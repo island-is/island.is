@@ -26,50 +26,53 @@ import {openBrowser} from '../../lib/rn-island';
 import {getRightButtons} from '../../utils/get-main-root';
 import {testIDs} from '../../utils/test-ids';
 import {ApplicationsModule} from '../home/applications-module';
+import {getApplicationOverviewUrl} from '../../utils/applications-utils';
 
 type ListItem =
   | {id: string; type: 'skeleton' | 'empty'}
   | (IArticleSearchResults & {type: undefined});
 
-const {useNavigationOptions, getNavigationOptions} =
-  createNavigationOptionHooks(
-    (theme, intl, initialized) => ({
-      topBar: {
-        title: {
-          text: intl.formatMessage({id: 'applications.title'}),
-        },
-        searchBar: {
-          visible: false,
-        },
-        rightButtons: initialized ? getRightButtons({theme} as any) : [],
+const {
+  useNavigationOptions,
+  getNavigationOptions,
+} = createNavigationOptionHooks(
+  (theme, intl, initialized) => ({
+    topBar: {
+      title: {
+        text: intl.formatMessage({id: 'applications.title'}),
       },
-      bottomTab: {
-        iconColor: theme.color.blue400,
-        text: initialized
-          ? intl.formatMessage({id: 'applications.bottomTabText'})
-          : '',
+      searchBar: {
+        visible: false,
       },
-    }),
-    {
-      topBar: {
-        largeTitle: {
-          visible: true,
-        },
-        scrollEdgeAppearance: {
-          active: true,
-          noBorder: true,
-        },
+      rightButtons: initialized ? getRightButtons({theme} as any) : [],
+    },
+    bottomTab: {
+      iconColor: theme.color.blue400,
+      text: initialized
+        ? intl.formatMessage({id: 'applications.bottomTabText'})
+        : '',
+    },
+  }),
+  {
+    topBar: {
+      largeTitle: {
+        visible: true,
       },
-      bottomTab: {
-        testID: testIDs.TABBAR_TAB_APPLICATION,
-        iconInsets: {
-          bottom: -4,
-        },
-        icon: require('../../assets/icons/tabbar-applications.png'),
-        selectedIcon: require('../../assets/icons/tabbar-applications-selected.png'),
+      scrollEdgeAppearance: {
+        active: true,
+        noBorder: true,
       },
     },
-  );
+    bottomTab: {
+      testID: testIDs.TABBAR_TAB_APPLICATION,
+      iconInsets: {
+        bottom: -4,
+      },
+      icon: require('../../assets/icons/tabbar-applications.png'),
+      selectedIcon: require('../../assets/icons/tabbar-applications-selected.png'),
+    },
+  },
+);
 
 export const ApplicationsScreen: NavigationFunctionComponent = ({
   componentId,
@@ -109,9 +112,10 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   useEffect(() => {
     if (!res.loading && res.data) {
       setItems(
-        [...(res?.data?.searchResults?.items || [])].sort(
-          (a: IArticleSearchResults, b: IArticleSearchResults) =>
-            a.title.localeCompare(b.title),
+        [
+          ...(res?.data?.searchResults?.items || []),
+        ].sort((a: IArticleSearchResults, b: IArticleSearchResults) =>
+          a.title.localeCompare(b.title),
         ) as any,
       );
     }
@@ -145,9 +149,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
       <ListButton
         key={item.id}
         title={item.title}
-        onPress={() =>
-          openBrowser(`http://island.is/${item.slug}`, componentId)
-        }
+        onPress={() => openBrowser(getApplicationOverviewUrl(item), componentId)}
       />
     );
   }, []);
