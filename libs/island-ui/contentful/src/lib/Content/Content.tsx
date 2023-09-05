@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck make web strict
 import React, { FC, ReactNode, ReactElement } from 'react'
 import { Document, Node, BLOCKS, INLINES } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
@@ -286,6 +288,8 @@ const embeddedNodes = {
 } as { [key: string]: EmbeddedNode }
 
 const defaultRenderNode = {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   [INLINES.HYPERLINK]: (node: Node, children: ReactNode) => {
     return <Hyperlink href={node.data.uri}>{children}</Hyperlink>
   },
