@@ -46,7 +46,7 @@ describe('Basic serialization', () => {
       },
     })
     .postgres()
-    .shutdownGracePeriod(80)
+    .shutdownGracePeriod(120)
   let result: SerializeSuccess<HelmService>
   beforeEach(async () => {
     result = (await generateOutputOne({
