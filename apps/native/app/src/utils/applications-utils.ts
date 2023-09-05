@@ -25,4 +25,4 @@ export const getApplicationOverviewUrl = (application: IApplication) => {
     application.id
   }`;
   return uri;
-}
+};
