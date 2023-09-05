@@ -124,6 +124,9 @@ export const prepareServiceForEnv = (
   if (serviceDef.shutdownGracePeriodSeconds) {
     result.shutdownGracePeriodSeconds = service.shutdownGracePeriodSeconds
   }
+  if (serviceDef.shutdownGracePeriodSleepSeconds) {
+    result.shutdownGracePeriodSleepSeconds = service.shutdownGracePeriodSleepSeconds
+  }
   // extra attributes
   if (serviceDef.extraAttributes) {
     const { errors, envs } = getEnvExtraValues(

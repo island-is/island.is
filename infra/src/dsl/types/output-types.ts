@@ -127,6 +127,7 @@ export interface HelmService {
   extra?: Hash
   files?: string[]
   shutdownGracePeriodSeconds?: number
+  shutdownGracePeriodSleepSeconds?: number
 }
 
 export interface LocalrunService {

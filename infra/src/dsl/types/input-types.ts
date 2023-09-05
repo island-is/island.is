@@ -103,6 +103,7 @@ export type ServiceDefinitionCore = {
   }
   files: MountedFile[]
   shutdownGracePeriodSeconds?: number
+  shutdownGracePeriodSleepSeconds?: number
   volumes: PersistentVolumeClaim[]
 }
 /**

@@ -256,6 +256,14 @@ const serializeService: SerializeMethod<HelmService> = async (
     }
   }
 
+  if (serviceDef.shutdownGracePeriodSleepSeconds) {
+    if (serviceDef.shutdownGracePeriodSleepSeconds < 0) {
+      addToErrors(['shutdownGracePeriodSleepSeconds cannot be less than 0'])
+    } else {
+      result.shutdownGracePeriodSleepSeconds = serviceDef.shutdownGracePeriodSleepSeconds
+    }
+  }
+
   const allErrors = getErrors()
   return allErrors.length === 0
     ? { type: 'success', serviceDef: [result] }
