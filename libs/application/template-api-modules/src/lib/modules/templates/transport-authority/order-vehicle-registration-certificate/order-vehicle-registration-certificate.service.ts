@@ -23,7 +23,8 @@ export class OrderVehicleRegistrationCertificateService extends BaseTemplateApiS
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const answers = application.answers as OrderVehicleRegistrationCertificateAnswers
+      const answers =
+        application.answers as OrderVehicleRegistrationCertificateAnswers
 
       const chargeItemCodes = getChargeItemCodes()
 
@@ -53,12 +54,8 @@ export class OrderVehicleRegistrationCertificateService extends BaseTemplateApiS
       )
     }
 
-    const isPayment:
-      | { fulfilled: boolean }
-      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
-      application.id,
-    )
+    const isPayment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
 
     if (!isPayment?.fulfilled) {
       throw new Error(
@@ -66,7 +63,8 @@ export class OrderVehicleRegistrationCertificateService extends BaseTemplateApiS
       )
     }
 
-    const answers = application.answers as OrderVehicleRegistrationCertificateAnswers
+    const answers =
+      application.answers as OrderVehicleRegistrationCertificateAnswers
     const permno = answers?.pickVehicle?.plate
 
     // Submit the application

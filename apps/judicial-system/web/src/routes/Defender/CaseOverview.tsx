@@ -3,14 +3,12 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
 import {
   capitalize,
   caseTypes,
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealDecision,
   CaseState,
   completedCaseStates,
   Feature,
@@ -39,6 +37,8 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
+import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import * as constants from '@island.is/judicial-system/consts'
 
 import { strings } from './CaseOverview.strings'
 
@@ -48,9 +48,8 @@ type availableModals =
   | 'ConfirmStatementAfterDeadline'
 
 export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   const { formatMessage } = useIntl()
   const { features } = useContext(FeatureContext)

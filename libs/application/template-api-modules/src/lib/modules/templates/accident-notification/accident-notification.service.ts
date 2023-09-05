@@ -174,9 +174,8 @@ export class AccidentNotificationService extends BaseTemplateApiService {
   async reviewApplication({ application }: TemplateApiModuleActionProps) {
     const documentId = getApplicationDocumentId(application)
 
-    const isRepresentativeOfCompanyOrInstitue = utils.isRepresentativeOfCompanyOrInstitute(
-      application.answers,
-    )
+    const isRepresentativeOfCompanyOrInstitue =
+      utils.isRepresentativeOfCompanyOrInstitute(application.answers)
     const reviewApproval = getValueViaPath(
       application.answers,
       'reviewApproval',

@@ -69,7 +69,9 @@ export const SideMenu = ({
   useKey('Escape', handleClose)
 
   const handleClickOutside = useCallback(
-    (e) => {
+    (e: { target: any }) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       if (isVisible && ref.current && !ref.current.contains(e.target)) {
         handleClose()
       }
@@ -77,7 +79,7 @@ export const SideMenu = ({
     [ref, isVisible, handleClose],
   )
 
-  const onKeyDown = useCallback((event, index) => {
+  const onKeyDown = useCallback((event: { key: string }, index: number) => {
     switch (event.key.toLowerCase()) {
       case 'arrowleft':
         if (index > 0) {
@@ -97,6 +99,8 @@ export const SideMenu = ({
 
     if (searchBarFocus) {
       if (searchInputRef?.current) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         searchInputRef.current.focus()
       }
     }
@@ -109,7 +113,7 @@ export const SideMenu = ({
   }, [])
 
   useEffect(() => {
-    tabRefs.current[activeTab].focus()
+    tabRefs.current[activeTab]?.focus()
   }, [activeTab])
 
   useEffect(() => {
@@ -184,111 +188,200 @@ export const SideMenu = ({
             </Hidden>
 
             <ul className={styles.tabBar} role="tablist">
-              {tabList.map((tab, index) => (
-                <li
-                  key={index}
-                  className={cn(styles.tabContainer, {
-                    [styles.tabBorder]: activeTab === index,
-                  })}
-                  role="presentation"
-                >
-                  <FocusableBox
-                    ref={(el) => (tabRefs.current[index] = el)}
-                    component="button"
-                    className={styles.tabButton}
-                    role="tab"
-                    aria-controls={`tab-content-${index}`}
-                    aria-selected={activeTab === index}
-                    tabIndex={activeTab === index ? 0 : -1}
-                    id={`tab-${index}`}
-                    onClick={() => setActiveTab(index)}
-                    onKeyDown={(e) => onKeyDown(e, index)}
-                  >
-                    <div className={styles.tab}>
-                      <Text
-                        variant="small"
-                        fontWeight={activeTab === index ? 'medium' : 'light'}
-                        color="blue400"
-                      >
-                        {tab.title}
-                      </Text>
-                    </div>
-                  </FocusableBox>
-                </li>
-              ))}
-            </ul>
-            {tabList.map((tab, index) => {
-              const hasExternalLinks =
-                tab.externalLinks && tab.externalLinks.length
-              return (
-                <div
-                  id={`tab-content-${index}`}
-                  key={index}
-                  aria-labelledby={`tab-${index}`}
-                  role="tabpanel"
-                  className={styles.content}
-                  hidden={activeTab !== index}
-                >
-                  <div className={styles.linksContent}>
-                    {tab.links.map((link, index) => {
-                      const props = {
-                        ...(link.href && { href: link.href }),
-                        ...(link.as && { as: link.as }),
-                      }
-
-                      return (
-                        <Text
-                          key={index}
-                          color="blue400"
-                          fontWeight="medium"
-                          paddingBottom={index + 1 === tab.links.length ? 0 : 2}
+              {tabList.map(
+                (
+                  tab: {
+                    title:
+                      | string
+                      | number
+                      | boolean
+                      | React.ReactElement<
+                          any,
+                          string | React.JSXElementConstructor<any>
                         >
-                          <Box
-                            component="span"
-                            display="inlineBlock"
-                            width="full"
-                            onClick={handleClose}
-                          >
-                            <FocusableBox {...props}>{link.title}</FocusableBox>
-                          </Box>
-                        </Text>
-                      )
+                      | Iterable<React.ReactNode>
+                      | React.ReactPortal
+                      | null
+                      | undefined
+                  },
+                  index: number,
+                ) => (
+                  <li
+                    key={index}
+                    className={cn(styles.tabContainer, {
+                      [styles.tabBorder]: activeTab === index,
                     })}
-                  </div>
-                  {hasExternalLinks && (
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      flexDirection="column"
+                    role="presentation"
+                  >
+                    <FocusableBox
+                      ref={(el) => (tabRefs.current[index] = el)}
+                      component="button"
+                      className={styles.tabButton}
+                      role="tab"
+                      aria-controls={`tab-content-${index}`}
+                      aria-selected={activeTab === index}
+                      tabIndex={activeTab === index ? 0 : -1}
+                      id={`tab-${index}`}
+                      onClick={() => setActiveTab(index)}
+                      onKeyDown={(e) => onKeyDown(e, index)}
                     >
-                      <Text
-                        variant="small"
-                        fontWeight="medium"
-                        color="blue400"
-                        paddingTop={3}
-                        paddingBottom={3}
-                      >
-                        {tab.externalLinksHeading}
-                      </Text>
-                      <div className={styles.linksContent}>
-                        {tab.externalLinks.map((link, index) => (
-                          <Text
-                            key={index}
-                            fontWeight="medium"
-                            color="blue400"
-                            paddingBottom={2}
-                          >
-                            <FocusableBox href={link.href}>
-                              {link.title}
-                            </FocusableBox>
-                          </Text>
-                        ))}
+                      <div className={styles.tab}>
+                        <Text
+                          variant="small"
+                          fontWeight={activeTab === index ? 'medium' : 'light'}
+                          color="blue400"
+                        >
+                          {tab.title}
+                        </Text>
                       </div>
-                    </Box>
-                  )}
-                </div>
-              )
-            })}
+                    </FocusableBox>
+                  </li>
+                ),
+              )}
+            </ul>
+            {tabList.map(
+              (
+                tab: {
+                  externalLinks: any[]
+                  links: any[]
+                  externalLinksHeading:
+                    | string
+                    | number
+                    | boolean
+                    | React.ReactElement<
+                        any,
+                        string | React.JSXElementConstructor<any>
+                      >
+                    | Iterable<React.ReactNode>
+                    | React.ReactPortal
+                    | null
+                    | undefined
+                },
+                index: number,
+              ) => {
+                const hasExternalLinks =
+                  tab.externalLinks && tab.externalLinks.length
+                return (
+                  <div
+                    id={`tab-content-${index}`}
+                    key={index}
+                    aria-labelledby={`tab-${index}`}
+                    role="tabpanel"
+                    className={styles.content}
+                    hidden={activeTab !== index}
+                  >
+                    <div className={styles.linksContent}>
+                      {tab.links.map(
+                        (
+                          link: {
+                            href: any
+                            as: any
+                            title:
+                              | string
+                              | number
+                              | boolean
+                              | React.ReactElement<
+                                  any,
+                                  string | React.JSXElementConstructor<any>
+                                >
+                              | Iterable<React.ReactNode>
+                              | React.ReactPortal
+                              | ((props: {
+                                  isFocused?: boolean | undefined
+                                  isHovered?: boolean | undefined
+                                }) => React.ReactNode)
+                              | null
+                              | undefined
+                          },
+                          index: number,
+                        ) => {
+                          const props = {
+                            ...(link.href && { href: link.href }),
+                            ...(link.as && { as: link.as }),
+                          }
+
+                          return (
+                            <Text
+                              key={index}
+                              color="blue400"
+                              fontWeight="medium"
+                              paddingBottom={
+                                index + 1 === tab.links.length ? 0 : 2
+                              }
+                            >
+                              <Box
+                                component="span"
+                                display="inlineBlock"
+                                width="full"
+                                onClick={handleClose}
+                              >
+                                <FocusableBox {...props}>
+                                  {link.title}
+                                </FocusableBox>
+                              </Box>
+                            </Text>
+                          )
+                        },
+                      )}
+                    </div>
+                    {hasExternalLinks && (
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        flexDirection="column"
+                      >
+                        <Text
+                          variant="small"
+                          fontWeight="medium"
+                          color="blue400"
+                          paddingTop={3}
+                          paddingBottom={3}
+                        >
+                          {tab.externalLinksHeading}
+                        </Text>
+                        <div className={styles.linksContent}>
+                          {tab.externalLinks.map(
+                            (
+                              link: {
+                                href: string | undefined
+                                title:
+                                  | string
+                                  | number
+                                  | boolean
+                                  | React.ReactElement<
+                                      any,
+                                      string | React.JSXElementConstructor<any>
+                                    >
+                                  | Iterable<React.ReactNode>
+                                  | React.ReactPortal
+                                  | ((props: {
+                                      isFocused?: boolean | undefined
+                                      isHovered?: boolean | undefined
+                                    }) => React.ReactNode)
+                                  | null
+                                  | undefined
+                              },
+                              index: number,
+                            ) => (
+                              <Text
+                                key={index}
+                                fontWeight="medium"
+                                color="blue400"
+                                paddingBottom={2}
+                              >
+                                <FocusableBox href={link.href}>
+                                  {link.title}
+                                </FocusableBox>
+                              </Text>
+                            ),
+                          )}
+                        </div>
+                      </Box>
+                    )}
+                  </div>
+                )
+              },
+            )}
           </Box>
           <Box
             display="flex"

@@ -60,13 +60,10 @@ export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
 
-  const [courtLocationErrorMessage, setCourtLocationMessage] = useState<string>(
-    '',
-  )
-  const [
-    sessionBookingsErrorMessage,
-    setSessionBookingsErrorMessage,
-  ] = useState<string>('')
+  const [courtLocationErrorMessage, setCourtLocationMessage] =
+    useState<string>('')
+  const [sessionBookingsErrorMessage, setSessionBookingsErrorMessage] =
+    useState<string>('')
 
   const router = useRouter()
   const { updateCase, setAndSendCaseToServer } = useCase()

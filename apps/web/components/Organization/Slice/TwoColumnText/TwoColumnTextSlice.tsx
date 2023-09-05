@@ -35,9 +35,11 @@ export const TwoColumnTextSlice: React.FC<
         <Box {...boxProps}>
           <GridRow>
             <GridColumn span={columnSpan} paddingBottom={2} hiddenBelow="lg">
-              <Text variant="h2" as="h2" id={labelId}>
-                <Hyphen>{slice.leftTitle}</Hyphen>
-              </Text>
+              {slice.leftTitle && (
+                <Text variant="h2" as="h2" id={labelId}>
+                  <Hyphen>{slice.leftTitle}</Hyphen>
+                </Text>
+              )}
             </GridColumn>
             <GridColumn span={columnSpan} paddingBottom={2} hiddenBelow="lg">
               {slice.rightTitle && (

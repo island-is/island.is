@@ -11,6 +11,7 @@ import { GridItems } from '@island.is/web/components'
 import { GetNewsQuery } from '@island.is/web/graphql/schema'
 import cn from 'classnames'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 import Item from './Item'
 import * as styles from './NewsItems.css'
 
@@ -108,6 +109,8 @@ export const NewsItems = ({
                 key={index}
                 date={date}
                 heading={title}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 text={intro}
                 colorVariant={colorVariant}
                 href={
@@ -116,16 +119,20 @@ export const NewsItems = ({
                     slug,
                   ]).href
                 }
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 image={image}
-                tags={genericTags.map(({ slug, title, __typename: tn }) => {
-                  return {
-                    label: title,
-                    href: linkResolver(linkType ?? (tn as LinkType), [
-                      ...parameters,
-                      slug,
-                    ]).href,
-                  }
-                })}
+                tags={genericTags
+                  .filter((tag) => tag.slug !== FRONTPAGE_NEWS_TAG_ID)
+                  .map(({ slug, title, __typename: tn }) => {
+                    return {
+                      label: title,
+                      href: linkResolver(linkType ?? (tn as LinkType), [
+                        ...parameters,
+                        slug,
+                      ]).href,
+                    }
+                  })}
               />
             ),
           )}

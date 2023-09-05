@@ -14,7 +14,6 @@ import {
   NotificationType,
   CaseState,
   CaseTransition,
-  CaseLegalProvisions,
 } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate, capitalize } from '@island.is/judicial-system/formatters'
@@ -46,6 +45,8 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
+import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
+import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
 
 import * as styles from './Overview.css'
 
@@ -54,12 +55,8 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
     'noModal' | 'caseResubmitModal' | 'caseSubmittedModal'
   >('noModal')
   const [modalText, setModalText] = useState('')
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   const router = useRouter()
   const {
@@ -288,7 +285,7 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
             <AccordionItem
               labelVariant="h3"
               id="id_1"
-              label="Lagaákvæði sem brot varða við"
+              label={formatMessage(lawsBrokenAccordion.heading)}
             >
               <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
             </AccordionItem>

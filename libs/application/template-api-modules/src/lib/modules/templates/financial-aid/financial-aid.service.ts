@@ -252,8 +252,10 @@ export class FinancialAidService extends BaseTemplateApiService {
       ).personalTaxReturnControllerMunicipalitiesDirectTaxPayments()
 
       return {
-        municipalitiesPersonalTaxReturn: personalTaxReturn as TaxData['municipalitiesPersonalTaxReturn'],
-        municipalitiesDirectTaxPayments: directTaxPayments as TaxData['municipalitiesDirectTaxPayments'],
+        municipalitiesPersonalTaxReturn:
+          personalTaxReturn as TaxData['municipalitiesPersonalTaxReturn'],
+        municipalitiesDirectTaxPayments:
+          directTaxPayments as TaxData['municipalitiesDirectTaxPayments'],
       }
     } catch {
       throw new TemplateApiError(

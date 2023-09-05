@@ -8,11 +8,12 @@ import React, {
 import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
-import { CaseState, Defendant } from '@island.is/judicial-system/types'
+import { CaseState } from '@island.is/judicial-system/types'
 import { USERS_ROUTE } from '@island.is/judicial-system/consts'
 import {
   CaseType,
   CaseOrigin,
+  Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { TempCase as Case } from '../../types'

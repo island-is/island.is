@@ -342,6 +342,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                     complaintDescription.labels.decisionDatePlaceholder,
                   backgroundColor: 'blue',
                   width: 'half',
+                  maxDate: new Date(),
                   condition: (answers: FormValue) =>
                     getComplaintType(answers) ===
                     OmbudsmanComplaintTypeEnum.DECISION,
@@ -406,8 +407,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                 answers.preexistingComplaint === YES,
             }),
             buildCustomField({
-              id:
-                'preexistingComplaint.preexistingComplaintAlternativeAlertMessage',
+              id: 'preexistingComplaint.preexistingComplaintAlternativeAlertMessage',
               title: preexistingComplaint.alternativeAlertMessage.title,
               component: 'FieldAlertMessage',
               description:

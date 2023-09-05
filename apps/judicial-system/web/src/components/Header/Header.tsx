@@ -84,9 +84,8 @@ const HeaderContainer: React.FC<React.PropsWithChildren<unknown>> = () => {
       ? constants.COURT_OF_APPEAL_CASES_ROUTE
       : constants.CASES_ROUTE
 
-  const handleLogout = async () => {
-    await api.logout()
-    window.location.assign('/')
+  const handleLogout = () => {
+    api.logout()
   }
 
   const { practice, email, phoneNr } =

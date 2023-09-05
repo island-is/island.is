@@ -23,7 +23,7 @@ export type Validation =
   | 'vehicle-registration-number'
   | 'appeal-case-number-format'
 
-type ValidateItem = 'valid' | [string | undefined, Validation[]]
+type ValidateItem = 'valid' | [string | undefined | null, Validation[]]
 type IsValid = { isValid: boolean; errorMessage: string }
 
 const getRegexByValidation = (validation: Validation) => {

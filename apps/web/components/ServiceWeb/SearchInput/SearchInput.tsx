@@ -142,7 +142,7 @@ export const SearchInput = ({
       .map((item, index) => ({
         label: item.title,
         value: item.slug,
-        component: ({ active }) => {
+        component: ({ active }: { active: boolean }) => {
           if (active) {
             setActiveItem(item)
           }
@@ -167,6 +167,8 @@ export const SearchInput = ({
       }))
 
     setOptions(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       options.length
         ? options
         : [
