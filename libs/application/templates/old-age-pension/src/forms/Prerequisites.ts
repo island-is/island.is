@@ -30,9 +30,8 @@ import {
   NationalRegistryResidenceHistoryApi,
   NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationTestApi,
-  SocialInsuranceAdministrationStatusApi
+  SocialInsuranceAdministrationStatusApi,
 } from '../dataProviders'
-
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'OldAgePensionPrerequisites',
@@ -110,10 +109,13 @@ export const PrerequisitesForm: Form = buildForm({
                   title: '',
                 }),
                 buildDataProviderItem({
-                  provider: SocialInsuranceAdministrationTestApi,
-                  title: 'Tryggingarstofun TODO',
-                  subTitle: 'Sækir info frá TR TODO'
-
+                  provider: SocialInsuranceAdministrationStatusApi,
+                  title:
+                    oldAgePensionFormMessage.pre
+                      .socialInsuranceAdministrationInformationTitle,
+                  subTitle:
+                    oldAgePensionFormMessage.pre
+                      .socialInsuranceAdministrationInformationSubTitle,
                 }),
               ],
             }),

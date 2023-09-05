@@ -15,10 +15,10 @@ import { SocialInsuranceAdministrationClientModule } from '@island.is/clients/so
 
 
 //TODO: Use process.env
-const XROAD_SIA_MEMBER_CODE = '10008' // process.env.XROAD_VMST_MEMBER_CODE ?? ''
-const XROAD_SIA_API_PATH =  '/TR-Protected/external-v1/api/protected/v1'    //process.env.XROAD_VMST_API_PATH ?? ''
-const XROAD_CLIENT_ID = 'IS-DEV/GOV/10000/island-is-client' // process.env.XROAD_CLIENT_ID ?? ''
-const XROAD_SIA_API_KEY =  'wFTRfq45N2HThNs2p4ZedLLSrVJ25GPU'   //process.env.XROAD_VMST_API_KEY ?? ''
+const XROAD_SIA_MEMBER_CODE =  process.env.XROAD_TR_MEMBER_CODE ?? ''
+const XROAD_SIA_API_PATH = process.env.XROAD_TR_API_PATH ?? ''
+const XROAD_CLIENT_ID =  process.env.XROAD_CLIENT_ID ?? ''
+const XROAD_SIA_API_KEY = process.env.XROAD_TR_API_KEY ?? ''
 
 
 export class OldAgePensionModule {
