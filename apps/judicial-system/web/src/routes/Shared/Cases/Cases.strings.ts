@@ -1,4 +1,4 @@
-import { defineMessage,defineMessages } from 'react-intl'
+import { defineMessage, defineMessages } from 'react-intl'
 
 export const cases = {
   tags: defineMessages({

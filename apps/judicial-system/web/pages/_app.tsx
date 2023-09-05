@@ -3,9 +3,9 @@ import App, { AppContext, AppProps } from 'next/app'
 import Head from 'next/head'
 import { ApolloProvider } from '@apollo/client'
 
-import { Query,QueryGetTranslationsArgs } from '@island.is/api/schema'
+import { Query, QueryGetTranslationsArgs } from '@island.is/api/schema'
 import { ToastContainer } from '@island.is/island-ui/core'
-import { GET_TRANSLATIONS,LocaleProvider } from '@island.is/localization'
+import { GET_TRANSLATIONS, LocaleProvider } from '@island.is/localization'
 
 import client from '../graphql/client'
 import {

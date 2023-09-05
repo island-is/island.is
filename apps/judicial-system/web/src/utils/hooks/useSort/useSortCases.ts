@@ -1,4 +1,4 @@
-import { useMemo,useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { CaseListEntry } from '@island.is/judicial-system/types'
 import { sortableTableColumn } from '@island.is/judicial-system-web/src/types'

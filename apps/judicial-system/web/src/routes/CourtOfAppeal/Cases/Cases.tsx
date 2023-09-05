@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
 import { Box } from '@island.is/island-ui/core'
-import { tables,titles } from '@island.is/judicial-system-web/messages'
+import { tables, titles } from '@island.is/judicial-system-web/messages'
 import {
   AppealCasesTable,
   Logo,

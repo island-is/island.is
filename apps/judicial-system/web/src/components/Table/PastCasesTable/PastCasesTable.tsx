@@ -9,7 +9,7 @@ import {
   CaseListEntry,
   isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
-import { core,tables } from '@island.is/judicial-system-web/messages'
+import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   TagAppealState,
   TagCaseState,

@@ -11,7 +11,7 @@ import {
   useAnimation,
 } from 'framer-motion'
 
-import { Box, Button,Icon, Text } from '@island.is/island-ui/core'
+import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
   capitalize,

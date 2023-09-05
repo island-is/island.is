@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { completedCaseStates } from '@island.is/judicial-system/types'
-import { core,titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
   FormContentContainer,

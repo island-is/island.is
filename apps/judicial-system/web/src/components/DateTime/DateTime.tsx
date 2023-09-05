@@ -6,7 +6,7 @@ import {
   Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { BlueBox,TimeInputField } from '../../components'
+import { BlueBox, TimeInputField } from '../../components'
 import * as styles from './DateTime.css'
 
 interface Props {

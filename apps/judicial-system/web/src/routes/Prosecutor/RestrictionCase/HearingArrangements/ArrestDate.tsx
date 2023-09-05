@@ -1,4 +1,4 @@
-import React, { useCallback,useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { DateTime } from '@island.is/judicial-system-web/src/components'

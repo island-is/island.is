@@ -12,7 +12,7 @@ import {
   IndictmentSubtype,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
-import { core, errors,titles } from '@island.is/judicial-system-web/messages'
+import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,

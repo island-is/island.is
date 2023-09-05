@@ -8,7 +8,7 @@ import {
   CaseListEntry,
   completedCaseStates,
 } from '@island.is/judicial-system/types'
-import { errors,titles } from '@island.is/judicial-system-web/messages'
+import { errors, titles } from '@island.is/judicial-system-web/messages'
 import { PageHeader } from '@island.is/judicial-system-web/src/components'
 import SharedPageLayout from '@island.is/judicial-system-web/src/components/SharedPageLayout/SharedPageLayout'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'

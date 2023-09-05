@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 
-import { Box, FocusableBox,Text } from '@island.is/island-ui/core'
+import { Box, FocusableBox, Text } from '@island.is/island-ui/core'
 import {
   displayFirstPlusRemaining,
   formatDOB,

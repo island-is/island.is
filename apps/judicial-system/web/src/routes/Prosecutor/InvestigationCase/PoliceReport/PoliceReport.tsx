@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, Checkbox, Input, Text,Tooltip } from '@island.is/island-ui/core'
+import { Box, Checkbox, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { icReportForm, titles } from '@island.is/judicial-system-web/messages'
 import {

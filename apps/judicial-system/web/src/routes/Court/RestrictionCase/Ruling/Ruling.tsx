@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useState } from 'react'
-import { IntlShape,useIntl } from 'react-intl'
+import { IntlShape, useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
 import { useRouter } from 'next/router'
 
@@ -22,7 +22,7 @@ import {
   CaseDecision,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
-import { core, ruling,titles } from '@island.is/judicial-system-web/messages'
+import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CaseFileList,

@@ -4,7 +4,7 @@ import partition from 'lodash/partition'
 import { useQuery } from '@apollo/client'
 
 import { AlertMessage, Box } from '@island.is/island-ui/core'
-import { errors,titles } from '@island.is/judicial-system-web/messages'
+import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   Logo,
   PageHeader,

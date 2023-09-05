@@ -4,7 +4,7 @@ import { applyCase } from 'beygla'
 import { AnimatePresence, motion } from 'framer-motion'
 import router from 'next/router'
 
-import { Box, Button, Checkbox,Input } from '@island.is/island-ui/core'
+import { Box, Button, Checkbox, Input } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { titles } from '@island.is/judicial-system-web/messages'

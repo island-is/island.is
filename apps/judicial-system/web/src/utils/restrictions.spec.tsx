@@ -1,7 +1,7 @@
 import React from 'react'
-import { createIntl,IntlFormatters, useIntl } from 'react-intl'
+import { createIntl, IntlFormatters, useIntl } from 'react-intl'
 import { MockedProvider } from '@apollo/client/testing'
-import { getDefaultNormalizer,render, screen } from '@testing-library/react'
+import { getDefaultNormalizer, render, screen } from '@testing-library/react'
 
 import {
   CaseCustodyRestrictions,

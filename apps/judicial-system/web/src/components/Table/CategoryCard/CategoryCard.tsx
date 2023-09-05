@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Box, FocusableBox,Text } from '@island.is/island-ui/core'
+import { Box, FocusableBox, Text } from '@island.is/island-ui/core'
 
 import * as styles from './CategoryCard.css'
 

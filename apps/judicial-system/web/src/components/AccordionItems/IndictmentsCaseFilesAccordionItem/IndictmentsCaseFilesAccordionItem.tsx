@@ -523,9 +523,8 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
 
     setReorderableItems((prev) => {
       const newReorderableItems = [...prev]
-      newReorderableItems[
-        fileInReorderableItems
-      ].userGeneratedFilename = newName
+      newReorderableItems[fileInReorderableItems].userGeneratedFilename =
+        newName
       newReorderableItems[fileInReorderableItems].displayDate = newDate
         ? newDate.toISOString()
         : newReorderableItems[fileInReorderableItems].displayDate

@@ -1,5 +1,5 @@
 import React from 'react'
-import { AnimatePresence,motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 
 import { Icon, Text, Tooltip } from '@island.is/island-ui/core'
 

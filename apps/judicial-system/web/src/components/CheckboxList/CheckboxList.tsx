@@ -1,5 +1,5 @@
 import React from 'react'
-import { MessageDescriptor,useIntl } from 'react-intl'
+import { MessageDescriptor, useIntl } from 'react-intl'
 
 import {
   Box,

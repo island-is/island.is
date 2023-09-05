@@ -1,5 +1,5 @@
 import React from 'react'
-import { Menu, MenuButton,MenuItem, useMenuState } from 'reakit/Menu'
+import { Menu, MenuButton, MenuItem, useMenuState } from 'reakit/Menu'
 
 import {
   Button,
