@@ -5,13 +5,12 @@ import type { User } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { OccupationalLicensesList } from './models/occupationalLicenseList.model'
+import { isDefined } from '@island.is/shared/utils'
 import {
   EducationalLicense,
   HealthDirectorateLicense,
   OccupationalLicenseType,
 } from './models/occupationalLicense.model'
-
-type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
 @Injectable()
 export class OccupationalLicensesService {
@@ -63,7 +62,7 @@ export class OccupationalLicensesService {
               isValid: isValid,
             }
           })
-          .filter(Boolean as unknown as ExcludesFalse)
+          .filter(isDefined)
           .find((license) => license.id === id) ?? undefined
       )
     } catch (e) {
@@ -113,7 +112,7 @@ export class OccupationalLicensesService {
             isValid: isValid,
           }
         })
-        .filter(Boolean as unknown as ExcludesFalse)
+        .filter(isDefined)
     } catch (e) {
       this.logger.error(`Error getting health directorate license`, {
         ...e,
@@ -185,7 +184,7 @@ export class OccupationalLicensesService {
       items: [
         ...(healthDirectorateLicenses ?? []),
         ...(educationalLicenses ?? []),
-      ].filter(Boolean as unknown as ExcludesFalse),
+      ].filter(isDefined),
       error: {
         hasError:
           healthDirectorateLicenses === null || educationalLicenses === null,
