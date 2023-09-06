@@ -389,6 +389,8 @@ export const en: TranslatedMessages = {
   'edit.phone.inputlabel': 'Phone number',
   'edit.phone.button': 'Save',
   'edit.phone.button.empty': 'Save empty',
+  'edit.phone.button.error': 'Error',
+  'edit.phone.button.errorMessage': 'Could not send verification code',
 
   // edit email
   'edit.email.screenTitle': 'Edit Email',
@@ -396,6 +398,8 @@ export const en: TranslatedMessages = {
   'edit.email.inputlabel': 'Email',
   'edit.email.button': 'Save',
   'edit.email.button.empty': 'Save empty',
+  'edit.email.button.error': 'Error',
+  'edit.email.button.errorMessage': 'Could not send verification code',
 
   // edit bank info
   'edit.bankinfo.screenTitle': 'Edit Bank Info',

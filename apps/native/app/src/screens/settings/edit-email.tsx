@@ -10,6 +10,7 @@ import {useUserProfile} from './profile-queries';
 import {client} from '../../graphql/client';
 import {CREATE_EMAIL_VERIFICATION} from '../../graphql/queries/create-email-verification.mutation';
 import {UPDATE_ISLYKILL_DELETE_INPUT} from '../../graphql/queries/update-islykill-settings.mutation';
+import {USER_PROFILE_QUERY} from '../../graphql/queries/user-profile.query';
 
 const {getNavigationOptions, useNavigationOptions} =
   createNavigationOptionHooks(() => ({
@@ -82,6 +83,7 @@ export const EditEmailScreen: NavigationFunctionComponent<{
                         email: true,
                       },
                     },
+                    refetchQueries: [USER_PROFILE_QUERY],
                   });
                   if (res.data) {
                     Navigation.dismissModal(componentId);
@@ -109,7 +111,10 @@ export const EditEmailScreen: NavigationFunctionComponent<{
                   }
                 }
               } catch (e) {
-                Alert.alert('Villa', 'Gat ekki sent staðfestingarkóða');
+                Alert.alert(
+                  intl.formatMessage({id: 'edit.email.error'}),
+                  intl.formatMessage({id: 'edit.email.errorMessage'}),
+                );
               }
               setLoading(false);
             }}

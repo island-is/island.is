@@ -387,6 +387,8 @@ export const is = {
   'edit.phone.inputlabel': 'Símanúmer',
   'edit.phone.button': 'Vista',
   'edit.phone.button.empty': 'Vista tómt',
+  'edit.phone.button.error': 'Villa',
+  'edit.phone.button.errorMessage': 'Gat ekki sent staðfestingarkóða',
 
   // edit email
   'edit.email.screenTitle': 'Breyta Netfangi',
@@ -394,6 +396,8 @@ export const is = {
   'edit.email.inputlabel': 'Netfang',
   'edit.email.button': 'Vista',
   'edit.email.button.empty': 'Vista tómt',
+  'edit.email.button.error': 'Villa',
+  'edit.email.button.errorMessage': 'Gat ekki sent staðfestingarkóða',
 
   // edit bank info
   'edit.bankinfo.screenTitle': 'Breyta banka upplýsingum',

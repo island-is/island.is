@@ -10,6 +10,7 @@ import {useUserProfile} from './profile-queries';
 import {client} from '../../graphql/client';
 import {CREATE_SMS_VERIFICATION} from '../../graphql/queries/create-sms-verification.mutation';
 import {UPDATE_ISLYKILL_DELETE_INPUT} from '../../graphql/queries/update-islykill-settings.mutation';
+import {USER_PROFILE_QUERY} from '../../graphql/queries/user-profile.query';
 
 const {getNavigationOptions, useNavigationOptions} =
   createNavigationOptionHooks(() => ({
@@ -97,10 +98,10 @@ export const EditPhoneScreen: NavigationFunctionComponent<{
                         mobilePhoneNumber: true,
                       },
                     },
+                    refetchQueries: [USER_PROFILE_QUERY],
                   });
                   if (res.data) {
                     Navigation.dismissModal(componentId);
-                    console.log(res.data, 'Uppfærði tómt símanúmer');
                   } else {
                     throw new Error('Failed to delete phone number');
                   }
@@ -124,7 +125,10 @@ export const EditPhoneScreen: NavigationFunctionComponent<{
                   }
                 }
               } catch (e) {
-                Alert.alert('Villa', 'Gat ekki sent staðfestingarkóða');
+                Alert.alert(
+                  intl.formatMessage({id: 'edit.phone.error'}),
+                  intl.formatMessage({id: 'edit.phone.errorMessage'}),
+                );
               }
               setLoading(false);
             }}
