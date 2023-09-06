@@ -1,6 +1,5 @@
 hooks:
   afterAllFileWrite:
-    - eslint --fix
     - prettier --write
 generates:
   ./apps/judicial-system/web/src/:
