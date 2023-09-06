@@ -6,6 +6,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { OccupationalLicensesList } from './models/occupationalLicenseList.model'
 import { isDefined } from '@island.is/shared/utils'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   EducationalLicense,
   HealthDirectorateLicense,
@@ -17,6 +18,7 @@ export class OccupationalLicensesService {
   constructor(
     private healthDirectorateApi: HealthDirectorateClientService,
     private mmsApi: MMSApi,
+    private readonly featureFlagService: FeatureFlagService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -171,9 +173,14 @@ export class OccupationalLicensesService {
   }
 
   async getOccupationalLicenses(user: User): Promise<OccupationalLicensesList> {
-    const healthDirectorateLicenses = await this.getHealthDirectorateLicense(
+    const allowHealthDirectorate = await this.featureFlagService.getValue(
+      Features.occupationalLicensesHealthDirectorate,
+      false,
       user,
     )
+    const healthDirectorateLicenses = allowHealthDirectorate
+      ? await this.getHealthDirectorateLicense(user)
+      : []
 
     const educationalLicenses = await this.getEducationalLicenses(user)
 
