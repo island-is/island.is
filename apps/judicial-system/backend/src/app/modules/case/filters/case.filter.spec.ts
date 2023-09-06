@@ -27,52 +27,52 @@ describe('canUserAccessCase', () => {
         state                  | role                       | institutionType
         ${CaseState.DELETED}   | ${UserRole.PROSECUTOR}     | ${InstitutionType.PROSECUTORS_OFFICE}
         ${CaseState.DELETED}   | ${UserRole.REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
-        ${CaseState.DELETED}   | ${UserRole.REGISTRAR}      | ${InstitutionType.COURT}
-        ${CaseState.DELETED}   | ${UserRole.JUDGE}          | ${InstitutionType.COURT}
-        ${CaseState.DELETED}   | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
-        ${CaseState.DELETED}   | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
-        ${CaseState.DELETED}   | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
-        ${CaseState.DELETED}   | ${UserRole.ASSISTANT}      | ${InstitutionType.HIGH_COURT}
+        ${CaseState.DELETED}   | ${UserRole.REGISTRAR}      | ${InstitutionType.DISTRICT_COURT}
+        ${CaseState.DELETED}   | ${UserRole.JUDGE}          | ${InstitutionType.DISTRICT_COURT}
+        ${CaseState.DELETED}   | ${UserRole.ASSISTANT}      | ${InstitutionType.DISTRICT_COURT}
+        ${CaseState.DELETED}   | ${UserRole.REGISTRAR}      | ${InstitutionType.COURT_OF_APPEALS}
+        ${CaseState.DELETED}   | ${UserRole.JUDGE}          | ${InstitutionType.COURT_OF_APPEALS}
+        ${CaseState.DELETED}   | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT_OF_APPEALS}
         ${CaseState.DELETED}   | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
         ${CaseState.DELETED}   | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
         ${CaseState.NEW}       | ${UserRole.REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
-        ${CaseState.NEW}       | ${UserRole.REGISTRAR}      | ${InstitutionType.COURT}
-        ${CaseState.NEW}       | ${UserRole.JUDGE}          | ${InstitutionType.COURT}
-        ${CaseState.NEW}       | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
-        ${CaseState.NEW}       | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
-        ${CaseState.NEW}       | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
-        ${CaseState.NEW}       | ${UserRole.ASSISTANT}      | ${InstitutionType.HIGH_COURT}
+        ${CaseState.NEW}       | ${UserRole.REGISTRAR}      | ${InstitutionType.DISTRICT_COURT}
+        ${CaseState.NEW}       | ${UserRole.JUDGE}          | ${InstitutionType.DISTRICT_COURT}
+        ${CaseState.NEW}       | ${UserRole.ASSISTANT}      | ${InstitutionType.DISTRICT_COURT}
+        ${CaseState.NEW}       | ${UserRole.REGISTRAR}      | ${InstitutionType.COURT_OF_APPEALS}
+        ${CaseState.NEW}       | ${UserRole.JUDGE}          | ${InstitutionType.COURT_OF_APPEALS}
+        ${CaseState.NEW}       | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT_OF_APPEALS}
         ${CaseState.NEW}       | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
         ${CaseState.NEW}       | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
         ${CaseState.DRAFT}     | ${UserRole.REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
-        ${CaseState.DRAFT}     | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
-        ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
-        ${CaseState.DRAFT}     | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
-        ${CaseState.DRAFT}     | ${UserRole.ASSISTANT}      | ${InstitutionType.HIGH_COURT}
+        ${CaseState.DRAFT}     | ${UserRole.ASSISTANT}      | ${InstitutionType.DISTRICT_COURT}
+        ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}      | ${InstitutionType.COURT_OF_APPEALS}
+        ${CaseState.DRAFT}     | ${UserRole.JUDGE}          | ${InstitutionType.COURT_OF_APPEALS}
+        ${CaseState.DRAFT}     | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT_OF_APPEALS}
         ${CaseState.DRAFT}     | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
         ${CaseState.DRAFT}     | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
         ${CaseState.SUBMITTED} | ${UserRole.REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
-        ${CaseState.SUBMITTED} | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
-        ${CaseState.SUBMITTED} | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
-        ${CaseState.SUBMITTED} | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
-        ${CaseState.SUBMITTED} | ${UserRole.ASSISTANT}      | ${InstitutionType.HIGH_COURT}
+        ${CaseState.SUBMITTED} | ${UserRole.ASSISTANT}      | ${InstitutionType.DISTRICT_COURT}
+        ${CaseState.SUBMITTED} | ${UserRole.REGISTRAR}      | ${InstitutionType.COURT_OF_APPEALS}
+        ${CaseState.SUBMITTED} | ${UserRole.JUDGE}          | ${InstitutionType.COURT_OF_APPEALS}
+        ${CaseState.SUBMITTED} | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT_OF_APPEALS}
         ${CaseState.SUBMITTED} | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
         ${CaseState.SUBMITTED} | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
         ${CaseState.RECEIVED}  | ${UserRole.REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
-        ${CaseState.RECEIVED}  | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
-        ${CaseState.RECEIVED}  | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
-        ${CaseState.RECEIVED}  | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
-        ${CaseState.RECEIVED}  | ${UserRole.ASSISTANT}      | ${InstitutionType.HIGH_COURT}
+        ${CaseState.RECEIVED}  | ${UserRole.ASSISTANT}      | ${InstitutionType.DISTRICT_COURT}
+        ${CaseState.RECEIVED}  | ${UserRole.REGISTRAR}      | ${InstitutionType.COURT_OF_APPEALS}
+        ${CaseState.RECEIVED}  | ${UserRole.JUDGE}          | ${InstitutionType.COURT_OF_APPEALS}
+        ${CaseState.RECEIVED}  | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT_OF_APPEALS}
         ${CaseState.RECEIVED}  | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
         ${CaseState.RECEIVED}  | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
         ${CaseState.REJECTED}  | ${UserRole.REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
-        ${CaseState.REJECTED}  | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
+        ${CaseState.REJECTED}  | ${UserRole.ASSISTANT}      | ${InstitutionType.DISTRICT_COURT}
         ${CaseState.REJECTED}  | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
         ${CaseState.REJECTED}  | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
         ${CaseState.ACCEPTED}  | ${UserRole.REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
-        ${CaseState.ACCEPTED}  | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
+        ${CaseState.ACCEPTED}  | ${UserRole.ASSISTANT}      | ${InstitutionType.DISTRICT_COURT}
         ${CaseState.DISMISSED} | ${UserRole.REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
-        ${CaseState.DISMISSED} | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
+        ${CaseState.DISMISSED} | ${UserRole.ASSISTANT}      | ${InstitutionType.DISTRICT_COURT}
         ${CaseState.DISMISSED} | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
         ${CaseState.DISMISSED} | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
       `.it(
@@ -102,38 +102,38 @@ describe('canUserAccessCase', () => {
       state                  | role                       | institutionType
       ${CaseState.DELETED}   | ${UserRole.PROSECUTOR}     | ${InstitutionType.PROSECUTORS_OFFICE}
       ${CaseState.DELETED}   | ${UserRole.REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
-      ${CaseState.DELETED}   | ${UserRole.REGISTRAR}      | ${InstitutionType.COURT}
-      ${CaseState.DELETED}   | ${UserRole.JUDGE}          | ${InstitutionType.COURT}
-      ${CaseState.DELETED}   | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
-      ${CaseState.DELETED}   | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
-      ${CaseState.DELETED}   | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
-      ${CaseState.DELETED}   | ${UserRole.ASSISTANT}      | ${InstitutionType.HIGH_COURT}
+      ${CaseState.DELETED}   | ${UserRole.REGISTRAR}      | ${InstitutionType.DISTRICT_COURT}
+      ${CaseState.DELETED}   | ${UserRole.JUDGE}          | ${InstitutionType.DISTRICT_COURT}
+      ${CaseState.DELETED}   | ${UserRole.ASSISTANT}      | ${InstitutionType.DISTRICT_COURT}
+      ${CaseState.DELETED}   | ${UserRole.REGISTRAR}      | ${InstitutionType.COURT_OF_APPEALS}
+      ${CaseState.DELETED}   | ${UserRole.JUDGE}          | ${InstitutionType.COURT_OF_APPEALS}
+      ${CaseState.DELETED}   | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT_OF_APPEALS}
       ${CaseState.DELETED}   | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
       ${CaseState.DELETED}   | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
-      ${CaseState.NEW}       | ${UserRole.REGISTRAR}      | ${InstitutionType.COURT}
-      ${CaseState.NEW}       | ${UserRole.JUDGE}          | ${InstitutionType.COURT}
-      ${CaseState.NEW}       | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
-      ${CaseState.NEW}       | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
-      ${CaseState.NEW}       | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
-      ${CaseState.NEW}       | ${UserRole.ASSISTANT}      | ${InstitutionType.HIGH_COURT}
+      ${CaseState.NEW}       | ${UserRole.REGISTRAR}      | ${InstitutionType.DISTRICT_COURT}
+      ${CaseState.NEW}       | ${UserRole.JUDGE}          | ${InstitutionType.DISTRICT_COURT}
+      ${CaseState.NEW}       | ${UserRole.ASSISTANT}      | ${InstitutionType.DISTRICT_COURT}
+      ${CaseState.NEW}       | ${UserRole.REGISTRAR}      | ${InstitutionType.COURT_OF_APPEALS}
+      ${CaseState.NEW}       | ${UserRole.JUDGE}          | ${InstitutionType.COURT_OF_APPEALS}
+      ${CaseState.NEW}       | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT_OF_APPEALS}
       ${CaseState.NEW}       | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
       ${CaseState.NEW}       | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
-      ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}      | ${InstitutionType.COURT}
-      ${CaseState.DRAFT}     | ${UserRole.JUDGE}          | ${InstitutionType.COURT}
-      ${CaseState.DRAFT}     | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
-      ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
-      ${CaseState.DRAFT}     | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
-      ${CaseState.DRAFT}     | ${UserRole.ASSISTANT}      | ${InstitutionType.HIGH_COURT}
+      ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}      | ${InstitutionType.DISTRICT_COURT}
+      ${CaseState.DRAFT}     | ${UserRole.JUDGE}          | ${InstitutionType.DISTRICT_COURT}
+      ${CaseState.DRAFT}     | ${UserRole.ASSISTANT}      | ${InstitutionType.DISTRICT_COURT}
+      ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}      | ${InstitutionType.COURT_OF_APPEALS}
+      ${CaseState.DRAFT}     | ${UserRole.JUDGE}          | ${InstitutionType.COURT_OF_APPEALS}
+      ${CaseState.DRAFT}     | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT_OF_APPEALS}
       ${CaseState.DRAFT}     | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
       ${CaseState.DRAFT}     | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
-      ${CaseState.SUBMITTED} | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
-      ${CaseState.SUBMITTED} | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
-      ${CaseState.SUBMITTED} | ${UserRole.ASSISTANT}      | ${InstitutionType.HIGH_COURT}
+      ${CaseState.SUBMITTED} | ${UserRole.REGISTRAR}      | ${InstitutionType.COURT_OF_APPEALS}
+      ${CaseState.SUBMITTED} | ${UserRole.JUDGE}          | ${InstitutionType.COURT_OF_APPEALS}
+      ${CaseState.SUBMITTED} | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT_OF_APPEALS}
       ${CaseState.SUBMITTED} | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
       ${CaseState.SUBMITTED} | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
-      ${CaseState.RECEIVED}  | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
-      ${CaseState.RECEIVED}  | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
-      ${CaseState.RECEIVED}  | ${UserRole.ASSISTANT}      | ${InstitutionType.HIGH_COURT}
+      ${CaseState.RECEIVED}  | ${UserRole.REGISTRAR}      | ${InstitutionType.COURT_OF_APPEALS}
+      ${CaseState.RECEIVED}  | ${UserRole.JUDGE}          | ${InstitutionType.COURT_OF_APPEALS}
+      ${CaseState.RECEIVED}  | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT_OF_APPEALS}
       ${CaseState.RECEIVED}  | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
       ${CaseState.RECEIVED}  | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
       ${CaseState.REJECTED}  | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
@@ -366,7 +366,10 @@ describe('canUserAccessCase', () => {
           } as Case
           const user = {
             role,
-            institution: { id: 'Another Court', type: InstitutionType.COURT },
+            institution: {
+              id: 'Another Court',
+              type: InstitutionType.DISTRICT_COURT,
+            },
           } as User
 
           // Act
@@ -387,7 +390,7 @@ describe('canUserAccessCase', () => {
           } as Case
           const user = {
             role,
-            institution: { id: 'Court', type: InstitutionType.COURT },
+            institution: { id: 'Court', type: InstitutionType.DISTRICT_COURT },
           } as User
 
           // Act
@@ -415,7 +418,7 @@ describe('canUserAccessCase', () => {
           const user = {
             id: 'Court User',
             role,
-            institution: { id: 'Court', type: InstitutionType.COURT },
+            institution: { id: 'Court', type: InstitutionType.DISTRICT_COURT },
           } as User
 
           // Act
@@ -440,7 +443,7 @@ describe('canUserAccessCase', () => {
         ${CaseState.DISMISSED} | ${UserRole.JUDGE}
         ${CaseState.DISMISSED} | ${UserRole.ASSISTANT}
       `.describe(
-        'given a $state case and $role at high court',
+        'given a $state case and $role at court of appeals',
         ({ state, role }) => {
           it.each([CaseAppealState.RECEIVED, CaseAppealState.COMPLETED])(
             'should not block the case if the accused appealed in court',
@@ -455,8 +458,8 @@ describe('canUserAccessCase', () => {
               const user = {
                 role,
                 institution: {
-                  id: 'High Court',
-                  type: InstitutionType.HIGH_COURT,
+                  id: 'Court of Appeals Id',
+                  type: InstitutionType.COURT_OF_APPEALS,
                 },
               } as User
 
@@ -483,8 +486,8 @@ describe('canUserAccessCase', () => {
               const user = {
                 role,
                 institution: {
-                  id: 'High Court',
-                  type: InstitutionType.HIGH_COURT,
+                  id: 'Court of Appeals Id',
+                  type: InstitutionType.COURT_OF_APPEALS,
                 },
               } as User
 
@@ -717,7 +720,10 @@ describe('canUserAccessCase', () => {
         } as Case
         const user = {
           role,
-          institution: { id: 'Another Court', type: InstitutionType.COURT },
+          institution: {
+            id: 'Another Court',
+            type: InstitutionType.DISTRICT_COURT,
+          },
         } as User
 
         // Act
@@ -738,7 +744,7 @@ describe('canUserAccessCase', () => {
         } as Case
         const user = {
           role,
-          institution: { id: 'Court', type: InstitutionType.COURT },
+          institution: { id: 'Court', type: InstitutionType.DISTRICT_COURT },
         } as User
 
         // Act
@@ -766,7 +772,7 @@ describe('canUserAccessCase', () => {
         const user = {
           id: 'Court User',
           role,
-          institution: { id: 'Court', type: InstitutionType.COURT },
+          institution: { id: 'Court', type: InstitutionType.DISTRICT_COURT },
         } as User
 
         // Act
@@ -791,7 +797,7 @@ describe('canUserAccessCase', () => {
         ${CaseState.DISMISSED} | ${UserRole.JUDGE}
         ${CaseState.DISMISSED} | ${UserRole.ASSISTANT}
       `.describe(
-      'given a $state case and $role at high court',
+      'given a $state case and $role at court of appeals',
       ({ state, role }) => {
         it('should block the case if the accused appealed in court', () => {
           // Arrange
@@ -804,8 +810,8 @@ describe('canUserAccessCase', () => {
           const user = {
             role,
             institution: {
-              id: 'High Court',
-              type: InstitutionType.HIGH_COURT,
+              id: 'Court of Appeals Id',
+              type: InstitutionType.COURT_OF_APPEALS,
             },
           } as User
 
@@ -829,8 +835,8 @@ describe('canUserAccessCase', () => {
           const user = {
             role,
             institution: {
-              id: 'High Court',
-              type: InstitutionType.HIGH_COURT,
+              id: 'Court of Appeals Id',
+              type: InstitutionType.COURT_OF_APPEALS,
             },
           } as User
 
@@ -855,8 +861,8 @@ describe('canUserAccessCase', () => {
           const user = {
             role,
             institution: {
-              id: 'High Court',
-              type: InstitutionType.HIGH_COURT,
+              id: 'Court of Appeals Id',
+              type: InstitutionType.COURT_OF_APPEALS,
             },
           } as User
 
@@ -881,8 +887,8 @@ describe('canUserAccessCase', () => {
           const user = {
             role,
             institution: {
-              id: 'High Court',
-              type: InstitutionType.HIGH_COURT,
+              id: 'Court of Appeals Id',
+              type: InstitutionType.COURT_OF_APPEALS,
             },
           } as User
 
@@ -920,8 +926,8 @@ describe('canUserAccessCase', () => {
             const user = {
               role,
               institution: {
-                id: 'High Court',
-                type: InstitutionType.HIGH_COURT,
+                id: 'Court of Appeals Id',
+                type: InstitutionType.COURT_OF_APPEALS,
               },
             } as User
 
