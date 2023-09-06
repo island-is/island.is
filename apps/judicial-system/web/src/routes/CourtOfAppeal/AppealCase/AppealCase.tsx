@@ -102,7 +102,6 @@ const AppealCase = () => {
       <PageHeader title={formatMessage(strings.title)} />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
-
         <Box component="section" marginBottom={5}>
           <SectionHeading title={formatMessage(core.appealCaseNumberHeading)} />
           <Input
@@ -170,8 +169,16 @@ const AppealCase = () => {
                 <Box marginBottom={2} key={`judgeBox${index + 1}`}>
                   <Select
                     name="judge"
-                    label={formatMessage(strings.judgeLabel)}
-                    placeholder={formatMessage(strings.judgePlaceholder)}
+                    label={formatMessage(
+                      index === 0
+                        ? strings.judgeForepersonLabel
+                        : strings.judgeLabel,
+                    )}
+                    placeholder={formatMessage(
+                      index === 0
+                        ? strings.judgeForepersonPlaceholder
+                        : strings.judgePlaceholder,
+                    )}
                     value={
                       judge?.id
                         ? { label: judge.name, value: judge.id }

@@ -71,10 +71,6 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
   const { pathname } = useLocation()
   const { formatMessage } = useLocale()
 
-  const trackExternalLinkClick = () => {
-    servicePortalOutboundLink(formatPlausiblePathToParams(pathname))
-  }
-
   return (
     <Box
       position="relative"
@@ -125,7 +121,7 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
               <SkeletonLoader width="70%" height={27} />
             ) : renderContent ? (
               renderContent()
-            ) : (
+            ) : typeof content === 'string' ? (
               <Text
                 translate={translate}
                 color={warning ? 'red600' : undefined}
@@ -133,6 +129,8 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
               >
                 {content}
               </Text>
+            ) : (
+              content
             )}
           </Box>
         </GridColumn>
@@ -152,7 +150,11 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
                   onClick={
                     editLink.skipOutboundTrack
                       ? undefined
-                      : trackExternalLinkClick
+                      : () =>
+                          servicePortalOutboundLink({
+                            url: formatPlausiblePathToParams(pathname).url,
+                            outboundUrl: editLink.url,
+                          })
                   }
                   target="_blank"
                 >
