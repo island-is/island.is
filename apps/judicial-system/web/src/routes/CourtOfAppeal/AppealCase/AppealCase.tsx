@@ -2,9 +2,8 @@ import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { ValueType } from 'react-select'
 
-import { Box, Input, Option, Select } from '@island.is/island-ui/core'
+import { Box, Input, Select } from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContentContainer,
@@ -85,7 +84,8 @@ const AppealCase = () => {
   ]
 
   const defaultAssistant = assistants?.find(
-    (assistant: Option) => assistant.value === workingCase.appealAssistant?.id,
+    (assistant: AssistantSelectOption) =>
+      assistant.value === workingCase.appealAssistant?.id,
   )
 
   const previousUrl = `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`
@@ -102,7 +102,6 @@ const AppealCase = () => {
       <PageHeader title={formatMessage(strings.title)} />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
-
         <Box component="section" marginBottom={5}>
           <SectionHeading title={formatMessage(core.appealCaseNumberHeading)} />
           <Input
@@ -145,7 +144,7 @@ const AppealCase = () => {
             placeholder={formatMessage(strings.assistantPlaceholder)}
             value={defaultAssistant}
             options={assistants}
-            onChange={(so: ValueType<ReactSelectOption>) => {
+            onChange={(so) => {
               const assistantUpdate = (so as AssistantSelectOption).assistant
 
               setAndSendCaseToServer(
@@ -170,15 +169,23 @@ const AppealCase = () => {
                 <Box marginBottom={2} key={`judgeBox${index + 1}`}>
                   <Select
                     name="judge"
-                    label={formatMessage(strings.judgeLabel)}
-                    placeholder={formatMessage(strings.judgePlaceholder)}
+                    label={formatMessage(
+                      index === 0
+                        ? strings.judgeForepersonLabel
+                        : strings.judgeLabel,
+                    )}
+                    placeholder={formatMessage(
+                      index === 0
+                        ? strings.judgeForepersonPlaceholder
+                        : strings.judgePlaceholder,
+                    )}
                     value={
                       judge?.id
                         ? { label: judge.name, value: judge.id }
                         : undefined
                     }
                     options={judges}
-                    onChange={(so: ValueType<ReactSelectOption>) => {
+                    onChange={(so) => {
                       const judgeUpdate = (so as JudgeSelectOption).judge
                       const judgeProperty = `appealJudge${index + 1}Id`
 

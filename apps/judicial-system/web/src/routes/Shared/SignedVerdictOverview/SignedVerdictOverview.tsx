@@ -1,9 +1,9 @@
 import React, { ReactNode, useCallback, useContext, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
-import { ValueType } from 'react-select/src/types'
 import { IntlShape, useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
+import { SingleValue } from 'react-select'
 
 import {
   Box,
@@ -21,7 +21,6 @@ import {
   isRestrictionCase,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
-  CaseAppealDecision,
   isCourtRole,
   Feature,
   isProsecutionRole,
@@ -72,6 +71,7 @@ import {
   errors,
 } from '@island.is/judicial-system-web/messages'
 import {
+  CaseAppealDecision,
   InstitutionType,
   User,
   UserRole,
@@ -86,6 +86,7 @@ import ShareCase from './Components/ShareCase/ShareCase'
 import { useGetCourtRecordSignatureConfirmationLazyQuery } from './getCourtRecordSignatureConfirmation.generated'
 import { useRequestCourtRecordSignatureMutation } from './requestCourtRecordSignature.generated'
 import { strings } from './SignedVerdictOverview.strings'
+import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 interface ModalControls {
   open: boolean
@@ -192,7 +193,7 @@ export const SignedVerdictOverview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
   const [selectedSharingInstitutionId, setSelectedSharingInstitutionId] =
-    useState<ValueType<ReactSelectOption>>()
+    useState<SingleValue<ReactSelectOption>>(null)
 
   const [
     requestCourtRecordSignatureResponse,
@@ -394,7 +395,7 @@ export const SignedVerdictOverview: React.FC = () => {
   }
 
   const shareCaseWithAnotherInstitution = (
-    institution?: ValueType<ReactSelectOption>,
+    institution?: SingleValue<ReactSelectOption>,
   ) => {
     if (workingCase) {
       if (workingCase.sharedWithProsecutorsOffice) {
@@ -430,7 +431,7 @@ export const SignedVerdictOverview: React.FC = () => {
           text: (
             <MarkdownWrapper
               markdown={formatMessage(m.sections.shareCaseModal.openText, {
-                prosecutorsOffice: (institution as ReactSelectOption).label,
+                prosecutorsOffice: institution?.label,
               })}
             />
           ),
@@ -439,8 +440,8 @@ export const SignedVerdictOverview: React.FC = () => {
         setWorkingCase({
           ...workingCase,
           sharedWithProsecutorsOffice: {
-            id: (institution as ReactSelectOption).value as string,
-            name: (institution as ReactSelectOption).label,
+            id: institution?.value as string,
+            name: institution?.label as string,
             type: InstitutionType.PROSECUTORS_OFFICE,
             created: new Date().toString(),
             modified: new Date().toString(),
@@ -452,8 +453,7 @@ export const SignedVerdictOverview: React.FC = () => {
         })
 
         updateCase(workingCase.id, {
-          sharedWithProsecutorsOfficeId: (institution as ReactSelectOption)
-            .value as string,
+          sharedWithProsecutorsOfficeId: institution?.value as string,
           isHeightenedSecurityLevel: workingCase.isHeightenedSecurityLevel
             ? false
             : workingCase.isHeightenedSecurityLevel,
@@ -659,9 +659,13 @@ export const SignedVerdictOverview: React.FC = () => {
                         title: formatMessage(core.appealJudgesHeading),
                         value: (
                           <>
-                            <Text>{workingCase.appealJudge1?.name}</Text>
-                            <Text>{workingCase.appealJudge2?.name}</Text>
-                            <Text>{workingCase.appealJudge3?.name}</Text>
+                            {sortByIcelandicAlphabet([
+                              workingCase.appealJudge1?.name || '',
+                              workingCase.appealJudge2?.name || '',
+                              workingCase.appealJudge3?.name || '',
+                            ]).map((judge, index) => (
+                              <Text key={index}>{judge}</Text>
+                            ))}
                           </>
                         ),
                       },

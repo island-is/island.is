@@ -2,6 +2,7 @@ import { uuid } from 'uuidv4'
 import { Base64 } from 'js-base64'
 import { Agent } from 'https'
 import fetch from 'isomorphic-fetch'
+import { z } from 'zod'
 
 import {
   BadGatewayException,
@@ -33,12 +34,44 @@ import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.resp
 import { policeModuleConfig } from './police.config'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 
+function getChapter(category?: string): number | undefined {
+  if (!category) {
+    return undefined
+  }
+
+  const chapter = /^([0-9]+)\..*$/.exec(category) // Matches the first number in a string
+
+  if (!chapter || +chapter[1] < 1) {
+    return undefined
+  }
+
+  return +chapter[1] - 1
+}
+
 @Injectable()
 export class PoliceService {
   private xRoadPath: string
   private agent: Agent
-
   private throttle = Promise.resolve({} as UploadPoliceCaseFileResponse)
+  private policeCaseFileStructure = z.object({
+    rvMalSkjolMals_ID: z.number(),
+    heitiSkjals: z.string(),
+    malsnumer: z.string(),
+    domsSkjalsFlokkun: z.optional(z.string()),
+    dagsStofnad: z.optional(z.string()),
+  })
+
+  private responseStructure = z.object({
+    malsnumer: z.string(),
+    skjol: z.array(this.policeCaseFileStructure),
+    malseinings: z.array(
+      z.object({
+        vettvangur: z.optional(z.string()),
+        brotFra: z.optional(z.string()),
+        upprunalegtMalsnumer: z.string(),
+      }),
+    ),
+  })
 
   constructor(
     @Inject(policeModuleConfig.KEY)
@@ -96,9 +129,15 @@ export class PoliceService {
       this.logger.info('Previous upload failed', { reason })
     })
 
-    const pdf = await this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
-    )
+    const promise = this.config.policeCaseApiV2Available
+      ? this.fetchPoliceDocumentApi(
+          `${this.xRoadPath}/V2/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
+        )
+      : this.fetchPoliceDocumentApi(
+          `${this.xRoadPath}/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
+        )
+
+    const pdf = await promise
       .then(async (res) => {
         if (res.ok) {
           const response = await res.json()
@@ -159,56 +198,25 @@ export class PoliceService {
     caseId: string,
     user: User,
   ): Promise<PoliceCaseFile[]> {
-    const promise = this.config.policeCaseApiV2Available
-      ? this.fetchPoliceDocumentApi(
-          `${this.xRoadPath}/V2/GetDocumentListById/${caseId}`,
-        )
-      : this.fetchPoliceDocumentApi(
-          `${this.xRoadPath}/GetDocumentListById/${caseId}`,
-        )
-
-    return promise
+    return this.fetchPoliceDocumentApi(
+      `${this.xRoadPath}/V2/GetDocumentListById/${caseId}`,
+    )
       .then(async (res: Response) => {
         if (res.ok) {
-          if (this.config.policeCaseApiV2Available) {
-            const response = await res.json()
+          const response: z.infer<typeof this.responseStructure> =
+            await res.json()
 
-            return (
-              response.skjol?.map(
-                (file: {
-                  rvMalSkjolMals_ID: string
-                  heitiSkjals: string
-                  malsnumer: string
-                  dagsStofnad: string
-                }) => ({
-                  id: file.rvMalSkjolMals_ID,
-                  name: file.heitiSkjals.endsWith('.pdf')
-                    ? file.heitiSkjals
-                    : `${file.heitiSkjals}.pdf`,
-                  policeCaseNumber: file.malsnumer,
-                  displayDate: file.dagsStofnad,
-                }),
-              ) ?? []
-            )
-          } else {
-            const response = await res.json()
+          this.responseStructure.parse(response)
 
-            return response.map(
-              (file: {
-                rvMalSkjolMals_ID: string
-                heitiSkjals: string
-                malsnumer: string
-                dagsStofnad: string
-              }) => ({
-                id: file.rvMalSkjolMals_ID,
-                name: file.heitiSkjals.endsWith('.pdf')
-                  ? file.heitiSkjals
-                  : `${file.heitiSkjals}.pdf`,
-                policeCaseNumber: file.malsnumer,
-                displayDate: file.dagsStofnad,
-              }),
-            )
-          }
+          return response.skjol.map((file) => ({
+            id: file.rvMalSkjolMals_ID.toString(),
+            name: file.heitiSkjals.endsWith('.pdf')
+              ? file.heitiSkjals
+              : `${file.heitiSkjals}.pdf`,
+            policeCaseNumber: file.malsnumer,
+            chapter: getChapter(file.domsSkjalsFlokkun),
+            displayDate: file.dagsStofnad,
+          }))
         }
 
         const reason = await res.text()
@@ -263,7 +271,10 @@ export class PoliceService {
     return promise
       .then(async (res: Response) => {
         if (res.ok) {
-          const response = await res.json()
+          const response: z.infer<typeof this.responseStructure> =
+            await res.json()
+
+          this.responseStructure.parse(response)
 
           const cases: PoliceCaseInfo[] = [
             { policeCaseNumber: response.malsnumer },
@@ -277,11 +288,11 @@ export class PoliceService {
             }
           })
 
-          response.malseinings?.forEach(
+          response.malseinings.forEach(
             (info: {
               upprunalegtMalsnumer: string
-              vettvangur: string
-              brotFra: string
+              vettvangur?: string
+              brotFra?: string
             }) => {
               const foundCase = cases.find(
                 (item) => item.policeCaseNumber === info.upprunalegtMalsnumer,
