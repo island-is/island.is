@@ -6,7 +6,7 @@ import { MockedProvider } from '@apollo/client/testing'
 
 import { CaseState, CaseType } from '@island.is/judicial-system/types'
 import {
-  mockHighCourtQuery,
+  mockCourtOfAppealsQuery,
   mockJudgeQuery,
   mockPrisonUserQuery,
   mockProsecutorQuery,
@@ -376,11 +376,11 @@ describe('Cases', () => {
     })
   })
 
-  describe('High court users', () => {
+  describe('Court of appeals users', () => {
     test('should only have a single table of cases', async () => {
       render(
         <MockedProvider
-          mocks={[...mockCasesQuery, ...mockHighCourtQuery]}
+          mocks={[...mockCasesQuery, ...mockCourtOfAppealsQuery]}
           addTypename={false}
         >
           <UserProvider authenticated={true}>
