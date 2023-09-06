@@ -21,7 +21,6 @@ import {
   isRestrictionCase,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
-  CaseAppealDecision,
   isCourtRole,
   Feature,
   isProsecutionRole,
@@ -72,6 +71,7 @@ import {
   errors,
 } from '@island.is/judicial-system-web/messages'
 import {
+  CaseAppealDecision,
   InstitutionType,
   User,
   UserRole,
@@ -86,6 +86,7 @@ import ShareCase from './Components/ShareCase/ShareCase'
 import { useGetCourtRecordSignatureConfirmationLazyQuery } from './getCourtRecordSignatureConfirmation.generated'
 import { useRequestCourtRecordSignatureMutation } from './requestCourtRecordSignature.generated'
 import { strings } from './SignedVerdictOverview.strings'
+import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 interface ModalControls {
   open: boolean
@@ -658,9 +659,13 @@ export const SignedVerdictOverview: React.FC = () => {
                         title: formatMessage(core.appealJudgesHeading),
                         value: (
                           <>
-                            <Text>{workingCase.appealJudge1?.name}</Text>
-                            <Text>{workingCase.appealJudge2?.name}</Text>
-                            <Text>{workingCase.appealJudge3?.name}</Text>
+                            {sortByIcelandicAlphabet([
+                              workingCase.appealJudge1?.name || '',
+                              workingCase.appealJudge2?.name || '',
+                              workingCase.appealJudge3?.name || '',
+                            ]).map((judge, index) => (
+                              <Text key={index}>{judge}</Text>
+                            ))}
                           </>
                         ),
                       },
