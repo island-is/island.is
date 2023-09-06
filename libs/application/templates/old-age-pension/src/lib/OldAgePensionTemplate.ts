@@ -1,5 +1,7 @@
 import { assign } from 'xstate'
 import unset from 'lodash/unset'
+import set from 'lodash/set'
+
 import {
   ApplicationTemplate,
   ApplicationContext,
@@ -13,6 +15,7 @@ import {
   UserProfileApi,
   NationalRegistrySpouseApi,
   ChildrenCustodyInformationApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
   coreMessages,
@@ -124,6 +127,8 @@ const OldAgePensionTemplate: ApplicationTemplate<
         },
       },
       [States.TRYGGINGASTOFNUN_SUBMITTED]: {
+        entry: ['assignOrganization'],
+        exit: ['clearAssignees'],
         meta: {
           name: States.TRYGGINGASTOFNUN_SUBMITTED,
           progress: 0.75,
@@ -162,6 +167,14 @@ const OldAgePensionTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
+            },
           ],
         },
         on: {
@@ -169,6 +182,8 @@ const OldAgePensionTemplate: ApplicationTemplate<
         },
       },
       [States.TRYGGINGASTOFNUN_IN_REVIEW]: {
+        entry: ['assignOrganization'],
+        exit: ['clearAssignees'],
         meta: {
           name: States.TRYGGINGASTOFNUN_IN_REVIEW,
           progress: 0.75,
@@ -196,6 +211,14 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 ),
               read: 'all',
             },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
+            },
           ],
         },
         on: {
@@ -207,6 +230,8 @@ const OldAgePensionTemplate: ApplicationTemplate<
         },
       },
       [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
+        entry: ['assignOrganization'],
+        exit: ['clearAssignees'],
         meta: {
           status: 'inprogress',
           name: States.ADDITIONAL_DOCUMENTS_REQUIRED,
@@ -231,6 +256,14 @@ const OldAgePensionTemplate: ApplicationTemplate<
                   Promise.resolve(val.AdditionalDocumentsRequired),
                 ),
               read: 'all',
+              write: 'all',
+            },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
               write: 'all',
             },
           ],
@@ -313,6 +346,29 @@ const OldAgePensionTemplate: ApplicationTemplate<
 
         return context
       }),
+      assignOrganization: assign((context) => {
+        const { application } = context
+        const TR_ID = InstitutionNationalIds.TRYGGINGASTOFNUN ?? ''
+
+        const assignees = application.assignees
+        if (TR_ID) {
+          if (Array.isArray(assignees) && !assignees.includes(TR_ID)) {
+            assignees.push(TR_ID)
+            set(application, 'assignees', assignees)
+          } else {
+            set(application, 'assignees', [TR_ID])
+          }
+        }
+
+        return context
+      }),
+      clearAssignees: assign((context) => ({
+        ...context,
+        application: {
+          ...context.application,
+          assignees: [],
+        },
+      })),
     },
   },
   mapUserToRole(
@@ -322,6 +378,12 @@ const OldAgePensionTemplate: ApplicationTemplate<
     if (id === application.applicant) {
       return Roles.APPLICANT
     }
+
+    const TR_ID = InstitutionNationalIds.TRYGGINGASTOFNUN
+    if (id === TR_ID) {
+      return Roles.ORGINISATION_REVIEWER
+    }
+
     return undefined
   },
   answerValidators,
