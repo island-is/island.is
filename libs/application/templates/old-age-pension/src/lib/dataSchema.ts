@@ -45,20 +45,10 @@ export const dataSchema = z.object({
   residenceHistory: z.object({
     question: z.enum([YES, NO]),
   }),
-  period: z
-    .object({
-      year: z.string(),
-      month: z.string(),
-    })
-    .refine(
-      (p) => {
-        const today = new Date()
-        const startDate = addYears(today, -2)
-        const selectedDate = new Date(p.year + p.month)
-        return startDate < selectedDate
-      },
-      { params: errorMessages.period },
-    ),
+  period: z.object({
+    year: z.string(),
+    month: z.string(),
+  }),
   onePaymentPerYear: z.object({
     question: z.enum([YES, NO]),
   }),

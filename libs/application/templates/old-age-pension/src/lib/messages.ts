@@ -1198,12 +1198,12 @@ export const validatorErrorMessages = defineMessages({
   },
   periodYear: {
     id: 'oap.application:period.year',
-    defaultMessage: 'Vitlaust ár.',
+    defaultMessage: 'Ógilt ár.',
     description: 'Invalid year.',
   },
   periodMonth: {
     id: 'oap.application:period.month',
-    defaultMessage: 'Vitlaus mánuður.',
+    defaultMessage: 'Ógildur mánuður.',
     description: 'Invalid month.',
   },
   requireAttachment: {
