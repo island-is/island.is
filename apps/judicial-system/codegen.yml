@@ -1,3 +1,7 @@
+hooks:
+  afterAllFileWrite:
+    - eslint --fix
+    - prettier --write
 generates:
   ./apps/judicial-system/web/src/:
     schema:
@@ -13,7 +17,6 @@ generates:
       withComponent: false
       avoidOptionals:
         object: true
-
   ./apps/judicial-system/web/src/graphql/schema.tsx:
     schema:
       - ./apps/judicial-system/api.graphql
@@ -53,6 +56,3 @@ generates:
       - fragment-matcher
     config:
       apolloClientVersion: 3
-hooks:
-  afterAllFileWrite:
-    - prettier --write
