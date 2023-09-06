@@ -35,7 +35,11 @@ import { policeModuleConfig } from './police.config'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 
 function getChapter(category?: string): number | undefined {
-  const chapter = /^([0-9]+)\..*$/.exec(category ?? '') // Matches the first number in a string
+  if (!category) {
+    return undefined
+  }
+
+  const chapter = /^([0-9]+)\..*$/.exec(category) // Matches the first number in a string
 
   if (!chapter || +chapter[1] < 1) {
     return undefined

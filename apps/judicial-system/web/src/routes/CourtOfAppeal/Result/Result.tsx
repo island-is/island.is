@@ -22,6 +22,7 @@ import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/h
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
+import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -118,9 +119,13 @@ const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
                   title: formatMessage(core.appealJudgesHeading),
                   value: (
                     <>
-                      <Text>{workingCase.appealJudge1?.name}</Text>
-                      <Text>{workingCase.appealJudge2?.name}</Text>
-                      <Text>{workingCase.appealJudge3?.name}</Text>
+                      {sortByIcelandicAlphabet([
+                        workingCase.appealJudge1?.name || '',
+                        workingCase.appealJudge2?.name || '',
+                        workingCase.appealJudge3?.name || '',
+                      ]).map((judge, index) => (
+                        <Text key={index}>{judge}</Text>
+                      ))}
                     </>
                   ),
                 },
