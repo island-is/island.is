@@ -58,7 +58,7 @@ const AppealCase = () => {
     .filter(
       (user: User) =>
         user.role === UserRole.ASSISTANT &&
-        user.institution?.type === InstitutionType.HIGH_COURT,
+        user.institution?.type === InstitutionType.COURT_OF_APPEALS,
     )
     .map((assistant: User) => {
       return { label: assistant.name, value: assistant.id, assistant }
@@ -68,7 +68,7 @@ const AppealCase = () => {
     .filter(
       (user: User) =>
         user.role === UserRole.JUDGE &&
-        user.institution?.type === InstitutionType.HIGH_COURT &&
+        user.institution?.type === InstitutionType.COURT_OF_APPEALS &&
         workingCase.appealJudge1?.id !== user.id &&
         workingCase.appealJudge2?.id !== user.id &&
         workingCase.appealJudge3?.id !== user.id,

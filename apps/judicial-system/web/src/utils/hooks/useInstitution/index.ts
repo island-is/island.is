@@ -36,13 +36,13 @@ const useInstitution = (skip = false) => {
     rawInstitutions = data.institutions
 
     institutions.courts = rawInstitutions.filter(
-      (institution) => institution.type === InstitutionType.COURT,
+      (institution) => institution.type === InstitutionType.DISTRICT_COURT,
     )
 
     institutions.allCourts = rawInstitutions.filter(
       (institution) =>
-        institution.type === InstitutionType.COURT ||
-        institution.type === InstitutionType.HIGH_COURT,
+        institution.type === InstitutionType.DISTRICT_COURT ||
+        institution.type === InstitutionType.COURT_OF_APPEALS,
     )
 
     institutions.prosecutorsOffices = rawInstitutions.filter(
