@@ -30,6 +30,8 @@ export interface ServiceListProps {
 export const ServiceList: React.FC<
   React.PropsWithChildren<ServiceListProps>
 > = ({ baseUrl, services = [], tagDisplayNames = {} }) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(tagDisplayNames)
 
   const CategoriesToTags = (service: Service) => {

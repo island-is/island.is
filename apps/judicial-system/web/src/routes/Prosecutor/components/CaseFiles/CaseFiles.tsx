@@ -42,39 +42,23 @@ import {
 import {
   CaseFileState,
   isRestrictionCase,
-  PoliceCaseFile,
 } from '@island.is/judicial-system/types'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
 
-import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
+import {
+  PoliceCaseFileCheck,
+  PoliceCaseFiles,
+  PoliceCaseFilesData,
+  mapPoliceCaseFileToPoliceCaseFileCheck,
+} from '../../components'
 import { useGetPoliceCaseFilesQuery } from './getPoliceCaseFiles.generated'
 import { caseFiles as strings } from './CaseFiles.strings'
 
-export interface PoliceCaseFilesData {
-  files: PoliceCaseFile[]
-  isLoading: boolean
-  hasError: boolean
-  errorCode?: string
-}
-
-export const mapPoliceCaseFileToPoliceCaseFileCheck = (
-  file: PoliceCaseFile,
-): PoliceCaseFileCheck => ({
-  id: file.id,
-  name: file.name,
-  policeCaseNumber: file.policeCaseNumber,
-  checked: false,
-})
-
 export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const {
     data: policeData,
     loading: policeDataLoading,
@@ -149,7 +133,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
         .filter(
           (policeFile) =>
             !workingCase.caseFiles?.some(
-              (file) => !file.category && file.name === policeFile.name,
+              (file) => !file.category && file.policeFileId === policeFile.id,
             ),
         )
         .map(mapPoliceCaseFileToPoliceCaseFileCheck) || [],

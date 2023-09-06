@@ -4,7 +4,8 @@ import { useIntl } from 'react-intl'
 import Select, {
   components,
   ControlProps,
-  IndicatorProps,
+  DropdownIndicatorProps,
+  ClearIndicatorProps,
   MenuProps,
   OptionProps,
   PlaceholderProps,
@@ -35,9 +36,8 @@ const CourtDocuments: FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer } = useCase()
-  const [submittedByMenuIsOpen, setSubmittedByMenuIsOpen] = useState<boolean>(
-    false,
-  )
+  const [submittedByMenuIsOpen, setSubmittedByMenuIsOpen] =
+    useState<boolean>(false)
 
   const whoFiledOptions = [
     {
@@ -54,7 +54,9 @@ const CourtDocuments: FC<React.PropsWithChildren<Props>> = (props) => {
     },
   ]
 
-  const DropdownIndicator = (props: IndicatorProps<ReactSelectOption>) => {
+  const DropdownIndicator = (
+    props: DropdownIndicatorProps<ReactSelectOption>,
+  ) => {
     return (
       <components.DropdownIndicator {...props}>
         <Icon icon="chevronDown" size="small" color="blue400" />
@@ -103,7 +105,7 @@ const CourtDocuments: FC<React.PropsWithChildren<Props>> = (props) => {
     )
   }
 
-  const ClearIndicator = (props: IndicatorProps<ReactSelectOption>) => {
+  const ClearIndicator = (props: ClearIndicatorProps<ReactSelectOption>) => {
     return (
       <components.ClearIndicator {...props}>
         <Icon icon="close" size="small" color="blue400" />

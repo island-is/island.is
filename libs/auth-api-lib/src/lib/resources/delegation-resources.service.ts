@@ -349,8 +349,8 @@ export class DelegationResourcesService {
     }
     if (user.delegationType.includes(AuthDelegationType.Custom)) {
       delegationOr.push({
-        [col(prefix, 'delegationScopes', 'delegation', 'toNationalId')]: user
-          .actor.nationalId,
+        [col(prefix, 'delegationScopes', 'delegation', 'toNationalId')]:
+          user.actor.nationalId,
       })
     }
     return [or(...delegationOr)]

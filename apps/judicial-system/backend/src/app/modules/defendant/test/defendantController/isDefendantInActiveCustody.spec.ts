@@ -18,10 +18,8 @@ describe('DefendantService - isDefendantInActiveCustody', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      defendantModel,
-      defendantService,
-    } = await createTestingDefendantModule()
+    const { defendantModel, defendantService } =
+      await createTestingDefendantModule()
 
     mockDefendantModel = defendantModel
 

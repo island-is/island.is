@@ -73,9 +73,29 @@ describe('PoliceController - Get all', () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
+          malsnumer: '000-0000-0000',
           skjol: [
-            { rvMalSkjolMals_ID: 'Id 1', heitiSkjals: 'Name 1.pdf' },
-            { rvMalSkjolMals_ID: 'Id 2', heitiSkjals: 'Name 2' },
+            {
+              dagsStofnad: '2020-01-01',
+              domsSkjalsFlokkun: 'dsf1',
+              rvMalSkjolMals_ID: 1,
+              heitiSkjals: 'Name 1.pdf',
+              malsnumer: 'malsnumer1',
+            },
+            {
+              dagsStofnad: '2020-01-01',
+              rvMalSkjolMals_ID: 2,
+              heitiSkjals: 'Name 2',
+              flokkurSkjals: 'flokkur2',
+              malsnumer: 'malsnumer2',
+            },
+          ],
+          malseinings: [
+            {
+              vettvangur: '',
+              brotFra: '',
+              upprunalegtMalsnumer: '',
+            },
           ],
         }),
       })
@@ -85,8 +105,18 @@ describe('PoliceController - Get all', () => {
 
     it('should return police case files', () => {
       expect(then.result).toEqual([
-        { id: 'Id 1', name: 'Name 1.pdf' },
-        { id: 'Id 2', name: 'Name 2.pdf' },
+        {
+          id: '1',
+          name: 'Name 1.pdf',
+          displayDate: '2020-01-01',
+          policeCaseNumber: 'malsnumer1',
+        },
+        {
+          id: '2',
+          name: 'Name 2.pdf',
+          displayDate: '2020-01-01',
+          policeCaseNumber: 'malsnumer2',
+        },
       ])
     })
   })

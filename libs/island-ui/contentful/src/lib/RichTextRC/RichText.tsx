@@ -107,6 +107,8 @@ type RichText = (
         renderMark: Options['renderMark']
         renderComponent: {
           [slice in keyof typeof defaultRenderComponentObject]: (
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             SliceType,
           ) => ReactNode
         }
@@ -121,10 +123,16 @@ export const richText: RichText = (
   locale = 'is',
 ) => {
   const options = {
-    renderText: (text) => {
-      return text.split('\n').reduce((children, textSegment, index) => {
-        return [...children, index > 0 && <br key={index} />, textSegment]
-      }, [])
+    renderText: (text: string) => {
+      return (
+        text
+          .split('\n')
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          .reduce((children: string[], textSegment: string, index: number) => {
+            return [...children, index > 0 && <br key={index} />, textSegment]
+          }, [])
+      )
     },
     renderNode: { ...defaultRenderNodeObject, ...opt.renderNode },
     renderMark: { ...defaultRenderMarkObject, ...opt.renderMark },
@@ -149,6 +157,9 @@ export const richText: RichText = (
         marginBottom={[5, 5, 5, 6]}
         marginTop={[5, 5, 5, 6]}
       >
+        {/** 
+         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+         // @ts-ignore make web strict */}
         {renderComponent[slice.__typename]?.(slice, locale)}
       </Box>
     )

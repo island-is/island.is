@@ -1,7 +1,5 @@
 import React, { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
-import { useQuery } from '@apollo/client'
-import { OptionsType, ValueType } from 'react-select'
 
 import { Select, Option } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
@@ -9,12 +7,9 @@ import {
   UserContext,
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
-import { ProsecutorSelectionUsersQuery } from './prosecutorSelectionUsersGql'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import {
-  User,
-  UserRole,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { useProsecutorSelectionUsersQuery } from './prosecutorSelectionUsers.generated'
+
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './ProsecutorSelection.strings'
 
@@ -39,25 +34,29 @@ const ProsecutorSelection: React.FC<React.PropsWithChildren<Props>> = (
       : undefined
   }, [workingCase.prosecutor])
 
-  const { data, loading } = useQuery(ProsecutorSelectionUsersQuery, {
+  const { data, loading } = useProsecutorSelectionUsersQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
-  const availableProsecutors: OptionsType<Option> = useMemo(() => {
-    return data?.users
+  const eligibleProsecutors: Option<string>[] = useMemo(() => {
+    if (!data?.users) {
+      return []
+    }
+
+    const institutionId = workingCase.creatingProsecutor
+      ? workingCase.creatingProsecutor.institution?.id
+      : user?.institution?.id
+
+    return data.users
       .filter(
-        (aUser: User) =>
-          aUser.role === UserRole.PROSECUTOR &&
-          ((!workingCase.creatingProsecutor &&
-            aUser.institution?.id === user?.institution?.id) ||
-            (workingCase.creatingProsecutor &&
-              aUser.institution?.id ===
-                workingCase.creatingProsecutor?.institution?.id)),
+        (user) =>
+          user.role === UserRole.PROSECUTOR &&
+          user.institution?.id === institutionId,
       )
-      .map((prosecutor: User) => ({
-        label: prosecutor.name,
-        value: prosecutor.id,
+      .map(({ id, name }) => ({
+        label: name,
+        value: id,
       }))
   }, [data?.users, user?.institution?.id, workingCase.creatingProsecutor])
 
@@ -71,14 +70,14 @@ const ProsecutorSelection: React.FC<React.PropsWithChildren<Props>> = (
         isIndictmentCase: isIndictmentCase(workingCase.type),
       })}
       value={selectedProsecutor}
-      options={availableProsecutors}
-      onChange={(value: ValueType<Option>) => {
-        const id = (value as ReactSelectOption).value
+      options={eligibleProsecutors}
+      onChange={(value) => {
+        const id = value?.value
         if (id && typeof id === 'string') {
           onChange(id)
         }
       }}
-      disabled={loading}
+      isDisabled={loading}
       required
     />
   )

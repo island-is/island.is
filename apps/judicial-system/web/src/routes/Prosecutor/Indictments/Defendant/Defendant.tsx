@@ -95,12 +95,8 @@ const getPoliceCasesForUpdate = (
   )
 
 const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const { formatMessage } = useIntl()
   const { createCase, isCreatingCase, setAndSendCaseToServer } = useCase()
   const {
@@ -120,11 +116,8 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
   const handleCreatePoliceCase = async (policeCaseInfo?: PoliceCase) => {
     const newPoliceCase = policeCaseInfo ?? { number: '' }
 
-    const [
-      policeCaseNumbers,
-      indictmentSubtypes,
-      crimeScenes,
-    ] = getPoliceCasesForUpdate([...getPoliceCases(workingCase), newPoliceCase])
+    const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
+      getPoliceCasesForUpdate([...getPoliceCases(workingCase), newPoliceCase])
 
     setAndSendCaseToServer(
       [
@@ -180,11 +173,8 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
       crimeScene?: CrimeScene
     },
   ) => {
-    const [
-      policeCaseNumbers,
-      indictmentSubtypes,
-      crimeScenes,
-    ] = getPoliceCasesForUpdate(getPoliceCases(workingCase), index, update)
+    const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
+      getPoliceCasesForUpdate(getPoliceCases(workingCase), index, update)
 
     setWorkingCase((theCase) => ({
       ...theCase,
@@ -197,13 +187,10 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
   const handleDeletePoliceCase = (index: number) => {
     const policeCases = getPoliceCases(workingCase)
 
-    const [
-      policeCaseNumbers,
-      indictmentSubtypes,
-      crimeScenes,
-    ] = getPoliceCasesForUpdate(
-      policeCases.slice(0, index).concat(policeCases.slice(index + 1)),
-    )
+    const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
+      getPoliceCasesForUpdate(
+        policeCases.slice(0, index).concat(policeCases.slice(index + 1)),
+      )
 
     setAndSendCaseToServer(
       [
@@ -227,11 +214,8 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
       crimeScene?: CrimeScene
     },
   ) => {
-    const [
-      policeCaseNumbers,
-      indictmentSubtypes,
-      crimeScenes,
-    ] = getPoliceCasesForUpdate(getPoliceCases(workingCase), index, update)
+    const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
+      getPoliceCasesForUpdate(getPoliceCases(workingCase), index, update)
 
     setAndSendCaseToServer(
       [
@@ -265,25 +249,31 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
 
         if (createdCase) {
           workingCase.defendants?.forEach(async (defendant, index) => {
-            const updatedDefendant = {
-              caseId: createdCase.id,
-              defendantId: defendant.id,
-              gender: defendant.gender,
-              name: defendant.name,
-              address: defendant.address,
-              nationalId: defendant.nationalId,
-              noNationalId: defendant.noNationalId,
-              citizenship: defendant.citizenship,
-            }
-
             if (
               index === 0 &&
               createdCase.defendants &&
               createdCase.defendants.length > 0
             ) {
-              await updateDefendant(updatedDefendant)
+              await updateDefendant({
+                caseId: createdCase.id,
+                defendantId: createdCase.defendants[0].id,
+                gender: defendant.gender,
+                name: defendant.name,
+                address: defendant.address,
+                nationalId: defendant.nationalId,
+                noNationalId: defendant.noNationalId,
+                citizenship: defendant.citizenship,
+              })
             } else {
-              await createDefendant(updatedDefendant)
+              await createDefendant({
+                caseId: createdCase.id,
+                gender: defendant.gender,
+                name: defendant.name,
+                address: defendant.address,
+                nationalId: defendant.nationalId,
+                noNationalId: defendant.noNationalId,
+                citizenship: defendant.citizenship,
+              })
             }
           })
           router.push(`${destination}/${createdCase.id}`)

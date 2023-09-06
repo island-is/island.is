@@ -34,6 +34,9 @@ registerEnumType(CaseAppealState, { name: 'CaseAppealState' })
 registerEnumType(CaseOrigin, { name: 'CaseOrigin' })
 registerEnumType(UserRole, { name: 'UserRole' })
 registerEnumType(CaseAppealRulingDecision, { name: 'CaseAppealRulingDecision' })
+registerEnumType(CaseCustodyRestrictions, { name: 'CaseCustodyRestrictions' })
+registerEnumType(CaseLegalProvisions, { name: 'CaseLegalProvisions' })
+registerEnumType(CaseAppealDecision, { name: 'CaseAppealDecision' })
 
 @ObjectType()
 export class Case implements TCase {
@@ -41,10 +44,10 @@ export class Case implements TCase {
   readonly id!: string
 
   @Field()
-  readonly created!: string
+  readonly modified!: string
 
   @Field()
-  readonly modified!: string
+  readonly created!: string
 
   @Field(() => CaseOrigin)
   readonly origin!: CaseOrigin
@@ -112,10 +115,10 @@ export class Case implements TCase {
   @Field({ nullable: true })
   readonly legalBasis?: string
 
-  @Field(() => [String], { nullable: true })
+  @Field(() => [CaseLegalProvisions], { nullable: true })
   readonly legalProvisions?: CaseLegalProvisions[]
 
-  @Field(() => [String], { nullable: true })
+  @Field(() => [CaseCustodyRestrictions], { nullable: true })
   readonly requestedCustodyRestrictions?: CaseCustodyRestrictions[]
 
   @Field({ nullable: true })
@@ -217,13 +220,13 @@ export class Case implements TCase {
   @Field({ nullable: true })
   readonly endOfSessionBookings?: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => CaseAppealDecision, { nullable: true })
   readonly accusedAppealDecision?: CaseAppealDecision
 
   @Field({ nullable: true })
   readonly accusedAppealAnnouncement?: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => CaseAppealDecision, { nullable: true })
   readonly prosecutorAppealDecision?: CaseAppealDecision
 
   @Field({ nullable: true })

@@ -43,16 +43,17 @@ export const ApplicationStatus: FC<
   const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION)
   const { locale, formatMessage } = useLocale()
 
-  const { loading: loadingData, error, data } = useQuery(
-    getAccidentStatusQuery,
-    {
-      variables: { input: { ihiDocumentID: ihiDocumentID } },
-      // Fetch every 5 minutes in case user leaves screen
-      // open for long period of time and does not refresh.
-      // We might get information from organization during that time.
-      pollInterval: 300000,
-    },
-  )
+  const {
+    loading: loadingData,
+    error,
+    data,
+  } = useQuery(getAccidentStatusQuery, {
+    variables: { input: { ihiDocumentID: ihiDocumentID } },
+    // Fetch every 5 minutes in case user leaves screen
+    // open for long period of time and does not refresh.
+    // We might get information from organization during that time.
+    pollInterval: 300000,
+  })
 
   const answers = application?.answers as FormValue
   const isAssigneeAndUnique = isUniqueAssignee(answers, isAssignee)

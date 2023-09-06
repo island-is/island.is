@@ -28,7 +28,6 @@ import {
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import {
-  CaseAppealDecision,
   CaseFileCategory,
   isProsecutionRole,
   UserRole,
@@ -40,6 +39,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { statement as strings } from './Statement.strings'
@@ -53,12 +53,8 @@ const Statement = () => {
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const [visibleModal, setVisibleModal] = useState<'STATEMENT_SENT'>()
   const { id } = router.query
-  const {
-    handleChange,
-    handleRemove,
-    handleRetry,
-    generateSingleFileUpdate,
-  } = useS3Upload(workingCase.id)
+  const { handleChange, handleRemove, handleRetry, generateSingleFileUpdate } =
+    useS3Upload(workingCase.id)
 
   const appealStatementType = isProsecutionRole(user?.role)
     ? CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT

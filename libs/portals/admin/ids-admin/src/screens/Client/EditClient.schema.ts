@@ -191,9 +191,10 @@ export const schema = {
     .merge(defaultEnvironmentSchema),
 }
 
-export type MergedFormDataSchema = typeof schema[ClientFormTypes.advancedSettings] &
-  typeof schema[ClientFormTypes.applicationUrls] &
-  typeof schema[ClientFormTypes.delegations] &
-  typeof schema[ClientFormTypes.lifeTime] &
-  typeof schema[ClientFormTypes.permissions] &
-  typeof schema[ClientFormTypes.translations]
+export type MergedFormDataSchema =
+  typeof schema[ClientFormTypes.advancedSettings] &
+    typeof schema[ClientFormTypes.applicationUrls] &
+    typeof schema[ClientFormTypes.delegations] &
+    typeof schema[ClientFormTypes.lifeTime] &
+    typeof schema[ClientFormTypes.permissions] &
+    typeof schema[ClientFormTypes.translations]

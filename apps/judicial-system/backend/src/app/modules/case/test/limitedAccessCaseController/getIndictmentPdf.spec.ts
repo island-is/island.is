@@ -19,7 +19,7 @@ describe('LimitedCaseController - Get indictment pdf', () => {
     id: caseId,
   } as Case
   const pdf = uuid()
-  const res = ({ end: jest.fn() } as unknown) as Response
+  const res = { end: jest.fn() } as unknown as Response
 
   let givenWhenThen: GivenWhenThen
 

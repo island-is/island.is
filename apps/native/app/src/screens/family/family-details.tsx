@@ -8,16 +8,14 @@ import {client} from '../../graphql/client';
 import {FAMILY_QUERY} from '../../graphql/queries/list-family-query';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {testIDs} from '../../utils/test-ids';
-import {formatNationalId} from '../profile/tab-personal-info';
+import {formatNationalId} from '../more/personal-info-content';
 
-const {
-  getNavigationOptions,
-  useNavigationOptions,
-} = createNavigationOptionHooks(() => ({
-  topBar: {
-    visible: false,
-  },
-}));
+const {getNavigationOptions, useNavigationOptions} =
+  createNavigationOptionHooks(() => ({
+    topBar: {
+      visible: false,
+    },
+  }));
 
 export const FamilyDetailScreen: NavigationFunctionComponent<{
   id: string;
@@ -55,8 +53,7 @@ export const FamilyDetailScreen: NavigationFunctionComponent<{
       <ScrollView style={{flex: 1}}>
         <SafeAreaView>
           <View
-            style={{paddingBottom: 8, paddingTop: 16, paddingHorizontal: 16}}
-          >
+            style={{paddingBottom: 8, paddingTop: 16, paddingHorizontal: 16}}>
             <Typography>
               {intl.formatMessage({id: 'familyDetail.description'})}
             </Typography>

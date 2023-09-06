@@ -85,9 +85,8 @@ export const IcelandicNamesSearcher = () => {
     GetIcelandicNameByInitialLetterQueryVariables
   >(GET_ICELANDIC_NAME_BY_INITIAL_LETTER)
 
-  const [filteredNamesList, setFilteredNamesList] = useState<NameType[]>(
-    tableData,
-  )
+  const [filteredNamesList, setFilteredNamesList] =
+    useState<NameType[]>(tableData)
 
   useMemo(() => {
     if (searchData?.getIcelandicNameBySearch) {
@@ -133,12 +132,18 @@ export const IcelandicNamesSearcher = () => {
     const data = tableData.filter((x) => x.visible)
 
     const kyn: string[] = filter.kyn.reduce((a, b) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       a.push(...b.split('|'))
       return a
     }, [])
 
     const filterFns: FilterFns = [
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       (x) => !kyn.length || kyn.includes(x.type),
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       (x) => !filter.stada.length || filter.stada.includes(x.status),
     ]
 

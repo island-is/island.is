@@ -49,6 +49,8 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
 }) => {
   const [allowed, setAllowed] = useState<boolean>(false)
   const [embedUrl, setEmbedUrl] = useState<string | null>(null)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const [termsUrl, setTermsUrl] = useState<string>(null)
   const [itemKey, setItemKey] = useState<string>('')
   const [type, setType] = useState<'YOUTUBE' | 'VIMEO' | ''>('')
@@ -70,7 +72,8 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
     }
 
     if (item.hostname.match(/(youtube.com|youtu.be)/g)) {
-      const regExp = /^.*((youtu.be|youtube.com\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/
+      const regExp =
+        /^.*((youtu.be|youtube.com\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/
       const match = item.href.match(regExp)
 
       let youtubeId: string | undefined = undefined
@@ -110,10 +113,15 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
 
   const textSettings = { termsUrl }
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const TextsData = Texts(textSettings)
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const texts = Object.prototype.hasOwnProperty.call(TextsData, locale)
-    ? TextsData[locale]
+    ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      TextsData[locale]
     : TextsData['is']
 
   return (

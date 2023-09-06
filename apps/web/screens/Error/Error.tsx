@@ -30,13 +30,11 @@ const formatBody = (body: string, path: string): ReactNode =>
 const fallbackMessage = {
   404: {
     title: 'Síða eða skjal fannst ekki',
-    body:
-      'Ekkert fannst á slóðinni {PATH}. Mögulega hefur síðan verið fjarlægð eða færð til. Þú getur byrjað aftur frá forsíðu eða notað leitina til að finna upplýsingar.',
+    body: 'Ekkert fannst á slóðinni {PATH}. Mögulega hefur síðan verið fjarlægð eða færð til. Þú getur byrjað aftur frá forsíðu eða notað leitina til að finna upplýsingar.',
   },
   500: {
     title: 'Afsakið hlé.',
-    body:
-      'Eitthvað fór úrskeiðis.\nVillan hefur verið skráð og unnið verður að viðgerð eins fljótt og auðið er.',
+    body: 'Eitthvað fór úrskeiðis.\nVillan hefur verið skráð og unnið verður að viðgerð eins fljótt og auðið er.',
   },
 }
 
@@ -52,7 +50,9 @@ export const ErrorScreen: React.FC<ErrorProps> = ({ statusCode, errPage }) => {
     ? {
         ...errPage,
       }
-    : fallbackMessage[statusCode]
+    : // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      fallbackMessage[statusCode]
 
   return (
     <GridContainer>
@@ -80,7 +80,9 @@ export const ErrorScreen: React.FC<ErrorProps> = ({ statusCode, errPage }) => {
                 <Text variant="intro" as="div">
                   {errorMessages.description
                     ? richText([errorMessages.description] as SliceType[])
-                    : formatBody(errorMessages.body, asPath)}
+                    : // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore make web strict
+                      formatBody(errorMessages.body, asPath)}
                 </Text>
               </>
             )}

@@ -115,6 +115,7 @@ const useSections = (
                 href: `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
                 isActive: routeIndex === 1,
                 onClick:
+                  routeIndex !== 1 &&
                   validateFormStepper(
                     isValid,
                     [
@@ -123,7 +124,8 @@ const useSections = (
                         : constants.CREATE_TRAVEL_BAN_ROUTE,
                     ],
                     workingCase,
-                  ) && onNavigationTo
+                  ) &&
+                  onNavigationTo
                     ? async () =>
                         await onNavigationTo(
                           constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
@@ -137,6 +139,7 @@ const useSections = (
                 href: `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${id}`,
                 isActive: routeIndex === 2,
                 onClick:
+                  routeIndex !== 2 &&
                   validateFormStepper(
                     isValid,
                     [
@@ -144,7 +147,8 @@ const useSections = (
                       constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
                     ],
                     workingCase,
-                  ) && onNavigationTo
+                  ) &&
+                  onNavigationTo
                     ? async () =>
                         await onNavigationTo(
                           constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
@@ -158,6 +162,7 @@ const useSections = (
                 href: `${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${id}`,
                 isActive: routeIndex === 3,
                 onClick:
+                  routeIndex !== 3 &&
                   validateFormStepper(
                     isValid,
                     [
@@ -166,7 +171,8 @@ const useSections = (
                       constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
                     ],
                     workingCase,
-                  ) && onNavigationTo
+                  ) &&
+                  onNavigationTo
                     ? async () =>
                         await onNavigationTo(
                           constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE,
@@ -180,6 +186,7 @@ const useSections = (
                 href: `${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${id}`,
                 isActive: routeIndex === 4,
                 onClick:
+                  routeIndex !== 4 &&
                   validateFormStepper(
                     isValid,
                     [
@@ -189,7 +196,8 @@ const useSections = (
                       constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE,
                     ],
                     workingCase,
-                  ) && onNavigationTo
+                  ) &&
+                  onNavigationTo
                     ? async () =>
                         await onNavigationTo(
                           constants.RESTRICTION_CASE_CASE_FILES_ROUTE,
@@ -203,6 +211,7 @@ const useSections = (
                 href: `${constants.RESTRICTION_CASE_OVERVIEW_ROUTE}/${id}`,
                 isActive: routeIndex === 5,
                 onClick:
+                  routeIndex !== 5 &&
                   validateFormStepper(
                     isValid,
                     [
@@ -213,7 +222,8 @@ const useSections = (
                       constants.RESTRICTION_CASE_CASE_FILES_ROUTE,
                     ],
                     workingCase,
-                  ) && onNavigationTo
+                  ) &&
+                  onNavigationTo
                     ? async () =>
                         await onNavigationTo(
                           constants.RESTRICTION_CASE_OVERVIEW_ROUTE,
@@ -267,11 +277,13 @@ const useSections = (
                 isActive: routeIndex === 1,
                 href: `${constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
                 onClick:
+                  routeIndex !== 1 &&
                   validateFormStepper(
                     isValid,
                     [constants.INVESTIGATION_CASE_DEFENDANT_ROUTE],
                     workingCase,
-                  ) && onNavigationTo
+                  ) &&
+                  onNavigationTo
                     ? async () =>
                         await onNavigationTo(
                           constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
@@ -285,6 +297,7 @@ const useSections = (
                 isActive: routeIndex === 2,
                 href: `${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${id}`,
                 onClick:
+                  routeIndex !== 2 &&
                   validateFormStepper(
                     isValid,
                     [
@@ -292,7 +305,8 @@ const useSections = (
                       constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
                     ],
                     workingCase,
-                  ) && onNavigationTo
+                  ) &&
+                  onNavigationTo
                     ? async () =>
                         await onNavigationTo(
                           constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
@@ -306,6 +320,7 @@ const useSections = (
                 href: `${constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE}/${id}`,
                 isActive: routeIndex === 3,
                 onClick:
+                  routeIndex !== 3 &&
                   validateFormStepper(
                     isValid,
                     [
@@ -314,7 +329,8 @@ const useSections = (
                       constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
                     ],
                     workingCase,
-                  ) && onNavigationTo
+                  ) &&
+                  onNavigationTo
                     ? async () =>
                         await onNavigationTo(
                           constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE,
@@ -328,6 +344,7 @@ const useSections = (
                 href: `${constants.INVESTIGATION_CASE_CASE_FILES_ROUTE}/${id}`,
                 isActive: routeIndex === 4,
                 onClick:
+                  routeIndex !== 4 &&
                   validateFormStepper(
                     isValid,
                     [
@@ -337,7 +354,8 @@ const useSections = (
                       constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE,
                     ],
                     workingCase,
-                  ) && onNavigationTo
+                  ) &&
+                  onNavigationTo
                     ? async () =>
                         await onNavigationTo(
                           constants.INVESTIGATION_CASE_CASE_FILES_ROUTE,
@@ -348,9 +366,10 @@ const useSections = (
                 name: formatMessage(
                   sections.investigationCaseProsecutorSection.overview,
                 ),
-                isActive: routeIndex === 5,
                 href: `${constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/${id}`,
+                isActive: routeIndex === 5,
                 onClick:
+                  routeIndex !== 5 &&
                   validateFormStepper(
                     isValid,
                     [
@@ -361,7 +380,8 @@ const useSections = (
                       constants.INVESTIGATION_CASE_CASE_FILES_ROUTE,
                     ],
                     workingCase,
-                  ) && onNavigationTo
+                  ) &&
+                  onNavigationTo
                     ? async () =>
                         await onNavigationTo(
                           constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
@@ -421,11 +441,13 @@ const useSections = (
               isActive: routeIndex === 1,
               href: `${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${id}`,
               onClick:
+                routeIndex !== 1 &&
                 validateFormStepper(
                   isValid,
                   [constants.INDICTMENTS_DEFENDANT_ROUTE],
                   workingCase,
-                ) && onNavigationTo
+                ) &&
+                onNavigationTo
                   ? async () =>
                       await onNavigationTo(
                         constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
@@ -441,6 +463,7 @@ const useSections = (
               isActive: routeIndex === 2,
               href: `${constants.INDICTMENTS_CASE_FILE_ROUTE}/${id}`,
               onClick:
+                routeIndex !== 2 &&
                 validateFormStepper(
                   isValid,
                   [
@@ -448,7 +471,8 @@ const useSections = (
                     constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
                   ],
                   workingCase,
-                ) && onNavigationTo
+                ) &&
+                onNavigationTo
                   ? async () =>
                       await onNavigationTo(
                         constants.INDICTMENTS_CASE_FILE_ROUTE,
@@ -464,6 +488,7 @@ const useSections = (
               isActive: routeIndex === 3,
               href: `${constants.INDICTMENTS_PROCESSING_ROUTE}/${id}`,
               onClick:
+                routeIndex !== 3 &&
                 validateFormStepper(
                   isValid,
                   [
@@ -472,7 +497,8 @@ const useSections = (
                     constants.INDICTMENTS_CASE_FILE_ROUTE,
                   ],
                   workingCase,
-                ) && onNavigationTo
+                ) &&
+                onNavigationTo
                   ? async () =>
                       await onNavigationTo(
                         constants.INDICTMENTS_PROCESSING_ROUTE,
@@ -488,6 +514,7 @@ const useSections = (
                     href: `${constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE}/${id}`,
                     isActive: routeIndex === 4,
                     onClick:
+                      routeIndex !== 4 &&
                       validateFormStepper(
                         isValid,
                         [
@@ -497,7 +524,8 @@ const useSections = (
                           constants.INDICTMENTS_PROCESSING_ROUTE,
                         ],
                         workingCase,
-                      ) && onNavigationTo
+                      ) &&
+                      onNavigationTo
                         ? async () =>
                             await onNavigationTo(
                               constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE,
@@ -518,6 +546,7 @@ const useSections = (
                   ? false
                   : routeIndex === (isTrafficViolation ? 5 : 4),
               onClick:
+                routeIndex !== (isTrafficViolation ? 5 : 4) &&
                 validateFormStepper(
                   isValid,
                   [
@@ -527,7 +556,8 @@ const useSections = (
                     constants.INDICTMENTS_PROCESSING_ROUTE,
                   ],
                   workingCase,
-                ) && onNavigationTo
+                ) &&
+                onNavigationTo
                   ? async () =>
                       await onNavigationTo(
                         constants.INDICTMENTS_CASE_FILES_ROUTE,
@@ -543,6 +573,7 @@ const useSections = (
               href: `${constants.INDICTMENTS_OVERVIEW_ROUTE}/${id}`,
               isActive: routeIndex === (isTrafficViolation ? 6 : 5),
               onClick:
+                routeIndex !== (isTrafficViolation ? 6 : 5) &&
                 validateFormStepper(
                   isValid,
                   [
@@ -553,7 +584,8 @@ const useSections = (
                     constants.INDICTMENTS_CASE_FILES_ROUTE,
                   ],
                   workingCase,
-                ) && onNavigationTo
+                ) &&
+                onNavigationTo
                   ? async () =>
                       await onNavigationTo(constants.INDICTMENTS_OVERVIEW_ROUTE)
                   : undefined,
@@ -582,7 +614,7 @@ const useSections = (
         !completedCaseStates.includes(workingCase.state) &&
         !parentCase,
       children:
-        user?.institution?.type !== InstitutionType.COURT
+        user?.institution?.type !== InstitutionType.DISTRICT_COURT
           ? []
           : [
               {
@@ -594,14 +626,16 @@ const useSections = (
               },
               {
                 name: formatMessage(sections.courtSection.overview),
-                href: `${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${id}`,
                 isActive: routeIndex === 1,
+                href: `${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${id}`,
                 onClick:
+                  routeIndex !== 1 &&
                   validateFormStepper(
                     isValid,
                     [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE],
                     workingCase,
-                  ) && onNavigationTo
+                  ) &&
+                  onNavigationTo
                     ? async () =>
                         await onNavigationTo(
                           constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
@@ -613,6 +647,7 @@ const useSections = (
                 isActive: routeIndex === 2,
                 href: `${constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
                 onClick:
+                  routeIndex !== 2 &&
                   validateFormStepper(
                     isValid,
                     [
@@ -620,7 +655,8 @@ const useSections = (
                       constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
                     ],
                     workingCase,
-                  ) && onNavigationTo
+                  ) &&
+                  onNavigationTo
                     ? async () =>
                         await onNavigationTo(
                           constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
@@ -632,6 +668,7 @@ const useSections = (
                 isActive: routeIndex === 3,
                 href: `${constants.RESTRICTION_CASE_RULING_ROUTE}/${id}`,
                 onClick:
+                  routeIndex !== 3 &&
                   validateFormStepper(
                     isValid,
                     [
@@ -640,7 +677,8 @@ const useSections = (
                       constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
                     ],
                     workingCase,
-                  ) && onNavigationTo
+                  ) &&
+                  onNavigationTo
                     ? async () =>
                         await onNavigationTo(
                           constants.RESTRICTION_CASE_RULING_ROUTE,
@@ -652,6 +690,7 @@ const useSections = (
                 isActive: routeIndex === 4,
                 href: `${constants.RESTRICTION_CASE_COURT_RECORD_ROUTE}/${id}`,
                 onClick:
+                  routeIndex !== 4 &&
                   validateFormStepper(
                     isValid,
                     [
@@ -661,7 +700,8 @@ const useSections = (
                       constants.RESTRICTION_CASE_RULING_ROUTE,
                     ],
                     workingCase,
-                  ) && onNavigationTo
+                  ) &&
+                  onNavigationTo
                     ? async () =>
                         await onNavigationTo(
                           constants.RESTRICTION_CASE_COURT_RECORD_ROUTE,
@@ -673,6 +713,7 @@ const useSections = (
                 isActive: routeIndex === 5,
                 href: `${constants.RESTRICTION_CASE_CONFIRMATION_ROUTE}/${id}`,
                 onClick:
+                  routeIndex !== 5 &&
                   validateFormStepper(
                     isValid,
                     [
@@ -683,7 +724,8 @@ const useSections = (
                       constants.RESTRICTION_CASE_COURT_RECORD_ROUTE,
                     ],
                     workingCase,
-                  ) && onNavigationTo
+                  ) &&
+                  onNavigationTo
                     ? async () =>
                         await onNavigationTo(
                           constants.RESTRICTION_CASE_CONFIRMATION_ROUTE,
@@ -715,7 +757,7 @@ const useSections = (
         !completedCaseStates.includes(workingCase.state) &&
         !parentCase,
       children:
-        user?.institution?.type !== InstitutionType.COURT
+        user?.institution?.type !== InstitutionType.DISTRICT_COURT
           ? []
           : [
               {
@@ -732,13 +774,15 @@ const useSections = (
                 isActive: routeIndex === 1,
                 href: `${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${id}`,
                 onClick:
+                  routeIndex !== 1 &&
                   validateFormStepper(
                     isValid,
                     [
                       constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
                     ],
                     workingCase,
-                  ) && onNavigationTo
+                  ) &&
+                  onNavigationTo
                     ? async () =>
                         await onNavigationTo(
                           constants.INVESTIGATION_CASE_OVERVIEW_ROUTE,
@@ -752,6 +796,7 @@ const useSections = (
                 isActive: routeIndex === 2,
                 href: `${constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
                 onClick:
+                  routeIndex !== 2 &&
                   validateFormStepper(
                     isValid,
                     [
@@ -759,7 +804,8 @@ const useSections = (
                       constants.INVESTIGATION_CASE_OVERVIEW_ROUTE,
                     ],
                     workingCase,
-                  ) && onNavigationTo
+                  ) &&
+                  onNavigationTo
                     ? async () =>
                         await onNavigationTo(
                           constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
@@ -773,6 +819,7 @@ const useSections = (
                 isActive: routeIndex === 3,
                 href: `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${id}`,
                 onClick:
+                  routeIndex !== 3 &&
                   validateFormStepper(
                     isValid,
                     [
@@ -781,7 +828,8 @@ const useSections = (
                       constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
                     ],
                     workingCase,
-                  ) && onNavigationTo
+                  ) &&
+                  onNavigationTo
                     ? async () =>
                         await onNavigationTo(
                           constants.INVESTIGATION_CASE_RULING_ROUTE,
@@ -795,6 +843,7 @@ const useSections = (
                 isActive: routeIndex === 4,
                 href: `${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${id}`,
                 onClick:
+                  routeIndex !== 4 &&
                   validateFormStepper(
                     isValid,
                     [
@@ -804,7 +853,8 @@ const useSections = (
                       constants.INVESTIGATION_CASE_RULING_ROUTE,
                     ],
                     workingCase,
-                  ) && onNavigationTo
+                  ) &&
+                  onNavigationTo
                     ? async () =>
                         await onNavigationTo(
                           constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE,
@@ -818,6 +868,7 @@ const useSections = (
                 isActive: routeIndex === 5,
                 href: `${constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE}/${id}`,
                 onClick:
+                  routeIndex !== 5 &&
                   validateFormStepper(
                     isValid,
                     [
@@ -828,7 +879,8 @@ const useSections = (
                       constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE,
                     ],
                     workingCase,
-                  ) && onNavigationTo
+                  ) &&
+                  onNavigationTo
                     ? async () =>
                         await onNavigationTo(
                           constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE,
@@ -868,7 +920,9 @@ const useSections = (
           isActive: routeIndex === 1,
           href: `${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`,
           onClick:
-            validateFormStepper(isValid, [], workingCase) && onNavigationTo
+            routeIndex !== 1 &&
+            validateFormStepper(isValid, [], workingCase) &&
+            onNavigationTo
               ? async () =>
                   await onNavigationTo(
                     constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
@@ -880,6 +934,7 @@ const useSections = (
           isActive: routeIndex === 2,
           href: `${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`,
           onClick:
+            routeIndex !== 2 &&
             validateFormStepper(
               isValid,
               [
@@ -887,7 +942,8 @@ const useSections = (
                 constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
               ],
               workingCase,
-            ) && onNavigationTo
+            ) &&
+            onNavigationTo
               ? async () =>
                   await onNavigationTo(constants.INDICTMENTS_SUBPOENA_ROUTE)
               : undefined,
@@ -897,6 +953,7 @@ const useSections = (
           isActive: routeIndex === 3,
           href: `${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`,
           onClick:
+            routeIndex !== 3 &&
             validateFormStepper(
               isValid,
               [
@@ -905,7 +962,8 @@ const useSections = (
                 constants.INDICTMENTS_SUBPOENA_ROUTE,
               ],
               workingCase,
-            ) && onNavigationTo
+            ) &&
+            onNavigationTo
               ? async () =>
                   await onNavigationTo(constants.INDICTMENTS_DEFENDER_ROUTE)
               : undefined,
@@ -915,6 +973,7 @@ const useSections = (
           isActive: routeIndex === 4,
           href: `${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`,
           onClick:
+            routeIndex !== 4 &&
             validateFormStepper(
               isValid,
               [
@@ -924,7 +983,8 @@ const useSections = (
                 constants.INDICTMENTS_DEFENDER_ROUTE,
               ],
               workingCase,
-            ) && onNavigationTo
+            ) &&
+            onNavigationTo
               ? async () =>
                   await onNavigationTo(constants.INDICTMENTS_COURT_RECORD_ROUTE)
               : undefined,
@@ -975,7 +1035,8 @@ const useSections = (
                   (section.children.length > 0 && section.children[1].href) ||
                   undefined,
                 onClick:
-                  (section.children.length > 0 &&
+                  (routeIndex !== 1 &&
+                    section.children.length > 0 &&
                     section.children[1].onClick) ||
                   undefined,
               },
@@ -986,7 +1047,8 @@ const useSections = (
                   (section.children.length > 0 && section.children[2].href) ||
                   undefined,
                 onClick:
-                  (section.children.length > 0 &&
+                  (routeIndex !== 2 &&
+                    section.children.length > 0 &&
                     section.children[2].onClick) ||
                   undefined,
               },
@@ -997,7 +1059,8 @@ const useSections = (
                   (section.children.length > 0 && section.children[3].href) ||
                   undefined,
                 onClick:
-                  (section.children.length > 0 &&
+                  (routeIndex !== 3 &&
+                    section.children.length > 0 &&
                     section.children[3].onClick) ||
                   undefined,
               },
@@ -1008,7 +1071,8 @@ const useSections = (
                   (section.children.length > 0 && section.children[4].href) ||
                   undefined,
                 onClick:
-                  (section.children.length > 0 &&
+                  (routeIndex !== 4 &&
+                    section.children.length > 0 &&
                     section.children[4].onClick) ||
                   undefined,
               },
@@ -1019,7 +1083,8 @@ const useSections = (
                   (section.children.length > 0 && section.children[5].href) ||
                   undefined,
                 onClick:
-                  (section.children.length > 0 &&
+                  (routeIndex !== 5 &&
+                    section.children.length > 0 &&
                     section.children[5].onClick) ||
                   undefined,
               },
@@ -1069,7 +1134,9 @@ const useSections = (
                 href:
                   (section.children.length > 0 && section.children[1].href) ||
                   undefined,
-                onClick: section.children[1].onClick,
+                onClick:
+                  (routeIndex !== 1 && section.children[1].onClick) ||
+                  undefined,
               },
               {
                 name: formatMessage(
@@ -1079,7 +1146,9 @@ const useSections = (
                 href:
                   (section.children.length > 0 && section.children[2].href) ||
                   undefined,
-                onClick: section.children[2].onClick,
+                onClick:
+                  (routeIndex !== 2 && section.children[2].onClick) ||
+                  undefined,
               },
               {
                 name: formatMessage(
@@ -1089,7 +1158,9 @@ const useSections = (
                 href:
                   (section.children.length > 0 && section.children[3].href) ||
                   undefined,
-                onClick: section.children[3].onClick,
+                onClick:
+                  (routeIndex !== 3 && section.children[3].onClick) ||
+                  undefined,
               },
               {
                 name: formatMessage(
@@ -1099,7 +1170,9 @@ const useSections = (
                 href:
                   (section.children.length > 0 && section.children[4].href) ||
                   undefined,
-                onClick: section.children[4].onClick,
+                onClick:
+                  (routeIndex !== 4 && section.children[4].onClick) ||
+                  undefined,
               },
               {
                 name: formatMessage(
@@ -1109,7 +1182,9 @@ const useSections = (
                 href:
                   (section.children.length > 0 && section.children[5].href) ||
                   undefined,
-                onClick: section.children[5].onClick,
+                onClick:
+                  (routeIndex !== 5 && section.children[5].onClick) ||
+                  undefined,
               },
             ],
     }
@@ -1128,14 +1203,14 @@ const useSections = (
       {
         name: formatMessage(sections.courtOfAppealSection.appealed),
         isActive:
-          user?.institution?.type !== InstitutionType.HIGH_COURT &&
+          user?.institution?.type !== InstitutionType.COURT_OF_APPEALS &&
           workingCase.appealState === CaseAppealState.RECEIVED,
         children: [],
       },
       {
         name: formatMessage(sections.courtOfAppealSection.result),
         isActive:
-          user?.institution?.type === InstitutionType.HIGH_COURT &&
+          user?.institution?.type === InstitutionType.COURT_OF_APPEALS &&
           routeIndex !== 3,
         children: [
           {
@@ -1148,11 +1223,13 @@ const useSections = (
             isActive: routeIndex === 1,
             href: `${constants.COURT_OF_APPEAL_CASE_ROUTE}/${id}`,
             onClick:
+              routeIndex !== 1 &&
               validateFormStepper(
                 isValid,
                 [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE],
                 workingCase,
-              ) && onNavigationTo
+              ) &&
+              onNavigationTo
                 ? async () =>
                     await onNavigationTo(constants.COURT_OF_APPEAL_CASE_ROUTE)
                 : undefined,
@@ -1162,6 +1239,7 @@ const useSections = (
             isActive: routeIndex === 2,
             href: `${constants.COURT_OF_APPEAL_RULING_ROUTE}/${workingCase.id}`,
             onClick:
+              routeIndex !== 2 &&
               validateFormStepper(
                 isValid,
                 [
@@ -1169,7 +1247,8 @@ const useSections = (
                   constants.COURT_OF_APPEAL_CASE_ROUTE,
                 ],
                 workingCase,
-              ) && onNavigationTo
+              ) &&
+              onNavigationTo
                 ? async () =>
                     await onNavigationTo(constants.COURT_OF_APPEAL_RULING_ROUTE)
                 : undefined,

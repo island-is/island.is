@@ -7,7 +7,7 @@ import React, {
 } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
-import { ValueType } from 'react-select'
+import { SingleValue } from 'react-select'
 
 import { Box, Input, Select } from '@island.is/island-ui/core'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
@@ -51,16 +51,11 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
   const { formatMessage } = useIntl()
   const lawyers = useGetLawyers()
   const { updateCase, setAndSendCaseToServer } = useCase()
-  const {
-    updateDefendant,
-    updateDefendantState,
-    setAndSendDefendantToServer,
-  } = useDefendants()
+  const { updateDefendant, updateDefendantState, setAndSendDefendantToServer } =
+    useDefendants()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('')
-  const [
-    phoneNumberErrorMessage,
-    setPhoneNumberErrorMessage,
-  ] = useState<string>('')
+  const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] =
+    useState<string>('')
 
   const defendantInDefendants = workingCase.defendants?.find(
     (defendant) => defendant.id === defendantId,
@@ -77,7 +72,7 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
   )
 
   const handleLawyerChange = useCallback(
-    (selectedOption: ValueType<ReactSelectOption>) => {
+    (selectedOption: SingleValue<ReactSelectOption>) => {
       let updatedLawyer = {
         defenderName: '',
         defenderNationalId: '',
@@ -86,11 +81,7 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
       }
 
       if (selectedOption) {
-        const {
-          label,
-          value,
-          __isNew__: defenderNotFound,
-        } = selectedOption as ReactSelectOption
+        const { label, value, __isNew__: defenderNotFound } = selectedOption
 
         onDefenderNotFound(defenderNotFound || false)
 
@@ -247,7 +238,7 @@ const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
           onChange={handleLawyerChange}
           filterConfig={{ matchFrom: 'start' }}
           isCreatable
-          disabled={disabled}
+          isDisabled={disabled}
         />
       </Box>
       <Box marginBottom={2}>
