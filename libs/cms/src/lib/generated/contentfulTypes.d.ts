@@ -2245,6 +2245,9 @@ export interface IOrganizationFields {
 
   /** Name In Vacancy List */
   nameInVacancyList?: string | undefined
+
+  /** Reference Identifier */
+  referenceIdentifier?: string | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -2300,6 +2303,7 @@ export interface IOrganizationPageFields {
         | ITabSection
         | ITimeline
         | ITwoColumnText
+        | ISectionWithVideo
       )[]
     | undefined
 
@@ -2376,6 +2380,7 @@ export interface IOrganizationPageFields {
     | 'haskolanam'
     | 'nti'
     | 'samgongustofa'
+    | 'geislavarnir-rikisins'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
@@ -2929,6 +2934,45 @@ export interface ISectionWithImage extends Entry<ISectionWithImageFields> {
   }
 }
 
+export interface ISectionWithVideoFields {
+  /** Title */
+  title: string
+
+  /** Show title */
+  showTitle?: boolean | undefined
+
+  /** Content */
+  content: Document
+
+  /** Video */
+  video: IEmbeddedVideo
+
+  /** Link */
+  link?: ILink | undefined
+
+  /** Show divider on top */
+  showDividerOnTop?: boolean | undefined
+}
+
+/** A section containing a video on the left and text on the right (which wraps below the video on smaller screens) */
+
+export interface ISectionWithVideo extends Entry<ISectionWithVideoFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'sectionWithVideo'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ISidebarCardFields {
   /** Type */
   type?:
@@ -2998,6 +3042,8 @@ export interface ISliceConnectedComponentFields {
     | 'Verðbréfamiðlarar/Brokers'
     | 'PublicVehicleSearch'
     | 'PlateAvailableSearch'
+    | 'AircraftSearch'
+    | 'DrivingInstructorList'
     | undefined
 
   /** Localized JSON */
@@ -4244,6 +4290,7 @@ export type CONTENT_TYPE =
   | 'questionAndAnswer'
   | 'sectionHeading'
   | 'sectionWithImage'
+  | 'sectionWithVideo'
   | 'sidebarCard'
   | 'sliceConnectedComponent'
   | 'sliceDropdown'

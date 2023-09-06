@@ -55,28 +55,26 @@ const Label = styled.Text`
   })}
 `;
 
-const {
-  useNavigationOptions,
-  getNavigationOptions,
-} = createNavigationOptionHooks(
-  (theme, intl) => ({
-    topBar: {
-      title: {
-        text: intl.formatMessage({id: 'walletPass.screenTitle'}),
+const {useNavigationOptions, getNavigationOptions} =
+  createNavigationOptionHooks(
+    (theme, intl) => ({
+      topBar: {
+        title: {
+          text: intl.formatMessage({id: 'walletPass.screenTitle'}),
+        },
+        noBorder: true,
       },
-      noBorder: true,
+    }),
+    {
+      topBar: {
+        rightButtons: [],
+      },
+      bottomTabs: {
+        visible: false,
+        drawBehind: true,
+      },
     },
-  }),
-  {
-    topBar: {
-      rightButtons: [],
-    },
-    bottomTabs: {
-      visible: false,
-      drawBehind: true,
-    },
-  },
-);
+  );
 const capitalizeEveryWord = (s: string) => {
   if (typeof s !== 'string') return '';
 
@@ -139,8 +137,7 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
                 paddingTop: 16,
                 paddingHorizontal: 16,
                 paddingBottom: 10,
-              }}
-            >
+              }}>
               <Alert
                 title={intl.formatMessage({id: 'walletPassport.warningTitle'})}
                 message={intl.formatMessage({
@@ -244,8 +241,7 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
                           style={{width: 24, height: 24}}
                           resizeMode="contain"
                         />
-                      }
-                    >
+                      }>
                       <View>
                         {child.passports?.map((passport: any) => {
                           return (
@@ -320,8 +316,7 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
                         })}
                         {noPassport && (
                           <View
-                            style={{marginVertical: 16, paddingHorizontal: 16}}
-                          >
+                            style={{marginVertical: 16, paddingHorizontal: 16}}>
                             <Label>
                               {intl.formatMessage({
                                 id: 'walletPassport.noPassport',
@@ -333,8 +328,7 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
                                   `https://island.is/vegabref`,
                                   componentId,
                                 )
-                              }
-                            >
+                              }>
                               <LinkText>
                                 {intl.formatMessage({
                                   id: 'walletPassport.noPassportLink',
@@ -362,8 +356,7 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
           left: 0,
           right: 0,
           zIndex: 100,
-        }}
-      >
+        }}>
         <LicenceCard
           nativeID={`license-${LicenseType.PASSPORT}_destination`}
           type={LicenseType.PASSPORT}

@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # service-portal-health
 
 This library was generated with [Nx](https://nx.dev).

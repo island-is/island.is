@@ -15,6 +15,7 @@ import { SliceType } from '@island.is/island-ui/contentful'
 import { webRichText } from '@island.is/web/utils/richText'
 import { useNamespace } from '@island.is/web/hooks'
 import * as styles from './LandlaeknirFooter.css'
+import { ReactNode } from 'react'
 
 const renderParagraphs = (
   content: Slice[],
@@ -23,7 +24,7 @@ const renderParagraphs = (
 ) =>
   webRichText(content as SliceType[], {
     renderNode: {
-      [BLOCKS.PARAGRAPH]: (_node, children) => (
+      [BLOCKS.PARAGRAPH]: (_node: never, children: ReactNode) => (
         <Text
           fontWeight={bold ? 'semiBold' : undefined}
           marginBottom={marginBottom}

@@ -2,7 +2,8 @@ import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common'
 
 @Injectable()
 export class ParseIcelandicAlphabetPipe
-  implements PipeTransform<string, string> {
+  implements PipeTransform<string, string>
+{
   transform(s: string): string {
     const letters =
       'aábcdðeéfghiíjklmnoópqrstuúvwxyýzþæöAÁBCDÐEÉFGHIÍJKLMNOÓPQRSTUÚVWXYÝZÞÆÖ'

@@ -418,11 +418,8 @@ export function isEarlyRetirement(
   externalData: Application['externalData'],
 ) {
   const { applicantNationalId } = getApplicationExternalData(externalData)
-  const {
-    selectedMonth,
-    selectedYear,
-    applicationType,
-  } = getApplicationAnswers(answers)
+  const { selectedMonth, selectedYear, applicationType } =
+    getApplicationAnswers(answers)
 
   if (!selectedMonth || !selectedYear) return false
 
@@ -471,7 +468,8 @@ export function getAttachments(application: Application) {
   const attachments: Attachments[] = []
 
   // Early retirement, pension fund, fishermen
-  const earlyPenFisher = answers.fileUploadEarlyPenFisher as EarlyRetirementPensionfundFishermen
+  const earlyPenFisher =
+    answers.fileUploadEarlyPenFisher as EarlyRetirementPensionfundFishermen
 
   getAttachmentDetails(earlyPenFisher?.pension, AttachmentTypes.PENSION)
   if (earlyRetirement) {
@@ -485,7 +483,8 @@ export function getAttachments(application: Application) {
   }
 
   // leaseAgreement, schoolAgreement
-  const leaseAgrSchoolConf = answers.fileUploadHouseholdSupplement as LeaseAgreementSchoolConfirmation
+  const leaseAgrSchoolConf =
+    answers.fileUploadHouseholdSupplement as LeaseAgreementSchoolConfirmation
   const isHouseholdSupplement = connectedApplications?.includes(
     ConnectedApplications.HOUSEHOLDSUPPLEMENT,
   )
@@ -515,7 +514,8 @@ export function getAttachments(application: Application) {
   }
 
   // child pension attachments
-  const childPensionAttachments = answers.fileUploadChildPension as ChildPensionAttachments
+  const childPensionAttachments =
+    answers.fileUploadChildPension as ChildPensionAttachments
   const isChildPension = connectedApplications?.includes(
     ConnectedApplications.CHILDPENSION,
   )
@@ -534,7 +534,8 @@ export function getAttachments(application: Application) {
     )
   }
 
-  const additionalInfo = answers.fileUploadAdditionalFiles as AdditionalInformation
+  const additionalInfo =
+    answers.fileUploadAdditionalFiles as AdditionalInformation
 
   if (
     additionalInfo.additionalDocuments &&
@@ -609,9 +610,8 @@ export function getTaxOptions() {
 export function isExistsCohabitantOlderThan25(
   externalData: Application['externalData'],
 ) {
-  const { cohabitants, applicantNationalId } = getApplicationExternalData(
-    externalData,
-  )
+  const { cohabitants, applicantNationalId } =
+    getApplicationExternalData(externalData)
 
   let isOlderThan25 = false
   cohabitants.forEach((cohabitant) => {

@@ -91,8 +91,7 @@ const Overview = () => {
         }}
         t={{
           title: 'Gjaldfæra og endurgreiða',
-          info:
-            'Vertu viss um að hafa prentað yfirlitið út frá núverandi síu áður en þú heldur áfram.<br/>Með því að halda áfram, munt þú merkja allar færslur sem annað hvort gjaldfærð eða endurgreidd, eftir því sem á við.',
+          info: 'Vertu viss um að hafa prentað yfirlitið út frá núverandi síu áður en þú heldur áfram.<br/>Með því að halda áfram, munt þú merkja allar færslur sem annað hvort gjaldfærð eða endurgreidd, eftir því sem á við.',
           buttons: {
             cancel: 'Hætta við',
             continue: 'Halda áfram',

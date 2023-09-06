@@ -171,9 +171,8 @@ export const OldAgePensionForm: Form = buildForm({
                     oldAgePensionFormMessage.applicant
                       .applicantInfoMaritalTitle,
                   condition: (answers, externalData) => {
-                    const { hasSpouse } = getApplicationExternalData(
-                      externalData,
-                    )
+                    const { hasSpouse } =
+                      getApplicationExternalData(externalData)
                     if (hasSpouse) return true
                     return false
                   },
@@ -191,9 +190,8 @@ export const OldAgePensionForm: Form = buildForm({
                     return maritalStatuses[data.maritalStatus]
                   },
                   condition: (_, externalData) => {
-                    const { maritalStatus } = getApplicationExternalData(
-                      externalData,
-                    )
+                    const { maritalStatus } =
+                      getApplicationExternalData(externalData)
                     if (maritalStatus) return true
                     return false
                   },
@@ -211,9 +209,8 @@ export const OldAgePensionForm: Form = buildForm({
                     return data.name
                   },
                   condition: (_, externalData) => {
-                    const { spouseName } = getApplicationExternalData(
-                      externalData,
-                    )
+                    const { spouseName } =
+                      getApplicationExternalData(externalData)
                     if (spouseName) return true
                     return false
                   },
@@ -231,9 +228,8 @@ export const OldAgePensionForm: Form = buildForm({
                     return kennitala.format(data.nationalId)
                   },
                   condition: (answers, externalData) => {
-                    const { spouseNationalId } = getApplicationExternalData(
-                      externalData,
-                    )
+                    const { spouseNationalId } =
+                      getApplicationExternalData(externalData)
                     if (spouseNationalId) return true
                     return false
                   },
@@ -306,9 +302,8 @@ export const OldAgePensionForm: Form = buildForm({
                   largeButtons: true,
                   space: 'containerGutter',
                   condition: (answers, externalData) => {
-                    const { hasSpouse } = getApplicationExternalData(
-                      externalData,
-                    )
+                    const { hasSpouse } =
+                      getApplicationExternalData(externalData)
                     if (hasSpouse) return true
                     return false
                   },
@@ -321,9 +316,8 @@ export const OldAgePensionForm: Form = buildForm({
                   suffix: '%',
                   condition: (answers, externalData) => {
                     const { spouseAllowance } = getApplicationAnswers(answers)
-                    const { hasSpouse } = getApplicationExternalData(
-                      externalData,
-                    )
+                    const { hasSpouse } =
+                      getApplicationExternalData(externalData)
                     return hasSpouse && spouseAllowance === YES
                   },
                   placeholder: '1%',
@@ -360,9 +354,8 @@ export const OldAgePensionForm: Form = buildForm({
                   title: '',
                   component: 'ResidenceHistory',
                   condition: (_, externalData) => {
-                    const { residenceHistory } = getApplicationExternalData(
-                      externalData,
-                    )
+                    const { residenceHistory } =
+                      getApplicationExternalData(externalData)
                     // if no residence history returned, dont show the table
                     if (residenceHistory.length === 0) return false
                     return true
@@ -376,9 +369,8 @@ export const OldAgePensionForm: Form = buildForm({
                   width: 'half',
                   largeButtons: true,
                   condition: (_, externalData) => {
-                    const { residenceHistory } = getApplicationExternalData(
-                      externalData,
-                    )
+                    const { residenceHistory } =
+                      getApplicationExternalData(externalData)
                     // if no residence history returned or if residence history is only iceland, show the question
                     if (residenceHistory.length === 0) return true
                     return residenceHistory.every(
@@ -666,9 +658,8 @@ export const OldAgePensionForm: Form = buildForm({
                       oldAgePensionFormMessage.onePaymentPerYear
                         .onePaymentPerYearAlertDescription,
                     condition: (answers) => {
-                      const { onePaymentPerYear } = getApplicationAnswers(
-                        answers,
-                      )
+                      const { onePaymentPerYear } =
+                        getApplicationAnswers(answers)
 
                       return onePaymentPerYear === YES
                     },
@@ -836,10 +827,8 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
               uploadMultiple: true,
               condition: (answers) => {
-                const {
-                  householdSupplementHousing,
-                  connectedApplications,
-                } = getApplicationAnswers(answers)
+                const { householdSupplementHousing, connectedApplications } =
+                  getApplicationAnswers(answers)
 
                 return (
                   householdSupplementHousing ===
@@ -872,10 +861,8 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
               uploadMultiple: true,
               condition: (answers) => {
-                const {
-                  householdSupplementChildren,
-                  connectedApplications,
-                } = getApplicationAnswers(answers)
+                const { householdSupplementChildren, connectedApplications } =
+                  getApplicationAnswers(answers)
 
                 return (
                   householdSupplementChildren === YES &&
@@ -911,17 +898,15 @@ export const OldAgePensionForm: Form = buildForm({
                       .registerChildTitle,
                   isPartOfRepeater: true,
                   children: [
-                    buildTextField({
-                      id: 'nationalIdOrBirthDate',
-                      title:
-                        oldAgePensionFormMessage.connectedApplications
-                          .childPensionTableHeaderId,
+                    buildCustomField({
+                      id: 'childDoesNotHaveNationalId',
+                      title: '',
+                      component: 'ChildDoesNotHaveNationalIdCheckbox',
                     }),
-                    buildTextField({
-                      id: 'name',
-                      title:
-                        oldAgePensionFormMessage.connectedApplications
-                          .childPensionFullName,
+                    buildCustomField({
+                      id: 'nationalIdOrBirthDate',
+                      title: '',
+                      component: 'ChildNationalIdOrBirthDate',
                     }),
                   ],
                 }),

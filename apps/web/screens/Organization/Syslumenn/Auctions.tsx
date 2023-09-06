@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import {
   Box,
   NavigationItem,
-  Option,
   Select,
   Tag,
   Text,
@@ -404,11 +403,11 @@ const Auctions: Screen<AuctionsProps> = ({
   const Router = useRouter()
   const auctionDataFetched = new Date()
 
-  useContentfulId(organizationPage.id, subpage?.id)
+  useContentfulId(organizationPage?.id, subpage?.id)
 
   const pageUrl = Router.pathname
 
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
       href: primaryLink?.url,
@@ -483,11 +482,11 @@ const Auctions: Screen<AuctionsProps> = ({
     return (
       // Filter by office
       (officeLocation.office
-        ? auction.office.toLowerCase() === officeLocation.office.toLowerCase()
+        ? auction.office?.toLowerCase() === officeLocation.office.toLowerCase()
         : true) &&
       // Filter by location
       (officeLocation.location
-        ? auction.location.toLowerCase() ===
+        ? auction.location?.toLowerCase() ===
           officeLocation.location.toLowerCase()
         : true) &&
       // Filter by lot type
@@ -523,10 +522,9 @@ const Auctions: Screen<AuctionsProps> = ({
    * but has not been implemented yet. To accomplish this, we utilize Contentful to store
    * keywords to identify certain Auctions.
    */
-  const vakaAuctionKeywords = (n(
-    'auctionVakaAuctionKeywords',
-    '',
-  ) as string).split(';')
+  const vakaAuctionKeywords = (
+    n('auctionVakaAuctionKeywords', '') as string
+  ).split(';')
   const capitalAreaOffice = n(
     'auctionCapitalAreaOffice',
     'Sýslumaðurinn á höfuðborgarsvæðinu',
@@ -536,14 +534,14 @@ const Auctions: Screen<AuctionsProps> = ({
       return (
         keyword &&
         (auction.lotId === keyword ||
-          auction.lotName.includes(keyword) ||
-          auction.lotItems.includes(keyword))
+          auction.lotName?.includes(keyword) ||
+          auction.lotItems?.includes(keyword))
       )
     })
   }
   const auctionAtVaka = (auction: SyslumennAuction) => {
     return (
-      auction.office.toLowerCase() === capitalAreaOffice.toLowerCase() &&
+      auction.office?.toLowerCase() === capitalAreaOffice.toLowerCase() &&
       (auction.lotType === LOT_TYPES.VEHICLE ||
         auctionContainsVakaKeyword(auction))
     )
@@ -646,8 +644,9 @@ const Auctions: Screen<AuctionsProps> = ({
           href: linkResolver('homepage').href,
         },
         {
-          title: organizationPage.title,
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
+          title: organizationPage?.title || '',
+          href: linkResolver('organizationpage', [organizationPage?.slug ?? ''])
+            .href,
         },
       ]}
       navigationData={{
@@ -683,7 +682,7 @@ const Auctions: Screen<AuctionsProps> = ({
                 label: x.filterLabel,
                 value: x.slugValue,
               })).find((x) => x.value === officeLocation.slugValue)}
-              onChange={({ value }: Option) => {
+              onChange={({ value }) => {
                 setOfficeLocationBySlugValue(String(value))
                 Router.replace(`#${value}`)
               }}
@@ -709,9 +708,7 @@ const Auctions: Screen<AuctionsProps> = ({
                 label: x.filterLabel,
                 value: x.value,
               })).find((x) => x.value === lotTypeOption.value)}
-              onChange={({ value }: Option) =>
-                setLotTypeOptionByValue(String(value))
-              }
+              onChange={({ value }) => setLotTypeOptionByValue(String(value))}
             />
           </GridColumn>
           <GridColumn
@@ -821,10 +818,12 @@ const Auctions: Screen<AuctionsProps> = ({
                           'Fasteign nr. ',
                         )}
                         linkText={auction.lotId}
-                        href={(n(
-                          'realEstateRegistryLinkTemplate',
-                          'https://fasteignaskra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2&selector=streetname&streetname={{ID}}&submitbutton=Leita',
-                        ) as string).replace('{{ID}}', auction.lotId)}
+                        href={(
+                          n(
+                            'realEstateRegistryLinkTemplate',
+                            'https://fasteignaskra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2&selector=streetname&streetname={{ID}}&submitbutton=Leita',
+                          ) as string
+                        ).replace('{{ID}}', auction.lotId)}
                       />
                     )}
 
@@ -833,10 +832,12 @@ const Auctions: Screen<AuctionsProps> = ({
                     <LotLink
                       prefix={n('auctionVehicleNumberPrefix', 'Bílnúmer: ')}
                       linkText={auction.lotId}
-                      href={(n(
-                        'carRegistryLinkTemplate',
-                        'https://www.samgongustofa.is/umferd/okutaeki/okutaekjaskra/uppfletting?vq={{ID}}',
-                      ) as string).replace('{{ID}}', auction.lotId)}
+                      href={(
+                        n(
+                          'carRegistryLinkTemplate',
+                          'https://www.samgongustofa.is/umferd/okutaeki/okutaekjaskra/uppfletting?vq={{ID}}',
+                        ) as string
+                      ).replace('{{ID}}', auction.lotId)}
                     />
                   )}
 
@@ -848,10 +849,12 @@ const Auctions: Screen<AuctionsProps> = ({
                         'Númer loftfars: ',
                       )}
                       linkText={auction.lotId}
-                      href={(n(
-                        'aircraftRegistryLinkTemplate',
-                        'https://www.samgongustofa.is/flug/loftfor/loftfaraskra?aq={{ID}}',
-                      ) as string).replace('{{ID}}', auction.lotId)}
+                      href={(
+                        n(
+                          'aircraftRegistryLinkTemplate',
+                          'https://www.samgongustofa.is/flug/loftfor/loftfaraskra?aq={{ID}}',
+                        ) as string
+                      ).replace('{{ID}}', auction.lotId)}
                     />
                   )}
 
@@ -860,10 +863,12 @@ const Auctions: Screen<AuctionsProps> = ({
                     <LotLink
                       prefix={n('auctionShipNumberPrefix', 'Númer skips: ')}
                       linkText={auction.lotId}
-                      href={(n(
-                        'shipRegistryLinkTemplate',
-                        'https://www.samgongustofa.is/siglingar/skrar-og-utgafa/skipaskra/uppfletting?sq={{ID}}',
-                      ) as string).replace('{{ID}}', auction.lotId)}
+                      href={(
+                        n(
+                          'shipRegistryLinkTemplate',
+                          'https://www.samgongustofa.is/siglingar/skrar-og-utgafa/skipaskra/uppfletting?sq={{ID}}',
+                        ) as string
+                      ).replace('{{ID}}', auction.lotId)}
                     />
                   )}
 
@@ -1027,7 +1032,7 @@ Auctions.getProps = async ({ apolloClient, locale, req }) => {
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),

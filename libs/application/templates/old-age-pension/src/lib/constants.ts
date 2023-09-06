@@ -79,6 +79,7 @@ export enum AnswerValidationConstants {
   EMPLOYMENT = 'employment',
   VALIDATE_LATEST_EMPLOYER = 'employers',
   PAYMENTINFO = 'paymentInfo',
+  VALIDATE_LATEST_CHILD = 'childPensionRepeater',
 }
 
 export enum TaxLevelOptions {

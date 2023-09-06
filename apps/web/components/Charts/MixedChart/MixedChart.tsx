@@ -33,7 +33,9 @@ export const MixedChart = ({ graphData }: GraphProps) => {
   const { data, datakeys } = graphData
   const parsedData = JSON.parse(data)
   const parsedDatakeys = JSON.parse(datakeys)[0]
-  const stackIds = parsedDatakeys.bars.map((e) => e.stackId)
+  const stackIds = parsedDatakeys.bars.map(
+    (e: { stackId: number }) => e.stackId,
+  )
   const shouldStack = new Set(stackIds).size !== stackIds.length
   const rightPadding = parsedDatakeys.yAxis?.right ? 70 : 0
   return (
@@ -81,31 +83,41 @@ export const MixedChart = ({ graphData }: GraphProps) => {
           />
           <Tooltip content={<CustomTooltip />} />
           <Legend iconType="circle" align="right" content={RenderLegend} />
-          {parsedDatakeys.bars.map((item, index) => (
-            <Bar
-              key={index}
-              dataKey={item.datakey}
-              fill={item.color}
-              stackId={item.stackId}
-              barSize={16}
-              yAxisId="left"
-              radius={
-                index === parsedDatakeys.bars.length - 1 || !shouldStack
-                  ? [20, 20, 0, 0]
-                  : 0
-              }
-            />
-          ))}
-          {parsedDatakeys.lines.map((item, index) => (
-            <Line
-              key={item.datakey}
-              dataKey={item.datakey}
-              stroke={item.color ? item.color : COLORS[index % COLORS.length]}
-              yAxisId={parsedDatakeys.yAxis?.right ? 'right' : 'left'}
-              strokeWidth={3}
-              dot={{ r: 6, strokeWidth: 3 }}
-            />
-          ))}
+          {parsedDatakeys.bars.map(
+            (
+              item: { datakey: any; color: string; stackId: string | number },
+              index: number,
+            ) => (
+              <Bar
+                key={index}
+                dataKey={item.datakey}
+                fill={item.color}
+                stackId={item.stackId}
+                barSize={16}
+                yAxisId="left"
+                radius={
+                  index === parsedDatakeys.bars.length - 1 || !shouldStack
+                    ? [20, 20, 0, 0]
+                    : 0
+                }
+              />
+            ),
+          )}
+          {parsedDatakeys.lines.map(
+            (
+              item: { datakey: any; color: string; stackId: string | number },
+              index: number,
+            ) => (
+              <Line
+                key={item.datakey}
+                dataKey={item.datakey}
+                stroke={item.color ? item.color : COLORS[index % COLORS.length]}
+                yAxisId={parsedDatakeys.yAxis?.right ? 'right' : 'left'}
+                strokeWidth={3}
+                dot={{ r: 6, strokeWidth: 3 }}
+              />
+            ),
+          )}
         </ComposedChart>
       </ResponsiveContainer>
     </Box>

@@ -32,12 +32,12 @@ export const Section: React.FC<React.PropsWithChildren<SectionProps>> = ({
 }) => {
   const { width } = useWindowSize()
 
-  const hasMobileBleedAmount = backgroundBleed?.mobileBleedAmount >= 0
+  const hasMobileBleedAmount = (backgroundBleed?.mobileBleedAmount ?? -1) >= 0
   const hasBleedAmount =
-    backgroundBleed?.bleedAmount >= 0 || hasMobileBleedAmount
+    (backgroundBleed?.bleedAmount ?? -1) >= 0 || hasMobileBleedAmount
 
   const generateBackgroundBleed = () => {
-    if (hasBleedAmount) {
+    if (hasBleedAmount && backgroundBleed) {
       const amount =
         hasMobileBleedAmount && width < theme.breakpoints.md
           ? backgroundBleed.mobileBleedAmount
@@ -45,7 +45,7 @@ export const Section: React.FC<React.PropsWithChildren<SectionProps>> = ({
 
       return {
         backgroundImage: `linear-gradient(to ${
-          backgroundBleed.bleedDirection
+          backgroundBleed?.bleedDirection
         }, ${
           theme.color[backgroundBleed.fromColor]
         } calc(100% - ${amount}px), ${

@@ -1,4 +1,11 @@
-import React, { useRef, useState, useEffect, useMemo, Fragment } from 'react'
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useMemo,
+  Fragment,
+  ReactNode,
+} from 'react'
 import Link from 'next/link'
 import ReactDOM from 'react-dom'
 import flatten from 'lodash/flatten'
@@ -18,7 +25,10 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { TimelineSlice as Timeline } from '@island.is/web/graphql/schema'
+import {
+  TimelineSlice as Timeline,
+  TimelineEvent,
+} from '@island.is/web/graphql/schema'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { renderSlices, SliceType } from '@island.is/island-ui/contentful'
 import { useNamespace } from '@island.is/web/hooks'
@@ -69,7 +79,7 @@ const getTimeline = (
 
   let currentMonth = 0
 
-  const items = []
+  const items: ReactNode[] = []
 
   const today = new Date()
   today.setMonth(today.getMonth() - 1)
@@ -207,7 +217,7 @@ export const TimelineSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
     return Math.min(...futureMonths)
   })
 
-  const monthEvents = eventMap.get(months[month].year).get(months[month].month)
+  const monthEvents = eventMap.get(months[month].year)?.get(months[month].month)
 
   const borderProps: BoxProps = slice.hasBorderAbove
     ? {
@@ -317,9 +327,11 @@ export const TimelineSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
                   type="next"
                   onClick={() => moveTimeline('right')}
                   disabled={
-                    frameRef.current?.scrollWidth -
-                      frameRef.current?.offsetWidth ===
-                    position
+                    frameRef.current?.scrollWidth === undefined ||
+                    frameRef.current?.offsetWidth === undefined ||
+                    frameRef.current.scrollWidth -
+                      frameRef.current.offsetWidth ===
+                      position
                   }
                 />
               </ArrowButtonShadow>
@@ -333,7 +345,7 @@ export const TimelineSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
             <div
               className={timelineStyles.timelineContainer}
               style={{
-                height: 140 + monthEvents.length * 104,
+                height: 140 + (monthEvents?.length || 0) * 104,
               }}
             >
               <ArrowButtonShadow type="prev">
@@ -359,12 +371,12 @@ export const TimelineSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
                 </Text>
               </div>
               <div className={timelineStyles.mobileContainer}>
-                {monthEvents.map((event) => (
+                {monthEvents?.map((event) => (
                   <TimelineItem
                     event={event}
                     offset={0}
                     index={0}
-                    detailed={!!event.body}
+                    detailed={event.body ? true : false}
                     mobile={true}
                     seeMoreText={n('timelineSeeMoreText', 'Lesa meira')}
                   />
@@ -426,6 +438,13 @@ const TimelineItem = ({
   detailed,
   mobile = false,
   seeMoreText = 'Lesa meira',
+}: {
+  event: TimelineEvent
+  offset: number
+  index: number
+  detailed: boolean
+  mobile?: boolean
+  seeMoreText: string
 }) => {
   const positionStyles = [
     { bottom: 136 },
@@ -533,7 +552,15 @@ const BulletLine = ({
   )
 }
 
-const MonthItem = ({ month, offset, year = '' }) => {
+const MonthItem = ({
+  month,
+  offset,
+  year = '',
+}: {
+  month: string
+  offset: number
+  year: string
+}) => {
   return (
     <div className={timelineStyles.monthItem} style={{ left: offset }}>
       <Text color="blue600" variant="eyebrow">
@@ -626,7 +653,7 @@ const EventModal = ({
             </Inline>
           )}
           {Boolean(event.body) &&
-            renderSlices([(event.body as unknown) as SliceType])}
+            renderSlices([event.body as unknown as SliceType])}
           {event.link && (
             <Link href={event.link} legacyBehavior>
               <Button variant="text" icon="arrowForward">

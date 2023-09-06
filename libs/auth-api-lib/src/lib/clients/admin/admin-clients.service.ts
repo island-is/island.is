@@ -423,7 +423,7 @@ export class AdminClientsService {
       )
     }
 
-    if (data.customClaims && data.customClaims.length > 0) {
+    if (data.customClaims) {
       await this.updateCustomClaims(
         data.clientId,
         data.customClaims,
@@ -750,9 +750,10 @@ export class AdminClientsService {
       },
     })
 
-    const translations = await this.adminTranslationService.getApiScopeTranslations(
-      apiScopes.map(({ name }) => name),
-    )
+    const translations =
+      await this.adminTranslationService.getApiScopeTranslations(
+        apiScopes.map(({ name }) => name),
+      )
 
     return apiScopes.map((apiScope) =>
       this.adminTranslationService.mapApiScopeToAdminScopeDTO(

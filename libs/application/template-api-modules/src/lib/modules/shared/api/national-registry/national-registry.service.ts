@@ -139,9 +139,8 @@ export class NationalRegistryService extends BaseTemplateApiService {
     ApplicantChildCustodyInformation[]
   > {
     const parentUser = auth
-    const childrenNationalIds = await this.nationalRegistryApi.getCustodyChildren(
-      parentUser,
-    )
+    const childrenNationalIds =
+      await this.nationalRegistryApi.getCustodyChildren(parentUser)
 
     if (params?.validateHasChildren) {
       if (!childrenNationalIds || childrenNationalIds.length === 0) {
@@ -164,45 +163,46 @@ export class NationalRegistryService extends BaseTemplateApiService {
     )
     const parentAFamilyMembers = parentAFamily?.individuals ?? []
 
-    const children: Array<ApplicantChildCustodyInformation | null> = await Promise.all(
-      childrenNationalIds.map(async (childNationalId) => {
-        const child = await this.getIndividual(childNationalId)
+    const children: Array<ApplicantChildCustodyInformation | null> =
+      await Promise.all(
+        childrenNationalIds.map(async (childNationalId) => {
+          const child = await this.getIndividual(childNationalId)
 
-        if (!child) {
-          return null
-        }
+          if (!child) {
+            return null
+          }
 
-        const parents = await this.nationalRegistryApi.getOtherCustodyParents(
-          parentUser,
-          childNationalId,
-        )
-
-        const parentBNationalId = parents.find(
-          (id) => id !== parentUser.nationalId,
-        )
-        const parentB = parentBNationalId
-          ? await this.getIndividual(parentBNationalId)
-          : undefined
-
-        const livesWithApplicant = parentAFamilyMembers.some(
-          (person) => person.nationalId === child?.nationalId,
-        )
-        const livesWithParentB =
-          parentB &&
-          parentAFamilyMembers.some(
-            (person) => person.nationalId === parentB.nationalId,
+          const parents = await this.nationalRegistryApi.getOtherCustodyParents(
+            parentUser,
+            childNationalId,
           )
 
-        return {
-          nationalId: child.nationalId,
-          fullName: child.fullName,
-          genderCode: child.genderCode,
-          livesWithApplicant,
-          livesWithBothParents: livesWithParentB ?? livesWithApplicant,
-          otherParent: parentB,
-        }
-      }),
-    )
+          const parentBNationalId = parents.find(
+            (id) => id !== parentUser.nationalId,
+          )
+          const parentB = parentBNationalId
+            ? await this.getIndividual(parentBNationalId)
+            : undefined
+
+          const livesWithApplicant = parentAFamilyMembers.some(
+            (person) => person.nationalId === child?.nationalId,
+          )
+          const livesWithParentB =
+            parentB &&
+            parentAFamilyMembers.some(
+              (person) => person.nationalId === parentB.nationalId,
+            )
+
+          return {
+            nationalId: child.nationalId,
+            fullName: child.fullName,
+            genderCode: child.genderCode,
+            livesWithApplicant,
+            livesWithBothParents: livesWithParentB ?? livesWithApplicant,
+            otherParent: parentB,
+          }
+        }),
+      )
 
     const filteredChildren = children.filter(
       (child): child is ApplicantChildCustodyInformation => child != null,
@@ -278,11 +278,8 @@ export class NationalRegistryService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<
     NationalRegistryResidenceHistory[] | null
   > {
-    const residenceHistory:
-      | NationalRegistryResidenceHistory[]
-      | null = await this.nationalRegistryApi.getResidenceHistory(
-      auth.nationalId,
-    )
+    const residenceHistory: NationalRegistryResidenceHistory[] | null =
+      await this.nationalRegistryApi.getResidenceHistory(auth.nationalId)
 
     if (!residenceHistory) {
       throw new TemplateApiError(
@@ -300,9 +297,8 @@ export class NationalRegistryService extends BaseTemplateApiService {
   async getCohabitants({
     auth,
   }: TemplateApiModuleActionProps): Promise<string[] | null> {
-    const cohabitants:
-      | string[]
-      | null = await this.nationalRegistryApi.getCohabitants(auth.nationalId)
+    const cohabitants: string[] | null =
+      await this.nationalRegistryApi.getCohabitants(auth.nationalId)
 
     if (!cohabitants) {
       throw new TemplateApiError(

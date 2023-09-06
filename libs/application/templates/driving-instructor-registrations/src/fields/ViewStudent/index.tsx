@@ -70,16 +70,13 @@ const ViewStudent = ({
   const [registerLesson, { loading: loadingRegistration }] = useMutation(
     RegisterDrivingLesson,
   )
-  const [deleteLesson, { loading: loadingDeletion }] = useMutation(
-    DeleteDrivingLesson,
-  )
-  const [editLesson, { loading: loadingEdition }] = useMutation(
-    EditDrivingLesson,
-  )
+  const [deleteLesson, { loading: loadingDeletion }] =
+    useMutation(DeleteDrivingLesson)
+  const [editLesson, { loading: loadingEdition }] =
+    useMutation(EditDrivingLesson)
 
-  const [allowDriving, { loading: loadingAllow }] = useMutation(
-    AllowPracticeDriving,
-  )
+  const [allowDriving, { loading: loadingAllow }] =
+    useMutation(AllowPracticeDriving)
 
   const [minutesInputActive, setMinutesInputActive] = useState(false)
   const [minutes, setMinutes] = useState<number>(0)
@@ -100,9 +97,11 @@ const ViewStudent = ({
     [],
   )
 
-  const userNationalId = (application.externalData.nationalRegistry?.data as {
-    nationalId?: string
-  })?.nationalId
+  const userNationalId = (
+    application.externalData.nationalRegistry?.data as {
+      nationalId?: string
+    }
+  )?.nationalId
 
   const studentRegistrations = student?.book
     ?.teachersAndLessons as Array<DrivingBookLesson>
@@ -253,11 +252,15 @@ const ViewStudent = ({
   const getExamString = ({
     name,
     examDate,
+    status,
   }: {
     name: string
     examDate?: string
+    status?: string
   }) =>
-    `${name}${examDate ? ` - ${format(new Date(examDate), 'dd.MM.yyyy')}` : ''}`
+    `${name}${
+      examDate ? ` - ${format(new Date(examDate), 'dd.MM.yyyy')}` : ''
+    }${status ? ` - ${status}` : ''}`
 
   return (
     <GridContainer>
@@ -318,6 +321,7 @@ const ViewStudent = ({
                       const textStr = getExamString({
                         name: school.schoolTypeName,
                         examDate: school.examDate,
+                        status: school.statusName,
                       })
                       return (
                         <BulletList type="ul" color="dark300">

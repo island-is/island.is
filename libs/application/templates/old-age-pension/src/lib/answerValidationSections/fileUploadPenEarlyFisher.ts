@@ -24,11 +24,8 @@ export const fileUploadPenEarlyFisher = (
   const obj = newAnswer as Record<string, Answer>
   const { FILEUPLOADPENEARLYFISHER } = AnswerValidationConstants
 
-  const {
-    selectedMonth,
-    selectedYear,
-    applicationType,
-  } = getApplicationAnswers(application.answers)
+  const { selectedMonth, selectedYear, applicationType } =
+    getApplicationAnswers(application.answers)
   const dateOfBirth = kennitala.info(application.applicant).birthday
 
   const dateOfBirth00 = new Date(

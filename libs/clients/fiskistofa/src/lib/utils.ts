@@ -45,7 +45,7 @@ const mapCatchQuotaCategoryForTimePeriod = (
   codEquivalent: category?.thorskigildi,
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  totalCatchQuota: ((category as unknown) as any)?.heildarAflamark,
+  totalCatchQuota: (category as unknown as any)?.heildarAflamark,
 })
 
 export const mapShipStatusForTimePeriod = (
