@@ -176,6 +176,7 @@ export class OccupationalLicensesService {
     const allowHealthDirectorate = await this.featureFlagService.getValue(
       Features.occupationalLicensesHealthDirectorate,
       false,
+      user,
     )
     const healthDirectorateLicenses = allowHealthDirectorate
       ? await this.getHealthDirectorateLicense(user)
