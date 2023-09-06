@@ -29,6 +29,8 @@ import {
 import {
   NationalRegistryResidenceHistoryApi,
   NationalRegistryCohabitantsApi,
+  SocialInsuranceAdministrationTestApi,
+  SocialInsuranceAdministrationStatusApi,
 } from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
@@ -105,6 +107,15 @@ export const PrerequisitesForm: Form = buildForm({
                 buildDataProviderItem({
                   provider: NationalRegistryCohabitantsApi,
                   title: '',
+                }),
+                buildDataProviderItem({
+                  provider: SocialInsuranceAdministrationTestApi,
+                  title:
+                    oldAgePensionFormMessage.pre
+                      .socialInsuranceAdministrationInformationTitle,
+                  subTitle:
+                    oldAgePensionFormMessage.pre
+                      .socialInsuranceAdministrationInformationSubTitle,
                 }),
               ],
             }),

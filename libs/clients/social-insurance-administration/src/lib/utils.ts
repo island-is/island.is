@@ -27,14 +27,14 @@ export const createWrappedFetchWithLogging = (
         // }
         if (response.ok) {
           logger.info(
-            `tr-module.success: input - ${JSON.stringify(
+            `socialInsuranceAdministration-module.success: input - ${JSON.stringify(
               input,
             )}, init - ${JSON.stringify(init)}`,
           )
         } else {
           const body = await response.json()
           logger.error(
-            `tr-module.error: input - ${JSON.stringify(
+            `socialInsuranceAdministration-module.error: input - ${JSON.stringify(
               input,
             )}, init - ${JSON.stringify(init)}, response - ${JSON.stringify(
               body,

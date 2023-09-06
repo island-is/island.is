@@ -88,6 +88,16 @@ export const oldAgePensionFormMessage: MessageDir = {
       description:
         'Information about email address, phone number and bank account will be retrieved from your account at Ísland.is.',
     },
+    socialInsuranceAdministrationInformationTitle: {
+      id: 'oap.application:prerequisites.socialInsuranceAdministration.title',
+      defaultMessage: 'Upplýsingar frá Tryggingastofnun',
+      description: 'Information from Social Insurance Administration Iceland',
+    },
+    socialInsuranceAdministrationInformationSubTitle: {
+      id: 'oap.application:prerequisites.socialInsuranceAdministration.subtitle',
+      defaultMessage: 'ZZZZZ',
+      description: 'EN-ZZZZ',
+    },
     startApplication: {
       id: 'oap.application:prerequisites.start.application',
       defaultMessage: 'Hefja umsókn',

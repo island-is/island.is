@@ -227,7 +227,7 @@
 /libs/clients/vmst/                                                                                      @island-is/deloitte
 /libs/api/domains/directorate-of-labour/                                                                 @island-is/deloitte
 /libs/application/templates/old-age-pension/                                                             @island-is/deloitte
-/libs/clients/tryggingastofnun/                                                                          @island-is/deloitte
+/libs/clients/social-insurance-administration/                                                           @island-is/deloitte
 
 /apps/services/auth/ids-api/                                                                             @island-is/fuglar @island-is/aranja
 /apps/services/auth/admin-api/                                                                           @island-is/fuglar @island-is/aranja
