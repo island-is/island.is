@@ -176,20 +176,11 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
                   <LoadingDots />
                 </Box>
               ) : policeCaseFiles?.hasError ? (
-                policeCaseFiles?.errorCode ===
-                'https://httpstatuses.org/404' ? (
-                  <PoliceCaseFilesMessageBox
-                    icon="warning"
-                    iconColor="yellow400"
-                    message={formatMessage(m.caseNotFoundInLOKEMessage)}
-                  />
-                ) : (
-                  <PoliceCaseFilesMessageBox
-                    icon="close"
-                    iconColor="red400"
-                    message={formatMessage(m.couldNotGetFromLOKEMessage)}
-                  />
-                )
+                <PoliceCaseFilesMessageBox
+                  icon="close"
+                  iconColor="red400"
+                  message={formatMessage(m.couldNotGetFromLOKEMessage)}
+                />
               ) : policeCaseFiles?.files.length === 0 ? (
                 <PoliceCaseFilesMessageBox
                   icon="warning"
