@@ -1171,7 +1171,7 @@ export const validatorErrorMessages = defineMessages({
   },
   periodMonth: {
     id: 'oap.application:period.month',
-    defaultMessage: 'Ógild mánuður.',
+    defaultMessage: 'Ógildur mánuður.',
     description: 'Invalid month.',
   },
   requireAttachment: {
