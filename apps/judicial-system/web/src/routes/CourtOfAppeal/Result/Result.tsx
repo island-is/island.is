@@ -25,12 +25,8 @@ import { conclusion } from '@island.is/judicial-system-web/src/components/Conclu
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
