@@ -8,7 +8,7 @@
       "institution": {
         "name": "Bráðabirgðadómstóllinn",
         "id": "",
-        "type": "COURT",
+        "type": "DISTRICT_COURT",
         "__typename": "Institution"
       },
       "__typename": "User"
