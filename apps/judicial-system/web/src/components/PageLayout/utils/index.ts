@@ -14,14 +14,7 @@ export const caseResult = (
   formatMessage: IntlFormatters['formatMessage'],
   workingCase: Case,
 ): string => {
-  const isAccepted =
-    workingCase.state === CaseState.ACCEPTED ||
-    workingCase.parentCase?.state === CaseState.ACCEPTED
-
-  /**
-   * No need to check the parent case state because you can't extend
-   * travel ban cases, dissmissed, rejected or appealed cases
-   */
+  const isAccepted = workingCase.state === CaseState.ACCEPTED
   const isRejected = workingCase.state === CaseState.REJECTED
   const isDismissed = workingCase.state === CaseState.DISMISSED
   let caseType = workingCase.type

@@ -1273,7 +1273,10 @@ const useSections = (
 
     return {
       ...getRestrictionCaseCourtSections(workingCase, user),
-      isActive: isRestrictionCase(type) && isCourtRole(user?.role),
+      isActive:
+        !completedCaseStates.includes(workingCase.state) &&
+        isRestrictionCase(type) &&
+        isCourtRole(user?.role),
     }
   }
 
@@ -1285,7 +1288,10 @@ const useSections = (
 
     return {
       ...getInvestigationCaseCourtSections(workingCase, user),
-      isActive: isInvestigationCase(type) && isCourtRole(user?.role),
+      isActive:
+        !completedCaseStates.includes(workingCase.state) &&
+        isInvestigationCase(type) &&
+        isCourtRole(user?.role),
     }
   }
 
@@ -1304,6 +1310,7 @@ const useSections = (
       {
         name: caseResult(formatMessage, workingCase),
         isActive:
+          !workingCase.parentCase &&
           completedCaseStates.includes(workingCase.state) &&
           !workingCase.prosecutorPostponedAppealDate &&
           !workingCase.accusedPostponedAppealDate &&
@@ -1325,6 +1332,15 @@ const useSections = (
             isRestrictionCase(workingCase.type)
               ? getRestrictionCaseExtensionCourtSections(workingCase, user)
               : getInvestigationCaseExtensionCourtSections(workingCase, user),
+            {
+              name: caseResult(formatMessage, workingCase),
+              isActive:
+                completedCaseStates.includes(workingCase.state) &&
+                !workingCase.prosecutorPostponedAppealDate &&
+                !workingCase.accusedPostponedAppealDate &&
+                workingCase.appealState !== CaseAppealState.COMPLETED,
+              children: [],
+            },
           ]
         : []),
     ]
