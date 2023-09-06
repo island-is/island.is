@@ -179,6 +179,9 @@ const OldAgePensionTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.EDIT]: { target: States.DRAFT },
+          INREVIEW: {
+            target: States.TRYGGINGASTOFNUN_IN_REVIEW,
+          },
         },
       },
       [States.TRYGGINGASTOFNUN_IN_REVIEW]: {

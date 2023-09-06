@@ -34,6 +34,7 @@ export const FILE_SIZE_LIMIT = 5000000 // 5MB
 
 export enum OAPEvents {
   ADDITIONALDOCUMENTSREQUIRED = 'ADDITIONALDOCUMENTSREQUIRED',
+  INREVIEW = 'INREVIEW',
 }
 
 export type Events =
@@ -43,6 +44,7 @@ export type Events =
   | { type: DefaultEvents.REJECT }
   // | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: TR ask for more documents
   | { type: OAPEvents.ADDITIONALDOCUMENTSREQUIRED } // Ex: TR ask for more documents
+  | { type: OAPEvents.INREVIEW } // Ex: TR's employee start review application
 
 export enum Roles {
   APPLICANT = 'applicant',
