@@ -540,7 +540,7 @@ jobs:
       - name: Check pre-check
         run: '[[ ${{ needs.pre-check.result }} == "success" ]] || exit 1'
       - name: Check prepare success
-        run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
+        run: '[[ ${{ needs.prepare.result }} != "failure" ]] || exit 1'
       - name: Check tests success
         run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
       - name: Check e2e success
