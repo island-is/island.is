@@ -86,6 +86,7 @@ import { useGetCourtRecordSignatureConfirmationLazyQuery } from './getCourtRecor
 import { useRequestCourtRecordSignatureMutation } from './requestCourtRecordSignature.generated'
 import { strings } from './SignedVerdictOverview.strings'
 import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
+import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 interface ModalControls {
   open: boolean
@@ -191,8 +192,10 @@ export const SignedVerdictOverview: React.FC = () => {
   const [isReopeningCase, setIsReopeningCase] = useState<boolean>(false)
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
-  const [selectedSharingInstitutionId, setSelectedSharingInstitutionId] =
-    useState<SingleValue<ReactSelectOption>>(null)
+  const [
+    selectedSharingInstitutionId,
+    setSelectedSharingInstitutionId,
+  ] = useState<SingleValue<ReactSelectOption>>(null)
 
   const [
     requestCourtRecordSignatureResponse,
@@ -251,26 +254,27 @@ export const SignedVerdictOverview: React.FC = () => {
     )
   }, [workingCase.type, user])
 
-  const [getCourtRecordSignatureConfirmation] =
-    useGetCourtRecordSignatureConfirmationLazyQuery({
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-      onCompleted: (courtRecordSignatureConfirmationData) => {
-        if (
-          courtRecordSignatureConfirmationData?.courtRecordSignatureConfirmation
-        ) {
-          setCourtRecordSignatureConfirmationResponse(
-            courtRecordSignatureConfirmationData.courtRecordSignatureConfirmation as SignatureConfirmationResponse,
-          )
-          refreshCase()
-        } else {
-          setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
-        }
-      },
-      onError: () => {
+  const [
+    getCourtRecordSignatureConfirmation,
+  ] = useGetCourtRecordSignatureConfirmationLazyQuery({
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+    onCompleted: (courtRecordSignatureConfirmationData) => {
+      if (
+        courtRecordSignatureConfirmationData?.courtRecordSignatureConfirmation
+      ) {
+        setCourtRecordSignatureConfirmationResponse(
+          courtRecordSignatureConfirmationData.courtRecordSignatureConfirmation as SignatureConfirmationResponse,
+        )
+        refreshCase()
+      } else {
         setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
-      },
-    })
+      }
+    },
+    onError: () => {
+      setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
+    },
+  })
 
   const [
     handleRequestCourtRecordSignature,
@@ -375,7 +379,7 @@ export const SignedVerdictOverview: React.FC = () => {
       })
 
       updateCase(workingCase.id, {
-        accusedPostponedAppealDate: null as unknown as string,
+        accusedPostponedAppealDate: (null as unknown) as string,
       })
     }
   }
@@ -388,7 +392,7 @@ export const SignedVerdictOverview: React.FC = () => {
       })
 
       updateCase(workingCase.id, {
-        prosecutorPostponedAppealDate: null as unknown as string,
+        prosecutorPostponedAppealDate: (null as unknown) as string,
       })
     }
   }
@@ -419,7 +423,7 @@ export const SignedVerdictOverview: React.FC = () => {
         setSelectedSharingInstitutionId(null)
 
         updateCase(workingCase.id, {
-          sharedWithProsecutorsOfficeId: null as unknown as string,
+          sharedWithProsecutorsOfficeId: (null as unknown) as string,
         })
       } else {
         setSharedCaseModal({
@@ -658,9 +662,13 @@ export const SignedVerdictOverview: React.FC = () => {
                         title: formatMessage(core.appealJudgesHeading),
                         value: (
                           <>
-                            <Text>{workingCase.appealJudge1?.name}</Text>
-                            <Text>{workingCase.appealJudge2?.name}</Text>
-                            <Text>{workingCase.appealJudge3?.name}</Text>
+                            {sortByIcelandicAlphabet([
+                              workingCase.appealJudge1?.name || '',
+                              workingCase.appealJudge2?.name || '',
+                              workingCase.appealJudge3?.name || '',
+                            ]).map((judge, index) => (
+                              <Text key={index}>{judge}</Text>
+                            ))}
                           </>
                         ),
                       },
