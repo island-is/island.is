@@ -91,6 +91,7 @@ import {
   TransportAuthorityFooter,
   TransportAuthorityHeader,
 } from './Themes/TransportAuthorityTheme'
+import { RettindagaeslaFatladsFolksHeader } from './Themes/RettindagaeslaFatladsFolksTheme'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -287,6 +288,10 @@ export const OrganizationHeader: React.FC<
         <IcelandicRadiationSafetyAuthorityHeader
           organizationPage={organizationPage}
         />
+      )
+    case 'rettindageasla-fatlads-folks':
+      return (
+        <RettindagaeslaFatladsFolksHeader organizationPage={organizationPage} />
       )
     default:
       return <DefaultHeader organizationPage={organizationPage} />
