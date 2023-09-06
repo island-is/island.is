@@ -20,6 +20,7 @@ import {
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { ApiScope } from '@island.is/auth/scopes'
+import { FeatureFlag, Features } from '@island.is/nest/feature-flags'
 @UseGuards(IdsUserGuard, IdsAuthGuard)
 @Scopes(ApiScope.internal)
 @Resolver()
@@ -48,6 +49,7 @@ export class OccupationalLicensesResolver {
     name: 'occupationalLicensesHealthDirectorateLicense',
     nullable: true,
   })
+  @FeatureFlag(Features.occupationalLicensesHealthDirectorate)
   @Audit()
   async getHealthDirectorateLicenseById(
     @CurrentUser() user: User,
