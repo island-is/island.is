@@ -45,9 +45,7 @@ jobs:
       E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS }}
       E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.BUILD_ID }}
       LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
-      UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
-      BUILD_MAP: ${{ steps.build_map.outputs.BUILD_MAP }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
