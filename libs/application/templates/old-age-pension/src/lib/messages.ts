@@ -1166,7 +1166,7 @@ export const validatorErrorMessages = defineMessages({
   },
   periodYear: {
     id: 'oap.application:period.year',
-    defaultMessage: 'Ógild ár.',
+    defaultMessage: 'Ógilt ár.',
     description: 'Invalid year.',
   },
   periodMonth: {
