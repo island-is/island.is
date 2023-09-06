@@ -5,7 +5,6 @@ import { useEffectOnce } from 'react-use'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { CaseAppealDecision } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   UserContext,
@@ -13,7 +12,10 @@ import {
 import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { signedVerdictOverview } from '@island.is/judicial-system-web/messages'
-import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  InstitutionType,
+  CaseAppealDecision,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import AccusedAppealInfo from '../Accused/AccusedAppealInfo'
@@ -40,7 +42,8 @@ const AppealSection: React.FC<React.PropsWithChildren<Props>> = (props) => {
   } = props
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-  const isHighCourt = user?.institution?.type === InstitutionType.HIGH_COURT
+  const isCourtOfAppeals =
+    user?.institution?.type === InstitutionType.COURT_OF_APPEALS
 
   const [isInitialMount, setIsInitialMount] = useState<boolean>(true)
 
@@ -58,7 +61,7 @@ const AppealSection: React.FC<React.PropsWithChildren<Props>> = (props) => {
       {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
         workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE) &&
         workingCase.rulingDate &&
-        !isHighCourt && (
+        !isCourtOfAppeals && (
           <Box marginBottom={3}>
             <Text>
               {formatMessage(signedVerdictOverview.sections.appeal.deadline, {
@@ -126,7 +129,7 @@ const AppealSection: React.FC<React.PropsWithChildren<Props>> = (props) => {
                   <AccusedAppealInfo
                     workingCase={workingCase}
                     withdrawAccusedAppealDate={
-                      workingCase.isAppealGracePeriodExpired || isHighCourt
+                      workingCase.isAppealGracePeriodExpired || isCourtOfAppeals
                         ? undefined
                         : withdrawAccusedAppealDate
                     }
@@ -157,7 +160,7 @@ const AppealSection: React.FC<React.PropsWithChildren<Props>> = (props) => {
                       workingCase.prosecutorPostponedAppealDate
                     }
                     withdrawProsecutorAppealDate={
-                      workingCase.isAppealGracePeriodExpired || isHighCourt
+                      workingCase.isAppealGracePeriodExpired || isCourtOfAppeals
                         ? undefined
                         : withdrawProsecutorAppealDate
                     }

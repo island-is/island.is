@@ -13,7 +13,6 @@ import {
   STATEMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
-  CaseAppealDecision,
   CaseAppealRulingDecision,
   isCourtRole,
   isProsecutionRole,
@@ -22,6 +21,7 @@ import {
   CaseAppealState,
   UserRole,
   InstitutionType,
+  CaseAppealDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
 
@@ -109,9 +109,9 @@ const useAppealAlertBanner = (
     (isProsecutionRoleUser && prosecutorStatementDate) ||
     (isDefenderRoleUser && defendantStatementDate)
 
-  // HIGH COURT AND SHARED WITH PROSECUTOR BANNER INFO IS HANDLED HERE
+  // COURT OF APPEALS AND SHARED WITH PROSECUTOR BANNER INFO IS HANDLED HERE
   if (
-    user?.institution?.type === InstitutionType.HIGH_COURT ||
+    user?.institution?.type === InstitutionType.COURT_OF_APPEALS ||
     isSharedWithProsecutor
   ) {
     if (appealState === CaseAppealState.COMPLETED) {
@@ -127,7 +127,7 @@ const useAppealAlertBanner = (
       })
     }
   }
-  // DEFENDER, PROSECUTOR AND COURT BANNER INFO IS HANDLED HERE:
+  // DEFENDER, PROSECUTOR AND DISTRICT COURT BANNER INFO IS HANDLED HERE:
   // When appeal has been received
   else if (appealState === CaseAppealState.RECEIVED) {
     title = formatMessage(strings.statementTitle)

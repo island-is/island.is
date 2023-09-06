@@ -58,7 +58,7 @@ const AppealCase = () => {
     .filter(
       (user: User) =>
         user.role === UserRole.ASSISTANT &&
-        user.institution?.type === InstitutionType.HIGH_COURT,
+        user.institution?.type === InstitutionType.COURT_OF_APPEALS,
     )
     .map((assistant: User) => {
       return { label: assistant.name, value: assistant.id, assistant }
@@ -68,7 +68,7 @@ const AppealCase = () => {
     .filter(
       (user: User) =>
         user.role === UserRole.JUDGE &&
-        user.institution?.type === InstitutionType.HIGH_COURT &&
+        user.institution?.type === InstitutionType.COURT_OF_APPEALS &&
         workingCase.appealJudge1?.id !== user.id &&
         workingCase.appealJudge2?.id !== user.id &&
         workingCase.appealJudge3?.id !== user.id,
@@ -102,7 +102,6 @@ const AppealCase = () => {
       <PageHeader title={formatMessage(strings.title)} />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
-
         <Box component="section" marginBottom={5}>
           <SectionHeading title={formatMessage(core.appealCaseNumberHeading)} />
           <Input
@@ -170,8 +169,16 @@ const AppealCase = () => {
                 <Box marginBottom={2} key={`judgeBox${index + 1}`}>
                   <Select
                     name="judge"
-                    label={formatMessage(strings.judgeLabel)}
-                    placeholder={formatMessage(strings.judgePlaceholder)}
+                    label={formatMessage(
+                      index === 0
+                        ? strings.judgeForepersonLabel
+                        : strings.judgeLabel,
+                    )}
+                    placeholder={formatMessage(
+                      index === 0
+                        ? strings.judgeForepersonPlaceholder
+                        : strings.judgePlaceholder,
+                    )}
                     value={
                       judge?.id
                         ? { label: judge.name, value: judge.id }

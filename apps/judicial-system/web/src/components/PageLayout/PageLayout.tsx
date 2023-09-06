@@ -126,6 +126,7 @@ const SidePanel: React.FC<React.PropsWithChildren<SidePanelProps>> = ({
   onNavigationTo,
   workingCase,
 }) => {
+  const { limitedAccess } = useContext(UserContext)
   const { getSections } = useSections(isValid, onNavigationTo)
   const sections = getSections(workingCase, user)
   const { formatMessage } = useIntl()
@@ -133,18 +134,19 @@ const SidePanel: React.FC<React.PropsWithChildren<SidePanelProps>> = ({
   const activeSubSection = sections[activeSection]?.children.findIndex(
     (s) => s.isActive,
   )
-
   return (
     <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
       <div className={styles.formStepperContainer}>
         <Box marginLeft={[0, 0, 2]}>
-          <Box marginBottom={7} display={['none', 'none', 'block']}>
-            <Logo defaultInstitution={workingCase.court?.name} />
-          </Box>
+          {!limitedAccess && (
+            <Box marginBottom={7} display={['none', 'none', 'block']}>
+              <Logo defaultInstitution={workingCase.court?.name} />
+            </Box>
+          )}
           <Box marginBottom={6}>
             <Text variant="h3" as="h3">
               {formatMessage(
-                user?.institution?.type === InstitutionType.HIGH_COURT
+                user?.institution?.type === InstitutionType.COURT_OF_APPEALS
                   ? formStepperSections.appealedCaseTitle
                   : isIndictmentCase(workingCase.type)
                   ? formStepperSections.indictmentTitle

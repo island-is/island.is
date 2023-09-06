@@ -1,0 +1,14 @@
+{
+  "data": {
+    "getDebtStatus": {
+      "myDebtStatus": [
+        {
+          "approvedSchedule": 0,
+          "possibleToSchedule": 13466,
+          "__typename": "DebtStatus"
+        }
+      ],
+      "__typename": "DebtStatusModel"
+    }
+  }
+}

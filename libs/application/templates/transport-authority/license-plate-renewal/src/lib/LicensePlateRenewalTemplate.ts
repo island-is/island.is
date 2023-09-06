@@ -55,10 +55,8 @@ const template: ApplicationTemplate<
   allowedDelegations: [
     {
       type: AuthDelegationType.ProcurationHolder,
-      featureFlag: Features.transportAuthorityLicensePlateRenewalDelegations,
     },
   ],
-  featureFlag: Features.transportAuthorityLicensePlateRenewal,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

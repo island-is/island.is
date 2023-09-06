@@ -91,7 +91,7 @@ export function isProsecutionUser(user: User): boolean {
 
 export function isDistrictCourtUser(user: User): boolean {
   return (
-    user.institution?.type === InstitutionType.COURT &&
+    user.institution?.type === InstitutionType.DISTRICT_COURT &&
     isExtendedCourtRole(user.role)
   )
 }
@@ -108,7 +108,7 @@ function isAppealsCourtRole(role: string): boolean {
 
 export function isAppealsCourtUser(user: User): boolean {
   return (
-    user.institution?.type === InstitutionType.HIGH_COURT &&
+    user.institution?.type === InstitutionType.COURT_OF_APPEALS &&
     isAppealsCourtRole(user.role)
   )
 }

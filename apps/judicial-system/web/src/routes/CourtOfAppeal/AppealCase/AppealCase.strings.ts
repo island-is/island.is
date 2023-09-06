@@ -33,6 +33,18 @@ export const appealCase = defineMessages({
     description:
       'Lýsitexti á dropdown til að velja aðstoðrmann á skráningarsíðu Landsréttar',
   },
+  judgeForepersonLabel: {
+    id: 'judicial.system.core:appeal_case.judge_foreperson_label',
+    defaultMessage: 'Veldu dómsformann',
+    description:
+      'Lýsitexti á dropdown til að velja dómsformann á skráningarsíðu Landsréttar',
+  },
+  judgeForepersonPlaceholder: {
+    id: 'judicial.system.core:appeal_case.judge_foreperson_placeholder',
+    defaultMessage: 'Veldu dómsformann',
+    description:
+      'Lýsitexti á dropdown til að velja dómsformann á skráningarsíðu Landsréttar',
+  },
   judgeLabel: {
     id: 'judicial.system.core:appeal_case.judge_label',
     defaultMessage: 'Veldu dómara',
