@@ -46,6 +46,7 @@ export type Events =
 
 export enum Roles {
   APPLICANT = 'applicant',
+  ORGINISATION_REVIEWER = 'tryggingastofnun',
 }
 
 export enum States {
