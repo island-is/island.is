@@ -11,6 +11,7 @@ export default {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/clients/social-insurance-administration',
+  coverageDirectory:
+    '<rootDir>/coverage/libs/clients/social-insurance-administration',
   displayName: 'social insurance administration (tryggingastofnun)',
 }

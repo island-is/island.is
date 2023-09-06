@@ -72,11 +72,11 @@ components:
       type: object
       description: Application
       properties:
-        applicationType: 
+        applicationType:
           type: string
-        applicationSubType: 
+        applicationSubType:
           type: string
-        applicationStatus: 
+        applicationStatus:
           type: string
         applicationCreateDate:
           format: date-time
@@ -85,9 +85,9 @@ components:
       type: object
       description: The status of the applicant applications at TR, if the applicant has one
       properties:
-        hasPension: 
+        hasPension:
           type: boolean
-        applications: 
+        applications:
           type: array
           items:
             $ref: '#/components/schemas/Application'

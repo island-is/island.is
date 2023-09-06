@@ -4,7 +4,10 @@ import { createCurrentUser } from '@island.is/testing/fixtures'
 import { createApplication } from '@island.is/application/testing'
 import { User } from 'oidc-client-ts'
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
-import { HelloOddurApi, SocialInsuranceAdministrationClientService } from '@island.is/clients/social-insurance-administration'
+import {
+  HelloOddurApi,
+  SocialInsuranceAdministrationClientService,
+} from '@island.is/clients/social-insurance-administration'
 
 describe('OldAgePensionService', () => {
   let oldAgePensionService: OldAgePensionService
@@ -32,7 +35,8 @@ describe('OldAgePensionService', () => {
       ],
     }).compile()
 
-    oldAgePensionService = module.get<OldAgePensionService>(OldAgePensionService)
+    oldAgePensionService =
+      module.get<OldAgePensionService>(OldAgePensionService)
   })
 
   it('should be hello Oddur', () => {
@@ -42,15 +46,11 @@ describe('OldAgePensionService', () => {
     const application = createApplication({})
 
     return expect(
-    oldAgePensionService.helloWorld({
-      application: application,
-      auth: user,
-      currentUserLocale: 'is'
-    })).resolves.toBe('OK FROM Oddur')
-
-
-   
-
-
+      oldAgePensionService.helloWorld({
+        application: application,
+        auth: user,
+        currentUserLocale: 'is',
+      }),
+    ).resolves.toBe('OK FROM Oddur')
   })
 })

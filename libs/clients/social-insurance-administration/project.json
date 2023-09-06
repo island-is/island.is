@@ -19,7 +19,9 @@
         "jestConfig": "libs/clients/social-insurance-administration/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["{workspaceRoot}/coverage/libs/clients/social-insurance-administration"]
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/clients/social-insurance-administration"
+      ]
     },
     "schemas/external-openapi-generator": {
       "executor": "nx:run-commands",

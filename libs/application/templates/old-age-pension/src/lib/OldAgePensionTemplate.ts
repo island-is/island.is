@@ -30,7 +30,7 @@ import {
   NationalRegistryResidenceHistoryApi,
   NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationTestApi,
-  SocialInsuranceAdministrationStatusApi
+  SocialInsuranceAdministrationStatusApi,
 } from '../dataProviders'
 import { getApplicationAnswers } from './oldAgePensionUtils'
 
@@ -79,7 +79,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 NationalRegistryCohabitantsApi,
                 ChildrenCustodyInformationApi,
                 SocialInsuranceAdministrationTestApi,
-                SocialInsuranceAdministrationStatusApi
+                SocialInsuranceAdministrationStatusApi,
               ],
               delete: true,
             },

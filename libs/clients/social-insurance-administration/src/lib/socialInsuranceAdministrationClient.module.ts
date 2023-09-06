@@ -10,20 +10,20 @@ import { SocialInsuranceAdministrationClientService } from './socialInsuranceAdm
 
 const isRunningOnProduction = isRunningOnEnvironment('production')
 
-export interface  SocialInsuranceAdministrationModuleConfig {
+export interface SocialInsuranceAdministrationModuleConfig {
   apiKey: string
   xRoadPath: string
   xRoadClient: string
 }
 
-
-
 @Module({
   providers: [SocialInsuranceAdministrationClientService],
   exports: [SocialInsuranceAdministrationClientService],
 })
-export class  SocialInsuranceAdministrationClientModule {
-  static register(config: SocialInsuranceAdministrationModuleConfig): DynamicModule {
+export class SocialInsuranceAdministrationClientModule {
+  static register(
+    config: SocialInsuranceAdministrationModuleConfig,
+  ): DynamicModule {
     if (!config.apiKey) {
       logger.error(
         'SocialInsuranceAdministrationModule XROAD_TR_API_KEY not provided.',

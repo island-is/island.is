@@ -139,7 +139,7 @@ export const modules = [
   DrivingLicenseBookUpdateInstructorModule,
   DrivingLearnersPermitModule,
   DrivingLicenseDuplicateModule,
-  OldAgePensionModule
+  OldAgePensionModule,
 ]
 
 export const services = [
@@ -189,5 +189,5 @@ export const services = [
   DrivingLicenseBookUpdateInstructorService,
   DrivingLearnersPermitService,
   DrivingLicenseDuplicateService,
-  OldAgePensionService
+  OldAgePensionService,
 ]
