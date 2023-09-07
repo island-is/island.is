@@ -72,8 +72,6 @@ jobs:
         env:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
         run: |
-          echo "PRE_CHECK=push" >> $GITHUB_OUTPUT
-          exit 0
           echo "GITHUB_EVENT_NAME is '$GITHUB_EVENT_NAME'"
           echo "PRE_RELEASE=false" >> $GITHUB_OUTPUT
 
