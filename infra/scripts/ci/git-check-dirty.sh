@@ -8,10 +8,8 @@ action=$2
 owner="${3:-github actions}"
 
 commit_as_github_actions() {
-  git diff "$abs_path"
   git config user.name 'github-actions[bot]'
   git config user.email 'github-actions[bot]@users.noreply.github.com'
-  git add "$abs_path"
   git commit -m "chore: $action update dirty files"
   git push
 }
@@ -19,8 +17,6 @@ commit_as_github_actions() {
 commit_as_dirty_bot() {
   REPO_URL="https://$DIRTY_TOKEN@github.com/island-is/island.is.git"
   echo "Commting to $branch"
-  git diff "$abs_path"
-  git add "$abs_path"
   git config user.name 'andes-it'
   git config user.email 'andes-it@andes.is'
   git commit -m "chore: $action update dirty files"
@@ -29,6 +25,8 @@ commit_as_dirty_bot() {
 
 if [[ $(git diff --stat "$abs_path") != '' ]]; then
   echo "changes found in $rel_path that will be commited"
+  git diff "$abs_path"
+  git add "$abs_path"
   if [ "$owner" == "github actions" ]; then
     commit_as_github_actions
   elif [ "$owner" == "dirty bot" ]; then
