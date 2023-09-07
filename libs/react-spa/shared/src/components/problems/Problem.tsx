@@ -28,6 +28,7 @@ type ProblemBaseProps = {
    * Size of the error box
    * 'small' is a small error that can be used inline
    * 'large' is a large error that should be used on a page
+   * @note this is not available for all types
    */
   error?: Error
   title?: string
@@ -35,12 +36,7 @@ type ProblemBaseProps = {
   tag?: string
 } & Pick<ProblemTemplateProps, 'noBorder' | 'buttonLink' | 'imgSrc' | 'imgAlt'>
 
-type CommonProps = Pick<
-  ProblemTemplateProps,
-  'noBorder' | 'buttonLink' | 'imgSrc' | 'imgAlt'
->
-
-interface InternalServiceErrorProps extends ProblemBaseProps, CommonProps {
+interface InternalServiceErrorProps extends ProblemBaseProps {
   type?: 'internal_service_error'
   error: Error
   title?: string
@@ -48,13 +44,13 @@ interface InternalServiceErrorProps extends ProblemBaseProps, CommonProps {
   size?: ProblemSize
 }
 
-interface NotFoundProps extends ProblemBaseProps, CommonProps {
+interface NotFoundProps extends ProblemBaseProps {
   type: 'not_found'
   error?: never
   size?: never
 }
 
-interface NoDataProps extends ProblemBaseProps, CommonProps {
+interface NoDataProps extends ProblemBaseProps {
   type: 'no_data'
   error?: never
   title?: string
