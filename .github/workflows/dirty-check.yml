@@ -22,6 +22,8 @@ jobs:
         fail-fast: false
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref_name }}
       - uses: actions/setup-node@v3
         with:
               cache: 'yarn'
