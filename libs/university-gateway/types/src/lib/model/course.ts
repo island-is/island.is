@@ -1,9 +1,10 @@
-import { Season } from '@island.is/university-gateway-types'
+import { Requirement, Season } from '@island.is/university-gateway-types'
 
 export interface Course {
   externalId: string
   nameIs: string
   nameEn: string
+  requirement: Requirement
   credits: number
   semesterYear?: number
   semesterSeason: Season

@@ -59,6 +59,17 @@ export class InternalCourseService {
       throw new Error('University not found in DB')
     }
 
+    // DELETE all programCourses for this university
+    // Need to loop through courses first to select by universityId
+    const oldCourseList = await this.courseModel.findAll({
+      where: { universityId: universityId },
+    })
+    for (let i = 0; i < oldCourseList.length; i++) {
+      await this.programCourseModel.destroy({
+        where: { courseId: oldCourseList[i].id },
+      })
+    }
+
     // DELETE all courses for this university
     await this.courseModel.destroy({ where: { universityId: universityId } })
 
@@ -114,7 +125,7 @@ export class InternalCourseService {
         await this.programCourseModel.create({
           programId: programId,
           courseId: courseId,
-          requirement: Requirement.MANDATORY, //TODO
+          requirement: course.requirement,
         })
       }
     }

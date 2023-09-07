@@ -6,6 +6,7 @@ import {
   FieldType,
   ModeOfDelivery,
   Program,
+  Requirement,
   Season,
 } from '@island.is/university-gateway-types'
 
@@ -29,31 +30,31 @@ export class UniversityGatewayUniversityOfIcelandClient {
           departmentNameEn: program.departmentNameEn,
           startingSemesterYear: program.startingSemesterYear,
           startingSemesterSeason:
-            program.startingSemesterSeason as unknown as Season, //TODO
+            program.startingSemesterSeason as unknown as Season, //TODO map enum
           applicationStartDate: program.applicationStartDate,
-          applicationEndDate: program.applicationEndDate || new Date(), //TODO
-          degreeType: program.degreeType as unknown as DegreeType, //TODO
+          applicationEndDate: program.applicationEndDate || new Date(), //TODO cannot be empty in api
+          degreeType: program.degreeType as unknown as DegreeType, //TODO map enum
           degreeAbbreviation: program.degreeAbbreviation,
           credits: program.credits || 0,
-          descriptionIs: '', //program.descriptionIs || '', //TODO
-          descriptionEn: '', //program.descriptionEn || '', //TODO
+          descriptionIs: program.descriptionIs || '',
+          descriptionEn: program.descriptionEn || '',
           durationInYears: program.durationInYears || 0,
           costPerYear: program.costPerYear,
-          iscedCode: program.iscedCode || '', //TODO
-          searchKeywords: [], //TODO
+          iscedCode: program.iscedCode || '', //TODO cannot be empty in api
+          searchKeywords: [], //TODO missing in api
           externalUrlIs: program.externalUrlIs,
           externalUrlEn: program.externalUrlEn,
-          admissionRequirementsIs: '', //program.admissionRequirementsIs,//TODO
-          admissionRequirementsEn: '', //program.admissionRequirementsEn,//TODO
-          studyRequirementsIs: '', //program.studyRequirementsIs,//TODO
-          studyRequirementsEn: '', //program.studyRequirementsEn,//TODO
+          admissionRequirementsIs: program.admissionRequirementsIs,
+          admissionRequirementsEn: program.admissionRequirementsEn,
+          studyRequirementsIs: program.studyRequirementsIs,
+          studyRequirementsEn: program.studyRequirementsEn,
           costInformationIs: program.costInformationIs,
           costInformationEn: program.costInformationEn,
           tag: program.interestTags.map((tag) => ({
-            code: tag.toString(), //TODO
+            code: tag.toString(), //TODO change from enum to code (string) in api
           })),
           modeOfDelivery: program.modeOfDelivery.map(
-            (mode) => mode as unknown as ModeOfDelivery, //TODO
+            (mode) => mode as unknown as ModeOfDelivery, //TODO map enum
           ),
           extraApplicationField: program.extraApplicationFields.map(
             (field) => ({
@@ -61,7 +62,7 @@ export class UniversityGatewayUniversityOfIcelandClient {
               nameEn: field.nameEn,
               descriptionIs: field.descriptionIs,
               descriptionEn: field.descriptionEn,
-              required: field.required === 'true', //TODO
+              required: field.required === 'true', //TODO change to enum not boolean in api
               fieldType: field.fieldType as unknown as FieldType,
               uploadAcceptedFileType: field.uploadAcceptedFileType,
             }),
@@ -82,10 +83,12 @@ export class UniversityGatewayUniversityOfIcelandClient {
         externalId: course.externalId,
         nameIs: course.nameIs,
         nameEn: course.nameEn,
-        required: course.required,
+        requirement: course.required
+          ? Requirement.MANDATORY
+          : Requirement.FREE_ELECTIVE, //TODO missing in api
         credits: course.credits,
         semesterYear: course.semesterYear,
-        semesterSeason: course.semesterSeason as unknown as Season, //TODO
+        semesterSeason: course.semesterSeason as unknown as Season, //TODO map enum
         descriptionIs: course.descriptionIs,
         descriptionEn: course.descriptionEn,
         externalUrlIs: course.externalUrlIs,

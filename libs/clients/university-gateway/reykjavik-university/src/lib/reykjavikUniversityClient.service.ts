@@ -6,6 +6,7 @@ import {
   FieldType,
   ModeOfDelivery,
   Program,
+  Requirement,
   Season,
 } from '@island.is/university-gateway-types'
 
@@ -59,7 +60,10 @@ export class UniversityGatewayReykjavikUniversityClient {
         }
 
         //TODO
-        const tagList = [{ code: 'engineering' }, { code: 'science' }]
+        const tagList = [
+          { code: 'verkfraedi_raunvisindi_taekni_og_tolur' },
+          { code: 'saga_menning_listir_og_tru' },
+        ]
 
         //TODO
         const modeOfDeliveryList = [
@@ -125,7 +129,7 @@ export class UniversityGatewayReykjavikUniversityClient {
         externalId: 'AB123',
         nameIs: 'Test',
         nameEn: 'Test',
-        required: true,
+        requirement: Requirement.MANDATORY,
         credits: 8,
         semesterYear: 2023,
         semesterSeason: Season.FALL,
