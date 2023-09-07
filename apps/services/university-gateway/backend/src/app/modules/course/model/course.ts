@@ -12,8 +12,8 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Season } from '../../program/types'
 import { University } from '../../university/model'
+import { Season } from '@island.is/university-gateway-types'
 
 @Table({
   tableName: 'course',

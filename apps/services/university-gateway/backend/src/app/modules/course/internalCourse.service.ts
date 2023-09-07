@@ -1,14 +1,23 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Course } from './model'
-import { Season } from '../program/types'
 import { University } from '../university/model'
 import { Program, ProgramCourse } from '../program/model'
-import { Requirement } from './types'
+import { UniversityGatewayReykjavikUniversityClient } from '@island.is/clients/university-gateway/reykjavik-university'
+import { UniversityGatewayUniversityOfIcelandClient } from '@island.is/clients/university-gateway/university-of-iceland'
+import {
+  Course as ICourse,
+  Requirement,
+  UniversityNationalIds,
+} from '@island.is/university-gateway-types'
 
 @Injectable()
 export class InternalCourseService {
   constructor(
+    private readonly reykjavikUniversityClient: UniversityGatewayReykjavikUniversityClient,
+
+    private readonly universityOfIcelandClient: UniversityGatewayUniversityOfIcelandClient,
+
     @InjectModel(University)
     private universityModel: typeof University,
 
@@ -23,59 +32,68 @@ export class InternalCourseService {
   ) {}
 
   async updateCourses(): Promise<void> {
-    const universityNationalId = '6001692039' //TODO
+    await this.doUpdateCoursesForUniversity(
+      UniversityNationalIds.REYKJAVIK_UNIVERSITY,
+      (externalId: string) =>
+        this.reykjavikUniversityClient.getCourses(externalId),
+    )
+
+    await this.doUpdateCoursesForUniversity(
+      UniversityNationalIds.UNIVERSITY_OF_ICELAND,
+      (externalId: string) =>
+        this.universityOfIcelandClient.getCourses(externalId),
+    )
+  }
+
+  private async doUpdateCoursesForUniversity(
+    universityNationalId: string,
+    getCourses: (externalId: string) => Promise<ICourse[]>,
+  ): Promise<void> {
     const universityId = (
       await this.universityModel.findOne({
         where: { nationalId: universityNationalId },
       })
     )?.id
 
+    if (!universityId) {
+      throw new Error('University not found in DB')
+    }
+
     // DELETE all courses for this university
     await this.courseModel.destroy({ where: { universityId: universityId } })
 
     const programList = await this.programModel.findAll({
-      where: { universityId: universityId },
+      where: { universityId },
     })
     for (let i = 0; i < programList.length; i++) {
       const programId = programList[i].id
-
-      //TODO
-      const courseList = [
-        {
-          externalId: 'AB123',
-          nameIs: 'Test',
-          nameEn: 'Test',
-          credits: 8,
-          semesterYear: 2023,
-          semesterSeason: Season.FALL,
-          descriptionIs: '',
-          descriptionEn: '',
-          externalUrlIs: '',
-          externalUrlEn: '',
-        },
-      ]
+      const programExternalId = programList[i].externalId
 
       // DELETE program course
       await this.programCourseModel.destroy({
         where: { programId: programId },
       })
 
+      const courseList = await getCourses(programExternalId)
+
       // CREATE/UPDATE course
       // CREATE program course
       for (let j = 0; j < courseList.length; j++) {
-        // course
+        const course = courseList[j]
+
+        // Map to courseModel object
         const courseObj = {
-          externalId: courseList[j].externalId,
-          nameIs: courseList[j].nameIs,
-          nameEn: courseList[j].nameEn,
+          externalId: course.externalId,
+          nameIs: course.nameIs,
+          nameEn: course.nameEn,
           universityId: universityId,
-          credits: courseList[j].credits,
-          semesterYear: courseList[j].semesterYear,
-          semesterSeason: courseList[j].semesterSeason,
-          descriptionIs: courseList[j].descriptionIs,
-          descriptionEn: courseList[j].descriptionEn,
-          externalUrlIs: courseList[j].externalUrlIs,
-          externalUrlEn: courseList[j].externalUrlEn,
+          credits: course.credits,
+          semesterYear: course.semesterYear,
+          semesterSeason: course.semesterSeason,
+          descriptionIs: course.descriptionIs,
+          descriptionEn: course.descriptionEn,
+          externalUrlIs: course.externalUrlIs,
+          externalUrlEn: course.externalUrlEn,
         }
 
         const oldCourseObj = await this.courseModel.findOne({

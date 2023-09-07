@@ -8,7 +8,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { ProgramDetailsResponse, ProgramResponse, TagResponse } from './model'
-import { DegreeType, Season } from './types'
+import { DegreeType, Season } from '@island.is/university-gateway-types'
 
 @ApiTags('Program')
 @Controller('api')

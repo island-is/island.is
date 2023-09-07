@@ -5,6 +5,8 @@ import { ProgramModule } from './modules/program/program.module'
 import { UniversityModule } from './modules/university/university.module'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { SequelizeConfigService } from './sequelizeConfig.service'
+import { ConfigModule } from '@nestjs/config'
+import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
 
 @Module({
   imports: [
@@ -20,6 +22,10 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     //   jwtSecret: environment.auth.jwtSecret,
     //   secretToken: environment.auth.secretToken,
     // }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [IdsClientConfig, XRoadConfig],
+    }),
   ],
   controllers: [],
   providers: [],

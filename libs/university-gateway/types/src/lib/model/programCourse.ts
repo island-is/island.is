@@ -1,12 +1,12 @@
-import { Course } from './course'
-import { Requirement } from './requirement'
+// import { Requirement } from '../types'
+// import { Course } from './course'
 
-export type ProgramCourse = {
-  id: string
-  programId: string
-  courseId: string
-  details: Course
-  requirement: Requirement
-  created: Date
-  modified: Date
-}
+// export type ProgramCourse = {
+//   id: string
+//   programId: string
+//   courseId: string
+//   details: Course
+//   requirement: Requirement
+//   created: Date
+//   modified: Date
+// }

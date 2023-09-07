@@ -10,9 +10,8 @@ const schema = z.object({
   secret: z.string(),
 })
 
-//TODOx change to xroad env variables (when xroad is ready) (and add to infra/src/dsl/xroad.ts)
-export const UgReykjavikUniversityClientConfig = defineConfig({
-  name: 'UgReykjavikUniversityApi',
+export const UniversityGatewayReykjavikUniversityClientConfig = defineConfig({
+  name: 'UniversityGatewayReykjavikUniversityApi',
   schema,
   load(env) {
     return {

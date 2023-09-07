@@ -7,8 +7,8 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ApplicationStatus } from '../types'
 import { Application } from './application'
+import { ApplicationStatus } from '@island.is/university-gateway-types'
 
 @Table({
   tableName: 'application_status_history',

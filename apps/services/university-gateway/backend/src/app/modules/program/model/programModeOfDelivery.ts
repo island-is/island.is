@@ -8,8 +8,8 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ModeOfDelivery } from '../types'
 import { Program } from './program'
+import { ModeOfDelivery } from '@island.is/university-gateway-types'
 
 @Table({
   tableName: 'program_mode_of_delivery',

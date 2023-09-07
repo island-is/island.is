@@ -1,5 +1,3 @@
-//TODO remove unused?
-
 import { Request } from 'express'
 import { DataSource, DataSourceConfig } from 'apollo-datasource'
 import { Injectable } from '@nestjs/common'

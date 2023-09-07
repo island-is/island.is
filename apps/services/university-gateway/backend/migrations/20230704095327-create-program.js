@@ -1,5 +1,6 @@
 'use strict'
 
+//TODOx breyta textasvæðum þannig það leyfi meira en varchar(255)
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) => {

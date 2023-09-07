@@ -22,7 +22,12 @@ module.exports = {
               allowNull: false,
             },
             mode_of_delivery: {
-              type: Sequelize.ENUM('ON_SITE', 'ONLINE', 'ONLINE_WITH_SESSION'),
+              type: Sequelize.ENUM(
+                'ON_SITE',
+                'ONLINE',
+                'ONLINE_WITH_SESSION',
+                'MIXED',
+              ),
               allowNull: false,
             },
             created: {

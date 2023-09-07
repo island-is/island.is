@@ -12,8 +12,8 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { FieldType } from '../types'
 import { Program } from './program'
+import { FieldType } from '@island.is/university-gateway-types'
 
 @Table({
   tableName: 'program_extra_application_field',

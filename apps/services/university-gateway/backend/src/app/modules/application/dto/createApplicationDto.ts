@@ -1,6 +1,6 @@
+import { ModeOfDelivery } from '@island.is/university-gateway-types'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { IsEnum, IsOptional, IsString, IsUUID } from 'class-validator'
-import { ModeOfDelivery } from '../../program/types'
 
 export class CreateApplicationDto {
   @IsUUID()

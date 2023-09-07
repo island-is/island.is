@@ -1,6 +1,6 @@
+import { ApplicationStatus } from '@island.is/university-gateway-types'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { IsEnum, IsOptional, IsString } from 'class-validator'
-import { ApplicationStatus } from '../types'
 
 export class UpdateApplicationDto {
   @IsEnum(ApplicationStatus)

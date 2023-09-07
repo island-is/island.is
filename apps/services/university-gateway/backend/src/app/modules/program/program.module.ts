@@ -6,7 +6,6 @@ import { InternalProgramService } from './internalProgram.service'
 import { SequelizeModule } from '@nestjs/sequelize'
 import {
   Program,
-  // ProgramCourse,
   ProgramExtraApplicationField,
   ProgramModeOfDelivery,
   ProgramTag,
@@ -15,9 +14,13 @@ import {
 import { Course } from '../course/model'
 import { University } from '../university/model'
 import {
-  UgReykjavikUniversityClientConfig,
-  UgReykjavikUniversityClientModule,
+  UniversityGatewayReykjavikUniversityClientConfig,
+  UniversityGatewayReykjavikUniversityClientModule,
 } from '@island.is/clients/university-gateway/reykjavik-university'
+import {
+  UniversityGatewayUniversityOfIcelandClientConfig,
+  UniversityGatewayUniversityOfIcelandClientModule,
+} from '@island.is/clients/university-gateway/university-of-iceland'
 import { ConfigModule } from '@nestjs/config'
 
 @Module({
@@ -27,15 +30,18 @@ import { ConfigModule } from '@nestjs/config'
       Course,
       Tag,
       Program,
-      // ProgramCourse,
       ProgramTag,
       ProgramModeOfDelivery,
       ProgramExtraApplicationField,
     ]),
-    UgReykjavikUniversityClientModule,
+    UniversityGatewayReykjavikUniversityClientModule,
+    UniversityGatewayUniversityOfIcelandClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [UgReykjavikUniversityClientConfig],
+      load: [
+        UniversityGatewayReykjavikUniversityClientConfig,
+        UniversityGatewayUniversityOfIcelandClientConfig,
+      ],
     }),
   ],
   controllers: [InternalProgramController, ProgramController],

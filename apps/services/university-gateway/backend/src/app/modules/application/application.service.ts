@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { Application, ApplicationResponse } from './model'
-import { UgReykjavikUniversityClient } from '@island.is/clients/university-gateway/reykjavik-university'
+import { UniversityGatewayReykjavikUniversityClient } from '@island.is/clients/university-gateway/reykjavik-university'
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 
 // TODO connect to university APIs when POST endpoints from them are ready
@@ -8,7 +8,7 @@ import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 @Injectable()
 export class ApplicationService {
   constructor(
-    private readonly ugReykjavikUniversityClient: UgReykjavikUniversityClient,
+    private readonly reykjavikUniversityClient: UniversityGatewayReykjavikUniversityClient,
   ) {}
 
   async getApplication(id: string): Promise<ApplicationResponse> {

@@ -6,25 +6,27 @@ import {
   ProgramTag,
   Tag,
 } from './model'
-import { DegreeType, FieldType, ModeOfDelivery, Season } from './types'
 import { InjectModel } from '@nestjs/sequelize'
-// import { Course } from '../course/model'
 import { University } from '../university/model'
-import { UgReykjavikUniversityClient } from '@island.is/clients/university-gateway/reykjavik-university'
+import { UniversityGatewayReykjavikUniversityClient } from '@island.is/clients/university-gateway/reykjavik-university'
+import { UniversityGatewayUniversityOfIcelandClient } from '@island.is/clients/university-gateway/university-of-iceland'
+import {
+  Program as IProgram,
+  UniversityNationalIds,
+} from '@island.is/university-gateway-types'
 
 @Injectable()
 export class InternalProgramService {
   constructor(
-    private readonly ugReykjavikUniversityClient: UgReykjavikUniversityClient,
+    private readonly reykjavikUniversityClient: UniversityGatewayReykjavikUniversityClient,
+
+    private readonly universityOfIcelandClient: UniversityGatewayUniversityOfIcelandClient,
 
     @InjectModel(University)
     private universityModel: typeof University,
 
     @InjectModel(Tag)
     private tagModel: typeof Tag,
-
-    // @InjectModel(Course)
-    // private courseModel: typeof Course,
 
     @InjectModel(Program)
     private programModel: typeof Program,
@@ -40,53 +42,32 @@ export class InternalProgramService {
   ) {}
 
   async updatePrograms(): Promise<void> {
-    var majors = await this.ugReykjavikUniversityClient.getMajors()
+    await this.doUpdateProgramsForUniversity(
+      UniversityNationalIds.REYKJAVIK_UNIVERSITY,
+      await this.reykjavikUniversityClient.getPrograms(),
+    )
 
-    const universityNationalId = '6001692039' //TODO
+    await this.doUpdateProgramsForUniversity(
+      UniversityNationalIds.UNIVERSITY_OF_ICELAND,
+      await this.universityOfIcelandClient.getPrograms(),
+    )
+  }
+
+  private async doUpdateProgramsForUniversity(
+    universityNationalId: string,
+    programList: IProgram[],
+  ): Promise<void> {
     const universityId = (
       await this.universityModel.findOne({
         where: { nationalId: universityNationalId },
       })
     )?.id
 
-    for (let i = 0; i < 5; i++) {
-      const departmentName =
-        majors[i].departmentId &&
-        (
-          await this.ugReykjavikUniversityClient.getDepartment(
-            majors[i].departmentId!,
-          )
-        )?.name
+    if (!universityId) {
+      throw new Error('University not found in DB')
+    }
 
-      let degreeType: DegreeType = DegreeType.UNDERGRADUATE
-      switch (majors[i].majorTypeKey) {
-        case 'grunnnám':
-          degreeType = DegreeType.UNDERGRADUATE
-        case 'meistaranám':
-          degreeType = DegreeType.POSTGRADUATE
-        case 'doktorsnám':
-          degreeType = DegreeType.DOCTORAL
-      }
-
-      //TODO
-      const tagList = [{ code: 'engineering' }, { code: 'science' }]
-
-      //TODO
-      const modeOfDeliveryList = [ModeOfDelivery.ONLINE, ModeOfDelivery.ON_SITE]
-
-      //TODO
-      const extraApplicationFieldList = [
-        {
-          nameIs: 'Ferilskrá',
-          nameEn: 'CV',
-          descriptionIs: '',
-          descriptionEn: '',
-          required: true,
-          fieldType: FieldType.UPLOAD,
-          uploadAcceptedFileType: '.pdf, .jpg, .jpeg, .png',
-        },
-      ]
-
+    for (let i = 0; i < programList.length; i++) {
       // UPDATE all programs for this university and make them inactive
       await this.programModel.update(
         {
@@ -99,36 +80,43 @@ export class InternalProgramService {
 
       // CREATE/UPDATE all programs for this university (make then active again)
 
+      const program = programList[i]
+
+      // Map to programModel object
       const programObj = {
-        externalId: majors[i].id?.toString(), //TODO
         active: true,
-        nameIs: majors[i].name,
-        nameEn: majors[i].name, //TODO
         universityId: universityId,
-        departmentNameIs: departmentName,
-        departmentNameEn: departmentName, //TODO
-        startingSemesterYear: 2023, //TODO
-        startingSemesterSeason: Season.FALL, //TODO
-        applicationStartDate: majors[i].courseRegistrationBegins,
-        applicationEndDate: majors[i].courseRegistrationEnds,
-        degreeType: degreeType,
-        degreeAbbreviation: 'TODO',
-        credits: majors[i].credits,
-        descriptionIs: 'TODO',
-        descriptionEn: 'TODO',
-        durationInYears: majors[i].years,
-        costPerYear: null, //TODO
-        iscedCode: 'TODO',
-        externalUrlIs: 'TODO',
-        externalUrlEn: 'TODO',
-        searchKeywords: ['Test1', 'Test2'], //TODO
-        admissionRequirementsIs: 'TODO',
-        admissionRequirementsEn: 'TODO',
-        studyRequirementsIs: 'TODO',
-        studyRequirementsEn: 'TODO',
-        costInformationIs: 'TODO',
-        costInformationEn: 'TODO',
+        externalId: program.externalId,
+        nameIs: program.nameIs,
+        nameEn: program.nameEn,
+        departmentNameIs: program.departmentNameIs,
+        departmentNameEn: program.departmentNameEn,
+        startingSemesterYear: program.startingSemesterYear,
+        startingSemesterSeason: program.startingSemesterSeason,
+        applicationStartDate: program.applicationStartDate,
+        applicationEndDate: program.applicationEndDate,
+        degreeType: program.degreeType,
+        degreeAbbreviation: program.degreeAbbreviation,
+        credits: program.credits,
+        descriptionIs: program.descriptionIs,
+        descriptionEn: program.descriptionEn,
+        durationInYears: program.durationInYears,
+        costPerYear: program.costPerYear,
+        iscedCode: program.iscedCode,
+        externalUrlIs: program.externalUrlIs,
+        externalUrlEn: program.externalUrlEn,
+        searchKeywords: program.searchKeywords,
+        admissionRequirementsIs: program.admissionRequirementsIs,
+        admissionRequirementsEn: program.admissionRequirementsEn,
+        studyRequirementsIs: program.studyRequirementsIs,
+        studyRequirementsEn: program.studyRequirementsEn,
+        costInformationIs: program.costInformationIs,
+        costInformationEn: program.costInformationEn,
       }
+
+      const tagList = program.tag || []
+      const modeOfDeliveryList = program.modeOfDelivery || []
+      const extraApplicationFieldList = program.extraApplicationField || []
 
       const oldProgramObj = await this.programModel.findOne({
         where: {
@@ -136,6 +124,7 @@ export class InternalProgramService {
         },
       })
 
+      // CREATE or UPDATE program
       let programId: string | undefined
       if (oldProgramObj) {
         programId = oldProgramObj.id

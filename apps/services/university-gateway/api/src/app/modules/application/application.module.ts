@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common'
 import { ApplicationResolver } from './application.resolver'
 import {
-  UgReykjavikUniversityClientModule,
-  UgReykjavikUniversityClientConfig,
+  UniversityGatewayReykjavikUniversityClientModule,
+  UniversityGatewayReykjavikUniversityClientConfig,
 } from '@island.is/clients/university-gateway/reykjavik-university'
 import { ConfigModule } from '@nestjs/config'
 
 @Module({
   imports: [
-    UgReykjavikUniversityClientModule,
+    UniversityGatewayReykjavikUniversityClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [UgReykjavikUniversityClientConfig],
+      load: [UniversityGatewayReykjavikUniversityClientConfig],
     }),
   ],
   providers: [ApplicationResolver],
