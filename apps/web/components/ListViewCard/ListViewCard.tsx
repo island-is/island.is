@@ -26,6 +26,7 @@ type CardProps = {
   heading: string
   href: string
   checkboxId?: string
+  checked?: boolean
 }
 
 export const ListViewCard = ({
@@ -38,6 +39,7 @@ export const ListViewCard = ({
   icon,
   iconText,
   heading,
+  checked,
   href,
 }: CardProps) => {
   return (
@@ -104,6 +106,7 @@ export const ListViewCard = ({
             labelVariant="small"
             onChange={onCheck}
             id={checkboxId}
+            checked={checked}
           />
         </Box>
         <Box paddingTop={3} width="full">
