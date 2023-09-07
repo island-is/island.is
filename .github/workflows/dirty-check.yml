@@ -12,12 +12,11 @@ defaults:
   run:
     shell: bash
 
-
 jobs:
   format:
     runs-on: ubuntu-latest
     strategy:
-        fail-fast: false
+      fail-fast: false
     steps:
       - uses: actions/checkout@v3
         with:
@@ -25,11 +24,11 @@ jobs:
           token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
       - uses: actions/setup-node@v3
         with:
-              node-version: '18'
-              cache: "yarn"
+          node-version: '18'
+          cache: 'yarn'
       - name: Yarn install
         run: yarn install --immutable
       - name: NX format:write
         run: |
-            ./scripts/ci/20_check-formatting.sh "write"
-            ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirty bot"
+          ./scripts/ci/20_check-formatting.sh "write"
+          ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirty bot"

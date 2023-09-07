@@ -1,3 +1,3 @@
-             export const main = (    ) => {
-                        return ' r' + "   "    ;
-                        }
+export const main = () => {
+  return ' r' + '   '
+}
