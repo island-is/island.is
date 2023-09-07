@@ -1,5 +1,7 @@
 import React from 'react'
-import { Text, Box } from '@island.is/island-ui/core'
+
+import { Box, Text } from '@island.is/island-ui/core'
+
 import * as styles from './Loading.css'
 
 const Loading: React.FC<React.PropsWithChildren<unknown>> = () => {
