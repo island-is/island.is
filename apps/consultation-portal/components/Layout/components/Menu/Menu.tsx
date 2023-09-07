@@ -15,7 +15,6 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from './Menu.css'
 import React, { useContext } from 'react'
-import { MenuLogo, MenuLogoMobile } from '../../../svg'
 import { menuItems, MenuModal } from './components'
 import { useIsMobile, useLogIn, useLogOut } from '../../../../hooks'
 import { checkActiveHeaderLink } from '../../utils'
