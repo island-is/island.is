@@ -397,9 +397,6 @@ jobs:
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
       - name: Check cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
-      - name: NX format:check
-        if: ${{ github.ref == 'ref/heads/main' }}
-        run: ./scripts/ci/20_check-formatting.sh "check"
       - name: NX format:write
         if: ${{ github.event_name == 'pull_request' }}
         env:
@@ -407,6 +404,10 @@ jobs:
         run: |
           ./scripts/ci/20_check-formatting.sh "write"
           ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write"
+      - name: NX format:check
+        if: ${{ github.ref == 'ref/heads/main' }}
+        run: ./scripts/ci/20_check-formatting.sh "check"
+     
 
   linting:
     needs:
