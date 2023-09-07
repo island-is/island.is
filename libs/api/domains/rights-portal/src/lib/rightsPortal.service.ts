@@ -18,6 +18,7 @@ import {
 } from './rightsPortal.types'
 import {
   Dentist,
+  DentistStatus,
   PaginatedDentistsResponse,
   UserDentistRegistration,
 } from './models/dentist.model'
@@ -83,6 +84,40 @@ export class RightsPortalService {
     }
   }
 
+  async getCurrentDentist(user: User): Promise<Dentist | null> {
+    try {
+      const res = await this.dentistApi
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .dentistsCurrent()
+
+      if (!res || !res.id) return null
+
+      return {
+        id: res.id,
+        name: res.name,
+      }
+    } catch (e) {
+      return handle404(e)
+    }
+  }
+
+  async getDentistStatus(user: User): Promise<DentistStatus | null> {
+    try {
+      const res = await this.dentistApi
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .dentiststatus()
+      if (!res) return null
+
+      return {
+        isInsured: res.isInsured,
+        canRegister: res.canRegister,
+        contractType: res.contractType,
+      }
+    } catch (e) {
+      return handle404(e)
+    }
+  }
+
   async getDentistRegistrations(
     user: User,
     dateFrom?: Date,
@@ -92,6 +127,7 @@ export class RightsPortalService {
     try {
       const res = await Promise.all([
         api.dentistsCurrent(),
+        api.dentiststatus(),
         api.dentistsBills({
           dateFrom: dateFrom
             ? dateFrom.toDateString()
@@ -101,9 +137,20 @@ export class RightsPortalService {
       ])
 
       if (!res) return null
+
+      const [current, status, bills] = res
+
       return {
-        currentDentistName: res[0].name,
-        billHistory: res[1] as Bill[],
+        dentist: {
+          name: current.name,
+          id: current.id,
+          status: {
+            isInsured: status.isInsured,
+            canRegister: status.canRegister,
+            contractType: status.contractType,
+          },
+        },
+        history: bills as Array<Bill>,
       }
     } catch (e) {
       return handle404(e)

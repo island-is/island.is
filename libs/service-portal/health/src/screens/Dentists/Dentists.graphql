@@ -1,7 +1,15 @@
 query getDentists($input: DentistBillsInput) {
   rightsPortalUserDentistRegistration(input: $input) {
-    currentDentistName
-    billHistory {
+    dentist {
+      id
+      name
+      status {
+        isInsured
+        canRegister
+        contractType
+      }
+    }
+    history {
       number
       amount
       coveredAmount

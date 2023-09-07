@@ -19,6 +19,31 @@ export const messages = defineMessages({
     defaultMessage:
       'Gjaldskrá tannlækna er frjáls. Sjúkratryggingar Íslands(SÍ) greiða hinsvegar samkvæmt gjaldskrá sem Velferðarráðuneytið hefur sett.',
   },
+  dentistNumber: {
+    id: 'sp.health:dentist-number',
+    defaultMessage: 'Númer tannlæknis',
+  },
+  dentistRegisterationPageTitle: {
+    id: 'sp.health:dentist-registeration-page-title',
+    defaultMessage: 'Skrá nýjan tannlækni',
+  },
+  dentistRegisterationPageDescription: {
+    id: 'sp.health:dentist-registeration-page-description',
+    defaultMessage:
+      'Einnig er hægt að velja tannlækni útfrá landshluta (skrifið eitt eftirfarandi: Reykjavík, Höfuðborgarsvæðið, Suðurnes, Vesturland, Vestfirðir, Norðurland vestra, Norðurland eystra, Austurland, Suðurland).',
+  },
+  dentistRegisterationNoRegisterTitle: {
+    id: 'sp.health:dentist-registeration-no-register-title',
+    defaultMessage: 'Þú ert ekki skráður hjá neinum tannlækni',
+  },
+  dentistRegisterForbiddenTitle: {
+    id: 'sp.health:dentist-register-forbidden-title',
+    defaultMessage: 'Þú hefur ekki réttindi',
+  },
+  dentistRegisterForbiddenInfo: {
+    id: 'sp.health:dentist-register-forbidden',
+    defaultMessage: 'Þú hefur ekki réttindi',
+  },
   healthCenterTitle: {
     id: 'sp.health:health-center-title',
     defaultMessage: 'Heilsugæsla',

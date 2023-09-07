@@ -21,6 +21,7 @@ import { useState } from 'react'
 import BillsTable from './BillsTable'
 import add from 'date-fns/add'
 import sub from 'date-fns/sub'
+import { HealthPaths } from '../../lib/paths'
 
 const Dentists = () => {
   useNamespaces('sp.health')
@@ -30,7 +31,6 @@ const Dentists = () => {
     sub(new Date(), { years: 5 }),
   )
   const [selectedDateTo, setSelectedDateTo] = useState(new Date())
-  const [dentistName, setDentistName] = useState('')
 
   const { loading, error, data } = useGetDentistsQuery({
     variables: {
@@ -41,11 +41,8 @@ const Dentists = () => {
     },
   })
 
-  const dentistData = data?.rightsPortalUserDentistRegistration
-
-  if (!dentistName && dentistData?.currentDentistName) {
-    setDentistName(dentistData.currentDentistName)
-  }
+  const { dentist, history } = data?.rightsPortalUserDentistRegistration ?? {}
+  const canRegister = dentist?.status?.canRegister ?? false
 
   if (error && !loading) {
     return (
@@ -68,7 +65,7 @@ const Dentists = () => {
         intro={formatMessage(messages.dentistsDescription)}
       />
 
-      {!loading && !dentistData && (
+      {!loading && !dentist && (
         <Box width="full" marginTop={4} display="flex" justifyContent="center">
           <Box marginTop={8}>
             <EmptyState />
@@ -76,15 +73,32 @@ const Dentists = () => {
         </Box>
       )}
 
-      {dentistName && (
+      {dentist?.name && dentist?.id && (
         <Stack space={2}>
           <UserInfoLine
             title={formatMessage(messages.yourInformation)}
             label={formatMessage(messages.dentist)}
-            content={dentistName}
+            content={dentist.name}
+            editLink={
+              canRegister
+                ? {
+                    url: HealthPaths.HealthDentistRegistration,
+                    title: messages.changeRegistration,
+                    icon: 'open',
+                  }
+                : undefined
+            }
           />
           <Divider />
-          <UserInfoLine label={formatMessage(messages.yourDentistBills)} />
+          <UserInfoLine
+            label={formatMessage(messages.dentistNumber)}
+            content={`${dentist.id}`}
+          />
+          <Divider />
+          <UserInfoLine
+            label={formatMessage(messages.yourDentistBills)}
+            labelColumnSpan={['12/12']}
+          />
           <Inline space={4}>
             <DatePicker
               size="sm"
@@ -108,9 +122,7 @@ const Dentists = () => {
 
       {loading && <SkeletonLoader space={1} height={30} repeat={4} />}
 
-      {!loading && !error && dentistData?.billHistory && (
-        <BillsTable bills={dentistData.billHistory} />
-      )}
+      {!loading && !error && history && <BillsTable bills={history} />}
     </Box>
   )
 }

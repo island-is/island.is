@@ -1,0 +1,32 @@
+query getDentistStatus {
+  rightsPortalDentistStatus {
+    canRegister
+  }
+}
+
+query getPaginatedDentists {
+  rightsPortalPaginatedDentists {
+    totalCount
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    data {
+      name
+      practice
+      address {
+        postalCode
+        municipality
+        streetAddress
+      }
+    }
+  }
+  rightsPortalUserDentistRegistration {
+    dentist {
+      id
+      name
+    }
+  }
+}

@@ -20,6 +20,10 @@ const HealthCenterRegistration = lazy(() =>
   import('./screens/HealthCenterRegistration/HealthCenterRegistration'),
 )
 
+const DentistRegistration = lazy(() =>
+  import('./screens/DentistRegistration/DentistRegistration'),
+)
+
 export const healthModule: PortalModule = {
   name: 'Heilsa',
   featureFlag: Features.servicePortalHealthRightsModule,
@@ -62,6 +66,12 @@ export const healthModule: PortalModule = {
       path: HealthPaths.HealthCenterRegistration,
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <HealthCenterRegistration />,
+    },
+    {
+      name: hm.dentistRegisterationPageTitle,
+      path: HealthPaths.HealthDentistRegistration,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <DentistRegistration />,
     },
   ],
 }

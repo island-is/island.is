@@ -20,6 +20,7 @@ import { GetHealthCenterHistoryInput } from './dto/getHealthCenterHistory.input'
 import { PaginatedTherapiesResponse } from './models/therapies.model'
 import { PaginatedAidsAndNutritionResponse } from './models/aidsOrNutrition.model'
 import {
+  DentistStatus,
   PaginatedDentistsResponse,
   UserDentistRegistration,
 } from './models/dentist.model'
@@ -62,6 +63,17 @@ export class RightsPortalResolver {
   @Audit()
   async getRightsPortalAidsAndNutrition(@CurrentUser() user: User) {
     return this.rightsPortalService.getAidsAndNutrition(user)
+  }
+
+  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
+  @Scopes(ApiScope.health)
+  @Query(() => UserDentistRegistration, {
+    name: 'rightsPortalUserDentistRegistration',
+    nullable: true,
+  })
+  @Audit()
+  getRightsPortalDentist(@CurrentUser() user: User) {
+    return this.rightsPortalService.getCurrentDentist(user)
   }
 
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
@@ -121,6 +133,28 @@ export class RightsPortalResolver {
 
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
   @Scopes(ApiScope.health)
+  @Query(() => DentistStatus, {
+    name: 'rightsPortalDentistStatus',
+    nullable: true,
+  })
+  @Audit()
+  getDentistStatus(@CurrentUser() user: User) {
+    return this.rightsPortalService.getDentistStatus(user)
+  }
+
+  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
+  @Scopes(ApiScope.health)
+  @Query(() => DentistStatus, {
+    name: 'rightsPortalCurrentDentist',
+    nullable: true,
+  })
+  @Audit()
+  getCurrentDentist(@CurrentUser() user: User) {
+    return this.rightsPortalService.getDentistStatus(user)
+  }
+
+  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
+  @Scopes(ApiScope.health)
   @Query(() => PaginatedDentistsResponse, {
     name: 'rightsPortalPaginatedDentists',
     nullable: true,
@@ -134,7 +168,7 @@ export class RightsPortalResolver {
   @Mutation(() => HealthCenterResponse, {
     name: 'rightsPortalTransferHealthCenter',
   })
-  // @FeatureFlag(Features.servicePortalTransferHealthCenter)
+  @FeatureFlag(Features.servicePortalTransferHealthCenter)
   @Audit()
   transferHealthCenter(@CurrentUser() user: User, @Args('id') id: string) {
     return this.rightsPortalService.transferHealthCenter(user, id)
