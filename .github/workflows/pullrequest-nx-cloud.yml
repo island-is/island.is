@@ -21,7 +21,7 @@ env:
   NODE_OPTIONS: --max-old-space-size=8192
   COMPOSE_HTTP_TIMEOUT: 180
   GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
-  MAX_JOBS: 3
+  MAX_JOBS: 1
   MAX_TASKS_PER_AGENT: 10
   MAX_AGENTS: 8
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
