@@ -5,19 +5,40 @@ DIR="$(git rev-parse --show-toplevel)"
 rel_path=$1
 abs_path=$DIR/$rel_path
 action=$2
-github_token="${3:-GITHUB_TOKEN}"
+owner="${3:-github actions}"
 
-REPO_URL="https://$github_token@github.com/island-is/island.is.git"
-branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}
+commit_as_github_actions() {
+  git diff "$abs_path"
+  git config user.name 'github-actions[bot]'
+  git config user.email 'github-actions[bot]@users.noreply.github.com'
+  git add "$abs_path"
+  git commit -m "chore: $action update dirty files"
+  git push
+}
 
-if [[ $(git diff --stat "$abs_path") != '' ]]; then
-  echo "changes found in $rel_path that will be commited"
+commit_as_dirty_bot() {
+  REPO_URL="https://$DIRTY_TOKEN@github.com/island-is/island.is.git"
+  branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+  echo "Commting to $branch"
   git diff "$abs_path"
   git add "$abs_path"
   git config user.name 'andes-it'
   git config user.email 'andes-it@andes.is'
   git commit -m "chore: $action update dirty files"
   git push "$REPO_URL" "${branch}"
+}
+
+if [[ $(git diff --stat "$abs_path") != '' ]]; then
+  echo "changes found in $rel_path that will be commited"
+  if [ "$owner" == "github actions" ]; then
+    commit_as_github_actions
+  elif [ "$owner" == "dirty bot" ]; then
+    commit_as_dirty_bot
+  else
+    echo "Error: Unknown owner!"
+    exit 1
+  fi
 else
   echo "found no unstaged files from $action, nothing to commit"
 fi
+

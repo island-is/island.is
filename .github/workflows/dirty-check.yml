@@ -32,4 +32,4 @@ jobs:
       - name: NX format:write
         run: |
             ./scripts/ci/20_check-formatting.sh "write"
-            ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "$DIRTY_TOKEN"
+            ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirty bot"
