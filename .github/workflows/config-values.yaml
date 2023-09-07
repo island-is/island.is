@@ -95,7 +95,7 @@ jobs:
         run: ./infra/scripts/ci/diff-chart-values-all-charts.sh
 
       - name: Commit any changes to charts
-        if: ${{ github.event_name == 'pull_request' }} && github.actor != 'andes-it'
+        if: ${{ github.event_name == 'pull_request' }}
         run: |
           ./infra/scripts/generate-chart-values.sh
           ./infra/scripts/ci/git-check-dirty.sh "charts/" "charts" "dirty bot"
