@@ -27,7 +27,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
               node-version: '18'
+              cache: "yarn"
+      - name: Yarn install
+        run: yarn install --immutable
       - name: NX format:write
         run: |
             ./scripts/ci/20_check-formatting.sh "write"
-            ./infra/scripts/ci/git-check-dirty.sh "/" "npx nx format:write" "dirty bot"
+            ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirty bot"
