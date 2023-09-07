@@ -79,12 +79,12 @@ export class ProgramService {
             {
               model: Tag,
               attributes: {
-                exclude: ['created', 'modified'],
+                exclude: ['id', 'created', 'modified'],
               },
             },
           ],
           attributes: {
-            exclude: [/*'id',*/ 'programId', 'tagId', 'created', 'modified'],
+            exclude: ['id', 'programId', 'created', 'modified'],
           },
         },
         {
@@ -119,12 +119,12 @@ export class ProgramService {
             {
               model: Tag,
               attributes: {
-                exclude: ['created', 'modified'],
+                exclude: ['id', 'created', 'modified'],
               },
             },
           ],
           attributes: {
-            exclude: [/*'id',*/ 'programId', 'tagId', 'created', 'modified'],
+            exclude: ['id', 'programId', 'created', 'modified'],
           },
         },
         {

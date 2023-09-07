@@ -13,6 +13,7 @@ import { ProgramTag } from './programTag'
   tableName: 'tag',
 })
 export class Tag extends Model {
+  @ApiHideProperty()
   @ApiProperty({
     description: 'Tag ID',
     example: '00000000-0000-0000-0000-000000000000',

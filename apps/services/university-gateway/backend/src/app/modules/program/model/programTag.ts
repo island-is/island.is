@@ -45,7 +45,6 @@ export class ProgramTag extends Model {
   //   description: 'Tag ID',
   //   example: '00000000-0000-0000-0000-000000000000',
   // })
-  @ApiHideProperty()
   @Column({
     type: DataType.UUID,
     allowNull: false,
