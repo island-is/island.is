@@ -39,8 +39,7 @@ export class FetchError extends Error {
         error.body = body
       }
 
-      // TODO set 500 instead of 400
-      if (organizationSlug && body.status >= 400) {
+      if (organizationSlug && body.status >= 500) {
         error.problem = {
           ...body,
           organizationSlug,

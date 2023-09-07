@@ -37,6 +37,7 @@ export const NoData = ({
     alt: imgAlt ?? title,
   }
 
+  // TODO fix UI when design is ready
   if (size === 'small') {
     return (
       <Box

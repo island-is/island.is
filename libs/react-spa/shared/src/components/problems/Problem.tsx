@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
 
-import { m, useServiceErrorStore } from '@island.is/portals/core'
+import { m, useOrganizationStore } from '@island.is/portals/core'
 import {
   ProblemTemplate,
   ProblemTemplateProps,
@@ -18,10 +18,10 @@ export type ProblemSize = 'small' | 'large'
 type ProblemBaseProps = {
   /**
    * Type of problem
-   * @default 'service_error'
+   * @default 'internal_service_error'
    * 'internal_service_error' is a generic error that is not caused by the user
-   * 'not_found' is a 404 error
-   * 'no_data' is a 200 response with no data
+   * 'not_found' is a 404 error, i.e. the page is not found
+   * 'no_data' is a 200 response, i.e. no data
    */
   type?: 'internal_service_error' | 'not_found' | 'no_data'
   /**
@@ -104,7 +104,7 @@ export const Problem = ({
   switch (type) {
     case 'internal_service_error':
       if (error) {
-        const organizations = useServiceErrorStore.use.organizations()
+        const organizations = useOrganizationStore.use.organizations()
         const organizationSlug = useMemo(
           () => getOrganizationSlugFromError(error),
           [error],

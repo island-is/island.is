@@ -14,7 +14,7 @@ import {
   ApplicationErrorBoundary,
   PortalRouter,
   m,
-  useServiceErrorStore,
+  useOrganizationStore,
 } from '@island.is/portals/core'
 import { modules } from '../lib/modules'
 import { createRoutes } from '../lib/routes'
@@ -25,8 +25,8 @@ import * as styles from './App.css'
 
 const App = () => {
   const { formatMessage } = useLocale()
-  const setOrganizationData = useServiceErrorStore.use.setOrganizationData()
-  const organizations = useServiceErrorStore.use.organizations()
+  const setOrganizationData = useOrganizationStore.use.setOrganizationData()
+  const organizations = useOrganizationStore.use.organizations()
   const { data: orgData } = useGetOrganizationsQuery()
 
   useEffect(() => {
@@ -34,7 +34,7 @@ const App = () => {
       setOrganizationData(orgData.getOrganizations.items)
     }
 
-    useServiceErrorStore.subscribe(({ organization, setServiceError }) => {
+    useOrganizationStore.subscribe(({ organization }) => {
       if (organization?.title) {
         toast.error(formatMessage(m.shortThirdPartyServiceErrorMessage))
       }
@@ -60,7 +60,7 @@ const App = () => {
 }
 
 const AppWrapper = () => {
-  const setServiceError = useServiceErrorStore.use.setServiceError()
+  const setServiceError = useOrganizationStore.use.setServiceError()
   const client = useMemo(() => createApolloClient(setServiceError), [])
 
   return (

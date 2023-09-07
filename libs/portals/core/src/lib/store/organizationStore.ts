@@ -13,14 +13,14 @@ type Organization = {
   } | null
 }
 
-export interface ServiceErrorStoreState {
+export interface OrganizationStoreState {
   organizations: Organization[]
   organization?: Organization
   setServiceError(organizationSlug?: string): void
   setOrganizationData(organizationData?: Organization[]): void
 }
 
-const useServiceErrorStoreBase = create<ServiceErrorStoreState>()((set) => ({
+const useOrganizationStoreBase = create<OrganizationStoreState>()((set) => ({
   organizations: [],
   setServiceError: (organizationSlug) =>
     set((state) => ({
@@ -35,4 +35,4 @@ const useServiceErrorStoreBase = create<ServiceErrorStoreState>()((set) => ({
     })),
 }))
 
-export const useServiceErrorStore = createSelectors(useServiceErrorStoreBase)
+export const useOrganizationStore = createSelectors(useOrganizationStoreBase)

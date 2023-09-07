@@ -1,4 +1,5 @@
 import { Colors } from '@island.is/island-ui/theme'
+
 import { Box, Button, Icon, Tag, Text } from '../..'
 import { Icon as IconType } from '../IconRC/iconMap'
 
@@ -52,7 +53,7 @@ const getIconProps = (icon: Variant): { color: Colors; icon: IconType } => {
   }
 }
 
-const getVariant = (variant: Variant) => {
+const variantToColour = (variant: Variant) => {
   switch (variant) {
     case 'error':
       return 'red'
@@ -74,7 +75,7 @@ export const ProblemTemplate = ({
   buttonLink,
   showIcon,
 }: ProblemTemplateProps) => {
-  const convertedVariant = getVariant(variant)
+  const convertedVariant = variantToColour(variant)
   return (
     <Box
       display="flex"

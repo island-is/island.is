@@ -10,7 +10,7 @@ import { RetryLink } from '@apollo/client/link/retry'
 import { onError } from '@apollo/client/link/error'
 import { getOrganizationSlugFromError } from '@island.is/react-spa/shared'
 import { authLink } from '@island.is/auth/react'
-import { ServiceErrorStoreState } from '@island.is/portals/core'
+import { OrganizationStoreState } from '@island.is/portals/core'
 import { getStaticEnv } from '@island.is/shared/utils'
 
 const uri =
@@ -23,7 +23,7 @@ const httpLink = new HttpLink({
 
 const retryLink = new RetryLink()
 
-type ServiceErrorCallback = ServiceErrorStoreState['setServiceError']
+type ServiceErrorCallback = OrganizationStoreState['setServiceError']
 
 const createErrorLink = (setServiceError?: ServiceErrorCallback) =>
   onError((error) => {
