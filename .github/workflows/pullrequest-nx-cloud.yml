@@ -23,7 +23,7 @@ env:
   GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
   MAX_JOBS: 3
   MAX_TASKS_PER_AGENT: 10
-  MAX_AGENTS: 5
+  MAX_AGENTS: 8
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   NX_BRANCH: ${{ github.head_ref || github.ref_name }}
   NX_VERBOSE_LOGGING: true
@@ -284,7 +284,7 @@ jobs:
         run: tar zxvf generated_files.tar.gz
 
       - name: Start NX ci run
-        run: npx nx-cloud start-ci-run
+        run: npx nx-cloud start-ci-run -stop-agents-after=build
 
       - name: Run NX targets
         run: |
