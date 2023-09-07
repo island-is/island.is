@@ -21,9 +21,11 @@ jobs:
     strategy:
         fail-fast: false
     steps:
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
               cache: 'yarn'
+              cache-dependency-path: 'yarn.lock'
               node-version: '18'
       - name: install packages
         run: yarn install
