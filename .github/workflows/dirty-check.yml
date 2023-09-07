@@ -12,20 +12,24 @@ defaults:
   run:
     shell: bash
 
-env:
-  DIRTY_TOKEN: {{ secret.DIRTY_FIX_BOT_TOKEN }}
-  GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
-  jobs:
-    format:
-      runs-on: ubuntu-latest
-    - uses: actions/setup-node@v3
-          with:
-            cache: 'yarn'
-            cache-dependency-path: 'yarn.lock'
-            node-version: '18'
-          - run: yarn install
-  - name: NX format:write
-          if: ${{ github.event_name == 'pull_request' }}
-          run: |
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    env:
+      DIRTY_TOKEN: {{ secret.DIRTY_FIX_BOT_TOKEN }}
+      GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
+    strategy:
+        fail-fast: false
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+              cache: 'yarn'
+              cache-dependency-path: 'yarn.lock'
+              node-version: '18'
+      - name: install packages
+        run: yarn install
+      - name: NX format:write
+        run: |
             ./scripts/ci/20_check-formatting.sh "write"
             ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "$DIRTY_TOKEN"
