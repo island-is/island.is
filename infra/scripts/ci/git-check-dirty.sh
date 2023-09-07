@@ -20,7 +20,7 @@ commit_as_dirty_bot() {
   git config user.name 'andes-it'
   git config user.email 'andes-it@andes.is'
   git commit -m "chore: $action update dirty files"
-  git push "$REPO_URL" head:$branch
+  git push "$REPO_URL" HEAD:$branch
 }
 
 if [[ $(git diff --stat "$abs_path") != '' ]]; then
