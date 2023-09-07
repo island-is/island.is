@@ -46,11 +46,11 @@ module.exports = {
               allowNull: false,
             },
             description_is: {
-              type: Sequelize.STRING(1000),
+              type: Sequelize.TEXT,
               allowNull: true,
             },
             description_en: {
-              type: Sequelize.STRING(1000),
+              type: Sequelize.TEXT,
               allowNull: true,
             },
             external_url_is: {
