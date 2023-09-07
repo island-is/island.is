@@ -1,9 +1,9 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import { commentsInput } from '@island.is/judicial-system-web/messages/Core/commentsInput'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import {
   removeTabsValidateAndSet,

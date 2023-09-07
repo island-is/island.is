@@ -4,8 +4,11 @@ import { useIntl } from 'react-intl'
 import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
+  AppealConclusion,
   CaseFilesAccordionItem,
+  Conclusion,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -13,16 +16,13 @@ import {
   PageHeader,
   PageLayout,
   UserContext,
-  Conclusion,
-  AppealConclusion,
 } from '@island.is/judicial-system-web/src/components'
-import { core } from '@island.is/judicial-system-web/messages'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
+import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
+import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
-import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
