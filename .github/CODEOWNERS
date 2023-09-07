@@ -287,3 +287,5 @@ libs/clients/rsk/relationships/                                                 
 /scripts/postinstall.js                                                                                  @island-is/devops @island-is/core
 /scripts/schemas.js                                                                                      @island-is/devops @island-is/core
 /charts                                                                                                  @island-is/devops
+# This is just for testing
+apps/web/pages/s/dirty-file.ts @lodmfjord
