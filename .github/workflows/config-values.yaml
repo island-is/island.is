@@ -59,10 +59,11 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         with:
           ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
 
       - uses: actions/checkout@v3
         if: ${{ github.ref == 'ref/heads/main' }}
-
+     
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
@@ -94,9 +95,7 @@ jobs:
         run: ./infra/scripts/ci/diff-chart-values-all-charts.sh
 
       - name: Commit any changes to charts
-        if: ${{ github.event_name == 'pull_request' }}
-        env:
-          DIRTY_TOKEN: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+        if: ${{ github.event_name == 'pull_request' }} && github.actor != 'andes-it'
         run: |
           ./infra/scripts/generate-chart-values.sh
           ./infra/scripts/ci/git-check-dirty.sh "charts/" "charts" "dirty bot"

@@ -378,6 +378,7 @@ jobs:
       - uses: actions/checkout@v3
         if: ${{ github.event_name == 'pull_request' }}
         with:
+          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
           ref: ${{ github.event.pull_request.head.ref }}
 
       - uses: actions/checkout@v3
@@ -401,9 +402,7 @@ jobs:
         if: ${{ github.ref == 'ref/heads/main' }}
         run: ./scripts/ci/20_check-formatting.sh "check"
       - name: NX format:write
-        if: ${{ github.event_name == 'pull_request' }}
-        env:
-          DIRTY_TOKEN: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+        if: ${{ github.event_name == 'pull_request' }} && github.actor != 'andes-it'
         run: |
           ./scripts/ci/20_check-formatting.sh "write"
           ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirty bot"

@@ -29,6 +29,7 @@ jobs:
       - name: Yarn install
         run: yarn install --immutable
       - name: NX format:write
+        if: github.event_name == 'pull_request' && github.actor != 'andes-it'
         run: |
           ./scripts/ci/20_check-formatting.sh "write"
           ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirty bot"
