@@ -14,6 +14,8 @@ if [[ $(git diff --stat "$abs_path") != '' ]]; then
   echo "changes found in $rel_path that will be commited"
   git diff "$abs_path"
   git add "$abs_path"
+  git config user.name 'andes-it'
+  git config user.email 'andes-it@andes.is'
   git commit -m "chore: $action update dirty files"
   git push "$REPO_URL"
 else
