@@ -128,7 +128,7 @@ describe('getCasesQueryFilter', () => {
       // Arrange
       const user = {
         role,
-        institution: { id: 'Court Id', type: InstitutionType.COURT },
+        institution: { id: 'Court Id', type: InstitutionType.DISTRICT_COURT },
       }
 
       // Act
@@ -187,7 +187,7 @@ describe('getCasesQueryFilter', () => {
       // Arrange
       const user = {
         role: UserRole.ASSISTANT,
-        institution: { id: 'Court Id', type: InstitutionType.COURT },
+        institution: { id: 'Court Id', type: InstitutionType.DISTRICT_COURT },
       }
 
       // Act
@@ -219,11 +219,14 @@ describe('getCasesQueryFilter', () => {
   })
 
   describe.each(appealsCourtRoles)('given %s role', (role) => {
-    it('should get high court filter', () => {
+    it('should get court of appeals filter', () => {
       // Arrange
       const user = {
         role,
-        institution: { id: 'High Court Id', type: InstitutionType.HIGH_COURT },
+        institution: {
+          id: 'Court of Appeals Id',
+          type: InstitutionType.COURT_OF_APPEALS,
+        },
       }
 
       // Act
