@@ -6,8 +6,8 @@ import {
   FormContext,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
-import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { strings } from './RulingModifiedModal.strings'
 
