@@ -11,6 +11,7 @@ import {
   NotFound,
   UserInfoLine,
   m,
+  ErrorScreen,
   IntroHeader,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
@@ -93,7 +94,7 @@ const Child = () => {
   )
 
   const isChildOrChildOfUser = isChild || isChildOfUser
-  if (!nationalId || error || (!loading && !isChildOrChildOfUser))
+  if (!nationalId || (!loading && !isChildOrChildOfUser && !error))
     return (
       <NotFound
         title={defineMessage({
@@ -102,6 +103,20 @@ const Child = () => {
         })}
       />
     )
+
+  if (error) {
+    return (
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag={formatMessage(m.errorTitle)}
+        title={formatMessage(m.somethingWrong)}
+        children={formatMessage(m.errorFetchModule, {
+          module: formatMessage(m.familyChild).toLowerCase(),
+        })}
+      />
+    )
+  }
 
   return (
     <ChildView>
