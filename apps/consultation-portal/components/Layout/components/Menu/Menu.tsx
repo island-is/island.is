@@ -22,6 +22,7 @@ import { checkActiveHeaderLink } from '../../utils'
 import { useRouter } from 'next/router'
 import { UserContext } from '../../../../context'
 import localization from '../../Layout.json'
+import { LogoText } from '../../../../components/'
 
 type MenuProps = {
   isFrontPage?: boolean
@@ -46,27 +47,34 @@ const Menu = ({ isFrontPage = false }: MenuProps) => {
           <GridRow>
             <GridColumn span="12/12" paddingTop={3} paddingBottom={3}>
               <Columns alignY="center" space={2}>
-                <Column width="content">
-                  {isFrontPage ? <Logo /> : !isMobile && <Logo iconOnly />}
-                </Column>
+                {isFrontPage && (
+                  <Column width="content">
+                    <Logo />
+                  </Column>
+                )}
                 {!isFrontPage && (
                   <>
                     {!isMobile && (
-                      <Column width="content">
-                        <Box
-                          style={{
-                            transform: 'rotate(90deg)',
-                            width: 56,
-                          }}
-                          marginX={1}
-                        >
-                          <Divider />
-                        </Box>
-                      </Column>
+                      <>
+                        <Column width="content">
+                          <Logo iconOnly />
+                        </Column>
+                        <Column width="content">
+                          <Box
+                            style={{
+                              transform: 'rotate(90deg)',
+                              width: 56,
+                            }}
+                            marginX={1}
+                          >
+                            <Divider />
+                          </Box>
+                        </Column>
+                      </>
                     )}
                     <Column width="content">
                       <FocusableBox href="/" alignItems="center">
-                        {isMobile ? <MenuLogoMobile /> : <MenuLogo />}
+                        <LogoText isSmall={isMobile ? true : false} />
                       </FocusableBox>
                     </Column>
                   </>
