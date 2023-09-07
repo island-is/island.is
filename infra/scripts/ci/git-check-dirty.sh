@@ -17,7 +17,7 @@ if [[ $(git diff --stat "$abs_path") != '' ]]; then
   git config user.name 'andes-it'
   git config user.email 'andes-it@andes.is'
   git commit -m "chore: $action update dirty files"
-  git push "$REPO_URL"
+  git push "$REPO_URL" "${GITHUB_REF#refs/heads/}"
 else
   echo "found no unstaged files from $action, nothing to commit"
 fi

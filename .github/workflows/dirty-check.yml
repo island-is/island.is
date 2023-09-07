@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DIRTY_TOKEN: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+      GITHUB_REF: ${{ github.ref }}
     strategy:
         fail-fast: false
     steps:
