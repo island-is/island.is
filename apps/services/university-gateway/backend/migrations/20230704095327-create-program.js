@@ -75,11 +75,11 @@ module.exports = {
               allowNull: false,
             },
             description_is: {
-              type: Sequelize.STRING,
+              type: Sequelize.STRING(1000),
               allowNull: false,
             },
             description_en: {
-              type: Sequelize.STRING,
+              type: Sequelize.STRING(1000),
               allowNull: false,
             },
             duration_in_years: {
@@ -108,27 +108,27 @@ module.exports = {
               allowNull: true,
             },
             admission_requirements_is: {
-              type: Sequelize.STRING,
+              type: Sequelize.STRING(1000),
               allowNull: true,
             },
             admission_requirements_en: {
-              type: Sequelize.STRING,
+              type: Sequelize.STRING(1000),
               allowNull: true,
             },
             study_requirements_is: {
-              type: Sequelize.STRING,
+              type: Sequelize.STRING(1000),
               allowNull: true,
             },
             study_requirements_en: {
-              type: Sequelize.STRING,
+              type: Sequelize.STRING(1000),
               allowNull: true,
             },
             cost_information_is: {
-              type: Sequelize.STRING,
+              type: Sequelize.STRING(1000),
               allowNull: true,
             },
             cost_information_en: {
-              type: Sequelize.STRING,
+              type: Sequelize.STRING(1000),
               allowNull: true,
             },
             created: {

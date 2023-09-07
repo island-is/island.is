@@ -30,11 +30,11 @@ module.exports = {
               allowNull: false,
             },
             description_is: {
-              type: Sequelize.STRING,
+              type: Sequelize.STRING(1000),
               allowNull: true,
             },
             description_en: {
-              type: Sequelize.STRING,
+              type: Sequelize.STRING(1000),
               allowNull: true,
             },
             required: {
