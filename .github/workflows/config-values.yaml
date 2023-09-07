@@ -95,9 +95,11 @@ jobs:
 
       - name: Commit any changes to charts
         if: ${{ github.event_name == 'pull_request' }}
+        env:
+          DIRTY_TOKEN: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
         run: |
           ./infra/scripts/generate-chart-values.sh
-          ./infra/scripts/ci/git-check-dirty.sh "charts/" "charts"
+          ./infra/scripts/ci/git-check-dirty.sh "charts/" "charts" "dirty bot"
 
   check-secrets:
     needs:
