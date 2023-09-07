@@ -8,6 +8,10 @@ on:
       - labeled
   workflow_dispatch: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
 defaults:
   run:
     shell: bash
