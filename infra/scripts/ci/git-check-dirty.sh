@@ -15,11 +15,9 @@ commit_as_github_actions() {
 }
 
 commit_as_dirty_bot() {
-  REPO_URL="https://$DIRTY_TOKEN@github.com/island-is/island.is.git"
   git config user.name 'andes-it'
-  git config user.email 'andes-it@andes.is'
+  git config user.email 'builders@andes.is'
   git commit -m "chore: $action update dirty files"
-  git remote set-url origin $REPO_URL
   git push
 }
 

@@ -16,14 +16,13 @@ defaults:
 jobs:
   format:
     runs-on: ubuntu-latest
-    env:
-      DIRTY_TOKEN: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
     strategy:
         fail-fast: false
     steps:
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
       - uses: actions/setup-node@v3
         with:
               node-version: '18'
