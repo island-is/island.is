@@ -49,9 +49,10 @@ export const ErrorBox = ({
 }: ErrorBoxProps) => {
   const { formatMessage } = useLocale()
   const organizations = useServiceErrorStore.use.organizations()
-  const organizationSlug = useMemo(() => getOrganizationSlugFromError(error), [
-    error,
-  ])
+  const organizationSlug = useMemo(
+    () => getOrganizationSlugFromError(error),
+    [error],
+  )
   const organization = useMemo(
     () => organizations.find((org) => org.slug === organizationSlug),
     [organizationSlug],
