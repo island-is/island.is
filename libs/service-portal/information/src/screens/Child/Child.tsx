@@ -104,7 +104,7 @@ const Child = () => {
       />
     )
 
-  if (error) {
+  if (error && !loading && !child) {
     return (
       <ErrorScreen
         figure="./assets/images/hourglass.svg"
