@@ -18,14 +18,13 @@ commit_as_github_actions() {
 
 commit_as_dirty_bot() {
   REPO_URL="https://$DIRTY_TOKEN@github.com/island-is/island.is.git"
-  branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
   echo "Commting to $branch"
   git diff "$abs_path"
   git add "$abs_path"
   git config user.name 'andes-it'
   git config user.email 'andes-it@andes.is'
   git commit -m "chore: $action update dirty files"
-  git push "$REPO_URL" "${branch}"
+  git push "$REPO_URL"
 }
 
 if [[ $(git diff --stat "$abs_path") != '' ]]; then
