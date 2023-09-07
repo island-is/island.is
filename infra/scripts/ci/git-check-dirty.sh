@@ -10,15 +10,11 @@ owner="${3:-github actions}"
 commit_as_github_actions() {
   git config user.name 'github-actions[bot]'
   git config user.email 'github-actions[bot]@users.noreply.github.com'
-  git commit -m "chore: $action update dirty files"
-  git push
 }
 
 commit_as_dirty_bot() {
   git config user.name 'andes-it'
   git config user.email 'builders@andes.is'
-  git commit -m "chore: $action update dirty files"
-  git push
 }
 
 if [[ $(git diff --stat "$abs_path") != '' ]]; then
@@ -33,6 +29,8 @@ if [[ $(git diff --stat "$abs_path") != '' ]]; then
     echo "Error: Unknown owner!"
     exit 1
   fi
+  git commit -m "chore: $action update dirty files"
+  git push
 else
   echo "found no unstaged files from $action, nothing to commit"
 fi
