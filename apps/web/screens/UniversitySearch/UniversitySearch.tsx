@@ -26,29 +26,39 @@ import {
   TopicCard,
   Input,
   VisuallyHidden,
+  ToastContainer,
+  toast,
+  Hidden,
+  Filter,
+  FilterMultiChoice,
 } from '@island.is/island-ui/core'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useEffect, useRef, useState } from 'react'
 import * as styles from './UniversitySearch.css'
-import { ListViewCard } from '@island.is/web/components'
+import { Comparison, ListViewCard } from '@island.is/web/components'
 import { UNIVERSITY_GATEWAY_BASE_URL } from '@island.is/web/constants'
 import axios from 'axios'
 import { useRouter } from 'next/router'
-import { useNavigate } from 'react-router-dom'
+import Fuse from 'fuse.js'
+import { SearchProducts } from '@island.is/web/utils/useUniversitySearch'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { theme } from '@island.is/island-ui/theme'
 
 const ITEMS_PER_PAGE = 8
 const NUMBER_OF_FILTERS = 6
+const MAX_SELECTED_COMPARISON = 3
 
 interface UniversitySearchProps {
   mockData: any
   data: any
+  mockFiltering: any
 }
 
 interface FilterProps {
   applications: Array<string>
-  studyLevel: Array<string>
+  degreeType: Array<string>
   typeOfStudy: Array<string>
   fieldOfStudy: Array<string>
   university: Array<string>
@@ -61,7 +71,7 @@ interface FilterProps {
 
 const intialFilters = {
   applications: [],
-  studyLevel: [],
+  degreeType: [],
   typeOfStudy: [],
   fieldOfStudy: [],
   university: [],
@@ -81,37 +91,96 @@ export interface ComparisonProps {
 const UniversitySearch: Screen<UniversitySearchProps> = ({
   mockData,
   data,
+  mockFiltering,
 }) => {
   console.log('data here', data)
   // const n = useNamespace(namespace)
-  console.log('mockData', mockData)
+  const { width } = useWindowSize()
+
+  const isMobileScreenWidth = width < theme.breakpoints.md
+  const isTabletScreenWidth = width < theme.breakpoints.lg
+
   const router = useRouter()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedPage, setSelectedPage] = useState(1)
   const [selectedComparison, setSelectedComparison] = useState<
     Array<ComparisonProps>
   >([])
+  const [query, setQuery] = useState('')
   const searchTermHasBeenInitialized = useRef(false)
+  const [filteredResults, setFilteredResults] = useState<
+    Array<Fuse.FuseResult<any>>
+  >(
+    data.map((item, index) => {
+      return { item, refIndex: index, score: 1 }
+    }),
+  )
 
   const [filters, setFilters] = useState<FilterProps>(intialFilters)
 
   const [gridView, setGridView] = useState<boolean>(true)
-
   const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE)
 
   useEffect(() => {
     const comparison = JSON.parse(localStorage.getItem('comparison'))
+    const viewChoice = localStorage.getItem('viewChoice')
     if (!!comparison) {
       setSelectedComparison(comparison)
     }
+
+    if (!!viewChoice) {
+      setGridView(viewChoice === 'true' ? true : false)
+    }
   }, [])
 
-  const getTags = () => {
-    const tags: CategoryCardTag[] = [
-      { label: 'BA gráða', disabled: true, outlined: false },
-      { label: '180 einingar', disabled: true, outlined: false },
-    ]
-    return tags
+  const fuseOptions = {
+    // isCaseSensitive: false,
+    // includeScore: false,
+    // shouldSort: true,
+    // includeMatches: false,
+    // findAllMatches: false,
+    // minMatchCharLength: 1,
+    // location: 0,
+    threshold: 0.2,
+    // distance: 100,
+    // useExtendedSearch: false,
+    // ignoreLocation: false,
+    // ignoreFieldNorm: false,
+    // fieldNormWeight: 1,
+    keys: ['nameIs', 'departmentNameIs', 'descriptionIs', 'degreeType'],
+  }
+
+  const fuseInstance = new Fuse(data, fuseOptions)
+
+  useEffect(() => {
+    let activeFiltersFound = []
+    Object.keys(filters).forEach(function (key, index) {
+      if (filters[key].length > 0) {
+        activeFiltersFound.push({ key, value: filters[key] })
+      }
+    })
+    //if no filters are active, then show no products
+    if (query === '' && activeFiltersFound.length === 0) {
+      resetFilteredList()
+    } else {
+      const results = SearchProducts({
+        fuseInstance,
+        query,
+        activeFilters: activeFiltersFound,
+      })
+
+      setFilteredResults(results)
+    }
+  }, [filters, query])
+
+  const resetFilteredList = () => {
+    const resultProducts: Array<Fuse.FuseResult<any>> = data.map(
+      (item, index) => {
+        return { item, refIndex: index, score: 1 }
+      },
+    )
+
+    setFilteredResults(resultProducts)
   }
 
   const createPrimaryCTA = () => {
@@ -145,8 +214,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     console.log('filters', filters)
   }, [filters])
 
-  const handleCheckbox = (e, dataItem: ComparisonProps) => {
-    console.log('dataItem', dataItem)
+  const handleComparisonChange = (dataItem: ComparisonProps) => {
     let found = false
     selectedComparison.forEach((x) => {
       if (x.id === dataItem.id) {
@@ -155,10 +223,16 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     })
 
     if (!found) {
-      console.log('found')
-      setSelectedComparison([...selectedComparison, dataItem])
+      console.log('selectedComlength', selectedComparison.length)
+      if (selectedComparison.length === MAX_SELECTED_COMPARISON) {
+        //comparison can only include 3 items so display error message if trying to add the fourth
+        toast.error(
+          `Aðeins er hægt að hafa ${MAX_SELECTED_COMPARISON} nám í samanburði`,
+        )
+      } else {
+        setSelectedComparison([...selectedComparison, dataItem])
+      }
     } else {
-      console.log('not found')
       setSelectedComparison(
         selectedComparison.filter((item) => {
           if (item.id !== dataItem.id) {
@@ -168,11 +242,17 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
         }),
       )
     }
-
-    //update localStorage
-    console.log('setting comparison')
-    localStorage.setItem('comparison', JSON.stringify(selectedComparison))
   }
+
+  useEffect(() => {
+    //update localStorage
+    localStorage.setItem('comparison', JSON.stringify(selectedComparison))
+  }, [selectedComparison])
+
+  useEffect(() => {
+    //update localStorage
+    localStorage.setItem('viewChoice', gridView ? 'true' : 'false')
+  }, [gridView])
 
   const predefinedFilterOpenings = []
   for (var x = 0; x < NUMBER_OF_FILTERS; x++) {
@@ -231,299 +311,312 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
           Háskólanám
         </Button>
       </LinkV2>
-      <Box marginBottom={5} marginTop={5}>
-        <Box display="flex" flexDirection="row" columnGap={15}>
-          <Box
-            height="full"
-            className={styles.filterWrapper}
-            display="flex"
-            flexDirection="column"
-          >
-            <Box display="inline" marginBottom={3}>
-              <Text title="Sía niðurstöður" variant="h3" as="h2">
-                Sía leitarniðurstöður
-              </Text>
-            </Box>
+      <Box marginBottom={8} marginTop={5}>
+        <Box
+          display="flex"
+          flexDirection="row"
+          columnGap={15}
+          paddingBottom={8}
+        >
+          <Hidden below="md">
             <Box
-              display="inline"
-              style={{ alignSelf: 'flex-end' }}
-              marginBottom={1}
-            >
-              <Button
-                variant="text"
-                icon="add"
-                size="small"
-                onClick={() =>
-                  isOpen.filter((x) => x === false).length > 0
-                    ? toggleOpenAll()
-                    : toggleCloseAll()
-                }
-              >
-                {`${
-                  isOpen.filter((x) => x === false).length > 0
-                    ? 'opna allar síur'
-                    : 'loka öllum síum'
-                }`}
-              </Button>
-            </Box>
-            <Accordion
-              singleExpand={false}
-              dividerOnTop={false}
-              dividerOnBottom={false}
-            >
-              <AccordionItem
-                id="mini_accordion1"
-                label="Umsóknir"
-                labelUse="p"
-                labelVariant="h5"
-                iconVariant="small"
-                expanded={isOpen[0]}
-                onToggle={() => toggleIsOpen(0, !isOpen[0])}
-              >
-                <Stack space={[1, 1, 2]}>
-                  <Checkbox
-                    label="Opið fyrir umsóknir"
-                    id="opid"
-                    value="open"
-                    checked={
-                      filters.applications.filter((x) => x === 'open').length >
-                      0
-                    }
-                    onChange={(e) => checkboxEventHandler(e, 'applications')}
-                  />
-                </Stack>
-                <Box
-                  display="flex"
-                  width="full"
-                  flexDirection="row"
-                  justifyContent="flexEnd"
-                  marginTop={1}
-                >
-                  <Button
-                    variant="text"
-                    icon="reload"
-                    size="small"
-                    onClick={() => setFilters({ ...filters, applications: [] })}
-                  >
-                    Hreinsa val
-                  </Button>
-                </Box>
-              </AccordionItem>
-
-              <AccordionItem
-                id="mini_accordion2"
-                label="Námstig"
-                labelUse="p"
-                labelVariant="h5"
-                iconVariant="small"
-                expanded={isOpen[1]}
-                onToggle={() => toggleIsOpen(1, !isOpen[1])}
-              >
-                <Stack space={[1, 1, 1]}>
-                  <Checkbox
-                    label="Grunndiplóma"
-                    id="grunn"
-                    value="diploma"
-                    checked={
-                      filters.studyLevel.filter((x) => x === 'diploma').length >
-                      0
-                    }
-                    onChange={(e) => checkboxEventHandler(e, 'studyLevel')}
-                  />
-                  <Checkbox
-                    label="Grunnnám"
-                    id="undergrad"
-                    value="undergrad"
-                    checked={
-                      filters.studyLevel.filter((x) => x === 'undergrad')
-                        .length > 0
-                    }
-                    onChange={(e) => checkboxEventHandler(e, 'studyLevel')}
-                  />
-                  <Checkbox
-                    label="Viðbótardiplóma"
-                    id="vidbotar"
-                    value="additionalDiploma"
-                    checked={
-                      filters.studyLevel.filter(
-                        (x) => x === 'additionalDiploma',
-                      ).length > 0
-                    }
-                    onChange={(e) => checkboxEventHandler(e, 'studyLevel')}
-                  />
-                  <Checkbox
-                    label="Meistaranám"
-                    id="master"
-                    value="masters"
-                    checked={
-                      filters.studyLevel.filter((x) => x === 'masters').length >
-                      0
-                    }
-                    onChange={(e) => checkboxEventHandler(e, 'studyLevel')}
-                  />
-                  <Checkbox
-                    label="Doktorsnám"
-                    id="dr"
-                    value="doctors"
-                    checked={
-                      filters.studyLevel.filter((x) => x === 'doctors').length >
-                      0
-                    }
-                    onChange={(e) => checkboxEventHandler(e, 'studyLevel')}
-                  />
-                </Stack>
-                <Box
-                  display="flex"
-                  width="full"
-                  flexDirection="row"
-                  justifyContent="flexEnd"
-                  marginTop={1}
-                >
-                  <Button
-                    variant="text"
-                    icon="reload"
-                    size="small"
-                    onClick={() => setFilters({ ...filters, studyLevel: [] })}
-                  >
-                    Hreinsa val
-                  </Button>
-                </Box>
-              </AccordionItem>
-
-              <AccordionItem
-                id="mini_accordion3"
-                label="Misseri"
-                labelUse="p"
-                labelVariant="h5"
-                iconVariant="small"
-                expanded={isOpen[2]}
-                onToggle={() => toggleIsOpen(2, !isOpen[2])}
-              >
-                <Stack space={[1, 1, 2]}>
-                  <Checkbox
-                    label="Haustmisseri"
-                    id="haust"
-                    value="fall"
-                    checked={
-                      filters.studyTime.filter((x) => x === 'fall').length > 0
-                    }
-                    onChange={(e) => checkboxEventHandler(e, 'studyTime')}
-                  />
-                  <Checkbox
-                    label="Vormisseri"
-                    id="vor"
-                    value="spring"
-                    checked={
-                      filters.studyTime.filter((x) => x === 'spring').length > 0
-                    }
-                    onChange={(e) => checkboxEventHandler(e, 'studyTime')}
-                  />
-                </Stack>
-                <Box
-                  display="flex"
-                  width="full"
-                  flexDirection="row"
-                  justifyContent="flexEnd"
-                  marginTop={1}
-                >
-                  <Button
-                    variant="text"
-                    icon="reload"
-                    size="small"
-                    onClick={() => setFilters({ ...filters, studyTime: [] })}
-                  >
-                    Hreinsa val
-                  </Button>
-                </Box>
-              </AccordionItem>
-
-              <AccordionItem
-                id="mini_accordion4"
-                label="Form kennslu"
-                labelUse="p"
-                labelVariant="h5"
-                iconVariant="small"
-                expanded={isOpen[3]}
-                onToggle={() => toggleIsOpen(3, !isOpen[3])}
-              >
-                <Stack space={[1, 1, 2]}>
-                  <Checkbox
-                    label="Staðnám"
-                    id="stadnam"
-                    value="onSite"
-                    checked={
-                      filters.typeOfStudy.filter((x) => x === 'onSite').length >
-                      0
-                    }
-                    onChange={(e) => checkboxEventHandler(e, 'typeOfStudy')}
-                  />
-                  <Checkbox
-                    label="Fjarnám"
-                    id="fjarnam"
-                    value="away"
-                    checked={
-                      filters.typeOfStudy.filter((x) => x === 'away').length > 0
-                    }
-                    onChange={(e) => checkboxEventHandler(e, 'typeOfStudy')}
-                  />
-                  <Checkbox
-                    label="Blandað nám"
-                    id="blandadnam"
-                    value="mixed"
-                    checked={
-                      filters.typeOfStudy.filter((x) => x === 'mixed').length >
-                      0
-                    }
-                    onChange={(e) => checkboxEventHandler(e, 'typeOfStudy')}
-                  />
-                  <Checkbox
-                    label="Dreifinám"
-                    id="dreifinam"
-                    value="spread"
-                    checked={
-                      filters.typeOfStudy.filter((x) => x === 'spread').length >
-                      0
-                    }
-                    onChange={(e) => checkboxEventHandler(e, 'typeOfStudy')}
-                  />
-                </Stack>
-                <Box
-                  display="flex"
-                  width="full"
-                  flexDirection="row"
-                  justifyContent="flexEnd"
-                  marginTop={1}
-                >
-                  <Button
-                    variant="text"
-                    icon="reload"
-                    size="small"
-                    onClick={() => setFilters({ ...filters, typeOfStudy: [] })}
-                  >
-                    Hreinsa val
-                  </Button>
-                </Box>
-              </AccordionItem>
-            </Accordion>
-            <Box
-              background="blue100"
-              width="full"
+              height="full"
+              className={styles.filterWrapper}
               display="flex"
-              flexDirection="row"
-              alignItems="center"
-              justifyContent="center"
-              style={{ height: 72 }}
+              flexDirection="column"
             >
-              <Button
-                variant="text"
-                icon="reload"
-                size="small"
-                onClick={() => setFilters(intialFilters)}
+              <Box display="inline" marginBottom={3}>
+                <Text title="Sía niðurstöður" variant="h3" as="h2">
+                  Sía leitarniðurstöður
+                </Text>
+              </Box>
+              <Box
+                display="inline"
+                style={{ alignSelf: 'flex-end' }}
+                marginBottom={1}
               >
-                Hreinsa allar síur
-              </Button>
+                <Button
+                  variant="text"
+                  icon="add"
+                  size="small"
+                  onClick={() =>
+                    isOpen.filter((x) => x === false).length > 0
+                      ? toggleOpenAll()
+                      : toggleCloseAll()
+                  }
+                >
+                  {`${
+                    isOpen.filter((x) => x === false).length > 0
+                      ? 'opna allar síur'
+                      : 'loka öllum síum'
+                  }`}
+                </Button>
+              </Box>
+              <Accordion
+                singleExpand={false}
+                dividerOnTop={false}
+                dividerOnBottom={false}
+              >
+                <AccordionItem
+                  id="mini_accordion1"
+                  label="Umsóknir"
+                  labelUse="p"
+                  labelVariant="h5"
+                  iconVariant="small"
+                  expanded={isOpen[0]}
+                  onToggle={() => toggleIsOpen(0, !isOpen[0])}
+                >
+                  <Stack space={[1, 1, 2]}>
+                    <Checkbox
+                      label="Opið fyrir umsóknir"
+                      id="opid"
+                      value="open"
+                      checked={
+                        filters.applications.filter((x) => x === 'open')
+                          .length > 0
+                      }
+                      onChange={(e) => checkboxEventHandler(e, 'applications')}
+                    />
+                  </Stack>
+                  <Box
+                    display="flex"
+                    width="full"
+                    flexDirection="row"
+                    justifyContent="flexEnd"
+                    marginTop={1}
+                  >
+                    <Button
+                      variant="text"
+                      icon="reload"
+                      size="small"
+                      onClick={() =>
+                        setFilters({ ...filters, applications: [] })
+                      }
+                    >
+                      Hreinsa val
+                    </Button>
+                  </Box>
+                </AccordionItem>
+
+                <AccordionItem
+                  id="mini_accordion2"
+                  label="Námstig"
+                  labelUse="p"
+                  labelVariant="h5"
+                  iconVariant="small"
+                  expanded={isOpen[1]}
+                  onToggle={() => toggleIsOpen(1, !isOpen[1])}
+                >
+                  <Stack space={[1, 1, 1]}>
+                    <Checkbox
+                      label="Grunndiplóma"
+                      id="grunn"
+                      value="diploma"
+                      checked={
+                        filters.degreeType.filter((x) => x === 'diploma')
+                          .length > 0
+                      }
+                      onChange={(e) => checkboxEventHandler(e, 'degreeType')}
+                    />
+                    <Checkbox
+                      label="Grunnnám"
+                      id="undergrad"
+                      value="UNDERGRADUATE"
+                      checked={
+                        filters.degreeType.filter((x) => x === 'UNDERGRADUATE')
+                          .length > 0
+                      }
+                      onChange={(e) => checkboxEventHandler(e, 'degreeType')}
+                    />
+                    <Checkbox
+                      label="Viðbótardiplóma"
+                      id="vidbotar"
+                      value="additionalDiploma"
+                      checked={
+                        filters.degreeType.filter(
+                          (x) => x === 'additionalDiploma',
+                        ).length > 0
+                      }
+                      onChange={(e) => checkboxEventHandler(e, 'degreeType')}
+                    />
+                    <Checkbox
+                      label="Meistaranám"
+                      id="master"
+                      value="MASTERS"
+                      checked={
+                        filters.degreeType.filter((x) => x === 'MASTERS')
+                          .length > 0
+                      }
+                      onChange={(e) => checkboxEventHandler(e, 'degreeType')}
+                    />
+                    <Checkbox
+                      label="Doktorsnám"
+                      id="dr"
+                      value="DOCTORAL"
+                      checked={
+                        filters.degreeType.filter((x) => x === 'DOCTORAL')
+                          .length > 0
+                      }
+                      onChange={(e) => checkboxEventHandler(e, 'degreeType')}
+                    />
+                  </Stack>
+                  <Box
+                    display="flex"
+                    width="full"
+                    flexDirection="row"
+                    justifyContent="flexEnd"
+                    marginTop={1}
+                  >
+                    <Button
+                      variant="text"
+                      icon="reload"
+                      size="small"
+                      onClick={() => setFilters({ ...filters, degreeType: [] })}
+                    >
+                      Hreinsa val
+                    </Button>
+                  </Box>
+                </AccordionItem>
+
+                <AccordionItem
+                  id="mini_accordion3"
+                  label="Misseri"
+                  labelUse="p"
+                  labelVariant="h5"
+                  iconVariant="small"
+                  expanded={isOpen[2]}
+                  onToggle={() => toggleIsOpen(2, !isOpen[2])}
+                >
+                  <Stack space={[1, 1, 2]}>
+                    <Checkbox
+                      label="Haustmisseri"
+                      id="haust"
+                      value="fall"
+                      checked={
+                        filters.studyTime.filter((x) => x === 'fall').length > 0
+                      }
+                      onChange={(e) => checkboxEventHandler(e, 'studyTime')}
+                    />
+                    <Checkbox
+                      label="Vormisseri"
+                      id="vor"
+                      value="spring"
+                      checked={
+                        filters.studyTime.filter((x) => x === 'spring').length >
+                        0
+                      }
+                      onChange={(e) => checkboxEventHandler(e, 'studyTime')}
+                    />
+                  </Stack>
+                  <Box
+                    display="flex"
+                    width="full"
+                    flexDirection="row"
+                    justifyContent="flexEnd"
+                    marginTop={1}
+                  >
+                    <Button
+                      variant="text"
+                      icon="reload"
+                      size="small"
+                      onClick={() => setFilters({ ...filters, studyTime: [] })}
+                    >
+                      Hreinsa val
+                    </Button>
+                  </Box>
+                </AccordionItem>
+
+                <AccordionItem
+                  id="mini_accordion4"
+                  label="Form kennslu"
+                  labelUse="p"
+                  labelVariant="h5"
+                  iconVariant="small"
+                  expanded={isOpen[3]}
+                  onToggle={() => toggleIsOpen(3, !isOpen[3])}
+                >
+                  <Stack space={[1, 1, 2]}>
+                    <Checkbox
+                      label="Staðnám"
+                      id="stadnam"
+                      value="onSite"
+                      checked={
+                        filters.typeOfStudy.filter((x) => x === 'onSite')
+                          .length > 0
+                      }
+                      onChange={(e) => checkboxEventHandler(e, 'typeOfStudy')}
+                    />
+                    <Checkbox
+                      label="Fjarnám"
+                      id="fjarnam"
+                      value="away"
+                      checked={
+                        filters.typeOfStudy.filter((x) => x === 'away').length >
+                        0
+                      }
+                      onChange={(e) => checkboxEventHandler(e, 'typeOfStudy')}
+                    />
+                    <Checkbox
+                      label="Blandað nám"
+                      id="blandadnam"
+                      value="mixed"
+                      checked={
+                        filters.typeOfStudy.filter((x) => x === 'mixed')
+                          .length > 0
+                      }
+                      onChange={(e) => checkboxEventHandler(e, 'typeOfStudy')}
+                    />
+                    <Checkbox
+                      label="Dreifinám"
+                      id="dreifinam"
+                      value="spread"
+                      checked={
+                        filters.typeOfStudy.filter((x) => x === 'spread')
+                          .length > 0
+                      }
+                      onChange={(e) => checkboxEventHandler(e, 'typeOfStudy')}
+                    />
+                  </Stack>
+                  <Box
+                    display="flex"
+                    width="full"
+                    flexDirection="row"
+                    justifyContent="flexEnd"
+                    marginTop={1}
+                  >
+                    <Button
+                      variant="text"
+                      icon="reload"
+                      size="small"
+                      onClick={() =>
+                        setFilters({ ...filters, typeOfStudy: [] })
+                      }
+                    >
+                      Hreinsa val
+                    </Button>
+                  </Box>
+                </AccordionItem>
+              </Accordion>
+              <Box
+                background="blue100"
+                width="full"
+                display="flex"
+                flexDirection="row"
+                alignItems="center"
+                justifyContent="center"
+                style={{ height: 72 }}
+              >
+                <Button
+                  variant="text"
+                  icon="reload"
+                  size="small"
+                  onClick={() => setFilters(intialFilters)}
+                >
+                  Hreinsa allar síur
+                </Button>
+              </Box>
             </Box>
-          </Box>
+          </Hidden>
 
           <Box width="full">
             <Text
@@ -546,6 +639,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 setSelectedPage(1)
                 setSearchTerm(e.target.value)
                 searchTermHasBeenInitialized.current = true
+                setQuery(e.target.value)
               }}
             />
             <ContentBlock>
@@ -585,74 +679,125 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               </Box>
             </ContentBlock>
 
+            <Hidden above="md">
+              <Box width="full" marginTop={2}>
+                <Filter
+                  resultCount={filteredResults?.length ?? 0}
+                  variant={'dialog'}
+                  labelClear="Hreinsa"
+                  labelClearAll="Hreinsa allar síur"
+                  labelOpen="Opna"
+                  labelClose="Loka"
+                  labelResult="Skoða niðurstöður"
+                  labelTitle="Sía niðurstöður"
+                  onFilterClear={() => setFilters(intialFilters)}
+                >
+                  <FilterMultiChoice
+                    labelClear="Hreinsa val"
+                    onChange={({ categoryId, selected }) => {
+                      setSelectedPage(1)
+                      // setParameters((prevParameters) => ({
+                      //   ...prevParameters,
+                      //   [categoryId]: selected,
+                      // }))
+                    }}
+                    onClear={(categoryId) => {
+                      setSelectedPage(1)
+                      // setParameters((prevParameters) => ({
+                      //   ...prevParameters,
+                      //   [categoryId]: [],
+                      // }))
+                    }}
+                    categories={mockFiltering.map((filter) => {
+                      return {
+                        id: 'blabla',
+                        label: filter.label,
+                        selected: [],
+                        filters: filter.options,
+                      }
+                    })}
+                  ></FilterMultiChoice>
+                </Filter>
+              </Box>
+            </Hidden>
+
             <Box
               display="flex"
               flexDirection="row"
               justifyContent="spaceBetween"
-              marginTop={5}
-              marginBottom={5}
+              marginTop={isTabletScreenWidth || isMobileScreenWidth ? 2 : 5}
+              marginBottom={isTabletScreenWidth || isMobileScreenWidth ? 2 : 5}
             >
-              <Text variant="intro">{`${data.length} Leitarniðurstöður`}</Text>
-              <Box>
-                <button
-                  onClick={() => setGridView(true)}
-                  className={styles.iconButton}
-                >
-                  <VisuallyHidden>Breyta niðurstöðum í töflu</VisuallyHidden>
-                  <Icon
-                    icon={'gridView'}
-                    type="outline"
-                    color={gridView ? 'blue400' : 'dark200'}
-                  />
-                </button>
-                <button
-                  onClick={() => setGridView(false)}
-                  className={styles.iconButton}
-                >
-                  <VisuallyHidden>Breyta niðurstöðum í lista</VisuallyHidden>
-                  <Icon
-                    icon={'listView'}
-                    type="outline"
-                    color={gridView ? 'dark200' : 'blue400'}
-                  />
-                </button>
-              </Box>
+              <Text variant="intro">{`${filteredResults.length} Leitarniðurstöður`}</Text>
+              <Hidden below="md">
+                <Box>
+                  <button
+                    onClick={() => setGridView(true)}
+                    className={styles.iconButton}
+                  >
+                    <VisuallyHidden>Breyta niðurstöðum í töflu</VisuallyHidden>
+                    <Icon
+                      icon={'gridView'}
+                      type="outline"
+                      color={gridView ? 'blue400' : 'dark200'}
+                    />
+                  </button>
+                  <button
+                    onClick={() => setGridView(false)}
+                    className={styles.iconButton}
+                  >
+                    <VisuallyHidden>Breyta niðurstöðum í lista</VisuallyHidden>
+                    <Icon
+                      icon={'listView'}
+                      type="outline"
+                      color={gridView ? 'dark200' : 'blue400'}
+                    />
+                  </button>
+                </Box>
+              </Hidden>
             </Box>
 
-            {gridView && (
+            {gridView && !isMobileScreenWidth && !isTabletScreenWidth && (
               <Box>
-                {data &&
-                  data.map((dataItem, index) => {
+                {filteredResults &&
+                  filteredResults.map((item, index) => {
+                    const dataItem = item.item
                     return (
                       <Box marginBottom={3} key={index}>
-                        <CategoryCard
+                        <ActionCategoryCard
                           key={index}
+                          href="/ahh"
                           heading={dataItem.nameIs}
                           text={dataItem.descriptionIs}
-                          tags={getTags()}
                           icon={
                             <img
                               src="https://www.ru.is/media/HR_logo_hringur_hires.jpg"
                               alt={`Logo fyrir ${dataItem.nameIs}`}
                             />
                           }
-                          component={Button}
+                          customBottomContent={
+                            <Checkbox
+                              label="Setja í samanburð"
+                              labelVariant="default"
+                              onChange={() =>
+                                handleComparisonChange({
+                                  id: dataItem.id,
+                                  nameIs: dataItem.nameIs,
+                                  iconSrc:
+                                    'https://www.ru.is/media/HR_logo_hringur_hires.jpg',
+                                })
+                              }
+                              checked={
+                                selectedComparison.filter(
+                                  (x) => x.id === dataItem.id,
+                                ).length > 0
+                              }
+                              id={dataItem.id}
+                            />
+                          }
                           sidePanelConfig={{
                             cta: createPrimaryCTA(),
-                            isChecked:
-                              selectedComparison.filter(
-                                (x) => x.id === dataItem.id,
-                              ).length > 0,
-                            onCheck: (e) =>
-                              handleCheckbox(e, {
-                                id: dataItem.id,
-                                nameIs: dataItem.nameIs,
-                                iconSrc:
-                                  'https://www.ru.is/media/HR_logo_hringur_hires.jpg',
-                              }),
                             buttonLabel: 'Sækja um',
-                            checkboxLabel: 'Setja í samanburð',
-                            checkboxId: dataItem.id,
                             items: [
                               {
                                 icon: (
@@ -722,13 +867,23 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                   })}
               </Box>
             )}
-            {!gridView && (
+            {(!gridView || isMobileScreenWidth || isTabletScreenWidth) && (
               <GridContainer className={styles.gridContainer}>
                 <GridRow rowGap={3}>
-                  {mockData &&
-                    mockData.map((dataItem, index) => {
+                  {filteredResults &&
+                    filteredResults.map((item, index) => {
+                      const dataItem = item.item
                       return (
-                        <GridColumn span="1/3" key={index}>
+                        <GridColumn
+                          span={
+                            isMobileScreenWidth
+                              ? '1/1'
+                              : isTabletScreenWidth
+                              ? '1/2'
+                              : '1/3'
+                          }
+                          key={index}
+                        >
                           <ListViewCard
                             key={index}
                             iconText="Háskólinn í Reykjavík"
@@ -740,12 +895,17 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                               />
                             }
                             onCheck={(e) =>
-                              handleCheckbox(e, {
+                              handleComparisonChange({
                                 id: dataItem.id,
                                 nameIs: dataItem.nameIs,
                                 iconSrc:
                                   'https://www.ru.is/media/HR_logo_hringur_hires.jpg',
                               })
+                            }
+                            checked={
+                              selectedComparison.filter(
+                                (x) => x.id === dataItem.id,
+                              ).length > 0
                             }
                             buttonLabel="Sækja um"
                             checkboxLabel="Setja í samanburð"
@@ -822,7 +982,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               </GridContainer>
             )}
 
-            <Box marginTop={2}>
+            <Box
+              marginTop={2}
+              marginBottom={selectedComparison.length > 0 ? 4 : 0}
+            >
               <Pagination
                 variant="purple"
                 page={selectedPage}
@@ -842,70 +1005,146 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
             </Box>
           </Box>
         </Box>
-        {selectedComparison.length > 0 && (
-          <Box display="flex" flexDirection="column">
-            <Box paddingLeft={2}>
-              <Text variant="h3">Nám í samanburði</Text>
+        {selectedComparison.length > 0 &&
+          !isTabletScreenWidth &&
+          !isMobileScreenWidth && (
+            <Box display="flex" flexDirection="column">
+              <Box paddingLeft={2} paddingBottom={2}>
+                <Text variant="h3">Nám í samanburði</Text>
+              </Box>
+              <Box
+                display="flex"
+                flexDirection="row"
+                justifyContent="spaceBetween"
+              >
+                <Box
+                  display="flex"
+                  flexDirection="row"
+                  flexWrap="wrap"
+                  rowGap={1}
+                  width="full"
+                >
+                  {selectedComparison.map((item) => {
+                    return (
+                      <GridColumn span="1/3" key={item.id}>
+                        <Comparison>
+                          <Box
+                            display="flex"
+                            flexDirection="row"
+                            justifyContent="spaceBetween"
+                            alignItems="center"
+                            width="full"
+                          >
+                            <Box
+                              display="flex"
+                              flexDirection="row"
+                              alignItems="center"
+                              paddingRight={3}
+                              style={{ maxWidth: '90%' }}
+                            >
+                              <img
+                                src="https://www.ru.is/media/HR_logo_hringur_hires.jpg"
+                                className={styles.icon}
+                                alt={`Logo fyrir ${item.nameIs}`}
+                                style={{ paddingRight: 10 }}
+                              />
+                              <Text variant="h5" truncate>
+                                {item.nameIs}
+                              </Text>
+                            </Box>
+                            <Box
+                              display="flex"
+                              flexDirection="row"
+                              alignItems="center"
+                            >
+                              <button
+                                onClick={() =>
+                                  handleComparisonChange({
+                                    id: item.id,
+                                    nameIs: item.nameIs,
+                                    iconSrc:
+                                      'https://www.ru.is/media/HR_logo_hringur_hires.jpg',
+                                  })
+                                }
+                                className={styles.removeButton}
+                              >
+                                <Icon
+                                  className={styles.closeIcon}
+                                  icon={'close'}
+                                  type="outline"
+                                  color="blue400"
+                                />
+                              </button>
+                            </Box>
+                          </Box>
+                        </Comparison>
+                      </GridColumn>
+                    )
+                  })}
+                </Box>
+                <Button onClick={() => routeToComparison()}>
+                  <Text variant="h5" whiteSpace="nowrap" color="white">
+                    Skoða samanburð
+                  </Text>
+                </Button>
+              </Box>
             </Box>
+          )}
+        {selectedComparison.length > 0 &&
+          (isTabletScreenWidth || isMobileScreenWidth) && (
             <Box
               display="flex"
-              flexDirection="row"
-              justifyContent="spaceBetween"
+              flexDirection="column"
+              width="full"
+              background="white"
+              padding={3}
+              position="fixed"
+              bottom={0}
+              right={0}
+              left={0}
+              zIndex={10}
+              borderTopWidth="standard"
+              borderColor="blue300"
+              boxShadow="strong"
             >
               <Box
                 display="flex"
                 flexDirection="row"
-                flexWrap="wrap"
-                rowGap={1}
+                justifyContent="spaceBetween"
+                width="full"
+                alignItems="flexStart"
+                paddingBottom={2}
               >
-                {selectedComparison.map((item) => {
-                  return (
-                    <GridColumn span="1/3" key={item.id}>
-                      <TopicCard size="small">
-                        <Box
-                          display="flex"
-                          flexDirection="row"
-                          justifyContent="spaceBetween"
-                          alignItems="center"
-                        >
-                          <Box
-                            display="flex"
-                            flexDirection="row"
-                            alignItems="center"
-                          >
-                            <img
-                              src="https://www.ru.is/media/HR_logo_hringur_hires.jpg"
-                              className={styles.icon}
-                              alt={`Logo fyrir ${item.nameIs}`}
-                            />
-                            <Text variant="h5" truncate>
-                              {item.nameIs}
-                            </Text>
-                          </Box>
-                          <Box>
-                            <Button variant="text" fluid>
-                              <Icon
-                                icon={'close'}
-                                type="outline"
-                                color="blue400"
-                              />
-                            </Button>
-                          </Box>
-                        </Box>
-                      </TopicCard>
-                    </GridColumn>
-                  )
-                })}
+                <Text variant="h3">Samanburður</Text>
+                <Button
+                  variant="text"
+                  icon="close"
+                  textSize="md"
+                  size="small"
+                  onClick={() => setSelectedComparison([])}
+                >
+                  Hreinsa val
+                </Button>
               </Box>
-              <Button onClick={() => routeToComparison()}>
-                <Text variant="h5" whiteSpace="nowrap" color="white">
+              <Box
+                display="flex"
+                flexDirection="row"
+                justifyContent="spaceBetween"
+                width="full"
+                alignItems="center"
+              >
+                <Button variant="primary" onClick={() => routeToComparison()}>
                   Skoða samanburð
-                </Text>
-              </Button>
+                </Button>
+                <Text
+                  variant="h5"
+                  as="span"
+                >{`${selectedComparison.length} / ${MAX_SELECTED_COMPARISON}`}</Text>
+              </Box>
             </Box>
-          </Box>
-        )}
+          )}
       </Box>
+      <ToastContainer></ToastContainer>
     </GridContainer>
   )
 }
@@ -988,6 +1227,35 @@ UniversitySearch.getProps = async ({ apolloClient, locale }) => {
   //   return response.data.results[0]
   // }
 
+  const mockFiltering = [
+    {
+      label: 'Námsstig',
+      value: 'degreeType',
+      options: [
+        {
+          label: 'Grunndiplóma',
+          value: 'GRUNN',
+        },
+        {
+          label: 'Grunnnám',
+          value: 'UNDERGRADUATE',
+        },
+        {
+          label: 'Viðbótardiplóma',
+          value: 'ADDITIONAL',
+        },
+        {
+          label: 'Meistaranám',
+          value: 'MASTERS',
+        },
+        {
+          label: 'Doktorsnám',
+          value: 'DOCTORS',
+        },
+      ],
+    },
+  ]
+
   const mockData = [
     {
       id: '1234',
@@ -1025,7 +1293,8 @@ UniversitySearch.getProps = async ({ apolloClient, locale }) => {
   return {
     mockData,
     data,
+    mockFiltering,
   }
 }
 
-export default withMainLayout(UniversitySearch)
+export default withMainLayout(UniversitySearch, { showFooter: false })

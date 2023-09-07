@@ -10,31 +10,21 @@ import { Inline } from '../Inline/Inline'
 import { Tag, TagProps } from '../Tag/Tag'
 import { Hyphen } from '../Hyphen/Hyphen'
 import { Text, TextProps } from '../Text/Text'
-import { Button, ButtonSizes, ButtonTypes } from '../Button/Button'
-import { Icon as IconType } from '../IconRC/iconMap'
 
 import * as styles from './ActionCategoryCard.css'
 import { Checkbox } from '../Checkbox/Checkbox'
+import { Button, ButtonSizes, ButtonTypes } from '../Button/Button'
+import { Icon as IconType } from '../IconRC/iconMap'
+import { LinkV2 } from '../Link/LinkV2'
 
 export const STACK_WIDTH = 280
 
-type Tag = {
+export type CategoryCardTag = {
   label: string
   href?: string
   onClick?: () => void
   disabled?: boolean
-}
-
-type SidePanelItems = {
-  icon?: React.ReactNode
-  title: string
-}
-
-type SidePanelConfigProps = {
-  onCheck?: () => void
-  buttonLabel?: string
-  checkboxLabel?: string
-  items?: Array<SidePanelItems>
+  outlined?: boolean
 }
 
 export type CTAProps = {
@@ -50,16 +40,26 @@ export type CTAProps = {
   disabled?: boolean
 }
 
+type SidePanelItems = {
+  icon?: React.ReactNode
+  title: string
+}
+
+type SidePanelConfigProps = {
+  buttonLabel?: string
+  items?: Array<SidePanelItems>
+  cta?: CTAProps
+}
+
 export type ActionCategoryCardProps = {
   ref?: UseMeasureRef<HTMLElement>
   width?: number
   icon?: React.ReactElement
-  iconText?: string
   heading: string
   headingAs?: TextProps['as']
   headingVariant?: TextProps['variant']
   text: string
-  tags?: Tag[]
+  tags?: CategoryCardTag[]
   tagOptions?: Pick<TagProps, 'hyphenate' | 'truncate' | 'textLeft'>
   href?: string
   colorScheme?: 'blue' | 'purple' | 'red'
@@ -72,22 +72,11 @@ export type ActionCategoryCardProps = {
   /** Hyphenate the heading */
   hyphenate?: boolean
   to?: string
-  component?: ElementType
 
-  secondaryTag?: Tag
-
-  cta?: CTAProps
-  secondaryCta?: CTAProps
-
-  //TODO: DOCUMENT THIS: NEW ITEMS FOR HASKOLANAM
+  //TODO: DOCUMENT THIS
   sidePanelConfig?: SidePanelConfigProps
+  customBottomContent?: React.ReactNode
 }
-
-const defaultCta = {
-  variant: 'primary',
-  icon: 'arrowForward',
-  onClick: () => null,
-} as const
 
 const colorSchemes = {
   blue: {
@@ -107,24 +96,7 @@ const colorSchemes = {
   },
 } as const
 
-export type ActionCategoryCardImage =
-  | {
-      src: string
-      alt: string
-      objectFit?: ObjectFitProperty
-      customImage?: never
-    }
-  | {
-      src?: never
-      alt?: never
-      objectFit?: never
-      customImage?: ReactNode
-    }
-
-const Component = forwardRef<
-  HTMLElement,
-  ActionCategoryCardProps & ActionCategoryCardImage
->(
+const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
   (
     {
       width,
@@ -133,62 +105,37 @@ const Component = forwardRef<
       headingAs = 'h3',
       headingVariant = 'h3',
       icon,
-      iconText,
       text,
       href = '/',
       tags = [],
       colorScheme = 'blue',
       truncateHeading = false,
-      src,
-      alt,
-      objectFit = 'contain',
-      customImage,
+      sidePanelConfig,
       hyphenate = false,
       tagOptions,
-      secondaryTag,
       autoStack,
-      sidePanelConfig,
-      cta: _cta,
-      secondaryCta,
+      customBottomContent,
       ...rest
     },
     ref,
   ) => {
     const { borderColor, textColor, tagVariant } = colorSchemes[colorScheme]
-    const cta = { ...defaultCta, ..._cta }
 
     const hasTags = Array.isArray(tags) && tags.length > 0
-    const hasImage = !!src || !!customImage
-
     const shouldStack = width && width < stackWidth
 
     const renderCTA = () => {
-      const hasCTA = !!cta.label
-      const hasSecondaryCTA = hasCTA && secondaryCta?.label
-
+      const hasCTA = !!sidePanelConfig?.cta?.label
+      const cta = sidePanelConfig?.cta
       return (
-        hasCTA && (
+        hasCTA &&
+        cta && (
           <Box
             paddingTop="gutter"
             display="flex"
             justifyContent={['flexStart', 'flexEnd']}
-            alignItems="center"
             flexDirection="row"
           >
-            {hasSecondaryCTA && (
-              <Box paddingRight={2} paddingLeft={2}>
-                <Button
-                  variant={secondaryCta.variant}
-                  size={secondaryCta?.size}
-                  onClick={secondaryCta?.onClick}
-                  icon={secondaryCta?.icon}
-                  iconType={secondaryCta?.iconType}
-                  disabled={secondaryCta?.disabled}
-                >
-                  {secondaryCta?.label}
-                </Button>
-              </Box>
-            )}
             <Box>
               <Button
                 {...(cta.buttonType ?? { variant: cta.variant })}
@@ -197,6 +144,7 @@ const Component = forwardRef<
                 disabled={cta.disabled}
                 icon={cta.icon}
                 iconType={cta.iconType}
+                nowrap
               >
                 {cta.label}
               </Button>
@@ -207,8 +155,7 @@ const Component = forwardRef<
     }
 
     return (
-      <FocusableBox
-        href={href}
+      <Box
         position="relative"
         display="flex"
         flexDirection="row"
@@ -235,18 +182,24 @@ const Component = forwardRef<
         >
           <Box
             display="flex"
+            height={sidePanelConfig ? undefined : 'full'}
             width="full"
             flexDirection="column"
-            justifyContent="spaceBetween"
-            style={{ alignSelf: 'stretch' }}
+            justifyContent={sidePanelConfig ? 'spaceBetween' : 'flexStart'}
+            style={sidePanelConfig && { alignSelf: 'stretch' }}
           >
-            <Box
+            <FocusableBox
+              href={href}
+              height="full"
               display="flex"
-              flexDirection={iconText ? 'column' : 'row'}
-              alignItems={iconText ? 'flexStart' : icon ? 'center' : 'flexEnd'}
+              flexDirection="column"
             >
-              {icon && (
-                <Box display="flex" alignItems="center" marginBottom={2}>
+              <Box
+                display="flex"
+                flexDirection="row"
+                alignItems={icon ? 'center' : 'flexEnd'}
+              >
+                {icon && (
                   <Box
                     paddingRight={1}
                     display="flex"
@@ -255,16 +208,7 @@ const Component = forwardRef<
                   >
                     {icon}
                   </Box>
-                  {iconText && <Text variant="small">{iconText}</Text>}
-                </Box>
-              )}
-              <Box
-                display="flex"
-                flexDirection="row"
-                justifyContent="spaceBetween"
-                width="full"
-                columnGap={2}
-              >
+                )}
                 <Text
                   as={headingAs}
                   variant={headingVariant}
@@ -274,35 +218,23 @@ const Component = forwardRef<
                 >
                   {hyphenate ? <Hyphen>{heading}</Hyphen> : heading}
                 </Text>
-                <Tag
-                  key={secondaryTag?.label}
-                  disabled={secondaryTag?.disabled}
-                  outlined={true}
-                  variant="white"
-                  href={secondaryTag?.href}
-                  onClick={secondaryTag?.onClick}
-                  {...tagOptions}
-                >
-                  {secondaryTag?.label}
-                </Tag>
               </Box>
-            </Box>
-            <Text paddingTop={2} paddingBottom={3}>
-              {text}
-            </Text>
-            <Box
-              display="flex"
-              flexDirection="row"
-              justifyContent={hasTags ? 'spaceBetween' : 'flexEnd'}
-            >
-              {hasTags && (
-                <Box paddingTop={3}>
-                  <Inline space={['smallGutter', 'smallGutter', 'gutter']}>
-                    {tags.map((tag) => (
+              <Text paddingTop={1}>{text}</Text>
+            </FocusableBox>
+            {/* You can only have tags or a custom component */}
+            {hasTags ? (
+              <Box paddingTop={3}>
+                <Inline space={['smallGutter', 'smallGutter', 'gutter']}>
+                  {tags.map((tag) => {
+                    console.log('tag', tag.outlined)
+                    return (
                       <Tag
                         key={tag.label}
                         disabled={tag.disabled}
-                        outlined={!tag.href}
+                        outlined={
+                          (tag.outlined || tag.outlined === undefined) &&
+                          !tag.href
+                        }
                         variant={tagVariant}
                         href={tag.href}
                         onClick={tag.onClick}
@@ -310,50 +242,21 @@ const Component = forwardRef<
                       >
                         {tag.label}
                       </Tag>
-                    ))}
-                  </Inline>
-                </Box>
-              )}
-              <Box>{renderCTA()}</Box>
-            </Box>
-          </Box>
-          {hasImage &&
-            (customImage ? (
-              customImage
-            ) : (
-              <Box
-                display="flex"
-                position="relative"
-                height="full"
-                justifyContent="center"
-                alignItems={shouldStack ? 'flexEnd' : 'center'}
-                marginLeft={shouldStack ? 0 : 2}
-                marginTop={shouldStack ? 2 : 0}
-                className={cn({
-                  [styles.imageContainerHidden]: !autoStack,
-                })}
-              >
-                <img
-                  src={src}
-                  alt={alt}
-                  style={{ objectFit }}
-                  className={styles.image}
-                />
+                    )
+                  })}
+                </Inline>
               </Box>
-            ))}
-
+            ) : (
+              <Box>{customBottomContent}</Box>
+            )}
+          </Box>
           {sidePanelConfig && (
             <Box
               display="flex"
               flexDirection="column"
               position="relative"
               justifyContent="flexStart"
-              alignItems="center"
-              borderLeftWidth="standard"
-              borderStyle="solid"
-              borderColor="blue200"
-              paddingLeft={3}
-              marginLeft={5}
+              paddingLeft={5}
               style={{ alignSelf: 'stretch' }}
             >
               {sidePanelConfig.items &&
@@ -372,24 +275,25 @@ const Component = forwardRef<
                     </Box>
                   )
                 })}
-              <Box marginTop={2}>
-                <Checkbox
-                  label="Setja í samanburð"
-                  labelVariant="small"
-                  onChange={sidePanelConfig.onCheck}
-                />
+              <Box>
+                <Box
+                  paddingTop="gutter"
+                  display="flex"
+                  justifyContent={['flexStart', 'flexEnd']}
+                  flexDirection="row"
+                >
+                  <Box>{renderCTA()}</Box>
+                </Box>
               </Box>
             </Box>
           )}
         </Box>
-      </FocusableBox>
+      </Box>
     )
   },
 )
 
-export const ActionCategoryCard = (
-  props: ActionCategoryCardProps & ActionCategoryCardImage,
-) => {
+export const ActionCategoryCard = (props: ActionCategoryCardProps) => {
   return props.autoStack ? (
     <WithMeasureProps>
       {(measureProps) => <Component {...props} {...measureProps} />}

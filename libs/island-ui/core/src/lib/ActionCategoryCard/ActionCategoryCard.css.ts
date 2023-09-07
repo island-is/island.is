@@ -18,16 +18,12 @@ export const image = style({
 export const icon = style({
   minWidth: 30,
   width: 40,
-  height: '100%',
+  height: 40,
   ...themeUtils.responsiveStyle({
     md: {
       minWidth: 40,
     },
   }),
-})
-
-export const iconWithText = style({
-  height: 40,
 })
 
 globalStyle(`${icon} svg`, {

@@ -38,3 +38,27 @@ export const icon = style({
     },
   }),
 })
+
+export const closeIcon = style({
+  minWidth: 15,
+  width: 25,
+  height: 25,
+})
+
+export const removeButton = style({
+  lineHeight: 0.75,
+})
+
+export const filterTagRow = style({
+  minHeight: '40px',
+  marginBottom: '18px',
+  marginTop: '24px',
+})
+
+export const filterInput = style({
+  ...themeUtils.responsiveStyle({
+    md: {
+      width: '480px',
+    },
+  }),
+})
