@@ -31,6 +31,8 @@ import { assign } from 'xstate'
 import set from 'lodash/set'
 import { hasReviewerApproved, isRemovingOperatorOnly } from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { Features } from '@island.is/feature-flags'
+import { ApiScope } from '@island.is/auth/scopes'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -88,7 +90,12 @@ const template: ApplicationTemplate<
     {
       type: AuthDelegationType.ProcurationHolder,
     },
+    {
+      type: AuthDelegationType.Custom,
+      featureFlag: Features.transportAuthorityApplicationsCustomDelegation,
+    },
   ],
+  requiredScopes: [ApiScope.transportAuthority],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

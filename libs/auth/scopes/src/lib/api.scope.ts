@@ -16,4 +16,5 @@ export enum ApiScope {
   samradsgatt = '@samradsgatt.island.is/samradsgatt',
   health = '@island.is/health',
   workMachines = '@island.is/work-machines',
+  transportAuthority = '@island.is/applications/transport-authority',
 }
