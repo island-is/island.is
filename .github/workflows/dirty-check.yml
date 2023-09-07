@@ -1,4 +1,4 @@
-name: 
+name: Check dirty files
 
 on:
   pull_request:
