@@ -61,8 +61,8 @@ jobs:
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       affected: ${{ steps.set-matrix.outputs.affected }}
-      nx-base: ${{ steps.git-sha.outputs.nx-base }}
-      nx-head: ${{ steps.git-sha.outputs.nx-head }}
+      nx-base: ${{ steps.set-sha.outputs.base }}
+      nx-head: ${{ steps.set-sha.outputs.head }}
 
     needs:
       - pre-checks
@@ -77,17 +77,19 @@ jobs:
           name: pr-event
           path: event.json
           retention-days: 60
-      - name: Checking out relevant branches
-        run: |
-          git checkout $GITHUB_HEAD_REF
-          git checkout $GITHUB_BASE_REF
-          git checkout $GITHUB_SHA
-          git config --global user.email "ci@island.is"
-          git config --global user.name "CI Bot"
 
-          BASE_SHA=$(git merge-base HEAD $GITHUB_BASE_REF)
-          HEAD_SHA=$(git merge-base HEAD $GITHUB_HEAD_REF)
-          echo Current base SHA is $BASE_SHA and head SHA is $HEAD_SHA
+      - name: Find sha for NX
+        id: set-sha
+        uses: nrwl/nx-set-shas@v3
+        with:
+          error-on-no-successful-workflow: 'true' # break hard
+          last-successful-event: 'pull-request'
+          workflow-id: 'pullrequest' # use legacy workflow to get more chance of hits
+      - name: Export sha for NX
+        id: export-sha
+        run: |
+          BASE_SHA=${{ steps.set-sha.outputs.base }}
+          HEAD_SHA=${{ steps.set-sha.outputs.head }}
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
       - uses: actions/setup-node@v3
@@ -135,27 +137,6 @@ jobs:
       - name: Building NodeJS dependencies
         if: steps.node-modules.outputs.cache-hit != 'true' || env.SKIP_NODEJS_CACHE == 'true'
         run: ./scripts/ci/10_prepare-host-deps.sh
-
-      - name: Preparing HEAD and BASE tags
-        id: git-sha
-        run: |
-          echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
-          echo "nx-head=$GITHUB_SHA" >> $GITHUB_OUTPUT
-
-          export HEAD_REF="$GITHUB_HEAD_REF"
-          export BASE_REF="$GITHUB_BASE_REF"
-          export PR_REF=$GITHUB_SHA
-          export SHELL=/usr/bin/bash
-          export WORKFLOW_ID=pullrequest
-          source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD $GITHUB_BASE_REF)
-          git checkout $GITHUB_SHA
-          echo "BASE=$BASE" >> $GITHUB_ENV
-          echo "nx-base=$BASE" >> $GITHUB_OUTPUT
-
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HTML_URL: ${{ github.event.pull_request.html_url }}
-          ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
 
       - name: Generate schemas
         if: steps.generated-files-cache.outputs.cache-hit != 'true'
