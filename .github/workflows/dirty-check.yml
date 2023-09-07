@@ -27,6 +27,8 @@ jobs:
               cache: 'yarn'
               cache-dependency-path: 'yarn.lock'
               node-version: '18'
+      - name: current branch
+        run: echo "${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
       - name: install packages
         run: yarn install
       - name: NX format:write
