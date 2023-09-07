@@ -40,6 +40,7 @@ export interface TUploadFile extends UploadFile {
   chapter?: number
   orderWithinChapter?: number
   displayDate?: string
+  policeFileId?: string
 }
 
 const createFormData = (presignedPost: PresignedPost, file: File): FormData => {
@@ -295,6 +296,7 @@ export const useS3Upload = (caseId: string) => {
               chapter: file.chapter,
               orderWithinChapter: file.orderWithinChapter,
               displayDate: file.displayDate,
+              policeFileId: file.id,
             },
           },
         })
@@ -315,6 +317,7 @@ export const useS3Upload = (caseId: string) => {
             chapter: file.chapter,
             orderWithinChapter: file.orderWithinChapter,
             displayDate: file.displayDate,
+            policeFileId: file.id,
           },
           // We need to set the id so we are able to delete the file later
           createFileData.createFile.id,
