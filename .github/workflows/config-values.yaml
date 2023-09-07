@@ -94,6 +94,8 @@ jobs:
         run: ./infra/scripts/ci/diff-chart-values-all-charts.sh
 
       - name: Commit any changes to charts
+        env:
+          - DIRTY_FIX_BOT_TOKEN: ${{secrets.DIRTY_FIX_BOT_TOKEN}}
         if: ${{ github.event_name == 'pull_request' }}
         run: |
           ./infra/scripts/generate-chart-values.sh

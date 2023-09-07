@@ -6,14 +6,16 @@ rel_path=$1
 abs_path=$DIR/$rel_path
 action=$2
 
+
+REPO_URL="https://$DIRTY_FIX_BOT_TOKEN@github.com/island-is/island.is.git"
+
+
 if [[ $(git diff --stat "$abs_path") != '' ]]; then
   echo "changes found in $rel_path that will be commited"
   git diff "$abs_path"
-  git config user.name 'github-actions[bot]'
-  git config user.email 'github-actions[bot]@users.noreply.github.com'
   git add "$abs_path"
   git commit -m "chore: $action update dirty files"
-  git push
+  git push "$REPO_URL"
 else
   echo "found no unstaged files from $action, nothing to commit"
 fi
