@@ -7,7 +7,7 @@ import {
 } from '@island.is/application/core'
 import { NO, YES } from '../lib/constants'
 import { allowFakeCondition } from '../lib/utils'
-import { MaritalStatus } from '../types/schema'
+import { NationalRegistryMaritalStatus as MaritalStatus } from '../types/schema'
 
 export const fakeDataSection = buildSection({
   id: 'fakeDataSection',

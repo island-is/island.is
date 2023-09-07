@@ -65,6 +65,9 @@ export const createApolloClient = (setServiceError?: ServiceErrorCallback) =>
         UserProfile: {
           keyFields: ['nationalId'],
         },
+        NationalRegistryPerson: {
+          keyFields: ['nationalId'],
+        },
         AuthProcuringHolderDelegation: {
           keyFields: ['from', ['nationalId']],
         },

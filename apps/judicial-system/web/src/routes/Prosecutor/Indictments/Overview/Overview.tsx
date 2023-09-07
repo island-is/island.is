@@ -1,8 +1,12 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
 import { AnimatePresence } from 'framer-motion'
+import { useRouter } from 'next/router'
 
+import { Box, Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
@@ -12,16 +16,12 @@ import {
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { core, titles } from '@island.is/judicial-system-web/messages'
-import { Box, Text } from '@island.is/island-ui/core'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
-import IndictmentCaseFilesList from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
 import IndictmentsLawsBrokenAccordionItem, {
   useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components/AccordionItems/IndictmentsLawsBrokenAccordionItem/IndictmentsLawsBrokenAccordionItem'
-import * as constants from '@island.is/judicial-system/consts'
+import IndictmentCaseFilesList from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as strings from './Overview.strings'
 

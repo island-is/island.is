@@ -1,5 +1,6 @@
 import { globalStyle, style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
+import { themeUtils } from '@island.is/island-ui/theme'
 
 export const footerBg = style({
   background: 'linear-gradient(272.58deg, #009D9D -2.52%, #07495D 92.41%)',
@@ -20,5 +21,20 @@ export const footerItemFirst = style({
 
 globalStyle(`${footerBg} a, ${footerBg} a:hover`, {
   color: 'white',
-  boxShadow: 'inset 0 -1px 0 0 white',
+  textDecoration: 'underline',
+  fontSize: '14px',
+})
+
+export const textContainer = style({
+  ...themeUtils.responsiveStyle({
+    xs: {
+      marginLeft: 5,
+    },
+    sm: {
+      marginLeft: 5,
+    },
+    md: {
+      marginLeft: 5,
+    },
+  }),
 })
