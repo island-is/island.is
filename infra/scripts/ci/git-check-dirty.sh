@@ -5,9 +5,9 @@ DIR="$(git rev-parse --show-toplevel)"
 rel_path=$1
 abs_path=$DIR/$rel_path
 action=$2
+github_token="${3:-GITHUB_TOKEN}"
 
-
-REPO_URL="https://$DIRTY_FIX_BOT_TOKEN@github.com/island-is/island.is.git"
+REPO_URL="https://$github_token@github.com/island-is/island.is.git"
 
 
 if [[ $(git diff --stat "$abs_path") != '' ]]; then
