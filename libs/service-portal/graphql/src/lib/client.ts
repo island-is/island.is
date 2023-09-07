@@ -8,12 +8,9 @@ import {
 
 import { RetryLink } from '@apollo/client/link/retry'
 import { onError } from '@apollo/client/link/error'
-
+import { getOrganizationSlugFromError } from '@island.is/react-spa/shared'
 import { authLink } from '@island.is/auth/react'
-import {
-  getOrganizationSlugFromError,
-  ServiceErrorStoreState,
-} from '@island.is/portals/core'
+import { ServiceErrorStoreState } from '@island.is/portals/core'
 import { getStaticEnv } from '@island.is/shared/utils'
 
 const uri =

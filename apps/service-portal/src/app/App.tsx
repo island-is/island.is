@@ -36,11 +36,7 @@ const App = () => {
 
     useServiceErrorStore.subscribe(({ organization, setServiceError }) => {
       if (organization?.title) {
-        toast.error(
-          formatMessage(m.organizationServiceError, {
-            service: organization.title,
-          }),
-        )
+        toast.error(formatMessage(m.shortThirdPartyServiceErrorMessage))
       }
     })
   }, [orgData])

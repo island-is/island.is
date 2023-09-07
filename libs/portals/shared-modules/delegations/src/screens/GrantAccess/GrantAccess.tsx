@@ -1,3 +1,4 @@
+import { Problem } from '@island.is/react-spa/shared'
 import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { Control, FormProvider, useForm } from 'react-hook-form'
@@ -18,7 +19,7 @@ import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import { ErrorBox, IntroHeader } from '@island.is/portals/core'
+import { IntroHeader } from '@island.is/portals/core'
 import { formatNationalId, m as coreMessages } from '@island.is/portals/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserInfo } from '@island.is/auth/react'
@@ -39,6 +40,7 @@ const GrantAccess = () => {
   useNamespaces(['sp.access-control-delegations'])
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
+  const [formError, setFormError] = useState<Error | undefined>()
   const [name, setName] = useState('')
   const inputRef = React.useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
@@ -57,19 +59,17 @@ const GrantAccess = () => {
     toast.error(formatMessage(m.grantIdentityError))
   }
 
-  const [
-    getIdentity,
-    { data, loading: queryLoading, error },
-  ] = useIdentityLazyQuery({
-    onCompleted: (data) => {
-      if (!data.identity) {
-        noUserFoundToast()
-      }
-    },
-    context: {
-      skipToastError: true,
-    },
-  })
+  const [getIdentity, { data, loading: queryLoading, error }] =
+    useIdentityLazyQuery({
+      onCompleted: (data) => {
+        if (!data.identity) {
+          noUserFoundToast()
+        }
+      },
+      context: {
+        skipToastError: true,
+      },
+    })
 
   const { identity } = data || {}
 
@@ -133,7 +133,7 @@ const GrantAccess = () => {
         )
       }
     } catch (error) {
-      toast.error(formatMessage(m.grantCreateError))
+      setFormError(error)
     }
   })
 
@@ -159,14 +159,6 @@ const GrantAccess = () => {
         <FormProvider {...methods}>
           <form onSubmit={onSubmit}>
             <Box display="flex" flexDirection="column" rowGap={[5, 6]}>
-              {error && (
-                <ErrorBox
-                  error={error}
-                  message={
-                    error ? undefined : formatMessage(m.grantIdentityError)
-                  }
-                />
-              )}
               <IdentityCard
                 label={formatMessage(m.accessOwner)}
                 title={userInfo.profile.name}
@@ -264,6 +256,7 @@ const GrantAccess = () => {
               </div>
             </Box>
             <Box display="flex" flexDirection="column" rowGap={5} marginTop={5}>
+              {formError && <Problem error={formError} />}
               <Text variant="small">
                 {formatMessage(m.grantNextStepDescription)}
               </Text>

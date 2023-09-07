@@ -124,4 +124,8 @@ export const m = defineMessages({
     id: 'portals:accessControlAccess',
     defaultMessage: 'Aðgangur',
   },
+  shortThirdPartyServiceErrorMessage: {
+    defaultMessage: 'Ekki náðist samband við þjónustuaðila',
+    id: 'portals:short-third-party-service-error-message',
+  },
 })

@@ -1,8 +1,8 @@
 import { useRouteError } from 'react-router-dom'
 import { MessageDescriptor } from 'react-intl'
 
-import { ErrorBox } from '@island.is/portals/core'
 import { Box } from '@island.is/island-ui/core'
+import { Problem } from '@island.is/react-spa/shared'
 
 interface ModuleErrorScreenProps {
   name: string | MessageDescriptor
@@ -13,7 +13,7 @@ export const ModuleErrorScreen = ({ name }: ModuleErrorScreenProps) => {
 
   return (
     <Box padding={8}>
-      <ErrorBox error={error as Error} moduleName={name}></ErrorBox>
+      <Problem error={error as Error} />
     </Box>
   )
 }
