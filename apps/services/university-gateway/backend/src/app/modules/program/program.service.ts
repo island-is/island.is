@@ -10,10 +10,11 @@ import {
   Tag,
   TagResponse,
 } from './model'
-import { DegreeType, PaginateInput, Season } from './types'
+import { Course } from '../course/model'
+import { PaginateInput } from './types'
 import { InjectModel } from '@nestjs/sequelize'
 import { paginate } from '@island.is/nest/pagination'
-import { Course } from '../course/model'
+import { DegreeType, Season } from '@island.is/university-gateway-types'
 
 @Injectable()
 export class ProgramService {
@@ -22,7 +23,7 @@ export class ProgramService {
     private programModel: typeof Program,
 
     @InjectModel(ProgramTag)
-    private programTagModel: typeof ProgramTag,
+    // private programTagModel: typeof ProgramTag,
 
     @InjectModel(Tag)
     private tagModel: typeof Tag,

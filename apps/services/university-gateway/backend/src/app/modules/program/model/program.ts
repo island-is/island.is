@@ -9,12 +9,12 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { DegreeType, Season } from '../types'
 import { ProgramExtraApplicationField } from './programExtraApplicationField'
 import { ProgramTag } from './programTag'
 import { ProgramModeOfDelivery } from './programModeOfDelivery'
 import { University } from '../../university/model'
 import { ProgramCourse } from './programCourse'
+import { DegreeType, Season } from '@island.is/university-gateway-types'
 //import { PageInfo } from '@island.is/nest/pagination'
 
 @Table({
@@ -344,14 +344,14 @@ export class Program extends Model {
     type: [ProgramTag],
   })
   @HasMany(() => ProgramTag)
-  tag?: [ProgramTag]
+  tag?: ProgramTag[]
 
   @ApiProperty({
     description: 'Modes of deliveries available for the program',
     type: [ProgramModeOfDelivery],
   })
   @HasMany(() => ProgramModeOfDelivery)
-  modeOfDelivery!: [ProgramModeOfDelivery]
+  modeOfDelivery!: ProgramModeOfDelivery[]
 
   @ApiProperty({
     description:
@@ -359,7 +359,7 @@ export class Program extends Model {
     type: [ProgramExtraApplicationField],
   })
   @HasMany(() => ProgramExtraApplicationField)
-  extraApplicationField?: [ProgramExtraApplicationField]
+  extraApplicationField?: ProgramExtraApplicationField[]
 
   @ApiProperty({
     type: String,

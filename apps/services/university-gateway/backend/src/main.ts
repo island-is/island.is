@@ -7,6 +7,6 @@ bootstrap({
   appModule: AppModule,
   name: 'university-gateway-backend',
   port: 3380,
-  swaggerPath: '/swagger',
+  swaggerPath: '/api/swagger',
   openApi,
 })

@@ -1,7 +1,9 @@
 /* eslint-disable */
 export default {
   displayName: 'clients-university-gateway-reykjavik-university',
-  preset: '../../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../../..',
+  roots: [__dirname],
   globals: {},
   testEnvironment: 'node',
   transform: {
@@ -14,5 +16,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '../../../../coverage/libs/clients/university-gateway/reykjavik-university',
+    '<rootDir>/coverage/libs/clients/university-gateway/reykjavik-university',
 }

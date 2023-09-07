@@ -1,10 +1,11 @@
 {
-  "root": "libs/clients/university-gateway/university-of-iceland",
+  "name": "clients-university-gateway-university-of-iceland",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/university-gateway/university-of-iceland/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
@@ -13,15 +14,23 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": [
-        "coverage/libs/clients/university-gateway/university-of-iceland"
+        "{workspaceRoot}/coverage/libs/clients/university-gateway/university-of-iceland"
       ],
       "options": {
         "jestConfig": "libs/clients/university-gateway/university-of-iceland/jest.config.js",
         "passWithNoTests": true
       }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/university-gateway/university-of-iceland/gen/fetch -i libs/clients/university-gateway/university-of-iceland/src/clientConfig.json"
+        ]
+      }
     }
   },
-  "tags": []
+  "tags": ["lib:client", "scope:client"]
 }

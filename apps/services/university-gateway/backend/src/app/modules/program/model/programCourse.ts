@@ -10,8 +10,8 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Course } from '../../course/model'
-import { Requirement } from '../../course/types'
 import { Program } from './program'
+import { Requirement } from '@island.is/university-gateway-types'
 
 @Table({
   tableName: 'program_course',
