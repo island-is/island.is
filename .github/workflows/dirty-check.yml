@@ -26,14 +26,8 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
       - uses: actions/setup-node@v3
         with:
-              cache: 'yarn'
-              cache-dependency-path: 'yarn.lock'
               node-version: '18'
-      - name: current branch
-        run: echo "${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
-      - name: install packages
-        run: yarn install
       - name: NX format:write
         run: |
             ./scripts/ci/20_check-formatting.sh "write"
-            ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirty bot"
+            ./infra/scripts/ci/git-check-dirty.sh "/" "npx nx format:write" "dirty bot"
