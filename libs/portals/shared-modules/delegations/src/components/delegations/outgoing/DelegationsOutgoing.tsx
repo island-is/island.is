@@ -1,12 +1,8 @@
 import { useMemo, useState } from 'react'
 import sortBy from 'lodash/sortBy'
-import {
-  SkeletonLoader,
-  Stack,
-  AlertBanner,
-  Box,
-} from '@island.is/island-ui/core'
+import { SkeletonLoader, Stack, Box } from '@island.is/island-ui/core'
 import { isDefined } from '@island.is/shared/utils'
+import { Problem } from '@island.is/react-spa/shared'
 import {
   AuthCustomDelegation,
   AuthDelegationDirection,
@@ -40,6 +36,9 @@ export const DelegationsOutgoing = () => {
         direction: AuthDelegationDirection.outgoing,
       },
     },
+    context: {
+      skipToastError: true,
+    },
     skip: !domainName || !lang,
     fetchPolicy: 'cache-and-network',
     errorPolicy: 'all',
@@ -55,7 +54,7 @@ export const DelegationsOutgoing = () => {
   )
 
   const onDomainChange = (option: DomainOption) => {
-    // Select components only supports string or number values, there for we use
+    // Select components only supports string or number values, therefore we use
     // the const ALL_DOMAINS as a value for the all domains option.
     // The service takes null as a value for all domains.
     refetch({
@@ -97,11 +96,8 @@ export const DelegationsOutgoing = () => {
         <div>
           {loading || domainName === null ? (
             <SkeletonLoader width="100%" height={191} />
-          ) : error && !delegations ? (
-            <AlertBanner
-              description={formatMessage(m.errorFetch)}
-              variant="error"
-            />
+          ) : error && (!delegations || delegations.length === 0) ? (
+            <Problem error={error} />
           ) : delegations.length === 0 ? (
             <DelegationsEmptyState />
           ) : (

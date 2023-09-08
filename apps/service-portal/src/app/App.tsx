@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { ApolloProvider } from '@apollo/client'
 
+import { useEffectOnce } from '@island.is/react-spa/shared'
 import { AuthProvider } from '@island.is/auth/react'
 import { toast } from '@island.is/island-ui/core'
 import {
@@ -33,13 +34,18 @@ const App = () => {
     if (orgData?.getOrganizations.items && organizations.length === 0) {
       setOrganizationData(orgData.getOrganizations.items)
     }
+  }, [orgData])
 
+  useEffectOnce(() => {
     useOrganizationStore.subscribe(({ organization }) => {
       if (organization?.title) {
-        toast.error(formatMessage(m.shortThirdPartyServiceErrorMessage))
+        toast.warning(formatMessage(m.shortThirdPartyServiceErrorMessage), {
+          // Make sure that toast is not duplicated
+          toastId: organization.title,
+        })
       }
     })
-  }, [orgData])
+  })
 
   return (
     <AuthProvider basePath={ServicePortalPaths.Base}>

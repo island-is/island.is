@@ -56,7 +56,7 @@ const GrantAccess = () => {
     useCreateAuthDelegationMutation()
 
   const noUserFoundToast = () => {
-    toast.error(formatMessage(m.grantIdentityError))
+    toast.warning(formatMessage(m.grantIdentityError))
   }
 
   const [getIdentity, { data, loading: queryLoading, error }] =
@@ -65,9 +65,6 @@ const GrantAccess = () => {
         if (!data.identity) {
           noUserFoundToast()
         }
-      },
-      context: {
-        skipToastError: true,
       },
     })
 
@@ -104,7 +101,9 @@ const GrantAccess = () => {
       if (kennitala.isCompany(value)) {
         setName(value)
       } else {
-        getIdentity({ variables: { input: { nationalId: value } } })
+        getIdentity({
+          variables: { input: { nationalId: value } },
+        })
       }
     } else {
       setName('')
@@ -125,6 +124,9 @@ const GrantAccess = () => {
             toNationalId,
             domainName: domainName === ALL_DOMAINS ? null : domainName,
           },
+        },
+        context: {
+          skipToastError: true,
         },
       })
       if (data) {
@@ -256,7 +258,7 @@ const GrantAccess = () => {
               </div>
             </Box>
             <Box display="flex" flexDirection="column" rowGap={5} marginTop={5}>
-              {formError && <Problem error={formError} />}
+              {formError && <Problem error={formError} size="small" />}
               <Text variant="small">
                 {formatMessage(m.grantNextStepDescription)}
               </Text>

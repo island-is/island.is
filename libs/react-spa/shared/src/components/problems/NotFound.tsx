@@ -1,5 +1,6 @@
 import { useLocation } from 'react-router-dom'
 
+import { TestSupport } from '@island.is/island-ui/utils'
 import { useLocale } from '@island.is/localization'
 import {
   ProblemTemplate,
@@ -24,7 +25,8 @@ export const NotFound = ({
   imgAlt,
   buttonLink,
   noBorder,
-}: NotFoundProps) => {
+  dataTestId,
+}: NotFoundProps & TestSupport) => {
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
   const title = titleStr ?? formatMessage(m.notFound)
@@ -49,6 +51,7 @@ export const NotFound = ({
       imgAlt={imgProps.alt}
       buttonLink={buttonLink}
       noBorder={noBorder}
+      dataTestId={dataTestId}
     />
   )
 }

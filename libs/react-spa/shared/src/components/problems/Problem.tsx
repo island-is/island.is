@@ -5,6 +5,7 @@ import {
   ProblemTemplate,
   ProblemTemplateProps,
 } from '@island.is/island-ui/core'
+import { TestSupport } from '@island.is/island-ui/utils'
 import { useLocale } from '@island.is/localization'
 
 import { getOrganizationSlugFromError } from '../../utils/getOrganizationSlugFromError'
@@ -34,7 +35,11 @@ type ProblemBaseProps = {
   title?: string
   message?: string
   tag?: string
-} & Pick<ProblemTemplateProps, 'noBorder' | 'buttonLink' | 'imgSrc' | 'imgAlt'>
+} & Pick<
+  ProblemTemplateProps,
+  'noBorder' | 'buttonLink' | 'imgSrc' | 'imgAlt'
+> &
+  TestSupport
 
 interface InternalServiceErrorProps extends ProblemBaseProps {
   type?: 'internal_service_error'
@@ -71,6 +76,7 @@ export const Problem = ({
   imgAlt,
   noBorder,
   buttonLink,
+  dataTestId,
 }: ProblemProps) => {
   const { formatMessage } = useLocale()
 
@@ -82,6 +88,7 @@ export const Problem = ({
     imgAlt,
     noBorder,
     buttonLink,
+    dataTestId,
   }
 
   const fallbackProps = {
@@ -89,6 +96,7 @@ export const Problem = ({
     message: message ?? formatMessage(m.errorPageText),
     withIcon: true,
     variant: 'error',
+    dataTestId,
   } as const
 
   useEffect(() => {
@@ -119,6 +127,7 @@ export const Problem = ({
                     icon: 'warning',
                   })}
               size={size}
+              dataTestId={dataTestId}
             />
           )
         }

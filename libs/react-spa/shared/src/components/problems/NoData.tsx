@@ -5,6 +5,7 @@ import {
   ProblemTemplateProps,
   problemTemplateStyles as styles,
 } from '@island.is/island-ui/core'
+import { TestSupport } from '@island.is/island-ui/utils'
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
@@ -28,7 +29,8 @@ export const NoData = ({
   buttonLink,
   imgSrc,
   imgAlt,
-}: NoDataProps) => {
+  dataTestId,
+}: NoDataProps & TestSupport) => {
   const { formatMessage } = useLocale()
   const title = titleStr ?? formatMessage(m.noDataTitle)
 
@@ -41,6 +43,7 @@ export const NoData = ({
   if (size === 'small') {
     return (
       <Box
+        dataTestId={dataTestId}
         display="flex"
         alignItems="center"
         columnGap={[2, 4]}
@@ -79,6 +82,7 @@ export const NoData = ({
       imgAlt={imgProps.alt}
       buttonLink={buttonLink}
       noBorder={noBorder}
+      dataTestId={dataTestId}
     />
   )
 }

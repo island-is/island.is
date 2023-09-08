@@ -1,4 +1,5 @@
 import { Colors } from '@island.is/island-ui/theme'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 import { Box, Button, Icon, Tag, Text } from '../..'
 import { Icon as IconType } from '../IconRC/iconMap'
@@ -18,7 +19,7 @@ export type ProblemTemplateBaseProps = {
     text: string
     onClick(): void
   }
-}
+} & TestSupport
 
 interface WithIconProps extends ProblemTemplateBaseProps {
   showIcon?: boolean
@@ -74,6 +75,7 @@ export const ProblemTemplate = ({
   noBorder,
   buttonLink,
   showIcon,
+  dataTestId,
 }: ProblemTemplateProps) => {
   const convertedVariant = variantToColour(variant)
   return (
@@ -94,6 +96,7 @@ export const ProblemTemplate = ({
       paddingY={[5, 10]}
       paddingX={3}
       textAlign="center"
+      dataTestId={dataTestId}
     >
       {tag && (
         <div>

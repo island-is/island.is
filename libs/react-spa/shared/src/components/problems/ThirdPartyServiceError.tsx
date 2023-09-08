@@ -1,3 +1,4 @@
+import { TestSupport } from '@island.is/island-ui/utils'
 import { useLocale } from '@island.is/localization'
 import { AlertMessage, ProblemTemplate } from '@island.is/island-ui/core'
 
@@ -12,7 +13,8 @@ type ThirdPartyServiceErrorProps = {
 export const ThirdPartyServiceError = ({
   tag,
   size = 'large',
-}: ThirdPartyServiceErrorProps) => {
+  ...rest
+}: ThirdPartyServiceErrorProps & TestSupport) => {
   const { formatMessage } = useLocale()
 
   const errorTemplateProps = {
@@ -29,6 +31,7 @@ export const ThirdPartyServiceError = ({
       variant="warning"
       {...(tag ? { tag } : { icon: 'warning' })}
       {...errorTemplateProps}
+      {...rest}
     />
   )
 }

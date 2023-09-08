@@ -3,6 +3,7 @@ import {
   ProblemTemplate,
   ProblemTemplateProps,
 } from '@island.is/island-ui/core'
+import { TestSupport } from '@island.is/island-ui/utils'
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
@@ -25,13 +26,15 @@ export const InternalServiceError = ({
   buttonLink,
   imgSrc,
   imgAlt,
-  tag,
-}: ServiceErrorProps) => {
+  tag = '500',
+  dataTestId,
+}: ServiceErrorProps & TestSupport) => {
   const { formatMessage } = useLocale()
 
   const commonProps = {
     title: title ?? formatMessage(m.errorPageHeading),
     message: message ?? formatMessage(m.errorPageText),
+    dataTestId,
   }
 
   const imgProps = {
