@@ -270,7 +270,7 @@
 
 /apps/services/university-gateway/                                                                       @island-is/origo
 /libs/clients/university-application/                                                                    @island-is/origo
-/libs/clients/university-gateway/                                                                        @island-is/origo
+/libs/clients/university-gateway-api/                                                                    @island-is/origo
 /libs/api/domains/university-gateway/                                                                    @island-is/origo
 /libs/university-gateway/                                                                                @island-is/origo
 
