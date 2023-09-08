@@ -87,8 +87,9 @@ const getInitialStateAndAnswersByQueryParams = (
     const stepType = resolveStepType(step)
 
     if (stepType === STEP_TYPES.ANSWER) break
-
-    const options = getStepOptions(step, activeLocale, optionsFromNamespace)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
+    const options = getStepOptions(step, activeLocale, optionsFromNamespace) // TODO: step might be undefined: Stefna
     const selectedOption = options.find((o) => o.value === answer)
     if (!selectedOption) break
 
@@ -96,8 +97,9 @@ const getInitialStateAndAnswersByQueryParams = (
       initialState,
       selectedOption.transition,
     )
-
-    const stepQuestion = getStepQuestion(step)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
+    const stepQuestion = getStepQuestion(step) // TODO: step might be undefined: Stefna
     if (stepQuestion) {
       questionsAndAnswers.push({
         question: stepQuestion,
@@ -122,7 +124,9 @@ const StepperWrapper = (
 
     const stepConfigErrors = steps.map((step) => ({
       step,
-      errors: validateStepConfig(step),
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      errors: validateStepConfig(step), // TODO: step might be undefined: Stefna
     }))
 
     if (
@@ -133,7 +137,9 @@ const StepperWrapper = (
         ? renderStepperAndStepConfigErrors(
             props.stepper,
             configErrors,
-            stepConfigErrors,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            stepConfigErrors, // TODO: Argument of type '{ step: Step | undefined; errors: Set<string>; }[]' is not assignable to parameter of type '{ step: Step; errors: Set<string>; }[]': Stefna
           )
         : null
     }
@@ -202,7 +208,9 @@ const Stepper = ({
   const isOnFirstStep = stepperMachine.initialState.value === currentState.value
   const [selectedOption, setSelectedOption] = useState<StepOption | null>(null)
   const stepOptions = useMemo(
-    () => getStepOptions(currentStep, activeLocale, optionsFromNamespace),
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
+    () => getStepOptions(currentStep, activeLocale, optionsFromNamespace), // TODO: currentStep might be undefined: Stefna
     [activeLocale, currentStep, optionsFromNamespace],
   )
 
@@ -249,7 +257,7 @@ const Stepper = ({
     questionsAndAnswers: QuestionAndAnswer[],
     urlWithoutQueryParams: string,
   ) => {
-    const accumulatedAnswers = []
+    const accumulatedAnswers: string[] = []
 
     return questionsAndAnswers.map(({ question, answer, slug }, i) => {
       const previouslyAccumulatedAnswers = [...accumulatedAnswers]
@@ -374,7 +382,7 @@ const Stepper = ({
         }
       }}
     >
-      {webRichText(currentStep.subtitle as SliceType[])}
+      {webRichText((currentStep?.subtitle ?? []) as SliceType[])}
     </Box>
   )
 
@@ -407,6 +415,8 @@ const Stepper = ({
                 name="step-option-select"
                 noOptionsMessage={n('noOptions', 'Enginn valmöguleiki')}
                 value={selectedOption}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 onChange={(option) => {
                   setSelectedOption(option as StepOption)
                 }}
@@ -424,7 +434,7 @@ const Stepper = ({
         <QuestionTitle containerClassName={webReaderClassName} />
       )}
       {showWebReader && (
-        <Webreader readId={null} readClass={webReaderClassName} />
+        <Webreader readId={undefined} readClass={webReaderClassName} />
       )}
       {currentStepType === STEP_TYPES.ANSWER && (
         <QuestionTitle containerClassName={webReaderClassName} />

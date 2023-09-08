@@ -55,10 +55,8 @@ const template: ApplicationTemplate<
   allowedDelegations: [
     {
       type: AuthDelegationType.ProcurationHolder,
-      featureFlag: Features.transportAuthorityLicensePlateRenewalDelegations,
     },
   ],
-  featureFlag: Features.transportAuthorityLicensePlateRenewal,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -87,10 +85,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import(
-                  '../forms/LicensePlateRenewalForm/index'
-                ).then((module) =>
-                  Promise.resolve(module.LicensePlateRenewalForm),
+                import('../forms/LicensePlateRenewalForm/index').then(
+                  (module) => Promise.resolve(module.LicensePlateRenewalForm),
                 ),
               actions: [
                 {

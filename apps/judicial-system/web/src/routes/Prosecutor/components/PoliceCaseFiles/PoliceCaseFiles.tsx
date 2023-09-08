@@ -1,12 +1,8 @@
 import React, { Fragment, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import cn from 'classnames'
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 
-import {
-  PoliceCaseFile,
-  isIndictmentCase,
-} from '@island.is/judicial-system/types'
 import {
   AlertMessage,
   Box,
@@ -14,17 +10,38 @@ import {
   Checkbox,
   LoadingDots,
 } from '@island.is/island-ui/core'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
-import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseOrigin,
+  PoliceCaseFile,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { policeCaseFiles as m } from './PoliceCaseFiles.strings'
 import PoliceCaseFilesMessageBox from '../PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
-import { PoliceCaseFilesData } from '../CaseFiles/CaseFiles'
+import { policeCaseFiles as m } from './PoliceCaseFiles.strings'
 import * as styles from './PoliceCaseFiles.css'
+
+export interface PoliceCaseFilesData {
+  files: PoliceCaseFile[]
+  isLoading: boolean
+  hasError: boolean
+  errorCode?: string
+}
 
 export interface PoliceCaseFileCheck extends PoliceCaseFile {
   checked: boolean
 }
+
+export const mapPoliceCaseFileToPoliceCaseFileCheck = (
+  file: PoliceCaseFile,
+): PoliceCaseFileCheck => ({
+  id: file.id,
+  name: file.name,
+  policeCaseNumber: file.policeCaseNumber,
+  chapter: file.chapter,
+  displayDate: file.displayDate,
+  checked: false,
+})
 
 const CheckboxListItem: React.FC<React.PropsWithChildren<unknown>> = ({
   children,
@@ -122,8 +139,8 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
         }),
       )
     } else {
-      newPoliceCaseFileList[target].checked = !newPoliceCaseFileList[target]
-        .checked
+      newPoliceCaseFileList[target].checked =
+        !newPoliceCaseFileList[target].checked
       setPoliceCaseFileList(newPoliceCaseFileList)
     }
   }
@@ -159,20 +176,11 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
                   <LoadingDots />
                 </Box>
               ) : policeCaseFiles?.hasError ? (
-                policeCaseFiles?.errorCode ===
-                'https://httpstatuses.org/404' ? (
-                  <PoliceCaseFilesMessageBox
-                    icon="warning"
-                    iconColor="yellow400"
-                    message={formatMessage(m.caseNotFoundInLOKEMessage)}
-                  />
-                ) : (
-                  <PoliceCaseFilesMessageBox
-                    icon="close"
-                    iconColor="red400"
-                    message={formatMessage(m.couldNotGetFromLOKEMessage)}
-                  />
-                )
+                <PoliceCaseFilesMessageBox
+                  icon="close"
+                  iconColor="red400"
+                  message={formatMessage(m.couldNotGetFromLOKEMessage)}
+                />
               ) : policeCaseFiles?.files.length === 0 ? (
                 <PoliceCaseFilesMessageBox
                   icon="warning"

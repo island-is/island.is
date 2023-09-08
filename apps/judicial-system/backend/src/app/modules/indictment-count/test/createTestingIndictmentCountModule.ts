@@ -14,7 +14,7 @@ jest.mock('@island.is/judicial-system/message')
 jest.mock('../../case/case.service')
 
 export const createTestingIndictmentCountModule = async () => {
-  const defendantModule = await Test.createTestingModule({
+  const indictmentCountModule = await Test.createTestingModule({
     imports: [
       SharedAuthModule.register({
         jwtSecret: environment.auth.jwtSecret,
@@ -47,17 +47,19 @@ export const createTestingIndictmentCountModule = async () => {
     ],
   }).compile()
 
-  const indictmentCountModel = await defendantModule.resolve<
+  const indictmentCountModel = await indictmentCountModule.resolve<
     typeof IndictmentCount
   >(getModelToken(IndictmentCount))
 
-  const indictmentCountService = defendantModule.get<IndictmentCountService>(
-    IndictmentCountService,
-  )
+  const indictmentCountService =
+    indictmentCountModule.get<IndictmentCountService>(IndictmentCountService)
 
-  const indictmentCountController = defendantModule.get<IndictmentCountController>(
-    IndictmentCountController,
-  )
+  const indictmentCountController =
+    indictmentCountModule.get<IndictmentCountController>(
+      IndictmentCountController,
+    )
+
+  indictmentCountModule.close()
 
   return {
     indictmentCountModel,

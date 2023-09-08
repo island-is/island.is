@@ -43,9 +43,10 @@ export class RecyclingRequestResolver {
       )
     }
 
-    const userLastRecyclingRequest = await this.recyclingRequestService.findUserRecyclingRequestWithPermno(
-      vehicle,
-    )
+    const userLastRecyclingRequest =
+      await this.recyclingRequestService.findUserRecyclingRequestWithPermno(
+        vehicle,
+      )
     return userLastRecyclingRequest
   }
 
@@ -61,9 +62,8 @@ export class RecyclingRequestResolver {
   async skilavottordRecyclingRequests(
     @Args('permno') perm: string,
   ): Promise<RecyclingRequestModel[]> {
-    const recyclingRequests = await this.recyclingRequestService.findAllWithPermno(
-      perm,
-    )
+    const recyclingRequests =
+      await this.recyclingRequestService.findAllWithPermno(perm)
     return recyclingRequests
   }
 

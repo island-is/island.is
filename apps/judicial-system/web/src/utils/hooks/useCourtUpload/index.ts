@@ -5,12 +5,12 @@ import {
   CaseFile as TCaseFile,
   CaseFileState,
 } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   UploadFileToCourtDocument,
   UploadFileToCourtMutation,
   UploadFileToCourtMutationVariables,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 export enum UploadState {
   ALL_UPLOADED = 'ALL_UPLOADED',
@@ -136,8 +136,10 @@ export const useCourtUpload = (
               (error as ApolloError).graphQLErrors[0].extensions?.code,
             detail:
               (error instanceof ApolloError &&
-                ((error as ApolloError).graphQLErrors[0].extensions
-                  ?.problem as { detail: string })?.detail) ||
+                (
+                  (error as ApolloError).graphQLErrors[0].extensions
+                    ?.problem as { detail: string }
+                )?.detail) ||
               '',
           }
 

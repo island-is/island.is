@@ -175,7 +175,7 @@ export class CaseController {
       await this.validateAssignedUser(
         update.judgeId,
         [UserRole.JUDGE, UserRole.ASSISTANT],
-        InstitutionType.COURT,
+        InstitutionType.DISTRICT_COURT,
         theCase.courtId,
       )
     }
@@ -184,7 +184,7 @@ export class CaseController {
       await this.validateAssignedUser(
         update.registrarId,
         [UserRole.REGISTRAR],
-        InstitutionType.COURT,
+        InstitutionType.DISTRICT_COURT,
         theCase.courtId,
       )
     }
@@ -193,7 +193,7 @@ export class CaseController {
       await this.validateAssignedUser(
         update.appealAssistantId,
         [UserRole.ASSISTANT],
-        InstitutionType.HIGH_COURT,
+        InstitutionType.COURT_OF_APPEALS,
       )
     }
 
@@ -201,7 +201,7 @@ export class CaseController {
       await this.validateAssignedUser(
         update.appealJudge1Id,
         [UserRole.JUDGE],
-        InstitutionType.HIGH_COURT,
+        InstitutionType.COURT_OF_APPEALS,
       )
     }
 
@@ -209,7 +209,7 @@ export class CaseController {
       await this.validateAssignedUser(
         update.appealJudge2Id,
         [UserRole.JUDGE],
-        InstitutionType.HIGH_COURT,
+        InstitutionType.COURT_OF_APPEALS,
       )
     }
 
@@ -217,7 +217,7 @@ export class CaseController {
       await this.validateAssignedUser(
         update.appealJudge3Id,
         [UserRole.JUDGE],
-        InstitutionType.HIGH_COURT,
+        InstitutionType.COURT_OF_APPEALS,
       )
     }
 
@@ -330,7 +330,7 @@ export class CaseController {
 
     // No need to wait
     this.eventService.postEvent(
-      (transition.transition as unknown) as CaseEvent,
+      transition.transition as unknown as CaseEvent,
       updatedCase ?? theCase,
     )
 

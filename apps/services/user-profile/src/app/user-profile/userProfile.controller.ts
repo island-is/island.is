@@ -280,10 +280,8 @@ export class UserProfileController {
       }
     }
 
-    const {
-      numberOfAffectedRows,
-      updatedUserProfile,
-    } = await this.userProfileService.update(nationalId, userProfileToUpdate)
+    const { numberOfAffectedRows, updatedUserProfile } =
+      await this.userProfileService.update(nationalId, userProfileToUpdate)
     if (numberOfAffectedRows === 0) {
       throw new NoContentException()
     }

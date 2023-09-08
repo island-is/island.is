@@ -304,6 +304,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN]: {
+        entry: ['clearEmployerNationalRegistryId'],
         exit: 'setEmployerReviewerNationalRegistryId',
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN,
@@ -547,10 +548,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import(
-                  '../forms/InReviewAdditionalDocumentsRequired'
-                ).then((val) =>
-                  Promise.resolve(val.InReviewAdditionalDocumentsRequired),
+                import('../forms/InReviewAdditionalDocumentsRequired').then(
+                  (val) =>
+                    Promise.resolve(val.InReviewAdditionalDocumentsRequired),
                 ),
               read: 'all',
               write: 'all',
@@ -874,6 +874,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
+        entry: ['clearEmployerNationalRegistryId'],
         exit: [
           'setEmployerReviewerNationalRegistryId',
           'restorePeriodsFromTemp',
@@ -1171,11 +1172,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       clearEmployers: assign((context) => {
         const { application } = context
         const { answers } = application
-        const {
-          employers,
-          isSelfEmployed,
-          employerLastSixMonths,
-        } = getApplicationAnswers(answers)
+        const { employers, isSelfEmployed, employerLastSixMonths } =
+          getApplicationAnswers(answers)
 
         if (isSelfEmployed === NO) {
           employers?.forEach((val, i) => {
@@ -1216,6 +1214,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             set(answers, `employers[${i}].companyNationalRegistryId`, '')
           })
         }
+
+        return context
+      }),
+      clearEmployerNationalRegistryId: assign((context) => {
+        const { application } = context
+        const { answers } = application
+
+        unset(answers, 'employerNationalRegistryId')
 
         return context
       }),
@@ -1605,7 +1611,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { application } = context
         const { state } = application
         const { answers } = application
-        const e = (event.type as unknown) as any
+        const e = event.type as unknown as any
         if (e === 'xstate.init') {
           return context
         }
@@ -1626,7 +1632,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       setHasAppliedForReidenceGrant: assign((context, event) => {
         const { application } = context
         const { state, answers } = application
-        const e = (event.type as unknown) as any
+        const e = event.type as unknown as any
         if (
           state === States.RESIDENCE_GRAND_APPLICATION &&
           e === DefaultEvents.APPROVE

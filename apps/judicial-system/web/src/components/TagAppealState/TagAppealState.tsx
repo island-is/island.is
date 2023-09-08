@@ -1,11 +1,10 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Feature } from '@island.is/judicial-system/types'
-
-import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
 import { Tag, TagVariant } from '@island.is/island-ui/core'
+import { Feature } from '@island.is/judicial-system/types'
 import { tables } from '@island.is/judicial-system-web/messages'
+import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
 import {
   CaseAppealRulingDecision,
   CaseAppealState,
@@ -99,7 +98,7 @@ const TagAppealState: React.FC<React.PropsWithChildren<Props>> = ({
   if (!tagVariantRuling) return null
 
   return (
-    <Tag variant={tagVariantRuling?.color} outlined disabled>
+    <Tag variant={tagVariantRuling?.color} outlined disabled truncate>
       {tagVariantRuling.text}
     </Tag>
   )

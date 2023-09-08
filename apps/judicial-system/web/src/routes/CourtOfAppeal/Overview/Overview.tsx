@@ -5,8 +5,10 @@ import { useRouter } from 'next/router'
 import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
   CaseFilesAccordionItem,
+  Conclusion,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -14,11 +16,9 @@ import {
   PageHeader,
   PageLayout,
   UserContext,
-  Conclusion,
 } from '@island.is/judicial-system-web/src/components'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
-import { core } from '@island.is/judicial-system-web/messages'
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
@@ -26,12 +26,8 @@ import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/Ca
 const CourtOfAppealOverview: React.FC<
   React.PropsWithChildren<unknown>
 > = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   const { title, description } = useAppealAlertBanner(workingCase)
   const { formatMessage } = useIntl()

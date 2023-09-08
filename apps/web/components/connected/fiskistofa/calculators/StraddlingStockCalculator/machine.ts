@@ -198,6 +198,8 @@ export const machine = createMachine<Context, Event, State>(
         },
       },
       'getting data': {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         invoke: {
           src: 'getData',
           onDone: {
@@ -214,6 +216,8 @@ export const machine = createMachine<Context, Event, State>(
         },
       },
       'updating data': {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         invoke: {
           src: 'updateData',
           onDone: {
@@ -239,17 +243,20 @@ export const machine = createMachine<Context, Event, State>(
   },
   {
     services: {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       getData: async (context: Context, event: GetDataEvent) => {
         let fiskistofaGetShipStatusForCalendarYearResponse = null
 
         try {
-          fiskistofaGetShipStatusForCalendarYearResponse = await context.apolloClient?.query<{
-            fiskistofaGetShipStatusForCalendarYear: FiskistofaShipStatusInformationResponse
-          }>({
-            query: GET_SHIP_STATUS_FOR_CALENDAR_YEAR,
-            variables: event.variables,
-            fetchPolicy: 'no-cache',
-          })
+          fiskistofaGetShipStatusForCalendarYearResponse =
+            await context.apolloClient?.query<{
+              fiskistofaGetShipStatusForCalendarYear: FiskistofaShipStatusInformationResponse
+            }>({
+              query: GET_SHIP_STATUS_FOR_CALENDAR_YEAR,
+              variables: event.variables,
+              fetchPolicy: 'no-cache',
+            })
         } catch (err) {
           // In case of an error we still want the user to be able to add categories and calculate values
           fiskistofaGetShipStatusForCalendarYearResponse = {
@@ -261,16 +268,17 @@ export const machine = createMachine<Context, Event, State>(
           }
         }
 
-        const fiskistofaGetQuotaTypesForCalendarYearResponse = await context.apolloClient?.query<{
-          fiskistofaGetQuotaTypesForCalendarYear: FiskistofaQuotaTypeResponse
-        }>({
-          query: GET_QUOTA_TYPES_FOR_CALENDAR_YEAR,
-          variables: {
-            input: {
-              year: event.variables.input.year,
+        const fiskistofaGetQuotaTypesForCalendarYearResponse =
+          await context.apolloClient?.query<{
+            fiskistofaGetQuotaTypesForCalendarYear: FiskistofaQuotaTypeResponse
+          }>({
+            query: GET_QUOTA_TYPES_FOR_CALENDAR_YEAR,
+            variables: {
+              input: {
+                year: event.variables.input.year,
+              },
             },
-          },
-        })
+          })
 
         const fiskistofaShipStatus =
           fiskistofaGetShipStatusForCalendarYearResponse?.data
@@ -300,14 +308,17 @@ export const machine = createMachine<Context, Event, State>(
           selectedQuotaTypes: [],
         }
       },
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       updateData: async (context: Context, event: UpdateDataEvent) => {
-        const fiskistofaUpdateShipStatusForCalendarYearResponse = await context?.apolloClient?.query<{
-          fiskistofaUpdateShipStatusForCalendarYear: FiskistofaShipStatusInformationResponse
-        }>({
-          query: UPDATE_SHIP_STATUS_FOR_CALENDAR_YEAR,
-          variables: event.variables,
-          fetchPolicy: 'no-cache',
-        })
+        const fiskistofaUpdateShipStatusForCalendarYearResponse =
+          await context?.apolloClient?.query<{
+            fiskistofaUpdateShipStatusForCalendarYear: FiskistofaShipStatusInformationResponse
+          }>({
+            query: UPDATE_SHIP_STATUS_FOR_CALENDAR_YEAR,
+            variables: event.variables,
+            fetchPolicy: 'no-cache',
+          })
 
         const fiskistofaShipStatus =
           fiskistofaUpdateShipStatusForCalendarYearResponse?.data
@@ -317,9 +328,10 @@ export const machine = createMachine<Context, Event, State>(
 
         // We want to keep the ordering of the categories the user has added
         for (const category of context?.data?.catchQuotaCategories ?? []) {
-          const categoryFromServer = fiskistofaShipStatus?.catchQuotaCategories?.find(
-            (c) => c.id === category.id,
-          )
+          const categoryFromServer =
+            fiskistofaShipStatus?.catchQuotaCategories?.find(
+              (c) => c.id === category.id,
+            )
           if (categoryFromServer) {
             categories.push({
               ...category,

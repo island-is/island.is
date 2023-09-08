@@ -48,8 +48,7 @@ export const caseFiles = defineMessages({
     description: 'Titill á önnur gögn hluta á dómskjalaskjá í ákærum.',
   },
   trafficViolationIndictmentTitle: {
-    id:
-      'judicial.system.core:indictments.case_files.traffic_violation_indictment_title',
+    id: 'judicial.system.core:indictments.case_files.traffic_violation_indictment_title',
     defaultMessage: 'Ákæra.pdf',
     description: 'Titill á ákæru pdf fyrir umferðalagabrot.',
   },

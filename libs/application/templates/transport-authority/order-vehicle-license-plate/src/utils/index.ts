@@ -25,22 +25,26 @@ export const getChargeItemCodesWithInfo = (
 
   if (answers?.plateSize?.frontPlateSize?.length > 0) {
     result.push({
-      chargeItemCode: ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE.toString(),
+      chargeItemCode:
+        ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE.toString(),
       type: PlateType.front,
     })
     result.push({
-      chargeItemCode: ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE_SGS.toString(),
+      chargeItemCode:
+        ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE_SGS.toString(),
       type: PlateType.front,
     })
   }
 
   if (answers?.plateSize?.rearPlateSize?.length > 0) {
     result.push({
-      chargeItemCode: ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE.toString(),
+      chargeItemCode:
+        ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE.toString(),
       type: PlateType.rear,
     })
     result.push({
-      chargeItemCode: ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE_SGS.toString(),
+      chargeItemCode:
+        ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE_SGS.toString(),
       type: PlateType.rear,
     })
   }
@@ -49,7 +53,8 @@ export const getChargeItemCodesWithInfo = (
     answers.plateDelivery?.includeRushFee?.includes(YES) || false
   if (result.length > 0 && includeRushFee) {
     result.push({
-      chargeItemCode: ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE_RUSH_FEE.toString(),
+      chargeItemCode:
+        ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_LICENSE_PLATE_RUSH_FEE.toString(),
     })
   }
 

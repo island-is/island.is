@@ -180,6 +180,7 @@ export class AdminClientsService {
             domainName: tenantId,
             nationalId: tenant.nationalId,
             clientName: clientDto.clientName,
+            contactEmail: clientDto.contactEmail,
             ...this.defaultClientAttributes(clientDto.clientType),
           },
           { transaction },
@@ -750,9 +751,10 @@ export class AdminClientsService {
       },
     })
 
-    const translations = await this.adminTranslationService.getApiScopeTranslations(
-      apiScopes.map(({ name }) => name),
-    )
+    const translations =
+      await this.adminTranslationService.getApiScopeTranslations(
+        apiScopes.map(({ name }) => name),
+      )
 
     return apiScopes.map((apiScope) =>
       this.adminTranslationService.mapApiScopeToAdminScopeDTO(

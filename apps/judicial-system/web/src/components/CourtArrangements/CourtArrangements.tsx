@@ -5,8 +5,6 @@ import { Box, Input } from '@island.is/island-ui/core'
 import { NotificationType } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import BlueBox from '../BlueBox/BlueBox'
-import DateTime from '../DateTime/DateTime'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -14,6 +12,8 @@ import {
 import { useCase } from '../../utils/hooks'
 import { formatDateForServer } from '../../utils/hooks/useCase'
 import { hasSentNotification } from '../../utils/stepHelper'
+import BlueBox from '../BlueBox/BlueBox'
+import DateTime from '../DateTime/DateTime'
 
 interface Props {
   workingCase: Case

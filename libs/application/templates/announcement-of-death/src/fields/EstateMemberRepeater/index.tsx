@@ -172,15 +172,13 @@ const Item = ({
 
   const { control, setValue } = useFormContext()
 
-  const [
-    getIdentity,
-    { loading: queryLoading, error: queryError },
-  ] = useLazyQuery<Query, { input: IdentityInput }>(IDENTITY_QUERY, {
-    onCompleted: (data) => {
-      setValue(nameField, data.identity?.name ?? '')
-    },
-    fetchPolicy: 'network-only',
-  })
+  const [getIdentity, { loading: queryLoading, error: queryError }] =
+    useLazyQuery<Query, { input: IdentityInput }>(IDENTITY_QUERY, {
+      onCompleted: (data) => {
+        setValue(nameField, data.identity?.name ?? '')
+      },
+      fetchPolicy: 'network-only',
+    })
 
   useEffect(() => {
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {

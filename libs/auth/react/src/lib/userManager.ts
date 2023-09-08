@@ -44,7 +44,7 @@ export const configureMock = (user?: MockUser) => {
     /* intentionally empty */
   }
 
-  userManager = ({
+  userManager = {
     getUser(): Promise<User> {
       return Promise.resolve(userInfo)
     },
@@ -58,7 +58,7 @@ export const configureMock = (user?: MockUser) => {
       removeUserLoaded: empty,
       removeUserSignedOut: empty,
     },
-  } as unknown) as UserManager
+  } as unknown as UserManager
 }
 
 export { User, UserManager }

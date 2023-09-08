@@ -542,14 +542,13 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    const deliverCaseFilesRecordToCourtMessages = theCase.policeCaseNumbers.map<CaseMessage>(
-      (policeCaseNumber) => ({
+    const deliverCaseFilesRecordToCourtMessages =
+      theCase.policeCaseNumbers.map<CaseMessage>((policeCaseNumber) => ({
         type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
         user,
         caseId: theCase.id,
         policeCaseNumber,
-      }),
-    )
+      }))
 
     const deliverCaseFileToCourtMessages =
       theCase.caseFiles
@@ -809,7 +808,11 @@ export class CaseService {
   ): Promise<void> {
     if (updatedCase.state !== theCase.state) {
       // New case state
-      if (updatedCase.state === CaseState.RECEIVED) {
+      if (
+        updatedCase.state === CaseState.RECEIVED &&
+        theCase.state === CaseState.SUBMITTED
+      ) {
+        // Only send messages if the case was in a SUBMITTED state - not when reopening a case
         await this.addMessagesForReceivedCaseToQueue(updatedCase, user)
       } else if (updatedCase.state === CaseState.DELETED) {
         await this.addMessagesForDeletedCaseToQueue(

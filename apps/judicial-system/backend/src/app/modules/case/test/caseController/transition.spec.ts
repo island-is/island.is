@@ -48,12 +48,8 @@ describe('CaseController - Transition', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      messageService,
-      sequelize,
-      caseModel,
-      caseController,
-    } = await createTestingCaseModule()
+    const { messageService, sequelize, caseModel, caseController } =
+      await createTestingCaseModule()
 
     mockMessageService = messageService
     mockCaseModel = caseModel
@@ -103,6 +99,7 @@ describe('CaseController - Transition', () => {
       ${CaseTransition.DELETE}  | ${CaseState.DRAFT}     | ${CaseState.DELETED}
       ${CaseTransition.DELETE}  | ${CaseState.SUBMITTED} | ${CaseState.DELETED}
       ${CaseTransition.DELETE}  | ${CaseState.RECEIVED}  | ${CaseState.DELETED}
+      ${CaseTransition.REOPEN}  | ${CaseState.ACCEPTED}  | ${CaseState.RECEIVED}
     `.describe(
     '$transition $oldState case transitioning to $newState case',
     ({ transition, oldState, newState }) => {
@@ -237,7 +234,10 @@ describe('CaseController - Transition', () => {
                 },
               ],
             )
-          } else if (newState === CaseState.RECEIVED) {
+          } else if (
+            transition !== CaseTransition.REOPEN &&
+            newState === CaseState.RECEIVED
+          ) {
             expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
               [
                 {
@@ -389,8 +389,7 @@ describe('CaseController - Transition', () => {
                   caseFileId: prosecutorAppealBriefCaseFileId2,
                 },
                 {
-                  type:
-                    MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+                  type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
                   user: defaultUser,
                   caseId,
                 },
