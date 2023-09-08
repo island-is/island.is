@@ -1,0 +1,16 @@
+import { Field, InputType } from '@nestjs/graphql'
+
+@InputType('DentistsInput')
+export class GetDentistsInput {
+  @Field(() => String)
+  contractType!: string
+
+  @Field(() => Number, { nullable: true })
+  limit?: number
+
+  @Field(() => String, { nullable: true })
+  before?: string
+
+  @Field(() => String, { nullable: true })
+  after?: string
+}

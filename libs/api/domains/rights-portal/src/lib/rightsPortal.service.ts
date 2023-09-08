@@ -33,6 +33,7 @@ import { HealthCenterResponse } from './models/healthCenterResponse.model'
 import { isDefined } from '@island.is/shared/utils'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { GetDentistsInput } from './dto/getDentists.input'
 
 @Injectable()
 export class RightsPortalService {
@@ -157,11 +158,16 @@ export class RightsPortalService {
     }
   }
 
-  async getDentists(user: User): Promise<PaginatedDentistsResponse | null> {
+  async getDentists(
+    user: User,
+    input: GetDentistsInput,
+  ): Promise<PaginatedDentistsResponse | null> {
     try {
       const res = await this.dentistApi
         .withMiddleware(new AuthMiddleware(user as Auth))
-        .dentists({ contractType: '' })
+        .dentists({
+          ...input,
+        })
 
       if (!res || !res.dentists || !res.totalCount || !res.pageInfo) {
         return null

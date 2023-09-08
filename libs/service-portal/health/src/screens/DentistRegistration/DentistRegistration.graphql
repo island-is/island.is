@@ -1,11 +1,12 @@
 query getDentistStatus {
   rightsPortalDentistStatus {
     canRegister
+    contractType
   }
 }
 
-query getPaginatedDentists {
-  rightsPortalPaginatedDentists {
+query getPaginatedDentists($input: DentistsInput!) {
+  response: rightsPortalPaginatedDentists(input: $input) {
     totalCount
     pageInfo {
       hasNextPage
@@ -13,7 +14,7 @@ query getPaginatedDentists {
       startCursor
       endCursor
     }
-    data {
+    dentists: data {
       name
       practice
       address {
@@ -23,7 +24,7 @@ query getPaginatedDentists {
       }
     }
   }
-  rightsPortalUserDentistRegistration {
+  current: rightsPortalUserDentistRegistration {
     dentist {
       id
       name

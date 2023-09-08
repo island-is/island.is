@@ -29,6 +29,7 @@ import {
   UserHealthCenterRegistration,
 } from './models/healthCenter.model'
 import { HealthCenterResponse } from './models/healthCenterResponse.model'
+import { GetDentistsInput } from './dto/getDentists.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -160,8 +161,11 @@ export class RightsPortalResolver {
     nullable: true,
   })
   @Audit()
-  getRightsPortalDentistList(@CurrentUser() user: User) {
-    return this.rightsPortalService.getDentists(user)
+  getRightsPortalDentistList(
+    @CurrentUser() user: User,
+    @Args('input') input: GetDentistsInput,
+  ) {
+    return this.rightsPortalService.getDentists(user, input)
   }
 
   @Scopes(ApiScope.health)

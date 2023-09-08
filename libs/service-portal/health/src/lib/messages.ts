@@ -19,9 +19,17 @@ export const messages = defineMessages({
     defaultMessage:
       'Gjaldskrá tannlækna er frjáls. Sjúkratryggingar Íslands(SÍ) greiða hinsvegar samkvæmt gjaldskrá sem Velferðarráðuneytið hefur sett.',
   },
+  dentistPractice: {
+    id: 'sp.health:dentist-practice',
+    defaultMessage: 'Stofa',
+  },
   dentistNumber: {
     id: 'sp.health:dentist-number',
     defaultMessage: 'Númer tannlæknis',
+  },
+  dentistCurrent: {
+    id: 'sp.health:dentist-current',
+    defaultMessage: 'Núverandi',
   },
   dentistRegisterationPageTitle: {
     id: 'sp.health:dentist-registeration-page-title',
