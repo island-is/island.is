@@ -60,6 +60,7 @@ import {
   UserContext,
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components'
+import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
 import {
   CaseAppealDecision,
   InstitutionType,
@@ -76,7 +77,6 @@ import {
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
-import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
 
 import AppealSection from './Components/AppealSection/AppealSection'
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
