@@ -39,6 +39,8 @@ const getSortedAndFilteredDrivingInstructors = (
   const startsWithFullSearchString = (
     instructor: DrivingInstructor,
   ): boolean => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     return (
       instructor.name?.trim().toLowerCase().startsWith(fullSearchString) ||
       instructor.nationalId?.trim().startsWith(fullSearchString) ||

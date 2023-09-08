@@ -1,5 +1,4 @@
 import { CaseState } from '@island.is/judicial-system/types'
-
 import { getDurationDate } from '@island.is/judicial-system-web/src/components/Table'
 
 const date1 = '2022-08-04T19:50:08.033Z'

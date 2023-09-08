@@ -13,7 +13,6 @@ export enum Features {
   transportAuthorityDigitalTachographCompanyCard = 'isTransportAuthorityDigitalTachographCompanyCardEnabled',
   transportAuthorityDigitalTachographDriversCard = 'isTransportAuthorityDigitalTachographDriversCardEnabled',
   transportAuthorityDigitalTachographWorkshopCard = 'isTransportAuthorityDigitalTachographWorkshopCardEnabled',
-  transportAuthorityLicensePlateRenewal = 'isTransportAuthorityLicensePlateRenewalEnabled',
   alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
@@ -32,11 +31,13 @@ export enum Features {
   servicePortalHealthCenterDentistPage = 'isServicePortalHealthCenterPageEnabled',
   servicePortalWorkMachinesModule = 'isServicePortalWorkMachinesPageEnabled',
 
+  //Occupational License Health directorate fetch enabled
+  occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
+
   //License service new drivers license client enabled
   licenseServiceDrivingLicenseClient = 'isLicenseServiceDrivingLicenceClientV2Enabled',
 
   // Application delegation flags
-  transportAuthorityLicensePlateRenewalDelegations = 'applicationTransportAuthorityLicensePlateRenewalDelegations',
   isFishingLicenceCustomDelegationEnabled = 'isFishingLicenceCustomDelegationEnabled',
 
   //Application system

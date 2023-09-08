@@ -14,10 +14,14 @@ const storage = storageFactory(() => sessionStorage)
 
 const getUserID = () => {
   const email = storage.getItem(emailInputId)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   return String(stringHash(storage.getItem('IBM_WAC_DEVICE_ID') ?? email))
 }
 
 const getUserInformation = async (
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   instance,
   callback: (userInfo: { name: string; email: string }) => void,
 ) => {
@@ -98,12 +102,15 @@ const getUserInformation = async (
     }
   }
 }
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
 export const onDirectorateOfImmigrationChatLoad = (instance) => {
   const apolloClient = initApollo({})
 
   instance.on({
     type: 'identityTokenExpired',
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     handler: (event) => {
       return new Promise((resolve, reject) => {
         getUserInformation(instance, ({ email, name }) => {

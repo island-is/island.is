@@ -32,6 +32,7 @@ import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-syst
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { FinanceModule } from '@island.is/api/domains/finance'
 import { FiskistofaModule } from '@island.is/api/domains/fiskistofa'
+import { OccupationalLicensesModule } from '@island.is/api/domains/occupational-licenses'
 import { HealthInsuranceModule } from '@island.is/api/domains/health-insurance'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import {
@@ -39,6 +40,8 @@ import {
   CommunicationsModule,
 } from '@island.is/api/domains/communications'
 import { IdentityModule } from '@island.is/api/domains/identity'
+import { NationalRegistrySoffiaClientConfig } from '@island.is/clients/national-registry-v1'
+import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import {
   GenericAdrLicenseConfig,
   GenericDisabilityLicenseConfig,
@@ -50,7 +53,6 @@ import {
 } from '@island.is/api/domains/license-service'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
-import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { PassportModule } from '@island.is/api/domains/passport'
 import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
@@ -106,6 +108,10 @@ import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { UniversityOfIcelandClientConfig } from '@island.is/clients/university-of-iceland'
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
+import {
+  HealthDirectorateClientConfig,
+  HealthDirectorateClientModule,
+} from '@island.is/clients/health-directorate'
 import { CmsModule, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
@@ -127,6 +133,8 @@ import { GraphqlOptionsFactory } from './graphql-options.factory'
 import { HealthController } from './health.controller'
 import { GraphQLConfig } from './graphql.config'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
+import { MMSClientConfig } from '@island.is/clients/mms'
+import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 
 const environment = getConfig
 
@@ -202,14 +210,6 @@ const environment = getConfig
     }),
     CmsTranslationsModule,
     TerminusModule,
-    NationalRegistryModule.register({
-      nationalRegistry: {
-        baseSoapUrl: environment.nationalRegistry.baseSoapUrl!,
-        user: environment.nationalRegistry.user!,
-        password: environment.nationalRegistry.password!,
-        host: environment.nationalRegistry.host!,
-      },
-    }),
     HealthInsuranceModule.register({
       clientV2Config: {
         xRoadBaseUrl: environment.healthInsuranceV2.xRoadBaseUrl!,
@@ -232,8 +232,11 @@ const environment = getConfig
     EmailSignupModule,
     ApiCatalogueModule,
     IdentityModule,
+    NationalRegistryModule,
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
+    OccupationalLicensesModule,
+    HealthDirectorateClientModule,
     DisabilityLicenseModule,
     ElectronicRegistrationsModule,
     FiskistofaModule,
@@ -284,6 +287,8 @@ const environment = getConfig
         AirDiscountSchemeClientConfig,
         ConsultationPortalClientConfig,
         AssetsClientConfig,
+        NationalRegistrySoffiaClientConfig,
+        NationalRegistryV3ClientConfig,
         FirearmLicenseClientConfig,
         DisabilityLicenseClientConfig,
         GenericFirearmLicenseConfig,
@@ -323,6 +328,7 @@ const environment = getConfig
         PaymentScheduleClientConfig,
         JudicialAdministrationClientConfig,
         CommunicationsConfig,
+        HealthDirectorateClientConfig,
         UniversityOfIcelandClientConfig,
         InnaClientConfig,
         SessionsApiClientConfig,
@@ -333,6 +339,7 @@ const environment = getConfig
         IcelandicGovernmentInstitutionVacanciesClientConfig,
         RskRelationshipsClientConfig,
         AircraftRegistryClientConfig,
+        MMSClientConfig,
       ],
     }),
   ],

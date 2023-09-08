@@ -34,7 +34,11 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
 }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     () => JSON.parse(organizationPage.organization.namespace?.fields ?? '{}'),
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     [organizationPage.organization.namespace?.fields],
   )
   const n = useNamespace(namespace)
@@ -53,6 +57,8 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
       <div className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             !!organizationPage.organization.logo && (
               <Link
                 href={
@@ -61,6 +67,8 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
                 className={styles.iconCircle}
               >
                 <img
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
                   alt="nti-logo"
@@ -69,22 +77,29 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
             )
           }
         >
-          {!!organizationPage.organization.logo && (
-            <Hidden above="sm">
-              <Link
-                href={
-                  linkResolver('organizationpage', [organizationPage.slug]).href
-                }
-                className={styles.iconCircle}
-              >
-                <img
-                  src={organizationPage.organization.logo.url}
-                  className={styles.headerLogo}
-                  alt=""
-                />
-              </Link>
-            </Hidden>
-          )}
+          {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            !!organizationPage.organization.logo && (
+              <Hidden above="sm">
+                <Link
+                  href={
+                    linkResolver('organizationpage', [organizationPage.slug])
+                      .href
+                  }
+                  className={styles.iconCircle}
+                >
+                  <img
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore make web strict
+                    src={organizationPage.organization.logo.url}
+                    className={styles.headerLogo}
+                    alt=""
+                  />
+                </Link>
+              </Hidden>
+            )
+          }
           <Box
             marginTop={[2, 2, 6]}
             textAlign={['center', 'center', 'left']}

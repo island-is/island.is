@@ -19,26 +19,26 @@ export class UpdateFileDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly userGeneratedFilename?: string | null
+  readonly userGeneratedFilename?: string
 
   @IsOptional()
   @ValidateIf((file) => typeof file.orderWithinChapter === 'number')
   @IsNumber()
   @Min(0)
   @ApiPropertyOptional()
-  readonly chapter?: number | null
+  readonly chapter?: number
 
   @IsOptional()
   @ValidateIf((file) => typeof file.chapter === 'number')
   @IsNumber()
   @Min(0)
   @ApiPropertyOptional()
-  readonly orderWithinChapter?: number | null
+  readonly orderWithinChapter?: number
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly displayDate?: string | null
+  readonly displayDate?: Date
 }
 
 export class UpdateFilesDto {
