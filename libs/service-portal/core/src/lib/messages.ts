@@ -506,7 +506,10 @@ export const m = defineMessages({
     defaultMessage:
       'Hér er markmiðið að þú getir fundið yfirlit yfir leyfisbréf og vottorð til starfsréttinda. Unnið er að því að koma öllum leyfisbréfum og vottorðum um starfsréttindi á einn stað.',
   },
-
+  occupationalLicensesNavIntro: {
+    id: 'service.portal:occupational-licenses-nav-intro',
+    defaultMessage: 'Hér er munu birtast starfsleyfi sem þú hefur fengið.',
+  },
   finance: {
     id: 'service.portal:finance',
     defaultMessage: 'Fjármál',
@@ -573,7 +576,7 @@ export const m = defineMessages({
     defaultMessage: 'Mín réttindi',
   },
   occupationaLicenses: {
-    id: 'service.portal:occupational-licenses',
+    id: 'service.portal:occupational-license',
     defaultMessage: 'Starfsleyfi',
   },
   parentalLeave: {
