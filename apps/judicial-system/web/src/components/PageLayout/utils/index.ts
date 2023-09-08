@@ -7,8 +7,8 @@ import {
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import { sections as m } from '@island.is/judicial-system-web/messages'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 export const caseResult = (
   formatMessage: IntlFormatters['formatMessage'],

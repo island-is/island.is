@@ -1,9 +1,18 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useRouter } from 'next/router'
 import { uuid } from 'uuidv4'
-import { AnimatePresence, motion } from 'framer-motion'
 
+import { Box, Button, toast } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  CrimeScene,
+  CrimeSceneMap,
+  IndictmentSubtype,
+  IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
+import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
@@ -13,29 +22,20 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles, core, errors } from '@island.is/judicial-system-web/messages'
-import { Box, Button, toast } from '@island.is/island-ui/core'
-import {
-  IndictmentSubtypeMap,
-  CrimeSceneMap,
-  IndictmentSubtype,
-  CrimeScene,
-} from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
-import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   CaseOrigin,
   Defendant as TDefendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
+import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { DefendantInfo } from '../../components'
-import { defendant } from './Defendant.strings'
 import { LokeNumberList } from './LokeNumberList/LokeNumberList'
 import { PoliceCaseInfo } from './PoliceCaseInfo/PoliceCaseInfo'
+import { defendant } from './Defendant.strings'
 
 export interface PoliceCase {
   number: string

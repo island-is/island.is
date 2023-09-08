@@ -543,6 +543,7 @@ export const Form = ({ form, namespace }: FormProps) => {
 
   const success = !!result?.genericForm?.sent
   const failure = result?.genericForm?.sent === false || !!error || submitError
+  const defaultNamespace = form.defaultFieldNamespace
 
   return (
     <Box
@@ -583,9 +584,14 @@ export const Form = ({ form, namespace }: FormProps) => {
           </Text>
           <Stack space={4}>
             <Input
-              placeholder={n('formNamePlaceholder', 'Nafnið þitt')}
+              placeholder={
+                defaultNamespace?.namePlaceholder ??
+                n('formNamePlaceholder', 'Nafnið þitt')
+              }
               name="name"
-              label={n('formFullName', 'Fullt nafn')}
+              label={
+                defaultNamespace?.nameLabel ?? n('formFullName', 'Fullt nafn')
+              }
               required={true}
               value={data['name'] ?? ''}
               hasError={!!errors.find((error) => error.field === 'name')}
@@ -595,9 +601,12 @@ export const Form = ({ form, namespace }: FormProps) => {
               onChange={(e) => onChange('name', e.target.value)}
             />
             <Input
-              placeholder={n('formEmailPlaceholder', 'Netfang')}
+              placeholder={
+                defaultNamespace?.emailPlaceholder ??
+                n('formEmailPlaceholder', 'Netfang')
+              }
               name="email"
-              label={n('formEmail', 'Netfang')}
+              label={defaultNamespace?.emailLabel ?? n('formEmail', 'Netfang')}
               required={true}
               value={data['email'] ?? ''}
               hasError={!!errors.find((error) => error.field === 'email')}

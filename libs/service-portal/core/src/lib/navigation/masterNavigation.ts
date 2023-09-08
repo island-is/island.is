@@ -121,7 +121,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'receipt',
         },
-        description: m.occupationalLicensesDescription,
+        description: m.occupationalLicensesNavIntro,
       },
       // Mín réttindi
       {

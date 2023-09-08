@@ -1,4 +1,4 @@
-import { sortByIcelandicAlphabet, compareLocaleIS } from './sortHelper'
+import { compareLocaleIS, sortByIcelandicAlphabet } from './sortHelper'
 
 describe('Sort by Icelandic alphabet', () => {
   it('should sort an array of strings in Icelandic alphabetical order', () => {
