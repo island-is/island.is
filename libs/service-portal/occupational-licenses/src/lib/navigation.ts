@@ -9,7 +9,7 @@ export const occupationalLicensesNavigation: PortalNavigationItem = {
   icon: {
     icon: 'receipt',
   },
-  description: m.occupationalLicensesDescription,
+  description: m.occupationalLicensesNavIntro,
   children: [
     {
       name: 'type',
