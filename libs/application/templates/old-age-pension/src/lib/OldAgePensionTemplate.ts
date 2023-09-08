@@ -33,6 +33,7 @@ import {
   SocialInsuranceAdministrationStatusApi,
 } from '../dataProviders'
 import { getApplicationAnswers } from './oldAgePensionUtils'
+import { Features } from '@island.is/feature-flags'
 
 const OldAgePensionTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -43,6 +44,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
   name: oldAgePensionFormMessage.shared.applicationTitle,
   institution: oldAgePensionFormMessage.shared.institution,
   readyForProduction: false, // hafa þett svona atm?
+  featureFlag: Features.oldAgePensionApplication,
   translationNamespaces: [ApplicationConfigurations.OldAgePension.translation],
   dataSchema,
   allowMultipleApplicationsInDraft: false,
