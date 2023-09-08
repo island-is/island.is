@@ -11,44 +11,44 @@ import {
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
-import {
-  FormFooter,
-  PageLayout,
-  CourtCaseInfo,
-  BlueBox,
-  FormContentContainer,
-  DateTime,
-  HideableText,
-  PdfButton,
-  CourtDocuments,
-  FormContext,
-} from '@island.is/judicial-system-web/src/components'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   CaseDecision,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import {
-  validateAndSendToServer,
+  closedCourt,
+  core,
+  rcCourtRecord as m,
+  titles,
+} from '@island.is/judicial-system-web/messages'
+import {
+  BlueBox,
+  CourtCaseInfo,
+  CourtDocuments,
+  DateTime,
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  HideableText,
+  PageLayout,
+  PdfButton,
+} from '@island.is/judicial-system-web/src/components'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
   removeTabsValidateAndSet,
+  validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   useCase,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  rcCourtRecord as m,
-  closedCourt,
-  core,
-  titles,
-} from '@island.is/judicial-system-web/messages'
-import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 
-import { isCourtRecordStepValidRC } from '../../../../utils/validate'
 import { formatCustodyRestrictions } from '../../../../utils/restrictions'
+import { isCourtRecordStepValidRC } from '../../../../utils/validate'
 import AppealSections from '../../components/AppealSections/AppealSections'
 
 export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
