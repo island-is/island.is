@@ -1,15 +1,15 @@
 import React from 'react'
-import { formatCustodyRestrictions } from './restrictions'
-import { IntlFormatters, useIntl, createIntl } from 'react-intl'
+import { createIntl, IntlFormatters, useIntl } from 'react-intl'
 import { MockedProvider } from '@apollo/client/testing'
-import { render, screen, getDefaultNormalizer } from '@testing-library/react'
+import { getDefaultNormalizer, render, screen } from '@testing-library/react'
 
-import { LocaleProvider } from '@island.is/localization'
 import {
-  CaseType,
   CaseCustodyRestrictions,
+  CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { LocaleProvider } from '@island.is/localization'
 
+import { formatCustodyRestrictions } from './restrictions'
 import { formatRequestedCustodyRestrictions } from './restrictions'
 
 interface Props {

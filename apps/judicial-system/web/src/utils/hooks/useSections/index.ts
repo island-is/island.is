@@ -1,6 +1,18 @@
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
+import {
+  courtIndictmentRoutes,
+  courtInvestigationCasesRoutes,
+  courtOfAppealRoutes,
+  courtRestrictionCasesRoutes,
+  prosecutorIndictmentRoutes,
+  prosecutorInvestigationCasesRoutes,
+  prosecutorRestrictionCasesRoutes,
+} from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
+import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealState,
   CaseState,
@@ -13,11 +25,9 @@ import {
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
-import { caseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
-import { capitalize } from '@island.is/judicial-system/formatters'
-import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
-
+import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
+import { caseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import {
   CaseType,
   Gender,
@@ -26,20 +36,9 @@ import {
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import {
-  courtIndictmentRoutes,
-  courtInvestigationCasesRoutes,
-  courtOfAppealRoutes,
-  courtRestrictionCasesRoutes,
-  prosecutorIndictmentRoutes,
-  prosecutorInvestigationCasesRoutes,
-  prosecutorRestrictionCasesRoutes,
-} from '@island.is/judicial-system/consts'
-import * as constants from '@island.is/judicial-system/consts'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
 import { isTrafficViolationCase } from '../../stepHelper'
-import { useContext } from 'react'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
@@ -614,7 +613,7 @@ const useSections = (
         !completedCaseStates.includes(workingCase.state) &&
         !parentCase,
       children:
-        user?.institution?.type !== InstitutionType.COURT
+        user?.institution?.type !== InstitutionType.DISTRICT_COURT
           ? []
           : [
               {
@@ -757,7 +756,7 @@ const useSections = (
         !completedCaseStates.includes(workingCase.state) &&
         !parentCase,
       children:
-        user?.institution?.type !== InstitutionType.COURT
+        user?.institution?.type !== InstitutionType.DISTRICT_COURT
           ? []
           : [
               {
@@ -1203,14 +1202,14 @@ const useSections = (
       {
         name: formatMessage(sections.courtOfAppealSection.appealed),
         isActive:
-          user?.institution?.type !== InstitutionType.HIGH_COURT &&
+          user?.institution?.type !== InstitutionType.COURT_OF_APPEALS &&
           workingCase.appealState === CaseAppealState.RECEIVED,
         children: [],
       },
       {
         name: formatMessage(sections.courtOfAppealSection.result),
         isActive:
-          user?.institution?.type === InstitutionType.HIGH_COURT &&
+          user?.institution?.type === InstitutionType.COURT_OF_APPEALS &&
           routeIndex !== 3,
         children: [
           {
