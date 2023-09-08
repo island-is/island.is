@@ -8,25 +8,25 @@ import { Course } from './model'
 import { University } from '../university/model'
 import { Program, ProgramCourse } from '../program/model'
 import {
-  UniversityGatewayReykjavikUniversityClientConfig,
-  UniversityGatewayReykjavikUniversityClientModule,
-} from '@island.is/clients/university-gateway/reykjavik-university'
+  ReykjavikUniversityApplicationClientConfig,
+  ReykjavikUniversityApplicationClientModule,
+} from '@island.is/clients/university-application/reykjavik-university'
 import {
-  UniversityGatewayUniversityOfIcelandClientConfig,
-  UniversityGatewayUniversityOfIcelandClientModule,
-} from '@island.is/clients/university-gateway/university-of-iceland'
+  UniversityOfIcelandApplicationClientConfig,
+  UniversityOfIcelandApplicationClientModule,
+} from '@island.is/clients/university-application/university-of-iceland'
 import { ConfigModule } from '@nestjs/config'
 
 @Module({
   imports: [
     SequelizeModule.forFeature([University, Course, Program, ProgramCourse]),
-    UniversityGatewayReykjavikUniversityClientModule,
-    UniversityGatewayUniversityOfIcelandClientModule,
+    ReykjavikUniversityApplicationClientModule,
+    UniversityOfIcelandApplicationClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
-        UniversityGatewayReykjavikUniversityClientConfig,
-        UniversityGatewayUniversityOfIcelandClientConfig,
+        ReykjavikUniversityApplicationClientConfig,
+        UniversityOfIcelandApplicationClientConfig,
       ],
     }),
   ],

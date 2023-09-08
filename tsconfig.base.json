@@ -567,11 +567,11 @@
       "@island.is/clients/transport-authority/vehicle-printing": [
         "libs/clients/transport-authority/vehicle-printing/src/index.ts"
       ],
-      "@island.is/clients/university-gateway/reykjavik-university": [
-        "libs/clients/university-gateway/reykjavik-university/src/index.ts"
+      "@island.is/clients/university-application/reykjavik-university": [
+        "libs/clients/university-application/reykjavik-university/src/index.ts"
       ],
-      "@island.is/clients/university-gateway/university-of-iceland": [
-        "libs/clients/university-gateway/university-of-iceland/src/index.ts"
+      "@island.is/clients/university-application/university-of-iceland": [
+        "libs/clients/university-application/university-of-iceland/src/index.ts"
       ],
       "@island.is/clients/university-of-iceland": [
         "libs/clients/university-of-iceland/src/index.ts"
