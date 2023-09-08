@@ -1,22 +1,23 @@
-import '@testing-library/jest-dom'
 import React from 'react'
-import { render, waitFor, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { MockedProvider } from '@apollo/client/testing'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
 import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import { UserProvider } from '@island.is/judicial-system-web/src/components'
+import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   mockCourtOfAppealsQuery,
   mockJudgeQuery,
   mockPrisonUserQuery,
   mockProsecutorQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { LocaleProvider } from '@island.is/localization'
-import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import Cases from './Cases'
+
+import '@testing-library/jest-dom'
 
 const mockCasesQuery = [
   {
