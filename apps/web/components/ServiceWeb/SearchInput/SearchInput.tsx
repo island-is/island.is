@@ -167,6 +167,8 @@ export const SearchInput = ({
       }))
 
     setOptions(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       options.length
         ? options
         : [

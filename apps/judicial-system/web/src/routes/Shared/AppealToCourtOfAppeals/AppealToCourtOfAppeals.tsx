@@ -9,6 +9,20 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
+  Box,
+  Button,
+  InputFileUpload,
+  Text,
+  UploadFile,
+} from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  CaseFileCategory,
+  CaseTransition,
+  isProsecutionRole,
+} from '@island.is/judicial-system/types'
+import { core, titles } from '@island.is/judicial-system-web/messages'
+import {
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -18,27 +32,13 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  Box,
-  Button,
-  InputFileUpload,
-  Text,
-  UploadFile,
-} from '@island.is/island-ui/core'
-import { core, titles } from '@island.is/judicial-system-web/messages'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
-import {
-  CaseFileCategory,
-  CaseTransition,
-  isProsecutionRole,
-} from '@island.is/judicial-system/types'
+import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   TUploadFile,
-  useS3Upload,
   useCase,
+  useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
-import * as constants from '@island.is/judicial-system/consts'
 
 import { appealToCourtOfAppeals as strings } from './AppealToCourtOfAppeals.strings'
 
