@@ -12,8 +12,8 @@ export const ModuleErrorScreen = ({ name }: ModuleErrorScreenProps) => {
   const error = useRouteError()
 
   return (
-    <Box padding={8}>
-      <Problem error={error as Error} />
+    <Box paddingY={8} paddingX={[0, 8]}>
+      <Problem error={error as Error} expand noBorder />
     </Box>
   )
 }
