@@ -8,7 +8,7 @@ import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { CriminalRecordItem } from '../../shared'
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import DescriptionText from '../../components/DescriptionText'
 import { information, application as appmessages } from '../../lib/messages'
 import { RadioController } from '@island.is/shared/form-fields'
@@ -186,9 +186,11 @@ export const CriminalRecord: FC<FieldBaseProps> = (props) => {
               fluid
               size="large"
               onClick={handleAdd}
-              textSize="md"
+              // textSize="md"
             >
-              {formatMessage(information.labels.criminalRecord.buttonTitle)}
+              <Text variant="h5" color="blue400">
+                {formatMessage(information.labels.criminalRecord.buttonTitle)}
+              </Text>
             </Button>
           </Box>
         )}

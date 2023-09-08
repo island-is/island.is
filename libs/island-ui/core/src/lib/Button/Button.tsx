@@ -40,7 +40,7 @@ type UtilityButtonType = {
 
 export type ButtonSizes = Exclude<
   keyof typeof styles.size,
-  'utility' | 'textSmall' | 'textMedium'
+  'utility' | 'textSmall'
 >
 
 export type ButtonTypes =
@@ -127,9 +127,7 @@ export const Button = forwardRef<
             [styles.fluid]: fluid,
             [styles.nowrap]: nowrap,
             [styles.size.utility]: variant === 'utility',
-            [styles.size.textSmall]:
-              (variant === 'text' && size === 'small') || textSize === 'sm',
-            [styles.size.textMedium]: textSize === 'md',
+            [styles.size.textSmall]: variant === 'text' && size === 'small',
             [styles.circleSizes[size]]: circle,
             [styles.circle]: circle,
             [styles.padding[size]]:

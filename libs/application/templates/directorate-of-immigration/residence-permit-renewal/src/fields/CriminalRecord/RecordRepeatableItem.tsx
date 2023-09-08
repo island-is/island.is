@@ -122,7 +122,7 @@ export const RecordRepeatableItem: FC<Props & FieldBaseProps> = ({
         error={errors && getErrorViaPath(errors, countryField)}
         field={{
           id: countryField,
-          title: `Dvalarland`,
+          title: `Hvar gerðist brotið?`,
           options: countryOptions,
           component: FieldComponents.SELECT,
           children: undefined,
