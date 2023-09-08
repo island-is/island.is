@@ -2,11 +2,11 @@ import {
   Box,
   Text,
   ProblemTemplate,
-  ProblemTemplateProps,
   problemTemplateStyles as styles,
 } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { useLocale } from '@island.is/localization'
+import { CommonProblemProps } from './problem.types'
 
 import { m } from '../../lib/messages'
 import { ProblemSize } from './Problem'
@@ -15,21 +15,18 @@ type NoDataProps = {
   title?: string
   message?: string
   size?: ProblemSize
-} & Pick<
-  ProblemTemplateProps,
-  'buttonLink' | 'noBorder' | 'tag' | 'imgAlt' | 'imgSrc'
->
+} & CommonProblemProps
 
 export const NoData = ({
   title: titleStr,
   message,
   tag,
   size = 'large',
-  noBorder,
-  buttonLink,
   imgSrc,
   imgAlt,
+  noBorder,
   dataTestId,
+  ...rest
 }: NoDataProps & TestSupport) => {
   const { formatMessage } = useLocale()
   const title = titleStr ?? formatMessage(m.noDataTitle)
@@ -80,9 +77,9 @@ export const NoData = ({
       message={message ?? formatMessage(m.noDataMessage)}
       imgSrc={imgProps.src}
       imgAlt={imgProps.alt}
-      buttonLink={buttonLink}
-      noBorder={noBorder}
       dataTestId={dataTestId}
+      noBorder={noBorder}
+      {...rest}
     />
   )
 }

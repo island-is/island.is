@@ -1,10 +1,7 @@
 import { useEffect, useMemo } from 'react'
 
 import { m, useOrganizationStore } from '@island.is/portals/core'
-import {
-  ProblemTemplate,
-  ProblemTemplateProps,
-} from '@island.is/island-ui/core'
+import { ProblemTemplate } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { useLocale } from '@island.is/localization'
 
@@ -12,6 +9,7 @@ import { getOrganizationSlugFromError } from '../../utils/getOrganizationSlugFro
 import { ThirdPartyServiceError } from './ThirdPartyServiceError'
 import { NotFound } from './NotFound'
 import { InternalServiceError } from './InternalServiceError'
+import { CommonProblemProps } from './problem.types'
 import { NoData } from './NoData'
 
 export type ProblemSize = 'small' | 'large'
@@ -35,10 +33,8 @@ type ProblemBaseProps = {
   title?: string
   message?: string
   tag?: string
-} & Pick<
-  ProblemTemplateProps,
-  'noBorder' | 'buttonLink' | 'imgSrc' | 'imgAlt'
-> &
+  logError?: boolean
+} & CommonProblemProps &
   TestSupport
 
 interface InternalServiceErrorProps extends ProblemBaseProps {
@@ -77,6 +73,8 @@ export const Problem = ({
   noBorder,
   buttonLink,
   dataTestId,
+  logError = true,
+  expand,
 }: ProblemProps) => {
   const { formatMessage } = useLocale()
 
@@ -89,6 +87,7 @@ export const Problem = ({
     noBorder,
     buttonLink,
     dataTestId,
+    expand,
   }
 
   const fallbackProps = {
@@ -97,10 +96,11 @@ export const Problem = ({
     withIcon: true,
     variant: 'error',
     dataTestId,
+    expand,
   } as const
 
   useEffect(() => {
-    if (error) {
+    if (error && logError) {
       console.error(error)
     }
   }, [])
@@ -128,6 +128,7 @@ export const Problem = ({
                   })}
               size={size}
               dataTestId={dataTestId}
+              expand={expand}
             />
           )
         }

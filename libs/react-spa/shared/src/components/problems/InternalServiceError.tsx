@@ -1,10 +1,7 @@
-import {
-  AlertMessage,
-  ProblemTemplate,
-  ProblemTemplateProps,
-} from '@island.is/island-ui/core'
+import { AlertMessage, ProblemTemplate } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { useLocale } from '@island.is/localization'
+import { CommonProblemProps } from './problem.types'
 
 import { m } from '../../lib/messages'
 import { ProblemSize } from './Problem'
@@ -13,21 +10,17 @@ type ServiceErrorProps = {
   title?: string
   message?: string
   size?: ProblemSize
-} & Pick<
-  ProblemTemplateProps,
-  'buttonLink' | 'noBorder' | 'tag' | 'imgAlt' | 'imgSrc'
->
+} & CommonProblemProps
 
 export const InternalServiceError = ({
   title,
   message,
   size,
-  noBorder,
-  buttonLink,
   imgSrc,
   imgAlt,
   tag = '500',
   dataTestId,
+  ...rest
 }: ServiceErrorProps & TestSupport) => {
   const { formatMessage } = useLocale()
 
@@ -53,8 +46,7 @@ export const InternalServiceError = ({
       {...commonProps}
       imgSrc={imgProps.src}
       imgAlt={imgProps.alt ?? commonProps.title}
-      buttonLink={buttonLink}
-      noBorder={noBorder}
+      {...rest}
     />
   )
 }

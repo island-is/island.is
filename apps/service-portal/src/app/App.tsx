@@ -48,8 +48,8 @@ const App = () => {
   })
 
   return (
-    <AuthProvider basePath={ServicePortalPaths.Base}>
-      <ApplicationErrorBoundary>
+    <ApplicationErrorBoundary>
+      <AuthProvider basePath={ServicePortalPaths.Base}>
         <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
           <PortalRouter
             modules={modules}
@@ -60,8 +60,8 @@ const App = () => {
             }}
           />
         </FeatureFlagProvider>
-      </ApplicationErrorBoundary>
-    </AuthProvider>
+      </AuthProvider>
+    </ApplicationErrorBoundary>
   )
 }
 

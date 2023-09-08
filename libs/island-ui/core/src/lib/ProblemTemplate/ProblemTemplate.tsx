@@ -19,6 +19,10 @@ export type ProblemTemplateBaseProps = {
     text: string
     onClick(): void
   }
+  /**
+   * If true, the out most container will be expanded to fill the available space.
+   */
+  expand?: boolean
 } & TestSupport
 
 interface WithIconProps extends ProblemTemplateBaseProps {
@@ -76,6 +80,7 @@ export const ProblemTemplate = ({
   buttonLink,
   showIcon,
   dataTestId,
+  expand,
 }: ProblemTemplateProps) => {
   const convertedVariant = variantToColour(variant)
   return (
@@ -97,6 +102,11 @@ export const ProblemTemplate = ({
       paddingX={3}
       textAlign="center"
       dataTestId={dataTestId}
+      {...(expand && {
+        width: 'full',
+        height: 'full',
+        justifyContent: 'center',
+      })}
     >
       {tag && (
         <div>

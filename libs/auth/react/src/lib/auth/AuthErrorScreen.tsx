@@ -1,15 +1,18 @@
+import { Problem } from '@island.is/react-spa/shared'
 import React from 'react'
-import { Box, Stack, Text, Button } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import * as styles from './Auth.css'
 
 type AuthenticatorErrorScreenProps = {
   basePath: string
+  error: Error
 }
 
 // This screen is unfortunately not translated because at this point we don't
 // have a user locale, nor an access token to fetch translations.
 export const AuthErrorScreen = ({
   basePath,
+  error,
 }: AuthenticatorErrorScreenProps) => {
   const onTryAgainHandler = () => {
     window.location.href = basePath
@@ -20,17 +23,21 @@ export const AuthErrorScreen = ({
       display="flex"
       justifyContent="center"
       alignItems="center"
+      padding={[0, 6]}
       className={styles.fullScreen}
     >
-      <Stack space={2} align="center">
-        <Text as="h1" variant="h2">
-          Óvænt villa
-        </Text>
-        <Text variant="intro">Innskráning mistókst.</Text>
-        <Button variant="primary" onClick={onTryAgainHandler}>
-          Reyna aftur
-        </Button>
-      </Stack>
+      <Problem
+        expand
+        error={error}
+        logError={false}
+        tag="Villa"
+        title="Innskráning mistókst"
+        message=""
+        buttonLink={{
+          text: 'Reyna aftur',
+          onClick: onTryAgainHandler,
+        }}
+      />
     </Box>
   )
 }

@@ -2,20 +2,15 @@ import { useLocation } from 'react-router-dom'
 
 import { TestSupport } from '@island.is/island-ui/utils'
 import { useLocale } from '@island.is/localization'
-import {
-  ProblemTemplate,
-  ProblemTemplateProps,
-} from '@island.is/island-ui/core'
+import { ProblemTemplate } from '@island.is/island-ui/core'
 
+import { CommonProblemProps } from './problem.types'
 import { m } from '../../lib/messages'
 
 type NotFoundProps = {
   title?: string
   message?: string
-} & Pick<
-  ProblemTemplateProps,
-  'buttonLink' | 'noBorder' | 'tag' | 'imgAlt' | 'imgSrc'
->
+} & CommonProblemProps
 
 export const NotFound = ({
   title: titleStr,
@@ -26,6 +21,7 @@ export const NotFound = ({
   buttonLink,
   noBorder,
   dataTestId,
+  expand,
 }: NotFoundProps & TestSupport) => {
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
@@ -52,6 +48,7 @@ export const NotFound = ({
       buttonLink={buttonLink}
       noBorder={noBorder}
       dataTestId={dataTestId}
+      expand={expand}
     />
   )
 }
