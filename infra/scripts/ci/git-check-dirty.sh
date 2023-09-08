@@ -23,7 +23,7 @@ if [[ $(git diff --stat "$abs_path") != '' ]]; then
   git add "$abs_path"
   if [ "$owner" == "github actions" ]; then
     commit_as_github_actions
-  elif [ "$owner" == "dirty bot" ]; then
+  elif [ "$owner" == "dirtybot" ]; then
     commit_as_dirty_bot
   else
     echo "Error: Unknown owner!"
