@@ -687,7 +687,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 />
               </Box>
             )}
-          {user?.role !== UserRole.STAFF && (
+          {user?.role !== UserRole.PRISON_SYSTEM_STAFF && (
             <Box marginBottom={5} data-testid="accordionItems">
               <Accordion>
                 <PoliceRequestAccordionItem workingCase={workingCase} />

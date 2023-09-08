@@ -13,7 +13,6 @@ import {
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {

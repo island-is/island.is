@@ -9,7 +9,7 @@ import Cases from './Cases'
 export const AllCases: React.FC = () => {
   const { user } = useContext(UserContext)
 
-  if (user?.role === UserRole.STAFF) {
+  if (user?.role === UserRole.PRISON_SYSTEM_STAFF) {
     return <PrisonCases />
   }
 
