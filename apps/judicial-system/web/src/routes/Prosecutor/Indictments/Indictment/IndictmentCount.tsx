@@ -1,19 +1,16 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
 import InputMask from 'react-input-mask'
+import { IntlShape, useIntl } from 'react-intl'
 
 import {
   Box,
+  Button,
+  Icon,
   Input,
   Select,
-  Button,
   Tag,
-  Icon,
 } from '@island.is/island-ui/core'
-import {
-  TempCase as Case,
-  TempIndictmentCount as TIndictmentCount,
-} from '@island.is/judicial-system-web/src/types'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   offenseSubstances,
   Substance,
@@ -23,15 +20,18 @@ import {
   BlueBox,
   IndictmentInfo,
 } from '@island.is/judicial-system-web/src/components'
-import useIndictmentCounts, {
-  UpdateIndictmentCount,
-} from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  TempCase as Case,
+  TempIndictmentCount as TIndictmentCount,
+} from '@island.is/judicial-system-web/src/types'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
+import useIndictmentCounts, {
+  UpdateIndictmentCount,
+} from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
 
 import { Substances as SubstanceChoices } from './Substances/Substances'
 import { indictmentCount as strings } from './IndictmentCount.strings'

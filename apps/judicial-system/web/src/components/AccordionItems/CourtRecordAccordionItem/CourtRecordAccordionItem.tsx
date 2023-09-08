@@ -1,8 +1,9 @@
 import React from 'react'
-import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 import isSameDay from 'date-fns/isSameDay'
 
+import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import {
   capitalize,
   formatAppeal,
@@ -11,9 +12,8 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { closedCourt, core } from '@island.is/judicial-system-web/messages'
-import { TIME_FORMAT } from '@island.is/judicial-system/consts'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import { courtRecordAccordion as m } from './CourtRecordAccordion.strings'

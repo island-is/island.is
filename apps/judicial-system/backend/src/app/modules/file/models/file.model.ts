@@ -8,7 +8,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
   CaseFileState,
@@ -67,7 +67,7 @@ export class CaseFile extends Model {
     allowNull: true,
     values: Object.values(CaseFileCategory),
   })
-  @ApiProperty({ enum: CaseFileCategory })
+  @ApiPropertyOptional({ enum: CaseFileCategory })
   category?: CaseFileCategory
 
   @Column({
@@ -82,7 +82,7 @@ export class CaseFile extends Model {
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   key?: string
 
   @Column({
@@ -96,40 +96,41 @@ export class CaseFile extends Model {
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   policeCaseNumber?: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   userGeneratedFilename?: string
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   chapter?: number
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   orderWithinChapter?: number
 
   @Column({
     type: DataType.DATE,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   displayDate?: Date
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
+  @ApiPropertyOptional()
   policeFileId?: string
 }

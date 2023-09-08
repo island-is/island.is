@@ -38,6 +38,9 @@ export const client = new ApolloClient({
       UserProfile: {
         keyFields: ['nationalId'],
       },
+      NationalRegistryPerson: {
+        keyFields: ['nationalId'],
+      },
       AuthProcuringHolderDelegation: {
         keyFields: ['from', ['nationalId']],
       },
