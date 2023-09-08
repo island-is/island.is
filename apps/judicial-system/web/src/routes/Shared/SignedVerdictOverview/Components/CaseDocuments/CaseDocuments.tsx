@@ -1,29 +1,29 @@
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { FetchResult, MutationFunctionOptions } from '@apollo/client'
-import { Exact } from '@island.is/api/schema'
 
+import { Exact } from '@island.is/api/schema'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import {
   CaseDecision,
   CaseState,
   CaseType,
-  UserRole,
   isAcceptingCaseDecision,
   isCourtRole,
   isInvestigationCase,
   isRestrictionCase,
+  UserRole,
 } from '@island.is/judicial-system/types'
+import {
+  core,
+  signedVerdictOverview as m,
+} from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
   PdfButton,
   SignedDocument,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  core,
-  signedVerdictOverview as m,
-} from '@island.is/judicial-system-web/messages'
 import { RequestRulingSignatureMutation } from '@island.is/judicial-system-web/src/components/SigningModal/requestRulingSignature.generated'
 import { RequestSignatureInput } from '@island.is/judicial-system-web/src/graphql/schema'
 

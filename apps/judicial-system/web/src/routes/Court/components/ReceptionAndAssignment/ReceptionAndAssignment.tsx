@@ -3,6 +3,14 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  isIndictmentCase,
+  isInvestigationCase,
+  isRestrictionCase,
+} from '@island.is/judicial-system/types'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
@@ -10,27 +18,19 @@ import {
   PageLayout,
   SelectCourtOfficials,
 } from '@island.is/judicial-system-web/src/components'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   ReactSelectOption,
   UserData,
 } from '@island.is/judicial-system-web/src/types'
-import {
-  isIndictmentCase,
-  isInvestigationCase,
-  isRestrictionCase,
-} from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { isReceptionAndAssignmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
-import { User } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
 
-import { receptionAndAssignment as strings } from './ReceptionAndAssignment.strings'
 import CourtCaseNumber from '../CourtCaseNumber/CourtCaseNumber'
+import { receptionAndAssignment as strings } from './ReceptionAndAssignment.strings'
 
 type JudgeSelectOption = ReactSelectOption & { judge: User }
 type RegistrarSelectOption = ReactSelectOption & { registrar: User }
