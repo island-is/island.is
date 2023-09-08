@@ -23,6 +23,10 @@ globalStyle(`${footerBg} a`, {
   color: 'white',
   textDecoration: 'underline',
   fontSize: '14px',
+  textUnderlineOffset: '5px',
+})
+globalStyle(`${footerBg} a:hover`, {
+  textDecorationThickness: '2px',
 })
 globalStyle(`${footerBg} a:hover`, {
   textDecorationThickness: '2px',
