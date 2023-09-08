@@ -30,12 +30,6 @@ export const policeCaseFiles = defineMessages({
     description:
       'Notaður sem villuskilaboð í LÖKE gagnapakkanum á rannsóknargagna skrefi.',
   },
-  caseNotFoundInLOKEMessage: {
-    id: 'judicial.system.core:police_case_files.case_not_found_in_loke_message',
-    defaultMessage: 'Þessi krafa var ekki stofnuð í gegnum LÖKE',
-    description:
-      'Notaður sem villuskilaboð í LÖKE gagnapakkanum á rannsóknargagna skrefi.',
-  },
   noFilesFoundInLOKEMessage: {
     id: 'judicial.system.core:police_case_files.no_files_found_in_loke_message',
     defaultMessage: 'Engin skjöl fundust fyrir kröfuna í LÖKE',
