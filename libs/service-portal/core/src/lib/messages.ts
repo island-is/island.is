@@ -576,7 +576,7 @@ export const m = defineMessages({
     defaultMessage: 'Mín réttindi',
   },
   occupationaLicenses: {
-    id: 'service.portal:occupational-licenses',
+    id: 'service.portal:occupational-license',
     defaultMessage: 'Starfsleyfi',
   },
   parentalLeave: {
