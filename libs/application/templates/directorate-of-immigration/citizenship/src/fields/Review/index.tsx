@@ -11,6 +11,7 @@ import { StaysAbroadReview } from './StaysAbroadReview'
 import { Citizenship } from '../../lib/dataSchema'
 import { getSelectedCustodyChildren } from '../../utils/childrenInfo'
 import { Routes } from '../../lib/constants'
+import { PassportReview } from './PassportReview'
 
 export const Review: FC<FieldBaseProps> = ({
   application,
@@ -81,6 +82,13 @@ export const Review: FC<FieldBaseProps> = ({
         route={Routes.STAYSABROAD}
         goToScreen={goToScreen}
       />
+      <Divider></Divider>
+      <PassportReview
+        field={field}
+        application={application}
+        route={Routes.PASSPORT}
+        goToScreen={goToScreen}
+      ></PassportReview>
       <Divider></Divider>
       <DocumentReview
         field={field}
