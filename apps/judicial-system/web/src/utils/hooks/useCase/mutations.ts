@@ -220,6 +220,7 @@ export const UpdateCaseMutation = gql`
         orderWithinChapter
         userGeneratedFilename
         displayDate
+        policeFileId
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
