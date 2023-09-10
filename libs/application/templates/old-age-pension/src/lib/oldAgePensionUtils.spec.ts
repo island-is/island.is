@@ -277,6 +277,11 @@ describe('isExistsCohabitantOlderThan25', () => {
 describe('childCustodyLivesWithApplicant', () => {
   it('should return true if children < 18 DOES NOT live with applicant', () => {
     const application = buildApplication({
+      answers: {
+        childPension: {
+          custodyKids: ['0703111430'],
+        },
+      },
       externalData: {
         childrenCustodyInformation: {
           data: [
@@ -295,7 +300,10 @@ describe('childCustodyLivesWithApplicant', () => {
       },
     })
 
-    const res = childCustodyLivesWithApplicant(application.externalData)
+    const res = childCustodyLivesWithApplicant(
+      application.answers,
+      application.externalData,
+    )
 
     expect(res).toEqual(true)
   })

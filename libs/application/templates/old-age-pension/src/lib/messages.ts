@@ -187,7 +187,7 @@ export const oldAgePensionFormMessage: MessageDir = {
     applicantInfoSubSectionDescription: {
       id: 'oap.application:applicant.info.sub.section.description',
       defaultMessage:
-        'Hérna eru upplýsingar um þig. Vinsamlegast farið yfir netfang og símanúmer til að tryggja að þær upplýsingar séu réttar. Athugið ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim hjá Þjóðskrá og koma svo aftur til að klára umsóknina.',
+        'Hérna eru upplýsingar um þig. Vinsamlegast farið yfir netfang og símanúmer til að tryggja að þær upplýsingar séu réttar. Athugið ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim hjá Þjóðskrá.',
       description:
         'Here is information about you. Please review the email address and phone number to ensure that the information is correct. Note that if the following information is not correct, it must be changed at Registers Iceland and then come back to complete the application.',
     },
@@ -369,27 +369,31 @@ export const oldAgePensionFormMessage: MessageDir = {
       description:
         'Child pension due to old age pension is paid with children under 18 years of age. Please note that pensioners who are liable for child pension and the child pension is paid by TR, do not receive child pension directly but instead it is added to the child pension payments.',
     },
-    childPensionTableTitle: {
-      id: 'oap.application:connected.applications.childPension.table.title',
-      defaultMessage: 'Börn í þinni forsjá',
-      description: 'Children in your care',
+    childPensionSubTitle: {
+      id: 'oap.application:connected.applications.childPension.sub.title',
+      defaultMessage: 'Veldu börn í þinni forsjá',
+      description: 'english translation',
     },
-    childPensionTableDescription: {
-      id: 'oap.application:connected.applications.childPension.table.description',
+    childPensionSubDescription: {
+      id: 'oap.application:connected.applications.childPension.sub.description',
       defaultMessage:
-        'Samkvæmt uppflettingu í þjóðskrá hefur þú forsjá með eftirfarandi barni/börnum. Ef barn er ekki með sama lögheimili og þú verður þú að skila inn meðlagssamningi. ATH ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim í Þjóðskrá og koma svo aftur til að klára umsóknina.',
+        'Samkvæmt uppflettingu í þjóðskrá hefur þú forsjá með eftirfarandi barni/börnum. Ef barn er ekki með sama lögheimili og þú verður þú að skila inn meðlagssamning. Veldu barn/börn sem þú vilt sækja um barnalífeyri fyrir, einnig geturu bætt við barni sem þú ert með á framfæri. ATH ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim í Þjóðskrá.',
       description: 'translation..',
     },
-    noChildPensionFoundTableTitle: {
-      id: 'oap.application:connected.applications.no.childPension.table.title',
-      defaultMessage: 'Börn',
-      description: 'Children',
+    childPensionAddChildQuestion: {
+      id: 'oap.application:connected.applications.childPension.add.child.question',
+      defaultMessage: 'Viltu bæta við barni á framfæri?',
+      description: 'english translation',
     },
-    noChildPensionFoundTableDescription: {
-      id: 'oap.application:connected.applications.no.childPension.table.description',
-      defaultMessage:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-      description: 'translation..',
+    childPensionAddChildTitle: {
+      id: 'oap.application:connected.applications.childPension.add.child.title',
+      defaultMessage: 'Börn á framfærslu',
+      description: 'english translation',
+    },
+    childPensionAddChildDescription: {
+      id: 'oap.application:connected.applications.childPension.add.child.description',
+      defaultMessage: 'Barn/börn sem þú ert með á framfærslu.',
+      description: 'english translation',
     },
     addChildButton: {
       id: 'oap.application:connected.applications.add.child.button',
@@ -411,21 +415,16 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Fullt nafn',
       description: 'Full name',
     },
-    noChildFoundTitle: {
-      id: 'oap.application:connected.applications.no.child.found.title',
-      defaultMessage: 'Engin börn fundust í þinni forsjá',
-      description: 'english translation',
-    },
-    noChildFoundDescription: {
-      id: 'oap.application:connected.applications.no.child.found.description',
-      defaultMessage:
-        'Samkvæmt uppflettingu í þjóðskrá hefur þú ekki forsjá með neinu barni/börnum. Þú getur bætt við barni ef þú ert með barn á framfærslu og þarft að skila inn staðfestingu á því. ATH ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim í Þjóðskrá og koma svo aftur til að klára umsóknina.',
-      description: 'english translation',
-    },
     registerChildTitle: {
       id: 'oap.application:connected.applications.register.child.title',
       defaultMessage: 'Skráning barns',
       description: 'Registration of a child',
+    },
+    registerChildDescription: {
+      id: 'oap.application:connected.applications.register.child.description',
+      defaultMessage:
+        'Samkvæmt uppflettingu í Þjóðskrá fundust engin börn í forsjá, vinsamlegast skráðu barn sem þú ert með á framfæri.',
+      description: 'english translation',
     },
     householdSupplementDescription: {
       id: 'oap.application:connected.applications.household.supplement.description',
@@ -509,7 +508,7 @@ export const oldAgePensionFormMessage: MessageDir = {
     residenceHistoryDescription: {
       id: 'oap.application:residence.history.description',
       defaultMessage:
-        'Hérna eru upplýsingar um búsetusögu þína eftir 1987. Full réttindi af ellilífeyri miðast við samtals 40 ára búsetu á Íslandi á tímabilinu 16-67 ára. Þegar búsetutími á Íslandi er styttri reiknast réttindin hlutfallslega miðað við búsetu. Athugið ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim hjá Þjóðskrá og koma svo aftur til að klára umsóknina.',
+        'Hérna eru upplýsingar um búsetusögu þína eftir 1987. Full réttindi af ellilífeyri miðast við samtals 40 ára búsetu á Íslandi á tímabilinu 16-67 ára. Þegar búsetutími á Íslandi er styttri reiknast réttindin hlutfallslega miðað við búsetu. Athugið ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim hjá Þjóðskrá.',
       description:
         'Here is information about your residence history after 1987. Full entitlement to old age pension is based on a total of 40 years of residence in Iceland between the ages of 16-67. When the period of residence in Iceland is shorter, the rights are calculated proportionally based on residence. Note that if the following information is not correct, it must be changed at Registers Iceland and then come back to complete the application.',
     },
@@ -1268,7 +1267,7 @@ export const validatorErrorMessages = defineMessages({
     description: 'Phone number must be a GSM number',
   },
   personalAllowance: {
-    id: 'oap.application:payment.personal.allowance',
+    id: 'oap.application:payment.personal.allowance.error',
     defaultMessage: 'Persónuafsláttur verður að vera milli 1 og 100',
     description: 'Personal allowace has to be between 1 and 100',
   },

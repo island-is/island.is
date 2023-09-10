@@ -10,7 +10,6 @@ import {
 } from '@island.is/island-ui/core'
 import { oldAgePensionFormMessage } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { useDeepCompareEffect } from 'react-use'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useMutation } from '@apollo/client'
 import { EmployersTable } from '../components/EmployersTable'
@@ -59,7 +58,7 @@ const EmployersOverview: FC<RepeaterProps> = ({
 
   useEffect(() => {
     onUpdateApplication(employers)
-  }, [])
+  }, [employers])
 
   const onDeleteEmployer = async (email: string) => {
     const reducedEmployers = employers?.filter((e) => e.email !== email)

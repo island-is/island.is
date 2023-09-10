@@ -139,6 +139,18 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const rawEmployers = getValueViaPath(answers, 'employers', []) as Employer[]
   const employers = filterValidEmployers(rawEmployers)
 
+  const childPensionSelectedCustodyKids = getValueViaPath(
+    answers,
+    'childPension.custodyKids',
+    [],
+  ) as []
+
+  const childPensionAddChild = getValueViaPath(
+    answers,
+    'childPensionAddChild',
+    YES,
+  ) as YesOrNo
+
   const childPension = getValueViaPath(
     answers,
     'childPensionRepeater',
@@ -187,6 +199,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     employmentStatus,
     employers,
     rawEmployers,
+    childPensionSelectedCustodyKids,
+    childPensionAddChild,
     childPension,
     personalAllowance,
     spouseAllowance,
@@ -463,6 +477,7 @@ export function getAttachments(application: Application) {
     connectedApplications,
     employmentStatus,
     childPension,
+    childPensionAddChild,
   } = getApplicationAnswers(answers)
   const earlyRetirement = isEarlyRetirement(answers, externalData)
   const attachments: Attachments[] = []
@@ -520,14 +535,18 @@ export function getAttachments(application: Application) {
     ConnectedApplications.CHILDPENSION,
   )
 
-  if (childPension.length > 0 && isChildPension) {
+  if (
+    childPension.length > 0 &&
+    isChildPension &&
+    childPensionAddChild !== NO
+  ) {
     getAttachmentDetails(
       childPensionAttachments?.maintenance,
       AttachmentTypes.MAINTENANCE,
     )
   }
 
-  if (childCustodyLivesWithApplicant(externalData) && isChildPension) {
+  if (childCustodyLivesWithApplicant(answers, externalData) && isChildPension) {
     getAttachmentDetails(
       childPensionAttachments?.notLivesWithApplicant,
       AttachmentTypes.NOT_LIVES_WITH_APPLICANT,
@@ -607,6 +626,26 @@ export function getTaxOptions() {
   return options
 }
 
+export function getChildPensionTitle(application: Application) {
+  const { custodyInformation } = getApplicationExternalData(
+    application.externalData,
+  )
+
+  return custodyInformation.length !== 0
+    ? oldAgePensionFormMessage.connectedApplications.registerChildTitle
+    : oldAgePensionFormMessage.connectedApplications.childPension
+}
+
+export function getChildPensionDescription(application: Application) {
+  const { custodyInformation } = getApplicationExternalData(
+    application.externalData,
+  )
+
+  return custodyInformation.length !== 0
+    ? ''
+    : oldAgePensionFormMessage.connectedApplications.childPensionDescription
+}
+
 export function isExistsCohabitantOlderThan25(
   externalData: Application['externalData'],
 ) {
@@ -648,16 +687,22 @@ function residenceMapper(
   return residence
 }
 
-// returns true if some of applicant children DOES NOT live with him.
+// returns true if selected child DOES NOT live with applicant
 export function childCustodyLivesWithApplicant(
+  answers: Application['answers'],
   externalData: Application['externalData'],
 ) {
   let returnStatus = false
+  const { childPensionSelectedCustodyKids } = getApplicationAnswers(answers)
   const { custodyInformation } = getApplicationExternalData(externalData)
 
-  custodyInformation.forEach((child) => {
-    !child.livesWithApplicant ? (returnStatus = true) : (returnStatus = false)
-  })
+  childPensionSelectedCustodyKids.map((i) =>
+    custodyInformation.map((j) =>
+      i === j.nationalId && !j.livesWithApplicant
+        ? (returnStatus = true)
+        : (returnStatus = false),
+    ),
+  )
 
   return returnStatus
 }

@@ -20,11 +20,10 @@ import {
   FormModes,
   NationalRegistryIndividual,
   NationalRegistrySpouse,
+  Option,
 } from '@island.is/application/types'
 import { UserProfile } from '@island.is/api/schema'
-
 import * as kennitala from 'kennitala'
-
 import Logo from '../assets/Logo'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import {
@@ -44,6 +43,8 @@ import {
   childCustodyLivesWithApplicant,
   getApplicationAnswers,
   getApplicationExternalData,
+  getChildPensionDescription,
+  getChildPensionTitle,
   getTaxOptions,
   getYesNOOptions,
   isEarlyRetirement,
@@ -885,19 +886,103 @@ export const OldAgePensionForm: Form = buildForm({
             )
           },
           children: [
-            buildRepeater({
-              id: 'childPensionRepeater',
+            buildMultiField({
+              condition: (answers, externalData) => {
+                const { custodyInformation } =
+                  getApplicationExternalData(externalData)
+                return custodyInformation.length !== 0
+              },
+              id: 'childPension',
               title:
                 oldAgePensionFormMessage.connectedApplications.childPension,
+              description:
+                oldAgePensionFormMessage.connectedApplications
+                  .childPensionDescription,
+              children: [
+                buildCheckboxField({
+                  id: 'childPension.custodyKids',
+                  title:
+                    oldAgePensionFormMessage.connectedApplications
+                      .childPensionSubTitle,
+                  description:
+                    oldAgePensionFormMessage.connectedApplications
+                      .childPensionSubDescription,
+                  doesNotRequireAnswer: true,
+                  defaultValue: '',
+                  options: (application) => {
+                    const applying: Array<Option> = []
+                    const { custodyInformation } = getApplicationExternalData(
+                      application.externalData,
+                    )
+
+                    custodyInformation.map((i) =>
+                      applying.push({
+                        label: i.fullName,
+                        value: i.nationalId,
+                      }),
+                    )
+
+                    return applying
+                  },
+                }),
+              ],
+            }),
+            buildRadioField({
+              condition: (_, externalData) => {
+                const { custodyInformation } =
+                  getApplicationExternalData(externalData)
+                return custodyInformation.length !== 0
+              },
+              id: 'childPensionAddChild',
+              title:
+                oldAgePensionFormMessage.connectedApplications
+                  .childPensionAddChildQuestion,
+              width: 'half',
+              required: true,
+              options: [
+                {
+                  value: YES,
+                  label: oldAgePensionFormMessage.shared.yes,
+                },
+                {
+                  value: NO,
+                  label: oldAgePensionFormMessage.shared.no,
+                },
+              ],
+            }),
+            buildRepeater({
+              condition: (answers) => {
+                const { childPensionAddChild } = getApplicationAnswers(answers)
+                return childPensionAddChild === YES
+              },
+              id: 'childPensionRepeater',
+              title:
+                oldAgePensionFormMessage.connectedApplications
+                  .childPensionAddChildTitle,
               component: 'ChildCustodyRepeater',
               children: [
                 buildMultiField({
                   id: 'childPension',
-                  title:
-                    oldAgePensionFormMessage.connectedApplications
-                      .registerChildTitle,
+                  title: getChildPensionTitle,
+                  description: getChildPensionDescription,
                   isPartOfRepeater: true,
                   children: [
+                    buildDescriptionField({
+                      id: 'childPension.descriptionField',
+                      marginBottom: 'containerGutter',
+                      titleVariant: 'h5',
+                      title:
+                        oldAgePensionFormMessage.connectedApplications
+                          .registerChildTitle,
+                      description:
+                        oldAgePensionFormMessage.connectedApplications
+                          .registerChildDescription,
+                      condition: (_, externalData) => {
+                        const { custodyInformation } =
+                          getApplicationExternalData(externalData)
+                        return custodyInformation.length === 0
+                      },
+                    }),
                     buildCustomField({
                       id: 'childDoesNotHaveNationalId',
                       title: '',
@@ -933,9 +1018,10 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
               uploadMultiple: true,
               condition: (answers) => {
-                const { childPension } = getApplicationAnswers(answers)
+                const { childPension, childPensionAddChild } =
+                  getApplicationAnswers(answers)
 
-                return childPension.length > 0
+                return childPension.length > 0 && childPensionAddChild === YES
               },
             }),
             buildFileUploadField({
@@ -958,8 +1044,8 @@ export const OldAgePensionForm: Form = buildForm({
               uploadButtonLabel:
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
               uploadMultiple: true,
-              condition: (_, externalData) =>
-                childCustodyLivesWithApplicant(externalData),
+              condition: (answers, externalData) =>
+                childCustodyLivesWithApplicant(answers, externalData),
             }),
           ],
         }),

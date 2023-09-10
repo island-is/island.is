@@ -22,7 +22,7 @@ import {
   pruneAfterDays,
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
-import { ConnectedApplications, Events, Roles, States } from './constants'
+import { ConnectedApplications, Events, NO, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { oldAgePensionFormMessage, statesMessages } from './messages'
 import { answerValidators } from './answerValidators'
@@ -32,8 +32,11 @@ import {
   SocialInsuranceAdministrationTestApi,
   SocialInsuranceAdministrationStatusApi,
 } from '../dataProviders'
-import { getApplicationAnswers } from './oldAgePensionUtils'
 import { Features } from '@island.is/feature-flags'
+import {
+  childCustodyLivesWithApplicant,
+  getApplicationAnswers,
+} from './oldAgePensionUtils'
 
 const OldAgePensionTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -92,7 +95,12 @@ const OldAgePensionTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: ['clearHouseholdSupplement'],
+        exit: [
+          'clearHouseholdSupplement',
+          'clearChildPension',
+          'clearChildPensionAddChild',
+          'clearChildPensionNotLivesWithApplicant',
+        ],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -363,6 +371,52 @@ const OldAgePensionTemplate: ApplicationTemplate<
           } else {
             set(application, 'assignees', [TR_ID])
           }
+        }
+
+        return context
+      }),
+      clearChildPension: assign((context) => {
+        const { application } = context
+        const { connectedApplications } = getApplicationAnswers(
+          application.answers,
+        )
+
+        if (
+          !connectedApplications?.includes(ConnectedApplications.CHILDPENSION)
+        ) {
+          unset(application.answers, 'childPensionAddChild')
+          unset(application.answers, 'childPensionRepeater')
+          unset(application.answers, 'childPension')
+          unset(application.answers, 'fileUploadChildPension')
+        }
+
+        return context
+      }),
+      clearChildPensionNotLivesWithApplicant: assign((context) => {
+        const { application } = context
+
+        const doesNotLiveWithApplicant = childCustodyLivesWithApplicant(
+          application.answers,
+          application.externalData,
+        )
+
+        if (!doesNotLiveWithApplicant)
+          unset(
+            application.answers,
+            'fileUploadChildPension.notLivesWithApplicant',
+          )
+
+        return context
+      }),
+      clearChildPensionAddChild: assign((context) => {
+        const { application } = context
+        const { childPensionAddChild } = getApplicationAnswers(
+          application.answers,
+        )
+
+        if (childPensionAddChild === NO) {
+          unset(application.answers, 'childPensionRepeater')
+          unset(application.answers, 'fileUploadChildPension.maintenance')
         }
 
         return context

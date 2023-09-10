@@ -77,6 +77,7 @@ export const dataSchema = z.object({
       TaxLevelOptions.SECOND_LEVEL,
     ]),
   }),
+  childPensionAddChild: z.enum([YES, NO]),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>
