@@ -425,7 +425,6 @@
     "jest-environment-jsdom": "29.6.4",
     "jest-environment-node": "29.6.4",
     "jest-mock-extended": "3.0.5",
-    "jest-resolve": "29.6.4",
     "jest-transform-stub": "2.0.0",
     "license-checker": "25.0.1",
     "mailparser": "3.5.0",
