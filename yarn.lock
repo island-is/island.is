@@ -21680,6 +21680,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"configcat-common@npm:^8.1.1":
+  version: 8.1.1
+  resolution: "configcat-common@npm:8.1.1"
+  dependencies:
+    tslib: ^2.4.1
+  checksum: 41d2ad2507df96281e2ed40fb4c59f0cfa99e4b4dd88ed61f4f135723c450caba1c2a77fa3562061de6c7e7ceb6b829078b1c076f8547a99b3eb2e8d32a0a669
+  languageName: node
+  linkType: hard
+
 "configcat-js@npm:7.0.0":
   version: 7.0.0
   resolution: "configcat-js@npm:7.0.0"
@@ -21690,24 +21699,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"configcat-js@npm:7.0.1":
-  version: 7.0.1
-  resolution: "configcat-js@npm:7.0.1"
+"configcat-js@npm:8.1.1":
+  version: 8.1.1
+  resolution: "configcat-js@npm:8.1.1"
   dependencies:
-    configcat-common: ^7.0.1
+    configcat-common: ^8.1.1
     tslib: ^2.4.1
-  checksum: d939087d08ce1df769f2545e06ac7f38b68dc59ced7d7276357f11d6263a31bafcacc4972b60280db7954448db43842d2e61194881f52669b515e84fcf47a87d
+  checksum: 1f47e68964c39e34245f098ac2797e0e05bd2cf2dc7c39b6e0591e9cd509e429f0c12de3e1bf08a1c0861f52534b2b57099b1ba9ddfed2446782ffe5482e274c
   languageName: node
   linkType: hard
 
-"configcat-node@npm:9.1.1":
-  version: 9.1.1
-  resolution: "configcat-node@npm:9.1.1"
+"configcat-node@npm:10.1.1":
+  version: 10.1.1
+  resolution: "configcat-node@npm:10.1.1"
   dependencies:
-    configcat-common: ^7.0.1
+    configcat-common: ^8.1.1
     tslib: ^2.4.1
     tunnel: 0.0.6
-  checksum: 7c2950c67c9f018a2195533bb4c788e7cc8a4ba228347c6e474cab55c8db302e28b2f4edcce7369ab67f0b88af6b754581384dc7929970336c629362281fe6ef
+  checksum: 2208a90f211454eaf2ca31845827c0e09a18c741ea913e7359e120d6f2ccc10f69bb575e5147c20006de93ab9dede359e5e3cda53413ca6c81ee53d081cac887
   languageName: node
   linkType: hard
 
@@ -31551,8 +31560,8 @@ __metadata:
     class-transformer: 0.5.1
     class-validator: 0.14.0
     classnames: 2.2.6
-    configcat-js: 7.0.1
-    configcat-node: 9.1.1
+    configcat-js: 8.1.1
+    configcat-node: 10.1.1
     contentful: 8.2.0
     contentful-cli: 1.5.14
     contentful-management: 10.12.0
