@@ -70,11 +70,9 @@ export class HousingBenefitCalculatorClientService {
     try {
       return await this.fetchCalculation(input)
     } catch (error) {
-      if (error instanceof FetchError) {
+      if (error instanceof FetchError && error.status === 401) {
         // Renew token if we are unauthorized (most likely due to token expiring)
-        if (error.status === 401) {
-          return this.fetchCalculation(input, true)
-        }
+        return this.fetchCalculation(input, true)
       }
       throw error
     }
