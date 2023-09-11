@@ -3,7 +3,6 @@ import {
   DataGovernance,
   IConfigCatClient,
 } from 'configcat-common'
-
 import {
   FeatureFlagClient,
   FeatureFlagUser,
@@ -11,6 +10,17 @@ import {
   SettingValue,
   SettingTypeOf,
 } from './types'
+
+// Use a function to determine the correct module
+const getConfigCatModule = () => {
+  if (typeof window === 'undefined') {
+    return require('configcat-node')
+  } else {
+    return require('configcat-js')
+  }
+}
+
+const configCatModule = getConfigCatModule()
 
 export class Client implements FeatureFlagClient {
   private configcat: IConfigCatClient
@@ -22,23 +32,12 @@ export class Client implements FeatureFlagClient {
         'Trying to initialize configcat client without CONFIGCAT_SDK_KEY environment variable',
       )
     }
+
     const ccConfig: IAutoPollOptions = {
       dataGovernance: DataGovernance.EuOnly,
     }
-    if (typeof window === 'undefined') {
-      this.configcat = eval('require')('configcat-node').getClient(
-        resolvedSdkKey,
-        null,
-        ccConfig,
-      )
-    } else {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      this.configcat = require('configcat-js').getClient(
-        resolvedSdkKey,
-        null,
-        ccConfig,
-      )
-    }
+
+    this.configcat = configCatModule.getClient(resolvedSdkKey, null, ccConfig)
   }
 
   dispose() {
