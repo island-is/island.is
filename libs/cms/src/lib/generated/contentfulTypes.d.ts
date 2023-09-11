@@ -2251,6 +2251,9 @@ export interface IOrganizationFields {
 
   /** Reference Identifier */
   referenceIdentifier?: string | undefined
+
+  /** Service Web Slices */
+  serviceWebSlices?: IFeaturedArticles[] | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -2384,6 +2387,7 @@ export interface IOrganizationPageFields {
     | 'nti'
     | 'samgongustofa'
     | 'geislavarnir-rikisins'
+    | 'rettindagaesla-fatlads-folks'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
@@ -3988,9 +3992,10 @@ export interface IVacancyFields {
 
   /** Locations */
   locations: (
-    | 'Án staðsetningar'
+    | 'Óstaðbundið'
     | 'Höfuðborgarsvæðið'
-    | 'Norðurland'
+    | 'Norðurland vestra'
+    | 'Norðurland eystra'
     | 'Vesturland'
     | 'Austurland'
     | 'Suðurland'

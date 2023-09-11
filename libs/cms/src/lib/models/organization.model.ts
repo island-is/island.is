@@ -6,6 +6,7 @@ import { OrganizationTag, mapOrganizationTag } from './organizationTag.model'
 import { FooterItem, mapFooterItem } from './footerItem.model'
 import { mapNamespace, Namespace } from './namespace.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
+import { SliceUnion, safelyMapSliceUnion } from '../unions/slice.union'
 
 @ObjectType()
 export class Organization {
@@ -71,6 +72,9 @@ export class Organization {
 
   @Field({ nullable: true })
   referenceIdentifier?: string
+
+  @CacheField(() => [SliceUnion], { nullable: true })
+  serviceWebSlices?: Array<typeof SliceUnion | null>
 }
 
 export const mapOrganization = ({
@@ -104,5 +108,8 @@ export const mapOrganization = ({
     hasALandingPage: fields.hasALandingPage ?? true,
     trackingDomain: fields.trackingDomain ?? '',
     referenceIdentifier: fields.referenceIdentifier,
+    serviceWebSlices: (fields.serviceWebSlices ?? [])
+      .map(safelyMapSliceUnion)
+      .filter(Boolean),
   }
 }

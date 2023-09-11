@@ -36,11 +36,13 @@ import {
   SimpleStackedSlider,
   ServiceWebWrapper,
   ServiceWebContext,
+  SliceMachine,
 } from '@island.is/web/components'
 import {
   useNamespace,
   LinkResolverResponse,
   useLinkResolver,
+  LinkType,
 } from '@island.is/web/hooks'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import { getSlugPart } from '../utils'
@@ -59,6 +61,7 @@ interface HomeProps {
     | Query['getSupportCategories']
     | Query['getSupportCategoriesInOrganization']
   featuredQNAs: Query['getFeaturedSupportQNAs']
+  //supportSlices?: Query['getSupportSlices']
   locale: Locale
 }
 
@@ -186,6 +189,22 @@ const Home: Screen<HomeProps> = ({
                     )}
                   </SimpleStackedSlider>
                 </Box>
+
+                {/* <Box marginTop={[4, 4, 8]}>
+                  {organization?.serviceWebSlices?.map((slice, index) => {
+                    return (
+                      <SliceMachine
+                        key={slice.id}
+                        slice={slice}
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
+                        namespace={namespace}
+                        slug={organization.slug}
+                        fullWidth={true}
+                      />
+                    )
+                  })}
+                </Box> */}
                 {featuredQNAs.length > 0 && (
                   <Box marginY={[4, 4, 8]}>
                     <GridContainer>
@@ -336,6 +355,9 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
         }),
   ])
 
+  // const serviceWebSlices = organization?.data?.getOrganization?.serviceWebSlices
+  // const slices = serviceWebSlices ? JSON.parse(serviceWebSlices) : []
+
   const popularQuestionCount =
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore make web strict
@@ -361,7 +383,6 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
   processedCategories = processedCategories.filter(
     (item) => !!item.organization,
   )
-
   if (
     !organization ||
     !organization?.data?.getOrganization?.serviceWebEnabled
