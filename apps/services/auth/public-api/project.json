@@ -44,7 +44,6 @@
         "passWithNoTests": true
       }
     },
-
     "schemas/build-openapi": {
       "executor": "nx:run-commands",
       "options": {
