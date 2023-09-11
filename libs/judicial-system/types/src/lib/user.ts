@@ -4,7 +4,6 @@ export enum UserRole {
   PROSECUTOR = 'PROSECUTOR', // sækjandi
   PROSECUTOR_REPRESENTATIVE = 'PROSECUTOR_REPRESENTATIVE', // fulltrúi
   REGISTRAR = 'REGISTRAR', // dómritari
-  // COURT_OF_APPEALS_OFFICE_WORKER = 'COURT_OF_APPEALS_OFFICE_WORKER', // skrifsofufólk
   JUDGE = 'JUDGE', // dómari
   ASSISTANT = 'ASSISTANT', // aðstoðarmaður dómara
   ADMIN = 'ADMIN', // Does not exist in the database // notendaumsjón
