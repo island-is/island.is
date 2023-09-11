@@ -133,7 +133,7 @@ export const lightThemes = [
   'haskolanam',
   'nti',
   'samgongustofa',
-  'rettindagaesla-fatlads-folks'
+  'rettindagaesla-fatlads-folks',
 ]
 export const footerEnabled = [
   'syslumenn',
