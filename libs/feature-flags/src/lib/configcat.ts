@@ -21,11 +21,14 @@ export class Client implements FeatureFlagClient {
   }
 
   static async create(config: FeatureFlagClientProps): Promise<Client> {
-    console.log(config)
+    console.log(
+      `process.env.CONFIGCAT_SDK_KEY: `,
+      process.env.CONFIGCAT_SDK_KEY,
+    )
     const resolvedSdkKey = config.sdkKey ?? process.env.CONFIGCAT_SDK_KEY
     if (!resolvedSdkKey) {
       throw new Error(
-        'Trying to initialize configcat client without CONFIGCAT_SDK_KEY environment variable',
+        `Trying to initialize configcat client without CONFIGCAT_SDK_KEY environment variable. Resolved key: ${resolvedSdkKey}`,
       )
     }
 
