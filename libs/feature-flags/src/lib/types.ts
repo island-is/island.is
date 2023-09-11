@@ -26,3 +26,7 @@ export interface ServerSideFeatureClientType {
 }
 
 export type { SettingTypeOf, SettingValue }
+
+type NodeModuleType = typeof import('configcat-node')
+type JsModuleType = typeof import('configcat-js')
+export type ConfigCatModule = NodeModuleType | JsModuleType
