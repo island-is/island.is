@@ -7,6 +7,7 @@ import {
   coreMessages,
   EphemeralStateLifeCycle,
   pruneAfterDays,
+  coreHistoryMessages,
 } from '@island.is/application/core'
 import {
   ApplicationContext,
@@ -19,6 +20,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   UserProfileApi,
+  PendingAction,
 } from '@island.is/application/types'
 
 import {
@@ -59,6 +61,12 @@ import {
 } from '../lib/parentalLeaveUtils'
 import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 
+export enum PLEvents {
+  MODIFY = 'MODIFY',
+  CLOSED = 'CLOSED',
+  ADDITIONALDOCUMENTSREQUIRED = 'ADDITIONALDOCUMENTSREQUIRED',
+}
+
 type Events =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.ASSIGN }
@@ -81,6 +89,38 @@ const determineNameFromApplicationAnswers = (application: Application) => {
   }
 
   return parentalLeaveFormMessages.shared.name
+}
+
+const otherParentApprovalStatePendingAction = (
+  application: Application,
+  role: string,
+): PendingAction => {
+  if (role === Roles.ASSIGNEE) {
+    return {
+      title: statesMessages.otherParentRequestApprovalTitle,
+      content: statesMessages.otherParentRequestApprovalDescription,
+      displayStatus: 'warning',
+    }
+  } else {
+    const applicationAnswers = getApplicationAnswers(application.answers)
+
+    const { isRequestingRights, usePersonalAllowanceFromSpouse } =
+      applicationAnswers
+
+    const description =
+      isRequestingRights === YES && usePersonalAllowanceFromSpouse === YES
+        ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingBoth
+        : isRequestingRights === YES
+        ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingRights
+        : parentalLeaveFormMessages.reviewScreen
+            .otherParentDescRequestingPersonalDiscount
+
+    return {
+      title: statesMessages.otherParentApprovalDescription,
+      content: description,
+      displayStatus: 'info',
+    }
+  }
 }
 
 const ParentalLeaveTemplate: ApplicationTemplate<
@@ -108,6 +148,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: States.PREREQUISITES,
           status: 'draft',
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           lifecycle: pruneAfterDays(9),
           progress: 0.25,
           onExit: defineTemplateApi({
@@ -160,6 +208,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           status: 'draft',
           actionCard: {
             description: statesMessages.draftDescription,
+            historyLogs: {
+              onEvent: DefaultEvents.SUBMIT,
+              logMessage: coreHistoryMessages.applicationSent,
+            },
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.25,
@@ -206,7 +258,23 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           name: States.OTHER_PARENT_APPROVAL,
           status: 'inprogress',
           actionCard: {
-            description: statesMessages.otherParentApprovalDescription,
+            pendingAction: otherParentApprovalStatePendingAction,
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: statesMessages.otherParentApproveHistoryLogMessage,
+              },
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: statesMessages.editHistoryLogMessage,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage:
+                  parentalLeaveFormMessages.draftFlow
+                    .draftNotApprovedOtherParentDesc,
+              },
+            ],
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.4,
@@ -278,7 +346,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           name: States.OTHER_PARENT_ACTION,
           status: 'inprogress',
           actionCard: {
-            description: statesMessages.otherParentActionDescription,
+            pendingAction: {
+              title: statesMessages.otherParentActionPendingActionTitle,
+              content: statesMessages.otherParentActionPendingActionContent,
+              displayStatus: 'warning',
+            },
+            historyLogs: {
+              onEvent: DefaultEvents.EDIT,
+              logMessage: statesMessages.editHistoryLogMessage,
+            },
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.4,
@@ -309,7 +385,23 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           name: States.EMPLOYER_WAITING_TO_ASSIGN,
           status: 'inprogress',
           actionCard: {
-            description: statesMessages.employerWaitingToAssignDescription,
+            pendingAction: {
+              title: statesMessages.employerWaitingToAssignDescription,
+              content: parentalLeaveFormMessages.reviewScreen.employerDesc,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                // TODO: Skoða hvernig kemst í REJECT (laga msg)?
+                onEvent: DefaultEvents.REJECT,
+                logMessage:
+                  statesMessages.employerWaitingToAssignRejectHistoryLogMessage,
+              },
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: statesMessages.editHistoryLogMessage,
+              },
+            ],
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.4,
@@ -343,7 +435,28 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           name: States.EMPLOYER_APPROVAL,
           status: 'inprogress',
           actionCard: {
-            description: statesMessages.employerApprovalDescription,
+            pendingAction: {
+              title: statesMessages.employerApprovalDescription,
+              content: parentalLeaveFormMessages.reviewScreen.employerDesc,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage:
+                  statesMessages.employerApprovalApproveHistoryLogMessage,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage:
+                  parentalLeaveFormMessages.draftFlow
+                    .draftNotApprovedEmployerDesc,
+              },
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: statesMessages.editHistoryLogMessage,
+              },
+            ],
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.5,
@@ -416,7 +529,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           name: States.EMPLOYER_ACTION,
           status: 'inprogress',
           actionCard: {
-            description: statesMessages.employerActionDescription,
+            pendingAction: {
+              title: statesMessages.employerActionDescription,
+              content: parentalLeaveFormMessages.draftFlow.modifyDraftDesc,
+              displayStatus: 'warning',
+            },
+            historyLogs: {
+              onEvent: DefaultEvents.EDIT,
+              logMessage: statesMessages.editHistoryLogMessage,
+            },
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.5,
@@ -453,7 +574,38 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           name: States.VINNUMALASTOFNUN_APPROVAL,
           status: 'inprogress',
           actionCard: {
-            description: statesMessages.vinnumalastofnunApprovalDescription,
+            pendingAction: {
+              title: statesMessages.vinnumalastofnunApprovalDescription,
+              content: parentalLeaveFormMessages.reviewScreen.deptDesc,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage:
+                  statesMessages.vinnumalastofnunApprovalApproveHistoryLogMessage,
+              },
+              {
+                onEvent: PLEvents.ADDITIONALDOCUMENTSREQUIRED,
+                logMessage:
+                  statesMessages.additionalDocumentRequiredDescription,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage:
+                  parentalLeaveFormMessages.draftFlow.draftNotApprovedVMLSTDesc,
+              },
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: statesMessages.editHistoryLogMessage,
+              },
+              {
+                // TODO: Skoða historyLogs: SUBMIT => (RESIDENCE_GRAND_APPLICATION, RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE)
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage:
+                  statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage, // TODO: Breyta logMEssage
+              },
+            ],
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.75,
@@ -505,7 +657,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           name: States.VINNUMALASTOFNUN_ACTION,
           status: 'inprogress',
           actionCard: {
-            description: statesMessages.vinnumalastofnunActionDescription,
+            pendingAction: {
+              title: statesMessages.vinnumalastofnunActionDescription,
+              content: parentalLeaveFormMessages.draftFlow.modifyDraftDesc,
+              displayStatus: 'warning',
+            },
+            historyLogs: {
+              onEvent: DefaultEvents.EDIT,
+              logMessage: statesMessages.editHistoryLogMessage,
+            },
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.5,
@@ -533,43 +693,43 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
-      [States.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED]: {
-        entry: 'assignToVMST',
-        meta: {
-          status: 'inprogress',
-          name: States.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED,
-          actionCard: {
-            description: statesMessages.additionalDocumentRequiredDescription,
-          },
-          lifecycle: pruneAfterDays(970),
-          progress: 0.5,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/InReviewAdditionalDocumentsRequired').then(
-                  (val) =>
-                    Promise.resolve(val.InReviewAdditionalDocumentsRequired),
-                ),
-              read: 'all',
-              write: 'all',
-            },
-            {
-              id: Roles.ORGINISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              write: 'all',
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.EDIT]: {
-            target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
-          },
-        },
-      },
+      // [States.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED]: {
+      //   entry: 'assignToVMST',
+      //   meta: {
+      //     status: 'inprogress',
+      //     name: States.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED,
+      //     actionCard: {
+      //       description: statesMessages.additionalDocumentRequiredDescription,
+      //     },
+      //     lifecycle: pruneAfterDays(970),
+      //     progress: 0.5,
+      //     roles: [
+      //       {
+      //         id: Roles.APPLICANT,
+      //         formLoader: () =>
+      //           import('../forms/InReviewAdditionalDocumentsRequired').then(
+      //             (val) =>
+      //               Promise.resolve(val.InReviewAdditionalDocumentsRequired),
+      //           ),
+      //         read: 'all',
+      //         write: 'all',
+      //       },
+      //       {
+      //         id: Roles.ORGINISATION_REVIEWER,
+      //         formLoader: () =>
+      //           import('../forms/InReview').then((val) =>
+      //             Promise.resolve(val.InReview),
+      //           ),
+      //         write: 'all',
+      //       },
+      //     ],
+      //   },
+      //   on: {
+      //     [DefaultEvents.EDIT]: {
+      //       target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
+      //     },
+      //   },
+      // },
       [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
         entry: 'assignToVMST',
         exit: 'setActionName',
@@ -577,10 +737,21 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           status: 'inprogress',
           name: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           actionCard: {
-            description: statesMessages.additionalDocumentRequiredDescription,
             tag: {
               label: coreMessages.tagsRequiresAction,
               variant: 'red',
+            },
+            pendingAction: {
+              title:
+                parentalLeaveFormMessages.reviewScreen
+                  .additionalDocumentRequiredTitle,
+              content: statesMessages.additionalDocumentRequiredDescription,
+              displayStatus: 'warning',
+            },
+            historyLogs: {
+              onEvent: DefaultEvents.APPROVE,
+              logMessage:
+                statesMessages.additionalDocumentRequiredApproveHistoryLogMessage,
             },
           },
           lifecycle: pruneAfterDays(970),
@@ -617,6 +788,26 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           status: 'inprogress',
           name: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
+          actionCard: {
+            description: statesMessages.residenceGrantInProgress,
+            pendingAction: {
+              title: statesMessages.residenceGrantInProgress,
+              content:
+                parentalLeaveFormMessages.residenceGrantMessage
+                  .residenceGrantClosedDescription,
+              displayStatus: 'warning',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: statesMessages.editHistoryLogMessage,
+              },
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: statesMessages.editHistoryLogMessage,
+              },
+            ],
+          },
           lifecycle: pruneAfterDays(970),
           onEntry: defineTemplateApi({
             action: ApiModuleActions.setBirthDate,
@@ -752,7 +943,28 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           name: States.APPROVED,
           status: 'inprogress',
           actionCard: {
-            description: statesMessages.approvedDescription,
+            pendingAction: {
+              title: statesMessages.approvedDescription,
+              content:
+                statesMessages.vinnumalastofnunApprovalApproveHistoryLogMessage,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                // TODO: Þarf að vera history fyrir CLOSED? (umsókn hverfur þegar fer í state = CLOSED)
+                onEvent: PLEvents.CLOSED,
+                logMessage: statesMessages.approvedClosedHistoryLogMessage,
+              },
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: statesMessages.editHistoryLogMessage,
+              },
+              {
+                // TODO: Skoða historyLogs: SUBMIT => (RESIDENCE_GRAND_APPLICATION, RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE)
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: statesMessages.approvedSubmitHistoryLogMessage,
+              },
+            ],
           },
           lifecycle: pruneAfterDays(970),
           progress: 1,
@@ -797,6 +1009,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           status: 'completed',
           actionCard: {
             description: statesMessages.closedDescription,
+            // TODO: Þarf að gera PendingAction og HistoryLogs hérna? Umsóknin hverfur þegar er CLOSED (held ég)
           },
           lifecycle: EphemeralStateLifeCycle,
           progress: 1,
@@ -826,7 +1039,23 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           name: States.EDIT_OR_ADD_PERIODS,
           status: 'inprogress',
           actionCard: {
-            description: statesMessages.editOrAddPeriodsDescription,
+            pendingAction: {
+              title: statesMessages.editOrAddPeriodsTitle,
+              content: statesMessages.editOrAddPeriodsDescription,
+              displayStatus: 'warning',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage:
+                  statesMessages.editOrAddPeriodsSubmitHistoryLogMessage,
+              },
+              {
+                onEvent: DefaultEvents.ABORT,
+                logMessage:
+                  statesMessages.editOrAddPeriodsAbortHistoryLogMessage,
+              },
+            ],
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.25,
@@ -881,8 +1110,24 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
           status: 'inprogress',
           actionCard: {
-            description:
-              statesMessages.employerWaitingToAssignForEditsDescription,
+            pendingAction: {
+              title: statesMessages.employerWaitingToAssignForEditsTitle,
+              content:
+                statesMessages.employerWaitingToAssignForEditsDescription,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                // TODO: Skoða hvernig kemst í REJECT (laga msg)?
+                onEvent: DefaultEvents.REJECT,
+                logMessage:
+                  statesMessages.employerWaitingToAssignForEditsRejectHistoryLogMessage,
+              },
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: statesMessages.editHistoryLogMessage,
+              },
+            ],
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.5,
@@ -919,7 +1164,28 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           name: States.EMPLOYER_APPROVE_EDITS,
           status: 'inprogress',
           actionCard: {
-            description: statesMessages.employerApproveEditsDescription,
+            pendingAction: {
+              title: statesMessages.employerApproveEditsTitle,
+              content: statesMessages.employerApproveEditsDescription,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage:
+                  statesMessages.employerApprovalApproveHistoryLogMessage,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage:
+                  parentalLeaveFormMessages.draftFlow
+                    .draftNotApprovedEmployerDesc,
+              },
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: statesMessages.editHistoryLogMessage,
+              },
+            ],
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.5,
@@ -992,7 +1258,23 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           name: States.EMPLOYER_EDITS_ACTION,
           status: 'inprogress',
           actionCard: {
-            description: statesMessages.employerEditsActionDescription,
+            pendingAction: {
+              title: statesMessages.employerEditsActionDescription,
+              content:
+                parentalLeaveFormMessages.editFlow.editsNotApprovedEmployerDesc,
+              displayStatus: 'warning',
+            },
+            historyLogs: [
+              {
+                onEvent: PLEvents.MODIFY,
+                logMessage: statesMessages.editHistoryLogMessage,
+              },
+              {
+                onEvent: DefaultEvents.ABORT,
+                logMessage:
+                  statesMessages.editOrAddPeriodsAbortHistoryLogMessage,
+              },
+            ],
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.5,
@@ -1024,18 +1306,51 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'assignToVMST',
           'removeNullPeriod',
           'setHasAppliedForReidenceGrant',
+          'setNavId',
         ],
         exit: [
           'clearTemp',
           'resetAdditionalDocumentsArray',
           'clearAssignees',
           'setPreviousState',
+          'setNavId',
         ],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
           status: 'inprogress',
           actionCard: {
-            description: statesMessages.vinnumalastofnunApproveEditsDescription,
+            pendingAction: {
+              title: statesMessages.vinnumalastofnunApprovalDescription,
+              content: statesMessages.vinnumalastofnunApproveEditsDescription,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage:
+                  statesMessages.vinnumalastofnunApprovalApproveHistoryLogMessage,
+              },
+              {
+                onEvent: PLEvents.ADDITIONALDOCUMENTSREQUIRED,
+                logMessage:
+                  statesMessages.additionalDocumentRequiredDescription,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage:
+                  statesMessages.vinnumalastofnunApproveEditsRejectHistoryLogMessage,
+              },
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: statesMessages.editHistoryLogMessage,
+              },
+              {
+                // TODO: Skoða historyLogs: SUBMIT => (RESIDENCE_GRAND_APPLICATION, RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE)
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage:
+                  statesMessages.vinnumalastofnunApproveEditsSubmitHistoryLogMessage,
+              },
+            ],
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.75,
@@ -1071,7 +1386,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         on: {
           [DefaultEvents.APPROVE]: { target: States.APPROVED },
           ADDITIONALDOCUMENTSREQUIRED: {
-            target: States.INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED,
+            target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           },
           [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
           [DefaultEvents.REJECT]: {
@@ -1094,7 +1409,24 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           name: States.VINNUMALASTOFNUN_EDITS_ACTION,
           status: 'inprogress',
           actionCard: {
-            description: statesMessages.vinnumalastofnunEditsActionDescription,
+            pendingAction: {
+              title:
+                statesMessages.vinnumalastofnunApproveEditsRejectHistoryLogMessage,
+              content:
+                parentalLeaveFormMessages.editFlow.editsNotApprovedVMLSTDesc,
+              displayStatus: 'warning',
+            },
+            historyLogs: [
+              {
+                onEvent: PLEvents.MODIFY,
+                logMessage: statesMessages.editHistoryLogMessage,
+              },
+              {
+                onEvent: DefaultEvents.ABORT,
+                logMessage:
+                  statesMessages.editOrAddPeriodsAbortHistoryLogMessage,
+              },
+            ],
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.4,
@@ -1122,7 +1454,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           MODIFY: {
             target: States.EDIT_OR_ADD_PERIODS,
           },
-          [DefaultEvents.ABORT]: { target: States.APPROVED },
+          [DefaultEvents.ABORT]: {
+            target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+          },
         },
       },
     },
@@ -1162,8 +1496,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { application } = context
         const { answers } = application
 
-        set(answers, 'periods', cloneDeep(answers.tempPeriods))
-        unset(answers, 'tempPeriods')
+        if (answers.tempPeriods) {
+          set(answers, 'periods', cloneDeep(answers.tempPeriods))
+          unset(answers, 'tempPeriods')
+        }
 
         return context
       }),
