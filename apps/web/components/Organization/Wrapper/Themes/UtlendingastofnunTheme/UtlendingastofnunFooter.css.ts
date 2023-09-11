@@ -25,9 +25,7 @@ globalStyle(`${footerBg} a`, {
   fontSize: '14px',
   textUnderlineOffset: '5px',
 })
-globalStyle(`${footerBg} a:hover`, {
-  textDecorationThickness: '2px',
-})
+
 globalStyle(`${footerBg} a:hover`, {
   textDecorationThickness: '2px',
 })
