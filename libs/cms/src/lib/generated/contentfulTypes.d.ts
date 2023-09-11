@@ -902,6 +902,9 @@ export interface IFormFields {
   /** Recipient */
   recipient: string
 
+  /** Default field namespace (In development) */
+  defaultFieldNamespace?: Record<string, any> | undefined
+
   /** Fields */
   fields?: IFormField[] | undefined
 
@@ -2380,6 +2383,7 @@ export interface IOrganizationPageFields {
     | 'haskolanam'
     | 'nti'
     | 'samgongustofa'
+    | 'geislavarnir-rikisins'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
@@ -2937,6 +2941,9 @@ export interface ISectionWithVideoFields {
   /** Title */
   title: string
 
+  /** Show title */
+  showTitle?: boolean | undefined
+
   /** Content */
   content: Document
 
@@ -2945,6 +2952,9 @@ export interface ISectionWithVideoFields {
 
   /** Link */
   link?: ILink | undefined
+
+  /** Show divider on top */
+  showDividerOnTop?: boolean | undefined
 }
 
 /** A section containing a video on the left and text on the right (which wraps below the video on smaller screens) */

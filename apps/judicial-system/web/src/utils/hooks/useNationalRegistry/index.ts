@@ -2,15 +2,15 @@ import { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import useSWR from 'swr'
 
+import { toast } from '@island.is/island-ui/core'
+import { errors } from '@island.is/judicial-system-web/messages'
 import {
   NationalRegistryResponseBusiness,
   NationalRegistryResponsePerson,
 } from '@island.is/judicial-system-web/src/types'
-import { toast } from '@island.is/island-ui/core'
-import { errors } from '@island.is/judicial-system-web/messages'
 
-import { validate } from '../../validate'
 import { isBusiness } from '../../stepHelper'
+import { validate } from '../../validate'
 
 const useNationalRegistry = (nationalId?: string | null) => {
   const { formatMessage } = useIntl()

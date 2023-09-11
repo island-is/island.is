@@ -1,22 +1,25 @@
 import {
-  CaseType,
-  Institution,
-  User,
-  UserRole,
-  IndictmentCount,
-  SessionArrangements,
-  CaseOrigin,
-  CaseAppealState,
-  CaseAppealRulingDecision,
-  Defendant,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import {
   Case,
   CaseListEntry,
   CreateCase,
   SubstanceMap,
   UpdateCase,
 } from '@island.is/judicial-system/types'
+import {
+  CaseAppealDecision,
+  CaseAppealRulingDecision,
+  CaseAppealState,
+  CaseCustodyRestrictions,
+  CaseLegalProvisions,
+  CaseOrigin,
+  CaseType,
+  Defendant,
+  IndictmentCount,
+  Institution,
+  SessionArrangements,
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 export enum AppealDecisionRole {
   PROSECUTOR = 'PROSECUTOR',
@@ -238,6 +241,10 @@ export interface TempCase
     | 'appealedByRole'
     | 'appealRulingDecision'
     | 'defendants'
+    | 'requestedCustodyRestrictions'
+    | 'legalProvisions'
+    | 'accusedAppealDecision'
+    | 'prosecutorAppealDecision'
   > {
   origin: CaseOrigin
   sharedWithProsecutorsOffice?: Institution
@@ -252,6 +259,10 @@ export interface TempCase
   appealedByRole?: UserRole
   appealRulingDecision?: CaseAppealRulingDecision
   defendants?: Defendant[]
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[]
+  legalProvisions?: CaseLegalProvisions[]
+  accusedAppealDecision?: CaseAppealDecision
+  prosecutorAppealDecision?: CaseAppealDecision
 }
 
 export interface TempUpdateCase

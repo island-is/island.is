@@ -49,11 +49,19 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   service = null,
 }) => {
   const Router = useRouter()
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(strings)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const nfc = useNamespace(filterContent)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const noa = useNamespace(openApiContent)
   const { linkResolver } = useLinkResolver()
   const [selectedServiceDetail, setselectedServiceDetail] =
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     useState<ServiceDetail>(service.environments[0].details[0])
 
   useLocalLinkTypeResolver()
@@ -80,7 +88,8 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
     0,
     Router.asPath.lastIndexOf('/'),
   )
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
@@ -99,7 +108,11 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   return (
     <>
       <OrganizationWrapper
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         pageTitle={service.title ?? ''}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         organizationPage={organizationPage}
         showReadSpeaker={false}
         breadcrumbItems={[

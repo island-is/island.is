@@ -18,7 +18,7 @@ const userSeeds = `[
     "title": "fulltrúi",
     "mobile_number": "6666666",
     "email": "finnur@dummy.dd",
-    "role": "REPRESENTATIVE",
+    "role": "PROSECUTOR_REPRESENTATIVE",
     "institution_id": "53581d7b-0591-45e5-9cbe-c96b2f82da85"
   },
   {

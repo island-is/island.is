@@ -6,11 +6,12 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import router from 'next/router'
 import { useIntl } from 'react-intl'
 import _isEqual from 'lodash/isEqual'
+import router from 'next/router'
 
 import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   CaseFile,
   CaseFileCategory,
@@ -18,7 +19,10 @@ import {
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  errors as errorMessages,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
@@ -31,22 +35,18 @@ import {
   ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  titles,
-  errors as errorMessages,
-} from '@island.is/judicial-system-web/messages'
-import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
-import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
+import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import {
+  mapPoliceCaseFileToPoliceCaseFileCheck,
   PoliceCaseFileCheck,
   PoliceCaseFiles,
-  mapPoliceCaseFileToPoliceCaseFileCheck,
   PoliceCaseFilesData,
 } from '../../components'
-import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
 import { useGetIndictmentPoliceCaseFilesQuery } from './getIndictmentPoliceCaseFiles.generated'
+import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
 
 const UploadFilesToPoliceCase: React.FC<
   React.PropsWithChildren<{
@@ -153,7 +153,7 @@ const UploadFilesToPoliceCase: React.FC<
       policeCaseFiles?.files
         .filter(
           (f) =>
-            !caseFiles.some((caseFile) => caseFile.name === f.name) &&
+            !caseFiles.some((caseFile) => caseFile.policeFileId === f.id) &&
             f.policeCaseNumber === policeCaseNumber,
         )
         .map(mapPoliceCaseFileToPoliceCaseFileCheck) || [],
@@ -202,11 +202,30 @@ const UploadFilesToPoliceCase: React.FC<
   )
 
   const onPoliceCaseFileUpload = useCallback(async () => {
-    const filesToUpload = policeCaseFileList.filter((p) => p.checked)
+    const filesToUpload = policeCaseFileList
+      .filter((p) => p.checked)
+      .sort((p1, p2) => (p1.chapter ?? -1) - (p2.chapter ?? -1))
 
     setIsUploading(true)
 
+    let currentChapter: number | undefined | null
+    let currentOrderWithinChapter: number | undefined | null
+
     filesToUpload.forEach(async (f, index) => {
+      if (
+        f.chapter !== undefined &&
+        f.chapter !== null &&
+        f.chapter !== currentChapter
+      ) {
+        currentChapter = f.chapter
+        currentOrderWithinChapter = Math.max(
+          -1,
+          ...caseFiles
+            .filter((p) => p.chapter === currentChapter)
+            .map((p) => p.orderWithinChapter ?? -1),
+        )
+      }
+
       const fileToUpload = {
         id: f.id,
         type: 'application/pdf',
@@ -215,6 +234,12 @@ const UploadFilesToPoliceCase: React.FC<
         state: CaseFileState.STORED_IN_RVG,
         policeCaseNumber: f.policeCaseNumber,
         category: CaseFileCategory.CASE_FILE,
+        chapter: f.chapter,
+        orderWithinChapter:
+          currentOrderWithinChapter !== undefined &&
+          currentOrderWithinChapter !== null
+            ? ++currentOrderWithinChapter
+            : undefined,
         displayDate: f.displayDate,
       } as UploadFile
 
@@ -226,7 +251,12 @@ const UploadFilesToPoliceCase: React.FC<
         setIsUploading(false)
       }
     })
-  }, [policeCaseFileList, uploadFromPolice, uploadPoliceCaseFileCallback])
+  }, [
+    caseFiles,
+    policeCaseFileList,
+    uploadFromPolice,
+    uploadPoliceCaseFileCallback,
+  ])
 
   return (
     <>
@@ -391,7 +421,7 @@ const PoliceCaseFilesRoute = () => {
         <PageTitle>{formatMessage(m.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} />
         <Box marginBottom={5}>
-          <InfoBox text={formatMessage(m.infoBox)}></InfoBox>
+          <InfoBox text={formatMessage(m.infoBox)} />
         </Box>
         <PoliceUploadListMemo
           caseId={workingCase.id}
