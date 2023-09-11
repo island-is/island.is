@@ -9,6 +9,19 @@ import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import {
+  AlertMessage,
+  Box,
+  InputFileUpload,
+  toast,
+  UploadFile,
+} from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  CaseFileCategory,
+  CaseTransition,
+} from '@island.is/judicial-system/types'
+import { core, errors, titles } from '@island.is/judicial-system-web/messages'
+import {
   CourtCaseInfo,
   FormContentContainer,
   FormFooter,
@@ -19,28 +32,15 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
-  AlertMessage,
-  Box,
-  InputFileUpload,
-  toast,
-  UploadFile,
-} from '@island.is/island-ui/core'
+  mapCaseFileToUploadFile,
+  stepValidationsType,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   TUploadFile,
   useCase,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  CaseFileCategory,
-  CaseTransition,
-} from '@island.is/judicial-system/types'
-import {
-  mapCaseFileToUploadFile,
-  stepValidationsType,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import * as constants from '@island.is/judicial-system/consts'
 
 import { courtRecord as m } from './CourtRecord.strings'
 
