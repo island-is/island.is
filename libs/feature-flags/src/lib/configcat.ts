@@ -24,7 +24,7 @@ export class Client implements FeatureFlagClient {
     const resolvedSdkKey = config.sdkKey ?? process.env.CONFIGCAT_SDK_KEY
     if (!resolvedSdkKey) {
       throw new Error(
-        `Trying to initialize configcat client without CONFIGCAT_SDK_KEY environment variable. Resolved key: ${resolvedSdkKey}`,
+        'Trying to initialize configcat client without CONFIGCAT_SDK_KEY environment variable.',
       )
     }
 
