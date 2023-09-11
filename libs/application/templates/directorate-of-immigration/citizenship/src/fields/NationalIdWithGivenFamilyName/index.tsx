@@ -70,6 +70,12 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
 
   useEffect(() => {
     setValue(wasRemovedField, repeaterField.wasRemoved)
+    if (!!repeaterField.nationalId) {
+      setNationalIdInput(
+        !!repeaterField.nationalId ? repeaterField.nationalId : '',
+      )
+      setValue(nationaIdField, repeaterField.nationalId)
+    }
   }, [repeaterField.wasRemoved, setValue])
 
   useEffect(() => {
@@ -95,7 +101,8 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
       '',
     ) as string
 
-    setCurrentName(`${givenName} ${familyName}`)
+    if (!!givenName && !!familyName)
+      setCurrentName(`${givenName} ${familyName}`)
   }, [nationalIdInput, getIdentity])
 
   useEffect(() => {
