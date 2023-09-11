@@ -2884,14 +2884,22 @@ export const statesMessages = defineMessages({
 
   editHistoryLogMessage: {
     id: 'pl.application:editHistoryLogMessage',
-    defaultMessage: 'Umsókn breytt / Umsókn tekin í vinnslu hjá þér', // TODO: Velja texta
+    defaultMessage: 'Umsækjandi gerði breyting',
     description: 'Application edited',
   },
 
-  employerWaitingToAssignRejectHistoryLogMessage: {
-    id: 'pl.application:employerWaitingToAssign.reject.historyLogMessage',
-    defaultMessage: 'EMPLOYER_WAITING_TO_ASSIGN: Reject', // TODO: Breyta texta
-    description: 'EMPLOYER_WAITING_TO_ASSIGN: Reject',
+  employerApprovalPendingActionTitle: {
+    id: 'pl.application:employerApproval.pendingAction.title',
+    defaultMessage: 'Starfsmaður óska eftir samþykki í fæðingarorlof',
+    description: 'An employee requests approval for maternity leave',
+  },
+
+  employerApprovalPendingActionDescription: {
+    id: 'pl.application:employerApproval.pendingAction.description',
+    defaultMessage:
+      'Starfsmaður óskar eftir samþykki fyrirtækis að fara í fæðingarorlof',
+    description:
+      'An employee requests the companys approval to go on maternity leave',
   },
 
   employerApprovalApproveHistoryLogMessage: {
@@ -2907,27 +2915,22 @@ export const statesMessages = defineMessages({
   },
   vinnumalastofnunApprovalSubmitHistoryLogMessage: {
     id: 'pl.application:vinnumalastofnunApproval.submit.historyLogMessage',
-    defaultMessage: 'VINNUMALASTOFNUN_APPROVAL: Submit', // TODO: Breyta texta
-    description: 'VINNUMALASTOFNUN_APPROVAL: Submit',
+    defaultMessage: 'Sæki um dvalarstyrk',
+    description: 'Apply for a residence grand',
   },
 
   additionalDocumentRequiredApproveHistoryLogMessage: {
     id: 'pl.application:additionalDocumentRequired.approve.historyLogMessage',
-    defaultMessage: 'Viðbótargögnum bætt við / Viðbótargögn send', // TODO: Velja texta
-    description: 'ADDITIONAL_DOCUMENTS_REQUIRED: Approve',
+    defaultMessage: 'Viðbótargögn send',
+    description: 'Additional data sent',
   },
 
   vinnumalastofnunApproveEditsRejectHistoryLogMessage: {
     id: 'pl.application:vinnumalastofnunApproveEdits.reject.historyLogMessage',
     defaultMessage: 'Vinnumálastofnun hafnaði breytingunum þínum',
-    description: 'VINNUMALASTOFNUN_APPROVE_EDITS: Reject => VINNUMALASTOFNUN_EDITS_ACTION',
+    description:
+      'VINNUMALASTOFNUN_APPROVE_EDITS: Reject => VINNUMALASTOFNUN_EDITS_ACTION',
   },
-  vinnumalastofnunApproveEditsSubmitHistoryLogMessage: {
-    id: 'pl.application:vinnumalastofnunApproveEdits.submit.historyLogMessage',
-    defaultMessage: 'VINNUMALASTOFNUN_APPROVE_EDITS: Submit => (RESIDENCE_GRAND_APPLICATION, RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE)', // TODO: Breyta texta
-    description: 'VINNUMALASTOFNUN_APPROVE_EDITS: Submit',
-  },
-
 
   editOrAddPeriodsSubmitHistoryLogMessage: {
     id: 'pl.application:editOrAddPeriods.submit.historyLogMessage',
@@ -2936,24 +2939,13 @@ export const statesMessages = defineMessages({
   },
   editOrAddPeriodsAbortHistoryLogMessage: {
     id: 'pl.application:editOrAddPeriods.abort.historyLogMessage',
-    defaultMessage: 'Hætti við breytingar / Breytingum fargað', // TODO: Velja texta
+    defaultMessage: 'Hætti við breytingar',
     description: 'EDIT_OR_ADD_PERIODS: Abort',
   },
 
   approvedClosedHistoryLogMessage: {
     id: 'pl.application:approved.closed.historyLogMessage',
-    defaultMessage: 'APPROVED: Closed', // TODO: Breyta texta
+    defaultMessage: 'Umsókn lokið',
     description: 'APPROVED: Closed',
-  },
-  approvedSubmitHistoryLogMessage: {
-    id: 'pl.application:approved.submit.historyLogMessage',
-    defaultMessage: 'APPROVED: Submit', // TODO: Breyta texta
-    description: 'APPROVED: Submit',
-  },
-
-  employerWaitingToAssignForEditsRejectHistoryLogMessage: {
-    id: 'pl.application:employerWaitingToAssignForEdits.reject.historyLogMessage',
-    defaultMessage: 'EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS: Reject', // TODO: Breyta texta
-    description: 'Application edited',
   },
 })

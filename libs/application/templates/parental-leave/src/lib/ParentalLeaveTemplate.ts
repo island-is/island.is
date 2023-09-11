@@ -123,6 +123,25 @@ const otherParentApprovalStatePendingAction = (
   }
 }
 
+const employerApprovalStatePendingAction = (
+  _: Application,
+  role: string,
+): PendingAction => {
+  if (role === Roles.ASSIGNEE) {
+    return {
+      title: statesMessages.employerApprovalPendingActionTitle,
+      content: statesMessages.employerApprovalPendingActionDescription,
+      displayStatus: 'info',
+    }
+  } else {
+    return {
+      title: statesMessages.employerWaitingToAssignDescription,
+      content: parentalLeaveFormMessages.reviewScreen.employerDesc,
+      displayStatus: 'info',
+    }
+  }
+}
+
 const ParentalLeaveTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -385,18 +404,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           name: States.EMPLOYER_WAITING_TO_ASSIGN,
           status: 'inprogress',
           actionCard: {
-            pendingAction: {
-              title: statesMessages.employerWaitingToAssignDescription,
-              content: parentalLeaveFormMessages.reviewScreen.employerDesc,
-              displayStatus: 'info',
-            },
+            pendingAction: employerApprovalStatePendingAction,
             historyLogs: [
-              {
-                // TODO: Skoða hvernig kemst í REJECT (laga msg)?
-                onEvent: DefaultEvents.REJECT,
-                logMessage:
-                  statesMessages.employerWaitingToAssignRejectHistoryLogMessage,
-              },
               {
                 onEvent: DefaultEvents.EDIT,
                 logMessage: statesMessages.editHistoryLogMessage,
@@ -424,7 +433,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.ASSIGN]: { target: States.EMPLOYER_APPROVAL },
-          [DefaultEvents.REJECT]: { target: States.EMPLOYER_ACTION },
           [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
@@ -435,11 +443,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           name: States.EMPLOYER_APPROVAL,
           status: 'inprogress',
           actionCard: {
-            pendingAction: {
-              title: statesMessages.employerApprovalDescription,
-              content: parentalLeaveFormMessages.reviewScreen.employerDesc,
-              displayStatus: 'info',
-            },
+            pendingAction: employerApprovalStatePendingAction,
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
@@ -600,10 +604,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 logMessage: statesMessages.editHistoryLogMessage,
               },
               {
-                // TODO: Skoða historyLogs: SUBMIT => (RESIDENCE_GRAND_APPLICATION, RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE)
                 onEvent: DefaultEvents.SUBMIT,
                 logMessage:
-                  statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage, // TODO: Breyta logMEssage
+                  statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage,
               },
             ],
           },
@@ -858,8 +861,26 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           status: 'inprogress',
           name: States.RESIDENCE_GRAND_APPLICATION,
+
           actionCard: {
             description: statesMessages.residenceGrantInProgress,
+            pendingAction: {
+              title: statesMessages.residenceGrantInProgress,
+              content:
+                parentalLeaveFormMessages.residenceGrantMessage
+                  .residenceGrantClosedDescription,
+              displayStatus: 'warning',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: statesMessages.editHistoryLogMessage,
+              },
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: statesMessages.editHistoryLogMessage,
+              },
+            ],
           },
           lifecycle: pruneAfterDays(970),
           progress: 1,
@@ -951,7 +972,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
-                // TODO: Þarf að vera history fyrir CLOSED? (umsókn hverfur þegar fer í state = CLOSED)
                 onEvent: PLEvents.CLOSED,
                 logMessage: statesMessages.approvedClosedHistoryLogMessage,
               },
@@ -960,9 +980,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 logMessage: statesMessages.editHistoryLogMessage,
               },
               {
-                // TODO: Skoða historyLogs: SUBMIT => (RESIDENCE_GRAND_APPLICATION, RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE)
                 onEvent: DefaultEvents.SUBMIT,
-                logMessage: statesMessages.approvedSubmitHistoryLogMessage,
+                logMessage:
+                  statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage,
               },
             ],
           },
@@ -1009,7 +1029,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           status: 'completed',
           actionCard: {
             description: statesMessages.closedDescription,
-            // TODO: Þarf að gera PendingAction og HistoryLogs hérna? Umsóknin hverfur þegar er CLOSED (held ég)
           },
           lifecycle: EphemeralStateLifeCycle,
           progress: 1,
@@ -1110,19 +1129,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
           status: 'inprogress',
           actionCard: {
-            pendingAction: {
-              title: statesMessages.employerWaitingToAssignForEditsTitle,
-              content:
-                statesMessages.employerWaitingToAssignForEditsDescription,
-              displayStatus: 'info',
-            },
+            pendingAction: employerApprovalStatePendingAction,
             historyLogs: [
-              {
-                // TODO: Skoða hvernig kemst í REJECT (laga msg)?
-                onEvent: DefaultEvents.REJECT,
-                logMessage:
-                  statesMessages.employerWaitingToAssignForEditsRejectHistoryLogMessage,
-              },
               {
                 onEvent: DefaultEvents.EDIT,
                 logMessage: statesMessages.editHistoryLogMessage,
@@ -1149,7 +1157,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.ASSIGN]: { target: States.EMPLOYER_APPROVE_EDITS },
-          [DefaultEvents.REJECT]: { target: States.EMPLOYER_EDITS_ACTION },
           [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
         },
       },
@@ -1164,11 +1171,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           name: States.EMPLOYER_APPROVE_EDITS,
           status: 'inprogress',
           actionCard: {
-            pendingAction: {
-              title: statesMessages.employerApproveEditsTitle,
-              content: statesMessages.employerApproveEditsDescription,
-              displayStatus: 'info',
-            },
+            pendingAction: employerApprovalStatePendingAction,
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
@@ -1345,10 +1348,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 logMessage: statesMessages.editHistoryLogMessage,
               },
               {
-                // TODO: Skoða historyLogs: SUBMIT => (RESIDENCE_GRAND_APPLICATION, RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE)
                 onEvent: DefaultEvents.SUBMIT,
                 logMessage:
-                  statesMessages.vinnumalastofnunApproveEditsSubmitHistoryLogMessage,
+                  statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage,
               },
             ],
           },
