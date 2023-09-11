@@ -13,4 +13,10 @@ export class GetDentistsInput {
 
   @Field(() => String, { nullable: true })
   after?: string
+
+  @Field(() => Number, { nullable: true })
+  pageNumber?: number
+
+  @Field(() => String, { nullable: true })
+  nameStartsWith?: string
 }

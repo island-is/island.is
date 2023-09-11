@@ -1,6 +1,7 @@
 import {
   AlertMessage,
   Box,
+  Input,
   Pagination,
   SkeletonLoader,
   Stack,
@@ -14,7 +15,8 @@ import { CardLoader, m } from '@island.is/service-portal/core'
 import { IntroHeader } from '@island.is/portals/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { messages } from '../../lib/messages'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { useDebounce } from 'react-use'
 
 const DEFAULT_PAGE_SIZE = 12
 const DEFAULT_PAGE_NUMBER = 1
@@ -25,8 +27,8 @@ export const DentistRegistration = () => {
   const { formatMessage } = useLocale()
 
   const [page, setPage] = useState(DEFAULT_PAGE_NUMBER)
-  const [cursor, setCursor] = useState(DEFAULT_CURSOR)
-
+  const [searchTerm, setSearchTerm] = useState('')
+  const [activeSearch, setActiveSearch] = useState('')
   const {
     data: status,
     error: statusError,
@@ -41,28 +43,24 @@ export const DentistRegistration = () => {
     ? status.rightsPortalDentistStatus.contractType
     : '0'
 
-  const { data, error, loading, refetch } = useGetPaginatedDentistsQuery({
+  const { data, error, loading } = useGetPaginatedDentistsQuery({
     variables: {
       input: {
         contractType,
         limit: DEFAULT_PAGE_SIZE,
-        after: cursor,
+        pageNumber: page - 1,
+        nameStartsWith: activeSearch,
       },
-    },
-    onCompleted: (data) => {
-      // setCursor(data?.response?.pageInfo?.endCursor ?? '')
     },
   })
 
-  const handlePaginate = () => {
-    refetch({
-      input: {
-        contractType,
-        limit: DEFAULT_PAGE_SIZE,
-        after: cursor,
-      },
-    })
-  }
+  useDebounce(
+    () => {
+      setActiveSearch(searchTerm)
+    },
+    500,
+    [searchTerm],
+  )
 
   if (!canRegister && !statusLoading && !statusError)
     return (
@@ -98,6 +96,18 @@ export const DentistRegistration = () => {
         <SkeletonLoader repeat={3} space={2} height={40} />
       ) : (
         <>
+          <Box marginBottom={3}>
+            <Input
+              name="filter"
+              placeholder={formatMessage(m.searchPlaceholder)}
+              icon={{
+                name: 'search',
+                type: 'outline',
+              }}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </Box>
           <T.Table>
             <T.Head>
               <T.Row>
@@ -134,13 +144,7 @@ export const DentistRegistration = () => {
                 )}
                 page={page}
                 renderLink={(page, className, children) => (
-                  <button
-                    className={className}
-                    onClick={() => {
-                      setPage(page)
-                      // handlePaginate()
-                    }}
-                  >
+                  <button className={className} onClick={() => setPage(page)}>
                     {children}
                   </button>
                 )}
