@@ -10,7 +10,7 @@ const activateWidget = (license: number, version: string, group?: number) => {
   w.__lc.license = license
 
   if (typeof group === 'number') {
-    w.__lc.group = 1
+    w.__lc.group = group
   }
 
   const widget = (function (n: any, t, c) {
