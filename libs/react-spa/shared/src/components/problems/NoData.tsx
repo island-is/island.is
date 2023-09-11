@@ -79,6 +79,7 @@ export const NoData = ({
       imgAlt={imgProps.alt}
       dataTestId={dataTestId}
       noBorder={noBorder}
+      titleSize="h2"
       {...rest}
     />
   )

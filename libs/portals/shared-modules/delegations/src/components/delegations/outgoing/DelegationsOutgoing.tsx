@@ -8,7 +8,6 @@ import {
   AuthDelegationDirection,
 } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
-import { m } from '@island.is/portals/core'
 import { AccessCard } from '../../access/AccessCard'
 import { AccessDeleteModal } from '../../access/AccessDeleteModal/AccessDeleteModal'
 import { DelegationsEmptyState } from '../DelegationsEmptyState'

@@ -15,6 +15,7 @@ export type ProblemTemplateBaseProps = {
   imgSrc?: string
   imgAlt?: string
   noBorder?: boolean
+  titleSize?: 'h1' | 'h2'
   buttonLink?: {
     text: string
     onClick(): void
@@ -81,6 +82,7 @@ export const ProblemTemplate = ({
   showIcon,
   dataTestId,
   expand,
+  titleSize = 'h1',
 }: ProblemTemplateProps) => {
   const convertedVariant = variantToColour(variant)
   return (
@@ -120,17 +122,19 @@ export const ProblemTemplate = ({
           <Icon size="large" type="filled" {...getIconProps(variant)} />
         </Box>
       )}
-      <Text variant="h2" as="h2" color="dark400">
+      <Text variant={titleSize} as={titleSize} color="dark400">
         {title}
       </Text>
       <Text whiteSpace="preLine">{message}</Text>
       {buttonLink && (
-        <Button variant="ghost" onClick={buttonLink.onClick}>
-          {buttonLink.text}
-        </Button>
+        <Box marginY={1}>
+          <Button variant="ghost" onClick={buttonLink.onClick} size="medium">
+            {buttonLink.text}
+          </Button>
+        </Box>
       )}
       {imgSrc && (
-        <Box marginTop={[2, 8]}>
+        <Box marginTop={[2, 4]}>
           <img src={imgSrc} alt={imgAlt} className={styles.img} />
         </Box>
       )}

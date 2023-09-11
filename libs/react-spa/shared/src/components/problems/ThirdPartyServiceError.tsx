@@ -36,6 +36,7 @@ export const ThirdPartyServiceError = ({
       {...(tag ? { tag } : { icon: 'warning' })}
       {...errorTemplateProps}
       {...rest}
+      titleSize="h2"
     />
   )
 }

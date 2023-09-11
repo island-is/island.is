@@ -22,6 +22,7 @@ export const NotFound = ({
   noBorder,
   dataTestId,
   expand,
+  titleSize,
 }: NotFoundProps & TestSupport) => {
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
@@ -49,6 +50,7 @@ export const NotFound = ({
       noBorder={noBorder}
       dataTestId={dataTestId}
       expand={expand}
+      titleSize={titleSize}
     />
   )
 }

@@ -128,4 +128,8 @@ export const m = defineMessages({
     defaultMessage: 'Ekki náðist samband við þjónustuaðila',
     id: 'portals:short-third-party-service-error-message',
   },
+  backToOverview: {
+    defaultMessage: 'Fara á yfirlitssíðu',
+    id: 'portals:back-to-overview',
+  },
 })
