@@ -2,6 +2,7 @@ import {
   IAutoPollOptions,
   DataGovernance,
   IConfigCatClient,
+  PollingMode,
 } from 'configcat-common'
 import {
   FeatureFlagClient,
@@ -10,22 +11,16 @@ import {
   SettingValue,
   SettingTypeOf,
 } from './types'
-
-// Use a function to determine the correct module
-const getConfigCatModule = () => {
-  if (typeof window === 'undefined') {
-    return require('configcat-node')
-  } else {
-    return require('configcat-js')
-  }
-}
-
-const configCatModule = getConfigCatModule()
+import { getConfigCatModule } from './utils'
 
 export class Client implements FeatureFlagClient {
   private configcat: IConfigCatClient
 
-  constructor(config: FeatureFlagClientProps) {
+  private constructor(client: IConfigCatClient) {
+    this.configcat = client
+  }
+
+  static async create(config: FeatureFlagClientProps): Promise<Client> {
     const resolvedSdkKey = config.sdkKey ?? process.env.CONFIGCAT_SDK_KEY
     if (!resolvedSdkKey) {
       throw new Error(
@@ -37,7 +32,14 @@ export class Client implements FeatureFlagClient {
       dataGovernance: DataGovernance.EuOnly,
     }
 
-    this.configcat = configCatModule.getClient(resolvedSdkKey, null, ccConfig)
+    const configCatModule = await getConfigCatModule()
+    const client = configCatModule.getClient(
+      resolvedSdkKey,
+      PollingMode.AutoPoll,
+      ccConfig,
+    )
+
+    return new Client(client)
   }
 
   dispose() {
