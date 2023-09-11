@@ -20,11 +20,16 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { dateFormat } from '@island.is/shared/constants'
-import { LoadModal } from '@island.is/service-portal/core'
+import {
+  LoadModal,
+  formatPlausiblePathToParams,
+} from '@island.is/service-portal/core'
 import * as styles from './DocumentLine.css'
 import { gql, useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { messages as m } from '../../utils/messages'
+import { servicePortalOutboundLink } from '@island.is/plausible'
+import { DocumentsPaths } from '../../lib/paths'
 
 interface Props {
   documentLine: Document
@@ -122,7 +127,18 @@ const DocumentLine: FC<React.PropsWithChildren<Props>> = ({
   const isLink = documentLine.fileType === 'url' && documentLine.url
 
   const subject = isLink ? (
-    <Link href={documentLine.url} newTab>
+    <Link
+      onClick={() =>
+        servicePortalOutboundLink({
+          url: formatPlausiblePathToParams(
+            DocumentsPaths.ElectronicDocumentsRoot,
+          ).url,
+          outboundUrl: documentLine.url,
+        })
+      }
+      href={documentLine.url}
+      newTab
+    >
       <button className={styles.button}>
         {documentLine.subject}
         <Icon type="outline" icon="open" size="small" className={styles.icon} />

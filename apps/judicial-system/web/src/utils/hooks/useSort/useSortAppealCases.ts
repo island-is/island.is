@@ -1,6 +1,6 @@
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useMemo, useState } from 'react'
 
-import { useState, useMemo } from 'react'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
 const useSortAppealCases = (
   defaultColumn: string,
