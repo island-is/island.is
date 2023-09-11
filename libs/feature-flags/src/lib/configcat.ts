@@ -21,10 +21,6 @@ export class Client implements FeatureFlagClient {
   }
 
   static async create(config: FeatureFlagClientProps): Promise<Client> {
-    console.log(
-      `process.env.CONFIGCAT_SDK_KEY: `,
-      process.env.CONFIGCAT_SDK_KEY,
-    )
     const resolvedSdkKey = config.sdkKey ?? process.env.CONFIGCAT_SDK_KEY
     if (!resolvedSdkKey) {
       throw new Error(
