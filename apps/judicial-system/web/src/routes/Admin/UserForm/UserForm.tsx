@@ -9,6 +9,11 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  isExtendedCourtRole,
+  isProsecutionRole,
+} from '@island.is/judicial-system/types'
 import {
   FormContentContainer,
   FormFooter,
@@ -19,7 +24,7 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
 
 import { ReactSelectOption } from '../../../types'
 import {
@@ -28,11 +33,6 @@ import {
   Validation,
 } from '../../../utils/validate'
 import * as styles from './UserForm.css'
-import {
-  isExtendedCourtRole,
-  isProsecutionRole,
-} from '@island.is/judicial-system/types'
-import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
 
 type ExtendedOption = ReactSelectOption & { institution: Institution }
 
@@ -231,11 +231,11 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
             <Box className={styles.roleColumn}>
               <RadioButton
                 name="role"
-                id="roleRepresentative"
+                id="roleProsecutorRepresentative"
                 label="Fulltrúi"
-                checked={user.role === UserRole.REPRESENTATIVE}
+                checked={user.role === UserRole.PROSECUTOR_REPRESENTATIVE}
                 onChange={() =>
-                  setUser({ ...user, role: UserRole.REPRESENTATIVE })
+                  setUser({ ...user, role: UserRole.PROSECUTOR_REPRESENTATIVE })
                 }
                 large
               />

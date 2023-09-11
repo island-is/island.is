@@ -1,9 +1,8 @@
 import React, { Fragment, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import cn from 'classnames'
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 
-import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
   AlertMessage,
   Box,
@@ -11,6 +10,7 @@ import {
   Checkbox,
   LoadingDots,
 } from '@island.is/island-ui/core'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 import {
   CaseOrigin,
@@ -176,20 +176,11 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
                   <LoadingDots />
                 </Box>
               ) : policeCaseFiles?.hasError ? (
-                policeCaseFiles?.errorCode ===
-                'https://httpstatuses.org/404' ? (
-                  <PoliceCaseFilesMessageBox
-                    icon="warning"
-                    iconColor="yellow400"
-                    message={formatMessage(m.caseNotFoundInLOKEMessage)}
-                  />
-                ) : (
-                  <PoliceCaseFilesMessageBox
-                    icon="close"
-                    iconColor="red400"
-                    message={formatMessage(m.couldNotGetFromLOKEMessage)}
-                  />
-                )
+                <PoliceCaseFilesMessageBox
+                  icon="close"
+                  iconColor="red400"
+                  message={formatMessage(m.couldNotGetFromLOKEMessage)}
+                />
               ) : policeCaseFiles?.files.length === 0 ? (
                 <PoliceCaseFilesMessageBox
                   icon="warning"
