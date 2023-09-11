@@ -74,11 +74,11 @@ describe('getCasesQueryFilter', () => {
     })
   })
 
-  it('should get representative filter', () => {
+  it('should get prosecutor representative filter', () => {
     // Arrange
     const user = {
       id: 'Prosecutor Id',
-      role: UserRole.REPRESENTATIVE,
+      role: UserRole.PROSECUTOR_REPRESENTATIVE,
       institution: {
         id: 'Prosecutors Office Id',
         type: InstitutionType.PROSECUTORS_OFFICE,
