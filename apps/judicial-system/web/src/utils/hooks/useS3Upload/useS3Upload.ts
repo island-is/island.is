@@ -9,25 +9,25 @@ import { UserContext } from '@island.is/judicial-system-web/src/components'
 import { PresignedPost } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
+  CreateFileMutation,
+  useCreateFileMutation,
+} from './createFile.generated'
+import {
   CreatePresignedPostMutation,
   useCreatePresignedPostMutation,
 } from './createPresignedPost.generated'
 import {
-  LimitedAccessCreatePresignedPostMutation,
-  useLimitedAccessCreatePresignedPostMutation,
-} from './limitedAccessCreatePresignedPost.generated'
-import {
-  CreateFileMutation,
-  useCreateFileMutation,
-} from './createFile.generated'
+  DeleteFileMutation,
+  useDeleteFileMutation,
+} from './deleteFile.generated'
 import {
   LimitedAccessCreateFileMutation,
   useLimitedAccessCreateFileMutation,
 } from './limitedAccessCreateFile.generated'
 import {
-  DeleteFileMutation,
-  useDeleteFileMutation,
-} from './deleteFile.generated'
+  LimitedAccessCreatePresignedPostMutation,
+  useLimitedAccessCreatePresignedPostMutation,
+} from './limitedAccessCreatePresignedPost.generated'
 import {
   LimitedAccessDeleteFileMutation,
   useLimitedAccessDeleteFileMutation,
@@ -40,6 +40,7 @@ export interface TUploadFile extends UploadFile {
   chapter?: number
   orderWithinChapter?: number
   displayDate?: string
+  policeFileId?: string
 }
 
 const createFormData = (presignedPost: PresignedPost, file: File): FormData => {
@@ -295,6 +296,7 @@ export const useS3Upload = (caseId: string) => {
               chapter: file.chapter,
               orderWithinChapter: file.orderWithinChapter,
               displayDate: file.displayDate,
+              policeFileId: file.id,
             },
           },
         })
@@ -315,6 +317,7 @@ export const useS3Upload = (caseId: string) => {
             chapter: file.chapter,
             orderWithinChapter: file.orderWithinChapter,
             displayDate: file.displayDate,
+            policeFileId: file.id,
           },
           // We need to set the id so we are able to delete the file later
           createFileData.createFile.id,

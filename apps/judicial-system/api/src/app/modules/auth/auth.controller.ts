@@ -213,7 +213,7 @@ export class AuthController {
           ? requestedRedirectRoute
           : user.role === UserRole.ADMIN
           ? USERS_ROUTE
-          : user.institution?.type === InstitutionType.HIGH_COURT
+          : user.institution?.type === InstitutionType.COURT_OF_APPEALS
           ? COURT_OF_APPEAL_CASES_ROUTE
           : CASES_ROUTE,
       }

@@ -12,19 +12,19 @@ import { SingleValue } from 'react-select'
 import { Box, Input, Select } from '@island.is/island-ui/core'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { FormContext } from '../FormProvider/FormProvider'
-import { useCase, useGetLawyers } from '../../utils/hooks'
-import { defenderInput as m } from './DefenderInput.strings'
 import { Lawyer, ReactSelectOption } from '../../types'
+import { replaceTabs } from '../../utils/formatters'
 import {
   removeErrorMessageIfValid,
   removeTabsValidateAndSet,
   validateAndSendToServer,
   validateAndSetErrorMessage,
 } from '../../utils/formHelper'
+import { useCase, useGetLawyers } from '../../utils/hooks'
 import useDefendants from '../../utils/hooks/useDefendants'
 import { Validation } from '../../utils/validate'
-import { replaceTabs } from '../../utils/formatters'
+import { FormContext } from '../FormProvider/FormProvider'
+import { defenderInput as m } from './DefenderInput.strings'
 
 interface Props {
   onDefenderNotFound: (defenderNotFound: boolean) => void
