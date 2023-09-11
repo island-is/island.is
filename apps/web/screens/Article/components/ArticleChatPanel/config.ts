@@ -5,7 +5,24 @@ import {
 } from '@island.is/web/components'
 import { Locale } from 'locale'
 
-export const liveChatIncConfig: Record<string, LiveChatIncChatPanelProps> = {}
+export const liveChatIncConfig: Record<
+  Locale,
+  Record<string, LiveChatIncChatPanelProps>
+> = {
+  is: {
+    '6IZT17s7stKJAmtPutjpD7': {
+      license: 13270509,
+      version: '2.0',
+    },
+  },
+  en: {
+    '6IZT17s7stKJAmtPutjpD7': {
+      license: 13270509,
+      version: '2.0',
+      group: 2,
+    },
+  },
+}
 
 interface WatsonInstance {
   on: (_: {
