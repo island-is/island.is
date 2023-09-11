@@ -56,7 +56,8 @@
         "commands": [
           "node scripts/dockerfile-assets/bash/extract-environment.js apps/service-portal/src"
         ]
-      }
+      },
+      "outputs": ["{workspaceRoot}/apps/service-portal/src/index.html"]
     },
     "serve": {
       "executor": "@nx/webpack:dev-server",

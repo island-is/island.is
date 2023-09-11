@@ -4,8 +4,9 @@ import { UserRole } from '@island.is/judicial-system/types'
 // Allows prosecutors to perform any action
 export const prosecutorRule: RolesRule = UserRole.PROSECUTOR
 
-// Allows representatives to perform any action
-export const representativeRule: RolesRule = UserRole.REPRESENTATIVE
+// Allows prosecutor representatives to perform any action
+export const prosecutorRepresentativeRule: RolesRule =
+  UserRole.PROSECUTOR_REPRESENTATIVE
 
 // Allows judges to perform any action
 export const judgeRule: RolesRule = UserRole.JUDGE
