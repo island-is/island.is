@@ -155,10 +155,18 @@ export class NationalRegistryService extends BaseTemplateApiService {
       (await this.nationalRegistryApi.getIndividual(parents[1].nationalId))
 
     const parentOne: NationalRegistryParent | null = parentOneDetails
-      ? { nationalId: parentOneDetails.nationalId, name: parentOneDetails.name }
+      ? {
+          nationalId: parentOneDetails.nationalId,
+          givenName: parentOneDetails.givenName,
+          familyName: parentOneDetails.familyName,
+        }
       : null
     const parentTwo: NationalRegistryParent | null = parentTwoDetails
-      ? { nationalId: parentTwoDetails.nationalId, name: parentTwoDetails.name }
+      ? {
+          nationalId: parentTwoDetails.nationalId,
+          givenName: parentTwoDetails.givenName,
+          familyName: parentTwoDetails.familyName,
+        }
       : null
 
     const parentsWithDetails = []
