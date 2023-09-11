@@ -1,37 +1,54 @@
-import React, { ComponentType } from 'react'
+import React from 'react'
 import cn from 'classnames'
 import {
   components,
   MenuProps,
   OptionProps,
-  IndicatorContainerProps,
   ControlProps,
   InputProps,
   PlaceholderProps,
   ValueContainerProps,
   SingleValueProps,
-  IndicatorProps,
-  Props,
   StylesConfig,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  IndicatorsContainerProps,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  GroupBase,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  DropdownIndicatorProps,
 } from 'react-select'
-import { Icon } from '../../../IconRC/Icon'
-import * as styles from '../CountryCodeSelect.css'
-import { CountryCodeSelectProps } from '../../PhoneInput.types'
-import { Option as ReactSelectOption } from '../../../Select/Select'
-import { Box } from '../../../Box/Box'
 
-export const Menu = (props: MenuProps<ReactSelectOption>) => (
-  <components.Menu className={styles.menu} {...props} />
+import { Box } from '../../../Box/Box'
+import { Icon } from '../../../IconRC/Icon'
+import { Option as OptionType } from '../../../Select/Select.types'
+
+import * as styles from '../CountryCodeSelect.css'
+
+export const Menu = (
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  props: MenuProps<OptionType<string>, false, GroupBase<OptionType<string>>>,
+) => (
+  <components.Menu className={styles.menu} {...props}>
+    {props.children}
+  </components.Menu>
 )
 
-type NonNullableSize = NonNullable<CountryCodeSelectProps['size']>
-
-export const Option = (props: OptionProps<ReactSelectOption>) => {
-  const size: NonNullableSize = props.selectProps.size || 'md'
+export const Option = (
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  props: OptionProps<OptionType<string>, false, GroupBase<OptionType<string>>>,
+) => {
+  const { size = 'md' } = props.selectProps
   const description = props.data?.description // Flag in this case
 
   return (
     <components.Option
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       className={cn(styles.option, styles.optionSizes[size])}
       {...props}
     >
@@ -44,28 +61,42 @@ export const Option = (props: OptionProps<ReactSelectOption>) => {
 }
 
 export const IndicatorsContainer = (
-  props: IndicatorContainerProps<ReactSelectOption>,
+  props: IndicatorsContainerProps<
+    OptionType<string>,
+    false,
+    GroupBase<OptionType<string>>
+  >,
 ) => {
-  const { icon } = props.selectProps
-  const size: CountryCodeSelectProps['size'] = props.selectProps.size || 'md'
-  const hasLabel: boolean = props.selectProps.inputHasLabel
-  const disabled: boolean = props.selectProps.isDisabled ?? false
+  const {
+    icon,
+    size = 'md',
+    isDisabled = false,
+    inputHasLabel,
+  } = props.selectProps
+
   return (
     <components.IndicatorsContainer
       className={cn(styles.indicatorsContainer, {
         [styles.dontRotateIconOnOpen]: icon !== 'chevronDown',
         [styles.indicatorsContainerExtraSmall]: size === 'xs',
-        [styles.indicatorContainerWithLabel]: hasLabel,
-        [styles.indicatorsContainerDisabled]: disabled,
+        [styles.indicatorContainerWithLabel]: inputHasLabel,
+        [styles.indicatorsContainerDisabled]: isDisabled,
       })}
       {...props}
-    />
+    >
+      {props.children}
+    </components.IndicatorsContainer>
   )
 }
 
-export const DropdownIndicator = (props: IndicatorProps<ReactSelectOption>) => {
-  const { icon, hasError } = props.selectProps
-  const size: CountryCodeSelectProps['size'] = props.selectProps.size || 'md'
+export const DropdownIndicator = (
+  props: DropdownIndicatorProps<
+    OptionType<string>,
+    false,
+    GroupBase<OptionType<string>>
+  >,
+) => {
+  const { icon = 'chevronDown', hasError, size = 'md' } = props.selectProps
 
   return (
     <components.DropdownIndicator
@@ -84,17 +115,22 @@ export const DropdownIndicator = (props: IndicatorProps<ReactSelectOption>) => {
   )
 }
 
-export const SingleValue = (props: SingleValueProps<ReactSelectOption>) => {
-  const size: NonNullableSize = props.selectProps.size || 'md'
-  const hasLabel: boolean = props.selectProps.inputHasLabel
-  const value = (props.hasValue ? props.getValue() : null) as
-    | ReactSelectOption[]
-    | null
+export const SingleValue = (
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  props: SingleValueProps<
+    OptionType<string>,
+    false,
+    GroupBase<OptionType<string>>
+  >,
+) => {
+  const { size = 'md' } = props.selectProps
+  const value = props.hasValue ? props.getValue() : null
   return (
     <components.SingleValue
-      className={cn(styles.singleValue, styles.singleValueSizes[size], {
-        [styles.singleValuePushTop]: hasLabel,
-      })}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      className={cn(styles.singleValue, styles.singleValueSizes[size])}
       {...props}
     >
       {value ? value[0].value : ''}
@@ -103,39 +139,64 @@ export const SingleValue = (props: SingleValueProps<ReactSelectOption>) => {
 }
 
 export const ValueContainer = (
-  props: ValueContainerProps<ReactSelectOption>,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  props: ValueContainerProps<
+    OptionType<string>,
+    false,
+    GroupBase<OptionType<string>>
+  >,
 ) => {
-  const hasLabel: boolean = props.selectProps.inputHasLabel
+  const { inputHasLabel, size } = props.selectProps
   return (
     <components.ValueContainer
-      className={cn({ [styles.valueContainer]: hasLabel })}
+      className={cn({
+        [styles.valueContainer]: !!inputHasLabel,
+        [styles.valueContainerSmall]: size === 'sm',
+      })}
       {...props}
-    />
+    >
+      {props.children}
+    </components.ValueContainer>
   )
 }
 
-export const Placeholder = (props: PlaceholderProps<ReactSelectOption>) => {
-  const size: NonNullableSize = props.selectProps.size || 'md'
+export const Placeholder = (
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  props: PlaceholderProps<
+    OptionType<string>,
+    false,
+    GroupBase<OptionType<string>>
+  >,
+) => {
+  const { size = 'md' } = props.selectProps
   return (
     <components.Placeholder
       className={cn(
         styles.placeholder,
         styles.placeholderPadding,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         styles.placeholderSizes[size],
       )}
       {...props}
-    />
+    >
+      {props.children}
+    </components.Placeholder>
   )
 }
 
-export const Input: ComponentType<InputProps> = (
-  props: InputProps & { selectProps?: Props<ReactSelectOption> },
+export const Input = (
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  props: InputProps<OptionType<string>, false, GroupBase<OptionType<string>>>,
 ) => {
-  const ariaError = props?.selectProps?.ariaError
-  const size = (props?.selectProps?.size || 'md') as NonNullableSize
+  const { ariaError } = props.selectProps
   return (
     <components.Input
-      className={cn(styles.input, styles.inputSize[size])}
+      className={styles.inputContainer}
+      inputClassName={styles.input}
       {...props}
       {...ariaError}
       data-testid={props?.selectProps?.dataTestId}
@@ -144,8 +205,12 @@ export const Input: ComponentType<InputProps> = (
     />
   )
 }
-export const Control = (props: ControlProps<ReactSelectOption>) => {
-  const size = (props?.selectProps?.size || 'md') as NonNullableSize
+export const Control = (
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  props: ControlProps<OptionType<string>, false, GroupBase<OptionType<string>>>,
+) => {
+  const { size = 'md' } = props.selectProps
   return (
     <components.Control
       className={cn(styles.container, {
@@ -158,9 +223,16 @@ export const Control = (props: ControlProps<ReactSelectOption>) => {
     </components.Control>
   )
 }
-
-export const customStyles: StylesConfig = {
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
+export const customStyles = (): StylesConfig<
+  OptionType<string>,
+  false,
+  GroupBase<OptionType<string>>
+> => ({
   indicatorSeparator: () => ({}),
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   container: (provided) => ({
     ...provided,
     position: 'absolute',
@@ -170,10 +242,12 @@ export const customStyles: StylesConfig = {
     height: '100%',
     zIndex: 1,
   }),
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   control: (provided, state) => ({
     ...provided,
     background: 'transparent',
     width: '140px',
     opacity: state.isDisabled ? '0.5' : '1',
   }),
-}
+})

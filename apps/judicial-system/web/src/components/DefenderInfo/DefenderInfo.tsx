@@ -7,18 +7,18 @@ import {
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   SessionArrangements,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { defenderInfo } from './DefenderInfo.strings'
-import { BlueBox, SectionHeading } from '..'
 import { useCase } from '../../utils/hooks'
 import { UserContext } from '../UserProvider/UserProvider'
+import { BlueBox, SectionHeading } from '..'
 import DefenderInput from './DefenderInput'
 import DefenderNotFound from './DefenderNotFound'
+import { defenderInfo } from './DefenderInfo.strings'
 
 interface Props {
   workingCase: Case

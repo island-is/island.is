@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
-import { ValueType } from 'react-select/src/types'
 
 import {
   Box,
@@ -10,6 +9,11 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  isExtendedCourtRole,
+  isProsecutionRole,
+} from '@island.is/judicial-system/types'
 import {
   FormContentContainer,
   FormFooter,
@@ -20,7 +24,7 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
 
 import { ReactSelectOption } from '../../../types'
 import {
@@ -29,11 +33,6 @@ import {
   Validation,
 } from '../../../utils/validate'
 import * as styles from './UserForm.css'
-import {
-  isExtendedCourtRole,
-  isProsecutionRole,
-} from '@island.is/judicial-system/types'
-import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
 
 type ExtendedOption = ReactSelectOption & { institution: Institution }
 
@@ -110,8 +109,8 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
     return isProsecutionRole(user.role)
       ? user.institution?.type === InstitutionType.PROSECUTORS_OFFICE
       : isExtendedCourtRole(user.role)
-      ? user.institution?.type === InstitutionType.COURT ||
-        user.institution?.type === InstitutionType.HIGH_COURT
+      ? user.institution?.type === InstitutionType.DISTRICT_COURT ||
+        user.institution?.type === InstitutionType.COURT_OF_APPEALS
       : user.role === UserRole.STAFF
       ? user.institution?.type === InstitutionType.PRISON ||
         user.institution?.type === InstitutionType.PRISON_ADMIN
@@ -293,7 +292,7 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
             label="Veldu stofnun"
             value={usersInstitution}
             options={selectInstitutions}
-            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+            onChange={(selectedOption) =>
               setUser({
                 ...user,
                 institution: (selectedOption as ExtendedOption).institution,
