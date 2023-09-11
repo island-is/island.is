@@ -68,8 +68,7 @@ export class HousingBenefitCalculatorClientService {
 
   async calculate(input: CalculateInput) {
     try {
-      const data = await this.fetchCalculation(input)
-      return data
+      return await this.fetchCalculation(input)
     } catch (error) {
       if (error instanceof FetchError) {
         // Renew token if we are unauthorized (most likely due to token expiring)
