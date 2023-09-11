@@ -1,19 +1,15 @@
-import React, {
-  FC,
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useMemo,
-} from 'react'
+import React, { FC, createContext, useContext, useMemo } from 'react'
+import * as ConfigCatJS from 'configcat-js'
 import {
-  createClient,
   FeatureFlagClient,
   FeatureFlagUser,
   SettingValue,
   SettingTypeOf,
+  createClientFactory,
 } from '@island.is/feature-flags'
 import { useAuth } from '@island.is/auth/react'
+
+const createClient = createClientFactory(() => ConfigCatJS)
 
 const FeatureFlagContext = createContext<FeatureFlagClient>({
   getValue: <T extends SettingValue>(_: string, defaultValue: T) =>
@@ -31,26 +27,11 @@ export const FeatureFlagProvider: FC<
   React.PropsWithChildren<FeatureFlagContextProviderProps>
 > = ({ children, sdkKey, defaultUser: userProp }) => {
   const { userInfo } = useAuth()
-  const [featureFlagClient, setFeatureFlagClient] =
-    useState<FeatureFlagClient | null>(null)
-
-  useEffect(() => {
-    const initializeClient = async () => {
-      const client = await createClient({ sdkKey })
-      setFeatureFlagClient(client)
-    }
-    initializeClient()
+  const featureFlagClient = useMemo(() => {
+    return createClient({ sdkKey })
   }, [sdkKey])
 
   const context = useMemo<FeatureFlagClient>(() => {
-    if (!featureFlagClient) {
-      return {
-        getValue: <T extends SettingValue>(_: string, defaultValue: T) =>
-          Promise.resolve(defaultValue as SettingTypeOf<T>),
-        dispose: () => void 0,
-      }
-    }
-
     const userAuth =
       userInfo && userInfo.profile.nationalId !== undefined
         ? {
@@ -74,10 +55,6 @@ export const FeatureFlagProvider: FC<
       dispose: () => featureFlagClient.dispose(),
     }
   }, [featureFlagClient, userInfo, userProp])
-
-  if (!featureFlagClient) {
-    return null
-  }
 
   return (
     <FeatureFlagContext.Provider value={context}>

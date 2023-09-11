@@ -18631,7 +18631,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^0.27.1":
+"axios@npm:^0.27.1, axios@npm:^0.27.2":
   version: 0.27.2
   resolution: "axios@npm:0.27.2"
   dependencies:
@@ -21657,6 +21657,17 @@ __metadata:
   dependencies:
     tslib: ^2.4.1
   checksum: 41d2ad2507df96281e2ed40fb4c59f0cfa99e4b4dd88ed61f4f135723c450caba1c2a77fa3562061de6c7e7ceb6b829078b1c076f8547a99b3eb2e8d32a0a669
+  languageName: node
+  linkType: hard
+
+"configcat-js-ssr@npm:7.1.1":
+  version: 7.1.1
+  resolution: "configcat-js-ssr@npm:7.1.1"
+  dependencies:
+    axios: ^0.27.2
+    configcat-common: ^8.1.1
+    tslib: ^2.4.1
+  checksum: 043bb546e5f149b6ccdc383e77746bba27a7b292a81bb308b2867dd4c6687ff65ad2a36852c758f9d27cc97d9ee5b17fc7c1717d523e4a457944fc0e34ac8e7e
   languageName: node
   linkType: hard
 
@@ -31531,6 +31542,7 @@ __metadata:
     class-validator: 0.14.0
     classnames: 2.2.6
     configcat-js: 8.1.1
+    configcat-js-ssr: 7.1.1
     configcat-node: 10.1.1
     contentful: 8.2.0
     contentful-cli: 1.5.14
