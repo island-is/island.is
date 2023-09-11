@@ -518,7 +518,7 @@ export const OldAgePensionForm: Form = buildForm({
           id: 'periodSection',
           title: oldAgePensionFormMessage.period.periodTitle,
           children: [
-            // Period is from 65 year old birthday or last 
+            // Period is from 65 year old birthday or last
             // 2 years if applicant is 67+ to 6 month ahead
             buildMultiField({
               id: 'periodField',
@@ -931,8 +931,11 @@ export const OldAgePensionForm: Form = buildForm({
               condition: (answers, externalData) => {
                 const { custodyInformation } =
                   getApplicationExternalData(externalData)
-                const { childPensionSelectedCustodyKids } = getApplicationAnswers(answers)
-                return custodyInformation.length !== 0 ? childPensionSelectedCustodyKids.length !== 0 : false
+                const { childPensionSelectedCustodyKids } =
+                  getApplicationAnswers(answers)
+                return custodyInformation.length !== 0
+                  ? childPensionSelectedCustodyKids.length !== 0
+                  : false
               },
               id: 'childPensionAddChild',
               title:

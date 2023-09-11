@@ -30,7 +30,6 @@ import {
   NationalRegistryResidenceHistoryApi,
   NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationTestApi,
-  SocialInsuranceAdministrationStatusApi,
 } from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({

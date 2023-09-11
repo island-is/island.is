@@ -8,7 +8,6 @@ import {
   YES,
 } from './constants'
 import { errorMessages } from './messages'
-import addYears from 'date-fns/addYears'
 import { formatBankInfo } from './oldAgePensionUtils'
 
 export const dataSchema = z.object({
