@@ -7,6 +7,8 @@ import {
   Document,
   DocumentCategory,
   DocumentDetails,
+  Query,
+  QueryGetDocumentArgs,
 } from '@island.is/api/schema'
 import { User } from '@island.is/shared/types'
 import {
@@ -55,26 +57,29 @@ const DocumentLine: FC<React.PropsWithChildren<Props>> = ({
   const isMobile = width < theme.breakpoints.sm
   const { formatMessage } = useLocale()
 
-  const [getDocument, { data: getFileByIdData, loading, error }] = useLazyQuery(
-    GET_DOCUMENT_BY_ID,
-    {
-      variables: {
-        input: {
-          id: documentLine.id,
-        },
-      },
-      onCompleted: () => {
-        onClickHandler()
+  const [getDocument, { data: getFileByIdData, loading, error }] = useLazyQuery<
+    Query,
+    QueryGetDocumentArgs
+  >(GET_DOCUMENT_BY_ID, {
+    variables: {
+      input: {
+        id: documentLine.id,
       },
     },
-  )
+    onCompleted: (data: { getDocument?: DocumentDetails | null }) => {
+      if (data?.getDocument) {
+        onClickHandler(data?.getDocument)
+      }
+    },
+  })
 
   const singleDocument = getFileByIdData?.getDocument || ({} as DocumentDetails)
 
-  const onClickHandler = async () => {
+  const onClickHandler = async (docData?: DocumentDetails) => {
+    const singleDocData = docData || singleDocument
     let html: string | undefined = undefined
-    if (singleDocument.html) {
-      html = singleDocument.html.length > 0 ? singleDocument.html : undefined
+    if (singleDocData.html) {
+      html = singleDocData.html.length > 0 ? singleDocData.html : undefined
     }
     if (html) {
       setTimeout(() => {
