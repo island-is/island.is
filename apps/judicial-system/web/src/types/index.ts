@@ -17,6 +17,7 @@ import {
   Case,
   CaseListEntry,
   CreateCase,
+  DefenderReceivesAccess,
   SubstanceMap,
   UpdateCase,
 } from '@island.is/judicial-system/types'
@@ -245,6 +246,7 @@ export interface TempCase
     | 'legalProvisions'
     | 'accusedAppealDecision'
     | 'prosecutorAppealDecision'
+    | 'defenderReceivesAccess'
   > {
   origin: CaseOrigin
   sharedWithProsecutorsOffice?: Institution
@@ -263,6 +265,7 @@ export interface TempCase
   legalProvisions?: CaseLegalProvisions[]
   accusedAppealDecision?: CaseAppealDecision
   prosecutorAppealDecision?: CaseAppealDecision
+  defenderReceivesAccess?: DefenderReceivesAccess
 }
 
 export interface TempUpdateCase
@@ -274,6 +277,7 @@ export interface TempUpdateCase
     | 'appealState'
     | 'appealRulingDecision'
     | 'defendants'
+    | 'defenderReceivesAccess'
   > {
   courtDocuments?: CourtDocument[]
   type?: CaseType
@@ -281,6 +285,7 @@ export interface TempUpdateCase
   appealState?: CaseAppealState
   appealRulingDecision?: CaseAppealRulingDecision
   defendants?: Defendant[]
+  defenderReceivesAccess?: DefenderReceivesAccess
 }
 
 export interface TempCreateCase extends Omit<CreateCase, 'type'> {

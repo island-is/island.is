@@ -1,8 +1,9 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Checkbox, Tooltip } from '@island.is/island-ui/core'
+import { Box, Checkbox, RadioButton, Tooltip } from '@island.is/island-ui/core'
 import {
+  DefenderReceivesAccess,
   isCourtRole,
   isInvestigationCase,
   isRestrictionCase,
@@ -101,8 +102,22 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
         <DefenderInput onDefenderNotFound={setDefenderNotFound} />
         {user?.role === UserRole.PROSECUTOR && (
           <Box marginTop={2}>
+            <Box>
+              <RadioButton
+                name="defender-access"
+                id="defender-access-when-sent"
+                label={formatMessage(
+                  isRestrictionCase(workingCase.type)
+                    ? defenderInfo.restrictionCases.sections
+                        .defenderRequestAccess.label
+                    : defenderInfo.investigationCases.sections
+                        .defenderRequestAccess.label,
+                )}
+              />
+            </Box>
+
             <Checkbox
-              name="sendRequestToDefender"
+              name="defenderReceivesAccess"
               label={formatMessage(
                 isRestrictionCase(workingCase.type)
                   ? defenderInfo.restrictionCases.sections.defenderRequestAccess
@@ -124,12 +139,17 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
                         .defenderRequestAccess.tooltip,
                     )
               }
-              checked={workingCase.sendRequestToDefender}
+              checked={
+                workingCase.defenderReceivesAccess ===
+                DefenderReceivesAccess.COURT_DATE
+              }
               onChange={(event) => {
                 setAndSendCaseToServer(
                   [
                     {
-                      sendRequestToDefender: event.target.checked,
+                      defenderReceivesAccess: event.target.checked
+                        ? DefenderReceivesAccess.COURT_DATE
+                        : undefined,
                       force: true,
                     },
                   ],

@@ -15,6 +15,7 @@ import {
   Recipient,
   IndictmentSubtype,
   User,
+  DefenderReceivesAccess,
 } from '@island.is/judicial-system/types'
 
 import { randomDate } from '../../../../test'
@@ -60,7 +61,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
     defenderNationalId: uuid(),
     defenderName: 'Saul Goodman',
     defenderEmail: 'saul@dummy.is',
-    sendRequestToDefender: true,
+    defenderReceivesAccess: DefenderReceivesAccess.COURT_DATE,
   } as Case
   const notificationDto = {
     user: { id: userId } as User,

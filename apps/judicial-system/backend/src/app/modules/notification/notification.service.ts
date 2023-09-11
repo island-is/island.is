@@ -40,6 +40,7 @@ import {
   Recipient,
   UserRole,
   getStatementDeadline,
+  DefenderReceivesAccess,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -450,7 +451,10 @@ export class NotificationService {
       this.eventService.postEvent(CaseEvent.RESUBMIT, theCase)
     }
 
-    if (theCase.state === CaseState.RECEIVED && theCase.sendRequestToDefender) {
+    if (
+      theCase.state === CaseState.RECEIVED &&
+      theCase.defenderReceivesAccess === DefenderReceivesAccess.COURT_DATE
+    ) {
       const defendantHasBeenNotified = await this.hasReceivedNotification(
         theCase.id,
         NotificationType.COURT_DATE,
@@ -459,7 +463,7 @@ export class NotificationService {
 
       if (
         theCase.courtDate &&
-        theCase.sendRequestToDefender &&
+        theCase.defenderReceivesAccess === DefenderReceivesAccess.COURT_DATE &&
         theCase.defenderName &&
         theCase.defenderEmail &&
         defendantHasBeenNotified
@@ -622,7 +626,9 @@ export class NotificationService {
   ): Promise<Recipient>[] {
     const subject = `Fyrirtaka í máli ${theCase.courtCaseNumber}`
     const linkSubject = `${
-      theCase.sendRequestToDefender ? 'Gögn í máli' : 'Yfirlit máls'
+      theCase.defenderReceivesAccess === DefenderReceivesAccess.COURT_DATE
+        ? 'Gögn í máli'
+        : 'Yfirlit máls'
     } ${theCase.courtCaseNumber}`
     const html = formatDefenderCourtDateEmailNotification(
       this.formatMessage,
@@ -642,7 +648,7 @@ export class NotificationService {
         formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
       theCase.court?.name,
       theCase.courtCaseNumber,
-      theCase.sendRequestToDefender,
+      theCase.defenderReceivesAccess === DefenderReceivesAccess.COURT_DATE,
     )
     const calendarInvite = this.createICalAttachment(theCase)
 

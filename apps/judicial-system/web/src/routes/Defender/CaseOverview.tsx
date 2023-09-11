@@ -11,6 +11,7 @@ import {
 import {
   CaseState,
   completedCaseStates,
+  DefenderReceivesAccess,
   Feature,
   isInvestigationCase,
   isRestrictionCase,
@@ -261,14 +262,16 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
 
           <AppealCaseFilesOverview />
 
-          {(workingCase.sendRequestToDefender ||
+          {(workingCase.defenderReceivesAccess ===
+            DefenderReceivesAccess.COURT_DATE ||
             completedCaseStates.includes(workingCase.state)) && (
             <Box marginBottom={10}>
               <Text as="h3" variant="h3" marginBottom={3}>
                 {formatMessage(strings.documentHeading)}
               </Text>
               <Box>
-                {(workingCase.sendRequestToDefender ||
+                {(workingCase.defenderReceivesAccess ===
+                  DefenderReceivesAccess.COURT_DATE ||
                   completedCaseStates.includes(workingCase.state)) && (
                   <PdfButton
                     renderAs="row"

@@ -20,7 +20,7 @@ export class RequestSharedWithDefenderGuard implements CanActivate {
     }
 
     if (
-      !theCase.sendRequestToDefender &&
+      !theCase.defenderReceivesAccess &&
       !completedCaseStates.includes(theCase.state)
     ) {
       throw new ForbiddenException(

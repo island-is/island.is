@@ -6,6 +6,7 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { caseResubmitModal as m } from '@island.is/judicial-system-web/messages'
 
 import { Modal } from '..'
+import { DefenderReceivesAccess } from '@island.is/judicial-system/types'
 
 interface Props {
   workingCase: Case
@@ -18,8 +19,9 @@ export function getCaseResubmittedText(
   workingCase: Case,
 ) {
   return formatMessage(m.text, {
-    sendRequestToDefender: Boolean(
-      workingCase.sendRequestToDefender && workingCase.courtDate,
+    defenderReceivesAccess: Boolean(
+      workingCase.defenderReceivesAccess ===
+        DefenderReceivesAccess.COURT_DATE && workingCase.courtDate,
     ),
   })
 }

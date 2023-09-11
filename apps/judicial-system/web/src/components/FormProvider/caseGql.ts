@@ -29,7 +29,7 @@ const CaseQuery = gql`
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
-      sendRequestToDefender
+      defenderReceivesAccess
       isHeightenedSecurityLevel
       court {
         id

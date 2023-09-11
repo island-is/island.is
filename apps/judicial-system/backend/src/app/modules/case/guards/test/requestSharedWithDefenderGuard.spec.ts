@@ -4,7 +4,10 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { completedCaseStates } from '@island.is/judicial-system/types'
+import {
+  DefenderReceivesAccess,
+  completedCaseStates,
+} from '@island.is/judicial-system/types'
 
 import { RequestSharedWithDefenderGuard } from '../requestSharedWithDefender.guard'
 
@@ -41,7 +44,7 @@ describe('Request Shared With Defender Guard', () => {
 
     beforeEach(() => {
       mockRequest.mockImplementationOnce(() => ({
-        case: { sendRequestToDefender: true },
+        case: { defenderReceivesAccess: DefenderReceivesAccess.COURT_DATE },
       }))
 
       then = givenWhenThen()
@@ -59,7 +62,10 @@ describe('Request Shared With Defender Guard', () => {
 
       beforeEach(() => {
         mockRequest.mockImplementationOnce(() => ({
-          case: { state, sendRequestToDefender: false },
+          case: {
+            state,
+            defenderReceivesAccess: DefenderReceivesAccess.COURT_DATE,
+          },
         }))
 
         then = givenWhenThen()
