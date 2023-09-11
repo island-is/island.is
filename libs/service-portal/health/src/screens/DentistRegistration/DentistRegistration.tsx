@@ -26,7 +26,6 @@ export const DentistRegistration = () => {
 
   const [page, setPage] = useState(DEFAULT_PAGE_NUMBER)
   const [cursor, setCursor] = useState(DEFAULT_CURSOR)
-  const [direction, setDirection] = useState(true)
 
   const {
     data: status,
@@ -42,56 +41,27 @@ export const DentistRegistration = () => {
     ? status.rightsPortalDentistStatus.contractType
     : '0'
 
-  const { data, error, loading } = useGetPaginatedDentistsQuery({
+  const { data, error, loading, refetch } = useGetPaginatedDentistsQuery({
     variables: {
       input: {
         contractType,
         limit: DEFAULT_PAGE_SIZE,
-        after: direction === true ? cursor : undefined,
-        before: direction === false ? cursor : undefined,
+        after: cursor,
       },
+    },
+    onCompleted: (data) => {
+      // setCursor(data?.response?.pageInfo?.endCursor ?? '')
     },
   })
 
-  console.log(data?.response?.pageInfo)
-
-  const onPaginate = (prev: number, current: number) => {
-    console.log(prev, current)
-
-    if (prev < current) {
-      setDirection(true) // going forward
-      setCursor(data?.response?.pageInfo?.endCursor ?? DEFAULT_CURSOR)
-    } else {
-      setDirection(false) // going backward
-      setCursor(data?.response?.pageInfo?.startCursor ?? DEFAULT_CURSOR)
-    }
-
-    return current
-    // if (prev < current) {
-    //   fetchMore({
-    //     variables: {
-    //       input: {
-    //         contractType,
-    //         limit: DEFAULT_PAGE_SIZE,
-    //         after: cursor,
-    //       },
-    //     },
-    //   })
-    //   setCursor(data?.response?.pageInfo?.endCursor ?? DEFAULT_CURSOR)
-    // } else {
-    //   fetchMore({
-    //     variables: {
-    //       input: {
-    //         contractType,
-    //         limit: DEFAULT_PAGE_SIZE,
-    //         before: cursor,
-    //       },
-    //     },
-    //   })
-    //   setCursor(data?.response?.pageInfo?.endCursor ?? DEFAULT_CURSOR)
-    // }
-
-    // return current
+  const handlePaginate = () => {
+    refetch({
+      input: {
+        contractType,
+        limit: DEFAULT_PAGE_SIZE,
+        after: cursor,
+      },
+    })
   }
 
   if (!canRegister && !statusLoading && !statusError)
@@ -156,22 +126,27 @@ export const DentistRegistration = () => {
               ))}
             </T.Body>
           </T.Table>
-          {data?.response?.totalCount && (
-            <Pagination
-              totalPages={Math.ceil(
-                data?.response.totalCount / DEFAULT_PAGE_SIZE,
-              )}
-              page={page}
-              renderLink={(page, className, children) => (
-                <button
-                  className={className}
-                  onClick={() => setPage((prev) => onPaginate(prev, page))}
-                >
-                  {children}
-                </button>
-              )}
-            />
-          )}
+          <Box marginTop={6}>
+            {data?.response?.totalCount && (
+              <Pagination
+                totalPages={Math.ceil(
+                  data?.response.totalCount / DEFAULT_PAGE_SIZE,
+                )}
+                page={page}
+                renderLink={(page, className, children) => (
+                  <button
+                    className={className}
+                    onClick={() => {
+                      setPage(page)
+                      // handlePaginate()
+                    }}
+                  >
+                    {children}
+                  </button>
+                )}
+              />
+            )}
+          </Box>
         </>
       )}
     </Box>
