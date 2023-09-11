@@ -133,6 +133,7 @@ export const lightThemes = [
   'haskolanam',
   'nti',
   'samgongustofa',
+  'rettindagaesla-fatlads-folks'
 ]
 export const footerEnabled = [
   'syslumenn',
@@ -289,7 +290,7 @@ export const OrganizationHeader: React.FC<
           organizationPage={organizationPage}
         />
       )
-    case 'rettindageasla-fatlads-folks':
+    case 'rettindagaesla-fatlads-folks':
       return (
         <RettindagaeslaFatladsFolksHeader organizationPage={organizationPage} />
       )
