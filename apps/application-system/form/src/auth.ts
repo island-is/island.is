@@ -43,7 +43,7 @@ if (userMocked) {
       MunicipalitiesFinancialAidScope.write,
       MunicipalitiesFinancialAidScope.applicant,
       ApiScope.assets,
-      ApiScope.transportAuthority,
+      ApiScope.samgongustofaVehicles,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'as.',

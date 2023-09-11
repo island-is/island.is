@@ -95,7 +95,7 @@ const template: ApplicationTemplate<
       featureFlag: Features.transportAuthorityApplicationsCustomDelegation,
     },
   ],
-  requiredScopes: [ApiScope.transportAuthority],
+  requiredScopes: [ApiScope.samgongustofaVehicles],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
