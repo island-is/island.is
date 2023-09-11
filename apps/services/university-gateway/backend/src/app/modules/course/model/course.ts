@@ -14,11 +14,13 @@ import {
 } from 'sequelize-typescript'
 import { University } from '../../university/model'
 import { Season } from '@island.is/university-gateway-types'
+import { PageInfoDto } from '@island.is/nest/pagination'
 
+export
 @Table({
   tableName: 'course',
 })
-export class Course extends Model {
+class Course extends Model {
   @ApiProperty({
     description: 'Course ID',
     example: '00000000-0000-0000-0000-000000000000',
@@ -152,16 +154,10 @@ export class Course extends Model {
   })
   externalUrlEn?: string
 
-  // @ApiProperty({
-  //   type: String,
-  // })
   @ApiHideProperty()
   @CreatedAt
   readonly created!: Date
 
-  // @ApiProperty({
-  //   type: String,
-  // })
   @ApiHideProperty()
   @UpdatedAt
   readonly modified!: Date
@@ -174,15 +170,15 @@ export class CourseResponse {
   })
   data!: Course[]
 
-  //  @ApiProperty({
-  //    description: 'Page information (for pagination)',
-  //  })
-  //  pageInfo!: PageInfo
+  @ApiProperty({
+    description: 'Page information (for pagination)',
+  })
+  pageInfo!: PageInfoDto
 
-  //  @ApiProperty({
-  //    description: 'Total number of items in result (for pagination)',
-  //  })
-  //  totalCount!: number
+  @ApiProperty({
+    description: 'Total number of items in result (for pagination)',
+  })
+  totalCount!: number
 }
 
 export class CourseDetailsResponse {

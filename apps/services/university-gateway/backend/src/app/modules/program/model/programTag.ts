@@ -9,17 +9,14 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Program } from './program'
+import { ProgramTable } from './program'
 import { Tag } from './tag'
 
+export
 @Table({
   tableName: 'program_tag',
 })
-export class ProgramTag extends Model {
-  // @ApiProperty({
-  //   description: 'Program tag ID',
-  //   example: '00000000-0000-0000-0000-000000000000',
-  // })
+class ProgramTag extends Model {
   @ApiHideProperty()
   @Column({
     type: DataType.UUID,
@@ -29,22 +26,18 @@ export class ProgramTag extends Model {
   })
   id!: string
 
-  // @ApiProperty({
-  //   description: 'Program ID',
-  //   example: '00000000-0000-0000-0000-000000000000',
-  // })
   @ApiHideProperty()
   @Column({
     type: DataType.UUID,
     allowNull: false,
   })
-  @ForeignKey(() => Program)
+  @ForeignKey(() => ProgramTable)
   programId!: string
 
-  // @ApiProperty({
-  //   description: 'Tag ID',
-  //   example: '00000000-0000-0000-0000-000000000000',
-  // })
+  @ApiProperty({
+    description: 'Tag ID',
+    example: '00000000-0000-0000-0000-000000000000',
+  })
   @Column({
     type: DataType.UUID,
     allowNull: false,
@@ -59,16 +52,10 @@ export class ProgramTag extends Model {
   @BelongsTo(() => Tag, 'tagId')
   details?: Tag
 
-  // @ApiProperty({
-  //   type: String,
-  // })
   @ApiHideProperty()
   @CreatedAt
   readonly created!: Date
 
-  // @ApiProperty({
-  //   type: String,
-  // })
   @ApiHideProperty()
   @UpdatedAt
   readonly modified!: Date

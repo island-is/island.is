@@ -6,7 +6,7 @@ import { InternalCourseController } from './internalCourse.controller'
 import { InternalCourseService } from './internalCourse.service'
 import { Course } from './model'
 import { University } from '../university/model'
-import { Program, ProgramCourse } from '../program/model'
+import { ProgramCourse, ProgramTable } from '../program/model'
 import {
   ReykjavikUniversityApplicationClientConfig,
   ReykjavikUniversityApplicationClientModule,
@@ -19,7 +19,12 @@ import { ConfigModule } from '@nestjs/config'
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([University, Course, Program, ProgramCourse]),
+    SequelizeModule.forFeature([
+      University,
+      Course,
+      ProgramTable,
+      ProgramCourse,
+    ]),
     ReykjavikUniversityApplicationClientModule,
     UniversityOfIcelandApplicationClientModule,
     ConfigModule.forRoot({

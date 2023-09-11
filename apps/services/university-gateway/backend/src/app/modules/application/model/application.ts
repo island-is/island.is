@@ -8,7 +8,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Program } from '../../program/model'
+import { ProgramTable } from '../../program/model'
 import { University } from '../../university/model'
 import {
   ApplicationStatus,
@@ -60,7 +60,7 @@ export class Application extends Model {
     type: DataType.UUID,
     allowNull: false,
   })
-  @ForeignKey(() => Program)
+  @ForeignKey(() => ProgramTable)
   programId!: string
 
   @ApiProperty({

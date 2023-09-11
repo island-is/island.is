@@ -4,8 +4,9 @@ import { Course, CourseDetailsResponse, CourseResponse } from './model'
 import { PaginateInput } from '../program/types'
 import { paginate } from '@island.is/nest/pagination'
 
+export
 @Injectable()
-export class CourseService {
+class CourseService {
   constructor(
     @InjectModel(Course)
     private courseModel: typeof Course,

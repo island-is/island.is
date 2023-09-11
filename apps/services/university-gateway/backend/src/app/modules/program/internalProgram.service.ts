@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import {
-  Program,
   ProgramExtraApplicationField,
   ProgramModeOfDelivery,
+  ProgramTable,
   ProgramTag,
   Tag,
 } from './model'
@@ -11,12 +11,13 @@ import { University } from '../university/model'
 import { ReykjavikUniversityApplicationClient } from '@island.is/clients/university-application/reykjavik-university'
 import { UniversityOfIcelandApplicationClient } from '@island.is/clients/university-application/university-of-iceland'
 import {
-  Program as IProgram,
+  IProgram,
   UniversityNationalIds,
 } from '@island.is/university-gateway-types'
 
+export
 @Injectable()
-export class InternalProgramService {
+class InternalProgramService {
   constructor(
     private readonly reykjavikUniversityClient: ReykjavikUniversityApplicationClient,
 
@@ -28,8 +29,8 @@ export class InternalProgramService {
     @InjectModel(Tag)
     private tagModel: typeof Tag,
 
-    @InjectModel(Program)
-    private programModel: typeof Program,
+    @InjectModel(ProgramTable)
+    private programModel: typeof ProgramTable,
 
     @InjectModel(ProgramTag)
     private programTagModel: typeof ProgramTag,

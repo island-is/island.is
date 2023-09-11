@@ -10,17 +10,14 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Course } from '../../course/model'
-import { Program } from './program'
+import { ProgramTable } from './program'
 import { Requirement } from '@island.is/university-gateway-types'
 
+export
 @Table({
   tableName: 'program_course',
 })
-export class ProgramCourse extends Model {
-  // @ApiProperty({
-  //   description: 'Program tag ID',
-  //   example: '00000000-0000-0000-0000-000000000000',
-  // })
+class ProgramCourse extends Model {
   @ApiHideProperty()
   @Column({
     type: DataType.UUID,
@@ -30,22 +27,14 @@ export class ProgramCourse extends Model {
   })
   id!: string
 
-  // @ApiProperty({
-  //   description: 'Program ID',
-  //   example: '00000000-0000-0000-0000-000000000000',
-  // })
   @ApiHideProperty()
   @Column({
     type: DataType.UUID,
     allowNull: false,
   })
-  @ForeignKey(() => Program)
+  @ForeignKey(() => ProgramTable)
   programId!: string
 
-  // @ApiProperty({
-  //   description: 'Course ID',
-  //   example: '00000000-0000-0000-0000-000000000000',
-  // })
   @ApiHideProperty()
   @Column({
     type: DataType.UUID,
@@ -73,16 +62,10 @@ export class ProgramCourse extends Model {
   })
   requirement!: Requirement
 
-  // @ApiProperty({
-  //   type: String,
-  // })
   @ApiHideProperty()
   @CreatedAt
   readonly created!: Date
 
-  // @ApiProperty({
-  //   type: String,
-  // })
   @ApiHideProperty()
   @UpdatedAt
   readonly modified!: Date

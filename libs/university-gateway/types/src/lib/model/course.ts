@@ -1,6 +1,6 @@
-import { Requirement, Season } from '@island.is/university-gateway-types'
+import { Requirement, Season } from '../types'
 
-export interface Course {
+export interface ICourse {
   externalId: string
   nameIs: string
   nameEn: string
@@ -13,22 +13,3 @@ export interface Course {
   externalUrlIs?: string
   externalUrlEn?: string
 }
-
-// import { Season } from '../types'
-
-// export type Course = {
-//   id: string
-//   externalId: string
-//   nameIs: string
-//   nameEn: string
-//   universityId: string
-//   credits: number
-//   semesterYear: number
-//   semesterSeason: Season
-//   descriptionIs: string
-//   descriptionEn: string
-//   externalUrlIs: string
-//   externalUrlEn: string
-//   created: Date
-//   modified: Date
-// }

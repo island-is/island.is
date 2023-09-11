@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import {
-  Program,
   ProgramCourse,
   ProgramDetailsResponse,
   ProgramExtraApplicationField,
   ProgramModeOfDelivery,
   ProgramResponse,
+  ProgramTable,
   ProgramTag,
   Tag,
   TagResponse,
@@ -16,11 +16,12 @@ import { InjectModel } from '@nestjs/sequelize'
 import { paginate } from '@island.is/nest/pagination'
 import { DegreeType, Season } from '@island.is/university-gateway-types'
 
+export
 @Injectable()
-export class ProgramService {
+class ProgramService {
   constructor(
-    @InjectModel(Program)
-    private programModel: typeof Program,
+    @InjectModel(ProgramTable)
+    private programModel: typeof ProgramTable,
 
     @InjectModel(ProgramTag)
     // private programTagModel: typeof ProgramTag,
@@ -78,18 +79,11 @@ export class ProgramService {
           include: [
             {
               model: Tag,
-              attributes: {
-                exclude: ['id', 'created', 'modified'],
-              },
             },
           ],
-          attributes: {
-            exclude: ['id', 'programId', 'created', 'modified'],
-          },
         },
         {
           model: ProgramModeOfDelivery,
-          attributes: { exclude: ['id', 'programId', 'created', 'modified'] },
         },
       ],
     })
@@ -104,36 +98,22 @@ export class ProgramService {
           include: [
             {
               model: Course,
-              attributes: {
-                exclude: ['created', 'modified'],
-              },
             },
           ],
-          attributes: {
-            exclude: ['id', 'programId', 'courseId', 'created', 'modified'],
-          },
         },
         {
           model: ProgramTag,
           include: [
             {
               model: Tag,
-              attributes: {
-                exclude: ['id', 'created', 'modified'],
-              },
             },
           ],
-          attributes: {
-            exclude: ['id', 'programId', 'created', 'modified'],
-          },
         },
         {
           model: ProgramModeOfDelivery,
-          attributes: { exclude: ['id', 'programId', 'created', 'modified'] },
         },
         {
           model: ProgramExtraApplicationField,
-          attributes: { exclude: ['id', 'programId', 'created', 'modified'] },
         },
       ],
     })

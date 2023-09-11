@@ -7,17 +7,13 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ProgramTag } from './programTag'
 
+export
 @Table({
   tableName: 'tag',
 })
-export class Tag extends Model {
+class Tag extends Model {
   @ApiHideProperty()
-  @ApiProperty({
-    description: 'Tag ID',
-    example: '00000000-0000-0000-0000-000000000000',
-  })
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -56,16 +52,10 @@ export class Tag extends Model {
   })
   nameEn!: string
 
-  // @ApiProperty({
-  //   type: String,
-  // })
   @ApiHideProperty()
   @CreatedAt
   readonly created!: Date
 
-  // @ApiProperty({
-  //   type: String,
-  // })
   @ApiHideProperty()
   @UpdatedAt
   readonly modified!: Date

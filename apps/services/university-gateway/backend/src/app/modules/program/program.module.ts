@@ -5,9 +5,9 @@ import { InternalProgramController } from './internalProgram.controller'
 import { InternalProgramService } from './internalProgram.service'
 import { SequelizeModule } from '@nestjs/sequelize'
 import {
-  Program,
   ProgramExtraApplicationField,
   ProgramModeOfDelivery,
+  ProgramTable,
   ProgramTag,
   Tag,
 } from './model'
@@ -29,7 +29,7 @@ import { ConfigModule } from '@nestjs/config'
       University,
       Course,
       Tag,
-      Program,
+      ProgramTable,
       ProgramTag,
       ProgramModeOfDelivery,
       ProgramExtraApplicationField,

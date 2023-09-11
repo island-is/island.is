@@ -12,17 +12,14 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Program } from './program'
+import { ProgramTable } from './program'
 import { FieldType } from '@island.is/university-gateway-types'
 
+export
 @Table({
   tableName: 'program_extra_application_field',
 })
-export class ProgramExtraApplicationField extends Model {
-  // @ApiProperty({
-  //   description: 'Program extra application field ID',
-  //   example: '00000000-0000-0000-0000-000000000000',
-  // })
+class ProgramExtraApplicationField extends Model {
   @ApiHideProperty()
   @Column({
     type: DataType.UUID,
@@ -32,16 +29,12 @@ export class ProgramExtraApplicationField extends Model {
   })
   id!: string
 
-  // @ApiProperty({
-  //   description: 'Program ID',
-  //   example: '00000000-0000-0000-0000-000000000000',
-  // })
   @ApiHideProperty()
   @Column({
     type: DataType.UUID,
     allowNull: false,
   })
-  @ForeignKey(() => Program)
+  @ForeignKey(() => ProgramTable)
   programId!: string
 
   @ApiProperty({
@@ -122,16 +115,10 @@ export class ProgramExtraApplicationField extends Model {
   })
   uploadAcceptedFileType?: string
 
-  // @ApiProperty({
-  //   type: String,
-  // })
   @ApiHideProperty()
   @CreatedAt
   readonly created!: Date
 
-  // @ApiProperty({
-  //   type: String,
-  // })
   @ApiHideProperty()
   @UpdatedAt
   readonly modified!: Date

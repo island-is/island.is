@@ -234,6 +234,12 @@ export const serviceSetup = (services: {
         '@rsk.is/prokura',
         '@rsk.is/prokura:admin',
       ]),
+      //TODOx need urls
+      // UNIVERSITY_GATWAY_API_URL: {
+      //   dev: 'https://university-gateway.dev01.devland.is',
+      //   staging: 'https://university-gateway.staging01.devland.is',
+      //   prod: 'https://university-gateway.island.is',
+      // },
     })
 
     .secrets({

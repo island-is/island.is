@@ -1,6 +1,6 @@
-import { FieldType } from '@island.is/university-gateway-types'
+import { FieldType } from '../types'
 
-export type ProgramExtraApplicationField = {
+export interface IProgramExtraApplicationField {
   nameIs: string
   nameEn?: string
   descriptionIs?: string
@@ -9,19 +9,3 @@ export type ProgramExtraApplicationField = {
   fieldType: FieldType
   uploadAcceptedFileType?: string
 }
-
-// import { FieldType } from '../types'
-
-// export type ProgramExtraApplicationField = {
-//   id: string
-//   programId: string
-//   nameIs: string
-//   nameEn: string
-//   descriptionIs: string
-//   descriptionEn: string
-//   required: boolean
-//   fieldType: FieldType
-//   uploadAcceptedFileType: string
-//   created: Date
-//   modified: Date
-// }

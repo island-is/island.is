@@ -1,4 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import {
+  ApiHideProperty,
+  ApiProperty,
+  ApiPropertyOptional,
+} from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -15,12 +19,9 @@ import { ProgramModeOfDelivery } from './programModeOfDelivery'
 import { University } from '../../university/model'
 import { ProgramCourse } from './programCourse'
 import { DegreeType, Season } from '@island.is/university-gateway-types'
-//import { PageInfo } from '@island.is/nest/pagination'
+import { PageInfoDto } from '@island.is/nest/pagination'
 
-@Table({
-  tableName: 'program',
-})
-export class Program extends Model {
+class Program extends Model {
   @ApiProperty({
     description: 'Program ID',
     example: '00000000-0000-0000-0000-000000000000',
@@ -243,6 +244,31 @@ export class Program extends Model {
 
   @ApiProperty({
     description:
+      'List of (interest) tags connected to this program (to be able to categorize programs after interest)',
+    type: [ProgramTag],
+  })
+  @HasMany(() => ProgramTag)
+  tag?: ProgramTag[]
+
+  @ApiProperty({
+    description: 'Modes of deliveries available for the program',
+    type: [ProgramModeOfDelivery],
+  })
+  @HasMany(() => ProgramModeOfDelivery)
+  modeOfDelivery!: ProgramModeOfDelivery[]
+
+  @ApiHideProperty()
+  @CreatedAt
+  readonly created!: Date
+
+  @ApiHideProperty()
+  @UpdatedAt
+  readonly modified!: Date
+}
+
+class ProgramDetails extends Program {
+  @ApiProperty({
+    description:
       'External url  for the program from the university web page (Icelandic)',
     example: 'https://www.ru.is/grunnnam/tolvunarfraedi',
   })
@@ -340,62 +366,41 @@ export class Program extends Model {
 
   @ApiProperty({
     description:
-      'List of (interest) tags connected to this program (to be able to categorize programs after interest)',
-    type: [ProgramTag],
-  })
-  @HasMany(() => ProgramTag)
-  tag?: ProgramTag[]
-
-  @ApiProperty({
-    description: 'Modes of deliveries available for the program',
-    type: [ProgramModeOfDelivery],
-  })
-  @HasMany(() => ProgramModeOfDelivery)
-  modeOfDelivery!: ProgramModeOfDelivery[]
-
-  @ApiProperty({
-    description:
       'Extra application fields that should be displayed in the application for the program',
     type: [ProgramExtraApplicationField],
   })
   @HasMany(() => ProgramExtraApplicationField)
   extraApplicationField?: ProgramExtraApplicationField[]
-
-  @ApiProperty({
-    type: String,
-  })
-  @CreatedAt
-  readonly created!: Date
-
-  @ApiProperty({
-    type: String,
-  })
-  @UpdatedAt
-  readonly modified!: Date
 }
 
+export
+@Table({
+  tableName: 'program',
+})
+class ProgramTable extends ProgramDetails {}
+
 export class ProgramResponse {
+  @ApiProperty({
+    description: 'Total number of items in result (for pagination)',
+  })
+  totalCount!: number
+
   @ApiProperty({
     description: 'Program data',
     type: [Program],
   })
   data!: Program[]
 
-  //  @ApiProperty({
-  //    description: 'Page information (for pagination)',
-  //  })
-  //  pageInfo!: PageInfo
-
-  //  @ApiProperty({
-  //    description: 'Total number of items in result (for pagination)',
-  //  })
-  //  totalCount!: number
+  @ApiProperty({
+    description: 'Page information (for pagination)',
+  })
+  pageInfo!: PageInfoDto
 }
 
 export class ProgramDetailsResponse {
   @ApiProperty({
     description: 'Program data',
-    type: Program,
+    type: ProgramDetails,
   })
-  data!: Program
+  data!: ProgramDetails
 }

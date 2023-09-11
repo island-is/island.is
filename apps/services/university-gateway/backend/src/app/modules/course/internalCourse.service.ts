@@ -2,16 +2,17 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Course } from './model'
 import { University } from '../university/model'
-import { Program, ProgramCourse } from '../program/model'
+import { ProgramCourse, ProgramTable } from '../program/model'
 import { ReykjavikUniversityApplicationClient } from '@island.is/clients/university-application/reykjavik-university'
 import { UniversityOfIcelandApplicationClient } from '@island.is/clients/university-application/university-of-iceland'
 import {
-  Course as ICourse,
+  ICourse,
   UniversityNationalIds,
 } from '@island.is/university-gateway-types'
 
+export
 @Injectable()
-export class InternalCourseService {
+class InternalCourseService {
   constructor(
     private readonly reykjavikUniversityClient: ReykjavikUniversityApplicationClient,
 
@@ -23,8 +24,8 @@ export class InternalCourseService {
     @InjectModel(Course)
     private courseModel: typeof Course,
 
-    @InjectModel(Program)
-    private programModel: typeof Program,
+    @InjectModel(ProgramTable)
+    private programModel: typeof ProgramTable,
 
     @InjectModel(ProgramCourse)
     private programCourseModel: typeof ProgramCourse,

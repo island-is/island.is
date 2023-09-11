@@ -1,22 +1,23 @@
 import { Injectable } from '@nestjs/common'
 import { ExampleEndpointsForUniversitiesApi } from '../../gen/fetch/apis'
 import {
-  Course,
   DegreeType,
   FieldType,
+  ICourse,
+  IProgram,
   ModeOfDelivery,
-  Program,
   Requirement,
   Season,
 } from '@island.is/university-gateway-types'
 
+export
 @Injectable()
-export class UniversityOfIcelandApplicationClient {
+class UniversityOfIcelandApplicationClient {
   constructor(
     private readonly exampleEndpointsForUniversitiesApi: ExampleEndpointsForUniversitiesApi,
   ) {}
 
-  async getPrograms(): Promise<Program[]> {
+  async getPrograms(): Promise<IProgram[]> {
     const res =
       await this.exampleEndpointsForUniversitiesApi.exampleControllerGetActivePrograms()
 
@@ -72,7 +73,7 @@ export class UniversityOfIcelandApplicationClient {
     )
   }
 
-  async getCourses(externalId: string): Promise<Course[]> {
+  async getCourses(externalId: string): Promise<ICourse[]> {
     const res =
       await this.exampleEndpointsForUniversitiesApi.exampleControllerGetProgramsCourses(
         { externalId },

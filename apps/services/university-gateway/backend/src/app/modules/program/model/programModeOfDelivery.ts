@@ -8,17 +8,14 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Program } from './program'
+import { ProgramTable } from './program'
 import { ModeOfDelivery } from '@island.is/university-gateway-types'
 
+export
 @Table({
   tableName: 'program_mode_of_delivery',
 })
-export class ProgramModeOfDelivery extends Model {
-  // @ApiProperty({
-  //   description: 'Program mode of delivery ID',
-  //   example: '00000000-0000-0000-0000-000000000000',
-  // })
+class ProgramModeOfDelivery extends Model {
   @ApiHideProperty()
   @Column({
     type: DataType.UUID,
@@ -28,16 +25,12 @@ export class ProgramModeOfDelivery extends Model {
   })
   id!: string
 
-  // @ApiProperty({
-  //   description: 'Program ID',
-  //   example: '00000000-0000-0000-0000-000000000000',
-  // })
   @ApiHideProperty()
   @Column({
     type: DataType.UUID,
     allowNull: false,
   })
-  @ForeignKey(() => Program)
+  @ForeignKey(() => ProgramTable)
   programId!: string
 
   @ApiProperty({
@@ -52,16 +45,10 @@ export class ProgramModeOfDelivery extends Model {
   })
   modeOfDelivery!: ModeOfDelivery
 
-  // @ApiProperty({
-  //   type: String,
-  // })
   @ApiHideProperty()
   @CreatedAt
   readonly created!: Date
 
-  // @ApiProperty({
-  //   type: String,
-  // })
   @ApiHideProperty()
   @UpdatedAt
   readonly modified!: Date
