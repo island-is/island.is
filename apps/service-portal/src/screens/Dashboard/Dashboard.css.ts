@@ -29,6 +29,21 @@ export const lock = style({
   right: theme.spacing[3],
 })
 
+export const mailIcon = style({
+  minWidth: 30,
+  width: 40,
+  height: 40,
+  ...themeUtils.responsiveStyle({
+    md: {
+      minWidth: 40,
+    },
+  }),
+})
+
+export const mailLink = style({
+  display: 'inline-block',
+})
+
 export const svgOutline = style({})
 
 globalStyle(`${svgOutline} svg path`, {

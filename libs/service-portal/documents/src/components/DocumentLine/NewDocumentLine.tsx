@@ -31,15 +31,16 @@ import { useLocale } from '@island.is/localization'
 import { messages as m } from '../../utils/messages'
 import { ActiveDocumentType } from '../../screens/Overview/NewOverview'
 import AvatarImage from './AvatarImage'
+import { useNavigate } from 'react-router-dom'
+import { DocumentsPaths } from '../../lib/paths'
 
 interface Props {
   documentLine: Document
   img?: string
-  documentCategories?: DocumentCategory[]
-  userInfo?: User
-  onClick: (doc: ActiveDocumentType) => void
+  onClick?: (doc: ActiveDocumentType) => void
   active: boolean
   loading?: boolean
+  asFrame?: boolean
 }
 
 const GET_DOCUMENT_BY_ID = gql`
@@ -51,34 +52,37 @@ const GET_DOCUMENT_BY_ID = gql`
     }
   }
 `
-const NewDocumentLine: FC<Props> = ({
+export const NewDocumentLine: FC<Props> = ({
   documentLine,
   img,
-  documentCategories,
-  userInfo,
   onClick,
   active,
   loading,
+  asFrame,
 }) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.sm
   const { formatMessage } = useLocale()
+  const navigate = useNavigate()
   const date = format(new Date(documentLine.date), dateFormat.is)
 
   const displayPdf = (docContent?: DocumentDetails) => {
-    onClick({
-      document: docContent || (getFileByIdData?.getDocument as DocumentDetails),
-      id: documentLine.id,
-      subject: documentLine.subject,
-      sender: documentLine.senderName,
-      downloadUrl: documentLine.url,
-      date: date,
-      img,
-    })
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    })
+    if (onClick) {
+      onClick({
+        document:
+          docContent || (getFileByIdData?.getDocument as DocumentDetails),
+        id: documentLine.id,
+        subject: documentLine.subject,
+        sender: documentLine.senderName,
+        downloadUrl: documentLine.url,
+        date: date,
+        img,
+      })
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      })
+    }
   }
 
   const [
@@ -92,7 +96,25 @@ const NewDocumentLine: FC<Props> = ({
     },
     fetchPolicy: 'no-cache',
     onCompleted: (data) => {
-      displayPdf(data?.getDocument)
+      const docContent = data?.getDocument
+      if (asFrame) {
+        navigate(DocumentsPaths.ElectronicDocumentsRoot, {
+          state: {
+            id: documentLine.id,
+            doc: {
+              document: docContent as DocumentDetails,
+              id: documentLine.id,
+              subject: documentLine.subject,
+              sender: documentLine.senderName,
+              downloadUrl: documentLine.url,
+              date: date,
+              img,
+            },
+          },
+        })
+      } else {
+        displayPdf(docContent)
+      }
     },
   })
 
@@ -111,6 +133,14 @@ const NewDocumentLine: FC<Props> = ({
     )
   }
 
+  const onLineClick = async () => {
+    getFileByIdData
+      ? displayPdf()
+      : await getDocument({
+          variables: { input: { id: documentLine.id } },
+        })
+  }
+
   if (loading) {
     return <CardLoader />
   }
@@ -123,17 +153,7 @@ const NewDocumentLine: FC<Props> = ({
 
       <button
         className={styles.wrapper}
-        onClick={
-          !isLink
-            ? async () => {
-                getFileByIdData
-                  ? displayPdf()
-                  : await getDocument({
-                      variables: { input: { id: documentLine.id } },
-                    })
-              }
-            : undefined
-        }
+        onClick={!isLink ? async () => onLineClick() : undefined}
       >
         <Box
           display="flex"

@@ -3,15 +3,22 @@ import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '@island.is/auth/react'
 import {
   Box,
+  Button,
   CategoryCard,
   GridColumn,
   GridContainer,
   GridRow,
   Icon,
+  SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
+  DocumentsPaths,
+  NewDocumentLine,
+} from '@island.is/service-portal/documents'
+import {
+  LinkResolver,
   PlausiblePageviewDetail,
   ServicePortalPath,
   m,
@@ -22,18 +29,26 @@ import { iconIdMapper, iconTypeToSVG } from '../../utils/Icons/idMapper'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
-import { useListDocuments } from '@island.is/service-portal/graphql'
+import {
+  useListDocuments,
+  useOrganizations,
+} from '@island.is/service-portal/graphql'
 import * as styles from './Dashboard.css'
 import cn from 'classnames'
+import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 
 export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
   const { userInfo } = useAuth()
-  const { unreadCounter } = useListDocuments()
+  const { unreadCounter, data, loading } = useListDocuments({
+    pageSize: 8,
+  })
+  const { data: organizations } = useOrganizations()
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
   const location = useLocation()
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const isMobile = width < theme.breakpoints.md
+  const isLg = width < theme.breakpoints.xl
   const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
 
   useEffect(() => {
@@ -51,6 +66,7 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
       id && document.getElementById(iconIdMapper(id))
     a && a.dispatchEvent(new Event('click'))
   }
+
   const displayCards = () => {
     // eslint-disable-next-line no-lone-blocks
     {
@@ -61,8 +77,13 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
             navRoot.path !== ServicePortalPath.MinarSidurRoot && (
               <GridColumn
                 key={formatMessage(navRoot.name) + '-' + index}
-                span={['12/12', '12/12', '6/12', '4/12', '3/12']}
+                span={['12/12', '12/12', '12/12', '6/12', '6/12']}
                 paddingBottom={3}
+                hiddenAbove={
+                  navRoot.path === DocumentsPaths.ElectronicDocumentsRoot
+                    ? 'md'
+                    : undefined
+                }
               >
                 <Box
                   onMouseEnter={() => onHover(navRoot.icon?.icon ?? '')}
@@ -87,6 +108,7 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
                         truncateHeading
                         component={Link}
                         to={navRoot.path}
+                        headingVariant="h4"
                         icon={
                           isMobile && navRoot.icon ? (
                             <Icon
@@ -132,7 +154,103 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
       <Greeting />
       <Box paddingTop={[0, 0, 0, 4]} marginBottom={3}>
         <GridContainer>
-          <GridRow>{displayCards()}</GridRow>
+          <GridRow>
+            <GridColumn
+              hiddenBelow="lg"
+              span={['12/12', '12/12', '12/12', '5/12']}
+            >
+              <Box
+                borderRadius="large"
+                paddingY={3}
+                paddingX={4}
+                borderWidth="standard"
+                borderColor="blue200"
+              >
+                <LinkResolver
+                  className={styles.mailLink}
+                  href={DocumentsPaths.ElectronicDocumentsRoot}
+                >
+                  <Box
+                    onMouseEnter={() => onHover('mail')}
+                    display="flex"
+                    flexDirection="row"
+                    alignItems="center"
+                  >
+                    <Box
+                      paddingRight={1}
+                      display="flex"
+                      alignItems="center"
+                      className={cn([styles.mailIcon, styles.svgOutline])}
+                    >
+                      {isMobile ? (
+                        <Icon icon="mail" type="outline" color="blue400" />
+                      ) : (
+                        iconTypeToSVG('mail', '') ?? (
+                          <Icon icon="mail" type="outline" color="blue400" />
+                        )
+                      )}
+                    </Box>
+                    <Text as="h3" variant="h4" color="blue400" truncate>
+                      {formatMessage(m.documents)}
+                    </Text>
+
+                    <Box
+                      borderRadius="circle"
+                      className={cn(styles.badge[badgeActive])}
+                    />
+                  </Box>
+                </LinkResolver>
+                {loading && (
+                  <Box marginTop={4}>
+                    <SkeletonLoader
+                      space={2}
+                      repeat={6}
+                      display="block"
+                      width="full"
+                      height={65}
+                    />
+                  </Box>
+                )}
+                {data?.documents.map((doc) => (
+                  <Box key={doc.id}>
+                    <NewDocumentLine
+                      img={getOrganizationLogoUrl(
+                        doc.senderName,
+                        organizations,
+                      )}
+                      documentLine={doc}
+                      active={false}
+                      asFrame
+                    />
+                  </Box>
+                ))}
+
+                <Box
+                  textAlign="center"
+                  marginBottom={1}
+                  printHidden
+                  marginY={3}
+                >
+                  <LinkResolver href={DocumentsPaths.ElectronicDocumentsRoot}>
+                    <Button
+                      icon="arrowForward"
+                      iconType="filled"
+                      size="small"
+                      type="button"
+                      variant="text"
+                    >
+                      {formatMessage(m.openDocuments)}
+                    </Button>
+                  </LinkResolver>
+                </Box>
+              </Box>
+            </GridColumn>
+            <GridColumn span={['12/12', '12/12', '12/12', '7/12']}>
+              <GridContainer>
+                <GridRow>{displayCards()}</GridRow>
+              </GridContainer>
+            </GridColumn>
+          </GridRow>
         </GridContainer>
       </Box>
     </Box>

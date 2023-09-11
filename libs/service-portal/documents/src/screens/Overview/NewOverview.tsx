@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react'
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useQuery, gql } from '@apollo/client'
 import {
   Box,
@@ -20,12 +20,10 @@ import {
   useOrganizations,
 } from '@island.is/service-portal/graphql'
 import {
-  useScrollToRefOnUpdate,
   ServicePortalPath,
   formatPlausiblePathToParams,
-  NoDataScreen,
   m,
-  CardLoader,
+  useScrollTopOnUpdate,
 } from '@island.is/service-portal/core'
 import {
   DocumentCategory,
@@ -36,7 +34,7 @@ import {
 } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import isAfter from 'date-fns/isAfter'
 import differenceInYears from 'date-fns/differenceInYears'
@@ -102,11 +100,11 @@ export const ServicePortalDocuments = () => {
   const [isEmpty, setEmpty] = useState(false)
   const [scalePDF, setScalePDF] = useState(1.0)
   const navigate = useNavigate()
+  const location = useLocation()
   const [
     activeDocument,
     setActiveDocument,
   ] = useState<ActiveDocumentType | null>(null)
-  console.log('activeDocument - Overview', activeDocument)
   const isLegal = userInfo.profile.delegationType?.includes(
     AuthDelegationType.LegalGuardian,
   )
@@ -124,7 +122,7 @@ export const ServicePortalDocuments = () => {
   const [searchInteractionEventSent, setSearchInteractionEventSent] = useState(
     false,
   )
-  const { scrollToRef } = useScrollToRefOnUpdate([page])
+  useScrollTopOnUpdate([page])
 
   const [filterValue, setFilterValue] = useState<FilterValuesType>(
     defaultFilterValues,
@@ -182,6 +180,12 @@ export const ServicePortalDocuments = () => {
       setTypesAvailable(typesData.getDocumentTypes)
     }
   }, [typesLoading])
+
+  useEffect(() => {
+    if (location?.state?.doc) {
+      setActiveDocument(location?.state?.doc)
+    }
+  }, [location?.state?.doc])
 
   useEffect(() => {
     if (
@@ -487,13 +491,11 @@ export const ServicePortalDocuments = () => {
               </Box>
             )}
             <Stack space={0}>
-              {filteredDocuments.map((doc, index) => (
-                <Box key={doc.id} ref={index === 0 ? scrollToRef : null}>
+              {filteredDocuments.map((doc) => (
+                <Box key={doc.id}>
                   <NewDocumentLine
                     img={getOrganizationLogoUrl(doc.senderName, organizations)}
                     documentLine={doc}
-                    documentCategories={categoriesAvailable}
-                    userInfo={userInfo}
                     onClick={setActiveDocument}
                     active={doc.id === activeDocument?.id}
                   />

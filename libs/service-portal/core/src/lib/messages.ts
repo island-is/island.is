@@ -368,6 +368,10 @@ export const m = defineMessages({
     id: 'service.portal:documents',
     defaultMessage: 'Pósthólf',
   },
+  openDocuments: {
+    id: 'service.portal:open-documents',
+    defaultMessage: 'Opna pósthólf',
+  },
   documentsDescription: {
     id: 'service.portal:documents-description',
     defaultMessage: 'Erindi til þín frá opinberum aðilum',
