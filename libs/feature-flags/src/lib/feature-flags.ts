@@ -1,8 +1,8 @@
 import { Client } from './configcat'
 import { FeatureFlagClient, FeatureFlagClientProps } from './types'
 
-export function createClient(
+export async function createClient(
   config?: FeatureFlagClientProps,
-): FeatureFlagClient {
-  return new Client(config ?? {})
+): Promise<FeatureFlagClient> {
+  return await Client.create(config ?? {})
 }
