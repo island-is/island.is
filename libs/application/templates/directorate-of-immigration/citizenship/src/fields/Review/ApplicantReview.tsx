@@ -46,11 +46,11 @@ export const ApplicantReview: FC<Props> = ({
                 personal.labels.userInformation.citizenship,
               )}: ${answers?.userInformation?.citizenship}`}
             </Text>
-            <Text>
+            {/* <Text>
               {`${formatMessage(
                 personal.labels.userInformation.birthCountry,
               )}: ${answers?.userInformation?.birthCountry}`}
-            </Text>
+            </Text> */}
           </GridColumn>
           <GridColumn span="1/2">
             <Text>{answers?.userInformation?.address}</Text>
@@ -58,14 +58,14 @@ export const ApplicantReview: FC<Props> = ({
             <Text>
               {answers?.userInformation?.phone.replace(/^(.{3})(.*)$/, '$1 $2')}
             </Text>
-            <Text>
+            {/* <Text>
               {`${formatMessage(
                 personal.labels.userInformation
                   .residenceInIcelandLastChangeDateShorter,
               )}: ${
                 answers?.userInformation?.residenceInIcelandLastChangeDate
               }`}
-            </Text>
+            </Text> */}
           </GridColumn>
         </GridRow>
       </Box>

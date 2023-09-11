@@ -73,10 +73,10 @@ export const Prerequisites: Form = buildForm({
               title: '',
               subTitle: '',
             }),
-            buildDataProviderItem({
-              provider: NationalRegistryBirthplaceApi,
-              title: '',
-            }),
+            // buildDataProviderItem({
+            //   provider: NationalRegistryBirthplaceApi,
+            //   title: '',
+            // }),
             buildDataProviderItem({
               provider: NationalRegistryParentsApi,
               title: '',
@@ -90,42 +90,42 @@ export const Prerequisites: Form = buildForm({
               title: externalData.userProfile.title,
               subTitle: externalData.userProfile.subTitle,
             }),
-            buildDataProviderItem({
-              title: externalData.directorateOfImmigration.title,
-              subTitle: externalData.directorateOfImmigration.subTitle,
-            }),
-            buildDataProviderItem({
-              provider: ResidenceConditionsApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: CountriesApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: TravelDocumentTypesApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: OldCountryOfResidenceListApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: OldStayAbroadListApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: OldPassportItemApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: OldForeignCriminalRecordFileListApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: UtlendingastofnunPaymentCatalogApi,
-              title: '',
-            }),
+            // buildDataProviderItem({
+            //   title: externalData.directorateOfImmigration.title,
+            //   subTitle: externalData.directorateOfImmigration.subTitle,
+            // }),
+            // buildDataProviderItem({
+            //   provider: ResidenceConditionsApi,
+            //   title: '',
+            // }),
+            // buildDataProviderItem({
+            //   provider: CountriesApi,
+            //   title: '',
+            // }),
+            // buildDataProviderItem({
+            //   provider: TravelDocumentTypesApi,
+            //   title: '',
+            // }),
+            // buildDataProviderItem({
+            //   provider: OldCountryOfResidenceListApi,
+            //   title: '',
+            // }),
+            // buildDataProviderItem({
+            //   provider: OldStayAbroadListApi,
+            //   title: '',
+            // }),
+            // buildDataProviderItem({
+            //   provider: OldPassportItemApi,
+            //   title: '',
+            // }),
+            // buildDataProviderItem({
+            //   provider: OldForeignCriminalRecordFileListApi,
+            //   title: '',
+            // }),
+            // buildDataProviderItem({
+            //   provider: UtlendingastofnunPaymentCatalogApi,
+            //   title: '',
+            // }),
             buildDataProviderItem({
               pageTitle: externalData.dataProvider.subTitle2,
               title: '',

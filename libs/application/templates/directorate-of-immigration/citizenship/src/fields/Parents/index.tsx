@@ -18,6 +18,15 @@ export const Parents = ({ field, application, errors }: any) => {
     getValueViaPath(answers, 'parentInformation.hasValidParents', NO) as string,
   )
 
+  console.log('application', application)
+
+  let parentsFoundFromAnswer: '0' | '1' | '2' =
+    nationalRegistryParents.length == 1
+      ? '1'
+      : nationalRegistryParents.length === 2
+      ? '2'
+      : '0'
+
   const defaultParents = [
     { nationalId: '', givenName: '', familyName: '', wasRemoved: 'false' },
     { nationalId: '', givenName: '', familyName: '', wasRemoved: 'true' },
@@ -33,16 +42,20 @@ export const Parents = ({ field, application, errors }: any) => {
     ) as ParentsToApplicant[],
   )
 
+  console.log('parents here', parents)
+
   const { formatMessage } = useLocale()
 
   useEffect(() => {
-    const validParents = parents.filter(
+    //Valid parents from answers
+    let validParents = parents.filter(
       (x) => x.nationalId && x.nationalId !== '',
     )
-    if (hasValidParents === YES && validParents.length === 0) {
-      setParents(defaultParents)
-    }
+
+    //if the user has answered YES previously and is returning to the step and has one valid parent from previous answers
+    //set the valid parent and set the second as default wasRemoved=true
     if (hasValidParents === YES && validParents.length === 1) {
+      console.log('should be in here')
       setParents([...validParents, { ...defaultParents[1] }])
     }
 
@@ -128,7 +141,13 @@ export const Parents = ({ field, application, errors }: any) => {
               isRequired={index === 0}
               repeaterField={parent}
               readOnly={
-                parent.nationalId && parent.nationalId !== '' ? true : false
+                (parent.nationalId &&
+                  parent.nationalId !== '' &&
+                  ((index === 0 && parentsFoundFromAnswer === '1') ||
+                    parentsFoundFromAnswer === '2')) ||
+                (index === 1 && parentsFoundFromAnswer === '2')
+                  ? true
+                  : false
               }
               addParentToApplication={addParentToApplication}
               isHidden={hasValidParents === NO}

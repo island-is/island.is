@@ -11,7 +11,7 @@ import { personal } from '../../lib/messages'
 import debounce from 'lodash/debounce'
 import { IDENTITY_QUERY } from '../../graphql/queries'
 import { ParentsToApplicant } from '../../shared'
-import { getErrorViaPath } from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 
 interface Props {
   customId?: string
@@ -73,7 +73,6 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
   }, [repeaterField.wasRemoved, setValue])
 
   useEffect(() => {
-    console.log('1')
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
       getIdentity({
         variables: {
@@ -83,6 +82,20 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
         },
       })
     }
+
+    const givenName = getValueViaPath(
+      application.answers,
+      givenNameField,
+      '',
+    ) as string
+
+    const familyName = getValueViaPath(
+      application.answers,
+      familyNameField,
+      '',
+    ) as string
+
+    setCurrentName(`${givenName} ${familyName}`)
   }, [nationalIdInput, getIdentity])
 
   useEffect(() => {

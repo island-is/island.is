@@ -3,24 +3,23 @@ import * as kennitala from 'kennitala'
 import { NO, YES } from '@island.is/application/core'
 
 const UserSchemaBase = z.object({
-  nationalId: z
-    .string()
-    .refine(
-      (nationalId) =>
-        nationalId &&
-        nationalId.length !== 0 &&
-        kennitala.isValid(nationalId) &&
-        (kennitala.isCompany(nationalId) ||
-          kennitala.info(nationalId).age >= 18),
-    ),
+  nationalId: z.string(),
+  // .refine(
+  //   (nationalId) =>
+  //     nationalId &&
+  //     nationalId.length !== 0 &&
+  //     kennitala.isValid(nationalId) &&
+  //     (kennitala.isCompany(nationalId) ||
+  //       kennitala.info(nationalId).age >= 18),
+  // ),
   name: z.string().min(1),
   address: z.string().min(1),
   postalCode: z.string().min(1),
   email: z.string().min(1),
   phone: z.string().min(1),
   citizenship: z.string().min(1),
-  residenceInIcelandLastChangeDate: z.string().min(1),
-  birthCountry: z.string().min(1),
+  // residenceInIcelandLastChangeDate: z.string().min(1),
+  // birthCountry: z.string().min(1),
 })
 
 export const UserInformationSchema = z.intersection(
