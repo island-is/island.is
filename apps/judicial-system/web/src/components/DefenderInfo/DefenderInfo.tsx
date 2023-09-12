@@ -1,9 +1,8 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Checkbox, RadioButton, Tooltip } from '@island.is/island-ui/core'
+import { Box, RadioButton, Tooltip } from '@island.is/island-ui/core'
 import {
-  DefenderReceivesAccess,
   isCourtRole,
   isInvestigationCase,
   isRestrictionCase,
@@ -12,6 +11,7 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   SessionArrangements,
   UserRole,
+  DefenderReceivesAccess,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { defenderInfo } from './DefenderInfo.strings'
@@ -105,61 +105,95 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
             <Box>
               <RadioButton
                 name="defender-access"
-                id="defender-access-when-sent"
+                id="defender-access-ready-for-court"
                 label={formatMessage(
                   isRestrictionCase(workingCase.type)
                     ? defenderInfo.restrictionCases.sections
-                        .defenderRequestAccess.label
+                        .defenderRequestAccess.labelReadyForCourt
                     : defenderInfo.investigationCases.sections
-                        .defenderRequestAccess.label,
+                        .defenderRequestAccess.labelReadyForCourt,
                 )}
+                checked={
+                  workingCase.defenderReceivesAccess ===
+                  DefenderReceivesAccess.READY_FOR_COURT
+                }
+                onChange={() => {
+                  setAndSendCaseToServer(
+                    [
+                      {
+                        defenderReceivesAccess:
+                          DefenderReceivesAccess.READY_FOR_COURT,
+                        force: true,
+                      },
+                    ],
+                    workingCase,
+                    setWorkingCase,
+                  )
+                }}
+                large
+                backgroundColor="white"
               />
             </Box>
-
-            <Checkbox
-              name="defenderReceivesAccess"
-              label={formatMessage(
-                isRestrictionCase(workingCase.type)
-                  ? defenderInfo.restrictionCases.sections.defenderRequestAccess
-                      .label
-                  : defenderInfo.investigationCases.sections
-                      .defenderRequestAccess.label,
-              )}
-              tooltip={
-                isRestrictionCase(workingCase.type)
-                  ? formatMessage(
-                      defenderInfo.restrictionCases.sections
-                        .defenderRequestAccess.tooltip,
+            <Box marginTop={2}>
+              <RadioButton
+                name="defender-access"
+                id="defender-access-court-date"
+                label={formatMessage(
+                  isRestrictionCase(workingCase.type)
+                    ? defenderInfo.restrictionCases.sections
+                        .defenderRequestAccess.labelCourtDate
+                    : defenderInfo.investigationCases.sections
+                        .defenderRequestAccess.labelCourtDate,
+                )}
+                checked={
+                  workingCase.defenderReceivesAccess ===
+                  DefenderReceivesAccess.COURT_DATE
+                }
+                onChange={() => {
+                  setAndSendCaseToServer(
+                    [
                       {
-                        caseType: workingCase.type,
+                        defenderReceivesAccess:
+                          DefenderReceivesAccess.COURT_DATE,
+                        force: true,
                       },
-                    )
-                  : formatMessage(
-                      defenderInfo.investigationCases.sections
-                        .defenderRequestAccess.tooltip,
-                    )
-              }
-              checked={
-                workingCase.defenderReceivesAccess ===
-                DefenderReceivesAccess.COURT_DATE
-              }
-              onChange={(event) => {
-                setAndSendCaseToServer(
-                  [
-                    {
-                      defenderReceivesAccess: event.target.checked
-                        ? DefenderReceivesAccess.COURT_DATE
-                        : undefined,
-                      force: true,
-                    },
-                  ],
-                  workingCase,
-                  setWorkingCase,
-                )
-              }}
-              large
-              filled
-            />
+                    ],
+                    workingCase,
+                    setWorkingCase,
+                  )
+                }}
+                large
+                backgroundColor="white"
+              />
+            </Box>
+            <Box marginTop={2}>
+              <RadioButton
+                name="defender-access-no"
+                id="defender-access-no"
+                label={formatMessage(
+                  isRestrictionCase(workingCase.type)
+                    ? defenderInfo.restrictionCases.sections
+                        .defenderRequestAccess.labelNoAccess
+                    : defenderInfo.investigationCases.sections
+                        .defenderRequestAccess.labelNoAccess,
+                )}
+                checked={!workingCase.defenderReceivesAccess}
+                onChange={() => {
+                  setAndSendCaseToServer(
+                    [
+                      {
+                        defenderReceivesAccess: null,
+                        force: true,
+                      },
+                    ],
+                    workingCase,
+                    setWorkingCase,
+                  )
+                }}
+                large
+                backgroundColor="white"
+              />
+            </Box>
           </Box>
         )}
       </BlueBox>

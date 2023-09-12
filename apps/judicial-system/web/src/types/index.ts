@@ -12,12 +12,12 @@ import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
   CaseAppealDecision,
+  DefenderReceivesAccess,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   Case,
   CaseListEntry,
   CreateCase,
-  DefenderReceivesAccess,
   SubstanceMap,
   UpdateCase,
 } from '@island.is/judicial-system/types'
@@ -285,7 +285,7 @@ export interface TempUpdateCase
   appealState?: CaseAppealState
   appealRulingDecision?: CaseAppealRulingDecision
   defendants?: Defendant[]
-  defenderReceivesAccess?: DefenderReceivesAccess
+  defenderReceivesAccess?: DefenderReceivesAccess | null
 }
 
 export interface TempCreateCase extends Omit<CreateCase, 'type'> {
