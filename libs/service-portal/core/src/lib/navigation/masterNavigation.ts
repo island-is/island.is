@@ -156,7 +156,15 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         ],
         description: m.licensesDescription,
       },
-
+      // Starfsleyfi
+      {
+        name: m.occupationaLicenses,
+        path: ServicePortalPath.OccupationalLicenses,
+        icon: {
+          icon: 'receipt',
+        },
+        description: m.occupationalLicensesNavIntro,
+      },
       // Mín réttindi
       {
         name: m.delegation,

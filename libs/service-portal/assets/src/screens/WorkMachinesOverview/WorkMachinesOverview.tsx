@@ -66,18 +66,15 @@ const WorkMachinesOverview = () => {
     },
   }
 
-  const [activeFilters, setActiveFilters] = useState<FilterValues>(
-    defaultFilterValues,
-  )
+  const [activeFilters, setActiveFilters] =
+    useState<FilterValues>(defaultFilterValues)
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [activeSearch, setActiveSearch] = useState<string>('')
 
   const [page, setPage] = useState(DEFAULT_PAGE_NUMBER)
 
-  const [
-    getDocumentExport,
-    { data: fileData },
-  ] = useGetWorkMachineDocumentLazyQuery()
+  const [getDocumentExport, { data: fileData }] =
+    useGetWorkMachineDocumentLazyQuery()
 
   const { loading, error, data } = useGetWorkMachinesQuery({
     variables: {
@@ -192,7 +189,8 @@ const WorkMachinesOverview = () => {
                             (filterKey, index) => {
                               const key = filterKey as keyof FilterValues
                               const filter = activeFilters[key]
-                              const labelKey = filter.label as keyof typeof messages
+                              const labelKey =
+                                filter.label as keyof typeof messages
                               return (
                                 <Checkbox
                                   key={index}

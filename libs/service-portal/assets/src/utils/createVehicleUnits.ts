@@ -70,7 +70,7 @@ const basicInfoArray = (
           title: formatMessage(messages.importStatus),
           value: data.importStatus,
         },
-      ].filter((Boolean as unknown) as ExcludesFalse),
+      ].filter(Boolean as unknown as ExcludesFalse),
       2,
     ),
   }
@@ -94,7 +94,7 @@ const coOwnerInfoArray = (
           title: formatMessage(messages.nationalId),
           value: data.nationalId ? formatNationalId(data.nationalId) : '',
         },
-      ].filter((Boolean as unknown) as ExcludesFalse),
+      ].filter(Boolean as unknown as ExcludesFalse),
       2,
     ),
   }
@@ -135,7 +135,7 @@ const feeInfoArray = (
             ? amountFormat(Number(data.carTax))
             : '',
         },
-      ].filter((Boolean as unknown) as ExcludesFalse),
+      ].filter(Boolean as unknown as ExcludesFalse),
       2,
     ),
   }
@@ -176,7 +176,7 @@ const inspectionInfoArray = (
             ? new Date(data.nextInspectionDate).toLocaleDateString(locale)
             : '',
         },
-      ].filter((Boolean as unknown) as ExcludesFalse),
+      ].filter(Boolean as unknown as ExcludesFalse),
       2,
     ),
   }
@@ -207,7 +207,7 @@ const operatorInfoArray = (
             ? new Date(data.startDate).toLocaleDateString(locale)
             : '',
         },
-      ].filter((Boolean as unknown) as ExcludesFalse),
+      ].filter(Boolean as unknown as ExcludesFalse),
       2,
     ),
   }
@@ -238,7 +238,7 @@ const ownerInfoArray = (
             ? new Date(data.dateOfPurchase).toLocaleDateString(locale)
             : '',
         },
-      ].filter((Boolean as unknown) as ExcludesFalse),
+      ].filter(Boolean as unknown as ExcludesFalse),
       2,
     ),
   }
@@ -315,7 +315,7 @@ const registrationInfoArray = (
           title: formatMessage(messages.standingPassengers),
           value: data.standingPassengers?.toString(),
         },
-      ].filter((Boolean as unknown) as ExcludesFalse),
+      ].filter(Boolean as unknown as ExcludesFalse),
       2,
     ),
   }
@@ -383,7 +383,7 @@ const technicalInfoArray = (
           title: formatMessage(messages.carryingCapacity),
           value: displayWithUnit(data.carryingCapacity?.toString(), 'kg'),
         },
-      ].filter((Boolean as unknown) as ExcludesFalse),
+      ].filter(Boolean as unknown as ExcludesFalse),
       2,
     ),
   }

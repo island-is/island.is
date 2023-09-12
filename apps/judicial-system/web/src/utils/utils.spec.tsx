@@ -8,13 +8,13 @@ import {
   NotificationType,
 } from '@island.is/judicial-system/types'
 
+import { Gender } from '../graphql/schema'
+import * as formatters from './formatters'
 import {
   getAppealEndDate,
   getShortGender,
   hasSentNotification,
 } from './stepHelper'
-import { Gender } from '../graphql/schema'
-import * as formatters from './formatters'
 
 describe('Formatters utils', () => {
   describe('Parse time', () => {
@@ -214,7 +214,7 @@ describe('Step helper', () => {
       // Arrange
 
       // Act
-      const res = formatters.replaceTabs((undefined as unknown) as string)
+      const res = formatters.replaceTabs(undefined as unknown as string)
 
       // Assert
       expect(res).toBeUndefined()

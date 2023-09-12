@@ -77,6 +77,8 @@ const OrganizationPage: Screen<OrganizationProps> = ({
     }
     setIsMobile(false)
   }, [width])
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const [page, setPage] = useState<number>(1)
   const { linkResolver } = useLinkResolver()
@@ -95,10 +97,8 @@ const OrganizationPage: Screen<OrganizationProps> = ({
     [],
   )
 
-  const [
-    selectedTitleSortOption,
-    setSelectedTitleSortOption,
-  ] = useState<TitleSortOption>(titleSortOptions[0])
+  const [selectedTitleSortOption, setSelectedTitleSortOption] =
+    useState<TitleSortOption>(titleSortOptions[0])
 
   const organizationsItems = useMemo(() => {
     const items = [...organizations.items]
@@ -111,7 +111,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   }, [organizations, selectedTitleSortOption])
 
   const tagsItems = useMemo(
-    () => tags.items.filter((x) => x.title).sort(sortAlpha('title')),
+    () => tags?.items.filter((x) => x.title).sort(sortAlpha('title')),
     [tags],
   )
 
@@ -120,6 +120,8 @@ const OrganizationPage: Screen<OrganizationProps> = ({
       id: 'raduneyti',
       label: n('ministries', 'Ráðuneyti'),
       selected: filter.raduneyti,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       filters: tagsItems.map((f) => ({
         value: f.title,
         label: f.title,
@@ -231,6 +233,8 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                   label={n('orderBy', 'Raða eftir')}
                   name="sort-option-select"
                   size="xs"
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   onChange={(option) => {
                     setSelectedTitleSortOption(option as TitleSortOption)
                   }}
@@ -256,8 +260,12 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                     paddingBottom={verticalSpacing}
                   >
                     <CategoryCard
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore make web strict
                       href={getOrganizationLink(organization, activeLocale)}
                       key={index}
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore make web strict
                       text={organization?.description}
                       heading={organization?.title}
                       hyphenate
@@ -344,7 +352,11 @@ OrganizationPage.getProps = async ({ apolloClient, locale }) => {
           },
         },
       })
-      .then((content) => JSON.parse(content.data.getNamespace.fields)),
+      .then((content) =>
+        content.data.getNamespace?.fields
+          ? JSON.parse(content.data.getNamespace.fields)
+          : {},
+      ),
   ])
 
   // we assume 404 if no Organization is found

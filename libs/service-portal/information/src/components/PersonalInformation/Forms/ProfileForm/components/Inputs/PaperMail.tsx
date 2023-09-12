@@ -46,10 +46,8 @@ export const PaperMail = () => {
   const [submitError, setSubmitError] = useState<string>()
 
   const { data, loading } = useQuery<Query>(GET_PAPER_MAIL)
-  const [
-    postPaperMailMutation,
-    { data: mutationData, loading: postLoading },
-  ] = useMutation(POST_PAPER_MAIL)
+  const [postPaperMailMutation, { data: mutationData, loading: postLoading }] =
+    useMutation(POST_PAPER_MAIL)
 
   const submitFormData = async (data: { wantsPaper: boolean }) => {
     try {

@@ -88,11 +88,8 @@ export const AirDiscountOverview = () => {
   const airDiscounts: AirDiscountSchemeDiscount[] | undefined =
     data?.airDiscountSchemeDiscounts
   const flightLegs = flightLegData?.airDiscountSchemeUserAndRelationsFlights
-  const connectionCodes:
-    | AirDiscountSchemeDiscount[]
-    | undefined = airDiscounts?.filter(
-    (x) => x.connectionDiscountCodes.length > 0,
-  )
+  const connectionCodes: AirDiscountSchemeDiscount[] | undefined =
+    airDiscounts?.filter((x) => x.connectionDiscountCodes.length > 0)
 
   if (error && !loading) {
     return (
@@ -239,8 +236,9 @@ export const AirDiscountOverview = () => {
           <Stack space={2}>
             {connectionCodes?.map((item) => {
               return item.connectionDiscountCodes.map((code, codeIndex) => {
-                const isCopied = copiedCodes.find((x) => x.code === code.code)
-                  ?.copied
+                const isCopied = copiedCodes.find(
+                  (x) => x.code === code.code,
+                )?.copied
                 return (
                   <ActionCard
                     key={`loftbru-item-connection-code-${codeIndex}`}

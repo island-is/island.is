@@ -11,7 +11,6 @@ import {
   GridColumn,
   Input,
   Select,
-  Option,
 } from '@island.is/island-ui/core'
 import {
   useApplications,
@@ -24,18 +23,24 @@ import {
   m as coreMessage,
   APPLICATION_SERVICE_PROVIDER_ID,
 } from '@island.is/service-portal/core'
-import { ValueType } from 'react-select'
 import {
   getFilteredApplicationsByStatus,
   getInstitutions,
   mapLinkToStatus,
 } from '../shared/utils'
-import { ApplicationOverViewStatus, FilterValues } from '../shared/types'
+import {
+  ApplicationOverViewStatus,
+  FilterValues,
+  InstitutionOption,
+} from '../shared/types'
 import { ApplicationGroup } from '../components/ApplicationGroup'
 import { Application } from '@island.is/application/types'
 import { ErrorScreen } from '@island.is/service-portal/core'
 
-const defaultInstitution = { label: 'Allar stofnanir', value: '' }
+const defaultInstitution: InstitutionOption = {
+  label: 'Allar stofnanir',
+  value: '',
+}
 
 const defaultFilterValues: FilterValues = {
   activeInstitution: defaultInstitution,
@@ -64,10 +69,10 @@ const Overview = () => {
     }))
   }
 
-  const handleInstitutionChange = (newInstitution: ValueType<Option>) => {
+  const handleInstitutionChange = (newInstitution: InstitutionOption) => {
     setFilterValue((oldFilter) => ({
       ...oldFilter,
-      activeInstitution: newInstitution as Option,
+      activeInstitution: newInstitution,
     }))
   }
 
@@ -186,7 +191,9 @@ const Overview = () => {
                       options={institutions}
                       value={filterValue.activeInstitution}
                       onChange={(e) => {
-                        handleInstitutionChange(e)
+                        if (e) {
+                          handleInstitutionChange(e)
+                        }
                       }}
                       label={formatMessage(m.searchInstitutiontLabel)}
                     />

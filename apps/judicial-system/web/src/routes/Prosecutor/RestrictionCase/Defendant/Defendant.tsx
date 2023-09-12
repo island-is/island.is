@@ -2,6 +2,13 @@ import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
+import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  accused as m,
+  core,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import {
   DefenderInfo,
   FormContentContainer,
@@ -9,31 +16,24 @@ import {
   FormFooter,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import {
+  CaseOrigin,
+  CaseType,
+  Defendant as TDefendant,
+  UpdateDefendantInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  validateAndSendToServer,
+  validateAndSet,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import {
-  accused as m,
-  core,
-  titles,
-} from '@island.is/judicial-system-web/messages'
-import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
-import {
-  validateAndSendToServer,
-  validateAndSet,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import {
-  CaseType,
-  CaseOrigin,
-  UpdateDefendantInput,
-  Defendant as TDefendant,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
 
 import {
   DefendantInfo,
@@ -42,23 +42,16 @@ import {
 } from '../../components'
 
 export const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
-  const [
-    leadInvestigatorErrorMessage,
-    setLeadInvestigatorErrorMessage,
-  ] = useState<string>('')
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
+  const [leadInvestigatorErrorMessage, setLeadInvestigatorErrorMessage] =
+    useState<string>('')
   const { createCase, isCreatingCase, updateCase } = useCase()
   const { updateDefendant } = useDefendants()
   const { loading: institutionLoading } = useInstitution()
   const { formatMessage } = useIntl()
-  const { clientPoliceNumbers, setClientPoliceNumbers } = usePoliceCaseNumbers(
-    workingCase,
-  )
+  const { clientPoliceNumbers, setClientPoliceNumbers } =
+    usePoliceCaseNumbers(workingCase)
   const router = useRouter()
 
   const updateDefendantState = useCallback(

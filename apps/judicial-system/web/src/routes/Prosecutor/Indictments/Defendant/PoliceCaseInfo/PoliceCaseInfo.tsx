@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
-import { useIntl } from 'react-intl'
-import { ValueType } from 'react-select'
 import InputMask from 'react-input-mask'
+import { useIntl } from 'react-intl'
 
 import {
   Box,
@@ -11,12 +10,11 @@ import {
   Select,
   Tag,
 } from '@island.is/island-ui/core'
-import { CrimeScene, IndictmentSubtype } from '@island.is/judicial-system/types'
 import {
   capitalize,
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { CrimeScene, IndictmentSubtype } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   DateTime,
@@ -78,10 +76,8 @@ export const PoliceCaseInfo: React.FC<React.PropsWithChildren<Props>> = (
   const [policeCaseNumberInput, setPoliceCaseNumberInput] = useState(
     policeCaseNumbers[index],
   )
-  const [
-    policeCaseNumberErrorMessage,
-    setPoliceCaseNumberErrorMessage,
-  ] = useState<string>('')
+  const [policeCaseNumberErrorMessage, setPoliceCaseNumberErrorMessage] =
+    useState<string>('')
 
   useEffect(() => {
     if (policeCaseNumbers[index] !== originalPoliceCaseNumber) {
@@ -205,9 +201,8 @@ export const PoliceCaseInfo: React.FC<React.PropsWithChildren<Props>> = (
           options={options}
           label={formatMessage(policeCaseInfo.indictmentTypeLabel)}
           placeholder={formatMessage(policeCaseInfo.indictmentTypePlaceholder)}
-          onChange={(selectedOption: ValueType<ReactSelectOption>) => {
-            const indictmentSubtype = (selectedOption as ReactSelectOption)
-              .value as IndictmentSubtype
+          onChange={(selectedOption) => {
+            const indictmentSubtype = selectedOption?.value as IndictmentSubtype
             updatePoliceCase(index, {
               subtypes: [...(subtypes || []), indictmentSubtype],
             })

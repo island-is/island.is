@@ -2,6 +2,9 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
+import { Box, Checkbox, Input, Text, Tooltip } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { icReportForm, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   FormContentContainer,
@@ -10,25 +13,18 @@ import {
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { icReportForm, titles } from '@island.is/judicial-system-web/messages'
-import { isPoliceReportStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import { Box, Checkbox, Input, Tooltip, Text } from '@island.is/island-ui/core'
 import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
-import * as constants from '@island.is/judicial-system/consts'
+import { isPoliceReportStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 const PoliceReport = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const { formatMessage } = useIntl()
   const [caseFactsEM, setCaseFactsEM] = useState<string>('')
   const [legalArgumentsEM, setLegalArgumentsEM] = useState<string>('')

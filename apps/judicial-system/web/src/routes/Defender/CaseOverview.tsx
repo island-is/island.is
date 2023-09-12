@@ -10,36 +10,37 @@ import {
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealDecision,
   CaseState,
   completedCaseStates,
   Feature,
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
+  AlertBanner,
+  AppealCaseFilesOverview,
   CaseDates,
+  CaseResentExplanation,
+  Conclusion,
+  FeatureContext,
   FormContentContainer,
   FormContext,
   InfoCard,
   MarkdownWrapper,
-  PageLayout,
-  RestrictionTags,
-  PageHeader,
   Modal,
-  Conclusion,
-  AppealCaseFilesOverview,
-  CaseResentExplanation,
-  FeatureContext,
-  AppealConclusion,
-  AlertBanner,
   OverviewHeader,
+  PageHeader,
+  PageLayout,
   PdfButton,
+  RestrictionTags,
   SignedDocument,
 } from '@island.is/judicial-system-web/src/components'
-import { core, titles } from '@island.is/judicial-system-web/messages'
+import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
+import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
+import { conclusion } from '../../components/Conclusion/Conclusion.strings'
 import { strings } from './CaseOverview.strings'
 
 type availableModals =
@@ -48,9 +49,8 @@ type availableModals =
   | 'ConfirmStatementAfterDeadline'
 
 export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   const { formatMessage } = useIntl()
   const { features } = useContext(FeatureContext)
@@ -227,9 +227,13 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                         title: formatMessage(core.appealJudgesHeading),
                         value: (
                           <>
-                            <Text>{workingCase.appealJudge1?.name}</Text>
-                            <Text>{workingCase.appealJudge2?.name}</Text>
-                            <Text>{workingCase.appealJudge3?.name}</Text>
+                            {sortByIcelandicAlphabet([
+                              workingCase.appealJudge1?.name || '',
+                              workingCase.appealJudge2?.name || '',
+                              workingCase.appealJudge3?.name || '',
+                            ]).map((judge, index) => (
+                              <Text key={index}>{judge}</Text>
+                            ))}
                           </>
                         ),
                       },
@@ -241,6 +245,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
           {completedCaseStates.includes(workingCase.state) && (
             <Box marginBottom={6}>
               <Conclusion
+                title={formatMessage(conclusion.title)}
                 conclusionText={workingCase.conclusion}
                 judgeName={workingCase.judge?.name}
               />
@@ -248,15 +253,13 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
           )}
           {workingCase.appealConclusion && (
             <Box marginBottom={6}>
-              <AppealConclusion
+              <Conclusion
+                title={formatMessage(conclusion.appealTitle)}
                 conclusionText={workingCase.appealConclusion}
-                judgeName={workingCase.appealJudge1?.name}
               />
             </Box>
           )}
-
           <AppealCaseFilesOverview />
-
           {(workingCase.sendRequestToDefender ||
             completedCaseStates.includes(workingCase.state)) && (
             <Box marginBottom={10}>

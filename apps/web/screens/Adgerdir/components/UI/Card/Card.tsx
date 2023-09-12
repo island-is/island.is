@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, useContext } from 'react'
+import React, { FC, ReactNode, useContext } from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import Link, { LinkProps } from 'next/link'
@@ -126,6 +126,8 @@ export const Card: FC<React.PropsWithChildren<CardProps>> = ({
         })}
       >
         <BackgroundImage
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           positionX={!stackImage ? 'right' : null}
           background="transparent"
           backgroundSize="contain"
@@ -178,6 +180,8 @@ export const Card: FC<React.PropsWithChildren<CardProps>> = ({
             className={cn(
               styles.status,
               styles.statusPosition,
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               styles.statusType[status],
             )}
           ></span>
@@ -194,6 +198,8 @@ export const Card: FC<React.PropsWithChildren<CardProps>> = ({
           className={cn(
             styles.status,
             styles.statusPosition,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             styles.statusType[status],
           )}
         ></span>
@@ -203,7 +209,7 @@ export const Card: FC<React.PropsWithChildren<CardProps>> = ({
   )
 }
 
-export const Frame = ({ children }) => {
+export const Frame = ({ children }: { children: ReactNode }) => {
   return (
     <Box
       className={cn(styles.card)}

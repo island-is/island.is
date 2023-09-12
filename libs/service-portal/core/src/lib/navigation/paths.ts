@@ -99,6 +99,10 @@ export enum ServicePortalPath {
   EducationHaskoliGraduation = '/menntun/haskoli/brautskraning',
   EducationHaskoliGraduationDetail = '/menntun/haskoli/brautskraning/:id',
 
+  // Occupational Licenses
+  OccupationalLicenses = '/starfsleyfi',
+  OccupationalLicensesDetail = '/starfsleyfi/:id',
+
   // Assets
   AssetsRoot = '/fasteignir',
   AssetsRealEstateDetail = '/fasteignir/:id',

@@ -11,6 +11,7 @@ import {
 } from '@island.is/service-portal/information'
 import { licenseNavigation } from '@island.is/service-portal/licenses'
 import { educationLicenseNavigation } from '@island.is/service-portal/education-license'
+import { occupationalLicensesNavigation } from '@island.is/service-portal/occupational-licenses'
 import { airDiscountNavigation } from '@island.is/service-portal/air-discount'
 import { healthNavigation } from '@island.is/service-portal/health'
 import {
@@ -51,5 +52,6 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     educationNavigation,
     licenseNavigation,
     educationLicenseNavigation,
+    occupationalLicensesNavigation,
   ],
 }

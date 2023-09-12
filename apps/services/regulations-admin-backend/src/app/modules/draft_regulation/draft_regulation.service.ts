@@ -67,23 +67,21 @@ export class DraftRegulationService {
 
     const count = 5
 
-    const {
-      rows: draftRegulations,
-      count: totalCount,
-    } = await this.draftRegulationModel.findAndCountAll({
-      where: {
-        drafting_status: { [Op.in]: ['draft', 'proposal'] },
-        ...authorsCondition,
-      },
-      limit: count,
-      offset: (page - 1) * count,
-      order: [
-        ['drafting_status', 'ASC'],
-        ['fast_track', 'DESC'],
-        ['ideal_publish_date', 'ASC'],
-        ['created', 'DESC'],
-      ],
-    })
+    const { rows: draftRegulations, count: totalCount } =
+      await this.draftRegulationModel.findAndCountAll({
+        where: {
+          drafting_status: { [Op.in]: ['draft', 'proposal'] },
+          ...authorsCondition,
+        },
+        limit: count,
+        offset: (page - 1) * count,
+        order: [
+          ['drafting_status', 'ASC'],
+          ['fast_track', 'DESC'],
+          ['ideal_publish_date', 'ASC'],
+          ['created', 'DESC'],
+        ],
+      })
 
     const drafts: DraftSummary[] = []
     for await (const draft of draftRegulations) {
@@ -302,13 +300,11 @@ export class DraftRegulationService {
       fast_track: update.fastTrack,
     }
 
-    const [
-      numberOfAffectedRows,
-      [updatedDraftRegulation],
-    ] = await this.draftRegulationModel.update(updateData, {
-      where: { id },
-      returning: true,
-    })
+    const [numberOfAffectedRows, [updatedDraftRegulation]] =
+      await this.draftRegulationModel.update(updateData, {
+        where: { id },
+        returning: true,
+      })
 
     return { numberOfAffectedRows, updatedDraftRegulation }
   }

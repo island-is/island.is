@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { DatePicker, Input } from '@island.is/island-ui/core'
-import { TimeInputField, BlueBox } from '../../components'
-import * as styles from './DateTime.css'
 
+import { DatePicker, Input } from '@island.is/island-ui/core'
 import {
   validate,
   Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
+
+import { BlueBox, TimeInputField } from '../../components'
+import * as styles from './DateTime.css'
 
 interface Props {
   name: string
@@ -47,10 +48,10 @@ const DateTime: React.FC<React.PropsWithChildren<Props>> = (props) => {
 
   const getTimeFromDate = (date: Date | undefined): string =>
     date
-      ? `${date
-          .getHours()
+      ? `${date.getHours().toString().padStart(2, '0')}:${date
+          .getMinutes()
           .toString()
-          .padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+          .padStart(2, '0')}`
       : ''
 
   const date = (d: Date | string | undefined) => {

@@ -40,7 +40,7 @@ export class TenantsService {
   async findById(id: string): Promise<TenantDto> {
     const tenant = await this.domainModel.findOne({
       where: { name: id },
-      attributes: ['name', 'displayName'],
+      attributes: ['name', 'displayName', 'contactEmail'],
     })
 
     if (!tenant) {
@@ -50,6 +50,7 @@ export class TenantsService {
     return {
       name: tenant.name,
       displayName: [{ locale: 'is', value: tenant.displayName }],
+      contactEmail: tenant.contactEmail,
     }
   }
 

@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, ReactNode } from 'react'
 import {
   Box,
   GridColumn,
@@ -65,7 +65,10 @@ const MannaudstorgFooter: FC<React.PropsWithChildren<Props>> = ({
                   <GridColumn>
                     {webRichText(item.serviceWebContent as SliceType[], {
                       renderNode: {
-                        [BLOCKS.PARAGRAPH]: (_node, children) => (
+                        [BLOCKS.PARAGRAPH]: (
+                          _node: never,
+                          children: ReactNode,
+                        ) => (
                           <Text
                             marginBottom={2}
                             fontWeight="regular"

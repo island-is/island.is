@@ -23,7 +23,7 @@ import {
 import ExpandableLine from './ExpandableLine'
 import { m } from '../../lib/messages'
 import { gql, useQuery } from '@apollo/client'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
 import { GenericLicenseDataField, Query } from '@island.is/api/schema'
@@ -325,8 +325,9 @@ const LicenseDetail = () => {
   const { data: userProfile } = useUserProfile()
   const { pathname } = useLocation()
   const locale = userProfile?.locale ?? 'is'
-  const type = getTypeFromPath(pathname.split('/').splice(-1, 1)[0])
-  const licenseType = type ?? undefined
+  const { type } = useParams() as UseParams
+  const licenseType = type ? getTypeFromPath(type) : undefined
+
   const { data, loading: queryLoading, error } = useQuery<Query>(
     GenericLicenseQuery,
     {

@@ -22,10 +22,8 @@ export const ResponsibleContactForm: FC<React.PropsWithChildren<Props>> = ({
     formState: { errors },
   } = useForm<Contact>()
   const { formatMessage } = useLocale()
-  const {
-    updateAdministrativeContact,
-    loading,
-  } = useUpdateAdministrativeContact(organisationId)
+  const { updateAdministrativeContact, loading } =
+    useUpdateAdministrativeContact(organisationId)
 
   const onSubmit = (contact: Contact) => {
     if (contact) {

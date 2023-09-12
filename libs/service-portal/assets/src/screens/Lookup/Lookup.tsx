@@ -359,7 +359,7 @@ const Lookup = () => {
                   title: formatMessage(messages.weightedWLTPCo2),
                   value: String(weightedco2Wltp),
                 },
-              ].filter((Boolean as unknown) as ExcludesFalse),
+              ].filter(Boolean as unknown as ExcludesFalse),
               2,
             )}
           />

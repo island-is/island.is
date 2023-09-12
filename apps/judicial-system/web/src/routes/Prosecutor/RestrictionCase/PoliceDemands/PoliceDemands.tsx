@@ -2,6 +2,19 @@ import React, { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
+import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
+import {
+  CaseDecision,
+  isAcceptingCaseDecision,
+} from '@island.is/judicial-system/types'
+import {
+  core,
+  rcDemands,
+  rcReportForm,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CheckboxList,
@@ -12,25 +25,13 @@ import {
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  useCase,
-  useDeb,
-  useOnceOn,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  core,
-  rcDemands,
-  rcReportForm,
-  titles,
-} from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   CaseCustodyRestrictions,
-  CaseDecision,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
-import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
+  CaseType,
+  Defendant,
+  Gender,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
@@ -38,24 +39,23 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  useCase,
+  useDeb,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import {
   autofillEntry,
   formatDateForServer,
 } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
-import {
-  restrictionsCheckboxes,
-  travelBanRestrictionsCheckboxes,
-} from '@island.is/judicial-system-web/src/utils/restrictions'
 import {
   legalProvisions,
   travelBanProvisions,
 } from '@island.is/judicial-system-web/src/utils/laws'
 import {
-  CaseType,
-  Defendant,
-  Gender,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+  restrictionsCheckboxes,
+  travelBanRestrictionsCheckboxes,
+} from '@island.is/judicial-system-web/src/utils/restrictions'
+import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import * as styles from './PoliceDemands.css'
 
@@ -104,9 +104,8 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
   } = useContext(FormContext)
   const router = useRouter()
   const { formatMessage } = useIntl()
-  const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
-    '',
-  )
+  const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] =
+    useState<string>('')
   const { updateCase, setAndSendCaseToServer } = useCase()
   useDeb(workingCase, [
     'lawsBroken',
@@ -262,7 +261,8 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
                     )
                     onDemandsChange(
                       {
-                        requestedCustodyRestrictions: nextRequestedCustodyRestrictions,
+                        requestedCustodyRestrictions:
+                          nextRequestedCustodyRestrictions,
                         force: true,
                       },
                       workingCase.type,

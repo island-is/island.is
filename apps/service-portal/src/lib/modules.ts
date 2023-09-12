@@ -16,6 +16,7 @@ import { delegationsModule } from '@island.is/portals/shared-modules/delegations
 import { healthModule } from '@island.is/service-portal/health'
 import { indexModule } from '../screens/Dashboard/module'
 import { consentModule } from '@island.is/service-portal/consent'
+import { occupationalLicensesModule } from '@island.is/service-portal/occupational-licenses'
 /**
  * NOTE:
  * Modules should only be here if they are production ready
@@ -28,6 +29,7 @@ export const modules: PortalModule[] = [
   documentsModule,
   educationModule,
   educationCareerModule,
+  occupationalLicensesModule,
   educationLicenseModule,
   educationStudentAssessmentModule,
   delegationsModule,

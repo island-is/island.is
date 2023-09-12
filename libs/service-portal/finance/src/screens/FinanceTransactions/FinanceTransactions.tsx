@@ -70,9 +70,8 @@ const FinanceTransactions = () => {
   const chargeTypeData: CustomerChargeType =
     customerChartypeData?.getCustomerChargeType || {}
 
-  const [loadCustomerRecords, { data, loading, called, error }] = useLazyQuery(
-    GET_CUSTOMER_RECORDS,
-  )
+  const [loadCustomerRecords, { data, loading, called, error }] =
+    useLazyQuery(GET_CUSTOMER_RECORDS)
 
   useEffect(() => {
     if (toDate && fromDate && dropdownSelect) {

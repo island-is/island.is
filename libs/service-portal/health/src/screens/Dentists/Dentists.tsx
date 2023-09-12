@@ -42,7 +42,7 @@ const Dentists = () => {
     },
   })
 
-  const dentistData = data?.rightsPortalDentists
+  const dentistData = data?.rightsPortalUserDentist
 
   if (!dentistName && dentistData?.currentDentistName) {
     setDentistName(dentistData.currentDentistName)
@@ -71,7 +71,7 @@ const Dentists = () => {
         serviceProviderTooltip={formatMessage(m.healthTooltip)}
       />
 
-      {!loading && !data?.rightsPortalDentists && (
+      {!loading && !dentistData && (
         <Box width="full" marginTop={4} display="flex" justifyContent="center">
           <Box marginTop={8}>
             <EmptyState />

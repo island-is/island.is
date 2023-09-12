@@ -328,6 +328,7 @@ export const OrganizationExternalLinks: React.FC<
             let variant = undefined
             if (
               isSjukratryggingar &&
+              organizationPage.externalLinks &&
               organizationPage.externalLinks.length === 2
             ) {
               variant = index === 0 ? 'primary' : 'ghost'
@@ -341,6 +342,8 @@ export const OrganizationExternalLinks: React.FC<
               >
                 <Button
                   as="a"
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   variant={variant}
                   icon={isSjukratryggingar ? 'lockClosed' : 'open'}
                   iconType="outline"
@@ -408,6 +411,8 @@ export const OrganizationFooter: React.FC<
           title={organization.title}
           logo={organization.logo?.url}
           footerItems={organization.footerItems}
+          organizationSlug={organization.slug}
+          namespace={namespace}
         />
       )
       break
@@ -554,6 +559,8 @@ export const OrganizationFooter: React.FC<
         <TransportAuthorityFooter
           title={organization.title}
           footerItems={organization.footerItems}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           logo={organization.logo?.url}
         />
       )
@@ -582,13 +589,13 @@ export const OrganizationChatPanel = ({
   const { activeLocale } = useI18n()
 
   const organizationIdWithLiveChat = organizationIds.find((id) => {
-    return id in liveChatIncConfig
+    return id in liveChatIncConfig[activeLocale]
   })
 
   if (organizationIdWithLiveChat) {
     return (
       <LiveChatIncChatPanel
-        {...liveChatIncConfig[organizationIdWithLiveChat]}
+        {...liveChatIncConfig[activeLocale][organizationIdWithLiveChat]}
       />
     )
   }
@@ -626,6 +633,8 @@ const SecondaryMenu = ({
         {title}
       </Text>
       {items.map((link) => (
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         <Link key={link.href} href={link.href} underline="normal">
           <Text
             key={link.href}
@@ -648,14 +657,15 @@ const getActiveNavigationItemTitle = (
     if (clientUrl === item.href) {
       return item.title
     }
-    for (const childItem of item.items) {
+    for (const childItem of item.items ?? []) {
       if (clientUrl === childItem.href) {
         return childItem.title
       }
     }
   }
 }
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
 const renderConnectedComponent = (slice) => {
   if (!slice?.componentType) return null
 
@@ -697,7 +707,8 @@ export const OrganizationWrapper: React.FC<
   const router = useRouter()
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   usePlausiblePageview(organizationPage.organization?.trackingDomain)
 
   useEffect(() => {
@@ -773,13 +784,15 @@ export const OrganizationWrapper: React.FC<
                     }
                     className={styles.sidebarCardContainer}
                   >
-                    {organizationPage.sidebarCards.map((card) => {
+                    {(organizationPage.sidebarCards ?? []).map((card) => {
                       if (card.__typename === 'SidebarCard') {
                         return (
                           <ProfileCard
                             key={card.id}
                             title={card.title}
                             description={card.contentString}
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore make web strict
                             link={card.link}
                             image={
                               card.image?.url ||
@@ -883,6 +896,8 @@ export const OrganizationWrapper: React.FC<
                   <Webreader
                     marginTop={breadcrumbItems?.length ? 3 : 0}
                     marginBottom={breadcrumbItems?.length ? 0 : 3}
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore make web strict
                     readId={null}
                     readClass="rs_read"
                   />
@@ -926,12 +941,16 @@ export const OrganizationWrapper: React.FC<
       {!minimal && (
         <Box className="rs_read">
           <OrganizationFooter
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             organizations={[organizationPage.organization]}
             force={true}
           />
         </Box>
       )}
       <OrganizationChatPanel
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         organizationIds={[organizationPage?.organization?.id]}
       />
     </>

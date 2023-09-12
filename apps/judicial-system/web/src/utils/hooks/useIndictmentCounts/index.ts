@@ -4,12 +4,13 @@ import { useIntl } from 'react-intl'
 import { toast } from '@island.is/island-ui/core'
 import { SubstanceMap } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { UpdateIndictmentCountInput } from '@island.is/judicial-system-web/src/graphql/schema'
+import { indictmentCount } from '@island.is/judicial-system-web/src/routes/Prosecutor/Indictments/Indictment/IndictmentCount.strings'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { useCreateIndictmentCountMutation } from './createIndictmentCount.generated'
-import { useUpdateIndictmentCountMutation } from './updateIndictmentCount.generated'
 import { useDeleteIndictmentCountMutation } from './deleteIndictmentCount.generated'
+import { useUpdateIndictmentCountMutation } from './updateIndictmentCount.generated'
 
 export interface UpdateIndictmentCount
   extends Omit<
@@ -125,11 +126,21 @@ const useIndictmentCounts = () => {
     [],
   )
 
+  const lawTag = useCallback(
+    (law: number[]) =>
+      formatMessage(indictmentCount.lawsBrokenTag, {
+        paragraph: law[1],
+        article: law[0],
+      }),
+    [formatMessage],
+  )
+
   return {
     updateIndictmentCount,
     createIndictmentCount,
     deleteIndictmentCount,
     updateIndictmentCountState,
+    lawTag,
   }
 }
 

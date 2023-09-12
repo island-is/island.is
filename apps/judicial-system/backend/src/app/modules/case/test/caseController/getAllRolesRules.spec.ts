@@ -2,7 +2,7 @@ import {
   judgeRule,
   prosecutorRule,
   registrarRule,
-  representativeRule,
+  prosecutorRepresentativeRule,
   assistantRule,
   staffRule,
   defenderRule,
@@ -20,7 +20,7 @@ describe('CaseController - Get all rules', () => {
   it('should give permission to seven roles', () => {
     expect(rules).toHaveLength(7)
     expect(rules).toContain(prosecutorRule)
-    expect(rules).toContain(representativeRule)
+    expect(rules).toContain(prosecutorRepresentativeRule)
     expect(rules).toContain(judgeRule)
     expect(rules).toContain(registrarRule)
     expect(rules).toContain(assistantRule)
