@@ -1,5 +1,4 @@
 import PDFDocument from 'pdfkit'
-import streamBuffers from 'stream-buffers'
 import { PdfConstants } from './constants'
 
 type generatePdfBody<T> = (template: T, doc: PDFKit.PDFDocument) => void
@@ -16,14 +15,19 @@ export async function generatePdf<T>(
       right: PdfConstants.HORIZONTAL_MARGIN,
     },
   })
-  const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
+  const buffers: Buffer[] = []
+
+  doc.on('data', (buffer: Buffer) => {
+    buffers.push(buffer)
+  })
+
+  // Generate content for the PDF.
   generatePdfBody(template, doc)
 
-  const pdfBuffer = await new Promise<Buffer>(function (resolve) {
-    stream.on('finish', () => {
-      resolve(stream.getContents() as Buffer)
-    })
+  await new Promise((resolve) => {
+    doc.on('end', resolve)
   })
-  return pdfBuffer
+
+  return Buffer.concat(buffers)
 }

@@ -31,6 +31,7 @@ import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-syst
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { FinanceModule } from '@island.is/api/domains/finance'
 import { FiskistofaModule } from '@island.is/api/domains/fiskistofa'
+import { OccupationalLicensesModule } from '@island.is/api/domains/occupational-licenses'
 import { HealthInsuranceModule } from '@island.is/api/domains/health-insurance'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import {
@@ -91,6 +92,7 @@ import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { FiskistofaClientConfig } from '@island.is/clients/fiskistofa'
 import { IcelandicGovernmentInstitutionVacanciesClientConfig } from '@island.is/clients/icelandic-government-institution-vacancies'
+import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
 import { AircraftRegistryClientConfig } from '@island.is/clients/aircraft-registry'
 import { JudicialAdministrationClientConfig } from '@island.is/clients/judicial-administration'
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
@@ -106,11 +108,16 @@ import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { UniversityOfIcelandClientConfig } from '@island.is/clients/university-of-iceland'
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
+import {
+  HealthDirectorateClientConfig,
+  HealthDirectorateClientModule,
+} from '@island.is/clients/health-directorate'
 import { CmsModule, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 import { WorkMachinesModule } from '@island.is/api/domains/work-machines'
+import { HousingBenefitCalculatorModule } from '@island.is/api/domains/housing-benefit-calculator'
 import { AuditModule } from '@island.is/nest/audit'
 import {
   ConfigModule,
@@ -127,6 +134,7 @@ import { GraphqlOptionsFactory } from './graphql-options.factory'
 import { HealthController } from './health.controller'
 import { GraphQLConfig } from './graphql.config'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
+import { MMSClientConfig } from '@island.is/clients/mms'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 
 const environment = getConfig
@@ -228,6 +236,8 @@ const environment = getConfig
     NationalRegistryModule,
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
+    OccupationalLicensesModule,
+    HealthDirectorateClientModule,
     DisabilityLicenseModule,
     ElectronicRegistrationsModule,
     FiskistofaModule,
@@ -269,6 +279,7 @@ const environment = getConfig
     WorkMachinesModule,
     SessionsModule,
     AuthAdminModule,
+    HousingBenefitCalculatorModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -318,6 +329,7 @@ const environment = getConfig
         PaymentScheduleClientConfig,
         JudicialAdministrationClientConfig,
         CommunicationsConfig,
+        HealthDirectorateClientConfig,
         UniversityOfIcelandClientConfig,
         InnaClientConfig,
         SessionsApiClientConfig,
@@ -328,6 +340,8 @@ const environment = getConfig
         IcelandicGovernmentInstitutionVacanciesClientConfig,
         RskRelationshipsClientConfig,
         AircraftRegistryClientConfig,
+        HousingBenefitCalculatorClientConfig,
+        MMSClientConfig,
       ],
     }),
   ],
