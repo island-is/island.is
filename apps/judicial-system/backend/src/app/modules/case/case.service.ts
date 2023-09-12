@@ -653,7 +653,7 @@ export class CaseService {
     })
 
     // Case created from LOKE
-    if (theCase.origin === CaseOrigin.LOKE && !theCase.parentCaseId) {
+    if (theCase.origin === CaseOrigin.LOKE) {
       messages.push({
         type: MessageType.DELIVER_CASE_TO_POLICE,
         user,
@@ -691,7 +691,7 @@ export class CaseService {
       },
     ]
 
-    if (theCase.origin === CaseOrigin.LOKE && !theCase.parentCaseId) {
+    if (theCase.origin === CaseOrigin.LOKE) {
       messages.push({
         type: MessageType.DELIVER_CASE_TO_POLICE,
         user,
@@ -923,26 +923,6 @@ export class CaseService {
     }
 
     return theCase
-  }
-
-  async findOriginalAncestor(theCase: Case): Promise<Case> {
-    let originalAncestor: Case = theCase
-
-    while (originalAncestor.parentCaseId) {
-      const parentCase = await this.caseModel.findByPk(
-        originalAncestor.parentCaseId,
-      )
-
-      if (!parentCase) {
-        throw new InternalServerErrorException(
-          `Original ancestor of case ${theCase.id} not found`,
-        )
-      }
-
-      originalAncestor = parentCase
-    }
-
-    return originalAncestor
   }
 
   getAll(user: TUser): Promise<Case[]> {
