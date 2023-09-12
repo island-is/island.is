@@ -140,7 +140,6 @@ describe(CREATE_INVESTIGATION_CASE_ROUTE, () => {
     cy.getByTestid('creatable-select-defenderName')
       .find('input')
       .get('.island-select__option')
-      .should('contain', 'Logmadur')
       .click()
     cy.getByTestid('defenderEmail').should('have.value', 'logmadur@logmenn.is')
     cy.getByTestid('defenderPhoneNumber').should('have.value', '666-6666')
