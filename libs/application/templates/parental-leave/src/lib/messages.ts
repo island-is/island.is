@@ -2884,13 +2884,13 @@ export const statesMessages = defineMessages({
 
   editHistoryLogMessage: {
     id: 'pl.application:editHistoryLogMessage',
-    defaultMessage: 'Umsækjandi gerði breyting',
+    defaultMessage: 'Umsækjandi gerði breytingu',
     description: 'Application edited',
   },
 
   employerApprovalPendingActionTitle: {
     id: 'pl.application:employerApproval.pendingAction.title',
-    defaultMessage: 'Starfsmaður óska eftir samþykki í fæðingarorlof',
+    defaultMessage: 'Starfsmaður óskar eftir samþykki í fæðingarorlof',
     description: 'An employee requests approval for maternity leave',
   },
 
@@ -2928,24 +2928,23 @@ export const statesMessages = defineMessages({
   vinnumalastofnunApproveEditsRejectHistoryLogMessage: {
     id: 'pl.application:vinnumalastofnunApproveEdits.reject.historyLogMessage',
     defaultMessage: 'Vinnumálastofnun hafnaði breytingunum þínum',
-    description:
-      'VINNUMALASTOFNUN_APPROVE_EDITS: Reject => VINNUMALASTOFNUN_EDITS_ACTION',
+    description: 'Vinnumálastofnun rejected your edits',
   },
 
   editOrAddPeriodsSubmitHistoryLogMessage: {
     id: 'pl.application:editOrAddPeriods.submit.historyLogMessage',
-    defaultMessage: 'Tímabili breytt eða bætt við umsókn / Tímabil uppfært',
-    description: 'EDIT_OR_ADD_PERIODS: Submit',
+    defaultMessage: 'Tímabili breytt eða bætt við umsókn',
+    description: 'Period edited or added to application',
   },
   editOrAddPeriodsAbortHistoryLogMessage: {
     id: 'pl.application:editOrAddPeriods.abort.historyLogMessage',
     defaultMessage: 'Hætti við breytingar',
-    description: 'EDIT_OR_ADD_PERIODS: Abort',
+    description: 'Changes aborted',
   },
 
   approvedClosedHistoryLogMessage: {
     id: 'pl.application:approved.closed.historyLogMessage',
     defaultMessage: 'Umsókn lokið',
-    description: 'APPROVED: Closed',
+    description: 'Application closed',
   },
 })

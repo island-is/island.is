@@ -792,7 +792,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           status: 'inprogress',
           name: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
           actionCard: {
-            description: statesMessages.residenceGrantInProgress,
             pendingAction: {
               title: statesMessages.residenceGrantInProgress,
               content:
@@ -863,7 +862,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           name: States.RESIDENCE_GRAND_APPLICATION,
 
           actionCard: {
-            description: statesMessages.residenceGrantInProgress,
             pendingAction: {
               title: statesMessages.residenceGrantInProgress,
               content:
