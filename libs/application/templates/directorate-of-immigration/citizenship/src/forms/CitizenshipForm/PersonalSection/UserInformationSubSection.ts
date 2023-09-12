@@ -139,41 +139,41 @@ export const UserInformationSubSection = buildSubSection({
             return individual?.citizenship?.name
           },
         }),
-        // buildTextField({
-        //   id: 'userInformation.residenceInIcelandLastChangeDate',
-        //   title:
-        //     personal.labels.userInformation.residenceInIcelandLastChangeDate,
-        //   backgroundColor: 'white',
-        //   width: 'half',
-        //   readOnly: true,
-        //   defaultValue: (application: Application) => {
-        //     const individual = getValueViaPath(
-        //       application.externalData,
-        //       'individual.data',
-        //       undefined,
-        //     ) as CitizenIndividual | undefined
+        buildTextField({
+          id: 'userInformation.residenceInIcelandLastChangeDate',
+          title:
+            personal.labels.userInformation.residenceInIcelandLastChangeDate,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) => {
+            const individual = getValueViaPath(
+              application.externalData,
+              'individual.data',
+              undefined,
+            ) as CitizenIndividual | undefined
 
-        //     const date = individual?.residenceInIcelandLastChangeDate
+            const date = individual?.residenceInIcelandLastChangeDate
 
-        //     return date ? formatDate(date) : ''
-        //   },
-        // }),
-        // buildTextField({
-        //   id: 'userInformation.birthCountry',
-        //   title: personal.labels.userInformation.birthCountry,
-        //   backgroundColor: 'white',
-        //   width: 'half',
-        //   readOnly: true,
-        //   defaultValue: (application: Application) => {
-        //     const nationalRegistryBirthplace = getValueViaPath(
-        //       application.externalData,
-        //       'nationalRegistryBirthplace.data',
-        //       undefined,
-        //     ) as NationalRegistryBirthplace | undefined
+            return date ? formatDate(date) : ''
+          },
+        }),
+        buildTextField({
+          id: 'userInformation.birthCountry',
+          title: personal.labels.userInformation.birthCountry,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) => {
+            const nationalRegistryBirthplace = getValueViaPath(
+              application.externalData,
+              'nationalRegistryBirthplace.data',
+              undefined,
+            ) as NationalRegistryBirthplace | undefined
 
-        //     return nationalRegistryBirthplace?.location
-        //   },
-        // }),
+            return nationalRegistryBirthplace?.location
+          },
+        }),
       ],
     }),
   ],
