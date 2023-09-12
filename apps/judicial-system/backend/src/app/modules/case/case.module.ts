@@ -45,6 +45,6 @@ import { LimitedAccessCaseService } from './limitedAccessCase.service'
     InternalCaseController,
     LimitedAccessCaseController,
   ],
-  exports: [CaseService, LimitedAccessCaseService],
+  exports: [CaseService, LimitedAccessCaseService, InternalCaseService],
 })
 export class CaseModule {}
