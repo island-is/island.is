@@ -22,15 +22,16 @@ const Greeting: FC<React.PropsWithChildren<{}>> = () => {
 
   return (
     <GridContainer>
-      <GridRow className={styles.greetingContainer} marginTop={4}>
+      <GridRow className={styles.greetingContainer}>
         <GridColumn
-          span={['12/12', '12/12', '12/12', '6/12']}
-          offset={['0', '0', '0', '0']}
+          span={['12/12', '12/12', '12/12', '5/12']}
+          offset={['0', '0', '0', '1/12']}
         >
           <Box
-            marginTop={[2, 3, 4]}
+            marginTop={[2, 3, 0]}
             paddingLeft={[2, 2, 2, 0]}
             data-testid="greeting"
+            className={styles.greetingTextBox}
           >
             <Text
               variant="eyebrow"

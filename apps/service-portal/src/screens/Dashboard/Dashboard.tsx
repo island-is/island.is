@@ -48,7 +48,6 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
   const location = useLocation()
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const isMobile = width < theme.breakpoints.md
-  const isLg = width < theme.breakpoints.xl
   const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
 
   useEffect(() => {
