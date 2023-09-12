@@ -52,7 +52,7 @@ import {
   prosecutorRule,
   registrarRule,
   prosecutorRepresentativeRule,
-  staffRule,
+  prisonSystemStaffRule,
   assistantRule,
   defenderRule,
 } from '../../guards'
@@ -344,7 +344,7 @@ export class CaseController {
     judgeRule,
     registrarRule,
     assistantRule,
-    staffRule,
+    prisonSystemStaffRule,
     defenderRule,
   )
   @Get('cases')
@@ -367,7 +367,7 @@ export class CaseController {
     judgeRule,
     registrarRule,
     assistantRule,
-    staffRule,
+    prisonSystemStaffRule,
   )
   @Get('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
@@ -456,7 +456,7 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
   )
-  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, prisonSystemStaffRule)
   @Get('case/:caseId/courtRecord')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -485,7 +485,7 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
   )
-  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, prisonSystemStaffRule)
   @Get('case/:caseId/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -511,7 +511,7 @@ export class CaseController {
     new CaseTypeGuard([CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY]),
     CaseReadGuard,
   )
-  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, prisonSystemStaffRule)
   @Get('case/:caseId/custodyNotice')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
