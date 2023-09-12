@@ -144,7 +144,10 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
             ...allCases.map((policeCase) => policeCase.number),
           ],
           indictmentSubtypes: allCases.reduce<IndictmentSubtypeMap>(
-            (acc, policeCase) => ({ ...acc, [policeCase.number]: [] }),
+            (acc, policeCase) => ({
+              ...acc,
+              [policeCase.number]: policeCase.subtypes ?? [],
+            }),
             {},
           ),
           crimeScenes: allCases.reduce<CrimeSceneMap>(
