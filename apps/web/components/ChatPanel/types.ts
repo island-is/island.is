@@ -8,6 +8,7 @@ export interface BoostChatPanelProps {
 export interface LiveChatIncChatPanelProps {
   license: number
   version: string
+  group?: number
 }
 
 export interface WatsonChatPanelProps {
