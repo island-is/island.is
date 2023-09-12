@@ -1,23 +1,15 @@
 import { ObjectType } from '@nestjs/graphql'
 import {
-  Course as ICourse,
-  CourseSemesterSeasonEnum,
-  Program as IProgram,
-  ProgramCourse as IProgramCourse,
-  ProgramCourseRequirementEnum,
-  ProgramDetails as IProgramDetails,
-  ProgramExtraApplicationField as IProgramExtraApplicationField,
-  ProgramModeOfDelivery as IProgramModeOfDelivery,
-  ProgramTag as IProgramTag,
-  Tag as ITag,
-  ProgramModeOfDeliveryModeOfDeliveryEnum,
-  ProgramExtraApplicationFieldFieldTypeEnum,
-} from '@island.is/clients/university-gateway-api'
-import { DegreeType, Season } from '@island.is/university-gateway-types'
+  DegreeType,
+  // FieldType,
+  ModeOfDelivery,
+  Requirement,
+  Season,
+} from '@island.is/university-gateway-types'
 
 export
 @ObjectType('Program')
-class Program /*implements IProgram*/ {
+class Program {
   id!: string
   externalId!: string
   active!: boolean
@@ -40,12 +32,12 @@ class Program /*implements IProgram*/ {
   iscedCode!: string
   searchKeywords!: string[]
   tag!: ProgramTag[]
-  modeOfDelivery!: ProgramModeOfDelivery[]
+  modeOfDelivery!: ModeOfDelivery[]
 }
 
 export
 @ObjectType('ProgramDetails')
-class ProgramDetails extends Program /*implements IProgramDetails*/ {
+class ProgramDetails extends Program {
   externalUrlIs?: string
   externalUrlEn?: string
   admissionRequirementsIs?: string
@@ -55,55 +47,40 @@ class ProgramDetails extends Program /*implements IProgramDetails*/ {
   costInformationIs?: string
   costInformationEn?: string
   courses!: ProgramCourse[]
-  extraApplicationField!: ProgramExtraApplicationField[]
+  // extraApplicationField!: ProgramExtraApplicationField[]
 }
 
 @ObjectType('ProgramCourse')
-class ProgramCourse implements IProgramCourse {
-  details!: Course
-  requirement!: ProgramCourseRequirementEnum
-}
-
-@ObjectType('Course')
-class Course implements ICourse {
+class ProgramCourse {
   id!: string
   externalId!: string
   nameIs!: string
   nameEn!: string
-  universityId!: string
   credits!: number
   semesterYear?: number
-  semesterSeason!: CourseSemesterSeasonEnum
+  semesterSeason!: Season
   descriptionIs?: string
   descriptionEn?: string
   externalUrlIs?: string
   externalUrlEn?: string
+  requirement!: Requirement
 }
 
 @ObjectType('ProgramTag')
-class ProgramTag implements IProgramTag {
-  tagId!: string
-  details!: Tag
-}
-
-@ObjectType('Tag')
-class Tag implements ITag {
+class ProgramTag {
+  id!: string
   code!: string
   nameIs!: string
   nameEn!: string
 }
 
-@ObjectType('ProgramModeOfDelivery')
-class ProgramModeOfDelivery implements IProgramModeOfDelivery {
-  modeOfDelivery!: ProgramModeOfDeliveryModeOfDeliveryEnum
-}
-
-class ProgramExtraApplicationField implements IProgramExtraApplicationField {
-  nameIs!: string
-  nameEn?: string
-  descriptionIs?: string
-  descriptionEn?: string
-  required!: boolean
-  fieldType!: ProgramExtraApplicationFieldFieldTypeEnum
-  uploadAcceptedFileType?: string
-}
+// @ObjectType('ProgramExtraApplicationField')
+// class ProgramExtraApplicationField {
+//   nameIs!: string
+//   nameEn?: string
+//   descriptionIs?: string
+//   descriptionEn?: string
+//   required!: boolean
+//   fieldType!: FieldType
+//   uploadAcceptedFileType?: string
+// }

@@ -84,9 +84,6 @@ class UniversityOfIcelandApplicationClient {
         externalId: course.externalId,
         nameIs: course.nameIs,
         nameEn: course.nameEn,
-        requirement: course.required
-          ? Requirement.MANDATORY
-          : Requirement.FREE_ELECTIVE, //TODO missing in api
         credits: course.credits,
         semesterYear: course.semesterYear,
         semesterSeason: course.semesterSeason as unknown as Season, //TODO map enum
@@ -94,6 +91,9 @@ class UniversityOfIcelandApplicationClient {
         descriptionEn: course.descriptionEn,
         externalUrlIs: course.externalUrlIs,
         externalUrlEn: course.externalUrlEn,
+        requirement: course.required
+          ? Requirement.MANDATORY
+          : Requirement.FREE_ELECTIVE, //TODO missing in api
       })) || []
     )
   }

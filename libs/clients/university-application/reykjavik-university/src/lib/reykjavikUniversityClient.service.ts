@@ -133,7 +133,6 @@ class ReykjavikUniversityApplicationClient {
         externalId: 'AB123',
         nameIs: 'Test',
         nameEn: 'Test',
-        requirement: Requirement.MANDATORY,
         credits: 8,
         semesterYear: 2023,
         semesterSeason: Season.FALL,
@@ -141,6 +140,7 @@ class ReykjavikUniversityApplicationClient {
         descriptionEn: '',
         externalUrlIs: '',
         externalUrlEn: '',
+        requirement: Requirement.MANDATORY,
       },
     ]
 

@@ -4,7 +4,6 @@ export interface ICourse {
   externalId: string
   nameIs: string
   nameEn: string
-  requirement: Requirement
   credits: number
   semesterYear?: number
   semesterSeason: Season
@@ -12,4 +11,5 @@ export interface ICourse {
   descriptionEn?: string
   externalUrlIs?: string
   externalUrlEn?: string
+  requirement: Requirement
 }
