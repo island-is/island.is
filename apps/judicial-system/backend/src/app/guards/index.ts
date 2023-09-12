@@ -1,6 +1,6 @@
 export {
   prosecutorRule,
-  representativeRule,
+  prosecutorRepresentativeRule,
   judgeRule,
   registrarRule,
   assistantRule,
