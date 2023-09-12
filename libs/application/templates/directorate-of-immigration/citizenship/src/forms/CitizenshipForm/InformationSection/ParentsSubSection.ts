@@ -13,16 +13,6 @@ import { Routes } from '../../../lib/constants'
 export const ParentsSubSection = buildSubSection({
   id: Routes.PARENTINFORMATION,
   title: information.labels.parents.subSectionTitle,
-  condition: (_, externalData) => {
-    const residenceConditionOptions = getValueViaPath(
-      externalData,
-      'residenceConditions.data',
-      [],
-    ) as ResidenceCondition[]
-
-    //return residenceConditionOptions.length === 0
-    return true
-  },
   children: [
     buildMultiField({
       id: Routes.PARENTINFORMATION,
