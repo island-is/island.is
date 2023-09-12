@@ -68,7 +68,7 @@ const userSeeds = `[
     "title": "starfsmaður",
     "mobile_number": "4444444",
     "email": "petur@dummy.dd",
-    "role": "STAFF",
+    "role": "PRISON_SYSTEM_STAFF",
     "institution_id": "c9b3b124-2a85-11ec-8d3d-0242ac130003"
   },
   {
@@ -78,7 +78,7 @@ const userSeeds = `[
     "title": "starfsmaður",
     "mobile_number": "5555555",
     "email": "valgard@dummy.dd",
-    "role": "STAFF",
+    "role": "PRISON_SYSTEM_STAFF",
     "institution_id": "c9b3b3ae-2a85-11ec-8d3d-0242ac130003"
   }
 ]`
