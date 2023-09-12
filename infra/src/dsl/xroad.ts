@@ -587,3 +587,19 @@ export const AircraftRegistry = new XroadConf({
     },
   },
 })
+
+export const HousingBenefitCalculator = new XroadConf({
+  env: {
+    XROAD_HOUSING_BENEFIT_CALCULATOR_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/calc-v1',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/calc-v1',
+      prod: 'IS/GOV/5812191480/HMS-Protected/calc-v1',
+    },
+  },
+  secrets: {
+    HOUSING_BENEFIT_CALCULATOR_USERNAME:
+      '/k8s/xroad/client/HOUSING_BENEFIT_CALCULATOR_USERNAME',
+    HOUSING_BENEFIT_CALCULATOR_PASSWORD:
+      '/k8s/xroad/client/HOUSING_BENEFIT_CALCULATOR_PASSWORD',
+  },
+})

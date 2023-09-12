@@ -74,11 +74,11 @@ describe('getCasesQueryFilter', () => {
     })
   })
 
-  it('should get representative filter', () => {
+  it('should get prosecutor representative filter', () => {
     // Arrange
     const user = {
       id: 'Prosecutor Id',
-      role: UserRole.REPRESENTATIVE,
+      role: UserRole.PROSECUTOR_REPRESENTATIVE,
       institution: {
         id: 'Prosecutors Office Id',
         type: InstitutionType.PROSECUTORS_OFFICE,
@@ -256,7 +256,7 @@ describe('getCasesQueryFilter', () => {
     // Arrange
     const user = {
       id: 'Staff Id',
-      role: UserRole.STAFF,
+      role: UserRole.PRISON_SYSTEM_STAFF,
       institution: {
         id: 'Prison Id',
         type: InstitutionType.PRISON,
@@ -283,7 +283,7 @@ describe('getCasesQueryFilter', () => {
     // Arrange
     const user = {
       id: 'Staff Id',
-      role: UserRole.STAFF,
+      role: UserRole.PRISON_SYSTEM_STAFF,
       institution: {
         id: 'Prison Id',
         type: InstitutionType.PRISON_ADMIN,
