@@ -5,7 +5,6 @@ import { assetsModule } from '@island.is/service-portal/assets'
 import { documentsModule } from '@island.is/service-portal/documents'
 import { educationModule } from '@island.is/service-portal/education'
 import { educationCareerModule } from '@island.is/service-portal/education-career'
-import { educationLicenseModule } from '@island.is/service-portal/education-license'
 import { educationStudentAssessmentModule } from '@island.is/service-portal/education-student-assessment'
 import { financeModule } from '@island.is/service-portal/finance'
 import { petitionsModule } from '@island.is/service-portal/petitions'
@@ -30,7 +29,6 @@ export const modules: PortalModule[] = [
   educationModule,
   educationCareerModule,
   occupationalLicensesModule,
-  educationLicenseModule,
   educationStudentAssessmentModule,
   delegationsModule,
   financeModule,

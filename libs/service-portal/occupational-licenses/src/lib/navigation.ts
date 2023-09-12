@@ -12,9 +12,14 @@ export const occupationalLicensesNavigation: PortalNavigationItem = {
   description: m.occupationalLicensesNavIntro,
   children: [
     {
+      name: om.occupationalLicense,
+      path: OccupationalLicensesPaths.OccupationalLicensesRoot,
+    },
+    {
       name: 'type',
       navHide: true,
-      path: OccupationalLicensesPaths.OccupationalLicensesHealthDirectorateDetail,
+      path:
+        OccupationalLicensesPaths.OccupationalLicensesHealthDirectorateDetail,
     },
     {
       name: 'type',
