@@ -33,8 +33,8 @@ describe('canUserAccessCase', () => {
         ${CaseState.DELETED}   | ${UserRole.REGISTRAR}                 | ${InstitutionType.COURT_OF_APPEALS}
         ${CaseState.DELETED}   | ${UserRole.JUDGE}                     | ${InstitutionType.COURT_OF_APPEALS}
         ${CaseState.DELETED}   | ${UserRole.ASSISTANT}                 | ${InstitutionType.COURT_OF_APPEALS}
-        ${CaseState.DELETED}   | ${UserRole.STAFF}                     | ${InstitutionType.PRISON}
-        ${CaseState.DELETED}   | ${UserRole.STAFF}                     | ${InstitutionType.PRISON_ADMIN}
+        ${CaseState.DELETED}   | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON}
+        ${CaseState.DELETED}   | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON_ADMIN}
         ${CaseState.NEW}       | ${UserRole.PROSECUTOR_REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
         ${CaseState.NEW}       | ${UserRole.REGISTRAR}                 | ${InstitutionType.DISTRICT_COURT}
         ${CaseState.NEW}       | ${UserRole.JUDGE}                     | ${InstitutionType.DISTRICT_COURT}
@@ -42,39 +42,39 @@ describe('canUserAccessCase', () => {
         ${CaseState.NEW}       | ${UserRole.REGISTRAR}                 | ${InstitutionType.COURT_OF_APPEALS}
         ${CaseState.NEW}       | ${UserRole.JUDGE}                     | ${InstitutionType.COURT_OF_APPEALS}
         ${CaseState.NEW}       | ${UserRole.ASSISTANT}                 | ${InstitutionType.COURT_OF_APPEALS}
-        ${CaseState.NEW}       | ${UserRole.STAFF}                     | ${InstitutionType.PRISON}
-        ${CaseState.NEW}       | ${UserRole.STAFF}                     | ${InstitutionType.PRISON_ADMIN}
+        ${CaseState.NEW}       | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON}
+        ${CaseState.NEW}       | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON_ADMIN}
         ${CaseState.DRAFT}     | ${UserRole.PROSECUTOR_REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
         ${CaseState.DRAFT}     | ${UserRole.ASSISTANT}                 | ${InstitutionType.DISTRICT_COURT}
         ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}                 | ${InstitutionType.COURT_OF_APPEALS}
         ${CaseState.DRAFT}     | ${UserRole.JUDGE}                     | ${InstitutionType.COURT_OF_APPEALS}
         ${CaseState.DRAFT}     | ${UserRole.ASSISTANT}                 | ${InstitutionType.COURT_OF_APPEALS}
-        ${CaseState.DRAFT}     | ${UserRole.STAFF}                     | ${InstitutionType.PRISON}
-        ${CaseState.DRAFT}     | ${UserRole.STAFF}                     | ${InstitutionType.PRISON_ADMIN}
+        ${CaseState.DRAFT}     | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON}
+        ${CaseState.DRAFT}     | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON_ADMIN}
         ${CaseState.SUBMITTED} | ${UserRole.PROSECUTOR_REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
         ${CaseState.SUBMITTED} | ${UserRole.ASSISTANT}                 | ${InstitutionType.DISTRICT_COURT}
         ${CaseState.SUBMITTED} | ${UserRole.REGISTRAR}                 | ${InstitutionType.COURT_OF_APPEALS}
         ${CaseState.SUBMITTED} | ${UserRole.JUDGE}                     | ${InstitutionType.COURT_OF_APPEALS}
         ${CaseState.SUBMITTED} | ${UserRole.ASSISTANT}                 | ${InstitutionType.COURT_OF_APPEALS}
-        ${CaseState.SUBMITTED} | ${UserRole.STAFF}                     | ${InstitutionType.PRISON}
-        ${CaseState.SUBMITTED} | ${UserRole.STAFF}                     | ${InstitutionType.PRISON_ADMIN}
+        ${CaseState.SUBMITTED} | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON}
+        ${CaseState.SUBMITTED} | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON_ADMIN}
         ${CaseState.RECEIVED}  | ${UserRole.PROSECUTOR_REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
         ${CaseState.RECEIVED}  | ${UserRole.ASSISTANT}                 | ${InstitutionType.DISTRICT_COURT}
         ${CaseState.RECEIVED}  | ${UserRole.REGISTRAR}                 | ${InstitutionType.COURT_OF_APPEALS}
         ${CaseState.RECEIVED}  | ${UserRole.JUDGE}                     | ${InstitutionType.COURT_OF_APPEALS}
         ${CaseState.RECEIVED}  | ${UserRole.ASSISTANT}                 | ${InstitutionType.COURT_OF_APPEALS}
-        ${CaseState.RECEIVED}  | ${UserRole.STAFF}                     | ${InstitutionType.PRISON}
-        ${CaseState.RECEIVED}  | ${UserRole.STAFF}                     | ${InstitutionType.PRISON_ADMIN}
+        ${CaseState.RECEIVED}  | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON}
+        ${CaseState.RECEIVED}  | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON_ADMIN}
         ${CaseState.REJECTED}  | ${UserRole.PROSECUTOR_REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
         ${CaseState.REJECTED}  | ${UserRole.ASSISTANT}                 | ${InstitutionType.DISTRICT_COURT}
-        ${CaseState.REJECTED}  | ${UserRole.STAFF}                     | ${InstitutionType.PRISON}
-        ${CaseState.REJECTED}  | ${UserRole.STAFF}                     | ${InstitutionType.PRISON_ADMIN}
+        ${CaseState.REJECTED}  | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON}
+        ${CaseState.REJECTED}  | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON_ADMIN}
         ${CaseState.ACCEPTED}  | ${UserRole.PROSECUTOR_REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
         ${CaseState.ACCEPTED}  | ${UserRole.ASSISTANT}                 | ${InstitutionType.DISTRICT_COURT}
         ${CaseState.DISMISSED} | ${UserRole.PROSECUTOR_REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
         ${CaseState.DISMISSED} | ${UserRole.ASSISTANT}                 | ${InstitutionType.DISTRICT_COURT}
-        ${CaseState.DISMISSED} | ${UserRole.STAFF}                     | ${InstitutionType.PRISON}
-        ${CaseState.DISMISSED} | ${UserRole.STAFF}                     | ${InstitutionType.PRISON_ADMIN}
+        ${CaseState.DISMISSED} | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON}
+        ${CaseState.DISMISSED} | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON_ADMIN}
       `.it(
         'should block $state $caseType case from $role at $institutionType',
         ({ state, role, institutionType }) => {
@@ -108,40 +108,40 @@ describe('canUserAccessCase', () => {
       ${CaseState.DELETED}   | ${UserRole.REGISTRAR}                 | ${InstitutionType.COURT_OF_APPEALS}
       ${CaseState.DELETED}   | ${UserRole.JUDGE}                     | ${InstitutionType.COURT_OF_APPEALS}
       ${CaseState.DELETED}   | ${UserRole.ASSISTANT}                 | ${InstitutionType.COURT_OF_APPEALS}
-      ${CaseState.DELETED}   | ${UserRole.STAFF}                     | ${InstitutionType.PRISON}
-      ${CaseState.DELETED}   | ${UserRole.STAFF}                     | ${InstitutionType.PRISON_ADMIN}
+      ${CaseState.DELETED}   | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON}
+      ${CaseState.DELETED}   | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON_ADMIN}
       ${CaseState.NEW}       | ${UserRole.REGISTRAR}                 | ${InstitutionType.DISTRICT_COURT}
       ${CaseState.NEW}       | ${UserRole.JUDGE}                     | ${InstitutionType.DISTRICT_COURT}
       ${CaseState.NEW}       | ${UserRole.ASSISTANT}                 | ${InstitutionType.DISTRICT_COURT}
       ${CaseState.NEW}       | ${UserRole.REGISTRAR}                 | ${InstitutionType.COURT_OF_APPEALS}
       ${CaseState.NEW}       | ${UserRole.JUDGE}                     | ${InstitutionType.COURT_OF_APPEALS}
       ${CaseState.NEW}       | ${UserRole.ASSISTANT}                 | ${InstitutionType.COURT_OF_APPEALS}
-      ${CaseState.NEW}       | ${UserRole.STAFF}                     | ${InstitutionType.PRISON}
-      ${CaseState.NEW}       | ${UserRole.STAFF}                     | ${InstitutionType.PRISON_ADMIN}
+      ${CaseState.NEW}       | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON}
+      ${CaseState.NEW}       | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON_ADMIN}
       ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}                 | ${InstitutionType.DISTRICT_COURT}
       ${CaseState.DRAFT}     | ${UserRole.JUDGE}                     | ${InstitutionType.DISTRICT_COURT}
       ${CaseState.DRAFT}     | ${UserRole.ASSISTANT}                 | ${InstitutionType.DISTRICT_COURT}
       ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}                 | ${InstitutionType.COURT_OF_APPEALS}
       ${CaseState.DRAFT}     | ${UserRole.JUDGE}                     | ${InstitutionType.COURT_OF_APPEALS}
       ${CaseState.DRAFT}     | ${UserRole.ASSISTANT}                 | ${InstitutionType.COURT_OF_APPEALS}
-      ${CaseState.DRAFT}     | ${UserRole.STAFF}                     | ${InstitutionType.PRISON}
-      ${CaseState.DRAFT}     | ${UserRole.STAFF}                     | ${InstitutionType.PRISON_ADMIN}
+      ${CaseState.DRAFT}     | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON}
+      ${CaseState.DRAFT}     | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON_ADMIN}
       ${CaseState.SUBMITTED} | ${UserRole.REGISTRAR}                 | ${InstitutionType.COURT_OF_APPEALS}
       ${CaseState.SUBMITTED} | ${UserRole.JUDGE}                     | ${InstitutionType.COURT_OF_APPEALS}
       ${CaseState.SUBMITTED} | ${UserRole.ASSISTANT}                 | ${InstitutionType.COURT_OF_APPEALS}
-      ${CaseState.SUBMITTED} | ${UserRole.STAFF}                     | ${InstitutionType.PRISON}
-      ${CaseState.SUBMITTED} | ${UserRole.STAFF}                     | ${InstitutionType.PRISON_ADMIN}
+      ${CaseState.SUBMITTED} | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON}
+      ${CaseState.SUBMITTED} | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON_ADMIN}
       ${CaseState.RECEIVED}  | ${UserRole.REGISTRAR}                 | ${InstitutionType.COURT_OF_APPEALS}
       ${CaseState.RECEIVED}  | ${UserRole.JUDGE}                     | ${InstitutionType.COURT_OF_APPEALS}
       ${CaseState.RECEIVED}  | ${UserRole.ASSISTANT}                 | ${InstitutionType.COURT_OF_APPEALS}
-      ${CaseState.RECEIVED}  | ${UserRole.STAFF}                     | ${InstitutionType.PRISON}
-      ${CaseState.RECEIVED}  | ${UserRole.STAFF}                     | ${InstitutionType.PRISON_ADMIN}
-      ${CaseState.REJECTED}  | ${UserRole.STAFF}                     | ${InstitutionType.PRISON}
-      ${CaseState.REJECTED}  | ${UserRole.STAFF}                     | ${InstitutionType.PRISON_ADMIN}
-      ${CaseState.ACCEPTED}  | ${UserRole.STAFF}                     | ${InstitutionType.PRISON}
-      ${CaseState.ACCEPTED}  | ${UserRole.STAFF}                     | ${InstitutionType.PRISON_ADMIN}
-      ${CaseState.DISMISSED} | ${UserRole.STAFF}                     | ${InstitutionType.PRISON}
-      ${CaseState.DISMISSED} | ${UserRole.STAFF}                     | ${InstitutionType.PRISON_ADMIN}
+      ${CaseState.RECEIVED}  | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON}
+      ${CaseState.RECEIVED}  | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON_ADMIN}
+      ${CaseState.REJECTED}  | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON}
+      ${CaseState.REJECTED}  | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON_ADMIN}
+      ${CaseState.ACCEPTED}  | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON}
+      ${CaseState.ACCEPTED}  | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON_ADMIN}
+      ${CaseState.DISMISSED} | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON}
+      ${CaseState.DISMISSED} | ${UserRole.PRISON_SYSTEM_STAFF}       | ${InstitutionType.PRISON_ADMIN}
     `.it(
       'should block $state $caseType case from $role at $institutionType',
       ({ state, role, institutionType }) => {
@@ -950,7 +950,7 @@ describe('canUserAccessCase', () => {
       ${InstitutionType.PRISON}
       ${InstitutionType.PRISON_ADMIN}
     `.it(
-      'it should block the case from staff at $institutionType',
+      'it should block the case from prison system staff at $institutionType',
       ({ institutionType }) => {
         // Arrange
         const theCase = {
@@ -958,7 +958,7 @@ describe('canUserAccessCase', () => {
           state: CaseState.ACCEPTED,
         } as Case
         const user = {
-          role: UserRole.STAFF,
+          role: UserRole.PRISON_SYSTEM_STAFF,
           institution: { type: institutionType },
         } as User
 
@@ -980,7 +980,7 @@ describe('canUserAccessCase', () => {
       state: CaseState.ACCEPTED,
     } as Case
     const user = {
-      role: UserRole.STAFF,
+      role: UserRole.PRISON_SYSTEM_STAFF,
       institution: { type: InstitutionType.PRISON },
     } as User
 
@@ -1000,7 +1000,7 @@ describe('canUserAccessCase', () => {
       state: CaseState.ACCEPTED,
     } as Case
     const user = {
-      role: UserRole.STAFF,
+      role: UserRole.PRISON_SYSTEM_STAFF,
       institution: { type: InstitutionType.PRISON_ADMIN },
     } as User
 
@@ -1021,7 +1021,7 @@ describe('canUserAccessCase', () => {
       decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
     } as Case
     const user = {
-      role: UserRole.STAFF,
+      role: UserRole.PRISON_SYSTEM_STAFF,
       institution: { type: InstitutionType.PRISON },
     } as User
 
@@ -1042,7 +1042,7 @@ describe('canUserAccessCase', () => {
       decision: CaseDecision.ACCEPTING,
     } as Case
     const user = {
-      role: UserRole.STAFF,
+      role: UserRole.PRISON_SYSTEM_STAFF,
       institution: { type: InstitutionType.PRISON },
     } as User
 
@@ -1063,7 +1063,7 @@ describe('canUserAccessCase', () => {
       decision: CaseDecision.ACCEPTING,
     } as Case
     const user = {
-      role: UserRole.STAFF,
+      role: UserRole.PRISON_SYSTEM_STAFF,
       institution: { type: InstitutionType.PRISON },
     } as User
 
@@ -1084,7 +1084,7 @@ describe('canUserAccessCase', () => {
       decision: CaseDecision.ACCEPTING_PARTIALLY,
     } as Case
     const user = {
-      role: UserRole.STAFF,
+      role: UserRole.PRISON_SYSTEM_STAFF,
       institution: { type: InstitutionType.PRISON },
     } as User
 
@@ -1105,7 +1105,7 @@ describe('canUserAccessCase', () => {
       decision: CaseDecision.ACCEPTING_PARTIALLY,
     } as Case
     const user = {
-      role: UserRole.STAFF,
+      role: UserRole.PRISON_SYSTEM_STAFF,
       institution: { type: InstitutionType.PRISON },
     } as User
 
@@ -1125,7 +1125,7 @@ describe('canUserAccessCase', () => {
       state: CaseState.ACCEPTED,
     } as Case
     const user = {
-      role: UserRole.STAFF,
+      role: UserRole.PRISON_SYSTEM_STAFF,
       institution: { type: InstitutionType.PRISON_ADMIN },
     } as User
 
@@ -1145,7 +1145,7 @@ describe('canUserAccessCase', () => {
       state: CaseState.ACCEPTED,
     } as Case
     const user = {
-      role: UserRole.STAFF,
+      role: UserRole.PRISON_SYSTEM_STAFF,
       institution: { type: InstitutionType.PRISON_ADMIN },
     } as User
 
