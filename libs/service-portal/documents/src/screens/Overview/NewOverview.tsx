@@ -101,10 +101,8 @@ export const ServicePortalDocuments = () => {
   const [scalePDF, setScalePDF] = useState(1.0)
   const navigate = useNavigate()
   const location = useLocation()
-  const [
-    activeDocument,
-    setActiveDocument,
-  ] = useState<ActiveDocumentType | null>(null)
+  const [activeDocument, setActiveDocument] =
+    useState<ActiveDocumentType | null>(null)
   const isLegal = userInfo.profile.delegationType?.includes(
     AuthDelegationType.LegalGuardian,
   )
@@ -119,14 +117,12 @@ export const ServicePortalDocuments = () => {
     direction: 'Descending',
     key: 'Date',
   })
-  const [searchInteractionEventSent, setSearchInteractionEventSent] = useState(
-    false,
-  )
+  const [searchInteractionEventSent, setSearchInteractionEventSent] =
+    useState(false)
   useScrollTopOnUpdate([page])
 
-  const [filterValue, setFilterValue] = useState<FilterValuesType>(
-    defaultFilterValues,
-  )
+  const [filterValue, setFilterValue] =
+    useState<FilterValuesType>(defaultFilterValues)
   const { data, totalCount, loading, error } = useListDocuments({
     senderKennitala: filterValue.activeSenders.join(),
     dateFrom: filterValue.dateFrom?.toISOString(),
@@ -146,13 +142,11 @@ export const ServicePortalDocuments = () => {
     GET_DOCUMENT_CATEGORIES,
   )
 
-  const { data: typesData, loading: typesLoading } = useQuery<Query>(
-    GET_DOCUMENT_TYPES,
-  )
+  const { data: typesData, loading: typesLoading } =
+    useQuery<Query>(GET_DOCUMENT_TYPES)
 
-  const { data: sendersData, loading: sendersLoading } = useQuery<Query>(
-    GET_DOCUMENT_SENDERS,
-  )
+  const { data: sendersData, loading: sendersLoading } =
+    useQuery<Query>(GET_DOCUMENT_SENDERS)
 
   const [categoriesAvailable, setCategoriesAvailable] = useState<
     DocumentCategory[]
