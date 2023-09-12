@@ -22,12 +22,12 @@ export const headerBg = style({
 export const headerTitle = style({
   ...themeUtils.responsiveStyle({
     xs: {
-      textAlign: 'center'
+      textAlign: 'center',
     },
     md: {
-      textAlign: 'left'
-    }
-  })
+      textAlign: 'left',
+    },
+  }),
 })
 
 export const image = style({
