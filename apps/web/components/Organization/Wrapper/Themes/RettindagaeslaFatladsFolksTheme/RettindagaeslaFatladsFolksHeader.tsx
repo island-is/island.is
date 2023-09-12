@@ -1,11 +1,12 @@
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { useWindowSize } from 'react-use'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
-import { useWindowSize } from 'react-use'
-import * as styles from './RettindagaeslaFatladsFolksHeader.css'
 import { Box, Text } from '@island.is/island-ui/core'
-import Link from 'next/link'
-import { useEffect, useState } from 'react'
 import { theme } from '@island.is/island-ui/theme'
+import * as styles from './RettindagaeslaFatladsFolksHeader.css'
+
 interface Props {
   organizationPage: OrganizationPage
 }
@@ -72,7 +73,9 @@ const RettindagaeslaFatladsFolksHeader = ({ organizationPage }: Props) => {
                 alt="header"
                 src={organizationPage.defaultHeaderImage?.url}
               />
-              <Text variant="h1">{organizationPage.title}</Text>
+              <div className={styles.headerTitle}>
+                <Text variant="h1">{organizationPage.title}</Text>
+              </div>
               <Link
                 href={
                   linkResolver('organizationpage', [organizationPage.slug]).href

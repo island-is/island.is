@@ -19,6 +19,17 @@ export const headerBg = style({
   }),
 })
 
+export const headerTitle = style({
+  ...themeUtils.responsiveStyle({
+    xs: {
+      textAlign: 'center'
+    },
+    md: {
+      textAlign: 'left'
+    }
+  })
+})
+
 export const image = style({
   ...themeUtils.responsiveStyle({
     xs: {
