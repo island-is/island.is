@@ -16,12 +16,20 @@ module.exports = {
           { transaction },
         )
         .then(() =>
-          queryInterface.bulkUpdate(
-            'institution',
-            { police_case_number_prefix: '314' },
-            { id: 'affee2cd-5519-450e-b11c-bdd61229e1ad' },
-            { transaction },
-          ),
+          Promise.all([
+            queryInterface.bulkUpdate(
+              'institution',
+              { police_case_number_prefix: '314' },
+              { id: 'affee2cd-5519-450e-b11c-bdd61229e1ad' },
+              { transaction },
+            ),
+            queryInterface.bulkUpdate(
+              'institution',
+              { police_case_number_prefix: '315' },
+              { id: '0be621ec-c063-4df3-ab15-61f6e421ed7c' },
+              { transaction },
+            ),
+          ]),
         ),
     )
   },
