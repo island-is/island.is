@@ -133,7 +133,7 @@ export const lightThemes = [
   'haskolanam',
   'nti',
   'samgongustofa',
-  'rettindagaesla-fatlads-folks'
+  'rettindagaesla-fatlads-folks',
 ]
 export const footerEnabled = [
   'syslumenn',
@@ -595,13 +595,13 @@ export const OrganizationChatPanel = ({
   const { activeLocale } = useI18n()
 
   const organizationIdWithLiveChat = organizationIds.find((id) => {
-    return id in liveChatIncConfig
+    return id in liveChatIncConfig[activeLocale]
   })
 
   if (organizationIdWithLiveChat) {
     return (
       <LiveChatIncChatPanel
-        {...liveChatIncConfig[organizationIdWithLiveChat]}
+        {...liveChatIncConfig[activeLocale][organizationIdWithLiveChat]}
       />
     )
   }
