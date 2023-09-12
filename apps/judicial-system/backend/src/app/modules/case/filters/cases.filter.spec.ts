@@ -256,7 +256,7 @@ describe('getCasesQueryFilter', () => {
     // Arrange
     const user = {
       id: 'Staff Id',
-      role: UserRole.STAFF,
+      role: UserRole.PRISON_SYSTEM_STAFF,
       institution: {
         id: 'Prison Id',
         type: InstitutionType.PRISON,
@@ -283,7 +283,7 @@ describe('getCasesQueryFilter', () => {
     // Arrange
     const user = {
       id: 'Staff Id',
-      role: UserRole.STAFF,
+      role: UserRole.PRISON_SYSTEM_STAFF,
       institution: {
         id: 'Prison Id',
         type: InstitutionType.PRISON_ADMIN,
