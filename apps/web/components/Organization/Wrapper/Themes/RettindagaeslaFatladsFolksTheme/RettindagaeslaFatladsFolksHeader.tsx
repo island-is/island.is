@@ -73,7 +73,7 @@ const RettindagaeslaFatladsFolksHeader = ({ organizationPage }: Props) => {
                 alt="header"
                 src={organizationPage.defaultHeaderImage?.url}
               />
-              <div className={styles.headerTitle}>
+              <div className={styles.mobileHeaderTitle}>
                 <Text variant="h1">{organizationPage.title}</Text>
               </div>
               <Link

@@ -19,15 +19,8 @@ export const headerBg = style({
   }),
 })
 
-export const headerTitle = style({
-  ...themeUtils.responsiveStyle({
-    xs: {
-      textAlign: 'center',
-    },
-    md: {
-      textAlign: 'left',
-    },
-  }),
+export const mobileHeaderTitle = style({
+  textAlign: 'center',
 })
 
 export const image = style({
