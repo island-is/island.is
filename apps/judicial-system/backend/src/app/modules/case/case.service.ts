@@ -308,6 +308,23 @@ export class CaseService {
       })
   }
 
+  private async uploadSignedCourtRecordPdfToS3(
+    theCase: Case,
+    pdf: string,
+  ): Promise<boolean> {
+    return this.awsS3Service
+      .putObject(`generated/${theCase.id}/courtRecord.pdf`, pdf)
+      .then(() => true)
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to upload signed court record pdf to AWS S3 for case ${theCase.id}`,
+          { reason },
+        )
+
+        return false
+      })
+  }
+
   private async throttleGetCaseFilesRecordPdf(
     theCase: Case,
     policeCaseNumber: string,
@@ -1142,16 +1159,26 @@ export class CaseService {
         'courtRecord.pdf',
         documentToken,
       )
+      const awsSuccess = await this.uploadSignedCourtRecordPdfToS3(
+        theCase,
+        courtRecordPdf,
+      )
 
-      this.awsS3Service
-        .putObject(`generated/${theCase.id}/courtRecord.pdf`, courtRecordPdf)
-        .catch((reason) => {
-          // Tolerate failure, but log error
-          this.logger.error(
-            `Failed to upload signed court record pdf to AWS S3 for case ${theCase.id}`,
-            { reason },
-          )
-        })
+      if (!awsSuccess) {
+        return { documentSigned: false, message: 'Failed to upload to S3' }
+      }
+
+      await this.update(
+        theCase,
+        {
+          courtRecordSignatoryId: user.id,
+          courtRecordSignatureDate: nowFactory(),
+        },
+        user,
+        false,
+      )
+
+      return { documentSigned: true }
     } catch (error) {
       this.eventService.postErrorEvent(
         'Failed to get a court record signature confirmation',
@@ -1175,18 +1202,6 @@ export class CaseService {
 
       throw error
     }
-
-    await this.update(
-      theCase,
-      {
-        courtRecordSignatoryId: user.id,
-        courtRecordSignatureDate: nowFactory(),
-      },
-      user,
-      false,
-    )
-
-    return { documentSigned: true }
   }
 
   async requestRulingSignature(theCase: Case): Promise<SigningServiceResponse> {

@@ -4,7 +4,7 @@ import {
   registrarRule,
   prosecutorRepresentativeRule,
   assistantRule,
-  staffRule,
+  prisonSystemStaffRule,
   defenderRule,
 } from '../../../../guards'
 import { CaseController } from '../../case.controller'
@@ -24,7 +24,7 @@ describe('CaseController - Get all rules', () => {
     expect(rules).toContain(judgeRule)
     expect(rules).toContain(registrarRule)
     expect(rules).toContain(assistantRule)
-    expect(rules).toContain(staffRule)
+    expect(rules).toContain(prisonSystemStaffRule)
     expect(rules).toContain(defenderRule)
   })
 })

@@ -17,8 +17,8 @@ export const registrarRule: RolesRule = UserRole.REGISTRAR
 // Allows assistants to perform any action
 export const assistantRule: RolesRule = UserRole.ASSISTANT
 
-// Allows staff to perform any action
-export const staffRule: RolesRule = UserRole.STAFF
+// Allows prison system staff to perform any action
+export const prisonSystemStaffRule: RolesRule = UserRole.PRISON_SYSTEM_STAFF
 
 // Allows admins to perform any action
 export const adminRule: RolesRule = UserRole.ADMIN
