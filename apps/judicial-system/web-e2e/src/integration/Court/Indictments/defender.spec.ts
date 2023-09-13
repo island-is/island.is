@@ -41,7 +41,10 @@ describe(`${INDICTMENTS_DEFENDER_ROUTE}/:id`, () => {
       .find('input')
       .get('.island-select__option')
       .should('contain', 'Logmadur')
-    cy.getByTestid(createableSelectTestId).click()
+    cy.getByTestid(createableSelectTestId)
+      .find('input')
+      .get('.island-select__option')
+      .click()
     cy.getByTestid(`defenderEmail-${defendant1.id}`).should(
       'have.value',
       'logmadur@logmenn.is',
@@ -62,7 +65,10 @@ describe(`${INDICTMENTS_DEFENDER_ROUTE}/:id`, () => {
       .find('input')
       .get('.island-select__option')
       .should('contain', 'Logmadur')
-    cy.getByTestid(createableSelectTestId2).click()
+    cy.getByTestid(createableSelectTestId2)
+      .find('input')
+      .get('.island-select__option')
+      .click()
     cy.getByTestid(`defenderEmail-${defendant2.id}`).should(
       'have.value',
       'logmadur@logmenn.is',
@@ -104,7 +110,10 @@ describe(`${INDICTMENTS_DEFENDER_ROUTE}/:id`, () => {
       .find('input')
       .get('.island-select__option')
       .should('contain', 'Logmadur')
-    cy.getByTestid(createableSelectTestId).click()
+    cy.getByTestid(createableSelectTestId)
+      .find('input')
+      .get('.island-select__option')
+      .click()
 
     cy.getByTestid(`defenderEmail-${defendant1.id}`).should(
       'have.value',
