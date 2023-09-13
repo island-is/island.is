@@ -11,7 +11,7 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   SessionArrangements,
   UserRole,
-  DefenderReceivesAccess,
+  RequestSharedWithDefender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { defenderInfo } from './DefenderInfo.strings'
@@ -114,15 +114,15 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
                         .defenderRequestAccess.labelReadyForCourt,
                 )}
                 checked={
-                  workingCase.defenderReceivesAccess ===
-                  DefenderReceivesAccess.READY_FOR_COURT
+                  workingCase.requestSharedWithDefender ===
+                  RequestSharedWithDefender.READY_FOR_COURT
                 }
                 onChange={() => {
                   setAndSendCaseToServer(
                     [
                       {
-                        defenderReceivesAccess:
-                          DefenderReceivesAccess.READY_FOR_COURT,
+                        requestSharedWithDefender:
+                          RequestSharedWithDefender.READY_FOR_COURT,
                         force: true,
                       },
                     ],
@@ -146,15 +146,15 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
                         .defenderRequestAccess.labelCourtDate,
                 )}
                 checked={
-                  workingCase.defenderReceivesAccess ===
-                  DefenderReceivesAccess.COURT_DATE
+                  workingCase.requestSharedWithDefender ===
+                  RequestSharedWithDefender.COURT_DATE
                 }
                 onChange={() => {
                   setAndSendCaseToServer(
                     [
                       {
-                        defenderReceivesAccess:
-                          DefenderReceivesAccess.COURT_DATE,
+                        requestSharedWithDefender:
+                          RequestSharedWithDefender.COURT_DATE,
                         force: true,
                       },
                     ],
@@ -177,12 +177,12 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
                     : defenderInfo.investigationCases.sections
                         .defenderRequestAccess.labelNoAccess,
                 )}
-                checked={!workingCase.defenderReceivesAccess}
+                checked={!workingCase.requestSharedWithDefender}
                 onChange={() => {
                   setAndSendCaseToServer(
                     [
                       {
-                        defenderReceivesAccess: null,
+                        requestSharedWithDefender: null,
                         force: true,
                       },
                     ],

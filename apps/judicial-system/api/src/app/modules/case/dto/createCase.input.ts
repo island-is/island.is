@@ -8,7 +8,7 @@ import type {
   CreateCase,
   CrimeSceneMap,
   IndictmentSubtypeMap,
-  DefenderReceivesAccess,
+  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -50,7 +50,7 @@ export class CreateCaseInput implements CreateCase {
 
   @Allow()
   @Field(() => String, { nullable: true })
-  readonly defenderReceivesAccess?: DefenderReceivesAccess
+  readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @Allow()
   @Field({ nullable: true })

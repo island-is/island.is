@@ -313,7 +313,7 @@ const useCase = () => {
                   defenderNationalId: theCase.defenderNationalId,
                   defenderEmail: theCase.defenderEmail,
                   defenderPhoneNumber: theCase.defenderPhoneNumber,
-                  defenderReceivesAccess: theCase.defenderReceivesAccess,
+                  requestSharedWithDefender: theCase.requestSharedWithDefender,
                   leadInvestigator: theCase.leadInvestigator,
                   crimeScenes: theCase.crimeScenes,
                 },

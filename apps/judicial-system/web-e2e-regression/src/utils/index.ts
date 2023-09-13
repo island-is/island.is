@@ -3,7 +3,7 @@ import { ApolloClient, gql, InMemoryCache } from '@apollo/client'
 import {
   CaseTransition,
   CaseType,
-  DefenderReceivesAccess,
+  RequestSharedWithDefender,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 
@@ -44,7 +44,7 @@ export const loginAndCreateCase = (
             defenderNationalId: '0000000000',
             defenderEmail: 'ivaro@kolibri.is',
             defenderPhoneNumber: '0000000',
-            defenderReceivesAccess: DefenderReceivesAccess.COURT_DATE,
+            requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
             leadInvestigator: 'asd',
           },
         },

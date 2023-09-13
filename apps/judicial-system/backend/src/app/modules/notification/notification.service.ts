@@ -40,7 +40,7 @@ import {
   Recipient,
   UserRole,
   getStatementDeadline,
-  DefenderReceivesAccess,
+  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -64,6 +64,7 @@ import {
   formatDefenderAssignedEmailNotification,
   formatCourtIndictmentReadyForCourtEmailNotification,
   formatDefenderRoute,
+  formatDefenderReadyForCourtEmailNotification,
 } from '../../formatters'
 import { notifications } from '../../messages'
 import { Case } from '../case'
@@ -418,6 +419,22 @@ export class NotificationService {
     )
   }
 
+  private sendReadyForCourtEmailNotificationToDefender(
+    theCase: Case,
+  ): Promise<Recipient> {
+    const { subject, body } = formatDefenderReadyForCourtEmailNotification(
+      this.formatMessage,
+      theCase,
+    )
+
+    return this.sendEmail(
+      subject,
+      body,
+      theCase.defenderName,
+      theCase.defenderEmail,
+    )
+  }
+
   private async sendReadyForCourtNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
@@ -432,7 +449,7 @@ export class NotificationService {
       )
     }
 
-    // Investigation and Restrction Cases
+    // Investigation and Restriction Cases
     const promises: Promise<Recipient>[] = [
       this.sendReadyForCourtEmailNotificationToProsecutor(theCase),
     ]
@@ -451,25 +468,27 @@ export class NotificationService {
       this.eventService.postEvent(CaseEvent.RESUBMIT, theCase)
     }
 
-    if (
-      theCase.state === CaseState.RECEIVED &&
-      theCase.defenderReceivesAccess === DefenderReceivesAccess.COURT_DATE
-    ) {
+    if (theCase.requestSharedWithDefender !== null) {
       const defendantHasBeenNotified = await this.hasReceivedNotification(
         theCase.id,
-        NotificationType.COURT_DATE,
+        [NotificationType.READY_FOR_COURT, NotificationType.COURT_DATE],
         theCase.defenderEmail,
       )
 
       if (
-        theCase.courtDate &&
-        theCase.defenderReceivesAccess === DefenderReceivesAccess.COURT_DATE &&
         theCase.defenderName &&
         theCase.defenderEmail &&
-        defendantHasBeenNotified
+        !defendantHasBeenNotified
       ) {
         promises.push(
           this.sendResubmittedToCourtEmailNotificationToDefender(theCase),
+        )
+      } else if (
+        theCase.requestSharedWithDefender ===
+        RequestSharedWithDefender.COURT_DATE
+      ) {
+        promises.push(
+          this.sendReadyForCourtEmailNotificationToDefender(theCase),
         )
       }
     }
@@ -626,7 +645,7 @@ export class NotificationService {
   ): Promise<Recipient>[] {
     const subject = `Fyrirtaka í máli ${theCase.courtCaseNumber}`
     const linkSubject = `${
-      theCase.defenderReceivesAccess === DefenderReceivesAccess.COURT_DATE
+      theCase.requestSharedWithDefender === RequestSharedWithDefender.COURT_DATE
         ? 'Gögn í máli'
         : 'Yfirlit máls'
     } ${theCase.courtCaseNumber}`
@@ -648,7 +667,8 @@ export class NotificationService {
         formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
       theCase.court?.name,
       theCase.courtCaseNumber,
-      theCase.defenderReceivesAccess === DefenderReceivesAccess.COURT_DATE,
+      theCase.requestSharedWithDefender ===
+        RequestSharedWithDefender.COURT_DATE,
     )
     const calendarInvite = this.createICalAttachment(theCase)
 

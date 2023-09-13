@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common'
 
 import {
-  DefenderReceivesAccess,
+  RequestSharedWithDefender,
   completedCaseStates,
 } from '@island.is/judicial-system/types'
 
@@ -44,7 +44,9 @@ describe('Request Shared With Defender Guard', () => {
 
     beforeEach(() => {
       mockRequest.mockImplementationOnce(() => ({
-        case: { defenderReceivesAccess: DefenderReceivesAccess.COURT_DATE },
+        case: {
+          requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+        },
       }))
 
       then = givenWhenThen()
@@ -64,7 +66,7 @@ describe('Request Shared With Defender Guard', () => {
         mockRequest.mockImplementationOnce(() => ({
           case: {
             state,
-            defenderReceivesAccess: DefenderReceivesAccess.COURT_DATE,
+            requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
           },
         }))
 

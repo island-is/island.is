@@ -86,7 +86,7 @@ export const UpdateCaseMutation = gql`
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
-      defenderReceivesAccess
+      requestSharedWithDefender
       isHeightenedSecurityLevel
       court {
         id
@@ -316,7 +316,7 @@ export const LimitedAccessUpdateCaseMutation = gql`
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
-      defenderReceivesAccess
+      requestSharedWithDefender
       court {
         id
         name

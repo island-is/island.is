@@ -10,7 +10,7 @@ import {
   UserRole,
   InstitutionType,
   CaseCustodyRestrictions,
-  DefenderReceivesAccess,
+  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -1393,7 +1393,7 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
     const court = 'Héraðsdómur Norðurlands'
     const courtCaseNumber = 'R-77/2021'
     const overviewUrl = 'https://example.com/overview'
-    const defenderReceivesAccess = DefenderReceivesAccess.COURT_DATE
+    const requestSharedWithDefender = RequestSharedWithDefender.COURT_DATE
 
     // Act
     const res = formatDefenderCourtDateLinkEmailNotification(
@@ -1401,7 +1401,7 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
       overviewUrl,
       court,
       courtCaseNumber,
-      defenderReceivesAccess === DefenderReceivesAccess.COURT_DATE,
+      requestSharedWithDefender === RequestSharedWithDefender.COURT_DATE,
     )
 
     // Assert

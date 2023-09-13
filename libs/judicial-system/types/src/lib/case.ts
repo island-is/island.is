@@ -171,7 +171,7 @@ export enum SessionArrangements {
   NONE_PRESENT = 'NONE_PRESENT',
 }
 
-export enum DefenderReceivesAccess {
+export enum RequestSharedWithDefender {
   READY_FOR_COURT = 'READY_FOR_COURT',
   COURT_DATE = 'COURT_DATE',
 }
@@ -281,7 +281,7 @@ export interface Case {
   appealReceivedByCourtDate?: string
   appealConclusion?: string
   appealRulingDecision?: CaseAppealRulingDecision
-  defenderReceivesAccess?: DefenderReceivesAccess
+  requestSharedWithDefender?: RequestSharedWithDefender
 }
 
 export interface CaseListEntry
@@ -330,6 +330,7 @@ export type CreateCase = Pick<
   | 'defenderPhoneNumber'
   | 'leadInvestigator'
   | 'crimeScenes'
+  | 'requestSharedWithDefender'
 >
 
 export interface UpdateCase
@@ -413,7 +414,7 @@ export interface UpdateCase
   appealJudge1Id?: string
   appealJudge2Id?: string
   appealJudge3Id?: string
-  defenderReceivesAccess?: DefenderReceivesAccess
+  requestSharedWithDefender?: RequestSharedWithDefender
 }
 
 export interface TransitionCase {

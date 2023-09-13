@@ -3,7 +3,7 @@ import { createIntl } from 'react-intl'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { getCaseResubmittedText } from './CaseResubmitModal'
-import { DefenderReceivesAccess } from '@island.is/judicial-system/types'
+import { RequestSharedWithDefender } from '@island.is/judicial-system/types'
 
 describe('getCaseResubmittedText', () => {
   const formatMessage = createIntl({
@@ -16,7 +16,7 @@ describe('getCaseResubmittedText', () => {
   test('should format correctly when court date has been set and defender is set to receive access when the court date is set', () => {
     const theCase = {
       courtDate: '2022-06-13T13:37:00Z',
-      defenderReceivesAccess: DefenderReceivesAccess.COURT_DATE,
+      requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
     } as Case
 
     const res = fn(theCase)
@@ -27,14 +27,14 @@ describe('getCaseResubmittedText', () => {
   })
 
   it.each`
-    courtDate                 | defenderReceivesAccess
-    ${undefined}              | ${DefenderReceivesAccess.COURT_DATE}
+    courtDate                 | requestSharedWithDefender
+    ${undefined}              | ${RequestSharedWithDefender.COURT_DATE}
     ${'2022-06-13T13:37:00Z'} | ${undefined}
     ${undefined}              | ${undefined}
   `(
     'should not include section about notification',
-    ({ courtDate, defenderReceivesAccess }) => {
-      const theCase = { courtDate, defenderReceivesAccess } as Case
+    ({ courtDate, requestSharedWithDefender }) => {
+      const theCase = { courtDate, requestSharedWithDefender } as Case
 
       const res = fn(theCase)
 

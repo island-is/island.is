@@ -12,7 +12,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
   CaseType,
-  DefenderReceivesAccess,
+  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 import type {
   IndictmentSubtypeMap,
@@ -63,9 +63,9 @@ export class CreateCaseDto {
   readonly defenderPhoneNumber?: string
 
   @IsOptional()
-  @IsEnum(DefenderReceivesAccess)
-  @ApiPropertyOptional({ enum: DefenderReceivesAccess })
-  readonly defenderReceivesAccess?: DefenderReceivesAccess
+  @IsEnum(RequestSharedWithDefender)
+  @ApiPropertyOptional({ enum: RequestSharedWithDefender })
+  readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @IsOptional()
   @IsString()

@@ -20,7 +20,7 @@ import {
   SessionArrangements,
   CourtDocument,
   CaseType,
-  DefenderReceivesAccess,
+  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 import type {
   IndictmentSubtypeMap,
@@ -71,9 +71,9 @@ export class UpdateCaseDto {
   readonly defenderPhoneNumber?: string
 
   @IsOptional()
-  @IsEnum(DefenderReceivesAccess)
-  @ApiPropertyOptional({ enum: DefenderReceivesAccess })
-  readonly defenderReceivesAccess?: DefenderReceivesAccess
+  @IsEnum(RequestSharedWithDefender)
+  @ApiPropertyOptional({ enum: RequestSharedWithDefender })
+  readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @IsOptional()
   @IsBoolean()

@@ -680,6 +680,27 @@ export function formatCourtIndictmentReadyForCourtEmailNotification(
   return { body, subject }
 }
 
+export function formatDefenderReadyForCourtEmailNotification(
+  formatMessage: FormatMessage,
+  theCase: Case,
+  overviewUrl?: string,
+) {
+  const subject = formatMessage(notifications.defenderReadyForCourtSubject, {
+    courtCaseNumber: theCase.courtCaseNumber,
+  })
+
+  const body = formatMessage(notifications.defenderReadyForCourtBody)
+
+  const link = formatMessage(notifications.defenderLink, {
+    defenderHasAccessToRvg: Boolean(overviewUrl),
+    courtName: theCase.court?.name?.replace('dómur', 'dómi') ?? 'Héraðsdómi',
+    linkStart: `<a href="${overviewUrl}">`,
+    linkEnd: '</a>',
+  })
+
+  return { subject, body: `${body}${link}` }
+}
+
 export const formatDefenderRoute = (
   baseUrl: string,
   type: string,

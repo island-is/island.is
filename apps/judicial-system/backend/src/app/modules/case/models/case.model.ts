@@ -25,7 +25,7 @@ import {
   CourtDocument,
   CaseOrigin,
   CaseAppealState,
-  DefenderReceivesAccess,
+  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 import type {
   IndictmentSubtypeMap,
@@ -187,10 +187,10 @@ export class Case extends Model {
   @Column({
     type: DataType.ENUM,
     allowNull: true,
-    values: Object.values(DefenderReceivesAccess),
+    values: Object.values(RequestSharedWithDefender),
   })
-  @ApiPropertyOptional({ enum: DefenderReceivesAccess })
-  defenderReceivesAccess?: DefenderReceivesAccess
+  @ApiPropertyOptional({ enum: RequestSharedWithDefender })
+  requestSharedWithDefender?: RequestSharedWithDefender
 
   /**********
    * Indicates whether the secutity level of the case has been heightened -

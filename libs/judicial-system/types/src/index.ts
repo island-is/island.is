@@ -62,7 +62,7 @@ export {
   CaseAppealDecision,
   CaseDecision,
   CaseAppealRulingDecision,
-  DefenderReceivesAccess,
+  RequestSharedWithDefender,
   SessionArrangements,
   restrictionCases,
   investigationCases,

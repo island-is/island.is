@@ -6,7 +6,7 @@ module.exports = {
       queryInterface
         .addColumn(
           'case',
-          'defender_receives_access',
+          'request_shared_with_defender',
           {
             type: Sequelize.ENUM('READY_FOR_COURT', 'COURT_DATE'),
             allowNull: true,
@@ -15,7 +15,7 @@ module.exports = {
         )
         .then(() =>
           queryInterface.sequelize.query(
-            `UPDATE "case" SET defender_receives_access = 'COURT_DATE' WHERE send_request_to_defender = true`,
+            `UPDATE "case" SET request_shared_with_defender = 'COURT_DATE' WHERE send_request_to_defender = true`,
             { transaction },
           ),
         )
@@ -41,18 +41,18 @@ module.exports = {
         )
         .then(() =>
           queryInterface.sequelize.query(
-            `UPDATE "case" SET send_request_to_defender = true WHERE defender_receives_access = 'COURT_DATE'`,
+            `UPDATE "case" SET send_request_to_defender = true WHERE request_shared_with_defender = 'COURT_DATE'`,
             { transaction },
           ),
         )
         .then(() =>
-          queryInterface.removeColumn('case', 'defender_receives_access', {
+          queryInterface.removeColumn('case', 'request_shared_with_defender', {
             transaction,
           }),
         )
         .then(() =>
           queryInterface.sequelize.query(
-            'DROP TYPE IF EXISTS enum_case_defender_receives_access',
+            'DROP TYPE IF EXISTS enum_case_request_shared_with_defender',
             { transaction },
           ),
         ),

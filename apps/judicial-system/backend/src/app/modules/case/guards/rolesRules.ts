@@ -16,7 +16,7 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'defenderNationalId',
   'defenderEmail',
   'defenderPhoneNumber',
-  'defenderReceivesAccess',
+  'requestSharedWithDefender',
   'isHeightenedSecurityLevel',
   'courtId',
   'leadInvestigator',

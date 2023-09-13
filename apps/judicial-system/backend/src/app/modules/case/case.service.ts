@@ -140,7 +140,7 @@ export interface UpdateCase
     | 'appealJudge3Id'
     | 'appealConclusion'
     | 'appealRulingDecision'
-    | 'defenderReceivesAccess'
+    | 'requestSharedWithDefender'
   > {
   type?: CaseType
   state?: CaseState
