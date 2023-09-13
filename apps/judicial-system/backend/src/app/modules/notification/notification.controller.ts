@@ -23,7 +23,7 @@ import {
   judgeRule,
   prosecutorRule,
   registrarRule,
-  representativeRule,
+  prosecutorRepresentativeRule,
   assistantRule,
 } from '../../guards'
 import {
@@ -85,7 +85,7 @@ export class NotificationController {
   @UseGuards(CaseReadGuard)
   @RolesRules(
     prosecutorRule,
-    representativeRule,
+    prosecutorRepresentativeRule,
     judgeRule,
     registrarRule,
     assistantRule,
