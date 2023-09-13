@@ -46,7 +46,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
   const [isButtonVisible, setIsButtonVisible] = useState(false)
 
   useEffect(() => {
-    if (Object.keys(namespace).length === 0 || loading) {
+    if (Object.keys(namespace).length === 0) {
       return () => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore make web strict
