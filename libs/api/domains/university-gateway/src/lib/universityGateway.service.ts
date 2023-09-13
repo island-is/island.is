@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { ProgramApi } from '@island.is/clients/university-gateway-api'
+import {
+  ProgramApi,
+  ProgramControllerGetProgramsDegreeTypeEnum,
+  ProgramControllerGetProgramsSeasonEnum,
+} from '@island.is/clients/university-gateway-api'
 import { GetProgramByIdInput, ProgramsPaginated } from './graphql/dto'
 import { GetProgramsInput } from './graphql/dto/getPrograms.input'
 import { ProgramDetails } from './graphql/models'
@@ -23,9 +27,10 @@ class UniversityGatewayApi {
       after: input.after,
       active: input.active,
       year: input.year,
-      season: input.season,
+      season: input.season as unknown as ProgramControllerGetProgramsSeasonEnum,
       universityId: input.universityId,
-      degreeType: input.degreeType,
+      degreeType:
+        input.degreeType as unknown as ProgramControllerGetProgramsDegreeTypeEnum,
     })
 
     return {

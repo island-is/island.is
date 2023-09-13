@@ -1,7 +1,4 @@
-import {
-  ProgramControllerGetProgramsDegreeTypeEnum,
-  ProgramControllerGetProgramsSeasonEnum,
-} from '@island.is/clients/university-gateway-api'
+import { DegreeType, Season } from '@island.is/university-gateway-types'
 import { Field, InputType } from '@nestjs/graphql'
 
 export
@@ -22,12 +19,12 @@ class GetProgramsInput {
   @Field()
   year?: number
 
-  @Field(() => ProgramControllerGetProgramsSeasonEnum, { nullable: true })
-  season?: ProgramControllerGetProgramsSeasonEnum
+  @Field(() => Season, { nullable: true })
+  season?: Season
 
   @Field()
   universityId?: string
 
-  @Field(() => ProgramControllerGetProgramsDegreeTypeEnum, { nullable: true })
-  degreeType?: ProgramControllerGetProgramsDegreeTypeEnum
+  @Field(() => DegreeType, { nullable: true })
+  degreeType?: DegreeType
 }
