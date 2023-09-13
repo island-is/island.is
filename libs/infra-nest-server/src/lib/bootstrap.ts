@@ -116,7 +116,7 @@ function generateSchema(filePath: string, document: OpenAPIObject) {
 export const bootstrap = async (
   options: RunServerOptions,
 ): Promise<InfraNestServer> => {
-  const argv = yargs.option('generateSchema', {
+  const argv = await yargs.option('generateSchema', {
     description: 'Generate OpenAPI schema into the specified file',
     type: 'string',
   }).argv
