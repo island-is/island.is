@@ -4,7 +4,9 @@
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
     "types": ["jest", "node"],
-    "jsx": "react"
+    "jsx": "react",
+    "composite": true,
+    "noEmit": false
   },
   "include": [
     "**/*.spec.ts",

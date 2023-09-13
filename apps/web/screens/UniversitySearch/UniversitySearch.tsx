@@ -45,6 +45,7 @@ import Fuse from 'fuse.js'
 import { SearchProducts } from '@island.is/web/utils/useUniversitySearch'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { theme } from '@island.is/island-ui/theme'
+import { GET_UNIVERSITY_GATEWAY_PROGRAM_LIST } from '../queries/UniversityGateway'
 
 const ITEMS_PER_PAGE = 8
 const NUMBER_OF_FILTERS = 6
@@ -111,7 +112,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const [filteredResults, setFilteredResults] = useState<
     Array<Fuse.FuseResult<any>>
   >(
-    data.map((item, index) => {
+    data.map((item: any, index: number) => {
       return { item, refIndex: index, score: 1 }
     }),
   )
@@ -122,7 +123,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE)
 
   useEffect(() => {
-    const comparison = JSON.parse(localStorage.getItem('comparison'))
+    const comp = localStorage.getItem('comparison')
+    const comparison = JSON.parse(!!comp ? comp : '')
     const viewChoice = localStorage.getItem('viewChoice')
     if (!!comparison) {
       setSelectedComparison(comparison)
@@ -153,10 +155,11 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const fuseInstance = new Fuse(data, fuseOptions)
 
   useEffect(() => {
-    let activeFiltersFound = []
+    let activeFiltersFound: Array<{ key: string; value: Array<string> }> = []
     Object.keys(filters).forEach(function (key, index) {
-      if (filters[key].length > 0) {
-        activeFiltersFound.push({ key, value: filters[key] })
+      let str = key as keyof typeof filters
+      if (filters[str].length > 0) {
+        activeFiltersFound.push({ key, value: filters[str] })
       }
     })
     //if no filters are active, then show no products
@@ -175,7 +178,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
   const resetFilteredList = () => {
     const resultProducts: Array<Fuse.FuseResult<any>> = data.map(
-      (item, index) => {
+      (item: any, index: number) => {
         return { item, refIndex: index, score: 1 }
       },
     )
@@ -197,15 +200,16 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }
 
   const handleFilters = (filterKey: string, filterValue: string) => {
-    if (filters[filterKey].includes(filterValue)) {
-      const index = filters[filterKey].indexOf(filterValue)
-      const specificArray = filters[filterKey]
+    let str = filterKey as keyof typeof filters
+    if (filters[str].includes(filterValue)) {
+      const index = filters[str].indexOf(filterValue)
+      const specificArray = filters[str]
       specificArray.splice(index, 1)
       setFilters({ ...filters, [filterKey]: specificArray })
     } else {
       setFilters({
         ...filters,
-        [filterKey]: [...filters[filterKey], filterValue],
+        [filterKey]: [...filters[str], filterValue],
       })
     }
   }
@@ -254,7 +258,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     localStorage.setItem('viewChoice', gridView ? 'true' : 'false')
   }, [gridView])
 
-  const predefinedFilterOpenings = []
+  const predefinedFilterOpenings: Array<boolean> = []
   for (var x = 0; x < NUMBER_OF_FILTERS; x++) {
     predefinedFilterOpenings.push(true)
   }
@@ -708,14 +712,16 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                       //   [categoryId]: [],
                       // }))
                     }}
-                    categories={mockFiltering.map((filter) => {
-                      return {
-                        id: 'blabla',
-                        label: filter.label,
-                        selected: [],
-                        filters: filter.options,
-                      }
-                    })}
+                    categories={mockFiltering.map(
+                      (filter: { label: string; options: Array<string> }) => {
+                        return {
+                          id: 'blabla',
+                          label: filter.label,
+                          selected: [],
+                          filters: filter.options,
+                        }
+                      },
+                    )}
                   ></FilterMultiChoice>
                 </Filter>
               </Box>
@@ -1171,16 +1177,11 @@ UniversitySearch.getProps = async ({ apolloClient, locale }) => {
   //   throw new CustomNextError(404, 'Vacancies on Ísland.is are turned off')
   // }
 
-  // const vacanciesResponse = await apolloClient.query<
-  //   GetIcelandicGovernmentInstitutionVacanciesQuery,
-  //   GetIcelandicGovernmentInstitutionVacanciesQueryVariables
-  // >({
-  //   query: GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES,
-  //   variables: {
-  //     input: {},
-  //   },
-  // })
+  const newResponse = await apolloClient.query<any, any>({
+    query: GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
+  })
 
+  console.log('newResponse', newResponse)
   // const vacancies =
   //   vacanciesResponse.data.icelandicGovernmentInstitutionVacancies.vacancies
 
