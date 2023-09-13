@@ -51,8 +51,8 @@ import {
   judgeRule,
   prosecutorRule,
   registrarRule,
-  representativeRule,
-  staffRule,
+  prosecutorRepresentativeRule,
+  prisonSystemStaffRule,
   assistantRule,
   defenderRule,
 } from '../../guards'
@@ -71,8 +71,8 @@ import {
   prosecutorUpdateRule,
   registrarTransitionRule,
   registrarUpdateRule,
-  representativeTransitionRule,
-  representativeUpdateRule,
+  prosecutorRepresentativeTransitionRule,
+  prosecutorRepresentativeUpdateRule,
   assistantUpdateRule,
   assistantTransitionRule,
 } from './guards/rolesRules'
@@ -120,7 +120,7 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(prosecutorRule, representativeRule)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Post('case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   async create(
@@ -139,7 +139,7 @@ export class CaseController {
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorUpdateRule,
-    representativeUpdateRule,
+    prosecutorRepresentativeUpdateRule,
     judgeUpdateRule,
     registrarUpdateRule,
     assistantUpdateRule,
@@ -244,7 +244,7 @@ export class CaseController {
   @UseGuards(JwtAuthGuard, CaseExistsGuard, RolesGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorTransitionRule,
-    representativeTransitionRule,
+    prosecutorRepresentativeTransitionRule,
     judgeTransitionRule,
     registrarTransitionRule,
     assistantTransitionRule,
@@ -340,11 +340,11 @@ export class CaseController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(
     prosecutorRule,
-    representativeRule,
+    prosecutorRepresentativeRule,
     judgeRule,
     registrarRule,
     assistantRule,
-    staffRule,
+    prisonSystemStaffRule,
     defenderRule,
   )
   @Get('cases')
@@ -363,11 +363,11 @@ export class CaseController {
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
   @RolesRules(
     prosecutorRule,
-    representativeRule,
+    prosecutorRepresentativeRule,
     judgeRule,
     registrarRule,
     assistantRule,
-    staffRule,
+    prisonSystemStaffRule,
   )
   @Get('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
@@ -414,7 +414,7 @@ export class CaseController {
   )
   @RolesRules(
     prosecutorRule,
-    representativeRule,
+    prosecutorRepresentativeRule,
     judgeRule,
     registrarRule,
     assistantRule,
@@ -456,7 +456,7 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
   )
-  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, prisonSystemStaffRule)
   @Get('case/:caseId/courtRecord')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -485,7 +485,7 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
   )
-  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, prisonSystemStaffRule)
   @Get('case/:caseId/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -511,7 +511,7 @@ export class CaseController {
     new CaseTypeGuard([CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY]),
     CaseReadGuard,
   )
-  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, prisonSystemStaffRule)
   @Get('case/:caseId/custodyNotice')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -547,7 +547,7 @@ export class CaseController {
   )
   @RolesRules(
     prosecutorRule,
-    representativeRule,
+    prosecutorRepresentativeRule,
     judgeRule,
     registrarRule,
     assistantRule,

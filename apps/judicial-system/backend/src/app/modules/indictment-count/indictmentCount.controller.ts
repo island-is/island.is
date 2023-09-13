@@ -20,7 +20,7 @@ import {
 
 import { IndictmentCountService } from './indictmentCount.service'
 import { CaseExistsGuard, CaseWriteGuard } from '../case'
-import { prosecutorRule, representativeRule } from '../../guards'
+import { prosecutorRule, prosecutorRepresentativeRule } from '../../guards'
 import { IndictmentCount } from './models/indictmentCount.model'
 import { IndictmentCountExistsGuard } from './guards/indictmentCountExists.guard'
 import { UpdateIndictmentCountDto } from './dto/updateIndictmentCount.dto'
@@ -36,7 +36,7 @@ export class IndictmentCountController {
   ) {}
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard)
-  @RolesRules(prosecutorRule, representativeRule)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Post()
   @ApiCreatedResponse({
     type: IndictmentCount,
@@ -49,7 +49,7 @@ export class IndictmentCountController {
   }
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard, IndictmentCountExistsGuard)
-  @RolesRules(prosecutorRule, representativeRule)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Patch(':indictmentCountId')
   @ApiOkResponse({
     type: IndictmentCount,
@@ -72,7 +72,7 @@ export class IndictmentCountController {
   }
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard, IndictmentCountExistsGuard)
-  @RolesRules(prosecutorRule, representativeRule)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Delete(':indictmentCountId')
   @ApiOkResponse({ description: 'Deletes an indictment count' })
   async delete(
