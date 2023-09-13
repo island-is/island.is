@@ -36,7 +36,7 @@ export const AccessListHeader = ({ validityPeriod }: AccessListHeaderProps) => {
         {validityPeriod && (
           <Box textAlign="right">
             <Text {...commonTextProps}>
-              {formatMessage(m.validToTranslation)}
+              {formatMessage(m.validTo)}
               {` ${formatDelegationDate(validityPeriod)}`}
             </Text>
           </Box>
@@ -44,9 +44,7 @@ export const AccessListHeader = ({ validityPeriod }: AccessListHeaderProps) => {
       </Box>
       {!validityPeriod && (
         <Box {...commonItemProps} paddingRight={2}>
-          <Text {...commonTextProps}>
-            {formatMessage(m.validToTranslation)}
-          </Text>
+          <Text {...commonTextProps}>{formatMessage(m.validTo)}</Text>
         </Box>
       )}
     </>

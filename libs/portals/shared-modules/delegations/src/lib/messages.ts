@@ -205,8 +205,8 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:close-modal',
     defaultMessage: 'Loka glugga',
   },
-  validToTranslation: {
-    id: 'sp.settings-access-control:access-valid-to',
+  validTo: {
+    id: 'sp.access-control-delegations:access-valid-to',
     defaultMessage: 'Í gildi til',
   },
 })
