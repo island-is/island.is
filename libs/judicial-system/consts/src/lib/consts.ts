@@ -68,6 +68,10 @@ export const InvestigationCaseTypes = [
         value: CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
       },
       {
+        label: 'Rof á reynslulausn',
+        value: CaseType.PROBATION_DISMISSAL,
+      },
+      {
         label: 'Upplýsingar um vefnotkun',
         value: CaseType.INTERNET_USAGE,
       },
