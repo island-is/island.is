@@ -1,16 +1,8 @@
-import yargs from 'yargs'
-import { hideBin } from 'yargs/helpers'
+import { processJob } from '@island.is/infra-nest-server'
 
-const argv = yargs(hideBin(process.argv))
-  .option('job', {
-    string: true,
-    choices: ['worker', 'server'],
-    description:
-      'Indicate if application-system-api should run as a worker or server',
-  })
-  .parseSync()
+const job = processJob()
 
-if (argv.job === 'worker') {
+if (job === 'worker') {
   import('./worker').then((app) => {
     app.worker()
   })
