@@ -28,11 +28,15 @@ export enum Features {
   servicePortalHealthCenterDentistPage = 'isServicePortalHealthCenterPageEnabled',
   servicePortalWorkMachinesModule = 'isServicePortalWorkMachinesPageEnabled',
 
+  //Occupational License Health directorate fetch enabled
+  occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
+
   //License service new drivers license client enabled
   licenseServiceDrivingLicenseClient = 'isLicenseServiceDrivingLicenceClientV2Enabled',
 
   // Application delegation flags
   isFishingLicenceCustomDelegationEnabled = 'isFishingLicenceCustomDelegationEnabled',
+  transportAuthorityApplicationsCustomDelegation = 'isTransportAuthorityApplicationsCustomDelegationEnabled',
 
   //Application system
   applicationSystemHistory = 'applicationSystemHistory',

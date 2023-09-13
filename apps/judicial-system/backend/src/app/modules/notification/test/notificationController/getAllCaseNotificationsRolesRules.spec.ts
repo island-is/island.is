@@ -2,7 +2,7 @@ import {
   judgeRule,
   prosecutorRule,
   registrarRule,
-  representativeRule,
+  prosecutorRepresentativeRule,
   assistantRule,
 } from '../../../../guards'
 import { NotificationController } from '../../notification.controller'
@@ -21,7 +21,7 @@ describe('NotificationController - Get all case notifications rules', () => {
   it('should give permission to five roles', () => {
     expect(rules).toHaveLength(5)
     expect(rules).toContain(prosecutorRule)
-    expect(rules).toContain(representativeRule)
+    expect(rules).toContain(prosecutorRepresentativeRule)
     expect(rules).toContain(judgeRule)
     expect(rules).toContain(registrarRule)
     expect(rules).toContain(assistantRule)
