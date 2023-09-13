@@ -125,6 +125,9 @@
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],
+      "@island.is/api/domains/housing-benefit-calculator": [
+        "libs/api/domains/housing-benefit-calculator/src/index.ts"
+      ],
       "@island.is/api/domains/icelandic-government-institution-vacancies": [
         "libs/api/domains/icelandic-government-institution-vacancies/src/index.ts"
       ],
@@ -151,6 +154,9 @@
       ],
       "@island.is/api/domains/national-registry-x-road": [
         "libs/api/domains/national-registry-x-road/src/index.ts"
+      ],
+      "@island.is/api/domains/occupational-licenses": [
+        "libs/api/domains/occupational-licenses/src/index.ts"
       ],
       "@island.is/api/domains/passport": [
         "libs/api/domains/passport/src/index.ts"
@@ -494,6 +500,12 @@
         "libs/clients/fishing-license/src/index.ts"
       ],
       "@island.is/clients/fiskistofa": ["libs/clients/fiskistofa/src/index.ts"],
+      "@island.is/clients/health-directorate": [
+        "libs/clients/health-directorate/src/index.ts"
+      ],
+      "@island.is/clients/housing-benefit-calculator": [
+        "libs/clients/housing-benefit-calculator/src/index.ts"
+      ],
       "@island.is/clients/icelandic-government-institution-vacancies": [
         "libs/clients/icelandic-government-institution-vacancies/src/index.ts"
       ],
@@ -795,6 +807,9 @@
       ],
       "@island.is/service-portal/modules": [
         "libs/service-portal/modules/src/index.ts"
+      ],
+      "@island.is/service-portal/occupational-licenses": [
+        "libs/service-portal/occupational-licenses/src/index.ts"
       ],
       "@island.is/service-portal/petitions": [
         "libs/service-portal/petitions/src/index.ts"

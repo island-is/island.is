@@ -63,8 +63,8 @@ export class PersonResolver {
   ): Promise<Array<Custodian> | null> {
     return this.service.getCustodians(
       person.nationalId,
-      person,
       user.nationalId,
+      person,
     )
   }
 

@@ -1,6 +1,17 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
+
+import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  CaseDecision,
+  CaseState,
+  isRestrictionCase,
+} from '@island.is/judicial-system/types'
+import { core } from '@island.is/judicial-system-web/messages'
+import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 import {
   CaseDates,
   FormContext,
@@ -8,21 +19,12 @@ import {
   OverviewHeader,
   RestrictionTags,
 } from '@island.is/judicial-system-web/src/components'
-import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
-import { core } from '@island.is/judicial-system-web/messages'
-import { formatDate } from '@island.is/judicial-system/formatters'
-import {
-  CaseDecision,
-  CaseState,
-  isRestrictionCase,
-} from '@island.is/judicial-system/types'
-import * as constants from '@island.is/judicial-system/consts'
-import {
-  UserRole,
-  CaseAppealDecision,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
+import {
+  CaseAppealDecision,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+
 import { courtOfAppealCaseOverviewHeader as strings } from './CaseOverviewHeader.strings'
 
 const CourtOfAppealCaseOverviewHeader: React.FC<

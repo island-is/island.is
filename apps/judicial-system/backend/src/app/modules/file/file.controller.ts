@@ -30,7 +30,7 @@ import {
   judgeRule,
   prosecutorRule,
   registrarRule,
-  representativeRule,
+  prosecutorRepresentativeRule,
   assistantRule,
 } from '../../guards'
 import {
@@ -68,7 +68,7 @@ export class FileController {
   @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorRule,
-    representativeRule,
+    prosecutorRepresentativeRule,
     registrarRule,
     judgeRule,
     assistantRule,
@@ -91,7 +91,7 @@ export class FileController {
   @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorRule,
-    representativeRule,
+    prosecutorRepresentativeRule,
     registrarRule,
     judgeRule,
     assistantRule,
@@ -120,7 +120,7 @@ export class FileController {
   )
   @RolesRules(
     prosecutorRule,
-    representativeRule,
+    prosecutorRepresentativeRule,
     judgeRule,
     registrarRule,
     assistantRule,
@@ -143,7 +143,12 @@ export class FileController {
   }
 
   @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard, CaseFileExistsGuard)
-  @RolesRules(prosecutorRule, representativeRule, registrarRule, judgeRule)
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    registrarRule,
+    judgeRule,
+  )
   @Delete('file/:fileId')
   @ApiOkResponse({
     type: DeleteFileResponse,
@@ -192,7 +197,7 @@ export class FileController {
     CaseWriteGuard,
     CaseNotCompletedGuard,
   )
-  @RolesRules(prosecutorRule, representativeRule)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Patch('files')
   @ApiOkResponse({
     type: CaseFile,

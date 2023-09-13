@@ -1,8 +1,8 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
+import { useWindowSize } from 'react-use'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
-import { useWindowSize } from 'react-use'
-import { useIntl } from 'react-intl'
 
 import {
   Box,
@@ -87,7 +87,11 @@ const FormFooter: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
               {props.nextButtonText ?? formatMessage(core.continue)}
             </Button>
           )}
-          {props.infoBoxText && <InfoBox text={props.infoBoxText} fluid />}
+          {props.infoBoxText && (
+            <div className={styles.infoBoxContainer}>
+              <InfoBox text={props.infoBoxText} />
+            </div>
+          )}
         </Box>
       )}
     </Box>
