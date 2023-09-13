@@ -128,6 +128,10 @@ const ProjectPage: Screen<PageProps> = ({
   const bottomSlices =
     (!subpage ? projectPage?.bottomSlices : subpage.bottomSlices) ?? []
 
+  const displayWebReader =
+    projectPage?.slug !==
+    n('webReaderNotDisplayedOnSlug', 'gagnasidur-fiskistofu')
+
   return (
     <>
       <HeadWithSocialSharing
@@ -146,7 +150,7 @@ const ProjectPage: Screen<PageProps> = ({
         sidebarNavigationTitle={navigationTitle}
         withSidebar={projectPage?.sidebar}
       >
-        {!subpage && (
+        {!subpage && displayWebReader && (
           <Webreader
             marginTop={0}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -160,6 +164,14 @@ const ProjectPage: Screen<PageProps> = ({
             <Text as="h1" variant="h1">
               {subpage.title}
             </Text>
+            {displayWebReader && (
+              <Webreader
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                readId={null}
+                readClass="rs_read"
+              />
+            )}
             {subpage.content &&
               webRichText(subpage.content as SliceType[], {
                 renderComponent: {
