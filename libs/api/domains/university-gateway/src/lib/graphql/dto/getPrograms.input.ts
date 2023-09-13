@@ -4,25 +4,25 @@ import { Field, InputType } from '@nestjs/graphql'
 export
 @InputType()
 class GetProgramsInput {
-  @Field()
+  @Field({ nullable: true })
   limit?: number
 
-  @Field()
+  @Field({ nullable: true })
   before?: string
 
-  @Field()
+  @Field({ nullable: true })
   after?: string
 
-  @Field()
+  @Field({ nullable: true })
   active?: boolean
 
-  @Field()
+  @Field({ nullable: true })
   year?: number
 
   @Field(() => Season, { nullable: true })
   season?: Season
 
-  @Field()
+  @Field({ nullable: true })
   universityId?: string
 
   @Field(() => DegreeType, { nullable: true })

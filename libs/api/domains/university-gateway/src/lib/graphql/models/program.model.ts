@@ -70,7 +70,7 @@ class Program {
   @Field()
   durationInYears!: number
 
-  @Field()
+  @Field({ nullable: true })
   costPerYear?: number
 
   @Field()
@@ -89,28 +89,28 @@ class Program {
 export
 @ObjectType('ProgramDetails')
 class ProgramDetails extends Program {
-  @Field()
+  @Field({ nullable: true })
   externalUrlIs?: string
 
-  @Field()
+  @Field({ nullable: true })
   externalUrlEn?: string
 
-  @Field()
+  @Field({ nullable: true })
   admissionRequirementsIs?: string
 
-  @Field()
+  @Field({ nullable: true })
   admissionRequirementsEn?: string
 
-  @Field()
+  @Field({ nullable: true })
   studyRequirementsIs?: string
 
-  @Field()
+  @Field({ nullable: true })
   studyRequirementsEn?: string
 
-  @Field()
+  @Field({ nullable: true })
   costInformationIs?: string
 
-  @Field()
+  @Field({ nullable: true })
   costInformationEn?: string
 
   @Field(() => [ProgramCourse])
@@ -137,22 +137,22 @@ class ProgramCourse {
   @Field()
   credits!: number
 
-  @Field()
+  @Field({ nullable: true })
   semesterYear?: number
 
   @Field(() => Season)
   semesterSeason!: Season
 
-  @Field()
+  @Field({ nullable: true })
   descriptionIs?: string
 
-  @Field()
+  @Field({ nullable: true })
   descriptionEn?: string
 
-  @Field()
+  @Field({ nullable: true })
   externalUrlIs?: string
 
-  @Field()
+  @Field({ nullable: true })
   externalUrlEn?: string
 
   @Field(() => Requirement)
@@ -179,13 +179,13 @@ class ProgramTag {
 //   @Field()
 //   nameIs!: string
 
-//   @Field()
+//   @Field({ nullable: true })
 //   nameEn?: string
 
-//   @Field()
+//   @Field({ nullable: true })
 //   descriptionIs?: string
 
-//   @Field()
+//   @Field({ nullable: true })
 //   descriptionEn?: string
 
 //   @Field()
@@ -194,6 +194,6 @@ class ProgramTag {
 //   @Field(() => FieldType)
 //   fieldType!: FieldType
 
-//   @Field()
+//   @Field({ nullable: true })
 //   uploadAcceptedFileType?: string
 // }
