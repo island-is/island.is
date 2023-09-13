@@ -7,7 +7,7 @@ import { olMessage as om } from '../lib/messages'
 type LicenseDetailProps = {
   title?: string | null
   intro?: string | null
-  img?: string | null
+  serviceProviderID?: string | null
   name?: string | null
   dateOfBirth?: string | null
   profession?: string | null
@@ -21,7 +21,7 @@ type LicenseDetailProps = {
 export const LicenseDetail: React.FC<LicenseDetailProps> = ({
   title,
   intro,
-  img,
+  serviceProviderID,
   buttonGroup,
   name,
   dateOfBirth,
@@ -38,7 +38,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
       <IntroHeader
         title={title ? title : om.occupationalLicense}
         intro={intro ? intro : undefined}
-        img={img ? img : undefined}
+        serviceProviderID={serviceProviderID}
         buttonGroup={buttonGroup}
       />
       <Stack dividers space="auto">
