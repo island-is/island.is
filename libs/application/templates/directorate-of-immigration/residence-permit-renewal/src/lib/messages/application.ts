@@ -36,13 +36,23 @@ export const application = defineMessages({
       'Description of application state/status when application is processed',
   },
   radioOptionYes: {
-    id: 'doi.cs.application:information.labels.radioButtons.radioYes',
+    id: 'doi.cs.application:radioYes',
     defaultMessage: 'Já',
     description: 'Yes option on radio button',
   },
   radioOptionNo: {
-    id: 'doi.cs.application:information.labels.radioButtons.radioNo',
+    id: 'doi.cs.application:radioNo',
     defaultMessage: 'Nei',
     description: 'No option on radio button',
+  },
+  acceptedFileTypes: {
+    id: 'doi.cs.application:acceptedFileTypes.',
+    defaultMessage: 'Tekið er við skjölum með endingu: .pdf, .docx, .rtf',
+    description: 'Text for accepted file types of file inputs',
+  },
+  uploadFileButtonText: {
+    id: 'doi.cs.application:uploadFileButtonText.',
+    defaultMessage: 'Velja skjöl til að hlaða upp',
+    description: 'Text for button in file input box',
   },
 })

@@ -1,9 +1,10 @@
 import {
   buildDescriptionField,
   buildMultiField,
+  buildRadioField,
   buildSection,
 } from '@island.is/application/core'
-import { agent } from '../../../lib/messages'
+import { agent, application } from '../../../lib/messages'
 
 export const AgentSection = buildSection({
   id: 'agent',
@@ -14,10 +15,19 @@ export const AgentSection = buildSection({
       title: agent.labels.pageTitle,
       description: agent.labels.description,
       children: [
-        buildDescriptionField({
+        buildRadioField({
           id: 'agent.title',
           title: agent.labels.title,
-          titleVariant: 'h5',
+          options: [
+            {
+              label: application.radioOptionNo,
+              value: 'NO',
+            },
+            {
+              label: application.radioOptionYes,
+              value: 'YES',
+            },
+          ],
         }),
       ],
     }),

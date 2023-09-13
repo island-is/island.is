@@ -3,8 +3,10 @@ import {
   buildSubSection,
   buildDescriptionField,
   getValueViaPath,
+  buildCustomField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
+import { Application } from '@island.is/application/types'
 
 export const EmploymentSubSection = (index: number) =>
   buildSubSection({
@@ -35,7 +37,19 @@ export const EmploymentSubSection = (index: number) =>
       buildMultiField({
         id: 'employmentMultiField',
         title: information.labels.employment.pageTitle,
-        description: information.labels.employment.description,
+        description: (application: Application) => {
+          const applicantName = getValueViaPath(
+            application.externalData,
+            'nationalRegistry.data.fullName',
+            '',
+          ) as string
+          return {
+            ...information.labels.employment.description,
+            values: {
+              name: applicantName,
+            },
+          }
+        },
         children: [
           buildDescriptionField({
             id: 'employment.title',
@@ -85,6 +99,12 @@ export const EmploymentSubSection = (index: number) =>
 
               return isWorkPermitTypeSpecial
             },
+          }),
+
+          buildCustomField({
+            id: 'employment.selectedEmployments',
+            title: '',
+            component: 'Employment',
           }),
         ],
       }),

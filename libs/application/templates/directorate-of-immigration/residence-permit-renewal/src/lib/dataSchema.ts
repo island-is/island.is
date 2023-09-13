@@ -48,6 +48,54 @@ const CriminalRecordSchema = z.object({
   selectedCriminalCountries: z.array(RemoveableCriminalRecordSchema).optional(),
 })
 
+export const RemoveableEmploymentSchema = z
+  .object({
+    name: z.string(),
+    country: z.string().optional(),
+    dateFrom: z.string().optional(),
+    dateTo: z.string().optional(),
+    applicationFile: z.string().optional(),
+    employmentContract: z.string().optional(),
+    typeOfEmployment: z.string().optional(),
+    wasRemoved: z.string().optional(),
+  })
+  .refine(
+    ({ wasRemoved, country }) => {
+      return wasRemoved === 'true' || (country && country.length > 0)
+    },
+    {
+      path: ['country'],
+    },
+  )
+  .refine(
+    ({ wasRemoved, name }) => {
+      return wasRemoved === 'true' || (name && name.length > 0)
+    },
+    {
+      path: ['name'],
+    },
+  )
+  .refine(
+    ({ wasRemoved, dateTo }) => {
+      return wasRemoved === 'true' || (dateTo && dateTo.length > 0)
+    },
+    {
+      path: ['dateTo'],
+    },
+  )
+  .refine(
+    ({ wasRemoved, dateFrom }) => {
+      return wasRemoved === 'true' || (dateFrom && dateFrom.length > 0)
+    },
+    {
+      path: ['dateFrom'],
+    },
+  )
+
+const EmploymentSchema = z.object({
+  selectedEmployments: z.array(RemoveableEmploymentSchema).optional(),
+})
+
 export const RemoveableStayAbroadSchema = z
   .object({
     countryId: z.string(),

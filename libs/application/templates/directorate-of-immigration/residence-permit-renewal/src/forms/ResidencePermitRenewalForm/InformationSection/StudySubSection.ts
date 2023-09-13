@@ -6,6 +6,7 @@ import {
   buildCustomField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
+import { Application } from '@island.is/application/types'
 
 export const StudySubSection = (index: number) =>
   buildSubSection({
@@ -26,7 +27,19 @@ export const StudySubSection = (index: number) =>
       buildMultiField({
         id: 'studyMultiField',
         title: information.labels.study.pageTitle,
-        description: information.labels.study.description,
+        description: (application: Application) => {
+          const applicantName = getValueViaPath(
+            application.externalData,
+            'nationalRegistry.data.fullName',
+            '',
+          ) as string
+          return {
+            ...information.labels.study.description,
+            values: {
+              name: applicantName,
+            },
+          }
+        },
         children: [
           buildCustomField({
             id: 'study',

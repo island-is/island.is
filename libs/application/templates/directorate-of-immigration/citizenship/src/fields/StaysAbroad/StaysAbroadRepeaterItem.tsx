@@ -136,9 +136,9 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
           <Column>
             <DatePickerController
               id={dateFromField}
-              label={
-                information.labels.staysAbroad.dateFromLabel.defaultMessage
-              }
+              label={formatMessage(
+                information.labels.staysAbroad.dateFromLabel,
+              )}
               error={errors && getErrorViaPath(errors, dateFromField)}
               onChange={(value) =>
                 addDataToCountryList('dateFrom', value as string, index)
@@ -149,7 +149,7 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
           <Column>
             <DatePickerController
               id={dateToField}
-              label={information.labels.staysAbroad.dateToLabel.defaultMessage}
+              label={formatMessage(information.labels.staysAbroad.dateToLabel)}
               error={errors && getErrorViaPath(errors, dateToField)}
               onChange={(value) =>
                 addDataToCountryList('dateTo', value as string, index)
@@ -161,7 +161,7 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
       </Box>
       <InputController
         id={purposeField}
-        label={information.labels.staysAbroad.purposeLabel.defaultMessage}
+        label={formatMessage(information.labels.staysAbroad.purposeLabel)}
         rows={4}
         textarea
         error={errors && getErrorViaPath(errors, purposeField)}

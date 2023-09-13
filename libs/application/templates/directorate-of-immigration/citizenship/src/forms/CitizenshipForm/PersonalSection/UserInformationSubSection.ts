@@ -120,6 +120,8 @@ export const UserInformationSubSection = buildSubSection({
               undefined,
             ) as UserProfile | undefined
 
+            // const strippedMobileNumber = userProfile?.mobilePhoneNumber.
+
             return userProfile?.mobilePhoneNumber
           },
         }),
