@@ -634,6 +634,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:permission-description',
     defaultMessage: 'Description',
   },
+  permissionAlreadyExists: {
+    id: 'ap.ids-admin:permission-already-exists',
+    defaultMessage: 'Permission ID already exists',
+  },
   permissionDescriptionInfo: {
     id: 'ap.ids-admin:permission-description-info',
     defaultMessage: 'Users see this when they sign in, and manage consents.',
