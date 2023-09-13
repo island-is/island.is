@@ -1203,7 +1203,8 @@ const useSections = (
         name: formatMessage(sections.courtOfAppealSection.appealed),
         isActive:
           user?.institution?.type !== InstitutionType.COURT_OF_APPEALS &&
-          workingCase.appealState === CaseAppealState.RECEIVED,
+          (workingCase.appealState === CaseAppealState.RECEIVED ||
+            workingCase.appealState === CaseAppealState.APPEALED),
         children: [],
       },
       {
