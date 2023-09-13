@@ -10,11 +10,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { Screen } from '../../types'
-import {
-  linkResolver,
-  useFeatureFlag,
-  useNamespace,
-} from '@island.is/web/hooks'
+import { linkResolver, useNamespace } from '@island.is/web/hooks'
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { GET_PROJECT_PAGE_QUERY } from '@island.is/web/screens/queries/Project'
@@ -61,10 +57,6 @@ const ProjectPage: Screen<PageProps> = ({
   stepOptionsFromNamespace,
   locale,
 }) => {
-  const { value: isWebReaderEnabledForProjectPages } = useFeatureFlag(
-    'isWebReaderEnabledForProjectPages',
-    false,
-  )
   const n = useNamespace(namespace)
   const p = useNamespace(projectNamespace)
 
@@ -154,7 +146,7 @@ const ProjectPage: Screen<PageProps> = ({
         sidebarNavigationTitle={navigationTitle}
         withSidebar={projectPage?.sidebar}
       >
-        {!subpage && isWebReaderEnabledForProjectPages && (
+        {!subpage && (
           <Webreader
             marginTop={0}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -168,14 +160,14 @@ const ProjectPage: Screen<PageProps> = ({
             <Text as="h1" variant="h1">
               {subpage.title}
             </Text>
-            {isWebReaderEnabledForProjectPages && (
-              <Webreader
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
-                readId={null}
-                readClass="rs_read"
-              />
-            )}
+
+            <Webreader
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              readId={null}
+              readClass="rs_read"
+            />
+
             {subpage.content &&
               webRichText(subpage.content as SliceType[], {
                 renderComponent: {
