@@ -1,3 +1,4 @@
+import * as data from './lib/jsonStuff/data'
 export * from './lib/ApplicationForm'
 export * from './types'
 
@@ -11,3 +12,6 @@ export {
   useHeaderInfo,
 } from './context/HeaderInfoProvider'
 export { DelegationsScreen } from './components/DelegationsScreen'
+export { JFormShell } from './lib/JFormShell'
+
+export default data

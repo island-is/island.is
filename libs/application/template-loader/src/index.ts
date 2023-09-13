@@ -72,6 +72,7 @@ export async function getApplicationUIFields(
   templateId: ApplicationTypes,
 ): Promise<UIFields> {
   const templateLib = await loadTemplateLib(templateId)
+
   if (templateLib.getFields) {
     return await templateLib.getFields()
   }

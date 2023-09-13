@@ -36,6 +36,41 @@ export const Application = () => {
       applicationId={id}
       nationalRegistryId={nationalRegistryId}
       slug={slug}
+      useJSON={false}
+    />
+  )
+}
+
+export const JApplication = () => {
+  const { slug, id } = useParams() as UseParams
+  const { userInfo } = useAuth()
+  const { formatMessage } = useLocale()
+  const nationalRegistryId = userInfo?.profile?.nationalId
+  console.log(nationalRegistryId)
+  console.log('helllro')
+  /*if (!id || !slug) {
+    console.log('helllro2')
+    return <ErrorShell errorType="notFound" />
+  }*/
+
+  console.log('helllro3')
+  if (!nationalRegistryId) {
+    console.log('helllro4')
+    return (
+      <ErrorShell
+        errorType="notFound"
+        title={formatMessage(coreMessages.notLoggedIn)}
+        subTitle={formatMessage(coreMessages.notLoggedInDescription)}
+      />
+    )
+  }
+  console.log('helllro5')
+  return (
+    <ApplicationForm
+      applicationId={id}
+      nationalRegistryId={nationalRegistryId}
+      slug={slug}
+      useJSON={true}
     />
   )
 }
