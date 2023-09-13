@@ -1,109 +1,199 @@
-import { ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 import {
-  Course as ICourse,
-  CourseSemesterSeasonEnum,
-  Program as IProgram,
-  ProgramCourse as IProgramCourse,
-  ProgramCourseRequirementEnum,
-  ProgramDetails as IProgramDetails,
-  ProgramExtraApplicationField as IProgramExtraApplicationField,
-  ProgramModeOfDelivery as IProgramModeOfDelivery,
-  ProgramTag as IProgramTag,
-  Tag as ITag,
-  ProgramModeOfDeliveryModeOfDeliveryEnum,
-  ProgramExtraApplicationFieldFieldTypeEnum,
-} from '@island.is/clients/university-gateway-api'
-import { DegreeType, Season } from '@island.is/university-gateway-types'
+  DegreeType,
+  // FieldType,
+  ModeOfDelivery,
+  Requirement,
+  Season,
+} from '@island.is/university-gateway-types'
+
+registerEnumType(DegreeType, { name: 'DegreeType' })
+// registerEnumType(FieldType, { name: 'FieldType' })
+registerEnumType(ModeOfDelivery, { name: 'ModeOfDelivery' })
+registerEnumType(Requirement, { name: 'Requirement' })
+registerEnumType(Season, { name: 'Season' })
 
 export
 @ObjectType('Program')
-class Program /*implements IProgram*/ {
+class Program {
+  @Field()
   id!: string
+
+  @Field()
   externalId!: string
+
+  @Field()
   active!: boolean
+
+  @Field()
   nameIs!: string
+
+  @Field()
   nameEn!: string
+
+  @Field()
   universityId!: string
+
+  @Field()
   departmentNameIs!: string
+
+  @Field()
   departmentNameEn!: string
+
+  @Field()
   startingSemesterYear!: number
+
+  @Field(() => Season)
   startingSemesterSeason!: Season
+
+  @Field()
   applicationStartDate!: Date
+
+  @Field()
   applicationEndDate!: Date
+
+  @Field(() => DegreeType)
   degreeType!: DegreeType
+
+  @Field()
   degreeAbbreviation!: string
+
+  @Field()
   credits!: number
+
+  @Field()
   descriptionIs!: string
+
+  @Field()
   descriptionEn!: string
+
+  @Field()
   durationInYears!: number
+
+  @Field()
   costPerYear?: number
+
+  @Field()
   iscedCode!: string
+
+  @Field(() => [String])
   searchKeywords!: string[]
+
+  @Field(() => [ProgramTag])
   tag!: ProgramTag[]
-  modeOfDelivery!: ProgramModeOfDelivery[]
+
+  @Field(() => [ModeOfDelivery])
+  modeOfDelivery!: ModeOfDelivery[]
 }
 
 export
 @ObjectType('ProgramDetails')
-class ProgramDetails extends Program /*implements IProgramDetails*/ {
+class ProgramDetails extends Program {
+  @Field()
   externalUrlIs?: string
+
+  @Field()
   externalUrlEn?: string
+
+  @Field()
   admissionRequirementsIs?: string
+
+  @Field()
   admissionRequirementsEn?: string
+
+  @Field()
   studyRequirementsIs?: string
+
+  @Field()
   studyRequirementsEn?: string
+
+  @Field()
   costInformationIs?: string
+
+  @Field()
   costInformationEn?: string
+
+  @Field(() => [ProgramCourse])
   courses!: ProgramCourse[]
-  extraApplicationField!: ProgramExtraApplicationField[]
+
+  // @Field(() => [ProgramExtraApplicationField])
+  // extraApplicationField!: ProgramExtraApplicationField[]
 }
 
 @ObjectType('ProgramCourse')
-class ProgramCourse implements IProgramCourse {
-  details!: Course
-  requirement!: ProgramCourseRequirementEnum
-}
-
-@ObjectType('Course')
-class Course implements ICourse {
+class ProgramCourse {
+  @Field()
   id!: string
+
+  @Field()
   externalId!: string
+
+  @Field()
   nameIs!: string
+
+  @Field()
   nameEn!: string
-  universityId!: string
+
+  @Field()
   credits!: number
+
+  @Field()
   semesterYear?: number
-  semesterSeason!: CourseSemesterSeasonEnum
+
+  @Field(() => Season)
+  semesterSeason!: Season
+
+  @Field()
   descriptionIs?: string
+
+  @Field()
   descriptionEn?: string
+
+  @Field()
   externalUrlIs?: string
+
+  @Field()
   externalUrlEn?: string
+
+  @Field(() => Requirement)
+  requirement!: Requirement
 }
 
 @ObjectType('ProgramTag')
-class ProgramTag implements IProgramTag {
-  tagId!: string
-  details!: Tag
-}
+class ProgramTag {
+  @Field()
+  id!: string
 
-@ObjectType('Tag')
-class Tag implements ITag {
+  @Field()
   code!: string
+
+  @Field()
   nameIs!: string
+
+  @Field()
   nameEn!: string
 }
 
-@ObjectType('ProgramModeOfDelivery')
-class ProgramModeOfDelivery implements IProgramModeOfDelivery {
-  modeOfDelivery!: ProgramModeOfDeliveryModeOfDeliveryEnum
-}
+// @ObjectType('ProgramExtraApplicationField')
+// class ProgramExtraApplicationField {
+//   @Field()
+//   nameIs!: string
 
-class ProgramExtraApplicationField implements IProgramExtraApplicationField {
-  nameIs!: string
-  nameEn?: string
-  descriptionIs?: string
-  descriptionEn?: string
-  required!: boolean
-  fieldType!: ProgramExtraApplicationFieldFieldTypeEnum
-  uploadAcceptedFileType?: string
-}
+//   @Field()
+//   nameEn?: string
+
+//   @Field()
+//   descriptionIs?: string
+
+//   @Field()
+//   descriptionEn?: string
+
+//   @Field()
+//   required!: boolean
+
+//   @Field(() => FieldType)
+//   fieldType!: FieldType
+
+//   @Field()
+//   uploadAcceptedFileType?: string
+// }

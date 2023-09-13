@@ -116,6 +116,7 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 import { WorkMachinesModule } from '@island.is/api/domains/work-machines'
+import { UniversityGatewayApiModule } from '@island.is/api/domains/university-gateway'
 import { AuditModule } from '@island.is/nest/audit'
 import {
   ConfigModule,
@@ -275,6 +276,7 @@ const environment = getConfig
     TransportAuthorityApiModule,
     UniversityOfIcelandModule,
     WorkMachinesModule,
+    UniversityGatewayApiModule,
     SessionsModule,
     AuthAdminModule,
     ConfigModule.forRoot({
