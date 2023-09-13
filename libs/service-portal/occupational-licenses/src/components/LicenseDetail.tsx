@@ -1,7 +1,6 @@
 import { Stack, Box, Icon, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { IntroHeader } from '@island.is/portals/core'
-import { UserInfoLine } from '@island.is/service-portal/core'
+import { IntroHeader, UserInfoLine } from '@island.is/service-portal/core'
 import { olMessage as om } from '../lib/messages'
 
 type LicenseDetailProps = {
@@ -38,7 +37,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
       <IntroHeader
         title={title ? title : om.occupationalLicense}
         intro={intro ? intro : undefined}
-        serviceProviderID={serviceProviderID}
+        serviceProviderID={serviceProviderID ?? undefined}
         buttonGroup={buttonGroup}
       />
       <Stack dividers space="auto">
