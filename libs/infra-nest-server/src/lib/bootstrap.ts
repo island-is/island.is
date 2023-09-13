@@ -1,14 +1,12 @@
-import '@island.is/infra-tracing'
-import type { Server } from 'http'
-import { NestFactory } from '@nestjs/core'
-import cookieParser from 'cookie-parser'
-import bodyParser from 'body-parser'
 import { INestApplication, ValidationPipe } from '@nestjs/common'
-import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
-import yaml from 'js-yaml'
-import * as yargs from 'yargs'
-import * as fs from 'fs'
+import { NestFactory } from '@nestjs/core'
 import { NestExpressApplication } from '@nestjs/platform-express'
+import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
+import bodyParser from 'body-parser'
+import cookieParser from 'cookie-parser'
+import * as fs from 'fs'
+import type { Server } from 'http'
+import yaml from 'js-yaml'
 
 import {
   logger,
@@ -16,6 +14,8 @@ import {
   monkeyPatchServerLogging,
 } from '@island.is/logging'
 import { getServerPort, startMetricServer } from '@island.is/infra-metrics'
+import '@island.is/infra-tracing'
+
 import { httpRequestDurationMiddleware } from './httpRequestDurationMiddleware'
 import { InfraModule } from './infra/infra.module'
 import { swaggerRedirectMiddleware } from './swaggerMiddlewares'
@@ -116,21 +116,10 @@ function generateSchema(filePath: string, document: OpenAPIObject) {
 export const bootstrap = async (
   options: RunServerOptions,
 ): Promise<InfraNestServer> => {
-  const argv = await yargs.option('generateSchema', {
-    description: 'Generate OpenAPI schema into the specified file',
-    type: 'string',
-  }).argv
-
   const app = await createApp(options)
 
   if (options.openApi) {
     const document = setupOpenApi(app, options.openApi, options.swaggerPath)
-
-    if (argv.generateSchema) {
-      generateSchema(argv.generateSchema, document)
-      await app.close()
-      process.exit()
-    }
   }
 
   if (options.interceptors) {
