@@ -1,40 +1,10 @@
 import { validatePermissionId } from './validatePermissionId'
+import { invalidIds, validIds } from './validateIdMockData'
 
-describe('validateClientId', () => {
-  it('should be valid client id', () => {
+describe('validatePermissionId', () => {
+  it('should be valid permission id', () => {
     const validArr = [
-      {
-        prefix: '@island.is',
-        value: '@island.is/island',
-      },
-      {
-        prefix: '@island.is',
-        value: '@island.is/island-is',
-      },
-      {
-        prefix: '@island.is',
-        value: '@island.is/island-is-other',
-      },
-      {
-        prefix: '@island.is',
-        value: '@island.is/island_is',
-      },
-      {
-        prefix: '@island.is',
-        value: '@island.is/island_is_other',
-      },
-      {
-        prefix: '@island.is',
-        value: '@island.is/island.is',
-      },
-      {
-        prefix: '@island.is',
-        value: '@island.is/island.is.com',
-      },
-      {
-        prefix: '@island.is',
-        value: '@island.is/island_is.com-other',
-      },
+      ...validIds,
       {
         prefix: '@island.is',
         value: '@island.is/island_is.com-other:other',
@@ -46,43 +16,8 @@ describe('validateClientId', () => {
     })
   })
 
-  it('should be invalid client id', () => {
-    const invalidArr = [
-      {
-        prefix: '@island.is',
-        value: '@island.isisland-is',
-      },
-      {
-        prefix: '@island.is',
-        value: '@island/islandis',
-      },
-      {
-        prefix: '@island.is',
-        value: '@island.is/islandis"',
-      },
-      {
-        prefix: '@island.is',
-        value: '@island.is/_islandis',
-      },
-      {
-        prefix: '@island.is',
-        value: '@island.is/.islandis',
-      },
-      {
-        prefix: '@island.is',
-        value: '@island.is/-islandis',
-      },
-      {
-        prefix: '@island.is',
-        value: '@island.is/island=is',
-      },
-      {
-        prefix: '@island.is',
-        value: '@island.is/island!is',
-      },
-    ]
-
-    invalidArr.forEach((invalid) => {
+  it('should be invalid permission id', () => {
+    invalidIds.forEach((invalid) => {
       expect(validatePermissionId(invalid)).toBe(false)
     })
   })
