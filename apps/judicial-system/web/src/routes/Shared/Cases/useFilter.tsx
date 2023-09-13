@@ -80,7 +80,7 @@ export function filterOptionsForUser(
 ) {
   return options.filter((option) => {
     if (
-      user?.role === UserRole.REPRESENTATIVE ||
+      user?.role === UserRole.PROSECUTOR_REPRESENTATIVE ||
       user?.role === UserRole.ASSISTANT
     ) {
       return option.value !== 'INVESTIGATION'

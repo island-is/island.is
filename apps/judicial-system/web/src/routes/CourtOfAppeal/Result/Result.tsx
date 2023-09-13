@@ -6,7 +6,6 @@ import * as constants from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
-  AppealConclusion,
   CaseFilesAccordionItem,
   Conclusion,
   FormContentContainer,
@@ -17,6 +16,7 @@ import {
   PageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
@@ -143,14 +143,14 @@ const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
           ) : null}
           <Box marginBottom={6}>
             <Conclusion
+              title={formatMessage(conclusion.title)}
               conclusionText={workingCase.conclusion}
-              judgeName={workingCase.judge?.name}
             />
           </Box>
           <Box marginBottom={6}>
-            <AppealConclusion
+            <Conclusion
+              title={formatMessage(conclusion.appealTitle)}
               conclusionText={workingCase.appealConclusion}
-              judgeName={workingCase.appealJudge1?.name}
             />
           </Box>
           <CaseFilesOverview />
