@@ -357,6 +357,12 @@ const HearingArrangements = () => {
               }
             }}
             onSecondaryButtonClick={() => {
+              sendNotification(
+                workingCase.id,
+                NotificationType.COURT_DATE,
+                true,
+              )
+
               router.push(`${navigateTo}/${workingCase.id}`)
             }}
             primaryButtonText={formatMessage(m.modal.primaryButtonText)}
