@@ -173,6 +173,10 @@ export const m = defineMessages({
     id: 'service.portal:get-as-csv',
     defaultMessage: 'Sækja CSV',
   },
+  getDocument: {
+    id: 'service.portal:get-document',
+    defaultMessage: 'Sækja skjal',
+  },
   getAsExcel: {
     id: 'service.portal:get-as-excel',
     defaultMessage: 'Sækja Excel',
