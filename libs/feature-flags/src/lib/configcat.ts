@@ -7,54 +7,47 @@ import {
 import {
   FeatureFlagClient,
   FeatureFlagUser,
-  FeatureFlagClientProps,
   SettingValue,
   SettingTypeOf,
+  ConfigCatModule,
+  FeatureFlagClientProps,
 } from './types'
-import { getConfigCatModule } from './utils'
+import { SDK_KEY_ERROR } from './constants'
 
-export class Client implements FeatureFlagClient {
-  private configcat: IConfigCatClient
+export const createFeatureFlagClient = (
+  config: FeatureFlagClientProps,
+  moduleProvider: () => ConfigCatModule,
+): FeatureFlagClient => {
+  const resolvedSdkKey = config.sdkKey || process.env.CONFIGCAT_SDK_KEY
 
-  private constructor(client: IConfigCatClient) {
-    this.configcat = client
+  if (!resolvedSdkKey) {
+    throw new Error(SDK_KEY_ERROR)
   }
 
-  static async create(config: FeatureFlagClientProps): Promise<Client> {
-    const resolvedSdkKey = config.sdkKey ?? process.env.CONFIGCAT_SDK_KEY
-    if (!resolvedSdkKey) {
-      throw new Error(
-        'Trying to initialize configcat client without CONFIGCAT_SDK_KEY environment variable.',
+  const ccConfig: IAutoPollOptions = {
+    dataGovernance: DataGovernance.EuOnly,
+  }
+
+  const client: IConfigCatClient = moduleProvider().getClient(
+    resolvedSdkKey,
+    PollingMode.AutoPoll,
+    ccConfig,
+  )
+
+  return {
+    dispose: () => {
+      client.dispose()
+    },
+    getValue: async <T extends SettingValue>(
+      key: string,
+      defaultValue: T,
+      user?: FeatureFlagUser,
+    ): Promise<SettingTypeOf<T>> => {
+      return await client.getValueAsync(
+        key,
+        defaultValue,
+        user ? { identifier: user.id, custom: user.attributes } : undefined,
       )
-    }
-
-    const ccConfig: IAutoPollOptions = {
-      dataGovernance: DataGovernance.EuOnly,
-    }
-
-    const configCatModule = await getConfigCatModule()
-    const client = configCatModule.getClient(
-      resolvedSdkKey,
-      PollingMode.AutoPoll,
-      ccConfig,
-    )
-
-    return new Client(client)
-  }
-
-  dispose() {
-    this.configcat.dispose()
-  }
-
-  async getValue<T extends SettingValue>(
-    key: string,
-    defaultValue: T,
-    user: FeatureFlagUser,
-  ): Promise<SettingTypeOf<T>> {
-    return await this.configcat.getValueAsync(
-      key,
-      defaultValue,
-      user ? { identifier: user.id, custom: user.attributes } : undefined,
-    )
+    },
   }
 }
