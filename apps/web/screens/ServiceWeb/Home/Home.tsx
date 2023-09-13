@@ -201,7 +201,11 @@ const Home: Screen<HomeProps> = ({
                         offset={[null, null, null, '1/12']}
                         span={['12/12', '12/12', '12/12', '10/12']}
                       >
-                        <Box marginTop={[4, 4, 8]} paddingX={[4, 4, 14]}>
+                        <Box
+                          marginTop={[4, 4, 4]}
+                          marginBottom={[4, 4, 8]}
+                          paddingX={[4, 4, 14]}
+                        >
                           {serviceWebPage?.slices?.map((slice) => {
                             return (
                               <SliceMachine
