@@ -128,9 +128,8 @@ const ProjectPage: Screen<PageProps> = ({
   const bottomSlices =
     (!subpage ? projectPage?.bottomSlices : subpage.bottomSlices) ?? []
 
-  const displayWebReader =
-    projectPage?.slug !==
-    n('projectPageSlugWhereWebReaderIsNotDisplayed', 'gagnasidur-fiskistofu')
+  const shouldDisplayWebReader =
+    projectNamespace?.shouldDisplayWebReader ?? true
 
   return (
     <>
@@ -150,7 +149,7 @@ const ProjectPage: Screen<PageProps> = ({
         sidebarNavigationTitle={navigationTitle}
         withSidebar={projectPage?.sidebar}
       >
-        {!subpage && displayWebReader && (
+        {!subpage && shouldDisplayWebReader && (
           <Webreader
             marginTop={0}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -164,7 +163,7 @@ const ProjectPage: Screen<PageProps> = ({
             <Text as="h1" variant="h1">
               {subpage.title}
             </Text>
-            {displayWebReader && (
+            {shouldDisplayWebReader && (
               <Webreader
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore make web strict
