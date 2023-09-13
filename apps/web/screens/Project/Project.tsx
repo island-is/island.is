@@ -130,7 +130,7 @@ const ProjectPage: Screen<PageProps> = ({
 
   const displayWebReader =
     projectPage?.slug !==
-    n('webReaderNotDisplayedOnSlug', 'gagnasidur-fiskistofu')
+    n('projectPageSlugWhereWebReaderIsNotDisplayed', 'gagnasidur-fiskistofu')
 
   return (
     <>
