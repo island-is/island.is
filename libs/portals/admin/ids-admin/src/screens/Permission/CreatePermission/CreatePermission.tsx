@@ -83,7 +83,7 @@ export default function CreatePermission() {
 
   const validateUniqueId = async () => {
     const scopeId = idState.value
-    if (!idState.value) return
+    if (!scopeId) return
 
     await getScopeAvailabilityQuery({
       variables: {
@@ -212,9 +212,7 @@ export default function CreatePermission() {
               {formatMessage(m.cancel)}
             </Button>
             <Button
-              disabled={
-                scopeIdAlreadyExists || scopeAvailabilityData === undefined
-              }
+              disabled={scopeIdAlreadyExists || !scopeAvailabilityData}
               type="submit"
               loading={isLoading || isSubmitting}
             >
