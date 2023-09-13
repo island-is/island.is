@@ -33,6 +33,9 @@ export interface FilterProps {
   /** Filter input component */
   filterInput?: ReactNode
 
+  /** Stretch filter input */
+  stretchInput?: boolean
+
   /** How the filter should be displayed */
   variant?: 'popover' | 'dialog' | 'default'
 
@@ -77,6 +80,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   reverse,
   children,
   popoverFlip = true,
+  stretchInput = false,
 }) => {
   const dialog = useDialogState()
   const popover = usePopoverState({
@@ -96,22 +100,56 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
             width="full"
             justifyContent={align === 'right' ? 'flexEnd' : 'flexStart'}
           >
-            <Inline space={2} reverse={reverse} alignY="bottom">
+            {stretchInput ? (
               <Box
-                component={PopoverDisclosure}
-                background="white"
-                display="inlineBlock"
-                borderRadius="large"
-                tabIndex={-1}
-                {...popover}
+                display="flex"
+                flexGrow={1}
+                flexDirection={reverse ? 'rowReverse' : 'row'}
+                columnGap={2}
               >
-                <Button as="span" variant="utility" icon="filter" fluid nowrap>
-                  {labelOpen}
-                </Button>
+                <Box
+                  component={PopoverDisclosure}
+                  background="white"
+                  display="inlineBlock"
+                  borderRadius="large"
+                  tabIndex={-1}
+                  {...popover}
+                >
+                  <Button
+                    as="span"
+                    variant="utility"
+                    icon="filter"
+                    fluid
+                    nowrap
+                  >
+                    {labelOpen}
+                  </Button>
+                </Box>
+                <Box width="full">{hasFilterInput && filterInput}</Box>
               </Box>
-
-              {hasFilterInput && filterInput}
-            </Inline>
+            ) : (
+              <Inline space={2} reverse={reverse} alignY="bottom">
+                <Box
+                  component={PopoverDisclosure}
+                  background="white"
+                  display="inlineBlock"
+                  borderRadius="large"
+                  tabIndex={-1}
+                  {...popover}
+                >
+                  <Button
+                    as="span"
+                    variant="utility"
+                    icon="filter"
+                    fluid
+                    nowrap
+                  >
+                    {labelOpen}
+                  </Button>
+                </Box>
+                {hasFilterInput && filterInput}
+              </Inline>
+            )}
           </Box>
 
           <Box

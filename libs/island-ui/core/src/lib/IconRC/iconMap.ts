@@ -1,5 +1,6 @@
 export type Type = 'filled' | 'outline'
 export type Icon =
+  | 'archive'
   | 'accessibility'
   | 'add'
   | 'airplane'
@@ -62,6 +63,7 @@ export type Icon =
   | 'school'
   | 'search'
   | 'settings'
+  | 'star'
   | 'time'
   | 'trash'
   | 'volumeHigh'
@@ -79,6 +81,7 @@ export type Icon =
 
 export default {
   filled: {
+    archive: 'Archive',
     accessibility: 'Accessibility',
     add: 'Add',
     airplane: 'Airplane',
@@ -138,6 +141,7 @@ export default {
     reader: 'Reader',
     receipt: 'Receipt',
     removeCircle: 'RemoveCircle',
+    star: 'Star',
     school: 'School',
     search: 'Search',
     settings: 'Settings',
@@ -157,6 +161,7 @@ export default {
     signLanguage: 'SignLanguage',
   },
   outline: {
+    archive: 'ArchiveOutline',
     accessibility: 'AccessibilityOutline',
     add: 'AddOutline',
     airplane: 'Airplane',
@@ -219,6 +224,7 @@ export default {
     school: 'SchoolOutline',
     search: 'SearchOutline',
     settings: 'SettingsOutline',
+    star: 'StarOutline',
     trash: 'TrashOutline',
     volumeHigh: 'VolumeHighOutline',
     volumeMute: 'VolumeMuteOutline',
