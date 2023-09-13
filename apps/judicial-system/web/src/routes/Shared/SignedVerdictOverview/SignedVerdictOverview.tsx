@@ -1,92 +1,91 @@
 import React, { ReactNode, useCallback, useContext, useState } from 'react'
+import { IntlShape, useIntl } from 'react-intl'
+import { SingleValue } from 'react-select'
+import formatISO from 'date-fns/formatISO'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
-import { IntlShape, useIntl } from 'react-intl'
-import formatISO from 'date-fns/formatISO'
-import { SingleValue } from 'react-select'
 
 import {
-  Box,
-  Text,
   Accordion,
-  Button,
   AlertMessage,
+  Box,
+  Button,
+  Text,
   toast,
 } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import {
+  CaseAppealState,
   CaseDecision,
   CaseState,
+  CaseTransition,
+  Feature,
+  isCourtRole,
   isInvestigationCase,
+  isProsecutionRole,
   isRestrictionCase,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
-  isCourtRole,
-  Feature,
-  isProsecutionRole,
-  CaseTransition,
-  CaseAppealState,
 } from '@island.is/judicial-system/types'
-import * as constants from '@island.is/judicial-system/consts'
-import {
-  FormFooter,
-  PageLayout,
-  Modal,
-  InfoCard,
-  CourtRecordAccordionItem,
-  FormContentContainer,
-  PoliceRequestAccordionItem,
-  RulingAccordionItem,
-  CommentsAccordionItem,
-  CaseFilesAccordionItem,
-  CaseDates,
-  FormContext,
-  MarkdownWrapper,
-  RestrictionTags,
-  useRequestRulingSignature,
-  SigningModal,
-  UserContext,
-  Conclusion,
-  FeatureContext,
-  AppealConclusion,
-  AlertBanner,
-  AppealCaseFilesOverview,
-  PageHeader,
-  RulingDateLabel,
-  OverviewHeader,
-} from '@island.is/judicial-system-web/src/components'
-import {
-  useCase,
-  useAppealAlertBanner,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  ReactSelectOption,
-  TempCase as Case,
-  TempUpdateCase as UpdateCase,
-} from '@island.is/judicial-system-web/src/types'
 import {
   core,
+  errors,
   signedVerdictOverview as m,
   titles,
-  errors,
 } from '@island.is/judicial-system-web/messages'
+import {
+  AlertBanner,
+  AppealCaseFilesOverview,
+  CaseDates,
+  CaseFilesAccordionItem,
+  CommentsAccordionItem,
+  Conclusion,
+  CourtRecordAccordionItem,
+  FeatureContext,
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  InfoCard,
+  MarkdownWrapper,
+  Modal,
+  OverviewHeader,
+  PageHeader,
+  PageLayout,
+  PoliceRequestAccordionItem,
+  RestrictionTags,
+  RulingAccordionItem,
+  RulingDateLabel,
+  SigningModal,
+  UserContext,
+  useRequestRulingSignature,
+} from '@island.is/judicial-system-web/src/components'
+import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
 import {
   CaseAppealDecision,
   InstitutionType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  ReactSelectOption,
+  TempCase as Case,
+  TempUpdateCase as UpdateCase,
+} from '@island.is/judicial-system-web/src/types'
+import {
+  useAppealAlertBanner,
+  useCase,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import AppealSection from './Components/AppealSection/AppealSection'
+import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
 import ReopenModal from './Components/ReopenModal/ReopenModal'
-import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ShareCase from './Components/ShareCase/ShareCase'
-
 import { useGetCourtRecordSignatureConfirmationLazyQuery } from './getCourtRecordSignatureConfirmation.generated'
 import { useRequestCourtRecordSignatureMutation } from './requestCourtRecordSignature.generated'
 import { strings } from './SignedVerdictOverview.strings'
-import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 interface ModalControls {
   open: boolean
@@ -692,7 +691,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 />
               </Box>
             )}
-          {user?.role !== UserRole.STAFF && (
+          {user?.role !== UserRole.PRISON_SYSTEM_STAFF && (
             <Box marginBottom={5} data-testid="accordionItems">
               <Accordion>
                 <PoliceRequestAccordionItem workingCase={workingCase} />
@@ -715,15 +714,16 @@ export const SignedVerdictOverview: React.FC = () => {
           )}
           <Box marginBottom={6}>
             <Conclusion
+              title={formatMessage(conclusion.title)}
               conclusionText={workingCase.conclusion}
               judgeName={workingCase.judge?.name}
             />
           </Box>
           {workingCase.appealConclusion && (
             <Box marginBottom={6}>
-              <AppealConclusion
+              <Conclusion
+                title={formatMessage(conclusion.appealTitle)}
                 conclusionText={workingCase.appealConclusion}
-                judgeName={workingCase.appealJudge1?.name}
               />
             </Box>
           )}
