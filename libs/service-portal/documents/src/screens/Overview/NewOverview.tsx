@@ -9,11 +9,11 @@ import {
   GridContainer,
   GridColumn,
   GridRow,
-  PdfViewer,
   Button,
-  Tooltip,
   Hidden,
   SkeletonLoader,
+  ModalBase,
+  Icon,
 } from '@island.is/island-ui/core'
 import {
   useListDocuments,
@@ -24,6 +24,7 @@ import {
   formatPlausiblePathToParams,
   m,
   useScrollTopOnUpdate,
+  Modal,
 } from '@island.is/service-portal/core'
 import {
   DocumentCategory,
@@ -52,6 +53,9 @@ import AvatarImage from '../../components/DocumentLine/AvatarImage'
 import NoPDF from '../../components/NoPDF/NoPDF'
 import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/service-portal/constants'
 import { useUserInfo } from '@island.is/auth/react'
+import { DocumentRenderer } from '../../components/DocumentRenderer'
+import { DocumentHeader } from '../../components/DocumentHeader'
+import { DocumentActionBar } from '../../components/DocumentActionBar'
 
 export type ActiveDocumentType = {
   document: DocumentDetails
@@ -61,6 +65,7 @@ export type ActiveDocumentType = {
   sender: string
   downloadUrl: string
   img?: string
+  categoryId?: string
 }
 
 const GET_DOCUMENT_CATEGORIES = gql`
@@ -98,7 +103,6 @@ export const ServicePortalDocuments = () => {
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [isEmpty, setEmpty] = useState(false)
-  const [scalePDF, setScalePDF] = useState(1.0)
   const navigate = useNavigate()
   const location = useLocation()
   const [activeDocument, setActiveDocument] =
@@ -294,129 +298,6 @@ export const ServicePortalDocuments = () => {
     return debounce(handleSearchChange, 500)
   }, [])
 
-  const downloadFile = async () => {
-    let html: string | undefined = undefined
-    if (activeDocument?.document.html) {
-      html =
-        activeDocument?.document.html.length > 0
-          ? activeDocument?.document.html
-          : undefined
-    }
-    if (html) {
-      setTimeout(() => {
-        const win = window.open('', '_blank')
-        win && html && win.document.write(html)
-        win?.focus()
-      }, 250)
-    } else {
-      // Create form elements
-      const form = document.createElement('form')
-      const documentIdInput = document.createElement('input')
-      const tokenInput = document.createElement('input')
-
-      const token = userInfo?.access_token
-
-      if (!token) return
-
-      form.appendChild(documentIdInput)
-      form.appendChild(tokenInput)
-
-      // Form values
-      form.method = 'post'
-      form.action = activeDocument?.downloadUrl ?? ''
-      form.target = '_blank'
-
-      // Document Id values
-      documentIdInput.type = 'hidden'
-      documentIdInput.name = 'documentId'
-      documentIdInput.value = activeDocument?.id ?? ''
-
-      // National Id values
-      tokenInput.type = 'hidden'
-      tokenInput.name = '__accessToken'
-      tokenInput.value = token
-
-      document.body.appendChild(form)
-      form.submit()
-      document.body.removeChild(form)
-    }
-  }
-
-  const PDF = () => {
-    return (
-      <>
-        <Box
-          className={styles.pdfControls}
-          display="flex"
-          flexDirection="row"
-          paddingBottom={2}
-        >
-          <Tooltip placement="top" as="span" text={formatMessage(m.zoomOut)}>
-            <Button
-              circle
-              icon="remove"
-              variant="ghost"
-              size="small"
-              onClick={() => setScalePDF(0.6 > scalePDF ? 0.5 : scalePDF - 0.1)}
-            />
-          </Tooltip>
-          <Box
-            paddingX={1}
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-          >
-            <Text variant="small">{(scalePDF * 100).toFixed(0) + '%'}</Text>
-          </Box>
-          <Tooltip placement="top" as="span" text={formatMessage(m.zoomIn)}>
-            <Button
-              circle
-              icon="add"
-              variant="ghost"
-              size="small"
-              onClick={() => setScalePDF(scalePDF > 3.9 ? 4 : scalePDF + 0.1)}
-            />
-          </Tooltip>
-          <Box paddingLeft={2}>
-            <Tooltip placement="top" as="span" text={formatMessage(m.download)}>
-              <Button
-                variant="ghost"
-                size="small"
-                circle
-                icon="download"
-                onClick={() => downloadFile()}
-              />
-            </Tooltip>
-          </Box>
-          <Box paddingLeft={2}>
-            <Tooltip placement="top" as="span" text={formatMessage(m.print)}>
-              <Button
-                variant="ghost"
-                size="small"
-                circle
-                icon="print"
-                onClick={() => downloadFile()}
-              />
-            </Tooltip>
-          </Box>
-        </Box>
-        <Box
-          className={styles.pdfPage}
-          height="full"
-          overflow="auto"
-          boxShadow="subtle"
-        >
-          <PdfViewer
-            file={`data:application/pdf;base64,${activeDocument?.document.content}`}
-            showAllPages
-            scale={scalePDF}
-            autoWidth={false}
-          />
-        </Box>
-      </>
-    )
-  }
-
   const GoBack = () => {
     return (
       <Box marginBottom={1} className={styles.btn} printHidden marginY={3}>
@@ -437,13 +318,39 @@ export const ServicePortalDocuments = () => {
 
   return (
     <GridContainer>
-      <Hidden above="md">
-        <GridRow>
-          <GridColumn span="12/12" position="relative">
-            <Box>{activeDocument?.document.content && <Box>{PDF()}</Box>}</Box>
-          </GridColumn>
-        </GridRow>
-      </Hidden>
+      {activeDocument?.document && (
+        <Hidden above="md">
+          <GridRow>
+            <GridColumn span="12/12" position="relative">
+              <Box className={styles.modalBase}>
+                <Box className={styles.modalHeader}>
+                  <DocumentActionBar
+                    onGoBack={() => setActiveDocument(null)}
+                    onArchiveClick={() => console.log('onArchive fired')}
+                    onFavoriteClick={() =>
+                      console.log('replace me with real logic')
+                    }
+                  />
+                </Box>
+                <Box className={styles.modalContent}>
+                  <DocumentHeader
+                    avatar={activeDocument.img}
+                    sender={activeDocument.sender}
+                    date={activeDocument.date}
+                    category={categoriesAvailable.find(
+                      (i) => i.id === activeDocument.categoryId,
+                    )}
+                  />
+                  <Text variant="h3" as="h3" marginBottom={3}>
+                    {activeDocument?.subject}
+                  </Text>
+                  {<DocumentRenderer document={activeDocument} />}
+                </Box>
+              </Box>
+            </GridColumn>
+          </GridRow>
+        </Hidden>
+      )}
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <GoBack />
@@ -499,7 +406,7 @@ export const ServicePortalDocuments = () => {
           </Box>
         </GridColumn>
         <GridColumn span="7/12" position="relative">
-          {activeDocument?.document.content ? (
+          {activeDocument?.document ? (
             <Hidden below="lg">
               <Box
                 marginLeft={8}
@@ -508,20 +415,21 @@ export const ServicePortalDocuments = () => {
                 borderRadius="large"
                 background="white"
               >
-                <Box display="flex">
-                  <AvatarImage img={activeDocument?.img} background="blue100" />
-                  <Box
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="spaceBetween"
-                    marginBottom={4}
-                    marginLeft={2}
-                  >
-                    <Text variant="h5">{activeDocument?.sender}</Text>
-                    <Text variant="medium">{activeDocument?.date}</Text>
-                  </Box>
-                </Box>
-                <Box>{PDF()}</Box>
+                <DocumentHeader
+                  avatar={activeDocument.img}
+                  sender={activeDocument.sender}
+                  date={activeDocument.date}
+                  category={categoriesAvailable.find(
+                    (i) => i.id === activeDocument.categoryId,
+                  )}
+                  actionBar={{
+                    onArchiveClick: () => console.log('onArchive fired'),
+                    onFavoriteClick: () =>
+                      console.log('replace me with real logic'),
+                    onPrintClick: () => console.log('onPrintClick fired'),
+                  }}
+                />
+                <Box>{<DocumentRenderer document={activeDocument} />}</Box>
               </Box>
             </Hidden>
           ) : (

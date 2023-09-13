@@ -77,6 +77,7 @@ export const NewDocumentLine: FC<Props> = ({
         downloadUrl: documentLine.url,
         date: date,
         img,
+        categoryId: documentLine.categoryId ?? undefined,
       })
       window.scrollTo({
         top: 0,

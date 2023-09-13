@@ -96,6 +96,7 @@ const DocumentsFilter = ({
             onChange={debounceChange}
           />
         }
+        stretchInput={true}
         onFilterClear={handleClearFilters}
       >
         <Box
