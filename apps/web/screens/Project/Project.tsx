@@ -160,14 +160,6 @@ const ProjectPage: Screen<PageProps> = ({
             <Text as="h1" variant="h1">
               {subpage.title}
             </Text>
-
-            <Webreader
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
-              readId={null}
-              readClass="rs_read"
-            />
-
             {subpage.content &&
               webRichText(subpage.content as SliceType[], {
                 renderComponent: {
