@@ -30,8 +30,7 @@ describe(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
 
     it('should validate input', () => {
       // should require a valid arrest time
-      cy.getByTestid('datepicker').first()
-      cy.getByTestid('datepicker').type('01.01.2020')
+      cy.getByTestid('datepicker').first().type('01.01.2020')
       cy.clickOutside()
       cy.getByTestid('arrestDate-time').type('13:')
       cy.getByTestid('arrestDate-time').blur()
@@ -43,7 +42,7 @@ describe(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
       cy.getByTestid('arrestDate-time').type('1333')
       cy.getByTestid('inputErrorMessage').should('not.exist')
 
-      // should have a info bubble that explains the what the requested court date means
+      // should have an info bubble that explains what the requested court date means
       cy.getByTestid('requested-court-date-tooltip').trigger('mouseover')
       cy.contains(
         'Dómstóll hefur þennan tíma til hliðsjónar þegar fyrirtökutíma er úthlutað og mun leitast við að taka málið fyrir í tæka tíð en ekki fyrir þennan tíma.',
