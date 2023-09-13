@@ -7,6 +7,8 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ConfigModule } from '@nestjs/config'
 import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
+import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import { environment } from '../environments'
 
 @Module({
   imports: [
@@ -17,11 +19,10 @@ import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
-    //TODO Gunnar skoða
-    // SharedAuthModule.register({
-    //   jwtSecret: environment.auth.jwtSecret,
-    //   secretToken: environment.auth.secretToken,
-    // }),
+    SharedAuthModule.register({
+      jwtSecret: environment.auth.jwtSecret,
+      secretToken: environment.auth.secretToken,
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [IdsClientConfig, XRoadConfig],

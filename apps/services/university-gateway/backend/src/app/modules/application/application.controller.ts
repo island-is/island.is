@@ -1,3 +1,6 @@
+import { UseGuards } from '@nestjs/common'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { UniversityGatewayScope } from '@island.is/auth/scopes'
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
 import { ApplicationService } from './application.service'
 import {
@@ -11,11 +14,13 @@ import {
 import { Application, ApplicationResponse } from './model'
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('Application')
 @Controller('api')
 export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
+  @Scopes(UniversityGatewayScope.main)
   @Get('applications/:id')
   @ApiParam({
     name: 'id',
@@ -34,6 +39,7 @@ export class ApplicationController {
     return this.applicationService.getApplication(id)
   }
 
+  @Scopes(UniversityGatewayScope.main)
   @Post('applications')
   @ApiBody({
     type: CreateApplicationDto,
@@ -51,6 +57,7 @@ export class ApplicationController {
     return this.applicationService.createApplication(applicationDto)
   }
 
+  @Scopes(UniversityGatewayScope.main)
   @Patch('applications/:id')
   @ApiParam({
     name: 'id',

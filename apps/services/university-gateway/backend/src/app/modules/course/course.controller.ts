@@ -1,3 +1,9 @@
+import { UseGuards } from '@nestjs/common'
+import {
+  BypassAuth,
+  IdsUserGuard,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 import { Controller, Get, Param, Query } from '@nestjs/common'
 import { CourseService } from './course.service'
 import {
@@ -9,11 +15,13 @@ import {
 } from '@nestjs/swagger'
 import { CourseDetailsResponse, CourseResponse } from './model'
 
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('Course')
 @Controller('api')
 export class CourseController {
   constructor(private readonly courseService: CourseService) {}
 
+  @BypassAuth()
   @Get('courses')
   @ApiQuery({
     name: 'limit',
@@ -64,6 +72,7 @@ export class CourseController {
     )
   }
 
+  @BypassAuth()
   @Get('courses/:id')
   @ApiParam({
     name: 'id',

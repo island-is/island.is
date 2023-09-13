@@ -1,7 +1,10 @@
+import { UseGuards } from '@nestjs/common'
+import { TokenGuard } from '@island.is/judicial-system/auth'
 import { Controller, Post } from '@nestjs/common'
 import { ApiNoContentResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { InternalProgramService } from './internalProgram.service'
 
+@UseGuards(TokenGuard)
 @ApiTags('Internal program')
 @Controller('api/internal')
 export class InternalProgramController {

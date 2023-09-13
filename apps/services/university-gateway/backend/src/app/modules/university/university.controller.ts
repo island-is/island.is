@@ -1,13 +1,21 @@
+import { UseGuards } from '@nestjs/common'
+import {
+  BypassAuth,
+  IdsUserGuard,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 import { Controller, Get } from '@nestjs/common'
 import { UniversityService } from './university.service'
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { UniversityResponse } from './model'
 
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('University')
 @Controller('api')
 export class UniversityController {
   constructor(private readonly universityService: UniversityService) {}
 
+  @BypassAuth()
   @Get('universities')
   @ApiOkResponse({
     type: UniversityResponse,
