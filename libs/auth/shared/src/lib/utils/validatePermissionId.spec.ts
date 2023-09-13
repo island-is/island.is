@@ -1,4 +1,4 @@
-import { validateClientId } from './validateClientId'
+import { validatePermissionId } from './validatePermissionId'
 
 describe('validateClientId', () => {
   it('should be valid client id', () => {
@@ -35,10 +35,14 @@ describe('validateClientId', () => {
         prefix: '@island.is',
         value: '@island.is/island_is.com-other',
       },
+      {
+        prefix: '@island.is',
+        value: '@island.is/island_is.com-other:other',
+      },
     ]
 
     validArr.forEach((valid) => {
-      expect(validateClientId(valid)).toBe(true)
+      expect(validatePermissionId(valid)).toBe(true)
     })
   })
 
@@ -76,14 +80,10 @@ describe('validateClientId', () => {
         prefix: '@island.is',
         value: '@island.is/island!is',
       },
-      {
-        prefix: '@island.is',
-        value: '@island.is/island_is.com-other:other',
-      },
     ]
 
     invalidArr.forEach((invalid) => {
-      expect(validateClientId(invalid)).toBe(false)
+      expect(validatePermissionId(invalid)).toBe(false)
     })
   })
 })
