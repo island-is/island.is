@@ -645,9 +645,7 @@ export class NotificationService {
   ): Promise<Recipient>[] {
     const subject = `Fyrirtaka í máli ${theCase.courtCaseNumber}`
     const linkSubject = `${
-      theCase.requestSharedWithDefender === RequestSharedWithDefender.COURT_DATE
-        ? 'Gögn í máli'
-        : 'Yfirlit máls'
+      theCase.requestSharedWithDefender ? 'Gögn í máli' : 'Yfirlit máls'
     } ${theCase.courtCaseNumber}`
     const html = formatDefenderCourtDateEmailNotification(
       this.formatMessage,

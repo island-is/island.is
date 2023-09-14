@@ -269,16 +269,13 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 {formatMessage(strings.documentHeading)}
               </Text>
               <Box>
-                {(workingCase.requestSharedWithDefender ===
-                  RequestSharedWithDefender.COURT_DATE ||
-                  completedCaseStates.includes(workingCase.state)) && (
-                  <PdfButton
-                    renderAs="row"
-                    caseId={workingCase.id}
-                    title={formatMessage(core.pdfButtonRequest)}
-                    pdfType={'limitedAccess/request'}
-                  />
-                )}
+                <PdfButton
+                  renderAs="row"
+                  caseId={workingCase.id}
+                  title={formatMessage(core.pdfButtonRequest)}
+                  pdfType={'limitedAccess/request'}
+                />
+
                 {completedCaseStates.includes(workingCase.state) && (
                   <>
                     <PdfButton
