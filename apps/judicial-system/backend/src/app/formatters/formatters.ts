@@ -686,10 +686,12 @@ export function formatDefenderReadyForCourtEmailNotification(
   overviewUrl?: string,
 ) {
   const subject = formatMessage(notifications.defenderReadyForCourtSubject, {
-    courtCaseNumber: theCase.courtCaseNumber,
+    policeCaseNumber: theCase.policeCaseNumbers?.[0],
   })
 
-  const body = formatMessage(notifications.defenderReadyForCourtBody)
+  const body = formatMessage(notifications.defenderReadyForCourtBody, {
+    policeCaseNumber: theCase.policeCaseNumbers?.[0],
+  })
 
   const link = formatMessage(notifications.defenderLink, {
     defenderHasAccessToRvg: Boolean(overviewUrl),

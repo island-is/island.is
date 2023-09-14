@@ -105,21 +105,21 @@ export const notifications = {
   }),
   defenderReadyForCourtSubject: defineMessage({
     id: 'judicial.system.backend:notifications.defender_ready_for_court.subject',
-    defaultMessage: 'Gögn í máli {courtCaseNumber}',
+    defaultMessage: 'Krafa í máli {policeCaseNumber}',
     description:
       'Notaður sem titill í pósti til verjanda þegar ný krafa er tilbúin til afgreiðslu',
   }),
   defenderReadyForCourtBody: defineMessage({
     id: 'judicial.system.backend:notifications.defender_ready_for_court.body',
     defaultMessage:
-      'Sækjandi hefur valið að deila kröfu með þér sem verjanda sakbornings í máli.',
+      'Sækjandi hefur valið að deila kröfu með þér sem verjanda varnaraðila í máli {policeCaseNumber}.',
     description:
       'Notaður sem texti í pósti til verjanda þegar ný krafa er tilbúin til afgreiðslu',
   }),
   defenderLink: defineMessage({
     id: 'judicial.system.backend:notifications.defender_link',
     defaultMessage:
-      '<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {Þú getur nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}}.',
+      '<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast málið hjá {courtName}} other {Þú getur nálgast málið á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}}.',
     description:
       'Notaður sem vísun í gögn málsins í pósti til verjanda/talsmanns',
   }),
