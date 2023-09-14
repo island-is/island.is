@@ -11,7 +11,7 @@ const createCacheKey = (config?: FeatureFlagClientProps): string => {
   return config?.sdkKey || process.env.CONFIGCAT_SDK_KEY || ''
 }
 
-export const createClientFactory = (moduleProvider: () => ConfigCatModule) => {
+export const createClientFactory = (moduleProvider: ConfigCatModule) => {
   return (config?: FeatureFlagClientProps): FeatureFlagClient => {
     const key = createCacheKey(config)
     if (!clientCache.has(key)) {
