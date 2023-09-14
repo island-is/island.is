@@ -61,15 +61,21 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
         onCompleted: (data) => {
           setValue(givenNameField, data.identity?.givenName ?? undefined)
           setValue(familyNameField, data.identity?.familyName ?? undefined)
-          setCurrentName(
-            `${data.identity?.givenName} ${data.identity?.familyName}`,
-          )
+          const currentName = `${data.identity?.givenName} ${data.identity?.familyName}`
+          setCurrentName(currentName)
+          setValue(currentNameField, currentName)
         },
       },
     )
 
   useEffect(() => {
     setValue(wasRemovedField, repeaterField.wasRemoved)
+    if (!!repeaterField.nationalId) {
+      setNationalIdInput(
+        !!repeaterField.nationalId ? repeaterField.nationalId : '',
+      )
+      setValue(nationaIdField, repeaterField.nationalId)
+    }
   }, [repeaterField.wasRemoved, setValue])
 
   useEffect(() => {
@@ -95,7 +101,16 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
       '',
     ) as string
 
-    setCurrentName(`${givenName} ${familyName}`)
+    if (!!givenName && !!familyName)
+      setCurrentName(`${givenName} ${familyName}`)
+
+    if (nationalIdInput === '' && !isRequired) {
+      setValue(wasRemovedField, 'true')
+      setCurrentName('')
+      setValue(currentNameField, '')
+    } else {
+      setValue(wasRemovedField, 'false')
+    }
   }, [nationalIdInput, getIdentity])
 
   useEffect(() => {

@@ -28,31 +28,11 @@ export const MaritalStatusSubSection = buildSubSection({
           [],
         ) as ResidenceCondition[]
 
-        const individual = getValueViaPath(
-          externalData,
-          'individual.data',
-          undefined,
-        ) as CitizenIndividual | undefined
-
-        const spouseDetails = getValueViaPath(
-          externalData,
-          'spouseDetails.data',
-          undefined,
-        ) as SpouseIndividual | undefined
-
         const hasMaritalStatus =
           residenceConditions.filter((x) => x.isTypeMaritalStatus).length > 0
 
-        let hasDifferentAddress = false
-        if (hasMaritalStatus && spouseDetails) {
-          const myAddressCombination = `${individual?.address?.streetAddress}, ${individual?.address?.postalCode} ${individual?.address?.city}`
-          const mySpouseAddressCombination = `${spouseDetails?.spouse?.address?.streetAddress}, ${spouseDetails?.spouse?.address?.postalCode} ${spouseDetails?.spouse?.address?.city}`
-          hasDifferentAddress =
-            myAddressCombination !== mySpouseAddressCombination
-        }
-
-        //Only show if individual has an option of marriageType in Hjúskapaskylirði and if the individual does not have the same legal address as the spouse
-        return hasMaritalStatus && hasDifferentAddress
+        //Only show if individual has an option of marriageType in Hjúskapaskylirði
+        return hasMaritalStatus
       },
       children: [
         buildDescriptionField({

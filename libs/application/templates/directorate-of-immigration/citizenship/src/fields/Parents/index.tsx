@@ -15,15 +15,18 @@ export const Parents = ({ field, application, errors }: any) => {
   } = application
 
   const [hasValidParents, setHasValidParents] = useState(
-    getValueViaPath(answers, 'parentInformation.hasValidParents', NO) as string,
+    getValueViaPath(
+      answers,
+      'parentInformation.hasValidParents',
+      nationalRegistryParents.data.length > 0 ? YES : NO,
+    ) as string,
   )
 
-  console.log('application', application)
-
+  //This is used to determine weather parent information comes from answer or national registry, to determine if the column is read only or not
   let parentsFoundFromAnswer: '0' | '1' | '2' =
-    nationalRegistryParents.length == 1
+    nationalRegistryParents.data.length == 1
       ? '1'
-      : nationalRegistryParents.length === 2
+      : nationalRegistryParents.data.length === 2
       ? '2'
       : '0'
 
@@ -42,12 +45,9 @@ export const Parents = ({ field, application, errors }: any) => {
     ) as ParentsToApplicant[],
   )
 
-  console.log('parents here', parents)
-
   const { formatMessage } = useLocale()
 
   useEffect(() => {
-    //Valid parents from answers
     let validParents = parents.filter(
       (x) => x.nationalId && x.nationalId !== '',
     )
@@ -55,7 +55,6 @@ export const Parents = ({ field, application, errors }: any) => {
     //if the user has answered YES previously and is returning to the step and has one valid parent from previous answers
     //set the valid parent and set the second as default wasRemoved=true
     if (hasValidParents === YES && validParents.length === 1) {
-      console.log('should be in here')
       setParents([...validParents, { ...defaultParents[1] }])
     }
 

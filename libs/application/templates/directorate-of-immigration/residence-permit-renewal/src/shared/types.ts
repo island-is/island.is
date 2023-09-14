@@ -5,6 +5,7 @@ import {
 import { z } from 'zod'
 import {
   RemoveableCriminalRecordSchema,
+  RemoveableEmploymentSchema,
   RemoveableStayAbroadSchema,
   StudySchema,
 } from '../lib/dataSchema'
@@ -19,4 +20,5 @@ export type ResidencePermitRenewalExternalData = {
 
 export type CountryOfVisit = z.TypeOf<typeof RemoveableStayAbroadSchema>
 export type CriminalRecordItem = z.TypeOf<typeof RemoveableCriminalRecordSchema>
+export type EmploymentItem = z.TypeOf<typeof RemoveableEmploymentSchema>
 export type ApplicantSchool = z.TypeOf<typeof StudySchema>

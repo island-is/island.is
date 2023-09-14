@@ -17,7 +17,7 @@ export const agent = {
     description: {
       id: 'doi.rpr.application:agent.labels.description',
       defaultMessage:
-        'Praesent euismod, nunc vel rutrum tristique, erat tortor scelerisque ex, suscipit blandit ipsum enim ut lacus.',
+        'Þú þarft aðeins að fylla út þennan lið umsóknar ef þú vilt hafa umboðsmann. Aðeins einn einstaklingur eða lögaðili getur verið umboðsmaður hverju sinni. Óskir þú eftir að fella umboð niður eða skrá nýjan umboðsmann skaltu tilkynna Útlendingastofnun það skriflega.',
       description: 'Agent section description',
     },
     title: {

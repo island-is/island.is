@@ -52,18 +52,13 @@ export const NationalIdSchoolName: FC<Props & FieldBaseProps> = ({
       `,
       {
         onCompleted: (data) => {
-          console.log('2')
-          console.log('data', data)
-          setValue(schoolNameField, data.identity?.givenName ?? undefined)
-          setCurrentName(
-            `${data.identity?.givenName} ${data.identity?.familyName}`,
-          )
+          setValue(schoolNameField, data.identity?.name ?? undefined)
+          setCurrentName(data.identity?.name ? data.identity?.name : '')
         },
       },
     )
 
   useEffect(() => {
-    console.log('1')
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
       getIdentity({
         variables: {

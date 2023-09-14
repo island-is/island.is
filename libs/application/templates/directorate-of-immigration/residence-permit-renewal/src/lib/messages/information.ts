@@ -144,7 +144,7 @@ export const information = {
       deleteButtonTitle: {
         id: 'doi.cs.application:information.labels.staysAbroad.deleteButtonTitle',
         defaultMessage: 'Eyða færslu',
-        description: 'Add more countries button title',
+        description: 'delete country item button title',
       },
     }),
     study: defineMessages({
@@ -160,13 +160,12 @@ export const information = {
       },
       description: {
         id: 'doi.rpr.application:information.labels.study.description',
-        defaultMessage:
-          'Pellentesque at nibh convallis, sodales nulla ut, sagittis ligula.',
+        defaultMessage: 'Upplýsingar fyrir {name}',
         description: 'Study description',
       },
       title: {
         id: 'doi.rpr.application:information.labels.study.title',
-        defaultMessage: 'Upplýsingar fyrir {name}',
+        defaultMessage: 'Upplýsingar um nám',
         description: 'Study title',
       },
       fileUploadConfirmationLabel: {
@@ -213,14 +212,63 @@ export const information = {
       },
       description: {
         id: 'doi.rpr.application:information.labels.employment.description',
-        defaultMessage:
-          'Pellentesque at nibh convallis, sodales nulla ut, sagittis ligula.',
+        defaultMessage: 'Upplýsingar fyrir {name}',
         description: 'Employment description',
       },
       title: {
         id: 'doi.rpr.application:information.labels.employment.title',
-        defaultMessage: 'Upplýsingar um atvinnuleyfi',
+        defaultMessage: 'Vinsamlegast fylltu út upplýsingar um atvinnurekanda',
         description: 'Employment title',
+      },
+      nameInput: {
+        id: 'doi.rpr.application:information.labels.employment.nameInput',
+        defaultMessage: 'Nafn atvinnurekanda',
+        description: 'Employment name input label',
+      },
+      countryInput: {
+        id: 'doi.rpr.application:information.labels.employment.countryInput',
+        defaultMessage: 'Land fyrirtækis',
+        description: 'Employment country input label',
+      },
+      dateFromInput: {
+        id: 'doi.rpr.application:information.labels.employment.dateFromInput',
+        defaultMessage: 'Ráðning frá',
+        description: 'Employment date from input label',
+      },
+      dateToInput: {
+        id: 'doi.rpr.application:information.labels.employment.dateToInput',
+        defaultMessage: 'Ráðning til',
+        description: 'Employment date to input label',
+      },
+      datePlaceholder: {
+        id: 'doi.rpr.application:information.labels.employment.datePlaceholder',
+        defaultMessage: 'Veldu dagsetningu',
+        description: 'Employment date input placeholder',
+      },
+      addEmploymentButtonLabel: {
+        id: 'doi.rpr.application:information.labels.employment.addEmploymentButtonLabel',
+        defaultMessage: 'Bæta við atvinnu',
+        description: 'Add employment button label',
+      },
+      applicationFileHeader: {
+        id: 'doi.rpr.application:information.labels.employment.applicationFileHeader',
+        defaultMessage: 'Umsókn um atvinnuleyfi',
+        description: 'Header of application file input',
+      },
+      contractFileHeader: {
+        id: 'doi.rpr.application:information.labels.employment.contractFileHeader',
+        defaultMessage: 'Frumrit af ráðningarsamningi',
+        description: 'Header of employee contract file input',
+      },
+      deleteButtonTitle: {
+        id: 'doi.cs.application:information.labels.employment.deleteButtonTitle',
+        defaultMessage: 'Eyða færslu',
+        description: 'Delete employment line button title',
+      },
+      itemTitle: {
+        id: 'doi.cs.application:information.labels.employment.itemTitle',
+        defaultMessage: 'Atvinna {index}',
+        description: 'Employment item separator title',
       },
     }),
     passport: defineMessages({

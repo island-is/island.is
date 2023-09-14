@@ -13,7 +13,6 @@ export const StudyInformation = ({ field, application, errors }: any) => {
     <Box key={`schoolInformation`}>
       <DescriptionText
         text={information.labels.study.title}
-        format={{ name: 'Nafn hér ...' }}
         textProps={{
           as: 'h5',
           fontWeight: 'semiBold',

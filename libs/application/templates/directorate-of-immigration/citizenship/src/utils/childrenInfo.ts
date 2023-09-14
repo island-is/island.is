@@ -49,8 +49,6 @@ export const getSelectedCustodyChild = (
   const childInfo = custodyChildren && custodyChildren[sectionIndex]
   const childNationalId = childInfo?.nationalId
 
-  console.log('childInfo', childInfo)
-
   const selectedChildren = (answers as Citizenship).selectedChildren
   const isSelected =
     selectedChildren && selectedChildren.find((x) => x === childNationalId)
