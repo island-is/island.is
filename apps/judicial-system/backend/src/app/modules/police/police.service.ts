@@ -129,15 +129,9 @@ export class PoliceService {
       this.logger.info('Previous upload failed', { reason })
     })
 
-    const promise = this.config.policeCaseApiV2Available
-      ? this.fetchPoliceDocumentApi(
-          `${this.xRoadPath}/V2/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
-        )
-      : this.fetchPoliceDocumentApi(
-          `${this.xRoadPath}/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
-        )
-
-    const pdf = await promise
+    const pdf = await this.fetchPoliceDocumentApi(
+      `${this.xRoadPath}/V2/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
+    )
       .then(async (res) => {
         if (res.ok) {
           const response = await res.json()
