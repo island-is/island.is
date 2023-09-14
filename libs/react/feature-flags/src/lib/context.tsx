@@ -1,12 +1,15 @@
 import React, { FC, createContext, useContext, useMemo } from 'react'
+import * as ConfigCatJS from 'configcat-js'
 import {
-  createClient,
   FeatureFlagClient,
   FeatureFlagUser,
   SettingValue,
   SettingTypeOf,
+  createClientFactory,
 } from '@island.is/feature-flags'
 import { useAuth } from '@island.is/auth/react'
+
+const createClient = createClientFactory(ConfigCatJS)
 
 const FeatureFlagContext = createContext<FeatureFlagClient>({
   getValue: <T extends SettingValue>(_: string, defaultValue: T) =>
