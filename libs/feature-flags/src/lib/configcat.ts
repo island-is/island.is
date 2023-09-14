@@ -27,6 +27,7 @@ export const createFeatureFlagClient = (
   const ccConfig: IAutoPollOptions = {
     dataGovernance: DataGovernance.EuOnly,
   }
+
   const client: IConfigCatClient = moduleProvider.getClient(
     resolvedSdkKey,
     PollingMode.AutoPoll,

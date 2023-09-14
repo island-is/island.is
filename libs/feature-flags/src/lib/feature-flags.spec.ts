@@ -6,6 +6,7 @@ import { createClientFactory } from './factory'
 
 const createClientJS = createClientFactory(ConfigCatJs)
 const createClientNode = createClientFactory(ConfigCatNode)
+
 const clientTypes = [
   { create: createClientJS, name: 'JS' },
   { create: createClientNode, name: 'Node' },
