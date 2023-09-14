@@ -14,6 +14,7 @@
         "main": "apps/services/user-profile/src/main.ts",
         "outputPath": "dist/apps/services/user-profile",
         "outputFileName": "main.js",
+        "format": ["cjs"],
         "tsConfig": "apps/services/user-profile/tsconfig.app.json",
         "esbuildConfig": "apps/services/user-profile/esbuild.json",
         "assets": [

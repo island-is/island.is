@@ -19,6 +19,7 @@
         "main": "apps/services/user-notification/src/main.ts",
         "outputPath": "dist/apps/services/user-notification",
         "outputFileName": "main.js",
+        "format": ["cjs"],
         "esbuildConfig": "apps/services/user-notification/esbuild.json",
         "tsConfig": "apps/services/user-notification/tsconfig.app.json",
         "assets": [

@@ -1,9 +1,9 @@
 import { Handlebars } from '../../types'
 
 const registerHelpers = (ctx: Handlebars) => {
-  ctx.registerHelper('ternary', (test, yes, no) =>
-    (typeof test === 'function' ? test.call(this) : test) ? yes : no,
-  )
+  ctx.registerHelper('ternary', function (test, yes, no) {
+    return (typeof test === 'function' ? test.call(ctx) : test) ? yes : no
+  })
 }
 
 export default registerHelpers
