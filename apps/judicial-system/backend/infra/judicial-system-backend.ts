@@ -45,8 +45,8 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       SQS_REGION: 'eu-west-1',
       BLOCKED_API_INTEGRATION: {
         dev: '',
-        staging: 'COURT,POLICE_CASE,POLICE_CASE_V2',
-        prod: 'POLICE_CASE_V2',
+        staging: 'COURT,POLICE_CASE',
+        prod: '',
       },
       NO_UPDATE_NOTIFIER: 'true',
       NOVA_ACCEPT_UNAUTHORIZED: {
