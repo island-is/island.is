@@ -16,7 +16,7 @@ import { SDK_KEY_ERROR } from './constants'
 
 export const createFeatureFlagClient = (
   config: FeatureFlagClientProps,
-  moduleProvider: () => ConfigCatModule,
+  moduleProvider: ConfigCatModule,
 ): FeatureFlagClient => {
   const resolvedSdkKey = config.sdkKey || process.env.CONFIGCAT_SDK_KEY
 
