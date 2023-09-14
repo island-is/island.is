@@ -12,25 +12,32 @@
       }
     },
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
       "options": {
-        "outputPath": "dist/apps/services/user-notification",
         "main": "apps/services/user-notification/src/main.ts",
+        "skipTypeCheck": true,
+        "outputPath": "dist/apps/services/user-notification",
+        "outputFileName": "main.js",
+        "format": ["cjs"],
         "tsConfig": "apps/services/user-notification/tsconfig.app.json",
-        "assets": ["apps/services/user-notification/src/assets"]
+        "platform": "node",
+        "assets": [
+          {
+            "glob": "src/assets/*",
+            "input": "apps/services/user-notification/",
+            "output": "/assets"
+          }
+        ]
       },
       "configurations": {
+        "development": {
+          "minify": false
+        },
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false,
-          "fileReplacements": [
-            {
-              "replace": "apps/services/user-notification/src/environments/environment.ts",
-              "with": "apps/services/user-notification/src/environments/environment.prod.ts"
-            }
-          ]
+          "minify": true,
+          "generatePackageJson": true
         }
       }
     },
@@ -66,7 +73,7 @@
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose up -d --build",
+        "command": "podman-compose up -d --build",
         "cwd": "apps/services/user-notification"
       }
     },

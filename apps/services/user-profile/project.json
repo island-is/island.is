@@ -7,44 +7,49 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
       "options": {
-        "outputPath": "dist/apps/services/user-profile",
         "main": "apps/services/user-profile/src/main.ts",
+        "outputPath": "dist/apps/services/user-profile",
+        "outputFileName": "main.js",
+        "format": ["cjs"],
+        "skipTypeCheck": true,
         "tsConfig": "apps/services/user-profile/tsconfig.app.json",
+        "platform": "node",
         "assets": [
-          "apps/services/user-profile/src/assets",
           {
-            "glob": "*",
-            "input": "apps/services/user-profile/migrations",
-            "output": "./migrations"
+            "input": "apps/services/user-profile",
+            "glob": "src/assets/*",
+            "output": "/assets"
           },
           {
+            "input": "apps/services/user-profile",
+            "glob": "migrations/*",
+            "output": "/migrations"
+          },
+          {
+            "input": "apps/services/user-profile",
             "glob": ".sequelizerc",
-            "input": "apps/services/user-profile",
-            "output": "./"
+            "output": "/"
           },
           {
-            "glob": "sequelize.config.js",
-            "input": "apps/services/user-profile",
-            "output": "./"
-          },
-          {
-            "glob": "*",
             "input": "libs/email-service/src/tools/design",
-            "output": "./email-service-assets"
+            "glob": "*",
+            "output": "/email-service-assets"
           }
-        ],
-        "maxWorkers": 2
+        ]
       },
       "configurations": {
+        "development": {
+          "minify": false
+        },
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "minify": true,
+          "generatePackageJson": true
         }
-      },
-      "outputs": ["{options.outputPath}"]
+      }
     },
     "serve": {
       "executor": "@nx/js:node",

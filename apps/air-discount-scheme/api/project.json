@@ -7,7 +7,9 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
       "options": {
         "outputPath": "dist/apps/air-discount-scheme/api",
         "main": "apps/air-discount-scheme/api/src/main.ts",
@@ -15,14 +17,14 @@
         "assets": [],
         "maxWorkers": 2
       },
+
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
           "inspect": false
         }
-      },
-      "outputs": ["{options.outputPath}"]
+      }
     },
     "serve": {
       "executor": "@nx/js:node",

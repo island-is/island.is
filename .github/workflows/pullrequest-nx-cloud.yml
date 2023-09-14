@@ -277,7 +277,7 @@ jobs:
 
           pids=()
           npx nx affected -t lint --parallel=$MAX_JOBS & pids+=($!)
-          npx nx affected -t build --parallel=$MAX_JOBS & pids+=($!)
+          npx nx affected -t build --parallel=$MAX_JOBS -c production & pids+=($!)
 
           for pid in ${pids[*]}; do
             if ! wait $pid; then
