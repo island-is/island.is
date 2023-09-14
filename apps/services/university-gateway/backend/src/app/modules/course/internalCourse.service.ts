@@ -8,7 +8,7 @@ import { UniversityOfIcelandApplicationClient } from '@island.is/clients/univers
 import {
   ICourse,
   UniversityNationalIds,
-} from '@island.is/university-gateway-types'
+} from '@island.is/university-gateway-lib'
 
 export
 @Injectable()

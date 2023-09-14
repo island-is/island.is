@@ -8,7 +8,7 @@ import {
   ModeOfDelivery,
   Requirement,
   Season,
-} from '@island.is/university-gateway-types'
+} from '@island.is/university-gateway-lib'
 
 export
 @Injectable()

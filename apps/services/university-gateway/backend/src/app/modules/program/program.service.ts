@@ -14,7 +14,7 @@ import { Course } from '../course/model'
 import { PaginateInput } from './types'
 import { InjectModel } from '@nestjs/sequelize'
 import { paginate } from '@island.is/nest/pagination'
-import { DegreeType, Season } from '@island.is/university-gateway-types'
+import { DegreeType, Season } from '@island.is/university-gateway-lib'
 
 export
 @Injectable()

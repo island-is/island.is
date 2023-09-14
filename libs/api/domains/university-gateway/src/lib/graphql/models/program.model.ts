@@ -5,7 +5,7 @@ import {
   ModeOfDelivery,
   Requirement,
   Season,
-} from '@island.is/university-gateway-types'
+} from '@island.is/university-gateway-lib'
 
 registerEnumType(DegreeType, { name: 'DegreeType' })
 // registerEnumType(FieldType, { name: 'FieldType' })

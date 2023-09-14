@@ -9,7 +9,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ProgramTable } from './program'
-import { ModeOfDelivery } from '@island.is/university-gateway-types'
+import { ModeOfDelivery } from '@island.is/university-gateway-lib'
 
 export
 @Table({

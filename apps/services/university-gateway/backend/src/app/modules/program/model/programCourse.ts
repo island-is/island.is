@@ -11,7 +11,7 @@ import {
 } from 'sequelize-typescript'
 import { Course } from '../../course/model'
 import { ProgramTable } from './program'
-import { Requirement } from '@island.is/university-gateway-types'
+import { Requirement } from '@island.is/university-gateway-lib'
 
 export
 @Table({

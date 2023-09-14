@@ -13,7 +13,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { University } from '../../university/model'
-import { Season } from '@island.is/university-gateway-types'
+import { Season } from '@island.is/university-gateway-lib'
 import { PageInfoDto } from '@island.is/nest/pagination'
 
 export

@@ -9,7 +9,7 @@ import {
   Requirement,
   Season,
   mapEnum,
-} from '@island.is/university-gateway-types'
+} from '@island.is/university-gateway-lib'
 import {
   ExampleProgramDegreeTypeEnum,
   ExampleProgramModeOfDeliveryEnum,

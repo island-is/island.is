@@ -1,4 +1,4 @@
-import { DegreeType, Season } from '@island.is/university-gateway-types'
+import { DegreeType, Season } from '@island.is/university-gateway-lib'
 import { Field, InputType } from '@nestjs/graphql'
 
 export
