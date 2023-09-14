@@ -578,6 +578,9 @@ export interface IEmbedFields {
 
   /** Embed link */
   embedUrl?: string | undefined
+
+  /** Alt Text */
+  altText?: string | undefined
 }
 
 /** A content type which allows you to embed an iframe (but only from sources that have been approved of) */

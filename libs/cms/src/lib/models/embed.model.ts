@@ -10,8 +10,11 @@ export class Embed {
   @Field()
   title!: string
 
-  @Field()
+  @Field({ nullable: true })
   embedUrl?: string
+
+  @Field({ nullable: true })
+  altText?: string
 }
 
 export const mapEmbed = ({ fields, sys }: IEmbed): SystemMetadata<Embed> => ({
@@ -19,4 +22,5 @@ export const mapEmbed = ({ fields, sys }: IEmbed): SystemMetadata<Embed> => ({
   id: sys.id,
   title: fields.title ?? '',
   embedUrl: fields.embedUrl,
+  altText: fields.altText,
 })
