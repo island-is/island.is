@@ -195,7 +195,10 @@ describe('InternalNotificationController - Send ready for court notifications fo
 
     it('should lookup previous court date notifications', () => {
       expect(mockNotificationModel.findAll).toHaveBeenCalledWith({
-        where: { caseId, type: NotificationType.COURT_DATE },
+        where: {
+          caseId,
+          type: [NotificationType.READY_FOR_COURT, NotificationType.COURT_DATE],
+        },
       })
     })
 

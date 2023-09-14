@@ -9,8 +9,6 @@ import {
   RequestSharedWithDefender,
   completedCaseStates,
   indictmentCases,
-  investigationCases,
-  restrictionCases,
 } from '@island.is/judicial-system/types'
 
 import { LimitedAccessCaseStateGuard } from '../limitedAccessCaseState.guard'
