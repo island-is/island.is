@@ -18,7 +18,7 @@ import { CardLoader, m } from '@island.is/service-portal/core'
 import { IntroHeader } from '@island.is/portals/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { messages } from '../../lib/messages'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { useNavigate } from 'react-router-dom'
 import { HealthPaths } from '../../lib/paths'
@@ -41,6 +41,8 @@ export const DentistRegistration = () => {
   const [selectedDentist, setSelectedDentist] =
     useState<SelectedDentist | null>(null)
   const [hoverId, setHoverId] = useState(0)
+  const [errorTransfering, setErrorTransfering] = useState(false)
+  const errorBoxRef = useRef<HTMLDivElement>(null)
   const {
     data: status,
     error: statusError,
@@ -48,12 +50,15 @@ export const DentistRegistration = () => {
   } = useGetDentistStatusQuery()
 
   const [registerDentist] = useRegisterDentistMutation({
-    onError: (e) => {
-      console.log('transfer error')
-      console.error(e)
+    onError: () => {
+      setErrorTransfering(true)
     },
-    onCompleted: () => {
-      navigate(`${HealthPaths.HealthDentists}?s=t`)
+    onCompleted: (data) => {
+      if (data.rightsPortalRegisterDentist.success) {
+        navigate(`${HealthPaths.HealthDentists}?s=t`)
+      } else {
+        setErrorTransfering(true)
+      }
     },
     variables: {
       input: {
@@ -61,6 +66,15 @@ export const DentistRegistration = () => {
       },
     },
   })
+
+  useEffect(() => {
+    if (errorTransfering && errorBoxRef.current) {
+      errorBoxRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      })
+    }
+  }, [errorTransfering])
 
   const canRegister = status?.rightsPortalDentistStatus?.canRegister
     ? true
@@ -89,12 +103,22 @@ export const DentistRegistration = () => {
     [searchTerm],
   )
 
-  if (!canRegister && !statusLoading && !statusError)
+  if (error) {
     return (
       <AlertMessage
         type="error"
         title={formatMessage(messages.dentistRegisterForbiddenTitle)}
         message={formatMessage(messages.dentistRegisterForbiddenInfo)}
+      />
+    )
+  }
+
+  if (!canRegister && !statusLoading && !statusError)
+    return (
+      <AlertMessage
+        type="error"
+        title={formatMessage(m.errorTitle)}
+        message={formatMessage(m.errorFetch)}
       />
     )
 
@@ -117,8 +141,21 @@ export const DentistRegistration = () => {
     <Box paddingY={2}>
       <IntroHeader
         title={formatMessage(messages.dentistRegisterationPageTitle)}
-        intro={formatMessage(messages.healthCenterRegistrationInfo)}
+        intro={formatMessage(messages.dentistRegisterationPageDescription)}
       />
+      {errorTransfering && (
+        <Box paddingBottom={4} ref={errorBoxRef}>
+          <AlertMessage
+            type="error"
+            title={formatMessage(
+              messages.healthCenterRegistrationTransferErrorTitle,
+            )}
+            message={formatMessage(
+              messages.healthCenterRegistrationTransferErrorInfo,
+            )}
+          />
+        </Box>
+      )}
       <Box marginBottom={3} display="flex" justifyContent="flexStart">
         <Input
           name="filter"
@@ -134,7 +171,10 @@ export const DentistRegistration = () => {
 
       <RegisterModal
         onClose={() => setSelectedDentist(null)}
-        onAccept={() => registerDentist()}
+        onAccept={() => {
+          setErrorTransfering(false)
+          registerDentist()
+        }}
         id={'dentistRegisterModal'}
         title={`${formatMessage(messages.dentistModalTitle)} ${
           selectedDentist?.name
