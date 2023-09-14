@@ -97,7 +97,7 @@
               "type": "primary"
             }
           ],
-          "refetchApplicationAfterSubmit": false
+          "refetchApplicationAfterSubmit": true
         }
       ]
     }

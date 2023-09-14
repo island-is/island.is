@@ -30,6 +30,9 @@ import {
 } from '@island.is/application/api/history'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { getApplicationNameTranslationString } from '../utils/application'
+import data from '../jsonStuff/data'
+import completedData from '../jsonStuff/completed'
+import prerequisites from '../jsonStuff/prerequisites'
 
 @Injectable()
 export class ApplicationSerializer
@@ -125,6 +128,16 @@ export class ApplicationSerializer
         )
       : undefined
 
+    const state = application.state
+    let form = ''
+    if (state === 'completed') {
+      form = JSON.stringify(completedData)
+    } else if (state === 'draft') {
+      form = JSON.stringify(data)
+    } else if (state === 'prerequisites') {
+      form = JSON.stringify(prerequisites)
+    }
+
     const dto = plainToInstance(ApplicationResponseDto, {
       ...application,
       ...helper.getReadableAnswersAndExternalData(userRole),
@@ -157,6 +170,7 @@ export class ApplicationSerializer
         ? intl.formatMessage(template.institution)
         : null,
       progress: helper.getApplicationProgress(),
+      form,
     })
     return instanceToPlain(dto)
   }

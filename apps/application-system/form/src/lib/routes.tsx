@@ -49,10 +49,6 @@ export const routes: RouteObject[] = [
         errorElement: <ErrorShell />,
         children: [
           {
-            path: 'vottord/' + newUrl.id,
-            element: <JApplication />,
-          },
-          {
             path: '/:slug',
             element: <Applications />,
           },

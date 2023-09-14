@@ -10,6 +10,7 @@ import {
 import {
   Application,
   ApplicationConfigurations,
+  ApplicationFormTypes,
   ApplicationTypes,
   DefaultEvents,
   FieldComponents,
@@ -48,15 +49,13 @@ const ApplicationLoader: FC<
     slug: string
     useJSON: boolean
   }>
-> = ({ applicationId, nationalRegistryId, slug, useJSON }) => {
+> = ({ applicationId, nationalRegistryId, slug }) => {
   const type = getTypeFromSlug(slug)
   const [delegationsChecked, setDelegationsChecked] = useState(
     type ? false : true,
   )
 
   const { lang: locale } = useLocale()
-  console.log('ApplicationLoader1', applicationId)
-  applicationId = 'e3c29483-4ca9-4de7-b43b-f31534499d43'
   const { data, error, loading, refetch } = useQuery(APPLICATION_APPLICATION, {
     variables: {
       input: {
@@ -73,18 +72,19 @@ const ApplicationLoader: FC<
   })
 
   const application = data?.applicationApplication
-  console.log('ApplicationLoader2', data)
-  console.log('a', error)
-  console.log('b', loading)
+
   if (loading) {
     return <LoadingShell />
   }
 
   const currentTypeId: ApplicationTypes = application?.typeId
-  /*if (ApplicationConfigurations[currentTypeId]?.slug !== slug) {
-    console.log('error maaan2')
+
+  if (ApplicationConfigurations[currentTypeId]?.slug !== slug) {
+    console.log('slug dont match')
     return <ErrorShell errorType="notExist" />
-  }*/
+  }
+
+  const formType = ApplicationConfigurations[currentTypeId].formType
 
   if (!applicationId || error) {
     const foundError = findProblemInApolloError(error, [
@@ -107,7 +107,7 @@ const ApplicationLoader: FC<
     return <ErrorShell />
   }
 
-  if (useJSON) {
+  if (formType === ApplicationFormTypes.DYNAMIC) {
     return (
       <RefetchProvider
         value={() => {
@@ -258,71 +258,12 @@ const JShellWrapper: FC<
               (r) => r.id === role,
             )
 
-            //dont get the form from the role but from JSON FILE?
-            const formDescriptor: Form = {
-              id: 'AccidentNotificationForqm',
-              title: 'Halló bingo',
-              mode: FormModes.DRAFT,
-              type: FormItemTypes.FORM,
-              renderLastScreenBackButton: true,
-              renderLastScreenButton: true,
-              children: [
-                {
-                  id: 'overview.section',
-                  title: 'overview.general.sectionTitle',
-                  type: FormItemTypes.SECTION,
-                  children: [
-                    {
-                      id: 'overview.multifield',
-                      title: 'overview.general.MultifiledTitle',
-                      type: FormItemTypes.MULTI_FIELD,
-                      children: [
-                        {
-                          id: 'onPayRoll.answer',
-                          width: 'half',
-                          title: '',
-                          options: [
-                            {
-                              value: YES,
-                              label: 'já já',
-                            },
-                            {
-                              value: NO,
-                              label: 'nei nei',
-                            },
-                          ],
-                          type: FieldTypes.RADIO,
-                          component: FieldComponents.RADIO,
-                          required: true,
-                          children: undefined,
-                        },
-                        {
-                          id: 'overview.submit',
-                          title: 'stuff',
-                          type: FieldTypes.SUBMIT,
-                          placement: 'footer',
-                          children: undefined,
-                          doesNotRequireAnswer: false,
-                          component: FieldComponents.SUBMIT,
-                          actions: [
-                            {
-                              event: DefaultEvents.SUBMIT,
-                              name: 'SUBMIT',
-                              type: 'primary',
-                            },
-                          ],
-                          refetchApplicationAfterSubmit: false,
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            }
+            const form = JSON.parse(
+              application.form as string,
+            ) as unknown as Form
+            //const formDescriptor2: Form = data as unknown as Form
 
-            const formDescriptor2: Form = data as unknown as Form
-
-            setForm(formDescriptor2)
+            setForm(form)
             setDataSchema(template.dataSchema)
             fieldsDispatch(applicationFields)
           }

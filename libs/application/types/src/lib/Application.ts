@@ -69,6 +69,7 @@ export interface Application<TAnswers = FormValue> {
   status: ApplicationStatus
   draftTotalSteps?: number
   draftFinishedSteps?: number
+  form?: string
 }
 
 export interface ApplicationWithAttachments extends Application {

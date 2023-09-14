@@ -128,6 +128,9 @@ export class Application {
 
   @Field(() => ApplicationResponseDtoStatusEnum)
   status!: ApplicationResponseDtoStatusEnum
+
+  @Field(() => String, { nullable: true })
+  form?: string
 }
 
 @ObjectType()

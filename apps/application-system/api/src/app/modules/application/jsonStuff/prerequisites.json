@@ -1,0 +1,61 @@
+{
+  "id": "SampleFormId",
+  "title": "Sample Form",
+  "mode": "draft",
+  "type": "FORM",
+  "renderLastScreenBackButton": false,
+  "renderLastScreenButton": false,
+  "children": [
+    {
+      "id": "section1",
+      "title": "Umsókn send inn!",
+      "type": "SECTION",
+      "children": [
+        {
+          "id": "approveExternalData",
+          "title": "Utanaðkomandi gögn",
+          "type": "EXTERNAL_DATA_PROVIDER",
+          "isPartOfRepeater": false,
+          "children": null,
+          "dataProviders": [
+            {
+              "id": "UserProfile.userProfile",
+              "actionId": "UserProfile.userProfile",
+              "action": "UserProfile.userProfile",
+              "order": 0,
+              "title": "User profile",
+              "subTitle": "User profile",
+              "source": null
+            },
+            {
+              "id": "NationalRegistry.nationalRegistry",
+              "actionId": "NationalRegistry.nationalRegistry",
+              "action": "NationalRegistry.nationalRegistry",
+              "order": 0,
+              "title": "Þjóðskrá",
+              "subTitle": "Upplýsingar um þig í Þjóðskrá.",
+              "source": null
+            }
+          ]
+        },
+        {
+          "id": "submit2",
+          "title": "Submit Title",
+          "type": "SUBMIT",
+          "placement": "footer",
+          "children": null,
+          "doesNotRequireAnswer": false,
+          "component": "SubmitFormField",
+          "actions": [
+            {
+              "event": "SUBMIT",
+              "name": "Samþykkja",
+              "type": "primary"
+            }
+          ],
+          "refetchApplicationAfterSubmit": true
+        }
+      ]
+    }
+  ]
+}
