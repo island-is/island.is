@@ -8,7 +8,13 @@ import {
   ModeOfDelivery,
   Requirement,
   Season,
+  mapEnum,
 } from '@island.is/university-gateway-types'
+import {
+  ExampleProgramDegreeTypeEnum,
+  ExampleProgramModeOfDeliveryEnum,
+  ExampleProgramStartingSemesterSeasonEnum,
+} from '../../gen/fetch'
 
 export
 @Injectable()
@@ -30,11 +36,18 @@ class UniversityOfIcelandApplicationClient {
           departmentNameIs: program.departmentNameIs,
           departmentNameEn: program.departmentNameEn,
           startingSemesterYear: program.startingSemesterYear,
-          startingSemesterSeason:
-            program.startingSemesterSeason as unknown as Season, //TODO map enum
+          startingSemesterSeason: mapEnum(
+            program.startingSemesterSeason,
+            ExampleProgramStartingSemesterSeasonEnum,
+            Season,
+          ),
           applicationStartDate: program.applicationStartDate,
           applicationEndDate: program.applicationEndDate || new Date(), //TODO cannot be empty in api
-          degreeType: program.degreeType as unknown as DegreeType, //TODO map enum
+          degreeType: mapEnum(
+            program.degreeType,
+            ExampleProgramDegreeTypeEnum,
+            DegreeType,
+          ),
           degreeAbbreviation: program.degreeAbbreviation,
           credits: program.credits || 0,
           descriptionIs: program.descriptionIs || '',
@@ -54,8 +67,8 @@ class UniversityOfIcelandApplicationClient {
           tag: program.interestTags.map((tag) => ({
             code: tag.toString(), //TODO change from enum to code (string) in api
           })),
-          modeOfDelivery: program.modeOfDelivery.map(
-            (mode) => mode as unknown as ModeOfDelivery, //TODO map enum
+          modeOfDelivery: program.modeOfDelivery.map((m) =>
+            mapEnum(m, ExampleProgramModeOfDeliveryEnum, ModeOfDelivery),
           ),
           extraApplicationField: program.extraApplicationFields.map(
             (field) => ({
