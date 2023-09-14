@@ -37,9 +37,13 @@ export enum Features {
 
   // Application delegation flags
   isFishingLicenceCustomDelegationEnabled = 'isFishingLicenceCustomDelegationEnabled',
+  transportAuthorityApplicationsCustomDelegation = 'isTransportAuthorityApplicationsCustomDelegationEnabled',
 
   //Application system
   applicationSystemHistory = 'applicationSystemHistory',
+
+  // Search indexer
+  shouldSearchIndexerResolveNestedEntries = 'shouldSearchIndexerResolveNestedEntries',
 }
 
 export enum ServerSideFeature {

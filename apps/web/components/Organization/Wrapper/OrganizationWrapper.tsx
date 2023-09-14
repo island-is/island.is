@@ -91,6 +91,7 @@ import {
   TransportAuthorityFooter,
   TransportAuthorityHeader,
 } from './Themes/TransportAuthorityTheme'
+import { RettindagaeslaFatladsFolksHeader } from './Themes/RettindagaeslaFatladsFolksTheme'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -132,6 +133,7 @@ export const lightThemes = [
   'haskolanam',
   'nti',
   'samgongustofa',
+  'rettindagaesla-fatlads-folks',
 ]
 export const footerEnabled = [
   'syslumenn',
@@ -287,6 +289,10 @@ export const OrganizationHeader: React.FC<
         <IcelandicRadiationSafetyAuthorityHeader
           organizationPage={organizationPage}
         />
+      )
+    case 'rettindagaesla-fatlads-folks':
+      return (
+        <RettindagaeslaFatladsFolksHeader organizationPage={organizationPage} />
       )
     default:
       return <DefaultHeader organizationPage={organizationPage} />
@@ -589,13 +595,13 @@ export const OrganizationChatPanel = ({
   const { activeLocale } = useI18n()
 
   const organizationIdWithLiveChat = organizationIds.find((id) => {
-    return id in liveChatIncConfig
+    return id in liveChatIncConfig[activeLocale]
   })
 
   if (organizationIdWithLiveChat) {
     return (
       <LiveChatIncChatPanel
-        {...liveChatIncConfig[organizationIdWithLiveChat]}
+        {...liveChatIncConfig[activeLocale][organizationIdWithLiveChat]}
       />
     )
   }
