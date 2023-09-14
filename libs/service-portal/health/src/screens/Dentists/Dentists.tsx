@@ -7,6 +7,7 @@ import {
 } from '@island.is/service-portal/core'
 import { useGetDentistsQuery } from './Dentists.generated'
 import {
+  AlertMessage,
   Box,
   DatePicker,
   Divider,
@@ -15,7 +16,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { IntroHeader } from '@island.is/portals/core'
+import { IntroHeader, useQueryParam } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
 import { useState } from 'react'
 import BillsTable from './BillsTable'
@@ -44,6 +45,10 @@ const Dentists = () => {
   const { dentist, history } = data?.rightsPortalUserDentistRegistration ?? {}
   const canRegister = dentist?.status?.canRegister ?? false
 
+  // Check if the user was transfered from another health center
+  // if s === t then we display a success message
+  const wasSuccessfulTransfer = useQueryParam('s') === 't'
+
   if (error && !loading) {
     return (
       <ErrorScreen
@@ -70,6 +75,18 @@ const Dentists = () => {
           <Box marginTop={8}>
             <EmptyState />
           </Box>
+        </Box>
+      )}
+
+      {wasSuccessfulTransfer && !loading && (
+        <Box width="full" marginTop={4} marginBottom={4}>
+          <AlertMessage
+            type="success"
+            title={formatMessage(messages.dentistTransferSuccessTitle)}
+            message={`${formatMessage(messages.dentistTransferSuccessInfo, {
+              name: dentist?.name,
+            })}`}
+          />
         </Box>
       )}
 

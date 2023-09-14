@@ -30,6 +30,8 @@ import {
 } from './models/healthCenter.model'
 import { HealthCenterResponse } from './models/healthCenterResponse.model'
 import { GetDentistsInput } from './dto/getDentists.input'
+import { RegisterDentistResponse } from './models/registerDentistResponse'
+import { RegisterDentistInput } from './dto/RegisterDentist.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -152,6 +154,19 @@ export class RightsPortalResolver {
   @Audit()
   getCurrentDentist(@CurrentUser() user: User) {
     return this.rightsPortalService.getDentistStatus(user)
+  }
+
+  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
+  @Scopes(ApiScope.health)
+  @Mutation(() => RegisterDentistResponse, {
+    name: 'rightsPortalRegisterDentist',
+  })
+  @Audit()
+  registerDentist(
+    @CurrentUser() user: User,
+    @Args('input') input: RegisterDentistInput,
+  ) {
+    return this.rightsPortalService.registerDentist(user, input.id)
   }
 
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)

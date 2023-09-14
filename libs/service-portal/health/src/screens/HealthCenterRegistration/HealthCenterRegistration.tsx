@@ -32,6 +32,7 @@ import { RightsPortalHealthCenter } from '@island.is/api/schema'
 import { useNavigate } from 'react-router-dom'
 import { HealthPaths } from '../../lib/paths'
 import { formatHealthCenterName } from '../../utils/format'
+import { RegisterModal } from '../../components/RegisterModal'
 
 type SelectedHealthCenter = Pick<RightsPortalHealthCenter, 'id' | 'name'>
 
@@ -58,7 +59,6 @@ const HealthCenterRegistration = () => {
 
   const [transferHealthCenter] = useRightsPortalTransferHealthCenterMutation({
     onError: (e) => {
-      console.log('error', e)
       setSelectedHealthCenter(null)
       setLoadingTransfer(false)
       setErrorTransfer(true)
@@ -183,62 +183,17 @@ const HealthCenterRegistration = () => {
         </Box>
       )}
 
-      <ModalBase
-        baseId="healthCareDialog"
-        isVisible={selectedHealthCenter !== null}
-        className={styles.modalBaseStyle}
-      >
-        <Box paddingTop={10} paddingBottom={9} paddingX={3} background="white">
-          <Box className={styles.closeModalButtonStyle}>
-            <button
-              aria-label={formatMessage(messages.closeModal)}
-              onClick={() => setSelectedHealthCenter(null)}
-            >
-              <Icon icon="close" size="large" />
-            </button>
-          </Box>
-          <Box className={styles.modalGridStyle}>
-            <Box className={styles.modalGridContentStyle}>
-              {selectedHealthCenter && selectedHealthCenter.name && (
-                <Text variant="h2">
-                  {formatMessage(messages.healthCenterRegistrationModalTitle, {
-                    healthCenter: selectedHealthCenter.name,
-                  })}
-                </Text>
-              )}
-              <Text marginTop={2} marginBottom={3}>
-                {formatMessage(messages.healthCenterRegistrationModalInfo)}
-              </Text>
-              <Box className={styles.modalGridButtonGroup}>
-                <Button
-                  size="small"
-                  variant="primary"
-                  onClick={() => setSelectedHealthCenter(null)}
-                >
-                  {formatMessage(
-                    messages.healthCenterRegistrationModalButtonCancel,
-                  )}
-                </Button>
-                <Button
-                  size="small"
-                  variant="ghost"
-                  onClick={() =>
-                    selectedHealthCenter?.id && handleHealthCenterTransfer()
-                  }
-                  loading={loadingTransfer}
-                >
-                  {formatMessage(
-                    messages.healthCenterRegistrationModalButtonAccept,
-                  )}
-                </Button>
-              </Box>
-            </Box>
-            <Box className={styles.modalGridImageStyle}>
-              <img src="./assets/images/hourglass.svg" alt="" />
-            </Box>
-          </Box>
-        </Box>
-      </ModalBase>
+      <RegisterModal
+        id="healthCenterDialog"
+        title={formatMessage(messages.healthCenterRegistrationModalTitle, {
+          healthCenter: selectedHealthCenter?.name,
+        })}
+        description={formatMessage(messages.healthCenterRegistrationModalInfo)}
+        onClose={() => setSelectedHealthCenter(null)}
+        onAccept={() => handleHealthCenterTransfer()}
+        isVisible={!!selectedHealthCenter}
+        buttonLoading={loadingTransfer}
+      />
 
       <Box className={styles.filterWrapperStyle} marginBottom={3}>
         <Input
@@ -301,9 +256,7 @@ const HealthCenterRegistration = () => {
                                   })
                                 }}
                               >
-                                {formatMessage(
-                                  messages.healthCenterRegistrationSave,
-                                )}
+                                {formatMessage(messages.healthRegistrationSave)}
                               </Button>
                             </Box>
                           </T.Data>

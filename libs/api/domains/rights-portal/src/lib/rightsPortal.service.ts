@@ -34,6 +34,7 @@ import { isDefined } from '@island.is/shared/utils'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { GetDentistsInput } from './dto/getDentists.input'
+import { RegisterDentistResponse } from './models/registerDentistResponse'
 
 @Injectable()
 export class RightsPortalService {
@@ -202,6 +203,31 @@ export class RightsPortalService {
       }
     } catch (e) {
       return handle404(e)
+    }
+  }
+
+  async registerDentist(
+    user: User,
+    id: number,
+  ): Promise<RegisterDentistResponse> {
+    console.log('form register dentist in serivce ', id)
+    try {
+      await this.dentistApi
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .dentistsRegister({
+          id,
+        })
+
+      return {
+        success: true,
+      }
+    } catch (e) {
+      if (e.response?.status === 400) handle404(e)
+      this.logger.error('Failed to register dentist', e)
+
+      return {
+        success: false,
+      }
     }
   }
   async getHealthCenters(

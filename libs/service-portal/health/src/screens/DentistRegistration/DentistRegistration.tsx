@@ -1,15 +1,18 @@
 import {
   AlertMessage,
   Box,
+  Button,
   Input,
   Pagination,
   SkeletonLoader,
   Stack,
   Table as T,
+  Text,
 } from '@island.is/island-ui/core'
 import {
   useGetDentistStatusQuery,
   useGetPaginatedDentistsQuery,
+  useRegisterDentistMutation,
 } from './DentistRegistration.generated'
 import { CardLoader, m } from '@island.is/service-portal/core'
 import { IntroHeader } from '@island.is/portals/core'
@@ -17,23 +20,47 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { messages } from '../../lib/messages'
 import { useState } from 'react'
 import { useDebounce } from 'react-use'
+import { useNavigate } from 'react-router-dom'
+import { HealthPaths } from '../../lib/paths'
+import { RightsPortalDentist } from '@island.is/api/schema'
+import { RegisterModal } from '../../components/RegisterModal'
+import * as styles from './DentistRegistration.css'
 
 const DEFAULT_PAGE_SIZE = 12
 const DEFAULT_PAGE_NUMBER = 1
-const DEFAULT_CURSOR = ''
+
+type SelectedDentist = Pick<RightsPortalDentist, 'id' | 'name' | 'practice'>
 
 export const DentistRegistration = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
-
+  const navigate = useNavigate()
   const [page, setPage] = useState(DEFAULT_PAGE_NUMBER)
   const [searchTerm, setSearchTerm] = useState('')
   const [activeSearch, setActiveSearch] = useState('')
+  const [selectedDentist, setSelectedDentist] =
+    useState<SelectedDentist | null>(null)
+  const [hoverId, setHoverId] = useState(0)
   const {
     data: status,
     error: statusError,
     loading: statusLoading,
   } = useGetDentistStatusQuery()
+
+  const [registerDentist] = useRegisterDentistMutation({
+    onError: (e) => {
+      console.log('transfer error')
+      console.error(e)
+    },
+    onCompleted: () => {
+      navigate(`${HealthPaths.HealthDentists}?s=t`)
+    },
+    variables: {
+      input: {
+        id: selectedDentist?.id ?? 0,
+      },
+    },
+  })
 
   const canRegister = status?.rightsPortalDentistStatus?.canRegister
     ? true
@@ -71,7 +98,7 @@ export const DentistRegistration = () => {
       />
     )
 
-  if (statusLoading || loading)
+  if (statusLoading)
     return (
       <Box paddingY={2}>
         <Stack space={4}>
@@ -92,22 +119,34 @@ export const DentistRegistration = () => {
         title={formatMessage(messages.dentistRegisterationPageTitle)}
         intro={formatMessage(messages.healthCenterRegistrationInfo)}
       />
+      <Box marginBottom={3} display="flex" justifyContent="flexStart">
+        <Input
+          name="filter"
+          placeholder={formatMessage(m.searchPlaceholder)}
+          icon={{
+            name: 'search',
+            type: 'outline',
+          }}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </Box>
+
+      <RegisterModal
+        onClose={() => setSelectedDentist(null)}
+        onAccept={() => registerDentist()}
+        id={'dentistRegisterModal'}
+        title={`${formatMessage(messages.dentistModalTitle)} ${
+          selectedDentist?.name
+        } hjá ${selectedDentist?.practice}`}
+        description={formatMessage(messages.dentistModalDescription)}
+        isVisible={!!selectedDentist}
+      />
+
       {loading ? (
         <SkeletonLoader repeat={3} space={2} height={40} />
       ) : (
         <>
-          <Box marginBottom={3}>
-            <Input
-              name="filter"
-              placeholder={formatMessage(m.searchPlaceholder)}
-              icon={{
-                name: 'search',
-                type: 'outline',
-              }}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </Box>
           <T.Table>
             <T.Head>
               <T.Row>
@@ -122,17 +161,38 @@ export const DentistRegistration = () => {
             </T.Head>
             <T.Body>
               {data?.response?.dentists.map((dentist, key) => (
-                <T.Row key={key}>
+                <tr onMouseOver={() => setHoverId(dentist.id)} key={key}>
                   <T.Data>{dentist?.name}</T.Data>
                   <T.Data>{dentist?.practice}</T.Data>
                   <T.Data>{`${dentist?.address?.postalCode} ${dentist.address?.municipality}`}</T.Data>
                   <T.Data>{dentist?.address?.streetAddress}</T.Data>
                   <T.Data>
-                    {dentist.name === data.current?.dentist?.name
-                      ? formatMessage(messages.dentistCurrent)
-                      : ''}
+                    {dentist.name === data.current?.dentist?.name ? (
+                      formatMessage(messages.dentistCurrent)
+                    ) : (
+                      <Box
+                        className={styles.saveButtonWrapperStyle({
+                          visible: dentist.id === hoverId,
+                        })}
+                      >
+                        <Button
+                          size="small"
+                          variant="text"
+                          icon="pencil"
+                          onClick={() => {
+                            setSelectedDentist({
+                              id: dentist.id,
+                              name: dentist.name,
+                              practice: dentist.practice,
+                            })
+                          }}
+                        >
+                          {formatMessage(messages.healthRegistrationSave)}
+                        </Button>
+                      </Box>
+                    )}
                   </T.Data>
-                </T.Row>
+                </tr>
               ))}
             </T.Body>
           </T.Table>

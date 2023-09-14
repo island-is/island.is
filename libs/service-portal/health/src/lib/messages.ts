@@ -52,6 +52,23 @@ export const messages = defineMessages({
     id: 'sp.health:dentist-register-forbidden',
     defaultMessage: 'Þú hefur ekki réttindi',
   },
+  dentistModalTitle: {
+    id: 'sp.health:dentist-modal-title',
+    defaultMessage: 'Færa skráningu yfir á:',
+  },
+  dentistModalDescription: {
+    id: 'sp.health:dentist-modal-description',
+    defaultMessage:
+      'Horem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum mattis.',
+  },
+  dentistTransferSuccessTitle: {
+    id: 'sp.health:dentist-transfer-success-title',
+    defaultMessage: 'Ný tannlæknir skráður',
+  },
+  dentistTransferSuccessInfo: {
+    id: 'sp.health:dentist-transfer-success-info',
+    defaultMessage: 'Þú hefur verið skráður á tannlækninn {name}.',
+  },
   healthCenterTitle: {
     id: 'sp.health:health-center-title',
     defaultMessage: 'Heilsugæsla',
@@ -403,14 +420,6 @@ export const messages = defineMessages({
     defaultMessage:
       'Við flutning á heilsugæslustöð verða sjúkraskráningar mínar aðgengilegar á valinni heilsugæslustöð / sjáfstætt starfandi heimilislækni.',
   },
-  healthCenterRegistrationModalButtonAccept: {
-    id: 'sp.health:health-center-registration-modal-button-accept',
-    defaultMessage: 'Já, ég vil færa mig',
-  },
-  healthCenterRegistrationModalButtonCancel: {
-    id: 'sp.health:health-center-registration-modal-button-cancel',
-    defaultMessage: 'Nei, ég vil ekki færa mig',
-  },
   healthCenterListSearchPlaceholder: {
     id: 'sp.health:health-center-list-search-placeholder',
     defaultMessage: 'Sláðu inn leitarorð',
@@ -432,8 +441,16 @@ export const messages = defineMessages({
     id: 'sp.health:health-center-registration-transfer-success-info',
     defaultMessage: 'Þú hefur verið skráður á',
   },
-  healthCenterRegistrationSave: {
-    id: 'sp.health:health-center-registration-save',
+  healthRegistrationSave: {
+    id: 'sp.health:health-registration-save',
     defaultMessage: 'Vista',
+  },
+  healthRegisterModalAccept: {
+    id: 'sp.health:health-register-modal-accept',
+    defaultMessage: 'Já, ég vil færa mig',
+  },
+  healthRegisterModalDecline: {
+    id: 'sp.health:health-registration-modal-decline',
+    defaultMessage: 'Nei, fara tilbaka',
   },
 })

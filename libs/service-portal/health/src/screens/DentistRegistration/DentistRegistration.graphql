@@ -15,6 +15,7 @@ query getPaginatedDentists($input: DentistsInput!) {
       endCursor
     }
     dentists: data {
+      id
       name
       practice
       address {
@@ -29,5 +30,11 @@ query getPaginatedDentists($input: DentistsInput!) {
       id
       name
     }
+  }
+}
+
+mutation registerDentist($input: RegisterDentistInput!) {
+  rightsPortalRegisterDentist(input: $input) {
+    success
   }
 }

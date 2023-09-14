@@ -5,7 +5,7 @@ import { PaginatedResponse } from '@island.is/nest/pagination'
 
 @ObjectType('RightsPortalDentist')
 export class Dentist {
-  @Field(() => ID)
+  @Field(() => Number)
   id!: number
 
   @Field(() => String, { nullable: true })
