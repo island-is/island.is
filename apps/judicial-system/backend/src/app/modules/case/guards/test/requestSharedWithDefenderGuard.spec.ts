@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common'
 
 import {
+  CaseState,
   RequestSharedWithDefender,
   completedCaseStates,
 } from '@island.is/judicial-system/types'
@@ -39,26 +40,31 @@ describe('Request Shared With Defender Guard', () => {
     }
   })
 
-  describe('request shared with defender', () => {
+  describe.each([
+    CaseState.SUBMITTED,
+    CaseState.RECEIVED,
+    ...completedCaseStates,
+  ])('request shared with defender when ready for court', (state) => {
     let then: Then
 
     beforeEach(() => {
       mockRequest.mockImplementationOnce(() => ({
         case: {
-          requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+          state,
+          requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
         },
       }))
 
       then = givenWhenThen()
     })
 
-    it('should activate', () => {
+    it(`${state} should activate`, () => {
       expect(then.result).toBe(true)
     })
   })
 
-  describe.each(completedCaseStates)(
-    'request shared with defender',
+  describe.each([CaseState.RECEIVED, ...completedCaseStates])(
+    'request shared with defender and court date has been set',
     (state) => {
       let then: Then
 
@@ -67,17 +73,40 @@ describe('Request Shared With Defender Guard', () => {
           case: {
             state,
             requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+            courtDate: new Date(),
           },
         }))
 
         then = givenWhenThen()
       })
 
-      it('should activate', () => {
+      it(`${state} should activate`, () => {
         expect(then.result).toBe(true)
       })
     },
   )
+
+  describe('request shared with defender at court date, but court date has not been set', () => {
+    let then: Then
+
+    beforeEach(() => {
+      mockRequest.mockImplementationOnce(() => ({
+        case: {
+          state: CaseState.RECEIVED,
+          requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+        },
+      }))
+
+      then = givenWhenThen()
+    })
+
+    it('should throw ForbiddenException', () => {
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+      expect(then.error.message).toBe(
+        'Forbidden when request is not shared with defender',
+      )
+    })
+  })
 
   describe('request not shared with defender', () => {
     let then: Then

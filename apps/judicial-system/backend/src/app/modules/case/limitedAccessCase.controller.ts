@@ -38,7 +38,7 @@ import { User } from '../user'
 import { CaseExistsGuard } from './guards/caseExists.guard'
 import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
-import { LimitedAccessCaseReceivedGuard } from './guards/limitedAccessCaseReceived.guard'
+import { LimitedAccessCaseStateGuard } from './guards/limitedAccessCaseState.guard'
 import { CaseDefenderGuard } from './guards/caseDefender.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
 import { RequestSharedWithDefenderGuard } from './guards/requestSharedWithDefender.guard'
@@ -70,7 +70,7 @@ export class LimitedAccessCaseController {
     JwtAuthGuard,
     RolesGuard,
     LimitedAccessCaseExistsGuard,
-    LimitedAccessCaseReceivedGuard,
+    LimitedAccessCaseStateGuard,
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
@@ -193,7 +193,7 @@ export class LimitedAccessCaseController {
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
-    LimitedAccessCaseReceivedGuard,
+    LimitedAccessCaseStateGuard,
     RequestSharedWithDefenderGuard,
     CaseDefenderGuard,
   )
@@ -223,7 +223,7 @@ export class LimitedAccessCaseController {
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
-    LimitedAccessCaseReceivedGuard,
+    LimitedAccessCaseStateGuard,
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
@@ -319,7 +319,7 @@ export class LimitedAccessCaseController {
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
-    LimitedAccessCaseReceivedGuard,
+    LimitedAccessCaseStateGuard,
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)

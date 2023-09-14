@@ -7,12 +7,14 @@ import {
 } from '@nestjs/common'
 
 import {
+  CaseState,
   RequestSharedWithDefender,
   completedCaseStates,
+  isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
 @Injectable()
-export class RequestSharedWithDefenderGuard implements CanActivate {
+export class LimitedAccessCaseStateGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
 
@@ -22,23 +24,28 @@ export class RequestSharedWithDefenderGuard implements CanActivate {
       throw new InternalServerErrorException('Missing case')
     }
 
-    const isCaseStateCompleted = completedCaseStates.includes(theCase.state)
-    const canDefenderSeeRequest = theCase.requestSharedWithDefender ?? false
-    const canDefenderSeeRequestBeforeCourtDate =
+    const isCaseStateCompleted =
+      completedCaseStates.includes(theCase.state) ?? false
+
+    const canDefenderSeeSubmittedCase =
       theCase.requestSharedWithDefender ===
       RequestSharedWithDefender.READY_FOR_COURT
-    const isCourtDateSet = theCase.courtDate
+
+    const canDefenderSeeReceivedCase =
+      canDefenderSeeSubmittedCase ||
+      isIndictmentCase(theCase.type) ||
+      theCase.courtDate
 
     if (
       isCaseStateCompleted ||
-      (canDefenderSeeRequest &&
-        (isCourtDateSet || canDefenderSeeRequestBeforeCourtDate))
+      (theCase.state === CaseState.SUBMITTED && canDefenderSeeSubmittedCase) ||
+      (theCase.state === CaseState.RECEIVED && canDefenderSeeReceivedCase)
     ) {
       return true
     }
 
     throw new ForbiddenException(
-      'Forbidden when request is not shared with defender',
+      'Forbidden for current status of limited access case',
     )
   }
 }

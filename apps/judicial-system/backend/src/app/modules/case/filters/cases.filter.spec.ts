@@ -11,6 +11,7 @@ import {
   indictmentCases,
   InstitutionType,
   investigationCases,
+  RequestSharedWithDefender,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -331,6 +332,15 @@ describe('getCasesQueryFilter', () => {
                 { type: [...restrictionCases, ...investigationCases] },
                 {
                   [Op.or]: [
+                    {
+                      [Op.and]: [
+                        { state: [CaseState.SUBMITTED, CaseState.RECEIVED] },
+                        {
+                          request_shared_with_defender:
+                            RequestSharedWithDefender.READY_FOR_COURT,
+                        },
+                      ],
+                    },
                     {
                       [Op.and]: [
                         { state: CaseState.RECEIVED },
