@@ -1,9 +1,9 @@
 import { createIntl } from 'react-intl'
 
+import { RequestSharedWithDefender } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { getCaseResubmittedText } from './CaseResubmitModal'
-import { RequestSharedWithDefender } from '@island.is/judicial-system/types'
 
 describe('getCaseResubmittedText', () => {
   const formatMessage = createIntl({

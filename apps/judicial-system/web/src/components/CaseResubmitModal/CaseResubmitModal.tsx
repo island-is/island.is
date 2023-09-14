@@ -2,11 +2,11 @@ import React, { useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'
+import { RequestSharedWithDefender } from '@island.is/judicial-system/types'
 import { caseResubmitModal as m } from '@island.is/judicial-system-web/messages'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { Modal } from '..'
-import { RequestSharedWithDefender } from '@island.is/judicial-system/types'
 
 interface Props {
   workingCase: Case

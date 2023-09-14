@@ -8,9 +8,9 @@ import {
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import {
+  RequestSharedWithDefender,
   SessionArrangements,
   UserRole,
-  RequestSharedWithDefender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
