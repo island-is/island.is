@@ -24,17 +24,17 @@ export class LimitedAccessCaseStateGuard implements CanActivate {
       throw new InternalServerErrorException('Missing case')
     }
 
-    const isCaseStateCompleted =
-      completedCaseStates.includes(theCase.state) ?? false
+    const isCaseStateCompleted = completedCaseStates.includes(theCase.state)
 
     const canDefenderSeeSubmittedCase =
       theCase.requestSharedWithDefender ===
       RequestSharedWithDefender.READY_FOR_COURT
 
-    const canDefenderSeeReceivedCase =
+    const canDefenderSeeReceivedCase = Boolean(
       canDefenderSeeSubmittedCase ||
-      isIndictmentCase(theCase.type) ||
-      theCase.courtDate
+        isIndictmentCase(theCase.type) ||
+        theCase.courtDate,
+    )
 
     if (
       isCaseStateCompleted ||

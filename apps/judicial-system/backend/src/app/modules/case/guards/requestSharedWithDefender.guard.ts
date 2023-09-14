@@ -23,11 +23,11 @@ export class RequestSharedWithDefenderGuard implements CanActivate {
     }
 
     const isCaseStateCompleted = completedCaseStates.includes(theCase.state)
-    const canDefenderSeeRequest = theCase.requestSharedWithDefender ?? false
+    const canDefenderSeeRequest = Boolean(theCase.requestSharedWithDefender)
     const canDefenderSeeRequestBeforeCourtDate =
       theCase.requestSharedWithDefender ===
       RequestSharedWithDefender.READY_FOR_COURT
-    const isCourtDateSet = theCase.courtDate
+    const isCourtDateSet = Boolean(theCase.courtDate)
 
     if (
       isCaseStateCompleted ||

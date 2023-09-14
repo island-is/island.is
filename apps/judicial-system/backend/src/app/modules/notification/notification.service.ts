@@ -468,8 +468,8 @@ export class NotificationService {
       this.eventService.postEvent(CaseEvent.RESUBMIT, theCase)
     }
 
-    if (theCase.requestSharedWithDefender !== null) {
-      const defendantHasBeenNotified = await this.hasReceivedNotification(
+    if (theCase.requestSharedWithDefender) {
+      const hasDefendantBeenNotified = await this.hasReceivedNotification(
         theCase.id,
         [NotificationType.READY_FOR_COURT, NotificationType.COURT_DATE],
         theCase.defenderEmail,
@@ -478,14 +478,14 @@ export class NotificationService {
       if (
         theCase.defenderName &&
         theCase.defenderEmail &&
-        !defendantHasBeenNotified
+        !hasDefendantBeenNotified
       ) {
         promises.push(
           this.sendResubmittedToCourtEmailNotificationToDefender(theCase),
         )
       } else if (
         theCase.requestSharedWithDefender ===
-        RequestSharedWithDefender.COURT_DATE
+        RequestSharedWithDefender.READY_FOR_COURT
       ) {
         promises.push(
           this.sendReadyForCourtEmailNotificationToDefender(theCase),
@@ -667,8 +667,7 @@ export class NotificationService {
         formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
       theCase.court?.name,
       theCase.courtCaseNumber,
-      theCase.requestSharedWithDefender ===
-        RequestSharedWithDefender.COURT_DATE,
+      Boolean(theCase.requestSharedWithDefender),
     )
     const calendarInvite = this.createICalAttachment(theCase)
 

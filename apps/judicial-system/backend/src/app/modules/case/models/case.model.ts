@@ -181,7 +181,7 @@ export class Case extends Model {
   defenderPhoneNumber?: string
 
   /**********
-   * Indicates whether, and if so when, the prosecutor's request should be sent to the accused's
+   * Indicates whether, and if so when, the prosecutor's request should become accessible to the accused's
    * defender - optional
    **********/
   @Column({

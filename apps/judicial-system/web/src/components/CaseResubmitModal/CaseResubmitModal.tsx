@@ -20,8 +20,11 @@ export function getCaseResubmittedText(
 ) {
   return formatMessage(m.text, {
     requestSharedWithDefender: Boolean(
-      workingCase.requestSharedWithDefender ===
-        RequestSharedWithDefender.COURT_DATE && workingCase.courtDate,
+      (workingCase.requestSharedWithDefender ===
+        RequestSharedWithDefender.COURT_DATE &&
+        workingCase.courtDate) ||
+        workingCase.requestSharedWithDefender ===
+          RequestSharedWithDefender.READY_FOR_COURT,
     ),
   })
 }
