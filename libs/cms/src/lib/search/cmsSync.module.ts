@@ -1,5 +1,11 @@
 import { Module } from '@nestjs/common'
 import { ElasticService } from '@island.is/content-search-toolkit'
+import { ConfigModule } from '@island.is/nest/config'
+import {
+  FeatureFlagConfig,
+  FeatureFlagModule,
+} from '@island.is/nest/feature-flags'
+
 import { ContentfulService } from './contentful.service'
 import { ArticleSyncService } from './importers/article.service'
 import { CmsSyncService } from './cmsSync.service'
@@ -20,6 +26,13 @@ import { EnhancedAssetSyncService } from './importers/enhancedAsset.service'
 import { VacancySyncService } from './importers/vacancy.service'
 
 @Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [FeatureFlagConfig],
+    }),
+    FeatureFlagModule,
+  ],
   providers: [
     ElasticService,
     ContentfulService,
