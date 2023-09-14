@@ -1179,6 +1179,16 @@ UniversitySearch.getProps = async ({ apolloClient, locale }) => {
 
   const newResponse = await apolloClient.query<any, any>({
     query: GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
+    variables: {
+      input: {
+        limit: 100,
+        before: '1',
+        after: '2',
+        active: true,
+        year: 2023,
+        universityId: '1',
+      },
+    },
   })
 
   console.log('newResponse', newResponse)
