@@ -13,6 +13,7 @@
       "options": {
         "outputPath": "dist/apps/services/license-api",
         "main": "apps/services/license-api/src/main.ts",
+        "format": ["cjs"],
         "tsConfig": "apps/services/license-api/tsconfig.app.json",
         "assets": [
           {

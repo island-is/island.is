@@ -13,6 +13,7 @@
         "outputPath": "dist/apps/services/auth/personal-representative",
         "main": "apps/services/auth/personal-representative/src/main.ts",
         "tsConfig": "apps/services/auth/personal-representative/tsconfig.app.json",
+        "format": ["cjs"],
         "assets": ["apps/services/auth/personal-representative/src/assets"],
         "outputFileName": "main.js",
         "esbuildConfig": "apps/services/auth/personal-representative/esbuild.json"

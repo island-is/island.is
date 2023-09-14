@@ -14,6 +14,7 @@
         "outputPath": "dist/apps/judicial-system/api",
         "esbuildConfig": "apps/judicial-system/api/esbuild.json",
         "main": "apps/judicial-system/api/src/main.ts",
+        "format": ["cjs"],
         "tsConfig": "apps/judicial-system/api/tsconfig.app.json",
         "assets": [],
         "outputFileName": "main.js"

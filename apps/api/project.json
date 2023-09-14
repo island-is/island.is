@@ -15,6 +15,7 @@
         "main": "apps/api/src/main.ts",
         "tsConfig": "apps/api/tsconfig.app.json",
         "outputFileName": "main.js",
+        "format": ["cjs"],
         "esbuildConfig": "apps/services/user-notification/esbuild.json",
         "assets": [
           {

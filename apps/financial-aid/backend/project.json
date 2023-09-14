@@ -14,6 +14,7 @@
         "outputPath": "dist/apps/financial-aid/backend",
         "main": "apps/financial-aid/backend/src/main.ts",
         "esbuildConfig": "apps/financial-aid/backend/esbuild.json",
+        "format": ["cjs"],
         "tsConfig": "apps/financial-aid/backend/tsconfig.app.json",
         "assets": [
           {

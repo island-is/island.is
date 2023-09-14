@@ -15,6 +15,7 @@
         "main": "apps/judicial-system/xrd-api/src/main.ts",
         "tsConfig": "apps/judicial-system/xrd-api/tsconfig.app.json",
         "outputFileName": "main.js",
+        "format": ["cjs"],
         "esbuildConfig": "apps/judicial-system/xrd-api/esbuild.json",
         "assets": [
           {

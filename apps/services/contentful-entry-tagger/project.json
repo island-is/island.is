@@ -13,6 +13,7 @@
         "outputPath": "dist/apps/services/contentful-entry-tagger",
         "main": "apps/services/contentful-entry-tagger/src/main.ts",
         "tsConfig": "apps/services/contentful-entry-tagger/tsconfig.app.json",
+        "format": ["cjs"],
         "assets": ["apps/services/contentful-entry-tagger/src/assets"],
         "outputFileName": "main.js",
         "esbuildConfig": "apps/services/contentful-entry-tagger/esbuild.json"

@@ -14,6 +14,7 @@
         "outputPath": "dist/apps/services/documents",
         "main": "apps/services/documents/src/main.ts",
         "tsConfig": "apps/services/documents/tsconfig.app.json",
+        "format": ["cjs"],
         "showCircularDependencies": false,
         "assets": [
           "apps/services/documents/src/assets",

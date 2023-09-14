@@ -15,6 +15,7 @@
         "showCircularDependencies": false,
         "main": "apps/skilavottord/ws/src/main.ts",
         "tsConfig": "apps/skilavottord/ws/tsconfig.app.json",
+        "format": ["cjs"],
         "assets": [
           "apps/skilavottord/ws/src/assets",
           {

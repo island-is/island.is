@@ -15,6 +15,7 @@
         "tsConfig": "apps/air-discount-scheme/backend/tsconfig.app.json",
         "outputPath": "dist/apps/air-discount-scheme/backend",
         "outputFileName": "main.js",
+        "format": ["cjs"],
         "esbuildConfig": "apps/air-discount-scheme/backend/esbuild.json",
         "assets": [
           {

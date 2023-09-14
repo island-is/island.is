@@ -14,6 +14,7 @@
         "outputPath": "dist/apps/reference-backend",
         "main": "apps/reference-backend/src/main.ts",
         "tsConfig": "apps/reference-backend/tsconfig.app.json",
+        "format": ["cjs"],
         "assets": [
           {
             "glob": "*",

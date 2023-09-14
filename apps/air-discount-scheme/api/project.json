@@ -15,6 +15,7 @@
         "esbuildConfig": "apps/air-discount-scheme/esbuild.json",
         "outputPath": "dist/apps/air-discount-scheme/api",
         "outputFileName": "main.js",
+        "format": ["cjs"],
         "tsConfig": "apps/air-discount-scheme/api/tsconfig.app.json",
         "assets": []
       },

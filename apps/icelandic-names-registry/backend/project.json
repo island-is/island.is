@@ -13,6 +13,7 @@
         "outputPath": "dist/apps/icelandic-names-registry/backend",
         "main": "apps/icelandic-names-registry/backend/src/main.ts",
         "esbuildConfig": "apps/icelandic-names-registry/backend/esbuild.json",
+        "format": ["cjs"],
         "tsConfig": "apps/icelandic-names-registry/backend/tsconfig.app.json",
         "assets": [
           {

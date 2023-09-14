@@ -14,6 +14,7 @@
         "outputPath": "dist/apps/financial-aid/api",
         "main": "apps/financial-aid/api/src/main.ts",
         "esbuildConfig": "apps/financial-aid/api/esbuild.json",
+        "format": ["cjs"],
         "tsConfig": "apps/financial-aid/api/tsconfig.app.json",
         "assets": [],
         "outputFileName": "main.js"

@@ -13,6 +13,7 @@
         "outputPath": "dist/apps/judicial-system/scheduler",
         "main": "apps/judicial-system/scheduler/src/main.ts",
         "tsConfig": "apps/judicial-system/scheduler/tsconfig.app.json",
+        "format": ["cjs"],
         "outputFileName": "main.js",
         "esbuildConfig": "apps/judicial-system/scheduler/esbuild.json"
       },

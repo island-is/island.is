@@ -28,6 +28,7 @@
       "options": {
         "outputPath": "dist/apps/services/sessions",
         "main": "apps/services/sessions/src/main.ts",
+        "format": ["cjs"],
         "tsConfig": "apps/services/sessions/tsconfig.app.json",
         "assets": [
           {

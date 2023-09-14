@@ -13,6 +13,7 @@
         "main": "apps/services/auth/delegation-api/src/main.ts",
         "tsConfig": "apps/services/auth/delegation-api/tsconfig.app.json",
         "assets": ["apps/services/auth/delegation-api/src/assets"],
+        "format": ["cjs"],
         "outputFileName": "main.js",
         "esbuildConfig": "apps/services/auth/delegation-api/esbuild.json"
       },

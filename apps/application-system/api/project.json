@@ -15,6 +15,7 @@
         "esbuildConfig": "apps/application-system/api/esbuild.json",
         "main": "apps/application-system/api/src/main.ts",
         "tsConfig": "apps/application-system/api/tsconfig.app.json",
+        "format": ["cjs"],
         "outputFileName": "main.js",
         "assets": [
           {

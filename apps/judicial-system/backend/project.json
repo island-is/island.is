@@ -14,6 +14,7 @@
         "outputPath": "dist/apps/judicial-system/backend",
         "main": "apps/judicial-system/backend/src/main.ts",
         "esbuildConfig": "apps/judicial-system/esbuild.json",
+        "format": ["cjs"],
         "tsConfig": "apps/judicial-system/backend/tsconfig.app.json",
         "assets": [
           {

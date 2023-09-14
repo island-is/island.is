@@ -12,6 +12,7 @@
       "options": {
         "outputPath": "dist/apps/services/auth/personal-representative-public",
         "main": "apps/services/auth/personal-representative-public/src/main.ts",
+        "format": ["cjs"],
         "tsConfig": "apps/services/auth/personal-representative-public/tsconfig.app.json",
         "assets": [
           "apps/services/auth/personal-representative-public/src/assets"

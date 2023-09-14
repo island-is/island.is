@@ -13,6 +13,7 @@
         "outputPath": "dist/apps/services/endorsements/api",
         "main": "apps/services/endorsements/api/src/main.ts",
         "tsConfig": "apps/services/endorsements/api/tsconfig.app.json",
+        "format": ["cjs"],
         "assets": [
           {
             "glob": "*",

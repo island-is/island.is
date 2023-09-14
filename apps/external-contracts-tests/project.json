@@ -21,6 +21,7 @@
       "options": {
         "outputPath": "dist/apps/external-contracts-tests",
         "esbuildConfig": "apps/external-contracts-tests/esbuild.json",
+        "format": ["cjs"],
         "main": "apps/external-contracts-tests/main.spec.ts",
         "tsConfig": "apps/external-contracts-tests/tsconfig.json"
       },

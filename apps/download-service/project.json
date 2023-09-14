@@ -15,6 +15,7 @@
         "main": "apps/download-service/src/main.ts",
         "tsConfig": "apps/download-service/tsconfig.app.json",
         "assets": ["apps/download-service/src/assets"],
+        "format": ["cjs"],
         "outputFileName": "main.js"
       },
       "configurations": {
