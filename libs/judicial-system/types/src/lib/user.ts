@@ -7,7 +7,7 @@ export enum UserRole {
   JUDGE = 'JUDGE', // dómari
   ASSISTANT = 'ASSISTANT', // aðstoðarmaður dómara
   ADMIN = 'ADMIN', // Does not exist in the database // notendaumsjón
-  STAFF = 'STAFF', // fangelsismálastarfsmaður
+  PRISON_SYSTEM_STAFF = 'PRISON_SYSTEM_STAFF', // fangelsismálastarfsmaður
   DEFENDER = 'DEFENDER', // Does not exist in the database // verjandi
 }
 
@@ -113,7 +113,7 @@ export function isAppealsCourtUser(user: User): boolean {
   )
 }
 
-const prisonSystemRoles: string[] = [UserRole.STAFF]
+const prisonSystemRoles: string[] = [UserRole.PRISON_SYSTEM_STAFF]
 
 function isPrisonSystemRole(role: string): boolean {
   return prisonSystemRoles.includes(role)

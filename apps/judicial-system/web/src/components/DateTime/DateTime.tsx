@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 
 import { DatePicker, Input } from '@island.is/island-ui/core'
 import {
@@ -7,6 +8,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { BlueBox, TimeInputField } from '../../components'
+import { dateTime as strings } from './DateTime.strings'
 import * as styles from './DateTime.css'
 
 interface Props {
@@ -35,7 +37,7 @@ const DateTime: React.FC<React.PropsWithChildren<Props>> = (props) => {
     minDate,
     maxDate,
     selectedDate,
-    timeLabel = 'Tímasetning (kk:mm)',
+    timeLabel,
     disabled,
     required = false,
     blueBox = true,
@@ -45,6 +47,7 @@ const DateTime: React.FC<React.PropsWithChildren<Props>> = (props) => {
     dateOnly = false,
     onChange,
   } = props
+  const { formatMessage } = useIntl()
 
   const getTimeFromDate = (date: Date | undefined): string =>
     date
@@ -196,8 +199,8 @@ const DateTime: React.FC<React.PropsWithChildren<Props>> = (props) => {
             <Input
               data-testid={`${name}-time`}
               name={`${name}-time`}
-              label={timeLabel}
-              placeholder="Veldu tíma"
+              label={timeLabel ?? formatMessage(strings.timeLabel)}
+              placeholder={formatMessage(strings.timePlaceholder)}
               errorMessage={timeErrorMessage}
               hasError={timeErrorMessage !== undefined}
               icon={

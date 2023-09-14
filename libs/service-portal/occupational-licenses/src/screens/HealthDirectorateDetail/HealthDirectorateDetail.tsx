@@ -65,13 +65,13 @@ export const EducationDetail = () => {
       intro={formatMessage(om.healthDirectorateIntro)}
       img={organizationImage}
       name={user.profile.name}
-      dateOfBirth={birthday ? formatDateFns(birthday, 'dd.mm.yyyy') : undefined}
+      dateOfBirth={birthday ? formatDateFns(birthday, 'dd.MM.yyyy') : undefined}
       profession={license.profession}
       licenseType={license.type}
       publisher={formatMessage(om.theDirectorateOfHealth)}
       dateOfIssue={
         license.validFrom
-          ? formatDateFns(license.validFrom, 'dd.mm.yyyy')
+          ? formatDateFns(license.validFrom, 'dd.MM.yyyy')
           : undefined
       }
       isValid={license.isValid}
