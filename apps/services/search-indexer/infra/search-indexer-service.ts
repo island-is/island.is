@@ -97,6 +97,7 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
       }),
       secrets: {
         CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN',
+        CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',
       },
     })
     .resources({
