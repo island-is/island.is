@@ -21,21 +21,6 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  CaseAppealDecision,
-  CaseAppealRulingDecision,
-  CaseAppealState,
-  CaseCustodyRestrictions,
-  CaseLegalProvisions,
-  CaseOrigin,
-  CaseType,
-  Defendant,
-  IndictmentCount,
-  Institution,
-  SessionArrangements,
-  User,
-  UserRole,
-} from '@island.is/judicial-system-web/src/graphql/schema'
 
 export enum AppealDecisionRole {
   PROSECUTOR = 'PROSECUTOR',
