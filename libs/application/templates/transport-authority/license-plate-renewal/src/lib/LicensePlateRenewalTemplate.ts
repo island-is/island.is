@@ -19,7 +19,6 @@ import {
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { application as applicationMessage } from './messages'
-import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { LicensePlateRenewalSchema } from './dataSchema'
 import {
@@ -27,6 +26,8 @@ import {
   MyPlateOwnershipsApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { Features } from '@island.is/feature-flags'
+import { ApiScope } from '@island.is/auth/scopes'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const regno = getValueViaPath(
@@ -55,10 +56,13 @@ const template: ApplicationTemplate<
   allowedDelegations: [
     {
       type: AuthDelegationType.ProcurationHolder,
-      featureFlag: Features.transportAuthorityLicensePlateRenewalDelegations,
+    },
+    {
+      type: AuthDelegationType.Custom,
+      featureFlag: Features.transportAuthorityApplicationsCustomDelegation,
     },
   ],
-  featureFlag: Features.transportAuthorityLicensePlateRenewal,
+  requiredScopes: [ApiScope.samgongustofaVehicles],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

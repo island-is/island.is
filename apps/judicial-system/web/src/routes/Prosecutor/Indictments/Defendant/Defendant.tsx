@@ -1,9 +1,18 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useRouter } from 'next/router'
 import { uuid } from 'uuidv4'
-import { AnimatePresence, motion } from 'framer-motion'
 
+import { Box, Button, toast } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  CrimeScene,
+  CrimeSceneMap,
+  IndictmentSubtype,
+  IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
+import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
@@ -13,29 +22,20 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles, core, errors } from '@island.is/judicial-system-web/messages'
-import { Box, Button, toast } from '@island.is/island-ui/core'
-import {
-  IndictmentSubtypeMap,
-  CrimeSceneMap,
-  IndictmentSubtype,
-  CrimeScene,
-} from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
-import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   CaseOrigin,
   Defendant as TDefendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
+import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { DefendantInfo } from '../../components'
-import { defendant } from './Defendant.strings'
 import { LokeNumberList } from './LokeNumberList/LokeNumberList'
 import { PoliceCaseInfo } from './PoliceCaseInfo/PoliceCaseInfo'
+import { defendant } from './Defendant.strings'
 
 export interface PoliceCase {
   number: string
@@ -144,7 +144,10 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
             ...allCases.map((policeCase) => policeCase.number),
           ],
           indictmentSubtypes: allCases.reduce<IndictmentSubtypeMap>(
-            (acc, policeCase) => ({ ...acc, [policeCase.number]: [] }),
+            (acc, policeCase) => ({
+              ...acc,
+              [policeCase.number]: policeCase.subtypes ?? [],
+            }),
             {},
           ),
           crimeScenes: allCases.reduce<CrimeSceneMap>(
@@ -249,25 +252,31 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
 
         if (createdCase) {
           workingCase.defendants?.forEach(async (defendant, index) => {
-            const updatedDefendant = {
-              caseId: createdCase.id,
-              defendantId: defendant.id,
-              gender: defendant.gender,
-              name: defendant.name,
-              address: defendant.address,
-              nationalId: defendant.nationalId,
-              noNationalId: defendant.noNationalId,
-              citizenship: defendant.citizenship,
-            }
-
             if (
               index === 0 &&
               createdCase.defendants &&
               createdCase.defendants.length > 0
             ) {
-              await updateDefendant(updatedDefendant)
+              await updateDefendant({
+                caseId: createdCase.id,
+                defendantId: createdCase.defendants[0].id,
+                gender: defendant.gender,
+                name: defendant.name,
+                address: defendant.address,
+                nationalId: defendant.nationalId,
+                noNationalId: defendant.noNationalId,
+                citizenship: defendant.citizenship,
+              })
             } else {
-              await createDefendant(updatedDefendant)
+              await createDefendant({
+                caseId: createdCase.id,
+                gender: defendant.gender,
+                name: defendant.name,
+                address: defendant.address,
+                nationalId: defendant.nationalId,
+                noNationalId: defendant.noNationalId,
+                citizenship: defendant.citizenship,
+              })
             }
           })
           router.push(`${destination}/${createdCase.id}`)

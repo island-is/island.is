@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 
-import { Button, Box } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
 
 import * as styles from '../AppealSection/AppealSection.css'
