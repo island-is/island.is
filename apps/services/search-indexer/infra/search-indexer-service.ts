@@ -1,4 +1,4 @@
-import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const envs = {
   APPLICATION_URL: 'http://search-indexer-service',
@@ -20,11 +20,6 @@ const envs = {
     dev: '20',
     staging: '40',
     prod: '40',
-  },
-  SHOULD_SEARCH_INDEXER_RESOLVE_NESTED_ENTRIES: {
-    dev: 'true',
-    staging: 'true',
-    prod: 'true',
   },
   AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: {
     dev: 'loftbru.dev01.devland.is',

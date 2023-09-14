@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   capitalize,
   caseTypes,
@@ -11,37 +12,36 @@ import {
 import {
   CaseState,
   completedCaseStates,
-  RequestSharedWithDefender,
   Feature,
   isInvestigationCase,
   isRestrictionCase,
+  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
+  AlertBanner,
+  AppealCaseFilesOverview,
   CaseDates,
+  CaseResentExplanation,
+  Conclusion,
+  FeatureContext,
   FormContentContainer,
   FormContext,
   InfoCard,
   MarkdownWrapper,
-  PageLayout,
-  RestrictionTags,
-  PageHeader,
   Modal,
-  Conclusion,
-  AppealCaseFilesOverview,
-  CaseResentExplanation,
-  FeatureContext,
-  AppealConclusion,
-  AlertBanner,
   OverviewHeader,
+  PageHeader,
+  PageLayout,
   PdfButton,
+  RestrictionTags,
   SignedDocument,
 } from '@island.is/judicial-system-web/src/components'
-import { core, titles } from '@island.is/judicial-system-web/messages'
-import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
+import { conclusion } from '../../components/Conclusion/Conclusion.strings'
 import { strings } from './CaseOverview.strings'
 
 type availableModals =
@@ -246,6 +246,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
           {completedCaseStates.includes(workingCase.state) && (
             <Box marginBottom={6}>
               <Conclusion
+                title={formatMessage(conclusion.title)}
                 conclusionText={workingCase.conclusion}
                 judgeName={workingCase.judge?.name}
               />
@@ -253,17 +254,15 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
           )}
           {workingCase.appealConclusion && (
             <Box marginBottom={6}>
-              <AppealConclusion
+              <Conclusion
+                title={formatMessage(conclusion.appealTitle)}
                 conclusionText={workingCase.appealConclusion}
-                judgeName={workingCase.appealJudge1?.name}
               />
             </Box>
           )}
-
           <AppealCaseFilesOverview />
 
-          {(workingCase.requestSharedWithDefender ===
-            RequestSharedWithDefender.COURT_DATE ||
+          {(workingCase.requestSharedWithDefender ||
             completedCaseStates.includes(workingCase.state)) && (
             <Box marginBottom={10}>
               <Text as="h3" variant="h3" marginBottom={3}>

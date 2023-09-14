@@ -1,14 +1,14 @@
 import { CaseState } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { GetCurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/getCurrentUser.generated'
 import {
+  CaseOrigin,
+  CaseType,
+  Gender,
   InstitutionType,
   User,
   UserRole,
-  CaseType,
-  CaseOrigin,
-  Gender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { GetCurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/getCurrentUser.generated'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 export const mockCourt = {
   id: 'court_id',
@@ -56,7 +56,7 @@ export const mockCourtOfAppealsUser = {
 
 export const mockPrisonUser = {
   id: 'hc_1',
-  role: UserRole.STAFF,
+  role: UserRole.PRISON_SYSTEM_STAFF,
   name: 'Finnur fangavörður',
   title: 'fangavörður',
   institution: mockPrison,

@@ -144,7 +144,7 @@ function getAppealsCourtUserCasesQueryFilter(): WhereOptions {
   }
 }
 
-function getStaffUserCasesQueryFilter(user: User): WhereOptions {
+function getPrisonSystemStaffUserCasesQueryFilter(user: User): WhereOptions {
   const options: WhereOptions = [
     { isArchived: false },
     { state: CaseState.ACCEPTED },
@@ -234,7 +234,7 @@ export function getCasesQueryFilter(user: User): WhereOptions {
   }
 
   if (isPrisonSystemUser(user)) {
-    return getStaffUserCasesQueryFilter(user)
+    return getPrisonSystemStaffUserCasesQueryFilter(user)
   }
 
   if (isDefenceUser(user)) {
