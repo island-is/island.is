@@ -49,23 +49,24 @@ export const DentistRegistration = () => {
     loading: statusLoading,
   } = useGetDentistStatusQuery()
 
-  const [registerDentist] = useRegisterDentistMutation({
-    onError: () => {
-      setErrorTransfering(true)
-    },
-    onCompleted: (data) => {
-      if (data.rightsPortalRegisterDentist.success) {
-        navigate(`${HealthPaths.HealthDentists}?s=t`)
-      } else {
+  const [registerDentist, { loading: loadingTranser }] =
+    useRegisterDentistMutation({
+      onError: () => {
         setErrorTransfering(true)
-      }
-    },
-    variables: {
-      input: {
-        id: selectedDentist?.id ?? 0,
       },
-    },
-  })
+      onCompleted: (data) => {
+        if (data.rightsPortalRegisterDentist.success) {
+          navigate(`${HealthPaths.HealthDentists}?s=t`)
+        } else {
+          setErrorTransfering(true)
+        }
+      },
+      variables: {
+        input: {
+          id: selectedDentist?.id ?? 0,
+        },
+      },
+    })
 
   useEffect(() => {
     if (errorTransfering && errorBoxRef.current) {
@@ -181,6 +182,7 @@ export const DentistRegistration = () => {
         } hjá ${selectedDentist?.practice}`}
         description={formatMessage(messages.dentistModalDescription)}
         isVisible={!!selectedDentist}
+        buttonLoading={loadingTranser}
       />
 
       {loading ? (

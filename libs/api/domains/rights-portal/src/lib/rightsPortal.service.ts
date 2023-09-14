@@ -210,7 +210,6 @@ export class RightsPortalService {
     user: User,
     id: number,
   ): Promise<RegisterDentistResponse> {
-    console.log('form register dentist in serivce ', id)
     try {
       await this.dentistApi
         .withMiddleware(new AuthMiddleware(user as Auth))
