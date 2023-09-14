@@ -153,7 +153,7 @@ export const m = defineMessages({
   },
   errorScopeIdRegex: {
     id: 'ap.ids-admin:error-scope-id-regex',
-    defaultMessage: 'Allowed characters are A-Z a-z 0-9 . _ - /',
+    defaultMessage: 'Allowed characters are A-Z a-z 0-9 . _ - / :',
   },
   errorEnvironment: {
     id: 'ap.ids-admin:error-environment',
@@ -633,6 +633,10 @@ export const m = defineMessages({
   permissionDescription: {
     id: 'ap.ids-admin:permission-description',
     defaultMessage: 'Description',
+  },
+  permissionAlreadyExists: {
+    id: 'ap.ids-admin:permission-already-exists',
+    defaultMessage: 'Permission ID already exists',
   },
   permissionDescriptionInfo: {
     id: 'ap.ids-admin:permission-description-info',

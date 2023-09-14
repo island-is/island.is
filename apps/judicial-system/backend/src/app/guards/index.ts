@@ -4,7 +4,7 @@ export {
   judgeRule,
   registrarRule,
   assistantRule,
-  staffRule,
+  prisonSystemStaffRule,
   adminRule,
   defenderRule,
 } from './rolesRules'

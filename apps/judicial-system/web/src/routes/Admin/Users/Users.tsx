@@ -72,7 +72,7 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
         return 'Dómritari'
       case UserRole.ASSISTANT:
         return 'Aðstoðarmaður dómara'
-      case UserRole.STAFF:
+      case UserRole.PRISON_SYSTEM_STAFF:
         return 'Starfsmaður'
     }
   }

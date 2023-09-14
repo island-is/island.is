@@ -46,6 +46,8 @@ import {
 import { Locale } from '@island.is/shared/types'
 import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
+import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator'
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
 export const webRenderConnectedComponent = (slice) => {
@@ -80,6 +82,8 @@ export const webRenderConnectedComponent = (slice) => {
       return <DrivingInstructorList slice={slice} />
     case 'PlateAvailableSearch':
       return <PlateAvailableSearch slice={slice} />
+    case 'HousingBenefitCalculator':
+      return <HousingBenefitCalculator slice={slice} />
     default:
       break
   }

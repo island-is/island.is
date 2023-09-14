@@ -4,24 +4,62 @@ import {
   WatsonChatPanelProps,
 } from '../../ChatPanel'
 
-export const liveChatIncConfig: Record<string, LiveChatIncChatPanelProps> = {
-  // HSN - Organization
-  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/EM4Y0gF4OoGhH9ZY0Dxl6
-  EM4Y0gF4OoGhH9ZY0Dxl6: {
-    license: 15092154,
-    version: '2.0',
+export const liveChatIncConfig: Record<
+  Locale,
+  Record<string, LiveChatIncChatPanelProps>
+> = {
+  is: {
+    // HSN - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/EM4Y0gF4OoGhH9ZY0Dxl6
+    EM4Y0gF4OoGhH9ZY0Dxl6: {
+      license: 15092154,
+      version: '2.0',
+    },
+    // HSU - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/1UDhUhE8pzwnl0UxuzRUMk
+    '1UDhUhE8pzwnl0UxuzRUMk': {
+      license: 15092154,
+      version: '2.0',
+    },
+    // HVE - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/Un4jJk0rPybt9fu8gk94m
+    Un4jJk0rPybt9fu8gk94m: {
+      license: 15092154,
+      version: '2.0',
+    },
+    // Samgöngustofa - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/6IZT17s7stKJAmtPutjpD7
+    '6IZT17s7stKJAmtPutjpD7': {
+      license: 13270509,
+      version: '2.0',
+    },
   },
-  // HSU - Organization
-  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/1UDhUhE8pzwnl0UxuzRUMk
-  '1UDhUhE8pzwnl0UxuzRUMk': {
-    license: 15092154,
-    version: '2.0',
-  },
-  // HVE - Organization
-  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/Un4jJk0rPybt9fu8gk94m
-  Un4jJk0rPybt9fu8gk94m: {
-    license: 15092154,
-    version: '2.0',
+  en: {
+    // HSN - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/EM4Y0gF4OoGhH9ZY0Dxl6
+    EM4Y0gF4OoGhH9ZY0Dxl6: {
+      license: 15092154,
+      version: '2.0',
+    },
+    // HSU - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/1UDhUhE8pzwnl0UxuzRUMk
+    '1UDhUhE8pzwnl0UxuzRUMk': {
+      license: 15092154,
+      version: '2.0',
+    },
+    // HVE - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/Un4jJk0rPybt9fu8gk94m
+    Un4jJk0rPybt9fu8gk94m: {
+      license: 15092154,
+      version: '2.0',
+    },
+    // Samgöngustofa - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/6IZT17s7stKJAmtPutjpD7
+    '6IZT17s7stKJAmtPutjpD7': {
+      license: 13270509,
+      version: '2.0',
+      group: 1,
+    },
   },
 }
 
