@@ -288,8 +288,10 @@ export interface TempUpdateCase
   requestSharedWithDefender?: RequestSharedWithDefender | null
 }
 
-export interface TempCreateCase extends Omit<CreateCase, 'type'> {
+export interface TempCreateCase
+  extends Omit<CreateCase, 'type' | 'requestSharedWithDefender'> {
   type: CaseType
+  requestSharedWithDefender?: RequestSharedWithDefender | null
 }
 
 export interface TempCaseListEntry

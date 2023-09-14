@@ -281,7 +281,7 @@ export interface Case {
   appealReceivedByCourtDate?: string
   appealConclusion?: string
   appealRulingDecision?: CaseAppealRulingDecision
-  requestSharedWithDefender?: RequestSharedWithDefender | null
+  requestSharedWithDefender?: RequestSharedWithDefender
 }
 
 export interface CaseListEntry
