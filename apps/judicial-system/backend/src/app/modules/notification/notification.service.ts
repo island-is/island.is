@@ -478,7 +478,7 @@ export class NotificationService {
       if (
         theCase.defenderName &&
         theCase.defenderEmail &&
-        !hasDefendantBeenNotified
+        hasDefendantBeenNotified
       ) {
         promises.push(
           this.sendResubmittedToCourtEmailNotificationToDefender(theCase),
