@@ -6,19 +6,24 @@
   "prefix": "personal-representative",
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
       "options": {
         "outputPath": "dist/apps/services/auth/personal-representative",
         "main": "apps/services/auth/personal-representative/src/main.ts",
         "tsConfig": "apps/services/auth/personal-representative/tsconfig.app.json",
-        "assets": ["apps/services/auth/personal-representative/src/assets"]
+        "assets": ["apps/services/auth/personal-representative/src/assets"],
+        "outputFileName": "main.js",
+        "esbuildConfig": "apps/services/auth/personal-representative/esbuild.json"
       },
       "configurations": {
+        "development": {
+          "minify": false
+        },
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "minify": true,
+          "generatePackageJson": true
         }
       }
     },

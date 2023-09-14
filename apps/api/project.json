@@ -7,22 +7,32 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
       "options": {
         "outputPath": "dist/apps/api",
         "main": "apps/api/src/main.ts",
         "tsConfig": "apps/api/tsconfig.app.json",
-        "showCircularDependencies": false,
-        "maxWorkers": 2
+        "outputFileName": "main.js",
+        "esbuildConfig": "apps/services/user-notification/esbuild.json",
+        "assets": [
+          {
+            "glob": "src/assets/*",
+            "input": "apps/services/user-notification/",
+            "output": "/assets"
+          }
+        ]
       },
       "configurations": {
+        "development": {
+          "minify": false
+        },
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "minify": true,
+          "generatePackageJson": true
         }
-      },
-      "outputs": ["{options.outputPath}"]
+      }
     },
     "serve": {
       "executor": "@nx/js:node",

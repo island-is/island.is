@@ -6,19 +6,24 @@
   "prefix": "services-auth-public-api",
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
       "options": {
         "outputPath": "dist/apps/services/auth/public-api",
         "main": "apps/services/auth/public-api/src/main.ts",
         "tsConfig": "apps/services/auth/public-api/tsconfig.app.json",
-        "assets": ["apps/services/auth/public-api/src/assets"]
+        "assets": ["apps/services/auth/public-api/src/assets"],
+        "outputFileName": "main.js",
+        "esbuildConfig": "apps/services/auth/public-api/esbuild.json"
       },
       "configurations": {
+        "development": {
+          "minify": false
+        },
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "minify": true,
+          "generatePackageJson": true
         }
       }
     },
@@ -44,7 +49,6 @@
         "passWithNoTests": true
       }
     },
-
     "schemas/build-openapi": {
       "executor": "nx:run-commands",
       "options": {

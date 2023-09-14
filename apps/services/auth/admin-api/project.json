@@ -7,22 +7,25 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
       "options": {
         "outputPath": "dist/apps/services/auth/admin-api",
         "main": "apps/services/auth/admin-api/src/main.ts",
         "tsConfig": "apps/services/auth/admin-api/tsconfig.app.json",
         "assets": ["apps/services/auth/admin-api/src/assets"],
-        "maxWorkers": 2
+        "esbuildConfig": "apps/services/auth/admin-api/esbuild.json"
       },
       "configurations": {
+        "development": {
+          "minify": false
+        },
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "minify": true,
+          "generatePackageJson": true
         }
-      },
-      "outputs": ["{options.outputPath}"]
+      }
     },
     "serve": {
       "executor": "@nx/js:node",

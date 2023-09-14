@@ -6,19 +6,24 @@
   "prefix": "download-service",
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
       "options": {
         "outputPath": "dist/apps/download-service",
+        "esbuildConfig": "apps/download-service/esbuild.json",
         "main": "apps/download-service/src/main.ts",
         "tsConfig": "apps/download-service/tsconfig.app.json",
-        "assets": ["apps/download-service/src/assets"]
+        "assets": ["apps/download-service/src/assets"],
+        "outputFileName": "main.js"
       },
       "configurations": {
+        "development": {
+          "minify": false
+        },
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "minify": true,
+          "generatePackageJson": true
         }
       }
     },

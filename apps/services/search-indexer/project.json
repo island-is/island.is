@@ -7,7 +7,9 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
       "options": {
         "outputPath": "dist/apps/services/search-indexer",
         "main": "apps/services/search-indexer/src/main.ts",
@@ -24,17 +26,17 @@
             "output": "./"
           }
         ],
-        "webpackConfig": "apps/services/search-indexer/webpack.config.js",
-        "maxWorkers": 2
+        "esbuildConfig": "apps/services/search-indexer/esbuild.js"
       },
       "configurations": {
+        "development": {
+          "minify": false
+        },
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "minify": true,
+          "generatePackageJson": true
         }
-      },
-      "outputs": ["{options.outputPath}"]
+      }
     },
     "serve": {
       "executor": "@nx/js:node",

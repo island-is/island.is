@@ -7,22 +7,26 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
       "options": {
         "outputPath": "dist/apps/judicial-system/api",
+        "esbuildConfig": "apps/judicial-system/api/esbuild.json",
         "main": "apps/judicial-system/api/src/main.ts",
         "tsConfig": "apps/judicial-system/api/tsconfig.app.json",
         "assets": [],
-        "maxWorkers": 2
+        "outputFileName": "main.js"
       },
       "configurations": {
+        "development": {
+          "minify": false
+        },
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "minify": true,
+          "generatePackageJson": true
         }
-      },
-      "outputs": ["{options.outputPath}"]
+      }
     },
     "serve": {
       "executor": "@nx/js:node",

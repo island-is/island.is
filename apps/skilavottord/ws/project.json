@@ -7,7 +7,9 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
       "options": {
         "outputPath": "dist/apps/skilavottord/ws",
         "showCircularDependencies": false,
@@ -36,16 +38,18 @@
             "output": "./"
           }
         ],
-        "maxWorkers": 2
+        "outputFileName": "main.js",
+        "esbuildConfig": "apps/skilavottord/ws/esbuild.json"
       },
       "configurations": {
+        "development": {
+          "minify": false
+        },
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "minify": true,
+          "generatePackageJson": true
         }
-      },
-      "outputs": ["{options.outputPath}"]
+      }
     },
     "serve": {
       "executor": "@nx/js:node",

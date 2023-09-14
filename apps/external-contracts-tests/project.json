@@ -15,18 +15,22 @@
       }
     },
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
       "options": {
         "outputPath": "dist/apps/external-contracts-tests",
+        "esbuildConfig": "apps/external-contracts-tests/esbuild.json",
         "main": "apps/external-contracts-tests/main.spec.ts",
         "tsConfig": "apps/external-contracts-tests/tsconfig.json"
       },
       "configurations": {
+        "development": {
+          "minify": false
+        },
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "minify": true,
+          "generatePackageJson": true
         }
       }
     },

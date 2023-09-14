@@ -7,10 +7,13 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
       "options": {
         "outputPath": "dist/apps/financial-aid/backend",
         "main": "apps/financial-aid/backend/src/main.ts",
+        "esbuildConfig": "apps/financial-aid/backend/esbuild.json",
         "tsConfig": "apps/financial-aid/backend/tsconfig.app.json",
         "assets": [
           {
@@ -29,16 +32,17 @@
             "output": "./"
           }
         ],
-        "maxWorkers": 2
+        "outputFileName": "main.js"
       },
       "configurations": {
+        "development": {
+          "minify": false
+        },
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "minify": true,
+          "generatePackageJson": true
         }
-      },
-      "outputs": ["{options.outputPath}"]
+      }
     },
     "serve": {
       "executor": "@nx/js:node",

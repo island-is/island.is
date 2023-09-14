@@ -22,8 +22,9 @@
       "outputs": ["{workspaceRoot}/dist/apps/services/sessions"]
     },
     "esbuild": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
       "options": {
         "outputPath": "dist/apps/services/sessions",
         "main": "apps/services/sessions/src/main.ts",
@@ -44,13 +45,17 @@
             "input": "apps/services/sessions",
             "output": "./"
           }
-        ]
+        ],
+        "outputFileName": "main.js",
+        "esbuildConfig": "apps/servies/sessions/esbuild.json"
       },
       "configurations": {
+        "development": {
+          "minify": false
+        },
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "minify": true,
+          "generatePackageJson": true
         }
       }
     },

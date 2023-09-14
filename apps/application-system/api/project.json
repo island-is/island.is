@@ -7,11 +7,15 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
       "options": {
         "outputPath": "dist/apps/application-system/api",
+        "esbuildConfig": "apps/application-system/api/esbuild.json",
         "main": "apps/application-system/api/src/main.ts",
         "tsConfig": "apps/application-system/api/tsconfig.app.json",
+        "outputFileName": "main.js",
         "assets": [
           {
             "glob": "*",
@@ -78,18 +82,17 @@
             "input": "libs/application/template-api-modules/src/lib/modules/templates/transport-authority/change-co-owner-of-vehicle/emailGenerators/assets",
             "output": "./transport-authority-change-co-owner-of-vehicle-assets"
           }
-        ],
-        "webpackConfig": "apps/application-system/api/webpack.config.js",
-        "maxWorkers": 2
+        ]
       },
       "configurations": {
+        "development": {
+          "minify": false
+        },
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "minify": true,
+          "generatePackageJson": true
         }
-      },
-      "outputs": ["{options.outputPath}"]
+      }
     },
     "serve": {
       "executor": "@nx/js:node",

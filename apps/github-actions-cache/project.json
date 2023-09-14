@@ -6,19 +6,24 @@
   "prefix": "github-actions-cache",
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
       "options": {
         "outputPath": "dist/apps/github-actions-cache",
+        "esbuildConfig": "apps/github-actions-cache/esbuild.json",
         "main": "apps/github-actions-cache/src/main.ts",
         "tsConfig": "apps/github-actions-cache/tsconfig.app.json",
-        "assets": ["apps/github-actions-cache/src/assets"]
+        "assets": ["apps/github-actions-cache/src/assets"],
+        "outputFileName": "main.js"
       },
       "configurations": {
+        "development": {
+          "minify": false
+        },
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "minify": true,
+          "generatePackageJson": true
         }
       }
     },

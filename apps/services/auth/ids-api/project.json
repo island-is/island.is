@@ -27,7 +27,9 @@
       "outputs": ["{workspaceRoot}/dist/apps/services/auth/ids-api"]
     },
     "esbuild": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
       "options": {
         "outputPath": "dist/apps/services/auth/ids-api",
         "main": "apps/services/auth/ids-api/src/main.ts",
@@ -55,16 +57,18 @@
             "output": "./"
           }
         ],
-        "maxWorkers": 2
+        "outputFileName": "main.js",
+        "esbuildConfig": "apps/services/auth/ids-api/esbuild.json"
       },
       "configurations": {
+        "development": {
+          "minify": false
+        },
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "minify": true,
+          "generatePackageJson": true
         }
-      },
-      "outputs": ["{options.outputPath}"]
+      }
     },
     "serve": {
       "executor": "@nx/js:node",

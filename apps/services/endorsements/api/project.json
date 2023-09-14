@@ -6,8 +6,9 @@
   "prefix": "services-endorsements-api",
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
       "options": {
         "outputPath": "dist/apps/services/endorsements/api",
         "main": "apps/services/endorsements/api/src/main.ts",
@@ -33,13 +34,17 @@
             "input": "libs/email-service/src/tools/design",
             "output": "./email-service-assets"
           }
-        ]
+        ],
+        "outputFileName": "main.js",
+        "esbuildConfig": "apps/services/endorsements/api/esbuild.json"
       },
       "configurations": {
+        "development": {
+          "minify": false
+        },
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "minify": true,
+          "generatePackageJson": true
         }
       }
     },

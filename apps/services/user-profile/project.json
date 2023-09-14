@@ -14,10 +14,8 @@
         "main": "apps/services/user-profile/src/main.ts",
         "outputPath": "dist/apps/services/user-profile",
         "outputFileName": "main.js",
-        "format": ["cjs"],
-        "skipTypeCheck": true,
         "tsConfig": "apps/services/user-profile/tsconfig.app.json",
-        "platform": "node",
+        "esbuildConfig": "apps/services/user-profile/esbuild.json",
         "assets": [
           {
             "input": "apps/services/user-profile",

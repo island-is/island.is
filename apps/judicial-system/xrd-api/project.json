@@ -7,19 +7,30 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
       "options": {
         "outputPath": "dist/apps/judicial-system/xrd-api",
         "main": "apps/judicial-system/xrd-api/src/main.ts",
         "tsConfig": "apps/judicial-system/xrd-api/tsconfig.app.json",
-        "assets": [],
-        "maxWorkers": 2
+        "outputFileName": "main.js",
+        "esbuildConfig": "apps/judicial-system/xrd-api/esbuild.json",
+        "assets": [
+          {
+            "glob": "src/assets/*",
+            "input": "apps/services/user-notification/",
+            "output": "/assets"
+          }
+        ]
       },
       "configurations": {
+        "development": {
+          "minify": false
+        },
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "minify": true,
+          "generatePackageJson": true
         }
       }
     },

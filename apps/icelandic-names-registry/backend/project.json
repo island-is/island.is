@@ -6,11 +6,13 @@
   "prefix": "icelandic-names-registry-backend",
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
       "options": {
         "outputPath": "dist/apps/icelandic-names-registry/backend",
         "main": "apps/icelandic-names-registry/backend/src/main.ts",
+        "esbuildConfig": "apps/icelandic-names-registry/backend/esbuild.json",
         "tsConfig": "apps/icelandic-names-registry/backend/tsconfig.app.json",
         "assets": [
           {
@@ -39,13 +41,15 @@
             "output": "./"
           }
         ],
-        "maxWorkers": 2
+        "outputFileName": "main.js"
       },
       "configurations": {
+        "development": {
+          "minify": false
+        },
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "minify": true,
+          "generatePackageJson": true
         }
       }
     },
