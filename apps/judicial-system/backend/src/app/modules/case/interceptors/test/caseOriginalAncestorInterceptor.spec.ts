@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common'
 
 import { Case } from '../../models/case.model'
-import { CaseService } from '../../case.service'
+import { InternalCaseService } from '../../internalCase.service'
 import { CaseOriginalAncestorInterceptor } from '../caseOriginalAncestor.interceptor'
 
 interface Then {
@@ -25,7 +25,7 @@ describe('Case Original Ancestor Interceptor', () => {
     givenWhenThen = async (): Promise<Then> => {
       const interceptor = new CaseOriginalAncestorInterceptor({
         findOriginalAncestor: mockFindOriginalAncestor,
-      } as unknown as CaseService)
+      } as unknown as InternalCaseService)
       const then = {} as Then
 
       await interceptor

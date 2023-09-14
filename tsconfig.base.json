@@ -125,6 +125,9 @@
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],
+      "@island.is/api/domains/housing-benefit-calculator": [
+        "libs/api/domains/housing-benefit-calculator/src/index.ts"
+      ],
       "@island.is/api/domains/icelandic-government-institution-vacancies": [
         "libs/api/domains/icelandic-government-institution-vacancies/src/index.ts"
       ],
@@ -502,6 +505,9 @@
       "@island.is/clients/fiskistofa": ["libs/clients/fiskistofa/src/index.ts"],
       "@island.is/clients/health-directorate": [
         "libs/clients/health-directorate/src/index.ts"
+      ],
+      "@island.is/clients/housing-benefit-calculator": [
+        "libs/clients/housing-benefit-calculator/src/index.ts"
       ],
       "@island.is/clients/icelandic-government-institution-vacancies": [
         "libs/clients/icelandic-government-institution-vacancies/src/index.ts"
