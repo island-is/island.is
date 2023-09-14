@@ -265,7 +265,7 @@ export interface TempCase
   legalProvisions?: CaseLegalProvisions[]
   accusedAppealDecision?: CaseAppealDecision
   prosecutorAppealDecision?: CaseAppealDecision
-  requestSharedWithDefender?: RequestSharedWithDefender
+  requestSharedWithDefender?: RequestSharedWithDefender | null
 }
 
 export interface TempUpdateCase
