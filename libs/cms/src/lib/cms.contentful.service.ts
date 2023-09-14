@@ -822,7 +822,7 @@ export class CmsContentfulService {
 
     return (result.items as types.ISupportCategory[])
       .map(mapSupportCategory)
-      .filter((category) => !!category?.title && !!category?.slug)
+      .filter((category) => category?.title && category?.slug)
   }
 
   async getOpenDataPage({ lang }: GetOpenDataPageInput): Promise<OpenDataPage> {
