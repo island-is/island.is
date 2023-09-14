@@ -1,3 +1,9 @@
+import { UseGuards } from '@nestjs/common'
+import {
+  BypassAuth,
+  IdsUserGuard,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 import { Controller, Get, Param, Query } from '@nestjs/common'
 import { ProgramService } from './program.service'
 import {
@@ -10,11 +16,13 @@ import {
 import { ProgramDetailsResponse, ProgramResponse, TagResponse } from './model'
 import { DegreeType, Season } from '@island.is/university-gateway-types'
 
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('Program')
 @Controller('api')
 export class ProgramController {
   constructor(private readonly programService: ProgramService) {}
 
+  @BypassAuth()
   @Get('programs')
   @ApiQuery({
     name: 'limit',
@@ -89,6 +97,7 @@ export class ProgramController {
     )
   }
 
+  @BypassAuth()
   @Get('programs/:id')
   @ApiParam({
     name: 'id',
@@ -109,6 +118,7 @@ export class ProgramController {
     return this.programService.getProgramDetails(id)
   }
 
+  @BypassAuth()
   @Get('tags')
   @ApiOkResponse({
     type: TagResponse,
