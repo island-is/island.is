@@ -1,3 +1,6 @@
+import { getModelToken } from '@nestjs/sequelize'
+import { TestingModuleBuilder } from '@nestjs/testing'
+
 import {
   ApiScope,
   Domain,
@@ -5,10 +8,15 @@ import {
 } from '@island.is/auth-api-lib'
 import { IdsUserGuard, MockAuthGuard, User } from '@island.is/auth-nest-tools'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
+import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import { UserProfileApi } from '@island.is/clients/user-profile'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import {
+  createDomain,
+  createApiScope,
+  CreateDomain,
+} from '@island.is/services/auth/testing'
 import {
   createCurrentUser,
   createUniqueWords,
@@ -19,15 +27,8 @@ import {
   useAuth,
   useDatabase,
 } from '@island.is/testing/nest'
-import { TestingModuleBuilder } from '@nestjs/testing'
+
 import { AppModule } from '../src/app/app.module'
-import { getModelToken } from '@nestjs/sequelize'
-import {
-  createDomain,
-  createApiScope,
-  CreateDomain,
-} from '@island.is/services/auth/testing'
-import faker from 'faker'
 
 type Scopes = {
   [key: string]: {
