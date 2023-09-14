@@ -9,8 +9,7 @@ import {
 } from '@island.is/feature-flags'
 import { useAuth } from '@island.is/auth/react'
 
-const createClient = createClientFactory(() => ConfigCatJS)
-
+const createClient = createClientFactory(ConfigCatJS)
 const FeatureFlagContext = createContext<FeatureFlagClient>({
   getValue: <T extends SettingValue>(_: string, defaultValue: T) =>
     Promise.resolve(defaultValue as SettingTypeOf<T>),
