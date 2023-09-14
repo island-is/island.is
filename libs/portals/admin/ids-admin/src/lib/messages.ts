@@ -153,7 +153,7 @@ export const m = defineMessages({
   },
   errorScopeIdRegex: {
     id: 'ap.ids-admin:error-scope-id-regex',
-    defaultMessage: 'Allowed characters are A-Z a-z 0-9 . _ - /',
+    defaultMessage: 'Allowed characters are A-Z a-z 0-9 . _ - / :',
   },
   errorEnvironment: {
     id: 'ap.ids-admin:error-environment',

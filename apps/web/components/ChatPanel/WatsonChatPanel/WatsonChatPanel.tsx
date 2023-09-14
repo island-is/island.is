@@ -4,7 +4,7 @@ import { ChatBubble } from '../ChatBubble'
 import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
 import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 import { useI18n } from '@island.is/web/i18n'
-import { useFeatureFlag, useNamespaceStrict } from '@island.is/web/hooks'
+import { useNamespaceStrict } from '@island.is/web/hooks'
 import { WatsonChatPanelProps } from '../types'
 import { onDirectorateOfImmigrationChatLoad } from './utils'
 
@@ -35,9 +35,6 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
     },
   })
 
-  const { loading, value: utlendingastofnunWatsonChatUsesIdentityToken } =
-    useFeatureFlag('utlendingastofnunWatsonChatUsesIdentityToken', false)
-
   const namespace = useMemo(
     () => JSON.parse(data?.getNamespace?.fields ?? '{}'),
     [data?.getNamespace?.fields],
@@ -49,7 +46,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
   const [isButtonVisible, setIsButtonVisible] = useState(false)
 
   useEffect(() => {
-    if (Object.keys(namespace).length === 0 || loading) {
+    if (Object.keys(namespace).length === 0) {
       return () => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore make web strict
@@ -90,10 +87,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
         if (Object.keys(languagePack).length > 0) {
           instance.updateLanguagePack(languagePack)
         }
-        if (
-          props.integrationID === '89a03e83-5c73-4642-b5ba-cd3771ceca54' &&
-          utlendingastofnunWatsonChatUsesIdentityToken
-        ) {
+        if (props.integrationID === '89a03e83-5c73-4642-b5ba-cd3771ceca54') {
           onDirectorateOfImmigrationChatLoad(instance)
         }
 
@@ -116,7 +110,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
       watsonInstance?.current?.destroy()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [namespace, loading])
+  }, [namespace])
 
   if (showLauncher) return null
 

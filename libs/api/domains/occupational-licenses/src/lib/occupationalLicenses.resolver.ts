@@ -71,7 +71,7 @@ export class OccupationalLicensesResolver {
     @CurrentUser() user: User,
     @Args('id', { type: () => String }) id: string,
   ) {
-    const documentUrl = `${this.downloadService.baseUrl}/download/v1/occupational-licenses/education?id=${id}`
+    const documentUrl = `${this.downloadService.baseUrl}/download/v1/occupational-licenses/education/${id}`
     const license = await this.occupationalLicensesApi
       .getEducationalLicensesById(user, id)
       .catch(handle404)
