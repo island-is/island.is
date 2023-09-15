@@ -123,7 +123,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
   private async createLicense(
     nationalId: string,
     answers: FormValue,
-    auth: string
+    auth: string,
   ): Promise<NewDrivingLicenseResult> {
     const applicationFor =
       getValueViaPath<'B-full' | 'B-temp'>(answers, 'applicationFor') ??
@@ -144,14 +144,18 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         needsToPresentQualityPhoto: needsQualityPhoto,
       })
     } else if (applicationFor === 'B-temp') {
-      return this.drivingLicenseService.newTemporaryDrivingLicense(nationalId, auth, {
-        juristictionId: juristictionId as number,
-        needsToPresentHealthCertificate: needsHealthCert,
-        needsToPresentQualityPhoto: needsQualityPhoto,
-        teacherNationalId: teacher,
-        email: email,
-        phone: phone,
-      })
+      return this.drivingLicenseService.newTemporaryDrivingLicense(
+        nationalId,
+        auth,
+        {
+          juristictionId: juristictionId as number,
+          needsToPresentHealthCertificate: needsHealthCert,
+          needsToPresentQualityPhoto: needsQualityPhoto,
+          teacherNationalId: teacher,
+          email: email,
+          phone: phone,
+        },
+      )
     }
 
     throw new Error('application for unknown type of license')

@@ -135,19 +135,9 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       }
     }
 
-    //let drivingLicense
-    //if (params?.useLegacyVersion) {
-    //  drivingLicense = await this.drivingLicenseService.legacyGetCurrentLicense(
-    //    {
-    //      nationalId: auth.nationalId,
-    //      token: auth.authorization,
-    //    },
-    //  )
-    //} else {
     const drivingLicense = await this.drivingLicenseService.getCurrentLicense({
       token: auth.authorization,
     })
-    //}
 
     const categoryB = (drivingLicense?.categories ?? []).find(
       (cat) => cat.name === 'B' || cat.nr === 'B',

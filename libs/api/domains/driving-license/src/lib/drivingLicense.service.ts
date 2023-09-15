@@ -242,13 +242,11 @@ export class DrivingLicenseService {
     nationalId: string,
     type: DrivingLicenseApplicationType,
   ): Promise<ApplicationEligibility> {
-    const token = user.authorization.toLowerCase().startsWith('bearer')
-      ? user.authorization.split(' ')[1]
-      : user.authorization // removes the Bearer prefix
+    const token = user.authorization.replace('Bearer ', '')
     const assessmentResult = await this.getDrivingAssessmentResult(token)
     const hasFinishedSchool =
       await this.drivingLicenseApi.getHasFinishedOkugerdi({
-        token
+        token,
       })
 
     const residenceHistory =
@@ -340,11 +338,11 @@ export class DrivingLicenseService {
     if (type === 'B-full') {
       return this.drivingLicenseApi.getCanApplyForCategoryFull({
         category: 'B',
-        token
+        token,
       })
     } else if (type === 'B-temp') {
       return this.drivingLicenseApi.getCanApplyForCategoryTemporary({
-        token
+        token,
       })
     } else {
       throw new Error('unhandled license type')
@@ -406,7 +404,7 @@ export class DrivingLicenseService {
         sendLicenseInMail: false,
         email: input.email,
         phone: input.phone,
-        auth
+        auth,
       })
 
     return {

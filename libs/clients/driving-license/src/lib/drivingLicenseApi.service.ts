@@ -372,12 +372,11 @@ export class DrivingLicenseApi {
   public async getCanApplyForCategoryTemporary(params: {
     token: string
   }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeBTemporary>> {
-    const response =
-      await this.v5.apiDrivinglicenseV5CanapplyforTemporaryGet({
-        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-        jwttoken: params.token,
-      })
+    const response = await this.v5.apiDrivinglicenseV5CanapplyforTemporaryGet({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: params.token,
+    })
     return {
       result: !!response.result,
       errorCode: response.errorCode
