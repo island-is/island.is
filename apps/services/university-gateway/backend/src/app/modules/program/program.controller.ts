@@ -135,10 +135,10 @@ export class ProgramController {
   @Get('duration-in-years')
   @ApiOkResponse({
     type: [String],
-    description: 'Returns all possible duration in years',
+    description: 'Returns all possible values for duration in years',
   })
   @ApiOperation({
-    summary: 'Get all possible duration in years',
+    summary: 'Get all possible values for duration in years',
   })
   async getDurationInYears(): Promise<string[]> {
     return this.programService.getDurationInYears()

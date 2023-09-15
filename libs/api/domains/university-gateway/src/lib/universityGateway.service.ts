@@ -147,12 +147,6 @@ class UniversityGatewayApi {
   }
 
   async getProgramFilters(): Promise<ProgramFilter[]> {
-    const universityRes =
-      await this.universityApi.universityControllerGetUniversities()
-
-    const durationRes =
-      await this.programApi.programControllerGetDurationInYears()
-
     return [
       {
         field: 'degreeType',
@@ -168,11 +162,13 @@ class UniversityGatewayApi {
       },
       {
         field: 'universityId',
-        options: universityRes.data.map((item) => item.id),
+        options: (
+          await this.universityApi.universityControllerGetUniversities()
+        ).data.map((item) => item.id),
       },
       {
         field: 'durationInYears',
-        options: durationRes,
+        options: await this.programApi.programControllerGetDurationInYears(),
       },
     ]
   }
