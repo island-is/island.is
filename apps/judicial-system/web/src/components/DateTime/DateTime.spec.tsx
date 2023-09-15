@@ -1,4 +1,5 @@
 import React from 'react'
+import { IntlProvider } from 'react-intl'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
@@ -10,7 +11,11 @@ describe('DateTime component', () => {
     const user = userEvent.setup()
     const onChangeMock = jest.fn()
 
-    render(<DateTime name="test1" onChange={onChangeMock} />)
+    render(
+      <IntlProvider locale="is" onError={jest.fn}>
+        <DateTime name="test1" onChange={onChangeMock} />)
+      </IntlProvider>,
+    )
 
     await user.click(screen.getByText('Veldu dagsetningu'))
 
@@ -33,11 +38,13 @@ describe('DateTime component', () => {
     const onChangeMock = jest.fn()
 
     render(
-      <DateTime
-        name="test1"
-        selectedDate={selectedDate}
-        onChange={onChangeMock}
-      />,
+      <IntlProvider locale="is" onError={jest.fn}>
+        <DateTime
+          name="test1"
+          selectedDate={selectedDate}
+          onChange={onChangeMock}
+        />
+      </IntlProvider>,
     )
 
     await user.click(screen.getByText('Veldu dagsetningu'))

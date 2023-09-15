@@ -2,6 +2,11 @@ import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
+import { AlertMessage, Box } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { NotificationType } from '@island.is/judicial-system/types'
+import { titles } from '@island.is/judicial-system-web/messages'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
   FormContentContainer,
@@ -12,21 +17,15 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { titles } from '@island.is/judicial-system-web/messages'
-import { AlertMessage, Box } from '@island.is/island-ui/core'
-import { isDefenderStepValid } from '@island.is/judicial-system-web/src/utils/validate'
-import { NotificationType } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import * as constants from '@island.is/judicial-system/consts'
-import { core } from '@island.is/judicial-system-web/messages'
+import { isDefenderStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { defender as m } from './Defender.strings'
 import SelectDefender from './SelectDefender'
+import { defender as m } from './Defender.strings'
 
 const HearingArrangements: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const router = useRouter()
   const { sendNotification, isSendingNotification } = useCase()
   const { formatMessage } = useIntl()

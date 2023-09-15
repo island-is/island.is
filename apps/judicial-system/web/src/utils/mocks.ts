@@ -1,23 +1,24 @@
-import { Gender, CaseState } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { CaseState } from '@island.is/judicial-system/types'
+import { GetCurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/getCurrentUser.generated'
 import {
+  CaseOrigin,
+  CaseType,
+  Gender,
   InstitutionType,
   User,
   UserRole,
-  CaseType,
-  CaseOrigin,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { GetCurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/getCurrentUser.generated'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 export const mockCourt = {
   id: 'court_id',
-  type: InstitutionType.COURT,
+  type: InstitutionType.DISTRICT_COURT,
   name: 'Héraðsdómur Reykjavíkur',
 }
 
-export const mockHighCourt = {
-  id: 'high_court_id',
-  type: InstitutionType.HIGH_COURT,
+export const mockCourtOfAppeals = {
+  id: 'court_of_appeals_id',
+  type: InstitutionType.COURT_OF_APPEALS,
   name: 'Landsréttur',
 }
 
@@ -45,17 +46,17 @@ export const mockJudge = {
   institution: mockCourt,
 } as User
 
-export const mockHighCourtUser = {
+export const mockCourtOfAppealsUser = {
   id: 'hc_1',
   role: UserRole.JUDGE,
   name: 'Lalli Landsréttardómari',
   title: 'dómari',
-  institution: mockHighCourt,
+  institution: mockCourtOfAppeals,
 } as User
 
 export const mockPrisonUser = {
   id: 'hc_1',
-  role: UserRole.STAFF,
+  role: UserRole.PRISON_SYSTEM_STAFF,
   name: 'Finnur fangavörður',
   title: 'fangavörður',
   institution: mockPrison,
@@ -74,14 +75,14 @@ export const mockJudgeQuery = [
   },
 ]
 
-export const mockHighCourtQuery = [
+export const mockCourtOfAppealsQuery = [
   {
     request: {
       query: GetCurrentUserDocument,
     },
     result: {
       data: {
-        currentUser: mockHighCourtUser,
+        currentUser: mockCourtOfAppealsUser,
       },
     },
   },

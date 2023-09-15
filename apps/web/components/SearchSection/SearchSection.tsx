@@ -46,12 +46,26 @@ export const SearchSection = ({
   const { linkResolver } = useLinkResolver()
 
   const {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     featured,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     heading,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     image,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     imageAlternativeText,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     imageMobile,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     videos,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     videosMobile,
   } = page
 
@@ -93,38 +107,48 @@ export const SearchSection = ({
                   colored
                 />
                 <Inline space={2}>
-                  {featured.map(({ title, attention, thing }) => {
-                    const cardUrl = linkResolver(thing?.type as LinkType, [
-                      thing?.slug,
-                    ])
-                    return cardUrl?.href && cardUrl?.href.length > 0 ? (
-                      <Tag
-                        key={title}
-                        {...(cardUrl.href.startsWith('/')
-                          ? {
-                              CustomLink: ({ children, ...props }) => (
-                                <Link
-                                  key={title}
-                                  {...props}
-                                  {...cardUrl}
-                                  dataTestId="featured-link"
-                                >
-                                  {children}
-                                </Link>
-                              ),
-                            }
-                          : { href: cardUrl.href })}
-                        variant="blue"
-                        attention={attention}
-                      >
-                        {title}
-                      </Tag>
-                    ) : (
-                      <Tag key={title} variant="blue" attention={attention}>
-                        {title}
-                      </Tag>
-                    )
-                  })}
+                  {featured.map(
+                    ({
+                      title,
+                      attention,
+                      thing,
+                    }: {
+                      title: string
+                      attention: boolean
+                      thing: any
+                    }) => {
+                      const cardUrl = linkResolver(thing?.type as LinkType, [
+                        thing?.slug,
+                      ])
+                      return cardUrl?.href && cardUrl?.href.length > 0 ? (
+                        <Tag
+                          key={title}
+                          {...(cardUrl.href.startsWith('/')
+                            ? {
+                                CustomLink: ({ children, ...props }) => (
+                                  <Link
+                                    key={title}
+                                    {...props}
+                                    {...cardUrl}
+                                    dataTestId="featured-link"
+                                  >
+                                    {children}
+                                  </Link>
+                                ),
+                              }
+                            : { href: cardUrl.href })}
+                          variant="blue"
+                          attention={attention}
+                        >
+                          {title}
+                        </Tag>
+                      ) : (
+                        <Tag key={title} variant="blue" attention={attention}>
+                          {title}
+                        </Tag>
+                      )
+                    },
+                  )}
                 </Inline>
               </Stack>
             </Box>
@@ -148,6 +172,8 @@ export const SearchSection = ({
                   <Video
                     name="desktop"
                     title={imageAlternativeText}
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore make web strict
                     sources={videos.map(({ url, contentType }) => {
                       return {
                         src: url,
@@ -187,6 +213,8 @@ export const SearchSection = ({
               name="mobile"
               title={imageAlternativeText}
               dataTestId="home-banner"
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               sources={videosMobile.map(({ url, contentType }) => {
                 return {
                   src: url,
@@ -272,7 +300,7 @@ const Image = ({ spacing, src, alt }: ImageProps) => {
 type ImageOrDefaultProps = {
   url?: string
   imageAlternativeText: string
-  isMobile?: boolean | null
+  isMobile?: boolean
 }
 
 const ImageOrDefault = ({

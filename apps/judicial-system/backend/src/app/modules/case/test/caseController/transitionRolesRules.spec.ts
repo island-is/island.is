@@ -3,7 +3,7 @@ import {
   judgeTransitionRule,
   prosecutorTransitionRule,
   registrarTransitionRule,
-  representativeTransitionRule,
+  prosecutorRepresentativeTransitionRule,
 } from '../../guards/rolesRules'
 import { CaseController } from '../../case.controller'
 
@@ -20,11 +20,8 @@ describe('CaseController - Transition rules', () => {
 
   it('should give permission to five roles', () => {
     expect(rules).toHaveLength(5)
-  })
-
-  it('should give permission to prosecutors, representatives, judges, registrars and assistants', () => {
     expect(rules).toContain(prosecutorTransitionRule)
-    expect(rules).toContain(representativeTransitionRule)
+    expect(rules).toContain(prosecutorRepresentativeTransitionRule)
     expect(rules).toContain(judgeTransitionRule)
     expect(rules).toContain(registrarTransitionRule)
     expect(rules).toContain(assistantTransitionRule)

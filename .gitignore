@@ -31,6 +31,7 @@ TODO
 *.todo
 .env
 .env.*
+.envrc.*
 .nvmrc
 .node-version
 # IDE - VSCode
@@ -50,6 +51,7 @@ yarn-error.log
 testem.log
 /typings
 /debug.log
+*.log
 
 # System Files
 .DS_Store
@@ -84,7 +86,7 @@ fragmentTypes.json
 *.suo
 /.vs
 
-# Gitbook/Honkit
+# Honkit
 _book
 .vscode/settings.json
 

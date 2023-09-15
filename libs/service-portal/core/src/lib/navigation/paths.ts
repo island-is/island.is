@@ -90,6 +90,10 @@ export enum ServicePortalPath {
   // Education License
   EducationLicense = '/leyfisbref',
 
+  // Occupational Licenses
+  OccupationalLicenses = '/starfsleyfi',
+  OccupationalLicensesDetail = '/starfsleyfi/:id',
+
   // Assets
   AssetsRoot = '/fasteignir',
   AssetsRealEstateDetail = '/fasteignir/:id',

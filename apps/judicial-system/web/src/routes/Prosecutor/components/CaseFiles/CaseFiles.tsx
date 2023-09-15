@@ -6,26 +6,9 @@ import React, {
   useState,
 } from 'react'
 import { useIntl } from 'react-intl'
-import { uuid } from 'uuidv4'
 import { useRouter } from 'next/router'
+import { uuid } from 'uuidv4'
 
-import {
-  ProsecutorCaseInfo,
-  FormContentContainer,
-  FormFooter,
-  PageLayout,
-  ParentCaseFiles,
-  FormContext,
-  MarkdownWrapper,
-  SectionHeading,
-} from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { errors } from '@island.is/judicial-system-web/messages'
-import {
-  useCase,
-  useDeb,
-  useS3Upload,
-} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   Box,
   ContentBlock,
@@ -35,46 +18,47 @@ import {
   Tooltip,
   UploadFile,
 } from '@island.is/island-ui/core'
+import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  CaseFileState,
+  isRestrictionCase,
+} from '@island.is/judicial-system/types'
+import { errors } from '@island.is/judicial-system-web/messages'
+import {
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  MarkdownWrapper,
+  PageLayout,
+  ParentCaseFiles,
+  ProsecutorCaseInfo,
+  SectionHeading,
+} from '@island.is/judicial-system-web/src/components'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   mapCaseFileToUploadFile,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
-  CaseFileState,
-  isRestrictionCase,
-  PoliceCaseFile,
-} from '@island.is/judicial-system/types'
-import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
-import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
-import * as constants from '@island.is/judicial-system/consts'
+  useCase,
+  useDeb,
+  useS3Upload,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
+import {
+  mapPoliceCaseFileToPoliceCaseFileCheck,
+  PoliceCaseFileCheck,
+  PoliceCaseFiles,
+  PoliceCaseFilesData,
+} from '../../components'
 import { useGetPoliceCaseFilesQuery } from './getPoliceCaseFiles.generated'
 import { caseFiles as strings } from './CaseFiles.strings'
 
-export interface PoliceCaseFilesData {
-  files: PoliceCaseFile[]
-  isLoading: boolean
-  hasError: boolean
-  errorCode?: string
-}
-
-export const mapPoliceCaseFileToPoliceCaseFileCheck = (
-  file: PoliceCaseFile,
-): PoliceCaseFileCheck => ({
-  id: file.id,
-  name: file.name,
-  policeCaseNumber: file.policeCaseNumber,
-  checked: false,
-})
-
 export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const {
     data: policeData,
     loading: policeDataLoading,
@@ -141,28 +125,25 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
           ?.code as string,
       })
     }
-  }, [
-    policeData,
-    policeDataError,
-    policeDataLoading,
-    setPoliceCaseFiles,
-    workingCase.origin,
-    workingCase.caseFiles,
-  ])
+  }, [policeData, policeDataError, policeDataLoading, workingCase.origin])
 
   useEffect(() => {
     setPoliceCaseFileList(
       policeCaseFiles?.files
         .filter(
-          (f) =>
+          (policeFile) =>
             !workingCase.caseFiles?.some(
-              (caseFile) => caseFile.name === f.name,
+              (file) => !file.category && file.policeFileId === policeFile.id,
             ),
         )
         .map(mapPoliceCaseFileToPoliceCaseFileCheck) || [],
     )
 
-    setFilesInRVG(workingCase.caseFiles?.map(mapCaseFileToUploadFile) || [])
+    setFilesInRVG(
+      workingCase.caseFiles
+        ?.filter((file) => !file.category)
+        .map(mapCaseFileToUploadFile) || [],
+    )
   }, [policeCaseFiles, workingCase.caseFiles])
 
   const uploadErrorMessage = useMemo(() => {

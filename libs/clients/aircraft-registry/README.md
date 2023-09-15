@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Clients Aircraft Registry
 
 This library was generated with [Nx](https://nx.dev).

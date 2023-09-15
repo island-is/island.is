@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Real estate assets api
 
 This service utilises the FasteignirApi

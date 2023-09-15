@@ -53,46 +53,46 @@ export type CreateClientResult = RouterActionRedirect<
   ValidateFormDataResult<typeof schema>['errors']
 >
 
-export const createClientAction: WrappedActionFn = ({ client }) => async ({
-  request,
-}): Promise<CreateClientResult | Response> => {
-  const formData = await request.formData()
-  const result = await validateFormData({ formData, schema })
+export const createClientAction: WrappedActionFn =
+  ({ client }) =>
+  async ({ request }): Promise<CreateClientResult | Response> => {
+    const formData = await request.formData()
+    const result = await validateFormData({ formData, schema })
 
-  if (result.errors || !result.data) {
-    return result
-  }
+    if (result.errors || !result.data) {
+      return result
+    }
 
-  const { data } = result
+    const { data } = result
 
-  try {
-    await client.mutate<CreateClientMutation, CreateClientMutationVariables>({
-      mutation: CreateClientDocument,
-      variables: {
-        input: {
-          displayName: data.displayName,
-          clientId: data.clientId,
-          environments: data.environments,
-          tenantId: data.tenant,
-          clientType: data.clientType,
+    try {
+      await client.mutate<CreateClientMutation, CreateClientMutationVariables>({
+        mutation: CreateClientDocument,
+        variables: {
+          input: {
+            displayName: data.displayName,
+            clientId: data.clientId,
+            environments: data.environments,
+            tenantId: data.tenant,
+            clientType: data.clientType,
+          },
         },
-      },
-    })
+      })
 
-    // TODO: Check for partial creation, and show a warning modal
-    return redirect(
-      replaceParams({
-        href: IDSAdminPaths.IDSAdminClient,
-        params: {
-          tenant: data?.tenant,
-          client: data?.clientId,
-        },
-      }),
-    )
-  } catch (e) {
-    return {
-      errors: null,
-      globalError: true,
+      // TODO: Check for partial creation, and show a warning modal
+      return redirect(
+        replaceParams({
+          href: IDSAdminPaths.IDSAdminClient,
+          params: {
+            tenant: data?.tenant,
+            client: data?.clientId,
+          },
+        }),
+      )
+    } catch (e) {
+      return {
+        errors: null,
+        globalError: true,
+      }
     }
   }
-}

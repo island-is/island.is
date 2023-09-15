@@ -74,11 +74,11 @@ describe('getCasesQueryFilter', () => {
     })
   })
 
-  it('should get representative filter', () => {
+  it('should get prosecutor representative filter', () => {
     // Arrange
     const user = {
       id: 'Prosecutor Id',
-      role: UserRole.REPRESENTATIVE,
+      role: UserRole.PROSECUTOR_REPRESENTATIVE,
       institution: {
         id: 'Prosecutors Office Id',
         type: InstitutionType.PROSECUTORS_OFFICE,
@@ -128,7 +128,7 @@ describe('getCasesQueryFilter', () => {
       // Arrange
       const user = {
         role,
-        institution: { id: 'Court Id', type: InstitutionType.COURT },
+        institution: { id: 'Court Id', type: InstitutionType.DISTRICT_COURT },
       }
 
       // Act
@@ -187,7 +187,7 @@ describe('getCasesQueryFilter', () => {
       // Arrange
       const user = {
         role: UserRole.ASSISTANT,
-        institution: { id: 'Court Id', type: InstitutionType.COURT },
+        institution: { id: 'Court Id', type: InstitutionType.DISTRICT_COURT },
       }
 
       // Act
@@ -219,11 +219,14 @@ describe('getCasesQueryFilter', () => {
   })
 
   describe.each(appealsCourtRoles)('given %s role', (role) => {
-    it('should get high court filter', () => {
+    it('should get court of appeals filter', () => {
       // Arrange
       const user = {
         role,
-        institution: { id: 'High Court Id', type: InstitutionType.HIGH_COURT },
+        institution: {
+          id: 'Court of Appeals Id',
+          type: InstitutionType.COURT_OF_APPEALS,
+        },
       }
 
       // Act
@@ -253,7 +256,7 @@ describe('getCasesQueryFilter', () => {
     // Arrange
     const user = {
       id: 'Staff Id',
-      role: UserRole.STAFF,
+      role: UserRole.PRISON_SYSTEM_STAFF,
       institution: {
         id: 'Prison Id',
         type: InstitutionType.PRISON,
@@ -280,7 +283,7 @@ describe('getCasesQueryFilter', () => {
     // Arrange
     const user = {
       id: 'Staff Id',
-      role: UserRole.STAFF,
+      role: UserRole.PRISON_SYSTEM_STAFF,
       institution: {
         id: 'Prison Id',
         type: InstitutionType.PRISON_ADMIN,

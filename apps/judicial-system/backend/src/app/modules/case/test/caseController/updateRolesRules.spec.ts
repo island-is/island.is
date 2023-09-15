@@ -3,7 +3,7 @@ import {
   judgeUpdateRule,
   prosecutorUpdateRule,
   registrarUpdateRule,
-  representativeUpdateRule,
+  prosecutorRepresentativeUpdateRule,
 } from '../../guards/rolesRules'
 import { CaseController } from '../../case.controller'
 
@@ -17,11 +17,8 @@ describe('CaseController - Update rules', () => {
 
   it('should give permission to five roles', () => {
     expect(rules).toHaveLength(5)
-  })
-
-  it('should give permission to prosecutors, representatives, judges, registrars and assistants', () => {
     expect(rules).toContain(prosecutorUpdateRule)
-    expect(rules).toContain(representativeUpdateRule)
+    expect(rules).toContain(prosecutorRepresentativeUpdateRule)
     expect(rules).toContain(judgeUpdateRule)
     expect(rules).toContain(registrarUpdateRule)
     expect(rules).toContain(assistantUpdateRule)

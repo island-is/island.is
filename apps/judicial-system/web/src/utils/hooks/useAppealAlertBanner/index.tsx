@@ -2,9 +2,6 @@ import { useContext } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { TempCase } from '@island.is/judicial-system-web/src/types'
-import { formatDate } from '@island.is/judicial-system/formatters'
-import { UserContext } from '@island.is/judicial-system-web/src/components'
 import { Button, Text } from '@island.is/island-ui/core'
 import {
   APPEAL_ROUTE,
@@ -12,18 +9,21 @@ import {
   DEFENDER_STATEMENT_ROUTE,
   STATEMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealDecision,
   CaseAppealRulingDecision,
   isCourtRole,
   isProsecutionRole,
 } from '@island.is/judicial-system/types'
-import {
-  CaseAppealState,
-  UserRole,
-  InstitutionType,
-} from '@island.is/judicial-system-web/src/graphql/schema'
 import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
+import { UserContext } from '@island.is/judicial-system-web/src/components'
+import {
+  CaseAppealDecision,
+  CaseAppealState,
+  InstitutionType,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase } from '@island.is/judicial-system-web/src/types'
 
 import { strings } from './strings'
 
@@ -109,9 +109,9 @@ const useAppealAlertBanner = (
     (isProsecutionRoleUser && prosecutorStatementDate) ||
     (isDefenderRoleUser && defendantStatementDate)
 
-  // HIGH COURT AND SHARED WITH PROSECUTOR BANNER INFO IS HANDLED HERE
+  // COURT OF APPEALS AND SHARED WITH PROSECUTOR BANNER INFO IS HANDLED HERE
   if (
-    user?.institution?.type === InstitutionType.HIGH_COURT ||
+    user?.institution?.type === InstitutionType.COURT_OF_APPEALS ||
     isSharedWithProsecutor
   ) {
     if (appealState === CaseAppealState.COMPLETED) {
@@ -127,7 +127,7 @@ const useAppealAlertBanner = (
       })
     }
   }
-  // DEFENDER, PROSECUTOR AND COURT BANNER INFO IS HANDLED HERE:
+  // DEFENDER, PROSECUTOR AND DISTRICT COURT BANNER INFO IS HANDLED HERE:
   // When appeal has been received
   else if (appealState === CaseAppealState.RECEIVED) {
     title = formatMessage(strings.statementTitle)

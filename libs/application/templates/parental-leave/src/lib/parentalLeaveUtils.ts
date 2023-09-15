@@ -2,6 +2,7 @@ import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
 import isSameMonth from 'date-fns/isSameMonth'
+import isThisMonth from 'date-fns/isThisMonth'
 import getDaysInMonth from 'date-fns/getDaysInMonth'
 import parseISO from 'date-fns/parseISO'
 import differenceInMonths from 'date-fns/differenceInMonths'
@@ -98,14 +99,6 @@ export function getLastDayOfLastMonth(): Date {
   return addDays(today, today.getDate() * -1)
 }
 
-export function isDateInThisMonth(theDate: Date): boolean {
-  const today = new Date()
-  return (
-    theDate.getMonth() === today.getMonth() &&
-    theDate.getFullYear() === today.getFullYear()
-  )
-}
-
 // TODO: Once we have the data, add the otherParentPeriods here.
 export function formatPeriods(
   application: Application,
@@ -132,11 +125,10 @@ export function formatPeriods(
     const startDateDateTime = new Date(period.startDate)
     let canDelete = startDateDateTime.getTime() > currentDateStartTime()
     const today = new Date()
-    const isTodaySameMonthAsStartDate = isDateInThisMonth(startDateDateTime)
 
     if (!applicationFundId || applicationFundId === '') {
       canDelete = true
-    } else if (isTodaySameMonthAsStartDate) {
+    } else if (isThisMonth(startDateDateTime)) {
       if (canDelete && today.getDate() >= 20) {
         canDelete = false
       } else if (!canDelete && today.getDate() < 20) {
@@ -255,11 +247,8 @@ export const getMultipleBirthsDays = (application: Application) => {
 export const getMultipleBirthRequestDays = (
   answers: Application['answers'],
 ) => {
-  const {
-    multipleBirthsRequestDays,
-    otherParent,
-    hasMultipleBirths,
-  } = getApplicationAnswers(answers)
+  const { multipleBirthsRequestDays, otherParent, hasMultipleBirths } =
+    getApplicationAnswers(answers)
 
   if (otherParent === SINGLE && hasMultipleBirths === YES) {
     return getMaxMultipleBirthsDays(answers)
@@ -293,9 +282,8 @@ export const getMaxMultipleBirthsAndSingleParenttMonths = (
   const multipleBirthsDaysInMonths = getMaxMultipleBirthsInMonths(
     application.answers,
   )
-  const singleParentDaysInMonths = getAvailablePersonalRightsSingleParentInMonths(
-    application,
-  )
+  const singleParentDaysInMonths =
+    getAvailablePersonalRightsSingleParentInMonths(application)
 
   return singleParentDaysInMonths + multipleBirthsDaysInMonths
 }
@@ -329,9 +317,8 @@ export const getAvailableRightsInDays = (application: Application) => {
   const multipleBirthsRequestDays = getMultipleBirthRequestDays(
     application.answers,
   )
-  const additionalSingleParentDays = getAdditionalSingleParentRightsInDays(
-    application,
-  )
+  const additionalSingleParentDays =
+    getAdditionalSingleParentRightsInDays(application)
 
   return (
     selectedChild.remainingDays +
@@ -355,9 +342,8 @@ export const getAvailablePersonalRightsInDays = (application: Application) => {
 
   const totalTransferredDays = getTransferredDays(application, selectedChild)
   const multipleBirthsDays = getMultipleBirthsDays(application)
-  const additionalSingleParentDays = getAdditionalSingleParentRightsInDays(
-    application,
-  )
+  const additionalSingleParentDays =
+    getAdditionalSingleParentRightsInDays(application)
 
   return (
     totalDaysAvailable -
@@ -507,11 +493,8 @@ export const getSelectedChild = (
 export const isEligibleForParentalLeave = (
   externalData: ExternalData,
 ): boolean => {
-  const {
-    dataProvider,
-    children,
-    existingApplications,
-  } = getApplicationExternalData(externalData)
+  const { dataProvider, children, existingApplications } =
+    getApplicationExternalData(externalData)
 
   return (
     dataProvider?.hasActivePregnancy &&
@@ -1083,10 +1066,8 @@ export const requiresOtherParentApproval = (
   const selectedChild = getSelectedChild(answers, externalData)
   const { navId } = getApplicationExternalData(externalData)
 
-  const {
-    isRequestingRights,
-    usePersonalAllowanceFromSpouse,
-  } = applicationAnswers
+  const { isRequestingRights, usePersonalAllowanceFromSpouse } =
+    applicationAnswers
 
   const needsApprovalForRequestingRights =
     selectedChild?.parentalRelation === ParentalRelations.primary
@@ -1108,10 +1089,8 @@ export const otherParentApprovalDescription = (
 ) => {
   const applicationAnswers = getApplicationAnswers(answers)
 
-  const {
-    isRequestingRights,
-    usePersonalAllowanceFromSpouse,
-  } = applicationAnswers
+  const { isRequestingRights, usePersonalAllowanceFromSpouse } =
+    applicationAnswers
 
   const description =
     isRequestingRights === YES && usePersonalAllowanceFromSpouse === YES
@@ -1127,14 +1106,13 @@ export const otherParentApprovalDescription = (
 export const allowOtherParentToUsePersonalAllowance = (
   answers: Application['answers'],
 ) => {
-  const otherParentObj = (answers?.otherParentObj as unknown) as OtherParentObj
+  const otherParentObj = answers?.otherParentObj as unknown as OtherParentObj
   return otherParentObj?.chooseOtherParent === SPOUSE
 }
 
 export const allowOtherParent = (answers: Application['answers']) => {
-  const { otherParent, otherParentRightOfAccess } = getApplicationAnswers(
-    answers,
-  )
+  const { otherParent, otherParentRightOfAccess } =
+    getApplicationAnswers(answers)
 
   return (
     otherParent === SPOUSE ||
@@ -1145,11 +1123,8 @@ export const allowOtherParent = (answers: Application['answers']) => {
 export const getOtherParentId = (
   application: Application,
 ): string | undefined => {
-  const {
-    otherParent,
-    otherParentId,
-    noPrimaryParentBirthDate,
-  } = getApplicationAnswers(application.answers)
+  const { otherParent, otherParentId, noPrimaryParentBirthDate } =
+    getApplicationAnswers(application.answers)
 
   if (noPrimaryParentBirthDate) {
     return ''
@@ -1257,7 +1232,7 @@ export const getLastValidPeriodEndDate = (
   const beginningOfMonth = getBeginningOfThisMonth()
 
   // LastPeriod's endDate is in current month
-  if (isDateInThisMonth(lastEndDate)) {
+  if (isThisMonth(lastEndDate)) {
     // Applicant has to start from begining of next month if today is >= 20
     if (today.getDate() >= 20) {
       return addMonths(beginningOfMonth, 1)
@@ -1283,9 +1258,8 @@ export const getLastValidPeriodEndDate = (
 }
 
 export const getMinimumStartDate = (application: Application): Date => {
-  const expectedDateOfBirthOrAdoptionDate = getExpectedDateOfBirthOrAdoptionDate(
-    application,
-  )
+  const expectedDateOfBirthOrAdoptionDate =
+    getExpectedDateOfBirthOrAdoptionDate(application)
   const lastPeriodEndDate = getLastValidPeriodEndDate(application)
 
   const today = new Date()
@@ -1505,6 +1479,7 @@ export const synchronizeVMSTPeriods = (
   const newPeriods: Period[] = []
   const temptVMSTPeriods: Period[] = []
   const VMSTPeriods: VMSTPeriod[] = data?.getApplicationInformation?.periods
+  const today = new Date()
   VMSTPeriods?.forEach((period, index) => {
     /*
      ** VMST could change startDate but still return 'date_of_birth'
@@ -1514,7 +1489,7 @@ export const synchronizeVMSTPeriods = (
       period.firstPeriodStart === 'date_of_birth'
         ? 'actualDateOfBirth'
         : 'specificDate'
-    if (new Date(period.from).getTime() <= new Date().getTime()) {
+    if (new Date(period.from).getTime() <= today.getTime()) {
       firstPeriodStart = 'specificDate'
     }
 
@@ -1531,14 +1506,13 @@ export const synchronizeVMSTPeriods = (
         rightCodePeriod: rightsCodePeriod,
       }
 
-      const isSameMonth = isDateInThisMonth(new Date(period.from))
       if (period.paid) {
         newPeriods.push(obj)
-      } else if (isSameMonth) {
-        if (new Date().getDay() >= 20) {
+      } else if (isThisMonth(new Date(period.from))) {
+        if (today.getDay() >= 20) {
           newPeriods.push(obj)
         }
-      } else if (new Date(period.from).getTime() <= new Date().getTime()) {
+      } else if (new Date(period.from).getTime() <= today.getTime()) {
         newPeriods.push(obj)
       }
       temptVMSTPeriods.push(obj)
@@ -1549,9 +1523,21 @@ export const synchronizeVMSTPeriods = (
   if (index > 0) {
     const VMSTEndDate = new Date(newPeriods[index - 1].endDate)
     periods.forEach((period) => {
+      // Drop period which is in the past, not in VMST and not in this month
       if (new Date(period.startDate) > VMSTEndDate) {
-        newPeriods.push({ ...period, rawIndex: index })
-        index += 1
+        const periodEndDate = new Date(period.endDate)
+        if (periodEndDate.getTime() < today.getTime()) {
+          if (
+            isThisMonth(periodEndDate) &&
+            isThisMonth(new Date(period.startDate))
+          ) {
+            newPeriods.push({ ...period, rawIndex: index })
+            index += 1
+          }
+        } else {
+          newPeriods.push({ ...period, rawIndex: index })
+          index += 1
+        }
       }
     })
 

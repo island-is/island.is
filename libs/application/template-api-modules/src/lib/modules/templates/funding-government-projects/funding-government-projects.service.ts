@@ -73,9 +73,11 @@ export class FundingGovernmentProjectsService extends BaseTemplateApiService {
 
     return await Promise.all(
       attachments.map(async ({ key, name }) => {
-        const url = (application.attachments as {
-          [key: string]: string
-        })[key]
+        const url = (
+          application.attachments as {
+            [key: string]: string
+          }
+        )[key]
 
         const signedUrl = await this.fileStorageService.generateSignedUrl(url)
 

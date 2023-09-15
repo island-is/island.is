@@ -8,7 +8,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Transaction } from 'sequelize'
 import omit from 'lodash/omit'
 
-import { validateClientId } from '@island.is/auth/shared'
+import { validatePermissionId } from '@island.is/auth/shared'
 import { isDefined } from '@island.is/shared/utils'
 
 import { ApiScope } from '../models/api-scope.model'
@@ -52,9 +52,10 @@ export class AdminScopeService {
       },
     })
 
-    const translations = await this.adminTranslationService.getApiScopeTranslations(
-      apiScopes.map(({ name }) => name),
-    )
+    const translations =
+      await this.adminTranslationService.getApiScopeTranslations(
+        apiScopes.map(({ name }) => name),
+      )
 
     return apiScopes.map((apiScope) =>
       this.adminTranslationService.mapApiScopeToAdminScopeDTO(
@@ -86,9 +87,10 @@ export class AdminScopeService {
       throw new NoContentException()
     }
 
-    const translations = await this.adminTranslationService.getApiScopeTranslations(
-      [apiScope.name],
-    )
+    const translations =
+      await this.adminTranslationService.getApiScopeTranslations([
+        apiScope.name,
+      ])
 
     return this.adminTranslationService.mapApiScopeToAdminScopeDTO(
       apiScope,
@@ -104,7 +106,7 @@ export class AdminScopeService {
     input: AdminCreateScopeDto,
   ): Promise<AdminScopeDTO> {
     if (
-      !validateClientId({
+      !validatePermissionId({
         prefix: tenantId,
         value: input.name,
       })
@@ -175,9 +177,10 @@ export class AdminScopeService {
       return scope
     })
 
-    const translations = await this.adminTranslationService.getApiScopeTranslations(
-      [apiScope.name],
-    )
+    const translations =
+      await this.adminTranslationService.getApiScopeTranslations([
+        apiScope.name,
+      ])
 
     return this.adminTranslationService.mapApiScopeToAdminScopeDTO(
       apiScope,

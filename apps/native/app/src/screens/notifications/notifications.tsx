@@ -15,14 +15,12 @@ import {
 import {useOrganizationsStore} from '../../stores/organizations-store';
 import {testIDs} from '../../utils/test-ids';
 
-const {
-  getNavigationOptions,
-  useNavigationOptions,
-} = createNavigationOptionHooks(() => ({
-  topBar: {
-    visible: false,
-  },
-}));
+const {getNavigationOptions, useNavigationOptions} =
+  createNavigationOptionHooks(() => ({
+    topBar: {
+      visible: false,
+    },
+  }));
 
 export const NotificationsScreen: NavigationFunctionComponent = ({
   componentId,
@@ -45,10 +43,11 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
   const renderNotificationItem = ({item}: {item: Notification}) => {
     return (
       <TouchableHighlight
-        underlayColor={theme.color.blue100}
+        underlayColor={
+          theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
+        }
         onPress={() => onNotificationPress(item)}
-        testID={testIDs.NOTIFICATION_CARD_BUTTON}
-      >
+        testID={testIDs.NOTIFICATION_CARD_BUTTON}>
         <NotificationCard
           key={item.id}
           id={item.id}
@@ -75,8 +74,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
       />
       <SafeAreaView
         style={{marginHorizontal: 16, flex: 1}}
-        testID={testIDs.SCREEN_NOTIFICATIONS}
-      >
+        testID={testIDs.SCREEN_NOTIFICATIONS}>
         <FlatList
           style={{flex: 1, paddingTop: 16}}
           data={notifications}

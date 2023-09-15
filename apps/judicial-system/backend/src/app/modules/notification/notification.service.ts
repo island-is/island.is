@@ -402,14 +402,12 @@ export class NotificationService {
   private sendReadyForCourtEmailNotificationToCourt(
     theCase: Case,
   ): Promise<Recipient> {
-    const {
-      subject,
-      body,
-    } = formatCourtIndictmentReadyForCourtEmailNotification(
-      this.formatMessage,
-      theCase,
-      `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
-    )
+    const { subject, body } =
+      formatCourtIndictmentReadyForCourtEmailNotification(
+        this.formatMessage,
+        theCase,
+        `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
+      )
 
     return this.sendEmail(
       subject,
@@ -707,9 +705,8 @@ export class NotificationService {
       )
     }
 
-    const shouldSendNotificationToPrison = await this.shouldSendNotificationToPrison(
-      theCase,
-    )
+    const shouldSendNotificationToPrison =
+      await this.shouldSendNotificationToPrison(theCase)
 
     if (shouldSendNotificationToPrison) {
       promises.push(this.sendCourtDateEmailNotificationToPrison(theCase))
@@ -736,7 +733,7 @@ export class NotificationService {
         ? this.formatMessage(notifications.caseCompleted.subject, {
             courtCaseNumber: theCase.courtCaseNumber,
           })
-        : this.formatMessage(notifications.signedRuling.subjectV2, {
+        : this.formatMessage(notifications.signedRuling.subject, {
             courtCaseNumber: theCase.courtCaseNumber,
             isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
           }),
@@ -770,7 +767,7 @@ export class NotificationService {
         ? this.formatMessage(notifications.caseCompleted.subject, {
             courtCaseNumber: theCase.courtCaseNumber,
           })
-        : this.formatMessage(notifications.signedRuling.subjectV2, {
+        : this.formatMessage(notifications.signedRuling.subject, {
             courtCaseNumber: theCase.courtCaseNumber,
             isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
           }),
@@ -808,9 +805,13 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = this.formatMessage(
       notifications.prisonRulingEmail.subject,
-      { courtCaseNumber: theCase.courtCaseNumber },
+      {
+        isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
+        courtCaseNumber: theCase.courtCaseNumber,
+      },
     )
     const html = this.formatMessage(notifications.prisonRulingEmail.body, {
+      isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
       institutionName: theCase.court?.name,
       caseType: theCase.type,
       linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
@@ -830,9 +831,10 @@ export class NotificationService {
   ): Promise<Recipient> {
     const { subject, body } = formatPrisonAdministrationRulingNotification(
       this.formatMessage,
+      Boolean(theCase.rulingModifiedHistory),
+      `${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}`,
       theCase.courtCaseNumber,
       theCase.court?.name,
-      `${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}`,
     )
 
     return this.sendEmail(
@@ -848,10 +850,15 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = this.formatMessage(
       notifications.rejectedCustodyEmail.subject,
-      { courtCaseNumber: theCase.courtCaseNumber },
+      {
+        isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
+        caseType: theCase.type,
+        courtCaseNumber: theCase.courtCaseNumber,
+      },
     )
     const body = this.formatMessage(notifications.rejectedCustodyEmail.body, {
       court: theCase.court?.name,
+      caseType: theCase.type,
       courtCaseNumber: theCase.courtCaseNumber,
     })
 
@@ -918,9 +925,8 @@ export class NotificationService {
       theCase.decision === CaseDecision.ACCEPTING ||
       theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
     ) {
-      const shouldSendNotificationToPrison = await this.shouldSendNotificationToPrison(
-        theCase,
-      )
+      const shouldSendNotificationToPrison =
+        await this.shouldSendNotificationToPrison(theCase)
 
       if (shouldSendNotificationToPrison) {
         promises.push(this.sendRulingEmailNotificationToPrison(theCase))
@@ -992,9 +998,8 @@ export class NotificationService {
       ),
     ]
 
-    const shouldSendNotificationToPrison = await this.shouldSendNotificationToPrison(
-      theCase,
-    )
+    const shouldSendNotificationToPrison =
+      await this.shouldSendNotificationToPrison(theCase)
 
     if (shouldSendNotificationToPrison) {
       promises.push(
@@ -1693,9 +1698,8 @@ export class NotificationService {
       theCase.decision === CaseDecision.ACCEPTING ||
       theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
     ) {
-      const shouldSendNotificationToPrison = await this.shouldSendNotificationToPrison(
-        theCase,
-      )
+      const shouldSendNotificationToPrison =
+        await this.shouldSendNotificationToPrison(theCase)
 
       if (shouldSendNotificationToPrison) {
         promises.push(
