@@ -62,6 +62,7 @@
     },
     "update-geoip": {
       "executor": "nx:run-commands",
+      "inputs": [{ "env": "GEOIP_LICENSE_KEY" }],
       "options": {
         "command": "npm run-script updatedb license_key=${GEOIP_LICENSE_KEY}",
         "cwd": "node_modules/geoip-lite"
