@@ -17,7 +17,7 @@ export const ReykjavikUniversityApplicationClientConfig = defineConfig({
     return {
       url: env.required(
         'REYKJAVIK_UNIVERSITY_HOST',
-        'https://devproxy.ru.is/test/api',
+        'https://devproxy.ru.is/test/api/custom',
       ),
       fetch: {
         timeout: env.optionalJSON('REYKJAVIK_UNIVERSITY_TIMEOUT') ?? 20000,

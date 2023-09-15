@@ -45,6 +45,7 @@ class InternalCourseService {
     )
   }
 
+  // TODOx try-catch each
   private async doUpdateCoursesForUniversity(
     universityNationalId: string,
     getCourses: (externalId: string) => Promise<ICourse[]>,

@@ -10,15 +10,7 @@ type MapperResult<
   ? TResult
   : never
 
-// export const createEnumMapperFunction =
-//   <TSourceEnumObj, TDestEnumObj extends SymmetricalEnum<TSourceEnumObj>>(
-//     from: TSourceEnumObj,
-//     to: TDestEnumObj,
-//   ) =>
-//   <TInput extends keyof TSourceEnumObj>(value: TInput) =>
-//     value as MapperResult<TSourceEnumObj, TDestEnumObj, TInput>
-
-export const mapEnum = <
+export const mapEnumToEnum = <
   TSourceEnumObj,
   TDestEnumObj extends SymmetricalEnum<TSourceEnumObj>,
   TInput extends keyof TSourceEnumObj,
@@ -28,4 +20,18 @@ export const mapEnum = <
   _to: TDestEnumObj,
 ) => {
   return value as MapperResult<TSourceEnumObj, TDestEnumObj, TInput>
+}
+
+export const mapStringToEnum = <TDestEnum, TKeys extends string>(
+  value: string,
+  enumType: { [key in TKeys]: TDestEnum },
+): TDestEnum => {
+  const keys = Object.keys(enumType)
+  const values = Object.values(enumType)
+
+  const index = keys.indexOf(value)
+  if (index < 0) {
+    throw new Error(`${value} does not exist in enum:` + enumType)
+  }
+  return values[index] as TDestEnum
 }

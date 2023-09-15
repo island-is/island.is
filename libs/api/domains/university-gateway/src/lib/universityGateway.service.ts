@@ -19,7 +19,7 @@ import {
   ModeOfDelivery,
   Requirement,
   Season,
-  mapEnum,
+  mapEnumToEnum,
 } from '@island.is/university-gateway-lib'
 
 export
@@ -36,11 +36,15 @@ class UniversityGatewayApi {
       year: input.year,
       season:
         input.season &&
-        mapEnum(input.season, Season, ProgramControllerGetProgramsSeasonEnum),
+        mapEnumToEnum(
+          input.season,
+          Season,
+          ProgramControllerGetProgramsSeasonEnum,
+        ),
       universityId: input.universityId,
       degreeType:
         input.degreeType &&
-        mapEnum(
+        mapEnumToEnum(
           input.degreeType,
           DegreeType,
           ProgramControllerGetProgramsDegreeTypeEnum,
@@ -60,14 +64,18 @@ class UniversityGatewayApi {
         departmentNameIs: item.departmentNameIs,
         departmentNameEn: item.departmentNameEn,
         startingSemesterYear: item.startingSemesterYear,
-        startingSemesterSeason: mapEnum(
+        startingSemesterSeason: mapEnumToEnum(
           item.startingSemesterSeason,
           ProgramStartingSemesterSeasonEnum,
           Season,
         ),
         applicationStartDate: item.applicationStartDate,
         applicationEndDate: item.applicationEndDate,
-        degreeType: mapEnum(item.degreeType, ProgramDegreeTypeEnum, DegreeType),
+        degreeType: mapEnumToEnum(
+          item.degreeType,
+          ProgramDegreeTypeEnum,
+          DegreeType,
+        ),
         degreeAbbreviation: item.degreeAbbreviation,
         credits: item.credits,
         descriptionIs: item.descriptionIs,
@@ -83,7 +91,7 @@ class UniversityGatewayApi {
           nameEn: t.details.nameEn,
         })),
         modeOfDelivery: item.modeOfDelivery.map((m) =>
-          mapEnum(
+          mapEnumToEnum(
             m.modeOfDelivery,
             ProgramModeOfDeliveryModeOfDeliveryEnum,
             ModeOfDelivery,
@@ -110,14 +118,14 @@ class UniversityGatewayApi {
       departmentNameIs: item.departmentNameIs,
       departmentNameEn: item.departmentNameEn,
       startingSemesterYear: item.startingSemesterYear,
-      startingSemesterSeason: mapEnum(
+      startingSemesterSeason: mapEnumToEnum(
         item.startingSemesterSeason,
         ProgramDetailsStartingSemesterSeasonEnum,
         Season,
       ),
       applicationStartDate: item.applicationStartDate,
       applicationEndDate: item.applicationEndDate,
-      degreeType: mapEnum(
+      degreeType: mapEnumToEnum(
         item.degreeType,
         ProgramDetailsDegreeTypeEnum,
         DegreeType,
@@ -137,7 +145,7 @@ class UniversityGatewayApi {
         nameEn: t.details.nameEn,
       })),
       modeOfDelivery: item.modeOfDelivery.map((m) =>
-        mapEnum(
+        mapEnumToEnum(
           m.modeOfDelivery,
           ProgramModeOfDeliveryModeOfDeliveryEnum,
           ModeOfDelivery,
@@ -158,7 +166,7 @@ class UniversityGatewayApi {
         nameEn: c.details.nameEn,
         credits: c.details.credits,
         semesterYear: c.details.semesterYear,
-        semesterSeason: mapEnum(
+        semesterSeason: mapEnumToEnum(
           c.details.semesterSeason,
           CourseSemesterSeasonEnum,
           Season,
@@ -167,7 +175,7 @@ class UniversityGatewayApi {
         descriptionEn: c.details.descriptionEn,
         externalUrlIs: c.details.externalUrlIs,
         externalUrlEn: c.details.externalUrlEn,
-        requirement: mapEnum(
+        requirement: mapEnumToEnum(
           c.requirement,
           ProgramCourseRequirementEnum,
           Requirement,
@@ -179,7 +187,7 @@ class UniversityGatewayApi {
       //   descriptionIs: e.descriptionIs,
       //   descriptionEn: e.descriptionEn,
       //   required: e.required,
-      //   fieldType: mapEnum(
+      //   fieldType: mapEnumToEnum(
       //     e.fieldType,
       //     ProgramExtraApplicationFieldFieldTypeEnum,
       //     FieldType,

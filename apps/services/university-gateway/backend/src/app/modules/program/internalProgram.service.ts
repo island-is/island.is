@@ -54,6 +54,7 @@ class InternalProgramService {
     )
   }
 
+  // TODOx try-catch each
   private async doUpdateProgramsForUniversity(
     universityNationalId: string,
     programList: IProgram[],
