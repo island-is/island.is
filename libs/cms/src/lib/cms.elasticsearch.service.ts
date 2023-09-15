@@ -403,9 +403,9 @@ export class CmsElasticsearchService {
 
     const supportqnasResponse =
       await this.elasticService.getDocumentsByMetaData(index, query)
-    return supportqnasResponse.hits.hits.map((response) =>
-      JSON.parse(response._source.response ?? '[]'),
-    )
+    return supportqnasResponse.hits.hits
+      .map((response) => JSON.parse(response._source.response ?? '[]'))
+      .filter((qna) => qna?.title && qna?.slug)
   }
 }
 
