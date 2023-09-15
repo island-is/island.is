@@ -1,14 +1,14 @@
 import React, { FC, useEffect } from 'react'
+import { coreErrorMessages, coreMessages } from '@island.is/application/core'
 import {
   Application,
   DefaultEvents,
   FieldBaseProps,
-  coreErrorMessages,
-  coreMessages,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useSubmitApplication, usePaymentStatus, useMsg } from './hooks'
 import { getRedirectUrl, isComingFromRedirect } from './util'
+import { Company } from './assets'
 
 export interface PaymentPendingProps {
   application: Application
@@ -16,11 +16,9 @@ export interface PaymentPendingProps {
   refetch: FieldBaseProps['refetch']
 }
 
-export const PaymentPending: FC<PaymentPendingProps> = ({
-  application,
-  refetch,
-  targetEvent,
-}) => {
+export const PaymentPending: FC<
+  React.PropsWithChildren<PaymentPendingProps>
+> = ({ application, refetch, targetEvent }) => {
   const msg = useMsg(application)
 
   const { paymentStatus, stopPolling, pollingError } = usePaymentStatus(
@@ -69,10 +67,7 @@ export const PaymentPending: FC<PaymentPendingProps> = ({
     <Box height="full">
       <Text variant="h3">{msg(coreMessages.paymentPollingIndicator)}</Text>
       <Box marginTop={4}>
-        <img
-          src="/assets/images/company.svg"
-          alt={msg(coreMessages.paymentPollingIndicator)}
-        />
+        <Company altText={msg(coreMessages.paymentPollingIndicator)} />
       </Box>
     </Box>
   )

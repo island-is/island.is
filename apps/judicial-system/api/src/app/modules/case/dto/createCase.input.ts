@@ -1,8 +1,14 @@
-import { Allow } from 'class-validator'
+import { Allow, ArrayMinSize, IsArray, IsString } from 'class-validator'
+import { GraphQLJSONObject } from 'graphql-type-json'
 
 import { Field, InputType } from '@nestjs/graphql'
 
-import type { CaseType, CreateCase } from '@island.is/judicial-system/types'
+import type {
+  CaseType,
+  CreateCase,
+  CrimeSceneMap,
+  IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
 
 @InputType()
 export class CreateCaseInput implements CreateCase {
@@ -11,12 +17,19 @@ export class CreateCaseInput implements CreateCase {
   readonly type!: CaseType
 
   @Allow()
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  readonly indictmentSubtypes?: IndictmentSubtypeMap
+
+  @Allow()
   @Field({ nullable: true })
   readonly description?: string
 
   @Allow()
-  @Field()
-  readonly policeCaseNumber!: string
+  @IsArray()
+  @ArrayMinSize(1)
+  @IsString({ each: true })
+  @Field(() => [String])
+  readonly policeCaseNumbers!: string[]
 
   @Allow()
   @Field({ nullable: true })
@@ -40,9 +53,9 @@ export class CreateCaseInput implements CreateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly courtId?: string
+  readonly leadInvestigator?: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly leadInvestigator?: string
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  readonly crimeScenes?: CrimeSceneMap
 }

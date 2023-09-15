@@ -1,87 +1,78 @@
 import { Box, IconProps, Icon } from '@island.is/island-ui/core'
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
 import * as styles from './NavItem.css'
 import { Link } from 'react-router-dom'
-import { useStore } from '../../../store/stateProvider'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import cn from 'classnames'
-
-interface ChevronProps {
-  expanded?: boolean
-  enabled?: boolean
-  active: boolean
-  onChevronClick?: () => void
-}
+import Chevron from './Chevron'
+import { iconTypeToSVG, iconIdMapper } from '../../../utils/Icons/idMapper'
 
 interface Props {
-  path?: ServicePortalPath
+  path?: string
   icon?: Pick<IconProps, 'icon' | 'type'>
   active: boolean
   chevron?: boolean
-  hover: boolean
+  hover?: boolean
   enabled?: boolean
   expanded?: boolean
   external?: boolean
-  variant?: 'blue' | 'blueberry'
   hasArray?: boolean
+  badge?: boolean
+  variant?: 'blue' | 'blueberry'
   onClick?: () => void
   onChevronClick?: () => void
-  badge?: boolean
 }
 
-const NavItemContent: FC<Props> = ({
+const NavItemContent: FC<React.PropsWithChildren<Props>> = ({
   icon,
   active,
-  hover,
   enabled,
   hasArray,
   onClick,
   children,
   badge = false,
 }) => {
-  const [{ sidebarState }] = useStore()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
-  const collapsed = sidebarState === 'closed' && !isMobile
   const showLock = enabled === false
+  const pathName = window.location.pathname
+  const isDashboard = pathName === '/minarsidur'
 
   const navItemActive: keyof typeof styles.navItemActive = active
-    ? collapsed
-      ? 'activeCollapsed'
-      : 'active'
-    : collapsed
-    ? 'inactiveCollapsed'
+    ? 'active'
     : 'inactive'
 
-  let navItemHover: keyof typeof styles.navItemHover = 'none'
-
-  if (hover && active) {
-    navItemHover = 'hoverActive'
-  } else if (hover && collapsed) {
-    navItemHover = 'hoverCollapsed'
-  } else if (hover && !active) {
-    navItemHover = 'hoverInactive'
-  } else {
-    navItemHover = 'none'
-  }
   const badgeActive: keyof typeof styles.badge = badge ? 'active' : 'inactive'
+
+  const animatedIconSource = icon
+    ? `./assets/icons/sidebar/${icon.icon}.svg`
+    : undefined
+
+  const iconSvg = icon ? iconTypeToSVG(icon.icon ?? '', 'navid') : undefined
+
   return (
     <Box
       className={[
-        styles.navItemHover[navItemHover],
+        styles.navItem,
         styles.navItemActive[navItemActive],
+        'navitem',
+        isDashboard && styles.dashboard,
       ]}
       display="flex"
       alignItems="center"
-      justifyContent={collapsed ? 'center' : 'spaceBetween'}
+      justifyContent="spaceBetween"
       cursor={showLock ? undefined : 'pointer'}
       position="relative"
-      onClick={showLock ? (hasArray ? undefined : onClick) : onClick}
+      onClick={() => {
+        const id = icon && iconIdMapper(icon.icon)
+        const a: HTMLElement | null = id ? document.getElementById(id) : null
+        a && a.dispatchEvent(new Event('click'))
+        if (!hasArray && onClick) onClick()
+      }}
       paddingY={1}
-      paddingLeft={collapsed ? 1 : 3}
-      paddingRight={collapsed ? 1 : 2}
+      paddingLeft={3}
+      paddingRight={2}
     >
       <Box
         display="flex"
@@ -94,68 +85,50 @@ const NavItemContent: FC<Props> = ({
           <Box
             display="flex"
             alignItems="center"
-            justifyContent={collapsed ? 'center' : 'flexStart'}
-            marginRight={collapsed ? 0 : 1}
+            justifyContent={isDashboard ? 'center' : 'spaceBetween'}
+            marginRight={1}
+            className={animatedIconSource && styles.animatedIcon}
           >
             <Box
               borderRadius="circle"
-              className={cn(
-                styles.badge[badgeActive],
-                collapsed && styles.badgeCollapsed,
-              )}
+              className={cn(styles.badge[badgeActive])}
             ></Box>
-            <Icon
-              type={active || hover ? 'filled' : icon.type}
-              icon={icon.icon}
-              size="medium"
-              className={styles.icon}
-            />
+
+            {!isDashboard && !isMobile && !!iconSvg ? (
+              <Box
+                className={styles.animatedIcon}
+                display="flex"
+                justifyContent="center"
+              >
+                {iconSvg}
+              </Box>
+            ) : (
+              <Box
+                className={styles.animatedIcon}
+                display="flex"
+                justifyContent="center"
+              >
+                <Icon type={'outline'} icon={icon.icon} />
+              </Box>
+            )}
           </Box>
         ) : null}
-        {!collapsed ? <Box className={styles.text}>{children}</Box> : ''}
+        <Box className={styles.text}>{children}</Box>
       </Box>
       {showLock && (
         <Icon
           type="filled"
           icon="lockClosed"
           size="small"
-          color={hover || active ? 'blue400' : 'blue600'}
-          className={cn(styles.lock, collapsed && styles.lockCollapsed)}
+          color={active ? 'blue400' : 'blue600'}
+          className={styles.lock}
         />
       )}
     </Box>
   )
 }
 
-const Chevron: FC<ChevronProps> = ({
-  expanded,
-  enabled,
-  active,
-  onChevronClick,
-}) => {
-  const chevronIcon = expanded ? 'chevronUp' : 'chevronDown'
-  const [{ sidebarState }] = useStore()
-  const showChevron = enabled && sidebarState === 'open'
-
-  return showChevron ? (
-    <Box
-      onClick={() => {
-        onChevronClick && onChevronClick()
-      }}
-      className={styles.iconWrapper}
-    >
-      <Icon
-        type="filled"
-        icon={chevronIcon}
-        size="medium"
-        color={active ? 'blue400' : 'blue600'}
-        className={styles.icon}
-      />
-    </Box>
-  ) : null
-}
-
-const NavItem: FC<Props> = (props) => {
+const NavItem: FC<React.PropsWithChildren<Props>> = (props) => {
   return props.external ? (
     <a
       href={props.path}

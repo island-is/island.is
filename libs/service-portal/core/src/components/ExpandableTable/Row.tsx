@@ -1,7 +1,7 @@
 import React, { useState, useCallback, FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { ApolloError } from '@apollo/client'
-import AnimateHeight from 'react-animate-height'
+import AnimateHeight, { Height } from 'react-animate-height'
 import {
   Box,
   Text,
@@ -9,9 +9,10 @@ import {
   Table as T,
   Button,
 } from '@island.is/island-ui/core'
-import { m } from '@island.is/service-portal/core'
+import { m } from '../../lib/messages'
 import * as styles from './ExpandableTable.css'
-import { tableStyles } from '@island.is/service-portal/core'
+import { tableStyles } from '../../utils/utils'
+import { theme } from '@island.is/island-ui/theme'
 
 interface Props {
   data: Array<{
@@ -21,22 +22,30 @@ interface Props {
   last?: boolean
   loading?: boolean
   error?: ApolloError
+  backgroundColor?: 'white' | 'default' | 'yellow'
+  forceBackgroundColor?: boolean
+  extraChildrenPadding?: boolean
+  showLine?: boolean
   onExpandCallback?: () => void
 }
 
-const ExpandableLine: FC<Props> = ({
+const ExpandableLine: FC<React.PropsWithChildren<Props>> = ({
   data,
   onExpandCallback,
+  backgroundColor = 'default',
+  forceBackgroundColor = false,
   children,
   last,
   loading,
+  extraChildrenPadding,
+  showLine = true,
   error,
 }) => {
   const { formatMessage } = useLocale()
   const [expanded, toggleExpand] = useState<boolean>(false)
   const [closed, setClosed] = useState<boolean>(true)
 
-  const handleAnimationEnd = useCallback((height) => {
+  const handleAnimationEnd = useCallback((height: Height) => {
     if (height === 0) {
       setClosed(true)
     } else {
@@ -51,21 +60,41 @@ const ExpandableLine: FC<Props> = ({
     toggleExpand(!expanded)
   }
 
+  const getColor =
+    backgroundColor === 'default'
+      ? 'blue100'
+      : backgroundColor === 'yellow'
+      ? 'yellow300'
+      : 'transparent'
   const fullClose = closed && !expanded
+  const color = forceBackgroundColor
+    ? getColor
+    : fullClose || loading
+    ? 'transparent'
+    : getColor
+
+  const borderColor =
+    fullClose || loading
+      ? 'blue200'
+      : backgroundColor === 'default'
+      ? 'blue100'
+      : 'transparent'
+
   return (
     <>
       <T.Row>
         <T.Data
           box={{
             alignItems: 'flexEnd',
-            background: fullClose || loading ? 'transparent' : 'blue100',
-            borderColor: fullClose || loading ? 'blue200' : 'blue100',
-            printHidden: true,
+            background: color,
+            borderColor: borderColor,
             position: 'relative',
           }}
           style={tableStyles}
         >
-          {!fullClose && !loading ? <div className={styles.line} /> : null}
+          {!fullClose && !loading && showLine ? (
+            <div className={styles.line} />
+          ) : null}
           {!last && !loading && (
             <Box
               display="flex"
@@ -82,7 +111,7 @@ const ExpandableLine: FC<Props> = ({
                 onClick={onExpandButton}
                 preTextIconType="filled"
                 size="small"
-                title="Sundurliðun"
+                title={formatMessage(m.financeBreakdown)}
                 type="button"
                 variant="primary"
               />
@@ -103,8 +132,8 @@ const ExpandableLine: FC<Props> = ({
           <T.Data
             key={i}
             box={{
-              background: fullClose || loading ? 'transparent' : 'blue100',
-              borderColor: fullClose || loading ? 'blue200' : 'blue100',
+              background: color,
+              borderColor: borderColor,
               position: 'relative',
             }}
             style={tableStyles}
@@ -123,19 +152,34 @@ const ExpandableLine: FC<Props> = ({
       </T.Row>
       <T.Row>
         <T.Data
-          style={{ padding: 0, width: '100%' }}
+          style={{
+            padding: 0,
+            width: '100%',
+            paddingTop:
+              extraChildrenPadding && expanded && !loading
+                ? theme.spacing[4]
+                : 0,
+            paddingBottom:
+              extraChildrenPadding && expanded && !loading
+                ? theme.spacing[4]
+                : 0,
+          }}
           box={{ position: 'relative' }}
-          borderColor={closed && !expanded ? 'blue100' : 'blue200'}
+          borderColor={
+            closed && !expanded
+              ? 'blue100'
+              : backgroundColor === 'white'
+              ? 'transparent'
+              : 'blue200'
+          }
           colSpan={data.length + 1}
         >
           <AnimateHeight
-            onAnimationEnd={(props: { newHeight: number }) =>
-              handleAnimationEnd(props.newHeight)
-            }
+            onHeightAnimationEnd={(newHeight) => handleAnimationEnd(newHeight)}
             duration={300}
             height={children && expanded ? 'auto' : 0}
           >
-            <div className={styles.line} />
+            {showLine && <div className={styles.line} />}
             {children}
             {error && (
               <Box

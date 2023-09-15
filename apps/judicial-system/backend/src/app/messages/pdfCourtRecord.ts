@@ -69,8 +69,7 @@ export const courtRecord = {
         'Notaður sem heiti á þingmerktri kröfu þar sem {caseType} er tegund máls og er sjálfkrafa bætt við í kóða.',
     },
     announcement: {
-      id:
-        'judicial.system.backend:pdf.court_record.court_documents.announcement',
+      id: 'judicial.system.backend:pdf.court_record.court_documents.announcement',
       defaultMessage: 'Rannsóknargögn málsins liggja frammi.',
       description:
         'Notaður sem tilkynning um að rannsóknargögn málsins liggi frammi.',
@@ -135,10 +134,11 @@ export const courtRecord = {
       'Notaður sem staðfesting á því að dómritari hafi verið vitni að þinghaldi þar sem {registrarNameAndTitle} er nafn og titill dómritara og er sjálfkrafa bætt við í kóða.',
   }),
   signOff: defineMessage({
-    id: 'judicial.system.backend:pdf.court_record.sign_off',
-    defaultMessage: 'Þinghaldi lýkur kl. {endTime}.',
+    id: 'judicial.system.backend:pdf.court_record.sign_off_v2',
+    defaultMessage:
+      'Þinghaldi lýkur {endDate, select, NONE {} other {{endDate} }}kl. {endTime}.',
     description:
-      'Notaður sem lokaorð þar sem {endTime} er lokatími þinghalds og er sjálfkrafa bætt við í kóða.',
+      'Notaður sem lokaorð þar sem {endDate/endTime} er lokatími þinghalds og er sjálfkrafa bætt við í kóða.',
   }),
   inSession: defineMessage({
     id: 'judicial.system.backend:pdf.court_record.in_session',
@@ -148,7 +148,7 @@ export const courtRecord = {
   smallPrint: defineMessage({
     id: 'judicial.system.backend:pdf.court_record.small_print',
     defaultMessage:
-      '{actorName} ({actorInstitution}) sótti þetta skjal í Réttarvörslugátt {date}.',
-    description: '',
+      '{actorName} ({actorInstitution, select, NONE {lögmaður} other {{actorInstitution}}}) sótti þetta skjal í Réttarvörslugátt {date}.',
+    description: 'Notaður til að tilgreina hver sótti þingbók.',
   }),
 }

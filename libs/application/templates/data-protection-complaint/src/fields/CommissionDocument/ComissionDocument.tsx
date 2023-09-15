@@ -1,10 +1,12 @@
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, Inline, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { info } from '../../lib/messages'
 
-export const CommissionDocument: FC<FieldBaseProps> = () => {
+export const CommissionDocument: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = () => {
   const { formatMessage } = useLocale()
   return (
     <Box marginBottom={2}>

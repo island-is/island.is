@@ -3,12 +3,12 @@ import { Box, DropdownMenu } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import * as styles from './DropdownExport.css'
-import DisabledItem from './DisabledItem'
 
 interface Props {
   onGetCSV: () => void
   onGetExcel: () => void
   dropdownItems?: {
+    href?: string
     onClick?: () => void
     title: string
     render?: (
@@ -18,7 +18,7 @@ interface Props {
     ) => ReactElement
   }[]
 }
-const DropdownExport: FC<Props> = ({
+const DropdownExport: FC<React.PropsWithChildren<Props>> = ({
   onGetCSV,
   onGetExcel,
   dropdownItems = [],

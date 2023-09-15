@@ -12,6 +12,15 @@ export interface IAccordionSliceFields {
 
   /** Accordion Items */
   accordionItems?: IOneColumnText[] | undefined
+
+  /** Has Border Above */
+  hasBorderAbove?: boolean | undefined
+
+  /** Show Title */
+  showTitle?: boolean | undefined
+
+  /** Title Heading Level */
+  titleHeadingLevel?: 'h2' | 'h3' | 'h4' | 'h5' | undefined
 }
 
 /** A slice with accordions */
@@ -38,7 +47,7 @@ export interface IAlertBannerFields {
   showAlertBanner: boolean
 
   /** Banner variant */
-  bannerVariant: 'default' | 'warning' | 'error' | 'info' | 'success'
+  bannerVariant: 'default' | 'warning' | 'error' | 'info'
 
   /** Title */
   title?: string | undefined
@@ -50,23 +59,33 @@ export interface IAlertBannerFields {
   linkTitle?: string | undefined
 
   /** Link */
-  link?:
-    | IAboutSubPage
-    | IArticle
-    | IArticleCategory
-    | ISubArticle
-    | ILifeEventPage
-    | ILinkUrl
-    | INews
-    | IVidspyrnaFrontpage
-    | IVidspyrnaPage
-    | undefined
+  link?: ILinkUrl | undefined
 
   /** Is dismissable */
   isDismissable: boolean
 
   /** dismissed for days */
   dismissedForDays: number
+
+  /** Service Portal Paths */
+  servicePortalPaths?:
+    | (
+        | '*'
+        | 'postholf'
+        | 'umsoknir'
+        | 'min-gogn'
+        | 'skirteini'
+        | 'leyfisbref'
+        | 'menntun'
+        | 'fasteignir'
+        | 'fjarmal'
+        | 'okutaeki'
+        | 'stillingar'
+        | 'starfsleyfi'
+        | 'loftbru'
+        | 'heilsa'
+      )[]
+    | undefined
 }
 
 /** Alert banner will show on top of all pages */
@@ -81,6 +100,28 @@ export interface IAlertBanner extends Entry<IAlertBannerFields> {
     contentType: {
       sys: {
         id: 'alertBanner'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IAppUriFields {
+  /** URI */
+  uri: string
+}
+
+export interface IAppUri extends Entry<IAppUriFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'appUri'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -118,9 +159,6 @@ export interface IArticleFields {
 
   /** Process Entry */
   processEntry?: IProcessEntry | undefined
-
-  /** Contains application form? (Deprecated) */
-  containsApplicationForm?: boolean | undefined
 
   /** Category (Main) */
   category: IArticleCategory
@@ -166,6 +204,21 @@ export interface IArticleFields {
 
   /** Featured image */
   featuredImage?: Asset | undefined
+
+  /** Stepper */
+  stepper?: IStepper | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
+
+  /** Process Entry Button Text */
+  processEntryButtonText?: 'application' | 'stepByStep' | undefined
+
+  /** Active Translations */
+  activeTranslations?: Record<string, any> | undefined
+
+  /** Sign language video */
+  signLanguageVideo?: IEmbeddedVideo | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
@@ -460,6 +513,9 @@ export interface IDistrictsFields {
 
   /** Links */
   links?: ILink[] | undefined
+
+  /** Has Border Above */
+  hasBorderAbove?: boolean | undefined
 }
 
 export interface IDistricts extends Entry<IDistrictsFields> {
@@ -472,6 +528,43 @@ export interface IDistricts extends Entry<IDistrictsFields> {
     contentType: {
       sys: {
         id: 'districts'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IEmailSignupFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Description */
+  description?: string | undefined
+
+  /** Form Fields */
+  formFields?: IFormField[] | undefined
+
+  /** Signup Type */
+  signupType?: 'mailchimp' | 'zenter' | undefined
+
+  /** Configuration */
+  configuration?: Record<string, any> | undefined
+
+  /** Translations */
+  translations?: Record<string, any> | undefined
+}
+
+export interface IEmailSignup extends Entry<IEmailSignupFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'emailSignup'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -682,14 +775,29 @@ export interface IFeaturedArticlesFields {
   /** Link */
   link?: ILink | undefined
 
-  /** Application Label */
-  applicationLabel: string
+  /** Automatically Fetch Articles */
+  automaticallyFetchArticles?: boolean | undefined
+
+  /** Sort By */
+  sortBy?: 'popularity' | 'importance' | undefined
 
   /** Organization */
   organization?: IOrganization | undefined
 
+  /** Category */
+  category?: IArticleCategory | undefined
+
+  /** Group */
+  group?: IArticleGroup | undefined
+
+  /** Subgroup */
+  subgroup?: IArticleSubgroup | undefined
+
   /** Article Count */
   articleCount?: number | undefined
+
+  /** Has Border Above */
+  hasBorderAbove?: boolean | undefined
 }
 
 export interface IFeaturedArticles extends Entry<IFeaturedArticlesFields> {
@@ -702,6 +810,53 @@ export interface IFeaturedArticles extends Entry<IFeaturedArticlesFields> {
     contentType: {
       sys: {
         id: 'featuredArticles'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IFeaturedSupportQnAsFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Rendered Title */
+  renderedTitle?: string | undefined
+
+  /** Link */
+  link?: ILink | undefined
+
+  /** Automatically Fetch SupportQNAs */
+  automaticallyFetchSupportQNAs?: boolean | undefined
+
+  /** SupportQNA count */
+  supportQnaCount?: number | undefined
+
+  /** Organization */
+  organization?: IOrganization | undefined
+
+  /** Support Category */
+  supportCategory?: ISupportCategory | undefined
+
+  /** Support Subcategory */
+  supportSubcategory?: ISupportSubCategory | undefined
+
+  /** SupportQNAs */
+  supportQNAs?: ISupportQna[] | undefined
+}
+
+export interface IFeaturedSupportQnAs
+  extends Entry<IFeaturedSupportQnAsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'featuredSupportQNAs'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -733,6 +888,108 @@ export interface IFooterItem extends Entry<IFooterItemFields> {
     contentType: {
       sys: {
         id: 'footerItem'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IFormFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Intro */
+  intro?: string | undefined
+
+  /** Recipient */
+  recipient: string
+
+  /** Default field namespace (In development) */
+  defaultFieldNamespace?: Record<string, any> | undefined
+
+  /** Fields */
+  fields?: IFormField[] | undefined
+
+  /** Success Text */
+  successText?: string | undefined
+
+  /** About You Heading Text */
+  aboutYouHeadingText?: string | undefined
+
+  /** Questions Heading text */
+  questionsHeadingText?: string | undefined
+
+  /** Recipient Form Field Decider */
+  recipientFormFieldDecider?: IFormField | undefined
+
+  /** Recipient List */
+  recipientList?: string[] | undefined
+}
+
+export interface IForm extends Entry<IFormFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'form'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IFormFieldFields {
+  /** Title */
+  title: string
+
+  /** Name */
+  name?: string | undefined
+
+  /** Placeholder */
+  placeholder?: string | undefined
+
+  /** Type */
+  type:
+    | 'input'
+    | 'text'
+    | 'dropdown'
+    | 'radio'
+    | 'acceptTerms'
+    | 'email'
+    | 'checkboxes'
+    | 'file'
+    | 'nationalId (kennitala)'
+    | 'information'
+
+  /** Required */
+  required?: boolean | undefined
+
+  /** Options */
+  options?: string[] | undefined
+
+  /** Email Config */
+  emailConfig?: Record<string, any> | undefined
+
+  /** Information Text */
+  informationText?: string | undefined
+}
+
+export interface IFormField extends Entry<IFormFieldFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'formField'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -941,7 +1198,7 @@ export interface IGenericTagFields {
   genericTagGroup?: IGenericTagGroup | undefined
 }
 
-/** A generic uniquely named tag that can be used for tag miscellaneous things. */
+/** A generic uniquely named tag that can be used to tag miscellaneous things. */
 
 export interface IGenericTag extends Entry<IGenericTagFields> {
   sys: {
@@ -1057,6 +1314,51 @@ export interface IGroupedMenu extends Entry<IGroupedMenuFields> {
   }
 }
 
+export interface IHnippTemplateFields {
+  /** Organization */
+  organization?: IOrganization | undefined
+
+  /** TemplateId */
+  templateId: string
+
+  /** Notification Title */
+  notificationTitle: string
+
+  /** Notification Body */
+  notificationBody: string
+
+  /** Notification Data Copy */
+  notificationDataCopy?: string | undefined
+
+  /** Click Action */
+  clickAction?: string | undefined
+
+  /** Category */
+  category?: 'NEW_DOCUMENT' | 'ISLANDIS_LINK' | undefined
+
+  /** Args */
+  args?: string[] | undefined
+}
+
+/** push notification templates for island.is */
+
+export interface IHnippTemplate extends Entry<IHnippTemplateFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'hnippTemplate'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IIconBulletFields {
   /** Title */
   title: string
@@ -1118,6 +1420,9 @@ export interface IIntroLinkImageFields {
     | INews
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
+
+  /** Open Link in New Tab */
+  openLinkInNewTab: boolean
 }
 
 export interface IIntroLinkImage extends Entry<IIntroLinkImageFields> {
@@ -1144,8 +1449,14 @@ export interface ILatestNewsSliceFields {
   /** News tag */
   newsTag?: IGenericTag | undefined
 
+  /** Organization */
+  organization?: IOrganization | undefined
+
   /** Read more text */
   readMoreText?: string | undefined
+
+  /** Read more link */
+  readMoreLink?: ILink | undefined
 }
 
 /** Slice to show latest news entries */
@@ -1180,6 +1491,9 @@ export interface ILifeEventPageFields {
   /** intro */
   intro?: string | undefined
 
+  /** short intro */
+  shortIntro?: string | undefined
+
   /** image */
   image?: Asset | undefined
 
@@ -1194,6 +1508,15 @@ export interface ILifeEventPageFields {
 
   /** category */
   category?: IArticleCategory | undefined
+
+  /** see more text */
+  seeMoreText?: string | undefined
+
+  /** page type */
+  pageType?: 'Life Event' | 'Digital Iceland Service' | undefined
+
+  /** featured image */
+  featuredImage?: Asset | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
@@ -1206,6 +1529,32 @@ export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
     contentType: {
       sys: {
         id: 'lifeEventPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ILifeEventPageListSliceFields {
+  /** Title */
+  title?: string | undefined
+
+  /** List */
+  lifeEventPageList?: ILifeEventPage[] | undefined
+}
+
+export interface ILifeEventPageListSlice
+  extends Entry<ILifeEventPageListSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'lifeEventPageListSlice'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1417,58 +1766,6 @@ export interface ILogoListSlice extends Entry<ILogoListSliceFields> {
   }
 }
 
-export interface IMailingListSignupFields {
-  /** Title */
-  title: string
-
-  /** Variant */
-  variant: 'default' | 'conference'
-
-  /** Description */
-  description?: string | undefined
-
-  /** Email label */
-  inputLabel: string
-
-  /** Name label */
-  fullNameLabel: string
-
-  /** QuestionLabel */
-  questionLabel?: string | undefined
-
-  /** Yes Label */
-  yesLabel?: string | undefined
-
-  /** No Label */
-  noLabel?: string | undefined
-
-  /** Disclaimer Label */
-  disclaimerLabel?: string | undefined
-
-  /** Submit button text */
-  buttonText: string
-
-  /** Signup URL */
-  signupUrl: string
-}
-
-export interface IMailingListSignup extends Entry<IMailingListSignupFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'mailingListSignup'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface IMenuFields {
   /** Title */
   title?: string | undefined
@@ -1588,6 +1885,9 @@ export interface IMultipleStatisticsFields {
 
   /** Link */
   link?: ILink | undefined
+
+  /** Has Border Above */
+  hasBorderAbove?: boolean | undefined
 }
 
 export interface IMultipleStatistics extends Entry<IMultipleStatisticsFields> {
@@ -1641,14 +1941,17 @@ export interface INamespace extends Entry<INamespaceFields> {
 }
 
 export interface INewsFields {
+  /** Organization */
+  organization: IOrganization
+
   /** Content status */
-  contentStatus: 'Undefined' | 'Needs work' | 'In review' | 'Done'
+  contentStatus?: 'Undefined' | 'Needs work' | 'In review' | 'Done' | undefined
 
   /** Title */
   title: string
 
   /** Subtitle */
-  subtitle: string
+  subtitle?: string | undefined
 
   /** Slug */
   slug: string
@@ -1665,6 +1968,9 @@ export interface INewsFields {
   /** Featured image */
   image: Asset
 
+  /** Full Width Image In Content */
+  fullWidthImageInContent?: boolean | undefined
+
   /** Content */
   content?: Document | undefined
 
@@ -1673,6 +1979,12 @@ export interface INewsFields {
 
   /** Generic tags */
   genericTags?: IGenericTag[] | undefined
+
+  /** Initial Publish Date */
+  initialPublishDate?: string | undefined
+
+  /** og:image */
+  featuredImage?: Asset | undefined
 }
 
 export interface INews extends Entry<INewsFields> {
@@ -1755,6 +2067,12 @@ export interface IOneColumnTextFields {
 
   /** Link */
   link?: ILink | undefined
+
+  /** Divider On Top */
+  dividerOnTop?: boolean | undefined
+
+  /** Show Title */
+  showTitle?: boolean | undefined
 }
 
 export interface IOneColumnText extends Entry<IOneColumnTextFields> {
@@ -1916,8 +2234,26 @@ export interface IOrganizationFields {
   /** Service Web Featured Image */
   serviceWebFeaturedImage?: Asset | undefined
 
+  /** Service Web Popular Question Count */
+  serviceWebPopularQuestionCount?: number | undefined
+
   /** Published Material Search Filter Generic Tags */
   publishedMaterialSearchFilterGenericTags?: IGenericTag[] | undefined
+
+  /** Shows up on the organizations page */
+  showsUpOnTheOrganizationsPage?: boolean | undefined
+
+  /** Has A Landing Page */
+  hasALandingPage?: boolean | undefined
+
+  /** Plausible Tracking Domain */
+  trackingDomain?: string | undefined
+
+  /** Name In Vacancy List */
+  nameInVacancyList?: string | undefined
+
+  /** Reference Identifier */
+  referenceIdentifier?: string | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -1941,52 +2277,11 @@ export interface IOrganizationPageFields {
   /** Title */
   title: string
 
-  /** Slug */
-  slug: string
-
   /** Intro */
   intro?: string | undefined
 
   /** Description */
   description?: string | undefined
-
-  /** Theme */
-  theme:
-    | 'default'
-    | 'default_with_image'
-    | 'utlendingastofnun'
-    | 'sjukratryggingar'
-    | 'syslumenn'
-    | 'digital_iceland'
-
-  /** Slices */
-  slices?:
-    | (
-        | IAccordionSlice
-        | IBigBulletList
-        | IDistricts
-        | IMailingListSignup
-        | IEventSlice
-        | IFeaturedArticles
-        | ISectionHeading
-        | ILogoListSlice
-        | IMultipleStatistics
-        | IOneColumnText
-        | IOverviewLinks
-        | IStorySection
-        | ITabSection
-        | ITimeline
-        | ITwoColumnText
-      )[]
-    | undefined
-
-  /** Bottom slices */
-  bottomSlices?:
-    | (ILatestNewsSlice | ILogoListSlice | IOneColumnText | ITwoColumnText)[]
-    | undefined
-
-  /** News tag */
-  newsTag?: IGenericTag | undefined
 
   /** Menu Links */
   menuLinks?: ILinkGroup[] | undefined
@@ -1994,35 +2289,108 @@ export interface IOrganizationPageFields {
   /** Secondary Menu */
   secondaryMenu?: ILinkGroup | undefined
 
+  /** Slices */
+  slices?:
+    | (
+        | IAccordionSlice
+        | ILifeEventPageListSlice
+        | IBigBulletList
+        | IDistricts
+        | IEmailSignup
+        | IEventSlice
+        | IFeaturedArticles
+        | ISectionHeading
+        | ILogoListSlice
+        | IMultipleStatistics
+        | IOneColumnText
+        | IOverviewLinks
+        | ISliceConnectedComponent
+        | IStorySection
+        | ITabSection
+        | ITimeline
+        | ITwoColumnText
+        | ISectionWithVideo
+      )[]
+    | undefined
+
+  /** Sidebar Cards */
+  sidebarCards?: (ISidebarCard | ISliceConnectedComponent)[] | undefined
+
+  /** Button Links */
+  externalLinks?: ILink[] | undefined
+
+  /** Bottom slices */
+  bottomSlices?:
+    | (
+        | ILatestNewsSlice
+        | ILogoListSlice
+        | IOneColumnText
+        | ITimeline
+        | ITwoColumnText
+      )[]
+    | undefined
+
   /** Menu Items */
   menuItems?: IMenuLinkWithChildren[] | undefined
 
   /** Secondary Menu Items */
   secondaryMenuItems?: IMenuLink[] | undefined
 
-  /** Organization */
-  organization: IOrganization
-
   /** Featured Image */
-  featuredImage?: Asset | undefined
-
-  /** Sidebar Cards */
-  sidebarCards?: ISidebarCard[] | undefined
+  featuredImage: Asset
 
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
 
-  /** Theme Properties */
-  themeProperties?: Record<string, any> | undefined
-
-  /** External Links */
-  externalLinks?: ILink[] | undefined
+  /** Default Header Image */
+  defaultHeaderImage?: Asset | undefined
 
   /** Alert Banner */
   alertBanner?: IAlertBanner | undefined
 
-  /** Default Header Image */
-  defaultHeaderImage?: Asset | undefined
+  /** Organization */
+  organization: IOrganization
+
+  /** Primary news tag */
+  newsTag?: IGenericTag | undefined
+
+  /** Secondary news tags */
+  secondaryNewsTags?: IGenericTag[] | undefined
+
+  /** Slug */
+  slug: string
+
+  /** Theme */
+  theme:
+    | 'default'
+    | 'utlendingastofnun'
+    | 'sjukratryggingar'
+    | 'syslumenn'
+    | 'digital_iceland'
+    | 'hsn'
+    | 'fiskistofa'
+    | 'landlaeknir'
+    | 'rikislogmadur'
+    | 'landskjorstjorn'
+    | 'landing_page'
+    | 'fjarsysla-rikisins'
+    | 'fjarsyslan'
+    | 'custom'
+    | 'hsu'
+    | 'tryggingastofnun'
+    | 'sak'
+    | 'gev'
+    | 'hve'
+    | 'shh'
+    | 'hsa'
+    | 'haskolanam'
+    | 'nti'
+    | 'samgongustofa'
+    | 'geislavarnir-rikisins'
+    | 'rettindagaesla-fatlads-folks'
+
+  /** Theme Properties */
+  themeProperties?: Record<string, any> | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
@@ -2043,6 +2411,9 @@ export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
 }
 
 export interface IOrganizationSubpageFields {
+  /** Organization Page */
+  organizationPage: IOrganizationPage
+
   /** Title */
   title: string
 
@@ -2052,25 +2423,26 @@ export interface IOrganizationSubpageFields {
   /** Intro */
   intro?: string | undefined
 
-  /** Description */
+  /** Content */
   description?: Document | undefined
-
-  /** Links */
-  links?: ILink[] | undefined
 
   /** Slices */
   slices?:
     | (
         | IAccordionSlice
+        | ILifeEventPageListSlice
         | IBigBulletList
         | IContactUs
         | IDistricts
-        | IMailingListSignup
+        | IEmailSignup
         | IEventSlice
+        | IFeaturedArticles
         | ILatestNewsSlice
         | IMultipleStatistics
         | IOneColumnText
         | IOverviewLinks
+        | IPowerBiSlice
+        | ISliceConnectedComponent
         | ITabSection
         | ITeamList
         | ITellUsAStory
@@ -2084,14 +2456,17 @@ export interface IOrganizationSubpageFields {
   /** Slice Extra Text */
   sliceExtraText?: string | undefined
 
-  /** Parent Subpage */
-  parentSubpage?: IOrganizationSubpage | undefined
+  /** Show Table of Contents */
+  showTableOfContents?: boolean | undefined
 
-  /** Organization Page */
-  organizationPage: IOrganizationPage
+  /** Extra links */
+  links?: ILink[] | undefined
 
   /** Featured Image */
   featuredImage?: Asset | undefined
+
+  /** Sign Language Video */
+  signLanguageVideo?: IEmbeddedVideo | undefined
 }
 
 export interface IOrganizationSubpage
@@ -2140,6 +2515,9 @@ export interface IOverviewLinksFields {
 
   /** Link */
   link?: ILink | undefined
+
+  /** Has Border Above */
+  hasBorderAbove?: boolean | undefined
 }
 
 export interface IOverviewLinks extends Entry<IOverviewLinksFields> {
@@ -2193,27 +2571,99 @@ export interface IPageHeader extends Entry<IPageHeaderFields> {
   }
 }
 
+export interface IPowerBiSliceFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Config */
+  config: Record<string, any>
+
+  /** Workspace ID */
+  workSpaceId?: string | undefined
+
+  /** Report ID */
+  reportId?: string | undefined
+
+  /** Owner */
+  owner?: 'Fiskistofa' | undefined
+}
+
+/** A Slice that embeds a Power BI report */
+
+export interface IPowerBiSlice extends Entry<IPowerBiSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'powerBiSlice'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IPriceFields {
+  /** Title */
+  title: string
+
+  /** Reference Identifier */
+  referenceIdentifier: string
+
+  /** Amount */
+  amount: number
+
+  /** Organization */
+  organization: IOrganization
+}
+
+export interface IPrice extends Entry<IPriceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'price'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IProcessEntryFields {
   /** Type */
   type:
-    | 'Digital'
-    | 'Not digital'
     | 'Digital w/login'
-    | 'Not digital w/login'
     | 'No type'
     | 'Application system'
+    | 'Leyfisveitingagatt'
+    | 'Drop and sign'
+    | 'Paper'
+    | 'Ísland.is mínar síður'
+    | 'Umsoknarkerfi'
 
   /** Process title */
   processTitle: string
 
   /** Process link */
-  processLink: string
+  processLink?: string | undefined
 
-  /** Open link in modal */
-  openLinkInModal?: boolean | undefined
+  /** Process asset */
+  processAsset?: Asset | undefined
 
   /** Button text */
   buttonText: string
+
+  /** Open link in modal */
+  openLinkInModal?: boolean | undefined
 }
 
 export interface IProcessEntry extends Entry<IProcessEntryFields> {
@@ -2241,7 +2691,13 @@ export interface IProjectPageFields {
   slug?: string | undefined
 
   /** Theme */
-  theme: 'default' | 'traveling-to-iceland' | 'election' | 'ukraine'
+  theme:
+    | 'default'
+    | 'traveling-to-iceland'
+    | 'election'
+    | 'ukraine'
+    | 'opinbernyskopun'
+    | 'gagnasidur-fiskistofu'
 
   /** Sidebar */
   sidebar: boolean
@@ -2265,16 +2721,28 @@ export interface IProjectPageFields {
   slices?:
     | (
         | IAccordionSlice
-        | IMailingListSignup
+        | IBigBulletList
+        | IContactUs
+        | IEmailSignup
+        | IEventSlice
+        | IFaqList
         | IFeaturedArticles
         | ISectionHeading
         | ILatestNewsSlice
+        | IMultipleStatistics
         | IOneColumnText
+        | IOverviewLinks
+        | ITabSection
+        | ITeamList
+        | ITwoColumnText
       )[]
     | undefined
 
-  /** News Tag */
+  /** Primary news tag */
   newsTag?: IGenericTag | undefined
+
+  /** Secondary news tags */
+  secondaryNewsTags?: IGenericTag[] | undefined
 
   /** Project Subpages */
   projectSubpages?: IProjectSubpage[] | undefined
@@ -2290,6 +2758,31 @@ export interface IProjectPageFields {
 
   /** Featured Description */
   featuredDescription?: string | undefined
+
+  /** Bottom Slices */
+  bottomSlices?:
+    | (
+        | ILatestNewsSlice
+        | ILogoListSlice
+        | IOneColumnText
+        | ITimeline
+        | ITwoColumnText
+        | ITabSection
+        | ISliceConnectedComponent
+      )[]
+    | undefined
+
+  /** Footer Items */
+  footerItems?: IFooterItem[] | undefined
+
+  /** Back Link */
+  backLink?: ILink | undefined
+
+  /** Content Is Full Width */
+  contentIsFullWidth?: boolean | undefined
+
+  /** Namespace */
+  namespace?: IUiConfiguration | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {
@@ -2323,7 +2816,29 @@ export interface IProjectSubpageFields {
   renderSlicesAsTabs?: boolean | undefined
 
   /** Slices */
-  slices?: IOneColumnText[] | undefined
+  slices?:
+    | (
+        | IAccordionSlice
+        | IBigBulletList
+        | IContactUs
+        | IDistricts
+        | IEmailSignup
+        | IEventSlice
+        | IFaqList
+        | IFeaturedArticles
+        | ILatestNewsSlice
+        | IMultipleStatistics
+        | IOneColumnText
+        | IOverviewLinks
+        | ITabSection
+        | ITeamList
+        | ITellUsAStory
+        | ITwoColumnText
+      )[]
+    | undefined
+
+  /** Bottom Slices */
+  bottomSlices?: (IPowerBiSlice | IOneColumnText)[] | undefined
 }
 
 export interface IProjectSubpage extends Entry<IProjectSubpageFields> {
@@ -2349,6 +2864,9 @@ export interface IQuestionAndAnswerFields {
 
   /** Answer */
   answer?: Document | undefined
+
+  /** Publish Date */
+  publishDate?: string | undefined
 }
 
 export interface IQuestionAndAnswer extends Entry<IQuestionAndAnswerFields> {
@@ -2423,6 +2941,73 @@ export interface ISectionWithImage extends Entry<ISectionWithImageFields> {
   }
 }
 
+export interface ISectionWithVideoFields {
+  /** Title */
+  title: string
+
+  /** Show title */
+  showTitle?: boolean | undefined
+
+  /** Content */
+  content: Document
+
+  /** Video */
+  video: IEmbeddedVideo
+
+  /** Link */
+  link?: ILink | undefined
+
+  /** Show divider on top */
+  showDividerOnTop?: boolean | undefined
+}
+
+/** A section containing a video on the left and text on the right (which wraps below the video on smaller screens) */
+
+export interface ISectionWithVideo extends Entry<ISectionWithVideoFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'sectionWithVideo'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IServiceWebPageFields {
+  /** Title */
+  title: string
+
+  /** Organization */
+  organization: IOrganization
+
+  /** Slices */
+  slices?: IFeaturedArticles[] | undefined
+}
+
+export interface IServiceWebPage extends Entry<IServiceWebPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'serviceWebPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ISidebarCardFields {
   /** Type */
   type?:
@@ -2444,6 +3029,9 @@ export interface ISidebarCardFields {
 
   /** Link */
   link?: ILink | undefined
+
+  /** Image */
+  image?: Asset | undefined
 }
 
 export interface ISidebarCard extends Entry<ISidebarCardFields> {
@@ -2473,10 +3061,32 @@ export interface ISliceConnectedComponentFields {
     | 'Skilavottord/CompanyList'
     | 'Skilavottord/CompanyListConnected'
     | 'Undirskriftalistar/PetitionLists'
+    | 'ElectronicRegistrations/MonthlyStatistics'
+    | 'LatestNewsCard'
+    | 'Fiskistofa/ShipSearch'
+    | 'Fiskistofa/ShipSearchSidebarInput'
+    | 'Fasteignasalar/RealEstateAgents'
+    | 'Lögmenn/Lawyers'
+    | 'Fiskistofa/CatchQuotaCalculator'
+    | 'Fiskistofa/StraddlingStockCalculator'
+    | 'Fiskistofa/SelectedShip'
+    | 'Fiskistofa/ShipSearchBoxedInput'
+    | 'Áfengisleyfi/AlcoholLicences'
+    | 'Tækifærisleyfi/TemporaryEventLicences'
+    | 'OrganizationSearchBox'
+    | 'Verðbréfamiðlarar/Brokers'
+    | 'PublicVehicleSearch'
+    | 'PlateAvailableSearch'
+    | 'AircraftSearch'
+    | 'DrivingInstructorList'
+    | 'HousingBenefitCalculator'
     | undefined
 
-  /** JSON */
+  /** Localized JSON */
   json?: Record<string, any> | undefined
+
+  /** Config */
+  config?: Record<string, any> | undefined
 }
 
 export interface ISliceConnectedComponent
@@ -2490,6 +3100,34 @@ export interface ISliceConnectedComponent
     contentType: {
       sys: {
         id: 'sliceConnectedComponent'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ISliceDropdownFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Dropdown Label */
+  dropdownLabel?: string | undefined
+
+  /** Slices */
+  slices?: IOneColumnText[] | undefined
+}
+
+export interface ISliceDropdown extends Entry<ISliceDropdownFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'sliceDropdown'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2589,15 +3227,6 @@ export interface IStepFields {
 
   /** Subtitle */
   subtitle?: Document | undefined
-
-  /** Text */
-  text?: Document | undefined
-
-  /** Is Answer */
-  isAnswer?: boolean | undefined
-
-  /** Options */
-  options?: Record<string, any> | undefined
 
   /** Config */
   config?: Record<string, any> | undefined
@@ -2730,8 +3359,17 @@ export interface IStorySection extends Entry<IStorySectionFields> {
 }
 
 export interface ISubArticleFields {
+  /** Parent */
+  parent: IArticle
+
   /** Title */
   title: string
+
+  /** url */
+  url: string
+
+  /** Slug(old) */
+  slug?: string | undefined
 
   /** Content */
   content: Document
@@ -2739,17 +3377,8 @@ export interface ISubArticleFields {
   /** Show Table Of Contents */
   showTableOfContents?: boolean | undefined
 
-  /** url */
-  url: string
-
-  /** Parent */
-  parent: IArticle
-
-  /** Slug(old) */
-  slug?: string | undefined
-
-  /** Stepper */
-  stepper?: IStepper | undefined
+  /** Sign Language Video */
+  signLanguageVideo?: IEmbeddedVideo | undefined
 }
 
 /** A sub article that's a part of another main article */
@@ -2953,6 +3582,31 @@ export interface ITabContent extends Entry<ITabContentFields> {
   }
 }
 
+export interface ITableSliceFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Table Content */
+  tableContent?: Document | undefined
+}
+
+export interface ITableSlice extends Entry<ITableSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'tableSlice'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ITabSectionFields {
   /** Title */
   title?: string | undefined
@@ -3013,6 +3667,9 @@ export interface ITeamMemberFields {
 
   /** Mynd */
   mynd: Asset
+
+  /** Image On Select */
+  imageOnSelect?: Asset | undefined
 }
 
 export interface ITeamMember extends Entry<ITeamMemberFields> {
@@ -3159,6 +3816,9 @@ export interface ITimelineFields {
 
   /** Events */
   events: ITimelineEvent[]
+
+  /** Has Border Above */
+  hasBorderAbove?: boolean | undefined
 }
 
 /** Timeline section with a collection of timeline events */
@@ -3243,6 +3903,9 @@ export interface ITwoColumnTextFields {
 
   /** Right Link */
   rightLink?: ILink | undefined
+
+  /** Divider On Top */
+  dividerOnTop?: boolean | undefined
 }
 
 export interface ITwoColumnText extends Entry<ITwoColumnTextFields> {
@@ -3321,6 +3984,88 @@ export interface IUrl extends Entry<IUrlFields> {
     contentType: {
       sys: {
         id: 'url'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IVacancyFields {
+  /** Title */
+  title: string
+
+  /** Intro */
+  intro?: Document | undefined
+
+  /** Job Listed */
+  applicationDeadlineFrom: string
+
+  /** Application Deadline */
+  applicationDeadlineTo: string
+
+  /** Category */
+  fieldOfWork:
+    | 'Stjórnunarstörf'
+    | 'Sérfræðistörf'
+    | 'Kennsla og rannsóknir'
+    | 'Heilbrigðisþjónusta'
+    | 'Löggæslustörf'
+    | 'Tæknistörf'
+    | 'Önnur störf'
+    | 'Skrifstofustörf'
+    | 'Sumarstörf'
+
+  /** Organization */
+  organization: IOrganization
+
+  /** Locations */
+  locations: (
+    | 'Óstaðbundið'
+    | 'Höfuðborgarsvæðið'
+    | 'Norðurland vestra'
+    | 'Norðurland eystra'
+    | 'Vesturland'
+    | 'Austurland'
+    | 'Suðurland'
+    | 'Vestfirðir'
+    | 'Suðurnes'
+  )[]
+
+  /** Job Percentage */
+  jobPercentage?: string | undefined
+
+  /** Application Link Url */
+  applicationHref?: string | undefined
+
+  /** Requirements */
+  qualificationRequirements?: Document | undefined
+
+  /** Responsibilities */
+  tasksAndResponsibilities?: Document | undefined
+
+  /** Description */
+  description?: Document | undefined
+
+  /** Salary Terms */
+  salaryTerms?: Document | undefined
+
+  /** Contacts */
+  contacts?: Record<string, any> | undefined
+}
+
+/** Icelandic Government Institution Vacancy that appears on island.is/starfatorg */
+
+export interface IVacancy extends Entry<IVacancyFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'vacancy'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -3513,6 +4258,7 @@ export interface IVidspyrnaTag extends Entry<IVidspyrnaTagFields> {
 export type CONTENT_TYPE =
   | 'accordionSlice'
   | 'alertBanner'
+  | 'appUri'
   | 'article'
   | 'articleCategory'
   | 'articleGroup'
@@ -3523,6 +4269,7 @@ export type CONTENT_TYPE =
   | 'cardSection'
   | 'contactUs'
   | 'districts'
+  | 'emailSignup'
   | 'embeddedVideo'
   | 'enhancedAsset'
   | 'errorPage'
@@ -3530,7 +4277,10 @@ export type CONTENT_TYPE =
   | 'faqList'
   | 'featured'
   | 'featuredArticles'
+  | 'featuredSupportQNAs'
   | 'footerItem'
+  | 'form'
+  | 'formField'
   | 'frontpage'
   | 'frontpageSlider'
   | 'genericOverviewPage'
@@ -3539,10 +4289,12 @@ export type CONTENT_TYPE =
   | 'genericTagGroup'
   | 'graphCard'
   | 'groupedMenu'
+  | 'hnippTemplate'
   | 'iconBullet'
   | 'introLinkImage'
   | 'latestNewsSlice'
   | 'lifeEventPage'
+  | 'lifeEventPageListSlice'
   | 'link'
   | 'linkedPage'
   | 'linkGroup'
@@ -3550,7 +4302,6 @@ export type CONTENT_TYPE =
   | 'linkUrl'
   | 'location'
   | 'logoListSlice'
-  | 'mailingListSignup'
   | 'menu'
   | 'menuLink'
   | 'menuLinkWithChildren'
@@ -3568,14 +4319,19 @@ export type CONTENT_TYPE =
   | 'organizationTag'
   | 'overviewLinks'
   | 'pageHeader'
+  | 'powerBiSlice'
+  | 'price'
   | 'processEntry'
   | 'projectPage'
   | 'projectSubpage'
   | 'questionAndAnswer'
   | 'sectionHeading'
   | 'sectionWithImage'
+  | 'sectionWithVideo'
+  | 'serviceWebPage'
   | 'sidebarCard'
   | 'sliceConnectedComponent'
+  | 'sliceDropdown'
   | 'statistic'
   | 'statistics'
   | 'statisticsCard'
@@ -3589,6 +4345,7 @@ export type CONTENT_TYPE =
   | 'supportQNA'
   | 'supportSubCategory'
   | 'tabContent'
+  | 'tableSlice'
   | 'tabSection'
   | 'teamList'
   | 'teamMember'
@@ -3598,6 +4355,7 @@ export type CONTENT_TYPE =
   | 'twoColumnText'
   | 'uiConfiguration'
   | 'url'
+  | 'vacancy'
   | 'vidspyrna-frontpage'
   | 'vidspyrnaFeaturedNews'
   | 'vidspyrnaFlokkur'

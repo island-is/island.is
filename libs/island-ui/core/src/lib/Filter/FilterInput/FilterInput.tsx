@@ -15,7 +15,9 @@ export interface FilterInputProps {
   backgroundColor?: ResponsiveProp<InputBackgroundColor>
 }
 
-export const FilterInput: React.FC<FilterInputProps> = ({
+export const FilterInput: React.FC<
+  React.PropsWithChildren<FilterInputProps>
+> = ({
   name,
   id = name,
   placeholder = '',
@@ -30,9 +32,8 @@ export const FilterInput: React.FC<FilterInputProps> = ({
       name={name}
       placeholder={placeholder}
       backgroundColor={backgroundColor}
-      size="sm"
-      icon="search"
-      iconType="outline"
+      size="xs"
+      icon={{ name: 'search', type: 'outline' }}
       value={value}
       onChange={(event) => onChange(event.target.value)}
       onKeyDown={onKeyDown}

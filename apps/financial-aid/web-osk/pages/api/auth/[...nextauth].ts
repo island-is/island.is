@@ -1,10 +1,6 @@
 import NextAuth, { CallbacksOptions } from 'next-auth'
 import Providers from 'next-auth/providers'
-import { uuid } from 'uuidv4'
-import {
-  identityServerConfig,
-  RolesRule,
-} from '@island.is/financial-aid/shared/lib'
+import { identityServerConfig } from '@island.is/financial-aid/shared/lib'
 import {
   AuthUser,
   signIn as handleSignIn,
@@ -14,12 +10,13 @@ import {
 } from '@island.is/next-ids-auth'
 import { NextApiRequest, NextApiResponse } from 'next-auth/internals/utils'
 import { JWT } from 'next-auth/jwt'
+import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
 
 const providers = [
   Providers.IdentityServer4({
     id: identityServerConfig.id,
     name: identityServerConfig.name,
-    scope: identityServerConfig.scope,
+    scope: `${identityServerConfig.scope} ${MunicipalitiesFinancialAidScope.applicant}`,
     clientId: identityServerConfig.clientId,
     domain: process.env.IDENTITY_SERVER_DOMAIN ?? '',
     clientSecret: process.env.IDENTITY_SERVER_SECRET ?? '',
@@ -50,8 +47,6 @@ async function jwt(token: JWT, user: AuthUser) {
       refreshToken: user.refreshToken,
       idToken: user.idToken,
       isRefreshTokenExpired: false,
-      folder: token.folder ?? uuid(),
-      service: RolesRule.OSK,
     }
   }
   return await handleJwt(

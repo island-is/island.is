@@ -3,11 +3,12 @@
     "target": "es2015",
     "module": "commonjs",
     "strict": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "rootDir": "./src",
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "lib": ["dom", "es2017"],
     "resolveJsonModule": true
-  }
+  },
+  "exclude": ["jest.config.ts"]
 }

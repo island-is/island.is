@@ -1,0 +1,31 @@
+{
+  "name": "service-portal-licenses",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/service-portal/licenses/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/service-portal/licenses/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/service-portal/licenses"],
+      "options": {
+        "jestConfig": "libs/service-portal/licenses/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/licenses/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
+      }
+    }
+  },
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"]
+}

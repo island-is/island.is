@@ -1,0 +1,30 @@
+{
+  "name": "clients-sessions",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/sessions/src",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/sessions/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/sessions"],
+      "options": {
+        "jestConfig": "libs/clients/sessions/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/openapi-generator": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/sessions/gen/fetch -i apps/services/sessions/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+      },
+      "outputs": ["{workspaceRoot}/libs/clients/sessions/gen"]
+    }
+  },
+  "tags": ["lib:client"]
+}

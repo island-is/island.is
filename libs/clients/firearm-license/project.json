@@ -1,0 +1,31 @@
+{
+  "name": "clients-firearm-license",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/firearm-license/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/firearm-license/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/firearm-license"],
+      "options": {
+        "jestConfig": "libs/clients/firearm-license/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/firearm-license/gen/fetch -i libs/clients/firearm-license/src/clientConfig.json"
+      }
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}

@@ -14,10 +14,6 @@ export class TransitionCaseInput implements TransitionCase {
   readonly id!: string
 
   @Allow()
-  @Field()
-  readonly modified!: string
-
-  @Allow()
   @Field(() => String)
   readonly transition!: CaseTransition
 }

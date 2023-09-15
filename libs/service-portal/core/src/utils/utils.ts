@@ -1,8 +1,6 @@
-import { User } from 'oidc-client'
+import get from 'lodash/get'
 
-export const userHasAccessToScope = (user: User, scope: string) => {
-  return true
-}
+export { formatNationalId } from '@island.is/portals/core'
 
 export const getNameAbbreviation = (name: string) => {
   const names = name.split(' ')
@@ -12,14 +10,6 @@ export const getNameAbbreviation = (name: string) => {
     initials += names[names.length - 1].substring(0, 1).toUpperCase()
 
   return initials
-}
-
-export const formatNationalId = (nationalId: string): string => {
-  if (nationalId?.length === 10) {
-    return `${nationalId.slice(0, 6)}-${nationalId.slice(6)}`
-  } else {
-    return nationalId
-  }
 }
 
 export const tableStyles = {
@@ -59,4 +49,14 @@ export type DrivingLicenseType = {
   mynd: string
   undirskrift: string
   svipting: Array<DrivingLicenseSuspended>
+}
+
+export type ExcludesFalse = <T>(
+  x: T | null | undefined | false | '' | 0,
+) => x is T
+
+export type RecordObject<T = unknown> = Record<string, T>
+
+export function getErrorViaPath(obj: RecordObject, path: string): string {
+  return get(obj, path) as string
 }

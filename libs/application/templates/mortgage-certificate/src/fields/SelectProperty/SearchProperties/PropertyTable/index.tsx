@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { Box, Text, Table as T, RadioButton } from '@island.is/island-ui/core'
-import { FieldBaseProps } from '@island.is/application/core'
-import { PropertyDetail } from '../../../../types/schema'
+import { FieldBaseProps } from '@island.is/application/types'
+import { PropertyDetail } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../../lib/messages'
 
@@ -12,7 +12,7 @@ interface PropertyTableProps {
 }
 
 export const PropertyTable: FC<
-  FieldBaseProps & PropertyTableProps & PropertyDetail
+  React.PropsWithChildren<FieldBaseProps & PropertyTableProps & PropertyDetail>
 > = ({ selectHandler, propertyInfo, selectedPropertyNumber }) => {
   const unitOfUse = (propertyInfo?.unitsOfUse?.unitsOfUse || [])[0]
 
@@ -61,7 +61,9 @@ export const PropertyTable: FC<
   )
 }
 
-const TableHeadText: FC<{ text: string }> = ({ text }) => {
+const TableHeadText: FC<React.PropsWithChildren<{ text: string }>> = ({
+  text,
+}) => {
   return (
     <Text variant={'small'} as={'p'} fontWeight={'semiBold'}>
       {text}

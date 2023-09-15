@@ -1,21 +1,32 @@
 import {
+  DefaultStateLifeCycle,
+  getValueViaPath,
+  coreHistoryMessages,
+} from '@island.is/application/core'
+import {
   ApplicationTemplate,
+  ApplicationConfigurations,
   ApplicationTypes,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  DefaultStateLifeCycle,
-  ApplicationConfigurations,
-} from '@island.is/application/core'
-import * as z from 'zod'
-import * as kennitala from 'kennitala'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
+  NationalRegistryUserApi,
+  UserProfileApi,
+  defineTemplateApi,
+} from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 
-import { ApiActions } from '../shared'
 import { m } from './messages'
+import { assign } from 'xstate'
+import { ApiActions } from '../shared'
+import {
+  ReferenceDataApi,
+  EphemeralApi,
+  MyMockProvider,
+} from '../dataProviders'
+import { ExampleSchema } from './dataSchema'
 
 const States = {
   prerequisites: 'prerequisites',
@@ -23,6 +34,7 @@ const States = {
   inReview: 'inReview',
   approved: 'approved',
   rejected: 'rejected',
+  waitingToAssign: 'waitingToAssign',
 }
 
 type ReferenceTemplateEvent =
@@ -30,62 +42,49 @@ type ReferenceTemplateEvent =
   | { type: DefaultEvents.REJECT }
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.ASSIGN }
+  | { type: DefaultEvents.EDIT }
 
 enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
 }
-const ExampleSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v),
-  person: z.object({
-    name: z.string().nonempty().max(256),
-    age: z.string().refine((x) => {
-      const asNumber = parseInt(x)
-      if (isNaN(asNumber)) {
-        return false
-      }
-      return asNumber > 15
-    }),
-    nationalId: z
-      .string()
-      /**
-       * We are depending on this template for the e2e tests on the application-system-api.
-       * Because we are not allowing committing valid kennitala, I reversed the condition
-       * to check for invalid kenitala so it passes the test.
-       */
-      .refine((n) => n && !kennitala.isValid(n), {
-        params: m.dataSchemeNationalId,
-      }),
-    phoneNumber: z.string().refine(
-      (p) => {
-        const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-        return phoneNumber && phoneNumber.isValid()
-      },
-      { params: m.dataSchemePhoneNumber },
-    ),
-    email: z.string().email(),
-  }),
-  careerHistory: z.enum(['yes', 'no']).optional(),
-  careerHistoryCompanies: z
-    .array(
-      // TODO checkbox answers are [undefined, 'aranja', undefined] and we need to do something about it...
-      z.union([z.enum(['government', 'aranja', 'advania']), z.undefined()]),
-    )
-    .nonempty(),
-  dreamJob: z.string().optional(),
-})
 
+const determineMessageFromApplicationAnswers = (application: Application) => {
+  const careerHistory = getValueViaPath(
+    application.answers,
+    'careerHistory',
+    undefined,
+  ) as string | undefined
+  const careerIndustry = getValueViaPath(
+    application.answers,
+    'careerIndustry',
+    undefined,
+  ) as string | undefined
+
+  if (careerHistory === 'no') {
+    return m.nameApplicationNeverWorkedBefore
+  }
+  if (careerIndustry) {
+    return {
+      name: m.nameApplicationWithValue,
+      value: `- ${careerIndustry}`,
+    }
+  }
+  return m.name
+}
 const ReferenceApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<ReferenceTemplateEvent>,
   ReferenceTemplateEvent
 > = {
   type: ApplicationTypes.EXAMPLE,
-  name: m.name,
+  name: determineMessageFromApplicationAnswers,
   institution: m.institutionName,
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: ExampleSchema,
   featureFlag: Features.exampleApplication,
+  allowMultipleApplicationsInDraft: true,
+
   stateMachineConfig: {
     initial: States.prerequisites,
     states: {
@@ -93,6 +92,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Skilyrði',
           progress: 0,
+          status: 'draft',
           lifecycle: {
             shouldBeListed: false,
             shouldBePruned: true,
@@ -110,6 +110,23 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
+              read: 'all',
+              api: [
+                ReferenceDataApi.configure({
+                  params: {
+                    id: 1986,
+                  },
+                }),
+                NationalRegistryUserApi.configure({
+                  params: {
+                    ageToValidate: 18,
+                  },
+                }),
+                UserProfileApi,
+                MyMockProvider,
+                EphemeralApi,
+              ],
+              delete: true,
             },
           ],
         },
@@ -122,11 +139,16 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: 'Umsókn um ökunám',
+
           actionCard: {
-            title: m.draftTitle,
             description: m.draftDescription,
+            historyLogs: {
+              onEvent: DefaultEvents.SUBMIT,
+              logMessage: coreHistoryMessages.applicationSent,
+            },
           },
           progress: 0.25,
+          status: 'draft',
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
@@ -139,26 +161,104 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
         on: {
-          SUBMIT: {
-            target: States.inReview,
+          SUBMIT: [
+            {
+              target: States.waitingToAssign,
+            },
+          ],
+        },
+      },
+      [States.waitingToAssign]: {
+        meta: {
+          name: 'Waiting to assign',
+          progress: 0.75,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            pendingAction: {
+              title: 'Skráning yfirferðaraðila',
+              content:
+                'Umsóknin bíður nú þess að yfirferðaraðili sé skráður á umsóknina. Þú getur líka skráð þig sjálfur inn og farið yfir umsóknina.',
+              displayStatus: 'warning',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.applicationAssigned,
+              },
+            ],
           },
+          onEntry: [
+            defineTemplateApi({
+              action: ApiActions.createApplication,
+              order: 1,
+            }),
+            defineTemplateApi({
+              action: 'getAnotherReferenceData',
+              order: 2,
+            }),
+          ],
+          status: 'inprogress',
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/WaitingToAssign').then((val) =>
+                  Promise.resolve(val.PendingReview),
+                ),
+              read: 'all',
+              write: 'all',
+              delete: true,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/WaitingToAssign').then((val) =>
+                  Promise.resolve(val.PendingReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          SUBMIT: { target: States.inReview },
+          ASSIGN: { target: States.inReview },
+          EDIT: { target: States.draft },
         },
       },
       [States.inReview]: {
         meta: {
           name: 'In Review',
           progress: 0.75,
+          status: 'inprogress',
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiActions.createApplication,
+          actionCard: {
+            pendingAction: {
+              title: 'Verið er að fara yfir umsóknina',
+              content:
+                'Example stofnun fer núna yfir umsóknina og því getur þetta tekið nokkra daga',
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: coreHistoryMessages.applicationRejected,
+              },
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: coreHistoryMessages.applicationApproved,
+              },
+            ],
           },
-          onExit: {
-            apiModuleAction: ApiActions.completeApplication,
-          },
+          onExit: [
+            defineTemplateApi({
+              action: ApiActions.completeApplication,
+            }),
+          ],
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -170,8 +270,11 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
                 { event: 'REJECT', name: 'Hafna', type: 'reject' },
               ],
-              write: { answers: ['careerHistoryCompanies'] },
+              write: {
+                answers: ['careerHistoryDetails', 'approvedByReviewer'],
+              },
               read: 'all',
+              shouldBeListedForRole: true,
             },
             {
               id: Roles.APPLICANT,
@@ -192,6 +295,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
+          status: 'approved',
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
@@ -204,12 +308,14 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
       },
       [States.rejected]: {
         meta: {
           name: 'Rejected',
+          progress: 1,
+          status: 'rejected',
           lifecycle: DefaultStateLifeCycle,
+
           roles: [
             {
               id: Roles.APPLICANT,
@@ -223,14 +329,29 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       },
     },
   },
+  stateMachineOptions: {
+    actions: {
+      clearAssignees: assign((context) => ({
+        ...context,
+        application: {
+          ...context.application,
+          assignees: [],
+        },
+      })),
+    },
+  },
   mapUserToRole(
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
+    if (application.assignees.includes(nationalId)) {
+      return Roles.ASSIGNEE
+    }
     if (application.applicant === nationalId) {
       if (application.state === 'inReview') {
         return Roles.ASSIGNEE
       }
+
       return Roles.APPLICANT
     }
   },

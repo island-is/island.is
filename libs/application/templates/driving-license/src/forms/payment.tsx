@@ -2,15 +2,14 @@ import { m } from '../lib/messages'
 import {
   buildForm,
   buildSection,
-  Form,
-  FormModes,
   buildCustomField,
 } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 
 export const payment: Form = buildForm({
   id: 'DrivingLicenseApplicationPaymentForm',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: false,
   children: [
     buildSection({

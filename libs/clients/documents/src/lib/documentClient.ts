@@ -1,14 +1,21 @@
-import { HttpService, Inject, Injectable } from '@nestjs/common'
-import { AxiosRequestConfig } from 'axios'
+import { Inject, Injectable } from '@nestjs/common'
+import { HttpService } from '@nestjs/axios'
+import { AxiosRequestConfig, Method } from 'axios'
 import {
   CategoriesResponse,
   DocumentDTO,
   CustomersDocumentRequest,
   ListDocumentsResponse,
+  TypesResponse,
+  SendersResponse,
 } from './models'
 import { DocumentOauthConnection } from './document.connection'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { lastValueFrom } from 'rxjs'
+import { GetDocumentListInput } from './models/DocumentInput'
+import { PaperMailResponse } from './models/PaperMailRes'
+import { RequestPaperDTO } from './models/RequestPaperDTO'
 
 export const DOCUMENT_CLIENT_CONFIG = 'DOCUMENT_CLIENT_CONFIG'
 
@@ -58,29 +65,91 @@ export class DocumentClient {
     try {
       const response: {
         data: T
-      } = await this.httpService
-        .get(`${this.clientConfig.basePath}${requestRoute}`, config)
-        .toPromise()
+      } = await lastValueFrom(
+        this.httpService.get(
+          `${this.clientConfig.basePath}${requestRoute}`,
+          config,
+        ),
+      )
 
       return response.data
     } catch (e) {
       const errMsg = 'Failed to get from Postholf'
       const error = e.toJSON()
       const description = error.message
+      const message = [errMsg, error, description].filter(Boolean).join(' - ')
+      throw new Error(message)
+    }
+  }
 
-      this.logger.error(errMsg, {
-        message: description,
-      })
+  private async postRequest<T>(requestRoute: string, body: any): Promise<T> {
+    await this.rehydrateToken()
+    const config: AxiosRequestConfig = {
+      headers: {
+        Authorization: `Bearer ${this.accessToken}`,
+      },
+    }
 
-      return null
+    try {
+      const response: {
+        data: T
+      } = await lastValueFrom(
+        this.httpService.post(
+          `${this.clientConfig.basePath}${requestRoute}`,
+          body,
+          config,
+        ),
+      )
+
+      return response.data
+    } catch (e) {
+      const errMsg = 'Failed to POST to Postholf'
+      const error = e.toJSON()
+      const description = error.message
+      const message = [errMsg, error, description].filter(Boolean).join(' - ')
+      throw new Error(message)
     }
   }
 
   async getDocumentList(
     nationalId: string,
+    input?: GetDocumentListInput,
   ): Promise<ListDocumentsResponse | null> {
-    const requestRoute = `/api/mail/v1/customers/${nationalId}/messages`
-    return await this.getRequest<ListDocumentsResponse>(requestRoute)
+    const {
+      senderKennitala,
+      dateFrom,
+      dateTo,
+      categoryId,
+      typeId,
+      sortBy,
+      order,
+      subjectContains,
+      opened,
+      page,
+      pageSize,
+    } = input ?? {}
+
+    type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
+
+    const inputs = [
+      sortBy ? `sortBy=${sortBy}` : 'sortBy=Date', // first in array to skip &
+      order ? `orderBy=${order}` : 'order=Descending',
+      page ? `page=${page}` : 'page=1',
+      pageSize ? `pageSize=${pageSize}` : 'pageSize=15',
+      senderKennitala && `senderKennitala=${senderKennitala}`,
+      dateFrom && `dateFrom=${dateFrom}`,
+      dateTo && `dateTo=${dateTo}`,
+      categoryId && `categoryId=${categoryId}`,
+      typeId && `typeId=${typeId}`,
+      subjectContains && `subjectContains=${subjectContains}`,
+      `opened=${opened}`,
+    ].filter(Boolean as unknown as ExcludesFalse)
+
+    const requestRoute = `/api/mail/v1/customers/${nationalId}/messages?${inputs.join(
+      '&',
+    )}`
+
+    return await this.getRequest<ListDocumentsResponse>(encodeURI(requestRoute))
   }
 
   async customersDocument(
@@ -96,5 +165,29 @@ export class DocumentClient {
   ): Promise<CategoriesResponse | null> {
     const requestRoute = `/api/mail/v1/customers/${nationalId}/messages/categories`
     return await this.getRequest<CategoriesResponse>(requestRoute)
+  }
+
+  async customersTypes(nationalId: string): Promise<TypesResponse | null> {
+    const requestRoute = `/api/mail/v1/customers/${nationalId}/messages/types`
+    return await this.getRequest<TypesResponse>(requestRoute)
+  }
+
+  async customersSenders(nationalId: string): Promise<SendersResponse | null> {
+    const requestRoute = `/api/mail/v1/customers/${nationalId}/messages/senders`
+    return await this.getRequest<SendersResponse>(requestRoute)
+  }
+
+  async requestPaperMail(
+    nationalId: string,
+  ): Promise<PaperMailResponse | null> {
+    const requestRoute = `/api/mail/v1/customers/${nationalId}/paper`
+    return await this.getRequest<PaperMailResponse>(requestRoute)
+  }
+
+  async postPaperMail(
+    body: RequestPaperDTO,
+  ): Promise<PaperMailResponse | null> {
+    const requestRoute = `/api/mail/v1/customers/${body.kennitala}/paper`
+    return await this.postRequest<PaperMailResponse>(requestRoute, body)
   }
 }

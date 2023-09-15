@@ -1,5 +1,4 @@
-export const amountFormat = (value: number): string => {
-  return `${Number(value.toFixed(1).replace(/\.0$/, '')).toLocaleString(
-    'de-DE',
-  )} kr.`
-}
+import { numberFormat } from './numberFormat'
+
+export const amountFormat = (value: number): string =>
+  numberFormat(value) + ' kr.'

@@ -37,22 +37,7 @@ export const slices = gql`
       tags
       link
     }
-  }
-
-  fragment MailingListSignupFields on MailingListSignupSlice {
-    __typename
-    id
-    title
-    variant
-    description
-    inputLabel
-    fullNameLabel
-    questionLabel
-    yesLabel
-    noLabel
-    disclaimerLabel
-    buttonText
-    signupUrl
+    hasBorderAbove
   }
 
   fragment StoryFields on StorySlice {
@@ -92,9 +77,13 @@ export const slices = gql`
       genericTags {
         id
         title
+        slug
       }
     }
     readMoreText
+    readMoreLink {
+      url
+    }
   }
 
   fragment LinkCardFields on LinkCardSlice {
@@ -165,6 +154,7 @@ export const slices = gql`
       answer {
         ...BaseSlices
       }
+      publishDate
     }
   }
 
@@ -173,6 +163,7 @@ export const slices = gql`
     id
     title
     json
+    configJson
     componentType: type
   }
 
@@ -190,7 +181,6 @@ export const slices = gql`
   fragment ProcessEntryFields on ProcessEntry {
     __typename
     id
-    type
     processTitle
     processLink
     openLinkInModal
@@ -222,6 +212,24 @@ export const slices = gql`
     }
   }
 
+  fragment SectionWithVideoFields on SectionWithVideo {
+    __typename
+    id
+    title
+    showTitle
+    showDividerOnTop
+    video {
+      ...EmbeddedVideoFields
+    }
+    html {
+      ...HtmlFields
+    }
+    link {
+      text
+      url
+    }
+  }
+
   fragment TabSectionFields on TabSection {
     __typename
     id
@@ -245,6 +253,9 @@ export const slices = gql`
       name
       title
       image {
+        ...ImageFields
+      }
+      imageOnSelect {
         ...ImageFields
       }
     }
@@ -337,6 +348,9 @@ export const slices = gql`
     image {
       ...ImageFields
     }
+    automaticallyFetchArticles
+    sortBy
+    hasBorderAbove
     articles {
       id
       slug
@@ -344,6 +358,17 @@ export const slices = gql`
       processEntry {
         id
       }
+      processEntryButtonText
+    }
+    resolvedArticles {
+      id
+      slug
+      title
+      processEntry {
+        id
+      }
+      processEntryButtonText
+      importance
     }
     link {
       text
@@ -370,6 +395,7 @@ export const slices = gql`
       text
       url
     }
+    dividerOnTop
   }
 
   fragment MultipleStatisticsFields on MultipleStatistics {
@@ -399,7 +425,11 @@ export const slices = gql`
     }
     content {
       ...HtmlFields
+      ...AssetFields
+      ...ImageFields
     }
+    dividerOnTop
+    showTitle
   }
 
   fragment AccordionSliceFields on AccordionSlice {
@@ -407,11 +437,16 @@ export const slices = gql`
     id
     title
     type
+    hasBorderAbove
+    showTitle
+    titleHeadingLevel
     accordionItems {
       id
       title
       content {
         ...HtmlFields
+        ...AssetFields
+        ...ImageFields
       }
       link {
         url
@@ -423,6 +458,7 @@ export const slices = gql`
   fragment OverviewLinksField on OverviewLinks {
     __typename
     id
+    hasBorderAbove
     overviewLinks {
       title
       intro {
@@ -440,6 +476,7 @@ export const slices = gql`
         width
         height
       }
+      openLinkInNewTab
     }
     link {
       text
@@ -465,9 +502,211 @@ export const slices = gql`
     }
   }
 
+  fragment FormFields on Form {
+    __typename
+    id
+    title
+    intro
+    defaultFieldNamespace
+    fields {
+      title
+      name
+      placeholder
+      type
+      required
+      options
+      informationText
+    }
+    successText
+    aboutYouHeadingText
+    questionsHeadingText
+    recipientFormFieldDecider {
+      title
+      placeholder
+      type
+      required
+      options
+    }
+  }
+
+  fragment StepperFields on Stepper {
+    __typename
+    id
+    title
+    steps {
+      id
+      title
+      slug
+      stepType
+      subtitle {
+        ...HtmlFields
+      }
+      config
+    }
+    config
+  }
+
+  fragment GraphCardFields on GraphCard {
+    id
+    graphTitle
+    graphDescription
+    organization
+    data
+    datakeys
+    type
+    displayAsCard
+    organizationLogo {
+      id
+      url
+      title
+      contentType
+      width
+      height
+    }
+  }
+
+  fragment LifeEventPageListSliceFields on LifeEventPageListSlice {
+    id
+    title
+    lifeEventPageList {
+      id
+      title
+      shortTitle
+      slug
+      tinyThumbnail {
+        url
+        title
+      }
+      thumbnail {
+        url
+        title
+      }
+      intro
+    }
+  }
+
+  fragment SidebarCardFields on SidebarCard {
+    title
+    contentString
+    type
+    image {
+      url
+      title
+      width
+      height
+    }
+    link {
+      text
+      url
+    }
+  }
+
+  fragment PowerBiSliceFields on PowerBiSlice {
+    __typename
+    id
+    title
+    powerBiEmbedProps
+    workspaceId
+    reportId
+    owner
+    powerBiEmbedPropsFromServer {
+      accessToken
+      embedUrl
+    }
+  }
+
+  fragment TableSliceFields on TableSlice {
+    __typename
+    id
+    title
+    tableContent
+  }
+
+  fragment EmailSignupFields on EmailSignup {
+    __typename
+    id
+    title
+    description
+    formFields {
+      id
+      title
+      name
+      placeholder
+      type
+      required
+      options
+      informationText
+    }
+    translations
+  }
+
+  fragment SliceDropdownFields on SliceDropdown {
+    __typename
+    id
+    dropdownLabel
+    slices {
+      ...OneColumnTextFields
+    }
+  }
+
+  fragment FeaturedSupportQNAsFields on FeaturedSupportQNAs {
+    __typename
+    id
+    renderedTitle
+    resolvedSupportQNAs {
+      id
+      title
+      slug
+      answer {
+        ...BaseSlices
+      }
+      organization {
+        id
+        title
+        slug
+      }
+      category {
+        title
+        description
+        slug
+      }
+      subCategory {
+        title
+        description
+        slug
+      }
+    }
+    link {
+      text
+      url
+    }
+    supportQNAs {
+      id
+      title
+      slug
+      answer {
+        ...BaseSlices
+      }
+      organization {
+        id
+        title
+        slug
+      }
+      category {
+        title
+        description
+        slug
+      }
+      subCategory {
+        title
+        description
+        slug
+      }
+    }
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
-    ...MailingListSignupFields
     ...StoryFields
     ...LatestNewsFields
     ...LinkCardFields
@@ -481,6 +720,7 @@ export const slices = gql`
     ...AssetFields
     ...EmbeddedVideoFields
     ...SectionWithImageFields
+    ...SectionWithVideoFields
     ...TabSectionFields
     ...TeamListFields
     ...ContactUsFields
@@ -494,11 +734,21 @@ export const slices = gql`
     ...AccordionSliceFields
     ...OverviewLinksField
     ...EventSliceFields
+    ...FormFields
+    ...StepperFields
+    ...GraphCardFields
+    ...LifeEventPageListSliceFields
+    ...SidebarCardFields
+    ...PowerBiSliceFields
+    ...TableSliceFields
+    ...EmailSignupFields
+    ...SliceDropdownFields
   }
 
   fragment AllSlices on Slice {
     ...BaseSlices
     ...FaqListFields
+    ...FeaturedSupportQNAsFields
   }
 `
 
@@ -509,4 +759,64 @@ export const nestedOneColumnTextFields = gql`
       ...AllSlices
     }
   }
+`
+
+const nestedContainerFields = `
+  ... on AccordionSlice {
+    ...AccordionSliceFields
+    accordionItems {
+      ... on OneColumnText {
+        ...OneColumnTextFields
+        content {
+          ...AllSlices
+        }
+      }
+    }
+  }
+  ... on FaqList {
+    ...FaqListFields
+    questions {
+      id
+      question
+      answer {
+        ...AllSlices
+      }
+      publishDate
+    }
+  }
+  ... on TabSection {
+    ...TabSectionFields 
+    tabs {
+      tabTitle
+      contentTitle
+      image {
+        ...ImageFields
+      }
+      body {
+        ...AllSlices
+      }
+    }
+  }
+  ... on SliceDropdown {
+    ...SliceDropdownFields
+    slices {
+      ... on OneColumnText {
+        ...OneColumnTextFields
+        content {
+          ...AllSlices
+        }
+      }
+    }
+  }
+`
+
+export const nestedFields = `
+  ... on OneColumnText {
+    ...OneColumnTextFields
+    content {
+      ...AllSlices
+      ${nestedContainerFields}
+    }
+  }
+  ${nestedContainerFields}
 `

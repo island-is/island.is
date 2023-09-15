@@ -1,5 +1,7 @@
-import { HttpService, Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { HttpService } from '@nestjs/axios'
 import { ConfigType } from '@nestjs/config'
+import { lastValueFrom } from 'rxjs'
 import { PersonalTaxReturnConfig } from './personalTaxReturn.config'
 import * as xml2js from 'xml2js'
 import { directTaxPaymentRequest, pdfRequest } from './requests'
@@ -26,8 +28,8 @@ export class PersonalTaxReturnApi {
   ): Promise<PdfDto> {
     const headers = { Accept: 'gzip', 'Content-Type': 'application/soap+xml' }
 
-    return await this.httpService
-      .post(
+    return await lastValueFrom(
+      this.httpService.post(
         this.config.url,
         pdfRequest(
           this.config.agentNationalId,
@@ -37,19 +39,18 @@ export class PersonalTaxReturnApi {
           year,
         ),
         { headers },
-      )
-      .toPromise()
-      .then(async (response) => {
-        const parser = new xml2js.Parser({
-          explicitArray: false,
-          valueProcessors: [parseBooleans],
-        })
-        return await parser
-          .parseStringPromise(response.data.replace(/(\t\n|\t|\n)/gm, ''))
-          .then((parsedResponse: PdfResponse) => {
-            return pdfResponseToDto(parsedResponse)
-          })
+      ),
+    ).then(async (response) => {
+      const parser = new xml2js.Parser({
+        explicitArray: false,
+        valueProcessors: [parseBooleans],
       })
+      return await parser
+        .parseStringPromise(response.data.replace(/(\t\n|\t|\n)/gm, ''))
+        .then((parsedResponse: PdfResponse) => {
+          return pdfResponseToDto(parsedResponse)
+        })
+    })
   }
 
   async directTaxPayments(
@@ -58,8 +59,8 @@ export class PersonalTaxReturnApi {
     to: Period,
   ): Promise<DirectTaxPaymentDto> {
     const headers = { 'Content-Type': 'application/soap+xml' }
-    return await this.httpService
-      .post(
+    return await lastValueFrom(
+      this.httpService.post(
         this.config.url,
         directTaxPaymentRequest(
           this.config.agentNationalId,
@@ -70,19 +71,18 @@ export class PersonalTaxReturnApi {
           to,
         ),
         { headers },
-      )
-      .toPromise()
-      .then(async (response) => {
-        const parser = new xml2js.Parser({
-          explicitArray: false,
-          valueProcessors: [parseNumbers, parseBooleans],
-        })
-
-        return await parser
-          .parseStringPromise(response.data.replace(/(\t\n|\t|\n)/gm, ''))
-          .then((parsedResponse: DirectTaxPaymentResponse) => {
-            return directTaxPaymentResponseToDto(parsedResponse)
-          })
+      ),
+    ).then(async (response) => {
+      const parser = new xml2js.Parser({
+        explicitArray: false,
+        valueProcessors: [parseNumbers, parseBooleans],
       })
+
+      return await parser
+        .parseStringPromise(response.data.replace(/(\t\n|\t|\n)/gm, ''))
+        .then((parsedResponse: DirectTaxPaymentResponse) => {
+          return directTaxPaymentResponseToDto(parsedResponse)
+        })
+    })
   }
 }

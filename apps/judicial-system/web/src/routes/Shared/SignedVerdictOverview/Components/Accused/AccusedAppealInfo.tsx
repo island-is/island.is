@@ -1,19 +1,18 @@
 import React from 'react'
-import { motion } from 'framer-motion'
 import { useIntl } from 'react-intl'
+import { motion } from 'framer-motion'
 
-import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import { Gender, isRestrictionCase } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
+import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 interface Props {
   workingCase: Case
   withdrawAccusedAppealDate?: () => void
 }
 
-const AccusedAppealInfo: React.FC<Props> = (props) => {
+const AccusedAppealInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, withdrawAccusedAppealDate } = props
   const { formatMessage } = useIntl()
 
@@ -33,21 +32,12 @@ const AccusedAppealInfo: React.FC<Props> = (props) => {
       <InfoBox
         text={
           `${capitalize(
-            isRestrictionCase(workingCase.type)
-              ? formatMessage(core.accused, {
-                  suffix:
-                    workingCase.defendants &&
-                    workingCase.defendants.length > 0 &&
-                    workingCase.defendants[0].gender === Gender.MALE
-                      ? 'i'
-                      : 'a',
-                })
-              : formatMessage(core.defendant, {
-                  suffix:
-                    workingCase.defendants && workingCase.defendants?.length > 1
-                      ? 'ar'
-                      : 'i',
-                }),
+            formatMessage(core.defendant, {
+              suffix:
+                workingCase.defendants && workingCase.defendants?.length > 1
+                  ? 'ar'
+                  : 'i',
+            }),
           )} hefur kært úrskurðinn ${formatDate(
             workingCase.accusedPostponedAppealDate,
             'PPPp',

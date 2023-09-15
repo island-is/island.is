@@ -1,3 +1,5 @@
+import type { User } from '@island.is/auth-nest-tools'
+import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
 import {
   Application,
   ApplicationEventType,
@@ -5,8 +7,6 @@ import {
   Employment,
   FamilyStatus,
   HomeCircumstances,
-  RolesRule,
-  User,
 } from '@island.is/financial-aid/shared/lib'
 import { NotFoundException } from '@nestjs/common'
 import { uuid } from 'uuidv4'
@@ -31,11 +31,8 @@ describe('ApplicationController - Create event', () => {
   let mockApplicationModel: typeof ApplicationModel
 
   beforeEach(async () => {
-    const {
-      applicationModel,
-      applicationEventService,
-      applicationController,
-    } = await createTestingApplicationModule()
+    const { applicationModel, applicationEventService, applicationController } =
+      await createTestingApplicationModule()
 
     mockApplicationEventService = applicationEventService
     mockApplicationModel = applicationModel
@@ -57,7 +54,7 @@ describe('ApplicationController - Create event', () => {
 
   describe('application found', () => {
     const id = uuid()
-    const user = { service: RolesRule.OSK } as User
+    const user = { scope: [MunicipalitiesFinancialAidScope.applicant] } as User
     const application: Application = {
       id: id,
       created: '',
@@ -84,7 +81,8 @@ describe('ApplicationController - Create event', () => {
     let then: Then
 
     beforeEach(async () => {
-      const createApplicationEvent = mockApplicationEventService.create as jest.Mock
+      const createApplicationEvent =
+        mockApplicationEventService.create as jest.Mock
       createApplicationEvent.mockReturnValueOnce(Promise.resolve())
       const findApplicationById = mockApplicationModel.findOne as jest.Mock
       findApplicationById.mockReturnValueOnce(application)
@@ -105,7 +103,7 @@ describe('ApplicationController - Create event', () => {
 
   describe('application not found', () => {
     const id = uuid()
-    const user = { service: RolesRule.OSK } as User
+    const user = { scope: [MunicipalitiesFinancialAidScope.applicant] } as User
     const application = undefined
     const applicationEvent: CreateApplicationEventDto = {
       applicationId: id,
@@ -114,7 +112,8 @@ describe('ApplicationController - Create event', () => {
     let then: Then
 
     beforeEach(async () => {
-      const createApplicationEvent = mockApplicationEventService.create as jest.Mock
+      const createApplicationEvent =
+        mockApplicationEventService.create as jest.Mock
       createApplicationEvent.mockReturnValueOnce(Promise.resolve())
       const findApplicationById = mockApplicationModel.findOne as jest.Mock
       findApplicationById.mockReturnValueOnce(application)

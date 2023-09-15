@@ -3,17 +3,21 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
 import { UserRole } from '@island.is/judicial-system/types'
 
-import { environment } from '../../../environments'
+import { nowFactory } from '../../factories'
 import { Institution } from '../institution'
 import { CreateUserDto } from './dto/createUser.dto'
 import { UpdateUserDto } from './dto/updateUser.dto'
 import { User } from './user.model'
+import { userModuleConfig } from './user.config'
 
 @Injectable()
 export class UserService {
   constructor(
+    @Inject(userModuleConfig.KEY)
+    private readonly config: ConfigType<typeof userModuleConfig>,
     @InjectModel(User) private readonly userModel: typeof User,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -33,11 +37,14 @@ export class UserService {
     })
   }
 
-  async findById(userId: string): Promise<User> {
-    const user = await this.userModel.findOne({
-      where: { id: userId },
+  async getById(userId: string): Promise<User | null> {
+    return this.userModel.findByPk(userId, {
       include: [{ model: Institution, as: 'institution' }],
     })
+  }
+
+  async findById(userId: string): Promise<User> {
+    const user = await this.getById(userId)
 
     if (!user) {
       throw new NotFoundException(`User ${userId} does not exist`)
@@ -49,18 +56,21 @@ export class UserService {
   async findByNationalId(nationalId: string): Promise<User> {
     // First check if the user is an admin
     try {
-      const admin = (JSON.parse(environment.admin.users) as User[]).find(
-        (user) => user.nationalId === nationalId,
+      const admin = this.config.adminUsers.find(
+        (user: { nationalId: string }) => user.nationalId === nationalId,
       )
 
       if (admin) {
+        // Default values are necessary because most of the fields are required
+        // all the way up to the client. Consider refactoring this.
         return {
-          ...admin,
-          title: '',
+          created: nowFactory(),
+          modified: nowFactory(),
           mobileNumber: '',
           email: '',
           role: UserRole.ADMIN,
           active: true,
+          ...admin,
         } as User
       }
     } catch (error) {
@@ -81,7 +91,7 @@ export class UserService {
   }
 
   async create(userToCreate: CreateUserDto): Promise<User> {
-    return this.userModel.create(userToCreate)
+    return this.userModel.create({ ...userToCreate })
   }
 
   async update(userId: string, update: UpdateUserDto): Promise<User> {

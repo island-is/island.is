@@ -10,7 +10,11 @@ interface TooltipProps {
   atEnd?: boolean
 }
 
-const Tooltip: FC<TooltipProps> = ({ style, atEnd = false, children }) => (
+const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
+  style,
+  atEnd = false,
+  children,
+}) => (
   <Box
     data-test="slider-tooltip"
     className={styles.TooltipContainer}
@@ -173,7 +177,7 @@ const Slider = ({
   })
 
   const formatTooltip = (count: number) =>
-    count <= 1
+    count === 1
       ? `${currentIndex} ${label.singular}`
       : `${count} ${label.plural}`
 
@@ -238,6 +242,8 @@ const Slider = ({
             <Box
               className={styles.TrackCell}
               key={index}
+              role="button"
+              aria-label={`${index} months`}
               style={calculateCellStyle(index)}
               onClick={(e) => onCellClick(index, e)}
             />

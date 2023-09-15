@@ -6,25 +6,35 @@ import {
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { FormValue, getValueViaPath } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import {
+  ApplicationTypes,
+  FormValue,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
 import {
   generateDrivingLicenseSubmittedEmail,
   generateDrivingAssessmentApprovalEmail,
 } from './emailGenerators'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { FetchError } from '@island.is/clients/middlewares'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
 }
 
 @Injectable()
-export class DrivingLicenseSubmissionService {
+export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly drivingLicenseService: DrivingLicenseService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-  ) {}
+  ) {
+    super(ApplicationTypes.DRIVING_LICENSE)
+  }
 
   async createCharge({
     application: { id, answers },
@@ -39,9 +49,10 @@ export class DrivingLicenseSubmissionService {
     const chargeItemCode = applicationFor === 'B-full' ? 'AY110' : 'AY114'
 
     const response = await this.sharedTemplateAPIService.createCharge(
-      auth.authorization,
+      auth,
       id,
-      chargeItemCode,
+      InstitutionNationalIds.SYSLUMENN,
+      [chargeItemCode],
     )
 
     // last chance to validate before the user receives a dummy
@@ -60,7 +71,7 @@ export class DrivingLicenseSubmissionService {
     const nationalId = application.applicant
 
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
 
@@ -118,6 +129,7 @@ export class DrivingLicenseSubmissionService {
       'B-full'
 
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
+    const healthRemarks = answers.hasHealthRemarks === 'yes'
     const needsQualityPhoto = answers.willBringQualityPhoto === 'yes'
     const juristictionId = answers.juristiction
     const teacher = answers.drivingInstructor as string
@@ -127,7 +139,7 @@ export class DrivingLicenseSubmissionService {
     if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
         juristictionId: juristictionId as number,
-        needsToPresentHealthCertificate: needsHealthCert,
+        needsToPresentHealthCertificate: needsHealthCert || healthRemarks,
         needsToPresentQualityPhoto: needsQualityPhoto,
       })
     } else if (applicationFor === 'B-temp') {
@@ -152,24 +164,37 @@ export class DrivingLicenseSubmissionService {
       .nationalId
     const teacherNationalId = application.applicant
 
-    const result = await this.drivingLicenseService.newDrivingAssessment(
-      studentNationalId as string,
-      teacherNationalId,
-    )
-
-    if (result.success) {
-      await this.sharedTemplateAPIService.sendEmail(
-        generateDrivingAssessmentApprovalEmail,
-        application,
+    try {
+      const result = await this.drivingLicenseService.newDrivingAssessment(
+        studentNationalId as string,
+        teacherNationalId,
       )
-    } else {
-      throw new Error(
-        `Unexpected error (creating driver's license): '${result.errorMessage}'`,
-      )
-    }
 
-    return {
-      success: result.success,
+      if (result.success) {
+        await this.sharedTemplateAPIService.sendEmail(
+          generateDrivingAssessmentApprovalEmail,
+          application,
+        )
+        return {
+          success: result.success,
+        }
+      } else {
+        throw new Error(
+          `Unexpected error (creating driver's license): '${result.errorMessage}'`,
+        )
+      }
+    } catch (e) {
+      if (e instanceof Error && e.name === 'FetchError') {
+        const err = e as unknown as FetchError
+        throw new TemplateApiError(
+          {
+            title:
+              err.problem?.title || coreErrorMessages.failedDataProviderSubmit,
+            summary: err.problem?.detail || '',
+          },
+          400,
+        )
+      }
     }
   }
 }

@@ -8,7 +8,7 @@ import LocalizationUtils from '../../../utils/localization.utils'
 import { ListControl } from '../../../entities/common/Localization'
 import { ApiScopeUser } from '../../../entities/models/api-scope-user.model'
 
-const ApiScopeUsersList: React.FC = () => {
+const ApiScopeUsersList: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [adminAccess, setAdminAccess] = useState<ApiScopeUser[]>([])
   const [page, setPage] = useState(1)
   const [modalIsOpen, setIsOpen] = React.useState(false)
@@ -88,30 +88,24 @@ const ApiScopeUsersList: React.FC = () => {
             <h1>{localization.title}</h1>
             <div className="api-scope-users-list__container__options">
               <div className="api-scope-users-list__container__options__button">
-                <Link href={'/admin/api-scope-user'}>
-                  <a
-                    className="api-scope-users-list__button__new"
-                    title={localization.buttons['new'].helpText}
-                  >
-                    <i className="icon__new"></i>
-                    {localization.buttons['new'].text}
-                  </a>
+                <Link
+                  href={'/admin/api-scope-user'}
+                  className="api-scope-users-list__button__new"
+                  title={localization.buttons['new'].helpText}
+                >
+                  <i className="icon__new"></i>
+                  {localization.buttons['new'].text}
                 </Link>
               </div>
               <form onSubmit={search}>
                 <div className="api-scope-users-list__container__options__search">
-                  <label
-                    htmlFor="search"
-                    className="api-scope-users-list__label"
-                  >
-                    {localization.search.label}
-                  </label>
                   <input
                     id="search"
                     className="api-scope-users-list__input__search"
+                    placeholder={localization.buttons['search'].helpText}
                     value={searchString}
                     onChange={handleSearchChange}
-                  ></input>
+                  />
                   <button
                     type="submit"
                     className="api-scope-users-list__button__search"
@@ -126,15 +120,17 @@ const ApiScopeUsersList: React.FC = () => {
               <table className="api-scope-users-list__table">
                 <thead>
                   <tr>
+                    <th>{localization.columns['name'].headerText}</th>
                     <th>{localization.columns['nationalId'].headerText}</th>
                     <th>{localization.columns['email'].headerText}</th>
-                    <th colSpan={2}></th>
+                    <th colSpan={2} />
                   </tr>
                 </thead>
                 <tbody>
                   {adminAccess.map((apiScopeUser: ApiScopeUser) => {
                     return (
                       <tr key={apiScopeUser.nationalId}>
+                        <td>{apiScopeUser.name}</td>
                         <td>{apiScopeUser.nationalId}</td>
                         <td>{apiScopeUser.email}</td>
                         <td className="api-scope-users-list__table__button">
@@ -142,6 +138,7 @@ const ApiScopeUsersList: React.FC = () => {
                             href={`/admin/api-scope-user/${encodeURIComponent(
                               apiScopeUser.nationalId,
                             )}`}
+                            legacyBehavior
                           >
                             <button
                               type="button"

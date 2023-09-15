@@ -1,0 +1,33 @@
+{
+  "name": "application-templates-public-debt-payment-plan",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/templates/public-debt-payment-plan/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/public-debt-payment-plan/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/public-debt-payment-plan"
+      ],
+      "options": {
+        "jestConfig": "libs/application/templates/public-debt-payment-plan/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/public-debt-payment-plan/src/**/*.{js,ts,tsx}'"
+      }
+    }
+  },
+  "tags": ["scope:application-system", "lib:application-system"]
+}

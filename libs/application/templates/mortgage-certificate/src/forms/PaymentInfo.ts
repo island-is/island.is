@@ -1,20 +1,17 @@
 import {
   buildForm,
-  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
-  Form,
-  FormModes,
   buildCustomField,
-  DefaultEvents,
 } from '@island.is/application/core'
+import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 export const PaymentInfo: Form = buildForm({
   id: 'PaymentInfo',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: true,
   children: [
     buildSection({
@@ -39,7 +36,7 @@ export const PaymentInfo: Form = buildForm({
             buildCustomField({
               id: 'payment.over',
               title: '',
-              component: 'OverviewPaymentCharge',
+              component: 'PaymentChargeOverview',
             }),
             buildSubmitField({
               id: 'submit',

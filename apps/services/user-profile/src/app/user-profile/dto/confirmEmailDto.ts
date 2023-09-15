@@ -6,4 +6,9 @@ export class ConfirmEmailDto {
   @IsString()
   @ApiProperty()
   readonly hash!: string
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  readonly email!: string
 }

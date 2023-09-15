@@ -1,12 +1,20 @@
 import React from 'react'
+import faker from 'faker'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { CaseTransition, Gender } from '@island.is/judicial-system/types'
-import { getShortGender, isDirty } from './stepHelper'
-import { validate } from './validate'
+import {
+  Notification,
+  NotificationType,
+} from '@island.is/judicial-system/types'
 
+import { Gender } from '../graphql/schema'
 import * as formatters from './formatters'
+import {
+  getAppealEndDate,
+  getShortGender,
+  hasSentNotification,
+} from './stepHelper'
 
 describe('Formatters utils', () => {
   describe('Parse time', () => {
@@ -65,11 +73,12 @@ describe('Formatters utils', () => {
   describe('replaceTabsOnChange', () => {
     test('should not call replaceTabs if called with a string that does not have a tab character', async () => {
       // Arrange
+      const user = userEvent.setup()
       const spy = jest.spyOn(formatters, 'replaceTabs')
       render(<input onChange={(evt) => formatters.replaceTabsOnChange(evt)} />)
 
       // Act
-      userEvent.type(await screen.findByRole('textbox'), 'Lorem ipsum')
+      await user.type(await screen.findByRole('textbox'), 'Lorem ipsum')
 
       // Assert
       expect(spy).not.toBeCalled()
@@ -123,179 +132,6 @@ describe('Formatters utils', () => {
 
       //Assert
       expect(result).toBe('')
-    })
-  })
-})
-
-describe('Validation', () => {
-  describe('Validate police casenumber format', () => {
-    test('should fail if not in correct form', () => {
-      // Arrange
-      const LOKE = 'INCORRECT FORMAT'
-
-      // Act
-      const r = validate(LOKE, 'police-casenumber-format')
-
-      // Assert
-      expect(r.isValid).toEqual(false)
-      expect(r.errorMessage).toEqual('Dæmi: 012-3456-7890')
-    })
-  })
-
-  describe('Validate time format', () => {
-    test('should fail if time is not within the 24 hour clock', () => {
-      // Arrange
-      const time = '99:00'
-
-      // Act
-      const r = validate(time, 'time-format')
-
-      // Assert
-      expect(r.isValid).toEqual(false)
-      expect(r.errorMessage).toEqual('Dæmi: 12:34 eða 1:23')
-    })
-
-    test('should be valid if with the hour part is one digit within the 24 hour clock', () => {
-      // Arrange
-      const time = '1:00'
-
-      // Act
-      const r = validate(time, 'time-format')
-
-      // Assert
-      expect(r.isValid).toEqual(true)
-    })
-  })
-
-  describe('Validate national id format', () => {
-    test('should be valid if all digits filled in', () => {
-      // Arrange
-      const nid = '999999-9999'
-
-      // Act
-      const r = validate(nid, 'national-id')
-
-      // Assert
-      expect(r.isValid).toEqual(true)
-    })
-
-    test('should be valid given just the first six digits', () => {
-      // Arrange
-      const nid = '010101'
-
-      // Act
-      const r = validate(nid, 'national-id')
-
-      // Assert
-      expect(r.isValid).toEqual(true)
-      expect(r.errorMessage).toEqual('')
-    })
-
-    test('should not be valid given too few digits', () => {
-      // Arrange
-      const nid = '99120'
-
-      // Act
-      const r = validate(nid, 'national-id')
-
-      // Assert
-      expect(r.isValid).toEqual(false)
-      expect(r.errorMessage).toEqual('Dæmi: 000000-0000')
-    })
-
-    test('should not be valid given invalid number of digits', () => {
-      // Arrange
-      const nid = '991201-22'
-
-      // Act
-      const r = validate(nid, 'national-id')
-
-      // Assert
-      expect(r.isValid).toEqual(false)
-      expect(r.errorMessage).toEqual('Dæmi: 000000-0000')
-    })
-  })
-
-  describe('Validate email format', () => {
-    test('should not be valid if @ is missing', () => {
-      // Arrange
-      const invalidEmail = 'testATtest.is'
-
-      // Act
-      const validation = validate(invalidEmail, 'email-format')
-
-      // Assert
-      expect(validation.isValid).toEqual(false)
-      expect(validation.errorMessage).toEqual('Netfang ekki á réttu formi')
-    })
-
-    test('should not be valid if the ending is less than two characters', () => {
-      // Arrange
-      const invalidEmail = 'testATtest.i'
-
-      // Act
-      const validation = validate(invalidEmail, 'email-format')
-
-      // Assert
-      expect(validation.isValid).toEqual(false)
-      expect(validation.errorMessage).toEqual('Netfang ekki á réttu formi')
-    })
-
-    test('should be valid if email is empty', () => {
-      // Arrange
-
-      // Act
-      const validation = validate('', 'email-format')
-
-      // Assert
-      expect(validation.isValid).toEqual(true)
-    })
-
-    test('should be valid if email contains - and . characters', () => {
-      // Arrange
-      const validEmail = 'garfield.lasagne-lover@garfield.io'
-
-      // Act
-      const validation = validate(validEmail, 'email-format')
-
-      // Assert
-      expect(validation.isValid).toEqual(true)
-    })
-
-    test('should be valid if email is valid', () => {
-      // Arrange
-      const validEmail = 'garfield@garfield.io'
-
-      // Act
-      const validation = validate(validEmail, 'email-format')
-
-      // Assert
-      expect(validation.isValid).toEqual(true)
-    })
-  })
-
-  describe('Validate phonenumber format', () => {
-    test('should fail if not in correct form', () => {
-      // Arrange
-      const phonenumber = '00292'
-
-      // Act
-      const r = validate(phonenumber, 'phonenumber')
-
-      // Assert
-      expect(r.isValid).toEqual(false)
-      expect(r.errorMessage).toEqual('Dæmi: 555-5555')
-    })
-
-    test('should pass if in correct form', () => {
-      // Arrange
-      const phonenumber = '555-5555'
-
-      // Act
-      const r = validate(phonenumber, 'phonenumber')
-
-      // Assert
-      expect(r.isValid).toEqual(true)
     })
   })
 })
@@ -378,7 +214,7 @@ describe('Step helper', () => {
       // Arrange
 
       // Act
-      const res = formatters.replaceTabs((undefined as unknown) as string)
+      const res = formatters.replaceTabs(undefined as unknown as string)
 
       // Assert
       expect(res).toBeUndefined()
@@ -396,41 +232,16 @@ describe('Step helper', () => {
     })
   })
 
-  describe('isDirty', () => {
-    test('should return true if value is an empty string', () => {
+  describe('getAppealEndDate', () => {
+    test('should return the correct end date', () => {
       // Arrange
-      const emptyString = ''
+      const date = '2020-10-24T12:25:00Z'
 
       // Act
-      const result = isDirty(emptyString)
+      const result = getAppealEndDate(date)
 
       // Assert
-      expect(result).toEqual(true)
-    })
-
-    test('should return true if value is a non empty string', () => {
-      // Arrange
-      const str = 'test'
-
-      // Act
-      const result = isDirty(str)
-
-      // Assert
-      expect(result).toEqual(true)
-    })
-
-    test('should return false if value is undefined or null', () => {
-      // Arrange
-      const und = undefined
-      const n = null
-
-      // Act
-      const resultUnd = isDirty(und)
-      const resultN = isDirty(n)
-
-      // Assert
-      expect(resultUnd).toEqual(false)
-      expect(resultN).toEqual(false)
+      expect(result).toEqual('27. október 2020 kl. 12:25')
     })
   })
 
@@ -462,5 +273,124 @@ describe('Step helper', () => {
       // Assert
       expect(res).toEqual('')
     })
+  })
+
+  describe('hasSentNotification', () => {
+    test('should return false if notifications are not provided', () => {
+      // Arrange
+      const n1 = undefined
+      const n2: Notification[] = []
+      const nt = NotificationType.COURT_DATE
+
+      // Act
+      const res1 = hasSentNotification(nt, n1)
+      const res2 = hasSentNotification(nt, n2)
+
+      // Assert
+      expect(res1).toEqual(false)
+      expect(res2).toEqual(false)
+    })
+
+    test('should return false if a notification has been sent in the past but the last time it was sent it failed', () => {
+      // Arrange
+      const email = faker.internet.email()
+      const n: Notification[] = [
+        {
+          id: faker.datatype.uuid(),
+          created: faker.date.future().toISOString(),
+          caseId: faker.datatype.uuid(),
+          type: NotificationType.COURT_DATE,
+          recipients: [
+            {
+              success: false,
+              address: email,
+            },
+          ],
+        },
+        {
+          id: faker.datatype.uuid(),
+          created: faker.date.past().toISOString(),
+          caseId: faker.datatype.uuid(),
+          type: NotificationType.COURT_DATE,
+          recipients: [
+            {
+              success: true,
+              address: email,
+            },
+          ],
+        },
+      ]
+      const nt = NotificationType.COURT_DATE
+
+      // Act
+      const res = hasSentNotification(nt, n)
+
+      // Assert
+      expect(res).toEqual(false)
+    })
+  })
+
+  test('should return false if no notification is found of a spesific notification type', () => {
+    // Arrange
+    const email = faker.internet.email()
+    const n: Notification[] = [
+      {
+        id: faker.datatype.uuid(),
+        created: faker.date.future().toISOString(),
+        caseId: faker.datatype.uuid(),
+        type: NotificationType.COURT_DATE,
+        recipients: [
+          {
+            success: true,
+            address: email,
+          },
+        ],
+      },
+    ]
+    const nt = NotificationType.REVOKED
+
+    // Act
+    const res = hasSentNotification(nt, n)
+
+    // Assert
+    expect(res).toEqual(false)
+  })
+
+  test('should return true if the latest notification has been sent successfully', () => {
+    // Arrange
+    const email = faker.internet.email()
+    const n: Notification[] = [
+      {
+        id: faker.datatype.uuid(),
+        created: faker.date.future().toISOString(),
+        caseId: faker.datatype.uuid(),
+        type: NotificationType.COURT_DATE,
+        recipients: [
+          {
+            success: true,
+            address: email,
+          },
+        ],
+      },
+      {
+        id: faker.datatype.uuid(),
+        created: faker.date.past().toISOString(),
+        caseId: faker.datatype.uuid(),
+        type: NotificationType.COURT_DATE,
+        recipients: [
+          {
+            success: true,
+            address: email,
+          },
+        ],
+      },
+    ]
+    const nt = NotificationType.COURT_DATE
+
+    // Act
+    const res = hasSentNotification(nt, n)
+
+    // Assert
+    expect(res).toEqual(true)
   })
 })

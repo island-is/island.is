@@ -1,58 +1,76 @@
-import React, { useState, useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
 import { AnimatePresence } from 'framer-motion'
+import { useRouter } from 'next/router'
 
-import { Box, Input } from '@island.is/island-ui/core'
 import {
-  NotificationType,
+  Accordion,
+  AccordionItem,
+  AlertMessage,
+  Box,
+} from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  capitalize,
+  caseTypes,
+  formatDate,
+} from '@island.is/judicial-system/formatters'
+import {
   CaseState,
   CaseTransition,
+  NotificationType,
 } from '@island.is/judicial-system/types'
 import {
-  Modal,
-  PageLayout,
-} from '@island.is/judicial-system-web/src/components'
-import {
-  ProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import {
-  icOverview,
+  core,
+  errors,
   icOverview as m,
+  requestCourtDate,
+  titles,
 } from '@island.is/judicial-system-web/messages'
+import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
+import {
+  AccordionListItem,
+  CaseFileList,
+  CaseResubmitModal,
+  CommentsAccordionItem,
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  InfoCard,
+  Modal,
+  PageHeader,
+  PageLayout,
+  PdfButton,
+  ProsecutorCaseInfo,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import * as Constants from '@island.is/judicial-system/consts'
 
-import OverviewForm from './OverviewForm'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import * as styles from './Overview.css'
 
-export const Overview: React.FC = () => {
+export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
-
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
-  const [modalText, setModalText] = useState('')
-  const [resendCaseModalVisible, setResendCaseModalVisible] = useState(false)
-  const [caseResentExplanation, setCaseResentExplanation] = useState('')
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const {
     transitionCase,
+    isTransitioningCase,
     sendNotification,
     isSendingNotification,
+    sendNotificationError,
     updateCase,
   } = useCase()
-
   const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
 
-  const handleNextButtonClick = async () => {
+  const [modal, setModal] = useState<
+    'noModal' | 'caseSubmittedModal' | 'caseResubmitModal'
+  >('noModal')
+  const [modalText, setModalText] = useState('')
+
+  const handleNextButtonClick = async (caseResentExplanation?: string) => {
     if (!workingCase) {
       return
     }
@@ -60,7 +78,11 @@ export const Overview: React.FC = () => {
     const shouldSubmitCase = workingCase.state === CaseState.DRAFT
 
     const caseSubmitted = shouldSubmitCase
-      ? await transitionCase(workingCase, CaseTransition.SUBMIT, setWorkingCase)
+      ? await transitionCase(
+          workingCase.id,
+          CaseTransition.SUBMIT,
+          setWorkingCase,
+        )
       : workingCase.state !== CaseState.NEW
 
     const notificationSent = caseSubmitted
@@ -81,93 +103,287 @@ export const Overview: React.FC = () => {
           caseResentExplanation,
         ),
       })
-
-      setResendCaseModalVisible(false)
     }
 
-    setModalVisible(true)
+    setModal('caseSubmittedModal')
   }
+
+  const caseFiles =
+    workingCase.caseFiles?.filter((file) => !file.category) ?? []
 
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
-      }
-      activeSubSection={ProsecutorSubsections.PROSECUTOR_OVERVIEW}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.investigationCases.overview)}
       />
-      <OverviewForm
-        workingCase={workingCase}
-        handleNextButtonClick={
-          workingCase.state === CaseState.RECEIVED
-            ? () => {
-                setResendCaseModalVisible(true)
-              }
-            : handleNextButtonClick
-        }
-        isLoading={
-          workingCase.state !== CaseState.RECEIVED &&
-          (isLoadingWorkingCase || isSendingNotification)
-        }
-      />
-      <AnimatePresence>
-        {resendCaseModalVisible && (
-          <Modal
-            title={formatMessage(icOverview.sections.caseResentModal.heading)}
-            text={formatMessage(icOverview.sections.caseResentModal.text)}
-            handleClose={() => setResendCaseModalVisible(false)}
-            primaryButtonText={formatMessage(
-              icOverview.sections.caseResentModal.primaryButtonText,
-            )}
-            secondaryButtonText={formatMessage(
-              icOverview.sections.caseResentModal.secondaryButtonText,
-            )}
-            handleSecondaryButtonClick={() => {
-              setResendCaseModalVisible(false)
-            }}
-            handlePrimaryButtonClick={() => {
-              handleNextButtonClick()
-            }}
-            isPrimaryButtonLoading={isSendingNotification}
-            isPrimaryButtonDisabled={!caseResentExplanation}
+      <FormContentContainer>
+        {workingCase.state === CaseState.RECEIVED && (
+          <Box
+            marginBottom={workingCase.openedByDefender ? 3 : 5}
+            data-testid="ic-overview-info-panel"
           >
-            <Box marginBottom={10}>
-              <Input
-                name="caseResentExplanation"
-                label={formatMessage(
-                  icOverview.sections.caseResentModal.input.label,
-                )}
-                placeholder={formatMessage(
-                  icOverview.sections.caseResentModal.input.placeholder,
-                )}
-                onChange={(evt) => setCaseResentExplanation(evt.target.value)}
-                textarea
-                rows={7}
-              />
+            <AlertMessage
+              title={formatMessage(m.receivedAlert.title)}
+              message={formatMessage(m.receivedAlert.message)}
+              type="info"
+            />
+          </Box>
+        )}
+        {workingCase.openedByDefender && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              title={formatMessage(m.openedByDefenderAlert.title)}
+              message={formatMessage(m.openedByDefenderAlert.text, {
+                when: formatDate(workingCase.openedByDefender, 'PPPp'),
+              })}
+              type="info"
+              testid="alertMessageOpenedByDefender"
+            />
+          </Box>
+        )}
+        <Box marginBottom={7}>
+          <Text as="h1" variant="h1">
+            {formatMessage(m.heading)}
+          </Text>
+        </Box>
+        <ProsecutorCaseInfo workingCase={workingCase} />
+        <Box component="section" marginBottom={5}>
+          <InfoCard
+            data={[
+              {
+                title: formatMessage(core.policeCaseNumber),
+                value: workingCase.policeCaseNumbers.map((n) => (
+                  <Text key={n}>{n}</Text>
+                )),
+              },
+              ...(workingCase.courtCaseNumber
+                ? [
+                    {
+                      title: 'Málsnúmer héraðsdóms',
+                      value: workingCase.courtCaseNumber,
+                    },
+                  ]
+                : []),
+              {
+                title: formatMessage(core.court),
+                value: workingCase.court?.name,
+              },
+              {
+                title: formatMessage(core.prosecutor),
+                value: `${workingCase.creatingProsecutor?.institution?.name}`,
+              },
+              ...(workingCase.judge
+                ? [
+                    {
+                      title: formatMessage(core.judge),
+                      value: workingCase.judge.name,
+                    },
+                  ]
+                : []),
+              {
+                title: formatMessage(requestCourtDate.heading),
+                value: `${capitalize(
+                  formatDate(workingCase.requestedCourtDate, 'PPPP', true) ??
+                    '',
+                )} eftir kl. ${formatDate(
+                  workingCase.requestedCourtDate,
+                  constants.TIME_FORMAT,
+                )}`,
+              },
+              ...(workingCase.registrar
+                ? [
+                    {
+                      title: formatMessage(core.registrar),
+                      value: workingCase.registrar.name,
+                    },
+                  ]
+                : []),
+              {
+                title: formatMessage(core.prosecutorPerson),
+                value: workingCase.prosecutor?.name,
+              },
+              {
+                title: formatMessage(core.caseType),
+                value: capitalize(caseTypes[workingCase.type]),
+              },
+              ...(workingCase.courtDate
+                ? [
+                    {
+                      title: formatMessage(core.confirmedCourtDate),
+                      value: `${capitalize(
+                        formatDate(workingCase.courtDate, 'PPPP', true) ?? '',
+                      )} kl. ${formatDate(
+                        workingCase.courtDate,
+                        constants.TIME_FORMAT,
+                      )}`,
+                    },
+                  ]
+                : []),
+            ]}
+            defendants={
+              workingCase.defendants
+                ? {
+                    title: capitalize(
+                      formatMessage(core.defendant, {
+                        suffix: workingCase.defendants.length > 1 ? 'ar' : 'i',
+                      }),
+                    ),
+                    items: workingCase.defendants,
+                  }
+                : undefined
+            }
+            defenders={[
+              {
+                name: workingCase.defenderName ?? '',
+                defenderNationalId: workingCase.defenderNationalId,
+                sessionArrangement: workingCase.sessionArrangements,
+                email: workingCase.defenderEmail,
+                phoneNumber: workingCase.defenderPhoneNumber,
+              },
+            ]}
+          />
+        </Box>
+        {workingCase.description && (
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={2}>
+              <Text as="h3" variant="h3">
+                Efni kröfu
+              </Text>
             </Box>
-          </Modal>
+            <Text>{workingCase.description}</Text>
+          </Box>
+        )}
+        <Box component="section" marginBottom={5} data-testid="demands">
+          <Box marginBottom={2}>
+            <Text as="h3" variant="h3">
+              Dómkröfur
+            </Text>
+          </Box>
+          <Text>{workingCase.demands}</Text>
+        </Box>
+        <Box component="section" marginBottom={7}>
+          <Accordion>
+            <AccordionItem
+              labelVariant="h3"
+              id="id_1"
+              label={formatMessage(lawsBrokenAccordion.heading)}
+            >
+              <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
+            </AccordionItem>
+            <AccordionItem
+              labelVariant="h3"
+              id="id_2"
+              label="Lagaákvæði sem krafan er byggð á"
+            >
+              <Text>{workingCase.legalBasis}</Text>
+            </AccordionItem>
+            <AccordionItem
+              labelVariant="h3"
+              id="id_4"
+              label="Greinargerð um málsatvik og lagarök"
+            >
+              {workingCase.caseFacts && (
+                <AccordionListItem title="Málsatvik">
+                  <Text whiteSpace="breakSpaces">{workingCase.caseFacts}</Text>
+                </AccordionListItem>
+              )}
+              {workingCase.legalArguments && (
+                <AccordionListItem title="Lagarök">
+                  <Text whiteSpace="breakSpaces">
+                    {workingCase.legalArguments}
+                  </Text>
+                </AccordionListItem>
+              )}
+              {workingCase.requestProsecutorOnlySession && (
+                <AccordionListItem title="Beiðni um dómþing að varnaraðila fjarstöddum">
+                  <Text>{workingCase.prosecutorOnlySessionRequest}</Text>
+                </AccordionListItem>
+              )}
+            </AccordionItem>
+            <AccordionItem
+              id="id_6"
+              label={`Rannsóknargögn ${`(${caseFiles.length})`}`}
+              labelVariant="h3"
+            >
+              <Box marginY={3}>
+                <CaseFileList caseId={workingCase.id} files={caseFiles} />
+              </Box>
+            </AccordionItem>
+            {(workingCase.comments ||
+              workingCase.caseFilesComments ||
+              workingCase.caseResentExplanation) && (
+              <CommentsAccordionItem workingCase={workingCase} />
+            )}
+          </Accordion>
+        </Box>
+        <Box className={styles.prosecutorContainer}>
+          <Text variant="h3">
+            {workingCase.prosecutor
+              ? `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`
+              : `${user?.name} ${user?.title}`}
+          </Text>
+        </Box>
+        <Box marginBottom={10}>
+          <PdfButton
+            caseId={workingCase.id}
+            title={formatMessage(core.pdfButtonRequest)}
+            pdfType="request"
+          />
+        </Box>
+      </FormContentContainer>
+      <FormContentContainer isFooter>
+        <FormFooter
+          nextButtonIcon="arrowForward"
+          previousUrl={`${constants.INVESTIGATION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
+          nextIsDisabled={workingCase.state === CaseState.NEW}
+          nextButtonText={
+            workingCase.state === CaseState.NEW ||
+            workingCase.state === CaseState.DRAFT
+              ? 'Senda kröfu á héraðsdóm'
+              : 'Endursenda kröfu á héraðsdóm'
+          }
+          nextIsLoading={
+            workingCase.state !== CaseState.RECEIVED &&
+            (isTransitioningCase || isSendingNotification)
+          }
+          onNextButtonClick={
+            workingCase.state === CaseState.RECEIVED
+              ? () => {
+                  setModal('caseResubmitModal')
+                }
+              : handleNextButtonClick
+          }
+        />
+      </FormContentContainer>
+      <AnimatePresence>
+        {modal === 'caseResubmitModal' && (
+          <CaseResubmitModal
+            workingCase={workingCase}
+            isLoading={isSendingNotification}
+            onClose={() => setModal('noModal')}
+            onContinue={(explanation) => handleNextButtonClick(explanation)}
+          />
         )}
       </AnimatePresence>
       <AnimatePresence>
-        {modalVisible && (
+        {modal === 'caseSubmittedModal' && (
           <Modal
             title={formatMessage(m.sections.modal.heading)}
             text={modalText}
-            handleClose={() => router.push(Constants.CASE_LIST_ROUTE)}
-            handlePrimaryButtonClick={() => {
-              window.open(Constants.FEEDBACK_FORM_URL, '_blank')
-              router.push(Constants.CASE_LIST_ROUTE)
+            onClose={() => router.push(constants.CASES_ROUTE)}
+            onSecondaryButtonClick={() => {
+              router.push(constants.CASES_ROUTE)
             }}
-            handleSecondaryButtonClick={() => {
-              router.push(Constants.CASE_LIST_ROUTE)
-            }}
-            primaryButtonText="Senda ábendingu"
-            secondaryButtonText="Loka glugga"
+            errorMessage={
+              sendNotificationError
+                ? formatMessage(errors.sendNotification)
+                : undefined
+            }
+            secondaryButtonText={formatMessage(core.closeModal)}
           />
         )}
       </AnimatePresence>

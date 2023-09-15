@@ -1,8 +1,8 @@
-import { theme } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
+import { theme } from '@island.is/island-ui/theme'
+
 export const infoBoxContainer = style({
-  maxWidth: '440px',
   padding: theme.spacing[2],
   border: `1px solid ${theme.color.blue200}`,
   borderRadius: theme.border.radius.large,
@@ -10,7 +10,7 @@ export const infoBoxContainer = style({
 })
 
 export const fluid = style({
-  maxWidth: '100%',
+  width: '100%',
 })
 
 export const light = style({

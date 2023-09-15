@@ -87,11 +87,23 @@ describe('EndorsementList', () => {
       nationalId: authNationalId,
       scope: [EndorsementsScope.main],
     })
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get(
         `/endorsement-list/general-petition-list/9c0b4106-4213-43be-a6b2-ff324f4ba016`,
       )
       .send()
       .expect(404)
+  })
+
+  // /endorsement-list/endorsementLists
+  it(`GET /endorsement-list/endorsementLists should return 200 array of lists`, async () => {
+    const app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [EndorsementsScope.main],
+    })
+    const response = await request(app.getHttpServer())
+      .get(`/endorsement-list/endorsementLists`)
+      .send()
+      .expect(200)
   })
 })

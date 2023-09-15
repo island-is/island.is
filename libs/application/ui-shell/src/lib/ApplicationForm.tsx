@@ -1,32 +1,50 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
-import * as Sentry from '@sentry/react'
 
 import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
 import {
-  Application,
   ApplicationTemplateHelper,
+  coreMessages,
+  getTypeFromSlug,
+} from '@island.is/application/core'
+import {
+  Application,
+  ApplicationConfigurations,
+  ApplicationTypes,
   Form,
   Schema,
-  coreMessages,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import {
   getApplicationTemplateByTypeId,
   getApplicationUIFields,
 } from '@island.is/application/template-loader'
-import { useApplicationNamespaces, useLocale } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 import { RefetchProvider } from '../context/RefetchContext'
 import { FieldProvider, useFields } from '../context/FieldContext'
 import { LoadingShell } from '../components/LoadingShell'
+import { useApplicationNamespaces } from '../hooks/useApplicationNamespaces'
 import { FormShell } from './FormShell'
 import { ErrorShell } from '../components/ErrorShell'
+import {
+  ProblemType,
+  findProblemInApolloError,
+} from '@island.is/shared/problem'
+import { DelegationsScreen } from '../components/DelegationsScreen'
 
-const ApplicationLoader: FC<{
-  applicationId: string
-  nationalRegistryId: string
-}> = ({ applicationId, nationalRegistryId }) => {
+const ApplicationLoader: FC<
+  React.PropsWithChildren<{
+    applicationId: string
+    nationalRegistryId: string
+    slug: string
+  }>
+> = ({ applicationId, nationalRegistryId, slug }) => {
+  const type = getTypeFromSlug(slug)
+  const [delegationsChecked, setDelegationsChecked] = useState(
+    type ? false : true,
+  )
+
   const { lang: locale } = useLocale()
   const { data, error, loading, refetch } = useQuery(APPLICATION_APPLICATION, {
     variables: {
@@ -42,13 +60,35 @@ const ApplicationLoader: FC<{
     notifyOnNetworkStatusChange: true,
     skip: !applicationId,
   })
+
   const application = data?.applicationApplication
 
   if (loading) {
     return <LoadingShell />
   }
 
+  const currentTypeId: ApplicationTypes = application?.typeId
+  if (ApplicationConfigurations[currentTypeId]?.slug !== slug) {
+    return <ErrorShell errorType="notExist" />
+  }
+
   if (!applicationId || error) {
+    const foundError = findProblemInApolloError(error, [
+      ProblemType.BAD_SUBJECT,
+    ])
+    if (
+      foundError?.type === ProblemType.BAD_SUBJECT &&
+      type &&
+      !delegationsChecked
+    ) {
+      return (
+        <DelegationsScreen
+          slug={slug}
+          alternativeSubjects={foundError.alternativeSubjects}
+          checkDelegation={setDelegationsChecked}
+        />
+      )
+    }
     return <ErrorShell />
   }
 
@@ -66,10 +106,12 @@ const ApplicationLoader: FC<{
   )
 }
 
-const ShellWrapper: FC<{
-  application: Application
-  nationalRegistryId: string
-}> = ({ application, nationalRegistryId }) => {
+const ShellWrapper: FC<
+  React.PropsWithChildren<{
+    application: Application
+    nationalRegistryId: string
+  }>
+> = ({ application, nationalRegistryId }) => {
   const [dataSchema, setDataSchema] = useState<Schema>()
   const [form, setForm] = useState<Form>()
   const [, fieldsDispatch] = useFields()
@@ -142,32 +184,20 @@ const ShellWrapper: FC<{
   )
 }
 
-export const ApplicationForm: FC<{
-  applicationId: string
-  nationalRegistryId: string
-}> = ({ applicationId, nationalRegistryId }) => {
-  const { formatMessage } = useLocale()
-
+export const ApplicationForm: FC<
+  React.PropsWithChildren<{
+    applicationId: string
+    nationalRegistryId: string
+    slug: string
+  }>
+> = ({ applicationId, nationalRegistryId, slug }) => {
   return (
-    <Sentry.ErrorBoundary
-      beforeCapture={(scope) => {
-        scope.setTag('errorBoundaryLocation', 'ApplicationForm')
-        scope.setExtra('applicationId', applicationId)
-        scope.setExtra('nationalRegistryId', nationalRegistryId)
-      }}
-      fallback={
-        <ErrorShell
-          title={formatMessage(coreMessages.globalErrorTitle)}
-          subTitle={formatMessage(coreMessages.globalErrorMessage)}
-        />
-      }
-    >
-      <FieldProvider>
-        <ApplicationLoader
-          applicationId={applicationId}
-          nationalRegistryId={nationalRegistryId}
-        />
-      </FieldProvider>
-    </Sentry.ErrorBoundary>
+    <FieldProvider>
+      <ApplicationLoader
+        applicationId={applicationId}
+        nationalRegistryId={nationalRegistryId}
+        slug={slug}
+      />
+    </FieldProvider>
   )
 }

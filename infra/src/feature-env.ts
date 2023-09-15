@@ -1,27 +1,30 @@
 import yargs from 'yargs'
-import { hideBin } from 'yargs/helpers'
 import AWS from 'aws-sdk'
-
-import {
-  generateYamlForFeature,
-  dumpYaml,
-  dumpJobYaml,
-} from './dsl/serialize-to-yaml'
-import { generateJobsForFeature } from './dsl/feature-jobs'
-import { UberChart } from './dsl/uber-chart'
+import { Kubernetes } from './dsl/kubernetes-runtime'
 import { Envs } from './environments'
 import {
-  Services,
-  FeatureDeploymentServices,
   ExcludedFeatureDeploymentServices,
+  FeatureDeploymentServices,
+  Services as IslandisServices,
 } from './uber-charts/islandis'
+import { Services as IDSServices } from './uber-charts/identity-server'
 import { EnvironmentServices } from './dsl/types/charts'
-import { ServiceHelm } from './dsl/types/output-types'
+import { HelmService, Services } from './dsl/types/output-types'
+import { Deployments } from './uber-charts/all-charts'
+import { getFeatureAffectedServices } from './dsl/feature-deployments'
+import { dumpJobYaml } from './dsl/file-formats/yaml'
+import {
+  renderHelmJobForFeature,
+  renderHelmServices,
+  renderHelmValueFileContent,
+} from './dsl/exports/helm'
+import { ServiceBuilder } from './dsl/dsl'
 
-type ChartName = 'islandis'
+type ChartName = 'islandis' | 'identity-server'
 
 const charts: { [name in ChartName]: EnvironmentServices } = {
-  islandis: Services,
+  islandis: IslandisServices,
+  'identity-server': IDSServices,
 }
 
 interface Arguments {
@@ -30,6 +33,7 @@ interface Arguments {
   chart: ChartName
   output?: string
   jobImage?: string
+  withMocks?: 'true' | 'false'
 }
 
 const writeToOutput = async (data: string, output?: string) => {
@@ -62,20 +66,27 @@ const writeToOutput = async (data: string, output?: string) => {
 const parseArguments = (argv: Arguments) => {
   const feature = argv.feature
   const images = argv.images.split(',') // Docker images that have changed
-  const env = 'dev'
+  const envName = 'dev'
   const chart = argv.chart as ChartName
 
-  const ch = new UberChart({ ...Envs[env], feature: feature })
+  const env = {
+    ...Envs[Deployments[chart][envName]],
+    feature: feature,
+  }
 
-  const habitat = charts[chart][env]
+  const habitat = charts[chart][envName]
 
   const affectedServices = habitat
     .concat(FeatureDeploymentServices)
-    .filter((h) => images?.includes(h.serviceDef.image ?? h.serviceDef.name))
-  return { ch, habitat, affectedServices }
+    .filter(
+      (h) =>
+        (images.length === 1 && images[0] === '*') ||
+        images?.includes(h.serviceDef.image ?? h.serviceDef.name),
+    )
+  return { habitat, affectedServices, env }
 }
 
-const buildIngressComment = (data: ServiceHelm[]): string =>
+const buildIngressComment = (data: HelmService[]): string =>
   data
     .filter((obj) => obj.ingress)
     .map(({ ingress }) => Object.values(ingress!))
@@ -87,41 +98,68 @@ const buildIngressComment = (data: ServiceHelm[]): string =>
     .sort()
     .join('\n')
 
-const buildComment = (data: { [key: string]: ServiceHelm }): string => {
-  return `Feature deployment successful! Access your feature here:\n\n${buildIngressComment(
-    Object.values(data),
-  )}`
+const buildComment = (data: Services<HelmService>): string => {
+  return `Feature deployment of your services will begin shortly. Your feature will be accessible here:\n${
+    buildIngressComment(Object.values(data)) ??
+    'Feature deployment of your services will begin shortly. No web endpoints defined (no ingresses were defined)'
+  }`
+}
+const deployedComment = (
+  data: ServiceBuilder<any>[],
+  excluded: string[],
+): string => {
+  return `Deployed services: ${data
+    .map((d) => d.name())
+    .join(',')}. \n Excluded services: \`${excluded.join(',')}\``
 }
 
-yargs(hideBin(process.argv))
+yargs(process.argv.slice(2))
   .command(
     'values',
     'get helm values file',
     () => {},
     async (argv: Arguments) => {
-      const { ch, habitat, affectedServices } = parseArguments(argv)
-      const featureYaml = generateYamlForFeature(
-        ch,
+      const { habitat, affectedServices, env } = parseArguments(argv)
+      const { included: featureYaml } = await getFeatureAffectedServices(
         habitat,
         affectedServices.slice(),
         ExcludedFeatureDeploymentServices,
+        env,
       )
-      await writeToOutput(dumpYaml(ch, featureYaml), argv.output)
+      await writeToOutput(
+        await renderHelmValueFileContent(
+          env,
+          habitat,
+          featureYaml,
+          (argv.withMocks ?? 'false') === 'true' ? 'with-mocks' : 'no-mocks',
+        ),
+        argv.output,
+      )
     },
   )
+
   .command(
     'ingress-comment',
     'get helm values file',
     () => {},
     async (argv: Arguments) => {
-      const { ch, habitat, affectedServices } = parseArguments(argv)
-      const featureYaml = generateYamlForFeature(
-        ch,
-        habitat,
-        affectedServices.slice(),
-        ExcludedFeatureDeploymentServices,
+      const { habitat, affectedServices, env } = parseArguments(argv)
+      const { included: featureYaml, excluded } =
+        await getFeatureAffectedServices(
+          habitat,
+          affectedServices.slice(),
+          ExcludedFeatureDeploymentServices,
+          env,
+        )
+      const ingressComment = buildComment(
+        (await renderHelmServices(env, habitat, featureYaml, 'no-mocks'))
+          .services,
       )
-      await writeToOutput(buildComment(featureYaml.services), argv.output)
+      const includedServicesComment = deployedComment(featureYaml, excluded)
+      await writeToOutput(
+        `${ingressComment}\n\n${includedServicesComment}`,
+        argv.output,
+      )
     },
   )
   .command(
@@ -135,12 +173,11 @@ yargs(hideBin(process.argv))
       })
     },
     async (argv: Arguments) => {
-      const { ch, habitat, affectedServices } = parseArguments(argv)
-      const featureYaml = generateJobsForFeature(
-        ch,
-        habitat,
+      const { affectedServices, env } = parseArguments(argv)
+      const featureYaml = await renderHelmJobForFeature(
+        env,
         argv.jobImage!,
-        ...affectedServices,
+        affectedServices,
       )
       await writeToOutput(dumpJobYaml(featureYaml), argv.output)
     },
@@ -158,7 +195,7 @@ yargs(hideBin(process.argv))
         'List of comma separated Docker image names that have changed',
     },
     chart: {
-      choices: ['islandis'],
+      choices: ['islandis', 'identity-server'],
       demandOption: true,
       description: 'Name of the umbrella chart to use',
     },

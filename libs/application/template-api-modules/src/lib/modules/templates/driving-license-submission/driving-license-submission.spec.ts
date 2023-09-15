@@ -1,15 +1,11 @@
 import { Test } from '@nestjs/testing'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  createCurrentUser,
-  createApplication,
-} from '@island.is/testing/fixtures'
+import { createCurrentUser } from '@island.is/testing/fixtures'
 
 import {
-  Application,
   ApplicationStatus,
   ApplicationTypes,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 import { SharedTemplateApiService } from '../../shared'
 import { DrivingLicenseSubmissionService } from './driving-license-submission.service'
@@ -20,6 +16,7 @@ import {
 } from '@island.is/email-service'
 import { DrivingLicenseService } from '@island.is/api/domains/driving-license'
 import { ConfigService } from '@nestjs/config'
+import { createApplication } from '@island.is/application/testing'
 
 describe('DrivingLicenseSubmissionService', () => {
   let drivingLicenseSubmissionService: DrivingLicenseSubmissionService
@@ -95,6 +92,7 @@ describe('DrivingLicenseSubmissionService', () => {
       const res = await drivingLicenseSubmissionService.submitApplication({
         application,
         auth: user,
+        currentUserLocale: 'is',
       })
 
       expect(res).toEqual({

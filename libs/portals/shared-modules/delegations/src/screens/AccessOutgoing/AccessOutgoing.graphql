@@ -1,0 +1,13 @@
+query AuthDelegation($input: AuthDelegationInput!, $lang: String) {
+  authDelegation(input: $input) {
+    id
+    type
+    to {
+      nationalId
+      name
+    }
+    ... on AuthCustomDelegation {
+      ...AuthCustomDelegation
+    }
+  }
+}

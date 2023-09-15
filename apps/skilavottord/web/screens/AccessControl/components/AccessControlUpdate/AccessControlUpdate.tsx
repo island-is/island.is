@@ -22,7 +22,9 @@ interface AccessControlUpdateProps
   currentPartner?: AccessControl
 }
 
-export const AccessControlUpdate: FC<AccessControlUpdateProps> = ({
+export const AccessControlUpdate: FC<
+  React.PropsWithChildren<AccessControlUpdateProps>
+> = ({
   title,
   text,
   show,
@@ -32,7 +34,13 @@ export const AccessControlUpdate: FC<AccessControlUpdateProps> = ({
   roles,
   currentPartner,
 }) => {
-  const { control, errors, reset, handleSubmit, watch } = useForm({
+  const {
+    control,
+    reset,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
     mode: 'onChange',
   })
 
@@ -48,10 +56,12 @@ export const AccessControlUpdate: FC<AccessControlUpdateProps> = ({
   }, [currentPartner])
 
   const handleOnSubmit = handleSubmit(
-    ({ nationalId, name, role, partnerId }) => {
+    ({ nationalId, name, role, partnerId, email, phone }) => {
       return onSubmit({
         nationalId,
         name,
+        email,
+        phone,
         role: role.value,
         partnerId: partnerId?.value || null,
       })
@@ -69,7 +79,7 @@ export const AccessControlUpdate: FC<AccessControlUpdateProps> = ({
       roles={roles}
       control={control}
       errors={errors}
-      partnerIdRequired={watch('role')?.value === Role.recyclingCompany}
+      partnerIdRequired={watch('role')?.value === Role.recyclingCompanyAdmin}
       nationalIdDisabled
     />
   )

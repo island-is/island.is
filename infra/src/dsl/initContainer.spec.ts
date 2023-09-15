@@ -1,11 +1,17 @@
 import { service } from './dsl'
-import { UberChart } from './uber-chart'
-import { serializeService } from './map-to-values'
-import { SerializeErrors, SerializeSuccess } from './types/output-types'
+import { Kubernetes } from './kubernetes-runtime'
+import {
+  SerializeErrors,
+  SerializeSuccess,
+  HelmService,
+} from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
+import { renderers } from './upstream-dependencies'
+import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
+  redisHost: 'b',
   domain: 'staging01.devland.is',
   type: 'staging',
   featuresOn: [],
@@ -18,7 +24,7 @@ const Staging: EnvironmentConfig = {
 }
 
 describe('Init-container definitions', () => {
-  it('Basic setup', () => {
+  it('Basic setup', async () => {
     const sut = service('api').initContainer({
       containers: [
         {
@@ -47,13 +53,17 @@ describe('Init-container definitions', () => {
       secrets: {
         S1: '/as/dfadf',
       },
-      postgres: {},
+      postgres: {
+        extensions: ['foo', 'bar'],
+      },
     })
-    const result = serializeService(
-      sut,
-      new UberChart(Staging),
-    ) as SerializeSuccess
-    expect(result.serviceDef.initContainer).toEqual({
+    const result = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
+    expect(result.serviceDef[0].initContainer).toEqual({
       containers: [
         {
           command: ['migration'],
@@ -76,13 +86,14 @@ describe('Init-container definitions', () => {
           name: 'seedation',
           resources: {
             limits: { cpu: '200m', memory: '256Mi' },
-            requests: { cpu: '100m', memory: '128Mi' },
+            requests: { cpu: '50m', memory: '128Mi' },
           },
         },
       ],
       env: {
         A: 'B',
         B: 'b',
+        DB_EXTENSIONS: 'foo,bar',
         DB_USER: 'api',
         DB_NAME: 'api',
         DB_HOST: 'a',
@@ -92,14 +103,16 @@ describe('Init-container definitions', () => {
       secrets: { S1: '/as/dfadf', DB_PASS: '/k8s/api/DB_PASSWORD' },
     })
   })
-  it('Empty list of containers', () => {
+  it('Empty list of containers', async () => {
     const sut = service('api').initContainer({
       containers: [],
     })
-    const result = serializeService(
-      sut,
-      new UberChart(Staging),
-    ) as SerializeErrors
+    const result = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeErrors
     expect(result.errors).toEqual([
       'No containers to run defined in initContainers',
     ])

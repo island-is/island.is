@@ -51,6 +51,10 @@ jest.mock('@nestjs/swagger', () => {
 })
 
 describe('Documentation decorator', () => {
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
   it('should apply ApiOkResponse decorator for 200', () => {
     // Arrange
     const options: Options = {
@@ -267,6 +271,71 @@ describe('Documentation decorator', () => {
     // Assert
     expect(applyDecorators).toHaveBeenCalledWith(
       ...getDefaultDecorators(options.response?.status),
+      ApiOkResponse,
+    )
+  })
+
+  it('should apply ApiNoContentResponse decorator when using path param and includeNoContentResponse=true', () => {
+    // Arrange
+    const options: Options = {
+      includeNoContentResponse: true,
+      isAuthorized: false,
+      request: {
+        params: {
+          test1: {},
+        },
+      },
+    }
+
+    // Act
+    Documentation(options)
+
+    // Assert
+    expect(applyDecorators).toHaveBeenCalledWith(
+      ...getDefaultDecorators(),
+      ApiOkResponse,
+      ApiNoContentResponse,
+      ApiParam,
+    )
+  })
+
+  it('should NOT apply ApiNoContentResponse decorator when using path param and includeNoContentResponse=false', () => {
+    // Arrange
+    const options: Options = {
+      includeNoContentResponse: false,
+      isAuthorized: false,
+      request: {
+        params: {
+          test1: {},
+        },
+      },
+    }
+
+    // Act
+    Documentation(options)
+
+    // Assert
+    expect(applyDecorators).toHaveBeenCalledWith(
+      ...getDefaultDecorators(),
+      ApiOkResponse,
+      ApiNotFoundResponse,
+      ApiParam,
+    )
+  })
+
+  it('should NOT apply ApiNoContentResponse decorator when NOT using path param and includeNoContentResponse=true', () => {
+    // Arrange
+    const options: Options = {
+      includeNoContentResponse: true,
+      isAuthorized: false,
+    }
+
+    // Act
+    Documentation(options)
+
+    // Assert
+    expect(applyDecorators).toHaveBeenCalledWith(
+      ...getDefaultDecorators(),
       ApiOkResponse,
     )
   })

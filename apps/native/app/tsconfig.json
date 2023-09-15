@@ -1,0 +1,12 @@
+{
+  "extends": "@tsconfig/react-native/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "strict": true,
+    "paths": {
+      "@ui": ["src/ui"],
+      "@ui/*": ["src/ui/*"]
+    },
+    "types": ["@types/styled-components-react-native"]
+  }
+}

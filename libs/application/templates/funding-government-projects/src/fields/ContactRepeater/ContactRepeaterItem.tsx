@@ -1,28 +1,24 @@
-import {
-  Application,
-  formatText,
-  getErrorViaPath,
-  RecordObject,
-} from '@island.is/application/core'
+import { formatText, getErrorViaPath } from '@island.is/application/core'
+import { Application, RecordObject } from '@island.is/application/types'
 import { Box, Button, Stack } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { informationAboutInstitution } from '../../lib/messages'
-import { ArrayField } from 'react-hook-form'
+import { FieldArrayWithId } from 'react-hook-form'
 import * as styles from './ContactRepeater.css'
 import { ContactField } from './ContactRepeater'
 
 interface Props {
   id: string
   application: Application
-  field: Partial<ArrayField<ContactField, 'id'>>
+  field: Partial<FieldArrayWithId<ContactField>>
   index: number
   handleRemoveContact: (index: number) => void
   errors: RecordObject<unknown> | undefined
 }
 
-export const ContactRepeaterItem: FC<Props> = ({
+export const ContactRepeaterItem: FC<React.PropsWithChildren<Props>> = ({
   id,
   application,
   field,

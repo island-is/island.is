@@ -5,6 +5,7 @@ import { Base64 } from 'js-base64'
 import { PersonalTaxReturnResponse } from '../models/personalTaxReturn.response'
 import { createTestingPersonalTaxReturnModule } from './createTestingPersonalTaxReturnModule'
 import fetch from 'isomorphic-fetch'
+import { uuid } from 'uuidv4'
 
 interface Then {
   result: PersonalTaxReturnResponse
@@ -20,12 +21,11 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
   let mockFileService: FileService
   let mockPersonalTaxReturnApi: PersonalTaxReturnApi
 
+  const folderId = uuid()
+
   beforeEach(async () => {
-    const {
-      personalTaxReturnController,
-      fileService,
-      personalTaxReturnApi,
-    } = await createTestingPersonalTaxReturnModule()
+    const { personalTaxReturnController, fileService, personalTaxReturnApi } =
+      await createTestingPersonalTaxReturnModule()
 
     mockFileService = fileService
     mockPersonalTaxReturnApi = personalTaxReturnApi
@@ -34,7 +34,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
       const then = {} as Then
 
       await personalTaxReturnController
-        .municipalitiesPersonalTaxReturn(user)
+        .municipalitiesPersonalTaxReturn(folderId, user)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -43,13 +43,14 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
   })
 
   describe('Personal Tax Return Api fails', () => {
-    const user = { nationalId: '0', folder: '' } as User
+    const user = { nationalId: '0', folder: '', name: '' } as User
     let personalTaxReturnInPdf: jest.Mock
     let createSignedUrl: jest.Mock
     let then: Then
 
     beforeEach(async () => {
-      personalTaxReturnInPdf = mockPersonalTaxReturnApi.personalTaxReturnInPdf as jest.Mock
+      personalTaxReturnInPdf =
+        mockPersonalTaxReturnApi.personalTaxReturnInPdf as jest.Mock
       personalTaxReturnInPdf.mockRejectedValueOnce({})
 
       createSignedUrl = mockFileService.createSignedUrl as jest.Mock
@@ -82,12 +83,12 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
     })
 
     it('should return undefined', () => {
-      expect(then.result).toBeUndefined()
+      expect(then.result.personalTaxReturn).toBeUndefined()
     })
   })
 
   describe('Personal Tax Return Api succeeds', () => {
-    const user = { nationalId: '0', folder: '' } as User
+    const user = { nationalId: '0', name: '' } as User
     let personalTaxReturnInPdf: jest.Mock
     let createSignedUrl: jest.Mock
     let mockFetch: jest.Mock
@@ -100,7 +101,8 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
     }
 
     beforeEach(async () => {
-      personalTaxReturnInPdf = mockPersonalTaxReturnApi.personalTaxReturnInPdf as jest.Mock
+      personalTaxReturnInPdf =
+        mockPersonalTaxReturnApi.personalTaxReturnInPdf as jest.Mock
       personalTaxReturnInPdf.mockResolvedValueOnce({
         success: true,
         errorText: '',
@@ -129,7 +131,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
 
     it('should call file service with correct params', () => {
       expect(createSignedUrl).toHaveBeenCalledWith(
-        user.folder,
+        folderId,
         `Framtal_${user.nationalId}_${lastYear}.pdf`,
       )
     })
@@ -158,7 +160,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
   })
 
   describe('Fetch fails', () => {
-    const user = { nationalId: '0', folder: '' } as User
+    const user = { nationalId: '0', folder: '', name: '' } as User
     let personalTaxReturnInPdf: jest.Mock
     let createSignedUrl: jest.Mock
     let mockFetch: jest.Mock
@@ -171,7 +173,8 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
     }
 
     beforeEach(async () => {
-      personalTaxReturnInPdf = mockPersonalTaxReturnApi.personalTaxReturnInPdf as jest.Mock
+      personalTaxReturnInPdf =
+        mockPersonalTaxReturnApi.personalTaxReturnInPdf as jest.Mock
       personalTaxReturnInPdf.mockResolvedValueOnce({
         success: true,
         errorText: '',
@@ -202,7 +205,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
 
     it('should call file service with correct params', () => {
       expect(createSignedUrl).toHaveBeenCalledWith(
-        user.folder,
+        folderId,
         `Framtal_${user.nationalId}_${lastYear}.pdf`,
       )
     })
@@ -220,7 +223,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
     })
 
     it('should return undefined', () => {
-      expect(then.result).toBeUndefined()
+      expect(then.result.personalTaxReturn).toBeUndefined()
     })
   })
 })

@@ -1,0 +1,30 @@
+{
+  "name": "shared-components",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/components/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/shared/components/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/shared/components"],
+      "options": {
+        "jestConfig": "libs/shared/components/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "parallel": false,
+        "command": "graphql-codegen --config libs/shared/components/codegen.yml"
+      }
+    }
+  },
+  "tags": ["scope:react-spa", "lib:react-spa", "TODO:splitUp"]
+}

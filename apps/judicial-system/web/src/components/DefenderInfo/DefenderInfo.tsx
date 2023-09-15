@@ -1,170 +1,50 @@
-import React, { useContext, useState, useCallback } from 'react'
-import InputMask from 'react-input-mask'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { ValueType } from 'react-select/src/types'
 
+import { Box, Checkbox, Tooltip } from '@island.is/island-ui/core'
 import {
-  Box,
-  Checkbox,
-  Input,
-  Select,
-  Text,
-  Tooltip,
-} from '@island.is/island-ui/core'
-
-import {
-  ReactSelectOption,
-  Lawyer,
-} from '@island.is/judicial-system-web/src/types'
-import {
-  Case,
-  CaseType,
+  isCourtRole,
   isInvestigationCase,
   isRestrictionCase,
+} from '@island.is/judicial-system/types'
+import {
   SessionArrangements,
   UserRole,
-} from '@island.is/judicial-system/types'
-import { accused } from '@island.is/judicial-system-web/messages'
-import { defendant } from '@island.is/judicial-system-web/messages'
-import { rcHearingArrangements } from '@island.is/judicial-system-web/messages'
-import { icHearingArrangements } from '@island.is/judicial-system-web/messages'
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { BlueBox } from '..'
-import { useCase, useLawyers } from '../../utils/hooks'
-import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-  setAndSendToServer,
-} from '../../utils/formHelper'
+import { useCase } from '../../utils/hooks'
 import { UserContext } from '../UserProvider/UserProvider'
+import { BlueBox, SectionHeading } from '..'
+import DefenderInput from './DefenderInput'
+import DefenderNotFound from './DefenderNotFound'
+import { defenderInfo } from './DefenderInfo.strings'
 
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
 }
 
-const DefenderInfo: React.FC<Props> = (props) => {
+const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
-  const { updateCase } = useCase()
+  const { setAndSendCaseToServer } = useCase()
   const { user } = useContext(UserContext)
 
-  const [
-    defenderEmailErrorMessage,
-    setDefenderEmailErrorMessage,
-  ] = useState<string>('')
+  const [defenderNotFound, setDefenderNotFound] = useState<boolean>(false)
 
-  const [
-    defenderPhoneNumberErrorMessage,
-    setDefenderPhoneNumberErrorMessage,
-  ] = useState<string>('')
-
-  const lawyers = useLawyers()
-
-  const handleDefenderChange = useCallback(
-    async (selectedOption: ValueType<ReactSelectOption>) => {
-      let updatedLawyer = {
-        defenderName: '',
-        defenderNationalId: '',
-        defenderEmail: '',
-        defenderPhoneNumber: '',
-      }
-
-      if (selectedOption) {
-        const { label, value } = selectedOption as ReactSelectOption
-        const lawyer = lawyers.find(
-          (l: Lawyer) => l.email === (value as string),
-        )
-
-        updatedLawyer = {
-          defenderName: lawyer ? lawyer.name : label,
-          defenderNationalId: lawyer ? lawyer.nationalId : '',
-          defenderEmail: lawyer ? lawyer.email : '',
-          defenderPhoneNumber: lawyer ? lawyer.phoneNr : '',
-        }
-      }
-
-      await updateCase(workingCase.id, updatedLawyer)
-      setWorkingCase({ ...workingCase, ...updatedLawyer })
-    },
-    [lawyers, setWorkingCase, workingCase, updateCase],
-  )
-
-  const getTranslations = () => {
+  const getSectionTitle = () => {
     if (isRestrictionCase(workingCase.type)) {
       if (user?.role === UserRole.PROSECUTOR) {
-        return {
-          title: accused.sections.defenderInfo.heading,
-          defenderName: {
-            label: accused.sections.defenderInfo.name.label,
-            placeholder: accused.sections.defenderInfo.name.placeholder,
-          },
-          defenderEmail: {
-            label: accused.sections.defenderInfo.email.label,
-            placeholder: accused.sections.defenderInfo.email.placeholder,
-          },
-          defenderPhoneNumber: {
-            label: accused.sections.defenderInfo.phoneNumber.label,
-            placeholder: accused.sections.defenderInfo.phoneNumber.placeholder,
-          },
-        }
+        return defenderInfo.restrictionCases.sections.defender.heading
       } else {
-        return {
-          title: rcHearingArrangements.sections.defender.title,
-          defenderName: {
-            label: rcHearingArrangements.sections.defender.nameLabel,
-            placeholder:
-              rcHearingArrangements.sections.defender.namePlaceholder,
-          },
-          defenderEmail: {
-            label: rcHearingArrangements.sections.defender.emailLabel,
-            placeholder:
-              rcHearingArrangements.sections.defender.emailPlaceholder,
-          },
-          defenderPhoneNumber: {
-            label: rcHearingArrangements.sections.defender.phoneNumberLabel,
-            placeholder:
-              rcHearingArrangements.sections.defender.phoneNumberPlaceholder,
-          },
-        }
+        return defenderInfo.restrictionCases.sections.defender.title
       }
     } else {
       if (user?.role === UserRole.PROSECUTOR) {
-        return {
-          title: defendant.sections.defenderInfo.heading,
-          defenderName: {
-            label: defendant.sections.defenderInfo.name.label,
-            placeholder: defendant.sections.defenderInfo.name.placeholder,
-          },
-          defenderEmail: {
-            label: defendant.sections.defenderInfo.email.label,
-            placeholder: defendant.sections.defenderInfo.email.placeholder,
-          },
-          defenderPhoneNumber: {
-            label: defendant.sections.defenderInfo.phoneNumber.label,
-            placeholder:
-              defendant.sections.defenderInfo.phoneNumber.placeholder,
-          },
-        }
+        return defenderInfo.investigationCases.sections.defender.heading
       } else {
-        return {
-          title: icHearingArrangements.sections.defender.title,
-          defenderName: {
-            label: icHearingArrangements.sections.defender.nameLabel,
-            placeholder:
-              icHearingArrangements.sections.defender.namePlaceholder,
-          },
-          defenderEmail: {
-            label: icHearingArrangements.sections.defender.emailLabel,
-            placeholder:
-              icHearingArrangements.sections.defender.emailPlaceholder,
-          },
-          defenderPhoneNumber: {
-            label: icHearingArrangements.sections.defender.phoneNumberLabel,
-            placeholder:
-              icHearingArrangements.sections.defender.phoneNumberPlaceholder,
-          },
-        }
+        return defenderInfo.investigationCases.sections.defender.title
       }
     }
   }
@@ -172,212 +52,95 @@ const DefenderInfo: React.FC<Props> = (props) => {
   const renderTooltip = () => {
     if (
       isRestrictionCase(workingCase.type) &&
-      (user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR)
+      user?.role &&
+      isCourtRole(user.role)
     ) {
       return (
         <Tooltip
-          text={formatMessage(rcHearingArrangements.sections.defender.tooltip)}
+          text={formatMessage(
+            defenderInfo.restrictionCases.sections.defender.tooltip,
+          )}
+          placement="right"
         />
       )
     } else if (
       isInvestigationCase(workingCase.type) &&
-      (user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR)
+      user?.role &&
+      isCourtRole(user.role)
     ) {
       return (
         <Tooltip
-          text={formatMessage(icHearingArrangements.sections.defender.tooltip, {
-            defenderType:
-              workingCase.sessionArrangements ===
-              SessionArrangements.ALL_PRESENT_SPOKESPERSON
-                ? 'talsmaður'
-                : 'verjandi',
-          })}
+          text={formatMessage(
+            defenderInfo.investigationCases.sections.defender.tooltip,
+            {
+              sessionArrangement: workingCase.sessionArrangements,
+            },
+          )}
+          placement="right"
         />
       )
     } else {
-      return ''
+      return null
     }
   }
 
   return (
     <>
-      <Box
-        display="flex"
-        justifyContent="spaceBetween"
-        alignItems="baseline"
-        marginBottom={2}
-      >
-        <Text as="h3" variant="h3">
-          {`${formatMessage(getTranslations().title, {
-            defenderType:
-              workingCase.sessionArrangements ===
-              SessionArrangements.ALL_PRESENT_SPOKESPERSON
-                ? 'Talsmaður'
-                : 'Verjandi',
-          })} `}
-          {renderTooltip()}
-        </Text>
-      </Box>
+      <SectionHeading
+        title={formatMessage(getSectionTitle(), {
+          defenderType:
+            workingCase.sessionArrangements ===
+            SessionArrangements.ALL_PRESENT_SPOKESPERSON
+              ? 'Talsmaður'
+              : 'Verjandi',
+        })}
+        tooltip={renderTooltip()}
+      />
+      {defenderNotFound && <DefenderNotFound />}
       <BlueBox>
-        <Box marginBottom={2}>
-          <Select
-            name="defenderName"
-            icon="search"
-            options={lawyers.map((l: Lawyer) => {
-              return {
-                label: `${l.name}${l.practice ? ` (${l.practice})` : ''}`,
-                value: l.email,
-              }
-            })}
-            label={formatMessage(getTranslations().defenderName.label, {
-              defenderType:
-                workingCase.sessionArrangements ===
-                SessionArrangements.ALL_PRESENT_SPOKESPERSON
-                  ? 'talsmanns'
-                  : 'verjanda',
-            })}
-            placeholder={formatMessage(
-              getTranslations().defenderName.placeholder,
-            )}
-            value={
-              workingCase.defenderName
-                ? {
-                    label: workingCase.defenderName ?? '',
-                    value: workingCase.defenderEmail ?? '',
-                  }
-                : undefined
-            }
-            onChange={handleDefenderChange}
-            filterConfig={{ matchFrom: 'start' }}
-            isCreatable
-          />
-        </Box>
-        <Box marginBottom={2}>
-          <Input
-            data-testid="defenderEmail"
-            name="defenderEmail"
-            autoComplete="off"
-            label={formatMessage(getTranslations().defenderEmail.label, {
-              defenderType:
-                workingCase.sessionArrangements ===
-                SessionArrangements.ALL_PRESENT_SPOKESPERSON
-                  ? 'talsmanns'
-                  : 'verjanda',
-            })}
-            placeholder={formatMessage(
-              getTranslations().defenderEmail.placeholder,
-            )}
-            value={workingCase.defenderEmail}
-            errorMessage={defenderEmailErrorMessage}
-            hasError={defenderEmailErrorMessage !== ''}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'defenderEmail',
-                event.target.value,
-                ['email-format'],
-                workingCase,
-                setWorkingCase,
-                defenderEmailErrorMessage,
-                setDefenderEmailErrorMessage,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'defenderEmail',
-                event.target.value,
-                ['email-format'],
-                workingCase,
-                updateCase,
-                setDefenderEmailErrorMessage,
-              )
-            }
-          />
-        </Box>
-        <Box marginBottom={2}>
-          <InputMask
-            mask="999-9999"
-            maskPlaceholder={null}
-            value={workingCase.defenderPhoneNumber}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'defenderPhoneNumber',
-                event.target.value,
-                ['phonenumber'],
-                workingCase,
-                setWorkingCase,
-                defenderPhoneNumberErrorMessage,
-                setDefenderPhoneNumberErrorMessage,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'defenderPhoneNumber',
-                event.target.value,
-                ['phonenumber'],
-                workingCase,
-                updateCase,
-                setDefenderPhoneNumberErrorMessage,
-              )
-            }
-          >
-            <Input
-              data-testid="defenderPhoneNumber"
-              name="defenderPhoneNumber"
-              autoComplete="off"
-              label={formatMessage(
-                getTranslations().defenderPhoneNumber.label,
-                {
-                  defenderType:
-                    workingCase.sessionArrangements ===
-                    SessionArrangements.ALL_PRESENT_SPOKESPERSON
-                      ? 'talsmanns'
-                      : 'verjanda',
-                },
-              )}
-              placeholder={formatMessage(
-                getTranslations().defenderPhoneNumber.placeholder,
-              )}
-              errorMessage={defenderPhoneNumberErrorMessage}
-              hasError={defenderPhoneNumberErrorMessage !== ''}
-            />
-          </InputMask>
-        </Box>
+        <DefenderInput onDefenderNotFound={setDefenderNotFound} />
         {user?.role === UserRole.PROSECUTOR && (
-          <Checkbox
-            name="sendRequestToDefender"
-            label={formatMessage(
-              isRestrictionCase(workingCase.type)
-                ? accused.sections.defenderInfo.sendRequest.label
-                : defendant.sections.defenderInfo.sendRequest.label,
-            )}
-            tooltip={
-              isRestrictionCase(workingCase.type)
-                ? formatMessage(
-                    accused.sections.defenderInfo.sendRequest.tooltip,
+          <Box marginTop={2}>
+            <Checkbox
+              name="sendRequestToDefender"
+              label={formatMessage(
+                isRestrictionCase(workingCase.type)
+                  ? defenderInfo.restrictionCases.sections.defenderRequestAccess
+                      .label
+                  : defenderInfo.investigationCases.sections
+                      .defenderRequestAccess.label,
+              )}
+              tooltip={
+                isRestrictionCase(workingCase.type)
+                  ? formatMessage(
+                      defenderInfo.restrictionCases.sections
+                        .defenderRequestAccess.tooltip,
+                      {
+                        caseType: workingCase.type,
+                      },
+                    )
+                  : formatMessage(
+                      defenderInfo.investigationCases.sections
+                        .defenderRequestAccess.tooltip,
+                    )
+              }
+              checked={workingCase.sendRequestToDefender}
+              onChange={(event) => {
+                setAndSendCaseToServer(
+                  [
                     {
-                      caseType:
-                        workingCase.type === CaseType.CUSTODY
-                          ? 'gæsluvarðhaldskröfuna'
-                          : 'farbannskröfuna',
+                      sendRequestToDefender: event.target.checked,
+                      force: true,
                     },
-                  )
-                : formatMessage(
-                    defendant.sections.defenderInfo.sendRequest.tooltip,
-                  )
-            }
-            checked={workingCase.sendRequestToDefender}
-            onChange={(event) => {
-              setAndSendToServer(
-                'sendRequestToDefender',
-                event.target.checked,
-                workingCase,
-                setWorkingCase,
-                updateCase,
-              )
-            }}
-            large
-            filled
-          />
+                  ],
+                  workingCase,
+                  setWorkingCase,
+                )
+              }}
+              large
+              filled
+            />
+          </Box>
         )}
       </BlueBox>
     </>

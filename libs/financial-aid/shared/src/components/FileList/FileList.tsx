@@ -3,11 +3,8 @@ import { Text, Box, UploadFile } from '@island.is/island-ui/core'
 
 import cn from 'classnames'
 import format from 'date-fns/format'
-import {
-  ApplicationFile,
-  getFileSizeInKilo,
-  getFileType,
-} from '@island.is/financial-aid/shared/lib'
+import { getFileSizeInKilo, getFileType } from '../../lib/utils'
+import { ApplicationFile } from '../../lib/interfaces'
 
 import { gql, useLazyQuery } from '@apollo/client'
 

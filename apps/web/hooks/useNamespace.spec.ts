@@ -63,12 +63,9 @@ describe('useNamespaceStrict', () => {
 
 describe('useNamespace', () => {
   const n = useNamespace(messages)
-  {
-    // Quick function signature testing to ensure it to returns `any`
-    const fooAny1: number = n('asdfasdf')
-    const fooAny2: Element = n('asdfasdf', null)
-    const fooAny3: Array<RegExp> = n('asdfasdf', 'yo')
-  }
+  n('asdfasdf')
+  n('asdfasdf', null)
+  n('asdfasdf', 'yo')
 
   it('should return a string value', () => {
     expect(n('title')).toEqual('My Title')

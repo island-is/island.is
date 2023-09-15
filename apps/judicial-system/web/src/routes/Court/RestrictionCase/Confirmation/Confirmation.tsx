@@ -1,86 +1,90 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
-import {
-  FormFooter,
-  PoliceRequestAccordionItem,
-  CourtRecordAccordionItem,
-  PdfButton,
-  CaseInfo,
-  PageLayout,
-  FormContentContainer,
-  RulingAccordionItem,
-  BlueBox,
-} from '@island.is/judicial-system-web/src/components'
-import {
-  CourtSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   CaseDecision,
+  CaseTransition,
+  completedCaseStates,
   isAcceptingCaseDecision,
+  NotificationType,
 } from '@island.is/judicial-system/types'
-import type { RequestSignatureResponse } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import SigningModal from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
-  core,
-  rcConfirmation as m,
-} from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system/consts'
+  BlueBox,
+  CourtCaseInfo,
+  CourtRecordAccordionItem,
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  PageHeader,
+  PageLayout,
+  PdfButton,
+  PoliceRequestAccordionItem,
+  RulingAccordionItem,
+  SigningModal,
+  UserContext,
+  useRequestRulingSignature,
+} from '@island.is/judicial-system-web/src/components'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
-export const Confirmation: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
-  const [
-    requestRulingSignatureResponse,
-    setRequestRulingSignatureResponse,
-  ] = useState<RequestSignatureResponse>()
+import { RulingModifiedModal } from '../../components'
+import { confirmation as strings } from './Confirmation.strings'
 
-  const { requestRulingSignature, isRequestingRulingSignature } = useCase()
+type VisibleModal = 'none' | 'rulingModifiedModal' | 'signingModal'
+
+export const Confirmation: React.FC<React.PropsWithChildren<unknown>> = () => {
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
+  const [modalVisible, setModalVisible] = useState<VisibleModal>('none')
+
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
-  useEffect(() => {
-    if (!modalVisible) {
-      setRequestRulingSignatureResponse(undefined)
-    }
-  }, [modalVisible, setRequestRulingSignatureResponse])
+  const { transitionCase } = useCase()
+  const {
+    requestRulingSignature,
+    requestRulingSignatureResponse,
+    isRequestingRulingSignature,
+  } = useRequestRulingSignature(workingCase.id, () =>
+    setModalVisible('signingModal'),
+  )
 
-  const handleNextButtonClick: () => Promise<void> = async () => {
-    if (!workingCase) {
+  async function signRuling() {
+    const shouldSign =
+      completedCaseStates.includes(workingCase.state) ||
+      (await transitionCase(
+        workingCase.id,
+        workingCase.decision === CaseDecision.REJECTING
+          ? CaseTransition.REJECT
+          : workingCase.decision === CaseDecision.DISMISSING
+          ? CaseTransition.DISMISS
+          : CaseTransition.ACCEPT,
+        setWorkingCase,
+      ))
+
+    if (shouldSign) {
+      requestRulingSignature()
+    }
+  }
+
+  const handleNextButtonClick = async () => {
+    const isCorrectingRuling = workingCase.notifications?.some(
+      (notification) => notification.type === NotificationType.RULING,
+    )
+
+    if (isCorrectingRuling) {
+      setModalVisible('rulingModifiedModal')
       return
     }
 
-    // Request ruling signature to get control code
-    const requestRulingSignatureResponse = await requestRulingSignature(
-      workingCase.id,
-    )
-    if (requestRulingSignatureResponse) {
-      setRequestRulingSignatureResponse(requestRulingSignatureResponse)
-      setModalVisible(true)
-    } else {
-      // TODO: Handle error
-    }
+    await signRuling()
   }
 
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
-      }
-      activeSubSection={CourtSubsections.CONFIRMATION}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -90,12 +94,10 @@ export const Confirmation: React.FC = () => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Yfirlit úrskurðar
+            {formatMessage(strings.title)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo workingCase={workingCase} userRole={user?.role} />
-        </Box>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box marginBottom={9}>
           <Accordion>
             <PoliceRequestAccordionItem workingCase={workingCase} />
@@ -107,7 +109,7 @@ export const Confirmation: React.FC = () => {
           <BlueBox>
             <Box marginBottom={2} textAlign="center">
               <Text as="h3" variant="h3">
-                {formatMessage(m.sections.conclusion.title)}
+                {formatMessage(strings.conclusionTitle)}
               </Text>
             </Box>
             <Box marginBottom={3}>
@@ -116,9 +118,7 @@ export const Confirmation: React.FC = () => {
               </Box>
             </Box>
             <Box marginBottom={1} textAlign="center">
-              <Text variant="h4">
-                {workingCase?.judge ? workingCase.judge.name : user?.name}
-              </Text>
+              <Text variant="h4">{workingCase.judge?.name}</Text>
             </Box>
           </BlueBox>
         </Box>
@@ -139,18 +139,18 @@ export const Confirmation: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`}
-          nextUrl={Constants.CASE_LIST_ROUTE}
+          previousUrl={`${constants.RESTRICTION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
+          nextUrl={constants.CASES_ROUTE}
           nextButtonText={formatMessage(
             workingCase.decision === CaseDecision.ACCEPTING
-              ? m.footer.accepting.continueButtonText
+              ? strings.continueButtonTextAccepting
               : workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY
-              ? m.footer.acceptingPartially.continueButtonText
+              ? strings.continueButtonTextAcceptingPartially
               : workingCase.decision === CaseDecision.REJECTING
-              ? m.footer.rejecting.continueButtonText
+              ? strings.continueButtonTextRejecting
               : workingCase.decision === CaseDecision.DISMISSING
-              ? m.footer.dismissing.continueButtonText
-              : m.footer.acceptingAlternativeTravelBan.continueButtonText,
+              ? strings.continueButtonTextDismissing
+              : strings.continueButtonTextAcceptingAlternativeTravelBan,
           )}
           nextButtonIcon={
             isAcceptingCaseDecision(workingCase.decision) ||
@@ -176,12 +176,18 @@ export const Confirmation: React.FC = () => {
           }
         />
       </FormContentContainer>
-      {modalVisible && (
+      {modalVisible === 'rulingModifiedModal' && (
+        <RulingModifiedModal
+          onCancel={() => setModalVisible('none')}
+          onContinue={signRuling}
+        />
+      )}
+      {modalVisible === 'signingModal' && (
         <SigningModal
           workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
+          requestRulingSignature={requestRulingSignature}
           requestRulingSignatureResponse={requestRulingSignatureResponse}
-          setModalVisible={setModalVisible}
+          onClose={() => setModalVisible('none')}
         />
       )}
     </PageLayout>

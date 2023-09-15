@@ -6,12 +6,9 @@ import {
   groupedMenu as createGroupedMenu,
   news,
   lifeEvent,
-  frontPageSlider,
   articleGroup,
   articleSubgroup,
-  featured,
   genericPage,
-  referenceLink,
   frontpage as createFrontpage,
 } from './factories'
 import orderBy from 'lodash/orderBy'

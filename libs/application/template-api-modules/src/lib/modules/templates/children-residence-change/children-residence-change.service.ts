@@ -20,10 +20,12 @@ import {
   generateSyslumennNotificationEmail,
   transferRequestedEmail,
 } from './emailGenerators'
-import { Application } from '@island.is/application/core'
+import { Application, ApplicationTypes } from '@island.is/application/types'
 import { SmsService } from '@island.is/nova-sms'
 import { syslumennDataFromPostalCode } from './utils'
 import { applicationRejectedEmail } from './emailGenerators/applicationRejected'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 
 export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
 
@@ -33,7 +35,7 @@ type props = Override<
 >
 
 @Injectable()
-export class ChildrenResidenceChangeService {
+export class ChildrenResidenceChangeService extends BaseTemplateApiService {
   s3: S3
 
   constructor(
@@ -41,7 +43,9 @@ export class ChildrenResidenceChangeService {
     @Inject(PRESIGNED_BUCKET) private readonly presignedBucket: string,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly smsService: SmsService,
+    private nationalRegistryApi: NationalRegistryClientService,
   ) {
+    super(ApplicationTypes.CHILDREN_RESIDENCE_CHANGE)
     this.s3 = new S3()
   }
 
@@ -56,7 +60,7 @@ export class ChildrenResidenceChangeService {
     const fileContent = file.Body as Buffer
 
     const selectedChildren = getSelectedChildrenFromExternalData(
-      applicant.children,
+      externalData.childrenCustodyInformation.data,
       answers.selectedChildren,
     )
 
@@ -64,29 +68,36 @@ export class ChildrenResidenceChangeService {
 
     const childResidenceInfo = childrenResidenceInfo(
       applicant,
+      externalData.childrenCustodyInformation.data,
       answers.selectedChildren,
     )
-    const currentAddress = childResidenceInfo.current.address
+    const currentAddress = childResidenceInfo?.current?.address
 
     if (!fileContent) {
       throw new Error('File content was undefined')
     }
 
-    const attachment: Attachment = {
-      name: `Lögheimilisbreyting-barns-${applicant.nationalId}.pdf`,
-      content: fileContent.toString('base64'),
-    }
+    const attachments: Attachment[] = [
+      {
+        name: `Lögheimilisbreyting-barns-${applicant.nationalId}.pdf`,
+        content: fileContent.toString('base64'),
+      },
+    ]
 
     const parentA: Person = {
       name: applicant.fullName,
       ssn: applicant.nationalId,
       phoneNumber: answers.parentA.phoneNumber,
       email: answers.parentA.email,
-      homeAddress: applicant.address.streetName,
-      postalCode: applicant.address.postalCode,
-      city: applicant.address.city,
+      homeAddress: applicant?.address?.streetAddress ?? '',
+      postalCode: applicant?.address?.postalCode ?? '',
+      city: applicant.address?.locality ?? '',
       signed: true,
       type: PersonType.Plaintiff,
+    }
+
+    if (!otherParent) {
+      throw new Error('Parent B was undefined')
     }
 
     const parentB: Person = {
@@ -94,9 +105,9 @@ export class ChildrenResidenceChangeService {
       ssn: otherParent.nationalId,
       phoneNumber: answers.parentB.phoneNumber,
       email: answers.parentB.email,
-      homeAddress: otherParent.address.streetName,
-      postalCode: otherParent.address.postalCode,
-      city: otherParent.address.city,
+      homeAddress: otherParent.address?.streetAddress || '',
+      postalCode: otherParent.address?.postalCode || '',
+      city: otherParent.address?.locality || '',
       signed: true,
       type: PersonType.CounterParty,
     }
@@ -105,9 +116,9 @@ export class ChildrenResidenceChangeService {
       return {
         name: child.fullName,
         ssn: child.nationalId,
-        homeAddress: currentAddress.streetName,
-        postalCode: currentAddress.postalCode,
-        city: currentAddress.city,
+        homeAddress: currentAddress?.streetAddress || '',
+        postalCode: currentAddress?.postalCode || '',
+        city: currentAddress?.locality || '',
         signed: false,
         type: PersonType.Child,
       }
@@ -125,6 +136,10 @@ export class ChildrenResidenceChangeService {
           : durationType,
     }
 
+    if (!childResidenceInfo.future?.address?.postalCode) {
+      throw new Error('Future residence postal code was not found')
+    }
+
     const syslumennData = syslumennDataFromPostalCode(
       childResidenceInfo.future.address.postalCode,
     )
@@ -132,11 +147,11 @@ export class ChildrenResidenceChangeService {
     const uploadDataName = 'Lögheimilisbreyting barns'
 
     const response = await this.syslumennService
-      .uploadData(participants, attachment, extraData, uploadDataName)
+      .uploadData(participants, attachments, extraData, uploadDataName)
       .catch(async () => {
         await this.sharedTemplateAPIService.sendEmailWithAttachment(
           generateSyslumennNotificationEmail,
-          (application as unknown) as Application,
+          application as unknown as Application,
           fileContent.toString('binary'),
           syslumennData.email,
         )
@@ -152,7 +167,7 @@ export class ChildrenResidenceChangeService {
           syslumennData.name,
           response?.caseNumber,
         ),
-      (application as unknown) as Application,
+      application as unknown as Application,
     )
 
     await this.sharedTemplateAPIService.sendEmail(
@@ -164,7 +179,7 @@ export class ChildrenResidenceChangeService {
           syslumennData.name,
           response?.caseNumber,
         ),
-      (application as unknown) as Application,
+      application as unknown as Application,
     )
 
     return response
@@ -177,7 +192,7 @@ export class ChildrenResidenceChangeService {
     if (counterParty.email) {
       await this.sharedTemplateAPIService.sendEmail(
         transferRequestedEmail,
-        (application as unknown) as Application,
+        application as unknown as Application,
       )
     }
 
@@ -192,7 +207,7 @@ export class ChildrenResidenceChangeService {
   async rejectApplication({ application }: props) {
     await this.sharedTemplateAPIService.sendEmail(
       applicationRejectedEmail,
-      (application as unknown) as Application,
+      application as unknown as Application,
     )
   }
 }

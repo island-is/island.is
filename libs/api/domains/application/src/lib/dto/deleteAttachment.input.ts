@@ -1,13 +1,13 @@
-import { Field, InputType, registerEnumType } from '@nestjs/graphql'
+import { Field, InputType } from '@nestjs/graphql'
 import { IsString } from 'class-validator'
 
 @InputType()
 export class DeleteAttachmentInput {
-  @Field((type) => String)
+  @Field(() => String)
   @IsString()
   id!: string
 
-  @Field((type) => String)
+  @Field(() => String)
   @IsString()
   key!: string
 }

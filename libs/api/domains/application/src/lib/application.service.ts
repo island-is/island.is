@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common'
-import { logger } from '@island.is/logging'
-import { ApolloError } from 'apollo-server-express'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
@@ -20,20 +18,22 @@ import { ApplicationApplicationsInput } from './dto/applicationApplications.inpu
 import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
 import { ApplicationPayment } from './application.model'
 import { AttachmentPresignedUrlInput } from './dto/AttachmentPresignedUrl.input'
+import { DeleteApplicationInput } from './dto/deleteApplication.input'
+import { ApplicationApplicationsAdminInput } from './application-admin/dto/applications-applications-admin-input'
 
 @Injectable()
 export class ApplicationService {
   constructor(
-    private _applicationApi: ApplicationsApi,
-    private _applicationPaymentApi: PaymentsApi,
+    private applicationApi: ApplicationsApi,
+    private applicationPaymentApi: PaymentsApi,
   ) {}
 
   applicationApiWithAuth(auth: Auth) {
-    return this._applicationApi.withMiddleware(new AuthMiddleware(auth))
+    return this.applicationApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   paymentApiWithAuth(auth: Auth) {
-    return this._applicationPaymentApi.withMiddleware(new AuthMiddleware(auth))
+    return this.applicationPaymentApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async findOne(id: string, auth: Auth, locale: Locale) {
@@ -58,18 +58,6 @@ export class ApplicationService {
     })
   }
 
-  async createCharge(
-    applicationId: string,
-    auth: Auth,
-    chargeItemCode: string,
-  ) {
-    return this.paymentApiWithAuth(auth).paymentControllerCreateCharge({
-      applicationId: applicationId,
-      body: { chargeItemCode: chargeItemCode },
-      authorization: auth.authorization,
-    })
-  }
-
   async findAll(
     user: User,
     locale: Locale,
@@ -81,8 +69,22 @@ export class ApplicationService {
         locale,
         typeId: input?.typeId?.join(','),
         status: input?.status?.join(','),
+        scopeCheck: input?.scopeCheck,
       },
     )
+  }
+
+  async findAllAdmin(
+    user: User,
+    locale: Locale,
+    input: ApplicationApplicationsAdminInput,
+  ) {
+    return this.applicationApiWithAuth(user).adminControllerFindAllAdmin({
+      nationalId: input.nationalId,
+      locale,
+      typeId: input.typeId?.join(','),
+      status: input.status?.join(','),
+    })
   }
 
   async create(input: CreateApplicationInput, auth: Auth) {
@@ -154,6 +156,13 @@ export class ApplicationService {
       auth,
     ).applicationControllerAssignApplication({
       assignApplicationDto: input,
+    })
+  }
+
+  async deleteApplication(input: DeleteApplicationInput, auth: Auth) {
+    return this.applicationApiWithAuth(auth).applicationControllerDelete({
+      id: input.id,
+      authorization: auth.authorization,
     })
   }
 

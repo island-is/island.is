@@ -1,18 +1,19 @@
 import React, { FC, useState, useEffect } from 'react'
 import {
   Box,
-  Button,
   Columns,
   Column,
   Icon,
   LoadingDots,
   Checkbox,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import { useUpdateOrCreateUserProfile } from '@island.is/service-portal/graphql'
 import { msg } from '../../../../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Controller, useForm } from 'react-hook-form'
+import { FormButton } from '../FormButton'
 import * as styles from './ProfileForms.css'
 
 interface Props {
@@ -25,10 +26,10 @@ interface Props {
  * "Refuse nudge" while the value in the db is of "Accept nudge (canNudge)"
  * So we need to get the value and set it to the opposite of the db value.
  */
-export const Nudge: FC<Props> = ({ refuseMail }) => {
+export const Nudge: FC<React.PropsWithChildren<Props>> = ({ refuseMail }) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
-  const { control, handleSubmit, getValues } = useForm()
+  const { control, handleSubmit, getValues } = useForm<Props>()
   const [inputPristine, setInputPristine] = useState<boolean>(false)
   const [submitError, setSubmitError] = useState<string>()
 
@@ -69,7 +70,7 @@ export const Nudge: FC<Props> = ({ refuseMail }) => {
               name="refuseMail"
               control={control}
               defaultValue={refuseMail}
-              render={({ onChange, value }) => (
+              render={({ field: { onChange, value } }) => (
                 <Checkbox
                   name="refuseMail"
                   onChange={(e) => {
@@ -94,20 +95,19 @@ export const Nudge: FC<Props> = ({ refuseMail }) => {
             display="flex"
             alignItems="center"
             justifyContent="flexStart"
-            marginLeft={2}
           >
-            <Box display="flex" alignItems="center" marginRight={1}>
-              {inputPristine && (
-                <Icon icon="checkmark" color="blue300" type="filled" />
-              )}
-            </Box>
+            <Hidden below="sm">
+              <Box display="flex" alignItems="center" marginRight={1}>
+                {inputPristine && (
+                  <Icon icon="checkmark" color="blue300" type="filled" />
+                )}
+              </Box>
+            </Hidden>
             <Box display="flex" alignItems="flexStart" flexDirection="column">
               {!loading && (
-                <button disabled={inputPristine} type="submit">
-                  <Button disabled={inputPristine} variant="text" size="small">
-                    {formatMessage(msg.saveSettings)}
-                  </Button>
-                </button>
+                <FormButton disabled={inputPristine} submit>
+                  {formatMessage(msg.saveSettings)}
+                </FormButton>
               )}
               {loading && <LoadingDots />}
             </Box>

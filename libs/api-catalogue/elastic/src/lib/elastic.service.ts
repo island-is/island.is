@@ -10,6 +10,8 @@ import { logger } from '@island.is/logging'
 
 const { elastic } = environment
 
+type RequestBodyType<T = Record<string, any>> = T | string | Buffer
+
 @Injectable()
 export class ElasticService {
   private client: Client
@@ -97,7 +99,9 @@ export class ElasticService {
     return this.search<SearchResponse<Service>, typeof requestBody>(requestBody)
   }
 
-  async search<ResponseBody, RequestBody>(query: RequestBody) {
+  async search<ResponseBody, RequestBody extends RequestBodyType>(
+    query: RequestBody,
+  ) {
     logger.debug('Searching for', query)
     return await this.client.search<ResponseBody, RequestBody>({
       body: query,

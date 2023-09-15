@@ -10,20 +10,25 @@ import { User } from '@island.is/shared/types'
 import { useLocale } from '@island.is/localization'
 import { userMessages } from '@island.is/shared/translations'
 import * as styles from './UserMenu.css'
+import { checkDelegation } from '@island.is/shared/utils'
 
 interface UserButtonProps {
   user: User
   small: boolean
-  onClick: () => void
+  onClick(): void
+  iconOnlyMobile?: boolean
 }
 
 export const UserButton = ({
   onClick,
-  user: { profile },
+  user,
   small,
+  iconOnlyMobile = false,
 }: UserButtonProps) => {
-  const isDelegation = Boolean(profile.actor)
+  const isDelegation = checkDelegation(user)
+  const { profile } = user
   const { formatMessage } = useLocale()
+
   return (
     <>
       <Hidden above="sm">
@@ -31,9 +36,10 @@ export const UserButton = ({
           <Box className={styles.smallAvatar}>
             <UserAvatar
               isDelegation={isDelegation}
-              username={profile.name}
+              username={iconOnlyMobile ? undefined : profile.name}
               onClick={onClick}
               aria-label={formatMessage(userMessages.userButtonAria)}
+              dataTestid="user-menu"
             />
           </Box>
         ) : (
@@ -41,17 +47,18 @@ export const UserButton = ({
             variant="utility"
             colorScheme={isDelegation ? 'primary' : 'default'}
             onClick={onClick}
-            icon="person"
+            icon={isDelegation ? 'people' : 'person'}
             iconType="outline"
             aria-label={formatMessage(userMessages.userButtonAria)}
+            data-testid="user-menu"
           >
-            <div className={styles.resetButtonPadding}>
-              {
+            {!iconOnlyMobile && (
+              <div className={styles.resetButtonPadding}>
                 <Inline space={1} alignY="center">
                   {profile.name.split(' ')[0]}
                 </Inline>
-              }
-            </div>
+              </div>
+            )}
           </Button>
         )}
       </Hidden>
@@ -62,8 +69,9 @@ export const UserButton = ({
           onClick={onClick}
           icon="chevronDown"
           aria-label={formatMessage(userMessages.userButtonAria)}
+          data-testid="user-menu"
         >
-          <div className={styles.resetButtonPadding}>
+          <div translate="no" className={styles.resetButtonPadding}>
             {isDelegation ? (
               <>
                 <div className={styles.delegationName}>{profile.name}</div>

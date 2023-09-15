@@ -1,8 +1,9 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
+import { Link } from 'react-router-dom'
+
 import { Box } from '@island.is/island-ui/core'
 import * as styles from './LinkButton.css'
-import { Link } from 'react-router-dom'
 
 interface Props {
   onClick?: () => void
@@ -11,7 +12,11 @@ interface Props {
   external?: boolean
 }
 
-const ButtonContent: FC<Props> = ({ onClick, active, children }) => (
+const ButtonContent: FC<React.PropsWithChildren<Props>> = ({
+  onClick,
+  active,
+  children,
+}) => (
   <Box
     display="flex"
     alignItems="center"
@@ -24,7 +29,7 @@ const ButtonContent: FC<Props> = ({ onClick, active, children }) => (
   </Box>
 )
 
-const LinkButton: FC<Props> = (props) => {
+const LinkButton: FC<React.PropsWithChildren<Props>> = (props) => {
   return props.external ? (
     <a
       href={props.url}

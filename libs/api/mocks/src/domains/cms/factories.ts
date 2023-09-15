@@ -60,12 +60,10 @@ export const sectionWithImage = factory<SystemMetadata<SectionWithImage>>({
   image: () => image(),
 })
 
-export const slice = simpleFactory(
-  (): Slice => {
-    const factory = faker.random.arrayElement([html, sectionWithImage])
-    return factory()
-  },
-)
+export const slice = simpleFactory((): Slice => {
+  const factory = faker.random.arrayElement([html, sectionWithImage])
+  return factory()
+})
 
 export const subArticle = factory<SubArticle>({
   id: () => faker.datatype.uuid(),
@@ -183,7 +181,7 @@ export const frontPageSlider = factory<FrontpageSlider>({
 
 export const featured = factory<Featured>({
   thing: () => referenceLink(),
-  title: ({ thing }) => title(),
+  title: (_) => title(),
   attention: () => faker.datatype.boolean(),
 })
 

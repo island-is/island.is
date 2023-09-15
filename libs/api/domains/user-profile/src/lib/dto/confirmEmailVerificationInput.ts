@@ -6,4 +6,8 @@ export class ConfirmEmailVerificationInput {
   @Field(() => String)
   @IsString()
   hash!: string
+
+  @Field(() => String)
+  @IsString()
+  email!: string
 }

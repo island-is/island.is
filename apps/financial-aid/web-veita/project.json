@@ -1,0 +1,112 @@
+{
+  "name": "financial-aid-web-veita",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/financial-aid/web-veita",
+  "projectType": "application",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/financial-aid/web-veita"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/financial-aid/web-veita"
+        },
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/financial-aid/web-veita/src/environments/environment.ts",
+              "with": "apps/financial-aid/web-veita/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      },
+      "dependsOn": ["build-custom-server"]
+    },
+    "build-custom-server": {
+      "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/financial-aid/web-veita",
+        "main": "apps/financial-aid/web-veita/server.ts",
+        "tsConfig": "apps/financial-aid/web-veita/tsconfig.server.json",
+        "maxWorkers": 2,
+        "assets": [],
+        "compiler": "tsc",
+        "target": "node"
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "financial-aid-web-veita:build",
+        "dev": true,
+        "customServerTarget": "financial-aid-web-veita:serve-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "financial-aid-web-veita:build:development",
+          "dev": true,
+          "customServerTarget": "financial-aid-web-veita:serve-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "financial-aid-web-veita:build:production",
+          "dev": false,
+          "customServerTarget": "financial-aid-web-veita:serve-custom-server:production"
+        }
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "financial-aid-web-veita:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "financial-aid-web-veita:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "financial-aid-web-veita:build-custom-server:production"
+        }
+      }
+    },
+    "export": {
+      "executor": "@nx/next:export",
+      "options": {
+        "buildTarget": "financial-aid-web-veita:build:production"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/financial-aid/web-veita/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "apps/financial-aid/web-veita/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": ["{workspaceRoot}/coverage/apps/financial-aid/web-veita"]
+    },
+    "docker-next": {}
+  },
+  "tags": ["scope:react-next"]
+}

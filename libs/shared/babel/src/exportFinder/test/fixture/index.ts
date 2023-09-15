@@ -2,16 +2,19 @@
 // Taken here: https://developer.mozilla.org/en-US/docs/web/javascript/reference/statements/export#syntax
 
 // Exporting individual features
-export let name1, name2 // also var, const
+export let name1 = 1
+export let name2 = 2
 export function functionName() {}
 export class ClassName {}
 
 // Export list
-const name3, name4
+const name3 = 3
+const name4 = 4
 export { name3, name4 }
 
 // Renaming exports
-const variable1, variable2
+const variable1 = 1
+const variable2 = 2
 export { variable1 as name5, variable2 as name6 }
 
 // Exporting destructured assignments with renaming

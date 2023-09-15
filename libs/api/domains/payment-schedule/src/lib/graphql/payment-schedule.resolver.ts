@@ -2,6 +2,7 @@ import { UseGuards } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { GetInitialScheduleInput, GetScheduleDistributionInput } from './dto'
 import {
+  PaymentScheduleCompanyConditions,
   PaymentScheduleConditions,
   PaymentScheduleDebts,
   PaymentScheduleDistribution,
@@ -20,9 +21,10 @@ import type { User } from '@island.is/auth-nest-tools'
 import { PaymentScheduleService } from '../payment-schedule.service'
 import { UpdateCurrentEmployerInput } from './dto/updateCurrentEmployerInput'
 import { UpdateCurrentEmployerResponse } from './models/updateCurrentEmployer.model'
+import { GetIsEmployerValidInput } from './dto/isEmployerValidInput'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.internal, ApiScope.internalProcuring)
 @Resolver()
 export class PaymentScheduleResolver {
   constructor(private paymentScheduleService: PaymentScheduleService) {}
@@ -36,6 +38,17 @@ export class PaymentScheduleResolver {
     @CurrentUser() user: User,
   ): Promise<PaymentScheduleConditions> {
     return await this.paymentScheduleService.getConditions(user)
+  }
+
+  @Query(() => PaymentScheduleCompanyConditions, {
+    name: 'paymentScheduleCompanyConditions',
+    nullable: true,
+  })
+  @Audit()
+  async companyConditions(
+    @CurrentUser() user: User,
+  ): Promise<PaymentScheduleCompanyConditions> {
+    return await this.paymentScheduleService.getCompanyConditions(user)
   }
 
   @Query(() => [PaymentScheduleDebts], {
@@ -80,6 +93,20 @@ export class PaymentScheduleResolver {
     input: GetScheduleDistributionInput,
   ): Promise<PaymentScheduleDistribution> {
     return await this.paymentScheduleService.getPaymentDistribution(user, input)
+  }
+
+  @Query(() => Boolean, {
+    name: 'isEmployerValid',
+  })
+  async employerIsValid(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => GetIsEmployerValidInput })
+    input: GetIsEmployerValidInput,
+  ): Promise<boolean> {
+    return await this.paymentScheduleService.isEmployerValid(
+      user,
+      input.companyId,
+    )
   }
 
   @Mutation(() => UpdateCurrentEmployerResponse, {

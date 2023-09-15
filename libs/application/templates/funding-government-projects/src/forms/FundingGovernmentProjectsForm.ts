@@ -1,15 +1,14 @@
 import {
   buildForm,
   buildSection,
-  Form,
-  FormModes,
   buildCustomField,
   buildTextField,
   buildMultiField,
   buildFileUploadField,
-  DefaultEvents,
   buildSubmitField,
 } from '@island.is/application/core'
+import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { Logo } from '../assets/Logo'
 import {
   section,
@@ -26,7 +25,7 @@ const FILE_SIZE_LIMIT = 10000000
 export const FundingGovernmentProjectsForm: Form = buildForm({
   id: 'FundingGovernmentProjectsForm',
   title: application.name,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   logo: Logo,
   children: [
     buildSection({
@@ -168,16 +167,11 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'submitted',
-      title: section.submitted,
-      children: [
-        buildCustomField({
-          id: 'submittedCustomField',
-          title: submitted.general.pageTitle,
-          component: 'Submitted',
-        }),
-      ],
+    buildFormConclusionSection({
+      alertTitle: submitted.general.alertTitle,
+      expandableHeader: submitted.labels.title,
+      expandableIntro: submitted.labels.intro,
+      expandableDescription: submitted.labels.bulletList,
     }),
   ],
 })

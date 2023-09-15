@@ -186,8 +186,8 @@ class BackendAPI extends RESTDataSource {
     return this.get(`staff/municipality/${municipalityId}`)
   }
 
-  getPersonalTaxReturn(): Promise<PersonalTaxReturnResponse> {
-    return this.get('personalTaxReturn')
+  getPersonalTaxReturn(id: string): Promise<PersonalTaxReturnResponse> {
+    return this.get(`personalTaxReturn/id/${id}`)
   }
 
   getDirectTaxPayments(): Promise<DirectTaxPaymentsResponse> {

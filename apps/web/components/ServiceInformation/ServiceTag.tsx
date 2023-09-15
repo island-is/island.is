@@ -12,9 +12,9 @@ import capitalize from 'lodash/capitalize'
 interface ServiceTagProps {
   category: string
   item: PricingCategory | DataCategory | TypeCategory | AccessCategory
-  namespace?: object
+  namespace?: Record<string, string>
 }
-export const ServiceTag: React.FC<ServiceTagProps> = ({
+export const ServiceTag: React.FC<React.PropsWithChildren<ServiceTagProps>> = ({
   category,
   item,
   namespace,

@@ -13,6 +13,7 @@ export type ResolverMap = Record<
   | Record<string, ((...args: any) => any) | undefined>
   | GraphQLScalarType
   | undefined
+  | any
 >
 
 export type NewResolvers<Resolvers> = {

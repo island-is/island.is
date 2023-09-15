@@ -1,0 +1,33 @@
+{
+  "name": "application-templates-no-debt-certificate",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/templates/no-debt-certificate/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/no-debt-certificate/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/no-debt-certificate"
+      ],
+      "options": {
+        "jestConfig": "libs/application/templates/no-debt-certificate/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/no-debt-certificate/src/**/*.{js,ts,tsx}'"
+      }
+    }
+  },
+  "tags": ["scope:application-system", "lib:application-system"]
+}

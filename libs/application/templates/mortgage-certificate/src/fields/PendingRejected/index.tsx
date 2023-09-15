@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import {
   Box,
   Text,
@@ -10,11 +10,13 @@ import {
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { MCEvents } from '../../lib/constants'
 import { useMutation } from '@apollo/client'
-import { PropertyDetail } from '../../types/schema'
+import { PropertyDetail } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
-export const PendingRejected: FC<FieldBaseProps> = ({ application }) => {
+export const PendingRejected: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { externalData } = application
   const { formatMessage } = useLocale()
 
@@ -60,7 +62,7 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application }) => {
   return (
     <Box>
       <Text variant="h2" marginBottom={4}>
-        Upplýsingar um eign
+        {formatMessage(m.selectRealEstateTitle)}
       </Text>
 
       <Box
@@ -70,7 +72,7 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application }) => {
         paddingY={1}
         marginBottom={5}
       >
-        <Text fontWeight="semiBold">Valin fasteign</Text>
+        <Text fontWeight="semiBold">{formatMessage(m.selectedProperty)}</Text>
         <Text>
           {propertyDetails?.propertyNumber}
           {' - '}
@@ -92,11 +94,15 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application }) => {
         />
       </Box>
       <Box display="flex" justifyContent={'flexEnd'}>
-        <Link href={formatMessage(m.mortgageCertificateInboxLink)}>
-          <Button variant="primary" icon="arrowForward">
-            {formatMessage(m.mysites)}
-          </Button>
-        </Link>
+        <Button
+          variant="primary"
+          icon="arrowForward"
+          onClick={() => {
+            window.open(formatMessage(m.mortgageCertificateInboxLink), '_blank')
+          }}
+        >
+          {formatMessage(m.mysites)}
+        </Button>
       </Box>
     </Box>
   )

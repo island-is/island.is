@@ -1,20 +1,26 @@
 import {
   buildForm,
   buildCustomField,
-  Form,
-  FormModes,
+  buildMultiField,
 } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 export const done: Form = buildForm({
   id: 'done',
   title: 'Umsókn móttekin',
-  mode: FormModes.APPLYING,
+  mode: FormModes.COMPLETED,
   children: [
-    buildCustomField({
-      id: 'overview',
-      component: 'Congratulations',
+    buildMultiField({
+      id: 'done',
       title: m.overviewDone,
+      children: [
+        buildCustomField({
+          id: 'overview',
+          component: 'Congratulations',
+          title: m.overviewDone,
+        }),
+      ],
     }),
   ],
 })

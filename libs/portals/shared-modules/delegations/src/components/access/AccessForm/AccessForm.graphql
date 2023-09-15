@@ -1,0 +1,16 @@
+mutation UpdateAuthDelegation($input: UpdateAuthDelegationInput!) {
+  updateAuthDelegation(input: $input) {
+    id
+    from {
+      nationalId
+    }
+    ... on AuthCustomDelegation {
+      scopes {
+        id
+        name
+        validTo
+        displayName
+      }
+    }
+  }
+}

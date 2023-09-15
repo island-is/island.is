@@ -1,0 +1,40 @@
+{
+  "name": "application-templates-driving-license",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/templates/driving-license/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/driving-license/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/application/templates/driving-license/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/driving-license"
+      ]
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/driving-license/src/**/*.{js,ts,tsx}'"
+      }
+    },
+    "schemas/codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/application/templates/driving-license/codegen.yml"
+      }
+    }
+  },
+  "tags": ["lib:application-system", "scope:application-system"]
+}

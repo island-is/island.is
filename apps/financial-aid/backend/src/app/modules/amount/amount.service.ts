@@ -5,7 +5,7 @@ import { AmountModel } from './models'
 
 import { DeductionFactorsService } from '../deductionFactors'
 
-import { Sequelize } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { Amount } from '@island.is/financial-aid/shared/lib'
 
 @Injectable()
@@ -26,7 +26,7 @@ export class AmountService {
             amount.deductionFactors.map(async (item) => {
               return await this.deductionFactorsService.create(
                 {
-                  amountId: amountResponse.getDataValue('id'),
+                  amountId: amountResponse.id,
                   description: item.description,
                   amount: item.amount,
                 },

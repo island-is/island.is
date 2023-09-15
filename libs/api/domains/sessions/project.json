@@ -1,0 +1,23 @@
+{
+  "name": "api-domains-sessions",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/api/domains/sessions/src",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/api/domains/sessions/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/sessions"],
+      "options": {
+        "jestConfig": "libs/api/domains/sessions/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": ["lib:api", "scope:api"]
+}

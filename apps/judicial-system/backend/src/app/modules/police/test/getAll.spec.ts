@@ -56,9 +56,7 @@ describe('PoliceController - Get all', () => {
     it('should request police files for the correct case', () => {
       expect(fetch).toHaveBeenCalledWith(
         expect.stringMatching(
-          new RegExp(
-            `.*/api/Rettarvarsla/GetDocumentListById/${originalAncestorCaseId}`,
-          ),
+          new RegExp(`.*/GetDocumentListById/${originalAncestorCaseId}`),
         ),
         expect.anything(),
       )
@@ -74,10 +72,32 @@ describe('PoliceController - Get all', () => {
       const mockFetch = fetch as jest.Mock
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: () => [
-          { rvMalSkjolMals_ID: 'Id 1', heitiSkjals: 'Name 1' },
-          { rvMalSkjolMals_ID: 'Id 2', heitiSkjals: 'Name 2' },
-        ],
+        json: async () => ({
+          malsnumer: '000-0000-0000',
+          skjol: [
+            {
+              dagsStofnad: '2020-01-01',
+              domsSkjalsFlokkun: 'dsf1',
+              rvMalSkjolMals_ID: 1,
+              heitiSkjals: 'Name 1.pdf',
+              malsnumer: 'malsnumer1',
+            },
+            {
+              dagsStofnad: '2020-01-01',
+              rvMalSkjolMals_ID: 2,
+              heitiSkjals: 'Name 2',
+              flokkurSkjals: 'flokkur2',
+              malsnumer: 'malsnumer2',
+            },
+          ],
+          malseinings: [
+            {
+              vettvangur: '',
+              brotFra: '',
+              upprunalegtMalsnumer: '',
+            },
+          ],
+        }),
       })
 
       then = await givenWhenThen(uuid(), theUser, theCase)
@@ -85,8 +105,18 @@ describe('PoliceController - Get all', () => {
 
     it('should return police case files', () => {
       expect(then.result).toEqual([
-        { id: 'Id 1', name: 'Name 1' },
-        { id: 'Id 2', name: 'Name 2' },
+        {
+          id: '1',
+          name: 'Name 1.pdf',
+          displayDate: '2020-01-01',
+          policeCaseNumber: 'malsnumer1',
+        },
+        {
+          id: '2',
+          name: 'Name 2.pdf',
+          displayDate: '2020-01-01',
+          policeCaseNumber: 'malsnumer2',
+        },
       ])
     })
   })
@@ -107,7 +137,7 @@ describe('PoliceController - Get all', () => {
     it('should throw not found exception', () => {
       expect(then.error).toBeInstanceOf(NotFoundException)
       expect(then.error.message).toBe(
-        `No police case files found for case ${originalAncestorCaseId}`,
+        `Police case for case ${originalAncestorCaseId} does not exist`,
       )
     })
   })

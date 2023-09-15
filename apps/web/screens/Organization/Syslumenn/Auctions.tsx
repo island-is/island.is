@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import {
   Box,
   NavigationItem,
-  Option,
   Select,
   Tag,
   Text,
@@ -35,16 +34,13 @@ import {
 import { Screen } from '../../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { OrganizationWrapper } from '@island.is/web/components'
-import { CustomNextError } from '@island.is/web/units/errors'
-import getConfig from 'next/config'
+import { OrganizationWrapper, Webreader } from '@island.is/web/components'
 import { useQuery } from '@apollo/client'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { useRouter } from 'next/router'
 import { theme } from '@island.is/island-ui/theme'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-
-const { publicRuntimeConfig } = getConfig()
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
 interface AuctionsProps {
   organizationPage: Query['getOrganizationPage']
@@ -318,63 +314,63 @@ const LOT_TYPES_OPTIONS: LotTypeOption[] = [
     value: 'okutaeki',
     lotType: LOT_TYPES.VEHICLE,
     auctionType: '',
-    excludeAuctionType: '',
+    excludeAuctionType: AUCTION_TYPES.SOLD,
   },
   {
     filterLabel: LOT_TYPES.AIRCRAFT,
     value: 'loftfar',
     lotType: LOT_TYPES.AIRCRAFT,
     auctionType: '...',
-    excludeAuctionType: '',
+    excludeAuctionType: AUCTION_TYPES.SOLD,
   },
   {
     filterLabel: LOT_TYPES.SHIP,
     value: 'skip',
     lotType: LOT_TYPES.SHIP,
     auctionType: '',
-    excludeAuctionType: '',
+    excludeAuctionType: AUCTION_TYPES.SOLD,
   },
   {
     filterLabel: LOT_TYPES.LIQUID_ASSETS,
     value: 'lausafjarmunir',
     lotType: LOT_TYPES.LIQUID_ASSETS,
     auctionType: '',
-    excludeAuctionType: '',
+    excludeAuctionType: AUCTION_TYPES.SOLD,
   },
   {
     filterLabel: LOT_TYPES.SHAREHOLDING,
     value: 'hlutafjareign',
     lotType: LOT_TYPES.SHAREHOLDING,
     auctionType: '',
-    excludeAuctionType: '',
+    excludeAuctionType: AUCTION_TYPES.SOLD,
   },
   {
     filterLabel: LOT_TYPES.SHAREHOLDING_PLC,
     value: 'hlutafjareign-i-einkahlutafelagi',
     lotType: LOT_TYPES.SHAREHOLDING_PLC,
     auctionType: '',
-    excludeAuctionType: '',
+    excludeAuctionType: AUCTION_TYPES.SOLD,
   },
   {
     filterLabel: LOT_TYPES.SHAREHOLDING_LLC,
     value: 'hlutafjareign-i-hlutafelagi',
     lotType: LOT_TYPES.SHAREHOLDING_LLC,
     auctionType: '',
-    excludeAuctionType: '',
+    excludeAuctionType: AUCTION_TYPES.SOLD,
   },
   {
     filterLabel: LOT_TYPES.STOCKS,
     value: 'verdbref',
     lotType: LOT_TYPES.STOCKS,
     auctionType: '...',
-    excludeAuctionType: '',
+    excludeAuctionType: AUCTION_TYPES.SOLD,
   },
   {
     filterLabel: LOT_TYPES.CLAIMS,
     value: 'krofurettindi',
     lotType: LOT_TYPES.CLAIMS,
     auctionType: '',
-    excludeAuctionType: '',
+    excludeAuctionType: AUCTION_TYPES.SOLD,
   },
   {
     filterLabel: AUCTION_TYPES.SOLD,
@@ -401,27 +397,25 @@ const Auctions: Screen<AuctionsProps> = ({
   namespace,
   subpage,
 }) => {
-  const { disableSyslumennPage: disablePage } = publicRuntimeConfig
-  if (disablePage === 'true') {
-    throw new CustomNextError(404, 'Not found')
-  }
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const { format } = useDateUtils()
   const Router = useRouter()
   const auctionDataFetched = new Date()
 
-  useContentfulId(organizationPage.id, subpage.id)
+  useContentfulId(organizationPage?.id, subpage?.id)
 
   const pageUrl = Router.pathname
-
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
       active:
-        primaryLink.url === pageUrl ||
+        primaryLink?.url === pageUrl ||
         childrenLinks.some((link) => link.url === pageUrl),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
@@ -491,11 +485,11 @@ const Auctions: Screen<AuctionsProps> = ({
     return (
       // Filter by office
       (officeLocation.office
-        ? auction.office.toLowerCase() === officeLocation.office.toLowerCase()
+        ? auction.office?.toLowerCase() === officeLocation.office.toLowerCase()
         : true) &&
       // Filter by location
       (officeLocation.location
-        ? auction.location.toLowerCase() ===
+        ? auction.location?.toLowerCase() ===
           officeLocation.location.toLowerCase()
         : true) &&
       // Filter by lot type
@@ -511,6 +505,8 @@ const Auctions: Screen<AuctionsProps> = ({
         ? auction.auctionType !== lotTypeOption.excludeAuctionType
         : true) &&
       // Filter by Date
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       (date ? sameDay(date, auctionDate) : true) &&
       // Filter by search query
       (auction.lotName?.toLowerCase().includes(query) ||
@@ -531,10 +527,9 @@ const Auctions: Screen<AuctionsProps> = ({
    * but has not been implemented yet. To accomplish this, we utilize Contentful to store
    * keywords to identify certain Auctions.
    */
-  const vakaAuctionKeywords = (n(
-    'auctionVakaAuctionKeywords',
-    '',
-  ) as string).split(';')
+  const vakaAuctionKeywords = (
+    n('auctionVakaAuctionKeywords', '') as string
+  ).split(';')
   const capitalAreaOffice = n(
     'auctionCapitalAreaOffice',
     'Sýslumaðurinn á höfuðborgarsvæðinu',
@@ -544,14 +539,14 @@ const Auctions: Screen<AuctionsProps> = ({
       return (
         keyword &&
         (auction.lotId === keyword ||
-          auction.lotName.includes(keyword) ||
-          auction.lotItems.includes(keyword))
+          auction.lotName?.includes(keyword) ||
+          auction.lotItems?.includes(keyword))
       )
     })
   }
   const auctionAtVaka = (auction: SyslumennAuction) => {
     return (
-      auction.office.toLowerCase() === capitalAreaOffice.toLowerCase() &&
+      auction.office?.toLowerCase() === capitalAreaOffice.toLowerCase() &&
       (auction.lotType === LOT_TYPES.VEHICLE ||
         auctionContainsVakaKeyword(auction))
     )
@@ -646,15 +641,19 @@ const Auctions: Screen<AuctionsProps> = ({
   return (
     <OrganizationWrapper
       pageTitle={subpage?.title ?? n('auctions', 'Uppboð')}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       organizationPage={organizationPage}
+      showReadSpeaker={false}
       breadcrumbItems={[
         {
           title: 'Ísland.is',
           href: linkResolver('homepage').href,
         },
         {
-          title: organizationPage.title,
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
+          title: organizationPage?.title || '',
+          href: linkResolver('organizationpage', [organizationPage?.slug ?? ''])
+            .href,
         },
       ]}
       navigationData={{
@@ -666,6 +665,12 @@ const Auctions: Screen<AuctionsProps> = ({
         <Text variant="h1" as="h2">
           {subpage?.title ?? n('auctions', 'Uppboð')}
         </Text>
+        <Webreader
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          readId={null}
+          readClass="rs_read"
+        />
       </Box>
       <GridContainer>
         <GridRow>
@@ -689,6 +694,8 @@ const Auctions: Screen<AuctionsProps> = ({
                 label: x.filterLabel,
                 value: x.slugValue,
               })).find((x) => x.value === officeLocation.slugValue)}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               onChange={({ value }: Option) => {
                 setOfficeLocationBySlugValue(String(value))
                 Router.replace(`#${value}`)
@@ -715,6 +722,8 @@ const Auctions: Screen<AuctionsProps> = ({
                 label: x.filterLabel,
                 value: x.value,
               })).find((x) => x.value === lotTypeOption.value)}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               onChange={({ value }: Option) =>
                 setLotTypeOptionByValue(String(value))
               }
@@ -740,8 +749,7 @@ const Auctions: Screen<AuctionsProps> = ({
               name="homestaySearchInput"
               placeholder={n('auctionFilterSearch', 'Leita eftir uppboði')}
               size="sm"
-              icon="search"
-              iconType="outline"
+              icon={{ name: 'search', type: 'outline' }}
               value={query}
               onChange={(event) => setQuery(event.target.value)}
             />
@@ -780,6 +788,8 @@ const Auctions: Screen<AuctionsProps> = ({
         {!loading &&
           !error &&
           filteredAuctions.slice(0, showCount).map((auction, index) => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             const auctionDate = new Date(auction.auctionDate)
             const auctionPetitioners = auction.petitioners?.split(',')
             const auctionRespondents = auction.respondent?.split(',')
@@ -828,7 +838,12 @@ const Auctions: Screen<AuctionsProps> = ({
                           'Fasteign nr. ',
                         )}
                         linkText={auction.lotId}
-                        href={`https://www.skra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2&selector=streetname&streetname=${auction.lotId}&submitbutton=Leita`}
+                        href={(
+                          n(
+                            'realEstateRegistryLinkTemplate',
+                            'https://fasteignaskra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2&selector=streetname&streetname={{ID}}&submitbutton=Leita',
+                          ) as string
+                        ).replace('{{ID}}', auction.lotId)}
                       />
                     )}
 
@@ -837,7 +852,12 @@ const Auctions: Screen<AuctionsProps> = ({
                     <LotLink
                       prefix={n('auctionVehicleNumberPrefix', 'Bílnúmer: ')}
                       linkText={auction.lotId}
-                      href={`https://www.samgongustofa.is/umferd/okutaeki/okutaekjaskra/uppfletting?vq=${auction.lotId}`}
+                      href={(
+                        n(
+                          'carRegistryLinkTemplate',
+                          'https://www.samgongustofa.is/umferd/okutaeki/okutaekjaskra/uppfletting?vq={{ID}}',
+                        ) as string
+                      ).replace('{{ID}}', auction.lotId)}
                     />
                   )}
 
@@ -849,7 +869,12 @@ const Auctions: Screen<AuctionsProps> = ({
                         'Númer loftfars: ',
                       )}
                       linkText={auction.lotId}
-                      href={`https://www.samgongustofa.is/flug/loftfor/loftfaraskra?aq=${auction.lotId}`}
+                      href={(
+                        n(
+                          'aircraftRegistryLinkTemplate',
+                          'https://www.samgongustofa.is/flug/loftfor/loftfaraskra?aq={{ID}}',
+                        ) as string
+                      ).replace('{{ID}}', auction.lotId)}
                     />
                   )}
 
@@ -858,15 +883,30 @@ const Auctions: Screen<AuctionsProps> = ({
                     <LotLink
                       prefix={n('auctionShipNumberPrefix', 'Númer skips: ')}
                       linkText={auction.lotId}
-                      href={`https://www.samgongustofa.is/siglingar/skrar-og-utgafa/skipaskra/uppfletting?sq=${auction.lotId}`}
+                      href={(
+                        n(
+                          'shipRegistryLinkTemplate',
+                          'https://www.samgongustofa.is/siglingar/skrar-og-utgafa/skipaskra/uppfletting?sq={{ID}}',
+                        ) as string
+                      ).replace('{{ID}}', auction.lotId)}
                     />
                   )}
 
                   {/* Auction extra info */}
                   {renderWhereAuctionTakesPlaceAndExtraInfo(auction)}
 
+                  {/* Publish Text - Auglysingatexti */}
+                  {auction.publishText && (
+                    <Text paddingBottom={1}>{auction.publishText}</Text>
+                  )}
+
                   {/* Respondents */}
-                  {renderRespondents(auction, auctionRespondents)}
+                  {renderRespondents(
+                    auction,
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore make web strict
+                    auctionRespondents,
+                  )}
 
                   {/* Petitioners */}
                   {auctionPetitioners &&
@@ -890,7 +930,11 @@ const Auctions: Screen<AuctionsProps> = ({
                     <Box>
                       {auction.lotItems && (
                         <DialogPrompt
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore make web strict
                           baseId={auction.lotId}
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore make web strict
                           title={auction.lotName}
                           description={auction.lotItems
                             .split('|')
@@ -966,7 +1010,8 @@ const LotLink = ({
   </LinkContext.Provider>
 )
 
-Auctions.getInitialProps = async ({ apolloClient, locale, pathname }) => {
+Auctions.getProps = async ({ apolloClient, locale, req }) => {
+  const pathname = safelyExtractPathnameFromUrl(req.url)
   const path = pathname?.split('/') ?? []
   const slug = path?.[path.length - 2] ?? 'syslumenn'
   const subSlug = path.pop() ?? 'uppbod'
@@ -1016,7 +1061,7 @@ Auctions.getInitialProps = async ({ apolloClient, locale, pathname }) => {
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
@@ -1034,4 +1079,5 @@ Auctions.getInitialProps = async ({ apolloClient, locale, pathname }) => {
 export default withMainLayout(Auctions, {
   headerButtonColorScheme: 'negative',
   headerColorScheme: 'white',
+  footerVersion: 'organization',
 })

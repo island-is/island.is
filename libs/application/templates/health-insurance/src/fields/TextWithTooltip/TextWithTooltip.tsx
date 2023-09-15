@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
-import { formatText, FieldBaseProps } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import * as styles from './TextWithTooltip.css'
@@ -9,7 +10,7 @@ export interface Props extends FieldBaseProps {
   description?: string
 }
 
-const TextWithTooltip: FC<Props> = ({
+const TextWithTooltip: FC<React.PropsWithChildren<Props>> = ({
   application,
   field,
   title = '',

@@ -1,222 +1,89 @@
-import { Injectable } from '@nestjs/common'
-import { ApplicationTypes } from '@island.is/application/core'
+import { Inject, Injectable } from '@nestjs/common'
+import { PerformActionResult } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../types'
-import {
-  ParentalLeaveService,
-  ReferenceTemplateService,
-  DocumentProviderOnboardingService,
-  HealthInsuranceService,
-  InstitutionCollaborationService,
-  ChildrenResidenceChangeService,
-  LoginServiceService,
-  FundingGovernmentProjectsService,
-  DrivingLicenseSubmissionService,
-  AccidentNotificationService,
-  PublicDebtPaymentPlanTemplateService,
-  GeneralPetitionService,
-  CriminalRecordSubmissionService,
-  DataProtectionComplaintService,
-  PSignSubmissionService,
-  ExamplePaymentActionsService,
-  ComplaintsToAlthingiOmbudsmanTemplateService,
-  MortgageCertificateSubmissionService,
-  DrivingSchoolConfirmationService,
-} from './templates'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { TEMPLATE_API_SERVICES } from './template-api.constants'
+import { BaseTemplateApiService } from './base-template-api.service'
+import { coreErrorMessages } from '@island.is/application/core'
 
-interface ApplicationApiAction {
+export interface ApplicationApiAction<Params = unknown> {
   templateId: string
-  type: string
-  props: TemplateApiModuleActionProps
+  actionId: string
+  action: string
+  props: TemplateApiModuleActionProps<Params>
 }
-
-type PerformActionResult =
-  | {
-      success: true
-      response: unknown
-    }
-  | {
-      success: false
-      error: string
-    }
 
 @Injectable()
 export class TemplateAPIService {
   constructor(
-    private readonly parentalLeaveService: ParentalLeaveService,
-    private readonly referenceTemplateService: ReferenceTemplateService,
-    private readonly documentProviderOnboardingService: DocumentProviderOnboardingService,
-    private readonly healthInsuranceService: HealthInsuranceService,
-    private readonly institutionApplicationService: InstitutionCollaborationService,
-    private readonly childrenResidenceChangeService: ChildrenResidenceChangeService,
-    private readonly loginServiceService: LoginServiceService,
-    private readonly fundingGovernmentProjectsService: FundingGovernmentProjectsService,
-    private readonly drivingLicenseSubmissionService: DrivingLicenseSubmissionService,
-    private readonly accidentNotificationService: AccidentNotificationService,
-    private readonly publicDebtPaymentPlanService: PublicDebtPaymentPlanTemplateService,
-    private readonly generalPetitionService: GeneralPetitionService,
-    private readonly criminalRecordSubmissionService: CriminalRecordSubmissionService,
-    private readonly dataProtectionComplaintService: DataProtectionComplaintService,
-    private readonly pSignSubmissionService: PSignSubmissionService,
-    private readonly examplePaymentActionsService: ExamplePaymentActionsService,
-    private readonly complaintsToAlthingiOmbudsman: ComplaintsToAlthingiOmbudsmanTemplateService,
-    private readonly mortgageCertificateSubmissionService: MortgageCertificateSubmissionService,
-    private readonly drivingSchoolConfirmationService: DrivingSchoolConfirmationService,
-  ) {}
-
-  private async tryRunningActionOnService(
-    service:
-      | ReferenceTemplateService
-      | ParentalLeaveService
-      | DocumentProviderOnboardingService
-      | HealthInsuranceService
-      | InstitutionCollaborationService
-      | ChildrenResidenceChangeService
-      | LoginServiceService
-      | FundingGovernmentProjectsService
-      | DrivingLicenseSubmissionService
-      | AccidentNotificationService
-      | PublicDebtPaymentPlanTemplateService
-      | GeneralPetitionService
-      | CriminalRecordSubmissionService
-      | DataProtectionComplaintService
-      | PSignSubmissionService
-      | ExamplePaymentActionsService
-      | ComplaintsToAlthingiOmbudsmanTemplateService
-      | MortgageCertificateSubmissionService
-      | DrivingSchoolConfirmationService,
-    action: ApplicationApiAction,
-  ): Promise<PerformActionResult> {
-    // No index signature with a parameter of type 'string' was found on type
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    if (typeof service[action.type] === 'function') {
-      try {
-        // No index signature with a parameter of type 'string' was found on type
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const response = await service[action.type](action.props)
-
-        return {
-          success: true,
-          response,
-        }
-      } catch (e) {
-        return {
-          success: false,
-          error: (e as Error).message,
-        }
-      }
-    }
-
-    return {
-      success: false,
-      error: 'action.invalid',
-    }
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject(TEMPLATE_API_SERVICES)
+    private services: Array<BaseTemplateApiService>,
+  ) {
+    this.logger = logger.child({ context: 'TemplateAPIService' })
   }
 
   async performAction(
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
-    switch (action.templateId) {
-      case ApplicationTypes.EXAMPLE:
-        return this.tryRunningActionOnService(
-          this.referenceTemplateService,
-          action,
-        )
-      case ApplicationTypes.PARENTAL_LEAVE:
-        return this.tryRunningActionOnService(this.parentalLeaveService, action)
-      case ApplicationTypes.INSTITUTION_COLLABORATION:
-        return this.tryRunningActionOnService(
-          this.institutionApplicationService,
-          action,
-        )
-      case ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING:
-        return this.tryRunningActionOnService(
-          this.documentProviderOnboardingService,
-          action,
-        )
-      case ApplicationTypes.HEALTH_INSURANCE:
-        return this.tryRunningActionOnService(
-          this.healthInsuranceService,
-          action,
-        )
-      case ApplicationTypes.CHILDREN_RESIDENCE_CHANGE:
-        return this.tryRunningActionOnService(
-          this.childrenResidenceChangeService,
-          action,
-        )
-      case ApplicationTypes.LOGIN_SERVICE:
-        return this.tryRunningActionOnService(this.loginServiceService, action)
-      case ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS:
-        return this.tryRunningActionOnService(
-          this.fundingGovernmentProjectsService,
-          action,
-        )
-      case ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL:
-        return this.tryRunningActionOnService(
-          this.drivingLicenseSubmissionService,
-          action,
-        )
-      case ApplicationTypes.DRIVING_LICENSE:
-        return this.tryRunningActionOnService(
-          this.drivingLicenseSubmissionService,
-          action,
-        )
-      case ApplicationTypes.ACCIDENT_NOTIFICATION:
-        return this.tryRunningActionOnService(
-          this.accidentNotificationService,
-          action,
-        )
-      case ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN:
-        return this.tryRunningActionOnService(
-          this.publicDebtPaymentPlanService,
-          action,
-        )
-      case ApplicationTypes.GENERAL_PETITION:
-        return this.tryRunningActionOnService(
-          this.generalPetitionService,
-          action,
-        )
-      case ApplicationTypes.CRIMINAL_RECORD:
-        return this.tryRunningActionOnService(
-          this.criminalRecordSubmissionService,
-          action,
-        )
-      case ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT:
-        return this.tryRunningActionOnService(
-          this.dataProtectionComplaintService,
-          action,
-        )
-      case ApplicationTypes.P_SIGN:
-        return this.tryRunningActionOnService(
-          this.pSignSubmissionService,
-          action,
-        )
-      case ApplicationTypes.EXAMPLE_PAYMENT:
-        return this.tryRunningActionOnService(
-          this.examplePaymentActionsService,
-          action,
-        )
-      case ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN:
-        return this.tryRunningActionOnService(
-          this.complaintsToAlthingiOmbudsman,
-          action,
-        )
-      case ApplicationTypes.MORTGAGE_CERTIFICATE:
-        return this.tryRunningActionOnService(
-          this.mortgageCertificateSubmissionService,
-          action,
-        )
-      case ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION:
-        return this.tryRunningActionOnService(
-          this.drivingSchoolConfirmationService,
-          action,
-        )
+    const serviceId = this.getServiceId(action)
+
+    const service = this.services.find((x) => x.serviceId === serviceId)
+
+    if (service) {
+      const result = await service.performAction(
+        action,
+        this.handleError.bind(this),
+      )
+
+      return result
     }
 
+    const noTemplateError = new TemplateApiError(
+      {
+        title: 'Invalid template api',
+        summary: 'No api registered with: ' + serviceId,
+      },
+      500,
+    )
+    this.logger.error(noTemplateError)
     return {
       success: false,
-      error: 'invalid template',
+      error: noTemplateError,
     }
+  }
+
+  /**
+   * Catches all errors and returns them as Template Api Error to display on the client
+   * If error is 500 or unexpected it logs the actual error and returns as a default TemplateApiErrorProblem
+   * @param action
+   * @param error
+   * @returns TemplateApiError
+   */
+  handleError(action: ApplicationApiAction, error: Error): TemplateApiError {
+    const problemError: TemplateApiError =
+      'problem' in error
+        ? (error as TemplateApiError)
+        : new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
+
+    if (problemError?.problem?.status && problemError?.problem?.status >= 500) {
+      this.logger.error(`PerformAction error`, {
+        ...error,
+        stack: error?.stack,
+        templateId: action.templateId,
+        actionId: action.actionId,
+        applicationId: action.props.application.id,
+      })
+    }
+    return problemError
+  }
+
+  getServiceId(action: ApplicationApiAction): string {
+    if (action.actionId.includes('.')) {
+      return action.actionId.split('.')[0]
+    }
+    return action.templateId
   }
 }

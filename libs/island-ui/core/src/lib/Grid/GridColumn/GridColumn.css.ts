@@ -1,6 +1,7 @@
 import { styleVariants, style } from '@vanilla-extract/css'
 import mapValues from 'lodash/mapValues'
 import { themeUtils, Theme, theme } from '@island.is/island-ui/theme'
+import { ResponsiveProp } from '../../../utils/responsiveProp'
 
 const ColumnRange = [
   '12/12',
@@ -86,6 +87,7 @@ const ColumnRange = [
 const orderRange = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const
 export type Order = typeof orderRange[number]
 export type GridColumns = typeof ColumnRange[number] | '0'
+export type SpanType = ResponsiveProp<GridColumns>
 type Columns = Record<GridColumns, string>
 type Orders = Record<Order, string>
 type Breakpoint = keyof Theme['breakpoints']
@@ -149,7 +151,7 @@ export const orderMd = makeOrder('md')
 export const orderLg = makeOrder('lg')
 export const orderXl = makeOrder('xl')
 
-// Treat gotcha:
+// Vanilla-extract gotcha:
 // The style order matters.
 // `base` has to be at the bottom because it uses a media query.
 export const base = style({

@@ -16,24 +16,14 @@ module.exports = {
 
   down: (queryInterface, Sequelize) => {
     Promise.all([
-      queryInterface.addColumn(
-        'application_events',
-        'amount',
-        {
-          type: Sequelize.INTEGER,
-          allowNull: true,
-        },
-        { transaction: t },
-      ),
-      queryInterface.addColumn(
-        'application_events',
-        'staff_comment',
-        {
-          type: Sequelize.STRING,
-          allowNull: true,
-        },
-        { transaction: t },
-      ),
+      queryInterface.addColumn('application_events', 'amount', {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      }),
+      queryInterface.addColumn('application_events', 'staff_comment', {
+        type: Sequelize.STRING,
+        allowNull: true,
+      }),
     ])
   },
 }

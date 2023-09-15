@@ -1,12 +1,8 @@
-import { UserManagerSettings, WebStorageStateStore } from 'oidc-client'
-import { storageFactory } from './storageFactory'
+import { storageFactory } from '@island.is/shared/utils'
+import { UserManagerSettings, WebStorageStateStore } from 'oidc-client-ts'
 
-export interface AuthSettings extends Omit<UserManagerSettings, 'scope'> {
-  /**
-   * Make client id required.
-   */
-  client_id: string
-
+export interface AuthSettings
+  extends Omit<UserManagerSettings, 'scope' | 'redirect_uri'> {
   /*
    * Used to create redirect uris. Should not end with slash.
    * Default: window.location.origin
@@ -14,18 +10,26 @@ export interface AuthSettings extends Omit<UserManagerSettings, 'scope'> {
   baseUrl?: string
 
   /*
-   * Used to bind React Router callback route and to build a default value for `redirect_uri` with baseUrl. Should be
+   * Used to handle login callback and to build a default value for `redirect_uri` with baseUrl. Should be
    * relative from baseUrl and start with a "/".
    * Default: "/auth/callback"
    */
   redirectPath?: string
 
   /**
-   * Used to bind React Router callback route and to build a default value for `silent_redirect_uri` with baseUrl.
+   * Used to handle login callback and to build a default value for `silent_redirect_uri` with baseUrl.
    * Should be relative from baseUrl and start with a "/".
    * Default: "/auth/callback-silent"
    */
   redirectPathSilent?: string
+
+  /**
+   * Used to support login flow triggered by the authorisation server or another party. Should be relative from baseUrl
+   * and start with a "/".
+   * More information: https://openid.net/specs/openid-connect-standard-1_0-21.html#client_Initiate_login
+   * Default: undefined
+   */
+  initiateLoginPath?: string
 
   /**
    * Prefix for storing user access tokens in session storage.
@@ -43,12 +47,12 @@ export interface AuthSettings extends Omit<UserManagerSettings, 'scope'> {
   switchUserRedirectUrl?: string
 
   /**
-   * Wich PATH on the AUTHORITY to use for checking the session expiry.
+   * Which PATH on the AUTHORITY to use for checking the session expiry.
    */
   checkSessionPath?: string
 }
 
-export const mergeAuthSettings = (settings: AuthSettings) => {
+export const mergeAuthSettings = (settings: AuthSettings): AuthSettings => {
   const baseUrl = settings.baseUrl ?? window.location.origin
   const redirectPath = settings.redirectPath ?? '/auth/callback'
   const redirectPathSilent =
@@ -61,19 +65,20 @@ export const mergeAuthSettings = (settings: AuthSettings) => {
     baseUrl,
     redirectPath,
     redirectPathSilent,
-    authority: 'https://innskra.island.is',
+    automaticSilentRenew: false,
     checkSessionPath: '/connect/sessioninfo',
     silent_redirect_uri: `${baseUrl}${redirectPathSilent}`,
-    redirect_uri: `${baseUrl}${redirectPath}`,
     post_logout_redirect_uri: baseUrl,
     response_type: 'code',
-    revokeAccessTokenOnSignout: true,
+    revokeTokenTypes: ['refresh_token'],
+    revokeTokensOnSignout: true,
     loadUserInfo: true,
     monitorSession: onIdsDomain,
     userStore: new WebStorageStateStore({
       store: storageFactory(() => sessionStorage),
       prefix: settings.userStorePrefix,
     }),
+    mergeClaims: true,
     ...settings,
   }
 }

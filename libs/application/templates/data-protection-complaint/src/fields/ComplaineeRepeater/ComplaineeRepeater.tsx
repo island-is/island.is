@@ -1,4 +1,4 @@
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import React, { FC, useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
@@ -15,15 +15,13 @@ export type ComplaineeField = {
   countryOfOperation: string
 }
 
-export const ComplaineeRepeater: FC<FieldBaseProps> = ({
-  application,
-  field,
-  errors,
-}) => {
+export const ComplaineeRepeater: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application, field, errors }) => {
   const { formatMessage } = useLocale()
   const { answers } = application
   const { id } = field
-  const { fields, append, remove } = useFieldArray<ComplaineeField>({
+  const { fields, append, remove } = useFieldArray({
     name: id,
   })
 

@@ -9,7 +9,7 @@ import { CaseService } from '../case.service'
 
 @Injectable()
 export class CaseExistsGuard implements CanActivate {
-  constructor(private caseService: CaseService) {}
+  constructor(private readonly caseService: CaseService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()

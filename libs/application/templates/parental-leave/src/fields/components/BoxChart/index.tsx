@@ -4,10 +4,18 @@ import cn from 'classnames'
 import { Box, Text } from '@island.is/island-ui/core'
 
 import * as styles from './BoxChart.css'
-import { Application, formatText, FormText } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { Application, FormText } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 
-type boxStyle = 'blue' | 'green' | 'gray' | 'greenWithLines' | 'grayWithLines'
+type boxStyle =
+  | 'blue'
+  | 'green'
+  | 'gray'
+  | 'purple'
+  | 'greenWithLines'
+  | 'grayWithLines'
+  | 'purpleWithLines'
 
 export interface BoxChartKey {
   label: FormText
@@ -59,7 +67,9 @@ const BoxChart = ({
     <Box>
       {titleLabel && (
         <Text variant="h4" as="p">
-          {titleLabel}
+          {typeof titleLabel === 'function'
+            ? formatMessage(titleLabel(application) ?? '')
+            : formatMessage(titleLabel)}
         </Text>
       )}
       <Box
@@ -75,10 +85,14 @@ const BoxChart = ({
                 [styles.blue]: style === 'blue',
                 [styles.green]: style === 'green' || style === 'greenWithLines',
                 [styles.gray]: style === 'gray' || style === 'grayWithLines',
+                [styles.purple]:
+                  style === 'purple' || style === 'purpleWithLines',
               })}
               key={index}
             >
-              {(style === 'greenWithLines' || style === 'grayWithLines') && (
+              {(style === 'greenWithLines' ||
+                style === 'grayWithLines' ||
+                style === 'purpleWithLines') && (
                 <Box className={styles.dashedLines} />
               )}
             </Box>
@@ -101,6 +115,8 @@ const BoxChart = ({
                   marginRight={1}
                   className={cn(styles.bullet, {
                     [styles.blue]: style === 'blue',
+                    [styles.purple]:
+                      style === 'purple' || style === 'purpleWithLines',
                     [styles.green]:
                       style === 'green' || style === 'greenWithLines',
                     [styles.gray]:
@@ -108,7 +124,8 @@ const BoxChart = ({
                   })}
                 >
                   {(style === 'greenWithLines' ||
-                    style === 'grayWithLines') && (
+                    style === 'grayWithLines' ||
+                    style === 'purpleWithLines') && (
                     <Box className={styles.dashedLines} />
                   )}
                 </Box>

@@ -78,10 +78,16 @@ function CodeCard({
           ]}
         >
           <Box
+            component="div"
             marginRight={[2, 4]}
             textAlign={['left', 'right', 'left', 'right']}
           >
-            <Text variant="h3" color="roseTinted400">
+            <Text
+              variant="h3"
+              as="pre"
+              title="Afsláttarkóði"
+              color="roseTinted400"
+            >
               {code}
             </Text>
             {codeSubText && <Text>{codeSubText}</Text>}

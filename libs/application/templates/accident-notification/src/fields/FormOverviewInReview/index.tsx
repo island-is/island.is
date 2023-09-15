@@ -1,8 +1,5 @@
-import {
-  DefaultEvents,
-  FieldBaseProps,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
@@ -21,7 +18,7 @@ interface FormOverviewInReviewProps {
 }
 
 export const FormOverviewInReview: FC<
-  FormOverviewInReviewProps & FieldBaseProps
+  React.PropsWithChildren<FormOverviewInReviewProps & FieldBaseProps>
 > = ({ application, field, refetch, goToScreen }) => {
   const isAssignee = field?.props?.isAssignee || false
   const { formatMessage } = useLocale()
@@ -36,12 +33,10 @@ export const FormOverviewInReview: FC<
     '',
   ) as string
 
-  const [rejectModalVisibility, setRejectModalVisibility] = useState<boolean>(
-    false,
-  )
-  const [approveModalVisibility, setApproveModalVisibility] = useState<boolean>(
-    false,
-  )
+  const [rejectModalVisibility, setRejectModalVisibility] =
+    useState<boolean>(false)
+  const [approveModalVisibility, setApproveModalVisibility] =
+    useState<boolean>(false)
   const [comment, setComment] = useState<string>('')
 
   const shouldReview =

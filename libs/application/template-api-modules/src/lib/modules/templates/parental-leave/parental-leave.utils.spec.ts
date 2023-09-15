@@ -4,21 +4,26 @@ import {
   ApplicationWithAttachments as Application,
   ApplicationStatus,
   ApplicationTypes,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import {
+  ADOPTION,
   getSelectedChild,
   NO,
   ParentalRelations,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
+  PERMANENT_FOSTER_CARE,
   YES,
 } from '@island.is/application/templates/parental-leave'
 
 import {
   getPersonalAllowance,
-  getEmployer,
   getPensionFund,
   getPrivatePensionFundRatio,
   getRightsCode,
   getRatio,
+  getEmployer,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
 
@@ -27,6 +32,7 @@ const createApplicationBase = (): Application => ({
   answers: {},
   applicant: '',
   assignees: [],
+  applicantActors: [],
   attachments: {},
   created: new Date(),
   modified: new Date(),
@@ -135,6 +141,7 @@ describe('getPersonalAllowance', () => {
   })
 })
 
+// TODO: Update with multiple employers
 describe('getEmployer', () => {
   it('should return applicant if self employed', () => {
     const expectedEmail = 'applicant@test.test'
@@ -143,10 +150,12 @@ describe('getEmployer', () => {
     set(application.answers, 'applicant.email', expectedEmail)
     set(application, 'applicant', expectedNationalRegistryId)
 
-    expect(getEmployer(application, true)).toEqual({
-      email: expectedEmail,
-      nationalRegistryId: expectedNationalRegistryId,
-    })
+    expect(getEmployer(application, true)).toEqual([
+      {
+        email: expectedEmail,
+        nationalRegistryId: expectedNationalRegistryId,
+      },
+    ])
   })
 
   it('should return employer if applicant is employee', () => {
@@ -160,10 +169,67 @@ describe('getEmployer', () => {
       expectedNationalRegistryId,
     )
 
-    expect(getEmployer(application)).toEqual({
-      email: expectedEmail,
-      nationalRegistryId: expectedNationalRegistryId,
-    })
+    expect(getEmployer(application)).toEqual([
+      {
+        email: expectedEmail,
+        nationalRegistryId: expectedNationalRegistryId,
+      },
+    ])
+  })
+
+  it('should return employer array if applicant is employee', () => {
+    const expectedEmail1 = 'employer@test.test'
+    const expectedNationalRegistryId1 = '1234567889'
+
+    set(application.answers, 'employers[0].email', expectedEmail1)
+    set(application.answers, 'employers[0].ratio', '100')
+    set(
+      application.answers,
+      'employers[0].companyNationalRegistryId',
+      expectedNationalRegistryId1,
+    )
+
+    expect(getEmployer(application)).toEqual([
+      {
+        email: expectedEmail1,
+        nationalRegistryId: expectedNationalRegistryId1,
+      },
+    ])
+  })
+
+  it('should return multiple employers if applicant is employee', () => {
+    const expectedEmail1 = 'employer@test.test'
+    const expectedNationalRegistryId1 = '1234567889'
+
+    const expectedEmail2 = 'employer2@test2.test2'
+    const expectedNationalRegistryId2 = '0987654119'
+
+    set(application.answers, 'employers[0].email', expectedEmail1)
+    set(application.answers, 'employers[0].ratio', '100')
+    set(
+      application.answers,
+      'employers[0].companyNationalRegistryId',
+      expectedNationalRegistryId1,
+    )
+
+    set(application.answers, 'employers[1].email', expectedEmail2)
+    set(application.answers, 'employers[1].ratio', '100')
+    set(
+      application.answers,
+      'employers[1].companyNationalRegistryId',
+      expectedNationalRegistryId2,
+    )
+
+    expect(getEmployer(application)).toEqual([
+      {
+        email: expectedEmail1,
+        nationalRegistryId: expectedNationalRegistryId1,
+      },
+      {
+        email: expectedEmail2,
+        nationalRegistryId: expectedNationalRegistryId2,
+      },
+    ])
   })
 })
 
@@ -172,6 +238,7 @@ describe('getPensionFund', () => {
     const expectedId = '123'
 
     set(application.answers, 'payments.pensionFund', expectedId)
+    set(application.answers, 'applicationType.option', PARENTAL_LEAVE)
 
     expect(getPensionFund(application)).toEqual({
       id: expectedId,
@@ -180,6 +247,8 @@ describe('getPensionFund', () => {
   })
 
   it('should throw an error if required pension fund is not provided', () => {
+    set(application.answers, 'applicationType.option', PARENTAL_LEAVE)
+
     expect(() => {
       getPensionFund(application)
     }).toThrowError()
@@ -198,6 +267,27 @@ describe('getPensionFund', () => {
     const expectedId = 'asdf'
 
     set(application.answers, 'payments.privatePensionFund', expectedId)
+    set(application.answers, 'applicationType.option', PARENTAL_LEAVE)
+
+    expect(getPensionFund(application, true)).toEqual({
+      id: expectedId,
+      name: '',
+    })
+  })
+
+  it('should return constant pension fund id for grant application', () => {
+    const expectedId = apiConstants.pensionFunds.noPensionFundId
+    set(application.answers, 'applicationType.option', PARENTAL_GRANT)
+
+    expect(getPensionFund(application)).toEqual({
+      id: expectedId,
+      name: '',
+    })
+  })
+
+  it('should return constant private pension fund id for grant application', () => {
+    const expectedId = apiConstants.pensionFunds.noPrivatePensionFundId
+    set(application.answers, 'applicationType.option', PARENTAL_GRANT_STUDENTS)
 
     expect(getPensionFund(application, true)).toEqual({
       id: expectedId,
@@ -218,6 +308,7 @@ describe('getPrivatePensionFundRatio', () => {
       'payments.privatePensionFundPercentage',
       expectedValue.toString(),
     )
+    set(application.answers, 'applicationType.option', PARENTAL_LEAVE)
 
     expect(getPrivatePensionFundRatio(application)).toBe(expectedValue)
   })
@@ -230,9 +321,24 @@ describe('getRightsCode', () => {
       createExternalDataChild(true, '2022-03-01'),
     ])
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'no')
+    set(base, 'answers.isSelfEmployed', 'no')
 
     const expected = 'M-L-GR'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+
+  it('should return M-Æ-L-GR for a primary parent with employer', () => {
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(true, '2022-03-01'),
+    ])
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.isSelfEmployed', 'no')
+    set(base, 'answers.noChildrenFound.typeOfApplication', ADOPTION)
+
+    const expected = 'M-Æ-L-GR'
     const result = getRightsCode(base)
 
     expect(result).toBe(expected)
@@ -243,13 +349,149 @@ describe('getRightsCode', () => {
       createExternalDataChild(true, '2022-03-01'),
     ])
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'yes')
+    set(base, 'answers.isSelfEmployed', 'yes')
 
     const expected = 'M-S-GR'
     const result = getRightsCode(base)
 
     expect(result).toBe(expected)
   })
+
+  it('should return M-FS for a primary parent (grant)', () => {
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(true, '2022-03-01'),
+    ])
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.applicationType.option', PARENTAL_GRANT)
+
+    const expected = 'M-FS'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+
+  it('should return F-FS for a secondary parent (grant)', () => {
+    const primaryParentNationalRegistryId = '1111111119'
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(
+        false,
+        '2022-03-01',
+        primaryParentNationalRegistryId,
+      ),
+    ])
+    set(base, 'externalData.person.data', {
+      spouse: {
+        fullName: 'Spouse Spousson',
+        nationalId: primaryParentNationalRegistryId,
+      },
+      genderCode: '1',
+    })
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.applicationType.option', PARENTAL_GRANT)
+
+    const expected = 'F-FS'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+
+  it('should return FO-FÓ-FS for a secondary parent with same gender as primary parent (grant) and foster care', () => {
+    const primaryParentNationalRegistryId = '1111111119'
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(
+        false,
+        '2022-03-01',
+        primaryParentNationalRegistryId,
+      ),
+    ])
+    set(
+      base,
+      'externalData.children.data.children[0].primaryParentGenderCode',
+      '1',
+    )
+    set(
+      base,
+      'externalData.children.data.children[0].primaryParentTypeOfApplication',
+      PERMANENT_FOSTER_CARE,
+    )
+    set(base, 'externalData.person.data', {
+      spouse: {
+        fullName: 'Spouse Spousson',
+        nationalId: primaryParentNationalRegistryId,
+      },
+      genderCode: '1',
+    })
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.applicationType.option', PARENTAL_GRANT)
+
+    const expected = 'FO-FÓ-FS'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+
+  it('should return M-FSN for a primary parent (student grant)', () => {
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(true, '2022-03-01'),
+    ])
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.applicationType.option', PARENTAL_GRANT_STUDENTS)
+
+    const expected = 'M-FSN'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+
+  it('should return M-FÓ-FSN for a primary parent (student grant) and foster care', () => {
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(true, '2022-03-01'),
+    ])
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.applicationType.option', PARENTAL_GRANT_STUDENTS)
+    set(
+      base,
+      'answers.noChildrenFound.typeOfApplication',
+      PERMANENT_FOSTER_CARE,
+    )
+
+    const expected = 'M-FÓ-FSN'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+
+  it('should return F-FSN for a secondary parent (grant)', () => {
+    const primaryParentNationalRegistryId = '1111111119'
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(
+        false,
+        '2022-03-01',
+        primaryParentNationalRegistryId,
+      ),
+    ])
+    set(base, 'externalData.person.data', {
+      spouse: {
+        fullName: 'Spouse Spousson',
+        nationalId: primaryParentNationalRegistryId,
+      },
+      genderCode: '1',
+    })
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.applicationType.option', PARENTAL_GRANT_STUDENTS)
+
+    const expected = 'F-FSN'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+
   // TODO:
   // it('should return M-S-GR-SJ for a primary parent both self employed and with an employer', () => {})
 
@@ -269,11 +511,10 @@ describe('getRightsCode', () => {
       spouse: {
         fullName: 'Spouse Spousson',
         nationalId: primaryParentNationalRegistryId,
-        familyRelation: 'spouse',
       },
     })
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'no')
+    set(base, 'answers.isSelfEmployed', 'no')
 
     const expected = 'FO-L-GR'
     const result = getRightsCode(base)
@@ -291,17 +532,61 @@ describe('getRightsCode', () => {
       spouse: {
         fullName: 'Spouse Spousson',
         nationalId: primaryParentNationalRegistryId,
-        familyRelation: 'spouse',
       },
     })
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'yes')
+    set(base, 'answers.isSelfEmployed', 'yes')
 
     const expected = 'FO-S-GR'
     const result = getRightsCode(base)
 
     expect(result).toBe(expected)
   })
+
+  it('should return FO-FS for parent with custody (grant)', () => {
+    const primaryParentNationalRegistryId = '1111111119'
+
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(false, '2022-03-01'),
+    ])
+    set(base, 'externalData.person.data', {
+      spouse: {
+        fullName: 'Spouse Spousson',
+        nationalId: primaryParentNationalRegistryId,
+      },
+    })
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.applicationType.option', PARENTAL_GRANT)
+
+    const expected = 'FO-FS'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+
+  it('should return FO-FSN for parent with custody (student grant)', () => {
+    const primaryParentNationalRegistryId = '1111111119'
+
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(false, '2022-03-01'),
+    ])
+    set(base, 'externalData.person.data', {
+      spouse: {
+        fullName: 'Spouse Spousson',
+        nationalId: primaryParentNationalRegistryId,
+      },
+    })
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.applicationType.option', PARENTAL_GRANT_STUDENTS)
+
+    const expected = 'FO-FSN'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+
   // TODO:
   // it('should return FO-L-GR-SJ for secondary parent that is both self employed and employed with custody', () => {})
 
@@ -312,7 +597,7 @@ describe('getRightsCode', () => {
       createExternalDataChild(false, '2022-03-01'),
     ])
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'no')
+    set(base, 'answers.isSelfEmployed', 'no')
 
     const expected = 'FO-FL-L-GR'
     const result = getRightsCode(base)
@@ -325,9 +610,134 @@ describe('getRightsCode', () => {
       createExternalDataChild(false, '2022-03-01'),
     ])
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'yes')
+    set(base, 'answers.isSelfEmployed', 'yes')
 
     const expected = 'FO-FL-S-GR'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+
+  it('should return F-FL-FS for parent with no custody (grant)', () => {
+    const primaryParentNationalRegistryId = '1111111119'
+    const spouseNationalRegistryId = '1111111118'
+
+    const base = createApplicationBase()
+
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(
+        false,
+        '2022-03-01',
+        primaryParentNationalRegistryId,
+      ),
+    ])
+    set(base, 'externalData.person.data', {
+      spouse: {
+        fullName: 'Spouse Spousson',
+        nationalId: spouseNationalRegistryId,
+      },
+      genderCode: '1',
+    })
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.applicationType.option', PARENTAL_GRANT)
+
+    const expected = 'F-FL-FS'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+
+  it('should return F-Æ-FL-FS for parent with no custody (grant) and adoption', () => {
+    const primaryParentNationalRegistryId = '1111111119'
+    const spouseNationalRegistryId = '1111111118'
+
+    const base = createApplicationBase()
+
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(
+        false,
+        '2022-03-01',
+        primaryParentNationalRegistryId,
+      ),
+    ])
+    set(
+      base,
+      'externalData.children.data.children[0].primaryParentGenderCode',
+      '2',
+    )
+    set(
+      base,
+      'externalData.children.data.children[0].primaryParentTypeOfApplication',
+      ADOPTION,
+    )
+    set(base, 'externalData.person.data', {
+      spouse: {
+        fullName: 'Spouse Spousson',
+        nationalId: spouseNationalRegistryId,
+      },
+      genderCode: '1',
+    })
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.applicationType.option', PARENTAL_GRANT)
+
+    const expected = 'F-Æ-FL-FS'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+
+  it('should return F-FL-FSN for parent with no custody (student grant)', () => {
+    const primaryParentNationalRegistryId = '1111111119'
+    const spouseNationalRegistryId = '1111111118'
+
+    const base = createApplicationBase()
+
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(
+        false,
+        '2022-03-01',
+        primaryParentNationalRegistryId,
+      ),
+    ])
+    set(base, 'externalData.person.data', {
+      spouse: {
+        fullName: 'Spouse Spousson',
+        nationalId: spouseNationalRegistryId,
+      },
+      genderCode: '1',
+    })
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.applicationType.option', PARENTAL_GRANT_STUDENTS)
+
+    const expected = 'F-FL-FSN'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+
+  it('should return FO-FL-FS for parent with no custody (grant)', () => {
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(false, '2022-03-01'),
+    ])
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.applicationType.option', PARENTAL_GRANT)
+
+    const expected = 'FO-FL-FS'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+
+  it('should return FO-FL-FSN for parent with no custody (student grant)', () => {
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(false, '2022-03-01'),
+    ])
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.applicationType.option', PARENTAL_GRANT_STUDENTS)
+
+    const expected = 'FO-FL-FSN'
     const result = getRightsCode(base)
 
     expect(result).toBe(expected)
@@ -350,12 +760,11 @@ describe('getRightsCode', () => {
       spouse: {
         fullName: 'Spouse Spousson',
         nationalId: primaryParentNationalRegistryId,
-        familyRelation: 'spouse',
       },
       genderCode: '0',
     })
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'no')
+    set(base, 'answers.isSelfEmployed', 'no')
 
     const expected = 'FO-L-GR'
     const result = getRightsCode(base)
@@ -378,12 +787,11 @@ describe('getRightsCode', () => {
       spouse: {
         fullName: 'Spouse Spousson',
         nationalId: primaryParentNationalRegistryId,
-        familyRelation: 'spouse',
       },
       genderCode: '1',
     })
     set(base, 'answers.selectedChild', '0')
-    set(base, 'answers.employer.isSelfEmployed', 'no')
+    set(base, 'answers.isSelfEmployed', 'no')
 
     const expected = 'F-L-GR'
     const result = getRightsCode(base)

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useDebounce } from 'react-use'
 import { useLazyQuery } from '@apollo/client'
@@ -13,23 +13,18 @@ import {
 import { GET_SUPPORT_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
+  ContentLanguage,
   GetSupportSearchResultsQuery,
   GetSupportSearchResultsQueryVariables,
   SearchableContentTypes,
   SupportQna,
-  Tag,
 } from '@island.is/web/graphql/schema'
-
-interface SearchInputProps {
-  title?: string
-  size?: AsyncSearchProps['size']
-  logoTitle?: string
-  logoUrl?: string
-  colored?: boolean
-  initialInputValue?: string
-  placeholder?: string
-  tags?: Tag[]
-}
+import {
+  getSlugPart,
+  getServiceWebSearchTagQuery,
+} from '@island.is/web/screens/ServiceWeb/utils'
+import { useI18n } from '@island.is/web/i18n'
+import { trackSearchQuery } from '@island.is/plausible'
 
 const unused = ['.', '?', ':', ',', ';', '!', '-', '_', '#', '~', '|']
 
@@ -46,12 +41,23 @@ export const ModifySearchTerms = (searchTerms: string) =>
       return sum ? `${sum}|${add}` : add
     }, '')
 
+interface SearchInputProps {
+  title?: string
+  size?: AsyncSearchProps['size']
+  logoTitle?: string
+  logoUrl?: string
+  colored?: boolean
+  initialInputValue?: string
+  placeholder?: string
+  nothingFoundText?: string
+}
+
 export const SearchInput = ({
   colored = false,
   size = 'large',
   initialInputValue = '',
   placeholder = 'Leitaðu á þjónustuvefnum',
-  tags,
+  nothingFoundText = 'Ekkert fannst',
 }: SearchInputProps) => {
   const [searchTerms, setSearchTerms] = useState<string>('')
   const [activeItem, setActiveItem] = useState<SupportQna>()
@@ -60,6 +66,12 @@ export const SearchInput = ({
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
+  const { activeLocale } = useI18n()
+
+  const institutionSlug = getSlugPart(
+    Router.asPath,
+    activeLocale === 'is' ? 2 : 3,
+  )
 
   const [fetch, { loading, data }] = useLazyQuery<
     GetSupportSearchResultsQuery,
@@ -73,7 +85,7 @@ export const SearchInput = ({
   useDebounce(
     () => {
       if (searchTerms) {
-        const queryString = ModifySearchTerms(searchTerms)
+        const queryString = searchTerms
 
         if (searchTerms.trim() === lastSearchTerms.trim()) {
           updateOptions()
@@ -81,9 +93,12 @@ export const SearchInput = ({
           fetch({
             variables: {
               query: {
+                highlightResults: true,
+                useQuery: 'suggestions',
+                language: activeLocale as ContentLanguage,
                 queryString,
                 types: [SearchableContentTypes['WebQna']],
-                tags,
+                ...getServiceWebSearchTagQuery(institutionSlug),
               },
             },
           })
@@ -112,46 +127,48 @@ export const SearchInput = ({
     const categorySlug = category?.slug ?? ''
 
     if (organizationSlug && categorySlug) {
-      Router.push({
-        pathname: `${
-          linkResolver('serviceweb').href
-        }/${organizationSlug}/${categorySlug}`,
-        query: { q: slug },
-      })
+      trackSearchQuery(searchTerms, 'Service Web Suggestion')
+      Router.push(
+        linkResolver('supportqna', [organizationSlug, categorySlug, slug]).href,
+      )
     }
   }
 
   const updateOptions = () => {
-    const options = (
-      (data?.searchResults?.items as Array<SupportQna>) || []
-    ).map((item, index) => ({
-      label: item.title,
-      value: item.slug,
-      component: ({ active }) => {
-        if (active) {
-          setActiveItem(item)
-        }
+    const options = ((data?.searchResults?.items as Array<SupportQna>) || [])
+      .filter(
+        (item) => item.category?.slug && item.organization?.slug && item.slug,
+      )
+      .map((item, index) => ({
+        label: item.title,
+        value: item.slug,
+        component: ({ active }: { active: boolean }) => {
+          if (active) {
+            setActiveItem(item)
+          }
 
-        return (
-          <Box
-            key={index}
-            cursor="pointer"
-            outline="none"
-            padding={2}
-            role="button"
-            background={active ? 'white' : 'blue100'}
-            onClick={() => {
-              setOptions([])
-              onSelect(item)
-            }}
-          >
-            <Text as="span">{item.title}</Text>
-          </Box>
-        )
-      },
-    }))
+          return (
+            <Box
+              key={index}
+              cursor="pointer"
+              outline="none"
+              padding={2}
+              role="button"
+              background={active ? 'white' : 'blue100'}
+              onClick={() => {
+                setOptions([])
+                onSelect(item)
+              }}
+            >
+              <span dangerouslySetInnerHTML={{ __html: item.title }} />
+            </Box>
+          )
+        },
+      }))
 
     setOptions(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       options.length
         ? options
         : [
@@ -165,7 +182,7 @@ export const SearchInput = ({
                   disabled
                   onClick={() => null}
                 >
-                  <Text as="span">Ekkert fannst</Text>
+                  <Text as="span">{nothingFoundText}</Text>
                 </Box>
               ),
             },
@@ -200,8 +217,21 @@ export const SearchInput = ({
           return onSelect(activeItem)
         }
 
+        const defaultInstitutionSlug =
+          activeLocale === 'en' ? 'digital-iceland' : 'stafraent-island'
+
+        let slug = institutionSlug
+
+        if (
+          institutionSlug === 'leit' ||
+          institutionSlug === 'search' ||
+          !institutionSlug
+        ) {
+          slug = defaultInstitutionSlug
+        }
+
         Router.push({
-          pathname: linkResolver('servicewebsearch').href,
+          pathname: linkResolver('serviceweborganizationsearch', [slug]).href,
           query: { q: value },
         })
       }}

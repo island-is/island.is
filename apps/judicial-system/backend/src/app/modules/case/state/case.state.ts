@@ -1,65 +1,136 @@
 import { ForbiddenException } from '@nestjs/common'
 
-import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
+import {
+  CaseAppealState,
+  CaseState,
+  CaseTransition,
+} from '@island.is/judicial-system/types'
 
-interface Rule {
-  from: CaseState[]
-  to: CaseState
+interface CaseStates {
+  state?: CaseState
+  appealState?: CaseAppealState
 }
 
-const caseStateMachine: Map<CaseTransition, Rule> = new Map([
+interface Rule {
+  fromStates: CaseState[]
+  fromAppealStates: (undefined | CaseAppealState)[]
+  to: CaseStates
+}
+
+export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
   [
     CaseTransition.OPEN,
     {
-      from: [CaseState.NEW],
-      to: CaseState.DRAFT,
+      fromStates: [CaseState.NEW],
+      fromAppealStates: [undefined],
+      to: { state: CaseState.DRAFT },
     },
   ],
   [
     CaseTransition.SUBMIT,
     {
-      from: [CaseState.DRAFT],
-      to: CaseState.SUBMITTED,
+      fromStates: [CaseState.DRAFT],
+      fromAppealStates: [undefined],
+      to: { state: CaseState.SUBMITTED },
     },
   ],
   [
     CaseTransition.RECEIVE,
     {
-      from: [CaseState.SUBMITTED],
-      to: CaseState.RECEIVED,
-    },
-  ],
-  [
-    CaseTransition.DISMISS,
-    {
-      from: [CaseState.RECEIVED],
-      to: CaseState.DISMISSED,
-    },
-  ],
-  [
-    CaseTransition.ACCEPT,
-    {
-      from: [CaseState.RECEIVED],
-      to: CaseState.ACCEPTED,
-    },
-  ],
-  [
-    CaseTransition.REJECT,
-    {
-      from: [CaseState.RECEIVED],
-      to: CaseState.REJECTED,
+      fromStates: [CaseState.SUBMITTED],
+      fromAppealStates: [undefined],
+      to: { state: CaseState.RECEIVED },
     },
   ],
   [
     CaseTransition.DELETE,
     {
-      from: [
+      fromStates: [
         CaseState.NEW,
         CaseState.DRAFT,
         CaseState.SUBMITTED,
         CaseState.RECEIVED,
       ],
-      to: CaseState.DELETED,
+      fromAppealStates: [undefined],
+      to: { state: CaseState.DELETED },
+    },
+  ],
+  [
+    CaseTransition.ACCEPT,
+    {
+      fromStates: [CaseState.RECEIVED],
+      fromAppealStates: [
+        undefined,
+        CaseAppealState.APPEALED,
+        CaseAppealState.RECEIVED,
+        CaseAppealState.COMPLETED,
+      ],
+      to: { state: CaseState.ACCEPTED },
+    },
+  ],
+  [
+    CaseTransition.REJECT,
+    {
+      fromStates: [CaseState.RECEIVED],
+      fromAppealStates: [
+        undefined,
+        CaseAppealState.APPEALED,
+        CaseAppealState.RECEIVED,
+        CaseAppealState.COMPLETED,
+      ],
+      to: { state: CaseState.REJECTED },
+    },
+  ],
+  [
+    CaseTransition.DISMISS,
+    {
+      fromStates: [CaseState.RECEIVED],
+      fromAppealStates: [
+        undefined,
+        CaseAppealState.APPEALED,
+        CaseAppealState.RECEIVED,
+        CaseAppealState.COMPLETED,
+      ],
+      to: { state: CaseState.DISMISSED },
+    },
+  ],
+  [
+    CaseTransition.REOPEN,
+    {
+      fromStates: [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED],
+      fromAppealStates: [
+        undefined,
+        CaseAppealState.APPEALED,
+        CaseAppealState.RECEIVED,
+        CaseAppealState.COMPLETED,
+      ],
+      to: { state: CaseState.RECEIVED },
+    },
+  ],
+  // APPEAL, RECEIVE_APPEAL and COMPLETE_APPEAL transitions do not affect the case state,
+  // but they should be blocked if case is not in a state that allows for this transition to take place
+  [
+    CaseTransition.APPEAL,
+    {
+      fromStates: [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED],
+      fromAppealStates: [undefined],
+      to: { appealState: CaseAppealState.APPEALED },
+    },
+  ],
+  [
+    CaseTransition.RECEIVE_APPEAL,
+    {
+      fromStates: [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED],
+      fromAppealStates: [CaseAppealState.APPEALED],
+      to: { appealState: CaseAppealState.RECEIVED },
+    },
+  ],
+  [
+    CaseTransition.COMPLETE_APPEAL,
+    {
+      fromStates: [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED],
+      fromAppealStates: [CaseAppealState.RECEIVED],
+      to: { appealState: CaseAppealState.COMPLETED },
     },
   ],
 ])
@@ -67,14 +138,30 @@ const caseStateMachine: Map<CaseTransition, Rule> = new Map([
 export const transitionCase = function (
   transition: CaseTransition,
   currentState: CaseState,
-): CaseState {
+  currentAppealState?: CaseAppealState,
+): CaseStates {
   const rule = caseStateMachine.get(transition)
 
-  if (!rule?.from.includes(currentState)) {
+  if (
+    !rule?.fromStates.some((state) => state === currentState) ||
+    !rule?.fromAppealStates.some(
+      (appealState) => appealState === (currentAppealState ?? undefined),
+    )
+  ) {
     throw new ForbiddenException(
-      `The transition ${transition} cannot be applied to a case in state ${currentState}`,
+      `The transition ${transition} cannot be applied to a case in state ${currentState} and appeal state ${currentAppealState}`,
     )
   }
 
-  return rule.to
+  const states: CaseStates = {}
+
+  if (rule.to?.state) {
+    states.state = rule.to.state
+  }
+
+  if (rule.to?.appealState) {
+    states.appealState = rule.to.appealState
+  }
+
+  return states
 }

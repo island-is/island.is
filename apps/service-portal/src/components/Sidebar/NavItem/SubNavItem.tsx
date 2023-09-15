@@ -1,10 +1,9 @@
-import { Box, Icon, Text } from '@island.is/island-ui/core'
-import { ServicePortalPath } from '@island.is/service-portal/core'
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { Link } from 'react-router-dom'
+import { Box, Icon } from '@island.is/island-ui/core'
 import * as styles from '../NavItem/NavItem.css'
 interface Props {
-  path?: ServicePortalPath
+  path?: string
   active: boolean
   enabled?: boolean
   collapsed?: boolean
@@ -13,7 +12,7 @@ interface Props {
   first?: boolean
 }
 
-const SubNavItemContent: FC<Props> = ({
+const SubNavItemContent: FC<React.PropsWithChildren<Props>> = ({
   active,
   onClick,
   enabled,
@@ -44,7 +43,7 @@ const SubNavItemContent: FC<Props> = ({
   </Box>
 )
 
-const SubNavItem: FC<Props> = (props) => {
+const SubNavItem: FC<React.PropsWithChildren<Props>> = (props) => {
   return props.external ? (
     <a
       href={props.path}

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import cn from 'classnames'
 import { Text } from '../Text/Text'
 import { Icon } from '../IconRC/Icon'
@@ -6,6 +6,7 @@ import { Tooltip } from '../Tooltip/Tooltip'
 import { Box } from '../Box/Box'
 import { InputBackgroundColor } from '../Input/types'
 import * as styles from './Checkbox.css'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 export interface CheckboxProps {
   name?: string
@@ -18,13 +19,15 @@ export interface CheckboxProps {
   hasError?: boolean
   errorMessage?: string
   value?: string
+  defaultChecked?: boolean
   strong?: boolean
   filled?: boolean
   large?: boolean
   backgroundColor?: InputBackgroundColor
   labelVariant?: 'default' | 'small' | 'medium'
-  /** subLabel can only be used if the 'large' prop set to true */
-  subLabel?: string
+  /** subLabel and rightContent can only be used if the 'large' prop set to true */
+  subLabel?: React.ReactNode
+  rightContent?: React.ReactNode
 }
 
 interface AriaError {
@@ -38,18 +41,21 @@ export const Checkbox = ({
   labelVariant = 'default',
   name,
   id = name,
-  checked,
   disabled,
   onChange,
   tooltip,
   hasError,
   errorMessage,
   value,
+  checked: checkedFromProps,
+  defaultChecked,
   large,
   strong,
   backgroundColor,
+  dataTestId,
   filled = false,
-}: CheckboxProps) => {
+  rightContent,
+}: CheckboxProps & TestSupport) => {
   const errorId = `${id}-error`
   const ariaError = hasError
     ? {
@@ -60,6 +66,24 @@ export const Checkbox = ({
 
   const background =
     backgroundColor && backgroundColor === 'blue' ? 'blue100' : undefined
+
+  // If defaultCheck is specified, we will use it as our initial state.
+  const [internalChecked, setInternalChecked] = useState(
+    defaultChecked !== undefined ? defaultChecked : false,
+  )
+
+  // We need to know whether the component is controlled or not.
+  const isCheckedControlled = checkedFromProps !== undefined
+  const checked = isCheckedControlled ? checkedFromProps : internalChecked
+
+  const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!isCheckedControlled) {
+      // If the component is not controlled, we need to update its internal state.
+      setInternalChecked(event.target.checked)
+    }
+
+    onChange?.(event)
+  }
 
   return (
     <Box
@@ -75,7 +99,8 @@ export const Checkbox = ({
         name={name}
         disabled={disabled}
         id={id}
-        onChange={onChange}
+        data-testid={dataTestId}
+        onChange={onChangeHandler}
         value={value}
         checked={checked}
         {...(ariaError as AriaError)}
@@ -94,7 +119,11 @@ export const Checkbox = ({
             [styles.checkboxDisabled]: disabled,
           })}
         >
-          <Icon icon="checkmark" color={checked ? 'white' : 'transparent'} />
+          <Icon
+            icon="checkmark"
+            color={checked ? 'white' : 'transparent'}
+            ariaHidden
+          />
         </div>
         <span className={styles.labelText}>
           <Text
@@ -123,6 +152,7 @@ export const Checkbox = ({
             </Text>
           )}
         </span>
+        {rightContent && large && <div>{rightContent}</div>}
         {tooltip && (
           <div
             className={cn(styles.tooltipContainer, {

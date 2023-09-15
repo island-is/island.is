@@ -1,9 +1,9 @@
-<!-- gitbook-ignore -->
-
 # judicial-system-formatters
 
 This library was generated with [Nx](https://nx.dev).
 
 ## Running unit tests
 
-Run `nx test judicial-system-formatters` to execute the unit tests via [Jest](https://jestjs.io).
+```bash
+yarn test judicial-system-formatters
+```

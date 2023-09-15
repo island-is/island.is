@@ -1,6 +1,7 @@
 import { JwtStrategy } from './jwt.strategy'
 import { Request } from 'express'
 import { JwtPayload } from './jwt.payload'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 describe('JwtStrategy#validate', () => {
   let jwtStrategy: JwtStrategy
@@ -25,9 +26,9 @@ describe('JwtStrategy#validate', () => {
       nationalId: '1234567890',
       scope: ['test-scope-1'],
       client_id: 'test-client',
+      delegationType: [AuthDelegationType.Custom],
       actor: {
         nationalId: '1234564321',
-        delegationType: 'Custom',
         scope: ['test-scope-2'],
       },
     }
@@ -77,9 +78,9 @@ describe('JwtStrategy#validate', () => {
       nationalId: '1234567890',
       scope: ['test-scope-1'],
       client_id: 'test-client',
+      delegationType: [AuthDelegationType.Custom],
       actor: {
         nationalId: '1234565555',
-        delegationType: 'Custom',
         scope: ['test-scope-2'],
       },
       act: {
@@ -89,14 +90,14 @@ describe('JwtStrategy#validate', () => {
         },
       },
     }
-    const request = ({
+    const request = {
       headers: {
         authorization: 'authorization',
         'user-agent': 'test user agent',
         'x-forwarded-for': '2.2.2.2, 3.3.3.3',
       },
       ip: '1.1.1.1',
-    } as unknown) as Request
+    } as unknown as Request
 
     // Act
     const user = await jwtStrategy.validate(request, payload)
@@ -119,9 +120,9 @@ describe('JwtStrategy#validate', () => {
       nationalId: '1234567890',
       scope: ['test-scope-1'],
       client_id: 'test-client',
+      delegationType: [AuthDelegationType.Custom],
       actor: {
         nationalId: '1234564321',
-        delegationType: 'Custom',
         scope: ['test-scope-2'],
       },
     }

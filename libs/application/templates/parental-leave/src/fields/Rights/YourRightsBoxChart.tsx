@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { Application } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
@@ -20,17 +20,12 @@ interface YourRightsBoxChartProps {
   showDisclaimer?: boolean
 }
 
-const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
-  application,
-  showDisclaimer = false,
-}) => {
+const YourRightsBoxChart: FC<
+  React.PropsWithChildren<YourRightsBoxChartProps>
+> = ({ application, showDisclaimer = false }) => {
   const { formatMessage } = useLocale()
-  const {
-    isRequestingRights,
-    requestDays,
-    isGivingRights,
-    giveDays,
-  } = useApplicationAnswers(application)
+  const { isRequestingRights, requestDays, isGivingRights, giveDays } =
+    useApplicationAnswers(application)
   const maxDays = maxDaysToGiveOrReceive
 
   const requestDaysStringKey =

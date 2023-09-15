@@ -16,7 +16,10 @@ import { ApplicationModel } from '../../application/models/application.model'
   tableName: 'direct_tax_payment',
   timestamps: true,
 })
-export class DirectTaxPaymentModel extends Model<DirectTaxPayment> {
+export class DirectTaxPaymentModel extends Model<
+  DirectTaxPaymentModel,
+  DirectTaxPayment
+> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

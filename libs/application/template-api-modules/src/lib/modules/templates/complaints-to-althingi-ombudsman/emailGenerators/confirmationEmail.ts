@@ -19,8 +19,8 @@ export const generateConfirmationEmail: ConfirmationEmail = (
   const { application } = props
   const answers = application.answers as ComplaintsToAlthingiOmbudsmanAnswers
   const applicant = {
-    name: answers.information.name,
-    address: answers.information.email,
+    name: answers.applicant.name,
+    address: answers.applicant.email,
   }
 
   const subject = `Tilkynning móttekin.`
@@ -57,8 +57,7 @@ export const generateConfirmationEmail: ConfirmationEmail = (
         {
           component: 'Copy',
           context: {
-            copy:
-              'Umboðsmaður Alþingis verður í sambandi við þig ef frekari upplýsingar vantar.',
+            copy: 'Umboðsmaður Alþingis verður í sambandi við þig ef frekari upplýsingar vantar.',
           },
         },
       ],

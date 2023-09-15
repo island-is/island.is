@@ -3,20 +3,24 @@ import {
   buildDescriptionField,
   buildMultiField,
   buildSection,
-  Form,
-  FormModes,
   buildExternalDataProvider,
   buildDataProviderItem,
   buildCustomField,
   buildSubmitField,
-  DefaultEvents,
 } from '@island.is/application/core'
+import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import { m } from '../lib/messages'
+import {
+  IdentityApi,
+  NationalRegistryRealEstateApi,
+  UserProfileApi,
+  SyslumadurPaymentCatalogApi,
+} from '../dataProviders'
 
 export const MortgageCertificateForm: Form = buildForm({
   id: 'MortgageCertificateFormDraft',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   children: [
     buildSection({
@@ -30,26 +34,22 @@ export const MortgageCertificateForm: Form = buildForm({
           checkboxLabel: m.externalDataAgreement,
           dataProviders: [
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
+              provider: IdentityApi,
               title: m.nationalRegistryTitle,
               subTitle: m.nationalRegistrySubTitle,
             }),
             buildDataProviderItem({
-              id: 'nationalRegistryRealEstate',
-              type: 'NationalRegistryRealEstateProvider',
+              provider: NationalRegistryRealEstateApi,
               title: m.nationalRegistryRealEstateTitle,
               subTitle: m.nationalRegistryRealEstateSubTitle,
             }),
             buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
+              provider: UserProfileApi,
               title: m.userProfileInformationTitle,
               subTitle: m.userProfileInformationSubTitle,
             }),
             buildDataProviderItem({
-              id: 'payment',
-              type: 'FeeInfoProvider',
+              provider: SyslumadurPaymentCatalogApi,
               title: '',
             }),
           ],

@@ -1,0 +1,11 @@
+{
+  "data": {
+    "createPresignedPost": {
+      "url": "https://example.com",
+      "fields": {
+        "key": "value"
+      },
+      "__typename": "PresignedPost"
+    }
+  }
+}

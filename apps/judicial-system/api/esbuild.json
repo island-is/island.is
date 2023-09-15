@@ -14,8 +14,10 @@
     "fastify-swagger",
     "@nestjs/mongoose",
     "@nestjs/typeorm",
+    "@nestjs/axios",
     "dd-trace",
     "express",
+    "util-deprecate",
     "http-errors",
     "graphql",
     "pg",
@@ -26,6 +28,7 @@
     "pg-native",
     "form-data",
     "@island.is/login",
+    "@mikro-orm/core",
     "@protobufjs/aspromise",
     "@protobufjs/base64",
     "@protobufjs/codegen",
@@ -35,7 +38,8 @@
     "@protobufjs/inquire",
     "@protobufjs/path",
     "@protobufjs/pool",
-    "@protobufjs/utf8"
+    "@protobufjs/utf8",
+    "safer-buffer"
   ],
   "keepNames": true
 }

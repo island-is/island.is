@@ -1,8 +1,5 @@
-import {
-  FieldBaseProps,
-  getErrorViaPath,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
@@ -12,11 +9,9 @@ import { complaint, sharedFields } from '../../lib/messages'
 const calcWordCount = (value: string) =>
   value.split(' ').filter((item) => item).length
 
-export const ComplaintDescription: FC<FieldBaseProps> = ({
-  application,
-  field,
-  errors,
-}) => {
+export const ComplaintDescription: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application, field, errors }) => {
   const { formatMessage } = useLocale()
   const value = getValueViaPath(application.answers, field.id) as
     | string

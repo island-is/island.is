@@ -1,23 +1,24 @@
 import { Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { DrivingLicenseBookService } from '@island.is/api/domains/driving-license-book'
-import { DrivingSchool, DrivingSchoolType } from './types'
+import { DrivingSchool } from './types'
 import { getValueViaPath } from '@island.is/application/core'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 
 @Injectable()
-export class DrivingSchoolConfirmationService {
+export class DrivingSchoolConfirmationService extends BaseTemplateApiService {
   constructor(
     private readonly drivingLicenseBookService: DrivingLicenseBookService,
-  ) {}
+  ) {
+    super(ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION)
+  }
 
   async submitApplication({
     application: { answers, externalData },
     auth,
   }: TemplateApiModuleActionProps) {
     // TODO: Confirmation email
-    const nationalId = getValueViaPath<string>(answers, 'nationalId')
-    const email = getValueViaPath<string>(answers, 'email')
-
     const studentBookId = getValueViaPath<string>(answers, 'studentBookId')
     const confirmation = getValueViaPath<{ date: string; school: string }>(
       answers,
@@ -26,20 +27,20 @@ export class DrivingSchoolConfirmationService {
     if (!confirmation || !studentBookId) {
       throw new Error(`Missing date and school`)
     }
-    const schoolNationalId = (externalData.employee.data as DrivingSchool)
-      .nationalId
+    const schoolNationalId = (
+      externalData.drivingSchoolForEmployee.data as DrivingSchool
+    ).nationalId
 
     try {
-      const result = await this.drivingLicenseBookService.createDrivingSchoolTestResult(
-        {
+      const result =
+        await this.drivingLicenseBookService.createDrivingSchoolTestResult({
           bookId: studentBookId,
           schoolTypeId: parseInt(confirmation?.school),
           schoolNationalId: schoolNationalId,
           schoolEmployeeNationalId: auth.nationalId,
           createdOn: confirmation?.date,
           comments: '',
-        },
-      )
+        })
 
       if (!result) {
         throw new Error(`Application submission failed`)

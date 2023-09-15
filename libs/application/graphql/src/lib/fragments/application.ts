@@ -7,6 +7,7 @@ export const ApplicationFragment = gql`
     modified
     applicant
     assignees
+    applicantActors
     state
     actionCard {
       title
@@ -15,6 +16,18 @@ export const ApplicationFragment = gql`
         label
         variant
       }
+      pendingAction {
+        displayStatus
+        content
+        title
+      }
+      history {
+        log
+        date
+      }
+      deleteButton
+      draftTotalSteps
+      draftFinishedSteps
     }
     typeId
     answers

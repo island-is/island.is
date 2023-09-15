@@ -1,0 +1,27 @@
+query FlightLegs($input: AirDiscountSchemeFlightLegsInput!) {
+  airDiscountSchemeFlightLegs(input: $input) {
+    id
+    travel
+    airline
+    cooperation
+    originalPrice
+    discountPrice
+    financialState
+    flight {
+      id
+      bookingDate
+      userInfo {
+        age
+        gender
+        postalCode
+      }
+    }
+  }
+}
+
+mutation ConfirmInvoice($input: AirDiscountSchemeConfirmInvoiceInput!) {
+  confirmAirDiscountSchemeInvoice(input: $input) {
+    id
+    financialState
+  }
+}

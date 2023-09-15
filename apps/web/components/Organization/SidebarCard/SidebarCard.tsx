@@ -16,7 +16,9 @@ interface SidebarCardProps {
   sidebarCard: Card
 }
 
-export const SidebarCard: React.FC<SidebarCardProps> = ({ sidebarCard }) => (
+export const SidebarCard: React.FC<
+  React.PropsWithChildren<SidebarCardProps>
+> = ({ sidebarCard }) => (
   <Box marginTop={4} border="standard" borderRadius="large" padding={4}>
     <GridContainer>
       <GridRow>
@@ -34,9 +36,9 @@ export const SidebarCard: React.FC<SidebarCardProps> = ({ sidebarCard }) => (
           offset={['1/12', '1/12', '0']}
           span={['8/12', '8/12', '12/12']}
         >
-          <Text variant="small">{sidebarCard.content}</Text>
+          <Text variant="small">{sidebarCard.contentString}</Text>
           <Box display="flex" justifyContent="flexEnd" paddingTop={2}>
-            <Link href={sidebarCard.link.url}>
+            <Link href={sidebarCard.link?.url ?? ''}>
               <Button
                 icon="arrowForward"
                 iconType="filled"
@@ -44,7 +46,7 @@ export const SidebarCard: React.FC<SidebarCardProps> = ({ sidebarCard }) => (
                 variant="text"
                 size="small"
               >
-                {sidebarCard.link.text}
+                {sidebarCard?.link?.text}
               </Button>
             </Link>
           </Box>

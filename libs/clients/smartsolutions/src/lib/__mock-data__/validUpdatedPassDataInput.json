@@ -1,0 +1,18 @@
+{
+  "expirationDate": "2028-01-01T12:00:00Z",
+  "status": "EXPIRED",
+  "inputFieldValues": [
+    {
+      "identifier": "gildir",
+      "value": "30.01.2024"
+    },
+    {
+      "identifier": "name",
+      "value": "TESTI MANNI"
+    },
+    {
+      "identifier": "kennitala",
+      "value": "0102491479"
+    }
+  ]
+}

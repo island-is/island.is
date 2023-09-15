@@ -1,4 +1,4 @@
-import { FormValue } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
 import { AccidentTypeEnum, WhoIsTheNotificationForEnum } from '../types'
 import { getAccidentTypeOptions } from './getAccidentTypeOptions'
 

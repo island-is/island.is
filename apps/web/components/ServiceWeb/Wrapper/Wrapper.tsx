@@ -1,17 +1,18 @@
-import React, { FC, useEffect, useState, createContext } from 'react'
-import Head from 'next/head'
+import { FC, useEffect, useState, createContext, useMemo } from 'react'
 import { Box } from '@island.is/island-ui/core'
-
-import { Organization, Tag, Image } from '@island.is/web/graphql/schema'
+import { Organization } from '@island.is/web/graphql/schema'
 import {
   ServiceWebSearchSection,
   ServiceWebHeader,
   ServiceWebBackground,
   ServiceWebDynamicFooter,
   HeadWithSocialSharing,
+  WatsonChatPanel,
 } from '@island.is/web/components'
+import { useI18n } from '@island.is/web/i18n'
+import { usePlausiblePageview } from '@island.is/web/hooks'
 import { BackgroundVariations, Options, TextModes } from '../types'
-import config from '../config'
+import config, { watsonConfig } from '../config'
 
 import * as styles from './Wrapper.css'
 
@@ -37,12 +38,13 @@ interface WrapperProps {
   organizationTitle?: string
   smallBackground?: boolean
   searchPlaceholder?: string
-  searchTags?: Tag[]
   showLogoTitle?: boolean
   pageDescription?: string
+  indexableBySearchEngine?: boolean
+  showLogoOnMobileDisplays?: boolean
 }
 
-export const Wrapper: FC<WrapperProps> = ({
+export const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
   pageTitle,
   headerTitle,
   institutionSlug,
@@ -52,16 +54,21 @@ export const Wrapper: FC<WrapperProps> = ({
   organizationTitle,
   smallBackground,
   searchPlaceholder,
-  searchTags,
   showLogoTitle,
   pageDescription,
+  indexableBySearchEngine = false,
+  showLogoOnMobileDisplays,
   children,
 }) => {
+  const { activeLocale } = useI18n()
   const [options, setOptions] = useState<Options>({
     textMode: 'dark',
   })
   const [textMode, setTextMode] = useState<TextModes>('light')
   const showSearchSection = searchTitle && organizationTitle
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  usePlausiblePageview(organization?.trackingDomain)
 
   useEffect(() => {
     if (institutionSlug in config) {
@@ -73,33 +80,33 @@ export const Wrapper: FC<WrapperProps> = ({
     setTextMode(options.textMode)
   }, [options])
 
+  const namespace = useMemo(
+    () => JSON.parse(organization?.namespace?.fields ?? '{}'),
+    [],
+  )
+
   return (
     <>
-      {!organization.serviceWebFeaturedImage && (
-        <Head>
-          <title>{pageTitle}</title>
+      <HeadWithSocialSharing
+        title={pageTitle}
+        description={pageDescription}
+        imageUrl={organization?.serviceWebFeaturedImage?.url}
+        imageContentType={organization?.serviceWebFeaturedImage?.contentType}
+        imageWidth={organization?.serviceWebFeaturedImage?.width?.toString()}
+        imageHeight={organization?.serviceWebFeaturedImage?.height?.toString()}
+      >
+        {!indexableBySearchEngine && (
           <meta name="robots" content="noindex, nofollow" />
-        </Head>
-      )}
-      {organization.serviceWebFeaturedImage && (
-        <HeadWithSocialSharing
-          title={pageTitle}
-          description={pageDescription}
-          imageUrl={organization.serviceWebFeaturedImage?.url}
-          imageContentType={organization.serviceWebFeaturedImage?.contentType}
-          imageWidth={organization.serviceWebFeaturedImage?.width?.toString()}
-          imageHeight={organization.serviceWebFeaturedImage?.height?.toString()}
-        >
-          <meta name="robots" content="noindex, nofollow" />
-        </HeadWithSocialSharing>
-      )}
+        )}
+      </HeadWithSocialSharing>
+
       <ServiceWebContext.Provider value={{ textMode, institutionSlug }}>
         <ServiceWebHeader
           hideSearch={!smallBackground}
           title={headerTitle}
           textMode={textMode}
           searchPlaceholder={searchPlaceholder}
-          searchTags={searchTags}
+          namespace={namespace}
         />
         <ServiceWebBackground
           variation={
@@ -107,6 +114,7 @@ export const Wrapper: FC<WrapperProps> = ({
               ? DEFAULT_INSTITUTION_SLUG
               : institutionSlug
           }
+          namespace={namespace}
           small={smallBackground}
         />
         {!!showSearchSection && (
@@ -117,7 +125,8 @@ export const Wrapper: FC<WrapperProps> = ({
               title={searchTitle}
               textMode={textMode}
               searchPlaceholder={searchPlaceholder}
-              searchTags={searchTags}
+              namespace={namespace}
+              showLogoOnMobileDisplays={showLogoOnMobileDisplays}
             />
           </Box>
         )}
@@ -125,8 +134,12 @@ export const Wrapper: FC<WrapperProps> = ({
         <ServiceWebDynamicFooter
           institutionSlug={institutionSlug}
           organization={organization}
+          namespace={namespace}
         />
       </ServiceWebContext.Provider>
+      {organization?.id in watsonConfig[activeLocale] && (
+        <WatsonChatPanel {...watsonConfig[activeLocale][organization.id]} />
+      )}
     </>
   )
 }

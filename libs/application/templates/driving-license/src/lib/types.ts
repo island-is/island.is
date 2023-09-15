@@ -1,4 +1,4 @@
-import { FormValue } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
 
 export type HasQualityPhotoData = {
   data: {
@@ -7,3 +7,8 @@ export type HasQualityPhotoData = {
 }
 
 export type ConditionFn = (answer: FormValue) => boolean
+
+export type DrivingLicense = {
+  currentLicense: string | null
+  healthRemarks?: string[]
+}

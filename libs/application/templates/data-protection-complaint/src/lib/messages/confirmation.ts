@@ -9,25 +9,23 @@ export const confirmation = {
     },
   }),
   labels: defineMessage({
+    alertTitle: {
+      id: 'dpac.application:section.overview.labels.alertMessage',
+      defaultMessage: `Umsókn þín hefur verið móttekin!`,
+    },
+    expandableHeader: {
+      id: 'dpac.application:section.overview.labels.expandableHeader',
+      defaultMessage: 'Hvað gerist næst?',
+      description: 'Expandable header',
+    },
     description: {
-      id: 'dpac.application:section.overview.labels.description',
-      defaultMessage: `
-      Upplýsingar um áætlaðan afgreiðslutíma kvartana má finna á {link}`,
-      description: 'The first bullet',
-    },
-    linkName: {
-      id: 'dpac.application:section.overview.labels.linkName',
-      defaultMessage: `vefsíðu Persónuverndar`,
-      description: 'Link name inside description',
-    },
-    link: {
-      id: 'dpac.application:section.overview.labels.link',
-      defaultMessage: `https://www.personuvernd.is/efst-a-baugi/malsmedferdartimi-hja-personuvernd`,
-      description: 'Link inside description',
+      id: 'dpac.application:section.overview.labels.description#markdown',
+      defaultMessage: `Upplýsingar um áætlaðan afgreiðslutíma kvartana má finna á [vefsíðu Persónuverndar](https://www.personuvernd.is/efst-a-baugi/malsmedferdartimi-hja-personuvernd)`,
+      description: 'Bulletpoints for conclusion screen',
     },
     pdfLink: {
       id: 'dpac.application:section.overview.labels.pdfLink',
-      defaultMessage: `Hlaða niður kvörtun á PDF`,
+      defaultMessage: `Sækja PDF`,
       description: 'Link inside description',
     },
   }),

@@ -1,12 +1,12 @@
 {
   "root": true,
   "ignorePatterns": ["**/*"],
-  "plugins": ["@nrwl/nx", "eslint-plugin-local-rules"],
+  "plugins": ["@nx", "eslint-plugin-local-rules"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
-        "@nrwl/nx/enforce-module-boundaries": [
+        "@nx/enforce-module-boundaries": [
           "error",
           {
             "enforceBuildableLibDependency": true,
@@ -15,6 +15,184 @@
               {
                 "sourceTag": "*",
                 "onlyDependOnLibsWithTags": ["*"]
+              },
+              {
+                "sourceTag": "scope:api",
+                "onlyDependOnLibsWithTags": [
+                  "lib:api",
+                  "lib:nest",
+                  "lib:node",
+                  "lib:js",
+                  "lib:client"
+                ]
+              },
+              {
+                "sourceTag": "scope:portals-mypages",
+                "onlyDependOnLibsWithTags": [
+                  "lib:portals-mypages",
+                  "lib:portals",
+                  "lib:react-spa",
+                  "lib:react",
+                  "lib:dom",
+                  "lib:js"
+                ]
+              },
+              {
+                "sourceTag": "scope:portals-admin",
+                "onlyDependOnLibsWithTags": [
+                  "lib:portals-admin",
+                  "lib:application-system",
+                  "lib:portals",
+                  "lib:react-spa",
+                  "lib:react",
+                  "lib:dom",
+                  "lib:js"
+                ]
+              },
+              {
+                "sourceTag": "scope:portals",
+                "onlyDependOnLibsWithTags": [
+                  "lib:portals",
+                  "lib:react-spa",
+                  "lib:react",
+                  "lib:dom",
+                  "lib:js"
+                ]
+              },
+              {
+                "sourceTag": "scope:application-system-api",
+                "onlyDependOnLibsWithTags": [
+                  "lib:api",
+                  "lib:application-system-api",
+                  "lib:application-system",
+                  "lib:client",
+                  "lib:nest",
+                  "lib:node",
+                  "lib:js"
+                ]
+              },
+              {
+                "sourceTag": "scope:application-system-web",
+                "onlyDependOnLibsWithTags": [
+                  "lib:application-system",
+                  "lib:application-system-web",
+                  "lib:react-spa",
+                  "lib:react",
+                  "lib:dom",
+                  "lib:js"
+                ]
+              },
+              {
+                "sourceTag": "scope:application-system",
+                "onlyDependOnLibsWithTags": [
+                  "lib:application-system",
+                  "lib:react",
+                  "lib:react-spa",
+                  "lib:dom",
+                  "lib:js",
+                  "lib:client"
+                ]
+              },
+              {
+                "sourceTag": "scope:react-spa",
+                "onlyDependOnLibsWithTags": [
+                  "lib:react-spa",
+                  "lib:react",
+                  "lib:dom",
+                  "lib:js"
+                ]
+              },
+              {
+                "sourceTag": "scope:react-next",
+                "onlyDependOnLibsWithTags": [
+                  "lib:react-next",
+                  "lib:react",
+                  "lib:dom",
+                  "lib:node",
+                  "lib:js"
+                ]
+              },
+              {
+                "sourceTag": "scope:auth-api",
+                "onlyDependOnLibsWithTags": [
+                  "lib:nest",
+                  "lib:node",
+                  "lib:js",
+                  "lib:client",
+                  "lib:auth-api"
+                ]
+              },
+              {
+                "sourceTag": "scope:judicial-system-api",
+                "onlyDependOnLibsWithTags": [
+                  "lib:judicial-system-api",
+                  "lib:judicial-system",
+                  "lib:nest",
+                  "lib:node",
+                  "lib:js",
+                  "lib:client",
+                  "lib:auth-api"
+                ]
+              },
+              {
+                "sourceTag": "scope:judicial-system-web",
+                "onlyDependOnLibsWithTags": [
+                  "lib:judicial-system-web",
+                  "lib:judicial-system",
+                  "lib:react-next",
+                  "lib:react",
+                  "lib:dom",
+                  "lib:node",
+                  "lib:js"
+                ]
+              },
+              {
+                "sourceTag": "scope:judicial-system",
+                "onlyDependOnLibsWithTags": ["lib:judicial-system", "lib:js"]
+              },
+              {
+                "sourceTag": "scope:react",
+                "onlyDependOnLibsWithTags": ["lib:react", "lib:dom", "lib:js"]
+              },
+              {
+                "sourceTag": "scope:client",
+                "onlyDependOnLibsWithTags": [
+                  "lib:client",
+                  "lib:nest",
+                  "lib:node",
+                  "lib:js"
+                ]
+              },
+              {
+                "sourceTag": "scope:dom",
+                "onlyDependOnLibsWithTags": ["lib:dom", "lib:js"]
+              },
+              {
+                "sourceTag": "scope:nest",
+                "onlyDependOnLibsWithTags": [
+                  "lib:nest",
+                  "lib:node",
+                  "lib:js",
+                  "lib:client"
+                ]
+              },
+              {
+                "sourceTag": "scope:node",
+                "onlyDependOnLibsWithTags": ["lib:node", "lib:js"]
+              },
+              {
+                "sourceTag": "scope:js",
+                "onlyDependOnLibsWithTags": ["lib:js"]
+              },
+              {
+                "sourceTag": "scope:e2e",
+                "onlyDependOnLibsWithTags": [
+                  "lib:js",
+                  "lib:client",
+                  "lib:application-system",
+                  "lib:portals",
+                  "lib:portals-mypages"
+                ]
               }
             ]
           }
@@ -39,12 +217,13 @@
             "skipTemplates": true
           }
         ],
-        "local-rules/disallow-kennitalas": 1
+        "local-rules/disallow-kennitalas": "warn",
+        "local-rules/no-async-module-init": "error"
       }
     },
     {
       "files": ["*.ts", "*.tsx"],
-      "extends": ["plugin:@nrwl/nx/typescript"],
+      "extends": ["plugin:@nx/typescript"],
       "rules": {
         "@typescript-eslint/no-extra-semi": "off",
         "@typescript-eslint/explicit-member-accessibility": "off",
@@ -55,8 +234,8 @@
           "warn",
           {
             "ignoreRestSiblings": true,
-            "argsIgnorePattern": "^_([0-9])?$",
-            "varsIgnorePattern": "^_([0-9])?$"
+            "argsIgnorePattern": "^_[a-zA-Z0-9]*$",
+            "varsIgnorePattern": "^_[a-zA-Z0-9]*$"
           }
         ],
         "@typescript-eslint/naming-convention": [
@@ -67,7 +246,19 @@
           },
           {
             "selector": "variable",
-            "format": ["camelCase", "PascalCase", "UPPER_CASE"]
+            "format": [],
+            "custom": {
+              "regex": "^_[a-zA-Z0-9]*$",
+              "match": true
+            }
+          },
+          {
+            "selector": "variable",
+            "format": ["camelCase", "PascalCase", "UPPER_CASE"],
+            "filter": {
+              "regex": "^_[a-zA-Z0-9]*$",
+              "match": false
+            }
           },
           {
             "selector": "variable",
@@ -108,12 +299,18 @@
             "selector": "enumMember",
             "format": ["camelCase", "UPPER_CASE", "PascalCase"]
           }
+        ],
+        "@typescript-eslint/no-empty-interface": [
+          "error",
+          {
+            "allowSingleExtends": true
+          }
         ]
       }
     },
     {
       "files": ["*.js", "*.jsx"],
-      "extends": ["plugin:@nrwl/nx/javascript"],
+      "extends": ["plugin:@nx/javascript"],
       "rules": {}
     },
     {
@@ -122,5 +319,6 @@
         "@typescript-eslint/no-explicit-any": "off"
       }
     }
-  ]
+  ],
+  "extends": ["plugin:storybook/recommended"]
 }

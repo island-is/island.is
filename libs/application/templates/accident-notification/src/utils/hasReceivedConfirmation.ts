@@ -1,5 +1,6 @@
 import { AccidentNotificationConfirmation } from '@island.is/api/schema'
-import { FormValue, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
 import { isReportingOnBehalfOfEmployee } from './isReportingOnBehalfOfEmployee'
 
 export const hasReceivedConfirmation = (answers: FormValue) => {

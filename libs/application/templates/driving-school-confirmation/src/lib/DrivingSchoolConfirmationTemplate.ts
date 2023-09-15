@@ -6,7 +6,10 @@ import {
   ApplicationRole,
   Application,
   DefaultEvents,
-} from '@island.is/application/core'
+  defineTemplateApi,
+  EmployeeApi,
+  NationalRegistryUserApi,
+} from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
@@ -20,13 +23,13 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
   type: ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION,
   name: m.applicationTitle,
   dataSchema: dataSchema,
-  readyForProduction: false,
   stateMachineConfig: {
     initial: States.CONFIRM,
     states: {
       [States.CONFIRM]: {
         meta: {
           name: 'Confirmations',
+          status: 'draft',
           actionCard: {
             title: m.applicationTitle,
           },
@@ -36,16 +39,16 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
             shouldBePruned: true,
             whenToPrune: 24 * 3600 * 1000,
           },
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.SCHOOL_EMPLOYEE,
               formLoader: () =>
-                import('../forms/drivingSchoolConfirmtation').then((val) =>
+                import('../forms/drivingSchoolConfirmation').then((val) =>
                   Promise.resolve(val.getDrivingSchoolConfirmation()),
                 ),
               actions: [
@@ -56,6 +59,7 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              api: [EmployeeApi, NationalRegistryUserApi],
             },
           ],
         },
@@ -66,13 +70,13 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
       [States.DONE]: {
         meta: {
           name: 'Done',
+          status: 'completed',
           progress: 1,
           lifecycle: {
             shouldBeListed: false,
             shouldBePruned: true,
             whenToPrune: 24 * 3600 * 1000,
           },
-
           roles: [
             {
               id: Roles.SCHOOL_EMPLOYEE,
@@ -81,7 +85,6 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final',
       },
     },
   },

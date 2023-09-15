@@ -1,0 +1,13 @@
+query GetTenant($id: String!) {
+  authAdminTenant(id: $id) {
+    id
+    availableEnvironments
+    defaultEnvironment {
+      id
+      displayName {
+        locale
+        value
+      }
+    }
+  }
+}

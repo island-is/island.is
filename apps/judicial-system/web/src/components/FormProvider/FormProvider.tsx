@@ -1,16 +1,25 @@
-import React, { createContext, ReactNode, useEffect, useState } from 'react'
-import { useLazyQuery } from '@apollo/client'
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { useRouter } from 'next/router'
+import { useLazyQuery } from '@apollo/client'
 
+import { USERS_ROUTE } from '@island.is/judicial-system/consts'
+import { CaseState } from '@island.is/judicial-system/types'
 import {
-  Case,
-  CaseState,
+  CaseOrigin,
   CaseType,
   Defendant,
-} from '@island.is/judicial-system/types'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { CaseData } from '../../types'
+import { TempCase as Case } from '../../types'
+import { UserContext } from '../UserProvider/UserProvider'
+import CaseQuery from './caseGql'
+import LimitedAccessCaseQuery from './limitedAccessCaseGql'
 
 type ProviderState =
   | 'fetch'
@@ -26,6 +35,7 @@ interface FormProvider {
   isLoadingWorkingCase: boolean
   caseNotFound: boolean
   isCaseUpToDate: boolean
+  refreshCase: () => void
 }
 
 interface Props {
@@ -36,10 +46,12 @@ const initialState: Case = {
   id: '',
   created: '',
   modified: '',
+  origin: CaseOrigin.UNKNOWN,
   type: CaseType.CUSTODY,
   state: CaseState.NEW,
-  policeCaseNumber: '',
-  defendants: [{ id: '' } as Defendant],
+  policeCaseNumbers: [],
+  defendants: [{ id: '', noNationalId: false } as Defendant],
+  defendantWaivesRightToCounsel: false,
 }
 
 export const FormContext = createContext<FormProvider>({
@@ -48,9 +60,22 @@ export const FormContext = createContext<FormProvider>({
   isLoadingWorkingCase: true,
   caseNotFound: false,
   isCaseUpToDate: false,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  refreshCase: () => {},
 })
 
+const MaybeFormProvider = ({ children }: Props) => {
+  const router = useRouter()
+  return router.pathname.includes(USERS_ROUTE) ? (
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    <>{children}</>
+  ) : (
+    <FormProvider>{children}</FormProvider>
+  )
+}
+
 const FormProvider = ({ children }: Props) => {
+  const { limitedAccess } = useContext(UserContext)
   const router = useRouter()
   const id = router.query.id
 
@@ -58,8 +83,10 @@ const FormProvider = ({ children }: Props) => {
     ? CaseType.TRAVEL_BAN
     : router.pathname.includes('gaesluvardhald')
     ? CaseType.CUSTODY
-    : // This is just a random investigation case type for the default value. This
-      // is updated when the case is created.
+    : router.pathname.includes('akaera')
+    ? CaseType.INDICTMENT
+    : // This is a random case type for the default value.
+      // It is updated when the case is created.
       CaseType.OTHER
 
   const [state, setState] = useState<ProviderState>()
@@ -68,6 +95,7 @@ const FormProvider = ({ children }: Props) => {
   const [workingCase, setWorkingCase] = useState<Case>({
     ...initialState,
     type: caseType,
+    policeCaseNumbers: caseType === CaseType.INDICTMENT ? [''] : [],
   })
 
   // Used in exported indicators
@@ -91,11 +119,29 @@ const FormProvider = ({ children }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.id, router.pathname])
 
-  const [getCase] = useLazyQuery<CaseData>(CaseQuery, {
+  const [getCase] = useLazyQuery(CaseQuery, {
     fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
     onCompleted: (caseData) => {
-      if (caseData?.case) {
+      if (caseData && caseData.case) {
         setWorkingCase(caseData.case)
+
+        // The case has been loaded from the server
+        setState('up-to-date')
+      }
+    },
+    onError: () => {
+      // The case was not found
+      setState('not-found')
+    },
+  })
+
+  const [getLimitedAccessCase] = useLazyQuery(LimitedAccessCaseQuery, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+    onCompleted: (caseData) => {
+      if (caseData && caseData.limitedAccessCase) {
+        setWorkingCase(caseData.limitedAccessCase)
 
         // The case has been loaded from the server
         setState('up-to-date')
@@ -109,9 +155,13 @@ const FormProvider = ({ children }: Props) => {
 
   useEffect(() => {
     if (state === 'fetch' || state === 'refresh') {
-      getCase({ variables: { input: { id } } })
+      if (limitedAccess) {
+        getLimitedAccessCase({ variables: { input: { id } } })
+      } else {
+        getCase({ variables: { input: { id } } })
+      }
     }
-  }, [getCase, id, state])
+  }, [getCase, getLimitedAccessCase, id, limitedAccess, state])
 
   useEffect(() => {
     let timeout: undefined | NodeJS.Timeout
@@ -135,6 +185,7 @@ const FormProvider = ({ children }: Props) => {
         // Not found until we navigate to a different page
         caseNotFound: !replacingPath && state === 'not-found',
         isCaseUpToDate: state === 'up-to-date',
+        refreshCase: () => setState('refresh'),
       }}
     >
       {children}
@@ -142,4 +193,4 @@ const FormProvider = ({ children }: Props) => {
   )
 }
 
-export default FormProvider
+export { MaybeFormProvider as FormProvider }

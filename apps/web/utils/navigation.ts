@@ -7,14 +7,24 @@ interface NavLink {
   text: string
 }
 
-interface Navigatable {
+interface Navigable {
   id: string
   title: string
 }
 
-const isNavigatable = (slice: any): slice is Navigatable => {
-  return typeof slice === 'object' && slice.id && slice.title
-}
+const isNavigable = (slice: Slice) =>
+  typeof slice === 'object' &&
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  slice['id'] &&
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  slice['title'] &&
+  slice.__typename !== 'Image' &&
+  // If there's not a showTitle field on the slice or it's set to true we want to show the title
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  (slice['showTitle'] ?? true)
 
 // hide the implementation rather than have everyone import slugify themselfes
 export const makeId = (s: string) => slugify(s)
@@ -55,8 +65,8 @@ const sliceToNavLinks = (slice: Slice, htmlTags: BLOCKS[]): NavLink[] => {
       }))
   }
 
-  if (isNavigatable(slice)) {
-    const { id, title: text } = slice
+  if (isNavigable(slice)) {
+    const { id, title: text } = slice as Navigable
     return [{ id, text }]
   }
 

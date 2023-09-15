@@ -17,6 +17,7 @@ export type TagVariant =
   | 'blueberry'
   | 'dark'
   | 'mint'
+  | 'disabled'
 
 export interface TagProps {
   onClick?: () => void
@@ -32,7 +33,7 @@ export interface TagProps {
   truncate?: boolean
   hyphenate?: boolean
   textLeft?: boolean
-  CustomLink?: FC
+  CustomLink?: FC<React.PropsWithChildren<unknown>>
 }
 
 export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
@@ -59,9 +60,9 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       [styles.outlined]: outlined,
       [styles.attention]: attention,
       [styles.focusable]: !disabled,
-      [styles.truncate]: truncate,
       [styles.hyphenate]: hyphenate,
       [styles.textLeft]: textLeft,
+      [styles.disabled]: disabled,
     })
 
     const isExternal = href && shouldLinkOpenInNewWindow(href)
@@ -85,10 +86,6 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       </Text>
     )
 
-    if (disabled) {
-      return <span {...sharedProps}>{content}</span>
-    }
-
     if (CustomLink) {
       return <CustomLink {...sharedProps}>{content}</CustomLink>
     }
@@ -97,7 +94,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       <a href={href} {...anchorProps} {...sharedProps} {...props}>
         {content}
       </a>
-    ) : (
+    ) : onClick ? (
       <button
         type="button"
         disabled={disabled}
@@ -107,6 +104,10 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       >
         {content}
       </button>
+    ) : (
+      <span {...sharedProps} {...props}>
+        {content}
+      </span>
     )
   },
 )

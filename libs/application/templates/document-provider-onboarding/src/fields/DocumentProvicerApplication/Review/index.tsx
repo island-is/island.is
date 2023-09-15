@@ -1,17 +1,17 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
-import {
-  FieldBaseProps,
-  formatText,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, GridColumn, GridRow, Input } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../../forms/messages'
 
-const Review: FC<FieldBaseProps> = ({ field, application }) => {
+const Review: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  field,
+  application,
+}) => {
   const { description } = field
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
@@ -33,7 +33,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
           <GridColumn span="1/1">
             <Input
               id="helpDesk.email"
-              name="helpDesk.email"
+              {...register('helpDesk.email')}
               label={formatText(m.helpDeskEmail, application, formatMessage)}
               defaultValue={getValue('helpDesk.email')}
               placeholder={formatText(
@@ -41,13 +41,12 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                 application,
                 formatMessage,
               )}
-              ref={register}
             />
           </GridColumn>
           <GridColumn span="1/1" paddingTop={3}>
             <Input
               id="helpDesk.phoneNumber"
-              name="helpDesk.phoneNumber"
+              {...register('helpDesk.phoneNumber')}
               label={formatText(
                 m.helpDeskPhoneNumber,
                 application,
@@ -59,7 +58,6 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                 application,
                 formatMessage,
               )}
-              ref={register}
             />
           </GridColumn>
         </GridRow>

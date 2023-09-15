@@ -1,25 +1,25 @@
 import React from 'react'
-import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 
+import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import {
   capitalize,
-  formatRequestedCustodyRestrictions,
   formatDate,
-  formatRequestCaseType,
   formatNationalId,
+  formatRequestCaseType,
 } from '@island.is/judicial-system/formatters'
-import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
-import type {
-  Case,
-  CaseLegalProvisions,
-} from '@island.is/judicial-system/types'
+import { isRestrictionCase } from '@island.is/judicial-system/types'
 import {
-  requestCourtDate,
   core,
   laws,
+  requestCourtDate,
+  restrictionsV2,
 } from '@island.is/judicial-system-web/messages'
-import { TIME_FORMAT } from '@island.is/judicial-system/consts'
+import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
+import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import * as styles from './PoliceRequestAccordionItem.css'
@@ -28,7 +28,7 @@ interface Props {
   workingCase: Case
 }
 
-const PoliceRequestAccordionItem: React.FC<Props> = ({
+const PoliceRequestAccordionItem: React.FC<React.PropsWithChildren<Props>> = ({
   workingCase,
 }: Props) => {
   const { formatMessage } = useIntl()
@@ -52,17 +52,21 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         {workingCase.defendants &&
           workingCase.defendants.map((defendant, index) => (
             <Box key={index}>
-              <Box marginBottom={1}>
-                <Text>
-                  {`${formatMessage(
-                    defendant.noNationalId ? core.dateOfBirth : core.nationalId,
-                  )}: ${
-                    defendant.noNationalId
-                      ? defendant.nationalId
-                      : formatNationalId(defendant.nationalId ?? '')
-                  }`}
-                </Text>
-              </Box>
+              {(!defendant.noNationalId || defendant.nationalId) && (
+                <Box marginBottom={1}>
+                  <Text>
+                    {`${formatMessage(
+                      defendant.noNationalId
+                        ? core.dateOfBirth
+                        : core.nationalId,
+                    )}: ${
+                      defendant.noNationalId
+                        ? defendant.nationalId
+                        : formatNationalId(defendant.nationalId ?? '')
+                    }`}
+                  </Text>
+                </Box>
+              )}
               <Box marginBottom={1}>
                 <Text>{`${formatMessage(core.fullName)}: ${
                   defendant.name
@@ -98,7 +102,10 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
       <AccordionListItem title="Dómkröfur">
         <Text>{workingCase.demands}</Text>
       </AccordionListItem>
-      <AccordionListItem title="Lagaákvæði sem brot varða við" breakSpaces>
+      <AccordionListItem
+        title={formatMessage(lawsBrokenAccordion.heading)}
+        breakSpaces
+      >
         <Text>{workingCase.lawsBroken}</Text>
       </AccordionListItem>
       <AccordionListItem title="Lagaákvæði sem krafan er byggð á" breakSpaces>
@@ -122,12 +129,13 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
       </AccordionListItem>
       {isRestrictionCase(workingCase.type) && (
         <AccordionListItem
-          title={`Takmarkanir og tilhögun ${
-            workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
-          }`}
+          title={formatMessage(restrictionsV2.title, {
+            caseType: workingCase.type,
+          })}
         >
           <Text>
             {formatRequestedCustodyRestrictions(
+              formatMessage,
               workingCase.type,
               workingCase.requestedCustodyRestrictions,
               workingCase.requestedOtherRestrictions,

@@ -2,8 +2,8 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
-import { Case } from '@island.is/judicial-system/types'
-import { commentsAccordion } from '@island.is/judicial-system-web/messages/Core/commentsAccordion'
+import { commentsAccordion } from '@island.is/judicial-system-web/messages'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import MarkdownWrapper from '../../MarkdownWrapper/MarkdownWrapper'
 
@@ -11,7 +11,9 @@ interface Props {
   workingCase: Case
 }
 
-const CommentsAccordionItem: React.FC<Props> = (props) => {
+const CommentsAccordionItem: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const { workingCase } = props
   const { formatMessage } = useIntl()
 
@@ -45,7 +47,7 @@ const CommentsAccordionItem: React.FC<Props> = (props) => {
             </Text>
           </Box>
           <Text whiteSpace="breakSpaces">
-            <MarkdownWrapper text={workingCase.caseResentExplanation} />
+            <MarkdownWrapper markdown={workingCase.caseResentExplanation} />
           </Text>
         </>
       )}

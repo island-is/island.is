@@ -1,11 +1,8 @@
 import React, { FC, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { gql, useMutation } from '@apollo/client'
-import {
-  FieldBaseProps,
-  formatText,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import {
   Box,
   GridColumn,
@@ -31,7 +28,9 @@ export const runEndpointTestsMutation = gql`
   }
 `
 
-const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
+const AutomatedTests: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
 
   interface Response {
@@ -44,7 +43,12 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
   const [automatedTestsError, setautomatedTestsError] = useState<string | null>(
     null,
   )
-  const { register, errors, trigger, getValues } = useForm()
+  const {
+    register,
+    formState: { errors },
+    trigger,
+    getValues,
+  } = useForm()
   const [runEndpointTests, { loading }] = useMutation(runEndpointTestsMutation)
 
   const nationalId = getValueViaPath<string>(
@@ -107,12 +111,11 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
                   application,
                   formatMessage,
                 )}
-                name="nationalId"
-                id="nationalId"
-                ref={register({
+                {...register('nationalId', {
                   required: true,
                   pattern: /([0-9]){6}-?([0-9]){4}/,
                 })}
+                id="nationalId"
                 required
                 defaultValue=""
                 placeholder={formatText(
@@ -136,14 +139,13 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
                   application,
                   formatMessage,
                 )}
-                name="docId"
+                {...register('docId', { required: true })}
                 required
                 placeholder={formatText(
                   m.automatedTestsDocIdPlaceholder,
                   application,
                   formatMessage,
                 )}
-                ref={register({ required: true })}
                 hasError={errors.docId !== undefined}
                 errorMessage={formatText(
                   m.automatedTestsDocIdErrorMessage,

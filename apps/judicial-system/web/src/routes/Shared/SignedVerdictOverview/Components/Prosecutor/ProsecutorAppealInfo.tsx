@@ -1,15 +1,15 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 
-import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
 
 interface Props {
   prosecutorPostponedAppealDate?: string
   withdrawProsecutorAppealDate?: () => void
 }
 
-const ProsecutorInfo: React.FC<Props> = (props) => {
+const ProsecutorInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { prosecutorPostponedAppealDate, withdrawProsecutorAppealDate } = props
 
   const animateInAndOut = {

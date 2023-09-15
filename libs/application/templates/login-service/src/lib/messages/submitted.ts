@@ -7,8 +7,18 @@ export const submitted = {
       defaultMessage: 'Takk fyrir umsóknina!',
       description: 'submitted page title',
     },
+    expandableTitle: {
+      id: `ls.application:section.submitted.expandableTitle`,
+      defaultMessage: 'Hvað gerist næst?',
+      description: 'submitted expandable title',
+    },
   }),
   labels: defineMessages({
+    desceriptionBulletPoints: {
+      id: `ls.application:section.submitted.desceriptionBulletPoints#markdown`,
+      defaultMessage: `* Við munum nú fara yfir umsóknina og hafa svo samband við ábyrgðaraðila í kjölfarið.\n* Við verðum í sambandi ef okkur vantar frekari upplýsingar.\n* Ef þú þarft frekari upplýsingar þá getur þú haft samband með tölvupósti á netfangið [island@island.is](mailto:island@island.is)`,
+      description: 'submitted desceriptionBulletPoints',
+    },
     descriptionBulletOne: {
       id: `ls.application:section.submitted.descriptionBulletOne`,
       defaultMessage:

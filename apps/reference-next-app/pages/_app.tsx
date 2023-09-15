@@ -1,11 +1,12 @@
-import React, { FC } from 'react'
 import Head from 'next/head'
-import { ApolloProvider } from 'react-apollo'
+import React, { FC } from 'react'
+import { ApolloProvider } from '@apollo/client/react'
 
-import initApollo from '../graphql/client'
 import { appWithLocale } from '@island.is/localization'
 
-const Layout: FC = ({ children }) => {
+import initApollo from '../graphql/client'
+
+const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   return (
     <div>
       <Head>

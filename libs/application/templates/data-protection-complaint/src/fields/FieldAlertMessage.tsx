@@ -1,4 +1,5 @@
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
@@ -16,10 +17,9 @@ type FieldAlertMessageProps = {
   }
 }
 
-export const FieldAlertMessage: FC<FieldBaseProps & FieldAlertMessageProps> = ({
-  application,
-  field,
-}) => {
+export const FieldAlertMessage: FC<
+  React.PropsWithChildren<FieldBaseProps & FieldAlertMessageProps>
+> = ({ application, field }) => {
   const { title, description, props } = field
   const { formatMessage } = useLocale()
 
@@ -29,7 +29,7 @@ export const FieldAlertMessage: FC<FieldBaseProps & FieldAlertMessageProps> = ({
         type="info"
         title={formatText(title, application, formatMessage)}
         message={
-          <>
+          <Box>
             <Box component="span" display="block">
               <Text variant="small">
                 {description
@@ -60,7 +60,7 @@ export const FieldAlertMessage: FC<FieldBaseProps & FieldAlertMessageProps> = ({
                 ))}
               </Box>
             )}
-          </>
+          </Box>
         }
       />
     </Box>

@@ -15,6 +15,11 @@ export interface Defendant {
   gender?: Gender
   address?: string
   citizenship?: string
+  defenderName?: string
+  defenderNationalId?: string
+  defenderEmail?: string
+  defenderPhoneNumber?: string
+  defendantWaivesRightToCounsel: boolean
 }
 
 export interface CreateDefendant {
@@ -34,6 +39,11 @@ export interface UpdateDefendant {
   gender?: Gender
   address?: string
   citizenship?: string
+  defenderName?: string
+  defenderNationalId?: string
+  defenderEmail?: string
+  defenderPhoneNumber?: string
+  defendantWaivesRightToCounsel?: boolean
 }
 
 export interface DeleteDefendantResponse {

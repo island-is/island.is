@@ -9,9 +9,6 @@ export class RskCompanyVat {
   @Field(() => Date, { nullable: true })
   dateOfRegistration?: Date
 
-  @Field(() => String, { nullable: true })
-  status?: string
-
   @Field(() => Date, { nullable: true })
   dateOfDeregistration?: Date
 

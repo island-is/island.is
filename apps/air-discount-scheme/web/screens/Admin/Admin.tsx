@@ -55,10 +55,11 @@ const ConfirmInvoiceMutation = gql`
 
 const TODAY = new Date()
 
-const Admin: Screen = ({}) => {
+const Admin: Screen = () => {
   const { user } = useContext(UserContext)
   const [showModal, setModal] = useState(false)
   const [filters, setFilters] = useState<FilterInput>({
+    nationalId: '',
     state: [],
     period: {
       from: new Date(TODAY.getFullYear(), TODAY.getMonth(), 1, 0, 0, 0, 0),
@@ -85,20 +86,23 @@ const Admin: Screen = ({}) => {
     postalCode: filters.postalCode
       ? parseInt(filters.postalCode.toString())
       : undefined,
+    isExplicit: Boolean(filters.isExplicit?.length),
   }
   const [confirmInvoice, { loading: confirmInvoiceLoading }] = useMutation(
     ConfirmInvoiceMutation,
   )
-  const { data, loading: queryLoading, error, refetch } = useQuery(
-    FlightLegsQuery,
-    {
-      ssr: false,
-      fetchPolicy: 'network-only',
-      variables: {
-        input,
-      },
+  const {
+    data,
+    loading: queryLoading,
+    error,
+    refetch,
+  } = useQuery(FlightLegsQuery, {
+    ssr: false,
+    fetchPolicy: 'network-only',
+    variables: {
+      input,
     },
-  )
+  })
   const { flightLegs = [] } = data ?? {}
 
   if (!user) {
@@ -181,6 +185,15 @@ const Admin: Screen = ({}) => {
                   </Box>
                 </Button>
               </Box>
+              <Box paddingTop={3}>
+                <Button
+                  width="fluid"
+                  variant="redGhost"
+                  onClick={() => window.open('/admin/discount', '_blank')}
+                >
+                  Handvirkir kóðar
+                </Button>
+              </Box>
             </Box>
           </Stack>
         </GridColumn>
@@ -240,8 +253,7 @@ const Admin: Screen = ({}) => {
         }}
         t={{
           title: 'Gjaldfæra og endurgreiða',
-          info:
-            'Vertu viss um að hafa prentað yfirlitið út frá núverandi síu áður en þú heldur áfram.<br/>Með því að halda áfram, munt þú merkja allar færslur sem annað hvort gjaldfærð eða endurgreidd, eftir því sem á við.',
+          info: 'Vertu viss um að hafa prentað yfirlitið út frá núverandi síu áður en þú heldur áfram.<br/>Með því að halda áfram, munt þú merkja allar færslur sem annað hvort gjaldfærð eða endurgreidd, eftir því sem á við.',
           buttons: {
             cancel: 'Hætta við',
             continue: 'Halda áfram',

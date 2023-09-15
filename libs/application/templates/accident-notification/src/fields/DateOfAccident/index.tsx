@@ -1,5 +1,5 @@
 import { IsHealthInsuredInput } from '@island.is/api/schema'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { DatePickerController } from '@island.is/shared/form-fields'
@@ -10,7 +10,7 @@ import { useLazyIsHealthInsured } from '../../hooks/useLazyIsHealthInsured'
 import { AccidentNotification } from '../../lib/dataSchema'
 import { accidentDetails } from '../../lib/messages'
 
-export const DateOfAccident: FC<FieldBaseProps> = ({
+export const DateOfAccident: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   field,
   error,
@@ -83,18 +83,17 @@ export const DateOfAccident: FC<FieldBaseProps> = ({
         <Controller
           name="reason"
           defaultValue={application.answers.residenceChangeReason}
-          render={({ onChange }) => {
+          render={({ field: { onChange } }) => {
             return (
               <Input
-                id="accidentDetails.isHealthInsured"
-                name="accidentDetails.isHealthInsured"
+                {...register('accidentDetails.isHealthInsured', {
+                  onChange: (e) => {
+                    onChange(e.target.value)
+                    setValue('accidentDetails.isHealthInsured', e.target.value)
+                  },
+                })}
                 defaultValue={'yes'}
                 value={isHealthInsured}
-                onChange={(e) => {
-                  onChange(e.target.value)
-                  setValue('accidentDetails.isHealthInsured', e.target.value)
-                }}
-                ref={register}
               />
             )
           }}

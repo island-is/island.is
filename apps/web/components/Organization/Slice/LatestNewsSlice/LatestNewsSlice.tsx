@@ -1,38 +1,48 @@
 import React from 'react'
 import { LatestNewsSlice as LatestNewsSliceSchema } from '@island.is/web/graphql/schema'
 import { NewsItems } from '@island.is/web/components'
-import { Box, GridContainer } from '@island.is/island-ui/core'
+import { Box, BoxProps } from '@island.is/island-ui/core'
+import { LinkType } from '@island.is/web/hooks'
 
 interface SliceProps {
   slice: LatestNewsSliceSchema
-  organizationPageSlug: string
+  slug: string
+  linkType?: LinkType
+  overview?: LinkType
+  latestNewsSliceBackground?: BoxProps['background']
+  latestNewsSliceColorVariant?: 'default' | 'blue'
+  forceTitleSectionHorizontalPadding?: boolean
 }
 
-export const LatestNewsSlice: React.FC<SliceProps> = ({
+export const LatestNewsSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
   slice,
-  organizationPageSlug,
+  slug,
+  linkType = 'organizationnews',
+  overview = 'organizationnewsoverview',
+  latestNewsSliceBackground = 'purple100',
+  latestNewsSliceColorVariant = 'default',
+  forceTitleSectionHorizontalPadding = false,
 }) => {
   return (
     <Box
-      width="full"
-      overflow="hidden"
       component="section"
-      background="purple100"
+      background={latestNewsSliceBackground}
       paddingTop={[5, 5, 8]}
       paddingBottom={[2, 2, 5]}
       aria-labelledby="news-items-title"
     >
-      <GridContainer>
-        <NewsItems
-          heading={slice.title}
-          headingTitle="news-items-title"
-          seeMoreText={slice.readMoreText}
-          items={slice.news}
-          linkType="organizationnews"
-          overview="organizationnewsoverview"
-          parameters={[organizationPageSlug]}
-        />
-      </GridContainer>
+      <NewsItems
+        heading={slice.title}
+        headingTitle="news-items-title"
+        seeMoreText={slice.readMoreText}
+        items={slice.news}
+        linkType={linkType}
+        overview={overview}
+        parameters={[slug]}
+        seeMoreHref={slice.readMoreLink?.url}
+        forceTitleSectionHorizontalPadding={forceTitleSectionHorizontalPadding}
+        colorVariant={latestNewsSliceColorVariant}
+      />
     </Box>
   )
 }

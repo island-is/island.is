@@ -60,7 +60,7 @@ const SkilavottordRecyclingRequestMutation = gql`
   }
 `
 
-const Handover: FC = () => {
+const Handover: FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
   const [requestType, setRequestType] = useState<RecyclingRequestTypes>()
   const [isInvalidCar, setInvalidCar] = useState(false)
@@ -91,7 +91,8 @@ const Handover: FC = () => {
     },
   })
 
-  const mutationResponse = mutationData?.createSkilavottordRecyclingRequest as RequestErrors
+  const mutationResponse =
+    mutationData?.createSkilavottordRecyclingRequest as RequestErrors
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {

@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/client'
 import { MessageDescriptor } from '@formatjs/intl'
 
 import { useLocale } from '@island.is/localization'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
@@ -12,7 +12,10 @@ import { handleServerError } from '@island.is/application/ui-components'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { States as ApplicationStates } from '../../constants'
 
-const DraftRequireAction: FC<FieldBaseProps> = ({ application, refetch }) => {
+const DraftRequireAction: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+  refetch,
+}) => {
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -29,6 +32,8 @@ const DraftRequireAction: FC<FieldBaseProps> = ({ application, refetch }) => {
       parentalLeaveFormMessages.draftFlow.draftNotApprovedEmployerDesc,
     [ApplicationStates.VINNUMALASTOFNUN_ACTION]:
       parentalLeaveFormMessages.draftFlow.draftNotApprovedVMLSTDesc,
+    [ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED]:
+      parentalLeaveFormMessages.draftFlow.draftAdditionalDocumentRequiredDesc,
   }
 
   return (

@@ -1,6 +1,6 @@
 import { IsString, IsEnum } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
-import { PdfTypes } from '@island.is/application/core'
+import { PdfTypes } from '@island.is/application/types'
 
 export class UploadSignedFileDto {
   @IsString()

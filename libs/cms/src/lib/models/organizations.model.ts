@@ -1,8 +1,9 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { Organization } from './organization.model'
 
 @ObjectType()
 export class Organizations {
-  @Field(() => [Organization])
+  @CacheField(() => [Organization])
   items!: Organization[]
 }

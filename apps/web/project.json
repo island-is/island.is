@@ -1,0 +1,138 @@
+{
+  "name": "web",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/web",
+  "projectType": "application",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/web"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/web"
+        },
+        "production": {}
+      },
+      "dependsOn": ["build-custom-server"]
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "web:build",
+        "dev": true,
+        "customServerTarget": "web:serve-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "web:build:development",
+          "dev": true,
+          "customServerTarget": "web:serve-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "web:build:production",
+          "dev": false,
+          "customServerTarget": "web:serve-custom-server:production"
+        }
+      }
+    },
+    "build-custom-server": {
+      "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/web",
+        "main": "apps/web/server.ts",
+        "tsConfig": "apps/web/tsconfig.server.json",
+        "maxWorkers": 2,
+        "assets": [],
+        "compiler": "tsc",
+        "target": "node"
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "web:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "web:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "web:build-custom-server:production"
+        }
+      }
+    },
+    "export": {
+      "executor": "@nx/next:export",
+      "options": {
+        "buildTarget": "web:build:production"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/web/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "apps/web/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": ["{workspaceRoot}/coverage/apps/web"]
+    },
+    "schemas/codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config apps/web/codegen.yml"
+      }
+    },
+    "dev-init": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn get-secrets web",
+          "echo '#############'",
+          "echo '# ATTENTION #'",
+          "echo '#############'",
+          "echo ''",
+          "echo 'You must manually add these to your .env.secrets file (used for e.g. extract-strings):'",
+          "echo '  CONTENTFUL_HOST '",
+          "echo '  CONTENTFUL_MANAGEMENT_ACCESS_TOKEN '",
+          "echo ''",
+          "yarn nx run api:dev-init"
+        ],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "./scripts/run-es-proxy.sh",
+          "yarn nx run api:dev",
+          "yarn start web"
+        ],
+        "parallel": true
+      }
+    },
+    "docker-next": {}
+  },
+  "tags": ["scope:react-next"]
+}

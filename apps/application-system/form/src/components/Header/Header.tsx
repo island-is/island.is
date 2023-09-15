@@ -11,7 +11,7 @@ import { UserMenu } from '@island.is/shared/components'
 
 import { fixSvgUrls } from '../../utils'
 
-export const Header: FC = () => {
+export const Header: FC<React.PropsWithChildren<unknown>> = () => {
   const location = useLocation()
   const { info } = useHeaderInfo()
 
@@ -34,6 +34,7 @@ export const Header: FC = () => {
                 }
               : undefined
           }
+          logoRender={(logo) => <a href="/minarsidur/umsoknir">{logo}</a>}
           headerItems={<UserMenu showDropdownLanguage small />}
         />
       </GridContainer>

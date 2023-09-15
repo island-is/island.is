@@ -3,7 +3,7 @@
 const replaceEnum = require('sequelize-replace-enum-postgres').default
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: (queryInterface) => {
     // replaceEnum does not support transactions
     return replaceEnum({
       queryInterface,
@@ -15,7 +15,7 @@ module.exports = {
     })
   },
 
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
     // replaceEnum does not support transactions
     return replaceEnum({
       queryInterface,

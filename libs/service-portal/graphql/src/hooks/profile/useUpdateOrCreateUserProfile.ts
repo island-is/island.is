@@ -16,12 +16,6 @@ type UpdateUserProfileData = {
 }
 
 export const useUpdateOrCreateUserProfile = () => {
-  const { refetch } = useUserProfile()
-  const {
-    createUserProfile,
-    loading: createLoading,
-    error: createError,
-  } = useCreateUserProfile()
   const {
     updateUserProfile,
     loading: updateLoading,
@@ -29,9 +23,6 @@ export const useUpdateOrCreateUserProfile = () => {
   } = useUpdateUserProfile()
 
   const updateOrCreateUserProfile = async (data: UpdateUserProfileData) => {
-    const profile = await refetch()
-    const userProfile = profile.data?.getUserProfile
-
     const input = {
       email: data.email,
       locale: data.locale,
@@ -44,16 +35,13 @@ export const useUpdateOrCreateUserProfile = () => {
       smsCode: data?.smsCode || undefined,
     }
 
-    if (userProfile?.modified) {
-      await updateUserProfile(input)
-    } else {
-      await createUserProfile(input)
-    }
+    // Update user profile handles update OR create.
+    await updateUserProfile(input)
   }
 
   return {
     updateOrCreateUserProfile,
-    loading: createLoading || updateLoading,
-    error: createError || updateError,
+    loading: updateLoading,
+    error: updateError,
   }
 }

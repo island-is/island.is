@@ -1,17 +1,14 @@
 import {
   buildForm,
   buildSection,
-  Form,
-  FormModes,
   buildDataProviderItem,
   buildExternalDataProvider,
   buildCustomField,
   buildSubSection,
   buildMultiField,
   buildSubmitField,
-  DefaultEvents,
 } from '@island.is/application/core'
-import { DataProviderTypes } from '@island.is/application/templates/children-residence-change'
+import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
 import { selectDurationInputs } from '../fields/Duration'
 import { confirmContractIds } from '../fields/Overview'
@@ -19,6 +16,11 @@ import { contactInfoIds } from '../fields/ContactInfo'
 import * as m from '../lib/messages'
 import { ExternalData } from '@island.is/application/templates/family-matters-core/types'
 import { hasChildren } from '../lib/utils'
+import {
+  ChildrenCustodyInformationApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '../dataProviders'
 
 const soleCustodyField = () => {
   return buildCustomField({
@@ -26,9 +28,9 @@ const soleCustodyField = () => {
     component: 'SoleCustodyModal',
     title: '',
     condition: (_, externalData) => {
-      return ((externalData as unknown) as ExternalData)?.nationalRegistry?.data?.children?.every(
-        (child) => !child.otherParent,
-      )
+      return (
+        externalData as unknown as ExternalData
+      )?.childrenCustodyInformation?.data?.every((child) => !child.otherParent)
     },
   })
 }
@@ -39,7 +41,7 @@ const noChildrenFoundField = () => {
     component: 'NoChildrenErrorModal',
     title: '',
     condition: (_, externalData) => {
-      return !hasChildren((externalData as unknown) as ExternalData)
+      return !hasChildren(externalData as unknown as ExternalData)
     },
   })
 }
@@ -60,7 +62,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
   id: 'ChildrenResidenceChangeFormDraft',
   title: m.application.name,
   logo: Logo,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     // buildSection({
     //   id: 'mockData',
@@ -146,22 +148,19 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               checkboxLabel: m.externalData.general.checkboxLabel,
               dataProviders: [
                 buildDataProviderItem({
-                  id: 'nationalRegistry',
-                  type: DataProviderTypes.NationalRegistry,
-                  title: m.externalData.applicant.title,
-                  subTitle: m.externalData.applicant.subTitle,
-                }),
-                buildDataProviderItem({
-                  id: '',
-                  type: '',
+                  provider: ChildrenCustodyInformationApi,
                   title: m.externalData.children.title,
                   subTitle: m.externalData.children.subTitle,
                 }),
                 buildDataProviderItem({
-                  id: 'userProfile',
-                  type: DataProviderTypes.UserProfile,
-                  title: '',
-                  subTitle: '',
+                  provider: NationalRegistryUserApi,
+                  title: m.externalData.applicant.title,
+                  subTitle: m.externalData.applicant.subTitle,
+                }),
+                buildDataProviderItem({
+                  provider: UserProfileApi,
+                  title: m.externalData.userProfile.title,
+                  subTitle: m.externalData.userProfile.subTitle,
                 }),
               ],
             }),
@@ -169,43 +168,6 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
             soleCustodyField(),
           ],
         }),
-        // buildSubSection({
-        //   id: 'externalData',
-        //   title: m.externalData.general.sectionTitle,
-        //   condition: (answers) =>
-        //     shouldUseMocks((answers as unknown) as Answers),
-        //   children: [
-        //     buildExternalDataProvider({
-        //       title: m.externalData.general.pageTitle,
-        //       id: 'approveExternalData',
-        //       subTitle: m.externalData.general.subTitle,
-        //       description: m.externalData.general.description,
-        //       checkboxLabel: m.externalData.general.checkboxLabel,
-        //       dataProviders: [
-        //         buildDataProviderItem({
-        //           id: 'nationalRegistry',
-        //           type: DataProviderTypes.MockNationalRegistry,
-        //           title: m.externalData.applicant.title,
-        //           subTitle: m.externalData.applicant.subTitle,
-        //         }),
-        //         buildDataProviderItem({
-        //           id: '',
-        //           type: '',
-        //           title: m.externalData.children.title,
-        //           subTitle: m.externalData.children.subTitle,
-        //         }),
-        //         buildDataProviderItem({
-        //           id: 'userProfile',
-        //           type: DataProviderTypes.UserProfile,
-        //           title: '',
-        //           subTitle: '',
-        //         }),
-        //       ],
-        //     }),
-        //     noChildrenFoundField(),
-        //     soleCustodyField(),
-        //   ],
-        // }),
         buildSubSection({
           id: 'selectChildInCustody',
           title: m.selectChildren.general.sectionTitle,

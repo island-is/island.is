@@ -7,26 +7,20 @@ import { validate } from './validate'
 
 export const parseTime = (date: string, time: string) => {
   const timeWithoutColon = time.replace(':', '')
+  const hours = timeWithoutColon.slice(0, 2)
+  const minutes = timeWithoutColon.slice(2, 4)
+  const isValidTime = validate([[time, ['empty', 'time-format']]]).isValid
 
-  const dateHours = setHours(
-    new Date(date),
-    parseInt(timeWithoutColon.substr(0, 2)),
-  )
+  const dateHours = setHours(new Date(date), parseInt(hours))
 
   /**
    * We are not validating date because we are assuming the date can't be invalid.
    * The user can't input the date by hand and can't input the time before selecting
    * a date.
    * */
-  if (
-    validate(time, 'empty').isValid &&
-    validate(time, 'time-format').isValid
-  ) {
+  if (isValidTime) {
     const dateMinutes = formatISO(
-      setSeconds(
-        setMinutes(dateHours, parseInt(timeWithoutColon.substr(2, 4))),
-        0,
-      ),
+      setSeconds(setMinutes(dateHours, parseInt(minutes)), 0),
     )
 
     return dateMinutes

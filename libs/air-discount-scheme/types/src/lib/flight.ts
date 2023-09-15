@@ -1,3 +1,5 @@
+import { Gender } from './user'
+
 export type FlightLeg = {
   id: string
   flightId: string
@@ -7,7 +9,8 @@ export type FlightLeg = {
   originalPrice: number
   discountPrice: number
   financialState: string
-  flight: Flight
+  financialStateUpdated: Date
+  flight?: Flight
   date: Date
   created: Date
   modified: Date
@@ -15,7 +18,7 @@ export type FlightLeg = {
 
 export type UserInfo = {
   age: number
-  gender: 'kk' | 'kvk' | 'hvk'
+  gender: Gender
   postalCode: number
 }
 
@@ -24,7 +27,7 @@ export type Flight = {
   nationalId: string
   userInfo: UserInfo
   bookingDate: Date
-  flightLegs: FlightLeg[]
+  flightLegs?: FlightLeg[]
   created: Date
   modified: Date
   connectable: boolean
@@ -51,6 +54,7 @@ export type FlightLegsInput = {
   period?: PeriodInput
   state?: string[]
   age?: RangeInput
-  gender?: 'kk' | 'kvk' | 'hvk'
+  gender?: Gender
   postalCode?: number
+  nationalId?: string
 }

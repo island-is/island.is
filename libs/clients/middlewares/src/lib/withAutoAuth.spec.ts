@@ -1,3 +1,10 @@
+/**
+ * Need to mock timers before importing cache-manager since they cache it.
+ * Also need to advance timers by 10ms to avoid cache-manager's 0-based logic.
+ */
+jest.useFakeTimers()
+jest.advanceTimersByTime(10)
+
 import { caching } from 'cache-manager'
 
 import { createCurrentUser } from '@island.is/testing/fixtures'
@@ -8,8 +15,8 @@ import {
   fakeAuthResponse,
   setupTestEnv,
 } from '../../test/setup'
+import { AuthDelegationType } from '@island.is/shared/types'
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 const testUrl = 'http://localhost/test'
 const issuerUrl = 'http://localhost/issuer'
 const clientId = 'client'
@@ -33,11 +40,36 @@ describe('EnhancedFetch#withAutoAuth', () => {
     // Assert
     expect(env.authFetch).toHaveBeenCalledTimes(1)
     expect(
-      env.authFetch.mock.calls[0][1].body.toString(),
+      env.authFetch.mock.calls[0][0].body.toString(),
     ).toMatchInlineSnapshot(
       `"grant_type=client_credentials&client_id=client&client_secret=secret&scope=testScope"`,
     )
-    expect(env.fetch.mock.calls[0][1].headers.get('authorization')).toEqual(
+    expect(env.fetch.mock.calls[0][0].headers.get('authorization')).toEqual(
+      fakeAuthentication,
+    )
+  })
+
+  it('should request token when tokenEndpoint is configured', async () => {
+    // Arrange
+    env = setupTestEnv({
+      autoAuth: {
+        ...autoAuth,
+        mode: 'token',
+        tokenEndpoint: `${autoAuth.issuer}/oauth2/token`,
+      },
+    })
+
+    // Act
+    await env.enhancedFetch(testUrl)
+
+    // Assert
+    expect(env.authFetch).toHaveBeenCalledTimes(1)
+    expect(
+      env.authFetch.mock.calls[0][0].body.toString(),
+    ).toMatchInlineSnapshot(
+      `"grant_type=client_credentials&client_id=client&client_secret=secret&scope=testScope"`,
+    )
+    expect(env.fetch.mock.calls[0][0].headers.get('authorization')).toEqual(
       fakeAuthentication,
     )
   })
@@ -54,17 +86,16 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
     // Assert
     expect(env.authFetch).toHaveBeenCalledTimes(1)
-    expect(env.fetch.mock.calls[0][1].headers.get('authorization')).toEqual(
+    expect(env.fetch.mock.calls[0][0].headers.get('authorization')).toEqual(
       fakeAuthentication,
     )
-    expect(env.fetch.mock.calls[1][1].headers.get('authorization')).toEqual(
+    expect(env.fetch.mock.calls[1][0].headers.get('authorization')).toEqual(
       fakeAuthentication,
     )
   })
 
   it('should not cache token forever', async () => {
     // Arrange
-    jest.useFakeTimers('modern')
     env = setupTestEnv({
       autoAuth: { ...autoAuth, mode: 'token' },
     })
@@ -86,16 +117,23 @@ describe('EnhancedFetch#withAutoAuth', () => {
     env = setupTestEnv({
       autoAuth: { ...autoAuth, mode: 'tokenExchange' },
     })
+    const expectedBody = new URLSearchParams({
+      grant_type: 'urn:ietf:params:oauth:grant-type:token-exchange',
+      client_id: 'client',
+      client_secret: 'secret',
+      scope: 'testScope',
+      subject_token: auth.authorization,
+      subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+      requested_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+    }).toString()
 
     // Act
     await env.enhancedFetch(testUrl, { auth })
 
     // Assert
     expect(env.authFetch).toHaveBeenCalledTimes(1)
-    expect(env.authFetch.mock.calls[0][1].body.toString()).toEqual(
-      `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange&client_id=client&client_secret=secret&scope=testScope&subject_token=${auth.authorization}&subject_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aaccess_token&requested_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aaccess_token`,
-    )
-    expect(env.fetch.mock.calls[0][1].headers.get('authorization')).toEqual(
+    expect(env.authFetch.mock.calls[0][0].body.toString()).toEqual(expectedBody)
+    expect(env.fetch.mock.calls[0][0].headers.get('authorization')).toEqual(
       fakeAuthentication,
     )
   })
@@ -116,7 +154,7 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
   it('should cache token exchange in private cache if requested', async () => {
     // Arrange
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       autoAuth: {
         ...autoAuth,
@@ -136,8 +174,7 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
   it('should not cache token exchange forever', async () => {
     // Arrange
-    jest.useFakeTimers('modern')
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       autoAuth: {
         ...autoAuth,
@@ -204,16 +241,23 @@ describe('EnhancedFetch#withAutoAuth', () => {
         tokenExchange: { requestActorToken: true },
       },
     })
+    const expectedBody = new URLSearchParams({
+      grant_type: 'urn:ietf:params:oauth:grant-type:token-exchange',
+      client_id: 'client',
+      client_secret: 'secret',
+      scope: 'testScope',
+      subject_token: auth.authorization,
+      subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+      requested_token_type: 'islandis:oauth:token-type:actor-access-token',
+    }).toString()
 
     // Act
     await env.enhancedFetch(testUrl, { auth })
 
     // Assert
     expect(env.authFetch).toHaveBeenCalledTimes(1)
-    expect(env.authFetch.mock.calls[0][1].body.toString()).toEqual(
-      `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange&client_id=client&client_secret=secret&scope=testScope&subject_token=${auth.authorization}&subject_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aaccess_token&requested_token_type=islandis%3Aoauth%3Atoken-type%3Aactor-access-token`,
-    )
-    expect(env.fetch.mock.calls[0][1].headers.get('authorization')).toEqual(
+    expect(env.authFetch.mock.calls[0][0].body.toString()).toEqual(expectedBody)
+    expect(env.fetch.mock.calls[0][0].headers.get('authorization')).toEqual(
       fakeAuthentication,
     )
   })
@@ -231,7 +275,7 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
       // Assert
       expect(env.authFetch).not.toHaveBeenCalled()
-      expect(env.fetch.mock.calls[0][1].headers.get('authorization')).toEqual(
+      expect(env.fetch.mock.calls[0][0].headers.get('authorization')).toEqual(
         auth.authorization,
       )
     })
@@ -253,7 +297,7 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
       // Assert
       expect(env.authFetch).toHaveBeenCalledTimes(1)
-      expect(env.fetch.mock.calls[0][1].headers.get('authorization')).toEqual(
+      expect(env.fetch.mock.calls[0][0].headers.get('authorization')).toEqual(
         fakeAuthentication,
       )
     })
@@ -275,7 +319,7 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
       // Assert
       expect(env.authFetch).not.toHaveBeenCalled()
-      expect(env.fetch.mock.calls[0][1].headers.get('authorization')).toEqual(
+      expect(env.fetch.mock.calls[0][0].headers.get('authorization')).toEqual(
         auth.authorization,
       )
     })
@@ -283,9 +327,9 @@ describe('EnhancedFetch#withAutoAuth', () => {
     it('should request token exchange if requestActorToken and delegation', async () => {
       // Arrange
       const auth = createCurrentUser({ scope })
+      auth.delegationType = [AuthDelegationType.Custom]
       auth.actor = {
         nationalId: auth.nationalId,
-        delegationType: 'Custom',
         scope: [],
       }
       env = setupTestEnv({
@@ -302,7 +346,7 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
       // Assert
       expect(env.authFetch).toHaveBeenCalledTimes(1)
-      expect(env.fetch.mock.calls[0][1].headers.get('authorization')).toEqual(
+      expect(env.fetch.mock.calls[0][0].headers.get('authorization')).toEqual(
         fakeAuthentication,
       )
     })
@@ -321,7 +365,7 @@ describe('EnhancedFetch#withAutoAuth', () => {
       // Assert
       expect(env.authFetch).toHaveBeenCalledTimes(1)
       expect(
-        env.authFetch.mock.calls[0][1].body.toString(),
+        env.authFetch.mock.calls[0][0].body.toString(),
       ).toMatchInlineSnapshot(
         `"grant_type=client_credentials&client_id=client&client_secret=secret&scope=testScope"`,
       )
@@ -332,14 +376,23 @@ describe('EnhancedFetch#withAutoAuth', () => {
       env = setupTestEnv({
         autoAuth: { ...autoAuth, mode: 'auto' },
       })
+      const expectedBody = new URLSearchParams({
+        grant_type: 'urn:ietf:params:oauth:grant-type:token-exchange',
+        client_id: 'client',
+        client_secret: 'secret',
+        scope: 'testScope',
+        subject_token: auth.authorization,
+        subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+        requested_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+      }).toString()
 
       // Act
       await env.enhancedFetch(testUrl, { auth })
 
       // Assert
       expect(env.authFetch).toHaveBeenCalledTimes(1)
-      expect(env.authFetch.mock.calls[0][1].body.toString()).toEqual(
-        `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange&client_id=client&client_secret=secret&scope=testScope&subject_token=${auth.authorization}&subject_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aaccess_token&requested_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aaccess_token`,
+      expect(env.authFetch.mock.calls[0][0].body.toString()).toEqual(
+        expectedBody,
       )
     })
   })

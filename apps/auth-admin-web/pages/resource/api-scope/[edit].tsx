@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import { LoadingScreen } from '../../../components/common/LoadingScreen'
 import ContentWrapper from '../../../components/Layout/ContentWrapper'
 import { ApiScope } from '../../../entities/models/api-scope.model'
 import { ApiScopeDTO } from '../../../entities/dtos/api-scope-dto'
@@ -14,12 +15,12 @@ import LocalizationUtils from '../../../utils/localization.utils'
 import ApiScopeResourceForm from './../../../components/Resource/forms/ApiScopeResourceForm'
 import ApiScopePersonalRepresentativePermissionsForm from '../../../components/Resource/forms/ApiScopePersonalRepresentativePermissionsForm'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { query } = useRouter()
   const stepQuery = query.step
   const apiScopeName = query.edit
   const [step, setStep] = useState(1)
-  const [apiScope, setApiScope] = useState<ApiScope>(new ApiScope())
+  const [apiScope, setApiScope] = useState<ApiScope>()
   const router = useRouter()
 
   /** Load the api Scope and set the step from query if there is one */
@@ -75,6 +76,17 @@ const Index: React.FC = () => {
   const refreshClaims = async () => {
     const decode = decodeURIComponent(apiScopeName as string)
     await getApiScope(decode)
+  }
+
+  if (!apiScope) {
+    return (
+      <ContentWrapper>
+        <ResourcesTabsNav />
+        <ApiScopeStepNav activeStep={step} handleStepChange={handleStepChange}>
+          <LoadingScreen />
+        </ApiScopeStepNav>
+      </ContentWrapper>
+    )
   }
 
   switch (step) {

@@ -1,26 +1,33 @@
 import '@island.is/api/mocks'
-import React from 'react'
-import ReactDOM from 'react-dom'
-import * as Sentry from '@sentry/react'
-import { Integrations } from '@sentry/tracing'
+import React, { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
 
-import {
-  getActiveEnvironment,
-  isRunningOnEnvironment,
-} from '@island.is/shared/utils'
+import { userMonitoring } from '@island.is/user-monitoring'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import './auth'
 import { environment } from './environments'
 import App from './app/App'
 
-const activeEnvironment = getActiveEnvironment()
+if (!isRunningOnEnvironment('local')) {
+  userMonitoring.initDdRum({
+    service: 'service-portal',
+    applicationId: environment.DD_RUM_APPLICATION_ID,
+    clientToken: environment.DD_RUM_CLIENT_TOKEN,
+    env: environment.ENVIRONMENT,
+    version: environment.APP_VERSION,
+  })
+}
 
-Sentry.init({
-  dsn: environment.sentry.dsn,
-  integrations: [new Integrations.BrowserTracing()],
-  enabled: !isRunningOnEnvironment('local'),
-  environment: activeEnvironment,
-  tracesSampleRate: 0.01,
-})
+const rootEl = document.getElementById('root')
 
-ReactDOM.render(<App />, document.getElementById('root'))
+if (!rootEl) {
+  throw new Error('Root element not found')
+}
+
+const root = createRoot(rootEl)
+root.render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)

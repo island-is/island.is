@@ -1,11 +1,18 @@
+import axios from 'axios'
 import { Inject, Injectable } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
 import { ValidationFailed } from '@island.is/nest/problem'
 import { EmailService } from '@island.is/email-service'
 import { ZendeskService } from '@island.is/clients/zendesk'
-import { ContentfulRepository, localeMap } from '@island.is/cms'
+import { FileStorageService } from '@island.is/file-storage'
+import {
+  ContentfulRepository,
+  CmsContentfulService,
+  localeMap,
+  Form,
+} from '@island.is/cms'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { SendMailOptions } from 'nodemailer'
 import { ContactUsInput } from './dto/contactUs.input'
 import { TellUsAStoryInput } from './dto/tellUsAStory.input'
 import {
@@ -15,6 +22,9 @@ import {
 import { getTemplate as getContactUsTemplate } from './emailTemplates/contactUs'
 import { getTemplate as getTellUsAStoryTemplate } from './emailTemplates/tellUsAStory'
 import { getTemplate as getServiceWebFormsTemplate } from './emailTemplates/serviceWebForms'
+import { GenericFormInput } from './dto/genericForm.input'
+import { environment } from './environments/environment'
+import { CommunicationsConfig } from './communications.config'
 
 type SendEmailInput =
   | ContactUsInput
@@ -26,8 +36,12 @@ export class CommunicationsService {
   constructor(
     private readonly emailService: EmailService,
     private readonly zendeskService: ZendeskService,
+    private readonly cmsContentfulService: CmsContentfulService,
+    private readonly fileStorageService: FileStorageService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    @Inject(CommunicationsConfig.KEY)
+    private readonly config: ConfigType<typeof CommunicationsConfig>,
   ) {}
   emailTypeTemplateMap = {
     contactUs: getContactUsTemplate,
@@ -50,13 +64,16 @@ export class CommunicationsService {
 
     const contentfulRespository = new ContentfulRepository()
 
-    const result = await contentfulRespository.getLocalizedEntries(
-      localeMap['is'],
-      {
-        ['content_type']: 'organization',
-        'fields.slug': institutionSlug,
-      },
-    )
+    let locale = localeMap['is']
+
+    if (input.lang && localeMap[input.lang]) {
+      locale = localeMap[input.lang]
+    }
+
+    const result = await contentfulRespository.getLocalizedEntries(locale, {
+      ['content_type']: 'organization',
+      'fields.slug': institutionSlug,
+    })
 
     const errors: Record<string, string> = {}
 
@@ -118,5 +135,92 @@ export class CommunicationsService {
     })
 
     return true
+  }
+
+  async sendFormResponse(input: GenericFormInput): Promise<boolean> {
+    const form = await this.cmsContentfulService.getForm({
+      id: input.id,
+      lang: 'is-IS',
+    })
+    if (!form) {
+      return false
+    }
+
+    if (form.id === this.config.hsnWebFormId) {
+      try {
+        const response = await axios.post(
+          this.config.hsnWebFormResponseUrl,
+          {
+            Nafn: input.name,
+            Netfang: input.email,
+            Titill: `Island.is form: ${form.title}`,
+            Lysing: input.message,
+            Starfsstod: input.recipientFormFieldDeciderValue,
+          },
+          {
+            headers: {
+              lykill: this.config.hsnWebFormResponseSecret,
+            },
+          },
+        )
+        return response.status === 200
+      } catch (error) {
+        this.logger.error('Failed to send form response to HSN', {
+          message: error.message,
+        })
+        return false
+      }
+    }
+
+    return this.sendFormResponseEmail(input, form)
+  }
+
+  private async sendFormResponseEmail(
+    input: GenericFormInput,
+    form: Form,
+  ): Promise<boolean> {
+    let recipient: string | string[] = form.recipientList ?? []
+
+    const emailConfig = form.recipientFormFieldDecider?.emailConfig
+    const key: string | undefined = input.recipientFormFieldDeciderValue
+
+    // The CMS might have a form field which decides what the recipient email address is
+    if (!!key && emailConfig && emailConfig[key]) {
+      recipient = emailConfig[key]
+    }
+
+    const attachments = await Promise.all(
+      input.files?.map(async (file) => {
+        return {
+          filename: file,
+          href: await this.fileStorageService.generateSignedUrl(
+            this.fileStorageService.getObjectUrl(file),
+          ),
+        }
+      }) ?? [],
+    )
+
+    const emailOptions = {
+      from: {
+        name: input.name,
+        address: environment.emailOptions.sendFrom!,
+      },
+      replyTo: {
+        name: input.name,
+        address: input.email,
+      },
+      to: recipient,
+      subject: `Island.is form: ${form.title}`,
+      text: input.message,
+      attachments,
+    }
+
+    try {
+      await this.emailService.sendEmail(emailOptions)
+      return true
+    } catch (error) {
+      this.logger.error('Failed to send email', { message: error.message })
+      return false
+    }
   }
 }

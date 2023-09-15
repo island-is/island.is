@@ -1,222 +1,83 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { ReactElement, useMemo, useState, useEffect } from 'react'
-import { LayoutProps, withMainLayout } from '@island.is/web/layouts/main'
+import { useMemo, useState, useEffect } from 'react'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
-  GetNewsQuery,
-  Link,
-  LinkGroup,
   OneColumnText,
   Query,
   QueryGetNamespaceArgs,
   QueryGetProjectPageArgs,
+  Stepper as StepperSchema,
 } from '@island.is/web/graphql/schema'
-import { GET_NAMESPACE_QUERY, GET_NEWS_QUERY } from '../queries'
+import { GET_NAMESPACE_QUERY } from '../queries'
 import { Screen } from '../../types'
-import { useNamespace } from '@island.is/web/hooks'
+import { linkResolver, useNamespace } from '@island.is/web/hooks'
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { GET_PROJECT_PAGE_QUERY } from '@island.is/web/screens/queries/Project'
 import {
-  DefaultProjectHeader,
-  OrganizationSlice,
-  Section,
-  EntryProjectHeader,
-  UkraineProjectHeader,
+  SliceMachine,
   HeadWithSocialSharing,
-  ElectionProjectHeader,
+  Stepper,
+  stepperUtils,
+  Form,
+  TabSectionSlice,
+  Webreader,
   OneColumnTextSlice,
-  NewsItems,
-  UkraineChatPanel,
 } from '@island.is/web/components'
 import {
   Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Hidden,
-  Navigation,
-  NavigationItem,
+  BreadCrumbItem,
   TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
-import { QueryGetNewsArgs } from '@island.is/api/schema'
-import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import NextLink from 'next/link'
+import { SliceType } from '@island.is/island-ui/contentful'
 import { useRouter } from 'next/router'
-import { ProjectPage as ProjectPageSchema } from '@island.is/web/graphql/schema'
 import slugify from '@sindresorhus/slugify'
-import { getStepOptionsFromUIConfiguration } from '../../components/StepperFSM/StepperFSMUtils'
-import StepperFSM from '../../components/StepperFSM/StepperFSM'
-
-const lightThemes = ['traveling-to-iceland', 'election', 'ukraine', 'default']
-
-const getThemeConfig = (
-  theme: string,
-): { themeConfig: Partial<LayoutProps> } => {
-  const isLightTheme = lightThemes.includes(theme)
-  if (!isLightTheme) {
-    return {
-      themeConfig: {
-        headerButtonColorScheme: 'negative',
-        headerColorScheme: 'white',
-      },
-    }
-  }
-  return { themeConfig: {} }
-}
-
-interface ProjectWrapperProps {
-  withSidebar?: boolean
-  sidebarContent?: ReactElement
-}
-
-const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
-  withSidebar = false,
-  sidebarContent,
-  children,
-}) => {
-  return withSidebar ? (
-    <SidebarLayout isSticky={true} sidebarContent={sidebarContent}>
-      {children}
-    </SidebarLayout>
-  ) : (
-    <GridContainer>
-      <GridRow>
-        <GridColumn
-          paddingTop={6}
-          paddingBottom={6}
-          span={['12/12', '12/12', '10/12']}
-          offset={['0', '0', '1/12']}
-        >
-          {children}
-        </GridColumn>
-      </GridRow>
-    </GridContainer>
-  )
-}
-
-interface ProjectHeaderProps {
-  projectPage: ProjectPageSchema
-}
-
-const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
-  switch (projectPage.theme) {
-    case 'traveling-to-iceland':
-      return <EntryProjectHeader projectPage={projectPage} />
-    case 'election':
-      return <ElectionProjectHeader projectPage={projectPage} />
-    case 'ukraine':
-      return <UkraineProjectHeader projectPage={projectPage} />
-    default:
-      return <DefaultProjectHeader projectPage={projectPage} />
-  }
-}
+import { getThemeConfig } from './utils'
+import { ProjectWrapper } from './components/ProjectWrapper'
+import { Locale } from 'locale'
+import { ProjectFooter } from './components/ProjectFooter'
+import { webRichText } from '@island.is/web/utils/richText'
 
 interface PageProps {
   projectPage: Query['getProjectPage']
-  news: GetNewsQuery['getNews']['items']
-  namespace: Query['getNamespace']
+  namespace: Record<string, string>
+  projectNamespace: Record<string, string>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stepOptionsFromNamespace: { data: Record<string, any>[]; slug: string }[]
+  stepperNamespace: Record<string, string>
+  locale: Locale
 }
-
-const convertLinksToNavigationItem = (links: Link[]) =>
-  links.map(({ text, url }) => {
-    return {
-      title: text,
-      href: url,
-      active: false,
-    }
-  })
-
-const convertLinkGroupsToNavigationItems = (
-  linkGroups: LinkGroup[],
-): NavigationItem[] =>
-  linkGroups.map(({ primaryLink, childrenLinks }) => {
-    return {
-      title: primaryLink.text,
-      href: primaryLink.url,
-      active: false,
-      items: convertLinksToNavigationItem(childrenLinks),
-    }
-  })
-
-const getActiveNavigationItemTitle = (
-  navigationItems: NavigationItem[],
-  clientUrl: string,
-) => {
-  for (const item of navigationItems) {
-    if (clientUrl === item.href) {
-      return item.title
-    }
-    for (const childItem of item.items) {
-      if (clientUrl === childItem.href) {
-        return childItem.title
-      }
-    }
-  }
-}
-
-const assignNavigationActive = (
-  items: NavigationItem[],
-  clientUrl: string,
-): NavigationItem[] =>
-  items.map((item) => {
-    let isAnyChildActive = false
-    const childItems = item.items.map((childItem) => {
-      const isChildActive = clientUrl === childItem.href
-      if (isChildActive) isAnyChildActive = isChildActive
-      return {
-        ...childItem,
-        active: isChildActive,
-      }
-    })
-    return {
-      title: item.title,
-      href: item.href,
-      active: clientUrl === item.href || isAnyChildActive,
-      items: childItems,
-    }
-  })
 
 const ProjectPage: Screen<PageProps> = ({
   projectPage,
-  news,
   namespace,
+  projectNamespace,
+  stepperNamespace,
   stepOptionsFromNamespace,
+  locale,
 }) => {
   const n = useNamespace(namespace)
+  const p = useNamespace(projectNamespace)
+
   const router = useRouter()
 
   const subpage = useMemo(
     () =>
-      projectPage.projectSubpages.find((x) => {
+      projectPage?.projectSubpages.find((x) => {
         return x.slug === router.query.subSlug
       }),
-    [router.query.subSlug, projectPage.projectSubpages],
+    [router.query.subSlug, projectPage?.projectSubpages],
   )
 
-  useContentfulId(projectPage.id, subpage?.id)
+  useContentfulId(projectPage?.id, subpage?.id)
 
   const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
 
-  const navigationList = useMemo(
-    () =>
-      assignNavigationActive(
-        convertLinkGroupsToNavigationItems(projectPage.sidebarLinks),
-        baseRouterPath,
-      ),
-    [baseRouterPath, projectPage.sidebarLinks],
+  const navigationTitle = p(
+    'navigationTitle',
+    n('navigationTitle', 'Efnisyfirlit'),
   )
-
-  const activeNavigationItemTitle = useMemo(
-    () => getActiveNavigationItemTitle(navigationList, baseRouterPath),
-    [baseRouterPath, navigationList],
-  )
-
-  const navigationTitle = n('navigationTitle', 'Efnisyfirlit')
 
   const renderSlicesAsTabs = subpage?.renderSlicesAsTabs ?? false
 
@@ -225,8 +86,9 @@ const ProjectPage: Screen<PageProps> = ({
   >(undefined)
 
   let content: SliceType[] = []
-  if (!!subpage && renderSlicesAsTabs)
+  if (!!subpage && renderSlicesAsTabs) {
     content = selectedSliceTab?.content as SliceType[]
+  }
   if (!subpage) content = projectPage?.content as SliceType[]
 
   useEffect(() => {
@@ -247,64 +109,76 @@ const ProjectPage: Screen<PageProps> = ({
     }
   }, [renderSlicesAsTabs, subpage, router.asPath])
 
+  const breadCrumbs: BreadCrumbItem[] = !subpage
+    ? []
+    : [
+        {
+          title: 'Ísland.is',
+          href: linkResolver('homepage', [], locale).href,
+          typename: 'homepage',
+        },
+        {
+          title: projectPage?.title ?? '',
+          href: linkResolver('projectpage', [projectPage?.slug ?? ''], locale)
+            .href,
+          typename: 'projectpage',
+        },
+      ]
+
+  const bottomSlices =
+    (!subpage ? projectPage?.bottomSlices : subpage.bottomSlices) ?? []
+
+  const shouldDisplayWebReader =
+    projectNamespace?.shouldDisplayWebReader ?? true
+
   return (
     <>
-      {projectPage.id === '7GtuCCd7MEZhZKe0oXcHdb' && <UkraineChatPanel />}
       <HeadWithSocialSharing
-        title={`${projectPage.title} | Ísland.is`}
-        description={projectPage.featuredDescription || projectPage.intro}
-        imageUrl={projectPage.featuredImage?.url}
-        imageContentType={projectPage.featuredImage?.contentType}
-        imageWidth={projectPage.featuredImage?.width?.toString()}
-        imageHeight={projectPage.featuredImage?.height?.toString()}
+        title={`${projectPage?.title} | Ísland.is`}
+        description={projectPage?.featuredDescription || projectPage?.intro}
+        imageUrl={projectPage?.featuredImage?.url}
+        imageContentType={projectPage?.featuredImage?.contentType}
+        imageWidth={projectPage?.featuredImage?.width?.toString()}
+        imageHeight={projectPage?.featuredImage?.height?.toString()}
       />
-      <ProjectHeader projectPage={projectPage} />
       <ProjectWrapper
-        withSidebar={projectPage.sidebar}
-        sidebarContent={
-          <Navigation
-            baseId="pageNav"
-            items={navigationList}
-            activeItemTitle={activeNavigationItemTitle}
-            title={navigationTitle}
-            renderLink={(link, item) => {
-              return item?.href ? (
-                <NextLink href={item?.href}>{link}</NextLink>
-              ) : (
-                link
-              )
-            }}
-          />
-        }
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
+        projectPage={projectPage}
+        breadcrumbItems={breadCrumbs}
+        sidebarNavigationTitle={navigationTitle}
+        withSidebar={projectPage?.sidebar}
       >
-        {projectPage.sidebar && (
-          <Hidden above="sm">
-            <Box>
-              <Box marginY={2}>
-                <Navigation
-                  isMenuDialog
-                  baseId="pageNav"
-                  items={navigationList}
-                  activeItemTitle={activeNavigationItemTitle}
-                  title={navigationTitle}
-                  renderLink={(link, item) => {
-                    return item?.href ? (
-                      <NextLink href={item?.href}>{link}</NextLink>
-                    ) : (
-                      link
-                    )
-                  }}
-                />
-              </Box>
-            </Box>
-          </Hidden>
+        {!subpage && shouldDisplayWebReader && (
+          <Webreader
+            marginTop={0}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            readId={null}
+            readClass="rs_read"
+          />
         )}
         {!!subpage && (
           <Box marginBottom={1}>
             <Text as="h1" variant="h1">
               {subpage.title}
             </Text>
-            {subpage.content && richText(subpage.content as SliceType[])}
+            {shouldDisplayWebReader && (
+              <Webreader
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                readId={null}
+                readClass="rs_read"
+              />
+            )}
+            {subpage.content &&
+              webRichText(subpage.content as SliceType[], {
+                renderComponent: {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
+                  Form: (slice) => <Form form={slice} namespace={namespace} />,
+                },
+              })}
           </Box>
         )}
         {renderSlicesAsTabs && !!subpage && subpage.slices.length > 1 && (
@@ -335,58 +209,110 @@ const ProjectPage: Screen<PageProps> = ({
             {selectedSliceTab.title}
           </Text>
         )}
-        {content && richText(content)}
-        {!subpage && projectPage.stepper && (
+        {content &&
+          webRichText(content, {
+            renderComponent: {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              Form: (slice) => <Form form={slice} namespace={namespace} />,
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              TabSection: (slice) => (
+                <TabSectionSlice
+                  slice={slice}
+                  contentColumnProps={{ span: '1/1' }}
+                  contentPaddingTop={0}
+                />
+              ),
+            },
+          })}
+        {!subpage && projectPage?.stepper && (
           <Box marginTop={6}>
-            <StepperFSM
+            <Stepper
               scrollUpWhenNextStepAppears={false}
               stepper={projectPage.stepper}
               optionsFromNamespace={stepOptionsFromNamespace}
+              namespace={stepperNamespace}
             />
           </Box>
         )}
         {!renderSlicesAsTabs &&
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           (subpage ?? projectPage).slices.map((slice) =>
             slice.__typename === 'OneColumnText' ? (
-              <OneColumnTextSlice slice={slice} boxProps={{ marginTop: 8 }} />
+              <Box marginTop={6}>
+                <SliceMachine
+                  key={slice.id}
+                  slice={slice}
+                  namespace={namespace}
+                  fullWidth={true}
+                  slug={projectPage?.slug}
+                />
+              </Box>
             ) : (
-              <OrganizationSlice
+              <SliceMachine
                 key={slice.id}
                 slice={slice}
                 namespace={namespace}
                 fullWidth={true}
-                organizationPageSlug={projectPage.slug}
+                slug={projectPage?.slug}
               />
             ),
           )}
       </ProjectWrapper>
-      {!subpage && !!projectPage.newsTag && (
-        <div style={{ overflow: 'hidden' }}>
-          <Section
-            paddingTop={[8, 8, 6]}
-            paddingBottom={[8, 8, 6]}
-            background="purple100"
-            aria-labelledby="latestNewsTitle"
-          >
-            <NewsItems
-              heading={n('newsAndAnnouncements')}
-              headingTitle="news-items-title"
-              seeMoreText={n('seeMore')}
-              items={news}
-            />
-          </Section>
-        </div>
-      )}
+
+      {bottomSlices.map((slice, index) => {
+        if (
+          slice.__typename === 'OneColumnText' &&
+          index === bottomSlices.length - 1
+        ) {
+          return (
+            <Box paddingBottom={6} paddingTop={2}>
+              <OneColumnTextSlice slice={slice} />
+            </Box>
+          )
+        }
+        return (
+          <SliceMachine
+            key={slice.id}
+            slice={slice}
+            namespace={namespace}
+            slug={projectPage?.slug}
+            fullWidth={true}
+            params={{
+              linkType: 'projectnews',
+              overview: 'projectnewsoverview',
+              containerPaddingBottom: 0,
+              containerPaddingTop: 0,
+              contentPaddingTop: 0,
+              contentPaddingBottom: 0,
+            }}
+            wrapWithGridContainer={
+              slice.__typename === 'ConnectedComponent' ||
+              slice.__typename === 'TabSection' ||
+              slice.__typename === 'PowerBiSlice'
+            }
+          />
+        )
+      })}
+      <ProjectFooter
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
+        projectPage={projectPage}
+        namespace={projectNamespace}
+      />
     </>
   )
 }
 
-ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
+ProjectPage.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getProjectPage },
     },
     namespace,
+    stepperNamespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetProjectPageArgs>({
       query: GET_PROJECT_PAGE_QUERY,
@@ -402,30 +328,32 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'Syslumenn',
+            namespace: 'ProjectPages',
             lang: locale,
           },
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
+          ? JSON.parse(variables.data.getNamespace.fields)
+          : {},
+      ),
+    apolloClient
+      .query<Query, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'Stepper',
+            lang: locale,
+          },
+        },
+      })
+      .then((variables) =>
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
   ])
-
-  const getNewsQuery = getProjectPage?.newsTag
-    ? await apolloClient.query<GetNewsQuery, QueryGetNewsArgs>({
-        query: GET_NEWS_QUERY,
-        variables: {
-          input: {
-            size: 3,
-            lang: locale as ContentLanguage,
-            tag: getProjectPage?.newsTag.slug,
-          },
-        },
-      })
-    : null
 
   const subpage = getProjectPage?.projectSubpages.find(
     (x) => x.slug === query.subSlug,
@@ -435,20 +363,26 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Project page not found')
   }
 
-  let stepOptionsFromNamespace = []
+  let stepOptionsFromNamespace: any = []
 
-  if (getProjectPage.stepper)
-    stepOptionsFromNamespace = await getStepOptionsFromUIConfiguration(
-      getProjectPage.stepper,
-      apolloClient,
-    )
+  if (getProjectPage.stepper) {
+    stepOptionsFromNamespace =
+      await stepperUtils.getStepOptionsFromUIConfiguration(
+        getProjectPage.stepper as StepperSchema,
+        apolloClient,
+      )
+  }
+
+  const projectNamespace = JSON.parse(getProjectPage.namespace?.fields ?? '{}')
 
   return {
     projectPage: getProjectPage,
     stepOptionsFromNamespace,
     namespace,
-    news: getNewsQuery?.data.getNews.items,
+    projectNamespace,
+    stepperNamespace,
     showSearchInHeader: false,
+    locale: locale as Locale,
     ...getThemeConfig(getProjectPage.theme),
   }
 }

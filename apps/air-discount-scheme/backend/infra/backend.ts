@@ -6,6 +6,7 @@ const postgresInfo = {
   username: 'air_discount_scheme_backend',
   name: 'air_discount_scheme_backend',
 }
+
 export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
   service('air-discount-scheme-backend')
     .image('air-discount-scheme-backend')
@@ -20,7 +21,7 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
         '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME',
       NATIONAL_REGISTRY_URL:
         '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL',
-      VEGAGERDIN_IDS_CLIENTS_SECRET:
+      IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/air-discount-scheme-backend/VEGAGERDIN_IDS_CLIENTS_ADS_SECRET',
     })
     .xroad(Base, Client, NationalRegistry)
@@ -30,24 +31,29 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
         staging: 'staging',
         prod: 'prod',
       },
-      REDIS_URL_NODE_01: {
-        dev:
-          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
-        staging:
-          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-        prod:
-          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
-      },
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme',
+      NO_UPDATE_NOTIFIER: 'true',
     })
     .postgres(postgresInfo)
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: postgresInfo,
+      envs: {
+        NO_UPDATE_NOTIFIER: 'true',
+      },
+    })
+    .redis({
+      host: {
+        dev: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        staging:
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        prod: 'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+      },
     })
     .ingress({
       primary: {
@@ -74,5 +80,6 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
     .liveness('/liveness')
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
-      requests: { cpu: '200m', memory: '256Mi' },
+      requests: { cpu: '50m', memory: '256Mi' },
     })
+    .grantNamespaces('nginx-ingress-external', 'islandis')

@@ -4,7 +4,6 @@ import { signIn } from 'next-auth/client'
 import { identityServerId } from '@island.is/air-discount-scheme-web/lib'
 
 import { NotificationService, api } from '../services'
-import { BREAK } from 'graphql'
 
 export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
   if (networkError) {
@@ -20,11 +19,12 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
       }
       switch (err.extensions?.code) {
         case 'UNAUTHENTICATED':
-          typeof window !== 'undefined'
-            ? signIn('identity-server', {
-                callbackUrl: `${window.location.href}`,
-              })
-            : BREAK
+          if (typeof window !== 'undefined') {
+            signIn('identity-server', {
+              callbackUrl: `${window.location.href}`,
+            })
+          }
+          break
         default:
           return NotificationService.onGraphQLError({
             graphQLErrors,

@@ -1,29 +1,30 @@
 import {
-  IC_HEARING_ARRANGEMENTS_ROUTE,
-  IC_POLICE_DEMANDS_ROUTE,
+  INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+  INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
 } from '@island.is/judicial-system/consts'
+import { CaseType, UserRole } from '@island.is/judicial-system/types'
 
 import {
   makeCourt,
-  makeInvestigationCase,
+  mockCase,
   makeProsecutor,
   intercept,
+  Operation,
 } from '../../../utils'
 
-describe(`${IC_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
+describe(`${INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = makeInvestigationCase()
+    const caseData = mockCase(CaseType.INTERNET_USAGE)
     const caseDataAddition = {
       ...caseData,
       prosecutor: makeProsecutor(),
       court: makeCourt(),
     }
 
-    cy.setCookie('judicial-system.csrf', 'test')
+    cy.login(UserRole.PROSECUTOR)
     cy.stubAPIResponses()
-    cy.visit(`${IC_HEARING_ARRANGEMENTS_ROUTE}/test_id`)
-
     intercept(caseDataAddition)
+    cy.visit(`${INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/test_id`)
   })
 
   it('should require a valid requested court date time', () => {
@@ -56,6 +57,26 @@ describe(`${IC_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     cy.getByTestid('select-court').contains('Héraðsdómur Reykjavíkur')
   })
 
+  it('should show an error message if sending a notification failed', () => {
+    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseDataAddition = {
+      ...caseData,
+      prosecutor: makeProsecutor(),
+      court: makeCourt(),
+    }
+    const forceFail = Operation.SendNotificationMutation
+
+    intercept(caseDataAddition, forceFail)
+
+    cy.getByTestid('datepicker').type('01.01.2020')
+    cy.getByTestid('datepickerIncreaseMonth').dblclick()
+    cy.contains('15').click()
+    cy.getByTestid('reqCourtDate-time').clear().type('1333')
+    cy.getByTestid('continueButton').click()
+    cy.getByTestid('modalPrimaryButton').click()
+    cy.getByTestid('modalErrorMessage').should('exist')
+  })
+
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
     cy.getByTestid('datepicker').type('01.01.2020')
     cy.getByTestid('datepickerIncreaseMonth').dblclick()
@@ -63,6 +84,6 @@ describe(`${IC_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     cy.getByTestid('reqCourtDate-time').clear().type('1333')
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modalSecondaryButton').click()
-    cy.url().should('include', IC_POLICE_DEMANDS_ROUTE)
+    cy.url().should('include', INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE)
   })
 })

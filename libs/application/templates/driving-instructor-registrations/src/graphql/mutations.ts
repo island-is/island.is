@@ -28,3 +28,13 @@ export const EditDrivingLesson = gql`
     }
   }
 `
+
+export const AllowPracticeDriving = gql`
+  mutation drivingLicenseBookAllowPracticeDriving(
+    $input: DrivingLicenseBookStudentInput!
+  ) {
+    drivingLicenseBookAllowPracticeDriving(input: $input) {
+      success
+    }
+  }
+`

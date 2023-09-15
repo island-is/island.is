@@ -109,7 +109,7 @@ const embeddedNodes = () => ({
   link: {
     component: Box,
     children: (node) => {
-      const { text, url } = node.data?.target?.fields
+      const { text, url } = node.data?.target?.fields ?? {}
       return (
         <Link href={url}>
           <Button variant="text" icon="arrowRight">
@@ -158,9 +158,8 @@ const options = (type) => ({
       )
     },
     [BLOCKS.EMBEDDED_ENTRY]: (node) => {
-      const embeddedNode = embeddedNodes()[
-        node.data.target?.sys?.contentType?.sys?.id
-      ]
+      const embeddedNode =
+        embeddedNodes()[node.data.target?.sys?.contentType?.sys?.id]
 
       if (!embeddedNode) return null
 
@@ -200,7 +199,11 @@ type Props = {
   wrapper?: ReactNode
 }
 
-export const Content: React.FC<Props> = ({ document, wrapper, type }) => {
+export const Content: React.FC<React.PropsWithChildren<Props>> = ({
+  document,
+  wrapper,
+  type,
+}) => {
   const parsed = useMemo(() => {
     if (typeof document === 'object') {
       return document

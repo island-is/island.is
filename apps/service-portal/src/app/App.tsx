@@ -1,55 +1,36 @@
-import React from 'react'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
-import { Authenticator } from '@island.is/auth/react'
+import { AuthProvider } from '@island.is/auth/react'
 import { ApolloProvider } from '@apollo/client'
 import { client } from '@island.is/service-portal/graphql'
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import { LocaleProvider } from '@island.is/localization'
 import { defaultLanguage } from '@island.is/shared/constants'
 import { FeatureFlagProvider } from '@island.is/react/feature-flags'
-
+import { ApplicationErrorBoundary, PortalRouter } from '@island.is/portals/core'
+import { modules } from '../lib/modules'
+import { createRoutes } from '../lib/routes'
+import { ServicePortalPaths } from '../lib/paths'
 import { environment } from '../environments'
-import { StateProvider } from '../store/stateProvider'
-import * as store from '../store/store'
-import Dashboard from '../screens/Dashboard/Dashboard'
-import Layout from '../components/Layout/Layout'
-import Modules from '../screens/Modules/Modules'
 import * as styles from './App.css'
-import { GlobalModules } from '../components/GlobalModules/GlobalModules'
-import { UserProfileLocale } from '../components/UserProfileLocale/UserProfileLocale'
-import ApplicationErrorBoundary from './../components/ApplicationErrorBoundary/ApplicationErrorBoundary'
 
 export const App = () => {
   return (
     <div className={styles.page}>
       <ApolloProvider client={client}>
-        <StateProvider
-          initialState={store.initialState}
-          reducer={store.reducer}
-        >
-          <LocaleProvider locale={defaultLanguage} messages={{}}>
+        <LocaleProvider locale={defaultLanguage} messages={{}}>
+          <AuthProvider basePath={ServicePortalPaths.Base}>
             <ApplicationErrorBoundary>
-              <Router basename="/minarsidur">
-                <Authenticator>
-                  <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
-                    <UserProfileLocale />
-                    <Layout>
-                      <Switch>
-                        <Route exact path={ServicePortalPath.MinarSidurRoot}>
-                          <Dashboard />
-                        </Route>
-                        <Route>
-                          <Modules />
-                        </Route>
-                      </Switch>
-                      <GlobalModules />
-                    </Layout>
-                  </FeatureFlagProvider>
-                </Authenticator>
-              </Router>
+              <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+                <PortalRouter
+                  modules={modules}
+                  createRoutes={createRoutes}
+                  portalMeta={{
+                    basePath: ServicePortalPaths.Base,
+                    portalType: 'my-pages',
+                  }}
+                />
+              </FeatureFlagProvider>
             </ApplicationErrorBoundary>
-          </LocaleProvider>
-        </StateProvider>
+          </AuthProvider>
+        </LocaleProvider>
       </ApolloProvider>
     </div>
   )

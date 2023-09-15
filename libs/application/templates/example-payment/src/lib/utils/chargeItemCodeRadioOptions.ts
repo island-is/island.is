@@ -1,5 +1,5 @@
 /* eslint-disable local-rules/disallow-kennitalas */
-import { Application } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { PaymentCatalogItem } from '../../types/schema'
 
 const orgIdToName = (orgId: string): string => {
@@ -25,7 +25,7 @@ const formatPrice = (price: number) => `kr. ${price.toLocaleString('de-DE')}`
 
 export const chargeItemCodeRadioOptions = ({
   externalData: {
-    feeInfo: { data },
+    paymentCatalog: { data },
   },
 }: Application) => {
   return (data as PaymentCatalogItem[]).map(

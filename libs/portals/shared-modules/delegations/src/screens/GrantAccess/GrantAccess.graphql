@@ -1,0 +1,16 @@
+mutation CreateAuthDelegation($input: CreateAuthDelegationInput!) {
+  createAuthDelegation(input: $input) {
+    id
+    to {
+      nationalId
+    }
+  }
+}
+
+query Identity($input: IdentityInput!) {
+  identity(input: $input) {
+    nationalId
+    type
+    name
+  }
+}

@@ -5,4 +5,4 @@ set -euo pipefail
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-"$DIR"/_run-aws-eks-commands.js proxy --namespace socat --service socat-soffia --port 443 --proxy-port 8443
+"$DIR"/_run-aws-eks-commands.js proxy --namespace socat --service socat-soffia --port 443 --proxy-port 8443 "$@"

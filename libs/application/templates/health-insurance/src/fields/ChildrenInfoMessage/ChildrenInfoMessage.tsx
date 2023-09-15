@@ -1,11 +1,14 @@
 import React, { FC } from 'react'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import * as styles from './ChildrenInfoMessage.css'
 import { m } from '../../forms/messages'
 
-const ChildrenInfoMessage: FC<FieldBaseProps> = ({ application }) => {
+const ChildrenInfoMessage: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
 
   return (

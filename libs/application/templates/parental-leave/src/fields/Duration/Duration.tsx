@@ -1,14 +1,12 @@
 import React, { FC, useEffect, useState, useCallback } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import format from 'date-fns/format'
-import * as Sentry from '@sentry/react'
 
 import {
-  FieldBaseProps,
-  RecordObject,
   extractRepeaterIndexFromField,
   NO_ANSWER,
 } from '@island.is/application/core'
+import { FieldBaseProps, RecordObject } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
@@ -19,6 +17,7 @@ import {
   getApplicationAnswers,
   calculateEndDateForPeriodWithStartAndLength,
   calculatePeriodLengthInMonths,
+  isParentalGrant,
 } from '../../lib/parentalLeaveUtils'
 import { errorMessages, parentalLeaveFormMessages } from '../../lib/messages'
 import { usageMaxMonths, usageMinMonths } from '../../config'
@@ -27,13 +26,13 @@ import * as styles from './Duration.css'
 
 const DEFAULT_PERIOD_LENGTH = usageMinMonths
 
-export const Duration: FC<FieldBaseProps> = ({
+export const Duration: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   field,
   application,
   errors,
 }) => {
   const { id } = field
-  const { register, setError, clearErrors } = useFormContext()
+  const { register, setError, clearErrors, setValue } = useFormContext()
   const { formatMessage, formatDateFns } = useLocale()
   const { answers } = application
   const { rawPeriods } = getApplicationAnswers(answers)
@@ -65,10 +64,9 @@ export const Duration: FC<FieldBaseProps> = ({
         )
 
         setChosenEndDate(calculatedEndDate.toISOString())
-
         return calculatedEndDate
       } catch (e) {
-        Sentry.captureException((e as Error).message)
+        console.error((e as Error).message)
 
         setError('component', {
           type: 'error',
@@ -78,6 +76,12 @@ export const Duration: FC<FieldBaseProps> = ({
     },
     [currentStartDateAnswer, formatMessage, setError],
   )
+
+  useEffect(() => {
+    if (chosenEndDate) {
+      setValue(`periods[${currentIndex}].endDate`, chosenEndDate)
+    }
+  }, [chosenEndDate, setValue, currentIndex])
 
   const handleChange = async (months: number) => {
     clearErrors([id, 'component'])
@@ -103,6 +107,7 @@ export const Duration: FC<FieldBaseProps> = ({
     init()
   }, [])
 
+  const isGrant = isParentalGrant(application)
   const rangeDates =
     currentPeriod.firstPeriodStart !== StartDateOptions.ACTUAL_DATE_OF_BIRTH
       ? {
@@ -120,12 +125,13 @@ export const Duration: FC<FieldBaseProps> = ({
           },
         }
       : undefined
-
   return (
     <Box>
       <FieldDescription
         description={formatMessage(
-          parentalLeaveFormMessages.duration.monthsDescription,
+          isGrant
+            ? parentalLeaveFormMessages.duration.monthsGrantDescription
+            : parentalLeaveFormMessages.duration.monthsDescription,
         )}
       />
 
@@ -140,7 +146,7 @@ export const Duration: FC<FieldBaseProps> = ({
           <Controller
             defaultValue={chosenEndDate}
             name={id}
-            render={({ onChange }) => (
+            render={({ field: { onChange } }) => (
               <Slider
                 min={usageMinMonths}
                 max={usageMaxMonths}
@@ -184,10 +190,9 @@ export const Duration: FC<FieldBaseProps> = ({
 
       <input
         readOnly
-        ref={register}
         type="hidden"
         value={chosenEndDate}
-        name={`periods[${currentIndex}].endDate`}
+        {...register(`periods[${currentIndex}].endDate`)}
       />
     </Box>
   )

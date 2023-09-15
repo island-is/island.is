@@ -13,6 +13,7 @@ const devConfig = {
     url: 'https://smsapi.devnova.is',
     username: 'IslandIs_User_Development',
     password: process.env.NOVA_PASSWORD,
+    acceptUnauthorized: true,
   },
   emailOptions: {
     useTestAccount: true,
@@ -39,6 +40,7 @@ const prodConfig = {
     url: process.env.NOVA_URL,
     username: process.env.NOVA_USERNAME,
     password: process.env.NOVA_PASSWORD,
+    acceptUnauthorized: process.env.NOVA_ACCEPT_UNAUTHORIZED === 'true',
   },
   emailOptions: {
     useTestAccount: false,
@@ -57,4 +59,7 @@ const prodConfig = {
   },
 }
 
-export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig
+export default process.env.PROD_MODE === 'true' ||
+process.env.NODE_ENV === 'production'
+  ? prodConfig
+  : devConfig

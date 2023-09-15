@@ -8,7 +8,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import * as styles from '../History/History.css'
 import cn from 'classnames'
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 
 interface Props {
   event: ApplicationEvent

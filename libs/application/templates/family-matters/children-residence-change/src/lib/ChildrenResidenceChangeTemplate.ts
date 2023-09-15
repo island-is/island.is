@@ -7,12 +7,19 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-} from '@island.is/application/core'
+  defineTemplateApi,
+} from '@island.is/application/types'
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { dataSchema } from './dataSchema'
 import { CRCApplication } from '../types'
 import { Roles, ApplicationStates } from './constants'
 import { application, stateDescriptions, stateLabels } from './messages'
+import {
+  ChildrenCustodyInformationApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '../dataProviders'
+import { pruneAfterDays } from '@island.is/application/core'
 
 type Events =
   | { type: DefaultEvents.ASSIGN }
@@ -29,17 +36,6 @@ enum TemplateApiActions {
 
 const applicationName = 'Umsókn um breytt lögheimili barns'
 
-const oneYear = 24 * 3600 * 1000 * 365
-const twentyEightDays = 24 * 3600 * 1000 * 28
-
-const pruneAfter = (time: number) => {
-  return {
-    shouldBeListed: true,
-    shouldBePruned: true,
-    whenToPrune: time,
-  }
-}
-
 const ChildrenResidenceChangeTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -47,18 +43,18 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
   name: application.name,
-  readyForProduction: true,
   dataSchema,
   stateMachineConfig: {
     initial: ApplicationStates.DRAFT,
     states: {
       [ApplicationStates.DRAFT]: {
         meta: {
+          status: 'draft',
           name: applicationName,
           actionCard: {
             description: stateDescriptions.draft,
           },
-          lifecycle: pruneAfter(oneYear),
+          lifecycle: pruneAfterDays(365),
           roles: [
             {
               id: Roles.ParentA,
@@ -74,6 +70,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                 },
               ],
               read: 'all',
+              delete: true,
               write: {
                 answers: [
                   'reason',
@@ -85,9 +82,19 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                   'approveExternalData',
                   'residenceChangeReason',
                   'approveChildSupportTerms',
+                  'confirmContract',
                 ],
-                externalData: ['userProfile', 'nationalRegistry'],
+                externalData: [
+                  NationalRegistryUserApi.externalDataId,
+                  ChildrenCustodyInformationApi.externalDataId,
+                  UserProfileApi.externalDataId,
+                ],
               },
+              api: [
+                ChildrenCustodyInformationApi,
+                NationalRegistryUserApi,
+                UserProfileApi,
+              ],
             },
           ],
         },
@@ -100,14 +107,15 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
       [ApplicationStates.IN_REVIEW]: {
         entry: 'assignToOtherParent',
         meta: {
+          status: 'inprogress',
           name: applicationName,
           actionCard: {
             description: stateDescriptions.inReview,
           },
-          lifecycle: pruneAfter(twentyEightDays),
-          onEntry: {
-            apiModuleAction: TemplateApiActions.sendNotificationToCounterParty,
-          },
+          lifecycle: pruneAfterDays(28),
+          onEntry: defineTemplateApi({
+            action: TemplateApiActions.sendNotificationToCounterParty,
+          }),
           roles: [
             {
               id: Roles.ParentB,
@@ -161,14 +169,15 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
       [ApplicationStates.SUBMITTED]: {
         meta: {
           name: applicationName,
+          status: 'inprogress',
           actionCard: {
             description: stateDescriptions.submitted,
             tag: { label: stateLabels.submitted },
           },
-          lifecycle: pruneAfter(oneYear),
-          onEntry: {
-            apiModuleAction: TemplateApiActions.submitApplication,
-          },
+          lifecycle: pruneAfterDays(365),
+          onEntry: defineTemplateApi({
+            action: TemplateApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.ParentA,
@@ -181,10 +190,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             {
               id: Roles.ParentB,
               formLoader: () =>
-                import(
-                  '../forms/ParentBApplicationConfirmation'
-                ).then((module) =>
-                  Promise.resolve(module.ParentBApplicationConfirmation),
+                import('../forms/ParentBApplicationConfirmation').then(
+                  (module) =>
+                    Promise.resolve(module.ParentBApplicationConfirmation),
                 ),
               read: 'all',
             },
@@ -194,6 +202,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
       [ApplicationStates.REJECTEDBYPARENTB]: {
         meta: {
           name: applicationName,
+          status: 'rejected',
           actionCard: {
             description: stateDescriptions.rejectedByParentB,
             tag: {
@@ -201,10 +210,10 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
               label: stateLabels.rejected,
             },
           },
-          lifecycle: pruneAfter(oneYear),
-          onEntry: {
-            apiModuleAction: TemplateApiActions.rejectApplication,
-          },
+          lifecycle: pruneAfterDays(365),
+          onEntry: defineTemplateApi({
+            action: TemplateApiActions.rejectApplication,
+          }),
           roles: [
             {
               id: Roles.ParentB,
@@ -226,15 +235,16 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
       },
       [ApplicationStates.REJECTED]: {
         meta: {
+          status: 'rejected',
           name: applicationName,
           actionCard: {
             description: stateDescriptions.rejected,
             tag: { label: stateLabels.rejected, variant: 'red' },
           },
-          lifecycle: pruneAfter(oneYear),
-          onEntry: {
-            apiModuleAction: TemplateApiActions.rejectedApplication,
-          },
+          lifecycle: pruneAfterDays(365),
+          onEntry: defineTemplateApi({
+            action: TemplateApiActions.rejectedApplication,
+          }),
           roles: [
             {
               id: Roles.ParentA,
@@ -258,14 +268,15 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
       [ApplicationStates.COMPLETED]: {
         meta: {
           name: applicationName,
+          status: 'approved',
           actionCard: {
             description: stateDescriptions.approved,
             tag: { label: stateLabels.approved, variant: 'blueberry' },
           },
-          lifecycle: pruneAfter(oneYear),
-          onEntry: {
-            apiModuleAction: TemplateApiActions.approveApplication,
-          },
+          lifecycle: pruneAfterDays(365),
+          onEntry: defineTemplateApi({
+            action: TemplateApiActions.approveApplication,
+          }),
           roles: [
             {
               id: Roles.ParentA,
@@ -292,13 +303,11 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
     actions: {
       assignToOtherParent: assign((context) => {
         // TODO: fix this..
-        const {
-          externalData,
-          answers,
-        } = (context.application as unknown) as CRCApplication
-        const applicant = externalData.nationalRegistry.data
+        const { externalData, answers } =
+          context.application as unknown as CRCApplication
+        const children = externalData.childrenCustodyInformation.data
         const selectedChildren = getSelectedChildrenFromExternalData(
-          applicant.children,
+          children,
           answers.selectedChildren,
         )
         const otherParent = selectedChildren[0].otherParent
@@ -307,7 +316,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           ...context,
           application: {
             ...context.application,
-            assignees: [otherParent.nationalId],
+            assignees: [otherParent?.nationalId ?? ''],
           },
         }
       }),

@@ -3,7 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType()
 export class DebtStatusModel {
   @Field(() => [DebtStatus])
-  debtStatus!: DebtStatus[]
+  myDebtStatus!: DebtStatus[]
 }
 
 @ObjectType()

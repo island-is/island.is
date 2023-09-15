@@ -1,75 +1,7 @@
-import {
-  style,
-  globalStyle,
-  styleVariants,
-  StyleRule,
-} from '@vanilla-extract/css'
+import { style, globalStyle, styleVariants } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import * as inputMixins from '../Input/Input.mixins'
-import merge from 'lodash/merge'
-
-/**
- * Media does not work under the selector key, this function moves the selector under the media key
- * ex.
- * wrapMedia({
- *  '@media': {
- *    [mediaSelector]: {
- *      padding: 0
- *    }
- *  }
- * }, '.react-select &')
- * output:
- * {
- *  '@media': {
- *    [mediaSelector]: {
- *      selectors: {
- *        ['.react-select &']: {
- *          padding: 0
- *        }
- *      }
- *    }
- *  }
- * }
- * @param stylesObj
- * @param selector
- */
-const wrapMedia = (stylesObj: StyleRule = {}, selector: string): StyleRule => {
-  const keys = Object.keys(stylesObj) as (keyof typeof stylesObj)[]
-  const initialValue: StyleRule = { selectors: {} }
-  return keys.reduce((acc, key) => {
-    if (key === '@media') {
-      const mediaObj: {
-        [query: string]: StyleRule
-      } = stylesObj['@media'] || {}
-      const mediaKeys = Object.keys(mediaObj)
-      const initialValue: {
-        [query: string]: StyleRule
-      } = {}
-      const media = mediaKeys.reduce((mediaAcc = {}, mediaKey) => {
-        if (!mediaAcc[mediaKey]) {
-          mediaAcc[mediaKey] = {
-            selectors: {},
-          }
-        }
-        mediaAcc[mediaKey].selectors![selector] = mediaObj[mediaKey]
-        return mediaAcc
-      }, initialValue)
-      if (!acc['@media']) {
-        acc['@media'] = media
-      } else {
-        acc['@media'] = merge(media, acc['@media'])
-      }
-    } else if (key === 'selectors' && typeof acc.selectors === 'object') {
-      acc.selectors = { ...acc.selectors, ...stylesObj.selectors }
-    } else {
-      acc.selectors![selector] = {
-        ...acc.selectors![selector],
-        [key]: stylesObj[key],
-      }
-    }
-    return acc
-  }, initialValue)
-}
+import { wrapMedia } from '../../utils/wrapMedia'
 
 export const wrapper = style({}, 'wrapper')
 export const wrapperColor = styleVariants(
@@ -90,9 +22,8 @@ export const valueContainer = style(
   'valueContainer',
 )
 
-globalStyle(`${wrapper} ${valueContainer} .css-b8ldur-Input`, {
+globalStyle(`${wrapper} ${valueContainer} .island-select__input-container`, {
   margin: 0,
-  padding: 0,
 })
 
 export const placeholder = style({
@@ -113,21 +44,27 @@ export const placeholderPadding = style({
 })
 export const placeholderSizes = styleVariants(inputMixins.inputSizes)
 
-export const input = style(inputMixins.input, 'input')
-export const inputSize = styleVariants(
+export const inputContainer = style(
   {
-    xs: wrapMedia(inputMixins.inputSizes.xs, `${wrapper} &`),
-    sm: wrapMedia(inputMixins.inputSizes.sm, `${wrapper} &`),
-    md: wrapMedia(inputMixins.inputSizes.md, `${wrapper} &`),
+    ...inputMixins.input,
+    padding: 0,
+    margin: 0,
   },
-  'inputSizes',
+  'input-container',
 )
 
-globalStyle(`${wrapper} ${input} input`, inputMixins.input)
-globalStyle(`${wrapper} ${inputSize.sm} input`, inputMixins.inputSizes.sm)
-globalStyle(`${wrapper} ${inputSize.md} input`, inputMixins.inputSizes.md)
-
-globalStyle(`${wrapper} ${input} input:focus`, inputMixins.inputFocus)
+export const input = style(
+  {
+    ...inputMixins.input,
+    ':focus': inputMixins.inputFocus,
+    ...themeUtils.responsiveStyle({
+      xs: inputMixins.inputSizes.xs,
+      sm: inputMixins.inputSizes.sm,
+      md: inputMixins.inputSizes.md,
+    }),
+  },
+  'input',
+)
 
 export const errorMessage = style(inputMixins.errorMessage)
 export const hasError = style({})
@@ -138,15 +75,14 @@ export const containerDisabled = style({
 export const container = style({}, 'container')
 export const containerSizes = styleVariants(inputMixins.containerSizes)
 
-globalStyle(`${wrapper} .css-1uccc91-singleValue`, {
-  color: theme.color.dark400,
-})
 globalStyle(`${wrapper} .css-1g6gooi`, {
   padding: 0,
   margin: 0,
 })
 globalStyle(`${wrapper} .island-select__control${container}`, {
   ...inputMixins.container,
+  flexDirection: 'column',
+  alignItems: 'flex-start',
   paddingRight: 70,
   border: 0,
 })
@@ -211,17 +147,14 @@ export const label = style({
 export const labelDisabled = style({
   opacity: 0.5,
 })
-export const labelSizes = styleVariants({
-  xs: inputMixins.labelSizes.xs,
-  sm: inputMixins.labelSizes.sm,
-  md: inputMixins.labelSizes.md,
-})
+export const labelSizes = styleVariants(inputMixins.labelSizes)
 export const singleValue = style(
   {
     marginLeft: 0,
     marginRight: 0,
     paddingRight: 0,
     ...inputMixins.input,
+    color: theme.color.dark400,
   },
   'singleValue',
 )

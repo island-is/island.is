@@ -1,23 +1,26 @@
-import React, { FC } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
-import { Select, Option, InputBackgroundColor } from '@island.is/island-ui/core'
+import React from 'react'
+import { Controller, useFormContext, RegisterOptions } from 'react-hook-form'
 
-interface Props {
+import { Select, Option, InputBackgroundColor } from '@island.is/island-ui/core'
+import { TestSupport } from '@island.is/island-ui/utils'
+
+interface SelectControllerProps<Value> {
   error?: string
   id: string
-  defaultValue?: unknown
+  defaultValue?: Value
   disabled?: boolean
   name?: string
   label: string
-  options?: Option[]
+  options?: Option<Value>[]
   placeholder?: string
-  onSelect?: (s: Option, onChange: (t: unknown) => void) => void
+  onSelect?: (s: Option<Value>, onChange: (t: unknown) => void) => void
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
   required?: boolean
+  rules?: RegisterOptions
 }
 
-export const SelectController: FC<Props> = ({
+export const SelectController = <Value,>({
   error,
   defaultValue,
   disabled = false,
@@ -29,32 +32,39 @@ export const SelectController: FC<Props> = ({
   onSelect,
   backgroundColor,
   isSearchable,
+  dataTestId,
   required = false,
-}) => {
+  rules,
+}: SelectControllerProps<Value> & TestSupport) => {
   const { clearErrors } = useFormContext()
   return (
     <Controller
       {...(defaultValue !== undefined && { defaultValue })}
       name={name}
-      render={({ onChange, value }) => (
+      rules={rules}
+      render={({ field: { onChange, value } }) => (
         <Select
           required={required}
           backgroundColor={backgroundColor}
           hasError={error !== undefined}
-          disabled={disabled}
+          isDisabled={disabled}
           id={id}
           errorMessage={error}
           name={name}
           options={options}
           label={label}
+          dataTestId={dataTestId}
           placeholder={placeholder}
           value={options.find((option) => option.value === value)}
           isSearchable={isSearchable}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           onChange={(newVal) => {
             clearErrors(id)
-            onChange((newVal as Option).value)
-            if (onSelect) {
-              onSelect(newVal as Option, onChange)
+
+            onChange(newVal?.value)
+            if (onSelect && newVal) {
+              onSelect(newVal, onChange)
             }
           }}
         />

@@ -26,7 +26,7 @@ export const getAccessToken = async () => {
 
   // Token is either expired, or just about to expire. We should get a new
   // token either way.
-  if (user.expires_in < MIN_EXPIRY_FOR_RE_SIGNIN) {
+  if (!user.expires_in || user.expires_in < MIN_EXPIRY_FOR_RE_SIGNIN) {
     user = await fetchNewToken()
     if (!user) {
       return null
@@ -35,7 +35,7 @@ export const getAccessToken = async () => {
 
   // We're still active but the token will expire soon. We'll make sure to
   // prefetch a new token for later.
-  else if (user.expires_in < MIN_EXPIRY_FOR_PRE_SIGNIN) {
+  else if (!user.expires_in || user.expires_in < MIN_EXPIRY_FOR_PRE_SIGNIN) {
     // Intentionally not awaited. We don't want to delay the current request.
     fetchNewToken()
   }

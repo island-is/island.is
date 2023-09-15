@@ -64,6 +64,8 @@ const SkilavottordAccessControlsQuery = gql`
       nationalId
       name
       role
+      email
+      phone
       recyclingPartner {
         companyId
         companyName
@@ -80,6 +82,8 @@ export const CreateSkilavottordAccessControlMutation = gql`
       nationalId
       name
       role
+      email
+      phone
       recyclingPartner {
         companyId
         companyName
@@ -96,6 +100,8 @@ export const UpdateSkilavottordAccessControlMutation = gql`
       nationalId
       name
       role
+      email
+      phone
       recyclingPartner {
         companyId
         companyName
@@ -112,7 +118,7 @@ export const DeleteSkilavottordAccessControlMutation = gql`
   }
 `
 
-const AccessControl: FC = () => {
+const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
   const { Table, Head, Row, HeadData, Body, Data } = T
   const { user } = useContext(UserContext)
   const {
@@ -264,7 +270,9 @@ const AccessControl: FC = () => {
             ]}
             renderLink={(link, item) => {
               return item?.href ? (
-                <NextLink href={item?.href}>{link}</NextLink>
+                <NextLink href={item?.href} legacyBehavior>
+                  {link}
+                </NextLink>
               ) : (
                 link
               )

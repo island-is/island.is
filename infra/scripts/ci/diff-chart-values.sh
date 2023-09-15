@@ -6,10 +6,11 @@ ROOT="$DIR/../.."
 export PATH=$ROOT/node_modules/.bin:$PATH
 
 case "$1" in
-    "islandis" | "judicial-system" | "air-discount-scheme")
+    "islandis" | "judicial-system" | "air-discount-scheme" | 'identity-server')
         ENVS=("dev" "staging" "prod")
+        cd "$ROOT"
         for env in "${ENVS[@]}"; do
-          ts-node --dir "$ROOT" "$ROOT"/src/cli/cli render-env --chart="$1" --env="${env}" | diff "$ROOT"/../charts/"$1"/values."${env}".yaml -
+           node -r esbuild-register "$ROOT"/src/cli/cli render-env --chart="$1" --env="${env}" | diff "$ROOT"/../charts/"$1"/values."${env}".yaml -
         done
         ;;
     *)

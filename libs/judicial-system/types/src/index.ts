@@ -10,15 +10,15 @@ export type {
 
 export { InstitutionType } from './lib/institution'
 export type { Institution } from './lib/institution'
-
 export { NotificationType } from './lib/notification'
 export type {
+  Recipient,
   Notification,
   SendNotification,
   SendNotificationResponse,
 } from './lib/notification'
 
-export { CaseFileState } from './lib/file'
+export { CaseFileState, CaseFileCategory } from './lib/file'
 
 export type {
   PresignedPost,
@@ -30,33 +30,59 @@ export type {
   UploadFileToCourt,
   UploadFileToCourtResponse,
   CaseFile,
+  UpdateFile,
   CreateFile,
 } from './lib/file'
 
-export { UserRole, courtRoles } from './lib/user'
+export {
+  UserRole,
+  prosecutionRoles,
+  isProsecutionRole,
+  isProsecutionUser,
+  courtRoles,
+  isCourtRole,
+  extendedCourtRoles,
+  isExtendedCourtRole,
+  isDistrictCourtUser,
+  appealsCourtRoles,
+  isAppealsCourtUser,
+  isPrisonSystemUser,
+  isDefenceUser,
+} from './lib/user'
 export type { User, CreateUser, UpdateUser } from './lib/user'
 
 export {
   CaseOrigin,
   CaseType,
+  IndictmentSubtype,
   CaseState,
   CaseTransition,
   CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseDecision,
+  CaseAppealRulingDecision,
   SessionArrangements,
   restrictionCases,
   investigationCases,
+  indictmentCases,
+  isIndictmentCase,
   isRestrictionCase,
   isInvestigationCase,
   isAcceptingCaseDecision,
   completedCaseStates,
   hasCaseBeenAppealed,
-  isCaseTypeWithMultipleDefendantsSupport,
+  CaseAppealState,
+  getAppealInfo,
+  getStatementDeadline,
+  getAppealedDate,
 } from './lib/case'
 export type {
   Case,
+  CaseListEntry,
+  CrimeScene,
+  CrimeSceneMap,
+  IndictmentSubtypeMap,
   CreateCase,
   UpdateCase,
   TransitionCase,
@@ -69,5 +95,12 @@ export type {
   UploadPoliceCaseFile,
   UploadPoliceCaseFileResponse,
 } from './lib/policeFile'
+
+export {
+  IndictmentCountOffense,
+  Substance,
+  offenseSubstances,
+} from './lib/indictmentCount'
+export type { SubstanceMap } from './lib/indictmentCount'
 
 export type { CourtDocument } from './lib/courtDocument'

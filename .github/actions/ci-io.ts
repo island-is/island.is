@@ -15,8 +15,10 @@ const app = Debug('change-detection:io')
 
 const repository = process.env.GITHUB_REPOSITORY || 'island-is/island.is'
 const [owner, repo] = repository.split('/')
-export type ActionsListWorkflowRunsForRepoResponseData = Endpoints['GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs']['response']['data']
-export type ActionsListJobsForWorkflowRunResponseData = Endpoints['GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs']['response']['data']
+export type ActionsListWorkflowRunsForRepoResponseData =
+  Endpoints['GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs']['response']['data']
+export type ActionsListJobsForWorkflowRunResponseData =
+  Endpoints['GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs']['response']['data']
 
 const hasFinishedSuccessfulJob = (
   run: ActionsListJobsForWorkflowRunResponseData['jobs'],
@@ -64,7 +66,7 @@ export class LocalRunner implements GitActionStatus {
 
     if (changedFiles.length === 0) return []
     try {
-      const printAffected = spawnSync(
+      let printAffected = spawnSync(
         `npx`,
         [
           `nx`,
@@ -80,6 +82,30 @@ export class LocalRunner implements GitActionStatus {
           shell: git.shell,
         },
       )
+      if (printAffected.status !== 0) {
+        log(
+          `Error running nx print-affected. Error is %O, stderr is %O`,
+          printAffected.error,
+          printAffected.stderr,
+        )
+        printAffected = spawnSync(
+          `npx`,
+          [`nx`, `print-affected`, `--select=projects`, '--all'],
+          {
+            encoding: 'utf-8',
+            cwd: git.cwd,
+            shell: git.shell,
+          },
+        )
+        if (printAffected.status !== 0) {
+          log(
+            `Error running print-affected --all. Error is %O\nstderr: %O\nstdout: %O`,
+            printAffected.stderr,
+            printAffected.stdout,
+          )
+          throw printAffected.error
+        }
+      }
       let affectedComponents = printAffected.stdout
         .split(',')
         .map((s) => s.trim())
@@ -101,7 +127,7 @@ export class LocalRunner implements GitActionStatus {
     workflowId: WorkflowID,
     candidateCommits: string[],
   ): Promise<BranchWorkflow | undefined> {
-    const branchName = branch.replace('origin/', '')
+    const branchName = branch.replace('origin/', '').replace(/'/g, '')
     app(
       `Getting last good branch (push) build for branch ${branchName} with workflow ${workflowId}`,
     )
@@ -118,7 +144,8 @@ export class LocalRunner implements GitActionStatus {
       },
     )
 
-    const workflowRuns: ActionsListWorkflowRunsForRepoResponseData['workflow_runs'] = []
+    const workflowRuns: ActionsListWorkflowRunsForRepoResponseData['workflow_runs'] =
+      []
     for await (const workflow_runs of runsIterator) {
       app(`Retrieved ${workflow_runs.data.length} workflow runs`)
       workflowRuns.push(
@@ -200,7 +227,7 @@ export class LocalRunner implements GitActionStatus {
     workflowId: WorkflowID,
     commits: string[],
   ): Promise<PRWorkflow | undefined> {
-    const branchName = branch.replace('origin/', '')
+    const branchName = branch.replace('origin/', '').replace(/'/g, '')
     app(
       `Getting last good PR (pull_request) run for branch ${branchName} with workflow ${workflowId}`,
     )
@@ -216,7 +243,8 @@ export class LocalRunner implements GitActionStatus {
       },
     )
 
-    const workflowRuns: ActionsListWorkflowRunsForRepoResponseData['workflow_runs'] = []
+    const workflowRuns: ActionsListWorkflowRunsForRepoResponseData['workflow_runs'] =
+      []
     for await (const workflow_runs of runsIterator) {
       app(`Retrieved ${workflow_runs.data.length} workflow runs`)
       workflowRuns.push(...workflow_runs.data)
@@ -267,32 +295,40 @@ export class LocalRunner implements GitActionStatus {
         )
         if (artifactUrls.length === 1) {
           app(`Found an artifact with PR metadata`)
-          const artifact = (await this.octokit.actions.downloadArtifact({
-            owner: owner,
-            repo: repo,
-            artifact_id: artifactUrls[0].id,
-            archive_format: 'zip',
-          })) as any
+          try {
+            const artifact = (await this.octokit.actions.downloadArtifact({
+              owner: owner,
+              repo: repo,
+              artifact_id: artifactUrls[0].id,
+              archive_format: 'zip',
+            })) as any
 
-          const dir = await unzipper.Open.buffer(new Uint8Array(artifact.data))
-          const event = JSON.parse(
-            (await dir.files[0].buffer()).toString('utf-8'),
-          )
-          app(`Got event data from PR ${run.run_number}`)
-          const headSha = event.head_sha as string
-          const baseSha = event.base_sha as string
-          if (
-            commits.includes(headSha.slice(0, 7)) &&
-            commits.includes(baseSha.slice(0, 7))
-          ) {
-            return {
-              head_commit: headSha,
-              run_nr: run.run_number,
-              base_commit: baseSha,
+            const dir = await unzipper.Open.buffer(
+              new Uint8Array(artifact.data),
+            )
+            const event = JSON.parse(
+              (await dir.files[0].buffer()).toString('utf-8'),
+            )
+            app(`Got event data from PR ${run.run_number}`)
+            const headSha = event.head_sha as string
+            const baseSha = event.base_sha as string
+            if (
+              commits.includes(headSha.slice(0, 7)) &&
+              commits.includes(baseSha.slice(0, 7))
+            ) {
+              return {
+                head_commit: headSha,
+                run_nr: run.run_number,
+                base_commit: baseSha,
+              }
+            } else {
+              app(
+                `PR base commit ${baseSha} or head commit ${headSha} could not be matched. Most likely PR was rebased`,
+              )
             }
-          } else {
+          } catch (e) {
             app(
-              `PR base commit ${baseSha} or head commit ${headSha} could not be matched. Most likely PR was rebased`,
+              `Error: failed processing PR metadata artifact: ${e.toString()}`,
             )
           }
         } else {

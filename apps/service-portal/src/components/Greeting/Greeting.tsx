@@ -1,91 +1,36 @@
 import React, { FC } from 'react'
-import {
-  Box,
-  Button,
-  GridColumn,
-  GridRow,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useAuth } from '@island.is/auth/react'
-import { LEGACY_MY_PAGES_URL } from '@island.is/service-portal/constants'
-import { useQuery, gql } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
 import { m } from '@island.is/service-portal/core'
+import * as styles from './Greeting.css'
 
-const NationalRegistryUserQuery = gql`
-  query NationalRegistryUserQuery {
-    nationalRegistryUser {
-      nationalId
-      gender
-    }
-  }
-`
-
-const Greeting: FC<{}> = () => {
+const Greeting: FC<React.PropsWithChildren<{}>> = () => {
   const { formatMessage } = useLocale()
-  const { data } = useQuery<Query>(NationalRegistryUserQuery)
   const { userInfo } = useAuth()
   const currentHour = new Date().getHours()
-  const isEveningGreeting = currentHour > 17 || currentHour < 4
-  const { nationalRegistryUser } = data || {}
 
-  const isMale =
-    nationalRegistryUser?.gender === 'MALE' ||
-    nationalRegistryUser?.gender === 'MALE_MINOR'
-  const isFemale =
-    nationalRegistryUser?.gender === 'FEMALE' ||
-    nationalRegistryUser?.gender === 'FEMALE_MINOR'
-  const isNonBinary =
-    nationalRegistryUser?.gender === 'TRANSGENDER_MINOR' ||
-    nationalRegistryUser?.gender === 'TRANSGENDER'
-  const knownGender = isMale || isFemale || isNonBinary
+  const isEveningGreeting = currentHour > 17 || currentHour < 4
 
   return (
-    <GridRow>
+    <GridRow className={styles.greetingContainer} marginTop={4}>
       <GridColumn span={['12/12', '7/12']}>
-        <Box marginTop={[2, 3, 4]}>
+        <Box marginTop={[2, 3, 4]} data-testid="greeting">
           <Text
             variant="eyebrow"
             marginBottom={2}
             fontWeight="semiBold"
             color="purple400"
           >
-            {isMale && formatMessage(m.maleGreeting)}
-            {isFemale && formatMessage(m.femaleGreeting)}
-            {isNonBinary && formatMessage(m.nonBinaryGreeting)}
-            {!knownGender &&
-              (isEveningGreeting
-                ? formatMessage(m.eveningGreeting)
-                : formatMessage(m.dayGreeting))}
+            {isEveningGreeting
+              ? formatMessage(m.eveningGreeting)
+              : formatMessage(m.dayGreeting)}
           </Text>
-          <Text variant="h1" as="h1" marginBottom={1}>
+          <Text translate="no" variant="h2" as="h1" marginBottom={1}>
             {userInfo?.profile.name}
           </Text>
           <Text marginBottom={2}>{formatMessage(m.greetingIntro)}</Text>
-          <div>
-            <a
-              href={LEGACY_MY_PAGES_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button
-                variant="text"
-                icon="open"
-                iconType="outline"
-                size="small"
-              >
-                {formatMessage(m.olderVersion)}
-              </Button>
-            </a>
-          </div>
         </Box>
-      </GridColumn>
-      <GridColumn span={['12/12', '5/12']}>
-        <img
-          src="./assets/images/school.svg"
-          alt={`${formatMessage(m.altText)} ${formatMessage(m.startPage)}`}
-        />
       </GridColumn>
     </GridRow>
   )

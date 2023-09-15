@@ -12,13 +12,10 @@ interface Props {
   index: number
   colored: boolean
   size: 'medium' | 'large'
-  item: {
-    component: AsyncSearchOption['component']
-    label: string
-  }
+  item: AsyncSearchOption
 }
 
-export const Item: React.FC<Props> = ({
+export const Item: React.FC<React.PropsWithChildren<Props>> = ({
   children,
   isSelected,
   isActive,
@@ -53,6 +50,7 @@ export const Item: React.FC<Props> = ({
       {...props}
       className={cn(styles.item, colorClass, styles.sizes[size], {
         [selectedClass]: isActive,
+        [styles.disabled]: item.disabled,
       })}
     >
       {item.label}

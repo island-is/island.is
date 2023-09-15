@@ -1,4 +1,5 @@
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -7,19 +8,17 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { Gender } from '@island.is/judicial-system/types'
 
-// TODO Find a way to import from case index file
 import { Case } from '../../case/models/case.model'
 
 @Table({
   tableName: 'defendant',
   timestamps: true,
 })
-export class Defendant extends Model<Defendant> {
+export class Defendant extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -45,25 +44,29 @@ export class Defendant extends Model<Defendant> {
   @ApiProperty()
   caseId!: string
 
+  @BelongsTo(() => Case, 'case_id')
+  @ApiPropertyOptional({ type: Case })
+  case?: Case
+
   @Column({
     type: DataType.BOOLEAN,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   noNationalId?: boolean
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   nationalId?: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   name?: string
 
   @Column({
@@ -71,18 +74,56 @@ export class Defendant extends Model<Defendant> {
     allowNull: true,
     values: Object.values(Gender),
   })
+  @ApiPropertyOptional()
   gender?: Gender
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   address?: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
+  @ApiPropertyOptional()
   citizenship?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  defenderName?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  defenderNationalId?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  defenderEmail?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  defenderPhoneNumber?: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty()
+  defendantWaivesRightToCounsel!: boolean
 }

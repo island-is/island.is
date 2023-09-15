@@ -1,0 +1,38 @@
+{
+  "name": "service-portal-information",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/service-portal/information/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/service-portal/information/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/service-portal/information"],
+      "options": {
+        "jestConfig": "libs/service-portal/information/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/information/src/{lib,screens,components}/**/*.{js,ts,tsx}'"
+      }
+    },
+    "schemas/codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/service-portal/information/src/**/*.generated.ts",
+        "command": "graphql-codegen --config libs/service-portal/information/codegen.yml"
+      }
+    }
+  },
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"]
+}

@@ -33,7 +33,7 @@ export class UserProfileService {
   }
 
   async create(userProfileDto: CreateUserProfileDto): Promise<UserProfile> {
-    return await this.userProfileModel.create(userProfileDto)
+    return this.userProfileModel.create({ ...userProfileDto })
   }
 
   async findByNationalId(nationalId: string): Promise<UserProfile | null> {
@@ -52,13 +52,11 @@ export class UserProfileService {
   }> {
     this.logger.debug(`Updating user profile with id "${nationalId}"`)
 
-    const [
-      numberOfAffectedRows,
-      [updatedUserProfile],
-    ] = await this.userProfileModel.update(userProfileToUpdate, {
-      where: { nationalId },
-      returning: true,
-    })
+    const [numberOfAffectedRows, [updatedUserProfile]] =
+      await this.userProfileModel.update(userProfileToUpdate, {
+        where: { nationalId },
+        returning: true,
+      })
 
     return { numberOfAffectedRows, updatedUserProfile }
   }
@@ -76,7 +74,7 @@ export class UserProfileService {
         ...body,
         nationalId: user.nationalId,
       })
-    } catch (e) {
+    } catch (e: any) {
       throw new BadRequestException(e.errors)
     }
   }

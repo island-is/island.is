@@ -1,4 +1,5 @@
 import React from 'react'
+import cn from 'classnames'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   Box,
@@ -8,22 +9,21 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './DigitalIcelandHeader.css'
-import cn from 'classnames'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
+import * as styles from './DigitalIcelandHeader.css'
 
 interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const DigitalIcelandHeader: React.FC<HeaderProps> = ({
+const DigitalIcelandHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   organizationPage,
 }) => {
   const { linkResolver } = useLinkResolver()
 
   return (
-    <Box className={styles.headerBg}>
+    <div className={styles.headerBg}>
       <Box
         className={cn(styles.headerWrapper, styles.dotBg)}
         display={['none', 'none', 'block']}
@@ -33,7 +33,7 @@ export const DigitalIcelandHeader: React.FC<HeaderProps> = ({
             <GridColumn span={'9/12'} className={styles.imageBg}>
               <SidebarLayout
                 sidebarContent={
-                  !!organizationPage.organization.logo && (
+                  !!organizationPage.organization?.logo && (
                     <Link
                       href={
                         linkResolver('organizationpage', [
@@ -69,7 +69,7 @@ export const DigitalIcelandHeader: React.FC<HeaderProps> = ({
       </Box>
 
       <Box display={['block', 'block', 'none']} textAlign="center">
-        {!!organizationPage.organization.logo && (
+        {!!organizationPage.organization?.logo && (
           <Link
             href={
               linkResolver('organizationpage', [organizationPage.slug]).href
@@ -87,6 +87,8 @@ export const DigitalIcelandHeader: React.FC<HeaderProps> = ({
           {organizationPage.title}
         </Text>
       </Box>
-    </Box>
+    </div>
   )
 }
+
+export default DigitalIcelandHeader

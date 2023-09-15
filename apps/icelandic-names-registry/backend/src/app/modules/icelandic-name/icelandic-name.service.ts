@@ -16,16 +16,15 @@ export class IcelandicNameService {
     private readonly logger: Logger,
   ) {}
 
-  getAll(): Promise<IcelandicName[]> {
+  async getAll(): Promise<IcelandicName[]> {
     this.logger.debug('Getting all icelandic names')
 
     return this.icelandicNameModel.findAll({
       order: ['icelandicName'],
-      raw: true,
     })
   }
 
-  getByInitialLetter(initialLetter: string): Promise<IcelandicName[]> {
+  async getByInitialLetter(initialLetter: string): Promise<IcelandicName[]> {
     this.logger.debug(
       `Getting all icelandic names by inital letter: "${initialLetter}"`,
     )
@@ -40,7 +39,7 @@ export class IcelandicNameService {
     })
   }
 
-  getBySearch(q: string): Promise<IcelandicName[]> {
+  async getBySearch(q: string): Promise<IcelandicName[]> {
     this.logger.debug(`Getting all icelandic names by search: "${q}"`)
 
     return this.icelandicNameModel.findAll({
@@ -53,7 +52,7 @@ export class IcelandicNameService {
     })
   }
 
-  getById(id: number): Promise<IcelandicName | null> {
+  async getById(id: number): Promise<IcelandicName | null> {
     this.logger.debug(`Getting name by id: ${id}`)
 
     return this.icelandicNameModel.findOne({
@@ -63,7 +62,7 @@ export class IcelandicNameService {
     })
   }
 
-  updateNameById(
+  async updateNameById(
     id: number,
     body: UpdateIcelandicNameBodyDto,
   ): Promise<[number, IcelandicName[]]> {
@@ -75,7 +74,7 @@ export class IcelandicNameService {
     })
   }
 
-  createName(body: CreateIcelandicNameBodyDto): Promise<IcelandicName> {
+  async createName(body: CreateIcelandicNameBodyDto): Promise<IcelandicName> {
     this.logger.debug(`Creating new name`)
 
     return this.icelandicNameModel.create(body, {
@@ -83,7 +82,7 @@ export class IcelandicNameService {
     })
   }
 
-  deleteById(id: number): Promise<number> {
+  async deleteById(id: number): Promise<number> {
     this.logger.debug(`Deleting name by id: ${id}`)
 
     return this.icelandicNameModel.destroy({ where: { id } })

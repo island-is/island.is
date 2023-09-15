@@ -43,7 +43,7 @@ module.exports = {
     )
   },
 
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
     // no need to roll back
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.removeColumn('case', 'other_restrictions', {

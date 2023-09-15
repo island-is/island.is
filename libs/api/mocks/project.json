@@ -1,0 +1,33 @@
+{
+  "name": "api-mocks",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/api/mocks/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/api/mocks/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/api/mocks/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": ["{workspaceRoot}/coverage/libs/api/mocks"]
+    },
+    "schemas/codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "graphql-codegen --config libs/api/mocks/codegen.yml",
+          "yarn ts-node -P libs/shared/mocking/tsconfig.json libs/shared/mocking/scripts/generate-gql.ts apps/api/src/api.graphql libs/api/mocks/src/schema.ts"
+        ]
+      }
+    }
+  },
+  "tags": ["lib:dom", "scope:dom"]
+}

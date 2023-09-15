@@ -24,6 +24,10 @@ import { EnhancedAssetSearchResult } from './models/enhancedAssetSearchResult.mo
 import { ApiResponse } from '@elastic/elasticsearch'
 import { SearchResponse } from 'elastic'
 import { MappedData } from '@island.is/content-search-indexer/types'
+import { SupportQNA } from './models/supportQNA.model'
+import { GetFeaturedSupportQNAsInput } from './dto/getFeaturedSupportQNAs.input'
+import { Vacancy } from './models/vacancy.model'
+import { ResponseError } from '@elastic/elasticsearch/lib/errors'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -70,6 +74,14 @@ export class CmsElasticsearchService {
       query.tags.push({ type: 'category', key: input.category })
     }
 
+    if (input.group) {
+      query.tags.push({ type: 'group', key: input.group })
+    }
+
+    if (input.subgroup) {
+      query.tags.push({ type: 'subgroup', key: input.subgroup })
+    }
+
     if (input.organization) {
       query.tags.push({ type: 'organization', key: input.organization })
     }
@@ -85,7 +97,7 @@ export class CmsElasticsearchService {
 
   async getNews(
     index: string,
-    { size, page, order, month, year, tag }: GetNewsInput,
+    { size, page, order, month, year, tags, organization }: GetNewsInput,
   ): Promise<NewsList> {
     let dateQuery
     if (year) {
@@ -99,21 +111,32 @@ export class CmsElasticsearchService {
       dateQuery = {}
     }
 
+    const tagList: {
+      key: string
+      type: string
+    }[] = []
+
     let tagQuery
-    if (tag) {
-      tagQuery = {
-        tags: [
-          {
-            key: tag,
-            type: 'genericTag',
-          },
-        ],
+    if (tags) {
+      for (const tag of tags) {
+        tagList.push({ key: tag, type: 'genericTag' })
       }
+    }
+
+    if (organization) {
+      tagList.push({ key: organization, type: 'organization' })
+    }
+
+    if (tagList.length > 0) {
+      tagQuery = { tags: tagList }
     }
 
     const query = {
       types: ['webNews'],
-      sort: [{ dateCreated: { order } }] as sortRule[],
+      sort: [
+        { dateCreated: { order } },
+        { releaseDate: { order } },
+      ] as sortRule[],
       ...dateQuery,
       ...tagQuery,
       page,
@@ -135,17 +158,24 @@ export class CmsElasticsearchService {
 
   async getNewsDates(
     index: string,
-    { order, tag }: GetNewsDatesInput,
+    { order, tags, organization }: GetNewsDatesInput,
   ): Promise<string[]> {
+    const tagList: { key: string; type: string }[] = []
+
     let tagQuery
-    if (tag) {
+    if (tags) {
+      for (const tag of tags) {
+        tagList.push({ key: tag, type: 'genericTag' })
+      }
+    }
+
+    if (organization) {
+      tagList.push({ key: organization, type: 'organization' })
+    }
+
+    if (tagList.length > 0) {
       tagQuery = {
-        tags: [
-          {
-            key: tag,
-            type: 'genericTag',
-          },
-        ],
+        tags: tagList,
       }
     }
 
@@ -232,6 +262,34 @@ export class CmsElasticsearchService {
     return response ? JSON.parse(response) : null
   }
 
+  async getSingleVacancy(index: string, id: string) {
+    try {
+      const vacancyResponse = await this.elasticService.findById(index, id)
+      const response = vacancyResponse.body?._source?.response
+      return response ? JSON.parse(response) : null
+    } catch (error) {
+      if (error instanceof ResponseError) {
+        if (error?.statusCode === 404) return null
+      }
+      throw error
+    }
+  }
+
+  async getVacancies(index: string) {
+    const vacanciesResponse = await this.elasticService.getDocumentsByMetaData(
+      index,
+      {
+        types: ['webVacancy'],
+        size: 1000,
+      },
+    )
+    return vacanciesResponse.hits.hits
+      .map<Vacancy>((response) =>
+        JSON.parse(response._source.response ?? 'null'),
+      )
+      .filter(Boolean)
+  }
+
   async getPublishedMaterial(
     index: string,
     {
@@ -294,24 +352,23 @@ export class CmsElasticsearchService {
 
     must.push(!searchString ? wildcardSearch : multimatchSearch)
 
-    const enhancedAssetResponse: ApiResponse<
-      SearchResponse<MappedData>
-    > = await this.elasticService.findByQuery(index, {
-      sort: [
-        {
-          [sort.field]: {
-            order: sort.order,
+    const enhancedAssetResponse: ApiResponse<SearchResponse<MappedData>> =
+      await this.elasticService.findByQuery(index, {
+        sort: [
+          {
+            [sort.field]: {
+              order: sort.order,
+            },
+          },
+        ],
+        query: {
+          bool: {
+            must: must.concat(generateGenericTagGroupQueries(tags, tagGroups)),
           },
         },
-      ],
-      query: {
-        bool: {
-          must: must.concat(generateGenericTagGroupQueries(tags, tagGroups)),
-        },
-      },
-      size,
-      from: (page - 1) * size,
-    })
+        size,
+        from: (page - 1) * size,
+      })
 
     return {
       total: enhancedAssetResponse.body.hits.total.value,
@@ -319,6 +376,36 @@ export class CmsElasticsearchService {
         JSON.parse(item._source.response ?? '{}'),
       ),
     }
+  }
+
+  async getFeaturedSupportQNAs(
+    index: string,
+    input: GetFeaturedSupportQNAsInput,
+  ): Promise<SupportQNA[]> {
+    const query = {
+      types: ['webQNA'],
+      tags: [] as elasticTagField[],
+      sort: [{ popularityScore: { order: SortDirection.DESC } }] as sortRule[],
+      size: input.size,
+    }
+
+    if (input.organization) {
+      query.tags.push({ type: 'organization', key: input.organization })
+    }
+
+    if (input.category) {
+      query.tags.push({ type: 'category', key: input.category })
+    }
+
+    if (input.subCategory) {
+      query.tags.push({ type: 'subcategory', key: input.subCategory })
+    }
+
+    const supportqnasResponse =
+      await this.elasticService.getDocumentsByMetaData(index, query)
+    return supportqnasResponse.hits.hits.map((response) =>
+      JSON.parse(response._source.response ?? '[]'),
+    )
   }
 }
 

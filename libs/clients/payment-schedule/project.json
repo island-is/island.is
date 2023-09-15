@@ -1,0 +1,31 @@
+{
+  "name": "clients-payment-schedule",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/payment-schedule/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/payment-schedule/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/payment-schedule/src/gen/fetch/ -i libs/clients/payment-schedule/src/openapi.json"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/payment-schedule"],
+      "options": {
+        "jestConfig": "libs/clients/payment-schedule/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}

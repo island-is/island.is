@@ -14,6 +14,7 @@ import {
   DrivingLicenseApplicationType,
   NewTemporaryDrivingLicenseInput,
   ApplicationEligibilityRequirement,
+  QualitySignatureResult,
 } from './drivingLicense.type'
 import {
   CanApplyErrorCodeBFull,
@@ -22,6 +23,7 @@ import {
   DrivingAssessment,
   DrivingLicenseApi,
   Teacher,
+  TeacherV4,
 } from '@island.is/clients/driving-license'
 import {
   BLACKLISTED_JURISTICTION,
@@ -33,7 +35,11 @@ import { FetchError } from '@island.is/clients/middlewares'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
-import { hasResidenceHistory } from './util/hasResidenceHistory'
+import {
+  hasLocalResidence,
+  hasResidenceHistory,
+} from './util/hasResidenceHistory'
+import { info } from 'kennitala'
 
 const LOGTAG = '[api-domains-driving-license]'
 
@@ -45,12 +51,24 @@ export class DrivingLicenseService {
     private nationalRegistryXRoadService: NationalRegistryXRoadService,
   ) {}
 
-  async getDrivingLicense(
-    nationalId: User['nationalId'],
-  ): Promise<DriversLicense | null> {
+  async getDrivingLicense(token: string): Promise<DriversLicense | null> {
     try {
       return await this.drivingLicenseApi.getCurrentLicense({
+        token,
+      })
+    } catch (e) {
+      return this.handleGetLicenseError(e)
+    }
+  }
+
+  async legacyGetDrivingLicense(
+    nationalId: User['nationalId'],
+    token?: string,
+  ): Promise<DriversLicense | null> {
+    try {
+      return await this.drivingLicenseApi.legacyGetCurrentLicense({
         nationalId,
+        token,
       })
     } catch (e) {
       return this.handleGetLicenseError(e)
@@ -61,7 +79,7 @@ export class DrivingLicenseService {
     // The goal of this is to basically normalize the known semi-error responses
     // so both those who are not found and those who have invalid/expired licenses will return nothing
     if (e instanceof Error && e.name === 'FetchError') {
-      const err = (e as unknown) as FetchError
+      const err = e as unknown as FetchError
 
       if ([400, 404].includes(err.status)) {
         return null
@@ -69,6 +87,33 @@ export class DrivingLicenseService {
     }
 
     throw e
+  }
+
+  // Disqualification is a bit tricky
+  // You're not allowed to have had a disqualification in the last 12 months
+  // You're not allowed to have an active disqualification
+  // Some disqualifications do not have an end date, so we have to assume they're still active
+  private isDisqualified(from?: Date, to?: Date): boolean {
+    if (!from) {
+      return false
+    }
+
+    if (!to && from) {
+      return true
+    }
+
+    const now = Date.now()
+    const year = 1000 * 3600 * 24 * 365.25
+    const twelveMonthsAgo = new Date(Date.now() - year)
+
+    // With the two checks above, 'to' is guaranteed to be defined
+    // Either !from returns or !to returns since '!from || from' is a tautology
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const activeDisqualification = from.getTime() < now && now < to!.getTime()
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const disqualificationInTheLastTwelveMonths = to! > twelveMonthsAgo
+
+    return activeDisqualification || disqualificationInTheLastTwelveMonths
   }
 
   async getStudentInformation(
@@ -95,6 +140,12 @@ export class DrivingLicenseService {
 
   async getTeachers(): Promise<Teacher[]> {
     const teachers = await this.drivingLicenseApi.getTeachers()
+
+    return teachers.sort(sortTeachers)
+  }
+
+  async getTeachersV4(): Promise<TeacherV4[]> {
+    const teachers = await this.drivingLicenseApi.getTeachersV4()
 
     return teachers.sort(sortTeachers)
   }
@@ -134,23 +185,76 @@ export class DrivingLicenseService {
     }
   }
 
+  async getLearnerMentorEligibility(
+    user: User,
+    nationalId: string,
+  ): Promise<ApplicationEligibility> {
+    const license = await this.legacyGetDrivingLicense(
+      nationalId,
+      user.authorization.split(' ')[1] ?? '', // removes the Bearer prefix,
+    )
+
+    const year = 1000 * 3600 * 24 * 365.25
+    const fiveYearsAgo = new Date(Date.now() - year * 5)
+
+    const categoryB = license?.categories
+      ? license.categories.find(
+          (category) => category.name.toLocaleUpperCase() === 'B',
+        )
+      : undefined
+
+    const isDisqualified = this.isDisqualified(
+      license?.disqualification?.from,
+      license?.disqualification?.to,
+    )
+
+    const requirements: ApplicationEligibilityRequirement[] = [
+      {
+        key: RequirementKey.hasDeprivation,
+        requirementMet: !isDisqualified,
+      },
+      {
+        key: RequirementKey.personNotAtLeast24YearsOld,
+        requirementMet: info(nationalId).age >= 24,
+      },
+      {
+        key: RequirementKey.hasHadValidCategoryForFiveYearsOrMore,
+        requirementMet:
+          categoryB && categoryB.issued
+            ? categoryB.issued < fiveYearsAgo
+            : false,
+      },
+    ]
+
+    // only eligible if we dont find an unmet requirement
+    const isEligible = !requirements.find(
+      ({ requirementMet }) => requirementMet === false,
+    )
+
+    return {
+      requirements,
+      isEligible,
+    }
+  }
+
   async getApplicationEligibility(
     user: User,
     nationalId: string,
     type: DrivingLicenseApplicationType,
   ): Promise<ApplicationEligibility> {
     const assessmentResult = await this.getDrivingAssessmentResult(nationalId)
-    const hasFinishedSchool = await this.drivingLicenseApi.getHasFinishedOkugerdi(
-      {
+    const hasFinishedSchool =
+      await this.drivingLicenseApi.getHasFinishedOkugerdi({
         nationalId,
-      },
-    )
+      })
 
-    const residenceHistory = await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
-      user,
-      nationalId,
-    )
-    const localRecidency = hasResidenceHistory(residenceHistory)
+    const residenceHistory =
+      await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
+        nationalId,
+      )
+
+    const localRecidencyHistory = hasResidenceHistory(residenceHistory)
+    const localRecidency = hasLocalResidence(residenceHistory)
 
     const canApply = await this.canApplyFor(nationalId, type)
 
@@ -167,13 +271,17 @@ export class DrivingLicenseService {
               key: RequirementKey.drivingSchoolMissing,
               requirementMet: hasFinishedSchool,
             },
+            {
+              key: RequirementKey.currentLocalResidency,
+              requirementMet: localRecidency,
+            },
           ]
         : []),
       ...(type === 'B-temp'
         ? [
             {
               key: RequirementKey.localResidency,
-              requirementMet: localRecidency,
+              requirementMet: localRecidencyHistory,
             },
           ]
         : []),
@@ -240,6 +348,30 @@ export class DrivingLicenseService {
     }
   }
 
+  async studentCanGetPracticePermit(params: {
+    studentSSN: string
+    token: string
+  }) {
+    const { studentSSN, token } = params
+    return await this.drivingLicenseApi.postCanApplyForPracticePermit({
+      studentSSN,
+      token,
+    })
+  }
+
+  async drivingLicenseDuplicateSubmission(params: {
+    districtId: number
+    token: string
+    stolenOrLost: boolean
+  }): Promise<number> {
+    const { districtId, token, stolenOrLost } = params
+    return await this.drivingLicenseApi.postApplicationNewCollaborative({
+      districtId,
+      stolenOrLost,
+      token,
+    })
+  }
+
   async newDrivingAssessment(
     nationalIdStudent: string,
     nationalIdTeacher: User['nationalId'],
@@ -260,8 +392,8 @@ export class DrivingLicenseService {
     nationalId: User['nationalId'],
     input: NewTemporaryDrivingLicenseInput,
   ): Promise<NewDrivingLicenseResult> {
-    const success = await this.drivingLicenseApi.postCreateDrivingLicenseTemporary(
-      {
+    const success =
+      await this.drivingLicenseApi.postCreateDrivingLicenseTemporary({
         willBringHealthCertificate: input.needsToPresentHealthCertificate,
         willBringQualityPhoto: input.needsToPresentQualityPhoto,
         juristictionId: input.juristictionId,
@@ -270,8 +402,7 @@ export class DrivingLicenseService {
         sendLicenseInMail: false,
         email: input.email,
         phone: input.phone,
-      },
-    )
+      })
 
     return {
       success,
@@ -305,13 +436,9 @@ export class DrivingLicenseService {
     const image = await this.drivingLicenseApi.getQualityPhoto({
       nationalId,
     })
-    const qualityPhoto =
-      image?.data && image?.data.length > 0
-        ? `data:image/jpeg;base64,${image?.data.substr(
-            1,
-            image.data.length - 2,
-          )}`
-        : null
+    const qualityPhoto = image?.data?.length
+      ? `data:image/jpeg;base64,${image?.data.substr(1, image.data.length - 2)}`
+      : null
 
     return qualityPhoto
   }
@@ -328,6 +455,32 @@ export class DrivingLicenseService {
     }
   }
 
+  async getQualitySignatureUri(
+    nationalId: User['nationalId'],
+  ): Promise<string | null> {
+    const image = await this.drivingLicenseApi.getQualitySignature({
+      nationalId,
+    })
+    const qualitySignature = image?.data?.length
+      ? `data:image/jpeg;base64,${image?.data.substr(1, image.data.length - 2)}`
+      : null
+
+    return qualitySignature
+  }
+
+  async getQualitySignature(
+    nationalId: User['nationalId'],
+  ): Promise<QualitySignatureResult> {
+    const hasQualitySignature =
+      await this.drivingLicenseApi.getHasQualitySignature({
+        nationalId,
+      })
+
+    return {
+      hasQualitySignature,
+    }
+  }
+
   async getDrivingAssessment(
     nationalId: string,
   ): Promise<StudentAssessment | null> {
@@ -341,7 +494,7 @@ export class DrivingLicenseService {
 
     let teacherName: string | null
     if (assessment.nationalIdTeacher) {
-      const teacherLicense = await this.getDrivingLicense(
+      const teacherLicense = await this.legacyGetDrivingLicense(
         assessment.nationalIdTeacher,
       )
       teacherName = teacherLicense?.name || null

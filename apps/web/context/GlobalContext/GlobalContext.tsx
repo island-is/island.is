@@ -7,43 +7,35 @@ export type NamespaceType = {
 
 export interface GlobalContextProps {
   globalNamespace: NamespaceType
-  shouldLinkToServiceWeb?: boolean
   isServiceWeb?: boolean
-  pageContentfulId: string
-  subpageContentfulId?: string
+  contentfulIds: string[]
   resolveLinkTypeLocally?: boolean
   setGlobalNamespace: (ns: NamespaceType) => void
-  setContentfulId: (pageId: string, subpageId?: string) => void
+  setContentfulIds: (ids: string[]) => void
   setResolveLinkTypeLocally: (localResolution: boolean) => void
 }
 
 export interface GlobalContextProviderProps {
   namespace?: NamespaceType
   isServiceWeb?: boolean
-  shouldLinkToServiceWeb?: boolean
 }
 
 export const GlobalContext = createContext<GlobalContextProps>({
   globalNamespace: {},
-  pageContentfulId: '',
-  subpageContentfulId: '',
+  contentfulIds: [],
   resolveLinkTypeLocally: false,
   setGlobalNamespace: () => null,
-  setContentfulId: () => null,
+  setContentfulIds: () => null,
   setResolveLinkTypeLocally: () => null,
 })
 
-export const GlobalContextProvider: FC<GlobalContextProviderProps> = ({
-  namespace = {},
-  shouldLinkToServiceWeb = false,
-  isServiceWeb = false,
-  children,
-}) => {
-  const setContentfulId = (pageId: string, subpageId?: string) => {
+export const GlobalContextProvider: FC<
+  React.PropsWithChildren<GlobalContextProviderProps>
+> = ({ namespace = {}, isServiceWeb = false, children }) => {
+  const setContentfulIds = (ids: string[]) => {
     setState((prevState) => ({
       ...prevState,
-      pageContentfulId: pageId,
-      subpageContentfulId: subpageId,
+      contentfulIds: ids,
     }))
   }
 
@@ -60,12 +52,10 @@ export const GlobalContextProvider: FC<GlobalContextProviderProps> = ({
 
   const initialState: GlobalContextProps = {
     globalNamespace: namespace,
-    shouldLinkToServiceWeb,
     isServiceWeb,
-    pageContentfulId: '',
-    subpageContentfulId: '',
+    contentfulIds: [],
     setGlobalNamespace,
-    setContentfulId,
+    setContentfulIds,
     setResolveLinkTypeLocally,
   }
 

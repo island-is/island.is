@@ -1,0 +1,109 @@
+{
+  "name": "judicial-system-web",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/judicial-system/web",
+  "projectType": "application",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/judicial-system/web"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/judicial-system/web"
+        },
+        "production": {}
+      },
+      "dependsOn": ["build-custom-server"]
+    },
+    "build-custom-server": {
+      "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/judicial-system/web",
+        "main": "apps/judicial-system/web/server.ts",
+        "tsConfig": "apps/judicial-system/web/tsconfig.server.json",
+        "maxWorkers": 2,
+        "assets": [],
+        "compiler": "tsc",
+        "target": "node"
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "judicial-system-web:build",
+        "dev": true,
+        "customServerTarget": "judicial-system-web:serve-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "judicial-system-web:build:development",
+          "dev": true,
+          "customServerTarget": "judicial-system-web:serve-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "judicial-system-web:build:production",
+          "dev": false,
+          "customServerTarget": "judicial-system-web:serve-custom-server:production"
+        }
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "judicial-system-web:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "judicial-system-web:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "judicial-system-web:build-custom-server:production"
+        }
+      }
+    },
+    "export": {
+      "executor": "@nx/next:export",
+      "options": {
+        "buildTarget": "judicial-system-web:build:production"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/judicial-system/web/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "apps/judicial-system/web/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": ["{workspaceRoot}/coverage/apps/judicial-system/web"]
+    },
+    "docker-next": {},
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/judicial-system/web/{messages/**/*,**/*.strings}.{js,ts,tsx}'"
+      }
+    }
+  },
+  "tags": ["scope:judicial-system-web"]
+}

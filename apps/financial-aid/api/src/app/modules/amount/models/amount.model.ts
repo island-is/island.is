@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
 
 import { Amount } from '@island.is/financial-aid/shared/lib'
 import { DeductionFactorsModel } from '../../deductionFactors'

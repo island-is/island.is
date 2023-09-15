@@ -14,14 +14,13 @@ export const applicationRejectedEmail: EmailTemplateGenerator = (props) => {
     application,
     options: { email },
   } = props
-  const crcApplication = (application as unknown) as CRCApplication
+  const crcApplication = application as unknown as CRCApplication
   const selectedChildren = getSelectedChildrenFromExternalData(
-    crcApplication.externalData.nationalRegistry.data.children,
+    crcApplication.externalData.childrenCustodyInformation.data,
     crcApplication.answers.selectedChildren,
   )
   const otherParent = selectedChildren[0].otherParent
   const newApplicationLink = 'https://island.is/umsoknir/breytt-logheimili-barn'
-  const interviewLink = 'https://www.syslumenn.is/timabokanir'
   const requestLink =
     'https://www.syslumenn.is/media/malefni-barna/Beidni-foreldris-med-sameiginlega-forsja-um-breytt-logheimili-barns.pdf'
 
@@ -32,7 +31,7 @@ export const applicationRejectedEmail: EmailTemplateGenerator = (props) => {
 
         <h1>${subject}</h1>
 
-        <p style="${fontStyles} margin: 0;">${otherParent.fullName} hefur hafnað drögum að samningi um breytt lögheimili og meðlag barna, sem þú útbjóst og undirritaðir á Island.is.</p>
+        <p style="${fontStyles} margin: 0;">${otherParent?.fullName} hefur hafnað drögum að samningi um breytt lögheimili og meðlag barna, sem þú útbjóst og undirritaðir á Island.is.</p>
 
         <h2>Hver eru möguleg næstu skref?</h2>
         <ul style="${ulStyles}"><li style=${liStyles}>Þið getið útbúið <a href=${newApplicationLink} target="_blank">nýjan samning</a> með því að hefja ferlið aftur.</li><li style=${liStyles}>Þú getur sent <a href=${requestLink}>beiðni um lögheimilisbreytingu</a> á sýslumann, sem tekur málið til meðferðar.</li><li style=${liStyles}>Þú getur haft samband við sýslumann í þínu umdæmi til að fá frekari leiðbeiningar.</li></ul>

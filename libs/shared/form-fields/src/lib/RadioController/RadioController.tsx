@@ -7,15 +7,22 @@ import {
   GridColumn,
   InputError,
   InputBackgroundColor,
+  TagVariant,
 } from '@island.is/island-ui/core'
+import { TestSupport } from '@island.is/island-ui/utils'
 
-interface Option {
+interface Option extends TestSupport {
   value: string
   label: React.ReactNode
-  subLabel?: string
+  subLabel?: React.ReactNode
   tooltip?: React.ReactNode
+  tag?: {
+    label: string
+    variant?: TagVariant
+    outlined?: boolean
+  }
   excludeOthers?: boolean
-  illustration?: React.FC
+  illustration?: React.FC<React.PropsWithChildren<unknown>>
   disabled?: boolean
 }
 
@@ -33,7 +40,7 @@ interface Props {
   onSelect?: (s: string) => void
 }
 
-export const RadioController: FC<Props> = ({
+export const RadioController: FC<React.PropsWithChildren<Props>> = ({
   defaultValue,
   disabled = false,
   error,
@@ -52,7 +59,7 @@ export const RadioController: FC<Props> = ({
     <Controller
       name={name}
       defaultValue={defaultValue}
-      render={({ value, onChange }) => (
+      render={({ field: { value, onChange } }) => (
         <GridRow>
           {options.map((option, index) => (
             <GridColumn
@@ -63,6 +70,7 @@ export const RadioController: FC<Props> = ({
               <RadioButton
                 large={largeButtons}
                 tooltip={option.tooltip}
+                tag={option.tag}
                 key={`${id}-${index}`}
                 onChange={({ target }) => {
                   clearErrors(id)
@@ -71,6 +79,7 @@ export const RadioController: FC<Props> = ({
                   setValue(id, target.value)
                 }}
                 checked={option.value === value}
+                dataTestId={option.dataTestId}
                 id={`${id}-${index}`}
                 name={`${id}`}
                 label={option.label}

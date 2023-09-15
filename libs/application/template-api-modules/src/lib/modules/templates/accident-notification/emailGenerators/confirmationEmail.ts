@@ -1,4 +1,4 @@
-import { ApplicationConfigurations } from '@island.is/application/core'
+import { ApplicationConfigurations } from '@island.is/application/types'
 import { AccidentNotificationAnswers } from '@island.is/application/templates/accident-notification'
 import { SendMailOptions } from 'nodemailer'
 import { EmailTemplateGeneratorProps } from '../../../../types'
@@ -70,8 +70,7 @@ export const generateConfirmationEmail: ConfirmationEmail = (
         {
           component: 'Copy',
           context: {
-            copy:
-              'Sjúkratryggingar Íslands verða í sambandi við þig ef frekari upplýsingar vantar. Hægt er að skoða tilkynninguna á island.is eða með því að smella á hlekkinn hér að neðan.',
+            copy: 'Sjúkratryggingar Íslands verða í sambandi við þig ef frekari upplýsingar vantar. Hægt er að skoða tilkynninguna á island.is eða með því að smella á hlekkinn hér að neðan.',
           },
         },
         {

@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 
 import { ILink, ISupportQna } from '../generated/contentfulTypes'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
@@ -19,25 +20,25 @@ export class SupportQNA {
   @Field()
   title!: string
 
-  @Field(() => [SliceUnion])
+  @CacheField(() => [SliceUnion])
   answer: Array<typeof SliceUnion> = []
 
   @Field()
   slug!: string
 
-  @Field(() => Organization, { nullable: true })
+  @CacheField(() => Organization, { nullable: true })
   organization!: Organization | null
 
-  @Field(() => SupportCategory, { nullable: true })
+  @CacheField(() => SupportCategory, { nullable: true })
   category!: SupportCategory | null
 
-  @Field(() => SupportSubCategory, { nullable: true })
+  @CacheField(() => SupportSubCategory, { nullable: true })
   subCategory!: SupportSubCategory | null
 
   @Field()
   importance!: number
 
-  @Field(() => [Link])
+  @CacheField(() => [Link])
   relatedLinks?: Link[]
 
   @Field()
@@ -63,13 +64,13 @@ export const mapSupportQNA = ({ fields, sys }: ISupportQna): SupportQNA => ({
           return mapLink(link as ILink)
         }
         const supportQnA = link as ISupportQna
-        return mapLink(convertSupportQnAToLink(supportQnA))
+        return mapLink(convertSupportQnAToLink(supportQnA, sys.locale))
       })
     : [],
   contactLink: fields.contactLink ?? '',
 })
 
-const convertSupportQnAToLink = (supportQnA: ISupportQna) => {
+const convertSupportQnAToLink = (supportQnA: ISupportQna, locale = 'is-IS') => {
   return {
     sys: {
       ...supportQnA.sys,
@@ -83,9 +84,11 @@ const convertSupportQnAToLink = (supportQnA: ISupportQna) => {
     },
     fields: {
       text: supportQnA.fields.question,
-      url: `/adstod/${supportQnA.fields.organization?.fields?.slug ?? ''}/${
-        supportQnA.fields.category?.fields?.slug ?? ''
-      }?q=${supportQnA.fields?.slug ?? ''}`,
+      url: `/${locale === 'is-IS' ? 'adstod' : `${locale}/help`}/${
+        supportQnA.fields.organization?.fields?.slug ?? ''
+      }/${supportQnA.fields.category?.fields?.slug ?? ''}/${
+        supportQnA.fields?.slug ?? ''
+      }`,
     },
   } as ILink
 }

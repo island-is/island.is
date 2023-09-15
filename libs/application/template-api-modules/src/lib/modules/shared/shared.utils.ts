@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import { ConfigService } from '@nestjs/config'
 
-import { Application } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 
 import { BaseTemplateAPIModuleConfig } from '../../types'
 
@@ -37,4 +37,28 @@ export const getConfigValue = (
   }
 
   return value
+}
+
+export const objectToXML = (obj: object) => {
+  let xml = ''
+  Object.entries(obj).forEach((entry) => {
+    const [key, value] = entry
+    if (value === undefined) {
+      return
+    }
+    xml += value instanceof Array ? '' : '<' + key + '>'
+    if (value instanceof Array) {
+      for (const i in value) {
+        xml += '<' + key + '>'
+        xml += objectToXML(value[i])
+        xml += '</' + key + '>'
+      }
+    } else if (typeof value == 'object') {
+      xml += objectToXML(new Object(value))
+    } else {
+      xml += value
+    }
+    xml += value instanceof Array ? '' : '</' + key + '>'
+  })
+  return xml
 }

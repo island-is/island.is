@@ -1,0 +1,37 @@
+{
+  "name": "service-portal-applications",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/service-portal/applications/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/service-portal/applications/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/service-portal/applications/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": ["{workspaceRoot}/coverage/libs/service-portal/applications"]
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "parallel": false,
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/applications/src/lib/messages.ts"
+      }
+    }
+  },
+  "tags": [
+    "lib:portals-mypages",
+    "scope:portals-mypages",
+    "TODO:RemoveOverrides"
+  ]
+}

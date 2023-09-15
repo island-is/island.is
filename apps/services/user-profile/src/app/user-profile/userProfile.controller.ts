@@ -5,13 +5,13 @@ import {
   Scopes,
   ScopesGuard,
   IdsUserGuard,
+  CurrentActor,
 } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   Body,
   Controller,
   Get,
-  NotFoundException,
   Param,
   Post,
   ConflictException,
@@ -22,6 +22,7 @@ import {
   Delete,
   Patch,
 } from '@nestjs/common'
+import { NoContentException } from '@island.is/nest/problem'
 import {
   ApiCreatedResponse,
   ApiExcludeEndpoint,
@@ -46,6 +47,7 @@ import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { VerificationService } from './verification.service'
 import { DataStatus } from './types/dataStatusTypes'
+import { ActorLocale } from './dto/actorLocale'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('User Profile')
@@ -85,12 +87,31 @@ export class UserProfileController {
       nationalId,
     )
     if (!userProfile) {
-      throw new NotFoundException(
-        `A user profile with nationalId ${nationalId} does not exist`,
-      )
+      throw new NoContentException()
     }
 
     return userProfile
+  }
+
+  @Scopes(UserProfileScope.read)
+  @ApiSecurity('oauth2', [UserProfileScope.read])
+  @Get('actor/locale')
+  @ApiOkResponse({ type: ActorLocale })
+  @Audit<ActorLocale>({
+    resources: (profile) => profile.nationalId,
+  })
+  async getActorLocale(@CurrentActor() actor: User): Promise<ActorLocale> {
+    const userProfile = await this.userProfileService.findByNationalId(
+      actor.nationalId,
+    )
+    if (!userProfile) {
+      throw new NoContentException()
+    }
+
+    return {
+      nationalId: userProfile.nationalId,
+      locale: userProfile.locale,
+    }
   }
 
   @Scopes(UserProfileScope.write)
@@ -117,38 +138,42 @@ export class UserProfileController {
 
     if (userProfileDto.email) {
       const emailVerified = await this.verificationService.confirmEmail(
-        { hash: userProfileDto.emailCode },
+        { hash: userProfileDto.emailCode, email: userProfileDto.email },
         user.nationalId,
       )
 
       if (emailVerified.confirmed) {
-        await this.verificationService.removeEmailVerification(
-          userProfileDto.nationalId,
-        )
         userProfileDto = {
           ...userProfileDto,
           emailStatus: DataStatus.VERIFIED,
           emailVerified: emailVerified.confirmed,
         }
+      } else {
+        throw new BadRequestException(
+          `Email not confirmed in create. Message: ${emailVerified.message}`,
+        )
       }
     }
 
     if (userProfileDto.mobilePhoneNumber) {
       const phoneVerified = await this.verificationService.confirmSms(
-        { code: userProfileDto.smsCode },
+        {
+          code: userProfileDto.smsCode,
+          mobilePhoneNumber: userProfileDto.mobilePhoneNumber,
+        },
         user.nationalId,
       )
 
       if (phoneVerified.confirmed) {
-        await this.verificationService.removeSmsVerification(
-          userProfileDto.nationalId,
-        )
-
         userProfileDto = {
           ...userProfileDto,
           emailStatus: DataStatus.VERIFIED,
           mobilePhoneNumberVerified: phoneVerified.confirmed,
         }
+      } else {
+        throw new BadRequestException(
+          `Phone not confirmed in create. Message: ${phoneVerified.message}`,
+        )
       }
     }
 
@@ -213,7 +238,10 @@ export class UserProfileController {
 
     if (userProfileToUpdate.mobilePhoneNumber) {
       const phoneVerified = await this.verificationService.confirmSms(
-        { code: userProfileToUpdate.smsCode },
+        {
+          code: userProfileToUpdate.smsCode,
+          mobilePhoneNumber: userProfileToUpdate.mobilePhoneNumber,
+        },
         user.nationalId,
       )
 
@@ -224,13 +252,18 @@ export class UserProfileController {
           mobilePhoneNumberVerified: phoneVerified.confirmed,
         }
       } else {
-        throw new ForbiddenException()
+        throw new BadRequestException(
+          `Phone not confirmed in update. Message: ${phoneVerified.message}`,
+        )
       }
     }
 
     if (userProfileToUpdate.email) {
       const emailVerified = await this.verificationService.confirmEmail(
-        { hash: userProfileToUpdate.emailCode },
+        {
+          hash: userProfileToUpdate.emailCode,
+          email: userProfileToUpdate.email,
+        },
         user.nationalId,
       )
 
@@ -241,18 +274,16 @@ export class UserProfileController {
           emailVerified: emailVerified.confirmed,
         }
       } else {
-        throw new ForbiddenException()
+        throw new BadRequestException(
+          `Email not confirmed in update. Message: ${emailVerified.message}`,
+        )
       }
     }
 
-    const {
-      numberOfAffectedRows,
-      updatedUserProfile,
-    } = await this.userProfileService.update(nationalId, userProfileToUpdate)
+    const { numberOfAffectedRows, updatedUserProfile } =
+      await this.userProfileService.update(nationalId, userProfileToUpdate)
     if (numberOfAffectedRows === 0) {
-      throw new NotFoundException(
-        `A user profile with nationalId ${nationalId} does not exist`,
-      )
+      throw new NoContentException()
     }
     this.auditService.audit({
       auth: user,

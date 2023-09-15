@@ -2,18 +2,21 @@ import React, { FC } from 'react'
 import {
   FormStepper as CoreFormStepper,
   FormStepperThemes,
+  Hidden,
   Tag,
 } from '@island.is/island-ui/core'
+import { formatText } from '@island.is/application/core'
 import {
   Application,
   FormModes,
   Section,
   SectionChildren,
-  formatText,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
-import { FormScreen } from '@island.is/application/ui-shell'
+import { m } from '../lib/messages'
+
+import { FormScreen } from '../types'
 
 interface FormStepperProps {
   application: Application
@@ -27,7 +30,7 @@ interface FormStepperProps {
   screen: FormScreen
 }
 
-const FormStepper: FC<FormStepperProps> = ({
+const FormStepper: FC<React.PropsWithChildren<FormStepperProps>> = ({
   application,
   form,
   mode,
@@ -36,15 +39,6 @@ const FormStepper: FC<FormStepperProps> = ({
   screen,
 }) => {
   const { formatMessage } = useLocale()
-
-  const progressTheme: Record<FormModes, FormStepperThemes> = {
-    [FormModes.APPLYING]: FormStepperThemes.PURPLE,
-    [FormModes.EDITING]: FormStepperThemes.PURPLE,
-    [FormModes.APPROVED]: FormStepperThemes.GREEN,
-    [FormModes.REVIEW]: FormStepperThemes.BLUE,
-    [FormModes.PENDING]: FormStepperThemes.BLUE,
-    [FormModes.REJECTED]: FormStepperThemes.RED,
-  }
 
   // Cannot infers type because of circular loop
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -60,27 +54,40 @@ const FormStepper: FC<FormStepperProps> = ({
     children: section.children.map((child) => formattedChildren(child)),
   }))
 
-  const ProgressTag: FC = () => {
+  const ProgressTag: FC<React.PropsWithChildren<unknown>> = () => {
     switch (mode) {
-      case FormModes.REVIEW:
-      case FormModes.PENDING:
+      case FormModes.IN_PROGRESS:
         return (
           <Tag variant="darkerBlue" outlined>
-            Status: In Review
+            {formatMessage(m.progressTag.inProgress)}
           </Tag>
         )
 
       case FormModes.APPROVED:
         return (
           <Tag variant="blueberry" outlined>
-            Status: Approved
+            {formatMessage(m.progressTag.approved)}
           </Tag>
         )
 
       case FormModes.REJECTED:
         return (
           <Tag variant="red" outlined>
-            Status: Rejected
+            {formatMessage(m.progressTag.rejected)}
+          </Tag>
+        )
+
+      case FormModes.COMPLETED:
+        return (
+          <Tag variant="blueberry" outlined>
+            {formatMessage(m.progressTag.completed)}
+          </Tag>
+        )
+
+      case FormModes.DRAFT:
+        return (
+          <Tag variant="purple" outlined>
+            {formatMessage(m.progressTag.draft)}
           </Tag>
         )
 
@@ -91,13 +98,18 @@ const FormStepper: FC<FormStepperProps> = ({
 
   return (
     <CoreFormStepper
-      theme={progressTheme[mode]}
-      tag={showTag && <ProgressTag />}
       formName={formatMessage(form.title)}
       formIcon={form.icon}
       sections={formattedSections}
       activeSection={screen.sectionIndex}
       activeSubSection={screen.subSectionIndex}
+      tag={
+        showTag && (
+          <Hidden below="md">
+            <ProgressTag />
+          </Hidden>
+        )
+      }
     />
   )
 }

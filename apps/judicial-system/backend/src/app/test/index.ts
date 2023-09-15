@@ -1,1 +1,6 @@
-export { randomDate, randomBoolean, randomEnum } from './random'
+export {
+  randomDate,
+  randomBoolean,
+  randomEnum,
+  randomEnumSplit as randomListSplit,
+} from './random'

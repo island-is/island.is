@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Problem" -->
-
 # Nest Problem Module
 
 This library includes a Nest Module that implements the [Problem Details for HTTP APIs](https://datatracker.ietf.org/doc/html/rfc7807) spec.
@@ -89,6 +87,34 @@ export class NewProblem extends ProblemError {
 // Later:
 throw new NewProblem('extra')
 ```
+
+## No Content response
+
+The API Design Guide describes how REST endpoints using resource IDs, i.e. /delegation/:delegationId, should use 204 No Content response instead of 404 Not Found response when no resource is found.
+
+This module includes a `NoContentException` class can be thrown to trigger a 204 No Content response:
+
+```
+export class DelegationService {
+  async findOne(delegationId: string) {
+    const delegation = await this.delegationModel.findOne({
+      where: {
+        id: delegationId,
+      },
+    })
+
+    if (!delegation) {
+      throw new NoContentException()
+    }
+
+    return delegation
+  }
+}
+```
+
+{% hint style="warning" %}
+Make sure you have included the `ProblemModule` in your root module. See [usage](#usage)
+{% endhint %}
 
 ## Running unit tests
 

@@ -1,11 +1,8 @@
 import React, { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { gql, useMutation } from '@apollo/client'
-import {
-  FieldBaseProps,
-  formatText,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -24,7 +21,10 @@ export const createTestProviderMutation = gql`
   }
 `
 
-const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
+const TestEnvironment: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+  error,
+}) => {
   const { lang: locale, formatMessage } = useLocale()
   interface Key {
     name: string
@@ -141,8 +141,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
         <input
           type="hidden"
           value={currentAnswer}
-          ref={register({ required: true })}
-          name={'testProviderId'}
+          {...register('testProviderId', { required: true })}
         />
         {error && (
           <Box color="red600" paddingY={2}>

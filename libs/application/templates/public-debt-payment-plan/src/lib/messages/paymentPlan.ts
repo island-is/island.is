@@ -1,7 +1,5 @@
 import { defineMessages } from 'react-intl'
 
-const t = 'pdpp.application'
-
 export const paymentPlan = {
   general: defineMessages({
     pageTitle: {
@@ -12,6 +10,11 @@ export const paymentPlan = {
     pageDescription: {
       id: `pdpp.application:section.paymentPlan.pageDescription`,
       defaultMessage: `Hér er yfirlit yfir þær skuldir sem hægt er að setja í greiðsluáætlun.`,
+      description: 'Description on overview for debts',
+    },
+    companyPageDescription: {
+      id: `pdpp.application:section.paymentPlan.companyPageDescription`,
+      defaultMessage: `Hér er yfirlit yfir þær skuldir sem hægt er að setja í greiðsluáætlun. Ef um fleiri en eina skuld er að ræða, þá birtast þær hver af annari í næstu skrefum þar sem ein skuld er geiðsludreifð í einu.`,
       description: 'Description on overview for debts',
     },
     paymentPlanDescription: {
@@ -127,12 +130,19 @@ export const paymentPlan = {
       `,
       description: `Slider descriptor`,
     },
+    distributionDataMainTitle: {
+      id: `pdpp.application:section.paymentPlan.distributionDataMainTitle`,
+      defaultMessage: `
+      Greiðsluáætlun skuldar
+      `,
+      description: `Total distribution plan title`,
+    },
     distributionDataTitle: {
       id: `pdpp.application:section.paymentPlan.distributionDataTitle`,
       defaultMessage: `
       Hér má sjá sundurliðun greiðsluáætlunar. Athugið að vextir uppfærast daglega og sýnir áætlunin stöðu þeirra þann dag sem greiðsluáætlunin er gerð.
       `,
-      description: `Total distribution plan`,
+      description: `Total distribution plan description`,
     },
     infoTitle: {
       id: `pdpp.application:section.paymentPlan.infoTitle`,

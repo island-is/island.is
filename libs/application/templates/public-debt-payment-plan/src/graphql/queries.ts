@@ -46,6 +46,27 @@ export const queryPaymentScheduleConditions = `
   }
 `
 
+export const queryPaymentScheduleCompanyConditions = `
+  query PaymentScheduleCompanyConditions {
+    paymentScheduleCompanyConditions {
+      nationalId
+      maxDebtAmount
+      totalDebtAmount
+      minPayment
+      maxPayment
+      collectionActions
+      doNotOwe
+      maxDebt
+      taxReturns
+      vatReturns
+      citReturns
+      accommodationTaxReturns
+      withholdingTaxReturns
+      financialStatement
+    }
+  }
+`
+
 export const queryPaymentScheduleEmployer = `
   query PaymentScheduleEmployer {
     paymentScheduleEmployer {

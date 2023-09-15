@@ -9,6 +9,10 @@ import {
   ServiceWebFormsInput,
   ServiceWebFormsInputWithInstitutionEmail,
 } from './dto/serviceWebForms.input'
+import { CmsModule } from '@island.is/cms'
+import { FileStorageConfig, FileStorageModule } from '@island.is/file-storage'
+import { ConfigModule } from '@nestjs/config'
+import { CommunicationsConfig } from './communications.config'
 
 describe('communicationsService', () => {
   const fakeServiceWebInput: ServiceWebFormsInput = {
@@ -53,6 +57,12 @@ describe('communicationsService', () => {
           token: 'token',
           subdomain: 'subdomain',
         }),
+        CmsModule,
+        FileStorageModule,
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [FileStorageConfig, CommunicationsConfig],
+        }),
       ],
       providers: [CommunicationsService],
     }).compile()
@@ -65,11 +75,10 @@ describe('communicationsService', () => {
   })
 
   describe('getEmailTemplate', () => {
-    it('should genereate difrent templates', () => {
-      // we know these two inputs should generate difrent templates
-      const contactUsTemplate = communicationsService.getEmailTemplate(
-        fakeContactUsInput,
-      )
+    it('should generate different templates', () => {
+      // we know these two inputs should generate different templates
+      const contactUsTemplate =
+        communicationsService.getEmailTemplate(fakeContactUsInput)
       const tellUsAStoryTemplate = communicationsService.getEmailTemplate(
         fakeTellUsAStoryInput,
       )
@@ -79,10 +88,11 @@ describe('communicationsService', () => {
 
   describe('getInputWithInstitutionEmail', () => {
     it('should get service web input with institution email', async () => {
-      const inputWithInstitutionEmail: ServiceWebFormsInputWithInstitutionEmail = {
-        ...fakeServiceWebInput,
-        institutionEmail: 'test@email.com',
-      }
+      const inputWithInstitutionEmail: ServiceWebFormsInputWithInstitutionEmail =
+        {
+          ...fakeServiceWebInput,
+          institutionEmail: 'test@email.com',
+        }
 
       jest
         .spyOn(communicationsService, 'getInputWithInstitutionEmail')

@@ -1,0 +1,201 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Húsnæðisbætur reiknivél",
+    "description": "Vefþjónusta sem inniheldur reiknivél til þess að reikna út húsnæðisbætur.",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/v1/Authenticate/token": {
+      "post": {
+        "tags": ["Authenticate"],
+        "summary": "Skilar token ef notandinn er auðkenndur.",
+        "requestBody": {
+          "description": "Model sem inniheldur upplýsingar um notanda.",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginModel" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/LoginModel" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/LoginModel" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/TokenModel" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TokenModel" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/TokenModel" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Reiknivel/reiknivel": {
+      "post": {
+        "tags": ["Reiknivel"],
+        "summary": "Reiknar bætur samkvæmt modeli og skilar módeli aftur með niðurstöðu.",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "fjoldiHeimilismanna",
+                  "heildarEignir",
+                  "heildarTekjur",
+                  "husnaedisKostnadur"
+                ],
+                "type": "object",
+                "properties": {
+                  "fjoldiHeimilismanna": {
+                    "maximum": 4,
+                    "minimum": 1,
+                    "pattern": "^[0-9]+$",
+                    "type": "integer",
+                    "description": "Fjöldi heimilismanna í húsnæði",
+                    "format": "int32"
+                  },
+                  "heildarTekjur": {
+                    "pattern": "^[0-9]+$",
+                    "type": "integer",
+                    "description": "Samanlagðar mánaðartekjur heimilismanna, 18 ára og eldri ( tekjur fyrir skatt)",
+                    "format": "int32"
+                  },
+                  "heildarEignir": {
+                    "pattern": "^[0-9]+$",
+                    "type": "integer",
+                    "description": "Eignir heimilismanna, 18 ára og eldri",
+                    "format": "int32"
+                  },
+                  "husnaedisKostnadur": {
+                    "pattern": "^[0-9]+$",
+                    "type": "integer",
+                    "description": "Húsnæðiskostnaður á mánuði",
+                    "format": "int32"
+                  }
+                }
+              },
+              "encoding": {
+                "fjoldiHeimilismanna": { "style": "form" },
+                "heildarTekjur": { "style": "form" },
+                "heildarEignir": { "style": "form" },
+                "husnaedisKostnadur": { "style": "form" }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReiknivelReturnModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReiknivelReturnModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReiknivelReturnModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LoginModel": {
+        "required": ["password", "username"],
+        "type": "object",
+        "properties": {
+          "username": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Notandanafn"
+          },
+          "password": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Lykilorð"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReiknivelReturnModel": {
+        "type": "object",
+        "properties": {
+          "manadarlegarHusnaedisbaetur": {
+            "type": "number",
+            "description": "Mánaðarlegar húsnæðisbætur",
+            "format": "double",
+            "nullable": true
+          },
+          "manadarlegTekjuSkerding": {
+            "type": "number",
+            "description": "Mánaðarleg tekjuskerðing",
+            "format": "double"
+          },
+          "manadarlegEignaSkerding": {
+            "type": "number",
+            "description": "Mánaðarleg eignaskerðing",
+            "format": "double"
+          },
+          "manadarlegarHamarksBaetur": {
+            "type": "number",
+            "description": "Hámarks bætur sem hægt er að fá mánaðarlega",
+            "format": "double"
+          },
+          "manadarlegHusnaedisKostnadarSkerding": {
+            "type": "number",
+            "description": "Mánaðarleg skerðing vegna húsnæðiskostnaðar",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TokenModel": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Tóki",
+            "nullable": true
+          },
+          "expiration": {
+            "type": "string",
+            "description": "Gildistími",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "security": [{ "Bearer": [] }]
+}

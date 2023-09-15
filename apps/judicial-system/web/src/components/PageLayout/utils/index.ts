@@ -1,65 +1,52 @@
+import { IntlFormatters } from 'react-intl'
+
 import {
-  Case,
   CaseDecision,
   CaseState,
-  CaseType,
+  isIndictmentCase,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
-
-interface TranslationStrings {
-  dismissedTitle: string
-}
+import { sections as m } from '@island.is/judicial-system-web/messages'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 export const caseResult = (
-  translationStrings: TranslationStrings,
-  workingCase?: Case,
-) => {
-  if (!workingCase) {
-    return ''
-  }
-
+  formatMessage: IntlFormatters['formatMessage'],
+  workingCase: Case,
+): string => {
   const isAccepted =
     workingCase.state === CaseState.ACCEPTED ||
-    workingCase?.parentCase?.state === CaseState.ACCEPTED
+    workingCase.parentCase?.state === CaseState.ACCEPTED
 
   /**
-   * No need to check the parent case state because you can't extend a
-   * travel ban cases, dissmissed or rejected cases
+   * No need to check the parent case state because you can't extend
+   * travel ban cases, dissmissed, rejected or appealed cases
    */
-  const isRejected = workingCase?.state === CaseState.REJECTED
+  const isRejected = workingCase.state === CaseState.REJECTED
   const isDismissed = workingCase.state === CaseState.DISMISSED
-
-  const isAlternativeTravelBan =
-    workingCase.state === CaseState.ACCEPTED &&
-    workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+  let caseType = workingCase.type
 
   if (isRejected) {
-    if (isInvestigationCase(workingCase.type)) {
-      return 'Kröfu um rannsóknarheimild hafnað'
-    } else {
-      return 'Kröfu hafnað'
-    }
+    return formatMessage(m.caseResults.rejectedV2, {
+      isInvestigationCase: isInvestigationCase(caseType),
+    })
   } else if (isAccepted) {
-    if (isInvestigationCase(workingCase?.type)) {
-      return 'Krafa um rannsóknarheimild samþykkt'
+    if (isInvestigationCase(caseType)) {
+      return formatMessage(m.caseResults.investigationAccepted)
+    } else if (isIndictmentCase(caseType)) {
+      return formatMessage(m.caseResults.indictmentClosed)
     } else {
-      return workingCase?.isValidToDateInThePast
-        ? `${
-            workingCase.type === CaseType.CUSTODY
-              ? 'Gæsluvarðhaldi'
-              : 'Farbanni'
-          } lokið`
-        : `${
-            workingCase.type === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann'
-          } virkt`
+      const isAlternativeTravelBan =
+        workingCase.state === CaseState.ACCEPTED &&
+        workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+      caseType = isAlternativeTravelBan ? CaseType.TRAVEL_BAN : caseType
+      return workingCase.isValidToDateInThePast
+        ? formatMessage(m.caseResults.restrictionOver, { caseType })
+        : formatMessage(m.caseResults.restrictionActive, { caseType })
     }
   } else if (isDismissed) {
-    return translationStrings.dismissedTitle
-  } else if (isAlternativeTravelBan) {
-    return workingCase.isValidToDateInThePast
-      ? 'Farbanni lokið'
-      : 'Farbann virkt'
+    return formatMessage(m.caseResults.dissmissed)
   } else {
-    return 'Niðurstaða'
+    return formatMessage(m.caseResults.result)
   }
 }

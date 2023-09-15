@@ -44,6 +44,7 @@ export interface ISLBorninMin {
   Sveitarfelag?: string
   Postaritun?: string
   Afdrif?: string
+  Eiginnafn?: string
 }
 
 interface ISLBorninMinAttributes {

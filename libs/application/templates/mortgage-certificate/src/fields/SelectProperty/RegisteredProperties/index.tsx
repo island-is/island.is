@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { PropertyTable } from './PropertyTable'
-import { PropertyDetail } from '../../../types/schema'
+import { PropertyDetail } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { m } from '../../../lib/messages'
@@ -12,13 +12,15 @@ interface RegisteredPropertiesProps {
 }
 
 export const RegisteredProperties: FC<
-  FieldBaseProps & RegisteredPropertiesProps
+  React.PropsWithChildren<FieldBaseProps & RegisteredPropertiesProps>
 > = ({ application, field, selectHandler, selectedPropertyNumber }) => {
   const { externalData } = application
 
-  const { properties } = externalData.nationalRegistryRealEstate?.data as {
+  const nationalRegistryRealEstateData = externalData.nationalRegistryRealEstate
+    ?.data as {
     properties: [PropertyDetail]
-  }
+  } | null
+  const properties = nationalRegistryRealEstateData?.properties
 
   const { formatMessage } = useLocale()
 

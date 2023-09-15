@@ -1,11 +1,14 @@
 import React, { FC } from 'react'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, AlertMessage } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import Markdown from 'markdown-to-jsx'
 import { m } from '../../forms/messages'
 
-const FormerCountryErrorMessage: FC<FieldBaseProps> = ({ application }) => {
+const FormerCountryErrorMessage: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   return (

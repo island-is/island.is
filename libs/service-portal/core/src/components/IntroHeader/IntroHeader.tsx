@@ -1,50 +1,16 @@
-import React from 'react'
-import { useLocale } from '@island.is/localization'
-import { MessageDescriptor } from 'react-intl'
 import {
-  GridColumn,
-  GridRow,
-  Text,
-  Box,
-  Hidden,
-} from '@island.is/island-ui/core'
-import { m } from '@island.is/service-portal/core'
-interface Props {
-  title: MessageDescriptor | string
-  intro?: MessageDescriptor
-  img?: string
-  hideImgPrint?: boolean
-}
+  IntroHeader as IntroHeaderBase,
+  IntroHeaderProps,
+} from '@island.is/portals/core'
 
-export const IntroHeader = ({
-  title,
-  intro,
-  img,
-  hideImgPrint = false,
-}: Props) => {
-  const { formatMessage } = useLocale()
+export const IntroHeader = (props: Omit<IntroHeaderProps, 'children'>) => {
+  const { marginBottom } = props
+
   return (
-    <GridRow marginBottom={7}>
-      <GridColumn span={['8/8', '6/8', '5/8']} order={[2, 1]}>
-        <Text variant="h3" as="h1" marginBottom={3}>
-          {formatMessage(title)}
-        </Text>
-        {intro && <Text variant="default">{formatMessage(intro)}</Text>}
-      </GridColumn>
-      {img && (
-        <GridColumn
-          span={['8/8', '2/8']}
-          offset={['0', '0', '1/8']}
-          order={[1, 2]}
-        >
-          <Hidden print={hideImgPrint}>
-            <Box textAlign={['center', 'right']} padding={[6, 0]}>
-              <img src={img} alt={`${formatMessage(m.altText)} ${title}`} />
-            </Box>
-          </Hidden>
-        </GridColumn>
-      )}
-    </GridRow>
+    <IntroHeaderBase
+      {...props}
+      marginBottom={marginBottom ? marginBottom : [0, 0, 2]}
+    />
   )
 }
 

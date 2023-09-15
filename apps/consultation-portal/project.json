@@ -1,0 +1,110 @@
+{
+  "name": "consultation-portal",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/consultation-portal",
+  "projectType": "application",
+  "prefix": "consultation-portal",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/consultation-portal"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/consultation-portal"
+        },
+        "production": {}
+      },
+      "dependsOn": ["build-custom-server"]
+    },
+    "build-custom-server": {
+      "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/consultation-portal",
+        "main": "apps/consultation-portal/server.ts",
+        "tsConfig": "apps/consultation-portal/tsconfig.server.json",
+        "maxWorkers": 2,
+        "assets": [],
+        "compiler": "tsc",
+        "target": "node"
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "consultation-portal:build",
+        "dev": true,
+        "customServerTarget": "consultation-portal:serve-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "consultation-portal:build:development",
+          "dev": true,
+          "customServerTarget": "consultation-portal:serve-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "consultation-portal:build:production",
+          "dev": false,
+          "customServerTarget": "consultation-portal:serve-custom-server:production"
+        }
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "consultation-portal:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "consultation-portal:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "consultation-portal:build-custom-server:production"
+        }
+      }
+    },
+    "schemas/codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config apps/consultation-portal/codegen.yml"
+      }
+    },
+    "export": {
+      "executor": "@nx/next:export",
+      "options": {
+        "buildTarget": "consultation-portal:build:production"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/consultation-portal"],
+      "options": {
+        "jestConfig": "apps/consultation-portal/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/consultation-portal/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "docker-next": {}
+  },
+  "tags": ["scope:react-next"]
+}

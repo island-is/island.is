@@ -1,6 +1,8 @@
-import { Inject, Injectable, HttpService, forwardRef } from '@nestjs/common'
+import { Inject, Injectable, forwardRef } from '@nestjs/common'
+import { HttpService } from '@nestjs/axios'
 import { InjectModel } from '@nestjs/sequelize'
 import format from 'date-fns/format'
+import { lastValueFrom } from 'rxjs'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -34,12 +36,8 @@ export class RecyclingRequestService {
 
   async deRegisterVehicle(vehiclePermno: string, disposalStation: string) {
     try {
-      const {
-        restAuthUrl,
-        restDeRegUrl,
-        restUsername,
-        restPassword,
-      } = environment.samgongustofa
+      const { restAuthUrl, restDeRegUrl, restUsername, restPassword } =
+        environment.samgongustofa
 
       const jsonObj = {
         username: restUsername,
@@ -51,9 +49,11 @@ export class RecyclingRequestService {
         'Content-Type': 'application/json',
       }
       // TODO: saved jToken and use it in next 7 days ( until it expires )
-      const authRes = await this.httpService
-        .post(restAuthUrl, jsonAuthBody, { headers: headerAuthRequest })
-        .toPromise()
+      const authRes = await lastValueFrom(
+        this.httpService.post(restAuthUrl, jsonAuthBody, {
+          headers: headerAuthRequest,
+        }),
+      )
 
       if (authRes.status > 299 || authRes.status < 200) {
         throw new Error(
@@ -75,9 +75,11 @@ export class RecyclingRequestService {
         Authorization: 'Bearer ' + jToken,
       }
 
-      const deRegRes = await this.httpService
-        .post(restDeRegUrl, jsonDeRegBody, { headers: headerDeRegRequest })
-        .toPromise()
+      const deRegRes = await lastValueFrom(
+        this.httpService.post(restDeRegUrl, jsonDeRegBody, {
+          headers: headerDeRegRequest,
+        }),
+      )
       if (deRegRes.status < 300 && deRegRes.status >= 200) {
         return true
       } else {
@@ -122,7 +124,10 @@ export class RecyclingRequestService {
   }
 
   // Find all a vehicle's requests
-  async getVehicleInfoToDeregistered(permno: string): Promise<VehicleModel> {
+  async getVehicleInfoToDeregistered(
+    user: User,
+    permno: string,
+  ): Promise<VehicleModel> {
     try {
       // Check 'pendingRecycle' status
       const resRequestType = await this.findAllWithPermno(permno)
@@ -150,7 +155,7 @@ export class RecyclingRequestService {
       return res
     } catch (err) {
       throw new Error(
-        `Failed on getVehicleInfoToDeregistered request with error: ${err}`,
+        `Failed on getVehicleInfoToDeregistered request ${user.name} with error: ${err}`,
       )
     }
   }

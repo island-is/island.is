@@ -5,7 +5,6 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { msg } from '../../../../../lib/messages'
 import {
   Box,
-  Button,
   Columns,
   Column,
   Input,
@@ -17,9 +16,11 @@ import {
   useVerifySms,
   useUpdateOrCreateUserProfile,
   useDeleteIslykillValue,
+  useUserProfile,
 } from '@island.is/service-portal/graphql'
 import { sharedMessages } from '@island.is/shared/translations'
-import { parseFullNumber } from '../../../../../utils/phoneHelper'
+import { parseFullNumber } from '@island.is/service-portal/core'
+import { FormButton } from '../FormButton'
 import * as styles from './ProfileForms.css'
 
 interface Props {
@@ -34,24 +35,32 @@ interface FormErrors {
   code: string | undefined
 }
 
-export const InputPhone: FC<Props> = ({
+interface UseFormProps {
+  tel: string
+  code: string
+}
+
+export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
   buttonText,
   mobile,
   disabled,
   telDirty,
 }) => {
   useNamespaces('sp.settings')
-  const { handleSubmit, control, errors, getValues, setValue } = useForm()
   const {
-    updateOrCreateUserProfile,
-    loading: saveLoading,
-  } = useUpdateOrCreateUserProfile()
-  const {
-    deleteIslykillValue,
-    loading: deleteLoading,
-  } = useDeleteIslykillValue()
+    handleSubmit,
+    control,
+    getValues,
+    setValue,
+    formState: { errors },
+  } = useForm<UseFormProps>()
+  const { updateOrCreateUserProfile, loading: saveLoading } =
+    useUpdateOrCreateUserProfile()
+  const { deleteIslykillValue, loading: deleteLoading } =
+    useDeleteIslykillValue()
   const { formatMessage } = useLocale()
   const { createSmsVerification, createLoading } = useVerifySms()
+  const { refetch, loading: fetchLoading } = useUserProfile()
   const [telInternal, setTelInternal] = useState(mobile)
   const [telToVerify, setTelToVerify] = useState(mobile)
 
@@ -159,9 +168,11 @@ export const InputPhone: FC<Props> = ({
       await deleteIslykillValue({
         mobilePhoneNumber: true,
       })
+      await refetch()
 
       setVerificationValid(true)
       setInputPristine(true)
+      setTelInternal(undefined)
       setErrors({ ...formErrors, code: undefined })
     } catch (err) {
       setErrors({ ...formErrors, code: emailError })
@@ -249,18 +260,16 @@ export const InputPhone: FC<Props> = ({
             flexDirection="column"
             paddingTop={2}
           >
-            {!createLoading && !deleteLoading && (
+            {!createLoading && !deleteLoading && !fetchLoading && (
               <>
                 {telVerifyCreated ? (
-                  <Button
-                    variant="text"
+                  <FormButton
                     disabled={
                       verificationValid ||
                       disabled ||
                       resendBlock ||
                       inputPristine
                     }
-                    size="small"
                     onClick={
                       telInternal
                         ? () =>
@@ -278,26 +287,22 @@ export const InputPhone: FC<Props> = ({
                           })
                         : buttonText
                       : formatMessage(msg.saveEmptyChange)}
-                  </Button>
+                  </FormButton>
                 ) : (
-                  <button
-                    type="submit"
+                  <FormButton
+                    submit
                     disabled={verificationValid || disabled || inputPristine}
                   >
-                    <Button
-                      variant="text"
-                      size="small"
-                      disabled={verificationValid || disabled || inputPristine}
-                    >
-                      {telInternal
-                        ? buttonText
-                        : formatMessage(msg.saveEmptyChange)}
-                    </Button>
-                  </button>
+                    {telInternal
+                      ? buttonText
+                      : formatMessage(msg.saveEmptyChange)}
+                  </FormButton>
                 )}
               </>
             )}
-            {(createLoading || deleteLoading) && <LoadingDots />}
+            {(createLoading || deleteLoading || fetchLoading) && (
+              <LoadingDots />
+            )}
           </Box>
         </Box>
       </form>
@@ -344,20 +349,15 @@ export const InputPhone: FC<Props> = ({
                 alignItems="flexStart"
                 flexDirection="column"
                 paddingTop={4}
+                className={styles.codeButton}
               >
                 {!saveLoading && (
-                  <button
-                    type="submit"
+                  <FormButton
+                    submit
                     disabled={!codeInternal || disabled || verificationValid}
                   >
-                    <Button
-                      variant="text"
-                      size="small"
-                      disabled={!codeInternal || disabled || verificationValid}
-                    >
-                      {formatMessage(m.codeConfirmation)}
-                    </Button>
-                  </button>
+                    {formatMessage(m.codeConfirmation)}
+                  </FormButton>
                 )}
                 {saveLoading && (
                   <Box>

@@ -12,6 +12,7 @@ import type {
   CreatePresignedPost,
   DeleteFileResponse,
   CaseFile,
+  UpdateFile,
   PresignedPost,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
@@ -33,9 +34,20 @@ import type {
   Defendant,
   UpdateDefendant,
   DeleteDefendantResponse,
+  CaseListEntry,
 } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
+import { UpdateFilesResponse } from '../modules/file'
+import { PoliceCaseInfo } from '../modules/police'
+
+import {
+  CreateIndictmentCountInput,
+  DeleteIndictmentCountInput,
+  DeleteIndictmentCountResponse,
+  IndictmentCount,
+  UpdateIndictmentCountInput,
+} from '../modules/indictment-count'
 
 @Injectable()
 export class BackendApi extends DataSource<{ req: Request }> {
@@ -78,9 +90,9 @@ export class BackendApi extends DataSource<{ req: Request }> {
     })
   }
 
-  private put<TBody, TResult>(route: string, body: TBody): Promise<TResult> {
+  private patch<TBody, TResult>(route: string, body: TBody): Promise<TResult> {
     return this.callBackend<TResult>(route, {
-      method: 'PUT',
+      method: 'PATCH',
       body: JSON.stringify(body),
       headers: this.headers,
     })
@@ -110,10 +122,10 @@ export class BackendApi extends DataSource<{ req: Request }> {
   }
 
   updateUser(id: string, updateUser: UpdateUser): Promise<User> {
-    return this.put(`user/${id}`, updateUser)
+    return this.patch(`user/${id}`, updateUser)
   }
 
-  getCases(): Promise<Case[]> {
+  getCases(): Promise<CaseListEntry[]> {
     return this.get('cases')
   }
 
@@ -126,11 +138,11 @@ export class BackendApi extends DataSource<{ req: Request }> {
   }
 
   updateCase(id: string, updateCase: UpdateCase): Promise<Case> {
-    return this.put(`case/${id}`, updateCase)
+    return this.patch(`case/${id}`, updateCase)
   }
 
   transitionCase(id: string, transitionCase: TransitionCase): Promise<Case> {
-    return this.put(`case/${id}/state`, transitionCase)
+    return this.patch(`case/${id}/state`, transitionCase)
   }
 
   requestCourtRecordSignature(id: string): Promise<RequestSignatureResponse> {
@@ -197,10 +209,6 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.delete(`case/${caseId}/file/${id}`)
   }
 
-  getCaseFiles(id: string): Promise<CaseFile[]> {
-    return this.get(`case/${id}/files`)
-  }
-
   uploadCaseFileToCourt(
     caseId: string,
     id: string,
@@ -208,8 +216,23 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.post(`case/${caseId}/file/${id}/court`)
   }
 
+  async updateFiles(
+    caseId: string,
+    updates: UpdateFile[],
+  ): Promise<UpdateFilesResponse> {
+    const caseFiles: CaseFile[] = await this.patch<
+      { files: UpdateFile[] },
+      CaseFile[]
+    >(`case/${caseId}/files`, { files: updates })
+    return { caseFiles }
+  }
+
   getPoliceCaseFiles(caseId: string): Promise<PoliceCaseFile[]> {
     return this.get(`case/${caseId}/policeFiles`)
+  }
+
+  getPoliceCaseInfo(caseId: string): Promise<PoliceCaseInfo[]> {
+    return this.get(`case/${caseId}/policeCaseInfo`)
   }
 
   uploadPoliceFile(
@@ -231,7 +254,10 @@ export class BackendApi extends DataSource<{ req: Request }> {
     defendantId: string,
     updateDefendant: UpdateDefendant,
   ): Promise<Defendant> {
-    return this.put(`case/${caseId}/defendant/${defendantId}`, updateDefendant)
+    return this.patch(
+      `case/${caseId}/defendant/${defendantId}`,
+      updateDefendant,
+    )
   }
 
   deleteDefendant(
@@ -239,6 +265,76 @@ export class BackendApi extends DataSource<{ req: Request }> {
     defendantId: string,
   ): Promise<DeleteDefendantResponse> {
     return this.delete(`case/${caseId}/defendant/${defendantId}`)
+  }
+
+  createIndictmentCount(
+    input: CreateIndictmentCountInput,
+  ): Promise<IndictmentCount> {
+    const { caseId, ...createIndictmentCount } = input
+
+    return this.post(`case/${caseId}/indictmentCount`, createIndictmentCount)
+  }
+
+  updateIndictmentCount(
+    input: UpdateIndictmentCountInput,
+  ): Promise<IndictmentCount> {
+    const { caseId, indictmentCountId, ...updateIndictmentCount } = input
+
+    return this.patch(
+      `case/${caseId}/indictmentCount/${indictmentCountId}`,
+      updateIndictmentCount,
+    )
+  }
+
+  deleteIndictmentCount(
+    input: DeleteIndictmentCountInput,
+  ): Promise<DeleteIndictmentCountResponse> {
+    const { caseId, indictmentCountId } = input
+
+    return this.delete(`case/${caseId}/indictmentCount/${indictmentCountId}`)
+  }
+
+  limitedAccessGetCase(id: string): Promise<Case> {
+    return this.get(`case/${id}/limitedAccess`)
+  }
+
+  limitedAccessUpdateCase(id: string, updateCase: UpdateCase): Promise<Case> {
+    return this.patch(`case/${id}/limitedAccess`, updateCase)
+  }
+
+  limitedAccessTransitionCase(
+    id: string,
+    transitionCase: TransitionCase,
+  ): Promise<Case> {
+    return this.patch(`case/${id}/limitedAccess/state`, transitionCase)
+  }
+
+  limitedAccessCreateCasePresignedPost(
+    id: string,
+    createPresignedPost: CreatePresignedPost,
+  ): Promise<PresignedPost> {
+    return this.post(`case/${id}/limitedAccess/file/url`, createPresignedPost)
+  }
+
+  limitedAccessCreateCaseFile(
+    id: string,
+    createFile: CreateFile,
+  ): Promise<CaseFile> {
+    return this.post(`case/${id}/limitedAccess/file`, createFile)
+  }
+
+  limitedAccessGetCaseFileSignedUrl(
+    caseId: string,
+    id: string,
+  ): Promise<SignedUrl> {
+    return this.get(`case/${caseId}/limitedAccess/file/${id}/url`)
+  }
+
+  limitedAccessDeleteCaseFile(
+    caseId: string,
+    id: string,
+  ): Promise<DeleteFileResponse> {
+    return this.delete(`case/${caseId}/limitedAccess/file/${id}`)
   }
 }
 

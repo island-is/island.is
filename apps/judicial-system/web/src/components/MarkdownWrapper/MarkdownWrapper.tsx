@@ -1,14 +1,15 @@
 import React, { ReactNode } from 'react'
 import Markdown from 'markdown-to-jsx'
-import { MessageDescriptor, useIntl } from 'react-intl'
+
 import {
   Box,
-  Text,
-  BulletList,
   Bullet,
-  Link,
+  BulletList,
+  LinkV2,
+  Text,
   TextProps,
 } from '@island.is/island-ui/core'
+
 import * as styles from './MarkdownWrapper.css'
 
 const BulletListBox = ({ children }: { children: ReactNode }) => {
@@ -35,15 +36,14 @@ const LinkComponent = ({
   href: string
 }) => {
   return (
-    <Link href={href} className={styles.link}>
+    <LinkV2 href={href} className={styles.link}>
       {children}
-    </Link>
+    </LinkV2>
   )
 }
 
 interface Props {
-  text: MessageDescriptor | string
-  format?: { [key: string]: string | number }
+  markdown: string
   textProps?: TextProps
 }
 
@@ -55,9 +55,7 @@ const headingOverride = {
   },
 }
 
-const DescriptionText = ({ text, format, textProps }: Props) => {
-  const { formatMessage } = useIntl()
-  const markdown = typeof text === 'string' ? text : formatMessage(text, format)
+const DescriptionText = ({ markdown, textProps }: Props) => {
   // markdown-to-jsx is able to handle this in most cases but when using 'formatMessage'
   // it does not work for some reason. That is the reason for this special handling here.
   // We will take a look at this later with the localization team.

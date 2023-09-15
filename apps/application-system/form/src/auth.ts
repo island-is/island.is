@@ -7,8 +7,10 @@ import {
   UserProfileScope,
   EndorsementsScope,
   AuthScope,
+  MunicipalitiesFinancialAidScope,
 } from '@island.is/auth/scopes'
 
+// Are users mocked?
 const userMocked = process.env.API_MOCKS === 'true'
 
 if (userMocked) {
@@ -21,7 +23,7 @@ if (userMocked) {
     redirectPath: '/signin-oidc',
     redirectPathSilent: '/silent/signin-oidc',
     authority: environment.identityServer.authority,
-    client_id: 'island-is-1',
+    client_id: '@island.is/web',
     scope: [
       'openid',
       'profile',
@@ -30,11 +32,18 @@ if (userMocked) {
       ApplicationScope.write,
       AuthScope.actorDelegations,
       UserProfileScope.read,
+      UserProfileScope.write,
       NationalRegistryScope.individuals,
       EndorsementsScope.main,
       ApiScope.internal,
+      ApiScope.internalProcuring,
       ApiScope.meDetails,
+      ApiScope.fishingLicense,
+      MunicipalitiesFinancialAidScope.read,
+      MunicipalitiesFinancialAidScope.write,
+      MunicipalitiesFinancialAidScope.applicant,
       ApiScope.assets,
+      ApiScope.samgongustofaVehicles,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'as.',

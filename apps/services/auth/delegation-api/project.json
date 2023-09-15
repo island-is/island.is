@@ -1,0 +1,57 @@
+{
+  "name": "services-auth-delegation-api",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/services/auth/delegation-api/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "./tools/executors/node:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/services/auth/delegation-api",
+        "main": "apps/services/auth/delegation-api/src/main.ts",
+        "tsConfig": "apps/services/auth/delegation-api/tsconfig.app.json",
+        "assets": ["apps/services/auth/delegation-api/src/assets"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-auth-delegation-api:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/services/auth/delegation-api/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/services/auth/delegation-api"],
+      "options": {
+        "jestConfig": "apps/services/auth/delegation-api/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/build-openapi": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth/delegation-api/tsconfig.app.json apps/services/auth/delegation-api/src/buildOpenApi.ts"
+      },
+      "outputs": [
+        "{workspaceRoot}/apps/services/auth/delegation-api/src/openapi.yaml"
+      ]
+    },
+    "docker-express": {}
+  },
+  "tags": ["scope:auth-api"]
+}

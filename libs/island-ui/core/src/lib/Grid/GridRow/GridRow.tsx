@@ -13,9 +13,10 @@ interface Props {
   alignItems?: BoxProps['alignItems']
   marginTop?: BoxProps['marginTop']
   marginBottom?: BoxProps['marginBottom']
+  rowGap?: BoxProps['rowGap']
 }
 
-export const GridRow: FC<Props> = ({
+export const GridRow: FC<React.PropsWithChildren<Props>> = ({
   children,
   className,
   direction = 'row',

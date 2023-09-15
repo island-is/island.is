@@ -1,22 +1,26 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
+
 import { Box, Text } from '@island.is/island-ui/core'
-import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
+import { isRestrictionCase } from '@island.is/judicial-system/types'
+import { ruling as m } from '@island.is/judicial-system-web/messages'
 import {
   Decision,
   RulingInput,
 } from '@island.is/judicial-system-web/src/components'
-import { icRuling, rcRuling } from '@island.is/judicial-system-web/messages'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+
+import { useCase } from '../../utils/hooks'
 
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
 }
 
-const ConclusionDraft: React.FC<Props> = (props) => {
+const ConclusionDraft: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
+  const { setAndSendCaseToServer } = useCase()
 
   return (
     <>
@@ -33,45 +37,93 @@ const ConclusionDraft: React.FC<Props> = (props) => {
       <Box marginBottom={3}>
         <Decision
           workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
           acceptedLabelText={
             isRestrictionCase(workingCase.type)
-              ? formatMessage(rcRuling.sections.decision.acceptLabel, {
-                  caseType:
-                    workingCase.type === CaseType.CUSTODY
-                      ? 'gæsluvarðhald'
-                      : 'farbann',
-                })
-              : formatMessage(icRuling.sections.decision.acceptLabel)
+              ? formatMessage(
+                  m.restrictionCases.sections.decision.acceptLabel,
+                  {
+                    caseType: formatMessage(
+                      m.restrictionCases.sections.decision.caseType,
+                      {
+                        caseType: workingCase.type,
+                      },
+                    ),
+                  },
+                )
+              : formatMessage(
+                  m.investigationCases.sections.decision.acceptLabel,
+                )
           }
           rejectedLabelText={
             isRestrictionCase(workingCase.type)
-              ? formatMessage(rcRuling.sections.decision.rejectLabel, {
-                  caseType:
-                    workingCase.type === CaseType.CUSTODY
-                      ? 'gæsluvarðhald'
-                      : 'farbann',
-                })
-              : formatMessage(icRuling.sections.decision.rejectLabel)
+              ? formatMessage(
+                  m.restrictionCases.sections.decision.rejectLabel,
+                  {
+                    caseType: formatMessage(
+                      m.restrictionCases.sections.decision.caseType,
+                      {
+                        caseType: workingCase.type,
+                      },
+                    ),
+                  },
+                )
+              : formatMessage(
+                  m.investigationCases.sections.decision.rejectLabel,
+                )
           }
           partiallyAcceptedLabelText={`${
             isRestrictionCase(workingCase.type)
-              ? formatMessage(rcRuling.sections.decision.partiallyAcceptLabel)
-              : formatMessage(icRuling.sections.decision.partiallyAcceptLabel)
+              ? formatMessage(
+                  m.restrictionCases.sections.decision.partiallyAcceptLabel,
+                  {
+                    caseType: formatMessage(
+                      m.restrictionCases.sections.decision.caseType,
+                      {
+                        caseType: workingCase.type,
+                      },
+                    ),
+                  },
+                )
+              : formatMessage(
+                  m.investigationCases.sections.decision.partiallyAcceptLabel,
+                )
           }`}
           dismissLabelText={
             isRestrictionCase(workingCase.type)
-              ? formatMessage(rcRuling.sections.decision.dismissLabel, {
-                  caseType:
-                    workingCase.type === CaseType.CUSTODY
-                      ? 'gæsluvarðhald'
-                      : 'farbann',
-                })
-              : formatMessage(icRuling.sections.decision.dismissLabel)
+              ? formatMessage(
+                  m.restrictionCases.sections.decision.dismissLabel,
+                  {
+                    caseType: formatMessage(
+                      m.restrictionCases.sections.decision.caseType,
+                      {
+                        caseType: workingCase.type,
+                      },
+                    ),
+                  },
+                )
+              : formatMessage(
+                  m.investigationCases.sections.decision.dismissLabel,
+                )
           }
           acceptingAlternativeTravelBanLabelText={formatMessage(
-            rcRuling.sections.decision.acceptingAlternativeTravelBanLabel,
+            m.restrictionCases.sections.decision
+              .acceptingAlternativeTravelBanLabel,
+            {
+              caseType: formatMessage(
+                m.restrictionCases.sections.decision.caseType,
+                {
+                  caseType: workingCase.type,
+                },
+              ),
+            },
           )}
+          onChange={(decision) => {
+            setAndSendCaseToServer(
+              [{ decision, force: true }],
+              workingCase,
+              setWorkingCase,
+            )
+          }}
         />
       </Box>
       <Box marginBottom={3}>
@@ -80,7 +132,6 @@ const ConclusionDraft: React.FC<Props> = (props) => {
       <RulingInput
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
-        isRequired
         rows={12}
       />
     </>

@@ -3,14 +3,21 @@ import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import { MessageService } from '@island.is/judicial-system/message'
 
 import { environment } from '../../../../environments'
+import { UserService } from '../../user'
+import { CourtService } from '../../court'
 import { CaseService } from '../../case'
 import { Defendant } from '../models/defendant.model'
 import { DefendantService } from '../defendant.service'
 import { DefendantController } from '../defendant.controller'
+import { InternalDefendantController } from '../internalDefendant.controller'
 
-jest.mock('../../case/case.service.ts')
+jest.mock('@island.is/judicial-system/message')
+jest.mock('../../user/user.service')
+jest.mock('../../court/court.service')
+jest.mock('../../case/case.service')
 
 export const createTestingDefendantModule = async () => {
   const defendantModule = await Test.createTestingModule({
@@ -20,8 +27,11 @@ export const createTestingDefendantModule = async () => {
         secretToken: environment.auth.secretToken,
       }),
     ],
-    controllers: [DefendantController],
+    controllers: [DefendantController, InternalDefendantController],
     providers: [
+      MessageService,
+      UserService,
+      CourtService,
       CaseService,
       {
         provide: LOGGER_PROVIDER,
@@ -35,26 +45,47 @@ export const createTestingDefendantModule = async () => {
         provide: getModelToken(Defendant),
         useValue: {
           findOne: jest.fn(),
+          findAll: jest.fn(),
           create: jest.fn(),
           update: jest.fn(),
           destroy: jest.fn(),
+          findByPk: jest.fn(),
         },
       },
       DefendantService,
     ],
   }).compile()
 
+  const messageService = defendantModule.get<MessageService>(MessageService)
+
+  const userService = defendantModule.get<UserService>(UserService)
+
+  const courtService = defendantModule.get<CourtService>(CourtService)
+
   const defendantModel = await defendantModule.resolve<typeof Defendant>(
     getModelToken(Defendant),
   )
 
-  const defendantService = defendantModule.get<DefendantService>(
-    DefendantService,
-  )
+  const defendantService =
+    defendantModule.get<DefendantService>(DefendantService)
 
-  const defendantController = defendantModule.get<DefendantController>(
-    DefendantController,
-  )
+  const defendantController =
+    defendantModule.get<DefendantController>(DefendantController)
 
-  return { defendantModel, defendantService, defendantController }
+  const internalDefendantController =
+    defendantModule.get<InternalDefendantController>(
+      InternalDefendantController,
+    )
+
+  defendantModule.close()
+
+  return {
+    messageService,
+    userService,
+    courtService,
+    defendantModel,
+    defendantService,
+    defendantController,
+    internalDefendantController,
+  }
 }

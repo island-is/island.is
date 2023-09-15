@@ -1,0 +1,130 @@
+{
+  "name": "skilavottord-web",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/skilavottord/web",
+  "projectType": "application",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/skilavottord/web"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/skilavottord/web"
+        },
+        "production": {}
+      },
+      "dependsOn": ["build-custom-server"]
+    },
+    "build-custom-server": {
+      "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/skilavottord/web",
+        "main": "apps/skilavottord/web/server.ts",
+        "tsConfig": "apps/skilavottord/web/tsconfig.server.json",
+        "maxWorkers": 2,
+        "assets": [],
+        "compiler": "tsc",
+        "target": "node"
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "skilavottord-web:build",
+        "dev": true,
+        "customServerTarget": "skilavottord-web:serve-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "skilavottord-web:build:development",
+          "dev": true,
+          "customServerTarget": "skilavottord-web:serve-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "skilavottord-web:build:production",
+          "dev": false,
+          "customServerTarget": "skilavottord-web:serve-custom-server:production"
+        }
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "skilavottord-web:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "skilavottord-web:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "skilavottord-web:build-custom-server:production"
+        }
+      }
+    },
+    "export": {
+      "executor": "@nx/next:export",
+      "options": {
+        "buildTarget": "skilavottord-web:build:production"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/skilavottord/web/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "apps/skilavottord/web/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": ["{workspaceRoot}/coverage/apps/skilavottord/web"]
+    },
+    "translations": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "quicktype is.json -o translation.d.ts --top-level Translation",
+        "cwd": "apps/skilavottord/web/i18n/locales"
+      }
+    },
+    "dev-init": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn get-secrets skilavottord skilavottord-web",
+          "yarn nx run skilavottord-ws:dev-init"
+        ],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn start skilavottord-web",
+          "yarn nx run skilavottord-ws:dev"
+        ],
+        "parallel": true
+      }
+    },
+    "docker-next": {}
+  },
+  "tags": ["scope:react-next"]
+}

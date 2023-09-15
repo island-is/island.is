@@ -12,13 +12,13 @@ export class HttpExceptionFilter extends BaseProblemFilter {
     if (typeof response === 'string') {
       return {
         status,
-        type: `https://httpstatuses.com/${status}`,
+        type: `https://httpstatuses.org/${status}`,
         title: response,
       } as HttpProblem
     }
     return {
       status,
-      type: `https://httpstatuses.com/${status}`,
+      type: `https://httpstatuses.org/${status}`,
       title: response.error || response.message,
       detail: response.error ? response.message : undefined,
     } as HttpProblem

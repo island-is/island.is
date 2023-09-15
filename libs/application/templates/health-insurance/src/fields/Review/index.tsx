@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Accordion, AccordionItem, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../forms/messages'
@@ -7,7 +8,10 @@ import FormerInsurance from './FormerInsurance'
 import StatusAndChildren from './StatusAndChildren'
 import ContactInfo from './ContactInfo'
 
-const Review: FC<FieldBaseProps> = ({ field, application }) => {
+const Review: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  field,
+  application,
+}) => {
   const { formatMessage } = useLocale()
 
   const isEditable = field.id !== 'submittedData'

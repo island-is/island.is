@@ -4,8 +4,8 @@ import {
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import { CurrentLicenseProviderResult } from '../../dataProviders/CurrentLicenseProvider'
 import { m } from '../../lib/messages'
+import { DrivingLicense } from '../../lib/types'
 import { B_FULL, B_TEMP } from '../../shared'
 
 export const sectionApplicationFor = buildSubSection({
@@ -24,9 +24,7 @@ export const sectionApplicationFor = buildSubSection({
           space: 0,
           largeButtons: true,
           options: (app) => {
-            const {
-              currentLicense,
-            } = getValueViaPath<CurrentLicenseProviderResult>(
+            const { currentLicense } = getValueViaPath<DrivingLicense>(
               app.externalData,
               'currentLicense.data',
             ) ?? { currentLicense: null }

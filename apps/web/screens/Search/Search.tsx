@@ -52,6 +52,7 @@ import {
   SubArticle,
   GetSearchResultsTotalQuery,
   OrganizationSubpage,
+  OrganizationPage,
   Link as LinkItem,
   ProjectPage,
 } from '@island.is/web/graphql/schema'
@@ -94,6 +95,7 @@ type SearchType = Article &
   AdgerdirPage &
   SubArticle &
   OrganizationSubpage &
+  OrganizationPage &
   LinkItem &
   ProjectPage
 
@@ -107,6 +109,7 @@ const connectedTypes: Partial<
     'WebArticle',
     'WebSubArticle',
     'WebOrganizationSubpage',
+    'webOrganizationPage',
     'WebProjectPage',
   ],
   webAdgerdirPage: ['WebAdgerdirPage'],
@@ -117,6 +120,11 @@ const connectedTypes: Partial<
 
 const stringToArray = (value: string | string[]) =>
   Array.isArray(value) ? value : value?.length ? [value] : []
+
+enum AnchorPageType {
+  LIFE_EVENT = 'Life Event',
+  DIGITAL_ICELAND_SERVICE = 'Digital Iceland Service',
+}
 
 const Search: Screen<CategoryProps> = ({
   q,
@@ -130,8 +138,14 @@ const Search: Screen<CategoryProps> = ({
     ...initialState,
     query: {
       q,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       type: stringToArray(query.type) as SearchableContentTypes[],
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       category: stringToArray(query.category),
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       organization: stringToArray(query.organization),
     },
   })
@@ -144,6 +158,8 @@ const Search: Screen<CategoryProps> = ({
   const { activeLocale } = useI18n()
   const searchRef = useRef<HTMLInputElement | null>(null)
   const routerReplace = useRouterReplace()
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
@@ -197,12 +213,21 @@ const Search: Screen<CategoryProps> = ({
     const labels = []
 
     switch (item.__typename) {
-      case 'LifeEventPage':
-        labels.push(n('lifeEvent'))
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      case 'LifeEventPage': {
+        if (item.pageType !== AnchorPageType.DIGITAL_ICELAND_SERVICE) {
+          labels.push(n('lifeEvent'))
+        }
         break
+      }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       case 'News':
         labels.push(n('newsTitle'))
         break
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       case 'AdgerdirPage':
         labels.push(n('adgerdirTitle'))
         break
@@ -256,6 +281,11 @@ const Search: Screen<CategoryProps> = ({
   const pathname = linkResolver('search').href
 
   const tagsList = useMemo((): TagsList[] => {
+    // Check if countResults.typesCount is not defined
+    if (!countResults.typesCount) {
+      // If it's not defined, return an empty array
+      return []
+    }
     return [
       ...countResults.typesCount
         .filter((x) => x.key in tagTitles)
@@ -270,6 +300,8 @@ const Search: Screen<CategoryProps> = ({
           }
 
           return {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             title: tagTitles[x.key] as string,
             key: x.key,
             count,
@@ -292,6 +324,42 @@ const Search: Screen<CategoryProps> = ({
     return false
   }
 
+  const getItemLink = (item: SearchType) => {
+    if (
+      item.__typename === 'LifeEventPage' &&
+      item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
+    ) {
+      return linkResolver('digitalicelandservicesdetailpage', [item.slug])
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
+    return linkResolver(item.__typename, item.url ?? item.slug?.split('/'))
+  }
+
+  const getItemImages = (item: SearchType) => {
+    if (
+      item.__typename === 'LifeEventPage' &&
+      item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
+    ) {
+      return {
+        image: undefined,
+        thumbnail: undefined,
+      }
+    }
+    if (item.__typename === 'OrganizationPage') {
+      return {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        image: (item as any)?.singleOrganization?.logo,
+        thumbnail: undefined,
+      }
+    }
+
+    return {
+      ...(item.image && { image: item.image as Image }),
+      ...(item.thumbnail && { thumbnail: item.thumbnail as Image }),
+    }
+  }
+
   const searchResultsItems = (searchResults.items as Array<SearchType>).map(
     (item) => ({
       typename: item.__typename,
@@ -299,17 +367,17 @@ const Search: Screen<CategoryProps> = ({
       parentTitle: item.parent?.title,
       description:
         item.intro ?? item.description ?? item.parent?.intro ?? item.subtitle,
-      link: linkResolver(item.__typename, item?.url ?? item.slug.split('/')),
+      link: getItemLink(item),
       categorySlug: item.category?.slug ?? item.parent?.category?.slug,
       category: item.category ?? item.parent?.category,
       hasProcessEntry: checkForProcessEntries(item),
       group: item.group,
-      ...(item.image && { image: item.image as Image }),
-      ...(item.thumbnail && { thumbnail: item.thumbnail as Image }),
+      ...getItemImages(item),
       labels: getLabels(item),
     }),
   )
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const noUncategorized = (item) => {
     if (!item.category && filters.category === 'uncategorized') {
       return true
@@ -330,7 +398,7 @@ const Search: Screen<CategoryProps> = ({
 
   useEffect(() => {
     if (state.searchLocked) {
-      return null
+      return
     }
 
     const newQuery = {
@@ -355,7 +423,9 @@ const Search: Screen<CategoryProps> = ({
       q,
       ...(contentType && {
         type: Object.prototype.hasOwnProperty.call(connectedTypes, contentType)
-          ? connectedTypes[contentType].map((x) => firstLower(x))
+          ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            connectedTypes[contentType].map((x) => firstLower(x))
           : contentType,
       }),
       ...(query.category?.length && { category: query.category }),
@@ -368,10 +438,10 @@ const Search: Screen<CategoryProps> = ({
   const categories: CategoriesProps[] = [
     {
       id: 'category',
-      label: 'Þjónustuflokkar',
-      selected: state.query.category,
+      label: n('categories', 'Þjónustuflokkar'),
+      selected: state.query.category ?? [],
       singleOption: true,
-      filters: countResults.tagCounts
+      filters: (countResults?.tagCounts ?? [])
         .filter((x) => x.value.trim() && x.type === 'category')
         .map(({ key, value }) => ({
           label: value,
@@ -380,10 +450,10 @@ const Search: Screen<CategoryProps> = ({
     },
     {
       id: 'organization',
-      label: 'Opinberir aðilar',
-      selected: state.query.organization,
+      label: n('organizations', 'Opinberir aðilar'),
+      selected: state.query.organization ?? [],
       singleOption: true,
-      filters: countResults.tagCounts
+      filters: (countResults?.tagCounts ?? [])
         .filter((x) => x.value.trim() && x.type === 'organization')
         .map(({ key, value }) => ({
           label: value,
@@ -391,6 +461,16 @@ const Search: Screen<CategoryProps> = ({
         })),
     },
   ]
+
+  const filterLabels: FilterLabels = {
+    labelClearAll: n('labelClearAll', 'Hreinsa allar síur'),
+    labelClear: n('labelClear', 'Hreinsa síu'),
+    labelOpen: n('labelOpen', 'Sía niðurstöður'),
+    labelClose: n('labelClose', 'Loka síu'),
+    labelTitle: n('labelTitle', 'Sía mannanöfn'),
+    labelResult: n('labelResult', 'Sjá niðurstöður'),
+    inputPlaceholder: n('inputPlaceholder', 'Leita að nafni'),
+  }
 
   return (
     <>
@@ -402,6 +482,8 @@ const Search: Screen<CategoryProps> = ({
           <GridColumn
             span={['12/12', '12/12', '12/12', '8/12']}
             paddingBottom={6}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             offset={[null, null, null, '2/12']}
           >
             <Stack space={[3, 3, 4]}>
@@ -414,7 +496,11 @@ const Search: Screen<CategoryProps> = ({
                 ]}
                 renderLink={(link) => {
                   return (
-                    <NextLink {...linkResolver('homepage')} passHref>
+                    <NextLink
+                      {...linkResolver('homepage')}
+                      passHref
+                      legacyBehavior
+                    >
                       {link}
                     </NextLink>
                   )
@@ -448,7 +534,7 @@ const Search: Screen<CategoryProps> = ({
                           })
                         }}
                       >
-                        Sýna allt
+                        {n('showAllResults', 'Sýna allt')}
                       </Tag>
                     )}
                     {tagsList
@@ -479,26 +565,27 @@ const Search: Screen<CategoryProps> = ({
                           {title}
                         </Tag>
                       ))}
-                    {countResults.processEntryCount > 0 && (
-                      <Tag
-                        variant="blue"
-                        active={query?.processentry === 'true'}
-                        onClick={() => {
-                          dispatch({
-                            type: ActionType.SET_PARAMS,
-                            payload: {
-                              query: {
-                                processentry: true,
-                                ...getSearchParams('webArticle'),
+                    {countResults.processEntryCount &&
+                      countResults?.processEntryCount > 0 && (
+                        <Tag
+                          variant="blue"
+                          active={query?.processentry === 'true'}
+                          onClick={() => {
+                            dispatch({
+                              type: ActionType.SET_PARAMS,
+                              payload: {
+                                query: {
+                                  processentry: true,
+                                  ...getSearchParams('webArticle'),
+                                },
+                                searchLocked: false,
                               },
-                              searchLocked: false,
-                            },
-                          })
-                        }}
-                      >
-                        {n('processEntry', 'Umsókn')}
-                      </Tag>
-                    )}
+                            })
+                          }}
+                        >
+                          {n('processEntry', 'Umsóknir')}
+                        </Tag>
+                      )}
                   </Inline>
                   <FilterMenu
                     {...filterLabels}
@@ -533,13 +620,13 @@ const Search: Screen<CategoryProps> = ({
                     )}{' '}
                     <strong>{q}</strong>
                     {!!(
-                      state.query.organization.length ||
-                      state.query.category.length
+                      state.query.organization?.length ||
+                      state.query.category?.length
                     ) && ` ${n('withChosenFilters', 'með völdum síum')}. `}
                   </Text>
                   {!!(
-                    state.query.organization.length ||
-                    state.query.category.length
+                    state.query.organization?.length ||
+                    state.query.category?.length
                   ) && (
                     <Button
                       variant="text"
@@ -601,8 +688,10 @@ const Search: Screen<CategoryProps> = ({
                       <Card
                         key={index}
                         tags={tags}
+                        dataTestId="search-result"
                         image={thumbnail ? thumbnail : image}
                         subTitle={parentTitle}
+                        highlightedResults={true}
                         {...rest}
                       />
                     )
@@ -638,7 +727,7 @@ const Search: Screen<CategoryProps> = ({
 
 const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
-Search.getInitialProps = async ({ apolloClient, locale, query }) => {
+Search.getProps = async ({ apolloClient, locale, query }) => {
   const queryString = single(query.q) || ''
   const page = Number(single(query.page)) || 1
   const category = query.category ?? ''
@@ -646,7 +735,8 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   const organization = query.organization ?? ''
   const processentry = query.processentry ?? ''
   const countTag = {}
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const tags: TagType[] = [
     ...stringToArray(category).map(
       (key: string): TagType => ({
@@ -669,19 +759,27 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   ]
 
   const types: SearchableContentTypes[] = stringToArray(type).map(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     (x: SearchableContentTypes) => x,
   )
-
-  const allTypes = [
-    'webArticle' as SearchableContentTypes,
-    'webLifeEventPage' as SearchableContentTypes,
-    'webAdgerdirPage' as SearchableContentTypes,
-    'webSubArticle' as SearchableContentTypes,
-    'webLink' as SearchableContentTypes,
-    'webNews' as SearchableContentTypes,
-    'webOrganizationSubpage' as SearchableContentTypes,
-    'webProjectPage' as SearchableContentTypes,
+  const allTypes: `${SearchableContentTypes}`[] = [
+    'webArticle',
+    'webLifeEventPage',
+    'webDigitalIcelandService',
+    'webAdgerdirPage',
+    'webSubArticle',
+    'webLink',
+    'webNews',
+    'webOrganizationSubpage',
+    'webOrganizationPage',
+    'webProjectPage',
   ]
+
+  const ensureContentTypeExists = (
+    types: string[],
+  ): types is SearchableContentTypes[] =>
+    !!types.length && allTypes.every((type) => allTypes.includes(type))
 
   const [
     {
@@ -693,21 +791,28 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     namespace,
   ] = await Promise.all([
     apolloClient.query<GetSearchResultsDetailedQuery, QuerySearchResultsArgs>({
+      fetchPolicy: 'no-cache', // overriding because at least local caching is broken
       query: GET_SEARCH_RESULTS_QUERY_DETAILED,
       variables: {
         query: {
           language: locale as ContentLanguage,
           queryString,
-          types: types.length ? types : allTypes,
+          types: types.length
+            ? types
+            : ensureContentTypeExists(allTypes)
+            ? allTypes
+            : [],
           ...(tags.length && { tags }),
           ...countTag,
           countTypes: true,
           size: PERPAGE,
           page,
+          highlightResults: true,
         },
       },
     }),
     apolloClient.query<GetSearchResultsNewsQuery, QuerySearchResultsArgs>({
+      fetchPolicy: 'no-cache', // overriding because at least local caching is broken
       query: GET_SEARCH_COUNT_QUERY,
       variables: {
         query: {
@@ -718,7 +823,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
             'organization' as SearchableTags,
             'processentry' as SearchableTags,
           ],
-          types: allTypes,
+          types: ensureContentTypeExists(allTypes) ? allTypes : [],
           countTypes: true,
           countProcessEntry: true,
         },
@@ -734,16 +839,17 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((variables) => {
-        // map data here to reduce data processing in component
-        return JSON.parse(variables.data.getNamespace.fields)
-      }),
+      // map data here to reduce data processing in component
+      .then((variables) =>
+        variables.data.getNamespace?.fields
+          ? JSON.parse(variables.data.getNamespace.fields)
+          : {},
+      ),
   ])
 
   if (searchResults.items.length === 0 && page > 1) {
     throw new CustomNextError(404)
   }
-
   return {
     q: queryString,
     searchResults,
@@ -775,7 +881,9 @@ interface EnglishResultsLinkProps {
   q: string
 }
 
-const EnglishResultsLink: FC<EnglishResultsLinkProps> = ({ q }) => {
+const EnglishResultsLink: FC<
+  React.PropsWithChildren<EnglishResultsLinkProps>
+> = ({ q }) => {
   const { linkResolver } = useLinkResolver()
   const [getCount, { data }] = useLazyQuery<
     GetSearchResultsTotalQuery,
@@ -818,16 +926,6 @@ const EnglishResultsLink: FC<EnglishResultsLinkProps> = ({ q }) => {
   }
 
   return null
-}
-
-const filterLabels: FilterLabels = {
-  labelClearAll: 'Hreinsa allar síur',
-  labelClear: 'Hreinsa síu',
-  labelOpen: 'Sía niðurstöður',
-  labelClose: 'Loka síu',
-  labelTitle: 'Sía mannanöfn',
-  labelResult: 'Sjá niðurstöður',
-  inputPlaceholder: 'Leita að nafni',
 }
 
 export default withMainLayout(Search, { showSearchInHeader: false })

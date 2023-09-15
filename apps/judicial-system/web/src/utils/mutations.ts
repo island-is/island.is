@@ -1,52 +1,73 @@
 import { gql } from '@apollo/client'
 
-export const RulingSignatureConfirmationQuery = gql`
-  query RulingSignatureConfirmationQuery(
-    $input: SignatureConfirmationQueryInput!
-  ) {
-    rulingSignatureConfirmation(input: $input) {
-      documentSigned
-      code
-      message
+const coreCaseListFields = gql`
+  fragment CoreCaseListFields on CaseListEntry {
+    id
+    type
+    decision
+    state
+    courtCaseNumber
+    accusedAppealDecision
+    prosecutorAppealDecision
+    accusedPostponedAppealDate
+    prosecutorPostponedAppealDate
+    courtEndTime
+    validToDate
+    policeCaseNumbers
+    parentCaseId
+    appealCaseNumber
+    appealState
+    appealRulingDecision
+    defendants {
+      id
+      nationalId
+      name
+      noNationalId
     }
   }
 `
 
 export const CasesQuery = gql`
-  query CasesQuery {
+  ${coreCaseListFields}
+  query CaseList {
     cases {
-      id
       created
-      type
-      state
-      policeCaseNumber
-      defendants {
-        id
-        nationalId
-        name
-        noNationalId
-      }
-      validToDate
-      decision
-      isValidToDateInThePast
-      courtCaseNumber
       courtDate
+      isValidToDateInThePast
+      initialRulingDate
       rulingDate
-      courtEndTime
-      accusedAppealDecision
-      prosecutorAppealDecision
-      accusedPostponedAppealDate
-      prosecutorPostponedAppealDate
-      parentCase {
+      rulingSignatureDate
+      judge {
         id
       }
+      prosecutor {
+        id
+      }
+      registrar {
+        id
+      }
+      creatingProsecutor {
+        id
+      }
+      ...CoreCaseListFields
+    }
+  }
+`
+
+export const AppealedCasesQuery = gql`
+  ${coreCaseListFields}
+  query AppealedCases($input: CaseListQueryInput) {
+    cases(input: $input) {
+      appealedDate
       initialRulingDate
+      rulingDate
+      ...CoreCaseListFields
     }
   }
 `
 
 export const CreateUserMutation = gql`
-  mutation CreateUserMutation($input: CreateUserInput!) {
+  mutation CreateUser($input: CreateUserInput!) {
     createUser(input: $input) {
       id
       name
@@ -66,7 +87,7 @@ export const CreateUserMutation = gql`
 `
 
 export const UsersQuery = gql`
-  query UsersQuery {
+  query Users {
     users {
       id
       name
@@ -86,7 +107,7 @@ export const UsersQuery = gql`
 `
 
 export const UserQuery = gql`
-  query UserQuery($input: UserQueryInput!) {
+  query User($input: UserQueryInput!) {
     user(input: $input) {
       id
       name
@@ -106,7 +127,7 @@ export const UserQuery = gql`
 `
 
 export const UpdateUserMutation = gql`
-  mutation UpdateUserMutation($input: UpdateUserInput!) {
+  mutation UpdateUser($input: UpdateUserInput!) {
     updateUser(input: $input) {
       id
       modified
@@ -115,7 +136,7 @@ export const UpdateUserMutation = gql`
 `
 
 export const InstitutionsQuery = gql`
-  query InstitutionsQuery {
+  query Institutions {
     institutions {
       id
       type

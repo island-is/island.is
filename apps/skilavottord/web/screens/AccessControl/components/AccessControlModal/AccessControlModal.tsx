@@ -1,6 +1,6 @@
 import React, { BaseSyntheticEvent, FC } from 'react'
 import { Control, Controller } from 'react-hook-form'
-import { FieldError, FieldValues } from 'react-hook-form/dist/types/form'
+import { FieldError, FieldValues } from 'react-hook-form/dist/types'
 import { DeepMap } from 'react-hook-form/dist/types/utils'
 import * as kennitala from 'kennitala'
 
@@ -25,7 +25,9 @@ interface AccessControlModalProps
   partnerIdRequired?: boolean
 }
 
-export const AccessControlModal: FC<AccessControlModalProps> = ({
+export const AccessControlModal: FC<
+  React.PropsWithChildren<AccessControlModalProps>
+> = ({
   title,
   text,
   show,
@@ -48,7 +50,9 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
       text={text}
       show={show}
       onCancel={onCancel}
-      onContinue={() => {}}
+      onContinue={() => {
+        // Intentionally left empty
+      }}
       continueButtonText={t.modal.buttons.continue}
       cancelButtonText={t.modal.buttons.cancel}
     >
@@ -97,6 +101,42 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
             error={errors?.name?.message}
             backgroundColor="blue"
           />
+          <InputController
+            id="email"
+            control={control}
+            required
+            label={t.modal.inputs.email.label}
+            placeholder={t.modal.inputs.email.placeholder}
+            rules={{
+              required: {
+                value: true,
+                message: t.modal.inputs.email.rules?.required,
+              },
+              pattern: {
+                value:
+                  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i,
+                message: t.modal.inputs.email.rules?.validate,
+              },
+            }}
+            error={errors?.email?.message}
+            backgroundColor="blue"
+          />
+          <InputController
+            id="phone"
+            control={control}
+            required
+            label={t.modal.inputs.phone.label}
+            placeholder={t.modal.inputs.phone.placeholder}
+            rules={{
+              required: {
+                value: true,
+                message: t.modal.inputs.phone.rules?.required,
+              },
+            }}
+            type="tel"
+            error={errors?.phone?.message}
+            backgroundColor="blue"
+          />
           <Controller
             name="role"
             control={control}
@@ -106,7 +146,7 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
                 message: t.modal.inputs.role.rules?.required,
               },
             }}
-            render={({ onChange, value, name }) => {
+            render={({ field: { onChange, value, name } }) => {
               return (
                 <Select
                   required
@@ -137,7 +177,7 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
                   }
                 : {}
             }
-            render={({ onChange, value, name }) => {
+            render={({ field: { onChange, value, name } }) => {
               return (
                 <Select
                   name={name}

@@ -1,12 +1,14 @@
 import React, { FC, useEffect } from 'react'
-import type { FieldBaseProps } from '@island.is/application/core'
+import type { FieldBaseProps } from '@island.is/application/types'
 import { Box, Text } from '@island.is/island-ui/core'
 import ReviewSection from './ReviewSection'
 import { useFormContext } from 'react-hook-form'
 import { extractReasons } from './extractReasons'
 import { useEligibility } from './useEligibility'
 
-export const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
+export const EligibilitySummary: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application }) => {
   const { eligibility, loading, error } = useEligibility(application.answers)
 
   const { setValue } = useFormContext()

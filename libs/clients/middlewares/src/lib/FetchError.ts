@@ -1,4 +1,4 @@
-import { Headers, Response } from 'node-fetch'
+import { BodyInit, Headers, Response, ResponseInit } from 'node-fetch'
 import { UnknownProblem } from '@island.is/shared/problem'
 
 export class FetchError extends Error {
@@ -41,5 +41,9 @@ export class FetchError extends Error {
     }
 
     return error
+  }
+
+  static async buildMock(init: ResponseInit, body: BodyInit = '') {
+    return this.build(new Response(body, init))
   }
 }

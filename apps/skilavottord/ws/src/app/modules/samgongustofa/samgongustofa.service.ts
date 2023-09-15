@@ -1,4 +1,6 @@
-import { Injectable, HttpService, Inject, forwardRef } from '@nestjs/common'
+import { Injectable, Inject, forwardRef } from '@nestjs/common'
+import { HttpService } from '@nestjs/axios'
+import { lastValueFrom } from 'rxjs'
 import * as xml2js from 'xml2js'
 
 import type { Logger } from '@island.is/logging'
@@ -47,9 +49,11 @@ export class SamgongustofaService {
         'Content-Type': 'application/xml',
       }
 
-      const allCarsResponse = await this.httpService
-        .post(soapUrl, xmlAllCarsBodyStr, { headers: headersRequest })
-        .toPromise()
+      const allCarsResponse = await lastValueFrom(
+        this.httpService.post(soapUrl, xmlAllCarsBodyStr, {
+          headers: headersRequest,
+        }),
+      )
       if (allCarsResponse.status != 200) {
         throw new Error(
           `Failed on getUserVehiclesInformation request with status: ${allCarsResponse.statusText}`,
@@ -152,9 +156,11 @@ export class SamgongustofaService {
             </soapenv:Body>
           </soapenv:Envelope>`
 
-          const basicInforesponse = await this.httpService
-            .post(soapUrl, xmlBasicInfoBodyStr, { headers: headersRequest })
-            .toPromise()
+          const basicInforesponse = await lastValueFrom(
+            this.httpService.post(soapUrl, xmlBasicInfoBodyStr, {
+              headers: headersRequest,
+            }),
+          )
           if (basicInforesponse.status !== 200) {
             throw new Error(
               `Failed on basicInforesponse request with status: ${basicInforesponse.statusText}`,
@@ -240,9 +246,10 @@ export class SamgongustofaService {
         const vehicle = vehicleInformationList[i]
         try {
           if (vehicle.isRecyclable) {
-            const resRequestType = await this.recyclingRequestService.findAllWithPermno(
-              vehicle['permno'],
-            )
+            const resRequestType =
+              await this.recyclingRequestService.findAllWithPermno(
+                vehicle['permno'],
+              )
             if (resRequestType.length > 0) {
               const requestType = resRequestType[0]['dataValues']['requestType']
               vehicleInformationList[i]['status'] = requestType

@@ -15,12 +15,18 @@ export type TestServerOptions = {
     override?: (builder: TestingModuleBuilder) => TestingModuleBuilder
     extend?: (app: TestApp) => Promise<CleanUp | undefined>
   }[]
+
+  /**
+   * Enables NestJS versioning.
+   */
+  enableVersioning?: boolean
 }
 
 export const testServer = async ({
   appModule,
   hooks = [],
   override,
+  enableVersioning,
 }: TestServerOptions): Promise<TestApp> => {
   let builder = Test.createTestingModule({
     imports: [InfraModule.forRoot({ appModule })],
@@ -30,31 +36,34 @@ export const testServer = async ({
     builder = override(builder)
   }
 
-  hooks.forEach(async (hook) => {
+  hooks.forEach((hook) => {
     if (hook.override) {
-      builder = await hook.override(builder)
+      builder = hook.override(builder)
     }
   })
 
   const moduleRef = await builder.compile()
-  const app = (await moduleRef
-    .createNestApplication()
-    .useGlobalPipes(
-      new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
-    )
-    .init()) as TestApp
+  const app = moduleRef.createNestApplication().useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: false,
+    }),
+  ) as TestApp
+
+  if (enableVersioning) {
+    app.enableVersioning()
+  }
+
+  await app.init()
 
   const hookCleanups = await Promise.all(
-    hooks.map((hook) => {
-      if (hook.extend) {
-        return hook.extend(app)
-      }
-    }),
+    hooks.map((hook) => hook.extend && hook.extend(app)),
   )
 
   app.cleanUp = async () => {
     await app.close()
-    await Promise.all(hookCleanups.map((cleanup) => cleanup && cleanup()))
+    await Promise.all(hookCleanups.map((cleanup) => cleanup?.()))
   }
 
   return app

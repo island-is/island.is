@@ -20,10 +20,7 @@ export class FundingGovernmentProjectsModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: FundingGovernmentProjectsModule,
-      imports: [
-        SharedTemplateAPIModule.register(config),
-        FileStorageModule.register({}),
-      ],
+      imports: [SharedTemplateAPIModule.register(config), FileStorageModule],
       providers: [
         {
           provide: FUNDING_GOVERNMENT_PROJECTS_CONFIG,

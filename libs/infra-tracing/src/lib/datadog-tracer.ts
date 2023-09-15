@@ -1,7 +1,6 @@
 import { maskNationalId } from '@island.is/shared/pii'
 
 import tracer from 'dd-trace'
-import { isPerson } from 'kennitala'
 import { Span } from 'opentracing'
 
 const PII_MASKING_ALWAYS_ON =

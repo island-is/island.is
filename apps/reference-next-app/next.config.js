@@ -1,24 +1,35 @@
+const { composePlugins, withNx } = require('@nx/next')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withVanillaExtract = createVanillaExtractPlugin()
 
-const {
-  API_URL = 'http://localhost:3333/api',
-  WEB_PUBLIC_URL = 'http://localhost:4200',
-} = process.env
+const { INTERNAL_API_URL = 'http://localhost:4444' } = process.env
 
-module.exports = withVanillaExtract({
+const graphqlPath = '/api/graphql'
+
+/**
+ * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
+ **/
+const nextConfig = {
   webpack: (config, options) => {
-    if (!options.isServer) {
-      config.resolve.alias['@sentry/node'] = '@sentry/browser'
-    }
     return config
   },
   serverRuntimeConfig: {
     // Will only be available on the server side
-    apiUrl: API_URL,
+    graphqlEndpoint: `${INTERNAL_API_URL}${graphqlPath}`,
   },
   publicRuntimeConfig: {
     // Will be available on both server and client
-    apiUrl: `${WEB_PUBLIC_URL}/api`,
+    graphqlEndpoint: graphqlPath,
   },
-})
+  env: {
+    API_MOCKS: process.env.API_MOCKS ?? '',
+  },
+}
+
+const plugins = [
+  // Add more Next.js plugins to this list if needed.
+  withNx,
+  withVanillaExtract,
+]
+
+module.exports = composePlugins(...plugins)(nextConfig)

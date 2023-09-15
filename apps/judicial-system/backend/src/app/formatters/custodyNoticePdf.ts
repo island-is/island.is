@@ -1,18 +1,16 @@
 import PDFDocument from 'pdfkit'
-import streamBuffers from 'stream-buffers'
 
 import {
   capitalize,
-  formatCustodyRestrictions,
   formatDate,
-  formatNationalId,
+  formatDOB,
 } from '@island.is/judicial-system/formatters'
 import { FormatMessage } from '@island.is/cms-translations'
-import { Gender, SessionArrangements } from '@island.is/judicial-system/types'
+import { SessionArrangements } from '@island.is/judicial-system/types'
 
-import { environment } from '../../environments'
 import { Case } from '../modules/case'
-import { core, custodyNotice } from '../messages'
+import { custodyNotice } from '../messages'
+import { formatCustodyRestrictions } from './formatters'
 import {
   addEmptyLines,
   addHugeHeading,
@@ -23,12 +21,11 @@ import {
   addFooter,
   setTitle,
 } from './pdfHelpers'
-import { writeFile } from './writeFile'
 
 function constructCustodyNoticePdf(
   theCase: Case,
   formatMessage: FormatMessage,
-): streamBuffers.WritableStreamBuffer {
+): Promise<Buffer> {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -40,12 +37,17 @@ function constructCustodyNoticePdf(
     bufferPages: true,
   })
 
-  const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
+  const sinc: Buffer[] = []
+
+  doc.on('data', (chunk) => sinc.push(chunk))
 
   setTitle(doc, 'Vistunarseðill')
   setLineGap(doc, 8)
   addHugeHeading(doc, 'Vistunarseðill', 'Helvetica-Bold')
-  addLargeHeading(doc, 'Úrskurður um gæsluvarðhald')
+  addLargeHeading(
+    doc,
+    formatMessage(custodyNotice.rulingTitle, { caseType: theCase.type }),
+  )
   addLargeHeading(
     doc,
     `Málsnúmer ${theCase.court?.name?.replace('dómur', 'dóms') ?? '?'} ${
@@ -53,7 +55,6 @@ function constructCustodyNoticePdf(
     }`,
     'Helvetica',
   )
-  addLargeHeading(doc, `LÖKE málsnúmer ${theCase.policeCaseNumber}`)
   addEmptyLines(doc)
   setLineGap(doc, 8)
   addMediumText(doc, 'Sakborningur', 'Helvetica-Bold')
@@ -65,29 +66,18 @@ function constructCustodyNoticePdf(
       ? theCase.defendants[0].name
       : 'Nafn ekki skráð',
   )
-  addNormalText(
-    doc,
-    `${
-      theCase.defendants &&
-      theCase.defendants.length > 0 &&
-      theCase.defendants[0].noNationalId
-        ? 'fd.'
-        : 'kt.'
-    } ${
-      theCase.defendants &&
-      theCase.defendants.length > 0 &&
-      theCase.defendants[0].noNationalId
-        ? theCase.defendants[0].nationalId
-        : formatNationalId(
-            theCase.defendants &&
-              theCase.defendants.length > 0 &&
-              theCase.defendants[0].nationalId
-              ? theCase.defendants[0].nationalId
-              : 'ekki skráð',
-          )
-    }`,
-    'Helvetica',
-  )
+
+  if (theCase.defendants && theCase.defendants.length > 0) {
+    addNormalText(
+      doc,
+      formatDOB(
+        theCase.defendants[0].nationalId,
+        theCase.defendants[0].noNationalId,
+      ),
+      'Helvetica',
+    )
+  }
+
   addNormalText(
     doc,
     theCase.defendants &&
@@ -98,7 +88,11 @@ function constructCustodyNoticePdf(
   )
   addEmptyLines(doc, 2)
   setLineGap(doc, 8)
-  addMediumText(doc, 'Úrskurður um gæsluvarðhald', 'Helvetica-Bold')
+  addMediumText(
+    doc,
+    formatMessage(custodyNotice.rulingTitle, { caseType: theCase.type }),
+    'Helvetica-Bold',
+  )
   addNormalText(
     doc,
     `${theCase.court?.name}, ${formatDate(theCase.courtStartDate, 'PPP')}`,
@@ -144,6 +138,8 @@ function constructCustodyNoticePdf(
   )
 
   const custodyRestrictions = formatCustodyRestrictions(
+    formatMessage,
+    theCase.type,
     theCase.requestedCustodyRestrictions,
     theCase.isCustodyIsolation,
   )
@@ -151,17 +147,13 @@ function constructCustodyNoticePdf(
   if (theCase.isCustodyIsolation || custodyRestrictions) {
     addEmptyLines(doc, 2)
     setLineGap(doc, 8)
-    addMediumText(doc, 'Tilhögun gæsluvarðhalds', 'Helvetica-Bold')
+    addMediumText(
+      doc,
+      formatMessage(custodyNotice.arrangement, { caseType: theCase.type }),
+      'Helvetica-Bold',
+    )
 
     if (theCase.isCustodyIsolation) {
-      const genderedAccused = formatMessage(core.accused, {
-        suffix:
-          !theCase.defendants ||
-          theCase.defendants.length < 1 ||
-          theCase.defendants[0].gender === Gender.MALE
-            ? 'i'
-            : 'a',
-      })
       const isolationPeriod = formatDate(theCase.isolationToDate, 'PPPPp')
         ?.replace('dagur,', 'dagsins')
         ?.replace(' kl.', ', kl.')
@@ -170,7 +162,6 @@ function constructCustodyNoticePdf(
         doc,
         capitalize(
           formatMessage(custodyNotice.isolationDisclaimer, {
-            genderedAccused,
             isolationPeriod,
           }),
         ),
@@ -187,45 +178,23 @@ function constructCustodyNoticePdf(
 
   doc.end()
 
-  return stream
+  return new Promise<Buffer>((resolve) =>
+    doc.on('end', () => resolve(Buffer.concat(sinc))),
+  )
 }
 
-export async function getCustodyNoticePdfAsString(
+export function getCustodyNoticePdfAsString(
   theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<string> {
-  const stream = constructCustodyNoticePdf(theCase, formatMessage)
-
-  // wait for the writing to finish
-  const pdf = await new Promise<string>(function (resolve) {
-    stream.on('finish', () => {
-      resolve(stream.getContentsAsString('binary') as string)
-    })
-  })
-
-  if (!environment.production) {
-    writeFile(`${theCase.id}-custody-notice.pdf`, pdf)
-  }
-
-  return pdf
+  return constructCustodyNoticePdf(theCase, formatMessage).then((buffer) =>
+    buffer.toString('binary'),
+  )
 }
 
-export async function getCustodyNoticePdfAsBuffer(
+export function getCustodyNoticePdfAsBuffer(
   theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<Buffer> {
-  const stream = constructCustodyNoticePdf(theCase, formatMessage)
-
-  // wait for the writing to finish
-  const pdf = await new Promise<Buffer>(function (resolve) {
-    stream.on('finish', () => {
-      resolve(stream.getContents() as Buffer)
-    })
-  })
-
-  if (!environment.production) {
-    writeFile(`${theCase.id}-custody-notice.pdf`, pdf)
-  }
-
-  return pdf
+  return constructCustodyNoticePdf(theCase, formatMessage)
 }

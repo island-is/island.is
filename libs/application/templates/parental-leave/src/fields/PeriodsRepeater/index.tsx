@@ -1,8 +1,8 @@
 import React, { FC, useEffect } from 'react'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import { RepeaterProps, FieldBaseProps } from '@island.is/application/core'
+import { RepeaterProps, FieldBaseProps } from '@island.is/application/types'
 import {
   Box,
   Button,
@@ -22,13 +22,15 @@ import { Timeline } from '../components/Timeline/Timeline'
 import {
   formatPeriods,
   getAvailableRightsInDays,
-  getExpectedDateOfBirth,
+  getExpectedDateOfBirthOrAdoptionDate,
   getApplicationAnswers,
+  synchronizeVMSTPeriods,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { States } from '../../constants'
 import { useDaysAlreadyUsed } from '../../hooks/useDaysAlreadyUsed'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
+import { GetApplicationInformation } from '../../graphql/queries'
 
 type FieldProps = FieldBaseProps & {
   field?: {
@@ -39,7 +41,7 @@ type FieldProps = FieldBaseProps & {
 }
 type ScreenProps = RepeaterProps & FieldProps
 
-const PeriodsRepeater: FC<ScreenProps> = ({
+const PeriodsRepeater: FC<React.PropsWithChildren<ScreenProps>> = ({
   application,
   expandRepeater,
   field,
@@ -53,13 +55,36 @@ const PeriodsRepeater: FC<ScreenProps> = ({
     application.state === States.DRAFT ||
     application.state === States.EDIT_OR_ADD_PERIODS
 
+  // Need to be consider again when applicant could change basic information
+  const shouldCall = application.state === States.EDIT_OR_ADD_PERIODS
+
   const showDescription = field?.props?.showDescription ?? true
-  const dob = getExpectedDateOfBirth(application)
+  const dob = getExpectedDateOfBirthOrAdoptionDate(application)
   const { formatMessage, locale } = useLocale()
   const rights = getAvailableRightsInDays(application)
   const daysAlreadyUsed = useDaysAlreadyUsed(application)
   const remainingRights = useRemainingRights(application)
   const { rawPeriods, periods } = getApplicationAnswers(application.answers)
+  const { data, loading } = useQuery(GetApplicationInformation, {
+    variables: {
+      applicationId: application.id,
+      nationalId: application.applicant,
+      shouldNotCall: !shouldCall,
+    },
+  })
+
+  useEffect(() => {
+    if (loading) {
+      return
+    }
+    synchronizeVMSTPeriods(
+      data,
+      rights,
+      periods,
+      setRepeaterItems,
+      setFieldLoadingState,
+    )
+  }, [loading])
 
   useEffect(() => {
     if (!editable) {

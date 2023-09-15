@@ -1,6 +1,6 @@
 'use strict'
 
-const client_id = 'ids-admin'
+const client_id = '@island.is/auth-admin-web'
 
 const client_redirect_uris = [
   {

@@ -6,14 +6,21 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  DefaultStateLifeCycle,
-} from '@island.is/application/core'
+  defineTemplateApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '@island.is/application/types'
 import { DataProtectionComplaintSchema } from './dataSchema'
 import { application } from './messages'
 import { Roles, TEMPLATE_API_ACTIONS } from '../shared'
 import { States } from '../constants'
 
 type DataProtectionComplaintEvent = { type: DefaultEvents.SUBMIT }
+
+export const DefaultSubmitHistoryLog = {
+  onEvent: DefaultEvents.SUBMIT,
+  logMessage: application.applicationSubmitted,
+}
 
 const DataProtectionComplaintTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -24,7 +31,6 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
   name: application.name,
   institution: application.institutionName,
   dataSchema: DataProtectionComplaintSchema,
-  readyForProduction: true,
   stateMachineConfig: {
     initial: 'draft',
     states: {
@@ -32,10 +38,14 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
         meta: {
           name: application.name.defaultMessage,
           progress: 0.5,
+          status: 'draft',
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: 5 * 60000, //5 minutes
+          },
+          actionCard: {
+            historyLogs: [DefaultSubmitHistoryLog],
           },
           roles: [
             {
@@ -48,30 +58,30 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
+              delete: true,
+              api: [NationalRegistryUserApi, UserProfileApi],
             },
           ],
         },
         on: {
           SUBMIT: {
-            target: States.IN_REVIEW,
+            target: States.Completed,
           },
         },
       },
-      [States.IN_REVIEW]: {
+      [States.Completed]: {
         meta: {
-          name: 'In Review',
+          name: 'Completed',
+          status: 'completed',
           progress: 1,
-          actionCard: {
-            tag: { label: application.submittedTag, variant: 'blueberry' },
-          },
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: 5 * 60000, //5 minutes
           },
-          onEntry: {
-            apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: TEMPLATE_API_ACTIONS.sendApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

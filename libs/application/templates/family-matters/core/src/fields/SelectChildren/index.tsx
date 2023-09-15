@@ -2,16 +2,13 @@ import React, { useState } from 'react'
 import { MessageDescriptor, useIntl, IntlFormatters } from 'react-intl'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { Box, Text } from '@island.is/island-ui/core'
-import { Child } from '@island.is/application/templates/family-matters-core/types'
-import {
-  DescriptionText,
-  InfoBanner,
-} from '@island.is/application/templates/family-matters-core/components'
-import { sortChildrenByAge } from '@island.is/application/templates/family-matters-core/utils'
+import { DescriptionText, InfoBanner } from '../../components'
+import { sortChildrenByAge } from '../../utils'
+import { ApplicantChildCustodyInformation } from '@island.is/application/types'
 
 const shouldBeDisabled = (
-  children: Child[],
-  childOption: Child,
+  children: ApplicantChildCustodyInformation[],
+  childOption: ApplicantChildCustodyInformation,
   selectedChildren?: string[],
 ) => {
   if (childOption.livesWithBothParents || !childOption.otherParent) {
@@ -36,7 +33,7 @@ const shouldBeDisabled = (
 
 interface Props {
   id: string
-  children: Child[]
+  children: ApplicantChildCustodyInformation[]
   translations: {
     title: MessageDescriptor
     description: MessageDescriptor
@@ -51,7 +48,7 @@ interface Props {
 }
 
 const checkboxInfoText = (
-  child: Child,
+  child: ApplicantChildCustodyInformation,
   formatMessage: IntlFormatters['formatMessage'],
   translations: Props['translations'],
 ) => {
@@ -96,9 +93,8 @@ const SelectChildren = ({
   error,
 }: Props) => {
   const { formatMessage } = useIntl()
-  const [selectedChildrenState, setSelectedChildrenState] = useState<string[]>(
-    currentAnswer,
-  )
+  const [selectedChildrenState, setSelectedChildrenState] =
+    useState<string[]>(currentAnswer)
   const childrenNotEligibleForTransfer = children.every(
     (child) => child.livesWithBothParents,
   )

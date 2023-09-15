@@ -1,0 +1,1 @@
+export { QualitySignature } from './QualitySignature'

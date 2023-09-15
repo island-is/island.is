@@ -10,20 +10,24 @@ import {
 import type { FundingGovernmentProjectsConfig } from './config/fundingFovernmentProjectsConfig'
 import { FUNDING_GOVERNMENT_PROJECTS_CONFIG } from './config/fundingFovernmentProjectsConfig'
 import { FileStorageService } from '@island.is/file-storage'
+import { getValueViaPath } from '@island.is/application/core'
 import {
+  ApplicationTypes,
   ApplicationWithAttachments as Application,
-  getValueViaPath,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { FundingAttachment } from './types'
+import { BaseTemplateApiService } from '../../base-template-api.service'
 
 @Injectable()
-export class FundingGovernmentProjectsService {
+export class FundingGovernmentProjectsService extends BaseTemplateApiService {
   constructor(
     @Inject(FUNDING_GOVERNMENT_PROJECTS_CONFIG)
     private fundingConfig: FundingGovernmentProjectsConfig,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly fileStorageService: FileStorageService,
-  ) {}
+  ) {
+    super(ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS)
+  }
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
     const attachments = await this.prepareAttachments(application)
@@ -69,9 +73,11 @@ export class FundingGovernmentProjectsService {
 
     return await Promise.all(
       attachments.map(async ({ key, name }) => {
-        const url = (application.attachments as {
-          [key: string]: string
-        })[key]
+        const url = (
+          application.attachments as {
+            [key: string]: string
+          }
+        )[key]
 
         const signedUrl = await this.fileStorageService.generateSignedUrl(url)
 

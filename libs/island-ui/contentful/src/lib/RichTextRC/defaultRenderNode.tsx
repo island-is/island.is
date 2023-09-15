@@ -1,4 +1,3 @@
-import React from 'react'
 import { BLOCKS, INLINES } from '@contentful/rich-text-types'
 import { Asset } from 'contentful'
 import { RenderNode } from '@contentful/rich-text-react-renderer'
@@ -8,6 +7,7 @@ import {
   Blockquote,
   ResponsiveSpace,
   Box,
+  Table as T,
 } from '@island.is/island-ui/core'
 import Hyperlink from '../Hyperlink/Hyperlink'
 import * as styles from './RichText.css'
@@ -52,7 +52,7 @@ const getInnerText = (node: any): string => {
 
   return ''
 }
-export const defaultRenderNode: RenderNode = {
+export const defaultRenderNodeObject: RenderNode = {
   [BLOCKS.HEADING_1]: (_node, children) => (
     <Box
       id={slugify(getInnerText(children))}
@@ -118,8 +118,11 @@ export const defaultRenderNode: RenderNode = {
     </Box>
   ),
   [BLOCKS.OL_LIST]: (_node, children) => (
-    <Box component="ol" className={styles.orderedList}>
-      {children}
+    // An extra box container was added due to counter not resetting
+    <Box>
+      <Box component="ol" className={styles.orderedList}>
+        {children}
+      </Box>
     </Box>
   ),
   [BLOCKS.UL_LIST]: (_node, children) => (
@@ -142,11 +145,58 @@ export const defaultRenderNode: RenderNode = {
       <hr />
     </Box>
   ),
+  [BLOCKS.TABLE]: (_node, children) => <T.Table>{children}</T.Table>,
+  [BLOCKS.TABLE_ROW]: (_node, children) => {
+    if (
+      (children as { nodeType: string }[])?.every(
+        (childNode) => childNode?.nodeType === BLOCKS.TABLE_HEADER_CELL,
+      )
+    ) {
+      return <T.Head>{children}</T.Head>
+    }
+    return <T.Row>{children}</T.Row>
+  },
+  [BLOCKS.TABLE_HEADER_CELL]: (_node, children) => (
+    <T.HeadData>{children}</T.HeadData>
+  ),
+  [BLOCKS.TABLE_CELL]: (_node, children) => <T.Data>{children}</T.Data>,
+  [BLOCKS.EMBEDDED_ASSET]: (node) => {
+    const url = node?.data?.target?.fields?.file?.url
+    const title = node?.data?.target?.fields
+    return (
+      <Box marginTop={url ? 5 : 0}>
+        <img src={url} alt={title} />
+      </Box>
+    )
+  },
+  [INLINES.EMBEDDED_ENTRY]: (node) => {
+    // In case something other than the price content type is inline embedded we ignore it
+    if (node?.data?.target?.sys?.contentType?.sys?.id !== 'price') return null
+
+    const amount = node?.data?.target?.fields?.amount
+    if (typeof amount !== 'number') return null
+
+    let postfix = 'krónur'
+
+    const amountEndsWithOne = amount % 10 === 1
+    const amountEndsWithEleven = amount % 100 === 11
+
+    if (amountEndsWithOne && !amountEndsWithEleven) {
+      postfix = 'króna'
+    }
+
+    // Format the amount so it displays dots (Example of a displayed value: 2.700 krónur)
+    const formatter = new Intl.NumberFormat('de-DE')
+
+    const displayedValue = `${formatter.format(amount)} ${postfix}`
+
+    return <span>{displayedValue}</span>
+  },
   [INLINES.HYPERLINK]: (node, children) => (
     <Hyperlink href={node.data.uri}>{children}</Hyperlink>
   ),
   [INLINES.ASSET_HYPERLINK]: (node, children) => {
-    const asset = (node.data.target as unknown) as Asset
+    const asset = node.data.target as unknown as Asset
     // The url might not contain a protocol that's why we prepend https:
     // https://www.contentful.com/developers/docs/concepts/images/
     let url: string
@@ -164,15 +214,21 @@ export const defaultRenderNode: RenderNode = {
     const type = entry?.sys?.contentType?.sys?.id
     switch (type) {
       case 'article':
-        return entry.fields.slug ? (
-          <Hyperlink href={`/${entry.fields.slug}`}>{children}</Hyperlink>
+        return entry?.fields?.slug ? (
+          <Hyperlink
+            href={`/${
+              entry.sys?.locale === 'is-IS' ? '' : entry.sys?.locale + '/'
+            }${entry?.fields?.slug}`}
+          >
+            {children}
+          </Hyperlink>
         ) : null
       case 'subArticle':
-        return entry.fields.url ? (
+        return entry?.fields?.url ? (
           <Hyperlink href={entry.fields.url}>{children}</Hyperlink>
         ) : null
       case 'organizationPage': {
-        const prefix = getOrganizationPrefix(entry.sys?.locale)
+        const prefix = getOrganizationPrefix(entry?.sys?.locale)
         return entry.fields.slug ? (
           <Hyperlink href={`/${prefix}/${entry.fields.slug}`}>
             {children}
@@ -180,8 +236,8 @@ export const defaultRenderNode: RenderNode = {
         ) : null
       }
       case 'organizationSubpage': {
-        const prefix = getOrganizationPrefix(entry.sys?.locale)
-        return entry.fields.slug &&
+        const prefix = getOrganizationPrefix(entry?.sys?.locale)
+        return entry?.fields?.slug &&
           entry.fields.organizationPage?.fields?.slug ? (
           <Hyperlink
             href={`/${prefix}/${entry.fields.organizationPage.fields.slug}/${entry.fields.slug}`}
@@ -198,7 +254,7 @@ export const defaultRenderNode: RenderNode = {
 
 const getOrganizationPrefix = (locale: string) => {
   if (locale && !locale.includes('is')) {
-    return 'o'
+    return `${locale}/o`
   }
   return 's'
 }

@@ -44,6 +44,7 @@ export class AidService {
         type: aid.type,
       },
       transaction: t,
+      returning: true,
     })
   }
 }

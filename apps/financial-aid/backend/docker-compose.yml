@@ -11,7 +11,7 @@ services:
       - POSTGRES_USER=dev_db
       - POSTGRES_PASSWORD=dev_db
     ports:
-      - 5432:5432
+      - 5433:5432
 
 networks:
   local:

@@ -14,10 +14,6 @@ export const container = style({
   border: '1px solid transparent',
 })
 
-export const truncate = style({
-  whiteSpace: 'nowrap',
-})
-
 export const hyphenate = style({
   padding: '4px 8px',
   minHeight: 32,
@@ -65,6 +61,10 @@ export const variants = styleVariants({
     color: theme.color.dark400,
     backgroundColor: theme.color.dark200,
   },
+  disabled: {
+    backgroundColor: theme.color.dark100,
+    color: theme.color.dark200,
+  },
   label: {},
 })
 
@@ -106,6 +106,10 @@ export const outlined = style({
     [`&${variants.mint}`]: {
       borderColor: theme.color.mint200,
       color: theme.color.mint800,
+    },
+    [`&${variants.disabled}`]: {
+      borderColor: theme.color.dark100,
+      color: theme.color.dark200,
     },
   },
 })
@@ -153,4 +157,8 @@ export const focusable = style({
     backgroundColor: theme.color.blue400,
     color: theme.color.white,
   },
+})
+
+export const disabled = style({
+  cursor: 'default',
 })

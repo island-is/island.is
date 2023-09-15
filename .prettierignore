@@ -7,3 +7,7 @@
 /tmp
 /cache
 /.cache
+/tools/**/*.js
+**/*.hbs
+.yarn
+/infra/helm/

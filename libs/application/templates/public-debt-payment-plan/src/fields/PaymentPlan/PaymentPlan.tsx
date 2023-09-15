@@ -1,9 +1,9 @@
 import {
   GetScheduleDistributionInput,
-  PaymentScheduleDebts,
   PaymentScheduleDistribution,
 } from '@island.is/api/schema'
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import {
   AccordionItem,
   AlertMessage,
@@ -18,7 +18,7 @@ import HtmlParser from 'react-html-parser'
 import { useLazyDistribution } from '../../hooks/useLazyDistribution'
 import { shared } from '../../lib/messages'
 import { paymentPlan } from '../../lib/messages/paymentPlan'
-import { formatIsk } from '../../lib/paymentPlanUtils'
+import { formatIsk, isApplicantPerson } from '../../lib/paymentPlanUtils'
 import { AMOUNT, MONTHS } from '../../shared/constants'
 import {
   getEmptyPaymentPlanEntryKey,
@@ -28,7 +28,6 @@ import {
   PaymentModeState,
   PaymentPlans,
   PrerequisitesResult,
-  PublicDebtPaymentPlan,
 } from '../../types'
 import { PaymentPlanTable } from '../components/PaymentPlanTable/PaymentPlanTable'
 import { PlanSlider } from '../components/PlanSlider/PlanSlider'
@@ -40,14 +39,12 @@ import { useDebouncedSliderValues } from './useDebouncedSliderValues'
 // Might need to define specific fields for each one
 export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
-  const { register } = useFormContext()
+  const { register, setValue } = useFormContext()
   const getDistribution = useLazyDistribution()
 
   const [isLoading, setIsLoading] = useState(false)
-  const [
-    distributionData,
-    setDistributionData,
-  ] = useState<PaymentScheduleDistribution | null>(null)
+  const [distributionData, setDistributionData] =
+    useState<PaymentScheduleDistribution | null>(null)
   const [displayInfo, setDisplayInfo] = useState(false)
 
   const index = field.defaultValue as number
@@ -66,9 +63,10 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
   const payment = paymentPlanPrerequisites?.data?.debts[index]
 
   // Geta min/max month and min/max payment data
-  const initialMinMaxData = paymentPlanPrerequisites?.data?.allInitialSchedules.find(
-    (x) => x.scheduleType === payment?.type,
-  )
+  const initialMinMaxData =
+    paymentPlanPrerequisites?.data?.allInitialSchedules.find(
+      (x) => x.scheduleType === payment?.type,
+    )
 
   // Locate the entry of the payment plan in answers.
   const entryKey = getPaymentPlanKeyById(paymentPlans, payment?.type || '')
@@ -79,9 +77,10 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
 
   const entry = `paymentPlans.${answerKey}`
   const currentAnswers = paymentPlans ? paymentPlans[answerKey] : undefined
+  const isPerson = isApplicantPerson(application)
 
   const [paymentMode, setPaymentMode] = useState<PaymentModeState | undefined>(
-    currentAnswers?.paymentMode,
+    isPerson ? currentAnswers?.paymentMode : MONTHS,
   )
 
   const getDistributionCallback = useCallback(
@@ -105,12 +104,8 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
     [getDistribution],
   )
 
-  const {
-    debouncedAmount,
-    debouncedMonths,
-    setAmount,
-    setMonths,
-  } = useDebouncedSliderValues(currentAnswers)
+  const { debouncedAmount, debouncedMonths, setAmount, setMonths } =
+    useDebouncedSliderValues(currentAnswers)
 
   useEffect(() => {
     if (payment && paymentMode !== undefined && initialMinMaxData) {
@@ -160,6 +155,12 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
     paymentMode,
     initialMinMaxData,
   ])
+
+  useEffect(() => {
+    if (distributionData) {
+      setValue(`${entry}.distribution`, distributionData.payments)
+    }
+  }, [distributionData, entry, setValue])
 
   const handleSelectPaymentMode = (mode: any) => {
     setPaymentMode(mode)
@@ -219,54 +220,55 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
       </Box>
     )
   }
-
   return (
     <div>
       <input
         type="hidden"
         value={payment.type}
-        ref={register({ required: true })}
-        name={`${entry}.id`}
+        {...register(`${entry}.id`, { required: true })}
       />
       <input
         type="hidden"
         value={payment.totalAmount}
-        ref={register({ required: true })}
-        name={`${entry}.totalAmount`}
+        {...register(`${entry}.totalAmount`, { required: true })}
       />
-      <input
-        type="hidden"
-        value={JSON.stringify(distributionData?.payments || '')}
-        ref={register({ required: true })}
-        name={`${entry}.distribution`}
-      />
-      <Text marginBottom={5}>
-        {formatMessage(paymentPlan.general.paymentPlanDescription)}
-      </Text>
-      <Box marginBottom={[5, 5, 8]}>
+      {isPerson && (
+        <Text marginBottom={5}>
+          {formatMessage(paymentPlan.general.paymentPlanDescription)}
+        </Text>
+      )}
+      <Box marginBottom={[5, 5, 8]} marginTop={isPerson ? 0 : 4}>
         <PaymentPlanCard payment={payment} />
       </Box>
       <Text variant="h4" marginBottom={3}>
         {formatMessage(paymentPlan.labels.paymentModeTitle)}
       </Text>
-      <RadioController
-        id={`${entry}.paymentMode`}
-        disabled={false}
-        name={`${entry}.paymentMode`}
-        largeButtons={true}
-        defaultValue={paymentMode}
-        onSelect={handleSelectPaymentMode}
-        options={[
-          {
-            value: AMOUNT,
-            label: formatMessage(paymentPlan.labels.payByAmount),
-          },
-          {
-            value: MONTHS,
-            label: formatMessage(paymentPlan.labels.payByMonths),
-          },
-        ]}
-      />
+      {isPerson ? (
+        <RadioController
+          id={`${entry}.paymentMode`}
+          disabled={false}
+          name={`${entry}.paymentMode`}
+          largeButtons={true}
+          defaultValue={paymentMode}
+          onSelect={handleSelectPaymentMode}
+          options={[
+            {
+              value: AMOUNT,
+              label: formatMessage(paymentPlan.labels.payByAmount),
+            },
+            {
+              value: MONTHS,
+              label: formatMessage(paymentPlan.labels.payByMonths),
+            },
+          ]}
+        />
+      ) : (
+        <input
+          type="hidden"
+          {...register(`${entry}.paymentMode`, { required: true })}
+          value={paymentMode}
+        />
+      )}
       {paymentMode === AMOUNT && (
         <PlanSlider
           id={`${entry}.amountPerMonth`}
@@ -302,7 +304,7 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
         <Box marginTop={5}>
           <AccordionItem
             id="payment-plan-table"
-            label="Greiðsluáætlun skuldar"
+            label={formatMessage(paymentPlan.labels.distributionDataMainTitle)}
             visibleContent={formatMessage(
               paymentPlan.labels.distributionDataTitle,
             )}

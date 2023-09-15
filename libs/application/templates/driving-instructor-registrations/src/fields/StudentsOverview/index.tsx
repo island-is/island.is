@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { FC, useState } from 'react'
 import { useDebounce } from 'react-use'
 import {
   Button,
@@ -6,11 +6,12 @@ import {
   Input,
   Pagination,
   Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { Table as T } from '@island.is/island-ui/core'
 import { PAGE_SIZE, pages, paginate } from './pagination'
 import ViewStudent from '../ViewStudent/index'
-import { Application } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import FindStudentModal from '../FindStudentModal/index'
@@ -18,13 +19,12 @@ import { useQuery } from '@apollo/client'
 import { InstructorsStudentsQuery } from '../../graphql/queries'
 import Skeleton from './Skeleton'
 import { DrivingLicenseBookStudentForTeacher as Student } from '../../types/schema'
+import { format as formatKennitala } from 'kennitala'
 import * as styles from '../style.css'
 
-interface Props {
-  application: Application
-}
-
-const StudentsOverview = ({ application }: Props) => {
+const StudentsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
 
   /* table pagination */
@@ -37,7 +37,7 @@ const StudentsOverview = ({ application }: Props) => {
   )
 
   /* table view */
-  const [showTable, setShowTable] = useState(true)
+  const [showStudentOverview, setShowStudentOverview] = useState(true)
   const [studentId, setStudentId] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [filteredStudents, setFilteredStudents] = useState<Array<Student>>()
@@ -73,7 +73,12 @@ const StudentsOverview = ({ application }: Props) => {
 
   return (
     <Box marginBottom={10}>
-      {showTable ? (
+      <Text variant="h2" marginBottom={3}>
+        {showStudentOverview
+          ? formatMessage(m.studentsOverviewTitle)
+          : formatMessage(m.viewStudentTitle)}
+      </Text>
+      {showStudentOverview ? (
         <Stack space={5}>
           <Box
             display={['block', 'flex', 'flex']}
@@ -82,8 +87,9 @@ const StudentsOverview = ({ application }: Props) => {
             <Box width="half" className={styles.mobileWidth}>
               <Input
                 name="searchbar"
+                label={formatMessage(m.studentsOverviewSearchLabel)}
                 placeholder={formatMessage(m.studentsOverviewSearchPlaceholder)}
-                icon="search"
+                icon={{ name: 'search' }}
                 backgroundColor="blue"
                 size="sm"
                 value={searchTerm}
@@ -92,23 +98,29 @@ const StudentsOverview = ({ application }: Props) => {
             </Box>
             <FindStudentModal
               application={application}
-              setShowTable={setShowTable}
+              setShowStudentOverview={setShowStudentOverview}
               setStudentId={setStudentId}
             />
           </Box>
-          <T.Table>
+          <T.Table box={{ overflow: 'hidden' }}>
             <T.Head>
               <T.Row>
-                <T.HeadData>
+                <T.HeadData style={styles.tableStyles}>
                   {formatMessage(m.studentsOverviewTableHeaderCol1)}
                 </T.HeadData>
-                <T.HeadData>
+                <T.HeadData style={styles.tableStyles}>
                   {formatMessage(m.studentsOverviewTableHeaderCol2)}
                 </T.HeadData>
-                <T.HeadData box={{ textAlign: 'center' }}>
+                <T.HeadData
+                  style={styles.tableStyles}
+                  box={{ textAlign: 'center' }}
+                >
                   {formatMessage(m.studentsOverviewTableHeaderCol3)}
                 </T.HeadData>
-                <T.HeadData></T.HeadData>
+                <T.HeadData
+                  box={{ textAlign: 'center' }}
+                  style={styles.tableStyles}
+                ></T.HeadData>
               </T.Row>
             </T.Head>
             {loading || (data && !pageStudents) ? (
@@ -119,18 +131,27 @@ const StudentsOverview = ({ application }: Props) => {
                   pageStudents.map((student) => {
                     return (
                       <T.Row key={student.id}>
-                        <T.Data>{student.name}</T.Data>
-                        <T.Data>{student.nationalId}</T.Data>
-                        <T.Data box={{ textAlign: 'center' }}>
-                          {student.totalLessonCount ?? 0}
+                        <T.Data style={styles.tableStyles}>
+                          {student.name}
                         </T.Data>
-                        <T.Data>
+                        <T.Data style={styles.tableStyles}>
+                          {formatKennitala(student.nationalId)}
+                        </T.Data>
+                        <T.Data box={{ textAlign: 'center' }}>
+                          {student.totalLessonCount % 2 === 0
+                            ? student.totalLessonCount
+                            : student.totalLessonCount.toFixed(2) ?? 0}
+                        </T.Data>
+                        <T.Data
+                          box={{ textAlign: 'center' }}
+                          style={styles.tableStyles}
+                        >
                           <Button
                             variant="text"
                             size="small"
                             onClick={() => {
                               setStudentId(student.nationalId)
-                              setShowTable(false)
+                              setShowStudentOverview(false)
                             }}
                           >
                             {formatMessage(
@@ -143,12 +164,9 @@ const StudentsOverview = ({ application }: Props) => {
                   })
                 ) : (
                   <T.Row>
-                    <T.Data>
+                    <T.Data colSpan={4}>
                       {formatMessage(m.studentsOverviewNoStudentFound)}
                     </T.Data>
-                    <T.Data></T.Data>
-                    <T.Data></T.Data>
-                    <T.Data></T.Data>
                   </T.Row>
                 )}
               </T.Body>
@@ -176,7 +194,7 @@ const StudentsOverview = ({ application }: Props) => {
         <ViewStudent
           application={application}
           studentNationalId={studentId}
-          setShowTable={setShowTable}
+          setShowStudentOverview={setShowStudentOverview}
         />
       )}
     </Box>

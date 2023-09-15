@@ -1,14 +1,31 @@
-import { IsNotEmpty, IsString, IsOptional, IsBoolean } from 'class-validator'
+import {
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsBoolean,
+  IsArray,
+  ArrayMinSize,
+  IsObject,
+} from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { CaseType } from '@island.is/judicial-system/types'
+import type {
+  IndictmentSubtypeMap,
+  CrimeSceneMap,
+} from '@island.is/judicial-system/types'
 
 export class CreateCaseDto {
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  @ApiPropertyOptional({ enum: CaseType })
+  @ApiProperty({ enum: CaseType })
   readonly type!: CaseType
+
+  @IsOptional()
+  @IsObject()
+  @ApiPropertyOptional()
+  readonly indictmentSubtypes?: IndictmentSubtypeMap
 
   @IsOptional()
   @IsString()
@@ -16,9 +33,11 @@ export class CreateCaseDto {
   readonly description?: string
 
   @IsNotEmpty()
-  @IsString()
+  @IsArray()
+  @ArrayMinSize(1)
+  @IsString({ each: true })
   @ApiProperty()
-  readonly policeCaseNumber!: string
+  readonly policeCaseNumbers!: string[]
 
   @IsOptional()
   @IsString()
@@ -48,10 +67,10 @@ export class CreateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly courtId?: string
+  readonly leadInvestigator?: string
 
   @IsOptional()
-  @IsString()
+  @IsObject()
   @ApiPropertyOptional()
-  readonly leadInvestigator?: string
+  readonly crimeScenes?: CrimeSceneMap
 }

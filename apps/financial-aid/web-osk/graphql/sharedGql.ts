@@ -135,8 +135,8 @@ export const NationalRegistryUserQuery = gql`
 `
 
 export const GatherTaxDataQuery = gql`
-  query gatherTaxDataQuery {
-    municipalitiesPersonalTaxReturn {
+  query gatherTaxDataQuery($input: MunicipalitiesPersonalTaxReturnIdInput!) {
+    municipalitiesPersonalTaxReturn(input: $input) {
       personalTaxReturn {
         key
         name

@@ -1,7 +1,8 @@
-import React from 'react'
+import cn from 'classnames'
 import { Box, Text, Hidden } from '@island.is/island-ui/core'
+import { Colors } from '@island.is/island-ui/theme'
 import { ServiceWebSearchInput } from '@island.is/web/components'
-import { Tag } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
 import { TextModes } from '../types'
 
 import * as styles from './SearchSection.css'
@@ -12,7 +13,8 @@ interface SearchSectionProps {
   logoUrl?: string
   textMode?: TextModes
   searchPlaceholder?: string
-  searchTags?: Tag[]
+  namespace: Record<string, string>
+  showLogoOnMobileDisplays?: boolean
 }
 
 export const SearchSection = ({
@@ -21,16 +23,25 @@ export const SearchSection = ({
   logoUrl,
   textMode,
   searchPlaceholder,
-  searchTags,
+  namespace,
+  showLogoOnMobileDisplays = true,
 }: SearchSectionProps) => {
-  const dark = textMode === 'dark'
+  const n = useNamespace(namespace)
+
+  const textProps: { color?: Colors } =
+    textMode === 'dark'
+      ? {}
+      : { color: textMode === 'light' ? 'white' : 'blueberry600' }
 
   return (
     <Box
       paddingX={[3, 3, 6]}
-      paddingTop={[0, 0, 0, 10]}
+      paddingTop={[3, 3, 3, 10]}
       paddingBottom={[15, 15, 3]}
-      className={styles.container}
+      className={cn([
+        styles.container,
+        { [styles.responsiveContainer]: !!logoUrl && showLogoOnMobileDisplays },
+      ])}
     >
       {!!logoUrl && (
         <Hidden below="lg">
@@ -41,31 +52,25 @@ export const SearchSection = ({
           </Box>
         </Hidden>
       )}
-      {!!title && (
-        <>
-          {logoTitle && (
-            <Hidden above="md">
-              <Box marginBottom={3}>
-                <Text
-                  as="span"
-                  variant="eyebrow"
-                  {...(dark ? {} : { color: 'white' })}
-                >
-                  {logoTitle}
-                </Text>
-              </Box>
-            </Hidden>
-          )}
-          <Box marginBottom={[4, 4, 4, 6]}>
-            <Text variant="h1" as="h1" {...(dark ? {} : { color: 'white' })}>
-              {title}
-            </Text>
+      {!!logoUrl && showLogoOnMobileDisplays && (
+        <Hidden above="md">
+          <Box marginBottom={2} className={styles.mobileLogoWrapper}>
+            <Box className={styles.mobilelogo}>
+              <img className={styles.logoImg} alt={logoTitle} src={logoUrl} />
+            </Box>
           </Box>
-        </>
+        </Hidden>
+      )}
+      {!!title && (
+        <Box textAlign="center" marginBottom={[4, 4, 4, 6]}>
+          <Text variant="h1" as="h1" {...textProps}>
+            {title}
+          </Text>
+        </Box>
       )}
       <ServiceWebSearchInput
         placeholder={searchPlaceholder}
-        tags={searchTags}
+        nothingFoundText={n('nothingFoundText', 'Ekkert fannst')}
       />
     </Box>
   )

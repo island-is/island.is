@@ -1,0 +1,28 @@
+{
+  "name": "service-portal-education-student-assessment",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/service-portal/education-student-assessment/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/service-portal/education-student-assessment/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/service-portal/education-student-assessment/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/service-portal/education-student-assessment"
+      ]
+    }
+  },
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"]
+}

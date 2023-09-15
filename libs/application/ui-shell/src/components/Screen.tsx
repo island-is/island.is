@@ -8,6 +8,7 @@ import React, {
   useState,
 } from 'react'
 import { ApolloError, useMutation } from '@apollo/client'
+import { formatText, mergeAnswers } from '@island.is/application/core'
 import {
   Application,
   Answer,
@@ -16,10 +17,9 @@ import {
   FormModes,
   FormValue,
   Schema,
-  formatText,
-  mergeAnswers,
   BeforeSubmitCallback,
-} from '@island.is/application/core'
+  Section,
+} from '@island.is/application/types'
 import {
   Box,
   GridColumn,
@@ -53,6 +53,7 @@ import RefetchContext from '../context/RefetchContext'
 
 type ScreenProps = {
   activeScreenIndex: number
+  sections: Section[]
   addExternalData(data: ExternalData): void
   application: Application
   answerAndGoToNextScreen(answers: FormValue): void
@@ -61,11 +62,14 @@ type ScreenProps = {
   expandRepeater(): void
   mode?: FormModes
   numberOfScreens: number
+  totalDraftScreens?: number
+  currentDraftScreen?: number
   prevScreen(): void
   screen: FormScreen
   renderLastScreenButton?: boolean
   renderLastScreenBackButton?: boolean
   goToScreen: (id: string) => void
+  setUpdateForbidden: (value: boolean) => void
 }
 
 const getServerValidationErrors = (error: ApolloError | undefined) => {
@@ -78,7 +82,8 @@ const getServerValidationErrors = (error: ApolloError | undefined) => {
   return null
 }
 
-const Screen: FC<ScreenProps> = ({
+const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
+  setUpdateForbidden,
   activeScreenIndex,
   addExternalData,
   answerQuestions,
@@ -90,9 +95,12 @@ const Screen: FC<ScreenProps> = ({
   mode,
   numberOfScreens,
   prevScreen,
+  totalDraftScreens,
+  currentDraftScreen,
   renderLastScreenButton,
   renderLastScreenBackButton,
   screen,
+  sections,
 }) => {
   const { answers: formValue, externalData, id: applicationId } = application
   const { lang: locale, formatMessage } = useLocale()
@@ -109,27 +117,32 @@ const Screen: FC<ScreenProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const refetch = useContext<() => void>(RefetchContext)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [
-    updateApplication,
-    { loading, error: updateApplicationError },
-  ] = useMutation(UPDATE_APPLICATION, {
-    onError: (e) => {
-      // We handle validation problems separately.
-      const problem = findProblemInApolloError(e)
-      if (problem?.type === ProblemType.VALIDATION_FAILED) {
-        return
-      }
+  const [updateApplication, { loading, error: updateApplicationError }] =
+    useMutation(UPDATE_APPLICATION, {
+      onError: (e) => {
+        // We handle validation problems separately.
+        const problem = findProblemInApolloError(e)
+        if (problem?.type === ProblemType.HTTP_NOT_FOUND) {
+          setUpdateForbidden(true)
+        }
+        if (problem?.type === ProblemType.VALIDATION_FAILED) {
+          return
+        }
 
-      return handleServerError(e, formatMessage)
-    },
-  })
+        return handleServerError(e, formatMessage)
+      },
+    })
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
       onError: (e) => handleServerError(e, formatMessage),
     },
   )
-  const { handleSubmit, errors: formErrors, reset } = hookFormData
+  const {
+    handleSubmit,
+    formState: { errors: formErrors },
+    reset,
+  } = hookFormData
 
   const submitField = useMemo(() => findSubmitField(screen), [screen])
 
@@ -154,6 +167,7 @@ const Screen: FC<ScreenProps> = ({
   }
 
   const goBack = useCallback(() => {
+    setSubmitButtonDisabled(false)
     // using deepmerge to prevent some weird react-hook-form read-only bugs
     reset(deepmerge({}, formValue))
     prevScreen()
@@ -174,7 +188,6 @@ const Screen: FC<ScreenProps> = ({
         if (typeof possibleError === 'string' && screen && screen.id) {
           setBeforeSubmitError({ [screen.id]: possibleError })
         }
-
         return
       }
     }
@@ -223,6 +236,10 @@ const Screen: FC<ScreenProps> = ({
           input: {
             id: applicationId,
             answers: extractedAnswers,
+            draftProgress: {
+              stepsFinished: currentDraftScreen ?? screen.sectionIndex,
+              totalSteps: totalDraftScreens ?? sections.length - 1,
+            },
           },
           locale,
         },
@@ -237,6 +254,7 @@ const Screen: FC<ScreenProps> = ({
   }
 
   const [isMobile, setIsMobile] = useState(false)
+  const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false)
   const { width } = useWindowSize()
   const headerHeight = 85
 
@@ -278,7 +296,7 @@ const Screen: FC<ScreenProps> = ({
           {},
           {
             ...formValue,
-            [screen.id]: newRepeaterItems as Answer[],
+            [screen.id]: newRepeaterItems as FormValue[],
           },
         ),
       )
@@ -291,7 +309,10 @@ const Screen: FC<ScreenProps> = ({
 
   const isLoadingOrPending =
     fieldLoadingState || loading || loadingSubmit || isSubmitting
-
+  const shouldCreateTopLevelRegion = !(
+    screen.type === FormItemTypes.REPEATER ||
+    screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER
+  )
   return (
     <FormProvider {...hookFormData}>
       <Box
@@ -307,7 +328,12 @@ const Screen: FC<ScreenProps> = ({
           span={['12/12', '12/12', '10/12', '7/9']}
           offset={['0', '0', '1/12', '1/9']}
         >
-          <Text variant="h2" as="h2" marginBottom={1}>
+          <Text
+            variant="h2"
+            as="h2"
+            marginBottom={1}
+            {...(shouldCreateTopLevelRegion ? { id: screen.id } : {})}
+          >
             {formatText(screen.title, application, formatMessage)}
           </Text>
           <Box>
@@ -331,9 +357,11 @@ const Screen: FC<ScreenProps> = ({
                 application={application}
                 goToScreen={goToScreen}
                 refetch={refetch}
+                setSubmitButtonDisabled={setSubmitButtonDisabled}
               />
             ) : screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER ? (
               <FormExternalDataProvider
+                application={application}
                 addExternalData={addExternalData}
                 setBeforeSubmitCallback={setBeforeSubmitCallback}
                 applicationId={applicationId}
@@ -343,16 +371,19 @@ const Screen: FC<ScreenProps> = ({
                 errors={dataSchemaOrApiErrors}
               />
             ) : (
-              <FormField
-                autoFocus
-                setBeforeSubmitCallback={setBeforeSubmitCallback}
-                setFieldLoadingState={setFieldLoadingState}
-                errors={dataSchemaOrApiErrors}
-                field={screen}
-                application={application}
-                goToScreen={goToScreen}
-                refetch={refetch}
-              />
+              <Box component="section" aria-labelledby={screen.id}>
+                <FormField
+                  autoFocus
+                  setBeforeSubmitCallback={setBeforeSubmitCallback}
+                  setFieldLoadingState={setFieldLoadingState}
+                  errors={dataSchemaOrApiErrors}
+                  field={screen}
+                  application={application}
+                  goToScreen={goToScreen}
+                  refetch={refetch}
+                  setSubmitButtonDisabled={setSubmitButtonDisabled}
+                />
+              </Box>
             )}
           </Box>
         </GridColumn>
@@ -360,6 +391,7 @@ const Screen: FC<ScreenProps> = ({
         <ToastContainer hideProgressBar closeButton useKeyframeStyles={false} />
 
         <ScreenFooter
+          submitButtonDisabled={submitButtonDisabled}
           application={application}
           renderLastScreenButton={renderLastScreenButton}
           renderLastScreenBackButton={renderLastScreenBackButton}

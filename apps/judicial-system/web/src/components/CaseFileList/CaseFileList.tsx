@@ -1,15 +1,22 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
-import { Box, Text, UploadedFile, UploadFile } from '@island.is/island-ui/core'
+
 import {
-  CaseFile as TCaseFile,
-  CaseFileState,
-} from '@island.is/judicial-system/types'
-import { Modal } from '..'
-import { useFileList } from '../../utils/hooks'
-import { caseFiles as m } from '@island.is/judicial-system-web/messages/Core/caseFiles'
-import { CaseFile } from '../../utils/hooks/useCourtUpload'
+  Box,
+  StatusColor,
+  Text,
+  UploadedFile,
+  UploadFile,
+} from '@island.is/island-ui/core'
+import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
+import { caseFiles as m } from '@island.is/judicial-system-web/messages'
+import { FileNotFoundModal } from '@island.is/judicial-system-web/src/components'
+import type {
+  CaseFile,
+  CaseFileStatus,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   caseId: string
@@ -17,77 +24,97 @@ interface Props {
   hideIcons?: boolean
   canOpenFiles?: boolean
   handleRetryClick?: (id: string) => void
-  isCaseCompleted: boolean
 }
 
-const CaseFileList: React.FC<Props> = (props) => {
+const getBackgroundColor = (status: CaseFileStatus): StatusColor => {
+  if (status === 'broken') return { background: 'dark100', border: 'dark200' }
+
+  return { background: 'blue100', border: 'blue300' }
+}
+
+const CaseFileList: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const {
     caseId,
     files,
     hideIcons = true,
     canOpenFiles = true,
     handleRetryClick,
-    isCaseCompleted,
   } = props
 
-  const { handleOpenFile, fileNotFound, dismissFileNotFound } = useFileList({
+  const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId,
   })
   const { formatMessage } = useIntl()
 
-  const xFiles = files as CaseFile[]
+  const xFiles = [...files] as CaseFile[]
 
-  return xFiles.length > 0 ? (
+  if (xFiles.length <= 0) {
+    return <Text>{formatMessage(m.noFilesFound)}</Text>
+  }
+
+  return (
     <>
-      {xFiles.map((file, index) => {
-        return (
-          <Box marginBottom={index !== xFiles.length - 1 ? 3 : 0} key={index}>
-            <UploadedFile
-              file={file as TCaseFile}
-              showFileSize={true}
-              defaultBackgroundColor={
-                file.status === 'broken' ? 'dark100' : 'blue100'
-              }
-              doneIcon="checkmark"
-              hideIcons={
-                hideIcons || file.status === 'broken' || file.status !== 'error'
-              }
-              onOpenFile={
-                canOpenFiles &&
-                file.key &&
-                !(
-                  isCaseCompleted &&
-                  file.state === CaseFileState.STORED_IN_COURT
-                )
-                  ? (file: UploadFile) => {
-                      if (file.id) {
-                        handleOpenFile(file.id)
-                      }
+      {xFiles.map((file, index) => (
+        <Box
+          marginBottom={
+            index === xFiles.length - 1 ||
+            file.status === 'case-not-found' ||
+            file.status === 'unsupported'
+              ? 0
+              : 3
+          }
+          key={`${file.id}-${index}`}
+        >
+          <UploadedFile
+            file={
+              {
+                ...file,
+                status:
+                  file.status === 'case-not-found' ||
+                  file.status === 'unsupported'
+                    ? 'error'
+                    : file.status === 'done-broken'
+                    ? 'done'
+                    : file.status,
+              } as TCaseFile
+            }
+            showFileSize={true}
+            defaultBackgroundColor={getBackgroundColor(file.status)}
+            doneIcon="checkmark"
+            hideIcons={
+              hideIcons ||
+              (file.status !== 'done' &&
+                file.status !== 'done-broken' &&
+                file.status !== 'error')
+            }
+            onOpenFile={
+              canOpenFiles && file.key
+                ? (file: UploadFile) => {
+                    if (file.id) {
+                      onOpen(file.id)
                     }
-                  : undefined
-              }
-              onRemoveClick={() =>
-                canOpenFiles ? handleOpenFile(file.id) : null
-              }
-              onRetryClick={() => handleRetryClick && handleRetryClick(file.id)}
-            />
-          </Box>
-        )
-      })}
-      <AnimatePresence>
-        {fileNotFound && (
-          <Modal
-            title={formatMessage(m.modal.fileNotFound.title)}
-            text={formatMessage(m.modal.fileNotFound.text)}
-            handleClose={() => dismissFileNotFound()}
-            handlePrimaryButtonClick={() => dismissFileNotFound()}
-            primaryButtonText="Loka glugga"
+                  }
+                : undefined
+            }
+            onRemoveClick={() => (canOpenFiles ? onOpen(file.id) : null)}
+            onRetryClick={() => handleRetryClick && handleRetryClick(file.id)}
           />
-        )}
+          {file.status === 'unsupported' && (
+            <Text color="red600" variant="eyebrow" lineHeight="lg">
+              {formatMessage(m.fileUnsupportedInCourt)}
+            </Text>
+          )}
+          {file.status === 'case-not-found' && (
+            <Text color="red600" variant="eyebrow" lineHeight="lg">
+              {formatMessage(m.caseNotFoundInCourt)}
+            </Text>
+          )}
+        </Box>
+      ))}
+      <AnimatePresence>
+        {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>
     </>
-  ) : (
-    <Text>Engin rannsóknargögn fylgja kröfunni í Réttarvörslugátt.</Text>
   )
 }
 

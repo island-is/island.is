@@ -73,7 +73,7 @@ function Toast() {
   const conf = typeConf[notification.type]
 
   return (
-    <Box position="fixed" top={20} right={0}>
+    <Box position="fixed" top={20} right={0} aria-live="polite">
       <Box
         background={conf.background}
         marginRight={4}

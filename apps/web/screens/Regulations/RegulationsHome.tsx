@@ -178,12 +178,17 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
                           heading={prettyName(reg.name)}
                           text={reg.title}
                           tags={
-                            reg.ministry && [
-                              {
-                                label: reg.ministry.name ?? reg.ministry,
-                                disabled: true,
-                              },
-                            ]
+                            reg.ministry
+                              ? [
+                                  {
+                                    label:
+                                      typeof reg.ministry === 'string'
+                                        ? reg.ministry
+                                        : reg.ministry.name,
+                                    disabled: true,
+                                  },
+                                ]
+                              : undefined
                           }
                         />
                       </GridColumn>
@@ -232,7 +237,7 @@ const assertReasonableYear = (maybeYear?: string): Year | undefined =>
     ? (Math.max(1900, Math.min(2150, Number(maybeYear))) as Year)
     : undefined
 
-RegulationsHome.getInitialProps = async (ctx) => {
+RegulationsHome.getProps = async (ctx) => {
   const { apolloClient, locale, query } = ctx
   const searchQuery = getParams(query, [
     'q',
@@ -248,87 +253,87 @@ RegulationsHome.getInitialProps = async (ctx) => {
     (value) => !!value,
   )
 
-  const [
-    texts,
-    introText,
-    regulations,
-    years,
-    ministries,
-    lawChapters,
-  ] = await Promise.all([
-    await getUiTexts<RegulationHomeTexts>(
-      apolloClient,
-      locale,
-      'Regulations_Home',
-    ),
+  const [texts, introText, regulations, years, ministries, lawChapters] =
+    await Promise.all([
+      await getUiTexts<RegulationHomeTexts>(
+        apolloClient,
+        locale,
+        'Regulations_Home',
+      ),
 
-    apolloClient
-      .query<GetSubpageHeaderQuery, QueryGetSubpageHeaderArgs>({
-        query: GET_SUBPAGE_HEADER_QUERY,
-        variables: {
-          input: { id: 'regulations-intro', lang: locale },
-        },
-      })
-      .then((res) => res.data?.getSubpageHeader),
-
-    doSearch
-      ? apolloClient
-          .query<GetRegulationsSearchQuery, QueryGetRegulationsSearchArgs>({
-            query: GET_REGULATIONS_SEARCH_QUERY,
-            variables: {
-              input: {
-                q: searchQuery.q,
-                rn: searchQuery.rn,
-                year: assertReasonableYear(searchQuery.year),
-                yearTo: assertReasonableYear(searchQuery.yearTo),
-                ch: searchQuery.ch,
-                iA: searchQuery.iA === 'true',
-                iR: searchQuery.iR === 'true',
-                page: searchQuery.page ? parseInt(searchQuery.page) : 1,
-              },
-            },
-          })
-          .then(
-            (res) => res.data?.getRegulationsSearch as RegulationSearchResults,
-          )
-      : apolloClient
-          .query<GetRegulationsQuery, QueryGetRegulationsArgs>({
-            query: GET_REGULATIONS_QUERY,
-            variables: {
-              input: {
-                type: 'newest',
-                page: searchQuery.page ? parseInt(searchQuery.page) : 1,
-              },
-            },
-          })
-          .then((res) => res.data?.getRegulations as RegulationSearchResults),
-
-    apolloClient
-      .query<GetRegulationsYearsQuery>({
-        query: GET_REGULATIONS_YEARS_QUERY,
-      })
-      .then((res) => res.data?.getRegulationsYears as Array<number>),
-
-    apolloClient
-      .query<GetRegulationsMinistriesQuery>({
-        query: GET_REGULATIONS_MINISTRIES_QUERY,
-      })
-      .then((res) => res.data?.getRegulationsMinistries as MinistryList),
-
-    apolloClient
-      .query<
-        GetRegulationsLawChaptersQuery,
-        QueryGetRegulationsLawChaptersArgs
-      >({
-        query: GET_REGULATIONS_LAWCHAPTERS_QUERY,
-        variables: {
-          input: {
-            tree: true,
+      apolloClient
+        .query<GetSubpageHeaderQuery, QueryGetSubpageHeaderArgs>({
+          query: GET_SUBPAGE_HEADER_QUERY,
+          variables: {
+            input: { id: 'regulations-intro', lang: locale },
           },
-        },
-      })
-      .then((res) => res.data?.getRegulationsLawChapters as LawChapterTree),
-  ])
+        })
+        .then((res) => res.data?.getSubpageHeader),
+
+      doSearch
+        ? apolloClient
+            .query<GetRegulationsSearchQuery, QueryGetRegulationsSearchArgs>({
+              query: GET_REGULATIONS_SEARCH_QUERY,
+              variables: {
+                input: {
+                  q: searchQuery.q,
+                  rn: searchQuery.rn,
+                  year: assertReasonableYear(searchQuery.year),
+                  yearTo: assertReasonableYear(searchQuery.yearTo),
+                  ch: searchQuery.ch,
+                  iA: searchQuery.iA === 'true',
+                  iR: searchQuery.iR === 'true',
+                  page: searchQuery.page ? parseInt(searchQuery.page) : 1,
+                },
+              },
+            })
+            .then(
+              (res) =>
+                res.data?.getRegulationsSearch as RegulationSearchResults,
+            )
+        : apolloClient
+            .query<GetRegulationsQuery, QueryGetRegulationsArgs>({
+              query: GET_REGULATIONS_QUERY,
+              variables: {
+                input: {
+                  type: 'newest',
+                  page: searchQuery.page ? parseInt(searchQuery.page) : 1,
+                },
+              },
+            })
+            .then((res) => res.data?.getRegulations as RegulationSearchResults),
+
+      apolloClient
+        .query<GetRegulationsYearsQuery>({
+          query: GET_REGULATIONS_YEARS_QUERY,
+        })
+        .then((res) => res.data?.getRegulationsYears as Array<number>),
+
+      apolloClient
+        .query<GetRegulationsMinistriesQuery>({
+          query: GET_REGULATIONS_MINISTRIES_QUERY,
+          variables: {
+            input: {
+              slugs: undefined,
+            },
+          },
+        })
+        .then((res) => res.data?.getRegulationsMinistries as MinistryList),
+
+      apolloClient
+        .query<
+          GetRegulationsLawChaptersQuery,
+          QueryGetRegulationsLawChaptersArgs
+        >({
+          query: GET_REGULATIONS_LAWCHAPTERS_QUERY,
+          variables: {
+            input: {
+              tree: true,
+            },
+          },
+        })
+        .then((res) => res.data?.getRegulationsLawChapters as LawChapterTree),
+    ])
 
   return {
     regulations,

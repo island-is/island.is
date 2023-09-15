@@ -2,12 +2,13 @@ import {
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
   Model,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
 
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { InstitutionType } from '@island.is/judicial-system/types'
 
@@ -15,7 +16,7 @@ import { InstitutionType } from '@island.is/judicial-system/types'
   tableName: 'institution',
   timestamps: true,
 })
-export class Institution extends Model<Institution> {
+export class Institution extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -38,6 +39,7 @@ export class Institution extends Model<Institution> {
     allowNull: false,
     values: Object.values(InstitutionType),
   })
+  @ApiProperty()
   type!: InstitutionType
 
   @Column({
@@ -46,12 +48,34 @@ export class Institution extends Model<Institution> {
     unique: true,
   })
   @ApiProperty()
-  name?: string
+  name!: string
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
   })
   @ApiProperty()
-  active?: boolean
+  active!: boolean
+
+  @ForeignKey(() => Institution)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  defaultCourtId?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  policeCaseNumberPrefix?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  nationalId?: string
 }

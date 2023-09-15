@@ -20,7 +20,7 @@ type FormData = {
   registrationNumber: string
 }
 
-const Select: FC = () => {
+const Select: FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
   const {
     t: {
@@ -29,9 +29,10 @@ const Select: FC = () => {
     },
   } = useI18n()
   const router = useRouter()
-  const { handleSubmit, control, formState, errors } = useForm({
+  const { handleSubmit, control, formState } = useForm({
     mode: 'onChange',
   })
+  const { errors } = formState
 
   const handleContinue = (formData: FormData) => {
     const registrationNumber = formData.registrationNumber
@@ -48,8 +49,10 @@ const Select: FC = () => {
   }
 
   const validateRegNumber = (value: string) => {
-    const regular = new RegExp(/^[A-Z]{1,2}(\s|-){0,1}([A-Z]|\d){1}\d{2}$/gi)
     const antique = new RegExp(/^[A-Z]{1}\s{0,1}\d{5}$/gi)
+    const regular = new RegExp(
+      /^[A-ZÞÖ]{1,2}(\s|-){0,1}([A-ZÞÖ]|\d){1}\d{2}$/gi,
+    )
     return regular.test(value) || antique.test(value)
   }
 
@@ -80,7 +83,7 @@ const Select: FC = () => {
             },
           }}
           defaultValue=""
-          render={({ onChange, value, name }) => (
+          render={({ field: { onChange, value, name } }) => (
             <Input
               label={t.input!.label}
               placeholder={t.input!.placeholder}

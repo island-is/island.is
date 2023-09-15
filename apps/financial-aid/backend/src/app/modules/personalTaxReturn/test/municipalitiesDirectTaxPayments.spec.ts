@@ -15,10 +15,8 @@ describe('PersonalTaxReturnController - Municipalities direct tax payments', () 
   let mockPersonalTaxReturnApi: PersonalTaxReturnApi
 
   beforeEach(async () => {
-    const {
-      personalTaxReturnController,
-      personalTaxReturnApi,
-    } = await createTestingPersonalTaxReturnModule()
+    const { personalTaxReturnController, personalTaxReturnApi } =
+      await createTestingPersonalTaxReturnModule()
 
     mockPersonalTaxReturnApi = personalTaxReturnApi
 
@@ -35,12 +33,13 @@ describe('PersonalTaxReturnController - Municipalities direct tax payments', () 
   })
 
   describe('Personal Tax Return Api fails', () => {
-    const user = { nationalId: '0', folder: '' } as User
+    const user = { nationalId: '0' } as User
     let personalTaxReturnApi: jest.Mock
     let then: Then
 
     beforeEach(async () => {
-      personalTaxReturnApi = mockPersonalTaxReturnApi.directTaxPayments as jest.Mock
+      personalTaxReturnApi =
+        mockPersonalTaxReturnApi.directTaxPayments as jest.Mock
       personalTaxReturnApi.mockRejectedValueOnce({})
 
       then = await givenWhenThen(user)
@@ -78,7 +77,7 @@ describe('PersonalTaxReturnController - Municipalities direct tax payments', () 
   })
 
   describe('Personal Tax Return Api succeeds', () => {
-    const user = { nationalId: '0', folder: '' } as User
+    const user = { nationalId: '0' } as User
     let personalTaxReturn: jest.Mock
     let then: Then
     const today = new Date()
@@ -133,7 +132,8 @@ describe('PersonalTaxReturnController - Municipalities direct tax payments', () 
     }
 
     beforeEach(async () => {
-      personalTaxReturn = mockPersonalTaxReturnApi.directTaxPayments as jest.Mock
+      personalTaxReturn =
+        mockPersonalTaxReturnApi.directTaxPayments as jest.Mock
       personalTaxReturn.mockResolvedValueOnce(returnValue)
 
       then = await givenWhenThen(user)

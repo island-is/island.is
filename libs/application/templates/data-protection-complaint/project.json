@@ -1,0 +1,34 @@
+{
+  "name": "application-templates-data-protection-complaint",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/templates/data-protection-complaint/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/data-protection-complaint/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/data-protection-complaint/src/**/*.{js,ts,tsx}'"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/application/templates/data-protection-complaint/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/data-protection-complaint"
+      ]
+    }
+  },
+  "tags": ["scope:application-system", "lib:application-system"]
+}

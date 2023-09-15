@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
+import React, { useCallback, useContext, useState } from 'react'
+import { IntlShape, useIntl } from 'react-intl'
+import formatISO from 'date-fns/formatISO'
 import { useRouter } from 'next/router'
 
 import {
@@ -11,54 +12,111 @@ import {
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
-import {
-  FormFooter,
-  PageLayout,
-  PoliceRequestAccordionItem,
-  BlueBox,
-  CaseInfo,
-  FormContentContainer,
-  CaseFileList,
-  Decision,
-  RulingInput,
-  PdfButton,
-} from '@island.is/judicial-system-web/src/components'
-import {
-  CaseCustodyRestrictions,
-  CaseDecision,
-  CaseType,
-  completedCaseStates,
-  Gender,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
-import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import {
-  CourtSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
-import {
-  setAndSendDateToServer,
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-  setAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import { DateTime } from '@island.is/judicial-system-web/src/components'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { core, rcRuling as m } from '@island.is/judicial-system-web/messages'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   capitalize,
   formatDate,
-  formatNationalId,
+  formatDOB,
 } from '@island.is/judicial-system/formatters'
-import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
+import {
+  CaseDecision,
+  isAcceptingCaseDecision,
+} from '@island.is/judicial-system/types'
+import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
+import {
+  BlueBox,
+  CaseFileList,
+  CourtCaseInfo,
+  Decision,
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  PageLayout,
+  PdfButton,
+  PoliceRequestAccordionItem,
+  RulingInput,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+import { DateTime } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
-import { autofillRuling } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
-import * as Constants from '@island.is/judicial-system/consts'
+import {
+  CaseType,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  removeTabsValidateAndSet,
+  validateAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  useCase,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
+import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
-export const Ruling: React.FC = () => {
+import { rcRuling as m } from './Ruling.strings'
+
+export function getConclusionAutofill(
+  formatMessage: IntlShape['formatMessage'],
+  workingCase: Case,
+  decision: CaseDecision,
+  defendant: Defendant,
+  validToDate?: string,
+  isCustodyIsolation?: boolean,
+  isolationToDate?: string,
+) {
+  const isolationEndsBeforeValidToDate =
+    validToDate &&
+    isolationToDate &&
+    new Date(validToDate) > new Date(isolationToDate)
+
+  const defendantDOB = formatDOB(
+    defendant.nationalId,
+    defendant.noNationalId,
+    '',
+  )
+
+  return decision === CaseDecision.DISMISSING
+    ? formatMessage(m.sections.conclusion.dismissingAutofill, {
+        defendantName: defendant.name,
+        isExtended:
+          workingCase.parentCase &&
+          isAcceptingCaseDecision(workingCase.parentCase.decision),
+        caseType: workingCase.type,
+      })
+    : decision === CaseDecision.REJECTING
+    ? formatMessage(m.sections.conclusion.rejectingAutofill, {
+        defendantName: defendant.name,
+        defendantDOB: defendantDOB ? `, ${defendantDOB}, ` : ', ',
+        isExtended:
+          workingCase.parentCase &&
+          isAcceptingCaseDecision(workingCase.parentCase.decision),
+        caseType: workingCase.type,
+      })
+    : formatMessage(m.sections.conclusion.acceptingAutofill, {
+        defendantName: defendant.name,
+        defendantDOB: defendantDOB ? `, ${defendantDOB}, ` : ', ',
+        isExtended:
+          workingCase.parentCase &&
+          isAcceptingCaseDecision(workingCase.parentCase.decision) &&
+          decision !== CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+        caseType:
+          decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+            ? CaseType.TRAVEL_BAN
+            : workingCase.type,
+        validToDate: `${formatDate(validToDate, 'PPPPp')
+          ?.replace('dagur,', 'dagsins')
+          ?.replace(' kl.', ', kl.')}`,
+        hasIsolation: isAcceptingCaseDecision(decision) && isCustodyIsolation,
+        isolationEndsBeforeValidToDate,
+        isolationToDate: formatDate(isolationToDate, 'PPPPp')
+          ?.replace('dagur,', 'dagsins')
+          ?.replace(' kl.', ', kl.'),
+      })
+}
+
+export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -67,212 +125,93 @@ export const Ruling: React.FC = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
 
-  const [
-    introductionErrorMessage,
-    setIntroductionErrorMessage,
-  ] = useState<string>('')
-  const [
-    courtCaseFactsErrorMessage,
-    setCourtCaseFactsErrorMessage,
-  ] = useState<string>('')
-  const [
-    courtLegalArgumentsErrorMessage,
-    setCourtLegalArgumentsErrorMessage,
-  ] = useState<string>('')
-  const [
-    prosecutorDemandsErrorMessage,
-    setProsecutorDemandsMessage,
-  ] = useState<string>('')
+  const [introductionErrorMessage, setIntroductionErrorMessage] =
+    useState<string>('')
+  const [courtCaseFactsErrorMessage, setCourtCaseFactsErrorMessage] =
+    useState<string>('')
+  const [courtLegalArgumentsErrorMessage, setCourtLegalArgumentsErrorMessage] =
+    useState<string>('')
+  const [prosecutorDemandsErrorMessage, setProsecutorDemandsMessage] =
+    useState<string>('')
 
   const router = useRouter()
-  const id = router.query.id
 
   const { user } = useContext(UserContext)
-  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const { updateCase, autofill, autofillBoolean } = useCase()
+  const { updateCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
 
-  useDeb(workingCase, 'prosecutorDemands')
-  useDeb(workingCase, 'courtCaseFacts')
-  useDeb(workingCase, 'courtLegalArguments')
-  useDeb(workingCase, 'conclusion')
-
-  useEffect(() => {
-    const isolationEndsBeforeValidToDate =
-      workingCase.validToDate &&
-      workingCase.isolationToDate &&
-      new Date(workingCase.validToDate) > new Date(workingCase.isolationToDate)
-
-    if (isCaseUpToDate && !initialAutoFillDone) {
-      autofill(
-        'introduction',
-        formatMessage(m.sections.introduction.autofill, {
-          date: formatDate(workingCase.courtDate, 'PPP'),
-        }),
-        workingCase,
-      )
-
-      if (workingCase.demands) {
-        autofill('prosecutorDemands', workingCase.demands, workingCase)
-      }
-
-      if (workingCase.requestedValidToDate) {
-        autofill('validToDate', workingCase.requestedValidToDate, workingCase)
-      }
-
-      if (workingCase.type === CaseType.CUSTODY) {
-        autofillBoolean(
-          'isCustodyIsolation',
-          workingCase.requestedCustodyRestrictions &&
-            workingCase.requestedCustodyRestrictions.includes(
-              CaseCustodyRestrictions.ISOLATION,
-            )
-            ? true
-            : false,
-          workingCase,
-        )
-      }
-
-      if (workingCase.validToDate) {
-        autofill('isolationToDate', workingCase.validToDate, workingCase)
-      }
-
-      if (workingCase.caseFacts) {
-        autofill('courtCaseFacts', workingCase.caseFacts, workingCase)
-      }
-
-      if (workingCase.legalArguments) {
-        autofill('courtLegalArguments', workingCase.legalArguments, workingCase)
-      }
-
-      autofillRuling(workingCase, autofill, formatMessage)
-
-      setInitialAutoFillDone(true)
-      setWorkingCase({ ...workingCase })
-    }
-
-    if (
-      !workingCase.conclusion &&
-      workingCase.decision &&
-      workingCase.defendants &&
-      workingCase.defendants.length > 0
-    ) {
-      const accusedSuffix =
-        workingCase.defendants[0].gender === Gender.MALE ? 'i' : 'a'
-
-      autofill(
-        'conclusion',
-        workingCase.decision === CaseDecision.DISMISSING
-          ? formatMessage(m.sections.conclusion.dismissingAutofill, {
-              genderedAccused: formatMessage(core.accused, {
-                suffix: accusedSuffix,
-              }),
-              accusedName: workingCase.defendants[0].name,
-              extensionSuffix:
-                workingCase.parentCase &&
-                isAcceptingCaseDecision(workingCase.parentCase.decision)
-                  ? ' áframhaldandi'
-                  : '',
-              caseType:
-                workingCase.type === CaseType.CUSTODY
-                  ? 'gæsluvarðhaldi'
-                  : 'farbanni',
-            })
-          : workingCase.decision === CaseDecision.REJECTING
-          ? formatMessage(m.sections.conclusion.rejectingAutofill, {
-              genderedAccused: formatMessage(core.accused, {
-                suffix: accusedSuffix,
-              }),
-              accusedName: workingCase.defendants[0].name,
-              accusedNationalId: workingCase.defendants[0].noNationalId
-                ? ', '
-                : `, kt. ${formatNationalId(
-                    workingCase.defendants[0].nationalId ?? '',
-                  )}, `,
-              extensionSuffix:
-                workingCase.parentCase &&
-                isAcceptingCaseDecision(workingCase.parentCase.decision)
-                  ? ' áframhaldandi'
-                  : '',
-              caseType:
-                workingCase.type === CaseType.CUSTODY
-                  ? 'gæsluvarðhaldi'
-                  : 'farbanni',
-            })
-          : formatMessage(m.sections.conclusion.acceptingAutofill, {
-              genderedAccused: capitalize(
-                formatMessage(core.accused, {
-                  suffix: accusedSuffix,
-                }),
-              ),
-              accusedName: workingCase.defendants[0].name,
-              accusedNationalId: workingCase.defendants[0].noNationalId
-                ? ', '
-                : `, kt. ${formatNationalId(
-                    workingCase.defendants[0].nationalId ?? '',
-                  )}, `,
-              caseTypeAndExtensionSuffix:
-                workingCase.decision === CaseDecision.ACCEPTING ||
-                workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY
-                  ? `${
-                      workingCase.parentCase &&
-                      isAcceptingCaseDecision(workingCase.parentCase.decision)
-                        ? 'áframhaldandi '
-                        : ''
-                    }${
-                      workingCase.type === CaseType.CUSTODY
-                        ? 'gæsluvarðhaldi'
-                        : 'farbanni'
-                    }`
-                  : // decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                    'farbanni',
-              validToDate: `${formatDate(workingCase.validToDate, 'PPPPp')
-                ?.replace('dagur,', 'dagsins')
-                ?.replace(' kl.', ', kl.')}`,
-              isolationSuffix:
-                isAcceptingCaseDecision(workingCase.decision) &&
-                workingCase.isCustodyIsolation
-                  ? ` ${capitalize(
-                      formatMessage(core.accused, {
-                        suffix: accusedSuffix,
-                      }),
-                    )} skal sæta einangrun ${
-                      isolationEndsBeforeValidToDate
-                        ? `ekki lengur en til ${formatDate(
-                            workingCase.isolationToDate,
-                            'PPPPp',
-                          )
-                            ?.replace('dagur,', 'dagsins')
-                            ?.replace(' kl.', ', kl.')}.`
-                        : 'á meðan á gæsluvarðhaldinu stendur.'
-                    }`
-                  : '',
-            }),
-        workingCase,
-      )
-
-      setWorkingCase({ ...workingCase })
-    }
-  }, [
-    autofill,
-    autofillBoolean,
-    formatMessage,
-    initialAutoFillDone,
-    isCaseUpToDate,
-    setWorkingCase,
-    updateCase,
-    workingCase,
+  useDeb(workingCase, [
+    'prosecutorDemands',
+    'courtCaseFacts',
+    'courtLegalArguments',
+    'conclusion',
   ])
+
+  const initialize = useCallback(() => {
+    setAndSendCaseToServer(
+      [
+        {
+          introduction: formatMessage(m.sections.introduction.autofill, {
+            date: formatDate(workingCase.courtDate, 'PPP'),
+          }),
+          prosecutorDemands: workingCase.demands,
+          courtCaseFacts: formatMessage(
+            ruling.sections.courtCaseFacts.prefill,
+            {
+              caseFacts: workingCase.caseFacts,
+            },
+          ),
+          courtLegalArguments: formatMessage(
+            ruling.sections.courtLegalArguments.prefill,
+            { legalArguments: workingCase.legalArguments },
+          ),
+          ruling: !workingCase.parentCase
+            ? `\n${formatMessage(ruling.autofill, {
+                judgeName: workingCase.judge?.name,
+              })}`
+            : isAcceptingCaseDecision(workingCase.decision)
+            ? workingCase.parentCase.ruling
+            : undefined,
+          conclusion:
+            workingCase.decision &&
+            workingCase.defendants &&
+            workingCase.defendants.length > 0
+              ? getConclusionAutofill(
+                  formatMessage,
+                  workingCase,
+                  workingCase.decision,
+                  workingCase.defendants[0],
+                  workingCase.validToDate,
+                  workingCase.isCustodyIsolation,
+                  workingCase.isolationToDate,
+                )
+              : undefined,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }, [formatMessage, setAndSendCaseToServer, setWorkingCase, workingCase])
+
+  useOnceOn(isCaseUpToDate, initialize)
+
+  const handleNavigationTo = useCallback(
+    async (destination: string) => {
+      router.push(`${destination}/${workingCase.id}`)
+    },
+    [router, workingCase.id],
+  )
+  const stepIsValid = isRulingValidRC(workingCase)
+  const caseFiles =
+    workingCase.caseFiles?.filter((file) => !file.category) ?? []
 
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
-      }
-      activeSubSection={CourtSubsections.RULING}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
+      isValid={stepIsValid}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader title={formatMessage(titles.court.restrictionCases.ruling)} />
       <FormContentContainer>
@@ -281,34 +220,27 @@ export const Ruling: React.FC = () => {
             {formatMessage(m.title)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo workingCase={workingCase} userRole={user?.role} />
-        </Box>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <Accordion>
             <PoliceRequestAccordionItem workingCase={workingCase} />
             <AccordionItem
               id="caseFileList"
-              label={`Rannsóknargögn (${workingCase.caseFiles?.length ?? 0})`}
+              label={`Rannsóknargögn (${caseFiles.length})`}
               labelVariant="h3"
             >
               <CaseFileList
                 caseId={workingCase.id}
-                files={workingCase.caseFiles ?? []}
+                files={caseFiles}
                 canOpenFiles={
-                  (workingCase.judge !== null &&
-                    workingCase.judge?.id === user?.id) ||
-                  (workingCase.registrar !== null &&
-                    workingCase.registrar?.id === user?.id)
+                  user &&
+                  (user.id === workingCase.judge?.id ||
+                    user.id === workingCase.registrar?.id)
                 }
-                isCaseCompleted={completedCaseStates.includes(
-                  workingCase.state,
-                )}
               />
             </AccordionItem>
           </Accordion>
-        </Box>
-        <Box component="section" marginBottom={5}>
+          <Box component="section" marginBottom={5}></Box>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
               {formatMessage(m.sections.introduction.title)}
@@ -495,7 +427,6 @@ export const Ruling: React.FC = () => {
           <RulingInput
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
-            isRequired
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -507,40 +438,86 @@ export const Ruling: React.FC = () => {
           <Box marginBottom={5}>
             <Decision
               workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
               acceptedLabelText={formatMessage(
-                m.sections.decision.acceptLabel,
+                ruling.restrictionCases.sections.decision.acceptLabel,
                 {
-                  caseType:
-                    workingCase.type === CaseType.CUSTODY
-                      ? 'gæsluvarðhald'
-                      : 'farbann',
+                  caseType: formatMessage(
+                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      caseType: workingCase.type,
+                    },
+                  ),
                 },
               )}
               rejectedLabelText={formatMessage(
-                m.sections.decision.rejectLabel,
+                ruling.restrictionCases.sections.decision.rejectLabel,
                 {
-                  caseType:
-                    workingCase.type === CaseType.CUSTODY
-                      ? 'gæsluvarðhald'
-                      : 'farbann',
+                  caseType: formatMessage(
+                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      caseType: workingCase.type,
+                    },
+                  ),
                 },
               )}
               partiallyAcceptedLabelText={formatMessage(
-                m.sections.decision.partiallyAcceptLabel,
+                ruling.restrictionCases.sections.decision.partiallyAcceptLabel,
+                {
+                  caseType: formatMessage(
+                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      caseType: workingCase.type,
+                    },
+                  ),
+                },
               )}
               dismissLabelText={formatMessage(
-                m.sections.decision.dismissLabel,
+                ruling.restrictionCases.sections.decision.dismissLabel,
                 {
-                  caseType:
-                    workingCase.type === CaseType.CUSTODY
-                      ? 'gæsluvarðhald'
-                      : 'farbann',
+                  caseType: formatMessage(
+                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      caseType: workingCase.type,
+                    },
+                  ),
                 },
               )}
               acceptingAlternativeTravelBanLabelText={formatMessage(
-                m.sections.decision.acceptingAlternativeTravelBanLabel,
+                ruling.restrictionCases.sections.decision
+                  .acceptingAlternativeTravelBanLabel,
+                {
+                  caseType: formatMessage(
+                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      caseType: workingCase.type,
+                    },
+                  ),
+                },
               )}
+              onChange={(decision) => {
+                let conclusion = undefined
+
+                if (
+                  workingCase.defendants &&
+                  workingCase.defendants.length > 0
+                ) {
+                  conclusion = getConclusionAutofill(
+                    formatMessage,
+                    workingCase,
+                    decision,
+                    workingCase.defendants[0],
+                    workingCase.validToDate,
+                    workingCase.isCustodyIsolation,
+                    workingCase.isolationToDate,
+                  )
+                }
+
+                setAndSendCaseToServer(
+                  [{ conclusion, decision, force: true }],
+                  workingCase,
+                  setWorkingCase,
+                )
+              }}
             />
           </Box>
         </Box>
@@ -554,37 +531,92 @@ export const Ruling: React.FC = () => {
             >
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  {workingCase.type === CaseType.CUSTODY &&
-                  isAcceptingCaseDecision(workingCase.decision)
-                    ? 'Gæsluvarðhald'
-                    : 'Farbann'}
+                  {capitalize(
+                    formatMessage(
+                      ruling.restrictionCases.sections.decision.caseType,
+                      {
+                        caseType:
+                          workingCase.decision ===
+                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                            ? CaseType.TRAVEL_BAN
+                            : workingCase.type,
+                      },
+                    ),
+                  )}
                 </Text>
               </Box>
               <DateTime
                 name="validToDate"
-                datepickerLabel={
-                  workingCase.type === CaseType.CUSTODY &&
-                  isAcceptingCaseDecision(workingCase.decision)
-                    ? 'Gæsluvarðhald til'
-                    : 'Farbann til'
-                }
+                datepickerLabel={formatMessage(
+                  m.sections.decision.validToDate,
+                  {
+                    caseType: capitalize(
+                      formatMessage(
+                        ruling.restrictionCases.sections.decision.caseType,
+                        {
+                          caseType:
+                            workingCase.decision ===
+                            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                              ? CaseType.TRAVEL_BAN
+                              : workingCase.type,
+                        },
+                      ),
+                    ),
+                  },
+                )}
                 selectedDate={workingCase.validToDate}
                 minDate={new Date()}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  setAndSendDateToServer(
-                    'validToDate',
-                    date,
-                    valid,
+                  const validToDate =
+                    date && valid ? formatISO(date) : undefined
+                  const isolationToDate =
+                    validToDate &&
+                    workingCase.isolationToDate &&
+                    validToDate < workingCase.isolationToDate
+                      ? validToDate
+                      : workingCase.isolationToDate
+                  let conclusion = undefined
+
+                  if (
+                    workingCase.decision &&
+                    workingCase.defendants &&
+                    workingCase.defendants.length > 0 &&
+                    date &&
+                    valid &&
+                    (isAcceptingCaseDecision(workingCase.decision) ||
+                      workingCase.decision ===
+                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+                  ) {
+                    conclusion = getConclusionAutofill(
+                      formatMessage,
+                      workingCase,
+                      workingCase.decision,
+                      workingCase.defendants[0],
+                      validToDate,
+                      workingCase.isCustodyIsolation,
+                      isolationToDate,
+                    )
+                  }
+
+                  setAndSendCaseToServer(
+                    [
+                      {
+                        validToDate,
+                        isolationToDate,
+                        conclusion,
+                        force: true,
+                      },
+                    ],
                     workingCase,
                     setWorkingCase,
-                    updateCase,
                   )
                 }}
                 required
               />
             </Box>
           )}
-        {workingCase.type === CaseType.CUSTODY &&
+        {(workingCase.type === CaseType.CUSTODY ||
+          workingCase.type === CaseType.ADMISSION_TO_FACILITY) &&
           isAcceptingCaseDecision(workingCase.decision) && (
             <Box component="section" marginBottom={5}>
               <Box marginBottom={2}>
@@ -596,26 +628,42 @@ export const Ruling: React.FC = () => {
                 <Box marginBottom={3}>
                   <Checkbox
                     name="isCustodyIsolation"
-                    label={capitalize(
-                      formatMessage(m.sections.custodyRestrictions.isolation, {
-                        genderedAccused: formatMessage(core.accused, {
-                          suffix:
-                            workingCase.defendants &&
-                            workingCase.defendants.length > 0 &&
-                            workingCase.defendants[0].gender === Gender.MALE
-                              ? 'i'
-                              : 'a',
-                        }),
-                      }),
+                    label={formatMessage(
+                      m.sections.custodyRestrictions.isolation,
                     )}
                     checked={workingCase.isCustodyIsolation}
                     onChange={() => {
-                      setAndSendToServer(
-                        'isCustodyIsolation',
-                        !workingCase.isCustodyIsolation,
+                      let conclusion = undefined
+
+                      if (
+                        workingCase.decision &&
+                        workingCase.defendants &&
+                        workingCase.defendants.length > 0 &&
+                        (isAcceptingCaseDecision(workingCase.decision) ||
+                          workingCase.decision ===
+                            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+                      ) {
+                        conclusion = getConclusionAutofill(
+                          formatMessage,
+                          workingCase,
+                          workingCase.decision,
+                          workingCase.defendants[0],
+                          workingCase.validToDate,
+                          !workingCase.isCustodyIsolation,
+                          workingCase.isolationToDate,
+                        )
+                      }
+
+                      setAndSendCaseToServer(
+                        [
+                          {
+                            isCustodyIsolation: !workingCase.isCustodyIsolation,
+                            conclusion,
+                            force: true,
+                          },
+                        ],
                         workingCase,
                         setWorkingCase,
-                        updateCase,
                       )
                     }}
                     filled
@@ -626,13 +674,7 @@ export const Ruling: React.FC = () => {
                   name="isolationToDate"
                   datepickerLabel="Einangrun til"
                   disabled={!workingCase.isCustodyIsolation}
-                  selectedDate={
-                    workingCase.isolationToDate
-                      ? workingCase.isolationToDate
-                      : workingCase.validToDate
-                      ? workingCase.validToDate
-                      : undefined
-                  }
+                  selectedDate={workingCase.isolationToDate}
                   // Isolation can never be set in the past.
                   minDate={new Date()}
                   maxDate={
@@ -641,13 +683,49 @@ export const Ruling: React.FC = () => {
                       : undefined
                   }
                   onChange={(date: Date | undefined, valid: boolean) => {
-                    setAndSendDateToServer(
-                      'isolationToDate',
-                      date,
-                      valid,
+                    let isolationToDate =
+                      date && valid ? formatISO(date) : undefined
+                    if (
+                      isolationToDate &&
+                      workingCase.validToDate &&
+                      isolationToDate > workingCase.validToDate
+                    ) {
+                      // Make sure the time component does not make the isolation to date larger than the valid to date.
+                      isolationToDate = workingCase.validToDate
+                    }
+                    let conclusion = undefined
+
+                    if (
+                      workingCase.decision &&
+                      workingCase.defendants &&
+                      workingCase.defendants.length > 0 &&
+                      date &&
+                      valid &&
+                      (isAcceptingCaseDecision(workingCase.decision) ||
+                        workingCase.decision ===
+                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+                    ) {
+                      conclusion = getConclusionAutofill(
+                        formatMessage,
+                        workingCase,
+                        workingCase.decision,
+                        workingCase.defendants[0],
+                        workingCase.validToDate,
+                        workingCase.isCustodyIsolation,
+                        formatISO(date),
+                      )
+                    }
+
+                    setAndSendCaseToServer(
+                      [
+                        {
+                          isolationToDate,
+                          conclusion,
+                          force: true,
+                        },
+                      ],
                       workingCase,
                       setWorkingCase,
-                      updateCase,
                     )
                   }}
                   blueBox={false}
@@ -703,9 +781,12 @@ export const Ruling: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.COURT_RECORD_ROUTE}/${id}`}
-          nextIsDisabled={!isRulingValidRC(workingCase)}
+          nextButtonIcon="arrowForward"
+          previousUrl={`${constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+          onNextButtonClick={() =>
+            handleNavigationTo(constants.RESTRICTION_CASE_COURT_RECORD_ROUTE)
+          }
+          nextIsDisabled={!stepIsValid}
         />
       </FormContentContainer>
     </PageLayout>

@@ -1,13 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op, WhereOptions, Sequelize } from 'sequelize'
+import { Op, WhereOptions } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import {
   ExternalData,
   FormValue,
   ApplicationStatus,
-} from '@island.is/application/core'
+  ApplicationLifecycle,
+} from '@island.is/application/types'
 import { Application } from './application.model'
-import { ApplicationLifecycle } from '@island.is/application/core'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
@@ -72,24 +73,41 @@ export class ApplicationService {
         )
       }
 
-      const [
-        numberOfAffectedRows,
-        [updatedApplication],
-      ] = await this.applicationModel.update(
-        {
-          attachments: {
-            ...existingApplication.attachments,
-            [key]: url,
+      const [numberOfAffectedRows, [updatedApplication]] =
+        await this.applicationModel.update(
+          {
+            attachments: {
+              ...existingApplication.attachments,
+              [key]: url,
+            },
           },
-        },
-        {
-          where: { id },
-          returning: true,
-          transaction,
-        },
-      )
+          {
+            where: { id },
+            returning: true,
+            transaction,
+          },
+        )
 
       return { numberOfAffectedRows, updatedApplication }
+    })
+  }
+
+  async findByApplicantActor(
+    id: string,
+    nationalId?: string,
+  ): Promise<Application | null> {
+    return this.applicationModel.findOne({
+      where: {
+        id,
+        ...(nationalId
+          ? {
+              [Op.or]: [
+                { applicant: nationalId },
+                { applicantActors: { [Op.contains]: [nationalId] } },
+              ],
+            }
+          : {}),
+      },
     })
   }
 
@@ -97,6 +115,7 @@ export class ApplicationService {
     nationalId: string,
     typeId?: string,
     status?: string,
+    actor?: string,
   ): Promise<Application[]> {
     const typeIds = typeId?.split(',')
     const statuses = status?.split(',')
@@ -108,8 +127,13 @@ export class ApplicationService {
         [Op.and]: [
           {
             [Op.or]: [
-              { applicant: nationalId },
-              { assignees: { [Op.contains]: [nationalId] } },
+              ...(actor
+                ? [
+                    { applicant: nationalId },
+                    { applicantActors: { [Op.contains]: [actor] } },
+                  ]
+                : [{ applicant: { [Op.eq]: nationalId } }]),
+              ...[{ assignees: { [Op.contains]: [nationalId] } }],
             ],
           },
           applicationIsNotSetToBePruned(),
@@ -123,10 +147,10 @@ export class ApplicationService {
   }
 
   async findAllDueToBePruned(): Promise<
-    Pick<Application, 'id' | 'attachments'>[]
+    Pick<Application, 'id' | 'attachments' | 'typeId' | 'state'>[]
   > {
     return this.applicationModel.findAll({
-      attributes: ['id', 'attachments'],
+      attributes: ['id', 'attachments', 'typeId', 'state'],
       where: {
         [Op.and]: {
           pruneAt: {
@@ -186,57 +210,58 @@ export class ApplicationService {
   async update(
     id: string,
     application: Partial<
-      Pick<Application, 'attachments' | 'answers' | 'externalData' | 'pruned'>
+      Pick<
+        Application,
+        | 'attachments'
+        | 'answers'
+        | 'externalData'
+        | 'pruned'
+        | 'applicantActors'
+        | 'draftTotalSteps'
+        | 'draftFinishedSteps'
+      >
     >,
   ) {
-    const [
-      numberOfAffectedRows,
-      [updatedApplication],
-    ] = await this.applicationModel.update(application, {
-      where: { id },
-      returning: true,
-    })
+    const [numberOfAffectedRows, [updatedApplication]] =
+      await this.applicationModel.update(application, {
+        where: { id },
+        returning: true,
+      })
     return { numberOfAffectedRows, updatedApplication }
   }
 
   async removeNonce(application: Application, assignNonce: string) {
-    const [
-      numberOfAffectedRows,
-      [updatedApplication],
-    ] = await this.applicationModel.update(
-      {
-        assignNonces: application.assignNonces.filter(
-          (nonce) => nonce !== assignNonce,
-        ),
-      },
-      { where: { id: application.id }, returning: true },
-    )
+    const [numberOfAffectedRows, [updatedApplication]] =
+      await this.applicationModel.update(
+        {
+          assignNonces: application.assignNonces.filter(
+            (nonce) => nonce !== assignNonce,
+          ),
+        },
+        { where: { id: application.id }, returning: true },
+      )
     return { numberOfAffectedRows, updatedApplication }
   }
 
   async clearNonces(id: string) {
-    const [
-      numberOfAffectedRows,
-      [updatedApplication],
-    ] = await this.applicationModel.update(
-      {
-        assignNonces: [],
-      },
-      { where: { id: id }, returning: true },
-    )
+    const [numberOfAffectedRows, [updatedApplication]] =
+      await this.applicationModel.update(
+        {
+          assignNonces: [],
+        },
+        { where: { id: id }, returning: true },
+      )
     return { numberOfAffectedRows, updatedApplication }
   }
 
   async addNonce(application: Application, assignNonce: string) {
-    const [
-      numberOfAffectedRows,
-      [updatedApplication],
-    ] = await this.applicationModel.update(
-      {
-        assignNonces: [...(application?.assignNonces ?? []), assignNonce],
-      },
-      { where: { id: application.id }, returning: true },
-    )
+    const [numberOfAffectedRows, [updatedApplication]] =
+      await this.applicationModel.update(
+        {
+          assignNonces: [...(application?.assignNonces ?? []), assignNonce],
+        },
+        { where: { id: application.id }, returning: true },
+      )
     return { numberOfAffectedRows, updatedApplication }
   }
 
@@ -248,16 +273,14 @@ export class ApplicationService {
     status: ApplicationStatus,
     lifecycle: ApplicationLifecycle,
   ) {
-    const [
-      numberOfAffectedRows,
-      [updatedApplication],
-    ] = await this.applicationModel.update(
-      { state, answers, assignees, status, ...lifecycle },
-      {
-        where: { id },
-        returning: true,
-      },
-    )
+    const [numberOfAffectedRows, [updatedApplication]] =
+      await this.applicationModel.update(
+        { state, answers, assignees, status, ...lifecycle },
+        {
+          where: { id },
+          returning: true,
+        },
+      )
 
     return { numberOfAffectedRows, updatedApplication }
   }
@@ -267,15 +290,13 @@ export class ApplicationService {
     oldExternalData: ExternalData,
     externalData: ExternalData,
   ) {
-    const [
-      numberOfAffectedRows,
-      [updatedApplication],
-    ] = await this.applicationModel.update(
-      {
-        externalData: { ...oldExternalData, ...externalData },
-      },
-      { where: { id }, returning: true },
-    )
+    const [numberOfAffectedRows, [updatedApplication]] =
+      await this.applicationModel.update(
+        {
+          externalData: { ...oldExternalData, ...externalData },
+        },
+        { where: { id }, returning: true },
+      )
 
     return { numberOfAffectedRows, updatedApplication }
   }

@@ -1,13 +1,13 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
-import { UserInfo as TUserInfo } from '@island.is/air-discount-scheme/types'
+import type { UserInfo as TUserInfo } from '@island.is/air-discount-scheme/types'
 import { User } from '../user'
 import { FlightLeg } from '../flightLeg'
 
 @ObjectType()
 export class UserInfo implements TUserInfo {
   @Field()
-  gender: 'kk' | 'kvk' | 'hvk'
+  gender: 'kk' | 'kvk' | 'x'
 
   @Field()
   age: number

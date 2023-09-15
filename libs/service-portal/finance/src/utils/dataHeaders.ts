@@ -12,9 +12,9 @@ export const gjoldSundurlidunHeaders = [
 ]
 
 export const greidsluStadaHeaders = [
-  'Gjaldflokkur',
+  'Gjaldflokkur / stofnun',
   'Staða',
-  'Umsjónarmaður',
+  'Þjónustuaðili',
   'Heimasíða',
   'Sími',
   'Netfang',
@@ -24,7 +24,7 @@ export const hreyfingarHeaders = [
   'Dagsetning',
   'Gildisdagur',
   'Framkvæmdaraðili',
-  'Umsjónarmaður',
+  'Þjónustuaðili',
   'Gjaldflokkur',
   'Gjaldliður',
   'Gjaldgrunnur',
@@ -34,4 +34,11 @@ export const hreyfingarHeaders = [
   'Hreyfingargerð',
   'Aðgerðarflokkur',
   'Tilvísun',
+]
+export const generalHeaders = [
+  'Dagsetning',
+  'Tegund',
+  'Framkvæmdaaðili',
+  'Upphæð',
+  'Skýring',
 ]

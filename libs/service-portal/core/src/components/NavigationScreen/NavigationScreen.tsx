@@ -1,11 +1,11 @@
 import React, { FC } from 'react'
-import { Text, Box, Tiles, Inline, Tag } from '@island.is/island-ui/core'
-import { m } from '@island.is/service-portal/core'
-import * as styles from './NavigationScreen.css'
 import { Link } from 'react-router-dom'
+import { useLocale } from '@island.is/localization'
+import { Text, Box, Tiles, Inline, Tag } from '@island.is/island-ui/core'
+import { m } from '../../lib/messages'
 import Card from './Card/Card'
 import { MessageDescriptor } from 'react-intl'
-import { useLocale } from '@island.is/localization'
+import * as styles from './NavigationScreen.css'
 
 export interface NavigationScreenItem {
   name: string | MessageDescriptor
@@ -21,7 +21,11 @@ interface Props {
   items: NavigationScreenItem[]
 }
 
-export const NavigationScreen: FC<Props> = ({ title, items, inProgress }) => {
+export const NavigationScreen: FC<React.PropsWithChildren<Props>> = ({
+  title,
+  items,
+  inProgress,
+}) => {
   const { formatMessage } = useLocale()
 
   return (

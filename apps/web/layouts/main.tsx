@@ -13,16 +13,15 @@ import {
   ColorSchemes,
 } from '@island.is/island-ui/core'
 import getConfig from 'next/config'
-import { NextComponentType, NextPageContext } from 'next'
-import { Screen, GetInitialPropsContext } from '../types'
+import { Screen } from '../types'
 import Cookies from 'js-cookie'
-import * as Sentry from '@sentry/node'
-import { RewriteFrames } from '@sentry/integrations'
+import { CACHE_CONTROL_HEADER } from '@island.is/shared/constants'
 import { userMonitoring } from '@island.is/user-monitoring'
 import { useRouter } from 'next/router'
 import {
   Header,
   Main,
+  MobileAppBanner,
   PageLoader,
   SkipToMainContent,
 } from '@island.is/web/components'
@@ -39,17 +38,19 @@ import {
   QueryGetArticleCategoriesArgs,
   QueryGetGroupedMenuArgs,
   Menu,
+  GetOrganizationPageQuery,
+  GetSingleArticleQuery,
 } from '../graphql/schema'
 import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
-import { useI18n } from '../i18n'
+import { getLocaleFromPath, useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
-import { environment } from '../environments'
 import { useNamespace } from '../hooks'
 import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
 } from '../utils/processMenuData'
+import { stringHash } from '@island.is/shared/utils'
 import { Locale } from '@island.is/shared/types'
 import {
   LinkType,
@@ -57,8 +58,7 @@ import {
   linkResolver as LinkResolver,
   pathIsRoute,
 } from '../hooks/useLinkResolver'
-import { stringHash } from '@island.is/web/utils/stringHash'
-
+import { OrganizationIslandFooter } from '../components/Organization/OrganizationIslandFooter'
 import Illustration from './Illustration'
 import * as styles from './main.css'
 
@@ -66,9 +66,8 @@ const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
 const IS_MOCK =
   process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
-
-const SHOULD_LINK_TO_SERVICE_WEB = false
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
   let host = req
@@ -103,23 +102,16 @@ export interface LayoutProps {
   namespace: Record<string, string | string[]>
   alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   organizationAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
+  articleAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
+  languageToggleQueryParams?: Record<Locale, Record<string, string>>
+  footerVersion?: 'default' | 'organization'
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   respOrigin
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   megaMenuData
-}
-
-if (environment.sentryDsn) {
-  Sentry.init({
-    dsn: environment.sentryDsn,
-    enabled: environment.production,
-    integrations: [
-      new RewriteFrames({
-        iteratee: (frame) => {
-          frame.filename = frame.filename.replace(`~/.next`, 'app:///_next')
-          return frame
-        },
-      }),
-    ],
-  })
+  children?: React.ReactNode
 }
 
 if (
@@ -135,12 +127,9 @@ if (
     version: publicRuntimeConfig.appVersion || 'local',
   })
 }
-
-const Layout: NextComponentType<
-  GetInitialPropsContext<NextPageContext>,
-  LayoutProps,
-  LayoutProps
-> = ({
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
+const Layout: Screen<LayoutProps> = ({
   showSearchInHeader = true,
   wrapContent = true,
   showHeader = true,
@@ -157,6 +146,9 @@ const Layout: NextComponentType<
   namespace,
   alertBannerContent,
   organizationAlertBannerContent,
+  articleAlertBannerContent,
+  languageToggleQueryParams,
+  footerVersion = 'default',
   respOrigin,
   children,
   megaMenuData,
@@ -164,25 +156,8 @@ const Layout: NextComponentType<
   const { activeLocale, t } = useI18n()
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
-  const { route, pathname, query, asPath } = useRouter()
-  const fullUrl = `${respOrigin}${asPath}`
-
-  Sentry.configureScope((scope) => {
-    scope.setExtra('lang', activeLocale)
-
-    scope.setContext('router', {
-      route,
-      pathname,
-      query,
-      asPath,
-    })
-  })
-
-  Sentry.addBreadcrumb({
-    category: 'pages/main',
-    message: `Rendering from ${process.browser ? 'browser' : 'server'}`,
-    level: Sentry.Severity.Debug,
-  })
+  const router = useRouter()
+  const fullUrl = `${respOrigin}${router.asPath}`
 
   const menuTabs = [
     {
@@ -207,6 +182,8 @@ const Layout: NextComponentType<
 
   useEffect(() => {
     setAlertBanners(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       [
         {
           bannerId: `alert-${stringHash(
@@ -220,11 +197,33 @@ const Layout: NextComponentType<
           )}`,
           ...organizationAlertBannerContent,
         },
+        {
+          bannerId: `article-alert-${stringHash(
+            JSON.stringify(articleAlertBannerContent ?? {}),
+          )}`,
+          ...articleAlertBannerContent,
+        },
       ].filter(
         (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
       ),
     )
-  }, [alertBannerContent, organizationAlertBannerContent])
+  }, [
+    alertBannerContent,
+    articleAlertBannerContent,
+    organizationAlertBannerContent,
+  ])
+
+  // Update html lang in case a route change leads us to a new locale
+  useEffect(() => {
+    const handleRouteChange = () => {
+      const language = getLocaleFromPath(router.asPath)
+      document.documentElement.lang = language
+    }
+    router.events.on('routeChangeComplete', handleRouteChange)
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange)
+    }
+  }, [router.asPath, router.events])
 
   const preloadedFonts = [
     '/fonts/ibm-plex-sans-v7-latin-300.woff2',
@@ -234,14 +233,10 @@ const Layout: NextComponentType<
     '/fonts/ibm-plex-sans-v7-latin-600.woff2',
   ]
 
-  const isServiceWeb = pathIsRoute(asPath, 'serviceweb')
+  const isServiceWeb = pathIsRoute(router.asPath, 'serviceweb', activeLocale)
 
   return (
-    <GlobalContextProvider
-      namespace={namespace}
-      shouldLinkToServiceWeb={SHOULD_LINK_TO_SERVICE_WEB}
-      isServiceWeb={isServiceWeb}
-    >
+    <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
       <Page component="div">
         <Head>
           {preloadedFonts.map((href, index) => {
@@ -323,33 +318,62 @@ const Layout: NextComponentType<
         <SkipToMainContent
           title={n('skipToMainContent', 'Fara beint í efnið')}
         />
-
         {alertBanners.map((banner) => (
           <AlertBanner
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             key={banner.bannerId}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             title={banner.title}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             description={banner.description}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             link={{
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               ...(!!banner.link &&
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 !!banner.linkTitle && {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   href: linkResolver(banner.link.type as LinkType, [
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore make web strict
                     banner.link.slug,
                   ]).href,
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   title: banner.linkTitle,
                 }),
             }}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             variant={banner.bannerVariant as AlertBannerVariants}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             dismissable={banner.isDismissable}
             onDismiss={() => {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               if (banner.dismissedForDays !== 0) {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 Cookies.set(banner.bannerId, 'hide', {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   expires: banner.dismissedForDays,
                 })
               }
             }}
           />
         ))}
-
+        <Hidden above="sm">
+          <MobileAppBanner namespace={namespace} />
+        </Hidden>
         <PageLoader />
         <MenuTabsContext.Provider
           value={{
@@ -358,12 +382,15 @@ const Layout: NextComponentType<
         >
           {showHeader && (
             <ColorSchemeContext.Provider
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               value={{ colorScheme: headerColorScheme }}
             >
               <Header
                 buttonColorScheme={headerButtonColorScheme}
                 showSearchInHeader={showSearchInHeader}
                 megaMenuData={megaMenuData}
+                languageToggleQueryParams={languageToggleQueryParams}
               />
             </ColorSchemeContext.Provider>
           )}
@@ -373,28 +400,38 @@ const Layout: NextComponentType<
         </MenuTabsContext.Provider>
         {showFooter && (
           <Hidden print={true}>
-            {showFooterIllustration && (
-              <Illustration className={styles.illustration} />
+            {footerVersion === 'default' && (
+              <>
+                {showFooterIllustration && (
+                  <Illustration className={styles.illustration} />
+                )}
+                <Footer
+                  topLinks={footerUpperInfo}
+                  topLinksContact={footerUpperContact}
+                  bottomLinks={footerLowerMenu}
+                  middleLinks={footerMiddleMenu}
+                  bottomLinksTitle={t.siteExternalTitle}
+                  middleLinksTitle={String(namespace.footerMiddleLabel)}
+                  languageSwitchLink={{
+                    title: activeLocale === 'en' ? 'Íslenska' : 'English',
+                    href: activeLocale === 'en' ? '/' : '/en',
+                  }}
+                  privacyPolicyLink={{
+                    title: n('privacyPolicyTitle', 'Persónuverndarstefna'),
+                    href: n(
+                      'privacyPolicyHref',
+                      '/personuverndarstefna-stafraent-islands',
+                    ),
+                  }}
+                  termsLink={{
+                    title: n('termsTitle', 'Skilmálar'),
+                    href: n('termsHref', '/skilmalar-island-is'),
+                  }}
+                  showMiddleLinks
+                />
+              </>
             )}
-            <Footer
-              topLinks={footerUpperInfo}
-              {...(activeLocale === 'is'
-                ? {
-                    linkToHelpWeb: SHOULD_LINK_TO_SERVICE_WEB
-                      ? linkResolver('serviceweb').href
-                      : '',
-                  }
-                : { topLinksContact: footerUpperContact })}
-              bottomLinks={footerLowerMenu}
-              middleLinks={footerMiddleMenu}
-              bottomLinksTitle={t.siteExternalTitle}
-              middleLinksTitle={String(namespace.footerMiddleLabel)}
-              languageSwitchLink={{
-                title: activeLocale === 'en' ? 'Íslenska' : 'English',
-                href: activeLocale === 'en' ? '/' : '/en',
-              }}
-              showMiddleLinks
-            />
+            {footerVersion === 'organization' && <OrganizationIslandFooter />}
           </Hidden>
         )}
         <style jsx global>{`
@@ -448,76 +485,80 @@ const Layout: NextComponentType<
     </GlobalContextProvider>
   )
 }
-
-Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
+Layout.getProps = async ({ apolloClient, locale, req }) => {
   const lang = locale ?? 'is' // Defaulting to is when locale is undefined
 
   const { origin } = absoluteUrl(req, 'localhost:4200')
   const respOrigin = `${origin}`
-  const [
-    categories,
-    alertBanner,
-    namespace,
-    megaMenuData,
-    footerMenuData,
-  ] = await Promise.all([
-    apolloClient
-      .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
-        query: GET_CATEGORIES_QUERY,
-        variables: {
-          input: {
-            lang: locale as ContentLanguage,
+  const [categories, alertBanner, namespace, megaMenuData, footerMenuData] =
+    await Promise.all([
+      apolloClient
+        .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
+          query: GET_CATEGORIES_QUERY,
+          variables: {
+            input: {
+              lang: locale as ContentLanguage,
+            },
           },
-        },
-      })
-      .then((res) => res.data.getArticleCategories),
-    apolloClient
-      .query<GetAlertBannerQuery, QueryGetAlertBannerArgs>({
-        query: GET_ALERT_BANNER_QUERY,
-        variables: {
-          input: { id: '2foBKVNnRnoNXx9CfiM8to', lang },
-        },
-      })
-      .then((res) => res.data.getAlertBanner),
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            namespace: 'Global',
-            lang,
+        })
+        .then((res) => res.data.getArticleCategories),
+      apolloClient
+        .query<GetAlertBannerQuery, QueryGetAlertBannerArgs>({
+          query: GET_ALERT_BANNER_QUERY,
+          variables: {
+            input: { id: '2foBKVNnRnoNXx9CfiM8to', lang },
           },
-        },
-      })
-      .then((res) => {
-        // map data here to reduce data processing in component
-        return JSON.parse(res.data.getNamespace.fields)
-      }),
-    apolloClient
-      .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
-        query: GET_GROUPED_MENU_QUERY,
-        variables: {
-          input: { id: '5prHB8HLyh4Y35LI4bnhh2', lang },
-        },
-      })
-      .then((res) => res.data.getGroupedMenu),
-    apolloClient
-      .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
-        query: GET_GROUPED_MENU_QUERY,
-        variables: {
-          input: { id: '7MeplCDXx2n01BoxRrekCi', lang },
-        },
-      })
-      .then((res) => res.data.getGroupedMenu),
-  ])
+        })
+        .then((res) => res.data.getAlertBanner),
+      apolloClient
+        .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+          query: GET_NAMESPACE_QUERY,
+          variables: {
+            input: {
+              namespace: 'Global',
+              lang,
+            },
+          },
+        })
+        .then((res) => {
+          // map data here to reduce data processing in component
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          return JSON.parse(res.data.getNamespace.fields)
+        }),
+      apolloClient
+        .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
+          query: GET_GROUPED_MENU_QUERY,
+          variables: {
+            input: { id: '5prHB8HLyh4Y35LI4bnhh2', lang },
+          },
+        })
+        .then((res) => res.data.getGroupedMenu),
+      apolloClient
+        .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
+          query: GET_GROUPED_MENU_QUERY,
+          variables: {
+            input: { id: '7MeplCDXx2n01BoxRrekCi', lang },
+          },
+        })
+        .then((res) => res.data.getGroupedMenu),
+    ])
 
   const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 
   const mapLinks = (item: Menu) =>
     item.menuLinks.map((x) => {
       const href = LinkResolver(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         x.link.type as LinkType,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         [x.link.slug],
         lang as Locale,
       ).href.trim()
@@ -537,11 +578,14 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
     footerTagsMenu: [],
     footerMiddleMenu: [],
   }
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const footerMenu = footerMenuData.menus.reduce((menus, menu, idx) => {
     if (IS_MOCK) {
       const key = Object.keys(menus)[idx]
       if (key) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         menus[key] = mapLinks(menu as Menu)
       }
       return menus
@@ -550,22 +594,32 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
     switch (menu.id) {
       // Footer lower
       case '6vTuiadpCKOBhAlSjYY8td':
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         menus.footerLowerMenu = mapLinks(menu as Menu)
         break
       // Footer middle
       case '7hSbSQm5F5EBc0KxPTFVAS':
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         menus.footerMiddleMenu = mapLinks(menu as Menu)
         break
       // Footer tags
       case '6oGQDyWos4xcKX9BdMHd5R':
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         menus.footerTagsMenu = mapLinks(menu as Menu)
         break
       // Footer upper
       case '62Zh6hUc3bi0JwNRnqV8Nm':
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         menus.footerUpperInfo = mapLinks(menu as Menu)
         break
       // Footer upper contact
       case '5yUCZ4U6aZ8rZ9Jigme7GI':
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         menus.footerUpperContact = mapLinks(menu as Menu)
         break
       default:
@@ -580,6 +634,8 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
     alertBannerContent: {
       ...alertBanner,
       showAlertBanner:
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         alertBanner.showAlertBanner &&
         (!req?.headers.cookie ||
           req.headers.cookie?.indexOf(alertBannerId) === -1),
@@ -602,11 +658,14 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
   }
 }
 
-type LayoutWrapper<T> = NextComponentType<
-  GetInitialPropsContext<NextPageContext>,
-  { layoutProps: LayoutProps; componentProps: T },
-  { layoutProps: LayoutProps; componentProps: T }
->
+type LayoutWrapper<T> = Screen<{ layoutProps: LayoutProps; componentProps: T }>
+
+interface LayoutComponentProps {
+  themeConfig?: Partial<LayoutProps>
+  organizationPage?: GetOrganizationPageQuery['getOrganizationPage']
+  article?: GetSingleArticleQuery['getSingleArticle']
+  languageToggleQueryParams?: LayoutProps['languageToggleQueryParams']
+}
 
 export const withMainLayout = <T,>(
   Component: Screen<T>,
@@ -618,29 +677,37 @@ export const withMainLayout = <T,>(
   }) => {
     return (
       <Layout {...layoutProps}>
+        {/** 
+         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+         // @ts-ignore make web strict */}
         <Component {...componentProps} />
       </Layout>
     )
   }
 
-  WithMainLayout.getInitialProps = async (ctx) => {
-    const getLayoutInitialProps = Layout.getInitialProps as Exclude<
-      typeof Layout.getInitialProps,
+  WithMainLayout.getProps = async (ctx) => {
+    // Configure default full-page caching.
+    if (ctx.res) {
+      ctx.res.setHeader('Cache-Control', CACHE_CONTROL_HEADER)
+    }
+
+    const getLayoutProps = Layout.getProps as Exclude<
+      typeof Layout.getProps,
       undefined
     >
 
     const [layoutProps, componentProps] = await Promise.all([
-      getLayoutInitialProps(ctx),
-      Component.getInitialProps ? Component.getInitialProps(ctx) : ({} as T),
+      getLayoutProps(ctx),
+      Component.getProps ? Component.getProps(ctx) : ({} as T),
     ])
+    const layoutComponentProps = componentProps as LayoutComponentProps
 
-    const themeConfig: Partial<LayoutProps> =
-      'themeConfig' in componentProps ? componentProps['themeConfig'] : {}
-
-    const organizationAlertBannerContent: GetAlertBannerQuery['getAlertBanner'] =
-      'organizationPage' in componentProps
-        ? componentProps['organizationPage']['alertBanner']
-        : undefined
+    const themeConfig = layoutComponentProps.themeConfig ?? {}
+    const organizationAlertBannerContent =
+      layoutComponentProps.organizationPage?.alertBanner
+    const articleAlertBannerContent = layoutComponentProps.article?.alertBanner
+    const languageToggleQueryParams =
+      layoutComponentProps.languageToggleQueryParams
 
     return {
       layoutProps: {
@@ -648,6 +715,8 @@ export const withMainLayout = <T,>(
         ...layoutConfig,
         ...themeConfig,
         organizationAlertBannerContent,
+        articleAlertBannerContent,
+        languageToggleQueryParams,
       },
       componentProps,
     }

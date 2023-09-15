@@ -20,11 +20,13 @@
     "graphql",
     "pg",
     "winston",
+    "util-deprecate",
     "source-map-resolve",
     "atob",
     "logform",
     "pg-native",
     "form-data",
+    "@mikro-orm/core",
     "@protobufjs/aspromise",
     "@protobufjs/base64",
     "@protobufjs/codegen",
@@ -34,7 +36,8 @@
     "@protobufjs/inquire",
     "@protobufjs/path",
     "@protobufjs/pool",
-    "@protobufjs/utf8"
+    "@protobufjs/utf8",
+    "safer-buffer"
   ],
   "keepNames": true
 }

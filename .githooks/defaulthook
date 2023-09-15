@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -euo pipefail
+
+default_hook="${1:-}"
+if [[ -n "$default_hook" && -x "$default_hook" ]]; then
+  echo "Running your custom hooks ⚙️ "
+  exec "$default_hook"
+fi

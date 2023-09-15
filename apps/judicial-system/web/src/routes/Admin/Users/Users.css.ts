@@ -1,15 +1,11 @@
 import { style } from '@vanilla-extract/css'
+
 import { theme } from '@island.is/island-ui/theme'
 
 export const userControlContainer = style({
   maxWidth: '1440px',
   margin: `${theme.spacing[12]}px auto`,
   padding: `0 ${theme.spacing[6]}px`,
-})
-
-export const logoContainer = style({
-  display: 'flex',
-  marginBottom: theme.spacing[9],
 })
 
 export const userTable = style({
@@ -28,10 +24,9 @@ export const tableRowContainer = style({
   transition: 'all .5s ease-in-out',
 })
 
-export const th = style({
-  padding: `${theme.spacing[2]}px ${theme.spacing[3]}px`,
-})
-
-export const td = style({
-  padding: `${theme.spacing[2]}px ${theme.spacing[3]}px`,
+export const userManagementContainer = style({
+  display: 'grid',
+  gridTemplateColumns: '.6fr auto',
+  justifyContent: 'center',
+  padding: '48px 0',
 })

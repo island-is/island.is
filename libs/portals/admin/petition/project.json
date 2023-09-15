@@ -1,0 +1,32 @@
+{
+  "name": "portals-admin-petition",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/portals/admin/petition/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/portals/admin/petition/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/portals/admin/petition"],
+      "options": {
+        "jestConfig": "libs/portals/admin/petition/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/portals/admin/petition/src/**/**/*.codegen.ts",
+        "command": "graphql-codegen --config libs/portals/admin/petition/codegen.yml"
+      }
+    }
+  },
+  "tags": ["scope:portals-admin", "lib:portals-admin"]
+}

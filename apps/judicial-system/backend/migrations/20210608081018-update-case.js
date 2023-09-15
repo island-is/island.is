@@ -61,7 +61,7 @@ function formatProsecutorDemands(
 }
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
       Promise.all([
         queryInterface
@@ -104,9 +104,8 @@ module.exports = {
                     subRes[0][0].length === 1 ? subRes[0][0][0].name : '',
                   requestedValidToDate: c.requested_valid_to_date,
                   demands: c.demands,
-                  isolation: c.requested_custody_restrictions?.includes(
-                    'ISOLATION',
-                  ),
+                  isolation:
+                    c.requested_custody_restrictions?.includes('ISOLATION'),
                   isExtension: subRes[1][0].length === 1,
                   previousDecision:
                     subRes[1][0].length === 1
@@ -131,8 +130,8 @@ module.exports = {
                        c.isolation,
                        c.isExtension,
                        c.previousDecision,
-                     ).replace(/\'/g, "''")}${
-                      c.demands ? `\n\n${c.demands.replace(/\'/g, "''")}` : ''
+                     ).replace(/'/g, "''")}${
+                      c.demands ? `\n\n${c.demands.replace(/'/g, "''")}` : ''
                     }' \
                      WHERE "id" = '${c.id}'`,
                     { transaction: t },
@@ -151,7 +150,7 @@ module.exports = {
     )
   },
 
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
       Promise.all([
         queryInterface
@@ -177,7 +176,7 @@ module.exports = {
                        idx >= 0
                          ? `'${c.other_demands
                              .slice(idx + 2)
-                             .replace(/\'/g, "''")}'`
+                             .replace(/'/g, "''")}'`
                          : 'NULL'
                      } \
                      WHERE "id" = '${c.id}'`,

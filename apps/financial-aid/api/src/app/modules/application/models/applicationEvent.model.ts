@@ -27,4 +27,7 @@ export class ApplicationEventModel implements ApplicationEvent {
 
   @Field({ nullable: true })
   readonly staffName?: string
+
+  @Field({ nullable: true })
+  readonly emailSent?: boolean
 }

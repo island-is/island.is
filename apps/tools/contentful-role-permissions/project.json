@@ -1,0 +1,66 @@
+{
+  "name": "contentful-role-permissions",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/tools/contentful-role-permissions",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/tools/contentful-role-permissions"
+      },
+      "configurations": {
+        "production": {},
+        "development": {
+          "outputPath": "apps/tools/contentful-role-permissions"
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "options": {
+        "buildTarget": "contentful-role-permissions:build",
+        "dev": true
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "contentful-role-permissions:build:production",
+          "dev": false
+        },
+        "development": {
+          "buildTarget": "contentful-role-permissions:build:development",
+          "dev": true
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "export": {
+      "executor": "@nx/next:export",
+      "options": {
+        "buildTarget": "contentful-role-permissions:build:production"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/tools/contentful-role-permissions"
+      ],
+      "options": {
+        "jestConfig": "apps/tools/contentful-role-permissions/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "apps/tools/contentful-role-permissions/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    }
+  },
+  "tags": ["scope:react-next"]
+}

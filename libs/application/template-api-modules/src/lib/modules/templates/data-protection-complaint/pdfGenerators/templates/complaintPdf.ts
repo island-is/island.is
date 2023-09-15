@@ -1,8 +1,14 @@
-import { ComplaintPDF } from '../../models'
+import { ComplaintPDF, ExternalDataMessages, Information } from '../../models'
 
-import { Application } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { applicationToComplaintPDF } from '../../data-protection-utils'
 import { generatePdf } from '../pdfGenerator'
+import {
+  messages,
+  OnBehalf,
+  SubjectOfComplaint,
+  subjectOfComplaintValueLabelMapper,
+} from '@island.is/application/templates/data-protection-complaint'
 import {
   addformFieldAndValue,
   addHeader,
@@ -17,7 +23,6 @@ import { dataProtectionLogo } from '../assets/logo'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
-import { OnBehalf } from '@island.is/application/templates/data-protection-complaint'
 import { DocumentInfo } from '@island.is/clients/data-protection-complaint'
 
 export async function generateComplaintPdf(
@@ -50,11 +55,12 @@ function dpcApplicationPdf(
     'Upplýsingar um fyrirtæki, stofnun eða einstakling sem kvartað er yfir',
     doc,
   )
-  complaint.targetsOfComplaint.map((c, i) => {
+
+  complaint.targetsOfComplaint.map((c) => {
     addformFieldAndValue('Nafn', c.name, doc, PdfConstants.SMALL_LINE_GAP)
     if (c.nationalId) {
       addformFieldAndValue(
-        'Kt.',
+        'Kennitala',
         formatSsn(c.nationalId),
         doc,
         PdfConstants.SMALL_LINE_GAP,
@@ -69,56 +75,128 @@ function dpcApplicationPdf(
     const operatesWithinEuropeAnswer =
       c.operatesWithinEurope === 'yes' ? c.countryOfOperation : 'Ekki vitað/nei'
     addformFieldAndValue(
-      'Starfsemi innan Evrópu?',
+      'Veistu hvort viðkomandi aðili er með starfsemi í öðru landi innan Evrópu?',
       operatesWithinEuropeAnswer,
       doc,
-      PdfConstants.LARGE_LINE_GAP,
+      PdfConstants.SMALL_LINE_GAP,
     )
+    doc.moveDown()
+    if (c.operatesWithinEurope === 'yes') {
+      addValue(
+        messages.complaint.labels.complaineeOperatesWithinEuropeMessage
+          .defaultMessage,
+        doc,
+        PdfConstants.NORMAL_FONT,
+      )
+      doc.moveDown(2)
+    }
   })
 
-  addSubheader('Efni kvörtunar', doc)
-  const subjects = complaint.complaintCategories
-    .map((c) => c)
-    .filter((x) => x !== '')
-    .join(', ')
+  if (complaint.complaintCategories.length !== 0) {
+    addSubheader('Efni kvörtunar', doc)
+    // Render it in the same order as shown on the application it self
+    for (const [key, value] of Object.entries(
+      subjectOfComplaintValueLabelMapper,
+    )) {
+      // Check if the option was selected by the user
+      const selection = complaint.complaintCategories.find(
+        (x) => x === value.defaultMessage,
+      )
+      if (!selection) continue
 
-  addValue(
-    subjects,
-    doc,
-    PdfConstants.NORMAL_FONT,
-    complaint.somethingElse
-      ? PdfConstants.SMALL_LINE_GAP
-      : PdfConstants.LARGE_LINE_GAP,
-  )
-  if (complaint.somethingElse) {
-    addValue(
-      `Annað hvað? : ${complaint.somethingElse}`,
-      doc,
-      PdfConstants.NORMAL_FONT,
-      PdfConstants.LARGE_LINE_GAP,
-    )
+      if (key === SubjectOfComplaint.OTHER) {
+        // other "annað" is found, printing the message with it
+        addValue(`• ${selection}: ${complaint.somethingElse}`, doc)
+      } else {
+        addValue(`• ${selection}`, doc)
+      }
+    }
+
+    doc.moveDown()
   }
 
   addSubheader('Yfir hverju er kvartað í meginatriðum?', doc)
-  addValue(
-    complaint.description,
-    doc,
-    PdfConstants.NORMAL_FONT,
-    PdfConstants.SMALL_LINE_GAP,
-  )
+  addValue(complaint.description, doc, PdfConstants.NORMAL_FONT)
   doc.moveDown()
   if (complaint.attachments.length > 0) {
     addSubheader('Fylgiskjöl', doc)
 
-    addValue(
-      complaint.attachments.join(),
-      doc,
-      PdfConstants.NORMAL_FONT,
-      PdfConstants.LARGE_LINE_GAP,
-    )
+    complaint.attachments.map((attachment) => {
+      return addValue(attachment, doc, PdfConstants.NORMAL_FONT)
+    })
+
+    doc.moveDown()
   }
+  doc.moveDown()
+
+  renderExternalDataMessages(complaint.messages.externalData, doc)
+  renderInformationMessages(complaint.messages.information, doc)
 
   doc.end()
+}
+
+function renderExternalDataMessages(
+  externalData: ExternalDataMessages,
+  doc: PDFKit.PDFDocument,
+): void {
+  addHeader(externalData.title, doc)
+  addValue(externalData.subtitle, doc, PdfConstants.BOLD_FONT)
+  addValue(externalData.description, doc)
+  doc.moveDown()
+  addValue(externalData.nationalRegistryTitle, doc, PdfConstants.BOLD_FONT)
+  addValue(
+    externalData.nationalRegistryDescription,
+    doc,
+    PdfConstants.NORMAL_FONT,
+  )
+  doc.moveDown()
+  addValue(externalData.userProfileTitle, doc, PdfConstants.BOLD_FONT)
+  addValue(externalData.userProfileDescription, doc, PdfConstants.NORMAL_FONT)
+  doc.moveDown()
+}
+
+function renderInformationMessages(
+  information: Information,
+  doc: PDFKit.PDFDocument,
+): void {
+  addHeader(information.title, doc)
+
+  const bulletsList = [
+    information.bullets.bulletOne,
+    information.bullets.bulletTwo,
+    information.bullets.bulletThree,
+    information.bullets.bulletFour,
+    information.bullets.bulletFive,
+    information.bullets.bulletSix,
+    information.bullets.bulletSeven,
+    information.bullets.bulletEight,
+  ]
+
+  bulletsList.map(({ bullet, link, linkText }) => {
+    const splitBullet = bullet.split('{link}')
+    if (splitBullet.length === 2) {
+      return doc
+        .font(PdfConstants.NORMAL_FONT)
+        .fontSize(PdfConstants.VALUE_FONT_SIZE)
+        .lineGap(PdfConstants.NORMAL_LINE_GAP)
+        .text('• ', { continued: true })
+        .text(splitBullet[0], { continued: true })
+        .fillColor('blue')
+        .text(linkText, {
+          continued: true,
+          link: link,
+        })
+        .fillColor('black')
+        .text(splitBullet[1], { paragraphGap: 10 })
+    } else {
+      return doc
+        .font(PdfConstants.NORMAL_FONT)
+        .fontSize(PdfConstants.VALUE_FONT_SIZE)
+        .lineGap(PdfConstants.NORMAL_LINE_GAP)
+        .text('• ', { continued: true })
+        .text(bullet, { paragraphGap: 10 })
+    }
+  })
 }
 
 function renderContactsAndComplainees(
@@ -127,18 +205,18 @@ function renderContactsAndComplainees(
 ): void {
   const contactHeading =
     complaint.onBehalf === OnBehalf.MYSELF ||
-    OnBehalf.ORGANIZATION_OR_INSTITUTION
+    complaint.onBehalf === OnBehalf.ORGANIZATION_OR_INSTITUTION ||
+    (complaint.onBehalf === OnBehalf.OTHERS &&
+      complaint.agency?.persons &&
+      complaint.agency.persons.length === 1)
       ? 'Kvartandi'
       : 'Kvartendur'
-  addSubheader(contactHeading, doc)
-
-  renderAgencyComplainees(complaint, doc)
 
   if (
-    complaint.onBehalf !== OnBehalf.MYSELF ||
-    OnBehalf.ORGANIZATION_OR_INSTITUTION
+    complaint.onBehalf === OnBehalf.ORGANIZATION_OR_INSTITUTION ||
+    complaint.onBehalf !== OnBehalf.OTHERS
   ) {
-    addSubheader('Tengiliður', doc)
+    addSubheader(contactHeading, doc)
   }
 
   addformFieldAndValue(
@@ -148,7 +226,7 @@ function renderContactsAndComplainees(
     PdfConstants.SMALL_LINE_GAP,
   )
   addformFieldAndValue(
-    'Kt.',
+    'Kennitala',
     complaint.contactInfo.nationalId,
     doc,
     PdfConstants.SMALL_LINE_GAP,
@@ -161,44 +239,82 @@ function renderContactsAndComplainees(
     PdfConstants.SMALL_LINE_GAP,
   )
 
-  addformFieldAndValue(
-    'Sími',
-    complaint.contactInfo.phone,
-    doc,
-    PdfConstants.SMALL_LINE_GAP,
-  )
+  complaint.contactInfo.phone &&
+    addformFieldAndValue(
+      'Sími',
+      complaint.contactInfo.phone,
+      doc,
+      PdfConstants.SMALL_LINE_GAP,
+    )
 
-  addformFieldAndValue(
-    'Netfang',
-    complaint.contactInfo.email,
-    doc,
-    PdfConstants.LARGE_LINE_GAP,
-  )
+  complaint.contactInfo.email &&
+    addformFieldAndValue(
+      'Netfang',
+      complaint.contactInfo.email,
+      doc,
+      PdfConstants.SMALL_LINE_GAP,
+    )
+
+  doc.moveDown()
+
+  if (complaint.onBehalf === OnBehalf.OTHERS) {
+    addSubheader(contactHeading, doc)
+  }
+
+  renderAgencyComplainees(complaint, doc)
+
+  if (complaint.onBehalf === OnBehalf.OTHERS) {
+    addSubheader('Tengiliður', doc)
+  }
+
+  /* Contact if complaint is for the hand of company/organization, it's optional to fill out */
+  if (
+    complaint.contactInfo.contactName.length > 0 ||
+    complaint.contactInfo.contactEmail.length > 0
+  ) {
+    addSubheader('Tengiliður', doc)
+    complaint.contactInfo.contactName.length > 0 &&
+      addformFieldAndValue(
+        'Nafn',
+        complaint.contactInfo.contactName,
+        doc,
+        PdfConstants.SMALL_LINE_GAP,
+      )
+    complaint.contactInfo.contactEmail.length > 0 &&
+      addformFieldAndValue(
+        'Netfang',
+        complaint.contactInfo.contactEmail,
+        doc,
+        PdfConstants.SMALL_LINE_GAP,
+      )
+    doc.moveDown()
+  }
 }
 
 function renderAgencyComplainees(
   complaint: ComplaintPDF,
   doc: PDFKit.PDFDocument,
 ): void {
-  if (complaint.onBehalf === OnBehalf.MYSELF_AND_OR_OTHERS) {
-    complaint.agency?.persons.push({
-      name: complaint.contactInfo.name,
-      nationalId: complaint.contactInfo.nationalId,
-    })
-  }
-
-  if (complaint.agency?.persons?.length) {
-    complaint.agency.persons.map((person, i, persons) => {
-      const linegap =
-        i === persons.length - 1
-          ? PdfConstants.LARGE_LINE_GAP
-          : PdfConstants.SMALL_LINE_GAP
-      addValue(
-        `${person.name} kt. ${person.nationalId}`,
+  if (
+    complaint.agency?.persons?.length &&
+    complaint.onBehalf !== OnBehalf.ORGANIZATION_OR_INSTITUTION &&
+    complaint.onBehalf !== OnBehalf.MYSELF
+  ) {
+    complaint.agency.persons.map((person) => {
+      addformFieldAndValue(
+        'Nafn',
+        person.name,
         doc,
-        PdfConstants.NORMAL_FONT,
-        linegap,
+        PdfConstants.SMALL_LINE_GAP,
       )
+      addformFieldAndValue(
+        'Kennitala',
+        person.nationalId,
+        doc,
+        PdfConstants.SMALL_LINE_GAP,
+      )
+
+      doc.moveDown()
     })
   }
 }

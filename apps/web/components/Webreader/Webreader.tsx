@@ -23,7 +23,7 @@ interface WebReaderProps {
   marginBottom?: ResponsiveProp<Space>
 }
 
-export const Webreader: FC<WebReaderProps> = ({
+export const Webreader: FC<React.PropsWithChildren<WebReaderProps>> = ({
   readId = 'main-content',
   readClass,
   marginTop = 3,
@@ -34,7 +34,7 @@ export const Webreader: FC<WebReaderProps> = ({
   const { activeLocale } = useI18n()
 
   useEffect(() => {
-    const routeChangestart = (url) => {
+    const routeChangestart = () => {
       if (typeof ReadSpeaker !== 'undefined' && ReadSpeaker.PlayerAPI?.stop) {
         ReadSpeaker.PlayerAPI.stop()
 

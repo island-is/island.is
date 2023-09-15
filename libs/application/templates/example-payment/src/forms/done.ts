@@ -1,16 +1,15 @@
 import {
   buildForm,
-  Form,
-  FormModes,
   buildSection,
   buildDescriptionField,
 } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 import * as m from '../lib/messages'
 
 export const done: Form = buildForm({
   id: 'ExamplePaymentDoneForm',
   title: 'Umsókn móttekin',
-  mode: FormModes.APPLYING,
+  mode: FormModes.COMPLETED,
   children: [
     buildSection({
       id: 'externalData',

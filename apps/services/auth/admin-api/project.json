@@ -1,0 +1,61 @@
+{
+  "name": "services-auth-admin-api",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/services/auth/admin-api/src",
+  "projectType": "application",
+  "prefix": "auth-admin-api",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "./tools/executors/node:build",
+      "options": {
+        "outputPath": "dist/apps/services/auth/admin-api",
+        "main": "apps/services/auth/admin-api/src/main.ts",
+        "tsConfig": "apps/services/auth/admin-api/tsconfig.app.json",
+        "assets": ["apps/services/auth/admin-api/src/assets"],
+        "maxWorkers": 2
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-auth-admin-api:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/services/auth/admin-api/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "apps/services/auth/admin-api/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": ["{workspaceRoot}/coverage/apps/services/auth/admin-api"]
+    },
+    "schemas/build-openapi": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth/admin-api/tsconfig.app.json apps/services/auth/admin-api/src/buildOpenApi.ts"
+      },
+      "outputs": [
+        "{workspaceRoot}/apps/services/auth/admin-api/src/openapi.yaml"
+      ]
+    },
+    "docker-express": {}
+  },
+  "tags": ["scope:auth-api"]
+}

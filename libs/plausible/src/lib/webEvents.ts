@@ -16,3 +16,26 @@ export const webLoginButtonSelect = (
   }
   plausibleCustomEvent(event)
 }
+
+// Tracks Site Search from Web, ServiceWeb and other search inputs
+export const trackSearchQuery = (query: string, source: string) => {
+  const event: BaseEvent = {
+    eventName: 'Search Query',
+    featureName: '', // intentionally left empty to match plausible Goal legacy settings
+    params: {
+      // lowercase to count "Query String" and "query string" as the same thing
+      query: query.trim().toLowerCase(),
+      source,
+    },
+  }
+  plausibleCustomEvent(event)
+}
+
+export const webMenuButtonClicked = () => {
+  const event: BaseEvent = {
+    eventName: 'Menu button',
+    featureName: 'web',
+    params: {},
+  }
+  plausibleCustomEvent(event)
+}

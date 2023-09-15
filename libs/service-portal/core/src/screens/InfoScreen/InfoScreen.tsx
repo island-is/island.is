@@ -14,8 +14,11 @@ import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 import { servicePortalOutboundLink } from '@island.is/plausible'
-import { m } from '@island.is/service-portal/core'
+import { m } from '../../lib/messages'
 import * as styles from './InfoScreen.css'
+import { formatPlausiblePathToParams } from '../../utils/formatPlausiblePathToParams'
+import { useLocation } from 'react-router-dom'
+
 interface Props {
   title: MessageDescriptor
   intro: MessageDescriptor
@@ -34,7 +37,7 @@ interface Props {
   figure: string
 }
 
-export const InfoScreen: FC<Props> = ({
+export const InfoScreen: FC<React.PropsWithChildren<Props>> = ({
   title,
   intro,
   list,
@@ -44,8 +47,10 @@ export const InfoScreen: FC<Props> = ({
   inProgress = true,
 }) => {
   const { formatMessage } = useLocale()
+  const { pathname } = useLocation()
+
   const trackExternalLinkClick = () => {
-    servicePortalOutboundLink()
+    servicePortalOutboundLink(formatPlausiblePathToParams(pathname))
   }
   return (
     <Box marginBottom={[4, 6, 9]}>
@@ -99,7 +104,7 @@ export const InfoScreen: FC<Props> = ({
         </GridColumn>
         <GridColumn span={['12/12', '5/12']} order={[1, 2]}>
           <Box marginBottom={[3, 0]}>
-            <img src={figure} alt={`${formatMessage(m.altText)} ${title}`} />
+            <img src={figure} alt="" />
           </Box>
         </GridColumn>
       </GridRow>

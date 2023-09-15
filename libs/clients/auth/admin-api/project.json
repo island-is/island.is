@@ -1,0 +1,31 @@
+{
+  "name": "clients-auth-admin-api",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/auth/admin-api/src",
+  "projectType": "library",
+  "tags": ["lib:client"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/auth/admin-api/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/auth/admin-api"],
+      "options": {
+        "jestConfig": "libs/clients/auth/admin-api/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/openapi-generator": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/auth/admin-api/gen/fetch -i apps/services/auth/admin-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+      },
+      "outputs": ["{workspaceRoot}/libs/clients/auth/admin-api/gen"]
+    }
+  }
+}

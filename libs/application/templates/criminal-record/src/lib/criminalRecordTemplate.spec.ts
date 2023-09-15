@@ -1,10 +1,10 @@
+import { ApplicationTemplateHelper } from '@island.is/application/core'
 import {
   Application,
-  ApplicationTemplateHelper,
   ApplicationTypes,
   DefaultEvents,
   ApplicationStatus,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { States } from './constants'
 import CriminalRecordTemplate from './CriminalRecordTemplate'
 
@@ -40,7 +40,7 @@ describe('Criminal Record Application Template', () => {
         CriminalRecordTemplate,
       )
       const [hasChanged, newState] = helper.changeState({
-        type: DefaultEvents.PAYMENT,
+        type: DefaultEvents.SUBMIT,
       })
       expect(hasChanged).toBe(true)
       expect(newState).toBe(States.PAYMENT)

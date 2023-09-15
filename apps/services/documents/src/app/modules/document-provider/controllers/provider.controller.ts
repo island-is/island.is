@@ -29,11 +29,11 @@ import { DocumentProviderService } from '../document-provider.service'
 import { CreateProviderDto } from '../dto/createProvider.dto'
 import { UpdateProviderDto } from '../dto/updateProvider.dto'
 import { Provider } from '../models/provider.model'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
 const namespace = `${environment.audit.defaultNamespace}/providers`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
 @ApiTags('providers')
 @ApiHeader({
   name: 'authorization',
@@ -48,6 +48,7 @@ export class ProviderController {
   ) {}
 
   @Get()
+  @Scopes(AdminPortalScope.documentProvider)
   @ApiOkResponse({ type: [Provider] })
   @Audit<Provider[]>({
     resources: (providers) => providers.map((provider) => provider.id),
@@ -57,6 +58,7 @@ export class ProviderController {
   }
 
   @Get(':id')
+  @Scopes(AdminPortalScope.documentProvider)
   @ApiOkResponse({ type: Provider })
   @Audit<Provider>({
     resources: (provider) => provider.id,
@@ -72,14 +74,14 @@ export class ProviderController {
   }
 
   @Get('/external/:id')
+  @Scopes(ApiScope.internal, AdminPortalScope.documentProvider)
   @ApiOkResponse({ type: Provider })
   @Audit<Provider>({
     resources: (provider) => provider.id,
   })
   async findByExternalId(@Param('id') id: string): Promise<Provider> {
-    const provider = await this.documentProviderService.findProviderByExternalProviderId(
-      id,
-    )
+    const provider =
+      await this.documentProviderService.findProviderByExternalProviderId(id)
 
     if (!provider) {
       throw new NotFoundException(
@@ -91,6 +93,7 @@ export class ProviderController {
   }
 
   @Post()
+  @Scopes(ApiScope.internal, AdminPortalScope.documentProvider)
   @ApiCreatedResponse({ type: Provider })
   @Audit<Provider>({
     resources: (provider) => provider?.id,
@@ -106,20 +109,19 @@ export class ProviderController {
   }
 
   @Put(':id')
+  @Scopes(ApiScope.internal, AdminPortalScope.documentProvider)
   @ApiOkResponse({ type: Provider })
   async updateProvider(
     @Param('id') id: string,
     @Body() provider: UpdateProviderDto,
     @CurrentUser() user: User,
   ): Promise<Provider> {
-    const {
-      numberOfAffectedRows,
-      updatedProvider,
-    } = await this.documentProviderService.updateProvider(
-      id,
-      provider,
-      user.nationalId,
-    )
+    const { numberOfAffectedRows, updatedProvider } =
+      await this.documentProviderService.updateProvider(
+        id,
+        provider,
+        user.nationalId,
+      )
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`Provider ${id} does not exist.`)

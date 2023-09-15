@@ -13,8 +13,8 @@ const AboutDataGathering = () => {
       <Text marginBottom={[4, 4, 5]}>
         Við þurfum að fá þig til að renna yfir nokkur atriði varðandi þína
         persónuhagi og fjármál til að reikna út fjárhagsaðstoð til útgreiðslu í
-        byrjun {getNextPeriod.month}. Í lok umsóknar getur þú sent hana inn eða
-        eytt henni og öllum tengdum gögnum.
+        byrjun {getNextPeriod().month}. Í lok umsóknar getur þú sent hana inn
+        eða eytt henni og öllum tengdum gögnum.
       </Text>
     </>
   )

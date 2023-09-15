@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import slugify from '@sindresorhus/slugify'
 import {
   Stack,
@@ -6,7 +6,7 @@ import {
   Accordion,
   AccordionItem,
 } from '@island.is/island-ui/core'
-import { Slice as SliceType, richText } from '@island.is/island-ui/contentful'
+import { Slice as SliceType, richText } from '../..'
 
 export interface FaqListProps {
   title: string
@@ -18,14 +18,14 @@ export interface FaqListProps {
   showTitle?: boolean
 }
 
-export const FaqList: FC<FaqListProps> = ({
+export const FaqList: FC<React.PropsWithChildren<FaqListProps>> = ({
   title,
   questions,
   showTitle = true,
 }) => {
   return (
     <Stack space={6}>
-      {showTitle !== false && (
+      {title && showTitle !== false && (
         <Text variant="h2" as="h2">
           <span data-sidebar-link={slugify(title)}>{title}</span>
         </Text>

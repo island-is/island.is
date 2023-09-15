@@ -1,0 +1,33 @@
+{
+  "name": "api-domains-application",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/api/domains/application/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/api/domains/application/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/api/domains/application/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/application"]
+    },
+    "schemas/openapi-generator": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/api/domains/application/gen/fetch -i apps/application-system/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+      },
+      "outputs": ["{workspaceRoot}/libs/api/domains/application/gen/fetch"]
+    }
+  },
+  "tags": ["lib:api", "scope:api"]
+}

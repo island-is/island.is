@@ -1,71 +1,34 @@
-import '@island.is/infra-tracing'
+import { INestApplication, ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
-import cookieParser from 'cookie-parser'
-import {
-  INestApplication,
-  Type,
-  ValidationPipe,
-  NestInterceptor,
-} from '@nestjs/common'
-import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
-import yaml from 'js-yaml'
-import * as yargs from 'yargs'
-import * as fs from 'fs'
 import { NestExpressApplication } from '@nestjs/platform-express'
+import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
+import bodyParser from 'body-parser'
+import cookieParser from 'cookie-parser'
+import * as fs from 'fs'
+import type { Server } from 'http'
+import yaml from 'js-yaml'
 
 import {
   logger,
   LoggingModule,
   monkeyPatchServerLogging,
 } from '@island.is/logging'
-import { startMetricServer } from '@island.is/infra-metrics'
+import { getServerPort, startMetricServer } from '@island.is/infra-metrics'
+import '@island.is/infra-tracing'
+
 import { httpRequestDurationMiddleware } from './httpRequestDurationMiddleware'
 import { InfraModule } from './infra/infra.module'
 import { swaggerRedirectMiddleware } from './swaggerMiddlewares'
+import { InfraNestServer, RunServerOptions } from './types'
 
-type RunServerOptions = {
-  /**
-   * Main nest module.
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  appModule: Type<any>
-
-  /**
-   * Server name.
-   */
-  name: string
-
-  /**
-   * The base path of the swagger documentation.
-   */
-  swaggerPath?: string
-
-  /**
-   * OpenAPI definition.
-   */
-  openApi?: Omit<OpenAPIObject, 'paths'>
-
-  /**
-   * The port to start the server on.
-   */
-  port?: number
-
-  /**
-   * Hook up global interceptors to app
-   */
-  interceptors?: NestInterceptor[]
-
-  /**
-   * Global url prefix for the app
-   */
-  globalPrefix?: string
-
-  stripNonClassValidatorInputs?: boolean
-}
+// Allow client connections to stay connected for up to 30 seconds of inactivity. For reference, the default value in
+// Node.JS is 5 seconds, Kestrel (.NET) is 120 seconds and Nginx is 75 seconds.
+const KEEP_ALIVE_TIMEOUT = 1000 * 30
 
 export const createApp = async ({
   stripNonClassValidatorInputs = true,
   appModule,
+  enableVersioning,
   ...options
 }: RunServerOptions) => {
   monkeyPatchServerLogging()
@@ -79,6 +42,10 @@ export const createApp = async ({
     },
   )
 
+  if (enableVersioning) {
+    app.enableVersioning()
+  }
+
   // Configure "X-Requested-For" handling.
   // Internal services should trust the X-Forwarded-For header (EXPRESS_TRUST_PROXY=1)
   // Public services (eg API Gateway) should trust our own reverse proxies
@@ -91,6 +58,7 @@ export const createApp = async ({
     new ValidationPipe({
       whitelist: stripNonClassValidatorInputs,
       forbidNonWhitelisted: true,
+      forbidUnknownValues: false,
     }),
   )
 
@@ -98,21 +66,33 @@ export const createApp = async ({
     app.setGlobalPrefix(options.globalPrefix)
   }
 
-  app.use(httpRequestDurationMiddleware())
+  if (options.collectMetrics !== false) {
+    app.use(httpRequestDurationMiddleware())
+  }
   app.use(cookieParser())
+
+  if (options.jsonBodyLimit) {
+    app.use(bodyParser.json({ limit: options.jsonBodyLimit }))
+  }
 
   return app
 }
 
-const startServer = async (app: INestApplication, port = 3333) => {
-  const servicePort = parseInt(process.env.PORT || '') || port
-  const metricsPort = servicePort + 1
-  await app.listen(servicePort, () => {
-    logger.info(`Service listening at http://localhost:${servicePort}`, {
+const startServer = async (
+  app: INestApplication,
+  port: number,
+): Promise<Server> => {
+  const server: Server = await app.listen(port)
+  logger.info(
+    `Service listening at http://localhost:${getServerPort(server, port)}`,
+    {
       context: 'Bootstrap',
-    })
-  })
-  await startMetricServer(metricsPort)
+    },
+  )
+
+  // Allow connections to remain idle for a bit longer than the default 5s.
+  server.keepAliveTimeout = KEEP_ALIVE_TIMEOUT
+  return server
 }
 
 function setupOpenApi(
@@ -128,27 +108,13 @@ function setupOpenApi(
   return document
 }
 
-function generateSchema(filePath: string, document: OpenAPIObject) {
-  logger.info('Generating OpenAPI schema.', { context: 'Bootstrap' })
-  fs.writeFileSync(filePath, yaml.dump(document, { noRefs: true }))
-}
-
-export const bootstrap = async (options: RunServerOptions) => {
-  const argv = yargs.option('generateSchema', {
-    description: 'Generate OpenAPI schema into the specified file',
-    type: 'string',
-  }).argv
-
+export const bootstrap = async (
+  options: RunServerOptions,
+): Promise<InfraNestServer> => {
   const app = await createApp(options)
 
   if (options.openApi) {
     const document = setupOpenApi(app, options.openApi, options.swaggerPath)
-
-    if (argv.generateSchema) {
-      generateSchema(argv.generateSchema, document)
-      await app.close()
-      return
-    }
   }
 
   if (options.interceptors) {
@@ -157,5 +123,25 @@ export const bootstrap = async (options: RunServerOptions) => {
     })
   }
 
-  startServer(app, options.port)
+  const serverPort = process.env.PORT
+    ? parseInt(process.env.PORT, 10)
+    : options.port ?? 3333
+  const metricServerPort = serverPort === 0 ? 0 : serverPort + 1
+  const server = await startServer(app, serverPort)
+  const metricsServer =
+    options.collectMetrics !== false
+      ? await startMetricServer(metricServerPort)
+      : undefined
+
+  return {
+    app,
+    server,
+    metricsServer,
+    close: async () => {
+      await app.close()
+      if (metricsServer) {
+        return new Promise((resolve) => metricsServer.close(() => resolve()))
+      }
+    },
+  }
 }

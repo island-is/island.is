@@ -65,6 +65,22 @@ export const messages = defineMessages({
     id: 'sp.assets:site-assessment',
     defaultMessage: 'Lóðarmat',
   },
+  landSize: {
+    id: 'sp.assets:land-size',
+    defaultMessage: 'Flatarmál',
+  },
+  land: {
+    id: 'sp.assets:land',
+    defaultMessage: 'Landeign',
+  },
+  landNumber: {
+    id: 'sp.assets:land-number',
+    defaultMessage: 'Landeignarnúmer',
+  },
+  landAppraisal: {
+    id: 'sp.assets:land-appraisal',
+    defaultMessage: 'Lóðarmat',
+  },
   usage: {
     id: 'sp.assets:usage',
     defaultMessage: 'Notkun',
@@ -96,5 +112,13 @@ export const messages = defineMessages({
     grunnupplýsingar um lönd og lóðir auk mannvirkja sem á þeim standa. Þar
     er meðal annars að finna upplýsingar um fasteigna- og brunabótamat,
     stærðir, byggingarár, byggingarefni, notkun og auðkennisnúmer eigna.`,
+  },
+  size: {
+    id: 'sp.assets:size',
+    defaultMessage: 'Stærð',
+  },
+  buildYear: {
+    id: 'sp.assets:build-year',
+    defaultMessage: 'Byggingarár',
   },
 })

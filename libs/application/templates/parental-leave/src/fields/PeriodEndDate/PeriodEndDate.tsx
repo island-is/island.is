@@ -1,16 +1,18 @@
 import React, { FC, useEffect } from 'react'
-import { FieldErrors, FieldValues } from 'react-hook-form/dist/types/form'
-import * as Sentry from '@sentry/react'
+import { FieldErrors, FieldValues } from 'react-hook-form/dist/types'
 
+import {
+  NO_ANSWER,
+  extractRepeaterIndexFromField,
+  getErrorViaPath,
+} from '@island.is/application/core'
 import {
   FieldBaseProps,
   FieldComponents,
   CustomField,
   FieldTypes,
   MaybeWithApplicationAndField,
-  NO_ANSWER,
-  extractRepeaterIndexFromField,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { DateFormField } from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
@@ -28,19 +30,19 @@ type FieldPeriodEndDateProps = {
 }
 
 export const PeriodEndDate: FC<
-  FieldBaseProps & CustomField & FieldPeriodEndDateProps
+  React.PropsWithChildren<
+    FieldBaseProps & CustomField & FieldPeriodEndDateProps
+  >
 > = ({ field, application, errors }) => {
   const { formatMessage } = useLocale()
   const { title, props } = field
   const currentIndex = extractRepeaterIndexFromField(field)
-  const error =
-    (errors as FieldErrors<FieldValues>)?.periods?.[currentIndex]?.endDate
-      ?.message ?? (errors?.[`periods[${currentIndex}].endDate`] as string)
   const fieldId = `periods[${currentIndex}].endDate`
+  const error = getErrorViaPath(errors as FieldErrors<FieldValues>, fieldId)
 
   useEffect(() => {
     if (currentIndex < 0) {
-      Sentry.captureException(
+      console.error(
         new Error(
           'Cannot render PeriodEndDate component with a currentIndex of -1',
         ),

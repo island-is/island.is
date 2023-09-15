@@ -1,4 +1,4 @@
 #!/bin/bash
 set -euxo pipefail
-
-yarn run format:check --all
+action=${1:-"check"}
+yarn nx format:"${action}" --all

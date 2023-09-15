@@ -1,13 +1,15 @@
 import { ApplicationUIState } from '../reducer/ReducerTypes'
 import {
-  ApplicationStatus,
-  ApplicationTypes,
   buildForm,
   buildSection,
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
-import * as z from 'zod'
+import {
+  ApplicationStatus,
+  ApplicationTypes,
+} from '@island.is/application/types'
+import { z } from 'zod'
 import { getApplicationTitle } from './useApplicationTitle'
 import { MessageDescriptor } from 'react-intl'
 import { initializeReducer } from '../reducer/ApplicationFormReducer'

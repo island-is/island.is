@@ -13,8 +13,15 @@ interface Props {
   existingClaims: string[]
 }
 
-const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, reset } = useForm<UserClaimDTO>()
+const UserClaimCreateForm: React.FC<React.PropsWithChildren<Props>> = (
+  props: Props,
+) => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<UserClaimDTO>()
   const [visible, setVisible] = useState<boolean>(false)
   const [isAvailable, setIsAvailable] = useState<boolean>(true)
   const [claimLength, setClaimLength] = useState<number>(0)
@@ -77,15 +84,14 @@ const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="claimName"
                     type="text"
-                    name="claimName"
+                    {...register('claimName', {
+                      required: true,
+                      validate: ValidationUtils.validateIdentifier,
+                      onChange: (e) => checkAvailability(e.target.value),
+                    })}
                     className="user-claim-create-form__input"
                     placeholder={localization.fields['claimName'].placeholder}
                     title={localization.fields['claimName'].helpText}
-                    onChange={(e) => checkAvailability(e.target.value)}
-                    ref={register({
-                      required: true,
-                      validate: ValidationUtils.validateIdentifier,
-                    })}
                   />
                   <div
                     className={`user-claim-create-form__container__field__available ${

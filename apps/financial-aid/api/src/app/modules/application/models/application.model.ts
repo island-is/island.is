@@ -138,4 +138,7 @@ export class ApplicationModel implements Application {
 
   @Field({ nullable: true })
   readonly applicationSystemId?: string
+
+  @Field({ nullable: true })
+  readonly navSuccess?: boolean
 }

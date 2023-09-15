@@ -10,7 +10,23 @@ export interface SyslumennAuction {
   auctionTime: string
   petitioners: string
   respondent: string
+  publishText: string
   auctionTakesPlaceAt: string
+}
+
+export interface RealEstateAgent {
+  name: string
+  location: string
+}
+
+export interface Lawyer {
+  name: string
+  licenceType: string
+}
+
+export interface Broker {
+  name: string
+  nationalId: string
 }
 
 export interface DataUploadResponse {
@@ -56,6 +72,38 @@ export interface OperatingLicense {
   alcoholWeekendOutdoorLicense?: string
   maximumNumberOfGuests?: number
   numberOfDiningGuests?: number
+}
+
+export interface OperatingLicensesCSV {
+  value: string
+}
+
+export interface AlcoholLicence {
+  licenceType?: string
+  licenceSubType?: string
+  licenseNumber?: string
+  issuedBy?: string
+  year?: number
+  validFrom?: Date
+  validTo?: Date
+  licenseHolder?: string
+  licenseResponsible?: string
+  office?: string
+  location?: string
+}
+
+export interface TemporaryEventLicence {
+  licenceType?: string
+  licenceSubType?: string
+  licenseNumber?: string
+  issuedBy?: string
+  year?: number
+  validFrom?: Date
+  validTo?: Date
+  licenseHolder?: string
+  licenseResponsible?: string
+  maximumNumberOfGuests?: number
+  estimatedNumberOfGuests?: number
 }
 
 /**
@@ -125,6 +173,7 @@ export enum PersonType {
   Child,
   CriminalRecordApplicant,
   MortgageCertificateApplicant,
+  AnnouncerOfDeathCertificate,
 }
 
 export interface MortgageCertificate {
@@ -137,4 +186,97 @@ export interface MortgageCertificateValidation {
   isFromSearch?: boolean
   exists: boolean
   hasKMarking: boolean
+}
+
+export enum AssetType {
+  RealEstate = 0,
+  Vehicle = 1,
+  Ship = 2,
+  Cash = 3,
+  Flyer = 4,
+}
+
+export type AssetName = {
+  name: string
+}
+
+export type Advocate = {
+  nationalId: string
+  name: string
+  address?: string
+  phone?: string
+  email?: string
+}
+
+export type EstateMember = {
+  name: string
+  nationalId: string
+  relation: string
+  dateOfBirth?: string
+  enabled?: boolean
+  phone?: string
+  email?: string
+  advocate?: Advocate
+}
+
+export type EstateAsset = {
+  description: string
+  assetNumber: string
+  share: number
+  enabled?: boolean
+  marketValue?: string
+}
+
+export interface EstateRegistrant extends EstateCommon {
+  applicantEmail: string
+  applicantPhone: string
+  office: string
+  ownBusinessManagement: boolean
+  assetsAbroad: boolean
+  occupationRightViaCondominium: boolean
+  bankStockOrShares: boolean
+}
+
+export type EstateRelations = {
+  relations: string[]
+}
+
+interface EstateCommon {
+  assets: EstateAsset[]
+  vehicles: EstateAsset[]
+  ships: EstateAsset[]
+  flyers: EstateAsset[]
+  cash: EstateAsset[]
+  guns: EstateAsset[]
+  estateMembers: EstateMember[]
+  caseNumber: string
+  districtCommissionerHasWill: boolean
+  marriageSettlement: boolean
+  dateOfDeath: Date
+  nameOfDeceased: string
+  nationalIdOfDeceased: string
+  knowledgeOfOtherWills: 'Yes' | 'No'
+}
+
+export interface EstateInfo extends EstateCommon {
+  addressOfDeceased: string
+}
+
+// Copied from propertyDetails in @island.is/api/domains/assets. Only properties in use
+export interface PropertyDetail {
+  defaultAddress?: PropertyLocation
+  propertyNumber?: string
+  unitsOfUse?: UnitsOfUseModel
+}
+
+interface PropertyLocation {
+  display?: string
+}
+
+interface UnitsOfUseModel {
+  unitsOfUse?: UnitsOfUse[]
+}
+
+interface UnitsOfUse {
+  explanation?: string
 }

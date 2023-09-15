@@ -1,0 +1,24 @@
+{
+  "name": "application-templates-children-residence-change-v2",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/templates/family-matters/children-residence-change-v2/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/family-matters/children-residence-change-v2/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/family-matters/children-residence-change-v2/src/**/*.{js,ts,tsx}'"
+      }
+    }
+  },
+  "tags": ["scope:application-system", "lib:application-system"]
+}

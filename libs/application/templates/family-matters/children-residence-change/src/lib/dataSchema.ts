@@ -4,7 +4,7 @@ import {
   validateTerms,
 } from '@island.is/application/templates/family-matters-core/utils/dataSchema'
 import { error } from './messages/index'
-import * as z from 'zod'
+import { z } from 'zod'
 
 enum Duration {
   Permanent = 'permanent',
@@ -16,12 +16,8 @@ export enum ApproveContract {
   No = 'no',
 }
 
-const {
-  counterParty,
-  invalidEmail,
-  invalidPhoneNumber,
-  approveTerms,
-} = error.validation
+const { counterParty, invalidEmail, invalidPhoneNumber, approveTerms } =
+  error.validation
 
 const parentContactInfo = validateContactInfo({
   email: invalidEmail,

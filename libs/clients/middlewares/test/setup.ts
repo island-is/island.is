@@ -1,9 +1,9 @@
 import {
   createEnhancedFetch,
-  EnhancedFetchAPI,
   EnhancedFetchOptions,
-  Request,
-} from '@island.is/clients/middlewares'
+} from '../src/lib/createEnhancedFetch'
+import type { EnhancedFetchAPI } from '../src/lib/types'
+import { Request } from '../src/lib/nodeFetch'
 import { Logger } from '@island.is/logging'
 import CircuitBreaker from 'opossum'
 import { SetOptional } from 'type-fest'
@@ -79,7 +79,7 @@ export const setupTestEnv = (
   const enhancedFetch = createEnhancedFetch({
     name: 'test',
     fetch: dynamicFetch,
-    logger: (logger as unknown) as Logger,
+    logger: logger as unknown as Logger,
     ...override,
     circuitBreaker: override?.circuitBreaker !== false && {
       volumeThreshold: 0,

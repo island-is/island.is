@@ -6,6 +6,9 @@ import { Inject, Injectable } from '@nestjs/common'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
+
+import { auditTrailModuleConfig } from './auditTrail.config'
 
 export enum AuditedAction {
   LOGIN = 'LOGIN',
@@ -26,36 +29,34 @@ export enum AuditedAction {
   UPDATE_USER = 'UPDATE_USER',
   CREATE_COURT_CASE = 'CREATE_COURT_CASE',
   GET_REQUEST_PDF = 'GET_REQUEST_PDF',
+  GET_CASE_FILES_PDF = 'GET_CASE_FILES_PDF',
   GET_RULING_PDF = 'GET_RULING_PDF',
   GET_COURT_RECORD = 'GET_COURT_RECORD',
   GET_CUSTODY_NOTICE_PDF = 'GET_CUSTODY_NOTICE_PDF',
+  GET_INDICTMENT_PDF = 'GET_INDICTMENT_PDF',
   GET_INSTITUTIONS = 'GET_INSTITUTIONS',
   CREATE_PRESIGNED_POST = 'CREATE_PRESIGNED_POST',
   CREATE_FILE = 'CREATE_FILE',
+  UPDATE_FILES = 'UPDATE_FILES',
   GET_SIGNED_URL = 'GET_SIGNED_URL',
   DELETE_FILE = 'DELETE_FILE',
   UPLOAD_FILE_TO_COURT = 'UPLOAD_FILE_TO_COURT',
   GET_POLICE_CASE_FILES = 'GET_POLICE_CASE_FILES',
+  GET_POLICE_CASE_INFO = 'GET_POLICE_CASE_INFO',
   UPLOAD_POLICE_CASE_FILE = 'UPLOAD_POLICE_CASE_FILE',
   CREATE_DEFENDANT = 'CREATE_DEFENDANT',
   UPDATE_DEFENDANT = 'UPDATE_DEFENDANT',
   DELETE_DEFENDANT = 'DELETE_DEFENDANT',
-}
-
-export const AUDIT_TRAIL_OPTIONS = 'AUDIT_TRAIL_OPTIONS'
-
-export interface AuditTrailOptions {
-  useGenericLogger: boolean // should be false in production environments
-  groupName?: string
-  serviceName?: string
-  region?: string
+  CREATE_INDICTMENT_COUNT = 'CREATE_INDICTMENT_COUNT',
+  UPDATE_INDICTMENT_COUNT = 'UPDATE_INDICTMENT_COUNT',
+  DELETE_INDICTMENT_COUNT = 'DELETE_INDICTMENT_COUNT',
 }
 
 @Injectable()
 export class AuditTrailService {
   constructor(
-    @Inject(AUDIT_TRAIL_OPTIONS)
-    private readonly options: AuditTrailOptions,
+    @Inject(auditTrailModuleConfig.KEY)
+    private readonly config: ConfigType<typeof auditTrailModuleConfig>,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {
@@ -63,7 +64,6 @@ export class AuditTrailService {
   }
 
   private trail?: Logger
-  private useGenericLogger = true
 
   private formatMessage(
     userId: string,
@@ -79,37 +79,35 @@ export class AuditTrailService {
     }
 
     // The generic logger expects a string, whereas the CloudWatch trail expect a json object
-    return this.useGenericLogger ? JSON.stringify(message) : message
+    return this.config.useGenericLogger ? JSON.stringify(message) : message
   }
 
   private initTrail() {
-    this.useGenericLogger = this.options.useGenericLogger
-
-    if (this.useGenericLogger) {
+    if (this.config.useGenericLogger) {
       this.logger.info('Using generic logger for audit trail')
 
       this.trail = this.logger
     } else {
       this.logger.info(
-        `Creating a dedicated logger for audit trail ${this.options.groupName}<<<${this.options.serviceName}`,
+        `Creating a dedicated logger for audit trail ${this.config.groupName}<<<${this.config.serviceName}`,
       )
 
       // Create a log stream with a randomized (time-based) hash so that multiple
       // instances of the service don't log to the same stream.
-      const serviceName = this.options.serviceName
+      const serviceName = this.config.serviceName
       const startTime = new Date().toISOString()
       this.trail = winston.createLogger({
         transports: [
           new WinstonCloudWatch({
             name: 'CloudWatch',
-            logGroupName: this.options.groupName,
+            logGroupName: this.config.groupName,
             logStreamName: function () {
               // Spread log streams across dates
               return `${serviceName}-${
                 new Date().toISOString().split('T')[0]
               }-${createHash('md5').update(startTime).digest('hex')}`
             },
-            awsRegion: this.options.region,
+            awsRegion: this.config.region,
             jsonMessage: true,
           }),
         ],

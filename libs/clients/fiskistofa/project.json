@@ -1,0 +1,45 @@
+{
+  "name": "clients-fiskistofa",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/fiskistofa/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/fiskistofa/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/fiskistofa"],
+      "options": {
+        "jestConfig": "libs/clients/fiskistofa/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl https://gagnaveitantest.azurewebsites.net/swagger/v1/swagger.json -H 'Accept: application/json' > src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/fiskistofa"
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/fiskistofa/gen/fetch -i libs/clients/fiskistofa/src/clientConfig.json"
+        ],
+        "parallel": false
+      }
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}

@@ -23,15 +23,6 @@ export const subSectionDelivery = buildSubSection({
       title: m.pickupLocationTitle,
       space: 1,
       children: [
-        buildKeyValueField({
-          label: m.informationApplicant,
-          value: ({ externalData: { nationalRegistry } }) =>
-            (nationalRegistry.data as NationalRegistryUser).fullName,
-        }),
-        buildDividerField({
-          title: '',
-          color: 'dark400',
-        }),
         buildDescriptionField({
           id: 'afhending',
           title: m.districtCommisionerTitle,
@@ -42,13 +33,14 @@ export const subSectionDelivery = buildSubSection({
           id: 'juristiction',
           title: m.districtCommisionerPickup,
           disabled: false,
+          required: true,
           options: ({
             externalData: {
               juristictions: { data },
             },
           }) => {
             return (data as Juristiction[]).map(({ id, name, zip }) => ({
-              value: id,
+              value: `${id}`,
               label: name,
               tooltip: `Póstnúmer ${zip}`,
             }))

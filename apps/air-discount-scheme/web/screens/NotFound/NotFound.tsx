@@ -37,7 +37,7 @@ function NotFound() {
             padding={3}
           >
             <Box marginRight={2}>
-              <Icon type="info" />
+              <Icon aria-hidden="true" type="info" />
             </Box>
             <Box marginRight={2}>
               <Typography variant="p">
@@ -50,7 +50,7 @@ function NotFound() {
       </GridRow>
       <Button variant="text" onClick={() => Router.back()}>
         <Box marginRight={1} alignItems="center" display="flex">
-          <Icon type="arrowLeft" width={16} />
+          <Icon aria-hidden="true" type="arrowLeft" width={16} />
         </Box>
         {t.button}
       </Button>

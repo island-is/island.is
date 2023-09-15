@@ -32,6 +32,7 @@ const root = {
   allow_explicit_delegation_grant: false,
   automatic_delegation_grant: false,
   also_for_delegated_user: false,
+  domain_name: '@island.is',
 }
 
 const full = {
@@ -47,6 +48,7 @@ const full = {
   allow_explicit_delegation_grant: false,
   automatic_delegation_grant: false,
   also_for_delegated_user: false,
+  domain_name: '@island.is',
 }
 
 const api_scopes = [root, full]
@@ -62,7 +64,7 @@ const api_resource_scopes = [
   },
 ]
 
-const client_id = 'ids-admin'
+const client_id = '@island.is/auth-admin-web'
 
 const client_allowed_scopes = [
   {

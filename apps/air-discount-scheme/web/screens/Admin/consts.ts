@@ -36,4 +36,5 @@ export const airlineOptions = [
 
 export type FilterInput = FlightLegsInput & {
   airline: { value: string }
+  isExplicit: string
 }

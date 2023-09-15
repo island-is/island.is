@@ -1,0 +1,3 @@
+mutation DeleteAuthDelegation($input: DeleteAuthDelegationInput!) {
+  deleteAuthDelegation(input: $input)
+}

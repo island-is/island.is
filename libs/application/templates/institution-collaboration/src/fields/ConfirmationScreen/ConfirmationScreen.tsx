@@ -1,11 +1,15 @@
-import React, { FC } from 'react'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box, Bullet, BulletList, Stack } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import InstitutionIllustration from '../../assets/InstitutionIllustration'
-import { institutionApplicationMessages as m } from '../../lib/messages'
+import React, { FC } from 'react'
 
-const ConfirmationScreen: FC<FieldBaseProps> = ({ application }) => {
+import { FieldBaseProps } from '@island.is/application/types'
+import InstitutionIllustration from '../../assets/InstitutionIllustration'
+import { formatText } from '@island.is/application/core'
+import { institutionApplicationMessages as m } from '../../lib/messages'
+import { useLocale } from '@island.is/localization'
+
+const ConfirmationScreen: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -14,21 +18,21 @@ const ConfirmationScreen: FC<FieldBaseProps> = ({ application }) => {
         <BulletList>
           <Bullet>
             {formatText(
-              m.confirmation.sectionInfoBulletFirst,
+              m.confirmation.sectionConfirmBulletFirst,
               application,
               formatMessage,
             )}
           </Bullet>
           <Bullet>
             {formatText(
-              m.confirmation.sectionInfoBulletSecond,
+              m.confirmation.sectionConfirmBulletSecond,
               application,
               formatMessage,
             )}
           </Bullet>
           <Bullet>
             {formatText(
-              m.confirmation.sectionInfoBulletThird,
+              m.confirmation.sectionConfirmBulletThird,
               application,
               formatMessage,
             )}

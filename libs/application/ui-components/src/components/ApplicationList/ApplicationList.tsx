@@ -1,121 +1,101 @@
-import React from 'react'
-import { MessageDescriptor } from '@formatjs/intl'
-import format from 'date-fns/format'
-
-import { ActionCard, Stack } from '@island.is/island-ui/core'
+import React, { useCallback, useState } from 'react'
+import { Box, Pagination, Stack } from '@island.is/island-ui/core'
 import {
   Application,
-  ApplicationStatus,
-  coreMessages,
-  getSlugFromType,
-  ActionCardTag,
-} from '@island.is/application/core'
-import { useLocale } from '@island.is/localization'
-import { dateFormat } from '@island.is/shared/constants'
+  ApplicationTypes,
+  institutionMapper,
+} from '@island.is/application/types'
+import { getOrganizationLogoUrl } from '@island.is/shared/utils'
+import { Organization } from '@island.is/shared/types'
+import { ApplicationCard } from '../ApplicationCard/ApplicationCard'
 
-interface DefaultStateData {
-  tag: {
-    variant: ActionCardTag
-    label: MessageDescriptor
-  }
-  progress: {
-    variant: 'blue' | 'red' | 'rose' | 'mint'
-  }
-  cta: {
-    label: MessageDescriptor
-  }
-}
+const pageSize = 5
 
-const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
-  [ApplicationStatus.REJECTED]: {
-    tag: {
-      variant: 'red',
-      label: coreMessages.tagsRejected,
-    },
-    progress: {
-      variant: 'red',
-    },
-    cta: {
-      label: coreMessages.cardButtonInProgress,
-    },
-  },
-  [ApplicationStatus.COMPLETED]: {
-    tag: {
-      variant: 'blueberry',
-      label: coreMessages.tagsDone,
-    },
-    progress: {
-      variant: 'mint',
-    },
-    cta: {
-      label: coreMessages.cardButtonComplete,
-    },
-  },
-  [ApplicationStatus.IN_PROGRESS]: {
-    tag: {
-      variant: 'blue',
-      label: coreMessages.tagsInProgress,
-    },
-    progress: {
-      variant: 'blue',
-    },
-    cta: {
-      label: coreMessages.cardButtonInProgress,
-    },
-  },
-}
+type ApplicationFields = Pick<
+  Application,
+  'actionCard' | 'id' | 'typeId' | 'status' | 'modified' | 'name' | 'progress'
+>
 
 interface Props {
-  applications: Application[]
-  onClick: (id: string) => void
+  applications: ApplicationFields[]
+  organizations?: Organization[]
+  onClick?: (id: string) => void
+  refetch?: (() => void) | undefined
+  focus?: boolean
 }
 
-const ApplicationList = ({ applications, onClick }: Props) => {
-  const { lang: locale, formatMessage } = useLocale()
-  const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
+const ApplicationList = ({
+  organizations,
+  applications,
+  onClick,
+  refetch,
+  focus = false,
+}: Props) => {
+  const [page, setPage] = useState<number>(1)
+  const handlePageChange = useCallback((page: number) => setPage(page), [])
+
+  const pagedDocuments = {
+    from: (page - 1) * pageSize,
+    to: pageSize * page,
+    totalPages: Math.ceil(applications.length / pageSize),
+  }
+
+  const getLogo = (typeId: ApplicationTypes): string => {
+    if (!organizations) {
+      return ''
+    }
+    const institutionSlug = institutionMapper[typeId]
+    const institution = organizations.find((x) => x.slug === institutionSlug)
+    return getOrganizationLogoUrl(
+      institution?.title ?? 'stafraent-island',
+      organizations,
+    )
+  }
+
+  const onApplicationDelete = () => {
+    if ((applications.length - 1) % pageSize === 0 && page > 1) {
+      setPage(page - 1)
+    }
+    if (refetch) {
+      refetch()
+    }
+  }
 
   return (
-    <Stack space={2}>
-      {applications.map((application, index: number) => {
-        const actionCard = application.actionCard
-        const stateDefaultData =
-          DefaultData[application.status] ||
-          DefaultData[ApplicationStatus.IN_PROGRESS]
-        const slug = getSlugFromType(application.typeId)
-
-        if (!slug) {
-          return null
-        }
-
-        return (
-          <ActionCard
-            key={`${application.id}-${index}`}
-            date={format(new Date(application.modified), formattedDate)}
-            tag={{
-              label: actionCard?.tag?.label
-                ? formatMessage(actionCard.tag.label)
-                : formatMessage(stateDefaultData.tag.label),
-              variant: actionCard?.tag?.variant || stateDefaultData.tag.variant,
-              outlined: false,
-            }}
-            heading={actionCard?.title ?? application.name}
-            text={actionCard?.description}
-            cta={{
-              label: formatMessage(stateDefaultData.cta.label),
-              variant: 'ghost',
-              size: 'small',
-              icon: undefined,
-              onClick: () => onClick(`${slug}/${application.id}`),
-            }}
-            progressMeter={{
-              active: Boolean(application.progress),
-              progress: application.progress,
-              variant: stateDefaultData.progress.variant,
-            }}
+    <>
+      <Stack space={2}>
+        {applications
+          .slice(pagedDocuments.from, pagedDocuments.to)
+          .map((application) => (
+            <ApplicationCard
+              key={application.id}
+              application={application}
+              focused={focus}
+              logo={getLogo(application.typeId)}
+              onDelete={onApplicationDelete}
+              onClick={onClick}
+            />
+          ))}
+      </Stack>
+      {applications.length > pageSize ? (
+        <Box marginTop={4}>
+          <Pagination
+            page={page}
+            totalPages={pagedDocuments.totalPages}
+            renderLink={(page, className, children) => (
+              <button
+                className={className}
+                onClick={() => {
+                  handlePageChange(page)
+                }}
+              >
+                {children}
+              </button>
+            )}
           />
-        )
-      })}
-    </Stack>
+        </Box>
+      ) : null}
+    </>
   )
 }
 

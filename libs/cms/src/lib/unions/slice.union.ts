@@ -4,7 +4,6 @@ import { Document, BLOCKS, Block } from '@contentful/rich-text-types'
 import { logger } from '@island.is/logging'
 import {
   ITimeline,
-  IMailingListSignup,
   ISectionHeading,
   ICardSection,
   IStorySection,
@@ -29,13 +28,20 @@ import {
   IAccordionSlice,
   IOverviewLinks,
   IEventSlice,
+  IForm,
+  IStepper,
+  IGraphCard,
+  ILifeEventPageListSlice,
+  ISidebarCard,
+  IPowerBiSlice,
+  ITableSlice,
+  IEmailSignup,
+  IFeaturedSupportQnAs,
+  ISliceDropdown,
+  ISectionWithVideo,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
-import {
-  MailingListSignupSlice,
-  mapMailingListSignup,
-} from '../models/mailingListSignupSlice.model'
 import { mapTimelineSlice, TimelineSlice } from '../models/timelineSlice.model'
 import { HeadingSlice, mapHeadingSlice } from '../models/headingSlice.model'
 import { mapStorySlice, StorySlice } from '../models/storySlice.model'
@@ -83,10 +89,29 @@ import {
   MultipleStatistics,
 } from '../models/multipleStatistics.model'
 import { EventSlice, mapEventSlice } from '../models/eventSlice.model'
+import { Form, mapForm } from '../models/form.model'
+import { mapStepper, Stepper } from '../models/stepper.model'
+import { GraphCard, mapGraphCard } from '../models/graphCard.model'
+import {
+  LifeEventPageListSlice,
+  mapLifeEventPageListSlice,
+} from '../models/lifeEventPageListSlice.model'
+import { mapSidebarCard, SidebarCard } from '../models/sidebarCard.model'
+import { PowerBiSlice, mapPowerBiSlice } from '../models/powerBiSlice.model'
+import { mapTableSlice, TableSlice } from '../models/tableSlice.model'
+import { EmailSignup, mapEmailSignup } from '../models/emailSignup.model'
+import {
+  FeaturedSupportQNAs,
+  mapFeaturedSupportQNAs,
+} from '../models/featuredSupportQNAs.model'
+import { mapSliceDropdown, SliceDropdown } from '../models/sliceDropdown.model'
+import {
+  SectionWithVideo,
+  mapSectionWithVideo,
+} from '../models/sectionWithVideo.model'
 
 type SliceTypes =
   | ITimeline
-  | IMailingListSignup
   | ISectionHeading
   | ICardSection
   | IStorySection
@@ -99,6 +124,7 @@ type SliceTypes =
   | ISliceConnectedComponent
   | IEmbeddedVideo
   | ISectionWithImage
+  | ISectionWithVideo
   | ITabSection
   | ITeamList
   | IContactUs
@@ -111,12 +137,21 @@ type SliceTypes =
   | IAccordionSlice
   | IOverviewLinks
   | IEventSlice
+  | IForm
+  | IStepper
+  | IGraphCard
+  | ILifeEventPageListSlice
+  | ISidebarCard
+  | IPowerBiSlice
+  | ITableSlice
+  | IEmailSignup
+  | IFeaturedSupportQnAs
+  | ISliceDropdown
 
 export const SliceUnion = createUnionType({
   name: 'Slice',
   types: () => [
     TimelineSlice,
-    MailingListSignupSlice,
     HeadingSlice,
     LinkCardSlice,
     StorySlice,
@@ -129,6 +164,7 @@ export const SliceUnion = createUnionType({
     ConnectedComponent,
     EmbeddedVideo,
     SectionWithImage,
+    SectionWithVideo,
     TabSection,
     TeamList,
     ContactUs,
@@ -144,6 +180,16 @@ export const SliceUnion = createUnionType({
     AccordionSlice,
     OverviewLinks,
     EventSlice,
+    Form,
+    Stepper,
+    GraphCard,
+    LifeEventPageListSlice,
+    SidebarCard,
+    PowerBiSlice,
+    TableSlice,
+    EmailSignup,
+    FeaturedSupportQNAs,
+    SliceDropdown,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -153,8 +199,6 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
   switch (contentType) {
     case 'timeline':
       return mapTimelineSlice(slice as ITimeline)
-    case 'mailingListSignup':
-      return mapMailingListSignup(slice as IMailingListSignup)
     case 'sectionHeading':
       return mapHeadingSlice(slice as ISectionHeading)
     case 'cardSection':
@@ -179,6 +223,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapEmbeddedVideo(slice as IEmbeddedVideo)
     case 'sectionWithImage':
       return mapSectionWithImage(slice as ISectionWithImage)
+    case 'sectionWithVideo':
+      return mapSectionWithVideo(slice as ISectionWithVideo)
     case 'tabSection':
       return mapTabSection(slice as ITabSection)
     case 'teamList':
@@ -203,6 +249,26 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapOverviewLinks(slice as IOverviewLinks)
     case 'eventSlice':
       return mapEventSlice(slice as IEventSlice)
+    case 'form':
+      return mapForm(slice as IForm)
+    case 'stepper':
+      return mapStepper(slice as IStepper)
+    case 'graphCard':
+      return mapGraphCard(slice as IGraphCard)
+    case 'lifeEventPageListSlice':
+      return mapLifeEventPageListSlice(slice as ILifeEventPageListSlice)
+    case 'sidebarCard':
+      return mapSidebarCard(slice as ISidebarCard)
+    case 'powerBiSlice':
+      return mapPowerBiSlice(slice as IPowerBiSlice)
+    case 'tableSlice':
+      return mapTableSlice(slice as ITableSlice)
+    case 'emailSignup':
+      return mapEmailSignup(slice as IEmailSignup)
+    case 'featuredSupportQNAs':
+      return mapFeaturedSupportQNAs(slice as IFeaturedSupportQnAs)
+    case 'sliceDropdown':
+      return mapSliceDropdown(slice as ISliceDropdown)
     default:
       throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }
@@ -243,7 +309,7 @@ export const mapDocument = (
         slices.push(safelyMapSliceUnion(block.data.target))
         break
       case BLOCKS.EMBEDDED_ASSET:
-        if (block.data.target.fields?.file) {
+        if (block.data.target?.fields?.file) {
           block.data.target.fields.file.details?.image
             ? slices.push(mapImage(block.data.target))
             : slices.push(mapAsset(block.data.target))

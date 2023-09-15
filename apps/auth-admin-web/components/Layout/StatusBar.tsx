@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import APIResponse from './../../entities/common/APIResponse'
 import { BehaviorSubject } from 'rxjs'
 
-const StatusBar: React.FC = () => {
+const StatusBar: React.FC<React.PropsWithChildren<unknown>> = () => {
   const status$ = React.useRef(new BehaviorSubject(null))
   const [state, setState] = useState(new APIResponse())
 
@@ -21,7 +21,7 @@ const StatusBar: React.FC = () => {
     if (typeof value?.message === 'string') {
       return <span>{value.message}</span>
     } else {
-      return value?.message.map((item, i) => <span>{item}</span>)
+      return value?.message.map((item) => <span>{item}</span>)
     }
   }
 

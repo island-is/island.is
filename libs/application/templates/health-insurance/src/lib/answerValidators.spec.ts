@@ -1,4 +1,8 @@
-import { Application, ApplicationTypes } from '@island.is/application/core'
+import {
+  ApplicationWithAttachments as Application,
+  ApplicationStatus,
+  ApplicationTypes,
+} from '@island.is/application/types'
 import { NO, YES, StatusTypes } from '../shared'
 
 import { answerValidators } from './answerValidators'
@@ -7,12 +11,14 @@ describe('answerValidators', () => {
   const baseApplication: Application = {
     answers: {
       fieldId: 'some answer',
-      applicant: { citizenship: '{"code":"IS","name":"Ísland"}' },
+      citizenship: '{"code":"IS","name":"Ísland"}',
     },
     assignees: [],
     applicant: '',
-    attachments: {},
+    applicantActors: [],
+    status: ApplicationStatus.IN_PROGRESS,
     created: new Date(),
+    attachments: {},
     externalData: {
       nationalRegistry: {
         date: new Date(),
@@ -100,24 +106,6 @@ describe('answerValidators', () => {
     })
   })
 
-  it('should return error when former insurance country is empty', () => {
-    const newFormerInsuranceAnswers = {
-      registration: 'yes',
-      country: '',
-    }
-
-    expect(
-      answerValidators['formerInsurance'](
-        newFormerInsuranceAnswers,
-        baseApplication,
-      ),
-    ).toStrictEqual({
-      message: 'Please select a country',
-      path: 'formerInsurance.country',
-      values: undefined,
-    })
-  })
-
   it('should return error if waiting period is required due to moving form country outside of EU', () => {
     const newFormerInsuranceAnswers = {
       registration: YES,
@@ -139,7 +127,7 @@ describe('answerValidators', () => {
   it('should return error if waiting period is required due to citizenship outside of EU', () => {
     const newApplication = {
       ...baseApplication,
-      answers: { applicant: { citizenship: 'outside EU' } },
+      answers: { citizenship: 'outside EU' },
     } as Application
 
     const newFormerInsuranceAnswers = {

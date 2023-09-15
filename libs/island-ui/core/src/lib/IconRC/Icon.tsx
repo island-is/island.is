@@ -1,37 +1,12 @@
-import React, { Suspense, useMemo } from 'react'
+import React, { Suspense, useEffect, useMemo, useState } from 'react'
 import cn from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
-import iconMap, { Icon as IconType, Type } from './iconMap'
+import iconMap from './iconMap'
 import { Box } from '../Box/Box'
 import * as styles from './Icon.css'
+import type { IconProps, SvgProps, PlaceholderProps } from './types'
 
 const colors = theme.color
-
-export type Size = 'small' | 'medium' | 'large'
-export type IconMapType = Type
-export type IconMapIcon = IconType
-
-export interface IconProps {
-  type?: Type
-  icon: IconType
-  title?: string
-  titleId?: string
-  color?: keyof typeof colors
-  size?: Size
-  className?: string
-  skipPlaceholderSize?: boolean
-  ariaHidden?: boolean
-}
-
-export interface SvgProps {
-  title?: string
-  titleId?: string
-  className?: string
-  width?: string
-  height?: string
-  fill?: string
-  color?: string
-}
 
 const sizes = {
   small: '16px',
@@ -43,12 +18,12 @@ const Placeholder = ({
   skipPlaceholderSize,
   size,
   className,
-}: Pick<IconProps, 'skipPlaceholderSize' | 'size' | 'className'>) => (
+}: PlaceholderProps) => (
   <Box
     component="span"
     display="inlineBlock"
     className={cn(className, {
-      [styles.placeholder[size!]]: !skipPlaceholderSize && size,
+      [styles.placeholder[size]]: !skipPlaceholderSize && size,
     })}
   />
 )
@@ -64,11 +39,18 @@ export const Icon = ({
   skipPlaceholderSize,
   ariaHidden,
 }: IconProps) => {
+  const [isMounted, setIsMounted] = useState(false)
   const path = iconMap[type][icon]
-  const IconSvg = useMemo(() => React.lazy(() => import('./icons/' + path)), [
-    path,
-  ])
-  if (typeof window === 'undefined') {
+  const IconSvg = useMemo(
+    () => React.lazy(() => import('./icons/' + path)),
+    [path],
+  )
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  if (!isMounted) {
     return (
       <Placeholder
         skipPlaceholderSize={skipPlaceholderSize}
@@ -77,6 +59,7 @@ export const Icon = ({
       />
     )
   }
+
   const optionalProps: SvgProps = {}
   if (className) {
     optionalProps.className = className

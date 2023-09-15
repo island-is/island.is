@@ -1,6 +1,9 @@
 import { useQuery } from '@apollo/client'
-import { InstitutionType } from '@island.is/judicial-system/types'
-import type { Institution } from '@island.is/judicial-system/types'
+
+import {
+  Institution,
+  InstitutionType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { InstitutionsQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 let rawInstitutions: Institution[]
@@ -23,22 +26,23 @@ const institutions: {
   loaded: false,
 }
 
-const useInstitution = () => {
+const useInstitution = (skip = false) => {
   const { data, loading } = useQuery<InstitutionData>(InstitutionsQuery, {
-    skip: Boolean(rawInstitutions),
+    skip: skip || Boolean(rawInstitutions),
+    errorPolicy: 'all',
   })
 
   if (data && data.institutions && !rawInstitutions) {
     rawInstitutions = data.institutions
 
     institutions.courts = rawInstitutions.filter(
-      (institution) => institution.type === InstitutionType.COURT,
+      (institution) => institution.type === InstitutionType.DISTRICT_COURT,
     )
 
     institutions.allCourts = rawInstitutions.filter(
       (institution) =>
-        institution.type === InstitutionType.COURT ||
-        institution.type === InstitutionType.HIGH_COURT,
+        institution.type === InstitutionType.DISTRICT_COURT ||
+        institution.type === InstitutionType.COURT_OF_APPEALS,
     )
 
     institutions.prosecutorsOffices = rawInstitutions.filter(

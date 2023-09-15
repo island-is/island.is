@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-const PrescriptionApplications: FC<{}> = () => {
+const PrescriptionApplications: FC<React.PropsWithChildren<{}>> = () => {
   return <h1>PrescriptionApplications</h1>
 }
 

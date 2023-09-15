@@ -8,6 +8,7 @@ import {
   DirectTaxPayment,
 } from '@island.is/financial-aid/shared/lib'
 import { UploadFile } from '@island.is/island-ui/core'
+import { uuid } from 'uuidv4'
 
 export interface Form {
   applicationId?: string
@@ -40,6 +41,7 @@ export interface Form {
   phoneNumber?: string
   directTaxPayments: DirectTaxPayment[]
   hasFetchedPayments: boolean
+  fileFolderId: string
 }
 
 export const initialState = {
@@ -50,6 +52,7 @@ export const initialState = {
   otherFiles: [],
   directTaxPayments: [],
   hasFetchedPayments: false,
+  fileFolderId: uuid(),
 }
 
 interface FormProvider {
@@ -92,6 +95,7 @@ const FormProvider = ({ children }: Props) => {
       taxReturnFromRskFile: [],
       directTaxPayments: [],
       hasFetchedPayments: false,
+      fileFolderId: uuid(),
     })
   }
 

@@ -1,14 +1,13 @@
 import React, { FC } from 'react'
-import {
-  FieldBaseProps,
-  formatText,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Text, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../forms/messages'
 
-const AgentComment: FC<FieldBaseProps> = ({ application }) => {
+const AgentComment: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const agentComments = getValueViaPath(
     application.answers,
     'agentComments',

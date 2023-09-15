@@ -60,7 +60,7 @@ const target = argv.name.replace('-e2e', '')
 // prettier-ignore
 const CMD = {
   BUILD: `yarn nx run ${target}:build:production${argv['skip-cache'] ? ' --skip-nx-cache' : ''}`,
-  EXTRACT_ENV: `scripts/dockerfile-assets/bash/extract-environment.sh ${argv.dist}`,
+  EXTRACT_ENV: `node scripts/dockerfile-assets/bash/extract-environment.js ${argv.dist}`,
   SERVE_NEXT: [ `${argv.dist}/main.js` ],
   SERVE_REACT: ['scripts/static-serve.js', '-p', argv.port, '-d', argv.dist, '-b', argv['base-path']],
   TEST: `yarn nx run ${argv.name}:e2e:production --headless --production ${

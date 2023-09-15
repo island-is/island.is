@@ -18,7 +18,12 @@ interface Props {
   loading?: boolean
 }
 
-export const DropModal: FC<Props> = ({ onClose, onDrop, type, loading }) => {
+export const DropModal: FC<React.PropsWithChildren<Props>> = ({
+  onClose,
+  onDrop,
+  type,
+  loading,
+}) => {
   const [closeModal, setCloseModal] = useState(false)
   const { formatMessage } = useLocale()
   useNamespaces('sp.settings')
@@ -61,7 +66,7 @@ export const DropModal: FC<Props> = ({ onClose, onDrop, type, loading }) => {
             <Hidden below="sm">
               <img
                 src="assets/images/jobsGrid.svg"
-                alt="Skrautmynd"
+                alt=""
                 width="80%"
                 style={{ float: 'right' }}
               />

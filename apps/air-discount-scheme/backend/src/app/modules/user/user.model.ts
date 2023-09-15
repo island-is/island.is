@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import type {
+import {
   BaseUser as TBaseUser,
   User as TUser,
   Fund as TFund,
@@ -39,7 +39,11 @@ class BaseUser implements TBaseUser {
   @ApiProperty()
   lastName: string
 
-  @ApiProperty({ enum: ['kvk', 'kk', 'hvk'] as ValueOf<TUser['gender']>[] })
+  // https://docs.nestjs.com/openapi/types-and-parameters#enums
+  // We must manually set the enum property
+  @ApiProperty({
+    enum: ['kk', 'kvk', 'x', 'manneskja'],
+  })
   gender: TUser['gender']
 
   @ApiProperty()

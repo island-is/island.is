@@ -1,0 +1,47 @@
+{
+  "name": "clients-transport-authority-vehicle-codetables",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/transport-authority/vehicle-codetables/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/transport-authority/vehicle-codetables/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/clients/transport-authority/vehicle-codetables"
+      ],
+      "options": {
+        "jestConfig": "libs/clients/transport-authority/vehicle-codetables/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10017/Samgongustofa-Protected/getOpenAPI?serviceCode=Vehicle-Codetables-V1 -H 'Accept: application/json' > src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/transport-authority/vehicle-codetables"
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/transport-authority/vehicle-codetables/gen/fetch -i libs/clients/transport-authority/vehicle-codetables/src/clientConfig.json"
+        ]
+      }
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}

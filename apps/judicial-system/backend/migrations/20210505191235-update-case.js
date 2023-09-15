@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.removeColumn('case', 'set_court_case_number_manually', {
         transaction: t,

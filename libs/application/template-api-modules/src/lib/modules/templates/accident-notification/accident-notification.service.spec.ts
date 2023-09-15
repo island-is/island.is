@@ -1,10 +1,9 @@
 import { Test } from '@nestjs/testing'
 import { ConfigService } from '@nestjs/config'
 import {
-  ApplicationWithAttachments as Application,
   ApplicationStatus,
   ApplicationTypes,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { EmailService } from '@island.is/email-service'
 import { SharedTemplateApiService } from '../../shared'
@@ -13,13 +12,16 @@ import { AccidentNotificationService } from './accident-notification.service'
 import { AccidentNotificationAttachmentProvider } from './attachments/applicationAttachmentProvider'
 import { ApplicationAttachmentService } from './attachments/applicationAttachment.service'
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
-import { DocumentApi } from '@island.is/clients/health-insurance-v2'
+import { DocumentApi } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { S3 } from 'aws-sdk'
-
+import type { Locale } from '@island.is/shared/types'
+import { createApplication } from '@island.is/application/testing'
 import get from 'lodash/get'
 import set from 'lodash/set'
 import { S3Service } from './attachments/s3.service'
+import { SmsService } from '@island.is/nova-sms'
+import { PaymentService } from '@island.is/application/api/payment'
 const nationalId = '1234564321'
 let id = 0
 
@@ -36,50 +38,15 @@ class MockEmailService {
     return sendMail()
   }
 }
+class MockSmsService {
+  getTransport() {
+    return { sendMail }
+  }
 
-const createApplication = (): Application => ({
-  answers: {
-    applicant: {
-      email: 'applicant@applicant.test',
-      phoneNumber: '8888888',
-    },
-    accidentStatus: {
-      recievedAttachments: {},
-    },
-    attachments: {},
-  },
-  applicant: nationalId,
-  assignees: [],
-  attachments: {
-    attachment1: 'somattachment',
-  },
-  created: new Date(),
-  modified: new Date(),
-  externalData: {
-    submitApplication: {
-      data: {
-        documentId: 123456789,
-        sendtDocuments: [''],
-      },
-      date: new Date('2021-06-10T11:31:02.641Z'),
-      status: 'success',
-    },
-    addAdditionalAttachment: {
-      data: {
-        sentDocuments: [
-          '9fe9172af1528d46bcac061f910bc89fa801ca031b35ee25ee6a31ee1d0365b3',
-        ],
-      },
-      date: new Date('2021-06-10T11:31:02.641Z'),
-      status: 'success',
-    },
-  },
-  id: (id++).toString(),
-  state: '',
-  typeId: ApplicationTypes.ACCIDENT_NOTIFICATION,
-  name: '',
-  status: ApplicationStatus.IN_PROGRESS,
-})
+  sendSms() {
+    return sendMail()
+  }
+}
 
 const S3Instance = {
   upload: jest.fn().mockReturnThis(),
@@ -122,8 +89,16 @@ describe('AccidentNotificationService', () => {
           useValue: {},
         },
         {
+          provide: PaymentService,
+          useValue: {}, //not used
+        },
+        {
           provide: EmailService,
           useClass: MockEmailService,
+        },
+        {
+          provide: SmsService,
+          useClass: MockSmsService,
         },
         {
           provide: S3Service,
@@ -156,7 +131,50 @@ describe('AccidentNotificationService', () => {
 
   describe('addAdditionalAttachment', () => {
     it('should send 2 files and no files on second call', async () => {
-      const application = createApplication()
+      const application = createApplication({
+        answers: {
+          applicant: {
+            email: 'applicant@applicant.test',
+            phoneNumber: '8888888',
+          },
+          accidentStatus: {
+            recievedAttachments: {},
+          },
+          attachments: {},
+        },
+        applicant: nationalId,
+        assignees: [],
+        applicantActors: [],
+        attachments: {
+          attachment1: 'somattachment',
+        },
+        created: new Date(),
+        modified: new Date(),
+        externalData: {
+          submitApplication: {
+            data: {
+              documentId: 123456789,
+              sendtDocuments: [''],
+            },
+            date: new Date('2021-06-10T11:31:02.641Z'),
+            status: 'success',
+          },
+          addAdditionalAttachment: {
+            data: {
+              sentDocuments: [
+                '9fe9172af1528d46bcac061f910bc89fa801ca031b35ee25ee6a31ee1d0365b3',
+              ],
+            },
+            date: new Date('2021-06-10T11:31:02.641Z'),
+            status: 'success',
+          },
+        },
+        id: (id++).toString(),
+        state: '',
+        typeId: ApplicationTypes.ACCIDENT_NOTIFICATION,
+        name: '',
+        status: ApplicationStatus.IN_PROGRESS,
+      })
       const user = createCurrentUser()
 
       const answerAttachments = get(
@@ -191,21 +209,22 @@ describe('AccidentNotificationService', () => {
       const props = {
         application,
         auth: user,
+        currentUserLocale: 'is' as Locale,
       }
 
       jest
         .spyOn(s3Service, 'getFilecontentAsBase64')
         .mockResolvedValueOnce(
-          (Buffer.from('some content', 'utf-8') as unknown) as string,
+          Buffer.from('some content', 'utf-8') as unknown as string,
         )
         .mockResolvedValueOnce(
-          (Buffer.from('some dsfsf', 'utf-8') as unknown) as string,
+          Buffer.from('some dsfsf', 'utf-8') as unknown as string,
         ) //reset resolved value to return same values again for the next request 2 times each with the same content
         .mockResolvedValueOnce(
-          (Buffer.from('some content', 'utf-8') as unknown) as string,
+          Buffer.from('some content', 'utf-8') as unknown as string,
         )
         .mockResolvedValueOnce(
-          (Buffer.from('some dsfsf', 'utf-8') as unknown) as string,
+          Buffer.from('some dsfsf', 'utf-8') as unknown as string,
         )
       const send = jest.spyOn(documentApi, 'documentDocumentAttachment')
       const res = await accidentNotificationService.addAdditionalAttachment(

@@ -1,0 +1,31 @@
+{
+  "name": "clients-document-provider",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/document-provider/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/document-provider/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/document-provider"],
+      "options": {
+        "jestConfig": "libs/clients/document-provider/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/document-provider/gen/fetch -i libs/clients/document-provider/src/clientConfig.yaml"
+      }
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}

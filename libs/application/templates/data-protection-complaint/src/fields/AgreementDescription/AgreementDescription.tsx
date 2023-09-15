@@ -1,10 +1,12 @@
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Stack } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import { delimitation } from '../../lib/messages'
 import { AgreementDescriptionBullet } from './AgreementDescriptionBullet'
 
-export const AgreementDescription: FC<FieldBaseProps> = () => {
+export const AgreementDescription: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = () => {
   return (
     <Box marginTop={3}>
       <Stack space={2}>

@@ -1,17 +1,12 @@
 import React from 'react'
 import { gql, useQuery } from '@apollo/client'
 
-import { Box, Button, SkeletonLoader, Text } from '@island.is/island-ui/core'
-import { Link } from 'react-router-dom'
+import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { Query } from '@island.is/api/schema'
-import {
-  ServicePortalPath,
-  EducationCard,
-  EmptyState,
-} from '@island.is/service-portal/core'
-import * as styles from './CareerCards.css'
+import { ServicePortalPath, EmptyState } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { ActionCard } from '@island.is/service-portal/core'
 
 const EducationExamFamilyOverviewsQuery = gql`
   query EducationExamFamilyOverviewsQuery {
@@ -42,33 +37,32 @@ const CareerCards = () => {
         <Box key={index} marginBottom={10}>
           <Text variant="h3" marginBottom={3}>
             {member.name}
-            {member.isChild && ' (barn)'}
+            {member.isChild &&
+              ` (${formatMessage({
+                id: 'sp.education-career:child',
+                defaultMessage: 'barn',
+              })})`}
           </Text>
-          <EducationCard
-            eyebrow={member.organizationType}
-            title={member.organizationName}
-            description={member.yearInterval}
-            CTA={
-              <Link
-                to={ServicePortalPath.EducationStudentAssessment.replace(
-                  ':familyIndex',
-                  member.familyIndex.toString(),
-                )}
-                className={styles.link}
-              >
-                <Button
-                  variant="text"
-                  icon="arrowForward"
-                  iconType="outline"
-                  nowrap
-                >
-                  {formatMessage({
-                    id: 'sp.education-career:education-more',
-                    defaultMessage: 'Skoða nánar',
-                  })}
-                </Button>
-              </Link>
-            }
+          <ActionCard
+            cta={{
+              label: formatMessage({
+                id: 'sp.education-career:education-more',
+                defaultMessage: 'Skoða nánar',
+              }),
+              url: ServicePortalPath.EducationStudentAssessment.replace(
+                ':familyIndex',
+                member.familyIndex.toString(),
+              ),
+              variant: 'text',
+              size: 'small',
+            }}
+            tag={{
+              label: member.organizationType,
+              variant: 'purple',
+              outlined: false,
+            }}
+            heading={member.organizationName}
+            text={member.yearInterval}
           />
         </Box>
       ))}
@@ -88,9 +82,9 @@ const CareerCards = () => {
 
 const LoadingTemplate = () => (
   <>
-    <Text variant="h3" marginBottom={3}>
+    <Box marginBottom={3}>
       <SkeletonLoader width={300} />
-    </Text>
+    </Box>
     <SkeletonLoader height={158} />
   </>
 )

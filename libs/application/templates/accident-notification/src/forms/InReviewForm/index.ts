@@ -1,4 +1,5 @@
-import { buildForm, Form } from '@island.is/application/core'
+import { buildForm } from '@island.is/application/core'
+import { Form } from '@island.is/application/types'
 import Logo from '../../assets/Logo'
 import { inReview } from '../../lib/messages'
 import { addAttachmentsSection } from './addAttachmentsSection'

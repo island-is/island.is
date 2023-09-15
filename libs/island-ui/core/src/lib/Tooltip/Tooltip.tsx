@@ -7,7 +7,8 @@ import {
   useTooltipState,
 } from 'reakit'
 import * as styles from './Tooltip.css'
-import { Icon, Size } from '../IconRC/Icon'
+import { Icon } from '../IconRC/Icon'
+import { Size } from '../IconRC/types'
 import { Colors } from '@island.is/island-ui/theme'
 
 type Placement = 'top' | 'right' | 'bottom' | 'left'
@@ -16,7 +17,9 @@ interface ArrowIconProps {
   placement: string
 }
 
-const ArrowIcon: FC<ArrowIconProps> = ({ placement }) => {
+const ArrowIcon: FC<React.PropsWithChildren<ArrowIconProps>> = ({
+  placement,
+}) => {
   let deg = 0
 
   if (placement.startsWith('left')) {
@@ -55,21 +58,29 @@ interface TooltipProps {
   iconSize?: Size
   color?: Colors
   children?: ReactElement
+  fullWidth?: boolean
+  renderInPortal?: boolean
   as?: ElementType
 }
 
-export const Tooltip: FC<TooltipProps> = ({
+export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
   placement,
   text,
   iconSize = 'small',
   color = 'dark200',
   children,
   as = 'span',
+  fullWidth,
+  renderInPortal = true,
 }) => {
   const tooltip = useTooltipState({
     animated: 250,
     ...(placement && { placement }),
   })
+
+  if (!text) {
+    return null
+  }
 
   return (
     <>
@@ -82,8 +93,12 @@ export const Tooltip: FC<TooltipProps> = ({
           <Icon icon="informationCircle" color={color} size={iconSize} />
         </TooltipReference>
       )}
-      <ReakitTooltip {...tooltip}>
-        <div className={styles.tooltip}>
+      <ReakitTooltip {...tooltip} unstable_portal={renderInPortal}>
+        <div
+          className={cn(styles.tooltip, {
+            [styles.fullWidth]: fullWidth,
+          })}
+        >
           <TooltipArrow {...tooltip}>
             <ArrowIcon placement={tooltip.placement} />
           </TooltipArrow>

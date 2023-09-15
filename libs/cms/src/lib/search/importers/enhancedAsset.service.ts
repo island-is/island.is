@@ -8,7 +8,8 @@ import { mapEnhancedAsset } from '../../models/enhancedAsset.model'
 
 @Injectable()
 export class EnhancedAssetSyncService
-  implements CmsSyncProvider<IEnhancedAsset> {
+  implements CmsSyncProvider<IEnhancedAsset>
+{
   processSyncData(entries: processSyncDataInput<IEnhancedAsset>) {
     return entries.filter(
       (entry: Entry<any>): entry is IEnhancedAsset =>
@@ -51,6 +52,7 @@ export class EnhancedAssetSyncService
         } catch (error) {
           logger.warn('Failed to import project page', {
             error: error.message,
+            id: entry?.sys?.id,
           })
           return false
         }

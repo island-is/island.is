@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { DatePicker, Input } from '@island.is/island-ui/core'
-import { TimeInputField, BlueBox } from '../../components'
-import * as styles from './DateTime.css'
+import { useIntl } from 'react-intl'
 
+import { DatePicker, Input } from '@island.is/island-ui/core'
 import {
   validate,
   Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
+
+import { BlueBox, TimeInputField } from '../../components'
+import { dateTime as strings } from './DateTime.strings'
+import * as styles from './DateTime.css'
 
 interface Props {
   name: string
@@ -22,10 +25,11 @@ interface Props {
   locked?: boolean
   backgroundColor?: 'blue' | 'white'
   size?: 'sm' | 'md'
+  dateOnly?: boolean
   onChange: (date: Date | undefined, valid: boolean) => void
 }
 
-const DateTime: React.FC<Props> = (props) => {
+const DateTime: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const {
     name,
     datepickerLabel = 'Veldu dagsetningu',
@@ -33,22 +37,24 @@ const DateTime: React.FC<Props> = (props) => {
     minDate,
     maxDate,
     selectedDate,
-    timeLabel = 'Tímasetning (kk:mm)',
+    timeLabel,
     disabled,
     required = false,
     blueBox = true,
     locked = false,
     backgroundColor = 'white',
     size = 'md',
+    dateOnly = false,
     onChange,
   } = props
+  const { formatMessage } = useIntl()
 
   const getTimeFromDate = (date: Date | undefined): string =>
     date
-      ? `${date
-          .getHours()
+      ? `${date.getHours().toString().padStart(2, '0')}:${date
+          .getMinutes()
           .toString()
-          .padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+          .padStart(2, '0')}`
       : ''
 
   const date = (d: Date | string | undefined) => {
@@ -57,7 +63,7 @@ const DateTime: React.FC<Props> = (props) => {
 
   const [currentDate, setCurrentDate] = useState(date(selectedDate))
   const [currentTime, setCurrentTime] = useState(
-    getTimeFromDate(date(selectedDate)),
+    dateOnly ? '00:00' : getTimeFromDate(date(selectedDate)),
   )
 
   const [datepickerErrorMessage, setDatepickerErrorMessage] = useState<string>()
@@ -67,8 +73,11 @@ const DateTime: React.FC<Props> = (props) => {
     const time = getTimeFromDate(date(selectedDate))
 
     setCurrentDate(date(selectedDate))
-    setCurrentTime(time)
-  }, [selectedDate])
+
+    if (!dateOnly) {
+      setCurrentTime(time)
+    }
+  }, [dateOnly, selectedDate])
 
   const isValidDateTime = (
     date: Date | undefined,
@@ -77,14 +86,12 @@ const DateTime: React.FC<Props> = (props) => {
   ) => {
     const validations: Validation[] = ['empty', 'time-format']
 
-    const timeError = validations.find(
-      (v) => validate(time ?? '', v).isValid === false,
-    )
+    const timeIsValid = validate([[time, validations]]).isValid
 
     return (
-      (required && date !== undefined && timeError === undefined) ||
+      (required && date !== undefined && timeIsValid) ||
       (required === false && date === undefined) ||
-      (date !== undefined && timeError === undefined)
+      (date !== undefined && timeIsValid)
     )
   }
 
@@ -113,11 +120,9 @@ const DateTime: React.FC<Props> = (props) => {
 
     const validations: Validation[] = ['empty', 'time-format']
 
-    const error = validations
-      .map((v) => validate(time, v))
-      .find((v) => v.isValid === false)
+    const timeValidation = validate([[time, validations]])
 
-    if (error === undefined) {
+    if (timeValidation.isValid) {
       setTimeErrorMessage(undefined)
     }
 
@@ -129,12 +134,10 @@ const DateTime: React.FC<Props> = (props) => {
 
     const validations: Validation[] = ['empty', 'time-format']
 
-    const error = validations
-      .map((v) => validate(time, v))
-      .find((v) => v.isValid === false)
+    const timeValidation = validate([[time, validations]])
 
-    if (error) {
-      setTimeErrorMessage(error.errorMessage)
+    if (!timeValidation.isValid) {
+      setTimeErrorMessage(timeValidation.errorMessage)
     }
   }
 
@@ -142,7 +145,7 @@ const DateTime: React.FC<Props> = (props) => {
     const isValid = isValidDateTime(date, time, required)
 
     if (isValid && date && time) {
-      const dateToSend = new Date(date.getTime())
+      let dateToSend = new Date(date.getTime())
 
       const timeParts = time.split(':')
 
@@ -150,6 +153,12 @@ const DateTime: React.FC<Props> = (props) => {
       const minutes = parseInt(timeParts[1])
 
       dateToSend.setHours(hours, minutes)
+
+      // Make sure the time component does not make the date larger than the max date.
+      if (maxDate && dateToSend > maxDate) {
+        dateToSend = maxDate
+        setCurrentTime(getTimeFromDate(maxDate))
+      }
 
       onChange(dateToSend, isValid)
     } else {
@@ -159,7 +168,10 @@ const DateTime: React.FC<Props> = (props) => {
 
   const renderDateTime = () => {
     return (
-      <div data-testid="date-time" className={styles.dateTimeContainer}>
+      <div
+        data-testid="date-time"
+        className={dateOnly ? undefined : styles.dateTimeContainer}
+      >
         <DatePicker
           id={name}
           label={datepickerLabel}
@@ -167,7 +179,7 @@ const DateTime: React.FC<Props> = (props) => {
           locale="is"
           errorMessage={datepickerErrorMessage}
           hasError={datepickerErrorMessage !== undefined}
-          icon={locked ? 'lockClosed' : undefined}
+          icon={locked ? { name: 'lockClosed', type: 'outline' } : undefined}
           minDate={minDate}
           maxDate={maxDate}
           selected={selectedDate ? new Date(selectedDate) : undefined}
@@ -177,27 +189,30 @@ const DateTime: React.FC<Props> = (props) => {
           backgroundColor={backgroundColor}
           size={size}
         />
-        <TimeInputField
-          disabled={disabled || locked || currentDate === undefined}
-          onChange={onTimeChange}
-          onBlur={onTimeBlur}
-          value={currentTime}
-        >
-          <Input
-            data-testid={`${name}-time`}
-            name={`${name}-time`}
-            label={timeLabel}
-            placeholder="Veldu tíma"
-            errorMessage={timeErrorMessage}
-            hasError={timeErrorMessage !== undefined}
-            icon={locked ? 'lockClosed' : undefined}
-            iconType="outline"
-            required={required}
-            backgroundColor={backgroundColor}
-            size={size}
-            autoComplete="off"
-          />
-        </TimeInputField>
+        {!dateOnly && (
+          <TimeInputField
+            disabled={disabled || locked || currentDate === undefined}
+            onChange={onTimeChange}
+            onBlur={onTimeBlur}
+            value={currentTime}
+          >
+            <Input
+              data-testid={`${name}-time`}
+              name={`${name}-time`}
+              label={timeLabel ?? formatMessage(strings.timeLabel)}
+              placeholder={formatMessage(strings.timePlaceholder)}
+              errorMessage={timeErrorMessage}
+              hasError={timeErrorMessage !== undefined}
+              icon={
+                locked ? { name: 'lockClosed', type: 'outline' } : undefined
+              }
+              required={required}
+              backgroundColor={backgroundColor}
+              size={size}
+              autoComplete="off"
+            />
+          </TimeInputField>
+        )}
       </div>
     )
   }

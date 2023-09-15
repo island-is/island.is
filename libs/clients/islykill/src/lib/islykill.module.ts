@@ -13,9 +13,7 @@ export interface IslykillApiModuleConfig {
 }
 
 export class IslykillApiModule {
-  static async register(
-    config: IslykillApiModuleConfig,
-  ): Promise<DynamicModule> {
+  static register(config: IslykillApiModuleConfig): DynamicModule {
     function lykillError(errorMsg: any) {
       logger.error(errorMsg)
     }
@@ -25,7 +23,8 @@ export class IslykillApiModule {
       if (!config.cert) {
         throw Error('IslykillApiModule certificate not provided')
       }
-      const data = await fs.promises.readFile(config.cert, {
+
+      const data = fs.readFileSync(config.cert, {
         encoding: 'base64',
       })
 
@@ -50,6 +49,7 @@ export class IslykillApiModule {
                 basePath: config.basePath,
                 fetchApi: createEnhancedFetch({
                   name: 'clients-islykill',
+                  timeout: 20000,
                   clientCertificate: pfx && {
                     pfx,
                     passphrase,

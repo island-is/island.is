@@ -1,5 +1,6 @@
 import { style, styleVariants } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
+import { recipe } from '@vanilla-extract/recipes'
 
 export const button = style({})
 
@@ -23,53 +24,72 @@ export const focusRing = [
   }),
 ]
 
-export const card = style({
-  display: 'flex',
-  height: '100%',
-  flexDirection: 'column',
-  borderWidth: 1,
-  boxSizing: 'border-box',
-  borderStyle: 'solid',
-  borderColor: theme.color.blue200,
-  transition: 'border-color 150ms ease',
-  borderRadius: theme.border.radius.large,
-  textDecoration: 'none',
-  position: 'relative',
-  ':hover': {
+export const card = recipe({
+  base: {
+    display: 'flex',
+    height: '100%',
+    flexDirection: 'column',
     borderWidth: 1,
-    borderColor: theme.color.blue400,
-    textDecoration: 'none',
-  },
-  ':focus': {
-    outline: 0,
-  },
-  '::before': {
-    content: "''",
-    display: 'inline-block',
-    position: 'absolute',
-    pointerEvents: 'none',
+    boxSizing: 'border-box',
     borderStyle: 'solid',
-    borderWidth: 3,
-    borderColor: theme.color.transparent,
-    borderRadius: 10,
-    top: -3,
-    left: -3,
-    bottom: -3,
-    right: -3,
-    opacity: 0,
-    transition: 'border-color 150ms ease, opacity 150ms ease',
-  },
-  selectors: {
-    [`&:focus::before`]: {
-      borderWidth: 3,
-      borderStyle: 'solid',
-      borderColor: theme.color.mint400,
-      opacity: 1,
+    transition: 'border-color 150ms ease',
+    borderRadius: theme.border.radius.large,
+    textDecoration: 'none',
+    position: 'relative',
+    ':hover': {
+      borderWidth: 1,
+      textDecoration: 'none',
+    },
+    ':focus': {
       outline: 0,
     },
-    [`&:focus:hover`]: {
-      borderColor: theme.color.white,
+    '::before': {
+      content: "''",
+      display: 'inline-block',
+      position: 'absolute',
+      pointerEvents: 'none',
+      borderStyle: 'solid',
+      borderWidth: 3,
+      borderColor: theme.color.transparent,
+      borderRadius: 10,
+      top: -3,
+      left: -3,
+      bottom: -3,
+      right: -3,
+      opacity: 0,
+      transition: 'border-color 150ms ease, opacity 150ms ease',
     },
+    selectors: {
+      [`&:focus::before`]: {
+        borderWidth: 3,
+        borderStyle: 'solid',
+        borderColor: theme.color.mint400,
+        opacity: 1,
+        outline: 0,
+      },
+      [`&:focus:hover`]: {
+        borderColor: theme.color.white,
+      },
+    },
+  },
+  variants: {
+    color: {
+      blue: {
+        borderColor: theme.color.blue200,
+        ':hover': {
+          borderColor: theme.color.blue400,
+        },
+      },
+      red: {
+        borderColor: theme.color.red200,
+        ':hover': {
+          borderColor: theme.color.red600,
+        },
+      },
+    },
+  },
+  defaultVariants: {
+    color: 'blue',
   },
 })
 
@@ -86,39 +106,54 @@ export const focused = style({
   },
 })
 
-export const plusIconWrap = style({
-  backgroundColor: theme.color.blue100,
-  borderRadius: '50%',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  position: 'relative',
-})
-
 const iconWrapSizes = {
   default: 40,
   small: 24,
   sidebar: 20,
 }
 
-export const iconWrapVariants = styleVariants({
-  default: {
-    backgroundColor: theme.color.blue100,
-    color: theme.color.blue400,
-    width: iconWrapSizes.default,
-    height: iconWrapSizes.default,
+export const plusIconWrap = recipe({
+  base: {
+    borderRadius: '50%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
   },
-  small: {
-    backgroundColor: theme.color.blue100,
-    color: theme.color.blue400,
-    width: iconWrapSizes.small,
-    height: iconWrapSizes.small,
+
+  variants: {
+    color: {
+      blue: {
+        backgroundColor: theme.color.blue100,
+        color: theme.color.blue400,
+      },
+      red: {
+        backgroundColor: theme.color.red100,
+        color: theme.color.red600,
+      },
+      purple: {
+        backgroundColor: theme.color.purple200,
+        color: theme.color.purple400,
+      },
+    },
+    iconVariant: {
+      default: {
+        width: iconWrapSizes.default,
+        height: iconWrapSizes.default,
+      },
+      small: {
+        width: iconWrapSizes.small,
+        height: iconWrapSizes.small,
+      },
+      sidebar: {
+        width: iconWrapSizes.sidebar,
+        height: iconWrapSizes.sidebar,
+      },
+    },
   },
-  sidebar: {
-    backgroundColor: theme.color.purple200,
-    color: theme.color.purple400,
-    width: iconWrapSizes.sidebar,
-    height: iconWrapSizes.sidebar,
+  defaultVariants: {
+    color: 'blue',
+    iconVariant: 'default',
   },
 })
 

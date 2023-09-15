@@ -17,7 +17,7 @@ export class DrivingLicenseSubmissionModule {
       module: DrivingLicenseSubmissionModule,
       imports: [
         SharedTemplateAPIModule.register(baseConfig),
-        DrivingLicenseModule.register(baseConfig.drivingLicense),
+        DrivingLicenseModule,
       ],
       providers: [DrivingLicenseSubmissionService],
       exports: [DrivingLicenseSubmissionService],

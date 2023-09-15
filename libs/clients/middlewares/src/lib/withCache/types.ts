@@ -2,7 +2,7 @@ import { Cache } from 'cache-manager'
 import CachePolicy from 'http-cache-semantics'
 import { Logger } from '@island.is/logging'
 
-import { FetchAPI, Request, Response } from '../nodeFetch'
+import { MiddlewareAPI, Request, Response } from '../nodeFetch'
 
 /**
  * UPGRADE WARNING
@@ -16,6 +16,7 @@ export interface CachePolicyInternal extends CachePolicy {
   _isShared: boolean
 
   age(): number
+  maxAge(): number
 
   _resHeaders: Record<string, string>
 
@@ -96,7 +97,7 @@ export interface CacheConfig {
 
 export interface CacheMiddlewareConfig extends CacheConfig {
   name: string
-  fetch: FetchAPI
+  fetch: MiddlewareAPI
   logger: Logger
 }
 

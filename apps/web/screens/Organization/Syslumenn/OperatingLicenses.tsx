@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect, useState, useRef, useReducer } from 'react'
+import { useEffect, useState, useRef, useReducer } from 'react'
 import { useApolloClient } from '@apollo/client/react'
 import {
   AlertMessage,
@@ -26,16 +26,24 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_SUBPAGE_QUERY,
   GET_OPERATING_LICENSES_QUERY,
+  GET_OPERATING_LICENSES_CSV_QUERY,
 } from '../../queries'
 import { Screen } from '../../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { OrganizationWrapper } from '@island.is/web/components'
+import {
+  OrganizationWrapper,
+  SyslumennListCsvExport,
+  Webreader,
+} from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useRouter } from 'next/router'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
+import { webRichText } from '@island.is/web/utils/richText'
+import { ApolloClient } from '@apollo/client'
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
 const DEBOUNCE_TIMER = 400
 const PAGE_SIZE = 10
@@ -58,7 +66,8 @@ const SEARCH_REDUCER_ACTION_TYPES = {
   SEARCH_SUCCESS_NEXT_PAGE: 'SEARCH_SUCCESS_NEXT_PAGE',
   SEARCH_ERROR: 'SEARCH_ERROR',
 }
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
 const searchReducer = (state: SearchState, action): SearchState => {
   switch (action.type) {
     case SEARCH_REDUCER_ACTION_TYPES.START_LOADING_FIRST_PAGE:
@@ -134,7 +143,11 @@ const searchReducer = (state: SearchState, action): SearchState => {
   }
 }
 
-const useSearch = (term: string, currentPageNumber: number): SearchState => {
+const useSearch = (
+  term: string,
+  currentPageNumber: number,
+  client: ApolloClient<object>,
+): SearchState => {
   const [state, dispatch] = useReducer(searchReducer, {
     currentTerm: term,
     results: [],
@@ -145,7 +158,6 @@ const useSearch = (term: string, currentPageNumber: number): SearchState => {
     isLoadingNextPage: false,
     hasError: false,
   })
-  const client = useApolloClient()
   const timer = useRef(null)
 
   useEffect(() => {
@@ -162,7 +174,8 @@ const useSearch = (term: string, currentPageNumber: number): SearchState => {
         currentPageNumber: currentPageNumber,
       })
     }
-
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     const thisTimerId = (timer.current = setTimeout(async () => {
       client
         .query<Query, QueryGetOperatingLicensesArgs>({
@@ -230,21 +243,24 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   subpage,
   namespace,
 }) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
   const { format } = useDateUtils()
   const DATE_FORMAT = n('operatingLicenseDateFormat', 'd. MMMM yyyy')
 
-  useContentfulId(organizationPage.id, subpage.id)
+  useContentfulId(organizationPage?.id, subpage?.id)
 
   const pageUrl = Router.pathname
-
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
-      active: pageUrl.includes(primaryLink.url),
+      title: primaryLink?.text,
+      href: primaryLink?.url,
+      active: pageUrl === primaryLink?.url,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -254,7 +270,8 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
 
   const [query, setQuery] = useState(' ')
   const [currentPageNumber, setCurrentPageNumber] = useState(1)
-  const search = useSearch(query, currentPageNumber)
+  const client = useApolloClient()
+  const search = useSearch(query, currentPageNumber, client)
 
   useEffect(() => {
     // Note: This is a workaround to fix an issue where the search input looses focus after the first keypress.
@@ -316,19 +333,42 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
     return address
   }
 
+  const csvStringProvider = () => {
+    return new Promise<string>((resolve, reject) => {
+      client
+        .query<Query>({
+          query: GET_OPERATING_LICENSES_CSV_QUERY,
+        })
+        .then(({ data: { getOperatingLicensesCSV } }) => {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          return resolve(getOperatingLicensesCSV.value)
+        })
+        .catch(() => {
+          reject('Unable to fetch CSV data.')
+        })
+    })
+  }
+
   return (
     <OrganizationWrapper
-      pageTitle={subpage.title}
+      pageTitle={subpage?.title ?? ''}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       organizationPage={organizationPage}
-      pageFeaturedImage={subpage.featuredImage}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      pageFeaturedImage={subpage?.featuredImage}
+      showReadSpeaker={false}
       breadcrumbItems={[
         {
           title: 'Ísland.is',
           href: linkResolver('homepage').href,
         },
         {
-          title: organizationPage.title,
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
+          title: organizationPage?.title ?? '',
+          href: linkResolver('organizationpage', [organizationPage?.slug ?? ''])
+            .href,
         },
       ]}
       navigationData={{
@@ -336,22 +376,48 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
         items: navList,
       }}
     >
-      <Box paddingBottom={2}>
+      <Box paddingBottom={0}>
         <Text variant="h1" as="h2">
-          {subpage.title}
+          {subpage?.title}
         </Text>
+        <Webreader
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          readId={null}
+          readClass="rs_read"
+        />
       </Box>
-      {richText(subpage.description as SliceType[])}
+      {webRichText((subpage?.description ?? []) as SliceType[])}
       <Box marginBottom={3}>
         <Input
           name="operatingLicenseSearchInput"
           placeholder={n('operatingLicensesFilterSearch', 'Leita')}
           backgroundColor={['blue', 'blue', 'white']}
           size="sm"
-          icon="search"
-          iconType="outline"
+          icon={{ name: 'search', type: 'outline' }}
           onChange={(event) => onSearch(event.target.value)}
         />
+        <Box textAlign="right" marginRight={1} marginTop={1}>
+          <SyslumennListCsvExport
+            defaultLabel={n(
+              'operatingLicensesCSVButtonLabelDefault',
+              'Sækja öll rekstrarleyfi (CSV)',
+            )}
+            loadingLabel={n(
+              'operatingLicensesCSVButtonLabelLoading',
+              'Sæki öll rekstrarleyfi...',
+            )}
+            errorLabel={n(
+              'operatingLicensesCSVButtonLabelError',
+              'Ekki tókst að sækja rekstrarleyfi, reyndu aftur',
+            )}
+            csvFilenamePrefix={n(
+              'operatingLicensesCSVFileTitlePrefix',
+              'Rekstrarleyfi',
+            )}
+            csvStringProvider={csvStringProvider}
+          />
+        </Box>
         <Box
           paddingTop={1}
           textAlign="center"
@@ -477,24 +543,26 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
                   : {operatingLicense.alcoholWeekendOutdoorLicense}
                 </Text>
               )}
-              {operatingLicense.maximumNumberOfGuests > 0 && (
-                <Text paddingBottom={0}>
-                  {n(
-                    'operatingLicensesAlcoholMaximumNumberOfGuests',
-                    'Hámarksfjöldi gesta',
-                  )}
-                  : {operatingLicense.maximumNumberOfGuests}
-                </Text>
-              )}
-              {operatingLicense.numberOfDiningGuests > 0 && (
-                <Text paddingBottom={0}>
-                  {n(
-                    'operatingLicensesNumberOfDiningGuests',
-                    'Fjöldi gesta í veitingum',
-                  )}
-                  : {operatingLicense.numberOfDiningGuests}
-                </Text>
-              )}
+              {operatingLicense.maximumNumberOfGuests &&
+                operatingLicense.maximumNumberOfGuests > 0 && (
+                  <Text paddingBottom={0}>
+                    {n(
+                      'operatingLicensesMaximumNumberOfAccommodationGuests',
+                      'Hámarksfjöldi gesta í gistingu',
+                    )}
+                    : {operatingLicense.maximumNumberOfGuests}
+                  </Text>
+                )}
+              {operatingLicense.numberOfDiningGuests &&
+                operatingLicense?.numberOfDiningGuests > 0 && (
+                  <Text paddingBottom={0}>
+                    {n(
+                      'operatingLicensesMaximumNumberOfDiningGuests',
+                      'Hámarksfjöldi gesta í veitingum',
+                    )}
+                    : {operatingLicense.numberOfDiningGuests}
+                  </Text>
+                )}
             </Box>
           </Box>
         )
@@ -541,11 +609,8 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   )
 }
 
-OperatingLicenses.getInitialProps = async ({
-  apolloClient,
-  locale,
-  pathname,
-}) => {
+OperatingLicenses.getProps = async ({ apolloClient, locale, req }) => {
+  const pathname = safelyExtractPathnameFromUrl(req.url)
   const path = pathname?.split('/') ?? []
   const slug = path?.[path.length - 2] ?? 'syslumenn'
   const subSlug = path.pop() ?? 'rekstrarleyfi'
@@ -589,7 +654,7 @@ OperatingLicenses.getInitialProps = async ({
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
@@ -610,4 +675,5 @@ OperatingLicenses.getInitialProps = async ({
 export default withMainLayout(OperatingLicenses, {
   headerButtonColorScheme: 'negative',
   headerColorScheme: 'white',
+  footerVersion: 'organization',
 })

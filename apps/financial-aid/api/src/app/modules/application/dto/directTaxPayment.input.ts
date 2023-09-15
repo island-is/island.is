@@ -2,7 +2,7 @@ import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
 
-import { DirectTaxPayment } from '@island.is/financial-aid/shared/lib'
+import { DirectTaxPayment, UserType } from '@island.is/financial-aid/shared/lib'
 
 @InputType()
 export class DirectTaxPaymentInput implements DirectTaxPayment {
@@ -29,4 +29,8 @@ export class DirectTaxPaymentInput implements DirectTaxPayment {
   @Allow()
   @Field()
   readonly year!: number
+
+  @Allow()
+  @Field(() => String)
+  readonly userType!: UserType
 }

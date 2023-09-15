@@ -1,44 +1,47 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, useContext } from 'react'
 import {
-  Logo,
-  Columns,
-  Column,
   Box,
-  Button,
-  Hidden,
-  ResponsiveSpace,
-  GridContainer,
-  GridColumn,
-  GridRow,
-  ColorSchemeContext,
-  FocusableBox,
   ButtonTypes,
-  Link,
+  ColorSchemeContext,
+  Column,
+  Columns,
+  FocusableBox,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Hidden,
+  Logo,
+  ResponsiveSpace,
 } from '@island.is/island-ui/core'
-import { useI18n } from '@island.is/web/i18n'
 import { FixedNav, SearchInput } from '@island.is/web/components'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { LoginButton } from './LoginButton'
+import { useI18n } from '@island.is/web/i18n'
+import { LayoutProps } from '@island.is/web/layouts/main'
+import React, { FC, useContext } from 'react'
 import { LanguageToggler } from '../LanguageToggler'
 import { Menu } from '../Menu/Menu'
+import { webMenuButtonClicked } from '@island.is/plausible'
 
 interface HeaderProps {
   showSearchInHeader?: boolean
   buttonColorScheme?: ButtonTypes['colorScheme']
+  languageToggleQueryParams?: LayoutProps['languageToggleQueryParams']
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   megaMenuData
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 
-export const Header: FC<HeaderProps> = ({
+export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
   showSearchInHeader = true,
   buttonColorScheme = 'default',
   megaMenuData,
+  languageToggleQueryParams,
   children,
 }) => {
   const { activeLocale, t } = useI18n()
   const { colorScheme } = useContext(ColorSchemeContext)
-  const { linkResolver } = useLinkResolver()
 
   const locale = activeLocale
   const english = activeLocale === 'en'
@@ -53,7 +56,10 @@ export const Header: FC<HeaderProps> = ({
             <GridColumn span="12/12" paddingTop={4} paddingBottom={4}>
               <Columns alignY="center" space={2}>
                 <Column width="content">
-                  <FocusableBox href={english ? '/en' : '/'}>
+                  <FocusableBox
+                    href={english ? '/en' : '/'}
+                    data-testid="link-back-home"
+                  >
                     <Hidden above="md">
                       <Logo
                         id="header-logo-icon"
@@ -85,34 +91,29 @@ export const Header: FC<HeaderProps> = ({
                           activeLocale={locale}
                           placeholder={t.searchPlaceholder}
                           autocomplete={true}
-                          autosuggest={false}
+                          autosuggest={true}
                         />
                       </Box>
                     )}
-                    <Hidden below="lg">
-                      <Box marginLeft={marginLeft}>
-                        <Link {...linkResolver('login')} skipTab>
-                          <Button
-                            colorScheme={buttonColorScheme}
-                            variant="utility"
-                            icon="person"
-                            as="span"
-                          >
-                            {t.login}
-                          </Button>
-                        </Link>
-                      </Box>
-                    </Hidden>
+
+                    <Box marginLeft={marginLeft}>
+                      <LoginButton colorScheme={buttonColorScheme} />
+                    </Box>
+
                     <Box
                       marginLeft={marginLeft}
                       display={['none', 'none', 'none', 'block']}
                     >
-                      <LanguageToggler buttonColorScheme={buttonColorScheme} />
+                      <LanguageToggler
+                        buttonColorScheme={buttonColorScheme}
+                        queryParams={languageToggleQueryParams}
+                      />
                     </Box>
                     <Box marginLeft={marginLeft}>
                       <Menu
                         {...megaMenuData}
                         buttonColorScheme={buttonColorScheme}
+                        onMenuOpen={webMenuButtonClicked}
                       />
                     </Box>
                   </Box>

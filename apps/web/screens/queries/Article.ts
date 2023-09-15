@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { slices } from './fragments'
+import { nestedFields, slices } from './fragments'
 
 export const GET_ARTICLE_QUERY = gql`
   query GetSingleArticle($input: GetSingleArticleInput!) {
@@ -11,22 +11,57 @@ export const GET_ARTICLE_QUERY = gql`
       intro
       importance
       showTableOfContents
+      processEntryButtonText
+      signLanguageVideo {
+        url
+      }
+      alertBanner {
+        showAlertBanner
+        bannerVariant
+        title
+        description
+        linkTitle
+        link {
+          slug
+          type
+        }
+        isDismissable
+        dismissedForDays
+      }
       body {
         ...AllSlices
+        ${nestedFields}
+      }
+      stepper {
+        id
+        title
+        steps {
+          id
+          title
+          slug
+          stepType
+          subtitle {
+            ...AllSlices
+          }
+          config
+        }
+        config
       }
       processEntry {
         id
-        type
         processTitle
         processLink
         openLinkInModal
         buttonText
       }
       organization {
+        id
         title
         shortTitle
         slug
         link
+        hasALandingPage
+        trackingDomain
         logo {
           url
           width
@@ -50,6 +85,7 @@ export const GET_ARTICLE_QUERY = gql`
         title
         slug
         link
+        hasALandingPage
         logo {
           url
           width
@@ -89,30 +125,14 @@ export const GET_ARTICLE_QUERY = gql`
         id
         title
         slug
+        signLanguageVideo {
+          url
+        }
         body {
           ...AllSlices
+          ${nestedFields}
         }
         showTableOfContents
-        stepper {
-          id
-          title
-          steps {
-            id
-            title
-            slug
-            stepType
-            subtitle {
-              ...HtmlFields
-            }
-            text {
-              ...HtmlFields
-            }
-            isAnswer
-            options
-            config
-          }
-          config
-        }
       }
       featuredImage {
         url
@@ -129,11 +149,16 @@ export const GET_CONTENT_SLUG = gql`
   query GetContentSlug($input: GetContentSlugInput!) {
     getContentSlug(input: $input) {
       id
+      activeTranslations
       title {
         en
         is
       }
       slug {
+        en
+        is
+      }
+      url {
         en
         is
       }

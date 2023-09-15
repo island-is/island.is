@@ -4,7 +4,7 @@ import { useMutation, ApolloError } from '@apollo/client'
 import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
 import { useFormContext } from 'react-hook-form'
-import { PdfTypes } from '@island.is/application/core'
+import { PdfTypes } from '@island.is/application/types'
 import { Box, Button } from '@island.is/island-ui/core'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import {
@@ -55,21 +55,19 @@ const Overview = ({
   )
   const applicant = externalData.nationalRegistry.data
   const children = getSelectedChildrenFromExternalData(
-    applicant.children,
+    externalData.childrenCustodyInformation.data,
     answers.selectedChildren,
   )
   const parentB = children[0].otherParent
 
   const { formatMessage } = useIntl()
 
-  const [
-    requestFileSignature,
-    { data: requestFileSignatureData },
-  ] = useMutation(REQUEST_FILE_SIGNATURE)
+  const [requestFileSignature, { data: requestFileSignatureData }] =
+    useMutation(REQUEST_FILE_SIGNATURE)
 
   const [uploadSignedFile] = useMutation(UPLOAD_SIGNED_FILE)
 
-  const { register } = useFormContext()
+  const { register, setValue } = useFormContext()
 
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
@@ -92,7 +90,7 @@ const Overview = ({
           dispatchFileSignature({
             type: FileSignatureActionTypes.ERROR,
             status: FileSignatureStatus.REQUEST_ERROR,
-            error: error.graphQLErrors[0].extensions?.code ?? 500,
+            error: (error.graphQLErrors[0].extensions?.code as number) ?? 500,
           })
         })
       if (documentToken) {
@@ -113,7 +111,7 @@ const Overview = ({
             dispatchFileSignature({
               type: FileSignatureActionTypes.ERROR,
               status: FileSignatureStatus.UPLOAD_ERROR,
-              error: error.graphQLErrors[0].extensions?.code ?? 500,
+              error: (error.graphQLErrors[0].extensions?.code as number) ?? 500,
             })
           })
 
@@ -128,6 +126,13 @@ const Overview = ({
   const controlCode =
     requestFileSignatureData?.requestFileSignature?.controlCode
   const isDraft = application.state === 'draft'
+  if (isDraft) {
+    setValue(
+      confirmContractTimestamp,
+      format(addDays(new Date(), 28), 'dd.MM.yyyy'),
+    )
+  }
+
   return (
     <Box className={style.descriptionOffset}>
       <SignatureModal
@@ -144,7 +149,7 @@ const Overview = ({
           <DescriptionText
             text={m.contract.general.description}
             format={{
-              otherParent: parentB.fullName,
+              otherParent: parentB?.fullName ?? '',
             }}
           />
         ) : (
@@ -193,14 +198,6 @@ const Overview = ({
           ]}
         />
       </Box>
-      {isDraft && (
-        <input
-          name={confirmContractTimestamp}
-          type="hidden"
-          value={format(addDays(new Date(), 28), 'dd.MM.yyyy')}
-          ref={register}
-        />
-      )}
     </Box>
   )
 }

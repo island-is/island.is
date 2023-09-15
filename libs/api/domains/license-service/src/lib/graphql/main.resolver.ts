@@ -68,14 +68,11 @@ export class GeneratePkPassInput {
 @InputType()
 export class VerifyPkPassInput {
   @Field(() => String)
-  licenseType!: GenericLicenseType
-
-  @Field(() => String)
   data!: string
 }
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.internal, ApiScope.licenses)
 @Resolver()
 @Audit({ namespace: '@island.is/api/license-service' })
 export class MainResolver {
@@ -90,10 +87,10 @@ export class MainResolver {
     @Args('input', { nullable: true }) input?: GetGenericLicensesInput,
   ) {
     const licenses = await this.licenseServiceService.getAllLicenses(
-      user.nationalId,
+      user,
       locale,
       {
-        includedTypes: input?.includedTypes,
+        includedTypes: input?.includedTypes ?? ['DriversLicense'],
         excludedTypes: input?.excludedTypes,
         force: input?.force,
         onlyList: input?.onlyList,
@@ -111,11 +108,10 @@ export class MainResolver {
     @Args('input') input: GetGenericLicenseInput,
   ) {
     const license = await this.licenseServiceService.getLicense(
-      user.nationalId,
+      user,
       locale,
       input.licenseType,
     )
-
     return license
   }
 
@@ -128,7 +124,7 @@ export class MainResolver {
     @Args('input') input: GeneratePkPassInput,
   ): Promise<GenericPkPass> {
     const { pkpassUrl } = await this.licenseServiceService.generatePkPass(
-      user.nationalId,
+      user,
       locale,
       input.licenseType,
     )
@@ -143,13 +139,12 @@ export class MainResolver {
     locale: Locale = 'is',
     @Args('input') input: GeneratePkPassInput,
   ): Promise<GenericPkPassQrCode> {
-    const {
-      pkpassQRCode,
-    } = await this.licenseServiceService.generatePkPassQrCode(
-      user.nationalId,
-      locale,
-      input.licenseType,
-    )
+    const { pkpassQRCode } =
+      await this.licenseServiceService.generatePkPassQrCode(
+        user,
+        locale,
+        input.licenseType,
+      )
 
     return { pkpassQRCode }
   }
@@ -164,12 +159,10 @@ export class MainResolver {
     @Args('input') input: VerifyPkPassInput,
   ): Promise<GenericPkPassVerification> {
     const verification = await this.licenseServiceService.verifyPkPass(
-      user.nationalId,
+      user,
       locale,
-      input.licenseType,
       input.data,
     )
-
     return verification
   }
 }

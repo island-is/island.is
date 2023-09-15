@@ -1,4 +1,4 @@
-import { User, UserManager } from 'oidc-client'
+import { User, UserManager } from 'oidc-client-ts'
 
 import { AuthSettings, mergeAuthSettings } from './AuthSettings'
 import { toStringScope } from './utils/toStringScope'
@@ -27,6 +27,7 @@ export const configure = (settings: AuthSettings) => {
   userManager = new UserManager({
     ...authSettings,
     scope: toStringScope(settings.scope),
+    redirect_uri: `${authSettings.baseUrl}${authSettings.redirectPath}`,
   })
 
   return userManager
@@ -35,6 +36,7 @@ export const configure = (settings: AuthSettings) => {
 export const configureMock = (user?: MockUser) => {
   authSettings = mergeAuthSettings({
     client_id: 'test-client',
+    authority: 'https://innskra.island.is',
   })
 
   const userInfo = createMockUser(user)
@@ -42,8 +44,8 @@ export const configureMock = (user?: MockUser) => {
     /* intentionally empty */
   }
 
-  userManager = ({
-    getUser() {
+  userManager = {
+    getUser(): Promise<User> {
       return Promise.resolve(userInfo)
     },
     signinSilent(): Promise<User> {
@@ -56,7 +58,7 @@ export const configureMock = (user?: MockUser) => {
       removeUserLoaded: empty,
       removeUserSignedOut: empty,
     },
-  } as unknown) as UserManager
+  } as unknown as UserManager
 }
 
 export { User, UserManager }

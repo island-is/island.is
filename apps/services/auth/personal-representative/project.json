@@ -1,0 +1,61 @@
+{
+  "name": "services-auth-personal-representative",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/services/auth/personal-representative/src",
+  "projectType": "application",
+  "prefix": "personal-representative",
+  "targets": {
+    "build": {
+      "executor": "./tools/executors/node:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/services/auth/personal-representative",
+        "main": "apps/services/auth/personal-representative/src/main.ts",
+        "tsConfig": "apps/services/auth/personal-representative/tsconfig.app.json",
+        "assets": ["apps/services/auth/personal-representative/src/assets"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-auth-personal-representative:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/services/auth/personal-representative/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/services/auth/personal-representative"
+      ],
+      "options": {
+        "jestConfig": "apps/services/auth/personal-representative/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/build-openapi": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth/personal-representative/tsconfig.app.json apps/services/auth/personal-representative/src/buildOpenApi.ts"
+      },
+      "outputs": [
+        "{workspaceRoot}/apps/services/auth/personal-representative/src/openapi.yaml"
+      ]
+    },
+    "docker-express": {}
+  },
+  "tags": ["scope:auth-api"]
+}

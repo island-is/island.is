@@ -1,14 +1,12 @@
 import {
   buildForm,
   buildSection,
-  Form,
-  FormModes,
   buildCustomField,
   buildMultiField,
   buildSubmitField,
   buildSubSection,
-  DefaultEvents,
 } from '@island.is/application/core'
+import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
 import { contactInfoParentBIds } from '../fields/ContactInfoParentB'
 import { ApproveContract } from '../lib/dataSchema'
@@ -18,7 +16,7 @@ export const ParentBForm: Form = buildForm({
   id: 'ParentBForm',
   title: m.application.name,
   logo: Logo,
-  mode: FormModes.APPLYING,
+  mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
       id: 'parentBIntro',

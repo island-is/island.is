@@ -1,0 +1,33 @@
+{
+  "name": "portals-admin-ids-admin",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/portals/admin/ids-admin/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/portals/admin/ids-admin/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "schemas/codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/portals/admin/ids-admin/src/**/*.generated.ts",
+        "command": "graphql-codegen --config libs/portals/admin/ids-admin/codegen.yml"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/portals/admin/ids-admin"],
+      "options": {
+        "jestConfig": "libs/portals/admin/ids-admin/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": ["scope:portals-admin", "lib:portals-admin"]
+}

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { useDropzone } from 'react-dropzone'
+import { FileRejection, useDropzone } from 'react-dropzone'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import * as styles from './InputImageUpload.css'
@@ -233,6 +233,7 @@ export interface InputImageUploadProps {
   onRemove: (file: UploadImage) => void
   onRetry?: (file: UploadImage) => void
   onChange?: (files: File[]) => void
+  onUploadRejection?: (files: FileRejection[]) => void
   errorMessage?: string
   defaultFileBackgroundColor?: Colors
   doneIcon?: IconMapType
@@ -255,12 +256,17 @@ export const InputImageUpload = ({
   onChange,
   onRemove,
   onRetry,
+  onUploadRejection,
   errorMessage,
   defaultFileBackgroundColor,
   doneIcon,
   hideIcons = false,
 }: InputImageUploadProps) => {
-  const onDrop = (acceptedFiles: File[]) => {
+  const onDrop = (acceptedFiles: File[], fileRejections: FileRejection[]) => {
+    if (fileRejections.length !== 0 && onUploadRejection) {
+      onUploadRejection(fileRejections)
+    }
+
     if (acceptedFiles.length === 0 || !onChange) return
 
     if (!multiple) {

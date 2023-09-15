@@ -5,7 +5,7 @@ import {
   Inject,
   Param,
   Post,
-  Put,
+  Patch,
   Query,
   UseGuards,
 } from '@nestjs/common'
@@ -39,10 +39,7 @@ export class UserController {
   @RolesRules(adminRule)
   @Post('user')
   @ApiCreatedResponse({ type: User, description: 'Creates a new user' })
-  create(
-    @Body()
-    userToCreate: CreateUserDto,
-  ): Promise<User> {
+  create(@Body() userToCreate: CreateUserDto): Promise<User> {
     this.logger.debug('Creating a new user')
 
     return this.userService.create(userToCreate)
@@ -50,7 +47,7 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(adminRule)
-  @Put('user/:userId')
+  @Patch('user/:userId')
   @ApiOkResponse({ type: User, description: 'Updates an existing user' })
   update(
     @Param('userId') userId: string,

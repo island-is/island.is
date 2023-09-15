@@ -11,22 +11,29 @@ import {
 } from '@island.is/clients/syslumenn'
 import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNotifyError'
 import { generateSyslumennSubmitRequestErrorEmail } from './emailGenerators/syslumennSubmitRequestError'
-import { Application } from '@island.is/application/core'
 import {
-  NationalRegistry,
+  Application,
+  ApplicationTypes,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
+import {
+  Identity,
   UserProfile,
   SubmitRequestToSyslumennResult,
   ValidateMortgageCertificateResult,
 } from './types'
 import { ChargeItemCode } from '@island.is/shared/constants'
+import { BaseTemplateApiService } from '../../base-template-api.service'
 
 @Injectable()
-export class MortgageCertificateSubmissionService {
+export class MortgageCertificateSubmissionService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly mortgageCertificateService: MortgageCertificateService,
     private readonly syslumennService: SyslumennService,
-  ) {}
+  ) {
+    super(ApplicationTypes.MORTGAGE_CERTIFICATE)
+  }
 
   async createCharge({
     application: { id },
@@ -34,9 +41,10 @@ export class MortgageCertificateSubmissionService {
   }: TemplateApiModuleActionProps) {
     try {
       const result = this.sharedTemplateAPIService.createCharge(
-        auth.authorization,
+        auth,
         id,
-        ChargeItemCode.MORTGAGE_CERTIFICATE,
+        InstitutionNationalIds.SYSLUMENN,
+        [ChargeItemCode.MORTGAGE_CERTIFICATE],
       )
       return result
     } catch (exeption) {
@@ -54,12 +62,8 @@ export class MortgageCertificateSubmissionService {
       }
     }
 
-    const isPayment:
-      | { fulfilled: boolean }
-      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
-      application.id,
-    )
+    const isPayment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
 
     if (isPayment?.fulfilled) {
       return {
@@ -82,10 +86,11 @@ export class MortgageCertificateSubmissionService {
     }
 
     return {
-      validation: await this.mortgageCertificateService.validateMortgageCertificate(
-        propertyNumber,
-        isFromSearch,
-      ),
+      validation:
+        await this.mortgageCertificateService.validateMortgageCertificate(
+          propertyNumber,
+          isFromSearch,
+        ),
       propertyDetails: await this.syslumennService.getPropertyDetails(
         propertyNumber,
       ),
@@ -98,9 +103,10 @@ export class MortgageCertificateSubmissionService {
     const { propertyNumber } = application.answers.selectProperty as {
       propertyNumber: string
     }
-    const document = await this.mortgageCertificateService.getMortgageCertificate(
-      propertyNumber,
-    )
+    const document =
+      await this.mortgageCertificateService.getMortgageCertificate(
+        propertyNumber,
+      )
 
     // Call sýslumaður to get the document sealed before handing it over to the user
     const sealedDocumentResponse = await this.syslumennService.sealDocument(
@@ -128,29 +134,30 @@ export class MortgageCertificateSubmissionService {
     const { propertyNumber } = application.answers.selectProperty as {
       propertyNumber: string
     }
-    const nationalRegistryData = application.externalData.nationalRegistry
-      ?.data as NationalRegistry
+    const identityData = application.externalData.identity?.data as Identity
     const userProfileData = application.externalData.userProfile
       ?.data as UserProfile
 
     const person: Person = {
-      name: nationalRegistryData?.fullName,
-      ssn: nationalRegistryData?.nationalId,
+      name: identityData?.name,
+      ssn: identityData?.nationalId,
       phoneNumber: userProfileData?.mobilePhoneNumber,
       email: userProfileData?.email,
-      homeAddress: nationalRegistryData?.address.streetAddress,
-      postalCode: nationalRegistryData?.address.postalCode,
-      city: nationalRegistryData?.address.city,
+      homeAddress: identityData?.address?.streetAddress || '',
+      postalCode: identityData?.address?.postalCode || '',
+      city: identityData?.address?.city || '',
       signed: true,
       type: PersonType.MortgageCertificateApplicant,
     }
     const persons: Person[] = [person]
 
     const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
-    const attachment: Attachment = {
-      name: `vedbokarvottord_${nationalRegistryData?.nationalId}_${dateStr}.pdf`,
-      content: document.contentBase64,
-    }
+    const attachments: Attachment[] = [
+      {
+        name: `vedbokarvottord_${identityData?.nationalId}_${dateStr}.pdf`,
+        content: document.contentBase64,
+      },
+    ]
 
     const extraData: { [key: string]: string } = {
       propertyNumber: propertyNumber,
@@ -160,11 +167,11 @@ export class MortgageCertificateSubmissionService {
     const uploadDataId = 'Vedbokavottord1.0'
 
     await this.syslumennService
-      .uploadData(persons, attachment, extraData, uploadDataName, uploadDataId)
+      .uploadData(persons, attachments, extraData, uploadDataName, uploadDataId)
       .catch(async () => {
         await this.sharedTemplateAPIService.sendEmail(
           generateSyslumennNotifyErrorEmail,
-          (application as unknown) as Application,
+          application as unknown as Application,
         )
         return undefined
       })
@@ -176,19 +183,18 @@ export class MortgageCertificateSubmissionService {
     const { propertyNumber } = application.answers.selectProperty as {
       propertyNumber: string
     }
-    const nationalRegistryData = application.externalData.nationalRegistry
-      ?.data as NationalRegistry
+    const identityData = application.externalData.identity?.data as Identity
     const userProfileData = application.externalData.userProfile
       ?.data as UserProfile
 
     const person: Person = {
-      name: nationalRegistryData?.fullName,
-      ssn: nationalRegistryData?.nationalId,
+      name: identityData?.name,
+      ssn: identityData?.nationalId,
       phoneNumber: userProfileData?.mobilePhoneNumber,
       email: userProfileData?.email,
-      homeAddress: nationalRegistryData?.address.streetAddress,
-      postalCode: nationalRegistryData?.address.postalCode,
-      city: nationalRegistryData?.address.city,
+      homeAddress: identityData?.address?.streetAddress || '',
+      postalCode: identityData?.address?.postalCode || '',
+      city: identityData?.address?.city || '',
       signed: true,
       type: PersonType.MortgageCertificateApplicant,
     }
@@ -207,7 +213,7 @@ export class MortgageCertificateSubmissionService {
       .catch(async () => {
         await this.sharedTemplateAPIService.sendEmail(
           generateSyslumennSubmitRequestErrorEmail,
-          (application as unknown) as Application,
+          application as unknown as Application,
         )
         return undefined
       })

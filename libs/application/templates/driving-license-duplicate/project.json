@@ -1,0 +1,30 @@
+{
+  "name": "application-templates-driving-license-duplicate",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/templates/driving-license-duplicate/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/driving-license-duplicate/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/driving-license-duplicate/src/lib/messages.ts"
+      }
+    },
+    "schemas/codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/application/templates/driving-license-duplicate/codegen.yml"
+      }
+    }
+  },
+  "tags": ["scope:application-system", "lib:application-system"]
+}

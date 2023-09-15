@@ -4,7 +4,7 @@ import { getModelToken } from '@nestjs/sequelize'
 import { User } from '@island.is/auth-nest-tools'
 import { AuditModule } from '@island.is/nest/audit'
 import { NameType, StatusType } from '@island.is/icelandic-names-registry-types'
-import { LOGGER_PROVIDER, LoggingModule } from '@island.is/logging'
+import { LoggingModule } from '@island.is/logging'
 
 import { IcelandicNameController } from '../../icelandic-name.controller'
 import { IcelandicNameService } from '../../icelandic-name.service'
@@ -74,9 +74,8 @@ describe('IcelandicNameController', () => {
     icelandicNameController = moduleRef.get<IcelandicNameController>(
       IcelandicNameController,
     )
-    icelandicNameService = moduleRef.get<IcelandicNameService>(
-      IcelandicNameService,
-    )
+    icelandicNameService =
+      moduleRef.get<IcelandicNameService>(IcelandicNameService)
   })
 
   it('should create an icelandic name', async () => {

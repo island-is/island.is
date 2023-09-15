@@ -3,15 +3,19 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   title: {
     id: 'sp.license:title',
-    defaultMessage: 'Þín skírteini',
+    defaultMessage: 'Skírteinin þín',
   },
   intro: {
     id: 'sp.license:intro',
     defaultMessage:
-      'Hér gefur að líta á núverandi skírteini og réttindi þín. Til að byrja með geturu fundið ökuréttindi þín og kannað stöðu þeirra. Unnið er að því að bæta við fleiri skírteinum og réttindum eins og bólusetningarskírteini, skotvopnaleyfi og vegabréfi.',
+      'Hér gefur að líta núverandi skírteini og réttindi þín. Unnið er að því að bæta við fleiri skírteinum og réttindum eins og bólusetningarskírteini og vegabréfi.',
+  },
+  license: {
+    id: 'sp.license:license',
+    defaultMessage: 'Réttindi',
   },
   drivingLicense: {
-    id: 'sp.license:license',
+    id: 'sp.license:driving-license',
     defaultMessage: 'Ökuréttindi',
   },
   yourDrivingLicense: {
@@ -21,7 +25,58 @@ export const m = defineMessages({
   drivingLicenseDescription: {
     id: 'sp.license:driving-license-description',
     defaultMessage:
-      'Hér birtast upplýsingar um ökuskírteini þitt ásam þeim ökuréttidnum sem þú ert með í gildi á hverjum tíma.',
+      'Hér birtast upplýsingar um ökuskírteini þitt ásamt þeim ökuréttindum sem þú ert með í gildi á hverjum tíma.',
+  },
+  ADRLicense: {
+    id: 'sp.license:adr-license',
+    defaultMessage: 'ADR réttindi',
+  },
+  yourADRLicense: {
+    id: 'sp.license:your-adr-license',
+    defaultMessage: 'ADR réttindin þín',
+  },
+  adrLicenseDescription: {
+    id: 'sp.license:adr-license-description',
+    defaultMessage:
+      'Hér birtast upplýsingar um ADR skírteini þitt ásamt þeim réttindum sem þú ert með í gildi á hverjum tíma.',
+  },
+  firearmLicense: {
+    id: 'sp.license:firearm-license',
+    defaultMessage: 'Skotvopnaleyfi',
+  },
+  yourFirearmLicense: {
+    id: 'sp.license:your-firearm-license',
+    defaultMessage: 'Skotvopnaleyfið þitt',
+  },
+  firearmLicenseDescription: {
+    id: 'sp.license:firearm-license-description',
+    defaultMessage:
+      'Hér birtast upplýsingar um skoptvopnaleyfið þitt ásamt skotvopnum skráð í þinni eigu.',
+  },
+  disabilityLicense: {
+    id: 'sp.license:disability-license',
+    defaultMessage: 'Örorkuskírteini',
+  },
+  yourDisabilityicense: {
+    id: 'sp.license:your-disability-license',
+    defaultMessage: 'Örorkuskírteinið þitt',
+  },
+  disabilityLicenseDescription: {
+    id: 'sp.license:disability-license-description',
+    defaultMessage: 'Hér birtast upplýsingar um örorkuskírteinið þitt.',
+  },
+  machineLicense: {
+    id: 'sp.license:machine-license',
+    defaultMessage: 'Vinnuvélaréttindi',
+  },
+  yourMachineLicense: {
+    id: 'sp.license:your-machine-license',
+    defaultMessage: 'Vinnuvélaréttindin þín',
+  },
+  machineLicenseDescription: {
+    id: 'sp.license:machine-license-description',
+    defaultMessage:
+      'Hér birtast upplýsingar um vinnuvélaskírteini þitt ásamt þeim réttindum sem þú ert með í gildi á hverjum tíma.',
   },
   expiresIn: {
     id: 'sp.license:expires-in',
@@ -43,13 +98,17 @@ export const m = defineMessages({
     id: 'sp.license:driving-license-number',
     defaultMessage: 'Númer ökuskírteinis',
   },
+  licenseNumber: {
+    id: 'sp.license:license-number-overview',
+    defaultMessage: 'Skírteinisnúmer',
+  },
   sendToPhone: {
     id: 'sp.license:send-to-phone',
     defaultMessage: 'Senda í síma',
   },
   sendLicenseToPhone: {
     id: 'sp.license:send-license-to-phone',
-    defaultMessage: 'Senda ökuskírteini í síma',
+    defaultMessage: 'Senda skírteini í síma',
   },
   renewDrivingLicense: {
     id: 'sp.license:renew-license',
@@ -78,11 +137,7 @@ export const m = defineMessages({
   },
   errorFetchingDrivingLicense: {
     id: 'sp.license:error-fetch-driving-license',
-    defaultMessage: 'Ekki tókst að sækja gögn um ökuskírteini',
-  },
-  errorFetch: {
-    id: 'sp.license:error-fetch',
-    defaultMessage: 'Ekki tókst að sækja gögn',
+    defaultMessage: 'Ekki tókst að sækja gögn um skírteini',
   },
   errorNoData: {
     id: 'sp.license:no-data-found',
@@ -111,5 +166,131 @@ export const m = defineMessages({
   licenseCategories: {
     id: 'sp.license:license-categories-title',
     defaultMessage: 'Réttindaflokkar',
+  },
+  lost: {
+    id: 'sp.license:is-lost',
+    defaultMessage: 'Glatað',
+  },
+  invalid: {
+    id: 'sp.license:is-invalid',
+    defaultMessage: 'Ógilt',
+  },
+  altText: {
+    id: 'sp.license:license-alt-text',
+    defaultMessage: 'Skrautmynd fyrir',
+  },
+  passportCardTitle: {
+    id: 'sp.license:passport-card-title',
+    defaultMessage: 'Vegabréf',
+  },
+  passportNumber: {
+    id: 'sp.license:passport-number',
+    defaultMessage: 'Númer vegabréfs',
+  },
+  passportName: {
+    id: 'sp.license:passport-name',
+    defaultMessage: 'Nafn einstaklings',
+  },
+  passportNumberShort: {
+    id: 'sp.license:passport-number-short',
+    defaultMessage: 'Númer',
+  },
+  passportNameComputer: {
+    id: 'sp.license:passport-name-computer',
+    defaultMessage: 'Nafn á tölvulesanlegu formi',
+  },
+  passportGender: {
+    id: 'sp.license:passport-gender',
+    defaultMessage: 'Kyn',
+  },
+  passportRenew: {
+    id: 'sp.license:passport-renew',
+    defaultMessage: 'Endurnýja vegabréf',
+  },
+  passportNotifyLost: {
+    id: 'sp.license:passport-notify-lost',
+    defaultMessage: 'Tilkynna glatað vegabréf',
+  },
+  passportExpired: {
+    id: 'sp.license:passport-expired',
+    defaultMessage: 'Vegabréf útrunnið',
+  },
+  passportExpiredText: {
+    id: 'sp.license:passport-expired-text',
+    defaultMessage: 'Athugið að vegabréf er útrunnið og þarf að sækja um nýtt',
+  },
+  passportInvalid: {
+    id: 'sp.license:passport-invalid',
+    defaultMessage: 'Vegabréf ógilt',
+  },
+  passportInvalidText: {
+    id: 'sp.license:passport-invalid-text',
+    defaultMessage: 'Athugið að vegabréf er ógilt og þarf að sækja um nýtt',
+  },
+  passportExpiring: {
+    id: 'sp.license:passport-expiring',
+    defaultMessage: 'Rennur út innan 6 mánaða',
+  },
+  passportExpiringText: {
+    id: 'sp.license:passport-expiring-text',
+    defaultMessage:
+      'Athugið að vegabréfið þitt mun renna út innan næstu 6 mánaða. Þeir sem hyggast ferðast utan EES verða að hafa vegabréf sem gilda í amk 6 mánuði frá áætluðum ferðalokum.',
+  },
+  passportDescription: {
+    id: 'sp.license:passport-description',
+    defaultMessage:
+      'Hér birtast upplýsingar um vegabréfið þitt. Athugaðu að þetta eru aðeins upplýsingar en ekki gilt vegabréf.',
+  },
+  errorFetchingPassport: {
+    id: 'sp.license:error-fetch-passport',
+    defaultMessage: 'Ekki tókst að sækja gögn um vegabréf',
+  },
+  noValidPassport: {
+    id: 'sp.license:no-valid-passport',
+    defaultMessage: 'Engin gild vegabréf',
+  },
+  see: {
+    id: 'sp.license:see',
+    defaultMessage: 'Skoða',
+  },
+  applyFor: {
+    id: 'sp.license:apply-for',
+    defaultMessage: 'Sækja um',
+  },
+  male: {
+    id: 'sp.license:gender-male',
+    defaultMessage: 'Karl',
+  },
+  female: {
+    id: 'sp.license:gender-female',
+    defaultMessage: 'Kona',
+  },
+  otherGender: {
+    id: 'sp.license:gender-other',
+    defaultMessage: 'Kynsegin/Annað',
+  },
+  licenseTabPrimary: {
+    id: 'sp.license:tab-primary',
+    defaultMessage: 'Þín skírteini',
+  },
+  licenseTabSecondary: {
+    id: 'sp.license:tab-secondary',
+    defaultMessage: 'Skírteini barna þinna',
+  },
+  seeLicenses: {
+    id: 'sp.license:see-licenses',
+    defaultMessage: 'Skoða skírteini',
+  },
+  licenseFetchError: {
+    id: 'sp.license:license-fetch-error',
+    defaultMessage: 'Í augnablikinu er ekki hægt að senda skilríki í síma',
+  },
+  lostPassportUrl: {
+    id: 'sp.license:url-lost-passport',
+    defaultMessage: 'https://island.is/stolidtynt-vegabref',
+  },
+  applyPassportUrl: {
+    id: 'sp.license:url-apply-passport',
+    defaultMessage: 'https://island.is/vegabref',
   },
 })

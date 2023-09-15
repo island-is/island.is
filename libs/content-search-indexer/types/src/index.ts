@@ -23,6 +23,7 @@ export interface MappedData {
   tags?: tag[]
   dateUpdated: string
   dateCreated: string
+  releaseDate?: string | null
 }
 
 export interface SyncOptions {

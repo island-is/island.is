@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsOptional } from 'class-validator'
+import { IsNotEmpty, IsString, IsOptional, IsBoolean } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -29,4 +29,9 @@ export class CreateApplicationEventDto {
   @IsString()
   @ApiProperty()
   readonly staffName?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty()
+  readonly emailSent?: boolean
 }

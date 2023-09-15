@@ -34,6 +34,17 @@ export const m = defineMessages({
       'Við munum sækja skráningu þína úr ökuskírteinaskrá til að athuga hvort þú hafir sannarlega ökukennararéttindi.',
     description: 'Data provider subtitle',
   },
+  dataCollectionNoRightsError: {
+    id: 'dir.application:dataCollectionNoRightsError',
+    defaultMessage:
+      'Þú hefur ekki ökukennararéttindi í ökuskírteinaskrá. Vinsamlega hafðu samband við næsta sýslumannsembætti ef þú telur um villu vera að ræða',
+    description: 'Data provider no teaching rights error',
+  },
+  dataCollectionNoConnection: {
+    id: 'dir.application:dataCollectionNoConnection',
+    defaultMessage: 'Náði ekki sambandi við vefþjónustu',
+    description: 'Data provider no connection',
+  },
 
   /* Students Overview Table Section */
   studentsOverviewSideTitle: {
@@ -46,9 +57,14 @@ export const m = defineMessages({
     defaultMessage: 'Mínir ökunemar',
     description: 'Students overview page title',
   },
+  studentsOverviewSearchLabel: {
+    id: 'dir.application:studentsOverviewSearchLabel',
+    defaultMessage: 'Leita að ökunema',
+    description: 'Students overview search placeholder',
+  },
   studentsOverviewSearchPlaceholder: {
     id: 'dir.application:studentsOverviewSearchPlaceholder',
-    defaultMessage: 'Leitaðu að nafni eða kennitölu',
+    defaultMessage: 'Slá inn nafn eða kennitölu',
     description: 'Students overview search placeholder',
   },
   studentsOverviewRegisterHoursForOtherStudent: {
@@ -58,7 +74,7 @@ export const m = defineMessages({
   },
   studentsOverviewTableHeaderCol1: {
     id: 'dir.application:studentsOverviewTableHeaderCol1',
-    defaultMessage: 'Nemandi',
+    defaultMessage: 'Ökunemi',
     description: 'Table header 1',
   },
   studentsOverviewTableHeaderCol2: {
@@ -68,7 +84,7 @@ export const m = defineMessages({
   },
   studentsOverviewTableHeaderCol3: {
     id: 'dir.application:studentsOverviewTableHeaderCol3',
-    defaultMessage: 'Kennslustundir',
+    defaultMessage: 'Tímar',
     description: 'Table header 3',
   },
   studentsOverviewRegisterHoursCancelButton: {
@@ -78,7 +94,7 @@ export const m = defineMessages({
   },
   studentsOverviewRegisterHoursButton: {
     id: 'dir.application:studentsOverviewRegisterHoursButton',
-    defaultMessage: 'Skrá ökutíma',
+    defaultMessage: 'Skrá',
     description: 'Register button',
   },
   studentsOverviewOtherStudentIdModalTitle: {
@@ -88,26 +104,36 @@ export const m = defineMessages({
   },
   studentsOverviewOtherStudentIdModalDescription: {
     id: 'dir.application:studentsOverviewOtherStudentIdDecription',
-    defaultMessage: 'Sláðu inn kennitölu nemanda',
+    defaultMessage: 'Sláðu inn kennitölu ökunema',
     description: 'Modal description',
   },
   studentsOverviewOtherStudentInputLabel: {
     id: 'dir.application:studentsOverviewOtherStudentIdModalDecription',
-    defaultMessage: 'Kennitala umsækjanda',
+    defaultMessage: 'Kennitala ökunema',
     description: 'Input id',
+  },
+  studentsOverviewOtherStudentRegisterButton: {
+    id: 'dir.application:studentsOverviewOtherStudentRegisterButton',
+    defaultMessage: 'Skrá ökutima',
+    description: 'Button ',
   },
   studentsOverviewNoStudentFound: {
     id: 'dir.application:studentsOverviewNoStudentFound',
-    defaultMessage: 'Enginn nemandi fannst',
+    defaultMessage: 'Enginn ökunemi fannst',
     description: 'No students',
   },
   studentsOverviewNoStudentFoundInModal: {
     id: 'dir.application:studentsOverviewNoStudentFoundInModal',
-    defaultMessage: 'Enginn nemandi skráður á eftirfarandi kennitölu',
+    defaultMessage: 'Enginn ökunemi skráður á eftirfarandi kennitölu',
     description: 'No students error in modal',
   },
 
   /* View Single Student Section */
+  viewStudentTitle: {
+    id: 'dir.application:viewStudentTitle',
+    defaultMessage: 'Ökunámsbók',
+    description: 'Registration page title',
+  },
   viewStudentName: {
     id: 'dir.application:viewStudentName',
     defaultMessage: 'Ökunemi',
@@ -123,6 +149,26 @@ export const m = defineMessages({
     defaultMessage: 'Kennslustundum lokið',
     description: 'Student complete hours',
   },
+  viewStudentPracticeDrivingTitle: {
+    id: 'dir.application:viewStudentPracticeDrivingTitle',
+    defaultMessage: 'Æfingarakstursleyfi',
+    description: 'Student complete hours',
+  },
+  viewStudentPracticeDrivingButton: {
+    id: 'dir.application:viewStudentPracticeDrivingButton',
+    defaultMessage: 'Veita æfingarakstursleyfi',
+    description: 'Student complete hours',
+  },
+  viewStudentYes: {
+    id: 'dir.application:viewStudentYes',
+    defaultMessage: 'Já',
+    description: 'Student complete hours',
+  },
+  viewStudentNo: {
+    id: 'dir.application:viewStudentNo',
+    defaultMessage: 'Nei',
+    description: 'Student complete hours',
+  },
   viewStudentCompleteSchools: {
     id: 'dir.application:viewStudentCompleteSchools',
     defaultMessage: 'Ökuskólum lokið',
@@ -132,6 +178,21 @@ export const m = defineMessages({
     id: 'dir.application:viewStudentExamsComplete',
     defaultMessage: 'Skriflegum prófum lokið',
     description: 'Student complete exams',
+  },
+  viewStudentNoCompleteSchools: {
+    id: 'dir.application:viewStudentNoCompleteSchools',
+    defaultMessage: 'Engum ökuskóla lokið',
+    description: 'Student complete schools',
+  },
+  viewStudentNoExamsComplete: {
+    id: 'dir.application:viewStudentNoExamsComplete',
+    defaultMessage: 'Engu skriflegu prófi lokið',
+    description: 'Student complete exams',
+  },
+  viewStudentRegisterDrivingLesson: {
+    id: 'dir.application:viewStudentRegisterDrivingLesson',
+    defaultMessage: 'Skrá ökutíma',
+    description: 'Register mintutes',
   },
   viewStudentRegisterMinutes: {
     id: 'dir.application:viewStudentRegisterMinutes',
@@ -175,22 +236,22 @@ export const m = defineMessages({
   },
   viewStudentEditRegistration: {
     id: 'dir.application:viewStudentEditRegistration',
-    defaultMessage: 'Breyta skráningu',
+    defaultMessage: 'Breyta',
     description: 'Edit registration button',
   },
   viewStudentTableHeaderCol1: {
     id: 'dir.application:viewStudentTableHeaderCol1',
-    defaultMessage: 'Dagsetning',
+    defaultMessage: 'Dags.',
     description: 'Table header col 1',
   },
   viewStudentTableHeaderCol2: {
     id: 'dir.application:viewStudentTableHeaderCol2',
-    defaultMessage: 'Ökukennari',
+    defaultMessage: 'Kennari',
     description: 'Table header col 2',
   },
   viewStudentTableHeaderCol3: {
     id: 'dir.application:viewStudentTableHeaderCol3',
-    defaultMessage: 'Mínútur skráðar',
+    defaultMessage: 'Mínútur',
     description: 'Table header col 3',
   },
   viewStudentGoBackToOverviewButton: {
@@ -202,6 +263,16 @@ export const m = defineMessages({
     id: 'dir.application:viewStudentInputMinutesLabel',
     defaultMessage: 'Slá inn mínútur',
     description: 'Input field label',
+  },
+  errorOnGettingStudentTitle: {
+    id: 'dir.application:errorOnGettingStudentTitle',
+    defaultMessage: 'Ökunemi fannst ekki eða er ekki með virka ökunámsbók.',
+    description: 'Error on input minutes',
+  },
+  errorOnGettingStudentSubtitle: {
+    id: 'dir.application:errorOnGettingStudentSubtitle',
+    defaultMessage: 'Vinsamlega hafðu samband við næsta sýslumannsembætti',
+    description: 'Error on input minutes',
   },
   errorOnInputMinutes: {
     id: 'dir.application:errorOnInputMinutes',
@@ -228,6 +299,12 @@ export const m = defineMessages({
     defaultMessage: 'Ekki tókst að eyða skráningu. Vínsamlegast reyndu aftur.',
     description: 'Error on delete lesson',
   },
+  errorOnAllowPracticeDriving: {
+    id: 'dir.application:errorOnAllowPracticeDriving',
+    defaultMessage:
+      'Ekki tókst að leyfa æfingarakstur. Vínsamlegast reyndu aftur.',
+    description: 'Error on edit lesson',
+  },
   successOnRegisterLesson: {
     id: 'dir.application:successOnRegisterLesson',
     defaultMessage: 'Skráning tókst!',
@@ -241,6 +318,11 @@ export const m = defineMessages({
   successOnDeleteLesson: {
     id: 'dir.application:successOnDeleteLesson',
     defaultMessage: 'Tókst að eyða út skráningu!',
+    description: 'Success message on delete lesson',
+  },
+  successOnAllowPracticeDriving: {
+    id: 'dir.application:successOnAllowPracticeDriving',
+    defaultMessage: 'Tókst að veita æfingarakstursleyfi!',
     description: 'Success message on delete lesson',
   },
 })

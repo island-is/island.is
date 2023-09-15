@@ -2,15 +2,14 @@ import * as m from '../lib/messages'
 import {
   buildForm,
   buildSection,
-  Form,
-  FormModes,
   buildCustomField,
 } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 
 export const payment: Form = buildForm({
   id: 'ExamplePaymentPaymentForm',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: false,
   children: [
     buildSection({

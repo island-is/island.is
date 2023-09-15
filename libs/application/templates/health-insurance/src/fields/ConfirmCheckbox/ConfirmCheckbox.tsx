@@ -1,15 +1,16 @@
 import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import {
-  FieldBaseProps,
-  formatText,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Checkbox } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../forms/messages'
 
-const ConfirmCheckbox: FC<FieldBaseProps> = ({ error, field, application }) => {
+const ConfirmCheckbox: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  error,
+  field,
+  application,
+}) => {
   const { id, disabled } = field
   const { setValue } = useFormContext()
   const defaultValue = getValueViaPath(
@@ -23,7 +24,7 @@ const ConfirmCheckbox: FC<FieldBaseProps> = ({ error, field, application }) => {
     <Controller
       name={id}
       defaultValue={defaultValue}
-      render={({ value, onChange }) => {
+      render={({ field: { onChange, value } }) => {
         return (
           <Box
             border="standard"

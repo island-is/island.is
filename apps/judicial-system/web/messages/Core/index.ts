@@ -85,6 +85,11 @@ export const core = defineMessages({
     defaultMessage: 'Sækjandi',
     description: 'Notað fyrir orðið sækjandi í öllum flæðum.',
   },
+  defender: {
+    id: 'judicial.system.core:defender_v2',
+    defaultMessage: 'Verjandi',
+    description: 'Notað fyrir orðið verjandi í öllum flæðum.',
+  },
   accused: {
     id: 'judicial.system.core:accused-v3',
     defaultMessage: 'kærð{suffix}',
@@ -94,6 +99,23 @@ export const core = defineMessages({
     id: 'judicial.system.core:defendant',
     defaultMessage: 'varnaraðil{suffix}',
     description: 'Notað fyrir orðið varnaraðili í öllum flæðum.',
+  },
+  sessionArrangementsNonePresent: {
+    id: 'judicial.system.core:session_arrangements_none_present',
+    defaultMessage:
+      'Með heimild í 1. mgr. 104. gr. laga nr. 88/2008 voru hvorki varnaraðili né sóknaraðili kvaddir til þinghaldsins.',
+    description: 'Notað fyrir þingbók undir mættir eru.',
+  },
+  indictmentDefendant: {
+    id: 'judicial.system.core:indictment_defendant_v2',
+    defaultMessage:
+      '{gender, select, MALE {ákærði} FEMALE {ákærða} other {ákærða}}',
+    description: 'Notað fyrir orðið ákærði í öllum flæðum.',
+  },
+  indictmentDefendants: {
+    id: 'judicial.system.core:indictment_defendants',
+    defaultMessage: 'ákærðu',
+    description: 'Notað fyrir orðið ákærðu í öllum flæðum.',
   },
   requestCaseType: {
     id: 'judicial.system.core:request_case_type',
@@ -151,15 +173,11 @@ export const core = defineMessages({
     defaultMessage: 'Tegund kröfu',
     description: 'Notað fyrir orðið Tegund Kröfu í öllum flæðum.',
   },
-  pastCustody: {
-    id: 'judicial.system.core:past_custody',
-    defaultMessage: 'Fyrri gæsla',
-    description: 'Notað fyrir orðið Fyrri gæsla í öllum flæðum.',
-  },
-  pastTravelBan: {
-    id: 'judicial.system.core:past_travel_ban',
-    defaultMessage: 'Fyrra farbann',
-    description: 'Notað fyrir orðið Fyrra farbann í öllum flæðum.',
+  pastRestrictionCase: {
+    id: 'judicial.system.core:past_restriction_case',
+    defaultMessage:
+      '{caseType, select, ADMISSION_TO_FACILITY {Fyrri vistun} TRAVEL_BAN {Fyrra farbann} other {Fyrri gæsla}}',
+    description: 'Notað fyrir fyrri mál í öllum flæðum.',
   },
   arrestDate: {
     id: 'judicial.system.core:arrest_date',
@@ -180,5 +198,109 @@ export const core = defineMessages({
     id: 'judicial.system.core:and',
     defaultMessage: 'og',
     description: 'Notað fyrir orðið og',
+  },
+  modify: {
+    id: 'judicial.system.core:modify',
+    defaultMessage: 'leiðrétta',
+    description: 'Notað fyrir orðið "leiðrétta" í öllum flæðum.',
+  },
+  back: {
+    id: 'judicial.system.core:back',
+    defaultMessage: 'Til baka',
+    description: 'Notað fyrir "Til baka" takka í öllum flæðum.',
+  },
+  continue: {
+    id: 'judicial.system.core:continue',
+    defaultMessage: 'Halda áfram',
+    description: 'Notað fyrir "Halda áfram" takka í öllum flæðum.',
+  },
+  createCase: {
+    id: 'judicial.system.core:create_case',
+    defaultMessage: 'Stofna mál',
+    description: 'Notað fyrir "Stofna mál" takka í öllum flæðum.',
+  },
+  linkCopied: {
+    id: 'judicial.system.core:link_copied',
+    defaultMessage: 'Hlekkur afritaður',
+    description: 'Notaður sem skilaboð þegar tekst að afrita hlekk',
+  },
+  serviceInterruptionTitle: {
+    id: 'judicial.system.core:service_interruption_title',
+    defaultMessage: 'Mikilvæg skilaboð',
+    description:
+      'Notaður sem titil á skilboðum í borða sem er sýndur við þjónusturof',
+  },
+  serviceInterruptionText: {
+    id: 'judicial.system.core:service_interruption_text',
+    defaultMessage: 'NONE',
+    description:
+      'Notaður sem texti á skilboðum í borða sem er sýndur við þjónusturof. Stjórnar hvort skilboð eru sýnd eða ekki.',
+  },
+  serviceInterruptionTextProsecutor: {
+    id: 'judicial.system.core:service_interruption_text_prosecutor',
+    defaultMessage: 'NONE',
+    description:
+      '(Saksóknaraflæði): Notaður sem texti á skilboðum í borða sem er sýndur við þjónusturof. Stjórnar hvort skilboð eru sýnd eða ekki.',
+  },
+  serviceInterruptionTextCourt: {
+    id: 'judicial.system.core:service_interruption_text_court',
+    defaultMessage: 'NONE',
+    description:
+      '(Dómstólaflæði): Notaður sem texti á skilboðum í borða sem er sýndur við þjónusturof. Stjórnar hvort skilboð eru sýnd eða ekki.',
+  },
+  restrictionCase: {
+    id: 'judicial.system.core:restriction_case',
+    defaultMessage: 'gæsluvarðhald',
+    description: 'Notaður fyrir orðið Gæsluvarðhald.',
+  },
+  travelBan: {
+    id: 'judicial.system.core:travel_ban',
+    defaultMessage: 'farbann',
+    description: 'Notaður fyrir orðið Farbann.',
+  },
+  investigationCase: {
+    id: 'judicial.system.core:investigation_case',
+    defaultMessage: 'rannsóknarheimild',
+    description: 'Notaður fyrir orðið Rannsóknarheimild.',
+  },
+  indictment: {
+    id: 'judicial.system.core:indictment',
+    defaultMessage: 'ákæra',
+    description: 'Notaður fyrir orðið Ákæra.',
+  },
+  closeModal: {
+    id: 'judicial.system.core:close_modal',
+    defaultMessage: 'Loka glugga',
+    description: 'Notaður fyrir texta í Loka glugga takka í modölum.',
+  },
+  uploadBoxTitle: {
+    id: 'judicial.system.core:upload_box_title',
+    defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+    description: 'Notaður fyrir titil í Hlaða upp skrám svæði.',
+  },
+  uploadBoxButtonLabel: {
+    id: 'judicial.system.core:upload_box_button_label',
+    defaultMessage: 'Velja skjöl til að hlaða upp',
+    description: 'Notaður fyrir titil í takka á Hlaða upp skrám svæði.',
+  },
+  uploadBoxDescription: {
+    id: 'judicial.system.core:upload_box_description',
+    defaultMessage: 'Tekið er við skjölum með endingu: {fileEndings}',
+    description: 'Notaður fyrir texta í Hlaða upp skrám svæði.',
+  },
+  appealCaseNumberHeading: {
+    id: 'judicial.system.core:appeal_case_number_heading',
+    defaultMessage: 'Málsnúmer Landsréttar',
+    description: 'Titill á málsnúmeri á skráningarsíðu Landsréttar',
+  },
+  appealAssistantHeading: {
+    id: 'judicial.system.core:appeal_assistant_heading',
+    defaultMessage: 'Aðstoðarmaður',
+    description: 'Titill á aðstoðrarmanni á skráningarsíðu Landsréttar',
+  },
+  appealJudgesHeading: {
+    id: 'judicial.system.core:appeal_judges_heading',
+    defaultMessage: 'Dómarar',
+    description: 'Titill dómara á skráningarsíðu Landsréttar',
   },
 })

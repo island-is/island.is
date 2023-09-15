@@ -1,0 +1,9 @@
+{
+  "executors": {
+    "build": {
+      "implementation": "./impl",
+      "schema": "./schema.json",
+      "description": "Builds node-based applications."
+    }
+  }
+}

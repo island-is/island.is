@@ -1,12 +1,14 @@
 import { Injectable, Inject } from '@nestjs/common'
 import { ValidationFailed } from '@island.is/nest/problem'
 import {
-  Application,
   ApplicationTemplateHelper,
-  FormatMessage,
-  FormValue,
   validateAnswers,
 } from '@island.is/application/core'
+import {
+  Application,
+  FormValue,
+  TemplateApi,
+} from '@island.is/application/types'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   BadRequestException,
@@ -16,10 +18,10 @@ import {
 import { Unwrap } from '@island.is/shared/types'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { environment } from '../../../../environments'
-import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
+import type { FormatMessage } from '@island.is/cms-translations'
 
 const isRunningOnProductionEnvironment = () => {
   return (
@@ -52,43 +54,41 @@ export class ApplicationValidationService {
       )
     }
 
-    await this.validateThatTemplateIsReady(user, applicationTemplate)
+    await this.validateThatTemplateIsReady(applicationTemplate, user)
   }
 
-  async isTemplateFeatureFlaggedReady(featureFlag: Features, user: User) {
+  async isTemplateFeatureFlaggedReady(featureFlag: Features, user?: User) {
     return await this.featureFlagService.getValue(featureFlag, false, user)
   }
 
-  // If configcat flag is present use that flag to determine if the template is ready
-  // If configcat flag is not present, use the readyForProduction flag
-  // TODO: Remove the readyForProduction flag and assume that applications that have no featureFlag are ready for production
+  // Determines if a template is ready based on the presence of a configcat flag or the readyForProduction flag.
   async isTemplateReady(
-    user: User,
     template: Pick<
       Unwrap<typeof getApplicationTemplateByTypeId>,
       'readyForProduction' | 'featureFlag'
     >,
+    user?: User,
   ): Promise<boolean> {
+    // If the featureFlag is present, use the isTemplateFeatureFlaggedReady function.
     if (template.featureFlag) {
       return await this.isTemplateFeatureFlaggedReady(
         template.featureFlag,
         user,
       )
     }
-    // TODO: Remove this when readyForProduction is removed
-    if (isRunningOnProductionEnvironment() && !template.readyForProduction) {
-      {
-        return false
-      }
+    // If the code is running in a production environment and the readyForProduction flag is undefined or true, consider the template ready.
+    if (isRunningOnProductionEnvironment()) {
+      return template.readyForProduction ?? true
     }
+    // If the code is not running in a production environment, consider the template ready.
     return true
   }
 
   async validateThatTemplateIsReady(
-    user: User,
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
+    user?: User,
   ): Promise<void> {
-    const results = await this.isTemplateReady(user, template)
+    const results = await this.isTemplateReady(template, user)
     if (!results) {
       throw new BadRequestException(
         `Template ${template.type} is not ready for production`,
@@ -112,7 +112,7 @@ export class ApplicationValidationService {
       )
     }
 
-    await this.validateThatTemplateIsReady(user, applicationTemplate)
+    await this.validateThatTemplateIsReady(applicationTemplate, user)
 
     const schemaFormValidationError = validateAnswers({
       dataSchema: applicationTemplate.dataSchema,
@@ -148,9 +148,8 @@ export class ApplicationValidationService {
     }
 
     const helper = new ApplicationTemplateHelper(application, template)
-    const writableAnswersAndExternalData = helper.getWritableAnswersAndExternalData(
-      role,
-    )
+    const writableAnswersAndExternalData =
+      helper.getWritableAnswersAndExternalData(role)
 
     let trimmedAnswers: FormValue
 
@@ -204,11 +203,10 @@ export class ApplicationValidationService {
 
   async validateIncomingExternalDataProviders(
     application: Application,
-    providerDto: PopulateExternalDataDto,
+    templateApis: TemplateApi[],
     nationalId: string,
   ): Promise<void> {
-    const { dataProviders } = providerDto
-    if (!dataProviders.length) {
+    if (!templateApis) {
       return
     }
     const template = await getApplicationTemplateByTypeId(application.typeId)
@@ -219,9 +217,8 @@ export class ApplicationValidationService {
       )
     }
     const helper = new ApplicationTemplateHelper(application, template)
-    const writableAnswersAndExternalData = helper.getWritableAnswersAndExternalData(
-      role,
-    )
+    const writableAnswersAndExternalData =
+      helper.getWritableAnswersAndExternalData(role)
     if (writableAnswersAndExternalData === 'all') {
       return
     }
@@ -237,9 +234,9 @@ export class ApplicationValidationService {
 
     const illegalDataProviders: string[] = []
 
-    dataProviders.forEach(({ id }) => {
-      if (permittedDataProviders.indexOf(id) === -1) {
-        illegalDataProviders.push(id)
+    templateApis.forEach(({ externalDataId }) => {
+      if (permittedDataProviders.indexOf(externalDataId) === -1) {
+        illegalDataProviders.push(externalDataId)
       }
     })
     if (illegalDataProviders.length > 0) {

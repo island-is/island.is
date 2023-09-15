@@ -124,6 +124,17 @@ export const assetDetail = factory<PropertyDetail>({
     unitsOfUse: propertyUnitOnUse.list(2),
     paging: pagingData({ hasNextPage: true }),
   },
+  land: {
+    landNumber: '123456',
+    landAppraisal: 75000000,
+    useDisplay: 'Íbúðarhúsalóð',
+    area: '300000',
+    areaUnit: 'm²',
+    registeredOwners: {
+      registeredOwners: [],
+      paging: null,
+    },
+  },
 })
 
 export const paginatedConfirmedOwners = (hasNextPage = true) =>

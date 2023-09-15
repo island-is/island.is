@@ -1,5 +1,4 @@
 import React, { FC, useRef } from 'react'
-import format from 'date-fns/format'
 import subMonths from 'date-fns/subMonths'
 import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 import toDate from 'date-fns/toDate'
@@ -8,21 +7,24 @@ import isSameDay from 'date-fns/isSameDay'
 import addMonths from 'date-fns/addMonths'
 import endOfMonth from 'date-fns/endOfMonth'
 import parseISO from 'date-fns/parseISO'
-
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 
 import { useDrag } from '../utils'
 import * as styles from './Chart.css'
 import { TimelinePeriod } from './Timeline'
+import { useLocale } from '@island.is/localization'
 
-const ChartMonths: FC<{
-  initDate: Date
-  rowWidth: string
-  chartColumns: string
-  totalDays: Date[]
-  lastDayInTimespan: Date
-}> = ({ initDate, rowWidth, chartColumns, totalDays, lastDayInTimespan }) => {
+const ChartMonths: FC<
+  React.PropsWithChildren<{
+    initDate: Date
+    rowWidth: string
+    chartColumns: string
+    totalDays: Date[]
+    lastDayInTimespan: Date
+  }>
+> = ({ initDate, rowWidth, chartColumns, totalDays, lastDayInTimespan }) => {
+  const { formatDateFns } = useLocale()
   return (
     <Box
       className={styles.row}
@@ -43,6 +45,7 @@ const ChartMonths: FC<{
           const isFirstDayOfMonth = totalDays[index].getDate() === 1
           const height = isFirstDayOfMonth || index === 0 ? 14 : 0
           const color = isInitDay ? theme.color.yellow200 : theme.color.dark200
+
           return (
             <Box
               key={index}
@@ -53,7 +56,7 @@ const ChartMonths: FC<{
               <Box className={styles.chartMonth}>
                 <Text variant="small">
                   {(isFirstDayOfMonth || index === 0) &&
-                    format(day, 'MMM yyyy')}
+                    formatDateFns(day, 'MMM yyyy')}
                   &nbsp;
                 </Text>
                 {isInitDay && <Box className={styles.highlightDay} />}
@@ -73,12 +76,14 @@ const ChartMonths: FC<{
   )
 }
 
-export const Chart: FC<{
-  initDate: Date
-  periods: TimelinePeriod[]
-  dayWidth: number
-  spanInMonths?: number
-}> = ({ initDate, dayWidth, periods, spanInMonths = 18 }) => {
+export const Chart: FC<
+  React.PropsWithChildren<{
+    initDate: Date
+    periods: TimelinePeriod[]
+    dayWidth: number
+    spanInMonths?: number
+  }>
+> = ({ initDate, dayWidth, periods, spanInMonths = 18 }) => {
   const padStart = subMonths(initDate, 1).setDate(1)
   const lastDayInTimespan = addMonths(initDate, spanInMonths)
   const padEnd = endOfMonth(lastDayInTimespan)
@@ -159,6 +164,10 @@ export const Chart: FC<{
       {periods.map((p, index) => {
         const periodStartDate = parseISO(p.startDate)
         const periodEndDate = parseISO(p.endDate)
+        const colStart =
+          (closestIndexTo(toDate(periodStartDate), totalDays) ?? 0) + 1
+        const colEnd =
+          (closestIndexTo(toDate(periodEndDate), totalDays) ?? 0) + 1
 
         return (
           <Box
@@ -176,9 +185,7 @@ export const Chart: FC<{
                 className={styles.period}
                 style={{
                   backgroundColor: p.color || theme.color.blue200,
-                  gridColumn: `${
-                    closestIndexTo(toDate(periodStartDate), totalDays) + 1
-                  }/${closestIndexTo(toDate(periodEndDate), totalDays) + 1}`,
+                  gridColumn: `${colStart}/${colEnd}`,
                 }}
               />
             </Box>

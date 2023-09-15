@@ -1,0 +1,13 @@
+{
+  "data": {
+    "verifyPkPass": {
+      "valid": false,
+      "data": null,
+      "error": {
+        "status": "3",
+        "message": "Expired barcode. Please refresh the pass.",
+        "data": "\"{\\\"size\\\":0,\\\"timeout\\\":0}\""
+      }
+    }
+  }
+}

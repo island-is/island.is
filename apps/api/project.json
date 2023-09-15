@@ -1,0 +1,90 @@
+{
+  "name": "api",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/api/src",
+  "projectType": "application",
+  "prefix": "api",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "./tools/executors/node:build",
+      "options": {
+        "outputPath": "dist/apps/api",
+        "main": "apps/api/src/main.ts",
+        "tsConfig": "apps/api/tsconfig.app.json",
+        "showCircularDependencies": false,
+        "maxWorkers": 2
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "api:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/api/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "apps/api/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": ["{workspaceRoot}/coverage/apps/api"]
+    },
+    "schemas/build-graphql-schema": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P apps/api/tsconfig.json scripts/build-graphql-schema.ts apps/api/src/app/app.module"
+      }
+    },
+    "schemas/codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "parallel": false,
+        "command": "graphql-codegen --config apps/api/codegen.yml"
+      }
+    },
+    "contentful-types": {
+      "executor": "nx:run-commands",
+      "outputPath": "libs/cms/scripts/generateContentfulTypes.ts",
+      "options": {
+        "command": "yarn ts-node -P apps/api/tsconfig.app.json ./libs/cms/scripts/generateContentfulTypes.ts"
+      }
+    },
+    "contentType": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P apps/api/tsconfig.app.json ./libs/cms/scripts/contentType.ts {args.id} {args.sys} {args.overwrite}"
+      }
+    },
+    "dev-init": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["yarn get-secrets api"],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["yarn start api"],
+        "parallel": true
+      }
+    },
+    "docker-express": {}
+  },
+  "tags": ["scope:api"]
+}

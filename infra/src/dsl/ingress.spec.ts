@@ -1,12 +1,14 @@
 import { service } from './dsl'
-import { UberChart } from './uber-chart'
+import { Kubernetes } from './kubernetes-runtime'
 import { MissingSetting } from './types/input-types'
-import { serializeService } from './map-to-values'
-import { SerializeErrors, SerializeSuccess } from './types/output-types'
+import { SerializeSuccess, HelmService } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
+import { renderers } from './upstream-dependencies'
+import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
+  redisHost: 'b',
   domain: 'staging01.devland.is',
   type: 'staging',
   featuresOn: [],
@@ -19,7 +21,7 @@ const Staging: EnvironmentConfig = {
 }
 
 describe('Ingress definitions', () => {
-  it('Support mutltiple ingresses', () => {
+  it('Support multiple ingresses', async () => {
     const sut = service('api').ingress({
       primary: {
         host: { dev: 'a', staging: 'a', prod: 'a' },
@@ -30,12 +32,14 @@ describe('Ingress definitions', () => {
         paths: ['/'],
       },
     })
-    const result = serializeService(
-      sut,
-      new UberChart(Staging),
-    ) as SerializeSuccess
+    const result = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
 
-    expect(result.serviceDef.ingress).toEqual({
+    expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
@@ -51,7 +55,7 @@ describe('Ingress definitions', () => {
     })
   })
 
-  it('Extra annotations', () => {
+  it('Extra annotations', async () => {
     const sut = service('api').ingress({
       primary: {
         host: { dev: 'a', staging: 'staging01.devland.is', prod: 'a' },
@@ -63,12 +67,14 @@ describe('Ingress definitions', () => {
         },
       },
     })
-    const result = serializeService(
-      sut,
-      new UberChart(Staging),
-    ) as SerializeSuccess
+    const result = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
 
-    expect(result.serviceDef.ingress).toEqual({
+    expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
@@ -78,12 +84,12 @@ describe('Ingress definitions', () => {
       },
     })
   })
-  it('Ingress missing generates errors', () => {
+  it('MissingSetting value for ingress host skips rendering it', async () => {
     const sut = service('api').ingress({
       primary: {
         host: {
           dev: MissingSetting,
-          staging: MissingSetting,
+          staging: 'notmissing-staging01.devland.is',
           prod: MissingSetting,
         },
         paths: ['/api'],
@@ -97,17 +103,23 @@ describe('Ingress definitions', () => {
         paths: ['/api'],
       },
     })
-    const result = serializeService(
-      sut,
-      new UberChart(Staging),
-    ) as SerializeErrors
+    const result = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
 
-    expect(result.errors).toEqual([
-      'Missing ingress host info for service:api, ingress:primary in env:staging',
-      'Missing ingress host info for service:api, ingress:secondary in env:staging',
-    ])
+    expect(result.serviceDef[0].ingress).toEqual({
+      'primary-alb': {
+        annotations: {
+          'kubernetes.io/ingress.class': 'nginx-external-alb',
+        },
+        hosts: [{ host: 'notmissing-staging01.devland.is', paths: ['/api'] }],
+      },
+    })
   })
-  it('Internal ingress basic', () => {
+  it('Internal ingress basic', async () => {
     const sut = service('api').ingress({
       primary: {
         public: false,
@@ -115,12 +127,14 @@ describe('Ingress definitions', () => {
         paths: ['/api'],
       },
     })
-    const result = serializeService(
-      sut,
-      new UberChart(Staging),
-    ) as SerializeSuccess
+    const result = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
 
-    expect(result.serviceDef.ingress).toEqual({
+    expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-internal-alb',

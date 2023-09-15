@@ -1,2 +1,2 @@
-export const name9
-export const name10
+export const name9 = 9
+export const name10 = 10

@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import format from 'date-fns/format'
-import { Application, formatText } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
@@ -14,7 +15,10 @@ interface PaymentsTableProps {
   payments?: Payment[]
 }
 
-const PaymentsTable: FC<PaymentsTableProps> = ({ application, payments }) => {
+const PaymentsTable: FC<React.PropsWithChildren<PaymentsTableProps>> = ({
+  application,
+  payments,
+}) => {
   const { formatMessage } = useLocale()
 
   const formattedPayments =

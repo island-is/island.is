@@ -1,11 +1,11 @@
 import React, { FC, useMemo } from 'react'
 
 import {
-  FieldBaseProps,
   formatText,
-  SelectField,
   buildFieldOptions,
+  getValueViaPath,
 } from '@island.is/application/core'
+import { FieldBaseProps, SelectField } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import {
   SelectController,
@@ -19,7 +19,11 @@ interface Props extends FieldBaseProps {
   field: SelectField
 }
 
-export const SelectFormField: FC<Props> = ({ application, error, field }) => {
+export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
+  application,
+  error,
+  field,
+}) => {
   const {
     id,
     title,
@@ -49,14 +53,21 @@ export const SelectFormField: FC<Props> = ({ application, error, field }) => {
       <Box paddingTop={2}>
         <SelectController
           required={required}
-          defaultValue={getDefaultValue(field, application)}
+          defaultValue={
+            ((getValueViaPath(application.answers, id) as string[]) ??
+              getDefaultValue(field, application)) ||
+            required
+              ? ''
+              : undefined
+          }
           label={formatText(title, application, formatMessage)}
           name={id}
           disabled={disabled}
           error={error}
           id={id}
+          dataTestId={field.dataTestId}
           backgroundColor={backgroundColor}
-          options={finalOptions.map(({ label, tooltip, ...o }) => ({
+          options={finalOptions?.map(({ label, tooltip, ...o }) => ({
             ...o,
             label: formatText(label, application, formatMessage),
             ...(tooltip && {

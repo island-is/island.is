@@ -1,0 +1,47 @@
+{
+  "name": "clients-electronic-registration-statistics",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/electronic-registration-statistics/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/electronic-registration-statistics/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/clients/electronic-registration-statistics"
+      ],
+      "options": {
+        "jestConfig": "libs/clients/electronic-registration-statistics/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl https://api-staging.thinglysing.is/business/tolfraedi/swagger/v1/swagger.json -H 'Accept: application/json' > src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/electronic-registration-statistics"
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/electronic-registration-statistics/gen/fetch -i libs/clients/electronic-registration-statistics/src/clientConfig.json"
+        ],
+        "parallel": false
+      }
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}

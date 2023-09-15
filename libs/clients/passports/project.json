@@ -1,0 +1,32 @@
+{
+  "name": "clients-passports",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/passports/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/clients/passports/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/passports"],
+      "options": {
+        "jestConfig": "libs/clients/passports/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/passports/gen/fetch -i libs/clients/passports/src/clientConfig.yaml",
+          "prettier --write libs/clients/passports/src/clientConfig.yaml"
+        ]
+      }
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}

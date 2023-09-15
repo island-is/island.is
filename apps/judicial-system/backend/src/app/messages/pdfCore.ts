@@ -2,6 +2,11 @@ import { defineMessages } from '@formatjs/intl'
 import { defineMessage } from 'react-intl'
 
 export const core = {
+  and: defineMessage({
+    id: 'judicial.system.backend:pdf.core.and',
+    defaultMessage: 'og',
+    description: 'Notað fyrir orðið og.',
+  }),
   accused: defineMessage({
     id: 'judicial.system.backend:pdf.core.accused',
     defaultMessage: 'kærð{suffix}',
@@ -23,6 +28,12 @@ export const core = {
       id: 'judicial.system.backend:pdf.core.case_type.travel_ban',
       defaultMessage: 'farbann',
       description: 'Notaður sem texti fyrir týpu farbann á kröfu í kröfu PDF',
+    },
+    admissionToFacility: {
+      id: 'judicial.system.backend:pdf.core.case_type.admission_to_facility',
+      defaultMessage: 'vistun á viðeigandi stofnun',
+      description:
+        'Notaður sem texti fyrir týpu vistun á viðeigandi stofnun á kröfu í kröfu PDF',
     },
     investigate: {
       id: 'judicial.system.backend:pdf.core.case_type.investigate',

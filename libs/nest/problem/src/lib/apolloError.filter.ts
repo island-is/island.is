@@ -16,7 +16,7 @@ export class ApolloErrorFilter extends BaseProblemFilter {
     const info = errorInfo[error.extensions.code] ?? errorInfo.BAD_USER_INPUT
     return {
       ...info,
-      type: `https://httpstatuses.com/${info.status}`,
+      type: `https://httpstatuses.org/${info.status}`,
       detail: error.message,
     } as HttpProblem
   }

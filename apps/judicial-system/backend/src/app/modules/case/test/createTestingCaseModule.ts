@@ -2,35 +2,44 @@ import { Sequelize } from 'sequelize-typescript'
 
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
+import { mock } from 'jest-mock-extended'
 
-import { ConfigType } from '@island.is/nest/config'
+import { ConfigModule, ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { IntlService } from '@island.is/cms-translations'
-import { SigningService } from '@island.is/dokobit-signing'
-import { EmailService } from '@island.is/email-service'
+import { createTestIntl } from '@island.is/cms-translations/test'
+import { signingModuleConfig, SigningService } from '@island.is/dokobit-signing'
+import { MessageService } from '@island.is/judicial-system/message'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../../environments'
 import { CourtService } from '../../court'
+import { PoliceService } from '../../police'
 import { EventService } from '../../event'
 import { UserService } from '../../user'
 import { FileService } from '../../file'
 import { AwsS3Service } from '../../aws-s3'
 import { DefendantService } from '../../defendant'
+import { IndictmentCountService } from '../../indictment-count'
 import { Case } from '../models/case.model'
+import { CaseArchive } from '../models/caseArchive.model'
 import { caseModuleConfig } from '../case.config'
 import { CaseService } from '../case.service'
+import { InternalCaseService } from '../internalCase.service'
+import { LimitedAccessCaseService } from '../limitedAccessCase.service'
 import { CaseController } from '../case.controller'
-import { CaseArchive } from '../models/caseArchive.model'
+import { InternalCaseController } from '../internalCase.controller'
+import { LimitedAccessCaseController } from '../limitedAccessCase.controller'
 
-jest.mock('@island.is/dokobit-signing')
-jest.mock('@island.is/email-service')
+jest.mock('@island.is/judicial-system/message')
 jest.mock('../../court/court.service')
+jest.mock('../../police/police.service')
 jest.mock('../../event/event.service')
 jest.mock('../../user/user.service')
 jest.mock('../../file/file.service')
 jest.mock('../../aws-s3/awsS3.service')
 jest.mock('../../defendant/defendant.service')
+jest.mock('../../indictment-count/indictmentCount.service')
 
 export const createTestingCaseModule = async () => {
   const caseModule = await Test.createTestingModule({
@@ -39,21 +48,33 @@ export const createTestingCaseModule = async () => {
         jwtSecret: environment.auth.jwtSecret,
         secretToken: environment.auth.secretToken,
       }),
+      ConfigModule.forRoot({ load: [signingModuleConfig, caseModuleConfig] }),
     ],
-    controllers: [CaseController],
+    controllers: [
+      CaseController,
+      InternalCaseController,
+      LimitedAccessCaseController,
+    ],
     providers: [
+      MessageService,
       CourtService,
+      PoliceService,
       UserService,
       FileService,
       AwsS3Service,
       EventService,
       SigningService,
-      EmailService,
       DefendantService,
+      IndictmentCountService,
       {
         provide: IntlService,
         useValue: {
-          useIntl: async () => ({}),
+          useIntl: async () => ({
+            formatMessage: createTestIntl({
+              onError: jest.fn(),
+              locale: 'is-IS',
+            }).formatMessage,
+          }),
         },
       },
       {
@@ -70,6 +91,8 @@ export const createTestingCaseModule = async () => {
         useValue: {
           create: jest.fn(),
           findOne: jest.fn(),
+          findByPk: jest.fn(),
+          findAll: jest.fn(),
           update: jest.fn(),
         },
       },
@@ -77,12 +100,23 @@ export const createTestingCaseModule = async () => {
         provide: getModelToken(CaseArchive),
         useValue: { create: jest.fn() },
       },
-      { provide: caseModuleConfig.KEY, useValue: caseModuleConfig() },
       CaseService,
+      InternalCaseService,
+      LimitedAccessCaseService,
     ],
-  }).compile()
+  })
+    .useMocker((token) => {
+      if (typeof token === 'function') {
+        return mock()
+      }
+    })
+    .compile()
+
+  const messageService = caseModule.get<MessageService>(MessageService)
 
   const courtService = caseModule.get<CourtService>(CourtService)
+
+  const policeService = caseModule.get<PoliceService>(PoliceService)
 
   const userService = caseModule.get<UserService>(UserService)
 
@@ -91,6 +125,10 @@ export const createTestingCaseModule = async () => {
   const awsS3Service = caseModule.get<AwsS3Service>(AwsS3Service)
 
   const defendantService = caseModule.get<DefendantService>(DefendantService)
+
+  const indictmentCountService = caseModule.get<IndictmentCountService>(
+    IndictmentCountService,
+  )
 
   const logger = caseModule.get<Logger>(LOGGER_PROVIDER)
 
@@ -108,20 +146,39 @@ export const createTestingCaseModule = async () => {
 
   const caseService = caseModule.get<CaseService>(CaseService)
 
+  const limitedAccessCaseService = caseModule.get<LimitedAccessCaseService>(
+    LimitedAccessCaseService,
+  )
+
   const caseController = caseModule.get<CaseController>(CaseController)
 
+  const internalCaseController = caseModule.get<InternalCaseController>(
+    InternalCaseController,
+  )
+
+  const limitedAccessCaseController =
+    caseModule.get<LimitedAccessCaseController>(LimitedAccessCaseController)
+
+  caseModule.close()
+
   return {
+    messageService,
     courtService,
+    policeService,
     userService,
     fileService,
     awsS3Service,
     defendantService,
+    indictmentCountService,
     logger,
     sequelize,
     caseModel,
     caseArchiveModel,
     caseConfig,
     caseService,
+    limitedAccessCaseService,
     caseController,
+    internalCaseController,
+    limitedAccessCaseController,
   }
 }

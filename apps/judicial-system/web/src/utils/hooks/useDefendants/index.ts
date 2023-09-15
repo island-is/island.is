@@ -1,121 +1,133 @@
-import { useMutation } from '@apollo/client'
+import React, { SetStateAction, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
-import { UpdateDefendant } from '@island.is/judicial-system/types'
+import {
+  CreateDefendantInput,
+  Defendant,
+  UpdateDefendantInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { CreateDefendantMutation } from './createDefendantGql'
-import { DeleteDefendantMutation } from './deleteDefendantGql'
-import { UpdateDefendantMutation } from './updateDefendantGql'
-
-interface CreateDefendantMutationResponse {
-  createDefendant: {
-    id: string
-  }
-}
-
-interface DeleteDefendantMutationResponse {
-  deleteDefendant: {
-    deleted: boolean
-  }
-}
-
-export interface UpdateDefendantMutationResponse {
-  updateDefendant: {
-    id: string
-  }
-}
+import { useCreateDefendantMutation } from './createDefendantt.generated'
+import { useDeleteDefendantMutation } from './deleteDefendantt.generated'
+import { useUpdateDefendantMutation } from './updateDefendantt.generated'
 
 const useDefendants = () => {
   const { formatMessage } = useIntl()
 
-  const [
-    createDefendantMutation,
-    { loading: isCreatingDefendant },
-  ] = useMutation<CreateDefendantMutationResponse>(CreateDefendantMutation)
-  const [
-    deleteDefendantMutation,
-  ] = useMutation<DeleteDefendantMutationResponse>(DeleteDefendantMutation)
-  const [
-    updateDefendantMutation,
-  ] = useMutation<UpdateDefendantMutationResponse>(UpdateDefendantMutation)
+  const [createDefendantMutation, { loading: isCreatingDefendant }] =
+    useCreateDefendantMutation()
+  const [deleteDefendantMutation] = useDeleteDefendantMutation()
+  const [updateDefendantMutation] = useUpdateDefendantMutation()
 
-  const createDefendant = async (
-    caseId: string,
-    defendant: UpdateDefendant,
-  ) => {
-    try {
-      if (!isCreatingDefendant) {
-        const { data } = await createDefendantMutation({
-          variables: {
-            input: {
-              caseId,
-              name: defendant.name,
-              address: defendant.address,
-              nationalId: defendant.nationalId?.replace('-', ''),
-              gender: defendant.gender,
-              citizenship: defendant.citizenship,
-              noNationalId: defendant.noNationalId,
+  const createDefendant = useCallback(
+    async (defendant: CreateDefendantInput) => {
+      try {
+        if (!isCreatingDefendant) {
+          const { data } = await createDefendantMutation({
+            variables: {
+              input: defendant,
             },
+          })
+
+          if (data) {
+            return data.createDefendant?.id
+          }
+        }
+      } catch (error) {
+        toast.error(formatMessage(errors.createDefendant))
+      }
+    },
+    [createDefendantMutation, formatMessage, isCreatingDefendant],
+  )
+
+  const deleteDefendant = useCallback(
+    async (caseId: string, defendantId: string) => {
+      try {
+        const { data } = await deleteDefendantMutation({
+          variables: { input: { caseId, defendantId } },
+        })
+
+        if (data?.deleteDefendant?.deleted) {
+          return true
+        } else {
+          return false
+        }
+      } catch (error) {
+        formatMessage(errors.deleteDefendant)
+      }
+    },
+    [deleteDefendantMutation, formatMessage],
+  )
+
+  const updateDefendant = useCallback(
+    async (updateDefendant: UpdateDefendantInput) => {
+      try {
+        const { data } = await updateDefendantMutation({
+          variables: {
+            input: updateDefendant,
           },
         })
 
         if (data) {
-          return data.createDefendant.id
+          return true
+        } else {
+          return false
         }
+      } catch (error) {
+        toast.error(formatMessage(errors.updateDefendant))
       }
-    } catch (error) {
-      toast.error(formatMessage(errors.createDefendant))
-    }
-  }
+    },
+    [formatMessage, updateDefendantMutation],
+  )
 
-  const deleteDefendant = async (caseId: string, defendantId: string) => {
-    try {
-      const { data } = await deleteDefendantMutation({
-        variables: { input: { caseId, defendantId } },
+  const updateDefendantState = useCallback(
+    (
+      update: UpdateDefendantInput,
+      setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+    ) => {
+      setWorkingCase((theCase: Case) => {
+        if (!theCase.defendants) {
+          return theCase
+        }
+        const indexOfDefendantToUpdate = theCase.defendants.findIndex(
+          (defendant) => defendant.id === update.defendantId,
+        )
+
+        const newDefendants = [...theCase.defendants]
+
+        newDefendants[indexOfDefendantToUpdate] = {
+          ...newDefendants[indexOfDefendantToUpdate],
+          ...update,
+        } as Defendant
+
+        return { ...theCase, defendants: newDefendants }
       })
+    },
+    [],
+  )
 
-      if (data?.deleteDefendant.deleted) {
-        return true
-      } else {
-        return false
-      }
-    } catch (error) {
-      formatMessage(errors.deleteDefendant)
-    }
-  }
-
-  const updateDefendant = async (
-    caseId: string,
-    defendantId: string,
-    updateDefendant: UpdateDefendant,
-  ) => {
-    try {
-      const { data } = await updateDefendantMutation({
-        variables: {
-          input: {
-            caseId,
-            defendantId,
-            ...updateDefendant,
-          },
-        },
-      })
-
-      if (data) {
-        return true
-      } else {
-        return false
-      }
-    } catch (error) {
-      toast.error(formatMessage(errors.updateDefendant))
-    }
-  }
+  const setAndSendDefendantToServer = useCallback(
+    (
+      caseId: string,
+      defendantId: string,
+      update: UpdateDefendantInput,
+      setWorkingCase: React.Dispatch<SetStateAction<Case>>,
+    ) => {
+      updateDefendantState(update, setWorkingCase)
+      updateDefendant(update)
+    },
+    [updateDefendant, updateDefendantState],
+  )
 
   return {
     createDefendant,
     deleteDefendant,
     updateDefendant,
+    updateDefendantState,
+    setAndSendDefendantToServer,
   }
 }
 

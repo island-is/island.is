@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Config" -->
-
 # Nest Config
 
 Wraps Nest's [Configuration](https://docs.nestjs.com/techniques/configuration) functionality with the following functionality:
@@ -110,7 +108,7 @@ Beside validating missing environment variables with the `env.required` helpers,
 
 ```tsx
 import { defineConfig } from '@island.is/nest/config'
-import * as z from 'zod'
+import { z } from 'zod'
 
 const SomeModuleConfig = z.shape({
   url: z.string().url(),

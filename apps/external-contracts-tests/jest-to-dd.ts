@@ -12,6 +12,7 @@ const jestReport = JSON.parse(
     assertionResults: { fullName: string; status: 'passed' | 'failed' }[]
   }[]
 }
+
 const testCasesInfo = jestReport.testResults.flatMap(
   (testResult) =>
     testResult.assertionResults.map((test) => ({

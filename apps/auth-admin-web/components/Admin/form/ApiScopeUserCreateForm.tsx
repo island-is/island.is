@@ -21,9 +21,11 @@ interface FormOutput {
   apiScopeUser: ApiScopeUserDTO
 }
 
-const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<FormOutput>()
-  const { isSubmitting } = formState
+const ApiScopeUserCreateForm: React.FC<React.PropsWithChildren<Props>> = (
+  props: Props,
+) => {
+  const { register, handleSubmit, formState } = useForm<FormOutput>()
+  const { isSubmitting, errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('ApiScopeUserCreateForm'),
@@ -60,33 +62,32 @@ const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
   }
 
   const create = async (data: ApiScopeUserDTO): Promise<void> => {
+    let response: ApiScopeUser | undefined = undefined
+
     if (isEditing) {
-      const response = await AccessService.update(
-        props.apiScopeUser.nationalId,
-        data,
-      )
-      if (response) {
-        pushEvent(response)
-      }
+      response = await AccessService.update(props.apiScopeUser.nationalId, data)
     } else {
-      const response = await AccessService.create(data)
-      if (response) {
-        pushEvent(response)
-      }
+      response = await AccessService.create(data)
+    }
+
+    if (response) {
+      pushEvent(response)
     }
   }
 
-  const save = async (data: FormOutput) => {
+  const save = async ({ apiScopeUser }: FormOutput) => {
     const user = new ApiScopeUserDTO()
-    user.nationalId = data.apiScopeUser.nationalId
-    user.email = data.apiScopeUser.email
+    user.nationalId = apiScopeUser.nationalId
+    user.email = apiScopeUser.email
+    user.name = apiScopeUser.name
 
     for (let i = 0; i < activeScopes.length; i++) {
       user.userAccess.push({
-        nationalId: data.apiScopeUser.nationalId,
+        nationalId: apiScopeUser.nationalId,
         scope: activeScopes[i],
       })
     }
+
     await create(user)
   }
 
@@ -119,6 +120,33 @@ const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
                 <div className="api-scope-user-create-form__container__field">
                   <label
                     className="api-scope-user-create-form__label"
+                    htmlFor="name"
+                  >
+                    {localization.fields['name'].label}
+                  </label>
+                  <input
+                    id="name"
+                    type="text"
+                    {...register('apiScopeUser.name', {
+                      minLength: 1,
+                      validate: (value) => value.trim().length > 1,
+                    })}
+                    defaultValue={user.name}
+                    className="api-scope-user-create-form__input"
+                    placeholder={localization.fields['name'].placeholder}
+                    title={localization.fields['name'].helpText}
+                  />
+                  <HelpBox helpText={localization.fields['name'].helpText} />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="apiScopeUser.name"
+                    message={localization.fields['name'].errorMessage}
+                  />
+                </div>
+                <div className="api-scope-user-create-form__container__field">
+                  <label
+                    className="api-scope-user-create-form__label"
                     htmlFor="nationalId"
                   >
                     {localization.fields['nationalId'].label}
@@ -126,8 +154,7 @@ const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="nationalId"
                     type="text"
-                    name="apiScopeUser.nationalId"
-                    ref={register({
+                    {...register('apiScopeUser.nationalId', {
                       required: true,
                       maxLength: 10,
                       minLength: 10,
@@ -161,11 +188,10 @@ const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="email"
                     type="text"
-                    ref={register({
+                    {...register('apiScopeUser.email', {
                       required: true,
                       validate: ValidationUtils.validateEmail,
                     })}
-                    name="apiScopeUser.email"
                     defaultValue={user.email ?? ''}
                     className="api-scope-user-create-form__input"
                     title={localization.fields['email'].helpText}
@@ -182,7 +208,7 @@ const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
 
                 {accessControlledScopes &&
                   accessControlledScopes.map((scope: ApiScope) => {
-                    let checked = activeScopes.some((x) => x === scope.name)
+                    const checked = activeScopes.some((x) => x === scope.name)
 
                     return (
                       <div
@@ -193,20 +219,22 @@ const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
                           className="api-scope-user-create-form__label"
                           htmlFor={scope.name}
                         >
-                          {scope.name}
+                          {scope.displayName} <i>({scope.name})</i>
                         </label>
 
                         <input
                           id={scope.name}
                           type="checkbox"
-                          name={`apiScopeUser.userAccess[${scope.name}]`}
+                          {...register(
+                            `apiScopeUser.userAccess[${scope.name}]` as any,
+                            {
+                              onChange: (e) =>
+                                handleScopeChange(scope.name, e.target.checked),
+                            },
+                          )}
                           className="api-scope-user-create-form__checkbox"
                           checked={checked}
-                          ref={register}
                           title={scope.name}
-                          onChange={(e) =>
-                            handleScopeChange(scope.name, e.target.checked)
-                          }
                         ></input>
                         <HelpBox helpText={scope.description} />
                       </div>

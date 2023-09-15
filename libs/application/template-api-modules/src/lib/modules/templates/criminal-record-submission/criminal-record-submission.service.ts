@@ -10,17 +10,27 @@ import {
   PersonType,
 } from '@island.is/clients/syslumenn'
 import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNotifyError'
-import { ApplicationWithAttachments as Application } from '@island.is/application/core'
+import {
+  ApplicationTypes,
+  ApplicationWithAttachments as Application,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
 import { NationalRegistry, UserProfile } from './types'
 import { ChargeItemCode } from '@island.is/shared/constants'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { info } from 'kennitala'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { coreErrorMessages } from '@island.is/application/core/messages'
 
 @Injectable()
-export class CriminalRecordSubmissionService {
+export class CriminalRecordSubmissionService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly criminalRecordService: CriminalRecordService,
     private readonly syslumennService: SyslumennService,
-  ) {}
+  ) {
+    super(ApplicationTypes.CRIMINAL_RECORD)
+  }
 
   async createCharge({
     application: { id },
@@ -28,9 +38,10 @@ export class CriminalRecordSubmissionService {
   }: TemplateApiModuleActionProps) {
     try {
       const result = this.sharedTemplateAPIService.createCharge(
-        auth.authorization,
+        auth,
         id,
-        ChargeItemCode.CRIMINAL_RECORD,
+        InstitutionNationalIds.SYSLUMENN,
+        [ChargeItemCode.CRIMINAL_RECORD],
       )
       return result
     } catch (exeption) {
@@ -48,12 +59,8 @@ export class CriminalRecordSubmissionService {
       }
     }
 
-    const isPayment:
-      | { fulfilled: boolean }
-      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
-      application.id,
-    )
+    const isPayment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
 
     if (isPayment?.fulfilled) {
       return {
@@ -116,10 +123,12 @@ export class CriminalRecordSubmissionService {
     const persons: Person[] = [person]
 
     const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
-    const attachment: Attachment = {
-      name: `sakavottord_${nationalRegistryData?.nationalId}_${dateStr}.pdf`,
-      content: document.contentBase64,
-    }
+    const attachments: Attachment[] = [
+      {
+        name: `sakavottord_${nationalRegistryData?.nationalId}_${dateStr}.pdf`,
+        content: document.contentBase64,
+      },
+    ]
 
     const extraData: { [key: string]: string } = {}
 
@@ -127,13 +136,32 @@ export class CriminalRecordSubmissionService {
     const uploadDataId = 'Sakavottord2.0'
 
     await this.syslumennService
-      .uploadData(persons, attachment, extraData, uploadDataName, uploadDataId)
+      .uploadData(persons, attachments, extraData, uploadDataName, uploadDataId)
       .catch(async () => {
         await this.sharedTemplateAPIService.sendEmail(
           generateSyslumennNotifyErrorEmail,
-          (application as unknown) as Application,
+          application as unknown as Application,
         )
         return undefined
       })
+  }
+
+  async validateCriminalRecord({ auth }: TemplateApiModuleActionProps) {
+    // Validate applicants age
+    const minAge = 15
+    const { age } = info(auth.nationalId)
+    if (age < minAge) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryAgeLimitNotMetTitle,
+          summary: coreErrorMessages.couldNotAssignApplicationErrorDescription,
+        },
+        400,
+      )
+    }
+
+    return await this.criminalRecordService.validateCriminalRecord(
+      auth.nationalId,
+    )
   }
 }

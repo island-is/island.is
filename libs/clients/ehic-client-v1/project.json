@@ -1,0 +1,30 @@
+{
+  "name": "clients-ehic-client-v1",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/ehic-client-v1/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/ehic-client-v1/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/ehic-client-v1"],
+      "options": {
+        "jestConfig": "libs/clients/ehic-client-v1/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/ehic-client-v1/gen/fetch -i libs/clients/ehic-client-v1/src/openapi.json"
+      }
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}

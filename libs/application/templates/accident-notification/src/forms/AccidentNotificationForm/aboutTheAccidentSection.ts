@@ -9,7 +9,7 @@ import {
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { NO, UPLOAD_ACCEPT, YES } from '../../constants'
+import { NO, UPLOAD_ACCEPT, YES, FILE_SIZE_LIMIT } from '../../constants'
 import {
   accidentDetails,
   accidentLocation,
@@ -28,8 +28,9 @@ import {
   workMachine,
   representativeInfo,
   addDocuments,
+  attachments,
+  error,
 } from '../../lib/messages'
-import { attachments } from '../../lib/messages/attachments'
 import {
   AgricultureAccidentLocationEnum,
   AttachmentsEnum,
@@ -83,6 +84,7 @@ export const aboutTheAccidentSection = buildSection({
               ],
               width: 'half',
               largeButtons: true,
+              required: true,
             }),
             buildCustomField({
               component: 'FieldAlertMessage',
@@ -107,6 +109,7 @@ export const aboutTheAccidentSection = buildSection({
               ],
               width: 'half',
               largeButtons: true,
+              required: true,
             }),
             buildCustomField({
               component: 'FieldAlertMessage',
@@ -527,6 +530,7 @@ export const aboutTheAccidentSection = buildSection({
               title: '',
               backgroundColor: 'blue',
               width: 'half',
+              required: true,
               options: [
                 { value: YES, label: application.general.yesOptionLabel },
                 { value: NO, label: application.general.noOptionLabel },
@@ -617,6 +621,7 @@ export const aboutTheAccidentSection = buildSection({
               id: 'injuryCertificate.answer',
               title: '',
               description: attachments.general.description,
+              required: true,
               options: (application) =>
                 isRepresentativeOfCompanyOrInstitute(application.answers)
                   ? [
@@ -666,6 +671,8 @@ export const aboutTheAccidentSection = buildSection({
             buildFileUploadField({
               id: 'attachments.injuryCertificateFile.file',
               title: attachments.general.heading,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText: error.attachmentMaxSizeError,
               uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: injuredPersonInformation.upload.uploadHeader,
               uploadDescription: attachments.general.uploadDescription,
@@ -687,6 +694,7 @@ export const aboutTheAccidentSection = buildSection({
               title: '',
               backgroundColor: 'blue',
               width: 'half',
+              required: true,
               options: [
                 { value: YES, label: application.general.yesOptionLabel },
                 { value: NO, label: application.general.noOptionLabel },
@@ -706,6 +714,7 @@ export const aboutTheAccidentSection = buildSection({
               id: 'fatalAccidentUploadDeathCertificateNow',
               title: '',
               backgroundColor: 'blue',
+              required: true,
               options: [
                 {
                   value: YES,
@@ -746,6 +755,8 @@ export const aboutTheAccidentSection = buildSection({
             buildFileUploadField({
               id: 'attachments.deathCertificateFile.file',
               title: attachments.general.uploadHeader,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText: error.attachmentMaxSizeError,
               uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: attachments.general.uploadHeader,
               uploadDescription: attachments.general.uploadDescription,
@@ -762,6 +773,7 @@ export const aboutTheAccidentSection = buildSection({
               id: 'additionalAttachments.answer',
               title: '',
               description: attachments.general.additionalAttachmentDescription,
+              required: true,
               options: () => [
                 {
                   value: AttachmentsEnum.ADDITIONALNOW,
@@ -798,6 +810,8 @@ export const aboutTheAccidentSection = buildSection({
             buildFileUploadField({
               id: 'attachments.additionalFiles.file',
               title: attachments.general.heading,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText: error.attachmentMaxSizeError,
               uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: addDocuments.general.uploadHeader,
               uploadDescription: addDocuments.general.uploadDescription,

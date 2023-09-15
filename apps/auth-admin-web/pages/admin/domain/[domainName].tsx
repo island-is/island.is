@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 import React, { useState, useEffect } from 'react'
+import { LoadingScreen } from '../../../components/common/LoadingScreen'
 import ContentWrapper from '../../../components/Layout/ContentWrapper'
 import { AdminTab } from './../../../entities/common/AdminTab'
 import LocalizationUtils from '../../../utils/localization.utils'
@@ -7,11 +8,11 @@ import { DomainDTO } from './../../../entities/dtos/domain.dto'
 import { ResourcesService } from './../../../services/ResourcesService'
 import DomainCreateForm from './../../../components/Admin/form/DomainCreateForm'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { query } = useRouter()
   const domainName = query.domainName
   const router = useRouter()
-  const [domain, setDomain] = useState<DomainDTO>(new DomainDTO())
+  const [domain, setDomain] = useState<DomainDTO>()
 
   /** Load the user */
   useEffect(() => {
@@ -39,6 +40,14 @@ const Index: React.FC = () => {
 
   const handleUserSaved = () => {
     router.push(`/admin/?tab=${AdminTab.Domains}`)
+  }
+
+  if (!domain) {
+    return (
+      <ContentWrapper>
+        <LoadingScreen />
+      </ContentWrapper>
+    )
   }
 
   return (

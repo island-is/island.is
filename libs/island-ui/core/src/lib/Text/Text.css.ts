@@ -44,6 +44,12 @@ export const strikethrough = style({
   textDecoration: 'line-through',
 })
 
+export const capitalizeFirstLetter = style({
+  ':first-letter': {
+    textTransform: 'capitalize',
+  },
+})
+
 export const base = style({
   ['-webkit-font-smoothing' as any]: 'antialiased',
 })
@@ -134,6 +140,18 @@ export const whiteSpace = {
       breakSpaces: { whiteSpace: 'break-spaces' },
     },
     'whiteSpace',
+  ),
+}
+
+export const textAlign = {
+  ...styleVariants(
+    {
+      left: { textAlign: 'left' },
+      right: { textAlign: 'right' },
+      center: { textAlign: 'center' },
+      justify: { textAlign: 'justify' },
+    },
+    'textAlign',
   ),
 }
 

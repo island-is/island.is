@@ -1,37 +1,44 @@
-import type { Case, User } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseListEntry,
+  CreateCase,
+  SubstanceMap,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
+import {
+  CaseAppealDecision,
+  CaseAppealRulingDecision,
+  CaseAppealState,
+  CaseCustodyRestrictions,
+  CaseLegalProvisions,
+  CaseOrigin,
+  CaseType,
+  Defendant,
+  IndictmentCount,
+  Institution,
+  SessionArrangements,
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 export enum AppealDecisionRole {
   PROSECUTOR = 'PROSECUTOR',
   ACCUSED = 'ACCUSED',
 }
 
-export enum Sections {
-  PROSECUTOR = 0,
-  JUDGE = 1,
-  // We skip 2 because that step has the ruling, i.e. the SignedVerdictPage, which has no subsections.
-  EXTENSION = 3,
-  JUDGE_EXTENSION = 4,
-}
-
-export enum ProsecutorSubsections {
-  STEP_ONE = 0,
-  STEP_TWO = 1,
-  STEP_THREE = 2,
-  STEP_FOUR = 3,
-  STEP_FIVE = 4,
-  PROSECUTOR_OVERVIEW = 5,
-}
-
-export enum CourtSubsections {
-  RECEPTION_AND_ASSIGNMENT = 0,
-  JUDGE_OVERVIEW = 1,
-  HEARING_ARRANGEMENTS = 2,
-  RULING = 3,
+export enum IndictmentsCourtSubsections {
+  JUDGE_OVERVIEW = 0,
+  RECEPTION_AND_ASSIGNMENT = 1,
+  SUBPEONA = 2,
+  PROSECUTOR_AND_DEFENDER = 3,
   COURT_RECORD = 4,
-  CONFIRMATION = 5,
 }
 
-export type ReactSelectOption = { label: string; value: string | number }
+export type ReactSelectOption = {
+  label: string
+  value: string | number
+  __isNew__?: boolean
+}
 
 export enum LoginErrorCodes {
   UNAUTHORIZED = 'innskraning-ekki-notandi',
@@ -40,7 +47,7 @@ export enum LoginErrorCodes {
 }
 
 export type directionType = 'ascending' | 'descending'
-export type sortableTableColumn = 'defendant' | 'createdAt'
+export type sortableTableColumn = 'defendant' | 'createdAt' | 'courtDate'
 
 export interface SortConfig {
   column: sortableTableColumn
@@ -48,7 +55,11 @@ export interface SortConfig {
 }
 
 export interface CaseData {
-  case?: Case
+  case?: TempCase
+}
+
+export interface LimitedAccessCaseData {
+  limitedAccessCase?: Case
 }
 
 export interface UserData {
@@ -200,4 +211,94 @@ export interface Lawyer {
   email: string
   phoneNr: string
   nationalId: string
+}
+
+/**
+ * We are in the process of stopping using the Case type and
+ * using the generated Case type from /graphql/schema.tsx instead.
+ * We use this type so that we don't have to migrate all the code
+ * at once and this type will be removed when we are done.
+ */
+
+export interface TempIndictmentCount
+  extends Omit<IndictmentCount, 'substances'> {
+  substances?: SubstanceMap
+}
+
+export interface TempCase
+  extends Omit<
+    Case,
+    | 'origin'
+    | 'sharedWithProsecutorsOffice'
+    | 'court'
+    | 'courtDocuments'
+    | 'parentCase'
+    | 'childCase'
+    | 'type'
+    | 'indictmentCounts'
+    | 'sessionArrangements'
+    | 'appealState'
+    | 'appealedByRole'
+    | 'appealRulingDecision'
+    | 'defendants'
+    | 'requestedCustodyRestrictions'
+    | 'legalProvisions'
+    | 'accusedAppealDecision'
+    | 'prosecutorAppealDecision'
+  > {
+  origin: CaseOrigin
+  sharedWithProsecutorsOffice?: Institution
+  court?: Institution
+  courtDocuments?: CourtDocument[]
+  parentCase?: TempCase
+  childCase?: TempCase
+  type: CaseType
+  indictmentCounts?: TempIndictmentCount[]
+  sessionArrangements?: SessionArrangements
+  appealState?: CaseAppealState
+  appealedByRole?: UserRole
+  appealRulingDecision?: CaseAppealRulingDecision
+  defendants?: Defendant[]
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[]
+  legalProvisions?: CaseLegalProvisions[]
+  accusedAppealDecision?: CaseAppealDecision
+  prosecutorAppealDecision?: CaseAppealDecision
+}
+
+export interface TempUpdateCase
+  extends Omit<
+    UpdateCase,
+    | 'courtDocuments'
+    | 'type'
+    | 'sessionArrangements'
+    | 'appealState'
+    | 'appealRulingDecision'
+    | 'defendants'
+  > {
+  courtDocuments?: CourtDocument[]
+  type?: CaseType
+  sessionArrangements?: SessionArrangements
+  appealState?: CaseAppealState
+  appealRulingDecision?: CaseAppealRulingDecision
+  defendants?: Defendant[]
+}
+
+export interface TempCreateCase extends Omit<CreateCase, 'type'> {
+  type: CaseType
+}
+
+export interface TempCaseListEntry
+  extends Omit<
+    CaseListEntry,
+    'type' | 'appealState' | 'appealCaseNumber' | 'appealRulingDecision'
+  > {
+  type: CaseType
+  appealState?: CaseAppealState
+  appealCaseNumber?: string
+  appealRulingDecision?: CaseAppealRulingDecision
+}
+
+export interface CourtDocument {
+  name: string
+  submittedBy: UserRole
 }

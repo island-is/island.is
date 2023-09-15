@@ -1,15 +1,14 @@
 import React, { useState } from 'react'
-import { motion } from 'framer-motion'
 import { useIntl } from 'react-intl'
+import { motion } from 'framer-motion'
 
 import { Box, Button } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
+import { core } from '@island.is/judicial-system-web/messages'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
-import { Gender, isRestrictionCase } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import * as styles from '../AppealSection/AppealSection.css'
-import { core } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case
@@ -17,7 +16,9 @@ interface Props {
   isInitialMount: boolean
 }
 
-const AccusedAppealDatePicker: React.FC<Props> = (props) => {
+const AccusedAppealDatePicker: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const { workingCase, setAccusedAppealDate, isInitialMount } = props
   const { formatMessage } = useIntl()
   const [appealDate, setAppealDate] = useState<Date>()
@@ -60,22 +61,12 @@ const AccusedAppealDatePicker: React.FC<Props> = (props) => {
             disabled={!appealDate}
           >
             {`${capitalize(
-              isRestrictionCase(workingCase.type)
-                ? formatMessage(core.accused, {
-                    suffix:
-                      workingCase.defendants &&
-                      workingCase.defendants.length > 0 &&
-                      workingCase.defendants[0].gender === Gender.MALE
-                        ? 'i'
-                        : 'a',
-                  })
-                : formatMessage(core.defendant, {
-                    suffix:
-                      workingCase.defendants &&
-                      workingCase.defendants.length > 1
-                        ? 'ar'
-                        : 'i',
-                  }),
+              formatMessage(core.defendant, {
+                suffix:
+                  workingCase.defendants && workingCase.defendants.length > 1
+                    ? 'ar'
+                    : 'i',
+              }),
             )} ${
               workingCase.defendants && workingCase.defendants.length > 1
                 ? 'kæra'

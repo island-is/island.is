@@ -25,8 +25,6 @@ export const CurrentUser = createParamDecorator(
     return {
       name: decodedToken.name,
       nationalId: decodedToken.nationalId,
-      folder: decodedToken.folder,
-      service: decodedToken.service,
     }
   },
 )

@@ -1,4 +1,5 @@
-import dynamic from 'next/dynamic'
-export const ChatPanel = dynamic(() => import('./ChatPanel'), {
-  ssr: false,
-})
+export { BoostChatPanel } from './BoostChatPanel'
+export { boostChatPanelEndpoints } from './BoostChatPanel/config'
+export { LiveChatIncChatPanel } from './LiveChatIncChatPanel'
+export { WatsonChatPanel } from './WatsonChatPanel'
+export * from './types'

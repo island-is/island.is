@@ -6,8 +6,6 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { createTestingDefendantModule } from '../../test/createTestingDefendantModule'
-import { Defendant } from '../../models/defendant.model'
 import { DefendantExistsGuard } from '../defendantExists.guard'
 
 interface Then {
@@ -19,25 +17,17 @@ type GivenWhenThen = () => Promise<Then>
 
 describe('Defendant Exists Guard', () => {
   const mockRequest = jest.fn()
-  let mockDefendantModel: typeof Defendant
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      defendantModel,
-      defendantService,
-    } = await createTestingDefendantModule()
-
-    mockDefendantModel = defendantModel
-
     givenWhenThen = async (): Promise<Then> => {
-      const guard = new DefendantExistsGuard(defendantService)
+      const guard = new DefendantExistsGuard()
       const then = {} as Then
 
       try {
-        then.result = await guard.canActivate(({
+        then.result = guard.canActivate({
           switchToHttp: () => ({ getRequest: mockRequest }),
-        } as unknown) as ExecutionContext)
+        } as unknown as ExecutionContext)
       } catch (error) {
         then.error = error as Error
       }
@@ -46,58 +36,41 @@ describe('Defendant Exists Guard', () => {
     }
   })
 
-  describe('database lookup', () => {
-    const caseId = uuid()
-    const defendantId = uuid()
-
-    beforeEach(async () => {
-      mockRequest.mockImplementationOnce(() => ({
-        params: { caseId, defendantId },
-      }))
-
-      await givenWhenThen()
-    })
-
-    it('should query the database', () => {
-      expect(mockDefendantModel.findOne).toHaveBeenCalledWith({
-        where: {
-          id: defendantId,
-          caseId,
-        },
-      })
-    })
-  })
-
   describe('defendant exists', () => {
     const caseId = uuid()
     const defendantId = uuid()
     const defendant = { id: defendantId, caseId }
+    const theCase = { id: caseId, defendants: [defendant] }
+    const request = {
+      params: { caseId, defendantId },
+      case: theCase,
+      defendant: undefined,
+    }
     let then: Then
 
     beforeEach(async () => {
-      mockRequest.mockImplementationOnce(() => ({
-        params: { caseId, defendantId },
-      }))
-      const mockFindOne = mockDefendantModel.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(defendant)
+      mockRequest.mockReturnValueOnce(request)
 
       then = await givenWhenThen()
     })
 
     it('should activate', () => {
       expect(then.result).toBe(true)
+      expect(request.defendant).toBe(defendant)
     })
   })
 
   describe('defendant does not exist', () => {
     const caseId = uuid()
     const defendantId = uuid()
+    const theCase = { id: caseId, defendants: [] }
     let then: Then
 
     beforeEach(async () => {
-      mockRequest.mockImplementationOnce(() => ({
+      mockRequest.mockReturnValueOnce({
         params: { caseId, defendantId },
-      }))
+        case: theCase,
+      })
 
       then = await givenWhenThen()
     })
@@ -110,27 +83,28 @@ describe('Defendant Exists Guard', () => {
     })
   })
 
-  describe('missing case id', () => {
+  describe('missing case', () => {
     let then: Then
 
     beforeEach(async () => {
-      mockRequest.mockImplementationOnce(() => ({ params: {} }))
+      mockRequest.mockReturnValueOnce({ params: {} })
 
       then = await givenWhenThen()
     })
 
     it('should throw BadRequestException', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
-      expect(then.error.message).toBe('Missing case id')
+      expect(then.error.message).toBe('Missing case')
     })
   })
 
   describe('missing defendant id', () => {
     const caseId = uuid()
+    const theCase = { id: caseId, defendants: [] }
     let then: Then
 
     beforeEach(async () => {
-      mockRequest.mockImplementationOnce(() => ({ params: { caseId } }))
+      mockRequest.mockReturnValueOnce({ params: { caseId }, case: theCase })
 
       then = await givenWhenThen()
     })

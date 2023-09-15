@@ -39,11 +39,12 @@ export abstract class ClientBaseDTO {
     this.protocolType = ''
     this.requireClientSecret = true
     this.contactEmail = ''
-    this.supportsDelegation = false
+    this.supportsCustomDelegation = false
     this.promptDelegations = false
     this.supportsLegalGuardians = false
     this.supportsProcuringHolders = false
     this.supportsPersonalRepresentatives = false
+    this.requireApiScopes = false
   }
 
   nationalId: string
@@ -85,9 +86,11 @@ export abstract class ClientBaseDTO {
   protocolType: string
   requireClientSecret: boolean
   contactEmail: string
-  supportsDelegation!: boolean
+  supportsCustomDelegation!: boolean
   supportsLegalGuardians!: boolean
   supportsProcuringHolders!: boolean
   supportsPersonalRepresentatives!: boolean
   promptDelegations!: boolean
+  requireApiScopes!: boolean
+  domainName?: string
 }

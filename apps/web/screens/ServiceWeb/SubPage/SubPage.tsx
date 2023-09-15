@@ -1,4 +1,3 @@
-import React from 'react'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -8,13 +7,16 @@ import {
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationArgs,
+  QueryGetSingleSupportQnaArgs,
+  QueryGetSupportCategoryArgs,
   QueryGetSupportQnAsInCategoryArgs,
-  SearchableTags,
   SupportQna,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
   GET_SERVICE_WEB_ORGANIZATION,
+  GET_SINGLE_SUPPORT_QNA,
+  GET_SUPPORT_CATEGORY,
   GET_SUPPORT_QNAS_IN_CATEGORY,
 } from '../../queries'
 import { Screen } from '../../../types'
@@ -34,13 +36,21 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { ServiceWebWrapper } from '@island.is/web/components'
-import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import {
+  linkResolver,
+  useLinkResolver,
+  useNamespace,
+} from '@island.is/web/hooks'
 import { getSlugPart } from '../utils'
 
 import ContactBanner from '../ContactBanner/ContactBanner'
 import groupBy from 'lodash/groupBy'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { SliceType } from '@island.is/island-ui/contentful'
 import OrganizationContactBanner from '../ContactBanner/OrganizationContactBanner'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { Locale } from 'locale'
+import { webRichText } from '@island.is/web/utils/richText'
 
 export interface Dictionary<T> {
   [index: string]: T
@@ -50,35 +60,47 @@ interface SubPageProps {
   organization?: Organization
   namespace: Query['getNamespace']
   supportQNAs: Query['getSupportQNAsInCategory']
+  singleSupportQNA: Query['getSingleSupportQNA']
   questionSlug: string
   organizationNamespace: Record<string, string>
+  singleSupportCategory: Query['getSupportCategory']
+  locale: Locale
 }
 
 const SubPage: Screen<SubPageProps> = ({
   organization,
   supportQNAs,
+  singleSupportQNA,
   questionSlug,
   namespace,
   organizationNamespace,
+  singleSupportCategory,
+  locale,
 }) => {
   const Router = useRouter()
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const o = useNamespace(organizationNamespace)
   const { linkResolver } = useLinkResolver()
-  const organizationSlug = organization.slug
-  const question = supportQNAs.find(
-    (supportQNA) => supportQNA.slug === questionSlug,
+  useContentfulId(
+    organization?.id,
+    singleSupportCategory?.id,
+    singleSupportQNA?.id,
   )
+  useLocalLinkTypeResolver()
 
-  const institutionSlug = getSlugPart(Router.asPath, 2)
+  const organizationSlug = organization?.slug
+  const question = singleSupportQNA
 
+  const institutionSlug = getSlugPart(Router.asPath, locale === 'is' ? 2 : 3)
   // Already filtered by category, simply
   const categoryDescription = supportQNAs[0]?.category?.description ?? ''
   const categoryTitle = supportQNAs[0]?.category?.title
   const categorySlug = supportQNAs[0]?.category?.slug
   const supportQNAsBySubCategory = groupBy(
     supportQNAs,
-    (supportQNA) => supportQNA.subCategory.title,
+    (supportQNA) => supportQNA.subCategory?.title ?? '',
   )
 
   const sortedSupportSubCategoryTitles = getSortedSupportSubCategoryTitles(
@@ -99,9 +121,8 @@ const SubPage: Screen<SubPageProps> = ({
     linkResolver('serviceweb').href
   }/${organizationSlug}${questionSlug ? `/${categorySlug}` : ''}`
 
-  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
-    'mannaudstorg',
-  )
+  const institutionSlugBelongsToMannaudstorg =
+    institutionSlug.includes('mannaudstorg')
 
   const breadcrumbItems = [
     {
@@ -110,25 +131,24 @@ const SubPage: Screen<SubPageProps> = ({
       href: linkResolver('serviceweb').href,
     },
     {
-      title: organization.title,
+      title: organization?.title,
       typename: 'serviceweb',
-      href: `${linkResolver('serviceweb').href}/${organizationSlug}`,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      href: linkResolver('serviceweborganization', [organizationSlug]).href,
     },
     {
-      title: `${categoryTitle}`,
+      title: categoryTitle,
       typename: 'serviceweb',
       isTag: true,
       ...(questionSlug && {
-        href: `${
-          linkResolver('serviceweb').href
-        }/${organizationSlug}/${categorySlug}`,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
+        href: linkResolver('supportcategory', [organizationSlug, categorySlug])
+          .href,
       }),
     },
   ]
-
-  const searchTags = institutionSlugBelongsToMannaudstorg
-    ? [{ key: 'mannaudstorg', type: SearchableTags.Organization }]
-    : undefined
 
   return (
     <ServiceWebWrapper
@@ -139,6 +159,8 @@ const SubPage: Screen<SubPageProps> = ({
         n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
       )}
       institutionSlug={institutionSlug}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       organization={organization}
       organizationTitle={organizationTitle}
       smallBackground
@@ -146,12 +168,13 @@ const SubPage: Screen<SubPageProps> = ({
         'serviceWebSearchPlaceholder',
         'Leitaðu á þjónustuvefnum',
       )}
-      searchTags={searchTags}
     >
       <Box marginY={[3, 3, 10]}>
         <GridContainer>
           <GridRow>
             <GridColumn
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               offset={[null, null, null, '1/12']}
               span={['12/12', '12/12', '12/12', '10/12']}
             >
@@ -160,12 +183,20 @@ const SubPage: Screen<SubPageProps> = ({
                   <GridColumn span="12/12" paddingBottom={[2, 2, 4]}>
                     <Box display={['none', 'none', 'block']} printHidden>
                       <Breadcrumbs
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
                         items={breadcrumbItems.slice(
                           institutionSlugBelongsToMannaudstorg ? 1 : 0,
                         )}
                         renderLink={(link, { href }) => {
                           return (
-                            <NextLink href={href} passHref>
+                            <NextLink
+                              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                              // @ts-ignore make web strict
+                              href={href}
+                              passHref
+                              legacyBehavior
+                            >
                               {link}
                             </NextLink>
                           )
@@ -225,9 +256,7 @@ const SubPage: Screen<SubPageProps> = ({
                         <Text variant="h2" as="h2">
                           {question.title}
                         </Text>
-                        <Box>
-                          {richText(question.answer as SliceType[], undefined)}
-                        </Box>
+                        <Box>{webRichText(question.answer as SliceType[])}</Box>
                         <>
                           {question.relatedLinks?.length > 0 && (
                             <Box
@@ -267,7 +296,7 @@ const SubPage: Screen<SubPageProps> = ({
                               }
                             >
                               <OrganizationContactBanner
-                                organizationLogoUrl={organization.logo?.url}
+                                organizationLogoUrl={organization?.logo?.url}
                                 contactLink={question.contactLink}
                                 headerText={o(
                                   'serviceWebOrganizationContactBannerHeaderTitle',
@@ -313,7 +342,17 @@ const SubPage: Screen<SubPageProps> = ({
                                         return (
                                           <Box key={index}>
                                             <TopicCard
-                                              href={`/adstod/${organizationSlug}/${categorySlug}?&q=${slug}`}
+                                              href={
+                                                linkResolver('supportqna', [
+                                                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                                  // @ts-ignore make web strict
+                                                  organizationSlug,
+                                                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                                  // @ts-ignore make web strict
+                                                  categorySlug,
+                                                  slug,
+                                                ]).href
+                                              }
                                             >
                                               {title}
                                             </TopicCard>
@@ -332,11 +371,27 @@ const SubPage: Screen<SubPageProps> = ({
                   </GridColumn>
                 </GridRow>
               </GridContainer>
-              {!institutionSlugBelongsToMannaudstorg && (
-                <Box marginTop={[10, 10, 20]}>
-                  <ContactBanner slug={institutionSlug} />
-                </Box>
-              )}
+
+              <Box marginTop={[10, 10, 20]}>
+                <ContactBanner
+                  slug={institutionSlug}
+                  cantFindWhatYouAreLookingForText={o(
+                    'cantFindWhatYouAreLookingForText',
+                    n(
+                      'cantFindWhatYouAreLookingForText',
+                      'Finnurðu ekki það sem þig vantar?',
+                    ),
+                  )}
+                  contactUsText={o(
+                    'contactUsText',
+                    n('contactUsText', 'Hafa samband'),
+                  )}
+                  howCanWeHelpText={o(
+                    'howCanWeHelpText',
+                    n('howCanWeHelpText', 'Hvernig getum við aðstoðað?'),
+                  )}
+                />
+              </Box>
             </GridColumn>
           </GridRow>
         </GridContainer>
@@ -347,13 +402,34 @@ const SubPage: Screen<SubPageProps> = ({
 
 const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
-SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
+SubPage.getProps = async ({ apolloClient, locale, query, res }) => {
   const slugs = query.slugs as string
   const organizationSlug = slugs[0]
   const categorySlug = slugs[1]
-  const questionSlug = single(query.q) ?? undefined
+  const questionSlug = slugs[2] ?? undefined
 
-  const [organization, namespace, supportQNAs] = await Promise.all([
+  if (single(query.q)) {
+    if (res) {
+      res.writeHead(302, {
+        Location: linkResolver(
+          'supportqna',
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          [organizationSlug, categorySlug, single(query.q)],
+          locale as Locale,
+        ).href,
+      })
+      res.end()
+    }
+  }
+
+  const [
+    organization,
+    namespace,
+    supportQNAs,
+    singleSupportQNA,
+    singleSupportCategory,
+  ] = await Promise.all([
     !!organizationSlug &&
       apolloClient.query<Query, QueryGetOrganizationArgs>({
         query: GET_SERVICE_WEB_ORGANIZATION,
@@ -375,7 +451,7 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
@@ -389,18 +465,48 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
           },
         },
       }),
+    !!questionSlug &&
+      apolloClient.query<Query, QueryGetSingleSupportQnaArgs>({
+        query: GET_SINGLE_SUPPORT_QNA,
+        variables: {
+          input: {
+            lang: locale as ContentLanguage,
+            slug: questionSlug,
+          },
+        },
+      }),
+    !!categorySlug &&
+      apolloClient.query<Query, QueryGetSupportCategoryArgs>({
+        query: GET_SUPPORT_CATEGORY,
+        variables: {
+          input: { slug: categorySlug, lang: locale as ContentLanguage },
+        },
+      }),
   ])
 
   const organizationNamespace = JSON.parse(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     organization?.data?.getOrganization?.namespace?.fields ?? '{}',
   )
 
   return {
     namespace,
     organizationNamespace,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     organization: organization?.data?.getOrganization,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     supportQNAs: supportQNAs?.data?.getSupportQNAsInCategory,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
+    singleSupportQNA: singleSupportQNA?.data?.getSingleSupportQNA,
     questionSlug,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
+    singleSupportCategory: singleSupportCategory?.data?.getSupportCategory,
+    locale: locale as Locale,
   }
 }
 
@@ -417,7 +523,11 @@ const getSortedSupportSubCategoryTitles = (
     if (subCategoryB.length === 0) return -1
 
     return (
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       subCategoryB[0].subCategory?.importance -
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       subCategoryA[0].subCategory?.importance
     )
   })
@@ -427,5 +537,5 @@ const getSortedSupportSubCategoryTitles = (
 
 export default withMainLayout(SubPage, {
   showHeader: false,
-  showFooter: false,
+  footerVersion: 'organization',
 })

@@ -1,11 +1,13 @@
 import React from 'react'
-import { useMenuState, Menu, MenuItem, MenuButton } from 'reakit/Menu'
+import { Menu, MenuButton, MenuItem, useMenuState } from 'reakit/Menu'
+
 import {
   Button,
   ButtonProps,
   getTextStyles,
   useBoxStyles,
 } from '@island.is/island-ui/core'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 import * as styles from './DropdownMenu.css'
 
@@ -34,7 +36,8 @@ export const DropdownMenu = ({
   items,
   title,
   icon,
-}: DropdownMenuProps) => {
+  dataTestId,
+}: DropdownMenuProps & TestSupport) => {
   const menu = useMenuState({
     placement: 'bottom-start',
     unstable_offset: [0, 8],
@@ -50,7 +53,7 @@ export const DropdownMenu = ({
   const menuItemBoxStyle = useBoxStyles({
     component: 'button',
     display: 'flex',
-    justifyContent: 'center',
+    width: 'full',
     paddingTop: 2,
     paddingRight: 3,
     paddingBottom: 2,
@@ -63,7 +66,7 @@ export const DropdownMenu = ({
 
   return (
     <>
-      <MenuButton as={Button} icon={icon} {...menu}>
+      <MenuButton as={Button} icon={icon} {...menu} data-testid={dataTestId}>
         {title}
       </MenuButton>
       <Menu

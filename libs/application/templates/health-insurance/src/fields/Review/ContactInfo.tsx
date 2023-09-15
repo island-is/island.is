@@ -17,7 +17,9 @@ import {
   ReviewFieldProps,
 } from '../../types'
 
-const ContactInfo: FC<ReviewFieldProps> = ({ application }) => {
+const ContactInfo: FC<React.PropsWithChildren<ReviewFieldProps>> = ({
+  application,
+}) => {
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -40,9 +42,8 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application }) => {
               <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 2, 0]}>
                 <Input
                   id="applicant.name"
-                  name="applicant.name"
+                  {...register('applicant.name')}
                   label={formatText(m.name, application, formatMessage)}
-                  ref={register}
                   disabled
                   defaultValue={nationalRegistry?.fullName}
                 />
@@ -50,9 +51,8 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application }) => {
               <GridColumn span={['12/12', '6/12']}>
                 <Input
                   id="applicant.nationalId"
-                  name="applicant.nationalId"
+                  {...register('applicant.nationalId')}
                   label={formatText(m.nationalId, application, formatMessage)}
-                  ref={register}
                   disabled
                   defaultValue={nationalRegistry?.nationalId}
                 />
@@ -62,9 +62,8 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application }) => {
               <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 2, 0]}>
                 <Input
                   id="applicant.address"
-                  name="applicant.address"
+                  {...register('applicant.address')}
                   label={formatText(m.address, application, formatMessage)}
-                  ref={register}
                   disabled
                   defaultValue={
                     nationalRegistry?.address?.streetAddress as string
@@ -74,9 +73,8 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application }) => {
               <GridColumn span={['12/12', '6/12']}>
                 <Input
                   id="applicant.postalCode"
-                  name="applicant.postalCode"
+                  {...register('applicant.postalCode')}
                   label={formatText(m.postalCode, application, formatMessage)}
-                  ref={register}
                   disabled
                   defaultValue={nationalRegistry?.address?.postalCode as string}
                 />
@@ -86,9 +84,8 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application }) => {
               <GridColumn span={['12/12', '6/12']}>
                 <Input
                   id="applicant.city"
-                  name="applicant.city"
+                  {...register('applicant.city')}
                   label={formatText(m.city, application, formatMessage)}
-                  ref={register}
                   disabled
                   defaultValue={nationalRegistry?.address?.city as string}
                 />
@@ -108,9 +105,8 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application }) => {
             <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 2, 0]}>
               <Input
                 id="applicant.email"
-                name="applicant.email"
+                {...register('applicant.email')}
                 label={formatText(m.email, application, formatMessage)}
-                ref={register}
                 disabled
                 defaultValue={userProfile?.email as string}
               />
@@ -118,9 +114,8 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application }) => {
             <GridColumn span={['12/12', '6/12']}>
               <Input
                 id="applicant.phoneNumber"
-                name="applicant.phoneNumber"
+                {...register('applicant.phoneNumber')}
                 label={formatText(m.phoneNumber, application, formatMessage)}
-                ref={register}
                 disabled
                 defaultValue={userProfile?.mobilePhoneNumber as string}
               />

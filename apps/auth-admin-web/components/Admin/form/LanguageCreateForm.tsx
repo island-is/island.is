@@ -19,9 +19,11 @@ interface FormOutput {
   language: LanguageDTO
 }
 
-const LanguageCreateForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<FormOutput>()
-  const { isSubmitting } = formState
+const LanguageCreateForm: React.FC<React.PropsWithChildren<Props>> = (
+  props: Props,
+) => {
+  const { register, handleSubmit, formState } = useForm<FormOutput>()
+  const { isSubmitting, errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('LanguageCreateForm'),
@@ -82,8 +84,7 @@ const LanguageCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="isoKey"
                     type="text"
-                    name="language.isoKey"
-                    ref={register({
+                    {...register('language.isoKey', {
                       required: true,
                       maxLength: 2,
                       minLength: 2,
@@ -119,11 +120,10 @@ const LanguageCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="description"
                     type="text"
-                    ref={register({
+                    {...register('language.description', {
                       required: true,
                       validate: ValidationUtils.validateDescription,
                     })}
-                    name="language.description"
                     defaultValue={language.description ?? ''}
                     className="language-create-form__input"
                     title={localization.fields['description'].helpText}
@@ -150,11 +150,10 @@ const LanguageCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="englishDescription"
                     type="text"
-                    ref={register({
+                    {...register('language.englishDescription', {
                       required: true,
                       validate: ValidationUtils.validateDescription,
                     })}
-                    name="language.englishDescription"
                     defaultValue={language.englishDescription ?? ''}
                     className="language-create-form__input"
                     title={localization.fields['englishDescription'].helpText}

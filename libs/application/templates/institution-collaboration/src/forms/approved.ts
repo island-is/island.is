@@ -1,35 +1,17 @@
-import {
-  buildForm,
-  buildMultiField,
-  buildSection,
-  Form,
-  FormModes,
-  buildCustomField,
-} from '@island.is/application/core'
+import { buildForm } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { institutionApplicationMessages as m } from '../lib/messages'
 
 export const approved: Form = buildForm({
   id: 'InstitutionCollaborationApprovedForm',
   title: '',
-  mode: FormModes.APPLYING,
+  mode: FormModes.APPROVED,
   children: [
-    buildSection({
-      id: 'approvedApplication',
-      title: '',
-      children: [
-        buildMultiField({
-          id: 'approvedApplicationReview',
-          title: m.approved.sectionTitle,
-          description: m.approved.sectionDescription,
-          children: [
-            buildCustomField({
-              id: 'reviewScreen',
-              title: '',
-              component: 'ReviewScreen',
-            }),
-          ],
-        }),
-      ],
+    buildFormConclusionSection({
+      alertTitle: m.confirmation.sectionTitle,
+      expandableHeader: m.confirmation.sectionInfoHeader,
+      expandableDescription: m.confirmation.sectionInfoBulletPoints,
     }),
   ],
 })

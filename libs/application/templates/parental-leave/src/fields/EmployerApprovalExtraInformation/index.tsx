@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-import { Application, RecordObject, Field } from '@island.is/application/core'
+import { Application, RecordObject, Field } from '@island.is/application/types'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { DataValue } from '@island.is/application/ui-components'
@@ -17,7 +17,9 @@ interface ScreenProps {
   errors?: RecordObject
 }
 
-const EmployerApprovalExtraInformation: FC<ScreenProps> = ({ application }) => {
+const EmployerApprovalExtraInformation: FC<
+  React.PropsWithChildren<ScreenProps>
+> = ({ application }) => {
   const pensionFundOptions = usePensionFundOptions()
   const unionOptions = useUnionOptions()
   const { formatMessage } = useLocale()

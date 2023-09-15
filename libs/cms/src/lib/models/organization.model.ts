@@ -1,4 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { IOrganization } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { OrganizationTag, mapOrganizationTag } from './organizationTag.model'
@@ -23,16 +24,16 @@ export class Organization {
   @Field()
   slug!: string
 
-  @Field(() => [OrganizationTag])
+  @CacheField(() => [OrganizationTag])
   tag?: Array<OrganizationTag>
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   logo?: Image | null
 
   @Field({ nullable: true })
   link?: string
 
-  @Field(() => [FooterItem])
+  @CacheField(() => [FooterItem])
   footerItems?: Array<FooterItem>
 
   @Field()
@@ -47,14 +48,29 @@ export class Organization {
   @Field(() => Boolean, { nullable: true })
   serviceWebEnabled?: boolean
 
-  @Field(() => Namespace, { nullable: true })
+  @Field(() => Number, { nullable: true })
+  serviceWebPopularQuestionCount?: number
+
+  @CacheField(() => Namespace, { nullable: true })
   namespace!: Namespace | null
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   serviceWebFeaturedImage!: Image | null
 
-  @Field(() => [GenericTag])
+  @CacheField(() => [GenericTag])
   publishedMaterialSearchFilterGenericTags!: GenericTag[]
+
+  @Field(() => Boolean, { nullable: true })
+  showsUpOnTheOrganizationsPage?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  hasALandingPage?: boolean
+
+  @Field({ nullable: true })
+  trackingDomain?: string
+
+  @Field({ nullable: true })
+  referenceIdentifier?: string
 }
 
 export const mapOrganization = ({
@@ -63,10 +79,10 @@ export const mapOrganization = ({
 }: IOrganization): Organization => {
   return {
     id: sys.id,
-    title: fields.title ?? '',
+    title: fields.title?.trim() ?? '',
     shortTitle: fields.shortTitle ?? '',
     description: fields.description ?? '',
-    slug: fields.slug ?? '',
+    slug: fields.slug?.trim() ?? '',
     tag: (fields.tag ?? []).map(mapOrganizationTag),
     logo: fields.logo ? mapImage(fields.logo) : null,
     link: fields.link ?? '',
@@ -75,12 +91,18 @@ export const mapOrganization = ({
     email: fields.email ?? '',
     serviceWebTitle: fields.serviceWebTitle ?? '',
     serviceWebEnabled: Boolean(fields.serviceWebEnabled),
+    serviceWebPopularQuestionCount: fields.serviceWebPopularQuestionCount ?? 0,
     namespace: fields.namespace ? mapNamespace(fields.namespace) : null,
     serviceWebFeaturedImage: fields.serviceWebFeaturedImage
       ? mapImage(fields.serviceWebFeaturedImage)
       : null,
-    publishedMaterialSearchFilterGenericTags: fields.publishedMaterialSearchFilterGenericTags
-      ? fields.publishedMaterialSearchFilterGenericTags.map(mapGenericTag)
-      : [],
+    publishedMaterialSearchFilterGenericTags:
+      fields.publishedMaterialSearchFilterGenericTags
+        ? fields.publishedMaterialSearchFilterGenericTags.map(mapGenericTag)
+        : [],
+    showsUpOnTheOrganizationsPage: fields.showsUpOnTheOrganizationsPage ?? true,
+    hasALandingPage: fields.hasALandingPage ?? true,
+    trackingDomain: fields.trackingDomain ?? '',
+    referenceIdentifier: fields.referenceIdentifier,
   }
 }

@@ -9,7 +9,7 @@ import { FileService } from '../file.service'
 
 @Injectable()
 export class CaseFileExistsGuard implements CanActivate {
-  constructor(private fileService: FileService) {}
+  constructor(private readonly fileService: FileService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()

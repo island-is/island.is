@@ -1,5 +1,21 @@
 # API
 
+## Quickstart
+
+Ensure docker is running, then run the following when running for the first time:
+
+```bash
+yarn dev-init api
+```
+
+To start the app:
+
+```bash
+yarn dev api
+```
+
+These commands are just shorthands for the setup described below.
+
 ## About
 
 This project forms the basis of a unified API for products belonging to island.is.
@@ -146,6 +162,6 @@ If your domain needs to expose fields in the GraphQL schema, make sure to export
 
 - [Júní](https://github.com/orgs/island-is/teams/juni/members): `libs/cms`, `libs/api/domains/content-search`
 - [Aranja](https://github.com/orgs/island-is/teams/aranja/members): `libs/cms`, `libs/api/domains/application`, `libs/api/domains/content-search`
-- [Sendiráðið](https://github.com/orgs/island-is/teams/sendiradid/members): `libs/api/domains/documents`, `libs/api/domains/national-registry`
+- [Norda](https://github.com/orgs/island-is/teams/norda/members): `libs/api/domains/documents`, `libs/api/domains/national-registry`
 - [Stefna](https://github.com/orgs/island-is/teams/stefna/members): `libs/api/domains/content-search`
 - [Advania](https://github.com/orgs/island-is/teams/advania/members) `libs/api/domains/api-catalogue`

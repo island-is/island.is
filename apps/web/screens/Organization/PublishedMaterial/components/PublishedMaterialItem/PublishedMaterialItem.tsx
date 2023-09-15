@@ -3,11 +3,11 @@ import { Box, FocusableBox, Text, Tag } from '@island.is/island-ui/core'
 import { EnhancedAsset } from '@island.is/web/graphql/schema'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
-const getFileEnding = (url: string): string => {
+const getFileEnding = (url: string): string | undefined => {
   const lastChunk = url.split('/').pop()
-  const filenameChunks = lastChunk.split('.')
-  if (filenameChunks.length === 1) return ''
-  return filenameChunks.pop()
+  const filenameChunks = lastChunk?.split('.')
+  if (filenameChunks?.length === 1) return ''
+  return filenameChunks?.pop()
 }
 
 interface PublishedMaterialItemProps {
@@ -18,16 +18,16 @@ export const PublishedMaterialItem = ({ item }: PublishedMaterialItemProps) => {
   const { format } = useDateUtils()
   const fileEnding = getFileEnding(item.file?.url ?? '')
   const date =
-    item?.releaseDate && format(new Date(item.releaseDate), 'do MMMM yyyy')
+    item.releaseDate && format(new Date(item.releaseDate), 'do MMMM yyyy')
 
   return (
     <FocusableBox
       width="full"
       padding={[2, 2, 3]}
       href={
-        item.file.url.startsWith('//')
+        item.file?.url?.startsWith('//')
           ? `https:${item.file.url}`
-          : item.file.url
+          : item.file?.url
       }
       border="standard"
       borderRadius="large"

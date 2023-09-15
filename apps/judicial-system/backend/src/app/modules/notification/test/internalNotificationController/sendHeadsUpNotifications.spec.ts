@@ -1,0 +1,69 @@
+import { uuid } from 'uuidv4'
+
+import { SmsService } from '@island.is/nova-sms'
+import {
+  CaseType,
+  NotificationType,
+  User,
+} from '@island.is/judicial-system/types'
+
+import { Case } from '../../../case'
+import { DeliverResponse } from '../../models/deliver.response'
+import { createTestingNotificationModule } from '../createTestingNotificationModule'
+
+interface Then {
+  result: DeliverResponse
+  error: Error
+}
+
+type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
+
+describe('InternalNotificationController - Send heads up notifications', () => {
+  const userId = uuid()
+  const courtId = uuid()
+  const mobileNumber = uuid()
+
+  let mockSmsService: SmsService
+  let givenWhenThen: GivenWhenThen
+
+  beforeEach(async () => {
+    process.env.COURTS_MOBILE_NUMBERS = `{"${courtId}": "${mobileNumber}"}`
+
+    const { smsService, internalNotificationController } =
+      await createTestingNotificationModule()
+
+    mockSmsService = smsService
+
+    givenWhenThen = async (caseId, theCase) => {
+      const then = {} as Then
+
+      await internalNotificationController
+        .sendCaseNotification(caseId, theCase, {
+          user: { id: userId } as User,
+          type: NotificationType.HEADS_UP,
+        })
+        .then((result) => (then.result = result))
+        .catch((error) => (then.error = error))
+
+      return then
+    }
+  })
+
+  describe('notification sent', () => {
+    const caseId = uuid()
+    const theCase = { id: caseId, type: CaseType.CUSTODY, courtId } as Case
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(caseId, theCase)
+    })
+
+    it('should send notification', () => {
+      expect(mockSmsService.sendSms).toHaveBeenCalledWith(
+        [mobileNumber],
+        'Ný gæsluvarðhaldskrafa í vinnslu. Sækjandi: Ekki skráður.',
+      )
+      expect(then.result).toEqual({ delivered: true })
+    })
+  })
+})

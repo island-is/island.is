@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useState } from 'react'
 import Header from '../Header/Header'
 import Sidebar from '../Sidebar/Sidebar'
 import {
@@ -12,52 +12,69 @@ import {
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import * as styles from './Layout.css'
 import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
-import useRoutes from '../../hooks/useRoutes/useRoutes'
-import { useModules } from '../../hooks/useModules/useModules'
-import { useScrollTopOnUpdate } from '@island.is/service-portal/core'
+import {
+  ModuleAlertBannerSection,
+  useScrollTopOnUpdate,
+} from '@island.is/service-portal/core'
 import { useLocation } from 'react-router-dom'
 import MobileMenu from '../MobileMenu/MobileMenu'
 import { useNamespaces } from '@island.is/localization'
-import { useStore } from '../../store/stateProvider'
 import { RemoveScroll } from 'react-remove-scroll'
-import cn from 'classnames'
+import { GlobalAlertBannerSection } from '../AlertBanners/GlobalAlertBannerSection'
+import { useAlertBanners } from '@island.is/service-portal/graphql'
+import { useMeasure } from 'react-use'
 
-const Layout: FC = ({ children }) => {
-  useRoutes()
-  useModules()
-  useNamespaces('service.portal')
+export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
+  useNamespaces(['service.portal', 'global', 'portals'])
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { pathname } = useLocation()
   useScrollTopOnUpdate([pathname])
-  const [{ mobileMenuState, sidebarState }] = useStore()
+  const banners = useAlertBanners()
+  const [ref, { height }] = useMeasure()
+  const globalBanners = banners.filter((banner) =>
+    banner.servicePortalPaths?.includes('*'),
+  )
 
   return (
     <>
       <AuthOverlay />
       <ToastContainer useKeyframeStyles={false} />
-      <Header />
+      {globalBanners.length > 0 && (
+        <GlobalAlertBannerSection ref={ref} banners={globalBanners} />
+      )}
+      <Header
+        setMobileMenuOpen={(set: boolean) => setMobileMenuOpen(set)}
+        mobileMenuOpen={mobileMenuOpen}
+        position={height ? height : 0}
+      />
       {/* // counter intuitive, the scroll blocks all scrolling aside from the component that is wrapped */}
-      <RemoveScroll enabled={mobileMenuState === 'open'}>
-        <Hidden above="sm">
-          <MobileMenu />
+      <Hidden print>
+        <RemoveScroll enabled={mobileMenuOpen}>
+          <Hidden above="sm">
+            <MobileMenu
+              position={height ? height : 0}
+              mobileMenuOpen={mobileMenuOpen}
+              setMobileMenuOpen={() => setMobileMenuOpen(false)}
+            />
+          </Hidden>
+        </RemoveScroll>
+        <Hidden below="md">
+          <Sidebar position={height ? height : 0} />
         </Hidden>
-      </RemoveScroll>
-      <Hidden below="md">
-        <Sidebar />
       </Hidden>
-      <Box
-        overflow="hidden"
-        className={cn(
-          styles.layoutWrapper,
-          sidebarState === 'closed' && styles.layoutWrapperWide,
-        )}
-        paddingBottom={7}
-      >
-        <Box as="main" component="main">
-          <GridContainer>
+      <Box className={styles.layoutWrapper} paddingBottom={7}>
+        <Box as="main" component="main" style={{ marginTop: height }}>
+          <GridContainer className={styles.layoutContainer}>
             <GridRow>
-              <GridColumn span={'12/12'} className={styles.layoutGrid}>
-                <ContentBreadcrumbs />
-                <div>{children}</div>
+              <GridColumn
+                span={['12/12', '12/12', '12/12', '11/12']}
+                className={styles.layoutGrid}
+              >
+                <Hidden print>
+                  <ContentBreadcrumbs />
+                </Hidden>
+                <ModuleAlertBannerSection />
+                {children}
               </GridColumn>
             </GridRow>
           </GridContainer>
@@ -66,4 +83,3 @@ const Layout: FC = ({ children }) => {
     </>
   )
 }
-export default Layout

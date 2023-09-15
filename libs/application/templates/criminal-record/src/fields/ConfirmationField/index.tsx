@@ -11,7 +11,8 @@ import {
 
 import React, { FC, useState } from 'react'
 import { useLocale } from '@island.is/localization'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import * as styles from './ConfirmationField.css'
@@ -37,9 +38,9 @@ type ConfirmationFieldProps = {
   }
 }
 
-export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
-  application,
-}) => {
+export const ConfirmationField: FC<
+  React.PropsWithChildren<FieldBaseProps & ConfirmationFieldProps>
+> = ({ application }) => {
   const { externalData } = application
   const { formatMessage } = useLocale()
   const [viewCriminalRecord, setViewCriminalRecord] = useState(false)
@@ -181,7 +182,11 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
         iconType="outline"
         onClick={() => {
           window.open(
-            formatText(m.criminalRecordInboxLink, application, formatMessage),
+            formatText(
+              `${window.location.origin}/minarsidur/postholf`,
+              application,
+              formatMessage,
+            ),
             '_blank',
           )
         }}

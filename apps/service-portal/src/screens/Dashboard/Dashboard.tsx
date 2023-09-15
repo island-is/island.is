@@ -1,98 +1,118 @@
-import React, { FC, Suspense, useCallback, useMemo } from 'react'
-import { Box, Text } from '@island.is/island-ui/core'
-import { useStore } from '../../store/stateProvider'
+import React, { FC, useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { useAuth } from '@island.is/auth/react'
 import {
-  ServicePortalWidget,
-  ServicePortalModule,
-} from '@island.is/service-portal/core'
-import WidgetLoading from './WidgetLoading/WidgetLoading'
-import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
-import Greeting from '../../components/Greeting/Greeting'
-import { User } from 'oidc-client'
+  Box,
+  CategoryCard,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Icon,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { WidgetErrorBoundary } from './WidgetError/WidgetError'
+import {
+  PlausiblePageviewDetail,
+  ServicePortalPath,
+  useDynamicRoutesWithNavigation,
+} from '@island.is/service-portal/core'
+import Greeting from '../../components/Greeting/Greeting'
+import * as styles from './Dashboard.css'
+import { iconIdMapper, iconTypeToSVG } from '../../utils/Icons/idMapper'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
+import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 
-const Widget: FC<{
-  widget: ServicePortalWidget
-  userInfo: User
-  client: ApolloClient<NormalizedCacheObject>
-}> = React.memo(({ widget, userInfo, client }) => {
-  const Component = widget.render({
-    userInfo,
-    client,
-  })
-
-  if (Component)
-    return (
-      <Suspense fallback={<WidgetLoading />}>
-        <WidgetErrorBoundary name={widget.name}>
-          <Component userInfo={userInfo} client={client} />
-        </WidgetErrorBoundary>
-      </Suspense>
-    )
-
-  return null
-})
-
-const WidgetLoader: FC<{
-  modules: ServicePortalModule[]
-  userInfo: User
-  client: ApolloClient<NormalizedCacheObject>
-}> = ({ modules, userInfo, client }) => {
+export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
+  const { userInfo } = useAuth()
+  const location = useLocation()
+  const mainNav = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const { formatMessage } = useLocale()
-  const widgets = useMemo(
-    () =>
-      modules
-        .reduce(
-          (prev, curr) => [
-            ...prev,
-            ...curr.widgets({
-              userInfo,
-              client,
-            }),
-          ],
-          [] as ServicePortalWidget[],
-        )
-        .sort((a, b) => a.weight - b.weight),
-    [modules, userInfo, client],
-  )
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
+  const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
 
-  return (
-    <>
-      {widgets.map((widget, index) => (
-        <Box marginBottom={8} key={index}>
-          <Box marginBottom={2}>
-            <Text variant="h3" as="h3">
-              {formatMessage(widget.name)}
-            </Text>
-          </Box>
-          <Widget
-            key={`widget-${index}`}
-            widget={widget}
-            userInfo={userInfo}
-            client={client}
-          />
-        </Box>
-      ))}
-    </>
-  )
-}
+  useEffect(() => {
+    PlausiblePageviewDetail(
+      ServicePortalPath.MinarSidurRoot,
+      IS_COMPANY ? 'company' : 'person',
+    )
+  }, [location])
 
-export const Dashboard: FC<{}> = () => {
-  const [{ modules, modulesPending }] = useStore()
-  const { userInfo, client } = useModuleProps()
+  const onHover = (id: string) => {
+    const a: HTMLElement | null | '' =
+      id && document.getElementById(iconIdMapper(id))
+    a && a.dispatchEvent(new Event('click'))
+  }
 
   return (
     <Box>
       <Greeting />
-      {userInfo !== null && !modulesPending && (
-        <WidgetLoader
-          modules={Object.values(modules)}
-          userInfo={userInfo}
-          client={client}
-        />
-      )}
+      <GridContainer className={styles.relative}>
+        <Box className={styles.imageAbsolute}>
+          <img
+            src={`./assets/images/${
+              IS_COMPANY ? 'coffee.svg' : 'dashboard.svg'
+            }`}
+            alt=""
+          />
+        </Box>
+
+        <GridRow data-testid={'service-portal-dashboard'}>
+          {[mainNav].map((rootItem) => {
+            return rootItem?.children?.map(
+              (navRoot, index) =>
+                navRoot.path !== ServicePortalPath.MinarSidurRoot &&
+                !navRoot.navHide && (
+                  <GridColumn
+                    key={formatMessage(navRoot.name) + '-' + index}
+                    span={['12/12', '12/12', '12/12', '6/12', '4/12']}
+                    paddingBottom={3}
+                  >
+                    <Box
+                      onMouseEnter={() => onHover(navRoot.icon?.icon ?? '')}
+                      height="full"
+                      flexGrow={1}
+                    >
+                      {navRoot.path && (
+                        <CategoryCard
+                          autoStack
+                          hyphenate
+                          truncateHeading
+                          component={Link}
+                          to={navRoot.path}
+                          icon={
+                            isMobile && navRoot.icon ? (
+                              <Icon
+                                icon={navRoot.icon.icon}
+                                type="outline"
+                                color="blue400"
+                              />
+                            ) : (
+                              iconTypeToSVG(navRoot.icon?.icon ?? '', '') ??
+                              (navRoot.icon ? (
+                                <Icon
+                                  icon={navRoot.icon.icon}
+                                  type="outline"
+                                  color="blue400"
+                                />
+                              ) : undefined)
+                            )
+                          }
+                          heading={formatMessage(navRoot.name)}
+                          text={
+                            navRoot.description
+                              ? formatMessage(navRoot.description)
+                              : formatMessage(navRoot.name)
+                          }
+                        />
+                      )}
+                    </Box>
+                  </GridColumn>
+                ),
+            )
+          })}
+        </GridRow>
+      </GridContainer>
     </Box>
   )
 }

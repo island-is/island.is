@@ -1,6 +1,7 @@
 import React from 'react'
 import {
   Box,
+  BoxProps,
   Button,
   GridColumn,
   GridContainer,
@@ -14,15 +15,28 @@ interface SliceProps {
   slice: MultipleStatisticsSchema
 }
 
-export const MultipleStatistics: React.FC<SliceProps> = ({ slice }) => {
+export const MultipleStatistics: React.FC<
+  React.PropsWithChildren<SliceProps>
+> = ({ slice }) => {
+  const boxProps: BoxProps = slice.hasBorderAbove
+    ? {
+        borderTopWidth: 'standard',
+        borderColor: 'standard',
+        paddingTop: [4, 4, 6],
+        paddingBottom: [4, 4, 6],
+      }
+    : {
+        paddingTop: 2,
+        paddingBottom: 2,
+      }
+
   return (
-    <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
-      <Box
-        borderTopWidth="standard"
-        borderColor="standard"
-        paddingTop={[4, 4, 6]}
-        paddingBottom={[4, 4, 6]}
-      >
+    <section
+      key={slice.id}
+      id={slice.id}
+      aria-labelledby={'sliceTitle-' + slice.id}
+    >
+      <Box {...boxProps}>
         {!!slice.title && (
           <Text variant="h2" as="h2" marginBottom={4}>
             {slice.title}

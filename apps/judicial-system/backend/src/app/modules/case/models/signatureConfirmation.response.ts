@@ -1,15 +1,16 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import type { SignatureConfirmationResponse as TSignatureConfirmationResponse } from '@island.is/judicial-system/types'
 
 export class SignatureConfirmationResponse
-  implements TSignatureConfirmationResponse {
+  implements TSignatureConfirmationResponse
+{
   @ApiProperty()
   documentSigned!: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   code?: number
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   message?: string
 }

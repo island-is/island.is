@@ -22,14 +22,12 @@ interface FormOutput {
   origin: string
 }
 
-const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<ClientAllowedCorsOriginDTO>()
-  const { isSubmitting } = formState
+const ClientAllowedCorsOriginsForm: React.FC<React.PropsWithChildren<Props>> = (
+  props: Props,
+) => {
+  const { register, handleSubmit, formState } =
+    useForm<ClientAllowedCorsOriginDTO>()
+  const { isSubmitting, errors } = formState
   const [defaultOrigin, setDefaultOrigin] = useState(
     !props.origins || props.origins.length === 0 ? props.defaultOrigin : '',
   )
@@ -110,8 +108,7 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
                     <input
                       id="origin"
                       type="text"
-                      name="origin"
-                      ref={register({
+                      {...register('origin', {
                         required: true,
                         validate: ValidationUtils.validateCorsOrigin,
                       })}

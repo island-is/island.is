@@ -1,198 +1,99 @@
-import * as kennitala from 'kennitala'
-import { Injectable } from '@nestjs/common'
-
-import {
-  FamilyMember,
-  FamilyChild,
-  User,
-  Gender,
-  MaritalStatus,
-  FamilyRelation,
-} from './types'
-import {
-  NationalRegistryApi,
-  ISLFjolskyldan,
-} from '@island.is/clients/national-registry-v1'
+import { Inject, Injectable } from '@nestjs/common'
+import { SoffiaService } from './v1/soffia.service'
+import { BrokerService } from './v3/broker.service'
+import { SharedPerson } from './shared/types'
+import { Birthplace, Citizenship, Spouse, Housing } from './shared/models'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { Name } from './shared/models/name.model'
 
 @Injectable()
 export class NationalRegistryService {
-  constructor(private nationalRegistryApi: NationalRegistryApi) {}
+  constructor(
+    private readonly v1: SoffiaService,
+    private readonly v3: BrokerService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
 
-  async getUser(nationalId: User['nationalId']): Promise<User> {
-    const user = await this.nationalRegistryApi.getUser(nationalId)
-    return {
-      nationalId: user.Kennitala,
-      name: user.Birtnafn,
-      firstName: user.Eiginnafn,
-      middleName: user.Millinafn,
-      lastName: user.Kenninafn,
-      fullName: user.Fulltnafn,
-      gender: this.formatGender(user.Kyn),
-      maritalStatus: this.formatMaritalStatus(user.hju),
-      religion: user.Trufelag, // TODO: format from user.Tru
-      banMarking: {
-        banMarked: user.Bannmerking === '1',
-        startDate: user.BannmerkingBreytt,
-      },
-      citizenship: {
-        code: user.Rikisfang,
-        name: user.RikisfangLand,
-      },
-      address: {
-        code: user.LoghHusk,
-        lastUpdated: user.LoghHuskBreytt,
-        streetAddress: user.Logheimili,
-        city: user.LogheimiliSveitarfelag,
-        postalCode: user.Postnr,
-      },
-      birthPlace: {
-        code: user.FaedSveit,
-        city: user.Faedingarstadur,
-        date: user.Faedingardagur,
-      },
-      ...(user.nafnmaka &&
-        user.MakiKt && {
-          spouse: {
-            name: user.nafnmaka,
-            nationalId: user.MakiKt,
-            cohabitant: user.Sambudarmaki,
-          },
-        }),
+  getPerson(nationalId: string, api: 'v1' | 'v3' = 'v1') {
+    return api === 'v3'
+      ? this.v3.getPerson(nationalId)
+      : this.v1.getPerson(nationalId)
+  }
+
+  getChildCustody(nationalId: string, data?: SharedPerson) {
+    return data?.api === 'v3'
+      ? this.v3.getChildrenCustodyInformation(nationalId, data?.rawData)
+      : this.v1.getChildCustody(nationalId, data?.rawData)
+  }
+
+  getCustodians(
+    nationalId: string,
+    userNationalId: string,
+    data?: SharedPerson,
+  ) {
+    return data?.api === 'v3'
+      ? this.v3.getCustodians(nationalId, data?.rawData)
+      : this.v1.getCustodians(nationalId, userNationalId, data?.rawData)
+  }
+
+  getParents(nationalId: string, data?: SharedPerson, userNationalId?: string) {
+    return data?.api === 'v3'
+      ? this.v3.getParents(nationalId, data?.rawData)
+      : this.v1.getParents(userNationalId, data?.rawData)
+  }
+
+  getBirthplace(
+    nationalId: string,
+    data?: SharedPerson,
+  ): Promise<Birthplace | null> {
+    return data?.api === 'v3'
+      ? this.v3.getBirthplace(nationalId, data?.rawData)
+      : this.v1.getBirthplace(nationalId, data?.rawData)
+  }
+
+  getCitizenship(
+    nationalId: string,
+    data?: SharedPerson,
+  ): Promise<Citizenship | null> {
+    return data?.api === 'v3'
+      ? this.v3.getCitizenship(nationalId, data?.rawData)
+      : this.v1.getCitizenship(nationalId, data?.rawData)
+  }
+
+  async getHousing(
+    nationalId: string,
+    data?: SharedPerson,
+  ): Promise<Housing | null> {
+    if (data?.api === 'v1') {
+      if (!data.rawData || !data.rawData.Fjolsknr) {
+        return null
+      }
+      const family = await this.v1.getFamily(nationalId)
+      return {
+        domicileId: data.rawData.Fjolsknr,
+        address: {
+          code: data.rawData.LoghHusk,
+          lastUpdated: data.rawData.LoghHuskBreytt,
+          streetAddress: data.rawData.Logheimili,
+          city: data.rawData.LogheimiliSveitarfelag,
+          postalCode: data.rawData.Postnr,
+        },
+        domicileInhabitants: family,
+      }
     }
+    return this.v3.getHousing(nationalId, data?.rawData)
   }
 
-  async getFamily(nationalId: User['nationalId']): Promise<FamilyMember[]> {
-    const family = await this.nationalRegistryApi.getMyFamily(nationalId)
-
-    const members = family
-      .filter((familyMember) => {
-        return familyMember.Kennitala !== nationalId
-      })
-      .map(
-        (familyMember) =>
-          ({
-            fullName: familyMember.Nafn,
-            nationalId: familyMember.Kennitala,
-            gender: this.formatGender(familyMember.Kyn),
-
-            familyRelation: this.getFamilyRelation(familyMember),
-          } as FamilyMember),
-      )
-      .sort((a, b) => {
-        return (
-          kennitala.info(b.nationalId).age - kennitala.info(a.nationalId).age
-        )
-      })
-
-    return members
+  getName(nationalId: string, data?: SharedPerson): Promise<Name | null> {
+    return data?.api === 'v3'
+      ? this.v3.getName(nationalId, data?.rawData)
+      : this.v1.getName(nationalId, data?.rawData)
   }
 
-  async getChildren(nationalId: User['nationalId']): Promise<FamilyChild[]> {
-    const myChildren = await this.nationalRegistryApi.getMyChildren(nationalId)
-
-    const members = myChildren
-      .filter((familyChild) => {
-        return familyChild.Barn !== nationalId
-      })
-      .map((familyChild) => ({
-        fullName: familyChild.FulltNafn,
-        nationalId: familyChild.Barn,
-        gender: familyChild.Kyn,
-        displayName: familyChild.BirtNafn,
-        middleName: familyChild.Millinafn,
-        surname: familyChild.Kenninafn,
-        genderDisplay: familyChild.Kynheiti,
-        birthday: familyChild.Faedingardagur,
-        parent1: familyChild.Foreldri1,
-        nameParent1: familyChild.NafnForeldri1,
-        parent2: familyChild.Foreldri2,
-        nameParent2: familyChild.NafnForeldri2,
-        custody1: familyChild.Forsja1,
-        nameCustody1: familyChild.NafnForsja1,
-        custodyText1: familyChild.Forsjatxt1,
-        custody2: familyChild.Forsja2,
-        nameCustody2: familyChild.NafnForsja2,
-        custodyText2: familyChild.Forsjatxt2,
-        birthplace: familyChild.Faedingarstadur,
-        religion: familyChild.Trufelag,
-        nationality: familyChild.Rikisfang,
-        homeAddress: familyChild.Logheimili,
-        municipality: familyChild.Sveitarfelag,
-        postal: familyChild.Postaritun,
-        fate: familyChild.Afdrif,
-      }))
-      .sort((a, b) => {
-        return (
-          kennitala.info(b.nationalId).age - kennitala.info(a.nationalId).age
-        )
-      })
-
-    return members
-  }
-
-  private formatGender(genderIndex: string): Gender {
-    switch (genderIndex) {
-      case '1':
-        return Gender.MALE
-      case '2':
-        return Gender.FEMALE
-      case '3':
-        return Gender.MALE_MINOR
-      case '4':
-        return Gender.FEMALE_MINOR
-      case '7':
-        return Gender.TRANSGENDER
-      case '8':
-        return Gender.TRANSGENDER_MINOR
-      default:
-        return Gender.UNKNOWN
-    }
-  }
-
-  private formatMaritalStatus(maritalCode: string): MaritalStatus {
-    switch (maritalCode) {
-      case '1':
-        return MaritalStatus.UNMARRIED
-      case '3':
-        return MaritalStatus.MARRIED
-      case '4':
-        return MaritalStatus.WIDOWED
-      case '5':
-        return MaritalStatus.SEPARATED
-      case '6':
-        return MaritalStatus.DIVORCED
-      case '7':
-        return MaritalStatus.MARRIED_LIVING_SEPARATELY
-      case '8':
-        return MaritalStatus.MARRIED_TO_FOREIGN_LAW_PERSON
-      case '9':
-        return MaritalStatus.UNKNOWN
-      case '0':
-        return MaritalStatus.FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON
-      case 'L':
-        return MaritalStatus.ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON
-      default:
-        return MaritalStatus.UNMARRIED
-    }
-  }
-
-  private getFamilyRelation(person: ISLFjolskyldan): FamilyRelation {
-    if (this.isChild(person)) {
-      return FamilyRelation.CHILD
-    }
-    return FamilyRelation.SPOUSE
-  }
-
-  private isParent(person: ISLFjolskyldan): boolean {
-    return ['1', '2'].includes(person.Kyn)
-  }
-
-  private isChild(person: ISLFjolskyldan): boolean {
-    const ADULT_AGE_LIMIT = 18
-
-    return (
-      !this.isParent(person) &&
-      kennitala.info(person.Kennitala).age < ADULT_AGE_LIMIT
-    )
+  getSpouse(nationalId: string, data?: SharedPerson): Promise<Spouse | null> {
+    return data?.api === 'v3'
+      ? this.v3.getSpouse(nationalId, data?.rawData)
+      : this.v1.getSpouse(nationalId, data?.rawData)
   }
 }

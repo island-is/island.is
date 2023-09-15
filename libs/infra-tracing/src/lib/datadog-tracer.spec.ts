@@ -1,5 +1,3 @@
-import { generatePerson } from 'kennitala'
-
 describe('datadogTrace', () => {
   const OLD_ENV = process.env
 

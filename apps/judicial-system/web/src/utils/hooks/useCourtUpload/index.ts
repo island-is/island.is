@@ -1,30 +1,39 @@
+import { useCallback, useEffect, useState } from 'react'
 import { ApolloError, useMutation } from '@apollo/client'
-import { UploadFileToCourtMutation } from '@island.is/judicial-system-web/graphql'
+
 import {
-  Case,
   CaseFile as TCaseFile,
   CaseFileState,
 } from '@island.is/judicial-system/types'
-import { useCallback, useEffect, useState } from 'react'
-
-export type CaseFileStatus =
-  | 'not-uploaded'
-  | 'broken'
-  | 'done'
-  | 'error'
-  | 'uploading'
-
-export interface CaseFile extends TCaseFile {
-  status: CaseFileStatus
-}
+import {
+  UploadFileToCourtDocument,
+  UploadFileToCourtMutation,
+  UploadFileToCourtMutationVariables,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 export enum UploadState {
   ALL_UPLOADED = 'ALL_UPLOADED',
-  NONE_CAN_BE_UPLOADED = 'NONE_CAN_BE_UPLOADED',
-  NONE_UPLOADED = 'NONE_UPLOADED',
+  ALL_UPLOADED_NONE_AVAILABLE = 'ALL_UPLOADED_NONE_AVAILABLE',
+  SOME_NOT_UPLOADED_NONE_AVAILABLE = 'SOME_NOT_UPLOADED_NONE_AVAILABLE',
+  ALL_UPLOADED_OR_NOT_AVAILABLE = 'ALL_UPLOADED_OR_NOT_AVAILABLE',
   SOME_NOT_UPLOADED = 'SOME_NOT_UPLOADED',
   UPLOAD_ERROR = 'UPLOAD_ERROR',
   UPLOADING = 'UPLOADING',
+}
+
+export type CaseFileStatus =
+  | 'done'
+  | 'done-broken'
+  | 'not-uploaded'
+  | 'broken'
+  | 'uploading'
+  | 'error'
+  | 'case-not-found'
+  | 'unsupported'
+
+export interface CaseFile extends TCaseFile {
+  status: CaseFileStatus
 }
 
 export const useCourtUpload = (
@@ -32,7 +41,10 @@ export const useCourtUpload = (
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
 ) => {
   const [uploadState, setUploadState] = useState<UploadState>()
-  const [uploadFileToCourtMutation] = useMutation(UploadFileToCourtMutation)
+  const [uploadFileToCourtMutation] = useMutation<
+    UploadFileToCourtMutation,
+    UploadFileToCourtMutationVariables
+  >(UploadFileToCourtDocument)
 
   const setFileUploadStatus = useCallback(
     (theCase: Case, file: CaseFile, status: CaseFileStatus) => {
@@ -52,52 +64,45 @@ export const useCourtUpload = (
   )
 
   useEffect(() => {
-    const files = workingCase.caseFiles as CaseFile[]
+    const files = (workingCase.caseFiles?.filter((f) => !f.category) ??
+      []) as CaseFile[]
 
     files
-      ?.filter((file) => file.status !== 'error' && file.status !== 'uploading')
+      .filter((file) => !file.status)
       .forEach((file) => {
-        if (
-          file.state === CaseFileState.STORED_IN_COURT &&
-          file.status !== 'done'
-        ) {
-          setFileUploadStatus(workingCase, file, 'done')
-        }
-
-        if (
-          file.state === CaseFileState.STORED_IN_RVG &&
-          file.key &&
-          file.status !== 'not-uploaded'
-        ) {
-          setFileUploadStatus(workingCase, file, 'not-uploaded')
-        }
-
-        if (
-          file.state === CaseFileState.STORED_IN_RVG &&
-          !file.key &&
-          file.status !== 'broken'
-        ) {
-          setFileUploadStatus(workingCase, file, 'broken')
+        if (file.state === CaseFileState.STORED_IN_COURT) {
+          if (file.key) {
+            setFileUploadStatus(workingCase, file, 'done')
+          } else {
+            setFileUploadStatus(workingCase, file, 'done-broken')
+          }
+        } else if (file.state === CaseFileState.STORED_IN_RVG) {
+          if (file.key) {
+            setFileUploadStatus(workingCase, file, 'not-uploaded')
+          } else {
+            setFileUploadStatus(workingCase, file, 'broken')
+          }
         }
       })
 
     setUploadState(
-      files?.some((file) => file.status === 'uploading')
+      files.some((file) => file.status === 'uploading')
         ? UploadState.UPLOADING
-        : files?.some((file) => file.status === 'error')
+        : files.some((file) => file.status === 'error')
         ? UploadState.UPLOAD_ERROR
-        : files?.every((file) => file.status === 'broken')
-        ? UploadState.NONE_CAN_BE_UPLOADED
-        : files?.every(
-            (file) => file.status === 'done' || file.status === 'broken',
+        : files.some((file) => file.status === 'not-uploaded')
+        ? UploadState.SOME_NOT_UPLOADED
+        : files.every((file) => file.status === 'done-broken')
+        ? UploadState.ALL_UPLOADED_NONE_AVAILABLE
+        : files.every(
+            (file) => file.status === 'done' || file.status === 'done-broken',
           )
         ? UploadState.ALL_UPLOADED
-        : files?.every(
-            (file) =>
-              file.status === 'not-uploaded' || file.status === 'broken',
+        : files.every(
+            (file) => file.status === 'broken' || file.status === 'done-broken',
           )
-        ? UploadState.NONE_UPLOADED
-        : UploadState.SOME_NOT_UPLOADED,
+        ? UploadState.SOME_NOT_UPLOADED_NONE_AVAILABLE
+        : UploadState.ALL_UPLOADED_OR_NOT_AVAILABLE,
     )
   }, [setFileUploadStatus, workingCase])
 
@@ -106,7 +111,7 @@ export const useCourtUpload = (
       const xFiles = files as CaseFile[]
       xFiles.forEach(async (file) => {
         try {
-          if (file.state === CaseFileState.STORED_IN_RVG) {
+          if (file.state === CaseFileState.STORED_IN_RVG && file.key) {
             setFileUploadStatus(workingCase, file, 'uploading')
 
             await uploadFileToCourtMutation({
@@ -125,16 +130,33 @@ export const useCourtUpload = (
             )
           }
         } catch (error) {
-          if (
-            error instanceof ApolloError &&
-            (error as ApolloError).graphQLErrors[0].extensions?.code ===
-              'https://httpstatuses.com/404'
+          const { errorCode, detail } = {
+            errorCode:
+              error instanceof ApolloError &&
+              (error as ApolloError).graphQLErrors[0].extensions?.code,
+            detail:
+              (error instanceof ApolloError &&
+                (
+                  (error as ApolloError).graphQLErrors[0].extensions
+                    ?.problem as { detail: string }
+                )?.detail) ||
+              '',
+          }
+
+          if (errorCode === 'https://httpstatuses.org/404') {
+            if (detail?.startsWith('Case Not Found')) {
+              setFileUploadStatus(workingCase, file, 'case-not-found')
+            } else {
+              setFileUploadStatus(
+                workingCase,
+                { ...file, key: undefined },
+                'broken',
+              )
+            }
+          } else if (
+            errorCode === 'https://httpstatuses.org/415' // Unsupported Media Type
           ) {
-            setFileUploadStatus(
-              workingCase,
-              { ...file, key: undefined },
-              'broken',
-            )
+            setFileUploadStatus(workingCase, file, 'unsupported')
           } else {
             setFileUploadStatus(workingCase, file, 'error')
           }

@@ -1,4 +1,4 @@
-import { ApiScope } from '@island.is/auth/scopes'
+import { AdminPortalScope, ApiScope } from '@island.is/auth/scopes'
 import {
   Body,
   Controller,
@@ -41,7 +41,6 @@ import { environment } from '../../../../environments'
 const namespace = `${environment.audit.defaultNamespace}/organisations`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
 @ApiTags('organisations')
 @ApiHeader({
   name: 'authorization',
@@ -56,6 +55,7 @@ export class OrganisationController {
   ) {}
 
   @Get()
+  @Scopes(AdminPortalScope.documentProvider)
   @ApiOkResponse({ type: [Organisation] })
   @Audit<Organisation[]>({
     resources: (organisations) =>
@@ -66,6 +66,7 @@ export class OrganisationController {
   }
 
   @Get(':nationalId')
+  @Scopes(ApiScope.internal, AdminPortalScope.documentProvider)
   @ApiOkResponse({ type: Organisation })
   @Audit<Organisation>({
     resources: (organisation) => organisation.id,
@@ -87,6 +88,7 @@ export class OrganisationController {
   }
 
   @Post()
+  @Scopes(AdminPortalScope.documentProvider, ApiScope.internal)
   @ApiCreatedResponse({ type: Organisation })
   @Audit<Organisation>({
     resources: (organisation) => organisation.id,
@@ -102,20 +104,19 @@ export class OrganisationController {
   }
 
   @Put(':id')
+  @Scopes(AdminPortalScope.documentProvider)
   @ApiOkResponse({ type: Organisation })
   async updateOrganisation(
     @Param('id') id: string,
     @Body() organisation: UpdateOrganisationDto,
     @CurrentUser() user: User,
   ): Promise<Organisation> {
-    const {
-      numberOfAffectedRows,
-      updatedOrganisation,
-    } = await this.documentProviderService.updateOrganisation(
-      id,
-      organisation,
-      user.nationalId,
-    )
+    const { numberOfAffectedRows, updatedOrganisation } =
+      await this.documentProviderService.updateOrganisation(
+        id,
+        organisation,
+        user.nationalId,
+      )
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`Organisation ${id} does not exist.`)
@@ -132,6 +133,7 @@ export class OrganisationController {
   }
 
   @Get(':nationalId/islastmodifier')
+  @Scopes(ApiScope.internal, AdminPortalScope.documentProvider)
   @ApiOkResponse({ type: Boolean })
   @Audit()
   async isLastModifierOfOrganisation(
@@ -145,6 +147,7 @@ export class OrganisationController {
   }
 
   @Post(':id/administrativecontact')
+  @Scopes(AdminPortalScope.documentProvider)
   @ApiOkResponse({ type: AdministrativeContact })
   @Audit<AdministrativeContact>({
     resources: (contact) => contact.id,
@@ -163,6 +166,7 @@ export class OrganisationController {
   }
 
   @Put(':id/administrativecontact/:administrativeContactId')
+  @Scopes(AdminPortalScope.documentProvider)
   @ApiOkResponse({ type: AdministrativeContact })
   async updateAdministrativeContact(
     @Param('id') id: string,
@@ -170,14 +174,12 @@ export class OrganisationController {
     @Body() administrativeContact: UpdateContactDto,
     @CurrentUser() user: User,
   ): Promise<AdministrativeContact> {
-    const {
-      numberOfAffectedRows,
-      updatedContact,
-    } = await this.documentProviderService.updateAdministrativeContact(
-      administrativeContactId,
-      administrativeContact,
-      user.nationalId,
-    )
+    const { numberOfAffectedRows, updatedContact } =
+      await this.documentProviderService.updateAdministrativeContact(
+        administrativeContactId,
+        administrativeContact,
+        user.nationalId,
+      )
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(
@@ -199,6 +201,7 @@ export class OrganisationController {
   }
 
   @Post(':id/technicalcontact')
+  @Scopes(AdminPortalScope.documentProvider)
   @ApiOkResponse({ type: TechnicalContact })
   @Audit<TechnicalContact>({
     resources: (contact) => contact.id,
@@ -217,6 +220,7 @@ export class OrganisationController {
   }
 
   @Put(':id/technicalcontact/:technicalContactId')
+  @Scopes(AdminPortalScope.documentProvider)
   @ApiOkResponse({ type: TechnicalContact })
   async updateTechnicalContact(
     @Param('id') id: string,
@@ -224,14 +228,12 @@ export class OrganisationController {
     @Body() technicalContact: UpdateContactDto,
     @CurrentUser() user: User,
   ): Promise<TechnicalContact> {
-    const {
-      numberOfAffectedRows,
-      updatedContact,
-    } = await this.documentProviderService.updateTechnicalContact(
-      technicalContactId,
-      technicalContact,
-      user.nationalId,
-    )
+    const { numberOfAffectedRows, updatedContact } =
+      await this.documentProviderService.updateTechnicalContact(
+        technicalContactId,
+        technicalContact,
+        user.nationalId,
+      )
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(
@@ -253,6 +255,7 @@ export class OrganisationController {
   }
 
   @Post(':id/helpdesk')
+  @Scopes(AdminPortalScope.documentProvider)
   @ApiOkResponse({ type: Helpdesk })
   @Audit<Helpdesk>({
     resources: (helpdesk) => helpdesk.id,
@@ -271,6 +274,7 @@ export class OrganisationController {
   }
 
   @Put(':id/helpdesk/:helpdeskId')
+  @Scopes(AdminPortalScope.documentProvider)
   @ApiOkResponse({ type: Helpdesk })
   async updateHelpdesk(
     @Param('id') id: string,
@@ -278,14 +282,12 @@ export class OrganisationController {
     @Body() helpdesk: UpdateHelpdeskDto,
     @CurrentUser() user: User,
   ): Promise<Helpdesk> {
-    const {
-      numberOfAffectedRows,
-      updatedHelpdesk,
-    } = await this.documentProviderService.updateHelpdesk(
-      helpdeskId,
-      helpdesk,
-      user.nationalId,
-    )
+    const { numberOfAffectedRows, updatedHelpdesk } =
+      await this.documentProviderService.updateHelpdesk(
+        helpdeskId,
+        helpdesk,
+        user.nationalId,
+      )
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`Helpdesk ${helpdeskId} does not exist.`)
@@ -305,6 +307,7 @@ export class OrganisationController {
   }
 
   @Get(':id/providers')
+  @Scopes(AdminPortalScope.documentProvider)
   @ApiOkResponse({ type: [Provider] })
   @Audit<Provider[]>({
     resources: (providers) => providers.map((provider) => provider.id),

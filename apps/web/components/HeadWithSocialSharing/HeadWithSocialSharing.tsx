@@ -12,7 +12,9 @@ interface HeadWithSocialSharingProps {
 
 const usableContentTypes = ['image/jpeg', 'image/gif', 'image/png', undefined]
 
-export const HeadWithSocialSharing: FC<HeadWithSocialSharingProps> = ({
+export const HeadWithSocialSharing: FC<
+  React.PropsWithChildren<HeadWithSocialSharingProps>
+> = ({
   title,
   description,
   imageUrl,
@@ -57,12 +59,12 @@ export const HeadWithSocialSharing: FC<HeadWithSocialSharingProps> = ({
         <>
           <meta
             property="og:image"
-            content={'https:' + imageUrl}
+            content={`${imageUrl.startsWith('//') ? 'https:' : ''}${imageUrl}`}
             key="ogImage"
           />
           <meta
             property="twitter:image"
-            content={'https:' + imageUrl}
+            content={`${imageUrl.startsWith('//') ? 'https:' : ''}${imageUrl}`}
             key="twitterImage"
           />
           <meta

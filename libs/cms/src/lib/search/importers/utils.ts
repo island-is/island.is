@@ -8,7 +8,7 @@ export const createTerms = (termStrings: string[]): string[] => {
       .split(/\s+/)
     return words
   })
-  return flatten(singleWords).filter((word) => word.length > 1) // fitler out 1 letter words and empty string
+  return flatten(singleWords).filter((word) => word.length > 1) // filter out 1 letter words and empty string
 }
 
 export const extractStringsFromObject = (
@@ -58,7 +58,7 @@ const getProcessEntries = (contentList: object[]) =>
 
 export const numberOfLinks = (contentList: object[]) => {
   const processLinks = getProcessEntries(contentList).map(
-    (entry) => new URL(entry.processLink),
+    (entry) => new URL(entry.processLink, 'https://island.is'),
   )
   const fillAndSignProcessLinks = processLinks.filter((url) =>
     url.hostname.includes('dropandsign.is'),
@@ -76,10 +76,14 @@ export const numberOfLinks = (contentList: object[]) => {
     return !url.hostname.includes('island.is')
   }).length
 
-  const pdfAssets = getAssetsByContentType(contentList, 'application/pdf')
-    .length
-  const wordAssets = getAssetsByContentType(contentList, 'application/msword')
-    .length
+  const pdfAssets = getAssetsByContentType(
+    contentList,
+    'application/pdf',
+  ).length
+  const wordAssets = getAssetsByContentType(
+    contentList,
+    'application/msword',
+  ).length
 
   return {
     fillAndSignLinks: fillAndSignProcessLinks,
@@ -99,7 +103,14 @@ export const numberOfProcessEntries = (contentList: any[]) =>
 const pruneEntryHyperlink = (node: any) => {
   if (node?.data?.target?.fields) {
     for (const field of Object.keys(node.data.target.fields)) {
-      if (field !== 'slug' && field !== 'url') {
+      if (field === 'organizationPage') {
+        // Just in case there's an entry-hyperlink that needs an organization page in order to make the url
+        node.data.target.fields[field] = {
+          fields: {
+            slug: node.data.target.fields[field]?.fields?.slug,
+          },
+        }
+      } else if (field !== 'slug' && field !== 'url') {
         delete node.data.target.fields[field]
       }
     }

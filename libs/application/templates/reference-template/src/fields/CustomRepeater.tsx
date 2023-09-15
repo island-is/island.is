@@ -1,8 +1,10 @@
 import React, { FC } from 'react'
-import { RepeaterProps } from '@island.is/application/core'
+import { RepeaterProps } from '@island.is/application/types'
 import { Button, Text } from '@island.is/island-ui/core'
 
-const CustomRepeater: FC<RepeaterProps> = ({ expandRepeater }) => {
+const CustomRepeater: FC<React.PropsWithChildren<RepeaterProps>> = ({
+  expandRepeater,
+}) => {
   return (
     <>
       <Text as={'p'}>

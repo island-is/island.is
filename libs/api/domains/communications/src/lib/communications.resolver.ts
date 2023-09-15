@@ -5,6 +5,7 @@ import { TellUsAStoryInput } from './dto/tellUsAStory.input'
 import { ServiceWebFormsInput } from './dto/serviceWebForms.input'
 
 import { CommunicationResponse } from './models/communicationResponse.model'
+import { GenericFormInput } from './dto/genericForm.input'
 
 @Resolver()
 export class CommunicationsResolver {
@@ -31,12 +32,21 @@ export class CommunicationsResolver {
   }
 
   @Mutation(() => CommunicationResponse)
+  async genericForm(
+    @Args('input') input: GenericFormInput,
+  ): Promise<CommunicationResponse> {
+    const result = await this.communicationsService.sendFormResponse(input)
+    return {
+      sent: result,
+    }
+  }
+
+  @Mutation(() => CommunicationResponse)
   async serviceWebForms(
     @Args('input') input: ServiceWebFormsInput,
   ): Promise<CommunicationResponse> {
-    const inputWithInstitutionEmail = await this.communicationsService.getInputWithInstitutionEmail(
-      input,
-    )
+    const inputWithInstitutionEmail =
+      await this.communicationsService.getInputWithInstitutionEmail(input)
     await this.communicationsService.sendEmail(inputWithInstitutionEmail)
     return {
       sent: true,

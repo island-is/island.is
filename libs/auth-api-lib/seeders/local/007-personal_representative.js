@@ -1,6 +1,6 @@
 /* eslint-disable local-rules/disallow-kennitalas */
 'use strict'
-const uuid = require('uuid/v4')
+const uuid = require('uuidv4').uuid
 
 const today = new Date()
 const tenYears = new Date()
@@ -26,6 +26,15 @@ const rightType2 = {
 
 const rightTypes = [rightType1, rightType2]
 
+const personalRepresentativeType1 = {
+  code: 'personal_representative_for_disabled_person',
+  name: 'Persónulegur talsmaður fatlaðs einstaklings',
+  description:
+    'Persónulegur talsmaður fatlaðs einstaklings samkvæmt reglugerð 972/2012',
+}
+
+const personalRepresentativeTypes = [personalRepresentativeType1]
+
 const personalRepresentative1 = {
   id: uuid(),
   national_id_personal_representative: '2011651489',
@@ -33,8 +42,7 @@ const personalRepresentative1 = {
   valid_to: tenYears,
   created: today,
   modified: null,
-  personal_representative_type_code:
-    'personal_representative_for_disabled_person',
+  personal_representative_type_code: personalRepresentativeType1.code,
   contract_id: 'data_for_local_dev',
   external_user_id: 'data_for_local_dev',
 }
@@ -59,6 +67,13 @@ module.exports = {
       await queryInterface.bulkInsert(
         'personal_representative_right_type',
         rightTypes,
+        {
+          transaction,
+        },
+      )
+      await queryInterface.bulkInsert(
+        'personal_representative_type',
+        personalRepresentativeTypes,
         {
           transaction,
         },

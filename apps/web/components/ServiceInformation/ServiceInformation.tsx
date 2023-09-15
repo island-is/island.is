@@ -10,7 +10,7 @@ import {
   Select,
   GridRow,
   GridColumn,
-  Option,
+  StringOption as Option,
 } from '@island.is/island-ui/core'
 import {
   Service,
@@ -33,6 +33,8 @@ export const ServiceInformation = ({
   strings,
   onSelectChange,
 }: ServiceInformationProps) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(strings)
 
   // TODO When environment is chosen set the version options, default is set to newest version.
@@ -42,12 +44,9 @@ export const ServiceInformation = ({
       value: x.environment,
     }
   })
-  const [
-    selectedEnviromentOption,
-    setSelectedEnviromentOption,
-  ] = useState<Option>(enviromentOptions[0])
+  const [selectedEnviromentOption, _1] = useState<Option>(enviromentOptions[0])
 
-  const [versionOptions, setVersionOptions] = useState<Option[]>(
+  const [versionOptions, _2] = useState<Option[]>(
     service.environments[0].details.map((x) => {
       return {
         label: x.version,
@@ -65,31 +64,17 @@ export const ServiceInformation = ({
   )
 
   const onSelectVersion = (versionOption: Option) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     const tempServiceDetail = service.environments
       .find((e) => e.environment === selectedEnviromentOption.value)
       .details.find((e) => e.version === versionOption.value)
-
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     setServiceDetail(tempServiceDetail)
     setSelectedVersionOption(versionOption)
-    onSelectChange(tempServiceDetail)
-  }
-
-  const onSelectEnviroment = (enviromentOption: Option) => {
-    const tempServiceDetail = service.environments
-      .find((e) => e.environment === enviromentOption.value)
-      .details.find((e) => e.version === selectedVersionOption.value)
-    setServiceDetail(tempServiceDetail)
-    setSelectedEnviromentOption(enviromentOption)
-    setVersionOptions(
-      service.environments
-        .find((e) => e.environment === enviromentOption.value)
-        .details.map((x) => {
-          return {
-            label: x.version,
-            value: x.version,
-          }
-        }),
-    )
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     onSelectChange(tempServiceDetail)
   }
 
@@ -104,6 +89,8 @@ export const ServiceInformation = ({
                 <ServiceTag
                   category="pricing"
                   item={service.pricing[0]}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   namespace={strings}
                 />
               </Box>
@@ -132,6 +119,8 @@ export const ServiceInformation = ({
             isSearchable={false}
             defaultValue={selectedVersionOption}
             options={versionOptions}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             onChange={onSelectVersion}
           />
         </GridColumn>
@@ -152,7 +141,11 @@ export const ServiceInformation = ({
               'flexEnd',
             ]}
           >
-            <Link href={serviceDetail.links.bugReport}>
+            <Link
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              href={serviceDetail.links.bugReport}
+            >
               <Button
                 disabled={!serviceDetail.links.bugReport}
                 colorScheme="light"
@@ -166,7 +159,11 @@ export const ServiceInformation = ({
               </Button>
             </Link>
             <Box marginLeft={[3, 3, 3, 3, 2]}>
-              <Link href={serviceDetail.links.featureRequest}>
+              <Link
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                href={serviceDetail.links.featureRequest}
+              >
                 <Button
                   disabled={!serviceDetail.links.featureRequest}
                   colorScheme="light"
@@ -244,6 +241,8 @@ export const ServiceInformation = ({
           data={serviceDetail.data}
           type={serviceDetail.type}
           access={service.access}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           namespace={strings}
         />
       </Box>

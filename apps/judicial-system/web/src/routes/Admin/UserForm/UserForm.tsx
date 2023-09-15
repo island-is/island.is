@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
+import InputMask from 'react-input-mask'
+
 import {
   Box,
   Checkbox,
@@ -7,14 +9,23 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
-import InputMask from 'react-input-mask'
-import { ValueType } from 'react-select/src/types'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  isExtendedCourtRole,
+  isProsecutionRole,
+} from '@island.is/judicial-system/types'
 import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
-import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
-import type { Institution, User } from '@island.is/judicial-system/types'
+import {
+  Institution,
+  InstitutionType,
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
+
 import { ReactSelectOption } from '../../../types'
 import {
   isAdminUserFormValid,
@@ -22,7 +33,7 @@ import {
   Validation,
 } from '../../../utils/validate'
 import * as styles from './UserForm.css'
-import * as constants from '@island.is/judicial-system/consts'
+
 type ExtendedOption = ReactSelectOption & { institution: Institution }
 
 interface Props {
@@ -34,25 +45,51 @@ interface Props {
   loading: boolean
 }
 
-export const UserForm: React.FC<Props> = (props) => {
+export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const [user, setUser] = useState<User>(props.user)
+
+  const { personData, personError } = useNationalRegistry(user.nationalId)
 
   const [nameErrorMessage, setNameErrorMessage] = useState<string>()
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>()
+
   const [titleErrorMessage, setTitleErrorMessage] = useState<string>()
-  const [
-    mobileNumberErrorMessage,
-    setMobileNumberErrorMessage,
-  ] = useState<string>()
+  const [mobileNumberErrorMessage, setMobileNumberErrorMessage] =
+    useState<string>()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>()
 
-  const selectInstitutions = (user.role === UserRole.PROSECUTOR
-    ? props.prosecutorsOffices
-    : user.role === UserRole.STAFF
-    ? props.prisonInstitutions
-    : user.role === UserRole.REGISTRAR || user.role === UserRole.JUDGE
-    ? props.allCourts
-    : []
+  const setName = useCallback(
+    (name: string) => {
+      if (name !== user.name) {
+        setUser({
+          ...user,
+          name: name,
+        })
+      }
+    },
+    [user],
+  )
+
+  useEffect(() => {
+    if (personError || (personData && personData.items?.length === 0)) {
+      setNationalIdErrorMessage('Kennitala fannst ekki í þjóðskrá')
+      return
+    }
+
+    if (personData && personData.items && personData.items.length > 0) {
+      setNationalIdErrorMessage(undefined)
+      setName(personData.items[0].name)
+    }
+  }, [personData, personError, setName])
+
+  const selectInstitutions = (
+    isProsecutionRole(user.role)
+      ? props.prosecutorsOffices
+      : isExtendedCourtRole(user.role)
+      ? props.allCourts
+      : user.role === UserRole.PRISON_SYSTEM_STAFF
+      ? props.prisonInstitutions
+      : []
   ).map((institution) => ({
     label: institution.name,
     value: institution.id,
@@ -69,12 +106,12 @@ export const UserForm: React.FC<Props> = (props) => {
       return false
     }
 
-    return user.role === UserRole.PROSECUTOR
+    return isProsecutionRole(user.role)
       ? user.institution?.type === InstitutionType.PROSECUTORS_OFFICE
-      : user.role === UserRole.REGISTRAR || user.role === UserRole.JUDGE
-      ? user.institution?.type === InstitutionType.COURT ||
-        user.institution?.type === InstitutionType.HIGH_COURT
-      : user.role === UserRole.STAFF
+      : isExtendedCourtRole(user.role)
+      ? user.institution?.type === InstitutionType.DISTRICT_COURT ||
+        user.institution?.type === InstitutionType.COURT_OF_APPEALS
+      : user.role === UserRole.PRISON_SYSTEM_STAFF
       ? user.institution?.type === InstitutionType.PRISON ||
         user.institution?.type === InstitutionType.PRISON_ADMIN
       : false
@@ -91,30 +128,25 @@ export const UserForm: React.FC<Props> = (props) => {
       [field]: value,
     })
 
-    validations.forEach((validation) => {
-      if (validate(value, validation).isValid) {
-        setErrorMessage(undefined)
-      }
-    })
+    if (validate([[value, validations]]).isValid) {
+      setErrorMessage(undefined)
+    }
   }
 
   const validateAndSetError = (
-    field: string,
     value: string,
     validations: Validation[],
     setErrorMessage: (value: React.SetStateAction<string | undefined>) => void,
   ) => {
-    const error = validations
-      .map((v) => validate(value, v))
-      .find((v) => v.isValid === false)
+    const validation = validate([[value, validations]])
 
-    if (error) {
-      setErrorMessage(error.errorMessage)
+    if (!validation.isValid) {
+      setErrorMessage(validation.errorMessage)
     }
   }
 
   return (
-    <div>
+    <div className={styles.userFormContainer}>
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
@@ -122,35 +154,8 @@ export const UserForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box marginBottom={2}>
-          <Input
-            name="name"
-            label="Nafn"
-            placeholder="Fullt nafn"
-            autoComplete="off"
-            value={user.name || ''}
-            onChange={(event) =>
-              storeAndRemoveErrorIfValid(
-                'name',
-                event.target.value,
-                ['empty'],
-                setNameErrorMessage,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSetError(
-                'name',
-                event.target.value,
-                ['empty'],
-                setNameErrorMessage,
-              )
-            }
-            hasError={nameErrorMessage !== undefined}
-            errorMessage={nameErrorMessage}
-            required
-          />
-        </Box>
-        <Box marginBottom={2}>
           <InputMask
+            // eslint-disable-next-line local-rules/disallow-kennitalas
             mask="999999-9999"
             maskPlaceholder={null}
             value={user.nationalId || ''}
@@ -164,7 +169,6 @@ export const UserForm: React.FC<Props> = (props) => {
             }
             onBlur={(event) =>
               validateAndSetError(
-                'nationalId',
                 event.target.value.replace('-', ''),
                 ['empty', 'national-id'],
                 setNationalIdErrorMessage,
@@ -184,8 +188,36 @@ export const UserForm: React.FC<Props> = (props) => {
             />
           </InputMask>
         </Box>
+        <Box marginBottom={2}>
+          <Input
+            name="name"
+            label="Nafn"
+            placeholder="Fullt nafn"
+            autoComplete="off"
+            value={user.name || ''}
+            onChange={(event) =>
+              storeAndRemoveErrorIfValid(
+                'name',
+                event.target.value,
+                ['empty'],
+                setNameErrorMessage,
+              )
+            }
+            onBlur={(event) =>
+              validateAndSetError(
+                event.target.value,
+                ['empty'],
+                setNameErrorMessage,
+              )
+            }
+            hasError={nameErrorMessage !== undefined}
+            errorMessage={nameErrorMessage}
+            required
+          />
+        </Box>
+
         <Box>
-          <Box marginBottom={2} className={styles.roleContainer}>
+          <Box display="flex" marginBottom={2}>
             <Box className={styles.roleColumn}>
               <RadioButton
                 name="role"
@@ -196,6 +228,20 @@ export const UserForm: React.FC<Props> = (props) => {
                 large
               />
             </Box>
+            <Box className={styles.roleColumn}>
+              <RadioButton
+                name="role"
+                id="roleProsecutorRepresentative"
+                label="Fulltrúi"
+                checked={user.role === UserRole.PROSECUTOR_REPRESENTATIVE}
+                onChange={() =>
+                  setUser({ ...user, role: UserRole.PROSECUTOR_REPRESENTATIVE })
+                }
+                large
+              />
+            </Box>
+          </Box>
+          <Box display="flex" marginBottom={2}>
             <Box className={styles.roleColumn}>
               <RadioButton
                 name="role"
@@ -217,14 +263,26 @@ export const UserForm: React.FC<Props> = (props) => {
               />
             </Box>
           </Box>
-          <Box marginBottom={2} className={styles.roleContainer}>
+          <Box display="flex" marginBottom={2}>
             <Box className={styles.roleColumn}>
               <RadioButton
                 name="role"
-                id="roleStaff"
+                id="roleAssistant"
+                label="Aðstoðarmaður dómara"
+                checked={user.role === UserRole.ASSISTANT}
+                onChange={() => setUser({ ...user, role: UserRole.ASSISTANT })}
+                large
+              />
+            </Box>
+            <Box className={styles.roleColumn}>
+              <RadioButton
+                name="role"
+                id="rolePrisonSystemStaff"
                 label="Fangelsisyfirvöld"
-                checked={user.role === UserRole.STAFF}
-                onChange={() => setUser({ ...user, role: UserRole.STAFF })}
+                checked={user.role === UserRole.PRISON_SYSTEM_STAFF}
+                onChange={() =>
+                  setUser({ ...user, role: UserRole.PRISON_SYSTEM_STAFF })
+                }
                 large
               />
             </Box>
@@ -236,7 +294,7 @@ export const UserForm: React.FC<Props> = (props) => {
             label="Veldu stofnun"
             value={usersInstitution}
             options={selectInstitutions}
-            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+            onChange={(selectedOption) =>
               setUser({
                 ...user,
                 institution: (selectedOption as ExtendedOption).institution,
@@ -261,7 +319,6 @@ export const UserForm: React.FC<Props> = (props) => {
             }
             onBlur={(event) =>
               validateAndSetError(
-                'title',
                 event.target.value,
                 ['empty'],
                 setTitleErrorMessage,
@@ -287,7 +344,6 @@ export const UserForm: React.FC<Props> = (props) => {
             }
             onBlur={(event) =>
               validateAndSetError(
-                'mobileNumber',
                 event.target.value.replace('-', ''),
                 ['empty'],
                 setMobileNumberErrorMessage,
@@ -323,7 +379,6 @@ export const UserForm: React.FC<Props> = (props) => {
             }
             onBlur={(event) =>
               validateAndSetError(
-                'email',
                 event.target.value,
                 ['empty', 'email-format'],
                 setEmailErrorMessage,
@@ -349,11 +404,12 @@ export const UserForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           onNextButtonClick={() => props.onSave(user)}
           nextIsDisabled={!isValid()}
           nextIsLoading={props.loading}
           nextButtonText="Vista"
-          previousUrl={constants.USER_LIST_ROUTE}
+          previousUrl={constants.USERS_ROUTE}
         />
       </FormContentContainer>
     </div>

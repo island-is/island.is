@@ -1,0 +1,103 @@
+{
+  "name": "auth-admin-web",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/auth-admin-web",
+  "projectType": "application",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/auth-admin-web"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/auth-admin-web"
+        },
+        "production": {}
+      },
+      "dependsOn": ["build-custom-server"]
+    },
+    "build-custom-server": {
+      "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/auth-admin-web",
+        "main": "apps/auth-admin-web/server.ts",
+        "tsConfig": "apps/auth-admin-web/tsconfig.server.json",
+        "maxWorkers": 2,
+        "assets": [],
+        "compiler": "tsc",
+        "target": "node"
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "auth-admin-web:build",
+        "dev": true,
+        "customServerTarget": "auth-admin-web:serve-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "auth-admin-web:build:development",
+          "dev": true,
+          "customServerTarget": "auth-admin-web:serve-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "auth-admin-web:build:production",
+          "dev": false,
+          "customServerTarget": "auth-admin-web:serve-custom-server:production"
+        }
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "auth-admin-web:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "auth-admin-web:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "auth-admin-web:build-custom-server:production"
+        }
+      }
+    },
+    "export": {
+      "executor": "@nx/next:export",
+      "options": {
+        "buildTarget": "auth-admin-web:build:production"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/auth-admin-web/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "apps/auth-admin-web/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": ["{workspaceRoot}/coverage/apps/auth-admin-web"]
+    },
+    "docker-next": {}
+  },
+  "tags": ["scope:react-next"]
+}

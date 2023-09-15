@@ -1,7 +1,8 @@
 import { Link, Text } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import * as styles from './descriptionWithLink.css'
 
@@ -16,10 +17,9 @@ type DescriptionLinkProps = {
   }
 }
 
-export const DescriptionWithLink: FC<FieldBaseProps & DescriptionLinkProps> = ({
-  application,
-  field,
-}) => {
+export const DescriptionWithLink: FC<
+  React.PropsWithChildren<FieldBaseProps & DescriptionLinkProps>
+> = ({ application, field }) => {
   const { props } = field
   const { formatMessage } = useLocale()
   const { descriptionFirstPart, descriptionSecondPart, linkName, url } = props

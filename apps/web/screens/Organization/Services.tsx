@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from 'react'
+import { useRouter } from 'next/router'
 import {
   Text,
   NavigationItem,
@@ -11,7 +12,6 @@ import {
   GridContainer,
   GridRow,
   Select,
-  Option,
   Input,
   Inline,
   Tag,
@@ -33,15 +33,14 @@ import {
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
+import {
+  getThemeConfig,
+  OrganizationWrapper,
+  Webreader,
+} from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
-import getConfig from 'next/config'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
-
-const { publicRuntimeConfig } = getConfig()
 
 interface ServicesPageProps {
   organizationPage: Query['getOrganizationPage']
@@ -65,24 +64,21 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   sort,
   namespace,
 }) => {
-  const { disableSyslumennPage: disablePage } = publicRuntimeConfig
-  if (disablePage === 'true') {
-    throw new CustomNextError(404, 'Not found')
-  }
-
+  const router = useRouter()
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
-  useContentfulId(organizationPage.id)
+  useContentfulId(organizationPage?.id)
   useLocalLinkTypeResolver()
-
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
-      active:
-        primaryLink.url.includes(`${organizationPage.slug}/thjonusta`) ||
-        primaryLink.url.includes(`${organizationPage.slug}/services`),
+      title: primaryLink?.text,
+      href: primaryLink?.url,
+      active: primaryLink?.url === router.asPath,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -96,7 +92,8 @@ const ServicesPage: Screen<ServicesPageProps> = ({
     groups: [],
   })
 
-  const filterItemComparator = (a, b) => a.label.localeCompare(b.label)
+  const filterItemComparator = (a: FilterItem, b: FilterItem) =>
+    a.label.localeCompare(b.label)
 
   categories.sort(filterItemComparator)
   groups.sort(filterItemComparator)
@@ -116,36 +113,45 @@ const ServicesPage: Screen<ServicesPageProps> = ({
     (x) =>
       x.title.toLowerCase().includes(parameters.query.toLowerCase()) &&
       (parameters.categories.length === 0 ||
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         parameters.categories.includes(x.category?.slug)) &&
       (parameters.groups.length === 0 ||
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         parameters.groups.includes(x.group?.slug)),
   )
 
   groups = groups.filter((x) =>
     services
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       .filter((x) => parameters.categories.includes(x.category?.slug))
-      .map((x) => x.group.slug)
+      .map((x) => x.group?.slug)
       .includes(x.value),
   )
-
-  const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
 
   return (
     <OrganizationWrapper
       pageTitle={n('services', 'Þjónusta')}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       organizationPage={organizationPage}
-      pageFeaturedImage={organizationPage.featuredImage}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      pageFeaturedImage={organizationPage?.featuredImage}
       fullWidthContent={false}
       stickySidebar={false}
+      showReadSpeaker={false}
       breadcrumbItems={[
         {
           title: 'Ísland.is',
           href: linkResolver('homepage').href,
         },
         {
-          title: organizationPage.title,
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
+          title: organizationPage?.title ?? '',
+          href: linkResolver('organizationpage', [organizationPage?.slug ?? ''])
+            .href,
         },
       ]}
       navigationData={{
@@ -156,9 +162,16 @@ const ServicesPage: Screen<ServicesPageProps> = ({
       <GridContainer>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/12', '6/12', '8/12']}>
-            <Text variant="h1" as="h1" marginBottom={4} marginTop={1}>
+            <Text variant="h1" as="h1" marginBottom={0} marginTop={1}>
               {n('allServices', 'Öll þjónusta')}
             </Text>
+            <Webreader
+              marginBottom={4}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              readId={null}
+              readClass="rs_read"
+            />
           </GridColumn>
         </GridRow>
         <GridRow marginBottom={4}>
@@ -167,7 +180,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
               placeholder={n('filterSearch', 'Leita')}
               name="filterInput"
               value={parameters.query}
-              icon={'search'}
+              icon={{ name: 'search' }}
               size="md"
               onChange={(e) =>
                 setParameters({ ...parameters, query: e.target.value })
@@ -196,9 +209,13 @@ const ServicesPage: Screen<ServicesPageProps> = ({
                 },
                 ...categories,
               ]}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               onChange={({ value }: Option) => {
                 setParameters({
                   ...parameters,
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   categories: value ? [value] : [],
                   groups: [],
                 })
@@ -215,10 +232,14 @@ const ServicesPage: Screen<ServicesPageProps> = ({
               <Tag
                 key={x.value}
                 variant="blue"
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 active={parameters.groups.includes(x.value)}
                 onClick={() =>
                   setParameters({
                     ...parameters,
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore make web strict
                     groups: parameters.groups.includes(x.value)
                       ? []
                       : [x.value],
@@ -238,14 +259,17 @@ const ServicesPage: Screen<ServicesPageProps> = ({
             <FocusableBox
               key={article.slug}
               href={url.href}
-              target={isMobile ? '' : '_blank'}
               borderRadius="large"
             >
               {({ isFocused }) => (
                 <LinkCard
                   isFocused={isFocused}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   tag={
-                    !!article.processEntry && n('applicationProcess', 'Umsókn')
+                    (!!article.processEntry ||
+                      article.processEntryButtonText) &&
+                    n(article.processEntryButtonText || 'application', 'Umsókn')
                   }
                 >
                   {article.title}
@@ -259,13 +283,10 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   )
 }
 
-ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
+ServicesPage.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getOrganizationPage },
-    },
-    {
-      data: { getArticles },
     },
     namespace,
   ] = await Promise.all([
@@ -278,33 +299,37 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetArticlesArgs>({
-      query: GET_ORGANIZATION_SERVICES_QUERY,
-      variables: {
-        input: {
-          organization: query.slug as string,
-          lang: locale as ContentLanguage,
-          sort: query.sort === 'title' ? SortField.Title : SortField.Popular,
-          size: 500,
-        },
-      },
-    }),
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'Syslumenn',
+            namespace: 'OrganizationPages',
             lang: locale,
           },
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
   ])
+
+  const {
+    data: { getArticles },
+  } = await apolloClient.query<Query, QueryGetArticlesArgs>({
+    query: GET_ORGANIZATION_SERVICES_QUERY,
+    variables: {
+      input: {
+        organization:
+          getOrganizationPage?.organization?.slug ?? (query.slug as string),
+        lang: locale as ContentLanguage,
+        sort: query.sort === 'title' ? SortField.Title : SortField.Popular,
+        size: 500,
+      },
+    },
+  })
 
   if (!getArticles) {
     throw new CustomNextError(404, 'Organization services page not found')
@@ -339,7 +364,9 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     groups,
     sort: (query.sort as string) ?? 'popular',
     showSearchInHeader: false,
-    ...getThemeConfig(getOrganizationPage.theme),
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
+    ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
   }
 }
 

@@ -1,20 +1,22 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import { Box, ModalBase, Button, Text, Input } from '@island.is/island-ui/core'
-import { Application } from '@island.is/application/core'
+import { Box, ModalBase, Button, Text } from '@island.is/island-ui/core'
+import { Application } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import * as styles from '../style.css'
 import { FindStudentQuery } from '../../graphql/queries'
 import { useQuery } from '@apollo/client'
+import { InputController } from '@island.is/shared/form-fields'
+import * as kennitala from 'kennitala'
 
 interface FindStudentsModalProps {
   application?: Application
-  setShowTable: React.Dispatch<React.SetStateAction<boolean>>
+  setShowStudentOverview: React.Dispatch<React.SetStateAction<boolean>>
   setStudentId: React.Dispatch<React.SetStateAction<string>>
 }
 
 const FindStudentModal = ({
-  setShowTable,
+  setShowStudentOverview,
   setStudentId,
 }: FindStudentsModalProps) => {
   const { formatMessage } = useLocale()
@@ -40,17 +42,17 @@ const FindStudentModal = ({
   )
 
   const viewStudent = useCallback(
-    (id) => {
-      setShowTable(false)
+    (id: string) => {
+      setShowStudentOverview(false)
       setStudentId(id)
     },
 
-    [setShowTable, setStudentId],
+    [setShowStudentOverview, setStudentId],
   )
 
   useEffect(() => {
     if (isSearching && findStudent) {
-      if (findStudent.drivingLicenseBookFindStudent.length) {
+      if (findStudent.drivingLicenseBookFindStudentForTeacher.length) {
         viewStudent(studentNationalId)
         setIsModalOpen(false)
       } else {
@@ -79,6 +81,7 @@ const FindStudentModal = ({
               <Button
                 size="small"
                 variant="text"
+                preTextIcon="pencil"
                 onClick={() => setIsModalOpen(true)}
               >
                 {formatMessage(m.studentsOverviewRegisterHoursForOtherStudent)}
@@ -87,7 +90,7 @@ const FindStudentModal = ({
           }
           className={styles.modalStyle}
         >
-          <Box padding={10} style={{ background: 'white' }}>
+          <Box padding={[5, 5, 10]} style={{ background: 'white' }}>
             <Text variant="h1">
               {formatMessage(m.studentsOverviewOtherStudentIdModalTitle)}
             </Text>
@@ -95,19 +98,20 @@ const FindStudentModal = ({
               {formatMessage(m.studentsOverviewOtherStudentIdModalDescription)}
             </Text>
             <Box marginTop={5} marginBottom={7}>
-              <Input
-                type="number"
+              <InputController
+                id="nationalId"
                 label={formatMessage(m.studentsOverviewOtherStudentInputLabel)}
-                name="search_student"
+                format="######-####"
                 backgroundColor="blue"
                 size="sm"
-                hasError={studentNotFoundError}
-                errorMessage={formatMessage(
-                  m.studentsOverviewNoStudentFoundInModal,
-                )}
-                onChange={(v) => {
-                  setStudentNationalId(v.target.value)
-                }}
+                onChange={(v) =>
+                  setStudentNationalId(v.target.value.replace(/\W/g, ''))
+                }
+                error={
+                  studentNotFoundError
+                    ? formatMessage(m.studentsOverviewNoStudentFoundInModal)
+                    : undefined
+                }
               />
             </Box>
             <Box display={'flex'} justifyContent={'spaceBetween'}>
@@ -122,11 +126,12 @@ const FindStudentModal = ({
               <Button
                 variant="primary"
                 loading={findingStudent}
+                disabled={!kennitala.isValid(studentNationalId)}
                 onClick={() => {
                   setIsSearching(true)
                 }}
               >
-                {formatMessage(m.studentsOverviewRegisterHoursButton)}
+                {formatMessage(m.studentsOverviewOtherStudentRegisterButton)}
               </Button>
             </Box>
           </Box>

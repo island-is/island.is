@@ -55,22 +55,23 @@ export const SkilavottordRecyclingPartnerVehiclesQuery = gql`
   }
 `
 
-const Overview: FC = () => {
+const Overview: FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
   const {
     t: { deregisterOverview: t, deregisterSidenav: sidenavText, routes },
   } = useI18n()
   const router = useRouter()
 
-  const { data: vehicleData, loading, fetchMore } = useQuery<Query>(
-    SkilavottordRecyclingPartnerVehiclesQuery,
-    {
-      notifyOnNetworkStatusChange: true,
-      variables: {
-        after: '',
-      },
+  const {
+    data: vehicleData,
+    loading,
+    fetchMore,
+  } = useQuery<Query>(SkilavottordRecyclingPartnerVehiclesQuery, {
+    notifyOnNetworkStatusChange: true,
+    variables: {
+      after: '',
     },
-  )
+  })
 
   const { pageInfo, items: vehicles = [] } =
     vehicleData?.skilavottordRecyclingPartnerVehicles ?? {}
@@ -98,7 +99,7 @@ const Overview: FC = () => {
                 skilavottordRecyclingPartnerVehicles: {
                   ...newResults,
                   items: [
-                    ...prevResults?.items,
+                    ...(prevResults?.items as Vehicle[]),
                     ...(newResults?.items as Vehicle[]),
                   ],
                 },
@@ -145,7 +146,16 @@ const Overview: FC = () => {
               title: `${sidenavText.companyInfo}`,
               link: `${routes.companyInfo.baseRoute}`,
             },
-          ]}
+            {
+              ...(hasPermission('accessControlCompany', user?.role)
+                ? {
+                    icon: 'lockClosed',
+                    title: `${sidenavText.accessControl}`,
+                    link: `${routes.accessControlCompany}`,
+                  }
+                : null),
+            } as React.ComponentProps<typeof Sidenav>['sections'][0],
+          ].filter(Boolean)}
           activeSection={0}
         />
       }

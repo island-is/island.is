@@ -5,7 +5,7 @@ import {
   GridColumn,
   CategoryCard,
 } from '@island.is/island-ui/core'
-import { Service } from '@island.is/api/schema'
+import { Service } from '@island.is/web/graphql/schema'
 import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
 import { capitalize } from '@island.is/web/utils/capitalize'
 import { useNamespace } from '@island.is/web/hooks'
@@ -27,11 +27,11 @@ export interface ServiceListProps {
   tagDisplayNames?: GetNamespaceQuery['getNamespace']
 }
 
-export const ServiceList: React.FC<ServiceListProps> = ({
-  baseUrl,
-  services = [],
-  tagDisplayNames = {},
-}) => {
+export const ServiceList: React.FC<
+  React.PropsWithChildren<ServiceListProps>
+> = ({ baseUrl, services = [], tagDisplayNames = {} }) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(tagDisplayNames)
 
   const CategoriesToTags = (service: Service) => {

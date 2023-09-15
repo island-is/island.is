@@ -1,16 +1,23 @@
 import { useEffect, useContext } from 'react'
 import { GlobalContext } from '../context'
 
-export const useContentfulId = (pageId: string, subpageId?: string) => {
-  const { setContentfulId } = useContext(GlobalContext)
+export const useContentfulId = (
+  pageId?: string,
+  subpageId?: string,
+  subSubPageId?: string,
+) => {
+  const { setContentfulIds } = useContext(GlobalContext)
 
   useEffect(() => {
     if (pageId) {
-      setContentfulId(pageId, subpageId)
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      setContentfulIds([pageId, subpageId, subSubPageId])
     }
-
-    return () => setContentfulId('')
-  }, [pageId, subpageId])
+    return () => {
+      setContentfulIds([])
+    }
+  }, [pageId, subpageId, subSubPageId])
 }
 
 export default useContentfulId

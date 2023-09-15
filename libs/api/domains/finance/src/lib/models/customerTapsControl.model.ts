@@ -10,4 +10,7 @@ export class CustomerTapsControlModel {
 
   @Field()
   localTaxTap!: boolean
+
+  @Field()
+  schedulesTap!: boolean
 }

@@ -2,22 +2,32 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { getValueViaPath } from '@island.is/application/core'
-import { Item } from '@island.is/clients/payment'
+import { CatalogItem } from '@island.is/clients/charge-fjs-v2'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import {
+  ApplicationTypes,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
 
 @Injectable()
-export class ExamplePaymentActionsService {
+export class ExamplePaymentActionsService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-  ) {}
+  ) {
+    super(ApplicationTypes.EXAMPLE_PAYMENT)
+  }
 
   async createCharge({
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
+    // Performing organization ID
+    const SYSLUMADUR_NATIONAL_ID = InstitutionNationalIds.SYSLUMENN
+
     // This is where you'd pick and validate that you are going to create a charge for a
     // particular charge item code. Note that creating these charges creates an actual "krafa"
     // with FJS
-    const chargeItemCode = getValueViaPath<Item['chargeItemCode']>(
+    const chargeItemCode = getValueViaPath<CatalogItem['chargeItemCode']>(
       answers,
       'userSelectedChargeItemCode',
     )
@@ -27,9 +37,10 @@ export class ExamplePaymentActionsService {
     }
 
     const response = await this.sharedTemplateAPIService.createCharge(
-      auth.authorization,
+      auth,
       id,
-      chargeItemCode,
+      SYSLUMADUR_NATIONAL_ID,
+      [chargeItemCode],
     )
 
     // last chance to validate before the user receives a dummy
@@ -45,7 +56,7 @@ export class ExamplePaymentActionsService {
     auth,
   }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
     const paymentStatus = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
 

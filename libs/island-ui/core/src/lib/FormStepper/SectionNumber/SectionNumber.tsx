@@ -1,4 +1,6 @@
 import React, { FC } from 'react'
+import cn from 'classnames'
+
 import { Colors } from '@island.is/island-ui/theme'
 
 import { Box } from '../../Box/Box'
@@ -28,13 +30,15 @@ interface SectionNumberProps {
   currentState: 'active' | 'previous' | 'next'
   number: number
   lineHeight?: number
+  isHistory?: boolean
 }
 
-export const SectionNumber: FC<SectionNumberProps> = ({
+export const SectionNumber: FC<React.PropsWithChildren<SectionNumberProps>> = ({
   theme = types.FormStepperThemes.BLUE,
   currentState,
   number,
   lineHeight,
+  isHistory = false,
 }) => {
   const currentBulletColor = bulletColors[theme] as Colors
   const currentLineColor =
@@ -53,7 +57,10 @@ export const SectionNumber: FC<SectionNumberProps> = ({
       <Box
         position="absolute"
         background={currentLineColor}
-        className={styles.progressLine}
+        className={cn(
+          isHistory ? styles.historyProgressLine : styles.progressLine,
+          'pl',
+        )}
         style={{ height: `${lineHeight}px` }}
       />
       {(currentState === 'next' && (

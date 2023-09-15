@@ -1,0 +1,39 @@
+{
+  "name": "application-templates-example-payment",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/templates/example-payment/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/example-payment/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/example-payment"
+      ],
+      "options": {
+        "jestConfig": "libs/application/templates/example-payment/jest.config.ts",
+        "passWithNoTests": false
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/example-payment/src/**/*.{js,ts,tsx}'"
+      }
+    },
+    "schemas/codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/application/templates/example-payment/codegen.yml"
+      }
+    }
+  },
+  "tags": ["scope:application-system", "lib:application-system"]
+}

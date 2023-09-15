@@ -32,7 +32,8 @@ export const CreateSkilavottordRecyclingPartnerMutation = gql`
     createSkilavottordRecyclingPartner(input: $input) {
       companyId
       companyName
-      active
+      email
+      nationalId
       address
       postnumber
       city
@@ -43,7 +44,7 @@ export const CreateSkilavottordRecyclingPartnerMutation = gql`
   }
 `
 
-const RecyclingCompanyCreate: FC = () => {
+const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
   const router = useRouter()
   const [createSkilavottordRecyclingPartner] = useMutation(
@@ -56,7 +57,11 @@ const RecyclingCompanyCreate: FC = () => {
       ],
     },
   )
-  const { control, errors, handleSubmit } = useForm({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     mode: 'onChange',
   })
   const {
@@ -126,7 +131,9 @@ const RecyclingCompanyCreate: FC = () => {
           ]}
           renderLink={(link, item) => {
             return item?.href ? (
-              <NextLink href={item?.href}>{link}</NextLink>
+              <NextLink href={item?.href} legacyBehavior>
+                {link}
+              </NextLink>
             ) : (
               link
             )

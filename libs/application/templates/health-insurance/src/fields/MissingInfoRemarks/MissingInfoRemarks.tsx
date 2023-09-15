@@ -6,7 +6,7 @@ import { useFormContext } from 'react-hook-form'
 import { m } from '../../forms/messages'
 import { MissingInfoType, ReviewFieldProps } from '../../types'
 
-const MissingInfoRemarks: FC<ReviewFieldProps> = ({
+const MissingInfoRemarks: FC<React.PropsWithChildren<ReviewFieldProps>> = ({
   application,
   isEditable = true,
   index = 0,
@@ -27,14 +27,13 @@ const MissingInfoRemarks: FC<ReviewFieldProps> = ({
   return (
     <Input
       id={`missingInfo[${index}].remarks`}
-      name={`missingInfo[${index}].remarks`}
+      {...register(`missingInfo[${index}].remarks`)}
       label={formatText(m.additionalRemarks, application, formatMessage)}
       placeholder={formatText(
         m.additionalRemarksPlaceholder,
         application,
         formatMessage,
       )}
-      ref={register}
       backgroundColor={'blue'}
       disabled={!isEditable}
       textarea

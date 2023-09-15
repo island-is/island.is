@@ -1,4 +1,5 @@
-import { Application, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { Application, ApplicationTypes } from '@island.is/application/types'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
   DefaultApi,
@@ -8,28 +9,32 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
+
 import { TemplateApiModuleActionProps } from '../../../types'
+import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   PublicDebtPaymentPlanPayment,
   PublicDebtPaymentPlanPaymentCollection,
   PublicDebtPaymentPlanPrerequisites,
 } from './types'
+import { PrerequisitesService } from './paymentPlanPrerequisites.service'
 
 @Injectable()
-export class PublicDebtPaymentPlanTemplateService {
+export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService {
   constructor(
     private paymentScheduleApi: DefaultApi,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-  ) {}
+    private prerequisitesService: PrerequisitesService,
+  ) {
+    super(ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN)
+  }
 
   paymentScheduleApiWithAuth(auth: Auth) {
     return this.paymentScheduleApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  private getValuesFromApplication(
-    application: Application,
-  ): {
+  private getValuesFromApplication(application: Application): {
     email: string
     phoneNumber: string
     paymentPlans: PublicDebtPaymentPlanPayment[]
@@ -70,14 +75,11 @@ export class PublicDebtPaymentPlanTemplateService {
 
   async sendApplication({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const {
-        email,
-        phoneNumber,
-        paymentPlans,
-      } = this.getValuesFromApplication(application)
+      const { email, phoneNumber, paymentPlans } =
+        this.getValuesFromApplication(application)
 
       const schedules = paymentPlans.map((plan) => {
-        const distribution = JSON.parse(plan.distribution) as PaymentsDT[]
+        const distribution = plan.distribution
         return {
           organizationID: plan.organization,
           chargeTypes: plan.chargetypes?.map((chargeType) => ({
@@ -94,20 +96,25 @@ export class PublicDebtPaymentPlanTemplateService {
 
       await this.paymentScheduleApiWithAuth(auth).schedulesPOST6({
         inputSchedules: {
-          serviceInput: {
-            email: email,
-            nationalId: application.applicant,
-            phoneNumber: phoneNumber,
-            schedules: schedules,
-          },
+          email: email,
+          nationalId: application.applicant,
+          phoneNumber: phoneNumber,
+          schedules: schedules,
         },
       })
     } catch (error) {
       this.logger.error(
-        'Failed to send public debt payment plan application',
+        '[public-debt-payment-plan]: Failed to send public debt payment plan application',
         error,
       )
       throw error
     }
+  }
+
+  async paymentPlanPrerequisites({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    return this.prerequisitesService.provide(application, auth)
   }
 }

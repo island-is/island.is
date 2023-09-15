@@ -13,5 +13,5 @@ export const popoverContainer = style({
   zIndex: 100,
   maxWidth: 360,
   width: '100%',
-  overflowY: 'scroll',
+  overflowY: 'auto',
 })

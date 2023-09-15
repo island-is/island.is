@@ -27,6 +27,7 @@ import {
 import { GET_REGULATION_QUERY } from '../queries'
 import { Text } from '@island.is/island-ui/core'
 import { HeadWithSocialSharing } from '@island.is/web/components'
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
 // ---------------------------------------------------------------------------
 
@@ -107,9 +108,9 @@ const reRegQueryNameFlex = /^\d{1,4}-\d{4}$/
  */
 const assertRegQueryName = (slug: string): RegQueryName => {
   if (reRegQueryNameFlex.test(slug)) {
-    return (slug.length === 9
-      ? slug
-      : ('000' + slug).substr(-9)) as RegQueryName
+    return (
+      slug.length === 9 ? slug : ('000' + slug).substr(-9)
+    ) as RegQueryName
   }
   throw new CustomNextError(404)
 }
@@ -168,13 +169,9 @@ const assertEarlierDate = (
 
 // ---------------------------------------------------------------------------
 
-RegulationPage.getInitialProps = async ({
-  apolloClient,
-  locale,
-  query,
-  res,
-  asPath,
-}) => {
+RegulationPage.getProps = async ({ apolloClient, locale, query, res, req }) => {
+  const asPath = safelyExtractPathnameFromUrl(req.url)
+
   const params = query.params as Partial<Array<string>>
   const isPdf = params[params.length - 1] === 'pdf'
   if (isPdf) {
@@ -225,7 +222,7 @@ RegulationPage.getInitialProps = async ({
         query: GET_REGULATION_QUERY,
         variables: {
           input: {
-            viewType: (viewType as unknown) as Schema_RegulationViewTypes,
+            viewType: viewType as unknown as Schema_RegulationViewTypes,
             name,
             date,
             isCustomDiff,

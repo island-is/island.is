@@ -26,7 +26,7 @@ import { EntityTypes } from '../enums/EntityTypes'
     },
   ],
 })
-export class Organisation extends Model<Organisation> {
+export class Organisation extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

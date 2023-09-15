@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client'
+import isEqual from 'lodash/isEqual'
 import {
   Box,
   Button,
@@ -8,20 +9,27 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Icon,
   Inline,
   LoadingDots,
   NavigationItem,
+  StringOption as Option,
+  Select,
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
+import {
+  getThemeConfig,
+  OrganizationWrapper,
+  Webreader,
+  FilterTag,
+} from '@island.is/web/components'
 import {
   ContentLanguage,
   GenericTag,
   GetNamespaceQuery,
   Query,
   QueryGetNamespaceArgs,
+  QueryGetOrganizationArgs,
   QueryGetOrganizationPageArgs,
   QueryGetPublishedMaterialArgs,
 } from '@island.is/web/graphql/schema'
@@ -33,7 +41,7 @@ import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useRouter } from 'next/router'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { Screen } from '../../../types'
 import {
@@ -42,17 +50,13 @@ import {
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
 import { GET_PUBLISHED_MATERIAL_QUERY } from '../../queries/PublishedMaterial'
-import FilterTag from './components/FilterTag/FilterTag'
 import { PublishedMaterialItem } from './components/PublishedMaterialItem'
 import {
   getFilterCategories,
-  getFilterTags,
+  extractFilterTags,
   getGenericTagGroupHierarchy,
   getInitialParameters,
-  Ordering,
 } from './utils'
-import { OrderByItem } from './components/OrderByItem'
-import { useSelect } from 'downshift'
 import * as styles from './PublishedMaterial.css'
 
 const ASSETS_PER_PAGE = 20
@@ -72,22 +76,55 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   const router = useRouter()
   const { width } = useWindowSize()
   const [searchValue, setSearchValue] = useState('')
-  const [ordering, setOrdering] = useState<Ordering>({
-    field: 'releaseDate',
-    order: 'desc',
-  })
+  const filterValuesHaveBeenInitialized = useRef(false)
+  const initialFilterParametersValueHasBeenSet = useRef(false)
+
   const n = useNamespace(namespace)
 
-  useContentfulId(organizationPage.id)
+  const orderByOptions = useMemo(() => {
+    return [
+      {
+        label: n('orderByReleaseDateDescending', 'Útgáfudagur (nýtt)'),
+        value: 'order-by-release-date-descending',
+        field: 'releaseDate',
+        order: 'desc',
+      },
+      {
+        label: n('orderByReleaseDateAscending', 'Útgáfudagur (gamalt)'),
+        value: 'order-by-release-date-ascending',
+        field: 'releaseDate',
+        order: 'asc',
+      },
+      {
+        label: n('orderByTitleAscending', 'Titill (a-ö)'),
+        value: 'order-by-title-ascending',
+        field: 'title.sort',
+        order: 'asc',
+      },
+      {
+        label: n('orderByTitleDescending', 'Titill (ö-a)'),
+        value: 'order-by-title-descending',
+        field: 'title.sort',
+        order: 'desc',
+      },
+    ]
+  }, [])
+
+  const [selectedOrderOption, setSelectedOrderOption] = useState<Option>(
+    orderByOptions?.[0],
+  )
+
+  useContentfulId(organizationPage?.id)
   useLocalLinkTypeResolver()
   const { activeLocale } = useI18n()
-
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
+      title: primaryLink?.text,
+      href: primaryLink?.url,
       active:
-        primaryLink.url === router.asPath ||
+        primaryLink?.url === router.asPath ||
         childrenLinks.some((link) => link.url === router.asPath),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
@@ -97,6 +134,9 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     }),
   )
 
+  const organizationSlug =
+    organizationPage?.organization?.slug ?? (router.query.slug as string) ?? ''
+
   // The page number is 1-based meaning that page 1 is the first page
   const [page, setPage] = useState(1)
   const [isTyping, setIsTyping] = useState(false)
@@ -105,15 +145,19 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     variables: {
       input: {
         lang: activeLocale,
-        organizationSlug: (router.query.slug as string) ?? '',
+        organizationSlug,
         tags: [],
         page: page,
         searchString: searchValue,
         size: ASSETS_PER_PAGE,
         tagGroups: {},
-        sort: ordering,
+        sort: selectedOrderOption,
       },
     },
+  })
+  const [publishedMaterial, setPublishedMaterial] = useState({
+    items: [],
+    total: 0,
   })
 
   const { data, loading, fetchMore } = useQuery<
@@ -126,13 +170,22 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     [genericTagFilters],
   )
 
+  useEffect(() => {
+    if (data?.getPublishedMaterial)
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      setPublishedMaterial(data.getPublishedMaterial)
+  }, [data?.getPublishedMaterial])
+
   const filterCategories = initialFilterCategories.map((category) => ({
     ...category,
     selected: parameters[category.id] ?? category.selected,
   }))
 
   useEffect(() => {
-    setParameters(getInitialParameters(initialFilterCategories))
+    if (!initialFilterParametersValueHasBeenSet.current) {
+      setParameters(getInitialParameters(initialFilterCategories))
+    }
   }, [initialFilterCategories])
 
   const loadMore = () => {
@@ -148,13 +201,13 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
       variables: {
         input: {
           lang: activeLocale,
-          organizationSlug: (router.query.slug as string) ?? '',
+          organizationSlug,
           tags: selectedCategories,
           page: nextPage,
           searchString: searchValue,
           size: ASSETS_PER_PAGE,
           tagGroups: getGenericTagGroupHierarchy(filterCategories),
-          sort: ordering,
+          sort: selectedOrderOption,
         },
       },
       updateQuery: (prevResult, { fetchMoreResult }) => {
@@ -180,20 +233,88 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         variables: {
           input: {
             lang: activeLocale,
-            organizationSlug: (router.query.slug as string) ?? '',
+            organizationSlug,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             tags: selectedCategories,
             page: 1,
             searchString: searchValue,
             size: ASSETS_PER_PAGE,
             tagGroups: getGenericTagGroupHierarchy(filterCategories),
-            sort: ordering,
+            sort: selectedOrderOption,
           },
         },
       })
       setIsTyping(false)
+
+      const updatedQueryParams = { ...router.query }
+
+      // Update search input state and query params
+      if (!searchValue) {
+        if (filterValuesHaveBeenInitialized.current) {
+          delete updatedQueryParams['q']
+        } else if (updatedQueryParams['q']) {
+          setSearchValue(updatedQueryParams['q'] as string)
+        }
+      } else {
+        updatedQueryParams['q'] = searchValue
+      }
+
+      // Update order dropdown state and query params
+      if (!filterValuesHaveBeenInitialized.current) {
+        if (updatedQueryParams.order) {
+          const newOrder = orderByOptions.find(
+            (o) => o.value === updatedQueryParams.order,
+          )
+          if (newOrder) setSelectedOrderOption(newOrder)
+        }
+      } else {
+        if (
+          !(
+            selectedOrderOption?.value === orderByOptions[0].value &&
+            !updatedQueryParams.order
+          )
+        ) {
+          updatedQueryParams.order = selectedOrderOption.value as string
+        }
+      }
+
+      // Update filter categories state and query params
+      if (!filterValuesHaveBeenInitialized.current) {
+        if (updatedQueryParams.filters) {
+          try {
+            const updatedFilters = JSON.parse(
+              updatedQueryParams.filters as string,
+            )
+            setParameters(updatedFilters)
+            initialFilterParametersValueHasBeenSet.current = true
+          } catch (_) {
+            delete updatedQueryParams.filters
+          }
+        }
+      } else {
+        if (Object.values(parameters).every((value) => !value?.length)) {
+          delete updatedQueryParams.filters
+        } else {
+          updatedQueryParams.filters = JSON.stringify(parameters)
+        }
+      }
+
+      filterValuesHaveBeenInitialized.current = true
+
+      if (!isEqual(router.query, updatedQueryParams)) {
+        router.replace(
+          {
+            pathname: router.pathname,
+            query: updatedQueryParams,
+          },
+          undefined,
+          { scroll: false, shallow: true },
+        )
+      }
     },
     DEBOUNCE_TIME_IN_MS,
-    [parameters, activeLocale, searchValue, ordering],
+    [parameters, activeLocale, searchValue, selectedOrderOption],
   )
 
   const pageTitle = n('pageTitle', 'Útgefið efni')
@@ -201,77 +322,27 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   const isMobile = width < theme.breakpoints.md
 
   const numberOfItemsThatCouldBeLoaded =
-    (data?.getPublishedMaterial?.total ?? page * ASSETS_PER_PAGE) -
+    (publishedMaterial?.total ?? page * ASSETS_PER_PAGE) -
     page * ASSETS_PER_PAGE
 
-  const selectedFilters = getFilterTags(filterCategories)
-
-  const orderByItems = [
-    {
-      title: n('orderByTitleAscending', 'Titill (a-ö)'),
-      onClick: () =>
-        setOrdering({
-          field: 'title.sort',
-          order: 'asc',
-        }),
-      isSelected: ordering.field === 'title.sort' && ordering.order === 'asc',
-    },
-    {
-      title: n('orderByTitleDescending', 'Titill (ö-a)'),
-      onClick: () =>
-        setOrdering({
-          field: 'title.sort',
-          order: 'desc',
-        }),
-      isSelected: ordering.field === 'title.sort' && ordering.order === 'desc',
-    },
-    {
-      title: n('orderByReleaseDateDescending', 'Útgáfudagur (nýtt)'),
-      onClick: () =>
-        setOrdering({
-          field: 'releaseDate',
-          order: 'desc',
-        }),
-      isSelected: ordering.field === 'releaseDate' && ordering.order === 'desc',
-    },
-    {
-      title: n('orderByReleaseDateAscending', 'Útgáfudagur (gamalt)'),
-      onClick: () =>
-        setOrdering({
-          field: 'releaseDate',
-          order: 'asc',
-        }),
-      isSelected: ordering.field === 'releaseDate' && ordering.order === 'asc',
-    },
-  ]
-
-  const {
-    isOpen,
-    selectedItem,
-    getToggleButtonProps,
-    getMenuProps,
-    highlightedIndex,
-    getItemProps,
-  } = useSelect({ items: orderByItems })
-
-  useEffect(() => {
-    if (selectedItem?.onClick) selectedItem.onClick()
-  }, [selectedItem])
-
-  const orderByButtonRef = useRef<HTMLDivElement | null>(null)
+  const selectedFilters = extractFilterTags(filterCategories)
 
   return (
     <OrganizationWrapper
       pageTitle={pageTitle}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       organizationPage={organizationPage}
+      showReadSpeaker={false}
       breadcrumbItems={[
         {
           title: 'Ísland.is',
           href: linkResolver('homepage').href,
         },
         {
-          title: organizationPage.title,
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
+          title: organizationPage?.title ?? '',
+          href: linkResolver('organizationpage', [organizationPage?.slug ?? ''])
+            .href,
         },
       ]}
       navigationData={{
@@ -283,14 +354,20 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         <GridColumn span="12/12">
           <GridRow>
             <GridColumn span={['12/12', '12/12', '6/12', '6/12', '8/12']}>
-              <Text variant="h1" as="h1" marginBottom={4} marginTop={1}>
+              <Text variant="h1" as="h1" marginBottom={0} marginTop={1}>
                 {pageTitle}
               </Text>
+              <Webreader
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                readId={null}
+                readClass="rs_read"
+              />
             </GridColumn>
           </GridRow>
           <GridRow>
             <Filter
-              resultCount={data?.getPublishedMaterial.total ?? 0}
+              resultCount={publishedMaterial?.total ?? 0}
               variant={isMobile ? 'dialog' : 'popover'}
               align="right"
               labelClear={n('clearFilter', 'Hreinsa síu')}
@@ -340,6 +417,23 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
             </Filter>
           </GridRow>
 
+          <GridRow align="flexStart" marginBottom={3} marginTop={3}>
+            <Box className={styles.orderBySelect}>
+              <Select
+                name="order-by-select"
+                label={n('orderBy', 'Raða eftir')}
+                size="xs"
+                options={orderByOptions}
+                value={selectedOrderOption}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                onChange={(option) => {
+                  setSelectedOrderOption(option as Option)
+                }}
+              />
+            </Box>
+          </GridRow>
+
           <GridRow marginTop={2} align="center">
             <Box
               style={{
@@ -349,6 +443,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
               <LoadingDots />
             </Box>
           </GridRow>
+
           <GridRow alignItems="center">
             <GridColumn span="8/12">
               <Inline space={1}>
@@ -370,51 +465,13 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
                 ))}
               </Inline>
             </GridColumn>
-            <GridColumn span="4/12">
-              <GridRow align="flexEnd">
-                <div ref={orderByButtonRef}>
-                  <button
-                    type="button"
-                    tabIndex={0}
-                    className={styles.orderByToggleButton}
-                    {...getToggleButtonProps()}
-                  >
-                    <div className={styles.orderByToggleButtonText}>
-                      {n('orderBy', 'Raða eftir')}
-                    </div>
-                    <Icon size="small" icon="chevronDown" />
-                  </button>
-                </div>
-                <ul
-                  style={{
-                    display: isOpen ? 'block' : 'none',
-                    marginTop: orderByButtonRef.current
-                      ? (orderByButtonRef.current.getBoundingClientRect()
-                          ?.height ?? 24) + 4
-                      : 28,
-                  }}
-                  className={styles.orderByItemContainer}
-                  {...getMenuProps()}
-                >
-                  {orderByItems.map((item, index) => (
-                    <li key={index} {...getItemProps({ item, index })}>
-                      <OrderByItem
-                        isSelected={item.isSelected}
-                        isHighlighted={highlightedIndex === index}
-                        hasBorderTop={index !== 0}
-                        onClick={item.onClick}
-                      >
-                        {item.title}
-                      </OrderByItem>
-                    </li>
-                  ))}
-                </ul>
-              </GridRow>
-            </GridColumn>
           </GridRow>
-          {(data?.getPublishedMaterial.items ?? []).map((item, index) => {
+
+          {(publishedMaterial?.items ?? []).map((item, index) => {
             return (
               <GridRow
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 key={`${item.id}-${index}`}
                 marginTop={2}
                 marginBottom={2}
@@ -436,27 +493,15 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   )
 }
 
-PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
+PublishedMaterial.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getOrganizationPage },
-    },
-    {
-      data: { getOrganization },
     },
     namespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
-      variables: {
-        input: {
-          slug: query.slug as string,
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
           slug: query.slug as string,
@@ -480,16 +525,29 @@ PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
       }),
   ])
 
-  if (!getOrganizationPage || !getOrganization) {
+  if (!getOrganizationPage) {
     throw new CustomNextError(404, 'Organization page not found')
   }
+
+  const {
+    data: { getOrganization },
+  } = await apolloClient.query<Query, QueryGetOrganizationArgs>({
+    query: GET_ORGANIZATION_QUERY,
+    variables: {
+      input: {
+        slug: getOrganizationPage.organization?.slug ?? (query.slug as string),
+        lang: locale as ContentLanguage,
+      },
+    },
+  })
 
   return {
     organizationPage: getOrganizationPage,
     genericTagFilters:
-      getOrganization.publishedMaterialSearchFilterGenericTags ?? [],
+      (getOrganization ?? getOrganizationPage?.organization)
+        ?.publishedMaterialSearchFilterGenericTags ?? [],
     namespace,
-    ...getThemeConfig(getOrganizationPage.theme),
+    ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
   }
 }
 

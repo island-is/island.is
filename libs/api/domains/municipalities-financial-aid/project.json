@@ -1,0 +1,28 @@
+{
+  "name": "api-domains-municipalities-financial-aid",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/api/domains/municipalities-financial-aid/src ",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/api/domains/municipalities-financial-aid/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/api/domains/municipalities-financial-aid/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/api/domains/municipalities-financial-aid"
+      ]
+    }
+  },
+  "tags": ["lib:api", "scope:api"]
+}

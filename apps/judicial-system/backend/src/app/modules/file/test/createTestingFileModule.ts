@@ -1,7 +1,12 @@
+import { Sequelize } from 'sequelize-typescript'
+import { mock } from 'jest-mock-extended'
+
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { IntlService } from '@island.is/cms-translations'
+import { createTestIntl } from '@island.is/cms-translations/test'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../../environments'
@@ -11,6 +16,8 @@ import { CaseService } from '../../case'
 import { CaseFile } from '../models/file.model'
 import { FileService } from '../file.service'
 import { FileController } from '../file.controller'
+import { InternalFileController } from '../internalFile.controller'
+import { LimitedAccessFileController } from '../limitedAccessFile.controller'
 
 jest.mock('../../aws-s3/awsS3.service.ts')
 jest.mock('../../court/court.service.ts')
@@ -24,11 +31,26 @@ export const createTestingFileModule = async () => {
         secretToken: environment.auth.secretToken,
       }),
     ],
-    controllers: [FileController],
+    controllers: [
+      FileController,
+      InternalFileController,
+      LimitedAccessFileController,
+    ],
     providers: [
       CaseService,
       CourtService,
       AwsS3Service,
+      {
+        provide: IntlService,
+        useValue: {
+          useIntl: async () => ({
+            formatMessage: createTestIntl({
+              onError: jest.fn(),
+              locale: 'is-IS',
+            }).formatMessage,
+          }),
+        },
+      },
       {
         provide: LOGGER_PROVIDER,
         useValue: {
@@ -47,8 +69,15 @@ export const createTestingFileModule = async () => {
         },
       },
       FileService,
+      { provide: Sequelize, useValue: { transaction: jest.fn() } },
     ],
-  }).compile()
+  })
+    .useMocker((token) => {
+      if (typeof token === 'function') {
+        return mock()
+      }
+    })
+    .compile()
 
   const awsS3Service = fileModule.get<AwsS3Service>(AwsS3Service)
 
@@ -62,5 +91,25 @@ export const createTestingFileModule = async () => {
 
   const fileController = fileModule.get<FileController>(FileController)
 
-  return { awsS3Service, courtService, fileModel, fileService, fileController }
+  const internalFileController = fileModule.get<InternalFileController>(
+    InternalFileController,
+  )
+
+  const limitedAccessFileController =
+    fileModule.get<LimitedAccessFileController>(LimitedAccessFileController)
+
+  const sequelize = fileModule.get<Sequelize>(Sequelize)
+
+  fileModule.close()
+
+  return {
+    sequelize,
+    awsS3Service,
+    courtService,
+    fileModel,
+    fileService,
+    fileController,
+    internalFileController,
+    limitedAccessFileController,
+  }
 }

@@ -1,7 +1,8 @@
 import React, { BaseSyntheticEvent, FC } from 'react'
 import { Control, Controller, FieldError } from 'react-hook-form'
-import { FieldValues } from 'react-hook-form/dist/types/form'
+import { FieldValues } from 'react-hook-form/dist/types'
 import { DeepMap } from 'react-hook-form/dist/types/utils'
+import * as kennitala from 'kennitala'
 
 import {
   Box,
@@ -25,13 +26,9 @@ interface RecyclingCompanyForm {
   editView?: boolean
 }
 
-const RecyclingCompanyForm: FC<RecyclingCompanyForm> = ({
-  onSubmit,
-  onCancel,
-  control,
-  errors,
-  editView = false,
-}) => {
+const RecyclingCompanyForm: FC<
+  React.PropsWithChildren<RecyclingCompanyForm>
+> = ({ onSubmit, onCancel, control, errors, editView = false }) => {
   const {
     t: { recyclingCompanies: t },
   } = useI18n()
@@ -83,6 +80,69 @@ const RecyclingCompanyForm: FC<RecyclingCompanyForm> = ({
                   },
                 }}
                 error={errors?.companyName?.message}
+                backgroundColor="blue"
+              />
+            </GridColumn>
+          </GridRow>
+          <GridRow>
+            <GridColumn
+              span={['12/12', '12/12', '12/12', '6/12']}
+              paddingBottom={[3, 3, 3, 0]}
+            >
+              <InputController
+                id="nationalId"
+                control={control}
+                required
+                label={t.recyclingCompany.form.inputs.nationalId.label}
+                placeholder={
+                  t.recyclingCompany.form.inputs.nationalId.placeholder
+                }
+                rules={{
+                  required: {
+                    value: true,
+                    message:
+                      t.recyclingCompany.form.inputs.nationalId.rules?.required,
+                  },
+                  validate: {
+                    value: (value: number) => {
+                      if (
+                        value.toString().length === 10 &&
+                        !kennitala.isValid(value)
+                      ) {
+                        return t.recyclingCompany.form.inputs.nationalId.rules
+                          ?.validate
+                      }
+                    },
+                  },
+                }}
+                type="tel"
+                format="######-####"
+                error={errors?.nationalId?.message}
+                disabled={editView}
+                backgroundColor="blue"
+              />
+            </GridColumn>
+            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+              <InputController
+                id="email"
+                control={control}
+                required
+                label={t.recyclingCompany.form.inputs.email.label}
+                placeholder={t.recyclingCompany.form.inputs.email.placeholder}
+                rules={{
+                  required: {
+                    value: true,
+                    message:
+                      t.recyclingCompany.form.inputs.email.rules?.required,
+                  },
+                  pattern: {
+                    value:
+                      /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i,
+                    message:
+                      t.recyclingCompany.form.inputs.email.rules?.validate,
+                  },
+                }}
+                error={errors?.email?.message}
                 backgroundColor="blue"
               />
             </GridColumn>
@@ -159,16 +219,8 @@ const RecyclingCompanyForm: FC<RecyclingCompanyForm> = ({
               <InputController
                 id="website"
                 control={control}
-                required
                 label={t.recyclingCompany.form.inputs.website.label}
                 placeholder={t.recyclingCompany.form.inputs.website.placeholder}
-                rules={{
-                  required: {
-                    value: true,
-                    message:
-                      t.recyclingCompany.form.inputs.website.rules?.required,
-                  },
-                }}
                 error={errors?.website?.message}
                 backgroundColor="blue"
               />
@@ -198,7 +250,7 @@ const RecyclingCompanyForm: FC<RecyclingCompanyForm> = ({
               <Controller
                 name="active"
                 control={control}
-                render={({ onChange, value, name }) => {
+                render={({ field: { onChange, value, name } }) => {
                   return (
                     <Checkbox
                       large
@@ -219,7 +271,6 @@ const RecyclingCompanyForm: FC<RecyclingCompanyForm> = ({
           </GridRow>
         </Stack>
       </GridContainer>
-
       <Box display="flex" justifyContent="spaceBetween" marginTop={7}>
         {editView ? (
           <Button variant="ghost" onClick={onCancel} preTextIcon="arrowBack">

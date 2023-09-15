@@ -1,0 +1,28 @@
+{
+  "extends": "../../../.eslintrc.json",
+  "ignorePatterns": ["!**/*"],
+  "rules": {},
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {
+        "@nx/enforce-module-boundaries": [
+          "error",
+          {
+            "enforceBuildableLibDependency": true,
+            "allowCircularSelfDependency": true,
+            "allow": [],
+            "depConstraints": [
+              {
+                "sourceTag": "*",
+                "onlyDependOnLibsWithTags": ["*"]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    { "files": ["*.ts", "*.tsx"], "rules": {} },
+    { "files": ["*.js", "*.jsx"], "rules": {} }
+  ]
+}

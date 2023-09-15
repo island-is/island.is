@@ -35,6 +35,7 @@ export const title = style({
   backgroundClip: 'text',
   ['-webkit-background-clip' as any]: 'text',
   ['-webkit-text-fill-color' as any]: 'transparent',
+  textShadow: '0px 0px #00000000',
 })
 
 export const iconCircle = style({

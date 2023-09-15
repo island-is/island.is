@@ -3,18 +3,20 @@ import { useForm } from 'react-hook-form'
 import { m } from '@island.is/service-portal/core'
 import { msg } from '../../../../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Box, Button, Text, LoadingDots } from '@island.is/island-ui/core'
+import { Box, Text, LoadingDots } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import {
   useVerifyEmail,
   useUpdateOrCreateUserProfile,
   useDeleteIslykillValue,
+  useUserProfile,
 } from '@island.is/service-portal/graphql'
+import { FormButton } from '../FormButton'
 import * as styles from './ProfileForms.css'
 
 interface Props {
   buttonText: string
-  email: string
+  email?: string
   emailDirty: (isDirty: boolean) => void
   disabled?: boolean
 }
@@ -24,24 +26,32 @@ interface FormErrors {
   code: string | undefined
 }
 
-export const InputEmail: FC<Props> = ({
+interface UseFormProps {
+  email: string
+  code: string
+}
+
+export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
   buttonText,
   email,
   disabled,
   emailDirty,
 }) => {
   useNamespaces('sp.settings')
-  const { handleSubmit, control, errors, getValues, setValue } = useForm()
   const {
-    updateOrCreateUserProfile,
-    loading: saveLoading,
-  } = useUpdateOrCreateUserProfile()
-  const {
-    deleteIslykillValue,
-    loading: deleteLoading,
-  } = useDeleteIslykillValue()
+    handleSubmit,
+    control,
+    getValues,
+    setValue,
+    formState: { errors },
+  } = useForm<UseFormProps>()
+  const { updateOrCreateUserProfile, loading: saveLoading } =
+    useUpdateOrCreateUserProfile()
+  const { deleteIslykillValue, loading: deleteLoading } =
+    useDeleteIslykillValue()
   const { formatMessage } = useLocale()
   const { createEmailVerification, createLoading } = useVerifyEmail()
+  const { refetch, loading: fetchLoading } = useUserProfile()
   const [emailInternal, setEmailInternal] = useState(email)
   const [emailToVerify, setEmailToVerify] = useState(email)
 
@@ -154,9 +164,10 @@ export const InputEmail: FC<Props> = ({
       await deleteIslykillValue({
         email: true,
       })
-
+      await refetch()
       setVerificationValid(true)
       setInputPristine(true)
+      setEmailInternal(undefined)
       setErrors({ ...formErrors, code: undefined })
     } catch (err) {
       setErrors({ ...formErrors, code: emailError })
@@ -209,7 +220,7 @@ export const InputEmail: FC<Props> = ({
                 checkSetPristineInput()
               }}
               placeholder="nafn@island.is"
-              error={errors.email?.message || formErrors.email}
+              error={errors?.email?.message || formErrors?.email}
               size="xs"
               defaultValue={email}
             />
@@ -220,12 +231,10 @@ export const InputEmail: FC<Props> = ({
             flexDirection="column"
             paddingTop={2}
           >
-            {!createLoading && !deleteLoading && (
+            {!createLoading && !deleteLoading && !fetchLoading && (
               <>
                 {emailVerifyCreated ? (
-                  <Button
-                    variant="text"
-                    size="small"
+                  <FormButton
                     disabled={
                       verificationValid ||
                       disabled ||
@@ -236,7 +245,7 @@ export const InputEmail: FC<Props> = ({
                       emailInternal
                         ? () =>
                             handleSendEmailVerification({
-                              email: getValues().email,
+                              email: getValues().email ?? '',
                             })
                         : () => saveEmptyChange()
                     }
@@ -249,26 +258,22 @@ export const InputEmail: FC<Props> = ({
                           })
                         : buttonText
                       : formatMessage(msg.saveEmptyChange)}
-                  </Button>
+                  </FormButton>
                 ) : (
-                  <button
-                    type="submit"
+                  <FormButton
+                    submit
                     disabled={verificationValid || disabled || inputPristine}
                   >
-                    <Button
-                      variant="text"
-                      size="small"
-                      disabled={verificationValid || disabled || inputPristine}
-                    >
-                      {emailInternal
-                        ? buttonText
-                        : formatMessage(msg.saveEmptyChange)}
-                    </Button>
-                  </button>
+                    {emailInternal
+                      ? buttonText
+                      : formatMessage(msg.saveEmptyChange)}
+                  </FormButton>
                 )}
               </>
             )}
-            {(createLoading || deleteLoading) && <LoadingDots />}
+            {(createLoading || deleteLoading || fetchLoading) && (
+              <LoadingDots />
+            )}
           </Box>
         </Box>
       </form>
@@ -294,7 +299,7 @@ export const InputEmail: FC<Props> = ({
                   label={formatMessage(m.verificationCode)}
                   placeholder="000000"
                   defaultValue=""
-                  error={errors.code?.message || formErrors.code}
+                  error={errors?.code?.message || formErrors?.code}
                   disabled={verificationValid || disabled}
                   icon={verificationValid ? 'checkmark' : undefined}
                   size="xs"
@@ -316,20 +321,15 @@ export const InputEmail: FC<Props> = ({
                 alignItems="flexStart"
                 flexDirection="column"
                 paddingTop={4}
+                className={styles.codeButton}
               >
                 {!saveLoading && (
-                  <button
-                    type="submit"
+                  <FormButton
+                    submit
                     disabled={!codeInternal || disabled || verificationValid}
                   >
-                    <Button
-                      variant="text"
-                      size="small"
-                      disabled={!codeInternal || disabled || verificationValid}
-                    >
-                      {formatMessage(m.codeConfirmation)}
-                    </Button>
-                  </button>
+                    {formatMessage(m.codeConfirmation)}
+                  </FormButton>
                 )}
                 {saveLoading && (
                   <Box>

@@ -5,36 +5,90 @@ import {
   Application,
   ApplicationWithAttachments,
   GraphqlGatewayResponse,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import {
   BaseTemplateAPIModuleConfig,
   EmailTemplateGenerator,
   AssignmentEmailTemplateGenerator,
   AttachmentEmailTemplateGenerator,
   BaseTemplateApiApplicationService,
+  AssignmentSmsTemplateGenerator,
+  SmsTemplateGenerator,
 } from '../../types'
 import { getConfigValue } from './shared.utils'
-import {
-  PAYMENT_QUERY,
-  PAYMENT_STATUS_QUERY,
-  PaymentChargeData,
-  PaymentStatusData,
-} from './shared.queries'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { SmsService } from '@island.is/nova-sms'
+import { S3 } from 'aws-sdk'
+import AmazonS3URI from 'amazon-s3-uri'
+import { PaymentService } from '@island.is/application/api/payment'
+import { User } from '@island.is/auth-nest-tools'
+import { ExtraData } from '@island.is/clients/charge-fjs-v2'
 
 @Injectable()
 export class SharedTemplateApiService {
+  s3: S3
   constructor(
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     @Inject(EmailService)
     private readonly emailService: EmailService,
+    @Inject(SmsService)
+    private readonly smsService: SmsService,
     @Inject(ConfigService)
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
     @Inject(BaseTemplateApiApplicationService)
     private readonly applicationService: BaseTemplateApiApplicationService,
-  ) {}
+    private readonly paymentService: PaymentService,
+  ) {
+    this.s3 = new S3()
+  }
+
+  async createAssignToken(application: Application, expiresIn: number) {
+    const token = await this.applicationService.createAssignToken(
+      application,
+      getConfigValue(this.configService, 'jwtSecret'),
+      expiresIn,
+    )
+
+    return token
+  }
+
+  async sendSms(
+    smsTemplateGenerator: SmsTemplateGenerator,
+    application: Application,
+  ) {
+    const clientLocationOrigin = getConfigValue(
+      this.configService,
+      'clientLocationOrigin',
+    ) as string
+
+    const { phoneNumber, message } = smsTemplateGenerator(application, {
+      clientLocationOrigin,
+    })
+
+    return this.smsService.sendSms(phoneNumber, message)
+  }
+
+  async assignApplicationThroughSms(
+    smsTemplateGenerator: AssignmentSmsTemplateGenerator,
+    application: Application,
+    token: string,
+  ) {
+    const clientLocationOrigin = getConfigValue(
+      this.configService,
+      'clientLocationOrigin',
+    ) as string
+
+    const assignLink = `${clientLocationOrigin}/tengjast-umsokn?token=${token}`
+
+    const { phoneNumber, message } = smsTemplateGenerator(
+      application,
+      assignLink,
+    )
+
+    return this.smsService.sendSms(phoneNumber, message)
+  }
 
   async sendEmail(
     templateGenerator: EmailTemplateGenerator,
@@ -66,15 +120,9 @@ export class SharedTemplateApiService {
   async assignApplicationThroughEmail(
     templateGenerator: AssignmentEmailTemplateGenerator,
     application: Application,
-    expiresIn: number,
+    token: string,
     locale = 'is',
   ) {
-    const token = await this.applicationService.createAssignToken(
-      application,
-      getConfigValue(this.configService, 'jwtSecret'),
-      expiresIn,
-    )
-
     const clientLocationOrigin = getConfigValue(
       this.configService,
       'clientLocationOrigin',
@@ -157,65 +205,23 @@ export class SharedTemplateApiService {
   }
 
   async createCharge(
-    authorization: string,
+    user: User,
     applicationId: string,
-    chargeItemCode: string,
-  ): Promise<PaymentChargeData['applicationPaymentCharge']> {
-    return this.makeGraphqlQuery<PaymentChargeData>(
-      authorization,
-      PAYMENT_QUERY,
-      {
-        input: {
-          applicationId,
-          chargeItemCode,
-        },
-      },
+    performingOrganizationID: string,
+    chargeItemCodes: string[],
+    extraData: ExtraData[] | undefined = undefined,
+  ) {
+    return this.paymentService.createCharge(
+      user,
+      performingOrganizationID,
+      chargeItemCodes,
+      applicationId,
+      extraData,
     )
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error('graphql query failed')
-        }
-
-        return res
-      })
-      .then((res) => res.json())
-      .then(({ errors, data }) => {
-        if (errors && errors.length) {
-          this.logger.error('Graphql errors', {
-            errors,
-          })
-
-          throw new Error('Graphql errors present')
-        }
-
-        if (!data?.applicationPaymentCharge) {
-          throw new Error(
-            'no graphql error, but payment object was not returned',
-          )
-        }
-
-        return data.applicationPaymentCharge
-      })
   }
 
-  async getPaymentStatus(authorization: string, applicationId: string) {
-    return await this.makeGraphqlQuery<PaymentStatusData>(
-      authorization,
-      PAYMENT_STATUS_QUERY,
-      {
-        applicationId,
-      },
-    )
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error('Couldnt query payment status')
-        }
-        return res
-      })
-      .then((res) => res.json())
-      .then(({ data }) => {
-        return data?.applicationPaymentStatus
-      })
+  async getPaymentStatus(user: User, applicationId: string) {
+    return this.paymentService.getStatus(user, applicationId)
   }
 
   async addAttachment(
@@ -234,5 +240,28 @@ export class SharedTemplateApiService {
       buffer,
       uploadParameters,
     )
+  }
+
+  async getAttachmentContentAsBase64(
+    application: ApplicationWithAttachments,
+    attachmentKey: string,
+  ): Promise<string> {
+    const fileName = (
+      application.attachments as {
+        [key: string]: string
+      }
+    )[attachmentKey]
+
+    const { bucket, key } = AmazonS3URI(fileName)
+
+    const uploadBucket = bucket
+    const file = await this.s3
+      .getObject({
+        Bucket: uploadBucket,
+        Key: key,
+      })
+      .promise()
+    const fileContent = file.Body as Buffer
+    return fileContent?.toString('base64') || ''
   }
 }

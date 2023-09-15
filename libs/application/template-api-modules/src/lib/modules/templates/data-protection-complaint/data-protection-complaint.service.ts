@@ -10,9 +10,11 @@ import type { Logger } from '@island.is/logging'
 import { PdfFileProvider } from './attachments/providers/pdfFileProvider'
 import { ApplicationAttachmentProvider } from './attachments/providers/applicationAttachmentProvider'
 import { SharedTemplateApiService } from '../../shared'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 
 @Injectable()
-export class DataProtectionComplaintService {
+export class DataProtectionComplaintService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly caseApi: CaseApi,
@@ -20,54 +22,62 @@ export class DataProtectionComplaintService {
     private readonly applicationAttachmentProvider: ApplicationAttachmentProvider,
     private readonly pdfFileProvider: PdfFileProvider,
     private readonly sharedService: SharedTemplateApiService,
-  ) {}
+  ) {
+    super(ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT)
+  }
 
   get caseApiWithAuth() {
     return this.caseApi.withMiddleware(this.tokenMiddleware)
   }
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
-    try {
-      const attachedFiles = await this.applicationAttachmentProvider.getFiles(
-        ['complaint.documents', 'commissions.documents'],
+    const complaintAttachedFiles =
+      await this.applicationAttachmentProvider.getFiles(
+        ['complaint.documents'],
         application,
       )
 
-      const complaintPdf = await this.pdfFileProvider.getApplicationPdf(
+    const commissionsAttachedFiles =
+      await this.applicationAttachmentProvider.getFiles(
+        ['commissions.documents'],
         application,
-        'kvörtun',
-        attachedFiles,
       )
 
-      if (!complaintPdf?.content) throw new Error('No pdf content')
+    const attachedFiles = complaintAttachedFiles.concat(
+      commissionsAttachedFiles,
+    )
 
-      const key = await this.sharedService.addAttachment(
-        application,
-        'kvörtun.pdf',
-        complaintPdf.fileBuffer,
-        {
-          ContentType: 'application/pdf',
-        },
-      )
+    const complaintPdf = await this.pdfFileProvider.getApplicationPdf(
+      application,
+      'kvörtun',
+      attachedFiles,
+    )
 
-      const attachments = [complaintPdf, ...attachedFiles]
+    if (!complaintPdf?.content) throw new Error('No pdf content')
 
-      const caseRequest = await applicationToCaseRequest(
-        application,
-        attachments,
-      )
+    const now = new Date()
+    const nowString = now.toISOString().replace(/:/g, '-')
+    const complaintPdfFileName = `kvörtun-${nowString}.pdf`
 
-      await this.caseApiWithAuth.createCase({
-        requestData: caseRequest,
-      })
+    const key = await this.sharedService.addAttachment(
+      application,
+      complaintPdfFileName,
+      complaintPdf.fileBuffer,
+      {
+        ContentType: 'application/pdf',
+      },
+    )
 
-      return {
-        applicationPdfKey: key,
-      }
-    } catch (error) {
-      this.logger.error('Error submitting', error)
+    const attachments = [complaintPdf, ...attachedFiles]
 
-      throw new Error('Villa kom kom upp við að senda umsókn')
+    const caseRequest = await applicationToCaseRequest(application, attachments)
+
+    await this.caseApiWithAuth.createCase({
+      requestData: caseRequest,
+    })
+
+    return {
+      applicationPdfKey: key,
     }
   }
 }

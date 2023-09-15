@@ -1,13 +1,15 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
-import { LocaleProvider } from '@island.is/localization'
 import { MockedProvider } from '@apollo/client/testing'
+import { render, screen } from '@testing-library/react'
 
+import { CaseState } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
-  CaseState,
+  CaseOrigin,
   CaseType,
-} from '@island.is/judicial-system/types'
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { LocaleProvider } from '@island.is/localization'
 
 import AppealSection from './AppealSection'
 
@@ -18,8 +20,10 @@ describe('Appeal section component', () => {
     modified: new Date().toString(),
     type: CaseType.CUSTODY,
     state: CaseState.ACCEPTED,
-    policeCaseNumber: '000',
-    defendants: [{ nationalId: '000000-0000' }],
+    policeCaseNumbers: ['000'],
+    defendants: [{ nationalId: '000000-0000' }] as Defendant[],
+    origin: CaseOrigin.UNKNOWN,
+    defendantWaivesRightToCounsel: false,
   }
 
   test('should say when a case is no longer appealable if either the prosecutors or judges appeal decision is to postpone', async () => {
@@ -128,7 +132,7 @@ describe('Appeal section component', () => {
     )
 
     expect(
-      screen.queryByRole('button', { name: 'Kærði kærir úrskurðinn' }),
+      screen.queryByRole('button', { name: 'Varnaraðili kærir úrskurðinn' }),
     ).not.toBeInTheDocument()
   })
 

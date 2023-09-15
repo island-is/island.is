@@ -1,5 +1,6 @@
-import { globalStyle, style } from '@vanilla-extract/css'
+import { styleVariants, globalStyle, style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
+import { mapToStyleProperty } from '../../utils/mapToStyleProperty'
 
 export const container = style({
   counterReset: 'section',
@@ -12,12 +13,20 @@ export const bullet = style({
   width: '24px',
   ':before': {
     display: 'none',
-    color: theme.color.red400,
+    color: 'inherit',
     fontWeight: theme.typography.semiBold,
     counterIncrement: 'section',
     content: 'counter(section)',
   },
 })
+
+export const numberColors = styleVariants(
+  mapToStyleProperty(theme.color, 'color'),
+)
+
+export const bulletColors = styleVariants(
+  mapToStyleProperty(theme.color, 'backgroundColor'),
+)
 
 export const numbered = style({
   ':before': {
@@ -29,13 +38,14 @@ export const icon = style({
   position: 'relative',
   display: 'inline-block',
   top: '-2px',
+  borderRadius: '50%',
 
   ':before': {
     content: ' ',
     display: 'block',
     width: theme.spacing[1],
     height: theme.spacing[1],
-    backgroundColor: theme.color.red400,
+    backgroundColor: 'inherit',
     borderRadius: '50%',
   },
 })

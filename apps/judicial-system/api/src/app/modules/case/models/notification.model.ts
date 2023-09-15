@@ -3,7 +3,17 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 import type {
   Notification as TNotification,
   NotificationType,
+  Recipient as TRecipient,
 } from '@island.is/judicial-system/types'
+
+@ObjectType()
+export class Recipient implements TRecipient {
+  @Field()
+  address?: string
+
+  @Field()
+  success!: boolean
+}
 
 @ObjectType()
 export class Notification implements TNotification {
@@ -19,6 +29,6 @@ export class Notification implements TNotification {
   @Field(() => String)
   readonly type!: NotificationType
 
-  @Field({ nullable: true })
-  readonly recipients?: string
+  @Field(() => [Recipient])
+  readonly recipients!: Recipient[]
 }

@@ -1,15 +1,13 @@
 import '@island.is/api/mocks'
+import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePropsWrapper'
 
-import getConfig from 'next/config'
-import withApollo from '@island.is/web/graphql/withApollo'
-import { withLocale } from '@island.is/web/i18n'
-import articleScreen from '@island.is/web/screens/Article'
-import { withHealthchecks } from '@island.is/web/units/Healthchecks/withHealthchecks'
+import withApollo from '../../graphql/withApollo'
+import { withLocale } from '../../i18n'
+import articleScreen from '../../screens/Article'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
+const Screen = withApollo(withLocale('is')(articleScreen))
 
-const { serverRuntimeConfig } = getConfig()
-const { graphqlUrl } = serverRuntimeConfig
-const externalEndpointDependencies = [graphqlUrl]
+export default Screen
 
-export default withHealthchecks(externalEndpointDependencies)(
-  withApollo(withLocale('is')(articleScreen)),
-)
+export const getServerSideProps = getServerSidePropsWrapper(Screen)

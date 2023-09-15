@@ -13,6 +13,7 @@ export const container = style({
   right: 0,
   bottom: 0,
   zIndex: 1,
+  overflowY: 'auto',
 })
 
 const overlayAnimation = keyframes({
@@ -47,17 +48,14 @@ const containerAnimation = keyframes({
 })
 
 export const modalContainer = style({
-  position: 'relative',
+  position: 'absolute',
   boxShadow: '0px 4px 70px rgba(0, 97, 255, 0.1)',
   zIndex: 1,
   animationName: containerAnimation,
   animationTimingFunction: 'ease-out',
   animationDuration: '0.25s',
-  '@media': {
-    [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
-      height: '100vh',
-    },
-  },
+  margin: 'auto',
+  top: -400,
 })
 
 export const modalClose = style({

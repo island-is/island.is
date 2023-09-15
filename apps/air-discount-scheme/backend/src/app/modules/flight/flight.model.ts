@@ -1,27 +1,30 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
+  HasMany,
+  HasOne,
   Model,
   Table,
   UpdatedAt,
-  HasMany,
-  BelongsTo,
-  ForeignKey,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
+import { Optional } from 'sequelize/types'
+import { createMachine } from 'xstate'
 
+import {
+  Actions,
+  Airlines,
+  States,
+} from '@island.is/air-discount-scheme/consts'
 import type {
   Flight as TFlight,
   FlightLeg as TFlightLeg,
-  UserInfo,
+  UserInfo as TUserInfo,
 } from '@island.is/air-discount-scheme/types'
-import {
-  Actions,
-  States,
-  Airlines,
-} from '@island.is/air-discount-scheme/consts'
-import { createMachine } from 'xstate'
+import { ExplicitCode } from '../discount/discount.model'
 
 export const financialStateMachine = createMachine({
   id: 'flight_leg_financial_state_machine',
@@ -48,8 +51,23 @@ export const financialStateMachine = createMachine({
   },
 })
 
+interface FlightLegCreationAttributes
+  extends Optional<
+    TFlightLeg,
+    | 'id'
+    | 'created'
+    | 'modified'
+    | 'financialState'
+    | 'financialStateUpdated'
+    | 'flight'
+    | 'flightId'
+  > {}
+
 @Table({ tableName: 'flight_leg' })
-export class FlightLeg extends Model<FlightLeg> implements TFlightLeg {
+export class FlightLeg
+  extends Model<TFlightLeg, FlightLegCreationAttributes>
+  implements TFlightLeg
+{
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -84,7 +102,8 @@ export class FlightLeg extends Model<FlightLeg> implements TFlightLeg {
 
   // eslint-disable-next-line
   @BelongsTo(() => Flight)
-  flight: any
+  @ApiProperty({ type: () => Flight })
+  flight?: TFlight
 
   @Column({
     type: DataType.STRING,
@@ -155,8 +174,16 @@ export class FlightLeg extends Model<FlightLeg> implements TFlightLeg {
   readonly modified!: Date
 }
 
+interface FlightCreationAttributes
+  extends Optional<Omit<TFlight, 'flightLegs'>, 'id' | 'modified' | 'created'> {
+  flightLegs: FlightLegCreationAttributes[]
+}
+
 @Table({ tableName: 'flight' })
-export class Flight extends Model<Flight> implements TFlight {
+export class Flight
+  extends Model<TFlight, FlightCreationAttributes>
+  implements TFlight
+{
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -166,11 +193,12 @@ export class Flight extends Model<Flight> implements TFlight {
   @ApiProperty()
   id!: string
 
+  @ApiProperty({ type: () => UserInfo })
   @Column({
     type: DataType.JSONB,
     allowNull: false,
   })
-  userInfo!: UserInfo
+  userInfo!: TUserInfo
 
   @Column({
     type: DataType.STRING,
@@ -187,8 +215,11 @@ export class Flight extends Model<Flight> implements TFlight {
   readonly bookingDate!: Date
 
   @HasMany(() => FlightLeg)
-  @ApiProperty({ type: [FlightLeg] })
-  flightLegs!: FlightLeg[]
+  @ApiProperty({ type: () => [FlightLeg], required: false })
+  flightLegs?: FlightLeg[]
+
+  @HasOne(() => ExplicitCode)
+  explicitCode?: ExplicitCode
 
   @CreatedAt
   @ApiProperty()
@@ -203,4 +234,15 @@ export class Flight extends Model<Flight> implements TFlight {
     type: DataType.BOOLEAN,
   })
   readonly connectable!: boolean
+}
+
+class UserInfo implements TUserInfo {
+  @ApiProperty()
+  age!: number
+
+  @ApiProperty()
+  gender!: 'kk' | 'kvk' | 'x' | 'manneskja'
+
+  @ApiProperty()
+  postalCode!: number
 }

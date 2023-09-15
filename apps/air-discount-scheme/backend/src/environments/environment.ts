@@ -5,21 +5,6 @@ const isProd = process.env.NODE_ENV === 'production'
 const devConfig = {
   production: false,
   environment: 'local',
-  nationalRegistry: {
-    url: process.env.NATIONAL_REGISTRY_URL,
-    username: process.env.NATIONAL_REGISTRY_USERNAME,
-    password: process.env.NATIONAL_REGISTRY_PASSWORD,
-    authMiddlewareOptions: {
-      forwardUserInfo: false,
-      tokenExchangeOptions: {
-        issuer: 'https://identity-server.dev01.devland.is',
-        clientId: '@vegagerdin.is/clients/air-discount-scheme',
-        clientSecret: process.env.VEGAGERDIN_IDS_CLIENTS_SECRET,
-        scope: 'openid profile @skra.is/individuals',
-        requestActorToken: false,
-      },
-    },
-  },
   airlineApiKeys: {
     [Airlines.icelandair]: Airlines.icelandair,
     [Airlines.ernir]: Airlines.ernir,
@@ -52,21 +37,6 @@ if (isProd) {
 const prodConfig = {
   production: true,
   environment: process.env.ENVIRONMENT,
-  nationalRegistry: {
-    url: process.env.NATIONAL_REGISTRY_URL,
-    username: process.env.NATIONAL_REGISTRY_USERNAME,
-    password: process.env.NATIONAL_REGISTRY_PASSWORD,
-    authMiddlewareOptions: {
-      forwardUserInfo: false,
-      tokenExchangeOptions: {
-        issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
-        clientId: '@vegagerdin.is/clients/air-discount-scheme',
-        clientSecret: process.env.VEGAGERDIN_IDS_CLIENTS_SECRET,
-        scope: 'openid profile @skra.is/individuals',
-        requestActorToken: false,
-      },
-    },
-  },
   airlineApiKeys: {
     [Airlines.icelandair]: process.env.ICELANDAIR_API_KEY,
     [Airlines.ernir]: process.env.ERNIR_API_KEY,

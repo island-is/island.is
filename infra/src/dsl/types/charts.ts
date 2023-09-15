@@ -1,10 +1,14 @@
 import { FeatureNames } from '../features'
-import { OpsEnv, Service } from './input-types'
+import {
+  OpsEnv,
+  OpsEnvWithLocal,
+  ServiceDefinition,
+  ServiceDefinitionCore,
+} from './input-types'
+import { ServiceBuilder } from '../dsl'
 
-export interface UberChartType {
-  env: EnvironmentConfig
-
-  ref(from: Service, to: Service): string
+export interface ReferenceResolver {
+  ref(from: ServiceDefinitionCore, to: ServiceDefinition | string): string
 }
 
 export interface EnvironmentConfig {
@@ -14,14 +18,23 @@ export interface EnvironmentConfig {
   releaseName: string
   defaultMaxReplicas: number
   defaultMinReplicas: number
-  type: OpsEnv
+  type: OpsEnvWithLocal
   featuresOn: FeatureNames[]
   awsAccountRegion: 'eu-west-1' | 'us-east-1'
   awsAccountId: string
   feature?: string
+  redisHost: string
   global: any
 }
 
-export type EnvironmentServices = { [name in OpsEnv]: Service[] }
+export type OpsEnvName =
+  | 'dev01'
+  | 'devIds'
+  | 'staging01'
+  | 'stagingIds'
+  | 'prod'
+  | 'prod-ids'
 
-export type EnvironmentConfigs = { [name in OpsEnv]: EnvironmentConfig }
+export type EnvironmentServices = { [name in OpsEnv]: ServiceBuilder<any>[] }
+
+export type EnvironmentConfigs = { [name in OpsEnvName]: EnvironmentConfig }

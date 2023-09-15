@@ -1,0 +1,33 @@
+{
+  "name": "api-domains-driving-license",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/api/domains/driving-license/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/api/domains/driving-license/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/api/domains/driving-license/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/driving-license"]
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["scripts/run-xroad-proxy.sh"],
+        "parallel": true
+      }
+    }
+  },
+  "tags": ["lib:api", "scope:api"]
+}

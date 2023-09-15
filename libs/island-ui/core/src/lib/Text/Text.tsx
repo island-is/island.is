@@ -16,7 +16,10 @@ import {
   truncate as truncateStyle,
   strikethrough as strikethroughStyle,
   whiteSpace as whiteSpaceStyle,
+  textAlign as textAlignStyle,
+  capitalizeFirstLetter as capitalizeFirstLetterStyle,
 } from './Text.css'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 type TextElements =
   | 'h1'
@@ -29,6 +32,7 @@ type TextElements =
   | 'div'
   | 'label'
   | 'caption'
+  | 'pre'
 
 export interface TextProps {
   id?: string
@@ -54,6 +58,9 @@ export interface TextProps {
     | 'preWrap'
     | 'preLine'
     | 'breakSpaces'
+  capitalizeFirstLetter?: boolean
+  translate?: 'yes' | 'no'
+  textAlign?: 'left' | 'right' | 'center' | 'justify'
 }
 
 type GetTextStylesProps = Pick<
@@ -65,6 +72,8 @@ type GetTextStylesProps = Pick<
   | 'lineHeight'
   | 'strikethrough'
   | 'whiteSpace'
+  | 'textAlign'
+  | 'capitalizeFirstLetter'
 >
 
 export const getTextStyles = ({
@@ -75,6 +84,8 @@ export const getTextStyles = ({
   variant = 'default',
   strikethrough,
   whiteSpace,
+  textAlign,
+  capitalizeFirstLetter,
 }: GetTextStylesProps) =>
   cn(base, {
     [variantStyles[variant!]]: variant,
@@ -86,9 +97,11 @@ export const getTextStyles = ({
     [truncateStyle]: truncate,
     [strikethroughStyle]: strikethrough,
     [whiteSpaceStyle[whiteSpace!]]: whiteSpace,
+    [textAlignStyle[textAlign!]]: textAlign,
+    [capitalizeFirstLetterStyle]: capitalizeFirstLetter,
   })
 
-export const Text = forwardRef<HTMLElement, TextProps>(
+export const Text = forwardRef<HTMLElement, TextProps & TestSupport>(
   (
     {
       id,
@@ -108,6 +121,10 @@ export const Text = forwardRef<HTMLElement, TextProps>(
       as = 'p',
       strikethrough,
       whiteSpace,
+      textAlign,
+      dataTestId,
+      capitalizeFirstLetter,
+      translate,
     },
     ref,
   ) => {
@@ -122,6 +139,7 @@ export const Text = forwardRef<HTMLElement, TextProps>(
         paddingTop={paddingTop}
         paddingBottom={paddingBottom}
         paddingY={paddingY}
+        data-testid={dataTestId}
         className={getTextStyles({
           color,
           truncate,
@@ -130,9 +148,12 @@ export const Text = forwardRef<HTMLElement, TextProps>(
           variant,
           strikethrough,
           whiteSpace,
+          textAlign,
+          capitalizeFirstLetter,
         })}
         ref={ref}
         title={title}
+        translate={translate}
       >
         {React.Children.map<React.ReactNode, React.ReactNode>(
           children,

@@ -1,9 +1,6 @@
 import React, { FC, useState } from 'react'
-import {
-  FieldBaseProps,
-  getValueViaPath,
-  ValidAnswers,
-} from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps, ValidAnswers } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -13,7 +10,11 @@ import { parentalLeaveFormMessages } from '../../lib/messages'
 import { defaultMonths, maxMonths } from '../../config'
 import { YES, NO } from '../../constants'
 
-const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
+const RequestRights: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  error,
+  field,
+  application,
+}) => {
   const { formatMessage } = useLocale()
   const currentAnswer = getValueViaPath(
     application.answers,
@@ -21,9 +22,8 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
     undefined,
   ) as ValidAnswers
 
-  const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>(
-    currentAnswer,
-  )
+  const [statefulAnswer, setStatefulAnswer] =
+    useState<ValidAnswers>(currentAnswer)
 
   const numberOfBoxes = statefulAnswer === NO ? defaultMonths : maxMonths
 

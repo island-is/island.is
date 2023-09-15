@@ -3,19 +3,17 @@ import {
   buildMultiField,
   buildSection,
   buildTextField,
-  Form,
-  ApplicationTypes,
-  FormModes,
   buildSubmitField,
   buildCustomField,
   buildDividerField,
 } from '@island.is/application/core'
+import { Form, ApplicationTypes, FormModes } from '@island.is/application/types'
 import { m } from './messages'
 
 export const DocumentProviderOnboarding: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
   title: m.formName,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'termsOfAgreement',

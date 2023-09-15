@@ -1,4 +1,4 @@
-import * as kennitala from 'kennitala'
+import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import * as z from 'zod'
 import {
   ComplainedForTypes,
@@ -17,22 +17,7 @@ const FileSchema = z.object({
 
 export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v, { params: error.required }),
-  information: z.object({
-    name: z.string().nonempty(),
-    ssn: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
-    address: z.string().nonempty(),
-    postcode: z.string().nonempty(),
-    city: z.string().nonempty(),
-    email: z
-      .string()
-      .email()
-      .refine((val) => (val ? val.length > 0 : false), {
-        params: error.required,
-      }),
-    phone: z.string().refine((p) => p, {
-      params: error.required,
-    }),
-  }),
+  applicant: applicantInformationSchema({ phoneRequired: true }),
   complainedFor: z.object({
     decision: z.enum([
       ComplainedForTypes.MYSELF,
@@ -53,12 +38,10 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
     address: z.string().refine((v) => v, { params: error.required }),
     postcode: z.string().refine((v) => v, { params: error.required }),
     city: z.string().refine((v) => v, { params: error.required }),
-    email: z.string().refine((v) => v, { params: error.required }),
-    phone: z.string().refine((v) => v, { params: error.required }),
+    email: z.string().optional(),
+    phone: z.string().optional(),
     connection: z.string().refine((v) => v, { params: error.required }),
-    powerOfAttorney: z
-      .array(FileSchema)
-      .refine((v) => v && v.length > 0, { params: error.document }),
+    powerOfAttorney: z.array(FileSchema).optional(),
   }),
   complaintDescription: z.object({
     decisionDate: z.string().optional(),

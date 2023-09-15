@@ -18,9 +18,11 @@ interface FormOutput {
   idp: IdpProviderDTO
 }
 
-const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<FormOutput>()
-  const { isSubmitting } = formState
+const IdpProviderCreateForm: React.FC<React.PropsWithChildren<Props>> = (
+  props: Props,
+) => {
+  const { register, handleSubmit, formState } = useForm<FormOutput>()
+  const { isSubmitting, errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('IdpProviderCreateForm'),
@@ -81,8 +83,7 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="name"
                     type="text"
-                    name="idp.name"
-                    ref={register({
+                    {...register('idp.name', {
                       required: true,
                       validate: isEditing
                         ? () => {
@@ -115,11 +116,10 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="description"
                     type="text"
-                    ref={register({
+                    {...register('idp.description', {
                       required: true,
                       validate: ValidationUtils.validateDescription,
                     })}
-                    name="idp.description"
                     defaultValue={idp.description ?? ''}
                     className="idp-provider-create-form__input"
                     title={localization.fields['description'].helpText}
@@ -147,8 +147,7 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     id="helptext"
                     type="text"
                     className="idp-provider-create-form__input"
-                    name="idp.helptext"
-                    ref={register({
+                    {...register('idp.helptext', {
                       required: true,
                       validate: ValidationUtils.validateDescription,
                     })}
@@ -179,8 +178,11 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     id="level"
                     type="number"
                     className="idp-provider-create-form__input"
-                    name="idp.level"
-                    ref={register({ required: true, min: 1, max: 4 })}
+                    {...register('idp.level', {
+                      required: true,
+                      min: 1,
+                      max: 4,
+                    })}
                     defaultValue={idp.level}
                     placeholder={localization.fields['level'].placeholder}
                     title={localization.fields['level'].helpText}

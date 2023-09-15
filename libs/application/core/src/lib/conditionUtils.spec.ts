@@ -3,11 +3,11 @@ import {
   Comparators,
   Condition,
   SingleConditionCheck,
-} from '../types/Condition'
-import { FormValue } from '../types/Application'
+  FormValue,
+} from '@island.is/application/types'
 import { buildTextField } from '../lib/fieldBuilders'
 import { shouldShowFormItem } from './conditionUtils'
-import { buildSection, buildSubSection } from '@island.is/application/core'
+import { buildSection, buildSubSection } from './formBuilders'
 
 describe('conditions', () => {
   it('should show a field which has no condition whatsoever', () => {
@@ -38,7 +38,7 @@ describe('conditions', () => {
           buildTextField({
             id: 'asdf',
             title: 'asdf',
-            condition: (formValue: FormValue) => formValue.money > 0,
+            condition: (formValue: FormValue) => Number(formValue.money) > 0,
           }),
           { money: 100 },
         ),
@@ -71,7 +71,7 @@ describe('conditions', () => {
           buildTextField({
             id: 'asdf',
             title: 'asdf',
-            condition: (formValue: FormValue) => formValue.money > 0,
+            condition: (formValue: FormValue) => Number(formValue.money) > 0,
           }),
           { money: 0 },
         ),

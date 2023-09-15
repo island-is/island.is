@@ -1,23 +1,28 @@
 import { style } from '@vanilla-extract/css'
-import { theme } from '@island.is/island-ui/theme'
 
-export const header = style({
+import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { responsiveStyleMap } from '@island.is/island-ui/vanilla-extract-utils'
+
+export const gridContainer = style({
+  padding: `0`,
+})
+
+export const container = responsiveStyleMap({
+  height: { xs: 80, md: 112 },
+})
+
+export const infoContainer = style({
+  ...themeUtils.responsiveStyle({
+    md: {
+      borderLeftWidth: '1px',
+      borderStyle: 'solid',
+      borderColor: theme.color.dark100,
+    },
+  }),
+})
+
+export const dropdownItem = style({
   display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  height: 112,
-  borderBottom: `1px solid ${theme.color.blue200}`,
-  padding: `0 ${theme.spacing[6]}px`,
-})
-
-export const headerTextWrapper = style({
-  marginTop: '5px',
-})
-
-export const headerDiviter = style({
-  display: 'inline-block',
-  height: '19px',
-  width: '2px',
-  backgroundColor: theme.color.dark200,
-  margin: `5px ${theme.spacing[3]}px 0 ${theme.spacing[3]}px`,
+  borderTop: `2px solid ${theme.color.blue200}`,
+  paddingTop: `${theme.spacing[3]}px`,
 })

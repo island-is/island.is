@@ -21,14 +21,16 @@ interface PropTypes {
 
 function Panel({ flightLegs }: PropTypes) {
   const translateGender = (gender: string): string => {
-    if (gender === 'kk') {
-      return 'karlmaður'
-    } else if (gender === 'kvk') {
-      return 'kvenmaður'
-    } else if (gender === 'hvk') {
-      return 'kynsegin/annað'
+    switch (gender) {
+      case 'kk':
+        return 'karlmaður'
+      case 'kvk':
+        return 'kvenmaður'
+      case 'x':
+        return 'kynsegin/annað'
+      default:
+        return 'manneskja'
     }
-    return 'manneskja'
   }
 
   return (
@@ -63,7 +65,7 @@ function Panel({ flightLegs }: PropTypes) {
                   <Typography color="dark300" variant="pSmall">
                     {format(
                       new Date(flightLeg.flight.bookingDate),
-                      'dd. MMMM - k:mm',
+                      'dd. MMM yyyy - k:mm',
                       {
                         locale: is,
                       },

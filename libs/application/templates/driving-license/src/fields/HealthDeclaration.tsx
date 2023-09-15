@@ -2,30 +2,16 @@ import React from 'react'
 
 import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import {
-  Box,
-  Stack,
-  Text,
-  GridRow,
-  GridColumn,
-} from '@island.is/island-ui/core'
-import {
-  CustomField,
-  FieldBaseProps,
-  getValueViaPath,
-  formatText,
-} from '@island.is/application/core'
+import { Box, Text, GridRow, GridColumn } from '@island.is/island-ui/core'
+import { getValueViaPath, formatText } from '@island.is/application/core'
+import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 interface PropTypes extends FieldBaseProps {
   field: CustomField
 }
 
-function HealthDeclaration({
-  error,
-  field,
-  application,
-}: PropTypes): JSX.Element {
+function HealthDeclaration({ field, application }: PropTypes): JSX.Element {
   const { formatMessage } = useLocale()
   const props = field.props as { title?: string; label: string }
 
@@ -39,10 +25,10 @@ function HealthDeclaration({
         </Box>
       )}
       <GridRow>
-        <GridColumn span={['12/12', '9/12']} paddingBottom={1}>
+        <GridColumn span={['12/12', '8/12']} paddingBottom={1}>
           <Text>{formatText(props.label, application, formatMessage)}</Text>
         </GridColumn>
-        <GridColumn span={['8/12', '3/12']}>
+        <GridColumn span={['8/12', '3/12']} offset={['0', '1/12']}>
           <RadioController
             id={field.id}
             split="1/2"

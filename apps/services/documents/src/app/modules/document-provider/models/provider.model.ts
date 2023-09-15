@@ -16,7 +16,7 @@ import { EntityTypes } from '../enums/EntityTypes'
 import { Changelog } from './changelog.model'
 
 @Table({ tableName: 'provider' })
-export class Provider extends Model<Provider> {
+export class Provider extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

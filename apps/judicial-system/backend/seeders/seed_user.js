@@ -12,6 +12,16 @@ const userSeeds = `[
     "institution_id": "53581d7b-0591-45e5-9cbe-c96b2f82da85"
   },
   {
+    "id": "7ac41587-061b-44b8-8028-fb19f997c8e7",
+    "national_id": "0000006669",
+    "name": "Finnur Fulltrúi",
+    "title": "fulltrúi",
+    "mobile_number": "6666666",
+    "email": "finnur@dummy.dd",
+    "role": "PROSECUTOR_REPRESENTATIVE",
+    "institution_id": "53581d7b-0591-45e5-9cbe-c96b2f82da85"
+  },
+  {
     "id": "cef1ba9b-99b6-47fc-a216-55c8194830aa",
     "national_id": "0000001119",
     "name": "Dalli Dómritari",
@@ -42,13 +52,23 @@ const userSeeds = `[
     "institution_id": "4676f08b-aab4-4b4f-a366-697540788088"
   },
   {
+    "id": "a9506891-96cc-4c5d-ad14-eb2f2ef39bb7",
+    "national_id": "0000007779",
+    "name": "Aðalheiður aðstoðar",
+    "title": "aðstoðarmaður dómara",
+    "mobile_number": "7777777",
+    "email": "adalheidur@dummy.dd",
+    "role": "ASSISTANT",
+    "institution_id": "d1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf"
+  },
+  {
     "id": "1e08b81e-2aa4-11ec-8d3d-0242ac130003",
     "national_id": "0000004449",
     "name": "Pétur í FMST",
     "title": "starfsmaður",
     "mobile_number": "4444444",
     "email": "petur@dummy.dd",
-    "role": "STAFF",
+    "role": "PRISON_SYSTEM_STAFF",
     "institution_id": "c9b3b124-2a85-11ec-8d3d-0242ac130003"
   },
   {
@@ -58,7 +78,7 @@ const userSeeds = `[
     "title": "starfsmaður",
     "mobile_number": "5555555",
     "email": "valgard@dummy.dd",
-    "role": "STAFF",
+    "role": "PRISON_SYSTEM_STAFF",
     "institution_id": "c9b3b3ae-2a85-11ec-8d3d-0242ac130003"
   }
 ]`
@@ -97,15 +117,14 @@ module.exports = {
               modified: new Date(),
             },
             { id: user.id },
-            model,
-            { transaction: t },
+            { transaction: t, model },
           ),
         ),
       ),
     )
   },
 
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.bulkDelete('user', null, { transaction: t }),
     )

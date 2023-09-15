@@ -1,137 +1,207 @@
 import {
-  buildCheckboxField,
+  buildCustomField,
   buildDataProviderItem,
-  buildDateField,
+  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
-  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSection,
   buildSelectField,
   buildSubmitField,
-  buildSubSection,
-  buildTextField,
-  buildDividerField,
+} from '@island.is/application/core'
+import {
+  Application,
+  DefaultEvents,
   Form,
   FormModes,
-} from '@island.is/application/core'
-import { m } from './messages'
+} from '@island.is/application/types'
+import {
+  DeliveryAddressApi,
+  IdentityDocumentApi,
+  SyslumadurPaymentCatalogApi,
+  UserInfoApi,
+  NationalRegistryUser,
+} from '../dataProviders'
+import { DistrictCommissionerAgencies, Services } from '../lib/constants'
+import { m } from '../lib/messages'
+import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
+import { personalInfo } from './infoSection/personalInfo'
+import { childsOverview } from './overviewSection/childsOverview'
+import { personalOverview } from './overviewSection/personalOverview'
+import { getChargeCode, getPrice } from '../lib/utils'
 
 export const Draft: Form = buildForm({
   id: 'PassportApplicationDraftForm',
   title: m.formName,
-  mode: FormModes.APPLYING,
+  mode: FormModes.DRAFT,
+  renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   children: [
     buildSection({
-      id: 'personalInfo',
-      title: m.personalInfoSection,
+      id: 'introSection',
+      title: m.introTitle,
       children: [
         buildMultiField({
-          id: 'personalInfo',
-          title: m.personalInfoTitle,
+          id: 'introApplicant',
+          title: m.passport,
+          description: m.introDescription,
           children: [
-            buildTextField({
-              id: 'personalInfo.name',
-              title: m.personalInfoName,
+            buildDescriptionField({
+              id: 'introDescription',
+              title: '',
+              description: '',
             }),
-            buildTextField({
-              id: 'personalInfo.nationalId',
-              title: m.nationalId,
-              width: 'half',
+          ],
+        }),
+      ],
+    }),
+
+    buildSection({
+      id: 'externalDataSection',
+      title: m.dataCollectionTitle,
+      children: [
+        buildExternalDataProvider({
+          id: 'approveExternalData',
+          title: m.dataCollectionTitle,
+          subTitle: m.dataCollectionSubtitle,
+          checkboxLabel: m.dataCollectionCheckboxLabel,
+          dataProviders: [
+            buildDataProviderItem({
+              provider: NationalRegistryUser,
+              title: m.dataCollectionNationalRegistryTitle,
+              subTitle: m.dataCollectionNationalRegistrySubtitle,
             }),
-            buildTextField({
-              id: 'personalInfo.phoneNumber',
-              title: m.phoneNumber,
-              width: 'half',
+            buildDataProviderItem({
+              provider: UserInfoApi,
+              title: m.dataCollectionUserProfileTitle,
+              subTitle: m.dataCollectionUserProfileSubtitle,
             }),
-            buildTextField({
-              id: 'personalInfo.email',
-              title: m.email,
-              width: 'half',
+            buildDataProviderItem({
+              provider: IdentityDocumentApi,
+              title: m.dataCollectionIdentityDocumentTitle,
+              subTitle: m.dataCollectionIdentityDocumentSubtitle,
             }),
-            buildTextField({
-              id: 'personalInfo.otherEmail',
-              title: m.otherEmail,
-              width: 'half',
+            buildDataProviderItem({
+              provider: SyslumadurPaymentCatalogApi,
+              title: '',
             }),
-            buildTextField({
-              id: 'personalInfo.height',
-              title: m.height,
-              width: 'half',
+            buildDataProviderItem({
+              provider: DeliveryAddressApi,
+              title: '',
             }),
           ],
         }),
       ],
     }),
     buildSection({
+      id: 'passportSection',
+      title: m.selectPassportSectionTitle,
+      children: [
+        buildMultiField({
+          id: 'selectPassport',
+          title: m.selectPassportSectionTitle,
+          description: m.selectPassportSectionDescription,
+          children: [
+            buildCustomField({
+              id: 'passport',
+              title: '',
+              component: 'PassportSelection',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'personalInfoSection',
+      title: m.infoTitle,
+      children: [personalInfo, childsPersonalInfo],
+    }),
+    buildSection({
       id: 'serviceSection',
-      title: m.serviceSection,
+      title: m.serviceTitle,
       children: [
         buildMultiField({
           id: 'service',
           title: m.serviceTitle,
           children: [
+            buildDescriptionField({
+              id: 'service.dropTypeDescription',
+              title: m.serviceTypeTitle,
+              titleVariant: 'h3',
+              description: m.serviceTypeDescription,
+            }),
             buildRadioField({
               id: 'service.type',
-              title: m.serviceType,
-              options: [
-                { value: 'regular', label: m.regularService },
-                { value: 'express', label: m.expressService },
-              ],
+              title: '',
+              width: 'half',
+              space: 'none',
+              options: ({ answers, externalData }: Application) => {
+                const regularCode = getChargeCode(
+                  answers,
+                  externalData,
+                  Services.REGULAR,
+                )
+                const regularPrices = getPrice(externalData, regularCode)
+                const expressCode = getChargeCode(
+                  answers,
+                  externalData,
+                  Services.EXPRESS,
+                )
+                const expressPrices = getPrice(externalData, expressCode)
+                return [
+                  {
+                    value: Services.REGULAR,
+                    label:
+                      m.serviceTypeRegular.defaultMessage +
+                      ' - ' +
+                      regularPrices,
+                    subLabel: m.serviceTypeRegularSublabel.defaultMessage,
+                  },
+                  {
+                    value: Services.EXPRESS,
+                    label:
+                      m.serviceTypeExpress.defaultMessage +
+                      ' - ' +
+                      expressPrices,
+                    subLabel: m.serviceTypeExpressSublabel.defaultMessage,
+                  },
+                ]
+              },
             }),
-
+            buildDescriptionField({
+              id: 'service.dropLocationDescription',
+              title: m.dropLocation,
+              titleVariant: 'h3',
+              space: 2,
+              description: m.dropLocationDescription,
+              marginBottom: 'gutter',
+            }),
             buildSelectField({
               id: 'service.dropLocation',
               title: m.dropLocation,
               placeholder: m.dropLocationPlaceholder.defaultMessage,
-              options: [
-                {
-                  label: 'Kópavogur',
-                  value: '1',
+              options: ({
+                externalData: {
+                  deliveryAddress: { data },
                 },
-                {
-                  label: 'Akureyri',
-                  value: '2',
-                },
-                {
-                  label: 'Egilstaðir',
-                  value: '3',
-                },
-              ],
-            }),
-
-            buildCheckboxField({
-              id: 'service.extraOptions',
-              title: m.extraOptions,
-              options: [
-                {
-                  label: m.extraOptionsBringOwnPhoto,
-                  value: 'bringOwnPhoto',
-                },
-              ],
+              }) => {
+                return (data as DistrictCommissionerAgencies[])?.map(
+                  ({ key, name }) => ({
+                    value: key,
+                    label: name,
+                  }),
+                )
+              },
             }),
           ],
         }),
       ],
     }),
     buildSection({
-      id: 'approveExternalData',
-      title: m.fetchDataSection,
-      children: [
-        buildExternalDataProvider({
-          title: m.fetchData,
-          id: 'fetchData',
-          dataProviders: [
-            buildDataProviderItem({
-              id: 'insuranceInfo',
-              title: m.insuranceInfoTitle,
-              subTitle: m.insuranceInfoSubtitle,
-              type: 'ExampleSucceeds',
-            }),
-          ],
-        }),
-      ],
+      id: 'overviewSection',
+      title: m.overview,
+      children: [personalOverview, childsOverview],
     }),
     buildSection({
       id: 'payment',
@@ -139,29 +209,28 @@ export const Draft: Form = buildForm({
       children: [
         buildMultiField({
           id: 'payment',
-          title: 'Yfirlit yfir greiðslu',
+          title: m.paymentSectionTitle,
           children: [
-            /*
-             * TODO Finish payment section when payment connection is ready
-             */
+            buildCustomField({
+              id: 'paymentCharge',
+              title: '',
+              component: 'PaymentCharge',
+              doesNotRequireAnswer: true,
+            }),
             buildSubmitField({
-              id: 'submit',
+              id: 'payment',
               placement: 'footer',
-              title: 'sick',
+              title: '',
+              refetchApplicationAfterSubmit: true,
               actions: [
                 {
-                  event: 'SUBMIT',
-                  name: 'Greiða',
+                  event: DefaultEvents.PAYMENT,
+                  name: m.proceedToPayment,
                   type: 'primary',
                 },
               ],
             }),
           ],
-        }),
-        buildDescriptionField({
-          id: 'final',
-          title: 'Takk',
-          description: 'Umsókn þín er samþykkt',
         }),
       ],
     }),

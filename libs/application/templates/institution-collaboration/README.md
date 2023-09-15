@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Institution Collaboration
 
 This application helps institutions to request Stafrænt Ísland to collaborate on a new application.
@@ -36,4 +34,5 @@ Fetch development secrets
 
 ## Code owners and maintainers
 
-- [Sendiráðið](https://github.com/orgs/island-is/teams/sendiradid)
+- [Fuglar](https://github.com/orgs/island-is/teams/fuglar)
+- [Norda](https://github.com/orgs/island-is/teams/norda)

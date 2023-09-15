@@ -10,8 +10,8 @@ export class SupportSubCategory {
   @Field({ nullable: true })
   description?: string
 
-  @Field()
-  slug!: string
+  @Field({ nullable: true })
+  slug?: string
 
   @Field()
   importance!: number

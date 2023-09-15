@@ -2,11 +2,8 @@ import {
   PaymentScheduleEmployer,
   PaymentSchedulePayment,
 } from '@island.is/api/schema'
-import {
-  coreMessages,
-  FieldBaseProps,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { coreMessages, getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Label, ReviewGroup } from '@island.is/application/ui-components'
 import {
   AccordionItem,
@@ -22,16 +19,18 @@ import React, { useEffect, useState } from 'react'
 import { overview } from '../../lib/messages'
 import { formatIsk } from '../../lib/paymentPlanUtils'
 import {
-  NatRegResult,
   PaymentPlan,
   Applicant,
   CorrectedEmployer,
+  IdentityResult,
 } from '../../types'
 import { DistributionTable } from './DistributionTabel'
 import * as styles from './Overview.css'
+import * as kennitala from 'kennitala'
 
 export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
+  const isCompany = kennitala.isCompany(application.applicant)
 
   const [bankClaims, setBankClaims] = useState<{
     paymentPlan: string
@@ -45,10 +44,8 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
 
   const [bankClaimsTotalAmount, setBankClaimsTotalAmount] = useState<number>(0)
 
-  const [
-    wageDeductionTotalAmount,
-    setWageDeductionTotalAmount,
-  ] = useState<number>(0)
+  const [wageDeductionTotalAmount, setWageDeductionTotalAmount] =
+    useState<number>(0)
 
   // Debts & payment plans
   const paymentPlans = getValueViaPath(
@@ -56,11 +53,10 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
     'paymentPlans',
   ) as PaymentPlan[]
 
-  // National Registry
-  const nationalRegistry = getValueViaPath(
+  const identityRegistry = getValueViaPath(
     application.externalData,
-    'nationalRegistry',
-  ) as NatRegResult
+    'identity',
+  ) as IdentityResult
 
   // Applicant
   const applicant = getValueViaPath(
@@ -92,9 +88,7 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
     const distributions = Object.entries(paymentPlans)
       .map(([key, value]) => {
         if (value === undefined) return []
-        const distribution = JSON.parse(
-          value.distribution || '',
-        ) as Array<PaymentSchedulePayment>
+        const distribution = value.distribution as Array<PaymentSchedulePayment>
         if (value.id === 'Wagedection') {
           setWageDeduction({ paymentPlan: key, distribution })
           setWageDeductionTotalAmount(parseInt(value.totalAmount, 10))
@@ -144,10 +138,14 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
       <ReviewGroup isEditable editAction={() => editAction('applicantSection')}>
         <GridRow>
           <GridColumn span={['6/12', '5/12']}>
-            {nationalRegistry?.data?.fullName && (
+            {identityRegistry?.data?.name && (
               <Box>
-                <Label>{formatMessage(overview.name)}</Label>
-                <Text>{nationalRegistry?.data?.fullName}</Text>
+                <Label>
+                  {formatMessage(
+                    isCompany ? overview.companyName : overview.name,
+                  )}
+                </Label>
+                <Text>{identityRegistry.data.name}</Text>
               </Box>
             )}
             {applicant?.phoneNumber && (
@@ -160,12 +158,12 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
             )}
           </GridColumn>
           <GridColumn span={['6/12', '5/12']}>
-            {nationalRegistry?.data?.address?.streetAddress &&
-              nationalRegistry?.data?.address?.postalCode &&
-              nationalRegistry?.data?.address?.city && (
+            {identityRegistry?.data?.address?.streetAddress &&
+              identityRegistry?.data?.address?.postalCode &&
+              identityRegistry?.data?.address?.city && (
                 <Box>
                   <Label>{formatMessage(overview.address)}</Label>
-                  <Text>{`${nationalRegistry?.data?.address?.streetAddress}, ${nationalRegistry?.data?.address?.postalCode} ${nationalRegistry?.data?.address?.city}`}</Text>
+                  <Text>{`${identityRegistry?.data?.address?.streetAddress}, ${identityRegistry?.data?.address?.postalCode} ${identityRegistry?.data?.address?.city}`}</Text>
                 </Box>
               )}
             {applicant?.email && (
@@ -195,6 +193,18 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
                 <Text>
                   {correctedEmployer?.nationalId || employerInfo?.nationalId}
                 </Text>
+              </Box>
+            </GridColumn>
+          </GridRow>
+        </ReviewGroup>
+      )}
+      {isCompany && (
+        <ReviewGroup isEditable editAction={() => editAction('info')}>
+          <GridRow>
+            <GridColumn span={['6/12', '5/12']}>
+              <Box>
+                <Label>{formatMessage(overview.companyNationalId)}</Label>
+                <Text>{kennitala.format(application.applicant)}</Text>
               </Box>
             </GridColumn>
           </GridRow>

@@ -13,13 +13,12 @@ export class NewsSyncService implements CmsSyncProvider<INews> {
   processSyncData(entries: processSyncDataInput<INews>) {
     logger.info('Processing sync data for news')
 
-    // only process news that we consider not to be empty and dont have circular structures
+    // only process news that we consider not to be empty
     return entries.filter(
       (entry: Entry<any>): entry is INews =>
         entry.sys.contentType.sys.id === 'news' &&
         !!entry.fields.title &&
-        !!entry.fields.date &&
-        !isCircular(entry),
+        !!entry.fields.date,
     )
   }
 
@@ -29,7 +28,35 @@ export class NewsSyncService implements CmsSyncProvider<INews> {
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapNews(entry)
+          if (isCircular(mapped)) {
+            logger.warn('Circular reference found in news', {
+              id: entry?.sys?.id,
+            })
+            return false
+          }
+
           const content = extractStringsFromObject(mapped.content)
+
+          const tags = [
+            {
+              key: mapped.slug,
+              type: 'slug',
+            },
+            ...mapped.genericTags.map((tag) => ({
+              // add all tags as meta data to this document so we can query by it later
+              key: tag.slug,
+              type: 'genericTag',
+              value: tag.title,
+            })),
+          ]
+
+          if (mapped.organization?.slug) {
+            tags.push({
+              key: mapped.organization.slug,
+              type: 'organization',
+            })
+          }
+
           return {
             _id: mapped.id,
             title: mapped.title,
@@ -38,23 +65,16 @@ export class NewsSyncService implements CmsSyncProvider<INews> {
             type: 'webNews',
             termPool: createTerms([mapped.title, mapped.intro]),
             response: JSON.stringify({ ...mapped, typename: 'News' }),
-            tags: [
-              {
-                key: mapped.slug,
-                type: 'slug',
-              },
-              ...mapped.genericTags.map((tag) => ({
-                // add all tags as meta data to this document so we can query by it later
-                key: tag.slug,
-                type: 'genericTag',
-                value: tag.title,
-              })),
-            ],
+            tags,
             dateCreated: mapped.date,
             dateUpdated: new Date().getTime().toString(),
+            releaseDate: mapped.initialPublishDate || null,
           }
         } catch (error) {
-          logger.warn('Failed to import news', { error: error.message })
+          logger.warn('Failed to import news', {
+            error: error.message,
+            id: entry?.sys?.id,
+          })
           return false
         }
       })

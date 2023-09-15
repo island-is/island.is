@@ -4,7 +4,7 @@ import {
   ReviewApprovalEnum,
   utils,
 } from '@island.is/application/templates/accident-notification'
-import { DocumentApi } from '@island.is/clients/health-insurance-v2'
+import { DocumentApi } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
@@ -29,11 +29,13 @@ import {
   getApplicationAttachmentStatus,
 } from './attachments/attachment.utils'
 import { AccidentNotificationAttachment } from './types/attachments'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 
 const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 
 @Injectable()
-export class AccidentNotificationService {
+export class AccidentNotificationService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @Inject(ACCIDENT_NOTIFICATION_CONFIG)
@@ -41,7 +43,9 @@ export class AccidentNotificationService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly attachmentProvider: AccidentNotificationAttachmentProvider,
     private readonly documentApi: DocumentApi,
-  ) {}
+  ) {
+    super(ApplicationTypes.ACCIDENT_NOTIFICATION)
+  }
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     try {
@@ -74,11 +78,16 @@ export class AccidentNotificationService {
 
       // Request representative review when applicable
       if (utils.shouldRequestReview(answers)) {
+        const token = await this.sharedTemplateAPIService.createAssignToken(
+          application,
+          SIX_MONTHS_IN_SECONDS_EXPIRES,
+        )
+
         await this.sharedTemplateAPIService.assignApplicationThroughEmail(
           (props, assignLink) =>
             generateAssignReviewerEmail(props, assignLink, ihiDocumentID),
           application,
-          SIX_MONTHS_IN_SECONDS_EXPIRES,
+          token,
         )
       }
       return {
@@ -86,7 +95,6 @@ export class AccidentNotificationService {
         sentDocuments: fileHashList,
       }
     } catch (e) {
-      this.logger.error('Error submitting application to SÍ', e)
       // In the case we get a precondition error we present it to the user
       if (e.body && e.body.errorList && e.body.errorList.length > 0) {
         throw new Error(
@@ -108,39 +116,34 @@ export class AccidentNotificationService {
   }
 
   async addAdditionalAttachment({ application }: TemplateApiModuleActionProps) {
-    try {
-      const attachmentStatus = getApplicationAttachmentStatus(application)
-      const requests = attachmentStatusToAttachmentRequests(attachmentStatus)
+    const attachmentStatus = getApplicationAttachmentStatus(application)
+    const requests = attachmentStatusToAttachmentRequests(attachmentStatus)
 
-      const attachments = await this.attachmentProvider.getFiles(
-        requests,
-        application,
-      )
+    const attachments = await this.attachmentProvider.getFiles(
+      requests,
+      application,
+    )
 
-      const newAttachments = filterOutAlreadySentDocuments(
-        attachments,
-        application,
-      )
+    const newAttachments = filterOutAlreadySentDocuments(
+      attachments,
+      application,
+    )
 
-      const documentId = getApplicationDocumentId(application)
+    const documentId = getApplicationDocumentId(application)
 
-      const promises = newAttachments.map((attachment) =>
-        this.sendAttachment(attachment, documentId),
-      )
+    const promises = newAttachments.map((attachment) =>
+      this.sendAttachment(attachment, documentId),
+    )
 
-      const successfulAttachments = (await Promise.all(promises)).filter(
-        (x) => x !== null,
-      )
+    const successfulAttachments = (await Promise.all(promises)).filter(
+      (x) => x !== null,
+    )
 
-      return {
-        sentDocuments: [
-          ...getAddAttachmentSentDocumentHashList(application),
-          ...successfulAttachments,
-        ],
-      }
-    } catch (e) {
-      this.logger.error('Error adding attachment to SÍ', e)
-      throw new Error('Villa kom upp við að bæta við viðhengi.')
+    return {
+      sentDocuments: [
+        ...getAddAttachmentSentDocumentHashList(application),
+        ...successfulAttachments,
+      ],
     }
   }
 
@@ -169,30 +172,24 @@ export class AccidentNotificationService {
   }
 
   async reviewApplication({ application }: TemplateApiModuleActionProps) {
-    try {
-      const documentId = getApplicationDocumentId(application)
+    const documentId = getApplicationDocumentId(application)
 
-      const isRepresentativeOfCompanyOrInstitue = utils.isRepresentativeOfCompanyOrInstitute(
-        application.answers,
-      )
-      const reviewApproval = getValueViaPath(
-        application.answers,
-        'reviewApproval',
-      ) as ReviewApprovalEnum
-      const reviewComment =
-        getValueViaPath(application.answers, 'reviewComment') || ''
-      await this.documentApi.documentSendConfirmation({
-        ihiDocumentID: documentId,
-        confirmationIN: {
-          confirmationType:
-            reviewApproval === ReviewApprovalEnum.APPROVED ? 1 : 2,
-          confirmationParty: isRepresentativeOfCompanyOrInstitue ? 1 : 2,
-          objection: reviewComment as string,
-        },
-      })
-    } catch (e) {
-      this.logger.error('Error reviewing application to SÍ', e)
-      throw new Error('Villa kom upp við samþykki á umsókn.')
-    }
+    const isRepresentativeOfCompanyOrInstitue =
+      utils.isRepresentativeOfCompanyOrInstitute(application.answers)
+    const reviewApproval = getValueViaPath(
+      application.answers,
+      'reviewApproval',
+    ) as ReviewApprovalEnum
+    const reviewComment =
+      getValueViaPath(application.answers, 'reviewComment') || ''
+    await this.documentApi.documentSendConfirmation({
+      ihiDocumentID: documentId,
+      confirmationIN: {
+        confirmationType:
+          reviewApproval === ReviewApprovalEnum.APPROVED ? 1 : 2,
+        confirmationParty: isRepresentativeOfCompanyOrInstitue ? 1 : 2,
+        objection: reviewComment as string,
+      },
+    })
   }
 }

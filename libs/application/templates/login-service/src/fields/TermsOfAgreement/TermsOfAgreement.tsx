@@ -1,10 +1,13 @@
 import React, { FC } from 'react'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, Link } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { terms } from '../../lib/messages'
 
-export const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
+export const TermsOfAgreement: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
 
   return (

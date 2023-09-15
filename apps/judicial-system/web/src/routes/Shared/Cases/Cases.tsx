@@ -1,128 +1,175 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useQuery, useLazyQuery } from '@apollo/client'
-import router from 'next/router'
+import partition from 'lodash/partition'
+import { useQuery } from '@apollo/client'
 
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
-import {
-  DropdownMenu,
-  Logo,
-} from '@island.is/judicial-system-web/src/components'
+import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   CaseState,
   CaseTransition,
   completedCaseStates,
-  InstitutionType,
-  NotificationType,
-  isRestrictionCase,
-  UserRole,
+  isCourtRole,
+  isIndictmentCase,
+  isProsecutionRole,
 } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
+import {
+  core,
+  errors,
+  tables,
+  titles,
+} from '@island.is/judicial-system-web/messages'
+import {
+  DropdownMenu,
+  Logo,
+  PageHeader,
+  PastCasesTable,
+  SectionHeading,
+  SharedPageLayout,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+import { TableSkeleton } from '@island.is/judicial-system-web/src/components/Table'
+import {
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseData } from '@island.is/judicial-system-web/src/types'
-import { requests as m } from '@island.is/judicial-system-web/messages/Core/requests'
-import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSections'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
-import type { Case } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 import ActiveCases from './ActiveCases'
-import PastCases from './PastCases'
-import TableSkeleton from './TableSkeleton'
+import { FilterOption, useFilter } from './useFilter'
+import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
+const CreateCaseButton: React.FC<
+  React.PropsWithChildren<{
+    user: User
+  }>
+> = ({ user }) => {
+  const { formatMessage } = useIntl()
+
+  const items = useMemo(() => {
+    if (user.role === UserRole.PROSECUTOR_REPRESENTATIVE) {
+      return [
+        {
+          href: constants.CREATE_INDICTMENT_ROUTE,
+          title: capitalize(formatMessage(core.indictment)),
+        },
+      ]
+    }
+
+    if (user.role === UserRole.PROSECUTOR) {
+      return [
+        {
+          href: constants.CREATE_INDICTMENT_ROUTE,
+          title: capitalize(formatMessage(core.indictment)),
+        },
+        {
+          href: constants.CREATE_RESTRICTION_CASE_ROUTE,
+          title: capitalize(formatMessage(core.restrictionCase)),
+        },
+        {
+          href: constants.CREATE_TRAVEL_BAN_ROUTE,
+          title: capitalize(formatMessage(core.travelBan)),
+        },
+        {
+          href: constants.CREATE_INVESTIGATION_CASE_ROUTE,
+          title: capitalize(formatMessage(core.investigationCase)),
+        },
+      ]
+    }
+
+    return []
+  }, [formatMessage, user?.role])
+
+  return (
+    <Box display={['none', 'none', 'block']}>
+      <DropdownMenu
+        dataTestId="createCaseDropdown"
+        menuLabel="Tegund kröfu"
+        icon="add"
+        items={items}
+        title={formatMessage(m.createCaseButton)}
+      />
+    </Box>
+  )
+}
+
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
-export const Cases: React.FC = () => {
-  const [activeCases, setActiveCases] = useState<Case[]>()
-  const [pastCases, setPastCases] = useState<Case[]>()
-
+export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
+  const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-  const {
-    findLastValidStep,
-    getCourtSections,
-    getInvestigationCaseCourtSections,
-    getCustodyAndTravelBanProsecutorSection,
-    getInvestigationCaseProsecutorSection,
-  } = useSections()
+  const [isFiltering, setIsFiltering] = useState<boolean>(false)
 
-  const isProsecutor = user?.role === UserRole.PROSECUTOR
-  const isJudge = user?.role === UserRole.JUDGE
-  const isRegistrar = user?.role === UserRole.REGISTRAR
-  const isHighCourtUser = user?.institution?.type === InstitutionType.HIGH_COURT
-  const isPrisonAdminUser =
-    user?.institution?.type === InstitutionType.PRISON_ADMIN
-  const isPrisonUser = user?.institution?.type === InstitutionType.PRISON
-
-  const { data, error, loading } = useQuery(CasesQuery, {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
-
-  const [getCaseToOpen] = useLazyQuery<CaseData>(CaseQuery, {
-    fetchPolicy: 'no-cache',
-    onCompleted: (caseData) => {
-      if (user?.role && caseData?.case) {
-        openCase(caseData.case, user.role)
-      }
-    },
-  })
+  const isProsecutionUser = user && isProsecutionRole(user?.role)
+  const isDistrictCourtUser = user && isCourtRole(user?.role)
 
   const {
     transitionCase,
     isTransitioningCase,
-    sendNotification,
     isSendingNotification,
+    getCaseToOpen,
   } = useCase()
-  const { formatMessage } = useIntl()
+
+  const { data, error, loading, refetch } = useQuery<{
+    cases?: CaseListEntry[]
+  }>(CasesQuery, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
+
+  useEffect(() => {
+    const loadingTimeout = setTimeout(() => {
+      setIsFiltering(false)
+    }, 250)
+
+    return () => {
+      clearTimeout(loadingTimeout)
+    }
+  }, [isFiltering])
 
   const resCases = data?.cases
 
-  useEffect(() => {
-    if (resCases && !activeCases) {
-      // Remove deleted cases
-      const casesWithoutDeleted = resCases.filter((c: Case) => {
+  const [allActiveCases, allPastCases]: [CaseListEntry[], CaseListEntry[]] =
+    useMemo(() => {
+      if (!resCases) {
+        return [[], []]
+      }
+
+      const casesWithoutDeleted = resCases.filter((c: CaseListEntry) => {
         return c.state !== CaseState.DELETED
       })
 
-      setActiveCases(
-        casesWithoutDeleted.filter((c: Case) => {
-          return isPrisonAdminUser || isPrisonUser
-            ? !c.isValidToDateInThePast
-            : !completedCaseStates.includes(c.state)
-        }),
-      )
+      return partition(casesWithoutDeleted, (c) => {
+        if (isIndictmentCase(c.type) || !isDistrictCourtUser) {
+          return !completedCaseStates.includes(c.state)
+        } else {
+          return !(
+            completedCaseStates.includes(c.state) && c.rulingSignatureDate
+          )
+        }
+      })
+    }, [isDistrictCourtUser, resCases])
 
-      setPastCases(
-        casesWithoutDeleted.filter((c: Case) => {
-          return isPrisonAdminUser || isPrisonUser
-            ? c.isValidToDateInThePast
-            : completedCaseStates.includes(c.state)
-        }),
-      )
-    }
-  }, [
+  const {
+    filter,
+    setFilter,
+    options: filterOptions,
     activeCases,
-    setActiveCases,
-    isProsecutor,
-    isJudge,
-    isRegistrar,
-    resCases,
-    isPrisonAdminUser,
-    isPrisonUser,
-  ])
+    pastCases,
+  } = useFilter(allActiveCases, allPastCases, user)
 
-  const deleteCase = async (caseToDelete: Case) => {
+  const deleteCase = async (caseToDelete: CaseListEntry) => {
     if (
       caseToDelete.state === CaseState.NEW ||
       caseToDelete.state === CaseState.DRAFT ||
       caseToDelete.state === CaseState.SUBMITTED ||
       caseToDelete.state === CaseState.RECEIVED
     ) {
-      await sendNotification(caseToDelete.id, NotificationType.REVOKED)
-      await transitionCase(caseToDelete, CaseTransition.DELETE)
+      await transitionCase(caseToDelete.id, CaseTransition.DELETE)
+      refetch()
     }
   }
 
@@ -132,204 +179,82 @@ export const Cases: React.FC = () => {
     })
   }
 
-  const openCase = (caseToOpen: Case, role: UserRole) => {
-    let routeTo = null
-
-    if (
-      caseToOpen.state === CaseState.ACCEPTED ||
-      caseToOpen.state === CaseState.REJECTED ||
-      caseToOpen.state === CaseState.DISMISSED
-    ) {
-      routeTo = `${Constants.SIGNED_VERDICT_OVERVIEW}/${caseToOpen.id}`
-    } else if (role === UserRole.JUDGE || role === UserRole.REGISTRAR) {
-      if (isRestrictionCase(caseToOpen.type)) {
-        routeTo = findLastValidStep(getCourtSections(caseToOpen, user)).href
-      } else {
-        routeTo = findLastValidStep(
-          getInvestigationCaseCourtSections(caseToOpen, user),
-        ).href
-      }
-    } else {
-      if (isRestrictionCase(caseToOpen.type)) {
-        if (
-          caseToOpen.state === CaseState.RECEIVED ||
-          caseToOpen.state === CaseState.SUBMITTED
-        ) {
-          routeTo = `${Constants.STEP_SIX_ROUTE}/${caseToOpen.id}`
-        } else {
-          routeTo = findLastValidStep(
-            getCustodyAndTravelBanProsecutorSection(caseToOpen),
-          ).href
-        }
-      } else {
-        if (
-          caseToOpen.state === CaseState.RECEIVED ||
-          caseToOpen.state === CaseState.SUBMITTED
-        ) {
-          routeTo = `${Constants.IC_POLICE_CONFIRMATION_ROUTE}/${caseToOpen.id}`
-        } else {
-          routeTo = findLastValidStep(
-            getInvestigationCaseProsecutorSection(caseToOpen),
-          ).href
-        }
-      }
-    }
-
-    if (routeTo) router.push(routeTo)
-  }
-
   return (
-    <div className={styles.casesContainer}>
+    <SharedPageLayout>
       <PageHeader title={formatMessage(titles.shared.cases)} />
-      {loading ? (
-        <TableSkeleton />
-      ) : (
-        user && (
-          <div className={styles.logoContainer}>
-            <Logo />
-            {isProsecutor && (
-              <DropdownMenu
-                menuLabel="Tegund kröfu"
-                icon="add"
-                items={[
-                  {
-                    href: Constants.STEP_ONE_CUSTODY_REQUEST_ROUTE,
-                    title: 'Gæsluvarðhald',
-                  },
-                  {
-                    href: Constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
-                    title: 'Farbann',
-                  },
-                  {
-                    href: Constants.NEW_IC_ROUTE,
-                    title: 'Rannsóknarheimild',
-                  },
-                ]}
-                title="Stofna nýja kröfu"
-              />
-            )}
-          </div>
-        )
-      )}
-      {activeCases || pastCases ? (
-        <>
-          {!isHighCourtUser && (
-            <>
-              <Box marginBottom={3}>
-                {/**
-                 * This should be a <caption> tag inside the table but
-                 * Safari has a bug that doesn't allow that. See more
-                 * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
-                 */}
-                <Text variant="h3" id="activeCasesTableCaption">
-                  {formatMessage(
-                    isPrisonUser
-                      ? m.sections.activeRequests.prisonStaffUsers.title
-                      : isPrisonAdminUser
-                      ? m.sections.activeRequests.prisonStaffUsers
-                          .prisonAdminTitle
-                      : m.sections.activeRequests.title,
-                  )}
-                </Text>
-              </Box>
-              <Box marginBottom={15}>
-                {activeCases && activeCases.length > 0 ? (
-                  isPrisonUser || isPrisonAdminUser ? (
-                    <PastCases
-                      cases={activeCases}
-                      onRowClick={handleRowClick}
-                      isHighCourtUser={false}
-                    />
-                  ) : (
-                    <ActiveCases
-                      cases={activeCases}
-                      onRowClick={handleRowClick}
-                      isDeletingCase={
-                        isTransitioningCase || isSendingNotification
-                      }
-                      onDeleteCase={deleteCase}
-                      setActiveCases={setActiveCases}
-                    />
-                  )
-                ) : (
-                  <div className={styles.infoContainer}>
-                    <AlertMessage
-                      title={formatMessage(
-                        isPrisonUser || isPrisonAdminUser
-                          ? m.sections.activeRequests.prisonStaffUsers
-                              .infoContainerTitle
-                          : m.sections.activeRequests.infoContainerTitle,
-                      )}
-                      message={formatMessage(
-                        isPrisonUser || isPrisonAdminUser
-                          ? m.sections.activeRequests.prisonStaffUsers
-                              .infoContainerText
-                          : m.sections.activeRequests.infoContainerText,
-                      )}
-                      type="info"
-                    />
-                  </div>
-                )}
-              </Box>
-            </>
-          )}
-          <Box marginBottom={3}>
-            {/**
-             * This should be a <caption> tag inside the table but
-             * Safari has a bug that doesn't allow that. See more
-             * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
-             */}
-            <Text variant="h3" id="activeCasesTableCaption">
-              {formatMessage(
-                isHighCourtUser
-                  ? m.sections.pastRequests.highCourtUsers.title
-                  : isPrisonUser
-                  ? m.sections.pastRequests.prisonStaffUsers.title
-                  : isPrisonAdminUser
-                  ? m.sections.pastRequests.prisonStaffUsers.prisonAdminTitle
-                  : m.sections.pastRequests.title,
-              )}
-            </Text>
-          </Box>
-          {pastCases && pastCases.length > 0 ? (
-            <PastCases
-              cases={pastCases}
-              onRowClick={handleRowClick}
-              isHighCourtUser={isHighCourtUser}
-            />
-          ) : (
-            <div className={styles.infoContainer}>
-              <AlertMessage
-                title={formatMessage(
-                  isPrisonAdminUser || isPrisonUser
-                    ? m.sections.activeRequests.prisonStaffUsers
-                        .infoContainerTitle
-                    : m.sections.pastRequests.infoContainerTitle,
-                )}
-                message={formatMessage(
-                  isPrisonAdminUser || isPrisonUser
-                    ? m.sections.activeRequests.prisonStaffUsers
-                        .infoContainerText
-                    : m.sections.pastRequests.infoContainerText,
-                )}
-                type="info"
-              />
-            </div>
-          )}
-        </>
-      ) : error ? (
+      <div className={styles.logoContainer}>
+        <Logo />
+        {isProsecutionUser ? <CreateCaseButton user={user} /> : null}
+      </div>
+
+      <Box marginBottom={[2, 5, 5]} className={styles.filterContainer}>
+        <Select
+          name="filter-cases"
+          options={filterOptions}
+          label={formatMessage(m.filter.label)}
+          onChange={(value) => {
+            setIsFiltering(true)
+            setFilter(value as FilterOption)
+          }}
+          value={filter}
+        />
+      </Box>
+
+      {error ? (
         <div
           className={styles.infoContainer}
           data-testid="custody-requests-error"
         >
           <AlertMessage
-            title="Ekki tókst að sækja gögn úr gagnagrunni"
-            message="Ekki tókst að ná sambandi við gagnagrunn. Málið hefur verið skráð og viðeigandi aðilar látnir vita. Vinsamlega reynið aftur síðar."
+            title={formatMessage(errors.failedToFetchDataFromDbTitle)}
+            message={formatMessage(errors.failedToFetchDataFromDbMessage)}
             type="error"
           />
         </div>
-      ) : null}
-    </div>
+      ) : (
+        <>
+          <SectionHeading title={formatMessage(m.activeRequests.title)} />
+          <Box marginBottom={[5, 5, 12]}>
+            {loading || isFiltering ? (
+              <TableSkeleton />
+            ) : activeCases.length > 0 ? (
+              <ActiveCases
+                cases={activeCases}
+                onRowClick={handleRowClick}
+                isDeletingCase={isTransitioningCase || isSendingNotification}
+                onDeleteCase={deleteCase}
+              />
+            ) : (
+              <div className={styles.infoContainer}>
+                <AlertMessage
+                  type="info"
+                  title={formatMessage(m.activeRequests.infoContainerTitle)}
+                  message={formatMessage(m.activeRequests.infoContainerText)}
+                />
+              </div>
+            )}
+          </Box>
+        </>
+      )}
+
+      <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
+      {loading || pastCases.length > 0 ? (
+        <PastCasesTable
+          cases={pastCases}
+          onRowClick={handleRowClick}
+          loading={loading || isFiltering}
+          testid="pastCasesTable"
+        />
+      ) : (
+        <div className={styles.infoContainer}>
+          <AlertMessage
+            type="info"
+            title={formatMessage(m.pastRequests.infoContainerTitle)}
+            message={formatMessage(m.pastRequests.infoContainerText)}
+          />
+        </div>
+      )}
+    </SharedPageLayout>
   )
 }
 

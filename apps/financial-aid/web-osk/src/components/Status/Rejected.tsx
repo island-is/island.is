@@ -80,16 +80,16 @@ const Rejected = ({
 
           <Text>
             Bent skal á að unnt er að skjóta ákvörðun þessari til
-            áfrýjunarnefndar þíns sveitarfélags. Skal það gert skriflega og
-            innan fjögurra vikna. Fyrir frekari upplýsingar um málskot hafðu
+            áfrýjunarnefndar þíns sveitarfélags. Skal það gert skriflega og
+            innan fjögurra vikna. Fyrir frekari upplýsingar um málskot hafðu
             samband með tölvupósti á netfangið{' '}
             <a href={`mailto:${municipality?.email}`} rel="noreferrer noopener">
               <span className="linkInText">{municipality?.email}</span>
             </a>
-            . 
+            .
             <br />
             <br />
-            Ákvörðun ráðsins má síðan skjóta til úrskurðarnefndar velferðarmála,
+            Ákvörðun ráðsins má síðan skjóta til úrskurðarnefndar velferðarmála,
             Katrínartúni 2, 105 Reykjavík innan þriggja mánaða.
           </Text>
         </>

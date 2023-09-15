@@ -20,12 +20,15 @@
     "graphql",
     "pg",
     "winston",
+    "util-deprecate",
     "source-map-resolve",
     "atob",
     "logform",
     "pg-native",
     "form-data",
-    "sequelize"
+    "sequelize",
+    "lru-cache",
+    "swagger-ui-dist"
   ],
   "keepNames": true
 }

@@ -1,31 +1,35 @@
-import { Query, Parent, Resolver, ResolveField } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
-import { IdsUserGuard, CurrentUser } from '@island.is/auth-nest-tools'
-import type { ApiScope as IApiScope } from '@island.is/clients/auth-public-api'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 
-import { ApiScopeService } from '../apiScope.service'
-import { ApiScope } from '../models'
+import { ApiScopesInput } from '../dto/apiScopes.input'
+import { ApiScopeService } from '../services/apiScope.service'
+import { ApiScope } from '../models/apiScope.model'
+import { ScopeTreeNode } from '../models/scopeTreeNode.model'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => ApiScope)
 export class ApiScopeResolver {
   constructor(private apiScope: ApiScopeService) {}
 
-  @Query(() => [ApiScope], { name: 'authApiScopes' })
-  getApiScopes(@CurrentUser() user: User): Promise<IApiScope[]> {
-    return this.apiScope.getApiScopes(user)
+  @Query(() => [ApiScope], {
+    name: 'authApiScopes',
+    deprecationReason: 'Should use authScopeTree instead.',
+  })
+  getApiScopes(
+    @CurrentUser() user: User,
+    @Args('input') input: ApiScopesInput,
+  ): Promise<ApiScope[]> {
+    return this.apiScope.getApiScopes(user, input)
   }
 
-  @ResolveField(() => String, { nullable: true, name: 'groupName' })
-  resolveGroupName(@Parent() apiScope: IApiScope): string | undefined {
-    return apiScope.group?.displayName
-  }
-
-  @ResolveField('type')
-  resolveType(@Parent() apiScope: IApiScope): string {
-    // TODO: waiting on implementation
-    return 'ApiScope'
+  @Query(() => [ScopeTreeNode], { name: 'authScopeTree' })
+  getScopeTree(
+    @CurrentUser() user: User,
+    @Args('input') input: ApiScopesInput,
+  ): Promise<Array<typeof ScopeTreeNode>> {
+    return this.apiScope.getScopeTree(user, input)
   }
 }

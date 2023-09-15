@@ -1,568 +1,1342 @@
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
 
 import {
-  Case,
-  CaseType,
-  isRestrictionCase,
-  User,
-} from '@island.is/judicial-system/types'
-import { core } from '@island.is/judicial-system-web/messages'
-import { caseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
-import { sections } from '@island.is/judicial-system-web/messages/Core/sections'
-import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
+  courtIndictmentRoutes,
+  courtInvestigationCasesRoutes,
+  courtOfAppealRoutes,
+  courtRestrictionCasesRoutes,
+  prosecutorIndictmentRoutes,
+  prosecutorInvestigationCasesRoutes,
+  prosecutorRestrictionCasesRoutes,
+} from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import * as Constants from '@island.is/judicial-system/consts'
 import {
-  isAccusedStepValidRC,
-  isCourtHearingArrangemenstStepValidRC,
-  isCourtHearingArrangementsStepValidIC,
-  isCourtRecordStepValidIC,
-  isCourtRecordStepValidRC,
-  isDefendantStepValidIC,
-  isHearingArrangementsStepValidIC,
-  isHearingArrangementsStepValidRC,
-  isReceptionAndAssignmentStepValidRC,
-  isReceptionAndAssignmentStepValidIC,
-  isPoliceDemandsStepValidIC,
-  isPoliceDemandsStepValidRC,
-  isPoliceReportStepValidIC,
-  isPoliceReportStepValidRC,
-  isRulingValidIC,
-  isRulingValidRC,
-} from '../../validate'
+  CaseAppealState,
+  CaseState,
+  completedCaseStates,
+  Feature,
+  isCourtRole,
+  isExtendedCourtRole,
+  isIndictmentCase,
+  isInvestigationCase,
+  isRestrictionCase,
+} from '@island.is/judicial-system/types'
+import { core, sections } from '@island.is/judicial-system-web/messages'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
+import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
+import { caseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
+import {
+  CaseType,
+  Gender,
+  InstitutionType,
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-interface Section {
-  name: string
-  children: {
-    type: string
-    name: string
-    href: string | undefined
-  }[]
-}
+import { stepValidations, stepValidationsType } from '../../formHelper'
+import { isTrafficViolationCase } from '../../stepHelper'
 
-const useSections = () => {
-  const { formatMessage } = useIntl()
-
-  const findLastValidStep = (section: Section) => {
-    const filterValidSteps = section.children.filter((c) => c.href)
-    return filterValidSteps[filterValidSteps.length - 1]
+const validateFormStepper = (
+  isActiveSubSectionValid: boolean,
+  steps: string[],
+  workingCase: Case,
+) => {
+  if (!isActiveSubSectionValid) {
+    return false
   }
 
-  const getCustodyAndTravelBanProsecutorSection = (
+  const validationForStep = stepValidations()
+
+  return steps.some(
+    (step) =>
+      validationForStep[step as keyof typeof validationForStep](workingCase) ===
+      false,
+  )
+    ? false
+    : true
+}
+
+const useSections = (
+  isValid = true,
+  onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>,
+) => {
+  const { formatMessage } = useIntl()
+  const router = useRouter()
+  const { features } = useContext(FeatureContext)
+
+  const getRestrictionCaseProsecutorSection = (
     workingCase: Case,
-    activeSubSection?: number,
-  ): Section => {
-    const { type, id } = workingCase
+    user?: User,
+  ): RouteSection => {
+    const { type, id, parentCase } = workingCase
+    const routeIndex =
+      router.pathname.includes(constants.CREATE_RESTRICTION_CASE_ROUTE) ||
+      router.pathname.includes(constants.CREATE_TRAVEL_BAN_ROUTE)
+        ? 0
+        : prosecutorRestrictionCasesRoutes.findIndex(
+            /**
+             * We do .slice here because router.pathname is /something/[:id]
+             * and we want to remove the /[:id] part
+             */
+            (route) => route === router.pathname.slice(0, -5),
+          )
 
     return {
-      name: formatMessage(
-        type === CaseType.CUSTODY
-          ? sections.custodyAndTravelBanProsecutorSection.custodyTitle
-          : sections.custodyAndTravelBanProsecutorSection.travelBanTitle,
-      ),
-      children: [
-        {
-          type: 'SUB_SECTION',
-          name: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
-          href: `${Constants.STEP_ONE_ROUTE}/${id}`,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(
-            sections.custodyAndTravelBanProsecutorSection.hearingArrangements,
-          ),
-          href:
-            (activeSubSection && activeSubSection > 1) ||
-            isAccusedStepValidRC(workingCase)
-              ? `${Constants.STEP_TWO_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(
-            sections.custodyAndTravelBanProsecutorSection.policeDemands,
-          ),
-          href:
-            (activeSubSection && activeSubSection > 2) ||
-            (isAccusedStepValidRC(workingCase) &&
-              isHearingArrangementsStepValidRC(workingCase))
-              ? `${Constants.STEP_THREE_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(
-            sections.custodyAndTravelBanProsecutorSection.policeReport,
-          ),
-          href:
-            (activeSubSection && activeSubSection > 3) ||
-            (isAccusedStepValidRC(workingCase) &&
-              isHearingArrangementsStepValidRC(workingCase) &&
-              isPoliceDemandsStepValidRC(workingCase))
-              ? `${Constants.STEP_FOUR_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(
-            sections.custodyAndTravelBanProsecutorSection.caseFiles,
-          ),
-          href:
-            (activeSubSection && activeSubSection > 4) ||
-            (isAccusedStepValidRC(workingCase) &&
-              isHearingArrangementsStepValidRC(workingCase) &&
-              isPoliceDemandsStepValidRC(workingCase) &&
-              isPoliceReportStepValidRC(workingCase))
-              ? `${Constants.STEP_FIVE_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(
-            sections.custodyAndTravelBanProsecutorSection.overview,
-          ),
-          href:
-            isAccusedStepValidRC(workingCase) &&
-            isHearingArrangementsStepValidRC(workingCase) &&
-            isPoliceDemandsStepValidRC(workingCase) &&
-            isPoliceReportStepValidRC(workingCase)
-              ? `${Constants.STEP_SIX_ROUTE}/${id}`
-              : undefined,
-        },
-      ],
+      name: formatMessage(sections.restrictionCaseProsecutorSection.caseTitle, {
+        caseType: type,
+      }),
+      isActive:
+        user?.role === UserRole.PROSECUTOR &&
+        isRestrictionCase(type) &&
+        !completedCaseStates.includes(workingCase.state) &&
+        !parentCase,
+      children:
+        user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
+          ? []
+          : [
+              {
+                name: capitalize(
+                  formatMessage(core.defendant, {
+                    suffix: 'i',
+                  }),
+                ),
+                isActive: routeIndex === 0,
+                href: `${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${id}`,
+              },
+              {
+                name: formatMessage(
+                  sections.restrictionCaseProsecutorSection.hearingArrangements,
+                ),
+                href: `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
+                isActive: routeIndex === 1,
+                onClick:
+                  routeIndex !== 1 &&
+                  validateFormStepper(
+                    isValid,
+                    [
+                      workingCase.type === CaseType.CUSTODY
+                        ? constants.RESTRICTION_CASE_DEFENDANT_ROUTE
+                        : constants.CREATE_TRAVEL_BAN_ROUTE,
+                    ],
+                    workingCase,
+                  ) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+                        )
+                    : undefined,
+              },
+              {
+                name: formatMessage(
+                  sections.restrictionCaseProsecutorSection.policeDemands,
+                ),
+                href: `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${id}`,
+                isActive: routeIndex === 2,
+                onClick:
+                  routeIndex !== 2 &&
+                  validateFormStepper(
+                    isValid,
+                    [
+                      constants.RESTRICTION_CASE_DEFENDANT_ROUTE,
+                      constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+                    ],
+                    workingCase,
+                  ) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
+                        )
+                    : undefined,
+              },
+              {
+                name: formatMessage(
+                  sections.restrictionCaseProsecutorSection.policeReport,
+                ),
+                href: `${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${id}`,
+                isActive: routeIndex === 3,
+                onClick:
+                  routeIndex !== 3 &&
+                  validateFormStepper(
+                    isValid,
+                    [
+                      constants.RESTRICTION_CASE_DEFENDANT_ROUTE,
+                      constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+                      constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
+                    ],
+                    workingCase,
+                  ) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE,
+                        )
+                    : undefined,
+              },
+              {
+                name: formatMessage(
+                  sections.restrictionCaseProsecutorSection.caseFiles,
+                ),
+                href: `${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${id}`,
+                isActive: routeIndex === 4,
+                onClick:
+                  routeIndex !== 4 &&
+                  validateFormStepper(
+                    isValid,
+                    [
+                      constants.RESTRICTION_CASE_DEFENDANT_ROUTE,
+                      constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+                      constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
+                      constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE,
+                    ],
+                    workingCase,
+                  ) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          constants.RESTRICTION_CASE_CASE_FILES_ROUTE,
+                        )
+                    : undefined,
+              },
+              {
+                name: formatMessage(
+                  sections.restrictionCaseProsecutorSection.overview,
+                ),
+                href: `${constants.RESTRICTION_CASE_OVERVIEW_ROUTE}/${id}`,
+                isActive: routeIndex === 5,
+                onClick:
+                  routeIndex !== 5 &&
+                  validateFormStepper(
+                    isValid,
+                    [
+                      constants.RESTRICTION_CASE_DEFENDANT_ROUTE,
+                      constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+                      constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
+                      constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE,
+                      constants.RESTRICTION_CASE_CASE_FILES_ROUTE,
+                    ],
+                    workingCase,
+                  ) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          constants.RESTRICTION_CASE_OVERVIEW_ROUTE,
+                        )
+                    : undefined,
+              },
+            ],
     }
   }
 
   const getInvestigationCaseProsecutorSection = (
     workingCase: Case,
-    activeSubSection?: number,
-  ): Section => {
-    const { id } = workingCase
+    user?: User,
+  ): RouteSection => {
+    const { id, type, parentCase } = workingCase
+    const routeIndex = router.pathname.includes(
+      constants.CREATE_INVESTIGATION_CASE_ROUTE,
+    )
+      ? 0
+      : prosecutorInvestigationCasesRoutes.findIndex(
+          /**
+           * We do .slice here because router.pathname is /something/[:id]
+           * and we want to remove the /[:id] part
+           */
+          (route) => route === router.pathname.slice(0, -5),
+        )
 
     return {
       name: formatMessage(sections.investigationCaseProsecutorSection.title),
-      children: [
-        {
-          type: 'SUB_SECTION',
-          name: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
-          href: `${Constants.IC_DEFENDANT_ROUTE}/${id}`,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(
-            sections.investigationCaseProsecutorSection.hearingArrangements,
-          ),
-          href:
-            (activeSubSection && activeSubSection > 1) ||
-            isDefendantStepValidIC(workingCase)
-              ? `${Constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(
-            sections.investigationCaseProsecutorSection.policeDemands,
-          ),
-          href:
-            (activeSubSection && activeSubSection > 2) ||
-            (isDefendantStepValidIC(workingCase) &&
-              isHearingArrangementsStepValidIC(workingCase))
-              ? `${Constants.IC_POLICE_DEMANDS_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(
-            sections.investigationCaseProsecutorSection.policeReport,
-          ),
-          href:
-            (activeSubSection && activeSubSection > 3) ||
-            (isDefendantStepValidIC(workingCase) &&
-              isHearingArrangementsStepValidIC(workingCase) &&
-              isPoliceDemandsStepValidIC(workingCase))
-              ? `${Constants.IC_POLICE_REPORT_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(
-            sections.investigationCaseProsecutorSection.caseFiles,
-          ),
-          href:
-            (activeSubSection && activeSubSection > 4) ||
-            (isDefendantStepValidIC(workingCase) &&
-              isHearingArrangementsStepValidIC(workingCase) &&
-              isPoliceDemandsStepValidIC(workingCase))
-              ? `${Constants.IC_CASE_FILES_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(
-            sections.investigationCaseProsecutorSection.overview,
-          ),
-          href:
-            isDefendantStepValidIC(workingCase) &&
-            isHearingArrangementsStepValidIC(workingCase) &&
-            isPoliceDemandsStepValidIC(workingCase)
-              ? `${Constants.IC_POLICE_CONFIRMATION_ROUTE}/${id}`
-              : undefined,
-        },
-      ],
+      isActive:
+        user?.role === UserRole.PROSECUTOR &&
+        isInvestigationCase(type) &&
+        !completedCaseStates.includes(workingCase.state) &&
+        !parentCase,
+      children:
+        user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
+          ? []
+          : [
+              {
+                name: capitalize(
+                  formatMessage(core.defendant, { suffix: 'i' }),
+                ),
+                isActive: routeIndex === 0,
+                href: `${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${id}`,
+              },
+              {
+                name: formatMessage(
+                  sections.investigationCaseProsecutorSection
+                    .hearingArrangements,
+                ),
+                isActive: routeIndex === 1,
+                href: `${constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
+                onClick:
+                  routeIndex !== 1 &&
+                  validateFormStepper(
+                    isValid,
+                    [constants.INVESTIGATION_CASE_DEFENDANT_ROUTE],
+                    workingCase,
+                  ) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+                        )
+                    : undefined,
+              },
+              {
+                name: formatMessage(
+                  sections.investigationCaseProsecutorSection.policeDemands,
+                ),
+                isActive: routeIndex === 2,
+                href: `${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${id}`,
+                onClick:
+                  routeIndex !== 2 &&
+                  validateFormStepper(
+                    isValid,
+                    [
+                      constants.INVESTIGATION_CASE_DEFENDANT_ROUTE,
+                      constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+                    ],
+                    workingCase,
+                  ) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
+                        )
+                    : undefined,
+              },
+              {
+                name: formatMessage(
+                  sections.investigationCaseProsecutorSection.policeReport,
+                ),
+                href: `${constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE}/${id}`,
+                isActive: routeIndex === 3,
+                onClick:
+                  routeIndex !== 3 &&
+                  validateFormStepper(
+                    isValid,
+                    [
+                      constants.INVESTIGATION_CASE_DEFENDANT_ROUTE,
+                      constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+                      constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
+                    ],
+                    workingCase,
+                  ) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE,
+                        )
+                    : undefined,
+              },
+              {
+                name: formatMessage(
+                  sections.investigationCaseProsecutorSection.caseFiles,
+                ),
+                href: `${constants.INVESTIGATION_CASE_CASE_FILES_ROUTE}/${id}`,
+                isActive: routeIndex === 4,
+                onClick:
+                  routeIndex !== 4 &&
+                  validateFormStepper(
+                    isValid,
+                    [
+                      constants.INVESTIGATION_CASE_DEFENDANT_ROUTE,
+                      constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+                      constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
+                      constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE,
+                    ],
+                    workingCase,
+                  ) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          constants.INVESTIGATION_CASE_CASE_FILES_ROUTE,
+                        )
+                    : undefined,
+              },
+              {
+                name: formatMessage(
+                  sections.investigationCaseProsecutorSection.overview,
+                ),
+                href: `${constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/${id}`,
+                isActive: routeIndex === 5,
+                onClick:
+                  routeIndex !== 5 &&
+                  validateFormStepper(
+                    isValid,
+                    [
+                      constants.INVESTIGATION_CASE_DEFENDANT_ROUTE,
+                      constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+                      constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
+                      constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE,
+                      constants.INVESTIGATION_CASE_CASE_FILES_ROUTE,
+                    ],
+                    workingCase,
+                  ) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
+                        )
+                    : undefined,
+              },
+            ],
+    }
+  }
+
+  const getIndictmentCaseProsecutorSection = (
+    workingCase: Case,
+    user?: User,
+  ): RouteSection => {
+    const { id, type } = workingCase
+    const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
+    const isTrafficViolation = isTrafficViolationCase(workingCase)
+
+    const routes = prosecutorIndictmentRoutes(isTrafficViolation)
+
+    const routeIndex = router.pathname.includes(
+      constants.CREATE_INDICTMENT_ROUTE,
+    )
+      ? 0
+      : routes.findIndex(
+          /**
+           * We do .slice here because router.pathname is /something/[:id]
+           * and we want to remove the /[:id] part
+           */
+          (route) => route === router.pathname.slice(0, -5),
+        )
+    return {
+      name: formatMessage(sections.indictmentCaseProsecutorSection.title),
+      isActive:
+        user?.role === UserRole.PROSECUTOR &&
+        isIndictmentCase(type) &&
+        !completedCaseStates.includes(workingCase.state),
+      // Prosecutor can only view the overview when case has been received by court
+      children: caseHasBeenReceivedByCourt
+        ? []
+        : [
+            {
+              name: capitalize(
+                formatMessage(core.indictmentDefendant, {
+                  gender: Gender.MALE,
+                }),
+              ),
+              isActive: routeIndex === 0,
+              href: `${constants.INDICTMENTS_DEFENDANT_ROUTE}/${id}`,
+            },
+            {
+              name: capitalize(
+                formatMessage(
+                  sections.indictmentCaseProsecutorSection.policeCaseFiles,
+                ),
+              ),
+              isActive: routeIndex === 1,
+              href: `${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${id}`,
+              onClick:
+                routeIndex !== 1 &&
+                validateFormStepper(
+                  isValid,
+                  [constants.INDICTMENTS_DEFENDANT_ROUTE],
+                  workingCase,
+                ) &&
+                onNavigationTo
+                  ? async () =>
+                      await onNavigationTo(
+                        constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
+                      )
+                  : undefined,
+            },
+            {
+              name: capitalize(
+                formatMessage(
+                  sections.indictmentCaseProsecutorSection.caseFile,
+                ),
+              ),
+              isActive: routeIndex === 2,
+              href: `${constants.INDICTMENTS_CASE_FILE_ROUTE}/${id}`,
+              onClick:
+                routeIndex !== 2 &&
+                validateFormStepper(
+                  isValid,
+                  [
+                    constants.INDICTMENTS_DEFENDANT_ROUTE,
+                    constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
+                  ],
+                  workingCase,
+                ) &&
+                onNavigationTo
+                  ? async () =>
+                      await onNavigationTo(
+                        constants.INDICTMENTS_CASE_FILE_ROUTE,
+                      )
+                  : undefined,
+            },
+            {
+              name: capitalize(
+                formatMessage(
+                  sections.indictmentCaseProsecutorSection.processing,
+                ),
+              ),
+              isActive: routeIndex === 3,
+              href: `${constants.INDICTMENTS_PROCESSING_ROUTE}/${id}`,
+              onClick:
+                routeIndex !== 3 &&
+                validateFormStepper(
+                  isValid,
+                  [
+                    constants.INDICTMENTS_DEFENDANT_ROUTE,
+                    constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
+                    constants.INDICTMENTS_CASE_FILE_ROUTE,
+                  ],
+                  workingCase,
+                ) &&
+                onNavigationTo
+                  ? async () =>
+                      await onNavigationTo(
+                        constants.INDICTMENTS_PROCESSING_ROUTE,
+                      )
+                  : undefined,
+            },
+            ...(isTrafficViolation
+              ? [
+                  {
+                    name: formatMessage(
+                      sections.indictmentCaseProsecutorSection.indictment,
+                    ),
+                    href: `${constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE}/${id}`,
+                    isActive: routeIndex === 4,
+                    onClick:
+                      routeIndex !== 4 &&
+                      validateFormStepper(
+                        isValid,
+                        [
+                          constants.INDICTMENTS_DEFENDANT_ROUTE,
+                          constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
+                          constants.INDICTMENTS_CASE_FILE_ROUTE,
+                          constants.INDICTMENTS_PROCESSING_ROUTE,
+                        ],
+                        workingCase,
+                      ) &&
+                      onNavigationTo
+                        ? async () =>
+                            await onNavigationTo(
+                              constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE,
+                            )
+                        : undefined,
+                  },
+                ]
+              : []),
+            {
+              name: capitalize(
+                formatMessage(
+                  sections.indictmentCaseProsecutorSection.caseFiles,
+                ),
+              ),
+              href: `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${id}`,
+              isActive:
+                workingCase.state === CaseState.RECEIVED
+                  ? false
+                  : routeIndex === (isTrafficViolation ? 5 : 4),
+              onClick:
+                routeIndex !== (isTrafficViolation ? 5 : 4) &&
+                validateFormStepper(
+                  isValid,
+                  [
+                    constants.INDICTMENTS_DEFENDANT_ROUTE,
+                    constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
+                    constants.INDICTMENTS_CASE_FILE_ROUTE,
+                    constants.INDICTMENTS_PROCESSING_ROUTE,
+                  ],
+                  workingCase,
+                ) &&
+                onNavigationTo
+                  ? async () =>
+                      await onNavigationTo(
+                        constants.INDICTMENTS_CASE_FILES_ROUTE,
+                      )
+                  : undefined,
+            },
+            {
+              name: capitalize(
+                formatMessage(
+                  sections.indictmentCaseProsecutorSection.overview,
+                ),
+              ),
+              href: `${constants.INDICTMENTS_OVERVIEW_ROUTE}/${id}`,
+              isActive: routeIndex === (isTrafficViolation ? 6 : 5),
+              onClick:
+                routeIndex !== (isTrafficViolation ? 6 : 5) &&
+                validateFormStepper(
+                  isValid,
+                  [
+                    constants.INDICTMENTS_DEFENDANT_ROUTE,
+                    constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
+                    constants.INDICTMENTS_CASE_FILE_ROUTE,
+                    constants.INDICTMENTS_PROCESSING_ROUTE,
+                    constants.INDICTMENTS_CASE_FILES_ROUTE,
+                  ],
+                  workingCase,
+                ) &&
+                onNavigationTo
+                  ? async () =>
+                      await onNavigationTo(constants.INDICTMENTS_OVERVIEW_ROUTE)
+                  : undefined,
+            },
+          ],
+    }
+  }
+
+  const getRestrictionCaseCourtSections = (
+    workingCase: Case,
+    user?: User,
+  ): RouteSection => {
+    const { id, type, parentCase } = workingCase
+    const routeIndex = courtRestrictionCasesRoutes.findIndex(
+      /**
+       * We do .slice here because router.pathname is /something/[:id]
+       * and we want to remove the /[:id] part
+       */
+      (route) => route === router.pathname.slice(0, -5),
+    )
+    return {
+      name: formatMessage(sections.courtSection.title),
+      isActive:
+        isCourtRole(user?.role) &&
+        isRestrictionCase(type) &&
+        !completedCaseStates.includes(workingCase.state) &&
+        !parentCase,
+      children:
+        user?.institution?.type !== InstitutionType.DISTRICT_COURT
+          ? []
+          : [
+              {
+                name: formatMessage(
+                  sections.courtSection.receptionAndAssignment,
+                ),
+                isActive: routeIndex === 0,
+                href: `${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
+              },
+              {
+                name: formatMessage(sections.courtSection.overview),
+                isActive: routeIndex === 1,
+                href: `${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${id}`,
+                onClick:
+                  routeIndex !== 1 &&
+                  validateFormStepper(
+                    isValid,
+                    [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE],
+                    workingCase,
+                  ) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
+                        )
+                    : undefined,
+              },
+              {
+                name: formatMessage(sections.courtSection.hearingArrangements),
+                isActive: routeIndex === 2,
+                href: `${constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
+                onClick:
+                  routeIndex !== 2 &&
+                  validateFormStepper(
+                    isValid,
+                    [
+                      constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                      constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
+                    ],
+                    workingCase,
+                  ) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+                        )
+                    : undefined,
+              },
+              {
+                name: formatMessage(sections.courtSection.ruling),
+                isActive: routeIndex === 3,
+                href: `${constants.RESTRICTION_CASE_RULING_ROUTE}/${id}`,
+                onClick:
+                  routeIndex !== 3 &&
+                  validateFormStepper(
+                    isValid,
+                    [
+                      constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                      constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
+                      constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+                    ],
+                    workingCase,
+                  ) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          constants.RESTRICTION_CASE_RULING_ROUTE,
+                        )
+                    : undefined,
+              },
+              {
+                name: formatMessage(sections.courtSection.courtRecord),
+                isActive: routeIndex === 4,
+                href: `${constants.RESTRICTION_CASE_COURT_RECORD_ROUTE}/${id}`,
+                onClick:
+                  routeIndex !== 4 &&
+                  validateFormStepper(
+                    isValid,
+                    [
+                      constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                      constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
+                      constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+                      constants.RESTRICTION_CASE_RULING_ROUTE,
+                    ],
+                    workingCase,
+                  ) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          constants.RESTRICTION_CASE_COURT_RECORD_ROUTE,
+                        )
+                    : undefined,
+              },
+              {
+                name: formatMessage(sections.courtSection.conclusion),
+                isActive: routeIndex === 5,
+                href: `${constants.RESTRICTION_CASE_CONFIRMATION_ROUTE}/${id}`,
+                onClick:
+                  routeIndex !== 5 &&
+                  validateFormStepper(
+                    isValid,
+                    [
+                      constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                      constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
+                      constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+                      constants.RESTRICTION_CASE_RULING_ROUTE,
+                      constants.RESTRICTION_CASE_COURT_RECORD_ROUTE,
+                    ],
+                    workingCase,
+                  ) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          constants.RESTRICTION_CASE_CONFIRMATION_ROUTE,
+                        )
+                    : undefined,
+              },
+            ],
     }
   }
 
   const getInvestigationCaseCourtSections = (
     workingCase: Case,
     user?: User,
-    activeSubSection?: number,
-  ): Section => {
-    const { id } = workingCase
+  ): RouteSection => {
+    const { id, type, parentCase } = workingCase
+    const routeIndex = courtInvestigationCasesRoutes.findIndex(
+      /**
+       * We do .slice here because router.pathname is /something/[:id]
+       * and we want to remove the /[:id] part
+       */
+      (route) => route === router.pathname.slice(0, -5),
+    )
 
     return {
       name: formatMessage(sections.investigationCaseCourtSection.title),
-      children: [
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(sections.courtSection.receptionAndAssignment),
-          href: `${Constants.IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(sections.investigationCaseCourtSection.overview),
-          href:
-            (activeSubSection && activeSubSection > 1) ||
-            isReceptionAndAssignmentStepValidIC(workingCase)
-              ? `${Constants.IC_OVERVIEW_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(
-            sections.investigationCaseCourtSection.hearingArrangements,
-          ),
-          href:
-            (activeSubSection && activeSubSection > 2) ||
-            isReceptionAndAssignmentStepValidIC(workingCase)
-              ? `${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(sections.investigationCaseCourtSection.ruling),
-          href:
-            (activeSubSection && activeSubSection > 3) ||
-            (isReceptionAndAssignmentStepValidIC(workingCase) &&
-              isCourtHearingArrangementsStepValidIC(workingCase))
-              ? `${Constants.IC_RULING_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(
-            sections.investigationCaseCourtSection.courtRecord,
-          ),
-          href:
-            (activeSubSection && activeSubSection > 4) ||
-            (isReceptionAndAssignmentStepValidIC(workingCase) &&
-              isCourtHearingArrangementsStepValidIC(workingCase) &&
-              isRulingValidIC(workingCase))
-              ? `${Constants.IC_COURT_RECORD_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(
-            sections.investigationCaseCourtSection.conclusion,
-          ),
-          href:
-            isReceptionAndAssignmentStepValidIC(workingCase) &&
-            isCourtHearingArrangementsStepValidIC(workingCase) &&
-            isRulingValidIC(workingCase) &&
-            isCourtRecordStepValidIC(workingCase)
-              ? `${Constants.IC_CONFIRMATION_ROUTE}/${id}`
-              : undefined,
-        },
-      ],
+      isActive:
+        isCourtRole(user?.role) &&
+        isInvestigationCase(type) &&
+        !completedCaseStates.includes(workingCase.state) &&
+        !parentCase,
+      children:
+        user?.institution?.type !== InstitutionType.DISTRICT_COURT
+          ? []
+          : [
+              {
+                name: formatMessage(
+                  sections.courtSection.receptionAndAssignment,
+                ),
+                isActive: routeIndex === 0,
+                href: `${constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
+              },
+              {
+                name: formatMessage(
+                  sections.investigationCaseCourtSection.overview,
+                ),
+                isActive: routeIndex === 1,
+                href: `${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${id}`,
+                onClick:
+                  routeIndex !== 1 &&
+                  validateFormStepper(
+                    isValid,
+                    [
+                      constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                    ],
+                    workingCase,
+                  ) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          constants.INVESTIGATION_CASE_OVERVIEW_ROUTE,
+                        )
+                    : undefined,
+              },
+              {
+                name: formatMessage(
+                  sections.investigationCaseCourtSection.hearingArrangements,
+                ),
+                isActive: routeIndex === 2,
+                href: `${constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
+                onClick:
+                  routeIndex !== 2 &&
+                  validateFormStepper(
+                    isValid,
+                    [
+                      constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                      constants.INVESTIGATION_CASE_OVERVIEW_ROUTE,
+                    ],
+                    workingCase,
+                  ) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+                        )
+                    : undefined,
+              },
+              {
+                name: formatMessage(
+                  sections.investigationCaseCourtSection.ruling,
+                ),
+                isActive: routeIndex === 3,
+                href: `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${id}`,
+                onClick:
+                  routeIndex !== 3 &&
+                  validateFormStepper(
+                    isValid,
+                    [
+                      constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                      constants.INVESTIGATION_CASE_OVERVIEW_ROUTE,
+                      constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+                    ],
+                    workingCase,
+                  ) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          constants.INVESTIGATION_CASE_RULING_ROUTE,
+                        )
+                    : undefined,
+              },
+              {
+                name: formatMessage(
+                  sections.investigationCaseCourtSection.courtRecord,
+                ),
+                isActive: routeIndex === 4,
+                href: `${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${id}`,
+                onClick:
+                  routeIndex !== 4 &&
+                  validateFormStepper(
+                    isValid,
+                    [
+                      constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                      constants.INVESTIGATION_CASE_OVERVIEW_ROUTE,
+                      constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+                      constants.INVESTIGATION_CASE_RULING_ROUTE,
+                    ],
+                    workingCase,
+                  ) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE,
+                        )
+                    : undefined,
+              },
+              {
+                name: formatMessage(
+                  sections.investigationCaseCourtSection.conclusion,
+                ),
+                isActive: routeIndex === 5,
+                href: `${constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE}/${id}`,
+                onClick:
+                  routeIndex !== 5 &&
+                  validateFormStepper(
+                    isValid,
+                    [
+                      constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                      constants.INVESTIGATION_CASE_OVERVIEW_ROUTE,
+                      constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+                      constants.INVESTIGATION_CASE_RULING_ROUTE,
+                      constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE,
+                    ],
+                    workingCase,
+                  ) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE,
+                        )
+                    : undefined,
+              },
+            ],
     }
   }
 
-  const getCourtSections = (
-    workingCase: Case,
-    user?: User,
-    activeSubSection?: number,
-  ): Section => {
-    const { id } = workingCase
+  const getIndictmentsCourtSections = (workingCase: Case, user?: User) => {
+    const { id, type } = workingCase
+    const routeIndex = courtIndictmentRoutes.findIndex(
+      /**
+       * We do .slice here because router.pathname is /something/[:id]
+       * and we want to remove the /[:id] part
+       */
+      (route) => route === router.pathname.slice(0, -5),
+    )
 
     return {
-      name: formatMessage(sections.courtSection.title),
+      name: formatMessage(sections.indictmentsCourtSection.title),
+      isActive:
+        isExtendedCourtRole(user?.role) &&
+        isIndictmentCase(type) &&
+        !completedCaseStates.includes(workingCase.state),
       children: [
         {
-          type: 'SUB_SECTION',
-          name: formatMessage(sections.courtSection.receptionAndAssignment),
-          href: `${Constants.RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
+          name: formatMessage(sections.indictmentsCourtSection.overview),
+          isActive: user?.role === UserRole.DEFENDER ? false : routeIndex === 0,
+          href: `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`,
         },
         {
-          type: 'SUB_SECTION',
-          name: formatMessage(sections.courtSection.overview),
-          href:
-            (activeSubSection && activeSubSection > 1) ||
-            isReceptionAndAssignmentStepValidRC(workingCase)
-              ? `${Constants.OVERVIEW_ROUTE}/${id}`
+          name: formatMessage(
+            sections.indictmentsCourtSection.receptionAndAssignment,
+          ),
+          isActive: routeIndex === 1,
+          href: `${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`,
+          onClick:
+            routeIndex !== 1 &&
+            validateFormStepper(isValid, [], workingCase) &&
+            onNavigationTo
+              ? async () =>
+                  await onNavigationTo(
+                    constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                  )
               : undefined,
         },
         {
-          type: 'SUB_SECTION',
-          name: formatMessage(sections.courtSection.hearingArrangements),
-          href:
-            (activeSubSection && activeSubSection > 2) ||
-            isReceptionAndAssignmentStepValidRC(workingCase)
-              ? `${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`
+          name: formatMessage(sections.indictmentsCourtSection.subpoena),
+          isActive: routeIndex === 2,
+          href: `${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`,
+          onClick:
+            routeIndex !== 2 &&
+            validateFormStepper(
+              isValid,
+              [
+                constants.INDICTMENTS_OVERVIEW_ROUTE,
+                constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
+              ],
+              workingCase,
+            ) &&
+            onNavigationTo
+              ? async () =>
+                  await onNavigationTo(constants.INDICTMENTS_SUBPOENA_ROUTE)
               : undefined,
         },
         {
-          type: 'SUB_SECTION',
-          name: formatMessage(sections.courtSection.ruling),
-          href:
-            (activeSubSection && activeSubSection > 3) ||
-            (isReceptionAndAssignmentStepValidRC(workingCase) &&
-              isCourtHearingArrangemenstStepValidRC(workingCase))
-              ? `${Constants.RULING_ROUTE}/${id}`
+          name: formatMessage(sections.indictmentsCourtSection.defender),
+          isActive: routeIndex === 3,
+          href: `${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`,
+          onClick:
+            routeIndex !== 3 &&
+            validateFormStepper(
+              isValid,
+              [
+                constants.INDICTMENTS_OVERVIEW_ROUTE,
+                constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                constants.INDICTMENTS_SUBPOENA_ROUTE,
+              ],
+              workingCase,
+            ) &&
+            onNavigationTo
+              ? async () =>
+                  await onNavigationTo(constants.INDICTMENTS_DEFENDER_ROUTE)
               : undefined,
         },
         {
-          type: 'SUB_SECTION',
-          name: formatMessage(sections.courtSection.courtRecord),
-          href:
-            (activeSubSection && activeSubSection > 4) ||
-            (isReceptionAndAssignmentStepValidRC(workingCase) &&
-              isCourtHearingArrangemenstStepValidRC(workingCase) &&
-              isRulingValidRC(workingCase))
-              ? `${Constants.COURT_RECORD_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(sections.courtSection.conclusion),
-          href:
-            isReceptionAndAssignmentStepValidRC(workingCase) &&
-            isCourtHearingArrangemenstStepValidRC(workingCase) &&
-            isRulingValidRC(workingCase) &&
-            isCourtRecordStepValidRC(workingCase)
-              ? `${Constants.CONFIRMATION_ROUTE}/${id}`
+          name: formatMessage(sections.indictmentsCourtSection.courtRecord),
+          isActive: routeIndex === 4,
+          href: `${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`,
+          onClick:
+            routeIndex !== 4 &&
+            validateFormStepper(
+              isValid,
+              [
+                constants.INDICTMENTS_OVERVIEW_ROUTE,
+                constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                constants.INDICTMENTS_SUBPOENA_ROUTE,
+                constants.INDICTMENTS_DEFENDER_ROUTE,
+              ],
+              workingCase,
+            ) &&
+            onNavigationTo
+              ? async () =>
+                  await onNavigationTo(constants.INDICTMENTS_COURT_RECORD_ROUTE)
               : undefined,
         },
       ],
     }
   }
 
-  const getExtenstionSections = (
+  const getRestrictionCaseExtenstionSections = (
     workingCase: Case,
-    activeSubSection?: number,
-  ): Section => {
-    const { id } = workingCase
+    user?: User,
+  ): RouteSection => {
+    const section = getRestrictionCaseProsecutorSection(workingCase, user)
+    const { type, parentCase } = workingCase
+    const routeIndex = prosecutorRestrictionCasesRoutes.findIndex(
+      /**
+       * We do .slice here because router.pathname is /something/[:id]
+       * and we want to remove the /[:id] part
+       */
+      (route) => route === router.pathname.slice(0, -5),
+    )
 
     return {
       name: formatMessage(sections.extensionSection.title),
-      children: [
-        {
-          type: 'SUB_SECTION',
-          name: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
-          href: `${Constants.STEP_ONE_ROUTE}/${id}`,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(sections.extensionSection.hearingArrangements),
-          href:
-            (activeSubSection && activeSubSection > 1) ||
-            isAccusedStepValidRC(workingCase)
-              ? `${Constants.STEP_TWO_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(sections.extensionSection.policeDemands),
-          href:
-            (activeSubSection && activeSubSection > 2) ||
-            (isAccusedStepValidRC(workingCase) &&
-              isHearingArrangementsStepValidRC(workingCase))
-              ? `${Constants.STEP_THREE_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(sections.extensionSection.policeReport),
-          href:
-            (activeSubSection && activeSubSection > 3) ||
-            (isAccusedStepValidRC(workingCase) &&
-              isHearingArrangementsStepValidRC(workingCase) &&
-              isPoliceDemandsStepValidRC(workingCase))
-              ? `${Constants.STEP_FOUR_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(sections.extensionSection.caseFiles),
-          href:
-            (activeSubSection && activeSubSection > 4) ||
-            (isAccusedStepValidRC(workingCase) &&
-              isHearingArrangementsStepValidRC(workingCase) &&
-              isPoliceDemandsStepValidRC(workingCase) &&
-              isPoliceReportStepValidRC(workingCase))
-              ? `${Constants.STEP_FIVE_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(sections.extensionSection.overview),
-          href:
-            isAccusedStepValidRC(workingCase) &&
-            isHearingArrangementsStepValidRC(workingCase) &&
-            isPoliceDemandsStepValidRC(workingCase) &&
-            isPoliceReportStepValidRC(workingCase)
-              ? `${Constants.STEP_SIX_ROUTE}/${id}`
-              : undefined,
-        },
-      ],
+      isActive:
+        user?.role === UserRole.PROSECUTOR &&
+        isRestrictionCase(type) &&
+        parentCase !== undefined,
+      children:
+        user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
+          ? []
+          : [
+              {
+                name: capitalize(
+                  formatMessage(core.defendant, { suffix: 'i' }),
+                ),
+                isActive: routeIndex === 0,
+                href:
+                  (section.children.length > 0 && section.children[0].href) ||
+                  undefined,
+              },
+              {
+                name: formatMessage(
+                  sections.extensionSection.hearingArrangements,
+                ),
+                isActive: routeIndex === 1,
+                href:
+                  (section.children.length > 0 && section.children[1].href) ||
+                  undefined,
+                onClick:
+                  (routeIndex !== 1 &&
+                    section.children.length > 0 &&
+                    section.children[1].onClick) ||
+                  undefined,
+              },
+              {
+                name: formatMessage(sections.extensionSection.policeDemands),
+                isActive: routeIndex === 2,
+                href:
+                  (section.children.length > 0 && section.children[2].href) ||
+                  undefined,
+                onClick:
+                  (routeIndex !== 2 &&
+                    section.children.length > 0 &&
+                    section.children[2].onClick) ||
+                  undefined,
+              },
+              {
+                name: formatMessage(sections.extensionSection.policeReport),
+                isActive: routeIndex === 3,
+                href:
+                  (section.children.length > 0 && section.children[3].href) ||
+                  undefined,
+                onClick:
+                  (routeIndex !== 3 &&
+                    section.children.length > 0 &&
+                    section.children[3].onClick) ||
+                  undefined,
+              },
+              {
+                name: formatMessage(sections.extensionSection.caseFiles),
+                isActive: routeIndex === 4,
+                href:
+                  (section.children.length > 0 && section.children[4].href) ||
+                  undefined,
+                onClick:
+                  (routeIndex !== 4 &&
+                    section.children.length > 0 &&
+                    section.children[4].onClick) ||
+                  undefined,
+              },
+              {
+                name: formatMessage(sections.extensionSection.overview),
+                isActive: routeIndex === 5,
+                href:
+                  (section.children.length > 0 && section.children[5].href) ||
+                  undefined,
+                onClick:
+                  (routeIndex !== 5 &&
+                    section.children.length > 0 &&
+                    section.children[5].onClick) ||
+                  undefined,
+              },
+            ],
     }
   }
 
   const getInvestigationCaseExtenstionSections = (
     workingCase: Case,
-    activeSubSection?: number,
-  ): Section => {
-    const { id } = workingCase
+    user?: User,
+  ): RouteSection => {
+    const section = getInvestigationCaseProsecutorSection(workingCase, user)
+    const { type, parentCase } = workingCase
+    const routeIndex = prosecutorInvestigationCasesRoutes.findIndex(
+      /**
+       * We do .slice here because router.pathname is /something/[:id]
+       * and we want to remove the /[:id] part
+       */
+      (route) => route === router.pathname.slice(0, -5),
+    )
 
     return {
       name: formatMessage(sections.investigationCaseExtensionSection.title),
-      children: [
-        {
-          type: 'SUB_SECTION',
-          name: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
-          href: `${Constants.IC_DEFENDANT_ROUTE}/${id}`,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(
-            sections.investigationCaseExtensionSection.hearingArrangements,
-          ),
-          href:
-            (activeSubSection && activeSubSection > 1) ||
-            isDefendantStepValidIC(workingCase)
-              ? `${Constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(
-            sections.investigationCaseExtensionSection.policeDemands,
-          ),
-          href:
-            (activeSubSection && activeSubSection > 2) ||
-            (isDefendantStepValidIC(workingCase) &&
-              isHearingArrangementsStepValidIC(workingCase))
-              ? `${Constants.IC_POLICE_DEMANDS_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(
-            sections.investigationCaseExtensionSection.policeReport,
-          ),
-          href:
-            (activeSubSection && activeSubSection > 3) ||
-            (isDefendantStepValidIC(workingCase) &&
-              isHearingArrangementsStepValidIC(workingCase) &&
-              isPoliceDemandsStepValidIC(workingCase))
-              ? `${Constants.IC_POLICE_REPORT_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(
-            sections.investigationCaseExtensionSection.caseFiles,
-          ),
-          href:
-            (activeSubSection && activeSubSection > 4) ||
-            (isDefendantStepValidIC(workingCase) &&
-              isHearingArrangementsStepValidIC(workingCase) &&
-              isPoliceDemandsStepValidIC(workingCase) &&
-              isPoliceReportStepValidIC(workingCase))
-              ? `${Constants.IC_CASE_FILES_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(
-            sections.investigationCaseExtensionSection.overview,
-          ),
-          href:
-            isDefendantStepValidIC(workingCase) &&
-            isHearingArrangementsStepValidIC(workingCase) &&
-            isPoliceDemandsStepValidIC(workingCase) &&
-            isPoliceReportStepValidIC(workingCase)
-              ? `${Constants.IC_POLICE_CONFIRMATION_ROUTE}/${id}`
-              : undefined,
-        },
-      ],
+      isActive:
+        user?.role === UserRole.PROSECUTOR &&
+        isInvestigationCase(type) &&
+        parentCase !== undefined,
+      children:
+        user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
+          ? []
+          : [
+              {
+                name: capitalize(
+                  formatMessage(core.defendant, { suffix: 'i' }),
+                ),
+                isActive: routeIndex === 0,
+                href:
+                  (section.children.length > 0 && section.children[5].href) ||
+                  undefined,
+              },
+              {
+                name: formatMessage(
+                  sections.investigationCaseExtensionSection
+                    .hearingArrangements,
+                ),
+                isActive: routeIndex === 1,
+                href:
+                  (section.children.length > 0 && section.children[1].href) ||
+                  undefined,
+                onClick:
+                  (routeIndex !== 1 && section.children[1].onClick) ||
+                  undefined,
+              },
+              {
+                name: formatMessage(
+                  sections.investigationCaseExtensionSection.policeDemands,
+                ),
+                isActive: routeIndex === 2,
+                href:
+                  (section.children.length > 0 && section.children[2].href) ||
+                  undefined,
+                onClick:
+                  (routeIndex !== 2 && section.children[2].onClick) ||
+                  undefined,
+              },
+              {
+                name: formatMessage(
+                  sections.investigationCaseExtensionSection.policeReport,
+                ),
+                isActive: routeIndex === 3,
+                href:
+                  (section.children.length > 0 && section.children[3].href) ||
+                  undefined,
+                onClick:
+                  (routeIndex !== 3 && section.children[3].onClick) ||
+                  undefined,
+              },
+              {
+                name: formatMessage(
+                  sections.investigationCaseExtensionSection.caseFiles,
+                ),
+                isActive: routeIndex === 4,
+                href:
+                  (section.children.length > 0 && section.children[4].href) ||
+                  undefined,
+                onClick:
+                  (routeIndex !== 4 && section.children[4].onClick) ||
+                  undefined,
+              },
+              {
+                name: formatMessage(
+                  sections.investigationCaseExtensionSection.overview,
+                ),
+                isActive: routeIndex === 5,
+                href:
+                  (section.children.length > 0 && section.children[5].href) ||
+                  undefined,
+                onClick:
+                  (routeIndex !== 5 && section.children[5].onClick) ||
+                  undefined,
+              },
+            ],
     }
   }
 
-  const getSections = (
-    workingCase?: Case,
-    activeSubSection?: number,
+  const getCourtOfAppealSections = (workingCase: Case, user?: User) => {
+    const { id } = workingCase
+    const routeIndex = courtOfAppealRoutes.findIndex(
+      /**
+       * We do .slice here because router.pathname is /something/[:id]
+       * and we want to remove the /[:id] part
+       */
+      (route) => route === router.pathname.slice(0, -5),
+    )
+    return [
+      {
+        name: formatMessage(sections.courtOfAppealSection.appealed),
+        isActive:
+          user?.institution?.type !== InstitutionType.COURT_OF_APPEALS &&
+          workingCase.appealState === CaseAppealState.RECEIVED,
+        children: [],
+      },
+      {
+        name: formatMessage(sections.courtOfAppealSection.result),
+        isActive:
+          user?.institution?.type === InstitutionType.COURT_OF_APPEALS &&
+          routeIndex !== 3,
+        children: [
+          {
+            name: formatMessage(sections.courtOfAppealSection.overview),
+            isActive: routeIndex === 0,
+            href: `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`,
+          },
+          {
+            name: formatMessage(sections.courtOfAppealSection.reception),
+            isActive: routeIndex === 1,
+            href: `${constants.COURT_OF_APPEAL_CASE_ROUTE}/${id}`,
+            onClick:
+              routeIndex !== 1 &&
+              validateFormStepper(
+                isValid,
+                [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE],
+                workingCase,
+              ) &&
+              onNavigationTo
+                ? async () =>
+                    await onNavigationTo(constants.COURT_OF_APPEAL_CASE_ROUTE)
+                : undefined,
+          },
+          {
+            name: formatMessage(sections.courtOfAppealSection.ruling),
+            isActive: routeIndex === 2,
+            href: `${constants.COURT_OF_APPEAL_RULING_ROUTE}/${workingCase.id}`,
+            onClick:
+              routeIndex !== 2 &&
+              validateFormStepper(
+                isValid,
+                [
+                  constants.COURT_OF_APPEAL_OVERVIEW_ROUTE,
+                  constants.COURT_OF_APPEAL_CASE_ROUTE,
+                ],
+                workingCase,
+              ) &&
+              onNavigationTo
+                ? async () =>
+                    await onNavigationTo(constants.COURT_OF_APPEAL_RULING_ROUTE)
+                : undefined,
+          },
+        ],
+      },
+      {
+        name: formatMessage(sections.caseResults.result),
+        isActive:
+          routeIndex === 3 ||
+          workingCase.appealState === CaseAppealState.COMPLETED,
+        children: [],
+      },
+    ]
+  }
+
+  const getRestrictionCaseExtensionCourtSections = (
+    workingCase: Case,
     user?: User,
   ) => {
+    const { type } = workingCase
+
+    return {
+      ...getRestrictionCaseCourtSections(workingCase, user),
+      isActive: isRestrictionCase(type) && isCourtRole(user?.role),
+    }
+  }
+
+  const getInvestigationCaseExtensionCourtSections = (
+    workingCase: Case,
+    user?: User,
+  ) => {
+    const { type } = workingCase
+
+    return {
+      ...getInvestigationCaseCourtSections(workingCase, user),
+      isActive: isInvestigationCase(type) && isCourtRole(user?.role),
+    }
+  }
+
+  const getSections = (workingCase: Case, user?: User): RouteSection[] => {
     return [
-      isRestrictionCase(workingCase?.type)
-        ? getCustodyAndTravelBanProsecutorSection(
-            workingCase || ({} as Case),
-            activeSubSection,
-          )
-        : getInvestigationCaseProsecutorSection(
-            workingCase || ({} as Case),
-            activeSubSection,
-          ),
-      isRestrictionCase(workingCase?.type)
-        ? getCourtSections(workingCase || ({} as Case), user, activeSubSection)
-        : getInvestigationCaseCourtSections(
-            workingCase || ({} as Case),
-            user,
-            activeSubSection,
-          ),
+      isRestrictionCase(workingCase.type)
+        ? getRestrictionCaseProsecutorSection(workingCase, user)
+        : isInvestigationCase(workingCase.type)
+        ? getInvestigationCaseProsecutorSection(workingCase, user)
+        : getIndictmentCaseProsecutorSection(workingCase, user),
+      isRestrictionCase(workingCase.type)
+        ? getRestrictionCaseCourtSections(workingCase, user)
+        : isInvestigationCase(workingCase.type)
+        ? getInvestigationCaseCourtSections(workingCase, user)
+        : getIndictmentsCourtSections(workingCase, user),
       {
-        name: caseResult(
-          {
-            dismissedTitle: formatMessage(signedVerdictOverview.dismissedTitle),
-          },
-          workingCase,
-        ),
+        name: caseResult(formatMessage, workingCase),
+        isActive:
+          completedCaseStates.includes(workingCase.state) &&
+          !workingCase.prosecutorPostponedAppealDate &&
+          !workingCase.accusedPostponedAppealDate &&
+          workingCase.appealState !== CaseAppealState.COMPLETED,
+        children: [],
       },
-      isRestrictionCase(workingCase?.type)
-        ? getExtenstionSections(workingCase || ({} as Case), activeSubSection)
-        : getInvestigationCaseExtenstionSections(
-            workingCase || ({} as Case),
-            activeSubSection,
-          ),
-      isRestrictionCase(workingCase?.type)
-        ? getCourtSections(workingCase || ({} as Case), user, activeSubSection)
-        : getInvestigationCaseCourtSections(
-            workingCase || ({} as Case),
-            user,
-            activeSubSection,
-          ),
+      ...(!features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS)
+        ? []
+        : isRestrictionCase(workingCase.type) && workingCase.appealState
+        ? getCourtOfAppealSections(workingCase, user)
+        : isInvestigationCase(workingCase.type) && workingCase.appealState
+        ? getCourtOfAppealSections(workingCase, user)
+        : []),
+      ...(workingCase.parentCase
+        ? [
+            isRestrictionCase(workingCase.type)
+              ? getRestrictionCaseExtenstionSections(workingCase, user)
+              : getInvestigationCaseExtenstionSections(workingCase, user),
+            isRestrictionCase(workingCase.type)
+              ? getRestrictionCaseExtensionCourtSections(workingCase, user)
+              : getInvestigationCaseExtensionCourtSections(workingCase, user),
+          ]
+        : []),
     ]
   }
 
   return {
-    getCustodyAndTravelBanProsecutorSection,
+    getRestrictionCaseProsecutorSection,
     getInvestigationCaseProsecutorSection,
+    getIndictmentCaseProsecutorSection,
+    getRestrictionCaseCourtSections,
     getInvestigationCaseCourtSections,
-    getCourtSections,
-    getExtenstionSections,
-    getInvestigationCaseExtenstionSections,
+    getIndictmentsCourtSections,
     getSections,
-    findLastValidStep,
   }
 }
 

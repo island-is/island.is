@@ -14,4 +14,15 @@ export const up = compose(
     description: '',
     addToClients: ['@island.is/system/notifications'],
   }),
+  createScope({
+    name: '@island.is/air-discount-scheme',
+    displayName: 'air discount scheme public scope',
+    description: 'Public facing Air Discount Scheme Scope',
+    addToResource: '@island.is',
+    addToClients: ['@island.is/web', '@island.is/clients/api'],
+    delegation: {
+      legalGuardians: true,
+      custom: true,
+    },
+  }),
 )

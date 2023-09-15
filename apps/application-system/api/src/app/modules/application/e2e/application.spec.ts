@@ -7,16 +7,17 @@ import { ApplicationScope } from '@island.is/auth/scopes'
 import {
   ApplicationStatus,
   ApplicationTypes,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { ContentfulRepository } from '@island.is/cms'
 import { setup } from '../../../../../test/setup'
 import { environment } from '../../../../environments'
-import { FileService } from '../files/file.service'
+import { FileService } from '@island.is/application/api/files'
 import { AppModule } from '../../../app.module'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { MockFeatureFlagService } from './mockFeatureFlagService'
 import * as uuid from 'uuidv4'
 import jwt from 'jsonwebtoken'
+import { coreHistoryMessages } from '@island.is/application/core'
 
 let app: INestApplication
 
@@ -55,8 +56,8 @@ class MockContentfulRepository {
   }
 }
 
-// eslint-disable-next-line local-rules/disallow-kennitalas
 let server: request.SuperTest<request.Test>
+// eslint-disable-next-line local-rules/disallow-kennitalas
 const nationalId = '1234564321'
 const mockAuthGuard = new MockAuthGuard({
   nationalId,
@@ -94,8 +95,104 @@ describe('Application system API', () => {
     expect(response.body.id).toBeTruthy()
   })
 
+  it('should set and return a pending action for an application', async () => {
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
+        answers: {
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['government'],
+          },
+          dreamJob: 'pilot',
+        },
+      })
+      .expect(200)
+
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    const newStateResponse = await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    expect(newStateResponse.body.state).toBe('inReview')
+
+    expect(newStateResponse.body.actionCard.pendingAction.title).toBe(
+      'Verið er að fara yfir umsóknina',
+    )
+    expect(newStateResponse.body.actionCard.pendingAction.content).toBe(
+      'Example stofnun fer núna yfir umsóknina og því getur þetta tekið nokkra daga',
+    )
+  })
+
+  it('should fetch Application History for overview', async () => {
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
+        answers: {
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['government'],
+          },
+          dreamJob: 'pilot',
+        },
+      })
+      .expect(200)
+
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    const list = await server
+      .get(`/users/${nationalId}/applications`)
+      .expect(200)
+
+    const historyLog = list?.body[0]?.actionCard?.history[0]?.log
+
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    const listAgain = await server
+      .get(`/users/${nationalId}/applications`)
+      .expect(200)
+
+    expect(historyLog).toBe(coreHistoryMessages.applicationSent.defaultMessage)
+    expect(listAgain.body[0].actionCard.history).toHaveLength(2)
+  })
+
   // This template does not have readyForProduction: false
-  it.skip('should fail when POST-ing an application whose template is not ready for production, on production environment', async () => {
+  it.skip('should succeed when POST-ing an application that has an undefined readyforproduction flag, on production environment', async () => {
     const envBefore = environment.environment
     environment.environment = 'production'
 
@@ -108,10 +205,12 @@ describe('Application system API', () => {
         typeId: ApplicationTypes.EXAMPLE,
         assignees: [nationalId],
         answers: {
-          careerHistoryCompanies: ['government'],
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['government'],
+          },
           dreamJob: 'pilot',
         },
-        status: ApplicationStatus.IN_PROGRESS,
+        status: ApplicationStatus.DRAFT,
       })
       .expect(400)
 
@@ -134,7 +233,9 @@ describe('Application system API', () => {
       .put(`/applications/${creationResponse.body.id}`)
       .send({
         answers: {
-          careerHistoryCompanies: ['government'],
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['government'],
+          },
           dreamJob: 'pilot',
         },
       })
@@ -144,7 +245,9 @@ describe('Application system API', () => {
       .put(`/applications/${creationResponse.body.id}`)
       .send({
         answers: {
-          careerHistoryCompanies: ['this', 'is', 'not', 'allowed'],
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['this', 'is', 'not', 'allowed'],
+          },
         },
       })
       .expect(400)
@@ -152,20 +255,91 @@ describe('Application system API', () => {
     // Assert
     expect(putResponse.body).toMatchInlineSnapshot(`
       Object {
-        "detail": "Found issues in these fields: careerHistoryCompanies",
+        "detail": "Found issues in these fields: careerHistoryDetails",
         "fields": Object {
-          "careerHistoryCompanies": Array [
-            "Ógilt gildi",
-            "Ógilt gildi",
-            "Ógilt gildi",
-            "Ógilt gildi",
-          ],
+          "careerHistoryDetails": Object {
+            "careerHistoryCompanies": Array [
+              "Ógilt gildi",
+              "Ógilt gildi",
+              "Ógilt gildi",
+              "Ógilt gildi",
+            ],
+          },
         },
         "status": 400,
         "title": "Validation Failed",
         "type": "https://docs.devland.is/reference/problems/validation-failed",
       }
     `)
+  })
+
+  it('should fail when PUT-ing answers in a very deep nested schema which doesnt comply', async () => {
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
+        answers: {
+          deepNestedValues: {
+            something: {
+              very: {
+                deep: {
+                  so: {
+                    so: {
+                      very: {
+                        very: {
+                          deep: {
+                            nested: {
+                              value: 6,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          dreamJob: 'pilot',
+        },
+      })
+      .expect(400)
+
+    await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
+        answers: {
+          deepNestedValues: {
+            something: {
+              very: {
+                deep: {
+                  so: {
+                    so: {
+                      very: {
+                        very: {
+                          deep: {
+                            nested: {
+                              value: 'hello',
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          dreamJob: 'pilot',
+        },
+      })
+      .expect(200)
   })
 
   it('should fail when PUT-ing answers on an application where it is in a state where it is not permitted', async () => {
@@ -180,13 +354,20 @@ describe('Application system API', () => {
       .put(`/applications/${creationResponse.body.id}`)
       .send({
         answers: {
-          careerHistoryCompanies: ['government'],
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['government'],
+          },
           dreamJob: 'pilot',
         },
       })
       .expect(200)
 
     // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
     await server
       .put(`/applications/${creationResponse.body.id}/submit`)
       .send({ event: 'SUBMIT' })
@@ -231,7 +412,9 @@ describe('Application system API', () => {
       .put(`/applications/${creationResponse.body.id}`)
       .send({
         answers: {
-          careerHistoryCompanies: ['government'],
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['government'],
+          },
           dreamJob: 'pilot',
         },
       })
@@ -242,14 +425,18 @@ describe('Application system API', () => {
       .send({
         event: 'SUBMIT',
         answers: {
-          careerHistoryCompanies: ['advania', 'aranja'],
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['advania', 'aranja'],
+          },
         },
       })
       .expect(200)
 
-    expect(newStateResponse.body.state).toBe('inReview')
+    expect(newStateResponse.body.state).toBe('waitingToAssign')
     expect(newStateResponse.body.answers).toEqual({
-      careerHistoryCompanies: ['advania', 'aranja'],
+      careerHistoryDetails: {
+        careerHistoryCompanies: ['advania', 'aranja'],
+      },
       dreamJob: 'pilot',
     })
   })
@@ -285,6 +472,13 @@ describe('Application system API', () => {
       })
       .expect(200)
 
+    await server
+      .put(`/applications/${response.body.id}/submit`)
+      .send({
+        event: 'SUBMIT',
+      })
+      .expect(200)
+
     const finalStateResponse = await server
       .put(`/applications/${response.body.id}/submit`)
       .send({
@@ -298,7 +492,7 @@ describe('Application system API', () => {
 
     expect(finalStateResponse.body.state).toBe('approved')
     expect(finalStateResponse.body.answers).toEqual({
-      careerHistoryCompanies: ['government', 'aranja', 'advania'],
+      careerHistoryCompanies: ['government'],
       dreamJob: 'pilot', // this answer is non-writable
     })
   })
@@ -331,7 +525,7 @@ describe('Application system API', () => {
         ],
         "status": 400,
         "title": "Bad Request",
-        "type": "https://httpstatuses.com/400",
+        "type": "https://httpstatuses.org/400",
       }
     `)
   })
@@ -354,9 +548,16 @@ describe('Application system API', () => {
       .put(`/applications/${creationResponse.body.id}`)
       .send({
         answers: {
-          careerHistoryCompanies: ['government'],
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['government'],
+          },
         },
       })
+      .expect(200)
+
+    await server
+      .put(`/applications/${response.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
       .expect(200)
 
     const newStateResponse = await server
@@ -369,12 +570,12 @@ describe('Application system API', () => {
     const failedResponse = await server
       .put(`/applications/${response.body.id}/externalData`)
       .send({
-        dataProviders: [{ id: 'test', type: 'ExampleSucceeds' }],
+        dataProviders: [{ actionId: 'test' }],
       })
       .expect(400)
 
     expect(failedResponse.body.detail).toBe(
-      'Current user is not permitted to update external data in this state: inReview',
+      `Current user is not permitted to update external data in this state with actionId: test`,
     )
   })
 
@@ -573,7 +774,7 @@ describe('Application system API', () => {
 
     const getResponse = await server
       .get(
-        `/users/${nationalId}/applications?typeId=${ApplicationTypes.PARENTAL_LEAVE}&status=${ApplicationStatus.IN_PROGRESS}`,
+        `/users/${nationalId}/applications?typeId=${ApplicationTypes.PARENTAL_LEAVE}&status=${ApplicationStatus.DRAFT}`,
       )
       .expect(200)
 
@@ -583,7 +784,7 @@ describe('Application system API', () => {
         expect.objectContaining({
           applicant: nationalId,
           typeId: ApplicationTypes.PARENTAL_LEAVE,
-          status: ApplicationStatus.IN_PROGRESS,
+          status: ApplicationStatus.DRAFT,
         }),
       ]),
     )
@@ -723,12 +924,14 @@ describe('Application system API', () => {
         nationalId: '1234567890',
         age: '30',
         email: 'tester@island.is',
-        phoneNumber: '8234567',
+        phoneNumber: '+3548234567',
       },
       dreamJob: 'Yes',
       attachments: [],
       careerHistory: 'yes',
-      careerHistoryCompanies: ['aranja'],
+      careerHistoryDetails: {
+        careerHistoryCompanies: ['aranja'],
+      },
     }
 
     const draftStateResponse = await server
@@ -740,6 +943,11 @@ describe('Application system API', () => {
 
     expect(draftStateResponse.body.state).toBe('draft')
     expect(draftStateResponse.body.externalData).toEqual({})
+
+    await server
+      .put(`/applications/${draftStateResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
 
     const inReviewStateResponse = await server
       .put(`/applications/${draftStateResponse.body.id}/submit`)
@@ -761,7 +969,6 @@ describe('Application system API', () => {
       .send({
         event: 'APPROVE',
         answers: {
-          ...answers,
           approvedByReviewer: 'APPROVE',
         },
       })
@@ -778,7 +985,7 @@ describe('Application system API', () => {
     ).toEqual({ id: 1337 })
   })
 
-  const mockParentalLeaveInAssignableState = async (
+  const mockExampleApplicationInAssignableState = async (
     includeNonce = true,
   ): Promise<{
     token: string
@@ -793,11 +1000,18 @@ describe('Application system API', () => {
     const creationResponse = await server
       .post('/applications')
       .send({
-        typeId: ApplicationTypes.PARENTAL_LEAVE,
+        typeId: ApplicationTypes.EXAMPLE,
       })
       .expect(201)
     const answers = {
-      employer: { isSelfEmployed: 'no' },
+      assigneeEmail: 'email@email.com',
+      person: {
+        age: '3123',
+        name: '123123',
+        email: 'another@email.com',
+        nationalId: '123',
+        phoneNumber: '+3545555555',
+      },
     }
 
     await server
@@ -818,7 +1032,17 @@ describe('Application system API', () => {
     const token = jwt.sign(
       {
         applicationId: creationResponse.body.id,
-        state: 'employerWaitingToAssign',
+        state: 'waitingToAssign',
+        ...(includeNonce && { nonce }),
+      },
+      secret,
+      { expiresIn: 100 },
+    )
+
+    console.log(
+      {
+        applicationId: creationResponse.body.id,
+        state: 'waitingToAssign',
         ...(includeNonce && { nonce }),
       },
       secret,
@@ -833,9 +1057,7 @@ describe('Application system API', () => {
       .send({ event: 'SUBMIT' })
       .expect(200)
 
-    expect(employerWaitingToAssignResponse.body.state).toBe(
-      'employerWaitingToAssign',
-    )
+    expect(employerWaitingToAssignResponse.body.state).toBe('waitingToAssign')
     expect(employerWaitingToAssignResponse.body.assignNonces).toStrictEqual([
       nonce,
     ])
@@ -844,7 +1066,7 @@ describe('Application system API', () => {
   }
 
   it('PUT applications/assign should work just once', async () => {
-    const { token } = await mockParentalLeaveInAssignableState()
+    const { token } = await mockExampleApplicationInAssignableState()
 
     await server
       .put('/applications/assign')
@@ -866,7 +1088,8 @@ describe('Application system API', () => {
   })
 
   it('PUT applications/assign returns to draft and creates a new token. Old token should be invalid', async () => {
-    const { token, applicationId } = await mockParentalLeaveInAssignableState()
+    const { token, applicationId } =
+      await mockExampleApplicationInAssignableState()
 
     await server
       .put(`/applications/${applicationId}/submit`)
@@ -878,9 +1101,7 @@ describe('Application system API', () => {
       .send({ event: 'SUBMIT' })
       .expect(200)
 
-    expect(employerWaitingToAssignResponse.body.state).toBe(
-      'employerWaitingToAssign',
-    )
+    expect(employerWaitingToAssignResponse.body.state).toBe('waitingToAssign')
 
     const assignAgain = await server
       .put('/applications/assign')
@@ -893,7 +1114,7 @@ describe('Application system API', () => {
   })
 
   it('PUT applications/assign supports legacy tokens', async () => {
-    const { token } = await mockParentalLeaveInAssignableState(false)
+    const { token } = await mockExampleApplicationInAssignableState(false)
 
     await server
       .put('/applications/assign')

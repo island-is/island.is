@@ -1,6 +1,6 @@
 const DefinePlugin = require('webpack/lib/DefinePlugin')
 const { VanillaExtractPlugin } = require('@vanilla-extract/webpack-plugin')
-const nrwlConfig = require('@nrwl/react/plugins/webpack.js')
+const webpack = require('webpack')
 
 /**
  * This file is based on how @nrwl/web does it's env config
@@ -63,19 +63,101 @@ const fixPostcss = (config) => {
 }
 
 /**
+ * This method adds the polyfills that webpack4 previously added
+ * but was removed in webpack 5. NextJS does this for the Next apps
+ * @param {*} config Webpack config object
+ */
+const addNodeModulesPolyfill = (config) => {
+  config.resolve.fallback = {
+    assert: require.resolve('assert'),
+    buffer: require.resolve('buffer'),
+    console: require.resolve('console-browserify'),
+    constants: require.resolve('constants-browserify'),
+    crypto: require.resolve('crypto-browserify'),
+    domain: require.resolve('domain-browser'),
+    events: require.resolve('events'),
+    http: require.resolve('stream-http'),
+    https: require.resolve('https-browserify'),
+    os: require.resolve('os-browserify/browser'),
+    path: require.resolve('path-browserify'),
+    punycode: require.resolve('punycode'),
+    process: require.resolve('process/browser'),
+    querystring: require.resolve('querystring-es3'),
+    stream: require.resolve('stream-browserify'),
+    string_decoder: require.resolve('string_decoder'),
+    sys: require.resolve('util'),
+    timers: require.resolve('timers-browserify'),
+    tty: require.resolve('tty-browserify'),
+    url: require.resolve('url'),
+    util: require.resolve('util'),
+    vm: require.resolve('vm-browserify'),
+    zlib: require.resolve('browserify-zlib'),
+  }
+
+  config.plugins.push(
+    new webpack.ProvidePlugin({
+      Buffer: [require.resolve('buffer'), 'Buffer'],
+      process: [require.resolve('process')],
+    }),
+  )
+}
+
+/**
+ * Ignore warnings for broken source maps inside node_modules.
+ * @param {*} config Webpack config object
+ */
+function ignoreSourceMapWarnings(config) {
+  config.ignoreWarnings ??= []
+  config.ignoreWarnings.push(function ignoreSourcemapsLoaderWarnings(warning) {
+    return (
+      warning.module &&
+      warning.module.resource.includes('node_modules') &&
+      warning.details &&
+      warning.details.includes('source-map-loader')
+    )
+  })
+}
+
+/**
+ * NX's withReact loads svg's as React components when imported from js/ts files.
+ * But it doesn't work when dynamically imported like this: import(`./svg/${dynamic}.svg`)
+ *
+ * This pattern is currently used in financial-aid to load logos. It also loads them in an <img> tag, so it expects
+ * URLs rather than react components. Ideally we can devise a better way to manage these logos and get rid of this
+ * hack in the future.
+ *
+ * UPGRADE WARNING: This is designed to catch SVGs which are unhandled by withReact.
+ * @param config
+ */
+function addFallbackSvgLoader(config) {
+  config.module.rules.push({
+    test: /\.svg$/,
+    issuer: { not: /\.(js|ts|md)x?$/ },
+    loader: require.resolve('file-loader'),
+    options: {
+      name: `[name].[contenthash:20].[ext]`,
+    },
+  })
+}
+
+/**
  * Adds common web related configs to webpack
- * @param {*} config
+ * @param {*} config Webpack config object
+ * @param {*} context  NxWebpackExecutionContext
  */
 module.exports = function (config) {
-  // Call @nrwl/react plugin for default webpack config
-  nrwlConfig(config)
-
   setApiMocks(config)
+  addNodeModulesPolyfill(config)
+  ignoreSourceMapWarnings(config)
+  addFallbackSvgLoader(config)
 
   fixPostcss(config)
 
   // Add the Vanilla Extract plugin
   config.plugins.push(new VanillaExtractPlugin())
+
+  // Disable stats for child compilations
+  config.stats.children = false
 
   return config
 }

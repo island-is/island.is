@@ -2,7 +2,7 @@ import React, { FC, useState, useEffect } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { GridRow, GridColumn, GridContainer } from '@island.is/island-ui/core'
-import { parseNumber } from '../../../utils/phoneHelper'
+import { parseNumber, LoadModal } from '@island.is/service-portal/core'
 import {
   useUserProfile,
   useUpdateOrCreateUserProfile,
@@ -13,13 +13,18 @@ import { InputSection } from './components/InputSection'
 import { InputEmail } from './components/Inputs/Email'
 import { InputPhone } from './components/Inputs/Phone'
 import { DropModal } from './components/DropModal'
-import { LoadModal } from './components/LoadModal'
 import { BankInfoForm } from './components/Inputs/BankInfoForm'
 import { Nudge } from './components/Inputs/Nudge'
 import { msg } from '../../../lib/messages'
 import { DropModalType, DataStatus } from './types/form'
 import { bankInfoObject } from '../../../utils/bankInfoHelper'
-import { diffModifiedOverMaxDate } from '../../../utils/showModal'
+import { diffModifiedOverMaxDate } from '../../../utils/showUserOnboardingModal'
+import { PaperMail } from './components/Inputs/PaperMail'
+
+import {
+  FeatureFlagClient,
+  useFeatureFlagClient,
+} from '@island.is/react/feature-flags'
 
 interface Props {
   onCloseOverlay?: () => void
@@ -31,7 +36,7 @@ interface Props {
   setFormLoading?: (isLoading: boolean) => void
 }
 
-export const ProfileForm: FC<Props> = ({
+export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
   onCloseOverlay,
   onCloseDropModal,
   canDrop,
@@ -44,19 +49,32 @@ export const ProfileForm: FC<Props> = ({
   const [telDirty, setTelDirty] = useState(true)
   const [emailDirty, setEmailDirty] = useState(true)
   const [internalLoading, setInternalLoading] = useState(false)
+  const [showPaperMail, setShowPaperMail] = useState(false)
   const [showDropModal, setShowDropModal] = useState<DropModalType>()
-  const {
-    updateOrCreateUserProfile,
-    loading: updateLoading,
-  } = useUpdateOrCreateUserProfile()
-  const {
-    deleteIslykillValue,
-    loading: deleteLoading,
-  } = useDeleteIslykillValue()
+  const { updateOrCreateUserProfile, loading: updateLoading } =
+    useUpdateOrCreateUserProfile()
+  const { deleteIslykillValue, loading: deleteLoading } =
+    useDeleteIslykillValue()
 
   const { data: userProfile, loading: userLoading, refetch } = useUserProfile()
 
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+
   const { formatMessage } = useLocale()
+
+  /* Should show the paper mail settings? */
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isServicePortalPaperMailSettingsEnabled`,
+        false,
+      )
+      if (ffEnabled) {
+        setShowPaperMail(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+  }, [])
 
   useEffect(() => {
     const isLoadingForm = updateLoading || deleteLoading
@@ -237,6 +255,15 @@ export const ProfileForm: FC<Props> = ({
                   bankInfo={bankInfoObject(userProfile?.bankInfo || '')}
                 />
               )}
+            </InputSection>
+          )}
+          {showDetails && showPaperMail && (
+            <InputSection
+              title={formatMessage(m.requestPaperMailTitle)}
+              loading={userLoading}
+              text={formatMessage(msg.editPaperMailText)}
+            >
+              {!userLoading && <PaperMail />}
             </InputSection>
           )}
           {showDropModal && onCloseOverlay && !internalLoading && (

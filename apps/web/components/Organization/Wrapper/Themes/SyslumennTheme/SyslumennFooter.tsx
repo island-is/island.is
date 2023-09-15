@@ -1,7 +1,8 @@
-import React, { FC, useContext } from 'react'
+import React, { FC, ReactNode, useContext } from 'react'
 import { FooterItem } from '@island.is/web/graphql/schema'
 import {
   Box,
+  Button,
   GridColumn,
   GridContainer,
   GridRow,
@@ -11,10 +12,11 @@ import {
   LinkProps,
   Text,
 } from '@island.is/island-ui/core'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { LinkType, useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import { SliceType } from '@island.is/island-ui/contentful'
 import { GlobalContext } from '@island.is/web/context'
 import { BLOCKS } from '@contentful/rich-text-types'
+import { webRichText } from '@island.is/web/utils/richText'
 
 import * as styles from './SyslumennFooter.css'
 
@@ -22,19 +24,30 @@ interface FooterProps {
   title: string
   logo?: string
   footerItems: Array<FooterItem>
+  questionsAndAnswersText?: string
+  canWeHelpText?: string
+  namespace: Record<string, string>
 }
 
-export const SyslumennFooter: React.FC<FooterProps> = ({
+const SyslumennFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
   title,
   logo,
   footerItems,
+  namespace,
 }) => {
-  const { isServiceWeb, shouldLinkToServiceWeb } = useContext(GlobalContext)
+  const n = useNamespace(namespace)
+  const questionsAndAnswersText = n('questionsAndAnswers', 'Spurningar og svör')
+  const canWeHelpText = n('canWeHelp', 'Getum við aðstoðað?')
+
+  const { isServiceWeb } = useContext(GlobalContext)
+  const { linkResolver } = useLinkResolver()
 
   const items = footerItems.map((item, index) => (
     <GridColumn
       key={index}
       span={['12/12', '6/12', '4/12', '1/5']}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       className={index === 0 ? styles.footerItemFirst : null}
     >
       <Box marginBottom={5}>
@@ -49,11 +62,11 @@ export const SyslumennFooter: React.FC<FooterProps> = ({
             </Text>
           )}
         </Box>
-        {richText(
+        {webRichText(
           (isServiceWeb ? item.serviceWebContent : item.content) as SliceType[],
           {
             renderNode: {
-              [BLOCKS.PARAGRAPH]: (_node, children) => (
+              [BLOCKS.PARAGRAPH]: (_node: never, children: ReactNode) => (
                 <Text variant="small" color="white">
                   {children}
                 </Text>
@@ -95,7 +108,7 @@ export const SyslumennFooter: React.FC<FooterProps> = ({
             </div>
           </Box>
           <GridRow>
-            {!shouldLinkToServiceWeb || isServiceWeb ? (
+            {isServiceWeb ? (
               items
             ) : (
               <>
@@ -104,8 +117,27 @@ export const SyslumennFooter: React.FC<FooterProps> = ({
                     linkType="serviceweborganization"
                     slug="syslumenn"
                   >
-                    Spurningar og svör
+                    {questionsAndAnswersText}
                   </HeaderLink>
+                  <Box marginTop={3}>
+                    <Link
+                      href={
+                        linkResolver('serviceweborganization', ['syslumenn'])
+                          ?.href
+                      }
+                      skipTab
+                    >
+                      <Button
+                        size="small"
+                        colorScheme="negative"
+                        icon="arrowForward"
+                        variant="text"
+                        as="span"
+                      >
+                        {canWeHelpText}
+                      </Button>
+                    </Link>
+                  </Box>
                 </GridColumn>
                 <GridColumn span={['12/12', '12/12', '4/5']}>
                   <GridContainer>
@@ -127,7 +159,7 @@ interface HeaderLink {
   slug: string
 }
 
-const HeaderLink: FC<HeaderLink> = ({
+const HeaderLink: FC<React.PropsWithChildren<HeaderLink>> = ({
   linkType,
   slug,
   children,
@@ -151,7 +183,15 @@ const HeaderLink: FC<HeaderLink> = ({
       }}
     >
       <Text fontWeight="semiBold" color="white">
-        <a href={linkType ? linkResolver(linkType, slug && [slug]).href : slug}>
+        <a
+          href={
+            linkType
+              ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                linkResolver(linkType, slug && [slug]).href
+              : slug
+          }
+        >
           {typeof children === 'string' ? (
             <Hyphen>{children}</Hyphen>
           ) : (
@@ -162,3 +202,5 @@ const HeaderLink: FC<HeaderLink> = ({
     </LinkContext.Provider>
   )
 }
+
+export default SyslumennFooter

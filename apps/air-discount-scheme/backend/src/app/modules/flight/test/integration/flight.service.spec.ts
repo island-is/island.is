@@ -2,10 +2,10 @@ import { INestApplication } from '@nestjs/common'
 
 import { Airlines } from '@island.is/air-discount-scheme/consts'
 
-import { setup } from '../../../../../../test/setup'
 import { NationalRegistryUser } from '../../../nationalRegistry'
 import { FlightService } from '../../flight.service'
 import { CreateFlightBody } from '../../dto'
+import { setup } from '../../../../../../test/setup'
 
 let app: INestApplication
 let flightService: FlightService
@@ -50,11 +50,12 @@ describe('create', () => {
   it('should set the cooperation as norlandair when it is included in body', async () => {
     const airline = 'icelandair'
     const result = await flightService.create(flightDto, user, airline, false)
+    const flightLegs = result.flightLegs ?? []
 
-    expect(result.flightLegs.length).toEqual(2)
-    expect(result.flightLegs[0].airline).toEqual(airline)
-    expect(result.flightLegs[1].airline).toEqual(airline)
-    expect(result.flightLegs[0].cooperation).toEqual(null)
-    expect(result.flightLegs[1].cooperation).toEqual(Airlines.norlandair)
+    expect(flightLegs.length).toEqual(2)
+    expect(flightLegs[0].airline).toEqual(airline)
+    expect(flightLegs[1].airline).toEqual(airline)
+    expect(flightLegs[0].cooperation).toEqual(null)
+    expect(flightLegs[1].cooperation).toEqual(Airlines.norlandair)
   })
 })

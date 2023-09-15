@@ -1,4 +1,4 @@
-import { FormValue } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
 import { isDateOlderThanAYear } from './isDateOlderThanAYear'
 describe('isDateOlderThanAYear', () => {
   const yesterday = new Date()

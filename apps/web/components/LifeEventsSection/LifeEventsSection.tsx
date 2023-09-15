@@ -7,6 +7,8 @@ import { GetFrontpageQuery } from '@island.is/web/graphql/schema'
 interface LifeEventsSectionProps {
   heading: string
   headingId: string
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   items: GetFrontpageQuery['getFrontpage']['lifeEvents']
 }
 
@@ -32,11 +34,13 @@ export const LifeEventsSection = ({
         insideGridContainer
       >
         {items
-          .filter((x) => x.slug && x.title)
+          .filter((x: { slug: string; title: string }) => x.slug && x.title)
           .map(
             (
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               { __typename: typename, title, shortTitle, slug, tinyThumbnail },
-              index,
+              index: number,
             ) => {
               return (
                 <IconTitleCard
@@ -44,6 +48,7 @@ export const LifeEventsSection = ({
                   heading={shortTitle || title}
                   imgSrc={tinyThumbnail?.url}
                   alt={tinyThumbnail?.title}
+                  dataTestId={'lifeevent-card'}
                   href={linkResolver(typename as LinkType, [slug]).href}
                 />
               )

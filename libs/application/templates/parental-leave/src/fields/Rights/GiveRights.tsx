@@ -1,10 +1,6 @@
 import React, { FC, useState } from 'react'
-import {
-  FieldBaseProps,
-  formatText,
-  getValueViaPath,
-  ValidAnswers,
-} from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps, ValidAnswers } from '@island.is/application/types'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { RadioController } from '@island.is/shared/form-fields'
@@ -14,7 +10,11 @@ import { parentalLeaveFormMessages } from '../../lib/messages'
 import { defaultMonths } from '../../config'
 import { YES, NO } from '../../constants'
 
-const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
+const GiveRights: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  error,
+  field,
+  application,
+}) => {
   const currentAnswer = getValueViaPath(
     application.answers,
     field.id,
@@ -23,9 +23,8 @@ const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
 
   const { formatMessage } = useLocale()
 
-  const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>(
-    currentAnswer,
-  )
+  const [statefulAnswer, setStatefulAnswer] =
+    useState<ValidAnswers>(currentAnswer)
 
   const boxChartKeys = [
     {

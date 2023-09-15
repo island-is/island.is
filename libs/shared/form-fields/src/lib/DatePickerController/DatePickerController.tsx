@@ -30,7 +30,7 @@ interface Props {
 
 const df = 'yyyy-MM-dd'
 
-export const DatePickerController: FC<Props> = ({
+export const DatePickerController: FC<React.PropsWithChildren<Props>> = ({
   error,
   defaultValue,
   disabled = false,
@@ -53,7 +53,7 @@ export const DatePickerController: FC<Props> = ({
     <Controller
       defaultValue={defaultValue}
       name={name}
-      render={({ onChange: onControllerChange, value }) => (
+      render={({ field: { onChange: onControllerChange, value } }) => (
         <DatePicker
           hasError={error !== undefined}
           disabled={disabled}

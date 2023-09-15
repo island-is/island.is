@@ -5,6 +5,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { useBoxStyles, UseBoxStylesProps } from '../Box/useBoxStyles'
 import { getTextStyles, TextProps } from '../Text/Text'
 import * as styles from './Table.css'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 type DataField = {
   children?: ReactNode
@@ -14,6 +15,7 @@ type DataField = {
   >
   box?: Omit<UseBoxStylesProps, 'component'>
   borderColor?: keyof typeof theme.color
+  align?: 'left' | 'right' | 'center'
 }
 
 type Table = {
@@ -25,43 +27,59 @@ export const Table = ({
   children,
   box,
   ...props
-}: Table & Omit<AllHTMLAttributes<HTMLTableElement>, 'className'>) => {
-  return (
-    <div
-      className={useBoxStyles({ component: 'div', overflow: 'auto', ...box })}
+}: Table & Omit<AllHTMLAttributes<HTMLTableElement>, 'className'>) => (
+  <div className={useBoxStyles({ component: 'div', overflow: 'auto', ...box })}>
+    <table
+      className={cn(
+        useBoxStyles({
+          component: 'table',
+          width: 'full',
+        }),
+        styles.table,
+      )}
+      {...props}
     >
-      <table
-        className={cn(
-          useBoxStyles({
-            component: 'table',
-            width: 'full',
-          }),
-          styles.table,
-        )}
-        {...props}
-      >
-        {children}
-      </table>
-    </div>
-  )
+      {children}
+    </table>
+  </div>
+)
+
+interface HeadProps {
+  sticky?: boolean
 }
-export const Head: FC = ({ children }) => {
-  return <thead>{children}</thead>
-}
-export const Body: FC = ({ children }) => {
-  return <tbody>{children}</tbody>
-}
-export const Foot: FC = ({ children }) => {
-  return <tfoot>{children}</tfoot>
-}
-export const Row: FC = ({ children }) => {
-  return <tr>{children}</tr>
-}
+
+export const Head: FC<React.PropsWithChildren<HeadProps>> = ({
+  children,
+  sticky,
+}) => (
+  <thead
+    {...(sticky && {
+      className: styles.stickyHead,
+    })}
+  >
+    {children}
+  </thead>
+)
+
+export const Body: FC<React.PropsWithChildren<unknown>> = ({ children }) => (
+  <tbody>{children}</tbody>
+)
+
+export const Foot: FC<React.PropsWithChildren<unknown>> = ({ children }) => (
+  <tfoot>{children}</tfoot>
+)
+
+export const Row: FC<React.PropsWithChildren<TestSupport>> = ({
+  children,
+  dataTestId,
+}) => <tr data-testid={dataTestId}>{children}</tr>
+
 export const Data = ({
   children,
   text = {},
   box = {},
   borderColor = 'blue200',
+  align,
   ...props
 }: DataField &
   Omit<AllHTMLAttributes<HTMLTableDataCellElement>, 'className'>) => {
@@ -79,6 +97,7 @@ export const Data = ({
       paddingBottom: 'p5',
       borderBottomWidth: 'standard',
       borderColor,
+      textAlign: align,
       ...box,
     }),
   )
@@ -92,6 +111,7 @@ export const HeadData = ({
   children,
   text = {},
   box = {},
+  align = 'left',
   ...props
 }: DataField &
   Omit<AllHTMLAttributes<HTMLTableHeaderCellElement>, 'className'>) => {
@@ -110,7 +130,7 @@ export const HeadData = ({
       borderBottomWidth: 'standard',
       borderColor: 'blue200',
       background: 'blue100',
-      textAlign: 'left',
+      textAlign: align,
       ...box,
     }),
   )

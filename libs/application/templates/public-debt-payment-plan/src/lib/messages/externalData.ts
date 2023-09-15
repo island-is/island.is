@@ -1,7 +1,5 @@
 import { defineMessages } from 'react-intl'
 
-const t = 'pdpp.application'
-
 // Global string for the application
 export const externalData = {
   general: defineMessages({
@@ -27,6 +25,28 @@ export const externalData = {
       description: 'External data description',
     },
   }),
+  companyLabels: defineMessages({
+    companyRegistryTitle: {
+      id: `pdpp.application:section.externalData.companyRegistryTitle`,
+      defaultMessage: `Upplýsingar frá Fyrirtækjaskrá`,
+      description: `External data section company registry title`,
+    },
+    companyRegistrySubTitle: {
+      id: `pdpp.application:section.externalData.companyRegistrySubTitle`,
+      defaultMessage: `Nafn, kennitala, lögheimili, póstfang`,
+      description: `External data section company registry subtitle`,
+    },
+    companyTaxTitle: {
+      id: `pdpp.application:section.externalData.companyTaxTitle`,
+      defaultMessage: `Upplýsingar frá skattinum og innheimtumanni ríkissjóðs`,
+      description: `External data section company tax title`,
+    },
+    companyTaxSubTitle: {
+      id: `pdpp.application:section.externalData.companyTaxSubTitle`,
+      defaultMessage: `Upplýsingar um stöðu skulda, skil á ársreikningum og framtölum ásamt skýrslum og skilagreinum.`,
+      description: `External data section company tax subtitle`,
+    },
+  }),
   labels: defineMessages({
     paymentPlanTitle: {
       id: `pdpp.application:section.externalData.paymentPlanTitle`,
@@ -48,9 +68,19 @@ export const externalData = {
       defaultMessage: 'Nafn og kennitala.',
       description: 'National Registry Subtitle',
     },
+    identityRegistryTitle: {
+      id: `pdpp.application:section.externalData.identityRegistryTitle`,
+      defaultMessage: 'Upplýsingar frá Fyrirtækjaskrá',
+      description: 'Identity Registry Title',
+    },
+    identityRegistrySubTitle: {
+      id: `pdpp.application:section.externalData.identityRegistrySubTitle`,
+      defaultMessage: 'Nafn, kennitala, lögheimili, póstfang.',
+      description: 'Identity Registry Subtitle',
+    },
     userProfileTitle: {
       id: `pdpp.application:section.externalData.userProfileTitle`,
-      defaultMessage: 'Upplýsingar frá Skattinum og Innheimtumanni ríkissjóðs',
+      defaultMessage: 'Upplýsingar frá skattinum og innheimtumanni ríkissjóðs',
       description: 'User Profile Title',
     },
     userProfileSubTitle: {
@@ -78,6 +108,11 @@ export const externalData = {
       id: `pdpp.application:section.externalData.paymentDebtsSubtitle`,
       defaultMessage: 'Upplýsingar um skuldir',
       description: 'External data section payment plan title',
+    },
+    externalDataSuccessSubmitFieldTitle: {
+      id: 'pdpp.application:externalDataSuccessTitle',
+      defaultMessage: 'Hefja umsókn',
+      description: 'Start application button text',
     },
   }),
 }

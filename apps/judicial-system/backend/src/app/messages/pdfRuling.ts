@@ -76,7 +76,7 @@ export const ruling = {
     description: 'Notaður sem texti þegar lagarök hafa ekki verið skráð.',
   }),
   rulingHeading: defineMessage({
-    id: 'judicial.system.backend:pdf.ruling.ruling_heading_tmp', // TODO: remove _tmp
+    id: 'judicial.system.backend:pdf.ruling.ruling_heading',
     defaultMessage: 'Niðurstaða',
     description: 'Notaður sem fyrirsögn á niðurstöðu.',
   }),
@@ -86,7 +86,7 @@ export const ruling = {
     description: 'Notaður sem texti þegar niðurstaða hefur ekki verið skráð.',
   }),
   conclusionHeading: defineMessage({
-    id: 'judicial.system.backend:pdf.ruling.conclusion_heading_tmp', // TODO: remove _tmp
+    id: 'judicial.system.backend:pdf.ruling.conclusion_heading',
     defaultMessage: 'Úrskurðarorð',
     description: 'Notaður sem fyrirsögn á úrskurðarorð.',
   }),

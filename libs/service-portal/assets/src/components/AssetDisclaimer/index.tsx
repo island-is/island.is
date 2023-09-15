@@ -6,7 +6,7 @@ import { messages } from '../../lib/messages'
 const AssetDisclaimer = () => {
   const { formatMessage } = useLocale()
   return (
-    <Box>
+    <Box style={{ pageBreakBefore: 'always' }}>
       <Text variant="small" paddingTop={4}>
         {formatMessage(messages.disclaimerA)}
       </Text>

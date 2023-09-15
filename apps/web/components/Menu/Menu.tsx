@@ -8,13 +8,13 @@ import {
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { SearchInput } from '@island.is/web/components'
 import { LanguageToggler } from '../LanguageToggler'
 
 interface MegaMenuLink {
   href: LinkResolverResponse
   text: string
+  dataTestId: string
   sub?: [MegaMenuLink]
 }
 
@@ -24,7 +24,10 @@ interface Props {
   asideBottomLinks: MegaMenuLink[]
   mainLinks: MegaMenuLink[]
   buttonColorScheme?: ButtonTypes['colorScheme']
+  onMenuOpen?: () => void
 }
+
+const minarsidurLink = '/minarsidur/'
 
 export const Menu = ({
   asideTopLinks,
@@ -32,15 +35,18 @@ export const Menu = ({
   asideBottomLinks,
   mainLinks,
   buttonColorScheme = 'default',
+  onMenuOpen,
 }: Props) => {
   const searchInput = useRef<HTMLInputElement>()
   const { activeLocale, t } = useI18n()
-  const { linkResolver } = useLinkResolver()
 
   return (
     <MenuUI
       baseId="Menu"
-      mainLinks={mainLinks}
+      mainLinks={mainLinks.map((item) => ({
+        ...item,
+        dataTestId: 'mega-menu-link',
+      }))}
       asideTopLinks={asideTopLinks}
       asideBottomLinks={asideBottomLinks}
       mainTitle={t.serviceCategories}
@@ -48,6 +54,8 @@ export const Menu = ({
       myPagesText={t.login}
       renderDisclosure={(
         disclosureDefault,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         { onClick, ...disclosureProps },
       ) => {
         return (
@@ -58,6 +66,7 @@ export const Menu = ({
                 colorScheme={buttonColorScheme}
                 variant="utility"
                 icon="search"
+                value={t.search}
                 onClick={(e) => {
                   onClick(e)
                   setTimeout(() => {
@@ -76,14 +85,20 @@ export const Menu = ({
         <Link
           href={activeLocale === 'en' ? '/en' : '/'}
           onClick={() => {
-            closeModal()
+            closeModal?.()
           }}
         >
           <div>{logo}</div>
         </Link>
       )}
       menuButton={
-        <Button variant="utility" icon="menu" colorScheme={buttonColorScheme}>
+        <Button
+          variant="utility"
+          icon="menu"
+          colorScheme={buttonColorScheme}
+          data-testid="frontpage-burger-button"
+          onClick={onMenuOpen}
+        >
           {t.menuCaption}
         </Button>
       }
@@ -96,9 +111,9 @@ export const Menu = ({
       }}
       renderMyPagesButton={(button) => {
         return (
-          <Link {...linkResolver('login')} skipTab>
+          <a tabIndex={-1} href={minarsidurLink}>
             {button}
-          </Link>
+          </a>
         )
       }}
       renderLanguageSwitch={(isMobile) => (
@@ -112,6 +127,8 @@ export const Menu = ({
         <SearchInput
           id="search_input_menu"
           size="medium"
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           ref={searchInput}
           activeLocale={activeLocale}
           placeholder={t.searchPlaceholder}

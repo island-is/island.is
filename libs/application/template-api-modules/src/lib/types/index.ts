@@ -1,16 +1,18 @@
+import { Injectable, Type } from '@nestjs/common'
+
+import { Config as CriminalRecordConfig } from '@island.is/api/domains/criminal-record'
 import {
   Application,
   ApplicationWithAttachments,
-} from '@island.is/application/core'
-import { Config as DrivingLicenseApiConfig } from '@island.is/api/domains/driving-license'
-import { Config as CriminalRecordConfig } from '@island.is/api/domains/criminal-record'
-import { PaymentServiceOptions } from '@island.is/clients/payment'
-import { Message } from '@island.is/email-service'
+} from '@island.is/application/types'
 import { User } from '@island.is/auth-nest-tools'
-import { PaymentScheduleServiceOptions } from '@island.is/clients/payment-schedule'
-import { HealthInsuranceV2Options } from '@island.is/clients/health-insurance-v2'
 import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
-import { Injectable, Type } from '@nestjs/common'
+import { HealthInsuranceV2Options } from '@island.is/clients/icelandic-health-insurance/health-insurance'
+import { IslykillApiModuleConfig } from '@island.is/clients/islykill'
+import { PaymentScheduleServiceOptions } from '@island.is/clients/payment-schedule'
+import { Message } from '@island.is/email-service'
+
+import type { Locale } from '@island.is/shared/types'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
@@ -32,24 +34,34 @@ export interface BaseTemplateAPIModuleConfig {
     url: string
     username: string
     password: string
+    acceptUnauthorized?: boolean
   }
-  drivingLicense: DrivingLicenseApiConfig
   criminalRecord: CriminalRecordConfig
   attachmentBucket: string
   presignBucket: string
-  paymentOptions: PaymentServiceOptions
   generalPetition: {
     endorsementsApiBasePath: string
   }
-  paymentScheduleConfig: PaymentScheduleServiceOptions
   healthInsuranceV2: HealthInsuranceV2Options
   dataProtectionComplaint: DataProtectionComplaintClientConfig
   applicationService: Type<BaseTemplateApiApplicationService>
+  userProfile: {
+    serviceBasePath: string
+  }
+  nationalRegistry: {
+    baseSoapUrl: string
+    user: string
+    password: string
+    host: string
+  }
+  islykill: IslykillApiModuleConfig
 }
 
-export interface TemplateApiModuleActionProps {
+export interface TemplateApiModuleActionProps<Params = unknown> {
   application: ApplicationWithAttachments
   auth: User
+  currentUserLocale: Locale
+  params?: Params
 }
 
 export interface EmailTemplateGeneratorProps {
@@ -96,4 +108,21 @@ export abstract class BaseTemplateApiApplicationService {
     secret: string,
     expiresIn: number,
   ): Promise<string>
+}
+
+export type SmsTemplateGenerator = (
+  application: Application,
+  options: {
+    clientLocationOrigin: string
+  },
+) => SmsMessage
+
+export type AssignmentSmsTemplateGenerator = (
+  application: Application,
+  assignLink: string,
+) => SmsMessage
+
+export interface SmsMessage {
+  phoneNumber: string
+  message: string
 }

@@ -25,12 +25,15 @@ import {
   Slice as SliceType,
   richText,
 } from '@island.is/island-ui/contentful'
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
 interface GenericOverviewProps {
   genericOverviewPage: GetGenericOverviewPageQuery['getGenericOverviewPage']
 }
 
 export const GenericOverview: Screen<GenericOverviewProps> = ({
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   genericOverviewPage: { title, intro, navigation, overviewLinks },
 }) => {
   const { linkResolver } = useLinkResolver()
@@ -43,12 +46,16 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
         activeItemTitle={navigation.title}
         title={navigation.title}
         items={[
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           ...navigation.menuLinks.map((item) => ({
             title: item.title,
             typename: item.link.type,
             slug: [item.link.slug],
           })),
         ]}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         renderLink={(link, { typename, slug }) => {
           return (
             <Link {...linkResolver(typename as LinkType, slug)}>{link}</Link>
@@ -95,6 +102,8 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
       </Stack>
       <Stack space={6}>
         {overviewLinks.map(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           ({ title, linkTitle, link, image, leftImage, intro }, index) => {
             return (
               <GridRow key={index} direction={leftImage ? 'row' : 'rowReverse'}>
@@ -157,11 +166,8 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
   )
 }
 
-GenericOverview.getInitialProps = async ({
-  apolloClient,
-  locale,
-  pathname,
-}) => {
+GenericOverview.getProps = async ({ apolloClient, locale, req }) => {
+  const pathname = safelyExtractPathnameFromUrl(req.url)
   const [
     {
       data: { getGenericOverviewPage: genericOverviewPage },

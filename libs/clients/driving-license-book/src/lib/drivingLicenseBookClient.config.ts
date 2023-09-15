@@ -1,5 +1,5 @@
 import { defineConfig } from '@island.is/nest/config'
-import * as z from 'zod'
+import { z } from 'zod'
 
 const schema = z.object({
   xRoadServicePath: z.string(),
@@ -23,8 +23,8 @@ export const DrivingLicenseBookClientConfig = defineConfig({
         timeout:
           env.optionalJSON('XROAD_DRIVING_LICENSE_BOOK_TIMEOUT') ?? 10000,
       },
-      username: env.required('DRIVING_LICENSE_BOOK_USERNAME'),
-      password: env.required('DRIVING_LICENSE_BOOK_PASSWORD'),
+      username: env.required('DRIVING_LICENSE_BOOK_USERNAME', ''),
+      password: env.required('DRIVING_LICENSE_BOOK_PASSWORD', ''),
     }
   },
 })

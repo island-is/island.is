@@ -4,17 +4,20 @@
 /dist
 /tmp
 /out-tsc
-
+**/tsconfig.tsbuildinfo
+infra/mountebank-imposter-config.json
 # Contentful extensions
 libs/contentful-extensions/translation/build
 libs/contentful-extensions/translation/.cache
-libs/contentful-extensions/mideind-translation/build
-libs/contentful-extensions/mideind-translation/.cache
-libs/contentful-extensions/parent-slug/build
-libs/contentful-extensions/parent-slug/.cache
 
 # dependencies
 node_modules/
+**/.yarn/*
+!**/.yarn/patches
+!**/.yarn/releases
+!**/.yarn/plugins
+!**/.yarn/sdks
+!**/.yarn/versions
 
 # IDEs and editors
 /.idea
@@ -27,6 +30,8 @@ node_modules/
 TODO
 *.todo
 .env
+.env.*
+.envrc.*
 .nvmrc
 .node-version
 # IDE - VSCode
@@ -46,16 +51,16 @@ yarn-error.log
 testem.log
 /typings
 /debug.log
+*.log
 
 # System Files
 .DS_Store
 Thumbs.db
 .cache
 
-.env
-
 # Used to store local secrets
 .env.secret
+.env.secret.*
 .env
 helm/**/*.tgz
 /cache*
@@ -74,7 +79,19 @@ possibleTypes.json
 fragmentTypes.json
 **/gen/fetch/**
 **/gen/graphql.ts
+*.generated.ts
+/apps/**/src/index.html
 
 # IDE - Visual Studio
 *.suo
 /.vs
+
+# Honkit
+_book
+.vscode/settings.json
+
+# Ignore generated .html files when running `serve`
+apps/**/index.html
+
+# Next.js
+.next

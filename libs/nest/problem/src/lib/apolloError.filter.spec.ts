@@ -26,7 +26,7 @@ describe('ApolloErrorFilter', () => {
         "detail": "User does not access.",
         "status": 403,
         "title": "Forbidden",
-        "type": "https://httpstatuses.com/403",
+        "type": "https://httpstatuses.org/403",
       }
     `)
   })

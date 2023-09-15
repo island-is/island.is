@@ -1,8 +1,9 @@
-import React from 'react'
 import {
   CompanyList,
   CompanyListConnected,
   GeneralPetitionLists,
+  RealEstateAgentsList,
+  LawyersList,
 } from '@island.is/shared/connected'
 import { Image } from '../Image/Image'
 import FaqList from '../FaqList/FaqList'
@@ -12,11 +13,13 @@ import { Hidden } from '@island.is/island-ui/core'
 import { ProcessEntry } from '../ProcessEntry/ProcessEntry'
 import EmbeddedVideo from '../EmbeddedVideo/EmbeddedVideo'
 import { SectionWithImage } from '../SectionWithImage/SectionWithImage'
+import { SectionWithVideo } from '../SectionWithVideo/SectionWithVideo'
 import { TeamList } from '../TeamList/TeamList'
 import { ContactUs } from '../ContactUs/ContactUs'
 import { Location } from '../Location/Location'
-
-const renderConnectedComponent = (slice) => {
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
+export const renderConnectedComponent = (slice) => {
   const data = slice.json
 
   switch (slice.componentType) {
@@ -26,14 +29,17 @@ const renderConnectedComponent = (slice) => {
       }
       break
     case 'Undirskriftalistar/PetitionLists':
-      return <GeneralPetitionLists />
+      return <GeneralPetitionLists slice={slice} />
     case 'Skilavottord/CompanyListConnected':
       if (typeof data === 'object') {
         const { graphqlLink } = data
-
         return <CompanyListConnected graphqlLink={graphqlLink} />
       }
       break
+    case 'Fasteignasalar/RealEstateAgents':
+      return <RealEstateAgentsList slice={slice} />
+    case 'Lögmenn/Lawyers':
+      return <LawyersList slice={slice} />
     default:
       break
   }
@@ -42,33 +48,51 @@ const renderConnectedComponent = (slice) => {
 }
 
 // TODO: add types
-export const defaultRenderComponent = {
+export const defaultRenderComponentObject = {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   ConnectedComponent: (slice) => renderConnectedComponent(slice),
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   FaqList: (slice) => <FaqList {...slice} />,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   Statistics: (slice) => <Statistics {...slice} />,
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   Image: (slice) => <Image {...slice} thumbnail={slice.url + '?w=50'} />,
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   Asset: (slice) => <AssetLink {...slice} />,
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   ProcessEntry: (slice) => (
     <Hidden print={true}>
       <ProcessEntry {...slice} />
     </Hidden>
   ),
-
-  EmbeddedVideo: (slice, locale) => (
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  EmbeddedVideo: (slice, locale: string) => (
     <Hidden print={true}>
       <EmbeddedVideo locale={locale} {...slice} />
     </Hidden>
   ),
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   SectionWithImage: (slice) => <SectionWithImage {...slice} />,
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  SectionWithVideo: (slice) => <SectionWithVideo {...slice} />,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   TeamList: (slice) => <TeamList {...slice} />,
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   Location: (slice) => <Location {...slice} />,
   // NB: ContactUs needs to be connected with submit logic higher up
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   ContactUs: (slice) => (
     <ContactUs
       {...slice}

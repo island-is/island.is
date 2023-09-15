@@ -1,20 +1,22 @@
-import React from 'react'
 import { useRouter } from 'next/router'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
   Organization,
   Query,
+  QueryGetFeaturedSupportQnAsArgs,
   QueryGetNamespaceArgs,
   QueryGetOrganizationArgs,
   QueryGetSupportCategoriesInOrganizationArgs,
   QueryGetSupportQnAsArgs,
-  SearchableTags,
   SupportCategory,
+  QueryGetServiceWebPageArgs,
 } from '@island.is/web/graphql/schema'
 import {
+  GET_FEATURED_SUPPORT_QNAS,
   GET_NAMESPACE_QUERY,
   GET_SERVICE_WEB_ORGANIZATION,
+  GET_SERVICE_WEB_PAGE_QUERY,
   GET_SUPPORT_CATEGORIES,
   GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
 } from '../../queries'
@@ -24,8 +26,11 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Stack,
   Text,
+  TopicCard,
 } from '@island.is/island-ui/core'
+import { sortAlpha } from '@island.is/shared/utils'
 
 import { CustomNextError } from '@island.is/web/units/errors'
 import {
@@ -33,11 +38,20 @@ import {
   SimpleStackedSlider,
   ServiceWebWrapper,
   ServiceWebContext,
+  SliceMachine,
 } from '@island.is/web/components'
-import { useNamespace, LinkResolverResponse } from '@island.is/web/hooks'
+import {
+  useNamespace,
+  LinkResolverResponse,
+  useLinkResolver,
+  LinkType,
+} from '@island.is/web/hooks'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import { getSlugPart } from '../utils'
-import sortAlpha from '@island.is/web/utils/sortAlpha'
+import { Locale } from 'locale'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { Colors } from '@island.is/island-ui/theme'
 
 import * as styles from './Home.css'
 
@@ -48,6 +62,9 @@ interface HomeProps {
   supportCategories:
     | Query['getSupportCategories']
     | Query['getSupportCategoriesInOrganization']
+  featuredQNAs: Query['getFeaturedSupportQNAs']
+  serviceWebPage?: Query['getServiceWebPage']
+  locale: Locale
 }
 
 const Home: Screen<HomeProps> = ({
@@ -55,16 +72,24 @@ const Home: Screen<HomeProps> = ({
   supportCategories,
   namespace,
   organizationNamespace,
+  featuredQNAs,
+  serviceWebPage,
+  locale,
 }) => {
   const Router = useRouter()
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const o = useNamespace(organizationNamespace)
+  const { linkResolver } = useLinkResolver()
 
-  const institutionSlug = getSlugPart(Router.asPath, 2)
+  useContentfulId(organization?.id)
+  useLocalLinkTypeResolver()
 
-  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
-    'mannaudstorg',
-  )
+  const institutionSlug = getSlugPart(Router.asPath, locale === 'is' ? 2 : 3)
+
+  const institutionSlugBelongsToMannaudstorg =
+    institutionSlug.includes('mannaudstorg')
 
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
   const headerTitle = o(
@@ -89,11 +114,6 @@ const Home: Screen<HomeProps> = ({
   const hasContent = !!supportCategories?.length
 
   const sortedSupportCategories = sortSupportCategories(supportCategories)
-
-  const searchTags = institutionSlugBelongsToMannaudstorg
-    ? [{ key: 'mannaudstorg', type: SearchableTags.Organization }]
-    : undefined
-
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
@@ -101,6 +121,8 @@ const Home: Screen<HomeProps> = ({
       headerTitle={headerTitle}
       institutionSlug={institutionSlug}
       logoUrl={logoUrl}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       organization={organization}
       organizationTitle={organizationTitle}
       searchTitle={searchTitle}
@@ -108,83 +130,199 @@ const Home: Screen<HomeProps> = ({
         'serviceWebSearchPlaceholder',
         'Leitaðu á þjónustuvefnum',
       )}
-      searchTags={searchTags}
       showLogoTitle={!institutionSlugBelongsToMannaudstorg}
+      indexableBySearchEngine={institutionSlugBelongsToMannaudstorg}
+      showLogoOnMobileDisplays={!institutionSlugBelongsToMannaudstorg}
     >
       {hasContent && (
         <ServiceWebContext.Consumer>
-          {({ textMode }) => (
-            <>
-              <Box className={styles.categories}>
-                <GridContainer>
-                  <GridRow
-                    {...(!institutionSlugBelongsToMannaudstorg
-                      ? {}
-                      : { direction: 'column', alignItems: 'center' })}
+          {({ textMode }) => {
+            const textProps: { color?: Colors } =
+              textMode === 'dark'
+                ? {}
+                : { color: textMode === 'blueberry' ? 'blueberry600' : 'white' }
+            return (
+              <>
+                <Box className={styles.categories}>
+                  <GridContainer>
+                    <GridRow
+                      {...(!institutionSlugBelongsToMannaudstorg
+                        ? {}
+                        : { direction: 'column', alignItems: 'center' })}
+                    >
+                      <GridColumn span="12/12" paddingBottom={[2, 2, 3]}>
+                        <Text variant="h3" {...textProps}>
+                          {o(
+                            'serviceWebCategoryTitle',
+                            n('answersByCategory', 'Svör eftir flokkum'),
+                          )}
+                        </Text>
+                      </GridColumn>
+                    </GridRow>
+                  </GridContainer>
+                  <SimpleStackedSlider
+                    itemWidth={280}
+                    span={['12/12', '6/12', '6/12', '4/12']}
                   >
-                    <GridColumn span="12/12" paddingBottom={[2, 2, 3]}>
-                      <Text
-                        variant="h3"
-                        {...(textMode === 'dark' ? {} : { color: 'white' })}
+                    {sortedSupportCategories.map(
+                      ({ title, slug, description, organization }, index) => {
+                        return (
+                          <Card
+                            key={index}
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore make web strict
+                            title={title}
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore make web strict
+                            description={description}
+                            link={
+                              {
+                                href: linkResolver('supportcategory', [
+                                  organization?.slug ?? '',
+                                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                  // @ts-ignore make web strict
+                                  slug,
+                                ]).href,
+                              } as LinkResolverResponse
+                            }
+                          />
+                        )
+                      },
+                    )}
+                  </SimpleStackedSlider>
+                </Box>
+
+                <Box marginY={[4, 4, 8]}>
+                  <GridContainer>
+                    <GridRow>
+                      <GridColumn
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
+                        offset={[null, null, null, '1/12']}
+                        span={['12/12', '12/12', '12/12', '10/12']}
                       >
-                        {o(
-                          'serviceWebCategoryTitle',
-                          n('answersByCategory', 'Svör eftir flokkum'),
+                        <Box
+                          marginTop={[4, 4, 4]}
+                          marginBottom={[4, 4, 8]}
+                          paddingX={[4, 4, 14]}
+                        >
+                          {serviceWebPage?.slices?.map((slice) => {
+                            return (
+                              <SliceMachine
+                                key={slice.id}
+                                slice={slice}
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                // @ts-ignore make web strict
+                                namespace={namespace}
+                                fullWidth={true}
+                              />
+                            )
+                          })}
+                        </Box>
+
+                        {featuredQNAs.length > 0 && (
+                          <Box
+                            borderRadius="large"
+                            border="standard"
+                            borderColor="blue200"
+                            paddingX={[4, 4, 14]}
+                            paddingY={[4, 4, 8]}
+                          >
+                            <Text variant="h3" as="h3" marginBottom={[4, 4, 8]}>
+                              {n('popularQuestions', 'Algengar spurningar')}
+                            </Text>
+                            <Stack space={2}>
+                              {featuredQNAs
+                                .filter(
+                                  (item) =>
+                                    !!item.title &&
+                                    !!item.slug &&
+                                    !!item.category,
+                                )
+                                .map(({ title, slug, category }, index) => {
+                                  return (
+                                    <Box key={index}>
+                                      <TopicCard
+                                        href={
+                                          linkResolver('supportqna', [
+                                            organization?.slug
+                                              ? organization.slug
+                                              : '',
+                                            category?.slug ? category.slug : '',
+                                            slug,
+                                          ]).href
+                                        }
+                                      >
+                                        {title}
+                                      </TopicCard>
+                                    </Box>
+                                  )
+                                })}
+                            </Stack>
+                          </Box>
                         )}
-                      </Text>
-                    </GridColumn>
-                  </GridRow>
-                </GridContainer>
-                <SimpleStackedSlider
-                  itemWidth={280}
-                  span={['12/12', '6/12', '6/12', '4/12']}
-                >
-                  {sortedSupportCategories.map(
-                    ({ title, slug, description, organization }, index) => {
-                      return (
-                        <Card
-                          key={index}
-                          title={title}
-                          description={description}
-                          link={
-                            {
-                              href: `/adstod/${organization.slug}/${slug}`,
-                            } as LinkResolverResponse
-                          }
-                        />
-                      )
-                    },
-                  )}
-                </SimpleStackedSlider>
-              </Box>
-              {!institutionSlugBelongsToMannaudstorg && (
+                      </GridColumn>
+                    </GridRow>
+                  </GridContainer>
+                </Box>
+
                 <Box marginY={[7, 10, 10]}>
                   <GridContainer>
                     <GridRow>
                       <GridColumn
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
                         offset={[null, null, null, '1/12']}
                         span={['12/12', '12/12', '12/12', '10/12']}
                       >
-                        <Box marginY={[10, 10, 20]}>
-                          <ContactBanner slug={institutionSlug} />
+                        <Box marginY={[2, 2, 4]}>
+                          <ContactBanner
+                            slug={institutionSlug}
+                            cantFindWhatYouAreLookingForText={o(
+                              'cantFindWhatYouAreLookingForText',
+                              n(
+                                'cantFindWhatYouAreLookingForText',
+                                'Finnurðu ekki það sem þig vantar?',
+                              ),
+                            )}
+                            contactUsText={o(
+                              'contactUsText',
+                              n('contactUsText', 'Hafa samband'),
+                            )}
+                            howCanWeHelpText={o(
+                              'howCanWeHelpText',
+                              n(
+                                'howCanWeHelpText',
+                                'Hvernig getum við aðstoðað?',
+                              ),
+                            )}
+                          />
                         </Box>
                       </GridColumn>
                     </GridRow>
                   </GridContainer>
                 </Box>
-              )}
-            </>
-          )}
+              </>
+            )
+          }}
         </ServiceWebContext.Consumer>
       )}
     </ServiceWebWrapper>
   )
 }
 
-Home.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const slug = query.slug ? (query.slug as string) : 'stafraent-island'
+Home.getProps = async ({ apolloClient, locale, query }) => {
+  const defaultSlug = locale === 'en' ? 'digital-iceland' : 'stafraent-island'
+  const slug = query.slug ? (query.slug as string) : defaultSlug
 
-  const [organization, namespace, supportCategories] = await Promise.all([
+  const [
+    organization,
+    namespace,
+    supportCategories,
+    {
+      data: { getServiceWebPage },
+    },
+  ] = await Promise.all([
     !!slug &&
       apolloClient.query<Query, QueryGetOrganizationArgs>({
         query: GET_SERVICE_WEB_ORGANIZATION,
@@ -206,7 +344,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
@@ -228,7 +366,33 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
             },
           },
         }),
+    apolloClient.query<Query, QueryGetServiceWebPageArgs>({
+      query: GET_SERVICE_WEB_PAGE_QUERY,
+      variables: {
+        input: {
+          slug: query.slug as string,
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
   ])
+
+  const popularQuestionCount =
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
+    organization?.data?.getOrganization?.serviceWebPopularQuestionCount
+  const featuredQNAs = popularQuestionCount
+    ? await apolloClient.query<Query, QueryGetFeaturedSupportQnAsArgs>({
+        query: GET_FEATURED_SUPPORT_QNAS,
+        variables: {
+          input: {
+            organization: slug,
+            lang: locale as ContentLanguage,
+            size: popularQuestionCount ?? 10,
+          },
+        },
+      })
+    : undefined
 
   let processedCategories = slug
     ? supportCategories?.data?.getSupportCategoriesInOrganization
@@ -238,7 +402,6 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
   processedCategories = processedCategories.filter(
     (item) => !!item.organization,
   )
-
   if (
     !organization ||
     !organization?.data?.getOrganization?.serviceWebEnabled
@@ -258,6 +421,11 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
     namespace,
     organizationNamespace,
     supportCategories: processedCategories,
+    featuredQNAs: featuredQNAs
+      ? featuredQNAs?.data?.getFeaturedSupportQNAs
+      : [],
+    serviceWebPage: getServiceWebPage,
+    locale: locale as Locale,
   }
 }
 
@@ -270,5 +438,5 @@ const sortSupportCategories = (items: SupportCategory[]) =>
 
 export default withMainLayout(Home, {
   showHeader: false,
-  showFooter: false,
+  footerVersion: 'organization',
 })

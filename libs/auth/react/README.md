@@ -22,7 +22,7 @@ import { environment } from './environments'
 configure({
   // You should usually configure these:
   authority: environment.identityServer.authority,
-  client_id: 'island-is-1',
+  client_id: '@island.is/web',
   scope: [
     'openid',
     'profile',
@@ -46,9 +46,9 @@ Then you can render the Authenticator component around your application to wrap 
 ```typescript jsx
 ReactDOM.render(
   <Router>
-    <Authenticator>
+    <AuthProvider basePath="/some_base_path">
       <App />
-    </Authenticator>
+    </AuthProvider>
   </Router>,
   document.getElementById('root'),
 )

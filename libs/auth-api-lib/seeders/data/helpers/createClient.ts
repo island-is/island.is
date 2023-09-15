@@ -69,9 +69,12 @@ const getClientFields = (options: ClientOptions): DbClient => ({
   require_client_secret:
     options.clientType === 'web' || options.clientType === 'machine',
   require_pkce: options.clientType === 'spa' || options.clientType === 'native',
-  supports_delegation: options.supportDelegations ?? false,
+  supports_custom_delegation: options.supportDelegations ?? false,
   supports_legal_guardians: options.supportDelegations ?? false,
   supports_procuring_holders: options.supportDelegations ?? false,
+  supports_personal_representatives: options.supportDelegations ?? false,
+
+  // eslint-disable-next-line local-rules/disallow-kennitalas
   national_id: options.contactNationalId ?? '5501692829',
   contact_email: options.contactEmail ?? 'island@island.is',
 
@@ -111,73 +114,72 @@ const getClientFields = (options: ClientOptions): DbClient => ({
   prompt_delegations: false,
 })
 
-export const createClient = (options: ClientOptions) => async (
-  queryInterface: QueryInterface,
-) => {
-  const client = getClientFields(options)
-  const grantTypes: GrantType[] =
-    options.grantTypes ??
-    (['spa', 'native'].includes(options.clientType)
-      ? ['authorization_code']
-      : ['client_credentials'])
+export const createClient =
+  (options: ClientOptions) => async (queryInterface: QueryInterface) => {
+    const client = getClientFields(options)
+    const grantTypes: GrantType[] =
+      options.grantTypes ??
+      (['spa', 'native'].includes(options.clientType)
+        ? ['authorization_code']
+        : ['client_credentials'])
 
-  await safeBulkInsert(
-    queryInterface,
-    'client',
-    [client],
-    () => `creating client "${client.client_id}"`,
-  )
-
-  if (grantTypes.length) {
     await safeBulkInsert(
       queryInterface,
-      'client_grant_type',
-      grantTypes.map((grant_type) => ({
-        client_id: client.client_id,
-        grant_type,
-      })),
-      ({ grant_type }) =>
-        `linking grant type "${grant_type}" to "${client.client_id}"`,
+      'client',
+      [client],
+      () => `creating client "${client.client_id}"`,
     )
-  }
 
-  if (options.allowedScopes?.length) {
-    await safeBulkInsert(
-      queryInterface,
-      'client_allowed_scope',
-      options.allowedScopes.map((scope) => ({
-        client_id: client.client_id,
-        scope_name: scope,
-      })),
-      ({ scope_name }) =>
-        `linking scope "${scope_name}" to "${client.client_id}"`,
-    )
-  }
+    if (grantTypes.length) {
+      await safeBulkInsert(
+        queryInterface,
+        'client_grant_type',
+        grantTypes.map((grant_type) => ({
+          client_id: client.client_id,
+          grant_type,
+        })),
+        ({ grant_type }) =>
+          `linking grant type "${grant_type}" to "${client.client_id}"`,
+      )
+    }
 
-  const redirectUris = getCurrentEnvValue(options.redirectUris || {})
-  if (redirectUris?.length) {
-    await safeBulkInsert(
-      queryInterface,
-      'client_redirect_uri',
-      redirectUris.map((uri) => ({
-        client_id: client.client_id,
-        redirect_uri: uri,
-      })),
-      ({ redirect_uri }) =>
-        `linking redirect uri "${redirect_uri}" to "${client.client_id}"`,
-    )
-  }
+    if (options.allowedScopes?.length) {
+      await safeBulkInsert(
+        queryInterface,
+        'client_allowed_scope',
+        options.allowedScopes.map((scope) => ({
+          client_id: client.client_id,
+          scope_name: scope,
+        })),
+        ({ scope_name }) =>
+          `linking scope "${scope_name}" to "${client.client_id}"`,
+      )
+    }
 
-  const postLogoutRedirectUri = getCurrentEnvValue(
-    options.postLogoutRedirectUri || {},
-  )
-  if (postLogoutRedirectUri) {
-    await safeBulkInsert(
-      queryInterface,
-      'client_post_logout_redirect_uri',
-      [{ client_id: client.client_id, redirect_uri: postLogoutRedirectUri }],
-      ({ redirect_uri }) =>
-        `linking post logout redirect uri "${redirect_uri}" to "${client.client_id}"`,
+    const redirectUris = getCurrentEnvValue(options.redirectUris || {})
+    if (redirectUris?.length) {
+      await safeBulkInsert(
+        queryInterface,
+        'client_redirect_uri',
+        redirectUris.map((uri) => ({
+          client_id: client.client_id,
+          redirect_uri: uri,
+        })),
+        ({ redirect_uri }) =>
+          `linking redirect uri "${redirect_uri}" to "${client.client_id}"`,
+      )
+    }
+
+    const postLogoutRedirectUri = getCurrentEnvValue(
+      options.postLogoutRedirectUri || {},
     )
+    if (postLogoutRedirectUri) {
+      await safeBulkInsert(
+        queryInterface,
+        'client_post_logout_redirect_uri',
+        [{ client_id: client.client_id, redirect_uri: postLogoutRedirectUri }],
+        ({ redirect_uri }) =>
+          `linking post logout redirect uri "${redirect_uri}" to "${client.client_id}"`,
+      )
+    }
   }
-}

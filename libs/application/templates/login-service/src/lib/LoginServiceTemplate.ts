@@ -1,4 +1,6 @@
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 import {
+  ApplicationConfigurations,
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
@@ -6,9 +8,8 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  DefaultStateLifeCycle,
-  ApplicationConfigurations,
-} from '@island.is/application/core'
+  defineTemplateApi,
+} from '@island.is/application/types'
 import { LoginServiceSchema } from './dataSchema'
 import { application } from './messages'
 
@@ -39,7 +40,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   type: ApplicationTypes.LOGIN_SERVICE,
   name: application.name,
   institution: application.institutionName,
-  readyForProduction: true,
   translationNamespaces: [ApplicationConfigurations.LoginService.translation],
   dataSchema: LoginServiceSchema,
   stateMachineConfig: {
@@ -48,6 +48,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.draft]: {
         meta: {
           name: States.draft,
+          status: 'draft',
           actionCard: {
             title: application.name,
             description: application.description,
@@ -69,6 +70,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -81,15 +83,16 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.submitted]: {
         meta: {
           name: States.submitted,
+          status: 'completed',
           actionCard: {
             title: application.name,
             description: application.description,
           },
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: TEMPLATE_API_ACTIONS.sendApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

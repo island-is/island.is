@@ -1,6 +1,6 @@
-import { DefaultEvents } from '@island.is/application/core'
+import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import * as kennitala from 'kennitala'
-import * as z from 'zod'
+import { z } from 'zod'
 import { NO, YES } from '../shared'
 import { error } from './messages/error'
 
@@ -17,16 +17,29 @@ const FileSchema = z.object({
   url: z.string().optional(),
 })
 
+const Bullet = z.object({
+  bullet: z.string(),
+  link: z.string(),
+  linkText: z.string(),
+})
+
 // Validation on optional field: https://github.com/colinhacks/zod/issues/310
 const optionalEmail = z.string().email().optional().or(z.literal(''))
+
+const validateSomethingElse = (data: any) => {
+  if (data.values?.includes('other') && !data.somethingElse) {
+    return false
+  }
+  return true
+}
 
 export const DataProtectionComplaintSchema = z.object({
   externalData: z.object({
     nationalRegistry: z.object({
       data: z.object({
         address: z.object({
-          city: z.string(),
-          code: z.string(),
+          locality: z.string(),
+          municipalityCode: z.string(),
           postalCode: z.string(),
           streetAddress: z.string(),
         }),
@@ -36,7 +49,6 @@ export const DataProtectionComplaintSchema = z.object({
           name: z.string(),
         }),
         fullName: z.string(),
-        legalResidence: z.string(),
         nationalId: z.string(),
       }),
       date: z.string(),
@@ -73,27 +85,21 @@ export const DataProtectionComplaintSchema = z.object({
       OnBehalf.ORGANIZATION_OR_INSTITUTION,
     ]),
   }),
-  applicant: z.object({
-    name: z.string().refine((x) => !!x, { params: error.required }),
-    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false), {
-      params: error.nationalId,
-    }),
-    address: z.string().refine((x) => !!x, { params: error.required }),
-    postalCode: z.string().refine((x) => !!x, { params: error.required }),
-    city: z.string().refine((x) => !!x, { params: error.required }),
-    email: optionalEmail,
-    phoneNumber: z.string().optional(),
-  }),
+  applicant: applicantInformationSchema(),
   organizationOrInstitution: z.object({
     name: z.string().refine((x) => !!x, { params: error.required }),
     nationalId: z.string().refine((x) => (x ? kennitala.isCompany(x) : false), {
       params: error.nationalId,
     }),
     address: z.string().refine((x) => !!x, { params: error.required }),
-    postalCode: z.string().refine((x) => !!x, { params: error.required }),
+    postalCode: z
+      .string()
+      .refine((x) => +x >= 100 && +x <= 999, { params: error.required }),
     city: z.string().refine((x) => !!x, { params: error.required }),
     email: optionalEmail,
     phoneNumber: z.string().optional(),
+    contactName: z.string().optional(),
+    contactEmail: z.string().optional(),
   }),
   commissions: z.object({
     documents: z.array(FileSchema).nonempty(),
@@ -114,26 +120,56 @@ export const DataProtectionComplaintSchema = z.object({
       address: z.string().refine((x) => !!x, { params: error.required }),
       nationalId: z.string().optional(),
       operatesWithinEurope: z.enum([YES, NO]),
-      countryOfOperation: z.string().optional(),
+      countryOfOperation: z
+        .string()
+        .refine((x) => !!x, { params: error.required }),
     }),
   ),
-  subjectOfComplaint: z.object({
-    values: z.array(z.string()).optional(),
-    somethingElse: z.string().optional(),
-    somethingElseValue: z.string().refine((x) => x.trim().length > 0, {
+  subjectOfComplaint: z
+    .object({
+      values: z.array(z.string()).optional(),
+      somethingElse: z.string(),
+    })
+    .partial()
+    .refine((x) => validateSomethingElse(x), {
       params: error.required,
+      path: ['somethingElse'],
     }),
-  }),
   complaint: z.object({
     description: z
       .string()
-      .nonempty()
+      .min(1)
       .refine((x) => !!x, { params: error.required })
       .refine((x) => x?.split(' ').filter((item) => item).length <= 500, {
         params: error.wordCountReached,
       }),
 
     documents: z.array(FileSchema),
+  }),
+  overview: z.object({
+    externalDataMessage: z.object({
+      title: z.string(),
+      subtitle: z.string(),
+      description: z.string(),
+      nationalRegistryTitle: z.string(),
+      nationalRegistryDescription: z.string(),
+      userProfileTitle: z.string(),
+      userProfileDescription: z.string(),
+      checkboxText: z.string(),
+    }),
+    informationMessage: z.object({
+      title: z.string(),
+      bullets: z.object({
+        bulletOne: Bullet,
+        bulletTwo: Bullet,
+        bulletThree: Bullet,
+        bulletFour: Bullet,
+        bulletFive: Bullet,
+        bulletSix: Bullet,
+        bulletSeven: Bullet,
+        bulletEight: Bullet,
+      }),
+    }),
   }),
 })
 

@@ -26,7 +26,7 @@ export const resolvers: Resolvers = {
 
     getMenu: () => store.menu,
 
-    getGroupedMenu: (parent, args) => store.groupedMenu,
+    getGroupedMenu: (_parent, _args) => store.groupedMenu,
 
     getAlertBanner: () => store.alertBanner,
 

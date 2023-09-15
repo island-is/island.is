@@ -1,17 +1,19 @@
 import fetch from 'isomorphic-fetch'
-
 import { Inject, Injectable } from '@nestjs/common'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
 import {
   capitalize,
   caseTypes,
   formatDate,
+  readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 
-import { environment } from '../../../environments'
 import { Case } from '../case'
+import { eventModuleConfig } from './event.config'
 
 const errorEmojis = [
   ':sos:',
@@ -32,19 +34,24 @@ const errorEmojis = [
 ]
 
 const caseEvent = {
-  CREATE: ':new: Krafa stofnuð',
-  CREATE_XRD: ':new: Krafa stofnuð í gegnum Strauminn',
-  EXTEND: ':recycle: Krafa framlengd',
-  OPEN: ':unlock: Krafa opnuð fyrir dómstól',
-  SUBMIT: ':mailbox_with_mail: Krafa send til dómstóls',
-  RESUBMIT: ':mailbox_with_mail: Krafa send aftur til dómstóls',
-  RECEIVE: ':eyes: Krafa móttekin',
-  ACCEPT: ':white_check_mark: Krafa samþykkt',
-  REJECT: ':negative_squared_cross_mark: Kröfu hafnað',
-  DELETE: ':fire: Krafa dregin til baka',
-  SCHEDULE_COURT_DATE: ':timer_clock: Kröfu úthlutað fyrirtökutíma',
-  DISMISS: ':woman-shrugging: Kröfu vísað frá',
+  CREATE: ':new: Mál stofnað',
+  CREATE_XRD: ':new: Mál stofnað í gegnum Strauminn',
+  EXTEND: ':recycle: Mál framlengt',
+  OPEN: ':unlock: Opnað fyrir dómstól',
+  SUBMIT: ':mailbox_with_mail: Sent',
+  RESUBMIT: ':mailbox_with_mail: Sent aftur',
+  RECEIVE: ':eyes: Móttekið',
+  ACCEPT: ':white_check_mark: Samþykkt',
+  ACCEPT_INDICTMENT: ':white_check_mark: Lokið',
+  REJECT: ':negative_squared_cross_mark: Hafnað',
+  DELETE: ':fire: Afturkallað',
+  SCHEDULE_COURT_DATE: ':timer_clock: Fyrirtökutíma úthlutað',
+  DISMISS: ':woman-shrugging: Vísað frá',
   ARCHIVE: ':file_cabinet: Sett í geymslu',
+  REOPEN: ':construction: Opnað aftur',
+  APPEAL: ':judge: Kæra',
+  RECEIVE_APPEAL: ':eyes: Kæra móttekin',
+  COMPLETE_APPEAL: ':white_check_mark: Kæru lokið',
 }
 
 export enum CaseEvent {
@@ -56,32 +63,50 @@ export enum CaseEvent {
   RESUBMIT = 'RESUBMIT',
   RECEIVE = 'RECEIVE',
   ACCEPT = 'ACCEPT',
+  ACCEPT_INDICTMENT = 'ACCEPT_INDICTMENT',
   REJECT = 'REJECT',
   DELETE = 'DELETE',
   SCHEDULE_COURT_DATE = 'SCHEDULE_COURT_DATE',
   DISMISS = 'DISMISS',
   ARCHIVE = 'ARCHIVE',
+  REOPEN = 'REOPEN',
+  APPEAL = 'APPEAL',
+  RECEIVE_APPEAL = 'RECEIVE_APPEAL',
+  COMPLETE_APPEAL = 'COMPLETE_APPEAL',
 }
 
 @Injectable()
 export class EventService {
   constructor(
+    @Inject(eventModuleConfig.KEY)
+    private readonly config: ConfigType<typeof eventModuleConfig>,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
 
-  postEvent(event: CaseEvent, theCase: Case) {
+  postEvent(event: CaseEvent, theCase: Case, eventOnly = false) {
     try {
-      if (!environment.events.url) {
+      if (!this.config.url) {
         return
       }
 
-      const typeText = `${capitalize(caseTypes[theCase.type])} *${theCase.id}*`
-      const prosecutionText = `${
-        theCase.prosecutor?.institution
-          ? `${theCase.prosecutor?.institution?.name} `
+      const title =
+        event === CaseEvent.ACCEPT && isIndictmentCase(theCase.type)
+          ? caseEvent[CaseEvent.ACCEPT_INDICTMENT]
+          : `${caseEvent[event]}${eventOnly ? ' - aðgerð ekki framkvæmd' : ''}`
+      const typeText = `${capitalize(caseTypes[theCase.type])}${
+        isIndictmentCase(theCase.type)
+          ? `:(${readableIndictmentSubtypes(
+              theCase.policeCaseNumbers,
+              theCase.indictmentSubtypes,
+            ).join(', ')})`
           : ''
-      }*${theCase.policeCaseNumber}*`
+      } *${theCase.id}*`
+      const prosecutionText = `${
+        theCase.creatingProsecutor?.institution
+          ? `${theCase.creatingProsecutor?.institution?.name} `
+          : ''
+      }*${theCase.policeCaseNumbers.join(', ')}*`
       const courtText = theCase.court
         ? `${theCase.court.name} ${
             theCase.courtCaseNumber ? `*${theCase.courtCaseNumber}*` : ''
@@ -98,7 +123,7 @@ export class EventService {
             }`
           : ''
 
-      fetch(`${environment.events.url}`, {
+      fetch(`${this.config.url}`, {
         method: 'POST',
         headers: { 'Content-type': 'application/json' },
         body: JSON.stringify({
@@ -107,7 +132,7 @@ export class EventService {
               type: 'section',
               text: {
                 type: 'mrkdwn',
-                text: `*${caseEvent[event]}:*\n>${typeText}\n>${prosecutionText}\n>${courtText}${extraText}`,
+                text: `*${title}*\n>${typeText}\n>${prosecutionText}\n>${courtText}${extraText}`,
               },
             },
           ],
@@ -128,7 +153,7 @@ export class EventService {
     reason: Error,
   ) {
     try {
-      if (!environment.events.errorUrl) {
+      if (!this.config.errorUrl) {
         return
       }
 
@@ -141,7 +166,7 @@ export class EventService {
         }
       }
 
-      fetch(`${environment.events.errorUrl}`, {
+      fetch(`${this.config.errorUrl}`, {
         method: 'POST',
         headers: { 'Content-type': 'application/json' },
         body: JSON.stringify({

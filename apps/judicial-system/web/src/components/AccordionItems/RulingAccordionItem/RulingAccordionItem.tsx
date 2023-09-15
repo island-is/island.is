@@ -1,9 +1,9 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
-import { rulingAccordion as m } from '@island.is/judicial-system-web/messages/Core/rulingAccordion'
-import type { Case } from '@island.is/judicial-system/types'
+import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
+import { rulingAccordion as m } from '@island.is/judicial-system-web/messages'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { AccordionListItem } from '../..'
 
@@ -12,7 +12,7 @@ interface Props {
   startExpanded?: boolean
 }
 
-const RulingAccordionItem: React.FC<Props> = ({
+const RulingAccordionItem: React.FC<React.PropsWithChildren<Props>> = ({
   workingCase,
   startExpanded,
 }: Props) => {

@@ -1,0 +1,15 @@
+{
+  "extends": "../../.eslintrc.json",
+  "rules": {},
+  "ignorePatterns": ["!**/*", "contentfulTypes.d.ts"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {
+        "local-rules/require-cache-control": "error"
+      }
+    },
+    { "files": ["*.ts", "*.tsx"], "rules": {} },
+    { "files": ["*.js", "*.jsx"], "rules": {} }
+  ]
+}

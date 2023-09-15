@@ -1,4 +1,4 @@
-import { IsObject, IsOptional, IsString } from 'class-validator'
+import { IsBoolean, IsObject, IsOptional, IsString } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 import type { Aid } from '@island.is/financial-aid/shared/lib'
@@ -28,6 +28,26 @@ export class UpdateMunicipalityDto {
   @IsString()
   @ApiProperty()
   readonly email?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty()
+  readonly usingNav?: boolean
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly navUrl?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly navUsername?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  navPassword?: string
 
   @IsString()
   @ApiProperty()

@@ -1,0 +1,44 @@
+{
+  "name": "external-contracts-tests",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/external-contracts-tests/src",
+  "projectType": "application",
+  "prefix": "external-contracts-tests",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/external-contracts-tests/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "build": {
+      "executor": "./tools/executors/node:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/external-contracts-tests",
+        "main": "apps/external-contracts-tests/main.spec.ts",
+        "tsConfig": "apps/external-contracts-tests/tsconfig.json"
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "external-test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "apps/external-contracts-tests/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": ["{workspaceRoot}/coverage/apps/external-contracts-tests"]
+    },
+    "docker-jest": {}
+  },
+  "tags": ["scope:e2e"]
+}

@@ -1,0 +1,41 @@
+{
+  "name": "clients-syslumenn",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/syslumenn/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/clients/syslumenn/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/syslumenn"],
+      "options": {
+        "jestConfig": "libs/clients/syslumenn/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl https://api.syslumenn.is/dev/swagger/v1/swagger.json -H 'Accept: application/json' | jq '.paths[][].tags = [\"Syslumenn\"]' > src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/syslumenn"
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/syslumenn/gen/fetch -i libs/clients/syslumenn/src/clientConfig.json"
+        ]
+      }
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}

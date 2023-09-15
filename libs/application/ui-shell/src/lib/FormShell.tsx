@@ -1,21 +1,18 @@
-import React, { FC, useEffect, useReducer } from 'react'
+import React, { FC, useEffect, useReducer, useState } from 'react'
 import cn from 'classnames'
-import * as Sentry from '@sentry/react'
 
 import {
   Application,
-  coreMessages,
   Form,
   FormModes,
   Schema,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import {
   Box,
   GridColumn,
   GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 
 import Screen from '../components/Screen'
 import FormStepper from '../components/FormStepper'
@@ -29,14 +26,17 @@ import { useApplicationTitle } from '../hooks/useApplicationTitle'
 import { useHeaderInfo } from '../context/HeaderInfoProvider'
 import * as styles from './FormShell.css'
 import { ErrorShell } from '../components/ErrorShell'
+import { m } from './messages'
 
-export const FormShell: FC<{
-  application: Application
-  nationalRegistryId: string
-  form: Form
-  dataSchema: Schema
-}> = ({ application, nationalRegistryId, form, dataSchema }) => {
-  const { formatMessage } = useLocale()
+export const FormShell: FC<
+  React.PropsWithChildren<{
+    application: Application
+    nationalRegistryId: string
+    form: Form
+    dataSchema: Schema
+  }>
+> = ({ application, nationalRegistryId, form, dataSchema }) => {
+  const [updateForbidden, setUpdateForbidden] = useState(false)
   const { setInfo } = useHeaderInfo()
   const [state, dispatch] = useReducer(
     ApplicationReducer,
@@ -59,13 +59,27 @@ export const FormShell: FC<{
     screens,
   } = state
   const {
-    mode = FormModes.APPLYING,
+    mode = FormModes.DRAFT,
     renderLastScreenButton,
     renderLastScreenBackButton,
   } = state.form
-  const showProgressTag = mode !== FormModes.APPLYING
+  const showProgressTag = mode !== FormModes.DRAFT
   const currentScreen = screens[activeScreen]
   const FormLogo = form.logo
+
+  const getDraftSectionCurrentScreen = (): number | undefined => {
+    const currentDraftScreenSection = sections.find(
+      (s, i) => i === currentScreen.sectionIndex,
+    )
+    return currentDraftScreenSection?.draftPageNumber ?? undefined
+  }
+
+  const getDraftSectionTotalScreens = (): number | undefined => {
+    const totalDraftScreens = Math.max(
+      ...sections.map((s) => s.draftPageNumber ?? -1),
+    )
+    return totalDraftScreens === -1 ? undefined : totalDraftScreens
+  }
 
   useHistorySync(state, dispatch)
   useApplicationTitle(state)
@@ -77,17 +91,12 @@ export const FormShell: FC<{
     })
   }, [setInfo, application])
 
+  if (updateForbidden) {
+    return <ErrorShell errorType="lost" applicationType={application.typeId} />
+  }
+
   return (
-    <Box
-      className={cn(styles.root, {
-        [styles.rootApplying]:
-          mode === FormModes.APPLYING || mode === FormModes.EDITING,
-        [styles.rootApproved]: mode === FormModes.APPROVED,
-        [styles.rootPending]: mode === FormModes.PENDING,
-        [styles.rootReviewing]: mode === FormModes.REVIEW,
-        [styles.rootRejected]: mode === FormModes.REJECTED,
-      })}
-    >
+    <Box className={styles.root}>
       <Box
         paddingTop={[0, 4]}
         paddingBottom={[0, 5]}
@@ -106,55 +115,42 @@ export const FormShell: FC<{
                 borderRadius="large"
                 background="white"
               >
-                <Sentry.ErrorBoundary
-                  beforeCapture={(scope) => {
-                    scope.setTag('errorBoundaryLocation', 'FormShell')
-                    scope.setExtra('applicationType', application.typeId)
-                    scope.setExtra('applicationState', application.state)
-                    scope.setExtra('currentScreen', currentScreen.id)
-                  }}
-                  fallback={
-                    <ErrorShell
-                      title={formatMessage(coreMessages.globalErrorTitle)}
-                      subTitle={formatMessage(coreMessages.globalErrorMessage)}
-                    />
+                <Screen
+                  sections={sections}
+                  setUpdateForbidden={setUpdateForbidden}
+                  application={storedApplication}
+                  addExternalData={(payload) =>
+                    dispatch({ type: ActionTypes.ADD_EXTERNAL_DATA, payload })
                   }
-                >
-                  <Screen
-                    application={storedApplication}
-                    addExternalData={(payload) =>
-                      dispatch({ type: ActionTypes.ADD_EXTERNAL_DATA, payload })
-                    }
-                    answerQuestions={(payload) =>
-                      dispatch({ type: ActionTypes.ANSWER, payload })
-                    }
-                    dataSchema={dataSchema}
-                    expandRepeater={() =>
-                      dispatch({ type: ActionTypes.EXPAND_REPEATER })
-                    }
-                    answerAndGoToNextScreen={(payload) =>
-                      dispatch({
-                        type: ActionTypes.ANSWER_AND_GO_NEXT_SCREEN,
-                        payload,
-                      })
-                    }
-                    goToScreen={(payload: string) => {
-                      dispatch({
-                        type: ActionTypes.GO_TO_SCREEN,
-                        payload,
-                      })
-                    }}
-                    prevScreen={() =>
-                      dispatch({ type: ActionTypes.PREV_SCREEN })
-                    }
-                    activeScreenIndex={activeScreen}
-                    numberOfScreens={screens.length}
-                    renderLastScreenButton={renderLastScreenButton}
-                    renderLastScreenBackButton={renderLastScreenBackButton}
-                    screen={currentScreen}
-                    mode={mode}
-                  />
-                </Sentry.ErrorBoundary>
+                  answerQuestions={(payload) =>
+                    dispatch({ type: ActionTypes.ANSWER, payload })
+                  }
+                  dataSchema={dataSchema}
+                  expandRepeater={() =>
+                    dispatch({ type: ActionTypes.EXPAND_REPEATER })
+                  }
+                  answerAndGoToNextScreen={(payload) =>
+                    dispatch({
+                      type: ActionTypes.ANSWER_AND_GO_NEXT_SCREEN,
+                      payload,
+                    })
+                  }
+                  goToScreen={(payload: string) => {
+                    dispatch({
+                      type: ActionTypes.GO_TO_SCREEN,
+                      payload,
+                    })
+                  }}
+                  prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
+                  activeScreenIndex={activeScreen}
+                  numberOfScreens={screens.length}
+                  renderLastScreenButton={renderLastScreenButton}
+                  renderLastScreenBackButton={renderLastScreenBackButton}
+                  currentDraftScreen={getDraftSectionCurrentScreen()}
+                  totalDraftScreens={getDraftSectionTotalScreens()}
+                  screen={currentScreen}
+                  mode={mode}
+                />
               </Box>
             </GridColumn>
             <GridColumn

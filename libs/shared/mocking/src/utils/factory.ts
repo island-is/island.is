@@ -1,6 +1,8 @@
 import { times } from './times'
 
-type InitializerProp<T, P extends keyof T> = T[P] | ((this: T, obj: T) => T[P])
+type InitializerProp<T, P extends keyof T> =
+  | T[P]
+  | ((this: T, obj: T, index: number) => T[P])
 
 type InitializerProps<T> = {
   [P in keyof T]: InitializerProp<T, P>
@@ -86,7 +88,8 @@ const findTrait = <T>(
  */
 export const factory = <T extends object>(init: Initializer<T>): Factory<T> => {
   const traitMap = init.$traits || {}
-  const factoryFn = (...data: FactoryArgs<T>) => {
+
+  const build = (data: FactoryArgs<T>, index = 0) => {
     const record: Record<string, unknown> = {}
     const initializers = [init as OverrideProps<T>].concat(
       data.map((arg) =>
@@ -104,7 +107,7 @@ export const factory = <T extends object>(init: Initializer<T>): Factory<T> => {
         let value = (initializers[i] as never)[key] as unknown
         if (value !== undefined) {
           if (typeof value === 'function') {
-            value = value.call(record, record)
+            value = value.call(record, record, index)
           }
           record[key] = value
           break
@@ -114,7 +117,9 @@ export const factory = <T extends object>(init: Initializer<T>): Factory<T> => {
     return record as T
   }
 
-  factoryFn.list = times(factoryFn)
+  const factoryFn = (...data: FactoryArgs<T>) => build(data)
+
+  factoryFn.list = times(build)
 
   return factoryFn
 }

@@ -4,7 +4,7 @@ import { withFigma } from '../../utils/withFigma'
 import { Stack } from '../Stack/Stack'
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
-import { AsyncSearch } from './AsyncSearch'
+import { AsyncSearch, AsyncSearchOption } from './AsyncSearch'
 
 export default {
   title: 'Components/AsyncSearch',
@@ -12,15 +12,14 @@ export default {
   parameters: withFigma('AsyncSearch'),
 }
 
-const items = [
+const items: AsyncSearchOption[] = [
   { label: 'Apple', value: 'apple' },
   { label: 'Pear', value: 'pear' },
-  { label: 'Orange', value: 'orange' },
+  { label: 'Orange', value: 'orange', disabled: true },
   { label: 'Grape', value: 'grape' },
   { label: 'Banana', value: 'banana' },
   { label: 'Fæðingarorlof', value: 'faedingarorlof' },
   { label: 'Atvinna', value: 'atvinna' },
-  { label: 'Ferðagjöf', value: 'ferdagjof' },
   { label: 'Vottorð', value: 'vottord' },
 ]
 
@@ -80,7 +79,7 @@ Features.args = {
   large: false,
 }
 
-export const OnSubmit: FC = () => (
+export const OnSubmit: FC<React.PropsWithChildren<unknown>> = () => (
   <Box padding={2}>
     <Stack space={2}>
       <AsyncSearch
@@ -100,7 +99,7 @@ interface ContainerProps {
 }
 
 export const CustomItem = ({ colored, large }) => {
-  const Container: React.FC<ContainerProps> = ({
+  const Container: React.FC<React.PropsWithChildren<ContainerProps>> = ({
     active,
     colored,
     children,

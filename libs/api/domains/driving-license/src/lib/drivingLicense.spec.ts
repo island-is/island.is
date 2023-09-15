@@ -1,7 +1,11 @@
 import { Test } from '@nestjs/testing'
 import { DrivingLicenseService } from './drivingLicense.service'
-import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
 import {
+  DrivingLicenseApiConfig,
+  DrivingLicenseApiModule,
+} from '@island.is/clients/driving-license'
+import {
+  DISQUALIFIED_NATIONAL_IDS,
   MOCK_NATIONAL_ID,
   MOCK_NATIONAL_ID_EXPIRED,
   MOCK_NATIONAL_ID_NO_ASSESSMENT,
@@ -10,30 +14,22 @@ import {
   requestHandlers,
 } from './__mock-data__/requestHandlers'
 import { startMocking } from '@island.is/shared/mocking'
-import { createLogger } from 'winston'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
-import RecsidenceHistory from '../lib/__mock-data__/residenceHistory.json'
+import ResidenceHistory from '../lib/__mock-data__/residenceHistory.json'
+import { ConfigModule } from '@island.is/nest/config'
 
 startMocking(requestHandlers)
-
 describe('DrivingLicenseService', () => {
   let service: DrivingLicenseService
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       imports: [
-        DrivingLicenseApiModule.register({
-          secret: '',
-          xroadBaseUrl: 'http://localhost',
-          xroadClientId: '',
-          xroadPathV1: 'v1',
-          xroadPathV2: 'v2',
-          fetchOptions: {
-            logger: createLogger({
-              silent: true,
-            }),
-          },
+        DrivingLicenseApiModule,
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [DrivingLicenseApiConfig],
         }),
       ],
       providers: [
@@ -48,7 +44,7 @@ describe('DrivingLicenseService', () => {
         {
           provide: NationalRegistryXRoadService,
           useClass: jest.fn(() => ({
-            getNationalRegistryResidenceHistory: () => RecsidenceHistory,
+            getNationalRegistryResidenceHistory: () => ResidenceHistory,
           })),
         },
       ],
@@ -65,8 +61,7 @@ describe('DrivingLicenseService', () => {
 
   describe('getDrivingLicense', () => {
     it('should return a license', async () => {
-      const response = await service.getDrivingLicense(MOCK_NATIONAL_ID)
-
+      const response = await service.legacyGetDrivingLicense(MOCK_NATIONAL_ID)
       expect(response).toMatchObject({
         name: 'Valid Jónsson',
         issued: new Date('2021-05-25T06:43:15.327Z'),
@@ -75,7 +70,9 @@ describe('DrivingLicenseService', () => {
     })
 
     it('should not return an expired license', async () => {
-      const response = await service.getDrivingLicense(MOCK_NATIONAL_ID_EXPIRED)
+      const response = await service.legacyGetDrivingLicense(
+        MOCK_NATIONAL_ID_EXPIRED,
+      )
 
       expect(response).toBeNull()
     })
@@ -181,6 +178,104 @@ describe('DrivingLicenseService', () => {
     })
   })
 
+  describe('getLearnerMentorEligibility', () => {
+    it('should not disqualify for disqualifications older than 12 months', async () => {
+      const response = await service.getLearnerMentorEligibility(
+        MOCK_USER,
+        DISQUALIFIED_NATIONAL_IDS[2],
+      )
+      expect(response).toStrictEqual({
+        isEligible: true,
+        requirements: [
+          {
+            key: 'HasDeprivation',
+            requirementMet: true,
+          },
+          {
+            key: 'PersonNotAtLeast24YearsOld',
+            requirementMet: true,
+          },
+          {
+            key: 'HasHadValidCategoryForFiveYearsOrMore',
+            requirementMet: true,
+          },
+        ],
+      })
+    })
+
+    it('should disqualify for expired disqualifications that happened less than 12 months ago', async () => {
+      const response = await service.getLearnerMentorEligibility(
+        MOCK_USER,
+        DISQUALIFIED_NATIONAL_IDS[1],
+      )
+      expect(response).toStrictEqual({
+        isEligible: false,
+        requirements: [
+          {
+            key: 'HasDeprivation',
+            requirementMet: false,
+          },
+          {
+            key: 'PersonNotAtLeast24YearsOld',
+            requirementMet: true,
+          },
+          {
+            key: 'HasHadValidCategoryForFiveYearsOrMore',
+            requirementMet: true,
+          },
+        ],
+      })
+    })
+
+    it('should disqualify for active disqualifications', async () => {
+      const response = await service.getLearnerMentorEligibility(
+        MOCK_USER,
+        DISQUALIFIED_NATIONAL_IDS[0],
+      )
+      expect(response).toStrictEqual({
+        isEligible: false,
+        requirements: [
+          {
+            key: 'HasDeprivation',
+            requirementMet: false,
+          },
+          {
+            key: 'PersonNotAtLeast24YearsOld',
+            requirementMet: true,
+          },
+          {
+            key: 'HasHadValidCategoryForFiveYearsOrMore',
+            requirementMet: true,
+          },
+        ],
+      })
+    })
+
+    it('should disqualify for disqualifications with a from date, but no specified end date', async () => {
+      const response = await service.getLearnerMentorEligibility(
+        MOCK_USER,
+        DISQUALIFIED_NATIONAL_IDS[0],
+      )
+      expect(response).toStrictEqual({
+        isEligible: false,
+        requirements: [
+          {
+            key: 'HasDeprivation',
+            requirementMet: false,
+          },
+          {
+            key: 'PersonNotAtLeast24YearsOld',
+            requirementMet: true,
+          },
+          {
+            key: 'HasHadValidCategoryForFiveYearsOrMore',
+            requirementMet: true,
+          },
+        ],
+      })
+    })
+  })
+
   describe('getApplicationEligibility', () => {
     it('all checks should pass for applicable students', async () => {
       const response = await service.getApplicationEligibility(
@@ -198,6 +293,10 @@ describe('DrivingLicenseService', () => {
           },
           {
             key: 'DrivingSchoolMissing',
+            requirementMet: true,
+          },
+          {
+            key: 'CurrentLocalResidency',
             requirementMet: true,
           },
           {
@@ -247,6 +346,10 @@ describe('DrivingLicenseService', () => {
           {
             key: 'DrivingSchoolMissing',
             requirementMet: false,
+          },
+          {
+            key: 'CurrentLocalResidency',
+            requirementMet: true,
           },
           {
             key: 'DeniedByService',
@@ -327,9 +430,7 @@ describe('DrivingLicenseService', () => {
     })
 
     it('should handle error responses when creating a license', async () => {
-      expect.assertions(1)
-
-      return service
+      return await service
         .newTemporaryDrivingLicense(MOCK_NATIONAL_ID_NO_ASSESSMENT, {
           juristictionId: 11,
           needsToPresentHealthCertificate: false,

@@ -1,5 +1,0 @@
-export { FamilyMemberResolver } from './familyMember.resolver'
-export { UserResolver } from './user.resolver'
-export { ChildResolver } from './child.resolver'
-export { NationalRegistryUser } from './models'
-export * from './scalars'

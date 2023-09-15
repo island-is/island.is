@@ -15,7 +15,9 @@ interface Props {
   recordsArray: Array<CustomerRecordsDetails>
 }
 
-const FinanceTransactionsTable: FC<Props> = ({ recordsArray }) => {
+const FinanceTransactionsTable: FC<React.PropsWithChildren<Props>> = ({
+  recordsArray,
+}) => {
   const [page, setPage] = useState(1)
   const { formatMessage } = useLocale()
 
@@ -28,7 +30,7 @@ const FinanceTransactionsTable: FC<Props> = ({ recordsArray }) => {
       <T.Table>
         <ExpandHeader
           data={[
-            { value: '' },
+            { value: '', printHidden: true },
             { value: formatMessage(m.date) },
             { value: formatMessage(m.chargeType) },
             { value: formatMessage(m.feeItem) },

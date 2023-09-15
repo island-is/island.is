@@ -8,10 +8,10 @@ import type { Staff, User } from '@island.is/financial-aid/shared/lib'
 import { UserModel } from './user.model'
 
 import { StaffModel } from '../staff/models'
-import { CurrentUser } from '../decorators'
 import { BackendAPI } from '../../../services'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { SpouseModel } from './spouseModel.model'
+import { CurrentUser } from '../decorators/currentUser.decorator'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => UserModel)
@@ -35,6 +35,7 @@ export class UserResolver {
   @Query(() => UserModel, { nullable: true })
   async currentUser(@CurrentUser() user: User): Promise<UserModel | undefined> {
     this.logger.debug('Getting current user')
+
     return user as UserModel
   }
 

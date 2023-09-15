@@ -1,3 +1,12 @@
+import type { User } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
+import { AuditService } from '@island.is/nest/audit'
 import {
   BadRequestException,
   Body,
@@ -20,21 +29,11 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'
-import { ApiScope } from '@island.is/auth/scopes'
-import {
-  CurrentUser,
-  IdsUserGuard,
-  Scopes,
-  ScopesGuard,
-} from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
-import { AuditService } from '@island.is/nest/audit'
 
-import { NationalIdGuard } from '../../common'
-import { IcelandicNameService } from './icelandic-name.service'
+import { CreateIcelandicNameBodyDto, UpdateIcelandicNameBodyDto } from './dto'
 import { IcelandicName } from './icelandic-name.model'
-import { UpdateIcelandicNameBodyDto, CreateIcelandicNameBodyDto } from './dto'
-
+import { IcelandicNameService } from './icelandic-name.service'
+import { ParseIcelandicAlphabetPipe, ParseIntPipe } from './pipes'
 @Controller('api/icelandic-names-registry')
 @ApiTags('icelandic-names-registry')
 export class IcelandicNameController {
@@ -43,7 +42,7 @@ export class IcelandicNameController {
     private readonly auditService: AuditService,
   ) {}
 
-  @Get()
+  @Get('names')
   @ApiOkResponse({
     type: IcelandicName,
     isArray: true,
@@ -53,7 +52,7 @@ export class IcelandicNameController {
     return await this.icelandicNameService.getAll()
   }
 
-  @Get(':id')
+  @Get('names/:id')
   @ApiOkResponse({
     type: IcelandicName,
     description: 'Gets icelandic name by id.',
@@ -61,7 +60,7 @@ export class IcelandicNameController {
   @ApiNotFoundResponse({
     description: 'The name was not found.',
   })
-  async getById(@Param('id') id: number): Promise<IcelandicName> {
+  async getById(@Param('id', ParseIntPipe) id: number): Promise<IcelandicName> {
     const result = await this.icelandicNameService.getById(id)
 
     if (!result) {
@@ -71,31 +70,33 @@ export class IcelandicNameController {
     return result
   }
 
-  @Get('initial-letter/:initialLetter')
+  @Get('names/initial-letter/:initialLetter')
   @ApiOkResponse({
     type: IcelandicName,
     isArray: true,
     description: 'Gets all icelandic names by initial letter.',
   })
   async getByInitialLetter(
-    @Param('initialLetter') initialLetter: string,
+    @Param('initialLetter', ParseIcelandicAlphabetPipe) initialLetter: string,
   ): Promise<IcelandicName[]> {
     return await this.icelandicNameService.getByInitialLetter(initialLetter)
   }
 
-  @Get('search/:q')
+  @Get('names/search/:q')
   @ApiOkResponse({
     type: IcelandicName,
     isArray: true,
     description: 'Gets all icelandic names by search.',
   })
-  async getBySearch(@Param('q') q: string): Promise<IcelandicName[]> {
+  async getBySearch(
+    @Param('q', ParseIcelandicAlphabetPipe) q: string,
+  ): Promise<IcelandicName[]> {
     return await this.icelandicNameService.getBySearch(q)
   }
 
-  @UseGuards(IdsUserGuard, NationalIdGuard, ScopesGuard)
-  @Scopes(ApiScope.internal)
-  @Patch(':id')
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes(AdminPortalScope.icelandicNamesRegistry)
+  @Patch('names/:id')
   @ApiBearerAuth()
   @ApiOkResponse()
   async updateNameById(
@@ -103,10 +104,8 @@ export class IcelandicNameController {
     @Body() body: UpdateIcelandicNameBodyDto,
     @CurrentUser() user: User,
   ): Promise<IcelandicName> {
-    const [
-      affectedRows,
-      [icelandicName],
-    ] = await this.icelandicNameService.updateNameById(id, body)
+    const [affectedRows, [icelandicName]] =
+      await this.icelandicNameService.updateNameById(id, body)
 
     if (!affectedRows) {
       throw new BadRequestException(`Could not update user by id: ${id}`)
@@ -122,9 +121,9 @@ export class IcelandicNameController {
     return icelandicName
   }
 
-  @UseGuards(IdsUserGuard, NationalIdGuard, ScopesGuard)
-  @Scopes(ApiScope.internal)
-  @Post()
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes(AdminPortalScope.icelandicNamesRegistry)
+  @Post('names')
   @ApiBearerAuth()
   @HttpCode(201)
   @ApiOkResponse()
@@ -150,9 +149,9 @@ export class IcelandicNameController {
     )
   }
 
-  @UseGuards(IdsUserGuard, NationalIdGuard, ScopesGuard)
-  @Scopes(ApiScope.internal)
-  @Delete(':id')
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes(AdminPortalScope.icelandicNamesRegistry)
+  @Delete('names/:id')
   @ApiBearerAuth()
   @ApiOkResponse()
   @HttpCode(204)

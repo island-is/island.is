@@ -1,6 +1,18 @@
-import React, { useRef, useState, useEffect, useMemo, Fragment } from 'react'
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useMemo,
+  Fragment,
+  ReactNode,
+} from 'react'
+import Link from 'next/link'
+import ReactDOM from 'react-dom'
+import flatten from 'lodash/flatten'
+import cn from 'classnames'
 import {
   Box,
+  BoxProps,
   Button,
   GridColumn,
   GridContainer,
@@ -13,15 +25,18 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { TimelineSlice as Timeline } from '@island.is/web/graphql/schema'
-import cn from 'classnames'
+import {
+  TimelineSlice as Timeline,
+  TimelineEvent,
+} from '@island.is/web/graphql/schema'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+import { renderSlices, SliceType } from '@island.is/island-ui/contentful'
+import { useNamespace } from '@island.is/web/hooks'
+
 import * as timelineStyles from './TimelineSlice.css'
 import * as eventStyles from './Event.css'
-import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import Link from 'next/link'
-import ReactDOM from 'react-dom'
-import { renderSlices, SliceType } from '@island.is/island-ui/contentful'
-import { flatten } from '@nestjs/common'
+
+const BUTTON_SCROLL_AMOUNT = 500
 
 function setDefault<K, V>(map: Map<K, V>, key: K, value: V): V {
   if (!map.has(key)) map.set(key, value)
@@ -55,16 +70,18 @@ const mapEvents = (
 
 const getTimeline = (
   eventMap: Map<number, Map<number, Timeline['events']>>,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   getMonthByIndex,
+  seeMoreText = 'Lesa meira',
 ) => {
   let i = 0
   let offset = 50
   let lastTimestamp = 0
-  let lastYear = 0
 
   let currentMonth = 0
 
-  const items = []
+  const items: ReactNode[] = []
 
   const today = new Date()
   today.setMonth(today.getMonth() - 1)
@@ -86,7 +103,6 @@ const getTimeline = (
           offset={offset}
         />,
       )
-      lastYear = year
       monthEvents.map((event, idx) => {
         // we increase the space between items if they are far apart in time
         const timestamp = new Date(event.date).getTime()
@@ -101,6 +117,7 @@ const getTimeline = (
               offset={offset}
               index={i}
               detailed={!!event.body}
+              seeMoreText={seeMoreText}
             />
             <BulletLine
               offset={offset}
@@ -120,10 +137,15 @@ const getTimeline = (
 
 interface SliceProps {
   slice: Timeline
+  namespace: Record<string, string>
 }
 
-export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
+export const TimelineSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
+  slice,
+  namespace,
+}) => {
   const { getMonthByIndex } = useDateUtils()
+  const n = useNamespace(namespace)
 
   const frameRef = useRef<HTMLDivElement>(null)
   const [position, setPosition] = useState(-1)
@@ -131,25 +153,38 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
   const eventMap = useMemo(() => mapEvents(slice.events), [slice.events])
 
   const { currentMonth, items } = useMemo(
-    () => getTimeline(eventMap, getMonthByIndex),
-    [],
+    () =>
+      getTimeline(
+        eventMap,
+        getMonthByIndex,
+        n('timelineSeeMoreText', 'Lesa meira'),
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [eventMap, n],
   )
 
-  const moveTimeline = (dir: 'left' | 'right') => {
+  const moveTimeline = (
+    dir: 'left' | 'right',
+    scrollAmount = BUTTON_SCROLL_AMOUNT,
+  ) => {
     if (dir === 'right') {
       setPosition(
         Math.min(
-          position + 500,
+          position + scrollAmount,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           frameRef.current.scrollWidth - frameRef.current.offsetWidth + 50,
         ),
       )
     } else {
-      setPosition(Math.max(position - 500, 0))
+      setPosition(Math.max(position - scrollAmount, 0))
     }
   }
 
   useEffect(() => {
     setPosition(currentMonth - 100)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     frameRef.current.scrollTo({
       left: currentMonth - 100,
     })
@@ -158,7 +193,8 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
   useEffect(() => {
     // used to ignore initial state
     if (position < 0) return
-
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     frameRef.current.scrollTo({
       left: position,
       behavior: 'smooth',
@@ -188,10 +224,91 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
     return Math.min(...futureMonths)
   })
 
-  const monthEvents = eventMap.get(months[month].year).get(months[month].month)
+  const monthEvents = eventMap.get(months[month].year)?.get(months[month].month)
+
+  const borderProps: BoxProps = slice.hasBorderAbove
+    ? {
+        borderTopWidth: 'standard',
+        borderColor: 'standard',
+        paddingTop: 6,
+      }
+    : {
+        paddingTop: 3,
+      }
+
+  const ref = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (!ref?.current) return
+
+    let isMouseDown = false
+    let lastMouseDownPosition: number | null = null
+    let lastMouseMovePosition: number | null = null
+
+    const onMouseDown = (ev: MouseEvent) => {
+      isMouseDown = true
+      lastMouseDownPosition = ev.x
+    }
+    const onMouseUp = () => {
+      isMouseDown = false
+      lastMouseMovePosition = null
+      lastMouseDownPosition = null
+    }
+    const onMouseMove = (ev: MouseEvent) => {
+      if (isMouseDown) {
+        setPosition((position) => {
+          let offset = 0
+          if (lastMouseMovePosition === null) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            offset = lastMouseDownPosition - ev.x
+          } else {
+            offset = lastMouseMovePosition - ev.x
+          }
+
+          let newPosition: number = position
+          if (offset > 0) {
+            newPosition = Math.min(
+              position + offset,
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              frameRef.current.scrollWidth - frameRef.current.offsetWidth + 50,
+            )
+          } else {
+            newPosition = Math.max(position + offset, 0)
+          }
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          frameRef.current.scrollTo({
+            left: newPosition,
+          })
+
+          lastMouseMovePosition = ev.x
+
+          return newPosition
+        })
+      }
+    }
+
+    ref.current.addEventListener('mousedown', onMouseDown)
+    document.addEventListener('mouseup', onMouseUp)
+    document.addEventListener('mousemove', onMouseMove)
+
+    return () => {
+      if (ref?.current) {
+        ref.current.removeEventListener('mousedown', onMouseDown)
+      }
+      document.removeEventListener('mouseup', onMouseUp)
+      document.removeEventListener('mousemove', onMouseMove)
+    }
+  }, [ref?.current])
 
   return (
-    <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
+    <section
+      key={slice.id}
+      id={slice.id}
+      aria-labelledby={'sliceTitle-' + slice.id}
+    >
       <GridContainer>
         <Box paddingLeft={1}>
           <GridContainer>
@@ -200,11 +317,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
                 span={['9/9', '9/9', '7/9']}
                 offset={['0', '0', '1/9']}
               >
-                <Box
-                  borderTopWidth="standard"
-                  borderColor="standard"
-                  paddingTop={6}
-                >
+                <Box {...borderProps}>
                   <Text variant="h2" paddingBottom={3}>
                     {slice.title}
                   </Text>
@@ -214,7 +327,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
             </GridRow>
           </GridContainer>
           <Hidden below="lg">
-            <div className={timelineStyles.timelineContainer}>
+            <div className={timelineStyles.timelineContainer} ref={ref}>
               <ArrowButtonShadow type="prev">
                 <ArrowButton
                   type="prev"
@@ -227,9 +340,11 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
                   type="next"
                   onClick={() => moveTimeline('right')}
                   disabled={
-                    frameRef.current?.scrollWidth -
-                      frameRef.current?.offsetWidth ===
-                    position
+                    frameRef.current?.scrollWidth === undefined ||
+                    frameRef.current?.offsetWidth === undefined ||
+                    frameRef.current.scrollWidth -
+                      frameRef.current.offsetWidth ===
+                      position
                   }
                 />
               </ArrowButtonShadow>
@@ -243,7 +358,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
             <div
               className={timelineStyles.timelineContainer}
               style={{
-                height: 140 + monthEvents.length * 104,
+                height: 140 + (monthEvents?.length || 0) * 104,
               }}
             >
               <ArrowButtonShadow type="prev">
@@ -269,13 +384,14 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
                 </Text>
               </div>
               <div className={timelineStyles.mobileContainer}>
-                {monthEvents.map((event) => (
+                {monthEvents?.map((event) => (
                   <TimelineItem
                     event={event}
                     offset={0}
                     index={0}
-                    detailed={!!event.body}
+                    detailed={event.body ? true : false}
                     mobile={true}
+                    seeMoreText={n('timelineSeeMoreText', 'Lesa meira')}
                   />
                 ))}
               </div>
@@ -291,10 +407,9 @@ interface ArrowButtonShadowProps {
   type: 'prev' | 'next'
 }
 
-const ArrowButtonShadow: React.FC<ArrowButtonShadowProps> = ({
-  children,
-  type,
-}) => {
+const ArrowButtonShadow: React.FC<
+  React.PropsWithChildren<ArrowButtonShadowProps>
+> = ({ children, type }) => {
   return (
     <div className={timelineStyles.arrowButtonShadow[type]}>{children}</div>
   )
@@ -329,7 +444,21 @@ const ArrowButton = ({
   )
 }
 
-const TimelineItem = ({ event, offset, index, detailed, mobile = false }) => {
+const TimelineItem = ({
+  event,
+  offset,
+  index,
+  detailed,
+  mobile = false,
+  seeMoreText = 'Lesa meira',
+}: {
+  event: TimelineEvent
+  offset: number
+  index: number
+  detailed: boolean
+  mobile?: boolean
+  seeMoreText: string
+}) => {
   const positionStyles = [
     { bottom: 136 },
     { top: 136 },
@@ -348,6 +477,8 @@ const TimelineItem = ({ event, offset, index, detailed, mobile = false }) => {
   const portalRef = useRef()
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     portalRef.current = document.querySelector('#__next')
   })
 
@@ -374,8 +505,14 @@ const TimelineItem = ({ event, offset, index, detailed, mobile = false }) => {
             onVisibilityChange={(isVisible) => !isVisible && setVisible(false)}
             hideOnEsc={true}
           >
-            <EventModal event={event} onClose={() => setVisible(false)} />
+            <EventModal
+              event={event}
+              onClose={() => setVisible(false)}
+              seeMoreText={seeMoreText}
+            />
           </ModalBase>,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           portalRef.current,
         )}
     </div>
@@ -432,7 +569,15 @@ const BulletLine = ({
   )
 }
 
-const MonthItem = ({ month, offset, year = '' }) => {
+const MonthItem = ({
+  month,
+  offset,
+  year = '',
+}: {
+  month: string
+  offset: number
+  year: string
+}) => {
   return (
     <div className={timelineStyles.monthItem} style={{ left: offset }}>
       <Text color="blue600" variant="eyebrow">
@@ -448,12 +593,17 @@ const MonthItem = ({ month, offset, year = '' }) => {
 interface EventModalProps {
   event: Timeline['events'][0]
   onClose: () => void
+  seeMoreText?: string
 }
 
 const formatNumber = (value: number) =>
   value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
 
-const EventModal = ({ event, onClose }: EventModalProps) => {
+const EventModal = ({
+  event,
+  onClose,
+  seeMoreText = 'Lesa meira',
+}: EventModalProps) => {
   if (!event) {
     return null
   }
@@ -520,11 +670,11 @@ const EventModal = ({ event, onClose }: EventModalProps) => {
             </Inline>
           )}
           {Boolean(event.body) &&
-            renderSlices([(event.body as unknown) as SliceType])}
+            renderSlices([event.body as unknown as SliceType])}
           {event.link && (
-            <Link href={event.link}>
+            <Link href={event.link} legacyBehavior>
               <Button variant="text" icon="arrowForward">
-                Lesa meira
+                {seeMoreText}
               </Button>
             </Link>
           )}

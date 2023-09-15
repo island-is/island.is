@@ -1,4 +1,4 @@
-import { logger } from '@island.is/logging'
+import { logger } from './logging'
 
 type ConsoleFn = typeof console.log
 

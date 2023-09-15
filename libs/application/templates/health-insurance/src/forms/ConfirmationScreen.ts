@@ -1,29 +1,20 @@
-import {
-  buildCustomField,
-  buildForm,
-  buildSection,
-  Form,
-  FormModes,
-} from '@island.is/application/core'
+import { buildForm } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 import { m } from './messages'
 import Logo from '../assets/Logo'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export const HealthInsuranceConfirmation: Form = buildForm({
   id: 'HealthInsuranceConfirmation',
   title: m.formTitle,
   logo: Logo,
-  mode: FormModes.APPLYING,
+  mode: FormModes.COMPLETED,
   children: [
-    buildSection({
-      id: 'confirmation',
-      title: '',
-      children: [
-        buildCustomField({
-          id: 'successfulSubmission',
-          title: '',
-          component: 'ConfirmationScreen',
-        }),
-      ],
+    buildFormConclusionSection({
+      alertTitle: m.successfulSubmissionTitle,
+      alertMessage: m.successfulSubmissionMessage,
+      expandableHeader: m.successfulExpendableHeader,
+      expandableDescription: m.nextStepReviewTime,
     }),
   ],
 })

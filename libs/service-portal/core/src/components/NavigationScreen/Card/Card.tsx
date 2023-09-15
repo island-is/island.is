@@ -1,5 +1,5 @@
 import { Box, Inline, Tag, Text } from '@island.is/island-ui/core'
-import { m } from '@island.is/service-portal/core'
+import { m } from '../../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { MessageDescriptor } from 'react-intl'
@@ -13,7 +13,12 @@ interface Props {
   disabled?: boolean
 }
 
-const Card: FC<Props> = ({ title, description, tags, disabled }) => {
+const Card: FC<React.PropsWithChildren<Props>> = ({
+  title,
+  description,
+  tags,
+  disabled,
+}) => {
   const { formatMessage } = useLocale()
 
   return disabled ? (

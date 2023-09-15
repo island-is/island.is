@@ -1,4 +1,4 @@
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, GridRow, GridColumn, Text } from '@island.is/island-ui/core'
 import { ReviewGroup } from '@island.is/application/ui-components'
 import React, { FC } from 'react'
@@ -13,13 +13,12 @@ import { ComplainedFor } from './ComplainedFor'
 import { ComplaintInformation } from './ComplaintInformation'
 import { yesNoMessageMapper } from '../../utils'
 import { OmbudsmanComplaintTypeEnum } from '../../shared'
-import upperCase from 'lodash/upperCase'
 import { DocumentCard } from '../components'
 import { useLocale } from '@island.is/localization'
 
 type Props = FieldBaseProps & { field: { props: { isEditable: boolean } } }
 
-export const ComplaintOverview: FC<Props> = ({
+export const ComplaintOverview: FC<React.PropsWithChildren<Props>> = ({
   application,
   goToScreen,
   field,
@@ -30,7 +29,7 @@ export const ComplaintOverview: FC<Props> = ({
   const {
     appeals,
     complaintType,
-    information: { name, phone, email, address },
+    applicant: { name, phoneNumber, email, address },
     complaintDescription: { decisionDate },
     attachments: { documents },
   } = answers
@@ -41,11 +40,6 @@ export const ComplaintOverview: FC<Props> = ({
 
   const complaintIsAboutDecision =
     complaintType === OmbudsmanComplaintTypeEnum.DECISION
-
-  const attachmentsText =
-    documents && documents.length > 0
-      ? documents?.map((x) => x.name).join(', ')
-      : complaintOverview.general.noAttachments
 
   return (
     <Box component="section" paddingTop={6}>
@@ -83,7 +77,7 @@ export const ComplaintOverview: FC<Props> = ({
         <GridRow>
           <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
             <ValueLine
-              value={phone}
+              value={phoneNumber ?? ''}
               label={information.aboutTheComplainer.phone}
             />
           </GridColumn>

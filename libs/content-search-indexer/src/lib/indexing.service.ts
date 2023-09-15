@@ -7,7 +7,18 @@ import {
   ContentSearchImporter,
   SyncOptions,
 } from '@island.is/content-search-indexer/types'
-import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
+import {
+  ElasticsearchIndexLocale,
+  getElasticsearchIndex,
+} from '@island.is/content-search-index-manager'
+import { environment } from '../environments/environment'
+import { Entry } from 'contentful'
+
+type SyncStatus = {
+  running?: boolean
+  lastStart?: string
+  lastFinish?: string
+}
 
 @Injectable()
 export class IndexingService {
@@ -18,6 +29,14 @@ export class IndexingService {
   ) {
     // add importer service to this array to make it import
     this.importers = [this.cmsSyncService]
+
+    // In case the service shut down in the middle of a sync, we need to set "running" to false
+    environment.locales.map((locale) => {
+      logger.info('Resetting sync status for locale', { locale })
+      this.updateSyncStatus(locale as ElasticsearchIndexLocale, {
+        running: false,
+      })
+    })
   }
 
   async ping() {
@@ -32,6 +51,7 @@ export class IndexingService {
 
     let didImportAll = true
     const importPromises = this.importers.map(async (importer) => {
+      logger.debug('Starting importer', importer)
       logger.info('Starting importer', {
         importer: importer.constructor.name,
         index: elasticIndex,
@@ -64,6 +84,7 @@ export class IndexingService {
 
     // wait for all importers to finish
     await Promise.all(importPromises).catch((error) => {
+      logger.debug('Importer failure error', error)
       logger.error('Importer failed', {
         message: error.message,
         index: elasticIndex,
@@ -78,9 +99,10 @@ export class IndexingService {
     */
     if (syncType === 'full' && didImportAll) {
       logger.info('Removing stale data from index', { index: elasticIndex })
-      const response = await this.elasticService.deleteAllDocumentsNotVeryRecentlyUpdated(
-        elasticIndex,
-      )
+      const response =
+        await this.elasticService.deleteAllDocumentsNotVeryRecentlyUpdated(
+          elasticIndex,
+        )
       logger.info('Removed stale documents', {
         count: response.body.deleted,
         index: elasticIndex,
@@ -90,5 +112,64 @@ export class IndexingService {
     logger.info('Indexing service finished sync', { index: elasticIndex })
 
     return didImportAll
+  }
+
+  async getSyncStatus(locale: ElasticsearchIndexLocale): Promise<SyncStatus> {
+    const elasticIndex = getElasticsearchIndex(locale)
+
+    return this.elasticService
+      .findById(elasticIndex, 'indexingServiceStatusId')
+      .then((document) => JSON.parse(document?.body._source.content))
+      .catch((error) => {
+        logger.warn('Failed to get last indexing service status', {
+          error: error.message,
+        })
+        return { running: false }
+      })
+  }
+
+  async updateSyncStatus(locale: ElasticsearchIndexLocale, status: SyncStatus) {
+    const elasticIndex = getElasticsearchIndex(locale)
+
+    const lastStatus = await this.getSyncStatus(locale)
+
+    const folderHashDocument = {
+      _id: 'indexingServiceStatusId',
+      title: 'indexingServiceStatus',
+      type: 'indexingServiceStatus',
+      content: JSON.stringify({ ...lastStatus, ...status }),
+      dateCreated: new Date().getTime().toString(),
+      dateUpdated: new Date().getTime().toString(),
+    }
+
+    logger.info('Writing sync status to elasticsearch index')
+    await this.elasticService
+      .index(elasticIndex, folderHashDocument)
+      .catch((error) => {
+        logger.debug('Sync status error', error)
+        logger.error('Could not update sync status', {
+          message: error.message,
+        })
+      })
+  }
+
+  async getDocumentById(locale: ElasticsearchIndexLocale, id: string) {
+    const elasticIndex = getElasticsearchIndex(locale)
+
+    try {
+      const document = await this.elasticService.findById(elasticIndex, id)
+
+      return document
+    } catch {
+      return { error: true }
+    }
+  }
+
+  async deleteDocument(
+    locale: ElasticsearchIndexLocale,
+    document: Pick<Entry<unknown>, 'sys'>,
+  ) {
+    const elasticIndex = getElasticsearchIndex(locale)
+    return this.cmsSyncService.handleDocumentDeletion(elasticIndex, document)
   }
 }

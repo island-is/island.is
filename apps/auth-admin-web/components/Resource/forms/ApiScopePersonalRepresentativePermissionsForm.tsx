@@ -32,13 +32,19 @@ const ApiScopePersonalRepresentativePermissionsForm = (props: Props) => {
       'ApiScopePersonalRepresentativePermissions',
     ),
   )
-  const { register, handleSubmit, errors, watch } = useForm<Inputs>()
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<Inputs>()
   const selectedItem = watch('permissionType')
 
   useEffect(() => {
     // Get list of available permissions
     async function fetchPermissionTypes() {
-      const response = await ResourcesService.getPersonalRepresentativePermissionTypes()
+      const response =
+        await ResourcesService.getPersonalRepresentativePermissionTypes()
       if (response) {
         setPermissionTypes(response.data)
       } else {
@@ -51,9 +57,10 @@ const ApiScopePersonalRepresentativePermissionsForm = (props: Props) => {
   useEffect(() => {
     // Get list of current scope's permissions
     async function fetchScopePermissions() {
-      const response = await ResourcesService.getPersonalRepresentativeScopePermissions(
-        props.apiScopeName,
-      )
+      const response =
+        await ResourcesService.getPersonalRepresentativeScopePermissions(
+          props.apiScopeName,
+        )
       if (response) {
         setScopePermissions(response)
       } else {
@@ -64,9 +71,10 @@ const ApiScopePersonalRepresentativePermissionsForm = (props: Props) => {
   }, [props.apiScopeName])
 
   const getScopePermissions = async () => {
-    const response = await ResourcesService.getPersonalRepresentativeScopePermissions(
-      props.apiScopeName,
-    )
+    const response =
+      await ResourcesService.getPersonalRepresentativeScopePermissions(
+        props.apiScopeName,
+      )
     if (response) {
       setScopePermissions(response)
     } else {
@@ -119,9 +127,10 @@ const ApiScopePersonalRepresentativePermissionsForm = (props: Props) => {
                   <select
                     id="permissionType"
                     className="personal-representative-permissions-form__select"
-                    name="permissionType"
+                    {...register('permissionType', {
+                      required: 'Permission type is required',
+                    })}
                     title={localization.fields['permissionType'].helpText}
-                    ref={register({ required: 'Permission type is required' })}
                   >
                     {permissionTypes &&
                       permissionTypes.map((option) => {
@@ -143,7 +152,6 @@ const ApiScopePersonalRepresentativePermissionsForm = (props: Props) => {
                     as="span"
                     errors={errors}
                     name="permissionType"
-                    message={errors.permissionType}
                   />
                   <input
                     type="submit"

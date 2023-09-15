@@ -1,0 +1,10 @@
+{
+  "extends": ["plugin:@nx/react", "../../../.eslintrc.json"],
+  "rules": { "react-hooks/exhaustive-deps": "error" },
+  "ignorePatterns": ["!**/*"],
+  "overrides": [
+    { "files": ["*.ts", "*.tsx", "*.js", "*.jsx"], "rules": {} },
+    { "files": ["*.ts", "*.tsx"], "rules": {} },
+    { "files": ["*.js", "*.jsx"], "rules": {} }
+  ]
+}

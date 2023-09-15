@@ -3,7 +3,7 @@ import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import slugify from '@sindresorhus/slugify'
 import NextLink from 'next/link'
-import { richText, Slice as SliceType } from '@island.is/island-ui/contentful'
+import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
   GridRow,
   GridColumn,
@@ -11,13 +11,16 @@ import {
   Text,
   Box,
   GridContainer,
+  BreadCrumbItem,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   AnchorNavigation,
   BackgroundImage,
+  Form,
   HeadWithSocialSharing,
   Sticky,
+  WatsonChatPanel,
 } from '@island.is/web/components'
 import {
   GET_LIFE_EVENT_QUERY,
@@ -30,36 +33,90 @@ import {
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
-import { useNamespace } from '@island.is/web/hooks'
+import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useRouter } from 'next/router'
+import { Locale } from 'locale'
+import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { webRichText } from '@island.is/web/utils/richText'
+import { useI18n } from '@island.is/web/i18n'
+import { Webreader } from '@island.is/web/components'
+import { DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN } from '@island.is/web/constants'
+import { watsonConfig } from './config'
 
 interface LifeEventProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
   namespace: GetNamespaceQuery['getNamespace']
+  locale: Locale
 }
 
 export const LifeEvent: Screen<LifeEventProps> = ({
-  lifeEvent: { id, image, title, intro, content },
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  lifeEvent: { id, image, title, intro, content, featuredImage },
   namespace,
+  locale,
 }) => {
   useContentfulId(id)
+  useLocalLinkTypeResolver()
+
+  usePlausiblePageview(DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
+  const router = useRouter()
+  const { activeLocale } = useI18n()
 
   const navigation = useMemo(() => {
     return createNavigation(content, { title })
   }, [content, title])
+
+  const breadcrumbItems = useMemo(() => {
+    const items: BreadCrumbItem[] = [
+      {
+        title: 'Ísland.is',
+        href: '/',
+        typename: 'homepage',
+      },
+    ]
+
+    const overviewUrl = router.asPath.slice(0, router.asPath.lastIndexOf('/'))
+
+    // If we're viewing the digital iceland services we need to change the breadcrumbs
+    if (
+      linkResolver('digitalicelandservices', [], locale).href === overviewUrl
+    ) {
+      items.push({
+        title: n('digitalIceland', 'Stafrænt Ísland'),
+        href: overviewUrl.slice(0, overviewUrl.lastIndexOf('/')),
+      })
+      items.push({
+        title: n('digitalIcelandServices', 'Þjónusta'),
+        href: overviewUrl,
+      })
+    } else {
+      items.push({
+        title: n('lifeEvents', 'Lífsviðburðir'),
+        href: overviewUrl,
+      })
+    }
+
+    return items
+  }, [])
+
+  const socialImage = featuredImage ?? image
 
   return (
     <Box paddingBottom={[2, 2, 10]}>
       <HeadWithSocialSharing
         title={`${title} | Ísland.is`}
         description={intro}
-        imageUrl={image.url}
-        imageContentType={image.contentType}
-        imageWidth={image.width.toString()}
-        imageHeight={image.height.toString()}
+        imageUrl={socialImage?.url}
+        imageContentType={socialImage?.contentType}
+        imageWidth={socialImage?.width?.toString()}
+        imageHeight={socialImage?.height?.toString()}
       />
 
       <GridContainer id="main-content">
@@ -70,12 +127,14 @@ export const LifeEvent: Screen<LifeEventProps> = ({
             width="full"
             printHidden
           >
-            <BackgroundImage
-              ratio="12:4"
-              background="transparent"
-              boxProps={{ background: 'white' }}
-              image={image}
-            />
+            {image && (
+              <BackgroundImage
+                ratio="12:4"
+                background="transparent"
+                boxProps={{ background: 'white' }}
+                image={image}
+              />
+            )}
           </Box>
         </GridRow>
         <GridRow>
@@ -87,20 +146,12 @@ export const LifeEvent: Screen<LifeEventProps> = ({
               >
                 <Box paddingBottom={[2, 2, 4]}>
                   <Breadcrumbs
-                    items={[
-                      {
-                        title: 'Ísland.is',
-                        href: '/',
-                        typename: 'homepage',
-                      },
-                      {
-                        title: n('lifeEvents', 'Lífsviðburðir'),
-                        href: linkResolver('lifeevents').href,
-                      },
-                    ]}
+                    items={breadcrumbItems}
                     renderLink={(link, { href }) => {
                       return (
-                        <NextLink href={href} passHref>
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
+                        <NextLink href={href} passHref legacyBehavior>
                           {link}
                         </NextLink>
                       )
@@ -108,11 +159,23 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                   />
                 </Box>
                 <Text variant="h1" as="h1">
-                  <span id={slugify(title)}>{title}</span>
+                  <span className="rs_read" id={slugify(title)}>
+                    {title}
+                  </span>
                 </Text>
+
+                <Webreader
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
+                  readId={null}
+                  readClass="rs_read"
+                />
+
                 {intro && (
                   <Text variant="intro" as="p" paddingTop={2}>
-                    <span id={slugify(intro)}>{intro}</span>
+                    <span className="rs_read" id={slugify(intro)}>
+                      {intro}
+                    </span>
                   </Text>
                 )}
                 <Box
@@ -127,8 +190,22 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                     position="right"
                   />
                 </Box>
-                <Box paddingTop={[3, 3, 4]}>
-                  {richText(content as SliceType[])}
+                <Box className="rs_read" paddingTop={[3, 3, 4]}>
+                  {webRichText(
+                    content as SliceType[],
+                    {
+                      renderComponent: {
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
+                        Form: (form) => (
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore make web strict
+                          <Form form={form} namespace={namespace} />
+                        ),
+                      },
+                    },
+                    activeLocale,
+                  )}
                 </Box>
               </GridColumn>
             </GridRow>
@@ -146,11 +223,15 @@ export const LifeEvent: Screen<LifeEventProps> = ({
           </GridColumn>
         </GridRow>
       </GridContainer>
+      {watsonConfig[locale] && ( // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
+        <WatsonChatPanel {...watsonConfig[locale]} />
+      )}
     </Box>
   )
 }
 
-LifeEvent.getInitialProps = async ({ apolloClient, locale, query }) => {
+LifeEvent.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getLifeEventPage: lifeEvent },
@@ -174,17 +255,19 @@ LifeEvent.getInitialProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((content) => {
-        // map data here to reduce data processing in component
-        return JSON.parse(content.data.getNamespace.fields)
-      }),
+      // map data here to reduce data processing in component
+      .then((content) =>
+        content.data.getNamespace?.fields
+          ? JSON.parse(content.data.getNamespace.fields)
+          : {},
+      ),
   ])
 
   if (!lifeEvent) {
     throw new CustomNextError(404, 'Life Event not found')
   }
 
-  return { lifeEvent, namespace }
+  return { lifeEvent, namespace, locale: locale as Locale }
 }
 
 export default withMainLayout(LifeEvent)

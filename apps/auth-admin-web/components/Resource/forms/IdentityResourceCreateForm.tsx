@@ -16,14 +16,11 @@ interface Props {
   identityResource: IdentityResourceDTO
 }
 
-const IdentityResourceCreateForm: React.FC<Props> = (props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<IdentityResourceDTO>()
-  const { isSubmitting } = formState
+const IdentityResourceCreateForm: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
+  const { register, handleSubmit, formState } = useForm<IdentityResourceDTO>()
+  const { isSubmitting, errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [available, setAvailable] = useState<boolean>(false)
   const [nameLength, setNameLength] = useState(0)
@@ -105,7 +102,10 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     {localization.fields['name'].label}
                   </label>
                   <input
-                    ref={register({
+                    id="name"
+                    {...register('name', {
+                      onBlur: () => setNameHintVisible(false),
+                      onChange: (e) => onNameChange(e.target.value),
                       required: true,
                       validate: isEditing
                         ? () => {
@@ -113,15 +113,11 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                           }
                         : ValidationUtils.validateIdentityResourceName,
                     })}
-                    id="name"
-                    name="name"
                     type="text"
                     className="identity-resource-form__input"
                     defaultValue={props.identityResource.name}
                     readOnly={isEditing}
-                    onChange={(e) => onNameChange(e.target.value)}
                     placeholder={localization.fields['name'].placeholder}
-                    onBlur={() => setNameHintVisible(false)}
                     onFocus={(e) => onNameChange(e.target.value)}
                   />
                   <div
@@ -157,12 +153,11 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     {localization.fields['displayName'].label}
                   </label>
                   <input
-                    ref={register({
+                    id="displayName"
+                    {...register('displayName', {
                       required: true,
                       validate: ValidationUtils.validateDescription,
                     })}
-                    id="displayName"
-                    name="displayName"
                     type="text"
                     className="identity-resource-form__input"
                     defaultValue={props.identityResource.displayName}
@@ -193,12 +188,11 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     {localization.fields['description'].label}
                   </label>
                   <input
-                    ref={register({
+                    id="description"
+                    {...register('description', {
                       required: false,
                       validate: ValidationUtils.validateDescription,
                     })}
-                    id="description"
-                    name="description"
                     type="text"
                     defaultValue={props.identityResource.description}
                     className="identity-resource-form__input"
@@ -230,9 +224,8 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     {localization.fields['enabled'].label}
                   </label>
                   <input
-                    ref={register}
                     id="enabled"
-                    name="enabled"
+                    {...register('enabled')}
                     type="checkbox"
                     defaultChecked={props.identityResource.enabled}
                     className="identity-resource-form__checkbox"
@@ -249,9 +242,8 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     {localization.fields['showInDiscoveryDocument'].label}
                   </label>
                   <input
-                    ref={register}
                     id="showInDiscoveryDocument"
-                    name="showInDiscoveryDocument"
+                    {...register('showInDiscoveryDocument')}
                     type="checkbox"
                     defaultChecked={
                       props.identityResource.showInDiscoveryDocument
@@ -276,9 +268,8 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     {localization.fields['emphasize'].label}
                   </label>
                   <input
-                    ref={register}
                     id="emphasize"
-                    name="emphasize"
+                    {...register('emphasize')}
                     defaultChecked={props.identityResource.emphasize}
                     type="checkbox"
                     className="identity-resource-form__checkbox"
@@ -297,9 +288,8 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     {localization.fields['required'].label}
                   </label>
                   <input
-                    ref={register}
                     id="required"
-                    name="required"
+                    {...register('required')}
                     defaultChecked={props.identityResource.required}
                     type="checkbox"
                     className="identity-resource-form__checkbox"
@@ -315,99 +305,14 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
 
                   <div className="api-scope-form__container__checkbox__field">
                     <label
-                      htmlFor="grantToLegalGuardians"
-                      className="api-scope-form__label"
-                    >
-                      {localization.fields['grantToLegalGuardians'].label}
-                    </label>
-                    <input
-                      ref={register}
-                      id="grantToLegalGuardians"
-                      name="grantToLegalGuardians"
-                      type="checkbox"
-                      defaultChecked={
-                        props.identityResource.grantToLegalGuardians
-                      }
-                      className="api-scope-form__checkbox"
-                      title={
-                        localization.fields['grantToLegalGuardians'].helpText
-                      }
-                    />
-                    <HelpBox
-                      helpText={
-                        localization.fields['grantToLegalGuardians'].helpText
-                      }
-                    />
-                  </div>
-
-                  <div className="api-scope-form__container__checkbox__field">
-                    <label
-                      htmlFor="grantToProcuringHolders"
-                      className="api-scope-form__label"
-                    >
-                      {localization.fields['grantToProcuringHolders'].label}
-                    </label>
-                    <input
-                      ref={register}
-                      id="grantToProcuringHolders"
-                      name="grantToProcuringHolders"
-                      type="checkbox"
-                      defaultChecked={
-                        props.identityResource.grantToProcuringHolders
-                      }
-                      className="api-scope-form__checkbox"
-                      title={
-                        localization.fields['grantToProcuringHolders'].helpText
-                      }
-                    />
-                    <HelpBox
-                      helpText={
-                        localization.fields['grantToProcuringHolders'].helpText
-                      }
-                    />
-                  </div>
-                  <div className="api-scope-form__container__checkbox__field">
-                    <label
-                      htmlFor="allowExplicitDelegationGrant"
-                      className="api-scope-form__label"
-                    >
-                      {
-                        localization.fields['allowExplicitDelegationGrant']
-                          .label
-                      }
-                    </label>
-                    <input
-                      ref={register}
-                      id="allowExplicitDelegationGrant"
-                      name="allowExplicitDelegationGrant"
-                      type="checkbox"
-                      defaultChecked={
-                        props.identityResource.allowExplicitDelegationGrant
-                      }
-                      className="api-scope-form__checkbox"
-                      title={
-                        localization.fields['allowExplicitDelegationGrant']
-                          .helpText
-                      }
-                    />
-                    <HelpBox
-                      helpText={
-                        localization.fields['allowExplicitDelegationGrant']
-                          .helpText
-                      }
-                    />
-                  </div>
-                  <div className="api-scope-form__container__checkbox__field">
-                    <label
                       htmlFor="automaticDelegationGrant"
                       className="api-scope-form__label"
                     >
                       {localization.fields['automaticDelegationGrant'].label}
                     </label>
                     <input
-                      ref={register}
                       id="automaticDelegationGrant"
-                      name="automaticDelegationGrant"
+                      {...register('automaticDelegationGrant')}
                       type="checkbox"
                       defaultChecked={
                         props.identityResource.automaticDelegationGrant
@@ -420,33 +325,6 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     <HelpBox
                       helpText={
                         localization.fields['automaticDelegationGrant'].helpText
-                      }
-                    />
-                  </div>
-
-                  <div className="api-scope-form__container__checkbox__field">
-                    <label
-                      htmlFor="alsoForDelegatedUser"
-                      className="api-scope-form__label"
-                    >
-                      {localization.fields['alsoForDelegatedUser'].label}
-                    </label>
-                    <input
-                      ref={register}
-                      id="alsoForDelegatedUser"
-                      name="alsoForDelegatedUser"
-                      type="checkbox"
-                      defaultChecked={
-                        props.identityResource.alsoForDelegatedUser
-                      }
-                      className="api-scope-form__checkbox"
-                      title={
-                        localization.fields['alsoForDelegatedUser'].helpText
-                      }
-                    />
-                    <HelpBox
-                      helpText={
-                        localization.fields['alsoForDelegatedUser'].helpText
                       }
                     />
                   </div>

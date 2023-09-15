@@ -1,0 +1,33 @@
+{
+  "name": "application-ui-components",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/ui-components/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/ui-components/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/application/ui-components/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": ["{workspaceRoot}/coverage/libs/application/ui-components"]
+    },
+    "schemas/codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "parallel": false,
+        "command": "graphql-codegen --config libs/application/ui-components/codegen.yml"
+      }
+    }
+  },
+  "tags": ["lib:application-system", "scope:application-system"]
+}

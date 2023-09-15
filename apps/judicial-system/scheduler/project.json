@@ -1,0 +1,50 @@
+{
+  "name": "judicial-system-scheduler",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/judicial-system/scheduler/src",
+  "projectType": "application",
+  "prefix": "judicial-system-scheduler",
+  "targets": {
+    "build": {
+      "executor": "./tools/executors/node:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/judicial-system/scheduler",
+        "main": "apps/judicial-system/scheduler/src/main.ts",
+        "tsConfig": "apps/judicial-system/scheduler/tsconfig.app.json",
+        "maxWorkers": 2
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "judicial-system-scheduler:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/judicial-system/scheduler/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/judicial-system/scheduler"],
+      "options": {
+        "jestConfig": "apps/judicial-system/scheduler/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "docker-express": {}
+  },
+  "tags": ["scope:judicial-system-api"]
+}

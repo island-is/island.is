@@ -41,6 +41,28 @@ export class AccessControlModel extends Model<AccessControlModel> {
   })
   role!: AccessControlRoleType
 
+  @Field({ nullable: true })
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  email!: string
+
+  @Field({ nullable: true })
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  phone!: string
+
+  @Field({ nullable: true })
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    field: 'recycling_location',
+  })
+  recyclingLocation?: string
+
   @ForeignKey(() => RecyclingPartnerModel)
   @Column({
     type: DataType.STRING,

@@ -15,7 +15,15 @@ export const startMocking = (requestHandlers: RequestHandlersList) => {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { setupWorker } = require('msw')
     const worker = setupWorker(...requestHandlers)
-    worker.start()
+    if (location.pathname.split('/')[1] === 'minarsidur') {
+      worker.start({
+        serviceWorker: {
+          url: '/minarsidur/mockServiceWorker.js',
+        },
+      })
+    } else {
+      worker.start()
+    }
     return worker
   }
 }

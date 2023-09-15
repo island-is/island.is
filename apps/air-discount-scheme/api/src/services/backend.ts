@@ -31,6 +31,12 @@ class BackendAPI extends RESTDataSource {
     })
   }
 
+  createExplicitDiscountCode(body: Record<string, unknown>): Promise<Discount> {
+    return this.post('users/createExplicitDiscountCode', body, {
+      cacheOptions: { ttl: -1 },
+    })
+  }
+
   getDiscount(nationalId: string): Promise<Discount | null> {
     return this.get(`users/${nationalId}/discounts/current`)
   }

@@ -1,1 +1,0 @@
-export { ComplaintConfirmation } from './ComplaintConfirmation'

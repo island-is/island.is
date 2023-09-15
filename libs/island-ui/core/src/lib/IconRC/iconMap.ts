@@ -2,6 +2,7 @@ export type Type = 'filled' | 'outline'
 export type Icon =
   | 'accessibility'
   | 'add'
+  | 'airplane'
   | 'arrowForward'
   | 'arrowBack'
   | 'arrowUp'
@@ -30,13 +31,18 @@ export type Icon =
   | 'ellipse'
   | 'ellipsisHorizontal'
   | 'ellipsisVertical'
+  | 'expand'
   | 'eye'
+  | 'eyeOff'
+  | 'facebook'
   | 'fileTrayFull'
   | 'filter'
   | 'heart'
   | 'home'
   | 'informationCircle'
+  | 'link'
   | 'lockClosed'
+  | 'lockOpened'
   | 'logOut'
   | 'mail'
   | 'menu'
@@ -46,6 +52,8 @@ export type Icon =
   | 'people'
   | 'person'
   | 'playCircle'
+  | 'pause'
+  | 'pauseCircle'
   | 'print'
   | 'reader'
   | 'receipt'
@@ -55,16 +63,24 @@ export type Icon =
   | 'settings'
   | 'time'
   | 'trash'
+  | 'volumeHigh'
+  | 'volumeMute'
   | 'wallet'
   | 'warning'
   | 'reload'
   | 'remove'
+  | 'save'
+  | 'bookmark'
+  | 'share'
   | 'QRCode'
+  | 'globe'
+  | 'signLanguage'
 
 export default {
   filled: {
     accessibility: 'Accessibility',
     add: 'Add',
+    airplane: 'Airplane',
     arrowForward: 'ArrowForward',
     arrowBack: 'ArrowBack',
     arrowDown: 'ArrowDown',
@@ -94,17 +110,24 @@ export default {
     ellipsisHorizontal: 'EllipsisHorizontal',
     ellipsisVertical: 'EllipsisVertical',
     eye: 'Eye',
+    eyeOff: 'EyeOff',
+    expand: 'Expand',
+    facebook: 'Facebook',
     fileTrayFull: 'FileTrayFull',
     filter: 'Filter',
     heart: 'Heart',
     home: 'Home',
     informationCircle: 'InformationCircle',
+    link: 'Link',
     lockClosed: 'LockClosed',
+    lockOpened: 'LockOpened',
     logOut: 'LogOut',
     mail: 'Mail',
     menu: 'Menu',
     notifications: 'Notifications',
     open: 'Open',
+    pause: 'Pause',
+    pauseCircle: 'PauseCircle',
     pencil: 'Pencil',
     people: 'People',
     person: 'Person',
@@ -117,16 +140,24 @@ export default {
     search: 'Search',
     settings: 'Settings',
     trash: 'Trash',
+    volumeHigh: 'VolumeHigh',
+    volumeMute: 'VolumeMute',
     wallet: 'Wallet',
     warning: 'Warning',
     reload: 'Reload',
     remove: 'Remove',
     time: 'Time',
+    save: 'Save',
+    bookmark: 'Bookmark',
+    share: 'Share',
     QRCode: 'QRCodeOutline',
+    globe: 'Globe',
+    signLanguage: 'SignLanguage',
   },
   outline: {
     accessibility: 'AccessibilityOutline',
     add: 'AddOutline',
+    airplane: 'Airplane',
     arrowForward: 'ArrowForward',
     arrowBack: 'ArrowBack',
     arrowDown: 'ArrowDown',
@@ -156,17 +187,24 @@ export default {
     ellipsisHorizontal: 'EllipsisHorizontalOutline',
     ellipsisVertical: 'EllipsisVerticalOutline',
     eye: 'EyeOutline',
+    eyeOff: 'EyeOffOutline',
+    expand: 'ExpandOutline',
+    facebook: 'Facebook',
     fileTrayFull: 'FileTrayFullOutline',
     filter: 'FilterOutline',
     heart: 'HeartOutline',
     home: 'HomeOutline',
     informationCircle: 'InformationCircleOutline',
+    link: 'LinkOutline',
     lockClosed: 'LockClosedOutline',
+    lockOpened: 'LockOpenedOutline',
     logOut: 'LogOutOutline',
     mail: 'MailOutline',
     menu: 'MenuOutline',
     notifications: 'NotificationsOutline',
     open: 'OpenOutline',
+    pause: 'PauseOutline',
+    pauseCircle: 'PauseCircleOutline',
     pencil: 'PencilOutline',
     people: 'PeopleOutline',
     person: 'PersonOutline',
@@ -179,11 +217,18 @@ export default {
     search: 'SearchOutline',
     settings: 'SettingsOutline',
     trash: 'TrashOutline',
+    volumeHigh: 'VolumeHighOutline',
+    volumeMute: 'VolumeMuteOutline',
     wallet: 'WalletOutline',
     warning: 'WarningOutline',
     reload: 'ReloadOutline',
     remove: 'Remove',
     time: 'TimeOutline',
+    save: 'SaveOutline',
+    bookmark: 'BookmarkOutline',
+    share: 'ShareOutline',
     QRCode: 'QRCodeOutline',
+    globe: 'Globe',
+    signLanguage: 'SignLanguage',
   },
 }

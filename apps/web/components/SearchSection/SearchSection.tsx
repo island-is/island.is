@@ -19,6 +19,7 @@ import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { GetFrontpageQuery } from '@island.is/web/graphql/schema'
 
 import * as styles from './SearchSection.css'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 const DefaultIllustration = dynamic(() => import('./Illustration'), {
   ssr: false,
@@ -45,12 +46,26 @@ export const SearchSection = ({
   const { linkResolver } = useLinkResolver()
 
   const {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     featured,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     heading,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     image,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     imageAlternativeText,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     imageMobile,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     videos,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     videosMobile,
   } = page
 
@@ -73,7 +88,12 @@ export const SearchSection = ({
           <GridColumn span={['12/12', '12/12', '6/12']}>
             <Box display="flex" height="full" alignItems="center">
               <Stack space={[3, 3, 5]}>
-                <Text as="h1" variant="h1" id={headingId}>
+                <Text
+                  as="h1"
+                  variant="h1"
+                  id={headingId}
+                  dataTestId="home-heading"
+                >
                   {heading ?? ''}
                 </Text>
                 <SearchInput
@@ -83,36 +103,52 @@ export const SearchSection = ({
                   quickContentLabel={quickContentLabel}
                   placeholder={placeholder}
                   openOnFocus
+                  dataTestId="search-box"
                   colored
                 />
                 <Inline space={2}>
-                  {featured.map(({ title, attention, thing }) => {
-                    const cardUrl = linkResolver(thing?.type as LinkType, [
-                      thing?.slug,
-                    ])
-                    return cardUrl?.href && cardUrl?.href.length > 0 ? (
-                      <Tag
-                        key={title}
-                        {...(cardUrl.href.startsWith('/')
-                          ? {
-                              CustomLink: ({ children, ...props }) => (
-                                <Link key={title} {...props} {...cardUrl}>
-                                  {children}
-                                </Link>
-                              ),
-                            }
-                          : { href: cardUrl.href })}
-                        variant="blue"
-                        attention={attention}
-                      >
-                        {title}
-                      </Tag>
-                    ) : (
-                      <Tag key={title} variant="blue" attention={attention}>
-                        {title}
-                      </Tag>
-                    )
-                  })}
+                  {featured.map(
+                    ({
+                      title,
+                      attention,
+                      thing,
+                    }: {
+                      title: string
+                      attention: boolean
+                      thing: any
+                    }) => {
+                      const cardUrl = linkResolver(thing?.type as LinkType, [
+                        thing?.slug,
+                      ])
+                      return cardUrl?.href && cardUrl?.href.length > 0 ? (
+                        <Tag
+                          key={title}
+                          {...(cardUrl.href.startsWith('/')
+                            ? {
+                                CustomLink: ({ children, ...props }) => (
+                                  <Link
+                                    key={title}
+                                    {...props}
+                                    {...cardUrl}
+                                    dataTestId="featured-link"
+                                  >
+                                    {children}
+                                  </Link>
+                                ),
+                              }
+                            : { href: cardUrl.href })}
+                          variant="blue"
+                          attention={attention}
+                        >
+                          {title}
+                        </Tag>
+                      ) : (
+                        <Tag key={title} variant="blue" attention={attention}>
+                          {title}
+                        </Tag>
+                      )
+                    },
+                  )}
                 </Inline>
               </Stack>
             </Box>
@@ -130,11 +166,14 @@ export const SearchSection = ({
                 justifyContent="center"
                 alignItems="center"
                 aria-hidden="true"
+                dataTestId="home-banner"
               >
                 {videos?.length ? (
                   <Video
                     name="desktop"
                     title={imageAlternativeText}
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore make web strict
                     sources={videos.map(({ url, contentType }) => {
                       return {
                         src: url,
@@ -173,6 +212,9 @@ export const SearchSection = ({
             <Video
               name="mobile"
               title={imageAlternativeText}
+              dataTestId="home-banner"
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               sources={videosMobile.map(({ url, contentType }) => {
                 return {
                   src: url,
@@ -212,7 +254,13 @@ type VideoProps = {
   fallback: ReactNode
 }
 
-const Video = ({ name, title, sources, fallback }: VideoProps) => {
+const Video = ({
+  name,
+  title,
+  sources,
+  fallback,
+  dataTestId,
+}: VideoProps & TestSupport) => {
   const id = `front_page_video_${name}`
 
   return (
@@ -221,6 +269,7 @@ const Video = ({ name, title, sources, fallback }: VideoProps) => {
       id={id}
       title={title}
       className={styles.mediaItem}
+      data-testid={dataTestId}
       autoPlay
       loop
       muted
@@ -251,7 +300,7 @@ const Image = ({ spacing, src, alt }: ImageProps) => {
 type ImageOrDefaultProps = {
   url?: string
   imageAlternativeText: string
-  isMobile?: boolean | null
+  isMobile?: boolean
 }
 
 const ImageOrDefault = ({

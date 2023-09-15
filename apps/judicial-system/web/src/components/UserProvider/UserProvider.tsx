@@ -1,47 +1,40 @@
-import type { User } from '@island.is/judicial-system/types'
-import { gql, useQuery } from '@apollo/client'
 import React, { createContext, useEffect, useState } from 'react'
-import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import Cookies from 'js-cookie'
+
+import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
+import {
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+
+import { useGetCurrentUserQuery } from './getCurrentUser.generated'
 
 interface UserProvider {
   isAuthenticated?: boolean
+  limitedAccess?: boolean
   user?: User
-  setUser?: React.Dispatch<React.SetStateAction<User | undefined>>
 }
 
 export const UserContext = createContext<UserProvider>({})
-
-export const CurrentUserQuery = gql`
-  query CurrentUserQuery {
-    currentUser {
-      id
-      name
-      title
-      role
-      institution {
-        id
-        name
-        type
-      }
-    }
-  }
-`
 
 // Setting authenticated to true forces current user query in tests
 interface Props {
   authenticated?: boolean
 }
 
-const UserProvider: React.FC<Props> = ({ children, authenticated = false }) => {
+export const UserProvider: React.FC<React.PropsWithChildren<Props>> = ({
+  children,
+  authenticated = false,
+}) => {
   const [user, setUser] = useState<User>()
 
   const isAuthenticated =
     authenticated || Boolean(Cookies.get(CSRF_COOKIE_NAME))
 
-  const { data } = useQuery(CurrentUserQuery, {
-    fetchPolicy: 'no-cache',
+  const { data } = useGetCurrentUserQuery({
     skip: !isAuthenticated || Boolean(user),
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
   })
 
   const loggedInUser = data?.currentUser
@@ -53,10 +46,14 @@ const UserProvider: React.FC<Props> = ({ children, authenticated = false }) => {
   }, [setUser, loggedInUser, user])
 
   return (
-    <UserContext.Provider value={{ isAuthenticated, user, setUser }}>
+    <UserContext.Provider
+      value={{
+        isAuthenticated,
+        limitedAccess: user?.role === UserRole.DEFENDER,
+        user,
+      }}
+    >
       {children}
     </UserContext.Provider>
   )
 }
-
-export default UserProvider

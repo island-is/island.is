@@ -5,7 +5,6 @@ import {
   InputError,
   GridRow,
   GridColumn,
-  Stack,
   InputBackgroundColor,
 } from '@island.is/island-ui/core'
 
@@ -14,10 +13,11 @@ type CheckboxProps = React.ComponentProps<typeof Checkbox>
 interface Option {
   value: string
   label: React.ReactNode
-  subLabel?: string
+  subLabel?: React.ReactNode
   tooltip?: React.ReactNode
   disabled?: boolean
   excludeOthers?: boolean
+  rightContent?: React.ReactNode
 }
 interface CheckboxControllerProps {
   defaultValue?: string[]
@@ -34,8 +34,10 @@ interface CheckboxControllerProps {
   backgroundColor?: InputBackgroundColor
   onSelect?: (s: string[]) => void
 }
-export const CheckboxController: FC<CheckboxControllerProps> = ({
-  defaultValue,
+export const CheckboxController: FC<
+  React.PropsWithChildren<CheckboxControllerProps>
+> = ({
+  defaultValue = [],
   disabled = false,
   labelVariant,
   spacing = 2,
@@ -74,7 +76,7 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
     <Controller
       name={name}
       defaultValue={defaultValue}
-      render={({ value, onChange }) => (
+      render={({ field: { value, onChange } }) => (
         <GridRow>
           {options.map((option, index) => (
             <GridColumn
@@ -92,8 +94,10 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
                   setValue(id, newChoices)
                   onSelect(newChoices)
                 }}
+                rightContent={option.rightContent}
                 checked={value && value.includes(option.value)}
-                name={`${id}[${index}]`}
+                name={name}
+                id={`${id}[${index}]`}
                 label={option.label}
                 strong={strong}
                 labelVariant={labelVariant}

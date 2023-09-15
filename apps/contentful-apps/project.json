@@ -1,0 +1,103 @@
+{
+  "name": "contentful-apps",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/contentful-apps",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/contentful-apps"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/contentful-apps"
+        },
+        "production": {}
+      },
+      "dependsOn": ["build-custom-server"]
+    },
+    "build-custom-server": {
+      "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/contentful-apps",
+        "main": "apps/contentful-apps/server.ts",
+        "tsConfig": "apps/contentful-apps/tsconfig.server.json",
+        "maxWorkers": 2,
+        "assets": [],
+        "compiler": "tsc",
+        "target": "node"
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "contentful-apps:build",
+        "dev": true,
+        "customServerTarget": "contentful-apps:serve-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "contentful-apps:build:development",
+          "dev": true,
+          "customServerTarget": "contentful-apps:serve-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "contentful-apps:build:production",
+          "dev": false,
+          "customServerTarget": "contentful-apps:serve-custom-server:production"
+        }
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "contentful-apps:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "contentful-apps:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "contentful-apps:build-custom-server:production"
+        }
+      }
+    },
+    "export": {
+      "executor": "@nx/next:export",
+      "options": {
+        "buildTarget": "contentful-apps:build:production"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/contentful-apps"],
+      "options": {
+        "jestConfig": "apps/contentful-apps/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/contentful-apps/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "docker-next": {}
+  },
+  "tags": ["scope:react-next"]
+}

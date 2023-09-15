@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
+import { Link } from 'react-router-dom'
 import { Box, Icon, IconProps, Text } from '@island.is/island-ui/core'
 import * as styles from './IconButton.css'
-import { Link } from 'react-router-dom'
 
 interface Props {
   icon: Pick<IconProps, 'icon' | 'type'> | undefined
@@ -10,7 +10,12 @@ interface Props {
   active?: boolean
 }
 
-const ButtonContent: FC<Props> = ({ icon, active, onClick, children }) => (
+const ButtonContent: FC<React.PropsWithChildren<Props>> = ({
+  icon,
+  active,
+  onClick,
+  children,
+}) => (
   <Box display="flex" alignItems="center" cursor="pointer" onClick={onClick}>
     <Box marginRight={2}>
       {icon ? (
@@ -27,7 +32,7 @@ const ButtonContent: FC<Props> = ({ icon, active, onClick, children }) => (
   </Box>
 )
 
-const IconButton: FC<Props> = (props) => {
+const IconButton: FC<React.PropsWithChildren<Props>> = (props) => {
   return props.url ? (
     <Link to={props.url} className={styles.link}>
       <ButtonContent {...props} />

@@ -24,13 +24,10 @@ export class VehicleResolver {
     @Args('first', { type: () => Int }) first: number,
     @Args('after') after: string,
   ): Promise<VehicleConnection> {
-    const {
-      pageInfo,
-      totalCount,
-      data,
-    } = await this.vehicleService.findAllByFilter(first, after, {
-      requestType: RecyclingRequestTypes.deregistered,
-    })
+    const { pageInfo, totalCount, data } =
+      await this.vehicleService.findAllByFilter(first, after, {
+        requestType: RecyclingRequestTypes.deregistered,
+      })
     return {
       pageInfo,
       count: totalCount,
@@ -39,7 +36,7 @@ export class VehicleResolver {
   }
 
   @Authorize({
-    roles: [Role.developer, Role.recyclingCompany],
+    roles: [Role.developer, Role.recyclingCompany, Role.recyclingCompanyAdmin],
   })
   @Query(() => VehicleConnection)
   async skilavottordRecyclingPartnerVehicles(
@@ -59,14 +56,11 @@ export class VehicleResolver {
         items: [],
       }
     }
-    const {
-      pageInfo,
-      totalCount,
-      data,
-    } = await this.vehicleService.findAllByFilter(first, after, {
-      partnerId: user.partnerId,
-      requestType: RecyclingRequestTypes.deregistered,
-    })
+    const { pageInfo, totalCount, data } =
+      await this.vehicleService.findAllByFilter(first, after, {
+        partnerId: user.partnerId,
+        requestType: RecyclingRequestTypes.deregistered,
+      })
     return {
       pageInfo,
       count: totalCount,

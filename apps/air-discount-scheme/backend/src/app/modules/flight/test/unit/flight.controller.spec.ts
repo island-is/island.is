@@ -10,7 +10,8 @@ import {
   NationalRegistryService,
   NationalRegistryUser,
 } from '../../../nationalRegistry'
-import { CACHE_MANAGER } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import { createTestUser } from '../../../../../../test/createTestUser'
 
 describe('PublicFlightController', () => {
   let publicFlightController: PublicFlightController
@@ -19,10 +20,10 @@ describe('PublicFlightController', () => {
   let nationalRegistryService: NationalRegistryService
 
   const airline = 'ernir'
-  const nationalId = '1234567890'
+  const nationalId = '0101302399'
   const flight = {
     id: '70de7be1-6b6d-4ec3-8063-be55e241d488',
-    nationalId: '123456xxx0',
+    nationalId: '010130xxx9',
     bookingDate: new Date('2020-10-05T14:48:00.000Z'),
     flightLegs: [
       {
@@ -75,7 +76,9 @@ describe('PublicFlightController', () => {
             get: () => ({}),
             set: () => ({}),
             del: () => ({}),
-            ttl: () => ({}),
+            store: {
+              ttl: () => ({}),
+            },
           })),
         },
       ],
@@ -95,7 +98,13 @@ describe('PublicFlightController', () => {
 
   describe('create', () => {
     const discountCode = 'ABCDEFG'
-    const discount = new Discount(discountCode, [], nationalId, 0)
+    const discount = new Discount(
+      createTestUser(),
+      discountCode,
+      [],
+      nationalId,
+      0,
+    )
     const flightDto: CreateFlightBody = {
       bookingDate: new Date('2020-10-05T14:48:00.000Z'),
       flightLegs: [
@@ -173,7 +182,7 @@ describe('PublicFlightController', () => {
           request,
         )
         expect('This should not happen').toEqual('')
-      } catch (e) {
+      } catch (e: any) {
         expect(e.response).toEqual({
           statusCode: 400,
           error: 'Bad Request',
@@ -182,13 +191,10 @@ describe('PublicFlightController', () => {
       }
     })
 
-    it('should fail if user is not found', async () => {
+    it('should fail if discount is invalid', async () => {
       const request: any = { airline }
       jest
         .spyOn(discountService, 'getDiscountByDiscountCode')
-        .mockImplementation(() => Promise.resolve(discount))
-      jest
-        .spyOn(nationalRegistryService, 'getUser')
         .mockImplementation(() => Promise.resolve(null))
 
       try {
@@ -198,39 +204,11 @@ describe('PublicFlightController', () => {
           request,
         )
         expect('This should not happen').toEqual('')
-      } catch (e) {
+      } catch (e: any) {
         expect(e.response).toEqual({
-          statusCode: 404,
-          error: 'Not Found',
-          message: `User not found`,
-        })
-      }
-    })
-
-    it('should fail if user postalcode does not meet conditions', async () => {
-      const request: any = { airline }
-      jest
-        .spyOn(discountService, 'getDiscountByDiscountCode')
-        .mockImplementation(() => Promise.resolve(discount))
-      jest
-        .spyOn(nationalRegistryService, 'getUser')
-        .mockImplementation(() => Promise.resolve(user))
-      jest
-        .spyOn(flightService, 'isADSPostalCode')
-        .mockImplementation(() => false)
-
-      try {
-        await publicFlightController.create(
-          { discountCode },
-          flightDto,
-          request,
-        )
-        expect('This should not happen').toEqual('')
-      } catch (e) {
-        expect(e.response).toEqual({
-          statusCode: 403,
-          error: 'Forbidden',
-          message: 'User postalcode does not meet conditions',
+          statusCode: 400,
+          error: 'Bad Request',
+          message: `Discount code is invalid`,
         })
       }
     })
@@ -257,7 +235,7 @@ describe('PublicFlightController', () => {
           request,
         )
         expect('This should not happen').toEqual('')
-      } catch (e) {
+      } catch (e: any) {
         expect(e.response).toEqual({
           statusCode: 403,
           error: 'Forbidden',
@@ -294,7 +272,7 @@ describe('PublicFlightController', () => {
       try {
         await publicFlightController.delete({ flightId: flight.id }, request)
         expect('This should not happen').toEqual('')
-      } catch (e) {
+      } catch (e: any) {
         expect(e.response).toEqual({
           statusCode: 404,
           error: 'Not Found',
@@ -332,7 +310,7 @@ describe('PublicFlightController', () => {
           request,
         )
         expect('This should not happen').toEqual('')
-      } catch (e) {
+      } catch (e: any) {
         expect(e.response).toEqual({
           statusCode: 404,
           error: 'Not Found',
@@ -356,7 +334,7 @@ describe('PublicFlightController', () => {
           request,
         )
         expect('This should not happen').toEqual('')
-      } catch (e) {
+      } catch (e: any) {
         expect(e.response).toEqual({
           statusCode: 404,
           error: 'Not Found',

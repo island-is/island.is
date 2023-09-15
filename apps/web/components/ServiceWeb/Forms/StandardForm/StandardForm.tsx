@@ -1,9 +1,8 @@
-import React, { ReactNode, useEffect, useState } from 'react'
+import React, { ReactNode, useEffect, useMemo, useState } from 'react'
 import { useLazyQuery } from '@apollo/client'
 import {
   useForm,
   Controller,
-  ValidationRules,
   useFormContext,
   FormProvider,
 } from 'react-hook-form'
@@ -26,17 +25,26 @@ import {
   Link,
   Stack,
   LoadingDots,
+  Checkbox,
 } from '@island.is/island-ui/core'
 import { Organizations, SupportCategory } from '@island.is/api/schema'
 import { GET_SUPPORT_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
 import {
+  ContentLanguage,
   GetSupportSearchResultsQuery,
   GetSupportSearchResultsQueryVariables,
   SearchableContentTypes,
+  SearchableTags,
   SupportQna,
 } from '@island.is/web/graphql/schema'
-import { ModifySearchTerms } from '../../SearchInput/SearchInput'
-import orderBy from 'lodash/orderBy'
+import { useNamespace } from '@island.is/web/hooks'
+import slugify from '@sindresorhus/slugify'
+import { FormNamespace } from '../../types'
+import { useI18n } from '@island.is/web/i18n'
+import { CategoryId, SyslumennCategories } from './types'
+import { SjukratryggingarCategories } from '@island.is/web/screens/ServiceWeb/Forms/utils'
+import { getServiceWebSearchTagQuery } from '@island.is/web/screens/ServiceWeb/utils'
+import { sortAlpha } from '@island.is/shared/utils'
 
 type FormState = {
   message: string
@@ -54,53 +62,14 @@ interface StandardFormProps {
   loading: boolean
   onSubmit: (formState: FormState) => Promise<void>
   institutionSlug: string
+  namespace?: Record<string, string>
+  stateEntities: string[]
+  formNamespace: FormNamespace
 }
 
-type CategoryId =
-  /**
-   * Fjölskyldumál
-   */
-  | '4vQ4htPOAZvzcXBcjx06SH'
-  /**
-   * Skírteini
-   */
-  | '7nWhQCER920RakQ7BZpEmV'
-  /**
-   * Andlát og dánarbú
-   */
-  | '2TkJynZlamqTHdjUziXDG0'
-  /**
-   * Þinglýsingar, staðfestingar og skráningar
-   */
-  | '6K9stHLAB2mEyGqtqjnXxf'
-  /**
-   * Gjöld og innheimta
-   */
-  | '5u2M09Kw3p1Spva1GSuAzB'
-  /**
-   * Löggildingar
-   */
-  | 'WrQIftmx61sHJMoIr1QRW'
-  /**
-   * Vottorð
-   */
-  | '76Expbwtudon1Gz5lrKOit'
-  /**
-   * Lögráðamál
-   */
-  | '4tvRkPgKP3kerbyRJDvaWF'
-  /**
-   * Önnur þjónusta sýslumanna
-   */
-  | '4LNbNB3GvH3RcoIGpuZKhG'
-  /**
-   * Leyfi
-   */
-  | '7HbSNTUHJReJ2GPeT1ni1C'
-  /**
-   * Fullnustugerðir
-   */
-  | '7LkzuYSzqwM7k8fJyeRbm6'
+const mannaudstorgTag = [
+  { key: 'mannaudstorg', type: SearchableTags.Organization },
+]
 
 const labels: Record<string, string> = {
   syslumadur: 'Sýslumannsembætti',
@@ -120,32 +89,54 @@ const labels: Record<string, string> = {
   kennitala_vegna_lausafes: 'Kennitala vegna lausafés',
   erindi: 'Erindi',
   vidfangsefni: 'Viðfangsefni',
+  starfsheiti: 'Starfsheiti',
+  rikisadili: 'Ríkisaðili',
+  kennitala: 'Kennitala',
+  malsnumer_ef_til_stadar: 'Málsnúmer (ef til staðar)',
 }
 
 // these should be skipped in the message itself
 const skippedLabelsInMessage: Array<keyof typeof labels> = [
   'nafn',
   'vidfangsefni',
-  'email',
   'erindi',
 ]
+
+const useFormNamespace =
+  (namespace: FormNamespace) =>
+  (
+    key: string,
+    type: 'label' | 'requiredMessage' | 'placeholder' | 'patternMessage',
+    fallback?: string,
+  ) => {
+    return namespace?.[key]?.[type] ?? fallback
+  }
 
 interface BasicInputProps {
   name: keyof typeof labels
   requiredMessage?: string
   format?: string | FormatInputValueFunction
+  label?: string
 }
 
-const BasicInput = ({ name, requiredMessage, format }: BasicInputProps) => {
-  const { errors, register } = useFormContext()
+const BasicInput = ({
+  name,
+  requiredMessage,
+  format,
+  label,
+}: BasicInputProps) => {
+  const {
+    formState: { errors },
+    register,
+  } = useFormContext()
 
   return (
     <InputController
       backgroundColor="blue"
       id={name}
       name={name}
-      label={labels[name]}
-      error={errors?.[name]?.message}
+      label={label}
+      error={errors?.[name]?.message as string}
       required={!!requiredMessage}
       format={format}
       rules={{
@@ -156,7 +147,9 @@ const BasicInput = ({ name, requiredMessage, format }: BasicInputProps) => {
           },
         }),
       }}
-      {...register(name)}
+      // The docs tell us to spread the response of the register function even though it's return type is void
+      // https://react-hook-form.com/api/useformcontext/
+      {...(register(name) as unknown as object)}
     />
   )
 }
@@ -169,14 +162,19 @@ export const StandardForm = ({
   loading,
   onSubmit,
   institutionSlug,
+  namespace,
+  stateEntities,
+  formNamespace,
 }: StandardFormProps) => {
-  const useFormMethods = useForm({})
+  const { activeLocale } = useI18n()
+  const useFormMethods = useForm()
+  const n = useNamespace(namespace)
+  const fn = useFormNamespace(formNamespace)
   const {
     handleSubmit,
     getValues,
     control,
-    errors,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = useFormMethods
   const { linkResolver } = useLinkResolver()
   const [syslumadurId, setSyslumadurId] = useState<string>('')
@@ -188,6 +186,17 @@ export const StandardForm = ({
   const [categoryId, setCategoryId] = useState<string>('')
   const [categoryLabel, setCategoryLabel] = useState<string>('')
   const [addonFields, setAddonFields] = useState<ReactNode | null>()
+  const categoryDescription = useMemo(
+    () =>
+      supportCategories?.find((c) => c.id === categoryId)?.description ?? '',
+    [categoryId, supportCategories],
+  )
+
+  const stateEntityOptions = useMemo(() => {
+    const options = [...stateEntities]
+    options.sort((a, b) => a.localeCompare(b, 'is-IS'))
+    return options.map((option) => ({ label: option, value: slugify(option) }))
+  }, [])
 
   const [fetch, { loading: loadingSuggestions, called, data }] = useLazyQuery<
     GetSupportSearchResultsQuery,
@@ -198,6 +207,9 @@ export const StandardForm = ({
       updateSuggestions()
     },
   })
+
+  const institutionSlugBelongsToMannaudstorg =
+    institutionSlug.includes('mannaudstorg')
 
   useDebounce(
     () => {
@@ -211,7 +223,7 @@ export const StandardForm = ({
       }
 
       if (subject.length > MIN_SEARCH_QUERY_LENGTH) {
-        const queryString = ModifySearchTerms(subject)
+        const queryString = subject
 
         if (subject.trim() === lastSubject.trim()) {
           updateSuggestions()
@@ -220,9 +232,11 @@ export const StandardForm = ({
           fetch({
             variables: {
               query: {
+                language: activeLocale as ContentLanguage,
                 queryString,
                 size: 10,
                 types: [SearchableContentTypes['WebQna']],
+                ...getServiceWebSearchTagQuery(institutionSlug),
               },
             },
           })
@@ -250,98 +264,218 @@ export const StandardForm = ({
     let fields = null
 
     switch (categoryId as CategoryId) {
-      case '6K9stHLAB2mEyGqtqjnXxf':
+      case SyslumennCategories.THINGLYSINGAR:
         fields = (
           <>
             <GridColumn span={['12/12', '12/12', '4/12']} paddingBottom={3}>
-              <BasicInput name="fastanumer_eignar" />
+              <BasicInput
+                name="fastanumer_eignar"
+                label={fn('fastanumer_eignar', 'label', 'Fastanúmber eignar')}
+              />
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '4/12']} paddingBottom={3}>
-              <BasicInput name="skraningarnumer_okutaekis" />
+              <BasicInput
+                name="skraningarnumer_okutaekis"
+                label={fn(
+                  'skraningarnumer_okutaekis',
+                  'label',
+                  'Skráningarnúmer ökutækis',
+                )}
+              />
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '4/12']} paddingBottom={3}>
               <BasicInput
                 name="kennitala_vegna_lausafes"
                 format="######-####"
+                label={fn(
+                  'kennitala_vegna_lausafes',
+                  'label',
+                  'Kennitala vegna lausafés',
+                )}
               />
             </GridColumn>
           </>
         )
         break
-      case '7HbSNTUHJReJ2GPeT1ni1C':
+      case SyslumennCategories.LEYFI:
         fields = (
           <>
             <GridColumn span="12/12" paddingBottom={3}>
               <BasicInput
                 name="nafn_leyfishafa"
                 requiredMessage="Nafn leyfishafa vantar"
+                label={fn('nafn_leyfishafa', 'label', 'Nafn leyfishafa')}
               />
             </GridColumn>
             <GridColumn span={['12/12', '6/12']} paddingBottom={3}>
               <BasicInput
                 name="kennitala_leyfishafa"
-                requiredMessage="Kennitala leyfishafa vantar"
+                requiredMessage={fn(
+                  'kennitala_leyfishafa',
+                  'requiredMessage',
+                  'Kennitala leyfishafa vantar',
+                )}
                 format="######-####"
+                label={fn(
+                  'kennitala_leyfishafa',
+                  'label',
+                  'Kennitala leyfishafa',
+                )}
               />
             </GridColumn>
           </>
         )
         break
-      case '5u2M09Kw3p1Spva1GSuAzB':
-      case '7nWhQCER920RakQ7BZpEmV':
+      case SyslumennCategories.GJOLD_OG_INNHEIMTA:
+      case SyslumennCategories.SKIRTEINI:
         fields = (
           <GridColumn span={['12/12', '6/12']} paddingBottom={3}>
             <BasicInput
               name="kennitala_malsadila"
               requiredMessage="Kennitala málsaðila vantar"
               format="######-####"
+              label={fn('kennitala_malsadila', 'label', 'Kennitala málsaðila')}
             />
           </GridColumn>
         )
         break
-      case '7LkzuYSzqwM7k8fJyeRbm6':
-      case '4tvRkPgKP3kerbyRJDvaWF':
-      case '4vQ4htPOAZvzcXBcjx06SH':
+      case SyslumennCategories.FULLNUSTUGERDIR:
+      case SyslumennCategories.LOGRADAMAL:
+      case SyslumennCategories.FJOLSKYLDUMAL:
         fields = (
           <>
             <GridColumn span="12/12" paddingBottom={3}>
               <BasicInput
                 name="nafn_malsadila"
-                requiredMessage="Nafn málsaðila vantar"
+                requiredMessage={fn(
+                  'nafn_malsadila',
+                  'requiredMessage',
+                  'Nafn málsaðila vantar',
+                )}
+                label={fn('nafn_malsadila', 'label', 'Nafn málsaðila')}
               />
             </GridColumn>
             <GridColumn span={['12/12', '6/12']} paddingBottom={3}>
-              <BasicInput name="kennitala_malsadila" format="######-####" />
+              <BasicInput
+                name="kennitala_malsadila"
+                format="######-####"
+                label={fn(
+                  'kennitala_malsadila',
+                  'label',
+                  'Kennitala málsaðila',
+                )}
+              />
             </GridColumn>
             <GridColumn span={['12/12', '6/12']} paddingBottom={3}>
-              <BasicInput name="malsnumer" />
+              <BasicInput
+                name="malsnumer"
+                label={fn('malsnumer', 'label', 'Málsnúmer')}
+              />
             </GridColumn>
           </>
         )
         break
-      case '2TkJynZlamqTHdjUziXDG0':
+      case SyslumennCategories.ANDLAT_OG_DANARBU:
         fields = (
           <>
             <GridColumn span="12/12" paddingBottom={3}>
               <BasicInput
                 name="nafn_hins_latna"
                 requiredMessage="Nafn hins látna vantar"
+                label={fn('nafn_hins_latna', 'label', 'Nafn hins látna')}
               />
             </GridColumn>
             <GridColumn span={['12/12', '6/12']} paddingBottom={3}>
-              <BasicInput name="kennitala_hins_latna" format="######-####" />
+              <BasicInput
+                name="kennitala_hins_latna"
+                format="######-####"
+                label={fn(
+                  'kennitala_hins_latna',
+                  'label',
+                  'Kennitala hins látna',
+                )}
+              />
             </GridColumn>
             <GridColumn span={['12/12', '6/12']} paddingBottom={8}>
-              <BasicInput name="malsnumer" />
+              <BasicInput
+                name="malsnumer"
+                label={fn('malsnumer', 'label', 'Málsnúmer')}
+              />
             </GridColumn>
             <GridColumn span={['12/12', '6/12']} paddingBottom={3}>
-              <BasicInput name="kennitala_arftaka" format="######-####" />
+              <BasicInput
+                name="kennitala_arftaka"
+                format="######-####"
+                label={fn('kennitala_arftaka', 'label', 'Kennitala arftaka')}
+              />
+            </GridColumn>
+          </>
+        )
+        break
+      case SjukratryggingarCategories.FERDAKOSTNADUR:
+      case SjukratryggingarCategories.HEILBRIGDISSTARFSFOLK:
+      case SjukratryggingarCategories.HEILBRIGDISTHJONUSTA:
+      case SjukratryggingarCategories.RETTINDI_MILLI_LANDA:
+      case SjukratryggingarCategories.SJUKRADAGPENINGAR:
+      case SjukratryggingarCategories.SLYS_OG_SJUKLINGATRYGGING:
+      case SjukratryggingarCategories.SJUKLINGATRYGGING:
+      case SjukratryggingarCategories.SLYSATRYGGING:
+      case SjukratryggingarCategories.TANNLAEKNINGAR:
+      case SjukratryggingarCategories.VEFGATTIR:
+      case SjukratryggingarCategories.THJALFUN:
+      case SjukratryggingarCategories.ONNUR_THJONUSTA_SJUKRATRYGGINGA:
+      case SjukratryggingarCategories.HJUKRUNARHEIMILI:
+      case SjukratryggingarCategories.TULKATHJONUSTA:
+        fields = (
+          <GridColumn span="12/12" paddingBottom={3}>
+            <BasicInput
+              name="kennitala"
+              format="######-####"
+              label={fn('kennitala', 'label', 'Kennitala')}
+            />
+          </GridColumn>
+        )
+        break
+      case SjukratryggingarCategories.HJALPARTAEKI:
+      case SjukratryggingarCategories.HJALPARTAEKI_OG_NAERING:
+      case SjukratryggingarCategories.NAERING:
+      case SjukratryggingarCategories.LYF_OG_LYFJAKOSTNADUR:
+        fields = (
+          <>
+            <GridColumn paddingBottom={3}>
+              <BasicInput
+                name="kennitala"
+                format="######-####"
+                label={fn('kennitala', 'label', 'Kennitala')}
+              />
+            </GridColumn>
+            <GridColumn span="12/12" paddingBottom={3}>
+              <BasicInput
+                name="malsnumer"
+                label={fn(
+                  'malsnumer_ef_til_stadar',
+                  'label',
+                  'Málsnúmer (ef til staðar)',
+                )}
+              />
             </GridColumn>
           </>
         )
         break
       default:
         break
+    }
+
+    if (institutionSlugBelongsToMannaudstorg) {
+      fields = (
+        <GridColumn span="12/12">
+          <BasicInput
+            label={fn('starfsheiti', 'label', 'Starfsheiti')}
+            name="starfsheiti"
+            requiredMessage={n('jobTitleMissing', 'Starfsheiti vantar')}
+          />
+        </GridColumn>
+      )
     }
 
     setAddonFields(
@@ -395,28 +529,41 @@ export const StandardForm = ({
 
   const isBusy = loadingSuggestions || isChangingSubject
 
+  const categoryOptions = (supportCategories ?? [])
+    .map((x) => ({
+      label: x.title?.trim(),
+      value: x.id,
+    }))
+    .sort(sortAlpha('label'))
+
   return (
     <>
       <GridContainer>
-        <GridRow marginTop={6}>
+        <GridRow marginTop={6} marginBottom={4}>
           <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
             <Select
               backgroundColor="blue"
               icon="chevronDown"
               isSearchable
-              label={labels.malaflokkur}
+              label={fn('malaflokkur', 'label', 'Málaflokkur')}
               name="malaflokkur"
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               onChange={({ label, value }: Option) => {
                 setCategoryLabel(label as string)
                 setCategoryId(value as string)
               }}
-              options={orderBy(supportCategories, 'title', 'asc').map((x) => ({
-                label: x.title,
-                value: x.id,
-              }))}
-              placeholder="Veldu flokk"
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              options={categoryOptions}
+              placeholder={fn('malaflokkur', 'placeholder', 'Veldu flokk')}
               size="md"
             />
+            <Box marginLeft={1} marginTop={1}>
+              <Text variant="small" as="div">
+                <i>{categoryDescription}</i>
+              </Text>
+            </Box>
           </GridColumn>
         </GridRow>
 
@@ -428,19 +575,22 @@ export const StandardForm = ({
                 control={control}
                 id="vidfangsefni"
                 name="vidfangsefni"
-                label={labels.vidfangsefni}
-                error={errors?.vidfangsefni?.message}
+                label={fn('vidfangsefni', 'label', 'Viðfangsefni')}
+                error={errors?.vidfangsefni?.message as string}
                 onChange={(e) => {
                   if (e?.target?.value?.length > MIN_SEARCH_QUERY_LENGTH) {
                     setIsChangingSubject(true)
                   }
-
                   setSubject(e.target.value)
                 }}
                 rules={{
                   required: {
                     value: true,
-                    message: 'Vinsamlegast fylltu út viðfangsefni',
+                    message: fn(
+                      'vidfangsefni',
+                      'requiredMessage',
+                      'Vinsamlegast fylltu út viðfangsefni',
+                    ),
                   },
                 }}
                 required
@@ -459,7 +609,7 @@ export const StandardForm = ({
           >
             {!!suggestions.length && (
               <Text variant="h5" marginBottom={3}>
-                Við höldum að þetta gæti hjálpað
+                {n('weThinkThisMightHelp', 'Við höldum að þetta gæti hjálpað')}
               </Text>
             )}
             {isBusy ? (
@@ -489,9 +639,17 @@ export const StandardForm = ({
                       >
                         <Text key={index} variant="small" color="blue600">
                           <a
-                            href={`${
-                              linkResolver('serviceweb').href
-                            }/${organizationSlug}/${categorySlug}?q=${slug}`}
+                            href={
+                              linkResolver('supportqna', [
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                // @ts-ignore make web strict
+                                organizationSlug,
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                // @ts-ignore make web strict
+                                categorySlug,
+                                slug,
+                              ]).href
+                            }
                           >
                             {title}
                           </a>
@@ -506,12 +664,14 @@ export const StandardForm = ({
                     size="small"
                     icon="arrowDown"
                   >
-                    Sjá meira
+                    {n('seeMore', 'Sjá meira')}
                   </Button>
                 )}
               </Stack>
             ) : (
-              <Text variant="small">Ekkert fannst</Text>
+              <Text variant="small">
+                {n('nothingWasFound', 'Ekkert fannst')}
+              </Text>
             )}
           </Box>
         )}
@@ -523,7 +683,55 @@ export const StandardForm = ({
         <FormProvider {...useFormMethods}>
           <form onSubmit={handleSubmit(submitWithMessage)}>
             <GridContainer>
-              <GridRow marginTop={8}>
+              {institutionSlugBelongsToMannaudstorg && (
+                <GridRow marginTop={8}>
+                  <GridColumn
+                    paddingBottom={3}
+                    span={['12/12', '12/12', '12/12', '8/12']}
+                  >
+                    <Controller
+                      control={control}
+                      name="rikisadili"
+                      defaultValue=""
+                      rules={{
+                        required: {
+                          value: true,
+                          message: fn(
+                            'rikisadili',
+                            'requiredMessage',
+                            'Vinsamlegast veldu stofnun',
+                          ),
+                        },
+                      }}
+                      render={({ field: { onChange } }) => (
+                        <Select
+                          backgroundColor="blue"
+                          icon="chevronDown"
+                          isSearchable
+                          label={fn('rikisadili', 'label', 'Ríkisaðili')}
+                          name="rikisadili"
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore make web strict
+                          onChange={({ label }: Option) => {
+                            onChange(label)
+                          }}
+                          hasError={errors?.rikisadili !== undefined}
+                          errorMessage={errors?.rikisadili?.message?.toString()}
+                          options={stateEntityOptions}
+                          placeholder={fn(
+                            'rikisadili',
+                            'requiredMessage',
+                            'Leitaðu að þinni stofnun',
+                          )}
+                          size="md"
+                          required
+                        />
+                      )}
+                    />
+                  </GridColumn>
+                </GridRow>
+              )}
+              <GridRow marginTop={institutionSlugBelongsToMannaudstorg ? 5 : 8}>
                 <GridColumn
                   paddingBottom={3}
                   span={['12/12', '12/12', '12/12', '8/12']}
@@ -532,23 +740,21 @@ export const StandardForm = ({
                     control={control}
                     name="nafn"
                     defaultValue=""
-                    rules={
-                      {
-                        required: {
-                          value: true,
-                          message: 'Nafn vantar',
-                        },
-                      } as ValidationRules
-                    }
-                    render={({ onChange, onBlur, value, name }) => (
+                    rules={{
+                      required: {
+                        value: true,
+                        message: fn('nafn', 'requiredMessage', 'Nafn vantar'),
+                      },
+                    }}
+                    render={({ field: { onChange, onBlur, value, name } }) => (
                       <Input
                         backgroundColor="blue"
                         name={name}
                         onBlur={onBlur}
-                        label={labels.nafn}
+                        label={fn('nafn', 'label', 'Nafn')}
                         value={value}
-                        hasError={errors.nafn}
-                        errorMessage={errors.nafn?.message}
+                        hasError={errors?.nafn !== undefined}
+                        errorMessage={errors?.nafn?.message as string}
                         onChange={onChange}
                         required
                       />
@@ -560,28 +766,37 @@ export const StandardForm = ({
                     <GridColumn paddingBottom={3} span="12/12">
                       <Controller
                         control={useFormMethods.control}
-                        id="email"
                         name="email"
                         defaultValue=""
                         rules={{
                           required: {
                             value: true,
-                            message: 'Netfang vantar',
+                            message: fn(
+                              'email',
+                              'requiredMessage',
+                              'Netfang vantar',
+                            ),
                           },
                           pattern: {
                             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                            message: 'Netfang er mögulega rangt skrifað',
+                            message: fn(
+                              'email',
+                              'patternMessage',
+                              'Netfang er mögulega rangt skrifað',
+                            ),
                           },
                         }}
-                        render={({ onChange, onBlur, value, name }) => (
+                        render={({
+                          field: { onChange, onBlur, value, name },
+                        }) => (
                           <Input
                             backgroundColor="blue"
                             name={name}
                             onBlur={onBlur}
-                            label={labels.email}
+                            label={fn('email', 'label', 'Tölvupóstfang')}
                             value={value}
-                            hasError={errors.email}
-                            errorMessage={errors.email?.message}
+                            hasError={errors?.email !== undefined}
+                            errorMessage={errors?.email?.message as string}
                             onChange={onChange}
                             required
                           />
@@ -594,28 +809,54 @@ export const StandardForm = ({
                     <GridColumn span="12/12" paddingTop={5}>
                       <Controller
                         control={control}
-                        id="erindi"
                         name="erindi"
                         defaultValue=""
                         rules={{
                           required: {
                             value: true,
-                            message: 'Erindi vantar',
+                            message: fn(
+                              'erindi',
+                              'requiredMessage',
+                              'Erindi vantar',
+                            ),
                           },
                         }}
-                        render={({ onChange, onBlur, value, name }) => (
+                        render={({
+                          field: { onChange, onBlur, value, name },
+                        }) => (
                           <Input
                             backgroundColor="blue"
                             name={name}
                             onBlur={onBlur}
-                            label={labels.erindi}
+                            label={fn('erindi', 'label', 'Erindi')}
                             value={value}
-                            hasError={errors.erindi}
-                            errorMessage={errors.erindi?.message}
+                            hasError={errors?.erindi !== undefined}
+                            errorMessage={errors?.erindi?.message as string}
                             onChange={onChange}
                             rows={10}
                             textarea
                             required
+                          />
+                        )}
+                      />
+                    </GridColumn>
+                  </GridRow>
+                  <GridRow marginTop={8}>
+                    <GridColumn>
+                      <Controller
+                        name="storageAllowed"
+                        defaultValue={false}
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field: { onChange, value } }) => (
+                          <Checkbox
+                            label={n(
+                              'serviceWebFormStorageAllowedCheckboxText',
+                              'Ég gef leyfi fyrir því að erindi mitt sé vistað í póstumsjónarkerfi',
+                            )}
+                            checked={value}
+                            onChange={(e) => onChange(e.target.checked)}
+                            hasError={errors?.storageAllowed !== undefined}
                           />
                         )}
                       />
@@ -629,33 +870,48 @@ export const StandardForm = ({
                       {institutionSlug === 'syslumenn' && (
                         <Controller
                           control={control}
-                          id="syslumadur"
                           name="syslumadur"
                           defaultValue=""
                           rules={{
                             required: {
                               value: true,
-                              message: 'Vinsamlegast veldu sýslumannsembætti',
+                              message: fn(
+                                'syslumadur',
+                                'requiredMessage',
+                                'Vinsamlegast veldu sýslumannsembætti',
+                              ),
                             },
                           }}
-                          render={({ onChange }) => (
+                          render={({ field: { onChange } }) => (
                             <Select
                               backgroundColor="blue"
                               icon="chevronDown"
                               isSearchable
-                              label="Þinn sýslumaður"
+                              label={fn(
+                                'syslumadur',
+                                'label',
+                                'Þinn sýslumaður',
+                              )}
                               name="syslumadur"
+                              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                              // @ts-ignore make web strict
                               onChange={({ label, value }: Option) => {
                                 onChange(label)
-                                setSyslumadurId(value as string)
+                                setSyslumadurId(value)
                               }}
-                              hasError={errors.syslumadur}
-                              errorMessage={errors.syslumadur?.message}
-                              options={syslumenn.map((x) => ({
+                              hasError={errors?.syslumadur !== undefined}
+                              errorMessage={
+                                errors?.syslumadur?.message as string
+                              }
+                              options={(syslumenn ?? []).map((x) => ({
                                 label: x.title,
                                 value: x.id,
                               }))}
-                              placeholder="Veldu sýslumannsembætti"
+                              placeholder={fn(
+                                'syslumadur',
+                                'placeholder',
+                                'Veldu sýslumannsembætti',
+                              )}
                               size="sm"
                               required
                             />
@@ -677,7 +933,7 @@ export const StandardForm = ({
                           loading={loading}
                           disabled={!canSubmit}
                         >
-                          Senda fyrirspurn
+                          {n('submitServiceWebForm', 'Senda fyrirspurn')}
                         </Button>
                       </Box>
                     </GridColumn>

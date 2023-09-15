@@ -1,5 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import CryptoJS from 'crypto-js'
+import { uuid } from 'uuidv4'
 
 import { MunicipalityModel } from './models'
 import { AidType, Staff } from '@island.is/financial-aid/shared/lib'
@@ -9,12 +11,14 @@ import {
   UpdateMunicipalityDto,
   CreateMunicipalityDto,
 } from './dto'
-import { Op, Sequelize } from 'sequelize'
+import { Op } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { StaffService } from '../staff'
 import { CreateStaffDto } from '../staff/dto'
+import { environment } from '../../../environments'
 
 @Injectable()
 export class MunicipalityService {
@@ -32,6 +36,16 @@ export class MunicipalityService {
     municipalityId: string,
   ): Promise<MunicipalityModel> {
     return await this.municipalityModel.findOne({
+      attributes: {
+        exclude: [
+          'navUrl',
+          'usingNav',
+          'navUsername',
+          'navPassword',
+          'created',
+          'modified',
+        ],
+      },
       where: { municipalityId },
       include: [
         {
@@ -54,28 +68,18 @@ export class MunicipalityService {
     })
   }
 
-  async findByMunicipalityIds(
-    staffNationalId: string,
-  ): Promise<MunicipalityModel[]> {
-    const currentStaffMuncipalities = await this.staffService.findByNationalId(
-      staffNationalId,
-    )
-    if (currentStaffMuncipalities.municipalityIds) {
-      return this.municipalityModel.findAll({
-        where: {
-          municipalityId: {
-            [Op.in]: currentStaffMuncipalities.municipalityIds,
-          },
-        },
-        order: ['name'],
+  async findByMunicipalityIdWithNav(
+    municipalityId: string,
+  ): Promise<MunicipalityModel> {
+    return this.decryptNavPassword(
+      await this.municipalityModel.findOne({
+        where: { municipalityId },
         include: [
           {
             model: AidModel,
             as: 'individualAid',
             where: {
-              municipalityId: {
-                [Op.in]: currentStaffMuncipalities.municipalityIds,
-              },
+              municipalityId,
               type: AidType.INDIVIDUAL,
             },
           },
@@ -83,14 +87,54 @@ export class MunicipalityService {
             model: AidModel,
             as: 'cohabitationAid',
             where: {
-              municipalityId: {
-                [Op.in]: currentStaffMuncipalities.municipalityIds,
-              },
+              municipalityId,
               type: AidType.COHABITATION,
             },
           },
         ],
-      })
+      }),
+    )
+  }
+
+  async findByMunicipalityIds(
+    staffNationalId: string,
+  ): Promise<MunicipalityModel[]> {
+    const currentStaffMuncipalities = await this.staffService.findByNationalId(
+      staffNationalId,
+    )
+    if (currentStaffMuncipalities.municipalityIds) {
+      return (
+        await this.municipalityModel.findAll({
+          where: {
+            municipalityId: {
+              [Op.in]: currentStaffMuncipalities.municipalityIds,
+            },
+          },
+          order: ['name'],
+          include: [
+            {
+              model: AidModel,
+              as: 'individualAid',
+              where: {
+                municipalityId: {
+                  [Op.in]: currentStaffMuncipalities.municipalityIds,
+                },
+                type: AidType.INDIVIDUAL,
+              },
+            },
+            {
+              model: AidModel,
+              as: 'cohabitationAid',
+              where: {
+                municipalityId: {
+                  [Op.in]: currentStaffMuncipalities.municipalityIds,
+                },
+                type: AidType.COHABITATION,
+              },
+            },
+          ],
+        })
+      ).map((m) => this.decryptNavPassword(m))
     }
     return []
   }
@@ -154,6 +198,14 @@ export class MunicipalityService {
     currentUser: Staff,
   ): Promise<MunicipalityModel[]> {
     try {
+      if (municipality.navPassword) {
+        municipality.navPassword = CryptoJS.AES.encrypt(
+          municipality.navPassword,
+          environment.navEncryptionKey,
+          { iv: CryptoJS.enc.Hex.parse(uuid()) },
+        ).toString()
+      }
+
       await this.sequelize.transaction((t) => {
         return Promise.all([
           this.municipalityModel.update(municipality, {
@@ -190,14 +242,22 @@ export class MunicipalityService {
     numberOfAffectedRows: number
     updatedMunicipality: MunicipalityModel
   }> {
-    const [
-      numberOfAffectedRows,
-      [updatedMunicipality],
-    ] = await this.municipalityModel.update(update, {
-      where: { id },
-      returning: true,
-    })
+    const [numberOfAffectedRows, [updatedMunicipality]] =
+      await this.municipalityModel.update(update, {
+        where: { id },
+        returning: true,
+      })
 
     return { numberOfAffectedRows, updatedMunicipality }
+  }
+
+  decryptNavPassword(municipality?: MunicipalityModel) {
+    if (municipality?.navPassword) {
+      municipality.navPassword = CryptoJS.AES.decrypt(
+        municipality.navPassword,
+        environment.navEncryptionKey,
+      ).toString(CryptoJS.enc.Utf8)
+    }
+    return municipality
   }
 }

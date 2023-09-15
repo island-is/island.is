@@ -9,6 +9,7 @@ import {
 } from './graphql/dto'
 import { UpdateCurrentEmployerInput } from './graphql/dto/updateCurrentEmployerInput'
 import {
+  PaymentScheduleCompanyConditions,
   PaymentScheduleConditions,
   PaymentScheduleDebts,
   PaymentScheduleDistribution,
@@ -47,22 +48,41 @@ export class PaymentScheduleService {
     return conditions
   }
 
+  async getCompanyConditions(
+    user: User,
+  ): Promise<PaymentScheduleCompanyConditions> {
+    const { conditions, error } = await this.paymentScheduleApiWithAuth(
+      user,
+    ).companyConditionsnationalIdGET8({
+      nationalId: user.nationalId,
+    })
+
+    if (error) {
+      this.logger.error('Error getting company conditions', error)
+      throw new Error('Error getting company conditions')
+    }
+
+    if (!conditions) {
+      throw new Error('No company conditions found for nationalId')
+    }
+
+    return conditions
+  }
+
   async getPaymentDistribution(
     user: User,
     input: GetScheduleDistributionInput,
   ): Promise<PaymentScheduleDistribution> {
-    const {
-      paymentDistribution,
-      error,
-    } = await this.paymentScheduleApiWithAuth(
-      user,
-    ).paymentDistributionnationalIdscheduleTypeGET5({
-      nationalId: user.nationalId,
-      monthAmount: input.monthAmount ?? 0,
-      monthCount: input.monthCount ?? 0,
-      scheduleType: input.scheduleType,
-      totalAmount: input.totalAmount,
-    })
+    const { paymentDistribution, error } =
+      await this.paymentScheduleApiWithAuth(
+        user,
+      ).paymentDistributionnationalIdscheduleTypeGET5({
+        nationalId: user.nationalId,
+        monthAmount: input.monthAmount ?? 0,
+        monthCount: input.monthCount ?? 0,
+        scheduleType: input.scheduleType,
+        totalAmount: input.totalAmount,
+      })
 
     if (error) {
       this.logger.error('Error getting payment distribution', error)
@@ -86,21 +106,45 @@ export class PaymentScheduleService {
     }
   }
 
+  /**
+   * Checks if the user is allowed to select specific company as his employer
+   * - returns boolean, true if allowed, false if not
+   * - FJS-Public/paymentSchedule_v1/employerValid/{usernationalid}/{employernationalid}
+   * @typedef {{user: User, nationalId: string}}
+   * @private
+   */
+  async isEmployerValid(user: User, nationalId: string): Promise<boolean> {
+    const { employerValid, error } = await this.paymentScheduleApiWithAuth(
+      user,
+    ).employerValidnationalIdemployerNationalIdGET7({
+      nationalId: user.nationalId,
+      employerNationalId: nationalId,
+    })
+    if (error) {
+      this.logger.error('Error employer information for nationalId', error)
+      throw new Error('Error employer information for nationalId')
+    }
+
+    if (!employerValid) {
+      return false
+    }
+
+    return employerValid.isEmployerValid === 'TRUE'
+  }
+
   async getInitalSchedule(
     user: User,
     input: GetInitialScheduleInput,
   ): Promise<PaymentScheduleInitialSchedule> {
-    const {
-      distributionInitialPosition,
-      error,
-    } = await this.paymentScheduleApiWithAuth(
-      user,
-    ).distributionInitialPositionnationalIdscheduleTypeGET4({
-      disposableIncome: input.disposableIncome,
-      nationalId: user.nationalId,
-      scheduleType: input.type,
-      totalAmount: input.totalAmount,
-    })
+    const { distributionInitialPosition, error } =
+      await this.paymentScheduleApiWithAuth(
+        user,
+      ).distributionInitialPositionnationalIdscheduleTypeGET4({
+        disposableIncome: input.disposableIncome,
+        nationalId: user.nationalId,
+        scheduleType: input.type,
+        totalAmount: input.totalAmount,
+      })
 
     if (error) {
       this.logger.error('Error getting initial schedule', error)

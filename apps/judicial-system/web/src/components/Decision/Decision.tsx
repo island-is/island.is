@@ -1,32 +1,34 @@
+import React, { useState } from 'react'
+
 import { Box, RadioButton } from '@island.is/island-ui/core'
-import { CaseDecision, CaseType } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
-import React from 'react'
+import { CaseDecision } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+
 import { BlueBox } from '..'
-import { setAndSendToServer } from '../../utils/formHelper'
-import { useCase } from '../../utils/hooks'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   acceptedLabelText: string
   rejectedLabelText: string
   partiallyAcceptedLabelText: string
   dismissLabelText: string
   acceptingAlternativeTravelBanLabelText?: string
+  onChange: (decision: CaseDecision) => void
+  disabled?: boolean
 }
 
-const Decision: React.FC<Props> = (props) => {
-  const {
-    workingCase,
-    setWorkingCase,
-    acceptedLabelText,
-    acceptingAlternativeTravelBanLabelText,
-    rejectedLabelText,
-    partiallyAcceptedLabelText,
-    dismissLabelText,
-  } = props
-  const { updateCase } = useCase()
+const Decision: React.FC<React.PropsWithChildren<Props>> = ({
+  workingCase,
+  acceptedLabelText,
+  acceptingAlternativeTravelBanLabelText,
+  rejectedLabelText,
+  partiallyAcceptedLabelText,
+  dismissLabelText,
+  onChange,
+  disabled = false,
+}) => {
+  const [checkedRadio, setCheckedRadio] = useState<CaseDecision>()
 
   return (
     <BlueBox>
@@ -35,18 +37,17 @@ const Decision: React.FC<Props> = (props) => {
           name="case-decision"
           id="case-decision-accepting"
           label={acceptedLabelText}
-          checked={workingCase.decision === CaseDecision.ACCEPTING}
+          checked={
+            checkedRadio === CaseDecision.ACCEPTING ||
+            (!checkedRadio && workingCase.decision === CaseDecision.ACCEPTING)
+          }
           onChange={() => {
-            setAndSendToServer(
-              'decision',
-              CaseDecision.ACCEPTING,
-              workingCase,
-              setWorkingCase,
-              updateCase,
-            )
+            setCheckedRadio(CaseDecision.ACCEPTING)
+            onChange(CaseDecision.ACCEPTING)
           }}
           large
           backgroundColor="white"
+          disabled={disabled}
         />
       </Box>
       {workingCase.type !== CaseType.TRAVEL_BAN && (
@@ -55,18 +56,18 @@ const Decision: React.FC<Props> = (props) => {
             name="case-decision"
             id="case-decision-accepting-partially"
             label={partiallyAcceptedLabelText}
-            checked={workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY}
+            checked={
+              checkedRadio === CaseDecision.ACCEPTING_PARTIALLY ||
+              (!checkedRadio &&
+                workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
+            }
             onChange={() => {
-              setAndSendToServer(
-                'decision',
-                CaseDecision.ACCEPTING_PARTIALLY,
-                workingCase,
-                setWorkingCase,
-                updateCase,
-              )
+              setCheckedRadio(CaseDecision.ACCEPTING_PARTIALLY)
+              onChange(CaseDecision.ACCEPTING_PARTIALLY)
             }}
             large
             backgroundColor="white"
+            disabled={disabled}
           />
         </Box>
       )}
@@ -75,41 +76,39 @@ const Decision: React.FC<Props> = (props) => {
           name="case-decision"
           id="case-decision-rejecting"
           label={rejectedLabelText}
-          checked={workingCase.decision === CaseDecision.REJECTING}
+          checked={
+            checkedRadio === CaseDecision.REJECTING ||
+            (!checkedRadio && workingCase.decision === CaseDecision.REJECTING)
+          }
           onChange={() => {
-            setAndSendToServer(
-              'decision',
-              CaseDecision.REJECTING,
-              workingCase,
-              setWorkingCase,
-              updateCase,
-            )
+            setCheckedRadio(CaseDecision.REJECTING)
+            onChange(CaseDecision.REJECTING)
           }}
           large
           backgroundColor="white"
+          disabled={disabled}
         />
       </Box>
-      {workingCase.type === CaseType.CUSTODY && (
+      {(workingCase.type === CaseType.CUSTODY ||
+        workingCase.type === CaseType.ADMISSION_TO_FACILITY) && (
         <Box marginTop={2}>
           <RadioButton
             name="case-decision"
             id="case-decision-accepting-alternative-travel-ban"
             label={acceptingAlternativeTravelBanLabelText}
             checked={
-              workingCase.decision ===
-              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+              checkedRadio === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+              (!checkedRadio &&
+                workingCase.decision ===
+                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
             }
             onChange={() => {
-              setAndSendToServer(
-                'decision',
-                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-                workingCase,
-                setWorkingCase,
-                updateCase,
-              )
+              setCheckedRadio(CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+              onChange(CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
             }}
             large
             backgroundColor="white"
+            disabled={disabled}
           />
         </Box>
       )}
@@ -118,18 +117,17 @@ const Decision: React.FC<Props> = (props) => {
           name="case-decision"
           id="case-decision-dismissing"
           label={dismissLabelText}
-          checked={workingCase.decision === CaseDecision.DISMISSING}
+          checked={
+            checkedRadio === CaseDecision.DISMISSING ||
+            (!checkedRadio && workingCase.decision === CaseDecision.DISMISSING)
+          }
           onChange={() => {
-            setAndSendToServer(
-              'decision',
-              CaseDecision.DISMISSING,
-              workingCase,
-              setWorkingCase,
-              updateCase,
-            )
+            setCheckedRadio(CaseDecision.DISMISSING)
+            onChange(CaseDecision.DISMISSING)
           }}
           large
           backgroundColor="white"
+          disabled={disabled}
         />
       </Box>
     </BlueBox>

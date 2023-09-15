@@ -9,6 +9,7 @@ import {
   martialStatusTypeFromMartialCode,
   estimatedBreakDown,
   showSpouseData,
+  FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
 
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
@@ -18,16 +19,17 @@ interface Props {
   aboutText: ReactNode
   homeCircumstances?: HomeCircumstances
   usePersonalTaxCredit?: boolean
+  familyStatus?: FamilyStatus
 }
 
 const Estimation = ({
   aboutText,
   homeCircumstances,
   usePersonalTaxCredit,
+  familyStatus,
 }: Props) => {
-  const { municipality, nationalRegistryData, myApplication } = useContext(
-    AppContext,
-  )
+  const { municipality, nationalRegistryData, myApplication } =
+    useContext(AppContext)
 
   const getAidType = () => {
     switch (true) {
@@ -37,12 +39,15 @@ const Estimation = ({
             nationalRegistryData?.spouse?.maritalStatus,
           ) === MartialStatusType.SINGLE
         )
-      case myApplication?.familyStatus != undefined:
-        if (myApplication?.familyStatus) {
-          return !showSpouseData[myApplication.familyStatus]
+      case familyStatus != undefined:
+        if (familyStatus) {
+          return !showSpouseData[familyStatus]
         }
+        break
       case myApplication?.spouseNationalId != undefined:
         return false
+      case !nationalRegistryData?.spouse:
+        return true
     }
   }
 
@@ -67,7 +72,7 @@ const Estimation = ({
         </Box>
 
         <Text variant="small">
-          (til útgreiðslu í byrjun {getNextPeriod.month})
+          (til útgreiðslu í byrjun {getNextPeriod().month})
         </Text>
       </Box>
 

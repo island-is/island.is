@@ -5,21 +5,27 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
-  Form,
-  FormModes,
   coreMessages,
   buildTextField,
   buildSubSection,
 } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 
 import Logo from '../assets/Logo'
-import { employerFormMessages } from '../lib/messages'
+import {
+  employerFormMessages,
+  otherParentApprovalFormMessages,
+} from '../lib/messages'
+import {
+  getApplicationAnswers,
+  getLastDayOfLastMonth,
+} from '../lib/parentalLeaveUtils'
 
 export const EmployerApproval: Form = buildForm({
   id: 'EmployerApprovalForParentalLeave',
   title: employerFormMessages.formTitle,
   logo: Logo,
-  mode: FormModes.REVIEW,
+  mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
       id: 'review',
@@ -65,6 +71,21 @@ export const EmployerApproval: Form = buildForm({
                   title: '',
                   component: 'EmployerApprovalExtraInformation',
                 }),
+                buildDescriptionField({
+                  id: 'final',
+                  title: otherParentApprovalFormMessages.warning,
+                  titleVariant: 'h4',
+                  description:
+                    otherParentApprovalFormMessages.startDateInThePast,
+                  condition: (answers) => {
+                    const lastDateOfLastMonth = getLastDayOfLastMonth()
+                    const startDateTime = new Date(
+                      getApplicationAnswers(answers).periods[0].startDate,
+                    ).getTime()
+
+                    return startDateTime < lastDateOfLastMonth.getTime()
+                  },
+                }),
                 buildSubmitField({
                   id: 'submit',
                   title: coreMessages.buttonSubmit,
@@ -79,17 +100,24 @@ export const EmployerApproval: Form = buildForm({
                       name: coreMessages.buttonApprove,
                       type: 'primary',
                       event: 'APPROVE',
+
+                      // TODO: enable this when we could get 'applicationFundId' from externalData
+
+                      // condition: (answers) =>
+                      //   new Date(
+                      //     getApplicationAnswers(answers).periods[0].startDate,
+                      //   ).getTime() >= currentDateStartTime(),
                     },
                   ],
                 }),
               ],
             }),
-            buildDescriptionField({
-              id: 'final.approve',
-              title: coreMessages.thanks,
-              description: coreMessages.thanksDescription,
-            }),
           ],
+        }),
+        buildDescriptionField({
+          id: 'final.approve',
+          title: coreMessages.thanks,
+          description: coreMessages.thanksDescription,
         }),
       ],
     }),

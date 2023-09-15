@@ -24,10 +24,10 @@ export const SkilavottordUserQuery = gql`
   }
 `
 
-export const Header: FC = () => {
+export const Header: FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const { setUser, isAuthenticated } = useContext(UserContext)
-  const [session]: AuthSession = useSession()
+  const [session] = useSession() as [AuthSession, boolean]
   const [baseUrl, setBaseUrl] = useState<string>('island.is')
   const {
     activeLocale,
@@ -85,15 +85,14 @@ export const Header: FC = () => {
   }
 
   const homeRoute = routes.home[mapUserRoleToRoute(user?.role)]
-
   return (
     <IslandUIHeader
-      logoRender={(logo) => <Link href={homeRoute}>{logo}</Link>}
+      logoRender={(logo) => <Link href={homeRoute!}>{logo}</Link>}
       logoutText={t.logoutText}
       userLogo={user?.role === 'developer' ? '👑' : undefined}
       language={activeLocale}
       switchLanguage={() => switchLanguage(nextLanguage)}
-      userName={loading ? '' : user?.name ?? session?.user.name ?? ''}
+      userName={loading ? '' : user?.name ?? session?.user?.name ?? ''}
       authenticated={isAuthenticated}
       onLogout={logout}
     />

@@ -14,13 +14,13 @@ export const m = defineMessages({
   },
   dataCollectionSubtitle: {
     id: 'ps.application:dataCollectionSubtitle',
-    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
+    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
     description: 'Subtitle for data collection section',
   },
   dataCollectionDescription: {
     id: 'ps.application:dataCollectionDescription',
     defaultMessage:
-      'Til þess að geta hafið umsókn þína fyrir stæðiskort þarf að sækja eftirfarandi gögn með þínu samþykki.',
+      'Til þess að geta hafið umsókn þína fyrir stæðiskort þarf að sækja eftirfarandi gögn',
     description: 'Description for data collection section',
   },
   dataCollectionCheckboxLabel: {
@@ -60,7 +60,7 @@ export const m = defineMessages({
     description: 'National registry subtitle',
   },
   dataCollectionUserProfileTitle: {
-    id: 'cr.application:dataCollectionUserProfileTitle',
+    id: 'ps.application:dataCollectionUserProfileTitle',
     defaultMessage: 'Mínar síður á Ísland.is/stillingar',
     description: 'Your user profile information',
   },
@@ -88,6 +88,11 @@ export const m = defineMessages({
     id: 'ps.application:informationTitle',
     defaultMessage: 'Upplýsingar',
     description: 'Information title',
+  },
+  informationActorTitle: {
+    id: 'ps.application:informationActorTitle',
+    defaultMessage: 'Umsækjandi',
+    description: 'Information section title',
   },
 
   /* Applicant - used in information and overview sections */
@@ -119,6 +124,16 @@ export const m = defineMessages({
   applicantsPhoneNumber: {
     id: 'ps.application:applicantsPhoneNumber',
     defaultMessage: 'Símanúmer',
+    description: 'Phone number label',
+  },
+  applicantsActorEmail: {
+    id: 'ps.application:applicantsActorEmail',
+    defaultMessage: 'Netfang forráðamanns',
+    description: 'Email label',
+  },
+  applicantsActorPhoneNumber: {
+    id: 'ps.application:applicantsActorPhoneNumber',
+    defaultMessage: 'Símanúmer forráðamanns',
     description: 'Phone number label',
   },
   cardValidityPeriod: {
@@ -307,7 +322,7 @@ export const m = defineMessages({
     description: 'Validation error for attachment',
   },
   missingDistrictValidationError: {
-    id: 'ps.application:error.missingAttachment',
+    id: 'ps.application:error.missingDistrict',
     defaultMessage: 'Vinsamlegast veldu embætti',
     description: 'Validation error for district',
   },

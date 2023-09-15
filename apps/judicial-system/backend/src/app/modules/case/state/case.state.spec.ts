@@ -1,91 +1,586 @@
-import each from 'jest-each'
-
 import { ForbiddenException } from '@nestjs/common'
 
-import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
+import {
+  CaseAppealState,
+  CaseState,
+  CaseTransition,
+} from '@island.is/judicial-system/types'
 
 import { transitionCase } from './case.state'
 
 describe('Transition Case', () => {
-  each`
-      transition                | oldState               | newState
-      ${CaseTransition.OPEN}    | ${CaseState.NEW}       | ${CaseState.DRAFT}
-      ${CaseTransition.SUBMIT}  | ${CaseState.DRAFT}     | ${CaseState.SUBMITTED}
-      ${CaseTransition.RECEIVE} | ${CaseState.SUBMITTED} | ${CaseState.RECEIVED}
-      ${CaseTransition.ACCEPT}  | ${CaseState.RECEIVED}  | ${CaseState.ACCEPTED}
-      ${CaseTransition.REJECT}  | ${CaseState.RECEIVED}  | ${CaseState.REJECTED}
-      ${CaseTransition.DISMISS} | ${CaseState.RECEIVED}  | ${CaseState.DISMISSED}
-      ${CaseTransition.DELETE}  | ${CaseState.NEW}       | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}  | ${CaseState.DRAFT}     | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}  | ${CaseState.SUBMITTED} | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}  | ${CaseState.RECEIVED}  | ${CaseState.DELETED}
-    `.it(
-    'should $transition $oldState case resulting in $newState case',
-    ({ transition, oldState, newState }) => {
-      // Act
-      const res = transitionCase(transition, oldState)
+  describe('open', () => {
+    const allowedFromStates = [CaseState.NEW]
+    const allowedFromAppealStates = [undefined]
 
-      // Assert
-      expect(res).toBe(newState)
-    },
-  )
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should open',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.OPEN,
+            fromState,
+            fromAppealState,
+          )
 
-  each`
-      transition                | oldState
-      ${CaseTransition.OPEN}    | ${CaseState.DRAFT}
-      ${CaseTransition.OPEN}    | ${CaseState.SUBMITTED}
-      ${CaseTransition.OPEN}    | ${CaseState.RECEIVED}
-      ${CaseTransition.OPEN}    | ${CaseState.ACCEPTED}
-      ${CaseTransition.OPEN}    | ${CaseState.REJECTED}
-      ${CaseTransition.OPEN}    | ${CaseState.DISMISSED}
-      ${CaseTransition.OPEN}    | ${CaseState.DELETED}
-      ${CaseTransition.SUBMIT}  | ${CaseState.NEW}
-      ${CaseTransition.SUBMIT}  | ${CaseState.SUBMITTED}
-      ${CaseTransition.SUBMIT}  | ${CaseState.RECEIVED}
-      ${CaseTransition.SUBMIT}  | ${CaseState.ACCEPTED}
-      ${CaseTransition.SUBMIT}  | ${CaseState.REJECTED}
-      ${CaseTransition.SUBMIT}  | ${CaseState.DISMISSED}
-      ${CaseTransition.SUBMIT}  | ${CaseState.DELETED}
-      ${CaseTransition.RECEIVE} | ${CaseState.NEW}
-      ${CaseTransition.RECEIVE} | ${CaseState.DRAFT}
-      ${CaseTransition.RECEIVE} | ${CaseState.RECEIVED}
-      ${CaseTransition.RECEIVE} | ${CaseState.ACCEPTED}
-      ${CaseTransition.RECEIVE} | ${CaseState.REJECTED}
-      ${CaseTransition.RECEIVE} | ${CaseState.DISMISSED}
-      ${CaseTransition.RECEIVE} | ${CaseState.DELETED}
-      ${CaseTransition.ACCEPT}  | ${CaseState.NEW}
-      ${CaseTransition.ACCEPT}  | ${CaseState.DRAFT}
-      ${CaseTransition.ACCEPT}  | ${CaseState.SUBMITTED}
-      ${CaseTransition.ACCEPT}  | ${CaseState.ACCEPTED}
-      ${CaseTransition.ACCEPT}  | ${CaseState.REJECTED}
-      ${CaseTransition.ACCEPT}  | ${CaseState.DISMISSED}
-      ${CaseTransition.ACCEPT}  | ${CaseState.DELETED}
-      ${CaseTransition.REJECT}  | ${CaseState.NEW}
-      ${CaseTransition.REJECT}  | ${CaseState.DRAFT}
-      ${CaseTransition.REJECT}  | ${CaseState.SUBMITTED}
-      ${CaseTransition.REJECT}  | ${CaseState.ACCEPTED}
-      ${CaseTransition.REJECT}  | ${CaseState.REJECTED}
-      ${CaseTransition.REJECT}  | ${CaseState.DISMISSED}
-      ${CaseTransition.REJECT}  | ${CaseState.DELETED}
-      ${CaseTransition.DISMISS} | ${CaseState.NEW}
-      ${CaseTransition.DISMISS} | ${CaseState.DRAFT}
-      ${CaseTransition.DISMISS} | ${CaseState.SUBMITTED}
-      ${CaseTransition.DISMISS} | ${CaseState.ACCEPTED}
-      ${CaseTransition.DISMISS} | ${CaseState.REJECTED}
-      ${CaseTransition.DISMISS} | ${CaseState.DISMISSED}
-      ${CaseTransition.DISMISS} | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}  | ${CaseState.ACCEPTED}
-      ${CaseTransition.DELETE}  | ${CaseState.REJECTED}
-      ${CaseTransition.DELETE}  | ${CaseState.DISMISSED}
-      ${CaseTransition.DELETE}  | ${CaseState.DELETED}
-    `.it(
-    'should not $transition $oldState case',
-    ({ transition, oldState }) => {
-      // Arrange
-      const act = () => transitionCase(transition, oldState)
+          // Assert
+          expect(res).toEqual({ state: CaseState.DRAFT })
+        },
+      )
 
-      // Act and assert
-      expect(act).toThrow(ForbiddenException)
-    },
-  )
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not open',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(CaseTransition.OPEN, fromState, fromAppealState)
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not open',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(CaseTransition.OPEN, fromState, fromAppealState)
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+  })
+
+  describe('submit', () => {
+    const allowedFromStates = [CaseState.DRAFT]
+    const allowedFromAppealStates = [undefined]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should submit',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.SUBMIT,
+            fromState,
+            fromAppealState,
+          )
+
+          // Assert
+          expect(res).toEqual({ state: CaseState.SUBMITTED })
+        },
+      )
+
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not submit',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(CaseTransition.SUBMIT, fromState, fromAppealState)
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not submit',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(CaseTransition.SUBMIT, fromState, fromAppealState)
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+  })
+
+  describe('reveive', () => {
+    const allowedFromStates = [CaseState.SUBMITTED]
+    const allowedFromAppealStates = [undefined]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should receive',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.RECEIVE,
+            fromState,
+            fromAppealState,
+          )
+
+          // Assert
+          expect(res).toEqual({ state: CaseState.RECEIVED })
+        },
+      )
+
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not receive',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(CaseTransition.RECEIVE, fromState, fromAppealState)
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not receive',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(CaseTransition.RECEIVE, fromState, fromAppealState)
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+  })
+
+  describe('delete', () => {
+    const allowedFromStates = [
+      CaseState.NEW,
+      CaseState.DRAFT,
+      CaseState.SUBMITTED,
+      CaseState.RECEIVED,
+    ]
+    const allowedFromAppealStates = [undefined]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should delete',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.DELETE,
+            fromState,
+            fromAppealState,
+          )
+
+          // Assert
+          expect(res).toEqual({ state: CaseState.DELETED })
+        },
+      )
+
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not delete',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(CaseTransition.DELETE, fromState, fromAppealState)
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not delete',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(CaseTransition.DELETE, fromState, fromAppealState)
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+  })
+
+  describe('accept', () => {
+    const allowedFromStates = [CaseState.RECEIVED]
+    const allowedFromAppealStates = [
+      undefined,
+      ...Object.values(CaseAppealState),
+    ]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should accept',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.ACCEPT,
+            fromState,
+            fromAppealState,
+          )
+
+          // Assert
+          expect(res).toEqual({ state: CaseState.ACCEPTED })
+        },
+      )
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not accept',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(CaseTransition.ACCEPT, fromState, fromAppealState)
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+  })
+
+  describe('reject', () => {
+    const allowedFromStates = [CaseState.RECEIVED]
+    const allowedFromAppealStates = [
+      undefined,
+      ...Object.values(CaseAppealState),
+    ]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should reject',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.REJECT,
+            fromState,
+            fromAppealState,
+          )
+
+          // Assert
+          expect(res).toEqual({ state: CaseState.REJECTED })
+        },
+      )
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not reject',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(CaseTransition.REJECT, fromState, fromAppealState)
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+  })
+
+  describe('dismiss', () => {
+    const allowedFromStates = [CaseState.RECEIVED]
+    const allowedFromAppealStates = [
+      undefined,
+      ...Object.values(CaseAppealState),
+    ]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should dismiss',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.DISMISS,
+            fromState,
+            fromAppealState,
+          )
+
+          // Assert
+          expect(res).toEqual({ state: CaseState.DISMISSED })
+        },
+      )
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not dismiss',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(CaseTransition.DISMISS, fromState, fromAppealState)
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+  })
+
+  describe('reopen', () => {
+    const allowedFromStates = [
+      CaseState.ACCEPTED,
+      CaseState.REJECTED,
+      CaseState.DISMISSED,
+    ]
+    const allowedFromAppealStates = [
+      undefined,
+      ...Object.values(CaseAppealState),
+    ]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should reopen',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.REOPEN,
+            fromState,
+            fromAppealState,
+          )
+
+          // Assert
+          expect(res).toEqual({ state: CaseState.RECEIVED })
+        },
+      )
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not reopen',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(CaseTransition.REOPEN, fromState, fromAppealState)
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+  })
+
+  describe('appeal', () => {
+    const allowedFromStates = [
+      CaseState.ACCEPTED,
+      CaseState.REJECTED,
+      CaseState.DISMISSED,
+    ]
+    const allowedFromAppealStates = [undefined]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should appeal',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.APPEAL,
+            fromState,
+            fromAppealState,
+          )
+
+          // Assert
+          expect(res).toEqual({ appealState: CaseAppealState.APPEALED })
+        },
+      )
+
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not appeal',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(CaseTransition.APPEAL, fromState, fromAppealState)
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not appeal',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(CaseTransition.APPEAL, fromState, fromAppealState)
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+  })
+
+  describe('receive appeal', () => {
+    const allowedFromStates = [
+      CaseState.ACCEPTED,
+      CaseState.REJECTED,
+      CaseState.DISMISSED,
+    ]
+    const allowedFromAppealStates = [CaseAppealState.APPEALED]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should receive appeal',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.RECEIVE_APPEAL,
+            fromState,
+            fromAppealState,
+          )
+
+          // Assert
+          expect(res).toEqual({ appealState: CaseAppealState.RECEIVED })
+        },
+      )
+
+      it.each(
+        Object.values(CaseAppealState).filter(
+          (appealState) => !allowedFromAppealStates.includes(appealState),
+        ),
+      )('appeal state %s - should not receive appeal', (fromAppealState) => {
+        // Arrange
+        const act = () =>
+          transitionCase(
+            CaseTransition.RECEIVE_APPEAL,
+            fromState,
+            fromAppealState,
+          )
+
+        // Act and assert
+        expect(act).toThrow(ForbiddenException)
+      })
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not receive appeal',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(
+              CaseTransition.RECEIVE_APPEAL,
+              fromState,
+              fromAppealState,
+            )
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+  })
+
+  describe('complete appeal', () => {
+    const allowedFromStates = [
+      CaseState.ACCEPTED,
+      CaseState.REJECTED,
+      CaseState.DISMISSED,
+    ]
+    const allowedFromAppealStates = [CaseAppealState.RECEIVED]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should complete appeal',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.COMPLETE_APPEAL,
+            fromState,
+            fromAppealState,
+          )
+
+          // Assert
+          expect(res).toEqual({ appealState: CaseAppealState.COMPLETED })
+        },
+      )
+
+      it.each(
+        Object.values(CaseAppealState).filter(
+          (appealState) => !allowedFromAppealStates.includes(appealState),
+        ),
+      )('appeal state %s - should not complete appeal', (fromAppealState) => {
+        // Arrange
+        const act = () =>
+          transitionCase(
+            CaseTransition.COMPLETE_APPEAL,
+            fromState,
+            fromAppealState,
+          )
+
+        // Act and assert
+        expect(act).toThrow(ForbiddenException)
+      })
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not complete appeal',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(
+              CaseTransition.COMPLETE_APPEAL,
+              fromState,
+              fromAppealState,
+            )
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+  })
 })

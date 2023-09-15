@@ -3,9 +3,23 @@ import {
   Appraisal,
   UnitsOfUseModel,
 } from './propertyUnitsOfUse.model'
-import { PropertyOwnersModel } from './propertyOwners.model'
-import { Field, ObjectType } from '@nestjs/graphql'
+import { PropertyOwnersModel, PropertyOwner } from './propertyOwners.model'
+import { LandModel } from './Land.model'
+import { Extensions, Field, ObjectType } from '@nestjs/graphql'
+import { MiddlewareContext } from '@nestjs/graphql'
 
+export const isPropertyOwner = ({ source }: MiddlewareContext) => {
+  const owners: PropertyOwner[] =
+    (source as PropertyDetail).registeredOwners?.registeredOwners ?? []
+  const isOwner = owners.some((owner) => owner.ssn == source.nationalId)
+  return isOwner
+}
+@Extensions({
+  filterFields: {
+    condition: isPropertyOwner,
+    fields: ['defaultAddress', 'land', 'propertyNumber'],
+  },
+})
 @ObjectType()
 export class PropertyDetail {
   @Field(() => UnitsOfUseModel, { nullable: true })
@@ -19,6 +33,9 @@ export class PropertyDetail {
 
   @Field(() => PropertyLocation, { nullable: true })
   defaultAddress?: PropertyLocation
+
+  @Field(() => LandModel, { nullable: true })
+  land?: LandModel
 
   @Field({ nullable: true })
   propertyNumber?: string

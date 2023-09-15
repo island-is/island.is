@@ -31,7 +31,8 @@ const SkilavottordRecyclingPartnerQuery = gql`
     skilavottordRecyclingPartner(input: $input) {
       companyId
       companyName
-      active
+      nationalId
+      email
       address
       postnumber
       city
@@ -49,7 +50,8 @@ const UpdateSkilavottordRecyclingPartnerMutation = gql`
     updateSkilavottordRecyclingPartner(input: $input) {
       companyId
       companyName
-      active
+      nationalId
+      email
       address
       postnumber
       city
@@ -60,7 +62,7 @@ const UpdateSkilavottordRecyclingPartnerMutation = gql`
   }
 `
 
-const RecyclingCompanyUpdate: FC = () => {
+const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
   const router = useRouter()
   const { id } = router.query
@@ -90,7 +92,12 @@ const RecyclingCompanyUpdate: FC = () => {
     },
   )
 
-  const { control, errors, reset, handleSubmit } = useForm({
+  const {
+    control,
+    reset,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     mode: 'onChange',
   })
   const {
@@ -164,7 +171,9 @@ const RecyclingCompanyUpdate: FC = () => {
           ]}
           renderLink={(link, item) => {
             return item?.href ? (
-              <NextLink href={item?.href}>{link}</NextLink>
+              <NextLink href={item?.href} legacyBehavior>
+                {link}
+              </NextLink>
             ) : (
               link
             )

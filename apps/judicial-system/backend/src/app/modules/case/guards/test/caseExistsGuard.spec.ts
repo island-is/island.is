@@ -10,10 +10,8 @@ import {
 import { CaseState } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
-import { Defendant } from '../../../defendant'
-import { Institution } from '../../../institution'
-import { User } from '../../../user'
 import { Case } from '../../models/case.model'
+import { order, include } from '../../case.service'
 import { CaseExistsGuard } from '../caseExists.guard'
 
 interface Then {
@@ -38,9 +36,9 @@ describe('Case Exists Guard', () => {
       const then = {} as Then
 
       try {
-        then.result = await guard.canActivate(({
+        then.result = await guard.canActivate({
           switchToHttp: () => ({ getRequest: mockRequest }),
-        } as unknown) as ExecutionContext)
+        } as unknown as ExecutionContext)
       } catch (error) {
         then.error = error as Error
       }
@@ -49,66 +47,14 @@ describe('Case Exists Guard', () => {
     }
   })
 
-  describe('database lookup', () => {
-    const caseId = uuid()
-
-    beforeEach(async () => {
-      mockRequest.mockImplementationOnce(() => ({ params: { caseId } }))
-
-      await givenWhenThen()
-    })
-
-    it('should query the database', () => {
-      expect(mockCaseModel.findOne).toHaveBeenCalledWith({
-        include: [
-          { model: Defendant, as: 'defendants' },
-          { model: Institution, as: 'court' },
-          {
-            model: User,
-            as: 'creatingProsecutor',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'prosecutor',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          { model: Institution, as: 'sharedWithProsecutorsOffice' },
-          {
-            model: User,
-            as: 'judge',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'registrar',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          {
-            model: User,
-            as: 'courtRecordSignatory',
-            include: [{ model: Institution, as: 'institution' }],
-          },
-          { model: Case, as: 'parentCase' },
-          { model: Case, as: 'childCase' },
-        ],
-        order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
-        where: {
-          id: caseId,
-          isArchived: false,
-          state: { [Op.not]: CaseState.DELETED },
-        },
-      })
-    })
-  })
-
   describe('case exists', () => {
     const caseId = uuid()
     const theCase = { id: caseId }
+    const request = { params: { caseId }, case: undefined }
     let then: Then
 
     beforeEach(async () => {
-      mockRequest.mockImplementationOnce(() => ({ params: { caseId } }))
+      mockRequest.mockReturnValueOnce(request)
       const mockFindOne = mockCaseModel.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(theCase)
 
@@ -116,7 +62,17 @@ describe('Case Exists Guard', () => {
     })
 
     it('should activate', () => {
+      expect(mockCaseModel.findOne).toHaveBeenCalledWith({
+        include,
+        order,
+        where: {
+          id: caseId,
+          state: { [Op.not]: CaseState.DELETED },
+          isArchived: false,
+        },
+      })
       expect(then.result).toBe(true)
+      expect(request.case).toBe(theCase)
     })
   })
 
@@ -125,7 +81,7 @@ describe('Case Exists Guard', () => {
     let then: Then
 
     beforeEach(async () => {
-      mockRequest.mockImplementationOnce(() => ({ params: { caseId } }))
+      mockRequest.mockReturnValueOnce({ params: { caseId } })
 
       then = await givenWhenThen()
     })
@@ -140,7 +96,7 @@ describe('Case Exists Guard', () => {
     let then: Then
 
     beforeEach(async () => {
-      mockRequest.mockImplementationOnce(() => ({ params: {} }))
+      mockRequest.mockReturnValueOnce({ params: {} })
 
       then = await givenWhenThen()
     })

@@ -5,30 +5,34 @@ import {
   Button,
   GridRow,
   GridColumn,
-  LoadingDots,
   GridColumnProps,
   Tooltip,
   ResponsiveSpace,
+  SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { servicePortalOutboundLink } from '@island.is/plausible'
 import { sharedMessages } from '@island.is/shared/translations'
 
 import * as styles from './UserInfoLine.css'
+import { formatPlausiblePathToParams } from '../../utils/formatPlausiblePathToParams'
+import cn from 'classnames'
 
 export type EditLink = {
   external?: boolean
   url: string
   title?: MessageDescriptor
+  skipOutboundTrack?: boolean
 }
 
 interface Props {
   label: MessageDescriptor | string
   content?: string | JSX.Element
-  renderContent?: () => JSX.Element
+  renderContent?: () => JSX.Element | undefined
   loading?: boolean
+  warning?: boolean
   labelColumnSpan?: GridColumnProps['span']
   valueColumnSpan?: GridColumnProps['span']
   editColumnSpan?: GridColumnProps['span']
@@ -38,9 +42,13 @@ interface Props {
   tooltip?: string
   paddingY?: ResponsiveSpace
   paddingBottom?: ResponsiveSpace
+  className?: string
+  translate?: 'yes' | 'no'
+  translateLabel?: 'yes' | 'no'
+  printable?: boolean
 }
 
-export const UserInfoLine: FC<Props> = ({
+export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
   label,
   content,
   renderContent,
@@ -50,14 +58,17 @@ export const UserInfoLine: FC<Props> = ({
   loading,
   editLink,
   title,
-  titlePadding = 2,
+  titlePadding = 4,
   tooltip,
   paddingY = 2,
   paddingBottom,
+  warning,
+  className,
+  translate = 'yes',
+  translateLabel = 'yes',
+  printable = false,
 }) => {
-  const trackExternalLinkClick = () => {
-    servicePortalOutboundLink()
-  }
+  const { pathname } = useLocation()
   const { formatMessage } = useLocale()
 
   return (
@@ -66,6 +77,9 @@ export const UserInfoLine: FC<Props> = ({
       paddingY={paddingY}
       paddingBottom={paddingBottom}
       paddingRight={4}
+      className={cn(className, {
+        [styles.printable]: printable,
+      })}
     >
       {title && (
         <Text variant="eyebrow" color="purple400" paddingBottom={titlePadding}>
@@ -81,8 +95,16 @@ export const UserInfoLine: FC<Props> = ({
             height="full"
             overflow="hidden"
           >
-            <Text variant="h5" as="span" lineHeight="lg">
-              {formatMessage(label)} {tooltip && <Tooltip text={tooltip} />}
+            <Text
+              translate={translateLabel}
+              variant="h5"
+              as="span"
+              lineHeight="lg"
+            >
+              {formatMessage(label)}{' '}
+              {tooltip && (
+                <Tooltip placement="right" fullWidth text={tooltip} />
+              )}
             </Text>
           </Box>
         </GridColumn>
@@ -96,11 +118,19 @@ export const UserInfoLine: FC<Props> = ({
             overflow="hidden"
           >
             {loading ? (
-              <LoadingDots />
+              <SkeletonLoader width="70%" height={27} />
             ) : renderContent ? (
               renderContent()
+            ) : typeof content === 'string' ? (
+              <Text
+                translate={translate}
+                color={warning ? 'red600' : undefined}
+                variant="default"
+              >
+                {content}
+              </Text>
             ) : (
-              <Text variant="default">{content}</Text>
+              content
             )}
           </Box>
         </GridColumn>
@@ -111,12 +141,21 @@ export const UserInfoLine: FC<Props> = ({
               justifyContent={['flexStart', 'flexEnd']}
               alignItems="center"
               height="full"
+              printHidden
             >
               {editLink.external ? (
                 <a
                   href={editLink.url}
                   rel="noopener noreferrer"
-                  onClick={trackExternalLinkClick}
+                  onClick={
+                    editLink.skipOutboundTrack
+                      ? undefined
+                      : () =>
+                          servicePortalOutboundLink({
+                            url: formatPlausiblePathToParams(pathname).url,
+                            outboundUrl: editLink.url,
+                          })
+                  }
                   target="_blank"
                 >
                   <Button

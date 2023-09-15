@@ -1,6 +1,5 @@
-import { Hash, ReplicaCount, Service } from './input-types'
-import { UberChartType } from './charts'
-import { FeatureNames } from '../features'
+import { Hash, ServiceDefinition, ServiceDefinitionForEnv } from './input-types'
+import { ReferenceResolver, EnvironmentConfig } from './charts'
 
 // Output types
 export type ContainerRunHelm = {
@@ -18,13 +17,40 @@ export type ContainerRunHelm = {
     }
   }
 }
-
+export type OutputAccessModes = 'ReadWriteMany' | 'ReadOnlyMany'
+export type OutputPersistentVolumeClaim = {
+  name?: string
+  size: string
+  accessModes: OutputAccessModes
+  mountPath: string
+  /**
+   * Sets the storageClass, leave empty if storageClass means little to you(defaults to efs-csi),
+   * Mostly for internal use by the DevOps team.
+   */
+  storageClass: 'efs-csi'
+}
 export type ContainerEnvironmentVariables = { [name: string]: string }
 export type ContainerSecrets = { [name: string]: string }
 
-export interface ServiceHelm {
-  replicaCount?: ReplicaCount
+export interface HelmService {
+  replicaCount?: {
+    min: number
+    max: number
+    default: number
+  }
+
+  hpa?: {
+    scaling: {
+      replicas: {
+        min: number
+        max: number
+      }
+      metric: { nginxRequestsIrate?: number; cpuAverageUtilization: number }
+    }
+  }
+
   healthCheck: {
+    port?: number
     liveness: {
       path: string
       initialDelaySeconds: number
@@ -85,6 +111,7 @@ export interface ServiceHelm {
       memory: string
     }
   }
+  pvcs?: OutputPersistentVolumeClaim[]
   grantNamespaces: string[]
   grantNamespacesEnabled: boolean
 
@@ -97,6 +124,12 @@ export interface ServiceHelm {
   }
   extra?: Hash
   files?: string[]
+}
+
+export interface LocalrunService {
+  env: ContainerEnvironmentVariables
+  command?: string[]
+  port?: number
 }
 
 export interface FeatureKubeJob {
@@ -119,9 +152,9 @@ export interface FeatureKubeJob {
   }
 }
 
-export type SerializeSuccess = {
+export type SerializeSuccess<T> = {
   type: 'success'
-  serviceDef: ServiceHelm
+  serviceDef: T[]
 }
 
 export type SerializeErrors = {
@@ -129,17 +162,40 @@ export type SerializeErrors = {
   errors: string[]
 }
 
-export type SerializeMethod = (
-  service: Service,
-  uberChart: UberChartType,
-  featuresOn?: FeatureNames[],
-) => SerializeSuccess | SerializeErrors
+export type ServiceOutputType = HelmService | LocalrunService
 
-export type Services = {
-  [name: string]: ServiceHelm
+export type SerializeMethod<T extends ServiceOutputType> = (
+  service: ServiceDefinitionForEnv,
+  runtime: ReferenceResolver,
+  env: EnvironmentConfig,
+  featureDeployment?: string,
+) => Promise<SerializeSuccess<T> | SerializeErrors>
+
+export type Services<T extends ServiceOutputType> = {
+  [name: string]: T
 }
 
-export type ValueFile = {
+export type HelmValueFile = {
   namespaces: string[]
-  services: Services
+  services: Services<HelmService>
+}
+export type LocalrunValueFile = {
+  services: Services<LocalrunService>
+  mocks: string
+}
+
+export interface OutputFormat<T extends ServiceOutputType> {
+  serializeService(
+    service: ServiceDefinitionForEnv,
+    runtime: ReferenceResolver,
+    env: EnvironmentConfig,
+    featureDeployment?: string,
+  ): Promise<SerializeSuccess<T> | SerializeErrors>
+
+  serviceMockDef(options: {
+    runtime: ReferenceResolver
+    env: EnvironmentConfig
+  }): T
+
+  featureDeployment(service: ServiceDefinition, env: EnvironmentConfig): void
 }

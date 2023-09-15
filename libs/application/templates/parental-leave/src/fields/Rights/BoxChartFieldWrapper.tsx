@@ -1,4 +1,4 @@
-import { Field, FieldBaseProps } from '@island.is/application/core'
+import { Field, FieldBaseProps } from '@island.is/application/types'
 import React, { FC } from 'react'
 import BoxChart, { BoxChartProps } from '../components/BoxChart'
 
@@ -7,9 +7,9 @@ interface BoxChartFieldWrapperProps extends FieldBaseProps {
     props: BoxChartProps
   }
 }
-const BoxChartFieldWrapper: FC<BoxChartFieldWrapperProps> = ({
-  field,
-}: BoxChartFieldWrapperProps) => {
+const BoxChartFieldWrapper: FC<
+  React.PropsWithChildren<BoxChartFieldWrapperProps>
+> = ({ field }: BoxChartFieldWrapperProps) => {
   return <BoxChart {...field.props} />
 }
 export default BoxChartFieldWrapper

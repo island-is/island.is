@@ -6,7 +6,6 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 # shellcheck disable=SC1091
 source "$DIR"/_common.sh
 MAX_JOBS=${MAX_JOBS:-2}
-
 AFFECTED_PROJECTS=$(echo "${AFFECTED_PROJECTS}" | tr -d '\n[:space:]')
 echo "Running '$AFFECTED_PROJECTS' in parallel of ${MAX_JOBS} for target $1"
 

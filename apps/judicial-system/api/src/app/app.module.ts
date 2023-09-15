@@ -1,10 +1,14 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
+import { ApolloDriver } from '@nestjs/apollo'
 
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { ProblemModule } from '@island.is/nest/problem'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
-import { AuditTrailModule } from '@island.is/judicial-system/audit-trail'
+import {
+  AuditTrailModule,
+  auditTrailModuleConfig,
+} from '@island.is/judicial-system/audit-trail'
 
 import { environment } from '../environments'
 import { BackendApi } from './data-sources/backend'
@@ -17,7 +21,13 @@ import {
   FeatureModule,
   PoliceModule,
   DefendantModule,
+  IndictmentCountModule,
+  fileModuleConfig,
+  authModuleConfig,
+  featureModuleConfig,
 } from './modules'
+import { ConfigModule } from '@nestjs/config'
+import { CaseListModule } from './modules/caseList/caseList.module'
 
 const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -28,28 +38,41 @@ const autoSchemaFile = environment.production
 @Module({
   imports: [
     GraphQLModule.forRoot({
+      driver: ApolloDriver,
       debug,
       playground,
       autoSchemaFile,
+      cache: 'bounded',
       path: '/api/graphql',
-      context: ({ req }) => ({ req }),
+      context: ({ req }: never) => ({ req }),
       dataSources: () => ({ backendApi: new BackendApi() }),
     }),
     SharedAuthModule.register({
       jwtSecret: environment.auth.jwtSecret,
       secretToken: environment.auth.secretToken,
     }),
-    AuditTrailModule.register(environment.auditTrail),
+    AuditTrailModule,
     AuthModule,
     UserModule,
     CaseModule,
+    CaseListModule,
     DefendantModule,
+    IndictmentCountModule,
     FileModule,
     InstitutionModule,
     FeatureModule,
     CmsTranslationsModule,
     PoliceModule,
     ProblemModule.forRoot({ logAllErrors: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [
+        fileModuleConfig,
+        auditTrailModuleConfig,
+        featureModuleConfig,
+        authModuleConfig,
+      ],
+    }),
   ],
 })
 export class AppModule {}

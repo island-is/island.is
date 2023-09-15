@@ -20,14 +20,11 @@ interface Props {
   handleChanges?: () => void
 }
 
-const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<ApiResourceSecretDTO>()
-  const { isSubmitting } = formState
+const ApiResourceSecretForm: React.FC<React.PropsWithChildren<Props>> = (
+  props: Props,
+) => {
+  const { register, handleSubmit, formState } = useForm<ApiResourceSecretDTO>()
+  const { isSubmitting, errors } = formState
   const defaultSecretLength = 25
   const [defaultSecret, setDefaultSecret] = useState<string>('')
   const [confirmModalIsOpen, setConfirmModalIsOpen] = useState(false)
@@ -154,8 +151,7 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="secretValue"
                     type="text"
-                    name="value"
-                    ref={register({ required: true })}
+                    {...register('value', { required: true })}
                     defaultValue={defaultSecret}
                     className="api-resource-secret-form__input"
                     placeholder={localization.fields['secretValue'].placeholder}
@@ -188,8 +184,7 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="type"
                     type="text"
-                    name="type"
-                    ref={register({ required: true })}
+                    {...register('type', { required: true })}
                     defaultValue={'SharedSecret'}
                     className="api-resource-secret-form__input"
                     placeholder={localization.fields['type'].placeholder}
@@ -214,8 +209,7 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="description"
                     type="text"
-                    name="description"
-                    ref={register({
+                    {...register('description', {
                       required: true,
                       validate: ValidationUtils.validateDescription,
                     })}

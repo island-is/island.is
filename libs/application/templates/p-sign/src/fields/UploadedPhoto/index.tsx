@@ -1,6 +1,6 @@
-import React from 'react'
 import { Box } from '@island.is/island-ui/core'
-import { Application, formatText } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { gql, useQuery } from '@apollo/client'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
@@ -21,11 +21,12 @@ export const PresignedUrlQuery = gql`
 const UploadedPhoto = ({ application }: UploadedPhotoProps) => {
   const { formatMessage } = useLocale()
 
-  const attachmentKey = ((application.answers.photo as Photo)
-    ?.attachments as Array<{
-    key: string
-    name: string
-  }>)[0]?.key
+  const attachmentKey = (
+    (application.answers.photo as Photo)?.attachments as Array<{
+      key: string
+      name: string
+    }>
+  )[0]?.key
 
   const { data: presignedUrl } = useQuery(PresignedUrlQuery, {
     variables: {

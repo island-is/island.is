@@ -1,37 +1,44 @@
-import { DynamicModule, HttpModule } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 
-import { FamilyMemberResolver, UserResolver, ChildResolver } from './graphql'
-import { NationalRegistryService } from './nationalRegistry.service'
 import {
   NationalRegistryApi,
-  NationalRegistryConfig,
+  NationalRegistrySoffiaClientConfig,
 } from '@island.is/clients/national-registry-v1'
+import { NationalRegistryService } from './nationalRegistry.service'
+import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
+import { ConfigType } from '@nestjs/config'
+import { SoffiaService } from './v1/soffia.service'
+import { BrokerService } from './v3/broker.service'
+import {
+  UserResolver,
+  FamilyMemberResolver,
+  ChildResolver,
+  CorrectionResolver,
+  PersonResolver,
+} from './resolvers'
 
-export interface Config {
-  nationalRegistry: NationalRegistryConfig
-}
-
-export class NationalRegistryModule {
-  static register(config: Config): DynamicModule {
-    return {
-      module: NationalRegistryModule,
-      imports: [
-        HttpModule.register({
-          timeout: 20000,
-        }),
-      ],
-      providers: [
-        NationalRegistryService,
-        UserResolver,
-        FamilyMemberResolver,
-        ChildResolver,
-        {
-          provide: NationalRegistryApi,
-          useFactory: async () =>
-            NationalRegistryApi.instantiateClass(config.nationalRegistry),
-        },
-      ],
-      exports: [NationalRegistryService],
-    }
-  }
-}
+@Module({
+  imports: [NationalRegistryV3ClientModule],
+  providers: [
+    {
+      provide: NationalRegistryApi,
+      useFactory(
+        config: ConfigType<typeof NationalRegistrySoffiaClientConfig>,
+      ) {
+        if (config) {
+          return NationalRegistryApi.instantiateClass(config)
+        }
+      },
+      inject: [NationalRegistrySoffiaClientConfig.KEY],
+    },
+    SoffiaService,
+    BrokerService,
+    NationalRegistryService,
+    UserResolver,
+    PersonResolver,
+    FamilyMemberResolver,
+    ChildResolver,
+    CorrectionResolver,
+  ],
+})
+export class NationalRegistryModule {}

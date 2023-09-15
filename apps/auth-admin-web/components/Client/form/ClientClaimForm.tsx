@@ -18,14 +18,11 @@ interface Props {
   handleChanges?: () => void
 }
 
-const ClientClaimForm: React.FC<Props> = (props: Props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<ClientClaimDTO>()
-  const { isSubmitting } = formState
+const ClientClaimForm: React.FC<React.PropsWithChildren<Props>> = (
+  props: Props,
+) => {
+  const { register, handleSubmit, formState } = useForm<ClientClaimDTO>()
+  const { isSubmitting, errors } = formState
   const [modalIsOpen, setIsOpen] = useState(false)
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('ClientClaimForm'),
@@ -101,8 +98,7 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="type"
                     type="text"
-                    name="type"
-                    ref={register({
+                    {...register('type', {
                       required: true,
                       validate: ValidationUtils.validateIdentifier,
                     })}
@@ -133,8 +129,7 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
                   <input
                     id="value"
                     type="text"
-                    name="value"
-                    ref={register({
+                    {...register('value', {
                       required: true,
                       validate: ValidationUtils.validateDescription,
                     })}

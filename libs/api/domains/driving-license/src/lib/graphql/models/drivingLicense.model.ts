@@ -1,4 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Disqualification } from './disqualification.model'
 
 import { Eligibility } from './eligibility.model'
 
@@ -10,12 +11,21 @@ export class DrivingLicense {
   @Field()
   name!: string
 
-  @Field()
-  issued!: string
+  @Field(() => Date)
+  issued!: Date
 
-  @Field()
-  expires!: string
+  @Field(() => Date)
+  expires!: Date
 
   @Field(() => [Eligibility])
   categories!: Eligibility[]
+
+  @Field(() => [String])
+  healthRemarks?: string[]
+
+  @Field(() => Disqualification, { nullable: true })
+  disqualification?: Disqualification
+
+  @Field({ nullable: true })
+  birthCountry?: string
 }

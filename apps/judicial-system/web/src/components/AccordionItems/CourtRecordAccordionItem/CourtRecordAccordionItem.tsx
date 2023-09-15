@@ -1,29 +1,30 @@
 import React from 'react'
-import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
+import isSameDay from 'date-fns/isSameDay'
 
+import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import {
   capitalize,
   formatAppeal,
   formatDate,
   formatRequestCaseType,
 } from '@island.is/judicial-system/formatters'
-import {
-  isRestrictionCase,
-  SessionArrangements,
-} from '@island.is/judicial-system/types'
+import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { closedCourt, core } from '@island.is/judicial-system-web/messages'
-import { TIME_FORMAT } from '@island.is/judicial-system/consts'
-import { courtRecordAccordion as m } from '@island.is/judicial-system-web/messages/Core/courtRecordAccordion'
-import type { Case } from '@island.is/judicial-system/types'
+import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
+import { courtRecordAccordion as m } from './CourtRecordAccordion.strings'
 
 interface Props {
   workingCase: Case
 }
 
-const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
+const CourtRecordAccordionItem: React.FC<React.PropsWithChildren<Props>> = ({
+  workingCase,
+}: Props) => {
   const { formatMessage } = useIntl()
 
   const prosecutorAppeal = formatAppeal(
@@ -54,22 +55,37 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         title={formatMessage(m.sections.timeAndLocation.title)}
       >
         <Text>
-          {workingCase.courtEndTime
-            ? formatMessage(m.sections.timeAndLocation.text, {
+          {!workingCase.courtEndTime
+            ? formatMessage(m.sections.timeAndLocation.textOngoing, {
+                courtStartTime: formatDate(
+                  workingCase.courtStartDate,
+                  TIME_FORMAT,
+                ),
+              })
+            : workingCase.courtStartDate &&
+              isSameDay(
+                new Date(workingCase.courtStartDate),
+                new Date(workingCase.courtEndTime),
+              )
+            ? formatMessage(m.sections.timeAndLocation.textSameDay, {
+                courtStartDate: formatDate(workingCase.courtStartDate, 'PPP'),
                 courtStartTime: formatDate(
                   workingCase.courtStartDate,
                   TIME_FORMAT,
                 ),
                 courtEndTime: formatDate(workingCase.courtEndTime, TIME_FORMAT),
-                courtEndDate: formatDate(workingCase.courtEndTime, 'PP'),
                 courtLocation: workingCase.courtLocation,
               })
-            : formatMessage(m.sections.timeAndLocation.textOngoing, {
+            : formatMessage(m.sections.timeAndLocation.text, {
+                courtStartDate: formatDate(workingCase.courtStartDate, 'PPP'),
                 courtStartTime: formatDate(
                   workingCase.courtStartDate,
                   TIME_FORMAT,
                 ),
-              })}
+                courtEndDate: formatDate(workingCase.courtEndTime, 'PPP'),
+                courtEndTime: formatDate(workingCase.courtEndTime, TIME_FORMAT),
+                courtLocation: workingCase.courtLocation,
+              })}{' '}
         </Text>
         {!workingCase.isClosedCourtHidden && (
           <Box marginBottom={3}>

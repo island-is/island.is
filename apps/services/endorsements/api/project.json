@@ -1,0 +1,146 @@
+{
+  "name": "services-endorsements-api",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/services/endorsements/api/src",
+  "projectType": "application",
+  "prefix": "services-endorsements-api",
+  "targets": {
+    "build": {
+      "executor": "./tools/executors/node:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/services/endorsements/api",
+        "main": "apps/services/endorsements/api/src/main.ts",
+        "tsConfig": "apps/services/endorsements/api/tsconfig.app.json",
+        "assets": [
+          {
+            "glob": "*",
+            "input": "apps/services/endorsements/api/migrations",
+            "output": "./migrations"
+          },
+          {
+            "glob": ".sequelizerc",
+            "input": "apps/services/endorsements/api",
+            "output": "./"
+          },
+          {
+            "glob": "sequelize.config.js",
+            "input": "apps/services/endorsements/api",
+            "output": "./"
+          },
+          {
+            "glob": "*",
+            "input": "libs/email-service/src/tools/design",
+            "output": "./email-service-assets"
+          }
+        ]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-endorsements-api:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/services/endorsements/api/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/services/endorsements/api"],
+      "options": {
+        "jestConfig": "apps/services/endorsements/api/jest.config.ts",
+        "runInBand": true,
+        "passWithNoTests": true
+      }
+    },
+    "dev-services": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker-compose up -d --build",
+        "cwd": "apps/services/endorsements/api"
+      }
+    },
+    "dev-init": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn get-secrets services-endorsements-api",
+          "yarn nx run services-endorsements-api:dev-services $NX_OPTIONS",
+          "echo \"Waiting for databases to start...\" && sleep 2",
+          "yarn nx run services-endorsements-api:migrate $NX_OPTIONS"
+        ],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "./scripts/run-xroad-proxy.sh",
+          "./scripts/run-soffia-proxy.sh",
+          "yarn start services-endorsements-api $NX_OPTIONS"
+        ],
+        "parallel": true
+      }
+    },
+    "schemas/build-openapi": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn nx run services-endorsements-api:schemas/build-openapi-internal $NX_OPTIONS"
+      }
+    },
+    "schemas/build-openapi-internal": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/endorsements/api/tsconfig.app.json apps/services/endorsements/api/src/buildOpenApi.ts"
+      },
+      "outputs": [
+        "{workspaceRoot}/apps/services/endorsements/api/src/openapi.yaml"
+      ]
+    },
+    "migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../../node_modules/.bin/sequelize-cli db:migrate",
+        "cwd": "apps/services/endorsements/api"
+      }
+    },
+    "seed": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../../node_modules/.bin/sequelize-cli db:seed",
+        "cwd": "apps/services/endorsements/api"
+      }
+    },
+    "seed/undo": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../../node_modules/.bin/sequelize-cli db:seed:undo",
+        "cwd": "apps/services/endorsements/api"
+      }
+    },
+    "migrate/generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
+        "cwd": "apps/services/endorsements/api"
+      }
+    },
+    "docker-express": {},
+    "service-endorsement-system-api": {}
+  },
+  "tags": ["scope:nest"]
+}
