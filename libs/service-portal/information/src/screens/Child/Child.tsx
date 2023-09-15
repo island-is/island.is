@@ -201,7 +201,8 @@ const Child = () => {
                     title: editLink,
                     external: true,
                     skipOutboundTrack: true,
-                    url: 'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=703760ac-686f-11e6-943e-005056851dd2',
+                    url:
+                      'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=703760ac-686f-11e6-943e-005056851dd2',
                   }
                 : undefined
             }
@@ -268,7 +269,8 @@ const Child = () => {
                     title: editLink,
                     external: true,
                     skipOutboundTrack: true,
-                    url: 'https://www.skra.is/umsoknir/rafraen-skil/tru-eda-lifsskodunarfelag-barna-15-ara-og-yngri/',
+                    url:
+                      'https://www.skra.is/umsoknir/rafraen-skil/tru-eda-lifsskodunarfelag-barna-15-ara-og-yngri/',
                   }
                 : undefined
             }
@@ -304,27 +306,6 @@ const Child = () => {
             loading={loading}
             printable
           />
-          <Box printHidden>
-            <Divider />
-          </Box>
-          {child?.fate && (
-            <>
-              <UserInfoLine
-                label={formatMessage({
-                  id: 'sp.family:fate',
-                  defaultMessage: 'Afdrif',
-                })}
-                content={
-                  error ? formatMessage(dataNotFoundMessage) : child?.fate || ''
-                }
-                loading={loading}
-                printable
-              />
-              <Box printHidden>
-                <Divider />
-              </Box>
-            </>
-          )}
         </Stack>
         {(parent1 || parent2 || loading) && (
           <Stack component="ul" space={2}>
@@ -354,7 +335,7 @@ const Child = () => {
             </Box>
           </Stack>
         )}
-        {!child?.fate && !error && (
+        {!error && (
           <Stack component="ul" space={2}>
             <TwoColumnUserInfoLine
               title={formatMessage({
