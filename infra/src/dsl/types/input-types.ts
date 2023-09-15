@@ -185,6 +185,7 @@ export type InitContainers = {
   features: Partial<Features>
   containers: {
     command: string
+    image?: string
     args?: string[]
     name?: string
     resources?: Resources
@@ -197,6 +198,7 @@ export type InitContainersForEnv = {
   features: Partial<Features>
   containers: {
     command: string
+    image?: string
     args?: string[]
     name?: string
     resources?: Resources

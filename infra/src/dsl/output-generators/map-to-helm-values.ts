@@ -382,6 +382,7 @@ function serializeVolumes(
 function serializeContainerRuns(
   containers: {
     command: string
+    image?: string
     args?: string[]
     name?: string
     resources?: Resources
@@ -391,6 +392,7 @@ function serializeContainerRuns(
     let result: ContainerRunHelm = {
       command: [c.command],
       args: c.args,
+      image: c.image,
       resources: {
         limits: {
           memory: '256Mi',

@@ -4,6 +4,7 @@ import { ReferenceResolver, EnvironmentConfig } from './charts'
 // Output types
 export type ContainerRunHelm = {
   command: string[]
+  image?: string
   args?: string[]
   name?: string
   resources: {
