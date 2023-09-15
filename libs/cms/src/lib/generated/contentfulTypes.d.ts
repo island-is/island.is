@@ -580,7 +580,10 @@ export interface IEmbedFields {
   embedUrl?: string | undefined
 
   /** Alt Text */
-  altText?: string | undefined
+  altText: string
+
+  /** Aspect Ratio */
+  aspectRatio?: '713/630' | '16/9' | undefined
 }
 
 /** A content type which allows you to embed an iframe (but only from sources that have been approved of) */

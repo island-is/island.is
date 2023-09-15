@@ -15,6 +15,9 @@ export class Embed {
 
   @Field({ nullable: true })
   altText?: string
+
+  @Field({ nullable: true })
+  aspectRatio?: string
 }
 
 export const mapEmbed = ({ fields, sys }: IEmbed): SystemMetadata<Embed> => ({
@@ -23,4 +26,5 @@ export const mapEmbed = ({ fields, sys }: IEmbed): SystemMetadata<Embed> => ({
   title: fields.title ?? '',
   embedUrl: fields.embedUrl,
   altText: fields.altText,
+  aspectRatio: fields.aspectRatio,
 })

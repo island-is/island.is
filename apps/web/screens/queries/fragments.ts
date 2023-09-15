@@ -708,6 +708,7 @@ export const slices = gql`
   fragment EmbedFields on Embed {
     embedUrl
     altText
+    aspectRatio
   }
 
   fragment BaseSlices on Slice {
