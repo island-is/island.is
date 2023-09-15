@@ -492,7 +492,6 @@ jobs:
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       PUBLISH: true
-      GEOIP_LICENSE_KEY: ${{ secrets.GEOIP_LICENSE_KEY }}
     strategy:
       fail-fast: false
       matrix:
@@ -594,13 +593,13 @@ jobs:
         if: steps.gather.outcome == 'success'
         run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
         env:
-          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg GEOIP_LICENSE_KEY=${{ env.GEOIP_LICENSE_KEY }}'
+          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }}'
 
       - name: Building Docker images Retry #This only exists until GHA starts supporting this
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
         run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
         env:
-          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg GEOIP_LICENSE_KEY=${{ env.GEOIP_LICENSE_KEY }}'
+          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }}'
 
   helm-docker-build:
     needs:
