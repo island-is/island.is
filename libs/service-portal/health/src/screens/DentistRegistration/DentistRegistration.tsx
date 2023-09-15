@@ -39,10 +39,8 @@ export const DentistRegistration = () => {
   const [page, setPage] = useState(DEFAULT_PAGE_NUMBER)
   const [searchTerm, setSearchTerm] = useState('')
   const [activeSearch, setActiveSearch] = useState('')
-  const [
-    selectedDentist,
-    setSelectedDentist,
-  ] = useState<SelectedDentist | null>(null)
+  const [selectedDentist, setSelectedDentist] =
+    useState<SelectedDentist | null>(null)
   const [hoverId, setHoverId] = useState(0)
   const [errorTransfering, setErrorTransfering] = useState(false)
   const errorBoxRef = useRef<HTMLDivElement>(null)
@@ -52,30 +50,28 @@ export const DentistRegistration = () => {
     loading: statusLoading,
   } = useGetDentistStatusQuery()
 
-  const [
-    registerDentist,
-    { loading: loadingTranser },
-  ] = useRegisterDentistMutation({
-    onError: () => {
-      setErrorTransfering(true)
-    },
-    onCompleted: (data) => {
-      if (data.rightsPortalRegisterDentist.success) {
-        navigate(`${HealthPaths.HealthDentists}`, {
-          state: {
-            transferSuccess: true,
-          },
-        })
-      } else {
+  const [registerDentist, { loading: loadingTranser }] =
+    useRegisterDentistMutation({
+      onError: () => {
         setErrorTransfering(true)
-      }
-    },
-    variables: {
-      input: {
-        id: selectedDentist?.id ?? 0,
       },
-    },
-  })
+      onCompleted: (data) => {
+        if (data.rightsPortalRegisterDentist.success) {
+          navigate(`${HealthPaths.HealthDentists}`, {
+            state: {
+              transferSuccess: true,
+            },
+          })
+        } else {
+          setErrorTransfering(true)
+        }
+      },
+      variables: {
+        input: {
+          id: selectedDentist?.id ?? 0,
+        },
+      },
+    })
 
   useEffect(() => {
     if (errorTransfering && errorBoxRef.current) {

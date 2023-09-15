@@ -52,10 +52,8 @@ const HealthCenterRegistration = () => {
   const [filter, setFilter] = useState('')
   const [loadingTransfer, setLoadingTransfer] = useState(false)
   const [errorTransfer, setErrorTransfer] = useState(false)
-  const [
-    selectedHealthCenter,
-    setSelectedHealthCenter,
-  ] = useState<SelectedHealthCenter | null>(null)
+  const [selectedHealthCenter, setSelectedHealthCenter] =
+    useState<SelectedHealthCenter | null>(null)
 
   const [transferHealthCenter] = useRightsPortalTransferHealthCenterMutation({
     onError: (e) => {
