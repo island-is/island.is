@@ -130,4 +130,17 @@ export class ProgramController {
   async getTags(): Promise<TagResponse> {
     return this.programService.getTags()
   }
+
+  @BypassAuth()
+  @Get('duration-in-years')
+  @ApiOkResponse({
+    type: [String],
+    description: 'Returns all possible duration in years',
+  })
+  @ApiOperation({
+    summary: 'Get all possible duration in years',
+  })
+  async getDurationInYears(): Promise<string[]> {
+    return this.programService.getDurationInYears()
+  }
 }

@@ -11,6 +11,7 @@ import {
   TagResponse,
 } from './model'
 import { Course } from '../course/model'
+import { University } from '../university/model'
 import { PaginateInput } from './types'
 import { InjectModel } from '@nestjs/sequelize'
 import { paginate } from '@island.is/nest/pagination'
@@ -25,6 +26,9 @@ class ProgramService {
 
     @InjectModel(ProgramTag)
     // private programTagModel: typeof ProgramTag,
+
+    @InjectModel(University)
+    // private universityModel: typeof University,
 
     @InjectModel(Tag)
     private tagModel: typeof Tag,
@@ -75,6 +79,9 @@ class ProgramService {
       },
       include: [
         {
+          model: University,
+        },
+        {
           model: ProgramTag,
           include: [
             {
@@ -93,6 +100,9 @@ class ProgramService {
     const program = await this.programModel.findOne({
       where: { id: id },
       include: [
+        {
+          model: University,
+        },
         {
           model: ProgramCourse,
           include: [
@@ -128,5 +138,9 @@ class ProgramService {
   async getTags(): Promise<TagResponse> {
     const tags = await this.tagModel.findAll()
     return { data: tags }
+  }
+
+  async getDurationInYears(): Promise<string[]> {
+    return ['1', '2', '3'] // TODOx
   }
 }

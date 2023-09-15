@@ -4,6 +4,7 @@ import {
   ApiPropertyOptional,
 } from '@nestjs/swagger'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -85,6 +86,13 @@ class Program extends Model {
   })
   @ForeignKey(() => University)
   universityId!: string
+
+  @ApiProperty({
+    description: 'University details',
+    type: University,
+  })
+  @BelongsTo(() => University, 'universityId')
+  universityDetails?: University
 
   @ApiProperty({
     description:

@@ -1,54 +1,27 @@
 import { Injectable } from '@nestjs/common'
 import {
-  CourseSemesterSeasonEnum,
   ProgramApi,
-  ProgramControllerGetProgramsDegreeTypeEnum,
-  ProgramControllerGetProgramsSeasonEnum,
-  ProgramCourseRequirementEnum,
-  ProgramDegreeTypeEnum,
-  ProgramDetailsDegreeTypeEnum,
-  ProgramDetailsStartingSemesterSeasonEnum,
-  ProgramModeOfDeliveryModeOfDeliveryEnum,
-  ProgramStartingSemesterSeasonEnum,
+  UniversityApi,
 } from '@island.is/clients/university-gateway-api'
 import { GetProgramByIdInput, ProgramsPaginated } from './graphql/dto'
-import { GetProgramsInput } from './graphql/dto/getPrograms.input'
-import { ProgramDetails } from './graphql/models'
+import { ProgramDetails, ProgramFilter, University } from './graphql/models'
 import {
   DegreeType,
   ModeOfDelivery,
-  Requirement,
   Season,
-  mapEnumToEnum,
 } from '@island.is/university-gateway-lib'
 
 export
 @Injectable()
 class UniversityGatewayApi {
-  constructor(private readonly programApi: ProgramApi) {}
+  constructor(
+    private readonly programApi: ProgramApi,
+    private readonly universityApi: UniversityApi,
+  ) {}
 
-  async getPrograms(input: GetProgramsInput): Promise<ProgramsPaginated> {
+  async getActivePrograms(): Promise<ProgramsPaginated> {
     const res = await this.programApi.programControllerGetPrograms({
-      limit: input.limit,
-      before: input.before,
-      after: input.after,
-      active: input.active,
-      year: input.year,
-      season:
-        input.season &&
-        mapEnumToEnum(
-          input.season,
-          Season,
-          ProgramControllerGetProgramsSeasonEnum,
-        ),
-      universityId: input.universityId,
-      degreeType:
-        input.degreeType &&
-        mapEnumToEnum(
-          input.degreeType,
-          DegreeType,
-          ProgramControllerGetProgramsDegreeTypeEnum,
-        ),
+      active: true,
     })
 
     return {
@@ -61,21 +34,14 @@ class UniversityGatewayApi {
         nameIs: item.nameIs,
         nameEn: item.nameEn,
         universityId: item.universityId,
+        universityContentfulKey: item.universityDetails.contentfulKey,
         departmentNameIs: item.departmentNameIs,
         departmentNameEn: item.departmentNameEn,
         startingSemesterYear: item.startingSemesterYear,
-        startingSemesterSeason: mapEnumToEnum(
-          item.startingSemesterSeason,
-          ProgramStartingSemesterSeasonEnum,
-          Season,
-        ),
+        startingSemesterSeason: item.startingSemesterSeason.toString(),
         applicationStartDate: item.applicationStartDate,
         applicationEndDate: item.applicationEndDate,
-        degreeType: mapEnumToEnum(
-          item.degreeType,
-          ProgramDegreeTypeEnum,
-          DegreeType,
-        ),
+        degreeType: item.degreeType.toString(),
         degreeAbbreviation: item.degreeAbbreviation,
         credits: item.credits,
         descriptionIs: item.descriptionIs,
@@ -91,11 +57,7 @@ class UniversityGatewayApi {
           nameEn: t.details.nameEn,
         })),
         modeOfDelivery: item.modeOfDelivery.map((m) =>
-          mapEnumToEnum(
-            m.modeOfDelivery,
-            ProgramModeOfDeliveryModeOfDeliveryEnum,
-            ModeOfDelivery,
-          ),
+          m.modeOfDelivery.toString(),
         ),
       })),
     }
@@ -115,21 +77,14 @@ class UniversityGatewayApi {
       nameIs: item.nameIs,
       nameEn: item.nameEn,
       universityId: item.universityId,
+      universityContentfulKey: item.universityDetails.contentfulKey,
       departmentNameIs: item.departmentNameIs,
       departmentNameEn: item.departmentNameEn,
       startingSemesterYear: item.startingSemesterYear,
-      startingSemesterSeason: mapEnumToEnum(
-        item.startingSemesterSeason,
-        ProgramDetailsStartingSemesterSeasonEnum,
-        Season,
-      ),
+      startingSemesterSeason: item.startingSemesterSeason.toString(),
       applicationStartDate: item.applicationStartDate,
       applicationEndDate: item.applicationEndDate,
-      degreeType: mapEnumToEnum(
-        item.degreeType,
-        ProgramDetailsDegreeTypeEnum,
-        DegreeType,
-      ),
+      degreeType: item.degreeType.toString(),
       degreeAbbreviation: item.degreeAbbreviation,
       credits: item.credits,
       descriptionIs: item.descriptionIs,
@@ -145,11 +100,7 @@ class UniversityGatewayApi {
         nameEn: t.details.nameEn,
       })),
       modeOfDelivery: item.modeOfDelivery.map((m) =>
-        mapEnumToEnum(
-          m.modeOfDelivery,
-          ProgramModeOfDeliveryModeOfDeliveryEnum,
-          ModeOfDelivery,
-        ),
+        m.modeOfDelivery.toString(),
       ),
       externalUrlIs: item.externalUrlIs,
       externalUrlEn: item.externalUrlEn,
@@ -166,20 +117,12 @@ class UniversityGatewayApi {
         nameEn: c.details.nameEn,
         credits: c.details.credits,
         semesterYear: c.details.semesterYear,
-        semesterSeason: mapEnumToEnum(
-          c.details.semesterSeason,
-          CourseSemesterSeasonEnum,
-          Season,
-        ),
+        semesterSeason: c.details.semesterSeason.toString(),
         descriptionIs: c.details.descriptionIs,
         descriptionEn: c.details.descriptionEn,
         externalUrlIs: c.details.externalUrlIs,
         externalUrlEn: c.details.externalUrlEn,
-        requirement: mapEnumToEnum(
-          c.requirement,
-          ProgramCourseRequirementEnum,
-          Requirement,
-        ),
+        requirement: c.requirement.toString(),
       })),
       // extraApplicationField: item.extraApplicationField.map((e) => ({
       //   nameIs: e.nameIs,
@@ -187,13 +130,50 @@ class UniversityGatewayApi {
       //   descriptionIs: e.descriptionIs,
       //   descriptionEn: e.descriptionEn,
       //   required: e.required,
-      //   fieldType: mapEnumToEnum(
-      //     e.fieldType,
-      //     ProgramExtraApplicationFieldFieldTypeEnum,
-      //     FieldType,
-      //   ),
+      //   fieldType: e.fieldType.toString(),
       //   uploadAcceptedFileType: e.uploadAcceptedFileType,
       // })),
     }
+  }
+
+  async getUniversities(): Promise<University[]> {
+    const res = await this.universityApi.universityControllerGetUniversities()
+
+    return res.data.map((item) => ({
+      id: item.id,
+      nationalId: item.nationalId,
+      contentfulKey: item.contentfulKey,
+    }))
+  }
+
+  async getProgramFilters(): Promise<ProgramFilter[]> {
+    const universityRes =
+      await this.universityApi.universityControllerGetUniversities()
+
+    const durationRes =
+      await this.programApi.programControllerGetDurationInYears()
+
+    return [
+      {
+        field: 'degreeType',
+        options: Object.values(DegreeType),
+      },
+      {
+        field: 'startingSemesterSeason',
+        options: Object.values(Season),
+      },
+      {
+        field: 'modeOfDelivery',
+        options: Object.values(ModeOfDelivery),
+      },
+      {
+        field: 'universityId',
+        options: universityRes.data.map((item) => item.id),
+      },
+      {
+        field: 'durationInYears',
+        options: durationRes,
+      },
+    ]
   }
 }
