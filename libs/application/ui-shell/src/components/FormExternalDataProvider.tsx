@@ -218,7 +218,6 @@ const FormExternalDataProvider: FC<
         ) {
           return [true, null]
         }
-
         return [false, '']
       })
     } else {

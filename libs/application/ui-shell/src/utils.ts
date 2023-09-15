@@ -19,7 +19,10 @@ export function verifyExternalData(
   for (let i = 0; i < dataProviders.length; i++) {
     const { id } = dataProviders[i]
     const dataProviderResult = externalData[id]
+    console.log(dataProviderResult)
+    console.log('id', id)
     if (!dataProviderResult || dataProviderResult.status === 'failure') {
+      console.log('verifyExternalData', id, dataProviderResult)
       return false
     }
   }

@@ -175,13 +175,11 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
 
   const onSubmit: SubmitHandler<FormValue> = async (data, e) => {
     let response
-
     setIsSubmitting(true)
     setBeforeSubmitError({})
 
     if (typeof beforeSubmitCallback.current === 'function') {
       const [canContinue, possibleError] = await beforeSubmitCallback.current()
-
       if (!canContinue) {
         setIsSubmitting(false)
 
