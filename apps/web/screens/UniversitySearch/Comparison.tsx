@@ -11,40 +11,25 @@ import {
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
-import { UNIVERSITY_GATEWAY_BASE_URL } from '@island.is/web/constants'
-import axios from 'axios'
+import { Screen } from '@island.is/web/types'
 import { useLinkResolver } from '@island.is/web/hooks'
-import { ComparisonProps } from './UniversitySearch'
+import {
+  GetUniversityGatewayProgramsQuery,
+  GetUniversityGatewayProgramsQueryVariables,
+  Program,
+} from '@island.is/web/graphql/schema'
+import { GET_UNIVERSITY_GATEWAY_PROGRAM_LIST } from '../queries/UniversityGateway'
 
-const Comparison = ({ data }) => {
-  const router = useRouter()
+interface UniversityComparisonProps {
+  data: Array<Program>
+}
+
+const Comparison: Screen<UniversityComparisonProps> = ({ data }) => {
   console.log('data', data)
-  const { linkResolver } = useLinkResolver()
+  const [selectedComparison, setSelectedComparison] =
+    useState<Array<Program>>(data)
 
-  const [selectedComparison, setSelectedComparison] = useState<Array<any>>([])
-
-  useEffect(() => {
-    const comparison = JSON.parse(localStorage.getItem('comparison'))
-    if (!!comparison) {
-      const newComp = []
-      comparison.map((item) => {
-        console.log('item', item)
-        const i = data.filter((dataItem) => {
-          console.log('dataItem.id', dataItem.id)
-          if (dataItem.id === item.id) {
-            return true
-          }
-          return false
-        })[0]
-
-        newComp.push(i)
-      })
-      setSelectedComparison(newComp)
-    }
-  }, [])
-
-  //TODO: TYPE UP DATA ITEMS AS THEY COME FROM THE GRAPHQL
-  const handleDelete = (dataItem: any) => {
+  const handleDelete = (dataItem: Program) => {
     let found = false
     selectedComparison.forEach((x) => {
       if (x.id === dataItem.id) {
@@ -59,7 +44,7 @@ const Comparison = ({ data }) => {
         }
         return false
       })
-      console.log('a', a)
+
       setSelectedComparison(a)
     }
   }
@@ -227,27 +212,25 @@ interface Props {
   locale: any
 }
 
-Comparison.getInitialProps = async ({ query, apolloClient, locale }: Props) => {
-  const api = `${UNIVERSITY_GATEWAY_BASE_URL}`
-  let response
-  let data
-
+Comparison.getProps = async ({ query, apolloClient, locale }) => {
   const { comparison } = query
-  const parsedComparison = JSON.parse(comparison)
-  parsedComparison.map((i) => console.log('i', i))
-  try {
-    response = await axios.get(`${api}/programs`)
-    data = response?.data?.data
-  } catch (e) {
-    const errMsg = 'Failed to retrieve program'
-    // const description = e.response.data.description
+  const parsedComparison = JSON.parse(
+    !!comparison ? (comparison as string) : '',
+  )
 
-    //   this.logger.error(errMsg, {
-    //     message: description,
-    //   })
+  const newResponse = await apolloClient.query<
+    GetUniversityGatewayProgramsQuery,
+    GetUniversityGatewayProgramsQueryVariables
+  >({
+    query: GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
+    variables: {
+      input: {},
+    },
+  })
 
-    throw new Error(`${errMsg}:`)
-  }
+  const data = newResponse.data.universityGatewayPrograms.data
+
+  console.log('data 1 ', data)
 
   const matchedItems = data.filter((x) => parsedComparison.includes(x.id))
 

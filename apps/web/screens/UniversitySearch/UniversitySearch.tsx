@@ -46,14 +46,18 @@ import { SearchProducts } from '@island.is/web/utils/useUniversitySearch'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { theme } from '@island.is/island-ui/theme'
 import { GET_UNIVERSITY_GATEWAY_PROGRAM_LIST } from '../queries/UniversityGateway'
+import {
+  GetUniversityGatewayProgramsQuery,
+  GetUniversityGatewayProgramsQueryVariables,
+  Program,
+} from '@island.is/web/graphql/schema'
 
 const ITEMS_PER_PAGE = 8
 const NUMBER_OF_FILTERS = 6
 const MAX_SELECTED_COMPARISON = 3
 
 interface UniversitySearchProps {
-  mockData: any
-  data: any
+  data: Array<Program>
   mockFiltering: any
 }
 
@@ -90,7 +94,6 @@ export interface ComparisonProps {
 }
 
 const UniversitySearch: Screen<UniversitySearchProps> = ({
-  mockData,
   data,
   mockFiltering,
 }) => {
@@ -110,9 +113,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const [query, setQuery] = useState('')
   const searchTermHasBeenInitialized = useRef(false)
   const [filteredResults, setFilteredResults] = useState<
-    Array<Fuse.FuseResult<any>>
+    Array<Fuse.FuseResult<Program>>
   >(
-    data.map((item: any, index: number) => {
+    data.map((item: Program, index: number) => {
       return { item, refIndex: index, score: 1 }
     }),
   )
@@ -177,8 +180,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }, [filters, query])
 
   const resetFilteredList = () => {
-    const resultProducts: Array<Fuse.FuseResult<any>> = data.map(
-      (item: any, index: number) => {
+    const resultProducts: Array<Fuse.FuseResult<Program>> = data.map(
+      (item: Program, index: number) => {
         return { item, refIndex: index, score: 1 }
       },
     )
@@ -772,7 +775,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                       <Box marginBottom={3} key={index}>
                         <ActionCategoryCard
                           key={index}
-                          href="/ahh"
+                          href={`/haskolanam/${dataItem.id}`}
                           heading={dataItem.nameIs}
                           text={dataItem.descriptionIs}
                           icon={
@@ -813,7 +816,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     color="blue400"
                                   />
                                 ),
-                                title: 'Grunnnám',
+                                title: dataItem.degreeType,
                               },
                               {
                                 icon: (
@@ -823,7 +826,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     color="blue400"
                                   />
                                 ),
-                                title: 'Hefst 01.01.2024',
+                                title: `Hefst ${dataItem.startingSemesterSeason} ${dataItem.startingSemesterYear}`,
                               },
                               {
                                 icon: (
@@ -833,7 +836,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     color="blue400"
                                   />
                                 ),
-                                title: 'Inntökupróf: Já',
+                                title: 'Inntökupróf: TODO',
                               },
                               {
                                 icon: (
@@ -843,7 +846,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     color="blue400"
                                   />
                                 ),
-                                title: 'Námstími: 3 ár',
+                                title: `Námstími: ${dataItem.durationInYears} ár`,
                               },
                               {
                                 icon: (
@@ -853,7 +856,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     color="blue400"
                                   />
                                 ),
-                                title: 'Staðnám',
+                                title: 'Staðnám TODO',
                               },
                               {
                                 icon: (
@@ -863,7 +866,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     color="blue400"
                                   />
                                 ),
-                                title: '75.000. (per ár)',
+                                title: '75.000 TODO',
                               },
                             ],
                           }}
@@ -927,7 +930,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     color="blue400"
                                   />
                                 ),
-                                title: 'Grunnnám',
+                                title: dataItem.degreeType,
                               },
                               {
                                 icon: (
@@ -937,7 +940,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     color="blue400"
                                   />
                                 ),
-                                title: 'Hefst 01.01.2024',
+                                title: `Hefst ${dataItem.startingSemesterSeason} ${dataItem.startingSemesterYear}`,
                               },
                               {
                                 icon: (
@@ -947,7 +950,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     color="blue400"
                                   />
                                 ),
-                                title: 'Inntökupróf: Já',
+                                title: 'Inntökupróf: TODO',
                               },
                               {
                                 icon: (
@@ -957,7 +960,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     color="blue400"
                                   />
                                 ),
-                                title: 'Námstími: 3 ár',
+                                title: `Námstími: ${dataItem.durationInYears} ár`,
                               },
                               {
                                 icon: (
@@ -967,7 +970,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     color="blue400"
                                   />
                                 ),
-                                title: 'Staðnám',
+                                title: 'Staðnám TODO',
                               },
                               {
                                 icon: (
@@ -977,7 +980,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     color="blue400"
                                   />
                                 ),
-                                title: '75.000. (per ár)',
+                                title: '75.000 TODO',
                               },
                             ]}
                           />
@@ -996,7 +999,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 variant="purple"
                 page={selectedPage}
                 itemsPerPage={ITEMS_PER_PAGE}
-                totalItems={mockData.length}
+                totalItems={data.length}
                 totalPages={totalPages}
                 renderLink={(page, className, children) => (
                   <button
@@ -1177,21 +1180,18 @@ UniversitySearch.getProps = async ({ apolloClient, locale }) => {
   //   throw new CustomNextError(404, 'Vacancies on Ísland.is are turned off')
   // }
 
-  const newResponse = await apolloClient.query<any, any>({
+  const newResponse = await apolloClient.query<
+    GetUniversityGatewayProgramsQuery,
+    GetUniversityGatewayProgramsQueryVariables
+  >({
     query: GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
     variables: {
-      input: {
-        limit: 100,
-        before: '1',
-        after: '2',
-        active: true,
-        year: 2023,
-        universityId: '1',
-      },
+      input: {},
     },
   })
 
-  console.log('newResponse', newResponse)
+  const data = newResponse.data.universityGatewayPrograms.data
+
   // const vacancies =
   //   vacanciesResponse.data.icelandicGovernmentInstitutionVacancies.vacancies
 
@@ -1211,32 +1211,6 @@ UniversitySearch.getProps = async ({ apolloClient, locale }) => {
   //     },
   //   },
   // })
-
-  const api = `${UNIVERSITY_GATEWAY_BASE_URL}`
-  let response
-  let data
-
-  try {
-    response = await axios.get(`${api}/programs`)
-    console.log('response', response)
-    data = response?.data?.data
-    console.log('data', data)
-  } catch (e) {
-    const errMsg = 'Failed to retrieve program'
-    // const description = e.response.data.description
-
-    //   this.logger.error(errMsg, {
-    //     message: description,
-    //   })
-
-    console.error('error', errMsg)
-    // throw new Error(`${errMsg}:`)
-  }
-
-  // if (response.data.results.length > 0) {
-  //   console.log('response', response.data.results)
-  //   return response.data.results[0]
-  // }
 
   const mockFiltering = [
     {
@@ -1267,42 +1241,7 @@ UniversitySearch.getProps = async ({ apolloClient, locale }) => {
     },
   ]
 
-  const mockData = [
-    {
-      id: '1234',
-      nameIs: 'Viðskiptafræði með lögfræði sem aukagrein',
-      descriptionIs:
-        'Enim nulla nunc pharetra nisi libero. Ipsum faucibus tortor bibendum massa. Nisl facilisi varius lacus neque purus consequat. Egestas sed lacinia in aliquet praesent mus diam...',
-      iconSrc: 'https://www.ru.is/media/HR_logo_hringur_hires.jpg',
-    },
-    {
-      id: '235345',
-      nameIs: 'Viðskiptafræði',
-      descriptionIs:
-        'Enim nulla nunc pharetra nisi libero. Ipsum faucibus tortor bibendum massa. Nisl facilisi varius lacus neque purus consequat. Egestas sed lacinia in aliquet praesent mus diam...',
-      iconSrc: 'https://www.ru.is/media/HR_logo_hringur_hires.jpg',
-    },
-    {
-      id: '56456',
-      nameIs: 'Lögfræði',
-      descriptionIs:
-        'Enim nulla nunc pharetra nisi libero. Ipsum faucibus tortor bibendum massa. Nisl facilisi varius lacus neque purus consequat. Egestas sed lacinia in aliquet praesent mus diam...',
-      iconSrc:
-        'https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/6b8ae3f96a2d0e1ae883d0?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKTB7DNOEL%2F20230719%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20230719T145800Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=774db23aca012063927fe8b62fc9b072d434deec186c37b2cd64621f1ecb08ca',
-    },
-    {
-      id: '678687',
-      nameIs: 'Tölvunarfræði',
-      descriptionIs:
-        'Enim nulla nunc pharetra nisi libero. Ipsum faucibus tortor bibendum massa. Nisl facilisi varius lacus neque purus consequat. Egestas sed lacinia in aliquet praesent mus diam...',
-
-      iconSrc:
-        'https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/6b8ae3f96a2d0e1ae883d0?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKTB7DNOEL%2F20230719%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20230719T145800Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=774db23aca012063927fe8b62fc9b072d434deec186c37b2cd64621f1ecb08ca',
-    },
-  ]
-
   return {
-    mockData,
     data,
     mockFiltering,
   }
