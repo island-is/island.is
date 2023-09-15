@@ -226,7 +226,8 @@ export class ServiceBuilder<ServiceType> {
      * @param shutdownGracePeriodSeconds Maximum time the pod is allowed to run. Pod will sleep for half this duration in seconds
      */
     this.serviceDef.shutdownGracePeriodSeconds = shutdownGracePeriodSeconds
-    this.serviceDef.shutdownGracePeriodSleepSeconds = shutdownGracePeriodSeconds / 2
+    this.serviceDef.shutdownGracePeriodSleepSeconds =
+      shutdownGracePeriodSeconds / 2
 
     return this
   }
