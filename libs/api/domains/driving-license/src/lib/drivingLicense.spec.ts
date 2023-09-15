@@ -413,6 +413,7 @@ describe('DrivingLicenseService', () => {
     it('should handle driving license creation', async () => {
       const response = await service.newTemporaryDrivingLicense(
         MOCK_NATIONAL_ID,
+        MOCK_USER.authorization,
         {
           juristictionId: 11,
           needsToPresentHealthCertificate: false,
@@ -431,14 +432,18 @@ describe('DrivingLicenseService', () => {
 
     it('should handle error responses when creating a license', async () => {
       return await service
-        .newTemporaryDrivingLicense(MOCK_NATIONAL_ID_NO_ASSESSMENT, {
-          juristictionId: 11,
-          needsToPresentHealthCertificate: false,
-          needsToPresentQualityPhoto: true,
-          teacherNationalId: MOCK_NATIONAL_ID_TEACHER,
-          email: 'mock@email.com',
-          phone: '9999999',
-        })
+        .newTemporaryDrivingLicense(
+          MOCK_NATIONAL_ID_NO_ASSESSMENT,
+          MOCK_USER.authorization,
+          {
+            juristictionId: 11,
+            needsToPresentHealthCertificate: false,
+            needsToPresentQualityPhoto: true,
+            teacherNationalId: MOCK_NATIONAL_ID_TEACHER,
+            email: 'mock@email.com',
+            phone: '9999999',
+          },
+        )
         .catch((e) => expect(e).toBeTruthy())
     })
   })
