@@ -20,6 +20,7 @@ import {
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { ApiScope } from '@island.is/auth/scopes'
+import { FeatureFlag, Features } from '@island.is/nest/feature-flags'
 @UseGuards(IdsUserGuard, IdsAuthGuard)
 @Scopes(ApiScope.internal)
 @Resolver()
@@ -48,6 +49,7 @@ export class OccupationalLicensesResolver {
     name: 'occupationalLicensesHealthDirectorateLicense',
     nullable: true,
   })
+  @FeatureFlag(Features.occupationalLicensesHealthDirectorate)
   @Audit()
   async getHealthDirectorateLicenseById(
     @CurrentUser() user: User,
@@ -69,7 +71,7 @@ export class OccupationalLicensesResolver {
     @CurrentUser() user: User,
     @Args('id', { type: () => String }) id: string,
   ) {
-    const documentUrl = `${this.downloadService.baseUrl}/download/v1/occupational-licenses/education?id=${id}`
+    const documentUrl = `${this.downloadService.baseUrl}/download/v1/occupational-licenses/education/${id}`
     const license = await this.occupationalLicensesApi
       .getEducationalLicensesById(user, id)
       .catch(handle404)

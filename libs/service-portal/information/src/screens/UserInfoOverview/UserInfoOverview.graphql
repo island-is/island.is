@@ -1,5 +1,6 @@
 query UserInfoOverview($api: String) {
   nationalRegistryPerson(api: $api) {
+    nationalId
     spouse {
       nationalId
       fullName
@@ -8,12 +9,12 @@ query UserInfoOverview($api: String) {
       nationalId
       fullName
       custodians {
-        fullName
         nationalId
+        fullName
       }
       birthParents {
-        fullName
         nationalId
+        fullName
       }
     }
   }

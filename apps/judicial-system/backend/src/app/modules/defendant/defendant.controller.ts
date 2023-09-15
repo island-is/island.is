@@ -24,7 +24,7 @@ import {
   judgeRule,
   prosecutorRule,
   registrarRule,
-  representativeRule,
+  prosecutorRepresentativeRule,
   assistantRule,
 } from '../../guards'
 import { Case, CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
@@ -46,7 +46,7 @@ export class DefendantController {
   ) {}
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard)
-  @RolesRules(prosecutorRule, representativeRule)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Post()
   @ApiCreatedResponse({
     type: Defendant,
@@ -66,7 +66,7 @@ export class DefendantController {
   @UseGuards(CaseExistsGuard, CaseWriteGuard, DefendantExistsGuard)
   @RolesRules(
     prosecutorRule,
-    representativeRule,
+    prosecutorRepresentativeRule,
     judgeRule,
     registrarRule,
     assistantRule,
@@ -95,7 +95,7 @@ export class DefendantController {
   }
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard, DefendantExistsGuard)
-  @RolesRules(prosecutorRule, representativeRule)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Delete(':defendantId')
   @ApiOkResponse({ description: 'Deletes a defendant' })
   async delete(

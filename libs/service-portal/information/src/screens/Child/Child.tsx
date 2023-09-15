@@ -11,6 +11,7 @@ import {
   NotFound,
   UserInfoLine,
   m,
+  ErrorScreen,
   IntroHeader,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
@@ -40,7 +41,6 @@ type UseParams = {
 const Child = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-  const [showTooltip, setShowTooltip] = useState(false)
   const [useNatRegV3, setUseNatRegV3] = useState(false)
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const userInfo = useUserInfo()
@@ -49,14 +49,6 @@ const Child = () => {
   /* Should show name breakdown tooltip? */
   useEffect(() => {
     const isFlagEnabled = async () => {
-      const ffNameBreakdownEnabled = await featureFlagClient.getValue(
-        `isServicePortalNameBreakdownEnabled`,
-        false,
-      )
-      if (ffNameBreakdownEnabled) {
-        setShowTooltip(ffNameBreakdownEnabled as boolean)
-      }
-
       const ffNatRegV3Enabled = await featureFlagClient.getValue(
         `isserviceportalnationalregistryv3enabled`,
         false,
@@ -89,8 +81,6 @@ const Child = () => {
       (x) => x.nationalId === nationalId,
     ) || null
 
-  console.log(JSON.stringify(data?.nationalRegistryPerson))
-
   const parent1 = child?.birthParents ? child.birthParents[0] : undefined
   const parent2 = child?.birthParents ? child.birthParents[1] : undefined
 
@@ -104,7 +94,7 @@ const Child = () => {
   )
 
   const isChildOrChildOfUser = isChild || isChildOfUser
-  if (!nationalId || error || (!loading && !isChildOrChildOfUser))
+  if (!nationalId || (!loading && !isChildOrChildOfUser && !error))
     return (
       <NotFound
         title={defineMessage({
@@ -113,6 +103,20 @@ const Child = () => {
         })}
       />
     )
+
+  if (error && !loading && !child) {
+    return (
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag={formatMessage(m.errorTitle)}
+        title={formatMessage(m.somethingWrong)}
+        children={formatMessage(m.errorFetchModule, {
+          module: formatMessage(m.familyChild).toLowerCase(),
+        })}
+      />
+    )
+  }
 
   return (
     <ChildView>
@@ -182,18 +186,14 @@ const Child = () => {
             translate="no"
             printable
             content={child?.fullName || '...'}
-            tooltip={
-              showTooltip
-                ? formatNameBreaks(
-                    (child as NationalRegistryName) ?? undefined,
-                    {
-                      givenName: formatMessage(spmm.givenName),
-                      middleName: formatMessage(spmm.middleName),
-                      lastName: formatMessage(spmm.lastName),
-                    },
-                  )
-                : undefined
-            }
+            tooltip={formatNameBreaks(
+              (child as NationalRegistryName) ?? undefined,
+              {
+                givenName: formatMessage(spmm.givenName),
+                middleName: formatMessage(spmm.middleName),
+                lastName: formatMessage(spmm.lastName),
+              },
+            )}
             loading={loading}
             editLink={
               !isChild
@@ -304,27 +304,6 @@ const Child = () => {
             loading={loading}
             printable
           />
-          <Box printHidden>
-            <Divider />
-          </Box>
-          {child?.fate && (
-            <>
-              <UserInfoLine
-                label={formatMessage({
-                  id: 'sp.family:fate',
-                  defaultMessage: 'Afdrif',
-                })}
-                content={
-                  error ? formatMessage(dataNotFoundMessage) : child?.fate || ''
-                }
-                loading={loading}
-                printable
-              />
-              <Box printHidden>
-                <Divider />
-              </Box>
-            </>
-          )}
         </Stack>
         {(parent1 || parent2 || loading) && (
           <Stack component="ul" space={2}>
@@ -354,7 +333,7 @@ const Child = () => {
             </Box>
           </Stack>
         )}
-        {!child?.fate && !error && (
+        {!error && (
           <Stack component="ul" space={2}>
             <TwoColumnUserInfoLine
               title={formatMessage({
