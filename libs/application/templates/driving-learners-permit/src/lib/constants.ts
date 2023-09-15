@@ -51,7 +51,7 @@ export interface LearnersPermitFakeData {
   deprivationDateTo?: string
   deprivationDateFrom?: string
   mentorAge?: string
-  healthRemarks?: YesOrNo
+  remarks?: YesOrNo
 }
 
 export type DrivingLearnersPermitTemplateEvent =

@@ -83,7 +83,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
     let result
     try {
-      result = await this.createLicense(nationalId, answers)
+      result = await this.createLicense(nationalId, answers, auth.authorization)
     } catch (e) {
       this.log('error', 'Creating license failed', {
         e,
@@ -123,13 +123,14 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
   private async createLicense(
     nationalId: string,
     answers: FormValue,
+    auth: string
   ): Promise<NewDrivingLicenseResult> {
     const applicationFor =
       getValueViaPath<'B-full' | 'B-temp'>(answers, 'applicationFor') ??
       'B-full'
 
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
-    const healthRemarks = answers.hasHealthRemarks === 'yes'
+    const remarks = answers.hasHealthRemarks === 'yes'
     const needsQualityPhoto = answers.willBringQualityPhoto === 'yes'
     const juristictionId = answers.juristiction
     const teacher = answers.drivingInstructor as string
@@ -139,11 +140,11 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
         juristictionId: juristictionId as number,
-        needsToPresentHealthCertificate: needsHealthCert || healthRemarks,
+        needsToPresentHealthCertificate: needsHealthCert || remarks,
         needsToPresentQualityPhoto: needsQualityPhoto,
       })
     } else if (applicationFor === 'B-temp') {
-      return this.drivingLicenseService.newTemporaryDrivingLicense(nationalId, {
+      return this.drivingLicenseService.newTemporaryDrivingLicense(nationalId, auth, {
         juristictionId: juristictionId as number,
         needsToPresentHealthCertificate: needsHealthCert,
         needsToPresentQualityPhoto: needsQualityPhoto,

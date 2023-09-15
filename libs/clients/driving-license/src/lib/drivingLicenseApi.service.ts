@@ -89,6 +89,19 @@ export class DrivingLicenseApi {
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
       jwttoken: input.token?.replace('Bearer ', ''),
     })
+
+    if (license?.comments) {
+      const remarks = await this.getRemarksCodeTable()
+      const licenseRemarks: string[] = license.comments.map(
+        (remark) =>
+          remarks?.find((r) => r.index === remark?.nr?.toString())?.name ?? '',
+      )
+      return {
+        ...DrivingLicenseApi.normalizeDrivingLicenseDTO(license),
+        remarks: licenseRemarks,
+      }
+    }
+
     return DrivingLicenseApi.normalizeDrivingLicenseDTO(license)
   }
 
@@ -125,7 +138,7 @@ export class DrivingLicenseApi {
               licenseRemarks.includes(remark.nr || ('' && !remark.athugasemd)),
           )
           .map((remark: v1.TegundAthugasemdaDto) => remark.heiti || '')
-        return { ...license, healthRemarks: filteredRemarks }
+        return { ...license, remarks: filteredRemarks }
       }
 
       return license
@@ -325,24 +338,27 @@ export class DrivingLicenseApi {
   }
 
   public async getHasFinishedOkugerdi(params: {
-    nationalId: string
+    token: string
   }): Promise<boolean> {
-    const res = await this.v1.apiOkuskirteiniKennitalaFinishedokugerdiGet({
-      kennitala: params.nationalId,
+    const res = await this.v5.apiDrivinglicenseV5Hasfinisheddrivingschool3Get({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: params.token.replace('Bearer ', ''),
     })
 
-    return (res.hefurLokidOkugerdi ?? 0) > 0
+    return Boolean(res.hasFinishedDrivingSchool3)
   }
 
   public async getCanApplyForCategoryFull(params: {
     category: string
-    nationalId: string
+    token: string
   }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeBFull>> {
     const response =
-      await this.v2.apiOkuskirteiniKennitalaCanapplyforCategoryFullGet({
-        apiVersion: v2.DRIVING_LICENSE_API_VERSION_V2,
-        kennitala: params.nationalId,
+      await this.v5.apiDrivinglicenseV5CanapplyforCategoryFullGet({
+        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
         category: params.category,
+        jwttoken: params.token,
       })
 
     return {
@@ -354,11 +370,13 @@ export class DrivingLicenseApi {
   }
 
   public async getCanApplyForCategoryTemporary(params: {
-    nationalId: string
+    token: string
   }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeBTemporary>> {
     const response =
-      await this.v1.apiOkuskirteiniKennitalaCanapplyforTemporaryGet({
-        kennitala: params.nationalId,
+      await this.v5.apiDrivinglicenseV5CanapplyforTemporaryGet({
+        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+        jwttoken: params.token,
       })
     return {
       result: !!response.result,
@@ -391,20 +409,22 @@ export class DrivingLicenseApi {
     sendLicenseInMail: boolean
     email: string
     phone: string
+    auth: string
   }) {
     try {
       const response =
-        await this.v2.apiOkuskirteiniApplicationsNewTemporaryPost({
-          apiVersion: v2.DRIVING_LICENSE_API_VERSION_V2,
-          postTemporaryLicenseV2: {
-            kemurMedLaeknisvottord: params.willBringHealthCertificate,
-            kennitala: params.nationalIdApplicant,
-            kemurMedNyjaMynd: params.willBringQualityPhoto,
-            embaetti: params.juristictionId,
-            kennitalaOkukennara: params.nationalIdTeacher,
-            sendaSkirteiniIPosti: params.sendLicenseInMail,
-            netfang: params.email,
-            farsimaNumer: params.phone,
+        await this.v5.apiDrivinglicenseV5ApplicationsNewTemporaryPost({
+          apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+          apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+          postTemporaryLicense: {
+            bringsHealthCertificate: params.willBringHealthCertificate,
+            ssn: params.nationalIdApplicant,
+            bringNewPhoto: params.willBringQualityPhoto,
+            instructorSSN: params.nationalIdTeacher,
+            sendLicenseInMail: params.sendLicenseInMail,
+            email: params.email,
+            gsm: params.phone,
+            authority: params.juristictionId,
           },
         })
       if (!response.result) {
@@ -419,7 +439,7 @@ export class DrivingLicenseApi {
       // The generated api does not map the error correctly so we check if the canApply status has changed to "HAS_B_Category"
       if ((e as { status: number })?.status === 400) {
         const hasTemp = await this.getCanApplyForCategoryTemporary({
-          nationalId: params.nationalIdApplicant,
+          token: params.auth,
         })
         return hasTemp.errorCode === 'HAS_B_CATEGORY'
       }

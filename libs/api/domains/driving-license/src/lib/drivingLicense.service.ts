@@ -242,10 +242,13 @@ export class DrivingLicenseService {
     nationalId: string,
     type: DrivingLicenseApplicationType,
   ): Promise<ApplicationEligibility> {
-    const assessmentResult = await this.getDrivingAssessmentResult(nationalId)
+    const token = user.authorization.toLowerCase().startsWith('bearer')
+      ? user.authorization.split(' ')[1]
+      : user.authorization // removes the Bearer prefix
+    const assessmentResult = await this.getDrivingAssessmentResult(token)
     const hasFinishedSchool =
       await this.drivingLicenseApi.getHasFinishedOkugerdi({
-        nationalId,
+        token
       })
 
     const residenceHistory =
@@ -256,7 +259,7 @@ export class DrivingLicenseService {
     const localRecidencyHistory = hasResidenceHistory(residenceHistory)
     const localRecidency = hasLocalResidence(residenceHistory)
 
-    const canApply = await this.canApplyFor(nationalId, type)
+    const canApply = await this.canApplyFor(type, token)
 
     const requirements: ApplicationEligibilityRequirement[] = [
       ...(type === 'B-full'
@@ -333,15 +336,15 @@ export class DrivingLicenseService {
     }
   }
 
-  async canApplyFor(nationalId: string, type: 'B-full' | 'B-temp') {
+  async canApplyFor(type: 'B-full' | 'B-temp', token: string) {
     if (type === 'B-full') {
       return this.drivingLicenseApi.getCanApplyForCategoryFull({
-        nationalId,
         category: 'B',
+        token
       })
     } else if (type === 'B-temp') {
       return this.drivingLicenseApi.getCanApplyForCategoryTemporary({
-        nationalId,
+        token
       })
     } else {
       throw new Error('unhandled license type')
@@ -390,6 +393,7 @@ export class DrivingLicenseService {
 
   async newTemporaryDrivingLicense(
     nationalId: User['nationalId'],
+    auth: User['authorization'],
     input: NewTemporaryDrivingLicenseInput,
   ): Promise<NewDrivingLicenseResult> {
     const success =
@@ -402,6 +406,7 @@ export class DrivingLicenseService {
         sendLicenseInMail: false,
         email: input.email,
         phone: input.phone,
+        auth
       })
 
     return {
