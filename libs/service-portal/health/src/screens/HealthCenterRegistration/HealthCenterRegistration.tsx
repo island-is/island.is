@@ -8,9 +8,7 @@ import {
   AccordionItem,
   Table as T,
   Button,
-  ModalBase,
-  Icon,
-  Input,
+  FilterInput,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
@@ -54,8 +52,10 @@ const HealthCenterRegistration = () => {
   const [filter, setFilter] = useState('')
   const [loadingTransfer, setLoadingTransfer] = useState(false)
   const [errorTransfer, setErrorTransfer] = useState(false)
-  const [selectedHealthCenter, setSelectedHealthCenter] =
-    useState<SelectedHealthCenter | null>(null)
+  const [
+    selectedHealthCenter,
+    setSelectedHealthCenter,
+  ] = useState<SelectedHealthCenter | null>(null)
 
   const [transferHealthCenter] = useRightsPortalTransferHealthCenterMutation({
     onError: (e) => {
@@ -128,8 +128,13 @@ const HealthCenterRegistration = () => {
   if (loading)
     return (
       <Box paddingY={2}>
-        <Stack space={2}>
-          <CardLoader />
+        <Stack space={4}>
+          <SkeletonLoader
+            borderRadius="large"
+            space={2}
+            height={40}
+            repeat={3}
+          />
         </Stack>
       </Box>
     )
@@ -196,19 +201,19 @@ const HealthCenterRegistration = () => {
       />
 
       <Box className={styles.filterWrapperStyle} marginBottom={3}>
-        <Input
-          size="sm"
-          onChange={(e) => setFilter(e.target.value)}
+        <FilterInput
+          onChange={(val) => setFilter(val)}
           name="filter"
           value={filter}
           placeholder={formatMessage(
             messages.healthCenterListSearchPlaceholder,
           )}
+          backgroundColor="blue"
         />
       </Box>
 
       {Object.keys(filteredHealthCenters).length ? (
-        <Accordion>
+        <Accordion dividerOnTop={false}>
           {Object.keys(filteredHealthCenters).map((region, key) => {
             const name = formatHealthCenterName(region)
             const group = filteredHealthCenters[region]

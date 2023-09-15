@@ -64,12 +64,14 @@ export const healthModule: PortalModule = {
     {
       name: hm.healthCenterRegistrationTitle,
       path: HealthPaths.HealthCenterRegistration,
+      key: 'HealthTransfer',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <HealthCenterRegistration />,
     },
     {
       name: hm.dentistRegisterationPageTitle,
       path: HealthPaths.HealthDentistRegistration,
+      key: 'HealthTransfer',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <DentistRegistration />,
     },

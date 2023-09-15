@@ -10,6 +10,10 @@ export const messages = defineMessages({
     defaultMessage:
       'Sjúkratryggingar greiða hluta af kostnaði við meðferð hjá þjálfara.',
   },
+  at: {
+    id: 'sp.health:at',
+    defaultMessage: 'hjá',
+  },
   dentistsTitle: {
     id: 'sp.health:dentists-title',
     defaultMessage: 'Tannlæknar',
@@ -451,6 +455,6 @@ export const messages = defineMessages({
   },
   healthRegisterModalDecline: {
     id: 'sp.health:health-registration-modal-decline',
-    defaultMessage: 'Nei, fara tilbaka',
+    defaultMessage: 'Nei, fara til baka',
   },
 })

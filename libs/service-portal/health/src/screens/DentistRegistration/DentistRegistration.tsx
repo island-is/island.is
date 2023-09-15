@@ -2,6 +2,7 @@ import {
   AlertMessage,
   Box,
   Button,
+  FilterInput,
   Input,
   Pagination,
   SkeletonLoader,
@@ -38,8 +39,10 @@ export const DentistRegistration = () => {
   const [page, setPage] = useState(DEFAULT_PAGE_NUMBER)
   const [searchTerm, setSearchTerm] = useState('')
   const [activeSearch, setActiveSearch] = useState('')
-  const [selectedDentist, setSelectedDentist] =
-    useState<SelectedDentist | null>(null)
+  const [
+    selectedDentist,
+    setSelectedDentist,
+  ] = useState<SelectedDentist | null>(null)
   const [hoverId, setHoverId] = useState(0)
   const [errorTransfering, setErrorTransfering] = useState(false)
   const errorBoxRef = useRef<HTMLDivElement>(null)
@@ -49,24 +52,26 @@ export const DentistRegistration = () => {
     loading: statusLoading,
   } = useGetDentistStatusQuery()
 
-  const [registerDentist, { loading: loadingTranser }] =
-    useRegisterDentistMutation({
-      onError: () => {
+  const [
+    registerDentist,
+    { loading: loadingTranser },
+  ] = useRegisterDentistMutation({
+    onError: () => {
+      setErrorTransfering(true)
+    },
+    onCompleted: (data) => {
+      if (data.rightsPortalRegisterDentist.success) {
+        navigate(`${HealthPaths.HealthDentists}?s=t`)
+      } else {
         setErrorTransfering(true)
+      }
+    },
+    variables: {
+      input: {
+        id: selectedDentist?.id ?? 0,
       },
-      onCompleted: (data) => {
-        if (data.rightsPortalRegisterDentist.success) {
-          navigate(`${HealthPaths.HealthDentists}?s=t`)
-        } else {
-          setErrorTransfering(true)
-        }
-      },
-      variables: {
-        input: {
-          id: selectedDentist?.id ?? 0,
-        },
-      },
-    })
+    },
+  })
 
   useEffect(() => {
     if (errorTransfering && errorBoxRef.current) {
@@ -127,7 +132,6 @@ export const DentistRegistration = () => {
     return (
       <Box paddingY={2}>
         <Stack space={4}>
-          <CardLoader />
           <SkeletonLoader
             borderRadius="large"
             space={2}
@@ -158,15 +162,12 @@ export const DentistRegistration = () => {
         </Box>
       )}
       <Box marginBottom={3} display="flex" justifyContent="flexStart">
-        <Input
+        <FilterInput
           name="filter"
           placeholder={formatMessage(m.searchPlaceholder)}
-          icon={{
-            name: 'search',
-            type: 'outline',
-          }}
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(val) => setSearchTerm(val)}
+          backgroundColor="blue"
         />
       </Box>
 
@@ -179,7 +180,7 @@ export const DentistRegistration = () => {
         id={'dentistRegisterModal'}
         title={`${formatMessage(messages.dentistModalTitle)} ${
           selectedDentist?.name
-        } hjá ${selectedDentist?.practice}`}
+        } ${formatMessage(messages.at)} ${selectedDentist?.practice}`}
         description={formatMessage(messages.dentistModalDescription)}
         isVisible={!!selectedDentist}
         buttonLoading={loadingTranser}

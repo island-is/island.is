@@ -21,20 +21,24 @@ export const healthNavigation: PortalNavigationItem = {
     {
       name: m.dentists,
       path: HealthPaths.HealthDentists,
-    },
-    {
-      name: messages.dentistRegisterationPageTitle,
-      path: HealthPaths.HealthDentistRegistration,
-      navHide: true,
+      children: [
+        {
+          name: messages.dentistRegisterationPageTitle,
+          path: HealthPaths.HealthDentistRegistration,
+          navHide: true,
+        },
+      ],
     },
     {
       name: m.healthCenter,
       path: HealthPaths.HealthCenter,
-    },
-    {
-      name: messages.healthCenterRegistrationTitle,
-      path: HealthPaths.HealthCenterRegistration,
-      navHide: true,
+      children: [
+        {
+          name: messages.healthCenterRegistrationTitle,
+          path: HealthPaths.HealthCenterRegistration,
+          navHide: true,
+        },
+      ],
     },
   ],
   description: m.healthDescription,

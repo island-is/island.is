@@ -156,7 +156,7 @@ export class RightsPortalResolver {
     return this.rightsPortalService.getDentistStatus(user)
   }
 
-  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
+  @FeatureFlag(Features.servicePortalTransferHealthCenter)
   @Scopes(ApiScope.health)
   @Mutation(() => RegisterDentistResponse, {
     name: 'rightsPortalRegisterDentist',

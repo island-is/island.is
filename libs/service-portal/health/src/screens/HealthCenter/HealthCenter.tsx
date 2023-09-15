@@ -1,4 +1,7 @@
+import { useEffect, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { FeatureFlagClient } from '@island.is/feature-flags'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import {
   m,
   ErrorScreen,
@@ -30,6 +33,22 @@ const HEALTH_CENTER_LOGO_PATH = 'Sjúkratryggingar'
 const HealthCenter = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
+
+  // Feature flag for transfer option.
+  const [isTransferAvailable, setIsTransferAvailable] = useState(false)
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isServicePortalHealthTransferPageEnabled`,
+        false,
+      )
+      if (ffEnabled) {
+        setIsTransferAvailable(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+  }, [])
 
   const { loading, error, data } = useGetHealthCenterQuery({
     variables: {
@@ -100,11 +119,14 @@ const HealthCenter = () => {
               title={formatMessage(messages.myRegistration)}
               label={formatMessage(messages.healthCenterTitle)}
               content={healthCenterData.current.healthCenterName ?? ''}
-              editLink={{
-                url: HealthPaths.HealthCenterRegistration,
-                title: hm.changeRegistration,
-                icon: 'open',
-              }}
+              editLink={
+                isTransferAvailable
+                  ? {
+                      url: HealthPaths.HealthCenterRegistration,
+                      title: hm.changeRegistration,
+                    }
+                  : undefined
+              }
             />
             <Divider />
             <UserInfoLine
