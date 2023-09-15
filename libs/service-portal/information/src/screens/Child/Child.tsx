@@ -304,27 +304,6 @@ const Child = () => {
             loading={loading}
             printable
           />
-          <Box printHidden>
-            <Divider />
-          </Box>
-          {child?.fate && (
-            <>
-              <UserInfoLine
-                label={formatMessage({
-                  id: 'sp.family:fate',
-                  defaultMessage: 'Afdrif',
-                })}
-                content={
-                  error ? formatMessage(dataNotFoundMessage) : child?.fate || ''
-                }
-                loading={loading}
-                printable
-              />
-              <Box printHidden>
-                <Divider />
-              </Box>
-            </>
-          )}
         </Stack>
         {(parent1 || parent2 || loading) && (
           <Stack component="ul" space={2}>
@@ -354,7 +333,7 @@ const Child = () => {
             </Box>
           </Stack>
         )}
-        {!child?.fate && !error && (
+        {!error && (
           <Stack component="ul" space={2}>
             <TwoColumnUserInfoLine
               title={formatMessage({
