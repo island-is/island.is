@@ -14,7 +14,7 @@ export const m = defineMessages({
     id: 'portals:internal-server-error-message',
   },
   notFound: {
-    defaultMessage: 'Síða finnst ekki',
+    defaultMessage: 'Síðan finnst ekki',
     id: 'portals:not-found',
   },
   notFoundMessage: {

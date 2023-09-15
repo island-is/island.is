@@ -2,7 +2,7 @@ import { Colors } from '@island.is/island-ui/theme'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { ReactNode } from 'react'
 
-import { Box, Button, Icon, Tag, Text } from '../..'
+import { Box, Icon, Tag, Text } from '../..'
 import { Icon as IconType } from '../IconRC/iconMap'
 
 import * as styles from './ProblemTemplate.css'
@@ -17,10 +17,6 @@ export type ProblemTemplateBaseProps = {
   imgAlt?: string
   noBorder?: boolean
   titleSize?: 'h1' | 'h2'
-  buttonLink?: {
-    text: string
-    onClick(): void
-  }
   /**
    * If true, the out most container will be expanded to fill the available space.
    */
@@ -79,7 +75,6 @@ export const ProblemTemplate = ({
   imgSrc,
   imgAlt = '',
   noBorder,
-  buttonLink,
   showIcon,
   dataTestId,
   expand,
@@ -127,13 +122,6 @@ export const ProblemTemplate = ({
         {title}
       </Text>
       <Text whiteSpace="preLine">{message}</Text>
-      {buttonLink && (
-        <Box marginY={1}>
-          <Button variant="ghost" onClick={buttonLink.onClick} size="medium">
-            {buttonLink.text}
-          </Button>
-        </Box>
-      )}
       {imgSrc && (
         <Box marginTop={[2, 4]}>
           <img src={imgSrc} alt={imgAlt} className={styles.img} />

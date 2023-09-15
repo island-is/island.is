@@ -18,7 +18,6 @@ export const NotFound = ({
   tag,
   imgSrc,
   imgAlt,
-  buttonLink,
   noBorder,
   dataTestId,
   expand,
@@ -46,7 +45,6 @@ export const NotFound = ({
       }
       imgSrc={imgSrc ?? './assets/images/nodata.svg'}
       imgAlt={imgAlt ?? title}
-      buttonLink={buttonLink}
       noBorder={noBorder}
       dataTestId={dataTestId}
       expand={expand}

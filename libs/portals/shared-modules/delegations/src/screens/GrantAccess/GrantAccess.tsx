@@ -61,6 +61,9 @@ const GrantAccess = () => {
 
   const [getIdentity, { data, loading: queryLoading, error }] =
     useIdentityLazyQuery({
+      onError: (error) => {
+        setFormError(error)
+      },
       onCompleted: (data) => {
         if (!data.identity) {
           noUserFoundToast()

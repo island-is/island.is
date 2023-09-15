@@ -70,7 +70,6 @@ export const Problem = ({
   imgSrc,
   imgAlt,
   noBorder,
-  buttonLink,
   dataTestId,
   logError = true,
   expand,
@@ -83,7 +82,6 @@ export const Problem = ({
     imgSrc,
     imgAlt,
     noBorder,
-    buttonLink,
     dataTestId,
     expand,
   }
@@ -122,7 +120,7 @@ export const Problem = ({
               {...(organization?.title
                 ? { tag: organization.title }
                 : {
-                    icon: 'warning',
+                    showIcon: true,
                   })}
               size={size}
               dataTestId={dataTestId}
