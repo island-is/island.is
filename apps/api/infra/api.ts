@@ -234,6 +234,7 @@ export const serviceSetup = (services: {
         '@rsk.is/prokura',
         '@rsk.is/prokura:admin',
       ]),
+      LICENSES_FAILSAFE: 'true',
     })
 
     .secrets({

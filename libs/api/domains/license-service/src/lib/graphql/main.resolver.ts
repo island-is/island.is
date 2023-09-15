@@ -71,6 +71,8 @@ export class VerifyPkPassInput {
   data!: string
 }
 
+const FAILSAFE = process.env.LICENSES_FAILSAFE === 'true'
+
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal, ApiScope.licenses)
 @Resolver()
@@ -86,6 +88,10 @@ export class MainResolver {
     locale: Locale = 'is',
     @Args('input', { nullable: true }) input?: GetGenericLicensesInput,
   ) {
+    if (FAILSAFE) {
+      return []
+    }
+
     const licenses = await this.licenseServiceService.getAllLicenses(
       user,
       locale,
@@ -107,6 +113,9 @@ export class MainResolver {
     locale: Locale = 'is',
     @Args('input') input: GetGenericLicenseInput,
   ) {
+    if (FAILSAFE) {
+      return null
+    }
     const license = await this.licenseServiceService.getLicense(
       user,
       locale,
@@ -123,6 +132,9 @@ export class MainResolver {
     locale: Locale = 'is',
     @Args('input') input: GeneratePkPassInput,
   ): Promise<GenericPkPass> {
+    if (FAILSAFE) {
+      return { pkpassUrl: '' }
+    }
     const { pkpassUrl } = await this.licenseServiceService.generatePkPass(
       user,
       locale,
@@ -139,6 +151,10 @@ export class MainResolver {
     locale: Locale = 'is',
     @Args('input') input: GeneratePkPassInput,
   ): Promise<GenericPkPassQrCode> {
+    if (FAILSAFE) {
+      return { pkpassQRCode: '' }
+    }
+
     const { pkpassQRCode } =
       await this.licenseServiceService.generatePkPassQrCode(
         user,
@@ -158,6 +174,10 @@ export class MainResolver {
     locale: Locale = 'is',
     @Args('input') input: VerifyPkPassInput,
   ): Promise<GenericPkPassVerification> {
+    if (FAILSAFE) {
+      return { valid: false }
+    }
+
     const verification = await this.licenseServiceService.verifyPkPass(
       user,
       locale,
