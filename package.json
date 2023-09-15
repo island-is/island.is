@@ -289,7 +289,7 @@
     "winston-cloudwatch": "3.1.1",
     "winston-transport": "4.5.0",
     "xlsx": "0.17.0",
-    "xml2js": "0.4.23",
+    "xml2js": "0.6.2",
     "xstate": "4.20.0",
     "yargs": "17.7.2",
     "zod": "^3.21.2",
