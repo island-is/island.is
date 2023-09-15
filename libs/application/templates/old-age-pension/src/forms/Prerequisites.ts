@@ -1,6 +1,7 @@
 import {
   buildCustomField,
   buildDataProviderItem,
+  buildDataProviderPermissionItem,
   buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
@@ -45,31 +46,6 @@ export const PrerequisitesForm: Form = buildForm({
       title: oldAgePensionFormMessage.pre.prerequisitesSection,
       children: [
         buildSubSection({
-          id: 'forInformation',
-          title: oldAgePensionFormMessage.pre.forInfoSubSection,
-          children: [
-            buildMultiField({
-              id: 'preInfo',
-              title: oldAgePensionFormMessage.pre.forInfoSubSection,
-              children: [
-                buildDescriptionField({
-                  id: 'preInfo.descriptionOne',
-                  title: '',
-                  description: oldAgePensionFormMessage.pre.forInfoDescription,
-                }),
-                // Accordion card here
-                buildDescriptionField({
-                  id: 'preInfo.descriptionTwo',
-                  space: 4,
-                  title: '',
-                  description:
-                    oldAgePensionFormMessage.pre.forInfoSecondDescription,
-                }),
-              ],
-            }),
-          ],
-        }),
-        buildSubSection({
           id: 'externalData',
           title: oldAgePensionFormMessage.pre.externalDataSubSection,
           children: [
@@ -79,21 +55,17 @@ export const PrerequisitesForm: Form = buildForm({
               checkboxLabel: oldAgePensionFormMessage.pre.checkboxProvider,
               dataProviders: [
                 buildDataProviderItem({
-                  provider: UserProfileApi,
-                  title:
-                    oldAgePensionFormMessage.pre.userProfileInformationTitle,
-                  subTitle:
-                    oldAgePensionFormMessage.pre.userProfileInformationSubTitle,
-                }),
-                buildDataProviderItem({
                   provider: NationalRegistryUserApi,
                   title: oldAgePensionFormMessage.pre.skraInformationTitle,
                   subTitle:
                     oldAgePensionFormMessage.pre.skraInformationSubTitle,
                 }),
                 buildDataProviderItem({
-                  provider: NationalRegistrySpouseApi,
-                  title: '',
+                  provider: UserProfileApi,
+                  title:
+                    oldAgePensionFormMessage.pre.userProfileInformationTitle,
+                  subTitle:
+                    oldAgePensionFormMessage.pre.userProfileInformationSubTitle,
                 }),
                 buildDataProviderItem({
                   provider: ChildrenCustodyInformationApi,
@@ -108,6 +80,14 @@ export const PrerequisitesForm: Form = buildForm({
                   title: '',
                 }),
                 buildDataProviderItem({
+                  provider: NationalRegistrySpouseApi,
+                  title: '',
+                }),
+                buildDataProviderItem({
+                  provider: NationalRegistryCohabitantsApi,
+                  title: '',
+                }),
+                buildDataProviderItem({
                   provider: SocialInsuranceAdministrationTestApi,
                   title:
                     oldAgePensionFormMessage.pre
@@ -115,6 +95,20 @@ export const PrerequisitesForm: Form = buildForm({
                   subTitle:
                     oldAgePensionFormMessage.pre
                       .socialInsuranceAdministrationInformationSubTitle,
+                }),
+                buildDataProviderPermissionItem({
+                  id: 'link',
+                  title: '',
+                  subTitle:
+                    oldAgePensionFormMessage.pre
+                      .socialInsuranceAdministrationInformationSubTitleMoreInfo,
+                }),
+                buildDataProviderPermissionItem({
+                  id: 'incomes',
+                  title: '',
+                  subTitle:
+                    oldAgePensionFormMessage.pre
+                      .socialInsuranceAdministrationInformationSubTitleAboutIncomes,
                 }),
               ],
             }),
