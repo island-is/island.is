@@ -87,4 +87,40 @@ export class OldAgePensionService extends BaseTemplateApiService {
 
     return true
   }
+
+  async sendApplication({
+    application,
+    params = undefined,
+  }: TemplateApiModuleActionProps) {
+    try {
+
+      console.log('-------------- OLGD AGE  sendApplication  -----------------')
+
+
+
+
+      /*const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
+        application,
+        periods,
+        attachments,
+        false, // put false in testData as this is not dummy request
+        this.checkActionName(application, actionNameFromParams),
+      )
+
+*/
+
+
+
+      console.log(application.answers)
+      console.log(' XXXXXXXXXXXXXXXXXXXXXXXXXXXX')
+
+
+      const response = undefined // await this.siaClientService.()
+
+      return response
+    } catch (e) {
+      this.logger.error('Failed to send the old age pension application', e)
+      throw this.parseErrors(e)
+    }
+  }
 }

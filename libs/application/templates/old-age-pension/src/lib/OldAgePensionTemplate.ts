@@ -16,6 +16,7 @@ import {
   NationalRegistrySpouseApi,
   ChildrenCustodyInformationApi,
   InstitutionNationalIds,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import {
   coreMessages,
@@ -112,6 +113,10 @@ const OldAgePensionTemplate: ApplicationTemplate<
             },
           },
           progress: 0.25,
+          onExit: defineTemplateApi({
+            action: 'sendApplication',
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
