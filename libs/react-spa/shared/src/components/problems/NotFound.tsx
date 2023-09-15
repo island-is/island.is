@@ -1,8 +1,8 @@
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { TestSupport } from '@island.is/island-ui/utils'
 import { useLocale } from '@island.is/localization'
-import { ProblemTemplate } from '@island.is/island-ui/core'
+import { Button, ProblemTemplate } from '@island.is/island-ui/core'
 
 import { CommonProblemProps } from './problem.types'
 import { m } from '../../lib/messages'
@@ -25,27 +25,27 @@ export const NotFound = ({
   titleSize,
 }: NotFoundProps & TestSupport) => {
   const { formatMessage } = useLocale()
+  const navigate = useNavigate()
   const { pathname } = useLocation()
   const title = titleStr ?? formatMessage(m.notFound)
-
-  const imgProps = {
-    src: imgSrc ?? './assets/images/nodata.svg',
-    alt: imgAlt ?? title,
-  }
 
   return (
     <ProblemTemplate
       variant="error"
-      {...(tag ? { tag } : { icon: 'error' })}
+      {...(tag ? { tag } : { showIcon: true })}
       title={title}
       message={
         message ??
         formatMessage(m.notFoundMessage, {
-          path: pathname,
+          link: (
+            <Button variant="text" onClick={() => navigate('/')}>
+              {formatMessage(m.notFoundMessageLink)}
+            </Button>
+          ),
         })
       }
-      imgSrc={imgProps.src}
-      imgAlt={imgProps.alt}
+      imgSrc={imgSrc ?? './assets/images/nodata.svg'}
+      imgAlt={imgAlt ?? title}
       buttonLink={buttonLink}
       noBorder={noBorder}
       dataTestId={dataTestId}

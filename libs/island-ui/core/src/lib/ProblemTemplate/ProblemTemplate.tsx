@@ -1,5 +1,6 @@
 import { Colors } from '@island.is/island-ui/theme'
 import { TestSupport } from '@island.is/island-ui/utils'
+import { ReactNode } from 'react'
 
 import { Box, Button, Icon, Tag, Text } from '../..'
 import { Icon as IconType } from '../IconRC/iconMap'
@@ -11,7 +12,7 @@ type Variant = 'info' | 'error' | 'warning'
 export type ProblemTemplateBaseProps = {
   variant: Variant
   title: string
-  message: string
+  message: string | ReactNode
   imgSrc?: string
   imgAlt?: string
   noBorder?: boolean
@@ -101,7 +102,7 @@ export const ProblemTemplate = ({
             },
       )}
       paddingY={[5, 10]}
-      paddingX={3}
+      paddingX={[3, 3, 5]}
       textAlign="center"
       dataTestId={dataTestId}
       {...(expand && {

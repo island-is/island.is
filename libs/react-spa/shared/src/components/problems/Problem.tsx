@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
 
-import { m, useOrganizationStore } from '@island.is/portals/core'
+import { useOrganizationStore } from '@island.is/portals/core'
 import { ProblemTemplate } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { useLocale } from '@island.is/localization'
@@ -9,10 +9,9 @@ import { getOrganizationSlugFromError } from '../../utils/getOrganizationSlugFro
 import { ThirdPartyServiceError } from './ThirdPartyServiceError'
 import { NotFound } from './NotFound'
 import { InternalServiceError } from './InternalServiceError'
-import { CommonProblemProps } from './problem.types'
+import { CommonProblemProps, ProblemSize } from './problem.types'
 import { NoData } from './NoData'
-
-export type ProblemSize = 'small' | 'large'
+import { m } from '../../lib/messages'
 
 type ProblemBaseProps = {
   /**
@@ -79,7 +78,6 @@ export const Problem = ({
   const { formatMessage } = useLocale()
 
   const defaultProps = {
-    tag,
     title,
     message,
     imgSrc,
@@ -91,8 +89,8 @@ export const Problem = ({
   }
 
   const fallbackProps = {
-    title: title ?? formatMessage(m.errorPageHeading),
-    message: message ?? formatMessage(m.errorPageText),
+    title: title ?? formatMessage(m.internalServerErrorTitle),
+    message: message ?? formatMessage(m.internalServerErrorMessage),
     withIcon: true,
     variant: 'error',
     dataTestId,
@@ -133,16 +131,22 @@ export const Problem = ({
           )
         }
 
-        return <InternalServiceError {...defaultProps} size={size} />
+        return (
+          <InternalServiceError
+            {...defaultProps}
+            size={size}
+            tag={tag ?? formatMessage(m.error)}
+          />
+        )
       }
 
       return <ProblemTemplate {...fallbackProps} />
 
     case 'not_found':
-      return <NotFound {...defaultProps} />
+      return <NotFound {...defaultProps} tag={tag ?? formatMessage(m.error)} />
 
     case 'no_data':
-      return <NoData {...defaultProps} size={size} />
+      return <NoData {...defaultProps} size={size} tag={tag} />
 
     default:
       return <ProblemTemplate {...fallbackProps} />

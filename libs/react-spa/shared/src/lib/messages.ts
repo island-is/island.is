@@ -1,14 +1,17 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
-  errorPageHeading: {
-    defaultMessage: 'Eitthvað fór úrskeiðis',
-    id: 'portals:error-page-heading',
+  error: {
+    defaultMessage: 'Villa',
+    id: 'portals:error',
   },
-  errorPageText: {
-    defaultMessage:
-      'Ekki næst samband við vefþjón. Tækniteymið hefur fengið skilaboð og mun skoða málið án tafar.',
-    id: 'portals:error-page-text',
+  internalServerErrorTitle: {
+    defaultMessage: 'Þjónusta liggur tímabundið niðri',
+    id: 'portals:internal-server-error-title',
+  },
+  internalServerErrorMessage: {
+    defaultMessage: 'Vinsamlegast reyndu aftur síðar',
+    id: 'portals:internal-server-error-message',
   },
   notFound: {
     defaultMessage: 'Síða finnst ekki',
@@ -16,8 +19,12 @@ export const m = defineMessages({
   },
   notFoundMessage: {
     defaultMessage:
-      'Ekkert fannst á slóðinni {path}.\nMögulega hefur síðan verið fjarlægð eða færð til',
+      'Hún gæti hafa verið fjarlægð eða færð til. Prófaðu að fara {link}.',
     id: 'portals:not-found-msg',
+  },
+  notFoundMessageLink: {
+    defaultMessage: ' til baka á yfirlitið',
+    id: 'portals:not-found-msg-link',
   },
   thirdPartyServiceErrorTitle: {
     defaultMessage: 'Samband næst ekki',
@@ -28,12 +35,12 @@ export const m = defineMessages({
     id: 'portals:third-party-service-error-message',
   },
   noDataTitle: {
+    defaultMessage: 'Engin gögn til að birta',
     id: 'portals:no-data-title',
-    defaultMessage: 'Engin gögn fundust',
   },
   noDataMessage: {
     id: 'portals:no-data-message',
     defaultMessage:
-      'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
+      'Ef þú telur þig eiga gögn sem ættu að birtast hér,\nvinsamlegast hafðu samband við þjónustuaðila.',
   },
 })

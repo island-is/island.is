@@ -306,7 +306,7 @@ export const AuthProvider = ({
   return (
     <AuthContext.Provider value={context}>
       {error ? (
-        <AuthErrorScreen basePath={basePath} error={error} />
+        <AuthErrorScreen signIn={signIn} />
       ) : isLoading ? (
         <LoadingScreen ariaLabel="Er að vinna í innskráningu" />
       ) : (

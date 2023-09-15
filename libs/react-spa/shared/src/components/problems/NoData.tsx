@@ -6,10 +6,9 @@ import {
 } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { useLocale } from '@island.is/localization'
-import { CommonProblemProps } from './problem.types'
+import { CommonProblemProps, ProblemSize } from './problem.types'
 
 import { m } from '../../lib/messages'
-import { ProblemSize } from './Problem'
 
 type NoDataProps = {
   title?: string
@@ -31,19 +30,16 @@ export const NoData = ({
   const { formatMessage } = useLocale()
   const title = titleStr ?? formatMessage(m.noDataTitle)
 
-  const imgProps = {
-    src: imgSrc ?? './assets/images/nodata.svg',
-    alt: imgAlt ?? title,
-  }
-
-  // TODO fix UI when design is ready
-  if (size === 'small') {
+  // Custom empty state if imgSrc, titleStr and message are provided
+  if (imgSrc && titleStr && message) {
     return (
       <Box
         dataTestId={dataTestId}
         display="flex"
         alignItems="center"
-        columnGap={[2, 4]}
+        justifyContent="center"
+        flexDirection={['columnReverse', 'columnReverse', 'row']}
+        columnGap={[2, 4, 8, 8, 20]}
         className={styles.container(
           noBorder
             ? {
@@ -54,17 +50,16 @@ export const NoData = ({
               },
         )}
         paddingY={[5, 10]}
-        paddingX={3}
+        paddingX={[3, 3, 5]}
+        rowGap={[7, 7, 0]}
       >
-        <Box marginTop={1}>
-          <img {...imgProps} className={styles.img} />
-        </Box>
-        <Box display="flex" flexDirection="column" rowGap={2}>
+        <Box display="flex" flexDirection="column" rowGap={1}>
           <Text variant="h2" as="h2" color="dark400">
             {title}
           </Text>
           <Text whiteSpace="preLine">{message}</Text>
         </Box>
+        <img src={imgSrc} alt={imgAlt ?? title} className={styles.img} />
       </Box>
     )
   }
@@ -72,11 +67,9 @@ export const NoData = ({
   return (
     <ProblemTemplate
       variant="info"
-      {...(tag ? { tag } : { icon: 'info' })}
+      {...(tag ? { tag } : { showIcon: true })}
       title={title}
       message={message ?? formatMessage(m.noDataMessage)}
-      imgSrc={imgProps.src}
-      imgAlt={imgProps.alt}
       dataTestId={dataTestId}
       noBorder={noBorder}
       titleSize="h2"

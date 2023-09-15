@@ -6,8 +6,8 @@ import {
   ProblemTemplateProps,
 } from '@island.is/island-ui/core'
 
+import { ProblemSize } from './problem.types'
 import { m } from '../../lib/messages'
-import { ProblemSize } from './Problem'
 
 type ThirdPartyServiceErrorProps = {
   tag?: string
@@ -33,7 +33,7 @@ export const ThirdPartyServiceError = ({
   return (
     <ProblemTemplate
       variant="warning"
-      {...(tag ? { tag } : { icon: 'warning' })}
+      {...(tag ? { tag } : { showIcon: true })}
       {...errorTemplateProps}
       {...rest}
       titleSize="h2"

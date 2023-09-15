@@ -10,3 +10,5 @@ export type CommonProblemProps = Pick<
   | 'expand'
   | 'titleSize'
 >
+
+export type ProblemSize = 'small' | 'large'
