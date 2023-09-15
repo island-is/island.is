@@ -65,7 +65,11 @@ const HealthCenterRegistration = () => {
     },
     onCompleted: (data) => {
       if (data.rightsPortalTransferHealthCenter.success) {
-        navigate(`${HealthPaths.HealthCenter}?s=t`)
+        navigate(`${HealthPaths.HealthCenter}`, {
+          state: {
+            transferSuccess: true,
+          },
+        })
       } else {
         setSelectedHealthCenter(null)
         setLoadingTransfer(false)

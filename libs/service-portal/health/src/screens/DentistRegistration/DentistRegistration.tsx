@@ -61,7 +61,11 @@ export const DentistRegistration = () => {
     },
     onCompleted: (data) => {
       if (data.rightsPortalRegisterDentist.success) {
-        navigate(`${HealthPaths.HealthDentists}?s=t`)
+        navigate(`${HealthPaths.HealthDentists}`, {
+          state: {
+            transferSuccess: true,
+          },
+        })
       } else {
         setErrorTransfering(true)
       }

@@ -8,6 +8,7 @@ import {
   EmptyState,
   UserInfoLine,
 } from '@island.is/service-portal/core'
+import { useLocation } from 'react-router-dom'
 import { useGetDentistsQuery } from './Dentists.generated'
 import {
   AlertMessage,
@@ -29,6 +30,7 @@ import { HealthPaths } from '../../lib/paths'
 const Dentists = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
+  const location = useLocation()
 
   // Feature flag for transfer option.
   const [isTransferAvailable, setIsTransferAvailable] = useState(false)
@@ -58,14 +60,14 @@ const Dentists = () => {
         dateTo: selectedDateTo,
       },
     },
+    fetchPolicy: 'no-cache',
   })
 
   const { dentist, history } = data?.rightsPortalUserDentistRegistration ?? {}
   const canRegister = dentist?.status?.canRegister ?? false
 
   // Check if the user was transfered from another health center
-  // if s === t then we display a success message
-  const wasSuccessfulTransfer = useQueryParam('s') === 't'
+  const wasSuccessfulTransfer = location?.state?.transferSuccess
 
   if (error && !loading) {
     return (

@@ -8,6 +8,7 @@ import {
   EmptyState,
   UserInfoLine,
 } from '@island.is/service-portal/core'
+import { useLocation } from 'react-router-dom'
 import { useGetHealthCenterQuery } from './HealthCenter.generated'
 import {
   AlertMessage,
@@ -33,6 +34,7 @@ const HEALTH_CENTER_LOGO_PATH = 'Sjúkratryggingar'
 const HealthCenter = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
+  const location = useLocation()
 
   // Feature flag for transfer option.
   const [isTransferAvailable, setIsTransferAvailable] = useState(false)
@@ -57,13 +59,13 @@ const HealthCenter = () => {
         dateTo: DEFAULT_DATE_TO,
       },
     },
+    fetchPolicy: 'no-cache',
   })
 
   const healthCenterData = data?.rightsPortalUserHealthCenterRegistration
 
   // Check if the user was transfered from another health center
-  // if s === t then we display a success message
-  const wasSuccessfulTransfer = useQueryParam('s') === 't'
+  const wasSuccessfulTransfer = location?.state?.transferSuccess
 
   if (error && !loading) {
     return (
