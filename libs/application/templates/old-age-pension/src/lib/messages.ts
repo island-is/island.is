@@ -72,7 +72,7 @@ export const oldAgePensionFormMessage: MessageDir = {
     skraInformationSubTitle: {
       id: 'oap.application:prerequisites.national.registry.subtitle',
       defaultMessage:
-        'Sækir upplýsingar um þig, maka og börn frá Þjóðskrá. Einnig eru sóttar upplýsingar um búsetu, íbúaskrá og forsjá',
+        'Upplýsingar um þig, maka og börn frá Þjóðskrá. Einnig eru sóttar upplýsingar um búsetu, íbúaskrá og forsjá',
       description:
         'Information about you, spouse and children will be retrieved from Registers Iceland. Information about residence will also be retrieved.',
     },
@@ -90,13 +90,29 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
     socialInsuranceAdministrationInformationTitle: {
       id: 'oap.application:prerequisites.socialInsuranceAdministration.title',
-      defaultMessage: 'Upplýsingar frá Tryggingastofnun',
-      description: 'Information from Social Insurance Administration Iceland',
+      defaultMessage: 'Upplýsingar um tekjur og aðstæður',
+      description: 'Information about income and circumstances',
     },
     socialInsuranceAdministrationInformationSubTitle: {
       id: 'oap.application:prerequisites.socialInsuranceAdministration.subtitle',
-      defaultMessage: 'ZZZZZ',
-      description: 'EN-ZZZZ',
+      defaultMessage:
+        'TR sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðsla mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar. Ef við á þá hefur TR heimild að ná í upplýsingar frá öðrum stofnunum.',
+      description:
+        'TR collects only necessary information for processing applications and processing cases. That information can relate to both your income and other circumstances. If applicable, TR is authorized to obtain information from other organizations.',
+    },
+    socialInsuranceAdministrationInformationSubTitleMoreInfo: {
+      id: 'oap.application:prerequisites.socialInsuranceAdministration.subtitle.moreInfo',
+      defaultMessage:
+        'Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar, <a target="_blank" href="https://www.tr.is/tryggingastofnun/personuvernd"><span style="color:blue;text-decoration:underline;">https://www.tr.is/tryggingastofnun/personuvernd</span></a>',
+      description:
+        'More information on data collection authority and processing of personal information can be found in the privacy policy of the Insurance Administration,  <a target="_blank" href="https://www.tr.is/tryggingastofnun/personuvernd"><span style="color:blue;text-decoration:underline;">https://www.tr.is/tryggingastofnun/personuvernd</span></a>',
+    },
+    socialInsuranceAdministrationInformationSubTitleAboutIncomes: {
+      id: 'oap.application:prerequisites.socialInsuranceAdministration.subtitle.incomes',
+      defaultMessage:
+        'Ef tekjur eða aðrar aðstæður þínar breytast verður þú að láta TR vita þar sem það getur haft áhrif á greiðslur þínar.',
+      description:
+        'If your income or other circumstances change, you must notify TR as this may affect your payments.',
     },
     startApplication: {
       id: 'oap.application:prerequisites.start.application',
