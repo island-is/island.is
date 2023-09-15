@@ -4,6 +4,7 @@ import {
   ApiPropertyOptional,
 } from '@nestjs/swagger'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -18,7 +19,7 @@ import { ProgramTag } from './programTag'
 import { ProgramModeOfDelivery } from './programModeOfDelivery'
 import { University } from '../../university/model'
 import { ProgramCourse } from './programCourse'
-import { DegreeType, Season } from '@island.is/university-gateway-types'
+import { DegreeType, Season } from '@island.is/university-gateway-lib'
 import { PageInfoDto } from '@island.is/nest/pagination'
 
 class Program extends Model {
@@ -85,6 +86,13 @@ class Program extends Model {
   })
   @ForeignKey(() => University)
   universityId!: string
+
+  @ApiProperty({
+    description: 'University details',
+    type: University,
+  })
+  @BelongsTo(() => University, 'universityId')
+  universityDetails?: University
 
   @ApiProperty({
     description:

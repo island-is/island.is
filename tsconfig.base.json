@@ -125,6 +125,9 @@
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],
+      "@island.is/api/domains/housing-benefit-calculator": [
+        "libs/api/domains/housing-benefit-calculator/src/index.ts"
+      ],
       "@island.is/api/domains/icelandic-government-institution-vacancies": [
         "libs/api/domains/icelandic-government-institution-vacancies/src/index.ts"
       ],
@@ -503,6 +506,9 @@
       "@island.is/clients/health-directorate": [
         "libs/clients/health-directorate/src/index.ts"
       ],
+      "@island.is/clients/housing-benefit-calculator": [
+        "libs/clients/housing-benefit-calculator/src/index.ts"
+      ],
       "@island.is/clients/icelandic-government-institution-vacancies": [
         "libs/clients/icelandic-government-institution-vacancies/src/index.ts"
       ],
@@ -860,8 +866,8 @@
       "@island.is/testing/containers": ["libs/testing/containers/src/index.ts"],
       "@island.is/testing/fixtures": ["libs/testing/fixtures/src/index.ts"],
       "@island.is/testing/nest": ["libs/testing/nest/src/index.ts"],
-      "@island.is/university-gateway-types": [
-        "libs/university-gateway/types/src/index.ts"
+      "@island.is/university-gateway-lib": [
+        "libs/university-gateway-lib/src/index.ts"
       ],
       "@island.is/user-monitoring": ["libs/user-monitoring/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],

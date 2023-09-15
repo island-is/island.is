@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { DepartmentsApi, MajorsApi } from '../../gen/fetch'
+import { HvinApi } from '../../gen/fetch'
 import {
   DegreeType,
   FieldType,
@@ -8,142 +8,101 @@ import {
   ModeOfDelivery,
   Requirement,
   Season,
-} from '@island.is/university-gateway-types'
+  mapStringToEnum,
+} from '@island.is/university-gateway-lib'
 
 export
 @Injectable()
 class ReykjavikUniversityApplicationClient {
-  constructor(
-    private majorsApi: MajorsApi,
-    private departmentsApi: DepartmentsApi,
-  ) {}
+  constructor(private hvinApi: HvinApi) {}
 
   async getPrograms(): Promise<IProgram[]> {
-    const majors =
-      await this.majorsApi.majorsGetAllMajorsExtendedByDepartmentId({
-        version: '2',
-      })
+    const res = await this.hvinApi.hvinActivePrograms({ version: '1' })
 
-    // Get flat list of departments
-    const departmentListList =
-      await this.departmentsApi.departmentsGetAllDepartments({
-        version: '2',
-      })
-    const departmentList: { id: number; name: string }[] = []
-    for (let i = 0; i < departmentListList.length; i++) {
-      const subDepartmentList = departmentListList[i].departments || []
-      for (let j = 0; j < subDepartmentList.length; j++) {
-        if (subDepartmentList[j].id) {
-          departmentList.push({
-            id: subDepartmentList[j].id!,
-            name: subDepartmentList[j].name || '',
-          })
-        }
-      }
-    }
-
-    return await Promise.all(
-      majors?.map(async (major) => {
-        // Get department name
-        const departmentName = departmentList.find(
-          (d) => d.id === major.departmentId,
-        )?.name
-
-        // Get degree type
-        let degreeType: DegreeType = DegreeType.UNDERGRADUATE
-        switch (major.majorType?.key) {
-          case 'grunnnám':
-            degreeType = DegreeType.UNDERGRADUATE
-            break
-          case 'meistaranám':
-            degreeType = DegreeType.POSTGRADUATE
-            break
-          case 'doktorsnám':
-            degreeType = DegreeType.DOCTORAL
-            break
-        }
-
-        //TODO
-        const tagList = [
-          { code: 'verkfraedi_raunvisindi_taekni_og_tolur' },
-          { code: 'saga_menning_listir_og_tru' },
-        ]
-
-        //TODO
-        const modeOfDeliveryList = [
-          ModeOfDelivery.ONLINE,
-          ModeOfDelivery.ON_SITE,
-        ]
-
-        //TODO
-        const extraApplicationFieldList = [
-          {
-            nameIs: 'Ferilskrá',
-            nameEn: 'CV',
-            descriptionIs: '',
-            descriptionEn: '',
-            required: true,
-            fieldType: FieldType.UPLOAD,
-            uploadAcceptedFileType: '.pdf, .jpg, .jpeg, .png',
-          },
-        ]
-
+    return (
+      res?.map((program) => {
         return {
-          externalId: major.id?.toString() ?? '', //TODO
-          nameIs: major.name || '',
-          nameEn: major.name || '', //TODO
-          departmentNameIs: departmentName || '',
-          departmentNameEn: departmentName || '', //TODO
-          startingSemesterYear: 2023, //TODO
-          startingSemesterSeason: Season.FALL, //TODO
-          applicationStartDate:
-            major.settings?.courseRegistration?.begins || new Date(),
-          applicationEndDate:
-            major.settings?.courseRegistration?.ends || new Date(),
-          degreeType: degreeType,
-          degreeAbbreviation: '', //TODO
-          credits: major.credits || 0,
-          descriptionIs: '', //TODO
-          descriptionEn: '', //TODO
-          durationInYears: major.years || 0,
-          costPerYear: undefined, //TODO
-          iscedCode: '', //TODO
-          searchKeywords: [], //TODO
-          externalUrlIs: '', //TODO
-          externalUrlEn: '', //TODO
-          admissionRequirementsIs: '', //TODO
-          admissionRequirementsEn: '', //TODO
-          studyRequirementsIs: '', //TODO
-          studyRequirementsEn: '', //TODO
-          costInformationIs: '', //TODO
-          costInformationEn: '', //TODO
-          courses: [], //TODO
-          tag: tagList,
-          modeOfDelivery: modeOfDeliveryList,
-          extraApplicationField: extraApplicationFieldList,
+          externalId: program.externalId || '',
+          nameIs: program.nameIs || '',
+          nameEn: program.nameEn || '',
+          departmentNameIs: program.departmentNameIs || '',
+          departmentNameEn: program.departmentNameEn || '',
+          startingSemesterYear: program.startingSemesterYear || 0,
+          startingSemesterSeason: program.startingSemesterSeason
+            ? mapStringToEnum(program.startingSemesterSeason, Season)
+            : Season.FALL,
+          applicationStartDate: program.applicationStartDate || new Date(),
+          applicationEndDate: program.applicationEndDate || new Date(),
+          degreeType: program.degreeType
+            ? mapStringToEnum(program.degreeType, DegreeType)
+            : DegreeType.UNDERGRADUATE,
+          degreeAbbreviation: program.degreeAbbreviation || '',
+          credits: program.credits || 0,
+          descriptionIs: program.descriptionIs || '',
+          descriptionEn: program.descriptionEn || '',
+          durationInYears: program.durationInYears || 0,
+          costPerYear: program.costPerYear,
+          iscedCode: program.iscedCode || '',
+          searchKeywords: [], //TODO missing in api
+          externalUrlIs: program.externalUrlIs,
+          externalUrlEn: program.externalUrlEn,
+          admissionRequirementsIs: program.admissionRequirementsIs,
+          admissionRequirementsEn: program.admissionRequirementsEn,
+          studyRequirementsIs: program.studyRequirementsIs,
+          studyRequirementsEn: program.studyRequirementsEn,
+          costInformationIs: program.costInformationIs,
+          costInformationEn: program.costInformationEn,
+          tag:
+            program.interestTags?.map((tag) => ({
+              code: tag, //TODO change from enumstring to code (string) in api?
+            })) || [],
+          modeOfDelivery:
+            program.modeOfDelivery?.map((m) =>
+              mapStringToEnum(m, ModeOfDelivery),
+            ) || [],
+          extraApplicationField: program.extraApplicationFields?.map(
+            (field) => ({
+              nameIs: field.nameIs || '',
+              nameEn: field.nameEn,
+              descriptionIs: field.descriptionIs,
+              descriptionEn: field.descriptionEn,
+              required: field.required || false,
+              fieldType: field.fieldType as unknown as FieldType,
+              uploadAcceptedFileType: field.uploadAcceptedFileType,
+            }),
+          ),
         }
-      }),
+      }) || []
     )
   }
 
   async getCourses(externalId: string): Promise<ICourse[]> {
-    //TODO
-    const courseList = [
-      {
-        externalId: 'AB123',
-        nameIs: 'Test',
-        nameEn: 'Test',
-        credits: 8,
-        semesterYear: 2023,
-        semesterSeason: Season.FALL,
-        descriptionIs: '',
-        descriptionEn: '',
-        externalUrlIs: '',
-        externalUrlEn: '',
-        requirement: Requirement.MANDATORY,
-      },
-    ]
+    const res = await this.hvinApi.hvinActivePrograms({ version: '1' })
 
-    return courseList
+    const program = res.find((p) => p.externalId === externalId)
+
+    if (!program) {
+      throw new Error('Did not find program for courses by program external id')
+    }
+
+    return (
+      program.courses?.map((course) => ({
+        externalId: course.externalId || '',
+        nameIs: course.nameIs || '',
+        nameEn: course.nameEn || '',
+        credits: course.credits || 0,
+        semesterYear: course.semesterYear,
+        semesterSeason: course.semesterSeason
+          ? mapStringToEnum(course.semesterSeason, Season)
+          : Season.FALL,
+        descriptionIs: course.descriptionIs,
+        descriptionEn: course.descriptionEn,
+        externalUrlIs: course.externalUrlIs,
+        externalUrlEn: course.externalUrlEn,
+        requirement: course.required
+          ? Requirement.MANDATORY
+          : Requirement.FREE_ELECTIVE, //TODO missing in api
+      })) || []
+    )
   }
 }

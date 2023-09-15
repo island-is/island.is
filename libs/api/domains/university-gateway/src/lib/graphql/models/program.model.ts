@@ -1,17 +1,4 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
-import {
-  DegreeType,
-  // FieldType,
-  ModeOfDelivery,
-  Requirement,
-  Season,
-} from '@island.is/university-gateway-types'
-
-registerEnumType(DegreeType, { name: 'DegreeType' })
-// registerEnumType(FieldType, { name: 'FieldType' })
-registerEnumType(ModeOfDelivery, { name: 'ModeOfDelivery' })
-registerEnumType(Requirement, { name: 'Requirement' })
-registerEnumType(Season, { name: 'Season' })
+import { Field, ObjectType } from '@nestjs/graphql'
 
 export
 @ObjectType('Program')
@@ -35,6 +22,9 @@ class Program {
   universityId!: string
 
   @Field()
+  universityContentfulKey!: string
+
+  @Field()
   departmentNameIs!: string
 
   @Field()
@@ -43,8 +33,8 @@ class Program {
   @Field()
   startingSemesterYear!: number
 
-  @Field(() => Season)
-  startingSemesterSeason!: Season
+  @Field()
+  startingSemesterSeason!: string
 
   @Field()
   applicationStartDate!: Date
@@ -52,8 +42,8 @@ class Program {
   @Field()
   applicationEndDate!: Date
 
-  @Field(() => DegreeType)
-  degreeType!: DegreeType
+  @Field()
+  degreeType!: string
 
   @Field()
   degreeAbbreviation!: string
@@ -82,8 +72,8 @@ class Program {
   @Field(() => [ProgramTag])
   tag!: ProgramTag[]
 
-  @Field(() => [ModeOfDelivery])
-  modeOfDelivery!: ModeOfDelivery[]
+  @Field(() => [String])
+  modeOfDelivery!: string[]
 }
 
 export
@@ -140,8 +130,8 @@ class ProgramCourse {
   @Field({ nullable: true })
   semesterYear?: number
 
-  @Field(() => Season)
-  semesterSeason!: Season
+  @Field()
+  semesterSeason!: string
 
   @Field({ nullable: true })
   descriptionIs?: string
@@ -155,8 +145,8 @@ class ProgramCourse {
   @Field({ nullable: true })
   externalUrlEn?: string
 
-  @Field(() => Requirement)
-  requirement!: Requirement
+  @Field()
+  requirement!: string
 }
 
 @ObjectType('ProgramTag')
@@ -191,8 +181,8 @@ class ProgramTag {
 //   @Field()
 //   required!: boolean
 
-//   @Field(() => FieldType)
-//   fieldType!: FieldType
+//   @Field()
+//   fieldType!: string
 
 //   @Field({ nullable: true })
 //   uploadAcceptedFileType?: string

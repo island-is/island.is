@@ -1,4 +1,4 @@
-import { ApplicationStatus } from '@island.is/university-gateway-types'
+import { ApplicationStatus } from '@island.is/university-gateway-lib'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { IsEnum, IsOptional, IsString } from 'class-validator'
 

@@ -1,36 +1,27 @@
 import { Injectable } from '@nestjs/common'
 import {
   ProgramApi,
-  ProgramControllerGetProgramsDegreeTypeEnum,
-  ProgramControllerGetProgramsSeasonEnum,
+  UniversityApi,
 } from '@island.is/clients/university-gateway-api'
 import { GetProgramByIdInput, ProgramsPaginated } from './graphql/dto'
-import { GetProgramsInput } from './graphql/dto/getPrograms.input'
-import { ProgramDetails } from './graphql/models'
+import { ProgramDetails, ProgramFilter, University } from './graphql/models'
 import {
   DegreeType,
-  // FieldType,
   ModeOfDelivery,
-  Requirement,
   Season,
-} from '@island.is/university-gateway-types'
+} from '@island.is/university-gateway-lib'
 
 export
 @Injectable()
 class UniversityGatewayApi {
-  constructor(private readonly programApi: ProgramApi) {}
+  constructor(
+    private readonly programApi: ProgramApi,
+    private readonly universityApi: UniversityApi,
+  ) {}
 
-  async getPrograms(input: GetProgramsInput): Promise<ProgramsPaginated> {
+  async getActivePrograms(): Promise<ProgramsPaginated> {
     const res = await this.programApi.programControllerGetPrograms({
-      limit: input.limit,
-      before: input.before,
-      after: input.after,
-      active: input.active,
-      year: input.year,
-      season: input.season as unknown as ProgramControllerGetProgramsSeasonEnum,
-      universityId: input.universityId,
-      degreeType:
-        input.degreeType as unknown as ProgramControllerGetProgramsDegreeTypeEnum,
+      active: true,
     })
 
     return {
@@ -43,14 +34,14 @@ class UniversityGatewayApi {
         nameIs: item.nameIs,
         nameEn: item.nameEn,
         universityId: item.universityId,
+        universityContentfulKey: item.universityDetails.contentfulKey,
         departmentNameIs: item.departmentNameIs,
         departmentNameEn: item.departmentNameEn,
         startingSemesterYear: item.startingSemesterYear,
-        startingSemesterSeason:
-          item.startingSemesterSeason as unknown as Season,
+        startingSemesterSeason: item.startingSemesterSeason.toString(),
         applicationStartDate: item.applicationStartDate,
         applicationEndDate: item.applicationEndDate,
-        degreeType: item.degreeType as unknown as DegreeType,
+        degreeType: item.degreeType.toString(),
         degreeAbbreviation: item.degreeAbbreviation,
         credits: item.credits,
         descriptionIs: item.descriptionIs,
@@ -65,8 +56,8 @@ class UniversityGatewayApi {
           nameIs: t.details.nameIs,
           nameEn: t.details.nameEn,
         })),
-        modeOfDelivery: item.modeOfDelivery.map(
-          (m) => m as unknown as ModeOfDelivery,
+        modeOfDelivery: item.modeOfDelivery.map((m) =>
+          m.modeOfDelivery.toString(),
         ),
       })),
     }
@@ -86,13 +77,14 @@ class UniversityGatewayApi {
       nameIs: item.nameIs,
       nameEn: item.nameEn,
       universityId: item.universityId,
+      universityContentfulKey: item.universityDetails.contentfulKey,
       departmentNameIs: item.departmentNameIs,
       departmentNameEn: item.departmentNameEn,
       startingSemesterYear: item.startingSemesterYear,
-      startingSemesterSeason: item.startingSemesterSeason as unknown as Season,
+      startingSemesterSeason: item.startingSemesterSeason.toString(),
       applicationStartDate: item.applicationStartDate,
       applicationEndDate: item.applicationEndDate,
-      degreeType: item.degreeType as unknown as DegreeType,
+      degreeType: item.degreeType.toString(),
       degreeAbbreviation: item.degreeAbbreviation,
       credits: item.credits,
       descriptionIs: item.descriptionIs,
@@ -107,8 +99,8 @@ class UniversityGatewayApi {
         nameIs: t.details.nameIs,
         nameEn: t.details.nameEn,
       })),
-      modeOfDelivery: item.modeOfDelivery.map(
-        (m) => m as unknown as ModeOfDelivery,
+      modeOfDelivery: item.modeOfDelivery.map((m) =>
+        m.modeOfDelivery.toString(),
       ),
       externalUrlIs: item.externalUrlIs,
       externalUrlEn: item.externalUrlEn,
@@ -125,12 +117,12 @@ class UniversityGatewayApi {
         nameEn: c.details.nameEn,
         credits: c.details.credits,
         semesterYear: c.details.semesterYear,
-        semesterSeason: c.details.semesterSeason as unknown as Season,
+        semesterSeason: c.details.semesterSeason.toString(),
         descriptionIs: c.details.descriptionIs,
         descriptionEn: c.details.descriptionEn,
         externalUrlIs: c.details.externalUrlIs,
         externalUrlEn: c.details.externalUrlEn,
-        requirement: c.requirement as unknown as Requirement,
+        requirement: c.requirement.toString(),
       })),
       // extraApplicationField: item.extraApplicationField.map((e) => ({
       //   nameIs: e.nameIs,
@@ -138,9 +130,50 @@ class UniversityGatewayApi {
       //   descriptionIs: e.descriptionIs,
       //   descriptionEn: e.descriptionEn,
       //   required: e.required,
-      //   fieldType: e.fieldType as unknown as FieldType,
+      //   fieldType: e.fieldType.toString(),
       //   uploadAcceptedFileType: e.uploadAcceptedFileType,
       // })),
     }
+  }
+
+  async getUniversities(): Promise<University[]> {
+    const res = await this.universityApi.universityControllerGetUniversities()
+
+    return res.data.map((item) => ({
+      id: item.id,
+      nationalId: item.nationalId,
+      contentfulKey: item.contentfulKey,
+    }))
+  }
+
+  async getProgramFilters(): Promise<ProgramFilter[]> {
+    const universityRes =
+      await this.universityApi.universityControllerGetUniversities()
+
+    const durationRes =
+      await this.programApi.programControllerGetDurationInYears()
+
+    return [
+      {
+        field: 'degreeType',
+        options: Object.values(DegreeType),
+      },
+      {
+        field: 'startingSemesterSeason',
+        options: Object.values(Season),
+      },
+      {
+        field: 'modeOfDelivery',
+        options: Object.values(ModeOfDelivery),
+      },
+      {
+        field: 'universityId',
+        options: universityRes.data.map((item) => item.id),
+      },
+      {
+        field: 'durationInYears',
+        options: durationRes,
+      },
+    ]
   }
 }

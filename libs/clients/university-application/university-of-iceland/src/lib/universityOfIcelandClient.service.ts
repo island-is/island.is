@@ -8,7 +8,14 @@ import {
   ModeOfDelivery,
   Requirement,
   Season,
-} from '@island.is/university-gateway-types'
+  mapEnumToEnum,
+} from '@island.is/university-gateway-lib'
+import {
+  ExampleCourseSemesterSeasonEnum,
+  ExampleProgramDegreeTypeEnum,
+  ExampleProgramModeOfDeliveryEnum,
+  ExampleProgramStartingSemesterSeasonEnum,
+} from '../../gen/fetch'
 
 export
 @Injectable()
@@ -30,18 +37,25 @@ class UniversityOfIcelandApplicationClient {
           departmentNameIs: program.departmentNameIs,
           departmentNameEn: program.departmentNameEn,
           startingSemesterYear: program.startingSemesterYear,
-          startingSemesterSeason:
-            program.startingSemesterSeason as unknown as Season, //TODO map enum
+          startingSemesterSeason: mapEnumToEnum(
+            program.startingSemesterSeason,
+            ExampleProgramStartingSemesterSeasonEnum,
+            Season,
+          ),
           applicationStartDate: program.applicationStartDate,
-          applicationEndDate: program.applicationEndDate || new Date(), //TODO cannot be empty in api
-          degreeType: program.degreeType as unknown as DegreeType, //TODO map enum
+          applicationEndDate: program.applicationEndDate || new Date(),
+          degreeType: mapEnumToEnum(
+            program.degreeType,
+            ExampleProgramDegreeTypeEnum,
+            DegreeType,
+          ),
           degreeAbbreviation: program.degreeAbbreviation,
           credits: program.credits || 0,
           descriptionIs: program.descriptionIs || '',
           descriptionEn: program.descriptionEn || '',
           durationInYears: program.durationInYears || 0,
           costPerYear: program.costPerYear,
-          iscedCode: program.iscedCode || '', //TODO cannot be empty in api
+          iscedCode: program.iscedCode || '',
           searchKeywords: [], //TODO missing in api
           externalUrlIs: program.externalUrlIs,
           externalUrlEn: program.externalUrlEn,
@@ -54,8 +68,8 @@ class UniversityOfIcelandApplicationClient {
           tag: program.interestTags.map((tag) => ({
             code: tag.toString(), //TODO change from enum to code (string) in api
           })),
-          modeOfDelivery: program.modeOfDelivery.map(
-            (mode) => mode as unknown as ModeOfDelivery, //TODO map enum
+          modeOfDelivery: program.modeOfDelivery.map((m) =>
+            mapEnumToEnum(m, ExampleProgramModeOfDeliveryEnum, ModeOfDelivery),
           ),
           extraApplicationField: program.extraApplicationFields.map(
             (field) => ({
@@ -63,7 +77,7 @@ class UniversityOfIcelandApplicationClient {
               nameEn: field.nameEn,
               descriptionIs: field.descriptionIs,
               descriptionEn: field.descriptionEn,
-              required: field.required === 'true', //TODO change to enum not boolean in api
+              required: field.required === 'true', //TODO change to boolean not string
               fieldType: field.fieldType as unknown as FieldType,
               uploadAcceptedFileType: field.uploadAcceptedFileType,
             }),
@@ -86,7 +100,11 @@ class UniversityOfIcelandApplicationClient {
         nameEn: course.nameEn,
         credits: course.credits,
         semesterYear: course.semesterYear,
-        semesterSeason: course.semesterSeason as unknown as Season, //TODO map enum
+        semesterSeason: mapEnumToEnum(
+          course.semesterSeason,
+          ExampleCourseSemesterSeasonEnum,
+          Season,
+        ),
         descriptionIs: course.descriptionIs,
         descriptionEn: course.descriptionEn,
         externalUrlIs: course.externalUrlIs,

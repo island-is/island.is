@@ -64,7 +64,7 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
     switch (userRole) {
       case UserRole.PROSECUTOR:
         return 'Saksóknari'
-      case UserRole.REPRESENTATIVE:
+      case UserRole.PROSECUTOR_REPRESENTATIVE:
         return 'Fulltrúi'
       case UserRole.JUDGE:
         return 'Dómari'
@@ -72,7 +72,7 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
         return 'Dómritari'
       case UserRole.ASSISTANT:
         return 'Aðstoðarmaður dómara'
-      case UserRole.STAFF:
+      case UserRole.PRISON_SYSTEM_STAFF:
         return 'Starfsmaður'
     }
   }
