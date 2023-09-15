@@ -1,0 +1,22 @@
+import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { SystemMetadata } from '@island.is/shared/types'
+import { IEmbed } from '../generated/contentfulTypes'
+
+@ObjectType()
+export class Embed {
+  @Field(() => ID)
+  id!: string
+
+  @Field()
+  title!: string
+
+  @Field()
+  embedUrl?: string
+}
+
+export const mapEmbed = ({ fields, sys }: IEmbed): SystemMetadata<Embed> => ({
+  typename: 'Embed',
+  id: sys.id,
+  title: fields.title ?? '',
+  embedUrl: fields.embedUrl,
+})

@@ -572,6 +572,33 @@ export interface IEmailSignup extends Entry<IEmailSignupFields> {
   }
 }
 
+export interface IEmbedFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Embed link */
+  embedUrl?: string | undefined
+}
+
+/** A content type which allows you to embed an iframe (but only from sources that have been approved of) */
+
+export interface IEmbed extends Entry<IEmbedFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'embed'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IEmbeddedVideoFields {
   /** Title */
   title: string
@@ -4270,6 +4297,7 @@ export type CONTENT_TYPE =
   | 'contactUs'
   | 'districts'
   | 'emailSignup'
+  | 'embed'
   | 'embeddedVideo'
   | 'enhancedAsset'
   | 'errorPage'
