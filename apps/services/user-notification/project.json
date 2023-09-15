@@ -72,7 +72,7 @@
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "podman-compose up -d --build",
+        "command": "docker-compose up -d --build",
         "cwd": "apps/services/user-notification"
       }
     },

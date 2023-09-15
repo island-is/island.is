@@ -17,7 +17,7 @@
         "assets": ["apps/services/xroad-collector/src/assets"],
         "format": ["cjs"],
         "outputFileName": "main.js",
-        "esbuildConfig": "apps/services-xroad-collector/esbuild.json"
+        "esbuildConfig": "apps/services/xroad-collector/esbuild.json"
       },
       "configurations": {
         "development": {

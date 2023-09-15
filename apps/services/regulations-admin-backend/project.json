@@ -6,8 +6,11 @@
   "prefix": "regulations-admin-backend",
   "targets": {
     "build": {
-      "executor": "@anatine/esbuildnx:build",
+      "executor": "@nx/esbuild:esbuild",
       "options": {
+        "outputFileName": "main.js",
+        "format": ["cjs"],
+        "esbuildConfig": "apps/services/user-notification/esbuild.json",
         "outputPath": "dist/apps/services/regulations-admin-backend",
         "main": "apps/services/regulations-admin-backend/src/main.ts",
         "tsConfig": "apps/services/regulations-admin-backend/tsconfig.app.json",
@@ -32,14 +35,15 @@
             "input": "apps/services/regulations-admin-backend",
             "output": "./"
           }
-        ],
-        "maxWorkers": 2
+        ]
       },
       "configurations": {
+        "development": {
+          "minify": false
+        },
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "minify": true,
+          "generatePackageJson": true
         }
       },
       "outputs": ["{options.outputPath}"]

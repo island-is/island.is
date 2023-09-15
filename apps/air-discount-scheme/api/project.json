@@ -12,7 +12,7 @@
       "defaultConfiguration": "development",
       "options": {
         "main": "apps/air-discount-scheme/api/src/main.ts",
-        "esbuildConfig": "apps/air-discount-scheme/esbuild.json",
+        "esbuildConfig": "apps/air-discount-scheme/api/esbuild.json",
         "outputPath": "dist/apps/air-discount-scheme/api",
         "outputFileName": "main.js",
         "format": ["cjs"],
