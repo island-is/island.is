@@ -12,6 +12,7 @@ export enum SearchableContentTypes {
   webQNA = 'webQNA',
   webLink = 'webLink',
   webProjectPage = 'webProjectPage',
+  webVacancyPage = 'webVacancyPage',
 }
 
 registerEnumType(SearchableContentTypes, { name: 'SearchableContentTypes' })

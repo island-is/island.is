@@ -19,7 +19,10 @@ import { ElasticService } from '@island.is/content-search-toolkit'
 import { AdgerdirPageSyncService } from './importers/adgerdirPage'
 import { MenuSyncService } from './importers/menu.service'
 import { GroupedMenuSyncService } from './importers/groupedMenu.service'
-import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
+import {
+  ElasticsearchIndexLocale,
+  getElasticsearchIndex,
+} from '@island.is/content-search-index-manager'
 import { OrganizationPageSyncService } from './importers/organizationPage.service'
 import { OrganizationSubpageSyncService } from './importers/organizationSubpage.service'
 import { FrontpageSyncService } from './importers/frontpage.service'
@@ -29,6 +32,7 @@ import { ProjectPageSyncService } from './importers/projectPage.service'
 import { EnhancedAssetSyncService } from './importers/enhancedAsset.service'
 import { VacancySyncService } from './importers/vacancy.service'
 import { ServiceWebPageSyncService } from './importers/serviceWebPage.service'
+import { VacancyPageSyncService } from './importers/vacancyPage.service'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -43,7 +47,10 @@ interface UpdateLastHashOptions {
 
 export type processSyncDataInput<T> = (Entry<any> | T)[]
 export interface CmsSyncProvider<T, ProcessOutput = any> {
-  processSyncData: (entries: processSyncDataInput<T>) => ProcessOutput
+  processSyncData: (
+    entries: processSyncDataInput<T>,
+    locale: ElasticsearchIndexLocale,
+  ) => ProcessOutput
   doMapping: (entries: ProcessOutput) => MappedData[]
 }
 
@@ -70,6 +77,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly elasticService: ElasticService,
     private readonly vacancyService: VacancySyncService,
     private readonly serviceWebPageSyncService: ServiceWebPageSyncService,
+    private readonly vacancyPageSyncService: VacancyPageSyncService,
   ) {
     this.contentSyncProviders = [
       this.articleSyncService,
@@ -89,6 +97,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       this.enhancedAssetService,
       this.vacancyService,
       this.serviceWebPageSyncService,
+      this.vacancyPageSyncService,
     ]
   }
 
@@ -185,7 +194,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     // import data from all providers
     const importableData = this.contentSyncProviders.map(
       (contentSyncProvider) => {
-        const data = contentSyncProvider.processSyncData(items)
+        const data = contentSyncProvider.processSyncData(items, options.locale)
         return contentSyncProvider.doMapping(data)
       },
     )
