@@ -7,6 +7,7 @@ import {
   GridRow,
   Hyphen,
   Text,
+  TextProps,
 } from '@island.is/island-ui/core'
 import type { SliceType } from '@island.is/island-ui/contentful'
 import type { FooterItem } from '@island.is/web/graphql/schema'
@@ -21,15 +22,23 @@ interface FooterProps {
   imageUrl?: string
   heading: string
   columns: FooterItem[]
+  color?: TextProps['color']
+  background?: string
 }
 
-export const Footer = ({ imageUrl, heading, columns }: FooterProps) => {
+export const Footer = ({
+  imageUrl,
+  heading,
+  columns,
+  color,
+  background,
+}: FooterProps) => {
   const { width } = useWindowSize()
 
   const isMobileScreenWidth = width < theme.breakpoints.sm
 
   return (
-    <footer className={styles.footer}>
+    <footer style={{ background }}>
       <Box paddingTop={3} paddingBottom={5}>
         <GridContainer>
           <GridRow className={styles.noWrap}>
@@ -39,7 +48,9 @@ export const Footer = ({ imageUrl, heading, columns }: FooterProps) => {
             <GridColumn offset={isMobileScreenWidth ? '2/12' : undefined}>
               <GridRow marginBottom={3} marginTop={2}>
                 <GridColumn>
-                  <Text variant="h2">{heading}</Text>
+                  <Text color={color} variant="h2">
+                    {heading}
+                  </Text>
                 </GridColumn>
               </GridRow>
               <GridRow>
@@ -51,7 +62,11 @@ export const Footer = ({ imageUrl, heading, columns }: FooterProps) => {
                   >
                     <Box marginRight={5}>
                       {column.title && (
-                        <Text fontWeight="semiBold" marginBottom={1}>
+                        <Text
+                          color={color}
+                          fontWeight="semiBold"
+                          marginBottom={1}
+                        >
                           <Hyphen>{column.title}</Hyphen>
                         </Text>
                       )}
@@ -61,7 +76,11 @@ export const Footer = ({ imageUrl, heading, columns }: FooterProps) => {
                           // @ts-ignore make web strict
                           [BLOCKS.PARAGRAPH]: (_node, children) => {
                             return (
-                              <Text variant="medium" marginBottom={1}>
+                              <Text
+                                color={color}
+                                variant="medium"
+                                marginBottom={1}
+                              >
                                 {children}
                               </Text>
                             )
