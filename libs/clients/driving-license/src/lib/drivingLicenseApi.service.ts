@@ -3,7 +3,6 @@ import {
   CanApplyErrorCodeBFull,
   CanApplyForCategoryResult,
   DrivingAssessment,
-  Juristiction,
   QualityPhoto,
 } from '..'
 import * as v1 from '../v1'
@@ -16,6 +15,7 @@ import {
   QualitySignature,
   Teacher,
   RemarkCode,
+  DrivingLicenseV4V5Dto,
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
 import { PracticePermitDto } from '../v5'
@@ -111,40 +111,40 @@ export class DrivingLicenseApi {
     token?: string
   }): Promise<DriversLicense | null> {
     try {
-      const skirteini = await this.v2.getCurrentLicenseV2({
-        kennitala: input.nationalId,
-        // apiVersion header indicates that this method will return a single license, rather
-        // than an array
-        apiVersion: v2.DRIVING_LICENSE_API_VERSION_V2,
+      const licenseRaw = await this.v4.getCurrentLicenseV4({
+        sSN: input.nationalId,
+        apiVersion: v4.DRIVING_LICENSE_API_VERSION_V4,
+        apiVersion2: v4.DRIVING_LICENSE_API_VERSION_V4,
       })
-      if (!skirteini || !skirteini.id) {
+      if (!licenseRaw || !licenseRaw.id) {
         return null
       }
-      const license = DrivingLicenseApi.normalizeDrivingLicenseType(skirteini)
-      if (skirteini.athugasemdir) {
-        const remarks = await this.v1.apiOkuskirteiniTegundirathugasemdaGet({
-          apiVersion: v1.DRIVING_LICENSE_API_VERSION_V1,
+      const license = DrivingLicenseApi.normalizeDrivingLicenseType(licenseRaw)
+      if (licenseRaw.comments) {
+        const remarks = await this.v5CodeTable.apiCodetablesRemarksGet({
+          apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+          apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
         })
-        const licenseRemarks: string[] = skirteini.athugasemdir
+        const licenseRemarks: string[] = licenseRaw.comments
           .filter(
-            (remark: v1.AtsSkirteini) =>
-              remark.id === skirteini.id && !!remark.nr,
+            (remark) =>
+              remark.id === licenseRaw.id && !!remark.nr,
           )
-          .map((remark: v1.AtsSkirteini) => remark.nr || '')
+          .map((remark) => remark.nr || '')
         const filteredRemarks: string[] = remarks
           .filter(
-            (remark: v1.TegundAthugasemdaDto) =>
+            (remark) =>
               !!remark.heiti &&
               licenseRemarks.includes(remark.nr || ('' && !remark.athugasemd)),
           )
-          .map((remark: v1.TegundAthugasemdaDto) => remark.heiti || '')
+          .map((remark) => remark.heiti || '')
         return { ...license, remarks: filteredRemarks }
       }
 
       return license
     } catch (e) {
       if (e.body.detail === 'Ökuskírteini er ekki í gildi') {
-        const oldLicenses = await this.getAllLicenses(input)
+        const oldLicenses = await this.getAllLicensesV4(input)
         // Find license that expired within 2 years
         const licenseWithinLimit = oldLicenses.find((license) => {
           const exists = license.categories.find(
@@ -164,7 +164,7 @@ export class DrivingLicenseApi {
       // disqualification is set manually via the deprivation endpoint.
       // This is less than ideal, but the API offers no alternative.
       if (e.body.detail === 'Einstaklingur er sviptur ökuréttindum') {
-        const getAllLicenses = await this.getAllLicenses(input)
+        const getAllLicenses = await this.getAllLicensesV4(input)
         const currentLicense = getAllLicenses.find((license) => {
           const categoryB = license.categories.find((cat) => cat.name === 'B')
           if (categoryB && categoryB.expires && categoryB.issued) {
@@ -220,7 +220,7 @@ export class DrivingLicenseApi {
   }
 
   private static normalizeDrivingLicenseDTO(
-    license: v5.DriverLicenseDto,
+    license: DrivingLicenseV4V5Dto
   ): DriversLicense {
     const normalizedLicense: DriversLicense = {
       ...license,
@@ -241,23 +241,16 @@ export class DrivingLicenseApi {
     return normalizedLicense
   }
 
-  public async getAllLicenses(input: {
+  public async getAllLicensesV4(input: {
     nationalId: string
   }): Promise<DriversLicense[]> {
-    const response = await this.v1.apiOkuskirteiniKennitalaAllGet({
-      kennitala: input.nationalId,
+    const response = await this.v4.apiDrivinglicenseV4SSNAllGet({
+      apiVersion: v4.DRIVING_LICENSE_API_VERSION_V4,
+      apiVersion2: v4.DRIVING_LICENSE_API_VERSION_V4,
+      sSN: input.nationalId,
     })
 
-    return response.map(DrivingLicenseApi.normalizeDrivingLicenseType)
-  }
-
-  public async getTeachers(): Promise<Teacher[]> {
-    const kennarar = await this.v1.apiOkuskirteiniOkukennararGet({})
-
-    return kennarar.map((okukennari) => ({
-      nationalId: okukennari.kennitala || '',
-      name: okukennari.nafn || '',
-    }))
+    return response.map(DrivingLicenseApi.normalizeDrivingLicenseDTO)
   }
 
   public async getTeachersV4() {

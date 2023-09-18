@@ -1,3 +1,7 @@
+import { DriverLicenseDto as DriverLicenseDtoV4, DriverLicenseWithoutImagesDto as DriverLicenseWithoutImagesDtoV4 } from '../v4'
+import { DriverLicenseDto as DriverLicenseDtoV5, DriverLicenseWithoutImagesDto as DriverLicenseWithoutImagesDtoV5 } from '../v5'
+
+export type DrivingLicenseV4V5Dto = DriverLicenseDtoV4 | DriverLicenseDtoV5 | DriverLicenseWithoutImagesDtoV4 | DriverLicenseWithoutImagesDtoV5
 export interface DriversLicenseCategory {
   id: number
   name: string
@@ -39,12 +43,6 @@ export interface TeacherV4 {
   name: string
   nationalId: string
   driverLicenseId: number | null | undefined
-}
-
-export interface Juristiction {
-  id: number
-  name: string
-  zip: number
 }
 
 export interface DrivingAssessment {
