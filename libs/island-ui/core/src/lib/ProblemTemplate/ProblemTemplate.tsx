@@ -1,6 +1,6 @@
+import React, { ReactNode } from 'react'
 import { Colors } from '@island.is/island-ui/theme'
 import { TestSupport } from '@island.is/island-ui/utils'
-import { ReactNode } from 'react'
 
 import { Box, Icon, Tag, Text } from '../..'
 import { Icon as IconType } from '../IconRC/iconMap'
