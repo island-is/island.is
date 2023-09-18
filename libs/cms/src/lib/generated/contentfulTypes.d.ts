@@ -2705,6 +2705,9 @@ export interface IProjectPageFields {
   /** Sidebar Links */
   sidebarLinks?: ILinkGroup[] | undefined
 
+  /** Secondary Sidebar */
+  secondarySidebar?: ILinkGroup | undefined
+
   /** Subtitle */
   subtitle?: string | undefined
 
