@@ -78,14 +78,11 @@ const SubjectInfo = () => {
           loading={loading}
           content={nationalRegistryPerson?.fullName ?? ''}
           translate="no"
-          tooltip={formatNameBreaks(
-            (nationalRegistryPerson as NationalRegistryName) ?? undefined,
-            {
-              givenName: formatMessage(spmm.givenName),
-              middleName: formatMessage(spmm.middleName),
-              lastName: formatMessage(spmm.lastName),
-            },
-          )}
+          tooltip={formatNameBreaks(nationalRegistryPerson?.name ?? undefined, {
+            givenName: formatMessage(spmm.givenName),
+            middleName: formatMessage(spmm.middleName),
+            lastName: formatMessage(spmm.lastName),
+          })}
           editLink={{
             external: true,
             title: spmm.changeInNationalReg,
