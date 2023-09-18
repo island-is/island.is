@@ -13,7 +13,6 @@ import {
   CanApplyErrorCodeBTemporary,
   DriversLicense,
   QualitySignature,
-  Teacher,
   RemarkCode,
   DrivingLicenseV4V5Dto,
 } from './drivingLicenseApi.types'
@@ -126,10 +125,7 @@ export class DrivingLicenseApi {
           apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
         })
         const licenseRemarks: string[] = licenseRaw.comments
-          .filter(
-            (remark) =>
-              remark.id === licenseRaw.id && !!remark.nr,
-          )
+          .filter((remark) => remark.id === licenseRaw.id && !!remark.nr)
           .map((remark) => remark.nr || '')
         const filteredRemarks: string[] = remarks
           .filter(
@@ -220,7 +216,7 @@ export class DrivingLicenseApi {
   }
 
   private static normalizeDrivingLicenseDTO(
-    license: DrivingLicenseV4V5Dto
+    license: DrivingLicenseV4V5Dto,
   ): DriversLicense {
     const normalizedLicense: DriversLicense = {
       ...license,

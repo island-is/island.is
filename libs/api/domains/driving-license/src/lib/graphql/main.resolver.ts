@@ -67,12 +67,6 @@ export class MainResolver {
     )
   }
 
-  @Scopes(ApiScope.internal)
-  @Query(() => [Teacher])
-  drivingLicenseTeachers() {
-    return this.drivingLicenseService.getTeachers()
-  }
-
   @BypassAuth()
   @CacheControl(defaultCache)
   @Query(() => [TeacherV4])

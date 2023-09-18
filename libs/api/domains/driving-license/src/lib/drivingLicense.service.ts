@@ -21,7 +21,6 @@ import {
   DriversLicense,
   DrivingAssessment,
   DrivingLicenseApi,
-  Teacher,
   TeacherV4,
 } from '@island.is/clients/driving-license'
 import { DRIVING_ASSESSMENT_MAX_AGE } from './util/constants'
@@ -117,7 +116,7 @@ export class DrivingLicenseService {
   ): Promise<StudentInformation | null> {
     let licenses
     try {
-      licenses = await this.drivingLicenseApi.getAllLicenses({ nationalId })
+      licenses = await this.drivingLicenseApi.getAllLicensesV4({ nationalId })
     } catch (e) {
       this.logger.error(`${LOGTAG} Error fetching student information`, e)
       return this.handleGetLicenseError(e)
@@ -132,12 +131,6 @@ export class DrivingLicenseService {
     return {
       name: drivingLicense.name,
     }
-  }
-
-  async getTeachers(): Promise<Teacher[]> {
-    const teachers = await this.drivingLicenseApi.getTeachers()
-
-    return teachers.sort(sortTeachers)
   }
 
   async getTeachersV4(): Promise<TeacherV4[]> {

@@ -1,7 +1,17 @@
-import { DriverLicenseDto as DriverLicenseDtoV4, DriverLicenseWithoutImagesDto as DriverLicenseWithoutImagesDtoV4 } from '../v4'
-import { DriverLicenseDto as DriverLicenseDtoV5, DriverLicenseWithoutImagesDto as DriverLicenseWithoutImagesDtoV5 } from '../v5'
+import {
+  DriverLicenseDto as DriverLicenseDtoV4,
+  DriverLicenseWithoutImagesDto as DriverLicenseWithoutImagesDtoV4,
+} from '../v4'
+import {
+  DriverLicenseDto as DriverLicenseDtoV5,
+  DriverLicenseWithoutImagesDto as DriverLicenseWithoutImagesDtoV5,
+} from '../v5'
 
-export type DrivingLicenseV4V5Dto = DriverLicenseDtoV4 | DriverLicenseDtoV5 | DriverLicenseWithoutImagesDtoV4 | DriverLicenseWithoutImagesDtoV5
+export type DrivingLicenseV4V5Dto =
+  | DriverLicenseDtoV4
+  | DriverLicenseDtoV5
+  | DriverLicenseWithoutImagesDtoV4
+  | DriverLicenseWithoutImagesDtoV5
 export interface DriversLicenseCategory {
   id: number
   name: string
@@ -31,11 +41,6 @@ export interface DriversLicense {
 
 export interface RemarkCode {
   index: string
-  name: string
-}
-
-export interface Teacher {
-  nationalId: string
   name: string
 }
 
