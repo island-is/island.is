@@ -24,9 +24,7 @@ import {
   Teacher,
   TeacherV4,
 } from '@island.is/clients/driving-license'
-import {
-  DRIVING_ASSESSMENT_MAX_AGE,
-} from './util/constants'
+import { DRIVING_ASSESSMENT_MAX_AGE } from './util/constants'
 import sortTeachers from './util/sortTeachers'
 import { StudentAssessment } from '..'
 import { FetchError } from '@island.is/clients/middlewares'

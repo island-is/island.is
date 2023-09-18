@@ -121,26 +121,6 @@ describe('DrivingLicenseService', () => {
     })
   })
 
-  describe('getListOfJuristictions', () => {
-    it('should return a list', async () => {
-      const response = await service.getListOfJuristictions()
-
-      expect(response).toHaveLength(24)
-
-      expect(response).toContainEqual({
-        id: 21,
-        name: 'Sýslumaðurinn á Norðurlandi vestra - Sauðárkróki',
-        zip: 550,
-      })
-    })
-
-    it('should not include juristiction nr 11', async () => {
-      const response = await service.getListOfJuristictions()
-
-      expect(response.find(({ id }) => id === 11)).toBeUndefined()
-    })
-  })
-
   describe('getTeachers', () => {
     it('should return a list', async () => {
       const response = await service.getTeachers()
