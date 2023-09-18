@@ -48,6 +48,22 @@ const CourtOfAppealCaseOverviewHeader: React.FC<
           </Button>
         </Box>
       </Box>
+      {/* {
+        //TODO: Use when we've exposed the opened by logic
+        workingCase.appealRulingDecision && (
+          <Box marginBottom={4} marginTop={8}>
+            <Box marginBottom={2}>
+              <AlertMessage
+                message={formatMessage(strings.appealResultOpenedBy, {
+                  userRole: UserRole.PROSECUTOR,
+                  when: formatDate(workingCase.created, 'PPPp'),
+                })}
+                type="info"
+              />
+            </Box>
+          </Box>
+        )
+      } */}
       <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
         <Box>
           <OverviewHeader />
