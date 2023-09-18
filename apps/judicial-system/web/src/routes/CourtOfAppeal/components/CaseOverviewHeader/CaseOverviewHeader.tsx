@@ -55,8 +55,27 @@ const CourtOfAppealCaseOverviewHeader: React.FC<
             <Box marginBottom={2}>
               <AlertMessage
                 message={formatMessage(strings.appealResultOpenedBy, {
+                  userRole: UserRole.DEFENDER,
+                  // TODO: Use correct dates when available
+                  when: formatDate(new Date(), 'PPPp'),
+                })}
+                type="info"
+              />
+            </Box>
+            <Box marginBottom={2}>
+              <AlertMessage
+                message={formatMessage(strings.appealResultOpenedBy, {
                   userRole: UserRole.PROSECUTOR,
-                  when: formatDate(workingCase.created, 'PPPp'),
+                  when: formatDate(new Date(), 'PPPp'),
+                })}
+                type="info"
+              />
+            </Box>
+            <Box marginBottom={2}>
+              <AlertMessage
+                message={formatMessage(strings.appealResultOpenedBy, {
+                  userRole: UserRole.PRISON_SYSTEM_STAFF,
+                  when: formatDate(new Date(), 'PPPp'),
                 })}
                 type="info"
               />
