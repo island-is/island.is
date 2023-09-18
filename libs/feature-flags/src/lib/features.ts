@@ -24,6 +24,7 @@ export enum Features {
   servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
   servicePortalConsentModule = 'isServicePortalConsentModuleEnabled',
   servicePortalHealthRightsModule = 'isServicePortalHealthRightsModuleEnabled',
+  servicePortalTransferHealthCenter = 'isServicePortalHealthTransferPageEnabled',
   servicePortalSecondaryEducationPages = 'isServicePortalSecondaryEducationPageEnabled',
   servicePortalHealthCenterDentistPage = 'isServicePortalHealthCenterPageEnabled',
   servicePortalWorkMachinesModule = 'isServicePortalWorkMachinesPageEnabled',
@@ -40,6 +41,9 @@ export enum Features {
 
   //Application system
   applicationSystemHistory = 'applicationSystemHistory',
+
+  // Search indexer
+  shouldSearchIndexerResolveNestedEntries = 'shouldSearchIndexerResolveNestedEntries',
 }
 
 export enum ServerSideFeature {

@@ -24,7 +24,7 @@ class App {
 }
 
 async function migrateBootstrap() {
-  const argv = yargs(process.argv).argv
+  const argv = await yargs(process.argv).argv
   const app = new App()
   if (argv.syncKibana) {
     await app.syncKibana()
