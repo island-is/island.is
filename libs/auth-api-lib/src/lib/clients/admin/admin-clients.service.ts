@@ -105,6 +105,7 @@ export class AdminClientsService {
     includeArchived = false,
   ): Promise<AdminClientDto> {
     const client = await this.clientModel.findOne({
+      useMaster: true,
       where: {
         clientId,
         domainName: tenantId,

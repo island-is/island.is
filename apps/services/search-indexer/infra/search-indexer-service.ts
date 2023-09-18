@@ -62,11 +62,11 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
           resources: {
             requests: {
               cpu: '300m',
-              memory: '1536Mi',
+              memory: '2048Mi',
             },
             limits: {
               cpu: '700m',
-              memory: '2048Mi',
+              memory: '3072Mi',
             },
           },
         },
@@ -103,11 +103,11 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
     .resources({
       requests: {
         cpu: '400m',
-        memory: '1536Mi',
+        memory: '2048Mi',
       },
       limits: {
         cpu: '800m',
-        memory: '2048Mi',
+        memory: '3072Mi',
       },
     })
     .ingress({
