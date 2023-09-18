@@ -27,7 +27,7 @@ import {
 import { core, sections } from '@island.is/judicial-system-web/messages'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
-import { caseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
+import { formatCaseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import {
   CaseType,
   Gender,
@@ -1308,7 +1308,13 @@ const useSections = (
         ? getInvestigationCaseCourtSections(workingCase, user)
         : getIndictmentsCourtSections(workingCase, user),
       {
-        name: caseResult(formatMessage, workingCase),
+        name: formatCaseResult(
+          formatMessage,
+          workingCase,
+          workingCase.parentCase
+            ? workingCase.parentCase.state
+            : workingCase.state,
+        ),
         isActive:
           !workingCase.parentCase &&
           completedCaseStates.includes(workingCase.state) &&
@@ -1333,7 +1339,11 @@ const useSections = (
               ? getRestrictionCaseExtensionCourtSections(workingCase, user)
               : getInvestigationCaseExtensionCourtSections(workingCase, user),
             {
-              name: caseResult(formatMessage, workingCase),
+              name: formatCaseResult(
+                formatMessage,
+                workingCase,
+                workingCase.state,
+              ),
               isActive:
                 completedCaseStates.includes(workingCase.state) &&
                 !workingCase.prosecutorPostponedAppealDate &&
