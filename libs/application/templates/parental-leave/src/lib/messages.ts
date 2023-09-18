@@ -171,31 +171,31 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Foreldri sem uppfyllir skilyrði um fullt nám öðlast rétt til fæðingarstyrks',
     },
     noPrimaryParentTitle: {
-      id: 'pl.applications:no.primary.parent.title',
+      id: 'pl.application:no.primary.parent.title',
       defaultMessage: 'Staðfesting á faðerni barns',
       description: 'Confirmation of paternity',
     },
     noPrimaryParentQuestionOne: {
-      id: 'pl.applications:no.primary.parent.question.one',
+      id: 'pl.application:no.primary.parent.question.one',
       defaultMessage: 'Er barn að fæðast erlendis?',
       description: 'Is child being born abroad?',
     },
     noPrimaryParentQuestionTwo: {
-      id: 'pl.applications:no.primary.parent.question.two',
+      id: 'pl.application:no.primary.parent.question.two',
       defaultMessage:
         'Er barnshafandi foreldri búsett erlendis og/eða ekki með íslenska kennitölu?',
       description:
         'Is the pregnant parent living abroad and/or does not have an Icelandic social security number?',
     },
     noPrimaryParentQuestionThree: {
-      id: 'pl.applications:no.primary.parent.question.three',
+      id: 'pl.application:no.primary.parent.question.three',
       defaultMessage:
         'Á barnshafandi foreldri rétt á fæðingarorlofi á Íslandi?',
       description:
         'Is the pregnant parent entitled to parental leave in Iceland?',
     },
     noPrimaryParentDatePickerTitle: {
-      id: 'pl.applications:no.primary.parent.date.picker.title',
+      id: 'pl.application:no.primary.parent.date.picker.title',
       defaultMessage:
         'Settu inn áætlaðan/raunverulegan fæðingardagur barnsins/barnanna?',
       description: `Please enter the child's/children's expected/actual date of birth?`,
