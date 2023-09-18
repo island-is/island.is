@@ -1,8 +1,9 @@
-import React, { PureComponent } from 'react'
-import { useLocale } from '@island.is/localization'
+import React, { ErrorInfo, PureComponent } from 'react'
+
+import { Box } from '@island.is/island-ui/core'
+import { Problem } from '@island.is/react-spa/shared'
+
 import * as styles from './ApplicationErrorBoundry.css'
-import { Box, Text, Tag, Button } from '@island.is/island-ui/core'
-import { m } from '../../lib/messages'
 
 interface PropTypes {
   children: React.ReactNode
@@ -22,63 +23,28 @@ export class ApplicationErrorBoundary extends PureComponent<
     this.state = { error: undefined, hasError: false }
   }
 
-  public static getDerivedStateFromError(_: Error): StateTypes {
-    return { hasError: true }
+  public static getDerivedStateFromError(error: Error): StateTypes {
+    return {
+      error,
+    }
   }
 
-  componentDidCatch(error: Error) {
-    console.error(error)
+  override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error(error, errorInfo)
   }
 
-  render() {
+  override render() {
     const { children } = this.props
-    const { hasError } = this.state
+    const { error } = this.state
 
-    if (hasError) {
-      return <Error />
+    if (error) {
+      return (
+        <Box padding={[0, 6]} className={styles.expandHeight}>
+          <Problem error={error} expand logError={false} />
+        </Box>
+      )
     }
 
     return children
   }
-}
-
-const Error = () => {
-  const { formatMessage } = useLocale()
-
-  return (
-    <Box marginTop={8}>
-      <Box
-        marginTop={[0, 6]}
-        marginBottom={[0, 6]}
-        textAlign="center"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Box marginBottom={4}>
-          <Tag variant="red">{500}</Tag>
-        </Box>
-        <Text variant="h1" as="h1" marginBottom={3}>
-          {formatMessage(m.errorPageHeading)}
-        </Text>
-        <Text variant="default" as="p">
-          {formatMessage(m.errorPageText)}
-        </Text>
-        <Box marginTop={2}>
-          <a href="https://island.is" target="_blank" rel="noreferrer">
-            <Button variant="text" size="medium">
-              Ísland.is
-            </Button>
-          </a>
-        </Box>
-      </Box>
-
-      <Box display="flex" justifyContent="center" marginBottom={[1, 0]}>
-        <img
-          src="./assets/images/hourglass.svg"
-          alt=""
-          className={styles.img}
-        />
-      </Box>
-    </Box>
-  )
 }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 
 import { ProblemTemplate } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
@@ -103,10 +103,7 @@ export const Problem = ({
   switch (type) {
     case 'internal_service_error':
       if (error) {
-        const organizationSlug = useMemo(
-          () => getOrganizationSlugFromError(error),
-          [error],
-        )
+        const organizationSlug = getOrganizationSlugFromError(error)
 
         if (organizationSlug) {
           return (
