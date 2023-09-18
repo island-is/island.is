@@ -75,17 +75,17 @@ export const AuthProvider = ({
         type: ActionType.SIGNIN_START,
       })
 
-      return userManager
-        .signinRedirect({
+      try {
+        return userManager.signinRedirect({
           state: getReturnUrl({
             returnUrl: getCurrentUrl(basePath),
             redirectPath: authSettings.redirectPath,
           }),
         })
-        .catch((e) => {
-          console.error('Error in signinRedirect', e)
-          setError(e)
-        })
+      } catch (e) {
+        console.error('Error in signinRedirect', e)
+        setError(e)
+      }
       // Nothing more happens here since browser will redirect to IDS.
     },
     [dispatch, userManager, authSettings, basePath],

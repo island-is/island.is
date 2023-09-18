@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, Button, ProblemTemplate } from '@island.is/island-ui/core'
 
 import * as styles from './Auth.css'
