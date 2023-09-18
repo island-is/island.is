@@ -18,7 +18,6 @@ import {
   HasTeachingRights,
   StudentInformationResult,
   ApplicationEligibility,
-  Juristiction,
   StudentAssessment,
   ApplicationEligibilityInput,
   Teacher,

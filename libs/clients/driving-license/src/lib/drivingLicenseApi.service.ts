@@ -297,16 +297,6 @@ export class DrivingLicenseApi {
     return parseInt(statusStr, 10) > 0
   }
 
-  public async getListOfJuristictions(): Promise<Juristiction[]> {
-    const embaetti = await this.v1.apiOkuskirteiniEmbaettiGet({})
-
-    return embaetti.map(({ nr, postnumer, nafn }: v1.EmbaettiDto) => ({
-      id: nr || 0,
-      zip: postnumer || 0,
-      name: nafn || '',
-    }))
-  }
-
   public async getDrivingAssessment(params: {
     token: string
   }): Promise<DrivingAssessment | null> {

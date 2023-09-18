@@ -3,7 +3,6 @@ import type { User } from '@island.is/auth-nest-tools'
 import {
   TeachingRightsStatus,
   StudentInformation,
-  Juristiction,
   NewDrivingLicenseInput,
   NewDrivingLicenseResult,
   NewDrivingAssessmentResult,
@@ -26,7 +25,6 @@ import {
   TeacherV4,
 } from '@island.is/clients/driving-license'
 import {
-  BLACKLISTED_JURISTICTION,
   DRIVING_ASSESSMENT_MAX_AGE,
 } from './util/constants'
 import sortTeachers from './util/sortTeachers'
@@ -161,12 +159,6 @@ export class DrivingLicenseService {
       nationalId,
       hasTeachingRights,
     }
-  }
-
-  async getListOfJuristictions(): Promise<Juristiction[]> {
-    const embaetti = await this.drivingLicenseApi.getListOfJuristictions()
-
-    return embaetti.filter(({ id }) => id !== BLACKLISTED_JURISTICTION)
   }
 
   async getDrivingAssessmentResult(
