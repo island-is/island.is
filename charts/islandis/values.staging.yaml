@@ -2077,7 +2077,7 @@ services-sessions-geoip-worker:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 5
       replicas:
-        max: 3
+        max: 1
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
@@ -2093,7 +2093,7 @@ services-sessions-geoip-worker:
       useExisting: false
   replicaCount:
     default: 1
-    max: 3
+    max: 1
     min: 1
   resources:
     limits:
