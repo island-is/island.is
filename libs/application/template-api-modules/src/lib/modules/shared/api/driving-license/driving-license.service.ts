@@ -17,12 +17,12 @@ import {
 } from '@island.is/api/domains/driving-license-book'
 import {
   DrivingLicenseApi,
-  QualitySignature,
   TeacherV4,
 } from '@island.is/clients/driving-license'
 import sortTeachers from './sortTeachers'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { CurrentLicenseParameters } from '@island.is/application/types'
+import { EmbaettiDto } from '@island.is/clients/driving-license'
 
 @Injectable()
 export class DrivingLicenseProviderService extends BaseTemplateApiService {
@@ -225,15 +225,15 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
   }
 
-  async juristictions(): Promise<Juristiction[]> {
-    return await this.drivingLicenseService.getListOfJuristictions()
+  async juristictions(): Promise<EmbaettiDto[]> {
+    return await this.drivingLicenseService.getListOfJurisdictions()
   }
 
   private async getDrivingAssessment(
-    nationalId: string,
+    token: string,
   ): Promise<StudentAssessment | null> {
     const assessment = await this.drivingLicenseService.getDrivingAssessment({
-      nationalId,
+      token,
     })
 
     if (!assessment) {
@@ -274,6 +274,6 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       }
     }
 
-    return await this.getDrivingAssessment(auth.nationalId)
+    return await this.getDrivingAssessment(auth.authorization)
   }
 }

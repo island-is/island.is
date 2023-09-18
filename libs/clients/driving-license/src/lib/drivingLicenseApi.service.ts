@@ -320,6 +320,13 @@ export class DrivingLicenseApi {
     }
   }
 
+  public async getListOfJurisdictions(): Promise<v5.EmbaettiDto[]> {
+    return await this.v5CodeTable.apiCodetablesDistrictsGet({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+    })
+  }
+
   public async getHasFinishedOkugerdi(params: {
     token: string
   }): Promise<boolean> {
