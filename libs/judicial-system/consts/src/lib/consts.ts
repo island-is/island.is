@@ -112,7 +112,7 @@ export const STATEMENT_ROUTE = '/greinargerd'
 export const RESTRICTION_CASE_DEFENDANT_ROUTE = '/krafa/sakborningur'
 export const RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE = '/krafa/fyrirtaka'
 export const RESTRICTION_CASE_POLICE_DEMANDS_ROUTE =
-  '/krafa/domkrofur-og-lagaakvaedi'
+  '/krafa/domkrofur-og-lagagrundvollur'
 export const RESTRICTION_CASE_POLICE_REPORT_ROUTE = '/krafa/greinargerd'
 export const RESTRICTION_CASE_CASE_FILES_ROUTE = '/krafa/rannsoknargogn'
 export const RESTRICTION_CASE_OVERVIEW_ROUTE = '/krafa/stadfesta'
@@ -122,7 +122,7 @@ export const INVESTIGATION_CASE_DEFENDANT_ROUTE =
 export const INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE =
   '/krafa/rannsoknarheimild/fyrirtaka'
 export const INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE =
-  '/krafa/rannsoknarheimild/domkrofur-og-lagaakvaedi'
+  '/krafa/rannsoknarheimild/domkrofur-og-lagagrundvollur'
 export const INVESTIGATION_CASE_POLICE_REPORT_ROUTE =
   '/krafa/rannsoknarheimild/greinargerd'
 export const INVESTIGATION_CASE_CASE_FILES_ROUTE =

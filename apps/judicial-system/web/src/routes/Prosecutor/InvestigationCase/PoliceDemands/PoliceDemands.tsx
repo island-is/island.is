@@ -113,6 +113,10 @@ const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
           year: true,
         },
       },
+      [CaseType.PROBATION_DISMISSAL]: {
+        text: icDemands.sections.demands.prefill.probationDismissal,
+        format: { court: true, accused: true },
+      },
     }
 
     if (workingCase.defendants && workingCase.defendants.length > 0) {
