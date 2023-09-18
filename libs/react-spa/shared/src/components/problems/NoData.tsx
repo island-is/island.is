@@ -2,7 +2,7 @@ import {
   Box,
   Text,
   ProblemTemplate,
-  problemTemplateStyles as styles,
+  problemTemplateStyles,
 } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { useLocale } from '@island.is/localization'
@@ -40,7 +40,7 @@ export const NoData = ({
         justifyContent="center"
         flexDirection={['columnReverse', 'columnReverse', 'row']}
         columnGap={[2, 4, 8, 8, 20]}
-        className={styles.container(
+        className={problemTemplateStyles.container(
           noBorder
             ? {
                 noBorder: true,
@@ -59,7 +59,11 @@ export const NoData = ({
           </Text>
           <Text whiteSpace="preLine">{message}</Text>
         </Box>
-        <img src={imgSrc} alt={imgAlt ?? title} className={styles.img} />
+        <img
+          src={imgSrc}
+          alt={imgAlt ?? title}
+          className={problemTemplateStyles.img}
+        />
       </Box>
     )
   }
