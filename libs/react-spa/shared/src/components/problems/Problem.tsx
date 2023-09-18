@@ -1,6 +1,5 @@
 import { useEffect, useMemo } from 'react'
 
-import { useOrganizationStore } from '@island.is/portals/core'
 import { ProblemTemplate } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { useLocale } from '@island.is/localization'
@@ -104,24 +103,15 @@ export const Problem = ({
   switch (type) {
     case 'internal_service_error':
       if (error) {
-        const organizations = useOrganizationStore.use.organizations()
         const organizationSlug = useMemo(
           () => getOrganizationSlugFromError(error),
           [error],
         )
-        const organization = useMemo(
-          () => organizations.find((org) => org.slug === organizationSlug),
-          [organizationSlug],
-        )
 
-        if (organization?.title || organizationSlug) {
+        if (organizationSlug) {
           return (
             <ThirdPartyServiceError
-              {...(organization?.title
-                ? { tag: organization.title }
-                : {
-                    showIcon: true,
-                  })}
+              organizationSlug={organizationSlug}
               size={size}
               dataTestId={dataTestId}
               expand={expand}

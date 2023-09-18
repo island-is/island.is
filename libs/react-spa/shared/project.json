@@ -19,6 +19,13 @@
         "jestConfig": "libs/react-spa/shared/jest.config.ts",
         "passWithNoTests": true
       }
+    },
+    "schemas/codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/react-spa/shared/src/**/*.generated.ts",
+        "command": "graphql-codegen --config libs/react-spa/shared/codegen.yml"
+      }
     }
   }
 }

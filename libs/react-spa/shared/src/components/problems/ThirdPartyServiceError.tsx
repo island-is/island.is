@@ -5,21 +5,35 @@ import {
   ProblemTemplate,
   ProblemTemplateProps,
 } from '@island.is/island-ui/core'
+import { useMemo } from 'react'
 
 import { ProblemSize } from './problem.types'
 import { m } from '../../lib/messages'
+import { useGetOrganizationsQuery } from './GetOrganization.generated'
 
 type ThirdPartyServiceErrorProps = {
-  tag?: string
+  organizationSlug: string
   size?: ProblemSize
 } & Pick<ProblemTemplateProps, 'expand'>
 
 export const ThirdPartyServiceError = ({
-  tag,
+  organizationSlug,
   size = 'large',
   ...rest
 }: ThirdPartyServiceErrorProps & TestSupport) => {
   const { formatMessage } = useLocale()
+  const { data, error, loading } = useGetOrganizationsQuery()
+
+  const organization = useMemo(
+    () =>
+      data?.getOrganizations.items.find((org) => org.slug === organizationSlug),
+    [data, organizationSlug],
+  )
+
+  if (loading) {
+    // We are deliberately not showing loading state here, as it would be confusing to the user
+    return null
+  }
 
   const errorTemplateProps = {
     title: formatMessage(m.thirdPartyServiceErrorTitle),
@@ -33,7 +47,7 @@ export const ThirdPartyServiceError = ({
   return (
     <ProblemTemplate
       variant="warning"
-      {...(tag ? { tag } : { showIcon: true })}
+      {...(organization ? { tag: organization.title } : { showIcon: true })}
       {...errorTemplateProps}
       {...rest}
       titleSize="h2"

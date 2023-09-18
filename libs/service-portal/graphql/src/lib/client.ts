@@ -8,9 +8,7 @@ import {
 
 import { RetryLink } from '@apollo/client/link/retry'
 import { onError } from '@apollo/client/link/error'
-import { getOrganizationSlugFromError } from '@island.is/react-spa/shared'
 import { authLink } from '@island.is/auth/react'
-import { OrganizationStoreState } from '@island.is/portals/core'
 import { getStaticEnv } from '@island.is/shared/utils'
 
 const uri =
@@ -23,43 +21,20 @@ const httpLink = new HttpLink({
 
 const retryLink = new RetryLink()
 
-type ServiceErrorCallback = OrganizationStoreState['setServiceError']
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors)
+    graphQLErrors.map(({ message, locations, path }) =>
+      console.log(
+        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
+      ),
+    )
 
-const createErrorLink = (setServiceError?: ServiceErrorCallback) =>
-  onError((error) => {
-    const { graphQLErrors, networkError, operation } = error
+  if (networkError) console.log(`[Network error]: ${networkError}`)
+})
 
-    if (graphQLErrors)
-      graphQLErrors.map(({ message, locations, path }) =>
-        console.log(
-          `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
-        ),
-      )
-
-    if (networkError) console.log(`[Network error]: ${networkError}`)
-
-    // This field is set in the context of the operation itself, i.e. query, mutation, etc.
-    // It is used to skip the toast error message, only when the component wants to handle the error itself.
-    // However, we only want to display the toast if the error is with organizationSlug field in the error.
-    const skipToastError = operation.getContext().skipToastError
-
-    if (setServiceError && !skipToastError) {
-      const organizationSlug = getOrganizationSlugFromError(error)
-
-      if (organizationSlug) {
-        setServiceError(organizationSlug)
-      }
-    }
-  })
-
-export const createApolloClient = (setServiceError?: ServiceErrorCallback) =>
+export const createApolloClient = () =>
   new ApolloClient({
-    link: ApolloLink.from([
-      retryLink,
-      createErrorLink(setServiceError),
-      authLink,
-      httpLink,
-    ]),
+    link: ApolloLink.from([retryLink, errorLink, authLink, httpLink]),
     cache: new InMemoryCache({
       typePolicies: {
         UserProfile: {
