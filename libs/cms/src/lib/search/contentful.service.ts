@@ -224,17 +224,6 @@ export class ContentfulService {
       }
     }
 
-    // Remove unnecessary fields to save memory
-    const keys = ['deletedEntries', 'assets', 'deletedAssets'] as const
-    for (const key of keys) {
-      for (let i = 0; i < syncData[key].length; i += 1) {
-        syncData[key][i] = {
-          ...syncData.entries[i],
-          fields: null,
-        }
-      }
-    }
-
     return syncData
   }
 

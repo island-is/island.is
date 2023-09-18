@@ -5,6 +5,11 @@ query NationalRegistryPerson($api: String) {
     gender
     exceptionFromDirectMarketing
     religion
+    name {
+      firstName
+      middleName
+      lastName
+    }
     maritalStatus
     citizenship {
       code
