@@ -147,3 +147,4 @@ export const geoipSetup =
         staging: { schedule: '*/30 * * * *' },
         prod: { schedule: '*/30 * * * *' },
       })
+      .grantNamespaces('')
