@@ -18,8 +18,7 @@ const AidsAndNutrition = () => {
 
   const { loading, error, data } = useGetAidsAndNutritionQuery()
 
-  const aidsAndNutrition =
-    data?.rightsPortalPaginatedAidsAndNutritionResponse?.data
+  const aidsAndNutrition = data?.rightsPortalPaginatedAidsAndNutrition?.data
 
   const aids = aidsAndNutrition?.filter(
     (ann) => ann.type === RightsPortalAidOrNutritionType.AID,
