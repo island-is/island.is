@@ -43,7 +43,7 @@ const FamilyMember = () => {
   const { formatMessage } = useLocale()
 
   const [useNatRegV3, setUseNatRegV3] = useState<boolean>()
-  const [spouseValue, setSpouseValue] = useState<string>()
+  const [spouseValue, setSpouseValue] = useState<string>('')
 
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
 
@@ -61,32 +61,39 @@ const FamilyMember = () => {
     isFlagEnabled()
   }, [])
 
-  useEffect(() => {
-    if (useNatRegV3) {
-      const v3Value = data?.nationalRegistryPerson?.spouse
-        ?.cohabitationWithSpouse
-        ? formatMessage(spmm.cohabitationWithSpouse)
-        : data?.nationalRegistryPerson?.spouse?.maritalStatus
-        ? data.nationalRegistryPerson.spouse.maritalStatus
-        : ''
-      setSpouseValue(v3Value)
-    } else {
-      const v1Value = data?.nationalRegistryPerson?.maritalStatus
-        ? formatMessage(
-            natRegMaritalStatusMessageDescriptorRecord[
-              data?.nationalRegistryPerson?.maritalStatus
-            ],
-          )
-        : ''
-      setSpouseValue(v1Value)
-    }
-  }, [useNatRegV3])
-
   const { data, loading, error } = useNationalRegistrySpouseQuery({
     variables: {
       api: useNatRegV3 ? 'v3' : undefined,
     },
   })
+
+  useEffect(() => {
+    if (useNatRegV3 !== undefined) {
+      if (useNatRegV3) {
+        const v3Value =
+          data?.nationalRegistryPerson?.spouse?.cohabitationWithSpouse === true
+            ? formatMessage(spmm.cohabitationWithSpouse)
+            : data?.nationalRegistryPerson?.spouse?.maritalStatus
+            ? data.nationalRegistryPerson.spouse.maritalStatus
+            : ''
+        setSpouseValue(v3Value)
+      } else {
+        const v1Value = data?.nationalRegistryPerson?.maritalStatus
+          ? formatMessage(
+              natRegMaritalStatusMessageDescriptorRecord[
+                data?.nationalRegistryPerson?.maritalStatus
+              ],
+            )
+          : ''
+        setSpouseValue(v1Value)
+      }
+    }
+  }, [
+    useNatRegV3,
+    data?.nationalRegistryPerson?.maritalStatus,
+    data?.nationalRegistryPerson?.spouse,
+    formatMessage,
+  ])
 
   const { nationalId } = useParams() as UseParams
 
