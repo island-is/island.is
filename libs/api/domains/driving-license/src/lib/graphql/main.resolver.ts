@@ -84,7 +84,10 @@ export class MainResolver {
         action: 'drivingLicenseTeachingRights',
         resources: user.nationalId,
       },
-      this.drivingLicenseService.getTeachingRights(user.nationalId),
+      this.drivingLicenseService.getTeachingRights({
+        nationalId: user.nationalId,
+        token: user.authorization,
+      }),
     )
   }
 

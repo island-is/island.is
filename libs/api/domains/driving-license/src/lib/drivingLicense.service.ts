@@ -139,15 +139,16 @@ export class DrivingLicenseService {
     return teachers.sort(sortTeachers)
   }
 
-  async getTeachingRights(
-    nationalId: User['nationalId'],
-  ): Promise<TeachingRightsStatus> {
+  async getTeachingRights(input: {
+    token: User['authorization']
+    nationalId: User['nationalId']
+  }): Promise<TeachingRightsStatus> {
     const hasTeachingRights = await this.drivingLicenseApi.getIsTeacher({
-      nationalId,
+      token: input.token,
     })
 
     return {
-      nationalId,
+      nationalId: input.nationalId,
       hasTeachingRights,
     }
   }

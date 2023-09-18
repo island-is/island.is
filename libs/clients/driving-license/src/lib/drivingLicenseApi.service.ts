@@ -273,17 +273,21 @@ export class DrivingLicenseApi {
     })
   }
 
-  public async getIsTeacher(params: { nationalId: string }) {
-    const statusStr =
-      (await this.v1.apiOkuskirteiniHasteachingrightsKennitalaGet({
-        kennitala: params.nationalId,
-      })) as unknown as string
+  public async getIsTeacher(params: { token: string }) {
+    const statusStr = await this.v5.apiDrivinglicenseV5HasteachingrightsGet({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: params.token.replace('Bearer ', ''),
+    })
 
     // API says number, type says number, but deserialization happens with a text
     // deserializer (runtime.TextApiResponse).
     // Seems to be an outstanding bug? or I have no idea what I'm doing
     // See https://github.com/OpenAPITools/openapi-generator/issues/2870
-    return parseInt(statusStr, 10) > 0
+
+    // TODO: try this as a number again
+    // There still is indeed a TextApiResponse in the JSON response of the generated API
+    return parseInt(statusStr.toString(), 10) > 0
   }
 
   public async getDrivingAssessment(params: {
