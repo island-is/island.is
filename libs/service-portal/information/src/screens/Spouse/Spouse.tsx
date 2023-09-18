@@ -88,12 +88,7 @@ const FamilyMember = () => {
         setSpouseValue(v1Value)
       }
     }
-  }, [
-    useNatRegV3,
-    data?.nationalRegistryPerson?.maritalStatus,
-    data?.nationalRegistryPerson?.spouse,
-    formatMessage,
-  ])
+  }, [useNatRegV3, data?.nationalRegistryPerson, formatMessage])
 
   const { nationalId } = useParams() as UseParams
 
