@@ -17,9 +17,8 @@ import {
 } from '@island.is/api/domains/driving-license-book'
 import {
   DrivingLicenseApi,
-  Juristiction,
   QualitySignature,
-  Teacher,
+  TeacherV4,
 } from '@island.is/clients/driving-license'
 import sortTeachers from './sortTeachers'
 import { TemplateApiModuleActionProps } from '../../../../types'
@@ -34,14 +33,14 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     super('DrivingLicenseShared')
   }
 
-  private async hasTeachingRights(nationalId: string): Promise<boolean> {
-    return await this.drivingLicenseService.getIsTeacher({ nationalId })
+  private async hasTeachingRights(token: string): Promise<boolean> {
+    return await this.drivingLicenseService.getIsTeacher({ token })
   }
 
   async getHasTeachingRights({
     auth,
   }: TemplateApiModuleActionProps): Promise<boolean> {
-    const teachingRights = await this.hasTeachingRights(auth.nationalId)
+    const teachingRights = await this.hasTeachingRights(auth.authorization)
     if (teachingRights) {
       return true
     } else {
@@ -101,8 +100,8 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       })
   }
 
-  async teachers(): Promise<Teacher[]> {
-    const teachers = await this.drivingLicenseService.getTeachers()
+  async teachers(): Promise<TeacherV4[]> {
+    const teachers = await this.drivingLicenseService.getTeachersV4()
     if (teachers) {
       return teachers.sort(sortTeachers)
     } else {
@@ -187,7 +186,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       return { hasQualityPhoto: hasQualityPhoto === 'yes' }
     }
     const hasQualityPhoto = await this.drivingLicenseService.getHasQualityPhoto(
-      { nationalId: auth.nationalId },
+      { token: auth.authorization },
     )
     return {
       hasQualityPhoto,

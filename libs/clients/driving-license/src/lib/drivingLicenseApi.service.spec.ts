@@ -41,14 +41,14 @@ describe('DrivingLicenseDuplicateService', () => {
   describe('Photo And Signature', () => {
     it('GetHasQualityPhoto for a person with no photo', async () => {
       const response = await service.getHasQualityPhoto({
-        nationalId: MOCK_NATIONAL_IDS.LICENSE_NO_PHOTO_NOR_SIGNATURE,
+        token: MOCK_NATIONAL_IDS.LICENSE_NO_PHOTO_NOR_SIGNATURE,
       })
       expect(response).toBe(false)
     })
 
     it('GetHasQualityPhoto for a person with photo', async () => {
       const response = await service.getHasQualityPhoto({
-        nationalId: MOCK_NATIONAL_IDS.LICENSE_B_CATEGORY,
+        token: MOCK_NATIONAL_IDS.LICENSE_B_CATEGORY,
       })
       expect(response).toBe(true)
     })

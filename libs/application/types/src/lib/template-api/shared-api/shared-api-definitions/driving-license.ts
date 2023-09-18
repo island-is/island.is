@@ -8,7 +8,7 @@ export const HasTeachingRightsApi = defineTemplateApi({
 })
 
 export const TeachersApi = defineTemplateApi({
-  action: 'teachers',
+  action: 'teachersV4',
   namespace,
 })
 

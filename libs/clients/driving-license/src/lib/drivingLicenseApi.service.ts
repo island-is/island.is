@@ -29,6 +29,7 @@ export class DrivingLicenseApi {
     private readonly v5CodeTable: v5.CodeTableV5,
   ) {}
 
+  //TODO: look into creating a wrapper such that v5 calls just pass along apiVersion and apiVersion2
   public notifyOnPkPassCreation(input: {
     nationalId: string
     token?: string
@@ -372,11 +373,13 @@ export class DrivingLicenseApi {
     nationalIdTeacher: string
     dateOfAssessment: Date
   }) {
-    return await this.v1.apiOkuskirteiniNewDrivingassesmentPost({
+    return await this.v5.apiDrivinglicenseV5DrivingassessmentPost({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
       postNewDrivingAssessment: {
-        kennitala: params.nationalIdStudent,
-        kennitalaOkukennara: params.nationalIdTeacher,
-        dagsetningMats: params.dateOfAssessment,
+        dateOfAssessment: params.dateOfAssessment,
+        instructorSSN: params.nationalIdTeacher,
+        ssn: params.nationalIdStudent,
       },
     })
   }
@@ -517,9 +520,11 @@ export class DrivingLicenseApi {
     })
   }
 
-  async getHasQualityPhoto(params: { nationalId: string }): Promise<boolean> {
-    const result = await this.v1.apiOkuskirteiniKennitalaHasqualityphotoGet({
-      kennitala: params.nationalId,
+  async getHasQualityPhoto(params: { token: string }): Promise<boolean> {
+    const result = await this.v5.apiDrivinglicenseV5HasqualityphotoGet({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: params.token.replace('Bearer ', ''),
     })
 
     return result > 0
