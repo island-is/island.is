@@ -56,7 +56,7 @@ export class AidOrNutrition {
   expiring!: boolean
 }
 
-@ObjectType('RightsPortalPaginatedAidsAndNutritionResponse')
+@ObjectType('RightsPortalPaginatedAidsAndNutrition')
 export class PaginatedAidsAndNutritionResponse extends PaginatedResponse(
   AidOrNutrition,
 ) {}

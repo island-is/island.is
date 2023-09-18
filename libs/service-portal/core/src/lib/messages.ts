@@ -964,6 +964,10 @@ export const m = defineMessages({
     id: 'service.portal:aids-and-nutrition',
     defaultMessage: 'Hjálpartæki og næring',
   },
+  dentist: {
+    id: 'service.portal:dentist',
+    defaultMessage: 'Tannlæknir',
+  },
   dentists: {
     id: 'service.portal:dentists',
     defaultMessage: 'Tannlæknar',
@@ -995,5 +999,9 @@ export const m = defineMessages({
   consent: {
     id: 'service.portal:consent',
     defaultMessage: 'Gagnaöflun',
+  },
+  postcode: {
+    id: 'service.portal:postcode',
+    defaultMessage: 'Póstfang',
   },
 })
