@@ -92,10 +92,6 @@ export const m = defineMessages({
     defaultMessage: 'Eitthvað fór úrskeiðis',
     id: 'portals:something-went-wrong',
   },
-  organizationServiceError: {
-    defaultMessage: 'Þjónustuvefsvilla í {service}',
-    id: 'portals:organization-service-error',
-  },
   view: {
     defaultMessage: 'Skoða',
     id: 'portals:view',
@@ -123,13 +119,5 @@ export const m = defineMessages({
   accessControlAccess: {
     id: 'portals:accessControlAccess',
     defaultMessage: 'Aðgangur',
-  },
-  shortThirdPartyServiceErrorMessage: {
-    defaultMessage: 'Ekki náðist samband við þjónustuaðila',
-    id: 'portals:short-third-party-service-error-message',
-  },
-  backToOverview: {
-    defaultMessage: 'Fara á yfirlitssíðu',
-    id: 'portals:back-to-overview',
   },
 })
