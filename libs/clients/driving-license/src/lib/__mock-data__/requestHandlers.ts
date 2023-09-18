@@ -1,4 +1,3 @@
-import type { User } from '@island.is/auth-nest-tools'
 import { rest } from 'msw'
 import { DriverLicenseDto } from '../../v5'
 

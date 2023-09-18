@@ -417,21 +417,22 @@ export class DrivingLicenseApi {
     sendLicenseToAddress: string
     category: string
   }): Promise<boolean> {
-    const response = await this.v5.apiDrivinglicenseV5ApplicationsNewCategoryPost({
-      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      category: params.category,
-      postNewFinalLicense: {
-        authorityNumber: params.juristictionId,
-        needsToPresentHealthCertificate: params.willBringHealthCertificate
-          ? 1
-          : 0,
-        personIdNumber: params.nationalIdApplicant,
-        bringsNewPhoto: params.willBringQualityPhoto ? 1 : 0,
-        sendLicenseInMail: params.sendLicenseInMail ? 1 : 0,
-        sendToAddress: params.sendLicenseToAddress,
-      }
-    })
+    const response =
+      await this.v5.apiDrivinglicenseV5ApplicationsNewCategoryPost({
+        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+        category: params.category,
+        postNewFinalLicense: {
+          authorityNumber: params.juristictionId,
+          needsToPresentHealthCertificate: params.willBringHealthCertificate
+            ? 1
+            : 0,
+          personIdNumber: params.nationalIdApplicant,
+          bringsNewPhoto: params.willBringQualityPhoto ? 1 : 0,
+          sendLicenseInMail: params.sendLicenseInMail ? 1 : 0,
+          sendToAddress: params.sendLicenseToAddress,
+        },
+      })
 
     const handledResponse = handleCreateResponse(response)
 
@@ -518,16 +519,12 @@ export class DrivingLicenseApi {
     }
   }
 
-  async getHasQualitySignature(params: {
-    token: string
-  }): Promise<boolean> {
-    const result = await this.v5.apiDrivinglicenseV5HasqualitysignatureGet(
-      {
-        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-        jwttoken: params.token.replace('Bearer ', ''),
-      }
-    )
+  async getHasQualitySignature(params: { token: string }): Promise<boolean> {
+    const result = await this.v5.apiDrivinglicenseV5HasqualitysignatureGet({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: params.token.replace('Bearer ', ''),
+    })
     return result > 0
   }
 

@@ -55,14 +55,14 @@ describe('DrivingLicenseDuplicateService', () => {
 
     it('GetHasQualitySignature for a person with no signature', async () => {
       const response = await service.getHasQualitySignature({
-        nationalId: MOCK_NATIONAL_IDS.LICENSE_NO_PHOTO_NOR_SIGNATURE,
+        token: MOCK_NATIONAL_IDS.LICENSE_NO_PHOTO_NOR_SIGNATURE,
       })
       expect(response).toBe(false)
     })
 
     it('GetHasQualitySignature for a person with signature', async () => {
       const response = await service.getHasQualitySignature({
-        nationalId: MOCK_NATIONAL_IDS.LICENSE_B_CATEGORY,
+        token: MOCK_NATIONAL_IDS.LICENSE_B_CATEGORY,
       })
       expect(response).toBe(true)
     })
