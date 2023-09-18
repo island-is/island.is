@@ -36,6 +36,9 @@ export class ProjectPage {
   @CacheField(() => [LinkGroup])
   sidebarLinks!: Array<LinkGroup>
 
+  @CacheField(() => LinkGroup, { nullable: true })
+  secondarySidebar?: LinkGroup | null
+
   @Field()
   subtitle!: string
 
@@ -94,6 +97,9 @@ export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
   sidebarLinks: (fields.sidebarLinks ?? [])
     .map(mapLinkGroup)
     .filter((link) => Boolean(link.primaryLink)),
+  secondarySidebar: fields.secondarySidebar
+    ? mapLinkGroup(fields.secondarySidebar)
+    : null,
   subtitle: fields.subtitle ?? '',
   intro: fields.intro ?? '',
   content: fields.content
