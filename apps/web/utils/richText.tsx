@@ -40,10 +40,13 @@ import {
   FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
   SliceDropdown as SliceDropdownSchema,
   SectionWithVideo as SectionWithVideoSchema,
+  Embed as EmbedSchema,
 } from '@island.is/web/graphql/schema'
 import { Locale } from '@island.is/shared/types'
 import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
+import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
 export const webRenderConnectedComponent = (slice) => {
@@ -123,6 +126,7 @@ const defaultRenderComponent = {
   SectionWithVideo: (slice: SectionWithVideoSchema) => (
     <SectionWithVideo slice={slice} />
   ),
+  Embed: (slice: EmbedSchema) => <EmbedSlice slice={slice} />,
 }
 
 export const webRichText = (
