@@ -8,16 +8,83 @@ import {
   buildSubSection,
   buildSubmitField,
   buildTextField,
+  buildCheckboxField,
+  buildRepeater,
 } from '@island.is/application/core'
 import {
   Application,
   DefaultEvents,
   Form,
   FormModes,
+  Option,
+  CustomField,
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { childPensionFormMessage } from '../lib/messages'
 import { UserProfile } from '@island.is/api/schema'
+import {
+  getApplicationExternalData,
+  getApplicationAnswers,
+  getChildPensionReasonOptions,
+} from '../lib/childPensionUtils'
+
+type PaymentPlanBuildIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+
+// TODO: Breyta nafni?
+const buildChildReasonStep = (index: number): CustomField => {
+  console.log('======> index: ', index)
+  return buildCustomField(
+    {
+      // id: 'reason',
+      id: `reason[${index}]`,
+      title: childPensionFormMessage.info.childPensionReasonTitle,
+      condition: (answers, _) => {
+        const { selectedCustodyKids } = getApplicationAnswers(answers)
+        console.log('=======> selectedCustodyKids: ', selectedCustodyKids)
+
+        const mono = answers?.selectedCustodyKids as { selectedCustodyKids: [] }
+        console.log('=======> mono: ', mono)
+
+        // return selectedCustodyKids.length > 0
+
+        if (selectedCustodyKids.length > 0) {
+          console.log('=======> index: ', index)
+
+          console.log(
+            '=======> selectedCustodyKids[index]: ',
+            selectedCustodyKids[index],
+          )
+          const test = index < (selectedCustodyKids.length || 0)
+          // ((
+          //   (externalData as PaymentPlanExternalData).paymentPlanPrerequisites
+          //     ?.data?.debts as PaymentScheduleDebts[]
+          // )?.length || 0)
+          console.log('=======> test: ', test)
+
+          return test
+        } else {
+          return false
+        }
+      },
+
+      component: 'ChildPensionReason',
+      defaultValue: index,
+    },
+    {
+      // title: 'Hello'
+      showDescription: true,
+      child: ({ answers }: Application) => {
+        const { selectedCustodyKids } = getApplicationAnswers(answers)
+        return selectedCustodyKids[index] as string
+      },
+    },
+  )
+}
+// TODO: Breyta nafni?
+const buildChildReasonSteps = (): CustomField[] =>
+  [...Array(10)].map((_key, index) =>
+    buildChildReasonStep(index as PaymentPlanBuildIndex),
+  )
 
 export const ChildPensionForm: Form = buildForm({
   id: 'ChildPensionDraft',
@@ -80,6 +147,129 @@ export const ChildPensionForm: Form = buildForm({
               title: childPensionFormMessage.info.paymentTitle,
               description: '',
               children: [],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'childrenSection',
+          title: childPensionFormMessage.info.childrenTitle,
+          children: [
+            buildMultiField({
+              id: 'chooseChildren',
+              title: childPensionFormMessage.info.chooseChildrenTitle,
+              description:
+                childPensionFormMessage.info.chooseChildrenDescription,
+              condition: (_, externalData) => {
+                const { custodyInformation } =
+                  getApplicationExternalData(externalData)
+                return custodyInformation.length !== 0
+              },
+              children: [
+                // buildCheckboxField({
+                //   id: 'chooseChildren.custodyKids', // TODO: breyta nafni í selectChildInCustody??
+                //   title: '',
+                //   doesNotRequireAnswer: true,
+                //   defaultValue: '',
+                //   options: (application) => {
+                //     const applying: Array<Option> = []
+                //     const { custodyInformation } = getApplicationExternalData(
+                //       application.externalData,
+                //     )
+
+                //     custodyInformation.map((i) =>
+                //       applying.push({
+                //         label: i.fullName,
+                //         value: i.nationalId,
+                //       }),
+                //     )
+
+                //     return applying
+                //   },
+                // }),
+                // TODO: Eyða component??? (sama og fyrir ofan en er að nota til að testa hvort geti save-að börnin sem nýtt obj)
+                buildCustomField({
+                  id: 'chooseChildren.custodyKids', // TODO: Breyta id
+                  title: '',
+                  condition: (_, externalData) => {
+                    const { custodyInformation } =
+                      getApplicationExternalData(externalData)
+                    return custodyInformation.length !== 0
+                  },
+                  component: 'ChooseChildren',
+                  childInputIds: ['selectChildInCustody'],
+                }),
+              ],
+            }),
+            ...buildChildReasonSteps(),
+            // buildCustomField(
+            //   {
+            //     id: 'reason',
+            //     title: childPensionFormMessage.info.childPensionReasonTitle,
+            //     condition: (answers) => {
+            //       const { selectedCustodyKids } = getApplicationAnswers(answers)
+            //       console.log(
+            //         '=======> selectedCustodyKids: ',
+            //         selectedCustodyKids,
+            //       )
+            //       // testChildren.push(selectedCustodyKids)
+            //       testChildren = selectedCustodyKids
+            //       return selectedCustodyKids.length > 0
+            //     },
+
+            //     component: 'ChildPensionReason',
+            //   },
+            //   {
+            //     // title: 'Hello'
+            //     showDescription: true,
+            //   },
+            // ),
+            buildRepeater({
+              id: 'registerChildRepeater',
+              title: childPensionFormMessage.info.registerChildRepeaterTitle,
+              component: 'RegisterChildRepeater',
+              condition: (_, externalData) => {
+                const { custodyInformation } =
+                  getApplicationExternalData(externalData)
+                return custodyInformation.length === 0
+              },
+              children: [
+                buildMultiField({
+                  id: 'registerChild',
+                  title: childPensionFormMessage.info.registerChildTitle,
+                  space: 3,
+                  children: [
+                    // buildDescriptionField({
+                    //   id: 'registerChild.descriptionField',
+                    //   marginBottom: 'containerGutter',
+                    //   titleVariant: 'h5',
+                    //   // title:
+                    //   //   childPensionFormMessage.connectedApplications
+                    //   //     .registerChildTitle,
+                    //   // description:
+                    //   //   childPensionFormMessage.connectedApplications
+                    //   //     .registerChildDescription,
+                    //   title: childPensionFormMessage.info.chooseChildrenTitle,
+                    //   description:
+                    //     childPensionFormMessage.info.chooseChildrenDescription,
+                    //   condition: (_, externalData) => {
+                    //     const { custodyInformation } =
+                    //       getApplicationExternalData(externalData)
+                    //     return custodyInformation.length === 0
+                    //   },
+                    // }),
+                    buildCustomField({
+                      id: 'registerChild',
+                      title: '',
+                      component: 'RegisterChild',
+                    }),
+                    buildCustomField({
+                      id: 'reason',
+                      title: '',
+                      component: 'ChildPensionReason',
+                    }),
+                  ],
+                }),
+              ],
             }),
           ],
         }),

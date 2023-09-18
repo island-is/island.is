@@ -21,3 +21,15 @@ export enum States {
   REJECTED = 'rejected',
   APPROVED = 'approved',
 }
+
+// TODO: Skoða enska þýðingu betur
+export enum ChildPensionReason {
+  PARENT_HAS_PENSION_OR_DISABILITY_ALLOWANCE = 'parentHasPensionOrDisabilityAllowance', // Innskráð foreldri er lífeyrisþegi eða með örorkustyrk
+  PARENT_IS_DEAD = 'parentIsDead', // Foreldri er látið
+  CHILD_IS_FATHERLESS = 'childIsFatherless', // Barn er ófeðrað
+  PARENTS_PENITENTIARY = 'parentsPenitentiary', // Refsivist foreldris
+}
+
+export enum AnswerValidationConstants {
+  VALIDATE_LATEST_CHILD = 'registerChildRepeater',
+}

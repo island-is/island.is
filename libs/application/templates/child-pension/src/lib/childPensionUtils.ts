@@ -1,6 +1,12 @@
 import { getValueViaPath } from '@island.is/application/core'
-
-import { Application } from '@island.is/application/types'
+import {
+  Application,
+  ApplicantChildCustodyInformation,
+  Option,
+} from '@island.is/application/types'
+import { ChildPensionRow } from '../types'
+import { ChildPensionReason } from './constants'
+import { childPensionFormMessage } from './messages'
 
 export function getApplicationAnswers(answers: Application['answers']) {
   const applicantEmail = getValueViaPath(
@@ -13,9 +19,30 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'applicantInfo.phonenumber',
   ) as string
 
+  const registeredChildren = getValueViaPath(
+    answers,
+    'registerChildRepeater',
+    [],
+  ) as ChildPensionRow[]
+
+  const selectedCustodyKids = getValueViaPath(
+    answers,
+    'chooseChildren.custodyKids',
+    [],
+  ) as []
+
+  const selectChildInCustody = getValueViaPath(
+    answers,
+    'selectChildInCustody',
+    [],
+  ) as ChildPensionRow[]
+
   return {
     applicantEmail,
     applicantPhonenumber,
+    registeredChildren,
+    selectedCustodyKids,
+    selectChildInCustody,
   }
 }
 
@@ -32,8 +59,39 @@ export function getApplicationExternalData(
     'nationalRegistry.data.nationalId',
   ) as string
 
+  const custodyInformation = getValueViaPath(
+    externalData,
+    'childrenCustodyInformation.data',
+    [],
+  ) as ApplicantChildCustodyInformation[]
+
   return {
     applicantName,
     applicantNationalId,
+    custodyInformation,
   }
+}
+
+export function getChildPensionReasonOptions() {
+  const options: Option[] = [
+    {
+      value: ChildPensionReason.PARENT_HAS_PENSION_OR_DISABILITY_ALLOWANCE,
+      label:
+        childPensionFormMessage.info
+          .childPensionReasonParentHasPensionOrDisabilityAllowance,
+    },
+    {
+      value: ChildPensionReason.PARENT_IS_DEAD,
+      label: childPensionFormMessage.info.childPensionReasonParentIsDead,
+    },
+    {
+      value: ChildPensionReason.CHILD_IS_FATHERLESS,
+      label: childPensionFormMessage.info.childPensionReasonChildIsFatherless,
+    },
+    {
+      value: ChildPensionReason.PARENTS_PENITENTIARY,
+      label: childPensionFormMessage.info.childPensionReasonParentsPenitentiary,
+    },
+  ]
+  return options
 }

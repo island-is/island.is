@@ -6,6 +6,7 @@ import { useMutation } from '@apollo/client'
 import get from 'lodash/get'
 import has from 'lodash/has'
 import { BaseInformation } from './review-groups/BaseInformation'
+import { Children } from './review-groups/Children'
 import { States } from '../../lib/constants'
 import { handleServerError } from '@island.is/application/ui-components'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
@@ -145,6 +146,7 @@ export const Review: FC<ReviewScreenProps> = ({
         </Box>
       )}
       <BaseInformation {...childProps} />
+      <Children {...childProps} />
     </>
   )
 }
