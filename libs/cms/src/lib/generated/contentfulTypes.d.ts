@@ -81,6 +81,9 @@ export interface IAlertBannerFields {
         | 'fjarmal'
         | 'okutaeki'
         | 'stillingar'
+        | 'starfsleyfi'
+        | 'loftbru'
+        | 'heilsa'
       )[]
     | undefined
 }
@@ -2384,6 +2387,7 @@ export interface IOrganizationPageFields {
     | 'nti'
     | 'samgongustofa'
     | 'geislavarnir-rikisins'
+    | 'rettindagaesla-fatlads-folks'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
@@ -2701,6 +2705,9 @@ export interface IProjectPageFields {
   /** Sidebar Links */
   sidebarLinks?: ILinkGroup[] | undefined
 
+  /** Secondary Sidebar */
+  secondarySidebar?: ILinkGroup | undefined
+
   /** Subtitle */
   subtitle?: string | undefined
 
@@ -2976,6 +2983,34 @@ export interface ISectionWithVideo extends Entry<ISectionWithVideoFields> {
   }
 }
 
+export interface IServiceWebPageFields {
+  /** Title */
+  title: string
+
+  /** Organization */
+  organization: IOrganization
+
+  /** Slices */
+  slices?: IFeaturedArticles[] | undefined
+}
+
+export interface IServiceWebPage extends Entry<IServiceWebPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'serviceWebPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ISidebarCardFields {
   /** Type */
   type?:
@@ -3047,6 +3082,7 @@ export interface ISliceConnectedComponentFields {
     | 'PlateAvailableSearch'
     | 'AircraftSearch'
     | 'DrivingInstructorList'
+    | 'HousingBenefitCalculator'
     | undefined
 
   /** Localized JSON */
@@ -3988,9 +4024,10 @@ export interface IVacancyFields {
 
   /** Locations */
   locations: (
-    | 'Án staðsetningar'
+    | 'Óstaðbundið'
     | 'Höfuðborgarsvæðið'
-    | 'Norðurland'
+    | 'Norðurland vestra'
+    | 'Norðurland eystra'
     | 'Vesturland'
     | 'Austurland'
     | 'Suðurland'
@@ -4294,6 +4331,7 @@ export type CONTENT_TYPE =
   | 'sectionHeading'
   | 'sectionWithImage'
   | 'sectionWithVideo'
+  | 'serviceWebPage'
   | 'sidebarCard'
   | 'sliceConnectedComponent'
   | 'sliceDropdown'

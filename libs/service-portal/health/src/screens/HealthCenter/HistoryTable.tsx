@@ -1,12 +1,12 @@
 import { FC } from 'react'
-import { RightsPortalHealthCenterHistoryEntry } from '@island.is/api/schema'
+import { RightsPortalHealthCenterRegistration } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { formatDate, m } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 
 interface Props {
-  history: Array<RightsPortalHealthCenterHistoryEntry>
+  history: Array<RightsPortalHealthCenterRegistration>
 }
 
 const HistoryTable: FC<Props> = ({ history }: Props) => {
@@ -57,14 +57,10 @@ const HistoryTable: FC<Props> = ({ history }: Props) => {
                 </Text>
               </T.Data>
               <T.Data>
-                <Text variant="medium">
-                  {rowItem.healthCenter?.name ?? '-'}
-                </Text>
+                <Text variant="medium">{rowItem.healthCenterName ?? '-'}</Text>
               </T.Data>
               <T.Data>
-                <Text variant="medium">
-                  {rowItem.healthCenter?.doctor ?? '-'}
-                </Text>
+                <Text variant="medium">{rowItem.doctor ?? '-'}</Text>
               </T.Data>
             </T.Row>
           ))}
