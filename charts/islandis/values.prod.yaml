@@ -2017,10 +2017,7 @@ services-sessions:
             - '/'
   namespace: 'services-sessions'
   pvcs:
-    - accessModes: 'ReadWriteMany'
-      mountPath: '/geoip-lite/data'
-      name: 'sessions-geoip-db'
-      size: '1Gi'
+    - name: 'services-sessions'
       storageClass: 'efs-csi'
       useExisting: true
   replicaCount:
@@ -2054,7 +2051,9 @@ services-sessions-geoip-worker:
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - ''
+    - 'nginx-ingress-internal'
+    - 'islandis'
+    - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2078,13 +2077,7 @@ services-sessions-geoip-worker:
   namespace: 'services-sessions'
   podSecurityContext:
     fsGroup: 65534
-  pvcs:
-    - accessModes: 'ReadWriteMany'
-      mountPath: '/geoip-lite/data'
-      name: 'sessions-geoip-db'
-      size: '1Gi'
-      storageClass: 'efs-csi'
-      useExisting: false
+  pvcs: []
   replicaCount:
     default: 3
     max: 10
