@@ -4,10 +4,11 @@ import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 const namespace = 'services-sessions'
 const imageName = 'services-sessions'
 const dbName = 'services_sessions'
+const geoDataDir = '/geoip-lite/data'
 
 const geoipVolume: PersistentVolumeClaim = {
   name: 'sessions-geoip-db',
-  mountPath: '/webapp/node_modules/geoip-lite/data',
+  mountPath: geoDataDir,
   size: '1Gi',
   accessModes: 'ReadWrite',
 }
@@ -40,6 +41,7 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
         prod: 'https://innskra.island.is',
       },
       REDIS_USE_SSL: 'true',
+      GEODATADIR: geoDataDir,
     })
     .secrets({
       GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY',
@@ -138,6 +140,7 @@ export const geoipSetup =
           memory: '128Mi',
         },
       })
+      .env({ GEODATADIR: geoDataDir })
       .secrets({
         GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY',
       })

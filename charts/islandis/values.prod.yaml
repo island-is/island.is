@@ -1977,6 +1977,7 @@ services-sessions:
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_sessions_read'
+    GEODATADIR: '/geoip-lite/data'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=464'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
@@ -2017,7 +2018,7 @@ services-sessions:
   namespace: 'services-sessions'
   pvcs:
     - accessModes: 'ReadWriteMany'
-      mountPath: '/webapp/node_modules/geoip-lite/data'
+      mountPath: '/geoip-lite/data'
       name: 'sessions-geoip-db'
       size: '1Gi'
       storageClass: 'efs-csi'
@@ -2048,6 +2049,7 @@ services-sessions-geoip-worker:
     - 'node'
   enabled: true
   env:
+    GEODATADIR: '/geoip-lite/data'
     NODE_OPTIONS: '--max-old-space-size=208'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -2078,7 +2080,7 @@ services-sessions-geoip-worker:
     fsGroup: 65534
   pvcs:
     - accessModes: 'ReadWriteMany'
-      mountPath: '/webapp/node_modules/geoip-lite/data'
+      mountPath: '/geoip-lite/data'
       name: 'sessions-geoip-db'
       size: '1Gi'
       storageClass: 'efs-csi'
