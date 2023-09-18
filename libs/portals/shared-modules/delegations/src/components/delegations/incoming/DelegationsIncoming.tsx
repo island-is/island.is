@@ -28,9 +28,6 @@ export const DelegationsIncoming = () => {
       },
       lang,
     },
-    context: {
-      skipToastError: true,
-    },
     // Make sure that loading state is shown when refetching
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'cache-and-network',

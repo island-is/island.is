@@ -35,9 +35,6 @@ export const DelegationsOutgoing = () => {
         direction: AuthDelegationDirection.outgoing,
       },
     },
-    context: {
-      skipToastError: true,
-    },
     skip: !domainName || !lang,
     fetchPolicy: 'cache-and-network',
     errorPolicy: 'all',

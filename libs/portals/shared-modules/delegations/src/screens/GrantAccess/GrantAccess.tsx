@@ -128,9 +128,6 @@ const GrantAccess = () => {
             domainName: domainName === ALL_DOMAINS ? null : domainName,
           },
         },
-        context: {
-          skipToastError: true,
-        },
       })
       if (data) {
         navigate(
