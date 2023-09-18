@@ -5,7 +5,7 @@ import { indictmentCases } from '@island.is/judicial-system/types'
 
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
-import { LimitedAccessCaseStateGuard } from '../../guards/limitedAccessCaseState.guard'
+import { LimitedAccessCaseStateGuard } from '../../guards/limitedAccessAccordingToCaseState.guard'
 import { CaseDefenderGuard } from '../../guards/caseDefender.guard'
 import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
 

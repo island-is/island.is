@@ -11,7 +11,7 @@ import {
   indictmentCases,
 } from '@island.is/judicial-system/types'
 
-import { LimitedAccessCaseStateGuard } from '../limitedAccessCaseState.guard'
+import { LimitedAccessAccordingToCaseStateGuard } from '../limitedAccessAccordingToCaseState.guard'
 
 interface Then {
   result: boolean
@@ -26,7 +26,7 @@ describe('Limited Access Case State Guard', () => {
 
   beforeEach(() => {
     givenWhenThen = (): Then => {
-      const guard = new LimitedAccessCaseStateGuard()
+      const guard = new LimitedAccessAccordingToCaseStateGuard()
       const then = {} as Then
 
       try {

@@ -14,7 +14,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 @Injectable()
-export class LimitedAccessCaseStateGuard implements CanActivate {
+export class LimitedAccessAccordingToCaseStateGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
 
@@ -24,11 +24,18 @@ export class LimitedAccessCaseStateGuard implements CanActivate {
       throw new InternalServerErrorException('Missing case')
     }
 
-    const isCaseStateCompleted = completedCaseStates.includes(theCase.state)
+    // Defender can always see a completed case
+    if (completedCaseStates.includes(theCase.state)) {
+      return true
+    }
 
     const canDefenderSeeSubmittedCase =
       theCase.requestSharedWithDefender ===
       RequestSharedWithDefender.READY_FOR_COURT
+
+    if (theCase.state === CaseState.SUBMITTED && canDefenderSeeSubmittedCase) {
+      return true
+    }
 
     const canDefenderSeeReceivedCase = Boolean(
       canDefenderSeeSubmittedCase ||
@@ -36,11 +43,7 @@ export class LimitedAccessCaseStateGuard implements CanActivate {
         theCase.courtDate,
     )
 
-    if (
-      isCaseStateCompleted ||
-      (theCase.state === CaseState.SUBMITTED && canDefenderSeeSubmittedCase) ||
-      (theCase.state === CaseState.RECEIVED && canDefenderSeeReceivedCase)
-    ) {
+    if (theCase.state === CaseState.RECEIVED && canDefenderSeeReceivedCase) {
       return true
     }
 

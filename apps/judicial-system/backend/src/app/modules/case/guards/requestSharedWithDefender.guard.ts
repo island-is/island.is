@@ -22,17 +22,21 @@ export class RequestSharedWithDefenderGuard implements CanActivate {
       throw new InternalServerErrorException('Missing case')
     }
 
-    const isCaseStateCompleted = completedCaseStates.includes(theCase.state)
-    const canDefenderSeeRequest = Boolean(theCase.requestSharedWithDefender)
-    const canDefenderSeeRequestBeforeCourtDate =
-      theCase.requestSharedWithDefender ===
-      RequestSharedWithDefender.READY_FOR_COURT
-    const isCourtDateSet = Boolean(theCase.courtDate)
+    // Defender can always see the request if it's in a completed state
+    if (completedCaseStates.includes(theCase.state)) {
+      return true
+    }
 
     if (
-      isCaseStateCompleted ||
-      (canDefenderSeeRequest &&
-        (isCourtDateSet || canDefenderSeeRequestBeforeCourtDate))
+      Boolean(theCase.requestSharedWithDefender) &&
+      Boolean(theCase.courtDate)
+    ) {
+      return true
+    }
+
+    if (
+      theCase.requestSharedWithDefender ===
+      RequestSharedWithDefender.READY_FOR_COURT
     ) {
       return true
     }

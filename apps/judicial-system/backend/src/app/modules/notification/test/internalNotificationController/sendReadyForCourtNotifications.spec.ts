@@ -211,6 +211,25 @@ describe('InternalNotificationController - Send ready for court notifications fo
     })
   })
 
+  describe('defender receives notification if request is shared when case is ready for court', () => {
+    beforeEach(async () => {
+      theCase.requestSharedWithDefender =
+        RequestSharedWithDefender.READY_FOR_COURT
+      await givenWhenThen(caseId, theCase, notificationDto)
+    })
+
+    it('should send ready for court email notification to defender', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({
+          subject: `Krafa í máli ${policeCaseNumber}`,
+          html: `Sækjandi hefur valið að deila kröfu með þér sem verjanda varnaraðila í máli ${policeCaseNumber}.<br /><br />Þú getur nálgast málið á <a href="${mockNotificationConfig.clientUrl}${DEFENDER_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+          attachments: undefined,
+        }),
+      )
+    })
+  })
+
   describe('defender notification', () => {
     beforeEach(async () => {
       const mockFindAll = mockNotificationModel.findAll as jest.Mock
@@ -225,7 +244,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
       await givenWhenThen(caseId, theCase, notificationDto)
     })
 
-    it('should send ready for court email notification to defender', () => {
+    it('should send ready for court email updated notification to defender', () => {
       expect(mockEmailService.sendEmail).toHaveBeenNthCalledWith(
         2,
         expect.objectContaining({

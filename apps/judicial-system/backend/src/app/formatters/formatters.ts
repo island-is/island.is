@@ -682,20 +682,21 @@ export function formatCourtIndictmentReadyForCourtEmailNotification(
 
 export function formatDefenderReadyForCourtEmailNotification(
   formatMessage: FormatMessage,
-  theCase: Case,
+  policeCaseNumber: string,
+  courtName: string,
   overviewUrl?: string,
 ) {
   const subject = formatMessage(notifications.defenderReadyForCourtSubject, {
-    policeCaseNumber: theCase.policeCaseNumbers?.[0],
+    policeCaseNumber: policeCaseNumber,
   })
 
   const body = formatMessage(notifications.defenderReadyForCourtBody, {
-    policeCaseNumber: theCase.policeCaseNumbers?.[0],
+    policeCaseNumber: policeCaseNumber,
   })
 
   const link = formatMessage(notifications.defenderLink, {
     defenderHasAccessToRvg: Boolean(overviewUrl),
-    courtName: theCase.court?.name?.replace('dómur', 'dómi') ?? 'Héraðsdómi',
+    courtName: courtName.replace('dómur', 'dómi') ?? 'Héraðsdómi',
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
   })

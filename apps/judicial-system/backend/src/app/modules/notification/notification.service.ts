@@ -424,7 +424,10 @@ export class NotificationService {
   ): Promise<Recipient> {
     const { subject, body } = formatDefenderReadyForCourtEmailNotification(
       this.formatMessage,
-      theCase,
+      theCase.policeCaseNumbers[0],
+      theCase.court?.name || 'Héraðsdómur',
+      theCase.defenderNationalId &&
+        formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
     )
 
     return this.sendEmail(
