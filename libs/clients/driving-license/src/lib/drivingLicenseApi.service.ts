@@ -219,9 +219,6 @@ export class DrivingLicenseApi {
     }
   }
 
-  // TODO: We should consider changing the DriversLicense type to reflect
-  // the new DTO from v5. This should be done as part of a larger refactor
-  // for the driving license client.
   private static normalizeDrivingLicenseDTO(
     license: v5.DriverLicenseDto,
   ): DriversLicense {
@@ -311,12 +308,14 @@ export class DrivingLicenseApi {
   }
 
   public async getDrivingAssessment(params: {
-    nationalId: string
+    token: string
   }): Promise<DrivingAssessment | null> {
     let assessment
     try {
-      assessment = await this.v1.apiOkuskirteiniSaekjaakstursmatKennitalaGet({
-        kennitala: params.nationalId,
+      assessment = await this.v5.apiDrivinglicenseV5DrivingassessmentGet({
+        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+        jwttoken: params.token.replace('Bearer ', ''),
       })
     } catch (e) {
       if ((e as { status: number })?.status === 404) {
@@ -331,9 +330,9 @@ export class DrivingLicenseApi {
     }
 
     return {
-      nationalIdStudent: assessment.kennitala ?? '',
-      nationalIdTeacher: assessment.kennitalaOkukennara ?? '',
-      created: assessment.dagsetningMats ?? null,
+      nationalIdStudent: assessment.ssn ?? '',
+      nationalIdTeacher: assessment.instructorSSN ?? '',
+      created: assessment.dateOfAssessment ?? null,
     }
   }
 

@@ -160,7 +160,9 @@ describe('DrivingLicenseService', () => {
 
   describe('getDrivingAssessmentResult', () => {
     it('should return a valid assessment when applicable', async () => {
-      const response = await service.getDrivingAssessment(MOCK_NATIONAL_ID)
+      const response = await service.getDrivingAssessment(
+        MOCK_USER.authorization,
+      )
 
       expect(response).toStrictEqual({
         studentNationalId: MOCK_NATIONAL_ID,
@@ -171,7 +173,7 @@ describe('DrivingLicenseService', () => {
 
     it('should return null for missing assessment', async () => {
       const response = await service.getDrivingAssessment(
-        MOCK_NATIONAL_ID_NO_ASSESSMENT,
+        MOCK_USER.authorization,
       )
 
       expect(response).toStrictEqual(null)

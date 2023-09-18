@@ -12,4 +12,10 @@ const DrivingAssessment = {
   kennitala: '0',
 }
 
-export default DrivingAssessment
+const DrivingAssessmentV5 = {
+  dateOfAssessment: getDateOfAssessment(),
+  ssn: '0',
+  instructorSSN: '2',
+}
+
+export { DrivingAssessment, DrivingAssessmentV5 }

@@ -170,11 +170,11 @@ export class DrivingLicenseService {
   }
 
   async getDrivingAssessmentResult(
-    nationalId: string,
+    token: string,
   ): Promise<DrivingAssessment | null> {
     try {
       return await this.drivingLicenseApi.getDrivingAssessment({
-        nationalId,
+        token,
       })
     } catch (e) {
       if ((e as { status: number })?.status === 404) {
@@ -484,11 +484,9 @@ export class DrivingLicenseService {
     }
   }
 
-  async getDrivingAssessment(
-    nationalId: string,
-  ): Promise<StudentAssessment | null> {
+  async getDrivingAssessment(token: string): Promise<StudentAssessment | null> {
     const assessment = await this.drivingLicenseApi.getDrivingAssessment({
-      nationalId,
+      token,
     })
 
     if (!assessment) {

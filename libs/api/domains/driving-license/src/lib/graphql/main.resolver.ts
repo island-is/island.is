@@ -141,15 +141,9 @@ export class MainResolver {
   }
 
   @Scopes(ApiScope.internal)
-  @Query(() => [Juristiction])
-  drivingLicenseListOfJuristictions() {
-    return this.drivingLicenseService.getListOfJuristictions()
-  }
-
-  @Scopes(ApiScope.internal)
   @Query(() => StudentAssessment, { nullable: true })
   drivingLicenseStudentAssessment(@CurrentUser() user: User) {
-    return this.drivingLicenseService.getDrivingAssessment(user.nationalId)
+    return this.drivingLicenseService.getDrivingAssessment(user.authorization)
   }
 
   @Scopes(ApiScope.internal)

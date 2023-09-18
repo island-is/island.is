@@ -3,7 +3,7 @@ import ValidLicense from './validLicense.json'
 import ExpiredLicense from './expiredLicense.json'
 import LicenseWithDisqualification from './licenseWithDisqualification.json'
 import Juristictions from './juristictions.json'
-import DrivingAssessment from './drivingAssessment'
+import { DrivingAssessment, DrivingAssessmentV5 } from './drivingAssessment'
 import FinishedSchool from './finishedSchool.json'
 import NotFinishedSchool from './notFinishedSchool.json'
 import CanApplyWithResultSuccess from './canApplyWithResultSuccess.json'
@@ -74,9 +74,12 @@ const url = (path: string) => {
 
 export const requestHandlers = [
   rest.get(
-    url(`${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/embaetti`),
+    url(
+      `${XROAD_DRIVING_LICENSE_V5_PATH}/api/drivinglicense/v5/drivingassessment`,
+    ),
     (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(Juristictions))
+      // TODO, ambiguate with mock auths
+      return res(ctx.status(200), ctx.json(DrivingAssessmentV5))
     },
   ),
 
@@ -150,6 +153,16 @@ export const requestHandlers = [
 
   rest.get(
     url(
+      `${XROAD_DRIVING_LICENSE_V5_PATH}/api/drivinglicense/v5/hasfinisheddrivingschool3`,
+    ),
+    (req, res, ctx) => {
+      // TODO, ambiguate with mock auths
+      return res(ctx.status(200), ctx.json({ hasFinishedDrivingSchool3: true }))
+    },
+  ),
+
+  rest.get(
+    url(
       `${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/:nationalId/finishedokugerdi`,
     ),
     (req, res, ctx) => {
@@ -159,6 +172,16 @@ export const requestHandlers = [
         ctx.status(200),
         ctx.json(isFound ? FinishedSchool : NotFinishedSchool),
       )
+    },
+  ),
+
+  rest.get(
+    url(
+      `${XROAD_DRIVING_LICENSE_V5_PATH}/api/drivinglicense/v5/canapplyfor/B/full`,
+    ),
+    (req, res, ctx) => {
+      // TODO ambiguate with mock auths
+      return res(ctx.status(200), ctx.json({ result: true, errorCode: '' }))
     },
   ),
 
