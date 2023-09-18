@@ -5,8 +5,6 @@ import {
   DrivingAssessment,
   QualityPhoto,
 } from '..'
-import * as v1 from '../v1'
-import * as v2 from '../v2'
 import * as v4 from '../v4'
 import * as v5 from '../v5'
 import {
@@ -22,8 +20,6 @@ import { PracticePermitDto } from '../v5'
 @Injectable()
 export class DrivingLicenseApi {
   constructor(
-    private readonly v1: v1.ApiV1,
-    private readonly v2: v2.ApiV2,
     private readonly v4: v4.ApiV4,
     private readonly v5: v5.ApiV5,
     private readonly v5CodeTable: v5.CodeTableV5,
@@ -119,7 +115,7 @@ export class DrivingLicenseApi {
       if (!licenseRaw || !licenseRaw.id) {
         return null
       }
-      const license = DrivingLicenseApi.normalizeDrivingLicenseType(licenseRaw)
+      const license = DrivingLicenseApi.normalizeDrivingLicenseDTO(licenseRaw)
       if (licenseRaw.comments) {
         const remarks = await this.v5CodeTable.apiCodetablesRemarksGet({
           apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
@@ -183,36 +179,6 @@ export class DrivingLicenseApi {
       }
 
       return null
-    }
-  }
-
-  private static normalizeDrivingLicenseType(
-    skirteini: v2.Okuskirteini | v1.Okuskirteini,
-  ): DriversLicense {
-    // Pretty sure none of these fallbacks can get triggered, since if the service
-    // finds a driver's license, it's going to have the values. - this is mostly to
-    // appease the type system, since the downstream type is actually wrong.
-    return {
-      id: skirteini.id ?? -1,
-      name: skirteini.nafn ?? '',
-      issued: skirteini.utgafuDagsetning,
-      expires: skirteini.gildirTil,
-      categories:
-        skirteini.rettindi?.map((rettindi: v2.Rettindi | v1.Rettindi) => ({
-          id: rettindi.id ?? 0,
-          name: rettindi?.nr ?? '',
-          issued: rettindi.utgafuDags ?? null,
-          expires: rettindi.gildirTil ?? null,
-          comments: rettindi.aths ?? '',
-        })) ?? [],
-      disqualification:
-        skirteini?.svipting?.dagsTil && skirteini?.svipting?.dagsFra
-          ? {
-              to: skirteini.svipting.dagsTil,
-              from: skirteini.svipting.dagsFra,
-            }
-          : null,
-      birthCountry: skirteini.faedingarStadurHeiti,
     }
   }
 
@@ -451,7 +417,9 @@ export class DrivingLicenseApi {
     sendLicenseToAddress: string
     category: string
   }): Promise<boolean> {
-    const response = await this.v2.apiOkuskirteiniApplicationsNewCategoryPost({
+    const response = await this.v5.apiDrivinglicenseV5ApplicationsNewCategoryPost({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
       category: params.category,
       postNewFinalLicense: {
         authorityNumber: params.juristictionId,
@@ -462,8 +430,7 @@ export class DrivingLicenseApi {
         bringsNewPhoto: params.willBringQualityPhoto ? 1 : 0,
         sendLicenseInMail: params.sendLicenseInMail ? 1 : 0,
         sendToAddress: params.sendLicenseToAddress,
-      },
-      apiVersion: v2.DRIVING_LICENSE_API_VERSION_V2,
+      }
     })
 
     const handledResponse = handleCreateResponse(response)
@@ -538,10 +505,12 @@ export class DrivingLicenseApi {
   }
 
   async getQualityPhoto(params: {
-    nationalId: string
+    token: string
   }): Promise<QualityPhoto | null> {
-    const image = await this.v1.apiOkuskirteiniKennitalaGetqualityphotoGet({
-      kennitala: params.nationalId,
+    const image = await this.v5.apiDrivinglicenseV5GetqualityphotoGet({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: params.token.replace('Bearer ', ''),
     })
 
     return {
@@ -550,21 +519,25 @@ export class DrivingLicenseApi {
   }
 
   async getHasQualitySignature(params: {
-    nationalId: string
+    token: string
   }): Promise<boolean> {
-    const result = await this.v1.apiOkuskirteiniKennitalaHasqualitysignatureGet(
+    const result = await this.v5.apiDrivinglicenseV5HasqualitysignatureGet(
       {
-        kennitala: params.nationalId,
-      },
+        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+        jwttoken: params.token.replace('Bearer ', ''),
+      }
     )
     return result > 0
   }
 
   async getQualitySignature(params: {
-    nationalId: string
+    token: string
   }): Promise<QualitySignature | null> {
-    const image = await this.v1.apiOkuskirteiniKennitalaGetqualitysignatureGet({
-      kennitala: params.nationalId,
+    const image = await this.v5.apiDrivinglicenseV5GetqualitysignatureGet({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: params.token.replace('Bearer ', ''),
     })
     return {
       data: image,

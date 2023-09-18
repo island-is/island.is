@@ -218,7 +218,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
     const hasQualitySignature =
       await this.drivingLicenseService.getHasQualitySignature({
-        nationalId: auth.nationalId,
+        token: auth.authorization,
       })
     return {
       hasQualitySignature,
