@@ -23,6 +23,7 @@ export type OutputPersistentVolumeClaim = {
   name?: string
   size: string
   accessModes: OutputAccessModes
+  useExisting?: boolean
   mountPath: string
   /**
    * Sets the storageClass, leave empty if storageClass means little to you(defaults to efs-csi),

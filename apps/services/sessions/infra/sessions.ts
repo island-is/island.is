@@ -1,8 +1,16 @@
-import { json, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { PersistentVolumeClaim } from '../../../../infra/src/dsl/types/input-types'
+import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const namespace = 'services-sessions'
 const imageName = 'services-sessions'
 const dbName = 'services_sessions'
+
+const geoipVolume: PersistentVolumeClaim = {
+  name: 'sessions-geoip-db',
+  mountPath: '/webapp/node_modules/geoip-lite/data',
+  size: '1Gi',
+  accessModes: 'ReadWrite',
+}
 
 const servicePostgresInfo = {
   // The service has only read permissions
@@ -32,6 +40,13 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
         prod: 'https://innskra.island.is',
       },
       REDIS_USE_SSL: 'true',
+    })
+    .secrets({
+      GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY',
+    })
+    .volumes({
+      ...geoipSetup().serviceDef.volumes[0],
+      useExisting: true,
     })
     .readiness('/liveness')
     .liveness('/liveness')
@@ -99,3 +114,36 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
       },
       REDIS_USE_SSL: 'true',
     })
+
+export const geoipSetup =
+  (): ServiceBuilder<'services-sessions-geoip-worker'> =>
+    service('services-sessions-geoip-worker')
+      .image(imageName)
+      .namespace(namespace)
+      .redis()
+      .serviceAccount('sessions-geoip')
+      .command('node')
+      .args(
+        './node_modules/geoip-lite/scripts/updatedb.js',
+        'license_key=$(GEOIP_LICENSE_KEY)',
+      )
+
+      .resources({
+        limits: {
+          cpu: '200m',
+          memory: '256Mi',
+        },
+        requests: {
+          cpu: '10m',
+          memory: '128Mi',
+        },
+      })
+      .secrets({
+        GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY',
+      })
+      .volumes(geoipVolume)
+      .extraAttributes({
+        dev: { schedule: '*/30 * * * *' },
+        staging: { schedule: '*/30 * * * *' },
+        prod: { schedule: '*/30 * * * *' },
+      })

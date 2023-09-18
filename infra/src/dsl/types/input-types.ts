@@ -149,6 +149,7 @@ export type PersistentVolumeClaim = {
   name?: string
   size: '1Gi' | '5Gi' | '10Gi' | string
   accessModes: AccessModes
+  useExisting?: boolean
   mountPath: string
   /**
    * Sets the storageClass, leave empty if storageClass means little to you(defaults to efs-csi),

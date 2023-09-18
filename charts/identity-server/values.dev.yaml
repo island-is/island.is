@@ -161,6 +161,7 @@ identity-server:
       name: 'identity-server'
       size: '1Gi'
       storageClass: 'efs-csi'
+      useExisting: false
   replicaCount:
     default: 1
     max: 3
