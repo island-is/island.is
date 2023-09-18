@@ -24,7 +24,6 @@ export const NATIONAL_REGISTRY_CHILDREN = gql`
       homeAddress
       religion
       nationality
-      fate
       religion
       homeAddress
       nationality

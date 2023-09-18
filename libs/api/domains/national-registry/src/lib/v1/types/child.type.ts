@@ -27,7 +27,6 @@ export interface FamilyChild {
   homeAddress?: string // Logheimili
   municipality?: string // Sveitarfelag
   postal?: string // Postaritun
-  fate?: string // Afdrif
 }
 export function formatFamilyChild(
   familyChild: ISLBorninMin | null | undefined,
@@ -63,6 +62,5 @@ export function formatFamilyChild(
     homeAddress: familyChild.Logheimili,
     municipality: familyChild.Sveitarfelag,
     postal: familyChild.Postaritun,
-    fate: familyChild.Afdrif,
   }
 }
