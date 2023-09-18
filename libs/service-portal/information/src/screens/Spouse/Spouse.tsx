@@ -56,6 +56,8 @@ const FamilyMember = () => {
       )
       if (ffEnabled) {
         setUseNatRegV3(ffEnabled as boolean)
+      } else {
+        setUseNatRegV3(false)
       }
     }
     isFlagEnabled()
@@ -85,7 +87,7 @@ const FamilyMember = () => {
               ],
             )
           : ''
-        setSpouseValue(v1Value)
+        setSpouseValue(v1Value ?? '')
       }
     }
   }, [useNatRegV3, data?.nationalRegistryPerson, formatMessage])
