@@ -1,0 +1,11 @@
+{
+  "type": "Server.ServerProxy.InternalError",
+  "message": "Service not found: SERVICE:IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-v1",
+  "detail": "1a0f4af9-291c-4567-b394-2290fbc7808a",
+  "components": {
+    "schemas": {
+      "ProblemDetails": { "additionalProperties": false },
+      "ValidationProblemDetails": { "additionalProperties": false }
+    }
+  }
+}

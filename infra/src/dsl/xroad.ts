@@ -603,3 +603,13 @@ export const HousingBenefitCalculator = new XroadConf({
       '/k8s/xroad/client/HOUSING_BENEFIT_CALCULATOR_PASSWORD',
   },
 })
+
+export const ShipRegistry = new XroadConf({
+  env: {
+    XROAD_SHIP_REGISTRY_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-v1',
+      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-v1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/skipaskra-v1',
+    },
+  },
+})
