@@ -1,13 +1,19 @@
 import classNames from 'classnames'
-import React, { useState } from 'react'
-import { Outlet } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Outlet, useSearchParams } from 'react-router-dom'
 
 import {
   AuthAdminClientType,
   AuthAdminEnvironment,
   AuthAdminRefreshTokenExpiration,
 } from '@island.is/api/schema'
-import { AlertMessage, Button, Stack, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Button,
+  Stack,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { getTranslatedValue } from '@island.is/portals/core'
 
@@ -29,6 +35,7 @@ import { EnvironmentProvider } from '../../context/EnvironmentContext'
 import { useClient } from './ClientContext'
 
 import * as styles from './Client.css'
+import { partiallyCreatedQueryName } from '../../lib/constants'
 
 const IssuerUrls = {
   [AuthAdminEnvironment.Development]:
@@ -44,6 +51,20 @@ export const EditClient = () => {
   const { onEnvironmentChange, client, selectedEnvironment } = useClient()
   const [isRevokeSecretsVisible, setRevokeSecretsVisibility] = useState(false)
   const isMachineApplication = client.clientType === AuthAdminClientType.machine
+
+  const [searchParams, setSearchParams] = useSearchParams()
+  const partiallyCreated = searchParams.get(partiallyCreatedQueryName)
+
+  useEffect(() => {
+    if (searchParams.has(partiallyCreatedQueryName)) {
+      if (!partiallyCreated) return
+
+      toast.warning(formatMessage(m.partiallyCreatedClient))
+
+      searchParams.delete(partiallyCreatedQueryName)
+      setSearchParams(searchParams, { replace: true })
+    }
+  }, [partiallyCreated, searchParams, setSearchParams, formatMessage])
 
   return (
     <EnvironmentProvider

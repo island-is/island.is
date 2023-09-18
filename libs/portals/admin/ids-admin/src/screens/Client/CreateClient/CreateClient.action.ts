@@ -18,6 +18,7 @@ import {
 } from './CreateClient.generated'
 import { redirect } from 'react-router-dom'
 import { IDSAdminPaths } from '../../../lib/paths'
+import { partiallyCreatedQueryName } from '../../../lib/constants'
 
 const schema = z
   .object({
@@ -66,7 +67,10 @@ export const createClientAction: WrappedActionFn =
     const { data } = result
 
     try {
-      await client.mutate<CreateClientMutation, CreateClientMutationVariables>({
+      const createdClient = await client.mutate<
+        CreateClientMutation,
+        CreateClientMutationVariables
+      >({
         mutation: CreateClientDocument,
         variables: {
           input: {
@@ -79,10 +83,16 @@ export const createClientAction: WrappedActionFn =
         },
       })
 
-      // TODO: Check for partial creation, and show a warning modal
+      const partiallyCreated =
+        createdClient.data?.createAuthAdminClient.map(
+          (client) => client.environment,
+        )?.length !== data?.environments?.length
+
       return redirect(
         replaceParams({
-          href: IDSAdminPaths.IDSAdminClient,
+          href: IDSAdminPaths.IDSAdminClient.concat(
+            partiallyCreated ? `?${partiallyCreatedQueryName}=true` : '',
+          ),
           params: {
             tenant: data?.tenant,
             client: data?.clientId,
