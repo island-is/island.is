@@ -1,5 +1,6 @@
 import { defineMessage } from 'react-intl'
 import { useParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 
 import {
   Box,
@@ -20,7 +21,7 @@ import {
 import { natRegMaritalStatusMessageDescriptorRecord } from '../../helpers/localizationHelpers'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { useState, useEffect } from 'react'
+import { spmm } from '../../lib/messages'
 import { useNationalRegistrySpouseQuery } from './Spouse.generated'
 
 const dataNotFoundMessage = defineMessage({
@@ -41,7 +42,8 @@ const FamilyMember = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
 
-  const [useNatRegV3, setUseNatRegV3] = useState(false)
+  const [useNatRegV3, setUseNatRegV3] = useState<boolean>()
+  const [spouseValue, setSpouseValue] = useState<string>()
 
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
 
@@ -58,6 +60,27 @@ const FamilyMember = () => {
     }
     isFlagEnabled()
   }, [])
+
+  useEffect(() => {
+    if (useNatRegV3) {
+      const v3Value = data?.nationalRegistryPerson?.spouse
+        ?.cohabitationWithSpouse
+        ? formatMessage(spmm.cohabitationWithSpouse)
+        : data?.nationalRegistryPerson?.spouse?.maritalStatus
+        ? data.nationalRegistryPerson.spouse.maritalStatus
+        : ''
+      setSpouseValue(v3Value)
+    } else {
+      const v1Value = data?.nationalRegistryPerson?.maritalStatus
+        ? formatMessage(
+            natRegMaritalStatusMessageDescriptorRecord[
+              data?.nationalRegistryPerson?.maritalStatus
+            ],
+          )
+        : ''
+      setSpouseValue(v1Value)
+    }
+  }, [useNatRegV3])
 
   const { data, loading, error } = useNationalRegistrySpouseQuery({
     variables: {
@@ -115,17 +138,7 @@ const FamilyMember = () => {
             id: 'sp.family:spouseCohab',
             defaultMessage: 'Tengsl',
           })}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : data?.nationalRegistryPerson?.maritalStatus
-              ? formatMessage(
-                  natRegMaritalStatusMessageDescriptorRecord[
-                    data?.nationalRegistryPerson?.maritalStatus
-                  ],
-                )
-              : ''
-          }
+          content={error ? formatMessage(dataNotFoundMessage) : spouseValue}
           loading={loading}
         />
         <Divider />

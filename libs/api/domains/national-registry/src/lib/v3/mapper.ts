@@ -132,7 +132,8 @@ export function formatSpouse(
   return {
     nationalId: spouse.makiKennitala,
     fullName: spouse.makiNafn,
-    cohabitationWithSpouse: spouse.sambudTexti ?? null,
+    cohabitationWithSpouse: spouse.sambudTexti ?? false,
+    maritalStatus: spouse.hjuskaparstadaTexti ?? null,
   }
 }
 
