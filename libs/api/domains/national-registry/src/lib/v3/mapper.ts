@@ -61,7 +61,7 @@ export function formatPerson(
     nationalId: individual.kennitala,
     fullName: individual.nafn,
     nationalIdType: individual.tegundKennitolu ?? null,
-    exceptionFromDirectMarketing: individual.bannmerking === 'true' ?? false,
+    exceptionFromDirectMarketing: individual.bannmerking === true ?? false,
     gender: mapGender(individual.kyn?.kynKodi ?? ''),
     religion: individual.trufelag?.trufelagHeiti ?? null,
     fate: individual.afdrif ?? null,
@@ -72,7 +72,7 @@ export function formatPerson(
     //DEPRECATION LINE -- below shall be removed
     legalResidence: legalResidence ?? null,
     banMarking: {
-      banMarked: individual.bannmerking === 'true' ?? false,
+      banMarked: individual.bannmerking === true ?? false,
     },
     firstName: individual.fulltNafn?.eiginNafn ?? null,
     middleName: individual.fulltNafn?.milliNafn ?? null,
@@ -132,7 +132,8 @@ export function formatSpouse(
   return {
     nationalId: spouse.makiKennitala,
     fullName: spouse.makiNafn,
-    cohabitationWithSpouse: spouse.sambudTexti ?? null,
+    cohabitationWithSpouse: spouse.sambudTexti ?? false,
+    maritalStatus: spouse.hjuskaparstadaTexti ?? null,
   }
 }
 
