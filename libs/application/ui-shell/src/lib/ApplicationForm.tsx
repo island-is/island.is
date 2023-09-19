@@ -41,6 +41,7 @@ import {
 } from '@island.is/shared/problem'
 import { DelegationsScreen } from '../components/DelegationsScreen'
 import data from './jsonStuff/data'
+import { generateZodSchema } from './jsonStuff/jsonToDataSchema'
 
 const ApplicationLoader: FC<
   React.PropsWithChildren<{
@@ -152,6 +153,7 @@ const ShellWrapper: FC<
 
   useEffect(() => {
     async function populateForm() {
+      console.log('no we here populate form', dataSchema)
       if (dataSchema === undefined && form === undefined) {
         const template = await getApplicationTemplateByTypeId(
           application.typeId,
@@ -182,6 +184,7 @@ const ShellWrapper: FC<
                 featureFlagClient,
               })
               setForm(formDescriptor)
+              console.log(template.dataSchema)
               setDataSchema(template.dataSchema)
               fieldsDispatch(applicationFields)
             }
@@ -230,6 +233,7 @@ const JShellWrapper: FC<
 
   useEffect(() => {
     async function populateForm() {
+      console.log('populateForm')
       if (dataSchema === undefined && form === undefined) {
         //USE JSON FILE
         // We will use a shared templates for each type of application
@@ -263,8 +267,11 @@ const JShellWrapper: FC<
             ) as unknown as Form
             //const formDescriptor2: Form = data as unknown as Form
 
+            // parse validation from json and make a zod dataschem
+            const dataSchema = generateZodSchema(form)
+            console.log(dataSchema)
             setForm(form)
-            setDataSchema(template.dataSchema)
+            setDataSchema(dataSchema)
             fieldsDispatch(applicationFields)
           }
         }
