@@ -3,12 +3,26 @@
 set -euo pipefail
 
 : "${TEST_ENVIRONMENT:=local}"
-: "${TEST_TYPE:=smoke}"
 : "${TEST_PROJECT:=everything}"
 : "${TEST_RESULTS_S3:=}"
-: "${DD_ENV:=dev}"
+: "${TEST_TYPE:=smoke}"
+
+: "${DD_API_KEY:=}"
+: "${DD_CIVISIBILITY_AGENTLESS_ENABLED:=true}"
+: "${DD_CIVISIBILITY_MANUAL_API_ENABLED:=1}"
+: "${DD_ENV:=local}"
+: "${DD_GIT_REPOSITORY_URL:="https://github.com/island-is/island.is"}"
 : "${DD_SERVICE:=system-tests}"
-export NODE_OPTIONS="${NODE_OPTIONS:-} -r dd-trace/ci/init"
+: "${DD_SITE:=datadoghq.eu}"
+: "${DD_TRACE_DEBUG:=true}"
+
+export DD_API_KEY DD_CIVISIBILITY_AGENTLESS_ENABLED DD_CIVISIBILITY_MANUAL_API_ENABLED DD_ENV DD_GIT_REPOSITORY_URL DD_SERVICE DD_SITE DD_TRACE_DEBUG NODE_OPTIONS NODE_OPTIONS
+
+if [[ -z "$DD_API_KEY" ]]; then
+  echo "DD_API_KEY is empty!!!"
+else
+  echo "sha256sum(DD_API_KEY): $(echo -n "$DD_API_KEY" | sha256sum)"
+fi
 
 if [[ "$*" =~ --project ]]; then
   TEST_PROJECT="$(echo "$*" | grep -oP -- '--project[= ](\S+)')"
