@@ -16,6 +16,7 @@ import {
   isPrisonSystemUser,
   isDefenceUser,
   completedCaseStates,
+  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
@@ -179,6 +180,15 @@ function getDefenceUserCasesQueryFilter(user: User): WhereOptions {
             { type: [...restrictionCases, ...investigationCases] },
             {
               [Op.or]: [
+                {
+                  [Op.and]: [
+                    { state: [CaseState.SUBMITTED, CaseState.RECEIVED] },
+                    {
+                      request_shared_with_defender:
+                        RequestSharedWithDefender.READY_FOR_COURT,
+                    },
+                  ],
+                },
                 {
                   [Op.and]: [
                     { state: CaseState.RECEIVED },
