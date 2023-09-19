@@ -3,9 +3,10 @@ import {
   Application,
   ApplicantChildCustodyInformation,
   Option,
+  YesOrNo,
 } from '@island.is/application/types'
 import { ChildPensionRow } from '../types'
-import { ChildPensionReason } from './constants'
+import { ChildPensionReason, YES } from './constants'
 import { childPensionFormMessage } from './messages'
 
 export function getApplicationAnswers(answers: Application['answers']) {
@@ -37,12 +38,19 @@ export function getApplicationAnswers(answers: Application['answers']) {
     [],
   ) as ChildPensionRow[]
 
+  const childPensionAddChild = getValueViaPath(
+    answers,
+    'childPensionAddChild',
+    YES,
+  ) as YesOrNo
+
   return {
     applicantEmail,
     applicantPhonenumber,
     registeredChildren,
     selectedCustodyKids,
     selectedChildrenInCustody,
+    childPensionAddChild,
   }
 }
 

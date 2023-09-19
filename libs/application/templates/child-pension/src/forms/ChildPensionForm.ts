@@ -9,6 +9,7 @@ import {
   buildSubmitField,
   buildTextField,
   buildRepeater,
+  buildRadioField,
 } from '@island.is/application/core'
 import {
   Application,
@@ -24,6 +25,7 @@ import {
   getApplicationExternalData,
   getApplicationAnswers,
 } from '../lib/childPensionUtils'
+import { YES, NO } from '../lib/constants'
 
 const buildChildReason = (index: number): CustomField =>
   buildCustomField(
@@ -129,14 +131,43 @@ export const ChildPensionForm: Form = buildForm({
               component: 'ChooseChildren',
             }),
             ...buildChildReasons(),
+            buildRadioField({
+              condition: (answers, externalData) => {
+                const { custodyInformation } =
+                  getApplicationExternalData(externalData)
+                const { selectedCustodyKids } = getApplicationAnswers(answers)
+                return custodyInformation.length !== 0
+                  ? selectedCustodyKids.length !== 0
+                  : false
+              },
+              id: 'childPensionAddChild',
+              title: childPensionFormMessage.info.childPensionAddChildQuestion,
+              width: 'half',
+              required: true,
+              options: [
+                {
+                  value: YES,
+                  label: childPensionFormMessage.shared.yes,
+                },
+                {
+                  value: NO,
+                  label: childPensionFormMessage.shared.no,
+                },
+              ],
+            }),
             buildRepeater({
               id: 'registerChildRepeater',
               title: childPensionFormMessage.info.registerChildRepeaterTitle,
               component: 'RegisterChildRepeater',
-              condition: (_, externalData) => {
+              condition: (answers, externalData) => {
                 const { custodyInformation } =
                   getApplicationExternalData(externalData)
-                return custodyInformation.length === 0
+                const { childPensionAddChild } = getApplicationAnswers(answers)
+
+                return (
+                  custodyInformation.length === 0 ||
+                  childPensionAddChild === YES
+                )
               },
               children: [
                 buildMultiField({
@@ -144,25 +175,6 @@ export const ChildPensionForm: Form = buildForm({
                   title: childPensionFormMessage.info.registerChildTitle,
                   space: 3,
                   children: [
-                    // buildDescriptionField({
-                    //   id: 'registerChild.descriptionField',
-                    //   marginBottom: 'containerGutter',
-                    //   titleVariant: 'h5',
-                    //   // title:
-                    //   //   childPensionFormMessage.connectedApplications
-                    //   //     .registerChildTitle,
-                    //   // description:
-                    //   //   childPensionFormMessage.connectedApplications
-                    //   //     .registerChildDescription,
-                    //   title: childPensionFormMessage.info.chooseChildrenTitle,
-                    //   description:
-                    //     childPensionFormMessage.info.chooseChildrenDescription,
-                    //   condition: (_, externalData) => {
-                    //     const { custodyInformation } =
-                    //       getApplicationExternalData(externalData)
-                    //     return custodyInformation.length === 0
-                    //   },
-                    // }),
                     buildCustomField({
                       id: 'registerChild',
                       title: '',

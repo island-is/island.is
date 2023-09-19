@@ -11,14 +11,18 @@ import { ReviewGroupProps } from './props'
 import { format as formatKennitala } from 'kennitala'
 import format from 'date-fns/format'
 import { formatText } from '@island.is/application/core'
+import { YES } from '../../../lib/constants'
 
 export const Children = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const { registeredChildren, selectedChildrenInCustody } =
-    getApplicationAnswers(application.answers)
+  const {
+    registeredChildren,
+    selectedChildrenInCustody,
+    childPensionAddChild,
+  } = getApplicationAnswers(application.answers)
 
   const { formatMessage } = useLocale()
 
@@ -26,7 +30,10 @@ export const Children = ({
     application.externalData,
   )
 
-  const allChildren = [...selectedChildrenInCustody, ...registeredChildren]
+  const allChildren = [
+    ...selectedChildrenInCustody,
+    ...(childPensionAddChild === YES ? registeredChildren : []),
+  ]
 
   return (
     <ReviewGroup

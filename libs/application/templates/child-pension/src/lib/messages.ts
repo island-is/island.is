@@ -265,6 +265,12 @@ export const childPensionFormMessage: MessageDir = {
       // defaultMessage: 'Villa kom upp við að sækja nafn útfrá kennitölu. Vinsamlegast prófaðu aftur síðar',
       description: 'No name found for national id in national registry',
     },
+
+    childPensionAddChildQuestion: {
+      id: 'cp.application:info.child.pension.add.child.question',
+      defaultMessage: 'Viltu bæta við barni á framfæri?',
+      description: 'english translation',
+    },
   }),
 
   additionalInfo: defineMessages({

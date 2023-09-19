@@ -1,3 +1,5 @@
+import { assign } from 'xstate'
+import unset from 'lodash/unset'
 import {
   ApplicationTemplate,
   ApplicationContext,
@@ -14,10 +16,11 @@ import {
 
 import { pruneAfterDays } from '@island.is/application/core'
 
-import { Events, Roles, States } from './constants'
+import { Events, Roles, States, NO } from './constants'
 import { dataSchema } from './dataSchema'
 import { childPensionFormMessage } from './messages'
 import { answerValidators } from './answerValidators'
+import { getApplicationAnswers } from './childPensionUtils'
 
 const ChildPensionTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -68,6 +71,7 @@ const ChildPensionTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        exit: ['clearChildPensionAddChild'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -96,6 +100,22 @@ const ChildPensionTemplate: ApplicationTemplate<
         //   SUBMIT: [],
         // },
       },
+    },
+  },
+  stateMachineOptions: {
+    actions: {
+      clearChildPensionAddChild: assign((context) => {
+        const { application } = context
+        const { childPensionAddChild } = getApplicationAnswers(
+          application.answers,
+        )
+
+        if (childPensionAddChild === NO) {
+          unset(application.answers, 'registerChildRepeater')
+        }
+
+        return context
+      }),
     },
   },
   mapUserToRole(
