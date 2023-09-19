@@ -41,15 +41,6 @@
           "minify": true,
           "generatePackageJson": true
         }
-      },
-      "configurations": {
-        "development": {
-          "minify": false
-        },
-        "production": {
-          "minify": true,
-          "generatePackageJson": true
-        }
       }
     },
     "update-geoip": {
