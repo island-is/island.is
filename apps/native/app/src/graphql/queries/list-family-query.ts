@@ -1,4 +1,4 @@
-import {gql} from '@apollo/client';
+import { gql } from '@apollo/client'
 
 export const FAMILY_QUERY = gql`
   query NationalRegistryChildrenQuery {
@@ -29,11 +29,10 @@ export const FAMILY_QUERY = gql`
       homeAddress
       religion
       nationality
-      fate
       religion
       homeAddress
       nationality
       legalResidence
     }
   }
-`;
+`
