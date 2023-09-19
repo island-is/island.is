@@ -1,6 +1,5 @@
 import {
   buildCustomField,
-  buildDescriptionField,
   buildForm,
   buildMultiField,
   buildPhoneField,
@@ -66,6 +65,24 @@ export const ChildPensionForm: Form = buildForm({
                       .data as UserProfile
                     return data.mobilePhoneNumber
                   },
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'periodSection',
+          title: childPensionFormMessage.period.periodTitle,
+          children: [
+            buildMultiField({
+              id: 'periodField',
+              title: childPensionFormMessage.period.periodTitle,
+              description: childPensionFormMessage.period.periodDescription,
+              children: [
+                buildCustomField({
+                  id: 'period',
+                  component: 'Period',
+                  title: childPensionFormMessage.period.periodTitle,
                 }),
               ],
             }),

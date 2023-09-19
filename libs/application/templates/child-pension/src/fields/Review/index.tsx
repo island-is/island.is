@@ -5,11 +5,13 @@ import { FC } from 'react'
 import { useMutation } from '@apollo/client'
 import get from 'lodash/get'
 import has from 'lodash/has'
-import { BaseInformation } from './review-groups/BaseInformation'
 import { States } from '../../lib/constants'
 import { handleServerError } from '@island.is/application/ui-components'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { childPensionFormMessage } from '../../lib/messages'
+
+import { BaseInformation } from './review-groups/BaseInformation'
+import { Period } from './review-groups/Period'
 
 interface ReviewScreenProps {
   application: Application
@@ -145,6 +147,7 @@ export const Review: FC<ReviewScreenProps> = ({
         </Box>
       )}
       <BaseInformation {...childProps} />
+      <Period {...childProps} />
     </>
   )
 }
