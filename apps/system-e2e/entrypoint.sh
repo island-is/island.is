@@ -6,6 +6,9 @@ set -euo pipefail
 : "${TEST_TYPE:=smoke}"
 : "${TEST_PROJECT:=everything}"
 : "${TEST_RESULTS_S3:=}"
+: "${DD_ENV:=dev}"
+: "${DD_SERVICE:=system-tests}"
+export NODE_OPTIONS="${NODE_OPTIONS:-} -r dd-trace/ci/init"
 
 if [[ "$*" =~ --project ]]; then
   TEST_PROJECT="$(echo "$*" | grep -oP -- '--project[= ](\S+)')"
