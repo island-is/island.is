@@ -59,6 +59,10 @@ export const spmm = defineMessages({
     id: 'sp.family:marital-status-living-sep',
     defaultMessage: 'Hjón ekki í samvistum',
   },
+  cohabitationWithSpouse: {
+    id: 'sp.family:cohabitation-with-spouse',
+    defaultMessage: 'Í sambúð',
+  },
   maritalStatusMarriedToForeign: {
     id: 'sp.family:marital-status-married-to-foreign',
     defaultMessage:

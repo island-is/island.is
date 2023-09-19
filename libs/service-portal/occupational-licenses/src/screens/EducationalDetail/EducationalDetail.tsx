@@ -86,13 +86,13 @@ export const EducationDetail = () => {
         ) : undefined
       }
       name={user.profile.name}
-      dateOfBirth={birthday ? formatDateFns(birthday, 'dd.mm.yyyy') : undefined}
+      dateOfBirth={birthday ? formatDateFns(birthday, 'dd.MM.yyyy') : undefined}
       profession={programme}
       licenseType={programme}
       publisher={license.type}
       dateOfIssue={
         !Number.isNaN(Date.parse(license.validFrom))
-          ? formatDateFns(license.validFrom, 'dd.mm.yyyy')
+          ? formatDateFns(license.validFrom, 'dd.MM.yyyy')
           : undefined
       }
       isValid={license.isValid}

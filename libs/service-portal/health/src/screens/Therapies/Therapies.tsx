@@ -25,7 +25,7 @@ const Therapies = () => {
 
   const { loading, error, data } = useGetTherapiesQuery()
 
-  const therapiesData = data?.rightsPortalPaginatedTherapiesResponse?.data ?? []
+  const therapiesData = data?.rightsPortalPaginatedTherapies?.data ?? []
 
   const physicalTherapyData = therapiesData.filter(
     (x: TherapiesType) => x.id === PHYSIO_THERAPY,

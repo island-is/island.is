@@ -44,6 +44,7 @@ const GET_DOCUMENT_BY_ID = gql`
   query getDocumentInboxLineQuery($input: GetDocumentInput!) {
     getDocument(input: $input) {
       html
+      url
     }
   }
 `
@@ -80,6 +81,10 @@ const DocumentLine: FC<React.PropsWithChildren<Props>> = ({
     let html: string | undefined = undefined
     if (singleDocData.html) {
       html = singleDocData.html.length > 0 ? singleDocData.html : undefined
+    }
+    if (singleDocData.url) {
+      window.open(singleDocData.url, '_blank')?.focus()
+      return
     }
     if (html) {
       setTimeout(() => {

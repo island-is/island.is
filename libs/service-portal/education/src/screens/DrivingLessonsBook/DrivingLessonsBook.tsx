@@ -51,6 +51,7 @@ export const GET_STUDENT_BOOK = gql`
           schoolName
           schoolTypeName
           comments
+          status
         }
         testResults {
           examDate
@@ -186,7 +187,7 @@ const DrivingLessonsBook = () => {
           {book?.drivingSchoolExams && (
             <DrivingLessonsSchools
               title={formatMessage(messages.vehicleDrivingLessonsSchools)}
-              data={book.drivingSchoolExams}
+              data={book.drivingSchoolExams.filter((item) => item.status === 2)}
             />
           )}
 

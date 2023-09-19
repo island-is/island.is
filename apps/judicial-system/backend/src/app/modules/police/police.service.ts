@@ -53,6 +53,7 @@ export class PoliceService {
   private xRoadPath: string
   private agent: Agent
   private throttle = Promise.resolve({} as UploadPoliceCaseFileResponse)
+
   private policeCaseFileStructure = z.object({
     rvMalSkjolMals_ID: z.number(),
     heitiSkjals: z.string(),
@@ -60,17 +61,15 @@ export class PoliceService {
     domsSkjalsFlokkun: z.optional(z.string()),
     dagsStofnad: z.optional(z.string()),
   })
-
+  private readonly crimeSceneStructure = z.object({
+    vettvangur: z.optional(z.string()),
+    brotFra: z.optional(z.string()),
+    upprunalegtMalsnumer: z.string(),
+  })
   private responseStructure = z.object({
     malsnumer: z.string(),
-    skjol: z.array(this.policeCaseFileStructure),
-    malseinings: z.array(
-      z.object({
-        vettvangur: z.optional(z.string()),
-        brotFra: z.optional(z.string()),
-        upprunalegtMalsnumer: z.string(),
-      }),
-    ),
+    skjol: z.optional(z.array(this.policeCaseFileStructure)),
+    malseinings: z.optional(z.array(this.crimeSceneStructure)),
   })
 
   constructor(
@@ -129,15 +128,9 @@ export class PoliceService {
       this.logger.info('Previous upload failed', { reason })
     })
 
-    const promise = this.config.policeCaseApiV2Available
-      ? this.fetchPoliceDocumentApi(
-          `${this.xRoadPath}/V2/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
-        )
-      : this.fetchPoliceDocumentApi(
-          `${this.xRoadPath}/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
-        )
-
-    const pdf = await promise
+    const pdf = await this.fetchPoliceDocumentApi(
+      `${this.xRoadPath}/V2/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
+    )
       .then(async (res) => {
         if (res.ok) {
           const response = await res.json()
@@ -208,15 +201,17 @@ export class PoliceService {
 
           this.responseStructure.parse(response)
 
-          return response.skjol.map((file) => ({
-            id: file.rvMalSkjolMals_ID.toString(),
-            name: file.heitiSkjals.endsWith('.pdf')
-              ? file.heitiSkjals
-              : `${file.heitiSkjals}.pdf`,
-            policeCaseNumber: file.malsnumer,
-            chapter: getChapter(file.domsSkjalsFlokkun),
-            displayDate: file.dagsStofnad,
-          }))
+          return (
+            response.skjol?.map((file) => ({
+              id: file.rvMalSkjolMals_ID.toString(),
+              name: file.heitiSkjals.endsWith('.pdf')
+                ? file.heitiSkjals
+                : `${file.heitiSkjals}.pdf`,
+              policeCaseNumber: file.malsnumer,
+              chapter: getChapter(file.domsSkjalsFlokkun),
+              displayDate: file.dagsStofnad,
+            })) ?? []
+          )
         }
 
         const reason = await res.text()
@@ -280,7 +275,7 @@ export class PoliceService {
             { policeCaseNumber: response.malsnumer },
           ]
 
-          response.skjol?.map((info: { malsnumer: string }) => {
+          response.skjol?.forEach((info: { malsnumer: string }) => {
             if (
               !cases.find((item) => item.policeCaseNumber === info.malsnumer)
             ) {
@@ -288,25 +283,29 @@ export class PoliceService {
             }
           })
 
-          response.malseinings.forEach(
+          response.malseinings?.forEach(
             (info: {
               upprunalegtMalsnumer: string
               vettvangur?: string
               brotFra?: string
             }) => {
+              const policeCaseNumber = info.upprunalegtMalsnumer
+              const place = info.vettvangur
+              const date = info.brotFra ? new Date(info.brotFra) : undefined
+
               const foundCase = cases.find(
-                (item) => item.policeCaseNumber === info.upprunalegtMalsnumer,
+                (item) => item.policeCaseNumber === policeCaseNumber,
               )
+
               if (!foundCase) {
-                cases.push({ policeCaseNumber: info.upprunalegtMalsnumer })
-              } else {
-                foundCase.place = info.vettvangur
-                foundCase.date = info.brotFra
-                  ? new Date(info.brotFra)
-                  : undefined
+                cases.push({ policeCaseNumber, place, date })
+              } else if (date && (!foundCase.date || date > foundCase.date)) {
+                foundCase.place = place
+                foundCase.date = date
               }
             },
           )
+
           return cases
         }
 
