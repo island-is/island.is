@@ -1,6 +1,6 @@
 import cn from 'classnames'
 import format from 'date-fns/format'
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { useWindowSize } from 'react-use'
 
 import {
@@ -38,9 +38,11 @@ interface Props {
   documentLine: Document
   img?: string
   onClick?: (doc: ActiveDocumentType) => void
+  setSelectLine?: (id: string) => void
   active: boolean
   loading?: boolean
   asFrame?: boolean
+  selected?: boolean
 }
 
 const GET_DOCUMENT_BY_ID = gql`
@@ -56,12 +58,14 @@ export const NewDocumentLine: FC<Props> = ({
   documentLine,
   img,
   onClick,
+  setSelectLine,
   active,
   loading,
   asFrame,
+  selected,
 }) => {
   const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.sm
+  const [avatarCheckmark, setAvatarCheckmark] = useState(false)
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const date = format(new Date(documentLine.date), dateFormat.is)
@@ -168,13 +172,40 @@ export const NewDocumentLine: FC<Props> = ({
             [styles.active]: active,
             [styles.unread]: unread,
           })}
+          onMouseEnter={asFrame ? undefined : () => setAvatarCheckmark(true)}
+          onMouseLeave={asFrame ? undefined : () => setAvatarCheckmark(false)}
         >
-          {!isMobile && (
-            <AvatarImage
-              img={img}
-              background={documentLine.opened ? 'blue100' : 'white'}
-            />
-          )}
+          <AvatarImage
+            img={img}
+            onClick={(e) => {
+              e.stopPropagation()
+              if (documentLine.id && setSelectLine) {
+                setSelectLine(documentLine.id)
+              }
+              console.log('ON AVATAR CLICK')
+            }}
+            avatar={
+              avatarCheckmark || selected ? (
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  background={selected ? 'blue400' : 'blue300'}
+                  borderRadius="circle"
+                  className={styles.checkCircle}
+                >
+                  <Icon icon="checkmark" color="white" type="filled" />
+                </Box>
+              ) : undefined
+            }
+            background={
+              avatarCheckmark || selected
+                ? 'blue200'
+                : documentLine.opened
+                ? 'blue100'
+                : 'white'
+            }
+          />
           <Box
             width="full"
             display="flex"

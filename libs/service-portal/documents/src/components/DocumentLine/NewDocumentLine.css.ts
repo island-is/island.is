@@ -10,6 +10,11 @@ export const wrapper = style({
 export const docline = style({
   paddingTop: theme.spacing.smallGutter * 3,
   paddingBottom: theme.spacing.smallGutter * 3,
+  selectors: {
+    '&:hover': {
+      backgroundColor: theme.color.blue100,
+    },
+  },
 })
 
 export const active = style({
@@ -75,6 +80,13 @@ export const imageContainer = style({
   minHeight: 48,
   maxHeight: 48,
   maxWidth: 48,
+})
+
+export const checkCircle = style({
+  minWidth: 30,
+  minHeight: 30,
+  maxHeight: 30,
+  maxWidth: 30,
 })
 
 export const linkWrapper = style({

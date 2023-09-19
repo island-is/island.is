@@ -7,6 +7,7 @@ import {
   ErrorScreen,
   MENNTAMALASTOFNUN_ID,
   formSubmit,
+  formatDate,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserInfo } from '@island.is/auth/react'
@@ -29,6 +30,11 @@ export const EducationDetail = () => {
   const birthday = user.profile.dateOfBirth
 
   const { formatDateFns, formatMessage } = useLocale()
+
+  console.log('birthday', birthday)
+  console.log('birthday2', birthday ? new Date(birthday) : '')
+  console.log('birthday2', birthday ? formatDate(birthday) : '')
+  console.log('birthday2', birthday ? formatDateFns(birthday) : '')
 
   const [shouldDownload, setShouldDownload] = useState(false)
 

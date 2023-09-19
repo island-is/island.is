@@ -28,6 +28,19 @@ export const modalHeader = style({
   justifyContent: 'space-between',
   padding: '0 1rem',
   borderBlock: `0.0625rem solid ${theme.color.blue200}`,
+})
+
+export const checkboxWrap = style({
+  width: 48,
+  display: 'flex',
+  justifyContent: 'center',
+})
+
+globalStyle(`${checkboxWrap} label > div`, {
+  marginRight: 0,
+})
+
+export const pdfPage = style({
   background: theme.color.blue100,
 })
 

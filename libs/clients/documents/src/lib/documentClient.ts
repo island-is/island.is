@@ -16,6 +16,8 @@ import { lastValueFrom } from 'rxjs'
 import { GetDocumentListInput } from './models/DocumentInput'
 import { PaperMailResponse } from './models/PaperMailRes'
 import { RequestPaperDTO } from './models/RequestPaperDTO'
+import { MessageActionDTO } from './models/MessageActionDTO'
+import { MessageActionResponse } from './models/MessageActionRes'
 
 export const DOCUMENT_CLIENT_CONFIG = 'DOCUMENT_CLIENT_CONFIG'
 
@@ -143,13 +145,18 @@ export class DocumentClient {
       typeId && `typeId=${typeId}`,
       subjectContains && `subjectContains=${subjectContains}`,
       `opened=${opened}`,
-    ].filter(Boolean as unknown as ExcludesFalse)
+    ].filter((Boolean as unknown) as ExcludesFalse)
 
     const requestRoute = `/api/mail/v1/customers/${nationalId}/messages?${inputs.join(
       '&',
     )}`
 
-    return await this.getRequest<ListDocumentsResponse>(encodeURI(requestRoute))
+    const gettheDOCS = await this.getRequest<ListDocumentsResponse>(
+      encodeURI(requestRoute),
+    )
+    this.logger.warn(`gettheDOCS -`, gettheDOCS)
+
+    return gettheDOCS
   }
 
   async customersDocument(
@@ -189,5 +196,27 @@ export class DocumentClient {
   ): Promise<PaperMailResponse | null> {
     const requestRoute = `/api/mail/v1/customers/${body.kennitala}/paper`
     return await this.postRequest<PaperMailResponse>(requestRoute, body)
+  }
+
+  async postMailAction(
+    body: MessageActionDTO,
+    action: 'archive' | 'unarchive' | 'bookmark' | 'unbookmark',
+  ): Promise<MessageActionResponse> {
+    const requestRoute = `/api/mail/v1/customers/${body.messageId}/${action}`
+    try {
+      const res = await this.postRequest(requestRoute, body)
+      console.log('postArchiveMail res', res)
+      return {
+        success: true,
+        messageId: body.messageId,
+        action: action,
+      }
+    } catch {
+      return {
+        success: false,
+        messageId: body.messageId,
+        action: action,
+      }
+    }
   }
 }

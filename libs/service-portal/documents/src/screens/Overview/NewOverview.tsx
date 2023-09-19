@@ -14,6 +14,7 @@ import {
   SkeletonLoader,
   ModalBase,
   Icon,
+  Checkbox,
 } from '@island.is/island-ui/core'
 import {
   useListDocuments,
@@ -102,6 +103,7 @@ export const ServicePortalDocuments = () => {
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
+  const [selectedLines, setSelectedLines] = useState<Array<string>>([])
   const [isEmpty, setEmpty] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
@@ -379,7 +381,60 @@ export const ServicePortalDocuments = () => {
             handleClearFilters={handleClearFilters}
             documentsLength={totalCount}
           />
-          <Box borderColor="blue200" borderTopWidth="standard" marginTop={4}>
+          <Box marginTop={4}>
+            <Box
+              background="blue100"
+              width="full"
+              borderColor="blue200"
+              borderBottomWidth="standard"
+              display="flex"
+              justifyContent="spaceBetween"
+              padding={2}
+            >
+              <Box display="flex">
+                <Box className={styles.checkboxWrap} marginRight={3}>
+                  <Checkbox
+                    name="checkbox-select-all"
+                    checked={selectedLines.length > 0}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        const allDocumentIds = filteredDocuments.map(
+                          (item) => item.id,
+                        )
+                        setSelectedLines([...allDocumentIds])
+                      } else {
+                        setSelectedLines([])
+                      }
+                    }}
+                  />
+                </Box>
+                {selectedLines.length > 0 ? null : (
+                  <Text variant="eyebrow">{formatMessage(m.info)}</Text>
+                )}
+              </Box>
+              {selectedLines.length > 0 ? (
+                <Box display="flex">
+                  <Button
+                    circle
+                    icon="trash"
+                    onClick={() => console.log('Trash or stash')}
+                    size="small"
+                    title="Store items"
+                    colorScheme="light"
+                  />
+                  <Button
+                    circle
+                    icon="heart"
+                    onClick={() => console.log('star or fav')}
+                    size="small"
+                    title="Favorite items"
+                    colorScheme="light"
+                  />
+                </Box>
+              ) : (
+                <Text variant="eyebrow">{formatMessage(m.date)}</Text>
+              )}
+            </Box>
             {loading && (
               <Box marginTop={4}>
                 <SkeletonLoader
@@ -399,6 +454,17 @@ export const ServicePortalDocuments = () => {
                     documentLine={doc}
                     onClick={setActiveDocument}
                     active={doc.id === activeDocument?.id}
+                    selected={selectedLines.includes(doc.id)}
+                    setSelectLine={(docId) => {
+                      if (selectedLines.includes(doc.id)) {
+                        const filtered = selectedLines.filter(
+                          (item) => item !== doc.id,
+                        )
+                        setSelectedLines([...filtered])
+                      } else {
+                        setSelectedLines([...selectedLines, docId])
+                      }
+                    }}
                   />
                 </Box>
               ))}
