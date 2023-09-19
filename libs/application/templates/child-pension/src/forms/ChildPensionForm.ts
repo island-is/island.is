@@ -84,11 +84,6 @@ export const ChildPensionForm: Form = buildForm({
                   component: 'Period',
                   title: childPensionFormMessage.period.periodTitle,
                 }),
-                buildCustomField({
-                  id: 'period',
-                  component: 'Period',
-                  title: childPensionFormMessage.period.periodTitle,
-                }),
               ],
             }),
           ],
