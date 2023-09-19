@@ -8,7 +8,7 @@ import {
   NO,
   getValueViaPath,
   buildSelectField,
-  buildCustomField,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { information } from '../../../lib/messages'
@@ -23,10 +23,11 @@ export const plateDeliverySubSection = buildSubSection({
       title: information.labels.plateDelivery.title,
       description: information.general.description,
       children: [
-        buildCustomField({
+        buildAlertMessageField({
           id: 'alertWarningLostPlate',
-          component: 'AlertWarningLostPlate',
-          title: '',
+          title: information.labels.plateDelivery.warningLostPlateTitle,
+          alertType: 'warning',
+          message: information.labels.plateDelivery.warningLostPlateSubTitle,
         }),
         buildDescriptionField({
           id: 'plateDelivery.subTitle',
