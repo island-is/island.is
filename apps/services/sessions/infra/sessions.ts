@@ -132,9 +132,12 @@ export const geoipSetup =
       .namespace(namespace)
       .redis()
       .serviceAccount('sessions-geoip')
-      .command('npm')
+      .command('node')
       .replicaCount({ min: 1, max: 1, default: 1 })
-      .args('run-script', 'updatedb', 'license_key=$(GEOIP_LICENSE_KEY)')
+      .args(
+        './node_modules/geoip-lite/scripts/updatedb.js',
+        'license_key=$(GEOIP_LICENSE_KEY)',
+      )
       .resources({
         limits: {
           cpu: '200m',
