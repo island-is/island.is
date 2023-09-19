@@ -1,14 +1,14 @@
 import { ReviewGroup, Label } from '@island.is/application/ui-components'
 import { GridColumn, GridRow, ProfileCard } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { format as formatKennitala } from 'kennitala'
 import {
-  getChildPensionReasonOptions,
   getApplicationExternalData,
+  getApplicationAnswers,
+  getChildPensionReasonOptions,
 } from '../../../lib/childPensionUtils'
 import { childPensionFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
-import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
+import { format as formatKennitala } from 'kennitala'
 import format from 'date-fns/format'
 import { formatText } from '@island.is/application/core'
 
@@ -17,21 +17,17 @@ export const Children = ({
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const [{ registeredChildren, selectedCustodyKids }] =
-    useStatefulAnswers(application)
+  const { registeredChildren, selectedChildrenInCustody } =
+    getApplicationAnswers(application.answers)
 
   const { formatMessage } = useLocale()
-  const childPensionReasonOptions = getChildPensionReasonOptions()
 
   const { custodyInformation } = getApplicationExternalData(
     application.externalData,
   )
 
-  console.log('=======> registeredChildren: ', registeredChildren)
-  console.log('=======> selectedCustodyKids: ', selectedCustodyKids)
-  console.log('=======> custodyInformation: ', custodyInformation)
+  const allChildren = [...selectedChildrenInCustody, ...registeredChildren]
 
-  // TODO: Bæta selectedCustodyKids við Review síðu
   return (
     <ReviewGroup
       isLast
@@ -53,18 +49,21 @@ export const Children = ({
             {formatMessage(childPensionFormMessage.confirm.children)}
           </Label>
         </GridColumn>
-        {registeredChildren?.map((child, index) => {
-          const reasons = child.reason.map(
+        {allChildren?.map((child, index) => {
+          const childPensionReasonOptions = getChildPensionReasonOptions()
+          const reasons = child.reason?.map(
             (reason) =>
               childPensionReasonOptions.find(
                 (option) => option.value === reason,
               )?.label,
           )
+
+          const hasTwoReasons = Boolean(child.reason && child.reason[1])
           return (
             <GridColumn
+              key={index}
               span={['12/12', '12/12', '12/12', '12/12']}
               paddingBottom={2}
-              key={index}
             >
               <ProfileCard
                 title={child.name}
@@ -85,18 +84,21 @@ export const Children = ({
                     childPensionFormMessage.info
                       .registerChildRepeaterTableHeaderReasonOne,
                   )}: ${
+                    reasons &&
                     reasons[0] &&
                     formatText(reasons[0], application, formatMessage)
                   }`,
-                  // reasonTwo,
-                  child.reason[1] &&
-                    `${formatMessage(
-                      childPensionFormMessage.info
-                        .registerChildRepeaterTableHeaderReasonTwo,
-                    )}: ${
-                      reasons[1] &&
-                      formatText(reasons[1], application, formatMessage)
-                    }`,
+                  // reasonTwo
+                  hasTwoReasons
+                    ? `${formatMessage(
+                        childPensionFormMessage.info
+                          .registerChildRepeaterTableHeaderReasonTwo,
+                      )}: ${
+                        reasons &&
+                        reasons[1] &&
+                        formatText(reasons[1], application, formatMessage)
+                      }`
+                    : '',
                 ]}
               />
             </GridColumn>

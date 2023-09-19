@@ -5,5 +5,5 @@ export interface ChildPensionRow {
   name: string
   editable?: boolean
   childDoesNotHaveNationalId: boolean
-  reason: ChildPensionReason[]
+  reason?: ChildPensionReason[]
 }

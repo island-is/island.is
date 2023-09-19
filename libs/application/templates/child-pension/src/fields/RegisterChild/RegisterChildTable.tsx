@@ -52,7 +52,7 @@ export const RegisterChildTable = ({
       </T.Head>
       <T.Body>
         {children?.map((child, index) => {
-          const reasons = child.reason.map(
+          const reasons = child.reason?.map(
             (reason) =>
               childPensionReasonOptions.find(
                 (option) => option.value === reason,
@@ -85,11 +85,13 @@ export const RegisterChildTable = ({
                 <T.Data>{child.nationalIdOrBirthDate}</T.Data>
               )}
               <T.Data>
-                {reasons[0] &&
+                {reasons &&
+                  reasons[0] &&
                   formatText(reasons[0], application, formatMessage)}
               </T.Data>
               <T.Data>
-                {reasons[1] &&
+                {reasons &&
+                  reasons[1] &&
                   formatText(reasons[1], application, formatMessage)}
               </T.Data>
             </T.Row>

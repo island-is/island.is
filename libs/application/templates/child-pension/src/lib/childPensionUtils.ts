@@ -31,9 +31,9 @@ export function getApplicationAnswers(answers: Application['answers']) {
     [],
   ) as []
 
-  const selectChildInCustody = getValueViaPath(
+  const selectedChildrenInCustody = getValueViaPath(
     answers,
-    'selectChildInCustody',
+    'chooseChildren.selectedChildrenInCustody',
     [],
   ) as ChildPensionRow[]
 
@@ -42,7 +42,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     applicantPhonenumber,
     registeredChildren,
     selectedCustodyKids,
-    selectChildInCustody,
+    selectedChildrenInCustody,
   }
 }
 

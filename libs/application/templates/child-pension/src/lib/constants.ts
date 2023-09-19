@@ -32,4 +32,5 @@ export enum ChildPensionReason {
 
 export enum AnswerValidationConstants {
   VALIDATE_LATEST_CHILD = 'registerChildRepeater',
+  VALIDATE_SELECTED_CHILDREN_IN_CUSTODY_REASON = 'chooseChildren.selectedChildrenInCustody',
 }
