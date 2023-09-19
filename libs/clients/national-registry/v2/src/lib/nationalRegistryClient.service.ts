@@ -38,7 +38,7 @@ export class NationalRegistryClientService {
   ) {}
 
   async getIndividual(nationalId: string): Promise<IndividualDto | null> {
-    console.log("V2.getIndividual")
+    console.log('V2.getIndividual')
     const individual = await this.handleModernMissingData(
       this.individualApi.einstaklingarGetEinstaklingurRaw({
         id: nationalId,
@@ -50,7 +50,7 @@ export class NationalRegistryClientService {
   }
 
   async getCustodyChildren(parentUser: User): Promise<string[]> {
-    console.log("V2.getCustodyChildren")
+    console.log('V2.getCustodyChildren')
     const response = await this.handleLegacyMissingData(
       this.individualApi
         .withMiddleware(new AuthMiddleware(parentUser))
@@ -64,7 +64,7 @@ export class NationalRegistryClientService {
     parentUser: User,
     childId: string,
   ): Promise<string[]> {
-    console.log("V2.getChildResidenceParent")
+    console.log('V2.getChildResidenceParent')
     const response = await this.handleLegacyMissingData(
       this.individualApi
         .withMiddleware(new AuthMiddleware(parentUser))
@@ -78,7 +78,7 @@ export class NationalRegistryClientService {
     parentUser: User,
     childId: string,
   ): Promise<string[]> {
-    console.log("V2.getChildDomicileParent")
+    console.log('V2.getChildDomicileParent')
     const response = await this.handleLegacyMissingData(
       this.individualApi
         .withMiddleware(new AuthMiddleware(parentUser))
@@ -92,7 +92,7 @@ export class NationalRegistryClientService {
     parentUser: User,
     childId: string,
   ): Promise<string[]> {
-    console.log("V2.getOtherCustodyParents")
+    console.log('V2.getOtherCustodyParents')
     const response = await this.handleLegacyMissingData(
       this.individualApi
         .withMiddleware(new AuthMiddleware(parentUser))
@@ -108,7 +108,7 @@ export class NationalRegistryClientService {
   async getCohabitationInfo(
     nationalId: string,
   ): Promise<CohabitationDto | null> {
-    console.log("V2.getCohabitationInfo")
+    console.log('V2.getCohabitationInfo')
     const response = await this.handleLegacyMissingData(
       this.individualApi.einstaklingarGetHjuskapurRaw({
         id: nationalId,
@@ -121,7 +121,7 @@ export class NationalRegistryClientService {
   async getResidenceHistory(
     nationalId: string,
   ): Promise<ResidenceHistoryEntryDto[]> {
-    console.log("V2.getResidenceHistory")
+    console.log('V2.getResidenceHistory')
     const residenceHistory = await this.handleLegacyMissingData(
       this.individualApi.einstaklingarGetBusetaRaw({ id: nationalId }),
     )
@@ -130,7 +130,7 @@ export class NationalRegistryClientService {
   }
 
   async getFamily(nationalId: string): Promise<FamilyDto | null> {
-    console.log("V2.getFamily")
+    console.log('V2.getFamily')
     const family = await this.handleLegacyMissingData(
       this.individualApi.einstaklingarGetFjolskyldumedlimirRaw({
         id: nationalId,
@@ -141,7 +141,7 @@ export class NationalRegistryClientService {
   }
 
   async getBirthplace(nationalId: string): Promise<BirthplaceDto | null> {
-    console.log("V2.getBirthplace")
+    console.log('V2.getBirthplace')
     const birthplace = await this.handleLegacyMissingData(
       this.individualApi.einstaklingarGetFaedingarstadurRaw({ id: nationalId }),
     )
@@ -150,7 +150,7 @@ export class NationalRegistryClientService {
   }
 
   async getCitizenship(nationalId: string): Promise<CitizenshipDto | null> {
-    console.log("V2.getCitizenship")
+    console.log('V2.getCitizenship')
     const citizenship = await this.handleLegacyMissingData(
       this.individualApi.einstaklingarGetRikisfangRaw({ id: nationalId }),
     )
@@ -159,7 +159,7 @@ export class NationalRegistryClientService {
   }
 
   async getReligionCodes(): Promise<ReligionDto[] | null> {
-    console.log("V2.getReligionCodes")
+    console.log('V2.getReligionCodes')
     const codes = await this.keysApi.lyklarGetTrufelog()
     console.log(codes)
     return formatReligionDto(codes)
@@ -168,7 +168,6 @@ export class NationalRegistryClientService {
   private async handleLegacyMissingData<T>(
     promise: Promise<ApiResponse<T>>,
   ): Promise<T | null> {
-    
     return promise.then(
       (response) => {
         if (LEGACY_IGNORED_STATUSES.includes(response.raw.status)) {
