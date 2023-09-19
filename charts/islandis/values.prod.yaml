@@ -2043,11 +2043,10 @@ services-sessions:
     privileged: false
 services-sessions-geoip-worker:
   args:
-    - 'run-script'
-    - 'updatedb'
+    - './node_modules/geoip-lite/scripts/updatedb.js'
     - 'license_key=$(GEOIP_LICENSE_KEY)'
   command:
-    - 'npm'
+    - 'node'
   enabled: true
   env:
     GEODATADIR: '/geoip-lite/data'
