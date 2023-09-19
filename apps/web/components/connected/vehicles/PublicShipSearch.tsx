@@ -4,6 +4,7 @@ import {
   AlertMessage,
   AsyncSearchInput,
   Box,
+  Stack,
   Table,
   Text,
 } from '@island.is/island-ui/core'
@@ -12,17 +13,10 @@ import {
   ConnectedComponent,
   GetPublicShipSearchQuery,
   GetPublicShipSearchQueryVariables,
-  //   GetPublicShipSearchQuery,
-  //   GetPublicShipSearchQueryVariables,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 const numberFormatter = new Intl.NumberFormat('de-DE')
-
-const getValueOrEmptyString = (value?: string) => {
-  return value ? value : ''
-}
 
 interface PublicShipSearchProps {
   slice: ConnectedComponent
@@ -31,19 +25,23 @@ interface PublicShipSearchProps {
 const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
   const [hasFocus, setHasFocus] = useState(false)
   const [searchValue, setSearchValue] = useState('')
-  const { format } = useDateUtils()
+
+  const [ships, setShips] = useState<
+    GetPublicShipSearchQuery['shipRegistryShipSearch']['ships']
+  >([])
 
   const n = useNamespace(slice?.json ?? {})
 
-  const [search, { loading, data, error, called }] = useLazyQuery<
+  const [search, { loading, error, called }] = useLazyQuery<
     GetPublicShipSearchQuery,
     GetPublicShipSearchQueryVariables
-  >(PUBLIC_SHIP_SEARCH_QUERY)
+  >(PUBLIC_SHIP_SEARCH_QUERY, {
+    onCompleted(data) {
+      setShips(data?.shipRegistryShipSearch?.ships ?? [])
+    },
+  })
 
-  const shipInformation = data?.shipRegistryShipSearch?.ships?.[0]
-
-  const shipWasNotFound =
-    shipInformation === null || typeof shipInformation === undefined
+  const noShipWasFound = !ships?.length
 
   const handleSearch = () => {
     if (!searchValue) {
@@ -58,23 +56,8 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
     })
   }
 
-  //   const formattedRegistrationDate = shipInformation?.newRegDate
-  //     ? format(new Date(shipInformation.newRegDate), 'do MMMM yyyy')
-  //     : ''
-  //   const formattedNextShipMainInspectionDate =
-  //     shipInformation?.nextShipMainInspection
-  //       ? format(
-  //           new Date(shipInformation.nextShipMainInspection),
-  //           'do MMMM yyyy',
-  //         )
-  //       : ''
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  //   const formattedShipType = formatShipType(shipInformation)
-
   return (
     <Box>
-      <Text>{n('inputEyebrowText', 'Númer eða nafn skips:')}</Text>
       <Box marginTop={2} marginBottom={3}>
         <AsyncSearchInput
           buttonProps={{
@@ -85,9 +68,9 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
           inputProps={{
             name: 'public-ship-search',
             inputSize: 'large',
-            placeholder: n('inputPlaceholder', 'Leita í skipaskrá'),
+            placeholder: n('inputPlaceholder', 'Númer eða nafn skips'),
             colored: true,
-            onChange: (ev) => setSearchValue(ev.target.value.toUpperCase()),
+            onChange: (ev) => setSearchValue(ev.target.value),
             value: searchValue,
             onKeyDown: (ev) => {
               if (ev.key === 'Enter') {
@@ -96,11 +79,10 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
             },
           }}
           hasFocus={hasFocus}
-          rootProps={{}}
           loading={loading}
         />
       </Box>
-      {called && !loading && !error && shipWasNotFound && (
+      {called && !loading && !error && noShipWasFound && (
         <Box>
           <Text fontWeight="semiBold">
             {n('noShipFound', 'Ekkert skip fannst')}
@@ -114,126 +96,144 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
           message={n('errorOccurredMessage', 'Ekki tókst að sækja skip')}
         />
       )}
-      {shipInformation && (
-        <Box marginBottom={3} marginTop={4}>
-          <Table.Table>
-            <Table.Head>
-              <Table.HeadData>
-                <Text fontWeight="semiBold">
-                  {n('shipInformationTableHeaderText', 'Niðurstaða leitar:')}
-                </Text>
-              </Table.HeadData>
-              <Table.HeadData />
-            </Table.Head>
-            <Table.Body>
-              {shipInformation.shipName && (
-                <Table.Row>
-                  <Table.Data>
-                    <Text fontWeight="semiBold">{n('shipName', 'Nafn:')}</Text>
-                  </Table.Data>
-                  <Table.Data>
-                    <Text>{shipInformation.shipName}</Text>
-                  </Table.Data>
-                </Table.Row>
-              )}
-              {shipInformation.shipType && (
-                <Table.Row>
-                  <Table.Data>
-                    <Text fontWeight="semiBold">{n('shipType', 'Gerð:')}</Text>
-                  </Table.Data>
-                  <Table.Data>
-                    <Text>{shipInformation.shipType}</Text>
-                  </Table.Data>
-                </Table.Row>
-              )}
-              {shipInformation.regno && (
-                <Table.Row>
-                  <Table.Data>
+      <Box marginBottom={3} marginTop={4}>
+        <Stack space={8}>
+          {ships.map((shipInformation, index) => (
+            <Table.Table key={index}>
+              {index === 0 && (
+                <Table.Head>
+                  <Table.HeadData>
                     <Text fontWeight="semiBold">
-                      {n('regno', 'Skráningarnúmer:')}
+                      {n(
+                        'shipInformationTableHeaderText',
+                        'Niðurstaða leitar:',
+                      )}
                     </Text>
-                  </Table.Data>
-                  <Table.Data>
-                    <Text>{shipInformation.regno}</Text>
-                  </Table.Data>
-                </Table.Row>
+                  </Table.HeadData>
+                  <Table.HeadData />
+                </Table.Head>
               )}
-              {shipInformation.region && (
-                <Table.Row>
-                  <Table.Data>
-                    <Text fontWeight="semiBold">{n('region', 'Umdæmi:')}</Text>
-                  </Table.Data>
-                  <Table.Data>
-                    <Text>{shipInformation.region}</Text>
-                  </Table.Data>
-                </Table.Row>
-              )}
-              {shipInformation.portOfRegistry && (
-                <Table.Row>
-                  <Table.Data>
-                    <Text fontWeight="semiBold">
-                      {n('portOfRegistry', 'Heimahöfn:')}
-                    </Text>
-                  </Table.Data>
-                  <Table.Data>
-                    <Text>{shipInformation.portOfRegistry}</Text>
-                  </Table.Data>
-                </Table.Row>
-              )}
-              {shipInformation.regStatus && (
-                <Table.Row>
-                  <Table.Data>
-                    <Text fontWeight="semiBold">
-                      {n('regStatus', 'Skráningar staða:')}
-                    </Text>
-                  </Table.Data>
-                  <Table.Data>
-                    <Text>{shipInformation.regStatus}</Text>
-                  </Table.Data>
-                </Table.Row>
-              )}
-              {shipInformation.grossTonnage && (
-                <Table.Row>
-                  <Table.Data>
-                    <Text fontWeight="semiBold">
-                      {n('grossTonnage', 'Brúttótonn:')}{' '}
-                    </Text>
-                  </Table.Data>
-                  <Table.Data>
-                    <Text>
-                      {shipInformation.grossTonnage}{' '}
-                      {n('grossTonnageMeasurement', 't')}
-                    </Text>
-                  </Table.Data>
-                </Table.Row>
-              )}
-              {shipInformation.length && (
-                <Table.Row>
-                  <Table.Data>
-                    <Text fontWeight="semiBold">
-                      {n('length', 'Skráð lengd:')}
-                    </Text>
-                  </Table.Data>
-                  <Table.Data>
-                    <Text>
-                      {shipInformation.length} {n('lengthMeasurement', 'm')}
-                    </Text>
-                  </Table.Data>
-                </Table.Row>
-              )}
-              {/* {shipInformation.manufacturer && (
-                <Table.Row>
-                  <Table.Data>
-                    <Text fontWeight="semiBold">
-                      {n('constructed', 'Smíðað:')}
-                    </Text>
-                  </Table.Data>
-                  <Table.Data>
-                    <Text>{shipInformation.manufacturer}</Text>
-                  </Table.Data>
-                </Table.Row>
-              )} */}
-              {/* {shipInformation.owners && (
+              <Table.Body>
+                {shipInformation.shipName && (
+                  <Table.Row>
+                    <Table.Data>
+                      <Text fontWeight="semiBold">
+                        {n('shipName', 'Nafn:')}
+                      </Text>
+                    </Table.Data>
+                    <Table.Data>
+                      <Text>{shipInformation.shipName}</Text>
+                    </Table.Data>
+                  </Table.Row>
+                )}
+                {shipInformation.shipType && (
+                  <Table.Row>
+                    <Table.Data>
+                      <Text fontWeight="semiBold">
+                        {n('shipType', 'Gerð:')}
+                      </Text>
+                    </Table.Data>
+                    <Table.Data>
+                      <Text>{shipInformation.shipType}</Text>
+                    </Table.Data>
+                  </Table.Row>
+                )}
+                {shipInformation.regno && (
+                  <Table.Row>
+                    <Table.Data>
+                      <Text fontWeight="semiBold">
+                        {n('regno', 'Skráningarnúmer:')}
+                      </Text>
+                    </Table.Data>
+                    <Table.Data>
+                      <Text>{shipInformation.regno}</Text>
+                    </Table.Data>
+                  </Table.Row>
+                )}
+                {shipInformation.region && (
+                  <Table.Row>
+                    <Table.Data>
+                      <Text fontWeight="semiBold">
+                        {n('region', 'Umdæmi:')}
+                      </Text>
+                    </Table.Data>
+                    <Table.Data>
+                      <Text>{shipInformation.region}</Text>
+                    </Table.Data>
+                  </Table.Row>
+                )}
+                {shipInformation.portOfRegistry && (
+                  <Table.Row>
+                    <Table.Data>
+                      <Text fontWeight="semiBold">
+                        {n('portOfRegistry', 'Heimahöfn:')}
+                      </Text>
+                    </Table.Data>
+                    <Table.Data>
+                      <Text>{shipInformation.portOfRegistry}</Text>
+                    </Table.Data>
+                  </Table.Row>
+                )}
+                {shipInformation.regStatus && (
+                  <Table.Row>
+                    <Table.Data>
+                      <Text fontWeight="semiBold">
+                        {n('regStatus', 'Skráningar staða:')}
+                      </Text>
+                    </Table.Data>
+                    <Table.Data>
+                      <Text>{shipInformation.regStatus}</Text>
+                    </Table.Data>
+                  </Table.Row>
+                )}
+                {typeof shipInformation.grossTonnage === 'number' && (
+                  <Table.Row>
+                    <Table.Data>
+                      <Text fontWeight="semiBold">
+                        {n('grossTonnage', 'Brúttótonn:')}{' '}
+                      </Text>
+                    </Table.Data>
+                    <Table.Data>
+                      <Text>
+                        {numberFormatter.format(shipInformation.grossTonnage)}{' '}
+                        {n('grossTonnageMeasurement', 't')}
+                      </Text>
+                    </Table.Data>
+                  </Table.Row>
+                )}
+                {typeof shipInformation.length === 'number' && (
+                  <Table.Row>
+                    <Table.Data>
+                      <Text fontWeight="semiBold">
+                        {n('length', 'Skráð lengd:')}
+                      </Text>
+                    </Table.Data>
+                    <Table.Data>
+                      <Text>
+                        {numberFormatter.format(shipInformation.length)}{' '}
+                        {n('lengthMeasurement', 'm')}
+                      </Text>
+                    </Table.Data>
+                  </Table.Row>
+                )}
+                {(shipInformation.manufacturer ||
+                  typeof shipInformation.manufactionYear === 'number') && (
+                  <Table.Row>
+                    <Table.Data>
+                      <Text fontWeight="semiBold">
+                        {n('constructed', 'Smíðað:')}
+                      </Text>
+                    </Table.Data>
+                    <Table.Data>
+                      <Text>
+                        {shipInformation.manufactionYear}{' '}
+                        {shipInformation.manufacturer &&
+                          n('manufacturedBy', 'af')}{' '}
+                        {shipInformation.manufacturer}
+                      </Text>
+                    </Table.Data>
+                  </Table.Row>
+                )}
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
@@ -241,16 +241,35 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
                     </Text>
                   </Table.Data>
                   <Table.Data>
-                    <Text>
-                      <Text>{shipInformation.owners}</Text>
-                    </Text>
+                    <Stack space={2}>
+                      {shipInformation.owners?.map((owner) => (
+                        <Box>
+                          <Text>
+                            {owner?.name}{' '}
+                            {owner?.nationalId
+                              ? `${n('nationalIdPrefix', 'kt.')} ${
+                                  owner.nationalId
+                                }`
+                              : ''}{' '}
+                          </Text>
+                          <Text>
+                            {typeof owner?.sharePercentage === 'number'
+                              ? `${owner.sharePercentage}% ${n(
+                                  'sharePercentageProperty',
+                                  'eign',
+                                )}`
+                              : ''}
+                          </Text>
+                        </Box>
+                      ))}
+                    </Stack>
                   </Table.Data>
                 </Table.Row>
-              )} */}
-            </Table.Body>
-          </Table.Table>
-        </Box>
-      )}
+              </Table.Body>
+            </Table.Table>
+          ))}
+        </Stack>
+      </Box>
     </Box>
   )
 }

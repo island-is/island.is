@@ -21,7 +21,7 @@ class Ship {
   @Field(() => String, { nullable: true })
   shipType?: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => Number, { nullable: true })
   regno?: number
 
   @Field(() => String, { nullable: true })
@@ -33,10 +33,10 @@ class Ship {
   @Field(() => String, { nullable: true })
   regStatus?: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => Number, { nullable: true })
   grossTonnage?: number
 
-  @Field(() => String, { nullable: true })
+  @Field(() => Number, { nullable: true })
   length?: number
 
   @Field(() => String, { nullable: true })
