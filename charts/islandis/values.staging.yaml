@@ -2107,7 +2107,7 @@ services-sessions-geoip-worker:
       cpu: '200m'
       memory: '256Mi'
     requests:
-      cpu: '10m'
+      cpu: '150m'
       memory: '128Mi'
   schedule: '*/30 * * * *'
   secrets:
