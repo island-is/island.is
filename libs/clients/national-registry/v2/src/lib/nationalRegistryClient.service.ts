@@ -38,21 +38,25 @@ export class NationalRegistryClientService {
   ) {}
 
   async getIndividual(nationalId: string): Promise<IndividualDto | null> {
+    console.log("V2.getIndividual")
     const individual = await this.handleModernMissingData(
       this.individualApi.einstaklingarGetEinstaklingurRaw({
         id: nationalId,
       }),
     )
+    console.log(individual)
 
     return formatIndividualDto(individual)
   }
 
   async getCustodyChildren(parentUser: User): Promise<string[]> {
+    console.log("V2.getCustodyChildren")
     const response = await this.handleLegacyMissingData(
       this.individualApi
         .withMiddleware(new AuthMiddleware(parentUser))
         .einstaklingarGetForsjaRaw({ id: parentUser.nationalId }),
     )
+    console.log(response)
     return response || []
   }
 
@@ -60,12 +64,13 @@ export class NationalRegistryClientService {
     parentUser: User,
     childId: string,
   ): Promise<string[]> {
+    console.log("V2.getChildResidenceParent")
     const response = await this.handleLegacyMissingData(
       this.individualApi
         .withMiddleware(new AuthMiddleware(parentUser))
         .einstaklingarGetBusetuForeldriRaw({ barn: childId }),
     )
-
+    console.log(response)
     return response || []
   }
 
@@ -73,12 +78,13 @@ export class NationalRegistryClientService {
     parentUser: User,
     childId: string,
   ): Promise<string[]> {
+    console.log("V2.getChildDomicileParent")
     const response = await this.handleLegacyMissingData(
       this.individualApi
         .withMiddleware(new AuthMiddleware(parentUser))
         .einstaklingarGetLogheimilisForeldriRaw({ barn: childId }),
     )
-
+    console.log(response)
     return response || []
   }
 
@@ -86,6 +92,7 @@ export class NationalRegistryClientService {
     parentUser: User,
     childId: string,
   ): Promise<string[]> {
+    console.log("V2.getOtherCustodyParents")
     const response = await this.handleLegacyMissingData(
       this.individualApi
         .withMiddleware(new AuthMiddleware(parentUser))
@@ -94,60 +101,74 @@ export class NationalRegistryClientService {
           barn: childId,
         }),
     )
+    console.log(response)
     return response || []
   }
 
   async getCohabitationInfo(
     nationalId: string,
   ): Promise<CohabitationDto | null> {
+    console.log("V2.getCohabitationInfo")
     const response = await this.handleLegacyMissingData(
       this.individualApi.einstaklingarGetHjuskapurRaw({
         id: nationalId,
       }),
     )
+    console.log(response)
     return formatCohabitationDto(response)
   }
 
   async getResidenceHistory(
     nationalId: string,
   ): Promise<ResidenceHistoryEntryDto[]> {
+    console.log("V2.getResidenceHistory")
     const residenceHistory = await this.handleLegacyMissingData(
       this.individualApi.einstaklingarGetBusetaRaw({ id: nationalId }),
     )
+    console.log(residenceHistory)
     return (residenceHistory || []).map(formatResidenceHistoryEntryDto)
   }
 
   async getFamily(nationalId: string): Promise<FamilyDto | null> {
+    console.log("V2.getFamily")
     const family = await this.handleLegacyMissingData(
       this.individualApi.einstaklingarGetFjolskyldumedlimirRaw({
         id: nationalId,
       }),
     )
+    console.log(family)
     return formatFamilyDto(family)
   }
 
   async getBirthplace(nationalId: string): Promise<BirthplaceDto | null> {
+    console.log("V2.getBirthplace")
     const birthplace = await this.handleLegacyMissingData(
       this.individualApi.einstaklingarGetFaedingarstadurRaw({ id: nationalId }),
     )
+    console.log(birthplace)
     return formatBirthplaceDto(birthplace)
   }
 
   async getCitizenship(nationalId: string): Promise<CitizenshipDto | null> {
+    console.log("V2.getCitizenship")
     const citizenship = await this.handleLegacyMissingData(
       this.individualApi.einstaklingarGetRikisfangRaw({ id: nationalId }),
     )
+    console.log(citizenship)
     return formatCitizenshipDto(citizenship)
   }
 
   async getReligionCodes(): Promise<ReligionDto[] | null> {
+    console.log("V2.getReligionCodes")
     const codes = await this.keysApi.lyklarGetTrufelog()
+    console.log(codes)
     return formatReligionDto(codes)
   }
 
   private async handleLegacyMissingData<T>(
     promise: Promise<ApiResponse<T>>,
   ): Promise<T | null> {
+    
     return promise.then(
       (response) => {
         if (LEGACY_IGNORED_STATUSES.includes(response.raw.status)) {
