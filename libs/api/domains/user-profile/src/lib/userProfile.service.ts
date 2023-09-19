@@ -105,7 +105,7 @@ export class UserProfileService {
         bankInfo: islyklarData?.bankInfo,
       }
     } catch (error) {
-      if (error.status === 404 || error.status === 204) {
+      if (error.status === 404) {
         /**
          * Even if userProfileApiWithAuth does not exist.
          * Islykill data might exist for the user, so we need to get that, with default values in the userprofile data.
