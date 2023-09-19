@@ -8,7 +8,7 @@ import { getOrganizationSlugFromError } from '../../utils/getOrganizationSlugFro
 import { ThirdPartyServiceError } from './ThirdPartyServiceError'
 import { NotFound } from './NotFound'
 import { InternalServiceError } from './InternalServiceError'
-import { CommonProblemProps, ProblemSize } from './problem.types'
+import { CommonProblemProps, Message, ProblemSize } from './problem.types'
 import { NoData } from './NoData'
 import { m } from '../../lib/messages'
 
@@ -29,7 +29,7 @@ type ProblemBaseProps = {
    */
   error?: Error
   title?: string
-  message?: string
+  message?: Message
   tag?: string
   logError?: boolean
 } & CommonProblemProps &
@@ -37,9 +37,9 @@ type ProblemBaseProps = {
 
 interface InternalServiceErrorProps extends ProblemBaseProps {
   type?: 'internal_service_error'
-  error: Error
+  error?: Error
   title?: string
-  message?: string
+  message?: Message
   size?: ProblemSize
 }
 
@@ -53,7 +53,7 @@ interface NoDataProps extends ProblemBaseProps {
   type: 'no_data'
   error?: never
   title?: string
-  message?: string
+  message?: Message
   size?: ProblemSize
 }
 
@@ -115,17 +115,15 @@ export const Problem = ({
             />
           )
         }
-
-        return (
-          <InternalServiceError
-            {...defaultProps}
-            size={size}
-            tag={tag ?? formatMessage(m.error)}
-          />
-        )
       }
 
-      return <ProblemTemplate {...fallbackProps} />
+      return (
+        <InternalServiceError
+          {...defaultProps}
+          size={size}
+          tag={tag ?? formatMessage(m.error)}
+        />
+      )
 
     case 'not_found':
       return <NotFound {...defaultProps} tag={tag ?? formatMessage(m.error)} />

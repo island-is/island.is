@@ -1,4 +1,5 @@
 import { ProblemTemplateProps } from '@island.is/island-ui/core'
+import { ReactNode } from 'react'
 
 export type CommonProblemProps = Pick<
   ProblemTemplateProps,
@@ -6,3 +7,5 @@ export type CommonProblemProps = Pick<
 >
 
 export type ProblemSize = 'small' | 'large'
+
+export type Message = ReactNode | string

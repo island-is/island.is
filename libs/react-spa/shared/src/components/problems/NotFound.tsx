@@ -4,12 +4,12 @@ import { TestSupport } from '@island.is/island-ui/utils'
 import { useLocale } from '@island.is/localization'
 import { Button, ProblemTemplate } from '@island.is/island-ui/core'
 
-import { CommonProblemProps } from './problem.types'
+import { CommonProblemProps, Message } from './problem.types'
 import { m } from '../../lib/messages'
 
 type NotFoundProps = {
   title?: string
-  message?: string
+  message?: Message
 } & CommonProblemProps
 
 export const NotFound = ({
