@@ -127,6 +127,101 @@ export const childPensionFormMessage: MessageDir = {
     },
   }),
 
+  period: defineMessages({
+    periodTitle: {
+      id: 'cp.application:period.title',
+      defaultMessage: 'Tímabil',
+      description: 'Period',
+    },
+    periodDescription: {
+      id: 'cp.application:period.description',
+      defaultMessage:
+        'Veldu dagsetningu sem þú vilt byrja að fá greitt ellilífeyri. Hægt er að sækja fyrir árið í ár og 2 ár aftur í tímann.',
+      description:
+        'Select the date you want to start receiving your retirement pension. You can apply for this year and 2 years back.',
+    },
+    periodInputMonth: {
+      id: 'cp.application:period.input.month',
+      defaultMessage: 'Mánuður',
+      description: 'Month',
+    },
+    periodInputMonthDefaultText: {
+      id: 'cp.application:period.input.month.default.text',
+      defaultMessage: 'Veldu mánuð',
+      description: 'Select month',
+    },
+    periodInputYear: {
+      id: 'cp.application:period.input.year',
+      defaultMessage: 'Ár',
+      description: 'Year',
+    },
+    periodInputYearDefaultText: {
+      id: 'cp.application:period.input.year.default.text',
+      defaultMessage: 'Veldu ár',
+      description: 'Select year',
+    },
+    january: {
+      id: 'cp.application:period.january',
+      defaultMessage: 'Janúar',
+      description: 'January',
+    },
+    february: {
+      id: 'cp.application:period.february',
+      defaultMessage: 'Febrúar',
+      description: 'February',
+    },
+    march: {
+      id: 'cp.application:period.march',
+      defaultMessage: 'Mars',
+      description: 'March',
+    },
+    april: {
+      id: 'cp.application:period.april',
+      defaultMessage: 'Apríl',
+      description: 'April',
+    },
+    may: {
+      id: 'cp.application:period.may',
+      defaultMessage: 'Maí',
+      description: 'May',
+    },
+    june: {
+      id: 'cp.application:period.june',
+      defaultMessage: 'Júní',
+      description: 'June',
+    },
+    july: {
+      id: 'cp.application:period.july',
+      defaultMessage: 'Júlí',
+      description: 'July',
+    },
+    august: {
+      id: 'cp.application:period.august',
+      defaultMessage: 'Ágúst',
+      description: 'August',
+    },
+    september: {
+      id: 'cp.application:period.september',
+      defaultMessage: 'September',
+      description: 'September',
+    },
+    october: {
+      id: 'cp.application:period.october',
+      defaultMessage: 'Október',
+      description: 'October',
+    },
+    november: {
+      id: 'cp.application:period.november',
+      defaultMessage: 'Nóvember',
+      description: 'November',
+    },
+    desember: {
+      id: 'cp.application:period.desember',
+      defaultMessage: 'Desember',
+      description: 'December',
+    },
+  }),
+
   additionalInfo: defineMessages({
     section: {
       id: 'cp.application:additional.info.section',
@@ -197,6 +292,11 @@ export const childPensionFormMessage: MessageDir = {
       id: 'cp.application:error.phonenumber',
       defaultMessage: 'Símanúmerið þarf að vera gilt.',
       description: 'The phone number must be valid.',
+    },
+    period: {
+      id: 'cp.application:error.period',
+      defaultMessage: 'Tímabil þarf að vera gilt.',
+      description: 'The period must be valid.',
     },
   }),
 }

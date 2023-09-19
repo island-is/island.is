@@ -25,6 +25,10 @@ export const dataSchema = z.object({
       },
       { params: childPensionFormMessage.errors.phonenumber },
     ),
+    period: z.object({
+      year: z.string(),
+      month: z.string(),
+    }),
   }),
 })
 
