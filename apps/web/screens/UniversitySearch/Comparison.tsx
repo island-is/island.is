@@ -1,25 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   Box,
   Button,
   GridContainer,
-  Icon,
   LinkV2,
-  Stack,
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
 import { Screen } from '@island.is/web/types'
-import { useLinkResolver } from '@island.is/web/hooks'
-import {
-  GetUniversityGatewayProgramsQuery,
-  GetUniversityGatewayProgramsQueryVariables,
-  Program,
-} from '@island.is/web/graphql/schema'
-import { GET_UNIVERSITY_GATEWAY_PROGRAM_LIST } from '../queries/UniversityGateway'
-
+import { Program } from '@island.is/web/graphql/schema'
+import { GET_UNIVERSITY_GATEWAY_PROGRAM } from '../queries/UniversityGateway'
 interface UniversityComparisonProps {
   data: Array<Program>
 }
@@ -206,36 +197,31 @@ const Comparison: Screen<UniversityComparisonProps> = ({ data }) => {
   )
 }
 
-interface Props {
-  query?: any
-  apolloClient: any
-  locale: any
-}
-
 Comparison.getProps = async ({ query, apolloClient, locale }) => {
   const { comparison } = query
   const parsedComparison = JSON.parse(
     !!comparison ? (comparison as string) : '',
   )
 
-  const newResponse = await apolloClient.query<
-    GetUniversityGatewayProgramsQuery,
-    GetUniversityGatewayProgramsQueryVariables
-  >({
-    query: GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
-    variables: {
-      input: {},
-    },
+  let promiseList: Array<any> = []
+
+  parsedComparison.map(async (item: Program) => {
+    promiseList.push(
+      await apolloClient.query<any, any>({
+        query: GET_UNIVERSITY_GATEWAY_PROGRAM,
+        variables: {
+          input: {
+            id: item.id,
+          },
+        },
+      }),
+    )
   })
 
-  const data = newResponse.data.universityGatewayPrograms.data
-
-  console.log('data 1 ', data)
-
-  const matchedItems = data.filter((x) => parsedComparison.includes(x.id))
+  const mappedData: Array<Program> = await Promise.all(promiseList)
 
   return {
-    data: matchedItems,
+    data: mappedData,
   }
 }
 

@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const GET_UNIVERSITY_GATEWAY_PROGRAM_LIST = gql`
-  query GetUniversityGatewayPrograms($input: GetProgramsInput!) {
-    universityGatewayPrograms(input: $input) {
+  query GetUniversityGatewayActivePrograms {
+    universityGatewayActivePrograms {
       data {
         active
         nameIs
@@ -26,6 +26,7 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM_LIST = gql`
         startingSemesterSeason
         modeOfDelivery
         startingSemesterYear
+        universityContentfulKey
         tag {
           code
           id
@@ -33,6 +34,25 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM_LIST = gql`
           nameIs
         }
       }
+    }
+  }
+`
+
+export const GET_UNIVERSITY_GATEWAY_UNIVERSITIES = gql`
+  query GetUniversityGatewayUniversities {
+    universityGatewayUniversities {
+      id
+      nationalId
+      contentfulKey
+    }
+  }
+`
+
+export const GET_UNIVERSITY_GATEWAY_FILTERS = gql`
+  query GetUniversityGatewayProgramFitlers {
+    universityGatewayProgramFitlers {
+      field
+      options
     }
   }
 `
@@ -70,6 +90,7 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM = gql`
       modeOfDelivery
       studyRequirementsEn
       studyRequirementsIs
+      universityContentfulKey
       courses {
         credits
         descriptionEn

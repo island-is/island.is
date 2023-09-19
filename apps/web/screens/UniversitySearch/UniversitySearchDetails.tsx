@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import React, { useState } from 'react'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   Accordion,
@@ -18,23 +17,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Screen } from '@island.is/web/types'
-import { useLinkResolver } from '@island.is/web/hooks'
-import {
-  GetUniversityGatewayProgramsQuery,
-  GetUniversityGatewayProgramsQueryVariables,
-  ProgramDetails,
-  QueryUniversityGatewayProgramByIdArgs,
-} from '@island.is/web/graphql/schema'
-import {
-  GET_UNIVERSITY_GATEWAY_PROGRAM,
-  GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
-} from '../queries/UniversityGateway'
+import { ProgramDetails } from '@island.is/web/graphql/schema'
+import { GET_UNIVERSITY_GATEWAY_PROGRAM } from '../queries/UniversityGateway'
 import { CustomNextError } from '@island.is/web/units/errors'
-import {
-  HeadWithSocialSharing,
-  IconTitleCard,
-  Sticky,
-} from '@island.is/web/components'
+import { IconTitleCard, Sticky } from '@island.is/web/components'
 import SidebarLayout from '../Layouts/SidebarLayout'
 
 interface UniversityDetailsProps {
