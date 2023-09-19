@@ -8,7 +8,6 @@ export function transformCase(theCase: Case): Case {
 
   return {
     ...theCase,
-    sendRequestToDefender: theCase.sendRequestToDefender ?? false,
     requestProsecutorOnlySession: theCase.requestProsecutorOnlySession ?? false,
     isClosedCourtHidden: theCase.isClosedCourtHidden ?? false,
     isHeightenedSecurityLevel: theCase.isHeightenedSecurityLevel ?? false,

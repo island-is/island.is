@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCheckboxField,
   buildCustomField,
   buildFileUploadField,
@@ -180,19 +181,16 @@ export const whoIsTheNotificationForSection = buildSection({
                 },
               ],
             }),
-            buildCustomField(
-              {
-                id: 'attachments.injuryCertificate.alert',
-                title: powerOfAttorney.alertMessage.title,
-                description: powerOfAttorney.alertMessage.description,
-                component: 'FieldAlertMessage',
-                doesNotRequireAnswer: true,
-                condition: (formValue) =>
-                  getValueViaPath(formValue, 'powerOfAttorney.type') ===
-                  PowerOfAttorneyUploadEnum.UPLOADLATER,
-              },
-              { type: 'warning' },
-            ),
+            buildAlertMessageField({
+              id: 'attachments.injuryCertificate.alert',
+              title: powerOfAttorney.alertMessage.title,
+              message: powerOfAttorney.alertMessage.description,
+              alertType: 'warning',
+              doesNotRequireAnswer: true,
+              condition: (formValue) =>
+                getValueViaPath(formValue, 'powerOfAttorney.type') ===
+                PowerOfAttorneyUploadEnum.UPLOADLATER,
+            }),
           ],
         }),
       ],
