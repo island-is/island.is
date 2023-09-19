@@ -2043,10 +2043,11 @@ services-sessions:
     privileged: false
 services-sessions-geoip-worker:
   args:
-    - './node_modules/geoip-lite/scripts/updatedb.js'
+    - 'run-script'
+    - 'updatedb'
     - 'license_key=$(GEOIP_LICENSE_KEY)'
   command:
-    - 'node'
+    - 'npm'
   enabled: true
   env:
     GEODATADIR: '/geoip-lite/data'
@@ -2084,6 +2085,12 @@ services-sessions-geoip-worker:
     - accessModes: 'ReadWriteMany'
       mountPath: '/geoip-lite/data'
       name: 'sessions-geoip-db'
+      size: '1Gi'
+      storageClass: 'efs-csi'
+      useExisting: false
+    - accessModes: 'ReadWriteMany'
+      mountPath: '/webapp/node_modules/geoip-lite/tmp'
+      name: 'sessions-geoip-db-tmp'
       size: '1Gi'
       storageClass: 'efs-csi'
       useExisting: false
