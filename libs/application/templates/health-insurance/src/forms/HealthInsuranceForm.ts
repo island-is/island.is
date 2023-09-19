@@ -10,6 +10,7 @@ import {
   buildSubmitField,
   buildTextField,
   buildSelectField,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import {
   Form,
@@ -175,10 +176,11 @@ export const HealthInsuranceForm: Form = buildForm({
               backgroundColor: 'blue',
               required: true,
             }),
-            buildCustomField({
+            buildAlertMessageField({
               id: 'waitingPeriodInfo',
-              title: '',
-              component: 'FormerCountryErrorMessage',
+              title: m.waitingPeriodTitle,
+              message: m.waitingPeriodDescription,
+              alertType: 'error',
               condition: (answers: FormValue) => {
                 const formerCountry = (
                   answers as {
