@@ -607,9 +607,9 @@ export const HousingBenefitCalculator = new XroadConf({
 export const ShipRegistry = new XroadConf({
   env: {
     XROAD_SHIP_REGISTRY_PATH: {
-      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-v1',
-      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-v1',
-      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/skipaskra-v1',
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-V1',
+      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/skipaskra-V1',
     },
   },
 })
