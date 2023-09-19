@@ -1,0 +1,18 @@
+{
+  "data": {
+    "currentUser": {
+      "id": "20a82fd1-e00f-4ccb-baef-389dd2079c09",
+      "name": "Fangelsa Yfirvaldadóttir",
+      "title": "Fangavörður",
+      "role": "PRISON_SYSTEM_STAFF",
+      "institution": {
+        "id": "",
+        "name": "Fangelsismálastofnun ríkisins",
+        "type": "PRISON_ADMIN",
+        "active": true,
+        "__typename": "Institution"
+      },
+      "__typename": "User"
+    }
+  }
+}

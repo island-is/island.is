@@ -10,11 +10,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { Screen } from '../../types'
-import {
-  linkResolver,
-  useFeatureFlag,
-  useNamespace,
-} from '@island.is/web/hooks'
+import { linkResolver, useNamespace } from '@island.is/web/hooks'
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { GET_PROJECT_PAGE_QUERY } from '@island.is/web/screens/queries/Project'
@@ -61,10 +57,6 @@ const ProjectPage: Screen<PageProps> = ({
   stepOptionsFromNamespace,
   locale,
 }) => {
-  const { value: isWebReaderEnabledForProjectPages } = useFeatureFlag(
-    'isWebReaderEnabledForProjectPages',
-    false,
-  )
   const n = useNamespace(namespace)
   const p = useNamespace(projectNamespace)
 
@@ -136,6 +128,9 @@ const ProjectPage: Screen<PageProps> = ({
   const bottomSlices =
     (!subpage ? projectPage?.bottomSlices : subpage.bottomSlices) ?? []
 
+  const shouldDisplayWebReader =
+    projectNamespace?.shouldDisplayWebReader ?? true
+
   return (
     <>
       <HeadWithSocialSharing
@@ -147,25 +142,40 @@ const ProjectPage: Screen<PageProps> = ({
         imageHeight={projectPage?.featuredImage?.height?.toString()}
       />
       <ProjectWrapper
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         projectPage={projectPage}
         breadcrumbItems={breadCrumbs}
         sidebarNavigationTitle={navigationTitle}
         withSidebar={projectPage?.sidebar}
       >
-        {!subpage && isWebReaderEnabledForProjectPages && (
-          <Webreader marginTop={0} readId={null} readClass="rs_read" />
+        {!subpage && shouldDisplayWebReader && (
+          <Webreader
+            marginTop={0}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            readId={null}
+            readClass="rs_read"
+          />
         )}
         {!!subpage && (
           <Box marginBottom={1}>
             <Text as="h1" variant="h1">
               {subpage.title}
             </Text>
-            {isWebReaderEnabledForProjectPages && (
-              <Webreader readId={null} readClass="rs_read" />
+            {shouldDisplayWebReader && (
+              <Webreader
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                readId={null}
+                readClass="rs_read"
+              />
             )}
             {subpage.content &&
               webRichText(subpage.content as SliceType[], {
                 renderComponent: {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   Form: (slice) => <Form form={slice} namespace={namespace} />,
                 },
               })}
@@ -202,7 +212,11 @@ const ProjectPage: Screen<PageProps> = ({
         {content &&
           webRichText(content, {
             renderComponent: {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               Form: (slice) => <Form form={slice} namespace={namespace} />,
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               TabSection: (slice) => (
                 <TabSectionSlice
                   slice={slice}
@@ -223,6 +237,8 @@ const ProjectPage: Screen<PageProps> = ({
           </Box>
         )}
         {!renderSlicesAsTabs &&
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           (subpage ?? projectPage).slices.map((slice) =>
             slice.__typename === 'OneColumnText' ? (
               <Box marginTop={6}>
@@ -280,7 +296,12 @@ const ProjectPage: Screen<PageProps> = ({
           />
         )
       })}
-      <ProjectFooter projectPage={projectPage} namespace={projectNamespace} />
+      <ProjectFooter
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
+        projectPage={projectPage}
+        namespace={projectNamespace}
+      />
     </>
   )
 }

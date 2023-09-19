@@ -1,12 +1,5 @@
 mutation CreateFile($input: CreateFileInput!) {
   createFile(input: $input) {
     id
-    created
-    caseId
-    name
-    key
-    size
-    category
-    policeCaseNumber
   }
 }

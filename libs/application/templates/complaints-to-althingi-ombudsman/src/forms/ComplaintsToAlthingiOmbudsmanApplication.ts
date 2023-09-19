@@ -218,7 +218,6 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               id: 'complainedForInformation.powerOfAttorney',
               title: '',
               introduction: '',
-              uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: attachments.uploadHeader,
               uploadDescription: attachments.uploadDescription,
               uploadButtonLabel: attachments.uploadButtonLabel,
@@ -343,6 +342,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                     complaintDescription.labels.decisionDatePlaceholder,
                   backgroundColor: 'blue',
                   width: 'half',
+                  maxDate: new Date(),
                   condition: (answers: FormValue) =>
                     getComplaintType(answers) ===
                     OmbudsmanComplaintTypeEnum.DECISION,
@@ -449,6 +449,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           title: attachments.title,
           introduction: attachments.introduction,
           uploadHeader: attachments.uploadHeader,
+          uploadAccept: UPLOAD_ACCEPT,
           uploadDescription: attachments.uploadDescription,
           uploadButtonLabel: attachments.uploadButtonLabel,
         }),
