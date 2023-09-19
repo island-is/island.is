@@ -260,7 +260,7 @@ export class SoffiaService {
             fullName: child.nameParent2,
           },
         //temporary, until we remove v1
-      ].filter((Boolean as unknown) as ExcludesFalse)
+      ].filter(Boolean as unknown as ExcludesFalse)
     }
     return null
   }
@@ -290,7 +290,7 @@ export class SoffiaService {
           fullName: child.nameCustody2,
           text: child.custodyText2,
         },
-    ].filter((Boolean as unknown) as ExcludesFalse)
+    ].filter(Boolean as unknown as ExcludesFalse)
   }
 
   async getBirthplace(
