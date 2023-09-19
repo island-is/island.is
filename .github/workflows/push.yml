@@ -709,7 +709,7 @@ jobs:
       IMAGES: ${{ needs.prepare.outputs.IMAGES }}
     steps:
       - uses: actions/checkout@v3
-      - name: Trigger Deployment for service
+      - name: Trigger Spinnaker Deployment for service
         env:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
         run: |
@@ -726,6 +726,14 @@ jobs:
             }
           }
           BODY
+      - name: Generate islandis feature-deployment charts for ArgoCD
+        env:
+          FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
+          DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
+          IMAGES: ${{ needs.prepare.outputs.IMAGES }}
+          GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
+        run: |
+          ./infra/src/feature-env.ts values --chart islandis --feature $FEATURE_NAME --images $IMAGES
       - name: Trigger Deployment for IDS-Services
         env:
           DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
