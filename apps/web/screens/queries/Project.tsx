@@ -24,6 +24,13 @@ export const GET_PROJECT_PAGE_QUERY = gql`
           url
         }
       }
+      secondarySidebar {
+        name
+        childrenLinks {
+          text
+          url
+        }
+      }
       footerItems {
         title
         content {
