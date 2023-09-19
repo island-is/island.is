@@ -13,11 +13,12 @@ import { PoliceCaseInfo } from '@island.is/judicial-system-web/src/graphql/schem
 import { PoliceCaseFilesMessageBox } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
 
 import { PoliceCase } from '../Defendant'
-import { useGetPoliceCaseInfoQuery } from './getPoliceCaseInfo.generated'
 import { lokeNumberList as strings } from './LokeNumberList.strings'
 
 interface Props {
-  caseId: string
+  isLoading: boolean
+  loadingError: boolean
+  policeCaseInfo?: PoliceCaseInfo[]
   addPoliceCaseNumbers: (policeCases: PoliceCase[]) => void
 }
 interface CheckBoxContainerProps {
@@ -39,16 +40,10 @@ const CheckBoxContainer: React.FC<CheckBoxContainerProps> = (props) => {
 }
 
 export const LokeNumberList: React.FC<Props> = (props) => {
-  const { caseId, addPoliceCaseNumbers } = props
+  const { isLoading, loadingError, policeCaseInfo, addPoliceCaseNumbers } =
+    props
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
-
-  const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [hasError, setHasError] = useState<boolean>(false)
-
-  const [policeCaseInfoResponse, setPoliceCaseInfoResponse] = useState<
-    PoliceCaseInfo[]
-  >([])
 
   const [availablePoliceCases, setAvailablePoliceCases] = useState<
     PoliceCaseInfo[]
@@ -58,28 +53,14 @@ export const LokeNumberList: React.FC<Props> = (props) => {
   >([])
 
   useEffect(() => {
-    const available = policeCaseInfoResponse.filter(
-      (caseInfo) =>
-        !workingCase.policeCaseNumbers.includes(caseInfo.policeCaseNumber),
-    )
-    setAvailablePoliceCases(available)
-  }, [workingCase, policeCaseInfoResponse])
-
-  useGetPoliceCaseInfoQuery({
-    variables: {
-      input: {
-        caseId: caseId,
-      },
-    },
-    fetchPolicy: 'no-cache',
-    onCompleted: (data) => {
-      setIsLoading(false)
-      setPoliceCaseInfoResponse(data.policeCaseInfo as PoliceCaseInfo[])
-    },
-    onError: () => {
-      setHasError(true)
-    },
-  })
+    if (policeCaseInfo) {
+      const available = policeCaseInfo?.filter(
+        (caseInfo) =>
+          !workingCase.policeCaseNumbers.includes(caseInfo.policeCaseNumber),
+      )
+      setAvailablePoliceCases(available)
+    }
+  }, [workingCase, policeCaseInfo])
 
   function handleSelectedPoliceCases(
     selected: boolean,
@@ -105,7 +86,7 @@ export const LokeNumberList: React.FC<Props> = (props) => {
     setSelectedPoliceCases([])
   }
 
-  if (hasError) {
+  if (loadingError) {
     return (
       <Box
         marginBottom={6}
