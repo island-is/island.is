@@ -101,7 +101,7 @@ export const oldAgePensionFormMessage: MessageDir = {
         'TR collects only necessary information for processing applications and processing cases. That information can relate to both your income and other circumstances. If applicable, TR is authorized to obtain information from other organizations.',
     },
     socialInsuranceAdministrationInformationSubTitleMoreInfo: {
-      id: 'oap.application:prerequisites.socialInsuranceAdministration.subtitle.moreInfo',
+      id: 'oap.application:prerequisites.socialInsuranceAdministration.subtitle.moreInfo#markdown',
       defaultMessage:
         'Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar, <a target="_blank" href="https://www.tr.is/tryggingastofnun/personuvernd"><span style="color:blue;text-decoration:underline;">https://www.tr.is/tryggingastofnun/personuvernd</span></a>',
       description:
