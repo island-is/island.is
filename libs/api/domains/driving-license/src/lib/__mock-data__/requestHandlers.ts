@@ -15,11 +15,24 @@ export const MOCK_NATIONAL_ID = '0'
 export const MOCK_NATIONAL_ID_EXPIRED = '1'
 export const MOCK_NATIONAL_ID_TEACHER = '2'
 export const MOCK_NATIONAL_ID_NO_ASSESSMENT = '9'
+
+export const MOCK_TOKEN = '0'
+export const MOCK_TOKEN_EXPIRED = '1'
+export const MOCK_TOKEN_TEACHER = '2'
+export const MOCK_TOKEN_ASSESSMENT = '9'
+
 export const DISQUALIFIED_NATIONAL_IDS = [
   '0101302399',
   '0101302719',
   '0101305069',
   '0101303019',
+]
+
+export const DISQUALIFIED_TOKENS = [
+  'auth-token-disqualified-01',
+  'auth-token-disqualified-02',
+  'auth-token-disqualified-03',
+  'auth-token-disqualified-04',
 ]
 
 type MockLicenseRaw =

@@ -225,7 +225,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
   }
 
-  async juristictions(): Promise<EmbaettiDto[]> {
+  async jurisdictions(): Promise<EmbaettiDto[]> {
     return await this.drivingLicenseService.getListOfJurisdictions()
   }
 

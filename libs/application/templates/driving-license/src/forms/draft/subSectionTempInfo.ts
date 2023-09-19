@@ -10,7 +10,7 @@ import {
 import {
   Application,
   NationalRegistryUser,
-  Teacher,
+  TeacherV4,
   UserProfile,
 } from '../../types/schema'
 import { m } from '../../lib/messages'
@@ -97,7 +97,7 @@ export const subSectionTempInfo = buildSubSection({
               teachers: { data },
             },
           }) => {
-            return (data as Teacher[]).map(({ name, nationalId }) => ({
+            return (data as TeacherV4[]).map(({ name, nationalId }) => ({
               value: nationalId,
               label: name,
             }))

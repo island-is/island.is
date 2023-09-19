@@ -9,7 +9,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents, StaticText } from '@island.is/application/types'
-import { NationalRegistryUser, Teacher } from '../../types/schema'
+import { NationalRegistryUser, TeacherV4 } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { StudentAssessment } from '@island.is/api/schema'
@@ -113,7 +113,7 @@ export const subSectionSummary = buildSubSection({
             answers,
           }) => {
             if (answers.applicationFor === B_TEMP) {
-              const teacher = (data as Teacher[]).find(
+              const teacher = (data as TeacherV4[]).find(
                 ({ nationalId }) =>
                   getValueViaPath(answers, 'drivingInstructor') === nationalId,
               )

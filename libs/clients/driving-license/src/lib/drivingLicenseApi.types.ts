@@ -24,8 +24,8 @@ export interface DriversLicenseCategory {
 }
 
 export interface Disqualification {
-  to: Date
-  from: Date
+  to?: Date | null
+  from?: Date | null
 }
 
 export interface DriversLicense {

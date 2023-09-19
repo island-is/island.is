@@ -18,6 +18,7 @@ import {
 import {
   CanApplyErrorCodeBFull,
   CanApplyErrorCodeBTemporary,
+  Disqualification,
   DriversLicense,
   DrivingAssessment,
   DrivingLicenseApi,
@@ -88,7 +89,10 @@ export class DrivingLicenseService {
   // You're not allowed to have had a disqualification in the last 12 months
   // You're not allowed to have an active disqualification
   // Some disqualifications do not have an end date, so we have to assume they're still active
-  private isDisqualified(from?: Date, to?: Date): boolean {
+  private isDisqualified(
+    from: Disqualification['from'],
+    to: Disqualification['to'],
+  ): boolean {
     if (!from) {
       return false
     }
