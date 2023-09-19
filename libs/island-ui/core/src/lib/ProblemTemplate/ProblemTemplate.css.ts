@@ -2,7 +2,7 @@ import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 import { recipe } from '@vanilla-extract/recipes'
 
-export const container = recipe({
+export const problemTemplateContainer = recipe({
   base: {
     ...themeUtils.responsiveStyle({
       md: {
@@ -44,7 +44,7 @@ export const container = recipe({
   },
 })
 
-export const img = style({
+export const problemTemplateImg = style({
   minHeight: '20vh',
   ...themeUtils.responsiveStyle({
     md: {

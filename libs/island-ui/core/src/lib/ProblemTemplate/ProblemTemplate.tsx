@@ -87,7 +87,7 @@ export const ProblemTemplate = ({
       flexDirection="column"
       alignItems="center"
       rowGap={2}
-      className={styles.container(
+      className={styles.problemTemplateContainer(
         noBorder
           ? {
               noBorder: true,
@@ -124,7 +124,11 @@ export const ProblemTemplate = ({
       <Text whiteSpace="preLine">{message}</Text>
       {imgSrc && (
         <Box marginTop={[2, 4]}>
-          <img src={imgSrc} alt={imgAlt} className={styles.img} />
+          <img
+            src={imgSrc}
+            alt={imgAlt}
+            className={styles.problemTemplateImg}
+          />
         </Box>
       )}
     </Box>

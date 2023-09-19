@@ -59,7 +59,7 @@ export * from './lib/PageLoader'
 export * from './lib/VisuallyHidden/VisuallyHidden'
 export * from './lib/Drawer/Drawer'
 export * from './lib/ProblemTemplate/ProblemTemplate'
-export * as problemTemplateStyles from './lib/ProblemTemplate/ProblemTemplate.css'
+export * from './lib/ProblemTemplate/ProblemTemplate.css'
 
 // Cards
 export * from './lib/LinkCard/LinkCard'
