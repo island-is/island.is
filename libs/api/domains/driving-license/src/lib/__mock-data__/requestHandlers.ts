@@ -2,7 +2,7 @@ import { rest } from 'msw'
 import ValidLicense from './validLicense.json'
 import ExpiredLicense from './expiredLicense.json'
 import LicenseWithDisqualification from './licenseWithDisqualification.json'
-import Juristictions from './juristictions.json'
+import Jurisdictions from './jurisdictions.json'
 import DrivingAssessment from './drivingAssessment'
 import FinishedSchool from './finishedSchool.json'
 import NotFinishedSchool from './notFinishedSchool.json'
@@ -76,7 +76,7 @@ export const requestHandlers = [
   rest.get(
     url(`${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/embaetti`),
     (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(Juristictions))
+      return res(ctx.status(200), ctx.json(Jurisdictions))
     },
   ),
 
