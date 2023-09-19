@@ -42,11 +42,13 @@ import {
   SliceDropdown as SliceDropdownSchema,
   SectionWithVideo as SectionWithVideoSchema,
   TableSlice as TableSliceSchema,
+  Embed as EmbedSchema,
 } from '@island.is/web/graphql/schema'
 import { Locale } from '@island.is/shared/types'
 import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator'
+import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
@@ -130,6 +132,7 @@ const defaultRenderComponent = {
     <SectionWithVideo slice={slice} />
   ),
   TableSlice: (slice: TableSliceSchema) => <TableSlice slice={slice} />,
+  Embed: (slice: EmbedSchema) => <EmbedSlice slice={slice} />,
 }
 
 export const webRichText = (
