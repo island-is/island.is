@@ -346,6 +346,7 @@ const environment = getConfig
         ShipRegistryClientConfig,
         HousingBenefitCalculatorClientConfig,
         MMSClientConfig,
+        ShipRegistryClientConfig,
       ],
     }),
   ],

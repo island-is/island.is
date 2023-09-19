@@ -1,2 +1,3 @@
-export * from './lib/ship-registry-client.module'
-export * from './lib/ship-registry-client.config'
+export * from './lib/ship-registry.module'
+export * from './lib/ship-registry.config'
+export * from './lib/ship-registry.service'
