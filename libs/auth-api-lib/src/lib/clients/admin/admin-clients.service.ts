@@ -118,12 +118,17 @@ export class AdminClientsService {
       throw new NoContentException()
     }
 
-    const clientTranslation = await this.translationService.findTranslationMap(
-      'client',
-      [client.clientId],
-    )
+    // Try fetching the translation and format with it if it exists, otherwise format without it
+    try {
+      const clientTranslation =
+        await this.translationService.findTranslationMap('client', [
+          client.clientId,
+        ])
 
-    return this.formatClient(client, clientTranslation.get(client.clientId))
+      return this.formatClient(client, clientTranslation.get(client.clientId))
+    } catch (e) {
+      return this.formatClient(client)
+    }
   }
 
   async create(

@@ -238,6 +238,7 @@ export class TranslationService {
     }
 
     const translations = await this.translationModel.findAll({
+      useMaster: true,
       where: {
         ...(language && { language }),
         className,
