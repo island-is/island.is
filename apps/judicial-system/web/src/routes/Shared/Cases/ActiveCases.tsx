@@ -38,6 +38,7 @@ import {
   TempCaseListEntry as CaseListEntry,
 } from '@island.is/judicial-system-web/src/types'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
+import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import MobileCase from './MobileCase'
 import { cases as m } from './Cases.strings'
@@ -91,8 +92,10 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
           }
           return entry.created
         }
-
-        const compareResult = getColumnValue(a).localeCompare(getColumnValue(b))
+        const compareResult = compareLocaleIS(
+          getColumnValue(a),
+          getColumnValue(b),
+        )
 
         return sortConfig.direction === 'ascending'
           ? compareResult

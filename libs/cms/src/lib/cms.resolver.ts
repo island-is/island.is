@@ -93,6 +93,8 @@ import { FeaturedSupportQNAs } from './models/featuredSupportQNAs.model'
 import { PowerBiSlice } from './models/powerBiSlice.model'
 import { GetPowerBiEmbedPropsFromServerResponse } from './dto/getPowerBiEmbedPropsFromServer.response'
 import { GetOrganizationByTitleInput } from './dto/getOrganizationByTitle.input'
+import { ServiceWebPage } from './models/serviceWebPage.model'
+import { GetServiceWebPageInput } from './dto/getServiceWebPage.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -231,6 +233,17 @@ export class CmsResolver {
     return this.cmsElasticsearchService.getSingleOrganizationSubpage(
       getElasticsearchIndex(input.lang),
       { ...input },
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => ServiceWebPage, { nullable: true })
+  getServiceWebPage(
+    @Args('input') input: GetServiceWebPageInput,
+  ): Promise<ServiceWebPage | null> {
+    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
+      getElasticsearchIndex(input.lang),
+      { type: 'webServiceWebPage', slug: input.slug },
     )
   }
 

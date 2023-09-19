@@ -76,6 +76,7 @@ export class AdminScopeService {
     tenantId: string
   }): Promise<AdminScopeDTO> {
     const apiScope = await this.apiScope.findOne({
+      useMaster: true,
       where: {
         name: scopeName,
         domainName: tenantId,
