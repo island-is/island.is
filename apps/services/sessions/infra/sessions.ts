@@ -141,12 +141,12 @@ export const geoipSetup =
       )
       .resources({
         limits: {
-          cpu: '200m',
-          memory: '256Mi',
+          cpu: '4',
+          memory: '4Gi',
         },
         requests: {
-          cpu: '150m',
-          memory: '128Mi',
+          cpu: '4',
+          memory: '4Gi',
         },
       })
       .env({ GEODATADIR: geoDataDir, GEOTMPDIR: geoTmpDir })
@@ -155,7 +155,7 @@ export const geoipSetup =
       })
       .volumes(...geoipVolume)
       .extraAttributes({
-        dev: { schedule: '*/30 * * * *' },
-        staging: { schedule: '*/30 * * * *' },
-        prod: { schedule: '*/30 * * * *' },
+        dev: { schedule: '0 0 * * *' },
+        staging: { schedule: '0 0 * * *' },
+        prod: { schedule: '0 0 * * *' },
       })
