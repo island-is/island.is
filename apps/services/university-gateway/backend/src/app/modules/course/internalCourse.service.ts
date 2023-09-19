@@ -9,6 +9,8 @@ import {
   ICourse,
   UniversityNationalIds,
 } from '@island.is/university-gateway-lib'
+import { logger } from '@island.is/logging'
+import { Op } from 'sequelize'
 
 export
 @Injectable()
@@ -32,20 +34,35 @@ class InternalCourseService {
   ) {}
 
   async updateCourses(): Promise<void> {
-    await this.doUpdateCoursesForUniversity(
-      UniversityNationalIds.REYKJAVIK_UNIVERSITY,
-      (externalId: string) =>
-        this.reykjavikUniversityClient.getCourses(externalId),
-    )
+    try {
+      logger.info('Updating courses for Reykjavik University')
+      await this.doUpdateCoursesForUniversity(
+        UniversityNationalIds.REYKJAVIK_UNIVERSITY,
+        (externalId: string) =>
+          this.reykjavikUniversityClient.getCourses(externalId),
+      )
+    } catch (e) {
+      logger.error(
+        'Failed to update courses for Reykjavik University, reason:',
+        { e },
+      )
+    }
 
-    await this.doUpdateCoursesForUniversity(
-      UniversityNationalIds.UNIVERSITY_OF_ICELAND,
-      (externalId: string) =>
-        this.universityOfIcelandClient.getCourses(externalId),
-    )
+    try {
+      logger.info('Updating courses for University of Iceland')
+      await this.doUpdateCoursesForUniversity(
+        UniversityNationalIds.UNIVERSITY_OF_ICELAND,
+        (externalId: string) =>
+          this.universityOfIcelandClient.getCourses(externalId),
+      )
+    } catch (e) {
+      logger.error(
+        'Failed to update courses for University of Iceland, reason:',
+        { e },
+      )
+    }
   }
 
-  // TODOx try-catch each
   private async doUpdateCoursesForUniversity(
     universityNationalId: string,
     getCourses: (externalId: string) => Promise<ICourse[]>,
@@ -62,14 +79,13 @@ class InternalCourseService {
 
     // DELETE all programCourses for this university
     // Need to loop through courses first to select by universityId
+    // since universityId is not in programCourse table
     const oldCourseList = await this.courseModel.findAll({
       where: { universityId: universityId },
     })
-    for (let i = 0; i < oldCourseList.length; i++) {
-      await this.programCourseModel.destroy({
-        where: { courseId: oldCourseList[i].id },
-      })
-    }
+    await this.programCourseModel.destroy({
+      where: { courseId: { [Op.in]: oldCourseList.map((c) => c.id) } },
+    })
 
     // DELETE all courses for this university
     await this.courseModel.destroy({ where: { universityId: universityId } })
@@ -78,56 +94,75 @@ class InternalCourseService {
       where: { universityId },
     })
     for (let i = 0; i < programList.length; i++) {
-      const programId = programList[i].id
-      const programExternalId = programList[i].externalId
-
-      // DELETE program course
-      await this.programCourseModel.destroy({
-        where: { programId: programId },
-      })
-
-      const courseList = await getCourses(programExternalId)
-
-      // CREATE/UPDATE course
-      // CREATE program course
-      for (let j = 0; j < courseList.length; j++) {
-        const course = courseList[j]
-
-        // Map to courseModel object
-        const courseObj = {
-          externalId: course.externalId,
-          nameIs: course.nameIs,
-          nameEn: course.nameEn,
-          universityId: universityId,
-          credits: course.credits,
-          semesterYear: course.semesterYear,
-          semesterSeason: course.semesterSeason,
-          descriptionIs: course.descriptionIs,
-          descriptionEn: course.descriptionEn,
-          externalUrlIs: course.externalUrlIs,
-          externalUrlEn: course.externalUrlEn,
-        }
-
-        const oldCourseObj = await this.courseModel.findOne({
-          where: { externalId: courseObj.externalId },
+      const program = programList[i]
+      try {
+        // DELETE program course
+        // Note: should be unecessary since we have already deleted all by course
+        await this.programCourseModel.destroy({
+          where: { programId: program.id },
         })
 
-        let courseId: string | undefined
-        if (oldCourseObj) {
-          courseId = oldCourseObj.id
-          await this.courseModel.update(courseObj, {
-            where: { id: courseId },
-          })
-        } else {
-          courseId = (await this.courseModel.create(courseObj)).id
-        }
+        const courseList = await getCourses(program.externalId)
 
-        // program course
-        await this.programCourseModel.create({
-          programId: programId,
-          courseId: courseId,
-          requirement: course.requirement,
-        })
+        // CREATE/UPDATE course
+        // CREATE program course
+        for (let j = 0; j < courseList.length; j++) {
+          const course = courseList[j]
+          try {
+            // Map to courseModel object
+            const courseObj = {
+              externalId: course.externalId,
+              nameIs: course.nameIs,
+              nameEn: course.nameEn,
+              universityId: universityId,
+              credits: course.credits,
+              semesterYear: course.semesterYear,
+              semesterSeason: course.semesterSeason,
+              descriptionIs: course.descriptionIs,
+              descriptionEn: course.descriptionEn,
+              externalUrlIs: course.externalUrlIs,
+              externalUrlEn: course.externalUrlEn,
+            }
+
+            // In case this course has already been registered with another program
+            // we should to check if we only need update (instead of inserting duplicate)
+            const oldCourseObj = await this.courseModel.findOne({
+              where: { externalId: courseObj.externalId },
+            })
+
+            // Create/update course, depending on whether course already existed (for other program)
+            let courseId: string | undefined
+            if (oldCourseObj) {
+              courseId = oldCourseObj.id
+              await this.courseModel.update(courseObj, {
+                where: { id: courseId },
+              })
+            } else {
+              courseId = (await this.courseModel.create(courseObj)).id
+            }
+
+            // Create entry in program course
+            await this.programCourseModel.create({
+              programId: program.id,
+              courseId: courseId,
+              requirement: course.requirement,
+            })
+          } catch (e) {
+            logger.error(
+              `Failed to update course with externalId ${course.externalId} for program with externalId ${program.externalId}, reason:`,
+              {
+                e,
+              },
+            )
+          }
+        }
+      } catch (e) {
+        logger.error(
+          `Failed to update courses for program with externalId ${program.externalId}, reason:`,
+          {
+            e,
+          },
+        )
       }
     }
   }

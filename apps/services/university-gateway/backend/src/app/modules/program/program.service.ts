@@ -141,6 +141,12 @@ class ProgramService {
   }
 
   async getDurationInYears(): Promise<string[]> {
-    return ['1', '2', '3'] // TODOx
+    const programs = await this.programModel.findAndCountAll({
+      group: 'duration_in_years',
+      attributes: ['durationInYears'],
+      order: ['durationInYears'],
+    })
+
+    return programs.rows.map((x) => x.durationInYears.toString())
   }
 }
