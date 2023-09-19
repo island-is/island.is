@@ -252,7 +252,7 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
                                   ? `${n('nationalIdPrefix', 'kt.')} ${
                                       owner.nationalId
                                     }`
-                                  : ''}{' '}
+                                  : ''}
                               </Text>
                               <Text>
                                 {typeof owner?.sharePercentage === 'number'
