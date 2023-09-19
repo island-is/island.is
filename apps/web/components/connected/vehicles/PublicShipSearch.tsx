@@ -10,6 +10,8 @@ import {
 import { PUBLIC_SHIP_SEARCH_QUERY } from '@island.is/web/screens/queries/PublicShipSearch'
 import {
   ConnectedComponent,
+  GetPublicShipSearchQuery,
+  GetPublicShipSearchQueryVariables,
   //   GetPublicShipSearchQuery,
   //   GetPublicShipSearchQueryVariables,
 } from '@island.is/web/graphql/schema'
@@ -33,28 +35,28 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
 
   const n = useNamespace(slice?.json ?? {})
 
-  //   const [search, { loading, data, error, called }] = useLazyQuery<
-  //     GetPublicShipSearchQuery,
-  //     GetPublicShipSearchQueryVariables
-  //   >(PUBLIC_SHIP_SEARCH_QUERY)
+  const [search, { loading, data, error, called }] = useLazyQuery<
+    GetPublicShipSearchQuery,
+    GetPublicShipSearchQueryVariables
+  >(PUBLIC_SHIP_SEARCH_QUERY)
 
-  //   const shipInformation = data?.getPublicShipSearch
+  const shipInformation = data?.shipRegistryShipSearch?.ships?.[0]
 
-  //   const shipWasNotFound =
-  //     shipInformation === null || typeof shipInformation === undefined
+  const shipWasNotFound =
+    shipInformation === null || typeof shipInformation === undefined
 
-  //   const handleSearch = () => {
-  //     if (!searchValue) {
-  //       return
-  //     }
-  //     search({
-  //       variables: {
-  //         input: {
-  //           search: searchValue,
-  //         },
-  //       },
-  //     })
-  //   }
+  const handleSearch = () => {
+    if (!searchValue) {
+      return
+    }
+    search({
+      variables: {
+        input: {
+          qs: searchValue,
+        },
+      },
+    })
+  }
 
   //   const formattedRegistrationDate = shipInformation?.newRegDate
   //     ? format(new Date(shipInformation.newRegDate), 'do MMMM yyyy')
@@ -76,7 +78,7 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
       <Box marginTop={2} marginBottom={3}>
         <AsyncSearchInput
           buttonProps={{
-            //onClick: handleSearch,
+            onClick: handleSearch,
             onFocus: () => setHasFocus(true),
             onBlur: () => setHasFocus(false),
           }}
@@ -87,18 +89,18 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
             colored: true,
             onChange: (ev) => setSearchValue(ev.target.value.toUpperCase()),
             value: searchValue,
-            // onKeyDown: (ev) => {
-            //   if (ev.key === 'Enter') {
-            //     handleSearch()
-            //   }
-            // },
+            onKeyDown: (ev) => {
+              if (ev.key === 'Enter') {
+                handleSearch()
+              }
+            },
           }}
           hasFocus={hasFocus}
           rootProps={{}}
-          //loading={loading}
+          loading={loading}
         />
       </Box>
-      {/* {called && !loading && !error && shipWasNotFound && (
+      {called && !loading && !error && shipWasNotFound && (
         <Box>
           <Text fontWeight="semiBold">
             {n('noShipFound', 'Ekkert skip fannst')}
@@ -124,13 +126,13 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
               <Table.HeadData />
             </Table.Head>
             <Table.Body>
-              {shipInformation.shipName && (
+              {shipInformation.name && (
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">{n('shipName', 'Nafn:')}</Text>
                   </Table.Data>
                   <Table.Data>
-                    <Text>{shipInformation.shipName}</Text>
+                    <Text>{shipInformation.name}</Text>
                   </Table.Data>
                 </Table.Row>
               )}
@@ -214,7 +216,7 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
                   </Table.Data>
                 </Table.Row>
               )}
-              {shipInformation.constructed && (
+              {/* {shipInformation.manufacturer && (
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
@@ -222,11 +224,11 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
                     </Text>
                   </Table.Data>
                   <Table.Data>
-                    <Text>{shipInformation.constructed}</Text>
+                    <Text>{shipInformation.manufacturer}</Text>
                   </Table.Data>
                 </Table.Row>
-              )}
-              {shipInformation.owners && (
+              )} */}
+              {/* {shipInformation.owners && (
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
@@ -239,12 +241,11 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
                     </Text>
                   </Table.Data>
                 </Table.Row>
-              )}
+              )} */}
             </Table.Body>
           </Table.Table>
-        </Box> 
+        </Box>
       )}
-      */}
     </Box>
   )
 }

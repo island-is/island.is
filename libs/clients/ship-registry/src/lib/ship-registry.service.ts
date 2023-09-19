@@ -1,6 +1,4 @@
-import { Inject } from '@nestjs/common'
 import { FindShipByNameOrNumberRequest, ShipApi } from '../../gen/fetch'
-import { ShipRegistryClientConfig } from './ship-registry.config'
 
 interface Ship {
   skraningarnumer: number
@@ -42,12 +40,11 @@ interface Ship {
 }
 
 export class ShipRegistryClientService {
-  constructor(
-    @Inject(ShipRegistryClientConfig.KEY)
-    private readonly shipApi: ShipApi,
-  ) {}
+  constructor(private readonly shipApi: ShipApi) {}
 
   async findShipByNameOrNumber(input: FindShipByNameOrNumberRequest) {
+    console.log({ yo: typeof this.shipApi?.findShipByNameOrNumber })
+
     const data = (await this.shipApi.findShipByNameOrNumber(
       input,
     )) as unknown as { ships: Ship[] }
