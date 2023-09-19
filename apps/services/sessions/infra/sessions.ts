@@ -1,5 +1,5 @@
 import { PersistentVolumeClaim } from '../../../../infra/src/dsl/types/input-types'
-import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const namespace = 'services-sessions'
 const imageName = 'services-sessions'
