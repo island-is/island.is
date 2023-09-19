@@ -145,7 +145,7 @@ export const geoipSetup =
           memory: '256Mi',
         },
         requests: {
-          cpu: '10m',
+          cpu: '150m',
           memory: '128Mi',
         },
       })
