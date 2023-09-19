@@ -1,4 +1,4 @@
-import { Teacher } from '@island.is/clients/driving-license'
+import { TeacherV4 } from '@island.is/clients/driving-license'
 
 const order =
   '0123456789aAáÁbBcCdDeEéÉfFgGhHiIíÍjJkKlLmMnNoOóÓpPqQrRsStTuUúÚvVwWxXyYýÝzZþÞæÆöÖ'
@@ -8,7 +8,7 @@ const charOrder = (a: string) => {
   return ix === -1 ? a.charCodeAt(0) + order.length : ix
 }
 
-const sortTeachers = (a: Teacher, b: Teacher) => {
+const sortTeachers = (a: TeacherV4, b: TeacherV4) => {
   if (!a.name || !b.name) {
     return 0
   }

@@ -418,10 +418,10 @@ export class DrivingLicenseService {
   }
 
   async getQualityPhotoUri(
-    nationalId: User['nationalId'],
+    token: User['authorization'],
   ): Promise<string | null> {
     const image = await this.drivingLicenseApi.getQualityPhoto({
-      nationalId,
+      token,
     })
     const qualityPhoto = image?.data?.length
       ? `data:image/jpeg;base64,${image?.data.substr(1, image.data.length - 2)}`
@@ -431,10 +431,10 @@ export class DrivingLicenseService {
   }
 
   async getQualityPhoto(
-    nationalId: User['nationalId'],
+    token: User['authorization'],
   ): Promise<QualityPhotoResult> {
     const hasQualityPhoto = await this.drivingLicenseApi.getHasQualityPhoto({
-      nationalId,
+      token,
     })
 
     return {
@@ -443,10 +443,10 @@ export class DrivingLicenseService {
   }
 
   async getQualitySignatureUri(
-    nationalId: User['nationalId'],
+    token: User['authorization'],
   ): Promise<string | null> {
     const image = await this.drivingLicenseApi.getQualitySignature({
-      nationalId,
+      token,
     })
     const qualitySignature = image?.data?.length
       ? `data:image/jpeg;base64,${image?.data.substr(1, image.data.length - 2)}`
@@ -456,11 +456,11 @@ export class DrivingLicenseService {
   }
 
   async getQualitySignature(
-    nationalId: User['nationalId'],
+    token: User['authorization'],
   ): Promise<QualitySignatureResult> {
     const hasQualitySignature =
       await this.drivingLicenseApi.getHasQualitySignature({
-        nationalId,
+        token,
       })
 
     return {
