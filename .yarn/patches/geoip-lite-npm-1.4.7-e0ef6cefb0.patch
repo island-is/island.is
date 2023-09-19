@@ -1,5 +1,5 @@
 diff --git a/scripts/updatedb.js b/scripts/updatedb.js
-index 9c1a43d7502410548dd138535ad3882b54de69ce..55624f633832f4973dfd5b787888670690e33cfe 100644
+index 9c1a43d7502410548dd138535ad3882b54de69ce..a77e381b3d3c53aa66d89c1edecf3aec589b42fd 100644
 --- a/scripts/updatedb.js
 +++ b/scripts/updatedb.js
 @@ -44,7 +44,7 @@ if (typeof geodatadir !== 'undefined') {
@@ -7,7 +7,7 @@ index 9c1a43d7502410548dd138535ad3882b54de69ce..55624f633832f4973dfd5b7878886706
  	}
  }
 -var tmpPath = path.resolve(__dirname, '..', 'tmp');
-+var tmpPath = path.resolve(__dirname, process.env.GEOTMPDIR || '..', 'tmp');
++var tmpPath = process.env.GEOTMPDIR ? process.env.GEOTMPDIR : path.resolve(__dirname, '..', 'tmp');
  var countryLookup = {};
  var cityLookup = {};
  var databases = [
