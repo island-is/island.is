@@ -234,37 +234,40 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
                     </Table.Data>
                   </Table.Row>
                 )}
-                <Table.Row>
-                  <Table.Data>
-                    <Text fontWeight="semiBold">
-                      {n('owners', 'Eigendur:')}
-                    </Text>
-                  </Table.Data>
-                  <Table.Data>
-                    <Stack space={2}>
-                      {shipInformation.owners?.map((owner) => (
-                        <Box>
-                          <Text>
-                            {owner?.name}{' '}
-                            {owner?.nationalId
-                              ? `${n('nationalIdPrefix', 'kt.')} ${
-                                  owner.nationalId
-                                }`
-                              : ''}{' '}
-                          </Text>
-                          <Text>
-                            {typeof owner?.sharePercentage === 'number'
-                              ? `${owner.sharePercentage}% ${n(
-                                  'sharePercentageProperty',
-                                  'eign',
-                                )}`
-                              : ''}
-                          </Text>
-                        </Box>
-                      ))}
-                    </Stack>
-                  </Table.Data>
-                </Table.Row>
+                {typeof shipInformation.owners?.length === 'number' &&
+                  shipInformation.owners.length > 0 && (
+                    <Table.Row>
+                      <Table.Data>
+                        <Text fontWeight="semiBold">
+                          {n('owners', 'Eigendur:')}
+                        </Text>
+                      </Table.Data>
+                      <Table.Data>
+                        <Stack space={2}>
+                          {shipInformation.owners?.map((owner) => (
+                            <Box>
+                              <Text>
+                                {owner?.name}{' '}
+                                {owner?.nationalId
+                                  ? `${n('nationalIdPrefix', 'kt.')} ${
+                                      owner.nationalId
+                                    }`
+                                  : ''}{' '}
+                              </Text>
+                              <Text>
+                                {typeof owner?.sharePercentage === 'number'
+                                  ? `${owner.sharePercentage}% ${n(
+                                      'sharePercentageProperty',
+                                      'eign',
+                                    )}`
+                                  : ''}
+                              </Text>
+                            </Box>
+                          ))}
+                        </Stack>
+                      </Table.Data>
+                    </Table.Row>
+                  )}
               </Table.Body>
             </Table.Table>
           ))}
