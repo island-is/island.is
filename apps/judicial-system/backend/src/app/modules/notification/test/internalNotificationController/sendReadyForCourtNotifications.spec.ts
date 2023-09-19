@@ -15,6 +15,7 @@ import {
   Recipient,
   IndictmentSubtype,
   User,
+  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 
 import { randomDate } from '../../../../test'
@@ -60,7 +61,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
     defenderNationalId: uuid(),
     defenderName: 'Saul Goodman',
     defenderEmail: 'saul@dummy.is',
-    sendRequestToDefender: true,
+    requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
   } as Case
   const notificationDto = {
     user: { id: userId } as User,
@@ -194,7 +195,10 @@ describe('InternalNotificationController - Send ready for court notifications fo
 
     it('should lookup previous court date notifications', () => {
       expect(mockNotificationModel.findAll).toHaveBeenCalledWith({
-        where: { caseId, type: NotificationType.COURT_DATE },
+        where: {
+          caseId,
+          type: [NotificationType.READY_FOR_COURT, NotificationType.COURT_DATE],
+        },
       })
     })
 
@@ -202,6 +206,25 @@ describe('InternalNotificationController - Send ready for court notifications fo
       expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: 'Saul Goodman', address: 'saul@dummy.is' }],
+        }),
+      )
+    })
+  })
+
+  describe('defender receives notification if request is shared when case is ready for court', () => {
+    beforeEach(async () => {
+      theCase.requestSharedWithDefender =
+        RequestSharedWithDefender.READY_FOR_COURT
+      await givenWhenThen(caseId, theCase, notificationDto)
+    })
+
+    it('should send ready for court email notification to defender', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({
+          subject: `Krafa í máli ${policeCaseNumber}`,
+          html: `Sækjandi hefur valið að deila kröfu með þér sem verjanda varnaraðila í máli ${policeCaseNumber}.<br /><br />Þú getur nálgast málið á <a href="${mockNotificationConfig.clientUrl}${DEFENDER_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+          attachments: undefined,
         }),
       )
     })
@@ -221,7 +244,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
       await givenWhenThen(caseId, theCase, notificationDto)
     })
 
-    it('should send ready for court email notification to defender', () => {
+    it('should send ready for court email updated notification to defender', () => {
       expect(mockEmailService.sendEmail).toHaveBeenNthCalledWith(
         2,
         expect.objectContaining({
