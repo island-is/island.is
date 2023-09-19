@@ -69,7 +69,6 @@ spec:
         - name: {{ .name | default "migration" }}
           securityContext:
             {{- toYaml $.Values.securityContext | nindent 12 }}
-          image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag | default $.Values.global.image.tag }}"
           image: "{{ if .image }}{{ .image }}{{ else }}{{ $.Values.image.repository }}:{{ $.Values.image.tag | default $.Values.global.image.tag }}{{ end }}"
           command: {{ .command | toJson }}
           args: {{ .args | toJson }}
