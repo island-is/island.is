@@ -137,12 +137,12 @@ export function getMainRoot(): Layout {
         },
         {
           stack: {
-            id: StackRegistry.ProfileStack,
+            id: StackRegistry.MoreStack,
             children: [
               {
                 component: {
-                  id: ComponentRegistry.ProfileScreen,
-                  name: ComponentRegistry.ProfileScreen,
+                  id: ComponentRegistry.MoreScreen,
+                  name: ComponentRegistry.MoreScreen,
                   options: {
                     topBar: {
                       rightButtons,

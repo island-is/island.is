@@ -1,12 +1,12 @@
-import Cookies from 'js-cookie'
 import React, { createContext, useEffect, useState } from 'react'
+import Cookies from 'js-cookie'
 
 import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
-
 import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+
 import { useGetCurrentUserQuery } from './getCurrentUser.generated'
 
 interface UserProvider {

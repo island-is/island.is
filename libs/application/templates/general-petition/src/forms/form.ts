@@ -108,6 +108,9 @@ export const form: Form = buildForm({
               width: 'half',
               backgroundColor: 'white',
               minDate: new Date(),
+              maxDate: new Date(
+                new Date().setFullYear(new Date().getFullYear() + 1),
+              ),
             }),
             buildDescriptionField({
               id: 'space',

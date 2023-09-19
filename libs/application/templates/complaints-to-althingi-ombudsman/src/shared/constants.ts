@@ -19,4 +19,5 @@ export enum ApiActions {
   submitApplication = 'submitApplication',
 }
 
-export const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic'
+export const UPLOAD_ACCEPT =
+  '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic, .xlsx, .xls'

@@ -9,11 +9,11 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { SGLogo } from '../../../svg/index'
 import { FooterColumn } from './components/FooterColumn'
 import localization from '../../Layout.json'
 
 import * as styles from './Footer.css'
+import { LogoText } from '../../../../components'
 
 const Footer = () => {
   const loc = localization.footer
@@ -31,7 +31,7 @@ const Footer = () => {
                   align="center"
                 >
                   <FooterColumn justifyContent="flexStart">
-                    <SGLogo />
+                    <LogoText isSmall />
                   </FooterColumn>
                   <FooterColumn isDivider />
                   <FooterColumn justifyContent="center">

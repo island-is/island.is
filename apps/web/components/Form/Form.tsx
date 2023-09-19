@@ -120,7 +120,9 @@ export const FormField = ({
           value={
             options.find((o) => o.value === value) ?? { label: value, value }
           }
-          onChange={({ value }) => onChange(slug, value)}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          onChange={({ value }: Option) => onChange(slug, value as string)}
           hasError={!!error}
           errorMessage={error}
         />
@@ -344,7 +346,8 @@ export const Form = ({ form, namespace }: FormProps) => {
         return null
       })
       .filter((x) => !!x)
-
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     setErrors(err)
 
     return !err.length
@@ -520,6 +523,8 @@ export const Form = ({ form, namespace }: FormProps) => {
               name: data['name'],
               email: data['email'],
               message: formatBody(_data),
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               files: files.map((f) => f[1]).flat(),
               recipientFormFieldDeciderValue:
                 getRecipientFormFieldDeciderValue(),
@@ -538,6 +543,7 @@ export const Form = ({ form, namespace }: FormProps) => {
 
   const success = !!result?.genericForm?.sent
   const failure = result?.genericForm?.sent === false || !!error || submitError
+  const defaultNamespace = form.defaultFieldNamespace
 
   return (
     <Box
@@ -578,9 +584,14 @@ export const Form = ({ form, namespace }: FormProps) => {
           </Text>
           <Stack space={4}>
             <Input
-              placeholder={n('formNamePlaceholder', 'Nafnið þitt')}
+              placeholder={
+                defaultNamespace?.namePlaceholder ??
+                n('formNamePlaceholder', 'Nafnið þitt')
+              }
               name="name"
-              label={n('formFullName', 'Fullt nafn')}
+              label={
+                defaultNamespace?.nameLabel ?? n('formFullName', 'Fullt nafn')
+              }
               required={true}
               value={data['name'] ?? ''}
               hasError={!!errors.find((error) => error.field === 'name')}
@@ -590,9 +601,12 @@ export const Form = ({ form, namespace }: FormProps) => {
               onChange={(e) => onChange('name', e.target.value)}
             />
             <Input
-              placeholder={n('formEmailPlaceholder', 'Netfang')}
+              placeholder={
+                defaultNamespace?.emailPlaceholder ??
+                n('formEmailPlaceholder', 'Netfang')
+              }
               name="email"
-              label={n('formEmail', 'Netfang')}
+              label={defaultNamespace?.emailLabel ?? n('formEmail', 'Netfang')}
               required={true}
               value={data['email'] ?? ''}
               hasError={!!errors.find((error) => error.field === 'email')}
