@@ -11,7 +11,7 @@
       "options": {
         "outputFileName": "main.js",
         "format": ["cjs"],
-        "esbuildConfig": "apps/services/session/esbuild.json",
+        "esbuildConfig": "apps/services/sessions/esbuild.json",
         "outputPath": "dist/apps/services/sessions",
         "main": "apps/services/sessions/src/main.ts",
         "tsConfig": "apps/services/sessions/tsconfig.app.json",
