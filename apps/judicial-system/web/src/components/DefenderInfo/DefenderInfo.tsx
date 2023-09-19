@@ -132,6 +132,7 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 }}
                 large
                 backgroundColor="white"
+                disabled={!workingCase.defenderName}
               />
             </Box>
             <Box marginTop={2}>
@@ -164,6 +165,7 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 }}
                 large
                 backgroundColor="white"
+                disabled={!workingCase.defenderName}
               />
             </Box>
             <Box marginTop={2}>
@@ -192,6 +194,7 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 }}
                 large
                 backgroundColor="white"
+                disabled={!workingCase.defenderName}
               />
             </Box>
           </Box>
