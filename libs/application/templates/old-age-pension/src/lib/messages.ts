@@ -103,9 +103,9 @@ export const oldAgePensionFormMessage: MessageDir = {
     socialInsuranceAdministrationInformationSubTitleMoreInfo: {
       id: 'oap.application:prerequisites.socialInsuranceAdministration.subtitle.moreInfo#markdown',
       defaultMessage:
-        'Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar, <a target="_blank" href="https://www.tr.is/tryggingastofnun/personuvernd"><span style="color:blue;text-decoration:underline;">https://www.tr.is/tryggingastofnun/personuvernd</span></a>',
+        'Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar, [https://www.tr.is/tryggingastofnun/personuvernd](https://www.tr.is/tryggingastofnun/personuvernd)',
       description:
-        'More information on data collection authority and processing of personal information can be found in the privacy policy of the Insurance Administration,  <a target="_blank" href="https://www.tr.is/tryggingastofnun/personuvernd"><span style="color:blue;text-decoration:underline;">https://www.tr.is/tryggingastofnun/personuvernd</span></a>',
+        'More information on data collection authority and processing of personal information can be found in the privacy policy of the Insurance Administration, [https://www.tr.is/tryggingastofnun/personuvernd](https://www.tr.is/tryggingastofnun/personuvernd)',
     },
     socialInsuranceAdministrationInformationSubTitleAboutIncomes: {
       id: 'oap.application:prerequisites.socialInsuranceAdministration.subtitle.incomes',
