@@ -49,8 +49,8 @@ export const GET_UNIVERSITY_GATEWAY_UNIVERSITIES = gql`
 `
 
 export const GET_UNIVERSITY_GATEWAY_FILTERS = gql`
-  query GetUniversityGatewayProgramFitlers {
-    universityGatewayProgramFitlers {
+  query GetUniversityGatewayProgramFilters {
+    universityGatewayProgramFilters {
       field
       options
     }

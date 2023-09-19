@@ -59,32 +59,33 @@ interface UniversitySearchProps {
   data: Array<Program>
   namespace: Record<string, string>
   filterOptions: Array<ProgramFilter>
+  locale: string
 }
 
 interface FilterProps {
-  applications: Array<string>
   degreeType: Array<string>
-  typeOfStudy: Array<string>
-  fieldOfStudy: Array<string>
-  university: Array<string>
-  degree: Array<string>
-  location: Array<string>
-  studyTime: Array<string>
-  tuition: Array<string>
-  tags: Array<string>
+  modeOfDelivery: Array<string>
+  universityId: Array<string>
+  durationInYears: Array<string>
+  startingSemesterSeason: Array<string>
+  // applications: Array<string>
+  // fieldOfStudy: Array<string>
+  // location: Array<string>
+  // tuition: Array<string>
+  // tags: Array<string>
 }
 
 const intialFilters = {
-  applications: [],
   degreeType: [],
-  typeOfStudy: [],
-  fieldOfStudy: [],
-  university: [],
-  degree: [],
-  location: [],
-  studyTime: [],
-  tuition: [],
-  tags: [],
+  modeOfDelivery: [],
+  durationInYears: [],
+  universityId: [],
+  startingSemesterSeason: [],
+  // applications: [],
+  // fieldOfStudy: [],
+  // location: [],
+  // tuition: [],
+  // tags: [],
 }
 
 export interface ComparisonProps {
@@ -97,15 +98,13 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   data,
   filterOptions,
   namespace,
+  locale,
 }) => {
-  console.log('data here', data)
-  console.log('filterOptions', filterOptions)
+  console.log('locale', locale)
   // const n = useNamespace(namespace)
   const { width } = useWindowSize()
 
   const n = useNamespace(namespace)
-  const a = n('ogTitle', 'TESTING')
-  console.log('a', a)
 
   const isMobileScreenWidth = width < theme.breakpoints.md
   const isTabletScreenWidth = width < theme.breakpoints.lg
@@ -158,7 +157,15 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     // ignoreLocation: false,
     // ignoreFieldNorm: false,
     // fieldNormWeight: 1,
-    keys: ['nameIs', 'departmentNameIs', 'descriptionIs', 'degreeType'],
+    keys: [
+      'nameIs',
+      'departmentNameIs',
+      'descriptionIs',
+      'degreeType',
+      'modeOfDelivery',
+      'startingSemesterSeason',
+      'durationInYears',
+    ],
   }
 
   const fuseInstance = new Fuse(data, fuseOptions)
@@ -209,20 +216,18 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }
 
   const handleFilters = (filterKey: string, filterValue: string) => {
-    // let str = filterKey as keyof typeof filters
-    // if (filters[str].includes(filterValue)) {
-    //   const index = filters[str].indexOf(filterValue)
-    //   const specificArray = filters[str]
-    //   specificArray.splice(index, 1)
-    //   setFilters({ ...filters, [filterKey]: specificArray })
-    // } else {
-    //   setFilters({
-    //     ...filters,
-    //     [filterKey]: [...filters[str], filterValue],
-    //   })
-    // }
-    console.log('filterKey', filterKey)
-    console.log('filterValue', filterValue)
+    let str = filterKey as keyof typeof filters
+    if (filters[str].includes(filterValue)) {
+      const index = filters[str].indexOf(filterValue)
+      const specificArray = filters[str]
+      specificArray.splice(index, 1)
+      setFilters({ ...filters, [filterKey]: specificArray })
+    } else {
+      setFilters({
+        ...filters,
+        [filterKey]: [...filters[str], filterValue],
+      })
+    }
   }
 
   useEffect(() => {
@@ -377,7 +382,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                     return (
                       <AccordionItem
                         id={filter.field}
-                        label={filter.field}
+                        label={n(
+                          filter.field,
+                          TranslationDefaults[filter.field],
+                        )}
                         labelUse="p"
                         labelVariant="h5"
                         iconVariant="small"
@@ -387,9 +395,18 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                         <Stack space={[1, 1, 2]}>
                           {filter.options.map((option) => {
                             let str = filter.field as keyof typeof filters
+                            console.log('option', option)
                             return (
                               <Checkbox
-                                label={option}
+                                label={`${n(option, option)}${
+                                  filter.field === 'durationInYears'
+                                    ? locale === 'en'
+                                      ? option === '1'
+                                        ? ' year'
+                                        : ' years'
+                                      : ' ár'
+                                    : ''
+                                }`}
                                 id={option}
                                 value={option}
                                 checked={
@@ -415,7 +432,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                             icon="reload"
                             size="small"
                             onClick={() =>
-                              setFilters({ ...filters, applications: [] })
+                              setFilters({ ...filters, [filter.field]: [] })
                             }
                           >
                             {n('clearFilter', 'Hreinsa val')}
@@ -424,245 +441,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                       </AccordionItem>
                     )
                   })}
-                {/* <AccordionItem
-                  id="mini_accordion1"
-                  label="Umsóknir"
-                  labelUse="p"
-                  labelVariant="h5"
-                  iconVariant="small"
-                  expanded={isOpen[0]}
-                  onToggle={() => toggleIsOpen(0, !isOpen[0])}
-                >
-                  <Stack space={[1, 1, 2]}>
-                    <Checkbox
-                      label="Opið fyrir umsóknir"
-                      id="opid"
-                      value="open"
-                      checked={
-                        filters.applications.filter((x) => x === 'open')
-                          .length > 0
-                      }
-                      onChange={(e) => checkboxEventHandler(e, 'applications')}
-                    />
-                  </Stack>
-                  <Box
-                    display="flex"
-                    width="full"
-                    flexDirection="row"
-                    justifyContent="flexEnd"
-                    marginTop={1}
-                  >
-                    <Button
-                      variant="text"
-                      icon="reload"
-                      size="small"
-                      onClick={() =>
-                        setFilters({ ...filters, applications: [] })
-                      }
-                    >
-                      Hreinsa val
-                    </Button>
-                  </Box>
-                </AccordionItem>
-
-                <AccordionItem
-                  id="mini_accordion2"
-                  label="Námstig"
-                  labelUse="p"
-                  labelVariant="h5"
-                  iconVariant="small"
-                  expanded={isOpen[1]}
-                  onToggle={() => toggleIsOpen(1, !isOpen[1])}
-                >
-                  <Stack space={[1, 1, 1]}>
-                    <Checkbox
-                      label="Grunndiplóma"
-                      id="grunn"
-                      value="diploma"
-                      checked={
-                        filters.degreeType.filter((x) => x === 'diploma')
-                          .length > 0
-                      }
-                      onChange={(e) => checkboxEventHandler(e, 'degreeType')}
-                    />
-                    <Checkbox
-                      label="Grunnnám"
-                      id="undergrad"
-                      value="UNDERGRADUATE"
-                      checked={
-                        filters.degreeType.filter((x) => x === 'UNDERGRADUATE')
-                          .length > 0
-                      }
-                      onChange={(e) => checkboxEventHandler(e, 'degreeType')}
-                    />
-                    <Checkbox
-                      label="Viðbótardiplóma"
-                      id="vidbotar"
-                      value="additionalDiploma"
-                      checked={
-                        filters.degreeType.filter(
-                          (x) => x === 'additionalDiploma',
-                        ).length > 0
-                      }
-                      onChange={(e) => checkboxEventHandler(e, 'degreeType')}
-                    />
-                    <Checkbox
-                      label="Meistaranám"
-                      id="master"
-                      value="MASTERS"
-                      checked={
-                        filters.degreeType.filter((x) => x === 'MASTERS')
-                          .length > 0
-                      }
-                      onChange={(e) => checkboxEventHandler(e, 'degreeType')}
-                    />
-                    <Checkbox
-                      label="Doktorsnám"
-                      id="dr"
-                      value="DOCTORAL"
-                      checked={
-                        filters.degreeType.filter((x) => x === 'DOCTORAL')
-                          .length > 0
-                      }
-                      onChange={(e) => checkboxEventHandler(e, 'degreeType')}
-                    />
-                  </Stack>
-                  <Box
-                    display="flex"
-                    width="full"
-                    flexDirection="row"
-                    justifyContent="flexEnd"
-                    marginTop={1}
-                  >
-                    <Button
-                      variant="text"
-                      icon="reload"
-                      size="small"
-                      onClick={() => setFilters({ ...filters, degreeType: [] })}
-                    >
-                      Hreinsa val
-                    </Button>
-                  </Box>
-                </AccordionItem>
-
-                <AccordionItem
-                  id="mini_accordion3"
-                  label="Misseri"
-                  labelUse="p"
-                  labelVariant="h5"
-                  iconVariant="small"
-                  expanded={isOpen[2]}
-                  onToggle={() => toggleIsOpen(2, !isOpen[2])}
-                >
-                  <Stack space={[1, 1, 2]}>
-                    <Checkbox
-                      label="Haustmisseri"
-                      id="haust"
-                      value="fall"
-                      checked={
-                        filters.studyTime.filter((x) => x === 'fall').length > 0
-                      }
-                      onChange={(e) => checkboxEventHandler(e, 'studyTime')}
-                    />
-                    <Checkbox
-                      label="Vormisseri"
-                      id="vor"
-                      value="spring"
-                      checked={
-                        filters.studyTime.filter((x) => x === 'spring').length >
-                        0
-                      }
-                      onChange={(e) => checkboxEventHandler(e, 'studyTime')}
-                    />
-                  </Stack>
-                  <Box
-                    display="flex"
-                    width="full"
-                    flexDirection="row"
-                    justifyContent="flexEnd"
-                    marginTop={1}
-                  >
-                    <Button
-                      variant="text"
-                      icon="reload"
-                      size="small"
-                      onClick={() => setFilters({ ...filters, studyTime: [] })}
-                    >
-                      Hreinsa val
-                    </Button>
-                  </Box>
-                </AccordionItem>
-
-                <AccordionItem
-                  id="mini_accordion4"
-                  label="Form kennslu"
-                  labelUse="p"
-                  labelVariant="h5"
-                  iconVariant="small"
-                  expanded={isOpen[3]}
-                  onToggle={() => toggleIsOpen(3, !isOpen[3])}
-                >
-                  <Stack space={[1, 1, 2]}>
-                    <Checkbox
-                      label="Staðnám"
-                      id="stadnam"
-                      value="onSite"
-                      checked={
-                        filters.typeOfStudy.filter((x) => x === 'onSite')
-                          .length > 0
-                      }
-                      onChange={(e) => checkboxEventHandler(e, 'typeOfStudy')}
-                    />
-                    <Checkbox
-                      label="Fjarnám"
-                      id="fjarnam"
-                      value="away"
-                      checked={
-                        filters.typeOfStudy.filter((x) => x === 'away').length >
-                        0
-                      }
-                      onChange={(e) => checkboxEventHandler(e, 'typeOfStudy')}
-                    />
-                    <Checkbox
-                      label="Blandað nám"
-                      id="blandadnam"
-                      value="mixed"
-                      checked={
-                        filters.typeOfStudy.filter((x) => x === 'mixed')
-                          .length > 0
-                      }
-                      onChange={(e) => checkboxEventHandler(e, 'typeOfStudy')}
-                    />
-                    <Checkbox
-                      label="Dreifinám"
-                      id="dreifinam"
-                      value="spread"
-                      checked={
-                        filters.typeOfStudy.filter((x) => x === 'spread')
-                          .length > 0
-                      }
-                      onChange={(e) => checkboxEventHandler(e, 'typeOfStudy')}
-                    />
-                  </Stack>
-                  <Box
-                    display="flex"
-                    width="full"
-                    flexDirection="row"
-                    justifyContent="flexEnd"
-                    marginTop={1}
-                  >
-                    <Button
-                      variant="text"
-                      icon="reload"
-                      size="small"
-                      onClick={() =>
-                        setFilters({ ...filters, typeOfStudy: [] })
-                      }
-                    >
-                      Hreinsa val
-                    </Button>
-                  </Box>
-                </AccordionItem> */}
               </Accordion>
               <Box
                 background="blue100"
@@ -709,7 +487,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 setQuery(e.target.value)
               }}
             />
-            <ContentBlock>
+            {/* <ContentBlock>
               <Box paddingTop={2}>
                 <Inline space={[1, 2]}>
                   <Tag
@@ -744,7 +522,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                   </Tag>
                 </Inline>
               </Box>
-            </ContentBlock>
+            </ContentBlock> */}
 
             <Hidden above="md">
               <Box width="full" marginTop={2}>
@@ -779,7 +557,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                       !!filterOptions
                         ? filterOptions.map((filter) => {
                             return {
-                              id: 'blabla',
+                              id: filter.field,
                               label: filter.field,
                               selected: [],
                               filters: filter.options.map((option) => {
@@ -847,12 +625,22 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                         <ActionCategoryCard
                           key={index}
                           href={`/haskolanam/${dataItem.id}`}
-                          heading={dataItem.nameIs}
-                          text={dataItem.descriptionIs}
+                          heading={
+                            locale === 'en' ? dataItem.nameEn : dataItem.nameIs
+                          }
+                          text={
+                            locale === 'en'
+                              ? dataItem.descriptionEn
+                              : dataItem.descriptionIs
+                          }
                           icon={
                             <img
                               src="https://www.ru.is/media/HR_logo_hringur_hires.jpg"
-                              alt={`Logo fyrir ${dataItem.nameIs}`}
+                              alt={`Logo fyrir ${
+                                locale === 'en'
+                                  ? dataItem.nameEn
+                                  : dataItem.nameIs
+                              }`}
                             />
                           }
                           customBottomContent={
@@ -862,7 +650,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                               onChange={() =>
                                 handleComparisonChange({
                                   id: dataItem.id,
-                                  nameIs: dataItem.nameIs,
+                                  nameIs:
+                                    locale === 'en'
+                                      ? dataItem.nameEn
+                                      : dataItem.nameIs,
                                   iconSrc:
                                     'https://www.ru.is/media/HR_logo_hringur_hires.jpg',
                                 })
@@ -887,7 +678,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     color="blue400"
                                   />
                                 ),
-                                title: dataItem.degreeType,
+                                title: `${n(
+                                  dataItem.degreeType,
+                                  TranslationDefaults[dataItem.degreeType],
+                                )}`,
                               },
                               {
                                 icon: (
@@ -904,16 +698,16 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   ],
                                 )} ${dataItem.startingSemesterYear}`,
                               },
-                              {
-                                icon: (
-                                  <Icon
-                                    icon={'document'}
-                                    type="outline"
-                                    color="blue400"
-                                  />
-                                ),
-                                title: `${n('entryExam', 'Inntökupróf')}: TODO`,
-                              },
+                              // {
+                              //   icon: (
+                              //     <Icon
+                              //       icon={'document'}
+                              //       type="outline"
+                              //       color="blue400"
+                              //     />
+                              //   ),
+                              //   title: `${n('entryExam', 'Inntökupróf')}: TODO`,
+                              // },
                               {
                                 icon: (
                                   <Icon
@@ -924,7 +718,13 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                 ),
                                 title: `${n('educationLength', 'Námstími')}: ${
                                   dataItem.durationInYears
-                                } ár`,
+                                } ${
+                                  locale === 'en'
+                                    ? dataItem.durationInYears === 1
+                                      ? 'year'
+                                      : 'years'
+                                    : 'ár'
+                                }`,
                               },
                               {
                                 icon: (
@@ -934,7 +734,21 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     color="blue400"
                                   />
                                 ),
-                                title: 'Staðnám TODO',
+                                title: `${dataItem.modeOfDelivery.map(
+                                  (delivery, index) => {
+                                    if (index !== 0) {
+                                      return `, ${n(
+                                        delivery,
+                                        TranslationDefaults[delivery],
+                                      )}`
+                                    } else {
+                                      return n(
+                                        delivery,
+                                        TranslationDefaults[delivery],
+                                      )
+                                    }
+                                  },
+                                )}`,
                               },
                               {
                                 icon: (
@@ -974,17 +788,28 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                           <ListViewCard
                             key={index}
                             iconText="Háskólinn í Reykjavík"
-                            heading={dataItem.nameIs}
+                            heading={
+                              locale === 'en'
+                                ? dataItem.nameEn
+                                : dataItem.nameIs
+                            }
                             icon={
                               <img
                                 src="https://www.ru.is/media/HR_logo_hringur_hires.jpg"
-                                alt={`Logo fyrir ${dataItem.nameIs}`}
+                                alt={`Logo fyrir ${
+                                  locale === 'en'
+                                    ? dataItem.nameEn
+                                    : dataItem.nameIs
+                                }`}
                               />
                             }
                             onCheck={(e) =>
                               handleComparisonChange({
                                 id: dataItem.id,
-                                nameIs: dataItem.nameIs,
+                                nameIs:
+                                  locale === 'en'
+                                    ? dataItem.nameEn
+                                    : dataItem.nameIs,
                                 iconSrc:
                                   'https://www.ru.is/media/HR_logo_hringur_hires.jpg',
                               })
@@ -1008,7 +833,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     color="blue400"
                                   />
                                 ),
-                                title: dataItem.degreeType,
+                                title: `${n(
+                                  dataItem.degreeType,
+                                  TranslationDefaults[dataItem.degreeType],
+                                )}`,
                               },
                               {
                                 icon: (
@@ -1025,16 +853,16 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   ],
                                 )} ${dataItem.startingSemesterYear}`,
                               },
-                              {
-                                icon: (
-                                  <Icon
-                                    icon={'document'}
-                                    type="outline"
-                                    color="blue400"
-                                  />
-                                ),
-                                title: `${n('entryExam', 'Inntökupróf')}: TODO`,
-                              },
+                              // {
+                              //   icon: (
+                              //     <Icon
+                              //       icon={'document'}
+                              //       type="outline"
+                              //       color="blue400"
+                              //     />
+                              //   ),
+                              //   title: `${n('entryExam', 'Inntökupróf')}: TODO`,
+                              // },
                               {
                                 icon: (
                                   <Icon
@@ -1045,7 +873,13 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                 ),
                                 title: `${n('educationLength', 'Námstími')}: ${
                                   dataItem.durationInYears
-                                } ár`,
+                                } ${
+                                  locale === 'en'
+                                    ? dataItem.durationInYears === 1
+                                      ? 'year'
+                                      : 'years'
+                                    : 'ár'
+                                }`,
                               },
                               {
                                 icon: (
@@ -1055,7 +889,21 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     color="blue400"
                                   />
                                 ),
-                                title: 'Staðnám TODO',
+                                title: `${dataItem.modeOfDelivery.map(
+                                  (delivery, index) => {
+                                    if (index !== 0) {
+                                      return `, ${n(
+                                        delivery,
+                                        TranslationDefaults[delivery],
+                                      )}`
+                                    } else {
+                                      return n(
+                                        delivery,
+                                        TranslationDefaults[delivery],
+                                      )
+                                    }
+                                  },
+                                )}`,
                               },
                               {
                                 icon: (
@@ -1263,12 +1111,6 @@ UniversitySearch.getProps = async ({ apolloClient, locale }) => {
     namespaceResponse?.data?.getNamespace?.fields || '{}',
   ) as Record<string, string>
 
-  console.log('namespace', namespace)
-
-  // if (namespace['display404']) {
-  //   throw new CustomNextError(404, 'Vacancies on Ísland.is are turned off')
-  // }
-
   const newResponse =
     await apolloClient.query<GetUniversityGatewayActiveProgramsQuery>({
       query: GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
@@ -1284,12 +1126,13 @@ UniversitySearch.getProps = async ({ apolloClient, locale }) => {
     query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
   })
 
-  console.log('filters', filters.data.univeristyGatewayProgramFitlers)
+  console.log('filters', filters)
   console.log('universities', universities.data.universityGatewayUniversities)
 
   return {
     data,
-    filterOptions: filters.data.univeristyGatewayProgramFitlers,
+    filterOptions: filters.data.universityGatewayProgramFilters,
+    locale,
     namespace,
   }
 }

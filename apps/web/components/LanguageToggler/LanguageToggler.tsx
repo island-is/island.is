@@ -46,6 +46,7 @@ export const LanguageToggler = ({
   const { linkResolver, typeResolver } = useLinkResolver()
 
   const getOtherLanguagePath = async () => {
+    console.log('contentfulIds', contentfulIds)
     if (showDialog) {
       return null
     }
@@ -56,7 +57,9 @@ export const LanguageToggler = ({
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict
       const { type } = typeResolver(pathWithoutQueryParams, true)
+      console.log('type', type)
       const pagePath = linkResolver(type, [], otherLanguage).href
+      console.log('pagePath', pagePath)
 
       if (pagePath === '/404') {
         return setShowDialog(true)

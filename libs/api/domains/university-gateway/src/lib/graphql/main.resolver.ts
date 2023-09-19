@@ -24,7 +24,7 @@ class MainResolver {
   }
 
   @Query(() => [ProgramFilter])
-  universityGatewayProgramFitlers() {
+  universityGatewayProgramFilters() {
     return this.universityGatewayApi.getProgramFilters()
   }
 }

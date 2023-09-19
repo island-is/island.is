@@ -212,15 +212,15 @@ export const routesTemplate = {
   },
   universitySearch: {
     is: '/haskolanam',
-    en: '',
+    en: '/en/haskolanam',
   },
   universitySearchDetails: {
     is: '/haskolanam/[id]',
-    en: '',
+    en: '/en/haskolanam/[id]',
   },
   universitySearchComparison: {
     is: '/haskolanam/samanburdur',
-    en: '',
+    en: '/en/haskolanam/comparison',
   },
 }
 

@@ -709,6 +709,8 @@ export const withMainLayout = <T,>(
     const languageToggleQueryParams =
       layoutComponentProps.languageToggleQueryParams
 
+    console.log('languageToggleQueryParams', languageToggleQueryParams)
+
     return {
       layoutProps: {
         ...layoutProps,
