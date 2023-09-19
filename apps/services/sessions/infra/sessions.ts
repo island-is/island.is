@@ -6,12 +6,20 @@ const imageName = 'services-sessions'
 const dbName = 'services_sessions'
 const geoDataDir = '/geoip-lite/data'
 
-const geoipVolume: PersistentVolumeClaim = {
-  name: 'sessions-geoip-db',
-  mountPath: geoDataDir,
-  size: '1Gi',
-  accessModes: 'ReadWrite',
-}
+const geoipVolume: PersistentVolumeClaim[] = [
+  {
+    name: 'sessions-geoip-db',
+    mountPath: geoDataDir,
+    size: '1Gi',
+    accessModes: 'ReadWrite',
+  },
+  {
+    name: 'sessions-geoip-db-tmp',
+    mountPath: '/webapp/node_modules/geoip-lite/tmp',
+    size: '1Gi',
+    accessModes: 'ReadWrite',
+  },
+]
 
 const servicePostgresInfo = {
   // The service has only read permissions
@@ -124,12 +132,9 @@ export const geoipSetup =
       .namespace(namespace)
       .redis()
       .serviceAccount('sessions-geoip')
-      .command('node')
+      .command('npm')
       .replicaCount({ min: 1, max: 1, default: 1 })
-      .args(
-        './node_modules/geoip-lite/scripts/updatedb.js',
-        'license_key=$(GEOIP_LICENSE_KEY)',
-      )
+      .args('run-script', 'updatedb', 'license_key=$(GEOIP_LICENSE_KEY)')
       .resources({
         limits: {
           cpu: '200m',
@@ -144,7 +149,7 @@ export const geoipSetup =
       .secrets({
         GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY',
       })
-      .volumes(geoipVolume)
+      .volumes(...geoipVolume)
       .extraAttributes({
         dev: { schedule: '*/30 * * * *' },
         staging: { schedule: '*/30 * * * *' },
