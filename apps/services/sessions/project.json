@@ -9,9 +9,11 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "development",
       "options": {
+        "outputFileName": "main.js",
+        "format": ["cjs"],
+        "esbuildConfig": "apps/services/session/esbuild.json",
         "outputPath": "dist/apps/services/sessions",
         "main": "apps/services/sessions/src/main.ts",
-        "format": ["cjs"],
         "tsConfig": "apps/services/sessions/tsconfig.app.json",
         "assets": [
           {
@@ -29,9 +31,7 @@
             "input": "apps/services/sessions",
             "output": "./"
           }
-        ],
-        "outputFileName": "main.js",
-        "esbuildConfig": "apps/servies/sessions/esbuild.json"
+        ]
       },
       "configurations": {
         "development": {
