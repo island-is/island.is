@@ -1,10 +1,11 @@
+import { Injectable } from '@nestjs/common'
 import { FindShipByNameOrNumberRequest, ShipApi } from '../../gen/fetch'
 
 interface Ship {
   skraningarnumer: number
   umdaemisnafn: string
   heimahofn: string
-  umdaemistolustafir: null
+  umdaemistolustafir: number | null
   bruttorumlestir: number
   bruttoTonn: number
   smidaar: number
@@ -38,7 +39,7 @@ interface Ship {
     postalCode: string
   }
 }
-
+@Injectable()
 export class ShipRegistryClientService {
   constructor(private readonly shipApi: ShipApi) {}
 
@@ -54,7 +55,9 @@ export class ShipRegistryClientService {
         shipName: ship.nafnskips,
         shipType: ship.gerd,
         regno: ship.skraningarnumer,
-        region: `${ship.umdaemisbokstafir}-${ship.umdaemistolustafir} ${ship.umdaemisnafn}`, // TODO: add fail-safe
+        region: `${ship.umdaemisbokstafir}${
+          ship.umdaemisbokstafir && ship.umdaemistolustafir ? '-' : ''
+        }${ship.umdaemistolustafir} ${ship.umdaemisnafn}`, // TODO: add fail-safe
         portOfRegistry: ship.heimahofn,
         regStatus: ship.skraningarstada,
         grossTonnage: ship.bruttoTonn,

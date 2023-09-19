@@ -4,7 +4,7 @@ export const PUBLIC_SHIP_SEARCH_QUERY = gql`
   query GetPublicShipSearch($input: ShipRegistryShipSearchInput!) {
     shipRegistryShipSearch(input: $input) {
       ships {
-        name
+        shipName
         shipType
         regno
         region

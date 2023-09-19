@@ -16,7 +16,7 @@ class ShipOwner {
 @ObjectType('ShipRegistryShip')
 class Ship {
   @Field(() => String, { nullable: true })
-  name?: string
+  shipName?: string
 
   @Field(() => String, { nullable: true })
   shipType?: string

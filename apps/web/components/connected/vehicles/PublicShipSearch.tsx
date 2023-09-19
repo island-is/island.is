@@ -126,13 +126,13 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
               <Table.HeadData />
             </Table.Head>
             <Table.Body>
-              {shipInformation.name && (
+              {shipInformation.shipName && (
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">{n('shipName', 'Nafn:')}</Text>
                   </Table.Data>
                   <Table.Data>
-                    <Text>{shipInformation.name}</Text>
+                    <Text>{shipInformation.shipName}</Text>
                   </Table.Data>
                 </Table.Row>
               )}
@@ -196,11 +196,14 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {n('grossTonnage', 'Brúttótonn:')}
+                      {n('grossTonnage', 'Brúttótonn:')}{' '}
                     </Text>
                   </Table.Data>
                   <Table.Data>
-                    <Text>{shipInformation.grossTonnage}</Text>
+                    <Text>
+                      {shipInformation.grossTonnage}{' '}
+                      {n('grossTonnageMeasurement', 't')}
+                    </Text>
                   </Table.Data>
                 </Table.Row>
               )}
@@ -212,7 +215,9 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
                     </Text>
                   </Table.Data>
                   <Table.Data>
-                    <Text>{shipInformation.length}</Text>
+                    <Text>
+                      {shipInformation.length} {n('lengthMeasurement', 'm')}
+                    </Text>
                   </Table.Data>
                 </Table.Row>
               )}
