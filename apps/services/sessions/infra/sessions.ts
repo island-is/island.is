@@ -5,6 +5,7 @@ const namespace = 'services-sessions'
 const imageName = 'services-sessions'
 const dbName = 'services_sessions'
 const geoDataDir = '/geoip-lite/data'
+const geoTmpDir = `${geoDataDir}/tmp`
 
 const geoipVolume: PersistentVolumeClaim[] = [
   {
@@ -148,7 +149,7 @@ export const geoipSetup =
           memory: '128Mi',
         },
       })
-      .env({ GEODATADIR: geoDataDir })
+      .env({ GEODATADIR: geoDataDir, GEOTMPDIR: geoTmpDir })
       .secrets({
         GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY',
       })
