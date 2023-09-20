@@ -1,0 +1,23 @@
+{
+  "name": "pipes",
+  "version": "0.0.1",
+  "packageManager": "yarn@4.0.0-rc.47",
+  "type": "module",
+  "scripts": {
+    "dev": "node src/ci.tsx"
+  },
+  "dependencies": {
+    "@alcalzone/ansi-tokenize": "0.1.3",
+    "@dagger.io/dagger": "0.8.4",
+    "@octokit/rest": "20.0.1",
+    "@swc/core": "1.3.78",
+    "code-excerpt": "4.0.0",
+    "glob": "10.3.4",
+    "mobx": "6.10.2",
+    "react-reconciler": "0.29.0",
+    "rollup": "3.29.2",
+    "rollup-plugin-swc3": "0.10.1",
+    "ts-toolbelt": "9.6.0",
+    "yoga-wasm-web": "0.3.3"
+  }
+}
