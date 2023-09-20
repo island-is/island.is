@@ -1669,6 +1669,7 @@ __metadata:
     code-excerpt: "npm:4.0.0"
     glob: "npm:10.3.4"
     mobx: "npm:6.10.2"
+    react: "npm:18.2.0"
     react-reconciler: "npm:0.29.0"
     rollup: "npm:3.29.2"
     rollup-plugin-node-resolve: "npm:5.2.0"
@@ -1698,6 +1699,15 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
   checksum: 637442f98ee816b8f86586f537712a0463b53e12c0f4dec716dfdde68dfa52cef1d10138acfad194d5571296cde8715c331aa3986e538087acdc1ef83187a9b0
+  languageName: node
+  linkType: hard
+
+"react@npm:18.2.0":
+  version: 18.2.0
+  resolution: "react@npm:18.2.0"
+  dependencies:
+    loose-envify: "npm:^1.1.0"
+  checksum: b562d9b569b0cb315e44b48099f7712283d93df36b19a39a67c254c6686479d3980b7f013dc931f4a5a3ae7645eae6386b4aa5eea933baa54ecd0f9acb0902b8
   languageName: node
   linkType: hard
 
