@@ -135,7 +135,7 @@ export const INDICTMENTS_CASE_FILES_ROUTE = '/akaera/domskjol'
 export const INDICTMENTS_OVERVIEW_ROUTE = '/akaera/stadfesta'
 /* PROSECUTOR ROUTES END */
 
-/* COURT ROUTES START */
+/* DISTRICT COURT ROUTES START */
 export const RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE = '/domur/mottaka'
 export const RESTRICTION_CASE_COURT_OVERVIEW_ROUTE = '/domur/krafa'
 export const RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE =
@@ -163,16 +163,16 @@ export const INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE =
 export const INDICTMENTS_SUBPOENA_ROUTE = '/domur/akaera/fyrirkall'
 export const INDICTMENTS_DEFENDER_ROUTE = '/domur/akaera/malflytjendur'
 export const INDICTMENTS_COURT_RECORD_ROUTE = '/domur/akaera/thingbok'
-/* COURT ROUTES END */
+/* DISTRICT COURT ROUTES END */
 
-/* COURT OF APPEAL ROUTES START */
+/* COURT OF APPEALS ROUTES START */
 export const COURT_OF_APPEAL_OVERVIEW_ROUTE = '/landsrettur/yfirlit'
 export const COURT_OF_APPEAL_CASES_ROUTE = '/landsrettur/krofur'
 export const COURT_OF_APPEAL_CASE_ROUTE = '/landsrettur/kaera'
 export const COURT_OF_APPEAL_RULING_ROUTE = '/landsrettur/urskurdur'
 export const COURT_OF_APPEAL_RESULT_ROUTE = '/landsrettur/nidurstada'
 
-/* COURT OF APPEAL ROUTES END */
+/* COURT OF APPEALS ROUTES END */
 
 export const prosecutorRestrictionCasesRoutes = [
   RESTRICTION_CASE_DEFENDANT_ROUTE,

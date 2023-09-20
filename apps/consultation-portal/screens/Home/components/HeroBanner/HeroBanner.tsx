@@ -10,16 +10,12 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import * as styles from './HeroBanner.css'
-import {
-  HeroLogo,
-  HeroLogoMobile,
-  LESchoolMobile,
-} from '../../../../components/svg'
+import { LESchoolMobile, Splash } from '../../../../components/svg'
 import { StatisticBox, HeroTiles } from './components'
 import { ArrOfStatistics } from '../../../../types/interfaces'
-import { Splash } from '../../../../components/svg'
 import { useIsMobile } from '../../../../hooks'
 import localization from '../../Home.json'
+import { LogoText } from '../../../../components'
 
 interface HeroBannerProps {
   statistics: ArrOfStatistics
@@ -42,8 +38,10 @@ export const HeroBanner = ({ statistics }: HeroBannerProps) => {
         {isMobile ? (
           <Box paddingY={6}>
             <Stack space={2}>
-              <HeroLogoMobile />
-              <LESchoolMobile />
+              <Stack space={6}>
+                <LogoText />
+                <LESchoolMobile />
+              </Stack>
               <StatisticBox
                 statistic={statistics?.casesInReview?.toLocaleString('de-DE')}
               />
@@ -60,7 +58,7 @@ export const HeroBanner = ({ statistics }: HeroBannerProps) => {
           <GridRow className={styles.rowAlign}>
             <GridColumn span={['6/12']}>
               <Stack space={4}>
-                <HeroLogo />
+                <LogoText />
                 <Stack space={3}>
                   <Text dataTestId="heroIntro">{loc.introText}</Text>
                   <Inline justifyContent="spaceBetween">

@@ -20,6 +20,8 @@ const useImageLoader = (url: string): boolean => {
   useEffect(() => {
     const img = new window.Image(100)
     img.onload = img.onerror = () => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       if (isMounted) {
         setLoaded(true)
       }

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
-import { useIntl } from 'react-intl'
 import InputMask from 'react-input-mask'
+import { useIntl } from 'react-intl'
 
 import {
   Box,
@@ -10,11 +10,11 @@ import {
   Select,
   Tag,
 } from '@island.is/island-ui/core'
-import { CrimeScene, IndictmentSubtype } from '@island.is/judicial-system/types'
 import {
   capitalize,
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
+import { CrimeScene, IndictmentSubtype } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   DateTime,

@@ -29,11 +29,11 @@ export class User {
   @Field()
   readonly mobileNumber!: string
 
-  @Field()
-  readonly email!: string
-
   @Field(() => UserRole)
   readonly role!: UserRole
+
+  @Field()
+  readonly email!: string
 
   @Field(() => Institution, { nullable: true })
   readonly institution?: Institution

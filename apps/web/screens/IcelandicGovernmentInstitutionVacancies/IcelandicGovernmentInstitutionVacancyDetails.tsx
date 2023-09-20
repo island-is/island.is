@@ -48,6 +48,8 @@ const InformationPanel = ({ vacancy, namespace }: InformationPanelProps) => {
     <Stack space={3}>
       {vacancy?.institutionName && (
         <InstitutionPanel
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           img={vacancy.logoUrl}
           institutionTitle={n('institutionCardTitle', 'Þjónustuaðili')}
           institution={vacancy.institutionName}
@@ -132,7 +134,9 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<
           VACANCY_INTRO_MAX_LENGTH,
         )}
         imageUrl={n('ogDetailsImageUrl', vacancy?.logoUrl)}
-      />
+      >
+        <meta name="robots" content="noindex, nofollow" />
+      </HeadWithSocialSharing>
 
       <SidebarLayout
         sidebarContent={

@@ -14,17 +14,6 @@ describe('transformCase', () => {
   `.describe(
     'when transforming boolean case attributes',
     ({ originalValue, transformedValue }) => {
-      it(`should transform ${originalValue} sendRequestToDefender to ${transformedValue}`, () => {
-        // Arrange
-        const theCase = { sendRequestToDefender: originalValue } as Case
-
-        // Act
-        const res = transformCase(theCase)
-
-        // Assert
-        expect(res.sendRequestToDefender).toBe(transformedValue)
-      })
-
       it(`should transform ${originalValue} requestProsecutorOnlySession to ${transformedValue}`, () => {
         // Arrange
         const theCase = { requestProsecutorOnlySession: originalValue } as Case

@@ -250,6 +250,16 @@ export const JudicialAdministration = new XroadConf({
   },
 })
 
+export const OccupationalLicenses = new XroadConf({
+  env: {
+    XROAD_HEALTH_DIRECTORATE_PATH: {
+      dev: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir',
+      staging: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir',
+      prod: 'IS/GOV/7101695009/EmbaettiLandlaeknis-Protected/landlaeknir',
+    },
+  },
+})
+
 export const Firearm = new XroadConf({
   env: {
     XROAD_FIREARM_LICENSE_PATH: {
@@ -329,6 +339,32 @@ export const NationalRegistry = new XroadConf({
       prod: '6503760649',
       dev: '10001',
       staging: '6503760649',
+    },
+  },
+})
+
+export const NationalRegistryB2C = new XroadConf({
+  env: {
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: {
+      dev: 'b464afdd-056b-406d-b650-6d41733cfeb7',
+      staging: 'ca128c23-b43c-443d-bade-ec5a146a933f',
+      prod: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f',
+    },
+    NATIONAL_REGISTRY_B2C_ENDPOINT: {
+      dev: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+      staging:
+        'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+      prod: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+    },
+    NATIONAL_REGISTRY_B2C_SCOPE: {
+      dev: 'https://skraidentitydev.onmicrosoft.com/midlun/.default',
+      staging: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default',
+      prod: 'https://skraidentity.onmicrosoft.com/midlun/.default',
+    },
+    NATIONAL_REGISTRY_B2C_PATH: {
+      dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1',
+      staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1',
+      prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1',
     },
   },
 })
@@ -549,5 +585,21 @@ export const AircraftRegistry = new XroadConf({
       staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Loftfaraskra-V1',
     },
+  },
+})
+
+export const HousingBenefitCalculator = new XroadConf({
+  env: {
+    XROAD_HOUSING_BENEFIT_CALCULATOR_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/calc-v1',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/calc-v1',
+      prod: 'IS/GOV/5812191480/HMS-Protected/calc-v1',
+    },
+  },
+  secrets: {
+    HOUSING_BENEFIT_CALCULATOR_USERNAME:
+      '/k8s/xroad/client/HOUSING_BENEFIT_CALCULATOR_USERNAME',
+    HOUSING_BENEFIT_CALCULATOR_PASSWORD:
+      '/k8s/xroad/client/HOUSING_BENEFIT_CALCULATOR_PASSWORD',
   },
 })

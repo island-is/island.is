@@ -14,6 +14,8 @@ export function optionsFromContext(
 
 export function optionsFromWindow(): ClientOptions {
   return {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     bypassCache: new URLSearchParams(window.location.search).get(
       'bypass-cache',
     ),
