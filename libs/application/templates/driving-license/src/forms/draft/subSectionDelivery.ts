@@ -30,13 +30,13 @@ export const subSectionDelivery = buildSubSection({
           description: chooseDistrictCommissionerDescription,
         }),
         buildSelectField({
-          id: 'juristiction',
+          id: 'jurisdiction',
           title: m.districtCommisionerPickup,
           disabled: false,
           required: true,
           options: ({
             externalData: {
-              juristictions: { data },
+              jurisdictions: { data },
             },
           }) => {
             return (data as Jurisdiction[]).map(({ id, name, zip }) => ({

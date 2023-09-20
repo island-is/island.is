@@ -161,8 +161,8 @@ export const sectionOverview = buildSection({
           value: ({ answers: { district }, externalData }) => {
             const districts = getValueViaPath(
               externalData,
-              'juristictions.data',
-            ) as Juristiction[]
+              'jurisdictions.data',
+            ) as Jurisdiction[]
             const selectedDistrict = districts.find(
               (d) => d.id.toString() === district,
             )

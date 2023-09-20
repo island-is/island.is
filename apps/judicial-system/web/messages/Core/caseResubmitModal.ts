@@ -8,9 +8,9 @@ export const caseResubmitModal = {
       'Notaður sem titill á modal sem birtist þegar móttekin krafa er endursend',
   }),
   text: defineMessage({
-    id: 'judicial.system.core:overview.case_resubmit_modal.text',
+    id: 'judicial.system.core:overview.case_resubmit_modal.text_v2',
     defaultMessage:
-      'Hér er hægt að senda skilaboð til dómstólsins með upplýsingum um hverju var breytt eða bætt við kröfuna áður en hún er send aftur.{sendRequestToDefender, select, true { Bæði dómari og verjandi munu fá tilkynningu um að krafa hafi verið send aftur.} other {}}',
+      'Hér er hægt að senda skilaboð til dómstólsins með upplýsingum um hverju var breytt eða bætt við kröfuna áður en hún er send aftur.{requestSharedWithDefender, select, true { Bæði dómari og verjandi munu fá tilkynningu um að krafa hafi verið send aftur.} other {}}',
     description: 'Notaður sem texti í modal þegar móttekin krafa er endursend',
   }),
   primaryButtonText: defineMessage({

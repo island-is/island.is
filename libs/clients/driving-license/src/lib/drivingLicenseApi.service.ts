@@ -378,7 +378,7 @@ export class DrivingLicenseApi {
     nationalIdTeacher: string
     willBringHealthCertificate: boolean
     willBringQualityPhoto: boolean
-    juristictionId: number
+    jurisdictionId: number
     sendLicenseInMail: boolean
     email: string
     phone: string
@@ -397,7 +397,7 @@ export class DrivingLicenseApi {
             sendLicenseInMail: params.sendLicenseInMail,
             email: params.email,
             gsm: params.phone,
-            authority: params.juristictionId,
+            authority: params.jurisdictionId,
           },
         })
       if (!response.result) {
@@ -428,7 +428,7 @@ export class DrivingLicenseApi {
     nationalIdApplicant: string
     willBringHealthCertificate: boolean
     willBringQualityPhoto: boolean
-    juristictionId: number
+    jurisdictionId: number
     sendLicenseInMail: boolean
     sendLicenseToAddress: string
     category: string
@@ -439,7 +439,7 @@ export class DrivingLicenseApi {
         apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
         category: params.category,
         postNewFinalLicense: {
-          authorityNumber: params.juristictionId,
+          authorityNumber: params.jurisdictionId,
           needsToPresentHealthCertificate: params.willBringHealthCertificate
             ? 1
             : 0,

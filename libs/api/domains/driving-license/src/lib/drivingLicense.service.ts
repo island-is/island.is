@@ -24,7 +24,10 @@ import {
   DrivingLicenseApi,
   TeacherV4,
 } from '@island.is/clients/driving-license'
-import { DRIVING_ASSESSMENT_MAX_AGE } from './util/constants'
+import {
+  BLACKLISTED_JURISDICTION,
+  DRIVING_ASSESSMENT_MAX_AGE,
+} from './util/constants'
 import sortTeachers from './util/sortTeachers'
 import { StudentAssessment } from '..'
 import { FetchError } from '@island.is/clients/middlewares'
@@ -155,6 +158,12 @@ export class DrivingLicenseService {
       nationalId: input.nationalId,
       hasTeachingRights,
     }
+  }
+
+  async getListOfJurisdictions(): Promise<Jurisdiction[]> {
+    const embaetti = await this.drivingLicenseApi.getListOfJurisdictions()
+
+    return embaetti.filter(({ id }) => id !== BLACKLISTED_JURISDICTION)
   }
 
   async getDrivingAssessmentResult(
@@ -386,7 +395,7 @@ export class DrivingLicenseService {
       await this.drivingLicenseApi.postCreateDrivingLicenseTemporary({
         willBringHealthCertificate: input.needsToPresentHealthCertificate,
         willBringQualityPhoto: input.needsToPresentQualityPhoto,
-        juristictionId: input.juristictionId,
+        jurisdictionId: input.jurisdictionId,
         nationalIdTeacher: input.teacherNationalId,
         nationalIdApplicant: nationalId,
         sendLicenseInMail: false,
@@ -407,7 +416,7 @@ export class DrivingLicenseService {
   ): Promise<NewDrivingLicenseResult> {
     const response = await this.drivingLicenseApi.postCreateDrivingLicenseFull({
       category: DrivingLicenseCategory.B,
-      juristictionId: input.juristictionId,
+      jurisdictionId: input.jurisdictionId,
       willBringHealthCertificate: input.needsToPresentHealthCertificate,
       nationalIdApplicant: nationalId,
       willBringQualityPhoto: input.needsToPresentQualityPhoto,

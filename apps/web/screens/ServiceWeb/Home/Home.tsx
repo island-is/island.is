@@ -10,11 +10,13 @@ import {
   QueryGetSupportCategoriesInOrganizationArgs,
   QueryGetSupportQnAsArgs,
   SupportCategory,
+  QueryGetServiceWebPageArgs,
 } from '@island.is/web/graphql/schema'
 import {
   GET_FEATURED_SUPPORT_QNAS,
   GET_NAMESPACE_QUERY,
   GET_SERVICE_WEB_ORGANIZATION,
+  GET_SERVICE_WEB_PAGE_QUERY,
   GET_SUPPORT_CATEGORIES,
   GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
 } from '../../queries'
@@ -36,11 +38,13 @@ import {
   SimpleStackedSlider,
   ServiceWebWrapper,
   ServiceWebContext,
+  SliceMachine,
 } from '@island.is/web/components'
 import {
   useNamespace,
   LinkResolverResponse,
   useLinkResolver,
+  LinkType,
 } from '@island.is/web/hooks'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import { getSlugPart } from '../utils'
@@ -59,6 +63,7 @@ interface HomeProps {
     | Query['getSupportCategories']
     | Query['getSupportCategoriesInOrganization']
   featuredQNAs: Query['getFeaturedSupportQNAs']
+  serviceWebPage?: Query['getServiceWebPage']
   locale: Locale
 }
 
@@ -68,6 +73,7 @@ const Home: Screen<HomeProps> = ({
   namespace,
   organizationNamespace,
   featuredQNAs,
+  serviceWebPage,
   locale,
 }) => {
   const Router = useRouter()
@@ -108,7 +114,6 @@ const Home: Screen<HomeProps> = ({
   const hasContent = !!supportCategories?.length
 
   const sortedSupportCategories = sortSupportCategories(supportCategories)
-
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
@@ -186,16 +191,36 @@ const Home: Screen<HomeProps> = ({
                     )}
                   </SimpleStackedSlider>
                 </Box>
-                {featuredQNAs.length > 0 && (
-                  <Box marginY={[4, 4, 8]}>
-                    <GridContainer>
-                      <GridRow>
-                        <GridColumn
-                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                          // @ts-ignore make web strict
-                          offset={[null, null, null, '1/12']}
-                          span={['12/12', '12/12', '12/12', '10/12']}
+
+                <Box marginY={[4, 4, 8]}>
+                  <GridContainer>
+                    <GridRow>
+                      <GridColumn
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
+                        offset={[null, null, null, '1/12']}
+                        span={['12/12', '12/12', '12/12', '10/12']}
+                      >
+                        <Box
+                          marginTop={[4, 4, 4]}
+                          marginBottom={[4, 4, 8]}
+                          paddingX={[4, 4, 14]}
                         >
+                          {serviceWebPage?.slices?.map((slice) => {
+                            return (
+                              <SliceMachine
+                                key={slice.id}
+                                slice={slice}
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                // @ts-ignore make web strict
+                                namespace={namespace}
+                                fullWidth={true}
+                              />
+                            )
+                          })}
+                        </Box>
+
+                        {featuredQNAs.length > 0 && (
                           <Box
                             borderRadius="large"
                             border="standard"
@@ -235,11 +260,11 @@ const Home: Screen<HomeProps> = ({
                                 })}
                             </Stack>
                           </Box>
-                        </GridColumn>
-                      </GridRow>
-                    </GridContainer>
-                  </Box>
-                )}
+                        )}
+                      </GridColumn>
+                    </GridRow>
+                  </GridContainer>
+                </Box>
 
                 <Box marginY={[7, 10, 10]}>
                   <GridContainer>
@@ -290,7 +315,14 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
   const defaultSlug = locale === 'en' ? 'digital-iceland' : 'stafraent-island'
   const slug = query.slug ? (query.slug as string) : defaultSlug
 
-  const [organization, namespace, supportCategories] = await Promise.all([
+  const [
+    organization,
+    namespace,
+    supportCategories,
+    {
+      data: { getServiceWebPage },
+    },
+  ] = await Promise.all([
     !!slug &&
       apolloClient.query<Query, QueryGetOrganizationArgs>({
         query: GET_SERVICE_WEB_ORGANIZATION,
@@ -334,6 +366,15 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
             },
           },
         }),
+    apolloClient.query<Query, QueryGetServiceWebPageArgs>({
+      query: GET_SERVICE_WEB_PAGE_QUERY,
+      variables: {
+        input: {
+          slug: slug,
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
   ])
 
   const popularQuestionCount =
@@ -361,7 +402,6 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
   processedCategories = processedCategories.filter(
     (item) => !!item.organization,
   )
-
   if (
     !organization ||
     !organization?.data?.getOrganization?.serviceWebEnabled
@@ -384,6 +424,7 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
     featuredQNAs: featuredQNAs
       ? featuredQNAs?.data?.getFeaturedSupportQNAs
       : [],
+    serviceWebPage: getServiceWebPage,
     locale: locale as Locale,
   }
 }

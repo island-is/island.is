@@ -10,13 +10,13 @@ export interface DrivingLicenseType {
 export type DrivingLicenseApplicationType = 'B-full' | 'B-temp'
 
 export interface NewDrivingLicenseInput {
-  juristictionId: number
+  jurisdictionId: number
   needsToPresentHealthCertificate: boolean
   needsToPresentQualityPhoto: boolean
 }
 
 export interface NewTemporaryDrivingLicenseInput {
-  juristictionId: number
+  jurisdictionId: number
   needsToPresentHealthCertificate: boolean
   needsToPresentQualityPhoto: boolean
   teacherNationalId: string

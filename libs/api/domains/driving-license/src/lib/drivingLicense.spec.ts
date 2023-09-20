@@ -123,7 +123,7 @@ describe('DrivingLicenseService', () => {
 
   describe('getTeachers', () => {
     it('should return a list', async () => {
-      const response = await service.getTeachers()
+      const response = await service.getTeachersV4()
 
       expect(response).toHaveLength(2)
 
@@ -367,7 +367,7 @@ describe('DrivingLicenseService', () => {
   describe('newDrivingLicense', () => {
     it('should handle driving license creation', async () => {
       const response = await service.newDrivingLicense(MOCK_NATIONAL_ID, {
-        juristictionId: 11,
+        jurisdictionId: 11,
         needsToPresentHealthCertificate: false,
         needsToPresentQualityPhoto: false,
       })
@@ -383,7 +383,7 @@ describe('DrivingLicenseService', () => {
 
       return service
         .newDrivingLicense(MOCK_NATIONAL_ID_NO_ASSESSMENT, {
-          juristictionId: 11,
+          jurisdictionId: 11,
           needsToPresentHealthCertificate: false,
           needsToPresentQualityPhoto: true,
         })
@@ -397,7 +397,7 @@ describe('DrivingLicenseService', () => {
         MOCK_NATIONAL_ID,
         MOCK_USER.authorization,
         {
-          juristictionId: 11,
+          jurisdictionId: 11,
           needsToPresentHealthCertificate: false,
           needsToPresentQualityPhoto: false,
           teacherNationalId: MOCK_NATIONAL_ID_TEACHER,
@@ -418,7 +418,7 @@ describe('DrivingLicenseService', () => {
           MOCK_NATIONAL_ID_NO_ASSESSMENT,
           MOCK_USER.authorization,
           {
-            juristictionId: 11,
+            jurisdictionId: 11,
             needsToPresentHealthCertificate: false,
             needsToPresentQualityPhoto: true,
             teacherNationalId: MOCK_NATIONAL_ID_TEACHER,

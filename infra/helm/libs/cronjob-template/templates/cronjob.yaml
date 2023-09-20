@@ -49,6 +49,19 @@ spec:
             name: {{ .Chart.Name }}
             securityContext:
               {{- toYaml $.Values.securityContext | nindent 14 }}
+            {{- if or (not (empty .Values.files)) (not (empty .Values.pvcs))}}
+            volumeMounts:
+            {{- end}}
+            {{- if not (empty .Values.pvcs) }}
+            {{- range .Values.pvcs}}
+              - mountPath: {{ .mountPath }}
+                name: {{ .name }}
+            {{- end}}
+            {{- end }}
+            {{- if not (empty .Values.files) }}
+              - name: config-volume
+                mountPath: /etc/config
+            {{- end }}
             env:
               {{- range $key, $value := .Values.global.env }}
               - name: {{ $key }}
@@ -92,7 +105,6 @@ spec:
                     "pattern": "\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b",
                     "repl": "--MASKED--"
                   }]'
-
             {{- with .Values.command }}
             command:
 {{ toYaml . | indent 12 }}
@@ -103,5 +115,20 @@ spec:
               {{- end }}
             resources:
 {{ toYaml $.Values.resources | indent 14 }}
+          {{- if or (not (empty .Values.files)) (not (empty .Values.pvcs)) }}
+          volumes:
+          {{- end }}
+          {{- if not (empty .Values.files) }}
+          - name: config-volume
+            configMap:
+              name: {{ include "cronjob-template.name" . }}
+          {{- end }}
+          {{- if not (empty .Values.pvcs) }}
+          {{- range .Values.pvcs }}
+          - name: {{ .name }}
+            persistentVolumeClaim:
+              claimName: {{ .name }}
+          {{- end }}
+          {{- end }}
           restartPolicy: {{ .Values.restartPolicy | default "Never" }}
 {{- end }}
