@@ -65,5 +65,5 @@ jobs:
         run: yarn install
       - name: Run pipes PR
         working-directory: ./pipes
-        run: yarn node src/ci.tsx
+        run: yarn start
 
