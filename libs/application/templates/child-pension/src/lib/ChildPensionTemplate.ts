@@ -11,7 +11,10 @@ import {
   UserProfileApi,
 } from '@island.is/application/types'
 
-import { pruneAfterDays } from '@island.is/application/core'
+import {
+  coreHistoryMessages,
+  pruneAfterDays,
+} from '@island.is/application/core'
 
 import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
@@ -36,6 +39,14 @@ const ChildPensionTemplate: ApplicationTemplate<
           status: 'draft',
           lifecycle: pruneAfterDays(1),
           progress: 0.25,
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           //onExit: defineTemplateApi - kalla á TR
           roles: [
             {
@@ -67,6 +78,12 @@ const ChildPensionTemplate: ApplicationTemplate<
           status: 'draft',
           lifecycle: pruneAfterDays(30),
           progress: 0.25,
+          actionCard: {
+            historyLogs: {
+              onEvent: DefaultEvents.SUBMIT,
+              logMessage: coreHistoryMessages.applicationSent,
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT,
