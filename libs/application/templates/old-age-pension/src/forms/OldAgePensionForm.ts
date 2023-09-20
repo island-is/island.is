@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
@@ -248,16 +249,13 @@ export const OldAgePensionForm: Form = buildForm({
               title: oldAgePensionFormMessage.payment.title,
               description: '',
               children: [
-                buildCustomField(
-                  {
-                    id: 'paymentInfo.alert',
-                    title: oldAgePensionFormMessage.payment.alertTitle,
-                    component: 'FieldAlertMessage',
-                    description: oldAgePensionFormMessage.payment.alertMessage,
-                    doesNotRequireAnswer: true,
-                  },
-                  { type: 'info' },
-                ),
+                buildAlertMessageField({
+                  id: 'paymentInfo.alert',
+                  title: oldAgePensionFormMessage.payment.alertTitle,
+                  message: oldAgePensionFormMessage.payment.alertMessage,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                }),
                 buildTextField({
                   id: 'paymentInfo.bank',
                   title: oldAgePensionFormMessage.payment.bank,
@@ -530,28 +528,24 @@ export const OldAgePensionForm: Form = buildForm({
                   component: 'Period',
                   title: oldAgePensionFormMessage.period.periodTitle,
                 }),
-                buildCustomField(
-                  {
-                    id: 'period.alert',
-                    title: oldAgePensionFormMessage.period.periodAlertTitle,
-                    component: 'EarlyRetirementWarning',
-                    condition: (answers, externalData) => {
-                      return isEarlyRetirement(answers, externalData)
+                buildAlertMessageField({
+                  id: 'period.alert',
+                  title: oldAgePensionFormMessage.period.periodAlertTitle,
+                  message: oldAgePensionFormMessage.period.periodAlertMessage,
+                  doesNotRequireAnswer: true,
+                  alertType: 'warning',
+                  links: [
+                    {
+                      title:
+                        oldAgePensionFormMessage.period.periodAlertLinkTitle,
+                      url: oldAgePensionFormMessage.period.periodAlertUrl,
+                      isExternal: true,
                     },
-                    doesNotRequireAnswer: true,
+                  ],
+                  condition: (answers, externalData) => {
+                    return isEarlyRetirement(answers, externalData)
                   },
-                  {
-                    descriptionFirstPart:
-                      oldAgePensionFormMessage.period
-                        .periodAlertDescriptionFirstPart,
-                    descriptionSecondPart:
-                      oldAgePensionFormMessage.period
-                        .periodAlertDescriptionSecondPart,
-                    linkName:
-                      oldAgePensionFormMessage.period.periodAlertLinkName,
-                    url: oldAgePensionFormMessage.period.periodAlertUrl,
-                  },
-                ),
+                }),
               ],
             }),
           ],
@@ -648,25 +642,22 @@ export const OldAgePensionForm: Form = buildForm({
                   defaultValue: NO,
                   width: 'half',
                 }),
-                buildCustomField(
-                  {
-                    id: 'onePaymentPerYear.alert',
-                    title:
-                      oldAgePensionFormMessage.onePaymentPerYear
-                        .onePaymentPerYearAlertTitle,
-                    component: 'FieldAlertMessage',
-                    description:
-                      oldAgePensionFormMessage.onePaymentPerYear
-                        .onePaymentPerYearAlertDescription,
-                    condition: (answers) => {
-                      const { onePaymentPerYear } =
-                        getApplicationAnswers(answers)
+                buildAlertMessageField({
+                  id: 'onePaymentPerYear.alert',
+                  title:
+                    oldAgePensionFormMessage.onePaymentPerYear
+                      .onePaymentPerYearAlertTitle,
+                  message:
+                    oldAgePensionFormMessage.onePaymentPerYear
+                      .onePaymentPerYearAlertDescription,
+                  doesNotRequireAnswer: true,
+                  alertType: 'warning',
+                  condition: (answers) => {
+                    const { onePaymentPerYear } = getApplicationAnswers(answers)
 
-                      return onePaymentPerYear === YES
-                    },
+                    return onePaymentPerYear === YES
                   },
-                  { type: 'warning' },
-                ),
+                }),
               ],
             }),
           ],
@@ -757,22 +748,20 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.connectedApplications
                   .householdSupplementDescription,
               children: [
-                buildCustomField(
-                  {
-                    id: 'householdSupplement.alert',
-                    title:
-                      oldAgePensionFormMessage.connectedApplications
-                        .householdSupplementAlertTitle,
-                    component: 'FieldAlertMessage',
-                    description:
-                      oldAgePensionFormMessage.connectedApplications
-                        .householdSupplementAlertDescription,
-                    condition: (_, externalData) => {
-                      return isExistsCohabitantOlderThan25(externalData)
-                    },
+                buildAlertMessageField({
+                  id: 'householdSupplement.alert',
+                  title:
+                    oldAgePensionFormMessage.connectedApplications
+                      .householdSupplementAlertTitle,
+                  message:
+                    oldAgePensionFormMessage.connectedApplications
+                      .householdSupplementAlertDescription,
+                  doesNotRequireAnswer: true,
+                  alertType: 'warning',
+                  condition: (_, externalData) => {
+                    return isExistsCohabitantOlderThan25(externalData)
                   },
-                  { type: 'warning' },
-                ),
+                }),
                 buildRadioField({
                   id: 'householdSupplement.housing',
                   title:

@@ -1,4 +1,3 @@
-export { FieldAlertMessage, EarlyRetirementWarning } from './AlertMessage'
 export { Period } from './Period'
 export { ResidenceHistory } from './ResidenceHistory'
 export { default as ChildPensionTable } from './ChildPension'

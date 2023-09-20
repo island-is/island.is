@@ -1,5 +1,5 @@
 import {
-  buildCustomField,
+  buildAlertMessageField,
   buildDataProviderItem,
   buildDataProviderPermissionItem,
   buildDescriptionField,
@@ -167,23 +167,19 @@ export const PrerequisitesForm: Form = buildForm({
                   options: getYesNOOptions(),
                   width: 'half',
                 }),
-                buildCustomField(
-                  {
-                    id: 'question.pensionFundAlert',
-                    title: oldAgePensionFormMessage.pre.pensionFundAlertTitle,
-                    component: 'FieldAlertMessage',
-                    description:
-                      oldAgePensionFormMessage.pre.pensionFundAlertDescription,
-                    doesNotRequireAnswer: true,
-                    condition: (answers) => {
-                      const { pensionFundQuestion } =
-                        getApplicationAnswers(answers)
+                buildAlertMessageField({
+                  id: 'question.pensionFundAlert',
+                  title: oldAgePensionFormMessage.pre.pensionFundAlertTitle,
+                  message: oldAgePensionFormMessage.pre.pensionFundAlertDescription,
+                  doesNotRequireAnswer: true,                  
+                  alertType: 'warning',
+                  condition: (answers) => {
+                    const { pensionFundQuestion } =
+                      getApplicationAnswers(answers)
 
-                      return pensionFundQuestion === NO
-                    },
-                  },
-                  { type: 'warning' },
-                ),
+                    return pensionFundQuestion === NO
+                  }
+                }),
                 buildSubmitField({
                   id: 'toDraft',
                   title: oldAgePensionFormMessage.pre.confirmationTitle,
