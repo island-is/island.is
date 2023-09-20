@@ -259,8 +259,7 @@ const PipesNodeContext = createContext(({ z, fn })=>({
                     // Currently we are just using yarn
                     const source = context.client.host().directory(config.nodeSourceDir, sourceOptions);
                     const corepack = await container.withDirectory(config.nodeWorkDir, source).withWorkdir(config.nodeWorkDir).withExec([
-                        "corepack",
-                        "enable"
+                        "ls",
                     ]).sync();
                     /* const yarnInstall = await corepack.withExec([
                         "yarn",
