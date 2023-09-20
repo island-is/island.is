@@ -416,7 +416,8 @@ export const ServicePortalDocuments = () => {
                 <Box display="flex">
                   <Button
                     circle
-                    icon="trash"
+                    icon="archive"
+                    iconType="outline"
                     onClick={() => console.log('Trash or stash')}
                     size="small"
                     title="Store items"
@@ -424,7 +425,8 @@ export const ServicePortalDocuments = () => {
                   />
                   <Button
                     circle
-                    icon="heart"
+                    icon="star"
+                    iconType="outline"
                     onClick={() => console.log('star or fav')}
                     size="small"
                     title="Favorite items"
