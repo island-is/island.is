@@ -12,7 +12,7 @@ import { Application } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import {
   DistrictCommissionerAgencies,
-  Juristiction,
+  Jurisdiction,
   NationalRegistryUser,
 } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
