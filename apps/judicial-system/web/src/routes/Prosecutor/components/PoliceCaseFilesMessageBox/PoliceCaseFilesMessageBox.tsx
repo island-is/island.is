@@ -15,7 +15,13 @@ const PoliceCaseFilesMessageBox: React.FC<React.PropsWithChildren<Props>> = (
   const { icon, iconColor, message } = props
 
   return (
-    <Box display="flex" paddingY={2} paddingX={3} marginBottom={2}>
+    <Box
+      display="flex"
+      alignItems="center"
+      paddingY={2}
+      paddingX={3}
+      marginBottom={2}
+    >
       <Box display="flex" marginRight={2}>
         <Icon icon={icon} color={iconColor} size="large" />
       </Box>
