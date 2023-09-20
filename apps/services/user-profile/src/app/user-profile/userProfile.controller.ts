@@ -21,6 +21,7 @@ import {
   HttpCode,
   Delete,
   Patch,
+  NotFoundException,
 } from '@nestjs/common'
 import { NoContentException } from '@island.is/nest/problem'
 import {
@@ -70,6 +71,7 @@ export class UserProfileController {
     allowEmptyValue: false,
   })
   @ApiOkResponse({ type: UserProfile })
+  @ApiNoContentResponse()
   @Audit<UserProfile>({
     resources: (profile) => profile.nationalId,
   })
@@ -87,7 +89,7 @@ export class UserProfileController {
       nationalId,
     )
     if (!userProfile) {
-      throw new NoContentException()
+      throw new NotFoundException()
     }
 
     return userProfile
@@ -97,6 +99,7 @@ export class UserProfileController {
   @ApiSecurity('oauth2', [UserProfileScope.read])
   @Get('actor/locale')
   @ApiOkResponse({ type: ActorLocale })
+  @ApiNoContentResponse()
   @Audit<ActorLocale>({
     resources: (profile) => profile.nationalId,
   })
@@ -105,7 +108,7 @@ export class UserProfileController {
       actor.nationalId,
     )
     if (!userProfile) {
-      throw new NoContentException()
+      throw new NotFoundException()
     }
 
     return {
