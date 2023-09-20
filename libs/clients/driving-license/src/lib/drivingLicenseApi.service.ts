@@ -13,6 +13,7 @@ import {
   QualitySignature,
   RemarkCode,
   DrivingLicenseV4V5Dto,
+  Jurisdiction,
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
 import { PracticePermitDto } from '../v5'
@@ -302,11 +303,17 @@ export class DrivingLicenseApi {
     }
   }
 
-  public async getListOfJurisdictions(): Promise<v5.EmbaettiDto[]> {
-    return await this.v5CodeTable.apiCodetablesDistrictsGet({
-      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-    })
+  public async getListOfJurisdictions(): Promise<Jurisdiction[]> {
+    return (
+      await this.v5CodeTable.apiCodetablesDistrictsGet({
+        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      })
+    ).map(({ nr, postnumer, nafn }) => ({
+      id: nr || 0,
+      zip: postnumer || 0,
+      name: nafn || '',
+    }))
   }
 
   public async getHasFinishedOkugerdi(params: {

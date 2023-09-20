@@ -40,6 +40,7 @@ import {
   hasResidenceHistory,
 } from './util/hasResidenceHistory'
 import { info } from 'kennitala'
+import { Jurisdiction } from './graphql/models'
 
 const LOGTAG = '[api-domains-driving-license]'
 
@@ -161,11 +162,9 @@ export class DrivingLicenseService {
     }
   }
 
-  async getListOfJurisdictions(): Promise<EmbaettiDto[]> {
+  async getListOfJurisdictions(): Promise<Jurisdiction[]> {
     const embaetti = await this.drivingLicenseApi.getListOfJurisdictions()
-    // TODO: check whether the jurisdiction is and embaetti nr refer to the same thing
-
-    return embaetti.filter(({ nr }) => nr !== BLACKLISTED_JURISDICTION)
+    return embaetti.filter(({ id }) => id !== BLACKLISTED_JURISDICTION)
   }
 
   async getDrivingAssessmentResult(

@@ -20,7 +20,6 @@ import {
   ApplicationEligibility,
   StudentAssessment,
   ApplicationEligibilityInput,
-  Teacher,
   TeacherV4,
 } from './models'
 import { AuditService } from '@island.is/nest/audit'

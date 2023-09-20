@@ -50,6 +50,12 @@ export interface TeacherV4 {
   driverLicenseId: number | null | undefined
 }
 
+export interface Jurisdiction {
+  id: number
+  name: string
+  zip: number
+}
+
 export interface DrivingAssessment {
   nationalIdStudent: string
   nationalIdTeacher: string
