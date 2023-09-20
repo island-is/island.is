@@ -22,6 +22,7 @@ import {
   DriversLicense,
   DrivingAssessment,
   DrivingLicenseApi,
+  EmbaettiDto,
   TeacherV4,
 } from '@island.is/clients/driving-license'
 import {
@@ -160,10 +161,11 @@ export class DrivingLicenseService {
     }
   }
 
-  async getListOfJurisdictions(): Promise<Jurisdiction[]> {
+  async getListOfJurisdictions(): Promise<EmbaettiDto[]> {
     const embaetti = await this.drivingLicenseApi.getListOfJurisdictions()
+    // TODO: check whether the jurisdiction is and embaetti nr refer to the same thing
 
-    return embaetti.filter(({ id }) => id !== BLACKLISTED_JURISDICTION)
+    return embaetti.filter(({ nr }) => nr !== BLACKLISTED_JURISDICTION)
   }
 
   async getDrivingAssessmentResult(

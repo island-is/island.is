@@ -42,11 +42,6 @@ export const DrivingAssessmentApi = defineTemplateApi({
   namespace,
 })
 
-export const JurisdictionApi = defineTemplateApi({
-  action: 'jurisdictions',
-  namespace,
-})
-
 export const EmployeeApi = defineTemplateApi({
   action: 'drivingSchoolForEmployee',
   namespace,
