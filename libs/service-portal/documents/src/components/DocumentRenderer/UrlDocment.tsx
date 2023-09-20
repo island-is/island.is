@@ -1,7 +1,6 @@
-import { Button, LinkV2 } from '@island.is/island-ui/core'
+import { Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '@island.is/service-portal/core'
-import { useEffect } from 'react'
+import { LinkResolver, m } from '@island.is/service-portal/core'
 type UrlDocumentProps = {
   url: string
 }
@@ -9,16 +8,11 @@ type UrlDocumentProps = {
 export const UrlDocument: React.FC<UrlDocumentProps> = ({ url }) => {
   const { formatMessage } = useLocale()
 
-  // open the document directly to save user 1 click
-  useEffect(() => {
-    window.open(url, '_blank')
-  }, [])
-
   return (
-    <Button variant="utility" icon="open" iconType="outline">
-      <LinkV2 href={url} newTab>
+    <LinkResolver href={url}>
+      <Button variant="utility" icon="open" iconType="outline" unfocusable>
         {formatMessage(m.getDocument)}
-      </LinkV2>
-    </Button>
+      </Button>
+    </LinkResolver>
   )
 }
