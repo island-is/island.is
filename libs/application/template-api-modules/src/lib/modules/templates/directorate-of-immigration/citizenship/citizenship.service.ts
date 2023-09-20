@@ -23,7 +23,7 @@ import {
   DirectorateOfImmigrationClient,
   ForeignCriminalRecordFile,
   Passport,
-  ResidenceCondition,
+  ResidenceConditionInfo,
   StayAbroad,
   TravelDocumentType,
 } from '@island.is/clients/directorate-of-immigration'
@@ -58,10 +58,10 @@ export class CitizenshipService extends BaseTemplateApiService {
     }
   }
 
-  async getResidenceConditions({
+  async getResidenceConditionInfo({
     auth,
-  }: TemplateApiModuleActionProps): Promise<ResidenceCondition[]> {
-    return this.directorateOfImmigrationClient.getCitizenshipResidenceConditions(
+  }: TemplateApiModuleActionProps): Promise<ResidenceConditionInfo> {
+    return this.directorateOfImmigrationClient.getCitizenshipResidenceConditionInfo(
       auth,
     )
   }
@@ -92,14 +92,6 @@ export class CitizenshipService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<Passport | undefined> {
     return this.directorateOfImmigrationClient.getOldPassportItem(auth)
-  }
-
-  async getOldForeignCriminalRecordFileList({
-    auth,
-  }: TemplateApiModuleActionProps): Promise<ForeignCriminalRecordFile[]> {
-    return this.directorateOfImmigrationClient.getOldForeignCriminalRecordFileList(
-      auth,
-    )
   }
 
   async getNationalRegistryIndividual({
@@ -283,15 +275,15 @@ export class CitizenshipService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps) {
     const answers = application.answers as CitizenshipAnswers
 
-    const residenceConditionList =
-      await this.directorateOfImmigrationClient.getCitizenshipResidenceConditions(
+    const residenceConditionInfo =
+      await this.directorateOfImmigrationClient.getCitizenshipResidenceConditionInfo(
         auth,
       )
 
     // throw error in case the residence condition list changed since prerequisite step and
     // user does not fulfill any other condition
     if (
-      residenceConditionList.length === 0 &&
+      !residenceConditionInfo.hasValid &&
       answers.parentInformation?.hasValidParents !== YES &&
       answers.formerIcelander !== YES
     ) {
@@ -346,14 +338,14 @@ export class CitizenshipService extends BaseTemplateApiService {
       answers.countriesOfResidence?.selectedAbroadCountries
         ?.filter((c) => c.wasRemoved !== 'true')
         ?.map((c) => ({
-          countryId: parseInt(c.countryId),
+          countryId: c.countryId,
         }))
     const filteredStaysAbroad =
       answers.staysAbroad?.hasStayedAbroad == YES &&
       answers.staysAbroad?.selectedAbroadCountries
         ?.filter((s) => s.wasRemoved !== 'true')
         ?.map((s) => ({
-          countryId: parseInt(s.countryId),
+          countryId: s.countryId,
           dateFrom: s.dateFrom ? new Date(s.dateFrom) : undefined,
           dateTo: s.dateTo ? new Date(s.dateTo) : undefined,
           purpose: s.purpose,
@@ -376,7 +368,7 @@ export class CitizenshipService extends BaseTemplateApiService {
         const fileList = criminalRecordList[i].file || []
         for (let j = 0; j < fileList.length; j++) {
           criminalRecordListFlattened.push({
-            countryId: parseInt(countryId),
+            countryId: countryId,
             base64: fileList[j],
           })
         }
@@ -426,7 +418,7 @@ export class CitizenshipService extends BaseTemplateApiService {
           dateOfExpiry: new Date(applicantPassport.expirationDate),
           passportNumber: applicantPassport.passportNumber,
           passportTypeId: parseInt(applicantPassport.passportTypeId),
-          countryOfIssuerId: parseInt(applicantPassport.countryOfIssuerId),
+          countryOfIssuerId: applicantPassport.countryOfIssuerId,
           file: applicantPassport.file?.map((file) => ({ base64: file })) || [],
         },
         supportingDocuments: {
@@ -459,6 +451,8 @@ export class CitizenshipService extends BaseTemplateApiService {
           childrenCustodyInformation?.map((c) => ({
             nationalId: c.nationalId,
             fullName: c.fullName,
+            givenName: c.givenName,
+            familyName: c.familyName,
           })) || [],
         childrenPassport:
           answers.childrenPassport?.map((p) => ({
@@ -467,7 +461,7 @@ export class CitizenshipService extends BaseTemplateApiService {
             dateOfExpiry: new Date(p.expirationDate),
             passportNumber: p.passportNumber,
             passportTypeId: parseInt(p.passportTypeId),
-            countryIdOfIssuer: parseInt(p.countryOfIssuerId),
+            countryIdOfIssuer: p.countryOfIssuerId,
             file: p.file?.map((file) => ({ base64: file })) || [],
           })) || [],
         childrenSupportingDocuments:

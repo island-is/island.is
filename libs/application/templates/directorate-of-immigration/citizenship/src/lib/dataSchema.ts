@@ -30,10 +30,6 @@ export const UserInformationSchema = z.intersection(
   }),
 )
 
-const ResidenceConditionSchema = z.object({
-  radio: z.string().min(1),
-})
-
 export const RemoveableStayAbroadSchema = z
   .object({
     countryId: z.string(),
@@ -201,7 +197,6 @@ export const CitizenshipSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   userInformation: UserInformationSchema,
   selectedChildren: z.array(z.string()).optional(),
-  residenceCondition: ResidenceConditionSchema,
   parentInformation: ParentsSchema,
   spouse: z.string().min(1),
   countriesOfResidence: CountriesOfResidenceSchema,

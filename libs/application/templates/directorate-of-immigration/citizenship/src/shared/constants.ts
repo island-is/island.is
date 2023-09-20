@@ -1,12 +1,11 @@
 export enum ApiActions {
   createCharge = 'createCharge',
-  getResidenceConditions = 'getResidenceConditions',
+  getResidenceConditionInfo = 'getResidenceConditionInfo',
   getCountries = 'getCountries',
   getTravelDocumentTypes = 'getTravelDocumentTypes',
   getOldCountryOfResidenceList = 'getOldCountryOfResidenceList',
   getOldStayAbroadList = 'getOldStayAbroadList',
   getOldPassportItem = 'getOldPassportItem',
-  getOldForeignCriminalRecordFileList = 'getOldForeignCriminalRecordFileList',
   getNationalRegistryIndividual = 'getNationalRegistryIndividual',
   getNationalRegistrySpouseDetails = 'getNationalRegistrySpouseDetails',
   submitApplication = 'submitApplication',

@@ -23,10 +23,9 @@ import {
   NationalRegistryParentsApi,
   NationalRegistrySpouseDetailsApi,
   OldCountryOfResidenceListApi,
-  OldForeignCriminalRecordFileListApi,
   OldPassportItemApi,
   OldStayAbroadListApi,
-  ResidenceConditionsApi,
+  ResidenceConditionInfoApi,
   TravelDocumentTypesApi,
   UserProfileApi,
   UtlendingastofnunPaymentCatalogApi,
@@ -95,7 +94,7 @@ export const Prerequisites: Form = buildForm({
               subTitle: externalData.directorateOfImmigration.subTitle,
             }),
             buildDataProviderItem({
-              provider: ResidenceConditionsApi,
+              provider: ResidenceConditionInfoApi,
               title: '',
             }),
             buildDataProviderItem({
@@ -116,10 +115,6 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: OldPassportItemApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: OldForeignCriminalRecordFileListApi,
               title: '',
             }),
             buildDataProviderItem({

@@ -7,9 +7,8 @@ import {
   CriminalRecord,
   CurrentResidencePermit,
   CurrentResidencePermitType,
-  ForeignCriminalRecordFile,
   Passport,
-  ResidenceCondition,
+  ResidenceConditionInfo,
   StayAbroad,
   Study,
   TravelDocumentType,
@@ -19,19 +18,19 @@ import {
   ApplicantApi,
   ApplicantResidenceConditionApi,
   ApplicationApi,
-  ChildrenApi,
+  ApplicationAttachmentApi,
+  AttachmentType,
   CountryOfResidenceApi,
   CriminalRecordApi,
   LookupType,
   OptionSetApi,
   ParentApi,
   ResidenceAbroadApi,
-  SpouseApi,
+  StaticDataApi,
   StudyApi,
   TravelDocumentApi,
 } from '../../gen/fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { child } from 'winston'
 
 export
 @Injectable()
@@ -40,13 +39,13 @@ class DirectorateOfImmigrationClient {
     private applicantApi: ApplicantApi,
     private applicantResidenceConditionApi: ApplicantResidenceConditionApi,
     private applicationApi: ApplicationApi,
-    private childrenApi: ChildrenApi,
+    private applicationAttachmentApi: ApplicationAttachmentApi,
     private countryOfResidenceApi: CountryOfResidenceApi,
     private criminalRecordApi: CriminalRecordApi,
     private optionSetApi: OptionSetApi,
     private parentApi: ParentApi,
     private residenceAbroadApi: ResidenceAbroadApi,
-    private spouseApi: SpouseApi,
+    private staticDataApi: StaticDataApi,
     private studyApi: StudyApi,
     private travelDocumentApi: TravelDocumentApi,
 
@@ -68,8 +67,10 @@ class DirectorateOfImmigrationClient {
     return this.applicationApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  private childrenApiWithAuth(auth: Auth) {
-    return this.childrenApi.withMiddleware(new AuthMiddleware(auth))
+  private applicationAttachmentApiWithAuth(auth: Auth) {
+    return this.applicationAttachmentApi.withMiddleware(
+      new AuthMiddleware(auth),
+    )
   }
 
   private countryOfResidenceApiWithAuth(auth: Auth) {
@@ -88,8 +89,8 @@ class DirectorateOfImmigrationClient {
     return this.residenceAbroadApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  private spouseApiWithAuth(auth: Auth) {
-    return this.spouseApi.withMiddleware(new AuthMiddleware(auth))
+  private staticDataApiWithAuth(auth: Auth) {
+    return this.staticDataApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   private studyApiWithAuth(auth: Auth) {
@@ -109,12 +110,13 @@ class DirectorateOfImmigrationClient {
       })
 
       return res.map((item) => ({
-        id: item.id!,
+        id: item.id?.toString() || '', //TODOx string not int
         name: item.name!,
       }))
     } catch (error) {
-      this.logger.error('Error when trying to get countries from UTL', error)
-      throw new Error('Error when trying to get countries from UTL')
+      const errorMsg = 'Error when trying to get countries from UTL'
+      this.logger.error(errorMsg, error)
+      throw new Error(errorMsg)
     }
   }
 
@@ -129,11 +131,9 @@ class DirectorateOfImmigrationClient {
         name: item.name!,
       }))
     } catch (error) {
-      this.logger.error(
-        'Error when trying to get travel document types from UTL',
-        error,
-      )
-      throw new Error('Error when trying to get travel document types from UTL')
+      const errorMsg = 'Error when trying to get travel document types from UTL'
+      this.logger.error(errorMsg, error)
+      throw new Error(errorMsg)
     }
   }
 
@@ -148,103 +148,84 @@ class DirectorateOfImmigrationClient {
       ).apiCountryOfResidenceGetAllGet()
 
       return res.map((item) => ({
-        countryId: item.countryId!,
+        countryId: item.countryId?.toString() || '', //TODOx string not int
         countryName: item.countryName!,
       }))
     } catch (error) {
-      this.logger.error(
-        'Error when trying to get country of residence from UTL',
-        error,
-      )
-      throw new Error('Error when trying to get country of residence from UTL')
+      const errorMsg = 'Error when trying to get country of residence from UTL'
+      this.logger.error(errorMsg, error)
+      throw new Error(errorMsg)
     }
   }
 
   async getOldStayAbroadList(auth: Auth): Promise<StayAbroad[]> {
     try {
-      //TODOx disabled while this endpoint is (unecessarily?) requiring applicationId
-      // const res = await this.residenceAbroadApiWithAuth(
-      //   auth,
-      // ).apiResidenceAbroadGetAllApplicationIdGet({ applicationId: '' })
+      const res = await this.residenceAbroadApiWithAuth(
+        auth,
+      ).apiResidenceAbroadGetAllGet()
 
-      // return res.map((item) => ({
-      //   countryId: item.countryId!,
-      //   countryName: item.countryName!,
-      //   dateFrom: item.dateFrom,
-      //   dateTo: item.dateTo,
-      //   purposeOfStay: item.purposeOfStay,
-      // }))
-      return []
+      return res.map((item) => ({
+        countryId: item.countryId?.toString() || '', //TODOx string not int
+        countryName: item.countryName!,
+        dateFrom: item.dateFrom,
+        dateTo: item.dateTo,
+        purposeOfStay: item.purposeOfStay,
+      }))
     } catch (error) {
-      this.logger.error(
-        'Error when trying to get residence abroad from UTL',
-        error,
-      )
-      throw new Error('Error when trying to get residence abroad from UTL')
+      const errorMsg = 'Error when trying to get residence abroad from UTL'
+      this.logger.error(errorMsg, error)
+      throw new Error(errorMsg)
     }
   }
 
   async getOldPassportItem(auth: Auth): Promise<Passport | undefined> {
     try {
-      //TODOx disabled while this endpoint is (unecessarily?) requiring applicationId
-      // const res = await this.travelDocumentApiWithAuth(
-      //   auth,
-      // ).apiTravelDocumentGetAllApplicationIdGet({ applicationId: '' })
+      const res = await this.travelDocumentApiWithAuth(
+        auth,
+      ).apiTravelDocumentGetAllGet()
 
-      // // Select the most recent entry
-      // const newestItem = res.sort(
-      //   (a, b) => (b.createdOn?.getTime() || 0) - (a.createdOn?.getTime() || 0),
-      // )[0]
+      // Select the most recent entry
+      const newestItem = res.sort(
+        (a, b) => (b.createdOn?.getTime() || 0) - (a.createdOn?.getTime() || 0),
+      )[0]
 
-      // return (
-      //   newestItem && {
-      //     dateOfIssue: newestItem.dateOfIssue,
-      //     dateOfExpiry: newestItem.dateOfExpiry,
-      //     name: newestItem.name,
-      //     passportNo: newestItem.travelDocumentNo,
-      //     passportTypeId: newestItem.travelDocumentTypeId,
-      //     passportTypeName: newestItem.travelDocumentTypeName,
-      //     issuingCountryId: newestItem.issuingCountryId,
-      //     issuingCountryName: newestItem.issuingCountryName,
-      //   }
-      // )
-      return undefined
-    } catch (error) {
-      this.logger.error(
-        'Error when trying to get users travel document from UTL',
-        error,
+      return (
+        newestItem && {
+          dateOfIssue: newestItem.dateOfIssue,
+          dateOfExpiry: newestItem.dateOfExpiry,
+          name: newestItem.name,
+          passportNo: newestItem.travelDocumentNo,
+          passportTypeId: newestItem.travelDocumentTypeId,
+          passportTypeName: newestItem.travelDocumentTypeName,
+          issuingCountryId: newestItem.issuingCountryId?.toString(), //TODOx string not int
+          issuingCountryName: newestItem.issuingCountryName,
+        }
       )
-      throw new Error('Error when trying to get users travel document from UTL')
+    } catch (error) {
+      const errorMsg = 'Error when trying to get users travel document from UTL'
+      this.logger.error(errorMsg, error)
+      throw new Error(errorMsg)
     }
   }
 
-  async getOldForeignCriminalRecordFileList(
+  async getCitizenshipResidenceConditionInfo(
     auth: Auth,
-  ): Promise<ForeignCriminalRecordFile[]> {
-    return [] // TODOx missing endpoint for GET foreign criminal record
-  }
-
-  async getCitizenshipResidenceConditions(
-    auth: Auth,
-  ): Promise<ResidenceCondition[]> {
+  ): Promise<ResidenceConditionInfo> {
     try {
       const res = await this.applicantResidenceConditionApiWithAuth(
         auth,
-      ).apiApplicantResidenceConditionGetAllGet()
+      ).apiApplicantResidenceConditionGetGet()
 
-      return res.map((item) => ({
-        conditionId: item.residenceConditionId!,
-        conditionName: item.residenceConditionName!,
-        isTypeMaritalStatus: item.isTypeMarried || false,
-      }))
+      return {
+        hasValid: res.isAnyResConValid || false,
+        hasOnlyTypeMaritalStatus:
+          res.isOnlyMarriedOrCohabitationWithISCitizen || false,
+      }
     } catch (error) {
-      this.logger.error(
-        'Error when trying to get citizenship residence conditions from UTL',
-        error,
-      )
-      throw new Error(
-        'Error when trying to get citizenship residence conditions from UTL',
-      )
+      const errorMsg =
+        'Error when trying to get citizenship residence conditions from UTL'
+      this.logger.error(errorMsg, error)
+      throw new Error(errorMsg)
     }
   }
 
@@ -252,99 +233,108 @@ class DirectorateOfImmigrationClient {
     auth: User,
     application: CitizenshipApplication,
   ): Promise<void> {
-    let applicationId: string
+    // applicant: create/update applicant
+    try {
+      const applicantOld = await this.applicantApiWithAuth(
+        auth,
+      ).applicantGetGet()
+      if (!applicantOld) {
+        await this.applicantApiWithAuth(auth).applicantPost({
+          applicantNewModel: {
+            icelandicIDNO: auth.nationalId,
+            givenName: application.givenName,
+            surName: application.familyName,
+            emailAddress: application.email,
+            telephone: application.phone,
+            addressCity: application.address,
+          },
+        })
+      } else {
+        await this.applicantApiWithAuth(auth).applicantPatch({
+          applicantEditModel: {
+            emailAddress: application.email,
+            telephone: application.phone,
+          },
+        })
+      }
+    } catch (error) {
+      const errorMsg =
+        'Error when trying to post/patch citizenship applicant to UTL'
+      this.logger.error(errorMsg, error)
+      throw new Error(errorMsg)
+    }
 
-    // create application for applicant
+    // applicant: post static stata
+    let staticDataId: string
+    try {
+      staticDataId = await this.staticDataApiWithAuth(auth).apiStaticDataPost({
+        staticDataNewModel: {
+          ssn: auth.nationalId,
+          name: application.givenName + ' ' + application.familyName,
+          address: application.address,
+          postalCode: application.postalCode,
+          municipality: application.city,
+          phone: application.phone,
+          nationality: application.citizenshipCode,
+          dateOfDomicileRegistration:
+            application.residenceInIcelandLastChangeDate?.toISOString(),
+          countryOfBirth: application.birthCountry,
+          maritalStatus: application.maritalStatusCode,
+          dateOfMarriage: application.dateOfMaritalStatus?.toISOString(),
+          spouseSSN: application.spouse?.nationalId,
+          spouseName:
+            application.spouse &&
+            application.spouse.givenName + ' ' + application.spouse.familyName,
+          spouseCountryOfBirth: application.spouse?.birthCountry,
+          spouseCitizenship: application.spouse?.citizenshipCode,
+          spouseAddress: application.spouse?.address,
+          spouseAddressMismatchReason:
+            application.spouse?.reasonDifferentAddress,
+          applicantIsChildOfIcelandicCitizen: application.parents.length > 0,
+          parent1SSN: application.parents[0]?.nationalId,
+          parent1Name:
+            application.parents[0] &&
+            application.parents[0]?.givenName +
+              ' ' +
+              application.parents[0]?.familyName,
+          parent2SSN: application.parents[1]?.nationalId,
+          parent2Name:
+            application.parents[1] &&
+            application.parents[1]?.givenName +
+              ' ' +
+              application.parents[1]?.familyName,
+          applicantIsFormerIcelandicCitizen:
+            application.isFormerIcelandicCitizen,
+        },
+      })
+    } catch (error) {
+      const errorMsg =
+        'Error when trying to post citizenship static data to UTL'
+      this.logger.error(errorMsg, error)
+      throw new Error(errorMsg)
+    }
+
+    // applicant: create application
+    let applicationId: string
     try {
       applicationId = await this.applicationApiWithAuth(
         auth,
-      ).apiApplicationCitizenshipPost()
+      ).apiApplicationCitizenshipPost({
+        applicationCitizienshipNewModel: {
+          staticDataId,
+        },
+      })
 
       // clean applicationId and remove double quotes that is added by the openapi generator
       applicationId = applicationId.replace('"', '').replace('"', '')
     } catch (error) {
-      this.logger.error(
-        'Error when trying to post citizenship application to UTL',
-        error,
-      )
-      throw new Error(
-        'Error when trying to post citizenship application to UTL',
-      )
+      const errorMsg =
+        'Error when trying to post citizenship application to UTL'
+      this.logger.error(errorMsg, error)
+      throw new Error(errorMsg)
     }
 
-    // submit basic information about applicant
-    // TODOx missing fields in POST applicant endpoint
-    try {
-      await this.applicantApiWithAuth(auth).applicantPost({
-        applicantNewModel: {
-          icelandicIDNO: auth.nationalId,
-          givenName: application.givenName,
-          surName: application.familyName,
-          emailAddress: application.email,
-          telephone: application.phone,
-          // address: application.address,
-          // postalCode: application.postalCode,
-          addressCity: application.city,
-          // citizenshipCode: application.citizenshipCode,
-          // residenceInIcelandLastChangeDate: application.residenceInIcelandLastChangeDate,
-          // birthCountry: application.birthCountry,
-          // isFormerIcelandicCitizen: application.isFormerIcelandicCitizen,
-        },
-      })
-    } catch (error) {
-      this.logger.error(
-        'Error when trying to post citizenship applicant to UTL',
-        error,
-      )
-      throw new Error('Error when trying to post citizenship applicant to UTL')
-    }
-
-    // submit information about spouse
-    if (application.spouse) {
-      try {
-        await this.spouseApiWithAuth(auth).apiSpousePost({
-          spouseNewModel: {
-            maritalStatusId: 1, //TODOx should receive string not int (use application.maritalStatusCode)
-            dateOfMarriage: application.dateOfMaritalStatus,
-            icelandicidIDNO: application.spouse.nationalId,
-            givenName: application.spouse.givenName,
-            surName: application.spouse.familyName,
-            applicantAddress: application.address,
-            spouseAddress: application.spouse.address,
-            explanation: application.spouse.reasonDifferentAddress,
-            nationalityId: 1, //TODOx should receive string not int (use application.spouseCitizenshipCode?)
-          },
-        })
-      } catch (error) {
-        this.logger.error(
-          'Error when trying to post citizenship spouse to UTL',
-          error,
-        )
-        throw new Error('Error when trying to post citizenship spouse to UTL')
-      }
-    }
-
-    // submit information about parents with Icelandic citizenship
-    const parents = application.parents
-    for (let i = 0; i < parents.length; i++) {
-      try {
-        await this.parentApiWithAuth(auth).apiParentPost({
-          parentNewModel: {
-            icelandicIDNO: parents[i].nationalId,
-            givenName: parents[i].givenName,
-            surName: parents[i].familyName,
-          },
-        })
-      } catch (error) {
-        this.logger.error(
-          'Error when trying to post citizenship parent to UTL',
-          error,
-        )
-        throw new Error('Error when trying to post citizenship parent to UTL')
-      }
-    }
-
-    // submit information about countries of residence
+    // applicant: submit information about countries of residence
     const countriesOfResidence = application.countriesOfResidence
     for (let i = 0; i < countriesOfResidence.length; i++) {
       try {
@@ -352,182 +342,279 @@ class DirectorateOfImmigrationClient {
           auth,
         ).apiCountryOfResidencePost({
           countryOfResidenceNewModel: {
-            countryId: countriesOfResidence[i].countryId,
+            countryId: parseInt(countriesOfResidence[i].countryId), //TODOx string not int
           },
         })
       } catch (error) {
-        this.logger.error(
-          'Error when trying to post citizenship country of residence to UTL',
-          error,
-        )
-        throw new Error(
-          'Error when trying to post citizenship country of residence to UTL',
-        )
+        const errorMsg =
+          'Error when trying to post citizenship country of residence to UTL'
+        this.logger.error(errorMsg, error)
+        throw new Error(errorMsg)
       }
     }
 
-    // submit information about stays abroad
+    // applicant: submit information about stays abroad
     const staysAbroad = application.staysAbroad
     for (let i = 0; i < staysAbroad.length; i++) {
       try {
         await this.residenceAbroadApiWithAuth(
           auth,
         ).apiResidenceAbroadApplicationIdPost({
-          applicationId: applicationId,
+          applicationId,
           residenceAbroadNewModel: {
-            countryId: staysAbroad[i].countryId,
+            countryId: parseInt(staysAbroad[i].countryId), //TODOx string not int
             dateFrom: staysAbroad[i].dateFrom,
             dateTo: staysAbroad[i].dateTo,
             purposeOfStay: staysAbroad[i].purpose,
           },
         })
       } catch (error) {
-        this.logger.error(
-          'Error when trying to post citizenship residence abroad to UTL',
-          error,
-        )
-        throw new Error(
-          'Error when trying to post citizenship residence abroad to UTL',
-        )
+        const errorMsg =
+          'Error when trying to post citizenship residence abroad to UTL'
+        this.logger.error(errorMsg, error)
+        throw new Error(errorMsg)
       }
     }
 
-    // submit information about travel document (passport) for applicant
+    // applicant: submit information about travel document (passport)
     try {
       await this.travelDocumentApiWithAuth(
         auth,
       ).apiTravelDocumentApplicationIdPost({
-        applicationId: applicationId,
+        applicationId,
         travelDocumentNewModel: {
           dateOfExpiry: application.passport.dateOfExpiry,
           dateOfIssue: application.passport.dateOfIssue,
-          issuingCountryId: application.passport.countryOfIssuerId,
+          issuingCountryId: parseInt(application.passport.countryOfIssuerId), //TODOx string not int
           name: application.fullName,
           travelDocumentNo: application.passport.passportNumber,
           travelDocumentTypeId: application.passport.passportTypeId,
         },
       })
     } catch (error) {
-      this.logger.error(
-        'Error when trying to post citizenship travel document to UTL',
-        error,
-      )
-      throw new Error(
-        'Error when trying to post citizenship travel document to UTL',
-      )
+      const errorMsg =
+        'Error when trying to post citizenship travel document to UTL'
+      this.logger.error(errorMsg, error)
+      throw new Error(errorMsg)
     }
 
-    // submit all other supporting documents for applicant
-    //TODOx missing endpoint for supporting documents (applicant)
-    // try {
-    //   await this.supportingDocumentsApiWithAuth(auth).post({
-    //     birthCertificate:
-    //       application.supportingDocuments.birthCertificate?.base64,
-    //     subsistenceCertificate:
-    //       application.supportingDocuments.subsistenceCertificate.base64,
-    //     subsistenceCertificateForTown:
-    //       application.supportingDocuments.subsistenceCertificateForTown.base64,
-    //     certificateOfLegalResidenceHistory:
-    //       application.supportingDocuments.certificateOfLegalResidenceHistory
-    //         .base64,
-    //     icelandicTestCertificate:
-    //       application.supportingDocuments.icelandicTestCertificate.base64,
-    //     criminalRecord: application.supportingDocuments.criminalRecordList.map(
-    //       (x) => x.base64,
-    //     ),
-    //   })
-    // } catch (error) {
-    //   this.logger.error(
-    //     'Error when trying to post citizenship supporting document to UTL',
-    //     error,
-    //   )
-    //   throw new Error(
-    //     'Error when trying to post citizenship supporting document to UTL',
-    //   )
-    // }
+    // applicant: submit travel document and other supporting attachment
+    const attachmentList: {
+      attachmentType: AttachmentType
+      fileList: { base64: string; countryId?: string }[]
+    }[] = [
+      {
+        attachmentType: AttachmentType.Passport,
+        fileList: application.passport.file || [],
+      },
+      {
+        attachmentType: AttachmentType.BirtCertificate,
+        fileList: application.supportingDocuments.birthCertificate || [],
+      },
+      {
+        attachmentType: AttachmentType.ProofOfFinancialCapabilityApplicant,
+        fileList: application.supportingDocuments.subsistenceCertificate || [],
+      },
+      {
+        attachmentType: AttachmentType.ProofOfFinancialCapabilityMunicipality,
+        fileList:
+          application.supportingDocuments.subsistenceCertificateForTown || [],
+      },
+      {
+        attachmentType: AttachmentType.DomicileHistory,
+        fileList:
+          application.supportingDocuments.certificateOfLegalResidenceHistory ||
+          [],
+      },
+      {
+        attachmentType: AttachmentType.ConfirmationIcelandicLanguage,
+        fileList:
+          application.supportingDocuments.icelandicTestCertificate || [],
+      },
+      {
+        attachmentType: AttachmentType.CriminalRecord,
+        fileList: application.supportingDocuments.criminalRecordList || [],
+      },
+    ]
+    for (let j = 0; j < attachmentList.length; j++) {
+      const file = attachmentList[j]
+      try {
+        for (let k = 0; k < file.fileList.length; k++) {
+          await this.applicationAttachmentApiWithAuth(
+            auth,
+          ).apiApplicationAttachmentPost({
+            applicationId,
+            applicationAttachmentNewModel: {
+              attachmentType: file.attachmentType,
+              fileName: file.attachmentType.toString(),
+              base64Contents: file.fileList[k].base64,
+              countryCode: file.fileList[k].countryId,
+            },
+          })
+        }
+      } catch (error) {
+        const errorMsg = `Error when trying to post citizenship attachment document (${file.attachmentType.toString()}) to UTL`
+        this.logger.error(errorMsg, error)
+        throw new Error(errorMsg)
+      }
+    }
 
-    // create application and submit information for selected children
-    // const selectedChildren = application.selectedChildren
-    // for (let i = 0; i < selectedChildren.length; i++) {
-    //   const childNationalId = selectedChildren[i]
-    //   const child = application.children.find(
-    //     (c) => c.nationalId === childNationalId,
-    //   )
+    // selected children: create application and submit information
+    const selectedChildren = application.selectedChildren
+    for (let i = 0; i < selectedChildren.length; i++) {
+      const childNationalId = selectedChildren[i]
+      const child = application.children.find(
+        (c) => c.nationalId === childNationalId,
+      )
 
-    //   // create application for child
-    //   try {
-    //     const childApplicationId = await this.applicationApiWithAuth(
-    //       auth,
-    //     ).apiApplicationCitizenshipSsnrPost({
-    //       ssnr: childNationalId,
-    //     })
-    //   } catch (error) {
-    //     this.logger.error(
-    //       'Error when trying to post citizenship child application to UTL',
-    //       error,
-    //     )
-    //     throw new Error(
-    //       'Error when trying to post citizenship child application to UTL',
-    //     )
-    //   }
+      if (!child) {
+        continue
+      }
 
-    //   // submit information about travel document (passport) for child
-    //   const childPassport = application.childrenPassport.find(
-    //     (c) => c.nationalId === childNationalId,
-    //   )
-    //   if (childPassport) {
-    //     try {
-    //       await this.travelDocumentApiWithAuth(
-    //         auth,
-    //       ).apiTravelDocumentApplicationIdPost({
-    //         applicationId: childApplicationId,
-    //         travelDocumentNewModel: {
-    //           dateOfExpiry: childPassport.dateOfExpiry,
-    //           dateOfIssue: childPassport.dateOfIssue,
-    //           issuingCountryId: childPassport.countryIdOfIssuer,
-    //           name: child?.fullName,
-    //           travelDocumentNo: childPassport.passportNumber,
-    //           travelDocumentTypeId: childPassport.passportTypeId,
-    //         },
-    //       })
-    //     } catch (error) {
-    //       this.logger.error(
-    //         'Error when trying to post citizenship child passport to UTL',
-    //         error,
-    //       )
-    //       throw new Error(
-    //         'Error when trying to post citizenship child passport to UTL',
-    //       )
-    //     }
-    //   }
+      // child: create applicant
+      try {
+        const applicantOld = await this.applicantApiWithAuth(
+          auth,
+        ).applicantGetGet()
+        if (!applicantOld) {
+          await this.applicantApiWithAuth(auth).applicantNewChildPost({
+            applicantNewModel: {
+              icelandicIDNO: child.nationalId,
+              givenName: child.givenName,
+              surName: child.familyName,
+              //TODOx
+              // emailAddress: child.email,
+              // telephone: child.phone,
+              // addressCity: child.address,
+            },
+          })
+        } else {
+          // TODOx
+          console.log('patch applicant child')
+        }
+      } catch (error) {
+        const errorMsg =
+          'Error when trying to post citizenship child applicant to UTL'
+        this.logger.error(errorMsg, error)
+        throw new Error(errorMsg)
+      }
 
-    //   // submit all other supporting documents for child
-    //   //TODOx missing endpoint for supporting documents (child)
-    //   const childSupportingDocuments = application.childrenSupportingDocuments.find(
-    //     (c) => c.nationalId === childNationalId,
-    //   )
-    //   if (childSupportingDocuments) {
-    //     try {
-    //       await this.supportingDocumentsApiWithAuth(auth).post({
-    //         applicationId: childApplicationId,
-    //         birthCertificate: childSupportingDocuments.birthCertificate.base64,
-    //         writtenConsentFromChild:
-    //           childSupportingDocuments.writtenConsentFromChild?.base64,
-    //         writtenConsentFromOtherParent:
-    //           childSupportingDocuments.writtenConsentFromOtherParent?.base64,
-    //         custodyDocuments: childSupportingDocuments.custodyDocuments.base64,
-    //       })
-    //     } catch (error) {
-    //       this.logger.error(
-    //         'Error when trying to post citizenship child supporting document to UTL',
-    //         error,
-    //       )
-    //       throw new Error(
-    //         'Error when trying to post citizenship child supporting document to UTL',
-    //       )
-    //     }
-    //   }
-    // }
+      // child: post static stata
+      let childStaticDataId: string
+      try {
+        childStaticDataId = await this.staticDataApiWithAuth(
+          auth,
+        ).apiStaticDataPost({
+          staticDataNewModel: {
+            ssn: child.nationalId,
+            name: child.givenName + ' ' + child.familyName,
+          },
+        })
+      } catch (error) {
+        const errorMsg =
+          'Error when trying to post citizenship child static data to UTL'
+        this.logger.error(errorMsg, error)
+        throw new Error(errorMsg)
+      }
+
+      // child: create application
+      let childApplicationId: string
+      try {
+        childApplicationId = await this.applicationApiWithAuth(
+          auth,
+        ).apiApplicationCitizenshipSsnrPost({
+          ssnr: childNationalId,
+          applicationCitizienshipNewModel: {
+            staticDataId: childStaticDataId,
+          },
+        })
+      } catch (error) {
+        const errorMsg =
+          'Error when trying to post citizenship child application to UTL'
+        this.logger.error(errorMsg, error)
+        throw new Error(errorMsg)
+      }
+
+      // child: submit information about travel document (passport)
+      const childPassportInfo = application.childrenPassport.find(
+        (c) => c.nationalId === childNationalId,
+      )
+      if (childPassportInfo) {
+        try {
+          await this.travelDocumentApiWithAuth(
+            auth,
+          ).apiTravelDocumentApplicationIdPost({
+            applicationId: childApplicationId,
+            travelDocumentNewModel: {
+              dateOfExpiry: childPassportInfo.dateOfExpiry,
+              dateOfIssue: childPassportInfo.dateOfIssue,
+              issuingCountryId: parseInt(childPassportInfo.countryIdOfIssuer), //TODOx string not int
+              name: child?.fullName,
+              travelDocumentNo: childPassportInfo.passportNumber,
+              travelDocumentTypeId: childPassportInfo.passportTypeId,
+            },
+          })
+        } catch (error) {
+          const errorMsg =
+            'Error when trying to post citizenship child passport to UTL'
+          this.logger.error(errorMsg, error)
+          throw new Error(errorMsg)
+        }
+      }
+
+      // child: submit travel document and other supporting attachment
+      const childSupportingDocuments =
+        application.childrenSupportingDocuments.find(
+          (c) => c.nationalId === childNationalId,
+        )
+      const childAttachmentList: {
+        attachmentType: AttachmentType
+        fileList: { base64: string }[]
+      }[] = [
+        {
+          attachmentType: AttachmentType.Passport,
+          fileList: childPassportInfo?.file || [],
+        },
+        {
+          attachmentType: AttachmentType.BirtCertificate,
+          fileList: childSupportingDocuments?.birthCertificate || [],
+        },
+        {
+          attachmentType: AttachmentType.WrittenConfirmationChild,
+          fileList: childSupportingDocuments?.writtenConsentFromChild || [],
+        },
+        {
+          attachmentType: AttachmentType.ConfirmationOtherParent,
+          fileList:
+            childSupportingDocuments?.writtenConsentFromOtherParent || [],
+        },
+        {
+          attachmentType: AttachmentType.CustodyDocuments,
+          fileList: childSupportingDocuments?.custodyDocuments || [],
+        },
+      ]
+      for (let j = 0; j < childAttachmentList.length; j++) {
+        const file = childAttachmentList[j]
+        try {
+          for (let k = 0; k < file.fileList.length; k++) {
+            await this.applicationAttachmentApiWithAuth(
+              auth,
+            ).apiApplicationAttachmentPost({
+              applicationId: childApplicationId,
+              applicationAttachmentNewModel: {
+                attachmentType: file.attachmentType,
+                fileName: file.attachmentType.toString(),
+                base64Contents: file.fileList[k].base64,
+              },
+            })
+          }
+        } catch (error) {
+          const errorMsg = `Error when trying to post citizenship child attachment document (${file.attachmentType.toString()}) to UTL`
+          this.logger.error(errorMsg, error)
+          throw new Error(errorMsg)
+        }
+      }
+    }
   }
 
   // Residence permit renewal:
@@ -548,13 +635,10 @@ class DirectorateOfImmigrationClient {
         isWorkPermitTypeSpecial: false,
       }
     } catch (error) {
-      this.logger.error(
-        'Error when trying to get current residence permit info from UTL',
-        error,
-      )
-      throw new Error(
-        'Villa kom upp þegar reynt var að sækja upplýsingar um núverandi dvalarleyfi þitt.',
-      )
+      const errorMsg =
+        'Error when trying to get current residence permit info from UTL'
+      this.logger.error(errorMsg, error)
+      throw new Error(errorMsg)
     }
   }
 
@@ -579,13 +663,10 @@ class DirectorateOfImmigrationClient {
         },
       }
     } catch (error) {
-      this.logger.error(
-        'Error when trying to get current residence permit info from UTL',
-        error,
-      )
-      throw new Error(
-        'Villa kom upp þegar reynt var að sækja upplýsingar um núverandi dvalarleyfi þitt.',
-      )
+      const errorMsg =
+        'Error when trying to get current residence permit info from UTL'
+      this.logger.error(errorMsg, error)
+      throw new Error(errorMsg)
     }
   }
 
@@ -625,13 +706,10 @@ class DirectorateOfImmigrationClient {
         },
       ]
     } catch (error) {
-      this.logger.error(
-        'Error when trying to get current residence permit info from UTL',
-        error,
-      )
-      throw new Error(
-        'Villa kom upp þegar reynt var að sækja upplýsingar um núverandi dvalarleyfi þitt.',
-      )
+      const errorMsg =
+        'Error when trying to get current residence permit info from UTL'
+      this.logger.error(errorMsg, error)
+      throw new Error(errorMsg)
     }
   }
 
@@ -643,18 +721,17 @@ class DirectorateOfImmigrationClient {
       ).apiCriminalRecordGetAllGet()
 
       return res.map((item) => ({
-        countryId: item.countryId!,
+        countryId: item.countryId?.toString() || '', //TODOx string not int
         countryName: item.countryName!,
         date: item.when ? new Date(item.when) : null,
         offenceDescription: item.offence,
         punishmentDescription: item.punishment,
       }))
     } catch (error) {
-      this.logger.error(
-        'Error when trying to get old criminal record info from UTL',
-        error,
-      )
-      throw new Error('Villa kom upp þegar reynt var að sækja sakaferill.')
+      const errorMsg =
+        'Error when trying to get old criminal record info from UTL'
+      this.logger.error(errorMsg, error)
+      throw new Error(errorMsg)
     }
   }
 
@@ -675,13 +752,9 @@ class DirectorateOfImmigrationClient {
         }
       )
     } catch (error) {
-      this.logger.error(
-        'Error when trying to get old study info from UTL',
-        error,
-      )
-      throw new Error(
-        'Villa kom upp þegar reynt var að sækja tegund vegabréfs.',
-      )
+      const errorMsg = 'Error when trying to get old study info from UTL'
+      this.logger.error(errorMsg, error)
+      throw new Error(errorMsg)
     }
   }
 

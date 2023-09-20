@@ -98,8 +98,7 @@ export const PassportReview: FC<Props> = ({
               {`${formatMessage(
                 supportingDocuments.labels.passport.publisher,
               )}: ${
-                countryOptions.find((x) => x.id === parseInt(countryOfIssuerId))
-                  ?.name
+                countryOptions.find((x) => x.id === countryOfIssuerId)?.name
               }`}
             </Text>
           </GridColumn>

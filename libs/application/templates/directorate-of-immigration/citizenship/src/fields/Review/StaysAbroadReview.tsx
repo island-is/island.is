@@ -46,7 +46,7 @@ export const StaysAbroadReview: FC<Props> = ({
           answers?.staysAbroad?.selectedAbroadCountries?.length > 0 ? (
             answers?.staysAbroad?.selectedAbroadCountries?.map((country) => {
               const countryInfo = countryOptions.filter(
-                (z) => z.id === parseInt(country.countryId),
+                (z) => z.id === country.countryId,
               )[0]
               return <GridColumn span="1/2">{countryInfo.name}</GridColumn>
             })

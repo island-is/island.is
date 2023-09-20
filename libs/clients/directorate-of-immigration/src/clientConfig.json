@@ -168,7 +168,7 @@
         }
       }
     },
-    "/api/ApplicantResidenceCondition/GetAll": {
+    "/api/ApplicantResidenceCondition/Get": {
       "get": {
         "tags": ["ApplicantResidenceCondition"],
         "responses": {
@@ -177,26 +177,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ApplicantResidenceConditionViewModel"
-                  }
+                  "$ref": "#/components/schemas/ApplicantResidenceConditionViewModel"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ApplicantResidenceConditionViewModel"
-                  }
+                  "$ref": "#/components/schemas/ApplicantResidenceConditionViewModel"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ApplicantResidenceConditionViewModel"
-                  }
+                  "$ref": "#/components/schemas/ApplicantResidenceConditionViewModel"
                 }
               }
             }
@@ -207,6 +198,25 @@
     "/api/Application/Citizenship": {
       "post": {
         "tags": ["Application"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationCitizienshipNewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationCitizienshipNewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationCitizienshipNewModel"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Success",
@@ -245,6 +255,25 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationCitizienshipNewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationCitizienshipNewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationCitizienshipNewModel"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Success",
@@ -398,24 +427,34 @@
         }
       }
     },
-    "/api/Children": {
+    "/api/ApplicationAttachment": {
       "post": {
-        "tags": ["Children"],
+        "tags": ["ApplicationAttachment"],
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ChildrenNewModel"
+                "$ref": "#/components/schemas/ApplicationAttachmentNewModel"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/ChildrenNewModel"
+                "$ref": "#/components/schemas/ApplicationAttachmentNewModel"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/ChildrenNewModel"
+                "$ref": "#/components/schemas/ApplicationAttachmentNewModel"
               }
             }
           }
@@ -444,9 +483,20 @@
         }
       }
     },
-    "/api/Children/GetAll": {
+    "/api/ApplicationAttachment/GetAll/{applicationId}": {
       "get": {
-        "tags": ["Children"],
+        "tags": ["ApplicationAttachment"],
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -455,7 +505,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ChildrenViewModel"
+                    "$ref": "#/components/schemas/ApplicationAttachmentViewModel"
                   }
                 }
               },
@@ -463,7 +513,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ChildrenViewModel"
+                    "$ref": "#/components/schemas/ApplicationAttachmentViewModel"
                   }
                 }
               },
@@ -471,7 +521,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ChildrenViewModel"
+                    "$ref": "#/components/schemas/ApplicationAttachmentViewModel"
                   }
                 }
               }
@@ -924,20 +974,9 @@
         }
       }
     },
-    "/api/ResidenceAbroad/GetAll/{applicationId}": {
+    "/api/ResidenceAbroad/GetAll": {
       "get": {
         "tags": ["ResidenceAbroad"],
-        "parameters": [
-          {
-            "name": "applicationId",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -1021,6 +1060,53 @@
               "text/json": {
                 "schema": {
                   "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ResidenceAbroad/GetAll/{applicationId}": {
+      "get": {
+        "tags": ["ResidenceAbroad"],
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResidenceAbroadViewModel"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResidenceAbroadViewModel"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResidenceAbroadViewModel"
+                  }
                 }
               }
             }
@@ -1158,24 +1244,24 @@
         }
       }
     },
-    "/api/Spouse": {
+    "/api/StaticData": {
       "post": {
-        "tags": ["Spouse"],
+        "tags": ["StaticData"],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SpouseNewModel"
+                "$ref": "#/components/schemas/StaticDataNewModel"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/SpouseNewModel"
+                "$ref": "#/components/schemas/StaticDataNewModel"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/SpouseNewModel"
+                "$ref": "#/components/schemas/StaticDataNewModel"
               }
             }
           }
@@ -1204,9 +1290,9 @@
         }
       }
     },
-    "/api/Spouse/GetAll": {
+    "/api/StaticData/GetAll": {
       "get": {
-        "tags": ["Spouse"],
+        "tags": ["StaticData"],
         "responses": {
           "200": {
             "description": "Success",
@@ -1215,7 +1301,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/SpouseViewModel"
+                    "$ref": "#/components/schemas/StaticDataViewModel"
                   }
                 }
               },
@@ -1223,7 +1309,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/SpouseViewModel"
+                    "$ref": "#/components/schemas/StaticDataViewModel"
                   }
                 }
               },
@@ -1231,7 +1317,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/SpouseViewModel"
+                    "$ref": "#/components/schemas/StaticDataViewModel"
                   }
                 }
               }
@@ -1322,20 +1408,9 @@
         }
       }
     },
-    "/api/TravelDocument/GetAll/{applicationId}": {
+    "/api/TravelDocument/GetAll": {
       "get": {
         "tags": ["TravelDocument"],
-        "parameters": [
-          {
-            "name": "applicationId",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -1425,6 +1500,53 @@
           }
         }
       }
+    },
+    "/api/TravelDocument/GetAll/{applicationId}": {
+      "get": {
+        "tags": ["TravelDocument"],
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TravelDocumentViewModel"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TravelDocumentViewModel"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TravelDocumentViewModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1476,19 +1598,10 @@
       "ApplicantResidenceConditionViewModel": {
         "type": "object",
         "properties": {
-          "applicantResidenceConditionId": {
-            "type": "string",
-            "nullable": true
+          "isAnyResConValid": {
+            "type": "boolean"
           },
-          "residenceConditionId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "residenceConditionName": {
-            "type": "string",
-            "nullable": true
-          },
-          "isTypeMarried": {
+          "isOnlyMarriedOrCohabitationWithISCitizen": {
             "type": "boolean"
           }
         },
@@ -1579,9 +1692,69 @@
         },
         "additionalProperties": false
       },
+      "ApplicationAttachmentNewModel": {
+        "type": "object",
+        "properties": {
+          "attachmentType": {
+            "$ref": "#/components/schemas/AttachmentType"
+          },
+          "fileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "base64Contents": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryCode": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApplicationAttachmentViewModel": {
+        "type": "object",
+        "properties": {
+          "attachmentType": {
+            "$ref": "#/components/schemas/AttachmentType"
+          },
+          "fileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "base64Contents": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "applicationAttachmentId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApplicationCitizienshipNewModel": {
+        "type": "object",
+        "properties": {
+          "staticDataId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ApplicationNewModel": {
         "type": "object",
         "properties": {
+          "staticDataId": {
+            "type": "string",
+            "nullable": true
+          },
           "caseTypeId": {
             "type": "integer",
             "format": "int32"
@@ -1637,6 +1810,10 @@
             "type": "string",
             "nullable": true
           },
+          "staticDataId": {
+            "type": "string",
+            "nullable": true
+          },
           "applicationId": {
             "type": "string",
             "nullable": true
@@ -1653,47 +1830,21 @@
         },
         "additionalProperties": false
       },
-      "ChildrenNewModel": {
-        "type": "object",
-        "properties": {
-          "nationalityId": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "givenName": {
-            "type": "string",
-            "nullable": true
-          },
-          "surName": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ChildrenViewModel": {
-        "type": "object",
-        "properties": {
-          "nationalityId": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "givenName": {
-            "type": "string",
-            "nullable": true
-          },
-          "surName": {
-            "type": "string",
-            "nullable": true
-          },
-          "childrenId": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
+      "AttachmentType": {
+        "enum": [
+          "Passport",
+          "PassportOtherAttachment",
+          "BirtCertificate",
+          "ProofOfFinancialCapabilityApplicant",
+          "ProofOfFinancialCapabilityMunicipality",
+          "DomicileHistory",
+          "ConfirmationIcelandicLanguage",
+          "WrittenConfirmationChild",
+          "ConfirmationOtherParent",
+          "CustodyDocuments",
+          "CriminalRecord"
+        ],
+        "type": "string"
       },
       "ClassificationDetailViewModel": {
         "type": "object",
@@ -2000,35 +2151,75 @@
           "residenceAbroadId": {
             "type": "string",
             "nullable": true
+          },
+          "applicationId": {
+            "type": "string",
+            "nullable": true
+          },
+          "applicantId": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "SpouseNewModel": {
+      "StaticDataNewModel": {
+        "required": ["name", "ssn"],
         "type": "object",
         "properties": {
-          "maritalStatusId": {
-            "type": "integer",
-            "format": "int32"
+          "ssn": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "name": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "municipality": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "nationality": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateOfDomicileRegistration": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryOfBirth": {
+            "type": "string",
+            "nullable": true
+          },
+          "maritalStatus": {
+            "type": "string",
+            "nullable": true
           },
           "dateOfMarriage": {
             "type": "string",
-            "format": "date-time",
             "nullable": true
           },
-          "icelandicidIDNO": {
+          "spouseSSN": {
             "type": "string",
             "nullable": true
           },
-          "givenName": {
+          "spouseName": {
             "type": "string",
             "nullable": true
           },
-          "surName": {
+          "spouseCountryOfBirth": {
             "type": "string",
             "nullable": true
           },
-          "applicantAddress": {
+          "spouseCitizenship": {
             "type": "string",
             "nullable": true
           },
@@ -2036,43 +2227,98 @@
             "type": "string",
             "nullable": true
           },
-          "explanation": {
+          "spouseAddressMismatchReason": {
             "type": "string",
             "nullable": true
           },
-          "nationalityId": {
-            "type": "integer",
-            "format": "int32",
+          "parent1SSN": {
+            "type": "string",
+            "nullable": true
+          },
+          "parent1Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "parent2SSN": {
+            "type": "string",
+            "nullable": true
+          },
+          "parent2Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "applicantIsChildOfIcelandicCitizen": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "applicantIsFormerIcelandicCitizen": {
+            "type": "boolean",
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "SpouseViewModel": {
+      "StaticDataViewModel": {
+        "required": ["name", "ssn"],
         "type": "object",
         "properties": {
-          "maritalStatusId": {
-            "type": "integer",
-            "format": "int32"
+          "ssn": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "name": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "municipality": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "nationality": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateOfDomicileRegistration": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryOfBirth": {
+            "type": "string",
+            "nullable": true
+          },
+          "maritalStatus": {
+            "type": "string",
+            "nullable": true
           },
           "dateOfMarriage": {
             "type": "string",
-            "format": "date-time",
             "nullable": true
           },
-          "icelandicidIDNO": {
+          "spouseSSN": {
             "type": "string",
             "nullable": true
           },
-          "givenName": {
+          "spouseName": {
             "type": "string",
             "nullable": true
           },
-          "surName": {
+          "spouseCountryOfBirth": {
             "type": "string",
             "nullable": true
           },
-          "applicantAddress": {
+          "spouseCitizenship": {
             "type": "string",
             "nullable": true
           },
@@ -2080,16 +2326,39 @@
             "type": "string",
             "nullable": true
           },
-          "explanation": {
+          "spouseAddressMismatchReason": {
             "type": "string",
             "nullable": true
           },
-          "nationalityId": {
-            "type": "integer",
-            "format": "int32",
+          "parent1SSN": {
+            "type": "string",
             "nullable": true
           },
-          "spouseId": {
+          "parent1Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "parent2SSN": {
+            "type": "string",
+            "nullable": true
+          },
+          "parent2Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "applicantIsChildOfIcelandicCitizen": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "applicantIsFormerIcelandicCitizen": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "staticDataId": {
             "type": "string",
             "nullable": true
           }
@@ -2168,6 +2437,14 @@
         "type": "object",
         "properties": {
           "travelDocumentId": {
+            "type": "string",
+            "nullable": true
+          },
+          "applicationId": {
+            "type": "string",
+            "nullable": true
+          },
+          "applicantId": {
             "type": "string",
             "nullable": true
           },

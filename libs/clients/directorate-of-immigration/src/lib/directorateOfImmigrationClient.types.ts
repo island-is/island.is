@@ -1,11 +1,10 @@
-export interface ResidenceCondition {
-  conditionId: number
-  conditionName: string
-  isTypeMaritalStatus: boolean
+export interface ResidenceConditionInfo {
+  hasValid: boolean
+  hasOnlyTypeMaritalStatus: boolean
 }
 
 export interface Country {
-  id: number
+  id: string
   name: string
 }
 
@@ -15,12 +14,12 @@ export interface TravelDocumentType {
 }
 
 export interface CountryOfResidence {
-  countryId: number
+  countryId: string
   countryName: string
 }
 
 export interface StayAbroad {
-  countryId: number
+  countryId: string
   countryName: string
   dateFrom?: Date | null
   dateTo?: Date | null
@@ -34,12 +33,12 @@ export interface Passport {
   passportNo?: string | null
   passportTypeId?: number | null
   passportTypeName?: string | null
-  issuingCountryId?: number | null
+  issuingCountryId?: string | null
   issuingCountryName?: string | null
 }
 
 export interface ForeignCriminalRecordFile {
-  countryId: number
+  countryId: string
   countryName: string
   base64: string
 }
@@ -75,10 +74,10 @@ export interface CitizenshipApplication {
     familyName?: string
   }[]
   countriesOfResidence: {
-    countryId: number
+    countryId: string
   }[]
   staysAbroad: {
-    countryId: number
+    countryId: string
     dateFrom?: Date
     dateTo?: Date
     purpose?: string
@@ -88,7 +87,7 @@ export interface CitizenshipApplication {
     dateOfExpiry: Date
     passportNumber: string
     passportTypeId: number
-    countryOfIssuerId: number
+    countryOfIssuerId: string
     file: { base64: string }[]
   }
   supportingDocuments: {
@@ -97,11 +96,13 @@ export interface CitizenshipApplication {
     subsistenceCertificateForTown: { base64: string }[]
     certificateOfLegalResidenceHistory: { base64: string }[]
     icelandicTestCertificate: { base64: string }[]
-    criminalRecordList: { countryId: number; base64: string }[]
+    criminalRecordList: { base64: string; countryId: string }[]
   }
   children: {
     nationalId: string
     fullName: string
+    givenName?: string | null
+    familyName?: string | null
   }[]
   childrenPassport: {
     nationalId: string
@@ -109,7 +110,7 @@ export interface CitizenshipApplication {
     dateOfExpiry: Date
     passportNumber: string
     passportTypeId: number
-    countryIdOfIssuer: number
+    countryIdOfIssuer: string
     file: { base64: string }[]
   }[]
   childrenSupportingDocuments: {
@@ -145,7 +146,7 @@ export interface CurrentResidencePermitType {
 }
 
 export interface CriminalRecord {
-  countryId: number
+  countryId: string
   countryName: string
   date?: Date | null
   offenceDescription?: string | null

@@ -17,9 +17,9 @@ export const UtlendingastofnunPaymentCatalogApi = PaymentCatalogApi.configure({
   externalDataId: 'payment',
 })
 
-export const ResidenceConditionsApi = defineTemplateApi({
-  action: ApiActions.getResidenceConditions,
-  externalDataId: 'residenceConditions',
+export const ResidenceConditionInfoApi = defineTemplateApi({
+  action: ApiActions.getResidenceConditionInfo,
+  externalDataId: 'residenceConditionInfo',
 })
 
 export const CountriesApi = defineTemplateApi({
@@ -45,11 +45,6 @@ export const OldStayAbroadListApi = defineTemplateApi({
 export const OldPassportItemApi = defineTemplateApi({
   action: ApiActions.getOldPassportItem,
   externalDataId: 'oldPassportItem',
-})
-
-export const OldForeignCriminalRecordFileListApi = defineTemplateApi({
-  action: ApiActions.getOldForeignCriminalRecordFileList,
-  externalDataId: 'oldForeignCriminalRecordFileList',
 })
 
 export const NationalRegistryIndividualApi = defineTemplateApi({

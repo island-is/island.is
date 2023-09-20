@@ -7,10 +7,8 @@ import {
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Application } from '@island.is/api/schema'
-import { Answer } from '@island.is/application/types'
-import { Citizenship } from '../../../lib/dataSchema'
 import { CitizenIndividual, SpouseIndividual } from '../../../shared'
-import { ResidenceCondition } from '@island.is/clients/directorate-of-immigration'
+import { ResidenceConditionInfo } from '@island.is/clients/directorate-of-immigration'
 import { formatDate } from '../../../utils'
 import { Routes } from '../../../lib/constants'
 
@@ -22,17 +20,17 @@ export const MaritalStatusSubSection = buildSubSection({
       id: Routes.MARITALSTATUS,
       title: information.labels.maritalStatus.pageTitle,
       condition: (_, externalData) => {
-        const residenceConditions = getValueViaPath(
+        const residenceConditionInfo = getValueViaPath(
           externalData,
-          'residenceConditions.data',
-          [],
-        ) as ResidenceCondition[]
+          'residenceConditionInfo.data',
+          {},
+        ) as ResidenceConditionInfo
 
-        const hasMaritalStatus =
-          residenceConditions.filter((x) => x.isTypeMaritalStatus).length > 0
+        const hasOnlyMaritalStatus =
+          residenceConditionInfo.hasOnlyTypeMaritalStatus
 
-        //Only show if individual has an option of marriageType in Hjúskapaskylirði
-        return hasMaritalStatus
+        //Only show if individual only has an option of marriageType in Hjúskapaskilyrði
+        return hasOnlyMaritalStatus
       },
       children: [
         buildDescriptionField({
