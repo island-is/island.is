@@ -812,7 +812,7 @@ export const oldAgePensionFormMessage: MessageDir = {
       id: 'oap.application:period.alert.url',
       defaultMessage: 'https://www.tr.is/65/ad-flyta-toku-ellilifeyris',
       description: 'The url the link text links to',
-    }
+    },
   }),
 
   conclusionScreen: defineMessages({

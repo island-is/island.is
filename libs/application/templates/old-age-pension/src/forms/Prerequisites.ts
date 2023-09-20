@@ -170,15 +170,16 @@ export const PrerequisitesForm: Form = buildForm({
                 buildAlertMessageField({
                   id: 'question.pensionFundAlert',
                   title: oldAgePensionFormMessage.pre.pensionFundAlertTitle,
-                  message: oldAgePensionFormMessage.pre.pensionFundAlertDescription,
-                  doesNotRequireAnswer: true,                  
+                  message:
+                    oldAgePensionFormMessage.pre.pensionFundAlertDescription,
+                  doesNotRequireAnswer: true,
                   alertType: 'warning',
                   condition: (answers) => {
                     const { pensionFundQuestion } =
                       getApplicationAnswers(answers)
 
                     return pensionFundQuestion === NO
-                  }
+                  },
                 }),
                 buildSubmitField({
                   id: 'toDraft',
