@@ -277,7 +277,7 @@ jobs:
 
           pids=()
           npx nx affected -t lint --parallel=$MAX_JOBS & pids+=($!)
-          npx nx affected -t build --parallel=$MAX_JOBS -c production & pids+=($!)
+          npx nx affected -t build --parallel=$MAX_JOBS --configuration=production & pids+=($!)
           npx nx affected -t test --parallel=$MAX_JOBS & pids+=($!)
 
 
