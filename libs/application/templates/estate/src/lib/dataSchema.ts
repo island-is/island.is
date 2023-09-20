@@ -83,27 +83,15 @@ export const estateSchema = z.object({
         dateOfBirth: z.string().optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
-        phone: z
-          .string()
-          .refine((v) => isValidPhoneNumber(v) || v === '')
-          .optional(),
-        email: z
-          .string()
-          .refine((v) => isValidEmail(v) || v === '')
-          .optional(),
+        phone: z.string().refine((v) => isValidPhoneNumber(v)),
+        email: z.string().refine((v) => isValidEmail(v)),
         // Málsvari
         advocate: z
           .object({
             name: z.string(),
             nationalId: z.string(),
-            phone: z
-              .string()
-              .refine((v) => isValidPhoneNumber(v) || v === '')
-              .optional(),
-            email: z
-              .string()
-              .refine((v) => isValidEmail(v) || v === '')
-              .optional(),
+            phone: z.string().refine((v) => isValidPhoneNumber(v)),
+            email: z.string().refine((v) => isValidEmail(v)),
           })
           .optional(),
       })
