@@ -1,7 +1,7 @@
 import { join as join$1, basename } from 'node:path/posix';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { createConfig, createContext, Container, createModule } from './pipes-core';
+import { createConfig, createContext, Container, createModule } from './pipes-core.js';
 import { builtinModules } from 'node:module';
 import { rollup } from 'rollup';
 import { swc } from 'rollup-plugin-swc3';
