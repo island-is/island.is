@@ -219,6 +219,8 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/aircraft-registry/                                                                     @island-is/stefna
 /libs/api/domains/housing-benefit-calculator/                                                            @island-is/stefna
 /libs/clients/housing-benefit-calculator/                                                                @island-is/stefna
+/libs/clients/ship-registry                                                                              @island-is/stefna
+/libs/api/domains/ship-registry                                                                          @island-is/stefna
 
 /libs/island-ui/                                                                                         @island-is/island-ui
 
