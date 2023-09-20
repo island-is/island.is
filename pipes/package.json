@@ -4,7 +4,7 @@
   "packageManager": "yarn@4.0.0-rc.47",
   "type": "module",
   "scripts": {
-    "dev": "node src/ci.tsx"
+    "start": "NODE_OPTIONS=--experimental-import-meta-resolve --no-warnings=ExperimentalWarning --enable-source-maps --experimental-loader=./src/loader.mjs node src/ci.tsx"
   },
   "dependencies": {
     "@alcalzone/ansi-tokenize": "0.1.3",
