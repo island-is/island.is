@@ -1,5 +1,7 @@
 import { useLazyQuery } from '@apollo/client'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/router'
+import isEqual from 'lodash/isEqual'
 import {
   AlertMessage,
   AsyncSearchInput,
@@ -25,6 +27,8 @@ interface PublicShipSearchProps {
 const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
   const [hasFocus, setHasFocus] = useState(false)
   const [searchValue, setSearchValue] = useState('')
+  const router = useRouter()
+  const queryParamInitialized = useRef(false)
 
   const [ships, setShips] = useState<
     GetPublicShipSearchQuery['shipRegistryShipSearch']['ships']
@@ -43,25 +47,52 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
 
   const noShipWasFound = !ships?.length
 
-  const handleSearch = () => {
-    if (!searchValue) {
-      return
-    }
-    search({
-      variables: {
-        input: {
-          qs: searchValue,
+  const handleSearch = (value: string) => {
+    const updatedQuery = { ...router.query }
+    if (value) {
+      updatedQuery['sq'] = value
+
+      search({
+        variables: {
+          input: {
+            qs: value,
+          },
         },
-      },
-    })
+      })
+    }
+
+    if (!isEqual(router.query, updatedQuery)) {
+      router.replace(
+        {
+          pathname: router.pathname,
+          query: updatedQuery,
+        },
+        undefined,
+        {
+          shallow: true,
+        },
+      )
+    }
   }
+
+  useEffect(() => {
+    if (!router?.isReady || queryParamInitialized?.current) return
+    queryParamInitialized.current = true
+    if (router.query.sq) {
+      setSearchValue(router.query.sq as string)
+      handleSearch(router.query.sq as string)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router?.isReady, router?.query?.sq])
 
   return (
     <Box>
       <Box marginTop={2} marginBottom={3}>
         <AsyncSearchInput
           buttonProps={{
-            onClick: handleSearch,
+            onClick: () => {
+              handleSearch(searchValue)
+            },
             onFocus: () => setHasFocus(true),
             onBlur: () => setHasFocus(false),
           }}
@@ -74,7 +105,7 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
             value: searchValue,
             onKeyDown: (ev) => {
               if (ev.key === 'Enter') {
-                handleSearch()
+                handleSearch(searchValue)
               }
             },
           }}
@@ -97,7 +128,7 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
         />
       )}
       <Box marginBottom={3} marginTop={4}>
-        <Stack space={8}>
+        <Stack space={10}>
           {ships.map((shipInformation, index) => (
             <Table.Table key={index}>
               {index === 0 && (
