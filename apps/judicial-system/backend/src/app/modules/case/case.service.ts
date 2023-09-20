@@ -626,6 +626,11 @@ export class CaseService {
         user,
         caseId: theCase.id,
       },
+      {
+        type: MessageType.DELIVER_CASE_CONCLUSION_TO_COURT,
+        user,
+        caseId: theCase.id,
+      },
       { type: MessageType.SEND_RULING_NOTIFICATION, user, caseId: theCase.id },
     ]
 
