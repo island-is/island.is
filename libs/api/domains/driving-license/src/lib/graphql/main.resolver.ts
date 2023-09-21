@@ -18,7 +18,7 @@ import {
   HasTeachingRights,
   StudentInformationResult,
   ApplicationEligibility,
-  Juristiction,
+  Jurisdiction,
   StudentAssessment,
   ApplicationEligibilityInput,
   Teacher,
@@ -141,9 +141,9 @@ export class MainResolver {
   }
 
   @Scopes(ApiScope.internal)
-  @Query(() => [Juristiction])
-  drivingLicenseListOfJuristictions() {
-    return this.drivingLicenseService.getListOfJuristictions()
+  @Query(() => [Jurisdiction])
+  drivingLicenseListOfJurisdictions() {
+    return this.drivingLicenseService.getListOfJurisdictions()
   }
 
   @Scopes(ApiScope.internal)
