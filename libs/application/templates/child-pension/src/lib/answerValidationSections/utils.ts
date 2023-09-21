@@ -101,4 +101,28 @@ export const validateReason = (child: ChildPensionRow, path: string) => {
       }
     }
   }
+
+  // Parents penitentiary
+  if (child.reason.includes(ChildPensionReason.PARENTS_PENITENTIARY)) {
+    if (child.parentsPenitentiary) {
+      if (!child.parentsPenitentiary.nationalId) {
+        return buildError(
+          validatorErrorMessages.nationalIdRequired,
+          `${path}.parentsPenitentiary.nationalId`,
+        )
+      }
+      if (
+        !(
+          child.parentsPenitentiary.nationalId.length !== 0 &&
+          kennitala.isValid(child.parentsPenitentiary.nationalId) &&
+          kennitala.isPerson(child.parentsPenitentiary.nationalId)
+        )
+      ) {
+        return buildError(
+          validatorErrorMessages.nationalIdMustBeValid,
+          `${path}.parentsPenitentiary.nationalId`,
+        )
+      }
+    }
+  }
 }

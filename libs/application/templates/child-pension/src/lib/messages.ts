@@ -254,8 +254,8 @@ export const childPensionFormMessage: MessageDir = {
       defaultMessage: 'Foreldri ekki með íslenska kennitölu',
       description: 'Parent does not have an Icelandic national ID',
     },
-    childPensionParentNationalId: {
-      id: 'cp.application:info.child.pension.parent.national.id',
+    childPensionParentIsDeadNationalId: {
+      id: 'cp.application:info.child.pension.parentIsDead.national.id',
       defaultMessage: 'Kennitala látins foreldris',
       description: 'english translation',
     },
@@ -291,6 +291,11 @@ export const childPensionFormMessage: MessageDir = {
       id: 'cp.application:info.child.pension.reason.parentIsDead.removeParent',
       defaultMessage: 'Eyða',
       description: 'Remove',
+    },
+    childPensionParentsPenitentiaryNationalId: {
+      id: 'cp.application:info.child.pension.parentsPenitentiary.national.id',
+      defaultMessage: 'Kennitala foreldris í refsivist',
+      description: 'english translation',
     },
   }),
 

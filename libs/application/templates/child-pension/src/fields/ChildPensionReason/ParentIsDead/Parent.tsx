@@ -230,7 +230,8 @@ export const Parent: FC<React.PropsWithChildren<ParentProps>> = ({
                 id={nationalIdOrBirthDateFieldId}
                 placeholder="000000-0000"
                 label={formatText(
-                  childPensionFormMessage.info.childPensionParentNationalId,
+                  childPensionFormMessage.info
+                    .childPensionParentIsDeadNationalId,
                   application,
                   formatMessage,
                 )}

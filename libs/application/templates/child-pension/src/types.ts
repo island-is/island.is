@@ -7,10 +7,16 @@ export interface ChildPensionRow {
   childDoesNotHaveNationalId: boolean
   reason?: ChildPensionReason[]
   parentIsDead?: ParentIsDead[]
+  parentsPenitentiary?: ParentsPenitentiary
 }
 
 export interface ParentIsDead {
   nationalIdOrBirthDate: string
   name: string
   parentDoesNotHaveNationalId: boolean
+}
+
+export interface ParentsPenitentiary {
+  nationalId: string
+  name: string
 }

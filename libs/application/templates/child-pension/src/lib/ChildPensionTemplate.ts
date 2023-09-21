@@ -71,7 +71,11 @@ const ChildPensionTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: ['clearChildPensionAddChild', 'clearParentIsDead'],
+        exit: [
+          'clearChildPensionAddChild',
+          'clearParentIsDead',
+          'clearParentsPenitentiary',
+        ],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -141,6 +145,37 @@ const ChildPensionTemplate: ApplicationTemplate<
             unset(
               application.answers,
               `registerChildRepeater[${index}].parentIsDead`,
+            )
+          }
+        }
+
+        return context
+      }),
+      clearParentsPenitentiary: assign((context) => {
+        const { application } = context
+        const { registeredChildren, selectedChildrenInCustody } =
+          getApplicationAnswers(application.answers)
+
+        for (const [index, child] of selectedChildrenInCustody.entries()) {
+          if (
+            child.parentsPenitentiary &&
+            !child.reason?.includes(ChildPensionReason.PARENTS_PENITENTIARY)
+          ) {
+            unset(
+              application.answers,
+              `chooseChildren.selectedChildrenInCustody[${index}].parentsPenitentiary`,
+            )
+          }
+        }
+
+        for (const [index, child] of registeredChildren.entries()) {
+          if (
+            child.parentsPenitentiary &&
+            !child.reason?.includes(ChildPensionReason.PARENTS_PENITENTIARY)
+          ) {
+            unset(
+              application.answers,
+              `registerChildRepeater[${index}].parentsPenitentiary`,
             )
           }
         }

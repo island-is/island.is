@@ -19,6 +19,7 @@ import { getChildPensionReasonOptions } from '../../lib/childPensionUtils'
 import { ChildPensionReason as ChildPensionReasonEnum } from '../../lib/constants'
 import ParentIsDead from './ParentIsDead'
 import { FieldDescription } from '@island.is/shared/form-fields'
+import ParentsPenitentiary from './ParentsPenitentiary'
 
 type ChildRepeaterProps = {
   field: {
@@ -105,8 +106,11 @@ const ChildPensionReason: FC<
                   value.includes(ChildPensionReasonEnum.PARENTS_PENITENTIARY) &&
                   option.value ===
                     ChildPensionReasonEnum.PARENTS_PENITENTIARY && (
-                    // TODO: Búa til component
-                    <Text>Refsivist foreldris</Text>
+                    <ParentsPenitentiary
+                      id={id}
+                      application={application}
+                      errors={errors}
+                    />
                   )}
               </GridColumn>
             ))}
