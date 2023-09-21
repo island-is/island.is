@@ -25,6 +25,7 @@ import {
   CourtDocument,
   CaseOrigin,
   CaseAppealState,
+  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 import type {
   IndictmentSubtypeMap,
@@ -181,15 +182,16 @@ export class Case extends Model {
   defenderPhoneNumber?: string
 
   /**********
-   * Indicates whether the prosecutor's request should be sent to the accused's defender
-   * when a court date has been assigned to the case - optional
+   * Indicates whether, and if so when, the prosecutor's request should become accessible to the accused's
+   * defender - optional
    **********/
   @Column({
-    type: DataType.BOOLEAN,
+    type: DataType.ENUM,
     allowNull: true,
+    values: Object.values(RequestSharedWithDefender),
   })
-  @ApiPropertyOptional()
-  sendRequestToDefender?: boolean
+  @ApiPropertyOptional({ enum: RequestSharedWithDefender })
+  requestSharedWithDefender?: RequestSharedWithDefender
 
   /**********
    * Indicates whether the secutity level of the case has been heightened -

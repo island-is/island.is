@@ -343,6 +343,7 @@ api:
     XROAD_RSK_PROCURING_PATH: 'IS/GOV/5402696029/Skatturinn/relationships-v1'
     XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     XROAD_RSK_PROCURING_SCOPE: '["@rsk.is/prokura","@rsk.is/prokura:admin"]'
+    XROAD_SHIP_REGISTRY_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/skipaskra-V1'
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
@@ -1977,6 +1978,7 @@ services-sessions:
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_sessions_read'
+    GEODATADIR: '/geoip-lite/data'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=464'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
@@ -2015,7 +2017,13 @@ services-sessions:
           paths:
             - '/'
   namespace: 'services-sessions'
-  pvcs: []
+  pvcs:
+    - accessModes: 'ReadWriteMany'
+      mountPath: '/geoip-lite/data'
+      name: 'sessions-geoip-db'
+      size: '1Gi'
+      storageClass: 'efs-csi'
+      useExisting: true
   replicaCount:
     default: 1
     max: 10
@@ -2030,9 +2038,86 @@ services-sessions:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-sessions/readonly/DB_PASSWORD'
+    GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+services-sessions-geoip-worker:
+  args:
+    - './node_modules/geoip-lite/scripts/updatedb.js'
+    - 'license_key=$(GEOIP_LICENSE_KEY)'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    GEODATADIR: '/geoip-lite/data'
+    GEOTMPDIR: '/geoip-lite/data/tmp'
+    NODE_OPTIONS: '--max-old-space-size=-44'
+    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'islandis'
+    - 'identity-server'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 5
+      replicas:
+        max: 1
+        min: 1
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
+  namespace: 'services-sessions'
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs:
+    - accessModes: 'ReadWriteMany'
+      mountPath: '/geoip-lite/data'
+      name: 'sessions-geoip-db'
+      size: '1Gi'
+      storageClass: 'efs-csi'
+      useExisting: false
+    - accessModes: 'ReadWriteMany'
+      mountPath: '/webapp/node_modules/geoip-lite/tmp'
+      name: 'sessions-geoip-db-tmp'
+      size: '1Gi'
+      storageClass: 'efs-csi'
+      useExisting: false
+  replicaCount:
+    default: 1
+    max: 1
+    min: 1
+  resources:
+    limits:
+      cpu: '4'
+      memory: '4Gi'
+    requests:
+      cpu: '4'
+      memory: '4Gi'
+  schedule: '0 0 * * *'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/sessions-geoip'
+    create: true
+    name: 'sessions-geoip'
 services-sessions-worker:
   args:
     - 'main.js'

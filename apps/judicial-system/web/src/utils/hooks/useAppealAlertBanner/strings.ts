@@ -101,4 +101,11 @@ export const strings = defineMessages({
     description:
       'Ómerking og heimvísun í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
   },
+  notifyCOATooltip: {
+    id: 'judicial.system.core:appeal_alert_banner.notify_COA_tooltip',
+    defaultMessage:
+      'Tilkynning um móttöku kæru og frest til að skila greinargerð sendist á Landsrétt og aðila málsins',
+    description:
+      'Texti í tilkynningarglugga sem birtist þegar héraðsdómari er að fara að móttaka kæru.',
+  },
 })

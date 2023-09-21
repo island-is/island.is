@@ -172,6 +172,11 @@ export enum SessionArrangements {
   NONE_PRESENT = 'NONE_PRESENT',
 }
 
+export enum RequestSharedWithDefender {
+  READY_FOR_COURT = 'READY_FOR_COURT',
+  COURT_DATE = 'COURT_DATE',
+}
+
 export interface Case {
   id: string
   created: string
@@ -187,7 +192,6 @@ export interface Case {
   defenderNationalId?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
-  sendRequestToDefender?: boolean
   isHeightenedSecurityLevel?: boolean
   court?: Institution
   leadInvestigator?: string
@@ -278,6 +282,7 @@ export interface Case {
   appealReceivedByCourtDate?: string
   appealConclusion?: string
   appealRulingDecision?: CaseAppealRulingDecision
+  requestSharedWithDefender?: RequestSharedWithDefender
   eventLogs?: EventLog[]
 }
 
@@ -325,9 +330,9 @@ export type CreateCase = Pick<
   | 'defenderNationalId'
   | 'defenderEmail'
   | 'defenderPhoneNumber'
-  | 'sendRequestToDefender'
   | 'leadInvestigator'
   | 'crimeScenes'
+  | 'requestSharedWithDefender'
 >
 
 export interface UpdateCase
@@ -339,7 +344,6 @@ export interface UpdateCase
     | 'defenderNationalId'
     | 'defenderEmail'
     | 'defenderPhoneNumber'
-    | 'sendRequestToDefender'
     | 'isHeightenedSecurityLevel'
     | 'leadInvestigator'
     | 'arrestDate'
@@ -412,6 +416,7 @@ export interface UpdateCase
   appealJudge1Id?: string
   appealJudge2Id?: string
   appealJudge3Id?: string
+  requestSharedWithDefender?: RequestSharedWithDefender | null
 }
 
 export interface TransitionCase {

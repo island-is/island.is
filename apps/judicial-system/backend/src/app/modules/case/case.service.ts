@@ -74,7 +74,6 @@ export interface UpdateCase
     | 'defenderNationalId'
     | 'defenderEmail'
     | 'defenderPhoneNumber'
-    | 'sendRequestToDefender'
     | 'isHeightenedSecurityLevel'
     | 'courtId'
     | 'leadInvestigator'
@@ -142,6 +141,7 @@ export interface UpdateCase
     | 'appealJudge3Id'
     | 'appealConclusion'
     | 'appealRulingDecision'
+    | 'requestSharedWithDefender'
   > {
   type?: CaseType
   state?: CaseState
@@ -633,6 +633,11 @@ export class CaseService {
     const messages = [
       {
         type: MessageType.DELIVER_SIGNED_RULING_TO_COURT,
+        user,
+        caseId: theCase.id,
+      },
+      {
+        type: MessageType.DELIVER_CASE_CONCLUSION_TO_COURT,
         user,
         caseId: theCase.id,
       },

@@ -25,6 +25,7 @@ import {
   awsS3ModuleConfig,
   eventModuleConfig,
   EventLogModule,
+  courtModuleConfig,
 } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 
@@ -59,6 +60,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
         userModuleConfig,
         awsS3ModuleConfig,
         eventModuleConfig,
+        courtModuleConfig,
       ],
     }),
   ],
