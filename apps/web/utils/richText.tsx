@@ -33,6 +33,7 @@ import {
   PlateAvailableSearch,
   SectionWithVideo,
   TableSlice,
+  PublicShipSearch,
 } from '@island.is/web/components'
 import {
   PowerBiSlice as PowerBiSliceSchema,
@@ -86,6 +87,8 @@ export const webRenderConnectedComponent = (slice) => {
       return <PlateAvailableSearch slice={slice} />
     case 'HousingBenefitCalculator':
       return <HousingBenefitCalculator slice={slice} />
+    case 'PublicShipSearch':
+      return <PublicShipSearch slice={slice} />
     default:
       break
   }

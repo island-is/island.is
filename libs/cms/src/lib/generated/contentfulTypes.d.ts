@@ -3116,6 +3116,7 @@ export interface ISliceConnectedComponentFields {
     | 'AircraftSearch'
     | 'DrivingInstructorList'
     | 'HousingBenefitCalculator'
+    | 'PublicShipSearch'
     | undefined
 
   /** Localized JSON */
