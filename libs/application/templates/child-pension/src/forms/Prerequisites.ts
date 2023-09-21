@@ -3,9 +3,7 @@ import {
   buildExternalDataProvider,
   buildForm,
   buildSection,
-  buildMultiField,
   buildSubmitField,
-  buildDescriptionField,
   buildSubSection,
 } from '@island.is/application/core'
 import {
@@ -37,7 +35,7 @@ export const PrerequisitesForm: Form = buildForm({
             buildExternalDataProvider({
               id: 'approveExternalData',
               title: childPensionFormMessage.pre.externalDataSection,
-              description: childPensionFormMessage.pre.externalDataDescription,
+              subTitle: childPensionFormMessage.pre.externalDataDescription,
               checkboxLabel: childPensionFormMessage.pre.checkboxProvider,
               submitField: buildSubmitField({
                 id: 'submit',
@@ -59,13 +57,18 @@ export const PrerequisitesForm: Form = buildForm({
                   subTitle: childPensionFormMessage.pre.registryIcelandSubTitle,
                 }),
                 buildDataProviderItem({
+                  provider: NationalRegistryResidenceHistoryApi,
+                  title: '',
+                }),
+                buildDataProviderItem({
                   provider: UserProfileApi,
                   title: childPensionFormMessage.pre.userProfileTitle,
                   subTitle: childPensionFormMessage.pre.userProfileSubTitle,
                 }),
                 buildDataProviderItem({
-                  provider: NationalRegistryResidenceHistoryApi,
-                  title: '',
+                  // add tr provider when needed
+                  title: childPensionFormMessage.pre.trTitle,
+                  subTitle: childPensionFormMessage.pre.trDescription,
                 }),
               ],
             }),
