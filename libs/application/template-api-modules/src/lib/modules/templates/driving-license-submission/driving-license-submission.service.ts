@@ -88,7 +88,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       this.log('error', 'Creating license failed', {
         e,
         applicationFor: answers.applicationFor,
-        jurisdiction: answers.juristictionId,
+        jurisdiction: answers.jurisdictionId,
       })
 
       throw e
@@ -131,20 +131,20 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
     const healthRemarks = answers.hasHealthRemarks === 'yes'
     const needsQualityPhoto = answers.willBringQualityPhoto === 'yes'
-    const juristictionId = answers.juristiction
+    const jurisdictionId = answers.jurisdiction
     const teacher = answers.drivingInstructor as string
     const email = answers.email as string
     const phone = answers.phone as string
 
     if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
-        juristictionId: juristictionId as number,
+        jurisdictionId: jurisdictionId as number,
         needsToPresentHealthCertificate: needsHealthCert || healthRemarks,
         needsToPresentQualityPhoto: needsQualityPhoto,
       })
     } else if (applicationFor === 'B-temp') {
       return this.drivingLicenseService.newTemporaryDrivingLicense(nationalId, {
-        juristictionId: juristictionId as number,
+        jurisdictionId: jurisdictionId as number,
         needsToPresentHealthCertificate: needsHealthCert,
         needsToPresentQualityPhoto: needsQualityPhoto,
         teacherNationalId: teacher,

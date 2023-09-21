@@ -1,7 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 @ObjectType()
-export class Juristiction {
+export class Jurisdiction {
   @Field(() => ID)
   id!: number
 
