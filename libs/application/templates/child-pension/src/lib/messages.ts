@@ -279,6 +279,29 @@ export const childPensionFormMessage: MessageDir = {
     },
   }),
 
+  comment: defineMessages({
+    additionalInfoTitle: {
+      id: 'cp.application:comment.additional.info.title',
+      defaultMessage: 'Viðbótarupplýsingar',
+      description: 'Additional Information',
+    },
+    commentSection: {
+      id: 'cp.application:comment.section',
+      defaultMessage: 'Athugasemd',
+      description: 'Comment',
+    },
+    description: {
+      id: 'cp.application:comment.description',
+      defaultMessage: 'Hafir þú einhverja athugasemd skildu hana eftir hér.',
+      description: 'If you have any comments, leave them here.',
+    },
+    placeholder: {
+      id: 'cp.application:comment.placeholder',
+      defaultMessage: 'Skrifaðu hér athugasemd',
+      description: 'Your comment',
+    },
+  }),
+
   conclusionScreen: defineMessages({
     title: {
       id: 'cp.application:conclusion.screen.title',

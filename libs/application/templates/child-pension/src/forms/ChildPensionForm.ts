@@ -105,7 +105,22 @@ export const ChildPensionForm: Form = buildForm({
     buildSection({
       id: 'additionalInfo',
       title: childPensionFormMessage.additionalInfo.section,
-      children: [],
+      children: [
+        buildSubSection({
+          id: 'commentSection',
+          title: childPensionFormMessage.comment.commentSection,
+          children: [
+            buildTextField({
+              id: 'comment',
+              title: childPensionFormMessage.comment.commentSection,
+              variant: 'textarea',
+              rows: 10,
+              description: childPensionFormMessage.comment.description,
+              placeholder: childPensionFormMessage.comment.placeholder,
+            }),
+          ],
+        }),
+      ],
     }),
     buildSection({
       id: 'confirm',
