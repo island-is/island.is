@@ -19,6 +19,7 @@ import {
 import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { childPensionFormMessage } from './messages'
+import { NationalRegistryResidenceHistoryApi } from '../dataProviders'
 
 const ChildPensionTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -63,7 +64,7 @@ const ChildPensionTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
-              api: [NationalRegistryUserApi, UserProfileApi],
+              api: [NationalRegistryUserApi, UserProfileApi, NationalRegistryResidenceHistoryApi],
               delete: true,
             },
           ],

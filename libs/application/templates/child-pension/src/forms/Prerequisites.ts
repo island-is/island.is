@@ -11,12 +11,12 @@ import {
 import {
   Form,
   FormModes,
-  NationalRegistrySpouseApi,
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { childPensionFormMessage } from '../lib/messages'
+import { NationalRegistryResidenceHistoryApi } from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'ChildPensionPrerequisites',
@@ -31,37 +31,13 @@ export const PrerequisitesForm: Form = buildForm({
       title: childPensionFormMessage.pre.prerequisitesSection,
       children: [
         buildSubSection({
-          id: 'forInformation',
-          title: childPensionFormMessage.pre.forInfoSection,
-          children: [
-            buildMultiField({
-              id: 'preInfo',
-              title: childPensionFormMessage.pre.forInfoSection,
-              children: [
-                buildDescriptionField({
-                  id: 'preInfo.descriptionOne',
-                  title: '',
-                  description: childPensionFormMessage.pre.forInfoDescription,
-                }),
-                // Accordion card here
-                buildDescriptionField({
-                  id: 'preInfo.descriptionTwo',
-                  space: 4,
-                  title: '',
-                  description:
-                    childPensionFormMessage.pre.forInfoSecondDescription,
-                }),
-              ],
-            }),
-          ],
-        }),
-        buildSubSection({
           id: 'externalData',
           title: childPensionFormMessage.pre.externalDataSection,
           children: [
             buildExternalDataProvider({
               id: 'approveExternalData',
               title: childPensionFormMessage.pre.externalDataSection,
+              description: childPensionFormMessage.pre.externalDataDescription,
               checkboxLabel: childPensionFormMessage.pre.checkboxProvider,
               submitField: buildSubmitField({
                 id: 'submit',
@@ -86,6 +62,10 @@ export const PrerequisitesForm: Form = buildForm({
                   provider: UserProfileApi,
                   title: childPensionFormMessage.pre.userProfileTitle,
                   subTitle: childPensionFormMessage.pre.userProfileSubTitle,
+                }),
+                buildDataProviderItem({
+                  provider: NationalRegistryResidenceHistoryApi,
+                  title: '',
                 }),
               ],
             }),

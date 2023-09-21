@@ -36,32 +36,20 @@ export const childPensionFormMessage: MessageDir = {
       defaultMessage: 'Forsendur',
       description: 'Prerequisites',
     },
-    forInfoSection: {
-      id: 'cp.application:for.info.section',
-      defaultMessage: 'Til upplýsinga',
-      description: 'For Information',
-    },
-    forInfoDescription: {
-      id: 'cp.application:for.info.description',
-      defaultMessage:
-        'TR sækir nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðslu mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar.\n \nMisjafnt er eftir tegund umsóknar hvaða upplýsingar þarf til úrvinnslu en ekki eru sóttar meiri upplýsingar en nauðsynlegt er hverju sinni.',
-      description: 'english translation',
-    },
-    forInfoSecondDescription: {
-      id: 'cp.application:for.info.second.description',
-      defaultMessage:
-        'Ef tekjur eða aðrar aðstæður þínar breytast verður þú að láta TR vita þar sem það getur haft áhrif á greiðslur þínar.\n \nFrekari upplýsingar um gagnaöflun og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingastofnunar, www.tr.is/personuvernd. \n \nÞeim umsóknum sem sendar eru TR í gegnum Mínar síður Ísland.is verður svarað rafrænt',
-      description: 'english translation',
-    },
     externalDataSection: {
       id: 'cp.application:externalData.section',
       defaultMessage: 'Gagnaöflun',
       description: 'External Data',
     },
+    externalDataDescription: {
+      id: 'cp.application:externalData.description',
+      defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt',
+      description: 'english translation',
+    },
     checkboxProvider: {
       id: 'cp.application:checkbox.provider',
       defaultMessage:
-        'Ég skil að ofangreindra gagna verður aflað í umsóknarferlinu',
+        'Ég skil að ofangreindra upplýsinga verður aflað í umsóknarferlinu',
       description: 'Checbox to confirm data provider',
     },
     userProfileTitle: {
@@ -72,18 +60,29 @@ export const childPensionFormMessage: MessageDir = {
     userProfileSubTitle: {
       id: 'cp.application:userprofile.subtitle',
       defaultMessage:
-        'Upplýsingar um netfang, símanúmer og bankareikning eru sóttar á mínar síður á Ísland.is..',
+        'Upplýsingar um netfang, símanúmer og bankareikning eru sóttar á mínar síður á Ísland.is.',
       description: 'english translation',
     },
     registryIcelandTitle: {
       id: 'cp.application:registry.iceland.title',
-      defaultMessage: 'Upplýsingar úr Þjóðskrá',
+      defaultMessage: 'Upplýsingar frá Þjóðskrá',
       description: 'english translation',
     },
     registryIcelandSubTitle: {
       id: 'cp.application:registry.iceland.subtitle',
       defaultMessage:
-        'Persónuupplýsingar um þig, maka og börn í þinni forsjá ásamt búsetusögu.',
+        'Upplýsingar um þig, maka og börn. Upplýsingar um búsetu.',
+      description: 'english translation',
+    },
+    trTitle: {
+      id: 'cp.application:tr.title',
+      defaultMessage: 'Upplýsingar um tekjur og aðstæður',
+      description: 'english translation',
+    },
+    trDescription: {
+      id: 'cp.application:tr.description',
+      defaultMessage:
+        'TR sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðsla mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar. Ef við á þá hefur TR heimild að ná í upplýsingar frá öðrum stofnunum.',
       description: 'english translation',
     },
     startApplication: {
