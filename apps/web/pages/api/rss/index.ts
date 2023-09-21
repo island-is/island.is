@@ -31,6 +31,7 @@ export default async function handler(req, res) {
         lang: locale as ContentLanguage,
         size: 25,
         tags,
+        organization,
       },
     },
   })
