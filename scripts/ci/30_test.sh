@@ -39,5 +39,4 @@ yarn run test \
   ${EXTRA_OPTS} \
   --verbose \
   --no-watchman \
-  --run-in-band \
   "$@"
