@@ -75,7 +75,6 @@ export interface IAlertBannerFields {
         | 'umsoknir'
         | 'min-gogn'
         | 'skirteini'
-        | 'leyfisbref'
         | 'menntun'
         | 'fasteignir'
         | 'fjarmal'
@@ -1490,6 +1489,9 @@ export interface ILatestNewsSliceFields {
 
   /** Read more link */
   readMoreLink?: ILink | undefined
+
+  /** Filter Tags */
+  filterTags?: IGenericTag[] | undefined
 }
 
 /** Slice to show latest news entries */
@@ -2872,6 +2874,9 @@ export interface IProjectSubpageFields {
         | ITwoColumnText
       )[]
     | undefined
+
+  /** Show Table of Contents */
+  showTableOfContents?: boolean | undefined
 
   /** Bottom Slices */
   bottomSlices?: (IPowerBiSlice | IOneColumnText)[] | undefined
