@@ -56,8 +56,6 @@ export const EstateMembersRepeater: FC<
     }
   }, [])
 
-  console.log(fields)
-
   return (
     <Box>
       {fields.reduce((acc, member: GenericFormField<EstateMember>, index) => {
