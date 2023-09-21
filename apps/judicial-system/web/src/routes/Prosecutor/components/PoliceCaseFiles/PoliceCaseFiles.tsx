@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { AlertMessage, Box, LoadingDots } from '@island.is/island-ui/core'
+import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 import SelectableList, {
@@ -67,12 +67,9 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
             onClick: onUpload,
             label: formatMessage(m.uploadButtonLabel),
           }}
+          isLoading={policeCaseFiles?.isLoading}
         >
-          {policeCaseFiles?.isLoading ? (
-            <Box textAlign="center" paddingY={2} paddingX={3} marginBottom={2}>
-              <LoadingDots />
-            </Box>
-          ) : policeCaseFiles?.hasError ? (
+          {policeCaseFiles?.hasError ? (
             <PoliceCaseFilesMessageBox
               icon="close"
               iconColor="red400"
