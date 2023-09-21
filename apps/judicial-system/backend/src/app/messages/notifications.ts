@@ -357,7 +357,7 @@ export const notifications = {
     paroleRevocationBody: {
       id: 'judicial.system.backend:notifications.prison_ruling_email.parole_revocation_body',
       defaultMessage:
-        '{institutionName} hefur rofið reynslulausn aðila með úrskurði í máli {courtCaseNumber}. Hægt er að nálgast þingbók og vistunarseðil á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
+        '{institutionName} hefur rofið reynslulausn aðila með úrskurði í máli {courtCaseNumber}. Hægt er að nálgast þingbók á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description: 'Texti í pósti til fangelsis með link á réttarvörslugátt',
     },
   }),
