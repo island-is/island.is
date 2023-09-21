@@ -53,7 +53,7 @@ class InternalProgramService {
     } catch (e) {
       logger.error(
         'Failed to update programs for Reykjavik University, reason:',
-        { e },
+        e,
       )
     }
 
@@ -66,7 +66,7 @@ class InternalProgramService {
     } catch (e) {
       logger.error(
         'Failed to update programs for University of Iceland, reason:',
-        { e },
+        e,
       )
     }
   }
@@ -77,7 +77,9 @@ class InternalProgramService {
   ): Promise<void> {
     const universityId = (
       await this.universityModel.findOne({
+        attributes: ['id'],
         where: { nationalId: universityNationalId },
+        logging: false,
       })
     )?.id
 
@@ -92,6 +94,7 @@ class InternalProgramService {
       },
       {
         where: { universityId: universityId },
+        logging: false,
       },
     )
 
@@ -136,9 +139,11 @@ class InternalProgramService {
         const extraApplicationFieldList = program.extraApplicationField || []
 
         const oldProgramObj = await this.programModel.findOne({
+          attributes: ['id'],
           where: {
             externalId: programObj.externalId,
           },
+          logging: false,
         })
 
         // CREATE or UPDATE program
@@ -147,68 +152,83 @@ class InternalProgramService {
           programId = oldProgramObj.id
           await this.programModel.update(programObj, {
             where: { id: programId },
+            logging: false,
           })
         } else {
-          programId = (await this.programModel.create(programObj)).id
+          programId = (
+            await this.programModel.create(programObj, { logging: false })
+          ).id
         }
 
         // DELETE program tag
         await this.programTagModel.destroy({
           where: { programId: programId },
+          logging: false,
         })
 
         // CREATE program tag
         for (let j = 0; j < tagList.length; j++) {
           const tag = await this.tagModel.findOne({
+            attributes: ['id'],
             where: { code: tagList[j].code },
+            logging: false,
           })
 
           if (!tag) continue
 
-          await this.programTagModel.create({
-            programId: programId,
-            tagId: tag?.id,
-          })
+          await this.programTagModel.create(
+            {
+              programId: programId,
+              tagId: tag?.id,
+            },
+            { logging: false },
+          )
         }
 
         // DELETE program mode of delivery
         await this.programModeOfDeliveryModel.destroy({
           where: { programId: programId },
+          logging: false,
         })
 
         // CREATE program mode of delivery
         for (let j = 0; j < modeOfDeliveryList.length; j++) {
-          await this.programModeOfDeliveryModel.create({
-            programId: programId,
-            modeOfDelivery: modeOfDeliveryList[j],
-          })
+          await this.programModeOfDeliveryModel.create(
+            {
+              programId: programId,
+              modeOfDelivery: modeOfDeliveryList[j],
+            },
+            { logging: false },
+          )
         }
 
         // DELETE program extra application field
         await this.programExtraApplicationFieldModel.destroy({
           where: { programId: programId },
+          logging: false,
         })
 
         // CREATE program extra application field
         for (let j = 0; j < extraApplicationFieldList.length; j++) {
-          await this.programExtraApplicationFieldModel.create({
-            programId: programId,
-            nameIs: extraApplicationFieldList[j].nameIs,
-            nameEn: extraApplicationFieldList[j].nameEn,
-            descriptionIs: extraApplicationFieldList[j].descriptionIs,
-            descriptionEn: extraApplicationFieldList[j].descriptionEn,
-            required: extraApplicationFieldList[j].required,
-            fieldType: extraApplicationFieldList[j].fieldType,
-            uploadAcceptedFileType:
-              extraApplicationFieldList[j].uploadAcceptedFileType,
-          })
+          await this.programExtraApplicationFieldModel.create(
+            {
+              programId: programId,
+              nameIs: extraApplicationFieldList[j].nameIs,
+              nameEn: extraApplicationFieldList[j].nameEn,
+              descriptionIs: extraApplicationFieldList[j].descriptionIs,
+              descriptionEn: extraApplicationFieldList[j].descriptionEn,
+              required: extraApplicationFieldList[j].required,
+              fieldType: extraApplicationFieldList[j].fieldType,
+              uploadAcceptedFileType:
+                extraApplicationFieldList[j].uploadAcceptedFileType,
+            },
+            { logging: false },
+          )
         }
       } catch (e) {
         logger.error(
           `Failed to update program with externalId ${program.externalId}, reason:`,
-          {
-            e,
-          },
+          e,
         )
       }
     }

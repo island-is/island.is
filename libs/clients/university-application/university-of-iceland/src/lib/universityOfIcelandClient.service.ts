@@ -89,9 +89,7 @@ class UniversityOfIcelandApplicationClient {
       } catch (e) {
         logger.error(
           `Failed to map program with externalId ${program.externalId} (University of Iceland), reason:`,
-          {
-            e,
-          },
+          e,
         )
       }
     }
@@ -116,11 +114,17 @@ class UniversityOfIcelandApplicationClient {
           case 'M':
             requirement = Requirement.MANDATORY
             break
-          case '0':
-            requirement = Requirement.MANDATORY
+          case 'O': // TODO what value is this
+            requirement = Requirement.FREE_ELECTIVE
+            break
+          case '0': // TODO what value is this
+            requirement = Requirement.FREE_ELECTIVE
+            break
+          case 'C': // TODO what value is this
+            requirement = Requirement.FREE_ELECTIVE
             break
         }
-        if (!requirement) {
+        if (requirement === undefined) {
           throw new Error(`Not able to map requirement: ${course.required}`)
         }
 
@@ -131,6 +135,15 @@ class UniversityOfIcelandApplicationClient {
             semesterSeason = Season.SPRING
             break
           case 'H':
+            semesterSeason = Season.FALL
+            break
+          case 'S':
+            semesterSeason = Season.SUMMER
+            break
+          case 'A': // TODO what value is this
+            semesterSeason = Season.FALL
+            break
+          case '': // TODO what value is this
             semesterSeason = Season.FALL
             break
         }
@@ -156,9 +169,7 @@ class UniversityOfIcelandApplicationClient {
       } catch (e) {
         logger.error(
           `Failed to map course with externalId ${course.externalId} for program with externalId ${externalId} (University of Iceland), reason:`,
-          {
-            e,
-          },
+          e,
         )
       }
     }

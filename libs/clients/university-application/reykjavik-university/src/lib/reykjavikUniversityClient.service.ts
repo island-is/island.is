@@ -82,9 +82,7 @@ class ReykjavikUniversityApplicationClient {
       } catch (e) {
         logger.error(
           `Failed to map program with externalId ${program.externalId} (Reykjavik University), reason:`,
-          {
-            e,
-          },
+          e,
         )
       }
     }
@@ -124,9 +122,7 @@ class ReykjavikUniversityApplicationClient {
       } catch (e) {
         logger.error(
           `Failed to map course with externalId ${course.externalId} for program with externalId ${externalId} (Reykjavik University), reason:`,
-          {
-            e,
-          },
+          e,
         )
       }
     }

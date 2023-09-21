@@ -75,7 +75,7 @@ module.exports = {
               allowNull: false,
             },
             credits: {
-              type: Sequelize.INTEGER,
+              type: Sequelize.FLOAT,
               allowNull: false,
             },
             description_is: {
