@@ -165,7 +165,11 @@ function canPrisonSystemUserAccessCase(
       return false
     }
   } else if (
-    ![CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY].includes(theCase.type)
+    ![
+      CaseType.CUSTODY,
+      CaseType.ADMISSION_TO_FACILITY,
+      CaseType.PROBATION_DISMISSAL,
+    ].includes(theCase.type)
   ) {
     return false
   }

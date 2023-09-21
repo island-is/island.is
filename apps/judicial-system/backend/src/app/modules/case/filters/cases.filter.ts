@@ -153,14 +153,21 @@ function getPrisonSystemStaffUserCasesQueryFilter(user: User): WhereOptions {
   if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
     options.push({
       type: [
-        CaseType.ADMISSION_TO_FACILITY,
         CaseType.CUSTODY,
+        CaseType.ADMISSION_TO_FACILITY,
+        CaseType.PROBATION_DISMISSAL,
         CaseType.TRAVEL_BAN,
       ],
     })
   } else {
     options.push(
-      { type: [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY] },
+      {
+        type: [
+          CaseType.CUSTODY,
+          CaseType.ADMISSION_TO_FACILITY,
+          CaseType.PROBATION_DISMISSAL,
+        ],
+      },
       {
         decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
       },

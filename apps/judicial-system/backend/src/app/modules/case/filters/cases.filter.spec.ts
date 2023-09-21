@@ -272,7 +272,13 @@ describe('getCasesQueryFilter', () => {
       [Op.and]: [
         { isArchived: false },
         { state: CaseState.ACCEPTED },
-        { type: [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY] },
+        {
+          type: [
+            CaseType.CUSTODY,
+            CaseType.ADMISSION_TO_FACILITY,
+            CaseType.PROBATION_DISMISSAL,
+          ],
+        },
         {
           decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
         },
