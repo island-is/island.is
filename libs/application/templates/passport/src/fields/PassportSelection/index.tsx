@@ -66,15 +66,16 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         label:
           formatMessage(m.validTag) +
           ' ' +
-          (identityDocument
-            ? format(new Date(expirationDate), 'dd/MM/yy')
-            : ''),
+          format(new Date(expirationDate), 'dd/MM/yy'),
         variant: 'red',
         outlined: true,
       }
     } else if (todayPlus6Months < expirationDate) {
       tagObject = {
-        label: formatMessage(m.validTag) + ' ' + expirationDate.getFullYear(),
+        label:
+          formatMessage(m.validTag) +
+          ' ' +
+          format(new Date(expirationDate), 'dd/MM/yy'),
         variant: 'mint',
         outlined: true,
       }

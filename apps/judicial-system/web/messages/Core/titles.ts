@@ -59,13 +59,6 @@ export const titles = {
         description:
           'Notaður sem titill fyrir Greinargerð skjá hjá saksóknara í gæslu- og farbannsmálum',
       }),
-      // TODO: Remove caseFiles
-      caseFiles: defineMessage({
-        id: 'judicial.system.core:titles.prosecutor.restriction_cases.case_files',
-        defaultMessage: 'Rannsóknargögn - Réttarvörslugátt',
-        description:
-          'Notaður sem titill fyrir Rannsóknargögn skjá hjá saksóknara í gæslu- og farbannsmálum',
-      }),
       overview: defineMessage({
         id: 'judicial.system.core:titles.prosecutor.restriction_cases.overview',
         defaultMessage: 'Yfirlit kröfu - Réttarvörslugátt',
