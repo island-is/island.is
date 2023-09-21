@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { EventType } from '@island.is/judicial-system/types'
-
 import { EventLog } from './models/eventLog.model'
 import { CreateEventLogDto } from './dto/createEventLog.dto'
 

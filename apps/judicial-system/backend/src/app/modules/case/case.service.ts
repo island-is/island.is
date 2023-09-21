@@ -163,6 +163,7 @@ export const include: Includeable[] = [
   {
     model: EventLog,
     as: 'eventLogs',
+    required: false,
     where: {
       eventType: { [Op.in]: eventTypes },
     },
