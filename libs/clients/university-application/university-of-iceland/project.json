@@ -23,6 +23,16 @@
         "passWithNoTests": true
       }
     },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/EDU/10010/HI-Protected/getOpenAPI?serviceCode=umsoknir-v1 -H 'Accept: application/json' > src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/university-application/university-of-iceland"
+      }
+    },
     "schemas/external-openapi-generator": {
       "executor": "nx:run-commands",
       "options": {

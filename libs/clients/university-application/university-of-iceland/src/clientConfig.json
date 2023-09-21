@@ -59,7 +59,7 @@
         "tags": ["Example endpoints for universities"]
       }
     },
-    "/programs/{externalId}/courses": {
+    "/program/{externalId}/courses": {
       "get": {
         "operationId": "ExampleController_getProgramsCourses",
         "summary": "Get courses for an active programs",
@@ -302,9 +302,9 @@
             "example": "Computer science I"
           },
           "required": {
-            "type": "boolean",
+            "type": "string",
             "description": "Whether the course is required to take within the program",
-            "example": true
+            "example": "M"
           },
           "credits": {
             "type": "number",

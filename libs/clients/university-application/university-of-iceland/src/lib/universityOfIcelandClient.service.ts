@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Req } from '@nestjs/common'
 import { ExampleEndpointsForUniversitiesApi } from '../../gen/fetch/apis'
 import {
   DegreeType,
@@ -11,11 +11,11 @@ import {
   mapEnumToEnum,
 } from '@island.is/university-gateway-lib'
 import {
-  ExampleCourseSemesterSeasonEnum,
   ExampleProgramDegreeTypeEnum,
   ExampleProgramModeOfDeliveryEnum,
   ExampleProgramStartingSemesterSeasonEnum,
 } from '../../gen/fetch'
+import { logger } from '@island.is/logging'
 
 export
 @Injectable()
@@ -28,9 +28,12 @@ class UniversityOfIcelandApplicationClient {
     const res =
       await this.exampleEndpointsForUniversitiesApi.exampleControllerGetActivePrograms()
 
-    return (
-      res.data?.map((program) => {
-        return {
+    const mappedRes = []
+    const programList = res.data || []
+    for (let i = 0; i < programList.length; i++) {
+      const program = programList[i]
+      try {
+        mappedRes.push({
           externalId: program.externalId,
           nameIs: program.nameIs,
           nameEn: program.nameEn,
@@ -50,7 +53,7 @@ class UniversityOfIcelandApplicationClient {
             DegreeType,
           ),
           degreeAbbreviation: program.degreeAbbreviation,
-          credits: program.credits || 0,
+          credits: Number(program.credits) || 0, // TODO swagger says number, but api returns string
           descriptionIs: program.descriptionIs || '',
           descriptionEn: program.descriptionEn || '',
           durationInYears: program.durationInYears || 0,
@@ -82,9 +85,18 @@ class UniversityOfIcelandApplicationClient {
               uploadAcceptedFileType: field.uploadAcceptedFileType,
             }),
           ),
-        }
-      }) || []
-    )
+        })
+      } catch (e) {
+        logger.error(
+          `Failed to map program with externalId ${program.externalId} (University of Iceland), reason:`,
+          {
+            e,
+          },
+        )
+      }
+    }
+
+    return mappedRes
   }
 
   async getCourses(externalId: string): Promise<ICourse[]> {
@@ -93,26 +105,64 @@ class UniversityOfIcelandApplicationClient {
         { externalId },
       )
 
-    return (
-      res.data?.map((course) => ({
-        externalId: course.externalId,
-        nameIs: course.nameIs,
-        nameEn: course.nameEn,
-        credits: course.credits,
-        semesterYear: course.semesterYear,
-        semesterSeason: mapEnumToEnum(
-          course.semesterSeason,
-          ExampleCourseSemesterSeasonEnum,
-          Season,
-        ),
-        descriptionIs: course.descriptionIs,
-        descriptionEn: course.descriptionEn,
-        externalUrlIs: course.externalUrlIs,
-        externalUrlEn: course.externalUrlEn,
-        requirement: course.required
-          ? Requirement.MANDATORY
-          : Requirement.FREE_ELECTIVE, //TODO missing in api
-      })) || []
-    )
+    const mappedRes = []
+    const courseList = res.data || []
+    for (let i = 0; i < courseList.length; i++) {
+      const course = courseList[i]
+      try {
+        let requirement: Requirement | undefined = undefined
+        //TODO swagger says boolean, but api returns string
+        switch (course.required) {
+          case 'M':
+            requirement = Requirement.MANDATORY
+            break
+          case '0':
+            requirement = Requirement.MANDATORY
+            break
+        }
+        if (!requirement) {
+          throw new Error(`Not able to map requirement: ${course.required}`)
+        }
+
+        let semesterSeason: Season | undefined = undefined
+        //TODO swagger says enum, but api returns string not in enum
+        switch (course.semesterSeason.toString()) {
+          case 'V':
+            semesterSeason = Season.SPRING
+            break
+          case 'H':
+            semesterSeason = Season.FALL
+            break
+        }
+        if (!semesterSeason) {
+          throw new Error(
+            `Not able to map semester season: ${course.semesterSeason.toString()}`,
+          )
+        }
+
+        mappedRes.push({
+          externalId: course.externalId,
+          nameIs: course.nameIs,
+          nameEn: course.nameEn,
+          credits: Number(course.credits.toString().replace(',', '.')), //TODO swagger says number, but api returns string (e.g. '7,5')
+          semesterYear: course.semesterYear,
+          semesterSeason: semesterSeason,
+          descriptionIs: course.descriptionIs,
+          descriptionEn: course.descriptionEn,
+          externalUrlIs: course.externalUrlIs,
+          externalUrlEn: course.externalUrlEn,
+          requirement: requirement,
+        })
+      } catch (e) {
+        logger.error(
+          `Failed to map course with externalId ${course.externalId} for program with externalId ${externalId} (University of Iceland), reason:`,
+          {
+            e,
+          },
+        )
+      }
+    }
+
+    return mappedRes
   }
 }
