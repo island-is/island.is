@@ -4,7 +4,7 @@ import { Area, SubscriptionDescriptionKey } from '../../../../types/enums'
 import { SubscriptionArray } from '../../../../types/interfaces'
 import { useIsMobile } from '../../../../hooks'
 import localization from '../../Subscriptions.json'
-import { sortLocale } from '@island.is/consultation-portal/utils/helpers'
+import { sortLocale } from '../../../../utils/helpers'
 
 interface Props {
   subscriptionArray: SubscriptionArray
