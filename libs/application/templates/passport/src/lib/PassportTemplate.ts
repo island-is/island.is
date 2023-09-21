@@ -21,6 +21,7 @@ import {
   DeliveryAddressApi,
   UserInfoApi,
   NationalRegistryUser,
+  NationalRegistryUserParentB,
 } from '../dataProviders'
 import { m } from '../lib/messages'
 import {
@@ -185,7 +186,7 @@ const PassportTemplate: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUser,
+                NationalRegistryUserParentB,
                 UserInfoApi,
                 SyslumadurPaymentCatalogApi,
                 IdentityDocumentApi,
