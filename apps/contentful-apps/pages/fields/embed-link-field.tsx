@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import isUrl from 'is-url'
 import { TextInput, Box, Text } from '@contentful/f36-components'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import { useSDK } from '@contentful/react-apps-toolkit'
@@ -7,8 +8,10 @@ const ALLOWED_EMBED_URLS = ['https://e.infogram.com']
 
 const EmbedLinkField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
-  const [value, setValue] = useState('')
-  const [isInvalid, setIsInvalid] = useState(false)
+  const [value, setValue] = useState(sdk.field.getValue() ?? '')
+  const [isValid, setIsValid] = useState(true)
+
+  const isValueUrl = isUrl(value)
 
   return (
     <Box>
@@ -16,23 +19,27 @@ const EmbedLinkField = () => {
         value={value}
         onChange={(ev) => {
           const newValue = ev.target.value
-          const invalidState = !ALLOWED_EMBED_URLS.some((url) =>
-            newValue.startsWith(url),
-          )
+          const isValidState =
+            ALLOWED_EMBED_URLS.some((url) => newValue.startsWith(url)) &&
+            isUrl(newValue)
 
-          sdk.field.setInvalid(invalidState)
-          setIsInvalid(invalidState)
+          sdk.field.setInvalid(!isValidState)
+          setIsValid(isValidState)
           setValue(newValue)
 
-          if (!isInvalid) {
+          if (isValidState) {
             sdk.field.setValue(newValue)
           }
         }}
       />
-      {isInvalid && (
+      {!isValid && (
         <Box marginTop="spacingM">
           <Text style={{ color: 'rgb(218, 41, 74)' }}>
-            Embed links are only allowed from {ALLOWED_EMBED_URLS.join(', ')}
+            {!isValueUrl && 'Value must be a valid url'}
+            {isValueUrl &&
+              `Embed links are only allowed from ${ALLOWED_EMBED_URLS.join(
+                ', ',
+              )}`}
           </Text>
         </Box>
       )}
