@@ -1143,4 +1143,8 @@ export const m = defineMessages({
     id: 'service.portal:postcode',
     defaultMessage: 'Póstfang',
   },
+  emptyDocumentsList: {
+    id: 'service.portal:empty-documents-list',
+    defaultMessage: 'Engin skjöl fundust',
+  },
 })

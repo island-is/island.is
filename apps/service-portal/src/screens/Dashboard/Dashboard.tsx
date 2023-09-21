@@ -2,6 +2,7 @@ import React, { FC, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '@island.is/auth/react'
 import {
+  AlertMessage,
   Box,
   Button,
   CategoryCard,
@@ -18,6 +19,7 @@ import {
   NewDocumentLine,
 } from '@island.is/service-portal/documents'
 import {
+  EmptyImageSmall,
   LinkResolver,
   PlausiblePageviewDetail,
   ServicePortalPath,
@@ -199,7 +201,7 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
                     />
                   </Box>
                 </LinkResolver>
-                {loading && (
+                {loading ? (
                   <Box marginTop={4}>
                     <SkeletonLoader
                       space={2}
@@ -209,20 +211,35 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
                       height={65}
                     />
                   </Box>
-                )}
-                {data?.documents.map((doc) => (
-                  <Box key={doc.id}>
-                    <NewDocumentLine
-                      img={getOrganizationLogoUrl(
-                        doc.senderName,
-                        organizations,
-                      )}
-                      documentLine={doc}
-                      active={false}
-                      asFrame
-                    />
+                ) : data.documents.length > 0 ? (
+                  data.documents.map((doc) => (
+                    <Box key={doc.id}>
+                      <NewDocumentLine
+                        img={getOrganizationLogoUrl(
+                          doc.senderName,
+                          organizations,
+                        )}
+                        documentLine={doc}
+                        active={false}
+                        asFrame
+                      />
+                    </Box>
+                  ))
+                ) : (
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    paddingTop={2}
+                    justifyContent="center"
+                    alignItems="center"
+                    rowGap={2}
+                  >
+                    <EmptyImageSmall style={{ maxHeight: 160 }} />
+                    <Text variant="h3">
+                      {formatMessage(m.emptyDocumentsList)}
+                    </Text>
                   </Box>
-                ))}
+                )}
 
                 <Box
                   textAlign="center"
