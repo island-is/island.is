@@ -3,7 +3,7 @@ import {
   CanApplyErrorCodeBFull,
   CanApplyForCategoryResult,
   DrivingAssessment,
-  Juristiction,
+  Jurisdiction,
   QualityPhoto,
 } from '..'
 import * as v1 from '../v1'
@@ -287,7 +287,7 @@ export class DrivingLicenseApi {
     return parseInt(statusStr, 10) > 0
   }
 
-  public async getListOfJuristictions(): Promise<Juristiction[]> {
+  public async getListOfJurisdictions(): Promise<Jurisdiction[]> {
     const embaetti = await this.v1.apiOkuskirteiniEmbaettiGet({})
 
     return embaetti.map(({ nr, postnumer, nafn }: v1.EmbaettiDto) => ({
@@ -387,7 +387,7 @@ export class DrivingLicenseApi {
     nationalIdTeacher: string
     willBringHealthCertificate: boolean
     willBringQualityPhoto: boolean
-    juristictionId: number
+    jurisdictionId: number
     sendLicenseInMail: boolean
     email: string
     phone: string
@@ -400,7 +400,7 @@ export class DrivingLicenseApi {
             kemurMedLaeknisvottord: params.willBringHealthCertificate,
             kennitala: params.nationalIdApplicant,
             kemurMedNyjaMynd: params.willBringQualityPhoto,
-            embaetti: params.juristictionId,
+            embaetti: params.jurisdictionId,
             kennitalaOkukennara: params.nationalIdTeacher,
             sendaSkirteiniIPosti: params.sendLicenseInMail,
             netfang: params.email,
@@ -435,7 +435,7 @@ export class DrivingLicenseApi {
     nationalIdApplicant: string
     willBringHealthCertificate: boolean
     willBringQualityPhoto: boolean
-    juristictionId: number
+    jurisdictionId: number
     sendLicenseInMail: boolean
     sendLicenseToAddress: string
     category: string
@@ -443,7 +443,7 @@ export class DrivingLicenseApi {
     const response = await this.v2.apiOkuskirteiniApplicationsNewCategoryPost({
       category: params.category,
       postNewFinalLicense: {
-        authorityNumber: params.juristictionId,
+        authorityNumber: params.jurisdictionId,
         needsToPresentHealthCertificate: params.willBringHealthCertificate
           ? 1
           : 0,

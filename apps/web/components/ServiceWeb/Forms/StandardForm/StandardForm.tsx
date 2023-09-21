@@ -547,10 +547,14 @@ export const StandardForm = ({
               isSearchable
               label={fn('malaflokkur', 'label', 'Málaflokkur')}
               name="malaflokkur"
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               onChange={({ label, value }: Option) => {
                 setCategoryLabel(label as string)
                 setCategoryId(value as string)
               }}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               options={categoryOptions}
               placeholder={fn('malaflokkur', 'placeholder', 'Veldu flokk')}
               size="md"
@@ -637,7 +641,11 @@ export const StandardForm = ({
                           <a
                             href={
                               linkResolver('supportqna', [
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                // @ts-ignore make web strict
                                 organizationSlug,
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                // @ts-ignore make web strict
                                 categorySlug,
                                 slug,
                               ]).href
@@ -702,6 +710,8 @@ export const StandardForm = ({
                           isSearchable
                           label={fn('rikisadili', 'label', 'Ríkisaðili')}
                           name="rikisadili"
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore make web strict
                           onChange={({ label }: Option) => {
                             onChange(label)
                           }}
@@ -883,9 +893,11 @@ export const StandardForm = ({
                                 'Þinn sýslumaður',
                               )}
                               name="syslumadur"
+                              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                              // @ts-ignore make web strict
                               onChange={({ label, value }: Option) => {
                                 onChange(label)
-                                setSyslumadurId(value as string)
+                                setSyslumadurId(value)
                               }}
                               hasError={errors?.syslumadur !== undefined}
                               errorMessage={

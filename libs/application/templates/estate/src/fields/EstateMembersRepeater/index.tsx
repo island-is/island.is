@@ -203,7 +203,7 @@ export const EstateMembersRepeater: FC<
                       format="###-####"
                       defaultValue={member.advocate?.phone || ''}
                       error={
-                        error && error[index] && error[index].advocate.phone
+                        error && error[index] && error[index].advocate?.phone
                       }
                       size="sm"
                     />
@@ -217,7 +217,7 @@ export const EstateMembersRepeater: FC<
                       disabled={!member.enabled}
                       defaultValue={member.advocate?.email || ''}
                       error={
-                        error && error[index] && error[index].advocate.email
+                        error && error[index] && error[index].advocate?.email
                       }
                       size="sm"
                     />

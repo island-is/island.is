@@ -29,7 +29,7 @@ const CaseQuery = gql`
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
-      sendRequestToDefender
+      requestSharedWithDefender
       isHeightenedSecurityLevel
       court {
         id
@@ -163,6 +163,7 @@ const CaseQuery = gql`
         orderWithinChapter
         userGeneratedFilename
         displayDate
+        policeFileId
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
