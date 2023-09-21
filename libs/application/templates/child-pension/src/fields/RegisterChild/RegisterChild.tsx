@@ -90,7 +90,7 @@ const RegisterChild: FC<FieldBaseProps> = ({ field, application, errors }) => {
     } else if (personNationalIdNumbers?.length === 0) {
       setValue(nameFieldId, '')
     }
-  }, [personNationalId, getIdentity, id, setValue, nameFieldId])
+  }, [personNationalId, getIdentity, setValue, nameFieldId])
 
   const finalMinDate = startOfYear(subYears(new Date(), 17))
   const finalMaxDate = new Date()

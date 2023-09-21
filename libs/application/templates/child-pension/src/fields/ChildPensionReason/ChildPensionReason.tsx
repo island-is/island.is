@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from 'react'
+import { FC } from 'react'
 import { useFormContext, Controller } from 'react-hook-form'
 import { formatText } from '@island.is/application/core'
 import {
@@ -17,7 +17,7 @@ import {
 } from '@island.is/application/types'
 import { getChildPensionReasonOptions } from '../../lib/childPensionUtils'
 import { ChildPensionReason as ChildPensionReasonEnum } from '../../lib/constants'
-// import ParentIsDead from './ParentIsDead'
+import ParentIsDead from './ParentIsDead'
 import { FieldDescription } from '@island.is/shared/form-fields'
 
 type ChildRepeaterProps = {
@@ -35,17 +35,8 @@ const ChildPensionReason: FC<
   const { id } = field
   const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
-  // const [repeaterIndex, setRepeaterIndex] = useState<number>(-1)
 
   const showDescription = field.props.showDescription ?? false
-
-  // useEffect(() => {
-  //   const index = id.match(/\d+/g)
-  //   if (index) {
-  //     setRepeaterIndex(Number(index[0]))
-  //   }
-  // }, [id])
-
   const options = getChildPensionReasonOptions()
 
   function handleSelect(option: Option, checkedValues: string[]) {
@@ -104,13 +95,11 @@ const ChildPensionReason: FC<
                 {value &&
                   value.includes(ChildPensionReasonEnum.PARENT_IS_DEAD) &&
                   option.value === ChildPensionReasonEnum.PARENT_IS_DEAD && (
-                    // TODO: Laga component (Fæ villu því er að harðkóða id)
-                    // <ParentIsDead
-                    //   application={application}
-                    //   repeaterIndex={repeaterIndex}
-                    //   errors={errors}
-                    // />
-                    <Text>Foreldri er látið</Text>
+                    <ParentIsDead
+                      id={id}
+                      application={application}
+                      errors={errors}
+                    />
                   )}
                 {value &&
                   value.includes(ChildPensionReasonEnum.PARENTS_PENITENTIARY) &&

@@ -143,8 +143,8 @@ export const childPensionFormMessage: MessageDir = {
     },
     registerChildTitle: {
       id: 'cp.application:info.register.child.title',
-      defaultMessage: 'Skráning barns',
-      description: 'Register child',
+      defaultMessage: 'Skráning barns á framfæri',
+      description: 'english translation',
     },
     registerChildChildDoesNotHaveNationalId: {
       id: 'cp.application:info.register.child.child.does.not.have.national.id',
@@ -246,13 +246,23 @@ export const childPensionFormMessage: MessageDir = {
     },
     childPensionReasonOtherParentIsDeadTitle: {
       id: 'cp.application:info.child.pension.reason.other.parentIsDead.title',
-      defaultMessage: 'Annað/Hitt foreldri (valkvæmt)',
+      defaultMessage: 'Hitt foreldri',
       description: 'english translation',
     },
     childPensionParentDoesNotHaveNationalId: {
       id: 'cp.application:info.child.pension.parent.does.not.have.national.id',
       defaultMessage: 'Foreldri ekki með íslenska kennitölu',
       description: 'Parent does not have an Icelandic national ID',
+    },
+    childPensionParentNationalId: {
+      id: 'cp.application:info.child.pension.parent.national.id',
+      defaultMessage: 'Kennitala látins foreldris',
+      description: 'english translation',
+    },
+    childPensionParentBirthDate: {
+      id: 'cp.application:info.child.pension.parent.birth.date',
+      defaultMessage: 'Fæðingardagur látins foreldris',
+      description: 'english translation',
     },
     childPensionNameAlertTitle: {
       id: 'cp.application:info.child.pension.name.alert.title',
@@ -270,6 +280,17 @@ export const childPensionFormMessage: MessageDir = {
       id: 'cp.application:info.child.pension.add.child.question',
       defaultMessage: 'Viltu bæta við barni á framfæri?',
       description: 'english translation',
+    },
+
+    childPensionReasonParentIsDeadAddParent: {
+      id: 'cp.application:info.child.pension.reason.parentIsDead.addParent',
+      defaultMessage: 'Bæta við foreldri',
+      description: 'Add parent',
+    },
+    childPensionReasonParentIsDeadRemoveParent: {
+      id: 'cp.application:info.child.pension.reason.parentIsDead.removeParent',
+      defaultMessage: 'Eyða',
+      description: 'Remove',
     },
   }),
 
@@ -358,28 +379,28 @@ export const validatorErrorMessages = defineMessages({
     defaultMessage: 'Ógilt gildi',
     description: 'Invalid value',
   },
-  childNationalId: {
-    id: 'cp.application:child.nationalId',
+  nationalIdRequired: {
+    id: 'cp.application:nationalId.required',
     defaultMessage: 'Vantar kennitölu',
     description: 'The national id is required',
   },
-  childNationalIdDuplicate: {
-    id: 'cp.application:child.nationalId.duplicate',
+  nationalIdDuplicate: {
+    id: 'cp.application:nationalId.duplicate',
     defaultMessage: 'Kennitala er þegar skráð.',
     description: 'National id is already registered.',
   },
-  childNationalIdMustBeValid: {
-    id: 'cp.application:child.nationalId.must.be.valid',
+  nationalIdMustBeValid: {
+    id: 'cp.application:nationalId.must.be.valid',
     defaultMessage: 'Kennitala þarf að vera gild.',
     description: 'The national id must be valid.',
   },
-  childBirthDate: {
-    id: 'cp.application:child.birthDate',
+  birthDateRequired: {
+    id: 'cp.application:birthDate.required',
     defaultMessage: 'Vinsamlegast veldu fæðingardag.',
     description: 'Please select a date of birth.',
   },
-  childName: {
-    id: 'cp.application:child.name',
+  nameRequired: {
+    id: 'cp.application:name.required',
     defaultMessage: 'Fullt nafn vantar',
     description: 'Full name missing',
   },
@@ -400,7 +421,7 @@ export const validatorErrorMessages = defineMessages({
   },
   childPensionMaxTwoReasons: {
     id: 'cp.application:child.pension.max.two.reasons',
-    defaultMessage: 'Má bara velja 2 ástæður',
+    defaultMessage: 'Aðeins leyfilegt að velja að hámarki tvær ástæður',
     description: 'english translation',
   },
   childPensionReasonsDoNotMatch: {

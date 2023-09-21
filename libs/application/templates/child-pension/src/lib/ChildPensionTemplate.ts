@@ -16,7 +16,7 @@ import {
 
 import { pruneAfterDays } from '@island.is/application/core'
 
-import { Events, Roles, States, NO } from './constants'
+import { Events, Roles, States, NO, ChildPensionReason } from './constants'
 import { dataSchema } from './dataSchema'
 import { childPensionFormMessage } from './messages'
 import { answerValidators } from './answerValidators'
@@ -71,7 +71,7 @@ const ChildPensionTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: ['clearChildPensionAddChild'],
+        exit: ['clearChildPensionAddChild', 'clearParentIsDead'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -112,6 +112,37 @@ const ChildPensionTemplate: ApplicationTemplate<
 
         if (childPensionAddChild === NO) {
           unset(application.answers, 'registerChildRepeater')
+        }
+
+        return context
+      }),
+      clearParentIsDead: assign((context) => {
+        const { application } = context
+        const { registeredChildren, selectedChildrenInCustody } =
+          getApplicationAnswers(application.answers)
+
+        for (const [index, child] of selectedChildrenInCustody.entries()) {
+          if (
+            child.parentIsDead &&
+            !child.reason?.includes(ChildPensionReason.PARENT_IS_DEAD)
+          ) {
+            unset(
+              application.answers,
+              `chooseChildren.selectedChildrenInCustody[${index}].parentIsDead`,
+            )
+          }
+        }
+
+        for (const [index, child] of registeredChildren.entries()) {
+          if (
+            child.parentIsDead &&
+            !child.reason?.includes(ChildPensionReason.PARENT_IS_DEAD)
+          ) {
+            unset(
+              application.answers,
+              `registerChildRepeater[${index}].parentIsDead`,
+            )
+          }
         }
 
         return context

@@ -1,12 +1,12 @@
 import { Application } from '@island.is/application/types'
 import { validatorErrorMessages } from '../messages'
-import { AnswerValidationConstants, ChildPensionReason } from '../constants'
-import { buildError } from './utils'
+import { AnswerValidationConstants } from '../constants'
+import { buildError, validateReason } from './utils'
 import { ChildPensionRow } from '../../types'
 import * as kennitala from 'kennitala'
 import subYears from 'date-fns/subYears'
 import startOfYear from 'date-fns/startOfYear'
-import { getApplicationExternalData } from '../childPensionUtils'
+import { getApplicationAnswers } from '../childPensionUtils'
 
 export const validateLastestChild = (
   newAnswer: unknown,
@@ -15,8 +15,8 @@ export const validateLastestChild = (
   const rawRegisterChildRow = newAnswer as ChildPensionRow[] | undefined
   const { VALIDATE_LATEST_CHILD } = AnswerValidationConstants
 
-  const { custodyInformation } = getApplicationExternalData(
-    application.externalData,
+  const { selectedChildrenInCustody } = getApplicationAnswers(
+    application.answers,
   )
 
   if (!Array.isArray(rawRegisterChildRow)) {
@@ -35,7 +35,7 @@ export const validateLastestChild = (
   if (child.childDoesNotHaveNationalId) {
     if (!child.nationalIdOrBirthDate) {
       return buildError(
-        validatorErrorMessages.childBirthDate,
+        validatorErrorMessages.birthDateRequired,
         `${VALIDATE_LATEST_CHILD}[${i}].nationalIdOrBirthDate`,
       )
     }
@@ -50,14 +50,14 @@ export const validateLastestChild = (
     }
     if (!child.name) {
       return buildError(
-        validatorErrorMessages.childName,
+        validatorErrorMessages.nameRequired,
         `${VALIDATE_LATEST_CHILD}[${i}].name`,
       )
     }
   } else {
     if (!child.nationalIdOrBirthDate) {
       return buildError(
-        validatorErrorMessages.childNationalId,
+        validatorErrorMessages.nationalIdRequired,
         `${VALIDATE_LATEST_CHILD}[${i}].nationalIdOrBirthDate`,
       )
     }
@@ -67,18 +67,19 @@ export const validateLastestChild = (
       ) !== i
     ) {
       return buildError(
-        validatorErrorMessages.childNationalIdDuplicate,
+        validatorErrorMessages.nationalIdDuplicate,
         `${VALIDATE_LATEST_CHILD}[${i}].nationalIdOrBirthDate`,
       )
     }
     if (
-      custodyInformation.findIndex(
+      selectedChildrenInCustody.findIndex(
         (item) =>
-          kennitala.format(item.nationalId) === child.nationalIdOrBirthDate,
+          kennitala.format(item.nationalIdOrBirthDate) ===
+          child.nationalIdOrBirthDate,
       ) !== -1
     ) {
       return buildError(
-        validatorErrorMessages.childNationalIdDuplicate,
+        validatorErrorMessages.nationalIdDuplicate,
         `${VALIDATE_LATEST_CHILD}[${i}].nationalIdOrBirthDate`,
       )
     }
@@ -95,45 +96,17 @@ export const validateLastestChild = (
       }
     } else {
       return buildError(
-        validatorErrorMessages.childNationalIdMustBeValid,
+        validatorErrorMessages.nationalIdMustBeValid,
         `${VALIDATE_LATEST_CHILD}[${i}].nationalIdOrBirthDate`,
       )
     }
   }
 
-  console.log('=======> (VALIDATION) child: ', child)
-  if (!child.reason || child.reason.length === 0) {
-    return buildError(
-      validatorErrorMessages.childPensionReason,
-      `${VALIDATE_LATEST_CHILD}[${i}].reason`,
-    )
-  }
+  // Reason
+  const validatedField = validateReason(child, `${VALIDATE_LATEST_CHILD}[${i}]`)
 
-  if (child.reason.length > 2) {
-    return buildError(
-      validatorErrorMessages.childPensionMaxTwoReasons,
-      `${VALIDATE_LATEST_CHILD}[${i}].reason`,
-    )
-  } else {
-    if (
-      child.reason.includes(ChildPensionReason.PARENT_IS_DEAD) &&
-      child.reason.includes(ChildPensionReason.CHILD_IS_FATHERLESS)
-    ) {
-      return buildError(
-        validatorErrorMessages.childPensionReasonsDoNotMatch,
-        `${VALIDATE_LATEST_CHILD}[${i}].reason`,
-      )
-    }
-
-    if (
-      child.reason.includes(ChildPensionReason.PARENT_IS_DEAD) &&
-      child.reason.includes(ChildPensionReason.PARENTS_PENITENTIARY)
-    ) {
-      return buildError(
-        validatorErrorMessages.childPensionReasonsDoNotMatch,
-        `${VALIDATE_LATEST_CHILD}[${i}].reason`,
-      )
-    }
+  if (validatedField !== undefined) {
+    return validatedField
   }
 
   return undefined
