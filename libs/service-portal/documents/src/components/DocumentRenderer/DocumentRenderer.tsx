@@ -1,6 +1,6 @@
 import { DocumentDetails } from '@island.is/api/schema'
 import { ActiveDocumentType } from '../../screens/Overview/NewOverview'
-import { HtmlDocument } from './HtmlDocument'
+import { HtmlDocument } from './HTMLDocument'
 import { PdfDocument } from './PdfDocument'
 import { UrlDocument } from './UrlDocment'
 import NoPDF from '../NoPDF/NoPDF'
