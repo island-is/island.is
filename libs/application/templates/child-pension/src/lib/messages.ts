@@ -299,6 +299,46 @@ export const childPensionFormMessage: MessageDir = {
     },
   }),
 
+  fileUpload: defineMessages({
+    title: {
+      id: 'cp.application:fileUpload.title',
+      defaultMessage: 'Fylgiskjöl',
+      description: 'Attachments',
+    },
+    attachmentButton: {
+      id: 'cp.application:fileUpload.attachment.button',
+      defaultMessage: 'Veldu skjal',
+      description: 'Upload file',
+    },
+    attachmentHeader: {
+      id: 'cp.application:fileUpload.attachment.header',
+      defaultMessage: 'Dragðu skjalið hingað til að hlaða upp',
+      description: 'Drag files here to upload',
+    },
+    attachmentDescription: {
+      id: 'cp.application:fileUpload.attachment.description',
+      defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
+      description: 'The following document types are accepted: .pdf',
+    },
+    attachmentMaxSizeError: {
+      id: 'cp.application:fileUpload.attachment.maxSizeError',
+      defaultMessage: 'Hámark 5 MB á skrá',
+      description: 'Max 5 MB per file',
+    },
+    maintenanceTitle: {
+      id: 'cp.application:fileUpload.maintenance.title',
+      defaultMessage: 'Staðfesting á framfærslu',
+      description: 'english translation',
+    },
+    maintenanceDescription: {
+      id: 'cp.application:fileUpload.maintenance.description',
+      defaultMessage:
+        'Hér fyrir neðan getur þú skilað staðfestingu á að þú sért með barn á framfærslu. Vinsamlegast gerðu grein fyrir barninu og ykkar tenglsum í skjalinu. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Below you can submit confirmation that you have a dependent child. Please state your relationship to the child in the document. Note that the document must be in .pdf format.',
+    },
+  }),
+
   additionalInfo: defineMessages({
     section: {
       id: 'cp.application:additional.info.section',
@@ -434,5 +474,10 @@ export const validatorErrorMessages = defineMessages({
     defaultMessage:
       'Ástæður passa ekki saman. Vinsamlegast veldu aðrar ástæður.',
     description: 'english translation',
+  },
+  requireAttachment: {
+    id: 'oap.application:fileUpload.required.attachment',
+    defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
+    description: 'You must upload an attachment to continue.',
   },
 })

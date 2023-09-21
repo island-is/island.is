@@ -11,6 +11,7 @@ import { States } from '../../lib/constants'
 import { handleServerError } from '@island.is/application/ui-components'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { childPensionFormMessage } from '../../lib/messages'
+import { Attachments } from './review-groups/Attachments'
 
 interface ReviewScreenProps {
   application: Application
@@ -147,6 +148,7 @@ export const Review: FC<ReviewScreenProps> = ({
       )}
       <BaseInformation {...childProps} />
       <Children {...childProps} />
+      <Attachments {...childProps} />
     </>
   )
 }

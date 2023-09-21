@@ -1,4 +1,6 @@
 import { DefaultEvents } from '@island.is/application/types'
+import { MessageDescriptor } from 'react-intl'
+import { childPensionFormMessage } from './messages'
 
 export const YES = 'yes'
 export const NO = 'no'
@@ -33,4 +35,13 @@ export enum ChildPensionReason {
 export enum AnswerValidationConstants {
   VALIDATE_LATEST_CHILD = 'registerChildRepeater',
   VALIDATE_SELECTED_CHILDREN_IN_CUSTODY_REASON = 'chooseChildren.selectedChildrenInCustody',
+  FILEUPLOAD = 'fileUpload',
+}
+
+export const FILE_SIZE_LIMIT = 5000000 // 5MB
+
+export const AttachmentLabel: {
+  [key: string]: MessageDescriptor
+} = {
+  maintenance: childPensionFormMessage.fileUpload.maintenanceTitle,
 }

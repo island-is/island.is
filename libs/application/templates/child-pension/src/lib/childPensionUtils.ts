@@ -6,8 +6,27 @@ import {
   YesOrNo,
 } from '@island.is/application/types'
 import { ChildPensionRow } from '../types'
-import { ChildPensionReason, YES } from './constants'
+import { ChildPensionReason, NO, YES, AttachmentLabel } from './constants'
 import { childPensionFormMessage } from './messages'
+import { MessageDescriptor } from 'react-intl'
+
+interface FileType {
+  key: string
+  name: string
+}
+
+interface ChildPensionAttachments {
+  maintenance?: FileType[]
+}
+
+enum AttachmentTypes {
+  MAINTENANCE = 'maintenance',
+}
+
+interface Attachments {
+  attachments: FileType[]
+  label: MessageDescriptor
+}
 
 export function getApplicationAnswers(answers: Application['answers']) {
   const applicantEmail = getValueViaPath(
@@ -102,4 +121,34 @@ export function getChildPensionReasonOptions() {
     },
   ]
   return options
+}
+
+export function getAttachments(application: Application) {
+  const getAttachmentDetails = (
+    attachmentsArr: FileType[] | undefined,
+    attachmentType: AttachmentTypes,
+  ) => {
+    if (attachmentsArr && attachmentsArr.length > 0) {
+      attachments.push({
+        attachments: attachmentsArr,
+        label: AttachmentLabel[attachmentType],
+      })
+    }
+  }
+
+  const { answers } = application
+  const { registeredChildren, childPensionAddChild } =
+    getApplicationAnswers(answers)
+  const attachments: Attachments[] = []
+
+  const childPensionAttachments = answers.fileUpload as ChildPensionAttachments
+
+  if (registeredChildren.length > 0 && childPensionAddChild !== NO) {
+    getAttachmentDetails(
+      childPensionAttachments?.maintenance,
+      AttachmentTypes.MAINTENANCE,
+    )
+  }
+
+  return attachments
 }

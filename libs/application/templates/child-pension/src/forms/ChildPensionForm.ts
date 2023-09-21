@@ -9,6 +9,7 @@ import {
   buildTextField,
   buildRepeater,
   buildRadioField,
+  buildFileUploadField,
 } from '@island.is/application/core'
 import {
   Application,
@@ -24,7 +25,7 @@ import {
   getApplicationExternalData,
   getApplicationAnswers,
 } from '../lib/childPensionUtils'
-import { YES, NO } from '../lib/constants'
+import { YES, NO, FILE_SIZE_LIMIT } from '../lib/constants'
 
 const buildChildReason = (index: number): CustomField =>
   buildCustomField(
@@ -187,6 +188,38 @@ export const ChildPensionForm: Form = buildForm({
                   ],
                 }),
               ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'fileUploadMaintenance',
+          title: childPensionFormMessage.fileUpload.maintenanceTitle,
+          children: [
+            buildFileUploadField({
+              id: 'fileUpload.maintenance',
+              title: childPensionFormMessage.fileUpload.maintenanceTitle,
+              description:
+                childPensionFormMessage.fileUpload.maintenanceDescription,
+              introduction:
+                childPensionFormMessage.fileUpload.maintenanceDescription,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                childPensionFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: childPensionFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                childPensionFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                childPensionFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
+              condition: (answers) => {
+                const { registeredChildren, childPensionAddChild } =
+                  getApplicationAnswers(answers)
+
+                return (
+                  registeredChildren.length > 0 && childPensionAddChild === YES
+                )
+              },
             }),
           ],
         }),

@@ -116,6 +116,7 @@ const ChildPensionTemplate: ApplicationTemplate<
 
         if (childPensionAddChild === NO) {
           unset(application.answers, 'registerChildRepeater')
+          unset(application.answers, 'fileUpload.maintenance')
         }
 
         return context
