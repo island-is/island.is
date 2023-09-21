@@ -32,32 +32,31 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (networkError) console.log(`[Network error]: ${networkError}`)
 })
 
-export const createApolloClient = () =>
-  new ApolloClient({
-    link: ApolloLink.from([retryLink, errorLink, authLink, httpLink]),
-    cache: new InMemoryCache({
-      typePolicies: {
-        UserProfile: {
-          keyFields: ['nationalId'],
-        },
-        NationalRegistryPerson: {
-          keyFields: ['nationalId'],
-        },
-        AuthProcuringHolderDelegation: {
-          keyFields: ['from', ['nationalId']],
-        },
-        AuthLegalGuardianDelegation: {
-          keyFields: ['from', ['nationalId']],
-        },
-        Query: {
-          fields: {
-            authDelegations: {
-              merge(_, incoming) {
-                return incoming
-              },
+export const client = new ApolloClient({
+  link: ApolloLink.from([retryLink, errorLink, authLink, httpLink]),
+  cache: new InMemoryCache({
+    typePolicies: {
+      UserProfile: {
+        keyFields: ['nationalId'],
+      },
+      NationalRegistryPerson: {
+        keyFields: ['nationalId'],
+      },
+      AuthProcuringHolderDelegation: {
+        keyFields: ['from', ['nationalId']],
+      },
+      AuthLegalGuardianDelegation: {
+        keyFields: ['from', ['nationalId']],
+      },
+      Query: {
+        fields: {
+          authDelegations: {
+            merge(_, incoming) {
+              return incoming
             },
           },
         },
       },
-    }),
-  })
+    },
+  }),
+})

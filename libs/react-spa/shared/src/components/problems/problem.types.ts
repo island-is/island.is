@@ -9,3 +9,9 @@ export type CommonProblemProps = Pick<
 export type ProblemSize = 'small' | 'large'
 
 export type Message = ReactNode | string
+
+export enum ProblemTypes {
+  internalServiceError = 'internal_service_error',
+  notFound = 'not_found',
+  noData = 'no_data',
+}

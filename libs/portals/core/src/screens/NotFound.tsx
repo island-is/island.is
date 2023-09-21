@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom'
 import { MessageDescriptor } from 'react-intl'
 
 import { Box } from '@island.is/island-ui/core'
@@ -10,16 +9,16 @@ interface NotFoundProps {
 }
 
 export const NotFound = ({ title }: NotFoundProps) => {
-  const navigate = useNavigate()
   const { formatMessage } = useLocale()
 
   return (
-    <Box marginY={6}>
+    <Box marginY={6} marginX={[0, 6]}>
       <Problem
         tag={formatMessage(m.error)}
         type="not_found"
         expand
         title={formatMessage(title || m.notFound)}
+        noBorder
       />
     </Box>
   )

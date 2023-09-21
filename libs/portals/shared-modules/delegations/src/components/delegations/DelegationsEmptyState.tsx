@@ -7,7 +7,7 @@ export const DelegationsEmptyState = () => {
 
   return (
     <Problem
-      type="no_data"
+      type="not_found"
       message={formatMessage(m.noDelegations)}
       imgSrc="./assets/images/educationDegree.svg"
       imgAlt={formatMessage(m.noDelegationsImageAlt)}

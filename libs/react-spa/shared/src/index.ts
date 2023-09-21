@@ -1,14 +1,16 @@
-// Components
+// components
 export * from './components/problems/Problem'
+export { ProblemTypes } from './components/problems/problem.types'
 
-// Libs
+// libs
 export * from './lib/validate'
 export * from './lib/replaceParams'
 export * from './lib/messages'
 
-// Hooks
+// hooks
 export * from './hooks/useSubmitting'
 export * from './hooks/useEffectOnce'
 
-// Utils
+// utils
 export * from './utils/getOrganizationSlugFromError'
+export * from './utils/notFoundError'

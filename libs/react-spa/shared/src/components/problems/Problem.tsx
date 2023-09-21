@@ -1,16 +1,20 @@
-import { useEffect } from 'react'
-
 import { ProblemTemplate } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { useLocale } from '@island.is/localization'
+import { useEffect } from 'react'
+import { m } from '../../lib/messages'
 
 import { getOrganizationSlugFromError } from '../../utils/getOrganizationSlugFromError'
-import { ThirdPartyServiceError } from './ThirdPartyServiceError'
-import { NotFound } from './NotFound'
 import { InternalServiceError } from './InternalServiceError'
-import { CommonProblemProps, Message, ProblemSize } from './problem.types'
 import { NoData } from './NoData'
-import { m } from '../../lib/messages'
+import { NotFound } from './NotFound'
+import {
+  CommonProblemProps,
+  Message,
+  ProblemSize,
+  ProblemTypes,
+} from './problem.types'
+import { ThirdPartyServiceError } from './ThirdPartyServiceError'
 
 type ProblemBaseProps = {
   /**
@@ -20,7 +24,7 @@ type ProblemBaseProps = {
    * 'not_found' is a 404 error, i.e. the page is not found
    * 'no_data' is a 200 response, i.e. no data
    */
-  type?: 'internal_service_error' | 'not_found' | 'no_data'
+  type?: `${ProblemTypes}`
   /**
    * Size of the error box
    * 'small' is a small error that can be used inline
@@ -60,7 +64,7 @@ interface NoDataProps extends ProblemBaseProps {
 type ProblemProps = InternalServiceErrorProps | NotFoundProps | NoDataProps
 
 export const Problem = ({
-  type = 'internal_service_error',
+  type = ProblemTypes.internalServiceError,
   size = 'large',
   error,
   title,
@@ -68,7 +72,7 @@ export const Problem = ({
   tag,
   imgSrc,
   imgAlt,
-  noBorder,
+  noBorder = true,
   dataTestId,
   logError = true,
   expand,
@@ -101,7 +105,7 @@ export const Problem = ({
   }, [])
 
   switch (type) {
-    case 'internal_service_error':
+    case ProblemTypes.internalServiceError:
       if (error) {
         const organizationSlug = getOrganizationSlugFromError(error)
 
@@ -125,10 +129,10 @@ export const Problem = ({
         />
       )
 
-    case 'not_found':
+    case ProblemTypes.notFound:
       return <NotFound {...defaultProps} tag={tag ?? formatMessage(m.error)} />
 
-    case 'no_data':
+    case ProblemTypes.noData:
       return <NoData {...defaultProps} size={size} tag={tag} />
 
     default:
