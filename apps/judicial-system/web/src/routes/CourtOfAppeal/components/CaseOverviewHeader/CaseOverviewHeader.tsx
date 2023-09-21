@@ -63,8 +63,8 @@ const CourtOfAppealCaseOverviewHeader: React.FC<
                     UserRole.PRISON_SYSTEM_STAFF,
                   ].includes(e.userRole as UserRole),
               )
-              .map((event) => (
-                <Box marginBottom={2}>
+              .map((event, index) => (
+                <Box marginBottom={2} key={`event${index}`}>
                   <AlertMessage
                     message={formatMessage(strings.appealResultOpenedBy, {
                       userRole: event.userRole as UserRole,
