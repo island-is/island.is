@@ -796,36 +796,22 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Til athugunar!',
       description: 'For consideration',
     },
-    periodAlertDescriptionFirstPart: {
-      id: 'oap.application:period.alert.description.firstPart',
+    periodAlertMessage: {
+      id: 'oap.application:period.alert.message',
       defaultMessage:
-        'Þú ert að sækja um snemmtöku miðað við valið tímabil. Nánar um snemmtöku má lesa ',
+        'Þú ert að sækja um snemmtöku miðað við valið tímabil. Réttur ellilífeyris myndast 1. næsta mánuð eftir fæðingardag.',
       description:
-        'You are applying for early admission based on the selected period. You can read more about early birding ',
+        'You are applying for early admission based on the selected period. The right to old-age pension is established on the 1st of the following month after birthday.',
     },
-    periodAlertDescriptionSecondPart: {
-      id: 'oap.application:period.alert.description.secondPart',
-      defaultMessage:
-        '. Réttur ellilífeyris myndast 1. næsta mánuð eftir fæðingardag.',
-      description:
-        '. The right to old-age pension is established on the 1st of the following month after birthday.',
-    },
-    periodAlertLinkName: {
-      id: 'oap.application:period.alert.linkName',
-      defaultMessage: 'hér',
-      description: 'here',
+    periodAlertLinkTitle: {
+      id: 'oap.application:period.alert.linkTitle',
+      defaultMessage: 'Nánar um snemmtöku má lesa hér',
+      description: 'You can read more about early birding here',
     },
     periodAlertUrl: {
       id: 'oap.application:period.alert.url',
       defaultMessage: 'https://www.tr.is/65/ad-flyta-toku-ellilifeyris',
       description: 'The url the link text links to',
-    },
-    periodAlertMessage: {
-      id: 'oap.application:period.alert.message',
-      defaultMessage:
-        'Þú ert að sækja um snemmtöku miðað við valið tímabil. Nánar um snemmtöku má lesa hér. Réttur ellilífeyris myndast 1. næsta mánuð eftir fæðingardag.',
-      description:
-        'You are applying for early admission based on the selected period. You can read more about early birding here. The right to old-age pension is established on the 1st of the following month after birthday.',
     },
   }),
 
