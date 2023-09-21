@@ -1,9 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-
-import addYears from 'date-fns/addYears'
 import addMonths from 'date-fns/addMonths'
-
 import { MAX_MONTHS_BACKWARD, MAX_MONTHS_FORWARD, MONTHS } from './constants'
 
 export function getApplicationAnswers(answers: Application['answers']) {

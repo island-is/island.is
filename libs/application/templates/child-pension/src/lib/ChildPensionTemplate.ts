@@ -64,7 +64,11 @@ const ChildPensionTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
-              api: [NationalRegistryUserApi, UserProfileApi, NationalRegistryResidenceHistoryApi],
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                NationalRegistryResidenceHistoryApi,
+              ],
               delete: true,
             },
           ],
