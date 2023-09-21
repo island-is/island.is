@@ -3,7 +3,10 @@ import isEmpty from 'lodash/isEmpty'
 import { validatorErrorMessages } from '../messages'
 import { AnswerValidationConstants } from '../constants'
 import { buildError } from './utils'
-import { getApplicationAnswers } from '../childPensionUtils'
+import {
+  childCustodyLivesWithApplicant,
+  getApplicationAnswers,
+} from '../childPensionUtils'
 
 export const fileUploadValidationSection = (
   newAnswer: unknown,
@@ -14,11 +17,29 @@ export const fileUploadValidationSection = (
 
   const { registeredChildren } = getApplicationAnswers(application.answers)
 
+  const DoesNotLiveWithApplicant = childCustodyLivesWithApplicant(
+    application.answers,
+    application.externalData,
+  )
+
   if (registeredChildren.length > 0 && obj.maintenance) {
     if (isEmpty((obj as { maintenance: unknown[] }).maintenance)) {
       return buildError(
         validatorErrorMessages.requireAttachment,
         `${FILEUPLOAD}.maintenance`,
+      )
+    }
+  }
+
+  if (DoesNotLiveWithApplicant && obj.notLivesWithApplicant) {
+    if (
+      isEmpty(
+        (obj as { notLivesWithApplicant: unknown[] }).notLivesWithApplicant,
+      )
+    ) {
+      return buildError(
+        validatorErrorMessages.requireAttachment,
+        `${FILEUPLOAD}.notLivesWithApplicant`,
       )
     }
   }

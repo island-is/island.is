@@ -337,6 +337,19 @@ export const childPensionFormMessage: MessageDir = {
       description:
         'Below you can submit confirmation that you have a dependent child. Please state your relationship to the child in the document. Note that the document must be in .pdf format.',
     },
+    notLivesWithApplicantTitle: {
+      id: 'cp.application:fileUpload.not.lives.with.applicant.title',
+      defaultMessage: 'Samningur um meðlag',
+      description: 'english translation',
+    },
+    notLivesWithApplicantDescription: {
+      id: 'cp.application:fileUpload.not.lives.with.applicant.description',
+      // TODO: Texti úr ellilífeyris umsókn (ætti frekar að nota texta úr Figma?)
+      defaultMessage:
+        'Hér getur þú skilað meðlagsúrskurði eða samningi frá sýslumanni vegna barns/barna sem er ekki með lögheimili hjá þér. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Below you can submit a child support order or agreement from the District Commissioner for a child/children who do not have legal residence with you. Note that the document must be in .pdf format.',
+    },
   }),
 
   additionalInfo: defineMessages({
@@ -476,7 +489,7 @@ export const validatorErrorMessages = defineMessages({
     description: 'english translation',
   },
   requireAttachment: {
-    id: 'oap.application:fileUpload.required.attachment',
+    id: 'cp.application:fileUpload.required.attachment',
     defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
     description: 'You must upload an attachment to continue.',
   },

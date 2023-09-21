@@ -24,6 +24,7 @@ import { UserProfile } from '@island.is/api/schema'
 import {
   getApplicationExternalData,
   getApplicationAnswers,
+  childCustodyLivesWithApplicant,
 } from '../lib/childPensionUtils'
 import { YES, NO, FILE_SIZE_LIMIT } from '../lib/constants'
 
@@ -194,6 +195,12 @@ export const ChildPensionForm: Form = buildForm({
         buildSubSection({
           id: 'fileUploadMaintenance',
           title: childPensionFormMessage.fileUpload.maintenanceTitle,
+          condition: (answers) => {
+            const { registeredChildren, childPensionAddChild } =
+              getApplicationAnswers(answers)
+
+            return registeredChildren.length > 0 && childPensionAddChild === YES
+          },
           children: [
             buildFileUploadField({
               id: 'fileUpload.maintenance',
@@ -212,14 +219,36 @@ export const ChildPensionForm: Form = buildForm({
               uploadButtonLabel:
                 childPensionFormMessage.fileUpload.attachmentButton,
               uploadMultiple: true,
-              condition: (answers) => {
-                const { registeredChildren, childPensionAddChild } =
-                  getApplicationAnswers(answers)
+            }),
+          ],
+        }),
 
-                return (
-                  registeredChildren.length > 0 && childPensionAddChild === YES
-                )
-              },
+        buildSubSection({
+          id: 'fileUploadNotLivesWithApplicant',
+          title: childPensionFormMessage.fileUpload.notLivesWithApplicantTitle,
+          condition: (answers, externalData) =>
+            childCustodyLivesWithApplicant(answers, externalData),
+          children: [
+            buildFileUploadField({
+              id: 'fileUpload.notLivesWithApplicant',
+              title:
+                childPensionFormMessage.fileUpload.notLivesWithApplicantTitle,
+              description:
+                childPensionFormMessage.fileUpload
+                  .notLivesWithApplicantDescription,
+              introduction:
+                childPensionFormMessage.fileUpload
+                  .notLivesWithApplicantDescription,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                childPensionFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: childPensionFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                childPensionFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                childPensionFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
             }),
           ],
         }),

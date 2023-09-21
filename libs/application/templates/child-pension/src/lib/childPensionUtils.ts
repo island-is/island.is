@@ -17,10 +17,12 @@ interface FileType {
 
 interface ChildPensionAttachments {
   maintenance?: FileType[]
+  notLivesWithApplicant?: FileType[]
 }
 
 enum AttachmentTypes {
   MAINTENANCE = 'maintenance',
+  NOT_LIVES_WITH_APPLICANT = 'notLivesWithApplicant',
 }
 
 interface Attachments {
@@ -136,7 +138,7 @@ export function getAttachments(application: Application) {
     }
   }
 
-  const { answers } = application
+  const { answers, externalData } = application
   const { registeredChildren, childPensionAddChild } =
     getApplicationAnswers(answers)
   const attachments: Attachments[] = []
@@ -150,5 +152,32 @@ export function getAttachments(application: Application) {
     )
   }
 
+  if (childCustodyLivesWithApplicant(answers, externalData)) {
+    getAttachmentDetails(
+      childPensionAttachments?.notLivesWithApplicant,
+      AttachmentTypes.NOT_LIVES_WITH_APPLICANT,
+    )
+  }
+
   return attachments
+}
+
+// returns true if selected child DOES NOT live with applicant
+export function childCustodyLivesWithApplicant(
+  answers: Application['answers'],
+  externalData: Application['externalData'],
+) {
+  let returnStatus = false
+  const { selectedCustodyKids } = getApplicationAnswers(answers)
+  const { custodyInformation } = getApplicationExternalData(externalData)
+
+  selectedCustodyKids.map((i) =>
+    custodyInformation.map((j) =>
+      i === j.nationalId && !j.livesWithApplicant
+        ? (returnStatus = true)
+        : (returnStatus = false),
+    ),
+  )
+
+  return returnStatus
 }

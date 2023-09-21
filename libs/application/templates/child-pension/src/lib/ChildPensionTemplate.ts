@@ -20,7 +20,10 @@ import { Events, Roles, States, NO, ChildPensionReason } from './constants'
 import { dataSchema } from './dataSchema'
 import { childPensionFormMessage } from './messages'
 import { answerValidators } from './answerValidators'
-import { getApplicationAnswers } from './childPensionUtils'
+import {
+  childCustodyLivesWithApplicant,
+  getApplicationAnswers,
+} from './childPensionUtils'
 
 const ChildPensionTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -75,6 +78,8 @@ const ChildPensionTemplate: ApplicationTemplate<
           'clearChildPensionAddChild',
           'clearParentIsDead',
           'clearParentsPenitentiary',
+          'clearChildPensionNotLivesWithApplicant',
+          'clearSelectedChildren',
         ],
         meta: {
           name: States.DRAFT,
@@ -179,6 +184,32 @@ const ChildPensionTemplate: ApplicationTemplate<
               `registerChildRepeater[${index}].parentsPenitentiary`,
             )
           }
+        }
+
+        return context
+      }),
+      clearChildPensionNotLivesWithApplicant: assign((context) => {
+        const { application } = context
+
+        const doesNotLiveWithApplicant = childCustodyLivesWithApplicant(
+          application.answers,
+          application.externalData,
+        )
+
+        if (!doesNotLiveWithApplicant)
+          unset(application.answers, 'fileUpload.notLivesWithApplicant')
+
+        return context
+      }),
+      clearSelectedChildren: assign((context) => {
+        const { application } = context
+
+        const { selectedCustodyKids } = getApplicationAnswers(
+          application.answers,
+        )
+
+        if (selectedCustodyKids.length === 0) {
+          unset(application.answers, 'chooseChildren')
         }
 
         return context

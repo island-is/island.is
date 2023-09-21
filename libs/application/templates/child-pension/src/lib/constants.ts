@@ -44,4 +44,6 @@ export const AttachmentLabel: {
   [key: string]: MessageDescriptor
 } = {
   maintenance: childPensionFormMessage.fileUpload.maintenanceTitle,
+  notLivesWithApplicant:
+    childPensionFormMessage.fileUpload.notLivesWithApplicantTitle,
 }
