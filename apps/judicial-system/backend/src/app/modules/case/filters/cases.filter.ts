@@ -155,7 +155,7 @@ function getPrisonSystemStaffUserCasesQueryFilter(user: User): WhereOptions {
       type: [
         CaseType.CUSTODY,
         CaseType.ADMISSION_TO_FACILITY,
-        CaseType.PROBATION_DISMISSAL,
+        CaseType.PAROLE_REVOCATION,
         CaseType.TRAVEL_BAN,
       ],
     })
@@ -165,7 +165,7 @@ function getPrisonSystemStaffUserCasesQueryFilter(user: User): WhereOptions {
         type: [
           CaseType.CUSTODY,
           CaseType.ADMISSION_TO_FACILITY,
-          CaseType.PROBATION_DISMISSAL,
+          CaseType.PAROLE_REVOCATION,
         ],
       },
       {

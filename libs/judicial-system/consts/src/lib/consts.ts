@@ -69,7 +69,7 @@ export const InvestigationCaseTypes = [
       },
       {
         label: 'Rof á reynslulausn',
-        value: CaseType.PROBATION_DISMISSAL,
+        value: CaseType.PAROLE_REVOCATION,
       },
       {
         label: 'Upplýsingar um vefnotkun',

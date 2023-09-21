@@ -168,7 +168,7 @@ function canPrisonSystemUserAccessCase(
     ![
       CaseType.CUSTODY,
       CaseType.ADMISSION_TO_FACILITY,
-      CaseType.PROBATION_DISMISSAL,
+      CaseType.PAROLE_REVOCATION,
     ].includes(theCase.type)
   ) {
     return false

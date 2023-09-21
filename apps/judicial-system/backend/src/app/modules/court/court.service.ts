@@ -92,7 +92,7 @@ export const courtSubtypes: CourtSubtypes = {
   EXPULSION_FROM_HOME: 'Nálgunarbann og brottvísun af heimili',
   // 'Réttarstaða afplánunarfanga',
   // 'Réttarstaða gæsluvarðhaldsfanga',
-  PROBATION_DISMISSAL: 'Rof á reynslulausn',
+  PAROLE_REVOCATION: 'Rof á reynslulausn',
   BANKING_SECRECY_WAIVER: 'Rof bankaleyndar',
   // 'Sekt vitnis',
   // 'Sektir málflytjenda',

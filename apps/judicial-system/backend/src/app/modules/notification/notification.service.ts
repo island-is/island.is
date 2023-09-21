@@ -139,7 +139,7 @@ export class NotificationService {
 
     if (
       theCase.type !== CaseType.ADMISSION_TO_FACILITY &&
-      theCase.type !== CaseType.PROBATION_DISMISSAL
+      theCase.type !== CaseType.PAROLE_REVOCATION
     ) {
       return false
     }
@@ -840,9 +840,9 @@ export class NotificationService {
       },
     )
     const html =
-      theCase.type === CaseType.PROBATION_DISMISSAL
+      theCase.type === CaseType.PAROLE_REVOCATION
         ? this.formatMessage(
-            notifications.prisonRulingEmail.probationDismissalBody,
+            notifications.prisonRulingEmail.paroleRevocationBody,
             {
               institutionName: theCase.court?.name,
               courtCaseNumber: theCase.courtCaseNumber,
@@ -954,7 +954,7 @@ export class NotificationService {
 
     if (
       (isRestrictionCase(theCase.type) ||
-        theCase.type === CaseType.PROBATION_DISMISSAL) &&
+        theCase.type === CaseType.PAROLE_REVOCATION) &&
       theCase.state === CaseState.ACCEPTED
     ) {
       promises.push(
