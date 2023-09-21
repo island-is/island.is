@@ -17,18 +17,31 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Screen } from '@island.is/web/types'
-import { ProgramDetails } from '@island.is/web/graphql/schema'
+import {
+  GetNamespaceQuery,
+  GetNamespaceQueryVariables,
+  ProgramDetails,
+} from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
 import { GET_UNIVERSITY_GATEWAY_PROGRAM } from '../queries/UniversityGateway'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { IconTitleCard, Sticky } from '@island.is/web/components'
 import SidebarLayout from '../Layouts/SidebarLayout'
+import { GET_NAMESPACE_QUERY } from '../queries'
+import { TranslationDefaults } from './TranslationDefaults'
 
 interface UniversityDetailsProps {
   data: ProgramDetails
+  namespace: Record<string, string>
+  locale: string
 }
 
-const UniversityDetails: Screen<UniversityDetailsProps> = ({ data }) => {
-  console.log('data', data)
+const UniversityDetails: Screen<UniversityDetailsProps> = ({
+  data,
+  namespace,
+  locale,
+}) => {
+  const n = useNamespace(namespace)
 
   const [isOpen, setIsOpen] = useState<Array<boolean>>([
     false,
@@ -61,7 +74,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({ data }) => {
                 variant="text"
                 truncate
               >
-                Til baka í yfirlit
+                {n('goBack', 'Til baka í yfirlit')}
               </Button>
             </LinkV2>
             <IconTitleCard
@@ -72,7 +85,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({ data }) => {
               imgSrc="https://www.ru.is/media/HR_logo_hringur_hires.jpg"
               alt="alt text todo"
             />
-            <Sticky>
+            {/* <Sticky>
               <Navigation
                 baseId="desktopNav"
                 colorScheme="purple"
@@ -100,7 +113,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({ data }) => {
                   )
                 }}
               />
-            </Sticky>
+            </Sticky> */}
           </Stack>
         }
       >
@@ -115,23 +128,31 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({ data }) => {
                 variant="text"
                 truncate
               >
-                Til baka í yfirlit
+                {n('goBack', 'Til baka í yfirlit')}
               </Button>
             </LinkV2>
           </Hidden>
           <Text variant="h1" as="h1">
-            {data.nameIs}
+            {locale === 'en' ? data.nameEn : data.nameIs}
           </Text>
 
           <Box marginTop={2}>
             <Text variant="default">{`${data.degreeAbbreviation} - ${data.credits} einingar`}</Text>
             <Text marginTop={3} marginBottom={3} variant="default">
-              {data.descriptionIs}
+              {locale === 'en' ? data.descriptionEn : data.descriptionIs}
             </Text>
             {data.externalUrlIs && (
               <LinkV2
-                href={data.externalUrlIs}
-              >{`Sjá nánar á vef ${data.universityId} TODO`}</LinkV2>
+                href={
+                  locale === 'en'
+                    ? !!data.externalUrlEn
+                      ? data.externalUrlEn
+                      : data.externalUrlIs
+                    : data.externalUrlIs
+                }
+              >{`${n('seeMoreWeb', 'Sjá meira á vef')} ${
+                data.universityId
+              }`}</LinkV2>
             )}
           </Box>
           <Box marginTop={7}>
@@ -142,7 +163,9 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({ data }) => {
                     <Box marginRight={1}>
                       <Icon icon={'school'} type="outline" color="blue400" />
                     </Box>
-                    <Text variant="medium">{data.degreeType}</Text>
+                    <Text variant="medium">
+                      {n(data.degreeType, TranslationDefaults[data.degreeType])}
+                    </Text>
                   </Box>
                 </GridColumn>
                 <GridColumn span="1/2">
@@ -150,7 +173,10 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({ data }) => {
                     <Box marginRight={1}>
                       <Icon icon={'calendar'} type="outline" color="blue400" />
                     </Box>
-                    <Text variant="medium">{`Hefst ${data.startingSemesterSeason} ${data.startingSemesterYear}`}</Text>
+                    <Text variant="medium">{`${n('begins', 'Hefst')} ${n(
+                      data.startingSemesterSeason,
+                      TranslationDefaults[data.startingSemesterSeason],
+                    )} ${data.startingSemesterYear}`}</Text>
                   </Box>
                 </GridColumn>
 
@@ -159,17 +185,26 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({ data }) => {
                     <Box marginRight={1}>
                       <Icon icon={'time'} type="outline" color="blue400" />
                     </Box>
-                    <Text variant="medium">{`Námstími: ${data.durationInYears} ár`}</Text>
+                    <Text variant="medium">{`${n(
+                      'educationLength',
+                      'Námstími',
+                    )}: ${data.durationInYears} ${
+                      locale === 'en'
+                        ? data.durationInYears === 1
+                          ? 'year'
+                          : 'years'
+                        : 'ár'
+                    }`}</Text>
                   </Box>
                 </GridColumn>
-                <GridColumn span="1/2">
+                {/* <GridColumn span="1/2">
                   <Box display="flex" flexDirection="row">
                     <Box marginRight={1}>
                       <Icon icon={'document'} type="outline" color="blue400" />
                     </Box>
                     <Text variant="medium">{'Inntökupróf: TODO'}</Text>
                   </Box>
-                </GridColumn>
+                </GridColumn> */}
 
                 <GridColumn span="1/2">
                   <Box display="flex" flexDirection="row">
@@ -177,7 +212,9 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({ data }) => {
                       <Icon icon={'wallet'} type="outline" color="blue400" />
                     </Box>
                     <Text variant="medium">
-                      {'Árlegt gjald: 75.000 kr. TODO'}
+                      {`${n('yearlyCost', 'Árlegur kostnaður')}: ${
+                        data.costPerYear
+                      }kr.`}
                     </Text>
                   </Box>
                 </GridColumn>
@@ -186,7 +223,12 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({ data }) => {
                     <Box marginRight={1}>
                       <Icon icon={'calendar'} type="outline" color="blue400" />
                     </Box>
-                    <Text variant="medium">{`Umsóknartímabil: ${data.applicationStartDate} - ${data.applicationEndDate}`}</Text>
+                    <Text variant="medium">{`${n(
+                      'applicationPeriod',
+                      'Umsóknartímabil',
+                    )}: ${data.applicationStartDate} - ${
+                      data.applicationEndDate
+                    }`}</Text>
                   </Box>
                 </GridColumn>
 
@@ -195,10 +237,21 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({ data }) => {
                     <Box marginRight={1}>
                       <Icon icon={'person'} type="outline" color="blue400" />
                     </Box>
-                    <Text variant="medium">{'Staðnám TODO'}</Text>
+                    <Text variant="medium">{`${data.modeOfDelivery.map(
+                      (delivery, index) => {
+                        if (index !== 0) {
+                          return `, ${n(
+                            delivery,
+                            TranslationDefaults[delivery],
+                          )}`
+                        } else {
+                          return n(delivery, TranslationDefaults[delivery])
+                        }
+                      },
+                    )}`}</Text>
                   </Box>
                 </GridColumn>
-                <GridColumn span="1/2">
+                {/* <GridColumn span="1/2">
                   <Box display="flex" flexDirection="row">
                     <Box marginRight={1}>
                       <Icon icon={'ellipse'} type="outline" color="blue400" />
@@ -207,7 +260,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({ data }) => {
                       {'Tungumál: Íslenska / enska TODO'}
                     </Text>
                   </Box>
-                </GridColumn>
+                </GridColumn> */}
               </GridRow>
             </GridContainer>
           </Box>
@@ -219,29 +272,37 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({ data }) => {
             >
               <AccordionItem
                 id="application-rules"
-                label="Inntökuskilyrði"
+                label={n('admissionRequirements', 'Inntökuskilyrði')}
                 labelUse="p"
                 labelVariant="h3"
                 iconVariant="default"
                 expanded={isOpen[0]}
                 onToggle={() => toggleIsOpen(0)}
               >
-                <Text as="p">{data.admissionRequirementsIs}</Text>
+                <Text as="p">
+                  {locale === 'en'
+                    ? data.admissionRequirementsEn
+                    : data.admissionRequirementsIs}
+                </Text>
               </AccordionItem>
               <AccordionItem
                 id="education-requirements"
-                label="Námskröfur"
+                label={n('educationRequirements', 'Námskröfur')}
                 labelUse="p"
                 labelVariant="h3"
                 iconVariant="default"
                 expanded={isOpen[1]}
                 onToggle={() => toggleIsOpen(1)}
               >
-                <Text as="p">{data.studyRequirementsIs}</Text>
+                <Text as="p">
+                  {locale === 'en'
+                    ? data.studyRequirementsEn
+                    : data.studyRequirementsIs}
+                </Text>
               </AccordionItem>
               <AccordionItem
                 id="education-orginization"
-                label="Skipulag náms"
+                label={n('educationOrganization', 'Skipulag náms')}
                 labelUse="p"
                 labelVariant="h3"
                 iconVariant="default"
@@ -259,14 +320,18 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({ data }) => {
               </AccordionItem>
               <AccordionItem
                 id="annual-cost"
-                label="Árlegt gjald"
+                label={n('yearlyCost', 'Árlegt gjald')}
                 labelUse="p"
                 labelVariant="h3"
                 iconVariant="default"
                 expanded={isOpen[3]}
                 onToggle={() => toggleIsOpen(3)}
               >
-                <Text as="p">{data.costInformationIs}</Text>
+                <Text as="p">
+                  {locale === 'en'
+                    ? data.costInformationEn
+                    : data.costInformationIs}
+                </Text>
               </AccordionItem>
             </Accordion>
           </Box>
@@ -281,6 +346,23 @@ UniversityDetails.getProps = async ({ query, apolloClient, locale }) => {
     throw new CustomNextError(404, 'Education item was not found')
   }
 
+  const namespaceResponse = await apolloClient.query<
+    GetNamespaceQuery,
+    GetNamespaceQueryVariables
+  >({
+    query: GET_NAMESPACE_QUERY,
+    variables: {
+      input: {
+        lang: locale,
+        namespace: 'universityGateway',
+      },
+    },
+  })
+
+  const namespace = JSON.parse(
+    namespaceResponse?.data?.getNamespace?.fields || '{}',
+  ) as Record<string, string>
+
   const newResponse = await apolloClient.query<any, any>({
     query: GET_UNIVERSITY_GATEWAY_PROGRAM,
     variables: {
@@ -294,7 +376,9 @@ UniversityDetails.getProps = async ({ query, apolloClient, locale }) => {
 
   return {
     data,
+    namespace,
+    locale,
   }
 }
 
-export default withMainLayout(UniversityDetails)
+export default withMainLayout(UniversityDetails, { showFooter: false })

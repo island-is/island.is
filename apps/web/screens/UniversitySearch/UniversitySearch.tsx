@@ -132,9 +132,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
   useEffect(() => {
     const comp = localStorage.getItem('comparison')
-    const comparison = JSON.parse(!!comp ? comp : '')
     const viewChoice = localStorage.getItem('viewChoice')
-    if (!!comparison) {
+
+    if (!!comp) {
+      const comparison = JSON.parse(comp)
       setSelectedComparison(comparison)
     }
 
@@ -204,7 +205,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
   const createPrimaryCTA = () => {
     const CTA: CTAProps = {
-      label: 'Sækja um nám',
+      label: n('apply', 'Sækja um'),
       variant: 'primary',
       size: 'small',
       icon: 'arrowForward',
@@ -1125,9 +1126,6 @@ UniversitySearch.getProps = async ({ apolloClient, locale }) => {
   const universities = await apolloClient.query<any>({
     query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
   })
-
-  console.log('filters', filters)
-  console.log('universities', universities.data.universityGatewayUniversities)
 
   return {
     data,

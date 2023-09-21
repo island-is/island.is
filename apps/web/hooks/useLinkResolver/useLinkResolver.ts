@@ -210,15 +210,15 @@ export const routesTemplate = {
     is: '/starfatorg/[id]',
     en: '',
   },
-  universitySearch: {
+  universitysearch: {
     is: '/haskolanam',
     en: '/en/haskolanam',
   },
-  universitySearchDetails: {
+  universitysearchdetails: {
     is: '/haskolanam/[id]',
     en: '/en/haskolanam/[id]',
   },
-  universitySearchComparison: {
+  universitysearchcomparison: {
     is: '/haskolanam/samanburdur',
     en: '/en/haskolanam/comparison',
   },
