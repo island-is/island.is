@@ -8,6 +8,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseDecision,
   CaseState,
+  EventType,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -48,41 +49,34 @@ const CourtOfAppealCaseOverviewHeader: React.FC<
           </Button>
         </Box>
       </Box>
-      {/* {
-        //TODO: Use when we've exposed the opened by logic
-        workingCase.appealRulingDecision && (
+      {workingCase.appealRulingDecision &&
+        workingCase.eventLogs &&
+        workingCase.eventLogs.length > 0 && (
           <Box marginBottom={4} marginTop={8}>
-            <Box marginBottom={2}>
-              <AlertMessage
-                message={formatMessage(strings.appealResultOpenedBy, {
-                  userRole: UserRole.DEFENDER,
-                  // TODO: Use correct dates when available
-                  when: formatDate(new Date(), 'PPPp'),
-                })}
-                type="info"
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <AlertMessage
-                message={formatMessage(strings.appealResultOpenedBy, {
-                  userRole: UserRole.PROSECUTOR,
-                  when: formatDate(new Date(), 'PPPp'),
-                })}
-                type="info"
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <AlertMessage
-                message={formatMessage(strings.appealResultOpenedBy, {
-                  userRole: UserRole.PRISON_SYSTEM_STAFF,
-                  when: formatDate(new Date(), 'PPPp'),
-                })}
-                type="info"
-              />
-            </Box>
+            {workingCase.eventLogs
+              .filter(
+                (e) =>
+                  e.eventType === EventType.APPEAL_RESULT_ACCESSED &&
+                  [
+                    UserRole.DEFENDER,
+                    UserRole.PROSECUTOR,
+                    UserRole.PRISON_SYSTEM_STAFF,
+                  ].includes(e.userRole as UserRole),
+              )
+              .map((event) => (
+                <Box marginBottom={2}>
+                  <AlertMessage
+                    message={formatMessage(strings.appealResultOpenedBy, {
+                      userRole: event.userRole as UserRole,
+                      when: formatDate(event.created, 'PPPp'),
+                    })}
+                    type="info"
+                  />
+                </Box>
+              ))}
           </Box>
-        )
-      } */}
+        )}
+
       <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
         <Box>
           <OverviewHeader />

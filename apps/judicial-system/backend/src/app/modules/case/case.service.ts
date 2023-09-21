@@ -36,6 +36,7 @@ import {
   isIndictmentCase,
   isRestrictionCase,
   UserRole,
+  EventType,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
 
@@ -63,7 +64,7 @@ import { getCasesQueryFilter } from './filters/cases.filter'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { Case } from './models/case.model'
 import { transitionCase } from './state/case.state'
-
+import { EventLog } from '../event-log'
 export interface UpdateCase
   extends Pick<
     Case,
@@ -154,9 +155,18 @@ export interface UpdateCase
   parentCaseId?: string | null
 }
 
+const eventTypes = Object.values(EventType)
+
 export const include: Includeable[] = [
   { model: Defendant, as: 'defendants' },
   { model: IndictmentCount, as: 'indictmentCounts' },
+  {
+    model: EventLog,
+    as: 'eventLogs',
+    where: {
+      eventType: { [Op.in]: eventTypes },
+    },
+  },
   { model: Institution, as: 'court' },
   {
     model: User,

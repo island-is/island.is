@@ -17,6 +17,7 @@ export type {
   SendNotification,
   SendNotificationResponse,
 } from './lib/notification'
+export { EventLog, EventType } from './lib/eventLog'
 
 export { CaseFileState, CaseFileCategory } from './lib/file'
 

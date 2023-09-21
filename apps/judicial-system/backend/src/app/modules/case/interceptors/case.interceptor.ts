@@ -1,0 +1,41 @@
+import { Observable } from 'rxjs'
+import { map } from 'rxjs/operators'
+import {
+  Injectable,
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+} from '@nestjs/common'
+
+import {
+  CaseAppealState,
+  User,
+  EventType,
+} from '@island.is/judicial-system/types'
+
+import { Case } from '../models/case.model'
+import { EventLogService } from '../../event-log'
+
+@Injectable()
+export class CaseInterceptor implements NestInterceptor {
+  constructor(private readonly eventLogService: EventLogService) {}
+
+  intercept(context: ExecutionContext, next: CallHandler): Observable<Case> {
+    const request = context.switchToHttp().getRequest()
+    const user: User = request.user
+
+    return next.handle().pipe(
+      map((data: Case) => {
+        if (data.appealState === CaseAppealState.COMPLETED) {
+          this.eventLogService.create({
+            eventType: EventType.APPEAL_RESULT_ACCESSED,
+            caseId: data.id,
+            nationalId: user.nationalId,
+            userRole: user.role,
+          })
+        }
+        return data
+      }),
+    )
+  }
+}

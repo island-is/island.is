@@ -14,6 +14,7 @@ import {
   CaseAppealState,
   UserRole,
   CaseAppealRulingDecision,
+  EventType,
 } from '@island.is/judicial-system/types'
 import type {
   Case as TCase,
@@ -27,6 +28,7 @@ import { Institution } from '../../institution'
 import { User } from '../../user'
 import { CaseFile } from '../../file'
 import { Notification } from './notification.model'
+import { EventLog } from './eventLog.model'
 
 registerEnumType(CaseType, { name: 'CaseType' })
 registerEnumType(SessionArrangements, { name: 'SessionArrangements' })
@@ -37,6 +39,7 @@ registerEnumType(CaseAppealRulingDecision, { name: 'CaseAppealRulingDecision' })
 registerEnumType(CaseCustodyRestrictions, { name: 'CaseCustodyRestrictions' })
 registerEnumType(CaseLegalProvisions, { name: 'CaseLegalProvisions' })
 registerEnumType(CaseAppealDecision, { name: 'CaseAppealDecision' })
+registerEnumType(EventType, { name: 'EventType' })
 
 @ObjectType()
 export class Case implements TCase {
@@ -357,4 +360,7 @@ export class Case implements TCase {
 
   @Field(() => User, { nullable: true })
   readonly appealJudge3?: User
+
+  @Field(() => [EventLog], { nullable: true })
+  readonly eventLogs?: EventLog[]
 }

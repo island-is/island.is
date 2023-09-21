@@ -36,6 +36,7 @@ import { Institution } from '../../institution'
 import { User } from '../../user'
 import { Defendant } from '../../defendant'
 import { IndictmentCount } from '../../indictment-count'
+import { EventLog } from '../../event-log'
 
 @Table({
   tableName: 'case',
@@ -1114,4 +1115,11 @@ export class Case extends Model {
   @BelongsTo(() => User, 'appealJudge3Id')
   @ApiPropertyOptional({ type: User })
   appealJudge3?: User
+
+  /**********
+   * The case's event logs
+   **********/
+  @HasMany(() => EventLog, 'caseId')
+  @ApiPropertyOptional({ type: EventLog, isArray: true })
+  eventLogs?: EventLog[]
 }
