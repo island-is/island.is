@@ -12,7 +12,6 @@ import {
   PoliceCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import IconAndText from '../../../../components/IconAndText/IconAndText'
 import { policeCaseFiles as m } from './PoliceCaseFiles.strings'
 
 export interface PoliceCaseFilesData {
@@ -73,21 +72,13 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
               : undefined
           }
           isLoading={policeCaseFiles?.isLoading}
-        >
-          {policeCaseFiles?.files.length === 0 ? (
-            <IconAndText
-              icon="warning"
-              iconColor="yellow400"
-              message={formatMessage(m.noFilesFoundInLOKEMessage)}
-            />
-          ) : (
-            <IconAndText
-              icon="checkmark"
-              iconColor="blue400"
-              message={formatMessage(m.allFilesUploadedMessage)}
-            />
-          )}
-        </SelectableList>
+          successMessage={formatMessage(m.allFilesUploadedMessage)}
+          warningMessage={
+            policeCaseFiles?.files.length === 0
+              ? formatMessage(m.noFilesFoundInLOKEMessage)
+              : undefined
+          }
+        />
       )}
       {workingCase.origin !== CaseOrigin.LOKE && (
         <AlertMessage

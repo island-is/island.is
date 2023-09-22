@@ -73,16 +73,11 @@ export const LokeNumberList: React.FC<Props> = (props) => {
           onClick: handleCreatePoliceCases,
         }}
         isLoading={isLoading}
-        errorMessage={loadingError ? formatMessage(strings.errorMessage) : ''}
-      >
-        {availablePoliceCases?.length === 0 ? (
-          <IconAndText
-            icon="checkmark"
-            iconColor="blue400"
-            message={formatMessage(strings.allNumbersSelected)}
-          />
-        ) : null}
-      </SelectableList>
+        errorMessage={
+          loadingError ? formatMessage(strings.errorMessage) : undefined
+        }
+        successMessage={formatMessage(strings.allNumbersSelected)}
+      />
     </Box>
   )
 }

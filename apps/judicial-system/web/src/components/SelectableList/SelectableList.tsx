@@ -25,10 +25,19 @@ interface Props {
   CTAButton: CTAButtonAttributes
   isLoading?: boolean
   errorMessage?: string
+  successMessage?: string
+  warningMessage?: string
 }
 
-const SelectableList: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { items, CTAButton, isLoading, errorMessage, children } = props
+const SelectableList: React.FC<Props> = (props) => {
+  const {
+    items,
+    CTAButton,
+    isLoading,
+    errorMessage,
+    successMessage,
+    warningMessage,
+  } = props
   const { formatMessage } = useIntl()
   const [selectableItems, setSelectableItems] = React.useState<
     SelectableItem[]
@@ -85,6 +94,18 @@ const SelectableList: React.FC<React.PropsWithChildren<Props>> = (props) => {
           </Box>
         ) : errorMessage ? (
           <IconAndText icon="close" iconColor="red400" message={errorMessage} />
+        ) : warningMessage ? (
+          <IconAndText
+            icon="warning"
+            iconColor="yellow400"
+            message={warningMessage}
+          />
+        ) : selectableItems.length === 0 && successMessage ? (
+          <IconAndText
+            icon="checkmark"
+            iconColor="blue400"
+            message={successMessage}
+          />
         ) : selectableItems.length > 0 ? (
           selectableItems.map((item, index) => (
             <Box
@@ -121,9 +142,7 @@ const SelectableList: React.FC<React.PropsWithChildren<Props>> = (props) => {
               />
             </Box>
           ))
-        ) : (
-          children
-        )}
+        ) : null}
       </Box>
       <Box display="flex" justifyContent="flexEnd">
         <Button
