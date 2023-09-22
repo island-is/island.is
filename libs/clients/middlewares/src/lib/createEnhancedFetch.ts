@@ -7,6 +7,7 @@ import { logger as defaultLogger } from '@island.is/logging'
 import {
   AGENT_DEFAULT_FREE_SOCKET_TIMEOUT,
   AGENT_DEFAULTS,
+  OrganizationSlugType,
 } from '@island.is/shared/constants'
 
 import { buildFetch } from './buildFetch'
@@ -32,9 +33,9 @@ export interface EnhancedFetchOptions {
   name: string
 
   /**
-   * The organization slug used in error logging. This slug matches Contentful's organization content type "slug" field.
+   * The organization slug used in error logging. This slug matches Contentful's organization content type english "slug" field.
    */
-  organizationSlug?: string
+  organizationSlug?: OrganizationSlugType
 
   /**
    * Configure caching.

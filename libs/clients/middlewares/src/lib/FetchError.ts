@@ -1,3 +1,4 @@
+import { OrganizationSlugType } from '@island.is/shared/constants'
 import { BodyInit, Headers, Response, ResponseInit } from 'node-fetch'
 import { UnknownProblem } from '@island.is/shared/problem'
 
@@ -24,7 +25,7 @@ export class FetchError extends Error {
   static async build(
     response: Response,
     includeBody = false,
-    organizationSlug?: string,
+    organizationSlug?: OrganizationSlugType,
   ) {
     const error = new FetchError(response)
     const contentType = response.headers.get('content-type') || ''
