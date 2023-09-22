@@ -9,6 +9,7 @@ import {
   Requirement,
   Season,
   mapEnumToEnum,
+  mapEnumToOtherEnum,
 } from '@island.is/university-gateway-lib'
 import {
   ExampleProgramDegreeTypeEnum,
@@ -74,9 +75,18 @@ class UniversityOfIcelandApplicationClient {
           tag: program.interestTags.map((tag) => ({
             code: tag.toString(), //TODO change from enum to code (string) in api
           })),
-          modeOfDelivery: program.modeOfDelivery.map((m) =>
-            mapEnumToEnum(m, ExampleProgramModeOfDeliveryEnum, ModeOfDelivery),
-          ),
+          modeOfDelivery: program.modeOfDelivery.map((m) => {
+            // TODO what value is this
+            if (m.toString() === 'MIXED') {
+              return ModeOfDelivery.OTHER
+            } else {
+              return mapEnumToOtherEnum(
+                m,
+                ExampleProgramModeOfDeliveryEnum,
+                ModeOfDelivery,
+              )
+            }
+          }),
           extraApplicationField: program.extraApplicationFields.map(
             (field) => ({
               nameIs: field.nameIs,
@@ -124,6 +134,9 @@ class UniversityOfIcelandApplicationClient {
             requirement = Requirement.FREE_ELECTIVE
             break
           case 'C': // TODO what value is this
+            requirement = Requirement.FREE_ELECTIVE
+            break
+          case '': // TODO what value is this
             requirement = Requirement.FREE_ELECTIVE
             break
         }

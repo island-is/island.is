@@ -75,6 +75,7 @@ module.exports = {
                 'UNDERGRADUATE',
                 'POSTGRADUATE',
                 'DOCTORAL',
+                'OTHER',
               ),
               allowNull: false,
             },

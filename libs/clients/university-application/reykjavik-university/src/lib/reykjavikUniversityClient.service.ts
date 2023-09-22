@@ -67,9 +67,14 @@ class ReykjavikUniversityApplicationClient {
               code: tag, //TODO change from enumstring to code (string) in api?
             })) || [],
           modeOfDelivery:
-            program.modeOfDelivery?.map((m) =>
-              mapStringToEnum(m, ModeOfDelivery),
-            ) || [],
+            program.modeOfDelivery?.map((m) => {
+              // TODO why is this value empty
+              if (!m) {
+                return ModeOfDelivery.OTHER
+              } else {
+                return mapStringToEnum(m, ModeOfDelivery)
+              }
+            }) || [],
           extraApplicationField: program.extraApplicationFields?.map(
             (field) => ({
               nameIs: field.nameIs || '',
@@ -107,13 +112,21 @@ class ReykjavikUniversityApplicationClient {
     for (let i = 0; i < courseList.length; i++) {
       const course = courseList[i]
       try {
+        let semesterSeason: Season | undefined = undefined
+        // TODO what value is this
+        if (course.semesterSeason === 'NOTSET') {
+          semesterSeason = Season.FALL
+        } else {
+          semesterSeason = mapStringToEnum(course.semesterSeason, Season)
+        }
+
         mappedRes.push({
           externalId: course.externalId || '',
           nameIs: course.nameIs || '',
           nameEn: course.nameEn || '',
           credits: course.credits || 0,
           semesterYear: course.semesterYear,
-          semesterSeason: mapStringToEnum(course.semesterSeason, Season),
+          semesterSeason: semesterSeason,
           descriptionIs: course.descriptionIs,
           descriptionEn: course.descriptionEn,
           externalUrlIs: course.externalUrlIs,
