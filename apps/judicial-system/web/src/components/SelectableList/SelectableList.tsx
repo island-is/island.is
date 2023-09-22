@@ -21,7 +21,7 @@ interface SelectableItem extends Item {
 }
 
 interface Props {
-  items: Item[]
+  items?: Item[]
   CTAButton: CTAButtonAttributes
   isLoading?: boolean
   errorMessage?: string
@@ -45,6 +45,10 @@ const SelectableList: React.FC<Props> = (props) => {
   const [isHandlingCTA, setIsHandlingCTA] = React.useState<boolean>()
 
   useEffect(() => {
+    if (!items) {
+      return
+    }
+
     setSelectableItems((selectableItems) =>
       items.map((item) => ({
         id: item.id,
@@ -81,7 +85,7 @@ const SelectableList: React.FC<Props> = (props) => {
             }
             onChange={() =>
               setSelectableItems((items) =>
-                items.map((item) => ({ ...item, checked: !item.checked })),
+                items?.map((item) => ({ ...item, checked: !item.checked })),
               )
             }
             disabled={isHandlingCTA || selectableItems.length === 0}
@@ -100,13 +104,13 @@ const SelectableList: React.FC<Props> = (props) => {
             iconColor="yellow400"
             message={warningMessage}
           />
-        ) : selectableItems.length === 0 && successMessage ? (
+        ) : items && selectableItems.length === 0 && successMessage ? (
           <IconAndText
             icon="checkmark"
             iconColor="blue400"
             message={successMessage}
           />
-        ) : selectableItems.length > 0 ? (
+        ) : (
           selectableItems.map((item, index) => (
             <Box
               key={item.id}
@@ -142,7 +146,7 @@ const SelectableList: React.FC<Props> = (props) => {
               />
             </Box>
           ))
-        ) : null}
+        )}
       </Box>
       <Box display="flex" justifyContent="flexEnd">
         <Button

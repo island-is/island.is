@@ -25,9 +25,8 @@ export const LokeNumberList: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
 
-  const [availablePoliceCases, setAvailablePoliceCases] = useState<
-    PoliceCaseInfo[]
-  >([])
+  const [availablePoliceCases, setAvailablePoliceCases] =
+    useState<PoliceCaseInfo[]>()
   const [selectedPoliceCases, setSelectedPoliceCases] = useState<
     PoliceCaseInfo[]
   >([])
@@ -44,7 +43,7 @@ export const LokeNumberList: React.FC<Props> = (props) => {
 
   const handleCreatePoliceCases = (selectedPoliceCases: Item[]) => {
     const policeCases = selectedPoliceCases.map((policeCase) => {
-      const availablePoliceCase = availablePoliceCases.find(
+      const availablePoliceCase = availablePoliceCases?.find(
         (p) => p.policeCaseNumber === policeCase.name,
       )
 
@@ -61,10 +60,12 @@ export const LokeNumberList: React.FC<Props> = (props) => {
     setSelectedPoliceCases([])
   }
 
+  console.log('isloading', isLoading, 'a', availablePoliceCases)
+
   return (
     <Box marginBottom={5}>
       <SelectableList
-        items={availablePoliceCases.map((availablePoliceCase) => ({
+        items={availablePoliceCases?.map((availablePoliceCase) => ({
           id: availablePoliceCase.policeCaseNumber,
           name: availablePoliceCase.policeCaseNumber,
         }))}
