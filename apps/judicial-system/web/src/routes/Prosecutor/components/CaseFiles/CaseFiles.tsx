@@ -77,6 +77,12 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
   )
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
 
+  const allFilesUploaded = useMemo(() => {
+    return filesInRVG.every(
+      (file) => file.status === 'done' || file.status === 'error',
+    )
+  }, [filesInRVG])
+
   const {
     upload,
     uploadFromPolice,
@@ -151,7 +157,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
     }
   }, [filesInRVG, formatMessage])
 
-  const stepIsValid = !isUploading
+  const stepIsValid = !isUploading && allFilesUploaded
   const handleNavigationTo = (destination: string) =>
     router.push(`${destination}/${workingCase.id}`)
 
@@ -178,24 +184,20 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
         uuid(),
       ])
 
-      setIsUploading(true)
-
       setFilesInRVG((previous) => [
         ...filesWithId.map(
           ([file, id]): UploadFile => ({
-            status: 'uploading',
-            percent: 1,
-            name: file.name,
             id,
+            name: file.name,
             type: file.type,
+            percent: 1,
+            status: 'uploading',
           }),
         ),
         ...(previous || []),
       ])
 
       await upload(filesWithId, handleUIUpdate)
-
-      setIsUploading(false)
     },
     [handleUIUpdate, upload],
   )
