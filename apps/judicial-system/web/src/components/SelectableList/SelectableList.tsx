@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { Box, Button, Checkbox, LoadingDots } from '@island.is/island-ui/core'
 
+import { IconAndText } from '../../routes/Prosecutor/components'
 import { selectableList as strings } from './SelectableList.strings'
 
 interface CTAButtonAttributes {
@@ -23,10 +24,11 @@ interface Props {
   items: Item[]
   CTAButton: CTAButtonAttributes
   isLoading?: boolean
+  errorMessage?: string
 }
 
 const SelectableList: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { items, CTAButton, isLoading, children } = props
+  const { items, CTAButton, isLoading, errorMessage, children } = props
   const { formatMessage } = useIntl()
   const [selectableItems, setSelectableItems] = React.useState<
     SelectableItem[]
@@ -81,6 +83,8 @@ const SelectableList: React.FC<React.PropsWithChildren<Props>> = (props) => {
           <Box textAlign="center" paddingY={2} paddingX={3} marginBottom={2}>
             <LoadingDots />
           </Box>
+        ) : errorMessage ? (
+          <IconAndText icon="close" iconColor="red400" message={errorMessage} />
         ) : selectableItems.length > 0 ? (
           selectableItems.map((item, index) => (
             <Box

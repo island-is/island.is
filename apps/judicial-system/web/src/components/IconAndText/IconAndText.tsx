@@ -9,9 +9,7 @@ interface Props {
   message: string
 }
 
-const PoliceCaseFilesMessageBox: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
+const IconAndText: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { icon, iconColor, message } = props
 
   return (
@@ -24,4 +22,4 @@ const PoliceCaseFilesMessageBox: React.FC<React.PropsWithChildren<Props>> = (
   )
 }
 
-export default PoliceCaseFilesMessageBox
+export default IconAndText

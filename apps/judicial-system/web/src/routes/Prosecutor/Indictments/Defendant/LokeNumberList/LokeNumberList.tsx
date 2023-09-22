@@ -8,7 +8,7 @@ import SelectableList, {
 } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
 import { PoliceCaseInfo } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { PoliceCaseFilesMessageBox } from '../../../components'
+import { IconAndText } from '../../../components'
 import { PoliceCase } from '../Defendant'
 import { lokeNumberList as strings } from './LokeNumberList.strings'
 
@@ -73,15 +73,10 @@ export const LokeNumberList: React.FC<Props> = (props) => {
           onClick: handleCreatePoliceCases,
         }}
         isLoading={isLoading}
+        errorMessage={loadingError ? formatMessage(strings.errorMessage) : ''}
       >
-        {loadingError ? (
-          <PoliceCaseFilesMessageBox
-            icon="close"
-            iconColor="red400"
-            message={formatMessage(strings.errorMessage)}
-          />
-        ) : availablePoliceCases?.length === 0 ? (
-          <PoliceCaseFilesMessageBox
+        {availablePoliceCases?.length === 0 ? (
+          <IconAndText
             icon="checkmark"
             iconColor="blue400"
             message={formatMessage(strings.allNumbersSelected)}

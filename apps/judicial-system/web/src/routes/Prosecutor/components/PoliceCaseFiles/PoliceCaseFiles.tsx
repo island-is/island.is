@@ -12,7 +12,7 @@ import {
   PoliceCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import PoliceCaseFilesMessageBox from '../PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
+import IconAndText from '../../../../components/IconAndText/IconAndText'
 import { policeCaseFiles as m } from './PoliceCaseFiles.strings'
 
 export interface PoliceCaseFilesData {
@@ -67,22 +67,21 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
             onClick: onUpload,
             label: formatMessage(m.uploadButtonLabel),
           }}
+          errorMessage={
+            policeCaseFiles?.hasError
+              ? formatMessage(m.couldNotGetFromLOKEMessage)
+              : undefined
+          }
           isLoading={policeCaseFiles?.isLoading}
         >
-          {policeCaseFiles?.hasError ? (
-            <PoliceCaseFilesMessageBox
-              icon="close"
-              iconColor="red400"
-              message={formatMessage(m.couldNotGetFromLOKEMessage)}
-            />
-          ) : policeCaseFiles?.files.length === 0 ? (
-            <PoliceCaseFilesMessageBox
+          {policeCaseFiles?.files.length === 0 ? (
+            <IconAndText
               icon="warning"
               iconColor="yellow400"
               message={formatMessage(m.noFilesFoundInLOKEMessage)}
             />
           ) : (
-            <PoliceCaseFilesMessageBox
+            <IconAndText
               icon="checkmark"
               iconColor="blue400"
               message={formatMessage(m.allFilesUploadedMessage)}
