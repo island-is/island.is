@@ -15,7 +15,6 @@ import {
   Feature,
   isInvestigationCase,
   isRestrictionCase,
-  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {

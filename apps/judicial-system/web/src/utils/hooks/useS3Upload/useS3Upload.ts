@@ -434,6 +434,7 @@ export const useS3Upload = (caseId: string) => {
       }
       const next = [...prevFiles]
       next[index] = displayFileWithId
+
       return next
     },
     [],
