@@ -108,12 +108,12 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
                   : '-'
               }
             />
-            <Input
+            {inspectionInfo?.odometer && <Input
               loading={loading}
               error={isError}
               label={intl.formatMessage({id: 'vehicleDetail.odometer'})}
               value={`${inspectionInfo?.odometer} km`}
-            />
+            />}
           </InputRow>
 
           <InputRow>

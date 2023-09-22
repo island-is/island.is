@@ -1,4 +1,5 @@
-## fastlane documentation
+fastlane documentation
+----
 
 # Installation
 
@@ -22,11 +23,13 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Upload a new AAB to the Google Play store
 
-### android promote_alpha
+### android promote
 
 ```sh
-[bundle exec] fastlane android promote_alpha
+[bundle exec] fastlane android promote
 ```
+
+
 
 ### android increment_version
 
@@ -34,11 +37,15 @@ Upload a new AAB to the Google Play store
 [bundle exec] fastlane android increment_version
 ```
 
+
+
 ### android increment_build
 
 ```sh
 [bundle exec] fastlane android increment_build
 ```
+
+
 
 ### android beta
 
@@ -48,7 +55,7 @@ Upload a new AAB to the Google Play store
 
 Submit a new Beta Build
 
----
+----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.
 
