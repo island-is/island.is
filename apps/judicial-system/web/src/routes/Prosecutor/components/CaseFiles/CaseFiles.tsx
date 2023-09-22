@@ -7,7 +7,6 @@ import React, {
 } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import { uuid } from 'uuidv4'
 
 import {
   Box,
@@ -16,7 +15,6 @@ import {
   InputFileUpload,
   Text,
   Tooltip,
-  UploadFile,
 } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
@@ -39,6 +37,7 @@ import {
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  TUploadFile,
   useCase,
   useDeb,
   useS3Upload,
@@ -72,7 +71,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [policeCaseFileList, setPoliceCaseFileList] = useState<
     PoliceCaseFileCheck[]
   >([])
-  const [displayFiles, setDisplayFiles] = useState<UploadFile[]>(
+  const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>(
     workingCase.caseFiles?.map(mapCaseFileToUploadFile) || [],
   )
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
@@ -162,7 +161,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
     router.push(`${destination}/${workingCase.id}`)
 
   const handleUIUpdate = useCallback(
-    (displayFile: UploadFile, newId?: string) => {
+    (displayFile: TUploadFile, newId?: string) => {
       setDisplayFiles((previous) =>
         generateSingleFileUpdate(previous, displayFile, newId),
       )
@@ -171,7 +170,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
   )
 
   const uploadPoliceCaseFileCallback = useCallback(
-    (file: UploadFile, id?: string) => {
+    (file: TUploadFile, id?: string) => {
       setDisplayFiles((previous) => [
         ...previous,
         { ...file, id: id ?? file.id },
@@ -204,9 +203,9 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
   }, [policeCaseFileList, uploadFromPolice, uploadPoliceCaseFileCallback])
 
   const removeFileCB = useCallback(
-    (file: UploadFile) => {
+    (file: TUploadFile) => {
       const policeCaseFile = policeCaseFiles?.files.find(
-        (f) => f.name === file.name,
+        (f) => f.id === file.policeFileId,
       )
 
       if (policeCaseFile) {

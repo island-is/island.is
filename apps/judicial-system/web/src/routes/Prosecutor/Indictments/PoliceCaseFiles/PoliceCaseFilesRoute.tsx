@@ -193,9 +193,7 @@ const UploadFilesToPoliceCase: React.FC<
         ])
       }
 
-      setDisplayFiles((previous) => {
-        return previous.filter((f) => f.id !== file.id)
-      })
+      setDisplayFiles((previous) => previous.filter((f) => f.id !== file.id))
     },
     [policeCaseFiles?.files],
   )
