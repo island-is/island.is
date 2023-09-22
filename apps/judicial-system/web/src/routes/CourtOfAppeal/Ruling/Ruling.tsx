@@ -312,9 +312,9 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
             onChange={(files) => {
               handleChange(
                 files,
-                CaseFileCategory.APPEAL_RULING,
                 setDisplayFiles,
                 handleUIUpdate,
+                CaseFileCategory.APPEAL_RULING,
               )
             }}
             onRemove={(file) => handleRemove(file, removeFileCB)}

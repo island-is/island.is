@@ -112,9 +112,9 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
             onChange={(files) =>
               handleChange(
                 files,
-                CaseFileCategory.COVER_LETTER,
                 setDisplayFiles,
                 handleUIUpdate,
+                CaseFileCategory.COVER_LETTER,
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}
@@ -138,9 +138,9 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
               onChange={(files) =>
                 handleChange(
                   files,
-                  CaseFileCategory.INDICTMENT,
                   setDisplayFiles,
                   handleUIUpdate,
+                  CaseFileCategory.INDICTMENT,
                 )
               }
               onRemove={(file) => handleRemove(file, removeFileCB)}
@@ -164,9 +164,9 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
             onChange={(files) =>
               handleChange(
                 files,
-                CaseFileCategory.CRIMINAL_RECORD,
                 setDisplayFiles,
                 handleUIUpdate,
+                CaseFileCategory.CRIMINAL_RECORD,
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}
@@ -193,9 +193,9 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
             onChange={(files) =>
               handleChange(
                 files,
-                CaseFileCategory.COST_BREAKDOWN,
                 setDisplayFiles,
                 handleUIUpdate,
+                CaseFileCategory.COST_BREAKDOWN,
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}
@@ -220,9 +220,9 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
             onChange={(files) =>
               handleChange(
                 files,
-                CaseFileCategory.CASE_FILE,
                 setDisplayFiles,
                 handleUIUpdate,
+                CaseFileCategory.CASE_FILE,
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}

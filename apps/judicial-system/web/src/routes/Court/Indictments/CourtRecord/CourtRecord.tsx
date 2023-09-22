@@ -132,9 +132,9 @@ const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
             onChange={(files) => {
               handleChange(
                 files,
-                CaseFileCategory.COURT_RECORD,
                 setDisplayFiles,
                 handleUIUpdate,
+                CaseFileCategory.COURT_RECORD,
               )
             }}
             onRemove={(file) => handleRemove(file, removeFileCB)}
@@ -158,9 +158,9 @@ const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
             onChange={(files) =>
               handleChange(
                 files,
-                CaseFileCategory.RULING,
                 setDisplayFiles,
                 handleUIUpdate,
+                CaseFileCategory.RULING,
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}

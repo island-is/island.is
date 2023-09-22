@@ -233,9 +233,9 @@ export const useS3Upload = (caseId: string) => {
   const handleChange = useCallback(
     (
       files: File[],
-      category: CaseFileCategory,
       setDisplayFiles: React.Dispatch<React.SetStateAction<TUploadFile[]>>,
       handleUIUpdate: (displayFile: TUploadFile, newId?: string) => void,
+      category?: CaseFileCategory,
       policeCaseNumber?: string,
     ) => {
       // We generate an id for each file so that we find the file again when
@@ -441,7 +441,6 @@ export const useS3Upload = (caseId: string) => {
   )
 
   return {
-    upload,
     uploadFromPolice,
     handleRetry,
     handleRemove,

@@ -275,9 +275,9 @@ const UploadFilesToPoliceCase: React.FC<
         onChange={(files) =>
           handleChange(
             files,
-            CaseFileCategory.CASE_FILE,
             setDisplayFiles,
             handleUIUpdate,
+            CaseFileCategory.CASE_FILE,
             policeCaseNumber,
           )
         }

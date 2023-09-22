@@ -140,9 +140,9 @@ const AppealToCourtOfAppeals = () => {
               onChange={(files) =>
                 handleChange(
                   files,
-                  appealBriefType,
                   setDisplayFiles,
                   handleUIUpdate,
+                  appealBriefType,
                 )
               }
               onRemove={(file) => handleRemove(file, removeFileCB)}
@@ -172,9 +172,9 @@ const AppealToCourtOfAppeals = () => {
               onChange={(files) =>
                 handleChange(
                   files,
-                  appealCaseFilesType,
                   setDisplayFiles,
                   handleUIUpdate,
+                  appealCaseFilesType,
                 )
               }
               onRemove={(file) => handleRemove(file, removeFileCB)}

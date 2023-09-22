@@ -72,22 +72,22 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [policeCaseFileList, setPoliceCaseFileList] = useState<
     PoliceCaseFileCheck[]
   >([])
-  const [filesInRVG, setFilesInRVG] = useState<UploadFile[]>(
+  const [displayFiles, setDisplayFiles] = useState<UploadFile[]>(
     workingCase.caseFiles?.map(mapCaseFileToUploadFile) || [],
   )
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
 
   const allFilesUploaded = useMemo(() => {
-    return filesInRVG.every(
+    return displayFiles.every(
       (file) => file.status === 'done' || file.status === 'error',
     )
-  }, [filesInRVG])
+  }, [displayFiles])
 
   const {
-    upload,
-    uploadFromPolice,
+    handleChange,
     handleRemove,
     handleRetry,
+    uploadFromPolice,
     generateSingleFileUpdate,
   } = useS3Upload(workingCase.id)
   const { updateCase } = useCase()
@@ -142,7 +142,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
         .map(mapPoliceCaseFileToPoliceCaseFileCheck) || [],
     )
 
-    setFilesInRVG(
+    setDisplayFiles(
       workingCase.caseFiles
         ?.filter((file) => !file.category)
         .map(mapCaseFileToUploadFile) || [],
@@ -150,12 +150,12 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
   }, [policeCaseFiles, workingCase.caseFiles])
 
   const uploadErrorMessage = useMemo(() => {
-    if (filesInRVG.some((file) => file.status === 'error')) {
+    if (displayFiles.some((file) => file.status === 'error')) {
       return formatMessage(errors.general)
     } else {
       return undefined
     }
-  }, [filesInRVG, formatMessage])
+  }, [displayFiles, formatMessage])
 
   const stepIsValid = !isUploading && allFilesUploaded
   const handleNavigationTo = (destination: string) =>
@@ -163,7 +163,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const handleUIUpdate = useCallback(
     (displayFile: UploadFile, newId?: string) => {
-      setFilesInRVG((previous) =>
+      setDisplayFiles((previous) =>
         generateSingleFileUpdate(previous, displayFile, newId),
       )
     },
@@ -172,34 +172,12 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const uploadPoliceCaseFileCallback = useCallback(
     (file: UploadFile, id?: string) => {
-      setFilesInRVG((previous) => [...previous, { ...file, id: id ?? file.id }])
+      setDisplayFiles((previous) => [
+        ...previous,
+        { ...file, id: id ?? file.id },
+      ])
     },
     [],
-  )
-
-  const handleUpload = useCallback(
-    async (files: File[]) => {
-      const filesWithId: Array<[File, string]> = files.map((file) => [
-        file,
-        uuid(),
-      ])
-
-      setFilesInRVG((previous) => [
-        ...filesWithId.map(
-          ([file, id]): UploadFile => ({
-            id,
-            name: file.name,
-            type: file.type,
-            percent: 1,
-            status: 'uploading',
-          }),
-        ),
-        ...(previous || []),
-      ])
-
-      await upload(filesWithId, handleUIUpdate)
-    },
-    [handleUIUpdate, upload],
   )
 
   const handlePoliceCaseFileUpload = useCallback(async () => {
@@ -238,7 +216,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
         ])
       }
 
-      setFilesInRVG((previous) => previous.filter((f) => f.id !== file.id))
+      setDisplayFiles((previous) => previous.filter((f) => f.id !== file.id))
     },
     [policeCaseFiles?.files],
   )
@@ -293,10 +271,12 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
             <InputFileUpload
               name="fileUpload"
               accept={Object.values(fileExtensionWhitelist)}
-              fileList={filesInRVG}
+              fileList={displayFiles}
               header={formatMessage(strings.filesLabel)}
               buttonLabel={formatMessage(strings.filesButtonLabel)}
-              onChange={handleUpload}
+              onChange={(files) =>
+                handleChange(files, setDisplayFiles, handleUIUpdate)
+              }
               onRemove={(file) => handleRemove(file, removeFileCB)}
               onRetry={(file) => handleRetry(file, handleUIUpdate)}
               errorMessage={uploadErrorMessage}

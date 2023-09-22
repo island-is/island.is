@@ -163,9 +163,9 @@ const Statement = () => {
                 onChange={(files) =>
                   handleChange(
                     files,
-                    appealStatementType,
                     setDisplayFiles,
                     handleUIUpdate,
+                    appealStatementType,
                   )
                 }
                 onRemove={(file) => handleRemove(file, removeFileCB)}
@@ -195,9 +195,9 @@ const Statement = () => {
                 onChange={(files) =>
                   handleChange(
                     files,
-                    appealCaseFilesType,
                     setDisplayFiles,
                     handleUIUpdate,
+                    appealCaseFilesType,
                   )
                 }
                 onRemove={(file) => handleRemove(file, removeFileCB)}
