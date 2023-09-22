@@ -4,7 +4,6 @@ import { uuid } from 'uuidv4'
 
 import { toast, UploadFile } from '@island.is/island-ui/core'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
-import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import { PresignedPost } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -33,6 +32,7 @@ import {
   useLimitedAccessDeleteFileMutation,
 } from './limitedAccessDeleteFile.generated'
 import { useUploadPoliceCaseFileMutation } from './uploadPoliceCaseFile.generated'
+import { strings } from './useS3Upload.strings'
 
 export interface TUploadFile extends UploadFile {
   category?: CaseFileCategory
@@ -327,7 +327,7 @@ export const useS3Upload = (caseId: string) => {
 
         return uploadPoliceCaseFileData?.uploadPoliceCaseFile
       } catch (e) {
-        toast.error(formatMessage(errors.failedUploadFile))
+        toast.error(formatMessage(strings.uploadFailed))
       }
     },
     [createFile, caseId, formatMessage, uploadPoliceCaseFile],
@@ -361,7 +361,7 @@ export const useS3Upload = (caseId: string) => {
 
   const handleRetry = useCallback(
     (
-      file: UploadFile,
+      file: TUploadFile,
       handleUIUpdate: (file: TUploadFile, newId?: string) => void,
       category?: CaseFileCategory,
       policeCaseNumber?: string,
@@ -395,7 +395,7 @@ export const useS3Upload = (caseId: string) => {
   )
 
   const handleRemove = useCallback(
-    async (file: UploadFile, cb?: (file: UploadFile) => void) => {
+    async (file: TUploadFile, handleUIUpdate?: (file: TUploadFile) => void) => {
       try {
         if (file.id) {
           const { data } = await remove(file.id)
@@ -409,19 +409,19 @@ export const useS3Upload = (caseId: string) => {
             throw new Error(`Failed to delete file: ${file.id}`)
           }
 
-          if (cb) {
-            cb(file)
+          if (handleUIUpdate) {
+            handleUIUpdate(file)
           }
         }
       } catch {
-        toast.error(formatMessage(errors.general))
+        toast.error(formatMessage(strings.removeFailed))
       }
     },
     [formatMessage, limitedAccess, remove],
   )
 
   const generateSingleFileUpdate = useCallback(
-    (prevFiles: UploadFile[], displayFile: UploadFile, newId?: string) => {
+    (prevFiles: TUploadFile[], displayFile: TUploadFile, newId?: string) => {
       const index = prevFiles.findIndex((f) => f.id === displayFile.id)
 
       if (index === -1) {
@@ -442,7 +442,6 @@ export const useS3Upload = (caseId: string) => {
   return {
     upload,
     uploadFromPolice,
-    remove,
     handleRetry,
     handleRemove,
     handleChange,
