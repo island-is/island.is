@@ -48,6 +48,7 @@ const GrantAccess = () => {
     selectedOption,
     loading: domainLoading,
     updateDomain,
+    queryString,
   } = useDomains(false)
 
   const [createAuthDelegation, { loading: mutationLoading }] =
@@ -124,7 +125,7 @@ const GrantAccess = () => {
       })
       if (data) {
         navigate(
-          `${DelegationPaths.Delegations}/${data.createAuthDelegation.id}`,
+          `${DelegationPaths.Delegations}/${data.createAuthDelegation.id}${queryString}`,
         )
       }
     } catch (error) {

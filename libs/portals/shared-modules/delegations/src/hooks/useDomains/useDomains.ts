@@ -35,11 +35,12 @@ export const useDomains = (includeDefaultOption = true) => {
   const { formatMessage, lang } = useLocale()
   const location = useLocation()
   const navigate = useNavigate()
-  const { portalType } = usePortalMeta()
-  const defaultPortalDomain =
-    portalType === 'admin' ? ADMIN_ISLAND_DOMAIN : ISLAND_DOMAIN
+
+  const defaultPortalDomain = ALL_DOMAINS
   const displayNameQueryParam = useQueryParam('domain')
+
   const [domainName, setDomainName] = useState<string | null>(null)
+  const [queryString, setQueryString] = useState<string>('')
 
   const defaultLabel = formatMessage(m.allDomains)
   const allDomainsOption = {
@@ -80,17 +81,15 @@ export const useDomains = (includeDefaultOption = true) => {
     const option = opt ?? allDomainsOption
     const name = option.value
     setDomainName(name)
-    sessionStore.setItem('domain', name)
 
-    const query = new URLSearchParams(location.search)
-    const currentDomain = query.get('domain')
+    const query = new URLSearchParams({ domain: name })
 
-    if (currentDomain && currentDomain !== displayNameQueryParam) {
-      query.set('domain', name)
-      navigate(`${location.pathname}?${query.toString()}`, {
-        replace: true,
-      })
-    }
+    const domainQuery = name !== ALL_DOMAINS ? `?${query.toString()}` : ``
+    setQueryString(domainQuery)
+
+    navigate(`${location.pathname}${domainQuery}`, {
+      replace: true,
+    })
   }
 
   const updateDomainByName = (name: string) => {
@@ -117,16 +116,11 @@ export const useDomains = (includeDefaultOption = true) => {
 
   useEffect(() => {
     if (data?.authDomains) {
-      const sessionDomainName = sessionStore.getItem('domain')
-
       // Priority
       // 1. Query string
-      // 2. Session storage
-      // 3. Default domain
+      // 2. Default domain
       if (displayNameQueryParam) {
         updateDomainByName(displayNameQueryParam)
-      } else if (sessionDomainName) {
-        updateDomainByName(sessionDomainName)
       } else {
         updateDomainByName(defaultPortalDomain)
       }
@@ -140,5 +134,6 @@ export const useDomains = (includeDefaultOption = true) => {
     options,
     selectedOption: getOptionByName(domainName),
     loading,
+    queryString,
   }
 }
