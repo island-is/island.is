@@ -1,5 +1,8 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 import { EventLog } from './models/eventLog.model'
 import { CreateEventLogDto } from './dto/createEventLog.dto'
@@ -9,9 +12,11 @@ export class EventLogService {
   constructor(
     @InjectModel(EventLog)
     private readonly eventLogModel: typeof EventLog,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
-  async create(event: CreateEventLogDto): Promise<EventLog> {
+  async create(event: CreateEventLogDto): Promise<void> {
     const { eventType, caseId, userRole, nationalId } = event
 
     const where = Object.fromEntries(
@@ -23,20 +28,18 @@ export class EventLogService {
     const eventExists = await this.eventLogModel.findOne({ where })
 
     if (eventExists) {
-      return eventExists
+      return
     }
 
-    return this.eventLogModel.create({
-      eventType,
-      caseId,
-      nationalId,
-      userRole,
-    })
-  }
-
-  async findByCaseId(caseId: string): Promise<EventLog[]> {
-    return this.eventLogModel.findAll({
-      where: { caseId },
-    })
+    try {
+      await this.eventLogModel.create({
+        eventType,
+        caseId,
+        nationalId,
+        userRole,
+      })
+    } catch (error) {
+      this.logger.error('Failed to create event log', error)
+    }
   }
 }

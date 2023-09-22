@@ -6,13 +6,12 @@ import {
   ExecutionContext,
   CallHandler,
 } from '@nestjs/common'
-
 import {
   CaseAppealState,
   User,
   EventType,
+  UserRole,
 } from '@island.is/judicial-system/types'
-
 import { Case } from '../models/case.model'
 import { EventLogService } from '../../event-log'
 
@@ -26,7 +25,14 @@ export class CaseInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map((data: Case) => {
-        if (data.appealState === CaseAppealState.COMPLETED) {
+        if (
+          data.appealState === CaseAppealState.COMPLETED &&
+          [
+            UserRole.PROSECUTOR,
+            UserRole.DEFENDER,
+            UserRole.PRISON_SYSTEM_STAFF,
+          ].includes(user.role)
+        ) {
           this.eventLogService.create({
             eventType: EventType.APPEAL_RESULT_ACCESSED,
             caseId: data.id,
