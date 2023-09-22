@@ -126,11 +126,6 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
     evt: React.ChangeEvent<HTMLInputElement>,
     checkAll?: boolean,
   ) => {
-    const newPoliceCaseFileList = [...policeCaseFileList]
-    const target = policeCaseFileList.findIndex(
-      (listItem) => listItem.id.toString() === evt.target.value,
-    )
-
     if (checkAll) {
       setCheckAllChecked(!checkAllChecked)
       setPoliceCaseFileList(
@@ -138,11 +133,18 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
           return { ...l, checked: evt.target.checked }
         }),
       )
-    } else {
-      newPoliceCaseFileList[target].checked =
-        !newPoliceCaseFileList[target].checked
-      setPoliceCaseFileList(newPoliceCaseFileList)
+
+      return
     }
+
+    const newPoliceCaseFileList = [...policeCaseFileList]
+    const target = policeCaseFileList.findIndex(
+      (listItem) => listItem.id === evt.target.value,
+    )
+
+    newPoliceCaseFileList[target].checked =
+      !newPoliceCaseFileList[target].checked
+    setPoliceCaseFileList(newPoliceCaseFileList)
   }
 
   return (

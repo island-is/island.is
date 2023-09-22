@@ -100,11 +100,13 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
         isLoading: false,
         hasError: false,
       })
-    } else if (policeData && policeData.policeCaseFiles) {
+    } else if (policeDataError) {
       setPoliceCaseFiles({
-        files: policeData.policeCaseFiles,
+        files: [],
         isLoading: false,
-        hasError: false,
+        hasError: true,
+        errorCode: policeDataError?.graphQLErrors[0]?.extensions
+          ?.code as string,
       })
     } else if (policeDataLoading) {
       setPoliceCaseFiles({
@@ -117,14 +119,9 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
       })
     } else {
       setPoliceCaseFiles({
-        files:
-          policeData && policeData.policeCaseFiles
-            ? policeData.policeCaseFiles
-            : [],
+        files: policeData?.policeCaseFiles ?? [],
         isLoading: false,
-        hasError: true,
-        errorCode: policeDataError?.graphQLErrors[0]?.extensions
-          ?.code as string,
+        hasError: false,
       })
     }
   }, [policeData, policeDataError, policeDataLoading, workingCase.origin])
