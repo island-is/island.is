@@ -518,13 +518,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Scan & upload
+      - name: Scan & upload main config
         uses: configcat/scan-repository@v2
         with:
           api-user: ${{ secrets.CONFIGCAT_API_USER }}
           api-pass: ${{ secrets.CONFIGCAT_API_PASS }}
           config-id: ${{ env.CONFIGCAT_MAIN_CONFIG_ID }}
-      - name: Scan & upload
+      - name: Scan & upload mobile app config
         uses: configcat/scan-repository@v2
         with:
           api-user: ${{ secrets.CONFIGCAT_API_USER }}
