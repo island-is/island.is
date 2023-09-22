@@ -1,9 +1,11 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
 import {
   EventLog as TEventLog,
   EventType,
 } from '@island.is/judicial-system/types'
+
+registerEnumType(EventType, { name: 'EventType' })
 
 @ObjectType()
 export class EventLog implements TEventLog {

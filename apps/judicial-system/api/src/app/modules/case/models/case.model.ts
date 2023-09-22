@@ -14,7 +14,6 @@ import {
   CaseAppealState,
   UserRole,
   CaseAppealRulingDecision,
-  EventType,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 import type {
@@ -40,7 +39,7 @@ registerEnumType(CaseAppealRulingDecision, { name: 'CaseAppealRulingDecision' })
 registerEnumType(CaseCustodyRestrictions, { name: 'CaseCustodyRestrictions' })
 registerEnumType(CaseLegalProvisions, { name: 'CaseLegalProvisions' })
 registerEnumType(CaseAppealDecision, { name: 'CaseAppealDecision' })
-registerEnumType(EventType, { name: 'EventType' })
+
 registerEnumType(RequestSharedWithDefender, {
   name: 'requestSharedWithDefender',
 })
