@@ -150,6 +150,10 @@ dependencies:
     repository: file://libs/api-template
     version: 0.0.1
     alias: services-sessions-worker
+  - name: cronjob-template
+    repository: file://libs/cronjob-template
+    version: 0.0.1
+    alias: services-sessions-geoip-worker
   - name: api-template
     repository: file://libs/api-template
     version: 0.0.1
