@@ -7,14 +7,7 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { MessageModule } from '@island.is/judicial-system/message'
 
 import { environment } from '../../../environments'
-import {
-  CaseModule,
-  UserModule,
-  CourtModule,
-  EventModule,
-  AwsS3Module,
-  DefendantModule,
-} from '../index'
+import { CaseModule, CourtModule, EventModule, DefendantModule } from '../index'
 import { Notification } from './models/notification.model'
 import { NotificationService } from './notification.service'
 import { NotificationController } from './notification.controller'
@@ -27,9 +20,7 @@ import { InternalNotificationController } from './internalNotification.controlle
     CmsTranslationsModule,
     MessageModule,
     forwardRef(() => CaseModule),
-    forwardRef(() => UserModule),
     forwardRef(() => CourtModule),
-    forwardRef(() => AwsS3Module),
     forwardRef(() => EventModule),
     forwardRef(() => DefendantModule),
     SequelizeModule.forFeature([Notification]),
