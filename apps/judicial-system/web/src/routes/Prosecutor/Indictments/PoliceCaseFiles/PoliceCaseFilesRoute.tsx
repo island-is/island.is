@@ -231,15 +231,15 @@ const UploadFilesToPoliceCase: React.FC<
         type: 'application/pdf',
         category: CaseFileCategory.CASE_FILE,
         policeCaseNumber: f.policeCaseNumber,
-        chapter: f.chapter,
+        chapter: f.chapter ?? undefined,
         orderWithinChapter:
           currentOrderWithinChapter !== undefined &&
           currentOrderWithinChapter !== null
             ? ++currentOrderWithinChapter
             : undefined,
-        displayDate: f.displayDate,
+        displayDate: f.displayDate ?? undefined,
         policeFileId: f.id,
-      } as UploadFile
+      }
 
       await uploadFromPolice(fileToUpload, uploadPoliceCaseFileCallback)
 

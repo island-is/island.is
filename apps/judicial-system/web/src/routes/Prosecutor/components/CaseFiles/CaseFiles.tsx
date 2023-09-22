@@ -211,7 +211,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
         name: f.name,
         type: 'application/pdf',
         policeFileId: f.id,
-      } as UploadFile
+      }
 
       await uploadFromPolice(fileToUpload, uploadPoliceCaseFileCallback)
 
