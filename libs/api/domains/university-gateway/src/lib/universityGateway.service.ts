@@ -41,6 +41,8 @@ class UniversityGatewayApi {
         startingSemesterSeason: item.startingSemesterSeason.toString(),
         applicationStartDate: item.applicationStartDate,
         applicationEndDate: item.applicationEndDate,
+        schoolAnswerDate: item.schoolAnswerDate,
+        studentAnswerDate: item.studentAnswerDate,
         degreeType: item.degreeType.toString(),
         degreeAbbreviation: item.degreeAbbreviation,
         credits: item.credits,
@@ -49,6 +51,7 @@ class UniversityGatewayApi {
         durationInYears: item.durationInYears,
         costPerYear: item.costPerYear,
         iscedCode: item.iscedCode,
+        languages: item.languages,
         searchKeywords: item.searchKeywords,
         tag: item.tag.map((t) => ({
           id: t.tagId,
@@ -84,6 +87,8 @@ class UniversityGatewayApi {
       startingSemesterSeason: item.startingSemesterSeason.toString(),
       applicationStartDate: item.applicationStartDate,
       applicationEndDate: item.applicationEndDate,
+      schoolAnswerDate: item.schoolAnswerDate,
+      studentAnswerDate: item.studentAnswerDate,
       degreeType: item.degreeType.toString(),
       degreeAbbreviation: item.degreeAbbreviation,
       credits: item.credits,
@@ -92,6 +97,7 @@ class UniversityGatewayApi {
       durationInYears: item.durationInYears,
       costPerYear: item.costPerYear,
       iscedCode: item.iscedCode,
+      languages: item.languages,
       searchKeywords: item.searchKeywords,
       tag: item.tag.map((t) => ({
         id: t.tagId,

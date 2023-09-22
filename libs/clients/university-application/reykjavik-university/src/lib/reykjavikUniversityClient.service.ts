@@ -38,6 +38,8 @@ class ReykjavikUniversityApplicationClient {
           ),
           applicationStartDate: program.applicationStartDate || new Date(),
           applicationEndDate: program.applicationEndDate || new Date(),
+          schoolAnswerDate: undefined, //TODO missing in api
+          studentAnswerDate: undefined, //TODO missing in api
           degreeType: mapStringToEnum(
             program.degreeType,
             DegreeType,
@@ -50,6 +52,7 @@ class ReykjavikUniversityApplicationClient {
           durationInYears: program.durationInYears || 0,
           costPerYear: program.costPerYear,
           iscedCode: program.iscedCode || '',
+          languages: [], //TODO missing in api
           searchKeywords: [], //TODO missing in api
           externalUrlIs: program.externalUrlIs,
           externalUrlEn: program.externalUrlEn,

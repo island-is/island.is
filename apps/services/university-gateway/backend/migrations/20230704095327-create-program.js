@@ -61,6 +61,14 @@ module.exports = {
               type: Sequelize.DATE,
               allowNull: false,
             },
+            school_answer_date: {
+              type: Sequelize.DATE,
+              allowNull: true,
+            },
+            student_answer_date: {
+              type: Sequelize.DATE,
+              allowNull: true,
+            },
             degree_type: {
               type: Sequelize.ENUM(
                 'DIPLOMA',
@@ -96,6 +104,11 @@ module.exports = {
             },
             isced_code: {
               type: Sequelize.STRING,
+              allowNull: false,
+            },
+            languages: {
+              type: Sequelize.ARRAY(Sequelize.STRING),
+              defaultValue: [],
               allowNull: false,
             },
             search_keywords: {

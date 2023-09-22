@@ -12,6 +12,8 @@ export interface IProgram {
   startingSemesterSeason: Season
   applicationStartDate: Date
   applicationEndDate: Date
+  schoolAnswerDate?: Date
+  studentAnswerDate?: Date
   degreeType: DegreeType
   degreeAbbreviation: string
   credits: number
@@ -20,6 +22,7 @@ export interface IProgram {
   durationInYears: number
   costPerYear?: number
   iscedCode: string
+  languages: string[]
   searchKeywords: string[]
   externalUrlIs?: string
   externalUrlEn?: string
