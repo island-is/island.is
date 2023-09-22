@@ -152,8 +152,8 @@ export const useS3Upload = (caseId: string) => {
               type: file.type,
               key,
               size: file.size,
-              ...(category && { category }),
-              ...(policeCaseNumber && { policeCaseNumber }),
+              category,
+              policeCaseNumber,
             },
           },
         })
