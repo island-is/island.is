@@ -211,10 +211,9 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
     filesToUpload.forEach(async (f, index) => {
       const fileToUpload = {
         id: f.id,
-        type: 'application/pdf',
         name: f.name,
-        status: 'done',
-        state: CaseFileState.STORED_IN_RVG,
+        type: 'application/pdf',
+        policeFileId: f.id,
       } as UploadFile
 
       await uploadFromPolice(fileToUpload, uploadPoliceCaseFileCallback)

@@ -15,7 +15,6 @@ import * as constants from '@island.is/judicial-system/consts'
 import {
   CaseFile,
   CaseFileCategory,
-  CaseFileState,
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
@@ -228,12 +227,10 @@ const UploadFilesToPoliceCase: React.FC<
 
       const fileToUpload = {
         id: f.id,
-        type: 'application/pdf',
         name: f.name,
-        status: 'done',
-        state: CaseFileState.STORED_IN_RVG,
-        policeCaseNumber: f.policeCaseNumber,
+        type: 'application/pdf',
         category: CaseFileCategory.CASE_FILE,
+        policeCaseNumber: f.policeCaseNumber,
         chapter: f.chapter,
         orderWithinChapter:
           currentOrderWithinChapter !== undefined &&
@@ -241,6 +238,7 @@ const UploadFilesToPoliceCase: React.FC<
             ? ++currentOrderWithinChapter
             : undefined,
         displayDate: f.displayDate,
+        policeFileId: f.id,
       } as UploadFile
 
       await uploadFromPolice(fileToUpload, uploadPoliceCaseFileCallback)

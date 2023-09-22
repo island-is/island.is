@@ -235,7 +235,7 @@ export const useS3Upload = (caseId: string) => {
       files: File[],
       category: CaseFileCategory,
       setDisplayFiles: React.Dispatch<React.SetStateAction<TUploadFile[]>>,
-      cb: (displayFile: TUploadFile, newId?: string) => void,
+      handleUIUpdate: (displayFile: TUploadFile, newId?: string) => void,
       policeCaseNumber?: string,
     ) => {
       // We generate an id for each file so that we find the file again when
@@ -248,18 +248,19 @@ export const useS3Upload = (caseId: string) => {
       setDisplayFiles((previous) => [
         ...filesWithId.map(
           ([file, id]): TUploadFile => ({
-            status: 'uploading',
-            percent: 1,
-            name: file.name,
             id: id,
+            name: file.name,
             type: file.type,
+            size: file.size,
+            percent: 1,
+            status: 'uploading',
             category,
             policeCaseNumber,
           }),
         ),
         ...previous,
       ])
-      upload(filesWithId, cb, category, policeCaseNumber)
+      upload(filesWithId, handleUIUpdate, category, policeCaseNumber)
     },
     [upload],
   )
@@ -267,14 +268,14 @@ export const useS3Upload = (caseId: string) => {
   const uploadFromPolice = useCallback(
     async (
       file: TUploadFile,
-      cb: (file: TUploadFile, newId?: string) => void,
+      handleUIUpdate: (file: TUploadFile, newId?: string) => void,
     ) => {
       try {
         const { data: uploadPoliceCaseFileData } = await uploadPoliceCaseFile({
           variables: {
             input: {
               caseId,
-              id: file.id ?? '',
+              id: file.policeFileId ?? '',
               name: file.name,
             },
           },
@@ -291,12 +292,12 @@ export const useS3Upload = (caseId: string) => {
               type: 'application/pdf',
               key: uploadPoliceCaseFileData.uploadPoliceCaseFile.key,
               size: uploadPoliceCaseFileData.uploadPoliceCaseFile.size,
-              policeCaseNumber: file.policeCaseNumber,
               category: file.category,
+              policeCaseNumber: file.policeCaseNumber,
               chapter: file.chapter,
               orderWithinChapter: file.orderWithinChapter,
               displayDate: file.displayDate,
-              policeFileId: file.id,
+              policeFileId: file.policeFileId,
             },
           },
         })
@@ -305,11 +306,12 @@ export const useS3Upload = (caseId: string) => {
           throw Error('failed to add file to case')
         }
 
-        cb(
+        handleUIUpdate(
           {
             id: file.id,
             name: file.name,
             type: 'application/pdf',
+            size: uploadPoliceCaseFileData.uploadPoliceCaseFile.size,
             percent: 100,
             status: 'done',
             category: file.category,
@@ -317,7 +319,7 @@ export const useS3Upload = (caseId: string) => {
             chapter: file.chapter,
             orderWithinChapter: file.orderWithinChapter,
             displayDate: file.displayDate,
-            policeFileId: file.id,
+            policeFileId: file.policeFileId,
           },
           // We need to set the id so we are able to delete the file later
           createFileData.createFile.id,
