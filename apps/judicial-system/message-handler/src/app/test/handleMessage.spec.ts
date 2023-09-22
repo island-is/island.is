@@ -258,6 +258,33 @@ describe('MessageHandlerService - Handle message', () => {
     })
   })
 
+  describe('deliver case conclusion to court', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.DELIVER_CASE_CONCLUSION_TO_COURT,
+        user,
+        caseId,
+      })
+    })
+
+    it('should deliver case conclusion to court', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/deliverCaseConclusionToCourt`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ user }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
   describe('deliver case to police', () => {
     let then: Then
 

@@ -59,6 +59,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         with:
           ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
 
       - uses: actions/checkout@v3
         if: ${{ github.ref == 'ref/heads/main' }}
@@ -97,7 +98,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         run: |
           ./infra/scripts/generate-chart-values.sh
-          ./infra/scripts/ci/git-check-dirty.sh "charts/" "charts"
+          ./infra/scripts/ci/git-check-dirty.sh "charts/" "charts" "dirtybot"
 
   check-secrets:
     needs:

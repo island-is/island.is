@@ -32,6 +32,8 @@ import {
   DrivingInstructorList,
   PlateAvailableSearch,
   SectionWithVideo,
+  TableSlice,
+  PublicShipSearch,
 } from '@island.is/web/components'
 import {
   PowerBiSlice as PowerBiSliceSchema,
@@ -40,10 +42,15 @@ import {
   FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
   SliceDropdown as SliceDropdownSchema,
   SectionWithVideo as SectionWithVideoSchema,
+  TableSlice as TableSliceSchema,
+  Embed as EmbedSchema,
 } from '@island.is/web/graphql/schema'
 import { Locale } from '@island.is/shared/types'
 import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
+import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator'
+import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
 export const webRenderConnectedComponent = (slice) => {
@@ -78,6 +85,10 @@ export const webRenderConnectedComponent = (slice) => {
       return <DrivingInstructorList slice={slice} />
     case 'PlateAvailableSearch':
       return <PlateAvailableSearch slice={slice} />
+    case 'HousingBenefitCalculator':
+      return <HousingBenefitCalculator slice={slice} />
+    case 'PublicShipSearch':
+      return <PublicShipSearch slice={slice} />
     default:
       break
   }
@@ -123,6 +134,8 @@ const defaultRenderComponent = {
   SectionWithVideo: (slice: SectionWithVideoSchema) => (
     <SectionWithVideo slice={slice} />
   ),
+  TableSlice: (slice: TableSliceSchema) => <TableSlice slice={slice} />,
+  Embed: (slice: EmbedSchema) => <EmbedSlice slice={slice} />,
 }
 
 export const webRichText = (
