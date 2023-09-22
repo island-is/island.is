@@ -10,7 +10,7 @@ import { useIntl } from 'react-intl'
 import _isEqual from 'lodash/isEqual'
 import router from 'next/router'
 
-import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
+import { Box, InputFileUpload } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   CaseFile,
@@ -36,7 +36,10 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  TUploadFile,
+  useS3Upload,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import {
   mapPoliceCaseFileToPoliceCaseFileCheck,
@@ -75,7 +78,7 @@ const UploadFilesToPoliceCase: React.FC<
     errorPolicy: 'all',
   })
 
-  const [displayFiles, setDisplayFiles] = useState<UploadFile[]>(
+  const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>(
     caseFiles.map(mapCaseFileToUploadFile),
   )
 
@@ -111,11 +114,13 @@ const UploadFilesToPoliceCase: React.FC<
         isLoading: false,
         hasError: false,
       })
-    } else if (policeData && policeData.policeCaseFiles) {
+    } else if (policeDataError) {
       setPoliceCaseFiles({
-        files: policeData.policeCaseFiles,
+        files: [],
         isLoading: false,
-        hasError: false,
+        hasError: true,
+        errorCode: policeDataError?.graphQLErrors[0]?.extensions
+          ?.code as string,
       })
     } else if (policeDataLoading) {
       setPoliceCaseFiles({
@@ -128,14 +133,9 @@ const UploadFilesToPoliceCase: React.FC<
       })
     } else {
       setPoliceCaseFiles({
-        files:
-          policeData && policeData.policeCaseFiles
-            ? policeData.policeCaseFiles
-            : [],
+        files: policeData?.policeCaseFiles ?? [],
         isLoading: false,
-        hasError: true,
-        errorCode: policeDataError?.graphQLErrors[0]?.extensions
-          ?.code as string,
+        hasError: false,
       })
     }
   }, [
@@ -159,10 +159,10 @@ const UploadFilesToPoliceCase: React.FC<
     )
 
     setDisplayFiles(caseFiles.map(mapCaseFileToUploadFile) || [])
-  }, [policeCaseFiles, caseFiles, policeCaseNumber])
+  }, [policeCaseFiles?.files, caseFiles, policeCaseNumber])
 
   const handleUIUpdate = useCallback(
-    (displayFile: UploadFile, newId?: string) => {
+    (displayFile: TUploadFile, newId?: string) => {
       setDisplayFiles((previous) =>
         generateSingleFileUpdate(previous, displayFile, newId),
       )
@@ -171,7 +171,7 @@ const UploadFilesToPoliceCase: React.FC<
   )
 
   const uploadPoliceCaseFileCallback = useCallback(
-    (file: UploadFile, id?: string) => {
+    (file: TUploadFile, id?: string) => {
       setDisplayFiles((previous) => [
         ...previous,
         { ...file, id: id ?? file.id },
@@ -181,9 +181,9 @@ const UploadFilesToPoliceCase: React.FC<
   )
 
   const removeFileCB = useCallback(
-    (file: UploadFile) => {
+    (file: TUploadFile) => {
       const policeCaseFile = policeCaseFiles?.files.find(
-        (f) => f.name === file.name,
+        (f) => f.id === file.policeFileId,
       )
 
       if (policeCaseFile) {

@@ -349,13 +349,17 @@ export const findFirstInvalidStep = (steps: string[], theCase: Case) => {
 }
 
 export const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
+  id: file.id,
   name: file.name,
   type: file.type,
-  id: file.id,
-  key: file.key,
-  status: 'done',
-  percent: 100,
   size: file.size,
+  key: file.key,
+  percent: 100,
+  status: 'done',
   category: file.category,
   policeCaseNumber: file.policeCaseNumber,
+  chapter: file.chapter,
+  orderWithinChapter: file.orderWithinChapter,
+  displayDate: file.displayDate,
+  policeFileId: file.policeFileId,
 })

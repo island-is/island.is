@@ -199,6 +199,7 @@ export const useS3Upload = (caseId: string) => {
               name: file.name,
               type: file.type,
               size: file.size,
+              key: presignedPost.fields.key,
               percent: 100,
               status: 'done',
               category,
@@ -245,6 +246,7 @@ export const useS3Upload = (caseId: string) => {
         file,
         `${file.name}-${uuid()}`,
       ])
+
       setDisplayFiles((previous) => [
         ...filesWithId.map(
           ([file, id]): TUploadFile => ({
@@ -260,6 +262,7 @@ export const useS3Upload = (caseId: string) => {
         ),
         ...previous,
       ])
+
       upload(filesWithId, handleUIUpdate, category, policeCaseNumber)
     },
     [upload],
@@ -312,6 +315,7 @@ export const useS3Upload = (caseId: string) => {
             name: file.name,
             type: 'application/pdf',
             size: uploadPoliceCaseFileData.uploadPoliceCaseFile.size,
+            key: uploadPoliceCaseFileData.uploadPoliceCaseFile.key,
             percent: 100,
             status: 'done',
             category: file.category,
@@ -375,6 +379,7 @@ export const useS3Upload = (caseId: string) => {
         category,
         policeCaseNumber,
       })
+
       upload(
         [
           [
@@ -429,6 +434,7 @@ export const useS3Upload = (caseId: string) => {
       }
 
       const displayFileWithId = {
+        ...prevFiles[index],
         ...displayFile,
         id: newId ?? displayFile.id,
       }
@@ -441,10 +447,10 @@ export const useS3Upload = (caseId: string) => {
   )
 
   return {
-    uploadFromPolice,
+    handleChange,
     handleRetry,
     handleRemove,
-    handleChange,
+    uploadFromPolice,
     generateSingleFileUpdate,
   }
 }
