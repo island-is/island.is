@@ -13,8 +13,13 @@ platform :ios do
 
   lane :beta do |options|
     apps = options[:apps] || 'dev,prod'
-    # Increment build version
-    increment_build
+    changed = `git diff --name-only HEAD~1`.split("\n")
+    unless changed.include? "apps/native/app/ios/IslandApp/Info.plist"
+      increment_build
+    else
+      puts "Not incrementing build version because IslandApp/Info.plist was changed."
+      puts "If you want to increment the build version, please do it manually."
+    end
     # Build and upload to TestFlight
     apps.split(',').each do |app|
       build_app(
