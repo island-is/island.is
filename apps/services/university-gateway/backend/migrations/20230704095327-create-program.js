@@ -104,11 +104,11 @@ module.exports = {
               allowNull: false,
             },
             external_url_is: {
-              type: Sequelize.STRING,
+              type: Sequelize.STRING(500),
               allowNull: true,
             },
             external_url_en: {
-              type: Sequelize.STRING,
+              type: Sequelize.STRING(500),
               allowNull: true,
             },
             admission_requirements_is: {
