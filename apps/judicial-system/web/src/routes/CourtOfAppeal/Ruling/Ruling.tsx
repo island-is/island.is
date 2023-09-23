@@ -14,7 +14,6 @@ import {
   InputFileUpload,
   RadioButton,
   Text,
-  UploadFile,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
@@ -94,7 +93,7 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
     [generateSingleFileUpdate],
   )
 
-  const removeFileCB = (file: UploadFile) => {
+  const removeFileCB = (file: TUploadFile) => {
     setDisplayFiles((previous) =>
       previous.filter((caseFile) => caseFile.id !== file.id),
     )

@@ -8,12 +8,7 @@ import React, {
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import {
-  Box,
-  InputFileUpload,
-  Text,
-  UploadFile,
-} from '@island.is/island-ui/core'
+import { Box, InputFileUpload, Text } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
@@ -74,7 +69,7 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
     [generateSingleFileUpdate],
   )
 
-  const removeFileCB = useCallback((file: UploadFile) => {
+  const removeFileCB = useCallback((file: TUploadFile) => {
     setDisplayFiles((previous) =>
       previous.filter((caseFile) => caseFile.id !== file.id),
     )

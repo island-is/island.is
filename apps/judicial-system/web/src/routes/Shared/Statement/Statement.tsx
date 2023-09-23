@@ -8,13 +8,7 @@ import React, {
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import {
-  Box,
-  Button,
-  InputFileUpload,
-  Text,
-  UploadFile,
-} from '@island.is/island-ui/core'
+import { Box, Button, InputFileUpload, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -81,7 +75,7 @@ const Statement = () => {
       (file) => file.category === appealStatementType && file.status === 'done',
     ) && allFilesUploaded
 
-  const removeFileCB = useCallback((file: UploadFile) => {
+  const removeFileCB = useCallback((file: TUploadFile) => {
     setDisplayFiles((previous) =>
       previous.filter((caseFile) => caseFile.id !== file.id),
     )

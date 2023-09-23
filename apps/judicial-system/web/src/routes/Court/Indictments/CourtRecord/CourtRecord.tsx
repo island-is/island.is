@@ -13,7 +13,6 @@ import {
   Box,
   InputFileUpload,
   toast,
-  UploadFile,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
@@ -93,7 +92,7 @@ const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
     [transitionCase, workingCase, formatMessage],
   )
 
-  const removeFileCB = useCallback((file: UploadFile) => {
+  const removeFileCB = useCallback((file: TUploadFile) => {
     setDisplayFiles((previous) =>
       previous.filter((caseFile) => caseFile.id !== file.id),
     )
