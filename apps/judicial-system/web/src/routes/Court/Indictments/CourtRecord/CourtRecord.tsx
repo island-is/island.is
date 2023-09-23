@@ -53,7 +53,7 @@ const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { formatMessage } = useIntl()
   const { transitionCase } = useCase()
 
-  const { handleChange, handleRemove, handleRetry } = useS3Upload(
+  const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
 
@@ -128,7 +128,7 @@ const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
             })}
             buttonLabel={formatMessage(m.uploadButtonText)}
             onChange={(files) => {
-              handleChange(
+              handleUpload(
                 files,
                 setDisplayFiles,
                 handleUIUpdate,
@@ -154,7 +154,7 @@ const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
             })}
             buttonLabel={formatMessage(m.uploadButtonText)}
             onChange={(files) =>
-              handleChange(
+              handleUpload(
                 files,
                 setDisplayFiles,
                 handleUIUpdate,

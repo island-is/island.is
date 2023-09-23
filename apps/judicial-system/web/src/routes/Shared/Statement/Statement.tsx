@@ -50,7 +50,7 @@ const Statement = () => {
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const [visibleModal, setVisibleModal] = useState<'STATEMENT_SENT'>()
   const { id } = router.query
-  const { handleChange, handleRemove, handleRetry } = useS3Upload(
+  const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
 
@@ -156,7 +156,7 @@ const Statement = () => {
                 })}
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
                 onChange={(files) =>
-                  handleChange(
+                  handleUpload(
                     files,
                     setDisplayFiles,
                     handleUIUpdate,
@@ -188,7 +188,7 @@ const Statement = () => {
                 })}
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
                 onChange={(files) =>
-                  handleChange(
+                  handleUpload(
                     files,
                     setDisplayFiles,
                     handleUIUpdate,

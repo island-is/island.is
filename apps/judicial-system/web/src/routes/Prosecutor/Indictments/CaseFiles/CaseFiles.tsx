@@ -40,7 +40,7 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
     useContext(FormContext)
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const { formatMessage } = useIntl()
-  const { handleChange, handleRemove, handleRetry } = useS3Upload(
+  const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
 
@@ -106,7 +106,7 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
             header={formatMessage(strings.caseFiles.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
-              handleChange(
+              handleUpload(
                 files,
                 setDisplayFiles,
                 handleUIUpdate,
@@ -132,7 +132,7 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
               header={formatMessage(strings.caseFiles.inputFieldLabel)}
               buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
               onChange={(files) =>
-                handleChange(
+                handleUpload(
                   files,
                   setDisplayFiles,
                   handleUIUpdate,
@@ -158,7 +158,7 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
             header={formatMessage(strings.caseFiles.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
-              handleChange(
+              handleUpload(
                 files,
                 setDisplayFiles,
                 handleUIUpdate,
@@ -187,7 +187,7 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
             header={formatMessage(strings.caseFiles.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
-              handleChange(
+              handleUpload(
                 files,
                 setDisplayFiles,
                 handleUIUpdate,
@@ -214,7 +214,7 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
             header={formatMessage(strings.caseFiles.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
-              handleChange(
+              handleUpload(
                 files,
                 setDisplayFiles,
                 handleUIUpdate,

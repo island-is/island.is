@@ -83,7 +83,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
     )
   }, [displayFiles])
 
-  const { handleChange, handleRemove, handleRetry, uploadFromPolice } =
+  const { handleUpload, handleUploadFromPolice, handleRetry, handleRemove } =
     useS3Upload(workingCase.id)
   const { updateCase } = useCase()
 
@@ -182,7 +182,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
         policeFileId: f.id,
       }
 
-      await uploadFromPolice(fileToUpload, uploadPoliceCaseFileCallback)
+      await handleUploadFromPolice(fileToUpload, uploadPoliceCaseFileCallback)
 
       setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
 
@@ -190,7 +190,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
         setIsUploading(false)
       }
     })
-  }, [policeCaseFileList, uploadFromPolice, uploadPoliceCaseFileCallback])
+  }, [policeCaseFileList, handleUploadFromPolice, uploadPoliceCaseFileCallback])
 
   const removeFileCB = useCallback(
     (file: TUploadFile) => {
@@ -264,7 +264,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
               header={formatMessage(strings.filesLabel)}
               buttonLabel={formatMessage(strings.filesButtonLabel)}
               onChange={(files) =>
-                handleChange(files, setDisplayFiles, handleUIUpdate)
+                handleUpload(files, setDisplayFiles, handleUIUpdate)
               }
               onRemove={(file) => handleRemove(file, removeFileCB)}
               onRetry={(file) => handleRetry(file, handleUIUpdate)}

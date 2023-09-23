@@ -231,7 +231,7 @@ export const useS3Upload = (caseId: string) => {
     ],
   )
 
-  const handleChange = useCallback(
+  const handleUpload = useCallback(
     (
       files: File[],
       setDisplayFiles: React.Dispatch<React.SetStateAction<TUploadFile[]>>,
@@ -268,7 +268,7 @@ export const useS3Upload = (caseId: string) => {
     [upload],
   )
 
-  const uploadFromPolice = useCallback(
+  const handleUploadFromPolice = useCallback(
     async (
       file: TUploadFile,
       handleUIUpdate: (file: TUploadFile, newId?: string) => void,
@@ -337,32 +337,6 @@ export const useS3Upload = (caseId: string) => {
     [createFile, caseId, formatMessage, uploadPoliceCaseFile],
   )
 
-  const remove = useCallback(
-    (fileId: string) => {
-      const variables = {
-        input: {
-          caseId: caseId,
-          id: fileId,
-        },
-      }
-      const resopnse: { success: boolean; __typename: 'DeleteFileResponse' } = {
-        success: true,
-        __typename: 'DeleteFileResponse',
-      }
-
-      return limitedAccess
-        ? limitedAccessDeleteFile({
-            variables,
-            optimisticResponse: { limitedAccessDeleteFile: resopnse },
-          })
-        : deleteFile({
-            variables,
-            optimisticResponse: { deleteFile: resopnse },
-          })
-    },
-    [caseId, limitedAccess, limitedAccessDeleteFile, deleteFile],
-  )
-
   const handleRetry = useCallback(
     (
       file: TUploadFile,
@@ -399,6 +373,32 @@ export const useS3Upload = (caseId: string) => {
     [upload],
   )
 
+  const remove = useCallback(
+    (fileId: string) => {
+      const variables = {
+        input: {
+          caseId: caseId,
+          id: fileId,
+        },
+      }
+      const resopnse: { success: boolean; __typename: 'DeleteFileResponse' } = {
+        success: true,
+        __typename: 'DeleteFileResponse',
+      }
+
+      return limitedAccess
+        ? limitedAccessDeleteFile({
+            variables,
+            optimisticResponse: { limitedAccessDeleteFile: resopnse },
+          })
+        : deleteFile({
+            variables,
+            optimisticResponse: { deleteFile: resopnse },
+          })
+    },
+    [caseId, limitedAccess, limitedAccessDeleteFile, deleteFile],
+  )
+
   const handleRemove = useCallback(
     async (file: TUploadFile, handleUIUpdate?: (file: TUploadFile) => void) => {
       try {
@@ -426,10 +426,10 @@ export const useS3Upload = (caseId: string) => {
   )
 
   return {
-    handleChange,
+    handleUpload,
     handleRetry,
     handleRemove,
-    uploadFromPolice,
+    handleUploadFromPolice,
   }
 }
 

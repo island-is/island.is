@@ -57,7 +57,7 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
     }
   }, [workingCase.caseFiles])
 
-  const { handleChange, handleRemove, handleRetry } = useS3Upload(
+  const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
 
@@ -308,7 +308,7 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
             })}
             buttonLabel={formatMessage(strings.uploadButtonText)}
             onChange={(files) => {
-              handleChange(
+              handleUpload(
                 files,
                 setDisplayFiles,
                 handleUIUpdate,

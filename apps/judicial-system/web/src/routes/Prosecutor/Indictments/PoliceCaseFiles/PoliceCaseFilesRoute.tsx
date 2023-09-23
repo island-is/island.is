@@ -63,7 +63,7 @@ const UploadFilesToPoliceCase: React.FC<
   }>
 > = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles, caseOrigin }) => {
   const { formatMessage } = useIntl()
-  const { handleChange, handleRemove, handleRetry, uploadFromPolice } =
+  const { handleUpload, handleUploadFromPolice, handleRetry, handleRemove } =
     useS3Upload(caseId)
   const {
     data: policeData,
@@ -234,7 +234,7 @@ const UploadFilesToPoliceCase: React.FC<
         policeFileId: f.id,
       }
 
-      await uploadFromPolice(fileToUpload, uploadPoliceCaseFileCallback)
+      await handleUploadFromPolice(fileToUpload, uploadPoliceCaseFileCallback)
 
       setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
 
@@ -245,7 +245,7 @@ const UploadFilesToPoliceCase: React.FC<
   }, [
     caseFiles,
     policeCaseFileList,
-    uploadFromPolice,
+    handleUploadFromPolice,
     uploadPoliceCaseFileCallback,
   ])
 
@@ -266,7 +266,7 @@ const UploadFilesToPoliceCase: React.FC<
         description={formatMessage(m.inputFileUpload.description)}
         buttonLabel={formatMessage(m.inputFileUpload.buttonLabel)}
         onChange={(files) =>
-          handleChange(
+          handleUpload(
             files,
             setDisplayFiles,
             handleUIUpdate,

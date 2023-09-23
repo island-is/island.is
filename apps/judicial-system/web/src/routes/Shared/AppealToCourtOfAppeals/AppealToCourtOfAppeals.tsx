@@ -46,7 +46,7 @@ const AppealToCourtOfAppeals = () => {
   const router = useRouter()
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const [visibleModal, setVisibleModal] = useState<'APPEAL_SENT'>()
-  const { handleChange, handleRemove, handleRetry } = useS3Upload(
+  const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
   const { transitionCase } = useCase()
@@ -133,7 +133,7 @@ const AppealToCourtOfAppeals = () => {
               })}
               buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
               onChange={(files) =>
-                handleChange(
+                handleUpload(
                   files,
                   setDisplayFiles,
                   handleUIUpdate,
@@ -165,7 +165,7 @@ const AppealToCourtOfAppeals = () => {
               })}
               buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
               onChange={(files) =>
-                handleChange(
+                handleUpload(
                   files,
                   setDisplayFiles,
                   handleUIUpdate,
