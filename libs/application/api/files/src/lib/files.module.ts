@@ -40,7 +40,6 @@ if (process.env.INIT_SCHEMA === 'true') {
     SigningModule,
     LoggingModule,
     BullModule,
-    ApplicationFilesModule,
     FileStorageModule,
   ],
   providers: [FileService, UploadProcessor],

@@ -392,7 +392,7 @@
     "@types/yup": "0.29.6",
     "@typescript-eslint/eslint-plugin": "5.61.0",
     "@typescript-eslint/parser": "5.61.0",
-    "babel-jest": "29.4.3",
+    "babel-jest": "29.7.0",
     "babel-loader": "8.2.5",
     "babel-plugin-transform-class-properties": "6.24.1",
     "babel-plugin-transform-imports": "2.0.0",

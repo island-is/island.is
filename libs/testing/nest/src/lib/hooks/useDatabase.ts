@@ -1,14 +1,14 @@
 import { getConnectionToken, SequelizeModuleOptions } from '@nestjs/sequelize'
 import { Type } from '@nestjs/common'
 import { Sequelize } from 'sequelize-typescript'
-import { Dialect } from 'sequelize'
+import { Dialect as SequelizeDialect } from 'sequelize'
 import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
 
 import { getOptions } from '@island.is/nest/sequelize'
 
 import { TestApp } from '../testServer'
 
-type Database = Extract<Dialect, 'postgres' | 'sqlite'>
+type Database = Extract<SequelizeDialect, 'postgres' | 'sqlite'>
 
 const Dialect: Record<string, Database> = {
   Postgres: 'postgres',

@@ -2,13 +2,11 @@ const path = require('path')
 const nxPreset = require('@nx/jest/preset').default
 
 const customResolver = path.join(__dirname, 'jest.resolver.js')
+const { transform, ...nxPresetRest } = nxPreset
 
 module.exports = {
-  ...nxPreset,
+  ...nxPresetRest,
   testMatch: ['**/+(*.)+(spec|test).+(ts|js)?(x)'],
-  transform: {
-    '^.+\\.(ts|js|html)$': 'ts-jest',
-  },
   resolver: customResolver,
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageReporters: ['json'],
