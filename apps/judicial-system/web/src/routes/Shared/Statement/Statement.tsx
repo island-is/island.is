@@ -29,7 +29,10 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
-import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  generateSingleFileUpdate,
+  mapCaseFileToUploadFile,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   TUploadFile,
   useCase,
@@ -47,8 +50,9 @@ const Statement = () => {
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const [visibleModal, setVisibleModal] = useState<'STATEMENT_SENT'>()
   const { id } = router.query
-  const { handleChange, handleRemove, handleRetry, generateSingleFileUpdate } =
-    useS3Upload(workingCase.id)
+  const { handleChange, handleRemove, handleRetry } = useS3Upload(
+    workingCase.id,
+  )
 
   const appealStatementType = isProsecutionRole(user?.role)
     ? CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT
@@ -81,14 +85,11 @@ const Statement = () => {
     )
   }, [])
 
-  const handleUIUpdate = useCallback(
-    (displayFile: TUploadFile, newId?: string) => {
-      setDisplayFiles((previous) =>
-        generateSingleFileUpdate(previous, displayFile, newId),
-      )
-    },
-    [generateSingleFileUpdate],
-  )
+  const handleUIUpdate = (displayFile: TUploadFile, newId?: string) => {
+    setDisplayFiles((previous) =>
+      generateSingleFileUpdate(previous, displayFile, newId),
+    )
+  }
 
   useEffect(() => {
     if (workingCase.caseFiles) {

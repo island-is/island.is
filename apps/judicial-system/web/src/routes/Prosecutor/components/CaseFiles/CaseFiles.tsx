@@ -33,6 +33,7 @@ import {
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  generateSingleFileUpdate,
   mapCaseFileToUploadFile,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -82,13 +83,8 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
     )
   }, [displayFiles])
 
-  const {
-    handleChange,
-    handleRemove,
-    handleRetry,
-    uploadFromPolice,
-    generateSingleFileUpdate,
-  } = useS3Upload(workingCase.id)
+  const { handleChange, handleRemove, handleRetry, uploadFromPolice } =
+    useS3Upload(workingCase.id)
   const { updateCase } = useCase()
 
   useDeb(workingCase, 'caseFilesComments')
@@ -157,14 +153,11 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
   const handleNavigationTo = (destination: string) =>
     router.push(`${destination}/${workingCase.id}`)
 
-  const handleUIUpdate = useCallback(
-    (displayFile: TUploadFile, newId?: string) => {
-      setDisplayFiles((previous) =>
-        generateSingleFileUpdate(previous, displayFile, newId),
-      )
-    },
-    [generateSingleFileUpdate],
-  )
+  const handleUIUpdate = (displayFile: TUploadFile, newId?: string) => {
+    setDisplayFiles((previous) =>
+      generateSingleFileUpdate(previous, displayFile, newId),
+    )
+  }
 
   const uploadPoliceCaseFileCallback = useCallback(
     (file: TUploadFile, id?: string) => {

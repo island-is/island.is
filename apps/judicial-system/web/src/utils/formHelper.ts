@@ -363,3 +363,25 @@ export const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
   displayDate: file.displayDate,
   policeFileId: file.policeFileId,
 })
+
+export const generateSingleFileUpdate = (
+  prevFiles: TUploadFile[],
+  displayFile: TUploadFile,
+  newId?: string,
+) => {
+  const index = prevFiles.findIndex((f) => f.id === displayFile.id)
+
+  if (index === -1) {
+    return prevFiles
+  }
+
+  const displayFileWithId = {
+    ...prevFiles[index],
+    ...displayFile,
+    id: newId ?? displayFile.id,
+  }
+  const next = [...prevFiles]
+  next[index] = displayFileWithId
+
+  return next
+}

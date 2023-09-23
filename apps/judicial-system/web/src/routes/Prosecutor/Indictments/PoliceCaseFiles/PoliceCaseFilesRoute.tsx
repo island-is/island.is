@@ -35,7 +35,10 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
-import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  generateSingleFileUpdate,
+  mapCaseFileToUploadFile,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   TUploadFile,
   useS3Upload,
@@ -60,13 +63,8 @@ const UploadFilesToPoliceCase: React.FC<
   }>
 > = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles, caseOrigin }) => {
   const { formatMessage } = useIntl()
-  const {
-    handleChange,
-    handleRemove,
-    handleRetry,
-    uploadFromPolice,
-    generateSingleFileUpdate,
-  } = useS3Upload(caseId)
+  const { handleChange, handleRemove, handleRetry, uploadFromPolice } =
+    useS3Upload(caseId)
   const {
     data: policeData,
     loading: policeDataLoading,
@@ -161,14 +159,11 @@ const UploadFilesToPoliceCase: React.FC<
     setDisplayFiles(caseFiles.map(mapCaseFileToUploadFile) || [])
   }, [policeCaseFiles?.files, caseFiles, policeCaseNumber])
 
-  const handleUIUpdate = useCallback(
-    (displayFile: TUploadFile, newId?: string) => {
-      setDisplayFiles((previous) =>
-        generateSingleFileUpdate(previous, displayFile, newId),
-      )
-    },
-    [generateSingleFileUpdate],
-  )
+  const handleUIUpdate = (displayFile: TUploadFile, newId?: string) => {
+    setDisplayFiles((previous) =>
+      generateSingleFileUpdate(previous, displayFile, newId),
+    )
+  }
 
   const uploadPoliceCaseFileCallback = useCallback(
     (file: TUploadFile, id?: string) => {

@@ -27,7 +27,10 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
-import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  generateSingleFileUpdate,
+  mapCaseFileToUploadFile,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   TUploadFile,
   useCase,
@@ -43,8 +46,9 @@ const AppealToCourtOfAppeals = () => {
   const router = useRouter()
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const [visibleModal, setVisibleModal] = useState<'APPEAL_SENT'>()
-  const { handleChange, handleRemove, handleRetry, generateSingleFileUpdate } =
-    useS3Upload(workingCase.id)
+  const { handleChange, handleRemove, handleRetry } = useS3Upload(
+    workingCase.id,
+  )
   const { transitionCase } = useCase()
   const { id } = router.query
   const appealBriefType = isProsecutionRole(user?.role)
@@ -76,14 +80,11 @@ const AppealToCourtOfAppeals = () => {
     )
   }, [])
 
-  const handleUIUpdate = useCallback(
-    (displayFile: TUploadFile, newId?: string) => {
-      setDisplayFiles((previous) =>
-        generateSingleFileUpdate(previous, displayFile, newId),
-      )
-    },
-    [generateSingleFileUpdate],
-  )
+  const handleUIUpdate = (displayFile: TUploadFile, newId?: string) => {
+    setDisplayFiles((previous) =>
+      generateSingleFileUpdate(previous, displayFile, newId),
+    )
+  }
 
   useEffect(() => {
     if (workingCase.caseFiles) {

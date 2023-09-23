@@ -23,7 +23,10 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  generateSingleFileUpdate,
+  mapCaseFileToUploadFile,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   TUploadFile,
   useS3Upload,
@@ -37,8 +40,9 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
     useContext(FormContext)
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const { formatMessage } = useIntl()
-  const { handleChange, handleRemove, handleRetry, generateSingleFileUpdate } =
-    useS3Upload(workingCase.id)
+  const { handleChange, handleRemove, handleRetry } = useS3Upload(
+    workingCase.id,
+  )
 
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
 
@@ -60,14 +64,11 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
     [workingCase.id],
   )
 
-  const handleUIUpdate = useCallback(
-    (displayFile: TUploadFile, newId?: string) => {
-      setDisplayFiles((previous) =>
-        generateSingleFileUpdate(previous, displayFile, newId),
-      )
-    },
-    [generateSingleFileUpdate],
-  )
+  const handleUIUpdate = (displayFile: TUploadFile, newId?: string) => {
+    setDisplayFiles((previous) =>
+      generateSingleFileUpdate(previous, displayFile, newId),
+    )
+  }
 
   const removeFileCB = useCallback((file: TUploadFile) => {
     setDisplayFiles((previous) =>

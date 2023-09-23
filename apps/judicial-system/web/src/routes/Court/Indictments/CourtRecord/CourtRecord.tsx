@@ -32,6 +32,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
+  generateSingleFileUpdate,
   mapCaseFileToUploadFile,
   stepValidationsType,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -52,8 +53,9 @@ const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { formatMessage } = useIntl()
   const { transitionCase } = useCase()
 
-  const { handleChange, handleRemove, handleRetry, generateSingleFileUpdate } =
-    useS3Upload(workingCase.id)
+  const { handleChange, handleRemove, handleRetry } = useS3Upload(
+    workingCase.id,
+  )
 
   useEffect(() => {
     if (workingCase.caseFiles) {
@@ -67,14 +69,11 @@ const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
     )
   }, [displayFiles])
 
-  const handleUIUpdate = useCallback(
-    (displayFile: TUploadFile, newId?: string) => {
-      setDisplayFiles((previous) =>
-        generateSingleFileUpdate(previous, displayFile, newId),
-      )
-    },
-    [generateSingleFileUpdate],
-  )
+  const handleUIUpdate = (displayFile: TUploadFile, newId?: string) => {
+    setDisplayFiles((previous) =>
+      generateSingleFileUpdate(previous, displayFile, newId),
+    )
+  }
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {

@@ -33,6 +33,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseAppealRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  generateSingleFileUpdate,
   mapCaseFileToUploadFile,
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -56,8 +57,9 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
     }
   }, [workingCase.caseFiles])
 
-  const { handleChange, handleRemove, handleRetry, generateSingleFileUpdate } =
-    useS3Upload(workingCase.id)
+  const { handleChange, handleRemove, handleRetry } = useS3Upload(
+    workingCase.id,
+  )
 
   const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
@@ -84,14 +86,11 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
     allFilesUploaded &&
     isCourtOfAppealRulingStepValid(workingCase)
 
-  const handleUIUpdate = useCallback(
-    (displayFile: TUploadFile, newId?: string) => {
-      setDisplayFiles((previous) =>
-        generateSingleFileUpdate(previous, displayFile, newId),
-      )
-    },
-    [generateSingleFileUpdate],
-  )
+  const handleUIUpdate = (displayFile: TUploadFile, newId?: string) => {
+    setDisplayFiles((previous) =>
+      generateSingleFileUpdate(previous, displayFile, newId),
+    )
+  }
 
   const removeFileCB = (file: TUploadFile) => {
     setDisplayFiles((previous) =>
