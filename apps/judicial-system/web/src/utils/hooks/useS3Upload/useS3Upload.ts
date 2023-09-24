@@ -109,7 +109,7 @@ export const useS3Upload = (caseId: string) => {
   const [limitedAccessDeleteFile] = useLimitedAccessDeleteFileMutation()
   const [uploadPoliceCaseFile] = useUploadPoliceCaseFileMutation()
 
-  const upload = useCallback(
+  const handleUpload = useCallback(
     async (
       files: TUploadFile[],
       handleUIUpdate: (file: TUploadFile, newId?: string) => void,
@@ -208,16 +208,6 @@ export const useS3Upload = (caseId: string) => {
     ],
   )
 
-  const handleUpload = useCallback(
-    (
-      uploadFiles: TUploadFile[],
-      handleUIUpdate: (displayFile: TUploadFile, newId?: string) => void,
-    ) => {
-      upload(uploadFiles, handleUIUpdate)
-    },
-    [upload],
-  )
-
   const handleUploadFromPolice = useCallback(
     async (
       file: TUploadFile,
@@ -286,9 +276,9 @@ export const useS3Upload = (caseId: string) => {
     ) => {
       handleUIUpdate({ ...file, percent: 1, status: 'uploading' })
 
-      upload([file], handleUIUpdate)
+      handleUpload([file], handleUIUpdate)
     },
-    [upload],
+    [handleUpload],
   )
 
   const remove = useCallback(
