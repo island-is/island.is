@@ -396,19 +396,9 @@ export const generateSingleFileUpdate = (
   displayFile: TUploadFile,
   newId?: string,
 ) => {
-  const index = prevFiles.findIndex((f) => f.id === displayFile.id)
-
-  if (index === -1) {
-    return prevFiles
-  }
-
-  const displayFileWithId = {
-    ...prevFiles[index],
-    ...displayFile,
-    id: newId ?? displayFile.id,
-  }
-  const next = [...prevFiles]
-  next[index] = displayFileWithId
-
-  return next
+  return prevFiles.map((f) =>
+    f.id === displayFile.id
+      ? { ...f, ...displayFile, id: newId ?? displayFile.id }
+      : f,
+  )
 }
