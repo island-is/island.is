@@ -1,8 +1,9 @@
 import compareAsc from 'date-fns/compareAsc'
+import { uuid } from 'uuidv4'
 
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { CaseFile } from '@island.is/judicial-system/types'
+import { CaseFile, CaseFileCategory } from '@island.is/judicial-system/types'
 import {
   TempCase as Case,
   TempUpdateCase as UpdateCase,
@@ -363,6 +364,32 @@ export const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
   displayDate: file.displayDate,
   policeFileId: file.policeFileId,
 })
+
+export const addUploadFiles = (
+  files: File[],
+  setDisplayFiles: React.Dispatch<React.SetStateAction<TUploadFile[]>>,
+  category?: CaseFileCategory,
+  policeCaseNumber?: string,
+) => {
+  // We generate an id for each file so that we find the file again when
+  // updating the file's progress and onRetry.
+  // Also we cannot spread File since it contains read-only properties.
+  const uploadFiles: TUploadFile[] = files.map((file) => ({
+    id: `${file.name}-${uuid()}`,
+    name: file.name,
+    type: file.type,
+    size: file.size,
+    percent: 1,
+    status: 'uploading',
+    category,
+    policeCaseNumber,
+    originalFileObj: file,
+  }))
+
+  setDisplayFiles((previous) => [...uploadFiles, ...previous])
+
+  return uploadFiles
+}
 
 export const generateSingleFileUpdate = (
   prevFiles: TUploadFile[],

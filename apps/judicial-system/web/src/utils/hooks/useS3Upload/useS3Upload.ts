@@ -1,6 +1,5 @@
 import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
-import { uuid } from 'uuidv4'
 
 import { toast, UploadFile } from '@island.is/island-ui/core'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
@@ -34,6 +33,8 @@ import {
 import { useUploadPoliceCaseFileMutation } from './uploadPoliceCaseFile.generated'
 import { strings } from './useS3Upload.strings'
 
+// - rewrite upload from police
+// - more granual retry
 export interface TUploadFile extends UploadFile {
   category?: CaseFileCategory
   policeCaseNumber?: string
@@ -112,8 +113,6 @@ export const useS3Upload = (caseId: string) => {
     async (
       files: TUploadFile[],
       handleUIUpdate: (file: TUploadFile, newId?: string) => void,
-      category?: CaseFileCategory,
-      policeCaseNumber?: string,
     ) => {
       const mutation = limitedAccess
         ? limitedAccessCreatePresignedPost
@@ -142,12 +141,7 @@ export const useS3Upload = (caseId: string) => {
         return presignedPost
       }
 
-      const addFileToCaseState = async (
-        file: TUploadFile,
-        key: string,
-        category?: CaseFileCategory,
-        policeCaseNumber?: string,
-      ) => {
+      const addFileToCaseState = async (file: TUploadFile, key: string) => {
         const mutation = limitedAccess ? limitedAccessCreateFile : createFile
 
         const { data } = await mutation({
@@ -157,8 +151,8 @@ export const useS3Upload = (caseId: string) => {
               type: file.type ?? '',
               key,
               size: file.size ?? 0,
-              category,
-              policeCaseNumber,
+              category: file.category,
+              policeCaseNumber: file.policeCaseNumber,
             },
           },
         })
@@ -185,8 +179,6 @@ export const useS3Upload = (caseId: string) => {
           const rvgFileId = await addFileToCaseState(
             file,
             presignedPost.fields.key,
-            category,
-            policeCaseNumber,
           )
 
           handleUIUpdate(
@@ -218,30 +210,10 @@ export const useS3Upload = (caseId: string) => {
 
   const handleUpload = useCallback(
     (
-      files: File[],
-      setDisplayFiles: React.Dispatch<React.SetStateAction<TUploadFile[]>>,
+      uploadFiles: TUploadFile[],
       handleUIUpdate: (displayFile: TUploadFile, newId?: string) => void,
-      category?: CaseFileCategory,
-      policeCaseNumber?: string,
     ) => {
-      // We generate an id for each file so that we find the file again when
-      // updating the file's progress and onRetry.
-      // Also we cannot spread File since it contains read-only properties.
-      const uploadFiles: TUploadFile[] = files.map((file) => ({
-        id: `${file.name}-${uuid()}`,
-        name: file.name,
-        type: file.type,
-        size: file.size,
-        percent: 1,
-        status: 'uploading',
-        category,
-        policeCaseNumber,
-        originalFileObj: file,
-      }))
-
-      setDisplayFiles((previous) => [...uploadFiles, ...previous])
-
-      upload(uploadFiles, handleUIUpdate, category, policeCaseNumber)
+      upload(uploadFiles, handleUIUpdate)
     },
     [upload],
   )
@@ -311,12 +283,10 @@ export const useS3Upload = (caseId: string) => {
     (
       file: TUploadFile,
       handleUIUpdate: (file: TUploadFile, newId?: string) => void,
-      category?: CaseFileCategory,
-      policeCaseNumber?: string,
     ) => {
       handleUIUpdate({ ...file, percent: 1, status: 'uploading' })
 
-      upload([file], handleUIUpdate, category, policeCaseNumber)
+      upload([file], handleUIUpdate)
     },
     [upload],
   )

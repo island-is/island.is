@@ -36,6 +36,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  addUploadFiles,
   generateSingleFileUpdate,
   mapCaseFileToUploadFile,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -267,22 +268,17 @@ const UploadFilesToPoliceCase: React.FC<
         buttonLabel={formatMessage(m.inputFileUpload.buttonLabel)}
         onChange={(files) =>
           handleUpload(
-            files,
-            setDisplayFiles,
+            addUploadFiles(
+              files,
+              setDisplayFiles,
+              CaseFileCategory.CASE_FILE,
+              policeCaseNumber,
+            ),
             handleUIUpdate,
-            CaseFileCategory.CASE_FILE,
-            policeCaseNumber,
           )
         }
         onRemove={(file) => handleRemove(file, removeFileCB)}
-        onRetry={(file) =>
-          handleRetry(
-            file,
-            handleUIUpdate,
-            CaseFileCategory.CASE_FILE,
-            policeCaseNumber,
-          )
-        }
+        onRetry={(file) => handleRetry(file, handleUIUpdate)}
         errorMessage={errorMessage}
         disabled={isUploading}
         showFileSize
