@@ -43,18 +43,23 @@ export interface TUploadFile extends UploadFile {
   policeFileId?: string
 }
 
-const createFormData = (presignedPost: PresignedPost, file: File): FormData => {
+const createFormData = (
+  presignedPost: PresignedPost,
+  file: TUploadFile,
+): FormData => {
   const formData = new FormData()
   Object.keys(presignedPost.fields).forEach((key) =>
     formData.append(key, presignedPost.fields[key]),
   )
-  formData.append('file', file)
+  if (file.originalFileObj) {
+    formData.append('file', file.originalFileObj)
+  }
 
   return formData
 }
 
 const uploadToS3 = (
-  file: File,
+  file: TUploadFile,
   presignedPost: PresignedPost,
   onProgress: (percent: number) => void,
 ) => {
@@ -71,7 +76,7 @@ const uploadToS3 = (
 
     request.upload.addEventListener('error', (event) => {
       if (event.lengthComputable) {
-        reject()
+        reject('Failed to upload file to S3')
       }
     })
 
@@ -79,7 +84,7 @@ const uploadToS3 = (
       if (request.status >= 200 && request.status < 300) {
         resolve(file)
       } else {
-        reject()
+        reject('Failed to upload file to S3')
       }
     })
 
@@ -105,7 +110,7 @@ export const useS3Upload = (caseId: string) => {
 
   const upload = useCallback(
     async (
-      files: Array<[File, string]>,
+      files: TUploadFile[],
       handleUIUpdate: (file: TUploadFile, newId?: string) => void,
       category?: CaseFileCategory,
       policeCaseNumber?: string,
@@ -114,7 +119,7 @@ export const useS3Upload = (caseId: string) => {
         ? limitedAccessCreatePresignedPost
         : createPresignedPost
 
-      const getPresignedPost = async (file: File) => {
+      const getPresignedPost = async (file: TUploadFile) => {
         const { data } = await mutation({
           variables: {
             input: {
@@ -131,14 +136,14 @@ export const useS3Upload = (caseId: string) => {
           : (data as CreatePresignedPostMutation)?.createPresignedPost
 
         if (!presignedPost?.fields?.key) {
-          throw Error('failed to get presigned post')
+          throw Error('Failed to get presigned post')
         }
 
         return presignedPost
       }
 
       const addFileToCaseState = async (
-        file: File,
+        file: TUploadFile,
         key: string,
         category?: CaseFileCategory,
         policeCaseNumber?: string,
@@ -149,9 +154,9 @@ export const useS3Upload = (caseId: string) => {
           variables: {
             input: {
               caseId,
-              type: file.type,
+              type: file.type ?? '',
               key,
-              size: file.size,
+              size: file.size ?? 0,
               category,
               policeCaseNumber,
             },
@@ -163,27 +168,18 @@ export const useS3Upload = (caseId: string) => {
           : (data as CreateFileMutation)?.createFile
 
         if (!createdFile?.id) {
-          throw Error('failed to add file to case')
+          throw Error('Failed to add file to case')
         }
 
         return createdFile.id
       }
 
-      files.forEach(async ([file, id]) => {
+      files.forEach(async (file) => {
         try {
           const presignedPost = await getPresignedPost(file)
 
           await uploadToS3(file, presignedPost, (percent) => {
-            handleUIUpdate({
-              id,
-              name: file.name,
-              type: file.type,
-              size: file.size,
-              percent,
-              status: 'uploading',
-              category,
-              policeCaseNumber,
-            })
+            handleUIUpdate({ ...file, percent })
           })
 
           const rvgFileId = await addFileToCaseState(
@@ -195,29 +191,17 @@ export const useS3Upload = (caseId: string) => {
 
           handleUIUpdate(
             {
-              id,
-              name: file.name,
-              type: file.type,
-              size: file.size,
+              ...file,
               key: presignedPost.fields.key,
               percent: 100,
               status: 'done',
-              category,
-              policeCaseNumber,
             },
             // We need to set the id so we are able to delete the file later
             rvgFileId,
           )
         } catch (e) {
-          handleUIUpdate({
-            id,
-            name: file.name,
-            type: file.type,
-            size: file.size,
-            status: 'error',
-            category,
-            policeCaseNumber,
-          })
+          toast.error(formatMessage(strings.uploadFailed))
+          handleUIUpdate({ ...file, status: 'error' })
         }
       })
     },
@@ -228,6 +212,7 @@ export const useS3Upload = (caseId: string) => {
       caseId,
       limitedAccessCreateFile,
       createFile,
+      formatMessage,
     ],
   )
 
@@ -242,28 +227,21 @@ export const useS3Upload = (caseId: string) => {
       // We generate an id for each file so that we find the file again when
       // updating the file's progress and onRetry.
       // Also we cannot spread File since it contains read-only properties.
-      const filesWithId: Array<[File, string]> = files.map((file) => [
-        file,
-        `${file.name}-${uuid()}`,
-      ])
+      const uploadFiles: TUploadFile[] = files.map((file) => ({
+        id: `${file.name}-${uuid()}`,
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        percent: 1,
+        status: 'uploading',
+        category,
+        policeCaseNumber,
+        originalFileObj: file,
+      }))
 
-      setDisplayFiles((previous) => [
-        ...filesWithId.map(
-          ([file, id]): TUploadFile => ({
-            id: id,
-            name: file.name,
-            type: file.type,
-            size: file.size,
-            percent: 1,
-            status: 'uploading',
-            category,
-            policeCaseNumber,
-          }),
-        ),
-        ...previous,
-      ])
+      setDisplayFiles((previous) => [...uploadFiles, ...previous])
 
-      upload(filesWithId, handleUIUpdate, category, policeCaseNumber)
+      upload(uploadFiles, handleUIUpdate, category, policeCaseNumber)
     },
     [upload],
   )
@@ -285,7 +263,7 @@ export const useS3Upload = (caseId: string) => {
         })
 
         if (!uploadPoliceCaseFileData?.uploadPoliceCaseFile) {
-          throw Error('failed to upload police case file')
+          throw Error('Failed to upload police file to S3')
         }
 
         const { data: createFileData } = await createFile({
@@ -306,24 +284,16 @@ export const useS3Upload = (caseId: string) => {
         })
 
         if (!createFileData?.createFile.id) {
-          throw Error('failed to add file to case')
+          throw Error('Failed to add police file to case')
         }
 
         handleUIUpdate(
           {
-            id: file.id,
-            name: file.name,
-            type: 'application/pdf',
+            ...file,
             size: uploadPoliceCaseFileData.uploadPoliceCaseFile.size,
             key: uploadPoliceCaseFileData.uploadPoliceCaseFile.key,
             percent: 100,
             status: 'done',
-            category: file.category,
-            policeCaseNumber: file.policeCaseNumber,
-            chapter: file.chapter,
-            orderWithinChapter: file.orderWithinChapter,
-            displayDate: file.displayDate,
-            policeFileId: file.policeFileId,
           },
           // We need to set the id so we are able to delete the file later
           createFileData.createFile.id,
@@ -344,31 +314,9 @@ export const useS3Upload = (caseId: string) => {
       category?: CaseFileCategory,
       policeCaseNumber?: string,
     ) => {
-      handleUIUpdate({
-        name: file.name,
-        id: file.id,
-        percent: 1,
-        status: 'uploading',
-        type: file.type,
-        category,
-        policeCaseNumber,
-      })
+      handleUIUpdate({ ...file, percent: 1, status: 'uploading' })
 
-      upload(
-        [
-          [
-            {
-              name: file.name,
-              type: file.type ?? '',
-              size: file.size,
-            } as File,
-            file.id ?? file.name,
-          ],
-        ],
-        handleUIUpdate,
-        category,
-        policeCaseNumber,
-      )
+      upload([file], handleUIUpdate, category, policeCaseNumber)
     },
     [upload],
   )
@@ -400,7 +348,7 @@ export const useS3Upload = (caseId: string) => {
   )
 
   const handleRemove = useCallback(
-    async (file: TUploadFile, handleUIUpdate?: (file: TUploadFile) => void) => {
+    async (file: TUploadFile, handleUIUpdate: (file: TUploadFile) => void) => {
       try {
         if (file.id) {
           const { data } = await remove(file.id)
@@ -411,12 +359,10 @@ export const useS3Upload = (caseId: string) => {
             : (data as DeleteFileMutation)?.deleteFile.success
 
           if (!success) {
-            throw new Error(`Failed to delete file: ${file.id}`)
+            throw new Error('Failed to delete file')
           }
 
-          if (handleUIUpdate) {
-            handleUIUpdate(file)
-          }
+          handleUIUpdate(file)
         }
       } catch {
         toast.error(formatMessage(strings.removeFailed))
