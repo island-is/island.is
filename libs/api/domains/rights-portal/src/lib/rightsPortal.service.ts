@@ -64,12 +64,12 @@ export class RightsPortalService {
       if (!res) {
         return null
       }
-      const nutrition: Array<AidOrNutrition> | null =
+      const nutrition =
         res.nutrition
           ?.map((c) => generateAidOrNutrition(c, AidOrNutritionType.NUTRITION))
           .filter(isDefined) ?? []
 
-      const aids: Array<AidOrNutrition> | null =
+      const aids =
         res.aids
           ?.map((c) => generateAidOrNutrition(c, AidOrNutritionType.AID))
           .filter(isDefined) ?? []

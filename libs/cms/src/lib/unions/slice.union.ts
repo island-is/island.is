@@ -39,6 +39,7 @@ import {
   IFeaturedSupportQnAs,
   ISliceDropdown,
   ISectionWithVideo,
+  IEmbed,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
@@ -109,6 +110,7 @@ import {
   SectionWithVideo,
   mapSectionWithVideo,
 } from '../models/sectionWithVideo.model'
+import { Embed, mapEmbed } from '../models/embed.model'
 
 type SliceTypes =
   | ITimeline
@@ -147,6 +149,7 @@ type SliceTypes =
   | IEmailSignup
   | IFeaturedSupportQnAs
   | ISliceDropdown
+  | IEmbed
 
 export const SliceUnion = createUnionType({
   name: 'Slice',
@@ -190,6 +193,7 @@ export const SliceUnion = createUnionType({
     EmailSignup,
     FeaturedSupportQNAs,
     SliceDropdown,
+    Embed,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -269,6 +273,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapFeaturedSupportQNAs(slice as IFeaturedSupportQnAs)
     case 'sliceDropdown':
       return mapSliceDropdown(slice as ISliceDropdown)
+    case 'embed':
+      return mapEmbed(slice as IEmbed)
     default:
       throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }

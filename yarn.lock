@@ -30359,6 +30359,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"geoip-lite@patch:geoip-lite@npm%3A1.4.7#./.yarn/patches/geoip-lite-npm-1.4.7-e0ef6cefb0.patch::locator=island.is%40workspace%3A.":
+  version: 1.4.7
+  resolution: "geoip-lite@patch:geoip-lite@npm%3A1.4.7#./.yarn/patches/geoip-lite-npm-1.4.7-e0ef6cefb0.patch::version=1.4.7&hash=5760c1&locator=island.is%40workspace%3A."
+  dependencies:
+    async: 2.1 - 2.6.4
+    chalk: 4.1 - 4.1.2
+    iconv-lite: 0.4.13 - 0.6.3
+    ip-address: 5.8.9 - 5.9.4
+    lazy: 1.0.11
+    rimraf: 2.5.2 - 2.7.1
+    yauzl: 2.9.2 - 2.10.0
+  checksum: a9be600e097dacb39667b33603efb71ace2addbb21c8baa50190ee447bb28b1996ac4b76a3e05c8149bc40d7db476008ec9e3f9c07748737001faa9f6ecf8b8e
+  languageName: node
+  linkType: hard
+
 "get-assigned-identifiers@npm:^1.1.0":
   version: 1.2.0
   resolution: "get-assigned-identifiers@npm:1.2.0"

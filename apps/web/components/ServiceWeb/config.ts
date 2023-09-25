@@ -47,6 +47,9 @@ enum Organization {
 
   /** Sjúkratryggingar */
   ICELANDIC_HEALTH_INSURANCE = '3pZwAagW0UY26giHaxHthe',
+
+  /** Útlendingastofnun */
+  DIRECTORATE_OF_IMMIGRATION = '77rXck3sISbMsUv7BO1PG2',
 }
 
 export const watsonConfig: Record<
@@ -78,6 +81,14 @@ export const watsonConfig: Record<
       carbonTheme: 'g10',
       namespaceKey: 'default',
     },
+    [Organization.DIRECTORATE_OF_IMMIGRATION]: {
+      integrationID: '89a03e83-5c73-4642-b5ba-cd3771ceca54',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
   },
   en: {
     [Organization.DIGITAL_ICELAND]: {
@@ -90,6 +101,14 @@ export const watsonConfig: Record<
     },
     [Organization.ICELANDIC_HEALTH_INSURANCE]: {
       integrationID: 'cba41fa0-12fb-4cb5-bd98-66a57cee42e0',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
+    [Organization.DIRECTORATE_OF_IMMIGRATION]: {
+      integrationID: '89a03e83-5c73-4642-b5ba-cd3771ceca54',
       region: 'eu-gb',
       serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
       showLauncher: false,

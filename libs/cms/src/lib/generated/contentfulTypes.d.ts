@@ -75,7 +75,6 @@ export interface IAlertBannerFields {
         | 'umsoknir'
         | 'min-gogn'
         | 'skirteini'
-        | 'leyfisbref'
         | 'menntun'
         | 'fasteignir'
         | 'fjarmal'
@@ -565,6 +564,39 @@ export interface IEmailSignup extends Entry<IEmailSignupFields> {
     contentType: {
       sys: {
         id: 'emailSignup'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IEmbedFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Embed link */
+  embedUrl?: string | undefined
+
+  /** Alt Text */
+  altText: string
+
+  /** Aspect Ratio */
+  aspectRatio?: '713/630' | '16/9' | undefined
+}
+
+/** A content type which allows you to embed an iframe (but only from sources that have been approved of) */
+
+export interface IEmbed extends Entry<IEmbedFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'embed'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2840,6 +2872,9 @@ export interface IProjectSubpageFields {
       )[]
     | undefined
 
+  /** Show Table of Contents */
+  showTableOfContents?: boolean | undefined
+
   /** Bottom Slices */
   bottomSlices?: (IPowerBiSlice | IOneColumnText)[] | undefined
 }
@@ -3083,6 +3118,7 @@ export interface ISliceConnectedComponentFields {
     | 'AircraftSearch'
     | 'DrivingInstructorList'
     | 'HousingBenefitCalculator'
+    | 'PublicShipSearch'
     | undefined
 
   /** Localized JSON */
@@ -4273,6 +4309,7 @@ export type CONTENT_TYPE =
   | 'contactUs'
   | 'districts'
   | 'emailSignup'
+  | 'embed'
   | 'embeddedVideo'
   | 'enhancedAsset'
   | 'errorPage'

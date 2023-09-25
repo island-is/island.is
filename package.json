@@ -477,7 +477,8 @@
     "@anatine/esbuildnx@0.2.0": "patch:@anatine/esbuildnx@patch%3A@anatine/esbuildnx@npm%253A0.2.0%23./.yarn/patches/@anatine-esbuildnx-npm-0.2.0-b2ba626748.patch%3A%3Aversion=0.2.0&hash=9054d7&locator=island.is%2540workspace%253A.#./.yarn/patches/@anatine-esbuildnx-patch-9f523e0a95.patch",
     "cache-manager-ioredis-yet@1.1.0": "patch:cache-manager-ioredis-yet@npm%3A1.1.0#./.yarn/patches/cache-manager-ioredis-yet-npm-1.1.0-da7d1a9865.patch",
     "dd-trace@3.32.1": "patch:dd-trace@npm%3A3.32.1#./.yarn/patches/dd-trace-npm-3.29.1-4e4e5d3a0c.patch",
-    "jest-config": "patch:jest-config@npm%3A29.7.0#./.yarn/patches/jest-config-npm-29.7.0-97d8544d74.patch"
+    "jest-config": "patch:jest-config@npm%3A29.7.0#./.yarn/patches/jest-config-npm-29.7.0-97d8544d74.patch",
+    "geoip-lite@1.4.7": "patch:geoip-lite@npm%3A1.4.7#./.yarn/patches/geoip-lite-npm-1.4.7-e0ef6cefb0.patch"
   },
   "volta": {
     "node": "18.16.0"
