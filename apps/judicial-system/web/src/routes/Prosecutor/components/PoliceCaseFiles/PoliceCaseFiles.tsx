@@ -2,7 +2,10 @@ import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage, Box } from '@island.is/island-ui/core'
-import { isIndictmentCase } from '@island.is/judicial-system/types'
+import {
+  CaseFileState,
+  isIndictmentCase,
+} from '@island.is/judicial-system/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 import SelectableList, {
   Item,
@@ -58,10 +61,21 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
     <Box marginBottom={5}>
       {workingCase.origin === CaseOrigin.LOKE && (
         <SelectableList
-          items={policeCaseFileList.map((p) => ({
-            id: p.id,
-            name: p.name,
-          }))}
+          items={policeCaseFileList
+            .filter((policeCaseFile) => {
+              const f = workingCase.caseFiles?.find(
+                (caseFile) => caseFile.id === policeCaseFile.id,
+              )
+
+              if (f?.state === CaseFileState.STORED_IN_RVG) {
+                return false
+              }
+              return true
+            })
+            .map((p) => ({
+              id: p.id,
+              name: p.name,
+            }))}
           CTAButton={{
             onClick: onUpload,
             label: formatMessage(m.uploadButtonLabel),

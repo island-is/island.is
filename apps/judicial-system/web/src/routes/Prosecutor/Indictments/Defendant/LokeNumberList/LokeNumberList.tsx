@@ -8,7 +8,6 @@ import SelectableList, {
 } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
 import { PoliceCaseInfo } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { IconAndText } from '../../../components'
 import { PoliceCase } from '../Defendant'
 import { lokeNumberList as strings } from './LokeNumberList.strings'
 
@@ -59,8 +58,6 @@ export const LokeNumberList: React.FC<Props> = (props) => {
     addPoliceCaseNumbers(policeCases)
     setSelectedPoliceCases([])
   }
-
-  console.log('isloading', isLoading, 'a', availablePoliceCases)
 
   return (
     <Box marginBottom={5}>
