@@ -128,23 +128,18 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
   ) => {
     if (checkAll) {
       setCheckAllChecked(!checkAllChecked)
-      setPoliceCaseFileList(
-        policeCaseFileList.map((l) => {
-          return { ...l, checked: evt.target.checked }
-        }),
+      setPoliceCaseFileList((prev) =>
+        prev.map((l) => ({ ...l, checked: evt.target.checked })),
       )
 
       return
     }
 
-    const newPoliceCaseFileList = [...policeCaseFileList]
-    const target = policeCaseFileList.findIndex(
-      (listItem) => listItem.id === evt.target.value,
+    setPoliceCaseFileList((prev) =>
+      prev.map((l) =>
+        l.id === evt.target.value ? { ...l, checked: !l.checked } : l,
+      ),
     )
-
-    newPoliceCaseFileList[target].checked =
-      !newPoliceCaseFileList[target].checked
-    setPoliceCaseFileList(newPoliceCaseFileList)
   }
 
   return (
