@@ -1,4 +1,3 @@
-import addYears from 'date-fns/addYears'
 import addMonths from 'date-fns/addMonths'
 import {
   ApplicationWithAttachments as Application,
@@ -11,7 +10,6 @@ import {
 import {
   getStartDateAndEndDate,
   getAvailableYears,
-  getApplicationAnswers,
   getAvailableMonths,
 } from './childPensionUtils'
 import { MAX_MONTHS_BACKWARD, MAX_MONTHS_FORWARD, MONTHS } from './constants'
