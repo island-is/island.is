@@ -55,8 +55,8 @@ const {useNavigationOptions, getNavigationOptions} =
         iconInsets: {
           bottom: -4,
         },
-        icon: require('../../assets/icons/tabbar-profile.png'),
-        selectedIcon: require('../../assets/icons/tabbar-profile-selected.png'),
+        icon: require('../../assets/icons/tabbar-more.png'),
+        selectedIcon: require('../../assets/icons/tabbar-more.png'),
       },
     },
   );
