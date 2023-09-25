@@ -276,6 +276,31 @@ export const ChildPensionForm: Form = buildForm({
       title: childPensionFormMessage.additionalInfo.section,
       children: [
         buildSubSection({
+          id: 'fileUploadAdditionalFiles',
+          title: childPensionFormMessage.fileUpload.additionalFileTitle,
+          children: [
+            buildFileUploadField({
+              id: 'fileUploadAdditionalFiles.additionalDocuments',
+              title: childPensionFormMessage.fileUpload.additionalFileTitle,
+              description:
+                childPensionFormMessage.fileUpload.additionalFileDescription,
+              introduction:
+                childPensionFormMessage.fileUpload.additionalFileDescription,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                childPensionFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                childPensionFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                childPensionFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                childPensionFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
+            }),
+          ],
+        }), 
+        buildSubSection({
           id: 'commentSection',
           title: childPensionFormMessage.comment.commentSection,
           children: [
@@ -290,6 +315,11 @@ export const ChildPensionForm: Form = buildForm({
           ],
         }),
       ],
+    }),
+    buildSection({
+      id: 'additionalInfo',
+      title: childPensionFormMessage.additionalInfo.section,
+      children: [],
     }),
     buildSection({
       id: 'confirm',

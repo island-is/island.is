@@ -349,6 +349,18 @@ export const childPensionFormMessage: MessageDir = {
       description:
         'Below you can submit a child support order or agreement from the District Commissioner for a child/children who do not have legal residence with you. Note that the document must be in .pdf format.',
     },
+    additionalFileTitle: {
+      id: 'oap.application:fileUpload.additionalFile.title',
+      defaultMessage: 'Viðbótagögn',
+      description: 'Additional attachments',
+    },
+    additionalFileDescription: {
+      id: 'oap.application:fileUpload.additionalFile.description',
+      defaultMessage:
+        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis staðfestingu frá Þjóðskrá vegna rangra upplýsinga. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Here you can submit additional data to TR. For example, confirmation from the National Registry due to incorrect information. Note that the document must be in .pdf format.',
+    },    
   }),
 
   period: defineMessages({
