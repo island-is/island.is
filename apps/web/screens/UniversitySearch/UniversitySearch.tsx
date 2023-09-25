@@ -494,42 +494,51 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 setQuery(e.target.value)
               }}
             />
-            {/* <ContentBlock>
+            <ContentBlock>
               <Box paddingTop={2}>
                 <Inline space={[1, 2]}>
                   <Tag
-                    onClick={() => handleFilters('tags', 'all')}
+                    onClick={() => resetFilteredList()}
                     customClassName={
-                      filters.tags.includes('all')
+                      Object.keys(filters).filter((x) => x.length > 0).length >
+                      0
                         ? styles.tagActive
                         : styles.tagNotActive
                     }
                   >
                     {n('showAll', 'Sýna allt')}
                   </Tag>
-                  <Tag
-                    onClick={() => handleFilters('tags', 'grunnnam')}
-                    customClassName={
-                      filters.tags.includes('grunnnam')
-                        ? styles.tagActive
-                        : styles.tagNotActive
-                    }
-                  >
-                    Grunnnám
-                  </Tag>
-                  <Tag
-                    onClick={() => handleFilters('tags', 'framhaldsnam')}
-                    customClassName={
-                      filters.tags.includes('framhaldsnam')
-                        ? styles.tagActive
-                        : styles.tagNotActive
-                    }
-                  >
-                    Framhaldsnám
-                  </Tag>
+                  {filters.degreeType.map((item) => {
+                    return (
+                      <Tag
+                        onClick={() => handleFilters('degreeType', item)}
+                        customClassName={
+                          filters.degreeType.includes(item)
+                            ? styles.tagActive
+                            : styles.tagNotActive
+                        }
+                      >
+                        {n(item, item)}
+                      </Tag>
+                    )
+                  })}
+                  {filters.universityId.map((item) => {
+                    return (
+                      <Tag
+                        onClick={() => handleFilters('universityId', item)}
+                        customClassName={
+                          filters.universityId.includes(item)
+                            ? styles.tagActive
+                            : styles.tagNotActive
+                        }
+                      >
+                        {n(item, item)}
+                      </Tag>
+                    )
+                  })}
                 </Inline>
               </Box>
-            </ContentBlock> */}
+            </ContentBlock>
 
             <Hidden above="md">
               <Box width="full" marginTop={2}>

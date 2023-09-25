@@ -42,10 +42,10 @@ class Program {
   @Field()
   applicationEndDate!: Date
 
-  @Field()
+  @Field({ nullable: true })
   schoolAnswerDate?: Date
 
-  @Field()
+  @Field({ nullable: true })
   studentAnswerDate?: Date
 
   @Field()

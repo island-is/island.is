@@ -20,9 +20,12 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM_LIST = gql`
         degreeAbbreviation
         durationInYears
         externalId
+        schoolAnswerDate
         id
         iscedCode
+        languages
         searchKeywords
+        studentAnswerDate
         startingSemesterSeason
         modeOfDelivery
         startingSemesterYear
@@ -77,8 +80,10 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM = gql`
       durationInYears
       externalId
       id
+      schoolAnswerDate
       iscedCode
       searchKeywords
+      studentAnswerDate
       startingSemesterSeason
       startingSemesterYear
       admissionRequirementsEn
@@ -86,6 +91,7 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM = gql`
       costInformationEn
       costInformationIs
       costPerYear
+      languages
       externalUrlEn
       externalUrlIs
       modeOfDelivery
