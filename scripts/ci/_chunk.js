@@ -2,7 +2,7 @@
 
 const chunkSize = parseInt(process.env['CHUNK_SIZE'] || '2')
 const projects = process.argv[2].split(',').map((s) => s.trim()) ?? []
-const soloProjects = ['judicial-system-backend']
+const problematicProjects = ['judicial-system-backend']
 
 function groupbByPrefix(arr) {
   arr.sort()
@@ -36,6 +36,7 @@ function chunk(groups, chunkSize) {
 }
 
 // Projects which require running solo due to timelimits
+const soloProjects = problematicProjects.filter((p) => projects.includes(p))
 const filteredProjects = projects.filter((p) => !soloProjects.includes(p))
 const groups = groupbByPrefix(filteredProjects)
 const chunkedGroups = groups.map((group) => chunk(group, chunkSize)).flat()
