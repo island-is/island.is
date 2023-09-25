@@ -161,7 +161,10 @@ function canPrisonSystemUserAccessCase(
 
   // Check case type access
   if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
-    if (!isRestrictionCase(theCase.type)) {
+    if (
+      !isRestrictionCase(theCase.type) &&
+      theCase.type !== CaseType.PAROLE_REVOCATION
+    ) {
       return false
     }
   } else if (

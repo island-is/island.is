@@ -307,8 +307,9 @@ describe('getCasesQueryFilter', () => {
         { state: CaseState.ACCEPTED },
         {
           type: [
-            CaseType.ADMISSION_TO_FACILITY,
             CaseType.CUSTODY,
+            CaseType.ADMISSION_TO_FACILITY,
+            CaseType.PAROLE_REVOCATION,
             CaseType.TRAVEL_BAN,
           ],
         },
