@@ -39,10 +39,19 @@ function chunk(groups, chunkSize) {
 const filteredProjects = projects.filter((p) => !soloProjects.includes(p))
 const groups = groupbByPrefix(filteredProjects)
 const chunkedGroups = groups.map((group) => chunk(group, chunkSize)).flat()
-const chunks = chunkedGroups
-  .map((chunk) => chunk.join(','))
-  .filter((job) => job.lkength > 0)
-const combinedChunks = chunks.concat(soloProjects.map((p) => [p]))
-console.log('Combined chunks:', combinedChunks)
+const chunksJoined = chunkedGroups.map((chunk) => chunk.join(','))
+const chunksFiltered = chunksJoined.filter((job) => job.length > 0)
+const chunksWithSolos = chunksFiltered.concat(soloProjects)
+const chunks = chunksWithSolos.sort()
+console.error('Chunk debug:', {
+  projects,
+  soloProjects,
+  filteredProjects,
+  groups,
+  chunkedGroups,
+  chunksJoined,
+  chunksFiltered,
+  chunksWithSolos,
+})
 
 process.stdout.write(JSON.stringify(chunks))
