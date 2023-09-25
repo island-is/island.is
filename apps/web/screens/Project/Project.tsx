@@ -159,7 +159,7 @@ const ProjectPage: Screen<PageProps> = ({
           />
         )}
         {!!subpage && (
-          <Box marginBottom={1}>
+          <Box marginBottom={1} className="rs_read">
             <Text as="h1" variant="h1">
               {subpage.title}
             </Text>
@@ -172,20 +172,27 @@ const ProjectPage: Screen<PageProps> = ({
               />
             )}
             {subpage.showTableOfContents && (
-              <TOC slices={subpage.slices} title={navigationTitle} />
+              <Box className="rs_read">
+                <TOC slices={subpage.slices} title={navigationTitle} />
+              </Box>
             )}
-            {subpage.content &&
-              webRichText(subpage.content as SliceType[], {
-                renderComponent: {
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
-                  Form: (slice) => <Form form={slice} namespace={namespace} />,
-                },
-              })}
+            {subpage.content && (
+              <Box className="rs_read">
+                {webRichText(subpage.content as SliceType[], {
+                  renderComponent: {
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore make web strict
+                    Form: (slice) => (
+                      <Form form={slice} namespace={namespace} />
+                    ),
+                  },
+                })}
+              </Box>
+            )}
           </Box>
         )}
         {renderSlicesAsTabs && !!subpage && subpage.slices.length > 1 && (
-          <Box marginBottom={2}>
+          <Box marginBottom={2} className="rs_read">
             <TableOfContents
               tableOfContentsTitle={n('tableOfContentsTitle', 'Undirkaflar')}
               headings={subpage.slices.map((slice) => ({
@@ -208,29 +215,34 @@ const ProjectPage: Screen<PageProps> = ({
           </Box>
         )}
         {renderSlicesAsTabs && selectedSliceTab && (
-          <Text paddingTop={4} as="h2" variant="h2">
-            {selectedSliceTab.title}
-          </Text>
+          <Box className="rs_read">
+            <Text paddingTop={4} as="h2" variant="h2">
+              {selectedSliceTab.title}
+            </Text>
+          </Box>
         )}
-        {content &&
-          webRichText(content, {
-            renderComponent: {
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
-              Form: (slice) => <Form form={slice} namespace={namespace} />,
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
-              TabSection: (slice) => (
-                <TabSectionSlice
-                  slice={slice}
-                  contentColumnProps={{ span: '1/1' }}
-                  contentPaddingTop={0}
-                />
-              ),
-            },
-          })}
+        {content && (
+          <Box className="rs_read">
+            {webRichText(content, {
+              renderComponent: {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                Form: (slice) => <Form form={slice} namespace={namespace} />,
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                TabSection: (slice) => (
+                  <TabSectionSlice
+                    slice={slice}
+                    contentColumnProps={{ span: '1/1' }}
+                    contentPaddingTop={0}
+                  />
+                ),
+              },
+            })}
+          </Box>
+        )}
         {!subpage && projectPage?.stepper && (
-          <Box marginTop={6}>
+          <Box marginTop={6} className="rs_read">
             <Stepper
               scrollUpWhenNextStepAppears={false}
               stepper={projectPage.stepper}
@@ -244,7 +256,7 @@ const ProjectPage: Screen<PageProps> = ({
           // @ts-ignore make web strict
           (subpage ?? projectPage).slices.map((slice) =>
             slice.__typename === 'OneColumnText' ? (
-              <Box marginTop={6}>
+              <Box marginTop={6} className="rs_read">
                 <SliceMachine
                   key={slice.id}
                   slice={slice}
@@ -254,13 +266,15 @@ const ProjectPage: Screen<PageProps> = ({
                 />
               </Box>
             ) : (
-              <SliceMachine
-                key={slice.id}
-                slice={slice}
-                namespace={namespace}
-                fullWidth={true}
-                slug={projectPage?.slug}
-              />
+              <Box className="rs_read">
+                <SliceMachine
+                  key={slice.id}
+                  slice={slice}
+                  namespace={namespace}
+                  fullWidth={true}
+                  slug={projectPage?.slug}
+                />
+              </Box>
             ),
           )}
       </ProjectWrapper>
