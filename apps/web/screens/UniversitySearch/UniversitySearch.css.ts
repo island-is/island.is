@@ -31,7 +31,7 @@ export const tagNotActive = style({
 export const icon = style({
   minWidth: 30,
   width: 40,
-  height: 40,
+  maxHeight: 40,
   ...themeUtils.responsiveStyle({
     md: {
       minWidth: 40,

@@ -194,6 +194,18 @@ export const routesTemplate = {
     is: '/[slug]',
     en: '/en/[slug]',
   },
+  universitysearchdetails: {
+    is: '/haskolanam/[id]',
+    en: '/en/haskolanam/[id]',
+  },
+  universitysearchcomparison: {
+    is: '/haskolanam/samanburdur',
+    en: '/en/haskolanam/comparison',
+  },
+  universitysearch: {
+    is: '/haskolanam',
+    en: '/en/haskolanam',
+  },
   homepage: {
     is: '/',
     en: '/en',
@@ -209,18 +221,6 @@ export const routesTemplate = {
   vacancydetails: {
     is: '/starfatorg/[id]',
     en: '',
-  },
-  universitySearch: {
-    is: '/haskolanam',
-    en: '/en/haskolanam',
-  },
-  universitySearchDetails: {
-    is: '/haskolanam/[id]',
-    en: '/en/haskolanam/[id]',
-  },
-  universitySearchComparison: {
-    is: '/haskolanam/samanburdur',
-    en: '/en/haskolanam/comparison',
   },
 }
 
@@ -352,6 +352,10 @@ export const typeResolver = (
 
       // convert the route template string into a regex query
       const regex = convertToRegex(routeTemplate)
+
+      console.log('regex', regex)
+      console.log('path', path)
+      console.log('routeTemplate', routeTemplate)
 
       // if the path starts with the routeTemplate string or matches dynamic route regex we have found the type
       if (

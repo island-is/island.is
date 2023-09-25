@@ -3,6 +3,7 @@ import {
   ProgramApi,
   UniversityApi,
 } from '@island.is/clients/university-gateway-api'
+import { CmsContentfulService, CmsElasticsearchService } from '@island.is/cms'
 import { GetProgramByIdInput, ProgramsPaginated } from './graphql/dto'
 import { ProgramDetails, ProgramFilter, University } from './graphql/models'
 import {
@@ -11,12 +12,14 @@ import {
   Season,
 } from '@island.is/university-gateway-lib'
 
+const defaultLang = 'is'
 export
 @Injectable()
 class UniversityGatewayApi {
   constructor(
     private readonly programApi: ProgramApi,
     private readonly universityApi: UniversityApi,
+    private readonly cmsContentfulService: CmsContentfulService,
   ) {}
 
   async getActivePrograms(): Promise<ProgramsPaginated> {
@@ -145,11 +148,39 @@ class UniversityGatewayApi {
   async getUniversities(): Promise<University[]> {
     const res = await this.universityApi.universityControllerGetUniversities()
 
-    return res.data.map((item) => ({
-      id: item.id,
-      nationalId: item.nationalId,
-      contentfulKey: item.contentfulKey,
-    }))
+    const referenceIdentifierSet = res.data?.map((i: any) => i.contentfulKey)
+
+    // Fetch organizations from cms that have the given reference identifiers so we can use their title and logo
+    const organizationsResponse =
+      await this.cmsContentfulService.getOrganizations({
+        lang: defaultLang,
+        referenceIdentifiers: referenceIdentifierSet,
+      })
+
+    // // Create a mapping for reference identifier -> organization data
+    const organizationMap = new Map<
+      string,
+      { logoUrl: string | undefined; title: string }
+    >()
+
+    for (const organization of organizationsResponse?.items ?? []) {
+      if (organization?.referenceIdentifier) {
+        organizationMap.set(organization.referenceIdentifier, {
+          logoUrl: organization.logo?.url,
+          title: organization.shortTitle || organization.title,
+        })
+      }
+    }
+
+    return res.data.map((item: any) => {
+      const info = organizationMap.get(item.contentfulKey)
+      return {
+        id: item.id,
+        nationalId: item.nationalId,
+        title: info?.title ? info?.title : 'Fannst ekki',
+        logoUrl: info?.logoUrl ? info?.logoUrl : '',
+      }
+    })
   }
 
   async getProgramFilters(): Promise<ProgramFilter[]> {
@@ -170,7 +201,7 @@ class UniversityGatewayApi {
         field: 'universityId',
         options: (
           await this.universityApi.universityControllerGetUniversities()
-        ).data.map((item) => item.id),
+        ).data.map((item: any) => item.id),
       },
       {
         field: 'durationInYears',
