@@ -216,46 +216,51 @@ export const useS3Upload = (caseId: string) => {
 
   const handleUploadFromPolice = useCallback(
     async (
-      file: TUploadFile,
+      files: TUploadFile[],
       handleUIUpdate: (file: TUploadFile, newId?: string) => void,
     ) => {
-      try {
-        const { data: uploadPoliceCaseFileData } = await uploadPoliceCaseFile({
-          variables: {
-            input: {
-              caseId,
-              id: file.policeFileId ?? '',
-              name: file.name,
+      files.forEach(async (file) => {
+        try {
+          const { data: uploadPoliceCaseFileData } = await uploadPoliceCaseFile(
+            {
+              variables: {
+                input: {
+                  caseId,
+                  id: file.policeFileId ?? '',
+                  name: file.name,
+                },
+              },
             },
-          },
-        })
+          )
 
-        if (!uploadPoliceCaseFileData?.uploadPoliceCaseFile) {
-          throw Error('Failed to upload police file to S3')
-        }
+          if (!uploadPoliceCaseFileData?.uploadPoliceCaseFile) {
+            throw Error('Failed to upload police file to S3')
+          }
 
-        const newFileId = await addFileToCaseState({
-          ...file,
-          key: uploadPoliceCaseFileData.uploadPoliceCaseFile.key,
-          size: uploadPoliceCaseFileData.uploadPoliceCaseFile.size,
-        })
-
-        handleUIUpdate(
-          {
+          const newFileId = await addFileToCaseState({
             ...file,
-            size: uploadPoliceCaseFileData.uploadPoliceCaseFile.size,
             key: uploadPoliceCaseFileData.uploadPoliceCaseFile.key,
-            percent: 100,
-            status: 'done',
-          },
-          // We need to set the id so we are able to delete the file later
-          newFileId,
-        )
+            size: uploadPoliceCaseFileData.uploadPoliceCaseFile.size,
+          })
 
-        return uploadPoliceCaseFileData?.uploadPoliceCaseFile
-      } catch (e) {
-        toast.error(formatMessage(strings.uploadFailed))
-      }
+          handleUIUpdate(
+            {
+              ...file,
+              size: uploadPoliceCaseFileData.uploadPoliceCaseFile.size,
+              key: uploadPoliceCaseFileData.uploadPoliceCaseFile.key,
+              percent: 100,
+              status: 'done',
+            },
+            // We need to set the id so we are able to delete the file later
+            newFileId,
+          )
+
+          return uploadPoliceCaseFileData?.uploadPoliceCaseFile
+        } catch (e) {
+          toast.error(formatMessage(strings.uploadFailed))
+          handleUIUpdate(file)
+        }
+      })
     },
     [uploadPoliceCaseFile, caseId, addFileToCaseState, formatMessage],
   )

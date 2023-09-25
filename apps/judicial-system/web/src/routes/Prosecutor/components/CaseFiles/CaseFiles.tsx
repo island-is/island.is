@@ -162,35 +162,47 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const uploadPoliceCaseFileCallback = useCallback(
     (file: TUploadFile, id?: string) => {
-      setDisplayFiles((previous) => [
-        ...previous,
-        { ...file, id: id ?? file.id },
-      ])
+      if (id) {
+        setDisplayFiles((previous) => [
+          ...previous,
+          { ...file, id: id ?? file.id },
+        ])
+      }
+
+      setPoliceCaseFileList((previous) => {
+        const current = id
+          ? previous.filter((p) => p.id !== file.id)
+          : previous.map((p) =>
+              p.id === file.id ? { ...p, checked: false } : p,
+            )
+
+        if (current.every((p) => !p.checked)) {
+          setIsUploading(false)
+        }
+
+        return current
+      })
     },
     [],
   )
 
   const handlePoliceCaseFileUpload = useCallback(async () => {
-    const filesToUpload = policeCaseFileList.filter((p) => p.checked)
-
-    setIsUploading(true)
-
-    filesToUpload.forEach(async (f, index) => {
-      const fileToUpload = {
+    const filesToUpload = policeCaseFileList
+      .filter((p) => p.checked)
+      .map((f) => ({
         id: f.id,
         name: f.name,
         type: 'application/pdf',
         policeFileId: f.id,
-      }
+      }))
 
-      await handleUploadFromPolice(fileToUpload, uploadPoliceCaseFileCallback)
+    if (filesToUpload.length === 0) {
+      return
+    }
 
-      setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
+    setIsUploading(true)
 
-      if (index === filesToUpload.length - 1) {
-        setIsUploading(false)
-      }
-    })
+    await handleUploadFromPolice(filesToUpload, uploadPoliceCaseFileCallback)
   }, [policeCaseFileList, handleUploadFromPolice, uploadPoliceCaseFileCallback])
 
   const removeFileCB = useCallback(

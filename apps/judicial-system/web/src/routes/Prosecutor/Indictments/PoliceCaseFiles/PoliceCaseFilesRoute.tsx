@@ -168,10 +168,26 @@ const UploadFilesToPoliceCase: React.FC<
 
   const uploadPoliceCaseFileCallback = useCallback(
     (file: TUploadFile, id?: string) => {
-      setDisplayFiles((previous) => [
-        ...previous,
-        { ...file, id: id ?? file.id },
-      ])
+      if (id) {
+        setDisplayFiles((previous) => [
+          ...previous,
+          { ...file, id: id ?? file.id },
+        ])
+      }
+
+      setPoliceCaseFileList((previous) => {
+        const current = id
+          ? previous.filter((p) => p.id !== file.id)
+          : previous.map((p) =>
+              p.id === file.id ? { ...p, checked: false } : p,
+            )
+
+        if (current.every((p) => !p.checked)) {
+          setIsUploading(false)
+        }
+
+        return current
+      })
     },
     [],
   )
@@ -195,54 +211,47 @@ const UploadFilesToPoliceCase: React.FC<
   )
 
   const onPoliceCaseFileUpload = useCallback(async () => {
-    const filesToUpload = policeCaseFileList
-      .filter((p) => p.checked)
-      .sort((p1, p2) => (p1.chapter ?? -1) - (p2.chapter ?? -1))
-
-    setIsUploading(true)
-
     let currentChapter: number | undefined | null
     let currentOrderWithinChapter: number | undefined | null
 
-    filesToUpload.forEach(async (f, index) => {
-      if (
-        f.chapter !== undefined &&
-        f.chapter !== null &&
-        f.chapter !== currentChapter
-      ) {
-        currentChapter = f.chapter
-        currentOrderWithinChapter = Math.max(
-          -1,
-          ...caseFiles
-            .filter((p) => p.chapter === currentChapter)
-            .map((p) => p.orderWithinChapter ?? -1),
-        )
-      }
+    const filesToUpload = policeCaseFileList
+      .filter((p) => p.checked)
+      .sort((p1, p2) => (p1.chapter ?? -1) - (p2.chapter ?? -1))
+      .map((f) => {
+        if (
+          f.chapter !== undefined &&
+          f.chapter !== null &&
+          f.chapter !== currentChapter
+        ) {
+          currentChapter = f.chapter
+          currentOrderWithinChapter = Math.max(
+            -1,
+            ...caseFiles
+              .filter((p) => p.chapter === currentChapter)
+              .map((p) => p.orderWithinChapter ?? -1),
+          )
+        }
 
-      const fileToUpload = {
-        id: f.id,
-        name: f.name,
-        type: 'application/pdf',
-        category: CaseFileCategory.CASE_FILE,
-        policeCaseNumber: f.policeCaseNumber,
-        chapter: f.chapter ?? undefined,
-        orderWithinChapter:
-          currentOrderWithinChapter !== undefined &&
-          currentOrderWithinChapter !== null
-            ? ++currentOrderWithinChapter
-            : undefined,
-        displayDate: f.displayDate ?? undefined,
-        policeFileId: f.id,
-      }
+        return {
+          id: f.id,
+          name: f.name,
+          type: 'application/pdf',
+          category: CaseFileCategory.CASE_FILE,
+          policeCaseNumber: f.policeCaseNumber,
+          chapter: f.chapter ?? undefined,
+          orderWithinChapter:
+            currentOrderWithinChapter !== undefined &&
+            currentOrderWithinChapter !== null
+              ? ++currentOrderWithinChapter
+              : undefined,
+          displayDate: f.displayDate ?? undefined,
+          policeFileId: f.id,
+        }
+      })
 
-      await handleUploadFromPolice(fileToUpload, uploadPoliceCaseFileCallback)
+    setIsUploading(true)
 
-      setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
-
-      if (index === filesToUpload.length - 1) {
-        setIsUploading(false)
-      }
-    })
+    await handleUploadFromPolice(filesToUpload, uploadPoliceCaseFileCallback)
   }, [
     caseFiles,
     policeCaseFileList,
