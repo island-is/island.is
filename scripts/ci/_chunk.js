@@ -43,7 +43,8 @@ const chunksJoined = chunkedGroups.map((chunk) => chunk.join(','))
 const chunksFiltered = chunksJoined.filter((job) => job.length > 0)
 const chunksWithSolos = chunksFiltered.concat(soloProjects)
 const chunks = chunksWithSolos.sort()
-console.error('Chunk debug:', {
+
+new console.Console(process.stderr).log(`Chunk debug:`, {
   projects,
   soloProjects,
   filteredProjects,
