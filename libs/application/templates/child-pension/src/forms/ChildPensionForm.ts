@@ -106,6 +106,24 @@ export const ChildPensionForm: Form = buildForm({
           ],
         }),
         buildSubSection({
+          id: 'periodSection',
+          title: childPensionFormMessage.period.periodTitle,
+          children: [
+            buildMultiField({
+              id: 'periodField',
+              title: childPensionFormMessage.period.periodTitle,
+              description: childPensionFormMessage.period.periodDescription,
+              children: [
+                buildCustomField({
+                  id: 'period',
+                  component: 'Period',
+                  title: childPensionFormMessage.period.periodTitle,
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
           id: 'payment',
           title: childPensionFormMessage.info.paymentTitle,
           children: [

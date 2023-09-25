@@ -4,3 +4,4 @@ export { default as RegisterChildRepeater } from './RegisterChild/RegisterChildR
 export { RegisterChildTable } from './RegisterChild/RegisterChildTable'
 export { default as ChildPensionReason } from './ChildPensionReason/ChildPensionReason'
 export { default as ChooseChildren } from './ChooseChildren/ChooseChildren'
+export { Period } from './Period'

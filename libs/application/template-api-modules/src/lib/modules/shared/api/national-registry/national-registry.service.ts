@@ -9,6 +9,7 @@ import {
   NationalRegistryParameters,
   NationalRegistryBirthplace,
   ChildrenCustodyInformationParameters,
+  NationalRegistryResidenceHistory,
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
@@ -270,5 +271,26 @@ export class NationalRegistryService extends BaseTemplateApiService {
         municipalityCode: birthplace.municipalityNumber,
       }
     )
+  }
+
+  async getResidenceHistory({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<
+    NationalRegistryResidenceHistory[] | null
+  > {
+    const residenceHistory: NationalRegistryResidenceHistory[] | null =
+      await this.nationalRegistryApi.getResidenceHistory(auth.nationalId)
+
+    if (!residenceHistory) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryResidenceHistoryMissing,
+          summary: coreErrorMessages.nationalRegistryResidenceHistoryMissing,
+        },
+        404,
+      )
+    }
+
+    return residenceHistory
   }
 }
