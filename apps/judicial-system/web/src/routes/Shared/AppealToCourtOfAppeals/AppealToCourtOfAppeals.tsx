@@ -28,6 +28,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import {
+  addUploadFiles,
   generateSingleFileUpdate,
   mapCaseFileToUploadFile,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -134,16 +135,12 @@ const AppealToCourtOfAppeals = () => {
               buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
               onChange={(files) =>
                 handleUpload(
-                  files,
-                  setDisplayFiles,
+                  addUploadFiles(files, setDisplayFiles, appealBriefType),
                   handleUIUpdate,
-                  appealBriefType,
                 )
               }
               onRemove={(file) => handleRemove(file, removeFileCB)}
-              onRetry={(file) =>
-                handleRetry(file, handleUIUpdate, appealBriefType)
-              }
+              onRetry={(file) => handleRetry(file, handleUIUpdate)}
             />
           </Box>
           <Box component="section" marginBottom={10}>
@@ -166,16 +163,12 @@ const AppealToCourtOfAppeals = () => {
               buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
               onChange={(files) =>
                 handleUpload(
-                  files,
-                  setDisplayFiles,
+                  addUploadFiles(files, setDisplayFiles, appealCaseFilesType),
                   handleUIUpdate,
-                  appealCaseFilesType,
                 )
               }
               onRemove={(file) => handleRemove(file, removeFileCB)}
-              onRetry={(file) =>
-                handleRetry(file, handleUIUpdate, appealCaseFilesType)
-              }
+              onRetry={(file) => handleRetry(file, handleUIUpdate)}
             />
           </Box>
         </>

@@ -33,6 +33,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseAppealRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  addUploadFiles,
   generateSingleFileUpdate,
   mapCaseFileToUploadFile,
   removeTabsValidateAndSet,
@@ -309,16 +310,16 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
             buttonLabel={formatMessage(strings.uploadButtonText)}
             onChange={(files) => {
               handleUpload(
-                files,
-                setDisplayFiles,
+                addUploadFiles(
+                  files,
+                  setDisplayFiles,
+                  CaseFileCategory.APPEAL_RULING,
+                ),
                 handleUIUpdate,
-                CaseFileCategory.APPEAL_RULING,
               )
             }}
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) =>
-              handleRetry(file, handleUIUpdate, CaseFileCategory.APPEAL_RULING)
-            }
+            onRetry={(file) => handleRetry(file, handleUIUpdate)}
           />
         </Box>
       </FormContentContainer>
