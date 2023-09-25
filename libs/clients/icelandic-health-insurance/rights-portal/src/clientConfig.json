@@ -12,8 +12,10 @@
   "paths": {
     "/v1/admin/rollnationalid/{nationalid}/{service}": {
       "post": {
-        "tags": ["admin"],
-        "operationId": "admin/rollnationalid",
+        "tags": [
+          "admin"
+        ],
+        "operationId": "RollNationalId",
         "parameters": [
           {
             "name": "nationalid",
@@ -66,8 +68,10 @@
     },
     "/v1/aidsandnutrition": {
       "get": {
-        "tags": ["aidsandnutrition"],
-        "operationId": "aidsandnutrition",
+        "tags": [
+          "aidsandnutrition"
+        ],
+        "operationId": "GetAidsAndNutrition",
         "responses": {
           "200": {
             "description": "OK",
@@ -103,7 +107,9 @@
     },
     "/v1/dentists/status": {
       "get": {
-        "tags": ["dentist"],
+        "tags": [
+          "dentist"
+        ],
         "operationId": "dentiststatus",
         "responses": {
           "200": {
@@ -140,8 +146,10 @@
     },
     "/v1/dentists/current": {
       "get": {
-        "tags": ["dentist"],
-        "operationId": "dentists/current",
+        "tags": [
+          "dentist"
+        ],
+        "operationId": "GetCurrentDentist",
         "responses": {
           "200": {
             "description": "OK",
@@ -177,8 +185,10 @@
     },
     "/v1/dentists": {
       "get": {
-        "tags": ["dentist"],
-        "operationId": "dentists",
+        "tags": [
+          "dentist"
+        ],
+        "operationId": "GetDentists",
         "parameters": [
           {
             "name": "contractType",
@@ -267,8 +277,10 @@
     },
     "/v1/dentists/{id}/register": {
       "post": {
-        "tags": ["dentist"],
-        "operationId": "dentists/register",
+        "tags": [
+          "dentist"
+        ],
+        "operationId": "RegisterDentist",
         "parameters": [
           {
             "name": "id",
@@ -309,8 +321,10 @@
     },
     "/v1/dentists/bills": {
       "get": {
-        "tags": ["dentist"],
-        "operationId": "dentists/bills",
+        "tags": [
+          "dentist"
+        ],
+        "operationId": "GetDentistBills",
         "parameters": [
           {
             "name": "dateFrom",
@@ -369,8 +383,10 @@
     },
     "/v1/drugs/paymentperiods": {
       "get": {
-        "tags": ["drug"],
-        "operationId": "drugs/paymentperiods",
+        "tags": [
+          "drug"
+        ],
+        "operationId": "GetDrugPaymentPeriods",
         "responses": {
           "200": {
             "description": "OK",
@@ -409,8 +425,10 @@
     },
     "/v1/drugs/paymentperiods/{paymentPeriodId}/bills": {
       "get": {
-        "tags": ["drug"],
-        "operationId": "drugs/paymentperiods/bills",
+        "tags": [
+          "drug"
+        ],
+        "operationId": "GetDrugBills",
         "parameters": [
           {
             "name": "paymentPeriodId",
@@ -459,11 +477,23 @@
         }
       }
     },
-    "/v1/drugs/bills/{billId}/lineitems": {
+    "/v1/drugs/paymentperiods/{paymentPeriodId}/bills/{billId}/lineitems": {
       "get": {
-        "tags": ["drug"],
-        "operationId": "drugs/bills/lineitems",
+        "tags": [
+          "drug"
+        ],
+        "operationId": "GetDrugBillLineItems",
         "parameters": [
+          {
+            "name": "paymentPeriodId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
           {
             "name": "billId",
             "in": "path",
@@ -513,8 +543,10 @@
     },
     "/v1/drugs/drugs": {
       "get": {
-        "tags": ["drug"],
-        "operationId": "drugs/drugs",
+        "tags": [
+          "drug"
+        ],
+        "operationId": "GetDrugs",
         "parameters": [
           {
             "name": "nameStartsWith",
@@ -594,8 +626,10 @@
     },
     "/v1/drugs/drugcalculator": {
       "post": {
-        "tags": ["drug"],
-        "operationId": "drugs/drugcalculator",
+        "tags": [
+          "drug"
+        ],
+        "operationId": "DrugCalculator",
         "requestBody": {
           "content": {
             "application/json": {
@@ -641,8 +675,10 @@
     },
     "/v1/drugs/certificates": {
       "get": {
-        "tags": ["drug"],
-        "operationId": "drugs/certificates",
+        "tags": [
+          "drug"
+        ],
+        "operationId": "GetDrugCertificates",
         "responses": {
           "200": {
             "description": "OK",
@@ -681,8 +717,10 @@
     },
     "/v1/drugs/certificates/{certificateId}/document": {
       "get": {
-        "tags": ["drug"],
-        "operationId": "drugs/certificates/document",
+        "tags": [
+          "drug"
+        ],
+        "operationId": "GetDrugCertificateDocument",
         "parameters": [
           {
             "name": "certificateId",
@@ -730,8 +768,10 @@
     },
     "/v1/ehic/cardstatus/{applicantnationalids}": {
       "get": {
-        "tags": ["ehic"],
-        "operationId": "ehic/cardstatus",
+        "tags": [
+          "ehic"
+        ],
+        "operationId": "GetEhicCardStatus",
         "parameters": [
           {
             "name": "applicantnationalids",
@@ -781,8 +821,10 @@
     },
     "/v1/ehic/requestcard/{applicantnationalid}/{cardtype}": {
       "post": {
-        "tags": ["ehic"],
-        "operationId": "ehic/requestcard",
+        "tags": [
+          "ehic"
+        ],
+        "operationId": "RequestEhicCard",
         "parameters": [
           {
             "name": "applicantnationalid",
@@ -838,8 +880,10 @@
     },
     "/v1/ehic/fetchtemppdfcard/{applicantnationalid}/{cardnumber}": {
       "get": {
-        "tags": ["ehic"],
-        "operationId": "ehic/fetchtemppdfcard",
+        "tags": [
+          "ehic"
+        ],
+        "operationId": "FetchTempEhicPDFCard",
         "parameters": [
           {
             "name": "applicantnationalid",
@@ -895,8 +939,10 @@
     },
     "/v1/healthcenters": {
       "get": {
-        "tags": ["healthcenter"],
-        "operationId": "healthcenters",
+        "tags": [
+          "healthcenter"
+        ],
+        "operationId": "GetHealthCenters",
         "parameters": [
           {
             "name": "limit",
@@ -968,8 +1014,10 @@
     },
     "/v1/healthcenters/current": {
       "get": {
-        "tags": ["healthcenter"],
-        "operationId": "healthcenters/current",
+        "tags": [
+          "healthcenter"
+        ],
+        "operationId": "GetCurrentHealthCenter",
         "responses": {
           "200": {
             "description": "OK",
@@ -1005,8 +1053,10 @@
     },
     "/v1/healthcenters/{id}/register": {
       "post": {
-        "tags": ["healthcenter"],
-        "operationId": "healthcenters/register",
+        "tags": [
+          "healthcenter"
+        ],
+        "operationId": "RegisterHealthCenter",
         "parameters": [
           {
             "name": "id",
@@ -1046,8 +1096,10 @@
     },
     "/v1/healthcenters/history": {
       "get": {
-        "tags": ["healthcenter"],
-        "operationId": "healthcenters/history",
+        "tags": [
+          "healthcenter"
+        ],
+        "operationId": "GetHealthCenterHistory",
         "parameters": [
           {
             "name": "dateFrom",
@@ -1106,8 +1158,10 @@
     },
     "/v1/overview/insurance": {
       "get": {
-        "tags": ["overview"],
-        "operationId": "overview/insurance",
+        "tags": [
+          "overview"
+        ],
+        "operationId": "GetInsuranceOverview",
         "responses": {
           "200": {
             "description": "OK",
@@ -1143,8 +1197,10 @@
     },
     "/v1/overview/insurance/confirmation": {
       "get": {
-        "tags": ["overview"],
-        "operationId": "overview/insurance/confirmation",
+        "tags": [
+          "overview"
+        ],
+        "operationId": "GetInsuranceConfirmation",
         "responses": {
           "200": {
             "description": "OK",
@@ -1180,8 +1236,10 @@
     },
     "/v1/payments/copayment/status": {
       "get": {
-        "tags": ["payment"],
-        "operationId": "payments/copayment/status",
+        "tags": [
+          "payment"
+        ],
+        "operationId": "GetCopaymentStatus",
         "responses": {
           "200": {
             "description": "OK",
@@ -1217,8 +1275,10 @@
     },
     "/v1/payments/copayment/periods": {
       "get": {
-        "tags": ["payment"],
-        "operationId": "payments/copayment/periods",
+        "tags": [
+          "payment"
+        ],
+        "operationId": "GetCopaymentPeriods",
         "responses": {
           "200": {
             "description": "OK",
@@ -1257,8 +1317,10 @@
     },
     "/v1/payments/copayment/periods/{periodId}/bills": {
       "get": {
-        "tags": ["payment"],
-        "operationId": "payments/copayment/periods/bills",
+        "tags": [
+          "payment"
+        ],
+        "operationId": "GetCopaymentBills",
         "parameters": [
           {
             "name": "periodId",
@@ -1309,8 +1371,10 @@
     },
     "/v1/payments/overview/status": {
       "get": {
-        "tags": ["payment"],
-        "operationId": "payments/overview/status",
+        "tags": [
+          "payment"
+        ],
+        "operationId": "GetPaymentOverviewStatus",
         "responses": {
           "200": {
             "description": "OK",
@@ -1346,8 +1410,10 @@
     },
     "/v1/payments/overview/bills": {
       "get": {
-        "tags": ["payment"],
-        "operationId": "payments/overview/bills",
+        "tags": [
+          "payment"
+        ],
+        "operationId": "GetPaymentOverviewBills",
         "responses": {
           "200": {
             "description": "OK",
@@ -1386,8 +1452,10 @@
     },
     "/v1/payments/overview/documents/{documentId}": {
       "get": {
-        "tags": ["payment"],
-        "operationId": "payments/overview/documents",
+        "tags": [
+          "payment"
+        ],
+        "operationId": "GetPaymentOverviewDocument",
         "parameters": [
           {
             "name": "documentId",
@@ -1435,8 +1503,10 @@
     },
     "/v1/therapies": {
       "get": {
-        "tags": ["therapy"],
-        "operationId": "therapies",
+        "tags": [
+          "therapy"
+        ],
+        "operationId": "GetTherapies",
         "responses": {
           "200": {
             "description": "OK",
@@ -1823,6 +1893,19 @@
             "type": "string",
             "nullable": true
           },
+          "practices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DentistPracticeDTO"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DentistPracticeDTO": {
+        "type": "object",
+        "properties": {
           "practice": {
             "type": "string",
             "nullable": true
@@ -1836,10 +1919,6 @@
             "nullable": true
           },
           "address": {
-            "type": "string",
-            "nullable": true
-          },
-          "phone": {
             "type": "string",
             "nullable": true
           }
@@ -1926,7 +2005,7 @@
       "DrugBillLineItemDTO": {
         "type": "object",
         "properties": {
-          "id": {
+          "billId": {
             "type": "integer",
             "format": "int32",
             "nullable": true
@@ -1944,8 +2023,8 @@
             "nullable": true
           },
           "number": {
-            "type": "integer",
-            "format": "int32",
+            "type": "number",
+            "format": "double",
             "nullable": true
           },
           "salesPrice": {
@@ -1974,11 +2053,12 @@
       "DrugCalculationInDTO": {
         "type": "object",
         "properties": {
-          "nordicCode": {
-            "type": "string",
+          "lineNumber": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
-          "strength": {
+          "nordicCode": {
             "type": "string",
             "nullable": true
           },
@@ -1998,24 +2078,12 @@
       "DrugCalculationOutDTO": {
         "type": "object",
         "properties": {
-          "nordicCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "strength": {
-            "type": "string",
-            "nullable": true
-          },
-          "units": {
+          "lineNumber": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
-          "price": {
+          "referencePrice": {
             "type": "integer",
             "format": "int32",
             "nullable": true
@@ -2026,6 +2094,21 @@
             "nullable": true
           },
           "calculatedCustomerPrice": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "insurancePrice": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "excessPrice": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "fullPrice": {
             "type": "integer",
             "format": "int32",
             "nullable": true
@@ -2060,17 +2143,17 @@
             },
             "nullable": true
           },
+          "totalUnits": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "totalPrice": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
           "totalCustomerPrice": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "totalCalculatedCustomerPrice": {
             "type": "integer",
             "format": "int32",
             "nullable": true

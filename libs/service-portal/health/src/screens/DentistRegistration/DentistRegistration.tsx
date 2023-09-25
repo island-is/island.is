@@ -1,21 +1,18 @@
 import {
   AlertMessage,
   Box,
-  Button,
   FilterInput,
-  Input,
   Pagination,
   SkeletonLoader,
   Stack,
   Table as T,
-  Text,
 } from '@island.is/island-ui/core'
 import {
   useGetDentistStatusQuery,
   useGetPaginatedDentistsQuery,
   useRegisterDentistMutation,
 } from './DentistRegistration.generated'
-import { CardLoader, m } from '@island.is/service-portal/core'
+import { m } from '@island.is/service-portal/core'
 import { IntroHeader } from '@island.is/portals/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { messages } from '../../lib/messages'
@@ -25,12 +22,13 @@ import { useNavigate } from 'react-router-dom'
 import { HealthPaths } from '../../lib/paths'
 import { RightsPortalDentist } from '@island.is/api/schema'
 import { RegisterModal } from '../../components/RegisterModal'
-import * as styles from './DentistRegistration.css'
 
 const DEFAULT_PAGE_SIZE = 12
 const DEFAULT_PAGE_NUMBER = 1
 
-type SelectedDentist = Pick<RightsPortalDentist, 'id' | 'name' | 'practice'>
+type SelectedDentist = Pick<RightsPortalDentist, 'id' | 'name'> & {
+  practice: string
+}
 
 export const DentistRegistration = () => {
   useNamespaces('sp.health')
@@ -206,7 +204,7 @@ export const DentistRegistration = () => {
               {data?.response?.dentists.map((dentist, key) => (
                 <tr onMouseOver={() => setHoverId(dentist.id)} key={key}>
                   <T.Data>{dentist?.name}</T.Data>
-                  <T.Data>{dentist?.practice}</T.Data>
+                  {/* <T.Data>{dentist?.practice}</T.Data>
                   <T.Data>{`${dentist?.address?.postalCode} ${dentist.address?.municipality}`}</T.Data>
                   <T.Data>{dentist?.address?.streetAddress}</T.Data>
                   <T.Data>
@@ -234,7 +232,7 @@ export const DentistRegistration = () => {
                         </Button>
                       </Box>
                     )}
-                  </T.Data>
+                  </T.Data> */}
                 </tr>
               ))}
             </T.Body>
