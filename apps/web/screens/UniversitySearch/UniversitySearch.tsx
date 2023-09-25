@@ -46,10 +46,13 @@ import {
   GetUniversityGatewayActiveProgramsQuery,
   Program,
   ProgramFilter,
+  University,
 } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { useNamespace } from '@island.is/web/hooks'
 import { TranslationDefaults } from './TranslationDefaults'
+import { getFeatureFlag } from '@island.is/web/utils/featureFlag'
+import { CustomNextError } from '@island.is/web/units/errors'
 
 const ITEMS_PER_PAGE = 8
 const NUMBER_OF_FILTERS = 6
@@ -60,6 +63,7 @@ interface UniversitySearchProps {
   namespace: Record<string, string>
   filterOptions: Array<ProgramFilter>
   locale: string
+  universities: Array<University>
 }
 
 interface FilterProps {
@@ -99,8 +103,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   filterOptions,
   namespace,
   locale,
+  universities,
 }) => {
-  console.log('locale', locale)
   // const n = useNamespace(namespace)
   const { width } = useWindowSize()
 
@@ -231,10 +235,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     }
   }
 
-  useEffect(() => {
-    console.log('filters', filters)
-  }, [filters])
-
   const handleComparisonChange = (dataItem: ComparisonProps) => {
     let found = false
     selectedComparison.forEach((x) => {
@@ -244,7 +244,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     })
 
     if (!found) {
-      console.log('selectedComlength', selectedComparison.length)
       if (selectedComparison.length === MAX_SELECTED_COMPARISON) {
         //comparison can only include 3 items so display error message if trying to add the fourth
         toast.error(
@@ -382,6 +381,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                   filterOptions.map((filter) => {
                     return (
                       <AccordionItem
+                        key={filter.field}
                         id={filter.field}
                         label={n(
                           filter.field,
@@ -395,23 +395,29 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                       >
                         <Stack space={[1, 1, 2]}>
                           {filter.options.map((option) => {
+                            let keyField = option
                             let str = filter.field as keyof typeof filters
-                            console.log('option', option)
+
+                            if (str === 'universityId') {
+                              keyField = universities.filter(
+                                (x) => x.id === option,
+                              )[0].title
+                            }
                             return (
                               <Checkbox
-                                label={`${n(option, option)}${
+                                label={`${n(keyField, keyField)}${
                                   filter.field === 'durationInYears'
                                     ? locale === 'en'
-                                      ? option === '1'
+                                      ? keyField === '1'
                                         ? ' year'
                                         : ' years'
                                       : ' ár'
                                     : ''
                                 }`}
-                                id={option}
-                                value={option}
+                                id={keyField}
+                                value={keyField}
                                 checked={
-                                  filters[str].filter((x) => x === option)
+                                  filters[str].filter((x) => x === keyField)
                                     .length > 0
                                 }
                                 onChange={(e) =>
@@ -625,7 +631,11 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                       <Box marginBottom={3} key={index}>
                         <ActionCategoryCard
                           key={index}
-                          href={`/haskolanam/${dataItem.id}`}
+                          href={
+                            locale === 'en'
+                              ? `/en/haskolanam/${dataItem.id}`
+                              : `/haskolanam/${dataItem.id}`
+                          }
                           heading={
                             locale === 'en' ? dataItem.nameEn : dataItem.nameIs
                           }
@@ -636,7 +646,11 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                           }
                           icon={
                             <img
-                              src="https://www.ru.is/media/HR_logo_hringur_hires.jpg"
+                              src={
+                                universities.filter(
+                                  (x) => x.id === dataItem.universityId,
+                                )[0].logoUrl
+                              }
                               alt={`Logo fyrir ${
                                 locale === 'en'
                                   ? dataItem.nameEn
@@ -655,8 +669,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     locale === 'en'
                                       ? dataItem.nameEn
                                       : dataItem.nameIs,
-                                  iconSrc:
-                                    'https://www.ru.is/media/HR_logo_hringur_hires.jpg',
+                                  iconSrc: universities.filter(
+                                    (x) => x.id === dataItem.universityId,
+                                  )[0].logoUrl,
                                 })
                               }
                               checked={
@@ -796,7 +811,11 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                             }
                             icon={
                               <img
-                                src="https://www.ru.is/media/HR_logo_hringur_hires.jpg"
+                                src={
+                                  universities.filter(
+                                    (x) => x.id === dataItem.universityId,
+                                  )[0].logoUrl
+                                }
                                 alt={`Logo fyrir ${
                                   locale === 'en'
                                     ? dataItem.nameEn
@@ -811,8 +830,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   locale === 'en'
                                     ? dataItem.nameEn
                                     : dataItem.nameIs,
-                                iconSrc:
-                                  'https://www.ru.is/media/HR_logo_hringur_hires.jpg',
+                                iconSrc: universities.filter(
+                                  (x) => x.id === dataItem.universityId,
+                                )[0].logoUrl,
                               })
                             }
                             checked={
@@ -824,7 +844,11 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                             checkboxLabel={n('compare', 'Setja í samanburð')}
                             checkboxId={dataItem.id}
                             cta={createPrimaryCTA()}
-                            href=""
+                            href={
+                              locale === 'en'
+                                ? `/en/haskolanam/${dataItem.id}`
+                                : `/haskolanam/${dataItem.id}`
+                            }
                             infoItems={[
                               {
                                 icon: (
@@ -988,7 +1012,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                               style={{ maxWidth: '90%' }}
                             >
                               <img
-                                src="https://www.ru.is/media/HR_logo_hringur_hires.jpg"
+                                src={item.iconSrc}
                                 className={styles.icon}
                                 alt={`Logo fyrir ${item.nameIs}`}
                                 style={{ paddingRight: 10 }}
@@ -1007,8 +1031,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   handleComparisonChange({
                                     id: item.id,
                                     nameIs: item.nameIs,
-                                    iconSrc:
-                                      'https://www.ru.is/media/HR_logo_hringur_hires.jpg',
+                                    iconSrc: item.iconSrc,
                                   })
                                 }
                                 className={styles.removeButton}
@@ -1095,6 +1118,13 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 }
 
 UniversitySearch.getProps = async ({ apolloClient, locale }) => {
+  const showPagesFeatureFlag = await getFeatureFlag(
+    'universityGatewayShowPages',
+    false,
+  )
+  if (!showPagesFeatureFlag) {
+    throw new CustomNextError(404, 'Síða er ekki opin')
+  }
   const namespaceResponse = await apolloClient.query<
     GetNamespaceQuery,
     GetNamespaceQueryVariables
@@ -1132,6 +1162,7 @@ UniversitySearch.getProps = async ({ apolloClient, locale }) => {
     filterOptions: filters.data.universityGatewayProgramFilters,
     locale,
     namespace,
+    universities: universities.data.universityGatewayUniversities,
   }
 }
 
