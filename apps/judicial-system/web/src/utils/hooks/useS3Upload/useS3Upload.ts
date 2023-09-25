@@ -1,6 +1,5 @@
 import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
-import { add } from 'lodash'
 
 import { toast, UploadFile } from '@island.is/island-ui/core'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
