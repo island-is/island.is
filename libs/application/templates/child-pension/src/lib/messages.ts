@@ -531,6 +531,11 @@ export const childPensionFormMessage: MessageDir = {
       defaultMessage: 'Börn sem þú sækir um barnalífeyri fyrir',
       description: 'english translation',
     },
+    bank: {
+      id: 'cp.application:conformation.bank',
+      defaultMessage: 'Banki',
+      description: 'Bank',
+    },
   }),
 
   comment: defineMessages({

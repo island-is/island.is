@@ -80,6 +80,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const comment = getValueViaPath(answers, 'comment') as string
 
+  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
+
   return {
     applicantEmail,
     applicantPhonenumber,
@@ -89,7 +91,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     childPensionAddChild,
     selectedMonth,
     selectedYear,
-    comment
+    comment,
+    bank
   }
 }
 
@@ -112,10 +115,13 @@ export function getApplicationExternalData(
     [],
   ) as ApplicantChildCustodyInformation[]
 
+  const bank = getValueViaPath(externalData, 'paymentInfo.bank') as string
+
   return {
     applicantName,
     applicantNationalId,
     custodyInformation,
+    bank
   }
 }
 

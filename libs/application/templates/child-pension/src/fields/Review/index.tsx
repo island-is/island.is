@@ -16,6 +16,8 @@ import { Period } from './review-groups/Period'
 import { Comment } from './review-groups/Comment'
 import { getApplicationAnswers } from '../../lib/childPensionUtils'
 import { Attachments } from './review-groups/Attachments'
+import { PaymentInformation } from './review-groups/PaymentInformation'
+
 
 
 interface ReviewScreenProps {
@@ -154,6 +156,7 @@ export const Review: FC<ReviewScreenProps> = ({
         </Box>
       )}
       <BaseInformation {...childProps} />
+      <PaymentInformation {...childProps} />
       <Children {...childProps} />
       <Period {...childProps} />
       {comment && <Comment {...childProps} />}

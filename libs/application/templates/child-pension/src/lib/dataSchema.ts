@@ -32,7 +32,7 @@ export const dataSchema = z.object({
     year: z.string(),
     month: z.string(),
   }),
-  payments: z.object({
+  paymentInfo: z.object({
     bank: z.string().refine(
       (b) => {
         const bankAccount = formatBankInfo(b)
