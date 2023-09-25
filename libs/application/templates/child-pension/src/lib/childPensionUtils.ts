@@ -1,7 +1,43 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import {
+  Application,
+  ApplicantChildCustodyInformation,
+  Option,
+  YesOrNo,
+} from '@island.is/application/types'
+import { ChildPensionRow } from '../types'
+import {
+  ChildPensionReason,
+  NO,
+  YES,
+  AttachmentLabel,
+  MAX_MONTHS_BACKWARD,
+  MAX_MONTHS_FORWARD,
+  MONTHS,
+} from './constants'
+import { childPensionFormMessage } from './messages'
+import { MessageDescriptor } from 'react-intl'
 import addMonths from 'date-fns/addMonths'
-import { MAX_MONTHS_BACKWARD, MAX_MONTHS_FORWARD, MONTHS } from './constants'
+
+interface FileType {
+  key: string
+  name: string
+}
+
+interface ChildPensionAttachments {
+  maintenance?: FileType[]
+  notLivesWithApplicant?: FileType[]
+}
+
+enum AttachmentTypes {
+  MAINTENANCE = 'maintenance',
+  NOT_LIVES_WITH_APPLICANT = 'notLivesWithApplicant',
+}
+
+interface Attachments {
+  attachments: FileType[]
+  label: MessageDescriptor
+}
 
 export function getApplicationAnswers(answers: Application['answers']) {
   const applicantEmail = getValueViaPath(
@@ -14,15 +50,46 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'applicantInfo.phonenumber',
   ) as string
 
+  const registeredChildren = getValueViaPath(
+    answers,
+    'registerChildRepeater',
+    [],
+  ) as ChildPensionRow[]
+
+  const selectedCustodyKids = getValueViaPath(
+    answers,
+    'chooseChildren.custodyKids',
+    [],
+  ) as []
+
+  const selectedChildrenInCustody = getValueViaPath(
+    answers,
+    'chooseChildren.selectedChildrenInCustody',
+    [],
+  ) as ChildPensionRow[]
+
+  const childPensionAddChild = getValueViaPath(
+    answers,
+    'childPensionAddChild',
+    YES,
+  ) as YesOrNo
+
   const selectedYear = getValueViaPath(answers, 'period.year') as string
 
   const selectedMonth = getValueViaPath(answers, 'period.month') as string
 
+  const comment = getValueViaPath(answers, 'comment') as string
+
   return {
     applicantEmail,
     applicantPhonenumber,
+    registeredChildren,
+    selectedCustodyKids,
+    selectedChildrenInCustody,
+    childPensionAddChild,
     selectedMonth,
     selectedYear,
+    comment
   }
 }
 
@@ -39,12 +106,99 @@ export function getApplicationExternalData(
     'nationalRegistry.data.nationalId',
   ) as string
 
+  const custodyInformation = getValueViaPath(
+    externalData,
+    'childrenCustodyInformation.data',
+    [],
+  ) as ApplicantChildCustodyInformation[]
+
   return {
     applicantName,
     applicantNationalId,
+    custodyInformation,
   }
 }
 
+export function getChildPensionReasonOptions() {
+  const options: Option[] = [
+    {
+      value: ChildPensionReason.PARENT_HAS_PENSION_OR_DISABILITY_ALLOWANCE,
+      label:
+        childPensionFormMessage.info
+          .childPensionReasonParentHasPensionOrDisabilityAllowance,
+    },
+    {
+      value: ChildPensionReason.PARENT_IS_DEAD,
+      label: childPensionFormMessage.info.childPensionReasonParentIsDead,
+    },
+    {
+      value: ChildPensionReason.CHILD_IS_FATHERLESS,
+      label: childPensionFormMessage.info.childPensionReasonChildIsFatherless,
+    },
+    {
+      value: ChildPensionReason.PARENTS_PENITENTIARY,
+      label: childPensionFormMessage.info.childPensionReasonParentsPenitentiary,
+    },
+  ]
+  return options
+}
+
+export function getAttachments(application: Application) {
+  const getAttachmentDetails = (
+    attachmentsArr: FileType[] | undefined,
+    attachmentType: AttachmentTypes,
+  ) => {
+    if (attachmentsArr && attachmentsArr.length > 0) {
+      attachments.push({
+        attachments: attachmentsArr,
+        label: AttachmentLabel[attachmentType],
+      })
+    }
+  }
+
+  const { answers, externalData } = application
+  const { registeredChildren, childPensionAddChild } =
+    getApplicationAnswers(answers)
+  const attachments: Attachments[] = []
+
+  const childPensionAttachments = answers.fileUpload as ChildPensionAttachments
+
+  if (registeredChildren.length > 0 && childPensionAddChild !== NO) {
+    getAttachmentDetails(
+      childPensionAttachments?.maintenance,
+      AttachmentTypes.MAINTENANCE,
+    )
+  }
+
+  if (childCustodyLivesWithApplicant(answers, externalData)) {
+    getAttachmentDetails(
+      childPensionAttachments?.notLivesWithApplicant,
+      AttachmentTypes.NOT_LIVES_WITH_APPLICANT,
+    )
+  }
+
+  return attachments
+}
+
+// returns true if selected child DOES NOT live with applicant
+export function childCustodyLivesWithApplicant(
+  answers: Application['answers'],
+  externalData: Application['externalData'],
+) {
+  let returnStatus = false
+  const { selectedCustodyKids } = getApplicationAnswers(answers)
+  const { custodyInformation } = getApplicationExternalData(externalData)
+
+  selectedCustodyKids.map((i) =>
+    custodyInformation.map((j) =>
+      i === j.nationalId && !j.livesWithApplicant
+        ? (returnStatus = true)
+        : (returnStatus = false),
+    ),
+  )
+
+  return returnStatus
+}
 export function getStartDateAndEndDate() {
   // Applicant could apply from the 2 year ago since 1st of next month
   // Until 6 month ahead
