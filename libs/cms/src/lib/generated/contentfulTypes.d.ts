@@ -1489,9 +1489,6 @@ export interface ILatestNewsSliceFields {
 
   /** Read more link */
   readMoreLink?: ILink | undefined
-
-  /** Filter Tags */
-  filterTags?: IGenericTag[] | undefined
 }
 
 /** Slice to show latest news entries */
