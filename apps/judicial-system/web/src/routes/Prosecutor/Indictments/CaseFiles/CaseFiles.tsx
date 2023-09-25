@@ -24,7 +24,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
-  addUploadFiles,
   generateSingleFileUpdate,
   mapCaseFileToUploadFile,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -108,16 +107,16 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleUpload(
-                addUploadFiles(
-                  files,
-                  setDisplayFiles,
-                  CaseFileCategory.COVER_LETTER,
-                ),
+                files,
+                setDisplayFiles,
                 handleUIUpdate,
+                CaseFileCategory.COVER_LETTER,
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.COVER_LETTER)
+            }
           />
         </Box>
         {!isTrafficViolationCaseCheck && (
@@ -134,16 +133,16 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
               buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
               onChange={(files) =>
                 handleUpload(
-                  addUploadFiles(
-                    files,
-                    setDisplayFiles,
-                    CaseFileCategory.INDICTMENT,
-                  ),
+                  files,
+                  setDisplayFiles,
                   handleUIUpdate,
+                  CaseFileCategory.INDICTMENT,
                 )
               }
               onRemove={(file) => handleRemove(file, removeFileCB)}
-              onRetry={(file) => handleRetry(file, handleUIUpdate)}
+              onRetry={(file) =>
+                handleRetry(file, handleUIUpdate, CaseFileCategory.INDICTMENT)
+              }
             />
           </Box>
         )}
@@ -160,16 +159,20 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleUpload(
-                addUploadFiles(
-                  files,
-                  setDisplayFiles,
-                  CaseFileCategory.CRIMINAL_RECORD,
-                ),
+                files,
+                setDisplayFiles,
                 handleUIUpdate,
+                CaseFileCategory.CRIMINAL_RECORD,
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(
+                file,
+                handleUIUpdate,
+                CaseFileCategory.CRIMINAL_RECORD,
+              )
+            }
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -185,16 +188,16 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleUpload(
-                addUploadFiles(
-                  files,
-                  setDisplayFiles,
-                  CaseFileCategory.COST_BREAKDOWN,
-                ),
+                files,
+                setDisplayFiles,
                 handleUIUpdate,
+                CaseFileCategory.COST_BREAKDOWN,
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.COST_BREAKDOWN)
+            }
           />
         </Box>
         <Box component="section" marginBottom={10}>
@@ -212,16 +215,16 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleUpload(
-                addUploadFiles(
-                  files,
-                  setDisplayFiles,
-                  CaseFileCategory.CASE_FILE,
-                ),
+                files,
+                setDisplayFiles,
                 handleUIUpdate,
+                CaseFileCategory.CASE_FILE,
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.CASE_FILE)
+            }
           />
         </Box>
         {isTrafficViolationCaseCheck && (

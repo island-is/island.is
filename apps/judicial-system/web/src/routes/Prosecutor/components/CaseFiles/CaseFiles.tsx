@@ -33,7 +33,6 @@ import {
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  addUploadFiles,
   generateSingleFileUpdate,
   mapCaseFileToUploadFile,
   removeTabsValidateAndSet,
@@ -265,10 +264,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
               header={formatMessage(strings.filesLabel)}
               buttonLabel={formatMessage(strings.filesButtonLabel)}
               onChange={(files) =>
-                handleUpload(
-                  addUploadFiles(files, setDisplayFiles),
-                  handleUIUpdate,
-                )
+                handleUpload(files, setDisplayFiles, handleUIUpdate)
               }
               onRemove={(file) => handleRemove(file, removeFileCB)}
               onRetry={(file) => handleRetry(file, handleUIUpdate)}

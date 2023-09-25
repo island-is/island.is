@@ -32,7 +32,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
-  addUploadFiles,
   generateSingleFileUpdate,
   mapCaseFileToUploadFile,
   stepValidationsType,
@@ -130,16 +129,16 @@ const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
             buttonLabel={formatMessage(m.uploadButtonText)}
             onChange={(files) => {
               handleUpload(
-                addUploadFiles(
-                  files,
-                  setDisplayFiles,
-                  CaseFileCategory.COURT_RECORD,
-                ),
+                files,
+                setDisplayFiles,
                 handleUIUpdate,
+                CaseFileCategory.COURT_RECORD,
               )
             }}
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.COURT_RECORD)
+            }
           />
         </Box>
         <Box component="section" marginBottom={10}>
@@ -156,12 +155,16 @@ const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
             buttonLabel={formatMessage(m.uploadButtonText)}
             onChange={(files) =>
               handleUpload(
-                addUploadFiles(files, setDisplayFiles, CaseFileCategory.RULING),
+                files,
+                setDisplayFiles,
                 handleUIUpdate,
+                CaseFileCategory.RULING,
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.RULING)
+            }
           />
         </Box>
       </FormContentContainer>
