@@ -38,7 +38,7 @@ import { ProjectWrapper } from './components/ProjectWrapper'
 import { Locale } from 'locale'
 import { ProjectFooter } from './components/ProjectFooter'
 import { webRichText } from '@island.is/web/utils/richText'
-import { TOC } from './ProjectTableOfContentes'
+import { TOC } from './ProjectTableOfContents'
 
 interface PageProps {
   projectPage: Query['getProjectPage']

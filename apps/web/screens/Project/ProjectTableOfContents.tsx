@@ -23,7 +23,7 @@ export const TOC: FC<
     return null
   }
   return (
-    <Box marginY={6} marginBottom={10}>
+    <Box marginY={6}>
       <TableOfContents
         tableOfContentsTitle={title}
         headings={navigation.map(({ id, text }) => ({
