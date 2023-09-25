@@ -43,6 +43,12 @@ class Program {
   applicationEndDate!: Date
 
   @Field()
+  schoolAnswerDate?: Date
+
+  @Field()
+  studentAnswerDate?: Date
+
+  @Field()
   degreeType!: string
 
   @Field()
@@ -65,6 +71,9 @@ class Program {
 
   @Field()
   iscedCode!: string
+
+  @Field(() => [String])
+  languages!: string[]
 
   @Field(() => [String])
   searchKeywords!: string[]

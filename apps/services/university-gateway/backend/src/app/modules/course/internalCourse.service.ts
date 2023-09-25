@@ -44,7 +44,7 @@ class InternalCourseService {
     } catch (e) {
       logger.error(
         'Failed to update courses for Reykjavik University, reason:',
-        { e },
+        e,
       )
     }
 
@@ -58,7 +58,7 @@ class InternalCourseService {
     } catch (e) {
       logger.error(
         'Failed to update courses for University of Iceland, reason:',
-        { e },
+        e,
       )
     }
   }
@@ -69,7 +69,9 @@ class InternalCourseService {
   ): Promise<void> {
     const universityId = (
       await this.universityModel.findOne({
+        attributes: ['id'],
         where: { nationalId: universityNationalId },
+        logging: false,
       })
     )?.id
 
@@ -81,17 +83,25 @@ class InternalCourseService {
     // Need to loop through courses first to select by universityId
     // since universityId is not in programCourse table
     const oldCourseList = await this.courseModel.findAll({
+      attributes: ['id'],
       where: { universityId: universityId },
+      logging: false,
     })
     await this.programCourseModel.destroy({
       where: { courseId: { [Op.in]: oldCourseList.map((c) => c.id) } },
+      logging: false,
     })
 
     // DELETE all courses for this university
-    await this.courseModel.destroy({ where: { universityId: universityId } })
+    await this.courseModel.destroy({
+      where: { universityId: universityId },
+      logging: false,
+    })
 
     const programList = await this.programModel.findAll({
+      attributes: ['id', 'externalId'],
       where: { universityId },
+      logging: false,
     })
     for (let i = 0; i < programList.length; i++) {
       const program = programList[i]
@@ -100,6 +110,7 @@ class InternalCourseService {
         // Note: should be unecessary since we have already deleted all by course
         await this.programCourseModel.destroy({
           where: { programId: program.id },
+          logging: false,
         })
 
         const courseList = await getCourses(program.externalId)
@@ -127,7 +138,9 @@ class InternalCourseService {
             // In case this course has already been registered with another program
             // we should to check if we only need update (instead of inserting duplicate)
             const oldCourseObj = await this.courseModel.findOne({
+              attributes: ['id'],
               where: { externalId: courseObj.externalId },
+              logging: false,
             })
 
             // Create/update course, depending on whether course already existed (for other program)
@@ -136,32 +149,34 @@ class InternalCourseService {
               courseId = oldCourseObj.id
               await this.courseModel.update(courseObj, {
                 where: { id: courseId },
+                logging: false,
               })
             } else {
-              courseId = (await this.courseModel.create(courseObj)).id
+              courseId = (
+                await this.courseModel.create(courseObj, { logging: false })
+              ).id
             }
 
             // Create entry in program course
-            await this.programCourseModel.create({
-              programId: program.id,
-              courseId: courseId,
-              requirement: course.requirement,
-            })
+            await this.programCourseModel.create(
+              {
+                programId: program.id,
+                courseId: courseId,
+                requirement: course.requirement,
+              },
+              { logging: false },
+            )
           } catch (e) {
             logger.error(
               `Failed to update course with externalId ${course.externalId} for program with externalId ${program.externalId}, reason:`,
-              {
-                e,
-              },
+              e,
             )
           }
         }
       } catch (e) {
         logger.error(
           `Failed to update courses for program with externalId ${program.externalId}, reason:`,
-          {
-            e,
-          },
+          e,
         )
       }
     }

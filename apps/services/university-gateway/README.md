@@ -21,7 +21,8 @@ yarn nx run services-university-gateway-backend:seed
 yarn start services-university-gateway-backend
 ```
 
-Open url: localhost:3380/api/swagger
+Open url:
+localhost:3380/api/swagger
 
 ### Regenerate the OpenAPI file (backend)
 

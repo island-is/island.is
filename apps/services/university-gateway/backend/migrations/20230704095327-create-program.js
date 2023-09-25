@@ -61,12 +61,21 @@ module.exports = {
               type: Sequelize.DATE,
               allowNull: false,
             },
+            school_answer_date: {
+              type: Sequelize.DATE,
+              allowNull: true,
+            },
+            student_answer_date: {
+              type: Sequelize.DATE,
+              allowNull: true,
+            },
             degree_type: {
               type: Sequelize.ENUM(
                 'DIPLOMA',
                 'UNDERGRADUATE',
                 'POSTGRADUATE',
                 'DOCTORAL',
+                'OTHER',
               ),
               allowNull: false,
             },
@@ -75,7 +84,7 @@ module.exports = {
               allowNull: false,
             },
             credits: {
-              type: Sequelize.INTEGER,
+              type: Sequelize.FLOAT,
               allowNull: false,
             },
             description_is: {
@@ -98,17 +107,22 @@ module.exports = {
               type: Sequelize.STRING,
               allowNull: false,
             },
+            languages: {
+              type: Sequelize.ARRAY(Sequelize.STRING),
+              defaultValue: [],
+              allowNull: false,
+            },
             search_keywords: {
               type: Sequelize.ARRAY(Sequelize.STRING),
               defaultValue: [],
               allowNull: false,
             },
             external_url_is: {
-              type: Sequelize.STRING,
+              type: Sequelize.STRING(500),
               allowNull: true,
             },
             external_url_en: {
-              type: Sequelize.STRING,
+              type: Sequelize.STRING(500),
               allowNull: true,
             },
             admission_requirements_is: {

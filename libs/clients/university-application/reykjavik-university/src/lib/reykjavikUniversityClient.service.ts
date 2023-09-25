@@ -10,6 +10,7 @@ import {
   Season,
   mapStringToEnum,
 } from '@island.is/university-gateway-lib'
+import { logger } from '@island.is/logging'
 
 export
 @Injectable()
@@ -19,23 +20,31 @@ class ReykjavikUniversityApplicationClient {
   async getPrograms(): Promise<IProgram[]> {
     const res = await this.hvinApi.hvinActivePrograms({ version: '1' })
 
-    return (
-      res?.map((program) => {
-        return {
+    const mappedRes = []
+    const programList = res || []
+    for (let i = 0; i < programList.length; i++) {
+      const program = programList[i]
+      try {
+        mappedRes.push({
           externalId: program.externalId || '',
           nameIs: program.nameIs || '',
           nameEn: program.nameEn || '',
           departmentNameIs: program.departmentNameIs || '',
           departmentNameEn: program.departmentNameEn || '',
           startingSemesterYear: program.startingSemesterYear || 0,
-          startingSemesterSeason: program.startingSemesterSeason
-            ? mapStringToEnum(program.startingSemesterSeason, Season)
-            : Season.FALL,
+          startingSemesterSeason: mapStringToEnum(
+            program.startingSemesterSeason,
+            Season,
+          ),
           applicationStartDate: program.applicationStartDate || new Date(),
           applicationEndDate: program.applicationEndDate || new Date(),
-          degreeType: program.degreeType
-            ? mapStringToEnum(program.degreeType, DegreeType)
-            : DegreeType.UNDERGRADUATE,
+          schoolAnswerDate: undefined, //TODO missing in api
+          studentAnswerDate: undefined, //TODO missing in api
+          degreeType: mapStringToEnum(
+            program.degreeType,
+            DegreeType,
+            DegreeType.OTHER,
+          ),
           degreeAbbreviation: program.degreeAbbreviation || '',
           credits: program.credits || 0,
           descriptionIs: program.descriptionIs || '',
@@ -43,6 +52,7 @@ class ReykjavikUniversityApplicationClient {
           durationInYears: program.durationInYears || 0,
           costPerYear: program.costPerYear,
           iscedCode: program.iscedCode || '',
+          languages: [], //TODO missing in api
           searchKeywords: [], //TODO missing in api
           externalUrlIs: program.externalUrlIs,
           externalUrlEn: program.externalUrlEn,
@@ -57,9 +67,14 @@ class ReykjavikUniversityApplicationClient {
               code: tag, //TODO change from enumstring to code (string) in api?
             })) || [],
           modeOfDelivery:
-            program.modeOfDelivery?.map((m) =>
-              mapStringToEnum(m, ModeOfDelivery),
-            ) || [],
+            program.modeOfDelivery?.map((m) => {
+              // TODO why is this value empty
+              if (!m) {
+                return ModeOfDelivery.OTHER
+              } else {
+                return mapStringToEnum(m, ModeOfDelivery)
+              }
+            }) || [],
           extraApplicationField: program.extraApplicationFields?.map(
             (field) => ({
               nameIs: field.nameIs || '',
@@ -71,9 +86,16 @@ class ReykjavikUniversityApplicationClient {
               uploadAcceptedFileType: field.uploadAcceptedFileType,
             }),
           ),
-        }
-      }) || []
-    )
+        })
+      } catch (e) {
+        logger.error(
+          `Failed to map program with externalId ${program.externalId} (Reykjavik University), reason:`,
+          e,
+        )
+      }
+    }
+
+    return mappedRes
   }
 
   async getCourses(externalId: string): Promise<ICourse[]> {
@@ -85,24 +107,42 @@ class ReykjavikUniversityApplicationClient {
       throw new Error('Did not find program for courses by program external id')
     }
 
-    return (
-      program.courses?.map((course) => ({
-        externalId: course.externalId || '',
-        nameIs: course.nameIs || '',
-        nameEn: course.nameEn || '',
-        credits: course.credits || 0,
-        semesterYear: course.semesterYear,
-        semesterSeason: course.semesterSeason
-          ? mapStringToEnum(course.semesterSeason, Season)
-          : Season.FALL,
-        descriptionIs: course.descriptionIs,
-        descriptionEn: course.descriptionEn,
-        externalUrlIs: course.externalUrlIs,
-        externalUrlEn: course.externalUrlEn,
-        requirement: course.required
-          ? Requirement.MANDATORY
-          : Requirement.FREE_ELECTIVE, //TODO missing in api
-      })) || []
-    )
+    const mappedRes = []
+    const courseList = program.courses || []
+    for (let i = 0; i < courseList.length; i++) {
+      const course = courseList[i]
+      try {
+        let semesterSeason: Season | undefined = undefined
+        // TODO what value is this
+        if (course.semesterSeason === 'NOTSET') {
+          semesterSeason = Season.FALL
+        } else {
+          semesterSeason = mapStringToEnum(course.semesterSeason, Season)
+        }
+
+        mappedRes.push({
+          externalId: course.externalId || '',
+          nameIs: course.nameIs || '',
+          nameEn: course.nameEn || '',
+          credits: course.credits || 0,
+          semesterYear: course.semesterYear,
+          semesterSeason: semesterSeason,
+          descriptionIs: course.descriptionIs,
+          descriptionEn: course.descriptionEn,
+          externalUrlIs: course.externalUrlIs,
+          externalUrlEn: course.externalUrlEn,
+          requirement: course.required
+            ? Requirement.MANDATORY
+            : Requirement.FREE_ELECTIVE, //TODO missing in api
+        })
+      } catch (e) {
+        logger.error(
+          `Failed to map course with externalId ${course.externalId} for program with externalId ${externalId} (Reykjavik University), reason:`,
+          e,
+        )
+      }
+    }
+
+    return mappedRes
   }
 }

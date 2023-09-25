@@ -26,7 +26,7 @@ module.exports = {
                 'ON_SITE',
                 'ONLINE',
                 'ONLINE_WITH_SESSION',
-                'MIXED',
+                'OTHER',
               ),
               allowNull: false,
             },

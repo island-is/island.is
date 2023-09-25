@@ -158,6 +158,29 @@ class Program extends Model {
   applicationEndDate!: Date
 
   @ApiProperty({
+    description: 'Last date for school to accept/decline student into program',
+    example: new Date('2023-08-15'),
+  })
+  @ApiPropertyOptional()
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  schoolAnswerDate?: Date
+
+  @ApiProperty({
+    description:
+      'Last date for student to accept enrollment in school (after school accepts student)',
+    example: new Date('2023-09-01'),
+  })
+  @ApiPropertyOptional()
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  studentAnswerDate?: Date
+
+  @ApiProperty({
     description: 'Degree type',
     example: DegreeType.UNDERGRADUATE,
     enum: DegreeType,
@@ -239,6 +262,17 @@ class Program extends Model {
     allowNull: false,
   })
   iscedCode!: string
+
+  @ApiProperty({
+    description:
+      'Languages used in the program. Should be array of two letter language code',
+    example: ['IS', 'EN'],
+  })
+  @Column({
+    type: DataType.ARRAY(DataType.STRING),
+    allowNull: false,
+  })
+  languages!: string[]
 
   @ApiProperty({
     description: 'Search keywords for the program',

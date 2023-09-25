@@ -34,7 +34,7 @@ module.exports = {
               allowNull: false,
             },
             credits: {
-              type: Sequelize.INTEGER,
+              type: Sequelize.FLOAT,
               allowNull: false,
             },
             semester_year: {
@@ -54,11 +54,11 @@ module.exports = {
               allowNull: true,
             },
             external_url_is: {
-              type: Sequelize.STRING,
+              type: Sequelize.STRING(500),
               allowNull: true,
             },
             external_url_en: {
-              type: Sequelize.STRING,
+              type: Sequelize.STRING(500),
               allowNull: true,
             },
             created: {
