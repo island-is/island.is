@@ -219,7 +219,9 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
                   {hyphenate ? <Hyphen>{heading}</Hyphen> : heading}
                 </Text>
               </Box>
-              <Text paddingTop={1}>{text}</Text>
+              <Text paddingTop={1}>
+                <Box className={styles.truncatedText}>{text}</Box>
+              </Text>
             </FocusableBox>
             {/* You can only have tags or a custom component */}
             {hasTags ? (

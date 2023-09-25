@@ -29,3 +29,10 @@ export const icon = style({
 globalStyle(`${icon} svg`, {
   height: '100%',
 })
+
+export const truncatedText = style({
+  display: '-webkit-box',
+  WebkitLineClamp: 5,
+  WebkitBoxOrient: 'vertical',
+  overflow: 'hidden',
+})

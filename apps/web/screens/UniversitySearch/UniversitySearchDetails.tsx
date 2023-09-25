@@ -21,9 +21,13 @@ import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
   ProgramDetails,
+  University,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { GET_UNIVERSITY_GATEWAY_PROGRAM } from '../queries/UniversityGateway'
+import {
+  GET_UNIVERSITY_GATEWAY_PROGRAM,
+  GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
+} from '../queries/UniversityGateway'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { IconTitleCard, Sticky } from '@island.is/web/components'
 import SidebarLayout from '../Layouts/SidebarLayout'
@@ -34,12 +38,14 @@ interface UniversityDetailsProps {
   data: ProgramDetails
   namespace: Record<string, string>
   locale: string
+  universities: Array<University>
 }
 
 const UniversityDetails: Screen<UniversityDetailsProps> = ({
   data,
   namespace,
   locale,
+  universities,
 }) => {
   const n = useNamespace(namespace)
 
@@ -78,11 +84,16 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
               </Button>
             </LinkV2>
             <IconTitleCard
-              heading="asdf"
+              heading={
+                universities.filter((x) => x.id === data.universityId)[0].title
+              }
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore make web strict
               href="/"
-              imgSrc="https://www.ru.is/media/HR_logo_hringur_hires.jpg"
+              imgSrc={
+                universities.filter((x) => x.id === data.universityId)[0]
+                  .logoUrl
+              }
               alt="alt text todo"
             />
             {/* <Sticky>
@@ -143,6 +154,9 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
             </Text>
             {data.externalUrlIs && (
               <LinkV2
+                underlineVisibility="always"
+                color="blue400"
+                as="h5"
                 href={
                   locale === 'en'
                     ? !!data.externalUrlEn
@@ -150,9 +164,14 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                       : data.externalUrlIs
                     : data.externalUrlIs
                 }
-              >{`${n('seeMoreWeb', 'Sjá meira á vef')} ${
-                data.universityId
-              }`}</LinkV2>
+              >
+                <Box display="flex" flexDirection="row">
+                  {`${n('seeMoreWeb', 'Sjá meira á vef skóla')}`}
+                  <Box marginLeft={1}>
+                    <Icon icon="open" type="outline" />
+                  </Box>
+                </Box>
+              </LinkV2>
             )}
           </Box>
           <Box marginTop={7}>
@@ -372,12 +391,17 @@ UniversityDetails.getProps = async ({ query, apolloClient, locale }) => {
     },
   })
 
+  const universities = await apolloClient.query<any>({
+    query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
+  })
+
   const data = newResponse.data.universityGatewayProgramById
 
   return {
     data,
     namespace,
     locale,
+    universities: universities.data.universityGatewayUniversities,
   }
 }
 

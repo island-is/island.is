@@ -170,6 +170,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       'modeOfDelivery',
       'startingSemesterSeason',
       'durationInYears',
+      'universityId',
     ],
   }
 
@@ -203,7 +204,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
         return { item, refIndex: index, score: 1 }
       },
     )
-
+    setFilters(intialFilters)
     setFilteredResults(resultProducts)
   }
 
@@ -403,28 +404,30 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                 (x) => x.id === option,
                               )[0].title
                             }
-                            return (
-                              <Checkbox
-                                label={`${n(keyField, keyField)}${
-                                  filter.field === 'durationInYears'
-                                    ? locale === 'en'
-                                      ? keyField === '1'
-                                        ? ' year'
-                                        : ' years'
-                                      : ' ár'
-                                    : ''
-                                }`}
-                                id={keyField}
-                                value={keyField}
-                                checked={
-                                  filters[str].filter((x) => x === keyField)
-                                    .length > 0
-                                }
-                                onChange={(e) =>
-                                  checkboxEventHandler(e, filter.field)
-                                }
-                              />
-                            )
+                            if (keyField !== 'OTHER') {
+                              return (
+                                <Checkbox
+                                  label={`${n(keyField, keyField)}${
+                                    filter.field === 'durationInYears'
+                                      ? locale === 'en'
+                                        ? keyField === '1'
+                                          ? ' year'
+                                          : ' years'
+                                        : ' ár'
+                                      : ''
+                                  }`}
+                                  id={keyField}
+                                  value={option}
+                                  checked={
+                                    filters[str].filter((x) => x === option)
+                                      .length > 0
+                                  }
+                                  onChange={(e) =>
+                                    checkboxEventHandler(e, filter.field)
+                                  }
+                                />
+                              )
+                            }
                           })}
                         </Stack>
                         <Box
@@ -508,33 +511,37 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                   >
                     {n('showAll', 'Sýna allt')}
                   </Tag>
-                  {filters.degreeType.map((item) => {
-                    return (
-                      <Tag
-                        onClick={() => handleFilters('degreeType', item)}
-                        customClassName={
-                          filters.degreeType.includes(item)
-                            ? styles.tagActive
-                            : styles.tagNotActive
+                  {filterOptions.map((option) => {
+                    if (
+                      option.field === 'degreeType' ||
+                      option.field === 'universityId'
+                    ) {
+                      return option.options.map((item) => {
+                        if (item !== 'OTHER') {
+                          return (
+                            <Tag
+                              onClick={() => handleFilters('degreeType', item)}
+                              customClassName={
+                                filters.degreeType.includes(item)
+                                  ? styles.tagActive
+                                  : styles.tagNotActive
+                              }
+                            >
+                              {n(
+                                option.field === 'universityId'
+                                  ? universities.filter((x) => x.id === item)[0]
+                                      .title
+                                  : item,
+                                option.field === 'universityId'
+                                  ? universities.filter((x) => x.id === item)[0]
+                                      .title
+                                  : item,
+                              )}
+                            </Tag>
+                          )
                         }
-                      >
-                        {n(item, item)}
-                      </Tag>
-                    )
-                  })}
-                  {filters.universityId.map((item) => {
-                    return (
-                      <Tag
-                        onClick={() => handleFilters('universityId', item)}
-                        customClassName={
-                          filters.universityId.includes(item)
-                            ? styles.tagActive
-                            : styles.tagNotActive
-                        }
-                      >
-                        {n(item, item)}
-                      </Tag>
-                    )
+                      })
+                    }
                   })}
                 </Inline>
               </Box>
@@ -634,44 +641,218 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
             {gridView && !isMobileScreenWidth && !isTabletScreenWidth && (
               <Box>
                 {filteredResults &&
-                  filteredResults.map((item, index) => {
-                    const dataItem = item.item
-                    return (
-                      <Box marginBottom={3} key={index}>
-                        <ActionCategoryCard
-                          key={index}
-                          href={
-                            locale === 'en'
-                              ? `/en/haskolanam/${dataItem.id}`
-                              : `/haskolanam/${dataItem.id}`
-                          }
-                          heading={
-                            locale === 'en' ? dataItem.nameEn : dataItem.nameIs
-                          }
-                          text={
-                            locale === 'en'
-                              ? dataItem.descriptionEn
-                              : dataItem.descriptionIs
-                          }
-                          icon={
-                            <img
-                              src={
-                                universities.filter(
-                                  (x) => x.id === dataItem.universityId,
-                                )[0].logoUrl
-                              }
-                              alt={`Logo fyrir ${
+                  filteredResults
+                    .slice(
+                      (selectedPage - 1) * ITEMS_PER_PAGE,
+                      (selectedPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE,
+                    )
+                    .map((item, index) => {
+                      const dataItem = item.item
+                      return (
+                        <Box marginBottom={3} key={index}>
+                          <ActionCategoryCard
+                            key={index}
+                            href={
+                              locale === 'en'
+                                ? `/en/haskolanam/${dataItem.id}`
+                                : `/haskolanam/${dataItem.id}`
+                            }
+                            heading={
+                              locale === 'en'
+                                ? dataItem.nameEn
+                                : dataItem.nameIs
+                            }
+                            text={
+                              locale === 'en'
+                                ? dataItem.descriptionEn
+                                : dataItem.descriptionIs
+                            }
+                            icon={
+                              <img
+                                src={
+                                  universities.filter(
+                                    (x) => x.id === dataItem.universityId,
+                                  )[0].logoUrl
+                                }
+                                alt={`Logo fyrir ${
+                                  locale === 'en'
+                                    ? dataItem.nameEn
+                                    : dataItem.nameIs
+                                }`}
+                              />
+                            }
+                            customBottomContent={
+                              <Checkbox
+                                label={n('compare', 'Setja í samanburð')}
+                                labelVariant="default"
+                                onChange={() =>
+                                  handleComparisonChange({
+                                    id: dataItem.id,
+                                    nameIs:
+                                      locale === 'en'
+                                        ? dataItem.nameEn
+                                        : dataItem.nameIs,
+                                    iconSrc: universities.filter(
+                                      (x) => x.id === dataItem.universityId,
+                                    )[0].logoUrl,
+                                  })
+                                }
+                                checked={
+                                  selectedComparison.filter(
+                                    (x) => x.id === dataItem.id,
+                                  ).length > 0
+                                }
+                                id={dataItem.id}
+                              />
+                            }
+                            sidePanelConfig={{
+                              cta: createPrimaryCTA(),
+                              buttonLabel: n('apply', 'Sækja um'),
+                              items: [
+                                {
+                                  icon: (
+                                    <Icon
+                                      icon={'school'}
+                                      type="outline"
+                                      color="blue400"
+                                    />
+                                  ),
+                                  title: `${n(
+                                    dataItem.degreeType,
+                                    TranslationDefaults[dataItem.degreeType],
+                                  )}`,
+                                },
+                                {
+                                  icon: (
+                                    <Icon
+                                      icon={'calendar'}
+                                      type="outline"
+                                      color="blue400"
+                                    />
+                                  ),
+                                  title: `${n('begins', 'Hefst')} ${n(
+                                    dataItem.startingSemesterSeason,
+                                    TranslationDefaults[
+                                      dataItem.startingSemesterSeason
+                                    ],
+                                  )} ${dataItem.startingSemesterYear}`,
+                                },
+                                // {
+                                //   icon: (
+                                //     <Icon
+                                //       icon={'document'}
+                                //       type="outline"
+                                //       color="blue400"
+                                //     />
+                                //   ),
+                                //   title: `${n('entryExam', 'Inntökupróf')}: TODO`,
+                                // },
+                                {
+                                  icon: (
+                                    <Icon
+                                      icon={'time'}
+                                      type="outline"
+                                      color="blue400"
+                                    />
+                                  ),
+                                  title: `${n(
+                                    'educationLength',
+                                    'Námstími',
+                                  )}: ${dataItem.durationInYears} ${
+                                    locale === 'en'
+                                      ? dataItem.durationInYears === 1
+                                        ? 'year'
+                                        : 'years'
+                                      : 'ár'
+                                  }`,
+                                },
+                                {
+                                  icon: (
+                                    <Icon
+                                      icon={'person'}
+                                      type="outline"
+                                      color="blue400"
+                                    />
+                                  ),
+                                  title: `${dataItem.modeOfDelivery.map(
+                                    (delivery: string, index: number) => {
+                                      if (index !== 0) {
+                                        return `, ${n(
+                                          delivery,
+                                          TranslationDefaults[delivery],
+                                        )}`
+                                      } else {
+                                        return n(
+                                          delivery,
+                                          TranslationDefaults[delivery],
+                                        )
+                                      }
+                                    },
+                                  )}`,
+                                },
+                                {
+                                  icon: (
+                                    <Icon
+                                      icon={'wallet'}
+                                      type="outline"
+                                      color="blue400"
+                                    />
+                                  ),
+                                  title: `${dataItem.costPerYear}kr.`,
+                                },
+                              ],
+                            }}
+                          />
+                        </Box>
+                      )
+                    })}
+              </Box>
+            )}
+            {(!gridView || isMobileScreenWidth || isTabletScreenWidth) && (
+              <GridContainer className={styles.gridContainer}>
+                <GridRow rowGap={3}>
+                  {filteredResults &&
+                    filteredResults
+                      .slice(
+                        (selectedPage - 1) * ITEMS_PER_PAGE,
+                        (selectedPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE,
+                      )
+                      .map((item, index) => {
+                        const dataItem = item.item
+                        return (
+                          <GridColumn
+                            span={
+                              isMobileScreenWidth
+                                ? '1/1'
+                                : isTabletScreenWidth
+                                ? '1/2'
+                                : '1/3'
+                            }
+                            key={index}
+                          >
+                            <ListViewCard
+                              key={index}
+                              iconText="Háskólinn í Reykjavík"
+                              heading={
                                 locale === 'en'
                                   ? dataItem.nameEn
                                   : dataItem.nameIs
-                              }`}
-                            />
-                          }
-                          customBottomContent={
-                            <Checkbox
-                              label={n('compare', 'Setja í samanburð')}
-                              labelVariant="default"
-                              onChange={() =>
+                              }
+                              icon={
+                                <img
+                                  src={
+                                    universities.filter(
+                                      (x) => x.id === dataItem.universityId,
+                                    )[0].logoUrl
+                                  }
+                                  alt={`Logo fyrir ${
+                                    locale === 'en'
+                                      ? dataItem.nameEn
+                                      : dataItem.nameIs
+                                  }`}
+                                />
+                              }
+                              onCheck={(e) =>
                                 handleComparisonChange({
                                   id: dataItem.id,
                                   nameIs:
@@ -688,272 +869,112 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   (x) => x.id === dataItem.id,
                                 ).length > 0
                               }
-                              id={dataItem.id}
+                              buttonLabel={n('apply', 'Sækja um')}
+                              checkboxLabel={n('compare', 'Setja í samanburð')}
+                              checkboxId={dataItem.id}
+                              cta={createPrimaryCTA()}
+                              href={
+                                locale === 'en'
+                                  ? `/en/haskolanam/${dataItem.id}`
+                                  : `/haskolanam/${dataItem.id}`
+                              }
+                              infoItems={[
+                                {
+                                  icon: (
+                                    <Icon
+                                      icon={'school'}
+                                      type="outline"
+                                      color="blue400"
+                                    />
+                                  ),
+                                  title: `${n(
+                                    dataItem.degreeType,
+                                    TranslationDefaults[dataItem.degreeType],
+                                  )}`,
+                                },
+                                {
+                                  icon: (
+                                    <Icon
+                                      icon={'calendar'}
+                                      type="outline"
+                                      color="blue400"
+                                    />
+                                  ),
+                                  title: `${n('begins', 'Hefst')} ${n(
+                                    dataItem.startingSemesterSeason,
+                                    TranslationDefaults[
+                                      dataItem.startingSemesterSeason
+                                    ],
+                                  )} ${dataItem.startingSemesterYear}`,
+                                },
+                                // {
+                                //   icon: (
+                                //     <Icon
+                                //       icon={'document'}
+                                //       type="outline"
+                                //       color="blue400"
+                                //     />
+                                //   ),
+                                //   title: `${n('entryExam', 'Inntökupróf')}: TODO`,
+                                // },
+                                {
+                                  icon: (
+                                    <Icon
+                                      icon={'time'}
+                                      type="outline"
+                                      color="blue400"
+                                    />
+                                  ),
+                                  title: `${n(
+                                    'educationLength',
+                                    'Námstími',
+                                  )}: ${dataItem.durationInYears} ${
+                                    locale === 'en'
+                                      ? dataItem.durationInYears === 1
+                                        ? 'year'
+                                        : 'years'
+                                      : 'ár'
+                                  }`,
+                                },
+                                {
+                                  icon: (
+                                    <Icon
+                                      icon={'person'}
+                                      type="outline"
+                                      color="blue400"
+                                    />
+                                  ),
+                                  title: `${dataItem.modeOfDelivery.map(
+                                    (delivery: string, index: number) => {
+                                      if (index !== 0) {
+                                        return `, ${n(
+                                          delivery,
+                                          TranslationDefaults[delivery],
+                                        )}`
+                                      } else {
+                                        return n(
+                                          delivery,
+                                          TranslationDefaults[delivery],
+                                        )
+                                      }
+                                    },
+                                  )}`,
+                                },
+                                {
+                                  icon: (
+                                    <Icon
+                                      icon={'wallet'}
+                                      type="outline"
+                                      color="blue400"
+                                    />
+                                  ),
+                                  title: `${dataItem.costPerYear}kr.`,
+                                },
+                              ]}
                             />
-                          }
-                          sidePanelConfig={{
-                            cta: createPrimaryCTA(),
-                            buttonLabel: n('apply', 'Sækja um'),
-                            items: [
-                              {
-                                icon: (
-                                  <Icon
-                                    icon={'school'}
-                                    type="outline"
-                                    color="blue400"
-                                  />
-                                ),
-                                title: `${n(
-                                  dataItem.degreeType,
-                                  TranslationDefaults[dataItem.degreeType],
-                                )}`,
-                              },
-                              {
-                                icon: (
-                                  <Icon
-                                    icon={'calendar'}
-                                    type="outline"
-                                    color="blue400"
-                                  />
-                                ),
-                                title: `${n('begins', 'Hefst')} ${n(
-                                  dataItem.startingSemesterSeason,
-                                  TranslationDefaults[
-                                    dataItem.startingSemesterSeason
-                                  ],
-                                )} ${dataItem.startingSemesterYear}`,
-                              },
-                              // {
-                              //   icon: (
-                              //     <Icon
-                              //       icon={'document'}
-                              //       type="outline"
-                              //       color="blue400"
-                              //     />
-                              //   ),
-                              //   title: `${n('entryExam', 'Inntökupróf')}: TODO`,
-                              // },
-                              {
-                                icon: (
-                                  <Icon
-                                    icon={'time'}
-                                    type="outline"
-                                    color="blue400"
-                                  />
-                                ),
-                                title: `${n('educationLength', 'Námstími')}: ${
-                                  dataItem.durationInYears
-                                } ${
-                                  locale === 'en'
-                                    ? dataItem.durationInYears === 1
-                                      ? 'year'
-                                      : 'years'
-                                    : 'ár'
-                                }`,
-                              },
-                              {
-                                icon: (
-                                  <Icon
-                                    icon={'person'}
-                                    type="outline"
-                                    color="blue400"
-                                  />
-                                ),
-                                title: `${dataItem.modeOfDelivery.map(
-                                  (delivery, index) => {
-                                    if (index !== 0) {
-                                      return `, ${n(
-                                        delivery,
-                                        TranslationDefaults[delivery],
-                                      )}`
-                                    } else {
-                                      return n(
-                                        delivery,
-                                        TranslationDefaults[delivery],
-                                      )
-                                    }
-                                  },
-                                )}`,
-                              },
-                              {
-                                icon: (
-                                  <Icon
-                                    icon={'wallet'}
-                                    type="outline"
-                                    color="blue400"
-                                  />
-                                ),
-                                title: `${dataItem.costPerYear}kr.`,
-                              },
-                            ],
-                          }}
-                        />
-                      </Box>
-                    )
-                  })}
-              </Box>
-            )}
-            {(!gridView || isMobileScreenWidth || isTabletScreenWidth) && (
-              <GridContainer className={styles.gridContainer}>
-                <GridRow rowGap={3}>
-                  {filteredResults &&
-                    filteredResults.map((item, index) => {
-                      const dataItem = item.item
-                      return (
-                        <GridColumn
-                          span={
-                            isMobileScreenWidth
-                              ? '1/1'
-                              : isTabletScreenWidth
-                              ? '1/2'
-                              : '1/3'
-                          }
-                          key={index}
-                        >
-                          <ListViewCard
-                            key={index}
-                            iconText="Háskólinn í Reykjavík"
-                            heading={
-                              locale === 'en'
-                                ? dataItem.nameEn
-                                : dataItem.nameIs
-                            }
-                            icon={
-                              <img
-                                src={
-                                  universities.filter(
-                                    (x) => x.id === dataItem.universityId,
-                                  )[0].logoUrl
-                                }
-                                alt={`Logo fyrir ${
-                                  locale === 'en'
-                                    ? dataItem.nameEn
-                                    : dataItem.nameIs
-                                }`}
-                              />
-                            }
-                            onCheck={(e) =>
-                              handleComparisonChange({
-                                id: dataItem.id,
-                                nameIs:
-                                  locale === 'en'
-                                    ? dataItem.nameEn
-                                    : dataItem.nameIs,
-                                iconSrc: universities.filter(
-                                  (x) => x.id === dataItem.universityId,
-                                )[0].logoUrl,
-                              })
-                            }
-                            checked={
-                              selectedComparison.filter(
-                                (x) => x.id === dataItem.id,
-                              ).length > 0
-                            }
-                            buttonLabel={n('apply', 'Sækja um')}
-                            checkboxLabel={n('compare', 'Setja í samanburð')}
-                            checkboxId={dataItem.id}
-                            cta={createPrimaryCTA()}
-                            href={
-                              locale === 'en'
-                                ? `/en/haskolanam/${dataItem.id}`
-                                : `/haskolanam/${dataItem.id}`
-                            }
-                            infoItems={[
-                              {
-                                icon: (
-                                  <Icon
-                                    icon={'school'}
-                                    type="outline"
-                                    color="blue400"
-                                  />
-                                ),
-                                title: `${n(
-                                  dataItem.degreeType,
-                                  TranslationDefaults[dataItem.degreeType],
-                                )}`,
-                              },
-                              {
-                                icon: (
-                                  <Icon
-                                    icon={'calendar'}
-                                    type="outline"
-                                    color="blue400"
-                                  />
-                                ),
-                                title: `${n('begins', 'Hefst')} ${n(
-                                  dataItem.startingSemesterSeason,
-                                  TranslationDefaults[
-                                    dataItem.startingSemesterSeason
-                                  ],
-                                )} ${dataItem.startingSemesterYear}`,
-                              },
-                              // {
-                              //   icon: (
-                              //     <Icon
-                              //       icon={'document'}
-                              //       type="outline"
-                              //       color="blue400"
-                              //     />
-                              //   ),
-                              //   title: `${n('entryExam', 'Inntökupróf')}: TODO`,
-                              // },
-                              {
-                                icon: (
-                                  <Icon
-                                    icon={'time'}
-                                    type="outline"
-                                    color="blue400"
-                                  />
-                                ),
-                                title: `${n('educationLength', 'Námstími')}: ${
-                                  dataItem.durationInYears
-                                } ${
-                                  locale === 'en'
-                                    ? dataItem.durationInYears === 1
-                                      ? 'year'
-                                      : 'years'
-                                    : 'ár'
-                                }`,
-                              },
-                              {
-                                icon: (
-                                  <Icon
-                                    icon={'person'}
-                                    type="outline"
-                                    color="blue400"
-                                  />
-                                ),
-                                title: `${dataItem.modeOfDelivery.map(
-                                  (delivery, index) => {
-                                    if (index !== 0) {
-                                      return `, ${n(
-                                        delivery,
-                                        TranslationDefaults[delivery],
-                                      )}`
-                                    } else {
-                                      return n(
-                                        delivery,
-                                        TranslationDefaults[delivery],
-                                      )
-                                    }
-                                  },
-                                )}`,
-                              },
-                              {
-                                icon: (
-                                  <Icon
-                                    icon={'wallet'}
-                                    type="outline"
-                                    color="blue400"
-                                  />
-                                ),
-                                title: `${dataItem.costPerYear}kr.`,
-                              },
-                            ]}
-                          />
-                        </GridColumn>
-                      )
-                    })}
+                          </GridColumn>
+                        )
+                      })}
                 </GridRow>
               </GridContainer>
             )}

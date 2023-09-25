@@ -150,8 +150,6 @@ class UniversityGatewayApi {
 
     const referenceIdentifierSet = res.data?.map((i: any) => i.contentfulKey)
 
-    console.log('referenceIdentifierSet', referenceIdentifierSet)
-
     // Fetch organizations from cms that have the given reference identifiers so we can use their title and logo
     const organizationsResponse =
       await this.cmsContentfulService.getOrganizations({
