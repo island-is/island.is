@@ -514,6 +514,33 @@ export const childPensionFormMessage: MessageDir = {
       defaultMessage: 'Umsókn móttekin og bíður tekjuáætlunar',
       description: 'Congratulations, below are the next steps',
     },
+    alertTitle: {
+      id: 'cp.application:conclusionScreen.alertTitle',
+      defaultMessage:
+        'Umsókn um barnalífeyri hefur verið send til Tryggingastofnunar',
+      description: 'english translation',
+    },
+    bulletList: {
+      id: `cp.application:conclusionScreen.bulletList#markdown`,
+      defaultMessage: `* Tryggingastofnun fer yfir umsóknina og staðfestir að allar upplýsingar eru réttar.\n* Ef þörf er á er kallað eftir frekari upplýsingum/gögnum.\n* Þegar öll nauðsynleg gögn hafa borist, fer Tryggingastofnun yfir umsókn og er afstaða tekin til barnalífeyris.`,
+      description: 'english translation',
+    },
+    nextStepsLabel: {
+      id: 'cp.application:conclusionScreen.nextStepsLabel',
+      defaultMessage: 'Hvað gerist næst?',
+      description: 'What happens next?',
+    },
+    nextStepsText: {
+      id: 'cp.application:conclusionScreen.nextStepsText',
+      defaultMessage:
+        'Hjá Tryggingastofnun verður farið yfir umsóknina. Ef þörf er á er kallað eftir frekari upplýsingum/gögnum. Þegar öll nauðsynleg gögn hafa borist er afstaða tekin til barnalífeyris.',
+      description: 'english translation',
+    },
+    buttonsViewApplication: {
+      id: 'cp.application:conclusionScreen.buttonsViewApplication',
+      defaultMessage: 'Skoða umsókn',
+      description: 'View application',
+    },
   }),
 
   errors: defineMessages({
