@@ -59,12 +59,12 @@ import { User } from '../user'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
 import { CaseEvent, EventService } from '../event'
+import { EventLog } from '../event-log'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { Case } from './models/case.model'
 import { transitionCase } from './state/case.state'
-import { EventLog } from '../event-log'
 export interface UpdateCase
   extends Pick<
     Case,

@@ -12,8 +12,9 @@ import {
   EventType,
   UserRole,
 } from '@island.is/judicial-system/types'
-import { Case } from '../models/case.model'
+
 import { EventLogService } from '../../event-log'
+import { Case } from '../models/case.model'
 
 @Injectable()
 export class CaseInterceptor implements NestInterceptor {
