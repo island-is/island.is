@@ -154,6 +154,13 @@ export class NotificationService {
     )
   }
 
+  private getCourtAssistantMobileNumbers(courtId?: string) {
+    return (
+      (courtId && this.config.sms.courtsAssistantMobileNumbers[courtId]) ??
+      undefined
+    )
+  }
+
   private getCourtEmail(courtId?: string) {
     return (courtId && this.config.email.courtsEmails[courtId]) ?? undefined
   }
@@ -1447,6 +1454,20 @@ export class NotificationService {
         ),
       )
     }
+
+    const smsText = this.formatMessage(
+      notifications.caseAppealedToCourtOfAppeals.text,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
+      },
+    )
+
+    promises.push(
+      this.sendSms(
+        smsText,
+        this.getCourtAssistantMobileNumbers(theCase.courtId),
+      ),
+    )
 
     const recipients = await Promise.all(promises)
 
