@@ -12,10 +12,18 @@ import { isLocale } from '@island.is/web/i18n/I18n'
 import { defaultLanguage } from '@island.is/shared/constants'
 import { linkResolver } from '@island.is/web/hooks'
 
-const extractTagsFromQuery = (query?: NextApiRequest['query']) => {
-  if (typeof query?.tags === 'string') return [query.tags]
-  if (typeof query?.tags?.length === 'number' && query.tags.length > 0)
+const extractTagsFromQuery = (query: NextApiRequest['query']) => {
+  if (typeof query?.tags === 'string') {
+    return [query.tags]
+  }
+  if (typeof query?.tags?.length === 'number' && query.tags.length > 0) {
     return query.tags
+  }
+  if (query?.organization) {
+    return []
+  }
+
+  // If nothing is defined in query we'll show frontpage news
   return [FRONTPAGE_NEWS_TAG_ID]
 }
 
