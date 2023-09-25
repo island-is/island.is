@@ -38,6 +38,7 @@ import { ProjectWrapper } from './components/ProjectWrapper'
 import { Locale } from 'locale'
 import { ProjectFooter } from './components/ProjectFooter'
 import { webRichText } from '@island.is/web/utils/richText'
+import { TOC } from './ProjectTableOfContents'
 
 interface PageProps {
   projectPage: Query['getProjectPage']
@@ -48,7 +49,6 @@ interface PageProps {
   stepperNamespace: Record<string, string>
   locale: Locale
 }
-
 const ProjectPage: Screen<PageProps> = ({
   projectPage,
   namespace,
@@ -170,6 +170,9 @@ const ProjectPage: Screen<PageProps> = ({
                 readId={null}
                 readClass="rs_read"
               />
+            )}
+            {subpage.showTableOfContents && (
+              <TOC slices={subpage.slices} title={navigationTitle} />
             )}
             {subpage.content &&
               webRichText(subpage.content as SliceType[], {
