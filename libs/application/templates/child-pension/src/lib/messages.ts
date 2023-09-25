@@ -126,6 +126,31 @@ export const childPensionFormMessage: MessageDir = {
     },
   }),
 
+  payment: defineMessages({
+    title: {
+      id: 'cp.application:payment.title',
+      defaultMessage: 'Greiðsluupplýsingar',
+      description: 'Payment information',
+    },
+    alertTitle: {
+      id: 'cp.application:payment.alert.title',
+      defaultMessage: 'Til athugunar!',
+      description: 'For consideration',
+    },
+    alertMessage: {
+      id: 'cp.application:payment.alert.message',
+      defaultMessage:
+        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inná bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inná þann reikning.',
+      description:
+        'All your payments from TR are paid into the bank account below. If you change your bank details, all your payments from the TR will be paid into that account.',
+    },
+    bank: {
+      id: 'cp.application:payment.bank',
+      defaultMessage: 'Banki',
+      description: 'Bank',
+    },
+  }),
+
   period: defineMessages({
     periodTitle: {
       id: 'cp.application:period.title',
@@ -296,6 +321,11 @@ export const childPensionFormMessage: MessageDir = {
       id: 'cp.application:error.period',
       defaultMessage: 'Tímabil þarf að vera gilt.',
       description: 'The period must be valid.',
+    },
+    bank: {
+      id: 'cp.application:error.bank',
+      defaultMessage: 'Ógilt bankanúmer. Þarf að vera á forminu: 0000-11-222222',
+      description: 'Invalid bank account. Has to be formatted: 0000-11-222222',
     },
   }),
 }

@@ -95,3 +95,12 @@ export function isMoreThan2Year(answers: Application['answers']) {
 
   return startDate > selectedDate
 }
+
+export const formatBankInfo = (bankInfo: string) => {
+  const formattedBankInfo = bankInfo.replace(/[^0-9]/g, '')
+  if (formattedBankInfo && formattedBankInfo.length === 12) {
+    return formattedBankInfo
+  }
+
+  return bankInfo
+}
