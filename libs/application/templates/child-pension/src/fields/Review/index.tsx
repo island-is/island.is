@@ -12,8 +12,8 @@ import { childPensionFormMessage } from '../../lib/messages'
 
 import { BaseInformation } from './review-groups/BaseInformation'
 import { Children } from './review-groups/Children'
-import { Attachments } from './review-groups/Attachments'
 import { Period } from './review-groups/Period'
+import { Attachments } from './review-groups/Attachments'
 
 interface ReviewScreenProps {
   application: Application
@@ -150,8 +150,8 @@ export const Review: FC<ReviewScreenProps> = ({
       )}
       <BaseInformation {...childProps} />
       <Children {...childProps} />
-      <Attachments {...childProps} />
       <Period {...childProps} />
+      <Attachments {...childProps} />
     </>
   )
 }
