@@ -1,5 +1,6 @@
 import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
+import { add } from 'lodash'
 
 import { toast, UploadFile } from '@island.is/island-ui/core'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
@@ -109,6 +110,40 @@ export const useS3Upload = (caseId: string) => {
   const [limitedAccessDeleteFile] = useLimitedAccessDeleteFileMutation()
   const [uploadPoliceCaseFile] = useUploadPoliceCaseFileMutation()
 
+  const addFileToCaseState = useCallback(
+    async (file: TUploadFile) => {
+      const mutation = limitedAccess ? limitedAccessCreateFile : createFile
+
+      const { data } = await mutation({
+        variables: {
+          input: {
+            caseId,
+            type: file.type ?? '',
+            key: file.key ?? '',
+            size: file.size ?? 0,
+            category: file.category,
+            policeCaseNumber: file.policeCaseNumber,
+            chapter: file.chapter,
+            orderWithinChapter: file.orderWithinChapter,
+            displayDate: file.displayDate,
+            policeFileId: file.policeFileId,
+          },
+        },
+      })
+
+      const createdFile = limitedAccess
+        ? (data as LimitedAccessCreateFileMutation)?.limitedAccessCreateFile
+        : (data as CreateFileMutation)?.createFile
+
+      if (!createdFile?.id) {
+        throw Error('Failed to add file to case')
+      }
+
+      return createdFile.id
+    },
+    [limitedAccess, limitedAccessCreateFile, createFile, caseId],
+  )
+
   const handleUpload = useCallback(
     async (
       files: TUploadFile[],
@@ -141,33 +176,6 @@ export const useS3Upload = (caseId: string) => {
         return presignedPost
       }
 
-      const addFileToCaseState = async (file: TUploadFile, key: string) => {
-        const mutation = limitedAccess ? limitedAccessCreateFile : createFile
-
-        const { data } = await mutation({
-          variables: {
-            input: {
-              caseId,
-              type: file.type ?? '',
-              key,
-              size: file.size ?? 0,
-              category: file.category,
-              policeCaseNumber: file.policeCaseNumber,
-            },
-          },
-        })
-
-        const createdFile = limitedAccess
-          ? (data as LimitedAccessCreateFileMutation)?.limitedAccessCreateFile
-          : (data as CreateFileMutation)?.createFile
-
-        if (!createdFile?.id) {
-          throw Error('Failed to add file to case')
-        }
-
-        return createdFile.id
-      }
-
       files.forEach(async (file) => {
         try {
           const presignedPost = await getPresignedPost(file)
@@ -176,10 +184,10 @@ export const useS3Upload = (caseId: string) => {
             handleUIUpdate({ ...file, percent })
           })
 
-          const rvgFileId = await addFileToCaseState(
-            file,
-            presignedPost.fields.key,
-          )
+          const newFileId = await addFileToCaseState({
+            ...file,
+            key: presignedPost.fields.key,
+          })
 
           handleUIUpdate(
             {
@@ -189,7 +197,7 @@ export const useS3Upload = (caseId: string) => {
               status: 'done',
             },
             // We need to set the id so we are able to delete the file later
-            rvgFileId,
+            newFileId,
           )
         } catch (e) {
           toast.error(formatMessage(strings.uploadFailed))
@@ -202,8 +210,7 @@ export const useS3Upload = (caseId: string) => {
       limitedAccessCreatePresignedPost,
       createPresignedPost,
       caseId,
-      limitedAccessCreateFile,
-      createFile,
+      addFileToCaseState,
       formatMessage,
     ],
   )
@@ -228,26 +235,11 @@ export const useS3Upload = (caseId: string) => {
           throw Error('Failed to upload police file to S3')
         }
 
-        const { data: createFileData } = await createFile({
-          variables: {
-            input: {
-              caseId,
-              type: 'application/pdf',
-              key: uploadPoliceCaseFileData.uploadPoliceCaseFile.key,
-              size: uploadPoliceCaseFileData.uploadPoliceCaseFile.size,
-              category: file.category,
-              policeCaseNumber: file.policeCaseNumber,
-              chapter: file.chapter,
-              orderWithinChapter: file.orderWithinChapter,
-              displayDate: file.displayDate,
-              policeFileId: file.policeFileId,
-            },
-          },
+        const newFileId = await addFileToCaseState({
+          ...file,
+          key: uploadPoliceCaseFileData.uploadPoliceCaseFile.key,
+          size: uploadPoliceCaseFileData.uploadPoliceCaseFile.size,
         })
-
-        if (!createFileData?.createFile.id) {
-          throw Error('Failed to add police file to case')
-        }
 
         handleUIUpdate(
           {
@@ -258,7 +250,7 @@ export const useS3Upload = (caseId: string) => {
             status: 'done',
           },
           // We need to set the id so we are able to delete the file later
-          createFileData.createFile.id,
+          newFileId,
         )
 
         return uploadPoliceCaseFileData?.uploadPoliceCaseFile
@@ -266,7 +258,7 @@ export const useS3Upload = (caseId: string) => {
         toast.error(formatMessage(strings.uploadFailed))
       }
     },
-    [createFile, caseId, formatMessage, uploadPoliceCaseFile],
+    [uploadPoliceCaseFile, caseId, addFileToCaseState, formatMessage],
   )
 
   const handleRetry = useCallback(
