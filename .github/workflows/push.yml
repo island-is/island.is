@@ -709,6 +709,9 @@ jobs:
       IMAGES: ${{ needs.prepare.outputs.IMAGES }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
       - name: Trigger Spinnaker Deployment for service
         env:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
