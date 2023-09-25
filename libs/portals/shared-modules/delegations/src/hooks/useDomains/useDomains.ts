@@ -1,18 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AuthDomainDirection } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
-import {
-  ADMIN_ISLAND_DOMAIN,
-  ALL_DOMAINS,
-  ISLAND_DOMAIN,
-} from '../../constants/domain'
-import { usePortalMeta, useQueryParam } from '@island.is/portals/core'
+import { ALL_DOMAINS } from '../../constants/domain'
+import { useQueryParam } from '@island.is/portals/core'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { isDefined, storageFactory } from '@island.is/shared/utils'
+import { isDefined } from '@island.is/shared/utils'
 import { useAuthDomainsQuery } from './useDomains.generated'
 import { m } from '../../lib/messages'
-
-const sessionStore = storageFactory(() => sessionStorage)
 
 export type DomainOption = {
   label: string
