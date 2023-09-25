@@ -1,2 +1,7 @@
 export { Review } from './Review'
+export { default as RegisterChild } from './RegisterChild/RegisterChild'
+export { default as RegisterChildRepeater } from './RegisterChild/RegisterChildRepeater'
+export { RegisterChildTable } from './RegisterChild/RegisterChildTable'
+export { default as ChildPensionReason } from './ChildPensionReason/ChildPensionReason'
+export { default as ChooseChildren } from './ChooseChildren/ChooseChildren'
 export { Period } from './Period'

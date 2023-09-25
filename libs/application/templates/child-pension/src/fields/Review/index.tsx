@@ -11,7 +11,9 @@ import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { childPensionFormMessage } from '../../lib/messages'
 
 import { BaseInformation } from './review-groups/BaseInformation'
+import { Children } from './review-groups/Children'
 import { Period } from './review-groups/Period'
+import { Attachments } from './review-groups/Attachments'
 
 interface ReviewScreenProps {
   application: Application
@@ -147,7 +149,9 @@ export const Review: FC<ReviewScreenProps> = ({
         </Box>
       )}
       <BaseInformation {...childProps} />
+      <Children {...childProps} />
       <Period {...childProps} />
+      <Attachments {...childProps} />
     </>
   )
 }

@@ -1,3 +1,5 @@
+import { assign } from 'xstate'
+import unset from 'lodash/unset'
 import {
   ApplicationTemplate,
   ApplicationContext,
@@ -9,6 +11,7 @@ import {
   DefaultEvents,
   NationalRegistryUserApi,
   UserProfileApi,
+  ChildrenCustodyInformationApi,
 } from '@island.is/application/types'
 
 import {
@@ -16,9 +19,14 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 
-import { Events, Roles, States } from './constants'
+import { Events, Roles, States, NO, ChildPensionReason } from './constants'
 import { dataSchema } from './dataSchema'
 import { childPensionFormMessage } from './messages'
+import { answerValidators } from './answerValidators'
+import {
+  childCustodyLivesWithApplicant,
+  getApplicationAnswers,
+} from './childPensionUtils'
 import { NationalRegistryResidenceHistoryApi } from '../dataProviders'
 
 const ChildPensionTemplate: ApplicationTemplate<
@@ -67,6 +75,7 @@ const ChildPensionTemplate: ApplicationTemplate<
               api: [
                 NationalRegistryUserApi,
                 UserProfileApi,
+                ChildrenCustodyInformationApi,
                 NationalRegistryResidenceHistoryApi,
               ],
               delete: true,
@@ -78,6 +87,13 @@ const ChildPensionTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        exit: [
+          'clearChildPensionAddChild',
+          'clearParentIsDead',
+          'clearParentsPenitentiary',
+          'clearChildPensionNotLivesWithApplicant',
+          'clearSelectedChildren',
+        ],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -114,6 +130,111 @@ const ChildPensionTemplate: ApplicationTemplate<
       },
     },
   },
+  stateMachineOptions: {
+    actions: {
+      clearChildPensionAddChild: assign((context) => {
+        const { application } = context
+        const { childPensionAddChild } = getApplicationAnswers(
+          application.answers,
+        )
+
+        if (childPensionAddChild === NO) {
+          unset(application.answers, 'registerChildRepeater')
+          unset(application.answers, 'fileUpload.maintenance')
+        }
+
+        return context
+      }),
+      clearParentIsDead: assign((context) => {
+        const { application } = context
+        const { registeredChildren, selectedChildrenInCustody } =
+          getApplicationAnswers(application.answers)
+
+        for (const [index, child] of selectedChildrenInCustody.entries()) {
+          if (
+            child.parentIsDead &&
+            !child.reason?.includes(ChildPensionReason.PARENT_IS_DEAD)
+          ) {
+            unset(
+              application.answers,
+              `chooseChildren.selectedChildrenInCustody[${index}].parentIsDead`,
+            )
+          }
+        }
+
+        for (const [index, child] of registeredChildren.entries()) {
+          if (
+            child.parentIsDead &&
+            !child.reason?.includes(ChildPensionReason.PARENT_IS_DEAD)
+          ) {
+            unset(
+              application.answers,
+              `registerChildRepeater[${index}].parentIsDead`,
+            )
+          }
+        }
+
+        return context
+      }),
+      clearParentsPenitentiary: assign((context) => {
+        const { application } = context
+        const { registeredChildren, selectedChildrenInCustody } =
+          getApplicationAnswers(application.answers)
+
+        for (const [index, child] of selectedChildrenInCustody.entries()) {
+          if (
+            child.parentsPenitentiary &&
+            !child.reason?.includes(ChildPensionReason.PARENTS_PENITENTIARY)
+          ) {
+            unset(
+              application.answers,
+              `chooseChildren.selectedChildrenInCustody[${index}].parentsPenitentiary`,
+            )
+          }
+        }
+
+        for (const [index, child] of registeredChildren.entries()) {
+          if (
+            child.parentsPenitentiary &&
+            !child.reason?.includes(ChildPensionReason.PARENTS_PENITENTIARY)
+          ) {
+            unset(
+              application.answers,
+              `registerChildRepeater[${index}].parentsPenitentiary`,
+            )
+          }
+        }
+
+        return context
+      }),
+      clearChildPensionNotLivesWithApplicant: assign((context) => {
+        const { application } = context
+
+        const doesNotLiveWithApplicant = childCustodyLivesWithApplicant(
+          application.answers,
+          application.externalData,
+        )
+
+        if (!doesNotLiveWithApplicant)
+          unset(application.answers, 'fileUpload.notLivesWithApplicant')
+
+        return context
+      }),
+      clearSelectedChildren: assign((context) => {
+        const { application } = context
+
+        const { selectedCustodyKids } = getApplicationAnswers(
+          application.answers,
+        )
+
+        if (selectedCustodyKids.length === 0) {
+          unset(application.answers, 'chooseChildren')
+        }
+
+        return context
+      }),
+    },
+  },
   mapUserToRole(
     id: string,
     application: Application,
@@ -123,6 +244,7 @@ const ChildPensionTemplate: ApplicationTemplate<
     }
     return undefined
   },
+  answerValidators,
 }
 
 export default ChildPensionTemplate
