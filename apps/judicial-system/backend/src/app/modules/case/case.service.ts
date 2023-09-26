@@ -73,7 +73,6 @@ export interface UpdateCase
     | 'defenderNationalId'
     | 'defenderEmail'
     | 'defenderPhoneNumber'
-    | 'sendRequestToDefender'
     | 'isHeightenedSecurityLevel'
     | 'courtId'
     | 'leadInvestigator'
@@ -141,6 +140,7 @@ export interface UpdateCase
     | 'appealJudge3Id'
     | 'appealConclusion'
     | 'appealRulingDecision'
+    | 'requestSharedWithDefender'
   > {
   type?: CaseType
   state?: CaseState
@@ -301,6 +301,23 @@ export class CaseService {
       .catch((reason) => {
         this.logger.error(
           `Failed to upload signed ruling pdf to AWS S3 for case ${theCase.id}`,
+          { reason },
+        )
+
+        return false
+      })
+  }
+
+  private async uploadSignedCourtRecordPdfToS3(
+    theCase: Case,
+    pdf: string,
+  ): Promise<boolean> {
+    return this.awsS3Service
+      .putObject(`generated/${theCase.id}/courtRecord.pdf`, pdf)
+      .then(() => true)
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to upload signed court record pdf to AWS S3 for case ${theCase.id}`,
           { reason },
         )
 
@@ -609,6 +626,11 @@ export class CaseService {
         user,
         caseId: theCase.id,
       },
+      {
+        type: MessageType.DELIVER_CASE_CONCLUSION_TO_COURT,
+        user,
+        caseId: theCase.id,
+      },
       { type: MessageType.SEND_RULING_NOTIFICATION, user, caseId: theCase.id },
     ]
 
@@ -636,7 +658,7 @@ export class CaseService {
     })
 
     // Case created from LOKE
-    if (theCase.origin === CaseOrigin.LOKE && !theCase.parentCaseId) {
+    if (theCase.origin === CaseOrigin.LOKE) {
       messages.push({
         type: MessageType.DELIVER_CASE_TO_POLICE,
         user,
@@ -674,7 +696,7 @@ export class CaseService {
       },
     ]
 
-    if (theCase.origin === CaseOrigin.LOKE && !theCase.parentCaseId) {
+    if (theCase.origin === CaseOrigin.LOKE) {
       messages.push({
         type: MessageType.DELIVER_CASE_TO_POLICE,
         user,
@@ -906,26 +928,6 @@ export class CaseService {
     }
 
     return theCase
-  }
-
-  async findOriginalAncestor(theCase: Case): Promise<Case> {
-    let originalAncestor: Case = theCase
-
-    while (originalAncestor.parentCaseId) {
-      const parentCase = await this.caseModel.findByPk(
-        originalAncestor.parentCaseId,
-      )
-
-      if (!parentCase) {
-        throw new InternalServerErrorException(
-          `Original ancestor of case ${theCase.id} not found`,
-        )
-      }
-
-      originalAncestor = parentCase
-    }
-
-    return originalAncestor
   }
 
   getAll(user: TUser): Promise<Case[]> {
@@ -1162,16 +1164,26 @@ export class CaseService {
         'courtRecord.pdf',
         documentToken,
       )
+      const awsSuccess = await this.uploadSignedCourtRecordPdfToS3(
+        theCase,
+        courtRecordPdf,
+      )
 
-      this.awsS3Service
-        .putObject(`generated/${theCase.id}/courtRecord.pdf`, courtRecordPdf)
-        .catch((reason) => {
-          // Tolerate failure, but log error
-          this.logger.error(
-            `Failed to upload signed court record pdf to AWS S3 for case ${theCase.id}`,
-            { reason },
-          )
-        })
+      if (!awsSuccess) {
+        return { documentSigned: false, message: 'Failed to upload to S3' }
+      }
+
+      await this.update(
+        theCase,
+        {
+          courtRecordSignatoryId: user.id,
+          courtRecordSignatureDate: nowFactory(),
+        },
+        user,
+        false,
+      )
+
+      return { documentSigned: true }
     } catch (error) {
       this.eventService.postErrorEvent(
         'Failed to get a court record signature confirmation',
@@ -1195,18 +1207,6 @@ export class CaseService {
 
       throw error
     }
-
-    await this.update(
-      theCase,
-      {
-        courtRecordSignatoryId: user.id,
-        courtRecordSignatureDate: nowFactory(),
-      },
-      user,
-      false,
-    )
-
-    return { documentSigned: true }
   }
 
   async requestRulingSignature(theCase: Case): Promise<SigningServiceResponse> {

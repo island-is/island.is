@@ -3,13 +3,22 @@ import { LiveChatIncChatPanelProps } from '../types'
 
 const SCRIPT_SRC = 'https://cdn.livechatinc.com/tracking.js'
 
-const activateWidget = (license: number, version: string) => {
+const activateWidget = (license: number, version: string, group?: number) => {
   /* eslint-disable */
   const w: any = window
   w.__lc = w.__lc || {}
   w.__lc.license = license
+
+  if (typeof group === 'number') {
+    w.__lc.group = group
+  }
+
   const widget = (function (n: any, t, c) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     function i(n) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       return e._h ? e._h.apply(null, n) : e._q.push(n)
     }
     var e = {
@@ -51,10 +60,11 @@ const activateWidget = (license: number, version: string) => {
 export const LiveChatIncChatPanel = ({
   license,
   version,
+  group,
 }: LiveChatIncChatPanelProps) => {
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const widget: any = activateWidget(license, version)
+    const widget: any = activateWidget(license, version, group)
     return () => widget?.call('destroy')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

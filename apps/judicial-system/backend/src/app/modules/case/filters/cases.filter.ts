@@ -16,6 +16,7 @@ import {
   isPrisonSystemUser,
   isDefenceUser,
   completedCaseStates,
+  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
@@ -143,7 +144,7 @@ function getAppealsCourtUserCasesQueryFilter(): WhereOptions {
   }
 }
 
-function getStaffUserCasesQueryFilter(user: User): WhereOptions {
+function getPrisonSystemStaffUserCasesQueryFilter(user: User): WhereOptions {
   const options: WhereOptions = [
     { isArchived: false },
     { state: CaseState.ACCEPTED },
@@ -179,6 +180,15 @@ function getDefenceUserCasesQueryFilter(user: User): WhereOptions {
             { type: [...restrictionCases, ...investigationCases] },
             {
               [Op.or]: [
+                {
+                  [Op.and]: [
+                    { state: [CaseState.SUBMITTED, CaseState.RECEIVED] },
+                    {
+                      request_shared_with_defender:
+                        RequestSharedWithDefender.READY_FOR_COURT,
+                    },
+                  ],
+                },
                 {
                   [Op.and]: [
                     { state: CaseState.RECEIVED },
@@ -224,7 +234,7 @@ export function getCasesQueryFilter(user: User): WhereOptions {
   }
 
   if (isPrisonSystemUser(user)) {
-    return getStaffUserCasesQueryFilter(user)
+    return getPrisonSystemStaffUserCasesQueryFilter(user)
   }
 
   if (isDefenceUser(user)) {

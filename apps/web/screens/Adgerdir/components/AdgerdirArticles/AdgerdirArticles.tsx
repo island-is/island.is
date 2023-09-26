@@ -83,6 +83,8 @@ export const AdgerdirArticles: FC<
 
   useEffect(() => {
     setUsableFilters(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       items.reduce((all, cur) => {
         const ids = cur.tags.map((x) => x.id)
 
@@ -94,7 +96,8 @@ export const AdgerdirArticles: FC<
       }, []),
     )
   }, [])
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const handleChange = (e) => {
     e.preventDefault()
     setFilterString(e.target.value)
@@ -138,17 +141,23 @@ export const AdgerdirArticles: FC<
   }, [onFilterStringChange, onFilterTagChange])
 
   const onUpdateFilters = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     clearTimeout(timerRef.current)
     setIsLoading(true)
 
     if (!filterString) {
       doUpdate()
     } else {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       timerRef.current = setTimeout(doUpdate, FILTER_TIMER)
     }
   }, [filterString, doUpdate])
 
   const onTagClick = (id: string) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     clearTimeout(timerRef.current)
 
     const arr = [...tagIds]
@@ -166,6 +175,8 @@ export const AdgerdirArticles: FC<
   useEffect(() => {
     onUpdateFilters()
     return () => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       clearTimeout(timerRef.current)
     }
   }, [onUpdateFilters])
@@ -178,6 +189,8 @@ export const AdgerdirArticles: FC<
 
   const batches = [...filteredItems].splice(
     0,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     showAll ? filteredItems.length : showCount,
   )
 
@@ -219,7 +232,11 @@ export const AdgerdirArticles: FC<
                     active={tagIds.includes(id)}
                     bordered
                   >
-                    {dividerRenames[title] ?? title}
+                    {
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore make web strict
+                      dividerRenames[title] ?? title
+                    }
                   </Tag>
                 )
               })}

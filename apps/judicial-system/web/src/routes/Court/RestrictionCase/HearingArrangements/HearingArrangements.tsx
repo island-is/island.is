@@ -1,35 +1,35 @@
-import React, { useContext, useState, useCallback } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, Text, AlertMessage } from '@island.is/island-ui/core'
-import {
-  FormFooter,
-  PageLayout,
-  CourtCaseInfo,
-  FormContentContainer,
-  Modal,
-  useCourtArrangements,
-  CourtArrangements,
-  DefenderInfo,
-  FormContext,
-} from '@island.is/judicial-system-web/src/components'
-import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
 import { NotificationType } from '@island.is/judicial-system/types'
-import {
-  useCase,
-  useOnceOn,
-} from '@island.is/judicial-system-web/src/utils/hooks'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
+import {
+  CourtArrangements,
+  CourtCaseInfo,
+  DefenderInfo,
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  Modal,
+  PageLayout,
+  useCourtArrangements,
+} from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import {
   CaseCustodyRestrictions,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  useCase,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { rcHearingArrangements as m } from './HearingArrangements.strings'
 
