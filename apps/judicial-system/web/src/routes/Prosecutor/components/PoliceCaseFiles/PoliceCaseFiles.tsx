@@ -18,7 +18,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import PoliceCaseFilesMessageBox from '../PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
-import { policeCaseFiles as m } from './PoliceCaseFiles.strings'
+import { strings } from './PoliceCaseFiles.strings'
 import * as styles from './PoliceCaseFiles.css'
 
 export interface PoliceCaseFilesData {
@@ -156,7 +156,7 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
               >
                 <Checkbox
                   name="selectAllPoliceCaseFiles"
-                  label={formatMessage(m.selectAllLabel)}
+                  label={formatMessage(strings.selectAllLabel)}
                   checked={checkAllChecked}
                   onChange={(evt) => toggleCheckbox(evt, true)}
                   disabled={isUploading || policeCaseFileList.length === 0}
@@ -176,13 +176,15 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
                 <PoliceCaseFilesMessageBox
                   icon="close"
                   iconColor="red400"
-                  message={formatMessage(m.couldNotGetFromLOKEMessage)}
+                  message={formatMessage(strings.couldNotGetFromLOKEMessage)}
                 />
               ) : policeCaseFiles?.files.length === 0 ? (
                 <PoliceCaseFilesMessageBox
                   icon="warning"
                   iconColor="yellow400"
-                  message={formatMessage(m.noFilesFoundInLOKEMessage)}
+                  message={formatMessage(strings.noFilesFoundInLOKEMessage, {
+                    isIndictmentCase: isIndictmentCase(workingCase.type),
+                  })}
                 />
               ) : policeCaseFileList.length > 0 ? (
                 <CheckboxList
@@ -194,7 +196,7 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
                 <PoliceCaseFilesMessageBox
                   icon="checkmark"
                   iconColor="blue400"
-                  message={formatMessage(m.allFilesUploadedMessage)}
+                  message={formatMessage(strings.allFilesUploadedMessage)}
                 />
               )}
             </motion.ul>
@@ -208,7 +210,7 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
               loading={isUploading}
               disabled={policeCaseFileList.every((p) => !p.checked)}
             >
-              {formatMessage(m.uploadButtonLabel)}
+              {formatMessage(strings.uploadButtonLabel)}
             </Button>
           </motion.div>
         </LayoutGroup>
@@ -216,10 +218,10 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
       {workingCase.origin !== CaseOrigin.LOKE && (
         <AlertMessage
           type="info"
-          title={formatMessage(m.originNotLokeTitle, {
+          title={formatMessage(strings.originNotLokeTitle, {
             isIndictmentCase: isIndictmentCase(workingCase.type),
           })}
-          message={formatMessage(m.originNotLokeMessage, {
+          message={formatMessage(strings.originNotLokeMessage, {
             isIndictmentCase: isIndictmentCase(workingCase.type),
           })}
         ></AlertMessage>

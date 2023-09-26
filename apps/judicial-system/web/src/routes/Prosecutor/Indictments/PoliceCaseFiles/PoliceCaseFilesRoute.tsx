@@ -48,7 +48,7 @@ import {
   PoliceCaseFilesData,
 } from '../../components'
 import { useGetIndictmentPoliceCaseFilesQuery } from './getIndictmentPoliceCaseFiles.generated'
-import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
+import { strings } from './PoliceCaseFilesRoute.strings'
 
 const UploadFilesToPoliceCase: React.FC<
   React.PropsWithChildren<{
@@ -115,16 +115,16 @@ const UploadFilesToPoliceCase: React.FC<
       })
     } else if (policeDataLoading) {
       setPoliceCaseFiles({
-        files:
-          policeData && policeData.policeCaseFiles
-            ? policeData.policeCaseFiles
-            : [],
+        files: [],
         isLoading: true,
         hasError: false,
       })
     } else {
       setPoliceCaseFiles({
-        files: policeData?.policeCaseFiles ?? [],
+        files:
+          policeData?.policeCaseFiles?.filter(
+            (file) => file.policeCaseNumber === policeCaseNumber,
+          ) ?? [],
         isLoading: false,
         hasError: false,
       })
@@ -136,15 +136,15 @@ const UploadFilesToPoliceCase: React.FC<
     setPoliceCaseFiles,
     caseOrigin,
     caseFiles,
+    policeCaseNumber,
   ])
 
   useEffect(() => {
     setPoliceCaseFileList(
       policeCaseFiles?.files
         .filter(
-          (f) =>
-            !caseFiles.some((caseFile) => caseFile.policeFileId === f.id) &&
-            f.policeCaseNumber === policeCaseNumber,
+          (file) =>
+            !caseFiles.some((caseFile) => caseFile.policeFileId === file.id),
         )
         .map(mapPoliceCaseFileToPoliceCaseFileCheck) || [],
     )
@@ -253,9 +253,9 @@ const UploadFilesToPoliceCase: React.FC<
         name="fileUpload"
         fileList={uploadFiles}
         accept="application/pdf"
-        header={formatMessage(m.inputFileUpload.header)}
-        description={formatMessage(m.inputFileUpload.description)}
-        buttonLabel={formatMessage(m.inputFileUpload.buttonLabel)}
+        header={formatMessage(strings.inputFileUpload.header)}
+        description={formatMessage(strings.inputFileUpload.description)}
+        buttonLabel={formatMessage(strings.inputFileUpload.buttonLabel)}
         onChange={(files) =>
           handleUpload(
             addUploadFiles(files, CaseFileCategory.CASE_FILE, policeCaseNumber),
@@ -306,7 +306,7 @@ const PoliceUploadListMemo: React.FC<
         {policeCaseNumbers.map((policeCaseNumber, index) => (
           <Box key={index} marginBottom={6}>
             <SectionHeading
-              title={formatMessage(m.policeCaseNumberSectionHeading, {
+              title={formatMessage(strings.policeCaseNumberSectionHeading, {
                 policeCaseNumber,
               })}
               marginBottom={2}
@@ -390,10 +390,10 @@ const PoliceCaseFilesRoute = () => {
         title={formatMessage(titles.prosecutor.indictments.policeCaseFiles)}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(m.heading)}</PageTitle>
+        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} />
         <Box marginBottom={5}>
-          <InfoBox text={formatMessage(m.infoBox)} />
+          <InfoBox text={formatMessage(strings.infoBox)} />
         </Box>
         <PoliceUploadListMemo
           caseId={workingCase.id}
