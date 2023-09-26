@@ -32,6 +32,7 @@ import { HealthCenterResponse } from './models/healthCenterResponse.model'
 import { GetDentistsInput } from './dto/getDentists.input'
 import { RegisterDentistResponse } from './models/registerDentistResponse'
 import { RegisterDentistInput } from './dto/RegisterDentist.input'
+import { DrugsPaymentPeroids } from './models/drugsPaymentPeroids.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -194,7 +195,7 @@ export class RightsPortalResolver {
   }
 
   @Scopes(ApiScope.health)
-  @Query(() => HealthCenterHistory, {
+  @Query(() => DrugsPaymentPeroids, {
     name: 'rightsPortalDrugsPaymentPeroids',
   })
   @Audit()

@@ -1,5 +1,13 @@
 query getDrugsData {
   rightsPortalDrugsPaymentPeroids {
-    
+    id
+    dateFrom
+    dateTo
+    active
+    paidAmount
+    paymentStatus
+    numberOfBills
+    levelNumber
+    levelPercentage
   }
 }

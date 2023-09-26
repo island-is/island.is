@@ -52,7 +52,7 @@ export class RightsPortalService {
   getTherapies = (user: User) =>
     this.therapyApi
       .withMiddleware(new AuthMiddleware(user as Auth))
-      .therapies()
+      .getTherapies()
       .catch(handle404)
 
   async getAidsAndNutrition(
@@ -61,7 +61,7 @@ export class RightsPortalService {
     try {
       const res = await this.aidsAndNutritionApi
         .withMiddleware(new AuthMiddleware(user as Auth))
-        .aidsandnutrition()
+        .getAidsAndNutrition()
 
       if (!res) {
         return null
@@ -92,7 +92,7 @@ export class RightsPortalService {
     try {
       const res = await this.dentistApi
         .withMiddleware(new AuthMiddleware(user as Auth))
-        .dentistsCurrent()
+        .getCurrentDentist()
 
       if (!res || !res.id) return null
 
@@ -130,9 +130,9 @@ export class RightsPortalService {
     const api = this.dentistApi.withMiddleware(new AuthMiddleware(user as Auth))
     try {
       const res = await Promise.all([
-        api.dentistsCurrent(),
+        api.getCurrentDentist(),
         api.dentiststatus(),
-        api.dentistsBills({
+        api.getDentistBills({
           dateFrom: dateFrom
             ? dateFrom.toDateString()
             : subYears(new Date(), 5).toDateString(),
@@ -168,7 +168,7 @@ export class RightsPortalService {
     try {
       const res = await this.dentistApi
         .withMiddleware(new AuthMiddleware(user as Auth))
-        .dentists({
+        .getDentists({
           ...input,
         })
 
@@ -185,9 +185,9 @@ export class RightsPortalService {
             ...d,
             id: d.id,
             address: {
-              postalCode: d.postalCode,
-              municipality: d.region,
-              streetAddress: d.address,
+              postalCode: '', //d.postalCode,
+              municipality: '', //d.region,
+              streetAddress: '', //d.address,
             },
           }
         })
@@ -215,7 +215,7 @@ export class RightsPortalService {
     try {
       await this.dentistApi
         .withMiddleware(new AuthMiddleware(user as Auth))
-        .dentistsRegister({
+        .registerDentist({
           id,
         })
 
@@ -237,7 +237,7 @@ export class RightsPortalService {
     try {
       const res = await this.healthCenterApi
         .withMiddleware(new AuthMiddleware(user as Auth))
-        .healthcenters({})
+        .getHealthCenters({})
 
       if (!res || !res.healthCenters || !res.totalCount || !res.pageInfo) {
         return null
@@ -286,8 +286,8 @@ export class RightsPortalService {
 
     try {
       const res = await Promise.all([
-        api.healthcentersCurrent(),
-        api.healthcentersHistory({
+        api.getCurrentHealthCenter(),
+        api.getHealthCenterHistory({
           dateFrom: dateFrom
             ? dateFrom.toDateString()
             : subYears(new Date(), 5).toDateString(),
@@ -326,7 +326,7 @@ export class RightsPortalService {
     try {
       await this.healthCenterApi
         .withMiddleware(new AuthMiddleware(user as Auth))
-        .healthcentersRegister({
+        .registerHealthCenter({
           id,
         })
       return {
@@ -345,7 +345,7 @@ export class RightsPortalService {
 
   async getDrugPaymentPeroids() {
     try {
-      return await this.drugsApi.drugsPaymentPeriods()
+      return await this.drugsApi.getDrugPaymentPeriods()
     } catch (e) {
       return handle404(e)
     }
