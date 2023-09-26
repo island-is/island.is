@@ -15,6 +15,7 @@ import {
   PoliceCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { policeCaseNumber } from '../PoliceCaseNumbers/PoliceCaseNumbers.strings'
 import { policeCaseFiles as m } from './PoliceCaseFiles.strings'
 
 export interface PoliceCaseFilesData {
@@ -42,17 +43,16 @@ export const mapPoliceCaseFileToPoliceCaseFileCheck = (
 interface Props {
   onUpload: (a: Item[]) => Promise<void>
   isUploading: boolean
-  policeCaseFileList: PoliceCaseFileCheck[]
-  setPoliceCaseFileList: React.Dispatch<
-    React.SetStateAction<PoliceCaseFileCheck[]>
-  >
+  policeCaseFileList?: PoliceCaseFileCheck[]
   policeCaseFiles?: PoliceCaseFilesData
+  policeCaseNumber: string
 }
 
 const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
   onUpload,
   policeCaseFileList,
   policeCaseFiles,
+  policeCaseNumber,
 }) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
@@ -61,14 +61,10 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
     <Box marginBottom={5}>
       {workingCase.origin === CaseOrigin.LOKE && (
         <SelectableList
-          items={
-            policeCaseFileList.length > 0
-              ? policeCaseFileList.map((p) => ({
-                  id: p.id,
-                  name: p.name,
-                }))
-              : undefined
-          }
+          items={policeCaseFileList?.map((p) => ({
+            id: p.id,
+            name: p.name,
+          }))}
           CTAButton={{
             onClick: onUpload,
             label: formatMessage(m.uploadButtonLabel),
@@ -83,7 +79,11 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
               ? true
               : policeCaseFiles?.isLoading
           }
-          successMessage={formatMessage(m.allFilesUploadedMessage)}
+          successMessage={
+            policeCaseFileList?.length === 0
+              ? formatMessage(m.allFilesUploadedMessage)
+              : undefined
+          }
           warningMessage={
             policeCaseFiles?.files.length === 0
               ? formatMessage(m.noFilesFoundInLOKEMessage)

@@ -26,7 +26,7 @@ interface Props {
   CTAButton: CTAButtonAttributes
   isLoading: boolean
   errorMessage?: string
-  successMessage: string
+  successMessage?: string
   warningMessage?: string
 }
 
@@ -64,7 +64,8 @@ const SelectableList: React.FC<Props> = (props) => {
   const [isHandlingCTA, setIsHandlingCTA] = useState<boolean>()
 
   useEffect(() => {
-    if (!items || isLoading) {
+    // console.log(isLoading, items)
+    if (!items) {
       return
     }
 
@@ -78,7 +79,7 @@ const SelectableList: React.FC<Props> = (props) => {
               selectableItems?.find((i) => i.id === item.id)?.checked ?? false,
           })),
     )
-  }, [isLoading, items])
+  }, [items, isLoading])
 
   const handleCTAButtonClick = async () => {
     if (!selectableItems) {
@@ -91,7 +92,6 @@ const SelectableList: React.FC<Props> = (props) => {
     setSelectableItems([])
   }
 
-  console.log(items, selectableItems, isLoading)
   return (
     <>
       <Box
@@ -147,15 +147,15 @@ const SelectableList: React.FC<Props> = (props) => {
                 message={warningMessage}
               />
             </AnimateChildren>
-          ) : !items && !selectableItems ? (
-            // <AnimateChildren id="success-message">
-            <IconAndText
-              icon="checkmark"
-              iconColor="blue400"
-              message={successMessage}
-            />
+          ) : !isLoading && successMessage ? (
+            <AnimateChildren id="success-message">
+              <IconAndText
+                icon="checkmark"
+                iconColor="blue400"
+                message={successMessage}
+              />
+            </AnimateChildren>
           ) : (
-            // </AnimateChildren>
             <AnimateChildren id="selectable-items">
               {selectableItems?.map((item, index) => (
                 <Box
@@ -206,7 +206,11 @@ const SelectableList: React.FC<Props> = (props) => {
         <Button
           onClick={handleCTAButtonClick}
           loading={isHandlingCTA}
-          disabled={isLoading || selectableItems?.every((p) => !p.checked)}
+          disabled={
+            items?.length === 0 ||
+            isLoading ||
+            selectableItems?.every((p) => !p.checked)
+          }
         >
           {CTAButton.label}
         </Button>

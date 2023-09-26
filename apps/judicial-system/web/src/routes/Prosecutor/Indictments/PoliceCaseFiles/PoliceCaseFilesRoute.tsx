@@ -81,9 +81,8 @@ const UploadFilesToPoliceCase: React.FC<
     caseFiles.map(mapCaseFileToUploadFile),
   )
 
-  const [policeCaseFileList, setPoliceCaseFileList] = useState<
-    PoliceCaseFileCheck[]
-  >([])
+  const [policeCaseFileList, setPoliceCaseFileList] =
+    useState<PoliceCaseFileCheck[]>()
 
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
 
@@ -157,7 +156,7 @@ const UploadFilesToPoliceCase: React.FC<
             !caseFiles.some((caseFile) => caseFile.policeFileId === f.id) &&
             f.policeCaseNumber === policeCaseNumber,
         )
-        .map(mapPoliceCaseFileToPoliceCaseFileCheck) || [],
+        .map(mapPoliceCaseFileToPoliceCaseFileCheck) || undefined,
     )
 
     setDisplayFiles(caseFiles.map(mapCaseFileToUploadFile) || [])
@@ -175,7 +174,7 @@ const UploadFilesToPoliceCase: React.FC<
   const uploadPoliceCaseFileCallback = useCallback(
     (file: UploadFile, id?: string) => {
       setPoliceCaseFileList((previous) =>
-        previous.filter((p) => p.id !== file.id),
+        previous?.filter((p) => p.id !== file.id),
       )
 
       setDisplayFiles((previous) => [
@@ -195,7 +194,7 @@ const UploadFilesToPoliceCase: React.FC<
       if (policeCaseFile) {
         setPoliceCaseFileList((previous) => [
           mapPoliceCaseFileToPoliceCaseFileCheck(policeCaseFile),
-          ...previous,
+          ...(previous || []),
         ])
       }
 
@@ -207,14 +206,16 @@ const UploadFilesToPoliceCase: React.FC<
   )
 
   const onPoliceCaseFileUpload = async (selectedFiles: Item[]) => {
-    const filesToUpload = policeCaseFileList
-      .filter((p) => selectedFiles.some((f) => f.id === p.id))
-      .sort((p1, p2) => (p1.chapter ?? -1) - (p2.chapter ?? -1))
+    const filesToUpload =
+      policeCaseFileList &&
+      policeCaseFileList
+        .filter((p) => selectedFiles.some((f) => f.id === p.id))
+        .sort((p1, p2) => (p1.chapter ?? -1) - (p2.chapter ?? -1))
 
     let currentChapter: number | undefined | null
     let currentOrderWithinChapter: number | undefined | null
 
-    const fileUploadPromises = filesToUpload.map(async (f) => {
+    const fileUploadPromises = filesToUpload?.map(async (f) => {
       if (
         f.chapter !== undefined &&
         f.chapter !== null &&
@@ -249,7 +250,7 @@ const UploadFilesToPoliceCase: React.FC<
       return uploadFromPolice(fileToUpload, uploadPoliceCaseFileCallback)
     })
 
-    await Promise.all(fileUploadPromises)
+    await Promise.all(fileUploadPromises || [])
   }
   return (
     <>
@@ -257,8 +258,8 @@ const UploadFilesToPoliceCase: React.FC<
         onUpload={onPoliceCaseFileUpload}
         isUploading={isUploading}
         policeCaseFileList={policeCaseFileList}
-        setPoliceCaseFileList={setPoliceCaseFileList}
         policeCaseFiles={policeCaseFiles}
+        policeCaseNumber={policeCaseNumber}
       />
       <InputFileUpload
         name="fileUpload"
