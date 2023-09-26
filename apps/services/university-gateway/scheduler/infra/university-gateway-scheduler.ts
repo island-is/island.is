@@ -8,10 +8,10 @@ export const serviceSetup = (services: {
     .image('services-university-gateway-scheduler')
     .env({
       BACKEND_URL: ref((h) => `http://${h.svc(services.worker)}`),
-      TIME_TO_LIVE_MINUTES: '30',
+      TIME_TO_LIVE_MINUTES: '1440',
     })
     .secrets({
-      BACKEND_ACCESS_TOKEN: '/k8s/university-gateway/WORKER_ACCESS_TOKEN',
+      BACKEND_ACCESS_TOKEN: '/k8s/university-gateway/BACKEND_ACCESS_TOKEN',
     })
     .replicaCount({ min: 1, max: 1, default: 1 })
     .command('node')

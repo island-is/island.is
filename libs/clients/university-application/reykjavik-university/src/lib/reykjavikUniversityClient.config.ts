@@ -6,8 +6,6 @@ const schema = z.object({
   fetch: z.object({
     timeout: z.number().int(),
   }),
-  clientId: z.string(),
-  secret: z.string(),
 })
 
 export const ReykjavikUniversityApplicationClientConfig = defineConfig({
@@ -22,8 +20,6 @@ export const ReykjavikUniversityApplicationClientConfig = defineConfig({
       fetch: {
         timeout: env.optionalJSON('REYKJAVIK_UNIVERSITY_TIMEOUT') ?? 20000,
       },
-      clientId: env.required('REYKJAVIK_UNIVERSITY_USERNAME'),
-      secret: env.required('REYKJAVIK_UNIVERSITY_PASSWORD'),
     }
   },
 })

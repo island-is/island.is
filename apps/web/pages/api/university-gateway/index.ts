@@ -19,7 +19,6 @@ export const getPrograms = async (): Promise<any | null> => {
   }
 
   if (response.data.results.length > 0) {
-    console.log('response', response.data.results)
     return response.data.results[0]
   }
 

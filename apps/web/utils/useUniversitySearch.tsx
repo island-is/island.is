@@ -31,8 +31,6 @@ export const SearchProducts = ({
     })
   })
 
-  console.log('querymaker', queryMaker)
-
   const result = fuseInstance.search(queryMaker)
 
   return result

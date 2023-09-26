@@ -6,7 +6,6 @@ export const openApi = new DocumentBuilder()
   .setTitle('University Gateway')
   .setDescription('API description')
   .addServer(process.env.PUBLIC_URL ?? `http://localhost:${environment.port}`)
-  // .addBearerAuth()
   .addOAuth2(
     {
       type: 'oauth2',
@@ -27,5 +26,5 @@ export const openApi = new DocumentBuilder()
     'ias',
   )
   .setVersion('1.0')
-  // .addTag('API tag')
+  .addTag('API tag')
   .build()

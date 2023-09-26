@@ -75,7 +75,7 @@ class ReykjavikUniversityApplicationClient {
           extraApplicationField: program.extraApplicationFields?.map(
             (field) => ({
               nameIs: field.nameIs || '',
-              nameEn: field.nameEn,
+              nameEn: field.nameEn || '',
               descriptionIs: field.descriptionIs,
               descriptionEn: field.descriptionEn,
               required: field.required || false,

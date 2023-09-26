@@ -230,7 +230,6 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
               <Box paddingTop={3}>
                 <Inline space={['smallGutter', 'smallGutter', 'gutter']}>
                   {tags.map((tag) => {
-                    console.log('tag', tag.outlined)
                     return (
                       <Tag
                         key={tag.label}

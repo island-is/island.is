@@ -14,10 +14,6 @@ export const ApiConfiguration = {
         timeout: config.fetch.timeout,
       }),
       basePath: config.url,
-      headers: {
-        ClientId: config.clientId,
-        Secret: config.secret,
-      },
     })
   },
   inject: [ReykjavikUniversityApplicationClientConfig.KEY],

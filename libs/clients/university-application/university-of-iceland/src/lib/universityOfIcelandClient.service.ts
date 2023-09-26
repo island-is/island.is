@@ -88,7 +88,7 @@ class UniversityOfIcelandApplicationClient {
           extraApplicationField: program.extraApplicationFields.map(
             (field) => ({
               nameIs: field.nameIs,
-              nameEn: field.nameEn,
+              nameEn: field.nameEn || '',
               descriptionIs: field.descriptionIs,
               descriptionEn: field.descriptionEn,
               required: field.required === 'true', //TODO change to boolean not string
@@ -133,7 +133,7 @@ class UniversityOfIcelandApplicationClient {
             requirement = Requirement.FREE_ELECTIVE
             break
           case 'C': // TODO what value is this
-            requirement = Requirement.FREE_ELECTIVE
+            requirement = Requirement.RESTRICTED_ELECTIVE
             break
           case '': // TODO what value is this
             requirement = Requirement.FREE_ELECTIVE
@@ -155,10 +155,10 @@ class UniversityOfIcelandApplicationClient {
           case 'S':
             semesterSeason = Season.SUMMER
             break
-          case 'A': // TODO what value is this
+          case 'A': // TODO what value is this -> "heilsár"
             semesterSeason = Season.FALL
             break
-          case '': // TODO what value is this
+          case '': // TODO what value is this -> "á ekki við"
             semesterSeason = Season.FALL
             break
         }
