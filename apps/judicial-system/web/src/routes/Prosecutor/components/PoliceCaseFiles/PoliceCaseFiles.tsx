@@ -51,11 +51,6 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
 
-  console.log(
-    policeCaseFiles?.files,
-    policeCaseFileList,
-    policeCaseFiles?.isLoading,
-  )
   return (
     <Box marginBottom={5}>
       {workingCase.origin === CaseOrigin.LOKE && (
