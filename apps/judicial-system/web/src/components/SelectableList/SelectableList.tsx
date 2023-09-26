@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence, motion, Variants } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 
 import { Box, Button, Checkbox, LoadingDots } from '@island.is/island-ui/core'
 

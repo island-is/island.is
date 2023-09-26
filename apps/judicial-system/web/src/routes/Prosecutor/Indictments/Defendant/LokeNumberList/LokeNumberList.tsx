@@ -26,9 +26,6 @@ export const LokeNumberList: React.FC<Props> = (props) => {
 
   const [availablePoliceCases, setAvailablePoliceCases] =
     useState<PoliceCaseInfo[]>()
-  const [selectedPoliceCases, setSelectedPoliceCases] = useState<
-    PoliceCaseInfo[]
-  >([])
 
   useEffect(() => {
     if (policeCaseInfo) {
@@ -56,7 +53,6 @@ export const LokeNumberList: React.FC<Props> = (props) => {
     })
 
     addPoliceCaseNumbers(policeCases)
-    setSelectedPoliceCases([])
   }
 
   return (
