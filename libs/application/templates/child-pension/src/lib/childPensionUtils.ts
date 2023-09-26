@@ -89,7 +89,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     childPensionAddChild,
     selectedMonth,
     selectedYear,
-    comment
+    comment,
   }
 }
 

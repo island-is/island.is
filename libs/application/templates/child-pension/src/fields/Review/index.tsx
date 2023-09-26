@@ -17,7 +17,6 @@ import { Comment } from './review-groups/Comment'
 import { getApplicationAnswers } from '../../lib/childPensionUtils'
 import { Attachments } from './review-groups/Attachments'
 
-
 interface ReviewScreenProps {
   application: Application
   field: Field & { props?: { editable?: boolean } }
