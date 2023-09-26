@@ -23,3 +23,4 @@ export type OrganizationSlugType =
   | 'samband-islenskra-sveitafelaga'
   | 'skatturinn'
   | 'syslumenn'
+  | 'domsmalaraduneytid'
