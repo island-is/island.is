@@ -112,9 +112,12 @@ const SelectableList: React.FC<Props> = (props) => {
               selectableItems.length > 0 &&
               selectableItems.every((item) => item.checked === true)
             }
-            onChange={() =>
+            onChange={(evt) =>
               setSelectableItems((items) =>
-                items?.map((item) => ({ ...item, checked: !item.checked })),
+                items?.map((item) => ({
+                  ...item,
+                  checked: evt.target.checked,
+                })),
               )
             }
             disabled={isHandlingCTA || selectableItems.length === 0}
