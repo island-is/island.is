@@ -1,9 +1,11 @@
+import { OrganizationSlugType } from '@island.is/shared/constants'
+
 import { MiddlewareAPI, FetchMiddlewareOptions } from './nodeFetch'
 import { FetchError } from './FetchError'
 
 interface ResponseErrorsOptions extends FetchMiddlewareOptions {
   includeBody: boolean
-  organizationSlug?: string
+  organizationSlug?: OrganizationSlugType
 }
 
 export function withResponseErrors({
