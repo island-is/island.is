@@ -16,7 +16,12 @@ import {
   useGetDrugsBillsQuery,
   useGetDrugsDataQuery,
 } from './Medicine.generated'
-import { UserInfoLine, m } from '@island.is/service-portal/core'
+import {
+  ExpandHeader,
+  ExpandRow,
+  UserInfoLine,
+  m,
+} from '@island.is/service-portal/core'
 import { useEffect, useState } from 'react'
 import { RightsPortalDrugsPaymentPeroids } from '@island.is/api/schema'
 
@@ -206,6 +211,33 @@ const Medicine = () => {
             <Text marginBottom={CONTENT_GAP} variant="h5">
               {formatMessage(messages.medicineBills)}
             </Text>
+            {!billsLoading && bills?.rightsPortalDrugsBills.length && (
+              <Box>
+                <ExpandHeader
+                  data={[
+                    { value: '' },
+                    { value: 'Dagsetning' },
+                    { value: 'Skýring' },
+                    { value: 'Greiðsluþátttökuverð' },
+                    { value: 'Greitt af einstakling' },
+                  ]}
+                />
+                {bills.rightsPortalDrugsBills.map((bill, i) => {
+                  return (
+                    <ExpandRow
+                      data={[
+                        { value: formatDateFns(bill.date, DATE_FORMAT) },
+                        { value: bill.description ?? '' },
+                        { value: bill.copaymentAmount ?? '' },
+                        { value: bill.customerAmount ?? '' },
+                      ]}
+                      key={i}
+                      // TODO: Call on expand getDrugBillLineItems to populate the table
+                    />
+                  )
+                })}
+              </Box>
+            )}
           </Box>
         </Box>
       ),
