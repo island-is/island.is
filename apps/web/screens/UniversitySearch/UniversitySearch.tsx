@@ -223,7 +223,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       size: 'small',
       icon: 'arrowForward',
       iconType: 'outline',
-      onClick: () => console.log('hallo'),
+      onClick: () => console.log('TODO'),
       disabled:
         new Date(item.applicationStartDate) > now ||
         new Date(item.applicationEndDate) < now,
