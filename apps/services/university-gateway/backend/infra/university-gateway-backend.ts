@@ -4,7 +4,6 @@ export const serviceSetup = (): ServiceBuilder<'university-gateway-backend'> =>
   service('university-gateway-backend')
     .namespace('university-gateway-backend')
     .secrets({
-      //TODOx vantar að búa til í AWS
       AUTH_JWT_SECRET: '/k8s/university-gateway/AUTH_JWT_SECRET',
       BACKEND_ACCESS_TOKEN: '/k8s/university-gateway/BACKEND_ACCESS_TOKEN',
     })
