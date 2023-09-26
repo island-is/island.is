@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCustomField,
   buildForm,
   buildMultiField,
@@ -109,11 +110,32 @@ export const ChildPensionForm: Form = buildForm({
           id: 'payment',
           title: childPensionFormMessage.info.paymentTitle,
           children: [
-            buildMultiField({
+            buildMultiField({ 
               id: 'paymentInfo',
               title: childPensionFormMessage.info.paymentTitle,
               description: '',
-              children: [],
+              children: [
+                buildAlertMessageField({
+                  id: 'paymentInfo.alert',
+                  title: childPensionFormMessage.payment.alertTitle,
+                  message: childPensionFormMessage.payment.alertMessage,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                }),
+                buildTextField({
+                  id: 'paymentInfo.bank',
+                  title: childPensionFormMessage.payment.bank,
+                  backgroundColor: 'white',
+                  //disabled: true,
+                  format: '####-##-######',
+                  placeholder: '0000-00-000000',
+                  defaultValue: (application: Application) => {
+                    const userProfile = application.externalData.userProfile
+                      .data as UserProfile
+                    return userProfile.bankInfo
+                  },
+                }),
+              ], 
             }),
           ],
         }),

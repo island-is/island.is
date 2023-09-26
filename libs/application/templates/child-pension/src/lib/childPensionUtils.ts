@@ -80,6 +80,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const comment = getValueViaPath(answers, 'comment') as string
 
+  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
+
   return {
     applicantEmail,
     applicantPhonenumber,
@@ -90,6 +92,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     selectedMonth,
     selectedYear,
     comment,
+    bank,
   }
 }
 
@@ -112,10 +115,13 @@ export function getApplicationExternalData(
     [],
   ) as ApplicantChildCustodyInformation[]
 
+  const bank = getValueViaPath(externalData, 'paymentInfo.bank') as string
+
   return {
     applicantName,
     applicantNationalId,
     custodyInformation,
+    bank
   }
 }
 
@@ -248,4 +254,13 @@ export function isMoreThan2Year(answers: Application['answers']) {
   const selectedDate = new Date(selectedYear + selectedMonth)
 
   return startDate > selectedDate
+}
+
+export const formatBankInfo = (bankInfo: string) => {
+  const formattedBankInfo = bankInfo.replace(/[^0-9]/g, '')
+  if (formattedBankInfo && formattedBankInfo.length === 12) {
+    return formattedBankInfo
+  }
+
+  return bankInfo
 }

@@ -2,6 +2,8 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import { NO, YES } from './constants'
 import { childPensionFormMessage } from './messages'
+import { formatBankInfo } from './childPensionUtils'
+
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -30,6 +32,15 @@ export const dataSchema = z.object({
     year: z.string(),
     month: z.string(),
   }),
+  paymentInfo: z.object({
+    bank: z.string().refine(
+      (b) => {
+        const bankAccount = formatBankInfo(b)
+        return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
+      },
+      { params: childPensionFormMessage.errors.bank },
+    )
+  })
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>
