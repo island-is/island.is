@@ -8,10 +8,11 @@ export default {
   testTimeout: 10000,
   testEnvironment: 'node',
   transform: {
-    '^.+\\.ts$': [
+    '^.+\\.[tj]s$': [
       'ts-jest',
       {
         tsconfig: `${__dirname}/tsconfig.spec.json`,
+        isolatedModules: true,
       },
     ],
   },
