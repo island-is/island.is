@@ -90,6 +90,13 @@ export class MessageHandlerService implements OnModuleDestroy {
           'deliverSignedRulingToCourt',
         )
         break
+      case MessageType.DELIVER_CASE_CONCLUSION_TO_COURT:
+        handled = await this.internalDeliveryService.deliver(
+          message.user,
+          message.caseId,
+          'deliverCaseConclusionToCourt',
+        )
+        break
       case MessageType.DELIVER_CASE_TO_POLICE:
         handled = await this.internalDeliveryService.deliver(
           message.user,

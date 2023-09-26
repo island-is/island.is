@@ -134,7 +134,9 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<
           VACANCY_INTRO_MAX_LENGTH,
         )}
         imageUrl={n('ogDetailsImageUrl', vacancy?.logoUrl)}
-      />
+      >
+        <meta name="robots" content="noindex, nofollow" />
+      </HeadWithSocialSharing>
 
       <SidebarLayout
         sidebarContent={

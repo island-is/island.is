@@ -34,6 +34,7 @@ import {
   AircraftRegistry,
   HousingBenefitCalculator,
   OccupationalLicenses,
+  ShipRegistry,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -373,6 +374,7 @@ export const serviceSetup = (services: {
       NationalRegistryB2C,
       AircraftRegistry,
       HousingBenefitCalculator,
+      ShipRegistry,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

@@ -3,5 +3,7 @@ export enum HealthPaths {
   HealthTherapies = '/heilsa/thjalfun',
   HealthAidsAndNutrition = '/heilsa/hjalpartaeki-og-naering',
   HealthDentists = '/heilsa/tannlaeknar',
+  HealthDentistRegistration = '/heilsa/tannlaeknar/skraning',
   HealthCenter = '/heilsa/heilusgaesla',
+  HealthCenterRegistration = '/heilsa/heilsugaesla/skraning',
 }

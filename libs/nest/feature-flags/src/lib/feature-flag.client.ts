@@ -1,22 +1,21 @@
-import { Provider } from '@nestjs/common'
+import { FactoryProvider } from '@nestjs/common'
+import * as ConfigCatNode from 'configcat-node'
 import { ConfigType } from '@island.is/nest/config'
-import { createClient } from '@island.is/feature-flags'
-
+import {
+  FeatureFlagClient,
+  createClientFactory,
+} from '@island.is/feature-flags'
 import { FeatureFlagConfig } from './feature-flag.config'
 
 export const FEATURE_FLAG_CLIENT = 'FeatureFlagClient'
+const createClient = createClientFactory(ConfigCatNode)
 
-let clientSingleton: ReturnType<typeof createClient>
-
-export const FeatureFlagClientProvider: Provider = {
+export const FeatureFlagClientProvider: FactoryProvider = {
   provide: FEATURE_FLAG_CLIENT,
   inject: [FeatureFlagConfig.KEY],
-  useFactory({ sdkKey }: ConfigType<typeof FeatureFlagConfig>) {
-    // Configcat verbosely complains if you create the same client twice, which we should only be doing in tests.
-    // So we singleton it:
-    if (!clientSingleton) {
-      clientSingleton = createClient({ sdkKey })
-    }
-    return clientSingleton
+  useFactory: ({
+    sdkKey,
+  }: ConfigType<typeof FeatureFlagConfig>): FeatureFlagClient => {
+    return createClient({ sdkKey })
   },
 }
