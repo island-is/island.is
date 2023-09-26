@@ -139,6 +139,7 @@ class UniversityGatewayApi {
       //   descriptionIs: e.descriptionIs,
       //   descriptionEn: e.descriptionEn,
       //   required: e.required,
+      //   fieldKey: e.fieldKey,
       //   fieldType: e.fieldType.toString(),
       //   uploadAcceptedFileType: e.uploadAcceptedFileType,
       // })),

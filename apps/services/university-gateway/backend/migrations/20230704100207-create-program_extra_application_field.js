@@ -41,6 +41,10 @@ module.exports = {
               type: Sequelize.BOOLEAN,
               allowNull: false,
             },
+            field_key: {
+              type: Sequelize.STRING,
+              allowNull: false,
+            },
             field_type: {
               type: Sequelize.ENUM(
                 'UPLOAD',

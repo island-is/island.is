@@ -72,9 +72,7 @@ class UniversityOfIcelandApplicationClient {
           studyRequirementsEn: program.studyRequirementsEn,
           costInformationIs: program.costInformationIs,
           costInformationEn: program.costInformationEn,
-          tag: program.interestTags.map((tag) => ({
-            code: tag.toString(), //TODO change from enum to code (string) in api
-          })),
+          tag: [], //TODO will not be used yet
           modeOfDelivery: program.modeOfDelivery.map((m) => {
             // TODO what value is this
             if (m.toString() === 'MIXED') {
@@ -94,6 +92,7 @@ class UniversityOfIcelandApplicationClient {
               descriptionIs: field.descriptionIs,
               descriptionEn: field.descriptionEn,
               required: field.required === 'true', //TODO change to boolean not string
+              fieldKey: '', //TODO missing in api
               fieldType: field.fieldType as unknown as FieldType,
               uploadAcceptedFileType: field.uploadAcceptedFileType,
             }),

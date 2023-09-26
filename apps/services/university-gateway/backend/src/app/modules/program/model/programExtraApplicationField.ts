@@ -51,12 +51,11 @@ class ProgramExtraApplicationField extends Model {
     description: 'Field name (English)',
     example: 'CV',
   })
-  @ApiPropertyOptional()
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  nameEn?: string
+  nameEn!: string
 
   @ApiProperty({
     description: 'Field description (Icelandic)',
@@ -65,7 +64,7 @@ class ProgramExtraApplicationField extends Model {
   @ApiPropertyOptional()
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   descriptionIs?: string
 
@@ -76,7 +75,7 @@ class ProgramExtraApplicationField extends Model {
   @ApiPropertyOptional()
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   descriptionEn?: string
 
@@ -89,6 +88,16 @@ class ProgramExtraApplicationField extends Model {
     allowNull: false,
   })
   required!: boolean
+
+  @ApiProperty({
+    description: 'Unique key for field',
+    example: 'cv_field',
+  })
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  fieldKey!: string
 
   @ApiProperty({
     description:

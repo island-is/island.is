@@ -62,10 +62,7 @@ class ReykjavikUniversityApplicationClient {
           studyRequirementsEn: program.studyRequirementsEn,
           costInformationIs: program.costInformationIs,
           costInformationEn: program.costInformationEn,
-          tag:
-            program.interestTags?.map((tag) => ({
-              code: tag, //TODO change from enumstring to code (string) in api?
-            })) || [],
+          tag: [], //TODO will not be used yet
           modeOfDelivery:
             program.modeOfDelivery?.map((m) => {
               // TODO why is this value empty
@@ -82,6 +79,7 @@ class ReykjavikUniversityApplicationClient {
               descriptionIs: field.descriptionIs,
               descriptionEn: field.descriptionEn,
               required: field.required || false,
+              fieldKey: field.fieldKey || '',
               fieldType: field.fieldType as unknown as FieldType,
               uploadAcceptedFileType: field.uploadAcceptedFileType,
             }),

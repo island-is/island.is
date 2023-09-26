@@ -178,8 +178,8 @@ class ProgramTag {
 //   @Field()
 //   nameIs!: string
 
-//   @Field({ nullable: true })
-//   nameEn?: string
+//   @Field()
+//   nameEn!: string
 
 //   @Field({ nullable: true })
 //   descriptionIs?: string
@@ -189,6 +189,9 @@ class ProgramTag {
 
 //   @Field()
 //   required!: boolean
+
+//   @Field()
+//   fieldKey!: string
 
 //   @Field()
 //   fieldType!: string

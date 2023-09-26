@@ -221,6 +221,7 @@ class InternalProgramService {
               descriptionIs: extraApplicationFieldList[j].descriptionIs,
               descriptionEn: extraApplicationFieldList[j].descriptionEn,
               required: extraApplicationFieldList[j].required,
+              fieldKey: extraApplicationFieldList[j].fieldKey,
               fieldType: extraApplicationFieldList[j].fieldType,
               uploadAcceptedFileType:
                 extraApplicationFieldList[j].uploadAcceptedFileType,
