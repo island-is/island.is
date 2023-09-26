@@ -273,7 +273,7 @@ export const m = defineMessages({
     description: '',
   },
   propertiesDescription: {
-    id: 'es.application:propertiesDescription',
+    id: 'es.application:propertiesDescription#markdown',
     defaultMessage: 'Tilgreina skal allar hjúskapareignir beggja hjóna.',
     description: '',
   },
@@ -502,7 +502,13 @@ export const m = defineMessages({
   acceptNoAssets: {
     id: 'es.application:acceptNoAssets',
     defaultMessage:
-      'Ég lýsi því yfir að eftir minni bestu vitund eru engar eignir í búinu.',
+      'Ég lýsi því yfir að eftir minni bestu vitund eru engar eign°ir í búinu.',
+    description: '',
+  },
+  acceptCorrectAssets: {
+    id: 'es.application:acceptCorrectAssets',
+    defaultMessage:
+      'Ég staðfesti hér með að eftir minni bestu vitund eru upplýsingarnar um eignir réttar.',
     description: '',
   },
 
