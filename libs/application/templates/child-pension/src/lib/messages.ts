@@ -349,6 +349,22 @@ export const childPensionFormMessage: MessageDir = {
       description:
         'Below you can submit a child support order or agreement from the District Commissioner for a child/children who do not have legal residence with you. Note that the document must be in .pdf format.',
     },
+    additionalDocumentRequiredTitle: {
+      id: 'cp.application:fileUpload.additionalDocumentRequired.title',
+      defaultMessage: 'Viðbótargögn krafist',
+      description: 'Additional attachments required',
+    },
+    additionalDocumentRequiredDescription: {
+      id: 'cp.application:fileUpload.additionalDocumentRequired.description',
+      defaultMessage:
+        'Vinsamlegast hlaðið upp viðbótargögnum til Tryggingastofnunar. Ef þú ert ekki viss hvaða viðbótagögn það eru geturu séð það í pósthólfinu þínu. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description: 'english translation',
+    },
+    additionalDocumentRequiredSubmit: {
+      id: 'cp.application:fileUpload.additionalDocumentRequired.submit',
+      defaultMessage: 'Senda inn',
+      description: 'Submit',
+    },
   }),
 
   period: defineMessages({
@@ -618,5 +634,103 @@ export const validatorErrorMessages = defineMessages({
     id: 'cp.application:fileUpload.required.attachment',
     defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
     description: 'You must upload an attachment to continue.',
+  },
+})
+
+export const inReviewFormMessages = defineMessages({
+  formTitle: {
+    id: 'cp.application:inReview.form.title',
+    defaultMessage: 'Umsókn vegna barnalífeyris',
+    description: 'Child pension',
+  },
+})
+
+export const statesMessages = defineMessages({
+  draftDescription: {
+    id: 'cp.application:draft.description',
+    defaultMessage: 'Þú hefur útbúið drög að umsókn.',
+    description: 'Description of the state - draft',
+  },
+  applicationSent: {
+    id: 'cp.application:applicationSent',
+    defaultMessage: 'Umsókn send',
+    description: 'History application sent',
+  },
+  tryggingastofnunSubmittedTitle: {
+    id: 'cp.application:tryggingastofnunSubmittedTitle',
+    defaultMessage: 'Umsókn hefur verið send til Tryggingastofnunnar',
+    description: 'The application has been sent to Tryggingastofnunnar',
+  },
+  tryggingastofnunSubmittedContent: {
+    id: 'cp.application:tryggingastofnunSubmittedContent',
+    defaultMessage:
+      'Umsóknin þín er í bið eftir yfirferð. Hægt er að breyta umsókn þar til umsókn er komin í yfirferð.',
+    description: 'Application waiting for review',
+  },
+
+  tryggingastofnunInReviewTitle: {
+    id: 'cp.application:tryggingastofnunInReviewTitle',
+    defaultMessage: 'Verið er að fara yfir umsóknina',
+    description: 'The application is being reviewed',
+  },
+  tryggingastofnunInReviewContent: {
+    id: 'cp.application:tryggingastofnunInReviewContent',
+    defaultMessage:
+      'Tryggingastofnun fer núna yfir umsóknina og því getur þetta tekið nokkra daga',
+    description:
+      'Tryggingastofnun is currently reviewing the application, so this may take a few days',
+  },
+
+  applicationEdited: {
+    id: 'cp.application:applicationEdited',
+    defaultMessage: 'Umsókn breytt',
+    description: 'Application edited',
+  },
+  applicationRejected: {
+    id: 'cp.application:applicationRejected',
+    defaultMessage: 'Umsókn hafnað',
+    description: 'Application rejected',
+  },
+  applicationApproved: {
+    id: 'cp.application:applicationApproved',
+    defaultMessage: 'Tryggingastofnun hefur samþykkt umsóknina',
+    description: 'Tryggingastofnun has accepted the application',
+  },
+  applicationApprovedDescription: {
+    id: 'cp.application:applicationApprovedDescription',
+    defaultMessage: 'Umsókn vegna barnalífeyris hefur verið samþykkt',
+    description: 'The application for child pension has been approved',
+  },
+
+  additionalDocumentRequired: {
+    id: 'cp.application:additionalDocumentRequired',
+    defaultMessage: 'Viðbótargögn vantar',
+    description: 'Additional documents required',
+  },
+  additionalDocumentsAdded: {
+    id: 'cp.application:additionalDocumentsAdded',
+    defaultMessage: 'Viðbótargögnum bætt við',
+    description: 'Additional documents added',
+  },
+  additionalDocumentRequiredDescription: {
+    id: 'cp.application:additionalDocumentRequired.description',
+    defaultMessage: 'Tryggingastofnun vantar frekari gögn vegna umsóknarinnar.',
+    description: 'Description of the state - additionalDocumentRequired',
+  },
+  pendingTag: {
+    id: 'cp.application:pending.tag',
+    defaultMessage: 'Í bið',
+    description: 'Pending',
+  },
+
+  applicationPending: {
+    id: 'oap.application:applicationPending',
+    defaultMessage: 'Umsókn í bið hjá Tryggingastofnun',
+    description: 'Application pending at Tryggingastofnun',
+  },
+  applicationPendingDescription: {
+    id: 'oap.application:applicationPendingDescription',
+    defaultMessage: 'Umsókn vegna barnalífeyris hefur verið sett í bið.',
+    description: 'The application for child pension has been put on hold.',
   },
 })

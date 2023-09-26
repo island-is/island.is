@@ -26,23 +26,44 @@ export const MONTHS = [
   { value: 'December', label: childPensionFormMessage.period.desember },
 ]
 
+export enum CPEvents {
+  ADDITIONALDOCUMENTSREQUIRED = 'ADDITIONALDOCUMENTSREQUIRED',
+  INREVIEW = 'INREVIEW',
+  PENDING = 'PENDING',
+  DISMISSED = 'DISMISSED',
+}
+
 export type Events =
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.EDIT }
+  | { type: DefaultEvents.APPROVE }
+  | { type: DefaultEvents.REJECT }
+  // | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: TR ask for more documents
+  | { type: CPEvents.ADDITIONALDOCUMENTSREQUIRED } // Ex: TR ask for more documents
+  | { type: CPEvents.INREVIEW } // Ex: TR's employee start review application
+  | { type: CPEvents.PENDING }
+  | { type: CPEvents.DISMISSED }
 
 export enum Roles {
   APPLICANT = 'applicant',
+  ORGINISATION_REVIEWER = 'tryggingastofnun',
 }
 
 export enum States {
   PREREQUESITES = 'prerequesites',
   DRAFT = 'draft',
   DONE = 'done',
-  TRYGGINGASTOFNUN_SUBMITTED = 'tryggingastofnunSubmitted',
-  TRYGGINGASTOFNUN_IN_REVIEW = 'tryggingastofnunInReview',
-  ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired',
-  REJECTED = 'rejected',
-  APPROVED = 'approved',
+
+  TRYGGINGASTOFNUN_SUBMITTED = 'tryggingastofnunSubmitted', // NYSKRAD = 91
+  TRYGGINGASTOFNUN_IN_REVIEW = 'tryggingastofnunInReview', // I_VINNSLU = 562
+
+  ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired', // I_BID_GOGN_VANTAR = 1617
+
+  PENDING = 'pending', // I_BID = 561
+  DISMISSED = 'dismissed', // VISAD_FRA = 1637
+
+  REJECTED = 'rejected', // SYNJAD = 1281
+  APPROVED = 'approved', // AFGREIDD = 563
 }
 
 // TODO: Skoða enska þýðingu betur

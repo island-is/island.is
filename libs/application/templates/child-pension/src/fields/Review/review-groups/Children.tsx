@@ -70,7 +70,7 @@ export const Children = ({
             <GridColumn
               key={index}
               span={['12/12', '12/12', '12/12', '12/12']}
-              paddingBottom={2}
+              paddingBottom={index !== allChildren.length - 1 ? 2 : undefined}
             >
               <ProfileCard
                 title={child.name}
