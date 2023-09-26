@@ -515,8 +515,6 @@ export const OrganizationFooter: React.FC<
         <TransportAuthorityFooter
           title={organization.title}
           footerItems={organization.footerItems}
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
           logo={organization.logo?.url}
         />
       )
@@ -543,6 +541,8 @@ export const OrganizationFooter: React.FC<
           imageUrl={organization?.logo?.url}
           heading={organization?.title ?? ''}
           columns={footerItems}
+          background={organization?.footerConfig?.background}
+          color={organization?.footerConfig?.textColor}
         />
       )
     }

@@ -16,7 +16,7 @@ import * as styles from './TransportAuthorityFooter.css'
 interface TransportAuthorityFooterProps {
   title: string
   footerItems?: FooterItem[]
-  logo: string
+  logo?: string
 }
 
 const TransportAuthorityFooter = ({

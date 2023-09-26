@@ -42,10 +42,15 @@ export const Footer = ({
       <Box paddingTop={3} paddingBottom={5}>
         <GridContainer>
           <GridRow className={styles.noWrap}>
-            <GridColumn hiddenBelow="sm">
-              <img width={IMAGE_WIDTH} src={imageUrl} alt="" />
-            </GridColumn>
-            <GridColumn offset={isMobileScreenWidth ? '2/12' : undefined}>
+            {imageUrl && (
+              <GridColumn hiddenBelow="sm">
+                <img width={IMAGE_WIDTH} src={imageUrl} alt="" />
+              </GridColumn>
+            )}
+            <GridColumn
+              offset={isMobileScreenWidth ? '2/12' : undefined}
+              className={styles.fullWidth}
+            >
               <GridRow marginBottom={3} marginTop={2}>
                 <GridColumn>
                   <Text color={color} variant="h2">
@@ -57,10 +62,14 @@ export const Footer = ({
                 {columns.map((column, index) => (
                   <GridColumn
                     key={index}
-                    span={isMobileScreenWidth ? '1/1' : undefined}
+                    span={
+                      isMobileScreenWidth
+                        ? '1/1'
+                        : `${columns.length < 4 ? 4 : 3}/12`
+                    }
                     paddingBottom={3}
                   >
-                    <Box marginRight={5}>
+                    <Box>
                       {column.title && (
                         <Text
                           color={color}
