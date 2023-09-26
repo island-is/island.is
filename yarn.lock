@@ -11576,11 +11576,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/testing@npm:10.2.6":
-  version: 10.2.6
-  resolution: "@nestjs/testing@npm:10.2.6"
+"@nestjs/testing@npm:10.0.5":
+  version: 10.0.5
+  resolution: "@nestjs/testing@npm:10.0.5"
   dependencies:
-    tslib: 2.6.2
+    tslib: 2.6.0
   peerDependencies:
     "@nestjs/common": ^10.0.0
     "@nestjs/core": ^10.0.0
@@ -11591,7 +11591,7 @@ __metadata:
       optional: true
     "@nestjs/platform-express":
       optional: true
-  checksum: 9b1004ef15ff1e70e562a76c718ccdd886b9f51c022f31dae6b7fc9e6fcc06d551cc82c1c54d89586515b7a6ca6024bd5d6c4b8ed61e8b7b3e89e04754bdd042
+  checksum: dfc6b492ca5abaf99ec2ccc5e508d95e5149380a77a0b41e946fc3293a33d67dea67a0248db2f624c7a5a201d3929635fcc6905f59986a1e4530896574d447d4
   languageName: node
   linkType: hard
 
@@ -33507,7 +33507,7 @@ __metadata:
     "@nestjs/sequelize": 9.0.2
     "@nestjs/swagger": 7.1.1
     "@nestjs/terminus": 9.2.2
-    "@nestjs/testing": 10.2.6
+    "@nestjs/testing": 10.0.5
     "@nrwl/js": 16.9.0
     "@nx/cypress": 16.9.0
     "@nx/eslint-plugin": 16.9.0
@@ -50902,13 +50902,6 @@ __metadata:
   version: 2.6.0
   resolution: "tslib@npm:2.6.0"
   checksum: c01066038f950016a18106ddeca4649b4d76caa76ec5a31e2a26e10586a59fceb4ee45e96719bf6c715648e7c14085a81fee5c62f7e9ebee68e77a5396e5538f
-  languageName: node
-  linkType: hard
-
-"tslib@npm:2.6.2":
-  version: 2.6.2
-  resolution: "tslib@npm:2.6.2"
-  checksum: 329ea56123005922f39642318e3d1f0f8265d1e7fcb92c633e0809521da75eeaca28d2cf96d7248229deb40e5c19adf408259f4b9640afd20d13aecc1430f3ad
   languageName: node
   linkType: hard
 
