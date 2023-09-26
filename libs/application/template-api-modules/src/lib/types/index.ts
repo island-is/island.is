@@ -7,6 +7,7 @@ import {
 } from '@island.is/application/types'
 import { User } from '@island.is/auth-nest-tools'
 import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
+import { ComplaintToAlthingiOmbudsmanClientConfig } from '@island.is/clients/althingi-ombudsman'
 import { HealthInsuranceV2Options } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { IslykillApiModuleConfig } from '@island.is/clients/islykill'
 import { PaymentScheduleServiceOptions } from '@island.is/clients/payment-schedule'
@@ -44,6 +45,7 @@ export interface BaseTemplateAPIModuleConfig {
   }
   healthInsuranceV2: HealthInsuranceV2Options
   dataProtectionComplaint: DataProtectionComplaintClientConfig
+  complaintToAlthingiOmbudsman: ComplaintToAlthingiOmbudsmanClientConfig
   applicationService: Type<BaseTemplateApiApplicationService>
   userProfile: {
     serviceBasePath: string
