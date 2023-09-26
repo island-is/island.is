@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCustomField,
   buildForm,
   buildMultiField,
@@ -106,32 +107,35 @@ export const ChildPensionForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'periodSection',
-          title: childPensionFormMessage.period.periodTitle,
-          children: [
-            buildMultiField({
-              id: 'periodField',
-              title: childPensionFormMessage.period.periodTitle,
-              description: childPensionFormMessage.period.periodDescription,
-              children: [
-                buildCustomField({
-                  id: 'period',
-                  component: 'Period',
-                  title: childPensionFormMessage.period.periodTitle,
-                }),
-              ],
-            }),
-          ],
-        }),
-        buildSubSection({
           id: 'payment',
           title: childPensionFormMessage.info.paymentTitle,
           children: [
-            buildMultiField({
+            buildMultiField({ 
               id: 'paymentInfo',
               title: childPensionFormMessage.info.paymentTitle,
               description: '',
-              children: [],
+              children: [
+                buildAlertMessageField({
+                  id: 'paymentInfo.alert',
+                  title: childPensionFormMessage.payment.alertTitle,
+                  message: childPensionFormMessage.payment.alertMessage,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                }),
+                buildTextField({
+                  id: 'paymentInfo.bank',
+                  title: childPensionFormMessage.payment.bank,
+                  backgroundColor: 'white',
+                  //disabled: true,
+                  format: '####-##-######',
+                  placeholder: '0000-00-000000',
+                  defaultValue: (application: Application) => {
+                    const userProfile = application.externalData.userProfile
+                      .data as UserProfile
+                    return userProfile.bankInfo
+                  },
+                }),
+              ], 
             }),
           ],
         }),
@@ -240,7 +244,6 @@ export const ChildPensionForm: Form = buildForm({
             }),
           ],
         }),
-
         buildSubSection({
           id: 'fileUploadNotLivesWithApplicant',
           title: childPensionFormMessage.fileUpload.notLivesWithApplicantTitle,
@@ -270,12 +273,45 @@ export const ChildPensionForm: Form = buildForm({
             }),
           ],
         }),
+        buildSubSection({
+          id: 'periodSection',
+          title: childPensionFormMessage.period.periodTitle,
+          children: [
+            buildMultiField({
+              id: 'periodField',
+              title: childPensionFormMessage.period.periodTitle,
+              description: childPensionFormMessage.period.periodDescription,
+              children: [
+                buildCustomField({
+                  id: 'period',
+                  component: 'Period',
+                  title: childPensionFormMessage.period.periodTitle,
+                }),
+              ],
+            }),
+          ],
+        }),
       ],
     }),
     buildSection({
       id: 'additionalInfo',
       title: childPensionFormMessage.additionalInfo.section,
-      children: [],
+      children: [
+        buildSubSection({
+          id: 'commentSection',
+          title: childPensionFormMessage.comment.commentSection,
+          children: [
+            buildTextField({
+              id: 'comment',
+              title: childPensionFormMessage.comment.commentSection,
+              variant: 'textarea',
+              rows: 10,
+              description: childPensionFormMessage.comment.description,
+              placeholder: childPensionFormMessage.comment.placeholder,
+            }),
+          ],
+        }),
+      ],
     }),
     buildSection({
       id: 'confirm',

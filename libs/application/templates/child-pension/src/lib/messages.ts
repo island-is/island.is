@@ -82,7 +82,7 @@ export const childPensionFormMessage: MessageDir = {
     trDescription: {
       id: 'cp.application:tr.description#markdown',
       defaultMessage:
-        'TR sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðsla mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar. Ef við á þá hefur TR heimild að ná í upplýsingar frá öðrum stofnunum. Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar, [https://www.tr.is/tryggingastofnun/personuvernd](https://www.tr.is/tryggingastofnun/personuvernd). Ef tekjur eða aðrar aðstæður þínar breytast verður þú að láta TR vita þar sem það getur haft áhrif á greiðslur þínar.',
+        'TR sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðsla mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar. Ef við á þá hefur TR heimild að ná í upplýsingar frá öðrum stofnunum. Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar [hér](https://www.tr.is/tryggingastofnun/personuvernd). Ef tekjur eða aðrar aðstæður þínar breytast verður þú að láta TR vita þar sem það getur haft áhrif á greiðslur þínar.',
       description: 'english translation',
     },
     startApplication: {
@@ -367,6 +367,31 @@ export const childPensionFormMessage: MessageDir = {
     },
   }),
 
+  payment: defineMessages({
+    title: {
+      id: 'cp.application:payment.title',
+      defaultMessage: 'Greiðsluupplýsingar',
+      description: 'Payment information',
+    },
+    alertTitle: {
+      id: 'cp.application:payment.alert.title',
+      defaultMessage: 'Til athugunar!',
+      description: 'For consideration',
+    },
+    alertMessage: {
+      id: 'cp.application:payment.alert.message',
+      defaultMessage:
+        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inná bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inná þann reikning.',
+      description:
+        'All your payments from TR are paid into the bank account below. If you change your bank details, all your payments from the TR will be paid into that account.',
+    },
+    bank: {
+      id: 'cp.application:payment.bank',
+      defaultMessage: 'Banki',
+      description: 'Bank',
+    },
+  }),
+
   period: defineMessages({
     periodTitle: {
       id: 'cp.application:period.title',
@@ -375,10 +400,8 @@ export const childPensionFormMessage: MessageDir = {
     },
     periodDescription: {
       id: 'cp.application:period.description',
-      defaultMessage:
-        'Veldu dagsetningu sem þú vilt byrja að fá greitt ellilífeyri. Hægt er að sækja fyrir árið í ár og 2 ár aftur í tímann.',
-      description:
-        'Select the date you want to start receiving your retirement pension. You can apply for this year and 2 years back.',
+      defaultMessage: 'Frá hvaða tíma er sótt um?',
+      description: 'english translation',
     },
     periodInputMonth: {
       id: 'cp.application:period.input.month',
@@ -522,6 +545,34 @@ export const childPensionFormMessage: MessageDir = {
       defaultMessage: 'Börn sem þú sækir um barnalífeyri fyrir',
       description: 'english translation',
     },
+    bank: {
+      id: 'cp.application:conformation.bank',
+      defaultMessage: 'Banki',
+      description: 'Bank',
+    },
+  }),
+
+  comment: defineMessages({
+    additionalInfoTitle: {
+      id: 'cp.application:comment.additional.info.title',
+      defaultMessage: 'Viðbótarupplýsingar',
+      description: 'Additional Information',
+    },
+    commentSection: {
+      id: 'cp.application:comment.section',
+      defaultMessage: 'Athugasemd',
+      description: 'Comment',
+    },
+    description: {
+      id: 'cp.application:comment.description',
+      defaultMessage: 'Hafir þú einhverja athugasemd skildu hana eftir hér.',
+      description: 'If you have any comments, leave them here.',
+    },
+    placeholder: {
+      id: 'cp.application:comment.placeholder',
+      defaultMessage: 'Skrifaðu hér athugasemd',
+      description: 'Your comment',
+    },
   }),
 
   conclusionScreen: defineMessages({
@@ -569,6 +620,11 @@ export const childPensionFormMessage: MessageDir = {
       id: 'cp.application:error.period',
       defaultMessage: 'Tímabil þarf að vera gilt.',
       description: 'The period must be valid.',
+    },
+    bank: {
+      id: 'cp.application:error.bank',
+      defaultMessage: 'Ógilt bankanúmer. Þarf að vera á forminu: 0000-11-222222',
+      description: 'Invalid bank account. Has to be formatted: 0000-11-222222',
     },
   }),
 }

@@ -13,7 +13,11 @@ import { childPensionFormMessage } from '../../lib/messages'
 import { BaseInformation } from './review-groups/BaseInformation'
 import { Children } from './review-groups/Children'
 import { Period } from './review-groups/Period'
+import { Comment } from './review-groups/Comment'
+import { getApplicationAnswers } from '../../lib/childPensionUtils'
 import { Attachments } from './review-groups/Attachments'
+import { PaymentInformation } from './review-groups/PaymentInformation'
+
 
 interface ReviewScreenProps {
   application: Application
@@ -33,6 +37,8 @@ export const Review: FC<ReviewScreenProps> = ({
 }) => {
   const editable = field.props?.editable ?? false
   const { formatMessage } = useLocale()
+  const { comment } = getApplicationAnswers(application.answers)
+
   const { state } = application
 
   const hasError = (id: string) => get(errors, id) as string
@@ -149,8 +155,10 @@ export const Review: FC<ReviewScreenProps> = ({
         </Box>
       )}
       <BaseInformation {...childProps} />
+      <PaymentInformation {...childProps} />
       <Children {...childProps} />
       <Period {...childProps} />
+      {comment && <Comment {...childProps} />}
       <Attachments {...childProps} />
     </>
   )
