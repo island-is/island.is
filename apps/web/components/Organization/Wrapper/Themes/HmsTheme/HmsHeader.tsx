@@ -14,6 +14,12 @@ const getDefaultStyle = (width: number): CSSProperties => {
   if (width <= 1230) {
     return {
       backgroundImage: 'none',
+      backgroundPosition: '107% bottom',
+    }
+  }
+  if (width <= 1315) {
+    return {
+      backgroundPosition: '111% bottom',
     }
   }
   return {}

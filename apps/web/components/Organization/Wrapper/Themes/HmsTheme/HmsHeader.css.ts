@@ -77,13 +77,13 @@ const titleStyles = themeUtils.responsiveStyle({
     marginTop: 30,
   },
   lg: {
-    width: '60%',
+    width: '55%',
     marginLeft: -80,
     marginTop: 24,
   },
   xl: {
-    width: '50%',
-    marginLeft: -145,
+    width: '80%',
+    marginLeft: -135,
     marginTop: 24,
   },
 })
