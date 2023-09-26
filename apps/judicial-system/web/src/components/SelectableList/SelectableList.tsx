@@ -24,10 +24,30 @@ interface SelectableItem extends Item {
 interface Props {
   items?: Item[]
   CTAButton: CTAButtonAttributes
-  isLoading?: boolean
+  isLoading: boolean
   errorMessage?: string
   successMessage: string
   warningMessage?: string
+}
+
+interface AnimateChildrenProps {
+  id: string
+}
+
+const AnimateChildren: React.FC<
+  React.PropsWithChildren<AnimateChildrenProps>
+> = (props) => {
+  const { children, id } = props
+  return (
+    <motion.div
+      initial={{ y: 10 }}
+      animate={{ y: 0 }}
+      exit={{ y: 10 }}
+      key={id}
+    >
+      {children}
+    </motion.div>
+  )
 }
 
 const SelectableList: React.FC<Props> = (props) => {
@@ -44,21 +64,21 @@ const SelectableList: React.FC<Props> = (props) => {
   const [isHandlingCTA, setIsHandlingCTA] = useState<boolean>()
 
   useEffect(() => {
-    if (!items) {
+    if (!items || isLoading) {
       return
-    } else if (items.length === 0) {
-      setSelectableItems(undefined)
-    } else {
-      setSelectableItems((selectableItems) =>
-        items.map((item) => ({
-          id: item.id,
-          name: item.name,
-          checked:
-            selectableItems?.find((i) => i.id === item.id)?.checked ?? false,
-        })),
-      )
     }
-  }, [items])
+
+    setSelectableItems((selectableItems) =>
+      items.length === 0
+        ? undefined
+        : items.map((item) => ({
+            id: item.id,
+            name: item.name,
+            checked:
+              selectableItems?.find((i) => i.id === item.id)?.checked ?? false,
+          })),
+    )
+  }, [isLoading, items])
 
   const handleCTAButtonClick = async () => {
     if (!selectableItems) {
@@ -68,8 +88,10 @@ const SelectableList: React.FC<Props> = (props) => {
     setIsHandlingCTA(true)
     await CTAButton.onClick(selectableItems.filter((p) => p.checked))
     setIsHandlingCTA(false)
+    setSelectableItems([])
   }
 
+  console.log(items, selectableItems, isLoading)
   return (
     <>
       <Box
@@ -100,72 +122,83 @@ const SelectableList: React.FC<Props> = (props) => {
         </Box>
         <AnimatePresence>
           {isLoading ? (
-            <Box textAlign="center" paddingY={2} paddingX={3} marginBottom={2}>
+            <Box
+              textAlign="center"
+              paddingY={2}
+              paddingX={3}
+              marginBottom={2}
+              key="loading-dots"
+            >
               <LoadingDots />
             </Box>
           ) : errorMessage ? (
-            <IconAndText
-              icon="close"
-              iconColor="red400"
-              message={errorMessage}
-            />
-          ) : warningMessage ? (
-            <IconAndText
-              icon="warning"
-              iconColor="yellow400"
-              message={warningMessage}
-            />
-          ) : items &&
-            items.length > 0 &&
-            selectableItems &&
-            selectableItems.length > 0 ? (
-            selectableItems.map((item, index) => (
-              <Box
-                key={item.id}
-                marginBottom={index === selectableItems.length - 1 ? 0 : 2}
-                paddingX={3}
-                paddingY={2}
-                background="blue100"
-                borderRadius="standard"
-              >
-                <Checkbox
-                  label={
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="spaceBetween"
-                    >
-                      {item.name}
-                      {isHandlingCTA && item.checked && <LoadingDots />}
-                    </Box>
-                  }
-                  name={item.name}
-                  value={item.name}
-                  checked={item.checked}
-                  onChange={(evt) =>
-                    setSelectableItems((items) => {
-                      if (!items) {
-                        return
-                      }
-
-                      const index = items.findIndex((i) => i.name === item.name)
-                      const newItems = [...items]
-                      newItems[index].checked = evt.target.checked
-                      return newItems
-                    })
-                  }
-                  disabled={isHandlingCTA}
-                />
-              </Box>
-            ))
-          ) : (
-            <motion.div initial={{ y: 10 }} animate={{ y: 0 }} exit={{ y: 10 }}>
+            <AnimateChildren id="error-message">
               <IconAndText
-                icon="checkmark"
-                iconColor="blue400"
-                message={successMessage}
+                icon="close"
+                iconColor="red400"
+                message={errorMessage}
               />
-            </motion.div>
+            </AnimateChildren>
+          ) : warningMessage ? (
+            <AnimateChildren id="warning-message">
+              <IconAndText
+                icon="warning"
+                iconColor="yellow400"
+                message={warningMessage}
+              />
+            </AnimateChildren>
+          ) : !items && !selectableItems ? (
+            // <AnimateChildren id="success-message">
+            <IconAndText
+              icon="checkmark"
+              iconColor="blue400"
+              message={successMessage}
+            />
+          ) : (
+            // </AnimateChildren>
+            <AnimateChildren id="selectable-items">
+              {selectableItems?.map((item, index) => (
+                <Box
+                  key={item.id}
+                  marginBottom={index === selectableItems.length - 1 ? 0 : 2}
+                  paddingX={3}
+                  paddingY={2}
+                  background="blue100"
+                  borderRadius="standard"
+                >
+                  <Checkbox
+                    label={
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="spaceBetween"
+                      >
+                        {item.name}
+                        {isHandlingCTA && item.checked && <LoadingDots />}
+                      </Box>
+                    }
+                    name={item.name}
+                    value={item.name}
+                    checked={item.checked}
+                    onChange={(evt) =>
+                      setSelectableItems((items) => {
+                        if (!items) {
+                          return
+                        }
+
+                        const index = items.findIndex(
+                          (i) => i.name === item.name,
+                        )
+                        const newItems = [...items]
+                        newItems[index].checked = evt.target.checked
+                        return newItems
+                      })
+                    }
+                    disabled={isHandlingCTA}
+                  />
+                </Box>
+              ))}
+            </AnimateChildren>
           )}
         </AnimatePresence>
       </Box>
@@ -173,7 +206,7 @@ const SelectableList: React.FC<Props> = (props) => {
         <Button
           onClick={handleCTAButtonClick}
           loading={isHandlingCTA}
-          disabled={selectableItems?.every((p) => !p.checked)}
+          disabled={isLoading || selectableItems?.every((p) => !p.checked)}
         >
           {CTAButton.label}
         </Button>
