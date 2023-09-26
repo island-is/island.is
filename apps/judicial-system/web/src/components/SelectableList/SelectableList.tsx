@@ -60,36 +60,28 @@ const SelectableList: React.FC<Props> = (props) => {
     warningMessage,
   } = props
   const { formatMessage } = useIntl()
-  const [selectableItems, setSelectableItems] = useState<SelectableItem[]>()
+  const [selectableItems, setSelectableItems] = useState<SelectableItem[]>([])
   const [isHandlingCTA, setIsHandlingCTA] = useState<boolean>()
 
   useEffect(() => {
-    // console.log(isLoading, items)
     if (!items) {
       return
     }
 
     setSelectableItems((selectableItems) =>
-      items.length === 0
-        ? undefined
-        : items.map((item) => ({
-            id: item.id,
-            name: item.name,
-            checked:
-              selectableItems?.find((i) => i.id === item.id)?.checked ?? false,
-          })),
+      items.map((item) => ({
+        id: item.id,
+        name: item.name,
+        checked:
+          selectableItems.find((i) => i.id === item.id)?.checked ?? false,
+      })),
     )
   }, [items, isLoading])
 
   const handleCTAButtonClick = async () => {
-    if (!selectableItems) {
-      return
-    }
-
     setIsHandlingCTA(true)
     await CTAButton.onClick(selectableItems.filter((p) => p.checked))
     setIsHandlingCTA(false)
-    setSelectableItems([])
   }
 
   return (
@@ -107,7 +99,6 @@ const SelectableList: React.FC<Props> = (props) => {
             name="select-all"
             label={formatMessage(strings.selectAllLabel)}
             checked={
-              selectableItems &&
               selectableItems.length > 0 &&
               selectableItems.every((item) => item.checked === true)
             }
@@ -116,7 +107,7 @@ const SelectableList: React.FC<Props> = (props) => {
                 items?.map((item) => ({ ...item, checked: !item.checked })),
               )
             }
-            disabled={isHandlingCTA || selectableItems?.length === 0}
+            disabled={isHandlingCTA || selectableItems.length === 0}
             strong
           />
         </Box>
@@ -157,7 +148,7 @@ const SelectableList: React.FC<Props> = (props) => {
             </AnimateChildren>
           ) : (
             <AnimateChildren id="selectable-items">
-              {selectableItems?.map((item, index) => (
+              {selectableItems.map((item, index) => (
                 <Box
                   key={item.id}
                   marginBottom={index === selectableItems.length - 1 ? 0 : 2}
@@ -182,10 +173,6 @@ const SelectableList: React.FC<Props> = (props) => {
                     checked={item.checked}
                     onChange={(evt) =>
                       setSelectableItems((items) => {
-                        if (!items) {
-                          return
-                        }
-
                         const index = items.findIndex(
                           (i) => i.name === item.name,
                         )
@@ -209,7 +196,7 @@ const SelectableList: React.FC<Props> = (props) => {
           disabled={
             items?.length === 0 ||
             isLoading ||
-            selectableItems?.every((p) => !p.checked)
+            selectableItems.every((p) => !p.checked)
           }
         >
           {CTAButton.label}

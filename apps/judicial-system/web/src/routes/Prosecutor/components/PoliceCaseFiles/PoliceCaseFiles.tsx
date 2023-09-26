@@ -2,10 +2,7 @@ import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage, Box } from '@island.is/island-ui/core'
-import {
-  CaseFileState,
-  isIndictmentCase,
-} from '@island.is/judicial-system/types'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 import SelectableList, {
   Item,
@@ -15,7 +12,6 @@ import {
   PoliceCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { policeCaseNumber } from '../PoliceCaseNumbers/PoliceCaseNumbers.strings'
 import { policeCaseFiles as m } from './PoliceCaseFiles.strings'
 
 export interface PoliceCaseFilesData {
@@ -41,18 +37,16 @@ export const mapPoliceCaseFileToPoliceCaseFileCheck = (
 })
 
 interface Props {
-  onUpload: (a: Item[]) => Promise<void>
+  onUpload: (selectedFiles: Item[]) => Promise<void>
   isUploading: boolean
   policeCaseFileList?: PoliceCaseFileCheck[]
   policeCaseFiles?: PoliceCaseFilesData
-  policeCaseNumber: string
 }
 
 const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
   onUpload,
   policeCaseFileList,
   policeCaseFiles,
-  policeCaseNumber,
 }) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)

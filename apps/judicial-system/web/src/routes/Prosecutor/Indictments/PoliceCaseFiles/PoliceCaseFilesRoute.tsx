@@ -259,7 +259,6 @@ const UploadFilesToPoliceCase: React.FC<
         isUploading={isUploading}
         policeCaseFileList={policeCaseFileList}
         policeCaseFiles={policeCaseFiles}
-        policeCaseNumber={policeCaseNumber}
       />
       <InputFileUpload
         name="fileUpload"
