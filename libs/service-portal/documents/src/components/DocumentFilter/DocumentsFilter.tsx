@@ -29,6 +29,8 @@ interface Props {
   debounceChange: (e: any) => void
   handleClearFilters: () => void
   handleShowUnread: (value: boolean) => void
+  handleShowArchived: (value: boolean) => void
+  handleShowBookmarked: (value: boolean) => void
   handleCategoriesChange: (values: string[]) => void
   handleSendersChange: (values: string[]) => void
   handleDateFromChange: (date: Date | null) => void
@@ -44,6 +46,8 @@ const DocumentsFilter = ({
   debounceChange,
   handleClearFilters,
   handleShowUnread,
+  handleShowArchived,
+  handleShowBookmarked,
   handleCategoriesChange,
   handleSendersChange,
   handleDateFromChange,
@@ -94,6 +98,8 @@ const DocumentsFilter = ({
             name="rafraen-skjol-input"
             size="xs"
             onChange={debounceChange}
+            backgroundColor="blue"
+            icon={{ name: 'search' }}
           />
         }
         stretchInput={true}
@@ -106,12 +112,28 @@ const DocumentsFilter = ({
           paddingX={3}
           className={styles.unreadFilter}
         >
-          <Box paddingY={3}>
+          <Box paddingTop={3}>
             <Checkbox
               id="show-unread"
               label={formatMessage(messages.onlyShowUnread)}
               checked={filterValue.showUnread}
               onChange={(e) => handleShowUnread(e.target.checked)}
+            />
+          </Box>
+          <Box paddingTop={1}>
+            <Checkbox
+              id="show-bookmarked"
+              label={formatMessage(messages.onlyShowBookmarked)}
+              checked={filterValue.bookmarked}
+              onChange={(e) => handleShowBookmarked(e.target.checked)}
+            />
+          </Box>
+          <Box paddingTop={1} paddingBottom={3}>
+            <Checkbox
+              id="show-archived"
+              label={formatMessage(messages.onlyShowArchived)}
+              checked={filterValue.archived}
+              onChange={(e) => handleShowArchived(e.target.checked)}
             />
           </Box>
           <Box

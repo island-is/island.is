@@ -21,6 +21,10 @@ export const active = style({
   backgroundColor: theme.color.blue100,
 })
 
+export const title = style({
+  cursor: 'pointer',
+})
+
 export const unread = style({
   backgroundColor: dark50,
 })

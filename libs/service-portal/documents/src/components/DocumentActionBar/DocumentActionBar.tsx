@@ -1,19 +1,41 @@
-import { Icon, Box, BoxProps } from '@island.is/island-ui/core'
+import {
+  Icon,
+  Box,
+  BoxProps,
+  LoadingDots,
+  Button,
+} from '@island.is/island-ui/core'
+import { useSubmitMailAction } from '../../utils/useSubmitMailAction'
+import * as styles from './DocumentActionBar.css'
 
 export type DocumentActionBarProps = {
-  onArchiveClick?: () => void
-  onFavoriteClick?: () => void
   onPrintClick?: () => void
   onGoBack?: () => void
   spacing?: BoxProps['columnGap']
+  documentId: string
+  archived?: boolean
+  bookmarked?: boolean
 }
 export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
   onGoBack,
-  onFavoriteClick,
   onPrintClick,
-  onArchiveClick,
   spacing = 1,
+  documentId,
+  bookmarked,
+  archived,
 }) => {
+  const {
+    submitMailAction,
+    archiveSuccess,
+    bookmarkSuccess,
+    loading,
+    dataSuccess,
+  } = useSubmitMailAction({ messageId: documentId })
+
+  const isBookmarked =
+    (bookmarked && !dataSuccess.unbookmark) || bookmarkSuccess
+  const isArchived = (archived && !dataSuccess.unarchive) || archiveSuccess
+
   return (
     <>
       {onGoBack && (
@@ -23,25 +45,45 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
           </button>
         </Box>
       )}
-      {(onPrintClick || onArchiveClick || onFavoriteClick) && (
-        <Box display="flex" columnGap={spacing}>
-          {onArchiveClick && (
-            <button onClick={onArchiveClick}>
-              <Icon color="blue400" icon="archive" type="outline" />
-            </button>
-          )}
-          {onFavoriteClick && (
-            <button onClick={onFavoriteClick}>
-              <Icon color="blue400" icon="star" type="outline" />
-            </button>
-          )}
-          {onPrintClick && (
-            <button onClick={onPrintClick}>
-              <Icon color="blue400" icon="print" type="outline" />
-            </button>
-          )}
-        </Box>
-      )}
+      <Box className={styles.filterBtns} display="flex" columnGap={spacing}>
+        {!loading && (
+          <>
+            <Button
+              circle
+              icon="archive"
+              iconType={isArchived ? 'filled' : 'outline'}
+              onClick={() =>
+                submitMailAction(isArchived ? 'unarchive' : 'archive')
+              }
+              size="medium"
+              title="Geymsla"
+              colorScheme="light"
+            />
+
+            <Button
+              circle
+              icon="star"
+              iconType={isBookmarked ? 'filled' : 'outline'}
+              onClick={() =>
+                submitMailAction(isBookmarked ? 'unbookmark' : 'bookmark')
+              }
+              size="medium"
+              title="Stjörnumerkja"
+              colorScheme="light"
+            />
+          </>
+        )}
+        {loading && (
+          <Box display="flex" alignItems="center">
+            <LoadingDots />
+          </Box>
+        )}
+        {onPrintClick && (
+          <button onClick={onPrintClick}>
+            <Icon color="blue400" icon="print" type="outline" />
+          </button>
+        )}
+      </Box>
     </>
   )
 }

@@ -36,6 +36,12 @@ export const checkboxWrap = style({
   justifyContent: 'center',
 })
 
+export const filterActionButtons = style({})
+
+globalStyle(`${filterActionButtons} button:hover`, {
+  backgroundColor: theme.color.white,
+})
+
 globalStyle(`${checkboxWrap} label > div`, {
   marginRight: 0,
 })

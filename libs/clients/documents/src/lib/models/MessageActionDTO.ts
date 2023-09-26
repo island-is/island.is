@@ -1,4 +1,4 @@
 export interface MessageActionDTO {
-  kennitala: string
+  nationalId: string
   messageId: string
 }
