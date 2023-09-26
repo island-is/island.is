@@ -106,24 +106,6 @@ export const ChildPensionForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'periodSection',
-          title: childPensionFormMessage.period.periodTitle,
-          children: [
-            buildMultiField({
-              id: 'periodField',
-              title: childPensionFormMessage.period.periodTitle,
-              description: childPensionFormMessage.period.periodDescription,
-              children: [
-                buildCustomField({
-                  id: 'period',
-                  component: 'Period',
-                  title: childPensionFormMessage.period.periodTitle,
-                }),
-              ],
-            }),
-          ],
-        }),
-        buildSubSection({
           id: 'payment',
           title: childPensionFormMessage.info.paymentTitle,
           children: [
@@ -240,7 +222,6 @@ export const ChildPensionForm: Form = buildForm({
             }),
           ],
         }),
-
         buildSubSection({
           id: 'fileUploadNotLivesWithApplicant',
           title: childPensionFormMessage.fileUpload.notLivesWithApplicantTitle,
@@ -267,6 +248,24 @@ export const ChildPensionForm: Form = buildForm({
               uploadButtonLabel:
                 childPensionFormMessage.fileUpload.attachmentButton,
               uploadMultiple: true,
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'periodSection',
+          title: childPensionFormMessage.period.periodTitle,
+          children: [
+            buildMultiField({
+              id: 'periodField',
+              title: childPensionFormMessage.period.periodTitle,
+              description: childPensionFormMessage.period.periodDescription,
+              children: [
+                buildCustomField({
+                  id: 'period',
+                  component: 'Period',
+                  title: childPensionFormMessage.period.periodTitle,
+                }),
+              ],
             }),
           ],
         }),

@@ -359,10 +359,8 @@ export const childPensionFormMessage: MessageDir = {
     },
     periodDescription: {
       id: 'cp.application:period.description',
-      defaultMessage:
-        'Veldu dagsetningu sem þú vilt byrja að fá greitt ellilífeyri. Hægt er að sækja fyrir árið í ár og 2 ár aftur í tímann.',
-      description:
-        'Select the date you want to start receiving your retirement pension. You can apply for this year and 2 years back.',
+      defaultMessage: 'Frá hvaða tíma er sótt um?',
+      description: 'english translation',
     },
     periodInputMonth: {
       id: 'cp.application:period.input.month',
