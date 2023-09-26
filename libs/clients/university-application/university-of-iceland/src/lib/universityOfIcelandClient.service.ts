@@ -173,7 +173,7 @@ class UniversityOfIcelandApplicationClient {
           externalId: course.externalId,
           nameIs: course.nameIs,
           nameEn: course.nameEn,
-          credits: Number(course.credits.toString().replace(',', '.')), //TODO swagger says number, but api returns string (e.g. '7,5')
+          credits: Number(course.credits.toString().replace(',', '.')) || 0, //TODO swagger says number, but api returns string (e.g. '7,5')
           semesterYear: course.semesterYear,
           semesterSeason: semesterSeason,
           descriptionIs: course.descriptionIs,

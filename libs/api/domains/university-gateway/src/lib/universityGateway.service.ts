@@ -124,7 +124,7 @@ class UniversityGatewayApi {
         externalId: c.details.externalId,
         nameIs: c.details.nameIs,
         nameEn: c.details.nameEn,
-        credits: c.details.credits,
+        credits: c.details.credits || 0,
         semesterYear: c.details.semesterYear,
         semesterSeason: c.details.semesterSeason.toString(),
         descriptionIs: c.details.descriptionIs,

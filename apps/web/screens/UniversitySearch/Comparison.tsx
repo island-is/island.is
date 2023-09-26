@@ -13,21 +13,28 @@ import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
   ProgramDetails,
+  University,
 } from '@island.is/web/graphql/schema'
-import { GET_UNIVERSITY_GATEWAY_PROGRAM } from '../queries/UniversityGateway'
+import {
+  GET_UNIVERSITY_GATEWAY_PROGRAM,
+  GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
+} from '../queries/UniversityGateway'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { useNamespace } from '@island.is/web/hooks'
 import { TranslationDefaults } from './TranslationDefaults'
+import { ComparisonProps } from './UniversitySearch'
 interface UniversityComparisonProps {
   data: Array<ProgramDetails>
   locale: string
   namespace: Record<string, string>
+  universities: Array<University>
 }
 
 const Comparison: Screen<UniversityComparisonProps> = ({
   data,
   locale,
   namespace,
+  universities,
 }) => {
   const n = useNamespace(namespace)
   const [selectedComparison, setSelectedComparison] =
@@ -59,7 +66,15 @@ const Comparison: Screen<UniversityComparisonProps> = ({
 
   useEffect(() => {
     //update localStorage
-    localStorage.setItem('comparison', JSON.stringify(selectedComparison))
+    const parsedData = selectedComparison.map((item) => {
+      return {
+        id: item.id,
+        nameIs: item.nameIs,
+        iconSrc: universities.filter((x) => x.id === item.universityId)[0]
+          .logoUrl,
+      }
+    })
+    localStorage.setItem('comparison', JSON.stringify(parsedData))
   }, [selectedComparison])
 
   return (
@@ -120,7 +135,12 @@ const Comparison: Screen<UniversityComparisonProps> = ({
                       justifyContent="spaceBetween"
                       alignItems="center"
                     >
-                      <Text variant="eyebrow">{i.universityContentfulKey}</Text>
+                      <Text variant="eyebrow">
+                        {
+                          universities.filter((x) => x.id === i.universityId)[0]
+                            .title
+                        }
+                      </Text>
                       <Button
                         variant="text"
                         size="small"
@@ -213,6 +233,7 @@ const Comparison: Screen<UniversityComparisonProps> = ({
             <T.Row>
               <T.Data borderColor="transparent"></T.Data>
               {selectedComparison.map((i) => {
+                const now = new Date()
                 return (
                   <T.Data borderColor="transparent">
                     <Box
@@ -221,9 +242,12 @@ const Comparison: Screen<UniversityComparisonProps> = ({
                       flexDirection="column"
                       rowGap={1}
                     >
-                      <Button size="small" fluid>
-                        {n('apply', 'Sækja um')}
-                      </Button>
+                      {new Date(i.applicationStartDate) <= now &&
+                        new Date(i.applicationEndDate) >= now && (
+                          <Button size="small" fluid>
+                            {n('apply', 'Sækja um')}
+                          </Button>
+                        )}
                       <Button size="small" variant="ghost" fluid>
                         {n('previewProgram', 'Skoða nám')}
                       </Button>
@@ -279,10 +303,15 @@ Comparison.getProps = async ({ query, apolloClient, locale }) => {
     (resolved) => resolved.data.universityGatewayProgramById,
   )
 
+  const universities = await apolloClient.query<any>({
+    query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
+  })
+
   return {
     data: mappedData,
     locale,
     namespace,
+    universities: universities.data.universityGatewayUniversities,
   }
 }
 

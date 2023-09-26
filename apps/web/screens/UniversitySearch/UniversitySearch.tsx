@@ -132,7 +132,14 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const [filters, setFilters] = useState<FilterProps>(intialFilters)
 
   const [gridView, setGridView] = useState<boolean>(true)
-  const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE)
+
+  const [totalPages, setTotalPages] = useState<number>(
+    Math.ceil(data.length / ITEMS_PER_PAGE),
+  )
+
+  useEffect(() => {
+    setTotalPages(Math.ceil(filteredResults.length / ITEMS_PER_PAGE))
+  }, [filteredResults])
 
   useEffect(() => {
     const comp = localStorage.getItem('comparison')
@@ -208,7 +215,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     setFilteredResults(resultProducts)
   }
 
-  const createPrimaryCTA = () => {
+  const createPrimaryCTA = (item: Program) => {
+    const now = new Date()
     const CTA: CTAProps = {
       label: n('apply', 'Sækja um'),
       variant: 'primary',
@@ -216,7 +224,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       icon: 'arrowForward',
       iconType: 'outline',
       onClick: () => console.log('hallo'),
-      disabled: false,
+      disabled:
+        new Date(item.applicationStartDate) > now ||
+        new Date(item.applicationEndDate) < now,
     }
     return CTA
   }
@@ -473,7 +483,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
             </Box>
           </Hidden>
 
-          <Box width="full">
+          <Box width="full" minWidth={0}>
             <Text
               marginTop={0}
               marginBottom={2}
@@ -706,7 +716,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                               />
                             }
                             sidePanelConfig={{
-                              cta: createPrimaryCTA(),
+                              cta: createPrimaryCTA(dataItem),
                               buttonLabel: n('apply', 'Sækja um'),
                               items: [
                                 {
@@ -872,7 +882,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                               buttonLabel={n('apply', 'Sækja um')}
                               checkboxLabel={n('compare', 'Setja í samanburð')}
                               checkboxId={dataItem.id}
-                              cta={createPrimaryCTA()}
+                              cta={createPrimaryCTA(dataItem)}
                               href={
                                 locale === 'en'
                                   ? `/en/haskolanam/${dataItem.id}`
@@ -987,7 +997,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 variant="purple"
                 page={selectedPage}
                 itemsPerPage={ITEMS_PER_PAGE}
-                totalItems={data.length}
+                totalItems={filteredResults.length}
                 totalPages={totalPages}
                 renderLink={(page, className, children) => (
                   <button

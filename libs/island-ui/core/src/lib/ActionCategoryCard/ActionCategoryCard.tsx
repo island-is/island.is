@@ -179,6 +179,7 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
           flexGrow={1}
           height="full"
           width="full"
+          minWidth={0}
         >
           <Box
             display="flex"
@@ -187,6 +188,7 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
             flexDirection="column"
             justifyContent={sidePanelConfig ? 'spaceBetween' : 'flexStart'}
             style={sidePanelConfig && { alignSelf: 'stretch' }}
+            minWidth={0}
           >
             <FocusableBox
               href={href}
