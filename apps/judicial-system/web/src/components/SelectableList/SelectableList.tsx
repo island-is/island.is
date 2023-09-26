@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, Variants } from 'framer-motion'
 
 import { Box, Button, Checkbox, LoadingDots } from '@island.is/island-ui/core'
 
@@ -34,6 +34,16 @@ interface AnimateChildrenProps {
   id: string
 }
 
+const selectableListItemVariants = {
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: i * 0.1,
+    },
+  }),
+  hidden: { opacity: 0, y: 10 },
+}
 const AnimateChildren: React.FC<
   React.PropsWithChildren<AnimateChildrenProps>
 > = (props) => {
@@ -147,45 +157,53 @@ const SelectableList: React.FC<Props> = (props) => {
               />
             </AnimateChildren>
           ) : (
-            <AnimateChildren id="selectable-items">
+            <ul>
               {selectableItems.map((item, index) => (
-                <Box
+                <motion.li
+                  custom={index}
+                  initial={'hidden'}
+                  animate={'visible'}
+                  variants={selectableListItemVariants}
                   key={item.id}
-                  marginBottom={index === selectableItems.length - 1 ? 0 : 2}
-                  paddingX={3}
-                  paddingY={2}
-                  background="blue100"
-                  borderRadius="standard"
                 >
-                  <Checkbox
-                    label={
-                      <Box
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="spaceBetween"
-                      >
-                        {item.name}
-                        {isHandlingCTA && item.checked && <LoadingDots />}
-                      </Box>
-                    }
-                    name={item.name}
-                    value={item.name}
-                    checked={item.checked}
-                    onChange={(evt) =>
-                      setSelectableItems((items) => {
-                        const index = items.findIndex(
-                          (i) => i.name === item.name,
-                        )
-                        const newItems = [...items]
-                        newItems[index].checked = evt.target.checked
-                        return newItems
-                      })
-                    }
-                    disabled={isHandlingCTA}
-                  />
-                </Box>
+                  <Box
+                    key={item.id}
+                    marginBottom={index === selectableItems.length - 1 ? 0 : 2}
+                    paddingX={3}
+                    paddingY={2}
+                    background="blue100"
+                    borderRadius="standard"
+                  >
+                    <Checkbox
+                      label={
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="spaceBetween"
+                        >
+                          {item.name}
+                          {isHandlingCTA && item.checked && <LoadingDots />}
+                        </Box>
+                      }
+                      name={item.name}
+                      value={item.name}
+                      checked={item.checked}
+                      onChange={(evt) =>
+                        setSelectableItems((items) => {
+                          const index = items.findIndex(
+                            (i) => i.name === item.name,
+                          )
+                          const newItems = [...items]
+                          newItems[index].checked = evt.target.checked
+                          return newItems
+                        })
+                      }
+                      disabled={isHandlingCTA}
+                    />
+                  </Box>
+                </motion.li>
               ))}
-            </AnimateChildren>
+            </ul>
           )}
         </AnimatePresence>
       </Box>

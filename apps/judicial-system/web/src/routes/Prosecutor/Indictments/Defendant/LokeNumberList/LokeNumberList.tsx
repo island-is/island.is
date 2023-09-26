@@ -74,7 +74,11 @@ export const LokeNumberList: React.FC<Props> = (props) => {
         errorMessage={
           loadingError ? formatMessage(strings.errorMessage) : undefined
         }
-        successMessage={formatMessage(strings.allNumbersSelected)}
+        successMessage={
+          availablePoliceCases?.length === 0
+            ? formatMessage(strings.allNumbersSelected)
+            : undefined
+        }
       />
     </Box>
   )
