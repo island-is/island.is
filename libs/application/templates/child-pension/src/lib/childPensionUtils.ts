@@ -92,7 +92,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     selectedMonth,
     selectedYear,
     comment,
-    bank
+    bank,
   }
 }
 
