@@ -149,6 +149,10 @@ const UploadFilesToPoliceCase: React.FC<
   ])
 
   useEffect(() => {
+    if (policeCaseFiles?.files.length === 0) {
+      return
+    }
+
     setPoliceCaseFileList(
       policeCaseFiles?.files
         .filter(
