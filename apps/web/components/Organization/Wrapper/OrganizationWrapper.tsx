@@ -87,10 +87,7 @@ import {
   IcelandicNaturalDisasterInsuranceHeader,
   IcelandicNaturalDisasterInsuranceFooter,
 } from './Themes/IcelandicNaturalDisasterInsuranceTheme'
-import {
-  TransportAuthorityFooter,
-  TransportAuthorityHeader,
-} from './Themes/TransportAuthorityTheme'
+import { TransportAuthorityHeader } from './Themes/TransportAuthorityTheme'
 import { RettindagaeslaFatladsFolksHeader } from './Themes/RettindagaeslaFatladsFolksTheme'
 
 import * as styles from './OrganizationWrapper.css'
@@ -506,16 +503,6 @@ export const OrganizationFooter: React.FC<
         <IcelandicNaturalDisasterInsuranceFooter
           footerItems={organization.footerItems}
           namespace={namespace}
-        />
-      )
-      break
-    case 'samgongustofa':
-    case 'transport-authority':
-      OrganizationFooterComponent = (
-        <TransportAuthorityFooter
-          title={organization.title}
-          footerItems={organization.footerItems}
-          logo={organization.logo?.url}
         />
       )
       break

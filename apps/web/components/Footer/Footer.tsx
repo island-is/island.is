@@ -38,7 +38,7 @@ export const Footer = ({
   const isMobileScreenWidth = width < theme.breakpoints.sm
 
   return (
-    <footer style={{ background }}>
+    <footer className={styles.footer} style={{ background }}>
       <Box paddingTop={3} paddingBottom={5}>
         <GridContainer>
           <GridRow className={styles.noWrap}>
