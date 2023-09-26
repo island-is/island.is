@@ -5,6 +5,14 @@ export const messages = defineMessages({
     id: 'sp.health:therapies-title',
     defaultMessage: 'Þjálfun',
   },
+  period: {
+    id: 'sp.health:period',
+    defaultMessage: 'Tímabil',
+  },
+  periodStatus: {
+    id: 'sp.health:period-status',
+    defaultMessage: 'Staða tímabils',
+  },
   therapyDescription: {
     id: 'sp.health:therapies-intro',
     defaultMessage:
@@ -461,13 +469,19 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-title',
     defaultMessage: 'Lyf',
   },
+  medicineTitleIntro: {
+    id: 'sp.health:medicine-title-intro',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore aliqua.',
+  },
+
   medicinePurchaseTitle: {
     id: 'sp.health:medicine-purchase-title',
     defaultMessage: 'Lyfjakaup þrepstaða',
   },
   medicinePurchaseIntroTitle: {
     id: 'sp.health:medicine-purchase-title',
-    defaultMessage: 'Lyfjakaup þrepstaða',
+    defaultMessage: 'Þrepastaða þín',
   },
   medicinePurchaseIntroText: {
     id: 'sp.health:medicine-purchase-intro',
@@ -499,5 +513,33 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-license-intro-text',
     defaultMessage:
       'Læknir sækir um lyfjaskírteini fyrir einstakling sem gefin eru út af Sjúkratryggingum að uppfylltum ákveðnum skilyrðum samkvæmt vinnureglum.',
+  },
+  medicinePaymentPeriod: {
+    id: 'sp.health:medicine-payment-period',
+    defaultMessage: 'Tímabil lyfjakaupa',
+  },
+  medicinePriceList: {
+    id: 'sp.health:medicine-price-list',
+    defaultMessage: 'Lyfjaverðskrá',
+  },
+  medicinePaymentStatus: {
+    id: 'sp.health:medicine-payment-status',
+    defaultMessage: 'Greiðslustaða',
+  },
+  medicinePaymentPaidAmount: {
+    id: 'sp.health:medicine-payment-paid-amount',
+    defaultMessage: '{amount} kr.',
+  },
+  medicineStep: {
+    id: 'sp.health:medicine-step',
+    defaultMessage: 'Þrepastaða',
+  },
+  medicineStepStatus: {
+    id: 'sp.health:medicine-step-status',
+    defaultMessage: 'Greiðsluþrep {step}, þú greiðir {ratio}%',
+  },
+  medicineBills: {
+    id: 'sp.health:medicine-bills',
+    defaultMessage: 'Lyfjareikningar',
   },
 })

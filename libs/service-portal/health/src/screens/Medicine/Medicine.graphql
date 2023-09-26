@@ -11,3 +11,15 @@ query getDrugsData {
     levelPercentage
   }
 }
+
+query getDrugsBills($input: RightsPortalDrugsBillsInput!) {
+  rightsPortalDrugsBills(input: $input) {
+    id
+    date
+    description
+    copaymentAmount
+    customerAmount
+    insuranceAmount
+    calculatedForPaymentStepAmount
+  }
+}
