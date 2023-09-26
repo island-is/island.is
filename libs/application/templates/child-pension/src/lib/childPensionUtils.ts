@@ -28,10 +28,14 @@ interface ChildPensionAttachments {
   maintenance?: FileType[]
   notLivesWithApplicant?: FileType[]
 }
+interface AdditionalInformation {
+  additionalDocuments?: FileType[]
+}
 
 enum AttachmentTypes {
   MAINTENANCE = 'maintenance',
   NOT_LIVES_WITH_APPLICANT = 'notLivesWithApplicant',
+  ADDITIONAL_DOCUMENTS = 'additionalDocuments',
 }
 
 interface Attachments {
@@ -182,6 +186,19 @@ export function getAttachments(application: Application) {
       AttachmentTypes.NOT_LIVES_WITH_APPLICANT,
     )
   }
+
+  const additionalInfo =
+    answers.fileUploadAdditionalFiles as AdditionalInformation
+
+  if (
+    additionalInfo.additionalDocuments &&
+    additionalInfo.additionalDocuments?.length > 0
+  ) {
+    getAttachmentDetails(
+      additionalInfo?.additionalDocuments,
+      AttachmentTypes.ADDITIONAL_DOCUMENTS,
+    )
+  }  
 
   return attachments
 }

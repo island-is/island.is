@@ -67,4 +67,5 @@ export const AttachmentLabel: {
   maintenance: childPensionFormMessage.fileUpload.maintenanceTitle,
   notLivesWithApplicant:
     childPensionFormMessage.fileUpload.notLivesWithApplicantTitle,
+  additionalDocuments: childPensionFormMessage.fileUpload.additionalFileTitle,
 }
