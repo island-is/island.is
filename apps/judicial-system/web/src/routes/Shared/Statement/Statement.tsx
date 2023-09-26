@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -30,14 +24,9 @@ import {
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  addUploadFiles,
-  generateSingleFileUpdate,
-  mapCaseFileToUploadFile,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
-  TUploadFile,
   useCase,
   useS3Upload,
+  useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { statement as strings } from './Statement.strings'
@@ -48,9 +37,15 @@ const Statement = () => {
   const { isUpdatingCase, updateCase } = useCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const [visibleModal, setVisibleModal] = useState<'STATEMENT_SENT'>()
   const { id } = router.query
+  const {
+    uploadFiles,
+    allFilesUploaded,
+    addUploadFiles,
+    updateUploadFile,
+    removeUploadFile,
+  } = useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
@@ -69,34 +64,10 @@ const Statement = () => {
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
 
-  const allFilesUploaded = useMemo(() => {
-    return displayFiles.every(
-      (file) => file.status === 'done' || file.status === 'error',
-    )
-  }, [displayFiles])
-
   const isStepValid =
-    displayFiles.some(
+    uploadFiles.some(
       (file) => file.category === appealStatementType && file.status === 'done',
     ) && allFilesUploaded
-
-  const removeFileCB = useCallback((file: TUploadFile) => {
-    setDisplayFiles((previous) =>
-      previous.filter((caseFile) => caseFile.id !== file.id),
-    )
-  }, [])
-
-  const handleUIUpdate = (displayFile: TUploadFile, newId?: string) => {
-    setDisplayFiles((previous) =>
-      generateSingleFileUpdate(previous, displayFile, newId),
-    )
-  }
-
-  useEffect(() => {
-    if (workingCase.caseFiles) {
-      setDisplayFiles(workingCase.caseFiles.map(mapCaseFileToUploadFile))
-    }
-  }, [workingCase.caseFiles])
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
@@ -147,7 +118,7 @@ const Statement = () => {
                 required
               />
               <InputFileUpload
-                fileList={displayFiles.filter(
+                fileList={uploadFiles.filter(
                   (file) => file.category === appealStatementType,
                 )}
                 accept={'application/pdf'}
@@ -158,12 +129,12 @@ const Statement = () => {
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
                 onChange={(files) =>
                   handleUpload(
-                    addUploadFiles(files, setDisplayFiles, appealStatementType),
-                    handleUIUpdate,
+                    addUploadFiles(files, appealStatementType),
+                    updateUploadFile,
                   )
                 }
-                onRemove={(file) => handleRemove(file, removeFileCB)}
-                onRetry={(file) => handleRetry(file, handleUIUpdate)}
+                onRemove={(file) => handleRemove(file, removeUploadFile)}
+                onRetry={(file) => handleRetry(file, updateUploadFile)}
               />
             </Box>
             <Box component="section" marginBottom={10}>
@@ -175,7 +146,7 @@ const Statement = () => {
                 {formatMessage(strings.uploadStatementCaseFilesSubtitle)}
               </Text>
               <InputFileUpload
-                fileList={displayFiles.filter(
+                fileList={uploadFiles.filter(
                   (file) => file.category === appealCaseFilesType,
                 )}
                 accept={'application/pdf'}
@@ -186,12 +157,12 @@ const Statement = () => {
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
                 onChange={(files) =>
                   handleUpload(
-                    addUploadFiles(files, setDisplayFiles, appealCaseFilesType),
-                    handleUIUpdate,
+                    addUploadFiles(files, appealCaseFilesType),
+                    updateUploadFile,
                   )
                 }
-                onRemove={(file) => handleRemove(file, removeFileCB)}
-                onRetry={(file) => handleRetry(file, handleUIUpdate)}
+                onRemove={(file) => handleRemove(file, removeUploadFile)}
+                onRetry={(file) => handleRetry(file, updateUploadFile)}
               />
             </Box>
           </>

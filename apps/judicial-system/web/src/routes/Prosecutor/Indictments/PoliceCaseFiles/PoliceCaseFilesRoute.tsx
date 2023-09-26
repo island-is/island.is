@@ -36,13 +36,9 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  addUploadFiles,
-  generateSingleFileUpdate,
-  mapCaseFileToUploadFile,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
   TUploadFile,
   useS3Upload,
+  useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import {
@@ -64,6 +60,14 @@ const UploadFilesToPoliceCase: React.FC<
   }>
 > = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles, caseOrigin }) => {
   const { formatMessage } = useIntl()
+  const {
+    uploadFiles,
+    allFilesUploaded,
+    addUploadFile,
+    addUploadFiles,
+    updateUploadFile,
+    removeUploadFile,
+  } = useUploadFiles(caseFiles)
   const { handleUpload, handleUploadFromPolice, handleRetry, handleRemove } =
     useS3Upload(caseId)
   const {
@@ -76,35 +80,23 @@ const UploadFilesToPoliceCase: React.FC<
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
-
-  const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>(
-    caseFiles.map(mapCaseFileToUploadFile),
-  )
-
+  const [isUploading, setIsUploading] = useState<boolean>(false)
+  const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
   const [policeCaseFileList, setPoliceCaseFileList] = useState<
     PoliceCaseFileCheck[]
   >([])
 
-  const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
-
-  const [isUploading, setIsUploading] = useState<boolean>(false)
-
   const errorMessage = useMemo(() => {
-    if (displayFiles.some((file) => file.status === 'error')) {
+    if (uploadFiles.some((file) => file.status === 'error')) {
       return formatMessage(errorMessages.general)
     } else {
       return undefined
     }
-  }, [displayFiles, formatMessage])
+  }, [uploadFiles, formatMessage])
 
   useEffect(() => {
-    setDisplayFiles(caseFiles.map(mapCaseFileToUploadFile))
-  }, [caseFiles, setDisplayFiles])
-
-  useEffect(() => {
-    const isUploading = displayFiles.some((file) => file.status === 'uploading')
-    setAllUploaded(!isUploading)
-  }, [setAllUploaded, displayFiles])
+    setAllUploaded(allFilesUploaded && !isUploading)
+  }, [allFilesUploaded, isUploading, setAllUploaded])
 
   useEffect(() => {
     if (caseOrigin !== CaseOrigin.LOKE) {
@@ -156,23 +148,12 @@ const UploadFilesToPoliceCase: React.FC<
         )
         .map(mapPoliceCaseFileToPoliceCaseFileCheck) || [],
     )
-
-    setDisplayFiles(caseFiles.map(mapCaseFileToUploadFile) || [])
   }, [policeCaseFiles?.files, caseFiles, policeCaseNumber])
-
-  const handleUIUpdate = (displayFile: TUploadFile, newId?: string) => {
-    setDisplayFiles((previous) =>
-      generateSingleFileUpdate(previous, displayFile, newId),
-    )
-  }
 
   const uploadPoliceCaseFileCallback = useCallback(
     (file: TUploadFile, id?: string) => {
       if (id) {
-        setDisplayFiles((previous) => [
-          ...previous,
-          { ...file, id: id ?? file.id },
-        ])
+        addUploadFile({ ...file, id: id ?? file.id })
       }
 
       setPoliceCaseFileList((previous) => {
@@ -189,7 +170,7 @@ const UploadFilesToPoliceCase: React.FC<
         return current
       })
     },
-    [],
+    [addUploadFile],
   )
 
   const removeFileCB = useCallback(
@@ -205,9 +186,9 @@ const UploadFilesToPoliceCase: React.FC<
         ])
       }
 
-      setDisplayFiles((previous) => previous.filter((f) => f.id !== file.id))
+      removeUploadFile(file)
     },
-    [policeCaseFiles?.files],
+    [policeCaseFiles?.files, removeUploadFile],
   )
 
   const onPoliceCaseFileUpload = useCallback(async () => {
@@ -270,24 +251,19 @@ const UploadFilesToPoliceCase: React.FC<
       />
       <InputFileUpload
         name="fileUpload"
-        fileList={displayFiles}
+        fileList={uploadFiles}
         accept="application/pdf"
         header={formatMessage(m.inputFileUpload.header)}
         description={formatMessage(m.inputFileUpload.description)}
         buttonLabel={formatMessage(m.inputFileUpload.buttonLabel)}
         onChange={(files) =>
           handleUpload(
-            addUploadFiles(
-              files,
-              setDisplayFiles,
-              CaseFileCategory.CASE_FILE,
-              policeCaseNumber,
-            ),
-            handleUIUpdate,
+            addUploadFiles(files, CaseFileCategory.CASE_FILE, policeCaseNumber),
+            updateUploadFile,
           )
         }
         onRemove={(file) => handleRemove(file, removeFileCB)}
-        onRetry={(file) => handleRetry(file, handleUIUpdate)}
+        onRetry={(file) => handleRetry(file, updateUploadFile)}
         errorMessage={errorMessage}
         disabled={isUploading}
         showFileSize

@@ -1,16 +1,12 @@
 import compareAsc from 'date-fns/compareAsc'
-import { uuid } from 'uuidv4'
 
 import * as constants from '@island.is/judicial-system/consts'
-import { formatDate } from '@island.is/judicial-system/formatters'
-import { CaseFile, CaseFileCategory } from '@island.is/judicial-system/types'
 import {
   TempCase as Case,
   TempUpdateCase as UpdateCase,
 } from '@island.is/judicial-system-web/src/types'
 
-import { padTimeWithZero, parseTime, replaceTabs } from './formatters'
-import { TUploadFile } from './hooks'
+import { replaceTabs } from './formatters'
 import * as validations from './validate'
 
 export const removeTabsValidateAndSet = (
@@ -95,33 +91,6 @@ export const validateAndSendToServer = (
   }
 }
 
-export const validateAndSendTimeToServer = (
-  field: keyof UpdateCase,
-  currentValue: string | undefined,
-  time: string,
-  validationsToRun: validations.Validation[],
-  theCase: Case,
-  updateCase: (id: string, updateCase: UpdateCase) => void,
-  setErrorMessage?: (value: React.SetStateAction<string>) => void,
-) => {
-  if (currentValue) {
-    const paddedTime = padTimeWithZero(time)
-
-    const validation = validations.validate([[paddedTime, validationsToRun]])
-
-    if (!validation.isValid && setErrorMessage) {
-      setErrorMessage(validation.errorMessage)
-      return
-    }
-
-    const dateMinutes = parseTime(currentValue, paddedTime)
-
-    if (theCase.id !== '') {
-      updateCase(theCase.id, { [field]: dateMinutes })
-    }
-  }
-}
-
 /**If entry is included in values then it is removed
  * otherwise it is appended
  */
@@ -158,12 +127,6 @@ export const setCheckboxAndSendToServer = (
   if (theCase.id !== '') {
     updateCase(theCase.id, { [field]: checks })
   }
-}
-
-export const getTimeFromDate = (date: string | undefined) => {
-  return date?.includes('T')
-    ? formatDate(date, constants.TIME_FORMAT)
-    : undefined
 }
 
 export const hasDateChanged = (
@@ -347,58 +310,4 @@ export const findFirstInvalidStep = (steps: string[], theCase: Case) => {
     []
 
   return key
-}
-
-export const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
-  id: file.id,
-  name: file.name,
-  type: file.type,
-  size: file.size,
-  key: file.key,
-  percent: 100,
-  status: 'done',
-  category: file.category,
-  policeCaseNumber: file.policeCaseNumber,
-  chapter: file.chapter,
-  orderWithinChapter: file.orderWithinChapter,
-  displayDate: file.displayDate,
-  policeFileId: file.policeFileId,
-})
-
-export const addUploadFiles = (
-  files: File[],
-  setDisplayFiles: React.Dispatch<React.SetStateAction<TUploadFile[]>>,
-  category?: CaseFileCategory,
-  policeCaseNumber?: string,
-) => {
-  // We generate an id for each file so that we find the file again when
-  // updating the file's progress and onRetry.
-  // Also we cannot spread File since it contains read-only properties.
-  const uploadFiles: TUploadFile[] = files.map((file) => ({
-    id: `${file.name}-${uuid()}`,
-    name: file.name,
-    type: file.type,
-    size: file.size,
-    percent: 1,
-    status: 'uploading',
-    category,
-    policeCaseNumber,
-    originalFileObj: file,
-  }))
-
-  setDisplayFiles((previous) => [...uploadFiles, ...previous])
-
-  return uploadFiles
-}
-
-export const generateSingleFileUpdate = (
-  prevFiles: TUploadFile[],
-  displayFile: TUploadFile,
-  newId?: string,
-) => {
-  return prevFiles.map((f) =>
-    f.id === displayFile.id
-      ? { ...f, ...displayFile, id: newId ?? displayFile.id }
-      : f,
-  )
 }

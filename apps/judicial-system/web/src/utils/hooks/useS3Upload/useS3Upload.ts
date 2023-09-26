@@ -1,8 +1,9 @@
-import { useCallback, useContext } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { uuid } from 'uuidv4'
 
 import { toast, UploadFile } from '@island.is/island-ui/core'
-import { CaseFileCategory } from '@island.is/judicial-system/types'
+import { CaseFile, CaseFileCategory } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import { PresignedPost } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -42,6 +43,85 @@ export interface TUploadFile extends UploadFile {
   orderWithinChapter?: number
   displayDate?: string
   policeFileId?: string
+}
+
+const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
+  id: file.id,
+  name: file.name,
+  type: file.type,
+  size: file.size,
+  key: file.key,
+  percent: 100,
+  status: 'done',
+  category: file.category,
+  policeCaseNumber: file.policeCaseNumber,
+  chapter: file.chapter,
+  orderWithinChapter: file.orderWithinChapter,
+  displayDate: file.displayDate,
+  policeFileId: file.policeFileId,
+})
+
+export const useUploadFiles = (files?: CaseFile[]) => {
+  const [uploadFiles, setUploadFiles] = useState<TUploadFile[]>(
+    files?.map(mapCaseFileToUploadFile) ?? [],
+  )
+
+  useEffect(() => {
+    setUploadFiles(files?.map(mapCaseFileToUploadFile) ?? [])
+  }, [files])
+
+  const allFilesUploaded = uploadFiles.every(
+    (file) => file.status === 'done' || file.status === 'error',
+  )
+
+  const addUploadFile = (file: TUploadFile) =>
+    setUploadFiles((previous) => [file, ...previous])
+
+  const addUploadFiles = (
+    files: File[],
+    category?: CaseFileCategory,
+    policeCaseNumber?: string,
+  ) => {
+    // We generate an id for each file so that we find the file again when
+    // updating the file's progress and onRetry.
+    // Also we cannot spread File since it contains read-only properties.
+    const uploadFiles: TUploadFile[] = files.map((file) => ({
+      id: `${file.name}-${uuid()}`,
+      name: file.name,
+      type: file.type,
+      size: file.size,
+      percent: 1,
+      status: 'uploading',
+      category,
+      policeCaseNumber,
+      originalFileObj: file,
+    }))
+
+    setUploadFiles((previous) => [...uploadFiles, ...previous])
+
+    return uploadFiles
+  }
+
+  const updateUploadFile = (file: TUploadFile, newId?: string) =>
+    setUploadFiles((previous) =>
+      previous.map((f) =>
+        f.id === file.id ? { ...f, ...file, id: newId ?? file.id } : f,
+      ),
+    )
+
+  const removeUploadFile = (file: TUploadFile) =>
+    setUploadFiles((previous) =>
+      previous.filter((caseFile) => caseFile.id !== file.id),
+    )
+
+  return {
+    uploadFiles,
+    allFilesUploaded,
+    addUploadFile,
+    addUploadFiles,
+    updateUploadFile,
+    removeUploadFile,
+  }
 }
 
 const createFormData = (
@@ -96,7 +176,7 @@ const uploadToS3 = (
   return promise
 }
 
-export const useS3Upload = (caseId: string) => {
+const useS3Upload = (caseId: string) => {
   const { limitedAccess } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
