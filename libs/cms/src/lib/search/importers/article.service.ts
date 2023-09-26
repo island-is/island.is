@@ -75,19 +75,12 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
               return undefined
             }
 
-            const parent = {
-              ...fields.parent,
-              fields: { ...fields.parent.fields },
-            }
-
-            delete parent['fields']['subArticles']
+            fields.parent.fields = { ...fields.parent.fields }
+            delete fields.parent.fields['subArticles']
 
             return {
               sys,
-              fields: {
-                ...fields,
-                parent,
-              },
+              fields,
             }
           })
           .filter((subArticle) => Boolean(subArticle))
