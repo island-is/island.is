@@ -4,7 +4,6 @@ export const selectableList = defineMessages({
   selectAllLabel: {
     id: 'judicial.system.core:selectable_list.select_all_label',
     defaultMessage: 'Velja öll',
-    description:
-      'Notaður sem texti fyrir "Velja öll" valmöguleikann í LÖKE gagnapakkanum á rannsóknargagna skrefi.',
+    description: 'Notaður sem texti fyrir "Velja öll" valmöguleikann.',
   },
 })
