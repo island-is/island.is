@@ -502,7 +502,7 @@ export const m = defineMessages({
   acceptNoAssets: {
     id: 'es.application:acceptNoAssets',
     defaultMessage:
-      'Ég lýsi því yfir að eftir minni bestu vitund eru engar eign°ir í búinu.',
+      'Ég lýsi því yfir að eftir minni bestu vitund eru engar eignir í búinu.',
     description: '',
   },
   acceptCorrectAssets: {
