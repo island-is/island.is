@@ -30,22 +30,22 @@ spec:
         prometheus.io/scrape: "true"
         prometheus.io/path: /metrics
         prometheus.io/port: {{ add1 .Values.service.targetPort  | quote }} # The metrics port is +1 on the HTTP service port
-        ad.datadoghq.com/{{ .Chart.Name }}.logs: >- 
+        ad.datadoghq.com/{{ .Chart.Name }}.logs: >-
           [{
             "log_processing_rules": [{
-              "type": "mask_sequences", 
-              "name": "mask_national_ids", 
-              "replace_placeholder": "--MASKED--", 
+              "type": "mask_sequences",
+              "name": "mask_national_ids",
+              "replace_placeholder": "--MASKED--",
               "pattern" : "\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b"
             }]
           }]
         {{- range .Values.initContainer.containers }}
-        ad.datadoghq.com/{{ .name | default "migration" }}.logs: >- 
+        ad.datadoghq.com/{{ .name | default "migration" }}.logs: >-
           [{
             "log_processing_rules": [{
-              "type": "mask_sequences", 
-              "name": "mask_national_ids", 
-              "replace_placeholder": "--MASKED--", 
+              "type": "mask_sequences",
+              "name": "mask_national_ids",
+              "replace_placeholder": "--MASKED--",
               "pattern" : "\\b(?:[89]\\d{3}|(?:[012]\\d|3[01])(?:0\\d|1[012]))\\d\\d-?\\d{4}\\b"
             }]
           }]
@@ -69,7 +69,7 @@ spec:
         - name: {{ .name | default "migration" }}
           securityContext:
             {{- toYaml $.Values.securityContext | nindent 12 }}
-          image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag | default $.Values.global.image.tag }}"
+          image: "{{ if .image }}{{ .image }}{{ else }}{{ $.Values.image.repository }}:{{ $.Values.image.tag | default $.Values.global.image.tag }}{{ end }}"
           command: {{ .command | toJson }}
           args: {{ .args | toJson }}
           env:
@@ -109,7 +109,7 @@ spec:
                 fieldRef:
                   fieldPath: status.hostIP
             - name: DD_APM_REPLACE_TAGS
-              value: '[ 
+              value: '[
                 {
                   "name": "*",
                   "pattern": "\b(?:[89]\d{3}|(?:[012]\d|3[01])(?:0\d|1[012]))\d\d-?\d{4}\b",
@@ -184,7 +184,7 @@ spec:
             - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
               value: "true"
             - name: DD_APM_REPLACE_TAGS
-              value: '[ 
+              value: '[
                 {
                   "name": "*",
                   "pattern": "\b(?:[89]\d{3}|(?:[012]\d|3[01])(?:0\d|1[012]))\d\d-?\d{4}\b",

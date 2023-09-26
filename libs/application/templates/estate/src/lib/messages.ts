@@ -812,11 +812,6 @@ export const m = defineMessages({
   },
 
   // Properties
-  realEstatesTitle: {
-    id: 'es.application:realEstatesTitle',
-    defaultMessage: 'Fasteignir',
-    description: 'Real estates and lands title',
-  },
   realEstatesDescription: {
     id: 'es.application:realEstatesDescription',
     defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir.',

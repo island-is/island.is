@@ -3,7 +3,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import {
   TeachingRightsStatus,
   StudentInformation,
-  Juristiction,
+  Jurisdiction,
   NewDrivingLicenseInput,
   NewDrivingLicenseResult,
   NewDrivingAssessmentResult,
@@ -26,7 +26,7 @@ import {
   TeacherV4,
 } from '@island.is/clients/driving-license'
 import {
-  BLACKLISTED_JURISTICTION,
+  BLACKLISTED_JURISDICTION,
   DRIVING_ASSESSMENT_MAX_AGE,
 } from './util/constants'
 import sortTeachers from './util/sortTeachers'
@@ -163,10 +163,10 @@ export class DrivingLicenseService {
     }
   }
 
-  async getListOfJuristictions(): Promise<Juristiction[]> {
-    const embaetti = await this.drivingLicenseApi.getListOfJuristictions()
+  async getListOfJurisdictions(): Promise<Jurisdiction[]> {
+    const embaetti = await this.drivingLicenseApi.getListOfJurisdictions()
 
-    return embaetti.filter(({ id }) => id !== BLACKLISTED_JURISTICTION)
+    return embaetti.filter(({ id }) => id !== BLACKLISTED_JURISDICTION)
   }
 
   async getDrivingAssessmentResult(
@@ -396,7 +396,7 @@ export class DrivingLicenseService {
       await this.drivingLicenseApi.postCreateDrivingLicenseTemporary({
         willBringHealthCertificate: input.needsToPresentHealthCertificate,
         willBringQualityPhoto: input.needsToPresentQualityPhoto,
-        juristictionId: input.juristictionId,
+        jurisdictionId: input.jurisdictionId,
         nationalIdTeacher: input.teacherNationalId,
         nationalIdApplicant: nationalId,
         sendLicenseInMail: false,
@@ -416,7 +416,7 @@ export class DrivingLicenseService {
   ): Promise<NewDrivingLicenseResult> {
     const response = await this.drivingLicenseApi.postCreateDrivingLicenseFull({
       category: DrivingLicenseCategory.B,
-      juristictionId: input.juristictionId,
+      jurisdictionId: input.jurisdictionId,
       willBringHealthCertificate: input.needsToPresentHealthCertificate,
       nationalIdApplicant: nationalId,
       willBringQualityPhoto: input.needsToPresentQualityPhoto,

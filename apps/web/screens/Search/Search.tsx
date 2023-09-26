@@ -471,7 +471,6 @@ const Search: Screen<CategoryProps> = ({
     labelResult: n('labelResult', 'Sjá niðurstöður'),
     inputPlaceholder: n('inputPlaceholder', 'Leita að nafni'),
   }
-
   return (
     <>
       <Head>
@@ -565,8 +564,8 @@ const Search: Screen<CategoryProps> = ({
                           {title}
                         </Tag>
                       ))}
-                    {countResults.processEntryCount &&
-                      countResults?.processEntryCount > 0 && (
+                    {typeof countResults.processEntryCount == 'number' &&
+                      countResults.processEntryCount > 0 && (
                         <Tag
                           variant="blue"
                           active={query?.processentry === 'true'}
