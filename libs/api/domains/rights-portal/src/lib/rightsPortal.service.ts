@@ -343,9 +343,11 @@ export class RightsPortalService {
     }
   }
 
-  async getDrugPaymentPeroids() {
+  async getDrugPaymentPeroids(user: User) {
     try {
-      return await this.drugsApi.getDrugPaymentPeriods()
+      return await this.drugsApi
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .getDrugPaymentPeriods()
     } catch (e) {
       return handle404(e)
     }

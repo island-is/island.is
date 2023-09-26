@@ -199,7 +199,7 @@ export class RightsPortalResolver {
     name: 'rightsPortalDrugsPaymentPeroids',
   })
   @Audit()
-  getRightsPortalDrugsPaymentPeroids() {
-    return this.rightsPortalService.getDrugPaymentPeroids()
+  getRightsPortalDrugsPaymentPeroids(@CurrentUser() user: User) {
+    return this.rightsPortalService.getDrugPaymentPeroids(user)
   }
 }
