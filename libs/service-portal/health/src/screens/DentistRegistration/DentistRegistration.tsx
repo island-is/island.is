@@ -1,6 +1,7 @@
 import {
   AlertMessage,
   Box,
+  Button,
   FilterInput,
   Pagination,
   SkeletonLoader,
@@ -22,13 +23,12 @@ import { useNavigate } from 'react-router-dom'
 import { HealthPaths } from '../../lib/paths'
 import { RightsPortalDentist } from '@island.is/api/schema'
 import { RegisterModal } from '../../components/RegisterModal'
+import * as styles from './DentistRegistration.css'
 
 const DEFAULT_PAGE_SIZE = 12
 const DEFAULT_PAGE_NUMBER = 1
 
-type SelectedDentist = Pick<RightsPortalDentist, 'id' | 'name'> & {
-  practice: string
-}
+type SelectedDentist = Pick<RightsPortalDentist, 'id' | 'name'>
 
 export const DentistRegistration = () => {
   useNamespaces('sp.health')
@@ -178,7 +178,7 @@ export const DentistRegistration = () => {
         id={'dentistRegisterModal'}
         title={`${formatMessage(messages.dentistModalTitle)} ${
           selectedDentist?.name
-        } ${formatMessage(messages.at)} ${selectedDentist?.practice}`}
+        }`}
         description={formatMessage(messages.dentistModalDescription)}
         isVisible={!!selectedDentist}
         buttonLoading={loadingTranser}
@@ -201,40 +201,46 @@ export const DentistRegistration = () => {
               </T.Row>
             </T.Head>
             <T.Body>
-              {data?.response?.dentists.map((dentist, key) => (
-                <tr onMouseOver={() => setHoverId(dentist.id)} key={key}>
-                  <T.Data>{dentist?.name}</T.Data>
-                  {/* <T.Data>{dentist?.practice}</T.Data>
-                  <T.Data>{`${dentist?.address?.postalCode} ${dentist.address?.municipality}`}</T.Data>
-                  <T.Data>{dentist?.address?.streetAddress}</T.Data>
-                  <T.Data>
-                    {dentist.name === data.current?.dentist?.name ? (
-                      formatMessage(messages.dentistCurrent)
-                    ) : (
-                      <Box
-                        className={styles.saveButtonWrapperStyle({
-                          visible: dentist.id === hoverId,
-                        })}
-                      >
-                        <Button
-                          size="small"
-                          variant="text"
-                          icon="pencil"
-                          onClick={() => {
-                            setSelectedDentist({
-                              id: dentist.id,
-                              name: dentist.name,
-                              practice: dentist.practice,
-                            })
-                          }}
-                        >
-                          {formatMessage(messages.healthRegistrationSave)}
-                        </Button>
-                      </Box>
-                    )}
-                  </T.Data> */}
-                </tr>
-              ))}
+              {data?.response?.dentists.map((dentist, key) =>
+                dentist.practices?.map((p, idx) => {
+                  return (
+                    <tr
+                      onMouseOver={() => setHoverId(dentist.id)}
+                      key={`${key}-${idx}`}
+                    >
+                      <T.Data>{idx === 0 ? dentist?.name : ''}</T.Data>
+                      <T.Data>{p.practice}</T.Data>
+                      <T.Data>{`${p.postalCode} ${p.region}`}</T.Data>
+                      <T.Data>{p.address}</T.Data>
+                      <T.Data style={{ whiteSpace: 'nowrap' }}>
+                        {dentist.name === data.current?.dentist?.name ? (
+                          formatMessage(messages.dentistCurrent)
+                        ) : idx === 0 ? (
+                          <Box
+                            className={styles.saveButtonWrapperStyle({
+                              visible: dentist.id === hoverId,
+                            })}
+                          >
+                            <Button
+                              size="small"
+                              variant="text"
+                              icon="pencil"
+                              onClick={() => {
+                                setSelectedDentist({
+                                  id: dentist.id,
+                                  name: dentist.name,
+                                })
+                              }}
+                            >
+                              {formatMessage(messages.healthRegistrationSave)}
+                            </Button>
+                          </Box>
+                        ) : undefined}
+                      </T.Data>
+                    </tr>
+                  )
+                }),
+              )}
             </T.Body>
           </T.Table>
           <Box marginTop={6}>
