@@ -86,6 +86,7 @@ const SubjectInfo = () => {
             middleName: formatMessage(spmm.middleName),
             lastName: formatMessage(spmm.lastName),
           })}
+          tooltipFull
           editLink={{
             external: true,
             title: spmm.changeInNationalReg,
@@ -139,8 +140,7 @@ const SubjectInfo = () => {
           loading={loading}
           tooltip={formatMessage({
             id: 'sp.family:family-number-tooltip',
-            defaultMessage:
-              'Lögheimilistengsl er samtenging á milli einstaklinga á lögheimili, en veitir ekki upplýsingar um hverjir eru foreldrar barns eða forsjáraðilar.',
+            defaultMessage: `Lögheimilistengsl er samtenging á milli einstaklinga á lögheimili, en veitir ekki upplýsingar um hverjir eru foreldrar barns eða forsjáraðilar.`,
           })}
         />
         {isUserAdult ? (

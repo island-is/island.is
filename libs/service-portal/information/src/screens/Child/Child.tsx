@@ -195,6 +195,7 @@ const Child = () => {
               middleName: formatMessage(spmm.middleName),
               lastName: formatMessage(spmm.lastName),
             })}
+            tooltipFull
             loading={loading}
             editLink={
               !isChild
