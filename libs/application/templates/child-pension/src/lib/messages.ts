@@ -365,6 +365,18 @@ export const childPensionFormMessage: MessageDir = {
       defaultMessage: 'Senda inn',
       description: 'Submit',
     },
+    additionalFileTitle: {
+      id: 'oap.application:fileUpload.additionalFile.title',
+      defaultMessage: 'Viðbótagögn',
+      description: 'Additional attachments',
+    },
+    additionalFileDescription: {
+      id: 'oap.application:fileUpload.additionalFile.description',
+      defaultMessage:
+        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis staðfestingu frá Þjóðskrá vegna rangra upplýsinga. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Here you can submit additional data to TR. For example, confirmation from the National Registry due to incorrect information. Note that the document must be in .pdf format.',
+    },
   }),
 
   payment: defineMessages({
@@ -623,7 +635,8 @@ export const childPensionFormMessage: MessageDir = {
     },
     bank: {
       id: 'cp.application:error.bank',
-      defaultMessage: 'Ógilt bankanúmer. Þarf að vera á forminu: 0000-11-222222',
+      defaultMessage:
+        'Ógilt bankanúmer. Þarf að vera á forminu: 0000-11-222222',
       description: 'Invalid bank account. Has to be formatted: 0000-11-222222',
     },
   }),
