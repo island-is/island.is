@@ -10015,7 +10015,7 @@ __metadata:
     react-native-passkit-wallet: 0.1.6
     react-native-pdf: 6.6.2
     react-native-quick-actions: 0.3.13
-    react-native-share: 7.1.1
+    react-native-share: 9.4.1
     react-native-spotlight-search: 2.0.0
     react-native-webview: 11.26.1
     react-test-renderer: 18.2.0
@@ -44995,10 +44995,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-share@npm:7.1.1":
-  version: 7.1.1
-  resolution: "react-native-share@npm:7.1.1"
-  checksum: f391e3797f1570d55922216546b096d2af386d025e6f98a1aca24142b0f51dc6c6d494c048a7a81f82947570e2d483c80467e2960b1a061961f98dfcea0f078e
+"react-native-share@npm:9.4.1":
+  version: 9.4.1
+  resolution: "react-native-share@npm:9.4.1"
+  checksum: 22b0f38b79bfa791b105c3c809ed0199d233c0ccddb5060546ade710767cab68812e5c9456ce858141dd0218bbbd946180c97e74132389996e00fdef4fbc355b
   languageName: node
   linkType: hard
 
