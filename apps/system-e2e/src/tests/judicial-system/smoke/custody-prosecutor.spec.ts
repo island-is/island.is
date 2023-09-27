@@ -58,7 +58,7 @@ test.describe('Custody Prosecutor', () => {
     await page.locator('input[id=reqCourtDate-time]').fill('15:00')
     await page.getByRole('button', { name: 'Halda áfram' }).click()
     await page.getByRole('button', { name: 'Senda tilkynningu' }).click()
-    await expect(page).toHaveURL(/.*\/krafa\/domkrofur-og-lagaakvaedi\/.*/)
+    await expect(page).toHaveURL(/.*\/krafa\/domkrofur-og-lagagrundvollur\/.*/)
 
     // Prosecutor demands
     await page.locator('input[id=reqValidToDate]').fill(today)
