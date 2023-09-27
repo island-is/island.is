@@ -51,8 +51,9 @@ import {
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { useNamespace } from '@island.is/web/hooks'
 import { TranslationDefaults } from './TranslationDefaults'
-import { getFeatureFlag } from '@island.is/web/utils/featureFlag'
 import { CustomNextError } from '@island.is/web/units/errors'
+
+import { useFeatureFlag } from '@island.is/react/feature-flags'
 
 const ITEMS_PER_PAGE = 8
 const NUMBER_OF_FILTERS = 6
@@ -1159,10 +1160,11 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 }
 
 UniversitySearch.getProps = async ({ apolloClient, locale }) => {
-  const showPagesFeatureFlag = await getFeatureFlag(
+  const showPagesFeatureFlag = useFeatureFlag(
     'universityGatewayShowPages',
     false,
   )
+  console.log('showPagesFeatureFlag', showPagesFeatureFlag)
   if (!showPagesFeatureFlag) {
     throw new CustomNextError(404, 'Síða er ekki opin')
   }
