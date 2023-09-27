@@ -19,6 +19,13 @@ import { MAX_CNT_APPLICANTS } from '../../shared'
 import { RadioController } from '@island.is/shared/form-fields'
 import { NO, YES } from '@island.is/application/core'
 
+interface ChildrenCustodyResponseProps {
+  ssn: string
+  fullCustody: boolean
+  otherParentSSN?: string
+  otherParentName?: string
+}
+
 export const SelectChildren = ({ field, application, error }: any) => {
   const { formatMessage } = useLocale()
 
@@ -32,10 +39,14 @@ export const SelectChildren = ({ field, application, error }: any) => {
   console.log('children', children)
 
   const [isVisible, setIsVisible] = useState(true)
-  const [mostRecentlyCheckedChildSSN, setMostRecentlyCheckedChildSSN] =
-    useState<string>('')
+  const [childrenCustodyResponses, setChildrenCustodyResponses] = useState<
+    Array<ChildrenCustodyResponseProps>
+  >([])
   const [mostRecentlyCheckedChildIndex, setMostRecentlyCheckedChildIndex] =
     useState<number>()
+
+  const [mostRecentlyCheckedChildSSN, setMostRecentlyCheckedChildSSN] =
+    useState<string>('')
 
   const childrenCheckboxes = children.map(
     (child: ApplicantChildCustodyInformation) => {
@@ -101,7 +112,19 @@ export const SelectChildren = ({ field, application, error }: any) => {
             children: undefined,
             options: childrenCheckboxes,
             onSelect: (newAnswer) => {
-              console.log('newAnswer', newAnswer)
+              //if the new answer includes ssn that has not been added to the children custody response array -> so still needs to be answered
+              //only one item can be unanswered since this happens every time a child is selected and is never deleted from the response array
+              const unansweredSSN = newAnswer.filter(
+                (x) =>
+                  childrenCustodyResponses.filter((y) => y.ssn === x).length ===
+                  0,
+              )[0]
+              if (unansweredSSN) {
+                console.log('unansweredSSN', unansweredSSN)
+                setMostRecentlyCheckedChildSSN(unansweredSSN)
+
+                setIsVisible(true)
+              }
               handleCheckboxChange(newAnswer.length)
               return { ...answers, selectedChildren: newAnswer }
             },
