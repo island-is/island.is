@@ -352,7 +352,13 @@ export const notifications = {
       id: 'judicial.system.backend:notifications.prison_ruling_email.body_v4',
       defaultMessage:
         '{institutionName} hefur úrskurðað aðila í {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} other {gæsluvarðhald}}{isModifyingRuling, select, true {} other { í þinghaldi sem lauk rétt í þessu}}. Hægt er að nálgast þingbók og vistunarseðil á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
-      description: 'Texti í pósti til fangelis með link á réttarvörslugátt',
+      description: 'Texti í pósti til fangelsis með link á réttarvörslugátt',
+    },
+    paroleRevocationBody: {
+      id: 'judicial.system.backend:notifications.prison_ruling_email.parole_revocation_body',
+      defaultMessage:
+        '{institutionName} hefur rofið reynslulausn aðila með úrskurði í máli {courtCaseNumber}. Hægt er að nálgast þingbók á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
+      description: 'Texti í pósti til fangelsis með link á réttarvörslugátt',
     },
   }),
   prisonRevokedEmail: defineMessages({

@@ -100,4 +100,16 @@ export const colorSchemes = styleVariants({
       },
     },
   },
+  dark: {
+    '@media': {
+      [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+        ':hover': {
+          borderColor: theme.color.dark400,
+        },
+        ':focus': {
+          borderColor: 'transparent',
+        },
+      },
+    },
+  },
 })

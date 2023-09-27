@@ -35,7 +35,8 @@ describe('Signed verdict overview - Court - Accepted restriction cases', () => {
     cy.getByTestid('caseDates').find('[type="button"]').click()
 
     cy.getByTestid('modalPrimaryButton').should('be.disabled')
-    cy.getByTestid('modal').get('[name="reason"]').focus().blur()
+    cy.getByTestid('modal').get('[name="reason"]').focus()
+    cy.getByTestid('modal').get('[name="reason"]').blur()
     cy.get('[data-testid=inputErrorMessage]').contains(
       'Reitur má ekki vera tómur',
     )
@@ -45,7 +46,8 @@ describe('Signed verdict overview - Court - Accepted restriction cases', () => {
     cy.getByTestid('datepickerIncreaseMonth').click()
     cy.get('.react-datepicker-popper').contains('15').click()
 
-    cy.getByTestid('modifiedValidToDate-time').clear().blur()
+    cy.getByTestid('modifiedValidToDate-time').clear()
+    cy.getByTestid('modifiedValidToDate-time').blur()
     cy.getByTestid('modalPrimaryButton').should('be.disabled')
     cy.get('[data-testid=inputErrorMessage]').contains(
       'Reitur má ekki vera tómur',
