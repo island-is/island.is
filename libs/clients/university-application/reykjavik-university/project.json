@@ -19,7 +19,7 @@
         "{workspaceRoot}/coverage/libs/clients/university-application/reykjavik-university"
       ],
       "options": {
-        "jestConfig": "libs/clients/university-application/reykjavik-university/jest.config.js",
+        "jestConfig": "libs/clients/university-application/reykjavik-university/jest.config.ts",
         "passWithNoTests": true
       }
     },
