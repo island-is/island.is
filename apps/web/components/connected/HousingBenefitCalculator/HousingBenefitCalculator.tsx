@@ -262,10 +262,7 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
           )}
           {typeof reduction === 'number' && (
             <Text variant="medium" fontWeight="light" paddingBottom={5}>
-              {n(
-                'reductionDueToHousingCosts',
-                'Skerðing vegna húsnæðiskostnaðar eru',
-              )}{' '}
+              {n('reductionDueToIncome', 'Skerðing vegna tekna eru')}{' '}
               {formatCurrency(reduction)} {n('perMonth', 'á mánuði.')}
             </Text>
           )}
