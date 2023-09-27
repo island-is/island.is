@@ -315,16 +315,21 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                     </PdfButton>
                   </>
                 )}
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    getAllFiles({
-                      variables: { input: { caseId: workingCase.id } },
-                    })
-                  }}
-                >
-                  Sækja öll skjöl
-                </Button>
+                <Box marginTop={7}>
+                  <Button
+                    variant="ghost"
+                    size="small"
+                    icon="download"
+                    iconType="outline"
+                    onClick={() => {
+                      getAllFiles({
+                        variables: { input: { caseId: workingCase.id } },
+                      })
+                    }}
+                  >
+                    Sækja öll skjöl
+                  </Button>
+                </Box>
               </Box>
             </Box>
           )}
