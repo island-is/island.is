@@ -2421,6 +2421,7 @@ export interface IOrganizationPageFields {
     | 'samgongustofa'
     | 'geislavarnir-rikisins'
     | 'rettindagaesla-fatlads-folks'
+    | 'hms'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
