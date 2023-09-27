@@ -4,7 +4,9 @@ import { default as environment } from './environments/environment'
 
 export const openApi = new DocumentBuilder()
   .setTitle('University Gateway')
-  .setDescription('API description')
+  .setDescription(
+    'API for communication between island.is application system and university gateway DB, and between university gateway DB and universities system (MySchool and Ugla)',
+  )
   .addServer(process.env.PUBLIC_URL ?? `http://localhost:${environment.port}`)
   .addOAuth2(
     {
@@ -26,5 +28,5 @@ export const openApi = new DocumentBuilder()
     'ias',
   )
   .setVersion('1.0')
-  .addTag('API tag')
+  .addTag('University Gateway API')
   .build()

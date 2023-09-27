@@ -52,7 +52,7 @@ class ReykjavikUniversityApplicationClient {
           durationInYears: program.durationInYears || 0,
           costPerYear: program.costPerYear,
           iscedCode: program.iscedCode || '',
-          languages: [], //TODO missing in api
+          languages: [], //TODO will not be used yet
           searchKeywords: [], //TODO missing in api
           externalUrlIs: program.externalUrlIs,
           externalUrlEn: program.externalUrlEn,
