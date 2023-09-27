@@ -34,7 +34,7 @@ jobs:
     if: needs.pre-check.outputs.use-nx-cloud == 'false'
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 25
+    timeout-minutes: 35
 
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
@@ -220,7 +220,7 @@ jobs:
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 25
+    timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       MAX_JOBS: 3
@@ -279,7 +279,7 @@ jobs:
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 25
+    timeout-minutes: 35
     env:
       AFFECTED_PROJECT: ${{ matrix.projects }}
       CYPRESS_PROJECT_ID: 4q7jz8
@@ -428,12 +428,12 @@ jobs:
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 25
+    timeout-minutes: 35
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       NODE_OPTIONS: --max-old-space-size=4096
-      MAX_JOBS: 1
+      MAX_JOBS: 3
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
@@ -478,7 +478,7 @@ jobs:
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 25
+    timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       MAX_JOBS: 2

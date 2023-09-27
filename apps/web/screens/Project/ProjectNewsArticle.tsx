@@ -17,11 +17,7 @@ import {
   QueryGetProjectPageArgs,
   ProjectPage,
 } from '@island.is/web/graphql/schema'
-import {
-  getThemeConfig,
-  HeadWithSocialSharing,
-  NewsArticle,
-} from '@island.is/web/components'
+import { HeadWithSocialSharing, NewsArticle } from '@island.is/web/components'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
 import { CustomNextError } from '../../units/errors'
@@ -29,6 +25,7 @@ import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeR
 import { Locale } from 'locale'
 import { ProjectWrapper } from './components/ProjectWrapper'
 import { GET_PROJECT_PAGE_QUERY } from '../queries/Project'
+import { getThemeConfig } from './utils'
 
 interface ProjectNewsArticleleProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
@@ -170,7 +167,7 @@ ProjectNewsArticle.getProps = async ({ apolloClient, locale, query }) => {
     newsItem,
     namespace,
     locale: locale as Locale,
-    ...getThemeConfig(projectPage.theme, projectPage.slug),
+    ...getThemeConfig(projectPage),
   }
 }
 

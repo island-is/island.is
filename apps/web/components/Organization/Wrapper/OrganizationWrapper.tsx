@@ -35,7 +35,7 @@ import {
   Footer as WebFooter,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { usePlausiblePageview } from '@island.is/web/hooks'
+import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { WatsonChatPanel } from '@island.is/web/components'
 
@@ -87,10 +87,7 @@ import {
   IcelandicNaturalDisasterInsuranceHeader,
   IcelandicNaturalDisasterInsuranceFooter,
 } from './Themes/IcelandicNaturalDisasterInsuranceTheme'
-import {
-  TransportAuthorityFooter,
-  TransportAuthorityHeader,
-} from './Themes/TransportAuthorityTheme'
+import { TransportAuthorityHeader } from './Themes/TransportAuthorityTheme'
 import { RettindagaeslaFatladsFolksHeader } from './Themes/RettindagaeslaFatladsFolksTheme'
 
 import * as styles from './OrganizationWrapper.css'
@@ -135,66 +132,15 @@ export const lightThemes = [
   'samgongustofa',
   'rettindagaesla-fatlads-folks',
 ]
-export const footerEnabled = [
-  'syslumenn',
-  'district-commissioner',
-
-  'utlendingastofnun',
-  'directorate-of-immigration',
-
-  'landlaeknir',
-  'directorate-of-health',
-
-  'sjukratryggingar',
-  'icelandic-health-insurance',
-
-  'mannaudstorg',
-
-  'fiskistofa',
-  'directorate-of-fisheries',
-
-  'landskjorstjorn',
-
-  'hsn',
-  'hsu',
-
-  'rikislogmadur',
-  'office-of-the-attorney-general-civil-affairs',
-
-  'fjarsyslan',
-  'the-financial-management-authority',
-
-  'sak',
-
-  'hve',
-
-  'tryggingastofnun',
-  'insurance-administration',
-
-  'gev',
-
-  'shh',
-
-  'hsa',
-
-  'nti',
-
-  'samgongustofa',
-  'transport-authority',
-
-  'geislavarnir-rikisins',
-  'icelandic-radiation-safety-authority',
-]
 
 export const getThemeConfig = (
-  theme: string,
-  slug: string,
+  theme?: string,
+  organization?: Organization | null,
 ): { themeConfig: Partial<LayoutProps> } => {
-  let footerVersion: LayoutProps['footerVersion'] = 'default'
-
-  if (footerEnabled.includes(slug) || theme === 'landing_page') {
-    footerVersion = 'organization'
-  }
+  const footerVersion: LayoutProps['footerVersion'] =
+    theme === 'landing-page' || (organization?.footerItems ?? [])?.length > 0
+      ? 'organization'
+      : 'default'
 
   if (
     theme === 'sjukratryggingar' ||
@@ -210,7 +156,7 @@ export const getThemeConfig = (
       },
     }
 
-  const isLightTheme = lightThemes.includes(theme)
+  const isLightTheme = lightThemes.includes(theme ?? '')
   return !isLightTheme
     ? {
         themeConfig: {
@@ -379,12 +325,13 @@ export const OrganizationFooter: React.FC<
 > = ({ organizations, force = false }) => {
   const organization = force
     ? organizations[0]
-    : organizations.find((x) => footerEnabled.includes(x.slug))
+    : organizations.find((x) => x?.footerItems?.length > 0)
 
   const namespace = useMemo(
     () => JSON.parse(organization?.namespace?.fields ?? '{}'),
     [],
   )
+  const n = useNamespace(namespace)
 
   let OrganizationFooterComponent = null
 
@@ -559,18 +506,6 @@ export const OrganizationFooter: React.FC<
         />
       )
       break
-    case 'samgongustofa':
-    case 'transport-authority':
-      OrganizationFooterComponent = (
-        <TransportAuthorityFooter
-          title={organization.title}
-          footerItems={organization.footerItems}
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          logo={organization.logo?.url}
-        />
-      )
-      break
     case 'geislavarnir-rikisins':
     case 'icelandic-radiation-safety-authority':
       OrganizationFooterComponent = (
@@ -578,9 +513,26 @@ export const OrganizationFooter: React.FC<
           imageUrl={organization.logo?.url}
           heading={organization.title}
           columns={organization.footerItems}
+          background={n(
+            'geislavarnirRikisinsFooterBackground',
+            'linear-gradient(360deg, rgba(182, 211, 216, 0.5092) -27.29%, rgba(138, 181, 185, 0.5776) 33.96%, rgba(69, 135, 138, 0.6384) 129.36%, rgba(19, 101, 103, 0.722) 198.86%)',
+          )}
         />
       )
       break
+    default: {
+      const footerItems = organization?.footerItems ?? []
+      if (footerItems.length === 0) break
+      OrganizationFooterComponent = (
+        <WebFooter
+          imageUrl={organization?.logo?.url}
+          heading={organization?.title ?? ''}
+          columns={footerItems}
+          background={organization?.footerConfig?.background}
+          color={organization?.footerConfig?.textColor}
+        />
+      )
+    }
   }
 
   return OrganizationFooterComponent
