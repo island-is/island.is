@@ -21,7 +21,7 @@ import {
 import {
   ExpandHeader,
   ExpandRow,
-  TableGrid,
+  TableBox,
   UserInfoLine,
   m,
 } from '@island.is/service-portal/core'
@@ -274,83 +274,136 @@ const Medicine = () => {
                             paddingBottom={SECTION_GAP}
                             background="blue100"
                           >
-                            <Text variant="h5" marginBottom={1}>
-                              Lyfjalínur
-                            </Text>
-                            <T.Table>
-                              <T.Head>
-                                <T.Row>
-                                  <T.HeadData>
-                                    <span className={styles.subTableHeaderText}>
-                                      Lyfjaheiti
-                                    </span>
-                                  </T.HeadData>
-                                  <T.HeadData>
-                                    <span className={styles.subTableHeaderText}>
-                                      Styrkur
-                                    </span>
-                                  </T.HeadData>
-                                  <T.HeadData>
-                                    <span className={styles.subTableHeaderText}>
-                                      Magn
-                                    </span>
-                                  </T.HeadData>
-                                  <T.HeadData>
-                                    <span className={styles.subTableHeaderText}>
-                                      Fjöldi
-                                    </span>
-                                  </T.HeadData>
-                                  <T.HeadData>
-                                    <span className={styles.subTableHeaderText}>
-                                      Söluverð
-                                    </span>
-                                  </T.HeadData>
-                                  <T.HeadData>
-                                    <span className={styles.subTableHeaderText}>
-                                      Greiðlsuþátttökuverð
-                                    </span>
-                                  </T.HeadData>
-                                  <T.HeadData>
-                                    <span className={styles.subTableHeaderText}>
-                                      Umframverð
-                                    </span>
-                                  </T.HeadData>
-                                  <T.HeadData>
-                                    <span className={styles.subTableHeaderText}>
-                                      Greitt af einstakling
-                                    </span>
-                                  </T.HeadData>
-                                </T.Row>
-                              </T.Head>
-                              <T.Body>
-                                {[...fetchedLineItems].map((item, j) => {
-                                  const [billId, lineItems] = item
+                            <Box marginBottom={SECTION_GAP}>
+                              <TableBox
+                                data={[
+                                  {
+                                    title: 'Dagsetning reiknings',
+                                    value: '9.7.2023',
+                                  },
+                                  { title: 'Magn', value: '1' },
+                                  {
+                                    title: 'Greitt af einstaklingi',
+                                    value: '3.100 kr.',
+                                  },
+                                  {
+                                    title: 'Styrkur',
+                                    value: '50 mg.',
+                                  },
+                                  {
+                                    title: 'Söluverð',
+                                    value: '3.100 kr.',
+                                  },
+                                  {
+                                    title: 'Greitt af sjúkratryggingum',
+                                    value: '500 kr.',
+                                  },
+                                  {
+                                    title: 'Fjöldi',
+                                    value: '1',
+                                  },
+                                  {
+                                    title: 'Greiðsluþátttökuverð',
+                                    value: '500 kr.',
+                                  },
+                                ]}
+                              />
+                            </Box>
+                            <Box>
+                              <Text variant="h5" marginBottom={1}>
+                                Lyfjalínur
+                              </Text>
+                              <T.Table>
+                                <T.Head>
+                                  <T.Row>
+                                    <T.HeadData>
+                                      <span
+                                        className={styles.subTableHeaderText}
+                                      >
+                                        Lyfjaheiti
+                                      </span>
+                                    </T.HeadData>
+                                    <T.HeadData>
+                                      <span
+                                        className={styles.subTableHeaderText}
+                                      >
+                                        Styrkur
+                                      </span>
+                                    </T.HeadData>
+                                    <T.HeadData>
+                                      <span
+                                        className={styles.subTableHeaderText}
+                                      >
+                                        Magn
+                                      </span>
+                                    </T.HeadData>
+                                    <T.HeadData>
+                                      <span
+                                        className={styles.subTableHeaderText}
+                                      >
+                                        Fjöldi
+                                      </span>
+                                    </T.HeadData>
+                                    <T.HeadData>
+                                      <span
+                                        className={styles.subTableHeaderText}
+                                      >
+                                        Söluverð
+                                      </span>
+                                    </T.HeadData>
+                                    <T.HeadData>
+                                      <span
+                                        className={styles.subTableHeaderText}
+                                      >
+                                        Greiðlsuþátttökuverð
+                                      </span>
+                                    </T.HeadData>
+                                    <T.HeadData>
+                                      <span
+                                        className={styles.subTableHeaderText}
+                                      >
+                                        Umframverð
+                                      </span>
+                                    </T.HeadData>
+                                    <T.HeadData>
+                                      <span
+                                        className={styles.subTableHeaderText}
+                                      >
+                                        Greitt af einstakling
+                                      </span>
+                                    </T.HeadData>
+                                  </T.Row>
+                                </T.Head>
+                                <T.Body>
+                                  {[...fetchedLineItems].map((item, j) => {
+                                    const [billId, lineItems] = item
 
-                                  if (billId !== bill.id) return null
+                                    if (billId !== bill.id) return null
 
-                                  return lineItems.map((lineItem, k) => {
-                                    return (
-                                      <T.Row key={`${i}-${j}-${k}`}>
-                                        <T.Data>{lineItem.drugName}</T.Data>
-                                        <T.Data>{lineItem.strength}</T.Data>
-                                        <T.Data>{lineItem.amount}</T.Data>
-                                        <T.Data>{lineItem.number}</T.Data>
-                                        <T.Data>{lineItem.salesPrice}</T.Data>
-                                        <T.Data>
-                                          {lineItem.copaymentAmount}
-                                        </T.Data>
-                                        <T.Data>
-                                          {lineItem.insuranceAmount}
-                                        </T.Data>
-                                        <T.Data>
-                                          {lineItem.customerAmount}
-                                        </T.Data>
-                                      </T.Row>
-                                    )
-                                  })
-                                })}
-                              </T.Body>
-                            </T.Table>
+                                    return lineItems.map((lineItem, k) => {
+                                      return (
+                                        <T.Row key={`${i}-${j}-${k}`}>
+                                          <T.Data>{lineItem.drugName}</T.Data>
+                                          <T.Data>{lineItem.strength}</T.Data>
+                                          <T.Data>{lineItem.amount}</T.Data>
+                                          <T.Data>{lineItem.number}</T.Data>
+                                          <T.Data>{lineItem.salesPrice}</T.Data>
+                                          <T.Data>
+                                            {lineItem.copaymentAmount}
+                                          </T.Data>
+                                          <T.Data>
+                                            {lineItem.insuranceAmount}
+                                          </T.Data>
+                                          <T.Data>
+                                            {lineItem.customerAmount}
+                                          </T.Data>
+                                        </T.Row>
+                                      )
+                                    })
+                                  })}
+                                </T.Body>
+                              </T.Table>
+                            </Box>
                           </Box>
                         </ExpandRow>
                       </T.Body>
