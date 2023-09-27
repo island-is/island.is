@@ -1,7 +1,10 @@
-const path = require('path')
-const { VanillaExtractPlugin } = require('@vanilla-extract/webpack-plugin')
-const rootDir = (dir) => path.resolve(__dirname, dir)
-module.exports = {
+import type { StorybookConfig } from '@storybook/react-webpack5'
+import { VanillaExtractPlugin } from '@vanilla-extract/webpack-plugin'
+import path from 'path'
+
+const rootDir = (dir: string) => path.resolve(__dirname, dir)
+
+const config: StorybookConfig = {
   typescript: {
     reactDocgen: false,
   },
@@ -13,24 +16,33 @@ module.exports = {
   ],
   addons: [
     '@storybook/addon-a11y',
-    '@storybook/addon-essentials',
-    'storybook-addon-designs',
     'storybook-addon-apollo-client',
     '@storybook/addon-mdx-gfm',
+    '@storybook/addon-essentials',
   ],
-  babel: async (options) => ({
+  babel: (options) => ({
     ...options,
-    presets: ['@babel/preset-env', '@babel/preset-react'],
+    presets: [
+      '@babel/preset-env',
+      [
+        '@babel/preset-react',
+        {
+          runtime: 'automatic',
+        },
+        'preset-react-jsx-transform',
+      ],
+      '@babel/preset-typescript',
+    ],
     plugins: [
-      '@babel/plugin-proposal-class-properties',
-      '@babel/plugin-proposal-private-methods',
-      '@babel/plugin-proposal-private-property-in-object',
+      '@babel/plugin-transform-class-properties',
+      '@babel/plugin-transform-private-methods',
+      '@babel/plugin-transform-private-property-in-object',
     ],
   }),
   webpackFinal: (config) => {
-    config.plugins.push(new VanillaExtractPlugin())
+    config.plugins?.push(new VanillaExtractPlugin())
     config.devtool = false
-    config.module.rules.push({
+    config.module?.rules?.push({
       test: /\.stories\.(ts|tsx)$/,
       exclude: path.resolve(__dirname, '../../../../node_modules'),
       use: [
@@ -46,7 +58,7 @@ module.exports = {
     config.resolve = {
       ...config.resolve,
       alias: {
-        ...config.resolve.alias,
+        ...config.resolve?.alias,
         '@island.is/island-ui/core': rootDir('../../core/src'),
         '@island.is/island-ui/theme': rootDir('../../theme/src'),
         '@island.is/island-ui/utils': rootDir('../../utils/src'),
@@ -96,3 +108,5 @@ module.exports = {
     autodocs: true,
   },
 }
+
+export default config
