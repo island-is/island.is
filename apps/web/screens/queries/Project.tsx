@@ -92,6 +92,7 @@ export const GET_PROJECT_PAGE_QUERY = gql`
           ...NestedOneColumnTextFields
           ${nestedFields}
         }
+        showTableOfContents
         bottomSlices {
           ...AllSlices
           ...NestedOneColumnTextFields
