@@ -89,7 +89,7 @@ import {
 } from './Themes/IcelandicNaturalDisasterInsuranceTheme'
 import { TransportAuthorityHeader } from './Themes/TransportAuthorityTheme'
 import { RettindagaeslaFatladsFolksHeader } from './Themes/RettindagaeslaFatladsFolksTheme'
-
+import { HmsHeader } from './Themes/HmsTheme'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -119,7 +119,16 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const lightThemes = [
+const darkThemes = ['hms']
+
+const blueberryThemes = [
+  'sjukratryggingar',
+  'rikislogmadur',
+  'tryggingastofnun',
+  'nti',
+]
+
+const lightThemes = [
   'digital_iceland',
   'default',
   'fiskistofa',
@@ -142,12 +151,7 @@ export const getThemeConfig = (
       ? 'organization'
       : 'default'
 
-  if (
-    theme === 'sjukratryggingar' ||
-    theme === 'rikislogmadur' ||
-    theme === 'tryggingastofnun' ||
-    theme === 'nti'
-  )
+  if (blueberryThemes.includes(theme))
     return {
       themeConfig: {
         headerButtonColorScheme: 'blueberry',
@@ -156,16 +160,25 @@ export const getThemeConfig = (
       },
     }
 
-  const isLightTheme = lightThemes.includes(theme ?? '')
-  return !isLightTheme
-    ? {
+  if (darkThemes.includes(theme)) {
+    return {
+      themeConfig: {
+        headerColorScheme: 'dark',
+        headerButtonColorScheme: 'dark',
+        footerVersion,
+      },
+    }
+  }
+
+  return lightThemes.includes(theme)
+    ? { themeConfig: { footerVersion } }
+    : {
         themeConfig: {
           headerColorScheme: 'white',
           headerButtonColorScheme: 'negative',
           footerVersion,
         },
       }
-    : { themeConfig: { footerVersion } }
 }
 
 export const OrganizationHeader: React.FC<
@@ -240,6 +253,9 @@ export const OrganizationHeader: React.FC<
       return (
         <RettindagaeslaFatladsFolksHeader organizationPage={organizationPage} />
       )
+    case 'hms':
+      return <HmsHeader organizationPage={organizationPage} />
+
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
