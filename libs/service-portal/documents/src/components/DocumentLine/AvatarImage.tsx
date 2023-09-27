@@ -1,6 +1,7 @@
 import React, { FC, ReactNode, MouseEvent } from 'react'
 
 import { Box, Icon } from '@island.is/island-ui/core'
+import cn from 'classnames'
 import * as styles from './NewDocumentLine.css'
 
 interface Props {
@@ -8,9 +9,16 @@ interface Props {
   img?: string
   avatar?: ReactNode
   onClick?: (event: MouseEvent<HTMLElement>) => void
+  large?: boolean
 }
 
-const AvatarImage: FC<Props> = ({ img, background, avatar, onClick }) => {
+const AvatarImage: FC<Props> = ({
+  img,
+  background,
+  avatar,
+  large,
+  onClick,
+}) => {
   return (
     <Box
       display="flex"
@@ -21,7 +29,9 @@ const AvatarImage: FC<Props> = ({ img, background, avatar, onClick }) => {
         background === 'blue100' ? { background: styles.dark50 } : undefined
       }
       borderRadius="circle"
-      className={styles.imageContainer}
+      className={cn(styles.imageContainer, {
+        [styles.largeAvatar]: large,
+      })}
       onClick={onClick}
     >
       {avatar ? (

@@ -489,6 +489,7 @@ export const ServicePortalDocuments = () => {
                 padding={5}
                 borderRadius="large"
                 background="white"
+                className={styles.docWrap}
               >
                 <DocumentHeader
                   avatar={activeDocument.img}

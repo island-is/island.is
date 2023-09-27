@@ -86,6 +86,17 @@ export const imageContainer = style({
   maxWidth: 48,
 })
 
+export const largeAvatar = style({
+  ...themeUtils.responsiveStyle({
+    lg: {
+      minWidth: 56,
+      minHeight: 56,
+      maxHeight: 56,
+      maxWidth: 56,
+    },
+  }),
+})
+
 export const checkCircle = style({
   minWidth: 30,
   minHeight: 30,

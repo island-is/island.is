@@ -1,5 +1,5 @@
 import { theme } from '@island.is/island-ui/theme'
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 export const categoryDivider = style({
   position: 'relative',
@@ -23,4 +23,10 @@ export const actionBarWrapper = style({
   gap: '1rem',
   alignItems: 'center',
   marginLeft: 'auto',
+})
+
+export const titleText = style({})
+
+globalStyle(`${titleText} p`, {
+  opacity: 0.8,
 })

@@ -79,9 +79,15 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
           </Box>
         )}
         {onPrintClick && (
-          <button onClick={onPrintClick}>
-            <Icon color="blue400" icon="print" type="outline" />
-          </button>
+          <Button
+            circle
+            icon="print"
+            iconType={'outline'}
+            onClick={onPrintClick}
+            size="medium"
+            title="Prenta"
+            colorScheme="light"
+          />
         )}
       </Box>
     </>
