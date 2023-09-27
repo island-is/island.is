@@ -3,7 +3,7 @@ import {
   ProgramApi,
   UniversityApi,
 } from '@island.is/clients/university-gateway-api'
-import { CmsContentfulService, CmsElasticsearchService } from '@island.is/cms'
+import { CmsContentfulService } from '@island.is/cms'
 import { GetProgramByIdInput, ProgramsPaginated } from './graphql/dto'
 import { ProgramDetails, ProgramFilter, University } from './graphql/models'
 import {
@@ -178,6 +178,7 @@ class UniversityGatewayApi {
       return {
         id: item.id,
         nationalId: item.nationalId,
+        contentfulKey: item.contentfulKey,
         title: info?.title ? info?.title : 'Fannst ekki',
         logoUrl: info?.logoUrl ? info?.logoUrl : '',
       }

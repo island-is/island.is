@@ -43,7 +43,18 @@
         "passWithNoTests": true
       }
     },
-    "docker-express": {}
+    "docker-express": {},
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn start services-university-gateway-backend",
+          "echo \"Waiting for backend to start...\" && sleep 10",
+          "yarn start services-university-gateway-scheduler"
+        ],
+        "parallel": true
+      }
+    }
   },
   "tags": ["scope:university-gateway-api"]
 }

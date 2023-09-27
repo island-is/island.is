@@ -62,7 +62,7 @@ class UniversityOfIcelandApplicationClient {
           durationInYears: program.durationInYears || 0,
           costPerYear: program.costPerYear,
           iscedCode: program.iscedCode || '',
-          languages: [], //TODO missing in api
+          languages: [], //TODO will not be used yet
           searchKeywords: [], //TODO missing in api
           externalUrlIs: program.externalUrlIs,
           externalUrlEn: program.externalUrlEn,
@@ -74,7 +74,7 @@ class UniversityOfIcelandApplicationClient {
           costInformationEn: program.costInformationEn,
           tag: [], //TODO will not be used yet
           modeOfDelivery: program.modeOfDelivery.map((m) => {
-            // TODO what value is this
+            // TODO handle when ráðuneyti has made decisions
             if (m.toString() === 'MIXED') {
               return ModeOfDelivery.OTHER
             } else {
@@ -126,17 +126,17 @@ class UniversityOfIcelandApplicationClient {
           case 'M':
             requirement = Requirement.MANDATORY
             break
-          case 'O': // TODO what value is this
+          case 'O':
             requirement = Requirement.FREE_ELECTIVE
             break
-          case '0': // TODO what value is this
+          case '0':
             requirement = Requirement.FREE_ELECTIVE
             break
-          case 'C': // TODO what value is this
+          case 'C':
             requirement = Requirement.RESTRICTED_ELECTIVE
             break
-          case '': // TODO what value is this
-            requirement = Requirement.FREE_ELECTIVE
+          case '':
+            requirement = Requirement.UNDEFINED
             break
         }
         if (requirement === undefined) {

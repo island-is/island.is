@@ -25,10 +25,10 @@ class ProgramService {
     private programModel: typeof ProgramTable,
 
     @InjectModel(ProgramTag)
-    // private programTagModel: typeof ProgramTag,
+    private programTagModel: typeof ProgramTag,
 
     @InjectModel(University)
-    // private universityModel: typeof University,
+    private universityModel: typeof University,
 
     @InjectModel(Tag)
     private tagModel: typeof Tag,
