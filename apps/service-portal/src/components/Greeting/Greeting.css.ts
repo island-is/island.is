@@ -11,12 +11,6 @@ export const greetingContainer = style({
 })
 
 export const greetingTextBox = style({
-  paddingBottom: theme.spacing[3],
-  '@media': {
-    [`screen and (max-width: ${theme.breakpoints.lg}px)`]: {
-      paddingBottom: 0,
-    },
-  },
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',

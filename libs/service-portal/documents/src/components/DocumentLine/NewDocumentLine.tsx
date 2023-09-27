@@ -173,8 +173,8 @@ export const NewDocumentLine: FC<Props> = ({
             [styles.active]: active,
             [styles.unread]: unread,
           })}
-          onMouseEnter={asFrame ? undefined : () => setAvatarCheckmark(true)}
-          onMouseLeave={asFrame ? undefined : () => setAvatarCheckmark(false)}
+          onMouseEnter={() => setAvatarCheckmark(true)}
+          onMouseLeave={() => setAvatarCheckmark(false)}
         >
           <AvatarImage
             img={img}
@@ -185,7 +185,7 @@ export const NewDocumentLine: FC<Props> = ({
               }
             }}
             avatar={
-              avatarCheckmark || selected ? (
+              (avatarCheckmark || selected) && !asFrame ? (
                 <Box
                   display="flex"
                   alignItems="center"
@@ -200,7 +200,9 @@ export const NewDocumentLine: FC<Props> = ({
             }
             background={
               avatarCheckmark || selected
-                ? 'blue200'
+                ? asFrame
+                  ? 'white'
+                  : 'blue200'
                 : documentLine.opened
                 ? 'blue100'
                 : 'white'
@@ -210,7 +212,7 @@ export const NewDocumentLine: FC<Props> = ({
             width="full"
             display="flex"
             flexDirection="column"
-            paddingLeft={3}
+            paddingLeft={2}
             minWidth={0}
           >
             {active && <div className={styles.fakeBorder} />}
@@ -219,7 +221,9 @@ export const NewDocumentLine: FC<Props> = ({
               flexDirection="row"
               justifyContent="spaceBetween"
             >
-              <Text variant="small">{documentLine.senderName}</Text>
+              <Text variant="small" truncate>
+                {documentLine.senderName}
+              </Text>
               <Text variant="small">{date}</Text>
             </Box>
             <Box
@@ -229,7 +233,7 @@ export const NewDocumentLine: FC<Props> = ({
               justifyContent="spaceBetween"
             >
               <Text
-                fontWeight={unread ? 'semiBold' : 'regular'}
+                fontWeight={unread ? 'medium' : 'regular'}
                 color="blue400"
                 truncate
               >

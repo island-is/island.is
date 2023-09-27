@@ -76,8 +76,8 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
             navRoot.path !== ServicePortalPath.MinarSidurRoot && (
               <GridColumn
                 key={formatMessage(navRoot.name) + '-' + index}
-                span={['12/12', '12/12', '12/12', '6/12', '6/12']}
-                paddingBottom={3}
+                span={['12/12', '6/12', '6/12', '6/12', '6/12']}
+                paddingBottom={[1, 2, 3, 3]}
                 hiddenAbove={
                   navRoot.path === DocumentsPaths.ElectronicDocumentsRoot
                     ? 'md'
@@ -210,20 +210,27 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
                     />
                   </Box>
                 )}
-                {data?.documents.map((doc) => (
-                  <Box key={doc.id}>
-                    <NewDocumentLine
-                      img={getOrganizationLogoUrl(
-                        doc.senderName,
-                        organizations,
-                      )}
-                      documentLine={doc}
-                      active={false}
-                      asFrame
-                    />
-                  </Box>
-                ))}
-
+                <Box
+                  position="relative"
+                  borderColor="blue200"
+                  borderTopWidth="standard"
+                  width="full"
+                  marginTop={2}
+                >
+                  {data?.documents.map((doc) => (
+                    <Box key={doc.id}>
+                      <NewDocumentLine
+                        img={getOrganizationLogoUrl(
+                          doc.senderName,
+                          organizations,
+                        )}
+                        documentLine={doc}
+                        active={false}
+                        asFrame
+                      />
+                    </Box>
+                  ))}
+                </Box>
                 <Box
                   textAlign="center"
                   marginBottom={1}

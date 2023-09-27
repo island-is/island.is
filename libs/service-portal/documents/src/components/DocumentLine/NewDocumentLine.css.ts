@@ -1,7 +1,7 @@
 import { style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
-const dark50 = '#F8F8FA'
+export const dark50 = '#F8F8FA'
 
 export const wrapper = style({
   width: '100%',

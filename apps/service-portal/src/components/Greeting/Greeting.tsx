@@ -28,8 +28,8 @@ const Greeting: FC<React.PropsWithChildren<{}>> = () => {
           offset={['0', '0', '0', '1/12']}
         >
           <Box
-            marginTop={[2, 3, 0]}
-            paddingLeft={[2, 2, 2, 0]}
+            marginTop={[2, 3, 3, 0]}
+            paddingLeft={[0, 0, 0, 0]}
             data-testid="greeting"
             className={styles.greetingTextBox}
           >
@@ -46,7 +46,9 @@ const Greeting: FC<React.PropsWithChildren<{}>> = () => {
             <Text translate="no" variant="h2" as="h1" marginBottom={1}>
               {userInfo?.profile.name}
             </Text>
-            <Text marginBottom={2}>{formatMessage(m.greetingIntro)}</Text>
+            <Text paddingBottom={[2, 3, 4, 0]} marginBottom={2}>
+              {formatMessage(m.greetingIntro)}
+            </Text>
           </Box>
         </GridColumn>
         <GridColumn span={'6/12'}>

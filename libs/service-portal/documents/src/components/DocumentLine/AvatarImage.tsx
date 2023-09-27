@@ -17,6 +17,9 @@ const AvatarImage: FC<Props> = ({ img, background, avatar, onClick }) => {
       alignItems="center"
       justifyContent="center"
       background={background}
+      style={
+        background === 'blue100' ? { background: styles.dark50 } : undefined
+      }
       borderRadius="circle"
       className={styles.imageContainer}
       onClick={onClick}
