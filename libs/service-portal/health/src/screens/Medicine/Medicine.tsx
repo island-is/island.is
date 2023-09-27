@@ -9,22 +9,28 @@ import {
   Stack,
   Tabs,
   Text,
+  Table as T,
 } from '@island.is/island-ui/core'
 import { IntroHeader } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
 import {
+  useGetDrugBillLineItemLazyQuery,
   useGetDrugsBillsQuery,
   useGetDrugsDataQuery,
 } from './Medicine.generated'
 import {
   ExpandHeader,
   ExpandRow,
+  TableGrid,
   UserInfoLine,
   m,
 } from '@island.is/service-portal/core'
 import { useEffect, useState } from 'react'
-import { RightsPortalDrugsPaymentPeroids } from '@island.is/api/schema'
-
+import {
+  RightsPortalDrugsPaymentPeroids,
+  RightsPortalDrugBillLineItem,
+} from '@island.is/api/schema'
+import * as styles from './Medicine.css'
 enum MedicineTabs {
   PURCHASE = 'lyfjakaup',
   CALCULATOR = 'reiknivel',
@@ -46,6 +52,10 @@ const Medicine = () => {
   )
   const [selectedPeriod, setSelectedPeriod] =
     useState<RightsPortalDrugsPaymentPeroids | null>(null)
+  const [selectedLineItem, setSelectedLineItem] = useState<string>('')
+  const [fetchedLineItems, setFetchedLineItems] = useState<
+    Map<string, RightsPortalDrugBillLineItem[]>
+  >(new Map())
   const formatDatePeriod = (dateFrom: Date, dateTo: Date) => {
     if (!dateFrom || !dateTo) return ''
     return `${formatDateFns(dateFrom, DATE_FORMAT)} - ${formatDateFns(
@@ -67,6 +77,9 @@ const Medicine = () => {
       },
     },
   })
+
+  const [lineItemQuery, { loading: lineItemLoading }] =
+    useGetDrugBillLineItemLazyQuery()
 
   useEffect(() => {
     if (data) {
@@ -211,32 +224,140 @@ const Medicine = () => {
             <Text marginBottom={CONTENT_GAP} variant="h5">
               {formatMessage(messages.medicineBills)}
             </Text>
-            {!billsLoading && bills?.rightsPortalDrugsBills.length && (
-              <Box>
-                <ExpandHeader
-                  data={[
-                    { value: '' },
-                    { value: 'Dagsetning' },
-                    { value: 'Skýring' },
-                    { value: 'Greiðsluþátttökuverð' },
-                    { value: 'Greitt af einstakling' },
-                  ]}
-                />
-                {bills.rightsPortalDrugsBills.map((bill, i) => {
-                  return (
-                    <ExpandRow
-                      data={[
-                        { value: formatDateFns(bill.date, DATE_FORMAT) },
-                        { value: bill.description ?? '' },
-                        { value: bill.copaymentAmount ?? '' },
-                        { value: bill.customerAmount ?? '' },
-                      ]}
-                      key={i}
-                      // TODO: Call on expand getDrugBillLineItems to populate the table
-                    />
-                  )
-                })}
-              </Box>
+            {billsLoading ? (
+              <SkeletonLoader repeat={3} borderRadius="large" space={1} />
+            ) : (
+              bills?.rightsPortalDrugsBills.length && (
+                <T.Table>
+                  <ExpandHeader
+                    data={[
+                      { value: '' },
+                      { value: 'Dagsetning' },
+                      { value: 'Skýring' },
+                      { value: 'Greiðsluþátttökuverð' },
+                      { value: 'Greitt af einstakling' },
+                    ]}
+                  />
+                  {bills.rightsPortalDrugsBills.map((bill, i) => {
+                    return (
+                      <T.Body key={i}>
+                        <ExpandRow
+                          expandWhenLoadingFinished={true}
+                          loading={
+                            lineItemLoading && bill.id === selectedLineItem
+                          }
+                          data={[
+                            { value: formatDateFns(bill.date, DATE_FORMAT) },
+                            { value: bill.description ?? '' },
+                            { value: bill.copaymentAmount ?? '' },
+                            { value: bill.customerAmount ?? '' },
+                          ]}
+                          onExpandCallback={() => {
+                            setSelectedLineItem(bill.id ?? '')
+                            lineItemQuery({
+                              variables: {
+                                input: {
+                                  billId: bill.id,
+                                  paymentPeriodId: selectedPeriod?.id ?? '',
+                                },
+                              },
+                              onCompleted: (data) =>
+                                fetchedLineItems.set(
+                                  bill.id ?? '',
+                                  data.rightsPortalDrugBillLineItems,
+                                ),
+                            })
+                          }}
+                        >
+                          <Box
+                            padding={CONTENT_GAP}
+                            paddingBottom={SECTION_GAP}
+                            background="blue100"
+                          >
+                            <Text variant="h5" marginBottom={1}>
+                              Lyfjalínur
+                            </Text>
+                            <T.Table>
+                              <T.Head>
+                                <T.Row>
+                                  <T.HeadData>
+                                    <span className={styles.subTableHeaderText}>
+                                      Lyfjaheiti
+                                    </span>
+                                  </T.HeadData>
+                                  <T.HeadData>
+                                    <span className={styles.subTableHeaderText}>
+                                      Styrkur
+                                    </span>
+                                  </T.HeadData>
+                                  <T.HeadData>
+                                    <span className={styles.subTableHeaderText}>
+                                      Magn
+                                    </span>
+                                  </T.HeadData>
+                                  <T.HeadData>
+                                    <span className={styles.subTableHeaderText}>
+                                      Fjöldi
+                                    </span>
+                                  </T.HeadData>
+                                  <T.HeadData>
+                                    <span className={styles.subTableHeaderText}>
+                                      Söluverð
+                                    </span>
+                                  </T.HeadData>
+                                  <T.HeadData>
+                                    <span className={styles.subTableHeaderText}>
+                                      Greiðlsuþátttökuverð
+                                    </span>
+                                  </T.HeadData>
+                                  <T.HeadData>
+                                    <span className={styles.subTableHeaderText}>
+                                      Umframverð
+                                    </span>
+                                  </T.HeadData>
+                                  <T.HeadData>
+                                    <span className={styles.subTableHeaderText}>
+                                      Greitt af einstakling
+                                    </span>
+                                  </T.HeadData>
+                                </T.Row>
+                              </T.Head>
+                              <T.Body>
+                                {[...fetchedLineItems].map((item, j) => {
+                                  const [billId, lineItems] = item
+
+                                  if (billId !== bill.id) return null
+
+                                  return lineItems.map((lineItem, k) => {
+                                    return (
+                                      <T.Row key={`${i}-${j}-${k}`}>
+                                        <T.Data>{lineItem.drugName}</T.Data>
+                                        <T.Data>{lineItem.strength}</T.Data>
+                                        <T.Data>{lineItem.amount}</T.Data>
+                                        <T.Data>{lineItem.number}</T.Data>
+                                        <T.Data>{lineItem.salesPrice}</T.Data>
+                                        <T.Data>
+                                          {lineItem.copaymentAmount}
+                                        </T.Data>
+                                        <T.Data>
+                                          {lineItem.insuranceAmount}
+                                        </T.Data>
+                                        <T.Data>
+                                          {lineItem.customerAmount}
+                                        </T.Data>
+                                      </T.Row>
+                                    )
+                                  })
+                                })}
+                              </T.Body>
+                            </T.Table>
+                          </Box>
+                        </ExpandRow>
+                      </T.Body>
+                    )
+                  })}
+                </T.Table>
+              )
             )}
           </Box>
         </Box>

@@ -3,7 +3,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 @ObjectType('RightsPortalDrugBillLineItem')
 export class DrugBillLineItem {
   @Field(() => ID, { nullable: true })
-  id?: number
+  billId?: number
 
   @Field(() => String, { nullable: true })
   drugName?: string

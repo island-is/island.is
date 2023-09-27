@@ -23,3 +23,17 @@ query getDrugsBills($input: RightsPortalDrugsBillsInput!) {
     calculatedForPaymentStepAmount
   }
 }
+
+query getDrugBillLineItem($input: RightsPortalDrugsBillLineItemInput!) {
+  rightsPortalDrugBillLineItems(input: $input) {
+    billId
+    drugName
+    strength
+    amount
+    number
+    salesPrice
+    copaymentAmount
+    customerAmount
+    insuranceAmount
+  }
+}
