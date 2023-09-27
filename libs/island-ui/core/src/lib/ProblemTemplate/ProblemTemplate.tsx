@@ -107,11 +107,9 @@ export const ProblemTemplate = ({
       })}
     >
       {tag && (
-        <div>
-          <Tag variant={convertedVariant} disabled>
-            {tag}
-          </Tag>
-        </div>
+        <Tag variant={convertedVariant} disabled>
+          {tag}
+        </Tag>
       )}
       {showIcon && (
         <Box display="flex">

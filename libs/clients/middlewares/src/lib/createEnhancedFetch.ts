@@ -33,7 +33,7 @@ export interface EnhancedFetchOptions {
   name: string
 
   /**
-   * The organization slug used in error logging. This slug matches Contentful's organization content type english "slug" field.
+   * The organization slug used in error logging. This slug matches Contentful's organization content type icelandic "slug" field.
    */
   organizationSlug?: OrganizationSlugType
 

@@ -90,7 +90,7 @@ export const DelegationsOutgoing = () => {
           onSearchChange={setSearchValue}
         />
         <div>
-          {loading || domainName === null ? (
+          {(loading || domainName === null) && !error ? (
             <SkeletonLoader width="100%" height={191} />
           ) : error && (!delegations || delegations.length === 0) ? (
             <Problem error={error} />
