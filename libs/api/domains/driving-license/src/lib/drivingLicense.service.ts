@@ -22,7 +22,6 @@ import {
   DriversLicense,
   DrivingAssessment,
   DrivingLicenseApi,
-  EmbaettiDto,
   TeacherV4,
 } from '@island.is/clients/driving-license'
 import {
