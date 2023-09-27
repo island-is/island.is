@@ -7,6 +7,7 @@ import {
   getApplicationAnswers,
   Period,
   NO,
+  getApplicationExternalData,
 } from '@island.is/application/templates/parental-leave'
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
@@ -45,6 +46,9 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmployerRejec
     })
 
     const periods = get(application.answers, 'periods') as unknown as Period[]
+    const { applicantName } = getApplicationExternalData(
+      application.externalData,
+    )
 
     const emailSubject = `Samþykkt umsókn um fæðingarorlof (kt. ${application.applicant}) - Vinsamlegast áframsendið til launadeildar`
     const subject = `Þú samþykktir umsókn um fæðingarorlof`
@@ -85,7 +89,7 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmployerRejec
           {
             component: 'Copy',
             context: {
-              copy: `Þú hefur samþykkt umsókn fyrir kt. ${application.applicant} um fæðingarorlof.`,
+              copy: `Þú hefur samþykkt umsókn fyrir ${applicantName} kt. ${application.applicant} um fæðingarorlof.`,
             },
           },
           {
