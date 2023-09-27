@@ -36,6 +36,7 @@ import { DeleteFileResponse } from './models/deleteFile.response'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { SignedUrl } from './models/signedUrl.model'
 import { CaseFile } from './models/file.model'
+import { AllFiles } from './models/allFiles.model'
 
 // Files are stored in AWS S3 under a key which has the following formats:
 // uploads/<uuid>/<uuid>/<filename> for restriction and investigation cases
@@ -179,32 +180,33 @@ export class FileService {
     return caseFile
   }
 
-  async getAll(caseId: string, caseType: CaseType): Promise<CaseFile[]> {
+  async getAll(caseId: string, caseType: CaseType): Promise<AllFiles> {
     const allowedCategories = [
-      ...([...restrictionCases, ...investigationCases].includes(caseType)
-        ? [
-            CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
-            CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-            CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-            CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-            CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-            CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-            CaseFileCategory.APPEAL_RULING,
-          ]
-        : indictmentCases.includes(caseType)
-        ? [
-            CaseFileCategory.COURT_RECORD,
-            CaseFileCategory.RULING,
-            CaseFileCategory.COVER_LETTER,
-            CaseFileCategory.INDICTMENT,
-            CaseFileCategory.CRIMINAL_RECORD,
-            CaseFileCategory.COST_BREAKDOWN,
-            CaseFileCategory.CASE_FILE,
-          ]
-        : []),
-    ]
+      ...restrictionCases,
+      ...investigationCases,
+    ].includes(caseType)
+      ? [
+          CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+          CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+          CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+          CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+          CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+          CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+          CaseFileCategory.APPEAL_RULING,
+        ]
+      : indictmentCases.includes(caseType)
+      ? [
+          CaseFileCategory.COURT_RECORD,
+          CaseFileCategory.RULING,
+          CaseFileCategory.COVER_LETTER,
+          CaseFileCategory.INDICTMENT,
+          CaseFileCategory.CRIMINAL_RECORD,
+          CaseFileCategory.COST_BREAKDOWN,
+          CaseFileCategory.CASE_FILE,
+        ]
+      : []
 
-    const a = await this.fileModel.findAll({
+    const caseFilesByCategory = await this.fileModel.findAll({
       where: {
         caseId,
         state: { [Op.not]: CaseFileState.DELETED },
@@ -250,14 +252,14 @@ export class FileService {
 
     archive.pipe(output)
 
-    for (const file of a) {
+    for (const file of caseFilesByCategory) {
       const content = await this.awsS3Service.getObject(file.key ?? '')
       archive.append(content, { name: file.name })
     }
 
     archive.finalize()
 
-    return a
+    return { success: true }
   }
 
   createPresignedPost(
@@ -321,13 +323,8 @@ export class FileService {
     return this.awsS3Service.getSignedUrl(file.key)
   }
 
-  async getAllCaseFiles(
-    caseId: string,
-    caseType: CaseType,
-  ): Promise<CaseFile[]> {
-    const a = this.getAll(caseId, caseType)
-    console.log(a)
-    return a
+  async getAllCaseFiles(caseId: string, caseType: CaseType): Promise<AllFiles> {
+    return this.getAll(caseId, caseType)
   }
 
   async deleteCaseFile(
