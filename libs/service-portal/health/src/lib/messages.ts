@@ -542,4 +542,44 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-bills',
     defaultMessage: 'Lyfjareikningar',
   },
+  medicinePaymentParticipationPrice: {
+    id: 'sp.health:medicine-payment-participation-price',
+    defaultMessage: 'Greiðsluþátttökuverð',
+  },
+  medicinePaidByCustomer: {
+    id: 'sp.health:medicine-paid-by-customer',
+    defaultMessage: 'Greitt af einstakling',
+  },
+  medicineBillDate: {
+    id: 'sp.health:medicine-bill-date',
+    defaultMessage: 'Dagsetning reiknings',
+  },
+  medicineQuantity: {
+    id: 'sp.health:medicine-quantity',
+    defaultMessage: 'Magn',
+  },
+  medicineAmount: {
+    id: 'sp.health:medicine-amount',
+    defaultMessage: 'Fjöldi',
+  },
+  medicineDrugName: {
+    id: 'sp.health:medicine-drug-name',
+    defaultMessage: 'Lyfjaheiti',
+  },
+  medicineStrength: {
+    id: 'sp.health:medicine-strength',
+    defaultMessage: 'Styrkur',
+  },
+  medicineSalePrice: {
+    id: 'sp.health:medicine-sale-price',
+    defaultMessage: 'Söluverð',
+  },
+  medicinePaidByInsurance: {
+    id: 'sp.health:medicine-paid-by-insurance',
+    defaultMessage: 'Greitt af sjúkratryggingum',
+  },
+  medicineExcessPrice: {
+    id: 'sp.health:medicine-excess-price',
+    defaultMessage: 'Umframverð',
+  },
 })

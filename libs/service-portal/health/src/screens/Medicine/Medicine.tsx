@@ -41,6 +41,7 @@ const SECTION_GAP = 5
 const CONTENT_GAP = 2
 
 const DATE_FORMAT = 'dd.MM.yyyy'
+const DATE_FORMAT_SHORT = 'd.M.yyyy'
 
 const Medicine = () => {
   useNamespaces('sp.health')
@@ -232,10 +233,14 @@ const Medicine = () => {
                   <ExpandHeader
                     data={[
                       { value: '' },
-                      { value: 'Dagsetning' },
-                      { value: 'Skýring' },
-                      { value: 'Greiðsluþátttökuverð' },
-                      { value: 'Greitt af einstakling' },
+                      { value: formatMessage(m.date) },
+                      { value: formatMessage(m.explanationNote) },
+                      {
+                        value: formatMessage(
+                          messages.medicinePaymentParticipationPrice,
+                        ),
+                      },
+                      { value: formatMessage(messages.medicinePaidByCustomer) },
                     ]}
                   />
                   {bills.rightsPortalDrugsBills.map((bill, i) => {
@@ -274,36 +279,59 @@ const Medicine = () => {
                             paddingBottom={SECTION_GAP}
                             background="blue100"
                           >
-                            <Box marginBottom={SECTION_GAP}>
+                            <Box marginBottom={CONTENT_GAP}>
+                              {/* These fields do not match the data coming from the API needs further investigation from designers */}
                               <TableBox
                                 data={[
                                   {
-                                    title: 'Dagsetning reiknings',
-                                    value: '9.7.2023',
-                                  },
-                                  { title: 'Magn', value: '1' },
-                                  {
-                                    title: 'Greitt af einstaklingi',
-                                    value: '3.100 kr.',
-                                  },
-                                  {
-                                    title: 'Styrkur',
-                                    value: '50 mg.',
+                                    title: formatMessage(
+                                      messages.medicineBillDate,
+                                    ),
+                                    value: formatDateFns(
+                                      bill.date,
+                                      DATE_FORMAT_SHORT,
+                                    ),
                                   },
                                   {
-                                    title: 'Söluverð',
-                                    value: '3.100 kr.',
-                                  },
-                                  {
-                                    title: 'Greitt af sjúkratryggingum',
-                                    value: '500 kr.',
-                                  },
-                                  {
-                                    title: 'Fjöldi',
+                                    title: formatMessage(
+                                      messages.medicineQuantity,
+                                    ),
                                     value: '1',
                                   },
                                   {
-                                    title: 'Greiðsluþátttökuverð',
+                                    title: formatMessage(
+                                      messages.medicinePaidByCustomer,
+                                    ),
+                                    value: '3.100 kr.',
+                                  },
+                                  {
+                                    title: formatMessage(
+                                      messages.medicineStrength,
+                                    ),
+                                    value: '50 mg.',
+                                  },
+                                  {
+                                    title: formatMessage(
+                                      messages.medicineSalePrice,
+                                    ),
+                                    value: '3.100 kr.',
+                                  },
+                                  {
+                                    title: formatMessage(
+                                      messages.medicinePaidByInsurance,
+                                    ),
+                                    value: '500 kr.',
+                                  },
+                                  {
+                                    title: formatMessage(
+                                      messages.medicineAmount,
+                                    ),
+                                    value: '1',
+                                  },
+                                  {
+                                    title: formatMessage(
+                                      messages.medicinePaymentParticipationPrice,
+                                    ),
                                     value: '500 kr.',
                                   },
                                 ]}
@@ -320,56 +348,70 @@ const Medicine = () => {
                                       <span
                                         className={styles.subTableHeaderText}
                                       >
-                                        Lyfjaheiti
+                                        {formatMessage(
+                                          messages.medicineDrugName,
+                                        )}
                                       </span>
                                     </T.HeadData>
                                     <T.HeadData>
                                       <span
                                         className={styles.subTableHeaderText}
                                       >
-                                        Styrkur
+                                        {formatMessage(
+                                          messages.medicineStrength,
+                                        )}
                                       </span>
                                     </T.HeadData>
                                     <T.HeadData>
                                       <span
                                         className={styles.subTableHeaderText}
                                       >
-                                        Magn
+                                        {formatMessage(
+                                          messages.medicineQuantity,
+                                        )}
                                       </span>
                                     </T.HeadData>
                                     <T.HeadData>
                                       <span
                                         className={styles.subTableHeaderText}
                                       >
-                                        Fjöldi
+                                        {formatMessage(messages.medicineAmount)}
                                       </span>
                                     </T.HeadData>
                                     <T.HeadData>
                                       <span
                                         className={styles.subTableHeaderText}
                                       >
-                                        Söluverð
+                                        {formatMessage(
+                                          messages.medicineSalePrice,
+                                        )}
                                       </span>
                                     </T.HeadData>
                                     <T.HeadData>
                                       <span
                                         className={styles.subTableHeaderText}
                                       >
-                                        Greiðlsuþátttökuverð
+                                        {formatMessage(
+                                          messages.medicinePaymentParticipationPrice,
+                                        )}
                                       </span>
                                     </T.HeadData>
                                     <T.HeadData>
                                       <span
                                         className={styles.subTableHeaderText}
                                       >
-                                        Umframverð
+                                        {formatMessage(
+                                          messages.medicineExcessPrice,
+                                        )}
                                       </span>
                                     </T.HeadData>
                                     <T.HeadData>
                                       <span
                                         className={styles.subTableHeaderText}
                                       >
-                                        Greitt af einstakling
+                                        {formatMessage(
+                                          messages.medicinePaidByCustomer,
+                                        )}
                                       </span>
                                     </T.HeadData>
                                   </T.Row>
