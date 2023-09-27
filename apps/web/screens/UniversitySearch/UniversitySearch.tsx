@@ -105,7 +105,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   locale,
   universities,
 }) => {
-  // const n = useNamespace(namespace)
   const { width } = useWindowSize()
 
   const n = useNamespace(namespace)
@@ -155,20 +154,22 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     }
   }, [])
 
+  //Fuse options:
+  // isCaseSensitive: false,
+  // includeScore: false,
+  // shouldSort: true,
+  // includeMatches: false,
+  // findAllMatches: false,
+  // minMatchCharLength: 1,
+  // location: 0,
+  // distance: 100,
+  // useExtendedSearch: false,
+  // ignoreLocation: false,
+  // ignoreFieldNorm: false,
+  // fieldNormWeight: 1,
+
   const fuseOptions = {
-    // isCaseSensitive: false,
-    // includeScore: false,
-    // shouldSort: true,
-    // includeMatches: false,
-    // findAllMatches: false,
-    // minMatchCharLength: 1,
-    // location: 0,
     threshold: 0.2,
-    // distance: 100,
-    // useExtendedSearch: false,
-    // ignoreLocation: false,
-    // ignoreFieldNorm: false,
-    // fieldNormWeight: 1,
     keys: [
       'nameIs',
       'departmentNameIs',

@@ -194,22 +194,6 @@ const Comparison: Screen<UniversityComparisonProps> = ({
                 )
               })}
             </T.Row>
-            {/* <T.Row>
-              <T.Data>
-                <Text variant="eyebrow">Háskólagráða</Text>
-              </T.Data>
-              {selectedComparison.map((i) => {
-                return <T.Data>{i.degreeType}</T.Data>
-              })}
-            </T.Row> */}
-            {/* <T.Row>
-              <T.Data>
-                <Text variant="eyebrow">Staðsetning</Text>
-              </T.Data>
-              {selectedComparison.map((i) => {
-                return <T.Data>Staðsetning hér</T.Data>
-              })}
-            </T.Row> */}
             <T.Row>
               <T.Data>
                 <Text variant="eyebrow">

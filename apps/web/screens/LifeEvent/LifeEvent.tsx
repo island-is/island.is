@@ -110,14 +110,14 @@ export const LifeEvent: Screen<LifeEventProps> = ({
 
   return (
     <Box paddingBottom={[2, 2, 10]}>
-      {/* <HeadWithSocialSharing
+      <HeadWithSocialSharing
         title={`${title} | Ísland.is`}
         description={intro}
         imageUrl={socialImage?.url}
         imageContentType={socialImage?.contentType}
         imageWidth={socialImage?.width?.toString()}
         imageHeight={socialImage?.height?.toString()}
-      /> */}
+      />
 
       <GridContainer id="main-content">
         <GridRow>
