@@ -1,6 +1,13 @@
-import { AlertMessage, Box, Tag } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  ModalBase,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 import { CheckboxFormField } from '@island.is/application/ui-fields'
-import { selectChildren } from '../../lib/messages'
+import { information, selectChildren } from '../../lib/messages'
 import {
   ApplicantChildCustodyInformation,
   FieldComponents,
@@ -9,6 +16,8 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useState } from 'react'
 import { MAX_CNT_APPLICANTS } from '../../shared'
+import { RadioController } from '@island.is/shared/form-fields'
+import { NO, YES } from '@island.is/application/core'
 
 export const SelectChildren = ({ field, application, error }: any) => {
   const { formatMessage } = useLocale()
@@ -19,6 +28,14 @@ export const SelectChildren = ({ field, application, error }: any) => {
   } = application
   const children =
     childrenCustodyInformation.data as ApplicantChildCustodyInformation[]
+
+  console.log('children', children)
+
+  const [isVisible, setIsVisible] = useState(true)
+  const [mostRecentlyCheckedChildSSN, setMostRecentlyCheckedChildSSN] =
+    useState<string>('')
+  const [mostRecentlyCheckedChildIndex, setMostRecentlyCheckedChildIndex] =
+    useState<number>()
 
   const childrenCheckboxes = children.map(
     (child: ApplicantChildCustodyInformation) => {
@@ -65,6 +82,9 @@ export const SelectChildren = ({ field, application, error }: any) => {
   const handleCheckboxChange = (length: number) => {
     setNumberOfChecked(length)
   }
+
+  const handleCustodyRadio = (childSSN: string, value: string) => {}
+
   return (
     <Box>
       <Box>
@@ -81,12 +101,54 @@ export const SelectChildren = ({ field, application, error }: any) => {
             children: undefined,
             options: childrenCheckboxes,
             onSelect: (newAnswer) => {
+              console.log('newAnswer', newAnswer)
               handleCheckboxChange(newAnswer.length)
               return { ...answers, selectedChildren: newAnswer }
             },
           }}
         />
       </Box>
+      <ModalBase
+        baseId="myDialog"
+        isVisible={isVisible}
+        onVisibilityChange={(visibility) => {
+          if (visibility !== isVisible) {
+            setIsVisible(visibility)
+          }
+        }}
+      >
+        {({ closeModal }) => (
+          <Box padding={4}>
+            <Text>We use onVisibilityChange to keep isVisible in sync</Text>
+            <RadioController
+              id={`selectedChildren[${mostRecentlyCheckedChildIndex}].showOtherParent`}
+              split="1/2"
+              onSelect={(value) => {
+                handleCustodyRadio(mostRecentlyCheckedChildSSN, value)
+              }}
+              defaultValue={false}
+              options={[
+                {
+                  value: YES,
+                  label: formatMessage(
+                    information.labels.radioButtons.radioOptionYes,
+                  ),
+                },
+                {
+                  value: NO,
+                  label: formatMessage(
+                    information.labels.radioButtons.radioOptionNo,
+                  ),
+                },
+              ]}
+            />
+
+            <Button onClick={closeModal} variant="text">
+              Close modal
+            </Button>
+          </Box>
+        )}
+      </ModalBase>
       {numberOfChecked > MAX_CNT_APPLICANTS && (
         <Box paddingBottom={1}>
           <AlertMessage
