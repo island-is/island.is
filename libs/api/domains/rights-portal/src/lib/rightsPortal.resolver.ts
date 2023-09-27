@@ -35,6 +35,8 @@ import { RegisterDentistInput } from './dto/RegisterDentist.input'
 import { DrugsPaymentPeroids } from './models/drugsPaymentPeroids.model'
 import { DrugsBillsInput } from './dto/drugsBills.input'
 import { DrugsBills } from './models/drugsBills.model'
+import { DrugBillLineItem } from './models/drugBillLineItem.model'
+import { DrugBillLineItemInput } from './dto/drugsBillLineItem.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -215,5 +217,17 @@ export class RightsPortalResolver {
     @Args('input') input: DrugsBillsInput,
   ) {
     return this.rightsPortalService.getDrugsBills(user, input)
+  }
+
+  @Scopes(ApiScope.health)
+  @Query(() => [DrugBillLineItem], {
+    name: 'rightsPortalDrugBillLineItems',
+  })
+  @Audit()
+  getRightsPortalDrugBillLineItems(
+    @CurrentUser() user: User,
+    @Args('input') input: DrugBillLineItemInput,
+  ) {
+    return this.rightsPortalService.getDrugBillLineItems(user, input)
   }
 }

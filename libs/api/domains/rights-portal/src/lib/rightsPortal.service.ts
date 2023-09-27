@@ -37,6 +37,7 @@ import type { Logger } from '@island.is/logging'
 import { GetDentistsInput } from './dto/getDentists.input'
 import { RegisterDentistResponse } from './models/registerDentistResponse'
 import { DrugsBillsInput } from './dto/drugsBills.input'
+import { DrugBillLineItemInput } from './dto/drugsBillLineItem.input'
 
 @Injectable()
 export class RightsPortalService {
@@ -359,6 +360,16 @@ export class RightsPortalService {
       return await this.drugsApi
         .withMiddleware(new AuthMiddleware(user as Auth))
         .getDrugBills(input)
+    } catch (e) {
+      return handle404(e)
+    }
+  }
+
+  async getDrugBillLineItems(user: User, input: DrugBillLineItemInput) {
+    try {
+      return await this.drugsApi
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .getDrugBillLineItems(input)
     } catch (e) {
       return handle404(e)
     }
