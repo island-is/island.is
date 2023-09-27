@@ -339,11 +339,6 @@ export const ChildPensionForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'additionalInfo',
-      title: childPensionFormMessage.additionalInfo.section,
-      children: [],
-    }),
-    buildSection({
       id: 'confirm',
       title: childPensionFormMessage.confirm.section,
       children: [
