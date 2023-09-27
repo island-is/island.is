@@ -50,7 +50,7 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmployerRejec
       application.externalData,
     )
 
-    const emailSubject = `Samþykkt umsókn um fæðingarorlof (kt. ${application.applicant}) - Vinsamlegast áframsendið til launadeildar`
+    const emailSubject = `Samþykkt umsókn um fæðingarorlof (${applicantName} kt. ${application.applicant}) - Vinsamlegast áframsendið til launadeildar`
     const subject = `Þú samþykktir umsókn um fæðingarorlof`
 
     const periodStartFromDateOfBirth =
