@@ -9,8 +9,8 @@ class University {
   @Field()
   nationalId!: string
 
-  // @Field()
-  // contentfulKey!: string
+  @Field()
+  contentfulKey!: string
 
   @Field()
   logoUrl!: string
