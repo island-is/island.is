@@ -110,7 +110,7 @@ const pruneEntryHyperlink = (node: any) => {
             slug: node.data.target.fields[field]?.fields?.slug,
           },
         }
-      } else if (field !== 'slug' && field !== 'url') {
+      } else if (typeof node.data.target.fields[field] === 'object') {
         delete node.data.target.fields[field]
       }
     }
