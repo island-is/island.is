@@ -107,6 +107,24 @@
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/services/university-gateway/backend/src/app/messages/**/*.ts'"
       }
+    },
+    "dev-init": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn dev-services services-university-gateway-backend",
+          "yarn nx run services-university-gateway-backend:migrate",
+          "yarn nx run services-university-gateway-backend:seed"
+        ],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["yarn start services-university-gateway-backend"],
+        "parallel": true
+      }
     }
   },
   "tags": ["scope:services/university-gateway"]
