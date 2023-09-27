@@ -733,7 +733,7 @@ jobs:
           IMAGES: ${{ needs.prepare.outputs.IMAGES }}
           GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
         run: |
-          ./infra/src/feature-env.ts values --chart islandis --feature "$FEATURE_NAME" --images "$IMAGES" > ./charts/islandis/$FEATURE_NAME.yaml
+          ./infra/scripts/generate-feature-values.sh values --chart islandis --feature "$FEATURE_NAME" --images "$IMAGES" > ./charts/islandis/$FEATURE_NAME.yaml
           cat charts/islandis/$FEATURE_NAME.yaml
           ./infra/scripts/ci/git-check-dirty.sh "charts/" "feature charts" "dirtybot"
       - name: Trigger Deployment for IDS-Services
