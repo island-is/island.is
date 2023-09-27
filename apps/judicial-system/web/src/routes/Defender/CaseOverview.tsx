@@ -1,8 +1,9 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
+import { useLazyQuery } from '@apollo/client'
 
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   capitalize,
@@ -15,7 +16,6 @@ import {
   Feature,
   isInvestigationCase,
   isRestrictionCase,
-  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -41,6 +41,7 @@ import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/s
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
+import LimitedAccessGetAllFiles from './limitedAccessGetAllFilesGql'
 import { conclusion } from '../../components/Conclusion/Conclusion.strings'
 import { strings } from './CaseOverview.strings'
 
@@ -67,6 +68,12 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
     completedCaseStates.includes(workingCase.state) &&
     (workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
       workingCase.hasBeenAppealed)
+
+  const [getAllFiles] = useLazyQuery(LimitedAccessGetAllFiles, {
+    onCompleted: (data) => {
+      console.log(data)
+    },
+  })
 
   return (
     <>
@@ -308,6 +315,16 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                     </PdfButton>
                   </>
                 )}
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    getAllFiles({
+                      variables: { input: { caseId: workingCase.id } },
+                    })
+                  }}
+                >
+                  Sækja öll skjöl
+                </Button>
               </Box>
             </Box>
           )}

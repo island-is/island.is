@@ -1,6 +1,8 @@
 import { uuid } from 'uuidv4'
 import { Op, Sequelize } from 'sequelize'
 import { Transaction } from 'sequelize/types'
+import Archiver from 'archiver'
+import * as fs from 'fs'
 
 import {
   BadRequestException,
@@ -16,9 +18,12 @@ import type { Logger } from '@island.is/logging'
 import {
   CaseFileCategory,
   CaseFileState,
+  indictmentCases,
+  investigationCases,
   isIndictmentCase,
+  restrictionCases,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
+import type { CaseType, User } from '@island.is/judicial-system/types'
 
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
@@ -174,6 +179,87 @@ export class FileService {
     return caseFile
   }
 
+  async getAll(caseId: string, caseType: CaseType): Promise<CaseFile[]> {
+    const allowedCategories = [
+      ...([...restrictionCases, ...investigationCases].includes(caseType)
+        ? [
+            CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+            CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+            CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+            CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+            CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+            CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+            CaseFileCategory.APPEAL_RULING,
+          ]
+        : indictmentCases.includes(caseType)
+        ? [
+            CaseFileCategory.COURT_RECORD,
+            CaseFileCategory.RULING,
+            CaseFileCategory.COVER_LETTER,
+            CaseFileCategory.INDICTMENT,
+            CaseFileCategory.CRIMINAL_RECORD,
+            CaseFileCategory.COST_BREAKDOWN,
+            CaseFileCategory.CASE_FILE,
+          ]
+        : []),
+    ]
+
+    const a = await this.fileModel.findAll({
+      where: {
+        caseId,
+        state: { [Op.not]: CaseFileState.DELETED },
+        category: allowedCategories,
+      },
+    })
+
+    const output = fs.createWriteStream(__dirname + '/example.zip')
+    const archive = Archiver('zip', {
+      zlib: { level: 9 }, // Sets the compression level.
+    })
+
+    // listen for all archive data to be written
+    // 'close' event is fired only when a file descriptor is involved
+    output.on('close', function () {
+      console.log(archive.pointer() + ' total bytes')
+      console.log(
+        'archiver has been finalized and the output file descriptor has closed.',
+      )
+    })
+
+    // This event is fired when the data source is drained no matter what was the data source.
+    // It is not part of this library but rather from the NodeJS Stream API.
+    // @see: https://nodejs.org/api/stream.html#stream_event_end
+    output.on('end', function () {
+      console.log('Data has been drained')
+    })
+
+    // good practice to catch warnings (ie stat failures and other non-blocking errors)
+    archive.on('warning', function (err) {
+      if (err.code === 'ENOENT') {
+        // log warning
+      } else {
+        // throw error
+        throw err
+      }
+    })
+
+    // good practice to catch this error explicitly
+    archive.on('error', function (err) {
+      throw err
+    })
+
+    archive.pipe(output)
+
+    for (const file of a) {
+      const content = await this.awsS3Service.getObject(file.key ?? '')
+      archive.append(content, { name: file.name })
+    }
+
+    archive.finalize()
+
+    return a
+  }
+
   createPresignedPost(
     theCase: Case,
     createPresignedPost: CreatePresignedPostDto,
@@ -233,6 +319,15 @@ export class FileService {
     }
 
     return this.awsS3Service.getSignedUrl(file.key)
+  }
+
+  async getAllCaseFiles(
+    caseId: string,
+    caseType: CaseType,
+  ): Promise<CaseFile[]> {
+    const a = this.getAll(caseId, caseType)
+    console.log(a)
+    return a
   }
 
   async deleteCaseFile(

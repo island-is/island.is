@@ -22,6 +22,8 @@ import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { CaseFile } from './models/file.model'
+import { GetAllFilesInput } from './dto/getAllFiles.input'
+import { GetAllFilesResponse } from './models/getAllFiles.response'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver()
@@ -108,6 +110,25 @@ export class LimitedAccessFileResolver {
       AuditedAction.DELETE_FILE,
       backendApi.limitedAccessDeleteCaseFile(caseId, id),
       id,
+    )
+  }
+
+  @Query(() => GetAllFilesResponse, { nullable: true })
+  limitedAccessGetAllFiles(
+    @Args('input', { type: () => GetAllFilesInput })
+    input: GetAllFilesInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+  ): Promise<GetAllFilesResponse> {
+    const { caseId } = input
+
+    this.logger.debug(`Getting all files of case ${caseId}`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.GET_ALL_FILES,
+      backendApi.limitedAccessGetAllFiles(caseId),
+      caseId,
     )
   }
 }

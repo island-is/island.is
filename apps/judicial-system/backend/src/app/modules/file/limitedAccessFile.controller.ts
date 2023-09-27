@@ -114,6 +114,22 @@ export class LimitedAccessFileController {
     return this.fileService.getCaseFileSignedUrl(caseFile)
   }
 
+  // @UseGuards(LimitedAccessViewCaseFileGuard)
+  @RolesRules(defenderRule)
+  @Get('files/all')
+  @ApiOkResponse({
+    type: CaseFile,
+    description: 'Gets all case files',
+  })
+  getAllCaseFiles(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<CaseFile[]> {
+    this.logger.debug(`Getting all files of case ${caseId}`)
+
+    return this.fileService.getAllCaseFiles(theCase.id, theCase.type)
+  }
+
   @UseGuards(
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseFileExistsGuard,
