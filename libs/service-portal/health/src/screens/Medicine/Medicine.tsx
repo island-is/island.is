@@ -279,173 +279,119 @@ const Medicine = () => {
                             paddingBottom={SECTION_GAP}
                             background="blue100"
                           >
-                            <Box marginBottom={CONTENT_GAP}>
-                              {/* These fields do not match the data coming from the API needs further investigation from designers */}
-                              <TableBox
-                                data={[
-                                  {
-                                    title: formatMessage(
-                                      messages.medicineBillDate,
-                                    ),
-                                    value: formatDateFns(
-                                      bill.date,
-                                      DATE_FORMAT_SHORT,
-                                    ),
-                                  },
-                                  {
-                                    title: formatMessage(
-                                      messages.medicineQuantity,
-                                    ),
-                                    value: '1',
-                                  },
-                                  {
-                                    title: formatMessage(
-                                      messages.medicinePaidByCustomer,
-                                    ),
-                                    value: '3.100 kr.',
-                                  },
-                                  {
-                                    title: formatMessage(
-                                      messages.medicineStrength,
-                                    ),
-                                    value: '50 mg.',
-                                  },
-                                  {
-                                    title: formatMessage(
-                                      messages.medicineSalePrice,
-                                    ),
-                                    value: '3.100 kr.',
-                                  },
-                                  {
-                                    title: formatMessage(
-                                      messages.medicinePaidByInsurance,
-                                    ),
-                                    value: '500 kr.',
-                                  },
-                                  {
-                                    title: formatMessage(
-                                      messages.medicineAmount,
-                                    ),
-                                    value: '1',
-                                  },
-                                  {
-                                    title: formatMessage(
-                                      messages.medicinePaymentParticipationPrice,
-                                    ),
-                                    value: '500 kr.',
-                                  },
-                                ]}
-                              />
-                            </Box>
-                            <Box>
-                              <Text variant="h5" marginBottom={1}>
-                                Lyfjalínur
-                              </Text>
-                              <T.Table>
-                                <T.Head>
-                                  <T.Row>
-                                    <T.HeadData>
-                                      <span
-                                        className={styles.subTableHeaderText}
-                                      >
-                                        {formatMessage(
-                                          messages.medicineDrugName,
-                                        )}
-                                      </span>
-                                    </T.HeadData>
-                                    <T.HeadData>
-                                      <span
-                                        className={styles.subTableHeaderText}
-                                      >
-                                        {formatMessage(
-                                          messages.medicineStrength,
-                                        )}
-                                      </span>
-                                    </T.HeadData>
-                                    <T.HeadData>
-                                      <span
-                                        className={styles.subTableHeaderText}
-                                      >
-                                        {formatMessage(
-                                          messages.medicineQuantity,
-                                        )}
-                                      </span>
-                                    </T.HeadData>
-                                    <T.HeadData>
-                                      <span
-                                        className={styles.subTableHeaderText}
-                                      >
-                                        {formatMessage(messages.medicineAmount)}
-                                      </span>
-                                    </T.HeadData>
-                                    <T.HeadData>
-                                      <span
-                                        className={styles.subTableHeaderText}
-                                      >
-                                        {formatMessage(
-                                          messages.medicineSalePrice,
-                                        )}
-                                      </span>
-                                    </T.HeadData>
-                                    <T.HeadData>
-                                      <span
-                                        className={styles.subTableHeaderText}
-                                      >
-                                        {formatMessage(
-                                          messages.medicinePaymentParticipationPrice,
-                                        )}
-                                      </span>
-                                    </T.HeadData>
-                                    <T.HeadData>
-                                      <span
-                                        className={styles.subTableHeaderText}
-                                      >
-                                        {formatMessage(
-                                          messages.medicineExcessPrice,
-                                        )}
-                                      </span>
-                                    </T.HeadData>
-                                    <T.HeadData>
-                                      <span
-                                        className={styles.subTableHeaderText}
-                                      >
-                                        {formatMessage(
-                                          messages.medicinePaidByCustomer,
-                                        )}
-                                      </span>
-                                    </T.HeadData>
-                                  </T.Row>
-                                </T.Head>
-                                <T.Body>
-                                  {[...fetchedLineItems].map((item, j) => {
-                                    const [billId, lineItems] = item
+                            <Text variant="h5" marginBottom={1}>
+                              {formatMessage(messages.medicineDrugLines)}
+                            </Text>
+                            <T.Table>
+                              <T.Head>
+                                <T.Row>
+                                  <T.HeadData>
+                                    <span className={styles.subTableHeaderText}>
+                                      {formatMessage(messages.medicineDrugName)}
+                                    </span>
+                                  </T.HeadData>
+                                  <T.HeadData>
+                                    <span className={styles.subTableHeaderText}>
+                                      {formatMessage(messages.medicineStrength)}
+                                    </span>
+                                  </T.HeadData>
+                                  <T.HeadData>
+                                    <span className={styles.subTableHeaderText}>
+                                      {formatMessage(messages.medicineQuantity)}
+                                    </span>
+                                  </T.HeadData>
+                                  <T.HeadData>
+                                    <span className={styles.subTableHeaderText}>
+                                      {formatMessage(messages.medicineAmount)}
+                                    </span>
+                                  </T.HeadData>
+                                  <T.HeadData>
+                                    <span className={styles.subTableHeaderText}>
+                                      {formatMessage(
+                                        messages.medicineSalePrice,
+                                      )}
+                                    </span>
+                                  </T.HeadData>
+                                  <T.HeadData>
+                                    <span className={styles.subTableHeaderText}>
+                                      {formatMessage(
+                                        messages.medicinePaymentParticipationPrice,
+                                      )}
+                                    </span>
+                                  </T.HeadData>
+                                  <T.HeadData>
+                                    <span className={styles.subTableHeaderText}>
+                                      {formatMessage(
+                                        messages.medicineExcessPrice,
+                                      )}
+                                    </span>
+                                  </T.HeadData>
+                                  <T.HeadData>
+                                    <span className={styles.subTableHeaderText}>
+                                      {formatMessage(
+                                        messages.medicinePaidByCustomer,
+                                      )}
+                                    </span>
+                                  </T.HeadData>
+                                </T.Row>
+                              </T.Head>
+                              <T.Body>
+                                {[...fetchedLineItems].map((item, j) => {
+                                  const [billId, lineItems] = item
 
-                                    if (billId !== bill.id) return null
+                                  if (billId !== bill.id) return null
 
-                                    return lineItems.map((lineItem, k) => {
-                                      return (
-                                        <T.Row key={`${i}-${j}-${k}`}>
-                                          <T.Data>{lineItem.drugName}</T.Data>
-                                          <T.Data>{lineItem.strength}</T.Data>
-                                          <T.Data>{lineItem.amount}</T.Data>
-                                          <T.Data>{lineItem.number}</T.Data>
-                                          <T.Data>{lineItem.salesPrice}</T.Data>
-                                          <T.Data>
-                                            {lineItem.copaymentAmount}
-                                          </T.Data>
-                                          <T.Data>
-                                            {lineItem.insuranceAmount}
-                                          </T.Data>
-                                          <T.Data>
-                                            {lineItem.customerAmount}
-                                          </T.Data>
-                                        </T.Row>
-                                      )
-                                    })
-                                  })}
-                                </T.Body>
-                              </T.Table>
-                            </Box>
+                                  return lineItems.map((lineItem, k) => {
+                                    return (
+                                      <T.Row key={`${i}-${j}-${k}`}>
+                                        <T.Data>{lineItem.drugName}</T.Data>
+                                        <T.Data>{lineItem.strength}</T.Data>
+                                        <T.Data>{lineItem.amount}</T.Data>
+                                        <T.Data>{lineItem.number}</T.Data>
+                                        <T.Data>{lineItem.salesPrice}</T.Data>
+                                        <T.Data>
+                                          {lineItem.copaymentAmount}
+                                        </T.Data>
+                                        <T.Data>
+                                          {lineItem.insuranceAmount}
+                                        </T.Data>
+                                        <T.Data>
+                                          {lineItem.customerAmount}
+                                        </T.Data>
+                                      </T.Row>
+                                    )
+                                  })
+                                })}
+                              </T.Body>
+                              <T.Foot>
+                                <T.Row>
+                                  <T.Data>
+                                    <span className={styles.subTableHeaderText}>
+                                      {formatMessage(m.total)}
+                                    </span>
+                                  </T.Data>
+                                  <T.Data></T.Data>
+                                  <T.Data></T.Data>
+                                  <T.Data></T.Data>
+                                  <T.Data></T.Data>
+                                  <T.Data>
+                                    <span className={styles.subTableHeaderText}>
+                                      {bill.copaymentAmount}
+                                    </span>
+                                  </T.Data>
+                                  <T.Data>
+                                    <span className={styles.subTableHeaderText}>
+                                      {bill.insuranceAmount}
+                                    </span>
+                                  </T.Data>
+                                  <T.Data>
+                                    <span className={styles.subTableHeaderText}>
+                                      {bill.customerAmount}
+                                    </span>
+                                  </T.Data>
+                                </T.Row>
+                              </T.Foot>
+                            </T.Table>
                           </Box>
                         </ExpandRow>
                       </T.Body>

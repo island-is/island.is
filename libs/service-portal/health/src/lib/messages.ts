@@ -582,4 +582,8 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-excess-price',
     defaultMessage: 'Umframverð',
   },
+  medicineDrugLines: {
+    id: 'sp.health:medicine-drug-lines',
+    defaultMessage: 'Lyfjalínur',
+  },
 })
