@@ -151,7 +151,7 @@ export const getThemeConfig = (
       ? 'organization'
       : 'default'
 
-  if (blueberryThemes.includes(theme))
+  if (blueberryThemes.includes(theme ?? ''))
     return {
       themeConfig: {
         headerButtonColorScheme: 'blueberry',
@@ -160,7 +160,7 @@ export const getThemeConfig = (
       },
     }
 
-  if (darkThemes.includes(theme)) {
+  if (darkThemes.includes(theme ?? '')) {
     return {
       themeConfig: {
         headerColorScheme: 'dark',
@@ -170,15 +170,17 @@ export const getThemeConfig = (
     }
   }
 
-  return lightThemes.includes(theme)
-    ? { themeConfig: { footerVersion } }
-    : {
-        themeConfig: {
-          headerColorScheme: 'white',
-          headerButtonColorScheme: 'negative',
-          footerVersion,
-        },
-      }
+  if (lightThemes.includes(theme ?? '')) {
+    return { themeConfig: { footerVersion } }
+  }
+
+  return {
+    themeConfig: {
+      headerColorScheme: 'white',
+      headerButtonColorScheme: 'negative',
+      footerVersion,
+    },
+  }
 }
 
 export const OrganizationHeader: React.FC<
