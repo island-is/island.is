@@ -20,10 +20,16 @@ import { sortLocale } from '../../../../utils/helpers'
 interface Props {
   list: Array<Stakeholder> | Array<RelatedCase>
   isStakeholder?: boolean
+  isEmpty?: boolean
 }
 
-export const BlowoutList = ({ list, isStakeholder }: Props) => {
+export const BlowoutList = ({
+  list,
+  isStakeholder = false,
+  isEmpty = false,
+}: Props) => {
   const sortOption = isStakeholder ? 'name' : 'caseNumber'
+
   const sortedList = sortLocale({ list: list, sortOption: sortOption })
   const [showList, setShowList] = useState(false)
   const loc = isStakeholder
@@ -49,7 +55,7 @@ export const BlowoutList = ({ list, isStakeholder }: Props) => {
           {showList && (
             <>
               {isStakeholder && <Text>{loc.description}</Text>}
-              {sortedList?.length < 1 && <Text>{loc.noList}</Text>}
+              {isEmpty && <Text>{loc.noList}</Text>}
               <Box padding="smallGutter">
                 <BulletList type="ul">
                   {isStakeholder
