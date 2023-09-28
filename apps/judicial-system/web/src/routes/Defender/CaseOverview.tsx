@@ -41,6 +41,7 @@ import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/s
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
+import { api } from '../../services'
 import LimitedAccessGetAllFiles from './limitedAccessGetAllFilesGql'
 import { conclusion } from '../../components/Conclusion/Conclusion.strings'
 import { strings } from './CaseOverview.strings'
@@ -315,16 +316,27 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                     </PdfButton>
                   </>
                 )}
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    getAllFiles({
-                      variables: { input: { caseId: workingCase.id } },
-                    })
-                  }}
-                >
-                  Sækja öll skjöl
-                </Button>
+                <Box marginTop={7}>
+                  <Button
+                    variant="ghost"
+                    size="small"
+                    icon="download"
+                    iconType="outline"
+                    onClick={async () => {
+                      const success = await getAllFiles({
+                        variables: { input: { caseId: workingCase.id } },
+                      })
+
+                      if (success) {
+                        const url = `${api.apiUrl}/api/case/${workingCase.id}/limitedAccess/allFiles`
+
+                        window.open(url, '_blank')
+                      }
+                    }}
+                  >
+                    Sækja öll skjöl
+                  </Button>
+                </Box>
               </Box>
             </Box>
           )}
