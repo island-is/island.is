@@ -475,7 +475,7 @@ export class NotificationService {
     }
 
     if (theCase.requestSharedWithDefender) {
-      const hasDefendantBeenNotified = await this.hasReceivedNotification(
+      const hasDefenderBeenNotified = await this.hasReceivedNotification(
         theCase.id,
         [NotificationType.READY_FOR_COURT, NotificationType.COURT_DATE],
         theCase.defenderEmail,
@@ -484,7 +484,7 @@ export class NotificationService {
       if (
         theCase.defenderName &&
         theCase.defenderEmail &&
-        hasDefendantBeenNotified
+        hasDefenderBeenNotified
       ) {
         promises.push(
           this.sendResubmittedToCourtEmailNotificationToDefender(theCase),
@@ -645,14 +645,13 @@ export class NotificationService {
     )
   }
 
-  private sendCourtDateEmailNotificationToDefender(
+  private sendCourtDateCalendarInviteEmailNotificationToDefender(
     theCase: Case,
     user: User,
-  ): Promise<Recipient>[] {
+  ): Promise<Recipient> {
     const subject = `Fyrirtaka í máli ${theCase.courtCaseNumber}`
-    const linkSubject = `${
-      theCase.requestSharedWithDefender ? 'Gögn í máli' : 'Yfirlit máls'
-    } ${theCase.courtCaseNumber}`
+    const calendarInvite = this.createICalAttachment(theCase)
+
     const html = formatDefenderCourtDateEmailNotification(
       this.formatMessage,
       theCase.court?.name,
@@ -665,6 +664,35 @@ export class NotificationService {
       theCase.creatingProsecutor?.institution?.name,
       theCase.sessionArrangements,
     )
+
+    return this.sendEmail(
+      subject,
+      html,
+      theCase.defenderName,
+      theCase.defenderEmail,
+      calendarInvite ? [calendarInvite] : undefined,
+    ).then((recipient) => {
+      if (recipient.success) {
+        // No need to wait
+        this.uploadCourtDateInvitationEmailToCourt(
+          theCase,
+          user,
+          subject,
+          html,
+          theCase.defenderEmail,
+        )
+      }
+      return recipient
+    })
+  }
+
+  private sendCourtDateEmailNotificationToDefender(
+    theCase: Case,
+  ): Promise<Recipient> {
+    const linkSubject = `${
+      theCase.requestSharedWithDefender ? 'Gögn í máli' : 'Yfirlit máls'
+    } ${theCase.courtCaseNumber}`
+
     const linkHtml = formatDefenderCourtDateLinkEmailNotification(
       this.formatMessage,
       theCase.defenderNationalId &&
@@ -673,40 +701,13 @@ export class NotificationService {
       theCase.courtCaseNumber,
       Boolean(theCase.requestSharedWithDefender),
     )
-    const calendarInvite = this.createICalAttachment(theCase)
 
-    const promises = [
-      this.sendEmail(
-        subject,
-        html,
-        theCase.defenderName,
-        theCase.defenderEmail,
-        calendarInvite ? [calendarInvite] : undefined,
-      ).then((recipient) => {
-        if (recipient.success) {
-          // No need to wait
-          this.uploadCourtDateInvitationEmailToCourt(
-            theCase,
-            user,
-            subject,
-            html,
-            theCase.defenderEmail,
-          )
-        }
-        return recipient
-      }),
-    ]
-
-    promises.push(
-      this.sendEmail(
-        linkSubject,
-        linkHtml,
-        theCase.defenderName,
-        theCase.defenderEmail,
-      ),
+    return this.sendEmail(
+      linkSubject,
+      linkHtml,
+      theCase.defenderName,
+      theCase.defenderEmail,
     )
-
-    return promises
   }
 
   private async sendCourtDateNotifications(
@@ -719,19 +720,33 @@ export class NotificationService {
       this.sendCourtDateEmailNotificationToProsecutor(theCase, user),
     ]
 
-    if (
-      theCase.defenderEmail &&
-      (isRestrictionCase(theCase.type) ||
+    if (theCase.defenderEmail) {
+      if (
+        isRestrictionCase(theCase.type) ||
         (isInvestigationCase(theCase.type) &&
           theCase.sessionArrangements &&
           [
             SessionArrangements.ALL_PRESENT,
             SessionArrangements.ALL_PRESENT_SPOKESPERSON,
-          ].includes(theCase.sessionArrangements)))
-    ) {
-      promises.push(
-        ...this.sendCourtDateEmailNotificationToDefender(theCase, user),
-      )
+          ].includes(theCase.sessionArrangements))
+      ) {
+        promises.push(
+          this.sendCourtDateCalendarInviteEmailNotificationToDefender(
+            theCase,
+            user,
+          ),
+        )
+
+        const hasDefenderBeenNotified = await this.hasReceivedNotification(
+          theCase.id,
+          [NotificationType.READY_FOR_COURT],
+          theCase.defenderEmail,
+        )
+
+        if (!hasDefenderBeenNotified) {
+          promises.push(this.sendCourtDateEmailNotificationToDefender(theCase))
+        }
+      }
     }
 
     const shouldSendNotificationToPrison =
