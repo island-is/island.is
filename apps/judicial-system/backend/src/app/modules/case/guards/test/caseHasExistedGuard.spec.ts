@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { include,order } from '../../case.service'
+import { include, order } from '../../case.service'
 import { Case } from '../../models/case.model'
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 import { CaseHasExistedGuard } from '../caseHasExisted.guard'

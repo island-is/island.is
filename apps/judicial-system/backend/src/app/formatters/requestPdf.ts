@@ -14,7 +14,7 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
-import { core,request as m } from '../messages'
+import { core, request as m } from '../messages'
 import { Case } from '../modules/case'
 import { formatLegalProvisions } from './formatters'
 import {

@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext,Injectable } from '@nestjs/common'
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 
 import type { User } from '@island.is/judicial-system/types'

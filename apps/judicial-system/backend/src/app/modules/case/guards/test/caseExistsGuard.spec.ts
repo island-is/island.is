@@ -9,7 +9,7 @@ import {
 
 import { CaseState } from '@island.is/judicial-system/types'
 
-import { include,order } from '../../case.service'
+import { include, order } from '../../case.service'
 import { Case } from '../../models/case.model'
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 import { CaseExistsGuard } from '../caseExists.guard'

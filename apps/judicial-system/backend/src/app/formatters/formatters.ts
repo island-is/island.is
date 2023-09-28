@@ -25,7 +25,7 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
-import { core, custodyNotice,notifications } from '../messages'
+import { core, custodyNotice, notifications } from '../messages'
 import { Case } from '../modules/case'
 
 type SubjectAndBody = {

@@ -3,7 +3,7 @@ import { uuid } from 'uuidv4'
 
 import { ForbiddenException } from '@nestjs/common'
 
-import { MessageService,MessageType } from '@island.is/judicial-system/message'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileState,
   CaseOrigin,

@@ -4,7 +4,7 @@ import { SQSClient } from '@aws-sdk/client-sqs'
 
 import { User } from '@island.is/judicial-system/types'
 
-import { CaseMessage,MessageType } from '../message'
+import { CaseMessage, MessageType } from '../message'
 import { createTestingMessageModule } from './createTestingMessageModule'
 
 interface Then {

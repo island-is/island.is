@@ -4,7 +4,7 @@ import FormData from 'form-data'
 import { Base64 } from 'js-base64'
 import fetch from 'node-fetch'
 
-import { Inject,Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { ApiProperty } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'

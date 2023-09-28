@@ -8,7 +8,7 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { CaseType,Gender } from '@island.is/judicial-system/types'
+import { CaseType, Gender } from '@island.is/judicial-system/types'
 
 export class InternalCreateCaseDto {
   @IsNotEmpty()

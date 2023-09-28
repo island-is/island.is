@@ -19,7 +19,7 @@ import {
   RolesRules,
 } from '@island.is/judicial-system/auth'
 
-import { prosecutorRepresentativeRule,prosecutorRule } from '../../guards'
+import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
 import { CaseExistsGuard, CaseWriteGuard } from '../case'
 import { UpdateIndictmentCountDto } from './dto/updateIndictmentCount.dto'
 import { IndictmentCountExistsGuard } from './guards/indictmentCountExists.guard'

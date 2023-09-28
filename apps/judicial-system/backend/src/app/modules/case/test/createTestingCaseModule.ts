@@ -7,7 +7,7 @@ import { Test } from '@nestjs/testing'
 import { IntlService } from '@island.is/cms-translations'
 import { createTestIntl } from '@island.is/cms-translations/test'
 import { signingModuleConfig, SigningService } from '@island.is/dokobit-signing'
-import { Logger,LOGGER_PROVIDER } from '@island.is/logging'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigModule, ConfigType } from '@island.is/nest/config'
 
 import { SharedAuthModule } from '@island.is/judicial-system/auth'

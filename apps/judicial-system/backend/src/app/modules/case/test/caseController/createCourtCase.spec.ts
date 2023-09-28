@@ -17,7 +17,7 @@ import {
 
 import { randomEnum } from '../../../../test'
 import { CourtService } from '../../../court'
-import { include,order } from '../../case.service'
+import { include, order } from '../../case.service'
 import { Case } from '../../models/case.model'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 

@@ -19,7 +19,7 @@ import {
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
-import { include,order } from '../../case.service'
+import { include, order } from '../../case.service'
 import { TransitionCaseDto } from '../../dto/transitionCase.dto'
 import { Case } from '../../models/case.model'
 import { createTestingCaseModule } from '../createTestingCaseModule'

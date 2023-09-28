@@ -29,7 +29,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { nowFactory,uuidFactory } from '../../factories'
+import { nowFactory, uuidFactory } from '../../factories'
 import {
   createCaseFilesRecord,
   getCourtRecordPdfAsBuffer,
