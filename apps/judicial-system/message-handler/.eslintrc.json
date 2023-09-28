@@ -7,7 +7,7 @@
       {
         "groups": [
           // External imports come first.
-          ["^\\w"],
+          ["^\\w", "@(?!nestjs|island\\.is)"],
           // Then nestjs packages.
           ["^@nestjs"],
           // Then island.is packages.
