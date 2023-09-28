@@ -80,6 +80,9 @@ export class CaseResult {
   @Field(() => String, { nullable: true })
   oldInstitutionName?: string | null
 
+  @Field(() => String, { nullable: true })
+  extraStakeholderList?: string | null
+
   @Field(() => [CaseStakeholderResult], { nullable: true })
   stakeholders?: CaseStakeholderResult[] | null
 
