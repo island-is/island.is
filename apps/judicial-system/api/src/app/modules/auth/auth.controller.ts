@@ -2,7 +2,7 @@ import { createHash, randomBytes } from 'crypto'
 import { Entropy } from 'entropy-string'
 import { CookieOptions, Request, Response } from 'express'
 
-import { Controller, Get, Inject, Query, Req,Res } from '@nestjs/common'
+import { Controller, Get, Inject, Query, Req, Res } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 
 import type { Logger } from '@island.is/logging'
@@ -19,6 +19,7 @@ import {
   CODE_VERIFIER_COOKIE_NAME,
   COURT_OF_APPEAL_CASES_ROUTE,
   CSRF_COOKIE_NAME,
+  DEFENDER_CASES_ROUTE,
   EXPIRES_IN_MILLISECONDS,
   IDS_ID_TOKEN,
   USERS_ROUTE,
@@ -225,7 +226,7 @@ export class AuthController {
         return {
           userId: defender.id,
           jwtToken: this.sharedAuthService.signJwt(defender, csrfToken),
-          redirectRoute: requestedRedirectRoute,
+          redirectRoute: requestedRedirectRoute ?? DEFENDER_CASES_ROUTE,
         }
       }
     }

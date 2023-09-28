@@ -80,6 +80,7 @@ import {
   registrarTransitionRule,
   registrarUpdateRule,
 } from './guards/rolesRules'
+import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
@@ -372,6 +373,7 @@ export class CaseController {
   )
   @Get('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
+  @UseInterceptors(CaseInterceptor)
   getById(@Param('caseId') caseId: string, @CurrentCase() theCase: Case): Case {
     this.logger.debug(`Getting case ${caseId} by id`)
 

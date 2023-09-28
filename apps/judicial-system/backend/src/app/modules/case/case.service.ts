@@ -35,6 +35,7 @@ import {
   CaseTransition,
   CaseType,
   completedCaseStates,
+  EventType,
   isIndictmentCase,
   isRestrictionCase,
   UserRole,
@@ -53,8 +54,9 @@ import {
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
-import { Defendant,DefendantService } from '../defendant'
+import { Defendant, DefendantService } from '../defendant'
 import { CaseEvent, EventService } from '../event'
+import { EventLog } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount } from '../indictment-count'
 import { Institution } from '../institution'
@@ -155,9 +157,19 @@ export interface UpdateCase
   parentCaseId?: string | null
 }
 
+const eventTypes = Object.values(EventType)
+
 export const include: Includeable[] = [
   { model: Defendant, as: 'defendants' },
   { model: IndictmentCount, as: 'indictmentCounts' },
+  {
+    model: EventLog,
+    as: 'eventLogs',
+    required: false,
+    where: {
+      eventType: { [Op.in]: eventTypes },
+    },
+  },
   { model: Institution, as: 'court' },
   {
     model: User,

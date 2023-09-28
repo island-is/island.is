@@ -12,6 +12,7 @@ import {
   Query,
   Res,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -48,6 +49,7 @@ import { LimitedAccessAccordingToCaseStateGuard } from './guards/limitedAccessAc
 import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
 import { RequestSharedWithDefenderGuard } from './guards/requestSharedWithDefender.guard'
 import { defenderTransitionRule, defenderUpdateRule } from './guards/rolesRules'
+import { CaseInterceptor } from './interceptors/case.interceptor'
 import { Case } from './models/case.model'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
@@ -80,6 +82,7 @@ export class LimitedAccessCaseController {
     type: Case,
     description: 'Gets a limited set of properties of an existing case',
   })
+  @UseInterceptors(CaseInterceptor)
   async getById(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,

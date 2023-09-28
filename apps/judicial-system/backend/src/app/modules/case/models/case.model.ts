@@ -33,6 +33,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
+import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
@@ -1116,4 +1117,11 @@ export class Case extends Model {
   @BelongsTo(() => User, 'appealJudge3Id')
   @ApiPropertyOptional({ type: User })
   appealJudge3?: User
+
+  /**********
+   * The case's event logs
+   **********/
+  @HasMany(() => EventLog, 'caseId')
+  @ApiPropertyOptional({ type: EventLog, isArray: true })
+  eventLogs?: EventLog[]
 }

@@ -29,6 +29,7 @@ import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { User } from '../../user'
 import { Notification } from './notification.model'
+import { EventLog } from './eventLog.model'
 
 registerEnumType(CaseType, { name: 'CaseType' })
 registerEnumType(SessionArrangements, { name: 'SessionArrangements' })
@@ -39,6 +40,7 @@ registerEnumType(CaseAppealRulingDecision, { name: 'CaseAppealRulingDecision' })
 registerEnumType(CaseCustodyRestrictions, { name: 'CaseCustodyRestrictions' })
 registerEnumType(CaseLegalProvisions, { name: 'CaseLegalProvisions' })
 registerEnumType(CaseAppealDecision, { name: 'CaseAppealDecision' })
+
 registerEnumType(RequestSharedWithDefender, {
   name: 'requestSharedWithDefender',
 })
@@ -362,4 +364,7 @@ export class Case implements TCase {
 
   @Field(() => User, { nullable: true })
   readonly appealJudge3?: User
+
+  @Field(() => [EventLog], { nullable: true })
+  readonly eventLogs?: EventLog[]
 }
