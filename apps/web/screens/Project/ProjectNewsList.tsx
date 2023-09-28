@@ -351,7 +351,7 @@ ProjectNewsList.getProps = async ({ apolloClient, query, locale }) => {
     namespace,
     locale: locale as Locale,
     languageToggleQueryParams,
-    ...getThemeConfig(projectPage?.theme),
+    ...getThemeConfig(projectPage),
   }
 }
 
