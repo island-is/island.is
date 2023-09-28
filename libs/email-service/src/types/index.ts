@@ -1,5 +1,5 @@
-import { SendMailOptions } from 'nodemailer'
 import handlebars from 'handlebars'
+import { SendMailOptions } from 'nodemailer'
 
 type Alignment = 'left' | 'center' | 'right' | undefined
 type Style = 'bold' | 'italic' | 'normal' | undefined
