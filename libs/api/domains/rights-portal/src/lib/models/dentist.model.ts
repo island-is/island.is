@@ -1,7 +1,21 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { Address } from './address.model'
 import { Bill } from './bill.model'
 import { PaginatedResponse } from '@island.is/nest/pagination'
+
+@ObjectType('RightsPortalDentistPractice')
+export class Practice {
+  @Field(() => String, { nullable: true })
+  practice?: string | null
+
+  @Field(() => String, { nullable: true })
+  region?: string | null
+
+  @Field(() => String, { nullable: true })
+  postalCode?: string | null
+
+  @Field(() => String, { nullable: true })
+  address?: string | null
+}
 
 @ObjectType('RightsPortalDentist')
 export class Dentist {
@@ -11,14 +25,8 @@ export class Dentist {
   @Field(() => String, { nullable: true })
   name?: string | null
 
-  @Field(() => String, { nullable: true })
-  practice?: string | null
-
-  @Field(() => String, { nullable: true })
-  phone?: string | null
-
-  @Field(() => Address, { nullable: true })
-  address?: Address
+  @Field(() => [Practice], { nullable: true })
+  practices?: Array<Practice> | null
 }
 
 @ObjectType('RightsPortalCurrentDentist')
