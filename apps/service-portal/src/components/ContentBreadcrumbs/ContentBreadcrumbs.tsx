@@ -11,6 +11,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import {
   ServicePortalNavigationItem,
+  m,
   useDynamicRoutesWithNavigation,
 } from '@island.is/service-portal/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -107,20 +108,16 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
       paddingTop={[4, 4, 0]}
       paddingLeft="p2"
     >
-      <Box paddingTop={0} position="relative">
+      <Box className={styles.breadcrumbs} paddingTop={0} position="relative">
         <Breadcrumbs color="blue400" separatorColor="blue400">
           {items.map((item, index) =>
             isDefined(item.path) &&
             !item.hidden &&
             !(isMobile && index === 0) ? (
-              <Link key={index} to={item.path}>
-                {index === 0 ? (
-                  <div className={styles.dots}>
-                    <Icon icon="dots" size="small" />
-                  </div>
-                ) : (
-                  formatMessage(item.name)
-                )}
+              <Link className={styles.link} key={index} to={item.path}>
+                {index === 0
+                  ? formatMessage(m.overview)
+                  : formatMessage(item.name)}
               </Link>
             ) : null,
           )}

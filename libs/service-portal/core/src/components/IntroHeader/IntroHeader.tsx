@@ -68,7 +68,6 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
             img={currentOrganization?.logo?.url ?? ''}
             imgContainerDisplay="block"
             tooltipText={props.serviceProviderTooltip}
-            backgroundColor="white"
           />
         </GridColumn>
       )}
