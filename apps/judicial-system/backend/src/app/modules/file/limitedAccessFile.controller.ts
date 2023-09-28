@@ -42,7 +42,6 @@ import { SignedUrl } from './models/signedUrl.model'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { CaseFile } from './models/file.model'
 import { FileService } from './file.service'
-import { AllFiles } from './models/allFiles.model'
 
 @UseGuards(
   JwtAuthGuard,
@@ -119,13 +118,13 @@ export class LimitedAccessFileController {
   @RolesRules(defenderRule)
   @Get('files/all')
   @ApiOkResponse({
-    type: AllFiles,
+    type: Buffer,
     description: 'Gets all case files',
   })
   getAllCaseFiles(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
-  ): Promise<AllFiles> {
+  ): Promise<Buffer> {
     this.logger.debug(`Getting all files of case ${caseId}`)
 
     return this.fileService.getAllCaseFiles(theCase.id, theCase.type)
