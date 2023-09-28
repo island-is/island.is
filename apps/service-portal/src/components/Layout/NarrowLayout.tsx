@@ -105,6 +105,7 @@ export const NarrowLayout: FC<NarrowLayoutProps> = ({
                   title={formatMessage(activeParent?.name ?? m.tableOfContents)}
                   items={subNavItems ?? []}
                   expand
+                  expandOnActivation
                   titleIcon={activeParent?.icon}
                 />
               </Box>

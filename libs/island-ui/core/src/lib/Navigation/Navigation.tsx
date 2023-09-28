@@ -86,6 +86,7 @@ interface NavigationTreeProps {
   level?: Level
   colorScheme?: keyof typeof styles.colorScheme
   expand?: boolean
+  expandOnActivation?: boolean
   renderLink?: (link: ReactElement, item?: NavigationItem) => ReactNode
   menuState: MenuStateReturn
   linkOnClick?: () => void
@@ -104,6 +105,10 @@ export interface NavigationProps {
    * Keep all child menu items expanded
    */
   expand?: boolean
+  /**
+   * Expand on link activation when link has sub items.
+   */
+  expandOnActivation?: boolean
   /**
    * Only a single acccordion can be expanded at a time
    */
@@ -154,6 +159,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
   titleProps,
   baseId,
   asSpan,
+  expandOnActivation,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeAccordions, setActiveAccordions] = useState<Array<string>>([])
@@ -299,6 +305,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
             renderLink={renderLink}
             menuState={menu}
             expand={expand}
+            expandOnActivation={expandOnActivation}
           />
         </Box>
       )}
@@ -439,6 +446,7 @@ export const NavigationTree: FC<
   id = '',
   labelId = '',
   asSpan,
+  expandOnActivation,
 }: NavigationTreeProps) => {
   return (
     <NavigationContext.Consumer>
@@ -500,7 +508,14 @@ export const NavigationTree: FC<
                     paddingRight={2}
                     paddingY={isChildren ? 'smallGutter' : 1}
                     className={styles.link}
-                    onClick={linkOnClick}
+                    onClick={() => {
+                      if (linkOnClick) {
+                        linkOnClick()
+                      }
+                      if (isAccordion && expandOnActivation) {
+                        toggleAccordion(accordionId)
+                      }
+                    }}
                   >
                     {({ isFocused, isHovered }) => {
                       const textColor =

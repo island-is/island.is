@@ -1,7 +1,14 @@
-import { style } from '@vanilla-extract/css'
+import { theme } from '@island.is/island-ui/theme'
+import { globalStyle, style } from '@vanilla-extract/css'
 
-export const dots = style({
-  position: 'absolute',
-  left: -13,
-  bottom: -3,
+export const breadcrumbs = style({})
+
+export const link = style({
+  ':hover': {
+    color: theme.color.blueberry400,
+  },
+})
+
+globalStyle(`${breadcrumbs} ${link}:hover`, {
+  textDecoration: 'underline',
 })
