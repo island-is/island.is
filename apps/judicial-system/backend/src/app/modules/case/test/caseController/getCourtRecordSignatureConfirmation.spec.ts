@@ -1,6 +1,6 @@
-import { uuid } from 'uuidv4'
-import { Transaction } from 'sequelize/types'
 import each from 'jest-each'
+import { Transaction } from 'sequelize/types'
+import { uuid } from 'uuidv4'
 
 import { ForbiddenException } from '@nestjs/common'
 

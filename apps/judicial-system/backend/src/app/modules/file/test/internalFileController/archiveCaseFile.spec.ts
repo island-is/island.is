@@ -1,9 +1,9 @@
 import { uuid } from 'uuidv4'
 
-import { createTestingFileModule } from '../createTestingFileModule'
 import { AwsS3Service } from '../../../aws-s3'
-import { CaseFile } from '../../models/file.model'
 import { DeliverResponse } from '../../models/deliver.response'
+import { CaseFile } from '../../models/file.model'
+import { createTestingFileModule } from '../createTestingFileModule'
 
 interface Then {
   result: DeliverResponse

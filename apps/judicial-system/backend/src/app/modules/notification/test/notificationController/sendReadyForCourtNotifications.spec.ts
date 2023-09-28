@@ -1,11 +1,11 @@
 import { uuid } from 'uuidv4'
 
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseState,
   NotificationType,
   User,
 } from '@island.is/judicial-system/types'
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
 
 import { Case } from '../../../case'
 import { SendNotificationResponse } from '../../models/sendNotification.response'

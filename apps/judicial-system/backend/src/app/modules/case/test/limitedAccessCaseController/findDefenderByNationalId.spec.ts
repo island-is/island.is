@@ -1,5 +1,5 @@
-import { uuid } from 'uuidv4'
 import { Op } from 'sequelize'
+import { uuid } from 'uuidv4'
 
 import { NotFoundException } from '@nestjs/common'
 
@@ -7,8 +7,8 @@ import { CaseState, UserRole } from '@island.is/judicial-system/types'
 
 import { nowFactory, uuidFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
-import { User } from '../../../user'
 import { DefendantService } from '../../../defendant'
+import { User } from '../../../user'
 import { Case } from '../../models/case.model'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 

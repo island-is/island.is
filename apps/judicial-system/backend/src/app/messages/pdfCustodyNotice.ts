@@ -1,5 +1,6 @@
-import { defineMessage, defineMessages } from '@formatjs/intl'
 import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
+
+import { defineMessage, defineMessages } from '@formatjs/intl'
 
 export const custodyNotice = {
   isolationDisclaimer: defineMessage({

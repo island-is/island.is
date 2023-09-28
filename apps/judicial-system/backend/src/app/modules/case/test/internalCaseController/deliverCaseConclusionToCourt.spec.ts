@@ -4,8 +4,8 @@ import { CaseDecision, CaseType, User } from '@island.is/judicial-system/types'
 
 import { randomDate } from '../../../../test'
 import { CourtService } from '../../../court'
-import { DeliverResponse } from '../../models/deliver.response'
 import { Case } from '../../models/case.model'
+import { DeliverResponse } from '../../models/deliver.response'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 interface Then {

@@ -9,12 +9,12 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { createTestingFileModule } from '../createTestingFileModule'
 import { AwsS3Service } from '../../../aws-s3'
-import { CourtDocumentFolder, CourtService } from '../../../court'
 import { Case } from '../../../case'
-import { CaseFile } from '../../models/file.model'
+import { CourtDocumentFolder, CourtService } from '../../../court'
 import { DeliverResponse } from '../../models/deliver.response'
+import { CaseFile } from '../../models/file.model'
+import { createTestingFileModule } from '../createTestingFileModule'
 
 interface Then {
   result: DeliverResponse

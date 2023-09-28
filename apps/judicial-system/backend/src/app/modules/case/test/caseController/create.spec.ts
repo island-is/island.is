@@ -1,6 +1,6 @@
-import { uuid } from 'uuidv4'
 import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
+import { uuid } from 'uuidv4'
 
 import {
   CaseOrigin,
@@ -10,11 +10,11 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { createTestingCaseModule } from '../createTestingCaseModule'
 import { DefendantService } from '../../../defendant'
+import { include, order } from '../../case.service'
 import { CreateCaseDto } from '../../dto/createCase.dto'
 import { Case } from '../../models/case.model'
-import { include, order } from '../../case.service'
+import { createTestingCaseModule } from '../createTestingCaseModule'
 
 interface Then {
   result: Case

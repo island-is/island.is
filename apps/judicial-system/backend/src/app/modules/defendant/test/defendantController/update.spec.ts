@@ -1,7 +1,7 @@
 import { uuid } from 'uuidv4'
 
-import { User } from '@island.is/judicial-system/types'
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { User } from '@island.is/judicial-system/types'
 
 import { Case } from '../../../case'
 import { UpdateDefendantDto } from '../../dto/updateDefendant.dto'

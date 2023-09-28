@@ -1,6 +1,6 @@
-import { uuid } from 'uuidv4'
 import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
+import { uuid } from 'uuidv4'
 
 import {
   CaseCustodyRestrictions,
@@ -12,11 +12,11 @@ import {
   User as TUser,
 } from '@island.is/judicial-system/types'
 
-import { createTestingCaseModule } from '../createTestingCaseModule'
 import { randomDate, randomEnum } from '../../../../test'
 import { DefendantService } from '../../../defendant'
-import { Case } from '../../models/case.model'
 import { include, order } from '../../case.service'
+import { Case } from '../../models/case.model'
+import { createTestingCaseModule } from '../createTestingCaseModule'
 
 interface Then {
   result: Case

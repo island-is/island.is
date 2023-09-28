@@ -1,5 +1,6 @@
-import { defineMessages } from '@formatjs/intl'
 import { defineMessage } from 'react-intl'
+
+import { defineMessages } from '@formatjs/intl'
 
 export const core = {
   and: defineMessage({

@@ -1,6 +1,7 @@
 import { uuid } from 'uuidv4'
 
 import { SmsService } from '@island.is/nova-sms'
+
 import {
   CaseType,
   NotificationType,

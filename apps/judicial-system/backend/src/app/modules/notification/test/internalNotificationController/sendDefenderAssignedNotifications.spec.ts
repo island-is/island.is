@@ -1,21 +1,22 @@
 import { uuid } from 'uuidv4'
 
-import { ConfigType } from '@island.is/nest/config'
 import { EmailService } from '@island.is/email-service'
+import { ConfigType } from '@island.is/nest/config'
+
+import { DEFENDER_INDICTMENT_ROUTE } from '@island.is/judicial-system/consts'
 import {
-  NotificationType,
   CaseType,
   Defendant,
+  NotificationType,
   User,
 } from '@island.is/judicial-system/types'
-import { DEFENDER_INDICTMENT_ROUTE } from '@island.is/judicial-system/consts'
 
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
 import { Case } from '../../../case'
 import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
-import { notificationModuleConfig } from '../../notification.config'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
+import { notificationModuleConfig } from '../../notification.config'
+import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 jest.mock('../../../factories')
 

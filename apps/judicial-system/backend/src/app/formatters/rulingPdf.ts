@@ -1,22 +1,23 @@
 import PDFDocument from 'pdfkit'
 
 import { FormatMessage } from '@island.is/cms-translations'
+
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 
-import { Case } from '../modules/case'
 import { nowFactory } from '../factories'
 import { ruling } from '../messages'
+import { Case } from '../modules/case'
 import {
-  addFooter,
   addCoatOfArms,
+  addEmptyLines,
+  addFooter,
   addLargeHeading,
   addMediumHeading,
+  addNormalCenteredText,
+  addNormalJustifiedText,
+  addNormalText,
   setLineGap,
   setTitle,
-  addEmptyLines,
-  addNormalText,
-  addNormalJustifiedText,
-  addNormalCenteredText,
 } from './pdfHelpers'
 
 function constructRulingPdf(

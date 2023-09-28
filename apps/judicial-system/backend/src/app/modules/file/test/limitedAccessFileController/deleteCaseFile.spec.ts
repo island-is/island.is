@@ -3,8 +3,8 @@ import { uuid } from 'uuidv4'
 import { CaseFileState } from '@island.is/judicial-system/types'
 
 import { AwsS3Service } from '../../../aws-s3'
-import { CaseFile } from '../../models/file.model'
 import { DeleteFileResponse } from '../../models/deleteFile.response'
+import { CaseFile } from '../../models/file.model'
 import { createTestingFileModule } from '../createTestingFileModule'
 
 interface Then {

@@ -1,9 +1,10 @@
+import { uuid } from 'uuidv4'
+
 import {
   indictmentCases,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
-import { uuid } from 'uuidv4'
 
 import { AwsS3Service } from '../../../aws-s3'
 import { Case } from '../../../case'

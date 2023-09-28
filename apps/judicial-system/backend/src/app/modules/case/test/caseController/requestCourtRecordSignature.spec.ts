@@ -3,6 +3,7 @@ import { uuid } from 'uuidv4'
 import { ForbiddenException } from '@nestjs/common'
 
 import { SigningServiceResponse } from '@island.is/dokobit-signing'
+
 import { User, UserRole } from '@island.is/judicial-system/types'
 
 import { Case } from '../../models/case.model'

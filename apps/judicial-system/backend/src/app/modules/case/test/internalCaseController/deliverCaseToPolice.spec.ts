@@ -7,17 +7,17 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { createTestingCaseModule } from '../createTestingCaseModule'
 import {
   getCourtRecordPdfAsString,
   getCustodyNoticePdfAsString,
   getRequestPdfAsString,
 } from '../../../../formatters'
 import { randomDate } from '../../../../test'
-import { PoliceService } from '../../../police'
 import { AwsS3Service } from '../../../aws-s3'
+import { PoliceService } from '../../../police'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
+import { createTestingCaseModule } from '../createTestingCaseModule'
 
 jest.mock('../../../../formatters/requestPdf')
 jest.mock('../../../../formatters/courtRecordPdf')

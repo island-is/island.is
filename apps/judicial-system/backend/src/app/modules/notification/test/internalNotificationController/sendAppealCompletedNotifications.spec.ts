@@ -1,7 +1,8 @@
 import { uuid } from 'uuidv4'
 
-import { ConfigType } from '@island.is/nest/config'
 import { EmailService } from '@island.is/email-service'
+import { ConfigType } from '@island.is/nest/config'
+
 import {
   CaseDecision,
   CaseState,
@@ -11,8 +12,8 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../../case'
-import { notificationModuleConfig } from '../../notification.config'
 import { DeliverResponse } from '../../models/deliver.response'
+import { notificationModuleConfig } from '../../notification.config'
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 interface Then {

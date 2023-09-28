@@ -1,6 +1,7 @@
 import { uuid } from 'uuidv4'
 
 import { EmailService } from '@island.is/email-service'
+
 import { NotificationType, User } from '@island.is/judicial-system/types'
 
 import { Case } from '../../../case'

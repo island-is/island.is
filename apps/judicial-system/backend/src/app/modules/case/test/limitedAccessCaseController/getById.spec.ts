@@ -1,9 +1,9 @@
 import { uuid } from 'uuidv4'
+
 import type { User } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
-
 import { Case } from '../../models/case.model'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 

@@ -1,5 +1,5 @@
-import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize/types'
+import { uuid } from 'uuidv4'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
@@ -17,8 +17,8 @@ import {
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
-import { UserService } from '../../../user'
 import { FileService } from '../../../file'
+import { UserService } from '../../../user'
 import { UpdateCaseDto } from '../../dto/updateCase.dto'
 import { Case } from '../../models/case.model'
 import { createTestingCaseModule } from '../createTestingCaseModule'

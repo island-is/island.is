@@ -2,9 +2,9 @@ import { literal, Op } from 'sequelize'
 
 import { CaseState, CaseType } from '@island.is/judicial-system/types'
 
-import { createTestingDefendantModule } from '../createTestingDefendantModule'
 import { Case } from '../../../case/models/case.model'
 import { Defendant } from '../../models/defendant.model'
+import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
 interface Then {
   result: boolean

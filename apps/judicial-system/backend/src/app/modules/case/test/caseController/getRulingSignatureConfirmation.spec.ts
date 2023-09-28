@@ -1,14 +1,14 @@
-import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize/types'
+import { uuid } from 'uuidv4'
 
 import { ForbiddenException } from '@nestjs/common'
 
+import { MessageService,MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileState,
   CaseOrigin,
   User,
 } from '@island.is/judicial-system/types'
-import { MessageType, MessageService } from '@island.is/judicial-system/message'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
