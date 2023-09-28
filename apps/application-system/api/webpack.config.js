@@ -1,11 +1,10 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const nrwlConfig = require('@nx/react/plugins/webpack.js')
+const { composePlugins, withNx } = require('@nx/webpack')
+const { withReact } = require('@nx/react')
 
-module.exports = (config) => {
-  nrwlConfig(config) // first call it so that it @nx/react plugin adds its configs,
-
+module.exports = composePlugins(withReact({ ssr: true }), (config) => {
+  // App specific config
   config.stats.chunks = false
   config.stats.modules = false
 
   return config
-}
+})

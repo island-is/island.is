@@ -1,4 +1,5 @@
 /* eslint-disable */
+
 export default {
   preset: './jest.preset.js',
   rootDir: '../../..',
@@ -16,6 +17,7 @@ export default {
       'ts-jest',
       {
         tsconfig: `${__dirname}/tsconfig.spec.json`,
+        isolatedModules: true,
       },
     ],
   },
