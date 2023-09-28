@@ -279,9 +279,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
         />
         <PoliceCaseFiles
           onUpload={handlePoliceCaseFileUpload}
-          isUploading={isUploading}
           policeCaseFileList={policeCaseFileList}
-          setPoliceCaseFileList={setPoliceCaseFileList}
           policeCaseFiles={policeCaseFiles}
         />
         <Box marginBottom={3}>
