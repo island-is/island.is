@@ -22,8 +22,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
     extraStakeholderList: chosenCase?.extraStakeholderList,
   })
 
-  const isStakeholdersNotEmpty =
-    stakeholders?.length > 0
+  const isStakeholdersNotEmpty = stakeholders?.length > 0
   const isRelatedCasesNotEmpty = chosenCase?.relatedCases?.length > 0
   const isDocumentsNotEmpty = chosenCase?.documents?.length > 0
   const isAdditionalDocumentsNotEmpty =

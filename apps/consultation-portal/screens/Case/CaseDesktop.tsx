@@ -5,7 +5,12 @@ import {
   GridRow,
   Stack,
 } from '@island.is/island-ui/core'
-import { AdviceResult, Case, CaseExpressions, Stakeholder } from '../../types/interfaces'
+import {
+  AdviceResult,
+  Case,
+  CaseExpressions,
+  Stakeholder,
+} from '../../types/interfaces'
 import {
   BlowoutList,
   CaseDocuments,
