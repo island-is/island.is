@@ -35,6 +35,7 @@ import {
   ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import { Item } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -80,13 +81,10 @@ const UploadFilesToPoliceCase: React.FC<
     caseFiles.map(mapCaseFileToUploadFile),
   )
 
-  const [policeCaseFileList, setPoliceCaseFileList] = useState<
-    PoliceCaseFileCheck[]
-  >([])
+  const [policeCaseFileList, setPoliceCaseFileList] =
+    useState<PoliceCaseFileCheck[]>()
 
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
-
-  const [isUploading, setIsUploading] = useState<boolean>(false)
 
   const errorMessage = useMemo(() => {
     if (displayFiles.some((file) => file.status === 'error')) {
@@ -149,6 +147,10 @@ const UploadFilesToPoliceCase: React.FC<
   ])
 
   useEffect(() => {
+    if (policeCaseFiles?.files.length === 0) {
+      return
+    }
+
     setPoliceCaseFileList(
       policeCaseFiles?.files
         .filter(
@@ -156,7 +158,7 @@ const UploadFilesToPoliceCase: React.FC<
             !caseFiles.some((caseFile) => caseFile.policeFileId === f.id) &&
             f.policeCaseNumber === policeCaseNumber,
         )
-        .map(mapPoliceCaseFileToPoliceCaseFileCheck) || [],
+        .map(mapPoliceCaseFileToPoliceCaseFileCheck) || undefined,
     )
 
     setDisplayFiles(caseFiles.map(mapCaseFileToUploadFile) || [])
@@ -173,6 +175,10 @@ const UploadFilesToPoliceCase: React.FC<
 
   const uploadPoliceCaseFileCallback = useCallback(
     (file: UploadFile, id?: string) => {
+      setPoliceCaseFileList((previous) =>
+        previous?.filter((p) => p.id !== file.id),
+      )
+
       setDisplayFiles((previous) => [
         ...previous,
         { ...file, id: id ?? file.id },
@@ -190,7 +196,7 @@ const UploadFilesToPoliceCase: React.FC<
       if (policeCaseFile) {
         setPoliceCaseFileList((previous) => [
           mapPoliceCaseFileToPoliceCaseFileCheck(policeCaseFile),
-          ...previous,
+          ...(previous || []),
         ])
       }
 
@@ -201,17 +207,17 @@ const UploadFilesToPoliceCase: React.FC<
     [policeCaseFiles?.files],
   )
 
-  const onPoliceCaseFileUpload = useCallback(async () => {
-    const filesToUpload = policeCaseFileList
-      .filter((p) => p.checked)
-      .sort((p1, p2) => (p1.chapter ?? -1) - (p2.chapter ?? -1))
-
-    setIsUploading(true)
+  const onPoliceCaseFileUpload = async (selectedFiles: Item[]) => {
+    const filesToUpload =
+      policeCaseFileList &&
+      policeCaseFileList
+        .filter((p) => selectedFiles.some((f) => f.id === p.id))
+        .sort((p1, p2) => (p1.chapter ?? -1) - (p2.chapter ?? -1))
 
     let currentChapter: number | undefined | null
     let currentOrderWithinChapter: number | undefined | null
 
-    filesToUpload.forEach(async (f, index) => {
+    const fileUploadPromises = filesToUpload?.map(async (f) => {
       if (
         f.chapter !== undefined &&
         f.chapter !== null &&
@@ -243,28 +249,16 @@ const UploadFilesToPoliceCase: React.FC<
         displayDate: f.displayDate,
       } as UploadFile
 
-      await uploadFromPolice(fileToUpload, uploadPoliceCaseFileCallback)
-
-      setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
-
-      if (index === filesToUpload.length - 1) {
-        setIsUploading(false)
-      }
+      return uploadFromPolice(fileToUpload, uploadPoliceCaseFileCallback)
     })
-  }, [
-    caseFiles,
-    policeCaseFileList,
-    uploadFromPolice,
-    uploadPoliceCaseFileCallback,
-  ])
 
+    await Promise.all(fileUploadPromises || [])
+  }
   return (
     <>
       <PoliceCaseFiles
         onUpload={onPoliceCaseFileUpload}
-        isUploading={isUploading}
         policeCaseFileList={policeCaseFileList}
-        setPoliceCaseFileList={setPoliceCaseFileList}
         policeCaseFiles={policeCaseFiles}
       />
       <InputFileUpload
@@ -293,7 +287,6 @@ const UploadFilesToPoliceCase: React.FC<
           )
         }
         errorMessage={errorMessage}
-        disabled={isUploading}
         showFileSize
       />
     </>
