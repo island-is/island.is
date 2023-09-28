@@ -8,7 +8,7 @@ import { EnvDifferences, EnvMappingType, EnvObject, OpsEnv } from './types'
 
 const DEFAULT_FILE = '.env.secret'
 const projectRoot = execSync('git rev-parse --show-toplevel').toString().trim()
-const envLogFilePath = resolve(projectRoot, '.env.log')
+const envLogFilePath = resolve(projectRoot, 'secrets.log')
 
 const envToFileMapping: Record<string, EnvMappingType> = {
   [DEFAULT_FILE]: {
@@ -21,7 +21,7 @@ const envToFileMapping: Record<string, EnvMappingType> = {
   },
 }
 
-export function escapeValue(value: string, key?: string): string {
+export const escapeValue = (value: string, key?: string): string => {
   value = value.replace(/\s+/g, ' ')
   if (value.match(/'/)) {
     console.error(`Secret values cannot contain single quotes, discarding:`, {
@@ -33,7 +33,7 @@ export function escapeValue(value: string, key?: string): string {
   return value
 }
 
-function parseEnvFile(filePath: string): EnvObject {
+const parseEnvFile = (filePath: string): EnvObject => {
   try {
     const absPath = resolve(projectRoot, filePath)
     if (!existsSync(absPath)) {
@@ -41,8 +41,6 @@ function parseEnvFile(filePath: string): EnvObject {
       return {}
     }
     const content = readFileSync(absPath, 'utf-8')
-    // TODO: Remove if unused
-    const isBash = envToFileMapping[filePath]?.isBashEnv
 
     // Do we want to require 'export' in bash-envs (custom local-files)?
     const pattern =
@@ -53,7 +51,7 @@ function parseEnvFile(filePath: string): EnvObject {
       const trimmedLine = line.trim()
       if (!trimmedLine) return // Skip empty lines
       const noExport = trimmedLine.split('export ').pop() // Can only be undefined if line is empty
-      if (!noExport) return // Skip empty lines, again? Mr. TypeScript?!
+      if (!noExport) return
 
       const match = trimmedLine.match(pattern)
       if (match && match.groups?.key && match.groups?.value != undefined) {
@@ -71,10 +69,10 @@ function parseEnvFile(filePath: string): EnvObject {
   }
 }
 
-function compareEnvs(
+const compareEnvs = (
   fileEnvs: Record<string, string>,
   ssmEnvs: Record<string, string>,
-) {
+) => {
   const added: Record<string, string> = {}
   const changed: Record<string, string> = {}
 
@@ -101,11 +99,11 @@ export const resetAllMappedFiles = async (): Promise<void> => {
   }
 }
 
-export function serviceExists(
+export const serviceExists = (
   service: string,
   chart?: ChartName,
   env?: OpsEnv,
-): boolean {
+): boolean => {
   const charts = chart ? [chart] : (Object.keys(Charts) as ChartName[])
   for (const chart of charts) {
     const envServices: EnvironmentServices = Charts[chart]
@@ -194,12 +192,16 @@ export const updateSecretFiles = async (services: string[]) => {
   return { changes, failedServices }
 }
 
-function generateUpdatedFileContent(
+const appendToEnvLog = (message: string): void => {
+  appendFileSync(envLogFilePath, `${message}\n`)
+}
+
+const generateUpdatedFileContent = (
   sortedEnvs: [string, string][],
   differences: EnvDifferences,
   mapping: EnvMappingType,
   fileEnvs: Record<string, string>,
-): string {
+): string => {
   return sortedEnvs.reduce((content, [envName, value]) => {
     const escapedValue = escapeValue(value)
     const line = mapping.isBashEnv
@@ -222,8 +224,4 @@ function generateUpdatedFileContent(
 
     return `${content}\n${line}`
   }, '')
-}
-
-function appendToEnvLog(message: string): void {
-  appendFileSync(envLogFilePath, `${message}\n`)
 }

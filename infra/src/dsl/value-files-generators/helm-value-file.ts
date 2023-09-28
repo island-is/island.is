@@ -8,12 +8,12 @@ export type Mocks = 'with-mocks' | 'no-mocks'
  * Monster rendering of the services' required values and secrets
  *
  */
-export function getHelmValueFile(
+export const getHelmValueFile = (
   runtime: Kubernetes,
   services: Services<HelmService>,
   withMocks: Mocks,
   env: EnvironmentConfig,
-): HelmValueFile {
+): HelmValueFile => {
   const outputFormat = renderers.helm
   const helmServices: Services<HelmService> = Object.entries(services).reduce(
     (acc, [name, service]) => {
