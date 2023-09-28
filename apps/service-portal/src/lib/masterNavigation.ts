@@ -10,7 +10,7 @@ import {
   informationNavigation,
 } from '@island.is/service-portal/information'
 import { licenseNavigation } from '@island.is/service-portal/licenses'
-import { educationLicenseNavigation } from '@island.is/service-portal/education-license'
+import { occupationalLicensesNavigation } from '@island.is/service-portal/occupational-licenses'
 import { vehiclesNavigation } from '@island.is/service-portal/vehicles'
 import { personalInformationNavigation } from '@island.is/service-portal/settings/personal-information'
 import { airDiscountNavigation } from '@island.is/service-portal/air-discount'
@@ -40,7 +40,7 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     informationNavigation,
     companyNavigation,
     licenseNavigation,
-    educationLicenseNavigation,
+    occupationalLicensesNavigation,
     educationNavigation,
     assetsNavigation,
     financeNavigation,

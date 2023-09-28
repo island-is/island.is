@@ -1,6 +1,8 @@
 import * as s from './RegulationsSearchSection.css'
 
 import React, { useEffect, useMemo, useState } from 'react'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
 import { SingleValue } from 'react-select'
 import { useRouter } from 'next/router'
 import {
@@ -344,6 +346,8 @@ export const RegulationsSearchSection = (
                         )}
                         value={findValueOption(ministryOptions, filters.rn)}
                         options={ministryOptions}
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
                         onChange={(option) =>
                           doSearch({ rn: getRSValue(option), iR: undefined })
                         }
@@ -365,6 +369,8 @@ export const RegulationsSearchSection = (
                         )}
                         value={findValueOption(lawChapterOptions, filters.ch)}
                         options={lawChapterOptions}
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
                         onChange={(option) =>
                           doSearch('ch', getRSValue(option))
                         }
@@ -386,6 +392,8 @@ export const RegulationsSearchSection = (
                         placeholder={txt('searchYearPlaceholder', 'Veldu ár')}
                         value={findValueOption(yearOptions, filters.year)}
                         options={yearOptions}
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
                         onChange={(option) => {
                           const year = getRSValue(option)
                           const yearTo = !year ? undefined : filters.yearTo // clear yearTo along with year
@@ -410,6 +418,8 @@ export const RegulationsSearchSection = (
                           )}
                           value={findValueOption(yearToOptions, filters.yearTo)}
                           options={yearToOptions}
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore make web strict
                           onChange={(option) =>
                             doSearch('yearTo', getRSValue(option))
                           }

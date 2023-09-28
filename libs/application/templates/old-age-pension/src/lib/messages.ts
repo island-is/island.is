@@ -36,23 +36,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Forsendur',
       description: 'Prerequisites',
     },
-    forInfoSubSection: {
-      id: 'oap.application:for.info.sub.section',
-      defaultMessage: 'Til upplýsinga',
-      description: 'For Information',
-    },
-    forInfoDescription: {
-      id: 'oap.application:for.info.description',
-      defaultMessage:
-        'TR sækir nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðslu mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar.\n \nMisjafnt er eftir tegund umsóknar hvaða upplýsingar þarf til úrvinnslu en ekki eru sóttar meiri upplýsingar en nauðsynlegt er hverju sinni.',
-      description: 'english translation',
-    },
-    forInfoSecondDescription: {
-      id: 'oap.application:for.info.second.description',
-      defaultMessage:
-        'Ef tekjur eða aðrar aðstæður þínar breytast verður þú að láta TR vita þar sem það getur haft áhrif á greiðslur þínar.\n \nFrekari upplýsingar um gagnaöflun og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingastofnunar, www.tr.is/personuvernd. \n \nÞeim umsóknum sem sendar eru TR í gegnum Mínar síður Ísland.is verður svarað rafrænt',
-      description: 'english translation',
-    },
     externalDataSubSection: {
       id: 'oap.application:externalData.sub.section',
       defaultMessage: 'Gagnaöflun',
@@ -72,7 +55,7 @@ export const oldAgePensionFormMessage: MessageDir = {
     skraInformationSubTitle: {
       id: 'oap.application:prerequisites.national.registry.subtitle',
       defaultMessage:
-        'Sækir upplýsingar um þig, maka og börn frá Þjóðskrá. Einnig eru sóttar upplýsingar um búsetu, íbúaskrá og forsjá',
+        'Upplýsingar um þig, maka og börn frá Þjóðskrá. Einnig eru sóttar upplýsingar um búsetu, íbúaskrá og forsjá',
       description:
         'Information about you, spouse and children will be retrieved from Registers Iceland. Information about residence will also be retrieved.',
     },
@@ -90,13 +73,29 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
     socialInsuranceAdministrationInformationTitle: {
       id: 'oap.application:prerequisites.socialInsuranceAdministration.title',
-      defaultMessage: 'Upplýsingar frá Tryggingastofnun',
-      description: 'Information from Social Insurance Administration Iceland',
+      defaultMessage: 'Upplýsingar um tekjur og aðstæður',
+      description: 'Information about income and circumstances',
     },
     socialInsuranceAdministrationInformationSubTitle: {
       id: 'oap.application:prerequisites.socialInsuranceAdministration.subtitle',
-      defaultMessage: 'ZZZZZ',
-      description: 'EN-ZZZZ',
+      defaultMessage:
+        'TR sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðsla mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar. Ef við á þá hefur TR heimild að ná í upplýsingar frá öðrum stofnunum.',
+      description:
+        'TR collects only necessary information for processing applications and processing cases. That information can relate to both your income and other circumstances. If applicable, TR is authorized to obtain information from other organizations.',
+    },
+    socialInsuranceAdministrationInformationSubTitleMoreInfo: {
+      id: 'oap.application:prerequisites.socialInsuranceAdministration.subtitle.moreInfo#markdown',
+      defaultMessage:
+        'Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar, [https://www.tr.is/tryggingastofnun/personuvernd](https://www.tr.is/tryggingastofnun/personuvernd)',
+      description:
+        'More information on data collection authority and processing of personal information can be found in the privacy policy of the Insurance Administration, [https://www.tr.is/tryggingastofnun/personuvernd](https://www.tr.is/tryggingastofnun/personuvernd)',
+    },
+    socialInsuranceAdministrationInformationSubTitleAboutIncomes: {
+      id: 'oap.application:prerequisites.socialInsuranceAdministration.subtitle.incomes',
+      defaultMessage:
+        'Ef tekjur eða aðrar aðstæður þínar breytast verður þú að láta TR vita þar sem það getur haft áhrif á greiðslur þínar.',
+      description:
+        'If your income or other circumstances change, you must notify TR as this may affect your payments.',
     },
     startApplication: {
       id: 'oap.application:prerequisites.start.application',
@@ -797,36 +796,22 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Til athugunar!',
       description: 'For consideration',
     },
-    periodAlertDescriptionFirstPart: {
-      id: 'oap.application:period.alert.description.firstPart',
+    periodAlertMessage: {
+      id: 'oap.application:period.alert.message',
       defaultMessage:
-        'Þú ert að sækja um snemmtöku miðað við valið tímabil. Nánar um snemmtöku má lesa ',
+        'Þú ert að sækja um snemmtöku miðað við valið tímabil. Réttur ellilífeyris myndast 1. næsta mánuð eftir fæðingardag.',
       description:
-        'You are applying for early admission based on the selected period. You can read more about early birding ',
+        'You are applying for early admission based on the selected period. The right to old-age pension is established on the 1st of the following month after birthday.',
     },
-    periodAlertDescriptionSecondPart: {
-      id: 'oap.application:period.alert.description.secondPart',
-      defaultMessage:
-        '. Réttur ellilífeyris myndast 1. næsta mánuð eftir fæðingardag.',
-      description:
-        '. The right to old-age pension is established on the 1st of the following month after birthday.',
-    },
-    periodAlertLinkName: {
-      id: 'oap.application:period.alert.linkName',
-      defaultMessage: 'hér',
-      description: 'here',
+    periodAlertLinkTitle: {
+      id: 'oap.application:period.alert.linkTitle',
+      defaultMessage: 'Nánar um snemmtöku má lesa hér',
+      description: 'You can read more about early birding here',
     },
     periodAlertUrl: {
       id: 'oap.application:period.alert.url',
       defaultMessage: 'https://www.tr.is/65/ad-flyta-toku-ellilifeyris',
       description: 'The url the link text links to',
-    },
-    periodAlertMessage: {
-      id: 'oap.application:period.alert.message',
-      defaultMessage:
-        'Þú ert að sækja um snemmtöku miðað við valið tímabil. Nánar um snemmtöku má lesa hér. Réttur ellilífeyris myndast 1. næsta mánuð eftir fæðingardag.',
-      description:
-        'You are applying for early admission based on the selected period. You can read more about early birding here. The right to old-age pension is established on the 1st of the following month after birthday.',
     },
   }),
 

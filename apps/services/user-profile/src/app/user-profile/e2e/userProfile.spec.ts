@@ -165,10 +165,7 @@ describe('User profile API', () => {
         .expect(404)
 
       // Assert
-      expect(getResponse.body.error).toBe('Not Found')
-      expect(getResponse.body.message).toBe(
-        `A user profile with nationalId ${mockProfile.nationalId} does not exist`,
-      )
+      expect(getResponse.body.message).toBe('Not Found')
     })
 
     it('GET /userProfile should return profile', async () => {

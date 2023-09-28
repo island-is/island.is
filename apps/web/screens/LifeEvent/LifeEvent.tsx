@@ -52,6 +52,8 @@ interface LifeEventProps {
 }
 
 export const LifeEvent: Screen<LifeEventProps> = ({
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   lifeEvent: { id, image, title, intro, content, featuredImage },
   namespace,
   locale,
@@ -60,7 +62,8 @@ export const LifeEvent: Screen<LifeEventProps> = ({
   useLocalLinkTypeResolver()
 
   usePlausiblePageview(DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN)
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const router = useRouter()
@@ -146,6 +149,8 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                     items={breadcrumbItems}
                     renderLink={(link, { href }) => {
                       return (
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
                         <NextLink href={href} passHref legacyBehavior>
                           {link}
                         </NextLink>
@@ -159,7 +164,12 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                   </span>
                 </Text>
 
-                <Webreader readId={null} readClass="rs_read" />
+                <Webreader
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
+                  readId={null}
+                  readClass="rs_read"
+                />
 
                 {intro && (
                   <Text variant="intro" as="p" paddingTop={2}>
@@ -185,7 +195,11 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                     content as SliceType[],
                     {
                       renderComponent: {
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
                         Form: (form) => (
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore make web strict
                           <Form form={form} namespace={namespace} />
                         ),
                       },
@@ -209,7 +223,10 @@ export const LifeEvent: Screen<LifeEventProps> = ({
           </GridColumn>
         </GridRow>
       </GridContainer>
-      {watsonConfig[locale] && <WatsonChatPanel {...watsonConfig[locale]} />}
+      {watsonConfig[locale] && ( // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
+        <WatsonChatPanel {...watsonConfig[locale]} />
+      )}
     </Box>
   )
 }

@@ -17,6 +17,7 @@ export class ResourceTranslationService {
     const translationMap = await this.translationService.findTranslationMap(
       'identityresource',
       scopes.map((scope) => scope.name),
+      false,
       language,
     )
 
@@ -37,6 +38,7 @@ export class ResourceTranslationService {
     const translationMap = await this.translationService.findTranslationMap(
       'apiscope',
       scopes.map((scope) => scope.name),
+      false,
       language,
     )
 
@@ -63,6 +65,7 @@ export class ResourceTranslationService {
     const translationMap = await this.translationService.findTranslationMap(
       'apiscopegroup',
       groups.map((group) => group.id),
+      false,
       language,
     )
 
@@ -82,6 +85,7 @@ export class ResourceTranslationService {
     const translationMap = await this.translationService.findTranslationMap(
       'domain',
       domains.map((domain) => domain.name),
+      false,
       language,
     )
 

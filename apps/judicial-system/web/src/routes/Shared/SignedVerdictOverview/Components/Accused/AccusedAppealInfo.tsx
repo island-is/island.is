@@ -1,10 +1,10 @@
 import React from 'react'
-import { motion } from 'framer-motion'
 import { useIntl } from 'react-intl'
+import { motion } from 'framer-motion'
 
-import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
+import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 interface Props {

@@ -16,6 +16,7 @@ import {
   fakeResponse,
   setupTestEnv,
 } from '../../../test/setup'
+import { defaultCacheKeyWithHeader } from './withCache'
 
 const testUrl = 'http://localhost/test'
 
@@ -640,6 +641,34 @@ describe('EnhancedFetch#withCache', () => {
     expect(response2.headers.get('cache-status')).toEqual(
       'EnhancedFetch; hit; ttl=1',
     )
+  })
+
+  it('supports cache key with header value', async () => {
+    // Arrange
+    const cacheManager = await caching('memory', { ttl: 0 })
+    const headerParamName = 'X-Param-National-Id'
+    const env1 = setupTestEnv({
+      cache: {
+        cacheManager,
+        cacheKey: defaultCacheKeyWithHeader(headerParamName),
+        overrideCacheControl: buildCacheControl({ maxAge: 50 }),
+      },
+    })
+    env1.fetch.mockResolvedValueOnce(fakeResponse('Response 1'))
+    env1.fetch.mockResolvedValueOnce(fakeResponse('Response 2'))
+
+    // Act
+    const response1 = await env1.enhancedFetch(testUrl, {
+      headers: { [headerParamName]: 'A' },
+    })
+    const response2 = await env1.enhancedFetch(testUrl, {
+      headers: { [headerParamName]: 'B' },
+    })
+
+    // Assert
+    expect(env1.fetch).toHaveBeenCalledTimes(2)
+    await expect(response1.text()).resolves.toEqual('Response 1')
+    await expect(response2.text()).resolves.toEqual('Response 2')
   })
 
   // REGRESSION TEST: Passed in headers were deleted when combining Cache with Auth or AutoAuth.
