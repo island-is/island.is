@@ -63,7 +63,6 @@ const Dentists = () => {
       },
     },
     fetchPolicy: 'no-cache',
-    pollInterval: wasSuccessfulTransfer ? 1000 : 0,
   })
 
   const { dentist, history } = data?.rightsPortalUserDentistRegistration ?? {}

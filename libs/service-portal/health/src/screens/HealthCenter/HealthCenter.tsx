@@ -64,7 +64,6 @@ const HealthCenter = () => {
       },
     },
     fetchPolicy: 'no-cache',
-    pollInterval: wasSuccessfulTransfer ? 10000 : 0,
   })
 
   const healthCenterData = data?.rightsPortalUserHealthCenterRegistration
