@@ -18,21 +18,24 @@ describe(`${INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/:id`, () => {
   })
 
   it('should require a valid demands value', () => {
-    cy.getByTestid('demands').click().blur()
+    cy.getByTestid('demands').click()
+    cy.getByTestid('demands').blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('demands').type(faker.lorem.words(5))
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
   it('should require a valid laws broken value', () => {
-    cy.getByTestid('lawsBroken').click().blur()
+    cy.getByTestid('lawsBroken').click()
+    cy.getByTestid('lawsBroken').blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('lawsBroken').type(faker.lorem.words(5))
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
   it('should require a valid legal basis value', () => {
-    cy.getByTestid('legalBasis').click().blur()
+    cy.getByTestid('legalBasis').click()
+    cy.getByTestid('legalBasis').blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('legalBasis').type(faker.lorem.words(5))
     cy.getByTestid('inputErrorMessage').should('not.exist')

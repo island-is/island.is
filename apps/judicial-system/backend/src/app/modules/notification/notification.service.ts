@@ -137,7 +137,10 @@ export class NotificationService {
       return true
     }
 
-    if (theCase.type !== CaseType.ADMISSION_TO_FACILITY) {
+    if (
+      theCase.type !== CaseType.ADMISSION_TO_FACILITY &&
+      theCase.type !== CaseType.PAROLE_REVOCATION
+    ) {
       return false
     }
 
@@ -851,13 +854,24 @@ export class NotificationService {
         courtCaseNumber: theCase.courtCaseNumber,
       },
     )
-    const html = this.formatMessage(notifications.prisonRulingEmail.body, {
-      isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
-      institutionName: theCase.court?.name,
-      caseType: theCase.type,
-      linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
-      linkEnd: '</a>',
-    })
+    const html =
+      theCase.type === CaseType.PAROLE_REVOCATION
+        ? this.formatMessage(
+            notifications.prisonRulingEmail.paroleRevocationBody,
+            {
+              institutionName: theCase.court?.name,
+              courtCaseNumber: theCase.courtCaseNumber,
+              linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
+              linkEnd: '</a>',
+            },
+          )
+        : this.formatMessage(notifications.prisonRulingEmail.body, {
+            isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
+            institutionName: theCase.court?.name,
+            caseType: theCase.type,
+            linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
+            linkEnd: '</a>',
+          })
 
     return this.sendEmail(
       subject,
@@ -954,7 +968,8 @@ export class NotificationService {
     }
 
     if (
-      isRestrictionCase(theCase.type) &&
+      (isRestrictionCase(theCase.type) ||
+        theCase.type === CaseType.PAROLE_REVOCATION) &&
       theCase.state === CaseState.ACCEPTED
     ) {
       promises.push(
