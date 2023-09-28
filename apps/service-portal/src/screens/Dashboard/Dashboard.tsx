@@ -211,15 +211,8 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
                       height={65}
                     />
                   </Box>
-                )}
-                <Box
-                  position="relative"
-                  borderColor="blue200"
-                  borderTopWidth="standard"
-                  width="full"
-                  marginTop={2}
-                >
-                  {data?.documents.map((doc) => (
+                ) : data.documents.length > 0 ? (
+                  data.documents.map((doc) => (
                     <Box key={doc.id}>
                       <NewDocumentLine
                         img={getOrganizationLogoUrl(
@@ -231,8 +224,23 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
                         asFrame
                       />
                     </Box>
-                  ))}
-                </Box>
+                  ))
+                ) : (
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    paddingTop={2}
+                    justifyContent="center"
+                    alignItems="center"
+                    rowGap={2}
+                  >
+                    <EmptyImageSmall style={{ maxHeight: 160 }} />
+                    <Text variant="h3">
+                      {formatMessage(m.emptyDocumentsList)}
+                    </Text>
+                  </Box>
+                )}
+
                 <Box
                   textAlign="center"
                   marginBottom={1}
