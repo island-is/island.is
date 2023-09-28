@@ -3712,10 +3712,10 @@ function BabyIllustration() {
       <path
         d="M258.607 1.57031H403.802"
         stroke="#6A2EA0"
-        stroke-width="1.77679"
-        stroke-miterlimit="10"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.77679"
+        strokeMiterlimit="10"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M730.38 133.088C730.168 133.088 729.964 132.982 729.851 132.792L720.449 116.471C720.289 116.193 720.397 115.847 720.689 115.695C720.981 115.543 721.346 115.646 721.506 115.923L730.908 132.245C731.068 132.522 730.96 132.868 730.668 133.02C730.576 133.065 730.476 133.088 730.38 133.088Z"

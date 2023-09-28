@@ -110,7 +110,7 @@ export const ChildPensionForm: Form = buildForm({
           id: 'payment',
           title: childPensionFormMessage.info.paymentTitle,
           children: [
-            buildMultiField({ 
+            buildMultiField({
               id: 'paymentInfo',
               title: childPensionFormMessage.info.paymentTitle,
               description: '',
@@ -135,7 +135,7 @@ export const ChildPensionForm: Form = buildForm({
                     return userProfile.bankInfo
                   },
                 }),
-              ], 
+              ],
             }),
           ],
         }),
@@ -312,8 +312,7 @@ export const ChildPensionForm: Form = buildForm({
               maxSizeErrorText:
                 childPensionFormMessage.fileUpload.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader:
-                childPensionFormMessage.fileUpload.attachmentHeader,
+              uploadHeader: childPensionFormMessage.fileUpload.attachmentHeader,
               uploadDescription:
                 childPensionFormMessage.fileUpload.attachmentDescription,
               uploadButtonLabel:
@@ -321,7 +320,7 @@ export const ChildPensionForm: Form = buildForm({
               uploadMultiple: true,
             }),
           ],
-        }), 
+        }),
         buildSubSection({
           id: 'commentSection',
           title: childPensionFormMessage.comment.commentSection,
