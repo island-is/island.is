@@ -192,13 +192,15 @@ const WorkMachinesOverview = () => {
                               const labelKey =
                                 filter.label as keyof typeof messages
                               return (
-                                <Checkbox
-                                  key={index}
-                                  id={`work-machine-filter-${index}`}
-                                  label={formatMessage(messages[labelKey])}
-                                  checked={filter.value}
-                                  onChange={() => onFilterChange(key, filter)}
-                                />
+                                <Box paddingTop={index === 0 ? 0 : 1}>
+                                  <Checkbox
+                                    key={index}
+                                    id={`work-machine-filter-${index}`}
+                                    label={formatMessage(messages[labelKey])}
+                                    checked={filter.value}
+                                    onChange={() => onFilterChange(key, filter)}
+                                  />
+                                </Box>
                               )
                             },
                           )}

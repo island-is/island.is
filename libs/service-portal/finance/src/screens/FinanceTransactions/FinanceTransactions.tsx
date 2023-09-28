@@ -211,7 +211,7 @@ const FinanceTransactions = () => {
                         key="date-accordion-item"
                         id="date-accordion-item"
                         label={formatMessage(m.datesLabel)}
-                        labelColor="blue400"
+                        labelColor="dark400"
                         labelUse="h5"
                         labelVariant="h5"
                         iconVariant="small"
