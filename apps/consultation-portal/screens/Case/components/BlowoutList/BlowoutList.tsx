@@ -55,9 +55,6 @@ export const BlowoutList = ({
           {showList && (
             <>
               {isStakeholder && <Text>{loc.description}</Text>}
-              {isStakeholder && !isEmpty && (
-                <Text>{loc.descriptionIfList}</Text>
-              )}
               {isEmpty && <Text>{loc.noList}</Text>}
               <Box padding="smallGutter">
                 <BulletList type="ul">
