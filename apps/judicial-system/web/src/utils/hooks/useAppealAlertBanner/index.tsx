@@ -25,7 +25,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase } from '@island.is/judicial-system-web/src/types'
 
-import { strings } from './strings'
+import { strings } from './useAppealAlertBanner.strings'
 import * as styles from './useAppealAlertBanner.css'
 
 const renderLinkButton = (text: string, href: string) => {
