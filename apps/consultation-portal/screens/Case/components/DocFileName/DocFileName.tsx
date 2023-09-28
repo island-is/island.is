@@ -31,7 +31,6 @@ const DocFileName = ({ doc, isAdvice = false }: Props) => {
 
   return (
     <LinkV2
-      as="span"
       href={linkHref}
       color="blue400"
       underline="normal"
