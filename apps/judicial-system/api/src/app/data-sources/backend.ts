@@ -48,7 +48,6 @@ import {
   IndictmentCount,
   UpdateIndictmentCountInput,
 } from '../modules/indictment-count'
-import { GetAllFilesResponse } from '../modules/file/models/getAllFiles.response'
 
 @Injectable()
 export class BackendApi extends DataSource<{ req: Request }> {
@@ -338,7 +337,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.delete(`case/${caseId}/limitedAccess/file/${id}`)
   }
 
-  limitedAccessGetAllFiles(caseId: string): Promise<GetAllFilesResponse> {
+  limitedAccessGetAllFiles(caseId: string): Promise<Buffer> {
     return this.get(`case/${caseId}/limitedAccess/files/all`)
   }
 }
