@@ -315,10 +315,6 @@ export class FileService {
     return this.awsS3Service.getSignedUrl(file.key)
   }
 
-  async getAllCaseFiles(caseId: string, caseType: CaseType): Promise<Buffer> {
-    return this.getAll(caseId, caseType)
-  }
-
   async deleteCaseFile(
     file: CaseFile,
     transaction?: Transaction,
