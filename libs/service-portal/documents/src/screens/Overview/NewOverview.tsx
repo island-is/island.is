@@ -50,13 +50,13 @@ import {
 import * as styles from './Overview.css'
 import { AuthDelegationType } from '@island.is/shared/types'
 import NewDocumentLine from '../../components/DocumentLine/NewDocumentLine'
-import AvatarImage from '../../components/DocumentLine/AvatarImage'
 import NoPDF from '../../components/NoPDF/NoPDF'
 import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/service-portal/constants'
 import { useUserInfo } from '@island.is/auth/react'
 import { DocumentRenderer } from '../../components/DocumentRenderer'
 import { DocumentHeader } from '../../components/DocumentHeader'
 import { DocumentActionBar } from '../../components/DocumentActionBar'
+import { FavAndStash } from '../../components/FavAndStash'
 
 export type ActiveDocumentType = {
   document: DocumentDetails
@@ -129,7 +129,7 @@ export const ServicePortalDocuments = () => {
 
   const [filterValue, setFilterValue] =
     useState<FilterValuesType>(defaultFilterValues)
-  const { data, totalCount, loading, error } = useListDocuments({
+  const { data, totalCount, loading, error, refetch } = useListDocuments({
     senderKennitala: filterValue.activeSenders.join(),
     dateFrom: filterValue.dateFrom?.toISOString(),
     dateTo: filterValue.dateTo?.toISOString(),
@@ -142,6 +142,8 @@ export const ServicePortalDocuments = () => {
     page: page,
     pageSize: pageSize,
     isLegalGuardian: hideHealthData,
+    archived: filterValue.archived,
+    bookmarked: filterValue.bookmarked,
   })
 
   const { data: categoriesData, loading: categoriesLoading } = useQuery<Query>(
@@ -272,6 +274,22 @@ export const ServicePortalDocuments = () => {
     }))
   }, [])
 
+  const handleShowArchived = useCallback((showArchived: boolean) => {
+    setPage(1)
+    setFilterValue((prevFilter) => ({
+      ...prevFilter,
+      archived: showArchived,
+    }))
+  }, [])
+
+  const handleShowBookmarked = useCallback((showBookmarked: boolean) => {
+    setPage(1)
+    setFilterValue((prevFilter) => ({
+      ...prevFilter,
+      bookmarked: showBookmarked,
+    }))
+  }, [])
+
   const handleSearchChange = (e: any) => {
     setPage(1)
     if (e) {
@@ -318,6 +336,8 @@ export const ServicePortalDocuments = () => {
     )
   }
 
+  const activeArchive = filterValue.archived === true
+
   return (
     <GridContainer>
       {activeDocument?.document && (
@@ -328,9 +348,12 @@ export const ServicePortalDocuments = () => {
                 <Box className={styles.modalHeader}>
                   <DocumentActionBar
                     onGoBack={() => setActiveDocument(null)}
-                    onArchiveClick={() => console.log('onArchive fired')}
-                    onFavoriteClick={() =>
-                      console.log('replace me with real logic')
+                    documentId={activeDocument.id}
+                    archived={activeArchive}
+                    bookmarked={
+                      !!filteredDocuments?.filter(
+                        (doc) => doc?.id === activeDocument?.id,
+                      )?.[0]?.bookmarked
                     }
                   />
                 </Box>
@@ -378,6 +401,8 @@ export const ServicePortalDocuments = () => {
             handleDateFromChange={handleDateFromInput}
             handleDateToChange={handleDateToInput}
             handleShowUnread={handleShowUnread}
+            handleShowArchived={handleShowArchived}
+            handleShowBookmarked={handleShowBookmarked}
             handleClearFilters={handleClearFilters}
             documentsLength={totalCount}
           />
@@ -413,26 +438,7 @@ export const ServicePortalDocuments = () => {
                 )}
               </Box>
               {selectedLines.length > 0 ? (
-                <Box display="flex">
-                  <Button
-                    circle
-                    icon="archive"
-                    iconType="outline"
-                    onClick={() => console.log('Trash or stash')}
-                    size="small"
-                    title="Store items"
-                    colorScheme="light"
-                  />
-                  <Button
-                    circle
-                    icon="star"
-                    iconType="outline"
-                    onClick={() => console.log('star or fav')}
-                    size="small"
-                    title="Favorite items"
-                    colorScheme="light"
-                  />
-                </Box>
+                <FavAndStash onStash={() => console.log('On batch archive')} />
               ) : (
                 <Text variant="eyebrow">{formatMessage(m.date)}</Text>
               )}
@@ -457,6 +463,7 @@ export const ServicePortalDocuments = () => {
                     onClick={setActiveDocument}
                     active={doc.id === activeDocument?.id}
                     selected={selectedLines.includes(doc.id)}
+                    bookmarked={!!doc.bookmarked}
                     setSelectLine={(docId) => {
                       if (selectedLines.includes(doc.id)) {
                         const filtered = selectedLines.filter(
@@ -482,6 +489,7 @@ export const ServicePortalDocuments = () => {
                 padding={5}
                 borderRadius="large"
                 background="white"
+                className={styles.docWrap}
               >
                 <DocumentHeader
                   avatar={activeDocument.img}
@@ -491,10 +499,11 @@ export const ServicePortalDocuments = () => {
                     (i) => i.id === activeDocument.categoryId,
                   )}
                   actionBar={{
-                    onArchiveClick: () => console.log('onArchive fired'),
-                    onFavoriteClick: () =>
-                      console.log('replace me with real logic'),
-                    onPrintClick: () => console.log('onPrintClick fired'),
+                    documentId: activeDocument.id,
+                    archived: activeArchive,
+                    bookmarked: !!filteredDocuments?.filter(
+                      (doc) => doc?.id === activeDocument?.id,
+                    )?.[0]?.bookmarked,
                   }}
                 />
                 <Box>{<DocumentRenderer document={activeDocument} />}</Box>

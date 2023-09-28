@@ -9,4 +9,5 @@ export interface DocumentInfoDTO {
   withdrawn?: boolean
   withdrawnReason?: string
   minumumAuthenticationType?: string
+  bookmarked?: boolean
 }

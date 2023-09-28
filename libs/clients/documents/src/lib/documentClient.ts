@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { HttpService } from '@nestjs/axios'
 import { AxiosRequestConfig, Method } from 'axios'
+import { isDefined } from '@island.is/shared/utils'
 import {
   CategoriesResponse,
   DocumentDTO,
@@ -129,6 +130,8 @@ export class DocumentClient {
       opened,
       page,
       pageSize,
+      archived,
+      bookmarked,
     } = input ?? {}
 
     type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
@@ -144,19 +147,16 @@ export class DocumentClient {
       categoryId && `categoryId=${categoryId}`,
       typeId && `typeId=${typeId}`,
       subjectContains && `subjectContains=${subjectContains}`,
+      bookmarked && `bookmarked=${bookmarked}`,
       `opened=${opened}`,
+      `archived=${archived}`,
     ].filter(Boolean as unknown as ExcludesFalse)
 
     const requestRoute = `/api/mail/v1/customers/${nationalId}/messages?${inputs.join(
       '&',
     )}`
 
-    const gettheDOCS = await this.getRequest<ListDocumentsResponse>(
-      encodeURI(requestRoute),
-    )
-    this.logger.warn(`gettheDOCS -`, gettheDOCS)
-
-    return gettheDOCS
+    return await this.getRequest<ListDocumentsResponse>(encodeURI(requestRoute))
   }
 
   async customersDocument(
@@ -201,22 +201,8 @@ export class DocumentClient {
   async postMailAction(
     body: MessageActionDTO,
     action: 'archive' | 'unarchive' | 'bookmark' | 'unbookmark',
-  ): Promise<MessageActionResponse> {
-    const requestRoute = `/api/mail/v1/customers/${body.messageId}/${action}`
-    try {
-      const res = await this.postRequest(requestRoute, body)
-      console.log('postArchiveMail res', res)
-      return {
-        success: true,
-        messageId: body.messageId,
-        action: action,
-      }
-    } catch {
-      return {
-        success: false,
-        messageId: body.messageId,
-        action: action,
-      }
-    }
+  ): Promise<any | null> {
+    const requestRoute = `/api/mail/v1/customers/${body.nationalId}/messages/${body.messageId}/${action}`
+    return await this.postRequest(requestRoute, body)
   }
 }

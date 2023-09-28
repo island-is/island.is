@@ -1,7 +1,7 @@
 import { style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
-const dark50 = '#F8F8FA'
+export const dark50 = '#F8F8FA'
 
 export const wrapper = style({
   width: '100%',
@@ -19,6 +19,10 @@ export const docline = style({
 
 export const active = style({
   backgroundColor: theme.color.blue100,
+})
+
+export const title = style({
+  cursor: 'pointer',
 })
 
 export const unread = style({
@@ -80,6 +84,17 @@ export const imageContainer = style({
   minHeight: 48,
   maxHeight: 48,
   maxWidth: 48,
+})
+
+export const largeAvatar = style({
+  ...themeUtils.responsiveStyle({
+    lg: {
+      minWidth: 56,
+      minHeight: 56,
+      maxHeight: 56,
+      maxWidth: 56,
+    },
+  }),
 })
 
 export const checkCircle = style({

@@ -24,7 +24,7 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
 }) => {
   return (
     <Box display="flex">
-      {avatar && <AvatarImage img={avatar} background="blue100" />}
+      {avatar && <AvatarImage large img={avatar} background="blue100" />}
       <Box
         display="flex"
         flexDirection="column"
@@ -37,7 +37,12 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
             {sender}
           </Text>
         )}
-        <Box display="flex" justifyContent="flexStart" alignItems="center">
+        <Box
+          className={styles.titleText}
+          display="flex"
+          justifyContent="flexStart"
+          alignItems="center"
+        >
           {date && <Text variant="medium">{date}</Text>}
           {category && (
             <Box className={styles.categoryDivider}>
@@ -49,7 +54,7 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
 
       {actionBar && (
         <Box className={styles.actionBarWrapper}>
-          <DocumentActionBar spacing={2} {...actionBar} />
+          <DocumentActionBar spacing={1} {...actionBar} />
         </Box>
       )}
     </Box>

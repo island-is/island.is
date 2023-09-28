@@ -22,6 +22,14 @@ export const messages = defineMessages({
     id: 'sp.documents:only-show-unread',
     defaultMessage: 'Sýna einungis ólesið',
   },
+  onlyShowArchived: {
+    id: 'sp.documents:only-show-archived',
+    defaultMessage: 'Geymsla',
+  },
+  onlyShowBookmarked: {
+    id: 'sp.documents:only-show-bookmarked',
+    defaultMessage: 'Stjörnumerkt',
+  },
   onlyShowUnreadShort: {
     id: 'sp.documents:only-show-unread-short',
     defaultMessage: 'Sýna ólesið',

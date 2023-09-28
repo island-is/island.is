@@ -48,6 +48,7 @@ interface Props {
   translate?: 'yes' | 'no'
   translateLabel?: 'yes' | 'no'
   printable?: boolean
+  tooltipFull?: boolean
 }
 
 export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
@@ -69,6 +70,7 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
   translate = 'yes',
   translateLabel = 'yes',
   printable = false,
+  tooltipFull,
 }) => {
   const { pathname } = useLocation()
   const { formatMessage } = useLocale()
@@ -105,7 +107,11 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
             >
               {formatMessage(label)}{' '}
               {tooltip && (
-                <Tooltip placement="right" fullWidth text={tooltip} />
+                <Tooltip
+                  placement="right"
+                  fullWidth={tooltipFull}
+                  text={tooltip}
+                />
               )}
             </Text>
           </Box>

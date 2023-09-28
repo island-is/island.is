@@ -78,8 +78,8 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
             navRoot.path !== ServicePortalPath.MinarSidurRoot && (
               <GridColumn
                 key={formatMessage(navRoot.name) + '-' + index}
-                span={['12/12', '12/12', '12/12', '6/12', '6/12']}
-                paddingBottom={3}
+                span={['12/12', '6/12', '6/12', '6/12', '6/12']}
+                paddingBottom={[1, 2, 3, 3]}
                 hiddenAbove={
                   navRoot.path === DocumentsPaths.ElectronicDocumentsRoot
                     ? 'md'
@@ -211,8 +211,15 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
                       height={65}
                     />
                   </Box>
-                ) : data.documents.length > 0 ? (
-                  data.documents.map((doc) => (
+                )}
+                <Box
+                  position="relative"
+                  borderColor="blue200"
+                  borderTopWidth="standard"
+                  width="full"
+                  marginTop={2}
+                >
+                  {data?.documents.map((doc) => (
                     <Box key={doc.id}>
                       <NewDocumentLine
                         img={getOrganizationLogoUrl(
@@ -224,23 +231,8 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
                         asFrame
                       />
                     </Box>
-                  ))
-                ) : (
-                  <Box
-                    display="flex"
-                    flexDirection="column"
-                    paddingTop={2}
-                    justifyContent="center"
-                    alignItems="center"
-                    rowGap={2}
-                  >
-                    <EmptyImageSmall style={{ maxHeight: 160 }} />
-                    <Text variant="h3">
-                      {formatMessage(m.emptyDocumentsList)}
-                    </Text>
-                  </Box>
-                )}
-
+                  ))}
+                </Box>
                 <Box
                   textAlign="center"
                   marginBottom={1}

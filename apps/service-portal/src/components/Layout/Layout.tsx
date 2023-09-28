@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import Header from '../Header/Header'
-import { ToastContainer, NavigationItem } from '@island.is/island-ui/core'
+import { ToastContainer, NavigationItem, Box } from '@island.is/island-ui/core'
 import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
 import { useLocation } from 'react-router-dom'
 import { useNamespaces } from '@island.is/localization'
@@ -42,7 +42,7 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
       <Header
         setSideMenuOpen={(set: boolean) => setSideMenuOpen(set)}
         sideMenuOpen={sideMenuOpen}
-        position={height ? height : 0}
+        position={height && globalBanners.length > 0 ? height : 0}
       />
 
       {!isFullwidth && activeParent && (

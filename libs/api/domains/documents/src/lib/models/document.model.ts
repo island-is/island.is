@@ -35,6 +35,9 @@ export class Document {
   @Field(() => String)
   url!: string
 
+  @Field(() => Boolean, { nullable: true })
+  bookmarked?: boolean
+
   @Field(() => String, { nullable: true })
   categoryId?: string
 
@@ -47,6 +50,7 @@ export class Document {
     doc.subject = docInfo.subject
     doc.senderNatReg = docInfo.senderKennitala
     doc.categoryId = docInfo.categoryId
+    doc.bookmarked = docInfo.bookmarked
 
     return doc
   }

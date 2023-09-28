@@ -1,30 +1,17 @@
 import cn from 'classnames'
 import format from 'date-fns/format'
 import React, { FC, useState } from 'react'
-import { useWindowSize } from 'react-use'
 
-import {
-  Document,
-  DocumentCategory,
-  DocumentDetails,
-} from '@island.is/api/schema'
-import { User } from '@island.is/shared/types'
+import { Document, DocumentDetails } from '@island.is/api/schema'
 import {
   Box,
-  Link,
   Text,
   Icon,
   AlertBanner,
-  FocusableBox,
-  Button,
+  LoadingDots,
 } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import { dateFormat } from '@island.is/shared/constants'
-import {
-  ActionCard,
-  CardLoader,
-  LoadModal,
-} from '@island.is/service-portal/core'
+import { CardLoader, LoadModal } from '@island.is/service-portal/core'
 import * as styles from './NewDocumentLine.css'
 import { gql, useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
@@ -33,6 +20,8 @@ import { ActiveDocumentType } from '../../screens/Overview/NewOverview'
 import AvatarImage from './AvatarImage'
 import { useNavigate } from 'react-router-dom'
 import { DocumentsPaths } from '../../lib/paths'
+import { FavAndStash } from '../FavAndStash'
+import { useSubmitMailAction } from '../../utils/useSubmitMailAction'
 
 interface Props {
   documentLine: Document
@@ -43,6 +32,7 @@ interface Props {
   loading?: boolean
   asFrame?: boolean
   selected?: boolean
+  bookmarked?: boolean
 }
 
 const GET_DOCUMENT_BY_ID = gql`
@@ -63,12 +53,19 @@ export const NewDocumentLine: FC<Props> = ({
   loading,
   asFrame,
   selected,
+  bookmarked,
 }) => {
-  const { width } = useWindowSize()
   const [avatarCheckmark, setAvatarCheckmark] = useState(false)
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const date = format(new Date(documentLine.date), dateFormat.is)
+
+  const {
+    submitMailAction,
+    archiveSuccess,
+    bookmarkSuccess,
+    loading: postLoading,
+  } = useSubmitMailAction({ messageId: documentLine.id })
 
   const displayPdf = (docContent?: DocumentDetails) => {
     if (onClick) {
@@ -151,14 +148,18 @@ export const NewDocumentLine: FC<Props> = ({
   }
 
   const unread = !documentLine.opened
+  const isBookmarked = bookmarked || bookmarkSuccess
+  const isArchived = archiveSuccess
 
   return (
     <>
       {fileLoading && <LoadModal />}
 
-      <button
+      <Box
         className={styles.wrapper}
         onClick={!isLink ? async () => onLineClick() : undefined}
+        role="button"
+        tabIndex={0}
       >
         <Box
           display="flex"
@@ -172,8 +173,8 @@ export const NewDocumentLine: FC<Props> = ({
             [styles.active]: active,
             [styles.unread]: unread,
           })}
-          onMouseEnter={asFrame ? undefined : () => setAvatarCheckmark(true)}
-          onMouseLeave={asFrame ? undefined : () => setAvatarCheckmark(false)}
+          onMouseEnter={() => setAvatarCheckmark(true)}
+          onMouseLeave={() => setAvatarCheckmark(false)}
         >
           <AvatarImage
             img={img}
@@ -182,10 +183,9 @@ export const NewDocumentLine: FC<Props> = ({
               if (documentLine.id && setSelectLine) {
                 setSelectLine(documentLine.id)
               }
-              console.log('ON AVATAR CLICK')
             }}
             avatar={
-              avatarCheckmark || selected ? (
+              (avatarCheckmark || selected) && !asFrame ? (
                 <Box
                   display="flex"
                   alignItems="center"
@@ -200,7 +200,9 @@ export const NewDocumentLine: FC<Props> = ({
             }
             background={
               avatarCheckmark || selected
-                ? 'blue200'
+                ? asFrame
+                  ? 'white'
+                  : 'blue200'
                 : documentLine.opened
                 ? 'blue100'
                 : 'white'
@@ -210,7 +212,7 @@ export const NewDocumentLine: FC<Props> = ({
             width="full"
             display="flex"
             flexDirection="column"
-            paddingLeft={3}
+            paddingLeft={2}
             minWidth={0}
           >
             {active && <div className={styles.fakeBorder} />}
@@ -219,29 +221,57 @@ export const NewDocumentLine: FC<Props> = ({
               flexDirection="row"
               justifyContent="spaceBetween"
             >
-              <Text variant="small">{documentLine.senderName}</Text>
+              <Text variant="small" truncate>
+                {documentLine.senderName}
+              </Text>
               <Text variant="small">{date}</Text>
             </Box>
             <Box
-              // className={styles.title}
-              width="full"
-              textAlign="left"
-              position="relative"
+              className={styles.title}
+              display="flex"
+              flexDirection="row"
+              justifyContent="spaceBetween"
             >
               <Text
-                fontWeight={unread ? 'semiBold' : 'regular'}
+                fontWeight={unread ? 'medium' : 'regular'}
                 color="blue400"
                 truncate
               >
                 {documentLine.subject}
-                {/* {unread && (
-                <Box borderRadius="circle" className={cn(styles.badge)}></Box>
-              )} */}
               </Text>
+              {(avatarCheckmark || isBookmarked || isArchived) && !postLoading && (
+                <FavAndStash
+                  bookmarked={isBookmarked}
+                  archived={isArchived}
+                  onFav={
+                    avatarCheckmark || isBookmarked
+                      ? (e) => {
+                          e.stopPropagation()
+                          submitMailAction(
+                            isBookmarked ? 'unbookmark' : 'bookmark',
+                          )
+                        }
+                      : undefined
+                  }
+                  onStash={
+                    avatarCheckmark || isArchived
+                      ? (e) => {
+                          e.stopPropagation()
+                          submitMailAction(isArchived ? 'unarchive' : 'archive')
+                        }
+                      : undefined
+                  }
+                />
+              )}
+              {postLoading && (
+                <Box display="flex" alignItems="center">
+                  <LoadingDots single />
+                </Box>
+              )}
             </Box>
           </Box>
         </Box>
-      </button>
+      </Box>
       {error && displayError()}
     </>
   )

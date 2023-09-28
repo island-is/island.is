@@ -8,6 +8,8 @@ export type GetDocumentListInput = {
   sortBy?: 'Date' | 'Category' | 'Type' | 'Subject' | 'Sender'
   order?: 'Ascending' | 'Descending'
   opened?: boolean
+  archived?: boolean
+  bookmarked?: boolean
   page?: number
   pageSize?: number
 }

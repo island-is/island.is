@@ -30,6 +30,12 @@ export class GetDocumentListInput {
   opened?: boolean
 
   @Field({ nullable: true })
+  archived?: boolean
+
+  @Field({ nullable: true })
+  bookmarked?: boolean
+
+  @Field({ nullable: true })
   page?: number
 
   @Field({ nullable: true })
