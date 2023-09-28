@@ -134,6 +134,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
       expect(mockAwsS3Service.putObject).toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, user, caseId },
+        { type: MessageType.DELIVER_CASE_CONCLUSION_TO_COURT, user, caseId },
         { type: MessageType.SEND_RULING_NOTIFICATION, user, caseId },
         {
           type: MessageType.DELIVER_CASE_FILE_TO_COURT,
@@ -175,6 +176,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
       expect(mockAwsS3Service.putObject).toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, user, caseId },
+        { type: MessageType.DELIVER_CASE_CONCLUSION_TO_COURT, user, caseId },
         { type: MessageType.SEND_RULING_NOTIFICATION, user, caseId },
         { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, user, caseId },
         { type: MessageType.DELIVER_CASE_TO_POLICE, user, caseId },
@@ -203,6 +205,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
     it('should return success', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, user, caseId },
+        { type: MessageType.DELIVER_CASE_CONCLUSION_TO_COURT, user, caseId },
         { type: MessageType.SEND_RULING_NOTIFICATION, user, caseId },
         { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, user, caseId },
         { type: MessageType.DELIVER_CASE_TO_POLICE, user, caseId },

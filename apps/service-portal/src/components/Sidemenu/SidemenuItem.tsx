@@ -38,7 +38,7 @@ const SidemenuItem = ({
         justifyContent="center"
         alignItems="center"
         border="standard"
-        borderColor="blue200"
+        borderColor={isHovered ? 'blue400' : 'blue200'}
         borderRadius="standard"
         className={cn(styles.itemBlock, {
           [`${styles.item}`]: itemTextHover || item.active,

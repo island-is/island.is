@@ -23,6 +23,7 @@ import {
   CaseType,
   completedCaseStates,
   isIndictmentCase,
+  isRestrictionCase,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
@@ -697,6 +698,26 @@ export class InternalCaseService {
     const delivered = await this.deliverSignedRulingPdfToCourt(theCase, user)
 
     return { delivered }
+  }
+
+  async deliverCaseConclusionToCourt(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    return this.courtService
+      .updateCaseWithConclusion(
+        user,
+        theCase.id,
+        theCase.court?.name,
+        theCase.courtCaseNumber,
+        theCase.decision,
+        theCase.rulingDate,
+        isRestrictionCase(theCase.type) ? theCase.validToDate : undefined,
+        theCase.type === CaseType.CUSTODY && theCase.isCustodyIsolation
+          ? theCase.isolationToDate
+          : undefined,
+      )
+      .then(() => ({ delivered: true }))
   }
 
   async deliverCaseToPolice(

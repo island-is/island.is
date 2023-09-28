@@ -18,6 +18,24 @@ const wrapperAnimation = keyframes({
   },
 })
 
+export const navWrapper = style({
+  display: 'grid',
+  paddingBottom: theme.spacing[3],
+  paddingTop: theme.spacing[3],
+  gap: theme.spacing[1],
+  ...themeUtils.responsiveStyle({
+    md: {
+      gridTemplateColumns: 'repeat(3, 1fr)',
+    },
+    sm: {
+      gridTemplateColumns: 'repeat(2, 1fr)',
+    },
+    xs: {
+      gridTemplateColumns: '1fr',
+    },
+  }),
+})
+
 export const link = style({
   display: 'block',
   height: '100%',
@@ -31,9 +49,7 @@ export const categories = style({
 export const itemBlock = style({
   height: 88,
   maxHeight: 88,
-  ':hover': {
-    background: theme.color.blue100,
-  },
+  transition: 'border-color 200ms',
 })
 
 const iconBase: StyleWithSelectors = {
@@ -166,20 +182,8 @@ export const itemLink = style({
 export const itemContainer = style({
   transition: 'max-height 200ms ease-out',
   ':hover': {
-    borderColor: theme.color.blue600,
     cursor: 'pointer',
   },
-  ...themeUtils.responsiveStyle({
-    md: {
-      width: '31.6%',
-    },
-    sm: {
-      width: `calc(50% - ${theme.spacing[2]}px)`,
-    },
-    xs: {
-      width: '100%',
-    },
-  }),
 })
 
 export const item = style({
@@ -194,8 +198,4 @@ export const itemText = style({
 export const overviewIcon = style({
   height: 40,
   width: 40,
-})
-
-globalStyle(`${item} svg, ${itemBlock}:hover svg`, {
-  color: theme.color.blue600,
 })

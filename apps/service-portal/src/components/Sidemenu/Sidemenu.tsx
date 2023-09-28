@@ -85,14 +85,7 @@ const Sidemenu = ({
             </Box>
             <Text variant="h4">{formatMessage(m.overview)}</Text>
           </Box>
-          <Box
-            display="flex"
-            flexWrap="wrap"
-            paddingBottom={3}
-            paddingTop={2}
-            columnGap={1}
-            rowGap={1}
-          >
+          <Box className={styles.navWrapper}>
             {navigation?.children?.map(
               (navRoot, index) =>
                 navRoot.path !== ServicePortalPath.MinarSidurRoot &&

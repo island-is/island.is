@@ -136,7 +136,7 @@ export const en: TranslatedMessages = {
   // Home
   'home.screenTitle': 'Overview',
   'home.applicationsStatus': 'Applications',
-  'home.allApplications': 'All digital applications',
+  'home.allApplications': 'Digital applications',
   'home.notifications': 'Notifications',
   'home.welcomeText': 'Hi',
   'home.onboardingModule.card1':
@@ -287,6 +287,7 @@ export const en: TranslatedMessages = {
   'vehicleDetail.vehicleWeight': 'Vehicle weight',
   'vehicleDetail.totalWeight': 'Maximum weight',
   'vehicleDetail.capacityWeight': 'Road train weight',
+  'vehicleDetail.odometer': 'Odometer',
 
   // assets overview
   'assetsOvervies.screenTitle': 'Assets',
@@ -387,12 +388,18 @@ export const en: TranslatedMessages = {
   'edit.phone.description': 'Here you can change your phone number',
   'edit.phone.inputlabel': 'Phone number',
   'edit.phone.button': 'Save',
+  'edit.phone.button.empty': 'Save empty',
+  'edit.phone.button.error': 'Error',
+  'edit.phone.button.errorMessage': 'Could not send verification code',
 
   // edit email
   'edit.email.screenTitle': 'Edit Email',
   'edit.email.description': 'Here you can change your email',
   'edit.email.inputlabel': 'Email',
   'edit.email.button': 'Save',
+  'edit.email.button.empty': 'Save empty',
+  'edit.email.button.error': 'Error',
+  'edit.email.button.errorMessage': 'Could not send verification code',
 
   // edit bank info
   'edit.bankinfo.screenTitle': 'Edit Bank Info',
