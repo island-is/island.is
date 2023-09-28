@@ -46,6 +46,7 @@ const CaseDesktop = ({
     contactEmail,
     contactName,
     shortDescription,
+    advicePublishTypeId,
   } = chosenCase
   const {
     isDocumentsNotEmpty,
@@ -99,7 +100,10 @@ const CaseDesktop = ({
           </GridColumn>
           <GridColumn span={'3/12'}>
             <Stack space={3}>
-              <CaseStatusBox status={statusName} />
+              <CaseStatusBox
+                status={statusName}
+                advicePublishTypeId={advicePublishTypeId}
+              />
               {isStakeholdersNotEmpty && (
                 <BlowoutList list={stakeholders} isStakeholder />
               )}

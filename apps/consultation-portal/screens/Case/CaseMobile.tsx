@@ -40,6 +40,7 @@ const CaseMobile = ({
     contactEmail,
     contactName,
     shortDescription,
+    advicePublishTypeId,
   } = chosenCase
   const {
     isDocumentsNotEmpty,
@@ -72,7 +73,10 @@ const CaseMobile = ({
             />
           )}
 
-          <CaseStatusBox status={statusName} />
+          <CaseStatusBox
+            status={statusName}
+            advicePublishTypeId={advicePublishTypeId}
+          />
           {isStakeholdersNotEmpty && (
             <BlowoutList list={stakeholders} isStakeholder />
           )}
