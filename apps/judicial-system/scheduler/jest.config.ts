@@ -8,7 +8,7 @@ export default {
   transform: {
     '^.+\\.[tj]s$': [
       'ts-jest',
-      { tsconfig: `${__dirname}/tsconfig.spec.json` },
+      { tsconfig: `${__dirname}/tsconfig.spec.json`, isolatedModules: true },
     ],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],

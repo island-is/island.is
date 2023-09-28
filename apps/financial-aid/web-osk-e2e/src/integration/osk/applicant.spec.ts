@@ -107,7 +107,9 @@ describe('applicant flow', () => {
           )
           cy.contains('Athugaðu hvort netfang sé rétt slegið inn')
           cy.contains('Verður að samþykkja')
-          cy.getByTestId('nationalIdSpouse').focus().type('0000000000')
+          const nationalIdSpouse = 'nationalIdSpouse'
+          cy.getByTestId(nationalIdSpouse).focus()
+          cy.getByTestId(nationalIdSpouse).type('0000000000')
 
           cy.contains(
             'Athugaðu hvort kennitalan sé rétt slegin inn, gild kennitala er 10 stafir',
@@ -120,9 +122,12 @@ describe('applicant flow', () => {
 
         it('should be able to continue when unregistered cohabitation is selected and needed inputs filled', () => {
           cy.get('[value=UnregisteredCohabitation]').click()
-
-          cy.getByTestId('nationalIdSpouse').focus().type('0000000000')
-          cy.getByTestId('emailSpouse').focus().type('test@test.test')
+          const nationalIdSpouse = 'nationalIdSpouse'
+          cy.getByTestId(nationalIdSpouse).focus()
+          cy.getByTestId(nationalIdSpouse).type('0000000000')
+          const emailSpouse = 'emailSpouse'
+          cy.getByTestId(emailSpouse).focus()
+          cy.getByTestId(emailSpouse).type('test@test.test')
           cy.getByTestId('acceptSpouseTerms').click()
           cy.getByTestId('continueButton').click()
           cy.url().should('include', '/umsokn/buseta')
@@ -315,8 +320,10 @@ describe('applicant flow', () => {
       })
 
       it('should route when input is filled', () => {
-        cy.get('[name=email]').focus().type('test@test.test')
-        cy.get('[name=phoneNumber]').focus().type('0000000')
+        cy.get('[name=email]').focus()
+        cy.get('[name=email]').type('test@test.test')
+        cy.get('[name=phoneNumber]').focus()
+        cy.get('[name=phoneNumber]').type('0000000')
         cy.getByTestId('continueButton').click()
         cy.url().should('include', '/umsokn/yfirlit')
       })

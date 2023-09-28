@@ -393,6 +393,11 @@ export const colors = {
       theme.color.blueberry400,
       theme.color.blueberry300,
     ),
+    dark: textColors(
+      theme.color.dark400,
+      theme.color.dark200,
+      theme.color.dark300,
+    ),
   }),
   utility: styleVariants({
     default: utilityColors(
@@ -435,6 +440,15 @@ export const colors = {
       theme.color.blueberry600,
       theme.color.dark200,
       theme.color.blue100,
+      2,
+    ),
+    dark: utilityColors(
+      theme.color.dark400,
+      theme.color.dark400,
+      theme.color.dark400,
+      theme.color.dark400,
+      theme.color.dark200,
+      theme.color.dark100,
       2,
     ),
     primary: primaryColors(

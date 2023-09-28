@@ -52,6 +52,9 @@ import { GET_NAMESPACE_QUERY } from '../queries'
 import { useNamespace } from '@island.is/web/hooks'
 import { TranslationDefaults } from './TranslationDefaults'
 import { CustomNextError } from '@island.is/web/units/errors'
+import getConfig from 'next/config'
+
+const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
 import {
   useFeatureFlag,
@@ -1180,19 +1183,17 @@ UniversitySearch.getProps = async ({ apolloClient, locale }) => {
     namespaceResponse?.data?.getNamespace?.fields || '{}',
   ) as Record<string, string>
 
-  console.log('process.env', process.env.NODE_ENV)
+  let showPagesFeatureFlag = false
 
-  let showPageFeatureFlag = false
   if (publicRuntimeConfig?.environment === 'prod') {
-    showPageFeatureFlag = Boolean(namespace?.prodKey)
+    showPagesFeatureFlag = Boolean(namespace?.showPagesProdFeatureFlag)
+  } else if (publicRuntimeConfig?.environment === 'staging') {
+    showPagesFeatureFlag = Boolean(namespace?.showPagesStagingFeatureFlag)
+  } else {
+    showPagesFeatureFlag = Boolean(namespace?.showPagesDevFeatureFlag)
   }
 
-  const showPage =
-    process.env.NODE_ENV === 'development'
-      ? namespace.devKey
-      : namespace.prodKey
-
-  if (showPage === 'false') {
+  if (!showPagesFeatureFlag) {
     throw new CustomNextError(404, 'Síða er ekki opin')
   }
 
