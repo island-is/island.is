@@ -98,7 +98,7 @@ export const m = defineMessages({
   },
   validTag: {
     id: 'pa.application:selectPassport.validTag',
-    defaultMessage: 'Í gildi til ',
+    defaultMessage: 'Í gildi til',
     description: 'Some description',
   },
   noPassport: {
@@ -285,11 +285,6 @@ export const m = defineMessages({
   currentPassportStatus: {
     id: 'pa.application:overview.currentPassport',
     defaultMessage: 'Staða núverandi vegabréfs',
-    description: 'Some description',
-  },
-  currentPassportExpiration: {
-    id: 'pa.application:overview.currentPassport.expiration',
-    defaultMessage: 'Í gildi til',
     description: 'Some description',
   },
   authenticationType: {

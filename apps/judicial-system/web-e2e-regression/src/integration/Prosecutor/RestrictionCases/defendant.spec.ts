@@ -30,24 +30,30 @@ describe('Create indictment', () => {
     cy.getByTestid('createCaseDropdown').click()
     cy.get(`a[href="${CREATE_RESTRICTION_CASE_ROUTE}"]`).click()
     cy.url().should('contain', CREATE_RESTRICTION_CASE_ROUTE)
-
-    cy.get('#policeCaseNumbers').type('0')
+    const policeCaseNumberId = '#policeCaseNumbers'
+    cy.get(policeCaseNumberId).type('0')
     cy.getByTestid('multipleValueListContainer').within(() =>
       cy.get('button').should('be.disabled'),
     )
-    cy.get('#policeCaseNumbers').clear().blur()
+    cy.get(policeCaseNumberId).clear()
+    cy.get(policeCaseNumberId).blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.get('#policeCaseNumbers').type('007202201').type('{enter}')
+    cy.get(policeCaseNumberId).type('007202201')
+    cy.get(policeCaseNumberId).type('{enter}')
     cy.getByTestid('policeCaseNumbers-list').children().should('have.length', 1)
     cy.getByTestid('inputErrorMessage').should('not.exist')
     cy.getByTestid('continueButton').should('be.disabled')
 
     // National id
-    cy.getByTestid('nationalId').type('0').blur()
+    const nationalId = 'nationalId'
+    cy.getByTestid(nationalId).type('0')
+    cy.getByTestid(nationalId).blur()
     cy.getByTestid('inputErrorMessage').contains('Dæmi: 000000-0000')
-    cy.getByTestid('nationalId').clear().blur()
+    cy.getByTestid(nationalId).clear()
+    cy.getByTestid(nationalId).blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('nationalId').clear().type('0000000000')
+    cy.getByTestid(nationalId).clear()
+    cy.getByTestid(nationalId).type('0000000000')
     cy.wait('@getPersonByNationalId')
     cy.getByTestid('inputErrorMessage').should('not.exist')
     cy.getByTestid('continueButton').should('be.disabled')

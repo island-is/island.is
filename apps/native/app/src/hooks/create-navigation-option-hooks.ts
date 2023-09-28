@@ -80,6 +80,18 @@ const defaultOptions = (
     }
   }
 
+  if (Platform.OS === 'android') {
+    options.bottomTabs = {
+      backgroundColor: theme.shade.background,
+    };
+    options.topBar = {
+      ...options.topBar,
+      background: {
+        color: theme.shade.background,
+      },
+    };
+  }
+
   return options;
 };
 

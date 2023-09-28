@@ -26,6 +26,7 @@ import {openBrowser} from '../../lib/rn-island';
 import {getRightButtons} from '../../utils/get-main-root';
 import {testIDs} from '../../utils/test-ids';
 import {ApplicationsModule} from '../home/applications-module';
+import {getApplicationOverviewUrl} from '../../utils/applications-utils';
 
 type ListItem =
   | {id: string; type: 'skeleton' | 'empty'}
@@ -65,8 +66,8 @@ const {useNavigationOptions, getNavigationOptions} =
         iconInsets: {
           bottom: -4,
         },
-        icon: require('../../assets/icons/tabbar-application.png'),
-        selectedIcon: require('../../assets/icons/tabbar-application-selected.png'),
+        icon: require('../../assets/icons/tabbar-applications.png'),
+        selectedIcon: require('../../assets/icons/tabbar-applications-selected.png'),
       },
     },
   );
@@ -146,7 +147,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         key={item.id}
         title={item.title}
         onPress={() =>
-          openBrowser(`http://island.is/${item.slug}`, componentId)
+          openBrowser(getApplicationOverviewUrl(item), componentId)
         }
       />
     );

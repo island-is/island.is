@@ -28,14 +28,16 @@ describe(`${INVESTIGATION_CASE_POLICE_REPORT_ROUTE}/:id`, () => {
   })
 
   it('should require a valid case facts value', () => {
-    cy.getByTestid('caseFacts').click().blur()
+    cy.getByTestid('caseFacts').click()
+    cy.getByTestid('caseFacts').blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('caseFacts').type(faker.lorem.words(5))
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
   it('should require a valid legal arguments value', () => {
-    cy.getByTestid('legalArguments').click().blur()
+    cy.getByTestid('legalArguments').click()
+    cy.getByTestid('legalArguments').blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('legalArguments').type(faker.lorem.words(5))
     cy.getByTestid('inputErrorMessage').should('not.exist')
