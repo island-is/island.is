@@ -6,15 +6,20 @@ import {
 import { Localhost } from '../localhost-runtime'
 import { EXCLUDED_ENVIRONMENT_NAMES } from '../../cli/render-env-vars'
 import { readFile, writeFile } from 'fs/promises'
-import { globSync } from 'glob'
+import { sync } from 'glob'
 import { join } from 'path'
 import { rootDir } from '../consts'
+import { existsSync } from 'fs'
 
 const mapServiceToNXname = async (serviceName: string) => {
   const projectRootPath = join(__dirname, '..', '..', '..', '..')
-  const projects = globSync(['apps/*/project.json', 'apps/*/*/project.json'], {
-    cwd: projectRootPath,
-  })
+  const projects = ['apps/*/project.json', 'apps/*/*/project.json']
+    .map((project) =>
+      sync(project, {
+        cwd: projectRootPath,
+      }),
+    )
+    .flat()
   const nxName = (
     await Promise.all(
       projects.map(async (path) => {
@@ -144,8 +149,13 @@ export const getLocalrunValueFile = async (
     { ports: [] as number[], configs: [] as any[] },
   )
   const defaultMountebankConfig = 'mountebank-imposter-config.json'
+  // TODO: Get project root (/infra/) from nx
+  const infraPath = existsSync(`${process.cwd()}/infra`)
+    ? `${process.cwd()}/infra`
+    : `${process.cwd()}`
+  const defaultMountebankConfigPath = `${infraPath}/${defaultMountebankConfig}`
   await writeFile(
-    defaultMountebankConfig,
+    defaultMountebankConfigPath,
     JSON.stringify({ imposters: mocksConfigs.configs }),
     { encoding: 'utf-8' },
   )
@@ -154,7 +164,7 @@ export const getLocalrunValueFile = async (
     .map((port) => `-p ${port}:${port}`)
     .join(
       ' ',
-    )} -v ${process.cwd()}/${defaultMountebankConfig}:/app/default.json docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json`
+    )} -v ${defaultMountebankConfigPath}:/app/default.json docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json`
 
   return {
     services: Object.entries(dockerComposeServices).reduce(
