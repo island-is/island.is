@@ -51,8 +51,10 @@ import {
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { useNamespace } from '@island.is/web/hooks'
 import { TranslationDefaults } from './TranslationDefaults'
-import { getFeatureFlag } from '@island.is/web/utils/featureFlag'
 import { CustomNextError } from '@island.is/web/units/errors'
+import getConfig from 'next/config'
+
+const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
 const ITEMS_PER_PAGE = 8
 const NUMBER_OF_FILTERS = 6
@@ -1159,13 +1161,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 }
 
 UniversitySearch.getProps = async ({ apolloClient, locale }) => {
-  const showPagesFeatureFlag = await getFeatureFlag(
-    'universityGatewayShowPages',
-    false,
-  )
-  if (!showPagesFeatureFlag) {
-    throw new CustomNextError(404, 'Síða er ekki opin')
-  }
   const namespaceResponse = await apolloClient.query<
     GetNamespaceQuery,
     GetNamespaceQueryVariables
@@ -1182,6 +1177,20 @@ UniversitySearch.getProps = async ({ apolloClient, locale }) => {
   const namespace = JSON.parse(
     namespaceResponse?.data?.getNamespace?.fields || '{}',
   ) as Record<string, string>
+
+  let showPagesFeatureFlag = false
+
+  if (publicRuntimeConfig?.environment === 'prod') {
+    showPagesFeatureFlag = Boolean(namespace?.showPagesProdFeatureFlag)
+  } else if (publicRuntimeConfig?.environment === 'staging') {
+    showPagesFeatureFlag = Boolean(namespace?.showPagesStagingFeatureFlag)
+  } else {
+    showPagesFeatureFlag = Boolean(namespace?.showPagesDevFeatureFlag)
+  }
+
+  if (!showPagesFeatureFlag) {
+    throw new CustomNextError(404, 'Síða er ekki opin')
+  }
 
   const newResponse =
     await apolloClient.query<GetUniversityGatewayActiveProgramsQuery>({
