@@ -86,8 +86,6 @@ const UploadFilesToPoliceCase: React.FC<
 
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
 
-  const [isUploading, setIsUploading] = useState<boolean>(false)
-
   const errorMessage = useMemo(() => {
     if (displayFiles.some((file) => file.status === 'error')) {
       return formatMessage(errorMessages.general)
@@ -260,7 +258,6 @@ const UploadFilesToPoliceCase: React.FC<
     <>
       <PoliceCaseFiles
         onUpload={onPoliceCaseFileUpload}
-        isUploading={isUploading}
         policeCaseFileList={policeCaseFileList}
         policeCaseFiles={policeCaseFiles}
       />
@@ -290,7 +287,6 @@ const UploadFilesToPoliceCase: React.FC<
           )
         }
         errorMessage={errorMessage}
-        disabled={isUploading}
         showFileSize
       />
     </>

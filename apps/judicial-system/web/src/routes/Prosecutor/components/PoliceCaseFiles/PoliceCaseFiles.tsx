@@ -38,7 +38,6 @@ export const mapPoliceCaseFileToPoliceCaseFileCheck = (
 
 interface Props {
   onUpload: (selectedFiles: Item[]) => Promise<void>
-  isUploading: boolean
   policeCaseFileList?: PoliceCaseFileCheck[]
   policeCaseFiles?: PoliceCaseFilesData
 }
