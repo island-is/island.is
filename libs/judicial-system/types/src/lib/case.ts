@@ -4,6 +4,7 @@ import type { Notification } from './notification'
 import { CaseFile } from './file'
 import { User, UserRole } from './user'
 import type { CourtDocument } from './courtDocument'
+import { EventLog } from './eventLog'
 
 export enum CaseOrigin {
   UNKNOWN = 'UNKNOWN',
@@ -283,6 +284,7 @@ export interface Case {
   appealConclusion?: string
   appealRulingDecision?: CaseAppealRulingDecision
   requestSharedWithDefender?: RequestSharedWithDefender
+  eventLogs?: EventLog[]
 }
 
 export interface CaseListEntry
