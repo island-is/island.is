@@ -1,5 +1,5 @@
 import { style, globalStyle } from '@vanilla-extract/css'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const line = style({
   width: 1,
@@ -22,6 +22,59 @@ const textStyle = {
   fontWeight: theme.typography.light,
   lineHeight: theme.typography.baseLineHeight,
 }
+
+export const gridWrapper = style({
+  display: 'grid',
+  gridTemplateColumns: '1fr auto',
+})
+
+export const expandButtonWrapper = style({
+  display: 'flex',
+  alignItems: 'center',
+})
+
+export const centerColumn = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'start',
+  position: 'relative',
+
+  ...themeUtils.responsiveStyle({
+    xl: {
+      selectors: {
+        '&:first-child::after': {
+          content: '',
+          display: 'block',
+          position: 'relative',
+          height: '50%',
+          marginLeft: theme.spacing[3],
+          width: 1,
+          background: theme.color.dark200,
+        },
+      },
+    },
+    lg: {
+      selectors: {
+        '&:first-child::after': {
+          content: 'unset',
+        },
+      },
+    },
+  }),
+})
+
+export const gridRow = style({
+  display: 'grid',
+
+  ...themeUtils.responsiveStyle({
+    xl: {
+      gridTemplateColumns: 'auto 1fr 1fr 1fr',
+    },
+    lg: {
+      gridTemplateColumns: '1fr',
+    },
+  }),
+})
 
 export const text = style({})
 
