@@ -1,5 +1,6 @@
 #!/bin/bash
 set -euo pipefail
+# echo "HOOK: Running pre-push hook"
 
 : "${GIT_ROOT:="$(git rev-parse --show-toplevel)"}"
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
@@ -23,9 +24,10 @@ for pattern in "${PROTECTED[@]}"; do
 done
 
 if [ "$branch_protected" = true ]; then
-  echo "HOOK: Pushing to protected branch ($BRANCH) 🙊"
+  echo "HOOK: You are pushing to a protected branch ($BRANCH) 🙊"
   echo "HOOK: Use git push --no-verify to force this operation."
   exit 1
 fi
 
+# echo "HOOK: Finished pre-push hook"
 exec "$GIT_ROOT/.githooks/defaulthook" pre-push
