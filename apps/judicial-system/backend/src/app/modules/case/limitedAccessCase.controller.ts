@@ -1,4 +1,5 @@
 import { Response } from 'express'
+import * as fs from 'fs'
 
 import {
   BadRequestException,
@@ -341,5 +342,32 @@ export class LimitedAccessCaseController {
     const pdf = await this.caseService.getIndictmentPdf(theCase)
 
     res.end(pdf)
+  }
+
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard(restrictionCases),
+    LimitedAccessAccordingToCaseStateGuard,
+    CaseDefenderGuard,
+  )
+  @RolesRules(defenderRule)
+  @Get('case/:caseId/limitedAccess/all')
+  @Header('Content-Type', 'application/zip')
+  @ApiOkResponse({
+    content: { 'application/zip': {} },
+    description: 'Gets the all files for an existing case as a zip document',
+  })
+  async getAllFiles(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(`Getting all files for case ${caseId} as a zip document`)
+
+    const zip = fs.readFileSync(__dirname + '/example.zip')
+
+    res.end(zip)
   }
 }

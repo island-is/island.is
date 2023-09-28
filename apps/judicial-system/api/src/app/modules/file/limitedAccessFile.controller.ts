@@ -40,13 +40,14 @@ export class LimitedAccessFileController {
   ): Promise<Response> {
     this.logger.debug(`Getting the request for case ${id} as a pdf document`)
 
-    return this.fileService.tryGetPdf(
+    return this.fileService.tryGetFile(
       user.id,
       AuditedAction.GET_REQUEST_PDF,
       id,
       'limitedAccess/request',
       req,
       res,
+      'pdf',
     )
   }
 
@@ -61,13 +62,14 @@ export class LimitedAccessFileController {
   ): Promise<Response> {
     this.logger.debug(`Getting the case files for case ${id} as a pdf document`)
 
-    return this.fileService.tryGetPdf(
+    return this.fileService.tryGetFile(
       user.id,
       AuditedAction.GET_CASE_FILES_PDF,
       id,
       `limitedAccess/caseFilesRecord/${policeCaseNumber}`,
       req,
       res,
+      'pdf',
     )
   }
 
@@ -83,13 +85,14 @@ export class LimitedAccessFileController {
       `Getting the court record for case ${id} as a pdf document`,
     )
 
-    return this.fileService.tryGetPdf(
+    return this.fileService.tryGetFile(
       user.id,
       AuditedAction.GET_COURT_RECORD,
       id,
       'limitedAccess/courtRecord',
       req,
       res,
+      'pdf',
     )
   }
 
@@ -103,13 +106,14 @@ export class LimitedAccessFileController {
   ): Promise<Response> {
     this.logger.debug(`Getting the ruling for case ${id} as a pdf document`)
 
-    return this.fileService.tryGetPdf(
+    return this.fileService.tryGetFile(
       user.id,
       AuditedAction.GET_RULING_PDF,
       id,
       'limitedAccess/ruling',
       req,
       res,
+      'pdf',
     )
   }
 
@@ -123,13 +127,35 @@ export class LimitedAccessFileController {
   ): Promise<Response> {
     this.logger.debug(`Getting the indictment for case ${id} as a pdf document`)
 
-    return this.fileService.tryGetPdf(
+    return this.fileService.tryGetFile(
       user.id,
       AuditedAction.GET_INDICTMENT_PDF,
       id,
       'limitedAccess/indictment',
       req,
       res,
+      'pdf',
+    )
+  }
+
+  @Get('allFiles')
+  @Header('Content-Type', 'application/zip')
+  async getAllFiles(
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.logger.debug(`Getting files for case ${id} as a zip document`)
+
+    return this.fileService.tryGetFile(
+      user.id,
+      AuditedAction.GET_INDICTMENT_PDF,
+      id,
+      'limitedAccess/all',
+      req,
+      res,
+      'zip',
     )
   }
 }
