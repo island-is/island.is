@@ -14,11 +14,10 @@
     "build": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "development",
       "options": {
         "main": "apps/services/user-notification/src/main.ts",
         "outputPath": "dist/apps/services/user-notification",
-        "outputFileName": "main.js",
+        "outputFileName": "main.cjs",
         "format": ["cjs"],
         "esbuildConfig": "apps/services/user-notification/esbuild.json",
         "tsConfig": "apps/services/user-notification/tsconfig.app.json",
@@ -31,9 +30,6 @@
         ]
       },
       "configurations": {
-        "development": {
-          "minify": false
-        },
         "production": {
           "minify": true,
           "generatePackageJson": true
@@ -43,7 +39,12 @@
     "serve": {
       "executor": "@nx/js:node",
       "options": {
-        "buildTarget": "services-user-notification:build"
+        "buildTarget": "services-user-notification:build",
+        "buildTargetOptions": {
+          "watch": true,
+          "minify": false,
+          "runBuildTargetDependencies": true
+        }
       }
     },
     "worker": {
