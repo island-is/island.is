@@ -400,7 +400,7 @@ ProjectPage.getProps = async ({ apolloClient, locale, query }) => {
     stepperNamespace,
     showSearchInHeader: false,
     locale: locale as Locale,
-    ...getThemeConfig(getProjectPage.theme),
+    ...getThemeConfig(getProjectPage),
   }
 }
 

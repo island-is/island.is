@@ -16,17 +16,20 @@ describe(`${RESTRICTION_CASE_POLICE_REPORT_ROUTE}/:id`, () => {
   })
 
   it('should validate form', () => {
-    cy.get('[name=demands]').click().blur()
+    cy.get('[name=demands]').click()
+    cy.get('[name=demands]').blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.get('[name=demands]').type('lorem ipsum')
     cy.getByTestid('inputErrorMessage').should('not.exist')
 
-    cy.get('[name=caseFacts]').click().blur()
+    cy.get('[name=caseFacts]').click()
+    cy.get('[name=caseFacts]').blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.get('[name=caseFacts]').type('lorem ipsum')
     cy.getByTestid('inputErrorMessage').should('not.exist')
 
-    cy.get('[name=legalArguments]').click().blur()
+    cy.get('[name=legalArguments]').click()
+    cy.get('[name=legalArguments]').blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.get('[name=legalArguments]').type('lorem ipsum')
     cy.getByTestid('inputErrorMessage').should('not.exist')

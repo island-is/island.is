@@ -31,6 +31,7 @@ export const GET_PROJECT_PAGE_QUERY = gql`
           url
         }
       }
+      footerConfig
       footerItems {
         title
         content {
