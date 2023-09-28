@@ -7,11 +7,13 @@
       {
         "groups": [
           // External imports come first.
-          ["^\\w", "^@(?!(island|nestjs)).+"],
+          ["^\\w"],
           // Then nestjs packages.
-          ["^(@nestjs).*", "^@(?!island).+"],
+          ["^@nestjs"],
           // Then island.is packages.
-          ["^(@island.is).*"],
+          ["^@island\\.is/(?!judicial-system)"],
+          // Then judicial-system packages.
+          ["^@island\\.is/judicial-system"],
           // Then all other imports in this order: "../", "./", "./strings", "./css"
           [
             "^\\.\\.(?!/?$)",
