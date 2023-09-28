@@ -41,10 +41,10 @@
       "outputs": ["{workspaceRoot}/coverage/apps/services/auth/public-api"],
       "options": {
         "jestConfig": "apps/services/auth/public-api/jest.config.ts",
-        "passWithNoTests": true
+        "passWithNoTests": true,
+        "runInBand": true
       }
     },
-
     "schemas/build-openapi": {
       "executor": "nx:run-commands",
       "options": {

@@ -59,7 +59,11 @@ export class HousingBenefitCalculatorClientService {
       })
     return {
       maximumHousingBenefits: round(calculationData.manadarlegarHamarksBaetur),
-      reductions: round(calculationData.manadarlegHusnaedisKostnadarSkerding),
+      reductionsDueToIncome: round(calculationData.manadarlegTekjuSkerding),
+      reductionsDueToAssets: round(calculationData.manadarlegEignaSkerding),
+      reductionsDueToHousingCosts: round(
+        calculationData.manadarlegHusnaedisKostnadarSkerding,
+      ),
       estimatedHousingBenefits: round(
         calculationData.manadarlegarHusnaedisbaetur,
       ),

@@ -3,7 +3,7 @@ import rosetta from 'rosetta'
 import { defaultLanguage } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
 
-export const isLocale = (x: string): x is Locale => {
+export const isLocale = (x?: string): x is Locale => {
   return x === 'is' || x === 'en'
 }
 

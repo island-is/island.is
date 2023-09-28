@@ -2245,6 +2245,9 @@ export interface IOrganizationFields {
   /** Logo */
   logo?: Asset | undefined
 
+  /** Footer Config */
+  footerConfig?: Record<string, any> | undefined
+
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
 
@@ -2420,6 +2423,7 @@ export interface IOrganizationPageFields {
     | 'samgongustofa'
     | 'geislavarnir-rikisins'
     | 'rettindagaesla-fatlads-folks'
+    | 'hms'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
@@ -2806,6 +2810,9 @@ export interface IProjectPageFields {
         | ISliceConnectedComponent
       )[]
     | undefined
+
+  /** Footer Config */
+  footerConfig?: Record<string, any> | undefined
 
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
