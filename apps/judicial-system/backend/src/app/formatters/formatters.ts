@@ -269,6 +269,7 @@ export function formatProsecutorCourtDateEmailNotification(
   const registrarText = registrarName
     ? formatMessage(notifications.registrar, { registrarName })
     : undefined
+
   const defenderText = formatMessage(notifications.defender, {
     defenderName: defenderName || 'NONE',
     sessionArrangements,
@@ -696,7 +697,7 @@ export function formatDefenderReadyForCourtEmailNotification(
 
   const link = formatMessage(notifications.defenderLink, {
     defenderHasAccessToRvg: Boolean(overviewUrl),
-    courtName: courtName.replace('dómur', 'dómi') ?? 'Héraðsdómi',
+    courtName: courtName.replace('dómur', 'dómi'),
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
   })
