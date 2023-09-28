@@ -90,6 +90,8 @@ import {
 import { TransportAuthorityHeader } from './Themes/TransportAuthorityTheme'
 import { RettindagaeslaFatladsFolksHeader } from './Themes/RettindagaeslaFatladsFolksTheme'
 import { HmsHeader } from './Themes/HmsTheme'
+import { RikissaksoknariHeader } from './Themes/RikissaksoknariTheme'
+
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -258,6 +260,8 @@ export const OrganizationHeader: React.FC<
     case 'hms':
       return <HmsHeader organizationPage={organizationPage} />
 
+    case 'rikissaksoknari':
+      return <RikissaksoknariHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
