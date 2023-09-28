@@ -366,12 +366,12 @@ export const childPensionFormMessage: MessageDir = {
       description: 'Submit',
     },
     additionalFileTitle: {
-      id: 'oap.application:fileUpload.additionalFile.title',
+      id: 'cp.application:fileUpload.additionalFile.title',
       defaultMessage: 'Viðbótagögn',
       description: 'Additional attachments',
     },
     additionalFileDescription: {
-      id: 'oap.application:fileUpload.additionalFile.description',
+      id: 'cp.application:fileUpload.additionalFile.description',
       defaultMessage:
         'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis staðfestingu frá Þjóðskrá vegna rangra upplýsinga. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
