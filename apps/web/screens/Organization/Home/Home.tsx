@@ -314,9 +314,7 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
     showSearchInHeader: false,
     ...getThemeConfig(
       getOrganizationPage?.theme ?? 'landing_page',
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
-      getOrganizationPage?.slug ?? getOrganization?.slug,
+      getOrganization ?? getOrganizationPage?.organization,
     ),
   }
 }

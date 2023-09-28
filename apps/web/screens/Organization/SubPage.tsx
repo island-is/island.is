@@ -408,7 +408,10 @@ SubPage.getProps = async ({ apolloClient, locale, query, req }) => {
     namespace,
     showSearchInHeader: false,
     locale: locale as Locale,
-    ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
+    ...getThemeConfig(
+      getOrganizationPage?.theme,
+      getOrganizationPage?.organization,
+    ),
   }
 }
 

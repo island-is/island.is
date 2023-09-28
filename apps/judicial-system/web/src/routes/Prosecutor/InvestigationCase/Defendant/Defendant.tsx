@@ -407,6 +407,7 @@ const Defendant = () => {
             {[
               CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
               CaseType.EXPULSION_FROM_HOME,
+              CaseType.PAROLE_REVOCATION,
               CaseType.PSYCHIATRIC_EXAMINATION,
               CaseType.RESTRAINING_ORDER,
               CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,

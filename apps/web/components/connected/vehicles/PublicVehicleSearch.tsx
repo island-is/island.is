@@ -1,5 +1,7 @@
 import { useLazyQuery } from '@apollo/client'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import isEqual from 'lodash/isEqual'
+import { useRouter } from 'next/router'
 import {
   AlertMessage,
   AsyncSearchInput,
@@ -46,6 +48,8 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
   const [hasFocus, setHasFocus] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const { format } = useDateUtils()
+  const router = useRouter()
+  const queryParamInitialized = useRef(false)
 
   const n = useNamespace(slice?.json ?? {})
 
@@ -59,18 +63,43 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
   const vehicleWasNotFound =
     vehicleInformation === null || typeof vehicleInformation === undefined
 
-  const handleSearch = () => {
-    if (!searchValue) {
-      return
-    }
-    search({
-      variables: {
-        input: {
-          search: searchValue,
+  const handleSearch = (value: string) => {
+    const updatedQuery = { ...router.query }
+    if (value) {
+      updatedQuery['vq'] = value
+
+      search({
+        variables: {
+          input: {
+            search: value,
+          },
         },
-      },
-    })
+      })
+    }
+
+    if (!isEqual(router.query, updatedQuery)) {
+      router.replace(
+        {
+          pathname: router.pathname,
+          query: updatedQuery,
+        },
+        undefined,
+        {
+          shallow: true,
+        },
+      )
+    }
   }
+
+  useEffect(() => {
+    if (!router?.isReady || queryParamInitialized?.current) return
+    queryParamInitialized.current = true
+    if (router.query.vq) {
+      setSearchValue(router.query.vq as string)
+      handleSearch(router.query.vq as string)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router?.isReady, router?.query?.vq])
 
   const formattedRegistrationDate = vehicleInformation?.newRegDate
     ? format(new Date(vehicleInformation.newRegDate), 'do MMMM yyyy')
@@ -97,7 +126,9 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
       <Box marginTop={2} marginBottom={3}>
         <AsyncSearchInput
           buttonProps={{
-            onClick: handleSearch,
+            onClick: () => {
+              handleSearch(searchValue)
+            },
             onFocus: () => setHasFocus(true),
             onBlur: () => setHasFocus(false),
           }}
@@ -110,7 +141,7 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
             value: searchValue,
             onKeyDown: (ev) => {
               if (ev.key === 'Enter') {
-                handleSearch()
+                handleSearch(searchValue)
               }
             },
           }}

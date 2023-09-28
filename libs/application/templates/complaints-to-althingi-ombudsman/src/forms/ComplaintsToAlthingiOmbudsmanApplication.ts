@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCustomField,
   buildDataProviderItem,
   buildDateField,
@@ -279,21 +280,21 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                     },
                   ],
                 }),
-                buildCustomField({
+                buildAlertMessageField({
                   id: 'complaintInformation.decisionAlertMessage',
                   title: complaintInformation.alertMessageTitle,
-                  component: 'FieldAlertMessage',
-                  description: complaintInformation.decisionAlertMessage,
+                  message: complaintInformation.decisionAlertMessage,
+                  alertType: 'info',
                   doesNotRequireAnswer: true,
                   condition: (answers: FormValue) =>
                     getComplaintType(answers) ===
                     OmbudsmanComplaintTypeEnum.DECISION,
                 }),
-                buildCustomField({
+                buildAlertMessageField({
                   id: 'complaintInformation.proceedingsAlertMessage',
                   title: complaintInformation.alertMessageTitle,
-                  component: 'FieldAlertMessage',
-                  description: complaintInformation.proceedingsAlertMessage,
+                  message: complaintInformation.proceedingsAlertMessage,
+                  alertType: 'info',
                   doesNotRequireAnswer: true,
                   condition: (answers: FormValue) =>
                     getComplaintType(answers) ===
@@ -346,17 +347,14 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                     getComplaintType(answers) ===
                     OmbudsmanComplaintTypeEnum.DECISION,
                 }),
-                buildCustomField(
-                  {
-                    id: 'complaintDescriptionAlert',
-                    title: complaintDescription.general.alertTitle,
-                    component: 'FieldAlertMessage',
-                    description: complaintDescription.general.alertMessage,
-                    condition: (answers: FormValue) =>
-                      isDecisionDateOlderThanYear(answers),
-                  },
-                  { spaceTop: 2 },
-                ),
+                buildAlertMessageField({
+                  id: 'complaintDescriptionAlert',
+                  title: complaintDescription.general.alertTitle,
+                  message: complaintDescription.general.alertMessage,
+                  alertType: 'info',
+                  condition: (answers: FormValue) =>
+                    isDecisionDateOlderThanYear(answers),
+                }),
               ],
             }),
           ],
@@ -396,21 +394,20 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                 { value: NO, label: shared.general.no },
               ],
             }),
-            buildCustomField({
+            buildAlertMessageField({
               id: 'preexistingComplaint.preexistingComplaintAlertMessage',
               title: preexistingComplaint.alertMessage.title,
-              component: 'FieldAlertMessage',
-              description: preexistingComplaint.alertMessage.description,
+              message: preexistingComplaint.alertMessage.description,
+              alertType: 'info',
               doesNotRequireAnswer: true,
               condition: (answers: FormValue) =>
                 answers.preexistingComplaint === YES,
             }),
-            buildCustomField({
+            buildAlertMessageField({
               id: 'preexistingComplaint.preexistingComplaintAlternativeAlertMessage',
               title: preexistingComplaint.alternativeAlertMessage.title,
-              component: 'FieldAlertMessage',
-              description:
-                preexistingComplaint.alternativeAlertMessage.description,
+              message: preexistingComplaint.alternativeAlertMessage.description,
+              alertType: 'info',
               doesNotRequireAnswer: true,
               condition: (answers: FormValue) =>
                 answers.preexistingComplaint === NO,
@@ -430,11 +427,11 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                 { value: NO, label: shared.general.no },
               ],
             }),
-            buildCustomField({
+            buildAlertMessageField({
               id: 'courtAction.alert',
               title: courtAction.alertTitle,
-              description: courtAction.alertText,
-              component: 'FieldAlertMessage',
+              message: courtAction.alertText,
+              alertType: 'info',
               doesNotRequireAnswer: true,
               condition: (answers: FormValue) =>
                 answers.courtActionAnswer === YES,

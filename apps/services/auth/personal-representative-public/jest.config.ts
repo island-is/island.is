@@ -11,6 +11,7 @@ export default {
       {
         diagnostics: false,
         tsconfig: `${__dirname}/tsconfig.spec.json`,
+        isolatedModules: true,
       },
     ],
   },

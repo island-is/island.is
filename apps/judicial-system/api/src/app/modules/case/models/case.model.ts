@@ -14,6 +14,7 @@ import {
   CaseAppealState,
   UserRole,
   CaseAppealRulingDecision,
+  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 import type {
   Case as TCase,
@@ -37,6 +38,9 @@ registerEnumType(CaseAppealRulingDecision, { name: 'CaseAppealRulingDecision' })
 registerEnumType(CaseCustodyRestrictions, { name: 'CaseCustodyRestrictions' })
 registerEnumType(CaseLegalProvisions, { name: 'CaseLegalProvisions' })
 registerEnumType(CaseAppealDecision, { name: 'CaseAppealDecision' })
+registerEnumType(RequestSharedWithDefender, {
+  name: 'requestSharedWithDefender',
+})
 
 @ObjectType()
 export class Case implements TCase {
@@ -82,8 +86,8 @@ export class Case implements TCase {
   @Field({ nullable: true })
   readonly defenderPhoneNumber?: string
 
-  @Field({ nullable: true })
-  readonly sendRequestToDefender?: boolean
+  @Field(() => RequestSharedWithDefender, { nullable: true })
+  readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @Field({ nullable: true })
   isHeightenedSecurityLevel?: boolean
