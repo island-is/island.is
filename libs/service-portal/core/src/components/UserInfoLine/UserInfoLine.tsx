@@ -55,9 +55,9 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
   label,
   content,
   renderContent,
-  labelColumnSpan = ['8/12', '4/12'],
-  valueColumnSpan = ['1/1', '5/12'],
-  editColumnSpan = ['1/1', '3/12'],
+  labelColumnSpan = ['12/12', '4/12', '6/12', '6/12', '4/12'],
+  valueColumnSpan = ['1/1', '5/12', '6/12', '6/12', '5/12'],
+  editColumnSpan = ['1/1', '3/12', '1/1', '1/1', '3/12'],
   loading,
   editLink,
   title,
@@ -91,7 +91,7 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
         </Text>
       )}
 
-      <GridRow align="flexStart">
+      <GridRow rowGap={'smallGutter'} align="flexStart">
         <GridColumn order={1} span={labelColumnSpan}>
           <Box
             display="flex"
@@ -146,7 +146,13 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
           {editLink ? (
             <Box
               display="flex"
-              justifyContent={['flexStart', 'flexEnd']}
+              justifyContent={[
+                'flexStart',
+                'flexEnd',
+                'flexStart',
+                'flexStart',
+                'flexEnd',
+              ]}
               alignItems="center"
               height="full"
               printHidden

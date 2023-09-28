@@ -170,8 +170,8 @@ const VehiclesHistory = () => {
       )}
       <Stack space={2}>
         {!loading && !error && vehicles.length > 0 && (
-          <GridRow>
-            <GridColumn span={['1/1', '8/9', '8/9', '3/9']}>
+          <GridRow rowGap={[1, 1, 2, 2, 'smallGutter']}>
+            <GridColumn span={['1/1', '7/9', '6/9', '5/9', '3/9']}>
               <DatePicker
                 backgroundColor="blue"
                 handleChange={(d: Date) => setFromDate(d)}
@@ -184,8 +184,8 @@ const VehiclesHistory = () => {
               />
             </GridColumn>
             <GridColumn
-              span={['1/1', '8/9', '8/9', '3/9']}
-              paddingTop={[2, 2, 2, 0, 0]}
+              span={['1/1', '7/9', '6/9', '5/9', '3/9']}
+              paddingTop={[1, 1, 2, 0, 0]}
             >
               <DatePicker
                 backgroundColor="blue"
@@ -199,9 +199,9 @@ const VehiclesHistory = () => {
               />
             </GridColumn>
             <GridColumn
-              span={['1/1', '8/9', '8/9', '3/9']}
+              span={['1/1', '7/9', '6/9', '5/9', '3/9']}
               offset={['0', '0', '0', '0', '0']}
-              paddingBottom={[2, 2, 2, 0, 0]}
+              paddingBottom={[1, 1, 2, 0, 0]}
             >
               <Box
                 display="flex"
