@@ -70,104 +70,67 @@ const ExpandableLine: FC<React.PropsWithChildren<Props>> = ({
   return (
     <>
       <Box paddingBottom={3} paddingTop={3}>
-        <GridRow>
-          <GridColumn span={columnSpan}>
-            <Box display="flex" alignItems={'center'}>
-              <Text variant="h5" as="span" lineHeight="lg">
-                {title}
-              </Text>
-              {isDriversLicense ? (
-                <Box
-                  display="flex"
-                  justifyContent="flexEnd"
-                  alignItems="flexEnd"
-                  marginLeft={1}
-                  marginRight={3}
-                >
+        <GridRow className={styles.gridWrapper}>
+          <Box className={styles.gridRow}>
+            <GridColumn className={styles.centerColumn}>
+              <Box display="flex" columnGap={1} marginBottom={[1, 1, 1, 1, 0]}>
+                <Text variant="h5" as="span">
+                  {title}
+                </Text>
+                {isDriversLicense && (
                   <LicenseIcon
                     category={mapCategory(title.trim()).icon ?? 'B'}
                   />
-                </Box>
-              ) : (
-                ''
-              )}
-            </Box>
-          </GridColumn>
-          {data.map((item) => {
-            return (
-              <GridColumn
-                span={[
-                  dataLenghtThree ? '8/12' : '1/1',
-                  dataLenghtThree ? '8/12' : '1/1',
-                  dataLenghtThree ? '8/12' : '1/1',
-                  '3/12',
-                ]}
-                key={`expandable-item-${item.label}`}
-              >
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  height="full"
-                  justifyContent={[
-                    'flexStart',
-                    'flexStart',
-                    'flexStart',
-                    'center',
-                  ]}
-                >
-                  <Text variant="default">{item.label}</Text>
-                  <Box marginLeft={1} />
-                  <Text variant="default" fontWeight="semiBold">
-                    {String(item.value ?? '')
-                      .split(' ')
-                      .map((part) =>
-                        isJSONDate(part)
-                          ? format(+new Date(part).getTime(), dateFormat.is)
-                          : part,
-                      )
-                      .join(' ')}
-                  </Text>
-                </Box>
-              </GridColumn>
-            )
-          })}
-          {isDriversLicense && (
-            <GridColumn
-              span={
-                dataLenghtThree
-                  ? ['5/12', '5/12', '5/12', '1/12']
-                  : ['5/12', '5/12', '5/12', '4/12']
-              }
-            >
-              <Box
-                display="flex"
-                justifyContent={[
-                  'flexStart',
-                  'flexStart',
-                  'flexStart',
-                  'flexEnd',
-                ]}
-                marginTop={[2, 2, 2, 0]}
-                alignItems="center"
-              >
-                <FocusableBox
-                  borderRadius="circle"
-                  background="blue100"
-                  onClick={onExpandButton}
-                  padding={1}
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  cursor="pointer"
-                >
-                  <Icon
-                    type="filled"
-                    icon={expanded ? 'remove' : 'add'}
-                    color="blue400"
-                  />
-                </FocusableBox>
+                )}
               </Box>
             </GridColumn>
+            {data.map((item) => {
+              return (
+                <GridColumn
+                  className={styles.centerColumn}
+                  key={`expandable-item-${item.label}`}
+                >
+                  <Box display="flex" columnGap={1}>
+                    <Text variant="default">{item.label}</Text>
+                    <Text variant="default" fontWeight="semiBold">
+                      {String(item.value ?? '')
+                        .split(' ')
+                        .map((part) =>
+                          isJSONDate(part)
+                            ? format(+new Date(part).getTime(), dateFormat.is)
+                            : part,
+                        )
+                        .join(' ')}
+                    </Text>
+                  </Box>
+                </GridColumn>
+              )
+            })}
+          </Box>
+
+          {isDriversLicense && (
+            <Box className={styles.expandButtonWrapper}>
+              <GridColumn>
+                <Box>
+                  <FocusableBox
+                    borderRadius="circle"
+                    background="blue100"
+                    onClick={onExpandButton}
+                    padding={1}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    cursor="pointer"
+                  >
+                    <Icon
+                      type="filled"
+                      icon={expanded ? 'remove' : 'add'}
+                      color="blue400"
+                    />
+                  </FocusableBox>
+                </Box>
+              </GridColumn>
+            </Box>
           )}
         </GridRow>
 
