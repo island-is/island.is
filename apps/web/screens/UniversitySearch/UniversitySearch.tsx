@@ -53,7 +53,10 @@ import { useNamespace } from '@island.is/web/hooks'
 import { TranslationDefaults } from './TranslationDefaults'
 import { CustomNextError } from '@island.is/web/units/errors'
 
-import { useFeatureFlag } from '@island.is/react/feature-flags'
+import {
+  useFeatureFlag,
+  useFeatureFlagClient,
+} from '@island.is/react/feature-flags'
 
 const ITEMS_PER_PAGE = 8
 const NUMBER_OF_FILTERS = 6
@@ -106,6 +109,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   locale,
   universities,
 }) => {
+  const router = useRouter()
   const { width } = useWindowSize()
 
   const n = useNamespace(namespace)
@@ -113,7 +117,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const isMobileScreenWidth = width < theme.breakpoints.md
   const isTabletScreenWidth = width < theme.breakpoints.lg
 
-  const router = useRouter()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedPage, setSelectedPage] = useState(1)
   const [selectedComparison, setSelectedComparison] = useState<
@@ -1160,14 +1163,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 }
 
 UniversitySearch.getProps = async ({ apolloClient, locale }) => {
-  const showPagesFeatureFlag = useFeatureFlag(
-    'universityGatewayShowPages',
-    false,
-  )
-  console.log('showPagesFeatureFlag', showPagesFeatureFlag)
-  if (!showPagesFeatureFlag) {
-    throw new CustomNextError(404, 'Síða er ekki opin')
-  }
   const namespaceResponse = await apolloClient.query<
     GetNamespaceQuery,
     GetNamespaceQueryVariables
@@ -1184,6 +1179,22 @@ UniversitySearch.getProps = async ({ apolloClient, locale }) => {
   const namespace = JSON.parse(
     namespaceResponse?.data?.getNamespace?.fields || '{}',
   ) as Record<string, string>
+
+  console.log('process.env', process.env.NODE_ENV)
+
+  let showPageFeatureFlag = false
+  if (publicRuntimeConfig?.environment === 'prod') {
+    showPageFeatureFlag = Boolean(namespace?.prodKey)
+  }
+
+  const showPage =
+    process.env.NODE_ENV === 'development'
+      ? namespace.devKey
+      : namespace.prodKey
+
+  if (showPage === 'false') {
+    throw new CustomNextError(404, 'Síða er ekki opin')
+  }
 
   const newResponse =
     await apolloClient.query<GetUniversityGatewayActiveProgramsQuery>({
