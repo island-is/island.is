@@ -125,7 +125,6 @@ describe('CaseController - Get court record signature confirmation', () => {
         mockPutObject.mockRejectedValueOnce(new Error('Some error'))
 
         then = await givenWhenThen(caseId, user, theCase, documentToken)
-        console.log(then)
       })
 
       it('return failure', () => {

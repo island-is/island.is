@@ -60,7 +60,7 @@ export const LicenseScanResult = ({
               setErrorMessage(undefined);
               setNationalId(nationalId);
               setName(name);
-              setPhoto(photo.mynd);
+              setPhoto(photo?.mynd ?? photo);
             } catch (err) {
               // whoops
             }
@@ -97,7 +97,7 @@ export const LicenseScanResult = ({
       nationalId={nationalId}
       licenseNumber={driverLicenseNumber}
       photo={photo}
-      hasNoData={!driverLicenseNumber}
+      hasNoData={!nationalId}
       type={type}
     />
   );

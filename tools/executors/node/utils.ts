@@ -1,6 +1,6 @@
 import { unlinkSync } from 'fs'
 import { dirname, join, relative } from 'path'
-import { writeJsonFile } from '@nrwl/devkit'
+import { writeJsonFile } from '@nx/devkit'
 
 /**
  * This "hacky" code is copied and tweaked from @nx/workspace.
