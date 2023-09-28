@@ -150,7 +150,7 @@ export class LimitedAccessFileController {
 
     return this.fileService.tryGetFile(
       user.id,
-      AuditedAction.GET_INDICTMENT_PDF,
+      AuditedAction.GET_ALL_FILES,
       id,
       'limitedAccess/all',
       req,
