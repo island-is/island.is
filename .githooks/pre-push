@@ -4,7 +4,7 @@ set -euo pipefail
 
 : "${GIT_ROOT:="$(git rev-parse --show-toplevel)"}"
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-PROTECTED=("main" "branch2" "branch3" "release/*") # Add more protected branches or patterns here
+PROTECTED=("main" "release/*" "pre-release/*") # Add more protected branches or patterns here
 
 # Add additional branches or patterns from environment variable if provided
 if [ -n "${EXTRA_PROTECTED_BRANCHES-}" ]; then
