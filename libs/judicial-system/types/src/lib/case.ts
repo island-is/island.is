@@ -1,9 +1,9 @@
+import type { CourtDocument } from './courtDocument'
 import type { Defendant } from './defendant'
+import { CaseFile } from './file'
 import type { Institution } from './institution'
 import type { Notification } from './notification'
-import { CaseFile } from './file'
 import { User, UserRole } from './user'
-import type { CourtDocument } from './courtDocument'
 
 export enum CaseOrigin {
   UNKNOWN = 'UNKNOWN',
