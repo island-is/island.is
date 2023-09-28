@@ -1,38 +1,10 @@
 import { defineMessages } from 'react-intl'
 
 export const policeCaseFiles = defineMessages({
-  // TODO: Remove heading
-  heading: {
-    id: 'judicial.system.core:police_case_files.heading_v1',
-    defaultMessage:
-      'Gögn úr LÖKE{policeCaseNumber, select, NONE {} other {-máli {policeCaseNumber}}}',
-    description:
-      'Notaður sem titill fyrir "LOKE" gagnapakkann á rannsóknargagna skrefi.',
-  },
-  // TODO: Remove introduction
-  introduction: {
-    id: 'judicial.system.core:police_case_files.introduction',
-    defaultMessage:
-      'Til að gögn úr þessum lista verði hluti af gagnapakka málsins þarf að velja þau og smella á Hlaða upp.',
-    description:
-      'Notaður sem skýring fyrir "LOKE" gagnapakkann á rannsóknargagna skrefi.',
-  },
-  selectAllLabel: {
-    id: 'judicial.system.core:police_case_files.select_all_label',
-    defaultMessage: 'Velja allt',
-    description:
-      'Notaður sem texti fyrir "Velja allt" valmöguleikann í LÖKE gagnapakkanum á rannsóknargagna skrefi.',
-  },
   couldNotGetFromLOKEMessage: {
     id: 'judicial.system.core:police_case_files.could_not_get_from_loke_message',
     defaultMessage:
       'Ekki tókst að sækja skjalalista í LÖKE. Hægt er að hlaða upp skjölum hér fyrir neðan.',
-    description:
-      'Notaður sem villuskilaboð í LÖKE gagnapakkanum á rannsóknargagna skrefi.',
-  },
-  caseNotFoundInLOKEMessage: {
-    id: 'judicial.system.core:police_case_files.case_not_found_in_loke_message',
-    defaultMessage: 'Þessi krafa var ekki stofnuð í gegnum LÖKE',
     description:
       'Notaður sem villuskilaboð í LÖKE gagnapakkanum á rannsóknargagna skrefi.',
   },

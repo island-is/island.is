@@ -252,9 +252,14 @@ export const PhoneInput = forwardRef(
                 </label>
               )}
               <Box display="flex">
+                {/**
+                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict*/}
                 <CountryCodeSelect
                   id={selectId}
                   name={selectId}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   onChange={(option) => {
                     if (option) {
                       const newCc = option.value

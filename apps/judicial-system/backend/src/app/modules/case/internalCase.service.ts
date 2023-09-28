@@ -23,6 +23,7 @@ import {
   CaseType,
   completedCaseStates,
   isIndictmentCase,
+  isRestrictionCase,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
@@ -699,6 +700,26 @@ export class InternalCaseService {
     return { delivered }
   }
 
+  async deliverCaseConclusionToCourt(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    return this.courtService
+      .updateCaseWithConclusion(
+        user,
+        theCase.id,
+        theCase.court?.name,
+        theCase.courtCaseNumber,
+        theCase.decision,
+        theCase.rulingDate,
+        isRestrictionCase(theCase.type) ? theCase.validToDate : undefined,
+        theCase.type === CaseType.CUSTODY && theCase.isCustodyIsolation
+          ? theCase.isolationToDate
+          : undefined,
+      )
+      .then(() => ({ delivered: true }))
+  }
+
   async deliverCaseToPolice(
     theCase: Case,
     user: TUser,
@@ -739,9 +760,11 @@ export class InternalCaseService {
             theCase.validToDate) ||
           new Date() // The API requires a date so we send 1970-01-01T00:00:00.000Z as a dummy date
 
+        const originalAncestor = await this.findOriginalAncestor(theCase)
+
         const delivered = await this.policeService.updatePoliceCase(
           user,
-          theCase.id,
+          originalAncestor.id,
           theCase.type,
           theCase.state,
           theCase.policeCaseNumbers.length > 0
@@ -768,5 +791,25 @@ export class InternalCaseService {
 
         return { delivered: false }
       })
+  }
+
+  async findOriginalAncestor(theCase: Case): Promise<Case> {
+    let originalAncestor: Case = theCase
+
+    while (originalAncestor.parentCaseId) {
+      const parentCase = await this.caseModel.findByPk(
+        originalAncestor.parentCaseId,
+      )
+
+      if (!parentCase) {
+        throw new InternalServerErrorException(
+          `Original ancestor of case ${theCase.id} not found`,
+        )
+      }
+
+      originalAncestor = parentCase
+    }
+
+    return originalAncestor
   }
 }
