@@ -4,7 +4,6 @@ import { NO, YES } from './constants'
 import { childPensionFormMessage } from './messages'
 import { formatBankInfo } from './childPensionUtils'
 
-
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   questions: z.object({
@@ -39,8 +38,9 @@ export const dataSchema = z.object({
         return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
       },
       { params: childPensionFormMessage.errors.bank },
-    )
-  })
+    ),
+  }),
+  childPensionAddChild: z.enum([YES, NO]),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>
