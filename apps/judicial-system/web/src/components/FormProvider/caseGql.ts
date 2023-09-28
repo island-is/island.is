@@ -219,6 +219,14 @@ const CaseQuery = gql`
         id
         name
       }
+      eventLogs {
+        id
+        created
+        caseId
+        eventType
+        nationalId
+        userRole
+      }
     }
   }
 `
