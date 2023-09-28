@@ -16,7 +16,6 @@ import {
 } from '@island.is/web/graphql/schema'
 import { SliceType } from '@island.is/island-ui/contentful'
 import { webRichText } from '@island.is/web/utils/richText'
-import * as styles from './AccordionSlice.css'
 
 const headingLevels = ['h2', 'h3', 'h4', 'h5'] as const
 type HeadingType = typeof headingLevels[number]
@@ -74,9 +73,7 @@ export const AccordionSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
                 labelUse={childHeading}
                 startExpanded={slice.accordionItems?.length === 1}
               >
-                <Box className={styles.accordionBox}>
-                  {webRichText(item.content ?? [])}
-                </Box>
+                <Box>{webRichText(item.content ?? [])}</Box>
               </AccordionCard>
             </Box>
           ))}
