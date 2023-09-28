@@ -34,6 +34,10 @@ import SidebarLayout from '../Layouts/SidebarLayout'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { TranslationDefaults } from './TranslationDefaults'
 
+import getConfig from 'next/config'
+
+const { publicRuntimeConfig = {} } = getConfig() ?? {}
+
 interface UniversityDetailsProps {
   data: ProgramDetails
   namespace: Record<string, string>
@@ -381,6 +385,20 @@ UniversityDetails.getProps = async ({ query, apolloClient, locale }) => {
   const namespace = JSON.parse(
     namespaceResponse?.data?.getNamespace?.fields || '{}',
   ) as Record<string, string>
+
+  let showPagesFeatureFlag = false
+
+  if (publicRuntimeConfig?.environment === 'prod') {
+    showPagesFeatureFlag = Boolean(namespace?.showPagesProdFeatureFlag)
+  } else if (publicRuntimeConfig?.environment === 'staging') {
+    showPagesFeatureFlag = Boolean(namespace?.showPagesStagingFeatureFlag)
+  } else {
+    showPagesFeatureFlag = Boolean(namespace?.showPagesDevFeatureFlag)
+  }
+
+  if (!showPagesFeatureFlag) {
+    throw new CustomNextError(404, 'Síða er ekki opin')
+  }
 
   const newResponse = await apolloClient.query<any, any>({
     query: GET_UNIVERSITY_GATEWAY_PROGRAM,

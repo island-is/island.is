@@ -22,7 +22,12 @@ import {
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { useNamespace } from '@island.is/web/hooks'
 import { TranslationDefaults } from './TranslationDefaults'
-import { ComparisonProps } from './UniversitySearch'
+
+import getConfig from 'next/config'
+import { CustomNextError } from '@island.is/web/units/errors'
+
+const { publicRuntimeConfig = {} } = getConfig() ?? {}
+
 interface UniversityComparisonProps {
   data: Array<ProgramDetails>
   locale: string
@@ -269,6 +274,20 @@ Comparison.getProps = async ({ query, apolloClient, locale }) => {
   const namespace = JSON.parse(
     namespaceResponse?.data?.getNamespace?.fields || '{}',
   ) as Record<string, string>
+
+  let showPagesFeatureFlag = false
+
+  if (publicRuntimeConfig?.environment === 'prod') {
+    showPagesFeatureFlag = Boolean(namespace?.showPagesProdFeatureFlag)
+  } else if (publicRuntimeConfig?.environment === 'staging') {
+    showPagesFeatureFlag = Boolean(namespace?.showPagesStagingFeatureFlag)
+  } else {
+    showPagesFeatureFlag = Boolean(namespace?.showPagesDevFeatureFlag)
+  }
+
+  if (!showPagesFeatureFlag) {
+    throw new CustomNextError(404, 'Síða er ekki opin')
+  }
 
   const allResolvedPromises = await Promise.all(
     parsedComparison.map(async (item: string) => {
