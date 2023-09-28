@@ -460,7 +460,9 @@ class DirectorateOfImmigrationClient {
     }
 
     // selected children: create application and submit information
-    const selectedChildren = application.selectedChildren
+    const selectedChildren = application.selectedChildren.map(
+      (c) => c.nationalId,
+    )
     for (let i = 0; i < selectedChildren.length; i++) {
       const childNationalId = selectedChildren[i]
       const child = application.children.find(

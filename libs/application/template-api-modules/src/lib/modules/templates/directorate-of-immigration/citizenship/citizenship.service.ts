@@ -21,7 +21,6 @@ import {
   Country,
   CountryOfResidence,
   DirectorateOfImmigrationClient,
-  ForeignCriminalRecordFile,
   Passport,
   ResidenceConditionInfo,
   StayAbroad,
@@ -95,7 +94,6 @@ export class CitizenshipService extends BaseTemplateApiService {
   }
 
   async getNationalRegistryIndividual({
-    application,
     auth,
   }: TemplateApiModuleActionProps): Promise<CitizenIndividual | null> {
     const individual = await this.getIndividualDetails(auth.nationalId)
@@ -182,8 +180,8 @@ export class CitizenshipService extends BaseTemplateApiService {
     const sortedResidenceHistory = residenceHistory
       .filter((x) => x.dateOfChange)
       .sort((a, b) =>
-        a.dateOfChange !== b.dateOfChange
-          ? a.dateOfChange! > b.dateOfChange!
+        a.dateOfChange && b.dateOfChange && a.dateOfChange !== b.dateOfChange
+          ? a.dateOfChange > b.dateOfChange
             ? -1
             : 1
           : a.country === countryIceland
@@ -216,7 +214,6 @@ export class CitizenshipService extends BaseTemplateApiService {
   }
 
   async getNationalRegistrySpouseDetails({
-    application,
     auth,
   }: TemplateApiModuleActionProps): Promise<SpouseIndividual | null> {
     const { nationalId } = auth
@@ -355,7 +352,7 @@ export class CitizenshipService extends BaseTemplateApiService {
       answers.parentInformation?.parents
         ?.filter((p) => p.nationalId && p.wasRemoved !== 'true')
         ?.map((p) => ({
-          nationalId: p.nationalId!,
+          nationalId: p.nationalId || '',
           givenName: p.givenName,
           familyName: p.familyName,
         }))
@@ -383,7 +380,15 @@ export class CitizenshipService extends BaseTemplateApiService {
     await this.directorateOfImmigrationClient.submitApplicationForCitizenship(
       auth,
       {
-        selectedChildren: answers.selectedChildren || [],
+        selectedChildren:
+          answers.selectedChildren?.map((c) => ({
+            nationalId: c.nationalId,
+            otherParentNationalId: c.otherParentNationalId,
+            otherParentBirtDate: c.otherParentBirtDate
+              ? new Date(c.otherParentBirtDate)
+              : undefined,
+            otherParentName: c.otherParentName,
+          })) || [],
         isFormerIcelandicCitizen: answers.formerIcelander === YES,
         givenName: individual?.givenName,
         familyName: individual?.familyName,
@@ -401,7 +406,7 @@ export class CitizenshipService extends BaseTemplateApiService {
         dateOfMaritalStatus: spouseDetails?.lastModified,
         spouse: spouseDetails?.nationalId
           ? {
-              nationalId: spouseDetails.nationalId!,
+              nationalId: spouseDetails.nationalId || '',
               givenName: spouseDetails.spouse?.givenName,
               familyName: spouseDetails.spouse?.familyName,
               birthCountry: spouseDetails.spouseBirthplace?.location,

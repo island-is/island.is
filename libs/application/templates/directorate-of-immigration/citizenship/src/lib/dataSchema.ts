@@ -193,10 +193,17 @@ const ChildrenSupportingDocumentsSchema = z.object({
   custodyDocuments: z.array(z.string()).optional(),
 })
 
+const SelectedChildSchema = z.object({
+  nationalId: z.string().min(1),
+  otherParentNationalId: z.string().optional(),
+  otherParentBirtDate: z.string().optional(),
+  otherParentName: z.string().optional(),
+})
+
 export const CitizenshipSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   userInformation: UserInformationSchema,
-  selectedChildren: z.array(z.string()).optional(),
+  selectedChildren: z.array(SelectedChildSchema).optional(),
   parentInformation: ParentsSchema,
   spouse: z.string().min(1),
   countriesOfResidence: CountriesOfResidenceSchema,

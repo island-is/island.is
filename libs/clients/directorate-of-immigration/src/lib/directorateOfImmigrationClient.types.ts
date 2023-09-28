@@ -44,7 +44,12 @@ export interface ForeignCriminalRecordFile {
 }
 
 export interface CitizenshipApplication {
-  selectedChildren: string[]
+  selectedChildren: {
+    nationalId: string
+    otherParentNationalId?: string
+    otherParentBirtDate?: Date
+    otherParentName?: string
+  }[]
   isFormerIcelandicCitizen: boolean
   givenName?: string | null
   familyName?: string | null
