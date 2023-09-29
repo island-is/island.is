@@ -23,7 +23,7 @@ import {
   GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
 } from '../queries/UniversityGateway'
 import { GET_NAMESPACE_QUERY } from '../queries'
-import { useNamespace } from '@island.is/web/hooks'
+import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { TranslationDefaults } from './TranslationDefaults'
 
 import getConfig from 'next/config'
@@ -45,6 +45,7 @@ const Comparison: Screen<UniversityComparisonProps> = ({
   universities,
 }) => {
   const n = useNamespace(namespace)
+  const { linkResolver } = useLinkResolver()
   const [selectedComparison, setSelectedComparison] =
     useState<Array<ProgramDetails>>(data)
 
@@ -87,7 +88,7 @@ const Comparison: Screen<UniversityComparisonProps> = ({
 
   return (
     <GridContainer>
-      <LinkV2 href="/haskolanam" skipTab>
+      <LinkV2 href={linkResolver('universitysearch').href} skipTab>
         <Button
           preTextIcon="arrowBack"
           preTextIconType="filled"
@@ -121,7 +122,7 @@ const Comparison: Screen<UniversityComparisonProps> = ({
           type="button"
           variant="text"
           truncate
-          onClick={() => handleDeleteAll()}
+          onClick={handleDeleteAll}
         >
           {n('clearFilter', 'Hreinsa val')}
         </Button>
@@ -240,9 +241,17 @@ const Comparison: Screen<UniversityComparisonProps> = ({
                             {n('apply', 'Sækja um')}
                           </Button>
                         )}
-                      <Button size="small" variant="ghost" fluid>
-                        {n('previewProgram', 'Skoða nám')}
-                      </Button>
+
+                      <LinkV2
+                        href={
+                          linkResolver('universitysearchdetails', [i.id]).href
+                        }
+                        passHref
+                      >
+                        <Button size="small" variant="ghost" fluid>
+                          {n('previewProgram', 'Skoða nám')}
+                        </Button>
+                      </LinkV2>
                     </Box>
                   </T.Data>
                 )

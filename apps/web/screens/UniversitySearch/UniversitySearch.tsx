@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 import getConfig from 'next/config'
 import {
   Box,
-  ActionCategoryCard,
   ContentBlock,
   Icon,
   Inline,
@@ -45,7 +44,7 @@ import {
   ProgramFilter,
   University,
 } from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
+import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { CustomNextError } from '@island.is/web/units/errors'
 import {
   GET_UNIVERSITY_GATEWAY_FILTERS,
@@ -56,6 +55,7 @@ import { GET_NAMESPACE_QUERY } from '../queries'
 import { TranslationDefaults } from './TranslationDefaults'
 import * as styles from './UniversitySearch.css'
 import { Comparison } from './ComparisonComponent'
+import { ActionCategoryCard } from '@island.is/web/components/ActionCategoryCard/ActionCategoryCard'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
@@ -132,6 +132,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       return { item, refIndex: index, score: 1 }
     }),
   )
+  const { linkResolver } = useLinkResolver()
 
   const [filters, setFilters] = useState<FilterProps>(initialFilters)
 
@@ -338,7 +339,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
   return (
     <GridContainer>
-      <LinkV2 href="/haskolanam" skipTab>
+      <LinkV2 href={linkResolver('universitysearch').href} skipTab>
         <Button
           preTextIcon="arrowBack"
           preTextIconType="filled"
@@ -702,9 +703,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                           <ActionCategoryCard
                             key={index}
                             href={
-                              locale === 'en'
-                                ? `/en/haskolanam/${dataItem.id}`
-                                : `/haskolanam/${dataItem.id}`
+                              linkResolver('universitysearchdetails', [
+                                dataItem.id,
+                              ]).href
                             }
                             heading={
                               locale === 'en'
@@ -916,9 +917,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                               checkboxId={dataItem.id}
                               cta={createPrimaryCTA(dataItem)}
                               href={
-                                locale === 'en'
-                                  ? `/en/haskolanam/${dataItem.id}`
-                                  : `/haskolanam/${dataItem.id}`
+                                linkResolver('universitysearchdetails', [
+                                  dataItem.id,
+                                ]).href
                               }
                               infoItems={[
                                 {

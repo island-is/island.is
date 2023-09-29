@@ -264,7 +264,7 @@ const ghostColors = (main: string, hover: string, disabled: string) => ({
 })
 const textColors = (main: string, hover: string, disabled: string) => ({
   backgroundColor: theme.color.transparent,
-  // boxShadow: `inset 0 -1px 0 0 ${main}`,
+  boxShadow: `inset 0 -1px 0 0 ${main}`,
   color: main,
   ':focus': {
     boxShadow: `inset 0 -1px 0 0 ${theme.color.dark400}`,

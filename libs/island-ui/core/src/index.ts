@@ -65,7 +65,6 @@ export { ProfileCard } from './lib/ProfileCard/ProfileCard'
 export { ActionCard } from './lib/ActionCard/ActionCard'
 export { TopicCard } from './lib/TopicCard/TopicCard'
 export { CategoryCard } from './lib/CategoryCard/CategoryCard'
-export { ActionCategoryCard } from './lib/ActionCategoryCard/ActionCategoryCard'
 
 // Core
 export { ButtonDeprecated } from './lib/ButtonDeprecated/Button'

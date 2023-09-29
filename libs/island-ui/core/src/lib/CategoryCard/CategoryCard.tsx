@@ -12,46 +12,14 @@ import { Hyphen } from '../Hyphen/Hyphen'
 import { Text, TextProps } from '../Text/Text'
 
 import * as styles from './CategoryCard.css'
-import { Checkbox } from '../Checkbox/Checkbox'
-import { Button, ButtonSizes, ButtonTypes } from '../Button/Button'
-import { Icon as IconType } from '../IconRC/iconMap'
 
 export const STACK_WIDTH = 280
 
-export type CategoryCardTag = {
+type Tag = {
   label: string
   href?: string
   onClick?: () => void
   disabled?: boolean
-  outlined?: boolean
-}
-
-export type CTAProps = {
-  label: string
-  /** Allows for simple variant configuration of the button. If buttonType is defined it will supersede this property. */
-  variant?: ButtonTypes['variant']
-  /** Allows for full buttonType control. Supersedes the variant property when both are defined. */
-  buttonType?: ButtonTypes
-  size?: ButtonSizes
-  icon?: IconType
-  iconType?: 'filled' | 'outline'
-  onClick?: () => void
-  disabled?: boolean
-}
-
-type SidePanelItems = {
-  icon?: React.ReactNode
-  title: string
-}
-
-type SidePanelConfigProps = {
-  onCheck?: (e: any) => void
-  isChecked?: boolean
-  checkboxId?: string
-  buttonLabel?: string
-  checkboxLabel?: string
-  items?: Array<SidePanelItems>
-  cta?: CTAProps
 }
 
 export type CategoryCardProps = {
@@ -62,7 +30,7 @@ export type CategoryCardProps = {
   headingAs?: TextProps['as']
   headingVariant?: TextProps['variant']
   text: string
-  tags?: CategoryCardTag[]
+  tags?: Tag[]
   tagOptions?: Pick<TagProps, 'hyphenate' | 'truncate' | 'textLeft'>
   href?: string
   colorScheme?: 'blue' | 'purple' | 'red'
@@ -76,9 +44,6 @@ export type CategoryCardProps = {
   hyphenate?: boolean
   to?: string
   component?: ElementType
-
-  //TODO: DOCUMENT THIS: NEW ITEMS FOR HASKOLANAM
-  sidePanelConfig?: SidePanelConfigProps
 }
 
 const colorSchemes = {
@@ -132,7 +97,6 @@ const Component = forwardRef<
       truncateHeading = false,
       src,
       alt,
-      sidePanelConfig,
       objectFit = 'contain',
       customImage,
       hyphenate = false,
@@ -148,36 +112,6 @@ const Component = forwardRef<
     const hasImage = !!src || !!customImage
 
     const shouldStack = width && width < stackWidth
-
-    const renderCTA = () => {
-      const hasCTA = !!sidePanelConfig?.cta?.label
-      const cta = sidePanelConfig?.cta
-      return (
-        hasCTA &&
-        cta && (
-          <Box
-            paddingTop="gutter"
-            display="flex"
-            justifyContent={['flexStart', 'flexEnd']}
-            flexDirection="row"
-          >
-            <Box>
-              <Button
-                {...(cta.buttonType ?? { variant: cta.variant })}
-                size={cta.size}
-                onClick={cta.onClick}
-                disabled={cta.disabled}
-                icon={cta.icon}
-                iconType={cta.iconType}
-                nowrap
-              >
-                {cta.label}
-              </Button>
-            </Box>
-          </Box>
-        )
-      )
-    }
 
     return (
       <FocusableBox
@@ -206,63 +140,49 @@ const Component = forwardRef<
           height="full"
           width="full"
         >
-          <Box
-            display="flex"
-            height={sidePanelConfig ? undefined : 'full'}
-            width="full"
-            flexDirection="column"
-            justifyContent={sidePanelConfig ? 'spaceBetween' : 'flexStart'}
-            style={sidePanelConfig && { alignSelf: 'stretch' }}
-          >
-            <Box>
-              <Box
-                display="flex"
-                flexDirection="row"
-                alignItems={icon ? 'center' : 'flexEnd'}
-              >
-                {icon && (
-                  <Box
-                    paddingRight={1}
-                    display="flex"
-                    alignItems="center"
-                    className={styles.icon}
-                  >
-                    {icon}
-                  </Box>
-                )}
-                <Text
-                  as={headingAs}
-                  variant={headingVariant}
-                  color={textColor}
-                  truncate={truncateHeading}
-                  title={heading}
+          <Box display="flex" height="full" width="full" flexDirection="column">
+            <Box
+              display="flex"
+              flexDirection="row"
+              alignItems={icon ? 'center' : 'flexEnd'}
+            >
+              {icon && (
+                <Box
+                  paddingRight={1}
+                  display="flex"
+                  alignItems="center"
+                  className={styles.icon}
                 >
-                  {hyphenate ? <Hyphen>{heading}</Hyphen> : heading}
-                </Text>
-              </Box>
-              <Text paddingTop={1}>{text}</Text>
+                  {icon}
+                </Box>
+              )}
+              <Text
+                as={headingAs}
+                variant={headingVariant}
+                color={textColor}
+                truncate={truncateHeading}
+                title={heading}
+              >
+                {hyphenate ? <Hyphen>{heading}</Hyphen> : heading}
+              </Text>
             </Box>
+            <Text paddingTop={1}>{text}</Text>
             {hasTags && (
               <Box paddingTop={3}>
                 <Inline space={['smallGutter', 'smallGutter', 'gutter']}>
-                  {tags.map((tag) => {
-                    return (
-                      <Tag
-                        key={tag.label}
-                        disabled={tag.disabled}
-                        outlined={
-                          (tag.outlined || tag.outlined === undefined) &&
-                          !tag.href
-                        }
-                        variant={tagVariant}
-                        href={tag.href}
-                        onClick={tag.onClick}
-                        {...tagOptions}
-                      >
-                        {tag.label}
-                      </Tag>
-                    )
-                  })}
+                  {tags.map((tag) => (
+                    <Tag
+                      key={tag.label}
+                      disabled={tag.disabled}
+                      outlined={!tag.href}
+                      variant={tagVariant}
+                      href={tag.href}
+                      onClick={tag.onClick}
+                      {...tagOptions}
+                    >
+                      {tag.label}
+                    </Tag>
+                  ))}
                 </Inline>
               </Box>
             )}
@@ -291,68 +211,6 @@ const Component = forwardRef<
                 />
               </Box>
             ))}
-          {sidePanelConfig && (
-            <Box
-              display="flex"
-              flexDirection="column"
-              position="relative"
-              justifyContent="flexStart"
-              paddingLeft={5}
-              style={{ alignSelf: 'stretch' }}
-            >
-              {sidePanelConfig.items &&
-                sidePanelConfig.items.map((item) => {
-                  return (
-                    <Box
-                      display="flex"
-                      flexDirection="row"
-                      width="full"
-                      paddingBottom={1}
-                    >
-                      <Box paddingRight={2}>{item.icon}</Box>
-                      <Text whiteSpace="nowrap" variant="small">
-                        {item.title}
-                      </Text>
-                    </Box>
-                  )
-                })}
-              <Box>
-                <Checkbox
-                  label="Setja í samanburð"
-                  labelVariant="small"
-                  onChange={sidePanelConfig.onCheck}
-                  checked={sidePanelConfig.isChecked}
-                  id={sidePanelConfig.checkboxId}
-                />
-              </Box>
-              <Box>
-                <Box
-                  paddingTop="gutter"
-                  display="flex"
-                  justifyContent={['flexStart', 'flexEnd']}
-                  flexDirection="row"
-                >
-                  <Box>
-                    {renderCTA()}
-                    {/* <Button>button</Button>
-                    {/* <Button
-                      {...(sidePanelConfig?.cta?.buttonType ?? {
-                        variant: sidePanelConfig?.cta?.variant,
-                      })}
-                      size={sidePanelConfig?.cta?.size}
-                      onClick={sidePanelConfig?.cta?.onClick}
-                      disabled={sidePanelConfig?.cta?.disabled}
-                      icon={sidePanelConfig?.cta?.icon}
-                      iconType={sidePanelConfig?.cta?.iconType}
-                      nowrap
-                    >
-                      {sidePanelConfig?.cta?.label}
-                    </Button> */}
-                  </Box>
-                </Box>
-              </Box>
-            </Box>
-          )}
         </Box>
       </FocusableBox>
     )
