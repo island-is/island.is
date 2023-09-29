@@ -165,9 +165,7 @@ export class CommunicationsService {
         )
         return response.status === 200
       } catch (error) {
-        this.logger.error('Failed to send form response to HSN', {
-          message: error.message,
-        })
+        this.logger.error('Failed to send form response to HSN', error)
         return false
       }
     }
