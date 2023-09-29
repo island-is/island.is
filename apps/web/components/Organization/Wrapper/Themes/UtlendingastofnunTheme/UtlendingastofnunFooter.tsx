@@ -35,6 +35,11 @@ const UtlendingastofnunFooter: React.FC<
   const { width } = useWindowSize()
   const { activeLocale } = useI18n()
 
+  const canWeHelpText = n(
+    'serviceWebFooterCanWeHelp',
+    activeLocale === 'is' ? 'Getum við aðstoðað?' : 'Can we help?',
+  )
+
   return (
     <footer aria-labelledby="organizationFooterTitle">
       <Box className={styles.footerBg} color="white" paddingY={[3, 3, 3, 7]}>
@@ -174,14 +179,9 @@ const UtlendingastofnunFooter: React.FC<
                           index === 2 && width > theme.breakpoints.md ? 5 : 0
                         }
                       >
-                        {index === 3 && (
+                        {index === 3 && canWeHelpText && (
                           <Text variant="h5" color="white" paddingBottom={2}>
-                            {n(
-                              'serviceWebFooterCanWeHelp',
-                              activeLocale === 'is'
-                                ? 'Getum við aðstoðað?'
-                                : 'Can we help?',
-                            )}
+                            {canWeHelpText}
                           </Text>
                         )}
                         {richText(item.content as SliceType[], {
