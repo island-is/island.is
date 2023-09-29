@@ -6,3 +6,4 @@ export { default as ChildPensionReason } from './ChildPensionReason/ChildPension
 export { default as ChooseChildren } from './ChooseChildren/ChooseChildren'
 export { Period } from './Period'
 export { default as Conclusion } from './Conclusion/Conclusion'
+export { default as UploadAdditionalDocumentsScreen } from './UploadAdditionalDocumentsScreen'

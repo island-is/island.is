@@ -367,7 +367,7 @@ export const childPensionFormMessage: MessageDir = {
     },
     additionalFileTitle: {
       id: 'cp.application:fileUpload.additionalFile.title',
-      defaultMessage: 'Viðbótagögn',
+      defaultMessage: 'Viðbótargögn',
       description: 'Additional attachments',
     },
     additionalFileDescription: {

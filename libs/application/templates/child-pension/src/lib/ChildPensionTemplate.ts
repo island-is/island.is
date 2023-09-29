@@ -250,7 +250,7 @@ const ChildPensionTemplate: ApplicationTemplate<
               content: statesMessages.additionalDocumentRequiredDescription,
               displayStatus: 'warning',
             },
-            // TODO: Bæta við 'APPROVE' history?
+            // TODO: Bæta við 'SUBMIT' history?
           },
           lifecycle: pruneAfterDays(970),
           progress: 0.5,
@@ -261,6 +261,14 @@ const ChildPensionTemplate: ApplicationTemplate<
                 import('../forms/AdditionalDocumentsRequired').then((val) =>
                   Promise.resolve(val.AdditionalDocumentsRequired),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: childPensionFormMessage.fileUpload
+                    .additionalDocumentRequiredSubmit,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
             },
@@ -275,9 +283,7 @@ const ChildPensionTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.APPROVE]: {
-            target: States.TRYGGINGASTOFNUN_IN_REVIEW,
-          },
+          SUBMIT: [{ target: States.TRYGGINGASTOFNUN_IN_REVIEW }],
         },
       },
       [States.PENDING]: {

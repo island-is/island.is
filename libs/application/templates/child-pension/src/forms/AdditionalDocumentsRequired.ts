@@ -1,75 +1,55 @@
 import {
-  buildDescriptionField,
-  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildSection,
   buildSubmitField,
+  buildCustomField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import Logo from '../assets/Logo'
-import { FILE_SIZE_LIMIT } from '../lib/constants'
 import { inReviewFormMessages, childPensionFormMessage } from '../lib/messages'
 
 export const AdditionalDocumentsRequired: Form = buildForm({
-  id: 'ParentalLeaveInReviewUpload',
+  id: 'ChildPensionInReviewUpload',
   title: inReviewFormMessages.formTitle,
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'reviewUpload',
       title: childPensionFormMessage.fileUpload.additionalDocumentRequiredTitle,
       children: [
         buildMultiField({
-          id: 'additionalDocumentsScreen',
+          id: 'additionalDocumentsRequiredScreen',
           title:
             childPensionFormMessage.fileUpload.additionalDocumentRequiredTitle,
+          description:
+            childPensionFormMessage.fileUpload
+              .additionalDocumentRequiredDescription,
           children: [
-            buildFileUploadField({
-              id: 'fileUpload.additionalDocuments',
-              title:
-                childPensionFormMessage.fileUpload
-                  .additionalDocumentRequiredTitle,
-              description:
-                childPensionFormMessage.fileUpload
-                  .additionalDocumentRequiredDescription,
-              introduction:
-                childPensionFormMessage.fileUpload
-                  .additionalDocumentRequiredDescription,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                childPensionFormMessage.fileUpload.attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader: childPensionFormMessage.fileUpload.attachmentHeader,
-              uploadDescription:
-                childPensionFormMessage.fileUpload.attachmentDescription,
-              uploadButtonLabel:
-                childPensionFormMessage.fileUpload.attachmentButton,
-              uploadMultiple: true,
+            buildCustomField({
+              id: 'fileUploadAdditionalFiles.additionalDocumentsRequired',
+              title: '',
+              component: 'UploadAdditionalDocumentsScreen',
             }),
             buildSubmitField({
-              id: 'additionalDocumentsSubmit',
+              id: 'submit',
+              placement: 'footer',
               title:
                 childPensionFormMessage.fileUpload
                   .additionalDocumentRequiredSubmit,
-              placement: 'footer',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
+                  event: DefaultEvents.SUBMIT,
                   name: childPensionFormMessage.fileUpload
                     .additionalDocumentRequiredSubmit,
                   type: 'primary',
-                  event: 'APPROVE',
                 },
               ],
             }),
           ],
-        }),
-        buildDescriptionField({
-          id: 'unused',
-          title: '',
-          description: '',
         }),
       ],
     }),
