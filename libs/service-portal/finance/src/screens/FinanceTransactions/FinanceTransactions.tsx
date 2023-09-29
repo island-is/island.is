@@ -10,7 +10,6 @@ import {
   Box,
   Button,
   DatePicker,
-  Filter,
   FilterInput,
   FilterMultiChoice,
   GridColumn,
@@ -25,6 +24,7 @@ import {
   FJARSYSLAN_ID,
   FootNote,
   m,
+  Filter,
 } from '@island.is/service-portal/core'
 import {
   GET_CUSTOMER_CHARGETYPE,
@@ -123,37 +123,6 @@ const FinanceTransactions = () => {
     <DynamicWrapper>
       <Box marginTop={[1, 1, 2, 2, 6]} marginBottom={[6, 6, 10]}>
         <Stack space={2}>
-          <GridRow>
-            <GridColumn span={['11/12', '6/12']}>
-              <Box
-                display="flex"
-                marginLeft="auto"
-                paddingRight={2}
-                printHidden
-              >
-                <Box paddingRight={2}>
-                  <Button
-                    colorScheme="default"
-                    icon="print"
-                    iconType="filled"
-                    onClick={() => window.print()}
-                    preTextIconType="filled"
-                    size="default"
-                    type="button"
-                    variant="utility"
-                  >
-                    {formatMessage(m.print)}
-                  </Button>
-                </Box>
-                <DropdownExport
-                  onGetCSV={() => exportHreyfingarFile(recordsDataArray, 'csv')}
-                  onGetExcel={() =>
-                    exportHreyfingarFile(recordsDataArray, 'xlsx')
-                  }
-                />
-              </Box>
-            </GridColumn>
-          </GridRow>
           <Hidden print={true}>
             <Box marginTop={[1, 1, 2, 2, 5]}>
               <Filter
@@ -172,6 +141,30 @@ const FinanceTransactions = () => {
                     onChange={(e) => setQ(e)}
                     backgroundColor="blue"
                   />
+                }
+                additionalFilters={
+                  <>
+                    <Button
+                      colorScheme="default"
+                      icon="print"
+                      iconType="filled"
+                      onClick={() => window.print()}
+                      preTextIconType="filled"
+                      size="default"
+                      type="button"
+                      variant="utility"
+                    >
+                      {formatMessage(m.print)}
+                    </Button>
+                    <DropdownExport
+                      onGetCSV={() =>
+                        exportHreyfingarFile(recordsDataArray, 'csv')
+                      }
+                      onGetExcel={() =>
+                        exportHreyfingarFile(recordsDataArray, 'xlsx')
+                      }
+                    />
+                  </>
                 }
                 onFilterClear={clearAllFilters}
               >

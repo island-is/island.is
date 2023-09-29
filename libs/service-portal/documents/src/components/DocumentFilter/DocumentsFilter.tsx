@@ -3,7 +3,6 @@ import {
   Box,
   DatePicker,
   Checkbox,
-  Filter,
   FilterMultiChoice,
   AccordionItem,
   Accordion,
@@ -11,7 +10,7 @@ import {
   Hidden,
   Text,
 } from '@island.is/island-ui/core'
-import { m } from '@island.is/service-portal/core'
+import { m, Filter } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { messages } from '../../utils/messages'
 import * as styles from './DocumentsFilter.css'
@@ -102,7 +101,6 @@ const DocumentsFilter = ({
             icon={{ name: 'search' }}
           />
         }
-        stretchInput={true}
         onFilterClear={handleClearFilters}
       >
         <Box

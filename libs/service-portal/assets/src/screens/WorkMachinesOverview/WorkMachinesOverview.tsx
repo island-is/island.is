@@ -13,12 +13,12 @@ import {
   formSubmit,
   IntroHeader,
   VINNUEFTIRLITID_ID,
+  Filter,
 } from '@island.is/service-portal/core'
 import {
   Box,
   Checkbox,
   DropdownMenu,
-  Filter,
   GridColumn,
   GridRow,
   Hidden,
@@ -180,6 +180,24 @@ const WorkMachinesOverview = () => {
                         )}
                       />
                     }
+                    additionalFilters={
+                      <DropdownMenu
+                        title={formatMessage(m.get)}
+                        icon="download"
+                        items={[
+                          {
+                            onClick: () =>
+                              getFileExport(WorkMachinesFileType.CSV),
+                            title: formatMessage(m.getAsCsv),
+                          },
+                          {
+                            onClick: () =>
+                              getFileExport(WorkMachinesFileType.EXCEL),
+                            title: formatMessage(m.getAsExcel),
+                          },
+                        ]}
+                      />
+                    }
                   >
                     {
                       <Box paddingX={3} marginTop={2}>
@@ -214,20 +232,6 @@ const WorkMachinesOverview = () => {
                     }
                   </Filter>
                 </Hidden>
-                <DropdownMenu
-                  title={formatMessage(m.get)}
-                  icon="download"
-                  items={[
-                    {
-                      onClick: () => getFileExport(WorkMachinesFileType.CSV),
-                      title: formatMessage(m.getAsCsv),
-                    },
-                    {
-                      onClick: () => getFileExport(WorkMachinesFileType.EXCEL),
-                      title: formatMessage(m.getAsExcel),
-                    },
-                  ]}
-                />
               </Inline>
             </Box>
           </Box>
