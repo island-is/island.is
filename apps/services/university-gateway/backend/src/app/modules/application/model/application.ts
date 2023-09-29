@@ -20,7 +20,8 @@ import {
 })
 export class Application extends Model {
   @ApiProperty({
-    description: 'Application ID',
+    description:
+      'Application ID, should be the same application GUID that is used in island.is application system',
     example: '00000000-0000-0000-0000-000000000000',
   })
   @Column({
@@ -30,6 +31,16 @@ export class Application extends Model {
     allowNull: false,
   })
   id!: string
+
+  @ApiProperty({
+    description: 'External ID for the application (from University)',
+    example: 'ABC12345',
+  })
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  externalId!: string
 
   @ApiProperty({
     description: 'Applicant national id',

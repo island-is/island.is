@@ -16,6 +16,7 @@ import { PaginateInput } from './types'
 import { InjectModel } from '@nestjs/sequelize'
 import { paginate } from '@island.is/nest/pagination'
 import { DegreeType, Season } from '@island.is/university-gateway-lib'
+import { logger } from '@island.is/logging'
 
 export
 @Injectable()
@@ -129,7 +130,9 @@ class ProgramService {
     })
 
     if (!program) {
-      throw Error('Not found')
+      const errorMsg = `Program with id ${id} found`
+      logger.error(`Failed to get application, reason:`, errorMsg)
+      throw new Error(errorMsg)
     }
 
     return { data: program }

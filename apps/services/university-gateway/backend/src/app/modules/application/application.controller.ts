@@ -1,5 +1,11 @@
 import { UseGuards } from '@nestjs/common'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  User,
+} from '@island.is/auth-nest-tools'
 import { UniversityGatewayScope } from '@island.is/auth/scopes'
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
 import { ApplicationService } from './application.service'
@@ -33,10 +39,13 @@ export class ApplicationController {
     description: 'Returns the application by ID',
   })
   @ApiOperation({
-    summary: 'Get application by ID',
+    summary: 'Get application by ID (only status for now) for logged in user',
   })
-  async getApplication(@Param('id') id: string): Promise<ApplicationResponse> {
-    return this.applicationService.getApplication(id)
+  async getApplication(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationResponse> {
+    return this.applicationService.getApplication(id, user)
   }
 
   @Scopes(UniversityGatewayScope.main)
@@ -49,12 +58,13 @@ export class ApplicationController {
     description: 'Returns the application that was created',
   })
   @ApiOperation({
-    summary: 'Create application',
+    summary: 'Create application for logged in user',
   })
   async createApplication(
     @Body() applicationDto: CreateApplicationDto,
+    @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.createApplication(applicationDto)
+    return this.applicationService.createApplication(applicationDto, user)
   }
 
   @Scopes(UniversityGatewayScope.main)
@@ -73,12 +83,13 @@ export class ApplicationController {
     description: 'Returns the updated application',
   })
   @ApiOperation({
-    summary: 'Update application status, and extradata (if applies)',
+    summary: 'Update application (only status for now) for logged in user',
   })
   async updateApplication(
     @Param('id') id: string,
     @Body() applicationDto: UpdateApplicationDto,
+    @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.updateApplication(id, applicationDto)
+    return this.applicationService.updateApplication(id, applicationDto, user)
   }
 }

@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Course, CourseDetailsResponse, CourseResponse } from './model'
 import { PaginateInput } from '../program/types'
 import { paginate } from '@island.is/nest/pagination'
+import { logger } from '@island.is/logging'
 
 export
 @Injectable()
@@ -39,7 +40,9 @@ class CourseService {
     const course = await this.courseModel.findOne({ where: { id: id } })
 
     if (!course) {
-      throw Error('Not found')
+      const errorMsg = `Course with id ${id} found`
+      logger.error(`Failed to get application, reason:`, errorMsg)
+      throw new Error(errorMsg)
     }
 
     return { data: course }

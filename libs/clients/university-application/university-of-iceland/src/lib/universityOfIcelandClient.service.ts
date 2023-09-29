@@ -1,8 +1,10 @@
 import { Injectable, Req } from '@nestjs/common'
 import { ExampleEndpointsForUniversitiesApi } from '../../gen/fetch/apis'
 import {
+  ApplicationStatus,
   DegreeType,
   FieldType,
+  IApplication,
   ICourse,
   IProgram,
   ModeOfDelivery,
@@ -190,5 +192,20 @@ class UniversityOfIcelandApplicationClient {
     }
 
     return mappedRes
+  }
+
+  async getApplicationStatus(externalId: string): Promise<ApplicationStatus> {
+    // TODOx connect to HÍ API
+    return ApplicationStatus.IN_REVIEW
+  }
+
+  async createApplication(application: IApplication) {
+    // TODOx connect to HÍ API
+    return true
+  }
+
+  async updateApplicationStatus(externalId: string, status: ApplicationStatus) {
+    // TODOx connect to HÍ API
+    return true
   }
 }

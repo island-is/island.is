@@ -1,6 +1,6 @@
 import { ApplicationStatus } from '@island.is/university-gateway-lib'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsEnum, IsOptional, IsString } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
+import { IsEnum } from 'class-validator'
 
 export class UpdateApplicationDto {
   @IsEnum(ApplicationStatus)
@@ -10,13 +10,4 @@ export class UpdateApplicationDto {
     enum: ApplicationStatus,
   })
   status!: ApplicationStatus
-
-  @IsString()
-  @IsOptional()
-  @ApiProperty({
-    description: 'Extra data that should follow application',
-    example: 'TBD',
-  })
-  @ApiPropertyOptional()
-  extraData?: string
 }

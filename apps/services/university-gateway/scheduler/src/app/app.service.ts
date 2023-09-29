@@ -70,6 +70,32 @@ export class AppService {
           logger.error('Failed to update courses, reason:', { reason })
           return true
         })
+
+      // Update application statuses
+      done = await fetch(
+        `${this.config.backendUrl}/api/internal/applications/update`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.backendAccessToken}`,
+          },
+        },
+      )
+        .then(async (res) => {
+          if (res.ok) {
+            return true
+          }
+
+          logger.error('Failed to update application statuses')
+          return true
+        })
+        .catch((reason) => {
+          logger.error('Failed to update application statuses, reason:', {
+            reason,
+          })
+          return true
+        })
     } while (
       !done &&
       minutesBetween(startTime, now()) < this.config.timeToLiveMinutes

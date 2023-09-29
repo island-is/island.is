@@ -57,6 +57,7 @@ class InternalProgramService {
       )
     }
 
+    // TODO need to perform for all Uglu universities
     try {
       logger.info('Updating programs for University of Iceland')
       await this.doUpdateProgramsForUniversity(
@@ -84,7 +85,9 @@ class InternalProgramService {
     )?.id
 
     if (!universityId) {
-      throw new Error('University not found in DB')
+      throw new Error(
+        `University with national id ${universityNationalId} not found in DB`,
+      )
     }
 
     // UPDATE all programs for this university and make them inactive
