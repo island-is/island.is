@@ -58,6 +58,7 @@ interface ChildPensionAttachments {
 
 interface AdditionalInformation {
   additionalDocuments?: FileType[]
+  additionalDocumentsRequired?: FileType[]
 }
 
 enum AttachmentTypes {
@@ -556,12 +557,20 @@ export function getAttachments(application: Application) {
   const additionalInfo =
     answers.fileUploadAdditionalFiles as AdditionalInformation
 
-  if (
-    additionalInfo.additionalDocuments &&
+  const additionalDocuments = [
+    ...(additionalInfo.additionalDocuments &&
     additionalInfo.additionalDocuments?.length > 0
-  ) {
+      ? additionalInfo.additionalDocuments
+      : []),
+    ...(additionalInfo.additionalDocumentsRequired &&
+    additionalInfo.additionalDocumentsRequired?.length > 0
+      ? additionalInfo.additionalDocumentsRequired
+      : []),
+  ]
+
+  if (additionalDocuments.length > 0) {
     getAttachmentDetails(
-      additionalInfo?.additionalDocuments,
+      additionalDocuments,
       AttachmentTypes.ADDITIONAL_DOCUMENTS,
     )
   }

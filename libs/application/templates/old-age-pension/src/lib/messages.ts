@@ -1008,6 +1008,17 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Senda inn',
       description: 'Submit',
     },
+    additionalDocumentRequiredTitle: {
+      id: 'oap.application:fileUpload.additionalDocumentRequired.title',
+      defaultMessage: 'Viðbótargögn krafist',
+      description: 'Additional attachments required',
+    },
+    additionalDocumentRequiredDescription: {
+      id: 'oap.application:fileUpload.additionalDocumentRequired.description',
+      defaultMessage:
+        'Vinsamlegast hlaðið upp viðbótargögnum til Tryggingastofnunar. Ef þú ert ekki viss hvaða viðbótagögn það eru geturu séð það í pósthólfinu þínu. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description: 'english translation',
+    },
   }),
 
   comment: defineMessages({

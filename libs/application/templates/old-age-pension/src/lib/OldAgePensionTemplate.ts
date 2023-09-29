@@ -292,9 +292,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.APPROVE]: {
-            target: States.TRYGGINGASTOFNUN_IN_REVIEW,
-          },
+          SUBMIT: [{ target: States.TRYGGINGASTOFNUN_IN_REVIEW }],
         },
       },
       [States.PENDING]: {
