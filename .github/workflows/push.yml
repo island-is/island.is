@@ -716,6 +716,10 @@ jobs:
           repository: island-is/feature-values
           token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
           path: feature-values
+      - name: Install infra modules
+        working-directory: monorepo/infra
+        run: |
+          yarn install
       - name: Generate islandis feature-deployment charts for ArgoCD
         env:
           FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
