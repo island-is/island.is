@@ -96,6 +96,7 @@ const DrivingLessonsBook = () => {
           intro={formatMessage(messages.vehicleDrivingLessonsText)}
           img="./assets/images/drivingLessons.svg"
           serviceProviderID={SAMGONGUSTOFA_ID}
+          serviceProviderTooltip={formatMessage(m.drivingLessonTooltip)}
         />
       </Box>
       {loading && (

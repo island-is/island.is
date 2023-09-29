@@ -1118,6 +1118,14 @@ export const m = defineMessages({
     id: 'service.portal:vehicles-tooltip',
     defaultMessage: 'Samgöngustofa hefur umsjón með gögnum um ökutæki.',
   },
+  drivingLessonTooltip: {
+    id: 'service.portal:driving-lessons-tooltip',
+    defaultMessage: 'Samgöngustofa hefur umsjón með gögnum um ökukennslu.',
+  },
+  licensesTooltip: {
+    id: 'service.portal:licenses-tooltip',
+    defaultMessage: 'Útgefandi hvers skírteinis hefur umsjón með gögnum þess.',
+  },
   mmsTooltip: {
     id: 'service.portal:mms-tooltip',
     defaultMessage: 'Menntamálastofnun hefur umsjón með gögnum um grunnskóla.',
