@@ -16,6 +16,7 @@ import { GET_VEHICLE_INFORMATION } from '../../graphql/queries'
 import { information } from '../../lib/messages'
 import { OwnerCoOwnersInformation } from '../../shared'
 import { useFormContext } from 'react-hook-form'
+import { logger } from '@island.is/logging'
 
 export const CoOwner: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const { application, field, setFieldLoadingState, errors } = props
@@ -48,6 +49,7 @@ export const CoOwner: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
     },
   )
 
+  logger.info('Testin loggin information too see if update has occured')
   useEffect(() => {
     setFieldLoadingState?.(loading || !!error)
   }, [loading, error])
