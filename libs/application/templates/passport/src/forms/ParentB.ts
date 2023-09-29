@@ -12,7 +12,6 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { ChildsPersonalInfo } from '../lib/constants'
 import { m } from '../lib/messages'
@@ -22,6 +21,7 @@ import {
   SyslumadurPaymentCatalogApi,
   DeliveryAddressApi,
   UserInfoApi,
+  NationalRegistryUserParentB,
 } from '../dataProviders'
 
 export const ParentB: Form = buildForm({
@@ -68,7 +68,7 @@ export const ParentB: Form = buildForm({
           checkboxLabel: m.dataCollectionCheckboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryUserParentB,
               title: m.dataCollectionNationalRegistryTitle,
               subTitle: m.dataCollectionNationalRegistrySubtitle,
             }),

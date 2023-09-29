@@ -202,9 +202,9 @@ export const StandardForm = ({
     GetSupportSearchResultsQuery,
     GetSupportSearchResultsQueryVariables
   >(GET_SUPPORT_SEARCH_RESULTS_QUERY, {
-    onCompleted: () => {
+    onCompleted: (updatedData) => {
       setIsChangingSubject(false)
-      updateSuggestions()
+      updateSuggestions(updatedData)
     },
   })
 
@@ -256,8 +256,11 @@ export const StandardForm = ({
     }
   }, [subject])
 
-  const updateSuggestions = () => {
-    setSuggestions((data?.searchResults?.items as Array<SupportQna>) || [])
+  const updateSuggestions = (updatedData?: GetSupportSearchResultsQuery) => {
+    setSuggestions(
+      ((updatedData?.searchResults?.items ??
+        data?.searchResults?.items) as Array<SupportQna>) || [],
+    )
   }
 
   useEffect(() => {
@@ -578,9 +581,9 @@ export const StandardForm = ({
                 label={fn('vidfangsefni', 'label', 'Viðfangsefni')}
                 error={errors?.vidfangsefni?.message as string}
                 onChange={(e) => {
-                  if (e?.target?.value?.length > MIN_SEARCH_QUERY_LENGTH) {
-                    setIsChangingSubject(true)
-                  }
+                  setIsChangingSubject(
+                    e?.target?.value?.length > MIN_SEARCH_QUERY_LENGTH,
+                  )
                   setSubject(e.target.value)
                 }}
                 rules={{

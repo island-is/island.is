@@ -269,6 +269,7 @@ export function formatProsecutorCourtDateEmailNotification(
   const registrarText = registrarName
     ? formatMessage(notifications.registrar, { registrarName })
     : undefined
+
   const defenderText = formatMessage(notifications.defender, {
     defenderName: defenderName || 'NONE',
     sessionArrangements,
@@ -678,6 +679,30 @@ export function formatCourtIndictmentReadyForCourtEmailNotification(
   })
 
   return { body, subject }
+}
+
+export function formatDefenderReadyForCourtEmailNotification(
+  formatMessage: FormatMessage,
+  policeCaseNumber: string,
+  courtName: string,
+  overviewUrl?: string,
+) {
+  const subject = formatMessage(notifications.defenderReadyForCourtSubject, {
+    policeCaseNumber: policeCaseNumber,
+  })
+
+  const body = formatMessage(notifications.defenderReadyForCourtBody, {
+    policeCaseNumber: policeCaseNumber,
+  })
+
+  const link = formatMessage(notifications.defenderLink, {
+    defenderHasAccessToRvg: Boolean(overviewUrl),
+    courtName: courtName.replace('dómur', 'dómi'),
+    linkStart: `<a href="${overviewUrl}">`,
+    linkEnd: '</a>',
+  })
+
+  return { subject, body: `${body}${link}` }
 }
 
 export const formatDefenderRoute = (

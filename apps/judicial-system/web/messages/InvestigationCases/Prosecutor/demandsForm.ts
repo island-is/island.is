@@ -97,6 +97,12 @@ export const icDemands = {
           description:
             'Sjálfgefinn dómkröfutexti fyrir rannsókn á rafrænum gögnum',
         },
+        paroleRevocation: {
+          id: 'judicial.system.investigation_cases:police_demands.demands.prefill.parole_revocation',
+          defaultMessage:
+            'Þess er krafist að {court} úrskurði að {accused}, verði á grundvelli 2. mgr. 82. gr. laga um fullnustu refsinga nr. 15/2016 gert að sæta afplánun á [FJÖLDI DAGA] daga eftirstöðvum refsingar, samkvæmt dómi [DÓMSTÓLL], uppkveðnum [DAGSETNING UPPKVAÐNINGAR], sem honum var veitt reynslulausn á með ákvörðun Fangelsismálastofnunar frá [DAGSETNING REYNSLULAUSNAR].',
+          description: 'Sjálfgefinn dómkröfutexti fyrir áreynslulausn',
+        },
       }),
     },
     lawsBroken: defineMessages({

@@ -16,6 +16,7 @@ import {
   isPrisonSystemUser,
   isDefenceUser,
   completedCaseStates,
+  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
@@ -152,14 +153,21 @@ function getPrisonSystemStaffUserCasesQueryFilter(user: User): WhereOptions {
   if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
     options.push({
       type: [
-        CaseType.ADMISSION_TO_FACILITY,
         CaseType.CUSTODY,
+        CaseType.ADMISSION_TO_FACILITY,
+        CaseType.PAROLE_REVOCATION,
         CaseType.TRAVEL_BAN,
       ],
     })
   } else {
     options.push(
-      { type: [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY] },
+      {
+        type: [
+          CaseType.CUSTODY,
+          CaseType.ADMISSION_TO_FACILITY,
+          CaseType.PAROLE_REVOCATION,
+        ],
+      },
       {
         decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
       },
@@ -179,6 +187,15 @@ function getDefenceUserCasesQueryFilter(user: User): WhereOptions {
             { type: [...restrictionCases, ...investigationCases] },
             {
               [Op.or]: [
+                {
+                  [Op.and]: [
+                    { state: [CaseState.SUBMITTED, CaseState.RECEIVED] },
+                    {
+                      request_shared_with_defender:
+                        RequestSharedWithDefender.READY_FOR_COURT,
+                    },
+                  ],
+                },
                 {
                   [Op.and]: [
                     { state: CaseState.RECEIVED },

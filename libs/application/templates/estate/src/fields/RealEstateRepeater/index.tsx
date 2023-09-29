@@ -22,7 +22,7 @@ export const RealEstateRepeater: FC<
   const error = (errors as any)?.estate?.assets
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove, update } = useFieldArray({
+  const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
 
@@ -34,7 +34,7 @@ export const RealEstateRepeater: FC<
 
   useEffect(() => {
     if (fields.length === 0 && externalData.estate.assets) {
-      append(externalData.estate.assets)
+      replace(externalData.estate.assets)
     }
   }, [])
 
