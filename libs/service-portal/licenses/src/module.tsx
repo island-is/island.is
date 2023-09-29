@@ -17,27 +17,27 @@ const PassportDetail = lazy(() =>
 export const licensesModule: PortalModule = {
   name: m.licenseNavTitle,
   enabled: ({ isCompany }) => !isCompany,
-  routes: (props) => [
+  routes: ({ userInfo, ...rest }) => [
     {
       name: defineMessage({
         id: 'sp.license:main-your-licenses',
         defaultMessage: 'Þín skírteini',
       }),
       path: LicensePaths.LicensesRoot,
-      enabled: props.userInfo.scopes.includes(ApiScope.licenses),
-      loader: translationLoader(props),
+      enabled: userInfo.scopes.includes(ApiScope.licenses),
+      loader: translationLoader({ userInfo, ...rest }),
       element: <LicensesOverview />,
     },
     {
       name: 'Skírteini',
       path: LicensePaths.LicensesDetail,
-      enabled: props.userInfo.scopes.includes(ApiScope.licenses),
+      enabled: userInfo.scopes.includes(ApiScope.licenses),
       element: <LicenseDetail />,
     },
     {
       name: m.passport,
       path: LicensePaths.LicensesPassportDetail,
-      enabled: props.userInfo.scopes.includes(ApiScope.licenses),
+      enabled: userInfo.scopes.includes(ApiScope.licenses),
       element: <PassportDetail />,
     },
   ],

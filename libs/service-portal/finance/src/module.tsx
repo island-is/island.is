@@ -19,7 +19,7 @@ const FinanceSchedule = lazy(() => import('./screens/FinanceSchedule'))
 
 export const financeModule: PortalModule = {
   name: 'Fjármál',
-  routes: (props) => [
+  routes: ({ userInfo, ...rest }) => [
     {
       name: m.finance,
       path: FinancePaths.FinanceRoot,
@@ -27,52 +27,52 @@ export const financeModule: PortalModule = {
         ApiScope.financeOverview,
         ApiScope.financeSalary,
         ApiScope.financeSchedule,
-      ].some((scope) => props.userInfo.scopes.includes(scope)),
+      ].some((scope) => userInfo.scopes.includes(scope)),
       element: <FinanceOverview />,
     },
     {
       name: m.financeStatus,
       path: FinancePaths.FinanceStatus,
-      enabled: props.userInfo.scopes.includes(ApiScope.financeOverview),
+      enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       element: <FinanceStatus />,
     },
     {
       name: m.financeBills,
       path: FinancePaths.FinanceBills,
-      enabled: props.userInfo.scopes.includes(ApiScope.financeOverview),
+      enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       element: <FinanceBills />,
     },
     {
       name: m.financeTransactions,
       path: FinancePaths.FinanceTransactions,
       element: <FinanceTransactions />,
-      enabled: props.userInfo.scopes.includes(ApiScope.financeOverview),
+      enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       dynamic: true,
-      loader: financeRoutesLoader(props),
+      loader: financeRoutesLoader({ userInfo, ...rest }),
     },
     {
       name: m.financeEmployeeClaims,
       path: FinancePaths.FinanceEmployeeClaims,
       element: <FinanceEmployeeClaims />,
-      enabled: props.userInfo.scopes.includes(ApiScope.financeSalary),
+      enabled: userInfo.scopes.includes(ApiScope.financeSalary),
       dynamic: true,
-      loader: financeRoutesLoader(props),
+      loader: financeRoutesLoader({ userInfo, ...rest }),
     },
     {
       name: m.financeLocalTax,
       path: FinancePaths.FinanceLocalTax,
       element: <FinanceLocalTax />,
-      enabled: props.userInfo.scopes.includes(ApiScope.financeOverview),
+      enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       dynamic: true,
-      loader: financeRoutesLoader(props),
+      loader: financeRoutesLoader({ userInfo, ...rest }),
     },
     {
       name: m.financeSchedules,
       path: FinancePaths.FinanceSchedule,
-      enabled: props.userInfo.scopes.includes(ApiScope.financeSchedule),
+      enabled: userInfo.scopes.includes(ApiScope.financeSchedule),
       element: <FinanceSchedule />,
       dynamic: true,
-      loader: financeRoutesLoader(props),
+      loader: financeRoutesLoader({ userInfo, ...rest }),
     },
   ],
 }
