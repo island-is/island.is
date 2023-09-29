@@ -122,8 +122,6 @@ export type {
 } from './lib/DatePicker/types'
 export type { ResponsiveProp } from './utils/responsiveProp'
 export type { GridColumns } from './lib/Grid/GridColumn/GridColumn.css'
-export type { CTAProps } from './lib/CategoryCard/CategoryCard'
-export type { CategoryCardTag } from './lib/CategoryCard/CategoryCard'
 
 // Styles
 export * as linkStyles from './lib/Link/Link.css'
