@@ -731,6 +731,10 @@ jobs:
           FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
         working-directory: feature-values
         run: |
+          if [[ -z $(git status --porcelain) ]]; then
+            echo "No changes to commit"
+            exit 0
+          fi
           git config user.name andes-it
           git config user.email andes-it@andes.is
           git add .
