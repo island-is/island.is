@@ -705,6 +705,12 @@ export const slices = gql`
     }
   }
 
+  fragment EmbedFields on Embed {
+    embedUrl
+    altText
+    aspectRatio
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...StoryFields
@@ -743,6 +749,7 @@ export const slices = gql`
     ...TableSliceFields
     ...EmailSignupFields
     ...SliceDropdownFields
+    ...EmbedFields
   }
 
   fragment AllSlices on Slice {

@@ -29,7 +29,7 @@ const CaseQuery = gql`
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
-      sendRequestToDefender
+      requestSharedWithDefender
       isHeightenedSecurityLevel
       court {
         id
@@ -218,6 +218,14 @@ const CaseQuery = gql`
       appealJudge3 {
         id
         name
+      }
+      eventLogs {
+        id
+        created
+        caseId
+        eventType
+        nationalId
+        userRole
       }
     }
   }
