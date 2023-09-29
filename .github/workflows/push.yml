@@ -706,18 +706,27 @@ jobs:
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
       IMAGES: ${{ needs.prepare.outputs.IMAGES }}
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout monorepo
+        uses: actions/checkout@v4
+        with:
+          path: monorepo
+      - name: Checkout feature-values
+        uses: actions/checkout@v4
         with:
           repository: island-is/feature-values
           token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+          path: feature-values
       - name: Generate islandis feature-deployment charts for ArgoCD
         env:
           FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
-          DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
           IMAGES: ${{ needs.prepare.outputs.IMAGES }}
-          GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
         run: |
-          ./infra/scripts/generate-feature-values.sh values --chart islandis --feature "$FEATURE_NAME" --images "$IMAGES" > $FEATURE_NAME.yaml
+          ./monorepo/infra/scripts/generate-feature-values.sh values --chart islandis --feature "$FEATURE_NAME" --images "$IMAGES" > feature-values/$FEATURE_NAME.yaml
+      - name: Commit and push feature-values
+        env:
+          FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
+        working-directory: feature-values
+        run: |
           git config user.name andes-it
           git config user.email andes-it@andes.is
           git add .
