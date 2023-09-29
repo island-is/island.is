@@ -33,7 +33,6 @@ import {
   GetSupportSearchResultsQuery,
   GetSupportSearchResultsQueryVariables,
   SearchableContentTypes,
-  SearchableTags,
   SupportQna,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
