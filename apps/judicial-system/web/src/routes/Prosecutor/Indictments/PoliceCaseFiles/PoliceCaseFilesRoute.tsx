@@ -155,94 +155,80 @@ const UploadFilesToPoliceCase: React.FC<
     )
   }, [policeCaseFiles?.files, caseFiles, policeCaseNumber])
 
-  const uploadPoliceCaseFileCallback = useCallback(
-    (file: TUploadFile, id?: string) => {
-      if (id) {
-        addUploadFile({ ...file, id: id ?? file.id })
-      }
+  const uploadPoliceCaseFileCallback = (file: TUploadFile, id?: string) => {
+    if (id) {
+      addUploadFile({ ...file, id: id ?? file.id })
+    }
 
-      setPoliceCaseFileList((previous) =>
-        id
-          ? previous.filter((p) => p.id !== file.id)
-          : previous.map((p) =>
-              p.id === file.id ? { ...p, checked: false } : p,
-            ),
-      )
-    },
-    [addUploadFile],
-  )
+    setPoliceCaseFileList((previous) =>
+      id
+        ? previous.filter((p) => p.id !== file.id)
+        : previous.map((p) =>
+            p.id === file.id ? { ...p, checked: false } : p,
+          ),
+    )
+  }
 
-  const removeFileCB = useCallback(
-    (file: TUploadFile) => {
-      const policeCaseFile = policeCaseFiles?.files.find(
-        (f) => f.id === file.policeFileId,
-      )
+  const removeFileCB = (file: TUploadFile) => {
+    const policeCaseFile = policeCaseFiles?.files.find(
+      (f) => f.id === file.policeFileId,
+    )
 
-      if (policeCaseFile) {
-        setPoliceCaseFileList((previous) => [
-          mapPoliceCaseFileToPoliceCaseFileCheck(policeCaseFile),
-          ...previous,
-        ])
-      }
+    if (policeCaseFile) {
+      setPoliceCaseFileList((previous) => [
+        mapPoliceCaseFileToPoliceCaseFileCheck(policeCaseFile),
+        ...previous,
+      ])
+    }
 
-      removeUploadFile(file)
-    },
-    [policeCaseFiles?.files, removeUploadFile],
-  )
+    removeUploadFile(file)
+  }
 
-  const onPoliceCaseFileUpload = useCallback(
-    async (selectedFiles: Item[]) => {
-      let currentChapter: number | undefined | null
-      let currentOrderWithinChapter: number | undefined | null
+  const onPoliceCaseFileUpload = async (selectedFiles: Item[]) => {
+    let currentChapter: number | undefined | null
+    let currentOrderWithinChapter: number | undefined | null
 
-      const filesToUpload = policeCaseFileList
-        .filter((p) => selectedFiles.some((f) => f.id === p.id))
-        .sort((p1, p2) => (p1.chapter ?? -1) - (p2.chapter ?? -1))
-        .map((f) => {
-          if (
-            f.chapter !== undefined &&
-            f.chapter !== null &&
-            f.chapter !== currentChapter
-          ) {
-            currentChapter = f.chapter
-            currentOrderWithinChapter = Math.max(
-              -1,
-              ...caseFiles
-                .filter((p) => p.chapter === currentChapter)
-                .map((p) => p.orderWithinChapter ?? -1),
-            )
-          }
+    const filesToUpload = policeCaseFileList
+      .filter((p) => selectedFiles.some((f) => f.id === p.id))
+      .sort((p1, p2) => (p1.chapter ?? -1) - (p2.chapter ?? -1))
+      .map((f) => {
+        if (
+          f.chapter !== undefined &&
+          f.chapter !== null &&
+          f.chapter !== currentChapter
+        ) {
+          currentChapter = f.chapter
+          currentOrderWithinChapter = Math.max(
+            -1,
+            ...caseFiles
+              .filter((p) => p.chapter === currentChapter)
+              .map((p) => p.orderWithinChapter ?? -1),
+          )
+        }
 
-          return {
-            id: f.id,
-            name: f.name,
-            type: 'application/pdf',
-            category: CaseFileCategory.CASE_FILE,
-            policeCaseNumber: f.policeCaseNumber,
-            chapter: f.chapter ?? undefined,
-            orderWithinChapter:
-              currentOrderWithinChapter !== undefined &&
-              currentOrderWithinChapter !== null
-                ? ++currentOrderWithinChapter
-                : undefined,
-            displayDate: f.displayDate ?? undefined,
-            policeFileId: f.id,
-          }
-        })
+        return {
+          id: f.id,
+          name: f.name,
+          type: 'application/pdf',
+          category: CaseFileCategory.CASE_FILE,
+          policeCaseNumber: f.policeCaseNumber,
+          chapter: f.chapter ?? undefined,
+          orderWithinChapter:
+            currentOrderWithinChapter !== undefined &&
+            currentOrderWithinChapter !== null
+              ? ++currentOrderWithinChapter
+              : undefined,
+          displayDate: f.displayDate ?? undefined,
+          policeFileId: f.id,
+        }
+      })
 
-      setIsUploading(true)
+    setIsUploading(true)
 
-      await handleUploadFromPolice(filesToUpload, uploadPoliceCaseFileCallback)
+    await handleUploadFromPolice(filesToUpload, uploadPoliceCaseFileCallback)
 
-      setIsUploading(false)
-    },
-    [
-      caseFiles,
-      policeCaseFileList,
-      handleUploadFromPolice,
-      uploadPoliceCaseFileCallback,
-    ],
-  )
+    setIsUploading(false)
+  }
 
   return (
     <>
@@ -374,10 +360,8 @@ const PoliceCaseFilesRoute = () => {
   )
 
   const stepIsValid = !Object.values(allUploaded).some((v) => !v)
-  const handleNavigationTo = useCallback(
-    (destination: string) => router.push(`${destination}/${workingCase.id}`),
-    [workingCase.id],
-  )
+  const handleNavigationTo = (destination: string) =>
+    router.push(`${destination}/${workingCase.id}`)
 
   return (
     <PageLayout

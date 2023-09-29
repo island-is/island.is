@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -143,64 +137,55 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
   const handleNavigationTo = (destination: string) =>
     router.push(`${destination}/${workingCase.id}`)
 
-  const uploadPoliceCaseFileCallback = useCallback(
-    (file: TUploadFile, newId?: string) => {
-      if (newId) {
-        addUploadFile({ ...file, id: newId })
-      }
+  const uploadPoliceCaseFileCallback = (file: TUploadFile, newId?: string) => {
+    if (newId) {
+      addUploadFile({ ...file, id: newId })
+    }
 
-      setPoliceCaseFileList((previous) =>
-        newId
-          ? previous.filter((p) => p.id !== file.id)
-          : previous.map((p) =>
-              p.id === file.id ? { ...p, checked: false } : p,
-            ),
-      )
-    },
-    [addUploadFile],
-  )
+    setPoliceCaseFileList((previous) =>
+      newId
+        ? previous.filter((p) => p.id !== file.id)
+        : previous.map((p) =>
+            p.id === file.id ? { ...p, checked: false } : p,
+          ),
+    )
+  }
 
-  const handlePoliceCaseFileUpload = useCallback(
-    async (selectedFiles: Item[]) => {
-      const filesToUpload = policeCaseFileList
-        .filter((p) => selectedFiles.some((f) => f.id === p.id))
-        .map((f) => ({
-          id: f.id,
-          name: f.name,
-          type: 'application/pdf',
-          policeFileId: f.id,
-        }))
+  const handlePoliceCaseFileUpload = async (selectedFiles: Item[]) => {
+    const filesToUpload = policeCaseFileList
+      .filter((p) => selectedFiles.some((f) => f.id === p.id))
+      .map((f) => ({
+        id: f.id,
+        name: f.name,
+        type: 'application/pdf',
+        policeFileId: f.id,
+      }))
 
-      if (filesToUpload.length === 0) {
-        return
-      }
+    if (filesToUpload.length === 0) {
+      return
+    }
 
-      setIsUploading(true)
+    setIsUploading(true)
 
-      await handleUploadFromPolice(filesToUpload, uploadPoliceCaseFileCallback)
+    await handleUploadFromPolice(filesToUpload, uploadPoliceCaseFileCallback)
 
-      setIsUploading(false)
-    },
-    [policeCaseFileList, handleUploadFromPolice, uploadPoliceCaseFileCallback],
-  )
+    setIsUploading(false)
+  }
 
-  const removeFileCB = useCallback(
-    (file: TUploadFile) => {
-      const policeCaseFile = policeCaseFiles?.files.find(
-        (f) => f.id === file.policeFileId,
-      )
+  const removeFileCB = (file: TUploadFile) => {
+    const policeCaseFile = policeCaseFiles?.files.find(
+      (f) => f.id === file.policeFileId,
+    )
 
-      if (policeCaseFile) {
-        setPoliceCaseFileList((previous) => [
-          mapPoliceCaseFileToPoliceCaseFileCheck(policeCaseFile),
-          ...previous,
-        ])
-      }
+    if (policeCaseFile) {
+      setPoliceCaseFileList((previous) => [
+        mapPoliceCaseFileToPoliceCaseFileCheck(policeCaseFile),
+        ...previous,
+      ])
+    }
 
-      removeUploadFile(file)
-    },
-    [policeCaseFiles?.files, removeUploadFile],
-  )
+    removeUploadFile(file)
+  }
 
   return (
     <PageLayout
