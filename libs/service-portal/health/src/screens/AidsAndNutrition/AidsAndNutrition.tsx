@@ -1,4 +1,4 @@
-import { Box, SkeletonLoader, Tabs } from '@island.is/island-ui/core'
+import { Box, SkeletonLoader, Tabs, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
@@ -56,6 +56,8 @@ const AidsAndNutrition = () => {
       },
   ].filter((x) => x !== false) as Array<{ label: string; content: JSX.Element }>
 
+  console.log(tabs)
+
   if (error && !loading) {
     return (
       <ErrorScreen
@@ -87,15 +89,22 @@ const AidsAndNutrition = () => {
         </Box>
       )}
 
-      {!loading && !error && tabs.length > 0 && (
+      {!loading && !error && tabs.length && (
         <Box>
-          <Tabs
-            label={formatMessage(messages.chooseAidsOrNutrition)}
-            tabs={tabs}
-            contentBackground="transparent"
-            selected="0"
-            size="xs"
-          />
+          {tabs.length === 1 ? (
+            <>
+              <Text variant="h5">{tabs[0].label}</Text>
+              {tabs[0].content}
+            </>
+          ) : (
+            <Tabs
+              label={formatMessage(messages.chooseAidsOrNutrition)}
+              tabs={tabs}
+              contentBackground="transparent"
+              selected="0"
+              size="xs"
+            />
+          )}
         </Box>
       )}
     </Box>
