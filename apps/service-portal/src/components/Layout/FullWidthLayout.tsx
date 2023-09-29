@@ -14,7 +14,7 @@ import * as styles from './Layout.css'
 import { useLocale } from '@island.is/localization'
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { IntroHeader } from '@island.is/service-portal/core'
-import { Link, matchPath, useLocation, useNavigate } from 'react-router-dom'
+import { Link, matchPath, useNavigate } from 'react-router-dom'
 import { ServicePortalPaths } from '../../lib/paths'
 import { DocumentsPaths } from '@island.is/service-portal/documents'
 
@@ -130,6 +130,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
                 <GridColumn span="12/12">
                   <Tabs
                     selected={pathname}
+                    key={navItems?.length}
                     onChange={tabChangeHandler}
                     label={
                       activeParent?.name ? formatMessage(activeParent.name) : ''
