@@ -31,7 +31,7 @@ import {
 } from '@island.is/island-ui/core'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { Comparison, ListViewCard } from '@island.is/web/components'
+import { ListViewCard } from '@island.is/web/components'
 import { SearchProducts } from '@island.is/web/utils/useUniversitySearch'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { theme } from '@island.is/island-ui/theme'
@@ -39,6 +39,8 @@ import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
   GetUniversityGatewayActiveProgramsQuery,
+  GetUniversityGatewayProgramFiltersQuery,
+  GetUniversityGatewayUniversitiesQuery,
   Program,
   ProgramFilter,
   University,
@@ -53,6 +55,7 @@ import {
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { TranslationDefaults } from './TranslationDefaults'
 import * as styles from './UniversitySearch.css'
+import { Comparison } from './ComparisonComponent'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
@@ -1225,13 +1228,15 @@ UniversitySearch.getProps = async ({ apolloClient, locale }) => {
 
   const data = newResponse.data.universityGatewayActivePrograms.data
 
-  const filters = await apolloClient.query<any>({
-    query: GET_UNIVERSITY_GATEWAY_FILTERS,
-  })
+  const filters =
+    await apolloClient.query<GetUniversityGatewayProgramFiltersQuery>({
+      query: GET_UNIVERSITY_GATEWAY_FILTERS,
+    })
 
-  const universities = await apolloClient.query<any>({
-    query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
-  })
+  const universities =
+    await apolloClient.query<GetUniversityGatewayUniversitiesQuery>({
+      query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
+    })
 
   return {
     data,

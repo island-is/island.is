@@ -20,6 +20,9 @@ import { Screen } from '@island.is/web/types'
 import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
+  GetUniversityGatewayByIdQuery,
+  GetUniversityGatewayByIdQueryVariables,
+  GetUniversityGatewayUniversitiesQuery,
   ProgramDetails,
   University,
 } from '@island.is/web/graphql/schema'
@@ -400,7 +403,10 @@ UniversityDetails.getProps = async ({ query, apolloClient, locale }) => {
     throw new CustomNextError(404, 'Síða er ekki opin')
   }
 
-  const newResponse = await apolloClient.query<any, any>({
+  const newResponse = await apolloClient.query<
+    GetUniversityGatewayByIdQuery,
+    GetUniversityGatewayByIdQueryVariables
+  >({
     query: GET_UNIVERSITY_GATEWAY_PROGRAM,
     variables: {
       input: {
@@ -409,9 +415,10 @@ UniversityDetails.getProps = async ({ query, apolloClient, locale }) => {
     },
   })
 
-  const universities = await apolloClient.query<any>({
-    query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
-  })
+  const universities =
+    await apolloClient.query<GetUniversityGatewayUniversitiesQuery>({
+      query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
+    })
 
   const data = newResponse.data.universityGatewayProgramById
 

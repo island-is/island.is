@@ -12,6 +12,9 @@ import { Screen } from '@island.is/web/types'
 import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
+  GetUniversityGatewayByIdQuery,
+  GetUniversityGatewayByIdQueryVariables,
+  GetUniversityGatewayUniversitiesQuery,
   ProgramDetails,
   University,
 } from '@island.is/web/graphql/schema'
@@ -291,7 +294,10 @@ Comparison.getProps = async ({ query, apolloClient, locale }) => {
 
   const allResolvedPromises = await Promise.all(
     parsedComparison.map(async (item: string) => {
-      return await apolloClient.query<any, any>({
+      return await apolloClient.query<
+        GetUniversityGatewayByIdQuery,
+        GetUniversityGatewayByIdQueryVariables
+      >({
         query: GET_UNIVERSITY_GATEWAY_PROGRAM,
         variables: {
           input: {
@@ -306,9 +312,10 @@ Comparison.getProps = async ({ query, apolloClient, locale }) => {
     (resolved) => resolved.data.universityGatewayProgramById,
   )
 
-  const universities = await apolloClient.query<any>({
-    query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
-  })
+  const universities =
+    await apolloClient.query<GetUniversityGatewayUniversitiesQuery>({
+      query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
+    })
 
   return {
     data: mappedData,
