@@ -15,7 +15,7 @@ export const SearchProducts = ({
   query,
   activeFilters,
 }: SearchProductsProps) => {
-  let queryMaker = { $or: [] }
+  const queryMaker = { $or: [] }
 
   if (query) {
     queryMaker.$or.push(
