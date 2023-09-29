@@ -156,7 +156,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
 const FullWidthLayoutWrapper: FC<FullWidthLayoutProps> = (props) => {
   return (
     <FullWidthLayout {...props}>
-      <ModuleAlertBannerSection />
+      <ModuleAlertBannerSection paddingTop={2} />
       {props.children}
     </FullWidthLayout>
   )
