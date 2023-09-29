@@ -35,7 +35,7 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
         >
           {sidebarContent}
         </Box>
-        <GridContainer>
+        <GridContainer className={styles.sidebarWrap}>
           <GridRow>
             <GridColumn
               offset={['0', '0', '0', '0', '1/9']}

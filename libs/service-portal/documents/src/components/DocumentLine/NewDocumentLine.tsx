@@ -2,7 +2,11 @@ import cn from 'classnames'
 import format from 'date-fns/format'
 import React, { FC, useState } from 'react'
 
-import { Document, DocumentDetails } from '@island.is/api/schema'
+import {
+  Document,
+  DocumentDetails,
+  GetDocumentListInput,
+} from '@island.is/api/schema'
 import {
   Box,
   Text,
@@ -28,6 +32,7 @@ interface Props {
   img?: string
   onClick?: (doc: ActiveDocumentType) => void
   setSelectLine?: (id: string) => void
+  refetchInboxItems?: (input?: GetDocumentListInput) => void
   active: boolean
   loading?: boolean
   asFrame?: boolean
@@ -49,6 +54,7 @@ export const NewDocumentLine: FC<Props> = ({
   img,
   onClick,
   setSelectLine,
+  refetchInboxItems,
   active,
   loading,
   asFrame,
@@ -245,19 +251,27 @@ export const NewDocumentLine: FC<Props> = ({
                   archived={isArchived}
                   onFav={
                     avatarCheckmark || isBookmarked
-                      ? (e) => {
+                      ? async (e) => {
                           e.stopPropagation()
-                          submitMailAction(
+                          await submitMailAction(
                             isBookmarked ? 'unbookmark' : 'bookmark',
                           )
+                          if (refetchInboxItems) {
+                            refetchInboxItems()
+                          }
                         }
                       : undefined
                   }
                   onStash={
                     avatarCheckmark || isArchived
-                      ? (e) => {
+                      ? async (e) => {
                           e.stopPropagation()
-                          submitMailAction(isArchived ? 'unarchive' : 'archive')
+                          await submitMailAction(
+                            isArchived ? 'unarchive' : 'archive',
+                          )
+                          if (refetchInboxItems) {
+                            refetchInboxItems()
+                          }
                         }
                       : undefined
                   }

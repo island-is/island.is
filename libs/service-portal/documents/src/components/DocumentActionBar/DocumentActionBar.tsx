@@ -7,10 +7,12 @@ import {
 } from '@island.is/island-ui/core'
 import { useSubmitMailAction } from '../../utils/useSubmitMailAction'
 import * as styles from './DocumentActionBar.css'
+import { GetDocumentListInput } from '@island.is/api/schema'
 
 export type DocumentActionBarProps = {
   onPrintClick?: () => void
   onGoBack?: () => void
+  refetchInboxItems?: (input?: GetDocumentListInput) => void
   spacing?: BoxProps['columnGap']
   documentId: string
   archived?: boolean
@@ -23,6 +25,7 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
   documentId,
   bookmarked,
   archived,
+  refetchInboxItems,
 }) => {
   const {
     submitMailAction,
@@ -52,9 +55,12 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
               circle
               icon="archive"
               iconType={isArchived ? 'filled' : 'outline'}
-              onClick={() =>
-                submitMailAction(isArchived ? 'unarchive' : 'archive')
-              }
+              onClick={async () => {
+                await submitMailAction(isArchived ? 'unarchive' : 'archive')
+                if (refetchInboxItems) {
+                  refetchInboxItems()
+                }
+              }}
               size="medium"
               title="Geymsla"
               colorScheme="light"
@@ -64,9 +70,12 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
               circle
               icon="star"
               iconType={isBookmarked ? 'filled' : 'outline'}
-              onClick={() =>
-                submitMailAction(isBookmarked ? 'unbookmark' : 'bookmark')
-              }
+              onClick={async () => {
+                await submitMailAction(isBookmarked ? 'unbookmark' : 'bookmark')
+                if (refetchInboxItems) {
+                  refetchInboxItems()
+                }
+              }}
               size="medium"
               title="Stjörnumerkja"
               colorScheme="light"

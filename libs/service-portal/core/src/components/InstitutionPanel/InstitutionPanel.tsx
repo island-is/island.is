@@ -49,7 +49,7 @@ export const InstitutionPanel = ({
         width="full"
         position="relative"
       >
-        <Box display={imgContainerDisplay}>
+        <Box width="full" height="full" display={imgContainerDisplay}>
           {loading ? (
             <SkeletonLoader
               display="block"
