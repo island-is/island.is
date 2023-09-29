@@ -34,6 +34,7 @@ import {
   ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import { Item } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   TUploadFile,
@@ -140,13 +141,17 @@ const UploadFilesToPoliceCase: React.FC<
   ])
 
   useEffect(() => {
+    if (policeCaseFiles?.files.length === 0) {
+      return
+    }
+
     setPoliceCaseFileList(
       policeCaseFiles?.files
         .filter(
           (file) =>
             !caseFiles.some((caseFile) => caseFile.policeFileId === file.id),
         )
-        .map(mapPoliceCaseFileToPoliceCaseFileCheck) || [],
+        .map(mapPoliceCaseFileToPoliceCaseFileCheck) ?? [],
     )
   }, [policeCaseFiles?.files, caseFiles, policeCaseNumber])
 
@@ -156,19 +161,13 @@ const UploadFilesToPoliceCase: React.FC<
         addUploadFile({ ...file, id: id ?? file.id })
       }
 
-      setPoliceCaseFileList((previous) => {
-        const current = id
+      setPoliceCaseFileList((previous) =>
+        id
           ? previous.filter((p) => p.id !== file.id)
           : previous.map((p) =>
               p.id === file.id ? { ...p, checked: false } : p,
-            )
-
-        if (current.every((p) => !p.checked)) {
-          setIsUploading(false)
-        }
-
-        return current
-      })
+            ),
+      )
     },
     [addUploadFile],
   )
@@ -191,62 +190,65 @@ const UploadFilesToPoliceCase: React.FC<
     [policeCaseFiles?.files, removeUploadFile],
   )
 
-  const onPoliceCaseFileUpload = useCallback(async () => {
-    let currentChapter: number | undefined | null
-    let currentOrderWithinChapter: number | undefined | null
+  const onPoliceCaseFileUpload = useCallback(
+    async (selectedFiles: Item[]) => {
+      let currentChapter: number | undefined | null
+      let currentOrderWithinChapter: number | undefined | null
 
-    const filesToUpload = policeCaseFileList
-      .filter((p) => p.checked)
-      .sort((p1, p2) => (p1.chapter ?? -1) - (p2.chapter ?? -1))
-      .map((f) => {
-        if (
-          f.chapter !== undefined &&
-          f.chapter !== null &&
-          f.chapter !== currentChapter
-        ) {
-          currentChapter = f.chapter
-          currentOrderWithinChapter = Math.max(
-            -1,
-            ...caseFiles
-              .filter((p) => p.chapter === currentChapter)
-              .map((p) => p.orderWithinChapter ?? -1),
-          )
-        }
+      const filesToUpload = policeCaseFileList
+        .filter((p) => selectedFiles.some((f) => f.id === p.id))
+        .sort((p1, p2) => (p1.chapter ?? -1) - (p2.chapter ?? -1))
+        .map((f) => {
+          if (
+            f.chapter !== undefined &&
+            f.chapter !== null &&
+            f.chapter !== currentChapter
+          ) {
+            currentChapter = f.chapter
+            currentOrderWithinChapter = Math.max(
+              -1,
+              ...caseFiles
+                .filter((p) => p.chapter === currentChapter)
+                .map((p) => p.orderWithinChapter ?? -1),
+            )
+          }
 
-        return {
-          id: f.id,
-          name: f.name,
-          type: 'application/pdf',
-          category: CaseFileCategory.CASE_FILE,
-          policeCaseNumber: f.policeCaseNumber,
-          chapter: f.chapter ?? undefined,
-          orderWithinChapter:
-            currentOrderWithinChapter !== undefined &&
-            currentOrderWithinChapter !== null
-              ? ++currentOrderWithinChapter
-              : undefined,
-          displayDate: f.displayDate ?? undefined,
-          policeFileId: f.id,
-        }
-      })
+          return {
+            id: f.id,
+            name: f.name,
+            type: 'application/pdf',
+            category: CaseFileCategory.CASE_FILE,
+            policeCaseNumber: f.policeCaseNumber,
+            chapter: f.chapter ?? undefined,
+            orderWithinChapter:
+              currentOrderWithinChapter !== undefined &&
+              currentOrderWithinChapter !== null
+                ? ++currentOrderWithinChapter
+                : undefined,
+            displayDate: f.displayDate ?? undefined,
+            policeFileId: f.id,
+          }
+        })
 
-    setIsUploading(true)
+      setIsUploading(true)
 
-    await handleUploadFromPolice(filesToUpload, uploadPoliceCaseFileCallback)
-  }, [
-    caseFiles,
-    policeCaseFileList,
-    handleUploadFromPolice,
-    uploadPoliceCaseFileCallback,
-  ])
+      await handleUploadFromPolice(filesToUpload, uploadPoliceCaseFileCallback)
+
+      setIsUploading(false)
+    },
+    [
+      caseFiles,
+      policeCaseFileList,
+      handleUploadFromPolice,
+      uploadPoliceCaseFileCallback,
+    ],
+  )
 
   return (
     <>
       <PoliceCaseFiles
         onUpload={onPoliceCaseFileUpload}
-        isUploading={isUploading}
         policeCaseFileList={policeCaseFileList}
-        setPoliceCaseFileList={setPoliceCaseFileList}
         policeCaseFiles={policeCaseFiles}
       />
       <InputFileUpload
@@ -265,7 +267,6 @@ const UploadFilesToPoliceCase: React.FC<
         onRemove={(file) => handleRemove(file, removeFileCB)}
         onRetry={(file) => handleRetry(file, updateUploadFile)}
         errorMessage={errorMessage}
-        disabled={isUploading}
         showFileSize
       />
     </>

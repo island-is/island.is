@@ -1,12 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const strings = defineMessages({
-  selectAllLabel: {
-    id: 'judicial.system.core:police_case_files.select_all_label',
-    defaultMessage: 'Velja allt',
-    description:
-      'Notaður sem texti fyrir "Velja allt" valmöguleikann í LÖKE gagnapakkanum.',
-  },
   couldNotGetFromLOKEMessage: {
     id: 'judicial.system.core:police_case_files.could_not_get_from_loke_message',
     defaultMessage:

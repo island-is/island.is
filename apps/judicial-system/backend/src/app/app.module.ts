@@ -24,6 +24,7 @@ import {
   userModuleConfig,
   awsS3ModuleConfig,
   eventModuleConfig,
+  EventLogModule,
   courtModuleConfig,
 } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
@@ -45,6 +46,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     FileModule,
     NotificationModule,
     PoliceModule,
+    EventLogModule,
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
       isGlobal: true,

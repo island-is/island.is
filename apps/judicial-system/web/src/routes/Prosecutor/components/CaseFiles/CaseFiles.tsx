@@ -31,6 +31,7 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { Item } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
@@ -148,41 +149,40 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
         addUploadFile({ ...file, id: newId })
       }
 
-      setPoliceCaseFileList((previous) => {
-        const current = newId
+      setPoliceCaseFileList((previous) =>
+        newId
           ? previous.filter((p) => p.id !== file.id)
           : previous.map((p) =>
               p.id === file.id ? { ...p, checked: false } : p,
-            )
-
-        if (current.every((p) => !p.checked)) {
-          setIsUploading(false)
-        }
-
-        return current
-      })
+            ),
+      )
     },
     [addUploadFile],
   )
 
-  const handlePoliceCaseFileUpload = useCallback(async () => {
-    const filesToUpload = policeCaseFileList
-      .filter((p) => p.checked)
-      .map((f) => ({
-        id: f.id,
-        name: f.name,
-        type: 'application/pdf',
-        policeFileId: f.id,
-      }))
+  const handlePoliceCaseFileUpload = useCallback(
+    async (selectedFiles: Item[]) => {
+      const filesToUpload = policeCaseFileList
+        .filter((p) => selectedFiles.some((f) => f.id === p.id))
+        .map((f) => ({
+          id: f.id,
+          name: f.name,
+          type: 'application/pdf',
+          policeFileId: f.id,
+        }))
 
-    if (filesToUpload.length === 0) {
-      return
-    }
+      if (filesToUpload.length === 0) {
+        return
+      }
 
-    setIsUploading(true)
+      setIsUploading(true)
 
-    await handleUploadFromPolice(filesToUpload, uploadPoliceCaseFileCallback)
-  }, [policeCaseFileList, handleUploadFromPolice, uploadPoliceCaseFileCallback])
+      await handleUploadFromPolice(filesToUpload, uploadPoliceCaseFileCallback)
+
+      setIsUploading(false)
+    },
+    [policeCaseFileList, handleUploadFromPolice, uploadPoliceCaseFileCallback],
+  )
 
   const removeFileCB = useCallback(
     (file: TUploadFile) => {
@@ -236,9 +236,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
         />
         <PoliceCaseFiles
           onUpload={handlePoliceCaseFileUpload}
-          isUploading={isUploading}
           policeCaseFileList={policeCaseFileList}
-          setPoliceCaseFileList={setPoliceCaseFileList}
           policeCaseFiles={policeCaseFiles}
         />
         <Box marginBottom={3}>
