@@ -74,14 +74,14 @@ const UtlendingastofnunFooter: React.FC<
                       {n('serviceWebFooterFirstColumnTitle', 'Þjónustuver')}
                     </Text>
 
-                    <Text color="white" variant="small">
+                    <Text color="white" variant="medium">
                       {n(
                         'serviceWebFooterOpeningHours',
                         'Opið mánudaga til föstudaga 9 - 14',
                       )}
                     </Text>
 
-                    <Text paddingTop={1} color="white" variant="small">
+                    <Text paddingTop={1} color="white" variant="medium">
                       {n(
                         'serviceWebFooterLocation',
                         'Dalvegur 18, 201 Kópavogi',
@@ -100,10 +100,10 @@ const UtlendingastofnunFooter: React.FC<
 
                 <GridColumn span={['12/12', '6/12', '6/12', '3/12']}>
                   <Box paddingTop={[3, 3, 3, 0]}>
-                    <Text variant="small" paddingBottom={1}>
+                    <Text variant="medium" paddingBottom={1}>
                       <LinkV2
                         underlineVisibility="always"
-                        underline="small"
+                        underline="medium"
                         href={n(
                           'serviceWebFooterWebChatHref',
                           '/s/utlendingastofnun?wa_lid=t10',
@@ -113,10 +113,10 @@ const UtlendingastofnunFooter: React.FC<
                       </LinkV2>
                     </Text>
 
-                    <Text variant="small">
+                    <Text variant="medium">
                       <LinkV2
                         underlineVisibility="always"
-                        underline="small"
+                        underline="medium"
                         href={n(
                           'serviceWebFooterEmailLinkHref',
                           linkResolver('servicewebcontact', [organizationSlug])
@@ -126,7 +126,7 @@ const UtlendingastofnunFooter: React.FC<
                         {n('serviceWebFooterEmailTitle', 'Sendu okkur línu')}
                       </LinkV2>
                     </Text>
-                    <Text paddingTop={1} color="white" variant="small">
+                    <Text paddingTop={1} color="white" variant="medium">
                       {n('serviceWebFooterTelephonePlaceholder', 'Sími:')}{' '}
                       <LinkV2
                         href={
@@ -190,7 +190,7 @@ const UtlendingastofnunFooter: React.FC<
                               <Text
                                 color="white"
                                 paddingBottom={2}
-                                variant="small"
+                                variant="medium"
                               >
                                 {children}
                               </Text>
