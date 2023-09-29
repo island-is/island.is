@@ -18,17 +18,16 @@ import type { Logger } from '@island.is/logging'
 import {
   CaseFileCategory,
   CaseFileState,
-  completedCaseStates,
   indictmentCases,
   investigationCases,
   isIndictmentCase,
   restrictionCases,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
+import type { CaseType, User } from '@island.is/judicial-system/types'
 
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
-import { Case, CaseService } from '../case'
+import { Case } from '../case'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFileDto } from './dto/updateFile.dto'
@@ -55,7 +54,6 @@ export class FileService {
     @InjectModel(CaseFile) private readonly fileModel: typeof CaseFile,
     private readonly courtService: CourtService,
     private readonly awsS3Service: AwsS3Service,
-    private readonly caseService: CaseService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -181,12 +179,12 @@ export class FileService {
     return caseFile
   }
 
-  async getAll(theCase: Case, user: User): Promise<Buffer> {
+  async getAll(caseId: string, caseType: CaseType): Promise<Buffer> {
     const filesToZip: Array<{ data: Buffer; name: string }> = []
     const allowedCategories = [
       ...restrictionCases,
       ...investigationCases,
-    ].includes(theCase.type)
+    ].includes(caseType)
       ? [
           CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
           CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
@@ -196,7 +194,7 @@ export class FileService {
           CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
           CaseFileCategory.APPEAL_RULING,
         ]
-      : indictmentCases.includes(theCase.type)
+      : indictmentCases.includes(caseType)
       ? [
           CaseFileCategory.COURT_RECORD,
           CaseFileCategory.RULING,
@@ -210,7 +208,7 @@ export class FileService {
 
     const caseFilesByCategory = await this.fileModel.findAll({
       where: {
-        caseId: theCase.id,
+        caseId: caseId,
         state: { [Op.not]: CaseFileState.DELETED },
         category: allowedCategories,
       },
@@ -219,24 +217,6 @@ export class FileService {
     for (const file of caseFilesByCategory) {
       const content = await this.awsS3Service.getObject(file.key ?? '')
       filesToZip.push({ data: content, name: file.name })
-    }
-
-    filesToZip.push({
-      data: await this.caseService.getRequestPdf(theCase),
-      name: 'krafa.pdf',
-    })
-
-    if (completedCaseStates.includes(theCase.state)) {
-      filesToZip.push(
-        {
-          data: await this.caseService.getRulingPdf(theCase),
-          name: 'urskurður.pdf',
-        },
-        {
-          data: await this.caseService.getCourtRecordPdf(theCase, user),
-          name: 'þingbok.pdf',
-        },
-      )
     }
 
     return this.zipFiles(filesToZip)
