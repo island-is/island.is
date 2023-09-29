@@ -8,7 +8,7 @@ type Props = {
 const LogoText = ({ isSmall = false }: Props) => {
   const loc = localization['logoText']
   return (
-    <Text variant={isSmall ? 'h2' : 'h1'} color="blue400">
+    <Text variant={isSmall ? 'h2' : 'h1'}>
       {loc.title}
     </Text>
   )
