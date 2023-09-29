@@ -7,9 +7,7 @@
   "paths": {
     "/Applicant/Get": {
       "get": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "responses": {
           "200": {
             "description": "Success",
@@ -36,9 +34,7 @@
     },
     "/Applicant": {
       "post": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -82,9 +78,7 @@
         }
       },
       "patch": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -130,9 +124,7 @@
     },
     "/Applicant/NewChild": {
       "post": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -178,9 +170,7 @@
     },
     "/api/ApplicantResidenceCondition/Get": {
       "get": {
-        "tags": [
-          "ApplicantResidenceCondition"
-        ],
+        "tags": ["ApplicantResidenceCondition"],
         "responses": {
           "200": {
             "description": "Success",
@@ -207,9 +197,7 @@
     },
     "/api/Application/Citizenship": {
       "post": {
-        "tags": [
-          "Application"
-        ],
+        "tags": ["Application"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -255,9 +243,7 @@
     },
     "/api/Application/Citizenship/{ssnr}": {
       "post": {
-        "tags": [
-          "Application"
-        ],
+        "tags": ["Application"],
         "parameters": [
           {
             "name": "ssnr",
@@ -314,9 +300,7 @@
     },
     "/api/Application/GetAll/{ssnr}": {
       "get": {
-        "tags": [
-          "Application"
-        ],
+        "tags": ["Application"],
         "parameters": [
           {
             "name": "ssnr",
@@ -363,9 +347,7 @@
     },
     "/api/Application/Confirm/{applicationId}": {
       "patch": {
-        "tags": [
-          "Application"
-        ],
+        "tags": ["Application"],
         "parameters": [
           {
             "name": "applicationId",
@@ -403,9 +385,7 @@
     },
     "/api/Application": {
       "post": {
-        "tags": [
-          "Application"
-        ],
+        "tags": ["Application"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -451,9 +431,7 @@
     },
     "/api/Application/GetAll": {
       "get": {
-        "tags": [
-          "Application"
-        ],
+        "tags": ["Application"],
         "responses": {
           "200": {
             "description": "Success",
@@ -489,9 +467,7 @@
     },
     "/api/ApplicationAttachment/{applicationId}": {
       "post": {
-        "tags": [
-          "ApplicationAttachment"
-        ],
+        "tags": ["ApplicationAttachment"],
         "parameters": [
           {
             "name": "applicationId",
@@ -548,9 +524,7 @@
     },
     "/api/CountryOfResidence": {
       "post": {
-        "tags": [
-          "CountryOfResidence"
-        ],
+        "tags": ["CountryOfResidence"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -596,9 +570,7 @@
     },
     "/api/CountryOfResidence/GetAll": {
       "get": {
-        "tags": [
-          "CountryOfResidence"
-        ],
+        "tags": ["CountryOfResidence"],
         "responses": {
           "200": {
             "description": "Success",
@@ -634,9 +606,7 @@
     },
     "/api/CriminalRecord": {
       "post": {
-        "tags": [
-          "CriminalRecord"
-        ],
+        "tags": ["CriminalRecord"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -682,9 +652,7 @@
     },
     "/api/CriminalRecord/GetAll": {
       "get": {
-        "tags": [
-          "CriminalRecord"
-        ],
+        "tags": ["CriminalRecord"],
         "responses": {
           "200": {
             "description": "Success",
@@ -720,9 +688,7 @@
     },
     "/api/Employer/GetAll/{applicationId}": {
       "get": {
-        "tags": [
-          "Employer"
-        ],
+        "tags": ["Employer"],
         "parameters": [
           {
             "name": "applicationId",
@@ -769,9 +735,7 @@
     },
     "/api/Employer/{applicationId}": {
       "post": {
-        "tags": [
-          "Employer"
-        ],
+        "tags": ["Employer"],
         "parameters": [
           {
             "name": "applicationId",
@@ -828,9 +792,7 @@
     },
     "/api/OptionSet/{lookupType}": {
       "get": {
-        "tags": [
-          "OptionSet"
-        ],
+        "tags": ["OptionSet"],
         "parameters": [
           {
             "name": "lookupType",
@@ -877,9 +839,7 @@
     },
     "/api/OptionSet/GetSingle/{lookupType}/{id}": {
       "get": {
-        "tags": [
-          "OptionSet"
-        ],
+        "tags": ["OptionSet"],
         "parameters": [
           {
             "name": "lookupType",
@@ -926,9 +886,7 @@
     },
     "/api/ResidenceAbroad/GetAll": {
       "get": {
-        "tags": [
-          "ResidenceAbroad"
-        ],
+        "tags": ["ResidenceAbroad"],
         "responses": {
           "200": {
             "description": "Success",
@@ -964,9 +922,7 @@
     },
     "/api/ResidenceAbroad/{applicationId}": {
       "post": {
-        "tags": [
-          "ResidenceAbroad"
-        ],
+        "tags": ["ResidenceAbroad"],
         "parameters": [
           {
             "name": "applicationId",
@@ -1023,9 +979,7 @@
     },
     "/api/ResidenceAbroad/GetAll/{applicationId}": {
       "get": {
-        "tags": [
-          "ResidenceAbroad"
-        ],
+        "tags": ["ResidenceAbroad"],
         "parameters": [
           {
             "name": "applicationId",
@@ -1072,9 +1026,7 @@
     },
     "/api/ResidencePermitClassification": {
       "get": {
-        "tags": [
-          "ResidencePermitClassification"
-        ],
+        "tags": ["ResidencePermitClassification"],
         "responses": {
           "200": {
             "description": "Success",
@@ -1110,9 +1062,7 @@
     },
     "/api/ResidencePermitClassification/ClassificationType/{classificationId}": {
       "get": {
-        "tags": [
-          "ResidencePermitClassification"
-        ],
+        "tags": ["ResidencePermitClassification"],
         "parameters": [
           {
             "name": "classificationId",
@@ -1159,9 +1109,7 @@
     },
     "/api/ResidencePermitClassification/ClassificationDetail/{classificationTypeId}": {
       "get": {
-        "tags": [
-          "ResidencePermitClassification"
-        ],
+        "tags": ["ResidencePermitClassification"],
         "parameters": [
           {
             "name": "classificationTypeId",
@@ -1208,9 +1156,7 @@
     },
     "/api/StaticData": {
       "post": {
-        "tags": [
-          "StaticData"
-        ],
+        "tags": ["StaticData"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1256,9 +1202,7 @@
     },
     "/api/StaticData/GetAll": {
       "get": {
-        "tags": [
-          "StaticData"
-        ],
+        "tags": ["StaticData"],
         "responses": {
           "200": {
             "description": "Success",
@@ -1294,9 +1238,7 @@
     },
     "/api/Study": {
       "post": {
-        "tags": [
-          "Study"
-        ],
+        "tags": ["Study"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1342,9 +1284,7 @@
     },
     "/api/Study/GetAll": {
       "get": {
-        "tags": [
-          "Study"
-        ],
+        "tags": ["Study"],
         "responses": {
           "200": {
             "description": "Success",
@@ -1380,9 +1320,7 @@
     },
     "/api/TravelDocument/GetAll": {
       "get": {
-        "tags": [
-          "TravelDocument"
-        ],
+        "tags": ["TravelDocument"],
         "responses": {
           "200": {
             "description": "Success",
@@ -1418,9 +1356,7 @@
     },
     "/api/TravelDocument/{applicationId}": {
       "post": {
-        "tags": [
-          "TravelDocument"
-        ],
+        "tags": ["TravelDocument"],
         "parameters": [
           {
             "name": "applicationId",
@@ -1477,9 +1413,7 @@
     },
     "/api/TravelDocument/GetAll/{applicationId}": {
       "get": {
-        "tags": [
-          "TravelDocument"
-        ],
+        "tags": ["TravelDocument"],
         "parameters": [
           {
             "name": "applicationId",
@@ -2093,10 +2027,7 @@
         "additionalProperties": false
       },
       "StaticDataNewModel": {
-        "required": [
-          "name",
-          "ssn"
-        ],
+        "required": ["name", "ssn"],
         "type": "object",
         "properties": {
           "ssn": {
@@ -2199,10 +2130,7 @@
         "additionalProperties": false
       },
       "StaticDataViewModel": {
-        "required": [
-          "name",
-          "ssn"
-        ],
+        "required": ["name", "ssn"],
         "type": "object",
         "properties": {
           "ssn": {
@@ -2443,7 +2371,7 @@
   },
   "security": [
     {
-      "bearerAuth": [ ]
+      "bearerAuth": []
     }
   ]
 }
