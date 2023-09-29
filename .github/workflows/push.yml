@@ -770,16 +770,6 @@ jobs:
             }
           }
           BODY
-      - name: Generate islandis feature-deployment charts for ArgoCD
-        env:
-          FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
-          DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
-          IMAGES: ${{ needs.prepare.outputs.IMAGES }}
-          GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
-        run: |
-          ./infra/scripts/generate-feature-values.sh values --chart islandis --feature "$FEATURE_NAME" --images "$IMAGES" > ./charts/islandis/$FEATURE_NAME.yaml
-          cat charts/islandis/$FEATURE_NAME.yaml
-          ./infra/scripts/ci/git-check-dirty.sh "charts/" "feature charts" "dirtybot"
       - name: Trigger Deployment for IDS-Services
         env:
           DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
