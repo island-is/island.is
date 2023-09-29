@@ -22,24 +22,10 @@ export const footerItemFirst = style({
 globalStyle(`${footerBg} a`, {
   color: 'white',
   textDecoration: 'underline',
-  fontSize: '14px',
+
   textUnderlineOffset: '5px',
 })
 
 globalStyle(`${footerBg} a:hover`, {
   textDecorationThickness: '2px',
-})
-
-export const textContainer = style({
-  ...themeUtils.responsiveStyle({
-    xs: {
-      marginLeft: 5,
-    },
-    sm: {
-      marginLeft: 5,
-    },
-    md: {
-      marginLeft: 5,
-    },
-  }),
 })

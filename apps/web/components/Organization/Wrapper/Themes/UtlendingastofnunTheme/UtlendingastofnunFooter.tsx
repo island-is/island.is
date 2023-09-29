@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { FooterItem } from '@island.is/web/graphql/schema'
+import { BLOCKS } from '@contentful/rich-text-types'
 import {
   Box,
   GridColumn,
@@ -8,10 +8,13 @@ import {
   LinkV2,
   Text,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
-import { BLOCKS } from '@contentful/rich-text-types'
+import { FooterItem } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { GlobalContext } from '@island.is/web/context'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { useI18n } from '@island.is/web/i18n'
 
 import * as styles from './UtlendingastofnunFooter.css'
 
@@ -29,6 +32,8 @@ const UtlendingastofnunFooter: React.FC<
   const n = useNamespace(namespace)
   const { isServiceWeb } = useContext(GlobalContext)
   const { linkResolver } = useLinkResolver()
+  const { width } = useWindowSize()
+  const { activeLocale } = useI18n()
 
   return (
     <footer aria-labelledby="organizationFooterTitle">
@@ -117,7 +122,15 @@ const UtlendingastofnunFooter: React.FC<
                       </LinkV2>
                     </Text>
                     <Text paddingTop={1} color="white" variant="small">
-                      {n('serviceWebFooterTelephone', 'Sími +354 444 0900')}
+                      {n('serviceWebFooterTelephonePlaceholder', 'Sími:')}{' '}
+                      <LinkV2
+                        href={
+                          'tel:' +
+                          n('serviceWebFooterTelephoneNumber', '+354 444 0900')
+                        }
+                      >
+                        {n('serviceWebFooterTelephoneNumber', '+354 444 0900')}
+                      </LinkV2>
                     </Text>
                   </Box>
                 </GridColumn>
@@ -149,16 +162,28 @@ const UtlendingastofnunFooter: React.FC<
                       key={index}
                       span={
                         index === 1 || index === 2
-                          ? ['12/12', '12/12', '3/12']
-                          : ['12/12', '12/12', '2/12']
+                          ? ['12/12', '12/12', '3/11']
+                          : ['12/12', '12/12', '2/11']
                       }
                       offset={index === 0 ? ['0', '0', '1/12'] : '0'}
                     >
                       <Box
                         marginBottom={5}
-                        paddingRight={index !== 3 ? 4 : 0}
-                        className={styles.textContainer}
+                        paddingRight={index !== 3 ? 2 : 0}
+                        paddingLeft={
+                          index === 2 && width > theme.breakpoints.md ? 5 : 0
+                        }
                       >
+                        {index === 3 && (
+                          <Text variant="h5" color="white" paddingBottom={2}>
+                            {n(
+                              'serviceWebFooterCanWeHelp',
+                              activeLocale === 'is'
+                                ? 'Getum við aðstoðað?'
+                                : 'Can we help?',
+                            )}
+                          </Text>
+                        )}
                         {richText(item.content as SliceType[], {
                           renderNode: {
                             [BLOCKS.PARAGRAPH]: (_node, children) => (
