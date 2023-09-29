@@ -25,7 +25,6 @@ import {
   Link,
   Stack,
   LoadingDots,
-  Checkbox,
 } from '@island.is/island-ui/core'
 import { Organizations, SupportCategory } from '@island.is/api/schema'
 import { GET_SUPPORT_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
@@ -66,10 +65,6 @@ interface StandardFormProps {
   stateEntities: string[]
   formNamespace: FormNamespace
 }
-
-const mannaudstorgTag = [
-  { key: 'mannaudstorg', type: SearchableTags.Organization },
-]
 
 const labels: Record<string, string> = {
   syslumadur: 'Sýslumannsembætti',
@@ -845,27 +840,6 @@ export const StandardForm = ({
                     </GridColumn>
                   </GridRow>
                   <GridRow marginTop={8}>
-                    <GridColumn>
-                      <Controller
-                        name="storageAllowed"
-                        defaultValue={false}
-                        control={control}
-                        rules={{ required: true }}
-                        render={({ field: { onChange, value } }) => (
-                          <Checkbox
-                            label={n(
-                              'serviceWebFormStorageAllowedCheckboxText',
-                              'Ég gef leyfi fyrir því að erindi mitt sé vistað í póstumsjónarkerfi',
-                            )}
-                            checked={value}
-                            onChange={(e) => onChange(e.target.checked)}
-                            hasError={errors?.storageAllowed !== undefined}
-                          />
-                        )}
-                      />
-                    </GridColumn>
-                  </GridRow>
-                  <GridRow marginTop={8}>
                     <GridColumn
                       span={['12/12', '12/12', '6/12', '6/12']}
                       paddingBottom={3}
@@ -936,7 +910,12 @@ export const StandardForm = ({
                           loading={loading}
                           disabled={!canSubmit}
                         >
-                          {n('submitServiceWebForm', 'Senda fyrirspurn')}
+                          {n(
+                            'submitServiceWebForm',
+                            activeLocale === 'is'
+                              ? 'Senda fyrirspurn'
+                              : 'Submit inquiry',
+                          )}
                         </Button>
                       </Box>
                     </GridColumn>
