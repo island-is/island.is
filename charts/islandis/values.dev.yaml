@@ -2339,12 +2339,6 @@ services-sessions-geoip-worker:
       size: '1Gi'
       storageClass: 'efs-csi'
       useExisting: false
-    - accessModes: 'ReadWriteMany'
-      mountPath: '/webapp/node_modules/geoip-lite/tmp'
-      name: 'sessions-geoip-db-tmp'
-      size: '1Gi'
-      storageClass: 'efs-csi'
-      useExisting: false
   replicaCount:
     default: 1
     max: 1
