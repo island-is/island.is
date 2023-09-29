@@ -129,21 +129,28 @@ export const ServicePortalDocuments = () => {
 
   const [filterValue, setFilterValue] =
     useState<FilterValuesType>(defaultFilterValues)
+
+  const fetchObject = () => {
+    return {
+      senderKennitala: filterValue.activeSenders.join(),
+      dateFrom: filterValue.dateFrom?.toISOString(),
+      dateTo: filterValue.dateTo?.toISOString(),
+      categoryId: filterValue.activeCategories.join(),
+      subjectContains: filterValue.searchQuery,
+      typeId: null,
+      sortBy: sortState.key,
+      order: sortState.direction,
+      opened: filterValue.showUnread ? false : null,
+      page: page,
+      pageSize: pageSize,
+      isLegalGuardian: hideHealthData,
+      archived: filterValue.archived,
+      bookmarked: filterValue.bookmarked,
+    }
+  }
+
   const { data, totalCount, loading, error, refetch } = useListDocuments({
-    senderKennitala: filterValue.activeSenders.join(),
-    dateFrom: filterValue.dateFrom?.toISOString(),
-    dateTo: filterValue.dateTo?.toISOString(),
-    categoryId: filterValue.activeCategories.join(),
-    subjectContains: filterValue.searchQuery,
-    typeId: null,
-    sortBy: sortState.key,
-    order: sortState.direction,
-    opened: filterValue.showUnread ? false : null,
-    page: page,
-    pageSize: pageSize,
-    isLegalGuardian: hideHealthData,
-    archived: filterValue.archived,
-    bookmarked: filterValue.bookmarked,
+    ...fetchObject(),
   })
 
   const { data: categoriesData, loading: categoriesLoading } = useQuery<Query>(
@@ -355,6 +362,13 @@ export const ServicePortalDocuments = () => {
                         (doc) => doc?.id === activeDocument?.id,
                       )?.[0]?.bookmarked
                     }
+                    refetchInboxItems={() => {
+                      if (refetch) {
+                        refetch({
+                          ...fetchObject(),
+                        })
+                      }
+                    }}
                   />
                 </Box>
                 <Box className={styles.modalContent}>
@@ -464,6 +478,13 @@ export const ServicePortalDocuments = () => {
                     active={doc.id === activeDocument?.id}
                     selected={selectedLines.includes(doc.id)}
                     bookmarked={!!doc.bookmarked}
+                    refetchInboxItems={() => {
+                      if (refetch) {
+                        refetch({
+                          ...fetchObject(),
+                        })
+                      }
+                    }}
                     setSelectLine={(docId) => {
                       if (selectedLines.includes(doc.id)) {
                         const filtered = selectedLines.filter(
@@ -504,6 +525,13 @@ export const ServicePortalDocuments = () => {
                     bookmarked: !!filteredDocuments?.filter(
                       (doc) => doc?.id === activeDocument?.id,
                     )?.[0]?.bookmarked,
+                    refetchInboxItems: () => {
+                      if (refetch) {
+                        refetch({
+                          ...fetchObject(),
+                        })
+                      }
+                    },
                   }}
                 />
                 <Box>{<DocumentRenderer document={activeDocument} />}</Box>

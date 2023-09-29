@@ -10,7 +10,7 @@ interface UseListDocumentsProps {
   unreadCounter: number
   loading?: boolean
   error?: any
-  refetch?: () => void
+  refetch?: (input?: GetDocumentListInput) => void
 }
 
 export const useListDocuments = (
