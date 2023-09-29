@@ -753,7 +753,10 @@ export class NotificationService {
     const shouldSendNotificationToPrison =
       await this.shouldSendNotificationToPrison(theCase)
 
-    if (shouldSendNotificationToPrison) {
+    if (
+      shouldSendNotificationToPrison &&
+      theCase.type !== CaseType.PAROLE_REVOCATION
+    ) {
       promises.push(this.sendCourtDateEmailNotificationToPrison(theCase))
     }
 

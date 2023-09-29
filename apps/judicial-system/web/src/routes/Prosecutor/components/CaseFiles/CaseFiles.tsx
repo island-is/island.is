@@ -36,6 +36,7 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { Item } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   mapCaseFileToUploadFile,
@@ -203,29 +204,41 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
     [handleUIUpdate, upload],
   )
 
-  const handlePoliceCaseFileUpload = useCallback(async () => {
-    const filesToUpload = policeCaseFileList.filter((p) => p.checked)
+  const handlePoliceCaseFileUpload = useCallback(
+    async (selectedFiles: Item[]) => {
+      const filesToUpload = policeCaseFileList.filter((p) =>
+        selectedFiles.some((f) => f.id === p.id),
+      )
 
-    setIsUploading(true)
+      setIsUploading(true)
 
-    filesToUpload.forEach(async (f, index) => {
-      const fileToUpload = {
-        id: f.id,
-        type: 'application/pdf',
-        name: f.name,
-        status: 'done',
-        state: CaseFileState.STORED_IN_RVG,
-      } as UploadFile
+      const promises = filesToUpload.map(async (f, index) => {
+        const fileToUpload = {
+          id: f.id,
+          type: 'application/pdf',
+          name: f.name,
+          status: 'done',
+          state: CaseFileState.STORED_IN_RVG,
+        } as UploadFile
 
-      await uploadFromPolice(fileToUpload, uploadPoliceCaseFileCallback)
+        return uploadFromPolice(
+          fileToUpload,
+          uploadPoliceCaseFileCallback,
+        ).then(() => {
+          setPoliceCaseFileList((previous) =>
+            previous.filter((p) => p.id !== f.id),
+          )
 
-      setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
+          if (index === filesToUpload.length - 1) {
+            setIsUploading(false)
+          }
+        })
+      })
 
-      if (index === filesToUpload.length - 1) {
-        setIsUploading(false)
-      }
-    })
-  }, [policeCaseFileList, uploadFromPolice, uploadPoliceCaseFileCallback])
+      await Promise.all(promises)
+    },
+    [policeCaseFileList, uploadFromPolice, uploadPoliceCaseFileCallback],
+  )
 
   const removeFileCB = useCallback(
     (file: UploadFile) => {
