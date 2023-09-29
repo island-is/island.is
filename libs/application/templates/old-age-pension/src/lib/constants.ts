@@ -35,6 +35,8 @@ export const FILE_SIZE_LIMIT = 5000000 // 5MB
 export enum OAPEvents {
   ADDITIONALDOCUMENTSREQUIRED = 'ADDITIONALDOCUMENTSREQUIRED',
   INREVIEW = 'INREVIEW',
+  PENDING = 'PENDING',
+  DISMISSED = 'DISMISSED',
 }
 
 export type Events =
@@ -45,6 +47,8 @@ export type Events =
   // | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: TR ask for more documents
   | { type: OAPEvents.ADDITIONALDOCUMENTSREQUIRED } // Ex: TR ask for more documents
   | { type: OAPEvents.INREVIEW } // Ex: TR's employee start review application
+  | { type: OAPEvents.PENDING }
+  | { type: OAPEvents.DISMISSED }
 
 export enum Roles {
   APPLICANT = 'applicant',
@@ -55,13 +59,16 @@ export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
 
-  TRYGGINGASTOFNUN_SUBMITTED = 'tryggingastofnunSubmitted',
-  TRYGGINGASTOFNUN_IN_REVIEW = 'tryggingastofnunInReview',
+  TRYGGINGASTOFNUN_SUBMITTED = 'tryggingastofnunSubmitted', // NYSKRAD = 91
+  TRYGGINGASTOFNUN_IN_REVIEW = 'tryggingastofnunInReview', // I_VINNSLU = 562
 
-  ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired',
+  ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired', // I_BID_GOGN_VANTAR = 1617
 
-  REJECTED = 'rejected',
-  APPROVED = 'approved',
+  PENDING = 'pending', // I_BID = 561
+  DISMISSED = 'dismissed', // VISAD_FRA = 1637
+
+  REJECTED = 'rejected', // SYNJAD = 1281
+  APPROVED = 'approved', // AFGREIDD = 563
 }
 
 export enum ConnectedApplications {

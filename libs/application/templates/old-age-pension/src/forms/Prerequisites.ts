@@ -84,10 +84,6 @@ export const PrerequisitesForm: Form = buildForm({
                   title: '',
                 }),
                 buildDataProviderItem({
-                  provider: NationalRegistryCohabitantsApi,
-                  title: '',
-                }),
-                buildDataProviderItem({
                   provider: SocialInsuranceAdministrationTestApi,
                   title:
                     oldAgePensionFormMessage.pre
