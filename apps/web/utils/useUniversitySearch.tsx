@@ -10,25 +10,33 @@ interface SearchProductsProps {
   query?: string
   activeFilters: Array<FilterProps>
 }
+
+interface queryMakerProps {
+  $and: Array<any>
+}
 export const SearchProducts = ({
   fuseInstance,
   query,
   activeFilters,
 }: SearchProductsProps) => {
-  const queryMaker = { $or: [] }
+  let queryMaker: queryMakerProps = { $and: [] }
 
   if (query) {
-    queryMaker.$or.push(
-      { nameIs: query },
-      { departmentNameIs: query },
-      { descriptionIs: query },
-    )
+    queryMaker.$and.push({
+      $or: [
+        { nameIs: query },
+        { departmentNameIs: query },
+        { descriptionIs: query },
+      ],
+    })
   }
 
   activeFilters.map((filter) => {
-    filter.value.map((searchParam) => {
-      queryMaker.$or.push({ [filter.key]: searchParam })
+    const orFilters: Array<any> = []
+    const newOrFilters = filter.value.map((searchParam) => {
+      orFilters.push({ [filter.key]: searchParam })
     })
+    queryMaker.$and.push({ $or: orFilters })
   })
 
   const result = fuseInstance.search(queryMaker)

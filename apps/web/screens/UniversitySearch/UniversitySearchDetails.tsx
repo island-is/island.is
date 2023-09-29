@@ -119,7 +119,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                     <LinkV2
                       //   href={linkResolver(typename as LinkType, slug).href}
                       href="/"
-                      onClick={() => console.log('whuuut')}
+                      onClick={() => console.log('TODO')}
                       skipTab
                       pureChildren
                     >
