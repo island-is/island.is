@@ -117,15 +117,7 @@ const UtlendingastofnunFooter: React.FC<
                       </LinkV2>
                     </Text>
                     <Text paddingTop={1} color="white" variant="small">
-                      {n('serviceWebFooterTelephonePlaceholder', 'Sími:')}{' '}
-                      <LinkV2
-                        href={
-                          'tel:' +
-                          n('serviceWebFooterTelephoneNumber', '+354 444 0900')
-                        }
-                      >
-                        {n('serviceWebFooterTelephoneNumber', '+354 444 0900')}
-                      </LinkV2>
+                      {n('serviceWebFooterTelephone', 'Sími +354 444 0900')}
                     </Text>
                   </Box>
                 </GridColumn>
@@ -157,15 +149,14 @@ const UtlendingastofnunFooter: React.FC<
                       key={index}
                       span={
                         index === 1 || index === 2
-                          ? ['12/12', '12/12', '3/11']
-                          : ['12/12', '12/12', '2/11']
+                          ? ['12/12', '12/12', '3/12']
+                          : ['12/12', '12/12', '2/12']
                       }
                       offset={index === 0 ? ['0', '0', '1/12'] : '0'}
                     >
                       <Box
                         marginBottom={5}
-                        paddingRight={index !== 3 ? 2 : 0}
-                        paddingLeft={index === 2 ? 5 : 0}
+                        paddingRight={index !== 3 ? 4 : 0}
                         className={styles.textContainer}
                       >
                         {richText(item.content as SliceType[], {
