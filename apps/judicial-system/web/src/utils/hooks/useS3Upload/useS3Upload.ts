@@ -226,7 +226,7 @@ const useS3Upload = (caseId: string) => {
   const handleUpload = useCallback(
     async (
       files: TUploadFile[],
-      handleUIUpdate: (file: TUploadFile, newId?: string) => void,
+      callback: (file: TUploadFile, newId?: string) => void,
     ) => {
       const mutation = limitedAccess
         ? limitedAccessCreatePresignedPost
@@ -260,7 +260,7 @@ const useS3Upload = (caseId: string) => {
           const presignedPost = await getPresignedPost(file)
 
           await uploadToS3(file, presignedPost, (percent) => {
-            handleUIUpdate({ ...file, percent })
+            callback({ ...file, percent })
           })
 
           const newFileId = await addFileToCaseState({
@@ -268,7 +268,7 @@ const useS3Upload = (caseId: string) => {
             key: presignedPost.fields.key,
           })
 
-          handleUIUpdate(
+          callback(
             {
               ...file,
               key: presignedPost.fields.key,
@@ -280,7 +280,7 @@ const useS3Upload = (caseId: string) => {
           )
         } catch (e) {
           toast.error(formatMessage(strings.uploadFailed))
-          handleUIUpdate({ ...file, status: 'error' })
+          callback({ ...file, status: 'error' })
         }
       })
     },
@@ -297,7 +297,7 @@ const useS3Upload = (caseId: string) => {
   const handleUploadFromPolice = useCallback(
     async (
       files: TUploadFile[],
-      handleUIUpdate: (file: TUploadFile, newId?: string) => void,
+      callback: (file: TUploadFile, newId?: string) => void,
     ) => {
       const promises = files.map(async (file) => {
         return uploadPoliceCaseFile({
@@ -320,7 +320,7 @@ const useS3Upload = (caseId: string) => {
               size: uploadPoliceCaseFileData.uploadPoliceCaseFile.size,
             })
 
-            handleUIUpdate(
+            callback(
               {
                 ...file,
                 size: uploadPoliceCaseFileData.uploadPoliceCaseFile.size,
@@ -334,7 +334,7 @@ const useS3Upload = (caseId: string) => {
           })
           .catch(() => {
             toast.error(formatMessage(strings.uploadFailed))
-            handleUIUpdate(file)
+            callback(file)
           })
       })
 
@@ -346,11 +346,11 @@ const useS3Upload = (caseId: string) => {
   const handleRetry = useCallback(
     (
       file: TUploadFile,
-      handleUIUpdate: (file: TUploadFile, newId?: string) => void,
+      callback: (file: TUploadFile, newId?: string) => void,
     ) => {
-      handleUIUpdate({ ...file, percent: 1, status: 'uploading' })
+      callback({ ...file, percent: 1, status: 'uploading' })
 
-      handleUpload([file], handleUIUpdate)
+      handleUpload([file], callback)
     },
     [handleUpload],
   )
@@ -382,7 +382,7 @@ const useS3Upload = (caseId: string) => {
   )
 
   const handleRemove = useCallback(
-    async (file: TUploadFile, handleUIUpdate: (file: TUploadFile) => void) => {
+    async (file: TUploadFile, callback: (file: TUploadFile) => void) => {
       try {
         if (file.id) {
           const { data } = await remove(file.id)
@@ -396,7 +396,7 @@ const useS3Upload = (caseId: string) => {
             throw new Error('Failed to delete file')
           }
 
-          handleUIUpdate(file)
+          callback(file)
         }
       } catch {
         toast.error(formatMessage(strings.removeFailed))
