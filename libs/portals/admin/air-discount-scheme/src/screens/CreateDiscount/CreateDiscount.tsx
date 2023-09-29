@@ -19,6 +19,11 @@ import {
 import Modal from '../../components/Modal/Modal'
 import { airDiscountSchemeNavigation } from '../../lib/navigation'
 
+enum TypeOptionsValue {
+  Normal,
+  Connecting,
+}
+
 const AdminCreateDiscount = () => {
   const options = [
     {
@@ -32,10 +37,10 @@ const AdminCreateDiscount = () => {
   ]
 
   const typeOptions = [
-    { label: 'Venjulegt flug', value: 'Normal' },
+    { label: 'Venjulegt flug', value: TypeOptionsValue.Normal },
     {
       label: 'Tengiflug',
-      value: 'Connecting',
+      value: TypeOptionsValue.Connecting,
     },
   ]
 
@@ -70,7 +75,7 @@ const AdminCreateDiscount = () => {
 
               {discountCode ? (
                 <>
-                  {typeOfFlight.value === 'Connecting' ? (
+                  {typeOfFlight.value === TypeOptionsValue.Connecting ? (
                     <>
                       <Text variant="h2" marginBottom={1}>
                         Tengiflugs kóðar
