@@ -272,6 +272,14 @@ jobs:
           export NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
           echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
           echo "node-modules-hash=$NODE_MODULES_HASH" >> $GITHUB_OUTPUT
+      - name: Calculate cache key for infra node_modules
+        id: calculate_infra_node_modules_hash
+        run: |
+          INFRA_PACKAGE_JSON_HASH=$(cat infra/package.json | sha1sum -t | cut -f1 -d" ")
+          echo "INFRA_PACKAGE_JSON_HASH: $INFRA_PACKAGE_JSON_HASH"
+          export INFRA_NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('infra/yarn.lock') }}-$INFRA_PACKAGE_JSON_HASH
+          echo "INFRA_NODE_MODULES_HASH: $INFRA_NODE_MODULES_HASH"
+          echo "infra-node-modules-hash=$INFRA_NODE_MODULES_HASH" >> $GITHUB_OUTPUT
 
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
@@ -694,7 +702,7 @@ jobs:
   deploy-feature:
     runs-on: ec2-runners
     container: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    if: always() && needs.pre-checks.result == 'success' && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true') && needs.helm-docker-build.result != 'failure'
+    if: always() && needs.pre-checks.result == 'success' && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true') && needs.helm-docker-build.result != 'failure' && needs.outputs.IMAGES
     needs:
       - pre-checks
       - prepare
@@ -716,6 +724,15 @@ jobs:
           repository: island-is/feature-values
           token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
           path: feature-values
+      - name: Cache for NodeJS dependencies - Infra
+        id: infra-node-modules
+        continue-on-error: true
+        uses: ./.github/actions/cache
+        with:
+          path: monorepo/infra/node_modules
+          key: ${{ needs.prepare.outputs.infra-node-modules-hash }}-yarn
+      - name: Check cache success
+        run: '[[ "${{ steps.infra-node-modules.outputs.success }}" != "false" ]] || exit 1'
       - name: Install infra modules
         working-directory: monorepo/infra
         run: |
