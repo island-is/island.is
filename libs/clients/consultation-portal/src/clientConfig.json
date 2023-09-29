@@ -878,6 +878,10 @@
             "type": "string",
             "nullable": true
           },
+          "extraStakeholderList": {
+            "type": "string",
+            "nullable": true
+          },
           "stakeholders": {
             "type": "array",
             "items": {

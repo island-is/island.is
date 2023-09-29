@@ -2424,6 +2424,7 @@ export interface IOrganizationPageFields {
     | 'geislavarnir-rikisins'
     | 'rettindagaesla-fatlads-folks'
     | 'hms'
+    | 'rikissaksoknari'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
