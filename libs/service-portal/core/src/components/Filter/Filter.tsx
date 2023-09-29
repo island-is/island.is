@@ -1,11 +1,7 @@
 import React, { createContext, FC, ReactNode } from 'react'
 import { Dialog, DialogDisclosure, useDialogState } from 'reakit/Dialog'
 import { usePopoverState, Popover, PopoverDisclosure } from 'reakit/Popover'
-import { Box } from '../Box/Box'
-import { Button } from '../Button/Button'
-import { Inline } from '../Inline/Inline'
-import { Stack } from '../Stack/Stack'
-import { Text } from '../Text/Text'
+import { Box, Button, Inline, Stack, Text } from '@island.is/island-ui/core'
 import * as styles from './Filter.css'
 
 export interface FilterProps {
@@ -47,6 +43,8 @@ export interface FilterProps {
 
   /** Allow popover to flip upwards */
   popoverFlip?: boolean
+
+  additionalFilters?: ReactNode
 }
 
 /**
@@ -77,6 +75,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   reverse,
   children,
   popoverFlip = true,
+  additionalFilters,
 }) => {
   const dialog = useDialogState()
   const popover = usePopoverState({
@@ -95,24 +94,34 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
             display="flex"
             width="full"
             justifyContent={align === 'right' ? 'flexEnd' : 'flexStart'}
+            rowGap={2}
+            columnGap={2}
           >
             <Inline space={2} reverse={reverse} alignY="bottom">
-              <Box
-                component={PopoverDisclosure}
-                background="white"
-                display="inlineBlock"
-                borderRadius="large"
-                tabIndex={-1}
-                {...popover}
-              >
-                <Button as="span" variant="utility" icon="filter" fluid nowrap>
-                  {labelOpen}
-                </Button>
+              <Box display="flex" rowGap={2} columnGap={2} flexWrap="wrap">
+                <Box
+                  component={PopoverDisclosure}
+                  background="white"
+                  display="inlineBlock"
+                  borderRadius="large"
+                  tabIndex={-1}
+                  {...popover}
+                >
+                  <Button
+                    as="span"
+                    variant="utility"
+                    icon="filter"
+                    fluid
+                    nowrap
+                  >
+                    {labelOpen}
+                  </Button>
+                </Box>
+                {additionalFilters && additionalFilters}
               </Box>
               {hasFilterInput && filterInput}
             </Inline>
           </Box>
-
           <Box
             component={Popover}
             background="white"
@@ -127,6 +136,8 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
 
             <Box
               display="flex"
+              columnGap={2}
+              rowGap={2}
               width="full"
               paddingX={3}
               paddingY={2}

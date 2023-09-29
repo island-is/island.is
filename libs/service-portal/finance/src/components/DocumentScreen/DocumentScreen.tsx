@@ -11,7 +11,6 @@ import {
   Box,
   Button,
   DatePicker,
-  Filter,
   FilterInput,
   GridColumn,
   GridRow,
@@ -30,6 +29,7 @@ import {
   FootNote,
   formSubmit,
   m,
+  Filter,
   tableStyles,
 } from '@island.is/service-portal/core'
 import { dateFormat } from '@island.is/shared/constants'
@@ -138,36 +138,14 @@ const DocumentScreen: FC<React.PropsWithChildren<Props>> = ({
   return (
     <Box marginTop={[1, 1, 2, 2, 6]} marginBottom={[6, 6, 10]}>
       <Stack space={2}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-            <Box display="flex" printHidden>
-              <Box paddingRight={2}>
-                <Button
-                  colorScheme="default"
-                  icon="print"
-                  iconType="filled"
-                  onClick={() => window.print()}
-                  preTextIconType="filled"
-                  size="default"
-                  type="button"
-                  variant="utility"
-                >
-                  {formatMessage(m.print)}
-                </Button>
-              </Box>
-              <DropdownExport
-                onGetCSV={() =>
-                  exportGeneralDocuments(billsDataArray, title, 'csv')
-                }
-                onGetExcel={() =>
-                  exportGeneralDocuments(billsDataArray, title, 'xlsx')
-                }
-              />
-            </Box>
-          </GridColumn>
-        </GridRow>
         <Hidden print={true}>
-          <Box marginTop={[1, 1, 2, 2, 5]}>
+          <Box
+            display="flex"
+            justifyContent="flexStart"
+            flexWrap="wrap"
+            rowGap={2}
+            columnGap={2}
+          >
             <Filter
               resultCount={0}
               variant="popover"
@@ -186,6 +164,30 @@ const DocumentScreen: FC<React.PropsWithChildren<Props>> = ({
                   onChange={(e) => setQ(e)}
                   backgroundColor="blue"
                 />
+              }
+              additionalFilters={
+                <>
+                  <Button
+                    colorScheme="default"
+                    icon="print"
+                    iconType="filled"
+                    onClick={() => window.print()}
+                    preTextIconType="filled"
+                    size="default"
+                    type="button"
+                    variant="utility"
+                  >
+                    {formatMessage(m.print)}
+                  </Button>
+                  <DropdownExport
+                    onGetCSV={() =>
+                      exportGeneralDocuments(billsDataArray, title, 'csv')
+                    }
+                    onGetExcel={() =>
+                      exportGeneralDocuments(billsDataArray, title, 'xlsx')
+                    }
+                  />
+                </>
               }
               onFilterClear={clearAllFilters}
             >
