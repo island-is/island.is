@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react'
-import { useFormContext } from 'react-hook-form'
+import { FieldErrors, FieldValues } from 'react-hook-form'
 
 import * as styles from './period.css'
 import { Box } from '@island.is/island-ui/core'
@@ -19,11 +19,7 @@ import {
   getAvailableYears,
 } from '../../lib/oldAgePensionUtils'
 
-export const Period: FC<FieldBaseProps> = ({ application }) => {
-  const {
-    formState: { errors },
-  } = useFormContext()
-
+export const Period: FC<FieldBaseProps> = ({ application, errors }) => {
   const { selectedYear: year, selectedMonth: month } = getApplicationAnswers(
     application.answers,
   )
@@ -37,13 +33,14 @@ export const Period: FC<FieldBaseProps> = ({ application }) => {
     return getAvailableMonths(application, rightYear)
   })
 
-  const getError = (path: string) => {
-    const periodError = getErrorViaPath(errors, 'period')
-    return (
-      getErrorViaPath(errors, path) ??
-      (periodError && typeof periodError != 'string' ? undefined : periodError)
-    )
-  }
+  const errorYear = getErrorViaPath(
+    errors as FieldErrors<FieldValues>,
+    'period.year',
+  )
+  const errorMonth = getErrorViaPath(
+    errors as FieldErrors<FieldValues>,
+    'period.month',
+  )
 
   const onSelectYear = (option: SelectOption) => {
     const value = option.value as string
@@ -64,7 +61,7 @@ export const Period: FC<FieldBaseProps> = ({ application }) => {
         <Box width="half" marginRight={3} className={styles.yearBox}>
           <SelectFormField
             application={application}
-            error={getError('period.year')}
+            error={errorYear}
             field={{
               type: FieldTypes.SELECT,
               component: FieldComponents.SELECT,
@@ -82,7 +79,7 @@ export const Period: FC<FieldBaseProps> = ({ application }) => {
         <Box width="half" marginLeft={3} className={styles.monthBox}>
           <SelectFormField
             application={application}
-            error={getError('period.month')}
+            error={errorMonth}
             field={{
               type: FieldTypes.SELECT,
               component: FieldComponents.SELECT,

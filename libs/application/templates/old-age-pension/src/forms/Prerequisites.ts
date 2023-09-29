@@ -1,6 +1,7 @@
 import {
-  buildCustomField,
+  buildAlertMessageField,
   buildDataProviderItem,
+  buildDataProviderPermissionItem,
   buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
@@ -29,6 +30,7 @@ import {
 import {
   NationalRegistryResidenceHistoryApi,
   NationalRegistryCohabitantsApi,
+  SocialInsuranceAdministrationTestApi,
 } from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
@@ -44,31 +46,6 @@ export const PrerequisitesForm: Form = buildForm({
       title: oldAgePensionFormMessage.pre.prerequisitesSection,
       children: [
         buildSubSection({
-          id: 'forInformation',
-          title: oldAgePensionFormMessage.pre.forInfoSubSection,
-          children: [
-            buildMultiField({
-              id: 'preInfo',
-              title: oldAgePensionFormMessage.pre.forInfoSubSection,
-              children: [
-                buildDescriptionField({
-                  id: 'preInfo.descriptionOne',
-                  title: '',
-                  description: oldAgePensionFormMessage.pre.forInfoDescription,
-                }),
-                // Accordion card here
-                buildDescriptionField({
-                  id: 'preInfo.descriptionTwo',
-                  space: 4,
-                  title: '',
-                  description:
-                    oldAgePensionFormMessage.pre.forInfoSecondDescription,
-                }),
-              ],
-            }),
-          ],
-        }),
-        buildSubSection({
           id: 'externalData',
           title: oldAgePensionFormMessage.pre.externalDataSubSection,
           children: [
@@ -78,21 +55,17 @@ export const PrerequisitesForm: Form = buildForm({
               checkboxLabel: oldAgePensionFormMessage.pre.checkboxProvider,
               dataProviders: [
                 buildDataProviderItem({
-                  provider: UserProfileApi,
-                  title:
-                    oldAgePensionFormMessage.pre.userProfileInformationTitle,
-                  subTitle:
-                    oldAgePensionFormMessage.pre.userProfileInformationSubTitle,
-                }),
-                buildDataProviderItem({
                   provider: NationalRegistryUserApi,
                   title: oldAgePensionFormMessage.pre.skraInformationTitle,
                   subTitle:
                     oldAgePensionFormMessage.pre.skraInformationSubTitle,
                 }),
                 buildDataProviderItem({
-                  provider: NationalRegistrySpouseApi,
-                  title: '',
+                  provider: UserProfileApi,
+                  title:
+                    oldAgePensionFormMessage.pre.userProfileInformationTitle,
+                  subTitle:
+                    oldAgePensionFormMessage.pre.userProfileInformationSubTitle,
                 }),
                 buildDataProviderItem({
                   provider: ChildrenCustodyInformationApi,
@@ -105,6 +78,37 @@ export const PrerequisitesForm: Form = buildForm({
                 buildDataProviderItem({
                   provider: NationalRegistryCohabitantsApi,
                   title: '',
+                }),
+                buildDataProviderItem({
+                  provider: NationalRegistrySpouseApi,
+                  title: '',
+                }),
+                buildDataProviderItem({
+                  provider: NationalRegistryCohabitantsApi,
+                  title: '',
+                }),
+                buildDataProviderItem({
+                  provider: SocialInsuranceAdministrationTestApi,
+                  title:
+                    oldAgePensionFormMessage.pre
+                      .socialInsuranceAdministrationInformationTitle,
+                  subTitle:
+                    oldAgePensionFormMessage.pre
+                      .socialInsuranceAdministrationInformationSubTitle,
+                }),
+                buildDataProviderPermissionItem({
+                  id: 'link',
+                  title: '',
+                  subTitle:
+                    oldAgePensionFormMessage.pre
+                      .socialInsuranceAdministrationInformationSubTitleMoreInfo,
+                }),
+                buildDataProviderPermissionItem({
+                  id: 'incomes',
+                  title: '',
+                  subTitle:
+                    oldAgePensionFormMessage.pre
+                      .socialInsuranceAdministrationInformationSubTitleAboutIncomes,
                 }),
               ],
             }),
@@ -163,23 +167,20 @@ export const PrerequisitesForm: Form = buildForm({
                   options: getYesNOOptions(),
                   width: 'half',
                 }),
-                buildCustomField(
-                  {
-                    id: 'question.pensionFundAlert',
-                    title: oldAgePensionFormMessage.pre.pensionFundAlertTitle,
-                    component: 'FieldAlertMessage',
-                    description:
-                      oldAgePensionFormMessage.pre.pensionFundAlertDescription,
-                    doesNotRequireAnswer: true,
-                    condition: (answers) => {
-                      const { pensionFundQuestion } =
-                        getApplicationAnswers(answers)
+                buildAlertMessageField({
+                  id: 'question.pensionFundAlert',
+                  title: oldAgePensionFormMessage.pre.pensionFundAlertTitle,
+                  message:
+                    oldAgePensionFormMessage.pre.pensionFundAlertDescription,
+                  doesNotRequireAnswer: true,
+                  alertType: 'warning',
+                  condition: (answers) => {
+                    const { pensionFundQuestion } =
+                      getApplicationAnswers(answers)
 
-                      return pensionFundQuestion === NO
-                    },
+                    return pensionFundQuestion === NO
                   },
-                  { type: 'warning' },
-                ),
+                }),
                 buildSubmitField({
                   id: 'toDraft',
                   title: oldAgePensionFormMessage.pre.confirmationTitle,

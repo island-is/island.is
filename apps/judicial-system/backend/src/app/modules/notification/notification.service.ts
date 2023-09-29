@@ -40,6 +40,7 @@ import {
   Recipient,
   UserRole,
   getStatementDeadline,
+  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -63,6 +64,7 @@ import {
   formatDefenderAssignedEmailNotification,
   formatCourtIndictmentReadyForCourtEmailNotification,
   formatDefenderRoute,
+  formatDefenderReadyForCourtEmailNotification,
 } from '../../formatters'
 import { notifications } from '../../messages'
 import { Case } from '../case'
@@ -135,7 +137,10 @@ export class NotificationService {
       return true
     }
 
-    if (theCase.type !== CaseType.ADMISSION_TO_FACILITY) {
+    if (
+      theCase.type !== CaseType.ADMISSION_TO_FACILITY &&
+      theCase.type !== CaseType.PAROLE_REVOCATION
+    ) {
       return false
     }
 
@@ -417,6 +422,25 @@ export class NotificationService {
     )
   }
 
+  private sendReadyForCourtEmailNotificationToDefender(
+    theCase: Case,
+  ): Promise<Recipient> {
+    const { subject, body } = formatDefenderReadyForCourtEmailNotification(
+      this.formatMessage,
+      theCase.policeCaseNumbers[0],
+      theCase.court?.name || 'Héraðsdómur',
+      theCase.defenderNationalId &&
+        formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
+    )
+
+    return this.sendEmail(
+      subject,
+      body,
+      theCase.defenderName,
+      theCase.defenderEmail,
+    )
+  }
+
   private async sendReadyForCourtNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
@@ -431,7 +455,7 @@ export class NotificationService {
       )
     }
 
-    // Investigation and Restrction Cases
+    // Investigation and Restriction Cases
     const promises: Promise<Recipient>[] = [
       this.sendReadyForCourtEmailNotificationToProsecutor(theCase),
     ]
@@ -450,22 +474,27 @@ export class NotificationService {
       this.eventService.postEvent(CaseEvent.RESUBMIT, theCase)
     }
 
-    if (theCase.state === CaseState.RECEIVED && theCase.sendRequestToDefender) {
-      const defendantHasBeenNotified = await this.hasReceivedNotification(
+    if (theCase.requestSharedWithDefender) {
+      const hasDefendantBeenNotified = await this.hasReceivedNotification(
         theCase.id,
-        NotificationType.COURT_DATE,
+        [NotificationType.READY_FOR_COURT, NotificationType.COURT_DATE],
         theCase.defenderEmail,
       )
 
       if (
-        theCase.courtDate &&
-        theCase.sendRequestToDefender &&
         theCase.defenderName &&
         theCase.defenderEmail &&
-        defendantHasBeenNotified
+        hasDefendantBeenNotified
       ) {
         promises.push(
           this.sendResubmittedToCourtEmailNotificationToDefender(theCase),
+        )
+      } else if (
+        theCase.requestSharedWithDefender ===
+        RequestSharedWithDefender.READY_FOR_COURT
+      ) {
+        promises.push(
+          this.sendReadyForCourtEmailNotificationToDefender(theCase),
         )
       }
     }
@@ -622,7 +651,7 @@ export class NotificationService {
   ): Promise<Recipient>[] {
     const subject = `Fyrirtaka í máli ${theCase.courtCaseNumber}`
     const linkSubject = `${
-      theCase.sendRequestToDefender ? 'Gögn í máli' : 'Yfirlit máls'
+      theCase.requestSharedWithDefender ? 'Gögn í máli' : 'Yfirlit máls'
     } ${theCase.courtCaseNumber}`
     const html = formatDefenderCourtDateEmailNotification(
       this.formatMessage,
@@ -642,7 +671,7 @@ export class NotificationService {
         formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
       theCase.court?.name,
       theCase.courtCaseNumber,
-      theCase.sendRequestToDefender,
+      Boolean(theCase.requestSharedWithDefender),
     )
     const calendarInvite = this.createICalAttachment(theCase)
 
@@ -810,13 +839,24 @@ export class NotificationService {
         courtCaseNumber: theCase.courtCaseNumber,
       },
     )
-    const html = this.formatMessage(notifications.prisonRulingEmail.body, {
-      isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
-      institutionName: theCase.court?.name,
-      caseType: theCase.type,
-      linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
-      linkEnd: '</a>',
-    })
+    const html =
+      theCase.type === CaseType.PAROLE_REVOCATION
+        ? this.formatMessage(
+            notifications.prisonRulingEmail.paroleRevocationBody,
+            {
+              institutionName: theCase.court?.name,
+              courtCaseNumber: theCase.courtCaseNumber,
+              linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
+              linkEnd: '</a>',
+            },
+          )
+        : this.formatMessage(notifications.prisonRulingEmail.body, {
+            isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
+            institutionName: theCase.court?.name,
+            caseType: theCase.type,
+            linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
+            linkEnd: '</a>',
+          })
 
     return this.sendEmail(
       subject,
@@ -913,7 +953,8 @@ export class NotificationService {
     }
 
     if (
-      isRestrictionCase(theCase.type) &&
+      (isRestrictionCase(theCase.type) ||
+        theCase.type === CaseType.PAROLE_REVOCATION) &&
       theCase.state === CaseState.ACCEPTED
     ) {
       promises.push(

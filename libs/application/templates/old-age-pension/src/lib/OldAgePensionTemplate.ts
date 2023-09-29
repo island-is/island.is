@@ -1,5 +1,7 @@
 import { assign } from 'xstate'
 import unset from 'lodash/unset'
+import set from 'lodash/set'
+
 import {
   ApplicationTemplate,
   ApplicationContext,
@@ -13,6 +15,7 @@ import {
   UserProfileApi,
   NationalRegistrySpouseApi,
   ChildrenCustodyInformationApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
   coreMessages,
@@ -20,15 +23,21 @@ import {
   DefaultStateLifeCycle,
   coreHistoryMessages,
 } from '@island.is/application/core'
-import { ConnectedApplications, Events, Roles, States } from './constants'
+import { ConnectedApplications, Events, NO, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { oldAgePensionFormMessage, statesMessages } from './messages'
 import { answerValidators } from './answerValidators'
 import {
   NationalRegistryResidenceHistoryApi,
   NationalRegistryCohabitantsApi,
+  SocialInsuranceAdministrationTestApi,
+  SocialInsuranceAdministrationStatusApi,
 } from '../dataProviders'
-import { getApplicationAnswers } from './oldAgePensionUtils'
+import { Features } from '@island.is/feature-flags'
+import {
+  childCustodyLivesWithApplicant,
+  getApplicationAnswers,
+} from './oldAgePensionUtils'
 
 const OldAgePensionTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -38,9 +47,10 @@ const OldAgePensionTemplate: ApplicationTemplate<
   type: ApplicationTypes.OLD_AGE_PENSION,
   name: oldAgePensionFormMessage.shared.applicationTitle,
   institution: oldAgePensionFormMessage.shared.institution,
-  readyForProduction: false, // hafa þett svona atm?
+  featureFlag: Features.oldAgePensionApplication,
   translationNamespaces: [ApplicationConfigurations.OldAgePension.translation],
   dataSchema,
+  allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -81,6 +91,8 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 NationalRegistryResidenceHistoryApi,
                 NationalRegistryCohabitantsApi,
                 ChildrenCustodyInformationApi,
+                SocialInsuranceAdministrationTestApi,
+                SocialInsuranceAdministrationStatusApi,
               ],
               delete: true,
             },
@@ -91,7 +103,12 @@ const OldAgePensionTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: ['clearHouseholdSupplement'],
+        exit: [
+          'clearHouseholdSupplement',
+          'clearChildPension',
+          'clearChildPensionAddChild',
+          'clearChildPensionNotLivesWithApplicant',
+        ],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -128,6 +145,8 @@ const OldAgePensionTemplate: ApplicationTemplate<
         },
       },
       [States.TRYGGINGASTOFNUN_SUBMITTED]: {
+        entry: ['assignOrganization'],
+        exit: ['clearAssignees'],
         meta: {
           name: States.TRYGGINGASTOFNUN_SUBMITTED,
           progress: 0.75,
@@ -166,13 +185,26 @@ const OldAgePensionTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
+            },
           ],
         },
         on: {
           [DefaultEvents.EDIT]: { target: States.DRAFT },
+          INREVIEW: {
+            target: States.TRYGGINGASTOFNUN_IN_REVIEW,
+          },
         },
       },
       [States.TRYGGINGASTOFNUN_IN_REVIEW]: {
+        entry: ['assignOrganization'],
+        exit: ['clearAssignees'],
         meta: {
           name: States.TRYGGINGASTOFNUN_IN_REVIEW,
           progress: 0.75,
@@ -200,6 +232,14 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 ),
               read: 'all',
             },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
+            },
           ],
         },
         on: {
@@ -213,6 +253,8 @@ const OldAgePensionTemplate: ApplicationTemplate<
         },
       },
       [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
+        entry: ['assignOrganization'],
+        exit: ['clearAssignees'],
         meta: {
           status: 'inprogress',
           name: States.ADDITIONAL_DOCUMENTS_REQUIRED,
@@ -237,6 +279,14 @@ const OldAgePensionTemplate: ApplicationTemplate<
                   Promise.resolve(val.AdditionalDocumentsRequired),
                 ),
               read: 'all',
+              write: 'all',
+            },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
               write: 'all',
             },
           ],
@@ -378,6 +428,75 @@ const OldAgePensionTemplate: ApplicationTemplate<
 
         return context
       }),
+      assignOrganization: assign((context) => {
+        const { application } = context
+        const TR_ID = InstitutionNationalIds.TRYGGINGASTOFNUN ?? ''
+
+        const assignees = application.assignees
+        if (TR_ID) {
+          if (Array.isArray(assignees) && !assignees.includes(TR_ID)) {
+            assignees.push(TR_ID)
+            set(application, 'assignees', assignees)
+          } else {
+            set(application, 'assignees', [TR_ID])
+          }
+        }
+
+        return context
+      }),
+      clearChildPension: assign((context) => {
+        const { application } = context
+        const { connectedApplications } = getApplicationAnswers(
+          application.answers,
+        )
+
+        if (
+          !connectedApplications?.includes(ConnectedApplications.CHILDPENSION)
+        ) {
+          unset(application.answers, 'childPensionAddChild')
+          unset(application.answers, 'childPensionRepeater')
+          unset(application.answers, 'childPension')
+          unset(application.answers, 'fileUploadChildPension')
+        }
+
+        return context
+      }),
+      clearChildPensionNotLivesWithApplicant: assign((context) => {
+        const { application } = context
+
+        const doesNotLiveWithApplicant = childCustodyLivesWithApplicant(
+          application.answers,
+          application.externalData,
+        )
+
+        if (!doesNotLiveWithApplicant)
+          unset(
+            application.answers,
+            'fileUploadChildPension.notLivesWithApplicant',
+          )
+
+        return context
+      }),
+      clearChildPensionAddChild: assign((context) => {
+        const { application } = context
+        const { childPensionAddChild } = getApplicationAnswers(
+          application.answers,
+        )
+
+        if (childPensionAddChild === NO) {
+          unset(application.answers, 'childPensionRepeater')
+          unset(application.answers, 'fileUploadChildPension.maintenance')
+        }
+
+        return context
+      }),
+      clearAssignees: assign((context) => ({
+        ...context,
+        application: {
+          ...context.application,
+          assignees: [],
+        },
+      })),
     },
   },
   mapUserToRole(
@@ -387,6 +506,12 @@ const OldAgePensionTemplate: ApplicationTemplate<
     if (id === application.applicant) {
       return Roles.APPLICANT
     }
+
+    const TR_ID = InstitutionNationalIds.TRYGGINGASTOFNUN
+    if (id === TR_ID) {
+      return Roles.ORGINISATION_REVIEWER
+    }
+
     return undefined
   },
   answerValidators,

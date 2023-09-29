@@ -551,7 +551,7 @@ export const ParentalLeaveForm: Form = buildForm({
                       answers as {
                         isSelfEmployed: string
                       }
-                    )?.isSelfEmployed === NO,
+                    )?.isSelfEmployed !== YES,
                 }),
                 buildSelectField({
                   id: 'unemploymentBenefits',

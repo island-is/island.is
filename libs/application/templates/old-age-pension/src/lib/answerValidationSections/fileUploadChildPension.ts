@@ -20,6 +20,7 @@ export const fileUploadChildPension = (
   const { childPension } = getApplicationAnswers(application.answers)
 
   const DoesNotLiveWithApplicant = childCustodyLivesWithApplicant(
+    application.answers,
     application.externalData,
   )
 

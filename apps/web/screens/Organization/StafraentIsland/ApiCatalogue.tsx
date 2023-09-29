@@ -74,8 +74,14 @@ const ApiCatalogue: Screen<HomestayProps> = ({
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState(false)
   const Router = useRouter()
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const sn = useNamespace(staticContent)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const fn = useNamespace(filterContent)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const nn = useNamespace(navigationLinks)
   const { linkResolver } = useLinkResolver()
   useContentfulId(organizationPage?.id, subpage?.id)
@@ -207,7 +213,8 @@ const ApiCatalogue: Screen<HomestayProps> = ({
       ],
     },
   ]
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
@@ -227,7 +234,11 @@ const ApiCatalogue: Screen<HomestayProps> = ({
     <>
       <OrganizationWrapper
         pageTitle={subpage?.title ?? ''}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         organizationPage={organizationPage}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         pageFeaturedImage={subpage?.featuredImage}
         showReadSpeaker={false}
         breadcrumbItems={[
@@ -252,10 +263,17 @@ const ApiCatalogue: Screen<HomestayProps> = ({
           <Text variant="h1" as="h2">
             {subpage?.title}
           </Text>
-          <Webreader readId={null} readClass="rs_read" />
+          <Webreader
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            readId={null}
+            readClass="rs_read"
+          />
         </Box>
         {webRichText(subpage?.description as SliceType[], {
           renderNode: {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             [INLINES.HYPERLINK]: (node, children: ReactNode) => (
               <ArrowLink href={node.data.uri}>{children}</ArrowLink>
             ),
@@ -286,6 +304,8 @@ const ApiCatalogue: Screen<HomestayProps> = ({
                   })
                 }
                 inputPlaceholder={fn('search')}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 inputValue={parameters.query}
                 onInputChange={(value) =>
                   setParameters({ ...parameters, query: value })
@@ -303,6 +323,8 @@ const ApiCatalogue: Screen<HomestayProps> = ({
                     [categoryId]: [],
                   })
                 }
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 categories={filterCategories}
               />
             </Box>
@@ -321,6 +343,8 @@ const ApiCatalogue: Screen<HomestayProps> = ({
               <GridContainer>
                 <ServiceList
                   baseUrl={linkResolver('apicataloguepage').href + '/'}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   services={data?.getApiCatalogue?.services}
                   tagDisplayNames={filterContent}
                 />

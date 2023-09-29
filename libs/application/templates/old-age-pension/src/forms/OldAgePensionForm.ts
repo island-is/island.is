@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
@@ -20,11 +21,10 @@ import {
   FormModes,
   NationalRegistryIndividual,
   NationalRegistrySpouse,
+  Option,
 } from '@island.is/application/types'
 import { UserProfile } from '@island.is/api/schema'
-
 import * as kennitala from 'kennitala'
-
 import Logo from '../assets/Logo'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import {
@@ -44,6 +44,8 @@ import {
   childCustodyLivesWithApplicant,
   getApplicationAnswers,
   getApplicationExternalData,
+  getChildPensionDescription,
+  getChildPensionTitle,
   getTaxOptions,
   getYesNOOptions,
   isEarlyRetirement,
@@ -247,16 +249,13 @@ export const OldAgePensionForm: Form = buildForm({
               title: oldAgePensionFormMessage.payment.title,
               description: '',
               children: [
-                buildCustomField(
-                  {
-                    id: 'paymentInfo.alert',
-                    title: oldAgePensionFormMessage.payment.alertTitle,
-                    component: 'FieldAlertMessage',
-                    description: oldAgePensionFormMessage.payment.alertMessage,
-                    doesNotRequireAnswer: true,
-                  },
-                  { type: 'info' },
-                ),
+                buildAlertMessageField({
+                  id: 'paymentInfo.alert',
+                  title: oldAgePensionFormMessage.payment.alertTitle,
+                  message: oldAgePensionFormMessage.payment.alertMessage,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                }),
                 buildTextField({
                   id: 'paymentInfo.bank',
                   title: oldAgePensionFormMessage.payment.bank,
@@ -517,8 +516,8 @@ export const OldAgePensionForm: Form = buildForm({
           id: 'periodSection',
           title: oldAgePensionFormMessage.period.periodTitle,
           children: [
-            // Period is from 65 year old birthday or last 2 years if applicant is 67+
-            //           to 6 month ahead
+            // Period is from 65 year old birthday or last
+            // 2 years if applicant is 67+ to 6 month ahead
             buildMultiField({
               id: 'periodField',
               title: oldAgePensionFormMessage.period.periodTitle,
@@ -529,28 +528,24 @@ export const OldAgePensionForm: Form = buildForm({
                   component: 'Period',
                   title: oldAgePensionFormMessage.period.periodTitle,
                 }),
-                buildCustomField(
-                  {
-                    id: 'period.alert',
-                    title: oldAgePensionFormMessage.period.periodAlertTitle,
-                    component: 'EarlyRetirementWarning',
-                    condition: (answers, externalData) => {
-                      return isEarlyRetirement(answers, externalData)
+                buildAlertMessageField({
+                  id: 'period.alert',
+                  title: oldAgePensionFormMessage.period.periodAlertTitle,
+                  message: oldAgePensionFormMessage.period.periodAlertMessage,
+                  doesNotRequireAnswer: true,
+                  alertType: 'warning',
+                  links: [
+                    {
+                      title:
+                        oldAgePensionFormMessage.period.periodAlertLinkTitle,
+                      url: oldAgePensionFormMessage.period.periodAlertUrl,
+                      isExternal: true,
                     },
-                    doesNotRequireAnswer: true,
+                  ],
+                  condition: (answers, externalData) => {
+                    return isEarlyRetirement(answers, externalData)
                   },
-                  {
-                    descriptionFirstPart:
-                      oldAgePensionFormMessage.period
-                        .periodAlertDescriptionFirstPart,
-                    descriptionSecondPart:
-                      oldAgePensionFormMessage.period
-                        .periodAlertDescriptionSecondPart,
-                    linkName:
-                      oldAgePensionFormMessage.period.periodAlertLinkName,
-                    url: oldAgePensionFormMessage.period.periodAlertUrl,
-                  },
-                ),
+                }),
               ],
             }),
           ],
@@ -647,25 +642,22 @@ export const OldAgePensionForm: Form = buildForm({
                   defaultValue: NO,
                   width: 'half',
                 }),
-                buildCustomField(
-                  {
-                    id: 'onePaymentPerYear.alert',
-                    title:
-                      oldAgePensionFormMessage.onePaymentPerYear
-                        .onePaymentPerYearAlertTitle,
-                    component: 'FieldAlertMessage',
-                    description:
-                      oldAgePensionFormMessage.onePaymentPerYear
-                        .onePaymentPerYearAlertDescription,
-                    condition: (answers) => {
-                      const { onePaymentPerYear } =
-                        getApplicationAnswers(answers)
+                buildAlertMessageField({
+                  id: 'onePaymentPerYear.alert',
+                  title:
+                    oldAgePensionFormMessage.onePaymentPerYear
+                      .onePaymentPerYearAlertTitle,
+                  message:
+                    oldAgePensionFormMessage.onePaymentPerYear
+                      .onePaymentPerYearAlertDescription,
+                  doesNotRequireAnswer: true,
+                  alertType: 'warning',
+                  condition: (answers) => {
+                    const { onePaymentPerYear } = getApplicationAnswers(answers)
 
-                      return onePaymentPerYear === YES
-                    },
+                    return onePaymentPerYear === YES
                   },
-                  { type: 'warning' },
-                ),
+                }),
               ],
             }),
           ],
@@ -756,22 +748,20 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.connectedApplications
                   .householdSupplementDescription,
               children: [
-                buildCustomField(
-                  {
-                    id: 'householdSupplement.alert',
-                    title:
-                      oldAgePensionFormMessage.connectedApplications
-                        .householdSupplementAlertTitle,
-                    component: 'FieldAlertMessage',
-                    description:
-                      oldAgePensionFormMessage.connectedApplications
-                        .householdSupplementAlertDescription,
-                    condition: (_, externalData) => {
-                      return isExistsCohabitantOlderThan25(externalData)
-                    },
+                buildAlertMessageField({
+                  id: 'householdSupplement.alert',
+                  title:
+                    oldAgePensionFormMessage.connectedApplications
+                      .householdSupplementAlertTitle,
+                  message:
+                    oldAgePensionFormMessage.connectedApplications
+                      .householdSupplementAlertDescription,
+                  doesNotRequireAnswer: true,
+                  alertType: 'warning',
+                  condition: (_, externalData) => {
+                    return isExistsCohabitantOlderThan25(externalData)
                   },
-                  { type: 'warning' },
-                ),
+                }),
                 buildRadioField({
                   id: 'householdSupplement.housing',
                   title:
@@ -885,19 +875,107 @@ export const OldAgePensionForm: Form = buildForm({
             )
           },
           children: [
-            buildRepeater({
-              id: 'childPensionRepeater',
+            buildMultiField({
+              condition: (answers, externalData) => {
+                const { custodyInformation } =
+                  getApplicationExternalData(externalData)
+                return custodyInformation.length !== 0
+              },
+              id: 'childPension',
               title:
                 oldAgePensionFormMessage.connectedApplications.childPension,
+              description:
+                oldAgePensionFormMessage.connectedApplications
+                  .childPensionDescription,
+              children: [
+                buildCheckboxField({
+                  id: 'childPension.custodyKids',
+                  title:
+                    oldAgePensionFormMessage.connectedApplications
+                      .childPensionSubTitle,
+                  description:
+                    oldAgePensionFormMessage.connectedApplications
+                      .childPensionSubDescription,
+                  doesNotRequireAnswer: true,
+                  defaultValue: '',
+                  options: (application) => {
+                    const applying: Array<Option> = []
+                    const { custodyInformation } = getApplicationExternalData(
+                      application.externalData,
+                    )
+
+                    custodyInformation.map((i) =>
+                      applying.push({
+                        label: i.fullName,
+                        value: i.nationalId,
+                      }),
+                    )
+
+                    return applying
+                  },
+                }),
+              ],
+            }),
+            buildRadioField({
+              condition: (answers, externalData) => {
+                const { custodyInformation } =
+                  getApplicationExternalData(externalData)
+                const { childPensionSelectedCustodyKids } =
+                  getApplicationAnswers(answers)
+                return custodyInformation.length !== 0
+                  ? childPensionSelectedCustodyKids.length !== 0
+                  : false
+              },
+              id: 'childPensionAddChild',
+              title:
+                oldAgePensionFormMessage.connectedApplications
+                  .childPensionAddChildQuestion,
+              width: 'half',
+              required: true,
+              options: [
+                {
+                  value: YES,
+                  label: oldAgePensionFormMessage.shared.yes,
+                },
+                {
+                  value: NO,
+                  label: oldAgePensionFormMessage.shared.no,
+                },
+              ],
+            }),
+            buildRepeater({
+              condition: (answers) => {
+                const { childPensionAddChild } = getApplicationAnswers(answers)
+                return childPensionAddChild === YES
+              },
+              id: 'childPensionRepeater',
+              title:
+                oldAgePensionFormMessage.connectedApplications
+                  .childPensionAddChildTitle,
               component: 'ChildCustodyRepeater',
               children: [
                 buildMultiField({
                   id: 'childPension',
-                  title:
-                    oldAgePensionFormMessage.connectedApplications
-                      .registerChildTitle,
+                  title: getChildPensionTitle,
+                  description: getChildPensionDescription,
                   isPartOfRepeater: true,
                   children: [
+                    buildDescriptionField({
+                      id: 'childPension.descriptionField',
+                      marginBottom: 'containerGutter',
+                      titleVariant: 'h5',
+                      title:
+                        oldAgePensionFormMessage.connectedApplications
+                          .registerChildTitle,
+                      description:
+                        oldAgePensionFormMessage.connectedApplications
+                          .registerChildDescription,
+                      condition: (_, externalData) => {
+                        const { custodyInformation } =
+                          getApplicationExternalData(externalData)
+                        return custodyInformation.length === 0
+                      },
+                    }),
                     buildCustomField({
                       id: 'childDoesNotHaveNationalId',
                       title: '',
@@ -933,9 +1011,10 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
               uploadMultiple: true,
               condition: (answers) => {
-                const { childPension } = getApplicationAnswers(answers)
+                const { childPension, childPensionAddChild } =
+                  getApplicationAnswers(answers)
 
-                return childPension.length > 0
+                return childPension.length > 0 && childPensionAddChild === YES
               },
             }),
             buildFileUploadField({
@@ -958,8 +1037,8 @@ export const OldAgePensionForm: Form = buildForm({
               uploadButtonLabel:
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
               uploadMultiple: true,
-              condition: (_, externalData) =>
-                childCustodyLivesWithApplicant(externalData),
+              condition: (answers, externalData) =>
+                childCustodyLivesWithApplicant(answers, externalData),
             }),
           ],
         }),

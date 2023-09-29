@@ -36,23 +36,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Forsendur',
       description: 'Prerequisites',
     },
-    forInfoSubSection: {
-      id: 'oap.application:for.info.sub.section',
-      defaultMessage: 'Til upplýsinga',
-      description: 'For Information',
-    },
-    forInfoDescription: {
-      id: 'oap.application:for.info.description',
-      defaultMessage:
-        'TR sækir nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðslu mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar.\n \nMisjafnt er eftir tegund umsóknar hvaða upplýsingar þarf til úrvinnslu en ekki eru sóttar meiri upplýsingar en nauðsynlegt er hverju sinni.',
-      description: 'english translation',
-    },
-    forInfoSecondDescription: {
-      id: 'oap.application:for.info.second.description',
-      defaultMessage:
-        'Ef tekjur eða aðrar aðstæður þínar breytast verður þú að láta TR vita þar sem það getur haft áhrif á greiðslur þínar.\n \nFrekari upplýsingar um gagnaöflun og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingastofnunar, www.tr.is/personuvernd. \n \nÞeim umsóknum sem sendar eru TR í gegnum Mínar síður Ísland.is verður svarað rafrænt',
-      description: 'english translation',
-    },
     externalDataSubSection: {
       id: 'oap.application:externalData.sub.section',
       defaultMessage: 'Gagnaöflun',
@@ -72,7 +55,7 @@ export const oldAgePensionFormMessage: MessageDir = {
     skraInformationSubTitle: {
       id: 'oap.application:prerequisites.national.registry.subtitle',
       defaultMessage:
-        'Sækir upplýsingar um þig, maka og börn frá Þjóðskrá. Einnig eru sóttar upplýsingar um búsetu, íbúaskrá og forsjá',
+        'Upplýsingar um þig, maka og börn frá Þjóðskrá. Einnig eru sóttar upplýsingar um búsetu, íbúaskrá og forsjá',
       description:
         'Information about you, spouse and children will be retrieved from Registers Iceland. Information about residence will also be retrieved.',
     },
@@ -87,6 +70,32 @@ export const oldAgePensionFormMessage: MessageDir = {
         'Upplýsingar um netfang, símanúmer og bankareikning eru sóttar frá mínum síðum á Ísland.is.',
       description:
         'Information about email address, phone number and bank account will be retrieved from your account at Ísland.is.',
+    },
+    socialInsuranceAdministrationInformationTitle: {
+      id: 'oap.application:prerequisites.socialInsuranceAdministration.title',
+      defaultMessage: 'Upplýsingar um tekjur og aðstæður',
+      description: 'Information about income and circumstances',
+    },
+    socialInsuranceAdministrationInformationSubTitle: {
+      id: 'oap.application:prerequisites.socialInsuranceAdministration.subtitle',
+      defaultMessage:
+        'TR sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðsla mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar. Ef við á þá hefur TR heimild að ná í upplýsingar frá öðrum stofnunum.',
+      description:
+        'TR collects only necessary information for processing applications and processing cases. That information can relate to both your income and other circumstances. If applicable, TR is authorized to obtain information from other organizations.',
+    },
+    socialInsuranceAdministrationInformationSubTitleMoreInfo: {
+      id: 'oap.application:prerequisites.socialInsuranceAdministration.subtitle.moreInfo#markdown',
+      defaultMessage:
+        'Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar, [https://www.tr.is/tryggingastofnun/personuvernd](https://www.tr.is/tryggingastofnun/personuvernd)',
+      description:
+        'More information on data collection authority and processing of personal information can be found in the privacy policy of the Insurance Administration, [https://www.tr.is/tryggingastofnun/personuvernd](https://www.tr.is/tryggingastofnun/personuvernd)',
+    },
+    socialInsuranceAdministrationInformationSubTitleAboutIncomes: {
+      id: 'oap.application:prerequisites.socialInsuranceAdministration.subtitle.incomes',
+      defaultMessage:
+        'Ef tekjur eða aðrar aðstæður þínar breytast verður þú að láta TR vita þar sem það getur haft áhrif á greiðslur þínar.',
+      description:
+        'If your income or other circumstances change, you must notify TR as this may affect your payments.',
     },
     startApplication: {
       id: 'oap.application:prerequisites.start.application',
@@ -177,7 +186,7 @@ export const oldAgePensionFormMessage: MessageDir = {
     applicantInfoSubSectionDescription: {
       id: 'oap.application:applicant.info.sub.section.description',
       defaultMessage:
-        'Hérna eru upplýsingar um þig. Vinsamlegast farið yfir netfang og símanúmer til að tryggja að þær upplýsingar séu réttar. Athugið ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim hjá Þjóðskrá og koma svo aftur til að klára umsóknina.',
+        'Hérna eru upplýsingar um þig. Vinsamlegast farið yfir netfang og símanúmer til að tryggja að þær upplýsingar séu réttar. Athugið ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim hjá Þjóðskrá.',
       description:
         'Here is information about you. Please review the email address and phone number to ensure that the information is correct. Note that if the following information is not correct, it must be changed at Registers Iceland and then come back to complete the application.',
     },
@@ -359,27 +368,31 @@ export const oldAgePensionFormMessage: MessageDir = {
       description:
         'Child pension due to old age pension is paid with children under 18 years of age. Please note that pensioners who are liable for child pension and the child pension is paid by TR, do not receive child pension directly but instead it is added to the child pension payments.',
     },
-    childPensionTableTitle: {
-      id: 'oap.application:connected.applications.childPension.table.title',
-      defaultMessage: 'Börn í þinni forsjá',
-      description: 'Children in your care',
+    childPensionSubTitle: {
+      id: 'oap.application:connected.applications.childPension.sub.title',
+      defaultMessage: 'Veldu börn í þinni forsjá',
+      description: 'english translation',
     },
-    childPensionTableDescription: {
-      id: 'oap.application:connected.applications.childPension.table.description',
+    childPensionSubDescription: {
+      id: 'oap.application:connected.applications.childPension.sub.description',
       defaultMessage:
-        'Samkvæmt uppflettingu í þjóðskrá hefur þú forsjá með eftirfarandi barni/börnum. Ef barn er ekki með sama lögheimili og þú verður þú að skila inn meðlagssamningi. ATH ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim í Þjóðskrá og koma svo aftur til að klára umsóknina.',
+        'Samkvæmt uppflettingu í þjóðskrá hefur þú forsjá með eftirfarandi barni/börnum. Ef barn er ekki með sama lögheimili og þú verður þú að skila inn meðlagssamning. Veldu barn/börn sem þú vilt sækja um barnalífeyri fyrir, einnig geturu bætt við barni sem þú ert með á framfæri. ATH ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim í Þjóðskrá.',
       description: 'translation..',
     },
-    noChildPensionFoundTableTitle: {
-      id: 'oap.application:connected.applications.no.childPension.table.title',
-      defaultMessage: 'Börn',
-      description: 'Children',
+    childPensionAddChildQuestion: {
+      id: 'oap.application:connected.applications.childPension.add.child.question',
+      defaultMessage: 'Viltu bæta við barni á framfæri?',
+      description: 'english translation',
     },
-    noChildPensionFoundTableDescription: {
-      id: 'oap.application:connected.applications.no.childPension.table.description',
-      defaultMessage:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-      description: 'translation..',
+    childPensionAddChildTitle: {
+      id: 'oap.application:connected.applications.childPension.add.child.title',
+      defaultMessage: 'Börn á framfærslu',
+      description: 'english translation',
+    },
+    childPensionAddChildDescription: {
+      id: 'oap.application:connected.applications.childPension.add.child.description',
+      defaultMessage: 'Barn/börn sem þú ert með á framfærslu.',
+      description: 'english translation',
     },
     addChildButton: {
       id: 'oap.application:connected.applications.add.child.button',
@@ -401,21 +414,16 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Fullt nafn',
       description: 'Full name',
     },
-    noChildFoundTitle: {
-      id: 'oap.application:connected.applications.no.child.found.title',
-      defaultMessage: 'Engin börn fundust í þinni forsjá',
-      description: 'english translation',
-    },
-    noChildFoundDescription: {
-      id: 'oap.application:connected.applications.no.child.found.description',
-      defaultMessage:
-        'Samkvæmt uppflettingu í þjóðskrá hefur þú ekki forsjá með neinu barni/börnum. Þú getur bætt við barni ef þú ert með barn á framfærslu og þarft að skila inn staðfestingu á því. ATH ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim í Þjóðskrá og koma svo aftur til að klára umsóknina.',
-      description: 'english translation',
-    },
     registerChildTitle: {
       id: 'oap.application:connected.applications.register.child.title',
       defaultMessage: 'Skráning barns',
       description: 'Registration of a child',
+    },
+    registerChildDescription: {
+      id: 'oap.application:connected.applications.register.child.description',
+      defaultMessage:
+        'Samkvæmt uppflettingu í Þjóðskrá fundust engin börn í forsjá, vinsamlegast skráðu barn sem þú ert með á framfæri.',
+      description: 'english translation',
     },
     householdSupplementDescription: {
       id: 'oap.application:connected.applications.household.supplement.description',
@@ -499,7 +507,7 @@ export const oldAgePensionFormMessage: MessageDir = {
     residenceHistoryDescription: {
       id: 'oap.application:residence.history.description',
       defaultMessage:
-        'Hérna eru upplýsingar um búsetusögu þína eftir 1987. Full réttindi af ellilífeyri miðast við samtals 40 ára búsetu á Íslandi á tímabilinu 16-67 ára. Þegar búsetutími á Íslandi er styttri reiknast réttindin hlutfallslega miðað við búsetu. Athugið ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim hjá Þjóðskrá og koma svo aftur til að klára umsóknina.',
+        'Hérna eru upplýsingar um búsetusögu þína eftir 1987. Full réttindi af ellilífeyri miðast við samtals 40 ára búsetu á Íslandi á tímabilinu 16-67 ára. Þegar búsetutími á Íslandi er styttri reiknast réttindin hlutfallslega miðað við búsetu. Athugið ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim hjá Þjóðskrá.',
       description:
         'Here is information about your residence history after 1987. Full entitlement to old age pension is based on a total of 40 years of residence in Iceland between the ages of 16-67. When the period of residence in Iceland is shorter, the rights are calculated proportionally based on residence. Note that if the following information is not correct, it must be changed at Registers Iceland and then come back to complete the application.',
     },
@@ -788,36 +796,22 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Til athugunar!',
       description: 'For consideration',
     },
-    periodAlertDescriptionFirstPart: {
-      id: 'oap.application:period.alert.description.firstPart',
+    periodAlertMessage: {
+      id: 'oap.application:period.alert.message',
       defaultMessage:
-        'Þú ert að sækja um snemmtöku miðað við valið tímabil. Nánar um snemmtöku má lesa ',
+        'Þú ert að sækja um snemmtöku miðað við valið tímabil. Réttur ellilífeyris myndast 1. næsta mánuð eftir fæðingardag.',
       description:
-        'You are applying for early admission based on the selected period. You can read more about early birding ',
+        'You are applying for early admission based on the selected period. The right to old-age pension is established on the 1st of the following month after birthday.',
     },
-    periodAlertDescriptionSecondPart: {
-      id: 'oap.application:period.alert.description.secondPart',
-      defaultMessage:
-        '. Réttur ellilífeyris myndast 1. næsta mánuð eftir fæðingardag.',
-      description:
-        '. The right to old-age pension is established on the 1st of the following month after birthday.',
-    },
-    periodAlertLinkName: {
-      id: 'oap.application:period.alert.linkName',
-      defaultMessage: 'hér',
-      description: 'here',
+    periodAlertLinkTitle: {
+      id: 'oap.application:period.alert.linkTitle',
+      defaultMessage: 'Nánar um snemmtöku má lesa hér',
+      description: 'You can read more about early birding here',
     },
     periodAlertUrl: {
       id: 'oap.application:period.alert.url',
       defaultMessage: 'https://www.tr.is/65/ad-flyta-toku-ellilifeyris',
       description: 'The url the link text links to',
-    },
-    periodAlertMessage: {
-      id: 'oap.application:period.alert.message',
-      defaultMessage:
-        'Þú ert að sækja um snemmtöku miðað við valið tímabil. Nánar um snemmtöku má lesa hér. Réttur ellilífeyris myndast 1. næsta mánuð eftir fæðingardag.',
-      description:
-        'You are applying for early admission based on the selected period. You can read more about early birding here. The right to old-age pension is established on the 1st of the following month after birthday.',
     },
   }),
 
@@ -1188,12 +1182,12 @@ export const validatorErrorMessages = defineMessages({
   },
   periodYear: {
     id: 'oap.application:period.year',
-    defaultMessage: 'Vitlaust ár.',
+    defaultMessage: 'Ógilt ár.',
     description: 'Invalid year.',
   },
   periodMonth: {
     id: 'oap.application:period.month',
-    defaultMessage: 'Vitlaus mánuður.',
+    defaultMessage: 'Ógildur mánuður.',
     description: 'Invalid month.',
   },
   requireAttachment: {
@@ -1258,7 +1252,7 @@ export const validatorErrorMessages = defineMessages({
     description: 'Phone number must be a GSM number',
   },
   personalAllowance: {
-    id: 'oap.application:payment.personal.allowance',
+    id: 'oap.application:payment.personal.allowance.error',
     defaultMessage: 'Persónuafsláttur verður að vera milli 1 og 100',
     description: 'Personal allowace has to be between 1 and 100',
   },

@@ -12,7 +12,6 @@ import {
 } from './case'
 import type { Case } from './case'
 import { UserRole } from './user'
-import { CaseFileCategory } from './file'
 
 describe('Case Type', () => {
   each`

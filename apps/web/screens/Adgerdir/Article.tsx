@@ -55,17 +55,22 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
 }) => {
   const portalRef = useRef()
   const [mounted, setMounted] = useState(false)
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { activeLocale } = useI18n()
   const { linkResolver } = useLinkResolver()
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     portalRef.current = document.querySelector('#__next')
     setMounted(true)
   }, [])
 
   const { items: pagesItems } = pages
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const { items: tagsItems } = tags
 
   const processEntry = article?.processEntry
@@ -136,6 +141,9 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
           </Text>
           {processEntry?.processLink && (
             <Box marginTop={3} display={['none', 'none', 'block']} printHidden>
+              {/** 
+               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+               // @ts-ignore */}
               <ProcessEntry {...processEntry} />
             </Box>
           )}
@@ -154,8 +162,13 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
                 display={['block', 'block', 'none']}
                 printHidden
               >
+                {/**
+                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment 
+                 // @ts-ignore make web strict */}
                 <ProcessEntry fixed {...processEntry} />
               </Box>,
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               portalRef.current,
             )}
         </Box>
@@ -166,7 +179,11 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
             <AdgerdirArticles
               tags={tagsItems}
               items={pagesItems}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               namespace={namespace}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               currentArticle={article}
               showAll
             />

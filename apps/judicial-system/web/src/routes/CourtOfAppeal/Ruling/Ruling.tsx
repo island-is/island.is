@@ -9,6 +9,21 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
+  Box,
+  Input,
+  InputFileUpload,
+  RadioButton,
+  Text,
+  UploadFile,
+} from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  CaseFileCategory,
+  CaseTransition,
+} from '@island.is/judicial-system/types'
+import { core } from '@island.is/judicial-system-web/messages'
+import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
+import {
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -17,34 +32,18 @@ import {
   PageLayout,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  Box,
-  Input,
-  InputFileUpload,
-  RadioButton,
-  Text,
-  UploadFile,
-} from '@island.is/island-ui/core'
-
-import { core } from '@island.is/judicial-system-web/messages'
-import {
-  CaseFileCategory,
-  CaseTransition,
-} from '@island.is/judicial-system/types'
 import { CaseAppealRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  TUploadFile,
-  useCase,
-  useS3Upload,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import * as constants from '@island.is/judicial-system/consts'
 import {
   mapCaseFileToUploadFile,
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  TUploadFile,
+  useCase,
+  useS3Upload,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { isCourtOfAppealRulingStepValid } from '@island.is/judicial-system-web/src/utils/validate'
-import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
 
 import { courtOfAppealRuling as strings } from './Ruling.strings'
 

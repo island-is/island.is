@@ -5,13 +5,13 @@ import {
   Scopes,
   ScopesGuard,
   IdsUserGuard,
+  CurrentActor,
 } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   Body,
   Controller,
   Get,
-  NotFoundException,
   Param,
   Post,
   ConflictException,
@@ -21,7 +21,9 @@ import {
   HttpCode,
   Delete,
   Patch,
+  NotFoundException,
 } from '@nestjs/common'
+import { NoContentException } from '@island.is/nest/problem'
 import {
   ApiCreatedResponse,
   ApiExcludeEndpoint,
@@ -46,6 +48,7 @@ import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { VerificationService } from './verification.service'
 import { DataStatus } from './types/dataStatusTypes'
+import { ActorLocale } from './dto/actorLocale'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('User Profile')
@@ -68,6 +71,7 @@ export class UserProfileController {
     allowEmptyValue: false,
   })
   @ApiOkResponse({ type: UserProfile })
+  @ApiNoContentResponse()
   @Audit<UserProfile>({
     resources: (profile) => profile.nationalId,
   })
@@ -85,12 +89,32 @@ export class UserProfileController {
       nationalId,
     )
     if (!userProfile) {
-      throw new NotFoundException(
-        `A user profile with nationalId ${nationalId} does not exist`,
-      )
+      throw new NotFoundException()
     }
 
     return userProfile
+  }
+
+  @Scopes(UserProfileScope.read)
+  @ApiSecurity('oauth2', [UserProfileScope.read])
+  @Get('actor/locale')
+  @ApiOkResponse({ type: ActorLocale })
+  @ApiNoContentResponse()
+  @Audit<ActorLocale>({
+    resources: (profile) => profile.nationalId,
+  })
+  async getActorLocale(@CurrentActor() actor: User): Promise<ActorLocale> {
+    const userProfile = await this.userProfileService.findByNationalId(
+      actor.nationalId,
+    )
+    if (!userProfile) {
+      throw new NotFoundException()
+    }
+
+    return {
+      nationalId: userProfile.nationalId,
+      locale: userProfile.locale,
+    }
   }
 
   @Scopes(UserProfileScope.write)
@@ -262,9 +286,7 @@ export class UserProfileController {
     const { numberOfAffectedRows, updatedUserProfile } =
       await this.userProfileService.update(nationalId, userProfileToUpdate)
     if (numberOfAffectedRows === 0) {
-      throw new NotFoundException(
-        `A user profile with nationalId ${nationalId} does not exist`,
-      )
+      throw new NoContentException()
     }
     this.auditService.audit({
       auth: user,
