@@ -56,8 +56,6 @@ const AidsAndNutrition = () => {
       },
   ].filter((x) => x !== false) as Array<{ label: string; content: JSX.Element }>
 
-  console.log(tabs)
-
   if (error && !loading) {
     return (
       <ErrorScreen

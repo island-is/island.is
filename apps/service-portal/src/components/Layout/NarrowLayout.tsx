@@ -126,7 +126,7 @@ export const NarrowLayout: FC<NarrowLayoutProps> = ({
             <Navigation
               renderLink={(link, item) => {
                 return item?.href ? (
-                  <ReactLink to={item?.href}>{link}x</ReactLink>
+                  <ReactLink to={item?.href}>{link}</ReactLink>
                 ) : (
                   link
                 )
