@@ -47,8 +47,6 @@ const parseOrganizationLinkHref = (organization: Query['getOrganization']) => {
   return link
 }
 
-// TEST COMMENT
-
 const OrganizationHomePage: Screen<HomeProps> = ({
   organizationPage,
   organization,
