@@ -20,3 +20,9 @@ export interface ParentsPenitentiary {
   nationalId: string
   name: string
 }
+
+export interface CombinedResidenceHistory {
+  country: string
+  periodFrom: Date
+  periodTo: Date | string
+}

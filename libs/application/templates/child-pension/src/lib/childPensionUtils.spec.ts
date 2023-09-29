@@ -11,6 +11,9 @@ import {
   getStartDateAndEndDate,
   getAvailableYears,
   getAvailableMonths,
+  hasForeignResidencetInTheLastThreeYears,
+  getCombinedResidenceHistory,
+  getApplicationExternalData,
 } from './childPensionUtils'
 import { MAX_MONTHS_BACKWARD, MAX_MONTHS_FORWARD, MONTHS } from './constants'
 
@@ -92,5 +95,177 @@ describe('getAvailableMonths', () => {
     }
 
     expect(res).toEqual(months)
+  })
+})
+
+describe('residence history', () => {
+  it('hasForeignResidencetInTheLastThreeYears - should return false if user has NO foreign residence in the last three years', () => {
+    const date1 = addMonths(new Date(), -12)
+    const date2 = addMonths(new Date(), -24)
+    const application = buildApplication({
+      externalData: {
+        nationalRegistryResidenceHistory: {
+          data: [
+            {
+              city: 'Reykjavík',
+              country: 'IS',
+              postalCode: '112',
+              streetName: 'Lyngrimi 6',
+              dateOfChange: date1,
+              municipalityCode: '0000',
+              realEstateNumber: '',
+              houseIdentificationCode: '000057000060',
+            },
+            {
+              city: 'Reykjavík',
+              country: 'IS',
+              postalCode: '112',
+              streetName: 'Gautavík 17',
+              dateOfChange: date2,
+              municipalityCode: '0000',
+              realEstateNumber: '',
+              houseIdentificationCode: '000026880170',
+            },
+            {
+              city: 'Selfoss',
+              country: 'IS',
+              postalCode: '800',
+              streetName: 'Tröllhólar 6',
+              dateOfChange: '2012-07-20T00:00:00.000Z',
+              municipalityCode: '8200',
+              realEstateNumber: '',
+              houseIdentificationCode: '820057610060',
+            },
+          ],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(
+      hasForeignResidencetInTheLastThreeYears(application.externalData),
+    ).toEqual(false)
+  })
+
+  it('hasForeignResidencetInTheLastThreeYears - should return true if user has foreign residence in the last three years', () => {
+    const date1 = addMonths(new Date(), -12)
+    const date2 = addMonths(new Date(), -24)
+    const application = buildApplication({
+      externalData: {
+        nationalRegistryResidenceHistory: {
+          data: [
+            {
+              city: 'Reykjavík',
+              country: 'IS',
+              postalCode: '112',
+              streetName: 'Lyngrimi 6',
+              dateOfChange: date1,
+              municipalityCode: '0000',
+              realEstateNumber: '',
+              houseIdentificationCode: '000057000060',
+            },
+            {
+              city: 'Greenland',
+              country: 'GL',
+              postalCode: 'GL-3900',
+              streetName: 'Nuukvegen',
+              dateOfChange: date2,
+              municipalityCode: '0000',
+              realEstateNumber: '',
+              houseIdentificationCode: '',
+            },
+            {
+              city: 'Selfoss',
+              country: 'IS',
+              postalCode: '800',
+              streetName: 'Tröllhólar 6',
+              dateOfChange: '2012-07-20T00:00:00.000Z',
+              municipalityCode: '8200',
+              realEstateNumber: '',
+              houseIdentificationCode: '820057610060',
+            },
+          ],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(
+      hasForeignResidencetInTheLastThreeYears(application.externalData),
+    ).toEqual(true)
+  })
+
+  it('getCombinedResidenceHistory - return combine residence history for the last three years', () => {
+    const date1 = addMonths(new Date(), -12)
+    const date2 = addMonths(new Date(), -24)
+    const application = buildApplication({
+      externalData: {
+        nationalRegistryResidenceHistory: {
+          data: [
+            {
+              city: 'Reykjavík',
+              country: 'IS',
+              postalCode: '112',
+              streetName: 'Lyngrimi 6',
+              dateOfChange: date1,
+              municipalityCode: '0000',
+              realEstateNumber: '',
+              houseIdentificationCode: '000057000060',
+            },
+            {
+              city: 'Greenland',
+              country: 'GL',
+              postalCode: 'GL-3900',
+              streetName: 'Nuukvegen',
+              dateOfChange: date2,
+              municipalityCode: '0000',
+              realEstateNumber: '',
+              houseIdentificationCode: '',
+            },
+            {
+              city: 'Selfoss',
+              country: 'IS',
+              postalCode: '800',
+              streetName: 'Tröllhólar 6',
+              dateOfChange: '2012-07-20T00:00:00.000Z',
+              municipalityCode: '8200',
+              realEstateNumber: '',
+              houseIdentificationCode: '820057610060',
+            },
+          ],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const combinedHistory = [
+      { country: 'IS', periodFrom: date1, periodTo: '-' },
+      {
+        country: 'GL',
+        periodFrom: date2,
+        periodTo: date1,
+      },
+      {
+        country: 'IS',
+        periodFrom: '2012-07-20T00:00:00.000Z',
+        periodTo: date2,
+      },
+    ]
+
+    const { residenceHistory } = getApplicationExternalData(
+      application.externalData,
+    )
+    console.log(
+      'his ',
+      getCombinedResidenceHistory([...residenceHistory].reverse()),
+    )
+    console.log('combinded his ', combinedHistory)
+
+    expect(
+      getCombinedResidenceHistory([...residenceHistory].reverse()),
+    ).toEqual(combinedHistory)
   })
 })

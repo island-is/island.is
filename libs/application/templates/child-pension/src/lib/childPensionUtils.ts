@@ -4,8 +4,9 @@ import {
   ApplicantChildCustodyInformation,
   Option,
   YesOrNo,
+  NationalRegistryResidenceHistory,
 } from '@island.is/application/types'
-import { ChildPensionRow } from '../types'
+import { ChildPensionRow, CombinedResidenceHistory } from '../types'
 import {
   ChildPensionReason,
   NO,
@@ -14,6 +15,8 @@ import {
   MAX_MONTHS_BACKWARD,
   MAX_MONTHS_FORWARD,
   MONTHS,
+  MAX_MONTHS_RESIDENCE_HISTORY,
+  IS,
 } from './constants'
 import { childPensionFormMessage } from './messages'
 import { MessageDescriptor } from 'react-intl'
@@ -121,12 +124,18 @@ export function getApplicationExternalData(
   ) as ApplicantChildCustodyInformation[]
 
   const bank = getValueViaPath(externalData, 'paymentInfo.bank') as string
+  const residenceHistory = getValueViaPath(
+    externalData,
+    'nationalRegistryResidenceHistory.data',
+    [],
+  ) as NationalRegistryResidenceHistory[]
 
   return {
     applicantName,
     applicantNationalId,
     custodyInformation,
     bank,
+    residenceHistory,
   }
 }
 
@@ -289,4 +298,66 @@ export const formatBankInfo = (bankInfo: string) => {
   }
 
   return bankInfo
+}
+
+function residenceMapper(
+  history: NationalRegistryResidenceHistory,
+): CombinedResidenceHistory {
+  const residence = {} as CombinedResidenceHistory
+
+  if (history.country && history.dateOfChange) {
+    residence.country = history.country
+    residence.periodFrom = history.dateOfChange
+    residence.periodTo = '-'
+  }
+
+  return residence
+}
+
+function isInTheRangeOfThreeYears(date: Date) {
+  const today = new Date()
+  const endDate = addMonths(today, MAX_MONTHS_RESIDENCE_HISTORY)
+
+  return today >= date && date >= endDate
+}
+
+export function hasForeignResidencetInTheLastThreeYears(
+  externalData: Application['externalData'],
+) {
+  const { residenceHistory } = getApplicationExternalData(externalData)
+
+  const combinedResidenceHistory = getCombinedResidenceHistory(
+    [...residenceHistory].reverse(),
+  )
+
+  return combinedResidenceHistory.some((residence) => residence.country !== IS)
+}
+
+// return combine residence history for the last three years
+export function getCombinedResidenceHistory(
+  residenceHistory: NationalRegistryResidenceHistory[],
+): CombinedResidenceHistory[] {
+  const combinedResidenceHistory: CombinedResidenceHistory[] = []
+
+  residenceHistory.forEach((history) => {
+    if (combinedResidenceHistory.length === 0) {
+      return combinedResidenceHistory.push(residenceMapper(history))
+    }
+
+    const priorResidence = combinedResidenceHistory.at(-1)
+
+    if (priorResidence && priorResidence?.country !== history.country) {
+      priorResidence.periodTo = history.dateOfChange ?? '-'
+
+      return combinedResidenceHistory.push(residenceMapper(history))
+    }
+  })
+
+  return [
+    ...combinedResidenceHistory.filter((l) =>
+      isInTheRangeOfThreeYears(
+        l.periodTo === '-' ? new Date() : new Date(l.periodTo),
+      ),
+    ),
+  ].reverse()
 }

@@ -497,6 +497,35 @@ export const childPensionFormMessage: MessageDir = {
     },
   }),
 
+  residence: defineMessages({
+    residenceHistoryTitle: {
+      id: 'cp.application:residence.history.title',
+      defaultMessage: 'Réttindi erlendis frá',
+      description: 'english translation',
+    },
+    residenceHistoryDescription: {
+      id: 'cp.application:residence.history.description',
+      defaultMessage:
+        'Samkvæmt Þjóðskrá hefur þú búið erlendis á síðast liðnum þremur árum. Greiðsla barnalífeyris getur skerst vegna búsetu erlendis utan EES. ATH ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim í Þjóðskrá.',
+      description: 'english translation',
+    },
+    residenceHistoryCountryTableHeader: {
+      id: 'cp.application:residence.history.country.table.header',
+      defaultMessage: 'Land',
+      description: 'Country',
+    },
+    residenceHistoryPeriodFromTableHeader: {
+      id: 'cp.application:residence.history.period.from.table.header',
+      defaultMessage: 'Tímabil frá',
+      description: 'Period from',
+    },
+    residenceHistoryPeriodToTableHeader: {
+      id: 'cp.application:residence.history.period.to.table.header',
+      defaultMessage: 'Tímabil til',
+      description: 'Period to',
+    },
+  }),
+
   additionalInfo: defineMessages({
     section: {
       id: 'cp.application:additional.info.section',

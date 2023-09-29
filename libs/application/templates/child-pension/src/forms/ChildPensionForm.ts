@@ -26,6 +26,7 @@ import {
   getApplicationExternalData,
   getApplicationAnswers,
   childCustodyLivesWithApplicant,
+  hasForeignResidencetInTheLastThreeYears,
 } from '../lib/childPensionUtils'
 import { YES, NO, FILE_SIZE_LIMIT } from '../lib/constants'
 
@@ -286,6 +287,35 @@ export const ChildPensionForm: Form = buildForm({
                   id: 'period',
                   component: 'Period',
                   title: childPensionFormMessage.period.periodTitle,
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'residence',
+          title: childPensionFormMessage.residence.residenceHistoryTitle,
+          // if no residence history returned or if residence history for the
+          // last three years is only iceland then dont show page
+          condition: (_, externalData) => {
+            const { residenceHistory } =
+              getApplicationExternalData(externalData)
+            if (residenceHistory.length === 0) return false
+
+            return hasForeignResidencetInTheLastThreeYears(externalData)
+          },
+          children: [
+            buildMultiField({
+              id: 'residenceHistory',
+              title: childPensionFormMessage.residence.residenceHistoryTitle,
+              description:
+                childPensionFormMessage.residence.residenceHistoryDescription,
+              children: [
+                buildCustomField({
+                  id: 'residenceHistory.table',
+                  doesNotRequireAnswer: true,
+                  title: '',
+                  component: 'ResidenceHistory',
                 }),
               ],
             }),

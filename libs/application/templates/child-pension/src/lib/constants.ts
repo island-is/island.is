@@ -4,7 +4,8 @@ import { childPensionFormMessage } from './messages'
 
 export const YES = 'yes'
 export const NO = 'no'
-
+export const IS = 'IS'
+export const MAX_MONTHS_RESIDENCE_HISTORY = -36
 export const MAX_MONTHS_BACKWARD = -24
 export const MAX_MONTHS_FORWARD = 6
 
