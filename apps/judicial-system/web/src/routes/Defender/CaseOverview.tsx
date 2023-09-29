@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import { useLazyQuery } from '@apollo/client'
 
 import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -42,7 +41,6 @@ import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/h
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import { api } from '../../services'
-import LimitedAccessGetAllFiles from './limitedAccessGetAllFilesGql'
 import { conclusion } from '../../components/Conclusion/Conclusion.strings'
 import { strings } from './CaseOverview.strings'
 
@@ -69,12 +67,6 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
     completedCaseStates.includes(workingCase.state) &&
     (workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
       workingCase.hasBeenAppealed)
-
-  const [getAllFiles] = useLazyQuery(LimitedAccessGetAllFiles, {
-    onCompleted: (data) => {
-      console.log(data)
-    },
-  })
 
   return (
     <>
@@ -323,15 +315,8 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                     icon="download"
                     iconType="outline"
                     onClick={async () => {
-                      const success = await getAllFiles({
-                        variables: { input: { caseId: workingCase.id } },
-                      })
-
-                      if (success) {
-                        const url = `${api.apiUrl}/api/case/${workingCase.id}/limitedAccess/allFiles`
-
-                        window.open(url, '_blank')
-                      }
+                      const url = `${api.apiUrl}/api/case/${workingCase.id}/limitedAccess/allFiles`
+                      window.open(url, '_blank')
                     }}
                   >
                     Sækja öll skjöl

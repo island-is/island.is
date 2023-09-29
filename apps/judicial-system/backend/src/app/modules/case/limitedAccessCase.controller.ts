@@ -1,5 +1,4 @@
 import { Response } from 'express'
-import * as fs from 'fs'
 
 import {
   BadRequestException,
@@ -51,6 +50,7 @@ import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { Case } from './models/case.model'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
+import { FileService } from '../file/file.service'
 import {
   LimitedAccessCaseService,
   LimitedAccessUpdateCase,
@@ -65,6 +65,7 @@ export class LimitedAccessCaseController {
     private readonly caseService: CaseService,
     private readonly limitedAccessCaseService: LimitedAccessCaseService,
     private readonly eventService: EventService,
+    private readonly fileService: FileService,
 
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -369,7 +370,7 @@ export class LimitedAccessCaseController {
   ): Promise<void> {
     this.logger.debug(`Getting all files for case ${caseId} as a zip document`)
 
-    const zip = fs.readFileSync(__dirname + '/example.zip')
+    const zip = await this.fileService.getAll(theCase.id, theCase.type)
 
     res.end(zip)
   }

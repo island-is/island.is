@@ -1,8 +1,8 @@
 import { uuid } from 'uuidv4'
 import { Op, Sequelize } from 'sequelize'
 import { Transaction } from 'sequelize/types'
-import Archiver from 'archiver'
-import * as fs from 'fs'
+import archiver from 'archiver'
+import { Writable } from 'stream'
 
 import {
   BadRequestException,
@@ -36,7 +36,6 @@ import { DeleteFileResponse } from './models/deleteFile.response'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { SignedUrl } from './models/signedUrl.model'
 import { CaseFile } from './models/file.model'
-import { AllFiles } from './models/allFiles.model'
 
 // Files are stored in AWS S3 under a key which has the following formats:
 // uploads/<uuid>/<uuid>/<filename> for restriction and investigation cases
@@ -180,7 +179,8 @@ export class FileService {
     return caseFile
   }
 
-  async getAll(caseId: string, caseType: CaseType): Promise<AllFiles> {
+  async getAll(caseId: string, caseType: CaseType): Promise<Buffer> {
+    const filesToZip: Array<{ data: Buffer; name: string }> = []
     const allowedCategories = [
       ...restrictionCases,
       ...investigationCases,
@@ -214,52 +214,44 @@ export class FileService {
       },
     })
 
-    const output = fs.createWriteStream(__dirname + '/example.zip')
-    const archive = Archiver('zip', {
-      zlib: { level: 9 }, // Sets the compression level.
-    })
-
-    // listen for all archive data to be written
-    // 'close' event is fired only when a file descriptor is involved
-    output.on('close', function () {
-      console.log(archive.pointer() + ' total bytes')
-      console.log(
-        'archiver has been finalized and the output file descriptor has closed.',
-      )
-    })
-
-    // This event is fired when the data source is drained no matter what was the data source.
-    // It is not part of this library but rather from the NodeJS Stream API.
-    // @see: https://nodejs.org/api/stream.html#stream_event_end
-    output.on('end', function () {
-      console.log('Data has been drained')
-    })
-
-    // good practice to catch warnings (ie stat failures and other non-blocking errors)
-    archive.on('warning', function (err) {
-      if (err.code === 'ENOENT') {
-        // log warning
-      } else {
-        // throw error
-        throw err
-      }
-    })
-
-    // good practice to catch this error explicitly
-    archive.on('error', function (err) {
-      throw err
-    })
-
-    archive.pipe(output)
-
     for (const file of caseFilesByCategory) {
       const content = await this.awsS3Service.getObject(file.key ?? '')
-      archive.append(content, { name: file.name })
+      filesToZip.push({ data: content, name: file.name })
     }
 
-    archive.finalize()
+    return this.zipFiles(filesToZip)
+  }
 
-    return { success: true }
+  zipFiles(files: Array<{ data: Buffer; name: string }>): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      const buffs: Buffer[] = []
+      const converter = new Writable()
+
+      converter._write = (chunk, encoding, cb) => {
+        buffs.push(chunk)
+        process.nextTick(cb)
+      }
+
+      converter.on('finish', () => {
+        resolve(Buffer.concat(buffs))
+      })
+
+      const archive = archiver('zip', {
+        zlib: { level: 9 },
+      })
+
+      archive.on('error', (err) => {
+        reject(err)
+      })
+
+      archive.pipe(converter)
+
+      for (const file of files) {
+        archive.append(file.data, { name: file.name })
+      }
+
+      archive.finalize()
+    })
   }
 
   createPresignedPost(
@@ -321,10 +313,6 @@ export class FileService {
     }
 
     return this.awsS3Service.getSignedUrl(file.key)
-  }
-
-  async getAllCaseFiles(caseId: string, caseType: CaseType): Promise<AllFiles> {
-    return this.getAll(caseId, caseType)
   }
 
   async deleteCaseFile(
