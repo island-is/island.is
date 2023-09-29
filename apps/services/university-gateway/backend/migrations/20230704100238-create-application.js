@@ -13,6 +13,10 @@ module.exports = {
               defaultValue: Sequelize.UUIDV4,
               allowNull: false,
             },
+            external_id: {
+              type: Sequelize.STRING,
+              allowNull: false,
+            },
             national_id: {
               type: Sequelize.STRING,
               allowNull: false,
