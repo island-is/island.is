@@ -10,30 +10,21 @@ import {
   Box,
   Text,
   Select,
-  Option,
 } from '@island.is/island-ui/core'
 import { PortalNavigation } from '@island.is/portals/core'
 import { useCreateExplicitDiscountCodeMutation } from './CreateDiscount.generated'
 import Modal from '../../components/Modal/Modal'
 import { airDiscountSchemeNavigation } from '../../lib/navigation'
-import { ValueType } from 'react-select'
 
 const AdminCreateDiscount = () => {
   const [createExplicitDiscountCode] = useCreateExplicitDiscountCodeMutation()
-
   const [nationalId, setNationalId] = useState('')
   const [postalcode, setPostalcode] = useState('')
   const [comment, setComment] = useState('')
   const [length, setLength] = useState('')
-
   const [discountCode, setDiscountCode] = useState('')
-
   const [showModal, setShowModal] = useState(false)
 
-  const onSelect = (option: ValueType<Option>) => {
-    const selectOption = option as Option
-    setLength(selectOption?.value as string)
-  }
   return (
     <>
       <GridContainer>
@@ -107,7 +98,9 @@ const AdminCreateDiscount = () => {
                     name="length"
                     label="Tímalengd"
                     required
-                    onChange={onSelect}
+                    onChange={(opt) => {
+                      setLength(opt?.value ?? '')
+                    }}
                     options={[
                       {
                         label: '24 tímar',

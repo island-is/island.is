@@ -2,10 +2,10 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import {
-  Box,
-  AccordionItem,
-  UploadedFile,
   Accordion,
+  AccordionItem,
+  Box,
+  UploadedFile,
 } from '@island.is/island-ui/core'
 import { CaseFile } from '@island.is/judicial-system/types'
 

@@ -2,46 +2,46 @@ import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
+import { Box, Input, Text, toast } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   CaseState,
   CaseTransition,
   NotificationType,
 } from '@island.is/judicial-system/types'
 import {
-  ProsecutorCaseInfo,
+  errors,
+  rcRequestedHearingArrangements,
+  titles,
+} from '@island.is/judicial-system-web/messages'
+import {
   FormContentContainer,
+  FormContext,
   FormFooter,
   Modal,
   PageLayout,
-  FormContext,
+  ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   stepValidationsType,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { Box, Input, Text, toast } from '@island.is/island-ui/core'
 import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  errors,
-  rcRequestedHearingArrangements,
-  titles,
-} from '@island.is/judicial-system-web/messages'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
 
-import ArrestDate from './ArrestDate'
 import {
+  ProsecutorSectionHeightenedSecurity,
   RequestCourtDate,
   SelectCourt,
-  ProsecutorSectionHeightenedSecurity,
 } from '../../components'
+import ArrestDate from './ArrestDate'
 
 export const HearingArrangements: React.FC<
   React.PropsWithChildren<unknown>

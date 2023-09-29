@@ -1,8 +1,8 @@
-import yargs from 'yargs'
+import { processJob } from '@island.is/infra-nest-server'
 
-const { argv } = yargs(process.argv.slice(2))
+const job = processJob()
 
-if (argv.job === 'worker') {
+if (job === 'worker') {
   import('./worker').then((app) => {
     app.worker()
   })

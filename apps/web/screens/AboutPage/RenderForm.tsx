@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useFormik } from 'formik'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
 import toQueryString from 'to-querystring'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
 import jsonp from 'jsonp'
 import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
@@ -31,6 +35,8 @@ export const RenderForm: React.FC<
   submitButtonText = 'Submit',
   inputLabel = 'Email',
 }) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const [status, setStatus] = useState<FormState>({
     type: '',
@@ -39,7 +45,7 @@ export const RenderForm: React.FC<
     touched: false,
   })
 
-  const formatMessage = (message) => {
+  const formatMessage = (message: string) => {
     // These messages come from Mailchimp's API and contain links and other stuff we don't want.
     if (!message) {
       return
@@ -61,7 +67,7 @@ export const RenderForm: React.FC<
     return ''
   }
 
-  const handleSubmit = ({ email }) => {
+  const handleSubmit = ({ email }: { email: string }) => {
     const validEmail = isValidEmail.test(email)
 
     if (!validEmail) {
@@ -82,7 +88,7 @@ export const RenderForm: React.FC<
         {
           param: 'c',
         },
-        (err, data) => {
+        (err: string, data: { result: string; msg: string }) => {
           if (err) {
             setStatus({
               type: 'error',
@@ -146,6 +152,8 @@ export const RenderForm: React.FC<
         variant="blue"
         buttonText={submitButtonText}
         onChange={formik.handleChange}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         onSubmit={formik.handleSubmit}
         value={formik.values.email}
         successTitle={n('formThankYou', 'Skráning tókst. Takk fyrir.')}
@@ -153,6 +161,8 @@ export const RenderForm: React.FC<
           'formCheckYourEmail',
           'Þú þarft að fara í pósthólfið þitt og samþykkja umsóknina',
         )}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         errorMessage={formatMessage(status.message)}
         state={status.type || 'default'}
       />

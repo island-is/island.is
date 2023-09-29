@@ -8,6 +8,7 @@ import {
   Sys,
 } from 'contentful'
 import Bottleneck from 'bottleneck'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import environment from '../environments/environment'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
@@ -58,7 +59,10 @@ export class ContentfulService {
     en: 'en',
   }
 
-  constructor(private readonly elasticService: ElasticService) {
+  constructor(
+    private readonly elasticService: ElasticService,
+    private readonly featureFlagService: FeatureFlagService,
+  ) {
     const params: CreateClientParams = {
       space: environment.contentful.space,
       accessToken: environment.contentful.accessToken,
@@ -220,17 +224,6 @@ export class ContentfulService {
       }
     }
 
-    // Remove unnecessary fields to save memory
-    const keys = ['deletedEntries', 'assets', 'deletedAssets'] as const
-    for (const key of keys) {
-      for (let i = 0; i < syncData[key].length; i += 1) {
-        syncData[key][i] = {
-          ...syncData.entries[i],
-          fields: null,
-        }
-      }
-    }
-
     return syncData
   }
 
@@ -350,9 +343,6 @@ export class ContentfulService {
       process.env.CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE ?? 40,
     )
 
-    const shouldResolveNestedEntries =
-      process.env.SHOULD_SEARCH_INDEXER_RESOLVE_NESTED_ENTRIES === 'true'
-
     logger.info(`Sync chunk size is: ${chunkSize}`)
 
     const populatedSyncEntriesResult = await this.getPopulatedSyncEntries(
@@ -366,6 +356,11 @@ export class ContentfulService {
     let { nestedEntryIds } = populatedSyncEntriesResult
 
     const isDeltaUpdate = syncType !== 'full'
+
+    const shouldResolveNestedEntries = await this.featureFlagService.getValue(
+      Features.shouldSearchIndexerResolveNestedEntries,
+      true,
+    )
 
     // In case of delta updates, we need to resolve embedded entries to their root model
     if (isDeltaUpdate && shouldResolveNestedEntries) {

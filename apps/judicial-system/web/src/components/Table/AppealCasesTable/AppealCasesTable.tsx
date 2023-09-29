@@ -6,33 +6,33 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import {
+  CaseDecision as TCaseDecision,
   CaseState,
   isRestrictionCase,
-  CaseDecision as TCaseDecision,
 } from '@island.is/judicial-system/types'
-import { tables } from '@island.is/judicial-system-web/messages/Core/tables'
 import { core } from '@island.is/judicial-system-web/messages/Core'
-import {
-  useSortAppealCases,
-  useViewport,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  CaseListEntry,
-  Defendant,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { tables } from '@island.is/judicial-system-web/messages/Core/tables'
 import { TagAppealState } from '@island.is/judicial-system-web/src/components'
 import {
   ColumnCaseType,
   CourtCaseNumber,
   DefendantInfo,
+  getDurationDate,
   SortButton,
   TableContainer,
   TableHeaderText,
-  getDurationDate,
 } from '@island.is/judicial-system-web/src/components/Table'
+import {
+  CaseListEntry,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  useSortAppealCases,
+  useViewport,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
-import * as styles from '../Table.css'
 import MobileAppealCase from './MobileAppealCase'
+import * as styles from '../Table.css'
 
 interface Props {
   cases: CaseListEntry[]
@@ -139,6 +139,7 @@ const AppealCasesTable: React.FC<Props> = (props) => {
               <TagAppealState
                 appealState={column.appealState}
                 appealRulingDecision={column.appealRulingDecision}
+                appealCaseNumber={column.appealCaseNumber}
               />
             </td>
             <td>

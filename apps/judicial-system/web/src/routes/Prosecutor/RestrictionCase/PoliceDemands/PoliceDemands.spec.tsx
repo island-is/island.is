@@ -1,10 +1,8 @@
 import { createIntl } from 'react-intl'
 
+import { CaseDecision } from '@island.is/judicial-system/types'
 import {
   CaseCustodyRestrictions,
-  CaseDecision,
-} from '@island.is/judicial-system/types'
-import {
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'

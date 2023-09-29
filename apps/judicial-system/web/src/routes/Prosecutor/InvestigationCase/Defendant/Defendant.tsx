@@ -1,29 +1,9 @@
 import React, { useCallback, useContext, useEffect } from 'react'
-import { useRouter } from 'next/router'
 import { useIntl } from 'react-intl'
-import { ValueType } from 'react-select/src/types'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useRouter } from 'next/router'
 import { uuid } from 'uuidv4'
 
-import {
-  BlueBox,
-  DefenderInfo,
-  FormContentContainer,
-  FormContext,
-  FormFooter,
-  PageLayout,
-} from '@island.is/judicial-system-web/src/components'
-import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import {
-  titles,
-  core,
-  defendant as m,
-  errors,
-} from '@island.is/judicial-system-web/messages'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   Box,
   Button,
@@ -32,17 +12,35 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import { theme } from '@island.is/island-ui/theme'
-import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import * as constants from '@island.is/judicial-system/consts'
+import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import {
-  CaseType,
+  core,
+  defendant as m,
+  errors,
+  titles,
+} from '@island.is/judicial-system-web/messages'
+import {
+  BlueBox,
+  DefenderInfo,
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  PageLayout,
+} from '@island.is/judicial-system-web/src/components'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import {
   CaseOrigin,
+  CaseType,
   Defendant as TDefendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
+import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import {
   DefendantInfo,
@@ -270,16 +268,13 @@ const Defendant = () => {
               <Box marginBottom={3}>
                 <Select
                   name="type"
-                  options={
-                    constants.InvestigationCaseTypes as ReactSelectOption[]
-                  }
+                  options={constants.InvestigationCaseTypes}
                   label={formatMessage(m.sections.investigationType.type.label)}
                   placeholder={formatMessage(
                     m.sections.investigationType.type.placeholder,
                   )}
-                  onChange={(selectedOption: ValueType<ReactSelectOption>) => {
-                    const type = (selectedOption as ReactSelectOption)
-                      .value as CaseType
+                  onChange={(selectedOption) => {
+                    const type = selectedOption?.value
 
                     setCaseType(type)
                     setAndSendCaseToServer(
@@ -296,9 +291,7 @@ const Defendant = () => {
                   value={
                     workingCase.id
                       ? {
-                          value: Object.keys(CaseType).indexOf(
-                            workingCase.type,
-                          ),
+                          value: workingCase.type,
                           label: capitalize(caseTypes[workingCase.type]),
                         }
                       : undefined
@@ -414,6 +407,7 @@ const Defendant = () => {
             {[
               CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
               CaseType.EXPULSION_FROM_HOME,
+              CaseType.PAROLE_REVOCATION,
               CaseType.PSYCHIATRIC_EXAMINATION,
               CaseType.RESTRAINING_ORDER,
               CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,

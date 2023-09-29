@@ -38,7 +38,7 @@ export const SidebarCard: React.FC<
         >
           <Text variant="small">{sidebarCard.contentString}</Text>
           <Box display="flex" justifyContent="flexEnd" paddingTop={2}>
-            <Link href={sidebarCard.link.url}>
+            <Link href={sidebarCard.link?.url ?? ''}>
               <Button
                 icon="arrowForward"
                 iconType="filled"
@@ -46,7 +46,7 @@ export const SidebarCard: React.FC<
                 variant="text"
                 size="small"
               >
-                {sidebarCard.link.text}
+                {sidebarCard?.link?.text}
               </Button>
             </Link>
           </Box>

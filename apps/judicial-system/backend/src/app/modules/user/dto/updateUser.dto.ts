@@ -38,5 +38,5 @@ export class UpdateUserDto {
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional()
-  readonly active?: string
+  readonly active?: boolean
 }

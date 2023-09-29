@@ -6,26 +6,9 @@ import React, {
   useState,
 } from 'react'
 import { useIntl } from 'react-intl'
-import { uuid } from 'uuidv4'
 import { useRouter } from 'next/router'
+import { uuid } from 'uuidv4'
 
-import {
-  ProsecutorCaseInfo,
-  FormContentContainer,
-  FormFooter,
-  PageLayout,
-  ParentCaseFiles,
-  FormContext,
-  MarkdownWrapper,
-  SectionHeading,
-} from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { errors } from '@island.is/judicial-system-web/messages'
-import {
-  useCase,
-  useDeb,
-  useS3Upload,
-} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   Box,
   ContentBlock,
@@ -35,39 +18,44 @@ import {
   Tooltip,
   UploadFile,
 } from '@island.is/island-ui/core'
+import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  CaseFileState,
+  isRestrictionCase,
+} from '@island.is/judicial-system/types'
+import { errors } from '@island.is/judicial-system-web/messages'
+import {
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  MarkdownWrapper,
+  PageLayout,
+  ParentCaseFiles,
+  ProsecutorCaseInfo,
+  SectionHeading,
+} from '@island.is/judicial-system-web/src/components'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { Item } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   mapCaseFileToUploadFile,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
-  CaseFileState,
-  isRestrictionCase,
-  PoliceCaseFile,
-} from '@island.is/judicial-system/types'
-import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
-import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
-import * as constants from '@island.is/judicial-system/consts'
+  useCase,
+  useDeb,
+  useS3Upload,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
+import {
+  mapPoliceCaseFileToPoliceCaseFileCheck,
+  PoliceCaseFileCheck,
+  PoliceCaseFiles,
+  PoliceCaseFilesData,
+} from '../../components'
 import { useGetPoliceCaseFilesQuery } from './getPoliceCaseFiles.generated'
 import { caseFiles as strings } from './CaseFiles.strings'
-
-export interface PoliceCaseFilesData {
-  files: PoliceCaseFile[]
-  isLoading: boolean
-  hasError: boolean
-  errorCode?: string
-}
-
-export const mapPoliceCaseFileToPoliceCaseFileCheck = (
-  file: PoliceCaseFile,
-): PoliceCaseFileCheck => ({
-  id: file.id,
-  name: file.name,
-  policeCaseNumber: file.policeCaseNumber,
-  checked: false,
-  displayDate: file.displayDate,
-})
 
 export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -146,7 +134,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
         .filter(
           (policeFile) =>
             !workingCase.caseFiles?.some(
-              (file) => !file.category && file.name === policeFile.name,
+              (file) => !file.category && file.policeFileId === policeFile.id,
             ),
         )
         .map(mapPoliceCaseFileToPoliceCaseFileCheck) || [],
@@ -216,29 +204,41 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
     [handleUIUpdate, upload],
   )
 
-  const handlePoliceCaseFileUpload = useCallback(async () => {
-    const filesToUpload = policeCaseFileList.filter((p) => p.checked)
+  const handlePoliceCaseFileUpload = useCallback(
+    async (selectedFiles: Item[]) => {
+      const filesToUpload = policeCaseFileList.filter((p) =>
+        selectedFiles.some((f) => f.id === p.id),
+      )
 
-    setIsUploading(true)
+      setIsUploading(true)
 
-    filesToUpload.forEach(async (f, index) => {
-      const fileToUpload = {
-        id: f.id,
-        type: 'application/pdf',
-        name: f.name,
-        status: 'done',
-        state: CaseFileState.STORED_IN_RVG,
-      } as UploadFile
+      const promises = filesToUpload.map(async (f, index) => {
+        const fileToUpload = {
+          id: f.id,
+          type: 'application/pdf',
+          name: f.name,
+          status: 'done',
+          state: CaseFileState.STORED_IN_RVG,
+        } as UploadFile
 
-      await uploadFromPolice(fileToUpload, uploadPoliceCaseFileCallback)
+        return uploadFromPolice(
+          fileToUpload,
+          uploadPoliceCaseFileCallback,
+        ).then(() => {
+          setPoliceCaseFileList((previous) =>
+            previous.filter((p) => p.id !== f.id),
+          )
 
-      setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
+          if (index === filesToUpload.length - 1) {
+            setIsUploading(false)
+          }
+        })
+      })
 
-      if (index === filesToUpload.length - 1) {
-        setIsUploading(false)
-      }
-    })
-  }, [policeCaseFileList, uploadFromPolice, uploadPoliceCaseFileCallback])
+      await Promise.all(promises)
+    },
+    [policeCaseFileList, uploadFromPolice, uploadPoliceCaseFileCallback],
+  )
 
   const removeFileCB = useCallback(
     (file: UploadFile) => {
@@ -292,9 +292,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
         />
         <PoliceCaseFiles
           onUpload={handlePoliceCaseFileUpload}
-          isUploading={isUploading}
           policeCaseFileList={policeCaseFileList}
-          setPoliceCaseFileList={setPoliceCaseFileList}
           policeCaseFiles={policeCaseFiles}
         />
         <Box marginBottom={3}>

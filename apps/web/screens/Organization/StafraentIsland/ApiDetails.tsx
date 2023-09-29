@@ -49,11 +49,19 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   service = null,
 }) => {
   const Router = useRouter()
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(strings)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const nfc = useNamespace(filterContent)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const noa = useNamespace(openApiContent)
   const { linkResolver } = useLinkResolver()
   const [selectedServiceDetail, setselectedServiceDetail] =
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     useState<ServiceDetail>(service.environments[0].details[0])
 
   useLocalLinkTypeResolver()
@@ -80,8 +88,9 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
     0,
     Router.asPath.lastIndexOf('/'),
   )
-
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
       href: primaryLink?.url,
@@ -99,7 +108,11 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   return (
     <>
       <OrganizationWrapper
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         pageTitle={service.title ?? ''}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         organizationPage={organizationPage}
         showReadSpeaker={false}
         breadcrumbItems={[
@@ -108,9 +121,10 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
             href: linkResolver('homepage').href,
           },
           {
-            title: organizationPage.title,
-            href: linkResolver('organizationpage', [organizationPage.slug])
-              .href,
+            title: organizationPage?.title ?? '',
+            href: linkResolver('organizationpage', [
+              organizationPage?.slug ?? '',
+            ]).href,
           },
           {
             title: n('linkServicesText'),
@@ -194,7 +208,11 @@ ServiceDetails.getProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+      .then((res) =>
+        res.data.getNamespace?.fields
+          ? JSON.parse(res.data.getNamespace.fields)
+          : {},
+      ),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -205,7 +223,11 @@ ServiceDetails.getProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+      .then((res) =>
+        res.data.getNamespace?.fields
+          ? JSON.parse(res.data.getNamespace.fields)
+          : {},
+      ),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -216,7 +238,11 @@ ServiceDetails.getProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+      .then((res) =>
+        res.data.getNamespace?.fields
+          ? JSON.parse(res.data.getNamespace.fields)
+          : {},
+      ),
     apolloClient.query<Query, QueryGetApiServiceByIdArgs>({
       query: GET_API_SERVICE_QUERY,
       variables: {

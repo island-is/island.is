@@ -9,6 +9,8 @@ import {
   NationalRegistryParameters,
   NationalRegistryBirthplace,
   ChildrenCustodyInformationParameters,
+  NationalRegistryParent,
+  NationalRegistryMaritalTitle,
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
@@ -113,6 +115,8 @@ export class NationalRegistryService extends BaseTemplateApiService {
     return (
       person && {
         nationalId: person.nationalId,
+        givenName: person.givenName,
+        familyName: person.familyName,
         fullName: person.name,
         age: this.getAgeFromDateOfBirth(person.birthdate),
         citizenship: citizenship && {
@@ -129,6 +133,52 @@ export class NationalRegistryService extends BaseTemplateApiService {
         genderCode: person.genderCode,
       }
     )
+  }
+
+  async getParents({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<NationalRegistryParent[] | null> {
+    const parentUser = auth
+    const parentNationalIds = await this.nationalRegistryApi.getLegalParents(
+      parentUser,
+    )
+
+    const parents = parentNationalIds.map((i) => {
+      return { nationalId: i }
+    })
+
+    const parentOneDetails =
+      parents.length > 0 &&
+      (await this.nationalRegistryApi.getIndividual(parents[0].nationalId))
+    const parentTwoDetails =
+      parents.length > 1 &&
+      (await this.nationalRegistryApi.getIndividual(parents[1].nationalId))
+
+    const parentOne: NationalRegistryParent | null = parentOneDetails
+      ? {
+          nationalId: parentOneDetails.nationalId,
+          givenName: parentOneDetails.givenName,
+          familyName: parentOneDetails.familyName,
+        }
+      : null
+    const parentTwo: NationalRegistryParent | null = parentTwoDetails
+      ? {
+          nationalId: parentTwoDetails.nationalId,
+          givenName: parentTwoDetails.givenName,
+          familyName: parentTwoDetails.familyName,
+        }
+      : null
+
+    const parentsWithDetails = []
+
+    if (parentOne) {
+      parentsWithDetails.push(parentOne)
+    }
+    if (parentTwo) {
+      parentsWithDetails.push(parentTwo)
+    }
+
+    return parentsWithDetails
   }
 
   async childrenCustodyInformation({
@@ -167,6 +217,12 @@ export class NationalRegistryService extends BaseTemplateApiService {
         childrenNationalIds.map(async (childNationalId) => {
           const child = await this.getIndividual(childNationalId)
 
+          let domicileInIceland = true
+          const domicileCode = child?.address?.municipalityCode
+          if (!domicileCode || domicileCode.substring(0, 2) === '99') {
+            domicileInIceland = false
+          }
+
           if (!child) {
             return null
           }
@@ -194,11 +250,15 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
           return {
             nationalId: child.nationalId,
+            givenName: child.givenName,
+            familyName: child.familyName,
             fullName: child.fullName,
             genderCode: child.genderCode,
             livesWithApplicant,
             livesWithBothParents: livesWithParentB ?? livesWithApplicant,
             otherParent: parentB,
+            citizenship: child.citizenship,
+            domicileInIceland,
           }
         }),
       )
@@ -242,6 +302,33 @@ export class NationalRegistryService extends BaseTemplateApiService {
         nationalId: spouse.spouseNationalId,
         name: spouse.spouseName,
         maritalStatus: spouse.cohabitationCode,
+      }
+    )
+  }
+
+  async getMaritalTitle({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<NationalRegistryMaritalTitle | null> {
+    const cohabitationInfo = await this.nationalRegistryApi.getCohabitationInfo(
+      auth.nationalId,
+    )
+
+    const individual = await this.nationalRegistryApi.getIndividual(
+      auth.nationalId,
+    )
+
+    const cohabitionCodeValue =
+      cohabitationInfo && individual
+        ? await this.nationalRegistryApi.getCohabitionCodeValue(
+            cohabitationInfo.cohabitationCode,
+            individual.genderCode,
+          )
+        : null
+
+    return (
+      cohabitionCodeValue && {
+        code: cohabitionCodeValue?.code,
+        description: cohabitionCodeValue?.description,
       }
     )
   }
