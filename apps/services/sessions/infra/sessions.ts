@@ -14,12 +14,6 @@ const geoipVolume: PersistentVolumeClaim[] = [
     size: '1Gi',
     accessModes: 'ReadWrite',
   },
-  {
-    name: 'sessions-geoip-db-tmp',
-    mountPath: '/webapp/node_modules/geoip-lite/tmp',
-    size: '1Gi',
-    accessModes: 'ReadWrite',
-  },
 ]
 
 const servicePostgresInfo = {
