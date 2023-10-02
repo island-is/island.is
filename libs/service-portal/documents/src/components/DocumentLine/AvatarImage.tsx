@@ -1,8 +1,8 @@
 import React, { FC, ReactNode, MouseEvent } from 'react'
 
-import { Box, Icon } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import cn from 'classnames'
-import * as styles from './NewDocumentLine.css'
+import * as styles from './DocumentLine.css'
 
 interface Props {
   background: 'blue100' | 'blue200' | 'white'
