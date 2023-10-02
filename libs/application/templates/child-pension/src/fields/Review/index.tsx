@@ -18,7 +18,6 @@ import { getApplicationAnswers } from '../../lib/childPensionUtils'
 import { Attachments } from './review-groups/Attachments'
 import { PaymentInformation } from './review-groups/PaymentInformation'
 
-
 interface ReviewScreenProps {
   application: Application
   field: Field & { props?: { editable?: boolean } }

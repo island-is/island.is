@@ -10,18 +10,12 @@ import { childPensionFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
 
-
-
 export const PaymentInformation = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const [
-    {
-      bank
-    },
-  ] = useStatefulAnswers(application)
+  const [{ bank }] = useStatefulAnswers(application)
 
   const { formatMessage } = useLocale()
 
