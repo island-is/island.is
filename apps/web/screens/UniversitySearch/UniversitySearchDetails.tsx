@@ -20,6 +20,9 @@ import { Screen } from '@island.is/web/types'
 import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
+  GetUniversityGatewayByIdQuery,
+  GetUniversityGatewayByIdQueryVariables,
+  GetUniversityGatewayUniversitiesQuery,
   ProgramDetails,
   University,
 } from '@island.is/web/graphql/schema'
@@ -98,37 +101,8 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                 universities.filter((x) => x.id === data.universityId)[0]
                   .logoUrl
               }
-              alt="alt text todo"
+              alt="University infomation"
             />
-            {/* <Sticky>
-              <Navigation
-                baseId="desktopNav"
-                colorScheme="purple"
-                items={[
-                  {
-                    title: 'Mentun',
-                    active: false,
-                    slug: ['/prufa'],
-                  },
-                ]}
-                title="Tengt efni"
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
-                renderLink={(link, { typename, slug }) => {
-                  return (
-                    <LinkV2
-                      //   href={linkResolver(typename as LinkType, slug).href}
-                      href="/"
-                      onClick={() => console.log('whuuut')}
-                      skipTab
-                      pureChildren
-                    >
-                      {link}
-                    </LinkV2>
-                  )
-                }}
-              />
-            </Sticky> */}
           </Stack>
         }
       >
@@ -400,7 +374,10 @@ UniversityDetails.getProps = async ({ query, apolloClient, locale }) => {
     throw new CustomNextError(404, 'Síða er ekki opin')
   }
 
-  const newResponse = await apolloClient.query<any, any>({
+  const newResponse = await apolloClient.query<
+    GetUniversityGatewayByIdQuery,
+    GetUniversityGatewayByIdQueryVariables
+  >({
     query: GET_UNIVERSITY_GATEWAY_PROGRAM,
     variables: {
       input: {
@@ -409,9 +386,10 @@ UniversityDetails.getProps = async ({ query, apolloClient, locale }) => {
     },
   })
 
-  const universities = await apolloClient.query<any>({
-    query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
-  })
+  const universities =
+    await apolloClient.query<GetUniversityGatewayUniversitiesQuery>({
+      query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
+    })
 
   const data = newResponse.data.universityGatewayProgramById
 

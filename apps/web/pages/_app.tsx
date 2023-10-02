@@ -6,11 +6,3 @@ import App from 'next/app'
 globalStyles()
 
 export default App
-
-// export const MyApp = () => (
-//   <FeatureFlagProvider sdkKey="YcfYCOwBTUeI04mWOWpPdA/KgCHhUk0_k2BdiKMaNh3qA">
-//     <App />
-//   </FeatureFlagProvider>
-// )
-
-// export default MyApp

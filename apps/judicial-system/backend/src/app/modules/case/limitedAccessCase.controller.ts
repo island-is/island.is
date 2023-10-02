@@ -12,6 +12,7 @@ import {
   Query,
   Res,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -54,6 +55,7 @@ import {
   LimitedAccessUpdateCase,
 } from './limitedAccessCase.service'
 import { CaseEvent, EventService } from '../event'
+import { CaseInterceptor } from './interceptors/case.interceptor'
 
 @Controller('api')
 @ApiTags('limited access cases')
@@ -79,6 +81,7 @@ export class LimitedAccessCaseController {
     type: Case,
     description: 'Gets a limited set of properties of an existing case',
   })
+  @UseInterceptors(CaseInterceptor)
   async getById(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,

@@ -5,10 +5,12 @@ import {
   ButtonTypes,
   CTAProps,
   Checkbox,
+  LinkV2,
   Text,
 } from '@island.is/island-ui/core'
 import React from 'react'
 import * as styles from './ListViewCard.css'
+import { useLinkResolver } from '@island.is/web/hooks'
 
 type InfoItems = {
   icon?: React.ReactNode
@@ -42,6 +44,7 @@ export const ListViewCard = ({
   checked,
   href,
 }: CardProps) => {
+  const linkResolver = useLinkResolver()
   return (
     <Box>
       <Box
@@ -75,16 +78,18 @@ export const ListViewCard = ({
           )}
           {iconText && <Text variant="small">{iconText}</Text>}
         </Box>
-        <Text
-          as="h4"
-          variant="h4"
-          color="blue400"
-          truncate={false}
-          title={heading}
-          paddingBottom={3}
-        >
-          {heading}
-        </Text>
+        <LinkV2 href={href} passHref>
+          <Text
+            as="h4"
+            variant="h4"
+            color="blue400"
+            truncate={false}
+            title={heading}
+            paddingBottom={3}
+          >
+            {heading}
+          </Text>
+        </LinkV2>
         {infoItems.map((item) => {
           return (
             <Box
