@@ -116,7 +116,7 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
               download={activeDocument.subject}
               href={getDocumentLink(
                 activeDocument,
-                activeDocument.document.fileType === 'pdf' ? 'pdf' : 'text',
+                activeDocument.document.fileType === 'pdf' ? 'pdf' : 'text', // TODO NEEDS FURHTER INVESTIGATION NOT CORRECT ATM
               )}
             >
               <Button variant="ghost" size="small" circle icon="download" />
