@@ -7,7 +7,6 @@ import {
   CaseType,
   Defendant,
   User,
-  SessionArrangements,
 } from '@island.is/judicial-system/types'
 import {
   DEFENDER_INDICTMENT_ROUTE,
