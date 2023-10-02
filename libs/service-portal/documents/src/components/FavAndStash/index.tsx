@@ -1,6 +1,8 @@
 import React, { MouseEvent } from 'react'
 import { Box, Button } from '@island.is/island-ui/core'
 import * as styles from './FavAndStash.css'
+import { Tooltip, m } from '@island.is/service-portal/core'
+import { useLocale } from '@island.is/localization'
 
 type FavAndStashProps = {
   onFav?: (event: MouseEvent<HTMLElement>) => void
@@ -15,29 +17,37 @@ export const FavAndStash: React.FC<FavAndStashProps> = ({
   bookmarked,
   archived,
 }) => {
+  const { formatMessage } = useLocale()
+
   return (
     <Box className={styles.filterActionButtons} display="flex">
       {onStash && (
-        <Button
-          circle
-          icon="archive"
-          iconType={archived ? 'filled' : 'outline'}
-          onClick={onStash}
-          size="small"
-          title="Store items"
-          colorScheme="light"
-        />
+        <Tooltip
+          text={formatMessage(archived ? m.removeFromStorage : m.addToStorage)}
+        >
+          <Button
+            circle
+            icon="archive"
+            iconType={archived ? 'filled' : 'outline'}
+            onClick={onStash}
+            size="small"
+            colorScheme="light"
+          />
+        </Tooltip>
       )}
       {onFav && (
-        <Button
-          circle
-          icon="star"
-          iconType={bookmarked ? 'filled' : 'outline'}
-          onClick={onFav}
-          size="small"
-          title="Favorite items"
-          colorScheme="light"
-        />
+        <Tooltip
+          text={formatMessage(bookmarked ? m.removeFavorite : m.addFavorite)}
+        >
+          <Button
+            circle
+            icon="star"
+            iconType={bookmarked ? 'filled' : 'outline'}
+            onClick={onFav}
+            size="small"
+            colorScheme="light"
+          />
+        </Tooltip>
       )}
     </Box>
   )
