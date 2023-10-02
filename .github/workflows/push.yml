@@ -732,7 +732,7 @@ jobs:
         uses: ./.github/actions/cache
         with:
           path: monorepo/infra/node_modules
-          key: ${{ needs.prepare.outputs.INFRA_NODE_MODULES_HASH }}-yarn
+          key: ${{ needs.prepare.outputs.infra-node-modules-hash }}
       - name: Check cache success
         run: '[[ "${{ steps.infra-node-modules.outputs.success }}" != "false" ]] || exit 1'
       - name: Install infra modules
