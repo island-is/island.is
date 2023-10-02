@@ -82,7 +82,16 @@ const url = (path: string) => {
 }
 
 export const requestHandlers = [
-  rest.get(/\/api\/drivinglicense\/v5\/drivingassessment/, (req, res, ctx) => {
+  rest.post(
+    /api\/drivinglicense\/v5\/drivingassessment/, 
+    (_req, res, ctx) => {
+    // TODO, ambiguate with mock auths
+    return res(ctx.status(200)) 
+  }),
+
+  rest.get(
+    /api\/drivinglicense\/v5\/drivingassessment/, 
+    (req, res, ctx) => {
     // TODO, ambiguate with mock auths
     return res(ctx.status(200), ctx.json(DrivingAssessmentV5))
   }),
