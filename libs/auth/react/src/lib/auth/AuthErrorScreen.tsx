@@ -5,14 +5,14 @@ import * as styles from './Auth.css'
 
 type AuthenticatorErrorScreenProps = {
   /**
-   * Retry signing in
+   * Retry callback
    */
-  signIn(): Promise<void>
+  onRetry(): void
 }
 
 // This screen is unfortunately not translated because at this point we don't
 // have a user locale, nor an access token to fetch translations.
-export const AuthErrorScreen = ({ signIn }: AuthenticatorErrorScreenProps) => (
+export const AuthErrorScreen = ({ onRetry }: AuthenticatorErrorScreenProps) => (
   <Box
     display="flex"
     justifyContent="center"
@@ -28,8 +28,8 @@ export const AuthErrorScreen = ({ signIn }: AuthenticatorErrorScreenProps) => (
       message={
         <>
           Vinsamlegast reyndu aftur síðar.{' '}
-          <Button variant="text" onClick={signIn}>
-            Aftur í innskráningu
+          <Button variant="text" onClick={onRetry}>
+            Reyna aftur
           </Button>
         </>
       }

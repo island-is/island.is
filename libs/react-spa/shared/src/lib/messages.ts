@@ -2,41 +2,41 @@ import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
   error: {
-    defaultMessage: 'Villa',
     id: 'portals:error',
+    defaultMessage: 'Villa',
   },
   internalServerErrorTitle: {
-    defaultMessage: 'Þjónusta liggur tímabundið niðri',
     id: 'portals:internal-server-error-title',
+    defaultMessage: 'Þjónusta liggur tímabundið niðri',
   },
   internalServerErrorMessage: {
-    defaultMessage: 'Vinsamlegast reyndu aftur síðar',
     id: 'portals:internal-server-error-message',
+    defaultMessage: 'Vinsamlegast reyndu aftur síðar',
   },
   notFound: {
-    defaultMessage: 'Síðan finnst ekki',
     id: 'portals:not-found',
+    defaultMessage: 'Síðan finnst ekki',
   },
   notFoundMessage: {
+    id: 'portals:not-found-msg',
     defaultMessage:
       'Hún gæti hafa verið fjarlægð eða færð til. Prófaðu að fara {link}.',
-    id: 'portals:not-found-msg',
   },
   notFoundMessageLink: {
-    defaultMessage: ' til baka á yfirlitið',
     id: 'portals:not-found-msg-link',
+    defaultMessage: ' til baka á yfirlitið',
   },
   thirdPartyServiceErrorTitle: {
-    defaultMessage: 'Samband næst ekki',
     id: 'portals:third-party-service-error-title',
+    defaultMessage: 'Samband næst ekki',
   },
   thirdPartyServiceErrorMessage: {
-    defaultMessage: 'Villa kom upp í samskiptum við þjónustuaðila',
     id: 'portals:third-party-service-error-message',
+    defaultMessage: 'Villa kom upp í samskiptum við þjónustuaðila',
   },
   noDataTitle: {
-    defaultMessage: 'Engin gögn til að birta',
     id: 'portals:no-data-title',
+    defaultMessage: 'Engin gögn til að birta',
   },
   noDataMessage: {
     id: 'portals:no-data-message',

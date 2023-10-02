@@ -303,10 +303,14 @@ export const AuthProvider = ({
     isCurrentRoute(url, authSettings?.redirectPath) ||
     isCurrentRoute(url, authSettings?.redirectPathSilent)
 
+  const onRetry = () => {
+    window.location.href = basePath
+  }
+
   return (
     <AuthContext.Provider value={context}>
       {error ? (
-        <AuthErrorScreen signIn={signIn} />
+        <AuthErrorScreen onRetry={onRetry} />
       ) : isLoading ? (
         <LoadingScreen ariaLabel="Er að vinna í innskráningu" />
       ) : (
