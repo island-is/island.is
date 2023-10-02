@@ -37,24 +37,4 @@ export const appealRuling = defineMessages({
     description:
       'Ómerking og heimvísun í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
   },
-  tagDecisionAccept: {
-    id: 'judicial.system.core:appeal_ruling.tag_decision_accept',
-    defaultMessage: 'Staðfest',
-    description: 'Staða eftir úrskurð á máli ef málið er staðfest',
-  },
-  tagDecisionChange: {
-    id: 'judicial.system.core:appeal_ruling.tag_decision_change',
-    defaultMessage: 'Breytt',
-    description: 'Staða eftir úrskurð á máli ef málið er breytt',
-  },
-  tagDecisionDismissed: {
-    id: 'judicial.system.core:appeal_ruling.tag_decision_dismissed',
-    defaultMessage: 'Frávísun',
-    description: 'Staða eftir úrskurð á máli ef málið er frávísun',
-  },
-  tagDecisionRemand: {
-    id: 'judicial.system.core:appeal_ruling.tag_decision_remand',
-    defaultMessage: 'Heimvísun',
-    description: 'Staða eftir úrskurð á máli ef málið er heimvísun',
-  },
 })
