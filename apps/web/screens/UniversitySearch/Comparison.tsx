@@ -50,12 +50,7 @@ const Comparison: Screen<UniversityComparisonProps> = ({
     useState<Array<ProgramDetails>>(data)
 
   const handleDelete = (dataItem: ProgramDetails) => {
-    let found = false
-    selectedComparison.forEach((x) => {
-      if (x.id === dataItem.id) {
-        found = true
-      }
-    })
+    const found = selectedComparison.some((x) => x.id === dataItem.id)
 
     if (found) {
       const a = selectedComparison.filter((item) => {

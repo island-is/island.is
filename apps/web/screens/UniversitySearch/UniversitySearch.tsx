@@ -255,12 +255,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }
 
   const handleComparisonChange = (dataItem: ComparisonProps) => {
-    let found = false
-    selectedComparison.forEach((x) => {
-      if (x.id === dataItem.id) {
-        found = true
-      }
-    })
+    const found = selectedComparison.some((x) => x.id === dataItem.id)
 
     if (!found) {
       if (selectedComparison.length === MAX_SELECTED_COMPARISON) {
@@ -594,12 +589,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                   <FilterMultiChoice
                     labelClear={n('clearFilter', 'Hreinsa val')}
                     onChange={({ categoryId, selected }) => {
-                      console.log('onChange')
                       setSelectedPage(1)
                       setFilters({ ...filters, [categoryId]: selected })
                     }}
                     onClear={(categoryId) => {
-                      console.log('onClear')
                       setSelectedPage(1)
                       setFilters({ ...filters, [categoryId]: [] })
                     }}

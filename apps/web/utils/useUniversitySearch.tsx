@@ -19,7 +19,7 @@ export const SearchProducts = ({
   query,
   activeFilters,
 }: SearchProductsProps) => {
-  let queryMaker: queryMakerProps = { $and: [] }
+  const queryMaker: queryMakerProps = { $and: [] }
 
   if (query) {
     queryMaker.$and.push({
@@ -33,7 +33,7 @@ export const SearchProducts = ({
 
   activeFilters.map((filter) => {
     const orFilters: Array<any> = []
-    const newOrFilters = filter.value.map((searchParam) => {
+    filter.value.map((searchParam) => {
       orFilters.push({ [filter.key]: searchParam })
     })
     queryMaker.$and.push({ $or: orFilters })
