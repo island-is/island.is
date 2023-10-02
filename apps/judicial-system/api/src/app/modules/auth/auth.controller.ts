@@ -16,6 +16,7 @@ import {
   USERS_ROUTE,
   COURT_OF_APPEAL_CASES_ROUTE,
   IDS_ID_TOKEN,
+  DEFENDER_CASES_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
@@ -224,7 +225,7 @@ export class AuthController {
         return {
           userId: defender.id,
           jwtToken: this.sharedAuthService.signJwt(defender, csrfToken),
-          redirectRoute: requestedRedirectRoute,
+          redirectRoute: requestedRedirectRoute ?? DEFENDER_CASES_ROUTE,
         }
       }
     }

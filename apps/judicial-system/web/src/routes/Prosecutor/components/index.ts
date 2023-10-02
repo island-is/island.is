@@ -3,7 +3,7 @@ export {
   default as PoliceCaseFiles,
   mapPoliceCaseFileToPoliceCaseFileCheck,
 } from './PoliceCaseFiles/PoliceCaseFiles'
-export { default as PoliceCaseFilesMessageBox } from './PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
+export { default as IconAndText } from '../../../components/IconAndText/IconAndText'
 export {
   PoliceCaseNumbers,
   usePoliceCaseNumbers,

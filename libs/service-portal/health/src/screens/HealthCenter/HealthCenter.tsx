@@ -7,6 +7,7 @@ import {
   ErrorScreen,
   EmptyState,
   UserInfoLine,
+  CardLoader,
 } from '@island.is/service-portal/core'
 import { useLocation } from 'react-router-dom'
 import { useGetHealthCenterQuery } from './HealthCenter.generated'
@@ -18,7 +19,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { IntroHeader, useQueryParam } from '@island.is/portals/core'
+import { IntroHeader } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
 import HistoryTable from './HistoryTable'
 import subYears from 'date-fns/subYears'
@@ -52,6 +53,9 @@ const HealthCenter = () => {
     isFlagEnabled()
   }, [])
 
+  // Check if the user was transfered from another health center
+  const wasSuccessfulTransfer = location?.state?.transferSuccess
+
   const { loading, error, data } = useGetHealthCenterQuery({
     variables: {
       input: {
@@ -64,8 +68,15 @@ const HealthCenter = () => {
 
   const healthCenterData = data?.rightsPortalUserHealthCenterRegistration
 
-  // Check if the user was transfered from another health center
-  const wasSuccessfulTransfer = location?.state?.transferSuccess
+  if (loading)
+    return (
+      <Box>
+        <Stack space={4}>
+          <SkeletonLoader repeat={4} space={2} />
+          <CardLoader />
+        </Stack>
+      </Box>
+    )
 
   if (error && !loading) {
     return (
@@ -80,6 +91,7 @@ const HealthCenter = () => {
       />
     )
   }
+
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
