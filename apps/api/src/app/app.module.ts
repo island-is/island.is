@@ -48,15 +48,7 @@ import {
 import { IdentityModule } from '@island.is/api/domains/identity'
 import { NationalRegistrySoffiaClientConfig } from '@island.is/clients/national-registry-v1'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
-import {
-  GenericAdrLicenseConfig,
-  GenericDisabilityLicenseConfig,
-  GenericDrivingLicenseConfig,
-  GenericFirearmLicenseConfig,
-  GenericMachineLicenseConfig,
-  OldGenericDrivingLicenseConfig,
-  LicenseServiceModule,
-} from '@island.is/api/domains/license-service'
+import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
@@ -306,7 +298,6 @@ const environment = getConfig
         FirearmDigitalLicenseClientConfig,
         DisabilityDigitalLicenseClientConfig,
         MachineDigitalLicenseClientConfig,
-        OldGenericDrivingLicenseConfig,
         DrivingDigitalLicenseClientConfig,
         GraphQLConfig,
         VehiclesClientConfig,

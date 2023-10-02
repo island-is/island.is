@@ -12,6 +12,7 @@ import {
   VerifyInputData,
 } from '../../../licenseClient.type'
 import { BaseLicenseUpdateClient } from '../../baseLicenseUpdateClient'
+import { DrivingLicenseApi } from '@island.is/clients/driving-license'
 
 /** Category to attach each log message to */
 //const LOG_CATEGORY = 'driving-license-service'
@@ -20,6 +21,7 @@ import { BaseLicenseUpdateClient } from '../../baseLicenseUpdateClient'
 export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
   constructor(
     @Inject(LOGGER_PROVIDER) protected logger: Logger,
+    private drivingLicenseApi: DrivingLicenseApi,
     protected smartApi: SmartSolutionsApi,
   ) {
     super(logger, smartApi)
@@ -48,7 +50,9 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
     }
   }
 
+  /** We need to verify the pk pass AND the license itself! */
   async verify(inputData: string): Promise<Result<PassVerificationData>> {
+    //need to parse the scanner data
     let parsedInput
     try {
       parsedInput = JSON.parse(inputData) as VerifyInputData
@@ -81,10 +85,66 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
       return verifyRes
     }
 
+    if (!verifyRes.data.valid) {
+      return {
+        ok: true,
+        data: {
+          valid: false,
+        },
+      }
+    }
+
+    const passNationalId = verifyRes.data.pass?.inputFieldValues.find(
+      (i) => i.passInputField.identifier === 'kennitala',
+    )?.value
+
+    if (!passNationalId) {
+      return {
+        ok: false,
+        error: {
+          code: 14,
+          message: 'Missing pass data',
+        },
+      }
+    }
+    const nationalId = passNationalId.replace('-', '')
+    const license = await this.drivingLicenseApi.getCurrentLicenseV4({
+      nationalId,
+    })
+
+    if (!license) {
+      return {
+        ok: false,
+        error: {
+          code: 3,
+          message: 'No license info found for user',
+        },
+      }
+    }
+
+    const licenseNationalId = license.socialSecurityNumber
+    const name = license.name ?? ''
+    const picture = license.photo?.image ?? ''
+
+    if (!licenseNationalId || !name || !picture) {
+      return {
+        ok: false,
+        error: {
+          code: 14,
+          message: 'Missing data. NationalId, name or photo missing',
+        },
+      }
+    }
+
     return {
       ok: true,
       data: {
-        valid: verifyRes.data.valid,
+        valid: licenseNationalId === nationalId,
+        passIdentity: {
+          nationalId: licenseNationalId,
+          name,
+          picture,
+        },
       },
     }
   }

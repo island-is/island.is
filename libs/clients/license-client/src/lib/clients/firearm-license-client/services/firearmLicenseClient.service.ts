@@ -163,11 +163,11 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
     const image = data.licenseInfo?.licenseImgBase64
     const parsedImage = image?.substring(image.indexOf(',') + 1).trim() ?? ''
 
-    if (!inputValues) return null
+    if (!inputValues || !data.licenseInfo?.expirationDate) return null
     //Fetch template from api?
     const payload: PassDataInput = {
       inputFieldValues: inputValues,
-      expirationDate: data.licenseInfo?.expirationDate,
+      expirationDate: new Date(data.licenseInfo?.expirationDate).toISOString(),
       thumbnail: image
         ? {
             imageBase64String: parsedImage ?? '',
