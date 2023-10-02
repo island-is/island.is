@@ -11,9 +11,7 @@ import {
   Hidden,
   Icon,
   LinkV2,
-  Navigation,
   Stack,
-  Table as T,
   Text,
 } from '@island.is/island-ui/core'
 import { Screen } from '@island.is/web/types'
@@ -32,7 +30,7 @@ import {
   GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
 } from '../queries/UniversityGateway'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { IconTitleCard, Sticky } from '@island.is/web/components'
+import { IconTitleCard } from '@island.is/web/components'
 import SidebarLayout from '../Layouts/SidebarLayout'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { TranslationDefaults } from './TranslationDefaults'
@@ -137,7 +135,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                 as="h5"
                 href={
                   locale === 'en'
-                    ? !!data.externalUrlEn
+                    ? data.externalUrlEn
                       ? data.externalUrlEn
                       : data.externalUrlIs
                     : data.externalUrlIs
@@ -194,14 +192,6 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                     }`}</Text>
                   </Box>
                 </GridColumn>
-                {/* <GridColumn span="1/2">
-                  <Box display="flex" flexDirection="row">
-                    <Box marginRight={1}>
-                      <Icon icon={'document'} type="outline" color="blue400" />
-                    </Box>
-                    <Text variant="medium">{'Inntökupróf: TODO'}</Text>
-                  </Box>
-                </GridColumn> */}
 
                 <GridColumn span="1/2">
                   <Box display="flex" flexDirection="row">
@@ -248,16 +238,6 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                     )}`}</Text>
                   </Box>
                 </GridColumn>
-                {/* <GridColumn span="1/2">
-                  <Box display="flex" flexDirection="row">
-                    <Box marginRight={1}>
-                      <Icon icon={'ellipse'} type="outline" color="blue400" />
-                    </Box>
-                    <Text variant="medium">
-                      {'Tungumál: Íslenska / enska TODO'}
-                    </Text>
-                  </Box>
-                </GridColumn> */}
               </GridRow>
             </GridContainer>
           </Box>
