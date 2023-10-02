@@ -1011,7 +1011,8 @@ const useSections = (
       isActive:
         user?.role === UserRole.PROSECUTOR &&
         isRestrictionCase(type) &&
-        parentCase !== undefined,
+        parentCase !== undefined &&
+        !completedCaseStates.includes(workingCase.state),
       children:
         user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
           ? []
@@ -1110,7 +1111,8 @@ const useSections = (
       isActive:
         user?.role === UserRole.PROSECUTOR &&
         isInvestigationCase(type) &&
-        parentCase !== undefined,
+        parentCase !== undefined &&
+        !completedCaseStates.includes(workingCase.state),
       children:
         user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
           ? []
@@ -1323,13 +1325,6 @@ const useSections = (
           workingCase.appealState !== CaseAppealState.COMPLETED,
         children: [],
       },
-      ...(!features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS)
-        ? []
-        : isRestrictionCase(workingCase.type) && workingCase.appealState
-        ? getCourtOfAppealSections(workingCase, user)
-        : isInvestigationCase(workingCase.type) && workingCase.appealState
-        ? getCourtOfAppealSections(workingCase, user)
-        : []),
       ...(workingCase.parentCase
         ? [
             isRestrictionCase(workingCase.type)
@@ -1352,6 +1347,13 @@ const useSections = (
               children: [],
             },
           ]
+        : []),
+      ...(!features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS)
+        ? []
+        : isRestrictionCase(workingCase.type) && workingCase.appealState
+        ? getCourtOfAppealSections(workingCase, user)
+        : isInvestigationCase(workingCase.type) && workingCase.appealState
+        ? getCourtOfAppealSections(workingCase, user)
         : []),
     ]
   }
