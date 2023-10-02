@@ -187,7 +187,8 @@ export class EstateTemplateService extends BaseTemplateApiService {
         name: 'Gervimaður Evrópa',
         address: 'Gerviheimili 123, 600 Feneyjar',
         nationalId: '0101302719',
-        email: 'evropa@gervi.com',
+        email: '',
+        phone: '',
       }
 
       const fakeChild = {
@@ -197,6 +198,8 @@ export class EstateTemplateService extends BaseTemplateApiService {
         // This test will stop serving its purpose on the 24th of September 2034
         // eslint-disable-next-line local-rules/disallow-kennitalas
         nationalId: '2409151460',
+        phone: '',
+        email: '',
       }
 
       if (application.applicant.endsWith('7789')) {
