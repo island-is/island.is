@@ -519,6 +519,7 @@ export const ServicePortalDocuments = () => {
                   category={categoriesAvailable.find(
                     (i) => i.id === activeDocument.categoryId,
                   )}
+                  activeDocument={activeDocument}
                   actionBar={{
                     documentId: activeDocument.id,
                     archived: activeArchive,

@@ -1,13 +1,7 @@
 import { useLocale } from '@island.is/localization'
 import * as styles from './DocumentRenderer.css'
-import { m } from '@island.is/service-portal/core'
-import {
-  Box,
-  Tooltip,
-  Button,
-  PdfViewer,
-  Text,
-} from '@island.is/island-ui/core'
+import { m, Tooltip } from '@island.is/service-portal/core'
+import { Box, Button, LinkV2, PdfViewer, Text } from '@island.is/island-ui/core'
 import { useState } from 'react'
 import { downloadFile } from '../../utils/downloadDocument'
 import { useUserInfo } from '@island.is/auth/react'
@@ -21,6 +15,9 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({ document }) => {
   const [scalePDF, setScalePDF] = useState(1.0)
 
   const userInfo = useUserInfo()
+
+  const getDocumentLink = () =>
+    encodeURI(`data:application/pdf;base64,${document.document.content}`)
 
   return (
     <>
@@ -58,24 +55,9 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({ document }) => {
         </Tooltip>
         <Box paddingLeft={2}>
           <Tooltip placement="top" as="span" text={formatMessage(m.download)}>
-            <Button
-              variant="ghost"
-              size="small"
-              circle
-              icon="download"
-              onClick={() => downloadFile(document, userInfo)}
-            />
-          </Tooltip>
-        </Box>
-        <Box paddingLeft={2}>
-          <Tooltip placement="top" as="span" text={formatMessage(m.print)}>
-            <Button
-              variant="ghost"
-              size="small"
-              circle
-              icon="print"
-              onClick={() => downloadFile(document, userInfo)}
-            />
+            <a download={document.subject} href={getDocumentLink()}>
+              <Button variant="ghost" size="small" circle icon="download" />
+            </a>
           </Tooltip>
         </Box>
       </Box>

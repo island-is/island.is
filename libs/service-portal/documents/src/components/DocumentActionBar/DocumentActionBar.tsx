@@ -19,6 +19,7 @@ export type DocumentActionBarProps = {
   documentId: string
   archived?: boolean
   bookmarked?: boolean
+  downloadUrl?: string
 }
 export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
   onGoBack,
