@@ -38,6 +38,7 @@ import { DeleteFileResponse } from './models/deleteFile.response'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { SignedUrl } from './models/signedUrl.model'
 import { CaseFile } from './models/file.model'
+import { PDFService } from '../case/pdf.service'
 
 // Files are stored in AWS S3 under a key which has the following formats:
 // uploads/<uuid>/<uuid>/<filename> for restriction and investigation cases
@@ -56,6 +57,7 @@ export class FileService {
     @InjectModel(CaseFile) private readonly fileModel: typeof CaseFile,
     private readonly courtService: CourtService,
     private readonly awsS3Service: AwsS3Service,
+    private readonly pdfService: PDFService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 

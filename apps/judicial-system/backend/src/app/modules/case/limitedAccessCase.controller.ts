@@ -49,7 +49,6 @@ import { UpdateCaseDto } from './dto/updateCase.dto'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { Case } from './models/case.model'
 import { transitionCase } from './state/case.state'
-import { CaseService } from './case.service'
 import { FileService } from '../file/file.service'
 import {
   LimitedAccessCaseService,
@@ -57,15 +56,16 @@ import {
 } from './limitedAccessCase.service'
 import { CaseEvent, EventService } from '../event'
 import { CaseInterceptor } from './interceptors/case.interceptor'
+import { PDFService } from './pdf.service'
 
 @Controller('api')
 @ApiTags('limited access cases')
 export class LimitedAccessCaseController {
   constructor(
-    private readonly caseService: CaseService,
     private readonly limitedAccessCaseService: LimitedAccessCaseService,
     private readonly eventService: EventService,
     private readonly fileService: FileService,
+    private readonly pdfService: PDFService,
 
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -218,7 +218,7 @@ export class LimitedAccessCaseController {
       `Getting the request for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.caseService.getRequestPdf(theCase)
+    const pdf = await this.pdfService.getRequestPdf(theCase)
 
     res.end(pdf)
   }
@@ -254,7 +254,7 @@ export class LimitedAccessCaseController {
       )
     }
 
-    const pdf = await this.caseService.getCaseFilesRecordPdf(
+    const pdf = await this.pdfService.getCaseFilesRecordPdf(
       theCase,
       policeCaseNumber,
     )
@@ -287,7 +287,7 @@ export class LimitedAccessCaseController {
       `Getting the court record for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.caseService.getCourtRecordPdf(theCase, user)
+    const pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
 
     res.end(pdf)
   }
@@ -314,7 +314,7 @@ export class LimitedAccessCaseController {
   ): Promise<void> {
     this.logger.debug(`Getting the ruling for case ${caseId} as a pdf document`)
 
-    const pdf = await this.caseService.getRulingPdf(theCase)
+    const pdf = await this.pdfService.getRulingPdf(theCase)
 
     res.end(pdf)
   }
@@ -343,7 +343,7 @@ export class LimitedAccessCaseController {
       `Getting the indictment for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.caseService.getIndictmentPdf(theCase)
+    const pdf = await this.pdfService.getIndictmentPdf(theCase)
 
     res.end(pdf)
   }
