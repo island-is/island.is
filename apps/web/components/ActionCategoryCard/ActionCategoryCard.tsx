@@ -4,18 +4,21 @@ import { ObjectFitProperty } from 'csstype'
 import { useMeasure } from 'react-use'
 import { UseMeasureRef } from 'react-use/lib/useMeasure'
 
-import { Box } from '../Box/Box'
-import { FocusableBox } from '../FocusableBox/FocusableBox'
-import { Inline } from '../Inline/Inline'
-import { Tag, TagProps } from '../Tag/Tag'
-import { Hyphen } from '../Hyphen/Hyphen'
-import { Text, TextProps } from '../Text/Text'
-
 import * as styles from './ActionCategoryCard.css'
-import { Checkbox } from '../Checkbox/Checkbox'
-import { Button, ButtonSizes, ButtonTypes } from '../Button/Button'
-import { Icon as IconType } from '../IconRC/iconMap'
-import { LinkV2 } from '../Link/LinkV2'
+import {
+  Box,
+  Button,
+  ButtonSizes,
+  ButtonTypes,
+  FocusableBox,
+  Hyphen,
+  IconMapIcon,
+  Inline,
+  Tag,
+  TagProps,
+  Text,
+  TextProps,
+} from '@island.is/island-ui/core'
 
 export const STACK_WIDTH = 280
 
@@ -34,7 +37,7 @@ export type CTAProps = {
   /** Allows for full buttonType control. Supersedes the variant property when both are defined. */
   buttonType?: ButtonTypes
   size?: ButtonSizes
-  icon?: IconType
+  icon?: IconMapIcon
   iconType?: 'filled' | 'outline'
   onClick?: () => void
   disabled?: boolean
@@ -73,8 +76,9 @@ export type ActionCategoryCardProps = {
   hyphenate?: boolean
   to?: string
 
-  //TODO: DOCUMENT THIS
+  // Side panel config allows you to add multiople items to the side of the card with icons and titles, as well as a CTA button
   sidePanelConfig?: SidePanelConfigProps
+  //This is used to be able to have an action in the card without the clickable area of the card affecting it
   customBottomContent?: React.ReactNode
 }
 

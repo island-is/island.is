@@ -200,7 +200,7 @@ export const routesTemplate = {
   },
   universitysearchcomparison: {
     is: '/haskolanam/samanburdur',
-    en: '/en/haskolanam/comparison',
+    en: '/en/haskolanam/samanburdur',
   },
   universitysearch: {
     is: '/haskolanam',
