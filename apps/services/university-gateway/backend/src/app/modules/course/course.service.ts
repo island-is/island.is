@@ -23,7 +23,7 @@ class CourseService {
     universityId: string,
   ): Promise<CourseResponse> {
     const where: {
-      id?: string | { [Op.in]: string[] }
+      id?: { [Op.in]: string[] }
       universityId?: string
     } = {}
     if (programId !== undefined) {

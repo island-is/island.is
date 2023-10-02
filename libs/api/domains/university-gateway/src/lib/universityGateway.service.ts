@@ -125,24 +125,14 @@ class UniversityGatewayApi {
         nameIs: c.details.nameIs,
         nameEn: c.details.nameEn,
         credits: c.details.credits,
-        semesterYear: c.details.semesterYear,
-        semesterSeason: c.details.semesterSeason.toString(),
         descriptionIs: c.details.descriptionIs,
         descriptionEn: c.details.descriptionEn,
         externalUrlIs: c.details.externalUrlIs,
         externalUrlEn: c.details.externalUrlEn,
         requirement: c.requirement.toString(),
+        semesterYear: c.semesterYear,
+        semesterSeason: c.semesterSeason.toString(),
       })),
-      // extraApplicationField: item.extraApplicationField.map((e) => ({
-      //   nameIs: e.nameIs,
-      //   nameEn: e.nameEn,
-      //   descriptionIs: e.descriptionIs,
-      //   descriptionEn: e.descriptionEn,
-      //   required: e.required,
-      //   fieldKey: e.fieldKey,
-      //   fieldType: e.fieldType.toString(),
-      //   uploadAcceptedFileType: e.uploadAcceptedFileType,
-      // })),
     }
   }
 
