@@ -314,12 +314,12 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                     size="small"
                     icon="download"
                     iconType="outline"
-                    onClick={async () => {
+                    onClick={() => {
                       const url = `${api.apiUrl}/api/case/${workingCase.id}/limitedAccess/allFiles`
                       window.open(url, '_blank')
                     }}
                   >
-                    Sækja öll skjöl
+                    {formatMessage(strings.getAllDocuments)}
                   </Button>
                 </Box>
               </Box>
