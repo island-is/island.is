@@ -110,7 +110,7 @@ describe('Old Age Pension Template', () => {
       )
 
       const [hasChanged, newState] = helper.changeState({
-        type: DefaultEvents.APPROVE,
+        type: DefaultEvents.SUBMIT,
       })
       expect(hasChanged).toBe(true)
       expect(newState).toBe('tryggingastofnunInReview')
