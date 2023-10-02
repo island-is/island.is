@@ -304,6 +304,14 @@ export const requestHandlers = [
     },
   ),
 
+  rest.get(
+    /api\/drivinglicense\/v5\/canapplyfor\/temporary/,
+    (_req, res, ctx) => {
+      // TODO ambiguate with mock auths
+      return res(ctx.status(200), ctx.json({ result: true, errorCode: '' }))
+    },
+  ),
+
   rest.post(
     /api\/drivinglicense\/v5\/applications\/new\/B/,
     (req, res, ctx) => {
