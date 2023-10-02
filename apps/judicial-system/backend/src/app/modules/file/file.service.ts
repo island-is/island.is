@@ -24,8 +24,10 @@ import {
   restrictionCases,
   availableCaseFileCategoriesForRestrictionAndInvestigationCases,
   availableCaseFileCategoriesForIndictmentCases,
+  completedCaseStates,
+  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
-import type { CaseType, User } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
@@ -183,20 +185,20 @@ export class FileService {
     return caseFile
   }
 
-  async getAll(caseId: string, caseType: CaseType): Promise<Buffer> {
+  async getAll(theCase: Case, user: User): Promise<Buffer> {
     const filesToZip: Array<{ data: Buffer; name: string }> = []
     const allowedCategories = [
       ...restrictionCases,
       ...investigationCases,
-    ].includes(caseType)
+    ].includes(theCase.type)
       ? availableCaseFileCategoriesForRestrictionAndInvestigationCases
-      : indictmentCases.includes(caseType)
+      : indictmentCases.includes(theCase.type)
       ? availableCaseFileCategoriesForIndictmentCases
       : []
 
     const caseFilesByCategory = await this.fileModel.findAll({
       where: {
-        caseId: caseId,
+        caseId: theCase.id,
         state: { [Op.not]: CaseFileState.DELETED },
         category: allowedCategories,
       },
@@ -207,7 +209,50 @@ export class FileService {
       filesToZip.push({ data: content, name: file.name })
     }
 
+    if (completedCaseStates.includes(theCase.state)) {
+      filesToZip.push(
+        {
+          data: await this.pdfService.getRulingPdf(theCase),
+          name: 'urskurður.pdf',
+        },
+        {
+          data: await this.pdfService.getCourtRecordPdf(theCase, user),
+          name: 'þingbok.pdf',
+        },
+      )
+
+      if (this.shouldShareRequestPDFWithDefender(theCase)) {
+        filesToZip.push({
+          data: await this.pdfService.getRequestPdf(theCase),
+          name: 'krafa.pdf',
+        })
+      }
+    }
+
     return this.zipFiles(filesToZip)
+  }
+
+  shouldShareRequestPDFWithDefender(theCase: Case): boolean {
+    // Defender can always see the request if it's in a completed state
+    if (completedCaseStates.includes(theCase.state)) {
+      return true
+    }
+
+    if (
+      Boolean(theCase.requestSharedWithDefender) &&
+      Boolean(theCase.courtDate)
+    ) {
+      return true
+    }
+
+    if (
+      theCase.requestSharedWithDefender ===
+      RequestSharedWithDefender.READY_FOR_COURT
+    ) {
+      return true
+    }
+
+    return false
   }
 
   zipFiles(files: Array<{ data: Buffer; name: string }>): Promise<Buffer> {

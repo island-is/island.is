@@ -7,7 +7,6 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  forwardRef,
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 

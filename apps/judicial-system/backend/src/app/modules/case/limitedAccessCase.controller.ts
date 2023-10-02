@@ -364,13 +364,15 @@ export class LimitedAccessCaseController {
     description: 'Gets the all files for an existing case as a zip document',
   })
   async getAllFiles(
-    @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
+    @CurrentHttpUser() user: TUser,
     @Res() res: Response,
   ): Promise<void> {
-    this.logger.debug(`Getting all files for case ${caseId} as a zip document`)
+    this.logger.debug(
+      `Getting all files for case ${theCase.id} as a zip document`,
+    )
 
-    const zip = await this.fileService.getAll(caseId, theCase.type)
+    const zip = await this.fileService.getAll(theCase, user)
 
     res.end(zip)
   }
