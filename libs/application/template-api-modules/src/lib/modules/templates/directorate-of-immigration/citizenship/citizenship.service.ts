@@ -366,7 +366,8 @@ export class CitizenshipService extends BaseTemplateApiService {
         for (let j = 0; j < fileList.length; j++) {
           criminalRecordListFlattened.push({
             countryId: countryId,
-            base64: fileList[j],
+            filename: fileList[j].filename,
+            base64: fileList[j].base64,
           })
         }
       }
@@ -424,30 +425,36 @@ export class CitizenshipService extends BaseTemplateApiService {
           passportNumber: applicantPassport.passportNumber,
           passportTypeId: parseInt(applicantPassport.passportTypeId),
           countryOfIssuerId: applicantPassport.countryOfIssuerId,
-          file: applicantPassport.file?.map((file) => ({ base64: file })) || [],
+          file:
+            applicantPassport.file?.map((file) => ({
+              filename: file.filename,
+              base64: file.base64,
+            })) || [],
         },
         supportingDocuments: {
           birthCertificate: answers.supportingDocuments?.birthCertificate?.map(
-            (file) => ({ base64: file }),
+            (file) => ({ filename: file.filename, base64: file.base64 }),
           ),
           subsistenceCertificate:
             answers.supportingDocuments?.subsistenceCertificate?.map(
               (file) => ({
-                base64: file,
+                filename: file.filename,
+                base64: file.base64,
               }),
             ) || [],
           subsistenceCertificateForTown:
             answers.supportingDocuments?.subsistenceCertificateForTown?.map(
-              (file) => ({ base64: file }),
+              (file) => ({ filename: file.filename, base64: file.base64 }),
             ) || [],
           certificateOfLegalResidenceHistory:
             answers.supportingDocuments?.certificateOfLegalResidenceHistory?.map(
-              (file) => ({ base64: file }),
+              (file) => ({ filename: file.filename, base64: file.base64 }),
             ) || [],
           icelandicTestCertificate:
             answers.supportingDocuments?.icelandicTestCertificate?.map(
               (file) => ({
-                base64: file,
+                filename: file.filename,
+                base64: file.base64,
               }),
             ) || [],
           criminalRecordList: criminalRecordListFlattened,
@@ -467,26 +474,34 @@ export class CitizenshipService extends BaseTemplateApiService {
             passportNumber: p.passportNumber,
             passportTypeId: parseInt(p.passportTypeId),
             countryIdOfIssuer: p.countryOfIssuerId,
-            file: p.file?.map((file) => ({ base64: file })) || [],
+            file:
+              p.file?.map((file) => ({
+                filename: file.filename,
+                base64: file.base64,
+              })) || [],
           })) || [],
         childrenSupportingDocuments:
           answers.childrenSupportingDocuments?.map((d) => ({
             nationalId: d.nationalId,
             birthCertificate:
               d.birthCertificate?.map((file) => ({
-                base64: file,
+                filename: file.filename,
+                base64: file.base64,
               })) || [],
             writtenConsentFromChild:
               d.writtenConsentFromChild?.map((file) => ({
-                base64: file,
+                filename: file.filename,
+                base64: file.base64,
               })) || [],
             writtenConsentFromOtherParent:
               d.writtenConsentFromOtherParent?.map((file) => ({
-                base64: file,
+                filename: file.filename,
+                base64: file.base64,
               })) || [],
             custodyDocuments:
               d.custodyDocuments?.map((file) => ({
-                base64: file,
+                filename: file.filename,
+                base64: file.base64,
               })) || [],
           })) || [],
       },

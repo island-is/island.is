@@ -376,7 +376,7 @@ class DirectorateOfImmigrationClient {
     // applicant: submit travel document and other supporting attachment
     const attachmentList: {
       attachmentType: AttachmentType
-      fileList: { base64: string; countryId?: string }[]
+      fileList: { filename: string; base64: string; countryId?: string }[]
     }[] = [
       {
         attachmentType: AttachmentType.Passport,
@@ -421,7 +421,7 @@ class DirectorateOfImmigrationClient {
             applicationId,
             applicationAttachmentNewModel: {
               attachmentType: file.attachmentType,
-              fileName: file.attachmentType.toString(),
+              fileName: file.fileList[k].filename,
               base64Contents: file.fileList[k].base64,
               countryCode: file.fileList[k].countryId,
             },
@@ -533,7 +533,7 @@ class DirectorateOfImmigrationClient {
         )
       const childAttachmentList: {
         attachmentType: AttachmentType
-        fileList: { base64: string }[]
+        fileList: { filename: string; base64: string }[]
       }[] = [
         {
           attachmentType: AttachmentType.Passport,
@@ -567,7 +567,7 @@ class DirectorateOfImmigrationClient {
               applicationId: childApplicationId,
               applicationAttachmentNewModel: {
                 attachmentType: file.attachmentType,
-                fileName: file.attachmentType.toString(),
+                fileName: file.fileList[k].filename,
                 base64Contents: file.fileList[k].base64,
               },
             })
