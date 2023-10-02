@@ -7,9 +7,8 @@
     "build": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "development",
       "options": {
-        "outputFileName": "main.js",
+        "outputFileName": "main.cjs",
         "format": ["cjs"],
         "esbuildConfig": "apps/services/sessions/esbuild.json",
         "outputPath": "dist/apps/services/sessions",
@@ -34,12 +33,11 @@
         ]
       },
       "configurations": {
-        "development": {
-          "minify": false
-        },
-        "production": {
-          "minify": true,
-          "generatePackageJson": true
+        "configurations": {
+          "production": {
+            "minify": true,
+            "generatePackageJson": true
+          }
         }
       }
     },
@@ -51,10 +49,16 @@
         "cwd": "node_modules/geoip-lite"
       }
     },
+
     "serve": {
       "executor": "@nx/js:node",
       "options": {
-        "buildTarget": "services-sessions:esbuild"
+        "buildTarget": "services-sessions:build",
+        "buildTargetOptions": {
+          "watch": true,
+          "minify": false,
+          "runBuildTargetDependencies": true
+        }
       }
     },
     "lint": {
