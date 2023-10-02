@@ -312,21 +312,15 @@ export const requestHandlers = [
     },
   ),
 
-  rest.get(
-    /api\/drivinglicense\/v5\/hasteachingrights/,
-    (_req, res, ctx) => {
-      // TODO ambiguate with mock auths
-      return res(ctx.status(200), ctx.json(1))
-    },
-  ),
+  rest.get(/api\/drivinglicense\/v5\/hasteachingrights/, (_req, res, ctx) => {
+    // TODO ambiguate with mock auths
+    return res(ctx.status(200), ctx.json(1))
+  }),
 
-  rest.get(
-    /api\/drivinglicense\/v4\/drivinginstructors/,
-    (_req, res, ctx) => {
-      // TODO ambiguate with mock auths
-      return res(ctx.status(200), ctx.json(Teachers))
-    },
-  ),
+  rest.get(/api\/drivinglicense\/v4\/drivinginstructors/, (_req, res, ctx) => {
+    // TODO ambiguate with mock auths
+    return res(ctx.status(200), ctx.json(Teachers))
+  }),
 
   rest.post(
     /api\/drivinglicense\/v5\/applications\/new\/B/,
