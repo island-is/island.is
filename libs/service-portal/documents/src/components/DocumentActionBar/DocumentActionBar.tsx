@@ -10,6 +10,7 @@ import * as styles from './DocumentActionBar.css'
 import { GetDocumentListInput } from '@island.is/api/schema'
 import { Tooltip, m } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
+import { ActiveDocumentType } from '../../screens/Overview/Overview'
 
 export type DocumentActionBarProps = {
   onPrintClick?: () => void
@@ -19,7 +20,7 @@ export type DocumentActionBarProps = {
   documentId: string
   archived?: boolean
   bookmarked?: boolean
-  downloadUrl?: string
+  activeDocument?: ActiveDocumentType
 }
 export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
   onGoBack,
@@ -29,6 +30,7 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
   bookmarked,
   archived,
   refetchInboxItems,
+  activeDocument,
 }) => {
   const {
     submitMailAction,
@@ -43,6 +45,11 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
   const isBookmarked =
     (bookmarked && !dataSuccess.unbookmark) || bookmarkSuccess
   const isArchived = (archived && !dataSuccess.unarchive) || archiveSuccess
+
+  const getDocumentLink = (
+    document: ActiveDocumentType,
+    type: 'pdf' | 'text',
+  ) => encodeURI(`data:application/pdf;${type},${document.document.content}`)
 
   return (
     <>
@@ -102,6 +109,19 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
           <Box display="flex" alignItems="center">
             <LoadingDots />
           </Box>
+        )}
+        {activeDocument && (
+          <Tooltip placement="top" as="span" text={formatMessage(m.download)}>
+            <a
+              download={activeDocument.subject}
+              href={getDocumentLink(
+                activeDocument,
+                activeDocument.document.fileType === 'pdf' ? 'pdf' : 'text',
+              )}
+            >
+              <Button variant="ghost" size="small" circle icon="download" />
+            </a>
+          </Tooltip>
         )}
         {onPrintClick && (
           <Tooltip text={formatMessage(m.print)}>

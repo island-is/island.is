@@ -5,7 +5,7 @@ import { Box, Button, LinkV2, PdfViewer, Text } from '@island.is/island-ui/core'
 import { useState } from 'react'
 import { downloadFile } from '../../utils/downloadDocument'
 import { useUserInfo } from '@island.is/auth/react'
-import { ActiveDocumentType } from '../../screens/Overview/NewOverview'
+import { ActiveDocumentType } from '../../screens/Overview/Overview'
 type PdfDocumentProps = {
   document: ActiveDocumentType
 }

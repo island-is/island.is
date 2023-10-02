@@ -16,7 +16,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import {
   DocumentsPaths,
-  NewDocumentLine,
+  DocumentLine,
 } from '@island.is/service-portal/documents'
 import {
   EmptyImageSmall,
@@ -214,7 +214,7 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
                 ) : data.documents.length > 0 ? (
                   data.documents.map((doc) => (
                     <Box key={doc.id}>
-                      <NewDocumentLine
+                      <DocumentLine
                         img={getOrganizationLogoUrl(
                           doc.senderName,
                           organizations,
