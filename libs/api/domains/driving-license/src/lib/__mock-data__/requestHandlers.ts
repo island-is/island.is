@@ -308,6 +308,6 @@ export const requestHandlers = [
     /api\/drivinglicense\/v5\/applications\/new\/B/,
     (req, res, ctx) => {
       return res(ctx.status(200), ctx.json(ApplicationsNewB))
-    }
-  )
+    },
+  ),
 ]
