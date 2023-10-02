@@ -28,6 +28,7 @@ export interface Case {
   documents?: Array<Document>
   additionalDocuments?: Array<Document>
   stakeholders?: Array<Stakeholder>
+  extraStakeholderList?: string
   allowUsersToSendPrivateAdvices?: boolean
   relatedCases?: Array<RelatedCase>
 }

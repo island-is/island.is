@@ -15,7 +15,6 @@ import {
   Feature,
   isInvestigationCase,
   isRestrictionCase,
-  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -155,7 +154,9 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 },
                 {
                   title: formatMessage(core.courtCaseNumber),
-                  value: workingCase.courtCaseNumber,
+                  value:
+                    workingCase.courtCaseNumber ??
+                    formatMessage(strings.noCourtNumber),
                 },
                 {
                   title: formatMessage(core.prosecutor),
@@ -169,10 +170,14 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   title: formatMessage(core.prosecutorPerson),
                   value: workingCase.prosecutor?.name,
                 },
-                {
-                  title: formatMessage(core.judge),
-                  value: workingCase.judge?.name,
-                },
+                ...(workingCase.judge
+                  ? [
+                      {
+                        title: formatMessage(core.judge),
+                        value: workingCase.judge?.name,
+                      },
+                    ]
+                  : []),
                 // Conditionally add this field based on case type
                 ...(isInvestigationCase(workingCase.type)
                   ? [
