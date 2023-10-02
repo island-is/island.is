@@ -1,4 +1,8 @@
-import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
+import {
+  ApiHideProperty,
+  ApiProperty,
+  ApiPropertyOptional,
+} from '@nestjs/swagger'
 import {
   BelongsTo,
   Column,
@@ -11,7 +15,7 @@ import {
 } from 'sequelize-typescript'
 import { Course } from '../../course/model'
 import { ProgramTable } from './program'
-import { Requirement } from '@island.is/university-gateway-lib'
+import { Requirement, Season } from '@island.is/university-gateway-lib'
 
 export
 @Table({
@@ -61,6 +65,29 @@ class ProgramCourse extends Model {
     allowNull: false,
   })
   requirement!: Requirement
+
+  @ApiProperty({
+    description: 'Which year this course is taught on',
+    example: 2023,
+  })
+  @ApiPropertyOptional()
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  semesterYear?: number
+
+  @ApiProperty({
+    description: 'Which season this course is taught on',
+    example: Season.FALL,
+    enum: Season,
+  })
+  @Column({
+    type: DataType.ENUM,
+    values: Object.values(Season),
+    allowNull: false,
+  })
+  semesterSeason!: Season
 
   @ApiHideProperty()
   @CreatedAt
