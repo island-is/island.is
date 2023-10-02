@@ -7,9 +7,10 @@ import {
 } from '@nestjs/common'
 
 import {
-  CaseFileCategory,
   User,
   UserRole,
+  availableCaseFileCategoriesForIndictmentCases,
+  availableCaseFileCategoriesForRestrictionAndInvestigationCases,
   completedCaseStates,
   indictmentCases,
   investigationCases,
@@ -48,30 +49,18 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
     ) {
       if (
         [...restrictionCases, ...investigationCases].includes(theCase.type) &&
-        [
-          CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
-          CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-          CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-          CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-          CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-          CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-          CaseFileCategory.APPEAL_RULING,
-        ].includes(caseFile.category)
+        availableCaseFileCategoriesForRestrictionAndInvestigationCases.includes(
+          caseFile.category,
+        )
       ) {
         return true
       }
 
       if (
         indictmentCases.includes(theCase.type) &&
-        [
-          CaseFileCategory.COURT_RECORD,
-          CaseFileCategory.RULING,
-          CaseFileCategory.COVER_LETTER,
-          CaseFileCategory.INDICTMENT,
-          CaseFileCategory.CRIMINAL_RECORD,
-          CaseFileCategory.COST_BREAKDOWN,
-          CaseFileCategory.CASE_FILE,
-        ].includes(caseFile.category)
+        availableCaseFileCategoriesForIndictmentCases.includes(
+          caseFile.category,
+        )
       ) {
         return true
       }

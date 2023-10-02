@@ -22,6 +22,8 @@ import {
   investigationCases,
   isIndictmentCase,
   restrictionCases,
+  availableCaseFileCategoriesForRestrictionAndInvestigationCases,
+  availableCaseFileCategoriesForIndictmentCases,
 } from '@island.is/judicial-system/types'
 import type { CaseType, User } from '@island.is/judicial-system/types'
 
@@ -185,25 +187,9 @@ export class FileService {
       ...restrictionCases,
       ...investigationCases,
     ].includes(caseType)
-      ? [
-          CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
-          CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-          CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-          CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-          CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-          CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-          CaseFileCategory.APPEAL_RULING,
-        ]
+      ? availableCaseFileCategoriesForRestrictionAndInvestigationCases
       : indictmentCases.includes(caseType)
-      ? [
-          CaseFileCategory.COURT_RECORD,
-          CaseFileCategory.RULING,
-          CaseFileCategory.COVER_LETTER,
-          CaseFileCategory.INDICTMENT,
-          CaseFileCategory.CRIMINAL_RECORD,
-          CaseFileCategory.COST_BREAKDOWN,
-          CaseFileCategory.CASE_FILE,
-        ]
+      ? availableCaseFileCategoriesForIndictmentCases
       : []
 
     const caseFilesByCategory = await this.fileModel.findAll({

@@ -1,7 +1,7 @@
 import type { Defendant } from './defendant'
 import type { Institution } from './institution'
 import type { Notification } from './notification'
-import { CaseFile } from './file'
+import { CaseFile, CaseFileCategory } from './file'
 import { User, UserRole } from './user'
 import type { CourtDocument } from './courtDocument'
 import { EventLog } from './eventLog'
@@ -461,6 +461,26 @@ export const investigationCases = [
   CaseType.TELECOMMUNICATIONS,
   CaseType.TRACKING_EQUIPMENT,
   CaseType.VIDEO_RECORDING_EQUIPMENT,
+]
+
+export const availableCaseFileCategoriesForRestrictionAndInvestigationCases = [
+  CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+  CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+  CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+  CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+  CaseFileCategory.APPEAL_RULING,
+]
+
+export const availableCaseFileCategoriesForIndictmentCases = [
+  CaseFileCategory.COURT_RECORD,
+  CaseFileCategory.RULING,
+  CaseFileCategory.COVER_LETTER,
+  CaseFileCategory.INDICTMENT,
+  CaseFileCategory.CRIMINAL_RECORD,
+  CaseFileCategory.COST_BREAKDOWN,
+  CaseFileCategory.CASE_FILE,
 ]
 
 export function isIndictmentCase(type: string): boolean {
