@@ -101,37 +101,8 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                 universities.filter((x) => x.id === data.universityId)[0]
                   .logoUrl
               }
-              alt="alt text todo"
+              alt="University infomation"
             />
-            {/* <Sticky>
-              <Navigation
-                baseId="desktopNav"
-                colorScheme="purple"
-                items={[
-                  {
-                    title: 'Mentun',
-                    active: false,
-                    slug: ['/prufa'],
-                  },
-                ]}
-                title="Tengt efni"
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
-                renderLink={(link, { typename, slug }) => {
-                  return (
-                    <LinkV2
-                      //   href={linkResolver(typename as LinkType, slug).href}
-                      href="/"
-                      onClick={() => console.log('TODO')}
-                      skipTab
-                      pureChildren
-                    >
-                      {link}
-                    </LinkV2>
-                  )
-                }}
-              />
-            </Sticky> */}
           </Stack>
         }
       >
