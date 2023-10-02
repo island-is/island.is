@@ -2,7 +2,6 @@ import { FirearmProperty } from '@island.is/clients/firearm-license'
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
 import {
-  ExcludesFalse,
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseLabels,
@@ -12,6 +11,7 @@ import {
 import { getLabel } from '../utils/translations'
 import { FirearmLicenseDto } from '@island.is/clients/license-client'
 import { Injectable } from '@nestjs/common'
+import { isDefined } from '@island.is/shared/utils'
 @Injectable()
 export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
   public parsePayload = (
@@ -31,71 +31,89 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
 
     const label = labels?.labels
     const data: Array<GenericLicenseDataField> = [
-      licenseInfo.licenseNumber && {
-        name: getLabel('basicInfoLicense', locale, label),
-        type: GenericLicenseDataFieldType.Value,
-        label: getLabel('licenseNumber', locale, label),
-        value: licenseInfo.licenseNumber,
-      },
-      licenseInfo.name && {
-        type: GenericLicenseDataFieldType.Value,
-        label: getLabel('fullName', locale, label),
-        value: licenseInfo.name,
-      },
-      licenseInfo.issueDate && {
-        type: GenericLicenseDataFieldType.Value,
-        label: getLabel('publishedDate', locale, label),
-        value: licenseInfo.issueDate ?? '',
-      },
-      licenseInfo.expirationDate && {
-        type: GenericLicenseDataFieldType.Value,
-        label: getLabel('validTo', locale, label),
-        value: licenseInfo.expirationDate ?? '',
-      },
-      licenseInfo.collectorLicenseExpirationDate && {
-        type: GenericLicenseDataFieldType.Value,
-        label: getLabel('collectorLicenseValidTo', locale, label),
-        value: licenseInfo.collectorLicenseExpirationDate ?? '',
-      },
+      licenseInfo.licenseNumber
+        ? {
+            name: getLabel('basicInfoLicense', locale, label),
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('licenseNumber', locale, label),
+            value: licenseInfo.licenseNumber,
+          }
+        : null,
+      licenseInfo.name
+        ? {
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('fullName', locale, label),
+            value: licenseInfo.name,
+          }
+        : null,
+      licenseInfo.issueDate
+        ? {
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('publishedDate', locale, label),
+            value: licenseInfo.issueDate ?? '',
+          }
+        : null,
+      licenseInfo.expirationDate
+        ? {
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('validTo', locale, label),
+            value: licenseInfo.expirationDate ?? '',
+          }
+        : null,
+      licenseInfo.collectorLicenseExpirationDate
+        ? {
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('collectorLicenseValidTo', locale, label),
+            value: licenseInfo.collectorLicenseExpirationDate ?? '',
+          }
+        : null,
 
-      licenseInfo.qualifications && {
-        type: GenericLicenseDataFieldType.Group,
-        label: getLabel('classesOfRights', locale, label),
-        fields: licenseInfo.qualifications.split('').map((qualification) => ({
-          type: GenericLicenseDataFieldType.Category,
-          name: qualification,
-          label:
-            categories?.[
-              `${getLabel('category', locale, label)} ${qualification}`
-            ] ?? '',
-          description:
-            categories?.[
-              `${getLabel('category', locale, label)} ${qualification}`
-            ] ?? '',
-        })),
-      },
-      properties && {
-        type: GenericLicenseDataFieldType.Group,
-        hideFromServicePortal: true,
-        label: getLabel('firearmProperties', locale, label),
-        fields: (properties.properties ?? []).map((property) => ({
-          type: GenericLicenseDataFieldType.Category,
-          fields: this.parseProperties(labels, property, locale)?.filter(
-            (Boolean as unknown) as ExcludesFalse,
-          ),
-        })),
-      },
-      properties && {
-        type: GenericLicenseDataFieldType.Table,
-        label: getLabel('firearmProperties', locale, label),
-        fields: (properties.properties ?? []).map((property) => ({
-          type: GenericLicenseDataFieldType.Category,
-          fields: this.parseProperties(labels, property, locale)?.filter(
-            (Boolean as unknown) as ExcludesFalse,
-          ),
-        })),
-      },
-    ].filter((Boolean as unknown) as ExcludesFalse)
+      licenseInfo.qualifications
+        ? {
+            type: GenericLicenseDataFieldType.Group,
+            label: getLabel('classesOfRights', locale, label),
+            fields: licenseInfo.qualifications
+              .split('')
+              .map((qualification) => ({
+                type: GenericLicenseDataFieldType.Category,
+                name: qualification,
+                label:
+                  categories?.[
+                    `${getLabel('category', locale, label)} ${qualification}`
+                  ] ?? '',
+                description:
+                  categories?.[
+                    `${getLabel('category', locale, label)} ${qualification}`
+                  ] ?? '',
+              })),
+          }
+        : null,
+      properties
+        ? {
+            type: GenericLicenseDataFieldType.Group,
+            hideFromServicePortal: true,
+            label: getLabel('firearmProperties', locale, label),
+            fields: (properties.properties ?? []).map((property) => ({
+              type: GenericLicenseDataFieldType.Category,
+              fields: this.parseProperties(labels, property, locale)?.filter(
+                isDefined,
+              ),
+            })),
+          }
+        : null,
+      properties
+        ? {
+            type: GenericLicenseDataFieldType.Table,
+            label: getLabel('firearmProperties', locale, label),
+            fields: (properties.properties ?? []).map((property) => ({
+              type: GenericLicenseDataFieldType.Category,
+              fields: this.parseProperties(labels, property, locale)?.filter(
+                isDefined,
+              ),
+            })),
+          }
+        : null,
+    ].filter(isDefined)
 
     return {
       data,

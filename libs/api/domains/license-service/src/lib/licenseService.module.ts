@@ -1,4 +1,4 @@
-import { Module, CacheModule } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { CmsModule } from '@island.is/cms'
 import { MainResolver } from './graphql/main.resolver'
@@ -72,12 +72,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   },
 ]
 @Module({
-  imports: [
-    CacheModule.register(),
-    LicenseClientModule,
-    LicenseMapperModule,
-    CmsModule,
-  ],
+  imports: [LicenseClientModule, LicenseMapperModule, CmsModule],
   providers: [
     MainResolver,
     LicenseServiceService,

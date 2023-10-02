@@ -1,11 +1,10 @@
-import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   CONFIG_PROVIDER,
   LICENSE_CLIENT_FACTORY,
   LicenseClient,
   LicenseType,
 } from './licenseClient.type'
-import { Cache as CacheManager } from 'cache-manager'
 import type { PassTemplateIds, LicenseTypeType } from './licenseClient.type'
 
 @Injectable()
@@ -16,7 +15,6 @@ export class LicenseClientService {
       type: LicenseType,
     ) => Promise<LicenseClient<unknown | null>>,
     @Inject(CONFIG_PROVIDER) private config: PassTemplateIds,
-    @Inject(CACHE_MANAGER) private cacheManager: CacheManager,
   ) {}
 
   private getClient = (type: LicenseType) => this.licenseClientFactory(type)

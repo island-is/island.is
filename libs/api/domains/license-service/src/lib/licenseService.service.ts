@@ -1,10 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common'
-import { InternalServerErrorException } from '@nestjs/cache-manager'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 import { CmsContentfulService } from '@island.is/cms'
-import { DriversLicenseClientTypes } from './licenceService.type'
 import {
   GenericUserLicense,
   GenericLicenseTypeType,
@@ -221,8 +224,6 @@ export class LicenseServiceService {
       return pkPassRes.data
     }
 
-    this.logger.debug(JSON.stringify(pkPassRes))
-
     throw new InternalServerErrorException(
       `Unable to get pkpass for ${licenseType} for user`,
     )
@@ -263,6 +264,10 @@ export class LicenseServiceService {
 
     const { passTemplateId }: { passTemplateId?: string } = JSON.parse(data)
 
+    if (!passTemplateId) {
+      throw new BadRequestException('Invalid pass template id supplied')
+    }
+
     /*
      * PkPass barcodes provide a PassTemplateId that we can use to
      * map barcodes to license types.
@@ -275,18 +280,6 @@ export class LicenseServiceService {
     )
     if (!licenseService) {
       throw new Error(`Invalid pass template id: ${passTemplateId}`)
-    }
-
-    // Temporariy flag until every user has the new digital driving license
-    // We have to make the driving license client decision dependant on the barcode
-    // being scanned. The simplest way for that is to add a force flag so we can make the
-    // decision based on input rather than the authenticated user's license
-
-    let forceDriversLicenseClient: DriversLicenseClientTypes | undefined =
-      undefined
-
-    if (licenseType === GenericLicenseType.DriversLicense) {
-      forceDriversLicenseClient = passTemplateId ? 'new' : 'old'
     }
 
     const verification = await licenseService.verifyPkPass(data, passTemplateId)

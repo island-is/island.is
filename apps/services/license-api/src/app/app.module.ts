@@ -16,6 +16,7 @@ import {
   DrivingDigitalLicenseClientConfig,
 } from '@island.is/clients/license-client'
 import { AuthModule } from '@island.is/auth-nest-tools'
+import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 
 @Module({
   imports: [
@@ -27,12 +28,9 @@ import { AuthModule } from '@island.is/auth-nest-tools'
       isGlobal: true,
       load: [
         XRoadConfig,
-        FirearmLicenseApiClientConfig,
-        DisabilityLicenseApiClientConfig,
-        DrivingLicenseApiClientConfig,
+        DrivingLicenseApiConfig,
         OpenFirearmLicenseClientConfig,
         FirearmDigitalLicenseClientConfig,
-        DisabilityLicenseClientConfig,
         DisabilityDigitalLicenseClientConfig,
         DrivingDigitalLicenseClientConfig,
         AdrDigitalLicenseClientConfig,

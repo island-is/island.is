@@ -1,5 +1,5 @@
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
-import { CacheModule, Module } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import {
   LICENSE_CLIENT_FACTORY,
   LicenseType,
@@ -27,7 +27,6 @@ import {
 
 @Module({
   imports: [
-    CacheModule.register(),
     FirearmClientModule,
     AdrClientModule,
     MachineClientModule,
@@ -43,30 +42,30 @@ import {
     },
     {
       provide: LICENSE_CLIENT_FACTORY,
-      useFactory: (
-        firearmClient: FirearmLicenseClient,
-        adrClient: AdrLicenseClient,
-        machineClient: MachineLicenseClient,
-        disabilityClient: DisabilityLicenseClient,
-        drivingClient: DrivingLicenseClient,
-      ) => async (
-        type: LicenseType,
-      ): Promise<LicenseClient<unknown> | null> => {
-        switch (type) {
-          case LicenseType.FirearmLicense:
-            return firearmClient
-          case LicenseType.DriversLicense:
-            return drivingClient
-          case LicenseType.AdrLicense:
-            return adrClient
-          case LicenseType.MachineLicense:
-            return machineClient
-          case LicenseType.DisabilityLicense:
-            return disabilityClient
-          default:
-            return null
-        }
-      },
+      useFactory:
+        (
+          firearmClient: FirearmLicenseClient,
+          adrClient: AdrLicenseClient,
+          machineClient: MachineLicenseClient,
+          disabilityClient: DisabilityLicenseClient,
+          drivingClient: DrivingLicenseClient,
+        ) =>
+        async (type: LicenseType): Promise<LicenseClient<unknown> | null> => {
+          switch (type) {
+            case LicenseType.FirearmLicense:
+              return firearmClient
+            case LicenseType.DriversLicense:
+              return drivingClient
+            case LicenseType.AdrLicense:
+              return adrClient
+            case LicenseType.MachineLicense:
+              return machineClient
+            case LicenseType.DisabilityLicense:
+              return disabilityClient
+            default:
+              return null
+          }
+        },
       inject: [
         FirearmLicenseClient,
         AdrLicenseClient,
