@@ -14,6 +14,7 @@ import {
   AwsS3Module,
   EventModule,
   PoliceModule,
+  EventLogModule,
 } from '../index'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
@@ -37,6 +38,7 @@ import { LimitedAccessCaseService } from './limitedAccessCase.service'
     forwardRef(() => AwsS3Module),
     forwardRef(() => EventModule),
     forwardRef(() => PoliceModule),
+    forwardRef(() => EventLogModule),
     SequelizeModule.forFeature([Case, CaseArchive]),
   ],
   providers: [CaseService, InternalCaseService, LimitedAccessCaseService],
