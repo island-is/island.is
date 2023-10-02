@@ -17,6 +17,7 @@ import {
 } from '@island.is/api/domains/driving-license-book'
 import {
   DrivingLicenseApi,
+  Jurisdiction,
   TeacherV4,
 } from '@island.is/clients/driving-license'
 import sortTeachers from './sortTeachers'
@@ -225,7 +226,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
   }
 
-  async jurisdictions(): Promise<EmbaettiDto[]> {
+  async jurisdictions(): Promise<Jurisdiction[]> {
     return await this.drivingLicenseService.getListOfJurisdictions()
   }
 
