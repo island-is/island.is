@@ -20,7 +20,7 @@ export const MOCK_NATIONAL_ID_NO_ASSESSMENT = '9'
 export const MOCK_TOKEN = '0'
 export const MOCK_TOKEN_EXPIRED = '1'
 export const MOCK_TOKEN_TEACHER = '2'
-export const MOCK_TOKEN_ASSESSMENT = '9'
+export const MOCK_TOKEN_NO_ASSESSMENT = '9'
 
 export const DISQUALIFIED_NATIONAL_IDS = [
   '0101302399',
@@ -76,25 +76,15 @@ export const XROAD_DRIVING_LICENSE_PATH =
 export const XROAD_DRIVING_LICENSE_V2_PATH =
   'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2'
 
-// At the time of implementation, the v5 path is case sensitive depending on the environment
-// and as such Okuskirteini and okuskirteini are considered paths
-export const XROAD_DRIVING_LICENSE_V5_PATH =
-  /\/r1\/IS-DEV\/GOV\/10005\/Logreglan-Protected\/[Oo]kuskirteini-v5/
-
 const url = (path: string) => {
   return new URL(path, XROAD_BASE_PATH).toString()
 }
 
 export const requestHandlers = [
-  rest.get(
-    url(
-      `${XROAD_DRIVING_LICENSE_V5_PATH}/api/drivinglicense/v5/drivingassessment`,
-    ),
-    (req, res, ctx) => {
-      // TODO, ambiguate with mock auths
-      return res(ctx.status(200), ctx.json(DrivingAssessmentV5))
-    },
-  ),
+  rest.get(/\/api\/drivinglicense\/v5\/drivingassessment/, (req, res, ctx) => {
+    // TODO, ambiguate with mock auths
+    return res(ctx.status(200), ctx.json(DrivingAssessmentV5))
+  }),
 
   rest.get(
     url(`${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/okukennarar`),
@@ -165,9 +155,7 @@ export const requestHandlers = [
   ),
 
   rest.get(
-    url(
-      `${XROAD_DRIVING_LICENSE_V5_PATH}/api/drivinglicense/v5/hasfinisheddrivingschool3`,
-    ),
+    /api\/drivinglicense\/v5\/hasfinisheddrivingschool3/,
     (req, res, ctx) => {
       // TODO, ambiguate with mock auths
       return res(ctx.status(200), ctx.json({ hasFinishedDrivingSchool3: true }))
@@ -188,15 +176,10 @@ export const requestHandlers = [
     },
   ),
 
-  rest.get(
-    url(
-      `${XROAD_DRIVING_LICENSE_V5_PATH}/api/drivinglicense/v5/canapplyfor/B/full`,
-    ),
-    (req, res, ctx) => {
-      // TODO ambiguate with mock auths
-      return res(ctx.status(200), ctx.json({ result: true, errorCode: '' }))
-    },
-  ),
+  rest.get(/api\/drivinglicense\/v5\/canapplyfor\/B\/full/, (req, res, ctx) => {
+    // TODO ambiguate with mock auths
+    return res(ctx.status(200), ctx.json({ result: true, errorCode: '' }))
+  }),
 
   rest.get(
     url(
@@ -299,21 +282,15 @@ export const requestHandlers = [
   ),
 
   // Ignore calls to this endpoint and mock response in get All Driving Licenses
-  rest.get(
-    new RegExp(
-      XROAD_DRIVING_LICENSE_V5_PATH.source +
-        /\/api\/drivinglicense\/v5\/deprivation/.source,
-    ),
-    (req, res, ctx) => {
-      return res(
-        ctx.status(200),
-        ctx.json({
-          dateFrom: null,
-          dateTo: null,
-        }),
-      )
-    },
-  ),
+  rest.get(/\/api\/drivinglicense\/v5\/deprivation/, (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        dateFrom: null,
+        dateTo: null,
+      }),
+    )
+  }),
 
   rest.get(
     url(`${XROAD_DRIVING_LICENSE_PATH}/einstaklingar/:nationalId/buseta`),

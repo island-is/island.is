@@ -10,6 +10,8 @@ import {
   MOCK_NATIONAL_ID_EXPIRED,
   MOCK_NATIONAL_ID_NO_ASSESSMENT,
   MOCK_NATIONAL_ID_TEACHER,
+  MOCK_TOKEN,
+  MOCK_TOKEN_TEACHER,
   MOCK_USER,
   requestHandlers,
 } from './__mock-data__/requestHandlers'
@@ -103,7 +105,10 @@ describe('DrivingLicenseService', () => {
 
   describe('getTeachingRights', () => {
     it('should return false for a normal license', async () => {
-      const response = await service.getTeachingRights(MOCK_NATIONAL_ID)
+      const response = await service.getTeachingRights({
+        nationalId: MOCK_NATIONAL_ID,
+        token: MOCK_TOKEN,
+      })
 
       expect(response).toStrictEqual({
         nationalId: MOCK_NATIONAL_ID,
@@ -112,7 +117,10 @@ describe('DrivingLicenseService', () => {
     })
 
     it('should return true for a teacher', async () => {
-      const response = await service.getTeachingRights(MOCK_NATIONAL_ID_TEACHER)
+      const response = await service.getTeachingRights({
+        nationalId: MOCK_NATIONAL_ID_TEACHER,
+        token: MOCK_TOKEN_TEACHER,
+      })
 
       expect(response).toStrictEqual({
         nationalId: MOCK_NATIONAL_ID_TEACHER,
