@@ -10,6 +10,7 @@ import CanApplyWithResultSuccess from './canApplyWithResultSuccess.json'
 import CanApplyWithResultFail from './canApplyWithResultFail.json'
 import Teachers from './teachers.json'
 import ResidenceHistory from './residenceHistory.json'
+import ApplicationsNewB from './applicationsNewB.json'
 import type { User } from '@island.is/auth-nest-tools'
 
 export const MOCK_NATIONAL_ID = '0'
@@ -302,4 +303,11 @@ export const requestHandlers = [
       )
     },
   ),
+
+  rest.post(
+    /api\/drivinglicense\/v5\/applications\/new\/B/,
+    (req, res, ctx) => {
+      return res(ctx.status(200), ctx.json(ApplicationsNewB))
+    }
+  )
 ]

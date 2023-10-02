@@ -1,0 +1,8 @@
+{
+    "personIdNumber": "1234567890",
+    "authorityNumber": 1,
+    "needsToPresentHealthCertificate": false,
+    "bringsNewPhoto": false,
+    "sendLicenseInMail": 0,
+    "sendToAddress": "Bingóvellir 2"
+}
