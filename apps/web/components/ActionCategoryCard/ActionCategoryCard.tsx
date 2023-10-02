@@ -125,10 +125,8 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
     const shouldStack = width && width < stackWidth
 
     const renderCTA = () => {
-      const hasCTA = !!sidePanelConfig?.cta?.label
       const cta = sidePanelConfig?.cta
       return (
-        hasCTA &&
         cta && (
           <Box
             paddingTop="gutter"

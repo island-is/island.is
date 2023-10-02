@@ -506,7 +506,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
             </Text>
             <Input
               label={n('searchPrograms', 'Leit í háskólanámi')}
-              // placeholder="Leita"
               id="searchuniversity"
               name="filterInput"
               value={searchTerm}
