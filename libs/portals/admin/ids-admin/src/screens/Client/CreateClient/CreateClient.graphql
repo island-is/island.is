@@ -4,3 +4,10 @@ mutation CreateClient($input: CreateAuthAdminClientInput!) {
     environment
   }
 }
+
+query GetClientAvailability($input: AuthAdminClientInput!) {
+  authAdminClient(input: $input) {
+    clientId
+    availableEnvironments
+  }
+}

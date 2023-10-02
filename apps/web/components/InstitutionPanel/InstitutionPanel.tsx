@@ -27,6 +27,8 @@ export const InstitutionPanel = ({
   imgContainerDisplay,
 }: InstitutionPanelProps) => {
   return (
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     <Link {...linkProps}>
       <Box
         background="purple100"
@@ -40,11 +42,10 @@ export const InstitutionPanel = ({
           style={{ flex: '0 0 64px' }}
           marginRight={3}
         >
-          <Box
-            component="img"
-            alt=""
+          <img
+            width={64}
             src={img ? img : '/assets/skjaldarmerki.svg'}
-            width="full"
+            alt=""
           />
         </Box>
         <Box>

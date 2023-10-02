@@ -1,5 +1,6 @@
+import { Cache as CacheManager } from 'cache-manager'
 import { Test } from '@nestjs/testing'
-import { CACHE_MANAGER } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
 
 import { DiscountService, DISCOUNT_CODE_LENGTH } from '../../discount.service'
 import { createTestUser } from '../../../../../../test/createTestUser'
@@ -47,7 +48,9 @@ describe('DiscountService', () => {
             get: () => ({}),
             set: () => ({}),
             del: () => ({}),
-            ttl: () => ({}),
+            store: {
+              ttl: () => ({}),
+            },
           })),
         },
         {
@@ -104,8 +107,8 @@ describe('DiscountService', () => {
         .spyOn(cacheManager, 'get')
         .mockImplementation(() => Promise.resolve({ discountCode }))
       const cacheManagerTtlSpy = jest
-        .spyOn(cacheManager, 'ttl')
-        .mockImplementation(() => Promise.resolve(ttl))
+        .spyOn(cacheManager.store, 'ttl')
+        .mockImplementation(() => Promise.resolve(ttl * 1000))
 
       const result = await discountService.getDiscountByNationalId(nationalId)
 
@@ -141,8 +144,8 @@ describe('DiscountService', () => {
         .spyOn(cacheManager, 'get')
         .mockImplementation(() => Promise.resolve({ nationalId, discountCode }))
       const cacheManagerTtlSpy = jest
-        .spyOn(cacheManager, 'ttl')
-        .mockImplementation(() => Promise.resolve(ttl))
+        .spyOn(cacheManager.store, 'ttl')
+        .mockImplementation(() => Promise.resolve(ttl * 1000))
 
       const result = await discountService.getDiscountByDiscountCode(
         discountCode,
@@ -208,6 +211,7 @@ describe('DiscountService', () => {
     const postalCode = 600
     const comment = 'This is a comment'
     const unConnectedFlights: Flight[] = []
+    const numberOfDaysUntilExpiration = 1
 
     it('should create an explicit discount and cache it', async () => {
       const cacheManagerSpy = jest.spyOn(cacheManager, 'set')
@@ -218,6 +222,7 @@ describe('DiscountService', () => {
         postalCode,
         employeeId,
         comment,
+        numberOfDaysUntilExpiration,
         unConnectedFlights,
       )
 
@@ -244,6 +249,7 @@ describe('DiscountService', () => {
         postalCode,
         employeeId,
         comment,
+        numberOfDaysUntilExpiration,
         unConnectedFlights,
       )
       expect(explicitCodeSpy).toBeCalledTimes(1)
@@ -259,14 +265,16 @@ describe('DiscountService', () => {
         postalCode,
         employeeId,
         comment,
+        numberOfDaysUntilExpiration,
         unConnectedFlights,
       )
       expect(result).toBe(null)
     })
 
     it('should override postalcodes', async () => {
-      jest.spyOn(nationalRegistryService, 'getUser').mockImplementation(
-        (): Promise<NationalRegistryUser> => {
+      jest
+        .spyOn(nationalRegistryService, 'getUser')
+        .mockImplementation((): Promise<NationalRegistryUser> => {
           return Promise.resolve({
             address: '',
             city: '',
@@ -277,8 +285,7 @@ describe('DiscountService', () => {
             nationalId: customerId,
             postalcode: 100, // This shall be overridden
           })
-        },
-      )
+        })
 
       const result = await discountService.createExplicitDiscountCode(
         getAuthUser(employeeId),
@@ -286,6 +293,7 @@ describe('DiscountService', () => {
         postalCode,
         employeeId,
         comment,
+        numberOfDaysUntilExpiration,
         unConnectedFlights,
       )
 

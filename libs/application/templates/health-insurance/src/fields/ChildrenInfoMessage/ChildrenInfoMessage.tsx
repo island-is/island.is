@@ -6,7 +6,9 @@ import { useLocale } from '@island.is/localization'
 import * as styles from './ChildrenInfoMessage.css'
 import { m } from '../../forms/messages'
 
-const ChildrenInfoMessage: FC<FieldBaseProps> = ({ application }) => {
+const ChildrenInfoMessage: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
 
   return (

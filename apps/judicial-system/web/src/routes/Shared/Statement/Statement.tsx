@@ -9,6 +9,21 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
+  Box,
+  Button,
+  InputFileUpload,
+  Text,
+  UploadFile,
+} from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  CaseFileCategory,
+  isProsecutionRole,
+  UserRole,
+} from '@island.is/judicial-system/types'
+import { core, titles } from '@island.is/judicial-system-web/messages'
+import {
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -18,29 +33,14 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  Box,
-  Button,
-  InputFileUpload,
-  Text,
-  UploadFile,
-} from '@island.is/island-ui/core'
-import { core, titles } from '@island.is/judicial-system-web/messages'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
-import {
-  CaseAppealDecision,
-  CaseFileCategory,
-  isProsecutionRole,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   TUploadFile,
   useCase,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { formatDate } from '@island.is/judicial-system/formatters'
-import * as constants from '@island.is/judicial-system/consts'
 
 import { statement as strings } from './Statement.strings'
 
@@ -53,12 +53,8 @@ const Statement = () => {
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const [visibleModal, setVisibleModal] = useState<'STATEMENT_SENT'>()
   const { id } = router.query
-  const {
-    handleChange,
-    handleRemove,
-    handleRetry,
-    generateSingleFileUpdate,
-  } = useS3Upload(workingCase.id)
+  const { handleChange, handleRemove, handleRetry, generateSingleFileUpdate } =
+    useS3Upload(workingCase.id)
 
   const appealStatementType = isProsecutionRole(user?.role)
     ? CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT
@@ -125,8 +121,8 @@ const Statement = () => {
           </Text>
         </Box>
         <Box marginBottom={7}>
-          {workingCase.courtEndTime && (
-            <RulingDateLabel courtEndTime={workingCase.courtEndTime} />
+          {workingCase.rulingDate && (
+            <RulingDateLabel rulingDate={workingCase.rulingDate} />
           )}
           {(workingCase.prosecutorPostponedAppealDate ||
             workingCase.accusedPostponedAppealDate) && (
@@ -173,7 +169,9 @@ const Statement = () => {
                   )
                 }
                 onRemove={(file) => handleRemove(file, removeFileCB)}
-                onRetry={(file) => handleRetry(file, handleUIUpdate)}
+                onRetry={(file) =>
+                  handleRetry(file, handleUIUpdate, appealStatementType)
+                }
               />
             </Box>
             <Box component="section" marginBottom={10}>
@@ -203,7 +201,9 @@ const Statement = () => {
                   )
                 }
                 onRemove={(file) => handleRemove(file, removeFileCB)}
-                onRetry={(file) => handleRetry(file, handleUIUpdate)}
+                onRetry={(file) =>
+                  handleRetry(file, handleUIUpdate, appealCaseFilesType)
+                }
               />
             </Box>
           </>

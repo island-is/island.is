@@ -8,21 +8,17 @@ import {
   useDeleteCaseSubscription,
 } from '../../../../hooks'
 import { isEmailValid } from '../../utils'
-import { ReactNode, useEffect, useState } from 'react'
+import { BaseSyntheticEvent, ReactNode, useEffect, useState } from 'react'
 import { CardSkeleton as CardSkeletonComponent } from '../../../../components'
 import {
-  Box,
   Text,
   Button,
   LoadingDots,
   toast,
+  Stack,
 } from '@island.is/island-ui/core'
 import { Stacked, CaseEmailActionBox } from '../../components'
-import {
-  CaseSubscriptionType,
-  SubscriptionType,
-  SubscriptionTypes,
-} from '../../../../types/enums'
+import { SubscriptionTypes } from '../../../../types/enums'
 import localization from '../../Case.json'
 
 const loc = localization['caseEmailBox']
@@ -35,8 +31,10 @@ interface CardSkeletonProps {
 const CardSkeleton = ({ text, children }: CardSkeletonProps) => {
   return (
     <CardSkeletonComponent>
-      <Stacked title={loc.buttonLabel}>{text && <Text>{text}</Text>}</Stacked>
-      <Box paddingTop={2}>{children}</Box>
+      <Stack space={2}>
+        <Stacked title={loc.buttonLabel}>{text && <Text>{text}</Text>}</Stacked>
+        {children}
+      </Stack>
     </CardSkeletonComponent>
   )
 }
@@ -50,32 +48,23 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
   const { isAuthenticated, userLoading } = useUser()
   const [isVerified, setIsVerified] = useState(false)
   const LogIn = useLogIn()
-  const [userEmail, setUserEmail] = useState<string>('')
+  const [userEmail, setUserEmail] = useState('')
   const [inputValue, setInputValue] = useState('')
-  const [allChecked, setAllChecked] = useState(true)
-  const [userClickedChange, setUserClickedChange] = useState(false)
 
   const { postEmailMutation, postEmailLoading } = usePostEmail()
-  const {
-    postCaseSubscriptionMutation,
-    postCaseSubscriptionLoading,
-  } = usePostCaseSubscription()
+  const { postCaseSubscriptionMutation, postCaseSubscriptionLoading } =
+    usePostCaseSubscription()
   const { email, emailVerified, getUserEmailLoading } = useFetchEmail({
     isAuthenticated: isAuthenticated,
   })
-  const {
-    deleteCaseSubscriptionMutation,
-    deleteCaseSubscriptionLoading,
-  } = useDeleteCaseSubscription()
+  const { deleteCaseSubscriptionMutation, deleteCaseSubscriptionLoading } =
+    useDeleteCaseSubscription()
 
-  const {
-    caseSubscription,
-    caseSubscriptionLoading,
-    refetchCaseSubscription,
-  } = useFetchCaseSubscription({
-    isAuthenticated: isAuthenticated,
-    caseId: caseId,
-  })
+  const { caseSubscription, caseSubscriptionLoading, refetchCaseSubscription } =
+    useFetchCaseSubscription({
+      isAuthenticated: isAuthenticated,
+      caseId: caseId,
+    })
 
   useEffect(() => {
     if (!getUserEmailLoading) {
@@ -101,10 +90,9 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
 
   const onPostCaseSubscription = async () => {
     const postCaseSubscriptionCommand = {
-      subscriptionType: allChecked
-        ? SubscriptionType.AllChanges
-        : SubscriptionType.StatusChanges,
+      subscriptionType: SubscriptionTypes.AllChanges,
     }
+
     await postCaseSubscriptionMutation({
       variables: {
         input: {
@@ -115,7 +103,6 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
     })
       .then(() => {
         refetchCaseSubscription()
-        setUserClickedChange(false)
         toast.success(
           `${loc.postSubscriptionMutationToasts.success} S-${caseNumber}.`,
         )
@@ -148,7 +135,7 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
       )
   }
 
-  const onChangeEmail = (e) => {
+  const onChangeEmail = (e: BaseSyntheticEvent) => {
     const nextInputVal = e.target.value
     setInputValue(nextInputVal)
   }
@@ -158,13 +145,6 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
     setInputValue(emptyString)
     setUserEmail(emptyString)
     setIsVerified(false)
-  }
-
-  const handleUserClickedChange = () => {
-    const checkBool =
-      caseSubscription?.type === SubscriptionType.AllChanges ? true : false
-    setAllChecked(checkBool)
-    setUserClickedChange(true)
   }
 
   if (!userLoading && !isAuthenticated) {
@@ -197,14 +177,12 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
             onChange: onChangeEmail,
             isDisabled: postEmailLoading,
           }}
-          button={[
-            {
-              label: loc.setEmailCardSkeleton.button,
-              onClick: onSetEmail,
-              isDisabled: !isEmailValid(inputValue),
-              isLoading: postEmailLoading,
-            },
-          ]}
+          button={{
+            label: loc.setEmailCardSkeleton.button,
+            onClick: onSetEmail,
+            isDisabled: !isEmailValid(inputValue),
+            isLoading: postEmailLoading,
+          }}
         />
       </CardSkeleton>
     )
@@ -214,99 +192,36 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
     return (
       <CardSkeleton text={`${loc.notVerifiedCardSkeleton.text} ${userEmail}`}>
         <CaseEmailActionBox
-          button={[
-            {
-              label: loc.notVerifiedCardSkeleton.button,
-              onClick: resetEmail,
-            },
-          ]}
+          button={{
+            label: loc.notVerifiedCardSkeleton.button,
+            onClick: resetEmail,
+          }}
         />
       </CardSkeleton>
     )
   }
 
-  {
-    return caseSubscription?.type ? (
-      <CardSkeleton
-        text={
-          userClickedChange
-            ? loc.subbedCardSkeleton.clickedChange.text
-            : loc.subbedCardSkeleton.initial.text
-        }
-      >
-        {userClickedChange ? (
-          <Box paddingTop={1}>
-            <CaseEmailActionBox
-              selection={[
-                {
-                  label: CaseSubscriptionType[SubscriptionTypes.AllChanges],
-                  checked: allChecked,
-                  onChange: () => setAllChecked(true),
-                  isDisabled: postCaseSubscriptionLoading,
-                },
-                {
-                  label: CaseSubscriptionType[SubscriptionTypes.StatusChanges],
-                  checked: !allChecked,
-                  onChange: () => setAllChecked(false),
-                  isDisabled: postCaseSubscriptionLoading,
-                },
-              ]}
-              button={[
-                {
-                  label: loc.subbedCardSkeleton.clickedChange.button,
-                  onClick: () => onPostCaseSubscription(),
-                  isLoading: postCaseSubscriptionLoading,
-                },
-              ]}
-            />
-          </Box>
-        ) : (
-          <CaseEmailActionBox
-            button={[
-              {
-                label: loc.subbedCardSkeleton.initial.buttonChange,
-                onClick: () => handleUserClickedChange(),
-                isDisabled: deleteCaseSubscriptionLoading,
-              },
-              {
-                label: loc.subbedCardSkeleton.initial.buttonRemove,
-                onClick: () => onDeleteCaseSubscription(),
-                isLoading: deleteCaseSubscriptionLoading,
-              },
-            ]}
-          />
-        )}
-      </CardSkeleton>
-    ) : (
-      <CardSkeleton text={loc.notSubbedCardSkeleton.text}>
-        <Box paddingTop={1}>
-          <CaseEmailActionBox
-            selection={[
-              {
-                label: CaseSubscriptionType[SubscriptionTypes.AllChanges],
-                checked: allChecked,
-                onChange: () => setAllChecked(true),
-                isDisabled: caseSubscriptionLoading,
-              },
-              {
-                label: CaseSubscriptionType[SubscriptionTypes.StatusChanges],
-                checked: !allChecked,
-                onChange: () => setAllChecked(false),
-                isDisabled: caseSubscriptionLoading,
-              },
-            ]}
-            button={[
-              {
-                label: loc.notSubbedCardSkeleton.button,
-                onClick: () => onPostCaseSubscription(),
-                isLoading: caseSubscriptionLoading,
-              },
-            ]}
-          />
-        </Box>
-      </CardSkeleton>
-    )
-  }
+  return caseSubscription?.type ? (
+    <CardSkeleton text={loc.subbedCardSkeleton.initial.text}>
+      <CaseEmailActionBox
+        button={{
+          label: loc.subbedCardSkeleton.initial.buttonRemove,
+          onClick: () => onDeleteCaseSubscription(),
+          isLoading: deleteCaseSubscriptionLoading || caseSubscriptionLoading,
+        }}
+      />
+    </CardSkeleton>
+  ) : (
+    <CardSkeleton text={loc.notSubbedCardSkeleton.text}>
+      <CaseEmailActionBox
+        button={{
+          label: loc.notSubbedCardSkeleton.button,
+          onClick: () => onPostCaseSubscription(),
+          isLoading: postCaseSubscriptionLoading || caseSubscriptionLoading,
+        }}
+      />
+    </CardSkeleton>
+  )
 }
 
 export default CaseEmailBox

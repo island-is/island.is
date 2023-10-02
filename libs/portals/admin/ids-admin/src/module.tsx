@@ -11,12 +11,10 @@ import { tenantLoader, tenantLoaderId } from './screens/Tenant/Tenant.loader'
 import { clientsLoader } from './screens/Clients/Clients.loader'
 import { clientLoader } from './screens/Client/Client.loader'
 import { editClientAction } from './screens/Client/EditClient.action'
-import PublishClient from './screens/Client/PublishClient/PublishClient'
-import { publishClientAction } from './screens/Client/PublishClient/PublishClient.action'
 import { createPermissionAction } from './screens/Permission/CreatePermission/CreatePermission.action'
 import { permissionsLoader } from './screens/Permissions/Permissions.loader'
 import { permissionLoader } from './screens/Permission/Permission.loader'
-import { updatePermissionAction } from './screens/Permission/EditPermission.action'
+import { editPermissionAction } from './screens/Permission/EditPermission.action'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 
@@ -29,6 +27,9 @@ const ClientsScreen = lazy(() => import('./screens/Clients/Clients'))
 const ClientScreen = lazy(() => import('./screens/Client/Client'))
 const CreateClient = lazy(() =>
   import('./screens/Client/CreateClient/CreateClient'),
+)
+const PublishClient = lazy(() =>
+  import('./screens/Client/PublishClient/PublishClient'),
 )
 
 // Permissions
@@ -107,15 +108,6 @@ export const idsAdminModule: PortalModule = {
                 handle: {
                   backPath: IDSAdminPaths.IDSAdminClients,
                 },
-                children: [
-                  {
-                    name: m.publishEnvironment,
-                    navHide: true,
-                    path: IDSAdminPaths.IDSAdminClientPublish,
-                    action: publishClientAction(props),
-                    element: <PublishClient />,
-                  },
-                ],
               },
               {
                 name: m.permissions,
@@ -140,7 +132,7 @@ export const idsAdminModule: PortalModule = {
                 navHide: true,
                 path: IDSAdminPaths.IDSAdminPermission,
                 element: <Permission />,
-                action: updatePermissionAction(props),
+                action: editPermissionAction(props),
                 loader: permissionLoader(props),
                 handle: {
                   backPath: IDSAdminPaths.IDSAdminPermissions,

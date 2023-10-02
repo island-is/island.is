@@ -50,6 +50,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
 
   beforeEach(async () => {
     process.env.PRISON_EMAIL = 'prisonEmail@email.com,prisonEmail2@email.com'
+
     const {
       emailService,
       notificationConfig,
@@ -165,7 +166,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         1,
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
-          subject: 'Úrskurður í máli 007-2022-07 leiðrétt',
+          subject: 'Úrskurður í máli 007-2022-07 leiðréttur',
           html: `Dómari hefur leiðrétt úrskurð í máli 007-2022-07 hjá Héraðsdómi Reykjavíkur.<br /><br />Skjöl málsins eru aðengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
@@ -182,7 +183,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         state: CaseState.ACCEPTED,
         decision,
         courtCaseNumber: '007-2022-07',
-        rulingDate: new Date('2021-07-01'),
+        rulingSignatureDate: new Date('2021-07-01'),
         defendants: [{ noNationalId: true }] as Defendant[],
         court: { name: 'Héraðsdómur Reykjavíkur' },
       } as Case
@@ -205,8 +206,8 @@ describe('InternalNotificationController - Send ruling notifications', () => {
             ],
             cc: mockConfig.email.prisonEmail.split(',').slice(1),
 
-            subject: 'Úrskurður um gæsluvarðhald',
-            html: `Héraðsdómur Reykjavíkur hefur úrskurðað aðila í gæsluvarðhald í þinghaldi sem lauk rétt í þessu. Hægt er að nálgast þingbók og vistunarseðil í ${expectedLink}Réttarvörslugátt</a>.`,
+            subject: `Úrskurður í máli ${theCase.courtCaseNumber}`,
+            html: `Héraðsdómur Reykjavíkur hefur úrskurðað aðila í gæsluvarðhald í þinghaldi sem lauk rétt í þessu. Hægt er að nálgast þingbók og vistunarseðil á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
           }),
         )
       })
@@ -225,14 +226,15 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       state: CaseState.ACCEPTED,
       decision,
       courtCaseNumber: '007-2022-07',
-      rulingDate: new Date('2021-07-01'),
+      rulingSignatureDate: new Date('2021-07-01'),
       defendants: [{ noNationalId: true }] as Defendant[],
     } as Case
 
     beforeEach(async () => {
-      const mockGetDefendantsActiveCases = mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
-        typeof mockDefendantService.isDefendantInActiveCustody
-      >
+      const mockGetDefendantsActiveCases =
+        mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
+          typeof mockDefendantService.isDefendantInActiveCustody
+        >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(false)
       await givenWhenThen(caseId, theCase, notificationDto)
     })
@@ -250,14 +252,15 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       state: CaseState.ACCEPTED,
       decision: CaseDecision.ACCEPTING,
       courtCaseNumber: '007-2022-07',
-      rulingDate: new Date('2021-07-01'),
+      rulingSignatureDate: new Date('2021-07-01'),
       defendants: [{ nationalId: '0000000000' }],
     } as Case
 
     beforeEach(async () => {
-      const mockGetDefendantsActiveCases = mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
-        typeof mockDefendantService.isDefendantInActiveCustody
-      >
+      const mockGetDefendantsActiveCases =
+        mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
+          typeof mockDefendantService.isDefendantInActiveCustody
+        >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(false)
       await givenWhenThen(caseId, theCase, notificationDto)
     })
@@ -275,15 +278,16 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       state: CaseState.ACCEPTED,
       decision: CaseDecision.ACCEPTING,
       courtCaseNumber: '007-2022-07',
-      rulingDate: new Date('2021-07-01'),
+      rulingSignatureDate: new Date('2021-07-01'),
       defendants: [{ nationalId: '0000000000' }],
       court: { name: 'Héraðsdómur Reykjavíkur' },
     } as Case
 
     beforeEach(async () => {
-      const mockGetDefendantsActiveCases = mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
-        typeof mockDefendantService.isDefendantInActiveCustody
-      >
+      const mockGetDefendantsActiveCases =
+        mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
+          typeof mockDefendantService.isDefendantInActiveCustody
+        >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(true)
       await givenWhenThen(caseId, theCase, notificationDto)
     })
@@ -301,8 +305,8 @@ describe('InternalNotificationController - Send ruling notifications', () => {
             },
           ],
           cc: mockConfig.email.prisonEmail.split(',').slice(1),
-          subject: 'Úrskurður um vistun á viðeigandi stofnun',
-          html: `Héraðsdómur Reykjavíkur hefur úrskurðað aðila í vistun á viðeigandi stofnun í þinghaldi sem lauk rétt í þessu. Hægt er að nálgast þingbók og vistunarseðil í ${expectedLink}Réttarvörslugátt</a>.`,
+          subject: `Úrskurður í máli ${theCase.courtCaseNumber}`,
+          html: `Héraðsdómur Reykjavíkur hefur úrskurðað aðila í vistun á viðeigandi stofnun í þinghaldi sem lauk rétt í þessu. Hægt er að nálgast þingbók og vistunarseðil á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
     })
@@ -316,15 +320,16 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       state: CaseState.ACCEPTED,
       decision: CaseDecision.ACCEPTING,
       courtCaseNumber: '007-2022-07',
-      rulingDate: new Date('2021-07-01'),
+      rulingSignatureDate: new Date('2021-07-01'),
       defendants: [{ noNationalId: true }] as Defendant[],
       court: { name: 'Héraðsdómur Reykjavíkur' },
     } as Case
 
     beforeEach(async () => {
-      const mockGetDefendantsActiveCases = mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
-        typeof mockDefendantService.isDefendantInActiveCustody
-      >
+      const mockGetDefendantsActiveCases =
+        mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
+          typeof mockDefendantService.isDefendantInActiveCustody
+        >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(false)
       await givenWhenThen(caseId, theCase, notificationDto)
     })
@@ -342,8 +347,8 @@ describe('InternalNotificationController - Send ruling notifications', () => {
             },
           ],
           cc: mockConfig.email.prisonEmail.split(',').slice(1),
-          subject: 'Úrskurður um vistun á viðeigandi stofnun',
-          html: `Héraðsdómur Reykjavíkur hefur úrskurðað aðila í vistun á viðeigandi stofnun í þinghaldi sem lauk rétt í þessu. Hægt er að nálgast þingbók og vistunarseðil í ${expectedLink}Réttarvörslugátt</a>.`,
+          subject: `Úrskurður í máli ${theCase.courtCaseNumber}`,
+          html: `Héraðsdómur Reykjavíkur hefur úrskurðað aðila í vistun á viðeigandi stofnun í þinghaldi sem lauk rétt í þessu. Hægt er að nálgast þingbók og vistunarseðil á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
     })

@@ -129,6 +129,7 @@ function Permissions() {
             return (
               <IdsAdminCard
                 key={item.scopeName}
+                dataTestId="tenant-permissions-list-item"
                 cta={{
                   label: formatMessage(m.change),
                   to: href,

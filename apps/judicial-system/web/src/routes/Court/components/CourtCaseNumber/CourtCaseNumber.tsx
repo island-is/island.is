@@ -1,13 +1,13 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
+import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { CaseState, isIndictmentCase } from '@island.is/judicial-system/types'
+import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import {
   TempCase as Case,
   TempUpdateCase as UpdateCase,
 } from '@island.is/judicial-system-web/src/types'
-import { Box, Button, Input, Text } from '@island.is/island-ui/core'
-import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -29,7 +29,7 @@ interface Props {
   isCreatingCourtCase: boolean
 }
 
-const CourtCaseNumber: React.FC<Props> = (props) => {
+const CourtCaseNumber: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const {
     workingCase,
     setWorkingCase,
@@ -103,6 +103,7 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                 label={formatMessage(courtCaseNumber.label)}
                 placeholder={formatMessage(courtCaseNumber.placeholder, {
                   isIndictment: isIndictmentCase(workingCase.type),
+                  year: new Date().getFullYear(),
                 })}
                 autoComplete="off"
                 size="sm"

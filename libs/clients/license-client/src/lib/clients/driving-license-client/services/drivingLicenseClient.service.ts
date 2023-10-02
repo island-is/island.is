@@ -1,12 +1,13 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 import { FetchError } from '@island.is/clients/middlewares'
-import { format as formatNationalId } from 'kennitala'
+import { format } from 'kennitala'
 import {
-  DriversLicense,
+  DriverLicenseDto as DriversLicense,
   DrivingLicenseApi,
+  RemarkCode,
 } from '@island.is/clients/driving-license'
 import {
   LicenseClient,
@@ -35,17 +36,13 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
   private checkLicenseValidity(
     license: DriversLicense,
   ): LicensePkPassAvailability {
-    if (
-      !license // || license.photo === undefined
-    ) {
+    if (!license || license.photo === undefined) {
       return LicensePkPassAvailability.Unknown
     }
 
-    /*
-    if (!license.photo?.noted || !license.photo?.image) {
+    if (!license.photo.image) {
       return LicensePkPassAvailability.NotAvailable
     }
-    */
 
     return LicensePkPassAvailability.Available
   }
@@ -54,12 +51,15 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
     return this.checkLicenseValidity(payload as DriversLicense)
   }
 
+  private fetchCategories = () => this.drivingApi.getRemarksCodeTable()
+
   private async fetchLicense(
     user: User,
   ): Promise<Result<DriversLicense | null>> {
     try {
-      const licenseInfo = await this.drivingApi.getCurrentLicense({
+      const licenseInfo = await this.drivingApi.getCurrentLicenseV5({
         nationalId: user.nationalId,
+        token: user.authorization.replace(/^bearer /i, ''),
       })
       return { ok: true, data: licenseInfo }
     } catch (e) {
@@ -98,26 +98,33 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
   }
 
   private async createPkPassPayload(
-    data: DriversLicense,
-    nationalId: string,
+    license: DriversLicense,
+    remarks?: Array<RemarkCode>,
   ): Promise<PassDataInput | null> {
-    const inputValues = createPkPassDataInput(data, nationalId)
+    const inputValues = createPkPassDataInput(license, remarks)
+
+    if (!inputValues) {
+      this.logger.warn('PkPassDataInput creation failed', {
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
 
     //slice out headers from base64 image string
-    //const image = data.photo?.image
-    const image = undefined
+    const image = license.photo?.image
 
     if (!inputValues) return null
     //Fetch template from api?
     const payload: PassDataInput = {
       inputFieldValues: inputValues,
-      expirationDate: data.expires?.toISOString(),
+      expirationDate: license.dateValidTo?.toISOString(),
       thumbnail: image
         ? {
-            imageBase64String: image ?? '',
+            imageBase64String: image.substring(image.indexOf(',') + 1).trim(),
           }
         : null,
     }
+
     return payload
   }
 
@@ -150,9 +157,25 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
   }
 
   async getPkPass(user: User): Promise<Result<Pass>> {
-    const license = await this.fetchLicense(user)
+    const license = await Promise.all([
+      this.fetchLicense(user),
+      this.fetchCategories(),
+    ])
 
-    if (!license.ok || !license.data) {
+    if (!license) {
+      this.logger.warn('License data fetch failed', {
+        category: LOG_CATEGORY,
+      })
+      return {
+        ok: false,
+        error: {
+          code: 13,
+          message: 'License fetch failed',
+        },
+      }
+    }
+
+    if (!license[0].ok || !license[0].data) {
       this.logger.info(
         `No license data found for user, no pkpass payload to create`,
         { LOG_CATEGORY },
@@ -166,7 +189,7 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
       }
     }
 
-    const valid = this.licenseIsValidForPkPass(license.data)
+    const valid = this.licenseIsValidForPkPass(license[0].data)
 
     if (!valid) {
       return {
@@ -179,8 +202,8 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
     }
 
     const payload = await this.createPkPassPayload(
-      license.data,
-      user.nationalId,
+      license[0].data,
+      license[1] ?? [],
     )
 
     if (!payload) {
@@ -195,9 +218,13 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
 
     const pass = await this.smartApi.generatePkPass(
       payload,
-      formatNationalId(user.nationalId),
+      format(user.nationalId),
+      () =>
+        this.drivingApi.notifyOnPkPassCreation({
+          nationalId: user.nationalId,
+          token: user.authorization.replace(/^bearer /i, ''),
+        }),
     )
-
     return pass
   }
 
@@ -258,26 +285,65 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
   }
 
   async verifyPkPass(data: string): Promise<Result<PkPassVerification>> {
-    const { code, date } = JSON.parse(data) as PkPassVerificationInputData
+    const parsedInput = JSON.parse(data)
+
+    const { code, date } = parsedInput as PkPassVerificationInputData
+
     const result = await this.smartApi.verifyPkPass({ code, date })
 
-    if (!result.ok) {
+    if (!result) {
+      this.logger.warn('Missing pkpass verify from client', {
+        category: LOG_CATEGORY,
+      })
       return result
     }
 
-    /*
-      TODO: VERIFICATION!!!!!!!! Máni (thorkellmani @ github)
-      Currently Impossible
-      A robust verification needs to both check that the PkPass is valid,
-      and that the user being scanned does indeed have a license!.
-      This method currently checks the validity of the PkPass, but we can't
-      inspect the validity of their actual ADR license. As of now, we can
-      only retrieve the license of a logged in user, not the user being scanned!
-    */
+    if (!result.ok) {
+      this.logger.warn('Pkpass verification failed', {
+        ...result.error,
+        category: LOG_CATEGORY,
+      })
+
+      throw new BadRequestException(result.error.message)
+    }
+
+    const nationalIdFromPkPass = result.data.pass?.inputFieldValues
+      .find((i) => i.passInputField.identifier === 'kennitala')
+      ?.value?.replace('-', '')
+
+    if (!nationalIdFromPkPass) {
+      throw new BadRequestException('Invalid Pkpass, missing national id')
+    }
+
+    const license = await this.drivingApi.getCurrentLicenseV4({
+      nationalId: nationalIdFromPkPass,
+    })
+    // and then compare to verify that the licenses sync up if (!license) {
+
+    if (!license) {
+      this.logger.warn('No license found for pkpass national id', {
+        category: LOG_CATEGORY,
+      })
+      throw new BadRequestException('No license found for pkass national id')
+    }
+
+    const licenseNationalId = license?.socialSecurityNumber
+    const name = license?.name
+    const photo = license?.photo?.image ?? ''
+
+    const rawData = license ? JSON.stringify(license) : undefined
 
     return {
       ok: true,
-      data: result.data,
+      data: {
+        valid: result.data.valid,
+        data: JSON.stringify({
+          nationalId: licenseNationalId,
+          name,
+          photo,
+          rawData,
+        }),
+      },
     }
   }
 }

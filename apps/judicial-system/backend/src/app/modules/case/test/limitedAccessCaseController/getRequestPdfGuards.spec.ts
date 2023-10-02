@@ -7,9 +7,10 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
-import { CaseScheduledGuard } from '../../guards/caseScheduled.guard'
+import { LimitedAccessAccordingToCaseStateGuard } from '../../guards/limitedAccessAccordingToCaseState.guard'
 import { CaseDefenderGuard } from '../../guards/caseDefender.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
+import { RequestSharedWithDefenderGuard } from '../../guards/requestSharedWithDefender.guard'
 import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
 
 describe('LimitedAccessCaseController - Get request pdf guards', () => {
@@ -23,8 +24,8 @@ describe('LimitedAccessCaseController - Get request pdf guards', () => {
     )
   })
 
-  it('should have six guards', () => {
-    expect(guards).toHaveLength(6)
+  it('should have seven guards', () => {
+    expect(guards).toHaveLength(7)
   })
 
   describe('JwtAuthGuard', () => {
@@ -78,15 +79,27 @@ describe('LimitedAccessCaseController - Get request pdf guards', () => {
     })
   })
 
-  describe('CaseScheduledGuard', () => {
+  describe('LimitedAccessAccordingToCaseStateGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[4]()
     })
 
-    it('should have CaseScheduledGuard as guard 5', () => {
-      expect(guard).toBeInstanceOf(CaseScheduledGuard)
+    it('should have LimitedAccessAccordingToCaseStateGuard as guard 5', () => {
+      expect(guard).toBeInstanceOf(LimitedAccessAccordingToCaseStateGuard)
+    })
+  })
+
+  describe('RequestSharedWithDefenderGuard', () => {
+    let guard: CanActivate
+
+    beforeEach(() => {
+      guard = new guards[5]()
+    })
+
+    it('should have RequestSharedWithDefenderGuard as guard 6', () => {
+      expect(guard).toBeInstanceOf(RequestSharedWithDefenderGuard)
     })
   })
 
@@ -94,10 +107,10 @@ describe('LimitedAccessCaseController - Get request pdf guards', () => {
     let guard: CanActivate
 
     beforeEach(() => {
-      guard = new guards[5]()
+      guard = new guards[6]()
     })
 
-    it('should have CaseDefenderGuard as guard 6', () => {
+    it('should have CaseDefenderGuard as guard 7', () => {
       expect(guard).toBeInstanceOf(CaseDefenderGuard)
     })
   })

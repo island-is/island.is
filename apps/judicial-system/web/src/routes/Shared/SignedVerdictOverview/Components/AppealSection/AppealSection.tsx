@@ -1,25 +1,27 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
 import { useEffectOnce } from 'react-use'
+import { AnimatePresence } from 'framer-motion'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { CaseAppealDecision } from '@island.is/judicial-system/types'
+import { formatDate } from '@island.is/judicial-system/formatters'
+import { signedVerdictOverview } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
-import { formatDate } from '@island.is/judicial-system/formatters'
-import { signedVerdictOverview } from '@island.is/judicial-system-web/messages'
-import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseAppealDecision,
+  InstitutionType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
-import AccusedAppealInfo from '../Accused/AccusedAppealInfo'
-import ProsecutorAppealInfo from '../Prosecutor/ProsecutorAppealInfo'
 import AccusedAppealDatePicker from '../Accused/AccusedAppealDatePicker'
+import AccusedAppealInfo from '../Accused/AccusedAppealInfo'
 import ProsecutorAppealDatePicker from '../Prosecutor/ProsecutorAppealDatePicker'
+import ProsecutorAppealInfo from '../Prosecutor/ProsecutorAppealInfo'
 import * as styles from './AppealSection.css'
 
 interface Props {
@@ -30,7 +32,7 @@ interface Props {
   withdrawProsecutorAppealDate?: () => void
 }
 
-const AppealSection: React.FC<Props> = (props) => {
+const AppealSection: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const {
     workingCase,
     setAccusedAppealDate,
@@ -40,7 +42,8 @@ const AppealSection: React.FC<Props> = (props) => {
   } = props
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-  const isHighCourt = user?.institution?.type === InstitutionType.HIGH_COURT
+  const isCourtOfAppeals =
+    user?.institution?.type === InstitutionType.COURT_OF_APPEALS
 
   const [isInitialMount, setIsInitialMount] = useState<boolean>(true)
 
@@ -57,13 +60,13 @@ const AppealSection: React.FC<Props> = (props) => {
       </Box>
       {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
         workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE) &&
-        workingCase.courtEndTime &&
-        !isHighCourt && (
+        workingCase.rulingDate &&
+        !isCourtOfAppeals && (
           <Box marginBottom={3}>
             <Text>
               {formatMessage(signedVerdictOverview.sections.appeal.deadline, {
                 isAppealDeadlineExpired: workingCase.isAppealDeadlineExpired,
-                appealDeadline: getAppealEndDate(workingCase.courtEndTime),
+                appealDeadline: getAppealEndDate(workingCase.rulingDate),
               })}
             </Text>
           </Box>
@@ -75,10 +78,10 @@ const AppealSection: React.FC<Props> = (props) => {
               text={formatMessage(
                 signedVerdictOverview.sections.appeal.defendantAppealed,
                 {
-                  courtEndTime: `${formatDate(
-                    workingCase.courtEndTime,
+                  rulingDate: `${formatDate(
+                    workingCase.rulingDate,
                     'PP',
-                  )} kl. ${formatDate(workingCase.courtEndTime, 'p')}`,
+                  )} kl. ${formatDate(workingCase.rulingDate, 'p')}`,
                 },
               )}
               fluid
@@ -94,10 +97,10 @@ const AppealSection: React.FC<Props> = (props) => {
               text={formatMessage(
                 signedVerdictOverview.sections.appeal.prosecutorAppealed,
                 {
-                  courtEndTime: `${formatDate(
-                    workingCase.courtEndTime,
+                  rulingDate: `${formatDate(
+                    workingCase.rulingDate,
                     'PP',
-                  )} kl. ${formatDate(workingCase.courtEndTime, 'p')}`,
+                  )} kl. ${formatDate(workingCase.rulingDate, 'p')}`,
                 },
               )}
               fluid
@@ -126,7 +129,7 @@ const AppealSection: React.FC<Props> = (props) => {
                   <AccusedAppealInfo
                     workingCase={workingCase}
                     withdrawAccusedAppealDate={
-                      workingCase.isAppealGracePeriodExpired || isHighCourt
+                      workingCase.isAppealGracePeriodExpired || isCourtOfAppeals
                         ? undefined
                         : withdrawAccusedAppealDate
                     }
@@ -157,7 +160,7 @@ const AppealSection: React.FC<Props> = (props) => {
                       workingCase.prosecutorPostponedAppealDate
                     }
                     withdrawProsecutorAppealDate={
-                      workingCase.isAppealGracePeriodExpired || isHighCourt
+                      workingCase.isAppealGracePeriodExpired || isCourtOfAppeals
                         ? undefined
                         : withdrawProsecutorAppealDate
                     }

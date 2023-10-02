@@ -14,7 +14,7 @@ import {
 } from './change-operator-of-vehicle.utils'
 import {
   ChargeFjsV2ClientService,
-  getChargeId,
+  getPaymentIdFromExternalData,
 } from '@island.is/clients/charge-fjs-v2'
 import {
   ChangeOperatorOfVehicleAnswers,
@@ -94,16 +94,18 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
         // Only validate if fewer than 5 items
         if (result.length <= 5) {
           // Get debt status
-          debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
-            auth,
-            vehicle.permno || '',
-          )
+          debtStatus =
+            await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
+              auth,
+              vehicle.permno || '',
+            )
 
           // Get validation
-          validation = await this.vehicleOperatorsClient.validateVehicleForOperatorChange(
-            auth,
-            vehicle.permno || '',
-          )
+          validation =
+            await this.vehicleOperatorsClient.validateVehicleForOperatorChange(
+              auth,
+              vehicle.permno || '',
+            )
         }
 
         return {
@@ -147,11 +149,12 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           : true,
     }))
 
-    const result = await this.vehicleOperatorsClient.validateAllForOperatorChange(
-      auth,
-      permno,
-      operators,
-    )
+    const result =
+      await this.vehicleOperatorsClient.validateAllForOperatorChange(
+        auth,
+        permno,
+        operators,
+      )
 
     // If we get any error messages, we will just throw an error with a default title
     // We will fetch these error messages again through graphql in the template, to be able
@@ -208,12 +211,8 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     }
 
     // 1b. Make sure payment is fulfilled (has been paid)
-    const payment:
-      | { fulfilled: boolean }
-      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
-      application.id,
-    )
+    const payment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
     if (!payment?.fulfilled) {
       throw new Error(
         'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
@@ -267,16 +266,9 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
     // 1. Delete charge so that the seller gets reimburshed
-    const chargeId = getChargeId(application)
+    const chargeId = getPaymentIdFromExternalData(application)
     if (chargeId) {
-      const status = await this.chargeFjsV2ClientService.getChargeStatus(
-        chargeId,
-      )
-
-      // Make sure charge has not been deleted yet (will otherwise end in error here and wont continue)
-      if (status !== 'cancelled') {
-        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
-      }
+      this.chargeFjsV2ClientService.deleteCharge(chargeId)
     }
 
     // 2. Notify everyone in the process that the application has been withdrawn
@@ -344,12 +336,8 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     }
 
     // 1b. Make sure payment is fulfilled (has been paid)
-    const isPayment:
-      | { fulfilled: boolean }
-      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
-      application.id,
-    )
+    const isPayment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
 
     if (!isPayment?.fulfilled) {
       throw new Error(
@@ -364,10 +352,8 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     const permno = answers?.pickVehicle?.plate
 
     // Note: Need to be sure that the user that created the application is the seller when submitting application to SGS
-    const currentOwner = await this.vehicleOwnerChangeClient.getNewestOwnerChange(
-      auth,
-      permno,
-    )
+    const currentOwner =
+      await this.vehicleOwnerChangeClient.getNewestOwnerChange(auth, permno)
     if (currentOwner?.ownerSsn !== application.applicant) {
       throw new TemplateApiError(
         {

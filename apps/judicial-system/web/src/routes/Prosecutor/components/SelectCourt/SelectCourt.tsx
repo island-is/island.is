@@ -1,14 +1,13 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { ValueType } from 'react-select'
 
 import { Box, Select, Text } from '@island.is/island-ui/core'
-import {
-  TempCase as Case,
-  ReactSelectOption,
-} from '@island.is/judicial-system-web/src/types'
 import { selectCourt as m } from '@island.is/judicial-system-web/messages'
 import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  ReactSelectOption,
+  TempCase as Case,
+} from '@island.is/judicial-system-web/src/types'
 
 type CourtSelectOption = ReactSelectOption & { court: Institution }
 
@@ -18,14 +17,12 @@ interface Props {
   onChange: (court: Institution) => boolean
 }
 
-const SelectCourt: React.FC<Props> = (props) => {
+const SelectCourt: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, courts, onChange } = props
 
   const { formatMessage } = useIntl()
 
-  const [selectedCourt, setSelectedCourt] = useState<
-    ValueType<CourtSelectOption>
-  >(
+  const [selectedCourt, setSelectedCourt] = useState<CourtSelectOption | null>(
     workingCase.court
       ? {
           label: workingCase.court.name,
@@ -54,7 +51,7 @@ const SelectCourt: React.FC<Props> = (props) => {
         placeholder={formatMessage(m.placeholder)}
         value={selectedCourt}
         options={selectCourts}
-        onChange={(selectedOption: ValueType<ReactSelectOption>) => {
+        onChange={(selectedOption) => {
           onChange((selectedOption as CourtSelectOption).court) &&
             setSelectedCourt(selectedOption as CourtSelectOption)
         }}

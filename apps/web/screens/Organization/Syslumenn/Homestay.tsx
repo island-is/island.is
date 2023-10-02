@@ -39,6 +39,7 @@ import { SliceType } from '@island.is/island-ui/contentful'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useRouter } from 'next/router'
 import { webRichText } from '@island.is/web/utils/richText'
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
 const PAGE_SIZE = 10
 const CSV_COLUMN_SEPARATOR = ','
@@ -66,7 +67,9 @@ const Homestay: Screen<HomestayProps> = ({
   homestays,
   namespace,
 }) => {
-  useContentfulId(organizationPage.id, subpage.id)
+  useContentfulId(organizationPage?.id, subpage?.id)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
@@ -74,7 +77,9 @@ const Homestay: Screen<HomestayProps> = ({
 
   const pageUrl = Router.pathname
 
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
       href: primaryLink?.url,
@@ -125,6 +130,8 @@ const Homestay: Screen<HomestayProps> = ({
             homestay.year?.toString(),
             homestay.guests?.toString(),
             homestay.rooms?.toString(),
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
           ].map((x) => csvColumnSeparatorSafeValue(x))
           rows.push(columnValues.join(CSV_COLUMN_SEPARATOR))
         }
@@ -150,18 +157,23 @@ const Homestay: Screen<HomestayProps> = ({
 
   return (
     <OrganizationWrapper
-      pageTitle={subpage.title}
+      pageTitle={subpage?.title ?? ''}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       organizationPage={organizationPage}
       showReadSpeaker={false}
-      pageFeaturedImage={subpage.featuredImage}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      pageFeaturedImage={subpage?.featuredImage}
       breadcrumbItems={[
         {
           title: 'Ísland.is',
           href: linkResolver('homepage').href,
         },
         {
-          title: organizationPage.title,
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
+          title: organizationPage?.title || '',
+          href: linkResolver('organizationpage', [organizationPage?.slug ?? ''])
+            .href,
         },
       ]}
       navigationData={{
@@ -171,11 +183,16 @@ const Homestay: Screen<HomestayProps> = ({
     >
       <Box paddingBottom={0}>
         <Text variant="h1" as="h2">
-          {subpage.title}
+          {subpage?.title}
         </Text>
-        <Webreader readId={null} readClass="rs_read" />
+        <Webreader
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          readId={null}
+          readClass="rs_read"
+        />
       </Box>
-      {webRichText(subpage.description as SliceType[])}
+      {webRichText(subpage?.description as SliceType[])}
       <Box marginTop={4} marginBottom={6}>
         <Input
           name="homestaySearchInput"
@@ -255,10 +272,17 @@ const Homestay: Screen<HomestayProps> = ({
                   <Text>
                     {n('homestayRealEstateNumberPrefix', 'Fasteign nr.')}{' '}
                     <a
-                      href={(n(
-                        'realEstateRegistryLinkTemplate',
-                        'https://fasteignaskra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2&selector=streetname&streetname={{ID}}&submitbutton=Leita',
-                      ) as string).replace('{{ID}}', homestay.propertyId)}
+                      href={(
+                        n(
+                          'realEstateRegistryLinkTemplate',
+                          'https://fasteignaskra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2&selector=streetname&streetname={{ID}}&submitbutton=Leita',
+                        ) as string
+                      ).replace(
+                        '{{ID}}',
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
+                        homestay.propertyId,
+                      )}
                     >
                       {homestay.propertyId}
                     </a>
@@ -294,7 +318,8 @@ const Homestay: Screen<HomestayProps> = ({
   )
 }
 
-Homestay.getInitialProps = async ({ apolloClient, locale, pathname }) => {
+Homestay.getProps = async ({ apolloClient, locale, req }) => {
+  const pathname = safelyExtractPathnameFromUrl(req.url)
   const path = pathname?.split('/') ?? []
   const slug = path?.[path.length - 2] ?? 'syslumenn'
   const subSlug = path.pop() ?? 'heimagisting'
@@ -347,7 +372,7 @@ Homestay.getInitialProps = async ({ apolloClient, locale, pathname }) => {
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),

@@ -59,7 +59,9 @@ const Clients = () => {
         marginBottom={[4, 4, 4, 6]}
       >
         <Stack space={2}>
-          <Text variant={'h2'}>{formatMessage(m.clients)}</Text>
+          <Text as="h1" variant="h2">
+            {formatMessage(m.clients)}
+          </Text>
           <Text variant={'default'}>{formatMessage(m.clientsDescription)}</Text>
         </Stack>
         {withCreateButton && (
@@ -124,6 +126,7 @@ const Clients = () => {
           return (
             <IdsAdminCard
               key={`clients-${item.clientId}`}
+              dataTestId="tenant-applications-list-item"
               title={
                 item.defaultEnvironment.displayName.find(
                   (translatedValue) => locale === translatedValue.locale,

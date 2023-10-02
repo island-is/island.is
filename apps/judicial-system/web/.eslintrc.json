@@ -1,12 +1,12 @@
 {
   "extends": [
-    "plugin:@nrwl/nx/react",
+    "plugin:@nx/react",
     "plugin:jsx-a11y/strict",
     "../../../.eslintrc.json"
   ],
   "ignorePatterns": ["!**/*", "/src/graphql/schema.tsx"],
   "rules": {
-    "@nrwl/nx/enforce-module-boundaries": [
+    "@nx/enforce-module-boundaries": [
       "error",
       {
         "enforceBuildableLibDependency": true,
@@ -22,9 +22,30 @@
       {
         "ignoreNonDOM": true
       }
+    ],
+    "simple-import-sort/imports": [
+      "error",
+      {
+        "groups": [
+          // Packages `react` related packages come first, followed by all external imports.
+          ["^react", "^\\w", "^@(?!island).+"],
+          // Then island.is packages.
+          ["^(@island.is).*"],
+          // Then all other imports in this order: "../", "./", "./strings", "./css"
+          [
+            "^\\.\\.(?!/?$)",
+            "^\\.\\./?$",
+            "^\\./(?=.*/)(?!/?$)",
+            "^\\.(?!/?$)",
+            "^\\./?$",
+            "^.+\\.?(strings)$",
+            "^.+\\.?(css)$"
+          ]
+        ]
+      }
     ]
   },
-  "plugins": ["jsx-a11y"],
+  "plugins": ["jsx-a11y", "simple-import-sort"],
   "overrides": [
     { "files": ["*.ts", "*.tsx", "*.js", "*.jsx"], "rules": {} },
     {

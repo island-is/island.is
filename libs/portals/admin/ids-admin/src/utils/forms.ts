@@ -1,3 +1,5 @@
+import { z } from 'zod'
+
 const pseudolocalizationMap = {
   ð: 'd',
   þ: 'th',
@@ -68,3 +70,8 @@ export const parseID = ({
   // If user tries to erase the prefix, we add it back
   return `${prefix}${formatID(value).split('/').join('/')}`
 }
+
+export const booleanCheckbox = z.preprocess(
+  (value) => value === 'true',
+  z.boolean(),
+)

@@ -4,20 +4,21 @@ import {
   Text,
   Stack,
   FocusableBox,
+  LinkV2,
 } from '@island.is/island-ui/core'
-import { useState } from 'react'
 import { mapIsToEn } from '../../../../../../utils/helpers'
-import * as styles from './SubscriptionTableItem.css'
+import * as styles from '../../SubscriptionTable.css'
 import { Area } from '../../../../../../types/enums'
 import {
   SubscriptionArray,
-  SubscriptionTableItem,
+  SubscriptionTableItem as SubscriptionTableItemType,
 } from '../../../../../../types/interfaces'
 import localization from '../../../../Subscriptions.json'
 import { tableRowBackgroundColor } from '../../../../utils'
+import cn from 'classnames'
 
 interface Props {
-  item: SubscriptionTableItem
+  item: SubscriptionTableItemType
   idx: number
   currentTab: Area
   mdBreakpoint: boolean
@@ -35,16 +36,10 @@ const SubscriptionTableItem = ({
   subscriptionArray,
   setSubscriptionArray,
 }: Props) => {
-  const [isOpen, setIsOpen] = useState(false)
   const loc = localization.subscriptionTableItem
-
-  const onClick = () => {
-    setIsOpen(!isOpen)
-  }
-
   const borderColor = 'transparent'
 
-  const onCheckboxChange = () => {
+  const checkboxHandler = () => {
     if (isGeneralSubscription) {
       const subscriptionArrayCopy = { ...subscriptionArray }
       // idx 0 is All, idx 1 is changes
@@ -76,97 +71,122 @@ const SubscriptionTableItem = ({
       thisData[thisInstance].checked = !oldVal
       subscriptionArrayCopy[mapIsToEn[currentTab]] = thisData
       setSubscriptionArray(subscriptionArrayCopy)
-
-      if ((oldVal && isOpen) || (!oldVal && !isOpen)) {
-        setIsOpen(!isOpen)
-      }
     }
   }
 
   const { Row, Data: TData } = T
 
-  const Data = ({ width = '', children }) => {
+  const Data = ({
+    width = '',
+    children,
+    isLastOrFirst = false,
+    isLeft = false,
+  }) => {
+    const className = isLeft ? styles.tableRowLeft : styles.tableRowRight
     return (
       <TData
         width={width}
         borderColor={borderColor}
-        box={{ background: tableRowBackgroundColor(idx) }}
+        box={{
+          background: tableRowBackgroundColor(idx),
+          className: cn(
+            styles.paddingRightZero,
+            isLastOrFirst ? className : '',
+          ),
+        }}
       >
         {children}
       </TData>
     )
   }
 
+  const LinkBox = ({ children }) => {
+    return (
+      <FocusableBox
+        component={LinkV2}
+        href={`${loc.caseHref}${item.id}`}
+        target="_blank"
+        title={loc.infoText}
+        textAlign="left"
+      >
+        {children}
+      </FocusableBox>
+    )
+  }
+
+  const Stacked = () => {
+    return (
+      <Stack space={1}>
+        <Text variant="medium" fontWeight="semiBold">
+          {isGeneralSubscription ? loc.allCases : `S-${item.caseNumber}`}
+        </Text>
+        <Text variant="medium" fontWeight="light">
+          {item.name}
+        </Text>
+      </Stack>
+    )
+  }
+
   return (
     <>
       <Row key={item.key}>
-        <Data width="10">
-          <Checkbox
-            checked={item.checked}
-            onChange={() => onCheckboxChange()}
-          />
+        <Data isLastOrFirst isLeft>
+          <Checkbox checked={item.checked} onChange={checkboxHandler} />
         </Data>
         {currentTab !== Area.case ? (
           isGeneralSubscription ? (
             <Data>
-              <FocusableBox>
-                <Text variant="h5">{loc.allCases}</Text>
-              </FocusableBox>
-              <FocusableBox>
-                <Text variant="medium" fontWeight="light">
-                  {item.name}
-                </Text>
-              </FocusableBox>
+              <Text variant="medium" fontWeight="semiBold">
+                {loc.allCases}
+              </Text>
+              <Text variant="medium" fontWeight="light">
+                {item.name}
+              </Text>
             </Data>
           ) : (
             <Data>
-              <FocusableBox onClick={onClick}>
-                <Text variant="h5">{item.name}</Text>
-              </FocusableBox>
+              <Text variant="medium" fontWeight="semiBold">
+                {item.name}
+              </Text>
             </Data>
           )
         ) : mdBreakpoint ? (
           <>
             <Data>
-              <FocusableBox onClick={onClick}>
-                <Text variant="h5">
-                  {isGeneralSubscription ? loc.allCases : item.caseNumber}
-                </Text>
-              </FocusableBox>
+              <Text variant="medium" fontWeight="semiBold">
+                {isGeneralSubscription ? loc.allCases : `S-${item.caseNumber}`}
+              </Text>
             </Data>
             <Data>
-              <FocusableBox onClick={onClick}>
+              {isGeneralSubscription ? (
                 <Text variant="medium" fontWeight="light">
                   {item.name}
                 </Text>
-              </FocusableBox>
+              ) : (
+                <LinkBox>
+                  <Text variant="medium" fontWeight="light">
+                    {item.name}
+                  </Text>
+                </LinkBox>
+              )}
             </Data>
           </>
         ) : (
           <>
             <Data>
-              <FocusableBox onClick={onClick}>
-                <Stack space={1}>
-                  <Text variant="h5">
-                    {isGeneralSubscription ? loc.allCases : item.caseNumber}
-                  </Text>
-                  <Text variant="medium" fontWeight="light">
-                    {item.name}
-                  </Text>
-                </Stack>
-              </FocusableBox>
+              {isGeneralSubscription ? (
+                <Stacked />
+              ) : (
+                <LinkBox>
+                  <Stacked />
+                </LinkBox>
+              )}
             </Data>
           </>
         )}
-
-        <TData
-          borderColor={borderColor}
-          box={{
-            className: styles.tableRowRight,
-            background: tableRowBackgroundColor(idx),
-          }}
-          align="right"
-        ></TData>
+        <Data isLastOrFirst>
+          <></>
+        </Data>
       </Row>
     </>
   )

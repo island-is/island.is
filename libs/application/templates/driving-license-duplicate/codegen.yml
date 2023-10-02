@@ -1,7 +1,7 @@
 schema:
   - apps/api/src/api.graphql
 generates:
-  libs/application/templates/driving-license-duplicaten/src/types/schema.ts:
+  libs/application/templates/driving-license-duplicate/src/types/schema.ts:
     plugins:
       - typescript
       - typescript-operations

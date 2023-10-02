@@ -3,7 +3,7 @@ import { ParentalLeaveModule } from './parental-leave/parental-leave.module'
 import { DocumentProviderOnboardingModule } from './document-provider-onboarding/document-provider-onboarding.module'
 import { InstitutionCollaborationModule } from './institution-collaboration/institution-collaboration.module'
 import { HealthInsuranceModule } from './health-insurance/health-insurance.module'
-import { ChildrenResidenceChangeModule } from './children-residence-change/children-residence-change.module'
+import { ChildrenResidenceChangeModuleV2 } from './children-residence-change-v2/children-residence-change.module'
 import { LoginServiceModule } from './login-service/login-service.module'
 import { FundingGovernmentProjectsModule } from './funding-government-projects/funding-government-projects.module'
 import { DrivingLicenseSubmissionModule } from './driving-license-submission/driving-license-submission.module'
@@ -29,7 +29,9 @@ import { ParentalLeaveService } from './parental-leave/parental-leave.service'
 import { DocumentProviderOnboardingService } from './document-provider-onboarding/document-provider-onboarding.service'
 import { InstitutionCollaborationService } from './institution-collaboration/institution-collaboration.service'
 import { HealthInsuranceService } from './health-insurance/health-insurance.service'
+import { ChildrenResidenceChangeServiceV2 } from './children-residence-change-v2/children-residence-change.service'
 import { ChildrenResidenceChangeService } from './children-residence-change/children-residence-change.service'
+import { ChildrenResidenceChangeModule } from './children-residence-change/children-residence-change.module'
 import { LoginServiceService } from './login-service/login-service.service'
 import { FundingGovernmentProjectsService } from './funding-government-projects/funding-government-projects.service'
 import { DrivingLicenseSubmissionService } from './driving-license-submission/driving-license-submission.service'
@@ -85,8 +87,8 @@ import { DrivingLicenseBookUpdateInstructorService } from './driving-license-boo
 import { DrivingLearnersPermitModule } from './driving-learners-permit/driving-learners-permit.module'
 import { DrivingLearnersPermitService } from './driving-learners-permit/driving-learners-permit.service'
 
-//TODO: ADD These templates.
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
+import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -98,6 +100,7 @@ export const modules = [
   InstitutionCollaborationModule,
   HealthInsuranceModule,
   ChildrenResidenceChangeModule,
+  ChildrenResidenceChangeModuleV2,
   LoginServiceModule,
   FundingGovernmentProjectsModule,
   DrivingLicenseSubmissionModule,
@@ -133,6 +136,7 @@ export const modules = [
   EuropeanHealthInsuranceCardModule,
   DrivingLicenseBookUpdateInstructorModule,
   DrivingLearnersPermitModule,
+  DrivingLicenseDuplicateModule,
 ]
 
 export const services = [
@@ -145,6 +149,7 @@ export const services = [
   InstitutionCollaborationService,
   HealthInsuranceService,
   ChildrenResidenceChangeService,
+  ChildrenResidenceChangeServiceV2,
   LoginServiceService,
   FundingGovernmentProjectsService,
   DrivingLicenseSubmissionService,
@@ -180,4 +185,5 @@ export const services = [
   EuropeanHealthInsuranceCardService,
   DrivingLicenseBookUpdateInstructorService,
   DrivingLearnersPermitService,
+  DrivingLicenseDuplicateService,
 ]

@@ -64,7 +64,7 @@ export class FileController {
 
     return this.fileService.tryGetPdf(
       user.id,
-      AuditedAction.GET_REQUEST_PDF,
+      AuditedAction.GET_CASE_FILES_PDF,
       id,
       `caseFilesRecord/${policeCaseNumber}`,
       req,

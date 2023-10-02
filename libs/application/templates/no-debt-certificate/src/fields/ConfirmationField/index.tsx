@@ -43,15 +43,14 @@ type ConfirmationFieldProps = {
   }
 }
 
-export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
-  application,
-}) => {
+export const ConfirmationField: FC<
+  React.PropsWithChildren<FieldBaseProps & ConfirmationFieldProps>
+> = ({ application }) => {
   const { externalData } = application
   const { formatMessage } = useLocale()
   const [viewNoDebtCertificate, setViewNoDebtCertificate] = useState(false)
-  const {
-    document,
-  } = externalData.noDebtCertificate.data.debtLessCertificateResult.certificate
+  const { document } =
+    externalData.noDebtCertificate.data.debtLessCertificateResult.certificate
 
   function renderFooter() {
     return (

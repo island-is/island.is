@@ -9,7 +9,7 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { EstateTypes } from '../lib/constants'
 import { m } from '../lib/messages'
-import { deceasedInfoFields } from './sharedSections/deceasedInfoFields'
+import { deceasedInfoFields } from './Sections/deceasedInfoFields'
 
 export const getForm = ({
   allowDivisionOfEstate = false,
@@ -30,25 +30,24 @@ export const getForm = ({
           buildMultiField({
             id: 'estate',
             title: m.prerequisitesTitle,
-            description: m.prerequisitesSubtitle,
             children: [
               ...deceasedInfoFields,
               buildDescriptionField({
-                id: 'space1',
-                space: 'gutter',
+                id: 'applicationInfo',
+                space: 'containerGutter',
                 title: '',
+                description: m.prerequisitesSubtitle,
               }),
               buildRadioField({
                 id: 'selectedEstate',
                 title: '',
                 width: 'full',
-                defaultValue: EstateTypes.permitToPostponeEstateDivision,
                 options: [
                   ...(allowDivisionOfEstate
                     ? [
                         {
-                          value: EstateTypes.divisionOfEstate,
-                          label: EstateTypes.divisionOfEstate,
+                          value: EstateTypes.officialDivision,
+                          label: EstateTypes.officialDivision,
                         },
                       ]
                     : []),
@@ -63,8 +62,8 @@ export const getForm = ({
                   ...(allowPermitToPostponeEstateDivision
                     ? [
                         {
-                          value: EstateTypes.permitToPostponeEstateDivision,
-                          label: EstateTypes.permitToPostponeEstateDivision,
+                          value: EstateTypes.permitForUndividedEstate,
+                          label: EstateTypes.permitForUndividedEstate,
                         },
                       ]
                     : []),

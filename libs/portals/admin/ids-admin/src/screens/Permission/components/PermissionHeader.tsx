@@ -6,11 +6,8 @@ import { EnvironmentHeader } from '../../../components/EnvironmentHeader/Environ
 
 export const PermissionHeader = () => {
   const { locale } = useLocale()
-  const {
-    selectedPermission,
-    onEnvironmentChange,
-    permission,
-  } = usePermission()
+  const { selectedPermission, onEnvironmentChange, permission } =
+    usePermission()
 
   return (
     <EnvironmentHeader
@@ -18,7 +15,6 @@ export const PermissionHeader = () => {
       selectedEnvironment={selectedPermission.environment}
       availableEnvironments={permission.availableEnvironments}
       onChange={onEnvironmentChange}
-      allowPublishing={false}
     />
   )
 }

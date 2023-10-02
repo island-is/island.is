@@ -1,18 +1,22 @@
 {
   "case": {
+    "documentsBox": {
+      "documents": { "title": "Skjöl til samráðs" },
+      "additional": { "title": "Fylgiskjöl" }
+    }
+  },
+  "caseSkeleton": {
     "seo": {
       "title": "Mál",
-      "url": "/mal/"
+      "url": "/mal/",
+      "keywords": "Opinbert samráð, lagasetning, frumvarp, reglugerð, stefna, umsögn, umsagnir"
     },
     "breadcrumbs": {
       "parent": { "title": "Öll mál", "href": "/samradsgatt" },
       "current": { "title": "Mál nr." }
-    },
-
-    "documentsBox": {
-      "documents": { "title": "Skjöl til samráðs" },
-      "additional": { "title": "Fylgiskjöl" }
-    },
+    }
+  },
+  "renderAdvices": {
     "advices": {
       "title": "Innsendar umsagnir"
     }
@@ -20,7 +24,7 @@
   "stakeholders": {
     "title": "Boð um þátttöku",
     "description": "Allir geta sent inn umsögn og verið áskrifendur að málum í Samráðsgátt. Í þessu máli var boð um þátttöku að auki sent eftirtöldum:",
-    "noList": "Enginn listi skráður."
+    "noList": "Enginn listi skráður"
   },
   "relatedCases": {
     "title": "Tenging við önnur mál",
@@ -45,7 +49,7 @@
       "show": "Birt",
       "advicesCount": "Fjöldi umsagna"
     },
-    "announcementTitle": "Málsefni",
+    "shortDescriptionTitle": "Málsefni",
     "detailedDescriptionTitle": "Nánari upplýsingar"
   },
   "caseEmailBox": {
@@ -67,7 +71,7 @@
       "button": "Skrá mig inn"
     },
     "setEmailCardSkeleton": {
-      "text": "Skráðu netfang hérna. Þú færð svo tölvupóst sem þú þarf að staðfesta til að hægt sé að skrá áskrift á það.",
+      "text": "Skráðu netfang hérna. Þú færð svo tölvupóst sem þú þarft að staðfesta.",
       "input": {
         "label": "Netfang",
         "placeholder": "nonni@island.is"
@@ -80,23 +84,15 @@
     },
     "subbedCardSkeleton": {
       "initial": {
-        "text": "Þú ert þegar með áskrift af þessu máli. Þú getur valið um að breyta tegund áskriftar eða fjarlægja áskrift.",
-        "buttonChange": "Breyta áskrift",
+        "text": "Þú ert þegar með áskrift af þessu máli. Þú getur valið um að fjarlægja áskrift.",
         "buttonRemove": "Fjarlægja áskrift"
-      },
-      "clickedChange": {
-        "text": "Veldu hvernig tilkynningar þú vilt af þessu máli.",
-        "button": "Staðfesta breytingu"
       }
     },
     "notSubbedCardSkeleton": {
-      "text": "Veldu hvernig tilkynningar þú vilt af þessu máli.",
+      "text": "Tilkynningar um breyttan umsagnarfrest, umsagnarfrest sem er að renna út og birtingu niðurstaðna verða sendar á skráð netfang.",
       "button": "Skrá í áskrift"
     },
-    "buttonLabel": "Skrá áskrift"
-  },
-  "caseEmailActionBox": {
-    "buttonLabel": "Breyta áskrift"
+    "buttonLabel": "Skrá áskrift að máli"
   },
   "adviceList": {
     "buttonShow": "Sjá allar umsagnir",
@@ -179,7 +175,10 @@
     }
   },
   "adviceCard": {
-    "hiddenContent": "Umsagnaraðili hefur valið að sýna ekki umsögn sína."
+    "privateContent": "Umsagnaraðili hefur valið að sýna ekki umsögn sína.",
+    "hiddenContent": "Umsögn barst en birtist ekki í gáttinni samkvæmt ákvörðun umsjónaraðila samráðsmáls. Upplýsingalög gilda, sjá nánar í",
+    "hiddenContentLink": "um samráðsgáttina",
+    "hiddenContentHref": "/um"
   },
   "caseDocuments": {
     "linkTitle": "Hlekkur",

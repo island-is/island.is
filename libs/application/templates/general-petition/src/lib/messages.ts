@@ -1,6 +1,18 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  // Applicant
+  phone: {
+    id: 'gpl.application:phone',
+    defaultMessage: 'Símanúmer',
+    description: '',
+  },
+  email: {
+    id: 'gpl.application:email',
+    defaultMessage: 'Netfang',
+    description: '',
+  },
+
   // Application Name
   applicationName: {
     id: 'gpl.application:applicationName',
@@ -61,7 +73,7 @@ export const m = defineMessages({
   },
   listName: {
     id: 'gpl.application:listName',
-    defaultMessage: 'Heiti undirskriftalista',
+    defaultMessage: 'Heiti lista',
     description: '',
   },
   listNamePlaceholder: {
@@ -71,7 +83,7 @@ export const m = defineMessages({
   },
   aboutList: {
     id: 'gpl.application:aboutList',
-    defaultMessage: 'Um undirskriftalista',
+    defaultMessage: 'Um lista',
     description: '',
   },
   aboutListPlaceholder: {
@@ -174,6 +186,12 @@ export const m = defineMessages({
     defaultMessage: 'Ekki birta nafn mitt á lista',
     description: '',
   },
+  hideNameText: {
+    id: 'gpl.application:hideNameText',
+    defaultMessage:
+      '* Athugið að nafn þitt er sýnilegt ábyrgðamanni listans en birtist ekki á vef eða hjá öðrum sem hafa skráð sig á lista.',
+    description: '',
+  },
   agreeToTermsLabel: {
     id: 'gpl.application:agreeToTermsLabel',
     defaultMessage:
@@ -197,7 +215,7 @@ export const m = defineMessages({
   },
   backtoSP: {
     id: 'gpl.application:backtoSP',
-    defaultMessage: 'Til baka á Mínar Síður',
+    defaultMessage: 'Mínar Síður',
     description: '',
   },
 
@@ -225,6 +243,18 @@ export const m = defineMessages({
   validationTilBeforeFrom: {
     id: 'gpl.application:validationTilBeforeFrom',
     defaultMessage: 'Lokadagsetning má ekki vera á undan upphafsdagsetningu',
+    description: '',
+  },
+
+  // History logs
+  logListInProgress: {
+    id: 'gpl.application:listInProgress',
+    defaultMessage: 'Gerð lista hafin',
+    description: '',
+  },
+  logListCreated: {
+    id: 'gpl.application:listCreated',
+    defaultMessage: 'Listi stofnaður',
     description: '',
   },
 })

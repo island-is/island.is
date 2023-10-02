@@ -27,6 +27,8 @@ import { SupportQNASyncService } from './importers/supportQNA.service'
 import { LinkSyncService } from './importers/link.service'
 import { ProjectPageSyncService } from './importers/projectPage.service'
 import { EnhancedAssetSyncService } from './importers/enhancedAsset.service'
+import { VacancySyncService } from './importers/vacancy.service'
+import { ServiceWebPageSyncService } from './importers/serviceWebPage.service'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -66,6 +68,8 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly linkSyncService: LinkSyncService,
     private readonly enhancedAssetService: EnhancedAssetSyncService,
     private readonly elasticService: ElasticService,
+    private readonly vacancyService: VacancySyncService,
+    private readonly serviceWebPageSyncService: ServiceWebPageSyncService,
   ) {
     this.contentSyncProviders = [
       this.articleSyncService,
@@ -83,6 +87,8 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       this.supportQNASyncService,
       this.linkSyncService,
       this.enhancedAssetService,
+      this.vacancyService,
+      this.serviceWebPageSyncService,
     ]
   }
 
@@ -172,12 +178,8 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     }
 
     // gets all data that needs importing
-    const {
-      items,
-      deletedEntryIds,
-      token,
-      elasticIndex,
-    } = await this.contentfulService.getSyncEntries(cmsSyncOptions)
+    const { items, deletedEntryIds, token, elasticIndex } =
+      await this.contentfulService.getSyncEntries(cmsSyncOptions)
     logger.info('Got sync data')
 
     // import data from all providers

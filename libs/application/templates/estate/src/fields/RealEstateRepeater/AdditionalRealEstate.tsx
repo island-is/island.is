@@ -45,22 +45,20 @@ export const AdditionalRealEstate = ({
   const { control, setValue, clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
 
-  const [
-    getProperty,
-    { loading: queryLoading, error: _queryError },
-  ] = useLazyQuery<Query, { input: SearchForPropertyInput }>(
-    SEARCH_FOR_PROPERTY_QUERY,
-    {
-      onCompleted: (data) => {
-        clearErrors(addressField)
-        setValue(
-          addressField,
-          data.searchForProperty?.defaultAddress?.display ?? '',
-        )
+  const [getProperty, { loading: queryLoading, error: _queryError }] =
+    useLazyQuery<Query, { input: SearchForPropertyInput }>(
+      SEARCH_FOR_PROPERTY_QUERY,
+      {
+        onCompleted: (data) => {
+          clearErrors(addressField)
+          setValue(
+            addressField,
+            data.searchForProperty?.defaultAddress?.display ?? '',
+          )
+        },
+        fetchPolicy: 'network-only',
       },
-      fetchPolicy: 'network-only',
-    },
-  )
+    )
 
   useEffect(() => {
     // According to Skra.is:
@@ -135,7 +133,7 @@ export const AdditionalRealEstate = ({
           <InputController
             id={marketValueField}
             name={marketValueField}
-            label={formatMessage(m.marketValueTitle)}
+            label={formatMessage(m.realEstateValueTitle)}
             defaultValue={field.marketValue}
             placeholder={'0 kr.'}
             error={error?.marketValue}

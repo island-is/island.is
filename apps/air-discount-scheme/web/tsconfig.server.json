@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "noEmit": false,
+    "incremental": true,
+    "tsBuildInfoFile": "../../../tmp/buildcache/apps/air-discount-scheme/web/server",
+    "types": ["node"]
+  },
+  "include": ["server.ts"]
+}

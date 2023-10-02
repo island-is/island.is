@@ -22,7 +22,7 @@ import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 
-export const Dashboard: FC<{}> = () => {
+export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
   const { userInfo } = useAuth()
   const location = useLocation()
   const mainNav = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
@@ -32,7 +32,10 @@ export const Dashboard: FC<{}> = () => {
   const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
 
   useEffect(() => {
-    PlausiblePageviewDetail(ServicePortalPath.MinarSidurRoot)
+    PlausiblePageviewDetail(
+      ServicePortalPath.MinarSidurRoot,
+      IS_COMPANY ? 'company' : 'person',
+    )
   }, [location])
 
   const onHover = (id: string) => {

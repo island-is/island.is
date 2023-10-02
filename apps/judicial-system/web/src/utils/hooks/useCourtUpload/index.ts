@@ -5,12 +5,12 @@ import {
   CaseFile as TCaseFile,
   CaseFileState,
 } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   UploadFileToCourtDocument,
   UploadFileToCourtMutation,
   UploadFileToCourtMutationVariables,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 export enum UploadState {
   ALL_UPLOADED = 'ALL_UPLOADED',
@@ -64,10 +64,11 @@ export const useCourtUpload = (
   )
 
   useEffect(() => {
-    const files = workingCase.caseFiles as CaseFile[]
+    const files = (workingCase.caseFiles?.filter((f) => !f.category) ??
+      []) as CaseFile[]
 
     files
-      ?.filter((file) => !file.status)
+      .filter((file) => !file.status)
       .forEach((file) => {
         if (file.state === CaseFileState.STORED_IN_COURT) {
           if (file.key) {
@@ -85,19 +86,19 @@ export const useCourtUpload = (
       })
 
     setUploadState(
-      files?.some((file) => file.status === 'uploading')
+      files.some((file) => file.status === 'uploading')
         ? UploadState.UPLOADING
-        : files?.some((file) => file.status === 'error')
+        : files.some((file) => file.status === 'error')
         ? UploadState.UPLOAD_ERROR
-        : files?.some((file) => file.status === 'not-uploaded')
+        : files.some((file) => file.status === 'not-uploaded')
         ? UploadState.SOME_NOT_UPLOADED
-        : files?.every((file) => file.status === 'done-broken')
+        : files.every((file) => file.status === 'done-broken')
         ? UploadState.ALL_UPLOADED_NONE_AVAILABLE
-        : files?.every(
+        : files.every(
             (file) => file.status === 'done' || file.status === 'done-broken',
           )
         ? UploadState.ALL_UPLOADED
-        : files?.every(
+        : files.every(
             (file) => file.status === 'broken' || file.status === 'done-broken',
           )
         ? UploadState.SOME_NOT_UPLOADED_NONE_AVAILABLE
@@ -135,8 +136,10 @@ export const useCourtUpload = (
               (error as ApolloError).graphQLErrors[0].extensions?.code,
             detail:
               (error instanceof ApolloError &&
-                ((error as ApolloError).graphQLErrors[0].extensions
-                  ?.problem as { detail: string })?.detail) ||
+                (
+                  (error as ApolloError).graphQLErrors[0].extensions
+                    ?.problem as { detail: string }
+                )?.detail) ||
               '',
           }
 

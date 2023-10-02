@@ -34,12 +34,11 @@ type Props = {
   }
 }
 
-export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
-  field,
-  errors,
-}) => {
+export const TextFieldsRepeater: FC<
+  React.PropsWithChildren<FieldBaseProps<Answers> & Props>
+> = ({ field, errors }) => {
   const { id, props } = field
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, replace } = useFieldArray({
     name: id,
   })
 
@@ -62,7 +61,11 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
       {},
     )
 
-    append(repeaterFields)
+    if (fields.length === 0) {
+      replace(repeaterFields)
+    } else {
+      append(repeaterFields)
+    }
   }
 
   useEffect(() => {

@@ -2,10 +2,10 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import {
-  Box,
-  AccordionItem,
-  UploadedFile,
   Accordion,
+  AccordionItem,
+  Box,
+  UploadedFile,
 } from '@island.is/island-ui/core'
 import { CaseFile } from '@island.is/judicial-system/types'
 
@@ -15,7 +15,9 @@ interface Props {
   files?: CaseFile[]
 }
 
-const ParentCaseFiles: React.FC<Props> = ({ files }) => {
+const ParentCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
+  files,
+}) => {
   const { formatMessage } = useIntl()
 
   if (!files || files.length < 1) {

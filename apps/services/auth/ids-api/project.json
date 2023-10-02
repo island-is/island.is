@@ -1,12 +1,13 @@
 {
-  "root": "apps/services/auth/ids-api",
+  "name": "services-auth-ids-api",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/auth/ids-api/src",
   "projectType": "application",
   "prefix": "ids-api",
   "generators": {},
   "targets": {
     "build": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "outputPath": "dist/apps/services/auth/ids-api",
         "commands": [
@@ -22,7 +23,8 @@
             "tsc --build libs/auth-api-lib/seeders/data/tsconfig.json"
           ]
         }
-      }
+      },
+      "outputs": ["{workspaceRoot}/dist/apps/services/auth/ids-api"]
     },
     "esbuild": {
       "executor": "./tools/executors/node:build",
@@ -65,56 +67,57 @@
       "outputs": ["{options.outputPath}"]
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "services-auth-ids-api:esbuild"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/services/auth/ids-api/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/services/auth/ids-api/jest.config.js",
-        "passWithNoTests": true
+        "jestConfig": "apps/services/auth/ids-api/jest.config.ts",
+        "passWithNoTests": true,
+        "runInBand": true
       },
-      "outputs": ["coverage/apps/services/auth/ids-api"]
+      "outputs": ["{workspaceRoot}/coverage/apps/services/auth/ids-api"]
     },
     "docker-express": {},
     "dev-services": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "docker-compose up -d",
         "cwd": "apps/services/auth/ids-api"
       }
     },
     "schemas/build-openapi": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
-        "outputPath": "apps/services/auth/ids-api/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth/ids-api/tsconfig.app.json apps/services/auth/ids-api/src/buildOpenApi.ts"
-      }
+      },
+      "outputs": ["{workspaceRoot}/apps/services/auth/ids-api/src/openapi.yaml"]
     },
     "migrate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "sequelize-cli db:migrate",
         "cwd": "libs/auth-api-lib"
       }
     },
     "migrate/generate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "sequelize-cli migration:generate --name $(whoami)",
         "cwd": "libs/auth-api-lib"
       }
     },
     "seed": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "sequelize-cli db:seed:all --seeders-path ./seeders/local",

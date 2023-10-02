@@ -1,4 +1,5 @@
 import { BrowserContext, expect, test } from '@playwright/test'
+
 import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { helpers } from '../../../../support/locator-helpers'
@@ -9,7 +10,7 @@ test.describe('Admin portal', () => {
   let context: BrowserContext
   test.beforeAll(async ({ browser }) => {
     context = await session({
-      browser: browser,
+      browser,
       homeUrl: `/stjornbord`,
       phoneNumber: '0102399',
       idsLoginOn: true,

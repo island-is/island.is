@@ -1,10 +1,11 @@
 {
-  "root": "libs/clients/driving-license",
+  "name": "clients-driving-license",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/driving-license/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/clients/driving-license/**/*.{ts,tsx,js,jsx}"
@@ -12,19 +13,19 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/driving-license"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/driving-license"],
       "options": {
-        "jestConfig": "libs/clients/driving-license/jest.config.js",
+        "jestConfig": "libs/clients/driving-license/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "update-openapi-document": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "[[ '{args.apiVersion}' =~ v1|v2|v5 ]] && >&2 echo \"Missing required --apiVersion, only v1, v2 or v5 are valid\"",
-          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" -H \"SECRET: $DRIVING_LICENSE_SECRET\" http://localhost:8081/r1/IS-DEV/GOV/10005/Logreglan-Protected/getOpenAPI?serviceCode=okuskirteini-{args.apiVersion} -H 'Accept: application/json' > src/{args.apiVersion}/clientConfig.json",
+          "[[ '{args.apiVersion}' =~ v1|v2|v4|v5 ]] && >&2 echo \"Missing required --apiVersion, only v1, v2,v4 or v5 are valid\"",
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" -H \"SECRET: $DRIVING_LICENSE_SECRET\" http://localhost:8081/r1/IS-DEV/GOV/10005/Logreglan-Protected/getOpenAPI?serviceCode=Okuskirteini-{args.apiVersion} -H 'Accept: application/json' > src/{args.apiVersion}/clientConfig.json",
           "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' src/{args.apiVersion}/clientConfig.json) > src/{args.apiVersion}/clientConfig.json",
           "cat <<< $(jq '.paths[].post.requestBody.content |= (select(. != null) | with_entries(select(.key == \"application/json\")))' src/{args.apiVersion}/clientConfig.json) > src/{args.apiVersion}/clientConfig.json"
         ],
@@ -33,17 +34,18 @@
       }
     },
     "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v1 -i libs/clients/driving-license/src/v1/clientConfig.json",
           "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v2 -i libs/clients/driving-license/src/v2/clientConfig.json",
+          "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v4 -i libs/clients/driving-license/src/v4/clientConfig.json",
           "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v5 -i libs/clients/driving-license/src/v5/clientConfig.json"
         ]
       }
     },
     "dev": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn nx run clients-driving-license:update-openapi-document --apiVersion=v2",

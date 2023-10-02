@@ -1,20 +1,20 @@
 import React from 'react'
 
 import { Box, Tag } from '@island.is/island-ui/core'
+import { getShortRestrictionByValue } from '@island.is/judicial-system/formatters'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import {
   CaseCustodyRestrictions,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
-import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { getShortRestrictionByValue } from '@island.is/judicial-system/formatters'
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 interface Props {
   workingCase: Case
 }
 
-const RestrictionTags: React.FC<Props> = (props) => {
+const RestrictionTags: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase } = props
 
   return (

@@ -4,6 +4,7 @@ import type { Notification } from './notification'
 import { CaseFile } from './file'
 import { User, UserRole } from './user'
 import type { CourtDocument } from './courtDocument'
+import { EventLog } from './eventLog'
 
 export enum CaseOrigin {
   UNKNOWN = 'UNKNOWN',
@@ -27,6 +28,7 @@ export enum CaseType {
   INTERNET_USAGE = 'INTERNET_USAGE',
   OTHER = 'OTHER',
   PHONE_TAPPING = 'PHONE_TAPPING',
+  PAROLE_REVOCATION = 'PAROLE_REVOCATION',
   PSYCHIATRIC_EXAMINATION = 'PSYCHIATRIC_EXAMINATION',
   RESTRAINING_ORDER = 'RESTRAINING_ORDER',
   RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME = 'RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME',
@@ -168,6 +170,12 @@ export enum SessionArrangements {
   ALL_PRESENT = 'ALL_PRESENT',
   ALL_PRESENT_SPOKESPERSON = 'ALL_PRESENT_SPOKESPERSON',
   PROSECUTOR_PRESENT = 'PROSECUTOR_PRESENT',
+  NONE_PRESENT = 'NONE_PRESENT',
+}
+
+export enum RequestSharedWithDefender {
+  READY_FOR_COURT = 'READY_FOR_COURT',
+  COURT_DATE = 'COURT_DATE',
 }
 
 export interface Case {
@@ -185,7 +193,6 @@ export interface Case {
   defenderNationalId?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
-  sendRequestToDefender?: boolean
   isHeightenedSecurityLevel?: boolean
   court?: Institution
   leadInvestigator?: string
@@ -240,6 +247,7 @@ export interface Case {
   isAppealDeadlineExpired?: boolean
   isAppealGracePeriodExpired?: boolean
   rulingDate?: string
+  rulingSignatureDate?: string
   initialRulingDate?: string
   registrar?: User
   judge?: User
@@ -252,7 +260,7 @@ export interface Case {
   caseModifiedExplanation?: string
   rulingModifiedHistory?: string
   caseResentExplanation?: string
-  seenByDefender?: string
+  openedByDefender?: string
   defendantWaivesRightToCounsel?: boolean
   crimeScenes?: CrimeSceneMap
   indictmentIntroduction?: string
@@ -275,6 +283,8 @@ export interface Case {
   appealReceivedByCourtDate?: string
   appealConclusion?: string
   appealRulingDecision?: CaseAppealRulingDecision
+  requestSharedWithDefender?: RequestSharedWithDefender
+  eventLogs?: EventLog[]
 }
 
 export interface CaseListEntry
@@ -293,6 +303,7 @@ export interface CaseListEntry
     | 'courtDate'
     | 'initialRulingDate'
     | 'rulingDate'
+    | 'rulingSignatureDate'
     | 'courtEndTime'
     | 'prosecutorAppealDecision'
     | 'accusedAppealDecision'
@@ -305,6 +316,7 @@ export interface CaseListEntry
     | 'appealState'
     | 'appealedDate'
     | 'appealCaseNumber'
+    | 'appealRulingDecision'
   > {
   parentCaseId?: string
 }
@@ -319,9 +331,9 @@ export type CreateCase = Pick<
   | 'defenderNationalId'
   | 'defenderEmail'
   | 'defenderPhoneNumber'
-  | 'sendRequestToDefender'
   | 'leadInvestigator'
   | 'crimeScenes'
+  | 'requestSharedWithDefender'
 >
 
 export interface UpdateCase
@@ -333,7 +345,6 @@ export interface UpdateCase
     | 'defenderNationalId'
     | 'defenderEmail'
     | 'defenderPhoneNumber'
-    | 'sendRequestToDefender'
     | 'isHeightenedSecurityLevel'
     | 'leadInvestigator'
     | 'arrestDate'
@@ -383,7 +394,7 @@ export interface UpdateCase
     | 'caseModifiedExplanation'
     | 'rulingModifiedHistory'
     | 'caseResentExplanation'
-    | 'seenByDefender'
+    | 'openedByDefender'
     | 'defendantWaivesRightToCounsel'
     | 'crimeScenes'
     | 'indictmentIntroduction'
@@ -406,6 +417,7 @@ export interface UpdateCase
   appealJudge1Id?: string
   appealJudge2Id?: string
   appealJudge3Id?: string
+  requestSharedWithDefender?: RequestSharedWithDefender | null
 }
 
 export interface TransitionCase {
@@ -440,6 +452,7 @@ export const investigationCases = [
   CaseType.INTERNET_USAGE,
   CaseType.OTHER,
   CaseType.PHONE_TAPPING,
+  CaseType.PAROLE_REVOCATION,
   CaseType.PSYCHIATRIC_EXAMINATION,
   CaseType.RESTRAINING_ORDER,
   CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
@@ -492,7 +505,7 @@ export function hasCaseBeenAppealed(theCase: Case): boolean {
 
 export function getAppealInfo(theCase: Case): Case {
   const {
-    courtEndTime,
+    rulingDate,
     appealState,
     accusedAppealDecision,
     prosecutorAppealDecision,
@@ -503,11 +516,10 @@ export function getAppealInfo(theCase: Case): Case {
 
   const appealInfo = {} as Case
 
-  if (!courtEndTime) return appealInfo
+  if (!rulingDate) return appealInfo
 
   appealInfo.canBeAppealed = Boolean(
-    courtEndTime &&
-      !appealState &&
+    !appealState &&
       (accusedAppealDecision === CaseAppealDecision.POSTPONE ||
         prosecutorAppealDecision === CaseAppealDecision.POSTPONE),
   )
@@ -525,12 +537,10 @@ export function getAppealInfo(theCase: Case): Case {
       ? prosecutorPostponedAppealDate ?? undefined
       : accusedPostponedAppealDate ?? undefined
 
-  if (courtEndTime) {
-    const courtEndDate = new Date(courtEndTime)
-    appealInfo.appealDeadline = new Date(
-      courtEndDate.setDate(courtEndDate.getDate() + 3),
-    ).toISOString()
-  }
+  const theRulingDate = new Date(rulingDate)
+  appealInfo.appealDeadline = new Date(
+    theRulingDate.setDate(theRulingDate.getDate() + 3),
+  ).toISOString()
 
   if (appealReceivedByCourtDate) {
     appealInfo.statementDeadline = getStatementDeadline(

@@ -35,9 +35,9 @@ describe('Limited Access View Case File Guard', () => {
       const then = {} as Then
 
       try {
-        then.result = guard.canActivate(({
+        then.result = guard.canActivate({
           switchToHttp: () => ({ getRequest: mockRequest }),
-        } as unknown) as ExecutionContext)
+        } as unknown as ExecutionContext)
       } catch (error) {
         then.error = error as Error
       }
@@ -142,7 +142,15 @@ describe('Limited Access View Case File Guard', () => {
 
   describe.each(indictmentCases)('for %s cases', (type) => {
     describe.each(completedCaseStates)('in state %s', (state) => {
-      const allowedCaseFileCategories = [CaseFileCategory.RULING]
+      const allowedCaseFileCategories = [
+        CaseFileCategory.COURT_RECORD,
+        CaseFileCategory.RULING,
+        CaseFileCategory.COVER_LETTER,
+        CaseFileCategory.INDICTMENT,
+        CaseFileCategory.CRIMINAL_RECORD,
+        CaseFileCategory.COST_BREAKDOWN,
+        CaseFileCategory.CASE_FILE,
+      ]
 
       describe.each(allowedCaseFileCategories)(
         'a defender can view %s',

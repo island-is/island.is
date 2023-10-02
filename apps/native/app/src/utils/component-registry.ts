@@ -1,6 +1,6 @@
-import {config} from './config';
+import {bundleId, isTestingApp} from '../config';
 
-const prefix = config.bundleId;
+const prefix = bundleId;
 
 export const ComponentRegistry = {
   // dev screens
@@ -8,7 +8,7 @@ export const ComponentRegistry = {
   DevtoolsCognitoAuthScreen: `${prefix}.screens.DevCognitoAuth`,
 
   // screens
-  LoginScreen: `${prefix}.screens.Login`,
+  LoginScreen: `${prefix}.screens.${isTestingApp ? `TestingLogin` : `Login`}`,
   CognitoAuthScreen: `${prefix}.screens.CognitoAuth`,
   AppLockScreen: `${prefix}.screens.AppLock`,
   OnboardingPinCodeScreen: `${prefix}.screens.OnboardingPinCode`,
@@ -30,7 +30,7 @@ export const ComponentRegistry = {
   VehicleDetailScreen: `${prefix}.screens.VehicleDetailScreen`,
   AssetsOverviewScreen: `${prefix}.screens.AssetsOverviewScreen`,
   AssetsDetailScreen: `${prefix}.screens.AssetsDetailScreen`,
-  ProfileScreen: `${prefix}.screens.ProfileScreen`,
+  MoreScreen: `${prefix}.screens.MoreScreen`,
   PersonalInfoScreen: `${prefix}.screens.PersonalInfoScreen`,
   SettingsScreen: `${prefix}.screens.SettingsScreen`,
   FamilyScreen: `${prefix}.screens.FamilyScreen`,
@@ -39,6 +39,8 @@ export const ComponentRegistry = {
   EditEmailScreen: `${prefix}.screens.EditEmailScreen`,
   EditBankInfoScreen: `${prefix}.screens.EditBankInfoScreen`,
   EditConfirmScreen: `${prefix}.screens.EditConfirmScreen`,
+  FinanceScreen: `${prefix}.screens.FinanceScreen`,
+  FinanceStatusDetailScreen: `${prefix}.screens.FinanceStatusDetailScreen`,
 
   // ui components
   AndroidSearchBar: `${prefix}.ui.AndroidSearchBar`,
@@ -60,7 +62,7 @@ export const StackRegistry = {
   HomeStack: `${prefix}.stack.HomeStack`,
   WalletStack: `${prefix}.stack.WalletStack`,
   LicenseScannerStack: `${prefix}.stack.LicenseScannerStack`,
-  ProfileStack: `${prefix}.stack.ProfileStack`,
+  MoreStack: `${prefix}.stack.MoreStack`,
   ApplicationsStack: `${prefix}.stack.ApplicationsStack`,
 };
 

@@ -12,6 +12,7 @@ import { ScopesPayload } from './dto/scopes.payload'
 import { ScopeEnvironment } from './models/scope-environment.model'
 import { environments } from '../shared/constants/environments'
 import { AdminPatchScopeInput } from './dto/patch-scope.input'
+import { PublishScopeInput } from './dto/publish-scope.input'
 
 @Injectable()
 export class ScopeService extends MultiEnvironmentService {
@@ -29,10 +30,20 @@ export class ScopeService extends MultiEnvironmentService {
           user,
         )?.meScopesControllerCreate({
           tenantId: input.tenantId,
-          clientCreateScopeDTO: {
+          adminCreateScopeDto: {
             name: input.name,
-            displayName: input.displayName,
-            description: input.description,
+            displayName: [
+              {
+                value: input.displayName,
+                locale: 'is',
+              },
+            ],
+            description: [
+              {
+                value: input.description,
+                locale: 'is',
+              },
+            ],
           },
         })
       }),
@@ -85,6 +96,51 @@ export class ScopeService extends MultiEnvironmentService {
   }
 
   /**
+   * Publishes a scope to a specific environment.
+   * First fetches the scope from the source environment.
+   * Then creates the scope in the target environment.
+   */
+  async publishScope(
+    user: User,
+    input: PublishScopeInput,
+  ): Promise<ScopeEnvironment> {
+    // Fetch the scope from source environment
+    const sourceInput = await this.adminApiByEnvironmentWithAuth(
+      input.sourceEnvironment,
+      user,
+    )
+      ?.meScopesControllerFindByTenantIdAndScopeName({
+        tenantId: input.tenantId,
+        scopeName: input.scopeName,
+      })
+      ?.catch((error) => this.handleError(error, input.sourceEnvironment))
+
+    if (!sourceInput) {
+      throw new Error(`Scope ${input.scopeName} not found`)
+    }
+
+    // If the source scope environment exists then create replica environment in the target environment.
+    const newScope = await this.adminApiByEnvironmentWithAuth(
+      input.targetEnvironment,
+      user,
+    )?.meScopesControllerCreate({
+      tenantId: input.tenantId,
+      adminCreateScopeDto: sourceInput,
+    })
+
+    if (!newScope) {
+      throw new Error(
+        `Failed to create scope ${input.scopeName} on ${input.targetEnvironment}`,
+      )
+    }
+
+    return {
+      ...newScope,
+      environment: input.targetEnvironment,
+    }
+  }
+
+  /**
    * Gets all scopes for all available environments for a specific tenant
    */
   async getScopes(user: User, tenantId: string): Promise<ScopesPayload> {
@@ -116,12 +172,12 @@ export class ScopeService extends MultiEnvironmentService {
 
     const groupedScopes = groupBy(scopeEnvironments, 'name')
 
-    const scopeModels: Scope[] = Object.entries(groupedScopes).map(
-      ([scopeName, scopes]) => ({
+    const scopeModels: Scope[] = Object.entries(groupedScopes)
+      .map(([scopeName, scopes]) => ({
         scopeName,
         environments: scopes,
-      }),
-    )
+      }))
+      .sort((a, b) => a.scopeName.localeCompare(b.scopeName))
 
     return {
       data: scopeModels,

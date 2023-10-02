@@ -1,5 +1,3 @@
-import { m } from '../../lib/messages'
-import React from 'react'
 import {
   Box,
   Divider,
@@ -10,26 +8,29 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
+import { m } from '../../lib/messages'
+import { SYNC_SUFFIX } from '../../utils/getIntent'
+
 import * as styles from './DropdownSync.css'
 
-type DropdownSyncProps = {
-  isInSync: boolean
+type DropdownSyncProps<Intent> = {
+  inSync: boolean
   isDirty: boolean
   isLoading: boolean
-  intent: string
+  intent: Intent
 }
 
-export const DropdownSync = ({
-  isInSync,
+export const DropdownSync = <Intent,>({
+  inSync,
   isDirty,
   isLoading = false,
   intent,
-}: DropdownSyncProps) => {
+}: DropdownSyncProps<Intent>) => {
   const { formatMessage } = useLocale()
 
   return (
     <DropdownMenu
-      title={isInSync ? formatMessage(m.synced) : formatMessage(m.outOfSync)}
+      title={inSync ? formatMessage(m.synced) : formatMessage(m.outOfSync)}
       menuLabel={formatMessage(m.synced)}
       icon="chevronDown"
       menuClassName={styles.menu}
@@ -46,13 +47,13 @@ export const DropdownSync = ({
                 className={styles.menuItem}
               >
                 <Icon
-                  icon={isInSync ? 'checkmark' : 'warning'}
-                  color={isInSync ? 'blue400' : 'red400'}
+                  icon={inSync ? 'checkmark' : 'warning'}
+                  color={inSync ? 'blue400' : 'red400'}
                   size="small"
                   type="outline"
                 />
                 <Text variant="small" color="blue400">
-                  {isInSync
+                  {inSync
                     ? formatMessage(m.syncedAcrossAllEnvironments)
                     : formatMessage(m.notInSyncAcrossAllEnvironments)}
                 </Text>
@@ -61,7 +62,7 @@ export const DropdownSync = ({
             </div>
           ),
         },
-        ...(isInSync || isDirty
+        ...(inSync || isDirty
           ? []
           : [
               {
@@ -79,7 +80,7 @@ export const DropdownSync = ({
                       <button
                         className={styles.syncButton}
                         type="submit"
-                        value={`${intent}-sync`}
+                        value={`${intent}${SYNC_SUFFIX}`}
                         name="intent"
                       >
                         <Text

@@ -37,7 +37,7 @@ interface Props {
   figure: string
 }
 
-export const InfoScreen: FC<Props> = ({
+export const InfoScreen: FC<React.PropsWithChildren<Props>> = ({
   title,
   intro,
   list,

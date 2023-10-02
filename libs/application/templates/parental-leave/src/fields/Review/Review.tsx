@@ -43,16 +43,15 @@ interface ReviewScreenProps {
   editable?: boolean
 }
 
-export const Review: FC<ReviewScreenProps> = ({
+export const Review: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
   application,
   field,
   goToScreen,
   errors,
 }) => {
   const editable = field.props?.editable ?? false
-  const [
-    { applicationType, otherParent, employerLastSixMonths },
-  ] = useStatefulAnswers(application)
+  const [{ applicationType, otherParent, employerLastSixMonths }] =
+    useStatefulAnswers(application)
   const selectedChild = getSelectedChild(
     application.answers,
     application.externalData,

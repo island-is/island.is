@@ -84,7 +84,15 @@ export const bootstrap = async (options: BootstrapOptions) => {
     readyPromise,
     options.externalEndpointDependencies,
   )
-  expressApp.all('*', (req: any, res: any) => handle(req, res))
+
+  expressApp.use((req, res) => {
+    // Configure long caching for web fonts (often in public folder).
+    if (req.url.match('.woff2?$')) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000') // 365 days
+    }
+
+    handle(req, res as never)
+  })
 
   startServer(expressApp, options.port)
 

@@ -7,6 +7,8 @@ import {
   Document,
   DocumentCategory,
   DocumentDetails,
+  Query,
+  QueryGetDocumentArgs,
 } from '@island.is/api/schema'
 import { User } from '@island.is/shared/types'
 import {
@@ -20,11 +22,16 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { dateFormat } from '@island.is/shared/constants'
-import { LoadModal } from '@island.is/service-portal/core'
+import {
+  LoadModal,
+  formatPlausiblePathToParams,
+} from '@island.is/service-portal/core'
 import * as styles from './DocumentLine.css'
 import { gql, useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { messages as m } from '../../utils/messages'
+import { servicePortalOutboundLink } from '@island.is/plausible'
+import { DocumentsPaths } from '../../lib/paths'
 
 interface Props {
   documentLine: Document
@@ -37,10 +44,11 @@ const GET_DOCUMENT_BY_ID = gql`
   query getDocumentInboxLineQuery($input: GetDocumentInput!) {
     getDocument(input: $input) {
       html
+      url
     }
   }
 `
-const DocumentLine: FC<Props> = ({
+const DocumentLine: FC<React.PropsWithChildren<Props>> = ({
   documentLine,
   img,
   documentCategories,
@@ -50,26 +58,33 @@ const DocumentLine: FC<Props> = ({
   const isMobile = width < theme.breakpoints.sm
   const { formatMessage } = useLocale()
 
-  const [getDocument, { data: getFileByIdData, loading, error }] = useLazyQuery(
-    GET_DOCUMENT_BY_ID,
-    {
-      variables: {
-        input: {
-          id: documentLine.id,
-        },
-      },
-      onCompleted: () => {
-        onClickHandler()
+  const [getDocument, { data: getFileByIdData, loading, error }] = useLazyQuery<
+    Query,
+    QueryGetDocumentArgs
+  >(GET_DOCUMENT_BY_ID, {
+    variables: {
+      input: {
+        id: documentLine.id,
       },
     },
-  )
+    onCompleted: (data: { getDocument?: DocumentDetails | null }) => {
+      if (data?.getDocument) {
+        onClickHandler(data?.getDocument)
+      }
+    },
+  })
 
   const singleDocument = getFileByIdData?.getDocument || ({} as DocumentDetails)
 
-  const onClickHandler = async () => {
+  const onClickHandler = async (docData?: DocumentDetails) => {
+    const singleDocData = docData || singleDocument
     let html: string | undefined = undefined
-    if (singleDocument.html) {
-      html = singleDocument.html.length > 0 ? singleDocument.html : undefined
+    if (singleDocData.html) {
+      html = singleDocData.html.length > 0 ? singleDocData.html : undefined
+    }
+    if (singleDocData.url) {
+      window.open(singleDocData.url, '_blank')?.focus()
+      return
     }
     if (html) {
       setTimeout(() => {
@@ -122,7 +137,18 @@ const DocumentLine: FC<Props> = ({
   const isLink = documentLine.fileType === 'url' && documentLine.url
 
   const subject = isLink ? (
-    <Link href={documentLine.url} newTab>
+    <Link
+      onClick={() =>
+        servicePortalOutboundLink({
+          url: formatPlausiblePathToParams(
+            DocumentsPaths.ElectronicDocumentsRoot,
+          ).url,
+          outboundUrl: documentLine.url,
+        })
+      }
+      href={documentLine.url}
+      newTab
+    >
       <button className={styles.button}>
         {documentLine.subject}
         <Icon type="outline" icon="open" size="small" className={styles.icon} />

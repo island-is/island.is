@@ -41,8 +41,7 @@ const firstNotification: Notification = {
   id: 'FIRST_NOTIFICATION',
   title: 'Stafrænt Ísland',
   body: 'Fyrsta útgáfa af Ísland.is appinu',
-  copy:
-    'Í þessari fyrstu útgáfu af Ísland.is appinu getur þú nálgast rafræn skjöl og skírteini frá hinu opinbera, fengið tilkynningar og séð stöðu umsókna.',
+  copy: 'Í þessari fyrstu útgáfu af Ísland.is appinu getur þú nálgast rafræn skjöl og skírteini frá hinu opinbera, fengið tilkynningar og séð stöðu umsókna.',
   date: new Date().getTime(),
   data: {},
   read: true,
@@ -54,7 +53,7 @@ export const notificationCategories = [
     actions: [
       {
         identifier: 'ACTION_OPEN_DOCUMENT',
-        buttonTitle: 'Opna skjal',
+        buttonTitle: 'Opna',
         onPress: ({id, data}: Notification, componentId?: string) => {
           return navigateToNotification({id, link: data.url}, componentId);
         },

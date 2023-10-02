@@ -4,6 +4,7 @@ export * from './lib/messages'
 
 // types
 export * from './types/portalCore'
+export * from './types/RouterActionResponse'
 
 // screens
 export * from './screens/AccessDenied'

@@ -1,3 +1,4 @@
 <resources>
-    <string moduleConfig="true" name="CodePushDeploymentKey">_qewvIttoK3R2JruZERhbqHUcRk6NwIL2goF_</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey">4sXtRa8Q7CWLTrTxKjvcH7g8WJYIDMCENhvYz</string>
+    <string name="app_login_name">Handle Login</string>
 </resources>

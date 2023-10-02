@@ -75,12 +75,14 @@ export interface IAlertBannerFields {
         | 'umsoknir'
         | 'min-gogn'
         | 'skirteini'
-        | 'leyfisbref'
         | 'menntun'
         | 'fasteignir'
         | 'fjarmal'
         | 'okutaeki'
         | 'stillingar'
+        | 'starfsleyfi'
+        | 'loftbru'
+        | 'heilsa'
       )[]
     | undefined
 }
@@ -213,6 +215,9 @@ export interface IArticleFields {
 
   /** Active Translations */
   activeTranslations?: Record<string, any> | undefined
+
+  /** Sign language video */
+  signLanguageVideo?: IEmbeddedVideo | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
@@ -566,6 +571,39 @@ export interface IEmailSignup extends Entry<IEmailSignupFields> {
   }
 }
 
+export interface IEmbedFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Embed link */
+  embedUrl?: string | undefined
+
+  /** Alt Text */
+  altText: string
+
+  /** Aspect Ratio */
+  aspectRatio?: '713/630' | '16/9' | undefined
+}
+
+/** A content type which allows you to embed an iframe (but only from sources that have been approved of) */
+
+export interface IEmbed extends Entry<IEmbedFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'embed'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IEmbeddedVideoFields {
   /** Title */
   title: string
@@ -898,6 +936,9 @@ export interface IFormFields {
 
   /** Recipient */
   recipient: string
+
+  /** Default field namespace (In development) */
+  defaultFieldNamespace?: Record<string, any> | undefined
 
   /** Fields */
   fields?: IFormField[] | undefined
@@ -1440,6 +1481,9 @@ export interface ILatestNewsSliceFields {
   /** News tag */
   newsTag?: IGenericTag | undefined
 
+  /** Organization */
+  organization?: IOrganization | undefined
+
   /** Read more text */
   readMoreText?: string | undefined
 
@@ -1929,6 +1973,9 @@ export interface INamespace extends Entry<INamespaceFields> {
 }
 
 export interface INewsFields {
+  /** Organization */
+  organization: IOrganization
+
   /** Content status */
   contentStatus?: 'Undefined' | 'Needs work' | 'In review' | 'Done' | undefined
 
@@ -2198,6 +2245,9 @@ export interface IOrganizationFields {
   /** Logo */
   logo?: Asset | undefined
 
+  /** Footer Config */
+  footerConfig?: Record<string, any> | undefined
+
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
 
@@ -2233,6 +2283,12 @@ export interface IOrganizationFields {
 
   /** Plausible Tracking Domain */
   trackingDomain?: string | undefined
+
+  /** Name In Vacancy List */
+  nameInVacancyList?: string | undefined
+
+  /** Reference Identifier */
+  referenceIdentifier?: string | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -2288,6 +2344,7 @@ export interface IOrganizationPageFields {
         | ITabSection
         | ITimeline
         | ITwoColumnText
+        | ISectionWithVideo
       )[]
     | undefined
 
@@ -2329,8 +2386,11 @@ export interface IOrganizationPageFields {
   /** Organization */
   organization: IOrganization
 
-  /** News tag */
+  /** Primary news tag */
   newsTag?: IGenericTag | undefined
+
+  /** Secondary news tags */
+  secondaryNewsTags?: IGenericTag[] | undefined
 
   /** Slug */
   slug: string
@@ -2357,6 +2417,14 @@ export interface IOrganizationPageFields {
     | 'gev'
     | 'hve'
     | 'shh'
+    | 'hsa'
+    | 'haskolanam'
+    | 'nti'
+    | 'samgongustofa'
+    | 'geislavarnir-rikisins'
+    | 'rettindagaesla-fatlads-folks'
+    | 'hms'
+    | 'rikissaksoknari'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
@@ -2433,6 +2501,9 @@ export interface IOrganizationSubpageFields {
 
   /** Featured Image */
   featuredImage?: Asset | undefined
+
+  /** Sign Language Video */
+  signLanguageVideo?: IEmbeddedVideo | undefined
 }
 
 export interface IOrganizationSubpage
@@ -2671,6 +2742,9 @@ export interface IProjectPageFields {
   /** Sidebar Links */
   sidebarLinks?: ILinkGroup[] | undefined
 
+  /** Secondary Sidebar */
+  secondarySidebar?: ILinkGroup | undefined
+
   /** Subtitle */
   subtitle?: string | undefined
 
@@ -2704,8 +2778,11 @@ export interface IProjectPageFields {
       )[]
     | undefined
 
-  /** News Tag */
+  /** Primary news tag */
   newsTag?: IGenericTag | undefined
+
+  /** Secondary news tags */
+  secondaryNewsTags?: IGenericTag[] | undefined
 
   /** Project Subpages */
   projectSubpages?: IProjectSubpage[] | undefined
@@ -2734,6 +2811,9 @@ export interface IProjectPageFields {
         | ISliceConnectedComponent
       )[]
     | undefined
+
+  /** Footer Config */
+  footerConfig?: Record<string, any> | undefined
 
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
@@ -2800,8 +2880,11 @@ export interface IProjectSubpageFields {
       )[]
     | undefined
 
+  /** Show Table of Contents */
+  showTableOfContents?: boolean | undefined
+
   /** Bottom Slices */
-  bottomSlices?: IPowerBiSlice[] | undefined
+  bottomSlices?: (IPowerBiSlice | IOneColumnText)[] | undefined
 }
 
 export interface IProjectSubpage extends Entry<IProjectSubpageFields> {
@@ -2904,6 +2987,73 @@ export interface ISectionWithImage extends Entry<ISectionWithImageFields> {
   }
 }
 
+export interface ISectionWithVideoFields {
+  /** Title */
+  title: string
+
+  /** Show title */
+  showTitle?: boolean | undefined
+
+  /** Content */
+  content: Document
+
+  /** Video */
+  video: IEmbeddedVideo
+
+  /** Link */
+  link?: ILink | undefined
+
+  /** Show divider on top */
+  showDividerOnTop?: boolean | undefined
+}
+
+/** A section containing a video on the left and text on the right (which wraps below the video on smaller screens) */
+
+export interface ISectionWithVideo extends Entry<ISectionWithVideoFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'sectionWithVideo'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IServiceWebPageFields {
+  /** Title */
+  title: string
+
+  /** Organization */
+  organization: IOrganization
+
+  /** Slices */
+  slices?: IFeaturedArticles[] | undefined
+}
+
+export interface IServiceWebPage extends Entry<IServiceWebPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'serviceWebPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ISidebarCardFields {
   /** Type */
   type?:
@@ -2971,6 +3121,12 @@ export interface ISliceConnectedComponentFields {
     | 'Tækifærisleyfi/TemporaryEventLicences'
     | 'OrganizationSearchBox'
     | 'Verðbréfamiðlarar/Brokers'
+    | 'PublicVehicleSearch'
+    | 'PlateAvailableSearch'
+    | 'AircraftSearch'
+    | 'DrivingInstructorList'
+    | 'HousingBenefitCalculator'
+    | 'PublicShipSearch'
     | undefined
 
   /** Localized JSON */
@@ -3267,6 +3423,9 @@ export interface ISubArticleFields {
 
   /** Show Table Of Contents */
   showTableOfContents?: boolean | undefined
+
+  /** Sign Language Video */
+  signLanguageVideo?: IEmbeddedVideo | undefined
 }
 
 /** A sub article that's a part of another main article */
@@ -3879,6 +4038,88 @@ export interface IUrl extends Entry<IUrlFields> {
   }
 }
 
+export interface IVacancyFields {
+  /** Title */
+  title: string
+
+  /** Intro */
+  intro?: Document | undefined
+
+  /** Job Listed */
+  applicationDeadlineFrom: string
+
+  /** Application Deadline */
+  applicationDeadlineTo: string
+
+  /** Category */
+  fieldOfWork:
+    | 'Stjórnunarstörf'
+    | 'Sérfræðistörf'
+    | 'Kennsla og rannsóknir'
+    | 'Heilbrigðisþjónusta'
+    | 'Löggæslustörf'
+    | 'Tæknistörf'
+    | 'Önnur störf'
+    | 'Skrifstofustörf'
+    | 'Sumarstörf'
+
+  /** Organization */
+  organization: IOrganization
+
+  /** Locations */
+  locations: (
+    | 'Óstaðbundið'
+    | 'Höfuðborgarsvæðið'
+    | 'Norðurland vestra'
+    | 'Norðurland eystra'
+    | 'Vesturland'
+    | 'Austurland'
+    | 'Suðurland'
+    | 'Vestfirðir'
+    | 'Suðurnes'
+  )[]
+
+  /** Job Percentage */
+  jobPercentage?: string | undefined
+
+  /** Application Link Url */
+  applicationHref?: string | undefined
+
+  /** Requirements */
+  qualificationRequirements?: Document | undefined
+
+  /** Responsibilities */
+  tasksAndResponsibilities?: Document | undefined
+
+  /** Description */
+  description?: Document | undefined
+
+  /** Salary Terms */
+  salaryTerms?: Document | undefined
+
+  /** Contacts */
+  contacts?: Record<string, any> | undefined
+}
+
+/** Icelandic Government Institution Vacancy that appears on island.is/starfatorg */
+
+export interface IVacancy extends Entry<IVacancyFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'vacancy'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IVidspyrnaFrontpageFields {
   /** Title */
   title: string
@@ -4076,6 +4317,7 @@ export type CONTENT_TYPE =
   | 'contactUs'
   | 'districts'
   | 'emailSignup'
+  | 'embed'
   | 'embeddedVideo'
   | 'enhancedAsset'
   | 'errorPage'
@@ -4133,6 +4375,8 @@ export type CONTENT_TYPE =
   | 'questionAndAnswer'
   | 'sectionHeading'
   | 'sectionWithImage'
+  | 'sectionWithVideo'
+  | 'serviceWebPage'
   | 'sidebarCard'
   | 'sliceConnectedComponent'
   | 'sliceDropdown'
@@ -4159,6 +4403,7 @@ export type CONTENT_TYPE =
   | 'twoColumnText'
   | 'uiConfiguration'
   | 'url'
+  | 'vacancy'
   | 'vidspyrna-frontpage'
   | 'vidspyrnaFeaturedNews'
   | 'vidspyrnaFlokkur'

@@ -1,4 +1,6 @@
-import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import { Cache as CacheManager } from 'cache-manager'
 import { User } from './user.model'
 import { Fund } from '@island.is/air-discount-scheme/types'
 import { FlightService } from '../flight'
@@ -12,6 +14,10 @@ import { info } from 'kennitala'
 const ONE_WEEK = 604800 // seconds
 const CACHE_KEY = 'userService'
 const MAX_AGE_LIMIT = 18
+
+interface CustodianCache {
+  custodians: Array<NationalRegistryUser | null>
+}
 
 @Injectable()
 export class UserService {
@@ -33,13 +39,10 @@ export class UserService {
     user: NationalRegistryUser,
     auth?: AuthUser,
   ): Promise<Fund> {
-    const {
-      used,
-      unused,
-      total,
-    } = await this.flightService.countThisYearsFlightLegsByNationalId(
-      user.nationalId,
-    )
+    const { used, unused, total } =
+      await this.flightService.countThisYearsFlightLegsByNationalId(
+        user.nationalId,
+      )
     let meetsADSRequirements = false
 
     if (this.flightService.isADSPostalCode(user.postalcode)) {
@@ -47,7 +50,7 @@ export class UserService {
     } else if (info(user.nationalId).age < MAX_AGE_LIMIT) {
       // NationalId is a minor and doesn't live in ADS postal codes.
       const cacheKey = this.getCacheKey(user.nationalId, 'custodians')
-      const cacheValue = await this.cacheManager.get(cacheKey)
+      const cacheValue = await this.cacheManager.get<CustodianCache>(cacheKey)
       let custodians = undefined
 
       if (cacheValue) {
@@ -61,7 +64,7 @@ export class UserService {
             user.nationalId,
           )),
         ]
-        await this.cacheManager.set(cacheKey, { custodians }, { ttl: ONE_WEEK })
+        await this.cacheManager.set(cacheKey, { custodians }, ONE_WEEK * 1000)
       }
 
       // Check child custodians if they have valid ADS postal code.

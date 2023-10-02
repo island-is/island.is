@@ -26,11 +26,9 @@ interface UseFormProps {
   organisationNationalId: string
 }
 
-export const DocumentProviderTechnicalContactForm: FC<Props> = ({
-  technicalContact,
-  organisationId,
-  organisationNationalId,
-}) => {
+export const DocumentProviderTechnicalContactForm: FC<
+  React.PropsWithChildren<Props>
+> = ({ technicalContact, organisationId, organisationNationalId }) => {
   const { formatMessage } = useLocale()
   const {
     handleSubmit,
@@ -38,14 +36,10 @@ export const DocumentProviderTechnicalContactForm: FC<Props> = ({
     formState: { errors },
   } = useForm<UseFormProps>()
 
-  const {
-    updateTechnicalContact,
-    loading: loadingUpdate,
-  } = useUpdateTechnicalContact(organisationId)
-  const {
-    createTechnicalContact,
-    loading: loadingCreate,
-  } = useCreateTechnicalContact(organisationId, organisationNationalId)
+  const { updateTechnicalContact, loading: loadingUpdate } =
+    useUpdateTechnicalContact(organisationId)
+  const { createTechnicalContact, loading: loadingCreate } =
+    useCreateTechnicalContact(organisationId, organisationNationalId)
 
   const onSubmit = (data: { technicalContact: Contact }) => {
     if (data?.technicalContact && technicalContact) {

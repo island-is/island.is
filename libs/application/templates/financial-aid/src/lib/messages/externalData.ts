@@ -3,8 +3,7 @@ import { defineMessages } from 'react-intl'
 export const externalData = {
   general: defineMessages({
     sectionTitle: {
-      id:
-        'fa.application:section.backgroundInformation.externalData.sectionTitle',
+      id: 'fa.application:section.backgroundInformation.externalData.sectionTitle',
       defaultMessage: 'Gagnaöflun',
       description: 'External information retrieval section title',
     },
@@ -19,15 +18,13 @@ export const externalData = {
       description: 'External information retrieval subtitle',
     },
     description: {
-      id:
-        'fa.application:section.backgroundInformation.externalData.description',
+      id: 'fa.application:section.backgroundInformation.externalData.description',
       defaultMessage:
         'Við þurfum að afla gagna frá eftirfarandi opinberum aðilum til að einfalda umsóknarferlið, staðfesta réttleika upplýsinga og reikna út áætlaðar greiðslur.',
       description: 'External information retrieval description',
     },
     checkboxLabel: {
-      id:
-        'fa.application:section.backgroundInformation.externalData.checkboxLabel',
+      id: 'fa.application:section.backgroundInformation.externalData.checkboxLabel',
       defaultMessage:
         'Ég skil að ofangreindra gagna verður aflað í umsóknar- og staðfestingarferlinu',
       description: 'External information retrieval checkbox label',
@@ -35,15 +32,13 @@ export const externalData = {
   }),
   applicant: defineMessages({
     title: {
-      id:
-        'fa.application:section.backgroundInformation.externalData.applicant.title',
+      id: 'fa.application:section.backgroundInformation.externalData.applicant.title',
       defaultMessage: 'Þjóðskrá Íslands',
       description:
         'Title: External Info about applicant from the National Registry',
     },
     subTitle: {
-      id:
-        'fa.application:section.backgroundInformation.externalData.applicant.subTitle#markdown',
+      id: 'fa.application:section.backgroundInformation.externalData.applicant.subTitle#markdown',
       defaultMessage: 'Við flettum upp lögheimili og hjúskaparstöðu.',
       description:
         'Subtitle: External Info about applicant from the National Registry',
@@ -51,15 +46,13 @@ export const externalData = {
   }),
   taxData: defineMessages({
     title: {
-      id:
-        'fa.application:section.backgroundInformation.externalData.taxData.title',
+      id: 'fa.application:section.backgroundInformation.externalData.taxData.title',
       defaultMessage: 'Skatturinn',
       description:
         'Title: External Info about applicant from the tax data gathering',
     },
     dataInfo: {
-      id:
-        'fa.application:section.backgroundInformation.externalData.taxData.dataInfo',
+      id: 'fa.application:section.backgroundInformation.externalData.taxData.dataInfo',
       defaultMessage:
         'Afrit af skattframtali og upplýsingar um staðgreiðslu í staðgreiðsluskrá.',
       description: 'What data is retrived from the tax',

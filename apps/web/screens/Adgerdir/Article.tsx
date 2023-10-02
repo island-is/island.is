@@ -55,26 +55,31 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
 }) => {
   const portalRef = useRef()
   const [mounted, setMounted] = useState(false)
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { activeLocale } = useI18n()
   const { linkResolver } = useLinkResolver()
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     portalRef.current = document.querySelector('#__next')
     setMounted(true)
   }, [])
 
   const { items: pagesItems } = pages
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const { items: tagsItems } = tags
 
-  const processEntry = article.processEntry
+  const processEntry = article?.processEntry
 
   return (
     <>
       <HeadWithSocialSharing
-        title={`${article.title} | Viðspyrna fyrir Ísland`}
-        description={article.description}
+        title={`${article?.title} | Viðspyrna fyrir Ísland`}
+        description={article?.description}
       />
       <SidebarLayout
         sidebarContent={
@@ -87,7 +92,7 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
                   </span>
                 </Text>
                 <Inline space={2} alignY="center">
-                  {article.tags.map(({ title }, index) => {
+                  {article?.tags.map(({ title }, index) => {
                     return (
                       <Tag key={index} variant="green" label>
                         {title}
@@ -121,6 +126,7 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
                 <NextLink
                   {...linkResolver(typename as LinkType, slug)}
                   passHref
+                  legacyBehavior
                 >
                   {link}
                 </NextLink>
@@ -131,16 +137,19 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
 
         <Stack space={2}>
           <Text variant="h1" as="h1">
-            {article.title}
+            {article?.title}
           </Text>
           {processEntry?.processLink && (
             <Box marginTop={3} display={['none', 'none', 'block']} printHidden>
+              {/** 
+               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+               // @ts-ignore */}
               <ProcessEntry {...processEntry} />
             </Box>
           )}
         </Stack>
         {richText(
-          (article ?? article).content as SliceType[],
+          (article?.content ?? []) as SliceType[],
           undefined,
           activeLocale,
         )}
@@ -153,8 +162,13 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
                 display={['block', 'block', 'none']}
                 printHidden
               >
+                {/**
+                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment 
+                 // @ts-ignore make web strict */}
                 <ProcessEntry fixed {...processEntry} />
               </Box>,
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               portalRef.current,
             )}
         </Box>
@@ -165,7 +179,11 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
             <AdgerdirArticles
               tags={tagsItems}
               items={pagesItems}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               namespace={namespace}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               currentArticle={article}
               showAll
             />
@@ -176,7 +194,7 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
   )
 }
 
-AdgerdirArticle.getInitialProps = async ({ apolloClient, query, locale }) => {
+AdgerdirArticle.getProps = async ({ apolloClient, query, locale }) => {
   const slug = query.slug as string
   const [
     {
@@ -225,7 +243,11 @@ AdgerdirArticle.getInitialProps = async ({ apolloClient, query, locale }) => {
           },
         },
       })
-      .then((content) => JSON.parse(content.data.getNamespace.fields)),
+      .then((content) => {
+        if (content.data.getNamespace) {
+          return JSON.parse(content.data.getNamespace.fields)
+        }
+      }),
   ])
 
   // we assume 404 if no article is found

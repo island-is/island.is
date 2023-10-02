@@ -5,18 +5,63 @@ import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { getValueViaPath } from '@island.is/application/core'
-import { getCurrencyString } from '../../lib/utils'
+import { allowFakeCondition, getCurrencyString } from '../../lib/utils'
 import { PaymentCatalogItem } from '@island.is/api/schema'
 import { useFormContext } from 'react-hook-form'
+import { YES } from '../../lib/constants'
+import { info } from 'kennitala'
+import { DriversLicense } from '@island.is/clients/driving-license'
 
-export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
+export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
-  const chargeCode = 'AY110'
+
+  // AY110: Ökuskírteini / Driving License
+  let chargeCode = 'AY116'
+  // Change price based on temporary license
+  const licenseData = getValueViaPath<DriversLicense>(
+    application.externalData,
+    'currentLicense.data',
+  )
+
+  const fakeAllowed = allowFakeCondition(YES)(application.answers)
+  const hasFakeTemporary =
+    fakeAllowed &&
+    getValueViaPath<string>(application.answers, 'fakeData.currentLicense') ===
+      'B-temp'
+
+  // Of note: Lazy evaluation guards against undefined errors.
+  // Shouldn't break unless changes are made to how the fake data works.
+  if (
+    hasFakeTemporary ||
+    (!fakeAllowed &&
+      licenseData?.categories.some((category) => category.validToCode === 8))
+  ) {
+    // AY114: Bráðabirgðaskirteini / Temporary Driving License
+    chargeCode = 'AY114'
+  }
+
+  // Change price based on age, takes precedence over temporary license
+  // and therefore comes after it for overriding purposes
+  let age = info(application.applicant).age
+  if (allowFakeCondition(YES)(application.answers)) {
+    age = parseInt(
+      getValueViaPath<string>(application.answers, 'fakeData.age') ?? '25',
+      10,
+    )
+  }
+  if (age >= 65) {
+    // AY113: Skírteini fyrir 65 ára og eldri / License for 65 years and over
+    chargeCode = 'AY137'
+  }
+
   const chargeItems = getValueViaPath(
     application.externalData,
     'payment.data',
   ) as PaymentCatalogItem[]
+
   const chargeItem = chargeItems.find(
     (item) => item.chargeItemCode === chargeCode,
   )

@@ -212,6 +212,11 @@ export const europeanHealthInsuranceCardApplicationMessages = {
         'Einstaklingar sem eiga bráðabirgðaskírteini í gildi í stafrænu pósthólfi',
       description: 'Label that indicates a user already has a PDF',
     },
+    sectionPlasticExpiryDate: {
+      id: 'ehic.application:temp.plasticExpiryDate',
+      defaultMessage: 'Rennur út',
+      description: 'Sublabel that states the expiry date of a plastic card',
+    },
   }),
 
   // Review Screen

@@ -1,12 +1,10 @@
-import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { InternalServerErrorException } from '@nestjs/cache-manager'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 import { CmsContentfulService } from '@island.is/cms'
+import { DriversLicenseClientTypes } from './licenceService.type'
 import {
   GenericUserLicense,
   GenericLicenseTypeType,
@@ -143,7 +141,7 @@ export class LicenseServiceService {
   ): Promise<GenericUserLicense | null> {
     const license = AVAILABLE_LICENSES.find((i) => i.type === licenseType)
     const licenseService = await this.licenseClient.getClientByLicenseType(
-      (licenseType as unknown) as LicenseType,
+      licenseType as unknown as LicenseType,
     )
 
     if (!license || !licenseService) {
@@ -176,9 +174,9 @@ export class LicenseServiceService {
       )
 
       if (licensePayload) {
-        licenseUserData.pkpassStatus = (licenseService.licenseIsValidForPkPass(
+        licenseUserData.pkpassStatus = licenseService.licenseIsValidForPkPass(
           licenseRes.data,
-        ) as unknown) as GenericUserLicensePkPassStatus
+        ) as unknown as GenericUserLicensePkPassStatus
         licenseUserData.status = GenericUserLicenseStatus.HasLicense
       } else {
         licenseUserData.status = GenericUserLicenseStatus.NotAvailable
@@ -209,7 +207,7 @@ export class LicenseServiceService {
     licenseType: GenericLicenseType,
   ): Promise<string | null> {
     const client = await this.licenseClient.getClientByLicenseType(
-      (licenseType as unknown) as LicenseType,
+      licenseType as unknown as LicenseType,
     )
 
     if (!client) {
@@ -236,7 +234,7 @@ export class LicenseServiceService {
     licenseType: GenericLicenseType,
   ): Promise<string | null> {
     const client = await this.licenseClient.getClientByLicenseType(
-      (licenseType as unknown) as LicenseType,
+      licenseType as unknown as LicenseType,
     )
 
     if (!client) {
@@ -263,7 +261,7 @@ export class LicenseServiceService {
       throw new Error(`Missing input data`)
     }
 
-    const { passTemplateId } = JSON.parse(data)
+    const { passTemplateId }: { passTemplateId?: string } = JSON.parse(data)
 
     /*
      * PkPass barcodes provide a PassTemplateId that we can use to
@@ -277,6 +275,18 @@ export class LicenseServiceService {
     )
     if (!licenseService) {
       throw new Error(`Invalid pass template id: ${passTemplateId}`)
+    }
+
+    // Temporariy flag until every user has the new digital driving license
+    // We have to make the driving license client decision dependant on the barcode
+    // being scanned. The simplest way for that is to add a force flag so we can make the
+    // decision based on input rather than the authenticated user's license
+
+    let forceDriversLicenseClient: DriversLicenseClientTypes | undefined =
+      undefined
+
+    if (licenseType === GenericLicenseType.DriversLicense) {
+      forceDriversLicenseClient = passTemplateId ? 'new' : 'old'
     }
 
     const verification = await licenseService.verifyPkPass(data, passTemplateId)

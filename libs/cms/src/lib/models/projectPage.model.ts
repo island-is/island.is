@@ -1,4 +1,6 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import GraphQLJSON from 'graphql-type-json'
+import { CacheField } from '@island.is/nest/graphql'
 
 import { IProjectPage } from '../generated/contentfulTypes'
 import {
@@ -32,8 +34,11 @@ export class ProjectPage {
   @Field()
   sidebar!: boolean
 
-  @Field(() => [LinkGroup])
+  @CacheField(() => [LinkGroup])
   sidebarLinks!: Array<LinkGroup>
+
+  @CacheField(() => LinkGroup, { nullable: true })
+  secondarySidebar?: LinkGroup | null
 
   @Field()
   subtitle!: string
@@ -41,28 +46,28 @@ export class ProjectPage {
   @Field()
   intro!: string
 
-  @Field(() => [SliceUnion], { nullable: true })
+  @CacheField(() => [SliceUnion], { nullable: true })
   content?: Array<typeof SliceUnion>
 
-  @Field(() => Stepper, { nullable: true })
+  @CacheField(() => Stepper, { nullable: true })
   stepper!: Stepper | null
 
-  @Field(() => [SliceUnion])
+  @CacheField(() => [SliceUnion])
   slices!: Array<typeof SliceUnion | null>
 
-  @Field(() => [SliceUnion])
+  @CacheField(() => [SliceUnion])
   bottomSlices!: Array<typeof SliceUnion | null>
 
-  @Field(() => GenericTag, { nullable: true })
+  @CacheField(() => GenericTag, { nullable: true })
   newsTag!: GenericTag | null
 
-  @Field(() => [ProjectSubpage])
+  @CacheField(() => [ProjectSubpage])
   projectSubpages!: Array<ProjectSubpage>
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   featuredImage!: Image | null
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   defaultHeaderImage!: Image | null
 
   @Field()
@@ -71,16 +76,19 @@ export class ProjectPage {
   @Field()
   featuredDescription!: string
 
-  @Field(() => [FooterItem], { nullable: true })
+  @CacheField(() => GraphQLJSON, { nullable: true })
+  footerConfig?: { background?: string; textColor?: string } | null
+
+  @CacheField(() => [FooterItem], { nullable: true })
   footerItems?: FooterItem[]
 
-  @Field(() => Link, { nullable: true })
+  @CacheField(() => Link, { nullable: true })
   backLink?: Link | null
 
   @Field(() => Boolean, { nullable: true })
   contentIsFullWidth?: boolean
 
-  @Field(() => Namespace, { nullable: true })
+  @CacheField(() => Namespace, { nullable: true })
   namespace?: Namespace | null
 }
 
@@ -93,6 +101,9 @@ export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
   sidebarLinks: (fields.sidebarLinks ?? [])
     .map(mapLinkGroup)
     .filter((link) => Boolean(link.primaryLink)),
+  secondarySidebar: fields.secondarySidebar
+    ? mapLinkGroup(fields.secondarySidebar)
+    : null,
   subtitle: fields.subtitle ?? '',
   intro: fields.intro ?? '',
   content: fields.content
@@ -114,6 +125,7 @@ export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
   defaultHeaderBackgroundColor: fields.defaultHeaderBackgroundColor ?? '',
   featuredDescription: fields.featuredDescription ?? '',
   footerItems: fields.footerItems ? fields.footerItems.map(mapFooterItem) : [],
+  footerConfig: fields.footerConfig,
   backLink: fields.backLink ? mapLink(fields.backLink) : null,
   contentIsFullWidth: fields.contentIsFullWidth ?? false,
   namespace: fields.namespace ? mapNamespace(fields.namespace) : null,

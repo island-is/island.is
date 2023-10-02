@@ -20,6 +20,7 @@ import { AuthAdminClientType } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { Modal } from '@island.is/react/components'
 import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
+import { isDefined } from '@island.is/shared/utils'
 
 import { m } from '../../../lib/messages'
 import { CreateClientResult } from './CreateClient.action'
@@ -28,6 +29,7 @@ import { IDSAdminPaths } from '../../../lib/paths'
 import { useErrorFormatMessage } from '../../../hooks/useFormatErrorMessage'
 import { parseID } from '../../../utils/forms'
 import { authAdminEnvironments } from '../../../utils/environments'
+import { useGetClientAvailabilityLazyQuery } from './CreateClient.generated'
 
 const clientTypes = [
   AuthAdminClientType.web,
@@ -46,7 +48,6 @@ type InputState = {
 export default function CreateClient() {
   const navigate = useNavigate()
   const { isLoading, isSubmitting } = useSubmitting()
-
   const tenant = useRouteLoaderData(tenantLoaderId) as TenantLoaderResult
   const actionData = useActionData() as CreateClientResult
   const { formatMessage } = useLocale()
@@ -60,9 +61,27 @@ export default function CreateClient() {
   const [clientType, setClientState] = useState<AuthAdminClientType>(
     AuthAdminClientType.web,
   )
-  const [clientIdState, setClientIdState] = useState<InputState>(
-    initialClientIdState,
-  )
+  const [clientIdState, setClientIdState] =
+    useState<InputState>(initialClientIdState)
+
+  const [getClientAvailabilityQuery, { data: availabilityData }] =
+    useGetClientAvailabilityLazyQuery()
+  const clientIdAlreadyExists = isDefined(availabilityData?.authAdminClient)
+
+  const validateUniqueClientId = async () => {
+    const clientId = clientIdState.value
+    if (!clientIdState.value) return
+
+    await getClientAvailabilityQuery({
+      variables: {
+        input: {
+          clientId,
+          tenantId: tenant.id,
+          includeArchived: true,
+        },
+      },
+    })
+  }
 
   const onNameChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -152,6 +171,7 @@ export default function CreateClient() {
               label={formatMessage(m.displayName)}
               size="sm"
               onChange={onNameChange}
+              onBlur={validateUniqueClientId}
               errorMessage={formatErrorMessage(actionData?.errors?.displayName)}
             />
           </Box>
@@ -163,9 +183,15 @@ export default function CreateClient() {
               name="clientId"
               label={formatMessage(m.clientId)}
               size="sm"
+              hasError={clientIdAlreadyExists}
               value={clientIdState.value}
               onChange={onClientIdChange}
-              errorMessage={formatErrorMessage(actionData?.errors?.clientId)}
+              onBlur={validateUniqueClientId}
+              errorMessage={
+                clientIdAlreadyExists
+                  ? formatMessage(m.clientIdAlreadyExists)
+                  : formatErrorMessage(actionData?.errors?.clientId)
+              }
             />
           </Box>
         </Box>
@@ -201,7 +227,7 @@ export default function CreateClient() {
             <InputError
               id="environments"
               errorMessage={formatErrorMessage(
-                (actionData?.errors?.environments as unknown) as string,
+                actionData?.errors?.environments as unknown as string,
               )}
             />
           )}
@@ -230,7 +256,7 @@ export default function CreateClient() {
             <InputError
               id="applicationType"
               errorMessage={formatErrorMessage(
-                (actionData?.errors?.clientType as unknown) as string,
+                actionData?.errors?.clientType as unknown as string,
               )}
             />
           )}
@@ -239,7 +265,11 @@ export default function CreateClient() {
           <Button onClick={onCancel} variant="ghost">
             {formatMessage(m.cancel)}
           </Button>
-          <Button type="submit" loading={isLoading || isSubmitting}>
+          <Button
+            disabled={clientIdAlreadyExists || availabilityData === undefined}
+            type="submit"
+            loading={isLoading || isSubmitting}
+          >
             {formatMessage(m.create)}
           </Button>
         </Box>

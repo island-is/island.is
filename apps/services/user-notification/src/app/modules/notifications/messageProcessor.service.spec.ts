@@ -4,7 +4,7 @@ import { LoggingModule } from '@island.is/logging'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
-import { CacheModule } from '@nestjs/common'
+import { CacheModule } from '@nestjs/cache-manager'
 import { NotificationsService } from './notifications.service'
 import {
   UserProfile,
@@ -65,9 +65,8 @@ describe('MessageProcessorService', () => {
     }).compile()
 
     service = module.get<MessageProcessorService>(MessageProcessorService)
-    notificationsService = module.get<NotificationsService>(
-      NotificationsService,
-    )
+    notificationsService =
+      module.get<NotificationsService>(NotificationsService)
   })
 
   it('should be defined', () => {

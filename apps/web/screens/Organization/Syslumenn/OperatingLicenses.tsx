@@ -43,6 +43,7 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { SliceType } from '@island.is/island-ui/contentful'
 import { webRichText } from '@island.is/web/utils/richText'
 import { ApolloClient } from '@apollo/client'
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
 const DEBOUNCE_TIMER = 400
 const PAGE_SIZE = 10
@@ -65,7 +66,8 @@ const SEARCH_REDUCER_ACTION_TYPES = {
   SEARCH_SUCCESS_NEXT_PAGE: 'SEARCH_SUCCESS_NEXT_PAGE',
   SEARCH_ERROR: 'SEARCH_ERROR',
 }
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
 const searchReducer = (state: SearchState, action): SearchState => {
   switch (action.type) {
     case SEARCH_REDUCER_ACTION_TYPES.START_LOADING_FIRST_PAGE:
@@ -172,7 +174,8 @@ const useSearch = (
         currentPageNumber: currentPageNumber,
       })
     }
-
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     const thisTimerId = (timer.current = setTimeout(async () => {
       client
         .query<Query, QueryGetOperatingLicensesArgs>({
@@ -240,17 +243,20 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   subpage,
   namespace,
 }) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
   const { format } = useDateUtils()
   const DATE_FORMAT = n('operatingLicenseDateFormat', 'd. MMMM yyyy')
 
-  useContentfulId(organizationPage.id, subpage.id)
+  useContentfulId(organizationPage?.id, subpage?.id)
 
   const pageUrl = Router.pathname
-
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
       href: primaryLink?.url,
@@ -334,6 +340,8 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
           query: GET_OPERATING_LICENSES_CSV_QUERY,
         })
         .then(({ data: { getOperatingLicensesCSV } }) => {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           return resolve(getOperatingLicensesCSV.value)
         })
         .catch(() => {
@@ -344,9 +352,13 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
 
   return (
     <OrganizationWrapper
-      pageTitle={subpage.title}
+      pageTitle={subpage?.title ?? ''}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       organizationPage={organizationPage}
-      pageFeaturedImage={subpage.featuredImage}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      pageFeaturedImage={subpage?.featuredImage}
       showReadSpeaker={false}
       breadcrumbItems={[
         {
@@ -354,8 +366,9 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
           href: linkResolver('homepage').href,
         },
         {
-          title: organizationPage.title,
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
+          title: organizationPage?.title ?? '',
+          href: linkResolver('organizationpage', [organizationPage?.slug ?? ''])
+            .href,
         },
       ]}
       navigationData={{
@@ -365,11 +378,16 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
     >
       <Box paddingBottom={0}>
         <Text variant="h1" as="h2">
-          {subpage.title}
+          {subpage?.title}
         </Text>
-        <Webreader readId={null} readClass="rs_read" />
+        <Webreader
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          readId={null}
+          readClass="rs_read"
+        />
       </Box>
-      {webRichText(subpage.description as SliceType[])}
+      {webRichText((subpage?.description ?? []) as SliceType[])}
       <Box marginBottom={3}>
         <Input
           name="operatingLicenseSearchInput"
@@ -525,24 +543,26 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
                   : {operatingLicense.alcoholWeekendOutdoorLicense}
                 </Text>
               )}
-              {operatingLicense.maximumNumberOfGuests > 0 && (
-                <Text paddingBottom={0}>
-                  {n(
-                    'operatingLicensesMaximumNumberOfAccommodationGuests',
-                    'Hámarksfjöldi gesta í gistingu',
-                  )}
-                  : {operatingLicense.maximumNumberOfGuests}
-                </Text>
-              )}
-              {operatingLicense.numberOfDiningGuests > 0 && (
-                <Text paddingBottom={0}>
-                  {n(
-                    'operatingLicensesMaximumNumberOfDiningGuests',
-                    'Hámarksfjöldi gesta í veitingum',
-                  )}
-                  : {operatingLicense.numberOfDiningGuests}
-                </Text>
-              )}
+              {operatingLicense.maximumNumberOfGuests &&
+                operatingLicense.maximumNumberOfGuests > 0 && (
+                  <Text paddingBottom={0}>
+                    {n(
+                      'operatingLicensesMaximumNumberOfAccommodationGuests',
+                      'Hámarksfjöldi gesta í gistingu',
+                    )}
+                    : {operatingLicense.maximumNumberOfGuests}
+                  </Text>
+                )}
+              {operatingLicense.numberOfDiningGuests &&
+                operatingLicense?.numberOfDiningGuests > 0 && (
+                  <Text paddingBottom={0}>
+                    {n(
+                      'operatingLicensesMaximumNumberOfDiningGuests',
+                      'Hámarksfjöldi gesta í veitingum',
+                    )}
+                    : {operatingLicense.numberOfDiningGuests}
+                  </Text>
+                )}
             </Box>
           </Box>
         )
@@ -589,11 +609,8 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   )
 }
 
-OperatingLicenses.getInitialProps = async ({
-  apolloClient,
-  locale,
-  pathname,
-}) => {
+OperatingLicenses.getProps = async ({ apolloClient, locale, req }) => {
+  const pathname = safelyExtractPathnameFromUrl(req.url)
   const path = pathname?.split('/') ?? []
   const slug = path?.[path.length - 2] ?? 'syslumenn'
   const subSlug = path.pop() ?? 'rekstrarleyfi'
@@ -637,7 +654,7 @@ OperatingLicenses.getInitialProps = async ({
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),

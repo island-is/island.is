@@ -8,8 +8,8 @@ import {
   DefaultEvents,
   defineTemplateApi,
   NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
-import { Features } from '@island.is/feature-flags'
 import { ApiModuleActions, States, Roles } from '../constants'
 import { GeneralPetitionSchema } from './dataSchema'
 import { m } from './messages'
@@ -24,8 +24,6 @@ const GeneralPetitionTemplate: ApplicationTemplate<
   type: ApplicationTypes.GENERAL_PETITION,
   name: m.applicationName,
   dataSchema: GeneralPetitionSchema,
-  readyForProduction: false,
-  featureFlag: Features.generalPetition,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -53,6 +51,14 @@ const GeneralPetitionTemplate: ApplicationTemplate<
               delete: true,
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: m.logListInProgress,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
         },
         on: {
           [DefaultEvents.SUBMIT]: {
@@ -81,10 +87,18 @@ const GeneralPetitionTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
-              api: [NationalRegistryUserApi],
+              api: [NationalRegistryUserApi, UserProfileApi],
               delete: true,
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: m.logListCreated,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
         },
         on: {
           [DefaultEvents.SUBMIT]: {
@@ -97,12 +111,23 @@ const GeneralPetitionTemplate: ApplicationTemplate<
           name: 'Done',
           status: 'completed',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: false,
+          },
           onEntry: defineTemplateApi({
             action: ApiModuleActions.CreateEndorsementList,
             shouldPersistToExternalData: true,
             throwOnError: true,
           }),
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: m.logListCreated,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,

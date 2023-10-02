@@ -47,11 +47,12 @@ interface ProjectNewsListProps {
   selectedYear: number
   selectedMonth: number
   selectedPage: number
-  selectedTag: string
+  selectedTag: string | string[]
   namespace: GetNamespaceQuery['getNamespace']
   locale: Locale
 }
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
 const ProjectNewsList: Screen<ProjectNewsListProps> = ({
   projectPage,
   newsList,
@@ -68,7 +69,8 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
   const { getMonthByIndex } = useDateUtils()
   useContentfulId(projectPage.id)
   useLocalLinkTypeResolver()
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
 
   const newsOverviewUrl = linkResolver(
@@ -138,6 +140,8 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
         sidebarContent={
           <NewsListSidebar
             months={months}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             namespace={namespace}
             newsOverviewUrl={newsOverviewUrl}
             selectedMonth={selectedMonth}
@@ -149,6 +153,8 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
         }
       >
         <NewsList
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           namespace={namespace}
           newsItemLinkType="projectnews"
           newsOverviewUrl={newsOverviewUrl}
@@ -177,26 +183,36 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
   )
 }
 
-const createDatesMap = (datesList) => {
-  return datesList.reduce((datesMap, date) => {
-    const [year, month] = date.split('-')
-    if (datesMap[year]) {
-      datesMap[year].push(parseInt(month)) // we can assume each month only appears once
-    } else {
-      datesMap[year] = [parseInt(month)]
-    }
-    return datesMap
-  }, {})
+const createDatesMap = (datesList: string[]) => {
+  return datesList.reduce(
+    (datesMap: Record<string, number[]>, date: string) => {
+      const [year, month] = date.split('-')
+      if (datesMap[year]) {
+        datesMap[year].push(parseInt(month)) // we can assume each month only appears once
+      } else {
+        datesMap[year] = [parseInt(month)]
+      }
+      return datesMap
+    },
+    {},
+  )
 }
 
 const getIntParam = (s: string | string[]) => {
   const i = parseInt(Array.isArray(s) ? s[0] : s, 10)
   if (!isNaN(i)) return i
 }
-
-ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
+ProjectNewsList.getProps = async ({ apolloClient, query, locale }) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const year = getIntParam(query.y)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const month = year && getIntParam(query.m)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const selectedPage = getIntParam(query.page) ?? 1
 
   const projectPage = (
@@ -220,7 +236,9 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
     )
   }
 
-  const tag = (query.tag as string) ?? projectPage?.newsTag?.slug ?? ''
+  const tag = query.tag ?? projectPage?.newsTag?.slug ?? ''
+
+  const newsTags = tag ? (Array.isArray(tag) ? tag : [tag]) : []
 
   const [
     {
@@ -239,7 +257,7 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
       variables: {
         input: {
           lang: locale as Locale,
-          tag,
+          tags: newsTags,
         },
       },
     }),
@@ -252,11 +270,11 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
           page: selectedPage,
           year,
           month,
-          tags: [tag],
+          tags: newsTags,
         },
       },
     }),
-    query.tag
+    typeof query.tag === 'string'
       ? apolloClient.query<
           GetGenericTagBySlugQuery,
           GetGenericTagBySlugQueryVariables
@@ -280,10 +298,12 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
           },
         },
       })
-      .then((variables) => {
-        // map data here to reduce data processing in component
-        return JSON.parse(variables.data.getNamespace.fields)
-      }),
+      // map data here to reduce data processing in component
+      .then((variables) =>
+        variables.data.getNamespace?.fields
+          ? JSON.parse(variables.data.getNamespace.fields)
+          : {},
+      ),
   ])
 
   const genericTag = genericTagResponse?.data?.getGenericTagBySlug
@@ -313,23 +333,25 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
     }
 
     for (const lang of Object.keys(slugs)) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       languageToggleQueryParams[lang as Locale] = { tag: slugs[lang] }
     }
   }
 
   return {
     projectPage,
-    newsList: projectPage?.newsTag ? newsList : [],
+    newsList,
     total,
     selectedYear: year,
     selectedMonth: month,
-    selectedTag: tag,
+    selectedTag: newsTags,
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,
     locale: locale as Locale,
     languageToggleQueryParams,
-    ...getThemeConfig(projectPage?.theme),
+    ...getThemeConfig(projectPage),
   }
 }
 

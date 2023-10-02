@@ -19,10 +19,9 @@ const IdentityQuery = gql`
   }
 `
 
-export const NationalIdWithName: FC<FieldBaseProps> = ({
-  field,
-  application,
-}) => {
+export const NationalIdWithName: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ field, application }) => {
   const { id } = field
   const { formatMessage } = useLocale()
   const {
@@ -39,15 +38,13 @@ export const NationalIdWithName: FC<FieldBaseProps> = ({
   const nameFieldErrors = getErrorViaPath(errors, nameField)
   const nationalIdFieldErrors = getErrorViaPath(errors, nationaIdField)
 
-  const [
-    getIdentity,
-    { data, loading: queryLoading, error: queryError },
-  ] = useLazyQuery<Query, { input: IdentityInput }>(IdentityQuery, {
-    onCompleted: (data) => {
-      setValue(nameField, data.identity?.name ?? undefined)
-      setName(data.identity?.name ?? '')
-    },
-  })
+  const [getIdentity, { data, loading: queryLoading, error: queryError }] =
+    useLazyQuery<Query, { input: IdentityInput }>(IdentityQuery, {
+      onCompleted: (data) => {
+        setValue(nameField, data.identity?.name ?? undefined)
+        setName(data.identity?.name ?? '')
+      },
+    })
 
   useEffect(() => {
     if (

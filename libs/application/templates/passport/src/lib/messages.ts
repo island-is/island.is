@@ -35,14 +35,12 @@ export const m = defineMessages({
     description: 'Some description',
   },
   dataCollectionDistrictCommissionersTitle: {
-    id:
-      'pa.application:dataCollection.dataCollectionDistrictCommissionersTitle',
+    id: 'pa.application:dataCollection.dataCollectionDistrictCommissionersTitle',
     defaultMessage: 'Persónuupplýsingar úr Sýslumenn',
     description: 'Some description',
   },
   dataCollectionDistrictCommissionersSubitle: {
-    id:
-      'pa.application:dataCollection.dataCollectionDistrictCommissionersSubitle',
+    id: 'pa.application:dataCollection.dataCollectionDistrictCommissionersSubitle',
     defaultMessage:
       'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Sýslumenn til þess að fylla út umsóknina.',
     description: 'Some description',
@@ -100,7 +98,7 @@ export const m = defineMessages({
   },
   validTag: {
     id: 'pa.application:selectPassport.validTag',
-    defaultMessage: 'Í gildi til ',
+    defaultMessage: 'Í gildi til',
     description: 'Some description',
   },
   noPassport: {
@@ -289,11 +287,6 @@ export const m = defineMessages({
     defaultMessage: 'Staða núverandi vegabréfs',
     description: 'Some description',
   },
-  currentPassportExpiration: {
-    id: 'pa.application:overview.currentPassport.expiration',
-    defaultMessage: 'Í gildi til',
-    description: 'Some description',
-  },
   authenticationType: {
     id: 'pa.application:overview.authenticationType',
     defaultMessage: 'Tegund skilríkja',
@@ -411,9 +404,25 @@ export const m = defineMessages({
     description: 'Some description',
   },
   applicationCompleteNextStepsDescriptionPersonalApplication: {
-    id:
-      'pa.application:complete.nextSteps.descriptionPersonalApplication#markdown',
+    id: 'pa.application:complete.nextSteps.descriptionPersonalApplication#markdown',
     defaultMessage: `* Fara í myndatöku á næsta afgreiðslustað sýslumanns.\\n\\n * Þú færð senda tilkynningu á Mínar síður þegar vegabréfið er tilbúið og hægt er að sækja það á þann afhendingarstað sem þú valdir.`,
     description: 'Some description',
+  },
+
+  /* History logs */
+  waitingForConfirmationFromParentBTitle: {
+    id: 'pa.application:history.waitingForConfirmationFromParentBTitle',
+    defaultMessage: 'Staðfesting forsjáraðila',
+    description: '',
+  },
+  waitingForConfirmationFromParentBDescription: {
+    id: 'pa.application:history.waitingForConfirmationFromParentBDescription',
+    defaultMessage: 'Beðið eftir staðfestingu forsjáraðila',
+    description: '',
+  },
+  confirmedByParentB: {
+    id: 'pa.application:history.confirmedByParentB',
+    defaultMessage: 'Forsjáraðili hefur staðfest umsókn',
+    description: '',
   },
 })

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
-import { Control, FieldValues, FormProvider, useForm } from 'react-hook-form'
+import { Control, FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
 import * as kennitala from 'kennitala'
@@ -50,10 +50,8 @@ const GrantAccess = () => {
     updateDomain,
   } = useDomains(false)
 
-  const [
-    createAuthDelegation,
-    { loading: mutationLoading },
-  ] = useCreateAuthDelegationMutation()
+  const [createAuthDelegation, { loading: mutationLoading }] =
+    useCreateAuthDelegationMutation()
 
   const noUserFoundToast = () => {
     toast.error(formatMessage(m.grantIdentityError))
@@ -175,7 +173,7 @@ const GrantAccess = () => {
                 )}
                 <Box display={name ? 'none' : 'block'} aria-live="assertive">
                   <InputController
-                    control={(control as unknown) as Control}
+                    control={control as unknown as Control}
                     id="toNationalId"
                     icon={name || queryLoading ? undefined : 'search'}
                     ref={inputRef}

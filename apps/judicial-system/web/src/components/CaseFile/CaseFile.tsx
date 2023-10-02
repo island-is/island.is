@@ -1,11 +1,12 @@
 import React from 'react'
-import { Box, Tag, Text } from '@island.is/island-ui/core'
-import BlueBox from '../BlueBox/BlueBox'
-import { kb } from '../../utils/stepHelper'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import isValid from 'date-fns/isValid'
-import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 
+import { Box, Tag, Text } from '@island.is/island-ui/core'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
+
+import { kb } from '../../utils/stepHelper'
+import BlueBox from '../BlueBox/BlueBox'
 import * as styles from './CaseFile.css'
 
 interface Props {
@@ -17,7 +18,7 @@ interface Props {
   canOpenFiles?: boolean
 }
 
-const CaseFile: React.FC<Props> = (props) => {
+const CaseFile: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { fileId, name, size, uploadedAt, canOpenFiles = true, onOpen } = props
 
   const isValidUpdatedAtDate = isValid(new Date(uploadedAt))

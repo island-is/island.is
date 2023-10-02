@@ -52,6 +52,21 @@ export const m = defineMessages({
     defaultMessage: 'Gagnaöflun',
     description: 'Title for data collection section',
   },
+  dataCollectionTitleUserIndividual: {
+    id: 'fsn.application:applicationDataCollectionTitleUserIndividual',
+    defaultMessage: 'Gagnaöflun vegna einstaklingsframboðs',
+    description: 'Title for data collection section',
+  },
+  dataCollectionTitleUserParty: {
+    id: 'fsn.application:applicationDataCollectionTitleUserParty',
+    defaultMessage: 'Gagnaöflun vegna skila ársreiknings stjórnmálaflokks',
+    description: 'Title for data collection section',
+  },
+  dataCollectionTitleUserCemetry: {
+    id: 'fsn.application:applicationDataCollectionTitleUserCemetry',
+    defaultMessage: 'Gagnaöflun vegna skila ársreiknings kirkjugarðs',
+    description: 'Title for data collection section',
+  },
   dataCollectionNationalRegistryTitle: {
     id: 'fsn.application:dataCollectionNationalRegistryTitle',
     defaultMessage: 'Persónuupplýsingar',

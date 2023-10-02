@@ -58,7 +58,7 @@ const getProcessEntries = (contentList: object[]) =>
 
 export const numberOfLinks = (contentList: object[]) => {
   const processLinks = getProcessEntries(contentList).map(
-    (entry) => new URL(entry.processLink),
+    (entry) => new URL(entry.processLink, 'https://island.is'),
   )
   const fillAndSignProcessLinks = processLinks.filter((url) =>
     url.hostname.includes('dropandsign.is'),
@@ -76,10 +76,14 @@ export const numberOfLinks = (contentList: object[]) => {
     return !url.hostname.includes('island.is')
   }).length
 
-  const pdfAssets = getAssetsByContentType(contentList, 'application/pdf')
-    .length
-  const wordAssets = getAssetsByContentType(contentList, 'application/msword')
-    .length
+  const pdfAssets = getAssetsByContentType(
+    contentList,
+    'application/pdf',
+  ).length
+  const wordAssets = getAssetsByContentType(
+    contentList,
+    'application/msword',
+  ).length
 
   return {
     fillAndSignLinks: fillAndSignProcessLinks,
@@ -106,7 +110,7 @@ const pruneEntryHyperlink = (node: any) => {
             slug: node.data.target.fields[field]?.fields?.slug,
           },
         }
-      } else if (field !== 'slug' && field !== 'url') {
+      } else if (typeof node.data.target.fields[field] === 'object') {
         delete node.data.target.fields[field]
       }
     }

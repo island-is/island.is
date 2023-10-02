@@ -3,17 +3,19 @@ import {
   CanApplyErrorCodeBFull,
   CanApplyForCategoryResult,
   DrivingAssessment,
-  Juristiction,
+  Jurisdiction,
   QualityPhoto,
 } from '..'
 import * as v1 from '../v1'
 import * as v2 from '../v2'
+import * as v4 from '../v4'
 import * as v5 from '../v5'
 import {
   CanApplyErrorCodeBTemporary,
   DriversLicense,
   QualitySignature,
   Teacher,
+  RemarkCode,
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
 import { PracticePermitDto } from '../v5'
@@ -23,9 +25,75 @@ export class DrivingLicenseApi {
   constructor(
     private readonly v1: v1.ApiV1,
     private readonly v2: v2.ApiV2,
+    private readonly v4: v4.ApiV4,
     private readonly v5: v5.ApiV5,
+    private readonly v5CodeTable: v5.CodeTableV5,
   ) {}
+
+  public notifyOnPkPassCreation(input: {
+    nationalId: string
+    token?: string
+  }): Promise<void> {
+    return this.v5.apiDrivinglicenseV5DigitallicensecreatedPost({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: input.token ?? '',
+    })
+  }
+
+  public async getRemarksCodeTable(): Promise<RemarkCode[] | null> {
+    const codeTable = await this.v5CodeTable.apiCodetablesRemarksGet({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+    })
+    if (!codeTable) return null
+    return codeTable.map((c) => ({
+      index: c.nr ?? '',
+      name: c.heiti ?? '',
+    }))
+  }
+  public async getCurrentLicenseV5(input: {
+    nationalId: string
+    token?: string
+  }): Promise<v5.DriverLicenseDto | null> {
+    const skirteini = await this.v5.getCurrentLicenseV5({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: input.token ?? '',
+    })
+    if (!skirteini || !skirteini.id) {
+      return null
+    }
+    return skirteini
+  }
+
+  public async getCurrentLicenseV4(input: {
+    nationalId: string
+  }): Promise<v4.DriverLicenseDto | null> {
+    const skirteini = await this.v4.getCurrentLicenseV4({
+      apiVersion: v4.DRIVING_LICENSE_API_VERSION_V4,
+      apiVersion2: v4.DRIVING_LICENSE_API_VERSION_V4,
+      sSN: input.nationalId,
+    })
+    if (!skirteini || !skirteini.id) {
+      return null
+    }
+    return skirteini
+  }
+
   public async getCurrentLicense(input: {
+    token: string
+  }): Promise<DriversLicense> {
+    const license = await this.v5.getCurrentLicenseV5({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: input.token?.replace('Bearer ', ''),
+    })
+    return DrivingLicenseApi.normalizeDrivingLicenseDTO(license)
+  }
+
+  // TODO: deprecate this function and use getCurrentLicense instead
+  public async legacyGetCurrentLicense(input: {
     nationalId: string
     token?: string
   }): Promise<DriversLicense | null> {
@@ -138,6 +206,31 @@ export class DrivingLicenseApi {
     }
   }
 
+  // TODO: We should consider changing the DriversLicense type to reflect
+  // the new DTO from v5. This should be done as part of a larger refactor
+  // for the driving license client.
+  private static normalizeDrivingLicenseDTO(
+    license: v5.DriverLicenseDto,
+  ): DriversLicense {
+    const normalizedLicense: DriversLicense = {
+      ...license,
+      id: license.id ?? -1,
+      name: license.name ?? '',
+      categories:
+        license.categories?.map((category) => {
+          return {
+            ...category,
+            id: category.id ?? -1,
+            issued: category.publishDate ?? null,
+            comments: category.comment ?? null,
+            name: category.categoryName ?? '',
+            expires: category.dateTo ?? null,
+          }
+        }) ?? [],
+    }
+    return normalizedLicense
+  }
+
   public async getAllLicenses(input: {
     nationalId: string
   }): Promise<DriversLicense[]> {
@@ -157,6 +250,19 @@ export class DrivingLicenseApi {
     }))
   }
 
+  public async getTeachersV4() {
+    const teachers = await this.v4.apiDrivinglicenseV4DrivinginstructorsGet({
+      apiVersion: v4.DRIVING_LICENSE_API_VERSION_V4,
+      apiVersion2: v4.DRIVING_LICENSE_API_VERSION_V4,
+    })
+
+    return teachers.map((teacher) => ({
+      name: teacher?.name ?? '',
+      nationalId: teacher?.ssn ?? '',
+      driverLicenseId: teacher?.driverLicenseId,
+    }))
+  }
+
   public async getDeprivation(input: {
     nationalId: string
     token?: string
@@ -164,16 +270,15 @@ export class DrivingLicenseApi {
     return await this.v5.apiDrivinglicenseV5DeprivationGet({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: input.token ?? '',
+      jwttoken: input.token?.replace('Bearer ', '') ?? '',
     })
   }
 
   public async getIsTeacher(params: { nationalId: string }) {
-    const statusStr = ((await this.v1.apiOkuskirteiniHasteachingrightsKennitalaGet(
-      {
+    const statusStr =
+      (await this.v1.apiOkuskirteiniHasteachingrightsKennitalaGet({
         kennitala: params.nationalId,
-      },
-    )) as unknown) as string
+      })) as unknown as string
 
     // API says number, type says number, but deserialization happens with a text
     // deserializer (runtime.TextApiResponse).
@@ -182,7 +287,7 @@ export class DrivingLicenseApi {
     return parseInt(statusStr, 10) > 0
   }
 
-  public async getListOfJuristictions(): Promise<Juristiction[]> {
+  public async getListOfJurisdictions(): Promise<Jurisdiction[]> {
     const embaetti = await this.v1.apiOkuskirteiniEmbaettiGet({})
 
     return embaetti.map(({ nr, postnumer, nafn }: v1.EmbaettiDto) => ({
@@ -233,13 +338,12 @@ export class DrivingLicenseApi {
     category: string
     nationalId: string
   }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeBFull>> {
-    const response = await this.v2.apiOkuskirteiniKennitalaCanapplyforCategoryFullGet(
-      {
+    const response =
+      await this.v2.apiOkuskirteiniKennitalaCanapplyforCategoryFullGet({
         apiVersion: v2.DRIVING_LICENSE_API_VERSION_V2,
         kennitala: params.nationalId,
         category: params.category,
-      },
-    )
+      })
 
     return {
       result: !!response.result,
@@ -252,11 +356,10 @@ export class DrivingLicenseApi {
   public async getCanApplyForCategoryTemporary(params: {
     nationalId: string
   }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeBTemporary>> {
-    const response = await this.v1.apiOkuskirteiniKennitalaCanapplyforTemporaryGet(
-      {
+    const response =
+      await this.v1.apiOkuskirteiniKennitalaCanapplyforTemporaryGet({
         kennitala: params.nationalId,
-      },
-    )
+      })
     return {
       result: !!response.result,
       errorCode: response.errorCode
@@ -284,27 +387,26 @@ export class DrivingLicenseApi {
     nationalIdTeacher: string
     willBringHealthCertificate: boolean
     willBringQualityPhoto: boolean
-    juristictionId: number
+    jurisdictionId: number
     sendLicenseInMail: boolean
     email: string
     phone: string
   }) {
     try {
-      const response = await this.v2.apiOkuskirteiniApplicationsNewTemporaryPost(
-        {
+      const response =
+        await this.v2.apiOkuskirteiniApplicationsNewTemporaryPost({
           apiVersion: v2.DRIVING_LICENSE_API_VERSION_V2,
           postTemporaryLicenseV2: {
             kemurMedLaeknisvottord: params.willBringHealthCertificate,
             kennitala: params.nationalIdApplicant,
             kemurMedNyjaMynd: params.willBringQualityPhoto,
-            embaetti: params.juristictionId,
+            embaetti: params.jurisdictionId,
             kennitalaOkukennara: params.nationalIdTeacher,
             sendaSkirteiniIPosti: params.sendLicenseInMail,
             netfang: params.email,
             farsimaNumer: params.phone,
           },
-        },
-      )
+        })
       if (!response.result) {
         throw new Error(
           `POST apiOkuskirteiniApplicationsNewTemporaryPost was not successful, response was: ${response.errorCode}`,
@@ -333,7 +435,7 @@ export class DrivingLicenseApi {
     nationalIdApplicant: string
     willBringHealthCertificate: boolean
     willBringQualityPhoto: boolean
-    juristictionId: number
+    jurisdictionId: number
     sendLicenseInMail: boolean
     sendLicenseToAddress: string
     category: string
@@ -341,7 +443,7 @@ export class DrivingLicenseApi {
     const response = await this.v2.apiOkuskirteiniApplicationsNewCategoryPost({
       category: params.category,
       postNewFinalLicense: {
-        authorityNumber: params.juristictionId,
+        authorityNumber: params.jurisdictionId,
         needsToPresentHealthCertificate: params.willBringHealthCertificate
           ? 1
           : 0,
@@ -371,7 +473,7 @@ export class DrivingLicenseApi {
     return await this.v5.apiDrivinglicenseV5CanapplyforPracticepermitPost({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: params.token,
+      jwttoken: params.token.replace('Bearer ', ''),
       postPracticePermit: {
         dateFrom: new Date(),
         studentSSN: params.studentSSN,
@@ -387,10 +489,28 @@ export class DrivingLicenseApi {
     return await this.v5.apiDrivinglicenseV5ApplicationsPracticepermitPost({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-      jwttoken: params.token,
+      jwttoken: params.token.replace('Bearer ', ''),
       postPracticePermit: {
         dateFrom: new Date(),
         studentSSN: params.studentSSN,
+        userId: v5.DRIVING_LICENSE_API_USER_ID,
+      },
+    })
+  }
+
+  async postApplicationNewCollaborative(params: {
+    token: string
+    districtId: number
+    stolenOrLost: boolean
+  }): Promise<number> {
+    const { districtId, token, stolenOrLost } = params
+    return await this.v5.apiDrivinglicenseV5ApplicationsNewCollaborativePost({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: token.replace('Bearer ', ''),
+      postNewCollaborative: {
+        districtId,
+        licenseStolenOrLost: stolenOrLost,
         userId: v5.DRIVING_LICENSE_API_USER_ID,
       },
     })

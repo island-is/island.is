@@ -11,7 +11,7 @@ import { UserEmailResult } from '../models/userEmailResult.model'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { UserSubscriptionsAggregate } from '../models/userSubscriptionsAggregate.model'
 import { PostEmailCommand } from '../models/postEmailCommand.model'
-import { UserSubscriptionsCommand } from '../models/userSubscriptionsCommand.model'
+import { PostUserSubscriptionsCommand } from '../models/postUserSubscriptionsCommand.model'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ApolloError } from '@apollo/client'
@@ -93,10 +93,10 @@ export class UserService {
 
   async postUserSubscriptions(
     auth: User,
-    input: UserSubscriptionsCommand,
+    input: PostUserSubscriptionsCommand,
   ): Promise<void> {
     const request: ApiUserSubscriptionsPostRequest = {
-      userSubscriptionsCommand: input,
+      postUserSubscriptionsCommand: input,
     }
 
     const response = await this.userApiWithAuth(auth)

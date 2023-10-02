@@ -1,10 +1,11 @@
 {
-  "root": "apps/portals/admin",
+  "name": "portals-admin",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/portals/admin/src",
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/web:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
@@ -36,21 +37,21 @@
       },
       "dependsOn": [
         {
-          "target": "generateDevIndexHTML",
-          "projects": "self"
+          "target": "generateDevIndexHTML"
         }
       ]
     },
     "generateDevIndexHTML": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "node scripts/dockerfile-assets/bash/extract-environment.js apps/portals/admin/src"
         ]
-      }
+      },
+      "outputs": ["{workspaceRoot}/apps/portals/admin/src/index.html"]
     },
     "serve": {
-      "executor": "@nrwl/web:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "options": {
         "buildTarget": "portals-admin:build",
         "hmr": true
@@ -63,41 +64,40 @@
       },
       "dependsOn": [
         {
-          "target": "generateDevIndexHTML",
-          "projects": "self"
+          "target": "generateDevIndexHTML"
         }
       ]
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/portals/admin/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/portals/admin"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/portals/admin"],
       "options": {
-        "jestConfig": "apps/portals/admin/jest.config.js",
+        "jestConfig": "apps/portals/admin/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/portals/admin/src/{screens,components}/**/*.{js,ts,tsx}'"
       }
     },
     "dev-init": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": ["yarn get-secrets portals-admin"],
         "parallel": false
       }
     },
     "dev": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": ["yarn start portals-admin"],
         "parallel": true

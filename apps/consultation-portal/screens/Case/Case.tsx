@@ -1,32 +1,10 @@
-import {
-  Box,
-  Breadcrumbs,
-  Divider,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
-import {
-  CaseOverview,
-  CaseTimeline,
-  Coordinator,
-  BlowoutList,
-  CaseStatusBox,
-  CaseDocuments,
-  CaseEmailBox,
-  AdviceForm,
-  AdviceList,
-  AdviceSkeletonLoader,
-} from './components'
 import { useFetchAdvicesById, useIsMobile } from '../../hooks'
 import { Case } from '../../types/interfaces'
 import { CaseStatuses } from '../../types/enums'
-import { useContext } from 'react'
-import UserContext from '../../context/UserContext'
-import localization from './Case.json'
-import { Layout } from '../../components'
+import Error404 from '../Error404/Error404'
+import CaseMobile from './CaseMobile'
+import CaseDesktop from './CaseDesktop'
+import { getStakeholdersList } from './utils'
 
 interface Props {
   chosenCase: Case
@@ -34,132 +12,64 @@ interface Props {
 }
 
 const CaseScreen = ({ chosenCase, caseId }: Props) => {
-  const { contactEmail, contactName } = chosenCase
   const { isMobile } = useIsMobile()
-  const { isAuthenticated, user } = useContext(UserContext)
-  const loc = localization['case']
   const { advices, advicesLoading, refetchAdvices } = useFetchAdvicesById({
     caseId: caseId,
   })
 
-  const isStakeholdersNotEmpty = chosenCase?.stakeholders?.length > 0
+  const stakeholders = getStakeholdersList({
+    stakeholders: chosenCase?.stakeholders,
+    extraStakeholderList: chosenCase?.extraStakeholderList,
+  })
+
+  const isStakeholdersNotEmpty = stakeholders?.length > 0
   const isRelatedCasesNotEmpty = chosenCase?.relatedCases?.length > 0
   const isDocumentsNotEmpty = chosenCase?.documents?.length > 0
   const isAdditionalDocumentsNotEmpty =
     chosenCase?.additionalDocuments?.length > 0
-  const statusNameIsNotPublished =
+  const isStatusNameNotPublished =
     chosenCase?.statusName !== CaseStatuses.published
-  const statusNameIsForReview =
+  const isStatusNameForReview =
     chosenCase?.statusName === CaseStatuses.forReview
+  const isChosenCaseNull = Object.values(chosenCase).every((value) =>
+    Boolean(String(value).trim()),
+  )
+
+  const expressions = {
+    isDocumentsNotEmpty: isDocumentsNotEmpty,
+    isAdditionalDocumentsNotEmpty: isAdditionalDocumentsNotEmpty,
+    isStatusNameNotPublished: isStatusNameNotPublished,
+    isStatusNameForReview: isStatusNameForReview,
+    isStakeholdersNotEmpty: isStakeholdersNotEmpty,
+    isRelatedCasesNotEmpty: isRelatedCasesNotEmpty,
+  }
+
+  if (isChosenCaseNull) {
+    return <Error404 />
+  }
+
+  if (isMobile) {
+    return (
+      <CaseMobile
+        chosenCase={chosenCase}
+        stakeholders={stakeholders}
+        expressions={expressions}
+        advices={advices}
+        advicesLoading={advicesLoading}
+        refetchAdvices={refetchAdvices}
+      />
+    )
+  }
 
   return (
-    <Layout
-      seo={{
-        title: `${loc.seo.title}: S-${chosenCase?.caseNumber}`,
-        url: `${loc.seo.url}${chosenCase?.id}`,
-      }}
-    >
-      <GridContainer>
-        <Box paddingY={[3, 3, 3, 5, 5]}>
-          <Breadcrumbs
-            items={[
-              {
-                title: loc.breadcrumbs.parent.title,
-                href: loc.breadcrumbs.parent.href,
-              },
-              {
-                title: `${loc.breadcrumbs.current.title} S-${chosenCase?.caseNumber}`,
-              },
-            ]}
-          />
-        </Box>
-      </GridContainer>
-      {isMobile && (
-        <Box paddingBottom={3}>
-          <Divider />
-        </Box>
-      )}
-      <GridContainer>
-        <GridRow rowGap={3}>
-          <GridColumn
-            span={['12/12', '12/12', '12/12', '3/12', '3/12']}
-            order={[3, 3, 3, 1, 1]}
-          >
-            <Stack space={3}>
-              <Divider />
-              <CaseTimeline chosenCase={chosenCase} />
-              <Divider />
-              {isDocumentsNotEmpty && (
-                <CaseDocuments
-                  title={loc.documentsBox.documents.title}
-                  documents={chosenCase?.documents}
-                />
-              )}
-              {isAdditionalDocumentsNotEmpty && (
-                <CaseDocuments
-                  title={loc.documentsBox.additional.title}
-                  documents={chosenCase?.additionalDocuments}
-                />
-              )}
-              {statusNameIsNotPublished && (
-                <CaseEmailBox
-                  caseId={caseId}
-                  caseNumber={chosenCase?.caseNumber}
-                />
-              )}
-            </Stack>
-          </GridColumn>
-          <GridColumn
-            span={['12/12', '12/12', '12/12', '6/12', '6/12']}
-            order={[1, 1, 1, 2, 2]}
-          >
-            <Stack space={[3, 3, 3, 9, 9]}>
-              <CaseOverview chosenCase={chosenCase} />
-              <Stack space={3}>
-                <Text variant="h1" color="blue400">
-                  {`${loc.advices.title} (${
-                    chosenCase.adviceCount ? chosenCase.adviceCount : 0
-                  })`}
-                </Text>
-                {advicesLoading ? (
-                  <AdviceSkeletonLoader />
-                ) : (
-                  <AdviceList advices={advices} chosenCase={chosenCase} />
-                )}
-                {statusNameIsForReview && (
-                  <AdviceForm
-                    card={chosenCase}
-                    isLoggedIn={isAuthenticated}
-                    username={user?.name}
-                    caseId={chosenCase?.id}
-                    refetchAdvices={refetchAdvices}
-                    canBePrivate={chosenCase?.allowUsersToSendPrivateAdvices}
-                  />
-                )}
-              </Stack>
-            </Stack>
-          </GridColumn>
-          <GridColumn
-            span={['12/12', '12/12', '12/12', '3/12', '3/12']}
-            order={[2, 2, 2, 3, 3]}
-          >
-            <Stack space={3}>
-              <CaseStatusBox status={chosenCase.statusName} />
-              {isStakeholdersNotEmpty && (
-                <BlowoutList list={chosenCase.stakeholders} isStakeholder />
-              )}
-              {isRelatedCasesNotEmpty && (
-                <BlowoutList list={chosenCase.relatedCases} />
-              )}
-              <Coordinator
-                contactEmail={contactEmail}
-                contactName={contactName}
-              />
-            </Stack>
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
-    </Layout>
+    <CaseDesktop
+      chosenCase={chosenCase}
+      stakeholders={stakeholders}
+      expressions={expressions}
+      advices={advices}
+      advicesLoading={advicesLoading}
+      refetchAdvices={refetchAdvices}
+    />
   )
 }
 

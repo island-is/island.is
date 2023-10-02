@@ -11,6 +11,8 @@ import {
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
+  coreHistoryMessages,
+  corePendingActionMessages,
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
@@ -49,6 +51,12 @@ const template: ApplicationTemplate<
               label: application.actionCardDraft,
               variant: 'blue',
             },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
@@ -56,10 +64,9 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import(
-                  '../forms/DigitalTachographWorkshopCardForm/index'
-                ).then((module) =>
-                  Promise.resolve(module.DigitalTachographWorkshopCardForm),
+                import('../forms/DigitalTachographWorkshopCardForm/index').then(
+                  (module) =>
+                    Promise.resolve(module.DigitalTachographWorkshopCardForm),
                 ),
               actions: [
                 {
@@ -90,6 +97,21 @@ const template: ApplicationTemplate<
             tag: {
               label: application.actionCardPayment,
               variant: 'red',
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentAccepted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+              {
+                logMessage: coreHistoryMessages.paymentCancelled,
+                onEvent: DefaultEvents.ABORT,
+              },
+            ],
+            pendingAction: {
+              title: corePendingActionMessages.paymentPendingTitle,
+              content: corePendingActionMessages.paymentPendingDescription,
+              displayStatus: 'warning',
             },
           },
           progress: 0.8,
@@ -128,6 +150,10 @@ const template: ApplicationTemplate<
             tag: {
               label: application.actionCardDone,
               variant: 'blueberry',
+            },
+            pendingAction: {
+              title: corePendingActionMessages.applicationReceivedTitle,
+              displayStatus: 'success',
             },
           },
           roles: [

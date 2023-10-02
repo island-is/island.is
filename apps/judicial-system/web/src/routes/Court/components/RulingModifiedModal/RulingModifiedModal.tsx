@@ -6,8 +6,8 @@ import {
   FormContext,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
-import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { strings } from './RulingModifiedModal.strings'
 
@@ -16,7 +16,10 @@ interface Props {
   onContinue: () => void
 }
 
-const RulingModifiedModal: React.FC<Props> = ({ onCancel, onContinue }) => {
+const RulingModifiedModal: React.FC<React.PropsWithChildren<Props>> = ({
+  onCancel,
+  onContinue,
+}) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
   const { updateCase } = useCase()

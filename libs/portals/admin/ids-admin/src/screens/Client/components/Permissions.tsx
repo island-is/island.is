@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { useActionData, useParams } from 'react-router-dom'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 
 import { AuthAdminClientAllowedScope } from '@island.is/api/schema'
 import { Box, Button, Icon, Table as T, Text } from '@island.is/island-ui/core'
@@ -7,15 +7,12 @@ import { useLocale } from '@island.is/localization'
 import { getTranslatedValue } from '@island.is/portals/core'
 
 import { m } from '../../../lib/messages'
-import {
-  ClientFormTypes,
-  EditApplicationResult,
-  schema,
-} from '../EditClient.action'
+import { ClientFormTypes } from '../EditClient.schema'
 import { ShadowBox } from '../../../components/ShadowBox/ShadowBox'
-import ContentCard from '../../../components/ContentCard'
-import { AddPermissions } from '../../../components/forms/AddPermissions/AddPermissions'
+import { AddPermissions } from './AddPermissions/AddPermissions'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
+import { useClient } from '../ClientContext'
+import { FormCard } from '../../../components/FormCard/FormCard'
 
 interface PermissionsProps {
   allowedScopes?: AuthAdminClientAllowedScope[]
@@ -23,8 +20,8 @@ interface PermissionsProps {
 
 function Permissions({ allowedScopes }: PermissionsProps) {
   const { formatMessage, locale } = useLocale()
+  const { tenant } = useParams()
   const [isModalVisible, setIsModalVisible] = useState(false)
-  const params = useParams()
   const [permissions, setPermissions] = useEnvironmentState<
     AuthAdminClientAllowedScope[]
   >(allowedScopes ?? [])
@@ -34,9 +31,7 @@ function Permissions({ allowedScopes }: PermissionsProps) {
   const [removedScopes, setRemovedScopes] = useState<
     AuthAdminClientAllowedScope[]
   >([])
-  const actionData = useActionData() as EditApplicationResult<
-    typeof schema[typeof ClientFormTypes.permissions]
-  >
+  const { actionData } = useClient()
 
   useEffect(() => {
     if (
@@ -47,8 +42,6 @@ function Permissions({ allowedScopes }: PermissionsProps) {
       setRemovedScopes([])
     }
   }, [actionData])
-
-  const tenant = params['tenant']
 
   const handleModalOpen = () => {
     setIsModalVisible(true)
@@ -105,22 +98,32 @@ function Permissions({ allowedScopes }: PermissionsProps) {
   const hasData =
     permissions.length > 0 || addedScopes.length > 0 || removedScopes.length > 0
 
+  const customValidation = useCallback(
+    () => addedScopes.length > 0 || removedScopes.length > 0,
+    [addedScopes, removedScopes],
+  )
+
   return (
-    <ContentCard
+    <FormCard
       title={formatMessage(m.permissions)}
       description={formatMessage(m.permissionsDescription, {
         br: <br />,
       })}
-      isDirty={addedScopes.length > 0 || removedScopes.length > 0}
-      intent={hasData ? ClientFormTypes.permissions : ClientFormTypes.none}
+      customValidation={customValidation}
+      intent={hasData ? ClientFormTypes.permissions : undefined}
       shouldSupportMultiEnvironment={false}
+      headerMarginBottom={3}
     >
       <Box
         marginBottom={hasData ? 5 : 0}
         display="flex"
         justifyContent="flexEnd"
       >
-        <Button size="small" onClick={handleModalOpen}>
+        <Button
+          size="small"
+          onClick={handleModalOpen}
+          dataTestId="add-permissions-button"
+        >
           {formatMessage(m.permissionsAdd)}
         </Button>
       </Box>
@@ -140,7 +143,7 @@ function Permissions({ allowedScopes }: PermissionsProps) {
             </T.Head>
             <T.Body>
               {permissions.map((item) => (
-                <T.Row key={item.name}>
+                <T.Row key={item.name} dataTestId="permission-row">
                   <T.Data>
                     <Box display="flex" columnGap={1} alignItems="center">
                       {item.domainName !== tenant && (
@@ -193,7 +196,7 @@ function Permissions({ allowedScopes }: PermissionsProps) {
         addedScopes={addedScopes}
         removedScopes={removedScopes}
       />
-    </ContentCard>
+    </FormCard>
   )
 }
 

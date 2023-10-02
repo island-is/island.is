@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { ILogoListSlice } from '../generated/contentfulTypes'
+import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
+import { ILogoListSlice } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 
 @ObjectType()
@@ -14,7 +15,7 @@ export class LogoListSlice {
   @Field()
   body?: string
 
-  @Field(() => [Image])
+  @CacheField(() => [Image])
   images?: Image[]
 }
 

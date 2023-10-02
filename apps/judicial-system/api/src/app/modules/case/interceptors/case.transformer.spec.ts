@@ -14,17 +14,6 @@ describe('transformCase', () => {
   `.describe(
     'when transforming boolean case attributes',
     ({ originalValue, transformedValue }) => {
-      it(`should transform ${originalValue} sendRequestToDefender to ${transformedValue}`, () => {
-        // Arrange
-        const theCase = { sendRequestToDefender: originalValue } as Case
-
-        // Act
-        const res = transformCase(theCase)
-
-        // Assert
-        expect(res.sendRequestToDefender).toBe(transformedValue)
-      })
-
       it(`should transform ${originalValue} requestProsecutorOnlySession to ${transformedValue}`, () => {
         // Arrange
         const theCase = { requestProsecutorOnlySession: originalValue } as Case
@@ -113,10 +102,10 @@ describe('transformCase', () => {
 
     it('should be false while the appeal window is open', () => {
       // Arrange
-      const courtEndTime = new Date()
-      courtEndTime.setDate(courtEndTime.getDate() - 3)
-      courtEndTime.setSeconds(courtEndTime.getSeconds() + 1)
-      const theCase = { courtEndTime: courtEndTime.toISOString() } as Case
+      const rulingDate = new Date()
+      rulingDate.setDate(rulingDate.getDate() - 3)
+      rulingDate.setSeconds(rulingDate.getSeconds() + 1)
+      const theCase = { rulingDate: rulingDate.toISOString() } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -127,9 +116,9 @@ describe('transformCase', () => {
 
     it('should be true when the appeal window has closed', () => {
       // Arrange
-      const courtEndTime = new Date()
-      courtEndTime.setDate(courtEndTime.getDate() - 3)
-      const theCase = { courtEndTime: courtEndTime.toISOString() } as Case
+      const rulingDate = new Date()
+      rulingDate.setDate(rulingDate.getDate() - 3)
+      const theCase = { rulingDate: rulingDate.toISOString() } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -153,10 +142,10 @@ describe('transformCase', () => {
 
     it('should be false while the appeal window is open', () => {
       // Arrange
-      const courtEndTime = new Date()
-      courtEndTime.setDate(courtEndTime.getDate() - 31)
-      courtEndTime.setSeconds(courtEndTime.getSeconds() + 1)
-      const theCase = { courtEndTime: courtEndTime.toISOString() } as Case
+      const rulingDate = new Date()
+      rulingDate.setDate(rulingDate.getDate() - 31)
+      rulingDate.setSeconds(rulingDate.getSeconds() + 1)
+      const theCase = { rulingDate: rulingDate.toISOString() } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -167,9 +156,9 @@ describe('transformCase', () => {
 
     it('should be true when the appeal window has closed', () => {
       // Arrange
-      const courtEndTime = new Date()
-      courtEndTime.setDate(courtEndTime.getDate() - 31)
-      const theCase = { courtEndTime: courtEndTime.toISOString() } as Case
+      const rulingDate = new Date()
+      rulingDate.setDate(rulingDate.getDate() - 31)
+      const theCase = { rulingDate: rulingDate.toISOString() } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -244,10 +233,10 @@ describe('transformCase', () => {
 
     it('should return appeal deadline and hasBeenAppealed set to false when case has not yet been appealed', () => {
       // Arrange
-      const courtEndTime = new Date()
-      courtEndTime.setDate(courtEndTime.getDate())
-      courtEndTime.setSeconds(courtEndTime.getSeconds())
-      const theCase = { courtEndTime: courtEndTime.toISOString() } as Case
+      const rulingDate = new Date()
+      rulingDate.setDate(rulingDate.getDate())
+      rulingDate.setSeconds(rulingDate.getSeconds())
+      const theCase = { rulingDate: rulingDate.toISOString() } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -259,10 +248,10 @@ describe('transformCase', () => {
 
     it('should return hasBeenAppealed true and the correct appealed date when case has been appealed', () => {
       // Arrange
-      const courtEndTime = new Date()
-      courtEndTime.setDate(courtEndTime.getDate() - 1)
+      const rulingDate = new Date()
+      rulingDate.setDate(rulingDate.getDate() - 1)
       const theCase = {
-        courtEndTime: courtEndTime.toISOString(),
+        rulingDate: rulingDate.toISOString(),
         accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
         appealState: CaseAppealState.APPEALED,
       } as Case
@@ -277,10 +266,10 @@ describe('transformCase', () => {
 
     it('should return statement deadline when case has been received by the court', () => {
       // Arrange
-      const courtEndTime = new Date()
-      courtEndTime.setDate(courtEndTime.getDate() - 1)
+      const rulingDate = new Date()
+      rulingDate.setDate(rulingDate.getDate() - 1)
       const theCase = {
-        courtEndTime: courtEndTime.toISOString(),
+        rulingDate: rulingDate.toISOString(),
         appealState: CaseAppealState.RECEIVED,
         appealReceivedByCourtDate: '2021-06-15T19:50:08.033Z',
       } as Case

@@ -5,9 +5,10 @@ import {
   CreateClientParams,
   Entry,
   EntryCollection,
-  SyncCollection,
+  Sys,
 } from 'contentful'
 import Bottleneck from 'bottleneck'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import environment from '../environments/environment'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
@@ -58,7 +59,10 @@ export class ContentfulService {
     en: 'en',
   }
 
-  constructor(private readonly elasticService: ElasticService) {
+  constructor(
+    private readonly elasticService: ElasticService,
+    private readonly featureFlagService: FeatureFlagService,
+  ) {
     const params: CreateClientParams = {
       space: environment.contentful.space,
       accessToken: environment.contentful.accessToken,
@@ -89,7 +93,7 @@ export class ContentfulService {
     })
   }
 
-  private getFilteredIds(chunkToProcess: Entry<unknown>[]): string[] {
+  private getFilteredIds(chunkToProcess: { sys: Sys }[]): string[] {
     return chunkToProcess.reduce((csvIds: string[], entry) => {
       // contentful sync api does not support limiting the sync to a single content type we filter here to reduce subsequent calls to Contentful
       if (environment.indexableTypes.includes(entry.sys.contentType.sys.id)) {
@@ -204,15 +208,27 @@ export class ContentfulService {
     }
   }
 
-  private getSyncData(typeOfSync: typeOfSync): Promise<SyncCollection> {
-    return this.contentfulClient.sync({
-      resolveLinks: true,
+  private async getSyncData(typeOfSync: typeOfSync) {
+    const syncData = await this.contentfulClient.sync({
       ...typeOfSync,
     })
+
+    // Remove unnecessary fields to save memory
+    for (let i = 0; i < syncData.entries.length; i += 1) {
+      syncData.entries[i] = {
+        ...syncData.entries[i],
+        fields: {
+          // In case the entry can be turned off via activeTranslations toggle we want to keep that information
+          activeTranslations: syncData.entries[i].fields?.activeTranslations,
+        },
+      }
+    }
+
+    return syncData
   }
 
   private async getPopulatedContentulEntries(
-    entries: Entry<unknown>[],
+    entries: { sys: Sys }[],
     locale: ElasticsearchIndexLocale,
     chunkSize: number,
   ): Promise<Entry<unknown>[]> {
@@ -335,17 +351,19 @@ export class ContentfulService {
       chunkSize,
     )
 
-    const {
-      indexableEntries,
-      newNextSyncToken,
-      deletedEntryIds,
-    } = populatedSyncEntriesResult
+    const { indexableEntries, newNextSyncToken, deletedEntryIds } =
+      populatedSyncEntriesResult
     let { nestedEntryIds } = populatedSyncEntriesResult
 
     const isDeltaUpdate = syncType !== 'full'
 
+    const shouldResolveNestedEntries = await this.featureFlagService.getValue(
+      Features.shouldSearchIndexerResolveNestedEntries,
+      true,
+    )
+
     // In case of delta updates, we need to resolve embedded entries to their root model
-    if (isDeltaUpdate) {
+    if (isDeltaUpdate && shouldResolveNestedEntries) {
       logger.info('Finding root entries from nestedEntries')
 
       const visitedEntryIds = new Set<string>()

@@ -10,7 +10,8 @@ const isValidPhoneNumber = (phoneNumber: string) => {
   return phone && phone.isValid()
 }
 
-const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+const emailRegex =
+  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 export const isValidEmail = (value: string) => emailRegex.test(value)
 
 const checkIfFilledOut = (arr: Array<string | undefined>) => {
@@ -43,6 +44,12 @@ const asset = z
   .array()
   .optional()
 
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
+
 export const estateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
 
@@ -58,9 +65,9 @@ export const estateSchema = z.object({
   }),
 
   selectedEstate: z.enum([
-    EstateTypes.divisionOfEstate,
+    EstateTypes.officialDivision,
     EstateTypes.estateWithoutAssets,
-    EstateTypes.permitToPostponeEstateDivision,
+    EstateTypes.permitForUndividedEstate,
     EstateTypes.divisionOfEstateByHeirs,
   ]),
 
@@ -76,15 +83,63 @@ export const estateSchema = z.object({
         dateOfBirth: z.string().optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
-        phone: z
-          .string()
-          .refine((v) => isValidPhoneNumber(v) || v === '')
-          .optional(),
-        email: z
-          .string()
-          .refine((v) => isValidEmail(v) || v === '')
+        phone: z.string(),
+        email: z.string(),
+        // Málsvari
+        advocate: z
+          .object({
+            name: z.string(),
+            nationalId: z.string(),
+            phone: z.string(),
+            email: z.string(),
+          })
           .optional(),
       })
+      .refine(
+        ({ nationalId, advocate }) => {
+          return kennitala.info(nationalId as string).age < 18 ? advocate : true
+        },
+        {
+          path: ['nationalId'],
+        },
+      )
+
+      /* Validating email and phone depending on whether the field is enabled */
+      .refine(
+        ({ enabled, phone }) => {
+          console.log(enabled, isValidPhoneNumber(phone))
+          return enabled ? isValidPhoneNumber(phone) : true
+        },
+        {
+          path: ['phone'],
+        },
+      )
+      .refine(
+        ({ enabled, email }) => {
+          return enabled ? isValidEmail(email) : true
+        },
+        {
+          path: ['email'],
+        },
+      )
+
+      /* phone and email validation for advocates */
+      .refine(
+        ({ enabled, advocate }) => {
+          return enabled && advocate ? isValidPhoneNumber(advocate.phone) : true
+        },
+        {
+          path: ['advocate', 'phone'],
+        },
+      )
+      .refine(
+        ({ enabled, advocate }) => {
+          return enabled && advocate ? isValidEmail(advocate.email) : true
+        },
+        {
+          path: ['advocate', 'email'],
+        },
+      )
       .array()
       .optional(),
     assets: asset,
@@ -93,6 +148,7 @@ export const estateSchema = z.object({
     ships: asset,
     guns: asset,
     knowledgeOfOtherWills: z.enum([YES, NO]).optional(),
+    addressOfDeceased: z.string().optional(),
     caseNumber: z.string().min(1).optional(),
     dateOfDeath: z.date().optional(),
     nameOfDeceased: z.string().min(1).optional(),
@@ -107,6 +163,26 @@ export const estateSchema = z.object({
       })
       .optional(),
   }),
+
+  // is: Maki hins látna
+  deceasedWithUndividedEstate: z
+    .object({
+      selection: z.enum([YES, NO]),
+      spouse: z
+        .object({
+          name: z.string().optional(),
+          nationalId: z.string().optional(),
+        })
+        .optional(),
+    })
+    .refine(
+      ({ selection, spouse }) => {
+        return selection === YES ? !!spouse?.nationalId : true
+      },
+      {
+        path: ['spouse', 'nationalId'],
+      },
+    ),
 
   // is: Innbú
   inventory: z
@@ -233,16 +309,8 @@ export const estateSchema = z.object({
       creditorName: z.string().optional(),
       nationalId: z.string().optional(),
       balance: z.string().optional(),
+      loanIdentity: z.string().optional(),
     })
-    .refine(
-      ({ creditorName, nationalId, balance }) => {
-        return checkIfFilledOut([creditorName, nationalId, balance])
-      },
-      {
-        params: m.fillOutRates,
-        path: ['balance'],
-      },
-    )
     .refine(
       ({ nationalId }) => {
         return nationalId === ''
@@ -286,11 +354,28 @@ export const estateSchema = z.object({
     )
     .optional(),
 
-  // is: Heimild til setu í óskiptu búi skv. erfðaskrá
-  undividedEstateResidencePermission: z.enum([YES, NO]),
+  estateAttachments: z.object({
+    attached: z.object({
+      file: z.array(FileSchema),
+    }),
+  }),
 
-  // is: Hefur umsækjandi forræði á búi?
-  applicantHasLegalCustodyOverEstate: z.enum([YES, NO]),
+  // is: Eignalaust bú
+  estateWithoutAssets: z
+    .object({
+      estateAssetsExist: z.enum([YES, NO]),
+      estateDebtsExist: z.enum([YES, NO]).optional(),
+    })
+    .refine(
+      ({ estateAssetsExist, estateDebtsExist }) => {
+        return estateAssetsExist === YES
+          ? estateDebtsExist === YES || estateDebtsExist === NO
+          : true
+      },
+      {
+        path: ['estateDebtsExist'],
+      },
+    ),
 
-  readTerms: z.array(z.enum([YES])).length(1),
+  confirmAction: z.array(z.enum([YES])).length(1),
 })

@@ -17,6 +17,8 @@ export type {
   SendNotification,
   SendNotificationResponse,
 } from './lib/notification'
+export type { EventLog } from './lib/eventLog'
+export { EventType } from './lib/eventLog'
 
 export { CaseFileState, CaseFileCategory } from './lib/file'
 
@@ -47,6 +49,7 @@ export {
   appealsCourtRoles,
   isAppealsCourtUser,
   isPrisonSystemUser,
+  isDefenceUser,
 } from './lib/user'
 export type { User, CreateUser, UpdateUser } from './lib/user'
 
@@ -61,6 +64,7 @@ export {
   CaseAppealDecision,
   CaseDecision,
   CaseAppealRulingDecision,
+  RequestSharedWithDefender,
   SessionArrangements,
   restrictionCases,
   investigationCases,

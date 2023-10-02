@@ -24,6 +24,8 @@ export class PowerBiSlice {
   @Field({ nullable: true })
   owner?: 'Fiskistofa'
 
+  // Make sure that this doesn't get cached since we want users to get a fresh embed token
+  // eslint-disable-next-line local-rules/require-cache-control
   @Field(() => GetPowerBiEmbedPropsFromServerResponse, { nullable: true })
   powerBiEmbedPropsFromServer?: GetPowerBiEmbedPropsFromServerResponse | null
 }

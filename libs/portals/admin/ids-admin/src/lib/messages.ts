@@ -13,6 +13,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:tenants',
     defaultMessage: 'Tenants',
   },
+  tenant: {
+    id: 'ap.ids-admin:tenant',
+    defaultMessage: 'Tenant',
+  },
   errorLoadingData: {
     id: 'ap.ids-admin:error-loading-data',
     defaultMessage: 'Error loading data. Please try again later.',
@@ -149,7 +153,7 @@ export const m = defineMessages({
   },
   errorScopeIdRegex: {
     id: 'ap.ids-admin:error-scope-id-regex',
-    defaultMessage: 'Allowed characters are A-Z a-z 0-9 . _ - /',
+    defaultMessage: 'Allowed characters are A-Z a-z 0-9 . _ - / :',
   },
   errorEnvironment: {
     id: 'ap.ids-admin:error-environment',
@@ -285,6 +289,11 @@ export const m = defineMessages({
     id: 'ap.ids-admin:callback-url-description',
     defaultMessage:
       'After the user authenticates we will only call back to one of these URLs, which should receive and handle the authentication. You can specify multiple valid URLs in different lines. The URLs should include the protocol, i.e. "https://" for websites. You can use the star symbol as a wildcard for subdomains (*.island.is) on development and staging.',
+  },
+  customClaimsDescription: {
+    id: 'ap.ids-admin:custom-claims-description',
+    defaultMessage:
+      'Configure custom claims (hard-coded) in access tokens created for this application. Each line should have the form claimName=value. Claim names automatically prefixed with "client_" to avoid collisions. Claim values are always stored as strings.',
   },
   logoutUrl: {
     id: 'ap.ids-admin:logout-url',
@@ -481,11 +490,6 @@ export const m = defineMessages({
     defaultMessage:
       'When true, the application requires user consent for third party permissions as well as standard scopes like email and phone.',
   },
-  customClaimsDescription: {
-    id: 'ap.ids-admin:custom-claims-description',
-    defaultMessage:
-      'Configure custom claims (hard-coded) in access tokens created for this application. Each line should have the form claimName=value. Claim names are automatically prefixed with "client_" to avoid collisions. Claim values are always stored as strings.',
-  },
   errorInvalidClaims: {
     id: 'ap.ids-admin:error-invalid-claims',
     defaultMessage: 'Invalid claim format',
@@ -544,6 +548,10 @@ export const m = defineMessages({
     defaultMessage:
       'Here you can add permissions from your own tenant. Permissions from other tenants can be granted to the application from the other tenant.',
   },
+  permissionsModalNoScopes: {
+    id: 'ap.ids-admin:permission-modal-no-scopes',
+    defaultMessage: 'No scopes available',
+  },
   successfullySaved: {
     id: 'ap.ids-admin:successfully-saved',
     defaultMessage: 'Successfully saved',
@@ -580,10 +588,15 @@ export const m = defineMessages({
     id: 'ap.ids-admin:publish-environment',
     defaultMessage: 'Publish to {environment}',
   },
-  publishEnvironmentDescription: {
-    id: 'ap.ids-admin:publish-environment-description',
+  publishClientEnvDesc: {
+    id: 'ap.ids-admin:publish-client-env-description',
     defaultMessage:
       'The application will inherit settings from the selected environment excluding URLs and client secrets.',
+  },
+  publishPermissionEnvDesc: {
+    id: 'ap.ids-admin:publish-permission-env-description',
+    defaultMessage:
+      'The permission will inherit settings from the selected environment.',
   },
   chooseEnvironmentToCopyFrom: {
     id: 'ap.ids-admin:choose-environment-to-copy-from',
@@ -620,6 +633,10 @@ export const m = defineMessages({
   permissionDescription: {
     id: 'ap.ids-admin:permission-description',
     defaultMessage: 'Description',
+  },
+  permissionAlreadyExists: {
+    id: 'ap.ids-admin:permission-already-exists',
+    defaultMessage: 'Permission ID already exists',
   },
   permissionDescriptionInfo: {
     id: 'ap.ids-admin:permission-description-info',
@@ -718,6 +735,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:content',
     defaultMessage: 'Content',
   },
+  accessControl: {
+    id: 'ap.ids-admin:access-control',
+    defaultMessage: 'Access control',
+  },
   icelandic: {
     id: 'ap.ids-admin:icelandic',
     defaultMessage: 'Icelandic',
@@ -777,5 +798,34 @@ export const m = defineMessages({
     id: 'ap.ids-admin:grant-to-personal-representatives-description',
     defaultMessage:
       'Should personal representatives automatically get this scope for their clients',
+  },
+  clientIdAlreadyExists: {
+    id: 'ap.ids-admin:client-id-already-exists',
+    defaultMessage: 'Client ID already exists',
+  },
+  successDeletingClient: {
+    id: 'ap.ids-admin:success-deleting-client',
+    defaultMessage: 'Successfully deleted application',
+  },
+  delete: {
+    id: 'ap.ids-admin:delete',
+    defaultMessage: 'Delete',
+  },
+  closeDeleteModal: {
+    id: 'ap.ids-admin:close-delete-modal',
+    defaultMessage: 'Close',
+  },
+  deleteClientDescription: {
+    id: 'ap.ids-admin:delete-client-action-card-label',
+    defaultMessage: 'Authentications will stop working for your application.',
+  },
+  deleteClient: {
+    id: 'ap.ids-admin:delete-client-all-env',
+    defaultMessage: 'Delete application',
+  },
+  deleteClientAlertMessage: {
+    id: 'ap.ids-admin:delete-client-alert-message',
+    defaultMessage:
+      'The client ID will be deleted from all available environments and cannot be reused. Authentications will stop working immediately for your application.',
   },
 })

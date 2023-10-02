@@ -1,13 +1,12 @@
-import { ApolloClient } from '@apollo/client/core'
 import { InMemoryCache, NormalizedCacheObject } from '@apollo/client/cache'
-import getConfig from 'next/config'
-import { BatchHttpLink } from '@apollo/client/link/batch-http'
-import { Locale } from '@island.is/shared/types'
+import { ApolloClient } from '@apollo/client/core'
 import { defaultLanguage } from '@island.is/shared/constants'
+import { Locale } from '@island.is/shared/types'
+import { createHttpLink } from '@island.is/web/graphql/httpLink'
 
+import { ClientOptions, optionsFromContext, optionsFromWindow } from './options'
 import possibleTypes from './fragmentTypes.json'
-
-const { publicRuntimeConfig = {}, serverRuntimeConfig = {} } = getConfig() ?? {}
+import type { ScreenContext } from '../types'
 
 const isBrowser: boolean = process.browser
 
@@ -15,19 +14,8 @@ let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
 
 let currentClientLocale = defaultLanguage
 
-function create(initialState?: any) {
-  // handle server vs client side calls
-  const {
-    graphqlUrl: graphqlServerUrl,
-    graphqlEndpoint: graphqlServerEndpoint,
-  } = serverRuntimeConfig
-  const {
-    graphqlUrl: graphqlClientUrl,
-    graphqlEndpoint: graphqlClientEndpoint,
-  } = publicRuntimeConfig
-  const graphqlUrl = graphqlServerUrl || graphqlClientUrl
-  const graphqlEndpoint = graphqlServerEndpoint || graphqlClientEndpoint
-  const httpLink = new BatchHttpLink({ uri: `${graphqlUrl}${graphqlEndpoint}` })
+function create(initialState?: any, options: ClientOptions = {}) {
+  const httpLink = createHttpLink(options)
 
   // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
   return new ApolloClient({
@@ -40,21 +28,27 @@ function create(initialState?: any) {
   })
 }
 
-export default function initApollo(initialState?: any, clientLocale?: Locale) {
+export default function initApollo(
+  initialState?: any,
+  clientLocale?: Locale,
+  ctx?: Partial<ScreenContext>,
+) {
   // Make sure to create a new client for every server-side request so that data
   // isn't shared between connections (which would be bad)
   if (!isBrowser) {
-    return create(initialState)
+    return create(initialState, optionsFromContext(ctx))
   }
 
   // Reuse client on the client-side
   if (!apolloClient) {
-    apolloClient = create(initialState)
+    apolloClient = create(initialState, optionsFromWindow())
     return apolloClient
   }
 
   // Create new instance if client is changing language
   if (currentClientLocale !== clientLocale) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     currentClientLocale = clientLocale
     apolloClient = create(initialState)
   }

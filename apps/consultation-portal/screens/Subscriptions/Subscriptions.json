@@ -34,7 +34,6 @@
     },
     "setEmailActionCard": {
       "heading": "Skrá netfang",
-      "text": "Skráðu netfang hérna. Þú færð svo tölvupóst sem þú þarf að staðfesta til að hægt sé að skrá áskrift á það.",
       "input": {
         "label": "Netfang",
         "placeholder": "nonni@island.is"
@@ -78,11 +77,14 @@
     "subscriptions": {
       "title": "Áskriftir",
       "url": "askriftir",
-      "text": "Hér er hægt að skrá sig í áskrift að málum. Þú skráir þig inn á Ísland.is, hakar við einn eða fleiri flokka (mál/stofnanir/málefnasvið), velur hvort þú vilt tilkynningar um ný mál eða fleiri atriði og smellir á „Staðfesta“. Loks þarftu að staðfesta áskriftina í gegnum netfangið sem þú skráðir. Kerfið er uppfært einu sinni á sólarhring."
+      "description": "Samráðsgátt býður upp á vöktun á málum í samráði. Hægt er að vakta mál eftir stofnunum og málaflokkum ásamt því að geta vaktað stakt mál.",
+      "keywords": "vöktun, vakta, póstlisti, samráð, samráðsgátt",
+      "text": "Hér er hægt að skrá sig í áskrift að málum. Við fyrstu innskráningu þarf að skrá netfang og staðfesta. Að því loknu má skrá áskrift með því að haka við einn eða fleiri flokka (mál/stofnanir/málefnasvið), velja um tilkynningar um ný mál eða fleiri atriði og smella á „Skrá í áskrift“.  Kerfið er uppfært einu sinni á sólarhring."
     },
     "mySubscriptions": {
       "title": "Mínar áskriftir",
       "url": "minaraskriftir",
+      "description": "Mínar áskriftir að málum á Samráðsgátt",
       "text": "Hér er hægt að halda utan um áskriftir og skrá sig úr áskriftum. Aðeins birtast virk mál. Kerfið er uppfært einu sinni á sólarhring."
     },
     "unsubscribeLink": {
@@ -97,6 +99,9 @@
     "clearSearchText": "Prófaðu að fjarlægja úr leit til að sjá fleiri mál."
   },
   "subscriptionTableItem": {
-    "allCases": "Öll mál"
+    "allCases": "Öll mál",
+    "caseHref": "/mal/",
+    "infoText": "Opna mál í nýjum glugga",
+    "linkText": "skoða"
   }
 }

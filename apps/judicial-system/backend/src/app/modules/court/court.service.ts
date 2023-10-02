@@ -1,18 +1,23 @@
 import formatISO from 'date-fns/formatISO'
 
-import { Injectable, ServiceUnavailableException } from '@nestjs/common'
+import { Inject, Injectable, ServiceUnavailableException } from '@nestjs/common'
 
+import type { ConfigType } from '@island.is/nest/config'
 import { CourtClientService } from '@island.is/judicial-system/court-client'
+import { EmailService } from '@island.is/email-service'
+import { sanitize } from '@island.is/judicial-system/formatters'
 import {
   CaseType,
   IndictmentSubtype,
   IndictmentSubtypeMap,
   isIndictmentCase,
+  CaseDecision,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { EventService } from '../event'
+import { courtModuleConfig } from './court.config'
 
 export enum CourtDocumentFolder {
   REQUEST_DOCUMENTS = 'Krafa og greinargerð',
@@ -87,7 +92,7 @@ export const courtSubtypes: CourtSubtypes = {
   EXPULSION_FROM_HOME: 'Nálgunarbann og brottvísun af heimili',
   // 'Réttarstaða afplánunarfanga',
   // 'Réttarstaða gæsluvarðhaldsfanga',
-  // 'Rof á reynslulausn',
+  PAROLE_REVOCATION: 'Rof á reynslulausn',
   BANKING_SECRECY_WAIVER: 'Rof bankaleyndar',
   // 'Sekt vitnis',
   // 'Sektir málflytjenda',
@@ -106,7 +111,10 @@ export const courtSubtypes: CourtSubtypes = {
 export class CourtService {
   constructor(
     private readonly courtClientService: CourtClientService,
+    private readonly emailService: EmailService,
     private readonly eventService: EventService,
+    @Inject(courtModuleConfig.KEY)
+    private readonly config: ConfigType<typeof courtModuleConfig>,
   ) {}
 
   private mask(value: string): string {
@@ -169,16 +177,18 @@ export class CourtService {
     fileType: string,
     content: Buffer,
   ): Promise<string> {
+    const sanitizedFileName = sanitize(fileName)
+
     return this.courtClientService
       .uploadStream(courtId, {
         value: content,
-        options: { filename: fileName, contentType: fileType },
+        options: { filename: sanitizedFileName, contentType: fileType },
       })
       .then((streamId) =>
         this.courtClientService.createDocument(courtId, {
           caseNumber: courtCaseNumber,
           subject,
-          fileName,
+          fileName: sanitizedFileName,
           streamID: streamId,
           caseFolder,
         }),
@@ -198,7 +208,7 @@ export class CourtService {
             courtId,
             courtCaseNumber,
             subject: this.mask(subject),
-            fileName: this.mask(fileName),
+            fileName: this.mask(sanitize(fileName)),
             fileType,
             caseFolder,
           },
@@ -434,5 +444,42 @@ export class CourtService {
 
         throw reason
       })
+  }
+
+  async updateCaseWithConclusion(
+    user: User,
+    caseId: string,
+    courtName?: string,
+    courtCaseNumber?: string,
+    decision?: CaseDecision,
+    rulingDate?: Date,
+    validToDate?: Date,
+    isolationToDate?: Date,
+  ): Promise<string> {
+    return this.emailService.sendEmail({
+      from: {
+        name: this.config.fromName,
+        address: this.config.fromEmail,
+      },
+      replyTo: {
+        name: this.config.replyToName,
+        address: this.config.replyToEmail,
+      },
+      to: [
+        {
+          name: this.config.courtRobotName,
+          address: this.config.courtRobotEmail,
+        },
+      ],
+      subject: `${courtName} ${courtCaseNumber}`,
+      text: JSON.stringify({
+        courtName,
+        courtCaseNumber,
+        decision,
+        rulingDate,
+        validToDate,
+        isolationToDate,
+      }),
+    })
   }
 }

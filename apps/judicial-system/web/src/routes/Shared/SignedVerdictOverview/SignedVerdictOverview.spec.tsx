@@ -2,13 +2,12 @@ import { createIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 
 import { CaseDecision, CaseState } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
+  CaseType,
   User,
   UserRole,
-  CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import {
   getExtensionInfoText,
@@ -17,101 +16,6 @@ import {
 
 window.scrollTo = jest.fn()
 
-describe('titleForCase', () => {
-  const formatMessage = createIntl({ locale: 'is', onError: jest.fn })
-    .formatMessage
-  const fn = (theCase: Case) => titleForCase(formatMessage, theCase)
-
-  test('should handle rejected investigation case', () => {
-    const theCase = {
-      state: CaseState.REJECTED,
-      type: CaseType.BODY_SEARCH,
-    } as Case
-    const res = fn(theCase)
-    expect(res).toEqual('Kröfu um rannsóknarheimild hafnað')
-  })
-
-  test('should handle rejected restriction case', () => {
-    const theCase = {
-      state: CaseState.REJECTED,
-      type: CaseType.CUSTODY,
-    } as Case
-    const res = fn(theCase)
-    expect(res).toEqual('Kröfu hafnað')
-  })
-
-  test('should handle dismissed case', () => {
-    const theCase = { state: CaseState.DISMISSED } as Case
-    const res = fn(theCase)
-    expect(res).toEqual('Kröfu vísað frá')
-  })
-
-  test('should handle custody case with valid to date in past', () => {
-    const theCase = {
-      state: CaseState.ACCEPTED,
-      type: CaseType.CUSTODY,
-      isValidToDateInThePast: true,
-    } as Case
-    const res = fn(theCase)
-    expect(res).toEqual('Gæsluvarðhaldi lokið')
-  })
-
-  test('should handle admission case with valid to date in past', () => {
-    const theCase = {
-      state: CaseState.ACCEPTED,
-      type: CaseType.ADMISSION_TO_FACILITY,
-      isValidToDateInThePast: true,
-    } as Case
-    const res = fn(theCase)
-    expect(res).toEqual('Vistun á viðeigandi stofnun lokið')
-  })
-
-  test('should handle travel ban case with valid to date in past', () => {
-    const theCase = {
-      state: CaseState.ACCEPTED,
-      type: CaseType.TRAVEL_BAN,
-      isValidToDateInThePast: true,
-    } as Case
-    const res = fn(theCase)
-    expect(res).toEqual('Farbanni lokið')
-  })
-
-  test('should handle accepted investigation case', () => {
-    const theCase = {
-      state: CaseState.ACCEPTED,
-      type: CaseType.SEARCH_WARRANT,
-    } as Case
-    const res = fn(theCase)
-    expect(res).toEqual('Krafa um rannsóknarheimild samþykkt')
-  })
-
-  test('should handle active custody case', () => {
-    const theCase = {
-      state: CaseState.ACCEPTED,
-      type: CaseType.CUSTODY,
-    } as Case
-    const res = fn(theCase)
-    expect(res).toEqual('Gæsluvarðhald virkt')
-  })
-
-  test('should handle active admission case', () => {
-    const theCase = {
-      state: CaseState.ACCEPTED,
-      type: CaseType.ADMISSION_TO_FACILITY,
-    } as Case
-    const res = fn(theCase)
-    expect(res).toEqual('Vistun á viðeigandi stofnun virk')
-  })
-
-  test('should handle active travel case', () => {
-    const theCase = {
-      state: CaseState.ACCEPTED,
-      type: CaseType.TRAVEL_BAN,
-    } as Case
-    const res = fn(theCase)
-    expect(res).toEqual('Farbann virkt')
-  })
-})
 describe('shouldHideNextButton', () => {
   const prosecutor = { id: uuid(), role: UserRole.PROSECUTOR } as User
 
@@ -121,7 +25,7 @@ describe('shouldHideNextButton', () => {
     ${UserRole.DEFENDER}
     ${UserRole.JUDGE}
     ${UserRole.REGISTRAR}
-    ${UserRole.STAFF}
+    ${UserRole.PRISON_SYSTEM_STAFF}
   `('should hide next button for user role: $role', ({ role }) => {
     const theCase = {} as Case
     const res = shouldHideNextButton(theCase, { id: uuid(), role } as User)
@@ -188,8 +92,10 @@ describe('shouldHideNextButton', () => {
 })
 
 describe('getExtensionInfoText', () => {
-  const formatMessage = createIntl({ locale: 'is', onError: jest.fn })
-    .formatMessage
+  const formatMessage = createIntl({
+    locale: 'is',
+    onError: jest.fn,
+  }).formatMessage
 
   const prosecutor = { role: UserRole.PROSECUTOR } as User
 
@@ -202,7 +108,7 @@ describe('getExtensionInfoText', () => {
     ${UserRole.DEFENDER}
     ${UserRole.JUDGE}
     ${UserRole.REGISTRAR}
-    ${UserRole.STAFF}
+    ${UserRole.PRISON_SYSTEM_STAFF}
   `('should return undefined for user role: $role', ({ role }) => {
     const theCase = {
       type: CaseType.CUSTODY,

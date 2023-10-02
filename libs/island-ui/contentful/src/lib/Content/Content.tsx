@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck make web strict
 import React, { FC, ReactNode, ReactElement } from 'react'
 import { Document, Node, BLOCKS, INLINES } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
@@ -29,7 +31,7 @@ import BorderedContent, {
 import Hyperlink from '../Hyperlink/Hyperlink'
 import { RenderNode } from '@contentful/rich-text-react-renderer'
 
-const ContentWrap: FC = ({ children }) => (
+const ContentWrap: FC<React.PropsWithChildren<unknown>> = ({ children }) => (
   <GridRow>
     <GridColumn span={['8/8', '8/8', '7/8']} offset={['0', '0', '1/8']}>
       {children}
@@ -37,7 +39,9 @@ const ContentWrap: FC = ({ children }) => (
   </GridRow>
 )
 
-const ProcessEntryWrap: FC = ({ children }) => (
+const ProcessEntryWrap: FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => (
   <GridRow>
     <GridColumn span={['8/8', '8/8', '6/8']} offset={['0', '0', '1/8']}>
       {children}
@@ -81,7 +85,11 @@ const processTypes = {
 } as { [key: string]: ProcessType }
 
 interface EmbeddedNode {
-  component: FC<EmbeddedVideoProps | BoxProps | BorderedContentProps>
+  component: FC<
+    React.PropsWithChildren<
+      EmbeddedVideoProps | BoxProps | BorderedContentProps
+    >
+  >
   wrapper?: ({ children }: { children: ReactNode }) => ReactElement
   children?: (node: Node) => ReactNode
   processedProps?: (node: Node) => { [key: string]: ReactNode }
@@ -280,6 +288,8 @@ const embeddedNodes = {
 } as { [key: string]: EmbeddedNode }
 
 const defaultRenderNode = {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   [INLINES.HYPERLINK]: (node: Node, children: ReactNode) => {
     return <Hyperlink href={node.data.uri}>{children}</Hyperlink>
   },
@@ -420,7 +430,7 @@ type Props = {
   document: string
 }
 
-export const Content: FC<Props> = ({ document }) => {
+export const Content: FC<React.PropsWithChildren<Props>> = ({ document }) => {
   return <RichText document={document} renderNode={defaultRenderNode} />
 }
 

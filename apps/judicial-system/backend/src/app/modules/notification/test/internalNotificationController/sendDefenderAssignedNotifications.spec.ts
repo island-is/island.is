@@ -8,7 +8,7 @@ import {
   Defendant,
   User,
 } from '@island.is/judicial-system/types'
-import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
+import { DEFENDER_INDICTMENT_ROUTE } from '@island.is/judicial-system/consts'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 import { Case } from '../../../case'
@@ -81,13 +81,17 @@ describe('InternalNotificationController - Send defender assigned notifications'
       type: NotificationType.DEFENDER_ASSIGNED,
     }
     const caseId = uuid()
-    const theCase = {
-      id: caseId,
-      court,
-      courtCaseNumber: 'S-123/2022',
+    const defendant = {
       defenderNationalId: '1234567890',
       defenderEmail: 'recipient@gmail.com',
       defenderName: 'John Doe',
+    }
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      court,
+      courtCaseNumber: 'S-123/2022',
+      defendants: [defendant],
     } as Case
 
     beforeEach(async () => {
@@ -103,8 +107,8 @@ describe('InternalNotificationController - Send defender assigned notifications'
         },
         to: [
           {
-            name: theCase.defenderName,
-            address: theCase.defenderEmail,
+            name: defendant.defenderName,
+            address: defendant.defenderEmail,
           },
         ],
         replyTo: {
@@ -114,7 +118,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
         attachments: undefined,
         subject: 'Héraðsdómur Reykjavíkur - aðgangur að málsgögnum',
         text: expect.anything(), // same as hmtl but stripped hmtl tags
-        html: `Héraðsdómur Reykjavíkur hefur skipað þig verjanda í máli S-123/2022.<br /><br />Gögn málsins eru aðgengileg í <a href="${mockConfig.clientUrl}${DEFENDER_ROUTE}/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+        html: `Héraðsdómur Reykjavíkur hefur skráð þig verjanda í máli ${theCase.courtCaseNumber}.<br /><br />Gögn málsins eru aðgengileg á <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
       })
     })
   })
@@ -125,7 +129,9 @@ describe('InternalNotificationController - Send defender assigned notifications'
       type: NotificationType.DEFENDER_ASSIGNED,
     }
     const caseId = uuid()
-    const theCase = {} as Case
+    const theCase = {
+      type: CaseType.INDICTMENT,
+    } as Case
     let then: Then
 
     beforeEach(async () => {
@@ -137,7 +143,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
     it('should not send notification', () => {
       expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
       expect(mockNotificationModel.create).not.toHaveBeenCalled()
-      expect(then.result).toStrictEqual({ delivered: false })
+      expect(then.result).toStrictEqual({ delivered: true })
     })
   })
 
@@ -147,11 +153,15 @@ describe('InternalNotificationController - Send defender assigned notifications'
       type: NotificationType.DEFENDER_ASSIGNED,
     }
     const caseId = uuid()
-    const theCase = {
-      id: caseId,
+    const defendant = {
       defenderEmail: 'recipient@gmail.com',
       defenderNationalId: '1234567890',
       defenderName: 'Sibbi',
+    }
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants: [defendant],
     } as Case
 
     beforeEach(async () => {
@@ -167,7 +177,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
         type: notificationDto.type,
         recipients: [
           {
-            address: theCase.defenderEmail,
+            address: defendant.defenderEmail,
             success: true,
           },
         ],
@@ -183,9 +193,14 @@ describe('InternalNotificationController - Send defender assigned notifications'
     const caseId = uuid()
     const theCase = {
       id: caseId,
-      defenderEmail: 'recipient@gmail.com',
-      defenderNationalId: '1234567890',
-      defenderName: 'Sibbi',
+      type: CaseType.INDICTMENT,
+      defendants: [
+        {
+          defenderEmail: 'recipient@gmail.com',
+          defenderNationalId: '1234567890',
+          defenderName: 'Sibbi',
+        },
+      ],
     } as Case
     let then: Then
 
@@ -206,11 +221,15 @@ describe('InternalNotificationController - Send defender assigned notifications'
       type: NotificationType.DEFENDER_ASSIGNED,
     }
     const caseId = uuid()
-    const theCase = {
-      id: caseId,
+    const defendant = {
       defenderEmail: 'recipient@gmail.com',
       defenderNationalId: '1234567890',
       defenderName: 'Sibbi',
+    }
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants: [defendant],
     } as Case
     let then: Then
 
@@ -222,7 +241,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
         {
           caseId,
           type: notificationDto.type,
-          recipients: [{ address: theCase.defenderEmail, success: true }],
+          recipients: [{ address: defendant.defenderEmail, success: true }],
         } as Notification,
       ])
 
@@ -232,7 +251,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
     it('should return notification was not sent', () => {
       expect(mockNotificationModel.create).not.toHaveBeenCalled()
       expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
-      expect(then.result).toEqual(expect.objectContaining({ delivered: false }))
+      expect(then.result).toEqual(expect.objectContaining({ delivered: true }))
     })
   })
 
@@ -313,8 +332,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
         attachments: undefined,
         subject: 'Héraðsdómur Reykjavíkur - aðgangur að málsgögnum',
         text: expect.anything(), // same as hmtl but stripped hmtl tags
-        html:
-          'Héraðsdómur Reykjavíkur hefur skipað þig verjanda í máli S-123/2022.<br /><br />Þú getur nálgast gögn málsins hjá Héraðsdómi Reykjavíkur ef þau hafa ekki þegar verið afhent.',
+        html: `Héraðsdómur Reykjavíkur hefur skráð þig verjanda í máli ${theCase.courtCaseNumber}.<br /><br />Gögn málsins eru aðgengileg á <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
       })
       expect(then.result).toEqual(expect.objectContaining({ delivered: true }))
     })

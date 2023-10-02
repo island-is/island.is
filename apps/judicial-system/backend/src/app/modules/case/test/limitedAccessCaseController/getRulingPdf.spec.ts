@@ -27,11 +27,8 @@ describe('LimitedAccessCaseController - Get ruling pdf', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      awsS3Service,
-      logger,
-      limitedAccessCaseController,
-    } = await createTestingCaseModule()
+    const { awsS3Service, logger, limitedAccessCaseController } =
+      await createTestingCaseModule()
     mockAwsS3Service = awsS3Service
     mockLogger = logger
 
@@ -50,7 +47,7 @@ describe('LimitedAccessCaseController - Get ruling pdf', () => {
 
   describe('AWS S3 lookup', () => {
     const caseId = uuid()
-    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
+    const theCase = { id: caseId, rulingSignatureDate: nowFactory() } as Case
     const res = {} as Response
 
     beforeEach(async () => {
@@ -66,8 +63,8 @@ describe('LimitedAccessCaseController - Get ruling pdf', () => {
 
   describe('AWS S3 pdf returned', () => {
     const caseId = uuid()
-    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
-    const res = ({ end: jest.fn() } as unknown) as Response
+    const theCase = { id: caseId, rulingSignatureDate: nowFactory() } as Case
+    const res = { end: jest.fn() } as unknown as Response
     const pdf = {}
 
     beforeEach(async () => {
@@ -84,7 +81,7 @@ describe('LimitedAccessCaseController - Get ruling pdf', () => {
 
   describe('AWS S3 lookup fails', () => {
     const caseId = uuid()
-    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
+    const theCase = { id: caseId, rulingSignatureDate: nowFactory() } as Case
     const res = {} as Response
     const error = new Error('Some ignored error')
 
@@ -96,9 +93,7 @@ describe('LimitedAccessCaseController - Get ruling pdf', () => {
     })
 
     it('should info log the failure', () => {
-      expect(
-        mockLogger.info,
-      ).toHaveBeenCalledWith(
+      expect(mockLogger.info).toHaveBeenCalledWith(
         `The ruling for case ${caseId} was not found in AWS S3`,
         { error },
       )
@@ -107,7 +102,7 @@ describe('LimitedAccessCaseController - Get ruling pdf', () => {
 
   describe('pdf generated', () => {
     const caseId = uuid()
-    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
+    const theCase = { id: caseId, rulingSignatureDate: nowFactory() } as Case
     const res = {} as Response
 
     beforeEach(async () => {
@@ -127,8 +122,8 @@ describe('LimitedAccessCaseController - Get ruling pdf', () => {
 
   describe('generated pdf returned', () => {
     const caseId = uuid()
-    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
-    const res = ({ end: jest.fn() } as unknown) as Response
+    const theCase = { id: caseId, rulingSignatureDate: nowFactory() } as Case
+    const res = { end: jest.fn() } as unknown as Response
     const pdf = {}
 
     beforeEach(async () => {
@@ -147,7 +142,7 @@ describe('LimitedAccessCaseController - Get ruling pdf', () => {
 
   describe('pdf generation fails', () => {
     const caseId = uuid()
-    const theCase = { id: caseId, rulingDate: nowFactory() } as Case
+    const theCase = { id: caseId, rulingSignatureDate: nowFactory() } as Case
     let then: Then
     const res = {} as Response
 

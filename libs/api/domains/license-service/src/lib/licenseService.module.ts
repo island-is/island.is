@@ -87,30 +87,32 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     },
     {
       provide: LICENSE_MAPPER_FACTORY,
-      useFactory: (
-        adr: AdrLicensePayloadMapper,
-        disability: DisabilityLicensePayloadMapper,
-        machine: MachineLicensePayloadMapper,
-        firearm: FirearmLicensePayloadMapper,
-        driving: DrivingLicensePayloadMapper,
-      ) => async (
-        type: GenericLicenseType,
-      ): Promise<GenericLicenseMapper | null> => {
-        switch (type) {
-          case GenericLicenseType.AdrLicense:
-            return adr
-          case GenericLicenseType.DisabilityLicense:
-            return disability
-          case GenericLicenseType.MachineLicense:
-            return machine
-          case GenericLicenseType.FirearmLicense:
-            return firearm
-          case GenericLicenseType.DriversLicense:
-            return driving
-          default:
-            return null
-        }
-      },
+      useFactory:
+        (
+          adr: AdrLicensePayloadMapper,
+          disability: DisabilityLicensePayloadMapper,
+          machine: MachineLicensePayloadMapper,
+          firearm: FirearmLicensePayloadMapper,
+          driving: DrivingLicensePayloadMapper,
+        ) =>
+        async (
+          type: GenericLicenseType,
+        ): Promise<GenericLicenseMapper | null> => {
+          switch (type) {
+            case GenericLicenseType.AdrLicense:
+              return adr
+            case GenericLicenseType.DisabilityLicense:
+              return disability
+            case GenericLicenseType.MachineLicense:
+              return machine
+            case GenericLicenseType.FirearmLicense:
+              return firearm
+            case GenericLicenseType.DriversLicense:
+              return driving
+            default:
+              return null
+          }
+        },
       inject: [
         AdrLicensePayloadMapper,
         DisabilityLicensePayloadMapper,

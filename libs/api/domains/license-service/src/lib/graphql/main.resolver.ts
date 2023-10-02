@@ -146,7 +146,7 @@ export class MainResolver {
     locale: Locale = 'is',
     @Args('input') input: GeneratePkPassInput,
   ): Promise<GenericPkPassQrCode> {
-    const pkpassQRCode = await this.licenseServiceService.generatePkPassUrl(
+    const pkpassQRCode = await this.licenseServiceService.generatePkPassQRCode(
       user,
       locale,
       input.licenseType,

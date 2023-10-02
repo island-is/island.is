@@ -1,9 +1,10 @@
 import type { WrappedLoaderFn } from '@island.is/portals/core'
 import { GetClientQuery, GetClientDocument } from './Client.generated'
 
-export type AuthAdminClient = GetClientQuery['authAdminClient']
+export type AuthAdminClient = NonNullable<GetClientQuery['authAdminClient']>
 export type AuthAdminClientEnvironment = AuthAdminClient['environments'][0]
-export type AuthAdminClientTranslation = AuthAdminClientEnvironment['displayName'][0]
+export type AuthAdminClientTranslation =
+  AuthAdminClientEnvironment['displayName'][0]
 export type AuthAdminClientSecret = AuthAdminClientEnvironment['secrets']
 
 export const clientLoader: WrappedLoaderFn = ({ client }) => {
@@ -33,6 +34,6 @@ export const clientLoader: WrappedLoaderFn = ({ client }) => {
       throw new Error('Client not found')
     }
 
-    return authClient.data?.authAdminClient ?? ({} as AuthAdminClient)
+    return authClient.data.authAdminClient
   }
 }

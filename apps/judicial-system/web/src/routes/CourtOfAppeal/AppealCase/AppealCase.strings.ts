@@ -12,8 +12,8 @@ export const appealCase = defineMessages({
     description: 'Lýsitexti á málsnúmeri á skráningarsíðu Landsréttar',
   },
   caseNumberPlaceholder: {
-    id: 'judicial.system.core:appeal_case.case_number_placeholder_v2',
-    defaultMessage: 'XXXX/2023',
+    id: 'judicial.system.core:appeal_case.case_number_placeholder_v3',
+    defaultMessage: 'X/{year}',
     description: 'Gildistexti á málsnúmeri á skráningarsíðu Landsréttar',
   },
   nextButtonText: {
@@ -32,6 +32,18 @@ export const appealCase = defineMessages({
     defaultMessage: 'Velja aðstoðarmann',
     description:
       'Lýsitexti á dropdown til að velja aðstoðrmann á skráningarsíðu Landsréttar',
+  },
+  judgeForepersonLabel: {
+    id: 'judicial.system.core:appeal_case.judge_foreperson_label',
+    defaultMessage: 'Veldu dómsformann',
+    description:
+      'Lýsitexti á dropdown til að velja dómsformann á skráningarsíðu Landsréttar',
+  },
+  judgeForepersonPlaceholder: {
+    id: 'judicial.system.core:appeal_case.judge_foreperson_placeholder',
+    defaultMessage: 'Veldu dómsformann',
+    description:
+      'Lýsitexti á dropdown til að velja dómsformann á skráningarsíðu Landsréttar',
   },
   judgeLabel: {
     id: 'judicial.system.core:appeal_case.judge_label',

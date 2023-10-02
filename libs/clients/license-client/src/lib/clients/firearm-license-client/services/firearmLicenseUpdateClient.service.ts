@@ -73,7 +73,7 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
       nationalId,
     )
 
-    if (!inputValues) {
+    if (!inputValues || !licenseInfo.expirationDate) {
       return {
         ok: false,
         error: {
@@ -86,6 +86,7 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
     const thumbnail = licenseInfo.licenseImgBase64
     const payload: PassDataInput = {
       inputFieldValues: inputValues,
+      expirationDate: new Date(licenseInfo?.expirationDate).toISOString(),
       thumbnail: thumbnail
         ? {
             imageBase64String: thumbnail

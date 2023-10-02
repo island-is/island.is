@@ -9,14 +9,12 @@ import { Translation } from './../../../entities/models/translation.model'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { ListControl } from '../../../entities/common/Localization'
 
-const TranslationList: React.FC = () => {
+const TranslationList: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [translations, setTranslations] = useState<Translation[]>([])
   const [page, setPage] = useState(1)
   const [lastPage, setLastPage] = useState(1)
-  const [
-    translationToRemove,
-    setTranslationToRemove,
-  ] = useState<TranslationDTO>(new TranslationDTO())
+  const [translationToRemove, setTranslationToRemove] =
+    useState<TranslationDTO>(new TranslationDTO())
   const [count, setCount] = useState(0)
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [searchString, setSearchString] = useState<string>('')
@@ -98,14 +96,13 @@ const TranslationList: React.FC = () => {
             <h1>{localization.title}</h1>
             <div className="translation-list__container__options">
               <div className="translation-list__container__options__button">
-                <Link href={'/admin/translation'}>
-                  <a
-                    className="translation-list__button__new"
-                    title={localization.buttons['new'].helpText}
-                  >
-                    <i className="icon__new"></i>
-                    {localization.buttons['new'].text}
-                  </a>
+                <Link
+                  href={'/admin/translation'}
+                  className="translation-list__button__new"
+                  title={localization.buttons['new'].helpText}
+                >
+                  <i className="icon__new"></i>
+                  {localization.buttons['new'].text}
                 </Link>
               </div>
               <form onSubmit={search}>
@@ -168,6 +165,7 @@ const TranslationList: React.FC = () => {
                                 '$' +
                                 translation.key,
                             )}`}
+                            legacyBehavior
                           >
                             <button
                               type="button"

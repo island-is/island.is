@@ -4,11 +4,7 @@ This [GitHub organization](https://github.com/island-is) is the center of develo
 
 These solutions are [FOSS](https://en.wikipedia.org/wiki/Free_and_open-source_software) and open to contributions, but most development will be performed by teams that win tenders to develop new functionality for Digital Iceland.
 
-The repository is a [monorepo](../technical-overview/monorepo.md) that has multiple apps (something that can be built and run) and libraries (which other apps and libraries can depend on). All custom-written services are also stored there.
-
-## GitBook
-
-The apps and libraries documentation and our handbook are hosted on [GitBook](https://www.gitbook.com) and is publicly available at [docs.devland.is](https://docs.devland.is).
+The repository is a [monorepo](https://docs.devland.is/technical-overview/monorepo) that has multiple apps (something that can be built and run) and libraries (which other apps and libraries can depend on). All custom-written services are also stored there.
 
 ## Storybook
 
@@ -16,11 +12,11 @@ The Ísland.is design system is developed and showcased using [Storybook](https:
 
 ## Reading material
 
-To get more technical information about the project please make sure to read this [overview](handbook/technical-overview/README.md).
+To get more technical information about the project please make sure to read this [overview](https://docs.devland.is/technical-overview/technical-overview).
 
 ## External contributors
 
-If you want to contribute to the repository, please make sure to follow [this guide](handbook/repository/external-contribute.md).
+If you want to contribute to the repository, please make sure to follow [this guide](https://docs.devland.is/repository/external-contribute).
 
 ## Prerequisites
 
@@ -28,7 +24,6 @@ If you want to contribute to the repository, please make sure to follow [this gu
 - You have [Docker](https://docs.docker.com/desktop/) installed.
 - You have [direnv](https://direnv.net/) installed.
 - You have [Java](https://www.java.com/en/download/manual.jsp) `>= 1.8` installed (for schema generation).
-- Run `yarn` to install the dependencies.
 
 {% hint style="info" %}
 If you are running on Windows we recommend using [Docker and WSL2](https://docs.docker.com/desktop/windows/wsl/)
@@ -44,6 +39,21 @@ If you are running on Windows we recommend using [Docker and WSL2](https://docs.
 ## Usage
 
 There are many projects that can be built and run. [Click here to see the full list](https://github.com/island-is/island.is/blob/main/nx.json).
+
+### Fresh start/changing branches
+
+Run on whenever you check out a branch:
+
+```bash
+yarn install
+yarn schemas
+```
+
+When you clone the repo for the first time, and whenever you change branches, you need to update your dependencies to match your current branch using `yarn install`.
+In addition, schemas change frequently, so you will also need to update the generated schemas and clients using `yarn schemas`.
+
+If you want schemas to be generated on every install you can set the environment variable `GENERATE_SCHEMAS_ON_INSTALL=true`.
+Note that this will generate the schemas when rebuilding the workspace in the post-install phase, with no output, so the `install` script seems to hang.
 
 ### Development server
 
@@ -113,7 +123,7 @@ yarn affected:e2e
 
 ### Schemas
 
-If your project is generating schemas files from an OpenAPI, Codegen or is an API, check out [this documentation](handbook/repository/schemas.md).
+If your project is generating schemas files from an OpenAPI, Codegen or is an API, check out [this documentation](https://docs.devland.is/repository/schemas).
 
 ### Understand your workspace
 
@@ -125,7 +135,7 @@ yarn nx dep-graph
 
 ### AWS Secrets
 
-A dedicated documentation about fetching shared development secrets or creating new secrets, using AWS secrets is available [here](handbook/repository/aws-secrets.md).
+A dedicated documentation about fetching shared development secrets or creating new secrets, using AWS secrets is available [here](https://docs.devland.is/repository/aws-secrets).
 
 ### Running proxy against development service
 
@@ -137,7 +147,7 @@ To do so, you can run for example:
 ./scripts/run-db-proxy.sh
 ```
 
-It will try to get your AWS credentials from your environment variables and from your `~/.aws/credentials` file. You can find more instructions [here](handbook/repository/aws-secrets.md#using-aws-session).
+It will try to get your AWS credentials from your environment variables and from your `~/.aws/credentials` file. You can find more instructions [here](https://docs.devland.is/repository/aws-secrets#using-aws-session).
 
 {% hint style="info" %}
 If you want to run your app against one of this service (e.g. `db`), you may need to edit your app environment or sequelize config to pass the proxy credentials.

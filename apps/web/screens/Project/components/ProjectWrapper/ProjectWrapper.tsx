@@ -27,7 +27,9 @@ interface ProjectWrapperProps {
   sidebarNavigationTitle: string
 }
 
-export const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
+export const ProjectWrapper: React.FC<
+  React.PropsWithChildren<ProjectWrapperProps>
+> = ({
   withSidebar = false,
   sidebarContent,
   projectPage,
@@ -58,13 +60,13 @@ export const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
             {showBackLink && (
               <Box marginBottom={3}>
                 <Link
-                  href={projectPage.backLink.url}
+                  href={projectPage.backLink?.url ?? ''}
                   underlineVisibility="always"
                   underline="normal"
                   color="blue400"
                 >
                   <Icon size="small" icon="arrowBack" />
-                  {projectPage.backLink.text}
+                  {projectPage.backLink?.text}
                 </Link>
               </Box>
             )}
@@ -92,13 +94,13 @@ export const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
               {showBackLink && (
                 <Box marginBottom={3}>
                   <Link
-                    href={projectPage.backLink.url}
+                    href={projectPage.backLink?.url || ''}
                     underlineVisibility="always"
                     underline="normal"
                     color="blue400"
                   >
                     <Icon size="small" icon="arrowBack" />
-                    {projectPage.backLink.text}
+                    {projectPage.backLink?.text}
                   </Link>
                 </Box>
               )}
@@ -116,14 +118,14 @@ export const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
           {showBackLink && (
             <Hidden below="md">
               <Link
-                href={projectPage.backLink.url}
+                href={projectPage.backLink?.url || ''}
                 underlineVisibility="always"
                 underline="normal"
                 color="blue400"
                 className={styles.linkContainer}
               >
                 <Icon size="small" icon="arrowBack" />
-                {projectPage.backLink.text}
+                {projectPage.backLink?.text}
               </Link>
             </Hidden>
           )}
@@ -132,14 +134,14 @@ export const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
               <Hidden above="sm">
                 <Box marginTop={4}>
                   <Link
-                    href={projectPage.backLink.url}
+                    href={projectPage.backLink?.url || ''}
                     underlineVisibility="always"
                     underline="normal"
                     color="blue400"
                     className={styles.linkContainerMobile}
                   >
                     <Icon size="small" icon="arrowBack" />
-                    {projectPage.backLink.text}
+                    {projectPage.backLink?.text}
                   </Link>
                 </Box>
               </Hidden>

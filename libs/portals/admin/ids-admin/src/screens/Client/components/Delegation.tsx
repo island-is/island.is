@@ -1,11 +1,13 @@
-import { m } from '../../../lib/messages'
-import ContentCard from '../../../components/ContentCard'
 import { useLocale } from '@island.is/localization'
 import { Checkbox, Stack } from '@island.is/island-ui/core'
+
+import { m } from '../../../lib/messages'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
-import { ClientFormTypes } from '../EditClient.action'
-import { useMultiEnvSupport } from '../../../hooks/useMultiEnvSupport'
+import { ClientFormTypes } from '../EditClient.schema'
 import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
+import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
+import { useClient } from '../ClientContext'
+import { FormCard } from '../../../components/FormCard/FormCard'
 
 interface DelegationProps {
   supportsProcuringHolders: boolean
@@ -25,8 +27,8 @@ const Delegation = ({
   requireApiScopes,
 }: DelegationProps) => {
   const { formatMessage } = useLocale()
-  const { shouldSupportMultiEnv } = useMultiEnvSupport()
   const { isSuperAdmin } = useSuperAdmin()
+  const { client } = useClient()
 
   const [inputValues, setInputValues] = useEnvironmentState({
     supportsCustomDelegation,
@@ -38,12 +40,20 @@ const Delegation = ({
   })
 
   return (
-    <ContentCard
+    <FormCard
       title={formatMessage(m.delegations)}
       description={formatMessage(m.delegationsDescription)}
       intent={ClientFormTypes.delegations}
       accordionLabel={formatMessage(m.settings)}
-      shouldSupportMultiEnvironment={shouldSupportMultiEnv}
+      headerMarginBottom={3}
+      inSync={checkEnvironmentsSync(client.environments, [
+        'supportsProcuringHolders',
+        'supportsLegalGuardians',
+        'promptDelegations',
+        'supportsPersonalRepresentatives',
+        'supportsCustomDelegation',
+        'requireApiScopes',
+      ])}
     >
       <Stack space={2}>
         <Checkbox
@@ -89,7 +99,8 @@ const Delegation = ({
           onChange={() => {
             setInputValues((prev) => ({
               ...prev,
-              supportsPersonalRepresentatives: !prev.supportsPersonalRepresentatives,
+              supportsPersonalRepresentatives:
+                !prev.supportsPersonalRepresentatives,
             }))
           }}
           subLabel={formatMessage(
@@ -147,7 +158,7 @@ const Delegation = ({
           subLabel={formatMessage(m.requirePermissionsDescription)}
         />
       </Stack>
-    </ContentCard>
+    </FormCard>
   )
 }
 

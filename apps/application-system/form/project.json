@@ -1,11 +1,12 @@
 {
-  "root": "apps/application-system/form",
+  "name": "application-system-form",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/application-system/form/src",
   "projectType": "application",
   "generators": {},
   "targets": {
     "build": {
-      "executor": "@nrwl/web:webpack",
+      "executor": "@nx/webpack:webpack",
       "options": {
         "baseHref": "/umsoknir/",
         "outputPath": "dist/apps/application-system/form",
@@ -45,21 +46,21 @@
       "outputs": ["{options.outputPath}"],
       "dependsOn": [
         {
-          "target": "generateDevIndexHTML",
-          "projects": "self"
+          "target": "generateDevIndexHTML"
         }
       ]
     },
     "generateDevIndexHTML": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "node scripts/dockerfile-assets/bash/extract-environment.js apps/application-system/form/src"
         ]
-      }
+      },
+      "outputs": ["{workspaceRoot}/apps/application-system/form/src/index.html"]
     },
     "serve": {
-      "executor": "@nrwl/web:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "options": {
         "port": 4242,
         "buildTarget": "application-system-form:build"
@@ -71,13 +72,12 @@
       },
       "dependsOn": [
         {
-          "target": "generateDevIndexHTML",
-          "projects": "self"
+          "target": "generateDevIndexHTML"
         }
       ]
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/application-system/form/**/*.{ts,tsx,js,jsx}"
@@ -85,21 +85,21 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/application-system/form/jest.config.js",
+        "jestConfig": "apps/application-system/form/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/application-system/form"]
+      "outputs": ["{workspaceRoot}/coverage/apps/application-system/form"]
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/form/src/{app,routes,components}/**/*.{js,ts,tsx}'"
       }
     },
     "dev-init": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn get-secrets application-system-form",
@@ -109,7 +109,7 @@
       }
     },
     "dev": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn nx run application-system-api:dev",

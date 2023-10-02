@@ -6,10 +6,12 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
+  completedCaseStates,
   courtRoles,
   indictmentCases,
   InstitutionType,
   investigationCases,
+  RequestSharedWithDefender,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -73,11 +75,11 @@ describe('getCasesQueryFilter', () => {
     })
   })
 
-  it('should get representative filter', () => {
+  it('should get prosecutor representative filter', () => {
     // Arrange
     const user = {
       id: 'Prosecutor Id',
-      role: UserRole.REPRESENTATIVE,
+      role: UserRole.PROSECUTOR_REPRESENTATIVE,
       institution: {
         id: 'Prosecutors Office Id',
         type: InstitutionType.PROSECUTORS_OFFICE,
@@ -127,7 +129,7 @@ describe('getCasesQueryFilter', () => {
       // Arrange
       const user = {
         role,
-        institution: { id: 'Court Id', type: InstitutionType.COURT },
+        institution: { id: 'Court Id', type: InstitutionType.DISTRICT_COURT },
       }
 
       // Act
@@ -186,7 +188,7 @@ describe('getCasesQueryFilter', () => {
       // Arrange
       const user = {
         role: UserRole.ASSISTANT,
-        institution: { id: 'Court Id', type: InstitutionType.COURT },
+        institution: { id: 'Court Id', type: InstitutionType.DISTRICT_COURT },
       }
 
       // Act
@@ -218,11 +220,14 @@ describe('getCasesQueryFilter', () => {
   })
 
   describe.each(appealsCourtRoles)('given %s role', (role) => {
-    it('should get high court filter', () => {
+    it('should get court of appeals filter', () => {
       // Arrange
       const user = {
         role,
-        institution: { id: 'High Court Id', type: InstitutionType.HIGH_COURT },
+        institution: {
+          id: 'Court of Appeals Id',
+          type: InstitutionType.COURT_OF_APPEALS,
+        },
       }
 
       // Act
@@ -252,7 +257,7 @@ describe('getCasesQueryFilter', () => {
     // Arrange
     const user = {
       id: 'Staff Id',
-      role: UserRole.STAFF,
+      role: UserRole.PRISON_SYSTEM_STAFF,
       institution: {
         id: 'Prison Id',
         type: InstitutionType.PRISON,
@@ -267,7 +272,13 @@ describe('getCasesQueryFilter', () => {
       [Op.and]: [
         { isArchived: false },
         { state: CaseState.ACCEPTED },
-        { type: [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY] },
+        {
+          type: [
+            CaseType.CUSTODY,
+            CaseType.ADMISSION_TO_FACILITY,
+            CaseType.PAROLE_REVOCATION,
+          ],
+        },
         {
           decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
         },
@@ -279,7 +290,7 @@ describe('getCasesQueryFilter', () => {
     // Arrange
     const user = {
       id: 'Staff Id',
-      role: UserRole.STAFF,
+      role: UserRole.PRISON_SYSTEM_STAFF,
       institution: {
         id: 'Prison Id',
         type: InstitutionType.PRISON_ADMIN,
@@ -296,9 +307,68 @@ describe('getCasesQueryFilter', () => {
         { state: CaseState.ACCEPTED },
         {
           type: [
-            CaseType.ADMISSION_TO_FACILITY,
             CaseType.CUSTODY,
+            CaseType.ADMISSION_TO_FACILITY,
+            CaseType.PAROLE_REVOCATION,
             CaseType.TRAVEL_BAN,
+          ],
+        },
+      ],
+    })
+  })
+
+  it('should get defender filter', () => {
+    // Arrange
+    const user = {
+      id: 'Defender Id',
+      nationalId: 'Defender National Id',
+      role: UserRole.DEFENDER,
+    }
+
+    // Act
+    const res = getCasesQueryFilter(user as User)
+
+    // Assert
+    expect(res).toStrictEqual({
+      [Op.and]: [
+        { isArchived: false },
+        {
+          [Op.or]: [
+            {
+              [Op.and]: [
+                { type: [...restrictionCases, ...investigationCases] },
+                {
+                  [Op.or]: [
+                    {
+                      [Op.and]: [
+                        { state: [CaseState.SUBMITTED, CaseState.RECEIVED] },
+                        {
+                          request_shared_with_defender:
+                            RequestSharedWithDefender.READY_FOR_COURT,
+                        },
+                      ],
+                    },
+                    {
+                      [Op.and]: [
+                        { state: CaseState.RECEIVED },
+                        { court_date: { [Op.not]: null } },
+                      ],
+                    },
+                    { state: completedCaseStates },
+                  ],
+                },
+                { defender_national_id: user.nationalId },
+              ],
+            },
+            {
+              [Op.and]: [
+                { type: indictmentCases },
+                { state: [CaseState.RECEIVED, ...completedCaseStates] },
+                {
+                  '$defendants.defender_national_id$': user.nationalId,
+                },
+              ],
+            },
           ],
         },
       ],

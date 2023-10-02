@@ -1,4 +1,5 @@
 import { Response } from 'express'
+
 import {
   Body,
   Controller,
@@ -26,13 +27,14 @@ import {
 } from '@island.is/dokobit-signing'
 import {
   CaseAppealDecision,
-  CaseAppealState,
   CaseState,
   CaseTransition,
   CaseType,
   indictmentCases,
   InstitutionType,
   investigationCases,
+  isCourtRole,
+  isIndictmentCase,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -49,9 +51,10 @@ import {
   judgeRule,
   prosecutorRule,
   registrarRule,
-  representativeRule,
-  staffRule,
+  prosecutorRepresentativeRule,
+  prisonSystemStaffRule,
   assistantRule,
+  defenderRule,
 } from '../../guards'
 import { nowFactory } from '../../factories'
 import { UserService } from '../user'
@@ -68,8 +71,8 @@ import {
   prosecutorUpdateRule,
   registrarTransitionRule,
   registrarUpdateRule,
-  representativeTransitionRule,
-  representativeUpdateRule,
+  prosecutorRepresentativeTransitionRule,
+  prosecutorRepresentativeUpdateRule,
   assistantUpdateRule,
   assistantTransitionRule,
 } from './guards/rolesRules'
@@ -79,6 +82,7 @@ import { UpdateCaseDto } from './dto/updateCase.dto'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
+import { CaseInterceptor } from './interceptors/case.interceptor'
 import { transitionCase } from './state/case.state'
 import { CaseService, UpdateCase } from './case.service'
 
@@ -117,7 +121,7 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(prosecutorRule, representativeRule)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Post('case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   async create(
@@ -136,7 +140,7 @@ export class CaseController {
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorUpdateRule,
-    representativeUpdateRule,
+    prosecutorRepresentativeUpdateRule,
     judgeUpdateRule,
     registrarUpdateRule,
     assistantUpdateRule,
@@ -172,7 +176,7 @@ export class CaseController {
       await this.validateAssignedUser(
         update.judgeId,
         [UserRole.JUDGE, UserRole.ASSISTANT],
-        InstitutionType.COURT,
+        InstitutionType.DISTRICT_COURT,
         theCase.courtId,
       )
     }
@@ -181,7 +185,7 @@ export class CaseController {
       await this.validateAssignedUser(
         update.registrarId,
         [UserRole.REGISTRAR],
-        InstitutionType.COURT,
+        InstitutionType.DISTRICT_COURT,
         theCase.courtId,
       )
     }
@@ -190,7 +194,7 @@ export class CaseController {
       await this.validateAssignedUser(
         update.appealAssistantId,
         [UserRole.ASSISTANT],
-        InstitutionType.HIGH_COURT,
+        InstitutionType.COURT_OF_APPEALS,
       )
     }
 
@@ -198,7 +202,7 @@ export class CaseController {
       await this.validateAssignedUser(
         update.appealJudge1Id,
         [UserRole.JUDGE],
-        InstitutionType.HIGH_COURT,
+        InstitutionType.COURT_OF_APPEALS,
       )
     }
 
@@ -206,7 +210,7 @@ export class CaseController {
       await this.validateAssignedUser(
         update.appealJudge2Id,
         [UserRole.JUDGE],
-        InstitutionType.HIGH_COURT,
+        InstitutionType.COURT_OF_APPEALS,
       )
     }
 
@@ -214,7 +218,7 @@ export class CaseController {
       await this.validateAssignedUser(
         update.appealJudge3Id,
         [UserRole.JUDGE],
-        InstitutionType.HIGH_COURT,
+        InstitutionType.COURT_OF_APPEALS,
       )
     }
 
@@ -224,6 +228,11 @@ export class CaseController {
         : ''
       const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
       update.rulingModifiedHistory = `${history}${today} - ${user.name} ${user.title}\n\n${update.rulingModifiedHistory}`
+    }
+
+    if (update.caseResentExplanation) {
+      update.courtCaseFacts = `Í greinargerð sóknaraðila er atvikum lýst svo: ${theCase.caseFacts}`
+      update.courtLegalArguments = `Í greinargerð er krafa sóknaraðila rökstudd þannig: ${theCase.legalArguments}`
     }
 
     if (update.prosecutorStatementDate) {
@@ -236,7 +245,7 @@ export class CaseController {
   @UseGuards(JwtAuthGuard, CaseExistsGuard, RolesGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorTransitionRule,
-    representativeTransitionRule,
+    prosecutorRepresentativeTransitionRule,
     judgeTransitionRule,
     registrarTransitionRule,
     assistantTransitionRule,
@@ -262,50 +271,55 @@ export class CaseController {
 
     let update: UpdateCase = states
 
-    if (transition.transition === CaseTransition.DELETE) {
-      update.parentCaseId = null
-    }
+    switch (transition.transition) {
+      case CaseTransition.DELETE:
+        update.parentCaseId = null
+        break
+      case CaseTransition.ACCEPT:
+      case CaseTransition.REJECT:
+      case CaseTransition.DISMISS:
+        update.rulingDate = isIndictmentCase(theCase.type)
+          ? nowFactory()
+          : theCase.courtEndTime
 
-    if (transition.transition === CaseTransition.REOPEN) {
-      update.rulingDate = null
-      update.courtRecordSignatoryId = null
-      update.courtRecordSignatureDate = null
-    }
+        // Handle appealed in court
+        if (
+          !theCase.appealState && // don't appeal twice
+          (theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+            theCase.accusedAppealDecision === CaseAppealDecision.APPEAL)
+        ) {
+          if (theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) {
+            update.prosecutorPostponedAppealDate = nowFactory()
+          } else {
+            update.accusedPostponedAppealDate = nowFactory()
+          }
 
-    // TODO: Consider changing the names of the postponed appeal date variables
-    // as they are now also used when the case is appealed in court
-    if (states.appealState === CaseAppealState.APPEALED) {
-      // The only roles that can appeal a case here are prosecutor roles
-      update.prosecutorPostponedAppealDate = nowFactory()
-    } else if (
-      // Handle appealed in court
-      !theCase.appealState &&
-      [
-        CaseTransition.ACCEPT,
-        CaseTransition.REJECT,
-        CaseTransition.DISMISS,
-      ].includes(transition.transition) &&
-      (theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
-        theCase.accusedAppealDecision === CaseAppealDecision.APPEAL)
-    ) {
-      if (theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) {
+          update = {
+            ...update,
+            ...transitionCase(
+              CaseTransition.APPEAL,
+              states.state ?? theCase.state,
+              states.appealState ?? theCase.appealState,
+            ),
+          }
+        }
+
+        break
+      case CaseTransition.REOPEN:
+        update.rulingDate = null
+        update.rulingSignatureDate = null
+        update.courtRecordSignatoryId = null
+        update.courtRecordSignatureDate = null
+        break
+      // TODO: Consider changing the names of the postponed appeal date variables
+      // as they are now also used when the case is appealed in court
+      case CaseTransition.APPEAL:
+        // The only roles that can appeal a case here are prosecutor roles
         update.prosecutorPostponedAppealDate = nowFactory()
-      } else {
-        update.accusedPostponedAppealDate = nowFactory()
-      }
-
-      update = {
-        ...update,
-        ...transitionCase(
-          CaseTransition.APPEAL,
-          states.state ?? theCase.state,
-          states.appealState ?? theCase.appealState,
-        ),
-      }
-    }
-
-    if (states.appealState === CaseAppealState.RECEIVED) {
-      update.appealReceivedByCourtDate = nowFactory()
+        break
+      case CaseTransition.RECEIVE_APPEAL:
+        update.appealReceivedByCourtDate = nowFactory()
+        break
     }
 
     const updatedCase = await this.caseService.update(
@@ -317,7 +331,7 @@ export class CaseController {
 
     // No need to wait
     this.eventService.postEvent(
-      (transition.transition as unknown) as CaseEvent,
+      transition.transition as unknown as CaseEvent,
       updatedCase ?? theCase,
     )
 
@@ -327,11 +341,12 @@ export class CaseController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(
     prosecutorRule,
-    representativeRule,
+    prosecutorRepresentativeRule,
     judgeRule,
     registrarRule,
     assistantRule,
-    staffRule,
+    prisonSystemStaffRule,
+    defenderRule,
   )
   @Get('cases')
   @ApiOkResponse({
@@ -349,14 +364,15 @@ export class CaseController {
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
   @RolesRules(
     prosecutorRule,
-    representativeRule,
+    prosecutorRepresentativeRule,
     judgeRule,
     registrarRule,
     assistantRule,
-    staffRule,
+    prisonSystemStaffRule,
   )
   @Get('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
+  @UseInterceptors(CaseInterceptor)
   getById(@Param('caseId') caseId: string, @CurrentCase() theCase: Case): Case {
     this.logger.debug(`Getting case ${caseId} by id`)
 
@@ -400,7 +416,7 @@ export class CaseController {
   )
   @RolesRules(
     prosecutorRule,
-    representativeRule,
+    prosecutorRepresentativeRule,
     judgeRule,
     registrarRule,
     assistantRule,
@@ -442,7 +458,7 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
   )
-  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, prisonSystemStaffRule)
   @Get('case/:caseId/courtRecord')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -471,7 +487,7 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
   )
-  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, prisonSystemStaffRule)
   @Get('case/:caseId/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -497,7 +513,7 @@ export class CaseController {
     new CaseTypeGuard([CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY]),
     CaseReadGuard,
   )
-  @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, prisonSystemStaffRule)
   @Get('case/:caseId/custodyNotice')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -528,12 +544,12 @@ export class CaseController {
     JwtAuthGuard,
     RolesGuard,
     CaseExistsGuard,
-    new CaseTypeGuard([...indictmentCases]),
+    new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
   )
   @RolesRules(
     prosecutorRule,
-    representativeRule,
+    prosecutorRepresentativeRule,
     judgeRule,
     registrarRule,
     assistantRule,
@@ -580,9 +596,9 @@ export class CaseController {
       `Requesting a signature for the court record of case ${caseId}`,
     )
 
-    if (user.id !== theCase.judgeId && user.id !== theCase.registrarId) {
+    if (!isCourtRole(user.role)) {
       throw new ForbiddenException(
-        'A court record must be signed by the assigned judge or registrar',
+        'A court record must be a judge or a registrar',
       )
     }
 
@@ -629,9 +645,9 @@ export class CaseController {
       `Confirming a signature for the court record of case ${caseId}`,
     )
 
-    if (user.id !== theCase.judgeId && user.id !== theCase.registrarId) {
+    if (!isCourtRole(user.role)) {
       throw new ForbiddenException(
-        'A court record must be signed by the assigned judge or registrar',
+        'A court record must be a judge or a registrar',
       )
     }
 

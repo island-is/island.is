@@ -4,6 +4,7 @@ import { Area, SubscriptionDescriptionKey } from '../../../../types/enums'
 import { SubscriptionArray } from '../../../../types/interfaces'
 import { useIsMobile } from '../../../../hooks'
 import localization from '../../Subscriptions.json'
+import { sortLocale } from '../../../../utils/helpers'
 
 interface Props {
   subscriptionArray: SubscriptionArray
@@ -33,8 +34,20 @@ const ChosenSubscriptions = ({
     subscribedToAllChangesObj,
   } = subscriptionArray
   const chosenCases = cases.filter((item) => item.checked)
+  const sortedChosenCases = sortLocale({
+    list: chosenCases,
+    sortOption: 'name',
+  })
   const chosenInstitutions = institutions.filter((item) => item.checked)
+  const sortedChosenInstitutions = sortLocale({
+    list: chosenInstitutions,
+    sortOption: 'name',
+  })
   const chosenPolicyAreas = policyAreas.filter((item) => item.checked)
+  const sortedChosenPolicyAreas = sortLocale({
+    list: chosenPolicyAreas,
+    sortOption: 'name',
+  })
   const { isMobile } = useIsMobile()
   const subscribeToAllChecked = subscribedToAllNewObj.checked
     ? subscribedToAllNewObj
@@ -42,12 +55,20 @@ const ChosenSubscriptions = ({
     ? subscribedToAllChangesObj
     : undefined
 
+  const DescText = ({ children }) => {
+    return (
+      <Text variant="medium" fontWeight="light">
+        {children}
+      </Text>
+    )
+  }
+
   return (
     <Stack space={0}>
       {!(
-        chosenCases.length === 0 &&
-        chosenInstitutions.length === 0 &&
-        chosenPolicyAreas.length === 0 &&
+        sortedChosenCases.length === 0 &&
+        sortedChosenInstitutions.length === 0 &&
+        sortedChosenPolicyAreas.length === 0 &&
         !subscribeToAllChecked
       ) && (
         <>
@@ -57,22 +78,21 @@ const ChosenSubscriptions = ({
           {subscribeToAllChecked && (
             <SubscriptionCard
               isGeneralSubscription
-              idx={0}
               item={subscribeToAllChecked}
               subscriptionArray={subscriptionArray}
               setSubscriptionArray={setSubscriptionArray}
               titleColumn={
-                <Text lineHeight="sm" variant="h5" color={'dark400'}>
+                <Text variant="medium" fontWeight="semiBold" color={'dark400'}>
                   {loc.cardTitle}
                 </Text>
               }
             >
-              <Text variant="medium">&emsp;{subscribeToAllChecked.name}</Text>
+              <DescText>{subscribeToAllChecked.name}</DescText>
             </SubscriptionCard>
           )}
 
-          {chosenCases.length !== 0 &&
-            chosenCases.map((item) => {
+          {sortedChosenCases.length !== 0 &&
+            sortedChosenCases.map((item) => {
               return (
                 <SubscriptionCard
                   key={item.key}
@@ -81,17 +101,22 @@ const ChosenSubscriptions = ({
                   subscriptionArray={subscriptionArray}
                   setSubscriptionArray={setSubscriptionArray}
                   titleColumn={
-                    <Text variant="h5" truncate={isMobile} color={'dark400'}>
-                      {item.caseNumber}
+                    <Text
+                      variant="medium"
+                      fontWeight="semiBold"
+                      truncate={isMobile}
+                      color={'dark400'}
+                    >
+                      {`S-${item.caseNumber}`}
                     </Text>
                   }
                 >
-                  <Text variant="medium">&emsp;{item.name}</Text>
+                  <DescText>{item.name}</DescText>
                 </SubscriptionCard>
               )
             })}
-          {chosenInstitutions.length !== 0 &&
-            chosenInstitutions.map((item) => {
+          {sortedChosenInstitutions.length !== 0 &&
+            sortedChosenInstitutions.map((item) => {
               return (
                 <SubscriptionCard
                   key={item.key}
@@ -101,22 +126,27 @@ const ChosenSubscriptions = ({
                   toggleAble={toggleAble}
                   setSubscriptionArray={setSubscriptionArray}
                   titleColumn={
-                    <Text variant="h5" truncate={isMobile} color={'blue400'}>
+                    <Text
+                      variant="medium"
+                      fontWeight="semiBold"
+                      truncate={isMobile}
+                      color={'blue400'}
+                    >
                       {item.name}
                     </Text>
                   }
                 >
-                  <Text variant="medium">
+                  <DescText>
                     <em>
-                      &emsp;&mdash;
+                      &mdash;
                       {SubscriptionDescriptionKey[item.subscriptionType]}
                     </em>
-                  </Text>
+                  </DescText>
                 </SubscriptionCard>
               )
             })}
-          {chosenPolicyAreas.length !== 0 &&
-            chosenPolicyAreas.map((item) => {
+          {sortedChosenPolicyAreas.length !== 0 &&
+            sortedChosenPolicyAreas.map((item) => {
               return (
                 <SubscriptionCard
                   key={item.key}
@@ -126,17 +156,22 @@ const ChosenSubscriptions = ({
                   subscriptionArray={subscriptionArray}
                   setSubscriptionArray={setSubscriptionArray}
                   titleColumn={
-                    <Text variant="h5" truncate={isMobile} color={'blue400'}>
+                    <Text
+                      variant="medium"
+                      fontWeight="semiBold"
+                      truncate={isMobile}
+                      color={'blue400'}
+                    >
                       {item.name}
                     </Text>
                   }
                 >
-                  <Text variant="medium">
+                  <DescText>
                     <em>
-                      &emsp;&mdash;
+                      &mdash;
                       {SubscriptionDescriptionKey[item.subscriptionType]}
                     </em>
-                  </Text>
+                  </DescText>
                 </SubscriptionCard>
               )
             })}

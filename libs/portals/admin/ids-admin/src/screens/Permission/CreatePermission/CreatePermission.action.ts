@@ -8,7 +8,7 @@ import {
   validateFormData,
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
-import { validateClientId } from '@island.is/auth/shared'
+import { validatePermissionId } from '@island.is/auth/shared'
 import { AuthAdminEnvironment } from '@island.is/api/schema'
 
 import { IDSAdminPaths } from '../../../lib/paths'
@@ -36,7 +36,7 @@ const schema = z
   // Second refine is to check if the scope id is prefixed with the tenant and matches the regex
   .refine(
     (data) =>
-      validateClientId({
+      validatePermissionId({
         prefix: data.tenantId,
         value: data.name,
       }),
@@ -53,43 +53,43 @@ export type CreateScopeResult = ValidateFormDataResult<typeof schema> & {
   globalError?: boolean
 }
 
-export const createPermissionAction: WrappedActionFn = ({ client }) => async ({
-  request,
-}): Promise<CreateScopeResult | Response> => {
-  const formData = await request.formData()
-  const result = await validateFormData({ formData, schema })
+export const createPermissionAction: WrappedActionFn =
+  ({ client }) =>
+  async ({ request }): Promise<CreateScopeResult | Response> => {
+    const formData = await request.formData()
+    const result = await validateFormData({ formData, schema })
 
-  if (result.errors || !result.data) {
-    return result
-  }
+    if (result.errors || !result.data) {
+      return result
+    }
 
-  const { data } = result
+    const { data } = result
 
-  try {
-    await client.mutate<
-      CreateAuthAdminScopeMutation,
-      CreateAuthAdminScopeMutationVariables
-    >({
-      mutation: CreateAuthAdminScopeDocument,
-      variables: {
-        input: data,
-      },
-    })
-
-    return redirect(
-      replaceParams({
-        href: IDSAdminPaths.IDSAdminPermission,
-        params: {
-          tenant: data?.tenantId,
-          permission: data?.name,
+    try {
+      await client.mutate<
+        CreateAuthAdminScopeMutation,
+        CreateAuthAdminScopeMutationVariables
+      >({
+        mutation: CreateAuthAdminScopeDocument,
+        variables: {
+          input: data,
         },
-      }),
-    )
-  } catch (e) {
-    return {
-      errors: null,
-      data: null,
-      globalError: true,
+      })
+
+      return redirect(
+        replaceParams({
+          href: IDSAdminPaths.IDSAdminPermission,
+          params: {
+            tenant: data?.tenantId,
+            permission: data?.name,
+          },
+        }),
+      )
+    } catch (e) {
+      return {
+        errors: null,
+        data: null,
+        globalError: true,
+      }
     }
   }
-}

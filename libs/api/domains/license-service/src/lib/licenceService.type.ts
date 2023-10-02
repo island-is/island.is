@@ -1,8 +1,6 @@
 import { User } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
 
-export type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
-
 export enum GenericLicenseType {
   DriversLicense = 'DriversLicense',
   HuntingLicense = 'HuntingLicense',
@@ -201,6 +199,7 @@ export type PassTemplateIds = {
   adrLicense: string
   machineLicense: string
   disabilityLicense: string
+  drivingLicense: string
 }
 
 export type PkPassVerificationData = {
@@ -273,5 +272,7 @@ export interface GenericLicenseMapper {
 export const DRIVING_LICENSE_FACTORY = 'driving_license_factory'
 
 export const LICENSE_MAPPER_FACTORY = 'license-mapper-factory'
+
+export const GENERIC_LICENSE_FACTORY = 'generic_license_factory'
 
 export const CONFIG_PROVIDER = 'config_provider'

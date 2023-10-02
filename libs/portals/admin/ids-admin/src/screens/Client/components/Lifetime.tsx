@@ -5,20 +5,31 @@ import {
   Text,
   ToggleSwitchCheckbox,
 } from '@island.is/island-ui/core'
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
-import ContentCard from '../../../components/ContentCard'
-import { useActionData } from 'react-router-dom'
-import {
-  ClientFormTypes,
-  EditApplicationResult,
-  schema,
-} from '../EditClient.action'
+import { ClientFormTypes } from '../EditClient.schema'
 import { useErrorFormatMessage } from '../../../hooks/useFormatErrorMessage'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
-import { useMultiEnvSupport } from '../../../hooks/useMultiEnvSupport'
 import { useReadableSeconds } from '../../../hooks/useReadableSeconds'
+import { FormCard } from '../../../components/FormCard/FormCard'
+import { useClient } from '../ClientContext'
+import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
+
+interface CompareArgs {
+  currVal: FormData
+  orgVal: FormData
+  key: string
+}
+
+/**
+ * Compares the current form key value with the original form key value
+ * @param currVal - Current form data
+ * @param orgVal - Original form data
+ * @param key - Form key to compare
+ */
+const compare = ({ currVal, orgVal, key }: CompareArgs) =>
+  currVal.get(key) !== orgVal.get(key)
 
 interface LifetimeProps {
   absoluteRefreshTokenLifetime: number
@@ -32,16 +43,13 @@ const Lifetime = ({
   refreshTokenExpiration,
 }: LifetimeProps) => {
   const { formatMessage } = useLocale()
-  const { shouldSupportMultiEnv } = useMultiEnvSupport()
   const [lifetime, setLifetime] = useEnvironmentState({
     absoluteRefreshTokenLifetime,
     refreshTokenExpiration,
     slidingRefreshTokenLifetime,
   })
   const { formatErrorMessage } = useErrorFormatMessage()
-  const actionData = useActionData() as EditApplicationResult<
-    typeof schema.lifeTime
-  >
+  const { actionData, client } = useClient()
 
   const setLifeTimeLength = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -52,30 +60,25 @@ const Lifetime = ({
     }))
   }
 
-  const customChangedValidation = (
-    currentValue: FormData,
-    originalValue: FormData,
-  ): boolean => {
-    if (
-      currentValue.get('refreshTokenExpiration') !==
-      originalValue.get('refreshTokenExpiration')
-    ) {
-      return true
-    }
-    if (currentValue.get('refreshTokenExpiration')) {
-      return (
-        currentValue.get('absoluteRefreshTokenLifetime') !==
-          originalValue.get('absoluteRefreshTokenLifetime') ||
-        currentValue.get('slidingRefreshTokenLifetime') !==
-          originalValue.get('slidingRefreshTokenLifetime')
-      )
-    } else {
-      return (
-        currentValue.get('absoluteRefreshTokenLifetime') !==
-        originalValue.get('absoluteRefreshTokenLifetime')
-      )
-    }
-  }
+  /**
+   * Custom validation for the lifetime form
+   */
+  const customFormValidation = useCallback(
+    (currVal: FormData, orgVal: FormData) => {
+      if (compare({ currVal, orgVal, key: 'refreshTokenExpiration' }))
+        return true
+
+      if (currVal.get('refreshTokenExpiration')) {
+        return (
+          compare({ currVal, orgVal, key: 'absoluteRefreshTokenLifetime' }) ||
+          compare({ currVal, orgVal, key: 'slidingRefreshTokenLifetime' })
+        )
+      }
+
+      return compare({ currVal, orgVal, key: 'absoluteRefreshTokenLifetime' })
+    },
+    [],
+  )
 
   const readableAbsoluteLifetime = useReadableSeconds(
     lifetime.absoluteRefreshTokenLifetime,
@@ -85,12 +88,16 @@ const Lifetime = ({
   )
 
   return (
-    <ContentCard
+    <FormCard
       title={formatMessage(m.lifetime)}
       description={formatMessage(m.lifeTimeDescription)}
-      isDirty={customChangedValidation}
+      customValidation={customFormValidation}
       intent={ClientFormTypes.lifeTime}
-      shouldSupportMultiEnvironment={shouldSupportMultiEnv}
+      inSync={checkEnvironmentsSync(client.environments, [
+        'absoluteRefreshTokenLifetime',
+        'slidingRefreshTokenLifetime',
+        'refreshTokenExpiration',
+      ])}
     >
       <Stack space={3}>
         <Stack space={1}>
@@ -103,8 +110,8 @@ const Lifetime = ({
             onChange={setLifeTimeLength}
             label={formatMessage(m.absoluteLifetime)}
             errorMessage={formatErrorMessage(
-              (actionData?.errors
-                ?.absoluteRefreshTokenLifetime as unknown) as string,
+              actionData?.errors
+                ?.absoluteRefreshTokenLifetime as unknown as string,
             )}
           />
           <Text variant={'small'}>
@@ -130,7 +137,7 @@ const Lifetime = ({
             {formatMessage(m.inactivityExpirationDescription)}
           </Text>
         </Stack>
-        <Box hidden={!lifetime.refreshTokenExpiration}>
+        {lifetime.refreshTokenExpiration && (
           <Stack space={1}>
             <Input
               size="sm"
@@ -141,8 +148,8 @@ const Lifetime = ({
               onChange={setLifeTimeLength}
               label={formatMessage(m.inactivityLifetime)}
               errorMessage={formatErrorMessage(
-                (actionData?.errors
-                  ?.slidingRefreshTokenLifetime as unknown) as string,
+                actionData?.errors
+                  ?.slidingRefreshTokenLifetime as unknown as string,
               )}
             />
             <Text variant={'small'}>
@@ -151,9 +158,9 @@ const Lifetime = ({
               {readableInactivityLifetime}
             </Text>
           </Stack>
-        </Box>
+        )}
       </Stack>
-    </ContentCard>
+    </FormCard>
   )
 }
 

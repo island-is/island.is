@@ -26,7 +26,7 @@ interface VehicleSearchFieldProps {
 }
 
 export const VehicleSelectField: FC<
-  VehicleSearchFieldProps & FieldBaseProps
+  React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>
 > = ({ currentVehicleList, application, errors }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
@@ -39,20 +39,18 @@ export const VehicleSelectField: FC<
   const currentVehicle = currentVehicleList[parseInt(vehicleValue, 10)]
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [
-    selectedVehicle,
-    setSelectedVehicle,
-  ] = useState<VehiclesCurrentVehicleWithPlateOrderChecks | null>(
-    currentVehicle && currentVehicle.permno
-      ? {
-          permno: currentVehicle.permno,
-          make: currentVehicle?.make || '',
-          color: currentVehicle?.color || '',
-          role: currentVehicle?.role,
-          validationErrorMessages: [],
-        }
-      : null,
-  )
+  const [selectedVehicle, setSelectedVehicle] =
+    useState<VehiclesCurrentVehicleWithPlateOrderChecks | null>(
+      currentVehicle && currentVehicle.permno
+        ? {
+            permno: currentVehicle.permno,
+            make: currentVehicle?.make || '',
+            color: currentVehicle?.color || '',
+            role: currentVehicle?.role,
+            validationErrorMessages: [],
+          }
+        : null,
+    )
   const [plate, setPlate] = useState<string>(
     getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
   )
@@ -86,8 +84,9 @@ export const VehicleSelectField: FC<
                 ?.validationErrorMessages,
           })
 
-          const disabled = !!response?.vehiclePlateOrderChecksByPermno
-            ?.validationErrorMessages?.length
+          const disabled =
+            !!response?.vehiclePlateOrderChecksByPermno?.validationErrorMessages
+              ?.length
           setPlate(disabled ? '' : currentVehicle.permno || '')
           setValue(
             'pickVehicle.plate',
@@ -167,7 +166,7 @@ export const VehicleSelectField: FC<
           </Box>
         )}
       </Box>
-      {!isLoading && plate.length === 0 && errors && errors.pickVehicle && (
+      {!isLoading && plate.length === 0 && (errors as any)?.pickVehicle && (
         <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />
       )}
     </Box>

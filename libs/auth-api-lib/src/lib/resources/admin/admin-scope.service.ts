@@ -1,22 +1,31 @@
 import { Sequelize } from 'sequelize-typescript'
-import { BadRequestException, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Transaction } from 'sequelize'
 import omit from 'lodash/omit'
 
-import { validateClientId } from '@island.is/auth/shared'
+import { validatePermissionId } from '@island.is/auth/shared'
 import { isDefined } from '@island.is/shared/utils'
 
 import { ApiScope } from '../models/api-scope.model'
 import { Client } from '../../clients/models/client.model'
-import { ClientCreateScopeDTO } from './dto/client-create-scope.dto'
+import { AdminCreateScopeDto } from './dto/admin-create-scope.dto'
 import { ApiScopeUserClaim } from '../models/api-scope-user-claim.model'
 import { AdminScopeDTO } from './dto/admin-scope.dto'
 import { AdminTranslationService } from './services/admin-translation.service'
 import { NoContentException } from '@island.is/nest/problem'
-import { AdminPatchScopeDto } from './dto/admin-patch-scope.dto'
+import {
+  AdminPatchScopeDto,
+  superUserScopeFields,
+} from './dto/admin-patch-scope.dto'
 import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
 import { TranslationService } from '../../translation/translation.service'
+import { User } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
 /**
  * This is a service that is used to access the admin scopes
@@ -43,9 +52,10 @@ export class AdminScopeService {
       },
     })
 
-    const translations = await this.adminTranslationService.getApiScopeTranslations(
-      apiScopes.map(({ name }) => name),
-    )
+    const translations =
+      await this.adminTranslationService.getApiScopeTranslations(
+        apiScopes.map(({ name }) => name),
+      )
 
     return apiScopes.map((apiScope) =>
       this.adminTranslationService.mapApiScopeToAdminScopeDTO(
@@ -66,6 +76,7 @@ export class AdminScopeService {
     tenantId: string
   }): Promise<AdminScopeDTO> {
     const apiScope = await this.apiScope.findOne({
+      useMaster: true,
       where: {
         name: scopeName,
         domainName: tenantId,
@@ -77,9 +88,10 @@ export class AdminScopeService {
       throw new NoContentException()
     }
 
-    const translations = await this.adminTranslationService.getApiScopeTranslations(
-      [apiScope.name],
-    )
+    const translations =
+      await this.adminTranslationService.getApiScopeTranslations([
+        apiScope.name,
+      ])
 
     return this.adminTranslationService.mapApiScopeToAdminScopeDTO(
       apiScope,
@@ -92,10 +104,10 @@ export class AdminScopeService {
    */
   async createScope(
     tenantId: string,
-    input: ClientCreateScopeDTO,
+    input: AdminCreateScopeDto,
   ): Promise<AdminScopeDTO> {
     if (
-      !validateClientId({
+      !validatePermissionId({
         prefix: tenantId,
         value: input.name,
       })
@@ -113,10 +125,34 @@ export class AdminScopeService {
       throw new BadRequestException(`Scope name "${input.name}" already exists`)
     }
 
+    const translatedValuesErrorMsg =
+      'Scope displayName and description are required'
+
+    if (!input.displayName || !input.description) {
+      throw new BadRequestException(translatedValuesErrorMsg)
+    }
+
+    const [displayName, description] = [
+      input.displayName,
+      input.description,
+    ].map(
+      (translatedValueDto) =>
+        this.adminTranslationService.findTranslationByLocale(
+          translatedValueDto,
+          'is',
+        )?.value,
+    )
+
+    if (!displayName || !description) {
+      throw new BadRequestException(translatedValuesErrorMsg)
+    }
+
     const apiScope = await this.sequelize.transaction(async (transaction) => {
       const scope = await this.apiScope.create(
         {
           ...input,
+          displayName,
+          description,
           domainName: tenantId,
         },
         { transaction },
@@ -133,12 +169,19 @@ export class AdminScopeService {
         },
       )
 
+      await this.updateScopeTranslatedValueFields(
+        input.name,
+        input,
+        transaction,
+      )
+
       return scope
     })
 
-    const translations = await this.adminTranslationService.getApiScopeTranslations(
-      [apiScope.name],
-    )
+    const translations =
+      await this.adminTranslationService.getApiScopeTranslations([
+        apiScope.name,
+      ])
 
     return this.adminTranslationService.mapApiScopeToAdminScopeDTO(
       apiScope,
@@ -162,7 +205,7 @@ export class AdminScopeService {
    */
   private async updateScopeTranslatedValueFields(
     scopeName: string,
-    input: AdminPatchScopeDto,
+    input: Pick<AdminPatchScopeDto, 'displayName' | 'description'>,
     transaction: Transaction,
   ) {
     // Find all translations that are not Icelandic for displayName and description
@@ -209,13 +252,22 @@ export class AdminScopeService {
     scopeName,
     tenantId,
     input,
+    user,
   }: {
     scopeName: string
     tenantId: string
     input: AdminPatchScopeDto
+    user: User
   }): Promise<AdminScopeDTO> {
     if (Object.keys(input).length === 0) {
       throw new BadRequestException('No fields provided to update.')
+    }
+
+    const isValid = await this.validateUserUpdateAccess(input, user)
+    if (!isValid) {
+      throw new ForbiddenException(
+        'User does not have access to update admin controlled fields',
+      )
     }
 
     // Check if scope exists
@@ -267,5 +319,24 @@ export class AdminScopeService {
       scopeName,
       tenantId,
     })
+  }
+
+  private async validateUserUpdateAccess(
+    input: AdminPatchScopeDto,
+    user: User,
+  ): Promise<boolean> {
+    const isSuperUser = user.scope.includes(AdminPortalScope.idsAdminSuperUser)
+
+    const updatedFields = Object.keys(input)
+    const superUserUpdatedFields = updatedFields.filter((field) =>
+      superUserScopeFields.includes(field),
+    )
+
+    if (superUserUpdatedFields.length === 0) {
+      return true
+    }
+
+    // If there is a superUser field in the updated fields, the user must be a superUser
+    return superUserUpdatedFields.length > 0 && isSuperUser
   }
 }

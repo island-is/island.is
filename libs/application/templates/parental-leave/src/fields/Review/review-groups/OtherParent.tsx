@@ -30,9 +30,8 @@ export const OtherParent = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const [
-    { otherParent, otherParentEmail, otherParentPhoneNumber },
-  ] = useStatefulAnswers(application)
+  const [{ otherParent, otherParentEmail, otherParentPhoneNumber }] =
+    useStatefulAnswers(application)
 
   const selectedChild = getSelectedChild(
     application.answers,

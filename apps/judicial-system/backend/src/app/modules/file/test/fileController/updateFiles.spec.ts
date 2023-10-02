@@ -1,6 +1,6 @@
 import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize/types'
-import { InternalServerErrorException } from '@nestjs/common/exceptions'
+import { InternalServerErrorException } from '@nestjs/common'
 
 import { CaseFile } from '../../models/file.model'
 import { UpdateFileDto } from '../../dto/updateFile.dto'
@@ -22,11 +22,8 @@ describe('FileController - Update case file order', () => {
   let transaction: Transaction
 
   beforeEach(async () => {
-    const {
-      fileModel,
-      fileController,
-      sequelize,
-    } = await createTestingFileModule()
+    const { fileModel, fileController, sequelize } =
+      await createTestingFileModule()
 
     mockFileModel = fileModel
     const mockTransaction = sequelize.transaction as jest.Mock

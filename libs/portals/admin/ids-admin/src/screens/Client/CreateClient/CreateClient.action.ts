@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { zfd } from 'zod-form-data'
-import { WrappedActionFn } from '@island.is/portals/core'
+import { RouterActionRedirect, WrappedActionFn } from '@island.is/portals/core'
 import {
   replaceParams,
   validateFormData,
@@ -49,56 +49,50 @@ const schema = z
     },
   )
 
-export type CreateClientResult =
-  | (ValidateFormDataResult<typeof schema> & {
-      /**
-       * Global error message if the mutation fails
-       */
-      globalError?: boolean
-    })
-  | undefined
+export type CreateClientResult = RouterActionRedirect<
+  ValidateFormDataResult<typeof schema>['errors']
+>
 
-export const createClientAction: WrappedActionFn = ({ client }) => async ({
-  request,
-}) => {
-  const formData = await request.formData()
-  const result = await validateFormData({ formData, schema })
+export const createClientAction: WrappedActionFn =
+  ({ client }) =>
+  async ({ request }): Promise<CreateClientResult | Response> => {
+    const formData = await request.formData()
+    const result = await validateFormData({ formData, schema })
 
-  if (result.errors || !result.data) {
-    return result
-  }
+    if (result.errors || !result.data) {
+      return result
+    }
 
-  const { data } = result
-  try {
-    await client.mutate<CreateClientMutation, CreateClientMutationVariables>({
-      mutation: CreateClientDocument,
-      variables: {
-        input: {
-          displayName: data.displayName,
-          clientId: data.clientId,
-          environments: data.environments,
-          tenantId: data.tenant,
-          clientType: data.clientType,
+    const { data } = result
+
+    try {
+      await client.mutate<CreateClientMutation, CreateClientMutationVariables>({
+        mutation: CreateClientDocument,
+        variables: {
+          input: {
+            displayName: data.displayName,
+            clientId: data.clientId,
+            environments: data.environments,
+            tenantId: data.tenant,
+            clientType: data.clientType,
+          },
         },
-      },
-    })
+      })
 
-    // TODO: Check for partial creation, and show a warning modal
-
-    return redirect(
-      replaceParams({
-        href: IDSAdminPaths.IDSAdminClient,
-        params: {
-          tenant: data?.tenant,
-          client: data?.clientId,
-        },
-      }),
-    )
-  } catch (e) {
-    return {
-      errors: null,
-      data: null,
-      globalError: true,
+      // TODO: Check for partial creation, and show a warning modal
+      return redirect(
+        replaceParams({
+          href: IDSAdminPaths.IDSAdminClient,
+          params: {
+            tenant: data?.tenant,
+            client: data?.clientId,
+          },
+        }),
+      )
+    } catch (e) {
+      return {
+        errors: null,
+        globalError: true,
+      }
     }
   }
-}

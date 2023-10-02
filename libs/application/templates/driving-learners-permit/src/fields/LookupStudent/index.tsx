@@ -23,6 +23,7 @@ import {
 import { IDENTITY_QUERY } from '../../graphql'
 import { LOOKUP_STUDENT_QUERY } from '../../graphql'
 import { LearnersPermitFakeData, YES } from '../../lib/constants'
+import { MessageDescriptor } from 'react-intl'
 
 const prefix = 'studentMentorability'
 
@@ -35,28 +36,27 @@ const fieldNames = {
   errorCode: `${prefix}.errorCode`,
 }
 
-const getErrorMessageFromErrorCode = (errorCode: string): string => {
-  const errorMessages: Record<string, string> = {
-    INSTRUCTOR_NOT_FOUND_IN_NATIONAL_REGISTRY:
-      m.errorNationalIdNoName.defaultMessage,
+const getErrorMessageFromErrorCode = (errorCode: string): MessageDescriptor => {
+  const errorMessages: Record<string, MessageDescriptor> = {
+    INSTRUCTOR_NOT_FOUND_IN_NATIONAL_REGISTRY: m.errorNationalIdNoName,
     INSTRUCTOR_DOES_NOT_MEET_AGE_LIMIT:
-      requirementsMessages.ageRequirementDescription.defaultMessage,
+      requirementsMessages.ageRequirementDescription,
     INSTRUCTOR_B_LICENSE_LESS_THAN_5_YEARS:
-      requirementsMessages.validForFiveYearsDescription.defaultMessage,
-    INSTRUCTOR_HAS_DEPRIVATION:
-      requirementsMessages.hasPointsOrDeprivation.defaultMessage,
+      requirementsMessages.validForFiveYearsDescription,
+    INSTRUCTOR_HAS_DEPRIVATION: requirementsMessages.hasPointsOrDeprivation,
     INSTRUCTOR_HAS_DEPRIVATION_WITHIN_LAST_12_MONTHS:
-      requirementsMessages.hasPointsOrDeprivation.defaultMessage,
-    'No license book found': m.studentNoLicenseBookDescription.defaultMessage,
-    'Not allowed practive driving':
-      m.studentIsNotMentorableDescription.defaultMessage,
+      requirementsMessages.hasPointsOrDeprivation,
+    'No license book found': m.studentNoLicenseBookDescription,
+    'Not allowed practive driving': m.studentIsNotMentorableDescription,
   }
 
   const errorMessage = errorMessages[errorCode]
-  return errorMessage ?? m.studentIsNotMentorableDescription.defaultMessage
+  return errorMessage ?? m.studentIsNotMentorableDescription
 }
 
-export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
+export const LookupStudent: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
   const fakeData = getValueViaPath<LearnersPermitFakeData>(
     application.answers,
@@ -101,10 +101,8 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
     onCompleted: (data) => {
       if (data.drivingLicenseStudentCanGetPracticePermit) {
         clearErrors(fieldNames.studentMentorabilityError)
-        const {
-          isOk,
-          errorCode,
-        } = data.drivingLicenseStudentCanGetPracticePermit
+        const { isOk, errorCode } =
+          data.drivingLicenseStudentCanGetPracticePermit
         const eligible = isOk && errorCode === null
         setValue(
           fieldNames.studentMentorability,

@@ -1,16 +1,18 @@
 import { createIntl } from 'react-intl'
 
-import { IndictmentCountOffense as offense } from '@island.is/judicial-system-web/src/graphql/schema'
 import { Substance, SubstanceMap } from '@island.is/judicial-system/types'
+import { IndictmentCountOffense as offense } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
-  getRelevantSubstances,
   getIncidentDescriptionReason,
   getLegalArguments,
+  getRelevantSubstances,
 } from './IndictmentCount'
 
-const formatMessage = createIntl({ locale: 'is', onError: jest.fn })
-  .formatMessage
+const formatMessage = createIntl({
+  locale: 'is',
+  onError: jest.fn,
+}).formatMessage
 
 describe('getRelevantSubstances', () => {
   test('should return relevant substances in the correct order for the indictment description', () => {
@@ -139,6 +141,30 @@ describe('getIncidentDescriptionReason', () => {
     )
   })
 
+  test('should return a description with illegal drugs', () => {
+    const offenses = [offense.DRUNK_DRIVING, offense.ILLEGAL_DRUGS_DRIVING]
+
+    const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
+
+    expect(result).toBe(
+      'undir áhrifum áfengis og óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna',
+    )
+  })
+
+  test('should return a description with illegal drugs as third offence', () => {
+    const offenses = [
+      offense.DRIVING_WITHOUT_LICENCE,
+      offense.DRUNK_DRIVING,
+      offense.ILLEGAL_DRUGS_DRIVING,
+    ]
+
+    const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
+
+    expect(result).toBe(
+      'sviptur ökurétti, undir áhrifum áfengis og óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna',
+    )
+  })
+
   test('should return a description with illegal and prescription drugs', () => {
     const offenses = [
       offense.DRUNK_DRIVING,
@@ -150,6 +176,19 @@ describe('getIncidentDescriptionReason', () => {
 
     expect(result).toBe(
       'undir áhrifum áfengis og óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna og slævandi lyfja',
+    )
+  })
+
+  test('should return a description with only illegal and prescription drugs', () => {
+    const offenses = [
+      offense.ILLEGAL_DRUGS_DRIVING,
+      offense.PRESCRIPTION_DRUGS_DRIVING,
+    ]
+
+    const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
+
+    expect(result).toBe(
+      'óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna og slævandi lyfja',
     )
   })
 })

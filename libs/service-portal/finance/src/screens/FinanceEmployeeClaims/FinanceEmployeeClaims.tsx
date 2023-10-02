@@ -5,7 +5,7 @@ import { m, DynamicWrapper } from '@island.is/service-portal/core'
 
 import DocumentScreen from '../../components/DocumentScreen/DocumentScreen'
 
-const EmployeeClaims: FC = () => {
+const EmployeeClaims: FC<React.PropsWithChildren<unknown>> = () => {
   useNamespaces('sp.employee-claims')
   const { formatMessage } = useLocale()
 

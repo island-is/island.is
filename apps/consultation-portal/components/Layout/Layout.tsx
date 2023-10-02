@@ -10,7 +10,7 @@ type LayoutProps = {
   justifyContent?: 'spaceBetween' | 'flexStart'
 }
 
-const Layout: FC<LayoutProps> = ({
+const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
   children,
   isFrontPage,
   seo,
@@ -24,7 +24,13 @@ const Layout: FC<LayoutProps> = ({
       className={styles.processContainer}
     >
       <Box>
-        <SEO title={seo.title} url={seo.url} image={seo.image} />
+        <SEO
+          title={seo.title}
+          url={seo.url}
+          image={seo.image}
+          description={seo.description}
+          keywords={seo.keywords}
+        />
         <Menu isFrontPage={isFrontPage} />
         <Divider />
         <ToastContainer />

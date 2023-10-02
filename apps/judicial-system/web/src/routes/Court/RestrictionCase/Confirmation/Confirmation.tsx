@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   CaseDecision,
   CaseTransition,
@@ -9,38 +10,33 @@ import {
   isAcceptingCaseDecision,
   NotificationType,
 } from '@island.is/judicial-system/types'
-import * as constants from '@island.is/judicial-system/consts'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
-  FormFooter,
-  PoliceRequestAccordionItem,
-  CourtRecordAccordionItem,
-  PdfButton,
-  CourtCaseInfo,
-  PageLayout,
-  FormContentContainer,
-  RulingAccordionItem,
   BlueBox,
+  CourtCaseInfo,
+  CourtRecordAccordionItem,
+  FormContentContainer,
   FormContext,
-  useRequestRulingSignature,
+  FormFooter,
+  PageHeader,
+  PageLayout,
+  PdfButton,
+  PoliceRequestAccordionItem,
+  RulingAccordionItem,
   SigningModal,
   UserContext,
-  PageHeader,
+  useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { core, titles } from '@island.is/judicial-system-web/messages'
 
 import { RulingModifiedModal } from '../../components'
 import { confirmation as strings } from './Confirmation.strings'
 
 type VisibleModal = 'none' | 'rulingModifiedModal' | 'signingModal'
 
-export const Confirmation: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+export const Confirmation: React.FC<React.PropsWithChildren<unknown>> = () => {
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const [modalVisible, setModalVisible] = useState<VisibleModal>('none')
 
   const { user } = useContext(UserContext)

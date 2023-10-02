@@ -2,14 +2,14 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Input } from '@island.is/island-ui/core'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { ruling as m } from '@island.is/judicial-system-web/messages'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { useCase } from '../../utils/hooks'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '../../utils/formHelper'
+import { useCase } from '../../utils/hooks'
 import useDeb from '../../utils/hooks/useDeb'
 
 interface Props {
@@ -18,7 +18,7 @@ interface Props {
   rows?: number
 }
 
-const RulingInput: React.FC<Props> = (props) => {
+const RulingInput: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, setWorkingCase, rows } = props
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()

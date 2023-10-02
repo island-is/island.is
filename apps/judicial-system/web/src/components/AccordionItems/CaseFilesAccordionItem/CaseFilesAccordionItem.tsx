@@ -2,22 +2,22 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-import { Box, AccordionItem, Button, Text } from '@island.is/island-ui/core'
-import {
-  UploadState,
-  useCourtUpload,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import { AccordionItem, Box, Button, Text } from '@island.is/island-ui/core'
 import {
   CaseState,
   completedCaseStates,
   isCourtRole,
 } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { caseFilesAccordion as m } from '@island.is/judicial-system-web/messages'
 import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  UploadState,
+  useCourtUpload,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { CaseFileList, InfoBox } from '../..'
 import { UploadStateMessage } from './UploadStateMessage'
@@ -28,7 +28,9 @@ interface Props {
   user: User
 }
 
-const CaseFilesAccordionItem: React.FC<Props> = (props) => {
+const CaseFilesAccordionItem: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const { workingCase, setWorkingCase, user } = props
 
   const { formatMessage } = useIntl()
@@ -61,6 +63,9 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
     return canCourtRoleUpload
   }
 
+  const caseFiles =
+    workingCase.caseFiles?.filter((file) => !file.category) ?? []
+
   return (
     <AccordionItem
       id="caseFilesAccordionItem"
@@ -74,7 +79,7 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
         >
           <Text variant="h3">
             {formatMessage(m.title, {
-              fileCount: workingCase.caseFiles?.length || 0,
+              fileCount: caseFiles.length,
             })}
           </Text>
           {canCaseFilesBeUploaded() && (
@@ -88,7 +93,7 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
                   message={formatMessage(m.someFilesNotUploadedToCourtText)}
                 />
               )}
-              {(workingCase.caseFiles || []).length > 0 &&
+              {caseFiles.length > 0 &&
                 (uploadState === UploadState.ALL_UPLOADED ||
                   uploadState === UploadState.ALL_UPLOADED_NONE_AVAILABLE) && (
                   <UploadStateMessage
@@ -106,22 +111,19 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
     >
       <CaseFileList
         caseId={workingCase.id}
-        files={workingCase.caseFiles ?? []}
+        files={caseFiles}
         canOpenFiles={canCaseFilesBeOpened()}
         hideIcons={user?.role === UserRole.PROSECUTOR}
         handleRetryClick={(id: string) =>
-          workingCase.caseFiles &&
           uploadFilesToCourt([
-            workingCase.caseFiles[
-              workingCase.caseFiles.findIndex((file) => file.id === id)
-            ],
+            caseFiles[caseFiles.findIndex((file) => file.id === id)],
           ])
         }
       />
       {canCaseFilesBeUploaded() &&
         uploadState !== UploadState.ALL_UPLOADED_OR_NOT_AVAILABLE && (
           <Box display="flex" justifyContent="flexEnd" marginTop={3}>
-            {(workingCase.caseFiles || []).length === 0 ? null : uploadState ===
+            {caseFiles.length === 0 ? null : uploadState ===
                 UploadState.ALL_UPLOADED_NONE_AVAILABLE ||
               uploadState === UploadState.SOME_NOT_UPLOADED_NONE_AVAILABLE ? (
               <InfoBox text={formatMessage(m.uploadToCourtAllBrokenText)} />
@@ -129,7 +131,7 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
               <Button
                 size="small"
                 data-testid="upload-to-court-button"
-                onClick={() => uploadFilesToCourt(workingCase.caseFiles)}
+                onClick={() => uploadFilesToCourt(caseFiles)}
                 loading={uploadState === UploadState.UPLOADING}
                 disabled={
                   uploadState !== UploadState.SOME_NOT_UPLOADED &&

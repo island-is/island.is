@@ -5,18 +5,66 @@ import {
   LinkV2,
   Stack,
   Text,
-  Tooltip,
 } from '@island.is/island-ui/core'
 import { CardSkeleton } from '../../../../components/'
-import { useEffect, useRef, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import * as styles from './AdviceCard.css'
 import { getShortDate } from '../../../../utils/helpers/dateFunctions'
-import env from '../../../../lib/environment'
 import { REVIEW_CARD_SCROLL_HEIGHT } from '../../../../utils/consts/consts'
-import { renderDocFileName } from '../../utils'
 import localization from '../../Case.json'
+import { AdviceResult } from '../../../../types/interfaces'
+import DocFileName from '../DocFileName/DocFileName'
 
-export const AdviceCard = ({ advice }) => {
+interface Props {
+  advice: AdviceResult
+}
+
+interface LocProps {
+  loc: typeof localization['adviceCard']
+}
+
+interface RenderAdviceProps extends Props, LocProps {
+  isOpen?: boolean
+}
+
+interface LinkProps extends LocProps {
+  children: ReactNode
+}
+
+const Link = ({ loc, children }: LinkProps) => {
+  return (
+    <LinkV2
+      href={loc['hiddenContentHref']}
+      color="blue400"
+      underline="normal"
+      underlineVisibility="always"
+    >
+      {children}
+    </LinkV2>
+  )
+}
+
+const RenderAdvice = ({ advice, loc, isOpen = false }: RenderAdviceProps) => {
+  if (advice?.isPrivate) {
+    return loc['privateContent']
+  }
+  if (advice?.isHidden) {
+    const retComp = []
+    retComp.push(loc['hiddenContent'])
+    retComp.push(' ')
+    retComp.push(
+      <Link key={advice.id} loc={loc}>
+        {loc['hiddenContentLink']}
+      </Link>,
+    )
+    retComp.push('.')
+    return retComp
+  }
+  const content = advice?.content
+  return isOpen ? <span className={styles.divStyle}>{content}</span> : content
+}
+
+export const AdviceCard = ({ advice }: Props) => {
   const loc = localization['adviceCard']
   const [open, setOpen] = useState(true)
   const [scrollHeight, setScrollHeight] = useState(null)
@@ -41,7 +89,7 @@ export const AdviceCard = ({ advice }) => {
             {getShortDate(advice.created)}
           </Text>
           {scrollHeight > REVIEW_CARD_SCROLL_HEIGHT && (
-            <FocusableBox onClick={() => setOpen(!open)}>
+            <FocusableBox component="button" onClick={() => setOpen(!open)}>
               <Icon
                 icon={open ? 'remove' : 'add'}
                 type="outline"
@@ -53,44 +101,17 @@ export const AdviceCard = ({ advice }) => {
         </Inline>
         <Text variant="h3">
           {advice?.number} -{' '}
-          {!advice?.isPrivateAdvice && advice?.participantName}
+          {!advice?.isPrivate && !advice?.isHidden && advice?.participantName}
         </Text>
         <Text variant="default" truncate={!open} ref={ref}>
-          {advice?.isPrivateAdvice ? loc.hiddenContent : advice.content}
+          {RenderAdvice({ advice: advice, loc: loc, isOpen: open })}
         </Text>
-        {!advice?.isPrivateAdvice &&
+        {!advice?.isPrivate &&
+          !advice?.isHidden &&
           advice?.adviceDocuments &&
           advice?.adviceDocuments.length > 0 &&
-          advice?.adviceDocuments.map((doc, index) => {
-            return (
-              <Tooltip
-                placement="right"
-                as="span"
-                text={doc.fileName}
-                key={index}
-                fullWidth
-              >
-                <span>
-                  <LinkV2
-                    href={`${env.backendDownloadUrl}${doc.id}`}
-                    color="blue400"
-                    underline="normal"
-                    underlineVisibility="always"
-                    newTab
-                    key={index}
-                  >
-                    {renderDocFileName(doc.fileName)}
-                    <Icon
-                      size="small"
-                      aria-hidden="true"
-                      icon="document"
-                      type="outline"
-                      className={styles.iconStyle}
-                    />
-                  </LinkV2>
-                </span>
-              </Tooltip>
-            )
+          advice?.adviceDocuments.map((doc) => {
+            return <DocFileName doc={doc} key={doc.id} isAdvice />
           })}
       </Stack>
     </CardSkeleton>

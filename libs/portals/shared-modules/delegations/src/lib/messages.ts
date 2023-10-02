@@ -47,8 +47,7 @@ export const m = defineMessages({
     defaultMessage: 'Eru sótt úr fyrirtækjaskrá Skattsins',
   },
   delegationTypePersonalRepresentativeDesc: {
-    id:
-      'sp.access-control-delegations:delegation-type-personal-representative-desc',
+    id: 'sp.access-control-delegations:delegation-type-personal-representative-desc',
     defaultMessage: 'Samningar frá Réttindagæslu fatlaðra',
   },
   accessControl: {
@@ -205,5 +204,9 @@ export const m = defineMessages({
   closeModal: {
     id: 'sp.access-control-delegations:close-modal',
     defaultMessage: 'Loka glugga',
+  },
+  validTo: {
+    id: 'sp.access-control-delegations:access-valid-to',
+    defaultMessage: 'Í gildi til',
   },
 })

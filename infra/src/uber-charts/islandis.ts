@@ -48,6 +48,7 @@ import { serviceSetup as rabBackendSetup } from '../../../apps/services/regulati
 import {
   serviceSetup as sessionsServiceSetup,
   workerSetup as sessionsWorkerSetup,
+  geoipSetup as sessionsGeoipSetup,
 } from '../../../apps/services/sessions/infra/sessions'
 
 import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/admin-api/infra/auth-admin-api'
@@ -75,6 +76,7 @@ const rabBackend = rabBackendSetup()
 
 const sessionsService = sessionsServiceSetup()
 const sessionsWorker = sessionsWorkerSetup()
+const sessionsGeoip = sessionsGeoipSetup()
 
 const authAdminApi = authAdminApiSetup()
 
@@ -128,6 +130,7 @@ export const Services: EnvironmentServices = {
     servicePortalApi,
     adminPortal,
     api,
+    consultationPortal,
     web,
     searchIndexer,
     skilavottordWeb,
@@ -149,6 +152,7 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
+    sessionsGeoip,
   ],
   staging: [
     appSystemApi,
@@ -157,6 +161,7 @@ export const Services: EnvironmentServices = {
     servicePortalApi,
     adminPortal,
     api,
+    consultationPortal,
     web,
     skilavottordWeb,
     skilavottordWs,
@@ -178,6 +183,7 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
+    sessionsGeoip,
   ],
   dev: [
     appSystemApi,
@@ -211,6 +217,7 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
+    sessionsGeoip,
     contentfulApps,
   ],
 }

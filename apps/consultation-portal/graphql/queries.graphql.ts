@@ -141,6 +141,7 @@ export const CASE_GET_CASE_BY_ID = gql`
       created
       changed
       oldInstitutionName
+      extraStakeholderList
       statusName
       stakeholders {
         name
@@ -180,7 +181,8 @@ export const CASE_GET_ADVICES_BY_ID = gql`
       participantEmail
       content
       created
-      isPrivateAdvice
+      isPrivate
+      isHidden
       adviceDocuments {
         id
         fileName

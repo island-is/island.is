@@ -84,7 +84,7 @@ export class AdminClientsService {
     const clients = await this.clientModel.findAll({
       where: {
         domainName: tenantId,
-        enabled: true,
+        archived: null,
       },
       include: this.clientInclude(),
     })
@@ -102,12 +102,16 @@ export class AdminClientsService {
   async findByTenantIdAndClientId(
     tenantId: string,
     clientId: string,
+    includeArchived = false,
+    useMaster = false,
   ): Promise<AdminClientDto> {
     const client = await this.clientModel.findOne({
+      useMaster,
       where: {
         clientId,
         domainName: tenantId,
         enabled: true,
+        ...(!includeArchived && { archived: null }),
       },
       include: this.clientInclude(),
     })
@@ -118,6 +122,7 @@ export class AdminClientsService {
     const clientTranslation = await this.translationService.findTranslationMap(
       'client',
       [client.clientId],
+      useMaster,
     )
 
     return this.formatClient(client, clientTranslation.get(client.clientId))
@@ -129,12 +134,25 @@ export class AdminClientsService {
     tenantId: string,
   ): Promise<AdminClientDto> {
     const tenant = await this.domainModel.findOne({
+      useMaster: true,
       where: {
         name: tenantId,
       },
     })
     if (!tenant) {
       throw new NoContentException()
+    }
+
+    const existingClient = await this.clientModel.findOne({
+      useMaster: true,
+      where: {
+        clientId: clientDto.clientId,
+        domainName: tenantId,
+      },
+    })
+
+    if (existingClient) {
+      throw new BadRequestException('Client already exists')
     }
 
     if (
@@ -167,6 +185,7 @@ export class AdminClientsService {
             domainName: tenantId,
             nationalId: tenant.nationalId,
             clientName: clientDto.clientName,
+            contactEmail: clientDto.contactEmail,
             ...this.defaultClientAttributes(clientDto.clientType),
           },
           { transaction },
@@ -200,7 +219,35 @@ export class AdminClientsService {
       },
     )
 
-    return this.findByTenantIdAndClientId(tenantId, clientId)
+    return this.findByTenantIdAndClientId(tenantId, clientId, false, true)
+  }
+
+  async delete(clientId: string, tenantId: string) {
+    const client = await this.clientModel.findOne({
+      where: {
+        clientId,
+        domainName: tenantId,
+      },
+    })
+
+    if (!client || client.archived) {
+      return
+    }
+
+    await this.clientModel.update(
+      {
+        archived: Date.now(),
+        enabled: false,
+      },
+      {
+        where: {
+          clientId,
+          domainName: tenantId,
+        },
+      },
+    )
+
+    return
   }
 
   async update(
@@ -222,8 +269,8 @@ export class AdminClientsService {
     if (!client) {
       throw new NoContentException()
     }
-
-    if (!this.validateUserUpdateAccess(user, input)) {
+    const isValid = await this.validateUserUpdateAccess(user, input, tenantId)
+    if (!isValid) {
       throw new ForbiddenException(
         'User does not have access to update admin controlled fields.',
       )
@@ -382,7 +429,7 @@ export class AdminClientsService {
       )
     }
 
-    if (data.customClaims && data.customClaims.length > 0) {
+    if (data.customClaims) {
       await this.updateCustomClaims(
         data.clientId,
         data.customClaims,
@@ -399,7 +446,6 @@ export class AdminClientsService {
         removedScopes: data.removedScopes,
         transaction,
         clientId: data.clientId,
-        tenantId: data?.tenantId ?? '',
       })
     }
 
@@ -542,7 +588,11 @@ export class AdminClientsService {
    * If the user is a superuser, they can update all fields.
    * If the user is not a superuser, they can only update non-admin fields.
    */
-  private validateUserUpdateAccess(user: User, input: AdminPatchClientDto) {
+  private async validateUserUpdateAccess(
+    user: User,
+    input: AdminPatchClientDto,
+    tenantId: string,
+  ) {
     const isSuperUser = user.scope.includes(AdminPortalScope.idsAdminSuperUser)
 
     const updatedFields = Object.keys(input)
@@ -558,6 +608,18 @@ export class AdminClientsService {
     if (superUserUpdatedFields.length > 0 && isSuperUser) {
       // There are some superuser fields to update and the user has the superuser scope
       return true
+    }
+
+    if (input.addedScopes && input.addedScopes.length > 0) {
+      const verifiedScopes = await this.verifyScopeNames({
+        isSuperUser,
+        scopeNames: input.addedScopes,
+        tenantId,
+      })
+
+      if (verifiedScopes) {
+        return true
+      }
     }
 
     // There are some superuser fields to update and the user does not have the superuser scope
@@ -604,23 +666,22 @@ export class AdminClientsService {
    * @returns true if all scopes exist, are enabled and have the same tenant, false otherwise.
    */
   private async verifyScopeNames({
+    isSuperUser,
     scopeNames,
     tenantId,
-    transaction,
   }: {
+    isSuperUser: boolean
     scopeNames: string[]
     tenantId: string
-    transaction: Transaction
   }): Promise<boolean> {
     const scopes = await this.apiScopeModel.findAndCountAll({
       where: {
         name: {
           [Op.in]: scopeNames,
         },
-        enabled: true,
-        domainName: tenantId,
+        archived: null,
+        ...(isSuperUser ? {} : { domainName: tenantId }),
       },
-      transaction,
     })
 
     return scopes.count === scopeNames.length
@@ -630,38 +691,13 @@ export class AdminClientsService {
     addedScopes,
     removedScopes,
     clientId,
-    tenantId,
     transaction,
   }: {
     addedScopes?: string[]
     removedScopes?: string[]
     clientId: string
-    tenantId: string
     transaction: Transaction
   }): Promise<void> {
-    const mergedScopes = [
-      ...(addedScopes ?? []),
-      ...(removedScopes ?? []),
-    ].filter((scopeName) => scopeName !== '')
-
-    if (mergedScopes.length > 0) {
-      const verifiedScopes = await this.verifyScopeNames({
-        scopeNames: mergedScopes,
-        tenantId,
-        transaction,
-      })
-
-      if (!verifiedScopes) {
-        throw new BadRequestException(
-          `One or more scopes (${mergedScopes
-            .map((scopeName) => scopeName)
-            .join(
-              ', ',
-            )}) do not exist, are not enabled or do not belong to tenant: ${tenantId}`,
-        )
-      }
-    }
-
     if (removedScopes) {
       await this.clientsService.removeAllowedScopes(removedScopes, clientId, {
         transaction,
@@ -720,9 +756,10 @@ export class AdminClientsService {
       },
     })
 
-    const translations = await this.adminTranslationService.getApiScopeTranslations(
-      apiScopes.map(({ name }) => name),
-    )
+    const translations =
+      await this.adminTranslationService.getApiScopeTranslations(
+        apiScopes.map(({ name }) => name),
+      )
 
     return apiScopes.map((apiScope) =>
       this.adminTranslationService.mapApiScopeToAdminScopeDTO(

@@ -1,4 +1,5 @@
-import { CacheModule, Module } from '@nestjs/common'
+import { Module } from '@nestjs/common'
+import { CacheModule } from '@nestjs/cache-manager'
 import { buildOpenApi } from '@island.is/infra-nest-server'
 import { QueueModule } from '@island.is/message-queue'
 import { openApi } from './openApi'
@@ -8,7 +9,7 @@ import { NotificationsService } from './app/modules/notifications/notifications.
 @Module({
   imports: [
     CacheModule.register({
-      ttl: 60,
+      ttl: 60 * 1000,
       max: 100,
     }),
     QueueModule.register({

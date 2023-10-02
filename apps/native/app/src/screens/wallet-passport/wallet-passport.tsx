@@ -1,14 +1,34 @@
 import {useQuery} from '@apollo/client';
-import {Alert, dynamicColor, Input, InputRow, LicenceCard} from '@ui';
+import {
+  Accordion,
+  AccordionItem,
+  Alert,
+  dynamicColor,
+  font,
+  Input,
+  InputRow,
+  LicenceCard,
+  LinkText,
+} from '@ui';
 import React from 'react';
 import {useIntl} from 'react-intl';
-import {Platform, SafeAreaView, View} from 'react-native';
+import {
+  Platform,
+  SafeAreaView,
+  View,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import {NavigationFunctionComponent} from 'react-native-navigation';
 import styled from 'styled-components/native';
 import {client} from '../../graphql/client';
 import {GET_IDENTITY_DOCUMENT_QUERY} from '../../graphql/queries/get-identity-document.query';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {LicenseStatus, LicenseType} from '../../types/license-type';
+import IconStatusVerified from '../../assets/icons/valid.png';
+import IconStatusNonVerified from '../../assets/icons/warning.png';
+import {useFeatureFlag} from '../../contexts/feature-flag-provider';
+import {openBrowser} from '../../lib/rn-island';
 
 const Information = styled.ScrollView`
   flex: 1;
@@ -26,28 +46,35 @@ const Spacer = styled.View`
   height: 150px;
 `;
 
-const {
-  useNavigationOptions,
-  getNavigationOptions,
-} = createNavigationOptionHooks(
-  (theme, intl) => ({
-    topBar: {
-      title: {
-        text: intl.formatMessage({id: 'walletPass.screenTitle'}),
+const Label = styled.Text`
+  margin-bottom: ${({theme}) => theme.spacing[1]}px;
+
+  ${font({
+    fontSize: 13,
+    lineHeight: 17,
+  })}
+`;
+
+const {useNavigationOptions, getNavigationOptions} =
+  createNavigationOptionHooks(
+    (theme, intl) => ({
+      topBar: {
+        title: {
+          text: intl.formatMessage({id: 'walletPass.screenTitle'}),
+        },
+        noBorder: true,
       },
-      noBorder: true,
+    }),
+    {
+      topBar: {
+        rightButtons: [],
+      },
+      bottomTabs: {
+        visible: false,
+        drawBehind: true,
+      },
     },
-  }),
-  {
-    topBar: {
-      rightButtons: [],
-    },
-    bottomTabs: {
-      visible: false,
-      drawBehind: true,
-    },
-  },
-);
+  );
 const capitalizeEveryWord = (s: string) => {
   if (typeof s !== 'string') return '';
 
@@ -67,6 +94,11 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
 }> = ({id, componentId, cardHeight = 140}) => {
   useNavigationOptions(componentId);
 
+  const showChildrenPassport = useFeatureFlag(
+    'isChildrenPassportEnabled',
+    false,
+  );
+
   const intl = useIntl();
   const {data, loading, error} = useQuery(GET_IDENTITY_DOCUMENT_QUERY, {
     client,
@@ -75,6 +107,8 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
 
   const passportData = data?.getIdentityDocument;
   const item = passportData?.find((x: any) => x.number === id) || null;
+
+  const childrenPassport = data?.getIdentityDocumentChildren;
 
   const isInvalid = item?.status?.toLowerCase() === 'invalid';
   const expireWarning = !!item?.expiresWithinNoticeTime;
@@ -99,8 +133,11 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
 
           {expireWarning ? (
             <View
-              style={{paddingTop: 16, paddingHorizontal: 16, paddingBottom: 10}}
-            >
+              style={{
+                paddingTop: 16,
+                paddingHorizontal: 16,
+                paddingBottom: 10,
+              }}>
               <Alert
                 title={intl.formatMessage({id: 'walletPassport.warningTitle'})}
                 message={intl.formatMessage({
@@ -132,6 +169,7 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
               loading={loading}
               error={!!error}
               noBorder
+              copy
             />
           </InputRow>
 
@@ -162,6 +200,7 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
                 }
                 loading={loading}
                 error={!!error}
+                noBorder
                 isCompact
               />
             ) : null}
@@ -172,9 +211,139 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
               label={intl.formatMessage({id: 'walletPassport.mrzName'})}
               value={`${item?.mrzLastName} ${item?.mrzFirstName}`}
               loading={loading}
+              noBorder
               error={!!error}
             />
           </InputRow>
+
+          {showChildrenPassport && childrenPassport?.length > 0 ? (
+            <View style={{paddingHorizontal: 16, marginTop: 8}}>
+              <Label>
+                {intl.formatMessage({id: 'walletPassport.children'})}
+              </Label>
+              <Accordion>
+                {childrenPassport?.map((child: any) => {
+                  const isInvalid =
+                    child?.status?.toLowerCase() === 'invalid' ||
+                    child?.passports?.length === 0;
+                  const noPassport = child?.passports?.length === 0;
+                  return (
+                    <AccordionItem
+                      key={child.childNationalId}
+                      title={child?.childName}
+                      icon={
+                        <Image
+                          source={
+                            isInvalid
+                              ? IconStatusNonVerified
+                              : IconStatusVerified
+                          }
+                          style={{width: 24, height: 24}}
+                          resizeMode="contain"
+                        />
+                      }>
+                      <View>
+                        {child.passports?.map((passport: any) => {
+                          return (
+                            <View key={passport.number}>
+                              <InputRow>
+                                <Input
+                                  label={intl.formatMessage({
+                                    id: 'walletPassport.number',
+                                  })}
+                                  value={passport?.numberWithType}
+                                  loading={loading}
+                                  error={!!error}
+                                  noBorder
+                                  isCompact
+                                  copy
+                                />
+                              </InputRow>
+
+                              <InputRow>
+                                {passport?.issuingDate ? (
+                                  <Input
+                                    label={intl.formatMessage({
+                                      id: 'walletPassport.issuingDate',
+                                    })}
+                                    value={
+                                      passport?.issuingDate
+                                        ? intl.formatDate(
+                                            new Date(passport?.issuingDate),
+                                          )
+                                        : '-'
+                                    }
+                                    loading={loading}
+                                    error={!!error}
+                                    noBorder
+                                    isCompact
+                                  />
+                                ) : null}
+                                {passport?.expirationDate ? (
+                                  <Input
+                                    label={intl.formatMessage({
+                                      id: 'walletPassport.expirationDate',
+                                    })}
+                                    value={
+                                      passport?.expirationDate
+                                        ? intl.formatDate(
+                                            new Date(passport?.expirationDate),
+                                          )
+                                        : '-'
+                                    }
+                                    loading={loading}
+                                    error={!!error}
+                                    noBorder
+                                    isCompact
+                                  />
+                                ) : null}
+                              </InputRow>
+
+                              <InputRow>
+                                <Input
+                                  label={intl.formatMessage({
+                                    id: 'walletPassport.mrzName',
+                                  })}
+                                  value={`${passport?.mrzLastName} ${passport?.mrzFirstName}`}
+                                  loading={loading}
+                                  error={!!error}
+                                  noBorder
+                                  isCompact
+                                />
+                              </InputRow>
+                            </View>
+                          );
+                        })}
+                        {noPassport && (
+                          <View
+                            style={{marginVertical: 16, paddingHorizontal: 16}}>
+                            <Label>
+                              {intl.formatMessage({
+                                id: 'walletPassport.noPassport',
+                              })}
+                            </Label>
+                            <TouchableOpacity
+                              onPress={() =>
+                                openBrowser(
+                                  `https://island.is/vegabref`,
+                                  componentId,
+                                )
+                              }>
+                              <LinkText>
+                                {intl.formatMessage({
+                                  id: 'walletPassport.noPassportLink',
+                                })}
+                              </LinkText>
+                            </TouchableOpacity>
+                          </View>
+                        )}
+                      </View>
+                    </AccordionItem>
+                  );
+                })}
+              </Accordion>
+            </View>
+          ) : null}
         </SafeAreaView>
         {Platform.OS === 'android' && <Spacer />}
       </Information>
@@ -187,8 +356,7 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
           left: 0,
           right: 0,
           zIndex: 100,
-        }}
-      >
+        }}>
         <LicenceCard
           nativeID={`license-${LicenseType.PASSPORT}_destination`}
           type={LicenseType.PASSPORT}

@@ -102,13 +102,15 @@ const skippedLabelsInMessage: Array<keyof typeof labels> = [
   'erindi',
 ]
 
-const useFormNamespace = (namespace: FormNamespace) => (
-  key: string,
-  type: 'label' | 'requiredMessage' | 'placeholder' | 'patternMessage',
-  fallback?: string,
-) => {
-  return namespace?.[key]?.[type] ?? fallback
-}
+const useFormNamespace =
+  (namespace: FormNamespace) =>
+  (
+    key: string,
+    type: 'label' | 'requiredMessage' | 'placeholder' | 'patternMessage',
+    fallback?: string,
+  ) => {
+    return namespace?.[key]?.[type] ?? fallback
+  }
 
 interface BasicInputProps {
   name: keyof typeof labels
@@ -147,7 +149,7 @@ const BasicInput = ({
       }}
       // The docs tell us to spread the response of the register function even though it's return type is void
       // https://react-hook-form.com/api/useformcontext/
-      {...((register(name) as unknown) as object)}
+      {...(register(name) as unknown as object)}
     />
   )
 }
@@ -185,7 +187,8 @@ export const StandardForm = ({
   const [categoryLabel, setCategoryLabel] = useState<string>('')
   const [addonFields, setAddonFields] = useState<ReactNode | null>()
   const categoryDescription = useMemo(
-    () => supportCategories.find((c) => c.id === categoryId)?.description ?? '',
+    () =>
+      supportCategories?.find((c) => c.id === categoryId)?.description ?? '',
     [categoryId, supportCategories],
   )
 
@@ -199,15 +202,14 @@ export const StandardForm = ({
     GetSupportSearchResultsQuery,
     GetSupportSearchResultsQueryVariables
   >(GET_SUPPORT_SEARCH_RESULTS_QUERY, {
-    onCompleted: () => {
+    onCompleted: (updatedData) => {
       setIsChangingSubject(false)
-      updateSuggestions()
+      updateSuggestions(updatedData)
     },
   })
 
-  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
-    'mannaudstorg',
-  )
+  const institutionSlugBelongsToMannaudstorg =
+    institutionSlug.includes('mannaudstorg')
 
   useDebounce(
     () => {
@@ -254,8 +256,11 @@ export const StandardForm = ({
     }
   }, [subject])
 
-  const updateSuggestions = () => {
-    setSuggestions((data?.searchResults?.items as Array<SupportQna>) || [])
+  const updateSuggestions = (updatedData?: GetSupportSearchResultsQuery) => {
+    setSuggestions(
+      ((updatedData?.searchResults?.items ??
+        data?.searchResults?.items) as Array<SupportQna>) || [],
+    )
   }
 
   useEffect(() => {
@@ -467,7 +472,11 @@ export const StandardForm = ({
     if (institutionSlugBelongsToMannaudstorg) {
       fields = (
         <GridColumn span="12/12">
-          <BasicInput name="starfsheiti" requiredMessage="Starfsheiti vantar" />
+          <BasicInput
+            label={fn('starfsheiti', 'label', 'Starfsheiti')}
+            name="starfsheiti"
+            requiredMessage={n('jobTitleMissing', 'Starfsheiti vantar')}
+          />
         </GridColumn>
       )
     }
@@ -523,7 +532,7 @@ export const StandardForm = ({
 
   const isBusy = loadingSuggestions || isChangingSubject
 
-  const categoryOptions = supportCategories
+  const categoryOptions = (supportCategories ?? [])
     .map((x) => ({
       label: x.title?.trim(),
       value: x.id,
@@ -541,10 +550,14 @@ export const StandardForm = ({
               isSearchable
               label={fn('malaflokkur', 'label', 'Málaflokkur')}
               name="malaflokkur"
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               onChange={({ label, value }: Option) => {
                 setCategoryLabel(label as string)
                 setCategoryId(value as string)
               }}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               options={categoryOptions}
               placeholder={fn('malaflokkur', 'placeholder', 'Veldu flokk')}
               size="md"
@@ -568,9 +581,9 @@ export const StandardForm = ({
                 label={fn('vidfangsefni', 'label', 'Viðfangsefni')}
                 error={errors?.vidfangsefni?.message as string}
                 onChange={(e) => {
-                  if (e?.target?.value?.length > MIN_SEARCH_QUERY_LENGTH) {
-                    setIsChangingSubject(true)
-                  }
+                  setIsChangingSubject(
+                    e?.target?.value?.length > MIN_SEARCH_QUERY_LENGTH,
+                  )
                   setSubject(e.target.value)
                 }}
                 rules={{
@@ -631,7 +644,11 @@ export const StandardForm = ({
                           <a
                             href={
                               linkResolver('supportqna', [
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                // @ts-ignore make web strict
                                 organizationSlug,
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                // @ts-ignore make web strict
                                 categorySlug,
                                 slug,
                               ]).href
@@ -696,11 +713,13 @@ export const StandardForm = ({
                           isSearchable
                           label={fn('rikisadili', 'label', 'Ríkisaðili')}
                           name="rikisadili"
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore make web strict
                           onChange={({ label }: Option) => {
                             onChange(label)
                           }}
                           hasError={errors?.rikisadili !== undefined}
-                          errorMessage={errors?.rikisadili?.message.toString()}
+                          errorMessage={errors?.rikisadili?.message?.toString()}
                           options={stateEntityOptions}
                           placeholder={fn(
                             'rikisadili',
@@ -877,15 +896,17 @@ export const StandardForm = ({
                                 'Þinn sýslumaður',
                               )}
                               name="syslumadur"
+                              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                              // @ts-ignore make web strict
                               onChange={({ label, value }: Option) => {
                                 onChange(label)
-                                setSyslumadurId(value as string)
+                                setSyslumadurId(value)
                               }}
                               hasError={errors?.syslumadur !== undefined}
                               errorMessage={
                                 errors?.syslumadur?.message as string
                               }
-                              options={syslumenn.map((x) => ({
+                              options={(syslumenn ?? []).map((x) => ({
                                 label: x.title,
                                 value: x.id,
                               }))}

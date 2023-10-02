@@ -9,46 +9,41 @@ import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import {
-  ProsecutorCaseInfo,
-  FormContentContainer,
-  FormFooter,
-  PageLayout,
-  FormContext,
-  SectionHeading,
-  PdfButton,
-} from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages'
-import {
   Box,
   InputFileUpload,
   Text,
   UploadFile,
 } from '@island.is/island-ui/core'
+import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
+import * as constants from '@island.is/judicial-system/consts'
+import { CaseFileCategory } from '@island.is/judicial-system/types'
+import { titles } from '@island.is/judicial-system-web/messages'
+import {
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  PageLayout,
+  PdfButton,
+  ProsecutorCaseInfo,
+  SectionHeading,
+} from '@island.is/judicial-system-web/src/components'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   TUploadFile,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseFileCategory } from '@island.is/judicial-system/types'
-import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './CaseFiles.strings'
 
-const CaseFiles: React.FC = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
+const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const { formatMessage } = useIntl()
-  const {
-    handleChange,
-    handleRemove,
-    handleRetry,
-    generateSingleFileUpdate,
-  } = useS3Upload(workingCase.id)
+  const { handleChange, handleRemove, handleRetry, generateSingleFileUpdate } =
+    useS3Upload(workingCase.id)
 
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
 
@@ -123,7 +118,9 @@ const CaseFiles: React.FC = () => {
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.COVER_LETTER)
+            }
           />
         </Box>
         {!isTrafficViolationCaseCheck && (
@@ -147,7 +144,9 @@ const CaseFiles: React.FC = () => {
                 )
               }
               onRemove={(file) => handleRemove(file, removeFileCB)}
-              onRetry={(file) => handleRetry(file, handleUIUpdate)}
+              onRetry={(file) =>
+                handleRetry(file, handleUIUpdate, CaseFileCategory.INDICTMENT)
+              }
             />
           </Box>
         )}
@@ -171,7 +170,13 @@ const CaseFiles: React.FC = () => {
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(
+                file,
+                handleUIUpdate,
+                CaseFileCategory.CRIMINAL_RECORD,
+              )
+            }
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -194,7 +199,9 @@ const CaseFiles: React.FC = () => {
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.COST_BREAKDOWN)
+            }
           />
         </Box>
         <Box component="section" marginBottom={10}>
@@ -219,7 +226,9 @@ const CaseFiles: React.FC = () => {
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.CASE_FILE)
+            }
           />
         </Box>
         {isTrafficViolationCaseCheck && (

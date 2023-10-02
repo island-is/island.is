@@ -37,10 +37,8 @@ export const RotateSecret = ({
     false,
   )
   const secretRef = useRef<HTMLInputElement>(null)
-  const [
-    rotateSecretMutation,
-    { loading, error: mutationError },
-  ] = useRotateSecretMutation()
+  const [rotateSecretMutation, { loading, error: mutationError }] =
+    useRotateSecretMutation()
   const [newSecret, setNewSecret] = useState('')
 
   const modalTitle = newSecret
@@ -70,10 +68,13 @@ export const RotateSecret = ({
   }
 
   const handleClose = useCallback(() => {
+    if (newSecret) {
+      revalidate()
+    }
+
     setNewSecret('')
     onClose?.()
-    revalidate()
-  }, [onClose, revalidate])
+  }, [onClose, newSecret, revalidate])
 
   return (
     <Modal

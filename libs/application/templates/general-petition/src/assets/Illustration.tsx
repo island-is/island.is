@@ -1,8 +1,8 @@
 import React from 'react'
 
-const Illustration: React.FC = () => (
+const Illustration: React.FC<React.PropsWithChildren<unknown>> = () => (
   <svg
-    width="80%"
+    width="90%"
     viewBox="0 0 789 327"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"

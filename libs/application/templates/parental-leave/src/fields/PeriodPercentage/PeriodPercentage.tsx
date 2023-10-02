@@ -40,11 +40,9 @@ interface PeriodPercentageField extends FieldBaseAndCustomField {
   errors: FieldErrors<FieldValues>
 }
 
-export const PeriodPercentage: FC<PeriodPercentageField> = ({
-  field,
-  application,
-  errors,
-}) => {
+export const PeriodPercentage: FC<
+  React.PropsWithChildren<PeriodPercentageField>
+> = ({ field, application, errors }) => {
   const { formatMessage } = useLocale()
   const { setError, register } = useFormContext()
   const { description } = field

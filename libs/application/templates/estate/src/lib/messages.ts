@@ -119,6 +119,18 @@ export const m = defineMessages({
     description: '',
   },
 
+  // Spouse of the deceased
+  isDeceasedWithUndividedEstate: {
+    id: 'es.application:isDeceasedWithUndividedEstate',
+    defaultMessage: 'Sat hinn látni í óskiptu búi?',
+    description: '',
+  },
+  spouseOfTheDeceased: {
+    id: 'es.application:spouseOfTheDeceased',
+    defaultMessage: 'Maki hins látna',
+    description: '',
+  },
+
   // Applicant
   announcer: {
     id: 'es.application:announcer',
@@ -194,17 +206,6 @@ export const m = defineMessages({
     defaultMessage: 'Erfingi',
     description: '',
   },
-  estateMemberAdvocateWarningTitle: {
-    id: 'es.application:estateMemberAdvocateWarningTitle',
-    defaultMessage: 'Vinsamlegast athugið',
-    description: '',
-  },
-  estateMemberAdvocateWarningDescription: {
-    id: 'es.application:estateMemberAdvocateWarningDescription',
-    defaultMessage:
-      'Þegar viðkomandi aðili nær ekki 18 ára aldri, þarf að skrá málsvara fyrir hans hönd.',
-    description: '',
-  },
   estateMembersHeaderDescription: {
     id: 'es.application:estateMembersHeaderDescription',
     defaultMessage: 'Vantar uppl hér',
@@ -272,7 +273,7 @@ export const m = defineMessages({
     description: '',
   },
   propertiesDescription: {
-    id: 'es.application:propertiesDescription',
+    id: 'es.application:propertiesDescription#markdown',
     defaultMessage: 'Tilgreina skal allar hjúskapareignir beggja hjóna.',
     description: '',
   },
@@ -492,14 +493,26 @@ export const m = defineMessages({
     defaultMessage: 'Fjárhæð á dánardegi',
     description: '',
   },
-
-  // Debts
-  acceptDebtsLabel: {
-    id: 'es.application:acceptDebtsLabel',
+  acceptAssets: {
+    id: 'es.application:acceptExistenceAssets',
     defaultMessage:
-      'Ég lýsi því yfir, að eftir minni bestu vitund nema eignir búsins ekki meira en kostnaði af útför og að eignirnar séu tæmandi taldar hér að ofan. Gegn því að fá eignirnar framseldar mér, mun ég kosta útför hins látna.',
+      'Ég lýsi því yfir, að eftir minni bestu vitund nema eignir búsins ekki meira en kostnaði af útför. Gegn því að fá eignirnar framseldar mér, mun ég kosta útför hins látna.',
     description: '',
   },
+  acceptNoAssets: {
+    id: 'es.application:acceptNoAssets',
+    defaultMessage:
+      'Ég lýsi því yfir að eftir minni bestu vitund eru engar eignir í búinu.',
+    description: '',
+  },
+  acceptCorrectAssets: {
+    id: 'es.application:acceptCorrectAssets',
+    defaultMessage:
+      'Ég staðfesti hér með að eftir minni bestu vitund eru upplýsingarnar um eignir réttar.',
+    description: '',
+  },
+
+  // Debts
   debtsTitle: {
     id: 'es.application:debtsTitle',
     defaultMessage: 'Skuldir',
@@ -530,6 +543,11 @@ export const m = defineMessages({
     defaultMessage: 'Eftirstöðvar á dánardegi',
     description: '',
   },
+  debtsLoanIdentity: {
+    id: 'es.application:debtsLoanIdentity',
+    defaultMessage: 'Auðkenni / Lánsnúmer',
+    description: '',
+  },
   debtsRepeaterButton: {
     id: 'es.application:debtsRepeaterButton',
     defaultMessage: 'Bæta við skuldum',
@@ -544,6 +562,46 @@ export const m = defineMessages({
   representativeDescription: {
     id: 'es.application:representativeDescription',
     defaultMessage: 'Vanalega er valinn umboðsmaður...',
+    description: '',
+  },
+
+  // Attachments
+  attachmentsTitle: {
+    id: 'es.application:attachmentsTitle',
+    defaultMessage: 'Skjöl með umsókn',
+    description: '',
+  },
+  attachmentsDescription: {
+    id: 'es.application:attachmentsDescription#markdown',
+    defaultMessage: 'Með umsókn skulu fylgja eftirfarandi skjöl:',
+    description: '',
+  },
+  attachmentsButton: {
+    id: 'es.application:attachmentsButton',
+    defaultMessage: 'Velja skjöl',
+    description: '',
+  },
+  uploadHeader: {
+    id: 'es.application:uploadHeader',
+    defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+    description: '',
+  },
+  uploadDescription: {
+    id: 'es.application:uploadDescription',
+    defaultMessage:
+      'Tekið er við skjölum með endingunum: .pdf, .doc, .docx, .rtf',
+    description: '',
+  },
+
+  // No assets
+  doAssetsExist: {
+    id: 'es.application:doAssetsExist',
+    defaultMessage: 'Eru eignir til staðar?',
+    description: '',
+  },
+  doDebtsExist: {
+    id: 'es.application:doDebtsExist',
+    defaultMessage: 'Eru skuldir til staðar?',
     description: '',
   },
 
@@ -580,6 +638,12 @@ export const m = defineMessages({
     defaultMessage: 'Ég hef lesið skilmálana',
     description: '',
   },
+  divisionOfEstateConfirmActionCheckbox: {
+    id: 'es.application:divisionOfEstateConfirmActionCheckbox',
+    defaultMessage:
+      'Ég krefst þess að eftirfarandi dánarbú verði tekið til opinberra skipta.',
+    description: '',
+  },
   overviewSubtitlePermitToPostpone: {
     id: 'es.application:overviewSubtitlePermitToPostpone#markdown',
     defaultMessage:
@@ -610,6 +674,11 @@ export const m = defineMessages({
   divisionOfEstateByHeirsSubmissionCheckbox: {
     id: 'es.application:divisionOfEstateByHeirsSubmissionCheckbox',
     defaultMessage: 'Ég hef lesið skilmálana',
+    description: '',
+  },
+  notFilledOut: {
+    id: 'es.application:notFilledOut',
+    defaultMessage: 'Ekki fyllt út',
     description: '',
   },
 
@@ -726,11 +795,6 @@ export const m = defineMessages({
     defaultMessage: 'Nafn',
     description: 'Name label',
   },
-  inheritanceCustodyLabel: {
-    id: 'es.application:inheritanceCustodyLabel',
-    defaultMessage: 'Forsjáraðili',
-    description: 'Custody label',
-  },
   inheritanceForeignCitizenshipLabel: {
     id: 'es.application:inheritanceForeignCitizenshipLabel',
     defaultMessage: 'Aðili án íslenskrar kennitölu',
@@ -741,13 +805,19 @@ export const m = defineMessages({
     defaultMessage: 'Fæðingardagur',
     description: 'Day of birth label',
   },
+  inheritanceAdvocateLabel: {
+    id: 'es.application:inheritanceAdvocateLabel',
+    defaultMessage: 'Málsvari',
+    description: 'Custody label',
+  },
+  inheritanceUnder18Error: {
+    id: 'es.application:inheritanceUnder18Error',
+    defaultMessage:
+      'Eftirfarandi erfingi er undir lögaldri og því er ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description: '',
+  },
 
   // Properties
-  realEstatesTitle: {
-    id: 'es.application:realEstatesTitle',
-    defaultMessage: 'Fasteignir',
-    description: 'Real estates and lands title',
-  },
   realEstatesDescription: {
     id: 'es.application:realEstatesDescription',
     defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir.',
@@ -846,6 +916,11 @@ export const m = defineMessages({
   marketValueTitle: {
     id: 'es.application:marketValueTitle',
     defaultMessage: 'Markaðsvirði á dánardegi',
-    description: 'Placeholder for vehicles type',
+    description: '',
+  },
+  realEstateValueTitle: {
+    id: 'es.application:realEstateValueTitle',
+    defaultMessage: 'Fasteignamat á dánardegi',
+    description: '',
   },
 })

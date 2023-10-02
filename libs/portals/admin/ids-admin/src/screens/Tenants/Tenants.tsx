@@ -54,7 +54,7 @@ const Tenants = () => {
           </GridRow>
           <Stack space={[1, 1, 2, 2]}>
             {tenantList.map((item) => (
-              <GridRow key={`tenants-${item.id}`}>
+              <GridRow key={`tenant-${item.id}`} data-testid="tenant-list-item">
                 <Link
                   className={styles.fill}
                   to={replaceParams({

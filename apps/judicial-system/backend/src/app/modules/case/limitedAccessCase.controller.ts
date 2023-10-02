@@ -1,6 +1,7 @@
 import { Response } from 'express'
 
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -11,6 +12,7 @@ import {
   Query,
   Res,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -25,6 +27,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import {
   CaseAppealState,
+  indictmentCases,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
@@ -36,9 +39,10 @@ import { User } from '../user'
 import { CaseExistsGuard } from './guards/caseExists.guard'
 import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
-import { CaseScheduledGuard } from './guards/caseScheduled.guard'
+import { LimitedAccessAccordingToCaseStateGuard } from './guards/limitedAccessAccordingToCaseState.guard'
 import { CaseDefenderGuard } from './guards/caseDefender.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
+import { RequestSharedWithDefenderGuard } from './guards/requestSharedWithDefender.guard'
 import { defenderTransitionRule, defenderUpdateRule } from './guards/rolesRules'
 import { CurrentCase } from './guards/case.decorator'
 import { UpdateCaseDto } from './dto/updateCase.dto'
@@ -51,6 +55,7 @@ import {
   LimitedAccessUpdateCase,
 } from './limitedAccessCase.service'
 import { CaseEvent, EventService } from '../event'
+import { CaseInterceptor } from './interceptors/case.interceptor'
 
 @Controller('api')
 @ApiTags('limited access cases')
@@ -67,7 +72,7 @@ export class LimitedAccessCaseController {
     JwtAuthGuard,
     RolesGuard,
     LimitedAccessCaseExistsGuard,
-    CaseScheduledGuard,
+    LimitedAccessAccordingToCaseStateGuard,
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
@@ -76,8 +81,22 @@ export class LimitedAccessCaseController {
     type: Case,
     description: 'Gets a limited set of properties of an existing case',
   })
-  getById(@Param('caseId') caseId: string, @CurrentCase() theCase: Case): Case {
+  @UseInterceptors(CaseInterceptor)
+  async getById(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentHttpUser() user: TUser,
+  ): Promise<Case> {
     this.logger.debug(`Getting limitedAccess case ${caseId} by id`)
+
+    if (!theCase.openedByDefender) {
+      const updated = await this.limitedAccessCaseService.update(
+        theCase,
+        { openedByDefender: nowFactory() },
+        user,
+      )
+      return updated
+    }
 
     return theCase
   }
@@ -151,7 +170,7 @@ export class LimitedAccessCaseController {
     )
 
     this.eventService.postEvent(
-      (transition.transition as unknown) as CaseEvent,
+      transition.transition as unknown as CaseEvent,
       updatedCase,
     )
 
@@ -177,7 +196,8 @@ export class LimitedAccessCaseController {
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
-    CaseScheduledGuard,
+    LimitedAccessAccordingToCaseStateGuard,
+    RequestSharedWithDefenderGuard,
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
@@ -197,6 +217,45 @@ export class LimitedAccessCaseController {
     )
 
     const pdf = await this.caseService.getRequestPdf(theCase)
+
+    res.end(pdf)
+  }
+
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    LimitedAccessAccordingToCaseStateGuard,
+    CaseDefenderGuard,
+  )
+  @RolesRules(defenderRule)
+  @Get('case/:caseId/limitedAccess/caseFilesRecord/:policeCaseNumber')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description:
+      'Gets the case files record for an existing case as a pdf document',
+  })
+  async getCaseFilesRecordPdf(
+    @Param('caseId') caseId: string,
+    @Param('policeCaseNumber') policeCaseNumber: string,
+    @CurrentCase() theCase: Case,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting the case files record for case ${caseId} and police case ${policeCaseNumber} as a pdf document`,
+    )
+
+    if (!theCase.policeCaseNumbers.includes(policeCaseNumber)) {
+      throw new BadRequestException(
+        `Case ${caseId} does not include police case number ${policeCaseNumber}`,
+      )
+    }
+
+    const pdf = await this.caseService.getCaseFilesRecordPdf(
+      theCase,
+      policeCaseNumber,
+    )
 
     res.end(pdf)
   }
@@ -254,6 +313,35 @@ export class LimitedAccessCaseController {
     this.logger.debug(`Getting the ruling for case ${caseId} as a pdf document`)
 
     const pdf = await this.caseService.getRulingPdf(theCase)
+
+    res.end(pdf)
+  }
+
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    LimitedAccessAccordingToCaseStateGuard,
+    CaseDefenderGuard,
+  )
+  @RolesRules(defenderRule)
+  @Get('case/:caseId/limitedAccess/indictment')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Gets the indictment for an existing case as a pdf document',
+  })
+  async getIndictmentPdf(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting the indictment for case ${caseId} as a pdf document`,
+    )
+
+    const pdf = await this.caseService.getIndictmentPdf(theCase)
 
     res.end(pdf)
   }

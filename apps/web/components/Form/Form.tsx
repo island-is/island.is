@@ -11,7 +11,6 @@ import {
   Stack,
   Checkbox,
   Button,
-  Option,
   InputFileUpload,
   UploadFile,
 } from '@island.is/island-ui/core'
@@ -121,6 +120,8 @@ export const FormField = ({
           value={
             options.find((o) => o.value === value) ?? { label: value, value }
           }
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           onChange={({ value }: Option) => onChange(slug, value as string)}
           hasError={!!error}
           errorMessage={error}
@@ -255,7 +256,7 @@ export const Form = ({ form, namespace }: FormProps) => {
     CREATE_UPLOAD_URL,
   )
 
-  const onChange = (field, value) => {
+  const onChange = (field: string, value: string) => {
     setData({ ...data, [field]: String(value) })
   }
 
@@ -345,13 +346,14 @@ export const Form = ({ form, namespace }: FormProps) => {
         return null
       })
       .filter((x) => !!x)
-
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     setErrors(err)
 
     return !err.length
   }
 
-  const formatBody = (data) => {
+  const formatBody = (data: Record<string, string>) => {
     return `Sendandi: ${data['name']} <${data['email']}>\n\n`.concat(
       form.fields
         .filter((field) => field.type !== FormFieldType.INFORMATION)
@@ -470,15 +472,21 @@ export const Form = ({ form, namespace }: FormProps) => {
                           filename: file.name,
                         },
                       })
-                        .then((response) =>
-                          uploadFile(
-                            file,
-                            response.data.createUploadUrl,
-                            slugify(field.title),
-                          ).then(() =>
-                            resolve(response.data.createUploadUrl.fields.key),
-                          ),
-                        )
+                        .then((response) => {
+                          if (response.data) {
+                            uploadFile(
+                              file,
+                              response.data.createUploadUrl,
+                              slugify(field.title),
+                            ).then(() =>
+                              resolve(
+                                response.data?.createUploadUrl.fields.key,
+                              ),
+                            )
+                          } else {
+                            reject() // Reject in case response.data is null or undefined
+                          }
+                        })
                         .catch(() => reject())
                     })
                   }),
@@ -501,7 +509,7 @@ export const Form = ({ form, namespace }: FormProps) => {
                 JSON.stringify(
                   (files as string[][]).find(
                     (file) => file[0] === slugify(field.title),
-                  )[1],
+                  )?.[1],
                 ),
               ]),
           ),
@@ -515,8 +523,11 @@ export const Form = ({ form, namespace }: FormProps) => {
               name: data['name'],
               email: data['email'],
               message: formatBody(_data),
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               files: files.map((f) => f[1]).flat(),
-              recipientFormFieldDeciderValue: getRecipientFormFieldDeciderValue(),
+              recipientFormFieldDeciderValue:
+                getRecipientFormFieldDeciderValue(),
             },
           },
         }).then(() => {
@@ -532,6 +543,7 @@ export const Form = ({ form, namespace }: FormProps) => {
 
   const success = !!result?.genericForm?.sent
   const failure = result?.genericForm?.sent === false || !!error || submitError
+  const defaultNamespace = form.defaultFieldNamespace
 
   return (
     <Box
@@ -572,9 +584,14 @@ export const Form = ({ form, namespace }: FormProps) => {
           </Text>
           <Stack space={4}>
             <Input
-              placeholder={n('formNamePlaceholder', 'Nafnið þitt')}
+              placeholder={
+                defaultNamespace?.namePlaceholder ??
+                n('formNamePlaceholder', 'Nafnið þitt')
+              }
               name="name"
-              label={n('formFullName', 'Fullt nafn')}
+              label={
+                defaultNamespace?.nameLabel ?? n('formFullName', 'Fullt nafn')
+              }
               required={true}
               value={data['name'] ?? ''}
               hasError={!!errors.find((error) => error.field === 'name')}
@@ -584,9 +601,12 @@ export const Form = ({ form, namespace }: FormProps) => {
               onChange={(e) => onChange('name', e.target.value)}
             />
             <Input
-              placeholder={n('formEmailPlaceholder', 'Netfang')}
+              placeholder={
+                defaultNamespace?.emailPlaceholder ??
+                n('formEmailPlaceholder', 'Netfang')
+              }
               name="email"
-              label={n('formEmail', 'Netfang')}
+              label={defaultNamespace?.emailLabel ?? n('formEmail', 'Netfang')}
               required={true}
               value={data['email'] ?? ''}
               hasError={!!errors.find((error) => error.field === 'email')}

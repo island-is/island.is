@@ -2,6 +2,13 @@ import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
+import { Box, Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
+import {
+  processing as m,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
@@ -9,32 +16,21 @@ import {
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
+import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import {
-  titles,
-  processing as m,
-} from '@island.is/judicial-system-web/messages'
-import { Box, Text } from '@island.is/island-ui/core'
-import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
+import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
-import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
-import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import * as constants from '@island.is/judicial-system/consts'
+import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { ProsecutorSection, SelectCourt } from '../../components'
 
-const Processing: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+const Processing: React.FC<React.PropsWithChildren<unknown>> = () => {
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const { setAndSendCaseToServer, transitionCase } = useCase()
   const { formatMessage } = useIntl()
   const { courts } = useInstitution()

@@ -9,31 +9,18 @@ export const rcCourtOverview = {
       description:
         'Notaður sem titill á yfirlitssíðu í gæsluvarðhalds-, vistunar- og farbannsmálum.',
     },
-    // TODO: REMOVE caseResentExplanation
-    caseResentExplanation: defineMessages({
+    openedByDefenderAlert: defineMessages({
       title: {
-        id:
-          'judicial.system.restriction_cases:reception_and_assignment.case_resent_explanation.title',
-        defaultMessage: 'Athugasemdir vegna endursendingar',
+        id: 'judicial.system.restriction_cases:court_overview.sections.opened_by_defender_alert.title',
+        defaultMessage: 'Mál opnað af verjanda',
         description:
-          'Notaður sem titill fyrir athugasemdir vegna endursendingar hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
-      },
-    }),
-    seenByDefenderAlert: defineMessages({
-      title: {
-        id:
-          'judicial.system.restriction_cases:court_overview.sections.seen_by_defender_alert.title',
-        defaultMessage: 'Krafa sótt af verjanda',
-        description:
-          'Notaður sem titill fyrir "Krafa sótt af verjanda" hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
+          'Notaður sem titill fyrir "Mál opnað af verjanda" hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
       },
       text: {
-        id:
-          'judicial.system.restriction_cases:court_overview.sections.seen_by_defender_alert.text',
-        defaultMessage:
-          'Verjandi skráði sig inn til að sækja kröfuskjal {when}.',
+        id: 'judicial.system.restriction_cases:court_overview.sections.opened_by_defender_alert.text',
+        defaultMessage: 'Verjandi hefur opnað málið í Réttarvörslugátt {when}.',
         description:
-          'Notaður sem titill fyrir "Krafa sótt af verjanda" hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
+          'Notaður sem titill fyrir "Mál opnað af verjanda" hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
       },
     }),
   },

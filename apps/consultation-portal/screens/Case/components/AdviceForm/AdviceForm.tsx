@@ -19,7 +19,7 @@ import {
 } from '@island.is/island-ui/core'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useIsMobile, useLogIn, usePostAdvice } from '../../../../hooks'
 import { PresignedPost } from '@island.is/api/schema'
 import {
@@ -32,14 +32,11 @@ import { createUUIDString } from '../../../../utils/helpers'
 import { advicePublishTypeKeyHelper } from '../../../../types/enums'
 import localization from '../../Case.json'
 import sharedLocalization from '../../../../lib/shared.json'
+import { UserContext } from '../../../../context'
 
-type CardProps = {
-  card: Case
-  isLoggedIn: boolean
-  username: string
-  caseId: number
+interface Props {
+  case: Case
   refetchAdvices: any
-  canBePrivate?: boolean
 }
 
 const fileExtensionWhitelist = {
@@ -51,15 +48,9 @@ const fileExtensionWhitelist = {
 
 const date = getShortDate(new Date())
 
-export const AdviceForm = ({
-  card,
-  isLoggedIn,
-  username,
-  caseId,
-  refetchAdvices,
-  canBePrivate,
-}: CardProps) => {
+export const AdviceForm = ({ case: _case, refetchAdvices }: Props) => {
   const { isMobile } = useIsMobile()
+  const { isAuthenticated, user } = useContext(UserContext)
   const LogIn = useLogIn()
   const [review, setReview] = useState('')
   const [showInputError, setShowInputError] = useState(false)
@@ -163,8 +154,8 @@ export const AdviceForm = ({
           }),
         )
         const objToSend = {
-          caseId: caseId,
-          caseAdviceCommand: {
+          caseId: _case?.id,
+          postCaseAdviceCommand: {
             content: review,
             fileUrls: mappedFileList,
             privateAdvice: privateAdvice,
@@ -204,7 +195,7 @@ export const AdviceForm = ({
     const newFileList = fileList.filter((file) => file.key !== fileToRemove.key)
     setFileList(newFileList)
   }
-  return isLoggedIn ? (
+  return isAuthenticated ? (
     <Box
       paddingY={3}
       paddingX={[2, 2, 4, 4, 4]}
@@ -221,7 +212,7 @@ export const AdviceForm = ({
       >
         <Inline alignY="center" collapseBelow="lg">
           <Text variant="eyebrow" color="purple400">
-            {`${loc.card.eyebrowText} S-${card.caseNumber}`}
+            {`${loc.card.eyebrowText} S-${_case.caseNumber}`}
           </Text>
           {!isMobile && (
             <Box style={{ transform: 'rotate(90deg)', width: 16 }}>
@@ -231,8 +222,8 @@ export const AdviceForm = ({
           <Box>
             <Text variant="eyebrow" color="purple400">
               {`${loc.card.forReviewText}: ${getDateBeginDateEnd(
-                card.processBegins,
-                card.processEnds,
+                _case.processBegins,
+                _case.processEnds,
               )}`}
             </Text>
           </Box>
@@ -246,18 +237,18 @@ export const AdviceForm = ({
       <Text marginBottom={2}>
         {loc.card.description.textBefore}
         {` ${
-          sloc[advicePublishTypeKeyHelper[card.advicePublishTypeId]].present
+          sloc[advicePublishTypeKeyHelper[_case.advicePublishTypeId]].present
         } 
         ${sloc.publishLaw.text} 
         `}
 
-        <Link href={sloc.publishLaw.link.href}>
+        <Link href={sloc.publishLaw.link.href} legacyBehavior>
           {sloc.publishLaw.link.label}
         </Link>
       </Text>
 
       <Text marginBottom={2}>
-        {loc.card.description.user}: {username}
+        {loc.card.description.user}: {user?.name}
       </Text>
 
       <Input
@@ -300,7 +291,7 @@ export const AdviceForm = ({
               errorMessage={showInputFileError && inputFileErrorText}
             />
           )}
-          {canBePrivate && (
+          {_case.allowUsersToSendPrivateAdvices && (
             <Checkbox
               checked={privateAdvice}
               onChange={() => handlePrivateChange()}

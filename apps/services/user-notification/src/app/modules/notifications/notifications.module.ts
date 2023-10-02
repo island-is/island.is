@@ -1,5 +1,6 @@
-import { CacheModule, Module } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import * as firebaseAdmin from 'firebase-admin'
+import { CacheModule } from '@nestjs/cache-manager'
 import { LoggingModule } from '@island.is/logging'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { environment } from '../../../environments/environment'
@@ -22,7 +23,7 @@ import { NotificationsService } from './notifications.service'
 @Module({
   imports: [
     CacheModule.register({
-      ttl: 60 * 10, // 10 minutes
+      ttl: 60 * 10 * 1000, // 10 minutes
       max: 100, // 100 items max
     }),
     LoggingModule,

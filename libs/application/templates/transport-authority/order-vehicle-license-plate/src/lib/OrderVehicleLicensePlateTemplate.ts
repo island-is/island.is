@@ -11,6 +11,8 @@ import {
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
+  coreHistoryMessages,
+  corePendingActionMessages,
   getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
@@ -25,6 +27,8 @@ import {
   PlateTypesApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { Features } from '@island.is/feature-flags'
+import { ApiScope } from '@island.is/auth/scopes'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const plate = getValueViaPath(
@@ -54,7 +58,12 @@ const template: ApplicationTemplate<
     {
       type: AuthDelegationType.ProcurationHolder,
     },
+    {
+      type: AuthDelegationType.Custom,
+      featureFlag: Features.transportAuthorityApplicationsCustomDelegation,
+    },
   ],
+  requiredScopes: [ApiScope.samgongustofaVehicles],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -67,6 +76,12 @@ const template: ApplicationTemplate<
               label: applicationMessage.actionCardDraft,
               variant: 'blue',
             },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
@@ -74,10 +89,9 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import(
-                  '../forms/OrderVehicleLicensePlateForm/index'
-                ).then((module) =>
-                  Promise.resolve(module.OrderVehicleLicensePlateForm),
+                import('../forms/OrderVehicleLicensePlateForm/index').then(
+                  (module) =>
+                    Promise.resolve(module.OrderVehicleLicensePlateForm),
                 ),
               actions: [
                 {
@@ -109,6 +123,21 @@ const template: ApplicationTemplate<
             tag: {
               label: applicationMessage.actionCardPayment,
               variant: 'red',
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentAccepted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+              {
+                logMessage: coreHistoryMessages.paymentCancelled,
+                onEvent: DefaultEvents.ABORT,
+              },
+            ],
+            pendingAction: {
+              title: corePendingActionMessages.paymentPendingTitle,
+              content: corePendingActionMessages.paymentPendingDescription,
+              displayStatus: 'warning',
             },
           },
           progress: 0.8,
@@ -147,6 +176,10 @@ const template: ApplicationTemplate<
             tag: {
               label: applicationMessage.actionCardDone,
               variant: 'blueberry',
+            },
+            pendingAction: {
+              title: applicationMessage.pendingActionOrderReceivedTitle,
+              displayStatus: 'success',
             },
           },
           roles: [

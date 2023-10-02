@@ -17,7 +17,7 @@ interface NewsListSidebarProps {
   title: string
   selectedYear: number
   selectedMonth: number
-  selectedTag: string
+  selectedTag: string | string[]
   newsOverviewUrl: string
   namespace: Record<string, string>
   yearOptions: { label: any; value: any }[]
@@ -61,6 +61,8 @@ export const NewsListSidebar = ({
             onChange={(e) => {
               const selectedValue =
                 e.target.value !== allYearsString ? e.target.value : null
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               router.push(makeHref(selectedTag, newsOverviewUrl, selectedValue))
             }}
             color="purple400"

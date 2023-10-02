@@ -62,7 +62,7 @@ export const AdditionalEstateMember = ({
   }, [foreignCitizenship])
 
   return (
-    <Box position="relative" key={field.id} marginTop={2}>
+    <Box position="relative" key={field.id} marginTop={7}>
       <Controller
         name={initialField}
         control={control}
@@ -90,43 +90,46 @@ export const AdditionalEstateMember = ({
           </Button>
         </Box>
       </Box>
-      <GridRow>
-        {foreignCitizenship?.length ? (
-          <>
-            <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
-              <InputController
-                key={nameField}
-                id={nameField}
-                name={nameField}
-                backgroundColor="blue"
-                defaultValue={field.name}
-                error={error?.name ?? undefined}
-                label={formatMessage(m.inheritanceNameLabel)}
-                required
-              />
-            </GridColumn>
-            <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
-              <DatePickerController
-                label={formatMessage(m.inheritanceDayOfBirthLabel)}
-                placeholder={formatMessage(m.inheritanceDayOfBirthLabel)}
-                id={dateOfBirthField}
-                key={dateOfBirthField}
-                name={dateOfBirthField}
-                locale="is"
-                maxDate={new Date()}
-                backgroundColor="blue"
-                onChange={(d) => {
-                  setValue(dateOfBirthField, d)
-                }}
-                error={error?.dateOfBirth ?? undefined}
-              />
-            </GridColumn>
-          </>
-        ) : (
-          <GridColumn paddingBottom={2} paddingTop={2}>
-            <LookupPerson field={{ id: fieldIndex }} error={error} />
+      {foreignCitizenship?.length ? (
+        <GridRow>
+          <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
+            <InputController
+              key={nameField}
+              id={nameField}
+              name={nameField}
+              backgroundColor="blue"
+              defaultValue={field.name}
+              error={error?.name ?? undefined}
+              label={formatMessage(m.inheritanceNameLabel)}
+              required
+            />
           </GridColumn>
-        )}
+          <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
+            <DatePickerController
+              label={formatMessage(m.inheritanceDayOfBirthLabel)}
+              placeholder={formatMessage(m.inheritanceDayOfBirthLabel)}
+              id={dateOfBirthField}
+              key={dateOfBirthField}
+              name={dateOfBirthField}
+              locale="is"
+              maxDate={new Date()}
+              backgroundColor="blue"
+              onChange={(d) => {
+                setValue(dateOfBirthField, d)
+              }}
+              error={error?.dateOfBirth ?? undefined}
+            />
+          </GridColumn>
+        </GridRow>
+      ) : (
+        <Box paddingY={2}>
+          <LookupPerson
+            field={{ id: fieldIndex, props: { alertWhenUnder18: true } }}
+            error={error}
+          />
+        </Box>
+      )}
+      <GridRow>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
           <SelectController
             key={relationField}

@@ -1,3 +1,10 @@
+/**
+ * Need to mock timers before importing cache-manager since they cache it.
+ * Also need to advance timers by 10ms to avoid cache-manager's 0-based logic.
+ */
+jest.useFakeTimers()
+jest.advanceTimersByTime(10)
+
 import { caching } from 'cache-manager'
 
 import { Auth } from '@island.is/auth-nest-tools'
@@ -9,6 +16,7 @@ import {
   fakeResponse,
   setupTestEnv,
 } from '../../../test/setup'
+import { defaultCacheKeyWithHeader } from './withCache'
 
 const testUrl = 'http://localhost/test'
 
@@ -34,7 +42,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('cache respects server max-age', async () => {
     // Arrange
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       cache: { cacheManager },
     })
@@ -58,7 +66,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('caches 404 responses', async () => {
     // Arrange
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       cache: { cacheManager },
     })
@@ -82,7 +90,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('respects server no-store', async () => {
     // Arrange
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       cache: { cacheManager },
     })
@@ -106,8 +114,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('expires responses', async () => {
     // Arrange
-    jest.useFakeTimers()
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       cache: { cacheManager },
     })
@@ -132,7 +139,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('does not cache authenticated requests', async () => {
     // Arrange
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       cache: { cacheManager },
     })
@@ -160,7 +167,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('caches public authenticated requests', async () => {
     // Arrange
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       cache: { cacheManager },
     })
@@ -188,7 +195,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('with shared=false does not share cache when user is missing', async () => {
     // Arrange
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       cache: { cacheManager, shared: false },
     })
@@ -213,7 +220,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('with shared=false does not share cache for different users', async () => {
     // Arrange
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     const auth: Auth = {
       authorization: 'something',
       client: 'client',
@@ -246,7 +253,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('with shared=false caches based on nationalId users', async () => {
     // Arrange
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     const auth: Auth = {
       authorization: 'something',
       client: 'client',
@@ -279,8 +286,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('does not get stale if not error during stale-if-error', async () => {
     // Arrange
-    jest.useFakeTimers()
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       cache: { cacheManager },
     })
@@ -305,8 +311,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('gets stale if http error during stale-if-error', async () => {
     // Arrange
-    jest.useFakeTimers()
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       cache: { cacheManager },
     })
@@ -342,8 +347,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('gets stale if network error during stale-if-error', async () => {
     // Arrange
-    jest.useFakeTimers()
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       cache: { cacheManager },
     })
@@ -380,7 +384,7 @@ describe('EnhancedFetch#withCache', () => {
   it('returns stale while revalidate during stale-while-revalidate', async () => {
     // Arrange
     jest.useRealTimers()
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       cache: { cacheManager },
     })
@@ -411,7 +415,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('cache-control can be overridden', async () => {
     // Arrange
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       cache: {
         cacheManager,
@@ -432,7 +436,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('does not override cache control for user responses', async () => {
     // Arrange
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       cache: {
         cacheManager,
@@ -457,7 +461,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('does not override cache control for error responses', async () => {
     // Arrange
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       logErrorResponseBody: true,
       circuitBreaker: false,
@@ -486,7 +490,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('does not override cache control for POST requests', async () => {
     // Arrange
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       cache: {
         cacheManager,
@@ -507,7 +511,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('can override cache control for POST requests', async () => {
     // Arrange
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       cache: {
         cacheManager,
@@ -529,7 +533,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('does not mix up GET and POST requests', async () => {
     // Arrange
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       cache: {
         cacheManager,
@@ -550,7 +554,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('caches 404 error responses', async () => {
     // Arrange
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       logErrorResponseBody: true,
       cache: {
@@ -578,7 +582,7 @@ describe('EnhancedFetch#withCache', () => {
 
   it('supports empty response bodies', async () => {
     // Arrange
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       cache: {
         cacheManager,
@@ -602,7 +606,7 @@ describe('EnhancedFetch#withCache', () => {
   it('supports 304 responses', async () => {
     // Arrange
     jest.useRealTimers()
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       cache: {
         cacheManager,
@@ -639,10 +643,38 @@ describe('EnhancedFetch#withCache', () => {
     )
   })
 
+  it('supports cache key with header value', async () => {
+    // Arrange
+    const cacheManager = await caching('memory', { ttl: 0 })
+    const headerParamName = 'X-Param-National-Id'
+    const env1 = setupTestEnv({
+      cache: {
+        cacheManager,
+        cacheKey: defaultCacheKeyWithHeader(headerParamName),
+        overrideCacheControl: buildCacheControl({ maxAge: 50 }),
+      },
+    })
+    env1.fetch.mockResolvedValueOnce(fakeResponse('Response 1'))
+    env1.fetch.mockResolvedValueOnce(fakeResponse('Response 2'))
+
+    // Act
+    const response1 = await env1.enhancedFetch(testUrl, {
+      headers: { [headerParamName]: 'A' },
+    })
+    const response2 = await env1.enhancedFetch(testUrl, {
+      headers: { [headerParamName]: 'B' },
+    })
+
+    // Assert
+    expect(env1.fetch).toHaveBeenCalledTimes(2)
+    await expect(response1.text()).resolves.toEqual('Response 1')
+    await expect(response2.text()).resolves.toEqual('Response 2')
+  })
+
   // REGRESSION TEST: Passed in headers were deleted when combining Cache with Auth or AutoAuth.
   it('keeps all passed in headers', async () => {
     // Arrange
-    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({ cache: { cacheManager } })
     mockResponse()
     const expectedHeaders = { 'X-Test': ['Test'], authorization: ['Test auth'] }

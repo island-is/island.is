@@ -6,43 +6,44 @@ export enum Features {
   // Application visibility flags
   exampleApplication = 'isExampleApplicationEnabled',
   accidentNotification = 'isAccidentNotificationEnabled',
-  announcementOfDeath = 'isAnnouncementOfDeathEnabled',
-  drivingLearnersPermit = 'isDrivingLearnersPermitEnabled',
-  drivingInstructorRegistrations = 'isDrivingInstructorRegistrationsEnabled',
-  drivingSchoolConfirmations = 'isDrivingSchoolConfirmationsEnabled',
   europeanHealthInsuranceCard = 'isEuropeanHealthInsuranceCardApplicationEnabled',
-  generalPetition = 'isGeneralPetitionEnabled',
   passportApplication = 'isPassportApplicationEnabled',
   financialStatementInao = 'financialStatementInao',
   inheritanceReport = 'isInheritanceReportApplicationEnabled',
-  operatingLicense = 'isApplicationOperatingLicenseEnabled',
-  marriageConditions = 'isMarriageConditionsApplicationEnabled',
-  estateApplication = 'isEstateApplicationEnabled',
-  drivingLicenseDuplicate = 'isDrivingLicenseDuplicateEnabled',
   transportAuthorityDigitalTachographCompanyCard = 'isTransportAuthorityDigitalTachographCompanyCardEnabled',
   transportAuthorityDigitalTachographDriversCard = 'isTransportAuthorityDigitalTachographDriversCardEnabled',
   transportAuthorityDigitalTachographWorkshopCard = 'isTransportAuthorityDigitalTachographWorkshopCardEnabled',
-  transportAuthorityLicensePlateRenewal = 'isTransportAuthorityLicensePlateRenewalEnabled',
   alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
   consultationPortalApplication = 'isConsultationPortalEnabled',
+  childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 
   // Service portal modules
   servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
-  servicePortalDrivingLessonsBookModule = 'isServicePortalDrivingLessonsBookModuleEnabled',
-  servicePortalAirDiscountModule = 'isServicePortalAirDiscountModuleEnabled',
-  servicePortalEducationGraduation = 'isServicePortalEducationGratuationModuleEnabled',
-  sessionHistory = 'sessionHistory',
   servicePortalConsentModule = 'isServicePortalConsentModuleEnabled',
   servicePortalHealthRightsModule = 'isServicePortalHealthRightsModuleEnabled',
+  servicePortalTransferHealthCenter = 'isServicePortalHealthTransferPageEnabled',
+  servicePortalSecondaryEducationPages = 'isServicePortalSecondaryEducationPageEnabled',
+  servicePortalHealthCenterDentistPage = 'isServicePortalHealthCenterPageEnabled',
+  servicePortalWorkMachinesModule = 'isServicePortalWorkMachinesPageEnabled',
+
+  //Occupational License Health directorate fetch enabled
+  occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
+
+  //License service new drivers license client enabled
+  licenseServiceDrivingLicenseClient = 'isLicenseServiceDrivingLicenceClientV2Enabled',
 
   // Application delegation flags
-  transportAuthorityLicensePlateRenewalDelegations = 'applicationTransportAuthorityLicensePlateRenewalDelegations',
+  isFishingLicenceCustomDelegationEnabled = 'isFishingLicenceCustomDelegationEnabled',
+  transportAuthorityApplicationsCustomDelegation = 'isTransportAuthorityApplicationsCustomDelegationEnabled',
 
   //Application system
   applicationSystemHistory = 'applicationSystemHistory',
+
+  // Search indexer
+  shouldSearchIndexerResolveNestedEntries = 'shouldSearchIndexerResolveNestedEntries',
 }
 
 export enum ServerSideFeature {

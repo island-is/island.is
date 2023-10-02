@@ -1,142 +1,87 @@
 import React, {
   createContext,
-  Dispatch,
   FC,
-  SetStateAction,
   useContext,
+  useEffect,
   useState,
 } from 'react'
-import { useLoaderData, useNavigate, useParams } from 'react-router-dom'
+import { useActionData, useLoaderData } from 'react-router-dom'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
-import { replaceParams } from '@island.is/react-spa/shared'
 
 import { AuthAdminClient, AuthAdminClientEnvironment } from './Client.loader'
-import { ClientFormTypes } from './EditClient.action'
-import { useEnvironment } from '../../hooks/useEnvironment'
-import { IDSAdminPaths } from '../../lib/paths'
-
-type PublishData = {
-  toEnvironment: AuthAdminEnvironment | null
-  fromEnvironment: AuthAdminEnvironment | null
-}
-
-type VariablesToCheckSync = {
-  [key in ClientFormTypes]: string[]
-}
+import { useEnvironmentQuery } from '../../hooks/useEnvironmentQuery'
+import { EditClientResult } from './EditClient.action'
+import { PublishData } from '../../types/publishData'
 
 export type ClientContextType = {
   client: AuthAdminClient
-  selectedEnvironment: AuthAdminClient['environments'][0]
+  selectedEnvironment: AuthAdminClientEnvironment
   availableEnvironments: AuthAdminEnvironment[] | null
-  variablesToCheckSync?: VariablesToCheckSync
-  publishData: {
-    toEnvironment?: AuthAdminEnvironment | null
-    fromEnvironment?: AuthAdminEnvironment | null
-  }
-  setPublishData: Dispatch<SetStateAction<PublishData>>
-  checkIfInSync(variables: string[]): boolean
+  /**
+   * This is the result of the client action
+   */
+  actionData: EditClientResult | undefined
+  publishData: PublishData | null
+  updatePublishData(publishData: PublishData): void
   onEnvironmentChange(environment: AuthAdminEnvironment): void
+  changeEnvironment(environment: AuthAdminEnvironment): void
 }
 
 const ClientContext = createContext<ClientContextType | undefined>(undefined)
 
-const variablesToCheckSync: VariablesToCheckSync = {
-  [ClientFormTypes.applicationUrls]: ['postLogoutRedirectUris', 'redirectUris'],
-  [ClientFormTypes.lifeTime]: [
-    'absoluteRefreshTokenLifetime',
-    'slidingRefreshTokenLifetime',
-    'refreshTokenExpiration',
-  ],
-  [ClientFormTypes.translations]: ['displayName'],
-  [ClientFormTypes.delegations]: [
-    'supportsProcuringHolders',
-    'supportsLegalGuardians',
-    'promptDelegations',
-    'supportsPersonalRepresentatives',
-    'supportsCustomDelegation',
-    'requireApiScopes',
-  ],
-  [ClientFormTypes.advancedSettings]: [
-    'requirePkce',
-    'allowOfflineAccess',
-    'requireConsent',
-    'supportTokenExchange',
-    'slidingRefreshTokenLifetime',
-    'customClaims',
-  ],
-  [ClientFormTypes.permissions]: [],
-  [ClientFormTypes.none]: [],
-}
+export const ClientProvider: FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => {
+  const clientResult = useLoaderData() as AuthAdminClient
+  const actionData = useActionData() as EditClientResult
+  const [publishData, setPublishData] = useState<PublishData | null>(null)
+  const { environment: selectedEnvironment, updateEnvironment } =
+    useEnvironmentQuery(clientResult.environments)
 
-export const ClientProvider: FC = ({ children }) => {
-  const navigate = useNavigate()
-  const params = useParams()
-  const client = useLoaderData() as AuthAdminClient
-  const [publishData, setPublishData] = useState<PublishData>({
-    toEnvironment: null,
-    fromEnvironment: null,
-  })
-  const {
-    environment: selectedEnvironment,
-    updateEnvironment,
-  } = useEnvironment(client.environments)
-
-  const openPublishModal = (to: AuthAdminEnvironment) => {
-    setPublishData({
-      toEnvironment: to,
-      fromEnvironment: selectedEnvironment.environment,
-    })
-    navigate(
-      replaceParams({
-        href: IDSAdminPaths.IDSAdminClientPublish,
-        params: {
-          tenant: params['tenant'],
-          client: selectedEnvironment.clientId,
-        },
-      }),
-      { preventScrollReset: true },
-    )
-  }
-
-  const checkIfInSync = (variables: string[]) => {
-    for (const v of variables) {
-      const variable = v as keyof AuthAdminClientEnvironment
-
-      for (const env of client.environments) {
-        if (
-          JSON.stringify(env[variable]) !==
-          JSON.stringify(selectedEnvironment[variable])
-        ) {
-          return false
-        }
-      }
-    }
-
-    return true
-  }
+  const [currentEnvironment, setCurrentEnvironment] =
+    useState<AuthAdminEnvironment>(selectedEnvironment.environment)
 
   const onEnvironmentChange = (environment: AuthAdminEnvironment) => {
     const newEnvironment = updateEnvironment(environment)
 
     if (!newEnvironment) {
-      openPublishModal(environment)
+      setPublishData({
+        toEnvironment: environment,
+        fromEnvironment: selectedEnvironment.environment,
+      })
     }
   }
+
+  const changeEnvironment = (environment: AuthAdminEnvironment) => {
+    setCurrentEnvironment(environment)
+    updateEnvironment(environment)
+  }
+
+  const updatePublishData = (publishData: PublishData) => {
+    setPublishData(publishData)
+  }
+
+  useEffect(() => {
+    if (
+      clientResult &&
+      selectedEnvironment.environment !== currentEnvironment
+    ) {
+      updateEnvironment(currentEnvironment)
+    }
+  }, [clientResult])
 
   return (
     <ClientContext.Provider
       value={{
-        client,
+        client: clientResult,
         selectedEnvironment,
-        checkIfInSync,
-        variablesToCheckSync,
         publishData,
-        setPublishData,
         onEnvironmentChange,
-        availableEnvironments: client.environments.map(
-          (env) => env.environment,
-        ),
+        availableEnvironments: clientResult.availableEnvironments,
+        actionData,
+        updatePublishData,
+        changeEnvironment,
       }}
     >
       {children}

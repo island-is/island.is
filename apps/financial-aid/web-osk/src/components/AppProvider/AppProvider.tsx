@@ -9,7 +9,7 @@ import {
 
 import useMyApplication from '@island.is/financial-aid-web/osk/src/utils/hooks/useMyApplication'
 import useUser from '@island.is/financial-aid-web/osk/src/utils/hooks/useUser'
-import { ApolloError } from 'apollo-client'
+import { ApolloError } from '@apollo/client'
 import useNationalRegistry from '@island.is/financial-aid-web/osk/src/utils/hooks/useNationalRegistry'
 import { useMunicipality } from '@island.is/financial-aid-web/osk/src/utils/hooks/useMunicipality'
 
@@ -57,17 +57,11 @@ const AppProvider = ({ children }: Props) => {
 
   const { isAuthenticated, user, setUser, loadingUser } = useUser()
 
-  const {
-    myApplication,
-    error,
-    loading,
-    updateApplication,
-  } = useMyApplication()
+  const { myApplication, error, loading, updateApplication } =
+    useMyApplication()
 
-  const {
-    nationalRegistryData,
-    setNationalRegistryData,
-  } = useNationalRegistry()
+  const { nationalRegistryData, setNationalRegistryData } =
+    useNationalRegistry()
 
   return (
     <AppContext.Provider

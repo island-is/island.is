@@ -9,16 +9,23 @@ import {
   buildDateField,
   buildKeyValueField,
   buildDividerField,
+  buildDescriptionField,
+  buildPhoneField,
 } from '@island.is/application/core'
 import {
   DefaultEvents,
   Form,
   FormModes,
   NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
+import { Application } from '@island.is/application/types'
+import { UserProfile } from '@island.is/api/schema'
+import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { parse } from 'libphonenumber-js'
 
 export const form: Form = buildForm({
   id: 'GeneralPetitionForm',
@@ -27,6 +34,11 @@ export const form: Form = buildForm({
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
+    buildSection({
+      id: 'intro',
+      title: m.introTitle,
+      children: [],
+    }),
     buildSection({
       id: 'termsAndConditions',
       title: m.externalDataSectionTitle,
@@ -40,6 +52,11 @@ export const form: Form = buildForm({
           dataProviders: [
             buildDataProviderItem({
               provider: NationalRegistryUserApi,
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              provider: UserProfileApi,
               title: '',
               subTitle: '',
             }),
@@ -91,6 +108,41 @@ export const form: Form = buildForm({
               width: 'half',
               backgroundColor: 'white',
               minDate: new Date(),
+              maxDate: new Date(
+                new Date().setFullYear(new Date().getFullYear() + 1),
+              ),
+            }),
+            buildDescriptionField({
+              id: 'space',
+              title: m.listOwner,
+              titleVariant: 'h3',
+              space: 'containerGutter',
+            }),
+            buildPhoneField({
+              id: 'phone',
+              title: m.phone,
+              width: 'half',
+              backgroundColor: 'white',
+              defaultValue: (application: Application) => {
+                const phone =
+                  (
+                    application.externalData.userProfile?.data as {
+                      mobilePhoneNumber?: string
+                    }
+                  )?.mobilePhoneNumber ?? ''
+
+                return phone
+              },
+            }),
+            buildTextField({
+              id: 'email',
+              title: m.email,
+              width: 'half',
+              backgroundColor: 'white',
+              defaultValue: ({ externalData }: Application) => {
+                const data = externalData.userProfile?.data as UserProfile
+                return data?.email
+              },
             }),
           ],
         }),
@@ -107,12 +159,36 @@ export const form: Form = buildForm({
           space: 3,
           children: [
             buildDividerField({}),
+            buildDescriptionField({
+              id: 'listOwner',
+              title: m.overviewApplicant,
+              titleVariant: 'h3',
+            }),
             buildKeyValueField({
-              label: m.overviewApplicant,
+              label: m.name,
               value: ({ externalData }) =>
-                (externalData.nationalRegistry?.data as {
-                  fullName?: string
-                })?.fullName,
+                (
+                  externalData.nationalRegistry?.data as {
+                    fullName?: string
+                  }
+                )?.fullName,
+            }),
+            buildKeyValueField({
+              label: m.phone,
+              value: ({ answers }) => {
+                const parsedPhoneNumber = parse(answers.phone as string)
+                return formatPhoneNumber(parsedPhoneNumber.phone as string)
+              },
+            }),
+            buildKeyValueField({
+              label: m.email,
+              value: ({ answers }) => answers.email as string,
+            }),
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'listInfo',
+              title: m.applicationName,
+              titleVariant: 'h3',
             }),
             buildKeyValueField({
               label: m.listName,

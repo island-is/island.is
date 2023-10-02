@@ -9,6 +9,7 @@ import {
   Stack,
   Box,
   Text,
+  Select,
 } from '@island.is/island-ui/core'
 import { PortalNavigation } from '@island.is/portals/core'
 import { useCreateExplicitDiscountCodeMutation } from './CreateDiscount.generated'
@@ -17,13 +18,11 @@ import { airDiscountSchemeNavigation } from '../../lib/navigation'
 
 const AdminCreateDiscount = () => {
   const [createExplicitDiscountCode] = useCreateExplicitDiscountCodeMutation()
-
   const [nationalId, setNationalId] = useState('')
   const [postalcode, setPostalcode] = useState('')
   const [comment, setComment] = useState('')
-
+  const [length, setLength] = useState('')
   const [discountCode, setDiscountCode] = useState('')
-
   const [showModal, setShowModal] = useState(false)
 
   return (
@@ -95,6 +94,24 @@ const AdminCreateDiscount = () => {
                       setComment(e.target.value)
                     }}
                   />
+                  <Select
+                    name="length"
+                    label="Tímalengd"
+                    required
+                    onChange={(opt) => {
+                      setLength(opt?.value ?? '')
+                    }}
+                    options={[
+                      {
+                        label: '24 tímar',
+                        value: '1',
+                      },
+                      {
+                        label: '14 dagar',
+                        value: '14',
+                      },
+                    ]}
+                  />
 
                   <Button
                     disabled={[nationalId, postalcode, comment].some(
@@ -122,6 +139,7 @@ const AdminCreateDiscount = () => {
                 nationalId: nationalId.replace('-', ''),
                 postalcode: parseInt(postalcode, 10),
                 comment,
+                numberOfDaysUntilExpiration: parseInt(length, 10),
               },
             },
           }).then((data) => {

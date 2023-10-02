@@ -9,6 +9,19 @@ import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import {
+  AlertMessage,
+  Box,
+  InputFileUpload,
+  toast,
+  UploadFile,
+} from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  CaseFileCategory,
+  CaseTransition,
+} from '@island.is/judicial-system/types'
+import { core, errors, titles } from '@island.is/judicial-system-web/messages'
+import {
   CourtCaseInfo,
   FormContentContainer,
   FormFooter,
@@ -19,47 +32,29 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
-  AlertMessage,
-  Box,
-  InputFileUpload,
-  toast,
-  UploadFile,
-} from '@island.is/island-ui/core'
+  mapCaseFileToUploadFile,
+  stepValidationsType,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   TUploadFile,
   useCase,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  CaseFileCategory,
-  CaseTransition,
-} from '@island.is/judicial-system/types'
-import {
-  mapCaseFileToUploadFile,
-  stepValidationsType,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import * as constants from '@island.is/judicial-system/consts'
 
 import { courtRecord as m } from './CourtRecord.strings'
 
-const CourtRecord: React.FC = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
+const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
 
   const { formatMessage } = useIntl()
   const { transitionCase } = useCase()
 
-  const {
-    handleChange,
-    handleRemove,
-    handleRetry,
-    generateSingleFileUpdate,
-  } = useS3Upload(workingCase.id)
+  const { handleChange, handleRemove, handleRetry, generateSingleFileUpdate } =
+    useS3Upload(workingCase.id)
 
   useEffect(() => {
     if (workingCase.caseFiles) {
@@ -143,7 +138,9 @@ const CourtRecord: React.FC = () => {
               )
             }}
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.COURT_RECORD)
+            }
           />
         </Box>
         <Box component="section" marginBottom={10}>
@@ -167,14 +164,16 @@ const CourtRecord: React.FC = () => {
               )
             }
             onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRetry={(file) =>
+              handleRetry(file, handleUIUpdate, CaseFileCategory.RULING)
+            }
           />
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE)
           }

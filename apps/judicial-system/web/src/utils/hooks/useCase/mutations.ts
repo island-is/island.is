@@ -42,6 +42,7 @@ export const TransitionCaseMutation = gql`
       state
       appealState
       appealReceivedByCourtDate
+      statementDeadline
     }
   }
 `
@@ -85,7 +86,7 @@ export const UpdateCaseMutation = gql`
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
-      sendRequestToDefender
+      requestSharedWithDefender
       isHeightenedSecurityLevel
       court {
         id
@@ -162,6 +163,7 @@ export const UpdateCaseMutation = gql`
       accusedPostponedAppealDate
       prosecutorPostponedAppealDate
       rulingDate
+      rulingSignatureDate
       judge {
         id
         name
@@ -218,6 +220,7 @@ export const UpdateCaseMutation = gql`
         orderWithinChapter
         userGeneratedFilename
         displayDate
+        policeFileId
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
@@ -225,7 +228,7 @@ export const UpdateCaseMutation = gql`
       rulingModifiedHistory
       caseResentExplanation
       origin
-      seenByDefender
+      openedByDefender
       defendantWaivesRightToCounsel
       crimeScenes
       indictmentIntroduction
@@ -291,6 +294,9 @@ export const LimitedAccessUpdateCaseMutation = gql`
         id
         name
         category
+        created
+        key
+        policeCaseNumber
       }
       defendants {
         id
@@ -310,6 +316,7 @@ export const LimitedAccessUpdateCaseMutation = gql`
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
+      requestSharedWithDefender
       court {
         id
         name
@@ -344,6 +351,7 @@ export const LimitedAccessUpdateCaseMutation = gql`
       isolationToDate
       conclusion
       rulingDate
+      rulingSignatureDate
       registrar {
         id
         name

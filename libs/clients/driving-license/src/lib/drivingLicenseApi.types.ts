@@ -4,6 +4,9 @@ export interface DriversLicenseCategory {
   issued: Date | null
   expires: Date | null
   comments: string | null
+  validToText?: string | null
+  validToCode?: number | null
+  nr?: string | null
 }
 
 export interface Disqualification {
@@ -22,12 +25,23 @@ export interface DriversLicense {
   birthCountry?: string | null
 }
 
+export interface RemarkCode {
+  index: string
+  name: string
+}
+
 export interface Teacher {
   nationalId: string
   name: string
 }
 
-export interface Juristiction {
+export interface TeacherV4 {
+  name: string
+  nationalId: string
+  driverLicenseId: number | null | undefined
+}
+
+export interface Jurisdiction {
   id: number
   name: string
   zip: number
@@ -62,7 +76,7 @@ export type CanApplyErrorCodeBFull =
   | 'HAS_DEPRIVATION'
 
 export interface CanApplyForCategoryResult<
-  T extends CanApplyErrorCodeBFull | CanApplyErrorCodeBTemporary
+  T extends CanApplyErrorCodeBFull | CanApplyErrorCodeBTemporary,
 > {
   result: boolean
   errorCode?: T | undefined

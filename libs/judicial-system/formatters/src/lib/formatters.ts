@@ -9,14 +9,9 @@ import {
   Gender,
   CaseType,
   isRestrictionCase,
-  isIndictmentCase,
   IndictmentSubtype,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
-import {
-  DEFENDER_INDICTMENT_ROUTE,
-  DEFENDER_ROUTE,
-} from '@island.is/judicial-system/consts'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
   if (typeof date === 'string' || date instanceof String) {
@@ -81,10 +76,8 @@ export const formatPhoneNumber = (phoneNumber?: string) => {
 
   const value = phoneNumber.replace('-', '')
 
-  const splitAt = (index: number) => (x: string) => [
-    x.slice(0, index),
-    x.slice(index),
-  ]
+  const splitAt = (index: number) => (x: string) =>
+    [x.slice(0, index), x.slice(index)]
   if (value.length > 3) return splitAt(3)(value).join('-')
   return value
 }
@@ -111,6 +104,7 @@ export const caseTypes: CaseTypes = {
   SEARCH_WARRANT: 'húsleit',
   BANKING_SECRECY_WAIVER: 'rof bankaleyndar',
   PHONE_TAPPING: 'símhlustun',
+  PAROLE_REVOCATION: 'rof á reynslulausn',
   TELECOMMUNICATIONS: 'upplýsingar um fjarskiptasamskipti',
   TRACKING_EQUIPMENT: 'eftirfararbúnaður',
   PSYCHIATRIC_EXAMINATION: 'geðrannsókn',
@@ -310,17 +304,6 @@ export const displayFirstPlusRemaining = (
   return `${list[0]} +${list.length - 1}`
 }
 
-export const formatDefenderRoute = (
-  baseUrl: string,
-  type: string,
-  id: string,
-) => {
-  const caseType = type as CaseType
-  return `${baseUrl}${
-    isIndictmentCase(caseType) ? DEFENDER_INDICTMENT_ROUTE : DEFENDER_ROUTE
-  }/${id}`
-}
-
 export const splitStringByComma = (str?: string): string[] => {
   return str?.trim().split(/[, ]+/) || []
 }
@@ -351,4 +334,8 @@ export const readableIndictmentSubtypes = (
   }
 
   return _uniq(returnValue)
+}
+
+export const sanitize = (str: string) => {
+  return str.replace('"', '')
 }

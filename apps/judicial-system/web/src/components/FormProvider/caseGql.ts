@@ -29,7 +29,7 @@ const CaseQuery = gql`
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
-      sendRequestToDefender
+      requestSharedWithDefender
       isHeightenedSecurityLevel
       court {
         id
@@ -106,6 +106,7 @@ const CaseQuery = gql`
       accusedPostponedAppealDate
       prosecutorPostponedAppealDate
       rulingDate
+      rulingSignatureDate
       judge {
         id
         name
@@ -162,6 +163,7 @@ const CaseQuery = gql`
         orderWithinChapter
         userGeneratedFilename
         displayDate
+        policeFileId
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
@@ -169,7 +171,7 @@ const CaseQuery = gql`
       rulingModifiedHistory
       caseResentExplanation
       origin
-      seenByDefender
+      openedByDefender
       defendantWaivesRightToCounsel
       crimeScenes
       indictmentIntroduction
@@ -216,6 +218,14 @@ const CaseQuery = gql`
       appealJudge3 {
         id
         name
+      }
+      eventLogs {
+        id
+        created
+        caseId
+        eventType
+        nationalId
+        userRole
       }
     }
   }

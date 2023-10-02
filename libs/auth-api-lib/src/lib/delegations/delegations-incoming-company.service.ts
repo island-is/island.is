@@ -1,9 +1,9 @@
 import { User } from '@island.is/auth-nest-tools'
-import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
+import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op } from 'sequelize'
+
 import { ApiScopeUserAccess } from '../resources/models/api-scope-user-access.model'
 import { ApiScopeInfo } from './delegations-incoming.service'
 import { DelegationDTO, DelegationProvider } from './dto/delegation.dto'
@@ -12,7 +12,7 @@ import { DelegationType } from './types/delegationType'
 @Injectable()
 export class IncomingDelegationsCompanyService {
   constructor(
-    private rskProcuringClient: RskProcuringClient,
+    private rskProcuringClient: RskRelationshipsClient,
     @InjectModel(ApiScopeUserAccess)
     private apiScopeUserAccessModel: typeof ApiScopeUserAccess,
     @Inject(LOGGER_PROVIDER)
@@ -36,15 +36,17 @@ export class IncomingDelegationsCompanyService {
     }
 
     try {
-      const person = await this.rskProcuringClient.getSimple(user)
+      const person = await this.rskProcuringClient.getIndividualRelationships(
+        user,
+      )
 
-      if (person && person.companies) {
-        const delegations = person.companies.map(
-          (company) =>
+      if (person && person.relationships) {
+        const delegations = person.relationships.map(
+          (relationship) =>
             <DelegationDTO>{
               toNationalId: user.nationalId,
-              fromNationalId: company.nationalId,
-              fromName: company.name,
+              fromNationalId: relationship.nationalId,
+              fromName: relationship.name,
               type: DelegationType.ProcurationHolder,
               provider: DelegationProvider.CompanyRegistry,
             },
@@ -55,12 +57,13 @@ export class IncomingDelegationsCompanyService {
           procuringHolderApiScopes &&
           procuringHolderApiScopes.every((s) => s.isAccessControlled)
         ) {
-          const fromNationalIdsWithSomeAccess = await this.findNationalIdsWithSomeAccess(
-            delegations.map((d) => d.fromNationalId),
-            procuringHolderApiScopes
-              .filter((s) => s.isAccessControlled)
-              .map((s) => s.name),
-          )
+          const fromNationalIdsWithSomeAccess =
+            await this.findNationalIdsWithSomeAccess(
+              delegations.map((d) => d.fromNationalId),
+              procuringHolderApiScopes
+                .filter((s) => s.isAccessControlled)
+                .map((s) => s.name),
+            )
 
           return delegations.filter((d) =>
             fromNationalIdsWithSomeAccess.includes(d.fromNationalId),

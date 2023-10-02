@@ -14,7 +14,7 @@ interface Option {
   disabled?: boolean
 }
 
-export const ShipSelection: FC<FieldBaseProps> = ({
+export const ShipSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   field,
   errors,

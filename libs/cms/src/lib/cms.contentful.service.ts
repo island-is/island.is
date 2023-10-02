@@ -146,11 +146,16 @@ export class CmsContentfulService {
       'fields.title[in]': input.organizationTitles.join(','),
     }
 
+    const organizationReferenceIdentifiers = input?.referenceIdentifiers && {
+      'fields.referenceIdentifier[in]': input.referenceIdentifiers.join(','),
+    }
+
     const params = {
       ['content_type']: 'organization',
       include: 10,
       limit: 1000,
       ...organizationTitles,
+      ...organizationReferenceIdentifiers,
     }
 
     const result = await this.contentfulRepository
@@ -250,6 +255,25 @@ export class CmsContentfulService {
       ['content_type']: 'organization',
       include: 10,
       'fields.slug': slug,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationFields>(lang, params)
+      .catch(errorHandler('getOrganization'))
+
+    return (
+      (result.items as types.IOrganization[]).map(mapOrganization)[0] ?? null
+    )
+  }
+
+  async getOrganizationByTitle(
+    title: string,
+    lang: string,
+  ): Promise<Organization> {
+    const params = {
+      ['content_type']: 'organization',
+      include: 10,
+      'fields.title[match]': title,
     }
 
     const result = await this.contentfulRepository
@@ -702,20 +726,6 @@ export class CmsContentfulService {
     return (result.items as types.IFrontpage[]).map(mapFrontpage)[0]
   }
 
-  async getTellUsAStory({ lang }: { lang: string }): Promise<TellUsAStory> {
-    const params = {
-      ['content_type']: 'tellUsAStory',
-      include: 10,
-      order: '-sys.createdAt',
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.ITellUsAStoryFields>(lang, params)
-      .catch(errorHandler('getTellUsAStory'))
-
-    return (result.items as types.ITellUsAStory[]).map(mapTellUsAStory)[0]
-  }
-
   async getSubpageHeader({
     lang,
     id,
@@ -761,7 +771,7 @@ export class CmsContentfulService {
 
     return (result.items as types.ISupportQna[])
       .map(mapSupportQNA)
-      .filter((qna) => qna?.title && qna?.answer)
+      .filter((qna) => qna?.title && qna?.answer && qna?.slug)
   }
 
   async getSupportCategory({

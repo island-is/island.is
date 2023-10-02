@@ -496,15 +496,28 @@ export function buildExpandableDescriptionField(
 export function buildAlertMessageField(
   data: Omit<AlertMessageField, 'type' | 'component' | 'children'>,
 ): AlertMessageField {
-  const { id, title, message, alertType } = data
+  const {
+    id,
+    title,
+    message,
+    alertType,
+    condition,
+    marginTop,
+    marginBottom,
+    links,
+  } = data
   return {
     children: undefined,
     id,
     title,
     message,
     alertType,
+    condition,
     type: FieldTypes.ALERT_MESSAGE,
     component: FieldComponents.ALERT_MESSAGE,
+    marginTop,
+    marginBottom,
+    links,
   }
 }
 

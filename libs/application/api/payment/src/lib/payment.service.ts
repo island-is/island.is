@@ -10,6 +10,8 @@ import { Op } from 'sequelize'
 import {
   CatalogItem,
   ChargeFjsV2ClientService,
+  ChargeResponse,
+  ChargeStatusResultStatusEnum,
   ExtraData,
 } from '@island.is/clients/charge-fjs-v2'
 import { User } from '@island.is/auth-nest-tools'
@@ -28,6 +30,9 @@ import { AuditService } from '@island.is/nest/audit'
 import { PaymentStatus } from './types/paymentStatus'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { ProblemError } from '@island.is/nest/problem'
+import { ProblemType } from '@island.is/shared/problem'
+import { coreErrorMessages } from '@island.is/application/core'
 
 @Injectable()
 export class PaymentService {
@@ -119,7 +124,25 @@ export class PaymentService {
     return `${this.config.arkBaseUrl}/quickpay/pay?doc_num=${docNum}`
   }
 
-  private async createPaymentModel(
+  private async setUser4(
+    applicationId: string,
+    paymentId: string,
+    user4: string,
+  ): Promise<void> {
+    await this.paymentModel.update(
+      {
+        user4,
+      },
+      {
+        where: {
+          id: paymentId,
+          application_id: applicationId,
+        },
+      },
+    )
+  }
+
+  async createPaymentModel(
     chargeItems: CatalogItem[],
     applicationId: string,
     performingOrganizationID: string,
@@ -162,58 +185,120 @@ export class PaymentService {
     applicationId: string,
     extraData: ExtraData[] | undefined,
   ): Promise<CreateChargeResult> {
-    try {
-      //.1 Get charge items from FJS
-      const chargeItems = await this.findChargeItems(
-        performingOrganizationID,
-        chargeItemCodes,
+    //1. Retrieve charge items from FJS
+    const chargeItems = await this.findChargeItems(
+      performingOrganizationID,
+      chargeItemCodes,
+    )
+
+    //2. Fetch existing payment if any
+    let paymentModel = await this.findPaymentByApplicationId(applicationId)
+    let user4 = ''
+
+    if (paymentModel) {
+      //payment Model already exists something has previously gone wrong.
+
+      const chargeStatus = await this.chargeFjsV2ClientService.getChargeStatus(
+        paymentModel.id,
       )
 
-      //2. Create and insert payment db entry
-      const paymentModel = await this.createPaymentModel(
+      const status = chargeStatus?.statusResult?.status
+
+      if (chargeStatus === null) {
+        //No charge present in FJS - we need to create a new one
+        const chargeResult = await this.createNewCharge(
+          paymentModel,
+          user,
+          extraData,
+        )
+        user4 = chargeResult.user4
+      } else if (status === ChargeStatusResultStatusEnum.InProgress) {
+        //Payment is still in progress - we need to wait for it to finish before we can continue.
+        throw new ProblemError({
+          type: ProblemType.TEMPLATE_API_ERROR,
+          title: 'CreateCharge Payment still in progress.',
+          errorReason: {
+            title:
+              coreErrorMessages.paymentCreateChargeFailedStillInProgressTitle,
+            summary:
+              coreErrorMessages.paymentCreateChargeFailedStillInProgressSummary,
+          },
+        })
+      } else if (
+        status === ChargeStatusResultStatusEnum.Unpaid &&
+        chargeStatus.statusResult.docNum
+      ) {
+        //We aldready have a charge that is unpaid so we can proceed like normal
+        //and update payment with user4 from charge result
+        await this.setUser4(
+          applicationId,
+          paymentModel.id,
+          chargeStatus.statusResult.docNum,
+        )
+        this.auditPaymentCreation(user, applicationId, paymentModel.id)
+        return this.buildChargeResult(
+          paymentModel.id,
+          chargeStatus.statusResult.docNum,
+        )
+      }
+      // update charge with new data if needed
+    } else {
+      //3. Create new payment entry
+      paymentModel = await this.createPaymentModel(
         chargeItems,
         applicationId,
         performingOrganizationID,
       )
 
-      //3. Send charge to FJS
-      const chargeResult = await this.chargeFjsV2ClientService.createCharge(
-        formatCharge(
-          paymentModel,
-          this.config.callbackBaseUrl,
-          this.config.callbackAdditionUrl,
-          extraData,
-          user,
-        ),
+      //4. Create new charge
+      const chargeResult = await this.createNewCharge(
+        paymentModel,
+        user,
+        extraData,
       )
+      user4 = chargeResult.user4
+    }
 
-      //4. update payment with user4 from charge result
-      await this.paymentModel.update(
-        {
-          user4: chargeResult.user4,
-        },
-        {
-          where: {
-            id: paymentModel.id,
-            application_id: applicationId,
-          },
-        },
-      )
+    //5. Update payment with user4 from charge result
+    await this.setUser4(applicationId, paymentModel.id, user4)
+    this.auditPaymentCreation(user, applicationId, paymentModel.id)
 
-      this.auditService.audit({
-        auth: user,
-        action: 'createCharge',
-        resources: applicationId as string,
-        meta: { applicationId, id: paymentModel.id },
-      })
+    return this.buildChargeResult(paymentModel.id, user4)
+  }
 
-      return {
-        id: paymentModel.id,
-        paymentUrl: this.makePaymentUrl(chargeResult.user4),
-      }
-    } catch (e) {
-      this.logger.error('Error creating charge', e)
-      throw new InternalServerErrorException('Error creating charge')
+  async createNewCharge(
+    paymentModel: Payment,
+    user: User,
+    extraData: ExtraData[] | undefined,
+  ): Promise<ChargeResponse> {
+    return await this.chargeFjsV2ClientService.createCharge(
+      formatCharge(
+        paymentModel,
+        this.config.callbackBaseUrl,
+        this.config.callbackAdditionUrl,
+        extraData,
+        user,
+      ),
+    )
+  }
+
+  private auditPaymentCreation(
+    user: User,
+    applicationId: string,
+    paymentId: string,
+  ) {
+    return this.auditService.audit({
+      auth: user,
+      action: 'createCharge',
+      resources: applicationId as string,
+      meta: { applicationId, id: paymentId },
+    })
+  }
+
+  private buildChargeResult(paymentId: string, user4: string) {
+    return {
+      id: paymentId,
+      paymentUrl: this.makePaymentUrl(user4),
     }
   }
 
@@ -237,11 +322,10 @@ export class PaymentService {
     performingOrganizationID: string,
     targetChargeItemCodes: string[],
   ): Promise<CatalogItem[]> {
-    const {
-      item: allItems,
-    } = await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
-      performingOrganizationID,
-    )
+    const { item: allItems } =
+      await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
+        performingOrganizationID,
+      )
 
     // get list of items with catalog info, but make sure to allow duplicates
     const items: CatalogItem[] = []

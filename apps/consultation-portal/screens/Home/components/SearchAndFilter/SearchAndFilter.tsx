@@ -4,21 +4,18 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Option,
   Select,
 } from '@island.is/island-ui/core'
 import { DebouncedSearch } from '../../../../components'
 import { FILTERS_FRONT_PAGE_KEY } from '../../../../utils/consts/consts'
 import localization from '../../Home.json'
-
-interface ArrOfValueAndLabel {
-  value: string
-  label: string
-}
+import { sortLocale } from '../../../../utils/helpers'
 
 interface SearchAndFilterProps {
-  PolicyAreas: Array<ArrOfValueAndLabel>
+  PolicyAreas: Array<Option<string>>
   defaultPolicyAreas: Array<number>
-  Institutions: Array<ArrOfValueAndLabel>
+  Institutions: Array<Option<string>>
   defaultInstitutions: Array<number>
   filters: CaseFilter
   setFilters: (arr: CaseFilter) => void
@@ -47,6 +44,16 @@ const SearchAndFilter = ({
     setFilters(filtersCopy)
   }
 
+  const sortedPolicyAreas = sortLocale({
+    list: PolicyAreas,
+    sortOption: 'label',
+  })
+
+  const sortedInstitutions = sortLocale({
+    list: Institutions,
+    sortOption: 'label',
+  })
+
   return (
     <GridContainer>
       <Box paddingY={4}>
@@ -62,15 +69,13 @@ const SearchAndFilter = ({
           </GridColumn>
           <GridColumn span={['2/12', '2/12', '3/12', '3/12', '3/12']}>
             <Select
-              disabled={loading}
+              isDisabled={loading}
               isSearchable
               size="xs"
               label={loc.policyAreaSelect.label}
               name="policyAreas"
               noOptionsMessage={loc.policyAreaSelect.noOptions}
-              options={[...PolicyAreas].sort((a, b) =>
-                a.label.localeCompare(b.label),
-              )}
+              options={sortedPolicyAreas}
               placeholder={loc.policyAreaSelect.placeholder}
               onChange={(e) => onChange(e, false)}
               isClearable
@@ -78,28 +83,26 @@ const SearchAndFilter = ({
                 filters?.policyAreas.length === 1 &&
                 [...PolicyAreas].filter(
                   (item) => parseInt(item.value) === filters?.policyAreas[0],
-                )
+                )?.[0]
               }
             />
           </GridColumn>
           <GridColumn span={['2/12', '2/12', '3/12', '3/12', '3/12']}>
             <Select
-              disabled={loading}
+              isDisabled={loading}
               isSearchable
               size="xs"
               label={loc.institutionSelect.label}
               name="institutions"
               noOptionsMessage={loc.institutionSelect.noOptions}
-              options={[...Institutions].sort((a, b) =>
-                a.label.localeCompare(b.label),
-              )}
+              options={sortedInstitutions}
               placeholder={loc.institutionSelect.placeholder}
               onChange={(e) => onChange(e, true)}
               value={
                 filters?.institutions.length === 1 &&
                 [...Institutions].filter(
                   (item) => parseInt(item.value) === filters?.institutions[0],
-                )
+                )?.[0]
               }
               isClearable
             />

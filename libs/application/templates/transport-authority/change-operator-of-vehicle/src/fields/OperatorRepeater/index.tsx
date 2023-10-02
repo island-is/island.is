@@ -17,7 +17,9 @@ import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { OldOperatorItem } from './OldOperatorItem'
 
-export const OperatorRepeater: FC<FieldBaseProps> = (props) => {
+export const OperatorRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = (
+  props,
+) => {
   const { application, setFieldLoadingState, setBeforeSubmitCallback } = props
   const { locale, formatMessage } = useLocale()
   const { setValue } = useFormContext()
@@ -103,11 +105,13 @@ export const OperatorRepeater: FC<FieldBaseProps> = (props) => {
     const existingOldOperators = filteredOldOperators.map(({ nationalId }) => {
       return nationalId
     })
-    const coOwners = (getValueViaPath(
-      application.answers,
-      'ownerCoOwner',
-      [],
-    ) as UserInformation[])?.map(({ nationalId }) => {
+    const coOwners = (
+      getValueViaPath(
+        application.answers,
+        'ownerCoOwner',
+        [],
+      ) as UserInformation[]
+    )?.map(({ nationalId }) => {
       return nationalId
     })
 

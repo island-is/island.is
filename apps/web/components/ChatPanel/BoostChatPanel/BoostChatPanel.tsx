@@ -12,10 +12,9 @@ declare global {
   }
 }
 
-export const BoostChatPanel: React.FC<BoostChatPanelProps> = ({
-  endpoint,
-  pushUp = false,
-}) => {
+export const BoostChatPanel: React.FC<
+  React.PropsWithChildren<BoostChatPanelProps>
+> = ({ endpoint, pushUp = false }) => {
   const [showButton, setShowButton] = useState(Boolean(window.boost)) // we show button when chat already loaded
 
   useEffect(() => {
@@ -28,9 +27,9 @@ export const BoostChatPanel: React.FC<BoostChatPanelProps> = ({
           chatPanel: {
             ...config.chatPanel,
             styling: {
-              ...config.chatPanel.styling,
+              ...config?.chatPanel?.styling,
               settings: {
-                ...config.chatPanel.styling.settings,
+                ...config?.chatPanel?.styling?.settings,
                 conversationId:
                   window.sessionStorage.getItem(
                     boostChatPanelEndpoints[endpoint].conversationKey,
@@ -46,7 +45,9 @@ export const BoostChatPanel: React.FC<BoostChatPanelProps> = ({
         )
         window.boostEndpoint = endpoint
 
-        const onConversationIdChanged = (e) => {
+        const onConversationIdChanged = (e: {
+          detail: { conversationId: string }
+        }) => {
           window.sessionStorage.setItem(
             boostChatPanelEndpoints[endpoint].conversationKey,
             e.detail.conversationId,

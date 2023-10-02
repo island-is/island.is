@@ -1,5 +1,5 @@
-import { RightsPortalTherapies as TherapiesType } from '@island.is/api/schema'
-import { Box, Tabs } from '@island.is/island-ui/core'
+import { RightsPortalTherapy as TherapiesType } from '@island.is/api/schema'
+import { Box, Tabs, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
@@ -24,7 +24,7 @@ const Therapies = () => {
 
   const { loading, error, data } = useGetTherapiesQuery()
 
-  const therapiesData = data?.rightsPortalTherapies ?? []
+  const therapiesData = data?.rightsPortalPaginatedTherapies?.data ?? []
 
   const physicalTherapyData = therapiesData.filter(
     (x: TherapiesType) => x.id === PHYSIO_THERAPY,
@@ -96,6 +96,22 @@ const Therapies = () => {
     },
   ].filter((x) => x !== false) as Array<{ label: string; content: JSX.Element }>
 
+  const tabsElement =
+    tabs.length === 1 ? (
+      <>
+        <Text variant="h5">{tabs[0].label}</Text>
+        <Box>{tabs[0].content}</Box>
+      </>
+    ) : (
+      <Tabs
+        label={formatMessage(messages.chooseTherapy)}
+        tabs={tabs}
+        contentBackground="transparent"
+        selected="0"
+        size="xs"
+      />
+    )
+
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
@@ -109,15 +125,7 @@ const Therapies = () => {
       )}
 
       {!loading && !error && tabs.length > 0 && (
-        <Box marginTop={[0, 0, 5]}>
-          <Tabs
-            label={formatMessage(messages.chooseTherapy)}
-            tabs={tabs}
-            contentBackground="transparent"
-            selected="0"
-            size="xs"
-          />
-        </Box>
+        <Box marginTop={[6]}>{tabsElement}</Box>
       )}
     </Box>
   )

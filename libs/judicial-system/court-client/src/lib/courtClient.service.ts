@@ -474,12 +474,6 @@ export class CourtClientServiceImplementation implements CourtClientService {
     courtId: string,
     args: UpdateCaseWithDefendantArgs,
   ): Promise<string> {
-    if (!this.config.courtLitigantApiAvailable) {
-      throw new ServiceUnavailableException(
-        'Court litigant API is not available',
-      )
-    }
-
     return this.authenticatedRequest(courtId, (authenticationToken) =>
       this.updateCaseWithDefendantApi.updateCaseWithDefendant({
         updateCaseWithDefendantData: { ...args, authenticationToken },
@@ -535,7 +529,8 @@ export class CourtClientServiceImplementation implements CourtClientService {
 
 @Injectable()
 export class CourtClientServiceUnavailableImplementation
-  implements CourtClientService {
+  implements CourtClientService
+{
   async createCase(_courtId: string, _args: CreateCaseArgs): Promise<string> {
     throw new ServiceUnavailableException('Court API is not available')
   }

@@ -1,22 +1,18 @@
 import React from 'react'
-import { useActionData } from 'react-router-dom'
 
 import { AuthAdminClientEnvironment } from '@island.is/api/schema'
 import { Checkbox, Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../../lib/messages'
-import ContentCard from '../../../components/ContentCard'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { useErrorFormatMessage } from '../../../hooks/useFormatErrorMessage'
-import {
-  ClientFormTypes,
-  EditApplicationResult,
-  schema,
-} from '../EditClient.action'
 import { useReadableSeconds } from '../../../hooks/useReadableSeconds'
 import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
-import { useMultiEnvSupport } from '../../../hooks/useMultiEnvSupport'
+import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
+import { useClient } from '../ClientContext'
+import { FormCard } from '../../../components/FormCard/FormCard'
+import { ClientFormTypes } from '../EditClient.schema'
 
 type AdvancedSettingsProps = Pick<
   AuthAdminClientEnvironment,
@@ -37,11 +33,8 @@ export const AdvancedSettings = ({
   customClaims,
 }: AdvancedSettingsProps) => {
   const { formatMessage } = useLocale()
-  const { shouldSupportMultiEnv } = useMultiEnvSupport()
-  const actionData = useActionData() as EditApplicationResult<
-    typeof schema.advancedSettings
-  >
   const { isSuperAdmin } = useSuperAdmin()
+  const { client, actionData } = useClient()
 
   const customClaimsString = (
     customClaims?.map((claim) => {
@@ -56,17 +49,23 @@ export const AdvancedSettings = ({
     accessTokenLifetime,
     customClaims: customClaimsString,
   })
-
   const { formatErrorMessage } = useErrorFormatMessage()
-
   const readableAccessTokenLifetime = useReadableSeconds(accessTokenLifetime)
 
   return (
-    <ContentCard
+    <FormCard
       title={formatMessage(m.advancedSettings)}
       intent={ClientFormTypes.advancedSettings}
       accordionLabel={formatMessage(m.settings)}
-      shouldSupportMultiEnvironment={shouldSupportMultiEnv}
+      headerMarginBottom={3}
+      inSync={checkEnvironmentsSync(client.environments, [
+        'requirePkce',
+        'allowOfflineAccess',
+        'requireConsent',
+        'supportTokenExchange',
+        'accessTokenLifetime',
+        'customClaims',
+      ])}
     >
       <Stack space={3}>
         <Checkbox
@@ -153,7 +152,7 @@ export const AdvancedSettings = ({
             }}
             label={formatMessage(m.accessTokenExpiration)}
             errorMessage={formatErrorMessage(
-              (actionData?.errors?.accessTokenLifetime as unknown) as string,
+              actionData?.errors?.accessTokenLifetime as unknown as string,
             )}
           />
           <Text variant={'small'}>
@@ -181,12 +180,14 @@ export const AdvancedSettings = ({
             value={inputValues.customClaims}
             placeholder={'claim=value'}
             errorMessage={formatErrorMessage(
-              (actionData?.errors?.customClaims as unknown) as string,
+              actionData?.errors?.customClaims as unknown as string,
             )}
           />
-          <Text variant="small">{formatMessage(m.callBackUrlDescription)}</Text>
+          <Text variant="small">
+            {formatMessage(m.customClaimsDescription)}
+          </Text>
         </Stack>
       </Stack>
-    </ContentCard>
+    </FormCard>
   )
 }

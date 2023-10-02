@@ -4,18 +4,18 @@ import { mock } from 'jest-mock-extended'
 import { uuid } from 'uuidv4'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { EmailService } from '@island.is/email-service'
+import { ConfigModule, ConfigType } from '@island.is/nest/config'
 import { IntlService } from '@island.is/cms-translations'
 import { createTestIntl } from '@island.is/cms-translations/test'
+import { EmailService } from '@island.is/email-service'
 import { SmsService } from '@island.is/nova-sms'
-import { ConfigModule, ConfigType } from '@island.is/nest/config'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 import { MessageService } from '@island.is/judicial-system/message'
 
 import { environment } from '../../../../environments'
 import { CourtService } from '../../court'
-import { AwsS3Service } from '../../aws-s3'
-import { EventService } from '../../event'
+import { awsS3ModuleConfig, AwsS3Service } from '../../aws-s3'
+import { eventModuleConfig, EventService } from '../../event'
 import { InternalNotificationController } from '../internalNotification.controller'
 import { notificationModuleConfig } from '../notification.config'
 import { Notification } from '../models/notification.model'
@@ -25,8 +25,10 @@ import { DefendantService } from '../../defendant'
 
 jest.mock('@island.is/judicial-system/message')
 
-const formatMessage = createTestIntl({ onError: jest.fn(), locale: 'is-IS' })
-  .formatMessage
+const formatMessage = createTestIntl({
+  onError: jest.fn(),
+  locale: 'is-IS',
+}).formatMessage
 
 export const createTestingNotificationModule = async () => {
   const notificationModule = await Test.createTestingModule({
@@ -35,7 +37,9 @@ export const createTestingNotificationModule = async () => {
         jwtSecret: environment.auth.jwtSecret,
         secretToken: environment.auth.secretToken,
       }),
-      ConfigModule.forRoot({ load: [notificationModuleConfig] }),
+      ConfigModule.forRoot({
+        load: [awsS3ModuleConfig, eventModuleConfig, notificationModuleConfig],
+      }),
     ],
     controllers: [NotificationController, InternalNotificationController],
     providers: [
@@ -101,11 +105,10 @@ export const createTestingNotificationModule = async () => {
     })
     .compile()
 
-  return {
+  const context = {
     messageService: notificationModule.get<MessageService>(MessageService),
-    defendantService: notificationModule.get<DefendantService>(
-      DefendantService,
-    ),
+    defendantService:
+      notificationModule.get<DefendantService>(DefendantService),
     emailService: notificationModule.get<EmailService>(EmailService),
     smsService: notificationModule.get<SmsService>(SmsService),
     courtService: notificationModule.get<CourtService>(CourtService),
@@ -118,8 +121,13 @@ export const createTestingNotificationModule = async () => {
     notificationController: notificationModule.get<NotificationController>(
       NotificationController,
     ),
-    internalNotificationController: notificationModule.get<InternalNotificationController>(
-      InternalNotificationController,
-    ),
+    internalNotificationController:
+      notificationModule.get<InternalNotificationController>(
+        InternalNotificationController,
+      ),
   }
+
+  notificationModule.close()
+
+  return context
 }

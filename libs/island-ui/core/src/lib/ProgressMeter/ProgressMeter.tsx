@@ -33,11 +33,9 @@ const colorSchemes = {
   },
 } as const
 
-export const ProgressMeter: React.FC<ProgressMeterProps> = ({
-  progress,
-  variant = 'blue',
-  className,
-}) => {
+export const ProgressMeter: React.FC<
+  React.PropsWithChildren<ProgressMeterProps>
+> = ({ progress, variant = 'blue', className }) => {
   return (
     <Box
       className={cn(styles.outer, className)}

@@ -1,16 +1,13 @@
-import { useQuery } from '@apollo/client'
-import Cookies from 'js-cookie'
 import React, { createContext, useEffect, useState } from 'react'
+import Cookies from 'js-cookie'
 
 import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
-
 import {
-  CurrentUserDocument,
-  CurrentUserQuery,
-  CurrentUserQueryVariables,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+
+import { useGetCurrentUserQuery } from './getCurrentUser.generated'
 
 interface UserProvider {
   isAuthenticated?: boolean
@@ -25,7 +22,7 @@ interface Props {
   authenticated?: boolean
 }
 
-export const UserProvider: React.FC<Props> = ({
+export const UserProvider: React.FC<React.PropsWithChildren<Props>> = ({
   children,
   authenticated = false,
 }) => {
@@ -34,13 +31,11 @@ export const UserProvider: React.FC<Props> = ({
   const isAuthenticated =
     authenticated || Boolean(Cookies.get(CSRF_COOKIE_NAME))
 
-  const { data } = useQuery<CurrentUserQuery, CurrentUserQueryVariables>(
-    CurrentUserDocument,
-    {
-      fetchPolicy: 'no-cache',
-      skip: !isAuthenticated || Boolean(user),
-    },
-  )
+  const { data } = useGetCurrentUserQuery({
+    skip: !isAuthenticated || Boolean(user),
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
 
   const loggedInUser = data?.currentUser
 

@@ -44,6 +44,8 @@
     tools:node="remove" />
   <uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_WRITE"
     tools:node="remove" />
+  <uses-permission android:name="com.google.android.gms.permission.AD_ID"
+    tools:node="remove" />
 
   <queries>
     <intent>
@@ -83,6 +85,7 @@
       </intent-filter>
     </activity>
     <activity
+      android:label="@string/app_login_name"
       android:name="net.openid.appauth.RedirectUriReceiverActivity">
       <intent-filter>
         <action android:name="android.intent.action.VIEW" />
