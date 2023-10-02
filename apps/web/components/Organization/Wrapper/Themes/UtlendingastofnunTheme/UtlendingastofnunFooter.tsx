@@ -137,7 +137,7 @@ const UtlendingastofnunFooter: React.FC<
                     </Box>
                   )}
                   <div id="organizationFooterTitle">
-                    <Text variant="h3" color="white">
+                    <Text variant="h2" color="white">
                       {title}
                     </Text>
                   </div>
