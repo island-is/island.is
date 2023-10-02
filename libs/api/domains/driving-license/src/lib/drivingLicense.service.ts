@@ -24,6 +24,7 @@ import {
   DrivingLicenseApi,
   Teacher,
   TeacherV4,
+  PostTemporaryLicenseWithHealthDeclaration as HealthDeclaration,
 } from '@island.is/clients/driving-license'
 import {
   BLACKLISTED_JURISDICTION,
@@ -507,5 +508,17 @@ export class DrivingLicenseService {
       teacherNationalId: assessment.nationalIdTeacher,
       teacherName,
     }
+  }
+
+  async postHealthDeclaration(
+    nationalId: User['nationalId'],
+    healthDeclaration: HealthDeclaration,
+    token?: string,
+  ): Promise<void> {
+    await this.drivingLicenseApi.postTemporaryLicenseWithHealthDeclaratio({
+      nationalId: nationalId,
+      token: token,
+      healthDecleration: healthDeclaration,
+    })
   }
 }

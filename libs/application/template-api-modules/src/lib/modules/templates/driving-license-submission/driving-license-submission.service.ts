@@ -21,6 +21,11 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { FetchError } from '@island.is/clients/middlewares'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { User } from '@island.is/auth-nest-tools'
+import {
+  PostTemporaryLicenseWithHealthDeclarationMapper,
+  DrivingLicenseSchema,
+} from './utils/healthDeclarationMapper'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
@@ -83,7 +88,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
     let result
     try {
-      result = await this.createLicense(nationalId, answers)
+      result = await this.createLicense(nationalId, answers, auth)
     } catch (e) {
       this.log('error', 'Creating license failed', {
         e,
@@ -123,6 +128,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
   private async createLicense(
     nationalId: string,
     answers: FormValue,
+    auth: User,
   ): Promise<NewDrivingLicenseResult> {
     const applicationFor =
       getValueViaPath<'B-full' | 'B-temp'>(answers, 'applicationFor') ??
@@ -135,6 +141,21 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const teacher = answers.drivingInstructor as string
     const email = answers.email as string
     const phone = answers.phone as string
+
+    if (needsHealthCert) {
+      console.log('PostHealthDeclaration')
+      await this.drivingLicenseService
+        .postHealthDeclaration(
+          nationalId,
+          PostTemporaryLicenseWithHealthDeclarationMapper(
+            answers as DrivingLicenseSchema,
+          ),
+          auth.nationalId,
+        )
+        .catch((e) => {
+          throw new Error('Foobar')
+        })
+    }
 
     if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
