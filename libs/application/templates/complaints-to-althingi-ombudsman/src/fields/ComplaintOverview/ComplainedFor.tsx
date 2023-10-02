@@ -89,8 +89,8 @@ export const ComplainedFor: FC<React.PropsWithChildren<Props>> = ({
             </GridColumn>
             <GridColumn span={['9/12', '9/12', '9/12', '4/12']}>
               <ValueLine
-                value={complainedFor.ssn}
-                label={complainedForMessages.labels.ssn}
+                value={complainedFor.nationalId}
+                label={complainedForMessages.labels.nationalId}
               />
             </GridColumn>
           </GridRow>
@@ -111,15 +111,15 @@ export const ComplainedFor: FC<React.PropsWithChildren<Props>> = ({
           <GridRow>
             <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
               <ValueLine
-                value={complainedFor.postcode}
-                label={complainedForMessages.labels.postcode}
+                value={complainedFor.postalCode}
+                label={complainedForMessages.labels.postalCode}
               />
             </GridColumn>
-            {complainedFor.phone && (
+            {complainedFor.phoneNumber && (
               <GridColumn span={['9/12', '9/12', '9/12', '4/12']}>
                 <ValueLine
-                  value={complainedFor.phone}
-                  label={complainedForMessages.labels.phone}
+                  value={complainedFor.phoneNumber}
+                  label={complainedForMessages.labels.phoneNumber}
                 />
               </GridColumn>
             )}

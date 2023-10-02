@@ -75,20 +75,20 @@ export const complainedFor = {
       defaultMessage: 'Nafn',
       description: 'Complained for name',
     },
-    ssn: {
-      id: 'ctao.application:complainedFor.ssn',
+    nationalId: {
+      id: 'ctao.application:complainedFor.nationalId',
       defaultMessage: 'Kennitala',
-      description: 'Complained for SSN',
+      description: 'Complained for nationalId',
     },
     address: {
       id: 'ctao.application:complainedFor.address',
       defaultMessage: 'Lögheimili',
       description: 'Complained for home address',
     },
-    postcode: {
-      id: 'ctao.application:complainedFor.postcode',
+    postalCode: {
+      id: 'ctao.application:complainedFor.postalCode',
       defaultMessage: 'Póstnúmer',
-      description: 'Complained for postcode',
+      description: 'Complained for postalCode',
     },
     city: {
       id: 'ctao.application:complainedFor.city',
@@ -100,8 +100,8 @@ export const complainedFor = {
       defaultMessage: 'Netfang',
       description: 'Complained for email ',
     },
-    phone: {
-      id: 'ctao.application:complainedFor.phone',
+    phoneNumber: {
+      id: 'ctao.application:complainedFor.phoneNumber',
       defaultMessage: 'Símanúmer',
       description: 'Complained for phone number',
     },

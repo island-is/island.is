@@ -14,10 +14,10 @@ export const information = {
       defaultMessage: 'Fullt nafn',
       description: 'Complainers name',
     },
-    ssn: {
-      id: 'ctao.application:information.aboutTheComplainer.ssn',
+    nationalId: {
+      id: 'ctao.application:information.aboutTheComplainer.nationalId',
       defaultMessage: 'Kennitala',
-      description: 'Complainers SSN',
+      description: 'Complainers nationalId',
     },
     address: {
       id: 'ctao.application:information.aboutTheComplainer.address',

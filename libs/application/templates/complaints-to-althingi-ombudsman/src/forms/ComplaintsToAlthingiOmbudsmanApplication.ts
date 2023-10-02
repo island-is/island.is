@@ -138,8 +138,8 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               required: true,
             }),
             buildTextField({
-              id: 'complainedForInformation.ssn',
-              title: information.aboutTheComplainer.ssn,
+              id: 'complainedForInformation.nationalId',
+              title: information.aboutTheComplainer.nationalId,
               format: '######-####',
               backgroundColor: 'blue',
               required: true,
