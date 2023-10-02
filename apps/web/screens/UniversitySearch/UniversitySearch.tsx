@@ -328,9 +328,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
   const routeToComparison = () => {
     router.push(
-      `haskolanam/samanburdur?comparison=${JSON.stringify(
-        selectedComparison.map((i) => i.id),
-      )}`,
+      `${
+        linkResolver('universitysearchcomparison').href
+      }?comparison=${JSON.stringify(selectedComparison.map((i) => i.id))}`,
     )
   }
 
