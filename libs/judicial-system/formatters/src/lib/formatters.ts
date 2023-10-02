@@ -104,6 +104,7 @@ export const caseTypes: CaseTypes = {
   SEARCH_WARRANT: 'húsleit',
   BANKING_SECRECY_WAIVER: 'rof bankaleyndar',
   PHONE_TAPPING: 'símhlustun',
+  PAROLE_REVOCATION: 'rof á reynslulausn',
   TELECOMMUNICATIONS: 'upplýsingar um fjarskiptasamskipti',
   TRACKING_EQUIPMENT: 'eftirfararbúnaður',
   PSYCHIATRIC_EXAMINATION: 'geðrannsókn',

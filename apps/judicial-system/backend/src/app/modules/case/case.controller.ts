@@ -82,6 +82,7 @@ import { UpdateCaseDto } from './dto/updateCase.dto'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
+import { CaseInterceptor } from './interceptors/case.interceptor'
 import { transitionCase } from './state/case.state'
 import { CaseService, UpdateCase } from './case.service'
 
@@ -371,6 +372,7 @@ export class CaseController {
   )
   @Get('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
+  @UseInterceptors(CaseInterceptor)
   getById(@Param('caseId') caseId: string, @CurrentCase() theCase: Case): Case {
     this.logger.debug(`Getting case ${caseId} by id`)
 
