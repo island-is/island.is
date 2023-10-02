@@ -1155,4 +1155,20 @@ export const m = defineMessages({
     id: 'service.portal:empty-documents-list',
     defaultMessage: 'Engin skjöl fundust',
   },
+  addFavorite: {
+    id: 'service.portal:add-favorite',
+    defaultMessage: 'Stjörnumerkja',
+  },
+  removeFavorite: {
+    id: 'service.portal:remove-favorite',
+    defaultMessage: 'Ekki stjörnumerkja',
+  },
+  addToStorage: {
+    id: 'service.portal:add-to-storage',
+    defaultMessage: 'Setja í geymslu',
+  },
+  removeFromStorage: {
+    id: 'service.portal:remove-from-storage',
+    defaultMessage: 'Flytja í pósthólf',
+  },
 })
