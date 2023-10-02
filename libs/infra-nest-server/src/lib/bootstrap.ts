@@ -113,9 +113,9 @@ export const bootstrap = async (
 ): Promise<InfraNestServer> => {
   const app = await createApp(options)
 
-  if (options.openApi) {
-    const document = setupOpenApi(app, options.openApi, options.swaggerPath)
-  }
+  // if (options.openApi) {
+  //   setupOpenApi(app, options.openApi, options.swaggerPath)
+  // }
 
   if (options.interceptors) {
     options.interceptors.forEach((interceptor) => {
@@ -130,7 +130,7 @@ export const bootstrap = async (
   const server = await startServer(app, serverPort)
   const metricsServer =
     options.collectMetrics !== false
-      ? await startMetricServer(metricServerPort)
+      ? startMetricServer(metricServerPort)
       : undefined
 
   return {

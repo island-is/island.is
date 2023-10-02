@@ -12,7 +12,8 @@ services:
       - POSTGRES_PASSWORD=dev_db
     ports:
       - 5434:5432
-
+    volumes:
+      - ./initdb.d:/docker-entrypoint-initdb.d/:Z
   redis_cluster:
     container_name: redis_cluster
     image: docker.io/grokzen/redis-cluster:6.0.16

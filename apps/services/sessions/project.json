@@ -57,6 +57,7 @@
         "buildTargetOptions": {
           "watch": true,
           "minify": false,
+          "sourceMap": true,
           "runBuildTargetDependencies": true
         }
       }
