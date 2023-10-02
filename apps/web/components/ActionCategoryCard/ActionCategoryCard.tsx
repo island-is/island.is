@@ -126,6 +126,7 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
 
     const renderCTA = () => {
       const cta = sidePanelConfig?.cta
+
       return (
         cta && (
           <Box
