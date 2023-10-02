@@ -450,7 +450,6 @@ describe('InternalNotificationController - Send defender assigned notifications'
       defenderEmail: 'recipient@gmail.com',
       defenderName: 'John Doe',
       courtDate: new Date(),
-      //sessionArrangements: SessionArrangements.PROSECUTOR_PRESENT,
     } as Case
 
     beforeEach(async () => {
