@@ -5,6 +5,7 @@ import { ComplaintsToAlthingiOmbudsmanTemplateService } from './complaints-to-al
 import { COMPLAINTS_TO_ALTHINGI_OMBUDSMAN_CONFIG } from './config'
 import { FileStorageModule } from '@island.is/file-storage'
 import { ClientsAlthingiOmbudsmanModule } from '@island.is/clients/althingi-ombudsman'
+import { ApplicationAttachmentProvider } from './attachments/providers/applicationAttachmentProvider'
 
 const applicationRecipientName =
   process.env.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN_APPLICATION_RECIPIENT_NAME ?? ''
@@ -25,9 +26,7 @@ export class ComplaintsToAlthingiOmbudsmanTemplateModule {
       imports: [
         SharedTemplateAPIModule.register(config),
         FileStorageModule,
-        ClientsAlthingiOmbudsmanModule.register(
-          config.complaintToAlthingiOmbudsman,
-        ),
+        ClientsAlthingiOmbudsmanModule,
       ],
       providers: [
         {
@@ -40,6 +39,7 @@ export class ComplaintsToAlthingiOmbudsmanTemplateModule {
           },
         },
         ComplaintsToAlthingiOmbudsmanTemplateService,
+        ApplicationAttachmentProvider,
       ],
       exports: [ComplaintsToAlthingiOmbudsmanTemplateService],
     }
