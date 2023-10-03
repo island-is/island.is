@@ -326,7 +326,7 @@ api:
     XROAD_HEALTH_INSURANCE_ID: 'IS/GOV/4804080550/SJUKRA-Protected'
     XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS/GOV/4804080550/SJUKRA-Protected/minarsidur'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://huld.sjukra.is/islandrg?wsdl'
-    XROAD_HOUSING_BENEFIT_CALCULATOR_PATH: 'IS/GOV/5812191480/HMS-Protected/calc-v1'
+    XROAD_HOUSING_BENEFIT_CALCULATOR_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/calc-v1'
     XROAD_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PATH: 'IS/GOV/5402697509/FJS-Protected/recruitment-v1'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS/EDU/5708150320/MMS-Protected/grade-api-v1'
     XROAD_MMS_LICENSE_SERVICE_ID: 'IS/EDU/5708150320/MMS-Protected/license-api-v1'
@@ -2086,12 +2086,6 @@ services-sessions-geoip-worker:
     - accessModes: 'ReadWriteMany'
       mountPath: '/geoip-lite/data'
       name: 'sessions-geoip-db'
-      size: '1Gi'
-      storageClass: 'efs-csi'
-      useExisting: false
-    - accessModes: 'ReadWriteMany'
-      mountPath: '/webapp/node_modules/geoip-lite/tmp'
-      name: 'sessions-geoip-db-tmp'
       size: '1Gi'
       storageClass: 'efs-csi'
       useExisting: false
