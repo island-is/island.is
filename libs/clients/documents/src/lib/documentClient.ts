@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { HttpService } from '@nestjs/axios'
 import { AxiosRequestConfig, Method } from 'axios'
-import { isDefined } from '@island.is/shared/utils'
 import {
   CategoriesResponse,
   DocumentDTO,
@@ -18,7 +17,6 @@ import { GetDocumentListInput } from './models/DocumentInput'
 import { PaperMailResponse } from './models/PaperMailRes'
 import { RequestPaperDTO } from './models/RequestPaperDTO'
 import { MessageActionDTO } from './models/MessageActionDTO'
-import { MessageActionResponse } from './models/MessageActionRes'
 
 export const DOCUMENT_CLIENT_CONFIG = 'DOCUMENT_CLIENT_CONFIG'
 
@@ -80,7 +78,7 @@ export class DocumentClient {
       const errMsg = 'Failed to get from Postholf'
       const error = e.toJSON()
       const description = error.message
-      const message = [errMsg, error, description].filter(Boolean).join(' - ')
+      const message = [errMsg, description].filter(Boolean).join(' - ')
       throw new Error(message)
     }
   }
@@ -109,7 +107,7 @@ export class DocumentClient {
       const errMsg = 'Failed to POST to Postholf'
       const error = e.toJSON()
       const description = error.message
-      const message = [errMsg, error, description].filter(Boolean).join(' - ')
+      const message = [errMsg, description].filter(Boolean).join(' - ')
       throw new Error(message)
     }
   }
