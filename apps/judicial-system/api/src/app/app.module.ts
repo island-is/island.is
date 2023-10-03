@@ -20,6 +20,7 @@ import {
   InstitutionModule,
   FeatureModule,
   PoliceModule,
+  DefenderModule,
   DefendantModule,
   IndictmentCountModule,
   fileModuleConfig,
@@ -28,6 +29,7 @@ import {
 } from './modules'
 import { ConfigModule } from '@nestjs/config'
 import { CaseListModule } from './modules/caseList/caseList.module'
+import { defenderModuleConfig } from './modules/defender/defender.config'
 
 const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -57,6 +59,7 @@ const autoSchemaFile = environment.production
     CaseModule,
     CaseListModule,
     DefendantModule,
+    DefenderModule,
     IndictmentCountModule,
     FileModule,
     InstitutionModule,
@@ -71,6 +74,7 @@ const autoSchemaFile = environment.production
         auditTrailModuleConfig,
         featureModuleConfig,
         authModuleConfig,
+        defenderModuleConfig,
       ],
     }),
   ],
