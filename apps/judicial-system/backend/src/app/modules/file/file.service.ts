@@ -24,8 +24,6 @@ import {
   restrictionCases,
   availableCaseFileCategoriesForRestrictionAndInvestigationCases,
   availableCaseFileCategoriesForIndictmentCases,
-  completedCaseStates,
-  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
@@ -209,50 +207,22 @@ export class FileService {
       filesToZip.push({ data: content, name: file.name })
     }
 
-    if (completedCaseStates.includes(theCase.state)) {
-      filesToZip.push(
-        {
-          data: await this.pdfService.getRulingPdf(theCase),
-          name: 'urskurður.pdf',
-        },
-        {
-          data: await this.pdfService.getCourtRecordPdf(theCase, user),
-          name: 'þingbok.pdf',
-        },
-      )
-
-      if (this.shouldShareRequestPDFWithDefender(theCase)) {
-        filesToZip.push({
-          data: await this.pdfService.getRequestPdf(theCase),
-          name: 'krafa.pdf',
-        })
-      }
-    }
+    filesToZip.push(
+      {
+        data: await this.pdfService.getRequestPdf(theCase),
+        name: 'krafa.pdf',
+      },
+      {
+        data: await this.pdfService.getCourtRecordPdf(theCase, user),
+        name: 'þingbok.pdf',
+      },
+      {
+        data: await this.pdfService.getRulingPdf(theCase),
+        name: 'urskurður.pdf',
+      },
+    )
 
     return this.zipFiles(filesToZip)
-  }
-
-  shouldShareRequestPDFWithDefender(theCase: Case): boolean {
-    // Defender can always see the request if it's in a completed state
-    if (completedCaseStates.includes(theCase.state)) {
-      return true
-    }
-
-    if (
-      Boolean(theCase.requestSharedWithDefender) &&
-      Boolean(theCase.courtDate)
-    ) {
-      return true
-    }
-
-    if (
-      theCase.requestSharedWithDefender ===
-      RequestSharedWithDefender.READY_FOR_COURT
-    ) {
-      return true
-    }
-
-    return false
   }
 
   zipFiles(files: Array<{ data: Buffer; name: string }>): Promise<Buffer> {
@@ -269,9 +239,7 @@ export class FileService {
         resolve(Buffer.concat(buffs))
       })
 
-      const archive = archiver('zip', {
-        zlib: { level: 9 },
-      })
+      const archive = archiver('zip')
 
       archive.on('error', (err) => {
         reject(err)

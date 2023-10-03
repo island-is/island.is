@@ -355,6 +355,7 @@ export class LimitedAccessCaseController {
     new CaseTypeGuard(restrictionCases),
     LimitedAccessAccordingToCaseStateGuard,
     CaseDefenderGuard,
+    CaseCompletedGuard,
   )
   @RolesRules(defenderRule)
   @Get('case/:caseId/limitedAccess/all')
