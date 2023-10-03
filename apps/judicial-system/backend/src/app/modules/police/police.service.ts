@@ -378,6 +378,7 @@ export class PoliceService {
     requestPdf: string,
     courtRecordPdf: string,
     rulingPdf: string,
+    appealRuling: string[],
     custodyNoticePdf?: string,
   ): Promise<boolean> {
     return this.fetchPoliceCaseApi(
@@ -403,6 +404,10 @@ export class PoliceService {
             { type: 'RVKR', courtDocument: Base64.btoa(requestPdf) },
             { type: 'RVTB', courtDocument: Base64.btoa(courtRecordPdf) },
             { type: 'RVUR', courtDocument: Base64.btoa(rulingPdf) },
+            ...appealRuling.map((ruling) => ({
+              type: 'RVUL',
+              courtDocument: Base64.btoa(ruling),
+            })),
             ...(custodyNoticePdf
               ? [
                   {

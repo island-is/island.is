@@ -35,6 +35,7 @@ describe('PoliceController - Update Police Case', () => {
   const requestPdf = 'test request pdf'
   const courtRecordPdf = 'test court record pdf'
   const rulingPdf = 'test ruling pdf'
+  const appealRulingPdf = 'test court of appeals ruling pdf'
   const custodyNoticePdf = 'test custody notice pdf'
 
   let mockConfig: ConfigType<typeof policeModuleConfig>
@@ -74,6 +75,7 @@ describe('PoliceController - Update Police Case', () => {
           requestPdf,
           courtRecordPdf,
           rulingPdf,
+          [appealRulingPdf],
           custodyNoticePdf,
         )
         .then((result) => (then.result = result))
@@ -114,6 +116,7 @@ describe('PoliceController - Update Police Case', () => {
               { type: 'RVKR', courtDocument: Base64.btoa(requestPdf) },
               { type: 'RVTB', courtDocument: Base64.btoa(courtRecordPdf) },
               { type: 'RVUR', courtDocument: Base64.btoa(rulingPdf) },
+              { type: 'RVUL', courtDocument: Base64.btoa(appealRulingPdf) },
               { type: 'RVVI', courtDocument: Base64.btoa(custodyNoticePdf) },
             ],
           }),
