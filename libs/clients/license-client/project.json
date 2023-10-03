@@ -1,17 +1,18 @@
 {
-  "root": "libs/clients/license-client",
+  "name": "clients-license-client",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/license-client/src",
+  "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/clients/license-client/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/license-client"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/license-client"],
       "options": {
         "jestConfig": "libs/clients/license-client/jest.config.js",
         "passWithNoTests": true
