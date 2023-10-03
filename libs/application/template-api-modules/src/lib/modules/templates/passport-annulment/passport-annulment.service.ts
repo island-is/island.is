@@ -17,11 +17,8 @@ export class PassportAnnulmentService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<{
     success: boolean
   }> {
-    const {
-      status,
-      comment,
-      productionRequestID,
-    } = application.answers as PassportAnnulmentAnswers
+    const { status, comment, productionRequestID } =
+      application.answers as PassportAnnulmentAnswers
     const result = await this.passportApi.annulPassport(auth, {
       status,
       comment,

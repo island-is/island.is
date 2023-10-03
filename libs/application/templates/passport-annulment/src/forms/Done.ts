@@ -18,9 +18,11 @@ export const Done: Form = buildForm({
       description: (application: Application) => ({
         ...m.applicationCompleteDescriptionText,
         values: {
-          name: (application.answers as {
-            passportName?: string
-          })?.passportName,
+          name: (
+            application.answers as {
+              passportName?: string
+            }
+          )?.passportName,
         },
       }),
       children: [

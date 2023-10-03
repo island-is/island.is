@@ -26,17 +26,21 @@ export const overview = buildMultiField({
       label: m.name,
       width: 'half',
       value: (application: Application) =>
-        (application.answers as {
-          passportName?: string
-        })?.passportName,
+        (
+          application.answers as {
+            passportName?: string
+          }
+        )?.passportName,
     }),
     buildKeyValueField({
       label: m.passportNumber,
       width: 'half',
       value: (application: Application) =>
-        (application.answers as {
-          passportNumber?: string
-        })?.passportNumber,
+        (
+          application.answers as {
+            passportNumber?: string
+          }
+        )?.passportNumber,
     }),
 
     buildDescriptionField({
@@ -61,9 +65,11 @@ export const overview = buildMultiField({
       label: m.commentTitle,
       width: 'full',
       value: (application: Application) =>
-        (application.answers as {
-          comment?: string
-        })?.comment,
+        (
+          application.answers as {
+            comment?: string
+          }
+        )?.comment,
     }),
     buildDescriptionField({
       id: 'overview.space3',
