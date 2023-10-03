@@ -6,6 +6,7 @@ on:
       - 'main'
       - 'release/**'
       - 'pre-release/**'
+      - 'feat/dd-env-in-ci'
     paths-ignore:
       - '**/*.md'
     tags:
@@ -31,6 +32,7 @@ env:
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   CONFIGCAT_MAIN_CONFIG_ID: 08d8c761-021c-46f0-8671-6244663a372f
   CONFIGCAT_MOBILE_APP_CONFIG_ID: 08daf234-7573-4b3b-85f6-189fc7502542
+  DD_ENV: ${{ github.branch === 'main' && 'dev' || (github.branch =~ ^(release|pre-release) && 'staging' || 'dev') }}
 
 jobs:
   pre-checks:
