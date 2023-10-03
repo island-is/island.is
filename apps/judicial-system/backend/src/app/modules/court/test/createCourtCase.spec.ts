@@ -12,10 +12,11 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
+import { createTestingCourtModule } from './createTestingCourtModule'
+
 import { nowFactory } from '../../../factories'
 import { randomBoolean, randomDate, randomEnum } from '../../../test'
 import { courtSubtypes, Subtype } from '../court.service'
-import { createTestingCourtModule } from './createTestingCourtModule'
 
 jest.mock('../../../factories')
 

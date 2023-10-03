@@ -3,10 +3,11 @@ import { uuid } from 'uuidv4'
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import { User } from '@island.is/judicial-system/types'
 
+import { createTestingDefendantModule } from '../createTestingDefendantModule'
+
 import { Case } from '../../../case'
 import { UpdateDefendantDto } from '../../dto/updateDefendant.dto'
 import { Defendant } from '../../models/defendant.model'
-import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
 interface Then {
   result: Defendant

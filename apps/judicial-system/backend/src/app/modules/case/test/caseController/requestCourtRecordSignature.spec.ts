@@ -6,8 +6,9 @@ import { SigningServiceResponse } from '@island.is/dokobit-signing'
 
 import { User, UserRole } from '@island.is/judicial-system/types'
 
-import { Case } from '../../models/case.model'
 import { createTestingCaseModule } from '../createTestingCaseModule'
+
+import { Case } from '../../models/case.model'
 
 interface Then {
   result: SigningServiceResponse

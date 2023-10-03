@@ -8,11 +8,12 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
+import { createTestingNotificationModule } from '../createTestingNotificationModule'
+
 import { Case } from '../../../case'
 import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 jest.mock('../../../factories')
 

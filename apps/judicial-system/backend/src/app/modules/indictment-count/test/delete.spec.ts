@@ -1,8 +1,9 @@
 import { uuid } from 'uuidv4'
 
+import { createTestingIndictmentCountModule } from './createTestingIndictmentCountModule'
+
 import { DeleteIndictmentCountResponse } from '../models/delete.response'
 import { IndictmentCount } from '../models/indictmentCount.model'
-import { createTestingIndictmentCountModule } from './createTestingIndictmentCountModule'
 
 interface Then {
   result: DeleteIndictmentCountResponse

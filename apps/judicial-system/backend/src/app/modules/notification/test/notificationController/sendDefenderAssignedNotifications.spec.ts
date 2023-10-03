@@ -3,9 +3,10 @@ import { uuid } from 'uuidv4'
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import { NotificationType, User } from '@island.is/judicial-system/types'
 
+import { createTestingNotificationModule } from '../createTestingNotificationModule'
+
 import { Case } from '../../../case'
 import { SendNotificationResponse } from '../../models/sendNotification.response'
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 jest.mock('../../../factories')
 

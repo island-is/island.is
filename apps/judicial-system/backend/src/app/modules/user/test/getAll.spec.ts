@@ -2,9 +2,10 @@ import { uuid } from 'uuidv4'
 
 import { UserRole } from '@island.is/judicial-system/types'
 
+import { createTestingUserModule } from './createTestingUserModule'
+
 import { Institution } from '../../institution'
 import { User } from '../user.model'
-import { createTestingUserModule } from './createTestingUserModule'
 
 interface Then {
   result: User[]

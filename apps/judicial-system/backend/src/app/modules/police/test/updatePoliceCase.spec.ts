@@ -11,9 +11,10 @@ import {
 
 import { CaseState, CaseType, User } from '@island.is/judicial-system/types'
 
+import { createTestingPoliceModule } from './createTestingPoliceModule'
+
 import { randomDate } from '../../../test'
 import { policeModuleConfig } from '../police.config'
-import { createTestingPoliceModule } from './createTestingPoliceModule'
 
 jest.mock('node-fetch')
 

@@ -10,11 +10,12 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import { DefendantService } from '../../../defendant'
 import { include, order } from '../../case.service'
 import { CreateCaseDto } from '../../dto/createCase.dto'
 import { Case } from '../../models/case.model'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 
 interface Then {
   result: Case

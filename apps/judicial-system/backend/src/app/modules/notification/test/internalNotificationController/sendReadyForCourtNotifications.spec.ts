@@ -19,6 +19,8 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
+import { createTestingNotificationModule } from '../createTestingNotificationModule'
+
 import { randomDate } from '../../../../test'
 import { Case } from '../../../case'
 import { Institution } from '../../../institution/institution.model'
@@ -26,7 +28,6 @@ import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 interface Then {
   result: DeliverResponse

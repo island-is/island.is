@@ -3,13 +3,14 @@ import { uuid } from 'uuidv4'
 
 import { User } from '@island.is/judicial-system/types'
 
+import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import { nowFactory } from '../../../../factories'
 import { getCourtRecordPdfAsBuffer } from '../../../../formatters'
 import { randomDate } from '../../../../test'
 import { CourtService } from '../../../court'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 
 jest.mock('../../../../formatters/courtRecordPdf')
 jest.mock('../../../../factories/date.factory')

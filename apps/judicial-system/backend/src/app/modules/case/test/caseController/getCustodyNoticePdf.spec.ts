@@ -5,9 +5,10 @@ import { BadRequestException } from '@nestjs/common/exceptions'
 
 import { CaseState, CaseType } from '@island.is/judicial-system/types'
 
+import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import { getCustodyNoticePdfAsBuffer } from '../../../../formatters'
 import { Case } from '../../models/case.model'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 
 jest.mock('../../../../formatters/custodyNoticePdf')
 

@@ -2,10 +2,11 @@ import { uuid } from 'uuidv4'
 
 import { CaseFileState } from '@island.is/judicial-system/types'
 
+import { createTestingFileModule } from '../createTestingFileModule'
+
 import { AwsS3Service } from '../../../aws-s3'
 import { DeleteFileResponse } from '../../models/deleteFile.response'
 import { CaseFile } from '../../models/file.model'
-import { createTestingFileModule } from '../createTestingFileModule'
 
 interface Then {
   result: DeleteFileResponse

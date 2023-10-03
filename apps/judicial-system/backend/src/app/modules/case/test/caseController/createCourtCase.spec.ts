@@ -15,11 +15,12 @@ import {
   User as TUser,
 } from '@island.is/judicial-system/types'
 
+import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import { randomEnum } from '../../../../test'
 import { CourtService } from '../../../court'
 import { include, order } from '../../case.service'
 import { Case } from '../../models/case.model'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 
 interface Then {
   result: Case

@@ -7,6 +7,8 @@ import { ConfigType } from '@island.is/nest/config'
 
 import { CaseState, UserRole } from '@island.is/judicial-system/types'
 
+import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import { uuidFactory } from '../../../../factories'
 import { Defendant, DefendantService } from '../../../defendant'
 import { CaseFile, FileService } from '../../../file'
@@ -19,7 +21,6 @@ import { archiveFilter } from '../../filters/case.archiveFilter'
 import { ArchiveResponse } from '../../models/archive.response'
 import { Case } from '../../models/case.model'
 import { CaseArchive } from '../../models/caseArchive.model'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 
 jest.mock('crypto-js')
 jest.mock('../../../../factories')

@@ -15,13 +15,14 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
+import { createTestingNotificationModule } from '../createTestingNotificationModule'
+
 import { Case } from '../../../case'
 import { Defendant, DefendantService } from '../../../defendant'
 import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 jest.mock('../../../factories')
 

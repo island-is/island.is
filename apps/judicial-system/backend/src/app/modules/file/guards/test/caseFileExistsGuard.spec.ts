@@ -9,8 +9,9 @@ import {
 
 import { CaseFileState } from '@island.is/judicial-system/types'
 
-import { CaseFile } from '../../models/file.model'
 import { createTestingFileModule } from '../../test/createTestingFileModule'
+
+import { CaseFile } from '../../models/file.model'
 import { CaseFileExistsGuard } from '../caseFileExists.guard'
 
 interface Then {

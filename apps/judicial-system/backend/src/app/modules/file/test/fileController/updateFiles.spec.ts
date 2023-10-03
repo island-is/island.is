@@ -3,9 +3,10 @@ import { uuid } from 'uuidv4'
 
 import { InternalServerErrorException } from '@nestjs/common'
 
+import { createTestingFileModule } from '../createTestingFileModule'
+
 import { UpdateFileDto } from '../../dto/updateFile.dto'
 import { CaseFile } from '../../models/file.model'
-import { createTestingFileModule } from '../createTestingFileModule'
 
 interface Then {
   result: CaseFile[]

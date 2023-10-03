@@ -6,11 +6,12 @@ import { BadGatewayException, NotFoundException } from '@nestjs/common'
 
 import { CaseType, User } from '@island.is/judicial-system/types'
 
+import { createTestingPoliceModule } from './createTestingPoliceModule'
+
 import { AwsS3Service } from '../../aws-s3'
 import { Case } from '../../case'
 import { UploadPoliceCaseFileDto } from '../dto/uploadPoliceCaseFile.dto'
 import { UploadPoliceCaseFileResponse } from '../models/uploadPoliceCaseFile.response'
-import { createTestingPoliceModule } from './createTestingPoliceModule'
 
 jest.mock('isomorphic-fetch')
 
