@@ -31,7 +31,7 @@ const WorkMachinesDetail = lazy(() =>
 
 export const assetsModule: PortalModule = {
   name: 'Fasteignir',
-  routes: ({ userInfo, client }) => {
+  routes: ({ userInfo, ...rest }) => {
     const routes: PortalRoute[] = [
       {
         name: m.assets,
@@ -81,7 +81,7 @@ export const assetsModule: PortalModule = {
         name: m.myVehicles,
         path: AssetsPaths.AssetsMyVehicles,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
-        loader: translationLoader({ userInfo, client }),
+        loader: translationLoader({ userInfo, ...rest }),
         element: <Overview />,
       },
       {

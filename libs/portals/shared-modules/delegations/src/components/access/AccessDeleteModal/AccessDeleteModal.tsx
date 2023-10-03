@@ -1,12 +1,8 @@
 import { useAuth } from '@island.is/auth/react'
-import {
-  AlertMessage,
-  Box,
-  toast,
-  useBreakpoint,
-} from '@island.is/island-ui/core'
+import { Box, toast, useBreakpoint } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/portals/core'
+import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useState } from 'react'
 import { DelegationsFormFooter } from '../../delegations/DelegationsFormFooter'
 import { Modal, ModalProps } from '@island.is/react/components'
@@ -110,9 +106,7 @@ export const AccessDeleteModal = ({
         rowGap={3}
       >
         {error && (
-          <Box paddingBottom={3}>
-            <AlertMessage message={formatMessage(m.deleteError)} type="error" />
-          </Box>
+          <Problem message={formatMessage(m.deleteError)} size="small" />
         )}
         <Box
           width="full"

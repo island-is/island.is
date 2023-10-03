@@ -15,6 +15,7 @@ const configFactory = (
 ) => ({
   fetchApi: createEnhancedFetch({
     name: 'clients-vehicle-service-fjs-v1',
+    organizationSlug: 'fjarsysla-rikisins',
     autoAuth: idsClientConfig.isConfigured
       ? {
           mode: 'tokenExchange',

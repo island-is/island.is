@@ -157,6 +157,13 @@ export class NotificationService {
     )
   }
 
+  private getCourtAssistantMobileNumbers(courtId?: string) {
+    return (
+      (courtId && this.config.sms.courtsAssistantMobileNumbers[courtId]) ??
+      undefined
+    )
+  }
+
   private getCourtEmail(courtId?: string) {
     return (courtId && this.config.email.courtsEmails[courtId]) ?? undefined
   }
@@ -752,7 +759,10 @@ export class NotificationService {
     const shouldSendNotificationToPrison =
       await this.shouldSendNotificationToPrison(theCase)
 
-    if (shouldSendNotificationToPrison) {
+    if (
+      shouldSendNotificationToPrison &&
+      theCase.type !== CaseType.PAROLE_REVOCATION
+    ) {
       promises.push(this.sendCourtDateEmailNotificationToPrison(theCase))
     }
 
@@ -1288,15 +1298,38 @@ export class NotificationService {
     if (!defenderEmail) {
       return false
     }
+    if (isIndictmentCase(theCase.type)) {
+      const hasSentNotificationBefore = await this.hasReceivedNotification(
+        theCase.id,
+        NotificationType.DEFENDER_ASSIGNED,
+        defenderEmail,
+      )
 
-    const hasSentNotificationBefore = await this.hasReceivedNotification(
-      theCase.id,
-      NotificationType.DEFENDER_ASSIGNED,
-      defenderEmail,
-    )
+      if (hasSentNotificationBefore) {
+        return false
+      }
+    } else if (isInvestigationCase(theCase.type)) {
+      const isDefenderIncludedInSessionArrangements =
+        theCase.sessionArrangements &&
+        [
+          SessionArrangements.ALL_PRESENT,
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+        ].includes(theCase.sessionArrangements)
 
-    if (hasSentNotificationBefore) {
-      return false
+      if (!isDefenderIncludedInSessionArrangements) return false
+    } else {
+      const hasDefenderBeenNotified = await this.hasReceivedNotification(
+        theCase.id,
+        [
+          NotificationType.READY_FOR_COURT,
+          NotificationType.COURT_DATE,
+          NotificationType.DEFENDER_ASSIGNED,
+        ],
+        theCase.defenderEmail,
+      )
+      if (hasDefenderBeenNotified) {
+        return false
+      }
     }
 
     return true
@@ -1321,29 +1354,47 @@ export class NotificationService {
   private async sendDefenderAssignedNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
-    // Only applies to indictment cases
     const promises: Promise<Recipient>[] = []
 
-    const uniqDefendants = _uniqBy(
-      theCase.defendants ?? [],
-      (d: Defendant) => d.defenderEmail,
-    )
-    for (const defendant of uniqDefendants) {
-      const { defenderEmail, defenderNationalId, defenderName } = defendant
+    if (isIndictmentCase(theCase.type)) {
+      const uniqDefendants = _uniqBy(
+        theCase.defendants ?? [],
+        (d: Defendant) => d.defenderEmail,
+      )
+      for (const defendant of uniqDefendants) {
+        const { defenderEmail, defenderNationalId, defenderName } = defendant
 
+        const shouldSend = await this.shouldSendDefenderAssignedNotification(
+          theCase,
+          defenderEmail,
+        )
+
+        if (shouldSend === true) {
+          promises.push(
+            this.sendDefenderAssignedNotification(
+              theCase,
+              defenderNationalId,
+              defenderName,
+              defenderEmail,
+            ),
+          )
+        }
+      }
+    } else if (theCase.courtDate) {
       const shouldSend = await this.shouldSendDefenderAssignedNotification(
         theCase,
-        defenderEmail,
+        theCase.defenderEmail,
       )
 
-      if (shouldSend === true) {
-        promises.push(
-          this.sendDefenderAssignedNotification(
-            theCase,
-            defenderNationalId,
-            defenderName,
-            defenderEmail,
-          ),
+      if (shouldSend) {
+        const recipient = await this.sendCourtDateEmailNotificationToDefender(
+          theCase,
+        )
+
+        return this.recordNotification(
+          theCase.id,
+          NotificationType.DEFENDER_ASSIGNED,
+          [recipient],
         )
       }
     }
@@ -1477,6 +1528,20 @@ export class NotificationService {
         ),
       )
     }
+
+    const smsText = this.formatMessage(
+      notifications.caseAppealedToCourtOfAppeals.text,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
+      },
+    )
+
+    promises.push(
+      this.sendSms(
+        smsText,
+        this.getCourtAssistantMobileNumbers(theCase.courtId),
+      ),
+    )
 
     const recipients = await Promise.all(promises)
 
@@ -1922,7 +1987,15 @@ export class NotificationService {
               theCase,
               true,
             )
-            messages = []
+            // We still want to send the defender a link to the case even if
+            // the judge chooses not to send a calendar invitation
+            messages = [
+              this.getNotificationMessage(
+                MessageType.SEND_DEFENDER_ASSIGNED_NOTIFICATION,
+                user,
+                theCase,
+              ),
+            ]
           } else {
             messages = [
               this.getNotificationMessage(

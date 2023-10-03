@@ -18,7 +18,7 @@ const FinanceSchedule = lazy(() => import('./screens/FinanceSchedule'))
 export const financeModule: PortalModule = {
   name: 'Fjármál',
   layout: 'full',
-  routes: ({ userInfo, client }) => [
+  routes: ({ userInfo, ...rest }) => [
     {
       name: m.finance,
       path: FinancePaths.FinanceRoot,
@@ -47,7 +47,7 @@ export const financeModule: PortalModule = {
       element: <FinanceTransactions />,
       enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       dynamic: true,
-      loader: financeRoutesLoader({ userInfo, client }),
+      loader: financeRoutesLoader({ userInfo, ...rest }),
     },
     {
       name: m.financeEmployeeClaims,
@@ -55,7 +55,7 @@ export const financeModule: PortalModule = {
       element: <FinanceEmployeeClaims />,
       enabled: userInfo.scopes.includes(ApiScope.financeSalary),
       dynamic: true,
-      loader: financeRoutesLoader({ userInfo, client }),
+      loader: financeRoutesLoader({ userInfo, ...rest }),
     },
     {
       name: m.financeLocalTax,
@@ -63,7 +63,7 @@ export const financeModule: PortalModule = {
       element: <FinanceLocalTax />,
       enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       dynamic: true,
-      loader: financeRoutesLoader({ userInfo, client }),
+      loader: financeRoutesLoader({ userInfo, ...rest }),
     },
     {
       name: m.financeSchedules,
@@ -71,7 +71,7 @@ export const financeModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.financeSchedule),
       element: <FinanceSchedule />,
       dynamic: true,
-      loader: financeRoutesLoader({ userInfo, client }),
+      loader: financeRoutesLoader({ userInfo, ...rest }),
     },
   ],
 }
