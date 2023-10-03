@@ -88,7 +88,7 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
               label: getLabel('comment', locale, label),
               value: field.comments ?? '',
             },
-          ].filter((Boolean as unknown) as ExcludesFalse),
+          ].filter(Boolean as unknown as ExcludesFalse),
         })),
       },
     ]

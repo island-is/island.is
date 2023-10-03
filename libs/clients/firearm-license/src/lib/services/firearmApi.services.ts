@@ -55,18 +55,17 @@ export class FirearmApi {
     this.api.withMiddleware(new AuthMiddleware(user as Auth))
 
   public async getLicenseInfo(user: User): Promise<Result<LicenseInfo | null>> {
-    const licenseInfo: Result<LicenseInfo | null> = await this.firearmApiWithAuth(
-      user,
-    )
-      .apiFirearmApplicationLicenseInfoGet()
-      .then((data) => {
-        const result: Result<LicenseInfo> = {
-          ok: true,
-          data,
-        }
-        return result
-      })
-      .catch((e) => this.handleError(e))
+    const licenseInfo: Result<LicenseInfo | null> =
+      await this.firearmApiWithAuth(user)
+        .apiFirearmApplicationLicenseInfoGet()
+        .then((data) => {
+          const result: Result<LicenseInfo> = {
+            ok: true,
+            data,
+          }
+          return result
+        })
+        .catch((e) => this.handleError(e))
 
     return licenseInfo
   }
@@ -74,18 +73,17 @@ export class FirearmApi {
   public async getPropertyInfo(
     user: User,
   ): Promise<Result<FirearmPropertyList | null>> {
-    const propertyInfo: Result<FirearmPropertyList | null> = await this.firearmApiWithAuth(
-      user,
-    )
-      .apiFirearmApplicationPropertyInfoGet()
-      .then((data) => {
-        const result: Result<FirearmPropertyList> = {
-          ok: true,
-          data,
-        }
-        return result
-      })
-      .catch((e) => this.handleError(e))
+    const propertyInfo: Result<FirearmPropertyList | null> =
+      await this.firearmApiWithAuth(user)
+        .apiFirearmApplicationPropertyInfoGet()
+        .then((data) => {
+          const result: Result<FirearmPropertyList> = {
+            ok: true,
+            data,
+          }
+          return result
+        })
+        .catch((e) => this.handleError(e))
 
     return propertyInfo
   }

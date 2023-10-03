@@ -211,10 +211,12 @@ describe('LicenseService', () => {
         {
           provide: LicenseUpdateClientService,
           useFactory: (logger, smart) => ({
-            getLicenseUpdateClientByType: async (): Promise<BaseLicenseUpdateClient | null> =>
-              new MockUpdateClient(logger, smart),
-            getLicenseUpdateClientByPassTemplateId: async (): Promise<BaseLicenseUpdateClient | null> =>
-              new MockUpdateClient(logger, smart),
+            getLicenseUpdateClientByType:
+              async (): Promise<BaseLicenseUpdateClient | null> =>
+                new MockUpdateClient(logger, smart),
+            getLicenseUpdateClientByPassTemplateId:
+              async (): Promise<BaseLicenseUpdateClient | null> =>
+                new MockUpdateClient(logger, smart),
           }),
           inject: [LOGGER_PROVIDER, SmartSolutionsApi],
         },

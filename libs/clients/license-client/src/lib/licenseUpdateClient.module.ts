@@ -71,24 +71,24 @@ import {
     },
     {
       provide: LICENSE_UPDATE_CLIENT_FACTORY,
-      useFactory: (
-        firearmClient: FirearmLicenseUpdateClient,
-        disabilityClient: DisabilityLicenseUpdateClient,
-        drivingClient: DrivingLicenseUpdateClient,
-      ) => async (
-        type: LicenseType,
-      ): Promise<BaseLicenseUpdateClient | null> => {
-        switch (type) {
-          case LicenseType.FirearmLicense:
-            return firearmClient
-          case LicenseType.DisabilityLicense:
-            return disabilityClient
-          case LicenseType.DriversLicense:
-            return drivingClient
-          default:
-            return null
-        }
-      },
+      useFactory:
+        (
+          firearmClient: FirearmLicenseUpdateClient,
+          disabilityClient: DisabilityLicenseUpdateClient,
+          drivingClient: DrivingLicenseUpdateClient,
+        ) =>
+        async (type: LicenseType): Promise<BaseLicenseUpdateClient | null> => {
+          switch (type) {
+            case LicenseType.FirearmLicense:
+              return firearmClient
+            case LicenseType.DisabilityLicense:
+              return disabilityClient
+            case LicenseType.DriversLicense:
+              return drivingClient
+            default:
+              return null
+          }
+        },
       inject: [
         FirearmLicenseUpdateClient,
         DisabilityLicenseUpdateClient,

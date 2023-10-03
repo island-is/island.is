@@ -60,9 +60,10 @@ export class LicenseService {
   private async getClientByPassTemplateId(
     passTemplateId: string,
   ): Promise<BaseLicenseUpdateClient> {
-    const service = await this.clientService.getLicenseUpdateClientByPassTemplateId(
-      passTemplateId,
-    )
+    const service =
+      await this.clientService.getLicenseUpdateClientByPassTemplateId(
+        passTemplateId,
+      )
 
     if (!service) {
       this.logger.warn(`Invalid pass template id`)

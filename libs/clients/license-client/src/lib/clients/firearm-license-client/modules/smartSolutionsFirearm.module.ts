@@ -5,8 +5,8 @@ import {
 import { FirearmDigitalLicenseClientConfig } from '../firearmLicenseClient.config'
 import { ConfigType } from '@nestjs/config'
 
-export const SmartSolutionsFirearmModule = SmartSolutionsApiClientModule.registerAsync(
-  {
+export const SmartSolutionsFirearmModule =
+  SmartSolutionsApiClientModule.registerAsync({
     useFactory: (
       config: ConfigType<typeof FirearmDigitalLicenseClientConfig>,
     ) => {
@@ -18,5 +18,4 @@ export const SmartSolutionsFirearmModule = SmartSolutionsApiClientModule.registe
       return smartConfig
     },
     inject: [FirearmDigitalLicenseClientConfig.KEY],
-  },
-)
+  })
