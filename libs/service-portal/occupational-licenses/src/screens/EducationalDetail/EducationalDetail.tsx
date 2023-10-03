@@ -31,11 +31,6 @@ export const EducationDetail = () => {
 
   const { formatDateFns, formatMessage } = useLocale()
 
-  console.log('birthday', birthday)
-  console.log('birthday2', birthday ? new Date(birthday) : '')
-  console.log('birthday2', birthday ? formatDate(birthday) : '')
-  console.log('birthday2', birthday ? formatDateFns(birthday) : '')
-
   const [shouldDownload, setShouldDownload] = useState(false)
 
   const { data, loading, error } = useGetEducationalLicenseByIdQuery({
