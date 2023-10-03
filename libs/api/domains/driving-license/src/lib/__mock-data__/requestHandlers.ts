@@ -82,11 +82,12 @@ const url = (path: string) => {
 }
 
 export const requestHandlers = [
-  rest.get(/api\/drivinglicense\/v4\/:nationalId/, (req, res, ctx) => {
-    const isExpired = req.params.nationalId === MOCK_NATIONAL_ID_EXPIRED
-    const isDisqualified = DISQUALIFIED_NATIONAL_IDS.includes(
-      req.params.nationalId,
-    )
+  rest.get(/api\/drivinglicense\/v4\/\d+$/, (req, res, ctx) => {
+    // Possibly questionable given weak matching, should not be a problem in practice
+    const nationalId = req.url.pathname.split('/').pop() ?? ''
+
+    const isExpired = nationalId === MOCK_NATIONAL_ID_EXPIRED
+    const isDisqualified = DISQUALIFIED_NATIONAL_IDS.includes(nationalId)
     return res(
       ctx.status(isExpired || isDisqualified ? 400 : 200),
       ctx.json(
