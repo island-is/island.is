@@ -249,7 +249,9 @@
             "in": "path",
             "allowEmptyValue": false,
             "description": "Application ID",
-            "schema": {}
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -327,7 +329,9 @@
             "in": "path",
             "allowEmptyValue": false,
             "description": "Application ID",
-            "schema": {}
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
