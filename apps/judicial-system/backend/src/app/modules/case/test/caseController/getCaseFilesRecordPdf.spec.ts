@@ -1,16 +1,17 @@
-import { uuid } from 'uuidv4'
 import { Response } from 'express'
+import { uuid } from 'uuidv4'
 
 import { BadRequestException } from '@nestjs/common'
 
 import { CaseFileCategory, CaseState } from '@island.is/judicial-system/types'
 
-import { randomDate } from '../../../../test'
+import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import { createCaseFilesRecord } from '../../../../formatters'
+import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
 import { CaseFile } from '../../../file'
 import { Case } from '../../models/case.model'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 
 jest.mock('../../../../formatters/caseFilesRecordPdf')
 

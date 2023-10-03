@@ -1,20 +1,21 @@
-import { uuid } from 'uuidv4'
 import fetch from 'node-fetch'
+import { uuid } from 'uuidv4'
 
 import type { Logger } from '@island.is/logging'
-import { NotificationType, User } from '@island.is/judicial-system/types'
+
 import {
-  CaseMessage,
   CaseFileMessage,
+  CaseMessage,
+  DefendantMessage,
   MessageService,
   MessageType,
   PoliceCaseMessage,
-  DefendantMessage,
 } from '@island.is/judicial-system/message'
+import { NotificationType, User } from '@island.is/judicial-system/types'
 
 import { appModuleConfig } from '../app.config'
-import { MessageHandlerService } from '../messageHandler.service'
 import { InternalDeliveryService } from '../internalDelivery.service'
+import { MessageHandlerService } from '../messageHandler.service'
 
 jest.mock('@island.is/logging')
 jest.mock('node-fetch')

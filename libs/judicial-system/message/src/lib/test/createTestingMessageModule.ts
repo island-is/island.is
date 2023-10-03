@@ -1,5 +1,5 @@
-import { SQSClient } from '@aws-sdk/client-sqs'
 import { uuid } from 'uuidv4'
+import { SQSClient } from '@aws-sdk/client-sqs'
 
 import { Test } from '@nestjs/testing'
 
