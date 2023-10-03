@@ -1,7 +1,7 @@
-import { uuid } from 'uuidv4'
-import { Base64 } from 'js-base64'
 import { Agent } from 'https'
 import fetch from 'isomorphic-fetch'
+import { Base64 } from 'js-base64'
+import { uuid } from 'uuidv4'
 import { z } from 'zod'
 
 import {
@@ -12,27 +12,28 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common'
 
-import type { ConfigType } from '@island.is/nest/config'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
 import {
   createXRoadAPIPath,
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
+
+import type { User } from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseType,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
 
-import { EventService } from '../event'
 import { AwsS3Service } from '../aws-s3'
+import { EventService } from '../event'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
+import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { policeModuleConfig } from './police.config'
-import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 
 function getChapter(category?: string): number | undefined {
   if (!category) {

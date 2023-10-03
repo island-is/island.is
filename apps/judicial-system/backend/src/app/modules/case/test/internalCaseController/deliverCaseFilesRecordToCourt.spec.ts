@@ -5,11 +5,12 @@ import { BadRequestException } from '@nestjs/common'
 import { CaseState, User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import { createCaseFilesRecord } from '../../../../formatters'
 import { AwsS3Service } from '../../../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../../../court'
-import { DeliverResponse } from '../../models/deliver.response'
 import { Case } from '../../models/case.model'
+import { DeliverResponse } from '../../models/deliver.response'
 
 jest.mock('../../../../formatters/caseFilesRecordPdf')
 

@@ -10,6 +10,7 @@ export const ApiConfiguration = {
     return new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'Regulations-AdminClientService',
+        organizationSlug: 'domsmalaraduneytid',
         logErrorResponseBody: true,
       }),
       basePath: config.baseApiUrl,

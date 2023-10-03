@@ -160,12 +160,15 @@ export class CommunicationsService {
           {
             headers: {
               lykill: this.config.hsnWebFormResponseSecret,
+              'Content-Type': 'application/json',
             },
           },
         )
         return response.status === 200
       } catch (error) {
-        this.logger.error('Failed to send form response to HSN', error)
+        this.logger.error('Failed to send form response to HSN', {
+          message: error.message,
+        })
         return false
       }
     }

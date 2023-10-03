@@ -1,21 +1,26 @@
 import { uuid } from 'uuidv4'
 
-import { ConfigType } from '@island.is/nest/config'
 import { EmailService } from '@island.is/email-service'
+import { ConfigType } from '@island.is/nest/config'
+
 import {
-  NotificationType,
+  DEFENDER_INDICTMENT_ROUTE,
+  DEFENDER_ROUTE,
+} from '@island.is/judicial-system/consts'
+import {
   CaseType,
   Defendant,
+  NotificationType,
   User,
 } from '@island.is/judicial-system/types'
-import { DEFENDER_INDICTMENT_ROUTE } from '@island.is/judicial-system/consts'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
+
 import { Case } from '../../../case'
 import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
-import { notificationModuleConfig } from '../../notification.config'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
+import { notificationModuleConfig } from '../../notification.config'
 
 jest.mock('../../../factories')
 
@@ -335,6 +340,125 @@ describe('InternalNotificationController - Send defender assigned notifications'
         html: `Héraðsdómur Reykjavíkur hefur skráð þig verjanda í máli ${theCase.courtCaseNumber}.<br /><br />Gögn málsins eru aðgengileg á <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
       })
       expect(then.result).toEqual(expect.objectContaining({ delivered: true }))
+    })
+  })
+
+  describe('when sending assigned defender notifications in a restriction case', () => {
+    const notificationDto: SendInternalNotificationDto = {
+      user: { id: userId } as User,
+      type: NotificationType.DEFENDER_ASSIGNED,
+    }
+    const caseId = uuid()
+
+    const theCase = {
+      id: caseId,
+      type: CaseType.ADMISSION_TO_FACILITY,
+      court,
+      courtCaseNumber: 'R-123/2022',
+      defenderEmail: 'recipient@gmail.com',
+      defenderName: 'John Doe',
+      defenderNationalId: '1234567890',
+      courtDate: new Date(),
+    } as Case
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, theCase, notificationDto)
+    })
+
+    it('should send email with link', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith({
+        from: {
+          name: mockConfig.email.fromName,
+          address: mockConfig.email.fromEmail,
+        },
+        to: [
+          {
+            name: theCase.defenderName,
+            address: theCase.defenderEmail,
+          },
+        ],
+        replyTo: {
+          name: mockConfig.email.replyToName,
+          address: mockConfig.email.replyToEmail,
+        },
+        attachments: undefined,
+        subject: `Yfirlit máls ${theCase.courtCaseNumber}`,
+        text: expect.anything(),
+        html: `Héraðsdómur Reykjavíkur hefur skráð þig sem verjanda/talsmann sakbornings í máli ${theCase.courtCaseNumber}.<br /><br />Þú getur nálgast yfirlit málsins á <a href="${mockConfig.clientUrl}${DEFENDER_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+      })
+    })
+  })
+
+  describe('when sending assigned defender without national id notifications in a restriction case', () => {
+    const notificationDto: SendInternalNotificationDto = {
+      user: { id: userId } as User,
+      type: NotificationType.DEFENDER_ASSIGNED,
+    }
+    const caseId = uuid()
+
+    const theCase = {
+      id: caseId,
+      type: CaseType.ADMISSION_TO_FACILITY,
+      court,
+      courtCaseNumber: 'R-123/2022',
+      defenderEmail: 'recipient@gmail.com',
+      defenderName: 'John Doe',
+      courtDate: new Date(),
+    } as Case
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, theCase, notificationDto)
+    })
+
+    it('should send an email without a link', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith({
+        from: {
+          name: mockConfig.email.fromName,
+          address: mockConfig.email.fromEmail,
+        },
+        to: [
+          {
+            name: theCase.defenderName,
+            address: theCase.defenderEmail,
+          },
+        ],
+        replyTo: {
+          name: mockConfig.email.replyToName,
+          address: mockConfig.email.replyToEmail,
+        },
+        attachments: undefined,
+        subject: `Yfirlit máls ${theCase.courtCaseNumber}`,
+        text: expect.anything(),
+        html: `Héraðsdómur Reykjavíkur hefur skráð þig sem verjanda/talsmann sakbornings í máli ${theCase.courtCaseNumber}.<br /><br />Þú getur nálgast yfirlit málsins hjá Héraðsdómi Reykjavíkur ef það hefur ekki þegar verið afhent.`,
+      })
+    })
+  })
+
+  describe('when sending notifications in an investigation case', () => {
+    const notificationDto: SendInternalNotificationDto = {
+      user: { id: userId } as User,
+      type: NotificationType.DEFENDER_ASSIGNED,
+    }
+    const caseId = uuid()
+
+    const theCase = {
+      id: caseId,
+      type: CaseType.PHONE_TAPPING,
+      court,
+      courtCaseNumber: 'R-123/2022',
+      defenderEmail: 'recipient@gmail.com',
+      defenderName: 'John Doe',
+      courtDate: new Date(),
+    } as Case
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, theCase, notificationDto)
+    })
+
+    it('should not send email', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(0)
     })
   })
 })

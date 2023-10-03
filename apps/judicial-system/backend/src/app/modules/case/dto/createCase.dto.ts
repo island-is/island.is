@@ -1,22 +1,22 @@
 import {
-  IsNotEmpty,
-  IsString,
-  IsOptional,
-  IsArray,
   ArrayMinSize,
-  IsObject,
+  IsArray,
   IsEnum,
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsString,
 } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import type {
+  CrimeSceneMap,
+  IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
 import {
   CaseType,
   RequestSharedWithDefender,
-} from '@island.is/judicial-system/types'
-import type {
-  IndictmentSubtypeMap,
-  CrimeSceneMap,
 } from '@island.is/judicial-system/types'
 
 export class CreateCaseDto {

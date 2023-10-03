@@ -9,6 +9,7 @@ const configFactory = (
 ) => ({
   fetchApi: createEnhancedFetch({
     name: 'clients-transport-authority-vehicle-codetables',
+    organizationSlug: 'samgongustofa',
   }),
   headers: {
     'X-Road-Client': xRoadConfig.xRoadClient,
