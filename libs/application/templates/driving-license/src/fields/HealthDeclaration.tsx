@@ -10,6 +10,7 @@ import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { NO, YES } from '../lib/constants'
 
 interface PropTypes extends FieldBaseProps {
   field: CustomField
@@ -18,7 +19,6 @@ interface PropTypes extends FieldBaseProps {
 function HealthDeclaration({
   field,
   application,
-  error,
 }: PropTypes): JSX.Element {
   const { formatMessage } = useLocale()
   const {
@@ -28,12 +28,20 @@ function HealthDeclaration({
   const props = field.props as { label: string }
 
   useEffect(() => {
-    if (getErrorViaPath(errors, 'healthDeclaration')) {
-      setValue('healthDeclaration.error', true)
-    } else {
-      setValue('healthDeclaration.error', false)
+    const healthDeclarationErrors = getErrorViaPath(errors, 'healthDeclaration')
+    
+    if (Object.keys(errors).length > 0 && Object.values(healthDeclarationErrors)) {
+      if (
+        Object.values(healthDeclarationErrors).some((error) =>
+          Object.keys(error).includes('answer'),
+        )
+      ) {
+        setValue('healthDeclaration.error', true)
+      } else {
+        setValue('healthDeclaration.error', false)
+      }
     }
-  }, [error, errors, setValue])
+  }, [errors, setValue])
 
   return (
     <GridRow>
@@ -53,13 +61,14 @@ function HealthDeclaration({
           options={[
             {
               label: formatText(m.yes, application, formatMessage),
-              value: 'yes',
+              value: YES,
             },
             {
               label: formatText(m.no, application, formatMessage),
-              value: 'no',
+              value: NO,
             },
           ]}
+          onSelect={(value) => setValue(field.id, value)}
         />
       </GridColumn>
     </GridRow>

@@ -3,14 +3,13 @@ import {
   buildCustomField,
   buildSubSection,
   buildFileUploadField,
-  buildDescriptionField,
-  hasYes,
   buildAlertMessageField,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { hasNoDrivingLicenseInOtherCountry } from '../../lib/utils'
 import { hasHealthRemarks } from '../../lib/utils/formUtils'
-import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../lib/constants'
+import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT, YES } from '../../lib/constants'
 
 export const subSectionHealthDeclaration = buildSubSection({
   id: 'healthDeclaration',
@@ -21,7 +20,7 @@ export const subSectionHealthDeclaration = buildSubSection({
       id: 'overview',
       title: m.healthDeclarationMultiFieldTitle,
       description: m.healthDeclarationMultiFieldSubTitle,
-      space: 2,
+      space: 1,
       children: [
         buildCustomField({
           id: 'remarks',
@@ -31,7 +30,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         }),
         buildCustomField(
           {
-            id: 'healthDeclaration.usesContactGlasses',
+            id: 'healthDeclaration.usesContactGlasses.answer',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -39,9 +38,27 @@ export const subSectionHealthDeclaration = buildSubSection({
             label: m.healthDeclaration1,
           },
         ),
+        buildFileUploadField({
+          id: 'healthDeclaration.usesContactGlasses.attachment',
+          title: '',
+          maxSize: FILE_SIZE_LIMIT,
+          maxSizeErrorText: m.attachmentMaxSizeError,
+          uploadAccept: UPLOAD_ACCEPT,
+          condition: (answers) =>
+            (answers.healthDeclaration as any)?.usesContactGlasses?.answer ===
+            YES,
+        }),
+        buildDescriptionField({
+          id: 'space1',
+          title: '',
+          marginBottom: 'containerGutter',
+          condition: (answers) =>
+            (answers.healthDeclaration as any)?.usesContactGlasses?.answer ===
+            YES,
+        }),
         buildCustomField(
           {
-            id: 'healthDeclaration.hasReducedPeripheralVision',
+            id: 'healthDeclaration.hasReducedPeripheralVision.answer',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -49,9 +66,27 @@ export const subSectionHealthDeclaration = buildSubSection({
             label: m.healthDeclaration2,
           },
         ),
+        buildFileUploadField({
+          id: 'healthDeclaration.hasReducedPeripheralVision.attachment',
+          title: '',
+          maxSize: FILE_SIZE_LIMIT,
+          maxSizeErrorText: m.attachmentMaxSizeError,
+          uploadAccept: UPLOAD_ACCEPT,
+          condition: (answers) =>
+            (answers.healthDeclaration as any)?.hasReducedPeripheralVision
+              ?.answer === YES,
+        }),
+        buildDescriptionField({
+          id: 'space2',
+          title: '',
+          marginBottom: 'containerGutter',
+          condition: (answers) =>
+            (answers.healthDeclaration as any)?.hasReducedPeripheralVision
+              ?.answer === YES,
+        }),
         buildCustomField(
           {
-            id: 'healthDeclaration.hasEpilepsy',
+            id: 'healthDeclaration.hasEpilepsy.answer',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -59,9 +94,25 @@ export const subSectionHealthDeclaration = buildSubSection({
             label: m.healthDeclaration3,
           },
         ),
+        buildFileUploadField({
+          id: 'healthDeclaration.hasEpilepsy.attachment',
+          title: '',
+          maxSize: FILE_SIZE_LIMIT,
+          maxSizeErrorText: m.attachmentMaxSizeError,
+          uploadAccept: UPLOAD_ACCEPT,
+          condition: (answers) =>
+            (answers.healthDeclaration as any)?.hasEpilepsy?.answer === YES,
+        }),
+        buildDescriptionField({
+          id: 'space3',
+          title: '',
+          marginBottom: 'containerGutter',
+          condition: (answers) =>
+            (answers.healthDeclaration as any)?.hasEpilepsy?.answer === YES,
+        }),
         buildCustomField(
           {
-            id: 'healthDeclaration.hasHeartDisease',
+            id: 'healthDeclaration.hasHeartDisease.answer',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -69,9 +120,25 @@ export const subSectionHealthDeclaration = buildSubSection({
             label: m.healthDeclaration4,
           },
         ),
+        buildFileUploadField({
+          id: 'healthDeclaration.hasHeartDisease.attachment',
+          title: '',
+          maxSize: FILE_SIZE_LIMIT,
+          maxSizeErrorText: m.attachmentMaxSizeError,
+          uploadAccept: UPLOAD_ACCEPT,
+          condition: (answers) =>
+            (answers.healthDeclaration as any)?.hasHeartDisease?.answer === YES,
+        }),
+        buildDescriptionField({
+          id: 'space4',
+          title: '',
+          marginBottom: 'containerGutter',
+          condition: (answers) =>
+            (answers.healthDeclaration as any)?.hasHeartDisease?.answer === YES,
+        }),
         buildCustomField(
           {
-            id: 'healthDeclaration.hasMentalIllness',
+            id: 'healthDeclaration.hasMentalIllness.answer',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -79,9 +146,27 @@ export const subSectionHealthDeclaration = buildSubSection({
             label: m.healthDeclaration5,
           },
         ),
+        buildFileUploadField({
+          id: 'healthDeclaration.hasMentalIllness.attachment',
+          title: '',
+          maxSize: FILE_SIZE_LIMIT,
+          maxSizeErrorText: m.attachmentMaxSizeError,
+          uploadAccept: UPLOAD_ACCEPT,
+          condition: (answers) =>
+            (answers.healthDeclaration as any)?.hasMentalIllness?.answer ===
+            YES,
+        }),
+        buildDescriptionField({
+          id: 'space5',
+          title: '',
+          marginBottom: 'containerGutter',
+          condition: (answers) =>
+            (answers.healthDeclaration as any)?.hasMentalIllness?.answer ===
+            YES,
+        }),
         buildCustomField(
           {
-            id: 'healthDeclaration.usesMedicalDrugs',
+            id: 'healthDeclaration.usesMedicalDrugs.answer',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -89,9 +174,27 @@ export const subSectionHealthDeclaration = buildSubSection({
             label: m.healthDeclaration6,
           },
         ),
+        buildFileUploadField({
+          id: 'healthDeclaration.usesMedicalDrugs.attachment',
+          title: '',
+          maxSize: FILE_SIZE_LIMIT,
+          maxSizeErrorText: m.attachmentMaxSizeError,
+          uploadAccept: UPLOAD_ACCEPT,
+          condition: (answers) =>
+            (answers.healthDeclaration as any)?.usesMedicalDrugs?.answer ===
+            YES,
+        }),
+        buildDescriptionField({
+          id: 'space6',
+          title: '',
+          marginBottom: 'containerGutter',
+          condition: (answers) =>
+            (answers.healthDeclaration as any)?.usesMedicalDrugs?.answer ===
+            YES,
+        }),
         buildCustomField(
           {
-            id: 'healthDeclaration.isAlcoholic',
+            id: 'healthDeclaration.isAlcoholic.answer',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -99,9 +202,25 @@ export const subSectionHealthDeclaration = buildSubSection({
             label: m.healthDeclaration7,
           },
         ),
+        buildFileUploadField({
+          id: 'healthDeclaration.isAlcoholic.attachment',
+          title: '',
+          maxSize: FILE_SIZE_LIMIT,
+          maxSizeErrorText: m.attachmentMaxSizeError,
+          uploadAccept: UPLOAD_ACCEPT,
+          condition: (answers) =>
+            (answers.healthDeclaration as any)?.isAlcoholic?.answer === YES,
+        }),
+        buildDescriptionField({
+          id: 'space7',
+          title: '',
+          marginBottom: 'containerGutter',
+          condition: (answers) =>
+            (answers.healthDeclaration as any)?.isAlcoholic?.answer === YES,
+        }),
         buildCustomField(
           {
-            id: 'healthDeclaration.hasDiabetes',
+            id: 'healthDeclaration.hasDiabetes.answer',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -109,9 +228,25 @@ export const subSectionHealthDeclaration = buildSubSection({
             label: m.healthDeclaration8,
           },
         ),
+        buildFileUploadField({
+          id: 'healthDeclaration.hasDiabetes.attachment',
+          title: '',
+          maxSize: FILE_SIZE_LIMIT,
+          maxSizeErrorText: m.attachmentMaxSizeError,
+          uploadAccept: UPLOAD_ACCEPT,
+          condition: (answers) =>
+            (answers.healthDeclaration as any)?.hasDiabetes?.answer === YES,
+        }),
+        buildDescriptionField({
+          id: 'space8',
+          title: '',
+          marginBottom: 'containerGutter',
+          condition: (answers) =>
+            (answers.healthDeclaration as any)?.hasDiabetes?.answer === YES,
+        }),
         buildCustomField(
           {
-            id: 'healthDeclaration.isDisabled',
+            id: 'healthDeclaration.isDisabled.answer',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -119,9 +254,25 @@ export const subSectionHealthDeclaration = buildSubSection({
             label: m.healthDeclaration9,
           },
         ),
+        buildFileUploadField({
+          id: 'healthDeclaration.isDisabled.attachment',
+          title: '',
+          maxSize: FILE_SIZE_LIMIT,
+          maxSizeErrorText: m.attachmentMaxSizeError,
+          uploadAccept: UPLOAD_ACCEPT,
+          condition: (answers) =>
+            (answers.healthDeclaration as any)?.isDisabled?.answer === YES,
+        }),
+        buildDescriptionField({
+          id: 'space9',
+          title: '',
+          marginBottom: 'containerGutter',
+          condition: (answers) =>
+            (answers.healthDeclaration as any)?.isDisabled?.answer === YES,
+        }),
         buildCustomField(
           {
-            id: 'healthDeclaration.hasOtherDiseases',
+            id: 'healthDeclaration.hasOtherDiseases.answer',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -129,26 +280,30 @@ export const subSectionHealthDeclaration = buildSubSection({
             label: m.healthDeclaration10,
           },
         ),
+        buildFileUploadField({
+          id: 'healthDeclaration.hasOtherDiseases.attachment',
+          title: '',
+          maxSize: FILE_SIZE_LIMIT,
+          maxSizeErrorText: m.attachmentMaxSizeError,
+          uploadAccept: UPLOAD_ACCEPT,
+          condition: (answers) =>
+            (answers.healthDeclaration as any)?.hasOtherDiseases?.answer ===
+            YES,
+        }),
+        buildDescriptionField({
+          id: 'space10',
+          title: '',
+          marginBottom: 'containerGutter',
+          condition: (answers) =>
+            (answers.healthDeclaration as any)?.hasOtherDiseases?.answer ===
+            YES,
+        }),
         buildAlertMessageField({
           id: 'healthDeclaration.error',
           title: '',
           message: 'Vinsamlegast fylltu út heilbringðisyfirlýsingu',
           alertType: 'error',
           condition: (answers) => !!(answers.healthDeclaration as any)?.error,
-        }),
-        buildDescriptionField({
-          id: 'space',
-          title: '',
-          space: 'containerGutter',
-          condition: (answers) => hasYes(answers.healthDeclaration),
-        }),
-        buildFileUploadField({
-          id: 'healthDeclaration.attachments',
-          title: '',
-          maxSize: FILE_SIZE_LIMIT,
-          maxSizeErrorText: m.attachmentMaxSizeError,
-          uploadAccept: UPLOAD_ACCEPT,
-          condition: (answers) => hasYes(answers.healthDeclaration),
         }),
       ],
     }),
