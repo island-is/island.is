@@ -43,6 +43,7 @@ import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/util
 import { api } from '../../services'
 import { conclusion } from '../../components/Conclusion/Conclusion.strings'
 import { strings } from './CaseOverview.strings'
+import * as styles from './CaseOverview.css'
 
 type availableModals =
   | 'NoModal'
@@ -315,18 +316,20 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   </>
                 )}
                 <Box marginTop={7}>
-                  <Button
-                    variant="ghost"
-                    size="small"
-                    icon="download"
-                    iconType="outline"
-                    onClick={() => {
-                      const url = `${api.apiUrl}/api/case/${workingCase.id}/limitedAccess/allFiles`
-                      window.open(url, '_blank')
-                    }}
+                  <a
+                    href={`${api.apiUrl}/api/case/${workingCase.id}/limitedAccess/allFiles`}
+                    download={`mal_${workingCase.courtCaseNumber}`}
+                    className={styles.downloadAllButton}
                   >
-                    {formatMessage(strings.getAllDocuments)}
-                  </Button>
+                    <Button
+                      variant="ghost"
+                      size="small"
+                      icon="download"
+                      iconType="outline"
+                    >
+                      {formatMessage(strings.getAllDocuments)}
+                    </Button>
+                  </a>
                 </Box>
               </Box>
             </Box>
