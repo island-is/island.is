@@ -45,8 +45,8 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       SQS_REGION: 'eu-west-1',
       BLOCKED_API_INTEGRATION: {
         dev: '',
-        staging: 'COURT,POLICE_CASE,POLICE_CASE_V2',
-        prod: 'POLICE_CASE_V2',
+        staging: 'COURT,POLICE_CASE',
+        prod: '',
       },
       NO_UPDATE_NOTIFIER: 'true',
       NOVA_ACCEPT_UNAUTHORIZED: {
@@ -61,6 +61,8 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       NOVA_USERNAME: '/k8s/judicial-system/NOVA_USERNAME',
       NOVA_PASSWORD: '/k8s/judicial-system/NOVA_PASSWORD',
       COURTS_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_MOBILE_NUMBERS',
+      COURTS_ASSISTANT_MOBILE_NUMBERS:
+        '/k8s/judicial-system/COURTS_ASSISTANT_MOBILE_NUMBERS',
       COURTS_EMAILS: '/k8s/judicial-system/COURTS_EMAILS',
       DOKOBIT_ACCESS_TOKEN: '/k8s/judicial-system/DOKOBIT_ACCESS_TOKEN',
       EMAIL_FROM: '/k8s/judicial-system/EMAIL_FROM',
@@ -69,6 +71,7 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       EMAIL_REPLY_TO_NAME: '/k8s/judicial-system/EMAIL_REPLY_TO_NAME',
       PRISON_EMAIL: '/k8s/judicial-system/PRISON_EMAIL',
       PRISON_ADMIN_EMAIL: '/k8s/judicial-system/PRISON_ADMIN_EMAIL',
+      COURT_ROBOT_EMAIL: '/k8s/judicial-system/COURT_ROBOT_EMAIL',
       AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET',
       ADMIN_USERS: '/k8s/judicial-system/ADMIN_USERS',
       BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN',

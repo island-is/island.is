@@ -247,6 +247,8 @@ export const machine = createMachine<Context, Event, State>(
         },
       },
       'getting data': {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         invoke: {
           src: 'getData',
           onDone: {
@@ -263,6 +265,8 @@ export const machine = createMachine<Context, Event, State>(
         },
       },
       'updating general data': {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         invoke: {
           src: 'updateGeneralData',
           onDone: {
@@ -279,6 +283,8 @@ export const machine = createMachine<Context, Event, State>(
         },
       },
       'updating quota data': {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         invoke: {
           src: 'updateQuotaData',
           onDone: {
@@ -307,6 +313,8 @@ export const machine = createMachine<Context, Event, State>(
   },
   {
     services: {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       getData: async (context: Context, event: GetDataEvent) => {
         const [
           fiskistofaGetShipStatusForTimePeriodResponse,
@@ -375,17 +383,20 @@ export const machine = createMachine<Context, Event, State>(
           quotaData,
         }
       },
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       updateGeneralData: async (
         context: Context,
         event: UpdateGeneralDataEvent,
       ) => {
-        const fiskistofaUpdateShipStatusForTimePeriodResponse = await context.apolloClient?.query<{
-          fiskistofaUpdateShipStatusForTimePeriod: FiskistofaExtendedShipStatusInformationUpdateResponse
-        }>({
-          query: UPDATE_SHIP_STATUS_FOR_TIME_PERIOD,
-          variables: event.variables,
-          fetchPolicy: 'no-cache',
-        })
+        const fiskistofaUpdateShipStatusForTimePeriodResponse =
+          await context.apolloClient?.query<{
+            fiskistofaUpdateShipStatusForTimePeriod: FiskistofaExtendedShipStatusInformationUpdateResponse
+          }>({
+            query: UPDATE_SHIP_STATUS_FOR_TIME_PERIOD,
+            variables: event.variables,
+            fetchPolicy: 'no-cache',
+          })
 
         const fiskistofaShipStatus =
           fiskistofaUpdateShipStatusForTimePeriodResponse?.data
@@ -394,9 +405,10 @@ export const machine = createMachine<Context, Event, State>(
         const categories: ContextData['catchQuotaCategories'] = []
         // We want to keep the ordering of the categories the user has added
         for (const category of context.data?.catchQuotaCategories ?? []) {
-          const categoryFromServer = fiskistofaShipStatus?.catchQuotaCategories?.find(
-            (c) => c.id === category.id,
-          )
+          const categoryFromServer =
+            fiskistofaShipStatus?.catchQuotaCategories?.find(
+              (c) => c.id === category.id,
+            )
           if (categoryFromServer) {
             categories.push({
               ...category,
@@ -420,16 +432,19 @@ export const machine = createMachine<Context, Event, State>(
           },
         }
       },
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       updateQuotaData: async (
         context: Context,
         event: UpdateQuotaDataEvent,
       ) => {
-        const fiskistofaUpdateShipQuotaStatusForTimePeriodResponse = await context.apolloClient?.query<{
-          fiskistofaUpdateShipQuotaStatusForTimePeriod: FiskistofaQuotaStatusResponse
-        }>({
-          query: UPDATE_SHIP_QUOTA_STATUS_FOR_TIME_PERIOD,
-          variables: event.variables,
-        })
+        const fiskistofaUpdateShipQuotaStatusForTimePeriodResponse =
+          await context.apolloClient?.query<{
+            fiskistofaUpdateShipQuotaStatusForTimePeriod: FiskistofaQuotaStatusResponse
+          }>({
+            query: UPDATE_SHIP_QUOTA_STATUS_FOR_TIME_PERIOD,
+            variables: event.variables,
+          })
 
         const serverQuotaData =
           fiskistofaUpdateShipQuotaStatusForTimePeriodResponse?.data

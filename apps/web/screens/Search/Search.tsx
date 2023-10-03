@@ -138,8 +138,14 @@ const Search: Screen<CategoryProps> = ({
     ...initialState,
     query: {
       q,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       type: stringToArray(query.type) as SearchableContentTypes[],
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       category: stringToArray(query.category),
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       organization: stringToArray(query.organization),
     },
   })
@@ -152,6 +158,8 @@ const Search: Screen<CategoryProps> = ({
   const { activeLocale } = useI18n()
   const searchRef = useRef<HTMLInputElement | null>(null)
   const routerReplace = useRouterReplace()
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
@@ -205,15 +213,21 @@ const Search: Screen<CategoryProps> = ({
     const labels = []
 
     switch (item.__typename) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       case 'LifeEventPage': {
         if (item.pageType !== AnchorPageType.DIGITAL_ICELAND_SERVICE) {
           labels.push(n('lifeEvent'))
         }
         break
       }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       case 'News':
         labels.push(n('newsTitle'))
         break
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       case 'AdgerdirPage':
         labels.push(n('adgerdirTitle'))
         break
@@ -267,6 +281,11 @@ const Search: Screen<CategoryProps> = ({
   const pathname = linkResolver('search').href
 
   const tagsList = useMemo((): TagsList[] => {
+    // Check if countResults.typesCount is not defined
+    if (!countResults.typesCount) {
+      // If it's not defined, return an empty array
+      return []
+    }
     return [
       ...countResults.typesCount
         .filter((x) => x.key in tagTitles)
@@ -281,6 +300,8 @@ const Search: Screen<CategoryProps> = ({
           }
 
           return {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             title: tagTitles[x.key] as string,
             key: x.key,
             count,
@@ -310,7 +331,8 @@ const Search: Screen<CategoryProps> = ({
     ) {
       return linkResolver('digitalicelandservicesdetailpage', [item.slug])
     }
-
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     return linkResolver(item.__typename, item.url ?? item.slug?.split('/'))
   }
 
@@ -354,7 +376,8 @@ const Search: Screen<CategoryProps> = ({
       labels: getLabels(item),
     }),
   )
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const noUncategorized = (item) => {
     if (!item.category && filters.category === 'uncategorized') {
       return true
@@ -400,7 +423,9 @@ const Search: Screen<CategoryProps> = ({
       q,
       ...(contentType && {
         type: Object.prototype.hasOwnProperty.call(connectedTypes, contentType)
-          ? connectedTypes[contentType].map((x) => firstLower(x))
+          ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            connectedTypes[contentType].map((x) => firstLower(x))
           : contentType,
       }),
       ...(query.category?.length && { category: query.category }),
@@ -414,9 +439,9 @@ const Search: Screen<CategoryProps> = ({
     {
       id: 'category',
       label: n('categories', 'Þjónustuflokkar'),
-      selected: state.query.category,
+      selected: state.query.category ?? [],
       singleOption: true,
-      filters: countResults.tagCounts
+      filters: (countResults?.tagCounts ?? [])
         .filter((x) => x.value.trim() && x.type === 'category')
         .map(({ key, value }) => ({
           label: value,
@@ -426,9 +451,9 @@ const Search: Screen<CategoryProps> = ({
     {
       id: 'organization',
       label: n('organizations', 'Opinberir aðilar'),
-      selected: state.query.organization,
+      selected: state.query.organization ?? [],
       singleOption: true,
-      filters: countResults.tagCounts
+      filters: (countResults?.tagCounts ?? [])
         .filter((x) => x.value.trim() && x.type === 'organization')
         .map(({ key, value }) => ({
           label: value,
@@ -446,7 +471,6 @@ const Search: Screen<CategoryProps> = ({
     labelResult: n('labelResult', 'Sjá niðurstöður'),
     inputPlaceholder: n('inputPlaceholder', 'Leita að nafni'),
   }
-
   return (
     <>
       <Head>
@@ -457,6 +481,8 @@ const Search: Screen<CategoryProps> = ({
           <GridColumn
             span={['12/12', '12/12', '12/12', '8/12']}
             paddingBottom={6}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             offset={[null, null, null, '2/12']}
           >
             <Stack space={[3, 3, 4]}>
@@ -538,26 +564,27 @@ const Search: Screen<CategoryProps> = ({
                           {title}
                         </Tag>
                       ))}
-                    {countResults.processEntryCount > 0 && (
-                      <Tag
-                        variant="blue"
-                        active={query?.processentry === 'true'}
-                        onClick={() => {
-                          dispatch({
-                            type: ActionType.SET_PARAMS,
-                            payload: {
-                              query: {
-                                processentry: true,
-                                ...getSearchParams('webArticle'),
+                    {typeof countResults.processEntryCount == 'number' &&
+                      countResults.processEntryCount > 0 && (
+                        <Tag
+                          variant="blue"
+                          active={query?.processentry === 'true'}
+                          onClick={() => {
+                            dispatch({
+                              type: ActionType.SET_PARAMS,
+                              payload: {
+                                query: {
+                                  processentry: true,
+                                  ...getSearchParams('webArticle'),
+                                },
+                                searchLocked: false,
                               },
-                              searchLocked: false,
-                            },
-                          })
-                        }}
-                      >
-                        {n('processEntry', 'Umsóknir')}
-                      </Tag>
-                    )}
+                            })
+                          }}
+                        >
+                          {n('processEntry', 'Umsóknir')}
+                        </Tag>
+                      )}
                   </Inline>
                   <FilterMenu
                     {...filterLabels}
@@ -592,13 +619,13 @@ const Search: Screen<CategoryProps> = ({
                     )}{' '}
                     <strong>{q}</strong>
                     {!!(
-                      state.query.organization.length ||
-                      state.query.category.length
+                      state.query.organization?.length ||
+                      state.query.category?.length
                     ) && ` ${n('withChosenFilters', 'með völdum síum')}. `}
                   </Text>
                   {!!(
-                    state.query.organization.length ||
-                    state.query.category.length
+                    state.query.organization?.length ||
+                    state.query.category?.length
                   ) && (
                     <Button
                       variant="text"
@@ -707,7 +734,8 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
   const organization = query.organization ?? ''
   const processentry = query.processentry ?? ''
   const countTag = {}
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const tags: TagType[] = [
     ...stringToArray(category).map(
       (key: string): TagType => ({
@@ -730,6 +758,8 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
   ]
 
   const types: SearchableContentTypes[] = stringToArray(type).map(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     (x: SearchableContentTypes) => x,
   )
   const allTypes: `${SearchableContentTypes}`[] = [
@@ -808,10 +838,12 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((variables) => {
-        // map data here to reduce data processing in component
-        return JSON.parse(variables.data.getNamespace.fields)
-      }),
+      // map data here to reduce data processing in component
+      .then((variables) =>
+        variables.data.getNamespace?.fields
+          ? JSON.parse(variables.data.getNamespace.fields)
+          : {},
+      ),
   ])
 
   if (searchResults.items.length === 0 && page > 1) {

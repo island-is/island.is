@@ -15,6 +15,7 @@ import type {
   IndictmentSubtypeMap,
   CrimeSceneMap,
   CaseAppealRulingDecision,
+  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -56,8 +57,8 @@ export class UpdateCaseInput implements UpdateCase {
   readonly defenderPhoneNumber?: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly sendRequestToDefender?: boolean
+  @Field(() => String, { nullable: true })
+  readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @Allow()
   @Field({ nullable: true })

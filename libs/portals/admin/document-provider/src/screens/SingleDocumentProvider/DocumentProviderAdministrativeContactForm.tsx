@@ -31,15 +31,11 @@ export const DocumentProviderAdministrativeContactForm: FC<
     control,
     formState: { errors },
   } = useForm<UseFormProps>()
-  const {
-    updateAdministrativeContact,
-    loading: loadingUpdate,
-  } = useUpdateAdministrativeContact(organisationId)
+  const { updateAdministrativeContact, loading: loadingUpdate } =
+    useUpdateAdministrativeContact(organisationId)
 
-  const {
-    createAdministrativeContact,
-    loading: loadingCreate,
-  } = useCreateAdministrativeContact(organisationId, organisationNationalId)
+  const { createAdministrativeContact, loading: loadingCreate } =
+    useCreateAdministrativeContact(organisationId, organisationNationalId)
 
   const onSubmit = (data: { administrativeContact: Contact }) => {
     if (data?.administrativeContact && administrativeContact) {

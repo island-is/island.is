@@ -1,0 +1,127 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Leit í skipaskrá",
+    "description": "",
+    "contact": {
+      "name": "Samgöngustofa",
+      "url": "https://www.samgongustofa.is",
+      "email": "larus.long@samgongustofa.is"
+    },
+    "license": {
+      "name": "Samg0ngustofa 2023",
+      "url": "https://spdx.org/licenses/Unlicense.html"
+    },
+    "version": "1.5.4"
+  },
+  "servers": [{ "url": "" }],
+  "tags": [{ "name": "ship", "description": "Ship search" }],
+  "paths": {
+    "/api/v1/ships/search/_website_minimal": {
+      "get": {
+        "tags": ["ship"],
+        "summary": "Finds ships by name or number",
+        "operationId": "findShipByNameOrNumber",
+        "parameters": [
+          {
+            "name": "qs",
+            "in": "query",
+            "description": "url encoded name or number",
+            "required": false,
+            "schema": { "type": "string", "default": "available" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ships": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/ShipModel" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ShipModel": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "skraningarnumer": { "type": "integer", "format": "int32" },
+            "umdaemisnafn": { "type": "string" },
+            "heimahofn": { "type": "string" },
+            "umdaemistolustafir": { "type": "string", "format": "nullable" },
+            "bruttorumlestir": { "type": "number" },
+            "bruttoTonn": { "type": "number" },
+            "smidaar": { "type": "integer", "format": "int32" },
+            "nafnskips": { "type": "string" },
+            "skraningarstada": { "type": "string" },
+            "skraningarlengd": { "type": "number" },
+            "umdaemisbokstafir": { "type": "string" },
+            "gerd": { "type": "string" },
+            "smidastod": { "type": "string" },
+            "eigendur": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "kennitala": { "type": "string" },
+                  "nafn": { "type": "string" },
+                  "eignaprosenta": { "type": "integer", "format": "int32" }
+                }
+              }
+            },
+            "engines": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "manufacturingNumber": {
+                    "type": "string",
+                    "format": "nullable"
+                  },
+                  "power": { "type": "integer", "format": "int32" },
+                  "year": { "type": "integer", "format": "int32" },
+                  "usage": {
+                    "type": "object",
+                    "properties": { "name": { "type": "string" } }
+                  },
+                  "manufacturer": {
+                    "type": "object",
+                    "properties": {
+                      "code": { "type": "string" },
+                      "name": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            },
+            "fishery": {
+              "type": "object",
+              "properties": {
+                "identityNumber": { "type": "string" },
+                "name": { "type": "string" },
+                "address": { "type": "string" },
+                "postalCode": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "ProblemDetails": { "additionalProperties": false },
+      "ValidationProblemDetails": { "additionalProperties": false }
+    }
+  }
+}

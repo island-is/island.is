@@ -10,7 +10,8 @@ const isValidPhoneNumber = (phoneNumber: string) => {
   return phone && phone.isValid()
 }
 
-const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+const emailRegex =
+  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 export const isValidEmail = (value: string) => emailRegex.test(value)
 
 const checkIfFilledOut = (arr: Array<string | undefined>) => {
@@ -82,27 +83,15 @@ export const estateSchema = z.object({
         dateOfBirth: z.string().optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
-        phone: z
-          .string()
-          .refine((v) => isValidPhoneNumber(v) || v === '')
-          .optional(),
-        email: z
-          .string()
-          .refine((v) => isValidEmail(v) || v === '')
-          .optional(),
+        phone: z.string(),
+        email: z.string(),
         // Málsvari
         advocate: z
           .object({
             name: z.string(),
             nationalId: z.string(),
-            phone: z
-              .string()
-              .refine((v) => isValidPhoneNumber(v) || v === '')
-              .optional(),
-            email: z
-              .string()
-              .refine((v) => isValidEmail(v) || v === '')
-              .optional(),
+            phone: z.string(),
+            email: z.string(),
           })
           .optional(),
       })
@@ -112,6 +101,43 @@ export const estateSchema = z.object({
         },
         {
           path: ['nationalId'],
+        },
+      )
+
+      /* Validating email and phone depending on whether the field is enabled */
+      .refine(
+        ({ enabled, phone }) => {
+          console.log(enabled, isValidPhoneNumber(phone))
+          return enabled ? isValidPhoneNumber(phone) : true
+        },
+        {
+          path: ['phone'],
+        },
+      )
+      .refine(
+        ({ enabled, email }) => {
+          return enabled ? isValidEmail(email) : true
+        },
+        {
+          path: ['email'],
+        },
+      )
+
+      /* phone and email validation for advocates */
+      .refine(
+        ({ enabled, advocate }) => {
+          return enabled && advocate ? isValidPhoneNumber(advocate.phone) : true
+        },
+        {
+          path: ['advocate', 'phone'],
+        },
+      )
+      .refine(
+        ({ enabled, advocate }) => {
+          return enabled && advocate ? isValidEmail(advocate.email) : true
+        },
+        {
+          path: ['advocate', 'email'],
         },
       )
       .array()

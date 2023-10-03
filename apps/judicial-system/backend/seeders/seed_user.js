@@ -18,7 +18,7 @@ const userSeeds = `[
     "title": "fulltrúi",
     "mobile_number": "6666666",
     "email": "finnur@dummy.dd",
-    "role": "REPRESENTATIVE",
+    "role": "PROSECUTOR_REPRESENTATIVE",
     "institution_id": "53581d7b-0591-45e5-9cbe-c96b2f82da85"
   },
   {
@@ -68,7 +68,7 @@ const userSeeds = `[
     "title": "starfsmaður",
     "mobile_number": "4444444",
     "email": "petur@dummy.dd",
-    "role": "STAFF",
+    "role": "PRISON_SYSTEM_STAFF",
     "institution_id": "c9b3b124-2a85-11ec-8d3d-0242ac130003"
   },
   {
@@ -78,7 +78,7 @@ const userSeeds = `[
     "title": "starfsmaður",
     "mobile_number": "5555555",
     "email": "valgard@dummy.dd",
-    "role": "STAFF",
+    "role": "PRISON_SYSTEM_STAFF",
     "institution_id": "c9b3b3ae-2a85-11ec-8d3d-0242ac130003"
   }
 ]`

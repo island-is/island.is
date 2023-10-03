@@ -10,12 +10,14 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   completedCaseStates,
-  Defendant,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
+import {
+  CaseType,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './CaseInfo.strings'
 

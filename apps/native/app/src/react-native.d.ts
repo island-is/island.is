@@ -10,3 +10,6 @@ declare module '*.jpg' {
 
 declare module 'react-native-passkit-wallet';
 declare module 'react-native-dialogs';
+declare module '@island.is/application/types/lib/ApplicationTypes' {
+  export const ApplicationConfigurations: Record<string, any>;
+}

@@ -352,24 +352,23 @@ export class CmsElasticsearchService {
 
     must.push(!searchString ? wildcardSearch : multimatchSearch)
 
-    const enhancedAssetResponse: ApiResponse<
-      SearchResponse<MappedData>
-    > = await this.elasticService.findByQuery(index, {
-      sort: [
-        {
-          [sort.field]: {
-            order: sort.order,
+    const enhancedAssetResponse: ApiResponse<SearchResponse<MappedData>> =
+      await this.elasticService.findByQuery(index, {
+        sort: [
+          {
+            [sort.field]: {
+              order: sort.order,
+            },
+          },
+        ],
+        query: {
+          bool: {
+            must: must.concat(generateGenericTagGroupQueries(tags, tagGroups)),
           },
         },
-      ],
-      query: {
-        bool: {
-          must: must.concat(generateGenericTagGroupQueries(tags, tagGroups)),
-        },
-      },
-      size,
-      from: (page - 1) * size,
-    })
+        size,
+        from: (page - 1) * size,
+      })
 
     return {
       total: enhancedAssetResponse.body.hits.total.value,
@@ -402,13 +401,11 @@ export class CmsElasticsearchService {
       query.tags.push({ type: 'subcategory', key: input.subCategory })
     }
 
-    const supportqnasResponse = await this.elasticService.getDocumentsByMetaData(
-      index,
-      query,
-    )
-    return supportqnasResponse.hits.hits.map((response) =>
-      JSON.parse(response._source.response ?? '[]'),
-    )
+    const supportqnasResponse =
+      await this.elasticService.getDocumentsByMetaData(index, query)
+    return supportqnasResponse.hits.hits
+      .map((response) => JSON.parse(response._source.response ?? '[]'))
+      .filter((qna) => qna?.title && qna?.slug)
   }
 }
 

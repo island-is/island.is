@@ -3,7 +3,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import {
   TeachingRightsStatus,
   StudentInformation,
-  Juristiction,
+  Jurisdiction,
   NewDrivingLicenseInput,
   NewDrivingLicenseResult,
   NewDrivingAssessmentResult,
@@ -26,7 +26,7 @@ import {
   TeacherV4,
 } from '@island.is/clients/driving-license'
 import {
-  BLACKLISTED_JURISTICTION,
+  BLACKLISTED_JURISDICTION,
   DRIVING_ASSESSMENT_MAX_AGE,
 } from './util/constants'
 import sortTeachers from './util/sortTeachers'
@@ -79,7 +79,7 @@ export class DrivingLicenseService {
     // The goal of this is to basically normalize the known semi-error responses
     // so both those who are not found and those who have invalid/expired licenses will return nothing
     if (e instanceof Error && e.name === 'FetchError') {
-      const err = (e as unknown) as FetchError
+      const err = e as unknown as FetchError
 
       if ([400, 404].includes(err.status)) {
         return null
@@ -163,10 +163,10 @@ export class DrivingLicenseService {
     }
   }
 
-  async getListOfJuristictions(): Promise<Juristiction[]> {
-    const embaetti = await this.drivingLicenseApi.getListOfJuristictions()
+  async getListOfJurisdictions(): Promise<Jurisdiction[]> {
+    const embaetti = await this.drivingLicenseApi.getListOfJurisdictions()
 
-    return embaetti.filter(({ id }) => id !== BLACKLISTED_JURISTICTION)
+    return embaetti.filter(({ id }) => id !== BLACKLISTED_JURISDICTION)
   }
 
   async getDrivingAssessmentResult(
@@ -243,15 +243,15 @@ export class DrivingLicenseService {
     type: DrivingLicenseApplicationType,
   ): Promise<ApplicationEligibility> {
     const assessmentResult = await this.getDrivingAssessmentResult(nationalId)
-    const hasFinishedSchool = await this.drivingLicenseApi.getHasFinishedOkugerdi(
-      {
+    const hasFinishedSchool =
+      await this.drivingLicenseApi.getHasFinishedOkugerdi({
         nationalId,
-      },
-    )
+      })
 
-    const residenceHistory = await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
-      nationalId,
-    )
+    const residenceHistory =
+      await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
+        nationalId,
+      )
 
     const localRecidencyHistory = hasResidenceHistory(residenceHistory)
     const localRecidency = hasLocalResidence(residenceHistory)
@@ -392,18 +392,17 @@ export class DrivingLicenseService {
     nationalId: User['nationalId'],
     input: NewTemporaryDrivingLicenseInput,
   ): Promise<NewDrivingLicenseResult> {
-    const success = await this.drivingLicenseApi.postCreateDrivingLicenseTemporary(
-      {
+    const success =
+      await this.drivingLicenseApi.postCreateDrivingLicenseTemporary({
         willBringHealthCertificate: input.needsToPresentHealthCertificate,
         willBringQualityPhoto: input.needsToPresentQualityPhoto,
-        juristictionId: input.juristictionId,
+        jurisdictionId: input.jurisdictionId,
         nationalIdTeacher: input.teacherNationalId,
         nationalIdApplicant: nationalId,
         sendLicenseInMail: false,
         email: input.email,
         phone: input.phone,
-      },
-    )
+      })
 
     return {
       success,
@@ -417,7 +416,7 @@ export class DrivingLicenseService {
   ): Promise<NewDrivingLicenseResult> {
     const response = await this.drivingLicenseApi.postCreateDrivingLicenseFull({
       category: DrivingLicenseCategory.B,
-      juristictionId: input.juristictionId,
+      jurisdictionId: input.jurisdictionId,
       willBringHealthCertificate: input.needsToPresentHealthCertificate,
       nationalIdApplicant: nationalId,
       willBringQualityPhoto: input.needsToPresentQualityPhoto,
@@ -472,11 +471,10 @@ export class DrivingLicenseService {
   async getQualitySignature(
     nationalId: User['nationalId'],
   ): Promise<QualitySignatureResult> {
-    const hasQualitySignature = await this.drivingLicenseApi.getHasQualitySignature(
-      {
+    const hasQualitySignature =
+      await this.drivingLicenseApi.getHasQualitySignature({
         nationalId,
-      },
-    )
+      })
 
     return {
       hasQualitySignature,

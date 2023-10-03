@@ -7,7 +7,11 @@ import SlackNotify from 'slack-notify'
       .send({
         channel: '#acceptance-tests-status',
         icon_emoji: ':boom:',
-        text: `One or more System E2E tests have failed (triggered by ${process.env.TRIGGER_USER}).\nCheck https://www.tesults.com/digital-iceland/monorepo`,
+        text: `System tests in ${
+          process.env.TEST_PROJECT ?? 'islandis'
+        } have failed (triggered by ${
+          process.env.TRIGGER_USER
+        }).\nCheck https://www.tesults.com/digital-iceland/monorepo`,
       })
       .then((_: unknown) => console.log('done'))
       .catch((e: unknown) => console.error(e))

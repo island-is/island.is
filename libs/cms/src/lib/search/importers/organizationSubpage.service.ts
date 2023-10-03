@@ -10,7 +10,8 @@ import { extractStringsFromObject } from './utils'
 
 @Injectable()
 export class OrganizationSubpageSyncService
-  implements CmsSyncProvider<IOrganizationSubpage> {
+  implements CmsSyncProvider<IOrganizationSubpage>
+{
   processSyncData(entries: processSyncDataInput<IOrganizationSubpage>) {
     return entries.filter(
       (entry: Entry<any>): entry is IOrganizationSubpage =>

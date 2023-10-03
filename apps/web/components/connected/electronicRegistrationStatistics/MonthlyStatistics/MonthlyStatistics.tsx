@@ -32,10 +32,8 @@ interface MonthlyStatisticsProps {
 }
 
 export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
-  const [
-    selectedRegistrationTypeOption,
-    setSelectedRegistrationTypeOption,
-  ] = useState(defaultSelection)
+  const [selectedRegistrationTypeOption, setSelectedRegistrationTypeOption] =
+    useState(defaultSelection)
 
   const n = useNamespace(slice?.json ?? {})
 
@@ -80,6 +78,8 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
     } else {
       // Make sure to keep the reference intact since we're renewing the list
       setSelectedRegistrationTypeOption(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         typeOptions.find(
           (type) => type.value === selectedRegistrationTypeOption.value,
         ),
@@ -117,6 +117,8 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
               size="xs"
               label={n('typeOfRegistration', 'Tegund þinglýsinga')}
               value={selectedRegistrationTypeOption}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               onChange={(option) =>
                 setSelectedRegistrationTypeOption(
                   option as { label: string; value: string },
@@ -131,6 +133,8 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
               size="xs"
               label={n('timePeriod', 'Tímabil')}
               value={selectedYear}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               onChange={(option) =>
                 setSelectedYear(option as { label: string; value: string })
               }
@@ -152,10 +156,12 @@ export const MonthlyStatistics = ({ slice }: MonthlyStatisticsProps) => {
             width={800}
             height={400}
             data={data.map((item) => ({
-              name: (n(
-                item.periodIntervalName?.split(' ')?.[0]?.trim() ?? '',
-                item.periodIntervalName,
-              ) as string).slice(0, 3),
+              name: (
+                n(
+                  item.periodIntervalName?.split(' ')?.[0]?.trim() ?? '',
+                  item.periodIntervalName,
+                ) as string
+              ).slice(0, 3),
               [paper]:
                 selectedRegistrationTypeOption.value === defaultSelection.value
                   ? item.totalPaperRegistrationsForCurrentPeriodInterval

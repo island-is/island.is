@@ -2,55 +2,51 @@ import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import {
-  ProsecutorCaseInfo,
-  FormContentContainer,
-  FormFooter,
-  Modal,
-  PageLayout,
-  FormContext,
-  UserContext,
-} from '@island.is/judicial-system-web/src/components'
+import { Box, Input, Text, toast } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   CaseState,
   CaseTransition,
   NotificationType,
 } from '@island.is/judicial-system/types'
 import {
-  useCase,
-  useInstitution,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+  errors,
+  icRequestedHearingArrangements as m,
+  titles,
+} from '@island.is/judicial-system-web/messages'
+import {
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  Modal,
+  PageLayout,
+  ProsecutorCaseInfo,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   stepValidationsType,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
-  errors,
-  icRequestedHearingArrangements as m,
-  titles,
-} from '@island.is/judicial-system-web/messages'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { Box, Input, Text, toast } from '@island.is/island-ui/core'
-import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+  useCase,
+  useInstitution,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import {
+  ProsecutorSectionHeightenedSecurity,
   RequestCourtDate,
   SelectCourt,
-  ProsecutorSectionHeightenedSecurity,
 } from '../../components'
 
 const HearingArrangements = () => {
   const router = useRouter()
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const { user } = useContext(UserContext)
   const { courts } = useInstitution()
   const { formatMessage } = useIntl()

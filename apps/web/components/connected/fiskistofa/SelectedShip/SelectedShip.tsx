@@ -16,9 +16,8 @@ const SelectedShip = ({ namespace }: SelectedShipProps) => {
   const router = useRouter()
 
   // TODO: figure out how to not call endpoint when nothing is selected
-  const [getSingleShip, { data, error, loading }] = useLazyQuery(
-    GET_SINGLE_SHIP,
-  )
+  const [getSingleShip, { data, error, loading }] =
+    useLazyQuery(GET_SINGLE_SHIP)
   const n = useNamespace(namespace)
 
   useEffect(() => {

@@ -86,7 +86,7 @@ export const UpdateCaseMutation = gql`
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
-      sendRequestToDefender
+      requestSharedWithDefender
       isHeightenedSecurityLevel
       court {
         id
@@ -220,6 +220,7 @@ export const UpdateCaseMutation = gql`
         orderWithinChapter
         userGeneratedFilename
         displayDate
+        policeFileId
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
@@ -315,7 +316,7 @@ export const LimitedAccessUpdateCaseMutation = gql`
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
-      sendRequestToDefender
+      requestSharedWithDefender
       court {
         id
         name

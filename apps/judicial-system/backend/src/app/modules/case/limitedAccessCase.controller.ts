@@ -12,6 +12,7 @@ import {
   Query,
   Res,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -38,7 +39,7 @@ import { User } from '../user'
 import { CaseExistsGuard } from './guards/caseExists.guard'
 import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
-import { LimitedAccessCaseReceivedGuard } from './guards/limitedAccessCaseReceived.guard'
+import { LimitedAccessAccordingToCaseStateGuard } from './guards/limitedAccessAccordingToCaseState.guard'
 import { CaseDefenderGuard } from './guards/caseDefender.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
 import { RequestSharedWithDefenderGuard } from './guards/requestSharedWithDefender.guard'
@@ -54,6 +55,7 @@ import {
   LimitedAccessUpdateCase,
 } from './limitedAccessCase.service'
 import { CaseEvent, EventService } from '../event'
+import { CaseInterceptor } from './interceptors/case.interceptor'
 
 @Controller('api')
 @ApiTags('limited access cases')
@@ -70,7 +72,7 @@ export class LimitedAccessCaseController {
     JwtAuthGuard,
     RolesGuard,
     LimitedAccessCaseExistsGuard,
-    LimitedAccessCaseReceivedGuard,
+    LimitedAccessAccordingToCaseStateGuard,
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
@@ -79,6 +81,7 @@ export class LimitedAccessCaseController {
     type: Case,
     description: 'Gets a limited set of properties of an existing case',
   })
+  @UseInterceptors(CaseInterceptor)
   async getById(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
@@ -167,7 +170,7 @@ export class LimitedAccessCaseController {
     )
 
     this.eventService.postEvent(
-      (transition.transition as unknown) as CaseEvent,
+      transition.transition as unknown as CaseEvent,
       updatedCase,
     )
 
@@ -193,7 +196,7 @@ export class LimitedAccessCaseController {
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
-    LimitedAccessCaseReceivedGuard,
+    LimitedAccessAccordingToCaseStateGuard,
     RequestSharedWithDefenderGuard,
     CaseDefenderGuard,
   )
@@ -223,7 +226,7 @@ export class LimitedAccessCaseController {
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
-    LimitedAccessCaseReceivedGuard,
+    LimitedAccessAccordingToCaseStateGuard,
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
@@ -319,7 +322,7 @@ export class LimitedAccessCaseController {
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
-    LimitedAccessCaseReceivedGuard,
+    LimitedAccessAccordingToCaseStateGuard,
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)

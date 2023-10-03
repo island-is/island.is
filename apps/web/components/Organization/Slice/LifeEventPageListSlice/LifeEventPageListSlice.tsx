@@ -40,6 +40,8 @@ export const LifeEventPageListSlice: React.FC<
                 variant="title-above"
                 size="small"
                 title={page.shortTitle || page.title}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 description={page.shortIntro || page.intro}
                 link={{
                   text:
@@ -66,7 +68,11 @@ export const LifeEventPageListSlice: React.FC<
         {slice.lifeEventPageList?.map((page) => (
           <IconTitleCard
             heading={page.shortTitle || page.title}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             imgSrc={page.tinyThumbnail?.url}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             alt={page.tinyThumbnail?.title}
             href={
               linkResolver(anchorPageLinkType, [page.slug], activeLocale).href

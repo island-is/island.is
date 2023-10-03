@@ -30,12 +30,8 @@ describe('CaseController - Get court record signature confirmation', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      awsS3Service,
-      sequelize,
-      caseModel,
-      caseController,
-    } = await createTestingCaseModule()
+    const { awsS3Service, sequelize, caseModel, caseController } =
+      await createTestingCaseModule()
 
     mockAwsS3Service = awsS3Service
     mockCaseModel = caseModel
@@ -78,13 +74,16 @@ describe('CaseController - Get court record signature confirmation', () => {
     const role = assignedRole === 'judgeId' ? 'JUDGE' : 'REGISTRAR'
     const user = { id: userId, role: role } as User
     const caseId = uuid()
-    const theCase = { id: caseId, judgeId: uuid(), registrarId: uuid() } as Case
-    ;((theCase as unknown) as { [key: string]: string })[assignedRole] = userId
+    const theCase = {
+      id: caseId,
+      policeCaseNumbers: [uuid()],
+      judgeId: uuid(),
+      registrarId: uuid(),
+    } as Case
+    ;(theCase as unknown as { [key: string]: string })[assignedRole] = userId
     const documentToken = uuid()
 
     beforeEach(() => {
-      const mockPutObject = mockAwsS3Service.putObject as jest.Mock
-      mockPutObject.mockResolvedValueOnce(Promise.resolve())
       const mockFindOne = mockCaseModel.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(theCase)
     })
@@ -93,6 +92,8 @@ describe('CaseController - Get court record signature confirmation', () => {
       let then: Then
 
       beforeEach(async () => {
+        const mockPutObject = mockAwsS3Service.putObject as jest.Mock
+        mockPutObject.mockResolvedValueOnce(Promise.resolve())
         const mockUpdate = mockCaseModel.update as jest.Mock
         mockUpdate.mockResolvedValueOnce([1, [theCase]])
 
@@ -110,7 +111,27 @@ describe('CaseController - Get court record signature confirmation', () => {
       })
 
       it('should return success', () => {
-        expect(then.result).toEqual({ documentSigned: true })
+        expect(then.result).toEqual({
+          documentSigned: true,
+        })
+      })
+    })
+
+    describe('AWS S3 upload fails', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        const mockPutObject = mockAwsS3Service.putObject as jest.Mock
+        mockPutObject.mockRejectedValueOnce(new Error('Some error'))
+
+        then = await givenWhenThen(caseId, user, theCase, documentToken)
+      })
+
+      it('return failure', () => {
+        expect(then.result).toEqual({
+          documentSigned: false,
+          message: 'Failed to upload to S3',
+        })
       })
     })
 
@@ -118,6 +139,8 @@ describe('CaseController - Get court record signature confirmation', () => {
       let then: Then
 
       beforeEach(async () => {
+        const mockPutObject = mockAwsS3Service.putObject as jest.Mock
+        mockPutObject.mockResolvedValueOnce(Promise.resolve())
         const mockUpdate = mockCaseModel.update as jest.Mock
         mockUpdate.mockRejectedValueOnce(new Error('Some error'))
 

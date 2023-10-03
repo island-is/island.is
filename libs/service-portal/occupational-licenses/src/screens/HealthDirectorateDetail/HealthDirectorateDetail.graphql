@@ -1,0 +1,22 @@
+query getHealthDirectorateLicenseById($id: String!) {
+  getOrganizations {
+    items {
+      id
+      title
+      slug
+      logo {
+        id
+        url
+        title
+      }
+    }
+  }
+  occupationalLicensesHealthDirectorateLicense(id: $id) {
+    holderName
+    profession
+    type
+    number
+    validFrom
+    isValid
+  }
+}

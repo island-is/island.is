@@ -14,7 +14,7 @@ interface LocalizedOperationVariables {
 
 export const useLocalizedQuery = <
   TData = any,
-  TVariables extends OperationVariables = OperationVariables
+  TVariables extends OperationVariables = OperationVariables,
 >(
   query: DocumentNode,
   options?: QueryHookOptions<TData, TVariables>,
