@@ -7,7 +7,7 @@ import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import './auth'
 import { environment } from './environments'
-import App from './app/App'
+import { App } from './app/App'
 
 if (!isRunningOnEnvironment('local')) {
   userMonitoring.initDdRum({

@@ -12,6 +12,7 @@ const configFactory = (
 ) => ({
   fetchApi: createEnhancedFetch({
     name: 'clients-driving-license',
+    organizationSlug: 'rikislogreglustjori',
   }),
   headers: {
     'X-Road-Client': config.xroadClientId,
