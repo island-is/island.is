@@ -140,10 +140,6 @@ export class DrivingLicenseApi {
       return license
     } catch (e) {
       if (e.body.detail === 'Ökuskírteini er ekki í gildi') {
-        console.log('THIS REALLY BE HAPPENING STILL!!!!')
-        console.log('THIS REALLY BE HAPPENING STILL!!!!')
-        console.log('THIS REALLY BE HAPPENING STILL!!!!')
-        console.log('THIS REALLY BE HAPPENING STILL!!!!')
         const oldLicenses = await this.getAllLicensesV4(input)
         // Find license that expired within 2 years
         const licenseWithinLimit = oldLicenses.find((license) => {
@@ -164,10 +160,6 @@ export class DrivingLicenseApi {
       // disqualification is set manually via the deprivation endpoint.
       // This is less than ideal, but the API offers no alternative.
       if (e.body.detail === 'Einstaklingur er sviptur ökuréttindum') {
-        console.log('THIS REALLY BE HAPPENING STILL!!!!')
-        console.log('THIS REALLY BE HAPPENING STILL!!!!')
-        console.log('THIS REALLY BE HAPPENING STILL!!!!')
-        console.log('THIS REALLY BE HAPPENING STILL!!!!')
         const getAllLicenses = await this.getAllLicensesV4(input)
         const currentLicense = getAllLicenses.find((license) => {
           const categoryB = license.categories.find((cat) => cat.name === 'B')

@@ -81,7 +81,24 @@ const url = (path: string) => {
   return new URL(path, XROAD_BASE_PATH).toString()
 }
 
+// TODO: go through endpoints via insomnia/postman and inspect thoroughly
 export const requestHandlers = [
+  rest.get(/api\/drivinglicense\/v4\/:nationalId/, (req, res, ctx) => {
+    const isExpired = req.params.nationalId === MOCK_NATIONAL_ID_EXPIRED
+    const isDisqualified = DISQUALIFIED_NATIONAL_IDS.includes(
+      req.params.nationalId,
+    )
+    return res(
+      ctx.status(isExpired || isDisqualified ? 400 : 200),
+      ctx.json(
+        isExpired
+          ? { message: 'Ökuskírteini er ekki í gildi' }
+          : isDisqualified
+          ? { detail: 'Einstaklingur er sviptur ökuréttindum' }
+          : ValidLicense,
+      ),
+    )
+  }),
   rest.post(/api\/drivinglicense\/v5\/drivingassessment/, (_req, res, ctx) => {
     // TODO, ambiguate with mock auths
     return res(ctx.status(200))
@@ -331,6 +348,16 @@ export const requestHandlers = [
     /api\/drivinglicense\/v5\/applications\/new\/B/,
     (req, res, ctx) => {
       return res(ctx.status(200), ctx.json(ApplicationsNewB))
+    },
+  ),
+
+  rest.post(
+    /api\/drivinglicense\/v5\/applications\/new\/temporary/,
+    (req, res, ctx) => {
+      return res(
+        ctx.status(200),
+        ctx.json({ result: true, driverLicenseId: 1, errorCode: null }),
+      )
     },
   ),
 ]
