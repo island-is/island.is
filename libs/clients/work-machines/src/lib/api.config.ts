@@ -19,6 +19,7 @@ export const ApiConfig = {
     new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-work-machines',
+        organizationSlug: 'vinnueftirlitid',
         logErrorResponseBody: true,
         autoAuth: idsClientConfig.isConfigured
           ? {
