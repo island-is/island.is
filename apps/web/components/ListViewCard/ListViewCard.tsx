@@ -1,13 +1,5 @@
-import {
-  Box,
-  Button,
-  ButtonSizes,
-  ButtonTypes,
-  CTAProps,
-  Checkbox,
-  LinkV2,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Button, Checkbox, LinkV2, Text } from '@island.is/island-ui/core'
+import { CTAProps } from '@island.is/web/components'
 import React from 'react'
 import * as styles from './ListViewCard.css'
 import { useLinkResolver } from '@island.is/web/hooks'

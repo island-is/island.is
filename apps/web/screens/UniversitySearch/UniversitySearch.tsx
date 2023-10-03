@@ -152,12 +152,12 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     const comp = localStorage.getItem('comparison')
     const viewChoice = localStorage.getItem('viewChoice')
 
-    if (!!comp) {
+    if (comp) {
       const comparison = JSON.parse(comp)
       setSelectedComparison(comparison)
     }
 
-    if (!!viewChoice) {
+    if (viewChoice) {
       setGridView(viewChoice === 'true' ? true : false)
     }
   }, [])
@@ -193,9 +193,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const fuseInstance = new Fuse(data, fuseOptions)
 
   useEffect(() => {
-    let activeFiltersFound: Array<{ key: string; value: Array<string> }> = []
-    Object.keys(filters).forEach(function (key, index) {
-      let str = key as keyof typeof filters
+    const activeFiltersFound: Array<{ key: string; value: Array<string> }> = []
+    Object.keys(filters).forEach(function (key) {
+      const str = key as keyof typeof filters
       if (filters[str].length > 0) {
         activeFiltersFound.push({ key, value: filters[str] })
       }
@@ -240,7 +240,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }
 
   const handleFilters = (filterKey: string, filterValue: string) => {
-    let str = filterKey as keyof typeof filters
+    const str = filterKey as keyof typeof filters
     if (filters[str].includes(filterValue)) {
       const index = filters[str].indexOf(filterValue)
       const specificArray = filters[str]
@@ -292,7 +292,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }, [gridView])
 
   const predefinedFilterOpenings: Array<boolean> = []
-  for (var x = 0; x < NUMBER_OF_FILTERS; x++) {
+  for (let x = 0; x < NUMBER_OF_FILTERS; x++) {
     predefinedFilterOpenings.push(true)
   }
 
@@ -313,7 +313,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }
 
   const toggleCloseAll = () => {
-    const newIsOpen = isOpen.map((x) => {
+    const newIsOpen = isOpen.map(() => {
       return false
     })
     setIsOpen(newIsOpen)
@@ -413,7 +413,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                         <Stack space={[1, 1, 2]}>
                           {filter.options.map((option) => {
                             let keyField = option
-                            let str = filter.field as keyof typeof filters
+                            const str = filter.field as keyof typeof filters
 
                             if (str === 'universityId') {
                               keyField = universities.filter(
@@ -597,9 +597,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                       setFilters({ ...filters, [categoryId]: [] })
                     }}
                     categories={
-                      !!filterOptions
+                      filterOptions
                         ? filterOptions.map((filter) => {
-                            let str = filter.field as keyof typeof filters
+                            const str = filter.field as keyof typeof filters
                             return {
                               id: filter.field,
                               label: n(
@@ -819,7 +819,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     />
                                   ),
                                   title: `${dataItem.modeOfDelivery.map(
-                                    (delivery: string, index: number) => {
+                                    (delivery: string) => {
                                       return ` ${n(
                                         delivery,
                                         TranslationDefaults[delivery],
@@ -889,7 +889,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   }`}
                                 />
                               }
-                              onCheck={(e) =>
+                              onCheck={() =>
                                 handleComparisonChange({
                                   id: dataItem.id,
                                   nameIs:
