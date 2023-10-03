@@ -87,6 +87,7 @@ const labels: Record<string, string> = {
   rikisadili: 'Ríkisaðili',
   kennitala: 'Kennitala',
   malsnumer_ef_til_stadar: 'Málsnúmer (ef til staðar)',
+  faedingardagur_eda_kennitala_malsadila: 'Fæðingardagur/Kennitala málsaðila',
 }
 
 // these should be skipped in the message itself
@@ -204,6 +205,10 @@ export const StandardForm = ({
 
   const institutionSlugBelongsToMannaudstorg =
     institutionSlug.includes('mannaudstorg')
+
+  const institutionSligBelongsToDirectorateOfImmigration =
+    institutionSlug === 'utlendingastofnun' ||
+    institutionSlug === 'directorate-of-immigration'
 
   useDebounce(
     () => {
@@ -472,6 +477,53 @@ export const StandardForm = ({
             requiredMessage={n('jobTitleMissing', 'Starfsheiti vantar')}
           />
         </GridColumn>
+      )
+    }
+
+    if (institutionSligBelongsToDirectorateOfImmigration) {
+      fields = (
+        <>
+          <GridColumn span="12/12">
+            <Text>
+              {n(
+                '',
+                activeLocale === 'is'
+                  ? 'Til þess að flýta fyrir máttu endilega gefa okkur upp eftirfarandi upplýsingar ef það á við:'
+                  : 'In order to speed things up, please provide us with the following information if applicable:',
+              )}
+            </Text>
+          </GridColumn>
+          <GridColumn span="12/12" paddingBottom={3}>
+            <BasicInput
+              name="nafn_malsadila"
+              label={fn(
+                'nafn_malsadila',
+                'label',
+                activeLocale === 'is'
+                  ? 'Nafn málsaðila'
+                  : 'Name of applicant/litigant',
+              )}
+            />
+          </GridColumn>
+          <GridColumn span="12/12" paddingBottom={3}>
+            <BasicInput
+              name="faedingardagur_eda_kennitala_malsadila"
+              label={fn(
+                'faedingardagur_eda_kennitala_malsadila',
+                'label',
+                activeLocale === 'is'
+                  ? 'Fæðingardagur/Kennitala málsaðila'
+                  : 'Date of birth - ID number of the applicant/litigant',
+              )}
+            />
+          </GridColumn>
+          <GridColumn span="12/12">
+            <BasicInput
+              name="malsnumer"
+              label={fn('malsnumer', 'label', 'Málsnúmer')}
+            />
+          </GridColumn>
+        </>
       )
     }
 
