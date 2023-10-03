@@ -80,9 +80,6 @@ export enum DirectorateOfImmigrationCategories {
 
   // Dvalarleyfi
   RESIDENCE_PERMIT = 'dvalarleyfi',
-
-  // Aðstoð við sjálfviljuga heimför
-  ASSISTED_VOLUNTARY_RETURN = 'adstod-vid-sjalfviljuga-heimfor',
 }
 
 export const filterSupportCategories = (
@@ -188,7 +185,6 @@ export const filterSupportCategories = (
           namespace?.['directorateOfImmigrationResidencePermit'] ||
           (locale === 'is' ? 'Dvalarleyfi' : 'Residence permit'),
       })
-    // TODO: perhaps add more categories here?
   }
 
   return supportCategories
