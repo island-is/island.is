@@ -10,19 +10,21 @@ import {
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import {
   DokobitError,
   SigningService,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   CaseMessage,
   MessageService,
   MessageType,
 } from '@island.is/judicial-system/message'
+import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
   CaseAppealState,
@@ -33,38 +35,38 @@ import {
   CaseTransition,
   CaseType,
   completedCaseStates,
+  EventType,
   isIndictmentCase,
   isRestrictionCase,
   UserRole,
-  EventType,
 } from '@island.is/judicial-system/types'
-import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import {
-  getRequestPdfAsBuffer,
-  getRulingPdfAsString,
-  getRulingPdfAsBuffer,
-  getCustodyNoticePdfAsBuffer,
-  getCourtRecordPdfAsBuffer,
-  getCourtRecordPdfAsString,
   createCaseFilesRecord,
   createIndictment,
+  getCourtRecordPdfAsBuffer,
+  getCourtRecordPdfAsString,
+  getCustodyNoticePdfAsBuffer,
+  getRequestPdfAsBuffer,
+  getRulingPdfAsBuffer,
+  getRulingPdfAsString,
 } from '../../formatters'
+import { AwsS3Service } from '../aws-s3'
+import { CourtService } from '../court'
+import { Defendant, DefendantService } from '../defendant'
+import { CaseEvent, EventService } from '../event'
+import { EventLog } from '../event-log'
 import { CaseFile, FileService } from '../file'
-import { DefendantService, Defendant } from '../defendant'
 import { IndictmentCount } from '../indictment-count'
 import { Institution } from '../institution'
 import { User } from '../user'
-import { AwsS3Service } from '../aws-s3'
-import { CourtService } from '../court'
-import { CaseEvent, EventService } from '../event'
-import { EventLog } from '../event-log'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
-import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { Case } from './models/case.model'
+import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
+
 export interface UpdateCase
   extends Pick<
     Case,

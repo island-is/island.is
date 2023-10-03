@@ -1,5 +1,5 @@
-import { uuid } from 'uuidv4'
 import { Op } from 'sequelize'
+import { uuid } from 'uuidv4'
 
 import {
   BadRequestException,
@@ -10,8 +10,9 @@ import {
 import { CaseState } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
-import { Case } from '../../models/case.model'
+
 import { attributes, include, order } from '../../limitedAccessCase.service'
+import { Case } from '../../models/case.model'
 import { LimitedAccessCaseExistsGuard } from '../limitedAccessCaseExists.guard'
 
 interface Then {

@@ -5,9 +5,9 @@ import { BadGatewayException, BadRequestException } from '@nestjs/common'
 
 import { Case as TCase, CaseType } from '@island.is/judicial-system/types'
 
+import appModuleConfig from '../app.config'
 import { CreateCaseDto } from '../app.dto'
 import { Case } from '../app.model'
-import appModuleConfig from '../app.config'
 import { createTestingAppModule } from './createTestingAppModule'
 
 jest.mock('isomorphic-fetch')

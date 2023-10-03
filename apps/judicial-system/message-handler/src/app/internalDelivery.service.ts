@@ -2,9 +2,10 @@ import fetch from 'node-fetch'
 
 import { Inject, Injectable } from '@nestjs/common'
 
-import type { ConfigType } from '@island.is/nest/config'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
+
 import type { User } from '@island.is/judicial-system/types'
 
 import { appModuleConfig } from './app.config'

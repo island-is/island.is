@@ -1,10 +1,10 @@
 import {
   assistantRule,
   judgeRule,
+  prisonSystemStaffRule,
+  prosecutorRepresentativeRule,
   prosecutorRule,
   registrarRule,
-  prosecutorRepresentativeRule,
-  prisonSystemStaffRule,
 } from '../../../../guards'
 import { CaseController } from '../../case.controller'
 
