@@ -586,4 +586,24 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-drug-lines',
     defaultMessage: 'Lyfjalínur',
   },
+  medicineFindDrug: {
+    id: 'sp.health:medicine-find-drug',
+    defaultMessage: 'Finna lyf',
+  },
+  medicineSearchForDrug: {
+    id: 'sp.health:medicine-search-for-drug',
+    defaultMessage: 'Leita að lyf',
+  },
+  medicineForm: {
+    id: 'sp.health:medicine-form',
+    defaultMessage: 'Form',
+  },
+  medicinePackaging: {
+    id: 'sp.health:medicine-packaging',
+    defaultMessage: 'Pakkning',
+  },
+  medicinePrice: {
+    id: 'sp.health:medicine-price',
+    defaultMessage: 'Verð',
+  },
 })

@@ -67,6 +67,8 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
 
   const [getPaymenetPeriodsQuery] = useGetDrugsBillsLazyQuery()
 
+  console.log(bills)
+
   useEffect(() => {
     if (selectedPeriod) {
       setBillsLoading(true)
@@ -251,8 +253,8 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
                       data={[
                         { value: formatDateFns(bill.date, DATE_FORMAT) },
                         { value: bill.description ?? '' },
-                        { value: bill.copaymentAmount ?? '' },
-                        { value: bill.customerAmount ?? '' },
+                        { value: bill.totalCopaymentAmount ?? '' },
+                        { value: bill.totalCustomerAmount ?? '' },
                       ]}
                       onExpandCallback={() => {
                         setSelectedLineItem(bill.id ?? '')
@@ -364,17 +366,17 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
                               <T.Data></T.Data>
                               <T.Data>
                                 <span className={styles.subTableHeaderText}>
-                                  {bill.copaymentAmount}
+                                  {bill.totalCopaymentAmount}
                                 </span>
                               </T.Data>
                               <T.Data>
                                 <span className={styles.subTableHeaderText}>
-                                  {bill.insuranceAmount}
+                                  {bill.totalInsuranceAmount}
                                 </span>
                               </T.Data>
                               <T.Data>
                                 <span className={styles.subTableHeaderText}>
-                                  {bill.customerAmount}
+                                  {bill.totalCustomerAmount}
                                 </span>
                               </T.Data>
                             </T.Row>

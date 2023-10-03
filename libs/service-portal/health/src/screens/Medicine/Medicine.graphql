@@ -17,10 +17,10 @@ query getDrugsBills($input: RightsPortalDrugsBillsInput!) {
     id
     date
     description
-    copaymentAmount
-    customerAmount
-    insuranceAmount
-    calculatedForPaymentStepAmount
+    totalCopaymentAmount
+    totalCustomerAmount
+    totalInsuranceAmount
+    totalCalculatedForPaymentStepAmount
   }
 }
 
@@ -36,5 +36,26 @@ query getDrugBillLineItem($input: RightsPortalDrugsBillLineItemInput!) {
     excessAmount
     customerAmount
     insuranceAmount
+  }
+}
+
+query getDrugs($input: RightsPortalDrugsInput!) {
+  rightsPortalDrugs(input: $input) {
+    drugs {
+      nordicCode
+      atcCode
+      name
+      form
+      strength
+      packaging
+      price
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
   }
 }

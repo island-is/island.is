@@ -5,6 +5,7 @@ import { messages } from '../../lib/messages'
 import { useState } from 'react'
 import { MedicinePurchase } from './TabPanes/MedicinePurchase'
 import { MedicineTabs, CONTENT_GAP } from './constants'
+import { MedicineCalulator } from './TabPanes/MedicineCalculator'
 
 const Medicine = () => {
   useNamespaces('sp.health')
@@ -18,19 +19,13 @@ const Medicine = () => {
     {
       id: MedicineTabs.BILLS,
       label: formatMessage(messages.medicinePurchaseTitle),
-      content: <MedicinePurchase onTabChange={setSelectedTab} />,
+      // content: <MedicinePurchase onTabChange={setSelectedTab} />,
+      content: <MedicineCalulator />,
     },
     {
       id: MedicineTabs.CALCULATOR,
       label: formatMessage(messages.medicineCalculatorTitle),
-      content: (
-        <Box paddingY={4}>
-          <Text marginBottom={CONTENT_GAP} variant="h5">
-            {formatMessage(messages.medicineCalculatorIntroTitle)}
-          </Text>
-          <Text>{formatMessage(messages.medicineCalculatorIntroText)}</Text>
-        </Box>
-      ),
+      content: <MedicineCalulator />,
     },
     {
       id: MedicineTabs.LICENSE,

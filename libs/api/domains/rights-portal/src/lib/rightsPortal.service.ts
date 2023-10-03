@@ -38,6 +38,8 @@ import { GetDentistsInput } from './dto/getDentists.input'
 import { RegisterDentistResponse } from './models/registerDentistResponse'
 import { DrugsBillsInput } from './dto/drugsBills.input'
 import { DrugBillLineItemInput } from './dto/drugsBillLineItem.input'
+import { DrugsInput } from './dto/drugs.input'
+import { DrugCalculatorInput } from './dto/drugsCalculator.input'
 
 @Injectable()
 export class RightsPortalService {
@@ -372,6 +374,26 @@ export class RightsPortalService {
         .getDrugBillLineItems(input)
     } catch (e) {
       return handle404(e)
+    }
+  }
+
+  async getDrugs(user: User, input: DrugsInput) {
+    try {
+      return await this.drugsApi
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .getDrugs(input)
+    } catch (error) {
+      return handle404(error)
+    }
+  }
+
+  async drugCalculator(user: User, input: DrugCalculatorInput) {
+    try {
+      return await this.drugsApi
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .drugCalculator(input)
+    } catch (error) {
+      return handle404(error)
     }
   }
 }

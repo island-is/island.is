@@ -12,14 +12,14 @@ export class DrugsBills {
   description?: string | null
 
   @Field(() => Number, { nullable: true })
-  copaymentAmount?: number | null
+  totalCopaymentAmount?: number | null
 
   @Field(() => Number, { nullable: true })
-  customerAmount?: number | null
+  totalCustomerAmount?: number | null
 
   @Field(() => Number, { nullable: true })
-  insuranceAmount?: number | null
+  totalInsuranceAmount?: number | null
 
   @Field(() => Number, { nullable: true })
-  calculatedForPaymentStepAmount?: number | null
+  totalCalculatedForPaymentStepAmount?: number | null
 }
