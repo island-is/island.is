@@ -2,10 +2,15 @@ import {
   buildMultiField,
   buildCustomField,
   buildSubSection,
+  buildFileUploadField,
+  buildDescriptionField,
+  hasYes,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { hasNoDrivingLicenseInOtherCountry } from '../../lib/utils'
 import { hasHealthRemarks } from '../../lib/utils/formUtils'
+import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../lib/constants'
 
 export const subSectionHealthDeclaration = buildSubSection({
   id: 'healthDeclaration',
@@ -15,6 +20,7 @@ export const subSectionHealthDeclaration = buildSubSection({
     buildMultiField({
       id: 'overview',
       title: m.healthDeclarationMultiFieldTitle,
+      description: m.healthDeclarationMultiFieldSubTitle,
       space: 2,
       children: [
         buildCustomField({
@@ -30,7 +36,6 @@ export const subSectionHealthDeclaration = buildSubSection({
             component: 'HealthDeclaration',
           },
           {
-            title: m.healthDeclarationMultiFieldSubTitle,
             label: m.healthDeclaration1,
           },
         ),
@@ -124,6 +129,27 @@ export const subSectionHealthDeclaration = buildSubSection({
             label: m.healthDeclaration10,
           },
         ),
+        buildAlertMessageField({
+          id: 'healthDeclaration.error',
+          title: '',
+          message: 'Vinsamlegast fylltu út heilbringðisyfirlýsingu',
+          alertType: 'error',
+          condition: (answers) => !!(answers.healthDeclaration as any)?.error,
+        }),
+        buildDescriptionField({
+          id: 'space',
+          title: '',
+          space: 'containerGutter',
+          condition: (answers) => hasYes(answers.healthDeclaration),
+        }),
+        buildFileUploadField({
+          id: 'healthDeclaration.attachments',
+          title: '',
+          maxSize: FILE_SIZE_LIMIT,
+          maxSizeErrorText: m.attachmentMaxSizeError,
+          uploadAccept: UPLOAD_ACCEPT,
+          condition: (answers) => hasYes(answers.healthDeclaration),
+        }),
       ],
     }),
   ],

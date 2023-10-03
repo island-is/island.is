@@ -581,6 +581,11 @@ export const m = defineMessages({
     description:
       'Text that shows up when an error occurs while submitting the application',
   },
+  attachmentMaxSizeError: {
+    id: 'dl.application:error.attachment.maxSizeError',
+    defaultMessage: 'Hámark 10 MB á skrá',
+    description: 'Max 10 MB per file',
+  },
   informationTitle: {
     id: 'dl.application:informationTitle',
     defaultMessage: 'Upplýsingar',
