@@ -20,6 +20,10 @@ export const notificationModuleConfig = defineConfig({
       courtsMobileNumbers: env.requiredJSON('COURTS_MOBILE_NUMBERS', {}) as {
         [key: string]: string
       },
+      courtsAssistantMobileNumbers: env.requiredJSON(
+        'COURTS_ASSISTANT_MOBILE_NUMBERS',
+        {},
+      ) as { [key: string]: string },
     },
     clientUrl: env.required('CLIENT_URL', 'http://localhost:4200'),
   }),
