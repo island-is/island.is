@@ -25,6 +25,7 @@ export const RskRelationshipsConfigurationProvider = {
     return new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-rsk-relationships',
+        organizationSlug: 'skatturinn',
         cache:
           config.redis.nodes.length === 0
             ? undefined
