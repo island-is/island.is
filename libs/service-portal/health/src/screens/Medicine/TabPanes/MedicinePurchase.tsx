@@ -11,6 +11,7 @@ import {
 import {
   ExpandHeader,
   ExpandRow,
+  IntroHeader,
   UserInfoLine,
   m,
 } from '@island.is/service-portal/core'
@@ -18,11 +19,13 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { messages } from '../../../lib/messages'
 import {
   useGetDrugBillLineItemLazyQuery,
+  useGetDrugsBillsLazyQuery,
   useGetDrugsBillsQuery,
   useGetDrugsDataQuery,
 } from '../Medicine.generated'
 import {
   RightsPortalDrugBillLineItem,
+  RightsPortalDrugsBills,
   RightsPortalDrugsPaymentPeroids,
 } from '@island.is/api/schema'
 import { useEffect, useState } from 'react'
@@ -57,19 +60,32 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
     )}`
   }
 
+  const [bills, setBills] = useState<RightsPortalDrugsBills[] | null>(null)
+  const [billsLoading, setBillsLoading] = useState<boolean>(false)
+
   const { data, loading, error } = useGetDrugsDataQuery()
 
-  const {
-    data: bills,
-    loading: billsLoading,
-    error: billsError,
-  } = useGetDrugsBillsQuery({
-    variables: {
-      input: {
-        paymentPeriodId: selectedPeriod?.id ?? '',
-      },
-    },
-  })
+  const [getPaymenetPeriodsQuery] = useGetDrugsBillsLazyQuery()
+
+  useEffect(() => {
+    if (selectedPeriod) {
+      setBillsLoading(true)
+      getPaymenetPeriodsQuery({
+        variables: {
+          input: {
+            paymentPeriodId: selectedPeriod?.id ?? '',
+          },
+        },
+        onCompleted: (data) => {
+          setBills(data.rightsPortalDrugsBills)
+          setBillsLoading(false)
+        },
+        onError: () => {
+          setBillsLoading(false)
+        },
+      })
+    }
+  }, [selectedPeriod])
 
   const [lineItemQuery, { loading: lineItemLoading }] =
     useGetDrugBillLineItemLazyQuery()
@@ -84,11 +100,26 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
   return (
     <Box paddingY={4}>
       <Box marginBottom={SECTION_GAP}>
-        <Text marginBottom={CONTENT_GAP} variant="h5">
+        {/* <Text marginBottom={CONTENT_GAP} variant="h5">
           {formatMessage(messages.medicinePurchaseIntroTitle)}
         </Text>
-        <Text>{formatMessage(messages.medicinePurchaseIntroText)}</Text>
+        <Text>{formatMessage(messages.medicinePurchaseIntroText)}</Text> */}
+        <IntroHeader
+          isSubheading
+          title={messages.medicinePurchaseTitle}
+          intro={messages.medicinePurchaseIntroText}
+        />
       </Box>
+      {loading && (
+        <Box marginBottom={CONTENT_GAP}>
+          <SkeletonLoader
+            repeat={4}
+            borderRadius="standard"
+            space={2}
+            height={32}
+          />
+        </Box>
+      )}
       {data?.rightsPortalDrugsPaymentPeroids?.length && (
         <Box display="flex" flexDirection="column">
           <Box marginBottom={1}>
@@ -193,10 +224,10 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
         <Text marginBottom={CONTENT_GAP} variant="h5">
           {formatMessage(messages.medicineBills)}
         </Text>
-        {billsLoading ? (
+        {billsLoading || loading ? (
           <SkeletonLoader repeat={3} borderRadius="large" space={1} />
         ) : (
-          bills?.rightsPortalDrugsBills.length && (
+          bills?.length && (
             <T.Table>
               <ExpandHeader
                 data={[
@@ -211,7 +242,7 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
                   { value: formatMessage(messages.medicinePaidByCustomer) },
                 ]}
               />
-              {bills.rightsPortalDrugsBills.map((bill, i) => {
+              {bills.map((bill, i) => {
                 return (
                   <T.Body key={i}>
                     <ExpandRow
@@ -304,6 +335,7 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
                               if (billId !== bill.id) return null
 
                               return lineItems.map((lineItem, k) => {
+                                console.log(lineItem)
                                 return (
                                   <T.Row key={`${i}-${j}-${k}`}>
                                     <T.Data>{lineItem.drugName}</T.Data>
@@ -312,7 +344,7 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
                                     <T.Data>{lineItem.number}</T.Data>
                                     <T.Data>{lineItem.salesPrice}</T.Data>
                                     <T.Data>{lineItem.copaymentAmount}</T.Data>
-                                    <T.Data>{lineItem.insuranceAmount}</T.Data>
+                                    <T.Data>{lineItem.excessAmount}</T.Data>
                                     <T.Data>{lineItem.customerAmount}</T.Data>
                                   </T.Row>
                                 )

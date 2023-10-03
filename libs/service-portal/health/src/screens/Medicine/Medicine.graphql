@@ -33,6 +33,7 @@ query getDrugBillLineItem($input: RightsPortalDrugsBillLineItemInput!) {
     number
     salesPrice
     copaymentAmount
+    excessAmount
     customerAmount
     insuranceAmount
   }

@@ -11,12 +11,12 @@ const Medicine = () => {
 
   const { formatMessage } = useLocale()
   const [selectedTab, setSelectedTab] = useState<MedicineTabs>(
-    MedicineTabs.PURCHASE,
+    MedicineTabs.BILLS,
   )
 
   const tabs = [
     {
-      id: MedicineTabs.PURCHASE,
+      id: MedicineTabs.BILLS,
       label: formatMessage(messages.medicinePurchaseTitle),
       content: <MedicinePurchase onTabChange={setSelectedTab} />,
     },

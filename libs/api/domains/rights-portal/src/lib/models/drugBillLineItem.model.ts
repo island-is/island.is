@@ -24,6 +24,9 @@ export class DrugBillLineItem {
   copaymentAmount?: number
 
   @Field(() => Number, { nullable: true })
+  excessAmount?: number
+
+  @Field(() => Number, { nullable: true })
   customerAmount?: number
 
   @Field(() => Number, { nullable: true })

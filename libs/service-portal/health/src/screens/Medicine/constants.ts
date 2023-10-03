@@ -1,5 +1,5 @@
 export enum MedicineTabs {
-  PURCHASE = 'lyfjakaup',
+  BILLS = 'lyfjakaup',
   CALCULATOR = 'reiknivel',
   LICENSE = 'skirteini',
 }
