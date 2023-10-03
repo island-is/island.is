@@ -1,10 +1,6 @@
+import { Problem } from '@island.is/react-spa/shared'
 import { useMemo, useState } from 'react'
-import {
-  SkeletonLoader,
-  Stack,
-  AlertBanner,
-  Box,
-} from '@island.is/island-ui/core'
+import { SkeletonLoader, Stack, Box } from '@island.is/island-ui/core'
 import sortBy from 'lodash/sortBy'
 import {
   AuthDelegationDirection,
@@ -52,10 +48,7 @@ export const DelegationsIncoming = () => {
       {loading ? (
         <SkeletonLoader width="100%" height={191} />
       ) : error ? (
-        <AlertBanner
-          description={formatMessage(m.errorFetch)}
-          variant="error"
-        />
+        <Problem error={error} />
       ) : delegations.length === 0 ? (
         <DelegationsEmptyState />
       ) : (

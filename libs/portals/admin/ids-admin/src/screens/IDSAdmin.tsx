@@ -61,7 +61,7 @@ const IDSAdmin = () => {
   const showBackButton = location.pathname !== IDSAdminPaths.IDSAdmin
 
   return (
-    <Stack space={'gutter'}>
+    <Stack space="gutter">
       {showBackButton && <BackButton onClick={navigateBack} />}
       <Outlet />
     </Stack>

@@ -1,8 +1,8 @@
 import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
 import {
   CaseTransition,
-  UserRole,
   isIndictmentCase,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { UpdateCaseDto } from '../dto/updateCase.dto'

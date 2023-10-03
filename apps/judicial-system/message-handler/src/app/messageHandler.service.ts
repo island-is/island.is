@@ -1,20 +1,21 @@
 import { Inject, Injectable, OnModuleDestroy } from '@nestjs/common'
 
-import type { ConfigType } from '@island.is/nest/config'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import {
-  MessageType,
-  MessageService,
-  CaseFileMessage,
-  PoliceCaseMessage,
-  DefendantMessage,
-} from '@island.is/judicial-system/message'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
+
 import type { CaseMessage } from '@island.is/judicial-system/message'
+import {
+  CaseFileMessage,
+  DefendantMessage,
+  MessageService,
+  MessageType,
+  PoliceCaseMessage,
+} from '@island.is/judicial-system/message'
 import { NotificationType } from '@island.is/judicial-system/types'
 
-import { InternalDeliveryService } from './internalDelivery.service'
 import { appModuleConfig } from './app.config'
+import { InternalDeliveryService } from './internalDelivery.service'
 
 @Injectable()
 export class MessageHandlerService implements OnModuleDestroy {

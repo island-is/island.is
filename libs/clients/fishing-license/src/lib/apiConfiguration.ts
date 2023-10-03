@@ -17,6 +17,7 @@ export const ApiConfiguration = {
     new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-fishing-license',
+        organizationSlug: 'fiskistofa',
         timeout: 30000, // 30 sec timeout
         logErrorResponseBody: true,
         autoAuth: idsClientConfig.isConfigured
