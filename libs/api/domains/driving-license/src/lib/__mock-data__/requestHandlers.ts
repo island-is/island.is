@@ -81,7 +81,6 @@ const url = (path: string) => {
   return new URL(path, XROAD_BASE_PATH).toString()
 }
 
-// TODO: go through endpoints via insomnia/postman and inspect thoroughly
 export const requestHandlers = [
   rest.get(/api\/drivinglicense\/v4\/:nationalId/, (req, res, ctx) => {
     const isExpired = req.params.nationalId === MOCK_NATIONAL_ID_EXPIRED
