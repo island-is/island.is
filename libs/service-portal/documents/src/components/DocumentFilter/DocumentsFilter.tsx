@@ -199,7 +199,7 @@ const DocumentsFilter = ({
                 iconVariant="small"
               >
                 <Box display="flex" flexDirection="column">
-                  <Box className={styles.firstDatePicker}>
+                  <Box>
                     <DatePicker
                       label={formatMessage(m.datepickerFromLabel)}
                       placeholderText={formatMessage(m.datepickLabel)}
@@ -208,9 +208,10 @@ const DocumentsFilter = ({
                       size="xs"
                       selected={filterValue.dateFrom}
                       handleChange={handleDateFromChange}
+                      appearInline
                     />
                   </Box>
-                  <Box marginTop={3} className={styles.secondDatePicker}>
+                  <Box marginTop={3}>
                     <DatePicker
                       label={formatMessage(m.datepickerToLabel)}
                       placeholderText={formatMessage(m.datepickLabel)}
@@ -219,6 +220,7 @@ const DocumentsFilter = ({
                       size="xs"
                       selected={filterValue.dateTo}
                       handleChange={handleDateToChange}
+                      appearInline
                       minDate={filterValue.dateFrom || undefined}
                     />
                   </Box>
@@ -230,32 +232,27 @@ const DocumentsFilter = ({
       </Filter>
       <Hidden print>
         {hasActiveFilters() && (
-          <Box marginTop={4}>
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="spaceBetween"
-            >
-              <DocumentsFilterTags
-                filterValue={filterValue}
-                categories={categoriesAvailable}
-                senders={sendersAvailable}
-                handleCategoriesChange={handleCategoriesChange}
-                handleSendersChange={handleSendersChange}
-                handleDateFromChange={handleDateFromChange}
-                handleDateToChange={handleDateToChange}
-                handleShowUnread={handleShowUnread}
-                handleClearFilters={handleClearFilters}
-              />
+          <Box display="flex" flexDirection="column" marginTop={4}>
+            <DocumentsFilterTags
+              filterValue={filterValue}
+              categories={categoriesAvailable}
+              senders={sendersAvailable}
+              handleCategoriesChange={handleCategoriesChange}
+              handleSendersChange={handleSendersChange}
+              handleDateFromChange={handleDateFromChange}
+              handleDateToChange={handleDateToChange}
+              handleShowUnread={handleShowUnread}
+              handleClearFilters={handleClearFilters}
+            />
 
-              <Text
-                variant="eyebrow"
-                as="h3"
-                dataTestId="doc-found-text"
-              >{`${documentsLength} ${formatMessage(
-                documentsFoundText(),
-              )}`}</Text>
-            </Box>
+            <Text
+              variant="eyebrow"
+              as="h3"
+              dataTestId="doc-found-text"
+              marginTop={2}
+            >{`${documentsLength} ${formatMessage(
+              documentsFoundText(),
+            )}`}</Text>
           </Box>
         )}
       </Hidden>

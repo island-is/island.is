@@ -79,9 +79,4 @@ export const messages = defineMessages({
     id: 'sp,documents:pick-document',
     defaultMessage: 'Veldu skjal til að lesa',
   },
-  pickDocumentText: {
-    id: 'sp,documents:pick-document-text',
-    defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut.',
-  },
 })

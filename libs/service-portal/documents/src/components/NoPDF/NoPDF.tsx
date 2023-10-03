@@ -26,11 +26,8 @@ export const NoPDF = () => {
         paddingTop={[3, 0]}
         style={{ maxWidth: 370 }}
       >
-        <Text marginBottom={1} variant="h3">
+        <Text marginBottom={1} variant="h3" fontWeight="medium">
           {formatMessage(messages.pickDocument)}
-        </Text>
-        <Text marginBottom={1} variant="medium">
-          {formatMessage(messages.pickDocumentText)}
         </Text>
       </Box>
     </Box>

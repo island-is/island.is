@@ -46,61 +46,59 @@ const DocumentsFilterTags = ({
     return sender?.label || ''
   }
   return (
-    <Box display="flex">
-      <Box display="flex">
-        {filterValue.activeCategories.length > 0 &&
-          filterValue.activeCategories.map((activecat) => (
-            <FilterTag
-              onClick={() =>
-                handleCategoriesChange(
-                  filterValue.activeCategories.filter(
-                    (item) => item !== activecat,
-                  ),
-                )
-              }
-              key={`cat-${activecat}`}
-              title={getCategoryTitle(activecat)}
-            />
-          ))}
-        {filterValue.activeSenders.length > 0 &&
-          filterValue.activeSenders.map((activeSender) => (
-            <FilterTag
-              onClick={() =>
-                handleSendersChange(
-                  filterValue.activeSenders.filter(
-                    (item) => item !== activeSender,
-                  ),
-                )
-              }
-              key={`sender-${activeSender}`}
-              title={getSenderTitle(activeSender)}
-            />
-          ))}
-        {filterValue.dateFrom && (
+    <Box display="flex" flexWrap="wrap" rowGap={1} alignItems="center">
+      {filterValue.activeCategories.length > 0 &&
+        filterValue.activeCategories.map((activecat) => (
           <FilterTag
-            onClick={() => handleDateFromChange(null)}
-            title={`${formatMessage(m.datepickerFromLabel)} - ${format(
-              filterValue.dateFrom,
-              dateFormat.is,
-            )}`}
+            onClick={() =>
+              handleCategoriesChange(
+                filterValue.activeCategories.filter(
+                  (item) => item !== activecat,
+                ),
+              )
+            }
+            key={`cat-${activecat}`}
+            title={getCategoryTitle(activecat)}
           />
-        )}
-        {filterValue.dateTo && (
+        ))}
+      {filterValue.activeSenders.length > 0 &&
+        filterValue.activeSenders.map((activeSender) => (
           <FilterTag
-            onClick={() => handleDateToChange(null)}
-            title={`${formatMessage(m.datepickerToLabel)} - ${format(
-              filterValue.dateTo,
-              dateFormat.is,
-            )}`}
+            onClick={() =>
+              handleSendersChange(
+                filterValue.activeSenders.filter(
+                  (item) => item !== activeSender,
+                ),
+              )
+            }
+            key={`sender-${activeSender}`}
+            title={getSenderTitle(activeSender)}
           />
-        )}
-        {filterValue.showUnread && (
-          <FilterTag
-            onClick={() => handleShowUnread(false)}
-            title={formatMessage(messages.onlyShowUnreadShort)}
-          />
-        )}
-      </Box>
+        ))}
+      {filterValue.dateFrom && (
+        <FilterTag
+          onClick={() => handleDateFromChange(null)}
+          title={`${formatMessage(m.datepickerFromLabel)} - ${format(
+            filterValue.dateFrom,
+            dateFormat.is,
+          )}`}
+        />
+      )}
+      {filterValue.dateTo && (
+        <FilterTag
+          onClick={() => handleDateToChange(null)}
+          title={`${formatMessage(m.datepickerToLabel)} - ${format(
+            filterValue.dateTo,
+            dateFormat.is,
+          )}`}
+        />
+      )}
+      {filterValue.showUnread && (
+        <FilterTag
+          onClick={() => handleShowUnread(false)}
+          title={formatMessage(messages.onlyShowUnreadShort)}
+        />
+      )}
       <Box marginLeft={1}>
         <Button
           icon="reload"

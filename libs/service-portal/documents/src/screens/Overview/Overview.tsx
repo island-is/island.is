@@ -95,7 +95,7 @@ const GET_DOCUMENT_SENDERS = gql`
   }
 `
 
-const pageSize = 3
+const pageSize = 10
 
 export const ServicePortalDocuments = () => {
   useNamespaces('sp.documents')
