@@ -129,17 +129,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ApplicantNewModel"
+                "$ref": "#/components/schemas/ApplicantNewChildModel"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/ApplicantNewModel"
+                "$ref": "#/components/schemas/ApplicantNewChildModel"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/ApplicantNewModel"
+                "$ref": "#/components/schemas/ApplicantNewChildModel"
               }
             }
           }
@@ -345,6 +345,44 @@
         }
       }
     },
+    "/api/Application/Confirm/{applicationId}": {
+      "patch": {
+        "tags": ["Application"],
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Application": {
       "post": {
         "tags": ["Application"],
@@ -427,14 +465,15 @@
         }
       }
     },
-    "/api/ApplicationAttachment": {
+    "/api/ApplicationAttachment/{applicationId}": {
       "post": {
         "tags": ["ApplicationAttachment"],
         "parameters": [
           {
             "name": "applicationId",
-            "in": "query",
-            "style": "form",
+            "in": "path",
+            "required": true,
+            "style": "simple",
             "schema": {
               "type": "string"
             }
@@ -476,53 +515,6 @@
               "text/json": {
                 "schema": {
                   "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/ApplicationAttachment/GetAll/{applicationId}": {
-      "get": {
-        "tags": ["ApplicationAttachment"],
-        "parameters": [
-          {
-            "name": "applicationId",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ApplicationAttachmentViewModel"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ApplicationAttachmentViewModel"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ApplicationAttachmentViewModel"
-                  }
                 }
               }
             }
@@ -885,88 +877,6 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/OptionSetItem"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Parent": {
-      "post": {
-        "tags": ["Parent"],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ParentNewModel"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ParentNewModel"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ParentNewModel"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Parent/GetAll": {
-      "get": {
-        "tags": ["Parent"],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ParentViewModel"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ParentViewModel"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ParentViewModel"
-                  }
                 }
               }
             }
@@ -1565,6 +1475,24 @@
         },
         "additionalProperties": false
       },
+      "ApplicantNewChildModel": {
+        "type": "object",
+        "properties": {
+          "icelandicIDNO": {
+            "type": "string",
+            "nullable": true
+          },
+          "givenName": {
+            "type": "string",
+            "nullable": true
+          },
+          "surName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ApplicantNewModel": {
         "type": "object",
         "properties": {
@@ -1707,31 +1635,6 @@
             "nullable": true
           },
           "countryCode": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ApplicationAttachmentViewModel": {
-        "type": "object",
-        "properties": {
-          "attachmentType": {
-            "$ref": "#/components/schemas/AttachmentType"
-          },
-          "fileName": {
-            "type": "string",
-            "nullable": true
-          },
-          "base64Contents": {
-            "type": "string",
-            "nullable": true
-          },
-          "countryCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "applicationAttachmentId": {
             "type": "string",
             "nullable": true
           }
@@ -2063,46 +1966,6 @@
         },
         "additionalProperties": false
       },
-      "ParentNewModel": {
-        "type": "object",
-        "properties": {
-          "icelandicIDNO": {
-            "type": "string",
-            "nullable": true
-          },
-          "givenName": {
-            "type": "string",
-            "nullable": true
-          },
-          "surName": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ParentViewModel": {
-        "type": "object",
-        "properties": {
-          "icelandicIDNO": {
-            "type": "string",
-            "nullable": true
-          },
-          "givenName": {
-            "type": "string",
-            "nullable": true
-          },
-          "surName": {
-            "type": "string",
-            "nullable": true
-          },
-          "parentsid": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "ResidenceAbroadNewModel": {
         "type": "object",
         "properties": {
@@ -2183,10 +2046,6 @@
             "type": "string",
             "nullable": true
           },
-          "phone": {
-            "type": "string",
-            "nullable": true
-          },
           "nationality": {
             "type": "string",
             "nullable": true
@@ -2196,6 +2055,10 @@
             "nullable": true
           },
           "countryOfBirth": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
             "type": "string",
             "nullable": true
           },
@@ -2244,6 +2107,10 @@
             "nullable": true
           },
           "parent2Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "parent2BirthDate": {
             "type": "string",
             "nullable": true
           },
@@ -2282,10 +2149,6 @@
             "type": "string",
             "nullable": true
           },
-          "phone": {
-            "type": "string",
-            "nullable": true
-          },
           "nationality": {
             "type": "string",
             "nullable": true
@@ -2295,6 +2158,10 @@
             "nullable": true
           },
           "countryOfBirth": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
             "type": "string",
             "nullable": true
           },
@@ -2343,6 +2210,10 @@
             "nullable": true
           },
           "parent2Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "parent2BirthDate": {
             "type": "string",
             "nullable": true
           },

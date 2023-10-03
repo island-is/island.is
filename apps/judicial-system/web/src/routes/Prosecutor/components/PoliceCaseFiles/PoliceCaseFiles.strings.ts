@@ -1,22 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const policeCaseFiles = defineMessages({
-  // TODO: Remove heading
-  heading: {
-    id: 'judicial.system.core:police_case_files.heading_v1',
-    defaultMessage:
-      'Gögn úr LÖKE{policeCaseNumber, select, NONE {} other {-máli {policeCaseNumber}}}',
-    description:
-      'Notaður sem titill fyrir "LOKE" gagnapakkann á rannsóknargagna skrefi.',
-  },
-  // TODO: Remove introduction
-  introduction: {
-    id: 'judicial.system.core:police_case_files.introduction',
-    defaultMessage:
-      'Til að gögn úr þessum lista verði hluti af gagnapakka málsins þarf að velja þau og smella á Hlaða upp.',
-    description:
-      'Notaður sem skýring fyrir "LOKE" gagnapakkann á rannsóknargagna skrefi.',
-  },
   selectAllLabel: {
     id: 'judicial.system.core:police_case_files.select_all_label',
     defaultMessage: 'Velja allt',

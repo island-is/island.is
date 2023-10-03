@@ -30,9 +30,15 @@ export const getSelectedCustodyChildren = (
 
   if (!selectedChildren) return []
 
-  return selectedChildren.map((sc) => {
-    return custodyChildren.find((cc) => cc.nationalId === sc)!
-  })
+  const result = []
+  for (let i = 0; i < selectedChildren.length; i++) {
+    const childInfo = custodyChildren.find(
+      (c) => c.nationalId === selectedChildren[i].nationalId,
+    )
+    if (childInfo) result.push(childInfo)
+  }
+
+  return result
 }
 
 export const getSelectedCustodyChild = (
@@ -51,7 +57,8 @@ export const getSelectedCustodyChild = (
 
   const selectedChildren = (answers as Citizenship).selectedChildren
   const isSelected =
-    selectedChildren && selectedChildren.find((x) => x === childNationalId)
+    selectedChildren &&
+    selectedChildren.find((sc) => sc.nationalId === childNationalId)
 
   return isSelected ? childInfo : undefined
 }

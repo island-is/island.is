@@ -142,13 +142,18 @@ const ParentsSchema = z.object({
   parents: z.array(ParentInformationSchema).optional(),
 })
 
+const FileDocumentSchema = z.object({
+  filename: z.string(),
+  base64: z.string(),
+})
+
 const PassportSchema = z.object({
   publishDate: z.string().min(1),
   expirationDate: z.string().min(1),
   passportNumber: z.string().min(1),
   passportTypeId: z.string().min(1),
   countryOfIssuerId: z.string().min(1),
-  file: z.array(z.string()).optional(),
+  file: z.array(FileDocumentSchema).optional(),
 })
 
 const ChildrenPassportSchema = z.object({
@@ -158,7 +163,7 @@ const ChildrenPassportSchema = z.object({
   passportNumber: z.string().min(1),
   passportTypeId: z.string().min(1),
   countryOfIssuerId: z.string().min(1),
-  file: z.array(z.string()).optional(),
+  file: z.array(FileDocumentSchema).optional(),
 })
 
 const MaritalStatusSchema = z.object({
@@ -173,30 +178,37 @@ const MaritalStatusSchema = z.object({
 
 const CriminalRecordSchema = z.object({
   countryId: z.string().min(1).optional(),
-  file: z.array(z.string()).optional(),
+  file: z.array(FileDocumentSchema).optional(),
 })
 
 const SupportingDocumentsSchema = z.object({
-  birthCertificate: z.array(z.string()).optional(),
-  subsistenceCertificate: z.array(z.string()).optional(),
-  subsistenceCertificateForTown: z.array(z.string()).optional(),
-  certificateOfLegalResidenceHistory: z.array(z.string()).optional(),
-  icelandicTestCertificate: z.array(z.string()).optional(),
+  birthCertificate: z.array(FileDocumentSchema).optional(),
+  subsistenceCertificate: z.array(FileDocumentSchema).optional(),
+  subsistenceCertificateForTown: z.array(FileDocumentSchema).optional(),
+  certificateOfLegalResidenceHistory: z.array(FileDocumentSchema).optional(),
+  icelandicTestCertificate: z.array(FileDocumentSchema).optional(),
   criminalRecordList: z.array(CriminalRecordSchema).optional(),
 })
 
 const ChildrenSupportingDocumentsSchema = z.object({
   nationalId: z.string().min(1),
-  birthCertificate: z.array(z.string()).optional(),
-  writtenConsentFromChild: z.array(z.string()).optional(),
-  writtenConsentFromOtherParent: z.array(z.string()).optional(),
-  custodyDocuments: z.array(z.string()).optional(),
+  birthCertificate: z.array(FileDocumentSchema).optional(),
+  writtenConsentFromChild: z.array(FileDocumentSchema).optional(),
+  writtenConsentFromOtherParent: z.array(FileDocumentSchema).optional(),
+  custodyDocuments: z.array(FileDocumentSchema).optional(),
+})
+
+const SelectedChildSchema = z.object({
+  nationalId: z.string().min(1),
+  otherParentNationalId: z.string().optional(),
+  otherParentBirtDate: z.string().optional(),
+  otherParentName: z.string().optional(),
 })
 
 export const CitizenshipSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   userInformation: UserInformationSchema,
-  selectedChildren: z.array(z.string()).optional(),
+  selectedChildren: z.array(SelectedChildSchema).optional(),
   parentInformation: ParentsSchema,
   spouse: z.string().min(1),
   countriesOfResidence: CountriesOfResidenceSchema,
