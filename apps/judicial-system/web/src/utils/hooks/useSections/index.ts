@@ -1194,7 +1194,7 @@ const useSections = (
   }
 
   const getCourtOfAppealSections = (workingCase: Case, user?: User) => {
-    const { id, appealRulingDecision } = workingCase
+    const { id, appealRulingDecision, appealState } = workingCase
     const routeIndex = courtOfAppealRoutes.findIndex(
       /**
        * We do .slice here because router.pathname is /something/[:id]
@@ -1260,7 +1260,10 @@ const useSections = (
         ],
       },
       {
-        name: getAppealResultText(appealRulingDecision),
+        name:
+          appealState === CaseAppealState.COMPLETED
+            ? getAppealResultText(appealRulingDecision)
+            : formatMessage(sections.caseResults.result),
         isActive:
           routeIndex === 3 ||
           workingCase.appealState === CaseAppealState.COMPLETED,
