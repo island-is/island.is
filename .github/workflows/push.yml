@@ -156,6 +156,7 @@ jobs:
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
+      infra-node-modules-hash: ${{ steps.calculate_infra_node_modules_hash.outputs.infra-node-modules-hash }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
@@ -275,6 +276,7 @@ jobs:
           export NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
           echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
           echo "node-modules-hash=$NODE_MODULES_HASH" >> $GITHUB_OUTPUT
+
       - name: Calculate cache key for infra node_modules
         id: calculate_infra_node_modules_hash
         run: |
@@ -732,7 +734,7 @@ jobs:
         uses: ./.github/actions/cache
         with:
           path: monorepo/infra/node_modules
-          key: ${{ needs.prepare.outputs.calculate_infra_node_modules_hash }}
+          key: ${{ needs.prepare.outputs.infra-node-modules-hash }}
       - name: check cache success
         run: '[[ "${{ steps.infra-node-modules.outputs.success }}" != "false" ]] || exit 1'
       - name: Install infra modules
