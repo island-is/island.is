@@ -7,10 +7,11 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
+import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
 import { Case } from '../../models/case.model'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 
 jest.mock('../../../factories')
 

@@ -1,7 +1,8 @@
 import { uuid } from 'uuidv4'
 
-import { Institution } from '../institution.model'
 import { createTestingInstitutionModule } from './createTestingInstitutionModule'
+
+import { Institution } from '../institution.model'
 
 interface Then {
   result: Institution[]

@@ -6,9 +6,9 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseCompletedGuard } from '../../guards/caseCompleted.guard'
 import { CaseDefenderGuard } from '../../guards/caseDefender.guard'
+import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
 import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
 

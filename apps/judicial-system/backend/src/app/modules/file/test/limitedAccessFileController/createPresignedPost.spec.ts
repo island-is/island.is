@@ -1,15 +1,17 @@
+import { uuid } from 'uuidv4'
+
 import {
   indictmentCases,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
-import { uuid } from 'uuidv4'
+
+import { createTestingFileModule } from '../createTestingFileModule'
 
 import { AwsS3Service } from '../../../aws-s3'
 import { Case } from '../../../case'
 import { CreatePresignedPostDto } from '../../dto/createPresignedPost.dto'
 import { PresignedPost } from '../../models/presignedPost.model'
-import { createTestingFileModule } from '../createTestingFileModule'
 
 interface Then {
   result: PresignedPost

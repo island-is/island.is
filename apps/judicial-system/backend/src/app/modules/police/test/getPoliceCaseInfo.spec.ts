@@ -2,11 +2,13 @@ import fetch from 'isomorphic-fetch'
 import { uuid } from 'uuidv4'
 
 import { NotFoundException } from '@nestjs/common'
+
 import { User } from '@island.is/judicial-system/types'
+
+import { createTestingPoliceModule } from './createTestingPoliceModule'
 
 import { Case } from '../../case'
 import { PoliceCaseInfo } from '../models/policeCaseInfo.model'
-import { createTestingPoliceModule } from './createTestingPoliceModule'
 
 jest.mock('isomorphic-fetch')
 
