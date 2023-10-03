@@ -1,18 +1,13 @@
 import { Controller, Get, Inject, Param, UseGuards } from '@nestjs/common'
 
-import { ConfigType } from '@nestjs/config'
-import { defenderModuleConfig } from './defender.config'
-import { DefenderService } from './defender.service'
 import { JwtInjectBearerAuthGuard } from '@island.is/judicial-system/auth'
+
+import { DefenderService } from './defender.service'
 
 @UseGuards(JwtInjectBearerAuthGuard)
 @Controller('api/defender')
 export class DefenderController {
-  constructor(
-    private readonly defenderService: DefenderService,
-    @Inject(defenderModuleConfig.KEY)
-    private readonly config: ConfigType<typeof defenderModuleConfig>,
-  ) {}
+  constructor(private readonly defenderService: DefenderService) {}
 
   @Get('lawyerRegistry')
   async getDefendersFromRegistry() {

@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
 import fetch from 'isomorphic-fetch'
 import { defenderModuleConfig } from './defender.config'
-import { ConfigType } from '@nestjs/config'
 
 @Injectable()
 export class DefenderService {
@@ -30,7 +30,6 @@ export class DefenderService {
   }
 
   async getLawyer(nationalId: string): Promise<Lawyer> {
-    console.log('!!!nationalId', nationalId)
     const response = await fetch(
       `${this.config.lawyerRegistryAPI}/lawyer/${nationalId}`,
       {
@@ -56,14 +55,15 @@ export class DefenderService {
 }
 
 const mapToLawyer = (lawyer: LawyerFull): Lawyer => {
-  return {
-    name: lawyer.Name,
-    practice: lawyer.Practice,
-    email: lawyer.Email,
-    phoneNr: lawyer.GSM,
-    nationalId: lawyer.SSN,
-  }
+    return {
+        name: lawyer.Name,
+        practice: lawyer.Practice,
+        email: lawyer.Email,
+        phoneNr: lawyer.GSM,
+        nationalId: lawyer.SSN,
+    }
 }
+
 
 interface Lawyer {
   name: string
