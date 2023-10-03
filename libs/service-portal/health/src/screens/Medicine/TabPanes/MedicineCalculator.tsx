@@ -1,10 +1,10 @@
 import {
   Text,
   Box,
-  Input,
   Pagination,
   Table as T,
   SkeletonLoader,
+  FilterInput,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../../lib/messages'
@@ -14,7 +14,7 @@ import { useState } from 'react'
 import { useDebounce } from 'react-use'
 import { useGetDrugsQuery } from '../Medicine.generated'
 
-const DEFAULT_PAGE_NUMBER = 0
+const DEFAULT_PAGE_NUMBER = 1
 const DEFAULT_PAGE_SIZE = 8
 
 export const MedicineCalulator = () => {
@@ -28,6 +28,7 @@ export const MedicineCalulator = () => {
   useDebounce(
     () => {
       setDebouncedSearch(search)
+      setPageNumber(DEFAULT_PAGE_NUMBER)
     },
     500,
     [search],
@@ -36,7 +37,7 @@ export const MedicineCalulator = () => {
   const { data: drugs, loading: drugsLoading } = useGetDrugsQuery({
     variables: {
       input: {
-        pageNumber: pageNumber,
+        pageNumber: pageNumber - 1,
         nameStartsWith: debouncedSearch,
         limit: DEFAULT_PAGE_SIZE,
       },
@@ -62,12 +63,11 @@ export const MedicineCalulator = () => {
         <Text color="blue400" variant="eyebrow">
           {formatMessage(messages.medicineFindDrug)}
         </Text>
-        <Input
+        <FilterInput
           name="drugs"
           placeholder={formatMessage(messages.medicineSearchForDrug)}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(value) => setSearch(value)}
           value={search}
-          loading={drugsLoading}
         />
       </Box>
       <Box display="flex" flexDirection="column" rowGap={2}>
@@ -139,7 +139,6 @@ export const MedicineCalulator = () => {
                 </T.Row>
               ) : (
                 drugs?.rightsPortalDrugs.drugs?.map((d) => {
-                  console.log(d)
                   return (
                     <T.Row>
                       <T.Data>{d.name}</T.Data>
@@ -155,19 +154,33 @@ export const MedicineCalulator = () => {
           )}
         </T.Table>
 
-        {SHOW_TABLE && (
+        {drugsLoading ? (
+          <SkeletonLoader
+            repeat={1}
+            space={1}
+            height={32}
+            borderRadius="standard"
+          />
+        ) : SHOW_TABLE ? (
           <Pagination
             totalPages={Math.ceil(
-              drugs?.rightsPortalDrugs?.totalCount ?? DEFAULT_PAGE_SIZE,
+              (drugs?.rightsPortalDrugs?.totalCount ?? DEFAULT_PAGE_SIZE) /
+                DEFAULT_PAGE_SIZE,
             )}
             page={pageNumber}
             renderLink={(page, className, children) => (
-              <button className={className} onClick={() => setPageNumber(page)}>
+              <button
+                className={className}
+                onClick={() => {
+                  console.log(page)
+                  return setPageNumber(page)
+                }}
+              >
                 {children}
               </button>
             )}
           />
-        )}
+        ) : null}
       </Box>
     </Box>
   )
