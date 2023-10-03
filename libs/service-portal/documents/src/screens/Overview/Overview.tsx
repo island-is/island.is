@@ -55,6 +55,7 @@ import { DocumentHeader } from '../../components/DocumentHeader'
 import { DocumentActionBar } from '../../components/DocumentActionBar'
 import { FavAndStash } from '../../components/FavAndStash'
 import { useWindowSize } from 'react-use'
+import { downloadFile } from '../../utils/downloadDocument'
 
 export type ActiveDocumentType = {
   document: DocumentDetails
@@ -350,6 +351,12 @@ export const ServicePortalDocuments = () => {
                       })
                     }
                   }}
+                  activeDocument={activeDocument}
+                  onPrintClick={
+                    activeDocument
+                      ? () => downloadFile(activeDocument, userInfo)
+                      : undefined
+                  }
                 />
               </Box>
               <Box className={styles.modalContent}>
@@ -357,7 +364,6 @@ export const ServicePortalDocuments = () => {
                   avatar={activeDocument.img}
                   sender={activeDocument.sender}
                   date={activeDocument.date}
-                  activeDocument={activeDocument}
                   category={categoriesAvailable.find(
                     (i) => i.id === activeDocument.categoryId,
                   )}
@@ -511,8 +517,8 @@ export const ServicePortalDocuments = () => {
                 category={categoriesAvailable.find(
                   (i) => i.id === activeDocument.categoryId,
                 )}
-                activeDocument={activeDocument}
                 actionBar={{
+                  activeDocument: activeDocument,
                   documentId: activeDocument.id,
                   archived: activeArchive,
                   bookmarked: !!filteredDocuments?.filter(
@@ -525,6 +531,9 @@ export const ServicePortalDocuments = () => {
                       })
                     }
                   },
+                  onPrintClick: activeDocument
+                    ? () => downloadFile(activeDocument, userInfo)
+                    : undefined,
                 }}
               />
               <Box>{<DocumentRenderer document={activeDocument} />}</Box>

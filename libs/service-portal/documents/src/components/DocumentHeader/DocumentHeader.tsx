@@ -6,9 +6,6 @@ import {
   DocumentActionBar,
   DocumentActionBarProps,
 } from '../DocumentActionBar/DocumentActionBar'
-import { downloadFile } from '../../utils/downloadDocument'
-import { useUserInfo } from '@island.is/auth/react'
-import { ActiveDocumentType } from '../../screens/Overview/Overview'
 
 type DocumentHeaderProps = {
   avatar?: string
@@ -16,7 +13,6 @@ type DocumentHeaderProps = {
   date?: string
   category?: DocumentCategory
   actionBar?: DocumentActionBarProps
-  activeDocument?: ActiveDocumentType
 }
 
 export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
@@ -25,10 +21,7 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
   date,
   category,
   actionBar,
-  activeDocument,
 }) => {
-  const userInfo = useUserInfo()
-
   return (
     <Box display="flex">
       {avatar && <AvatarImage large img={avatar} background="blue100" />}
@@ -60,16 +53,7 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
       </Box>
       {actionBar && (
         <Box className={styles.actionBarWrapper}>
-          <DocumentActionBar
-            spacing={1}
-            {...actionBar}
-            onPrintClick={
-              activeDocument
-                ? () => downloadFile(activeDocument, userInfo)
-                : undefined
-            }
-            activeDocument={activeDocument}
-          />
+          <DocumentActionBar spacing={1} {...actionBar} />
         </Box>
       )}
     </Box>

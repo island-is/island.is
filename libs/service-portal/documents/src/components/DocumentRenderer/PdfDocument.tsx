@@ -53,13 +53,6 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({ document }) => {
             onClick={() => setScalePDF(scalePDF > 3.9 ? 4 : scalePDF + 0.1)}
           />
         </Tooltip>
-        <Box paddingLeft={2}>
-          <Tooltip placement="top" as="span" text={formatMessage(m.download)}>
-            <a download={document.subject} href={getDocumentLink()}>
-              <Button variant="ghost" size="small" circle icon="download" />
-            </a>
-          </Tooltip>
-        </Box>
       </Box>
       <Box
         className={styles.pdfPage}

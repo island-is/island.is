@@ -98,9 +98,6 @@ export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
             [styles.fullWidth]: fullWidth,
           })}
         >
-          <TooltipArrow {...tooltip}>
-            <ArrowIcon placement={tooltip.placement} />
-          </TooltipArrow>
           {text}
         </div>
       </ReakitTooltip>

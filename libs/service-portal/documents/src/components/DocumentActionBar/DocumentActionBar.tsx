@@ -48,8 +48,14 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
 
   const getDocumentLink = (
     document: ActiveDocumentType,
-    type: 'pdf' | 'text',
-  ) => encodeURI(`data:application/pdf;${type},${document.document.content}`)
+    type: 'pdf' | 'html',
+  ) => {
+    const uri =
+      type === 'html'
+        ? `data:text/html,${document.document.html}`
+        : `data:application/pdf;base64,${document.document.content}`
+    return encodeURI(uri)
+  }
 
   return (
     <>
@@ -110,19 +116,26 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
             <LoadingDots />
           </Box>
         )}
-        {activeDocument && (
-          <Tooltip placement="top" as="span" text={formatMessage(m.download)}>
-            <a
-              download={activeDocument.subject}
-              href={getDocumentLink(
-                activeDocument,
-                activeDocument.document.fileType === 'pdf' ? 'pdf' : 'text', // TODO NEEDS FURHTER INVESTIGATION NOT CORRECT ATM
-              )}
-            >
-              <Button variant="ghost" size="small" circle icon="download" />
-            </a>
-          </Tooltip>
-        )}
+        {activeDocument &&
+          (activeDocument.document.content || activeDocument.document.html) && (
+            <Tooltip placement="top" as="span" text={formatMessage(m.download)}>
+              <a
+                download={`${activeDocument.subject}.html`}
+                href={getDocumentLink(
+                  activeDocument,
+                  activeDocument.document.html ? 'html' : 'pdf',
+                )}
+              >
+                <Button
+                  circle
+                  icon="download"
+                  iconType={isBookmarked ? 'filled' : 'outline'}
+                  size="small"
+                  colorScheme="light"
+                />
+              </a>
+            </Tooltip>
+          )}
         {onPrintClick && (
           <Tooltip text={formatMessage(m.print)}>
             <Button
