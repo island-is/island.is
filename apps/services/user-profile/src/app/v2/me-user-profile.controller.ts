@@ -1,0 +1,39 @@
+import { Controller, Get, UseGuards } from '@nestjs/common'
+import { UserProfileScope } from '@island.is/auth/scopes'
+import { ApiSecurity, ApiTags } from '@nestjs/swagger'
+import { Audit } from '@island.is/nest/audit'
+import { UserProfile } from '../user-profile/userProfile.model'
+import { Documentation } from '@island.is/nest/swagger'
+import { UserProfileService } from './user-profile.service'
+import { UserProfileDto } from './dto/user-profileDto'
+import type { User } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
+
+@UseGuards(IdsUserGuard)
+@Scopes(UserProfileScope.read)
+@ApiTags('user-profile')
+@Controller({
+  path: 'me/user-profile',
+  version: ['2'],
+})
+@Audit({ namespace: '@island.is/apps/services/user-profile/v2/me' })
+export class MeUserProfileController {
+  constructor(private readonly userProfileService: UserProfileService) {}
+
+  @Get()
+  @Documentation({
+    description: 'Get user profile for the current user.',
+    response: { status: 200, type: UserProfile },
+  })
+  @Audit<UserProfile>({
+    resources: (profile) => profile.nationalId,
+  })
+  findUserProfile(@CurrentUser() user: User): Promise<UserProfileDto> {
+    return this.userProfileService.findById(user.nationalId)
+  }
+}
