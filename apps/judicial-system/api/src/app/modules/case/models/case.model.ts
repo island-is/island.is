@@ -28,8 +28,8 @@ import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { User } from '../../user'
-import { Notification } from './notification.model'
 import { EventLog } from './eventLog.model'
+import { Notification } from './notification.model'
 
 registerEnumType(CaseType, { name: 'CaseType' })
 registerEnumType(SessionArrangements, { name: 'SessionArrangements' })
