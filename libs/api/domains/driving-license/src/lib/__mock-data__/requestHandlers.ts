@@ -44,10 +44,10 @@ type MockLicenseRaw =
 
 type MockLicense =
   | MockLicenseRaw
-  | (Omit<MockLicenseRaw, 'svipting'> & {
-      svipting: {
-        dagsFra: Date | null
-        dagsTil: Date | null
+  | (Omit<MockLicenseRaw, 'deprivation'> & {
+      deprivation: {
+        dateTo: Date | null
+        dateFrom: Date | null
       }
     })
 
@@ -99,6 +99,43 @@ export const requestHandlers = [
       ),
     )
   }),
+
+  rest.get(/api\/drivinglicense\/v4\/\d+\/all$/, (req, res, ctx) => {
+    // Possibly questionable given weak matching, should not be a problem in practice
+    const nationalId = req.url.pathname.split('/').reverse()?.[1] ?? ''
+
+    let response: [MockLicense] =
+      nationalId === MOCK_NATIONAL_ID_EXPIRED
+        ? [ExpiredLicense]
+        : [ValidLicense]
+
+    if (DISQUALIFIED_NATIONAL_IDS.includes(req.params.nationalId)) {
+      response = [LicenseWithDisqualification]
+      switch (DISQUALIFIED_NATIONAL_IDS.indexOf(req.params.nationalId)) {
+        // Currently active
+        case 0:
+          response[0].deprivation.dateFrom = nowDeltaMonths(-6)
+          response[0].deprivation.dateTo = nowDeltaMonths(6)
+          break
+        // Disqualification expired but still less than 12 months since expiry
+        case 1:
+          response[0].deprivation.dateFrom = nowDeltaMonths(-13)
+          response[0].deprivation.dateTo = nowDeltaMonths(-7)
+          break
+        // Disqualification expired more than 12 months ago
+        case 2:
+          response[0].deprivation.dateFrom = nowDeltaMonths(-20)
+          response[0].deprivation.dateTo = nowDeltaMonths(-13)
+          break
+        // Disqualification has unspecified end date
+        default:
+          response[0].deprivation.dateFrom = nowDeltaMonths(-2)
+          response[0].deprivation.dateTo = null
+      }
+    }
+    return res(ctx.status(200), ctx.json(response))
+  }),
+
   rest.post(/api\/drivinglicense\/v5\/drivingassessment/, (_req, res, ctx) => {
     // TODO, ambiguate with mock auths
     return res(ctx.status(200))
@@ -116,41 +153,6 @@ export const requestHandlers = [
     },
   ),
 
-  rest.get(
-    url(`${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/:nationalId/all`),
-    (req, res, ctx) => {
-      let response: [MockLicense] =
-        req.params.nationalId === MOCK_NATIONAL_ID_EXPIRED
-          ? [ExpiredLicense]
-          : [ValidLicense]
-
-      if (DISQUALIFIED_NATIONAL_IDS.includes(req.params.nationalId)) {
-        response = [LicenseWithDisqualification]
-        switch (DISQUALIFIED_NATIONAL_IDS.indexOf(req.params.nationalId)) {
-          // Currently active
-          case 0:
-            response[0].svipting.dagsFra = nowDeltaMonths(-6)
-            response[0].svipting.dagsTil = nowDeltaMonths(6)
-            break
-          // Disqualification expired but still less than 12 months since expiry
-          case 1:
-            response[0].svipting.dagsFra = nowDeltaMonths(-13)
-            response[0].svipting.dagsTil = nowDeltaMonths(-7)
-            break
-          // Disqualification expired more than 12 months ago
-          case 2:
-            response[0].svipting.dagsFra = nowDeltaMonths(-20)
-            response[0].svipting.dagsTil = nowDeltaMonths(-13)
-            break
-          // Disqualification has unspecified end date
-          default:
-            response[0].svipting.dagsFra = nowDeltaMonths(-2)
-            response[0].svipting.dagsTil = null
-        }
-      }
-      return res(ctx.status(200), ctx.json(response))
-    },
-  ),
   rest.get(
     url(
       `${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/hasteachingrights/:nationalId`,
