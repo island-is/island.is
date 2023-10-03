@@ -212,7 +212,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
 
       setIsUploading(true)
 
-      filesToUpload.forEach(async (f, index) => {
+      const promises = filesToUpload.map(async (f, index) => {
         const fileToUpload = {
           id: f.id,
           type: 'application/pdf',
@@ -221,16 +221,21 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
           state: CaseFileState.STORED_IN_RVG,
         } as UploadFile
 
-        await uploadFromPolice(fileToUpload, uploadPoliceCaseFileCallback)
+        return uploadFromPolice(
+          fileToUpload,
+          uploadPoliceCaseFileCallback,
+        ).then(() => {
+          setPoliceCaseFileList((previous) =>
+            previous.filter((p) => p.id !== f.id),
+          )
 
-        setPoliceCaseFileList((previous) =>
-          previous.filter((p) => p.id !== f.id),
-        )
-
-        if (index === filesToUpload.length - 1) {
-          setIsUploading(false)
-        }
+          if (index === filesToUpload.length - 1) {
+            setIsUploading(false)
+          }
+        })
       })
+
+      await Promise.all(promises)
     },
     [policeCaseFileList, uploadFromPolice, uploadPoliceCaseFileCallback],
   )

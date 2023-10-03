@@ -610,6 +610,13 @@ export const notifications = {
       description:
         'Texti í pósti til dómara og dómritara þegar að mál er kært til landsréttar',
     },
+    text: {
+      id: 'judicial.system.backend:notifications.case_appealed_to_court_of_appeals.text',
+      defaultMessage:
+        'Úrskurður hefur verið kærður í máli {courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is',
+      description:
+        'Texti í SMS-i á vaktsíma dómara eða dómritara þegar að mál er kært til landsréttar',
+    },
   }),
   caseAppealReceivedByCourt: defineMessages({
     subject: {
