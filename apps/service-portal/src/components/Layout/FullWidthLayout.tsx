@@ -17,6 +17,7 @@ import { IntroHeader } from '@island.is/service-portal/core'
 import { Link, matchPath, useNavigate } from 'react-router-dom'
 import { ServicePortalPaths } from '../../lib/paths'
 import { DocumentsPaths } from '@island.is/service-portal/documents'
+import { theme } from '@island.is/island-ui/theme'
 
 interface FullWidthLayoutProps {
   activeParent?: PortalNavigationItem
@@ -62,7 +63,10 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
       as="main"
       component="main"
       className={isDocuments ? styles.fullWidthSplit : undefined}
-      style={{ marginTop: height }}
+      style={{
+        marginTop: height,
+        minHeight: `calc(100vh - ${theme.headerHeight.large}px`,
+      }}
     >
       <Box>
         {!isDashboard && !isDocuments && (

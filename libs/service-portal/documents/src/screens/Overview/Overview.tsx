@@ -95,7 +95,7 @@ const GET_DOCUMENT_SENDERS = gql`
   }
 `
 
-const pageSize = 10
+const pageSize = 3
 
 export const ServicePortalDocuments = () => {
   useNamespaces('sp.documents')
@@ -544,18 +544,19 @@ export const ServicePortalDocuments = () => {
               style={{ top: SERVICE_PORTAL_HEADER_HEIGHT_LG + 50 }}
               paddingLeft={8}
             >
-              {loading ? (
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  paddingTop={6}
-                >
-                  <LoadingDots />
-                </Box>
-              ) : (
-                <NoPDF />
-              )}
+              {isDesktop &&
+                (loading ? (
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    paddingTop={6}
+                  >
+                    <LoadingDots />
+                  </Box>
+                ) : (
+                  <NoPDF />
+                ))}
             </Box>
           )}
         </GridColumn>
