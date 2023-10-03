@@ -1,5 +1,5 @@
-import { SQSClient } from '@aws-sdk/client-sqs'
 import { uuid } from 'uuidv4'
+import { SQSClient } from '@aws-sdk/client-sqs'
 
 import { CaseMessage } from '../message'
 import { messageModuleConfig } from '../message.config'
