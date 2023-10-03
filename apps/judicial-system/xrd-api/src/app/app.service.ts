@@ -1,24 +1,26 @@
 import fetch from 'isomorphic-fetch'
-import { ConfigType } from '@nestjs/config'
+
 import {
   BadGatewayException,
   BadRequestException,
   Inject,
   Injectable,
 } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { CaseOrigin } from '@island.is/judicial-system/types'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import { CaseOrigin } from '@island.is/judicial-system/types'
 
+import appModuleConfig from './app.config'
 import { CreateCaseDto } from './app.dto'
 import { Case } from './app.model'
-import appModuleConfig from './app.config'
 
 function reportError(
   url: string,

@@ -1,19 +1,19 @@
 import {
-  Injectable,
   CanActivate,
   ExecutionContext,
-  InternalServerErrorException,
   ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
 } from '@nestjs/common'
 
 import {
   CaseFileCategory,
-  User,
-  UserRole,
   completedCaseStates,
   indictmentCases,
   investigationCases,
   restrictionCases,
+  User,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case'

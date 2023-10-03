@@ -1,6 +1,6 @@
-import { uuid } from 'uuidv4'
 import { Op, Sequelize } from 'sequelize'
 import { Transaction } from 'sequelize/types'
+import { uuid } from 'uuidv4'
 
 import {
   BadRequestException,
@@ -11,26 +11,27 @@ import {
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import type { User } from '@island.is/judicial-system/types'
 import {
   CaseFileCategory,
   CaseFileState,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
 
 import { AwsS3Service } from '../aws-s3'
-import { CourtDocumentFolder, CourtService } from '../court'
 import { Case } from '../case'
+import { CourtDocumentFolder, CourtService } from '../court'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFileDto } from './dto/updateFile.dto'
-import { PresignedPost } from './models/presignedPost.model'
 import { DeleteFileResponse } from './models/deleteFile.response'
-import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
-import { SignedUrl } from './models/signedUrl.model'
 import { CaseFile } from './models/file.model'
+import { PresignedPost } from './models/presignedPost.model'
+import { SignedUrl } from './models/signedUrl.model'
+import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 
 // Files are stored in AWS S3 under a key which has the following formats:
 // uploads/<uuid>/<uuid>/<filename> for restriction and investigation cases

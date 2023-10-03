@@ -6,9 +6,9 @@ import {
 
 import {
   CaseState,
-  RequestSharedWithDefender,
   completedCaseStates,
   indictmentCases,
+  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 
 import { LimitedAccessAccordingToCaseStateGuard } from '../limitedAccessAccordingToCaseState.guard'

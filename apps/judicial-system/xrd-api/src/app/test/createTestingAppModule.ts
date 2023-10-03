@@ -1,15 +1,16 @@
-import { Test } from '@nestjs/testing'
 import { ConfigModule } from '@nestjs/config'
+import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
-  AuditTrailService,
   auditTrailModuleConfig,
+  AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
 
-import { AppService } from '../app.service'
-import { AppController } from '../app.controller'
 import appConfigModule from '../app.config'
+import { AppController } from '../app.controller'
+import { AppService } from '../app.service'
 
 export const createTestingAppModule = async () => {
   const appModule = await Test.createTestingModule({
