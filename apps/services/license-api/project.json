@@ -58,7 +58,7 @@
       "outputs": ["{workspaceRoot}/apps/services/license-api/src/openapi.yaml"]
     },
     "schemas/build-graphql-schema": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P apps/services/license-api/tsconfig.json scripts/build-graphql-schema.ts apps/services/license-api/src/app/app.module"
       }
