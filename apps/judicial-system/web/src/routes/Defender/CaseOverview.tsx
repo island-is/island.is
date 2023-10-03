@@ -313,24 +313,24 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                         <Text>{formatMessage(strings.unsignedRuling)}</Text>
                       )}
                     </PdfButton>
+                    <Box marginTop={7}>
+                      <a
+                        href={`${api.apiUrl}/api/case/${workingCase.id}/limitedAccess/allFiles`}
+                        download={`mal_${workingCase.courtCaseNumber}`}
+                        className={styles.downloadAllButton}
+                      >
+                        <Button
+                          variant="ghost"
+                          size="small"
+                          icon="download"
+                          iconType="outline"
+                        >
+                          {formatMessage(strings.getAllDocuments)}
+                        </Button>
+                      </a>
+                    </Box>
                   </>
                 )}
-                <Box marginTop={7}>
-                  <a
-                    href={`${api.apiUrl}/api/case/${workingCase.id}/limitedAccess/allFiles`}
-                    download={`mal_${workingCase.courtCaseNumber}`}
-                    className={styles.downloadAllButton}
-                  >
-                    <Button
-                      variant="ghost"
-                      size="small"
-                      icon="download"
-                      iconType="outline"
-                    >
-                      {formatMessage(strings.getAllDocuments)}
-                    </Button>
-                  </a>
-                </Box>
               </Box>
             </Box>
           )}
