@@ -1,16 +1,7 @@
-import {
-  Box,
-  Button,
-  ButtonSizes,
-  ButtonTypes,
-  CTAProps,
-  Checkbox,
-  LinkV2,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Button, Checkbox, LinkV2, Text } from '@island.is/island-ui/core'
 import React from 'react'
 import * as styles from './ListViewCard.css'
-import { useLinkResolver } from '@island.is/web/hooks'
+import { CTAProps } from '../ActionCategoryCard/ActionCategoryCard'
 
 type InfoItems = {
   icon?: React.ReactNode
@@ -34,8 +25,6 @@ type CardProps = {
 export const ListViewCard = ({
   infoItems = [],
   onCheck,
-  buttonLabel,
-  checkboxLabel,
   checkboxId,
   cta,
   icon,
@@ -44,7 +33,6 @@ export const ListViewCard = ({
   checked,
   href,
 }: CardProps) => {
-  const linkResolver = useLinkResolver()
   return (
     <Box>
       <Box
