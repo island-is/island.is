@@ -6,10 +6,10 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { LimitedAccessCaseExistsGuard } from '../../guards/limitedAccessCaseExists.guard'
-import { CaseTypeGuard } from '../../guards/caseType.guard'
 import { CaseCompletedGuard } from '../../guards/caseCompleted.guard'
 import { CaseDefenderGuard } from '../../guards/caseDefender.guard'
+import { CaseTypeGuard } from '../../guards/caseType.guard'
+import { LimitedAccessCaseExistsGuard } from '../../guards/limitedAccessCaseExists.guard'
 import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
 
 describe('LimitedAccessCaseController - Update guards', () => {

@@ -8,8 +8,9 @@ import {
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import { TokenGuard } from '@island.is/judicial-system/auth'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
@@ -20,12 +21,12 @@ import {
   CaseTypeGuard,
   CurrentCase,
 } from '../case'
-import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
+import { DeliverDto } from './dto/deliver.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
+import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { DeliverResponse } from './models/deliver.response'
 import { CaseFile } from './models/file.model'
 import { FileService } from './file.service'
-import { DeliverDto } from './dto/deliver.dto'
 
 @UseGuards(TokenGuard)
 @Controller('api/internal/case/:caseId/file/:fileId')

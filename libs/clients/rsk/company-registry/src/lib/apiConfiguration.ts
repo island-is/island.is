@@ -37,6 +37,7 @@ export const ApiConfiguration = {
     return new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-rsk-company-info',
+        organizationSlug: 'skatturinn',
         logErrorResponseBody: true,
         cache,
       }),
