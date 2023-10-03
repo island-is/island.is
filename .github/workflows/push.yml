@@ -569,7 +569,7 @@ jobs:
           path: cache
           key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-deps-1
 
-      - name: Check cache success
+      - name: check cache success
         run: '[[ "${{ steps.cache-deps.outputs.success }}" != "false" ]] || exit 1'
 
       # needed to run `nx show project` in scripts/ci/_docker.sh - should be refactored.
@@ -732,8 +732,9 @@ jobs:
         uses: ./.github/actions/cache
         with:
           path: monorepo/infra/node_modules
+          key: ${{ needs.prepare.outputs.calculate_infra_node_modules_hash }}
           key: ${{ needs.prepare.outputs.infra-node-modules-hash }}
-      - name: Check cache success
+      - name: check cache success
         run: '[[ "${{ steps.infra-node-modules.outputs.success }}" != "false" ]] || exit 1'
       - name: Install infra modules
         working-directory: monorepo/infra
