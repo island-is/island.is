@@ -18,10 +18,10 @@ export const MOCK_NATIONAL_ID_EXPIRED = '1'
 export const MOCK_NATIONAL_ID_TEACHER = '2'
 export const MOCK_NATIONAL_ID_NO_ASSESSMENT = '9'
 
-export const MOCK_TOKEN = '0'
-export const MOCK_TOKEN_EXPIRED = '1'
-export const MOCK_TOKEN_TEACHER = '2'
-export const MOCK_TOKEN_NO_ASSESSMENT = '9'
+export const MOCK_TOKEN = 'Bearer 0'
+export const MOCK_TOKEN_EXPIRED = 'Bearer 1'
+export const MOCK_TOKEN_TEACHER = 'Bearer 2'
+export const MOCK_TOKEN_NO_ASSESSMENT = 'Bearer 9'
 
 export const DISQUALIFIED_NATIONAL_IDS = [
   '0101302399',
@@ -31,10 +31,10 @@ export const DISQUALIFIED_NATIONAL_IDS = [
 ]
 
 export const DISQUALIFIED_TOKENS = [
-  'auth-token-disqualified-01',
-  'auth-token-disqualified-02',
-  'auth-token-disqualified-03',
-  'auth-token-disqualified-04',
+  'Bearer auth-token-disqualified-01',
+  'Bearer auth-token-disqualified-02',
+  'Bearer auth-token-disqualified-03',
+  'Bearer auth-token-disqualified-04',
 ]
 
 type MockLicenseRaw =
@@ -109,9 +109,9 @@ export const requestHandlers = [
         ? [ExpiredLicense]
         : [ValidLicense]
 
-    if (DISQUALIFIED_NATIONAL_IDS.includes(req.params.nationalId)) {
+    if (DISQUALIFIED_NATIONAL_IDS.includes(nationalId)) {
       response = [LicenseWithDisqualification]
-      switch (DISQUALIFIED_NATIONAL_IDS.indexOf(req.params.nationalId)) {
+      switch (DISQUALIFIED_NATIONAL_IDS.indexOf(nationalId)) {
         // Currently active
         case 0:
           response[0].deprivation.dateFrom = nowDeltaMonths(-6)
@@ -142,16 +142,13 @@ export const requestHandlers = [
   }),
 
   rest.get(/api\/drivinglicense\/v5\/drivingassessment/, (req, res, ctx) => {
-    // TODO, ambiguate with mock auths
-    return res(ctx.status(200), ctx.json(DrivingAssessmentV5))
+    const isFound = req.headers.get('jwttoken') !== MOCK_TOKEN_NO_ASSESSMENT
+    if (isFound) {
+      return res(ctx.status(200), ctx.json(DrivingAssessmentV5))
+    } else {
+      return res(ctx.status(404), ctx.text('error message from service'))
+    }
   }),
-
-  rest.get(
-    url(`${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/okukennarar`),
-    (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(Teachers))
-    },
-  ),
 
   rest.get(
     url(
@@ -336,13 +333,18 @@ export const requestHandlers = [
     },
   ),
 
-  rest.get(/api\/drivinglicense\/v5\/hasteachingrights/, (_req, res, ctx) => {
-    // TODO ambiguate with mock auths
-    return res(ctx.status(200), ctx.json(1))
+  rest.get(/api\/drivinglicense\/v5\/hasteachingrights/, (req, res, ctx) => {
+    let teachingRights = 0
+
+    const token = req.headers.get('jwttoken')
+    if (token === MOCK_TOKEN_TEACHER) {
+      teachingRights = 1
+    }
+
+    return res(ctx.status(200), ctx.json(teachingRights))
   }),
 
   rest.get(/api\/drivinglicense\/v4\/drivinginstructors/, (_req, res, ctx) => {
-    // TODO ambiguate with mock auths
     return res(ctx.status(200), ctx.json(Teachers))
   }),
 
@@ -356,10 +358,21 @@ export const requestHandlers = [
   rest.post(
     /api\/drivinglicense\/v5\/applications\/new\/temporary/,
     (req, res, ctx) => {
-      return res(
-        ctx.status(200),
-        ctx.json({ result: true, driverLicenseId: 1, errorCode: null }),
-      )
+      const token = req.headers.get('jwttoken')
+      const canApply = token !== MOCK_TOKEN_NO_ASSESSMENT
+
+      if (canApply) {
+        return res(
+          ctx.status(200),
+          ctx.json({
+            result: true,
+            driverLicenseId: 1,
+            errorCode: null,
+          }),
+        )
+      } else {
+        return res(ctx.status(400), ctx.text('error message'))
+      }
     },
   ),
 ]

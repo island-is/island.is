@@ -104,7 +104,6 @@ export class DrivingLicenseApi {
     return DrivingLicenseApi.normalizeDrivingLicenseDTO(license)
   }
 
-  // TODO: deprecate this function and use getCurrentLicense instead
   public async legacyGetCurrentLicense(input: {
     nationalId: string
     token?: string
@@ -209,6 +208,8 @@ export class DrivingLicenseApi {
             to: license.deprivation?.dateTo ?? null,
           }
         : null,
+      issued: license.publishDate ?? null,
+      expires: license.dateValidTo ?? null,
     }
     return normalizedLicense
   }
