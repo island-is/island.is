@@ -75,7 +75,6 @@ export interface IAlertBannerFields {
         | 'umsoknir'
         | 'min-gogn'
         | 'skirteini'
-        | 'leyfisbref'
         | 'menntun'
         | 'fasteignir'
         | 'fjarmal'
@@ -2246,6 +2245,9 @@ export interface IOrganizationFields {
   /** Logo */
   logo?: Asset | undefined
 
+  /** Footer Config */
+  footerConfig?: Record<string, any> | undefined
+
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
 
@@ -2421,6 +2423,8 @@ export interface IOrganizationPageFields {
     | 'samgongustofa'
     | 'geislavarnir-rikisins'
     | 'rettindagaesla-fatlads-folks'
+    | 'hms'
+    | 'rikissaksoknari'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
@@ -2808,6 +2812,9 @@ export interface IProjectPageFields {
       )[]
     | undefined
 
+  /** Footer Config */
+  footerConfig?: Record<string, any> | undefined
+
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
 
@@ -2872,6 +2879,9 @@ export interface IProjectSubpageFields {
         | ITwoColumnText
       )[]
     | undefined
+
+  /** Show Table of Contents */
+  showTableOfContents?: boolean | undefined
 
   /** Bottom Slices */
   bottomSlices?: (IPowerBiSlice | IOneColumnText)[] | undefined
@@ -3116,6 +3126,7 @@ export interface ISliceConnectedComponentFields {
     | 'AircraftSearch'
     | 'DrivingInstructorList'
     | 'HousingBenefitCalculator'
+    | 'PublicShipSearch'
     | undefined
 
   /** Localized JSON */

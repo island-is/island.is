@@ -352,7 +352,13 @@ export const notifications = {
       id: 'judicial.system.backend:notifications.prison_ruling_email.body_v4',
       defaultMessage:
         '{institutionName} hefur úrskurðað aðila í {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} other {gæsluvarðhald}}{isModifyingRuling, select, true {} other { í þinghaldi sem lauk rétt í þessu}}. Hægt er að nálgast þingbók og vistunarseðil á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
-      description: 'Texti í pósti til fangelis með link á réttarvörslugátt',
+      description: 'Texti í pósti til fangelsis með link á réttarvörslugátt',
+    },
+    paroleRevocationBody: {
+      id: 'judicial.system.backend:notifications.prison_ruling_email.parole_revocation_body',
+      defaultMessage:
+        '{institutionName} hefur rofið reynslulausn aðila með úrskurði í máli {courtCaseNumber}. Hægt er að nálgast þingbók á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
+      description: 'Texti í pósti til fangelsis með link á réttarvörslugátt',
     },
   }),
   prisonRevokedEmail: defineMessages({
@@ -603,6 +609,13 @@ export const notifications = {
         'Úrskurður hefur verið kærður í máli {courtCaseNumber}. {userHasAccessToRVG, select, true {Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Hægt er að nálgast gögn málsins hjá {court} ef þau hafa ekki þegar verið afhent}}.',
       description:
         'Texti í pósti til dómara og dómritara þegar að mál er kært til landsréttar',
+    },
+    text: {
+      id: 'judicial.system.backend:notifications.case_appealed_to_court_of_appeals.text',
+      defaultMessage:
+        'Úrskurður hefur verið kærður í máli {courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is',
+      description:
+        'Texti í SMS-i á vaktsíma dómara eða dómritara þegar að mál er kært til landsréttar',
     },
   }),
   caseAppealReceivedByCourt: defineMessages({

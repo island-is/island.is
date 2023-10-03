@@ -36,6 +36,7 @@ import {
   isIndictmentCase,
   isRestrictionCase,
   UserRole,
+  EventType,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
 
@@ -58,12 +59,12 @@ import { User } from '../user'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
 import { CaseEvent, EventService } from '../event'
+import { EventLog } from '../event-log'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { Case } from './models/case.model'
 import { transitionCase } from './state/case.state'
-
 export interface UpdateCase
   extends Pick<
     Case,
@@ -154,9 +155,19 @@ export interface UpdateCase
   parentCaseId?: string | null
 }
 
+const eventTypes = Object.values(EventType)
+
 export const include: Includeable[] = [
   { model: Defendant, as: 'defendants' },
   { model: IndictmentCount, as: 'indictmentCounts' },
+  {
+    model: EventLog,
+    as: 'eventLogs',
+    required: false,
+    where: {
+      eventType: { [Op.in]: eventTypes },
+    },
+  },
   { model: Institution, as: 'court' },
   {
     model: User,
@@ -623,6 +634,11 @@ export class CaseService {
     const messages = [
       {
         type: MessageType.DELIVER_SIGNED_RULING_TO_COURT,
+        user,
+        caseId: theCase.id,
+      },
+      {
+        type: MessageType.DELIVER_CASE_CONCLUSION_TO_COURT,
         user,
         caseId: theCase.id,
       },
