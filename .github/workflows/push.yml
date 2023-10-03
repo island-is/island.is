@@ -733,7 +733,6 @@ jobs:
         with:
           path: monorepo/infra/node_modules
           key: ${{ needs.prepare.outputs.calculate_infra_node_modules_hash }}
-          key: ${{ needs.prepare.outputs.infra-node-modules-hash }}
       - name: check cache success
         run: '[[ "${{ steps.infra-node-modules.outputs.success }}" != "false" ]] || exit 1'
       - name: Install infra modules
