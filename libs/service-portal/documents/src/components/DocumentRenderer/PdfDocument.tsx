@@ -1,10 +1,8 @@
 import { useLocale } from '@island.is/localization'
 import * as styles from './DocumentRenderer.css'
 import { m, Tooltip } from '@island.is/service-portal/core'
-import { Box, Button, LinkV2, PdfViewer, Text } from '@island.is/island-ui/core'
+import { Box, Button, PdfViewer, Text } from '@island.is/island-ui/core'
 import { useState } from 'react'
-import { downloadFile } from '../../utils/downloadDocument'
-import { useUserInfo } from '@island.is/auth/react'
 import { ActiveDocumentType } from '../../screens/Overview/Overview'
 type PdfDocumentProps = {
   document: ActiveDocumentType
@@ -13,11 +11,6 @@ type PdfDocumentProps = {
 export const PdfDocument: React.FC<PdfDocumentProps> = ({ document }) => {
   const { formatMessage } = useLocale()
   const [scalePDF, setScalePDF] = useState(1.0)
-
-  const userInfo = useUserInfo()
-
-  const getDocumentLink = () =>
-    encodeURI(`data:application/pdf;base64,${document.document.content}`)
 
   return (
     <>
@@ -33,7 +26,8 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({ document }) => {
             icon="remove"
             variant="ghost"
             size="small"
-            onClick={() => setScalePDF(0.6 > scalePDF ? 0.5 : scalePDF - 0.1)}
+            onClick={() => setScalePDF(scalePDF - 0.1)}
+            disabled={0.6 > scalePDF}
           />
         </Tooltip>
         <Box
@@ -50,7 +44,8 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({ document }) => {
             icon="add"
             variant="ghost"
             size="small"
-            onClick={() => setScalePDF(scalePDF > 3.9 ? 4 : scalePDF + 0.1)}
+            onClick={() => setScalePDF(scalePDF + 0.1)}
+            disabled={scalePDF > 3.5}
           />
         </Tooltip>
       </Box>

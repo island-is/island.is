@@ -6,14 +6,14 @@ export const badge = styleVariants({
   active: {
     position: 'absolute',
     top: 34,
-    left: 37,
+    left: 67,
     height: theme.spacing[1],
     width: theme.spacing[1],
     borderRadius: '50%',
     backgroundColor: theme.color.red400,
     ...themeUtils.responsiveStyle({
       md: {
-        left: 47,
+        left: 67,
       },
     }),
   },

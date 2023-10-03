@@ -103,6 +103,13 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
                           className={styles.lock}
                         />
                       )}
+
+                      {navRoot.subscribesTo === 'documents' && (
+                        <Box
+                          borderRadius="circle"
+                          className={cn(styles.badge[badgeActive])}
+                        />
+                      )}
                       <CategoryCard
                         autoStack
                         hyphenate
@@ -135,12 +142,6 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
                             : formatMessage(navRoot.name)
                         }
                       />
-                      {navRoot.subscribesTo === 'documents' && (
-                        <Box
-                          borderRadius="circle"
-                          className={cn(styles.badge[badgeActive])}
-                        />
-                      )}
                     </>
                   )}
                 </Box>
