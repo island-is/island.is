@@ -18,10 +18,10 @@ export const MOCK_NATIONAL_ID_EXPIRED = '1'
 export const MOCK_NATIONAL_ID_TEACHER = '2'
 export const MOCK_NATIONAL_ID_NO_ASSESSMENT = '9'
 
-export const MOCK_TOKEN = 'Bearer 0'
-export const MOCK_TOKEN_EXPIRED = 'Bearer 1'
-export const MOCK_TOKEN_TEACHER = 'Bearer 2'
-export const MOCK_TOKEN_NO_ASSESSMENT = 'Bearer 9'
+export const MOCK_TOKEN = '0'
+export const MOCK_TOKEN_EXPIRED = '1'
+export const MOCK_TOKEN_TEACHER = '2'
+export const MOCK_TOKEN_NO_ASSESSMENT = '9'
 
 export const DISQUALIFIED_NATIONAL_IDS = [
   '0101302399',
@@ -31,10 +31,10 @@ export const DISQUALIFIED_NATIONAL_IDS = [
 ]
 
 export const DISQUALIFIED_TOKENS = [
-  'Bearer auth-token-disqualified-01',
-  'Bearer auth-token-disqualified-02',
-  'Bearer auth-token-disqualified-03',
-  'Bearer auth-token-disqualified-04',
+  'auth-token-disqualified-01',
+  'auth-token-disqualified-02',
+  'auth-token-disqualified-03',
+  'auth-token-disqualified-04',
 ]
 
 type MockLicenseRaw =
@@ -137,7 +137,6 @@ export const requestHandlers = [
   }),
 
   rest.post(/api\/drivinglicense\/v5\/drivingassessment/, (_req, res, ctx) => {
-    // TODO, ambiguate with mock auths
     return res(ctx.status(200))
   }),
 
@@ -151,71 +150,23 @@ export const requestHandlers = [
   }),
 
   rest.get(
-    url(
-      `${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/hasteachingrights/:nationalId`,
-    ),
-    (req, res, ctx) => {
-      const hasTeachingRights =
-        req.params.nationalId === MOCK_NATIONAL_ID_TEACHER
-
-      return res(ctx.status(200), ctx.json(hasTeachingRights ? 1 : 0))
-    },
-  ),
-
-  rest.get(
-    url(
-      `${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/saekjaakstursmat/:nationalId`,
-    ),
-    (req, res, ctx) => {
-      const isFound = req.params.nationalId !== MOCK_NATIONAL_ID_NO_ASSESSMENT
-      if (isFound) {
-        return res(ctx.status(200), ctx.json(DrivingAssessment))
-      } else {
-        return res(ctx.status(404), ctx.text('error message from service'))
-      }
-    },
-  ),
-
-  rest.get(
     /api\/drivinglicense\/v5\/hasfinisheddrivingschool3/,
     (req, res, ctx) => {
-      // TODO, ambiguate with mock auths
-      return res(ctx.status(200), ctx.json({ hasFinishedDrivingSchool3: true }))
-    },
-  ),
-
-  rest.get(
-    url(
-      `${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/:nationalId/finishedokugerdi`,
-    ),
-    (req, res, ctx) => {
-      const isFound = req.params.nationalId !== MOCK_NATIONAL_ID_EXPIRED
-
+      const isFound = req.headers.get('jwttoken') !== MOCK_TOKEN_EXPIRED
       return res(
         ctx.status(200),
-        ctx.json(isFound ? FinishedSchool : NotFinishedSchool),
+        ctx.json({ hasFinishedDrivingSchool3: isFound }),
       )
     },
   ),
 
   rest.get(/api\/drivinglicense\/v5\/canapplyfor\/B\/full/, (req, res, ctx) => {
-    // TODO ambiguate with mock auths
-    return res(ctx.status(200), ctx.json({ result: true, errorCode: '' }))
+    const canApply = req.headers.get('jwttoken') === MOCK_TOKEN
+    return res(
+      ctx.status(200),
+      ctx.json({ result: canApply, errorCode: canApply ? '' : 'SOME REASON' }),
+    )
   }),
-
-  rest.get(
-    url(
-      `${XROAD_DRIVING_LICENSE_V2_PATH}/api/okuskirteini/:nationalId/canapplyfor/B/full`,
-    ),
-    (req, res, ctx) => {
-      const canApply = req.params.nationalId === MOCK_NATIONAL_ID
-
-      return res(
-        ctx.status(200),
-        ctx.json(canApply ? CanApplyWithResultSuccess : CanApplyWithResultFail),
-      )
-    },
-  ),
 
   rest.get(
     url(
@@ -327,9 +278,15 @@ export const requestHandlers = [
 
   rest.get(
     /api\/drivinglicense\/v5\/canapplyfor\/temporary/,
-    (_req, res, ctx) => {
-      // TODO ambiguate with mock auths
-      return res(ctx.status(200), ctx.json({ result: true, errorCode: '' }))
+    (req, res, ctx) => {
+      const canApply = req.headers.get('jwttoken') === MOCK_TOKEN
+      return res(
+        ctx.status(200),
+        ctx.json({
+          result: canApply,
+          errorCode: canApply ? '' : 'SOME REASON',
+        }),
+      )
     },
   ),
 

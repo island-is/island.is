@@ -186,17 +186,22 @@ export class DrivingLicenseService {
     user: User,
     nationalId: string,
   ): Promise<ApplicationEligibility> {
+    console.log('incoming', {
+      user,
+      nationalId,
+    })
     const license = await this.legacyGetDrivingLicense(
       nationalId,
-      user.authorization.split(' ')[1] ?? '', // removes the Bearer prefix,
+      user.authorization.replace('Bearer ', ''), // removes the Bearer prefix,
     )
+    console.log('And in that case the license is', license)
 
     const year = 1000 * 3600 * 24 * 365.25
     const fiveYearsAgo = new Date(Date.now() - year * 5)
 
     const categoryB = license?.categories
       ? license.categories.find(
-          (category) => category.name.toLocaleUpperCase() === 'B',
+          (category) => category.nr?.toLocaleUpperCase() === 'B',
         )
       : undefined
 

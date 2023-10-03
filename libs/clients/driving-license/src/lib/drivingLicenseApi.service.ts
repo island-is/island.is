@@ -161,7 +161,7 @@ export class DrivingLicenseApi {
       if (e.body.detail === 'Einstaklingur er sviptur ökuréttindum') {
         const getAllLicenses = await this.getAllLicensesV4(input)
         const currentLicense = getAllLicenses.find((license) => {
-          const categoryB = license.categories.find((cat) => cat.name === 'B')
+          const categoryB = license.categories.find((cat) => cat.nr === 'B')
           if (categoryB && categoryB.expires && categoryB.issued) {
             const now = new Date()
             return categoryB.issued < now && now < categoryB.expires
@@ -200,6 +200,7 @@ export class DrivingLicenseApi {
             comments: category.comment ?? null,
             name: category.categoryName ?? '',
             expires: category.dateTo ?? null,
+            nr: category.nr ?? '',
           }
         }) ?? [],
       disqualification: license.deprivation

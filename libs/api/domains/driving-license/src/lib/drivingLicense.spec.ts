@@ -6,11 +6,13 @@ import {
 } from '@island.is/clients/driving-license'
 import {
   DISQUALIFIED_NATIONAL_IDS,
+  DISQUALIFIED_TOKENS,
   MOCK_NATIONAL_ID,
   MOCK_NATIONAL_ID_EXPIRED,
   MOCK_NATIONAL_ID_NO_ASSESSMENT,
   MOCK_NATIONAL_ID_TEACHER,
   MOCK_TOKEN,
+  MOCK_TOKEN_NO_ASSESSMENT,
   MOCK_TOKEN_TEACHER,
   MOCK_USER,
   requestHandlers,
@@ -67,7 +69,7 @@ describe('DrivingLicenseService', () => {
       console.log('WHAT IS THE RESPONSE HERE?', response)
       expect(response).toMatchObject({
         name: 'Valid Jónsson',
-        issued: new Date('2021-05-25T06:43:15.327Z'),
+        issued: new Date('2018-05-25T06:43:15.327Z'),
         expires: new Date('2036-05-25T06:43:15.327Z'),
       })
     })
@@ -162,7 +164,7 @@ describe('DrivingLicenseService', () => {
 
     it('should return null for missing assessment', async () => {
       const response = await service.getDrivingAssessment(
-        MOCK_USER.authorization,
+        MOCK_TOKEN_NO_ASSESSMENT,
       )
 
       expect(response).toStrictEqual(null)
@@ -171,8 +173,10 @@ describe('DrivingLicenseService', () => {
 
   describe('getLearnerMentorEligibility', () => {
     it('should not disqualify for disqualifications older than 12 months', async () => {
+      const MOCK_USER_COPY = { ...MOCK_USER }
+      MOCK_USER_COPY.authorization = DISQUALIFIED_TOKENS[2]
       const response = await service.getLearnerMentorEligibility(
-        MOCK_USER,
+        MOCK_USER_COPY,
         DISQUALIFIED_NATIONAL_IDS[2],
       )
       expect(response).toStrictEqual({
