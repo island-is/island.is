@@ -226,7 +226,7 @@ export const Services: EnvironmentServices = {
     sessionsGeoip,
     contentfulApps,
     universityGatewayBackend,
-    universityGatewayWorker
+    universityGatewayWorker,
   ],
 }
 
