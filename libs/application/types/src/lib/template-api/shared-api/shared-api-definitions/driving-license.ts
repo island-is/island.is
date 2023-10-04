@@ -22,11 +22,6 @@ export const CurrentLicenseApi = defineTemplateApi<CurrentLicenseParameters>({
   namespace,
 })
 
-export const JurisdictionApi = defineTemplateApi({
-  action: 'jurisdictions',
-  namespace,
-})
-
 export const QualityPhotoApi = defineTemplateApi({
   action: 'qualityPhoto',
   namespace,
@@ -39,6 +34,11 @@ export const QualitySignatureApi = defineTemplateApi({
 
 export const DrivingAssessmentApi = defineTemplateApi({
   action: 'drivingAssessment',
+  namespace,
+})
+
+export const JurisdictionApi = defineTemplateApi({
+  action: 'jurisdictions',
   namespace,
 })
 
