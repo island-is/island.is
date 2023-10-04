@@ -46,6 +46,7 @@ export const GET_UNIVERSITY_GATEWAY_UNIVERSITIES = gql`
     universityGatewayUniversities {
       id
       nationalId
+      contentfulKey
       logoUrl
       title
     }

@@ -96,7 +96,7 @@ class InternalProgramService {
         active: false,
       },
       {
-        where: { universityId: universityId },
+        where: { universityId },
         logging: false,
       },
     )

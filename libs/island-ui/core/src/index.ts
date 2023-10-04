@@ -58,6 +58,8 @@ export * from './lib/PdfViewer/PdfViewer'
 export * from './lib/PageLoader'
 export * from './lib/VisuallyHidden/VisuallyHidden'
 export * from './lib/Drawer/Drawer'
+export * from './lib/ProblemTemplate/ProblemTemplate'
+export * from './lib/ProblemTemplate/ProblemTemplate.css'
 
 // Cards
 export * from './lib/LinkCard/LinkCard'
@@ -65,7 +67,6 @@ export { ProfileCard } from './lib/ProfileCard/ProfileCard'
 export { ActionCard } from './lib/ActionCard/ActionCard'
 export { TopicCard } from './lib/TopicCard/TopicCard'
 export { CategoryCard } from './lib/CategoryCard/CategoryCard'
-export { ActionCategoryCard } from './lib/ActionCategoryCard/ActionCategoryCard'
 
 // Core
 export { ButtonDeprecated } from './lib/ButtonDeprecated/Button'
@@ -123,8 +124,6 @@ export type {
 } from './lib/DatePicker/types'
 export type { ResponsiveProp } from './utils/responsiveProp'
 export type { GridColumns } from './lib/Grid/GridColumn/GridColumn.css'
-export type { CTAProps } from './lib/CategoryCard/CategoryCard'
-export type { CategoryCardTag } from './lib/CategoryCard/CategoryCard'
 
 // Styles
 export * as linkStyles from './lib/Link/Link.css'

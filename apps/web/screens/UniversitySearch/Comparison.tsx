@@ -12,6 +12,9 @@ import { Screen } from '@island.is/web/types'
 import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
+  GetUniversityGatewayByIdQuery,
+  GetUniversityGatewayByIdQueryVariables,
+  GetUniversityGatewayUniversitiesQuery,
   ProgramDetails,
   University,
 } from '@island.is/web/graphql/schema'
@@ -20,9 +23,14 @@ import {
   GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
 } from '../queries/UniversityGateway'
 import { GET_NAMESPACE_QUERY } from '../queries'
-import { useNamespace } from '@island.is/web/hooks'
+import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { TranslationDefaults } from './TranslationDefaults'
-import { ComparisonProps } from './UniversitySearch'
+
+import getConfig from 'next/config'
+import { CustomNextError } from '@island.is/web/units/errors'
+
+const { publicRuntimeConfig = {} } = getConfig() ?? {}
+
 interface UniversityComparisonProps {
   data: Array<ProgramDetails>
   locale: string
@@ -37,16 +45,12 @@ const Comparison: Screen<UniversityComparisonProps> = ({
   universities,
 }) => {
   const n = useNamespace(namespace)
+  const { linkResolver } = useLinkResolver()
   const [selectedComparison, setSelectedComparison] =
     useState<Array<ProgramDetails>>(data)
 
   const handleDelete = (dataItem: ProgramDetails) => {
-    let found = false
-    selectedComparison.forEach((x) => {
-      if (x.id === dataItem.id) {
-        found = true
-      }
-    })
+    const found = selectedComparison.some((x) => x.id === dataItem.id)
 
     if (found) {
       const a = selectedComparison.filter((item) => {
@@ -79,7 +83,7 @@ const Comparison: Screen<UniversityComparisonProps> = ({
 
   return (
     <GridContainer>
-      <LinkV2 href="/haskolanam" skipTab>
+      <LinkV2 href={linkResolver('universitysearch').href} skipTab>
         <Button
           preTextIcon="arrowBack"
           preTextIconType="filled"
@@ -113,7 +117,7 @@ const Comparison: Screen<UniversityComparisonProps> = ({
           type="button"
           variant="text"
           truncate
-          onClick={() => handleDeleteAll()}
+          onClick={handleDeleteAll}
         >
           {n('clearFilter', 'Hreinsa val')}
         </Button>
@@ -232,9 +236,17 @@ const Comparison: Screen<UniversityComparisonProps> = ({
                             {n('apply', 'Sækja um')}
                           </Button>
                         )}
-                      <Button size="small" variant="ghost" fluid>
-                        {n('previewProgram', 'Skoða nám')}
-                      </Button>
+
+                      <LinkV2
+                        href={
+                          linkResolver('universitysearchdetails', [i.id]).href
+                        }
+                        passHref
+                      >
+                        <Button size="small" variant="ghost" fluid>
+                          {n('previewProgram', 'Skoða nám')}
+                        </Button>
+                      </LinkV2>
                     </Box>
                   </T.Data>
                 )
@@ -249,9 +261,7 @@ const Comparison: Screen<UniversityComparisonProps> = ({
 
 Comparison.getProps = async ({ query, apolloClient, locale }) => {
   const { comparison } = query
-  const parsedComparison = JSON.parse(
-    !!comparison ? (comparison as string) : '',
-  )
+  const parsedComparison = JSON.parse(comparison ? (comparison as string) : '')
 
   const namespaceResponse = await apolloClient.query<
     GetNamespaceQuery,
@@ -270,9 +280,26 @@ Comparison.getProps = async ({ query, apolloClient, locale }) => {
     namespaceResponse?.data?.getNamespace?.fields || '{}',
   ) as Record<string, string>
 
+  let showPagesFeatureFlag = false
+
+  if (publicRuntimeConfig?.environment === 'prod') {
+    showPagesFeatureFlag = Boolean(namespace?.showPagesProdFeatureFlag)
+  } else if (publicRuntimeConfig?.environment === 'staging') {
+    showPagesFeatureFlag = Boolean(namespace?.showPagesStagingFeatureFlag)
+  } else {
+    showPagesFeatureFlag = Boolean(namespace?.showPagesDevFeatureFlag)
+  }
+
+  if (!showPagesFeatureFlag) {
+    throw new CustomNextError(404, 'Síða er ekki opin')
+  }
+
   const allResolvedPromises = await Promise.all(
     parsedComparison.map(async (item: string) => {
-      return await apolloClient.query<any, any>({
+      return await apolloClient.query<
+        GetUniversityGatewayByIdQuery,
+        GetUniversityGatewayByIdQueryVariables
+      >({
         query: GET_UNIVERSITY_GATEWAY_PROGRAM,
         variables: {
           input: {
@@ -287,9 +314,10 @@ Comparison.getProps = async ({ query, apolloClient, locale }) => {
     (resolved) => resolved.data.universityGatewayProgramById,
   )
 
-  const universities = await apolloClient.query<any>({
-    query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
-  })
+  const universities =
+    await apolloClient.query<GetUniversityGatewayUniversitiesQuery>({
+      query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
+    })
 
   return {
     data: mappedData,

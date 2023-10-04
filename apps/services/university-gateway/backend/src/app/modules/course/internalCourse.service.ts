@@ -87,7 +87,7 @@ class InternalCourseService {
     // since universityId is not in programCourse table
     const oldCourseList = await this.courseModel.findAll({
       attributes: ['id'],
-      where: { universityId: universityId },
+      where: { universityId },
       logging: false,
     })
     await this.programCourseModel.destroy({
@@ -97,7 +97,7 @@ class InternalCourseService {
 
     // DELETE all courses for this university
     await this.courseModel.destroy({
-      where: { universityId: universityId },
+      where: { universityId },
       logging: false,
     })
 
@@ -130,8 +130,6 @@ class InternalCourseService {
               nameEn: course.nameEn,
               universityId: universityId,
               credits: course.credits,
-              semesterYear: course.semesterYear,
-              semesterSeason: course.semesterSeason,
               descriptionIs: course.descriptionIs,
               descriptionEn: course.descriptionEn,
               externalUrlIs: course.externalUrlIs,
@@ -166,6 +164,8 @@ class InternalCourseService {
                 programId: program.id,
                 courseId: courseId,
                 requirement: course.requirement,
+                semesterYear: course.semesterYear,
+                semesterSeason: course.semesterSeason,
               },
               { logging: false },
             )

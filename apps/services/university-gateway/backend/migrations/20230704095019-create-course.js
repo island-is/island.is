@@ -37,14 +37,6 @@ module.exports = {
               type: Sequelize.FLOAT,
               allowNull: false,
             },
-            semester_year: {
-              type: Sequelize.INTEGER,
-              allowNull: true,
-            },
-            semester_season: {
-              type: Sequelize.ENUM('FALL', 'SPRING', 'SUMMER'),
-              allowNull: false,
-            },
             description_is: {
               type: Sequelize.TEXT,
               allowNull: true,

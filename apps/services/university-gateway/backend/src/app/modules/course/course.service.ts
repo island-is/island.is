@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Course, CourseDetailsResponse, CourseResponse } from './model'
 import { PaginateInput } from '../program/types'
 import { paginate } from '@island.is/nest/pagination'
+import { ProgramCourse } from '../program/model'
+import { Op } from 'sequelize'
 import { logger } from '@island.is/logging'
 
 export
@@ -11,6 +13,9 @@ class CourseService {
   constructor(
     @InjectModel(Course)
     private courseModel: typeof Course,
+
+    @InjectModel(ProgramCourse)
+    private programCourseModel: typeof ProgramCourse,
   ) {}
 
   async getCourses(
@@ -19,10 +24,16 @@ class CourseService {
     universityId: string,
   ): Promise<CourseResponse> {
     const where: {
-      programId?: string
+      id?: { [Op.in]: string[] }
       universityId?: string
     } = {}
-    if (programId !== undefined) where.programId = programId
+    if (programId !== undefined) {
+      const courseList = await this.programCourseModel.findAll({
+        attributes: ['courseId'],
+        where: { programId },
+      })
+      where.id = { [Op.in]: courseList.map((c) => c.courseId) }
+    }
     if (universityId !== undefined) where.universityId = universityId
 
     return await paginate({

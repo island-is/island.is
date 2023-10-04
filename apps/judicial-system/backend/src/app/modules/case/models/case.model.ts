@@ -13,30 +13,31 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import type {
+  CrimeSceneMap,
+  IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
 import {
-  CaseState,
-  CaseLegalProvisions,
   CaseAppealDecision,
+  CaseAppealRulingDecision,
+  CaseAppealState,
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseAppealRulingDecision,
-  CaseType,
-  SessionArrangements,
-  CourtDocument,
+  CaseLegalProvisions,
   CaseOrigin,
-  CaseAppealState,
+  CaseState,
+  CaseType,
+  CourtDocument,
   RequestSharedWithDefender,
-} from '@island.is/judicial-system/types'
-import type {
-  IndictmentSubtypeMap,
-  CrimeSceneMap,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
+import { Defendant } from '../../defendant'
+import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
+import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { User } from '../../user'
-import { Defendant } from '../../defendant'
-import { IndictmentCount } from '../../indictment-count'
 
 @Table({
   tableName: 'case',
@@ -1116,4 +1117,11 @@ export class Case extends Model {
   @BelongsTo(() => User, 'appealJudge3Id')
   @ApiPropertyOptional({ type: User })
   appealJudge3?: User
+
+  /**********
+   * The case's event logs
+   **********/
+  @HasMany(() => EventLog, 'caseId')
+  @ApiPropertyOptional({ type: EventLog, isArray: true })
+  eventLogs?: EventLog[]
 }

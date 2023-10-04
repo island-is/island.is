@@ -132,8 +132,6 @@ class ReykjavikUniversityApplicationClient {
           nameIs: course.nameIs || '',
           nameEn: course.nameEn || '',
           credits: course.credits || 0,
-          semesterYear: course.semesterYear,
-          semesterSeason: semesterSeason,
           descriptionIs: course.descriptionIs,
           descriptionEn: course.descriptionEn,
           externalUrlIs: course.externalUrlIs,
@@ -141,6 +139,8 @@ class ReykjavikUniversityApplicationClient {
           requirement: course.required
             ? Requirement.MANDATORY
             : Requirement.FREE_ELECTIVE, //TODO missing in api
+          semesterYear: course.semesterYear,
+          semesterSeason: semesterSeason,
         })
       } catch (e) {
         logger.error(

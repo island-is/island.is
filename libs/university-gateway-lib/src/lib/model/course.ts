@@ -5,11 +5,11 @@ export interface ICourse {
   nameIs: string
   nameEn: string
   credits: number
-  semesterYear?: number
-  semesterSeason: Season
   descriptionIs?: string
   descriptionEn?: string
   externalUrlIs?: string
   externalUrlEn?: string
   requirement: Requirement
+  semesterYear?: number
+  semesterSeason: Season
 }

@@ -200,7 +200,7 @@ export const routesTemplate = {
   },
   universitysearchcomparison: {
     is: '/haskolanam/samanburdur',
-    en: '/en/haskolanam/comparison',
+    en: '/en/haskolanam/samanburdur',
   },
   universitysearch: {
     is: '/haskolanam',
@@ -352,10 +352,6 @@ export const typeResolver = (
 
       // convert the route template string into a regex query
       const regex = convertToRegex(routeTemplate)
-
-      console.log('regex', regex)
-      console.log('path', path)
-      console.log('routeTemplate', routeTemplate)
 
       // if the path starts with the routeTemplate string or matches dynamic route regex we have found the type
       if (

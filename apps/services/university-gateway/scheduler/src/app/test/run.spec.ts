@@ -45,7 +45,7 @@ describe('AppService - Run', () => {
 
     it('should call the backend', () => {
       expect(fetch).toHaveBeenCalledWith(
-        `${appModuleConfig().backendUrl}/api/internal/cases/archive`,
+        `${appModuleConfig().backendUrl}/api/internal/programs/update`,
         {
           method: 'POST',
           headers: {
@@ -54,30 +54,6 @@ describe('AppService - Run', () => {
           },
         },
       )
-    })
-  })
-
-  describe('continue until done', () => {
-    beforeEach(async () => {
-      mockFetch
-        .mockResolvedValue({
-          ok: true,
-          json: () => Promise.resolve({ caseArchived: false }),
-        })
-        .mockResolvedValueOnce({
-          ok: true,
-          json: () => Promise.resolve({ caseArchived: true }),
-        })
-        .mockResolvedValueOnce({
-          ok: true,
-          json: () => Promise.resolve({ caseArchived: true }),
-        })
-
-      await givenWhenThen()
-    })
-
-    it('should call the backend three times', () => {
-      expect(fetch).toHaveBeenCalledTimes(3)
     })
   })
 
@@ -96,39 +72,6 @@ describe('AppService - Run', () => {
 
     it('should call the backend twice', () => {
       expect(fetch).toHaveBeenCalledTimes(2)
-    })
-  })
-
-  describe('remote call not ok', () => {
-    beforeEach(async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        json: () => Promise.resolve('Some error'),
-      })
-
-      await givenWhenThen()
-    })
-
-    it('should log error', () => {
-      expect(logger.error).toHaveBeenCalledWith('Failed to archive cases', {
-        response: 'Some error',
-      })
-    })
-  })
-
-  describe('remote call fails', () => {
-    const error = new Error('Some error')
-
-    beforeEach(async () => {
-      mockFetch.mockRejectedValueOnce(error)
-
-      await givenWhenThen()
-    })
-
-    it('should log error', () => {
-      expect(logger.error).toHaveBeenCalledWith('Failed to archive cases', {
-        reason: error,
-      })
     })
   })
 })

@@ -1,68 +1,247 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/liveness": {
+    "/livness": {
       "get": {
-        "operationId": "InfraController_liveness",
-        "parameters": [],
+        "summary": "Check livness status",
         "responses": {
           "200": {
-            "description": "",
+            "description": "Successful response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Liveness"
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    }
+                  }
                 }
               }
             }
           }
         },
-        "tags": ["internal"]
+        "tags": ["Utility"]
       }
     },
     "/version": {
       "get": {
-        "operationId": "InfraController_version",
-        "parameters": [],
+        "summary": "Get API version",
         "responses": {
           "200": {
-            "description": "",
+            "description": "Successful response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Version"
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
             }
           }
         },
-        "tags": ["internal"]
+        "tags": ["Utility"]
       }
     },
     "/active-programs": {
       "get": {
-        "operationId": "ExampleController_getActivePrograms",
-        "summary": "Get all active programs",
-        "parameters": [],
+        "summary": "Get active programs",
         "responses": {
           "200": {
             "description": "Returns all active programs",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ExampleProgramResponse"
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "externalId": {
+                            "type": "string"
+                          },
+                          "nameIs": {
+                            "type": "string"
+                          },
+                          "nameEn": {
+                            "type": "string"
+                          },
+                          "departmentNameIs": {
+                            "type": "string"
+                          },
+                          "departmentNameEn": {
+                            "type": "string"
+                          },
+                          "startingSemesterYear": {
+                            "type": "string"
+                          },
+                          "startingSemesterSeason": {
+                            "type": "string"
+                          },
+                          "applicationStartDate": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "degreeType": {
+                            "type": "string"
+                          },
+                          "degreeAbbreviation": {
+                            "type": "string"
+                          },
+                          "credits": {
+                            "type": "integer"
+                          },
+                          "descriptionIs": {
+                            "type": "string"
+                          },
+                          "descriptionEn": {
+                            "type": "string"
+                          },
+                          "durationInYears": {
+                            "type": "integer"
+                          },
+                          "costPerYear": {
+                            "type": "integer"
+                          },
+                          "iscedCode": {
+                            "type": "string"
+                          },
+                          "externalUrlIs": {
+                            "type": "string"
+                          },
+                          "externalUrlEn": {
+                            "type": "string"
+                          },
+                          "modeOfDelivery": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "interestTags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "admissionRequirementsIs": {
+                            "type": "string"
+                          },
+                          "admissionRequirementsEn": {
+                            "type": "string"
+                          },
+                          "studyRequirementsIs": {
+                            "type": "string"
+                          },
+                          "studyRequirementsEn": {
+                            "type": "string"
+                          },
+                          "costInformationIs": {
+                            "type": "string"
+                          },
+                          "costInformationEn": {
+                            "type": "string"
+                          },
+                          "extraApplicationSettings": {
+                            "type": "object",
+                            "properties": {
+                              "clausus": {
+                                "type": "string"
+                              },
+                              "inntokuprof": {
+                                "type": "string"
+                              },
+                              "banna_undanthagur": {
+                                "type": "string"
+                              },
+                              "kjorsvid_skylda": {
+                                "type": "string"
+                              },
+                              "kennt_a_ensku": {
+                                "type": "string"
+                              },
+                              "sleppa_namskeidavali": {
+                                "type": "string"
+                              },
+                              "dags_haust_opnar": {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "dags_haust_lokar": {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "dags_vor_opnar": {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "dags_vor_lokar": {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "dags_erlendir_opnar": {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "dags_erlendir_lokar": {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "nafnleynd": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "extraApplicationFields": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "nameIs": {
+                                  "type": "string"
+                                },
+                                "nameEn": {
+                                  "type": "string"
+                                },
+                                "descriptionIs": {
+                                  "type": "string"
+                                },
+                                "descriptionEn": {
+                                  "type": "string"
+                                },
+                                "fieldType": {
+                                  "type": "string"
+                                },
+                                "uploadAcceptedFileType": {
+                                  "type": "string"
+                                },
+                                "required": {
+                                  "type": "boolean"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
           }
         },
-        "tags": ["Example endpoints for universities"]
+        "tags": ["Programs"]
       }
     },
     "/program/{externalId}/courses": {
       "get": {
-        "operationId": "ExampleController_getProgramsCourses",
-        "summary": "Get courses for an active programs",
+        "summary": "Get courses for a program",
         "parameters": [
           {
             "name": "externalId",
@@ -77,22 +256,71 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns the program",
+            "description": "Successful response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProgramCoursesResponse"
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "externalId": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "nameIs": {
+                            "type": "string"
+                          },
+                          "nameEn": {
+                            "type": "string"
+                          },
+                          "required": {
+                            "type": "string"
+                          },
+                          "credits": {
+                            "type": "string"
+                          },
+                          "semesterYear": {
+                            "type": "string"
+                          },
+                          "semesterSeason": {
+                            "type": "string"
+                          },
+                          "descriptionIs": {
+                            "type": "string"
+                          },
+                          "descriptionEn": {
+                            "type": "string"
+                          },
+                          "externalUrlIs": {
+                            "type": "string"
+                          },
+                          "externalUrlEn": {
+                            "type": "string"
+                          },
+                          "displayId": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
           }
         },
-        "tags": ["Example endpoints for universities"]
+        "tags": ["Courses"]
       }
     },
     "/applications/{id}": {
       "get": {
-        "operationId": "ExampleController_getApplicationStatus",
+        "operationId": "Controller_getApplicationStatus",
         "summary": "Get application data",
         "parameters": [
           {
@@ -112,16 +340,16 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ExampleApplicationResponse"
+                  "$ref": "#/components/schemas/ApplicationResponse"
                 }
               }
             }
           }
         },
-        "tags": ["Example endpoints for universities"]
+        "tags": ["Applications"]
       },
       "post": {
-        "operationId": "ExampleController_updateApplication",
+        "operationId": "Controller_updateApplication",
         "summary": "Update application status. Used when student accepts/rejects/cancels.",
         "parameters": [
           {
@@ -157,37 +385,250 @@
             }
           }
         },
-        "tags": ["Example endpoints for universities"]
+        "tags": ["Applications"]
       }
     },
     "/applications": {
       "post": {
-        "operationId": "ExampleController_createApplication",
-        "summary": "Create application in university DB",
-        "parameters": [],
+        "summary": "Submit an application",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateApplicationDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "TBD",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string"
+                "type": "object",
+                "properties": {
+                  "guid": {
+                    "type": "string"
+                  },
+                  "kennitala": {
+                    "type": "string"
+                  },
+                  "simi": {
+                    "type": "string"
+                  },
+                  "namsleid": {
+                    "type": "string"
+                  },
+                  "tegund_umsoknar": {
+                    "type": "integer"
+                  },
+                  "uid": {
+                    "type": "integer"
+                  },
+                  "namsform": {
+                    "type": "string"
+                  },
+                  "nomination_id": {
+                    "type": "integer"
+                  },
+                  "undanthaga": {
+                    "type": "string"
+                  },
+                  "leidbeiningar_fylgigogn_lesid": {
+                    "type": "string"
+                  },
+                  "inntokuskilyrdi_lesin": {
+                    "type": "string"
+                  },
+                  "kjorsvid": {
+                    "type": "string"
+                  },
+                  "personuvernd_samthykki": {
+                    "type": "string"
+                  },
+                  "hugverkarettur_samthykki": {
+                    "type": "string"
+                  },
+                  "eldri_umsokn": {
+                    "type": "string"
+                  },
+                  "skilyrdi_msl": {
+                    "type": "string"
+                  },
+                  "personuvernd_msl_lesin": {
+                    "type": "string"
+                  },
+                  "samthykki_creditinfo": {
+                    "type": "string"
+                  },
+                  "samthykki_trunadarlaeknir": {
+                    "type": "string"
+                  },
+                  "samthykki_sakaskra": {
+                    "type": "string"
+                  },
+                  "samthykki_okurettindaskra": {
+                    "type": "string"
+                  },
+                  "framhaldsskolar": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "framhaldsskoli_nafn": {
+                          "type": "string"
+                        },
+                        "framhaldsskoli_land": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "fyrra_nam": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "skoli": {
+                          "type": "string"
+                        },
+                        "namsgrein": {
+                          "type": "string"
+                        },
+                        "namsgrada": {
+                          "type": "string"
+                        },
+                        "land": {
+                          "type": "string"
+                        },
+                        "nami_lokid": {
+                          "type": "string"
+                        },
+                        "ar_lokid": {
+                          "type": "integer"
+                        },
+                        "manudur_lokid": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  },
+                  "medmaelendur": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "nafn": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "simanumer": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "leidbeinandi": {
+                    "type": "object",
+                    "properties": {
+                      "nafn": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "simanumer": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "tenglar": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "skrar": {
+                    "type": "object",
+                    "properties": {
+                      "cv": {
+                        "type": "string"
+                      },
+                      "markmid": {
+                        "type": "string"
+                      },
+                      "rannsoknaraaetlun": {
+                        "type": "string"
+                      },
+                      "namsaaetlun": {
+                        "type": "string"
+                      },
+                      "rannsoknarverkefni": {
+                        "type": "string"
+                      },
+                      "vidhengi_medmaelendur": {
+                        "type": "string"
+                      },
+                      "leidbeinandi": {
+                        "type": "string"
+                      },
+                      "profskirteini": {
+                        "type": "string"
+                      },
+                      "profskirteini2": {
+                        "type": "string"
+                      },
+                      "onnur_skjol": {
+                        "type": "string"
+                      },
+                      "kynningarbref": {
+                        "type": "string"
+                      },
+                      "ferilsskra": {
+                        "type": "string"
+                      },
+                      "leyfisbref": {
+                        "type": "string"
+                      },
+                      "portofolio": {
+                        "type": "string"
+                      },
+                      "sakavottord": {
+                        "type": "string"
+                      },
+                      "profskirteini3": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "namskeid": {
+                    "type": "object",
+                    "properties": {
+                      "H": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
           }
         },
-        "tags": ["Example endpoints for universities"]
+        "responses": {
+          "200": {
+            "description": "Successful submission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Application ID"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Application"]
       }
     },
     "/openapi.yaml": {
@@ -216,12 +657,12 @@
             }
           }
         },
-        "tags": ["internal"]
+        "tags": ["Utility"]
       }
     }
   },
   "info": {
-    "title": "University Application",
+    "title": "University Gateway",
     "description": "API description",
     "version": "1.0",
     "contact": {}
@@ -247,342 +688,8 @@
     }
   ],
   "components": {
-    "securitySchemes": {
-      "ias": {
-        "type": "oauth2",
-        "flows": {
-          "authorizationCode": {
-            "authorizationUrl": "https://identity-server.dev01.devland.is/connect/authorize",
-            "tokenUrl": "https://identity-server.dev01.devland.is/connect/token",
-            "scopes": {
-              "openid": "",
-              "profile": "",
-              "@island.is/university-gateway": ""
-            }
-          }
-        },
-        "description": "Authentication and authorization using island.is authentication service (IAS)."
-      }
-    },
     "schemas": {
-      "Liveness": {
-        "type": "object",
-        "properties": {
-          "ok": {
-            "type": "boolean"
-          }
-        },
-        "required": ["ok"]
-      },
-      "Version": {
-        "type": "object",
-        "properties": {
-          "version": {
-            "type": "string"
-          }
-        },
-        "required": ["version"]
-      },
-      "ExampleCourse": {
-        "type": "object",
-        "properties": {
-          "externalId": {
-            "type": "string",
-            "description": "External ID for the course (from University)",
-            "example": "ABC12345"
-          },
-          "nameIs": {
-            "type": "string",
-            "description": "Course name (Icelandic)",
-            "example": "Tölvunarfræði I"
-          },
-          "nameEn": {
-            "type": "string",
-            "description": "Course name (English)",
-            "example": "Computer science I"
-          },
-          "required": {
-            "type": "string",
-            "description": "Whether the course is required to take within the program",
-            "example": "M"
-          },
-          "credits": {
-            "type": "number",
-            "description": "Number of course credits (in ECTS)",
-            "example": 8
-          },
-          "semesterYear": {
-            "type": "number",
-            "description": "Which year this course is taught on",
-            "example": 2023
-          },
-          "semesterSeason": {
-            "type": "string",
-            "description": "Which season this course is taught on",
-            "example": "FALL",
-            "enum": ["FALL", "SPRING", "SUMMER"]
-          },
-          "descriptionIs": {
-            "type": "string",
-            "description": "Course description (Icelandic)",
-            "example": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-          },
-          "descriptionEn": {
-            "type": "string",
-            "description": "Course description (English)",
-            "example": "Mauris a justo arcu. Orci varius natoque penatibus."
-          },
-          "externalUrlIs": {
-            "type": "string",
-            "description": "External url  for the course from the university web page (Icelandic)",
-            "example": "https://www.hi.is/grunnnam/tolvunarfraedi/staerdfraedigreining-i"
-          },
-          "externalUrlEn": {
-            "type": "string",
-            "description": "External url  for the course from the university web page (English)",
-            "example": "https://www.en.hi.is/undergraduate-study/computer-science/mathematical-analysis-i"
-          }
-        },
-        "required": [
-          "externalId",
-          "nameIs",
-          "nameEn",
-          "required",
-          "credits",
-          "semesterYear",
-          "semesterSeason"
-        ]
-      },
-      "ExampleProgramExtraApplicationField": {
-        "type": "object",
-        "properties": {
-          "nameIs": {
-            "type": "string",
-            "description": "Field name (Icelandic)",
-            "example": "Ferilskrá"
-          },
-          "nameEn": {
-            "type": "string",
-            "description": "Field name (English)",
-            "example": "CV"
-          },
-          "descriptionIs": {
-            "type": "string",
-            "description": "Field description (Icelandic)",
-            "example": "Fusce sit amet pellentesque magna."
-          },
-          "descriptionEn": {
-            "type": "string",
-            "description": "Field description (English)",
-            "example": "Phasellus nisi turpis, rutrum vitae congue sed."
-          },
-          "required": {
-            "type": "string",
-            "description": "Is this field required?",
-            "example": true
-          },
-          "fieldType": {
-            "type": "string",
-            "description": "What type of field should be displayed in the application form",
-            "example": "UPLOAD",
-            "enum": ["UPLOAD", "CHECKBOX", "TEXT_INPUT", "TEXT_AREA"]
-          },
-          "uploadAcceptedFileType": {
-            "type": "string",
-            "description": "If field type is UPLOAD, then this field is required and should list up all file types that should be accepted",
-            "example": ".pdf, .jpg, .jpeg, .png"
-          }
-        },
-        "required": ["nameIs", "required", "fieldType"]
-      },
-      "ExampleProgram": {
-        "type": "object",
-        "properties": {
-          "externalId": {
-            "type": "string",
-            "description": "External ID for the program (from University)",
-            "example": "ABC12345"
-          },
-          "nameIs": {
-            "type": "string",
-            "description": "Program name (Icelandic)",
-            "example": "Tölvunarfræði"
-          },
-          "nameEn": {
-            "type": "string",
-            "description": "Program name (English)",
-            "example": "Computer science"
-          },
-          "departmentNameIs": {
-            "type": "string",
-            "description": "Name of the department that the program belongs to (Icelandic)",
-            "example": "Verkfræði og náttúruvísindasvið"
-          },
-          "departmentNameEn": {
-            "type": "string",
-            "description": "Name of the department that the program belongs to (English)",
-            "example": "Engineering and Natural Sciences"
-          },
-          "startingSemesterYear": {
-            "type": "number",
-            "description": "Which year this program started on",
-            "example": 2023
-          },
-          "startingSemesterSeason": {
-            "type": "string",
-            "description": "Which season this program started on",
-            "example": "FALL",
-            "enum": ["FALL", "SPRING", "SUMMER"]
-          },
-          "applicationStartDate": {
-            "format": "date-time",
-            "type": "string",
-            "description": "When the application period for this program starts",
-            "example": "2023-05-01T00:00:00.000Z"
-          },
-          "applicationEndDate": {
-            "format": "date-time",
-            "type": "string",
-            "description": "When the application period for this program ends",
-            "example": "2023-08-01T00:00:00.000Z"
-          },
-          "degreeType": {
-            "type": "string",
-            "description": "Degree type",
-            "example": "UNDERGRADUATE",
-            "enum": ["UNDERGRADUATE", "POSTGRADUATE", "DOCTORAL"]
-          },
-          "degreeAbbreviation": {
-            "type": "string",
-            "description": "Degree abbreviation",
-            "example": "BSc"
-          },
-          "credits": {
-            "type": "number",
-            "description": "Number of course credits (in ECTS)",
-            "example": "180"
-          },
-          "descriptionIs": {
-            "type": "string",
-            "description": "Program description (Icelandic)",
-            "example": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-          },
-          "descriptionEn": {
-            "type": "string",
-            "description": "Program description (English)",
-            "example": "Mauris a justo arcu. Orci varius natoque penatibus."
-          },
-          "durationInYears": {
-            "type": "number",
-            "description": "Total duration for this program (in years)",
-            "example": 3
-          },
-          "costPerYear": {
-            "type": "number",
-            "description": "Cost for program (per year)",
-            "example": 75000
-          },
-          "iscedCode": {
-            "type": "string",
-            "description": "ISCED code for program",
-            "example": "481"
-          },
-          "externalUrlIs": {
-            "type": "string",
-            "description": "External url  for the program from the university web page (Icelandic)",
-            "example": "https://www.ru.is/grunnnam/tolvunarfraedi"
-          },
-          "externalUrlEn": {
-            "type": "string",
-            "description": "External url  for the program from the university web page (English)",
-            "example": "https://en.ru.is/st/dcs/undergraduate-study/bsc-computer-science"
-          },
-          "modeOfDelivery": {
-            "type": "array",
-            "description": "Modes of deliveries available for the program",
-            "example": ["ON_SITE"],
-            "items": {
-              "type": "string",
-              "enum": ["ON_SITE", "ONLINE", "ONLINE_WITH_SESSION", "MIXED"]
-            }
-          },
-          "interestTags": {
-            "type": "array",
-            "description": "Interest tag for the program (to be able to categorize programs after interest)",
-            "example": ["ENGINEER"],
-            "items": {
-              "type": "string",
-              "enum": ["POLITICS", "LANGUAGE", "ENGINEER", "HISTORY"]
-            }
-          },
-          "admissionRequirementsIs": {
-            "type": "string",
-            "description": "Admission requirements for program (Icelandic)",
-            "example": "Nemandinn verður að hafa klárað stúdentspróf"
-          },
-          "admissionRequirementsEn": {
-            "type": "string",
-            "description": "Admission requirements for program (English)",
-            "example": "The student needs to have finished the matriculation exam"
-          },
-          "studyRequirementsIs": {
-            "type": "string",
-            "description": "Study requirements for program (Icelandic)",
-            "example": "Nemandinn verður að vera með lágmarkseinkunn 6 í öllum áföngum"
-          },
-          "studyRequirementsEn": {
-            "type": "string",
-            "description": "Study requirements for program (English)",
-            "example": "The student must have a minimum grade of 6 in all courses"
-          },
-          "costInformationIs": {
-            "type": "string",
-            "description": "Cost information for program (Icelandic)",
-            "example": "Það verður að borga 10.000 kr staðfestingargjald fyrir 1. ágúst"
-          },
-          "costInformationEn": {
-            "type": "string",
-            "description": "Cost information for program (English)",
-            "example": "A confirmation fee of ISK 10.000 must be paid before August 1"
-          },
-          "extraApplicationFields": {
-            "description": "Other fields that should be displayed in the application for the program",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ExampleProgramExtraApplicationField"
-            }
-          }
-        },
-        "required": [
-          "externalId",
-          "nameIs",
-          "nameEn",
-          "departmentNameIs",
-          "departmentNameEn",
-          "startingSemesterYear",
-          "startingSemesterSeason",
-          "applicationStartDate",
-          "degreeType",
-          "degreeAbbreviation",
-          "modeOfDelivery",
-          "interestTags",
-          "extraApplicationFields"
-        ]
-      },
-      "ExampleProgramResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "description": "Program data",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ExampleProgram"
-            }
-          }
-        },
-        "required": ["data"]
-      },
-      "ExampleApplication": {
+      "Application": {
         "type": "object",
         "properties": {
           "status": {
@@ -593,7 +700,6 @@
               "IN_REVIEW",
               "IN_PROGRESS",
               "ACCEPTED_BY_UNIVERSITY",
-              "ACCEPTED_BY_UNIVERSITY_WITH_CONDITION",
               "ACCEPTED_BY_UNIVERSITY_AND_STUDENT",
               "REJECTED_BY_STUDENT_REASON_CANCELLED",
               "REJECTED_BY_STUDENT_REASON_OTHER_ACCEPTED",
@@ -605,31 +711,19 @@
         },
         "required": ["status"]
       },
-      "ExampleApplicationResponse": {
+      "ApplicationResponse": {
         "type": "object",
         "properties": {
           "data": {
             "description": "Application status data",
             "allOf": [
               {
-                "$ref": "#/components/schemas/ExampleApplication"
+                "$ref": "#/components/schemas/Application"
               }
             ]
           }
         },
         "required": ["data"]
-      },
-      "ProgramCoursesResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "description": "Column description for data",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ExampleCourse"
-            }
-          }
-        }
       },
       "CreateApplicationDto": {
         "type": "object",

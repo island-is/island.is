@@ -13,7 +13,6 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { University } from '../../university/model'
-import { Season } from '@island.is/university-gateway-lib'
 import { PageInfoDto } from '@island.is/nest/pagination'
 
 export
@@ -83,29 +82,6 @@ class Course extends Model {
     allowNull: false,
   })
   credits!: number
-
-  @ApiProperty({
-    description: 'Which year this course is taught on',
-    example: 2023,
-  })
-  @ApiPropertyOptional()
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: true,
-  })
-  semesterYear?: number
-
-  @ApiProperty({
-    description: 'Which season this course is taught on',
-    example: Season.FALL,
-    enum: Season,
-  })
-  @Column({
-    type: DataType.ENUM,
-    values: Object.values(Season),
-    allowNull: false,
-  })
-  semesterSeason!: Season
 
   @ApiProperty({
     description: 'Course description (Icelandic)',
