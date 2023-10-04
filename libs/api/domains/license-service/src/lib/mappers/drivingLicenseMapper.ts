@@ -9,8 +9,7 @@ import { Locale } from '@island.is/shared/types'
 import { getLabel } from '../utils/translations'
 import { Injectable } from '@nestjs/common'
 import { DriversLicense } from '@island.is/clients/driving-license'
-
-type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
+import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
 export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
@@ -83,12 +82,14 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
               label: getLabel('publishedDate', locale, label),
               value: field.issued ? field.issued.toISOString() : '',
             },
-            field.comments && {
-              type: GenericLicenseDataFieldType.Value,
-              label: getLabel('comment', locale, label),
-              value: field.comments ?? '',
-            },
-          ].filter(Boolean as unknown as ExcludesFalse),
+            field.comments
+              ? {
+                  type: GenericLicenseDataFieldType.Value,
+                  label: getLabel('comment', locale, label),
+                  value: field.comments ?? '',
+                }
+              : undefined,
+          ].filter(isDefined),
         })),
       },
     ]
