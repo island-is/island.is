@@ -121,6 +121,10 @@ export class UserProfileService {
       )
 
       if (profile === null) {
+        /**
+         * Even if userProfileApiWithAuth does not exist.
+         * Islykill data might exist for the user, so we need to get that, with default values in the userprofile data.
+         */
         return await this.getIslykillProfile(user)
       }
 
