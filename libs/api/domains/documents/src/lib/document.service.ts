@@ -212,7 +212,7 @@ export class DocumentService {
         action: body.action,
       }
     } catch (e) {
-      logger.error('Post mail acion failed', {
+      logger.error('Post mail action failed', {
         category: LOG_CATEGORY,
         error: e,
       })
