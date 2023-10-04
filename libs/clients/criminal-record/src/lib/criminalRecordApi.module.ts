@@ -16,6 +16,7 @@ export interface CriminalRecordApiConfig {
 const configFactory = (config: CriminalRecordApiConfig, basePath: string) => ({
   fetchApi: createEnhancedFetch({
     name: 'clients-criminal-record',
+    organizationSlug: 'rikislogreglustjori',
     ...config.fetchOptions,
   }),
   headers: {

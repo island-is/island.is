@@ -188,11 +188,12 @@ export class RightsPortalService {
           return {
             ...d,
             id: d.id,
-            address: {
-              postalCode: '', //d.postalCode,
-              municipality: '', //d.region,
-              streetAddress: '', //d.address,
-            },
+            practices: d.practices?.map((p) => ({
+              practice: p.practice,
+              region: p.region,
+              postalCode: p.postalCode,
+              address: p.address,
+            })),
           }
         })
         .filter(isDefined)

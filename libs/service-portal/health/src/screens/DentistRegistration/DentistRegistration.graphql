@@ -17,11 +17,11 @@ query getPaginatedDentists($input: DentistsInput!) {
     dentists: data {
       id
       name
-      practice
-      address {
+      practices {
+        practice
+        address
+        region
         postalCode
-        municipality
-        streetAddress
       }
     }
   }

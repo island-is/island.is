@@ -13,6 +13,7 @@ export const ApiConfiguration = {
     return new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-driving-license-book',
+        organizationSlug: 'samgongustofa',
         ...config.fetch,
       }),
       basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,

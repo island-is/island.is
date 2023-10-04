@@ -1,40 +1,41 @@
-import {
-  Query,
-  Resolver,
-  Context,
-  Args,
-  Mutation,
-  ResolveField,
-  Parent,
-} from '@nestjs/graphql'
 import { Inject, UseGuards, UseInterceptors } from '@nestjs/common'
+import {
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
-import type {
-  User,
-  Notification as TNotification,
-} from '@island.is/judicial-system/types'
 import {
   CurrentGraphQlUser,
   JwtGraphQlAuthGuard,
 } from '@island.is/judicial-system/auth'
+import type {
+  Notification as TNotification,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { BackendApi } from '../../data-sources'
-import { CaseInterceptor } from './interceptors/case.interceptor'
-import { CreateCaseInput } from './dto/createCase.input'
-import { UpdateCaseInput } from './dto/updateCase.input'
-import { TransitionCaseInput } from './dto/transitionCase.input'
-import { SendNotificationInput } from './dto/sendNotification.input'
-import { RequestSignatureInput } from './dto/requestSignature.input'
-import { SignatureConfirmationQueryInput } from './dto/signatureConfirmation.input'
 import { CaseQueryInput } from './dto/case.input'
-import { ExtendCaseInput } from './dto/extendCase.input'
+import { CreateCaseInput } from './dto/createCase.input'
 import { CreateCourtCaseInput } from './dto/createCourtCase.input'
+import { ExtendCaseInput } from './dto/extendCase.input'
+import { RequestSignatureInput } from './dto/requestSignature.input'
+import { SendNotificationInput } from './dto/sendNotification.input'
+import { SignatureConfirmationQueryInput } from './dto/signatureConfirmation.input'
+import { TransitionCaseInput } from './dto/transitionCase.input'
+import { UpdateCaseInput } from './dto/updateCase.input'
+import { CaseInterceptor } from './interceptors/case.interceptor'
 import { Case } from './models/case.model'
 import { Notification } from './models/notification.model'
 import { RequestSignatureResponse } from './models/requestSignature.response'

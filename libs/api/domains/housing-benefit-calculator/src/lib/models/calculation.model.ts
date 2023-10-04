@@ -6,7 +6,13 @@ export class Calculation {
   maximumHousingBenefits?: number | null
 
   @Field(() => Number, { nullable: true })
-  reductions?: number | null
+  reductionsDueToIncome?: number | null
+
+  @Field(() => Number, { nullable: true })
+  reductionsDueToAssets?: number | null
+
+  @Field(() => Number, { nullable: true })
+  reductionsDueToHousingCosts?: number | null
 
   @Field(() => Number, { nullable: true })
   estimatedHousingBenefits?: number | null

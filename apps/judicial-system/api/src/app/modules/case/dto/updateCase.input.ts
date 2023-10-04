@@ -5,17 +5,17 @@ import { Field, InputType } from '@nestjs/graphql'
 
 import type {
   CaseAppealDecision,
-  CaseLegalProvisions,
+  CaseAppealRulingDecision,
   CaseCustodyRestrictions,
   CaseDecision,
-  UpdateCase,
-  SessionArrangements,
-  CourtDocument,
+  CaseLegalProvisions,
   CaseType,
-  IndictmentSubtypeMap,
+  CourtDocument,
   CrimeSceneMap,
-  CaseAppealRulingDecision,
+  IndictmentSubtypeMap,
   RequestSharedWithDefender,
+  SessionArrangements,
+  UpdateCase,
 } from '@island.is/judicial-system/types'
 
 @InputType()

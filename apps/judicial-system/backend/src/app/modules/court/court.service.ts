@@ -2,18 +2,19 @@ import formatISO from 'date-fns/formatISO'
 
 import { Inject, Injectable, ServiceUnavailableException } from '@nestjs/common'
 
-import type { ConfigType } from '@island.is/nest/config'
-import { CourtClientService } from '@island.is/judicial-system/court-client'
 import { EmailService } from '@island.is/email-service'
+import type { ConfigType } from '@island.is/nest/config'
+
+import { CourtClientService } from '@island.is/judicial-system/court-client'
 import { sanitize } from '@island.is/judicial-system/formatters'
+import type { User } from '@island.is/judicial-system/types'
 import {
+  CaseDecision,
   CaseType,
   IndictmentSubtype,
   IndictmentSubtypeMap,
   isIndictmentCase,
-  CaseDecision,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { EventService } from '../event'
@@ -92,7 +93,7 @@ export const courtSubtypes: CourtSubtypes = {
   EXPULSION_FROM_HOME: 'Nálgunarbann og brottvísun af heimili',
   // 'Réttarstaða afplánunarfanga',
   // 'Réttarstaða gæsluvarðhaldsfanga',
-  // 'Rof á reynslulausn',
+  PAROLE_REVOCATION: 'Rof á reynslulausn',
   BANKING_SECRECY_WAIVER: 'Rof bankaleyndar',
   // 'Sekt vitnis',
   // 'Sektir málflytjenda',

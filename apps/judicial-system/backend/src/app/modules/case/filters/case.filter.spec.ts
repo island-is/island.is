@@ -1,5 +1,6 @@
 import each from 'jest-each'
 
+import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
   CaseAppealState,
@@ -13,7 +14,6 @@ import {
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
 
 import { randomDate } from '../../../test'
 import { Case } from '../models/case.model'
@@ -944,7 +944,11 @@ describe('canUserAccessCase', () => {
     )
   })
 
-  describe.each(investigationCases)('given an accepted %s case', (type) => {
+  describe.each(
+    Object.values(investigationCases).filter(
+      (type) => type !== CaseType.PAROLE_REVOCATION,
+    ),
+  )('given an accepted %s case', (type) => {
     each`
       institutionType
       ${InstitutionType.PRISON}
@@ -969,6 +973,35 @@ describe('canUserAccessCase', () => {
         // Assert
         expect(isWriteBlocked).toBe(true)
         expect(isReadBlocked).toBe(true)
+      },
+    )
+  })
+
+  describe('given an accepted parole revocation case', () => {
+    each`
+      institutionType
+      ${InstitutionType.PRISON}
+      ${InstitutionType.PRISON_ADMIN}
+    `.it(
+      'it should not block the case from prison system staff at $institutionType',
+      ({ institutionType }) => {
+        // Arrange
+        const theCase = {
+          type: CaseType.PAROLE_REVOCATION,
+          state: CaseState.ACCEPTED,
+        } as Case
+        const user = {
+          role: UserRole.PRISON_SYSTEM_STAFF,
+          institution: { type: institutionType },
+        } as User
+
+        // Act
+        const isWriteBlocked = !canUserAccessCase(theCase, user)
+        const isReadBlocked = !canUserAccessCase(theCase, user, false)
+
+        // Assert
+        expect(isWriteBlocked).toBe(true)
+        expect(isReadBlocked).toBe(false)
       },
     )
   })

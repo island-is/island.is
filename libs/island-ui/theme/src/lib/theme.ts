@@ -100,6 +100,7 @@ export const theme = {
     radius: {
       standard: '4px',
       large: '8px',
+      xl: '24px',
       circle: '50%',
     },
     width: {
