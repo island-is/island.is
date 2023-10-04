@@ -124,6 +124,7 @@ export enum ServicePortalPath {
   ADRLicensesDetail = '/skirteini/umhverfisstofnun/adrrettindi',
   FirearmLicensesDetail = '/skirteini/rikislogreglustjori/skotvopnaleyfi',
   MachineLicensesDetail = '/skirteini/vinnueftirlitid/vinnuvelarettindi',
+  DisabilityLicense = '/skirteini/tryggingastofnun/ororkuskirteini',
   LicensesPassportDetail = '/skirteini/tjodskra/vegabref/:id',
   LicensesDetail = '/skirteini/:provider/:type',
 }

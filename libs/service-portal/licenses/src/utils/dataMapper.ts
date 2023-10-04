@@ -533,22 +533,16 @@ export const getPathFromType = (type: string) => {
   switch (type) {
     case LicenseType.AdrLicense:
       return ServicePortalPath.ADRLicensesDetail
-      break
     case LicenseType.DriversLicense:
       return ServicePortalPath.DrivingLicensesDetail
-      break
     case LicenseType.FirearmLicense:
       return ServicePortalPath.FirearmLicensesDetail
-      break
     case LicenseType.MachineLicense:
       return ServicePortalPath.MachineLicensesDetail
-      break
     case LicenseType.DisabilityLicense:
-      return LicenseTypePath.ororkuskirteini
-      break
+      return ServicePortalPath.DisabilityLicense
     default:
       return ''
-      break
   }
 }
 
@@ -556,40 +550,29 @@ export const getTypeFromPath = (path: string) => {
   switch (path) {
     case LicenseTypePath.adrrettindi:
       return LicenseType.AdrLicense
-      break
     case LicenseTypePath.okurettindi:
       return LicenseType.DriversLicense
-      break
     case LicenseTypePath.skotvopnaleyfi:
       return LicenseType.FirearmLicense
-      break
     case LicenseTypePath.vinnuvelarettindi:
       return LicenseType.MachineLicense
-      break
     case LicenseTypePath.ororkuskirteini:
       return LicenseType.DisabilityLicense
-      break
     default:
       return undefined
-      break
   }
 }
 export const getPathFromProviderId = (id: string) => {
   switch (id) {
     case LicenseProviderId.AdministrationOfOccupationalSafetyAndHealth:
       return LicenseProviderPath.vinnueftirlitid
-      break
     case LicenseProviderId.EnvironmentAgency:
       return LicenseProviderPath.umhverfisstofnun
-      break
     case LicenseProviderId.NationalPoliceCommissioner:
       return LicenseProviderPath.rikislogreglustjori
-      break
     case LicenseProviderId.SocialInsuranceAdministration:
       return LicenseProviderPath.tryggingastofnun
-      break
     default:
       return ''
-      break
   }
 }
