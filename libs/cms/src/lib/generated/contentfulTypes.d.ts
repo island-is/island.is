@@ -1520,17 +1520,15 @@ export interface IIntroLinkImage extends Entry<IIntroLinkImageFields> {
   }
 }
 
-export interface ILatestEventSliceFields {
+export interface ILatestEventsSliceFields {
   /** Title */
-  title?: string | undefined
+  title: string
 
   /** Organization */
-  organization?: IOrganization | undefined
+  organization: IOrganization
 }
 
-/** Slice to show latest event entries */
-
-export interface ILatestEventSlice extends Entry<ILatestEventSliceFields> {
+export interface ILatestEventsSlice extends Entry<ILatestEventsSliceFields> {
   sys: {
     id: string
     type: string
@@ -1539,7 +1537,7 @@ export interface ILatestEventSlice extends Entry<ILatestEventSliceFields> {
     locale: string
     contentType: {
       sys: {
-        id: 'latestEventSlice'
+        id: 'latestEventsSlice'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -4416,7 +4414,7 @@ export type CONTENT_TYPE =
   | 'hnippTemplate'
   | 'iconBullet'
   | 'introLinkImage'
-  | 'latestEventSlice'
+  | 'latestEventsSlice'
   | 'latestNewsSlice'
   | 'lifeEventPage'
   | 'lifeEventPageListSlice'

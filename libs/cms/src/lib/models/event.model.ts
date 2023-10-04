@@ -20,11 +20,11 @@ export class Event {
   @Field(() => String)
   slug!: string
 
-  @Field()
+  @Field(() => String)
   date!: string
 
   @Field(() => String, { nullable: true })
-  introduction?: string
+  intro!: string
 
   @CacheField(() => Image, { nullable: true })
   image!: Image | null
@@ -39,10 +39,7 @@ export class Event {
   featuredImage?: Image | null
 }
 
-export const mapEventSlice = ({
-  sys,
-  fields,
-}: IEvent): SystemMetadata<Event> => ({
+export const mapEvent = ({ sys, fields }: IEvent): SystemMetadata<Event> => ({
   typename: 'Event',
   id: sys.id,
   title: fields.title ?? '',
@@ -51,10 +48,10 @@ export const mapEventSlice = ({
     ? mapDocument(fields.content, sys.id + ':content')
     : [],
   image: fields.image ? mapImage(fields.image) : null,
-  slug: fields.slug,
+  slug: fields.slug ?? '',
   featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
   fullWidthImageInContent: fields.fullWidthImageInContent ?? true,
-  introduction: fields.introduction,
+  intro: fields.introduction ?? '',
   organization: fields.organization
     ? mapOrganization(fields.organization)
     : null,
