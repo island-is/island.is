@@ -11,16 +11,14 @@ import { createTerms, extractStringsFromObject } from './utils'
 @Injectable()
 export class EventSyncService implements CmsSyncProvider<IEvent> {
   processSyncData(entries: processSyncDataInput<IEvent>) {
-    logger.info('Processing sync data for Event')
+    logger.info('Processing sync data for events')
 
     // only process events that we consider not to be empty
     return entries.filter(
       (entry: Entry<any>): entry is IEvent =>
         entry.sys.contentType.sys.id === 'event' &&
-        entry &&
-        entry.fields &&
         !!entry.fields.title &&
-        !!entry.fields.date &&
+        !!entry.fields.startDate &&
         !!entry.fields.slug,
     )
   }
