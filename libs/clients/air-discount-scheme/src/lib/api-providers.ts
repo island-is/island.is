@@ -25,6 +25,7 @@ const provideApi = <T>(
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-air-discount-scheme',
+          organizationSlug: 'stafraent-island',
           timeout: config.timeout,
           logErrorResponseBody: true,
           autoAuth: idsClientConfig.isConfigured

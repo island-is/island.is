@@ -51,6 +51,7 @@ export const PortalRouter = ({
         featureFlagClient,
         modules,
         client,
+        formatMessage,
       })
         .then((data) => setRouterData(data))
         .catch((err) => setError(err))
