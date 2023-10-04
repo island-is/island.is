@@ -197,4 +197,8 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       }
     }
   }
+
+  async glassesCheck(): Promise<boolean> {
+    return Math.random() < 0.5
+  }
 }

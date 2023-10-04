@@ -30,7 +30,7 @@ import {
 } from './getApplicationFeatureFlags'
 import { m } from './messages'
 import { hasCompletedPrerequisitesStep } from './utils'
-import { SyslumadurPaymentCatalogApi } from '../dataProviders'
+import { GlassesCheckApi, SyslumadurPaymentCatalogApi } from '../dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -78,6 +78,7 @@ const template: ApplicationTemplate<
                 TeachersApi,
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
+                GlassesCheckApi,
                 CurrentLicenseApi.configure({
                   params: {
                     useLegacyVersion: true,
