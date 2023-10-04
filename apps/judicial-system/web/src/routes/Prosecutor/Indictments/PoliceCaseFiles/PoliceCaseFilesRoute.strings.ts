@@ -1,6 +1,6 @@
 import { defineMessage, defineMessages } from 'react-intl'
 
-export const policeCaseFiles = {
+export const strings = {
   heading: defineMessage({
     id: 'judicial.system.core:police_case_files_route.heading',
     defaultMessage: 'Málsgögn',

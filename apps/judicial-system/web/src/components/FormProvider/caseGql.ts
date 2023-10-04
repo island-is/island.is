@@ -132,11 +132,11 @@ const CaseQuery = gql`
         ruling
         caseFiles {
           id
-          name
-          size
           created
+          name
           state
           key
+          size
         }
       }
       childCase {
@@ -151,13 +151,14 @@ const CaseQuery = gql`
       }
       caseFiles {
         id
-        name
-        size
         created
         modified
+        name
+        type
+        category
         state
         key
-        category
+        size
         policeCaseNumber
         chapter
         orderWithinChapter
