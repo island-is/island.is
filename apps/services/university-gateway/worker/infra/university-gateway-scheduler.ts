@@ -2,8 +2,8 @@ import { ref, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (services: {
   worker: ServiceBuilder<'university-gateway-worker'>
-}): ServiceBuilder<'services-university-gateway-worker'> =>
-  service('services-university-gateway-worker')
+}): ServiceBuilder<'services-university-gateway-worker'> => {
+  return service('services-university-gateway-worker')
     .namespace('university-gateway')
     .image('services-university-gateway-worker')
     .env({
@@ -22,3 +22,4 @@ export const serviceSetup = (services: {
       staging: { schedule: '0 2 * * *' },
       prod: { schedule: '0 2 * * *' },
     })
+}
