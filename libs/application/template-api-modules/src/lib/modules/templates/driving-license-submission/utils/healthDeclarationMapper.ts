@@ -15,10 +15,7 @@ export const PostTemporaryLicenseWithHealthDeclarationMapper = (
     keyof PostTemporaryLicenseWithHealthDeclaration
   > = {
     jurisdiction: 'authority',
-    healthDeclaration: 'bringsHealthCertificate',
     willBringQualityPhoto: 'bringNewPhoto',
-    // a: 'sendLicenseInMail',
-    // b: 'sendToAddress',
     drivingInstructor: 'instructorSSN',
     email: 'email',
     phone: 'gsm',
@@ -26,7 +23,7 @@ export const PostTemporaryLicenseWithHealthDeclarationMapper = (
 
   const mappedAnswers: PostTemporaryLicenseWithHealthDeclaration = {
     authority: 0,
-    bringsHealthCertificate: false,
+    bringsHealthCertificate: true,
     bringNewPhoto: false,
     sendLicenseInMail: false,
     sendToAddress: null,
@@ -46,24 +43,31 @@ export const PostTemporaryLicenseWithHealthDeclarationMapper = (
         } else if (value === 'no') {
           return [key, false]
         } else {
-          return [key, value]
+          return [key, false]
         }
       }),
     )
   }
 
-  for (const [key, value] of Object.entries(answers)) {
+  for (const key in answers) {
     if (key in propertyMapping) {
+      const value = answers[key as keyof DrivingLicenseSchema]
       const mappedKey = propertyMapping[
         key
       ] as keyof PostTemporaryLicenseWithHealthDeclaration
-      ;(mappedAnswers[mappedKey] as any) = value
+      const mappedValue =
+        value === 'yes' ? true : value === 'no' ? false : value
+      ;(mappedAnswers[
+        mappedKey
+      ] as DrivingLicenseSchema[keyof DrivingLicenseSchema]) = mappedValue
     } else if (key === 'healthDeclaration') {
       mappedAnswers.healthDeclaration = healthDeclarationMapper(
         answers['healthDeclaration'],
       )
     }
   }
+
+  console.log(mappedAnswers)
 
   return mappedAnswers
 }
