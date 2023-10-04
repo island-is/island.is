@@ -3,6 +3,7 @@ import { logger } from '@island.is/logging'
 import { ApolloError, ForbiddenError } from 'apollo-server-express'
 import {
   ActorLocaleLocaleEnum,
+  ApiResponse,
   ConfirmationDtoResponse,
   CreateUserProfileDto,
   UpdateUserProfileDto,
@@ -23,8 +24,10 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { IslykillService } from './islykill.service'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DataStatus } from './types/dataStatus.enum'
+import { FetchError } from '@island.is/clients/middlewares'
 
 export const MAX_OUT_OF_DATE_MONTHS = 6
+const IGNORED_STATUS = 204
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'userprofile-service'
@@ -47,6 +50,25 @@ export class UserProfileService {
 
   userProfileApiWithAuth(auth: Auth) {
     return this.userProfileApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private async handleRawRes<T>(
+    promise: Promise<ApiResponse<T>>,
+  ): Promise<T | null> {
+    return promise.then(
+      (response) => {
+        if (response.raw.status === IGNORED_STATUS) {
+          return null
+        }
+        return response.value()
+      },
+      (error) => {
+        if (error instanceof FetchError && error.status === IGNORED_STATUS) {
+          return null
+        }
+        throw error
+      },
+    )
   }
 
   async getIslykillProfile(user: User) {
@@ -76,22 +98,31 @@ export class UserProfileService {
   }
 
   async getUserProfileLocale(user: User) {
-    const locale = await this.userProfileApiWithAuth(
-      user,
-    ).userProfileControllerGetActorLocale()
+    const locale = await this.handleRawRes(
+      this.userProfileApiWithAuth(
+        user,
+      ).userProfileControllerGetActorLocaleRaw(),
+    )
 
     return {
-      nationalId: locale.nationalId,
-      locale: locale.locale === ActorLocaleLocaleEnum.En ? 'en' : 'is',
+      nationalId: user.nationalId,
+      locale: locale?.locale === ActorLocaleLocaleEnum.En ? 'en' : 'is',
     }
   }
+
   async getUserProfile(user: User) {
     try {
-      const profile = await this.userProfileApiWithAuth(
-        user,
-      ).userProfileControllerFindOneByNationalId({
-        nationalId: user.nationalId,
-      })
+      const profile = await this.handleRawRes(
+        this.userProfileApiWithAuth(
+          user,
+        ).userProfileControllerFindOneByNationalIdRaw({
+          nationalId: user.nationalId,
+        }),
+      )
+
+      if (profile === null) {
+        return await this.getIslykillProfile(user)
+      }
 
       const islyklarData = await this.islyklarService.getIslykillSettings(
         user.nationalId,
@@ -105,13 +136,6 @@ export class UserProfileService {
         bankInfo: islyklarData?.bankInfo,
       }
     } catch (error) {
-      if (error.status === 404) {
-        /**
-         * Even if userProfileApiWithAuth does not exist.
-         * Islykill data might exist for the user, so we need to get that, with default values in the userprofile data.
-         */
-        return await this.getIslykillProfile(user)
-      }
       handleError(error, `getUserProfile error`)
     }
   }
