@@ -143,20 +143,21 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const phone = answers.phone as string
 
     if (needsHealthCert) {
-      console.log('PostHealthDeclaration')
       await this.drivingLicenseService
         .postHealthDeclaration(
           nationalId,
           PostTemporaryLicenseWithHealthDeclarationMapper(
             answers as DrivingLicenseSchema,
           ),
-          auth.nationalId,
+          auth.authorization.split(' ')[1] ?? '',
         )
         .catch((e) => {
-          throw new Error('Foobar')
+          throw new Error(
+            `Unexpected error (creating driver's license with health declarations): '${e}'`,
+          )
         })
     }
-
+ 
     if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
         jurisdictionId: jurisdictionId as number,
