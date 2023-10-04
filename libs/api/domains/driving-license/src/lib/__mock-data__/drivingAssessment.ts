@@ -6,16 +6,10 @@ const getDateOfAssessment = () => {
   return formatISO(nowDate)
 }
 
-const DrivingAssessment = {
-  dagsetningMats: getDateOfAssessment(),
-  kennitalaOkukennara: '2',
-  kennitala: '0',
-}
-
 const DrivingAssessmentV5 = {
   dateOfAssessment: getDateOfAssessment(),
   ssn: '0',
   instructorSSN: '2',
 }
 
-export { DrivingAssessment, DrivingAssessmentV5 }
+export { DrivingAssessmentV5 }
