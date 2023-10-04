@@ -24,7 +24,7 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { IslykillService } from './islykill.service'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DataStatus } from './types/dataStatus.enum'
-import { FetchError } from '@island.is/clients/middlewares'
+import { FetchError, handle404 } from '@island.is/clients/middlewares'
 
 export const MAX_OUT_OF_DATE_MONTHS = 6
 const IGNORED_STATUS = 204
@@ -136,7 +136,7 @@ export class UserProfileService {
         bankInfo: islyklarData?.bankInfo,
       }
     } catch (error) {
-      handleError(error, `getUserProfile error`)
+      handle404(error)
     }
   }
 
