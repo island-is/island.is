@@ -1,12 +1,12 @@
 import { Field, ID, InputType, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('RightsPortalCalculatorRequest')
+@InputType('RightsPortalCalculatorRequest')
 export class CalculatorRequest {
   @Field(() => [CalculatorRequestInput], { nullable: true })
   drugs?: CalculatorRequestInput[] | null
 }
 
-@ObjectType('RightsPortalCalculatorRequestInput')
+@InputType('RightsPortalCalculatorRequestInput')
 export class CalculatorRequestInput {
   @Field(() => Number, { nullable: true })
   lineNumber?: number | null
@@ -23,6 +23,6 @@ export class CalculatorRequestInput {
 
 @InputType('RightsPortalDrugCalculatorInput')
 export class DrugCalculatorInput {
-  @Field(() => [CalculatorRequestInput])
+  @Field(() => CalculatorRequest)
   drugCalculatorRequestDTO!: CalculatorRequest
 }

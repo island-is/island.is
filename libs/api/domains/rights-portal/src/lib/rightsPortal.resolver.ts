@@ -39,6 +39,8 @@ import { DrugBillLineItem } from './models/drugBillLineItem.model'
 import { DrugBillLineItemInput } from './dto/drugsBillLineItem.input'
 import { DrugsInput } from './dto/drugs.input'
 import { DrugsResponse } from './models/drugsResponse.model'
+import { DrugCalculatorInput } from './dto/drugsCalculator.input'
+import { DrugCalculatorResponse } from './models/drugCalculatorResponse.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -243,5 +245,17 @@ export class RightsPortalResolver {
     @Args('input') input: DrugsInput,
   ) {
     return this.rightsPortalService.getDrugs(user, input)
+  }
+
+  @Scopes(ApiScope.health)
+  @Mutation(() => DrugCalculatorResponse, {
+    name: 'rightsPortalDrugsCalculator',
+  })
+  @Audit()
+  getRightsPortalDrugsCalculator(
+    @CurrentUser() user: User,
+    @Args('input') input: DrugCalculatorInput,
+  ) {
+    return this.rightsPortalService.drugCalculator(user, input)
   }
 }

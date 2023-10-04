@@ -389,9 +389,11 @@ export class RightsPortalService {
 
   async drugCalculator(user: User, input: DrugCalculatorInput) {
     try {
-      return await this.drugsApi
+      const results = await this.drugsApi
         .withMiddleware(new AuthMiddleware(user as Auth))
         .drugCalculator(input)
+
+      return results
     } catch (error) {
       return handle404(error)
     }

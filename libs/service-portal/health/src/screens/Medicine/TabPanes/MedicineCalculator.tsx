@@ -6,16 +6,24 @@ import {
   SkeletonLoader,
   FilterInput,
   Button,
-  Icon,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../../lib/messages'
 import { CONTENT_GAP_LG, SECTION_GAP } from '../constants'
-import { IntroHeader, m } from '@island.is/service-portal/core'
+import { IntroHeader } from '@island.is/service-portal/core'
 import { useState } from 'react'
 import { useDebounce } from 'react-use'
-import { useGetDrugsQuery } from '../Medicine.generated'
-import { RightsPortalDrugs } from '@island.is/api/schema'
+import {
+  useGetDrugCalculationMutation,
+  useGetDrugsQuery,
+} from '../Medicine.generated'
+import {
+  RightsPortalCalculatorRequestInput,
+  RightsPortalDrugCalculatorResponse,
+} from '@island.is/api/schema'
+import * as styles from './Medicine.css'
+import { EmptyTable } from '../components/EmptyTable/EmptyTable'
+import { DrugRow } from '../components/DrugRow/DrugRow'
 
 const DEFAULT_PAGE_NUMBER = 1
 const DEFAULT_PAGE_SIZE = 8
@@ -27,12 +35,10 @@ export const MedicineCalulator = () => {
   const [pageNumber, setPageNumber] = useState(DEFAULT_PAGE_NUMBER)
 
   const [hoveredDrug, setHoveredDrug] = useState(-1)
-  const [selectedDrugList, setSelectedDrugList] = useState<RightsPortalDrugs[]>(
-    [],
-  )
+  const [selectedDrugList, setSelectedDrugList] = useState<
+    RightsPortalCalculatorRequestInput[]
+  >([])
 
-  const SHOW_TABLE = debouncedSearch.length > 0
-  const CALCULATOR_DISABLED = selectedDrugList.length === 0
   useDebounce(
     () => {
       setDebouncedSearch(search)
@@ -51,6 +57,39 @@ export const MedicineCalulator = () => {
       },
     },
   })
+
+  const [drugCalcQuery] = useGetDrugCalculationMutation()
+
+  const [calculatorResults, setCalculatorResults] = useState<
+    RightsPortalDrugCalculatorResponse[]
+  >([])
+
+  const SHOW_TABLE = debouncedSearch.length > 0 && !drugsLoading
+  const CALCULATOR_DISABLED = selectedDrugList.length === 0
+
+  const handleCalculate = () => {
+    const input = {
+      drugCalculatorRequestDTO: {
+        drugs: selectedDrugList.map((d) => ({
+          lineNumber: d.lineNumber,
+          nordicCode: d.nordicCode,
+          price: d.price,
+          units: d.units,
+        })),
+      },
+    }
+
+    console.log(input)
+
+    drugCalcQuery({
+      variables: {
+        input: input,
+      },
+      onCompleted: (data) => {
+        console.log(data)
+      },
+    })
+  }
 
   return (
     <Box paddingY={4}>
@@ -76,6 +115,7 @@ export const MedicineCalulator = () => {
           placeholder={formatMessage(messages.medicineSearchForDrug)}
           onChange={(value) => setSearch(value)}
           value={search}
+          loading={drugsLoading}
         />
       </Box>
       <Box
@@ -103,105 +143,58 @@ export const MedicineCalulator = () => {
           </T.Head>
           {SHOW_TABLE && (
             <T.Body>
-              {drugsLoading ? (
-                <T.Row>
-                  <T.Data>
-                    <SkeletonLoader
-                      repeat={2}
-                      height={16}
-                      borderRadius="standard"
-                      width="100%"
-                      space={1}
-                    />
-                  </T.Data>
-                  <T.Data>
-                    <SkeletonLoader
-                      repeat={2}
-                      height={16}
-                      borderRadius="standard"
-                      width="100%"
-                      space={1}
-                    />
-                  </T.Data>
-                  <T.Data>
-                    <SkeletonLoader
-                      repeat={2}
-                      height={16}
-                      borderRadius="standard"
-                      width="100%"
-                      space={1}
-                    />
-                  </T.Data>
-                  <T.Data>
-                    <SkeletonLoader
-                      repeat={2}
-                      height={16}
-                      borderRadius="standard"
-                      width="100%"
-                      space={1}
-                    />
-                  </T.Data>
-                  <T.Data>
-                    <SkeletonLoader
-                      repeat={2}
-                      height={16}
-                      borderRadius="standard"
-                      width="100%"
-                      space={1}
-                    />
-                  </T.Data>
-                </T.Row>
-              ) : (
-                drugs?.rightsPortalDrugs.drugs?.map((d, i) => {
-                  return (
-                    <tr
-                      onMouseLeave={() => setHoveredDrug(-1)}
-                      onMouseOver={() => setHoveredDrug(i)}
-                      key={i}
-                    >
-                      <T.Data>{d.name}</T.Data>
-                      <T.Data>{d.form}</T.Data>
-                      <T.Data>{d.strength}</T.Data>
-                      <T.Data>{d.packaging}</T.Data>
-                      <T.Data>{d.price}</T.Data>
-                      <T.Data>
-                        {hoveredDrug === i && (
-                          <Button
-                            size="small"
-                            variant="text"
-                            icon="pencil"
-                            onClick={() => {
-                              setSelectedDrugList(
-                                [...selectedDrugList, d].filter(
+              {drugs?.rightsPortalDrugs.drugs?.map((d, i) => {
+                return (
+                  <tr
+                    onMouseLeave={() => setHoveredDrug(-1)}
+                    onMouseOver={() => setHoveredDrug(i)}
+                    key={i}
+                  >
+                    <T.Data>{d.name}</T.Data>
+                    <T.Data>{d.form}</T.Data>
+                    <T.Data>{d.strength}</T.Data>
+                    <T.Data>{d.packaging}</T.Data>
+                    <T.Data>{d.price}</T.Data>
+                    <T.Data>
+                      {hoveredDrug === i && (
+                        <Button
+                          size="small"
+                          variant="text"
+                          icon="pencil"
+                          onClick={() => {
+                            setSelectedDrugList(
+                              [...selectedDrugList, d]
+                                .filter(
                                   (drug, index, self) =>
                                     index ===
                                     self.findIndex(
                                       (d) => d.nordicCode === drug.nordicCode,
                                     ),
-                                ),
-                              )
-                            }}
-                          >
-                            {formatMessage(messages.medicineSelect)}
-                          </Button>
-                        )}
-                      </T.Data>
-                    </tr>
-                  )
-                })
-              )}
+                                )
+                                .map((d, i) => ({
+                                  lineNumber: i + 1,
+                                  nordicCode: d.nordicCode,
+                                  price: d.price,
+                                  units: 1,
+                                })),
+                            )
+                          }}
+                        >
+                          {formatMessage(messages.medicineSelect)}
+                        </Button>
+                      )}
+                    </T.Data>
+                  </tr>
+                )
+              })}
             </T.Body>
           )}
         </T.Table>
+        {!SHOW_TABLE && (
+          <EmptyTable message={messages.medicineCalculatorEmptySearch} />
+        )}
 
-        {drugsLoading ? (
-          <SkeletonLoader
-            repeat={1}
-            space={1}
-            height={32}
-            borderRadius="standard"
-          />
-        ) : SHOW_TABLE ? (
+        {SHOW_TABLE && (
           <Pagination
             totalPages={Math.ceil(
               (drugs?.rightsPortalDrugs?.totalCount ?? DEFAULT_PAGE_SIZE) /
@@ -219,7 +212,7 @@ export const MedicineCalulator = () => {
               </button>
             )}
           />
-        ) : null}
+        )}
       </Box>
       <Box marginBottom={SECTION_GAP}>
         <Text marginBottom={CONTENT_GAP_LG} variant="h5">
@@ -236,7 +229,7 @@ export const MedicineCalulator = () => {
               variant="utility"
               icon="print"
               size="small"
-              onClick={() => {}} /* TODO: Add missing functionality */
+              onClick={() => console.log('print')}
               disabled={CALCULATOR_DISABLED}
             >
               Prenta
@@ -245,7 +238,7 @@ export const MedicineCalulator = () => {
               variant="utility"
               icon="download"
               size="small"
-              onClick={() => {}} /* TODO: Add missing functionality */
+              onClick={() => console.log('download')}
               disabled={CALCULATOR_DISABLED}
             >
               Sækja
@@ -255,64 +248,69 @@ export const MedicineCalulator = () => {
             size="medium"
             variant="primary"
             disabled={CALCULATOR_DISABLED}
+            onClick={handleCalculate}
           >
             Reikna
           </Button>
         </Box>
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              <T.HeadData>
-                {formatMessage(messages.medicineDrugName)}
-              </T.HeadData>
-              <T.HeadData>
-                {formatMessage(messages.medicineStrength)}
-              </T.HeadData>
-              <T.HeadData>
-                {formatMessage(messages.medicineQuantity)}
-              </T.HeadData>
-              <T.HeadData>
-                {formatMessage(messages.medicinePriceTotal)}
-              </T.HeadData>
-              <T.HeadData>
-                {formatMessage(messages.medicinePaidByCustomer)}
-              </T.HeadData>
-              <T.HeadData></T.HeadData>
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            {selectedDrugList.map((d, i) => {
-              return (
-                <tr key={i}>
-                  <T.Data>{d.name}</T.Data>
-                  <T.Data>{d.strength}</T.Data>
-                  <T.Data>1</T.Data> {/* TODO: Add missing functionality */}
-                  <T.Data>{d.price}</T.Data>{' '}
-                  {/* TODO: Add multiplication with quantity */}
-                  <T.Data>Vantar gögn</T.Data> {/* TODO: Add missing dat */}
-                  <T.Data>
-                    <button
-                      onClick={() =>
+        <Box className={CALCULATOR_DISABLED ? styles.disabledTable : ''}>
+          <T.Table>
+            <T.Head>
+              <T.Row>
+                <T.HeadData>
+                  {formatMessage(messages.medicineDrugName)}
+                </T.HeadData>
+                <T.HeadData>
+                  {formatMessage(messages.medicineStrength)}
+                </T.HeadData>
+                <T.HeadData>
+                  {formatMessage(messages.medicineQuantity)}
+                </T.HeadData>
+                <T.HeadData>
+                  {formatMessage(messages.medicinePriceTotal)}
+                </T.HeadData>
+                <T.HeadData>
+                  {formatMessage(messages.medicinePaidByCustomer)}
+                </T.HeadData>
+                <T.HeadData></T.HeadData>
+              </T.Row>
+            </T.Head>
+            <T.Body>
+              {selectedDrugList.map((d, i) => {
+                return (
+                  <tr key={i}>
+                    <DrugRow
+                      drug={d}
+                      handleQuantityChange={(val) =>
+                        setSelectedDrugList((list) =>
+                          list.map((drug) => {
+                            if (drug.nordicCode === d.nordicCode) {
+                              return {
+                                ...drug,
+                                units: val,
+                              }
+                            }
+                            return drug
+                          }),
+                        )
+                      }
+                      handleRemove={() =>
                         setSelectedDrugList((list) =>
                           list.filter(
                             (drug) => drug.nordicCode !== d.nordicCode,
                           ),
                         )
                       }
-                    >
-                      <Icon
-                        icon="trash"
-                        color="blue400"
-                        type="outline"
-                        size="small"
-                      />
-                    </button>
-                  </T.Data>
-                </tr>
-              )
-            })}
-          </T.Body>
-        </T.Table>
+                    />
+                  </tr>
+                )
+              })}
+            </T.Body>
+          </T.Table>
+        </Box>
+        {CALCULATOR_DISABLED && (
+          <EmptyTable message={messages.medicineCalculatorNoDrugSelected} />
+        )}
       </Box>
       <Box>
         <Text variant="small">

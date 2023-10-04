@@ -59,3 +59,21 @@ query getDrugs($input: RightsPortalDrugsInput!) {
     totalCount
   }
 }
+
+mutation getDrugCalculation($input: RightsPortalDrugCalculatorInput!) {
+  rightsPortalDrugsCalculator(input: $input) {
+    drugs {
+      lineNumber
+      referencePrice
+      customerPrice
+      calculatedCustomerPrice
+      insurancePrice
+      excessPrice
+      fullPrice
+      comment
+    }
+    totalUnits
+    totalPrice
+    totalCustomerPrice
+  }
+}

@@ -623,4 +623,12 @@ export const messages = defineMessages({
     defaultMessage:
       'Kerfið byggir á þrepaskiptri greiðsluþátttöku þar sem hver einstaklingur greiðir hlutfallslega minna eftir því sem lyfjakostnaður hans eykst innan tólf mánaða tímabils. Reiknivélin sækir upplýsingar um heildarverð lyfja og hvað einstaklingur/barn einstaklings hefur greitt mikið fyrir lyf fram að deginum í dag. Hún getur því gefið upp mögulegt kaupverð á lyfjum út frá því hversu mikið viðkomandi hefur greitt fyrir lyf á 12 mánaða tímabili.',
   },
+  medicineCalculatorNoDrugSelected: {
+    id: 'sp.health:medicine-calculator-no-drug-selected',
+    defaultMessage: 'Engin lyf valin',
+  },
+  medicineCalculatorEmptySearch: {
+    id: 'sp.health:medicine-calculator-empty-search',
+    defaultMessage: 'Engin lyf birt, finndu lyf',
+  },
 })
