@@ -13,7 +13,11 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
-import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseAppealRulingDecision,
+  CaseAppealState,
+  CaseOrigin,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import useSections from './index'
 
@@ -35,6 +39,40 @@ describe('useSections getSections', () => {
     </IntlProvider>
   )
 
+  const u: User = {
+    created: faker.date.past().toISOString(),
+    modified: faker.date.past().toISOString(),
+    id: faker.datatype.uuid(),
+    nationalId: '0000000000',
+    name: faker.name.firstName(),
+    title: faker.name.jobType(),
+    mobileNumber: faker.phone.phoneNumber(),
+    role: UserRole.PROSECUTOR,
+    email: faker.internet.email(),
+    active: true,
+    institution: {
+      created: faker.date.past().toISOString(),
+      modified: faker.date.past().toISOString(),
+      id: faker.datatype.uuid(),
+      name: faker.company.companyName(),
+      active: true,
+      type: InstitutionType.PROSECUTORS_OFFICE,
+    },
+  }
+
+  const generateSubsteps = (count: number) => {
+    if (count < 1) {
+      return []
+    }
+
+    return [...Array(count).keys()].map((_, i) => ({
+      href: expect.any(String),
+      name: expect.any(String),
+      isActive: expect.any(Boolean),
+      ...(i > 0 && { onClick: undefined }),
+    }))
+  }
+
   it('should return the correct sections for restriction cases in DRAFT state', () => {
     const { result } = renderHook(() => useSections(), { wrapper })
     const c: Case = {
@@ -47,67 +85,10 @@ describe('useSections getSections', () => {
       policeCaseNumbers: [],
     }
 
-    const u: User = {
-      created: faker.date.past().toISOString(),
-      modified: faker.date.past().toISOString(),
-      id: faker.datatype.uuid(),
-      nationalId: '0000000000',
-      name: faker.name.firstName(),
-      title: faker.name.jobType(),
-      mobileNumber: faker.phone.phoneNumber(),
-      role: UserRole.PROSECUTOR,
-      email: faker.internet.email(),
-      active: true,
-      institution: {
-        created: faker.date.past().toISOString(),
-        modified: faker.date.past().toISOString(),
-        id: faker.datatype.uuid(),
-        name: faker.company.companyName(),
-        active: true,
-        type: InstitutionType.PROSECUTORS_OFFICE,
-      },
-    }
-
     expect(result.current.getSections(c, u)).toStrictEqual([
       {
-        children: [
-          {
-            href: expect.any(String),
-            name: expect.any(String),
-            isActive: expect.any(Boolean),
-          },
-          {
-            href: expect.any(String),
-            name: expect.any(String),
-            isActive: expect.any(Boolean),
-            onClick: undefined,
-          },
-          {
-            href: expect.any(String),
-            name: expect.any(String),
-            isActive: expect.any(Boolean),
-            onClick: undefined,
-          },
-          {
-            href: expect.any(String),
-            name: expect.any(String),
-            isActive: expect.any(Boolean),
-            onClick: undefined,
-          },
-          {
-            href: expect.any(String),
-            name: expect.any(String),
-            isActive: expect.any(Boolean),
-            onClick: undefined,
-          },
-          {
-            href: expect.any(String),
-            name: expect.any(String),
-            isActive: expect.any(Boolean),
-            onClick: undefined,
-          },
-        ],
-        isActive: expect.any(Boolean),
+        children: generateSubsteps(6),
+        isActive: true,
         name: expect.any(String),
       },
       {
@@ -116,6 +97,38 @@ describe('useSections getSections', () => {
         name: expect.any(String),
       },
       { children: [], isActive: false, name: expect.any(String) },
+    ])
+  })
+
+  it.skip('should return the correct sections for appealed restriction cases when the court of appeals has made a ruling', () => {
+    const { result } = renderHook(() => useSections(), { wrapper })
+    const c: Case = {
+      origin: CaseOrigin.RVG,
+      type: CaseType.CUSTODY,
+      created: faker.date.past().toISOString(),
+      modified: faker.date.past().toISOString(),
+      id: faker.datatype.uuid(),
+      state: CaseState.ACCEPTED,
+      policeCaseNumbers: [],
+      appealState: CaseAppealState.COMPLETED,
+      appealRulingDecision: CaseAppealRulingDecision.REMAND,
+    }
+
+    expect(result.current.getSections(c, u)).toStrictEqual([
+      {
+        children: generateSubsteps(6),
+        isActive: false,
+        name: expect.any(String),
+      },
+      { children: [], isActive: false, name: expect.any(String) },
+      { children: [], isActive: false, name: expect.any(String) },
+      { children: [], isActive: false, name: expect.any(String) },
+      {
+        children: generateSubsteps(3),
+        isActive: false,
+        name: expect.any(String),
+      },
+      { children: [], isActive: true, name: 'Heimvísun' },
     ])
   })
 })
