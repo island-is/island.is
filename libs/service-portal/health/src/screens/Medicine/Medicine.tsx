@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { MedicinePurchase } from './TabPanes/MedicinePurchase'
 import { MedicineTabs, CONTENT_GAP } from './constants'
 import { MedicineCalulator } from './TabPanes/MedicineCalculator'
+import { MedicineLicence } from './TabPanes/MedicineLicence'
 
 const Medicine = () => {
   useNamespaces('sp.health')
@@ -19,8 +20,7 @@ const Medicine = () => {
     {
       id: MedicineTabs.BILLS,
       label: formatMessage(messages.medicinePurchaseTitle),
-      // content: <MedicinePurchase onTabChange={setSelectedTab} />,
-      content: <MedicineCalulator />,
+      content: <MedicinePurchase onTabChange={setSelectedTab} />,
     },
     {
       id: MedicineTabs.CALCULATOR,
@@ -30,14 +30,7 @@ const Medicine = () => {
     {
       id: MedicineTabs.LICENSE,
       label: formatMessage(messages.medicineLicenseTitle),
-      content: (
-        <Box paddingY={4}>
-          <Text marginBottom={CONTENT_GAP} variant="h5">
-            {formatMessage(messages.medicineLicenseIntroTitle)}
-          </Text>
-          <Text>{formatMessage(messages.medicineLicenseIntroText)}</Text>
-        </Box>
-      ),
+      content: <MedicineLicence />,
     },
   ]
 

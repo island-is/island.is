@@ -335,9 +335,7 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
                               const [billId, lineItems] = item
 
                               if (billId !== bill.id) return null
-
                               return lineItems.map((lineItem, k) => {
-                                console.log(lineItem)
                                 return (
                                   <T.Row key={`${i}-${j}-${k}`}>
                                     <T.Data>{lineItem.drugName}</T.Data>
@@ -371,7 +369,7 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
                               </T.Data>
                               <T.Data>
                                 <span className={styles.subTableHeaderText}>
-                                  {bill.totalInsuranceAmount}
+                                  {bill.totalExcessAmount}
                                 </span>
                               </T.Data>
                               <T.Data>

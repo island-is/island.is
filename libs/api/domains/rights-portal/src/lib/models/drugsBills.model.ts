@@ -21,5 +21,8 @@ export class DrugsBills {
   totalInsuranceAmount?: number | null
 
   @Field(() => Number, { nullable: true })
+  totalExcessAmount?: number | null
+
+  @Field(() => Number, { nullable: true })
   totalCalculatedForPaymentStepAmount?: number | null
 }

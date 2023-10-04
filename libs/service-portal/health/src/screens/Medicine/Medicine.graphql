@@ -20,6 +20,7 @@ query getDrugsBills($input: RightsPortalDrugsBillsInput!) {
     totalCopaymentAmount
     totalCustomerAmount
     totalInsuranceAmount
+    totalExcessAmount
     totalCalculatedForPaymentStepAmount
   }
 }
