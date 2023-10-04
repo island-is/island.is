@@ -65,7 +65,7 @@ export const MOCK_USER = {
     nationalId: '1',
     scope: ['test-scope-2'],
   },
-  authorization: '',
+  authorization: MOCK_TOKEN,
   client: '',
   ip: '',
   userAgent: '',
@@ -136,8 +136,11 @@ export const requestHandlers = [
     return res(ctx.status(200), ctx.json(response))
   }),
 
-  rest.post(/api\/drivinglicense\/v5\/drivingassessment/, (_req, res, ctx) => {
-    return res(ctx.status(200))
+  rest.post(/api\/drivinglicense\/v5\/drivingassessment/, (req, res, ctx) => {
+    const isTeacher =
+      (req.body as { instructorSSN: string }).instructorSSN ===
+      MOCK_NATIONAL_ID_TEACHER
+    return res(ctx.status(isTeacher ? 200 : 400))
   }),
 
   rest.get(/api\/drivinglicense\/v5\/drivingassessment/, (req, res, ctx) => {
@@ -266,17 +269,6 @@ export const requestHandlers = [
   }),
 
   rest.get(
-    url(`${XROAD_DRIVING_LICENSE_PATH}/einstaklingar/:nationalId/buseta`),
-    (req, res, ctx) => {
-      const isExpired = req.params.nationalId === MOCK_NATIONAL_ID_EXPIRED
-      return res(
-        ctx.status(isExpired ? 400 : 200),
-        ctx.json(isExpired ? undefined : ResidenceHistory),
-      )
-    },
-  ),
-
-  rest.get(
     /api\/drivinglicense\/v5\/canapplyfor\/temporary/,
     (req, res, ctx) => {
       const canApply = req.headers.get('jwttoken') === MOCK_TOKEN
@@ -308,7 +300,14 @@ export const requestHandlers = [
   rest.post(
     /api\/drivinglicense\/v5\/applications\/new\/B/,
     (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(ApplicationsNewB))
+      const hasAssessment =
+        (req.body as { personIdNumber: string }).personIdNumber !==
+        MOCK_NATIONAL_ID_NO_ASSESSMENT
+      const newLicenseNumber = 1
+      return res(
+        ctx.status(hasAssessment ? 200 : 400),
+        ctx.json(newLicenseNumber),
+      )
     },
   ),
 

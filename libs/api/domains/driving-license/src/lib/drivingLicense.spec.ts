@@ -12,6 +12,7 @@ import {
   MOCK_NATIONAL_ID_NO_ASSESSMENT,
   MOCK_NATIONAL_ID_TEACHER,
   MOCK_TOKEN,
+  MOCK_TOKEN_EXPIRED,
   MOCK_TOKEN_NO_ASSESSMENT,
   MOCK_TOKEN_TEACHER,
   MOCK_USER,
@@ -325,8 +326,10 @@ describe('DrivingLicenseService', () => {
     })
 
     it('checks should fail for non-applicable students', async () => {
+      const MOCK_USER_COPY = { ...MOCK_USER }
+      MOCK_USER_COPY.authorization = MOCK_TOKEN_EXPIRED
       const response = await service.getApplicationEligibility(
-        MOCK_USER,
+        MOCK_USER_COPY,
         MOCK_NATIONAL_ID_EXPIRED,
         'B-full',
       )
