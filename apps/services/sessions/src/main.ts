@@ -11,6 +11,7 @@ if (job === 'worker') {
   bootstrap({
     appModule: WorkerModule,
     name: 'sessions-worker',
+    port: environment.workerPort,
   })
 } else {
   bootstrap({

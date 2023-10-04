@@ -37,29 +37,28 @@
           "production": {
             "minify": true,
             "generatePackageJson": true
+          },
+          "dev": {
+            "watch": true,
+            "minify": false,
+            "sourceMap": true
           }
         }
       }
     },
-    "update-geoip": {
-      "executor": "nx:run-commands",
-      "inputs": [{ "env": "GEOIP_LICENSE_KEY" }],
-      "options": {
-        "command": "npm run-script updatedb license_key=${GEOIP_LICENSE_KEY}",
-        "cwd": "node_modules/geoip-lite"
-      }
-    },
-
     "serve": {
       "executor": "@nx/js:node",
       "options": {
-        "buildTarget": "services-sessions:build",
-        "buildTargetOptions": {
-          "watch": true,
-          "minify": false,
-          "sourceMap": true,
-          "runBuildTargetDependencies": true
-        }
+        "port": 0,
+        "buildTarget": "services-sessions:build:dev"
+      }
+    },
+    "worker": {
+      "executor": "@nx/js:node",
+      "options": {
+        "port": 0,
+        "buildTarget": "services-sessions:build:dev",
+        "args": ["--job", "worker"]
       }
     },
     "lint": {
@@ -77,11 +76,12 @@
         "passWithNoTests": false
       }
     },
-    "worker": {
-      "executor": "@nx/js:node",
+    "update-geoip": {
+      "executor": "nx:run-commands",
+      "inputs": [{ "env": "GEOIP_LICENSE_KEY" }],
       "options": {
-        "buildTarget": "services-sessions:esbuild",
-        "args": ["--job", "worker"]
+        "command": "npm run-script updatedb license_key=${GEOIP_LICENSE_KEY}",
+        "cwd": "node_modules/geoip-lite"
       }
     },
     "dev-services": {

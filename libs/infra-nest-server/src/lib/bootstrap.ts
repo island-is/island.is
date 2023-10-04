@@ -113,9 +113,9 @@ export const bootstrap = async (
 ): Promise<InfraNestServer> => {
   const app = await createApp(options)
 
-  // if (options.openApi) {
-  //   setupOpenApi(app, options.openApi, options.swaggerPath)
-  // }
+  if (options.openApi) {
+    setupOpenApi(app, options.openApi, options.swaggerPath)
+  }
 
   if (options.interceptors) {
     options.interceptors.forEach((interceptor) => {

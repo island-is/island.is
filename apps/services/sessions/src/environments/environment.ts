@@ -14,4 +14,5 @@ export default {
       : 'https://identity-server.dev01.devland.is',
   },
   port: 3333,
+  workerPort: isProduction ? 3333 : 3331,
 }
