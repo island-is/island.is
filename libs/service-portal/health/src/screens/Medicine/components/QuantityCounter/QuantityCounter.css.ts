@@ -5,7 +5,6 @@ export const quantityCounterWrapper = style({
   display: 'flex',
   columnGap: '0.5rem',
   alignItems: 'center',
-  justifyContent: 'center',
 })
 
 export const quantityCounterButton = style({

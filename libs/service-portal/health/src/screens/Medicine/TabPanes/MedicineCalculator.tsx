@@ -64,7 +64,7 @@ export const MedicineCalulator = () => {
     RightsPortalDrugCalculatorResponse[]
   >([])
 
-  const SHOW_TABLE = debouncedSearch.length > 0 && !drugsLoading
+  const SHOW_TABLE = debouncedSearch.length > 0
   const CALCULATOR_DISABLED = selectedDrugList.length === 0
 
   const handleCalculate = () => {
@@ -78,15 +78,12 @@ export const MedicineCalulator = () => {
         })),
       },
     }
-
-    console.log(input)
-
     drugCalcQuery({
       variables: {
         input: input,
       },
       onCompleted: (data) => {
-        console.log(data)
+        // route not implemented
       },
     })
   }
@@ -143,18 +140,18 @@ export const MedicineCalulator = () => {
           </T.Head>
           {SHOW_TABLE && (
             <T.Body>
-              {drugs?.rightsPortalDrugs.drugs?.map((d, i) => {
+              {drugs?.rightsPortalDrugs.drugs?.map((drug, i) => {
                 return (
                   <tr
                     onMouseLeave={() => setHoveredDrug(-1)}
                     onMouseOver={() => setHoveredDrug(i)}
                     key={i}
                   >
-                    <T.Data>{d.name}</T.Data>
-                    <T.Data>{d.form}</T.Data>
-                    <T.Data>{d.strength}</T.Data>
-                    <T.Data>{d.packaging}</T.Data>
-                    <T.Data>{d.price}</T.Data>
+                    <T.Data>{drug.name}</T.Data>
+                    <T.Data>{drug.form}</T.Data>
+                    <T.Data>{drug.strength}</T.Data>
+                    <T.Data>{drug.packaging}</T.Data>
+                    <T.Data>{drug.price}</T.Data>
                     <T.Data>
                       {hoveredDrug === i && (
                         <Button
@@ -163,7 +160,7 @@ export const MedicineCalulator = () => {
                           icon="pencil"
                           onClick={() => {
                             setSelectedDrugList(
-                              [...selectedDrugList, d]
+                              [...selectedDrugList, drug]
                                 .filter(
                                   (drug, index, self) =>
                                     index ===
@@ -176,6 +173,8 @@ export const MedicineCalulator = () => {
                                   nordicCode: d.nordicCode,
                                   price: d.price,
                                   units: 1,
+                                  name: drug.name,
+                                  strength: drug.strength,
                                 })),
                             )
                           }}
@@ -193,7 +192,6 @@ export const MedicineCalulator = () => {
         {!SHOW_TABLE && (
           <EmptyTable message={messages.medicineCalculatorEmptySearch} />
         )}
-
         {SHOW_TABLE && (
           <Pagination
             totalPages={Math.ceil(
