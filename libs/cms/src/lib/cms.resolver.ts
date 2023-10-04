@@ -428,7 +428,7 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
-  @Query(() => [EventModel])
+  @Query(() => EventList)
   getEvents(@Args('input') input: GetEventsInput): Promise<EventList> {
     return this.cmsElasticsearchService.getEvents(
       getElasticsearchIndex(input.lang),

@@ -30,7 +30,7 @@ export class EventSyncService implements CmsSyncProvider<IEvent> {
         try {
           const mapped = mapEvent(entry)
           if (isCircular(mapped)) {
-            logger.warn('Circular reference found in Event', {
+            logger.warn('Circular reference found in event', {
               id: entry?.sys?.id,
             })
             return false

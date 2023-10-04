@@ -32,15 +32,19 @@ export const GET_SINGLE_EVENT_QUERY = gql`
 export const GET_EVENTS_QUERY = gql`
   query GetEvents($input: GetEventsInput!) {
     getEvents(input: $input) {
-      title
-      slug
-      date
-      intro
-      image {
-        url
+      total
+      items {
+        id
         title
-        width
-        height
+        slug
+        date
+        intro
+        image {
+          url
+          title
+          width
+          height
+        }
       }
     }
   }
