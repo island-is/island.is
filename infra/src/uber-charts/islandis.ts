@@ -84,7 +84,9 @@ const sessionsGeoip = sessionsGeoipSetup()
 const authAdminApi = authAdminApiSetup()
 
 const universityGatewayBackend = universityGatewayBackendSetup()
-const universityGatewayWorker = universityGatewayWorkerSetup()
+const universityGatewayWorker = universityGatewayWorkerSetup({
+  backend: universityGatewayBackend,
+})
 
 const api = apiSetup({
   appSystemApi,
@@ -226,7 +228,7 @@ export const Services: EnvironmentServices = {
     sessionsGeoip,
     contentfulApps,
     universityGatewayBackend,
-    universityGatewayWorker
+    universityGatewayWorker,
   ],
 }
 

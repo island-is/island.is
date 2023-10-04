@@ -1,13 +1,13 @@
 import { ref, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (services: {
-  worker: ServiceBuilder<'university-gateway-worker'>
+  backend: ServiceBuilder<'university-gateway-backend'>
 }): ServiceBuilder<'services-university-gateway-worker'> => {
   return service('services-university-gateway-worker')
     .namespace('university-gateway')
     .image('services-university-gateway-worker')
     .env({
-      BACKEND_URL: ref((h) => `http://${h.svc(services.worker)}`),
+      BACKEND_URL: ref((h) => `http://${h.svc(services.backend)}`),
       TIME_TO_LIVE_MINUTES: '1440',
     })
     .secrets({
