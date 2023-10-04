@@ -199,7 +199,7 @@ export class DocumentClient {
   async postMailAction(
     body: MessageActionDTO,
     action: 'archive' | 'unarchive' | 'bookmark' | 'unbookmark',
-  ): Promise<any | null> {
+  ): Promise<null> {
     const requestRoute = `/api/mail/v1/customers/${body.nationalId}/messages/${body.messageId}/${action}`
     return await this.postRequest(requestRoute, body)
   }
