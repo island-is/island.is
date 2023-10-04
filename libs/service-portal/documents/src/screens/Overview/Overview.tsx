@@ -102,7 +102,6 @@ export const ServicePortalDocuments = () => {
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
-  const [selectedLines, setSelectedLines] = useState<Array<string>>([])
   const [isEmpty, setEmpty] = useState(false)
   const { width } = useWindowSize()
   const navigate = useNavigate()
@@ -430,31 +429,9 @@ export const ServicePortalDocuments = () => {
               padding={2}
             >
               <Box display="flex">
-                <Box className={styles.checkboxWrap} marginRight={3}>
-                  <Checkbox
-                    name="checkbox-select-all"
-                    checked={selectedLines.length > 0}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        const allDocumentIds = filteredDocuments.map(
-                          (item) => item.id,
-                        )
-                        setSelectedLines([...allDocumentIds])
-                      } else {
-                        setSelectedLines([])
-                      }
-                    }}
-                  />
-                </Box>
-                {selectedLines.length > 0 ? null : (
-                  <Text variant="eyebrow">{formatMessage(m.info)}</Text>
-                )}
+                <Text variant="eyebrow">{formatMessage(m.info)}</Text>
               </Box>
-              {selectedLines.length > 0 ? (
-                <FavAndStash onStash={() => console.log('On batch archive')} />
-              ) : (
-                <Text variant="eyebrow">{formatMessage(m.date)}</Text>
-              )}
+              <Text variant="eyebrow">{formatMessage(m.date)}</Text>
             </Box>
             {loading && (
               <Box marginTop={4}>
@@ -475,23 +452,12 @@ export const ServicePortalDocuments = () => {
                     documentLine={doc}
                     onClick={setActiveDocument}
                     active={doc.id === activeDocument?.id}
-                    selected={selectedLines.includes(doc.id)}
                     bookmarked={!!doc.bookmarked}
                     refetchInboxItems={() => {
                       if (refetch) {
                         refetch({
                           ...fetchObject(),
                         })
-                      }
-                    }}
-                    setSelectLine={(docId) => {
-                      if (selectedLines.includes(doc.id)) {
-                        const filtered = selectedLines.filter(
-                          (item) => item !== doc.id,
-                        )
-                        setSelectedLines([...filtered])
-                      } else {
-                        setSelectedLines([...selectedLines, docId])
                       }
                     }}
                   />

@@ -58,7 +58,6 @@ export const DocumentLine: FC<Props> = ({
   active,
   loading,
   asFrame,
-  selected,
   bookmarked,
 }) => {
   const [avatarCheckmark, setAvatarCheckmark] = useState(false)
@@ -190,25 +189,9 @@ export const DocumentLine: FC<Props> = ({
                 setSelectLine(documentLine.id)
               }
             }}
-            avatar={
-              (avatarCheckmark || selected) && !asFrame ? (
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  background={selected ? 'blue400' : 'blue300'}
-                  borderRadius="circle"
-                  className={styles.checkCircle}
-                >
-                  <Icon icon="checkmark" color="white" type="filled" />
-                </Box>
-              ) : undefined
-            }
             background={
-              avatarCheckmark || selected
-                ? asFrame
-                  ? 'white'
-                  : 'blue200'
+              avatarCheckmark
+                ? 'white'
                 : documentLine.opened
                 ? 'blue100'
                 : 'white'

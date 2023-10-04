@@ -73,7 +73,7 @@ export const messages = defineMessages({
   documentFetchError: {
     id: 'sp,documents:fetch-error',
     defaultMessage:
-      'Ekki tókst að sækja umbeðið skjal, við bendum þér á að beina fyrirspurn til sendanda þess, {senderName}',
+      'Ekki tókst að sækja umbeðið skjal, við bendum þér á að beina fyrirspurn til sendanda þess: {senderName}',
   },
   pickDocument: {
     id: 'sp,documents:pick-document',
