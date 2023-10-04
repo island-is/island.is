@@ -157,7 +157,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           )
         })
     }
- 
+
     if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
         jurisdictionId: jurisdictionId as number,
