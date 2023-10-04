@@ -44,8 +44,8 @@ export const sectionExternalData = buildSubSection({
         }),
         buildDataProviderItem({
           provider: GlassesCheckApi,
-          title: 'Gleraugnavottorð',
-          subTitle: 'Til þess að auðvelda umsóknarferlið er sótt gleraugnavottorð frá samgöngustofu',
+          title: m.glassesPrescriptionTitle,
+          subTitle: m.glassesPrescriptionSubTitle,
         }),
         buildDataProviderItem({
           provider: QualityPhotoApi,
