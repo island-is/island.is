@@ -8,8 +8,15 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import {
+  CaseMessage,
+  MessageService,
+  MessageType,
+} from '@island.is/judicial-system/message'
+import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
   CaseFileCategory,
@@ -17,18 +24,12 @@ import {
   CaseState,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { User as TUser } from '@island.is/judicial-system/types'
-import {
-  CaseMessage,
-  MessageService,
-  MessageType,
-} from '@island.is/judicial-system/message'
 
 import { nowFactory, uuidFactory } from '../../factories'
 import { Defendant, DefendantService } from '../defendant'
+import { CaseFile } from '../file'
 import { Institution } from '../institution'
 import { User } from '../user'
-import { CaseFile } from '../file'
 import { Case } from './models/case.model'
 
 export const attributes: (keyof Case)[] = [
@@ -44,7 +45,7 @@ export const attributes: (keyof Case)[] = [
   'defenderNationalId',
   'defenderEmail',
   'defenderPhoneNumber',
-  'sendRequestToDefender',
+  'requestSharedWithDefender',
   'courtId',
   'leadInvestigator',
   'requestedCustodyRestrictions',

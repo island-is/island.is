@@ -2,17 +2,18 @@ import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 import { MessageService } from '@island.is/judicial-system/message'
 
 import { environment } from '../../../../environments'
-import { UserService } from '../../user'
-import { CourtService } from '../../court'
 import { CaseService } from '../../case'
-import { Defendant } from '../models/defendant.model'
-import { DefendantService } from '../defendant.service'
+import { CourtService } from '../../court'
+import { UserService } from '../../user'
 import { DefendantController } from '../defendant.controller'
+import { DefendantService } from '../defendant.service'
 import { InternalDefendantController } from '../internalDefendant.controller'
+import { Defendant } from '../models/defendant.model'
 
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../user/user.service')
@@ -66,17 +67,16 @@ export const createTestingDefendantModule = async () => {
     getModelToken(Defendant),
   )
 
-  const defendantService = defendantModule.get<DefendantService>(
-    DefendantService,
-  )
+  const defendantService =
+    defendantModule.get<DefendantService>(DefendantService)
 
-  const defendantController = defendantModule.get<DefendantController>(
-    DefendantController,
-  )
+  const defendantController =
+    defendantModule.get<DefendantController>(DefendantController)
 
-  const internalDefendantController = defendantModule.get<InternalDefendantController>(
-    InternalDefendantController,
-  )
+  const internalDefendantController =
+    defendantModule.get<InternalDefendantController>(
+      InternalDefendantController,
+    )
 
   defendantModule.close()
 

@@ -2,10 +2,11 @@ import { uuid } from 'uuidv4'
 
 import { CaseFileState } from '@island.is/judicial-system/types'
 
-import { AwsS3Service } from '../../../aws-s3'
-import { CaseFile } from '../../models/file.model'
-import { DeleteFileResponse } from '../../models/deleteFile.response'
 import { createTestingFileModule } from '../createTestingFileModule'
+
+import { AwsS3Service } from '../../../aws-s3'
+import { DeleteFileResponse } from '../../models/deleteFile.response'
+import { CaseFile } from '../../models/file.model'
 
 interface Then {
   result: DeleteFileResponse
@@ -24,11 +25,8 @@ describe('FileController - Delete case file', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      awsS3Service,
-      fileModel,
-      fileController,
-    } = await createTestingFileModule()
+    const { awsS3Service, fileModel, fileController } =
+      await createTestingFileModule()
 
     mockAwsS3Service = awsS3Service
     mockFileModel = fileModel

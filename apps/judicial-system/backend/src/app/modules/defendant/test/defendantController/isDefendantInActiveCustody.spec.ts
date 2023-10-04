@@ -3,6 +3,7 @@ import { literal, Op } from 'sequelize'
 import { CaseState, CaseType } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
+
 import { Case } from '../../../case/models/case.model'
 import { Defendant } from '../../models/defendant.model'
 
@@ -18,10 +19,8 @@ describe('DefendantService - isDefendantInActiveCustody', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      defendantModel,
-      defendantService,
-    } = await createTestingDefendantModule()
+    const { defendantModel, defendantService } =
+      await createTestingDefendantModule()
 
     mockDefendantModel = defendantModel
 

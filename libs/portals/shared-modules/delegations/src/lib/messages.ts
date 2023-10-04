@@ -47,8 +47,7 @@ export const m = defineMessages({
     defaultMessage: 'Eru sótt úr fyrirtækjaskrá Skattsins',
   },
   delegationTypePersonalRepresentativeDesc: {
-    id:
-      'sp.access-control-delegations:delegation-type-personal-representative-desc',
+    id: 'sp.access-control-delegations:delegation-type-personal-representative-desc',
     defaultMessage: 'Samningar frá Réttindagæslu fatlaðra',
   },
   accessControl: {
@@ -122,7 +121,8 @@ export const m = defineMessages({
   },
   confirmError: {
     id: 'sp.access-control-delegations:confirm-error',
-    defaultMessage: 'Ekki tókst að vista réttindi. Vinsamlegast reyndu aftur',
+    defaultMessage:
+      'Ekki tókst að vista réttindi. Vinsamlegast reyndu aftur síðar',
   },
   deleteAccess: {
     id: 'sp.access-control-delegations:delete-access',
@@ -138,7 +138,8 @@ export const m = defineMessages({
   },
   deleteError: {
     id: 'sp.access-control-delegations:delete-error',
-    defaultMessage: 'Ekki tókst að eyða umboði. Vinsamlegast reyndu aftur',
+    defaultMessage:
+      'Ekki tókst að eyða umboði. Vinsamlegast reyndu aftur síðar',
   },
   dateError: {
     id: 'sp.access-control-delegations:date-error',
@@ -205,5 +206,9 @@ export const m = defineMessages({
   closeModal: {
     id: 'sp.access-control-delegations:close-modal',
     defaultMessage: 'Loka glugga',
+  },
+  validTo: {
+    id: 'sp.access-control-delegations:access-valid-to',
+    defaultMessage: 'Í gildi til',
   },
 })

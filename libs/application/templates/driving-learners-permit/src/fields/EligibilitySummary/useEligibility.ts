@@ -18,7 +18,11 @@ export const useEligibility = (
   const fakeData = getValueViaPath<LearnersPermitFakeData>(answers, 'fakeData')
   const usingFakeData = fakeData?.useFakeData === YES
 
-  const { data = {}, error, loading } = useQuery(ELIGIBILITY_QUERY, {
+  const {
+    data = {},
+    error,
+    loading,
+  } = useQuery(ELIGIBILITY_QUERY, {
     skip: usingFakeData,
   })
 

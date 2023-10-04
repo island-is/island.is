@@ -5,8 +5,9 @@ import {
   HttpLink,
   InMemoryCache,
 } from '@apollo/client'
-import { onError } from '@apollo/client/link/error'
+
 import { RetryLink } from '@apollo/client/link/retry'
+import { onError } from '@apollo/client/link/error'
 import { authLink } from '@island.is/auth/react'
 import { getStaticEnv } from '@island.is/shared/utils'
 
@@ -36,6 +37,9 @@ export const client = new ApolloClient({
   cache: new InMemoryCache({
     typePolicies: {
       UserProfile: {
+        keyFields: ['nationalId'],
+      },
+      NationalRegistryPerson: {
         keyFields: ['nationalId'],
       },
       AuthProcuringHolderDelegation: {

@@ -1,12 +1,17 @@
+import { useEffect, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { FeatureFlagClient } from '@island.is/feature-flags'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import {
   m,
   ErrorScreen,
   EmptyState,
   UserInfoLine,
 } from '@island.is/service-portal/core'
+import { useLocation } from 'react-router-dom'
 import { useGetDentistsQuery } from './Dentists.generated'
 import {
+  AlertMessage,
   Box,
   DatePicker,
   Divider,
@@ -15,22 +20,40 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { IntroHeader } from '@island.is/portals/core'
+import { IntroHeader, useQueryParam } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
-import { useState } from 'react'
 import BillsTable from './BillsTable'
 import add from 'date-fns/add'
 import sub from 'date-fns/sub'
+import { HealthPaths } from '../../lib/paths'
 
 const Dentists = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
+  const location = useLocation()
+  // Check if the user was transfered from another health center
+  const wasSuccessfulTransfer = location?.state?.transferSuccess
+
+  // Feature flag for transfer option.
+  const [isTransferAvailable, setIsTransferAvailable] = useState(false)
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isServicePortalHealthTransferPageEnabled`,
+        false,
+      )
+      if (ffEnabled) {
+        setIsTransferAvailable(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+  }, [])
 
   const [selectedDateFrom, setSelectedDateFrom] = useState(
     sub(new Date(), { years: 5 }),
   )
   const [selectedDateTo, setSelectedDateTo] = useState(new Date())
-  const [dentistName, setDentistName] = useState('')
 
   const { loading, error, data } = useGetDentistsQuery({
     variables: {
@@ -39,13 +62,11 @@ const Dentists = () => {
         dateTo: selectedDateTo,
       },
     },
+    fetchPolicy: 'no-cache',
   })
 
-  const dentistData = data?.rightsPortalDentists
-
-  if (!dentistName && dentistData?.currentDentistName) {
-    setDentistName(dentistData.currentDentistName)
-  }
+  const { dentist, history } = data?.rightsPortalUserDentistRegistration ?? {}
+  const canRegister = dentist?.status?.canRegister ?? false
 
   if (error && !loading) {
     return (
@@ -68,7 +89,7 @@ const Dentists = () => {
         intro={formatMessage(messages.dentistsDescription)}
       />
 
-      {!loading && !data?.rightsPortalDentists && (
+      {!loading && !dentist && (
         <Box width="full" marginTop={4} display="flex" justifyContent="center">
           <Box marginTop={8}>
             <EmptyState />
@@ -76,15 +97,43 @@ const Dentists = () => {
         </Box>
       )}
 
-      {dentistName && (
+      {wasSuccessfulTransfer && !loading && (
+        <Box width="full" marginTop={4} marginBottom={4}>
+          <AlertMessage
+            type="success"
+            title={formatMessage(messages.dentistTransferSuccessTitle)}
+            message={`${formatMessage(messages.dentistTransferSuccessInfo, {
+              name: dentist?.name,
+            })}`}
+          />
+        </Box>
+      )}
+
+      {dentist?.name && dentist?.id && (
         <Stack space={2}>
           <UserInfoLine
             title={formatMessage(messages.yourInformation)}
             label={formatMessage(messages.dentist)}
-            content={dentistName}
+            content={dentist.name}
+            editLink={
+              canRegister && isTransferAvailable
+                ? {
+                    url: HealthPaths.HealthDentistRegistration,
+                    title: messages.changeRegistration,
+                  }
+                : undefined
+            }
           />
           <Divider />
-          <UserInfoLine label={formatMessage(messages.yourDentistBills)} />
+          <UserInfoLine
+            label={formatMessage(messages.dentistNumber)}
+            content={`${dentist.id}`}
+          />
+          <Divider />
+          <UserInfoLine
+            label={formatMessage(messages.yourDentistBills)}
+            labelColumnSpan={['12/12']}
+          />
           <Inline space={4}>
             <DatePicker
               size="sm"
@@ -101,16 +150,14 @@ const Dentists = () => {
               selected={selectedDateTo}
               handleChange={(e) => setSelectedDateTo(e)}
               minDate={add(selectedDateFrom, { days: 1 })}
-            ></DatePicker>
+            />
           </Inline>
         </Stack>
       )}
 
       {loading && <SkeletonLoader space={1} height={30} repeat={4} />}
 
-      {!loading && !error && dentistData?.billHistory && (
-        <BillsTable bills={dentistData.billHistory} />
-      )}
+      {!loading && !error && history && <BillsTable bills={history} />}
     </Box>
   )
 }

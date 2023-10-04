@@ -35,6 +35,8 @@ import { assign } from 'xstate'
 import set from 'lodash/set'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { hasReviewerApproved } from '../utils'
+import { Features } from '@island.is/feature-flags'
+import { ApiScope } from '@island.is/auth/scopes'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -92,7 +94,12 @@ const template: ApplicationTemplate<
     {
       type: AuthDelegationType.ProcurationHolder,
     },
+    {
+      type: AuthDelegationType.Custom,
+      featureFlag: Features.transportAuthorityApplicationsCustomDelegation,
+    },
   ],
+  requiredScopes: [ApiScope.samgongustofaVehicles],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -121,10 +128,9 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import(
-                  '../forms/ChangeCoOwnerOfVehicleForm/index'
-                ).then((module) =>
-                  Promise.resolve(module.ChangeCoOwnerOfVehicleForm),
+                import('../forms/ChangeCoOwnerOfVehicleForm/index').then(
+                  (module) =>
+                    Promise.resolve(module.ChangeCoOwnerOfVehicleForm),
                 ),
               actions: [
                 {

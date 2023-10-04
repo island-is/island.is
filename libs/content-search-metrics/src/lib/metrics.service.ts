@@ -103,16 +103,14 @@ export class MetricsService {
 
           // we add the test case if requested
           if (additionalFields.includes('testCase')) {
-            results.terms[
-              term
-            ].testCase = this.rankedDataService.getTermTestCase(term)
+            results.terms[term].testCase =
+              this.rankedDataService.getTermTestCase(term)
           }
         })
 
         if (additionalFields.includes('legends')) {
           results.legends = {
-            dcg:
-              'Shows if our search is ranking the documents well. Calculated based on presence of document in top X search results weight against their position in list. Higher score means higher rated documents near the top',
+            dcg: 'Shows if our search is ranking the documents well. Calculated based on presence of document in top X search results weight against their position in list. Higher score means higher rated documents near the top',
             precision:
               'Shows if our ranked documents show up in top results. Calculated based on presence of document in top X search results. Higher score means more desired documents present somewhere in top X documents',
           }
@@ -148,11 +146,12 @@ export class MetricsService {
   }
 
   async getCMSRankEvaluation({ index, display }: MetricInput) {
-    const response = await this.elasticService.getRankEvaluation<searchTermsUnion>(
-      index,
-      this.rankedDataService.getTermRatings(index),
-      this.metrics,
-    )
+    const response =
+      await this.elasticService.getRankEvaluation<searchTermsUnion>(
+        index,
+        this.rankedDataService.getTermRatings(index),
+        this.metrics,
+      )
     return this.formatRankEvaluationResponse(response, display)
   }
 }

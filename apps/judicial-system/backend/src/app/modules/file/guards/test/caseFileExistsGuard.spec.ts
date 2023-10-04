@@ -1,5 +1,5 @@
-import { uuid } from 'uuidv4'
 import { Op } from 'sequelize'
+import { uuid } from 'uuidv4'
 
 import {
   BadRequestException,
@@ -10,6 +10,7 @@ import {
 import { CaseFileState } from '@island.is/judicial-system/types'
 
 import { createTestingFileModule } from '../../test/createTestingFileModule'
+
 import { CaseFile } from '../../models/file.model'
 import { CaseFileExistsGuard } from '../caseFileExists.guard'
 
@@ -35,9 +36,9 @@ describe('Case File Exists Guard', () => {
       const then = {} as Then
 
       try {
-        then.result = await guard.canActivate(({
+        then.result = await guard.canActivate({
           switchToHttp: () => ({ getRequest: mockRequest }),
-        } as unknown) as ExecutionContext)
+        } as unknown as ExecutionContext)
       } catch (error) {
         then.error = error as Error
       }

@@ -98,10 +98,6 @@ identity-server:
     CORECLR_PROFILER: '{846F5F1C-F9AE-4B07-969E-05C26BC060D8}'
     CORECLR_PROFILER_PATH: '/opt/datadog/Datadog.Trace.ClrProfiler.Native.so'
     CacheSettings__Enabled: 'true'
-    CacheSettings__Memcached__Address: 'identity-server.ab9ckb.cfg.euw1.cache.amazonaws.com'
-    CacheSettings__Memcached__Port: '11211'
-    CacheSettings__Redis__Address: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com'
-    CacheSettings__Redis__Port: '6379'
     ContentfulSettings__BaseAddress: 'https://cdn.contentful.com'
     DD_DOTNET_TRACER_HOME: '/opt/datadog'
     DD_INTEGRATIONS: '/opt/datadog/integrations.json'
@@ -116,6 +112,8 @@ identity-server:
     PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
     PersistenceSettings__DelegationsCacheEnabled: 'false'
     PersistenceSettings__SessionsBaseAddress: 'http://web-services-sessions.services-sessions.svc.cluster.local'
+    RedisSettings__Address: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com'
+    RedisSettings__Port: '6379'
     SERVERSIDE_FEATURES_ON: ''
   files:
     - 'ids-signing.pfx'
@@ -161,6 +159,7 @@ identity-server:
       name: 'identity-server'
       size: '1Gi'
       storageClass: 'efs-csi'
+      useExisting: false
   replicaCount:
     default: 1
     max: 3
@@ -335,8 +334,6 @@ services-auth-delegation-api:
     DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
-    RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD'
-    RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -446,8 +443,6 @@ services-auth-ids-api:
     NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD'
     NOVA_URL: '/k8s/services-auth/NOVA_URL'
     NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME'
-    RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD'
-    RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -653,8 +648,6 @@ services-auth-public-api:
     DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
-    RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD'
-    RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

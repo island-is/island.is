@@ -1,25 +1,24 @@
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
+import { SingleValue } from 'react-select'
 
+import { Box, Button, Select, Text, Tooltip } from '@island.is/island-ui/core'
+import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
-import { Box, Button, Select, Text, Tooltip } from '@island.is/island-ui/core'
-
-import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
-import { ValueType } from 'react-select'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
-  selectedSharingInstitutionId: ValueType<ReactSelectOption>
+  selectedSharingInstitutionId: SingleValue<ReactSelectOption>
   setSelectedSharingInstitutionId: React.Dispatch<
-    React.SetStateAction<ValueType<ReactSelectOption>>
+    React.SetStateAction<SingleValue<ReactSelectOption>>
   >
   shareCaseWithAnotherInstitution: (
-    institution?: ValueType<ReactSelectOption>,
+    institution?: SingleValue<ReactSelectOption>,
   ) => void
 }
 
@@ -76,10 +75,8 @@ const ShareCase: React.FC<React.PropsWithChildren<Props>> = ({
                     }
                   : null
               }
-              onChange={(so: ValueType<ReactSelectOption>) =>
-                setSelectedSharingInstitutionId(so)
-              }
-              disabled={Boolean(workingCase.sharedWithProsecutorsOffice)}
+              onChange={(so) => setSelectedSharingInstitutionId(so)}
+              isDisabled={Boolean(workingCase.sharedWithProsecutorsOffice)}
             />
           </Box>
           <Button

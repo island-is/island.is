@@ -1,32 +1,32 @@
 import PDFDocument from 'pdfkit'
-import streamBuffers from 'stream-buffers'
+
+import { FormatMessage } from '@island.is/cms-translations'
 
 import {
   capitalize,
   formatDate,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
-import { FormatMessage } from '@island.is/cms-translations'
 import { SessionArrangements } from '@island.is/judicial-system/types'
 
-import { Case } from '../modules/case'
 import { custodyNotice } from '../messages'
+import { Case } from '../modules/case'
 import { formatCustodyRestrictions } from './formatters'
 import {
   addEmptyLines,
+  addFooter,
   addHugeHeading,
   addLargeHeading,
   addMediumText,
   addNormalText,
   setLineGap,
-  addFooter,
   setTitle,
 } from './pdfHelpers'
 
 function constructCustodyNoticePdf(
   theCase: Case,
   formatMessage: FormatMessage,
-): streamBuffers.WritableStreamBuffer {
+): Promise<Buffer> {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -38,7 +38,9 @@ function constructCustodyNoticePdf(
     bufferPages: true,
   })
 
-  const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
+  const sinc: Buffer[] = []
+
+  doc.on('data', (chunk) => sinc.push(chunk))
 
   setTitle(doc, 'Vistunarseðill')
   setLineGap(doc, 8)
@@ -177,33 +179,23 @@ function constructCustodyNoticePdf(
 
   doc.end()
 
-  return stream
+  return new Promise<Buffer>((resolve) =>
+    doc.on('end', () => resolve(Buffer.concat(sinc))),
+  )
 }
 
 export function getCustodyNoticePdfAsString(
   theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<string> {
-  const stream = constructCustodyNoticePdf(theCase, formatMessage)
-
-  // wait for the writing to finish
-  return new Promise<string>(function (resolve) {
-    stream.on('finish', () => {
-      resolve(stream.getContentsAsString('binary') as string)
-    })
-  })
+  return constructCustodyNoticePdf(theCase, formatMessage).then((buffer) =>
+    buffer.toString('binary'),
+  )
 }
 
 export function getCustodyNoticePdfAsBuffer(
   theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<Buffer> {
-  const stream = constructCustodyNoticePdf(theCase, formatMessage)
-
-  // wait for the writing to finish
-  return new Promise<Buffer>(function (resolve) {
-    stream.on('finish', () => {
-      resolve(stream.getContents() as Buffer)
-    })
-  })
+  return constructCustodyNoticePdf(theCase, formatMessage)
 }

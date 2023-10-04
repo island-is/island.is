@@ -14,8 +14,7 @@ import leJobss4 from '../../assets/illustrations/le-jobs-s4.png';
 import {IApplication} from '../../graphql/fragments/application.fragment';
 import {navigateTo} from '../../lib/deep-linking';
 import {openBrowser} from '../../lib/rn-island';
-import {getConfig} from '../../config';
-
+import {getApplicationUrl} from '../../utils/applications-utils';
 interface ApplicationsModuleProps {
   applications: IApplication[];
   loading: boolean;
@@ -53,13 +52,7 @@ export const ApplicationsModule = React.memo(
               id: 'applicationStatusCard.openButtonLabel',
             }),
             onPress() {
-              openBrowser(
-                `${getConfig().apiUrl.replace(
-                  /api$/,
-                  'umsoknir',
-                )}/sjukratryggingar/${application.id}`,
-                componentId,
-              );
+              openBrowser(getApplicationUrl(application), componentId);
             },
           },
         ]}
@@ -106,8 +99,7 @@ export const ApplicationsModule = React.memo(
                 link={
                   hideAction ? null : (
                     <TouchableOpacity
-                      onPress={() => navigateTo(`/applications`)}
-                    >
+                      onPress={() => navigateTo(`/applications`)}>
                       <LinkText>
                         {intl.formatMessage({
                           id: 'applicationStatusCard.seeMoreApplications',

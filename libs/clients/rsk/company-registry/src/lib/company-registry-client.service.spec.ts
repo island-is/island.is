@@ -18,7 +18,7 @@ describe('CompanyRegistryClientService', () => {
   let service: CompanyRegistryClientService
   beforeEach(() => {
     api = new DefaultApi()
-    const logger = ({} as unknown) as Logger
+    const logger = {} as unknown as Logger
     service = new CompanyRegistryClientService(api, logger)
   })
   it('maps company endpoint', async () => {

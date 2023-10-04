@@ -146,7 +146,8 @@ export interface RenderConfig {
   padding: Readonly<Array<PaddingConfig>>
   skipGrid?: boolean
 }
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
 const renderConnectedComponent = (slice) => {
   const data = slice.json
 
@@ -241,19 +242,18 @@ export const defaultRenderComponent = (
   }
 }
 
-const typography = (
-  variant: TextProps['variant'],
-  as: TextProps['as'],
-  withId = false,
-) => (_: Block | Inline, children: ReactNode) => (
-  <Text
-    id={withId ? slugify(String(children)) : undefined}
-    variant={variant}
-    as={as}
-  >
-    {children}
-  </Text>
-)
+const typography =
+  (variant: TextProps['variant'], as: TextProps['as'], withId = false) =>
+  (_: Block | Inline, children: ReactNode) =>
+    (
+      <Text
+        id={withId ? slugify(String(children)) : undefined}
+        variant={variant}
+        as={as}
+      >
+        {children}
+      </Text>
+    )
 
 export const defaultRenderNode: Readonly<RenderNode> = {
   [BLOCKS.HEADING_1]: typography('h1', 'h1', true),
@@ -273,7 +273,7 @@ export const defaultRenderNode: Readonly<RenderNode> = {
     node: Block | Inline,
     children: ReactNode,
   ): ReactNode => {
-    const asset = (node.data.target as unknown) as Asset
+    const asset = node.data.target as unknown as Asset
     return asset.fields.file?.url ? (
       <Hyperlink href={asset.fields.file.url}>{children}</Hyperlink>
     ) : null
@@ -357,6 +357,8 @@ export const renderSlices = (
   }
 
   const components = slices.map((slice, index) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     const comp = config.renderComponent(slice, locale, config)
     if (!comp) {
       return null

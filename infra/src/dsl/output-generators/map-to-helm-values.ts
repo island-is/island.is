@@ -324,9 +324,8 @@ function serializeIngress(
   ingressConf: IngressForEnv,
   env: EnvironmentConfig,
 ) {
-  const hosts = (typeof ingressConf.host === 'string'
-    ? [ingressConf.host]
-    : ingressConf.host
+  const hosts = (
+    typeof ingressConf.host === 'string' ? [ingressConf.host] : ingressConf.host
   ).map((host) =>
     ingressConf.public ?? true
       ? hostFullName(host, env)
@@ -354,6 +353,7 @@ function serializeVolumes(
     name?: string
     size: string
     accessModes: AccessModes
+    useExisting?: boolean
     mountPath: string
     storageClass?: string
   }[],
@@ -372,6 +372,7 @@ function serializeVolumes(
   const results: OutputPersistentVolumeClaim[] = volumes.map((volume) => ({
     name: volume.name ?? `${service.name}`,
     size: volume.size,
+    useExisting: volume.useExisting ?? false,
     mountPath: volume.mountPath,
     storageClass: 'efs-csi',
     accessModes: mapping[volume.accessModes],
@@ -383,6 +384,7 @@ function serializeVolumes(
 function serializeContainerRuns(
   containers: {
     command: string
+    image?: string
     args?: string[]
     name?: string
     resources?: Resources
@@ -392,6 +394,7 @@ function serializeContainerRuns(
     let result: ContainerRunHelm = {
       command: [c.command],
       args: c.args,
+      image: c.image,
       resources: {
         limits: {
           memory: '256Mi',

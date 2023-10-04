@@ -11,47 +11,48 @@ import {
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import type { User } from '@island.is/judicial-system/types'
 import {
   indictmentCases,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
 
 import {
+  assistantRule,
   judgeRule,
+  prosecutorRepresentativeRule,
   prosecutorRule,
   registrarRule,
-  representativeRule,
-  assistantRule,
 } from '../../guards'
 import {
   Case,
-  CaseNotCompletedGuard,
-  CurrentCase,
   CaseExistsGuard,
+  CaseNotCompletedGuard,
   CaseReadGuard,
   CaseReceivedGuard,
-  CaseWriteGuard,
   CaseTypeGuard,
+  CaseWriteGuard,
+  CurrentCase,
 } from '../case'
-import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
-import { CurrentCaseFile } from './guards/caseFile.decorator'
-import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFilesDto } from './dto/updateFile.dto'
-import { PresignedPost } from './models/presignedPost.model'
-import { CaseFile } from './models/file.model'
+import { CurrentCaseFile } from './guards/caseFile.decorator'
+import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
+import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
+import { CaseFile } from './models/file.model'
+import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { FileService } from './file.service'
@@ -68,7 +69,7 @@ export class FileController {
   @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorRule,
-    representativeRule,
+    prosecutorRepresentativeRule,
     registrarRule,
     judgeRule,
     assistantRule,
@@ -91,7 +92,7 @@ export class FileController {
   @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorRule,
-    representativeRule,
+    prosecutorRepresentativeRule,
     registrarRule,
     judgeRule,
     assistantRule,
@@ -120,7 +121,7 @@ export class FileController {
   )
   @RolesRules(
     prosecutorRule,
-    representativeRule,
+    prosecutorRepresentativeRule,
     judgeRule,
     registrarRule,
     assistantRule,
@@ -143,7 +144,12 @@ export class FileController {
   }
 
   @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard, CaseFileExistsGuard)
-  @RolesRules(prosecutorRule, representativeRule, registrarRule, judgeRule)
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    registrarRule,
+    judgeRule,
+  )
   @Delete('file/:fileId')
   @ApiOkResponse({
     type: DeleteFileResponse,
@@ -192,7 +198,7 @@ export class FileController {
     CaseWriteGuard,
     CaseNotCompletedGuard,
   )
-  @RolesRules(prosecutorRule, representativeRule)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Patch('files')
   @ApiOkResponse({
     type: CaseFile,

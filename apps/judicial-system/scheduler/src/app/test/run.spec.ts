@@ -2,9 +2,9 @@ import fetch from 'node-fetch'
 
 import { logger } from '@island.is/logging'
 
-import { now } from '../date.factory'
 import { appModuleConfig } from '../app.config'
 import { AppService } from '../app.service'
+import { now } from '../date.factory'
 
 jest.mock('node-fetch')
 jest.mock('@island.is/logging')
@@ -19,7 +19,7 @@ type GivenWhenThen = () => Promise<Then>
 describe('AppService - Run', () => {
   const mockError = logger.error as jest.Mock
   const mockNow = now as jest.Mock
-  const mockFetch = (fetch as unknown) as jest.Mock
+  const mockFetch = fetch as unknown as jest.Mock
   let givenWhenThen: GivenWhenThen
 
   beforeEach(() => {

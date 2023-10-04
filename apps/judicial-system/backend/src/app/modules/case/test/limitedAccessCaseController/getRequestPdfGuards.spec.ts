@@ -6,10 +6,10 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { CaseExistsGuard } from '../../guards/caseExists.guard'
-import { LimitedAccessCaseReceivedGuard } from '../../guards/limitedAccessCaseReceived.guard'
 import { CaseDefenderGuard } from '../../guards/caseDefender.guard'
+import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
+import { LimitedAccessAccordingToCaseStateGuard } from '../../guards/limitedAccessAccordingToCaseState.guard'
 import { RequestSharedWithDefenderGuard } from '../../guards/requestSharedWithDefender.guard'
 import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
 
@@ -79,15 +79,15 @@ describe('LimitedAccessCaseController - Get request pdf guards', () => {
     })
   })
 
-  describe('LimitedAccessCaseReceivedGuard', () => {
+  describe('LimitedAccessAccordingToCaseStateGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[4]()
     })
 
-    it('should have LimitedAccessCaseReceivedGuard as guard 5', () => {
-      expect(guard).toBeInstanceOf(LimitedAccessCaseReceivedGuard)
+    it('should have LimitedAccessAccordingToCaseStateGuard as guard 5', () => {
+      expect(guard).toBeInstanceOf(LimitedAccessAccordingToCaseStateGuard)
     })
   })
 

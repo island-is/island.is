@@ -1,5 +1,5 @@
-import { SQSClient } from '@aws-sdk/client-sqs'
 import { uuid } from 'uuidv4'
+import { SQSClient } from '@aws-sdk/client-sqs'
 
 import { CaseMessage } from '../message'
 import { messageModuleConfig } from '../message.config'
@@ -22,12 +22,8 @@ describe('MessageService - Receive messages from queue', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      setSendMocks,
-      queueUrl,
-      sqs,
-      messageService,
-    } = await createTestingMessageModule()
+    const { setSendMocks, queueUrl, sqs, messageService } =
+      await createTestingMessageModule()
     setMocks = setSendMocks
 
     mockQueueUrl = queueUrl

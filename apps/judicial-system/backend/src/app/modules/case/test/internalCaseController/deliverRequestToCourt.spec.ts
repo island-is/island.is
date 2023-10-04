@@ -1,21 +1,22 @@
-import { uuid } from 'uuidv4'
 import format from 'date-fns/format'
+import { uuid } from 'uuidv4'
 
+import { caseTypes } from '@island.is/judicial-system/formatters'
 import {
   CaseType,
   investigationCases,
   restrictionCases,
   User,
 } from '@island.is/judicial-system/types'
-import { caseTypes } from '@island.is/judicial-system/formatters'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
-import { randomDate } from '../../../../test'
+
 import { nowFactory } from '../../../../factories'
 import { getRequestPdfAsBuffer } from '../../../../formatters'
+import { randomDate } from '../../../../test'
 import { CourtDocumentFolder, CourtService } from '../../../court'
-import { DeliverResponse } from '../../models/deliver.response'
 import { Case } from '../../models/case.model'
+import { DeliverResponse } from '../../models/deliver.response'
 
 jest.mock('../../../../factories/date.factory')
 jest.mock('../../../../formatters/requestPdf')
@@ -41,10 +42,8 @@ describe('InternalCaseController - Deliver requst to court', () => {
     const mockGet = getRequestPdfAsBuffer as jest.Mock
     mockGet.mockRejectedValue(new Error('Some error'))
 
-    const {
-      courtService,
-      internalCaseController,
-    } = await createTestingCaseModule()
+    const { courtService, internalCaseController } =
+      await createTestingCaseModule()
 
     mockCourtService = courtService
     const mockCreateDocument = mockCourtService.createDocument as jest.Mock

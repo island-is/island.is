@@ -68,6 +68,8 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
   locale,
 }) => {
   const Router = useRouter()
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   usePlausible('Search Query', {
     query: (q ?? '').trim().toLowerCase(),
@@ -95,14 +97,14 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
       description: item.organization?.description,
       link: {
         href: linkResolver('supportqna', [
-          item.organization.slug,
-          item.category.slug,
+          item.organization?.slug || '',
+          item.category?.slug || '',
           item.slug,
         ]).href,
       },
-      categorySlug: item.category.slug,
-      category: item.category.title,
-      labels: [item.category.title],
+      categorySlug: item.category?.slug,
+      category: item.category?.title,
+      labels: [item.category?.title],
     }))
 
   const headerTitle = n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')
@@ -111,14 +113,13 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 
   const pageTitle = `${n('search', 'Leit')} | ${headerTitle}`
 
-  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
-    'mannaudstorg',
-  )
+  const institutionSlugBelongsToMannaudstorg =
+    institutionSlug.includes('mannaudstorg')
 
   const breadcrumbItems = [
     institutionSlugBelongsToMannaudstorg
       ? {
-          title: organization.title,
+          title: organization?.title,
           typename: 'serviceweb',
           href: linkResolver('serviceweb', [institutionSlug]).href,
         }
@@ -140,6 +141,8 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
         n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
       )}
       institutionSlug={institutionSlug}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       organization={organization}
       smallBackground
       searchPlaceholder={o(
@@ -151,16 +154,26 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
         <GridContainer>
           <GridRow marginBottom={3}>
             <GridColumn
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               offset={[null, null, null, '1/12']}
               span={['12/12', '12/12', '12/12', '10/12', '7/12']}
             >
               <Stack space={[3, 3, 4]}>
                 <Box display={['none', 'none', 'block']} printHidden>
                   <Breadcrumbs
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore make web strict
                     items={breadcrumbItems}
                     renderLink={(link, { href }) => {
                       return (
-                        <NextLink href={href} passHref legacyBehavior>
+                        <NextLink
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore make web strict
+                          href={href}
+                          passHref
+                          legacyBehavior
+                        >
                           {link}
                         </NextLink>
                       )
@@ -246,6 +259,8 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 
           <GridRow marginBottom={9}>
             <GridColumn
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               offset={[null, null, null, '1/12']}
               span={['12/12', '12/12', '12/12', '10/12', '7/12']}
             >
@@ -256,6 +271,8 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 
                     labels.forEach((label) => {
                       tags.push({
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
                         title: label,
                         tagProps: {
                           outlined: true,
@@ -264,6 +281,8 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                     })
 
                     return (
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore make web strict
                       <Card
                         key={index}
                         tags={tags}
@@ -281,6 +300,8 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
           {totalSearchResults > 0 && (
             <GridRow>
               <GridColumn
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 offset={[null, null, null, '1/12']}
                 span={['12/12', '12/12', '12/12', '10/12', '7/12']}
               >
@@ -304,6 +325,8 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 
           <GridRow>
             <GridColumn
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               offset={[null, null, null, '1/12']}
               span={['12/12', '12/12', '12/12', '10/12']}
             >
@@ -403,6 +426,8 @@ ServiceSearch.getProps = async ({ apolloClient, locale, query }) => {
     q,
     page,
     namespace,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     organization: organization?.data?.getOrganization,
     searchResults,
     locale: locale as Locale,

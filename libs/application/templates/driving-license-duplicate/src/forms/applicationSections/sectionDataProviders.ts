@@ -5,7 +5,7 @@ import {
 import { m } from '../../lib/messages'
 import {
   CurrentLicenseApi,
-  JuristictionApi,
+  JurisdictionApi,
   NationalRegistryUserApi,
   QualityPhotoApi,
   QualitySignatureApi,
@@ -41,7 +41,7 @@ export const sectionDataProviders = buildExternalDataProvider({
       subTitle: m.dataCollectionUserProfileSubtitle,
     }),
     buildDataProviderItem({
-      provider: JuristictionApi,
+      provider: JurisdictionApi,
       title: '',
       subTitle: '',
     }),

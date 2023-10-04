@@ -43,5 +43,5 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsBoolean()
   @ApiProperty()
-  readonly active!: string
+  readonly active!: boolean
 }

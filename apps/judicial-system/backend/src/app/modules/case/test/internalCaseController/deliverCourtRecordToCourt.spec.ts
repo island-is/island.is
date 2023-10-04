@@ -1,15 +1,16 @@
-import { uuid } from 'uuidv4'
 import format from 'date-fns/format'
+import { uuid } from 'uuidv4'
 
 import { User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
+
+import { nowFactory } from '../../../../factories'
 import { getCourtRecordPdfAsBuffer } from '../../../../formatters'
+import { randomDate } from '../../../../test'
 import { CourtService } from '../../../court'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
-import { randomDate } from '../../../../test'
-import { nowFactory } from '../../../../factories'
 
 jest.mock('../../../../formatters/courtRecordPdf')
 jest.mock('../../../../factories/date.factory')
@@ -32,13 +33,12 @@ describe('InternalCaseController - Deliver court record to court', () => {
     const mockGet = getCourtRecordPdfAsBuffer as jest.Mock
     mockGet.mockRejectedValue(new Error('Some error'))
 
-    const {
-      courtService,
-      internalCaseController,
-    } = await createTestingCaseModule()
+    const { courtService, internalCaseController } =
+      await createTestingCaseModule()
 
     mockCourtService = courtService
-    const mockCreateCourtRecord = mockCourtService.createCourtRecord as jest.Mock
+    const mockCreateCourtRecord =
+      mockCourtService.createCourtRecord as jest.Mock
     mockCreateCourtRecord.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async (caseId: string, theCase: Case) => {
@@ -68,7 +68,8 @@ describe('InternalCaseController - Deliver court record to court', () => {
       mockNowFactory.mockReturnValue(now)
       const mockGet = getCourtRecordPdfAsBuffer as jest.Mock
       mockGet.mockResolvedValueOnce(pdf)
-      const mockCreateCourtRecord = mockCourtService.createCourtRecord as jest.Mock
+      const mockCreateCourtRecord =
+        mockCourtService.createCourtRecord as jest.Mock
       mockCreateCourtRecord.mockResolvedValueOnce(uuid())
 
       then = await givenWhenThen(caseId, theCase)

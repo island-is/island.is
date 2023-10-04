@@ -37,6 +37,7 @@ export class FinanceClientService {
     this.baseURL = `${this.xroadConfig.xRoadBasePath}/r1/${this.config.xRoadServicePath}`
     this.fetch = createEnhancedFetch({
       name: 'FJS-financeIsland',
+      organizationSlug: 'fjarsysla-rikisins',
       autoAuth: this.idsClientConfig.isConfigured
         ? {
             mode: 'tokenExchange',

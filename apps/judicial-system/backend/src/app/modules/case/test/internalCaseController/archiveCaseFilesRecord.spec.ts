@@ -2,10 +2,11 @@ import { uuid } from 'uuidv4'
 
 import { BadRequestException } from '@nestjs/common'
 
-import { AwsS3Service } from '../../../aws-s3'
-import { DeliverResponse } from '../../models/deliver.response'
-import { Case } from '../../models/case.model'
 import { createTestingCaseModule } from '../createTestingCaseModule'
+
+import { AwsS3Service } from '../../../aws-s3'
+import { Case } from '../../models/case.model'
+import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {
   result: DeliverResponse
@@ -25,10 +26,8 @@ describe('InternalCaseController - Archive case files record', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      awsS3Service,
-      internalCaseController,
-    } = await createTestingCaseModule()
+    const { awsS3Service, internalCaseController } =
+      await createTestingCaseModule()
 
     mockawsS3Service = awsS3Service
     const mockCopyObject = mockawsS3Service.copyObject as jest.Mock

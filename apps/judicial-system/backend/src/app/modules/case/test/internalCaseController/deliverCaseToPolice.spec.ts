@@ -8,14 +8,15 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import {
   getCourtRecordPdfAsString,
   getCustodyNoticePdfAsString,
   getRequestPdfAsString,
 } from '../../../../formatters'
 import { randomDate } from '../../../../test'
-import { PoliceService } from '../../../police'
 import { AwsS3Service } from '../../../aws-s3'
+import { PoliceService } from '../../../police'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
@@ -39,11 +40,8 @@ describe('InternalCaseController - Deliver case to police', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      awsS3Service,
-      policeService,
-      internalCaseController,
-    } = await createTestingCaseModule()
+    const { awsS3Service, policeService, internalCaseController } =
+      await createTestingCaseModule()
 
     mockAwsS3Service = awsS3Service
     mockPoliceService = policeService
@@ -105,7 +103,8 @@ describe('InternalCaseController - Deliver case to police', () => {
       mockGetCustodyNotice.mockResolvedValueOnce(custodyNoticePdf)
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
       mockGetObject.mockResolvedValueOnce(rulingPdf)
-      const mockUpdatePoliceCase = mockPoliceService.updatePoliceCase as jest.Mock
+      const mockUpdatePoliceCase =
+        mockPoliceService.updatePoliceCase as jest.Mock
       mockUpdatePoliceCase.mockResolvedValueOnce(true)
 
       then = await givenWhenThen(caseId, theCase)

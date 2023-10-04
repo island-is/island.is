@@ -1,7 +1,8 @@
 import { uuid } from 'uuidv4'
 
-import { ConfigType } from '@island.is/nest/config'
 import { EmailService } from '@island.is/email-service'
+import { ConfigType } from '@island.is/nest/config'
+
 import {
   CaseDecision,
   CaseState,
@@ -10,10 +11,11 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../../../case'
-import { notificationModuleConfig } from '../../notification.config'
-import { DeliverResponse } from '../../models/deliver.response'
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
+
+import { Case } from '../../../case'
+import { DeliverResponse } from '../../models/deliver.response'
+import { notificationModuleConfig } from '../../notification.config'
 
 interface Then {
   result: DeliverResponse
@@ -39,11 +41,8 @@ describe('InternalNotificationController - Send appeal completed notifications',
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      emailService,
-      notificationConfig,
-      internalNotificationController,
-    } = await createTestingNotificationModule()
+    const { emailService, notificationConfig, internalNotificationController } =
+      await createTestingNotificationModule()
 
     mockEmailService = emailService
     mockConfig = notificationConfig

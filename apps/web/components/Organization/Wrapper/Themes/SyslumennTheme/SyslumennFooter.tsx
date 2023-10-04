@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import React, { FC, ReactNode, useContext } from 'react'
 import { FooterItem } from '@island.is/web/graphql/schema'
 import {
   Box,
@@ -17,6 +17,7 @@ import { SliceType } from '@island.is/island-ui/contentful'
 import { GlobalContext } from '@island.is/web/context'
 import { BLOCKS } from '@contentful/rich-text-types'
 import { webRichText } from '@island.is/web/utils/richText'
+import { useI18n } from '@island.is/web/i18n'
 
 import * as styles from './SyslumennFooter.css'
 
@@ -38,6 +39,7 @@ const SyslumennFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
   const n = useNamespace(namespace)
   const questionsAndAnswersText = n('questionsAndAnswers', 'Spurningar og svör')
   const canWeHelpText = n('canWeHelp', 'Getum við aðstoðað?')
+  const { activeLocale } = useI18n()
 
   const { isServiceWeb } = useContext(GlobalContext)
   const { linkResolver } = useLinkResolver()
@@ -46,6 +48,8 @@ const SyslumennFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
     <GridColumn
       key={index}
       span={['12/12', '6/12', '4/12', '1/5']}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       className={index === 0 ? styles.footerItemFirst : null}
     >
       <Box marginBottom={5}>
@@ -64,7 +68,7 @@ const SyslumennFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
           (isServiceWeb ? item.serviceWebContent : item.content) as SliceType[],
           {
             renderNode: {
-              [BLOCKS.PARAGRAPH]: (_node, children) => (
+              [BLOCKS.PARAGRAPH]: (_node: never, children: ReactNode) => (
                 <Text variant="small" color="white">
                   {children}
                 </Text>
@@ -120,8 +124,14 @@ const SyslumennFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
                   <Box marginTop={3}>
                     <Link
                       href={
-                        linkResolver('serviceweborganization', ['syslumenn'])
-                          ?.href
+                        linkResolver('serviceweborganization', [
+                          n(
+                            'organizationSlug',
+                            activeLocale === 'is'
+                              ? 'syslumenn'
+                              : 'district-commissioner',
+                          ) as string,
+                        ])?.href
                       }
                       skipTab
                     >
@@ -181,7 +191,15 @@ const HeaderLink: FC<React.PropsWithChildren<HeaderLink>> = ({
       }}
     >
       <Text fontWeight="semiBold" color="white">
-        <a href={linkType ? linkResolver(linkType, slug && [slug]).href : slug}>
+        <a
+          href={
+            linkType
+              ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                linkResolver(linkType, slug && [slug]).href
+              : slug
+          }
+        >
           {typeof children === 'string' ? (
             <Hyphen>{children}</Hyphen>
           ) : (

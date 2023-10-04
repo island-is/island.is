@@ -1,11 +1,12 @@
-import { uuid } from 'uuidv4'
 import { Response } from 'express'
+import { uuid } from 'uuidv4'
 
 import { Logger } from '@island.is/logging'
 
+import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import { nowFactory } from '../../../../factories'
 import { getRulingPdfAsBuffer } from '../../../../formatters'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 import { AwsS3Service } from '../../../aws-s3'
 import { Case } from '../../models/case.model'
 
@@ -27,11 +28,8 @@ describe('LimitedAccessCaseController - Get ruling pdf', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      awsS3Service,
-      logger,
-      limitedAccessCaseController,
-    } = await createTestingCaseModule()
+    const { awsS3Service, logger, limitedAccessCaseController } =
+      await createTestingCaseModule()
     mockAwsS3Service = awsS3Service
     mockLogger = logger
 
@@ -67,7 +65,7 @@ describe('LimitedAccessCaseController - Get ruling pdf', () => {
   describe('AWS S3 pdf returned', () => {
     const caseId = uuid()
     const theCase = { id: caseId, rulingSignatureDate: nowFactory() } as Case
-    const res = ({ end: jest.fn() } as unknown) as Response
+    const res = { end: jest.fn() } as unknown as Response
     const pdf = {}
 
     beforeEach(async () => {
@@ -96,9 +94,7 @@ describe('LimitedAccessCaseController - Get ruling pdf', () => {
     })
 
     it('should info log the failure', () => {
-      expect(
-        mockLogger.info,
-      ).toHaveBeenCalledWith(
+      expect(mockLogger.info).toHaveBeenCalledWith(
         `The ruling for case ${caseId} was not found in AWS S3`,
         { error },
       )
@@ -128,7 +124,7 @@ describe('LimitedAccessCaseController - Get ruling pdf', () => {
   describe('generated pdf returned', () => {
     const caseId = uuid()
     const theCase = { id: caseId, rulingSignatureDate: nowFactory() } as Case
-    const res = ({ end: jest.fn() } as unknown) as Response
+    const res = { end: jest.fn() } as unknown as Response
     const pdf = {}
 
     beforeEach(async () => {

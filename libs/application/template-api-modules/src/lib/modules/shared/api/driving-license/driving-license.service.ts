@@ -17,7 +17,7 @@ import {
 } from '@island.is/api/domains/driving-license-book'
 import {
   DrivingLicenseApi,
-  Juristiction,
+  Jurisdiction,
   QualitySignature,
   Teacher,
 } from '@island.is/clients/driving-license'
@@ -227,18 +227,17 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
         return null
       }
     }
-    const hasQualitySignature = await this.drivingLicenseService.getHasQualitySignature(
-      {
+    const hasQualitySignature =
+      await this.drivingLicenseService.getHasQualitySignature({
         nationalId: auth.nationalId,
-      },
-    )
+      })
     return {
       hasQualitySignature,
     }
   }
 
-  async juristictions(): Promise<Juristiction[]> {
-    return await this.drivingLicenseService.getListOfJuristictions()
+  async jurisdictions(): Promise<Jurisdiction[]> {
+    return await this.drivingLicenseService.getListOfJurisdictions()
   }
 
   private async getDrivingAssessment(
@@ -254,11 +253,10 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
 
     let teacherName: string | null
     if (assessment.nationalIdTeacher) {
-      const teacherLicense = await this.drivingLicenseService.legacyGetCurrentLicense(
-        {
+      const teacherLicense =
+        await this.drivingLicenseService.legacyGetCurrentLicense({
           nationalId: assessment.nationalIdTeacher,
-        },
-      )
+        })
       teacherName = teacherLicense?.name || null
     } else {
       teacherName = null
