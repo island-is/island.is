@@ -3,6 +3,7 @@ import {
   ToastContainer as ToastifyContainer,
   toast as toastify,
   Slide,
+  ToastOptions,
 } from 'react-toastify'
 import cn from 'classnames'
 import { Box } from '../Box/Box'
@@ -25,17 +26,18 @@ const RenderMessage = ({
   type: 'error' | 'success' | 'warning' | 'info'
 }) => {
   const colors = {
-    error: 'red400' as const,
-    success: 'mint400' as const,
-    warning: 'yellow600' as const,
-    info: 'blue400' as const,
-  }
+    error: 'red400',
+    success: 'mint400',
+    warning: 'yellow600',
+    info: 'blue400',
+  } as const
   const icons = {
-    error: 'toasterError' as const,
-    success: 'toasterSuccess' as const,
-    warning: 'toasterWarning' as const,
-    info: 'toasterInfo' as const,
-  }
+    error: 'toasterError',
+    success: 'toasterSuccess',
+    warning: 'toasterWarning',
+    info: 'toasterInfo',
+  } as const
+
   return (
     <Box display="flex" padding={1} alignItems="flexStart">
       <Box flexShrink={0}>
@@ -75,13 +77,26 @@ export const ToastContainer: React.FC<React.PropsWithChildren<ToastProps>> = ({
   )
 }
 
-export const toast = {
-  success: (message: string) =>
-    toastify.success(<RenderMessage type="success" message={message} />),
-  error: (message: string) =>
-    toastify.error(<RenderMessage type="error" message={message} />),
-  info: (message: string) =>
-    toastify.info(<RenderMessage type="info" message={message} />),
-  warning: (message: string) =>
-    toastify.warning(<RenderMessage type="warning" message={message} />),
+type ToastType = 'success' | 'error' | 'info' | 'warning'
+type ToastFunction = (message: string, options?: ToastOptions) => void
+
+type Toast = {
+  [key in ToastType]: ToastFunction
+}
+
+export const toast: Toast = {
+  success: (message, options) =>
+    toastify.success(
+      <RenderMessage type="success" message={message} />,
+      options,
+    ),
+  error: (message, options) =>
+    toastify.error(<RenderMessage type="error" message={message} />, options),
+  info: (message, options) =>
+    toastify.info(<RenderMessage type="info" message={message} />, options),
+  warning: (message, options) =>
+    toastify.warning(
+      <RenderMessage type="warning" message={message} />,
+      options,
+    ),
 }

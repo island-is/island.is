@@ -1,7 +1,32 @@
 {
   "extends": "../../../.eslintrc.json",
   "ignorePatterns": ["!**/*"],
-  "rules": {},
+  "rules": {
+    "simple-import-sort/imports": [
+      "error",
+      {
+        "groups": [
+          // External imports come first.
+          ["^\\w", "@(?!nestjs|island\\.is)"],
+          // Then nestjs packages.
+          ["^@nestjs"],
+          // Then island.is packages.
+          ["^@island\\.is/(?!judicial-system)"],
+          // Then judicial-system packages.
+          ["^@island\\.is/judicial-system"],
+          // Then all other imports in this order: "../", "./", "./strings", "./css"
+          [
+            "^\\.\\.(?!/?$)",
+            "^\\.\\./?$",
+            "^\\./(?=.*/)(?!/?$)",
+            "^\\.(?!/?$)",
+            "^\\./?$"
+          ]
+        ]
+      }
+    ]
+  },
+  "plugins": ["simple-import-sort"],
   "overrides": [
     { "files": ["*.ts", "*.tsx", "*.js", "*.jsx"], "rules": {} },
     { "files": ["*.ts", "*.tsx"], "rules": {} },

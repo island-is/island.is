@@ -1,12 +1,12 @@
-import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
 import {
   CaseAppealDecision,
+  CaseAppealRulingDecision,
+  CaseAppealState,
   CaseDecision,
   CaseState,
   CaseType,
-  CaseAppealState,
-  CaseAppealRulingDecision,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'

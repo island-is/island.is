@@ -21,6 +21,7 @@ export const VehiclesApiPDFProvider: Provider<PdfApi> = {
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-vehicles',
+          organizationSlug: 'samgongustofa',
           autoAuth: idsClientConfig.isConfigured
             ? {
                 mode: 'tokenExchange',
