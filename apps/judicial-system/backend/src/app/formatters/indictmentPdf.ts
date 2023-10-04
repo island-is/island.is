@@ -1,15 +1,17 @@
+import { setLineCap } from 'pdf-lib'
 import PDFDocument from 'pdfkit'
 
 import { FormatMessage } from '@island.is/cms-translations'
+
 import {
   capitalize,
   formatDate,
   lowercase,
 } from '@island.is/judicial-system/formatters'
 
-import { Case } from '../modules/case'
 import { nowFactory } from '../factories'
 import { indictment } from '../messages'
+import { Case } from '../modules/case'
 import {
   addEmptyLines,
   addGiganticHeading,
@@ -19,7 +21,6 @@ import {
   addNormalText,
   setTitle,
 } from './pdfHelpers'
-import { setLineCap } from 'pdf-lib'
 
 // Credit: https://stackoverflow.com/a/41358305
 function roman(num: number) {

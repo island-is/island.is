@@ -1,8 +1,8 @@
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   AuditedAction,
@@ -16,10 +16,10 @@ import type { User } from '@island.is/judicial-system/types'
 
 import { BackendApi } from '../../data-sources'
 import { CreateDefendantInput } from './dto/createDefendant.input'
-import { UpdateDefendantInput } from './dto/updateDefendant.input'
 import { DeleteDefendantInput } from './dto/deleteDefendant.input'
-import { DeleteDefendantResponse } from './models/delete.response'
+import { UpdateDefendantInput } from './dto/updateDefendant.input'
 import { Defendant } from './models/defendant.model'
+import { DeleteDefendantResponse } from './models/delete.response'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver()
