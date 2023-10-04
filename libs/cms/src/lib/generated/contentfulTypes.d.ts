@@ -698,6 +698,52 @@ export interface IErrorPage extends Entry<IErrorPageFields> {
   }
 }
 
+export interface IEventFields {
+  /** Organization */
+  organization: IOrganization
+
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Date */
+  startDate: string
+
+  /** Introduction */
+  introduction: string
+
+  /** Image */
+  image: Asset
+
+  /** Full Width Image In Content */
+  fullWidthImageInContent?: boolean | undefined
+
+  /** Content */
+  content?: Document | undefined
+
+  /** og:image */
+  featuredImage?: Asset | undefined
+}
+
+export interface IEvent extends Entry<IEventFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'event'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IEventSliceFields {
   /** Title */
   title?: string | undefined
@@ -1467,6 +1513,33 @@ export interface IIntroLinkImage extends Entry<IIntroLinkImageFields> {
     contentType: {
       sys: {
         id: 'introLinkImage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ILatestEventSliceFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Organization */
+  organization?: IOrganization | undefined
+}
+
+/** Slice to show latest event entries */
+
+export interface ILatestEventSlice extends Entry<ILatestEventSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'latestEventSlice'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -4012,6 +4085,7 @@ export interface IUrlFields {
     | IProjectPage
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
+    | IOrganizationPage
     | undefined
 
   /** Urls list */
@@ -4064,7 +4138,7 @@ export interface IVacancyFields {
     | 'Sumarstörf'
 
   /** Organization */
-  organization: IOrganization
+  organization?: IOrganization | undefined
 
   /** Locations */
   locations: (
@@ -4077,6 +4151,7 @@ export interface IVacancyFields {
     | 'Suðurland'
     | 'Vestfirðir'
     | 'Suðurnes'
+    | 'Erlendis'
   )[]
 
   /** Job Percentage */
@@ -4321,6 +4396,7 @@ export type CONTENT_TYPE =
   | 'embeddedVideo'
   | 'enhancedAsset'
   | 'errorPage'
+  | 'event'
   | 'eventSlice'
   | 'faqList'
   | 'featured'
@@ -4340,6 +4416,7 @@ export type CONTENT_TYPE =
   | 'hnippTemplate'
   | 'iconBullet'
   | 'introLinkImage'
+  | 'latestEventSlice'
   | 'latestNewsSlice'
   | 'lifeEventPage'
   | 'lifeEventPageListSlice'
