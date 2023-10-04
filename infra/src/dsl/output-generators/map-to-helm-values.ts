@@ -24,7 +24,7 @@ import {
   serializeEnvironmentVariables,
 } from './serialization-helpers'
 
-import { getScaledValue } from './utils'
+import { getScaledValue } from '../../../../libs/shared/utils/src/lib/scale-value'
 
 /**
  * Transforms our definition of a service to a Helm values object
