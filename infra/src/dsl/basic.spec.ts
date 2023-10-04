@@ -4,7 +4,6 @@ import { SerializeSuccess, HelmService } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './upstream-dependencies'
 import { generateOutputOne } from './processing/rendering-pipeline'
-import { getScaledValue } from './output-generators/utils'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
