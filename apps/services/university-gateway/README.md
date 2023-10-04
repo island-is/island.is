@@ -45,14 +45,14 @@ localhost:3380/api/swagger
 yarn nx run services-university-gateway-backend:schemas/build-openapi
 ```
 
-### Scheduler
+### Worker
 
 This service is for running scheduled tasks. Currently, fetching programs and courses from university APIs and adding data to out database.
 
-## Running locally (Scheduler)
+## Running locally (Worker)
 
 You can serve this service locally by running (make sure backend is running):
 
 ```bash
-yarn start services-university-gateway-scheduler
+yarn start services-university-gateway-worker
 ```

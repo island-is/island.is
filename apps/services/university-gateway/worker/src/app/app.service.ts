@@ -17,7 +17,7 @@ export class AppService {
   ) {}
 
   async run() {
-    logger.info('Scheduler starting')
+    logger.info('Worker starting')
 
     const startTime = now()
     let done = false
@@ -75,6 +75,6 @@ export class AppService {
       minutesBetween(startTime, now()) < this.config.timeToLiveMinutes
     )
 
-    logger.info('Scheduler done')
+    logger.info('Worker done')
   }
 }
