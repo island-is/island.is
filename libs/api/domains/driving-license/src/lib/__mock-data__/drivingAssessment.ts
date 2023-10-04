@@ -6,10 +6,10 @@ const getDateOfAssessment = () => {
   return formatISO(nowDate)
 }
 
-const DrivingAssessmentV5 = {
+const DrivingAssessment = {
   dateOfAssessment: getDateOfAssessment(),
   ssn: '0',
   instructorSSN: '2',
 }
 
-export { DrivingAssessmentV5 }
+export default DrivingAssessment

@@ -67,7 +67,6 @@ describe('DrivingLicenseService', () => {
   describe('getDrivingLicense', () => {
     it('should return a license', async () => {
       const response = await service.legacyGetDrivingLicense(MOCK_NATIONAL_ID)
-      console.log('WHAT IS THE RESPONSE HERE?', response)
       expect(response).toMatchObject({
         name: 'Valid Jónsson',
         issued: new Date('2018-05-25T06:43:15.327Z'),

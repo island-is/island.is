@@ -2,7 +2,7 @@ import { rest } from 'msw'
 import ValidLicense from './validLicense.json'
 import ExpiredLicense from './expiredLicense.json'
 import LicenseWithDisqualification from './licenseWithDisqualification.json'
-import { DrivingAssessmentV5 } from './drivingAssessment'
+import DrivingAssessment from './drivingAssessment'
 import Teachers from './teachers.json'
 import type { User } from '@island.is/auth-nest-tools'
 
@@ -129,7 +129,7 @@ export const requestHandlers = [
   rest.get(/api\/drivinglicense\/v5\/drivingassessment/, (req, res, ctx) => {
     const isFound = req.headers.get('jwttoken') !== MOCK_TOKEN_NO_ASSESSMENT
     if (isFound) {
-      return res(ctx.status(200), ctx.json(DrivingAssessmentV5))
+      return res(ctx.status(200), ctx.json(DrivingAssessment))
     } else {
       return res(ctx.status(404), ctx.text('error message from service'))
     }
