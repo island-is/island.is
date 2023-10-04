@@ -16,10 +16,7 @@ interface PropTypes extends FieldBaseProps {
   field: CustomField
 }
 
-function HealthDeclaration({
-  field,
-  application,
-}: PropTypes): JSX.Element {
+function HealthDeclaration({ field, application }: PropTypes): JSX.Element {
   const { formatMessage } = useLocale()
   const {
     setValue,
@@ -29,8 +26,11 @@ function HealthDeclaration({
 
   useEffect(() => {
     const healthDeclarationErrors = getErrorViaPath(errors, 'healthDeclaration')
-    
-    if (Object.keys(errors).length > 0 && Object.values(healthDeclarationErrors)) {
+
+    if (
+      Object.keys(errors).length > 0 &&
+      Object.values(healthDeclarationErrors)
+    ) {
       if (
         Object.values(healthDeclarationErrors).some((error) =>
           Object.keys(error).includes('answer'),

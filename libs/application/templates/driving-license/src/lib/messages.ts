@@ -69,12 +69,12 @@ export const m = defineMessages({
     defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
     description: 'Your user profile information',
   },
-    glassesPrescriptionSubTitle: {
+  glassesPrescriptionSubTitle: {
     id: 'dl.application:glassesPrescription',
-    defaultMessage: 
+    defaultMessage:
       'Til þess að auðvelda umsóknarferlið er sótt gleraugnavottorð frá samgöngustofu',
     description:
-      'In order to facilitate the application process, a glasses certificate is obtained from the transport office'
+      'In order to facilitate the application process, a glasses certificate is obtained from the transport office',
   },
   userProfileInformationSubTitle: {
     id: 'dl.application:userprofile.subTitle',
