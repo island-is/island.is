@@ -96,6 +96,8 @@ import { GetServiceWebPageInput } from './dto/getServiceWebPage.input'
 import { LatestEventsSlice } from './models/latestEventsSlice.model'
 import { Event as EventModel } from './models/event.model'
 import { GetSingleEventInput } from './dto/getSingleEvent.input'
+import { GetEventsInput } from './dto/getEvents.input'
+import { EventList } from './models/eventList.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -426,6 +428,15 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
+  @Query(() => [EventModel])
+  getEvents(@Args('input') input: GetEventsInput): Promise<EventList> {
+    return this.cmsElasticsearchService.getEvents(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
+  }
+
+  @CacheControl(defaultCache)
   @Query(() => [String])
   getNewsDates(@Args('input') input: GetNewsDatesInput): Promise<string[]> {
     return this.cmsElasticsearchService.getNewsDates(
@@ -584,7 +595,7 @@ export class LatestEventsSliceResolver {
 
   @CacheControl(defaultCache)
   @ResolveField(() => [EventModel])
-  async news(
+  async events(
     @Parent() { events: input }: LatestEventsSlice,
   ): Promise<EventModel[]> {
     const eventsList = await this.cmsElasticsearchService.getEvents(

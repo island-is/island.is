@@ -5,6 +5,7 @@ import { SystemMetadata } from '@island.is/shared/types'
 import { ILatestEventsSlice } from '../generated/contentfulTypes'
 import { mapOrganization } from './organization.model'
 import { GetEventsInput } from '../dto/getEvents.input'
+import { Event as EventModel } from './event.model'
 
 @ObjectType()
 export class LatestEventsSlice {
@@ -14,7 +15,7 @@ export class LatestEventsSlice {
   @Field()
   title?: string
 
-  @CacheField(() => [Event])
+  @CacheField(() => [EventModel])
   events!: GetEventsInput
 }
 
