@@ -61,8 +61,6 @@ export class DrivingLicenseApi {
     if (!skirteini || !skirteini.id) {
       return null
     }
-    console.log('GET CURRENT LICENSE V5 RESPONSE')
-    console.log(JSON.stringify(skirteini))
     return skirteini
   }
 
