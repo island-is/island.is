@@ -2,10 +2,10 @@ import { ref, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (services: {
   worker: ServiceBuilder<'university-gateway-worker'>
-}): ServiceBuilder<'services-university-gateway-scheduler'> =>
-  service('services-university-gateway-scheduler')
+}): ServiceBuilder<'services-university-gateway-worker'> =>
+  service('services-university-gateway-worker')
     .namespace('university-gateway')
-    .image('services-university-gateway-scheduler')
+    .image('services-university-gateway-worker')
     .env({
       BACKEND_URL: ref((h) => `http://${h.svc(services.worker)}`),
       TIME_TO_LIVE_MINUTES: '1440',
