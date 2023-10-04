@@ -1703,6 +1703,7 @@ namespaces:
     - 'services-sessions'
     - 'contentful-apps'
     - 'university-gateway-backend'
+    - 'university-gateway'
 portals-admin:
   enabled: true
   env:
@@ -2456,6 +2457,59 @@ services-sessions-worker:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/sessions-worker'
     create: true
     name: 'sessions-worker'
+services-university-gateway-worker:
+  args:
+    - '--no-experimental-fetch'
+    - 'main.js'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    BACKEND_URL: 'http://web-university-gateway-backend.university-gateway-backend.svc.cluster.local'
+    NODE_OPTIONS: '--max-old-space-size=208'
+    SERVERSIDE_FEATURES_ON: ''
+    TIME_TO_LIVE_MINUTES: '1440'
+  grantNamespaces: []
+  grantNamespacesEnabled: false
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 5
+      replicas:
+        max: 1
+        min: 1
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway-worker'
+  namespace: 'university-gateway'
+  pvcs: []
+  replicaCount:
+    default: 1
+    max: 1
+    min: 1
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  schedule: '* * * * *'
+  secrets:
+    BACKEND_ACCESS_TOKEN: '/k8s/university-gateway/BACKEND_ACCESS_TOKEN'
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
 skilavottord-web:
   enabled: true
   env:
