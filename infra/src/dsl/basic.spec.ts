@@ -4,6 +4,7 @@ import { SerializeSuccess, HelmService } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './upstream-dependencies'
 import { generateOutputOne } from './processing/rendering-pipeline'
+import { getScaledValue } from './output-generators/utils'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -103,7 +104,7 @@ describe('Basic serialization', () => {
       DB_NAME: 'api',
       DB_HOST: 'a',
       DB_REPLICAS_HOST: 'a',
-      NODE_OPTIONS: '--max-old-space-size=464',
+      NODE_OPTIONS: '--max-old-space-size=460',
       SERVERSIDE_FEATURES_ON: '',
     })
   })

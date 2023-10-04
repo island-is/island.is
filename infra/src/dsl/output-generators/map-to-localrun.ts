@@ -19,7 +19,7 @@ import {
 } from './serialization-helpers'
 import { getSsmParams } from '../adapters/get-ssm-params'
 import { getPostgresExtensions } from './map-to-helm-values'
-import { getMaxOldSpaceSizeRatio } from './utils'
+import { getScaledValue } from './utils'
 
 /**
  * Transforms our definition of a service to a definition for a local running serivce
@@ -40,7 +40,7 @@ const serializeService = async (
   const result: LocalrunService = {
     env: {
       SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
-      NODE_OPTIONS: `--max-old-space-size=${getMaxOldSpaceSizeRatio(
+      NODE_OPTIONS: `--max-old-space-size=${getScaledValue(
         serviceDef.resources.limits.memory,
       )}`,
     },

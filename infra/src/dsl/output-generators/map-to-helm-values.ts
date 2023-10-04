@@ -24,7 +24,7 @@ import {
   serializeEnvironmentVariables,
 } from './serialization-helpers'
 
-import { getMaxOldSpaceSizeRatio } from './utils'
+import { getScaledValue } from './utils'
 
 /**
  * Transforms our definition of a service to a Helm values object
@@ -58,7 +58,7 @@ const serializeService: SerializeMethod<HelmService> = async (
     },
     env: {
       SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
-      NODE_OPTIONS: `--max-old-space-size=${getMaxOldSpaceSizeRatio(
+      NODE_OPTIONS: `--max-old-space-size=${getScaledValue(
         serviceDef.resources.limits.memory,
       )}`,
     },
