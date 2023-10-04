@@ -30,12 +30,10 @@ export const subSectionOtherCountry = buildSubSection({
           options: [
             {
               label: m.no,
-              subLabel: '',
               value: NO,
             },
             {
               label: m.yes,
-              subLabel: '',
               value: YES,
             },
           ],

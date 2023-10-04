@@ -19,6 +19,7 @@ interface PropTypes extends FieldBaseProps {
 function HealthDeclaration({
   field,
   application,
+  error,
 }: PropTypes): JSX.Element {
   const { formatMessage } = useLocale()
   const {
@@ -29,19 +30,18 @@ function HealthDeclaration({
 
   useEffect(() => {
     const healthDeclarationErrors = getErrorViaPath(errors, 'healthDeclaration')
-    
-    if (Object.keys(errors).length > 0 && Object.values(healthDeclarationErrors)) {
-      if (
-        Object.values(healthDeclarationErrors).some((error) =>
-          Object.keys(error).includes('answer'),
-        )
-      ) {
-        setValue('healthDeclaration.error', true)
-      } else {
-        setValue('healthDeclaration.error', false)
-      }
+
+    if (
+      !!healthDeclarationErrors &&
+      Object.values(healthDeclarationErrors).some((error) =>
+        Object.keys(error).includes('answer'),
+      )
+    ) {
+      setValue('healthDeclaration.error', true)
+    } else {
+      setValue('healthDeclaration.error', false)
     }
-  }, [errors, setValue])
+  }, [error, errors, setValue])
 
   return (
     <GridRow>
