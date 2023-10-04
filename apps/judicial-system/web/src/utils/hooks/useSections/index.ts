@@ -69,7 +69,6 @@ const useSections = (
   const router = useRouter()
   const { features } = useContext(FeatureContext)
   const { getAppealResultText } = useStringHelpers()
-
   const getRestrictionCaseProsecutorSection = (
     workingCase: Case,
     user?: User,
