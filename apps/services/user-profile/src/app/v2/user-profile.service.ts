@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { UserProfile } from '../user-profile/userProfile.model'
 import { InjectModel } from '@nestjs/sequelize'
 import { UserProfileDto } from './dto/user-profileDto'
+import { NoContentException } from '@island.is/nest/problem'
 
 @Injectable()
 export class UserProfileService {
@@ -14,6 +15,10 @@ export class UserProfileService {
     const resp = await this.userProfileModel.findOne({
       where: { nationalId: nationalId },
     })
+
+    if (!resp) {
+      throw new NoContentException()
+    }
 
     return {
       nationalId: resp.nationalId,

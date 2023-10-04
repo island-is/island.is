@@ -14,7 +14,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 
-@UseGuards(IdsUserGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(UserProfileScope.read)
 @ApiTags('user-profile')
 @Controller({
