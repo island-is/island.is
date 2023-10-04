@@ -4,6 +4,7 @@ import { HtmlDocument } from './HTMLDocument'
 import { PdfDocument } from './PdfDocument'
 import { UrlDocument } from './UrlDocment'
 import NoPDF from '../NoPDF/NoPDF'
+import { messages } from '../../utils/messages'
 
 const parseDocmentType = (doc: DocumentDetails) => {
   if (doc.html && doc.html.length > 0) {
@@ -27,8 +28,7 @@ export const DocumentRenderer: React.FC<DocumentRendererProps> = ({
 }) => {
   const type = parseDocmentType(document.document)
 
-  // should we render any message here?
-  if (type === 'unknown') return null
+  if (type === 'unknown') return <NoPDF text={messages.error} />
 
   if (type === 'html') {
     return <HtmlDocument html={document.document.html} />

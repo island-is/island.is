@@ -139,8 +139,6 @@ export const fullScreen = style({
 
 export const wrapper = style({
   maxHeight: `calc(100vh - ${spacing[12]}px)`,
-  // overflowY: 'auto',
-  // overflowX: 'hidden',
 })
 
 export const closeButton = style({

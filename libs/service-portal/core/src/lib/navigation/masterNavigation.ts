@@ -293,10 +293,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
               },
             ],
           },
-          // {
-          //   name: 'Loftbrú', // TESTING ONLY
-          //   path: ServicePortalPath.TransportLowerAirfare,
-          // },
         ],
       },
 

@@ -1,6 +1,9 @@
 import { gql, useMutation } from '@apollo/client'
 import { MailActions } from './types'
 import { useState } from 'react'
+import { toast } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { m } from '@island.is/service-portal/core'
 
 const POST_MAIL_ACTION = gql`
   mutation PostMailActionMutation($input: PostMailActionResolverInput!) {
@@ -13,6 +16,7 @@ const POST_MAIL_ACTION = gql`
 `
 
 export const useSubmitMailAction = (input?: { messageId: string }) => {
+  const { formatMessage } = useLocale()
   const [postMailAction, { data, loading }] = useMutation(POST_MAIL_ACTION)
 
   const [bookmarkSuccess, setBookmarkSuccess] = useState(false)
@@ -35,6 +39,11 @@ export const useSubmitMailAction = (input?: { messageId: string }) => {
         },
       }).then((d) => {
         const actionName = d.data?.postMailAction?.action as MailActions
+
+        if (!d.data?.postMailAction?.success) {
+          toast.error(formatMessage(m.errorTitle))
+          return
+        }
 
         if (actionName === 'bookmark') {
           setBookmarkSuccess(true)
@@ -66,7 +75,7 @@ export const useSubmitMailAction = (input?: { messageId: string }) => {
         }
       })
     } catch (err) {
-      console.error(`submitMailAction error: ${err}`)
+      toast.error(formatMessage(m.errorTitle))
     }
   }
 

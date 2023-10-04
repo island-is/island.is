@@ -549,7 +549,7 @@ export const m = defineMessages({
   financeHeading: {
     id: 'service.portal:finance-heading',
     defaultMessage:
-      'Hér sérðu yfirlit yfir allt sem tengist þínum fjámálum við ríkissjóð og aðrar ríkisreknar stofnanir.',
+      'Hér sérðu yfirlit yfir allt sem tengist þínum fjármálum við ríkissjóð og aðrar ríkisreknar stofnanir.',
   },
   financeDescription: {
     id: 'service.portal:finance-description',
@@ -1133,7 +1133,7 @@ export const m = defineMessages({
   occupationalLicenseTooltip: {
     id: 'service.portal:occupational-license-tooltip',
     defaultMessage:
-      'Ýmsir þjónustuaðilar sjá um hvert starsleyfi fyrir sig, veldu þitt starsleyfi til að sjá þjónustuaðila þess.',
+      'Ýmsir þjónustuaðilar sjá um hvert starfsleyfi fyrir sig, veldu þitt starfsleyfi til að sjá þjónustuaðila þess.',
   },
   workmachineTooltip: {
     id: 'service.portal:workmachine-tooltip',

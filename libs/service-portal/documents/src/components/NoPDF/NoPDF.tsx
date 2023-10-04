@@ -1,10 +1,15 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { Text, Box } from '@island.is/island-ui/core'
 import { EmptyImageSmall } from './EmptyImage'
 import { messages } from '../../utils/messages'
+import { MessageDescriptor } from 'react-intl'
 
-export const NoPDF = () => {
+type DocumentRendererProps = {
+  text?: MessageDescriptor
+}
+
+export const NoPDF: FC<DocumentRendererProps> = ({ text }) => {
   const { formatMessage } = useLocale()
   return (
     <Box
@@ -27,7 +32,7 @@ export const NoPDF = () => {
         style={{ maxWidth: 370 }}
       >
         <Text marginBottom={1} variant="h3" fontWeight="medium">
-          {formatMessage(messages.pickDocument)}
+          {formatMessage(text ?? messages.pickDocument)}
         </Text>
       </Box>
     </Box>
