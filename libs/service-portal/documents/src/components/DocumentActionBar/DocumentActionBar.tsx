@@ -129,8 +129,8 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
                 <Button
                   circle
                   icon="download"
-                  iconType={isBookmarked ? 'filled' : 'outline'}
-                  size="small"
+                  iconType="outline"
+                  size="medium"
                   colorScheme="light"
                 />
               </a>

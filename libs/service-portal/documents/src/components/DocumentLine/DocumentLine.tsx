@@ -38,6 +38,7 @@ interface Props {
   asFrame?: boolean
   selected?: boolean
   bookmarked?: boolean
+  archived?: boolean
 }
 
 const GET_DOCUMENT_BY_ID = gql`
@@ -59,6 +60,7 @@ export const DocumentLine: FC<Props> = ({
   loading,
   asFrame,
   bookmarked,
+  archived,
 }) => {
   const [avatarCheckmark, setAvatarCheckmark] = useState(false)
   const { formatMessage } = useLocale()
@@ -154,7 +156,7 @@ export const DocumentLine: FC<Props> = ({
 
   const unread = !documentLine.opened
   const isBookmarked = bookmarked || bookmarkSuccess
-  const isArchived = archiveSuccess
+  const isArchived = archived || archiveSuccess
 
   return (
     <>

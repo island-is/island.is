@@ -108,7 +108,7 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
               {formatMessage(label)}{' '}
               {tooltip && (
                 <Tooltip
-                  placement="right"
+                  placement="top"
                   fullWidth={tooltipFull}
                   text={tooltip}
                 />

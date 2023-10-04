@@ -453,6 +453,7 @@ export const ServicePortalDocuments = () => {
                     onClick={setActiveDocument}
                     active={doc.id === activeDocument?.id}
                     bookmarked={!!doc.bookmarked}
+                    archived={activeArchive}
                     refetchInboxItems={() => {
                       if (refetch) {
                         refetch({
