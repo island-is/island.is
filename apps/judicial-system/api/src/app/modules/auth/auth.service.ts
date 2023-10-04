@@ -1,16 +1,19 @@
 import fetch from 'isomorphic-fetch'
 import jwksClient from 'jwks-rsa'
 import jwt from 'jsonwebtoken'
+import { uuid } from 'uuidv4'
 
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
-import type { User } from '@island.is/judicial-system/types'
+import { UserRole, type User } from '@island.is/judicial-system/types'
 
 import { authModuleConfig } from './auth.config'
+import { DefenderService } from '../defender/defender.service'
 
 @Injectable()
 export class AuthService {
   constructor(
+    private readonly defenderService: DefenderService,
     @Inject(authModuleConfig.KEY)
     private readonly config: ConfigType<typeof authModuleConfig>,
   ) {}
@@ -31,18 +34,46 @@ export class AuthService {
   }
 
   async findDefender(nationalId: string): Promise<User | undefined> {
-    const res = await fetch(
-      `${this.config.backendUrl}/api/cases/limitedAccess/defender?nationalId=${nationalId}`,
-      {
-        headers: { authorization: `Bearer ${this.config.secretToken}` },
-      },
-    )
-
-    if (!res.ok) {
-      return undefined
+    try {
+      const res = await fetch(
+        `${this.config.backendUrl}/api/cases/limitedAccess/defender?nationalId=${nationalId}`,
+        {
+          headers: { authorization: `Bearer ${this.config.secretToken}` },
+        },
+      )
+      if (res.ok) {
+        return await res.json()
+      }
+    } catch (error) {
+      console.warn('Defender not found', error)
     }
 
-    return await res.json()
+    try {
+      const lawyerRegistryInfo = await this.defenderService.getLawyer(
+        nationalId,
+      )
+      if (lawyerRegistryInfo && lawyerRegistryInfo.nationalId === nationalId) {
+        return {
+          // Reason for this is so we trust the nationalId from the authentication provider
+          // just in case the lawyer registry does something strange, we don't want to create
+          // a user with a nationalId that is not the same as the one from the authentication provider
+          nationalId: nationalId,
+          name: lawyerRegistryInfo.name,
+          role: UserRole.DEFENDER,
+          email: lawyerRegistryInfo.email,
+          mobileNumber: lawyerRegistryInfo.phoneNr,
+          active: true,
+          title: 'verjandi',
+          id: uuid(),
+          created: new Date().toString(),
+          modified: new Date().toString(),
+        } as User
+      }
+    } catch (error) {
+      console.warn('Defender not found in lawyer registry', error)
+    }
+
+    return undefined
   }
 
   async fetchIdsToken(code: string, codeVerifier: string) {
