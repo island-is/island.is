@@ -8,7 +8,7 @@ import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
 import { getLabel } from '../utils/translations'
 import { Injectable } from '@nestjs/common'
-import { DriversLicense } from '@island.is/clients/driving-license'
+import { DriverLicenseDto as DriversLicense } from '@island.is/clients/driving-license'
 import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
@@ -22,8 +22,8 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
 
     const typedPayload = payload as DriversLicense
 
-    const expired = typedPayload.expires
-      ? !isAfter(new Date(typedPayload.expires), new Date())
+    const expired = typedPayload.dateValidTo
+      ? !isAfter(new Date(typedPayload.dateValidTo), new Date())
       : null
 
     const label = labels?.labels
@@ -41,27 +41,25 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
       {
         type: GenericLicenseDataFieldType.Value,
         label: getLabel('fullName', locale, label),
-        value: typedPayload.name,
+        value: typedPayload.name ?? '',
       },
       {
         type: GenericLicenseDataFieldType.Value,
         label: getLabel('publisher', locale, label),
-        // todo:
-        // value: typedPayload.location ?? '',
-        value: '',
+        value: '', // todo
       },
       {
         type: GenericLicenseDataFieldType.Value,
         label: getLabel('publishedDate', locale, label),
-        value: typedPayload.issued
-          ? new Date(typedPayload.issued).toISOString()
+        value: typedPayload.publishDate
+          ? new Date(typedPayload.publishDate).toISOString()
           : '',
       },
       {
         type: GenericLicenseDataFieldType.Value,
         label: getLabel('validTo', locale, label),
-        value: typedPayload.expires
-          ? new Date(typedPayload.expires).toISOString()
+        value: typedPayload.dateValidTo
+          ? new Date(typedPayload.dateValidTo).toISOString()
           : '',
       },
       {
@@ -69,24 +67,24 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
         label: getLabel('classesOfRights', locale, label),
         fields: (typedPayload.categories ?? []).map((field) => ({
           type: GenericLicenseDataFieldType.Category,
-          name: field.name ?? '',
+          name: field.nr ?? '',
           label: '',
           fields: [
             {
               type: GenericLicenseDataFieldType.Value,
               label: getLabel('expiryDate', locale, label),
-              value: field.expires ? field.expires.toISOString() : '',
+              value: field.dateTo ? field.dateTo.toISOString() : '',
             },
             {
               type: GenericLicenseDataFieldType.Value,
               label: getLabel('publishedDate', locale, label),
-              value: field.issued ? field.issued.toISOString() : '',
+              value: field.publishDate ? field.publishDate.toISOString() : '',
             },
-            field.comments
+            field.comment
               ? {
                   type: GenericLicenseDataFieldType.Value,
                   label: getLabel('comment', locale, label),
-                  value: field.comments ?? '',
+                  value: field.comment ?? '',
                 }
               : undefined,
           ].filter(isDefined),
@@ -100,7 +98,7 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
       metadata: {
         licenseNumber: typedPayload.id?.toString() ?? '',
         expired,
-        expireDate: typedPayload.expires?.toISOString() ?? undefined,
+        expireDate: typedPayload.dateValidTo?.toISOString() ?? undefined,
         links: [
           {
             label: getLabel('renewDrivingLicense', locale, label),
