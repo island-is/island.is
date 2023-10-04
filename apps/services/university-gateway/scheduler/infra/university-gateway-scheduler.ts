@@ -1,11 +1,11 @@
 import { ref, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (services: {
-  worker: ServiceBuilder<'university-gateway-worker'>
-}): ServiceBuilder<'services-university-gateway-worker'> =>
-  service('services-university-gateway-worker')
+  worker: ServiceBuilder<'university-gateway-scheduler'>
+}): ServiceBuilder<'services-university-gateway-scheduler'> => {
+  return service('services-university-gateway-scheduler')
     .namespace('university-gateway')
-    .image('services-university-gateway-worker')
+    .image('services-university-gateway-scheduler')
     .env({
       BACKEND_URL: ref((h) => `http://${h.svc(services.worker)}`),
       TIME_TO_LIVE_MINUTES: '1440',
@@ -22,3 +22,5 @@ export const serviceSetup = (services: {
       staging: { schedule: '0 2 * * *' },
       prod: { schedule: '0 2 * * *' },
     })
+
+}
