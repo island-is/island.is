@@ -8,9 +8,6 @@ import {
 } from '@island.is/clients/smartsolutions'
 import { PassVerificationData, Result } from '../licenseClient.type'
 
-/** Category to attach each log message to */
-//const LOG_CATEGORY = 'disability-license-service'
-
 @Injectable()
 export abstract class BaseLicenseUpdateClient {
   constructor(
