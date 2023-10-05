@@ -105,8 +105,7 @@ export {
   offenseSubstances,
 } from './lib/indictmentCount'
 
-export { Lawyer, mapToLawyer } from './lib/defender'
-export type { LawyerFull } from './lib/defender'
+export { type LawyerFull, type Lawyer, mapToLawyer } from './lib/defender'
 
 export type { SubstanceMap } from './lib/indictmentCount'
 
