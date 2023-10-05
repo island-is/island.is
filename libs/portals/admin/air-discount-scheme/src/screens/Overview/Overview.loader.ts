@@ -25,12 +25,7 @@ export const transformDate = (val: string, start: boolean) => {
 
     return start ? startOfDay(value) : endOfDay(value)
   }
-
-  if (isValidDate(new Date(val))) {
-    return val
-  }
-  const value = parseDate(val, 'dd.MM.yyyy', new Date())
-  return start ? startOfDay(value) : endOfDay(value)
+  return val
 }
 
 const schema = z.object({
@@ -75,9 +70,8 @@ export type OverviewLoaderReturnType = {
 
 export const overviewLoader: WrappedLoaderFn = ({ client }) => {
   return async ({ request }): Promise<OverviewLoaderReturnType> => {
-    console.log(request)
     const input = validateSearchParams({ request, schema })
-    console.log(input)
+
     const flightLegs = await client.query<
       FlightLegsQuery,
       FlightLegsQueryVariables
