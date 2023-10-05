@@ -22,7 +22,6 @@ const TODAY = new Date()
 export const transformDate = (val: string, start: boolean) => {
   if (isValidDate(new Date(val)) && val.indexOf('.') === 2) {
     const value = parseDate(val, 'dd.MM.yyyy', new Date())
-
     return start ? startOfDay(value) : endOfDay(value)
   }
   return val
