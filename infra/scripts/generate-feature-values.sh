@@ -8,4 +8,3 @@ export PATH=$ROOT/node_modules/.bin:$PATH
 
 cd "$ROOT"
 node -r esbuild-register "$ROOT"/src/feature-env.ts "$@"
-cd -
