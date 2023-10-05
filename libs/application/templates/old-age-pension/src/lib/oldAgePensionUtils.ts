@@ -29,10 +29,10 @@ import * as kennitala from 'kennitala'
 import addYears from 'date-fns/addYears'
 import addMonths from 'date-fns/addMonths'
 import addDays from 'date-fns/addDays'
-import { CombinedResidenceHistory, Employer, ChildPensionRow } from '../types'
+import { CombinedResidenceHistory, Employer, ChildPensionRow   } from '../types'
 
 interface FileType {
-  key: string
+  key: string  
   name: string
 }
 
@@ -182,6 +182,54 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'paymentInfo.taxLevel',
   ) as TaxLevelOptions
 
+
+  const additionalFiles = getValueViaPath(
+    answers,
+    'fileUploadAdditionalFiles.additionalDocuments',
+  ) as FileType[]
+
+  const pensionFiles  = getValueViaPath(
+    answers,
+    'fileUploadEarlyPenFisher.pension',
+  ) as FileType[]
+
+  const fishermenFiles = getValueViaPath(
+    answers,
+    'fileUploadEarlyPenFisher.fishermen',
+  ) as FileType[]
+
+  const selfEmployedFiles = getValueViaPath(
+    answers,
+    'employment.selfEmployedAttachment',
+  ) as FileType[]
+
+  const earlyRetirementFiles = getValueViaPath(
+    answers,
+    'fileUploadEarlyPenFisher.earlyRetirement',
+  ) as FileType[]
+
+  const leaseAgreementFiles = getValueViaPath(
+    answers,
+    'fileUploadHouseholdSupplement.leaseAgreement',
+  ) as FileType[]
+
+  const schoolConfirmationFiles = getValueViaPath(
+    answers,
+    'fileUploadHouseholdSupplement.schoolConfirmation',
+  ) as FileType[]
+
+  const maintenanceFiles = getValueViaPath(
+    answers,
+    'fileUploadChildPension.maintenance',
+  ) as FileType[]
+
+  const notLivesWithApplicantFiles = getValueViaPath(
+    answers,
+    'fileUploadChildPension.notLivesWithApplicant',
+  ) as FileType[]
+
+
+
   return {
     pensionFundQuestion,
     applicationType,
@@ -207,6 +255,15 @@ export function getApplicationAnswers(answers: Application['answers']) {
     personalAllowanceUsage,
     spouseAllowanceUsage,
     taxLevel,
+    additionalFiles,
+    pensionFiles,
+    fishermenFiles,
+    selfEmployedFiles,
+    earlyRetirementFiles,
+    leaseAgreementFiles,
+    schoolConfirmationFiles,
+    maintenanceFiles,
+    notLivesWithApplicantFiles
   }
 }
 
@@ -565,6 +622,10 @@ export function getAttachments(application: Application) {
       AttachmentTypes.ADDITIONAL_DOCUMENTS,
     )
   }
+
+
+
+  console.log('GOT ATTACHMENTS', attachments)
 
   return attachments
 }

@@ -34,9 +34,5 @@ export class SocialInsuranceAdministrationClientService {
       '-------------------getStatus Begin #45----------------------------',
     )
     return await this.statusAPIWithAuth(user).getStatus()
-
-    console.log(
-      '-------------------getStatus DONE #45 ----------------------------',
-    )
   }
 }

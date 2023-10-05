@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 
-import { ApplicationTypes } from '@island.is/application/types'
+import { Application, ApplicationTypes } from '@island.is/application/types'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -12,6 +12,10 @@ import {
   HelloOddurApi,
   SocialInsuranceAdministrationClientService,
 } from '@island.is/clients/social-insurance-administration'
+import { transformApplicationToOldAgePensionDTO } from './old-age-pension-utils'
+import { getValueViaPath } from '@island.is/application/core'
+import { S3 } from 'aws-sdk'
+import { getApplicationAnswers } from '@island.is/application/templates/old-age-pension'
 
 interface customError {
   type: string
@@ -21,12 +25,18 @@ interface customError {
   errors: Record<string, string[]>
 }
 
+export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
+
 @Injectable()
 export class OldAgePensionService extends BaseTemplateApiService {
+  s3 = new S3()
+
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private siaClientService: SocialInsuranceAdministrationClientService,
     private helloOddurApi: HelloOddurApi,
+    @Inject(APPLICATION_ATTACHMENT_BUCKET)
+    private readonly attachmentBucket: string,
   ) {
     super(ApplicationTypes.OLD_AGE_PENSION)
   }
@@ -38,6 +48,166 @@ export class OldAgePensionService extends BaseTemplateApiService {
 
     return {
       message: Object.entries(e.errors).map(([, values]) => values.join(', ')),
+    }
+  }
+
+  private async initFiles(
+    application: Application,
+    id: string,
+    type: string,
+    documents: any[],
+  ): Promise<any[]> {
+    const attachments: any[] = []
+
+    for (let i = 0; i <= documents.length - 1; i++) {
+      const pdf = await this.getPdf(application, i, id)
+      attachments.push({
+        name: documents[i].name,
+        type: type,
+        file: pdf,
+      })
+    }
+
+    return attachments
+  }
+
+  // TODO: Replace any with attachment types
+  //private async getAttachments(application: Application): Promise<Attachment[]> {
+  //const attachments: Attachment[] = []
+
+  private async getAttachments(application: Application): Promise<any> {
+    const {
+      additionalFiles,
+      pensionFiles,
+      fishermenFiles,
+      selfEmployedFiles,
+      earlyRetirementFiles,
+      leaseAgreementFiles,
+      schoolConfirmationFiles,
+      maintenanceFiles,
+      notLivesWithApplicantFiles,
+    } = getApplicationAnswers(application.answers)
+
+    const uploads = {
+      childPension: [] as any,
+      sailorPension: [] as any,
+      additional: [] as any,
+      householdSupplement: [] as any,
+      pension: [] as any,
+      halfOldAgePension: [] as any,
+      earlyRetirement: [] as any,
+    }
+
+    if (additionalFiles) {
+      uploads.additional = await this.initFiles(
+        application,
+        'fileUploadAdditionalFiles.additionalDocuments',
+        'other',
+        additionalFiles,
+      )
+    }
+
+    if (pensionFiles) {
+      uploads.pension = await this.initFiles(
+        application,
+        'fileUploadEarlyPenFisher.pension',
+        'pension',
+        pensionFiles,
+      )
+    }
+
+    if (fishermenFiles) {
+      uploads.sailorPension = await this.initFiles(
+        application,
+        'fileUploadEarlyPenFisher.fishermen',
+        'sailor',
+        fishermenFiles,
+      )
+    }
+
+    if (leaseAgreementFiles) {
+      uploads.householdSupplement = await this.initFiles(
+        application,
+        'fileUploadHouseholdSupplement.leaseAgreement',
+        'leaseAgreement',
+        leaseAgreementFiles,
+      )
+    }
+
+    if (schoolConfirmationFiles) {
+      uploads.householdSupplement.push(
+        ...(await this.initFiles(
+          application,
+          'fileUploadHouseholdSupplement.schoolConfirmation',
+          'schoolConfirmation',
+          schoolConfirmationFiles,
+        )),
+      )
+    }
+
+    if (maintenanceFiles) {
+      uploads.childPension = await this.initFiles(
+        application,
+        'fileUploadChildPension.maintenance',
+        'maintenance',
+        maintenanceFiles,
+      )
+    }
+
+    if (notLivesWithApplicantFiles) {
+      uploads.childPension.push(
+        ...(await this.initFiles(
+          application,
+          'fileUploadChildPension.notLivesWithApplicant',
+          'childSupport',
+          notLivesWithApplicantFiles,
+        )),
+      )
+    }
+
+    if (selfEmployedFiles) {
+      uploads.halfOldAgePension = await this.initFiles(
+        application,
+        'employment.selfEmployedAttachment',
+        'selfEmployed',
+        selfEmployedFiles,
+      )
+    }
+
+    if (earlyRetirementFiles) {
+      uploads.earlyRetirement = await this.initFiles(
+        application,
+        'fileUploadEarlyPenFisher.earlyRetirement',
+        'earlyRetirement',
+        earlyRetirementFiles,
+      )
+    }
+
+    return uploads
+  }
+
+  async getPdf(application: Application, index = 0, fileUpload: string) {
+    try {
+      const filename = getValueViaPath(
+        application.answers,
+        fileUpload + `[${index}].key`,
+      )
+
+      const Key = `${application.id}/${filename}`
+
+      const file = await this.s3
+        .getObject({ Bucket: this.attachmentBucket, Key })
+        .promise()
+      const fileContent = file.Body as Buffer
+
+      if (!fileContent) {
+        throw new Error('File content was undefined')
+      }
+
+      return fileContent.toString('base64')
+    } catch (e) {
+      this.logger.error('Cannot get ' + fileUpload + ' attachment', { e })
+      throw new Error('Failed to get the ' + fileUpload + ' attachment')
     }
   }
 
@@ -93,11 +263,14 @@ export class OldAgePensionService extends BaseTemplateApiService {
     params = undefined,
   }: TemplateApiModuleActionProps) {
     try {
+      console.log('-------------- OLD AGE  sendApplication  -----------------')
 
-      console.log('-------------- OLGD AGE  sendApplication  -----------------')
+      const attachments = await this.getAttachments(application)
 
-
-
+      const oldAgePensionDTO = transformApplicationToOldAgePensionDTO(
+        application,
+        attachments,
+      )
 
       /*const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
         application,
@@ -109,11 +282,8 @@ export class OldAgePensionService extends BaseTemplateApiService {
 
 */
 
-
-
-      console.log(application.answers)
-      console.log(' XXXXXXXXXXXXXXXXXXXXXXXXXXXX')
-
+      console.log(' !!!!!!!!!!!!!! DATA FOR TR   !!!!!!!!!!!!!!!!!!')
+      console.log(oldAgePensionDTO)
 
       const response = undefined // await this.siaClientService.()
 
