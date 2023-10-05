@@ -134,6 +134,8 @@ import { GraphQLConfig } from './graphql.config'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
 import { MMSClientConfig } from '@island.is/clients/mms'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
+//import { AosahModule } from '@island.is/api/domains/aosah'
+import { AosahClientConfig } from '@island.is/clients/aosah/transfer-of-machine-ownership'
 
 const environment = getConfig
 
@@ -277,6 +279,7 @@ const environment = getConfig
     WorkMachinesModule,
     SessionsModule,
     AuthAdminModule,
+    //AosahModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -338,6 +341,7 @@ const environment = getConfig
         RskRelationshipsClientConfig,
         AircraftRegistryClientConfig,
         MMSClientConfig,
+        AosahClientConfig,
       ],
     }),
   ],

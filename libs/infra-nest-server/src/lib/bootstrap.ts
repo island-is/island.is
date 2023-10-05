@@ -6,7 +6,8 @@ import bodyParser from 'body-parser'
 import { INestApplication, ValidationPipe } from '@nestjs/common'
 import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
 import yaml from 'js-yaml'
-import * as yargs from 'yargs'
+//import * as yargs from 'yargs'
+const yargs = require('yargs');
 import * as fs from 'fs'
 import { NestExpressApplication } from '@nestjs/platform-express'
 

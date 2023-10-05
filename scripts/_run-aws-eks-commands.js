@@ -8,7 +8,7 @@ const getCredentials = async (profile) => {
   return defaultProvider({ profile })().catch((err) => {
     if (err.name === 'CredentialsProviderError') {
       console.error(
-        'Could not load AWS credentials from any providers. Did you forget to configure environment variables, aws profile or run `aws sso login`?',
+        `Could not load AWS credentials from any providers. Did you forget to configure environment variables, aws profile or run aws sso login ${err}?`,
       )
     } else {
       console.error(err)

@@ -1,4 +1,5 @@
-import yargs from 'yargs'
+//import yargs from 'yargs'
+const yargs = require('yargs')
 
 import { createApp } from '@island.is/infra-nest-server'
 

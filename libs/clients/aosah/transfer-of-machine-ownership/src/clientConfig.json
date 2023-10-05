@@ -1,0 +1,533 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Vinnuvélauppfletting",
+    "description": "Vefþjónusta til þess að fletta upp á vinnuvélum.",
+    "contact": {
+      "name": "Ut teymi vinnueftirlits",
+      "email": "ut@vinnueftirlit.is"
+    },
+    "version": "v1",
+    "x-pricing": "free",
+    "x-category": "official",
+    "x-links": { "responsibleParty ": "https://www.vinnueftirlit.is" }
+  },
+  "servers": [{ "url": "/vinnuvelar-token" }],
+  "paths": {
+    "/api/Machines": {
+      "get": {
+        "tags": ["Machines"],
+        "summary": "Endpoint that returns Machines",
+        "parameters": [
+          {
+            "name": "searchQuery",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          { "name": "OrderBy", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "ShowDeregisteredMachines",
+            "in": "query",
+            "schema": { "type": "boolean" }
+          },
+          {
+            "name": "supervisorRegistered",
+            "in": "query",
+            "schema": { "type": "boolean" }
+          },
+          {
+            "name": "onlyInOwnerChangeProcess",
+            "in": "query",
+            "schema": { "type": "boolean" }
+          },
+          {
+            "name": "onlyShowOwnedMachines",
+            "in": "query",
+            "schema": { "type": "boolean" }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "",
+            "schema": { "type": "string", "default": "is" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "X-Pagination": {
+                "description": "Paging info",
+                "schema": {
+                  "type": "string",
+                  "description": "Paging info",
+                  "format": "{\"totalCount\":6,\"pageSize\":10,\"currentPage\":1,\"totalPages\":1}"
+                }
+              }
+            },
+            "content": {
+              "application/vnd.ver.machines.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MachinesFriendlyHateaosDto"
+                }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MachinesFriendlyHateaosDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MachinesFriendlyHateaosDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/vnd.ver.machines.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/vnd.ver.machines.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/vnd.ver.machines.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/vnd.ver.machines.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "422": {
+            "description": "Client Error",
+            "content": {
+              "application/vnd.ver.machines.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/vnd.ver.machines.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Machines/{Id}": {
+      "get": {
+        "tags": ["Machines"],
+        "operationId": "GetMachine",
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "schema": { "type": "string", "default": "is" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/vnd.ver.machine.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/MachineHateoasDto" }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/MachineHateoasDto" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MachineHateoasDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/vnd.ver.machine.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/vnd.ver.machine.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/vnd.ver.machine.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/vnd.ver.machine.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "422": {
+            "description": "Client Error",
+            "content": {
+              "application/vnd.ver.machine.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/vnd.ver.machine.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MachinesDocument": {
+      "get": {
+        "tags": ["MachinesDocument"],
+        "summary": "Returns a list of machines as a file.",
+        "operationId": "Excel",
+        "parameters": [
+          {
+            "name": "fileType",
+            "in": "query",
+            "description": "The filetype to return. Accepts \"excel\" and \"csv\"",
+            "schema": { "type": "string", "default": "excel" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/octet-stream": {
+                "schema": { "type": "string", "format": "binary" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/octet-stream": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/octet-stream": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/octet-stream": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/octet-stream": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Openapi": {
+      "get": {
+        "tags": ["Openapi"],
+        "responses": { "200": { "description": "Success" } }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LabelDto": {
+        "type": "object",
+        "properties": {
+          "columnName": { "type": "string", "nullable": true },
+          "displayTitle": { "type": "string", "nullable": true },
+          "tooltip": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "LinkDtoWithDisplayTitle": {
+        "type": "object",
+        "properties": {
+          "href": { "type": "string", "nullable": true },
+          "rel": { "type": "string", "nullable": true },
+          "method": { "type": "string", "nullable": true },
+          "displayTitle": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "MachineFriendlyDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "registrationNumber": { "type": "string", "nullable": true },
+          "type": { "type": "string", "nullable": true },
+          "owner": { "type": "string", "nullable": true },
+          "supervisor": { "type": "string", "nullable": true },
+          "status": { "type": "string", "nullable": true },
+          "dateLastInspection": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "MachineHateoasDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "registrationNumber": { "type": "string", "nullable": true },
+          "type": { "type": "string", "nullable": true },
+          "status": { "type": "string", "nullable": true },
+          "category": { "type": "string", "nullable": true },
+          "subCategory": { "type": "string", "nullable": true },
+          "productionYear": { "type": "integer", "format": "int32" },
+          "registrationDate": { "type": "string", "nullable": true },
+          "ownerNumber": { "type": "string", "nullable": true },
+          "productionNumber": { "type": "string", "nullable": true },
+          "productionCountry": { "type": "string", "nullable": true },
+          "licensePlateNumber": { "type": "string", "nullable": true },
+          "importer": { "type": "string", "nullable": true },
+          "insurer": { "type": "string", "nullable": true },
+          "ownerName": { "type": "string", "nullable": true },
+          "ownerNationalId": { "type": "string", "nullable": true },
+          "ownerAddress": { "type": "string", "nullable": true },
+          "ownerPostcode": { "type": "string", "nullable": true },
+          "supervisorName": { "type": "string", "nullable": true },
+          "supervisorNationalId": { "type": "string", "nullable": true },
+          "supervisorAddress": { "type": "string", "nullable": true },
+          "supervisorPostcode": { "type": "string", "nullable": true },
+          "_links": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/LinkDtoWithDisplayTitle" },
+            "nullable": true
+          },
+          "_labels": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/LabelDto" },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MachinesFriendlyHateaosDto": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MachineFriendlyDto" },
+            "nullable": true
+          },
+          "_links": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/LinkDtoWithDisplayTitle" },
+            "nullable": true
+          },
+          "_labels": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/LabelDto" },
+            "nullable": true
+          },
+          "_pagination": { "$ref": "#/components/schemas/PaginationDto" }
+        },
+        "additionalProperties": false
+      },
+      "PaginationDto": {
+        "type": "object",
+        "properties": {
+          "totalCount": { "type": "integer", "format": "int32" },
+          "pageSize": { "type": "integer", "format": "int32" },
+          "currentPage": { "type": "integer", "format": "int32" },
+          "totalPages": { "type": "integer", "format": "int32" }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": {}
+      },
+      "ValidationProblemDetails": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "nullable": true
+          },
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": {}
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "JWT Token",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "security": [{ "Bearer": [] }]
+}
