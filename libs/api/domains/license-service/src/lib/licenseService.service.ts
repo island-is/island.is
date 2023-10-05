@@ -148,7 +148,9 @@ export class LicenseServiceService {
     )
 
     if (!license || !licenseService) {
-      this.logger.warn(`Invalid license type. type: ${licenseType}`)
+      this.logger.error(`Invalid license type. type: ${licenseType}`, {
+        category: LOG_CATEGORY,
+      })
       return null
     }
 
@@ -166,7 +168,9 @@ export class LicenseServiceService {
       const mapper = await this.licenseMapperFactory(licenseType)
 
       if (!mapper) {
-        this.logger.warn('Service failure. No mapper created')
+        this.logger.warn('Service failure. No mapper created', {
+          category: LOG_CATEGORY,
+        })
         return null
       }
 
@@ -214,7 +218,9 @@ export class LicenseServiceService {
     )
 
     if (!client) {
-      this.logger.warn(`Invalid license type. type: ${licenseType}`)
+      this.logger.warn(`Invalid license type. type: ${licenseType}`, {
+        category: LOG_CATEGORY,
+      })
       return null
     }
 
@@ -239,7 +245,9 @@ export class LicenseServiceService {
     )
 
     if (!client) {
-      this.logger.warn(`Invalid license type. type: ${licenseType}`)
+      this.logger.warn(`Invalid license type. type: ${licenseType}`, {
+        category: LOG_CATEGORY,
+      })
       return null
     }
 
