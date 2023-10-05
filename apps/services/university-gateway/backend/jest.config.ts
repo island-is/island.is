@@ -16,6 +16,6 @@ export default {
       },
     ],
   },
-  displayName: 'university-gateway-backend',
+  displayName: 'services-university-gateway-backend',
   testEnvironment: 'node',
 }

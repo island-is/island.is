@@ -1,8 +1,8 @@
 import { service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 
-export const serviceSetup = (): ServiceBuilder<'university-gateway-backend'> =>
-  service('university-gateway-backend')
-    .namespace('university-gateway-backend')
+export const serviceSetup = (): ServiceBuilder<'services-university-gateway-backend'> =>
+  service('services-university-gateway-backend')
+    .namespace('university-gateway')
     .secrets({
       AUTH_JWT_SECRET: '/k8s/university-gateway/AUTH_JWT_SECRET',
       BACKEND_ACCESS_TOKEN: '/k8s/university-gateway/BACKEND_ACCESS_TOKEN',

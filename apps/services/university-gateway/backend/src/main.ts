@@ -5,7 +5,7 @@ import { openApi } from './openApi'
 
 bootstrap({
   appModule: AppModule,
-  name: 'university-gateway-backend',
+  name: 'services-university-gateway-backend',
   port: 3380,
   swaggerPath: '/api/swagger',
   openApi,

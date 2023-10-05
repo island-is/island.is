@@ -1,7 +1,7 @@
 import { ref, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (services: {
-  backend: ServiceBuilder<'university-gateway-backend'>
+  backend: ServiceBuilder<'services-university-gateway-backend'>
 }): ServiceBuilder<'services-university-gateway-worker'> => {
   return service('services-university-gateway-worker')
     .namespace('university-gateway')
