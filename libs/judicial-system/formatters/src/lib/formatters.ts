@@ -1,4 +1,4 @@
-import { format, parseISO, isValid } from 'date-fns' // eslint-disable-line no-restricted-imports
+import { format, isValid, parseISO } from 'date-fns' // eslint-disable-line no-restricted-imports
 // Importing 'is' directly from date-fns/locale/is has caused unexpected problems
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
 import _uniq from 'lodash/uniq'
@@ -6,11 +6,11 @@ import _uniq from 'lodash/uniq'
 import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
-  Gender,
   CaseType,
-  isRestrictionCase,
+  Gender,
   IndictmentSubtype,
   IndictmentSubtypeMap,
+  isRestrictionCase,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {

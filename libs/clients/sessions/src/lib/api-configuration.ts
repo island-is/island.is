@@ -10,6 +10,7 @@ export const ApiConfiguration = {
     return new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-sessions-api',
+        organizationSlug: 'stafraent-island',
       }),
       basePath: config.basePath,
     })

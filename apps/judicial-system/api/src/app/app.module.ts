@@ -1,33 +1,34 @@
-import { Module } from '@nestjs/common'
-import { GraphQLModule } from '@nestjs/graphql'
 import { ApolloDriver } from '@nestjs/apollo'
+import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
+import { GraphQLModule } from '@nestjs/graphql'
 
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { ProblemModule } from '@island.is/nest/problem'
-import { SharedAuthModule } from '@island.is/judicial-system/auth'
+
 import {
   AuditTrailModule,
   auditTrailModuleConfig,
 } from '@island.is/judicial-system/audit-trail'
+import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../environments'
 import { BackendApi } from './data-sources/backend'
+import { CaseListModule } from './modules/caseList/caseList.module'
 import {
   AuthModule,
-  UserModule,
-  CaseModule,
-  FileModule,
-  InstitutionModule,
-  FeatureModule,
-  PoliceModule,
-  DefendantModule,
-  IndictmentCountModule,
-  fileModuleConfig,
   authModuleConfig,
+  CaseModule,
+  DefendantModule,
+  FeatureModule,
   featureModuleConfig,
+  FileModule,
+  fileModuleConfig,
+  IndictmentCountModule,
+  InstitutionModule,
+  PoliceModule,
+  UserModule,
 } from './modules'
-import { ConfigModule } from '@nestjs/config'
-import { CaseListModule } from './modules/caseList/caseList.module'
 
 const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'

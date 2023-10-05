@@ -1,18 +1,20 @@
-import { uuid } from 'uuidv4'
-import fetch from 'node-fetch'
-import { Base64 } from 'js-base64'
 import { Agent } from 'https'
+import { Base64 } from 'js-base64'
+import fetch from 'node-fetch'
+import { uuid } from 'uuidv4'
 
 import { ConfigType } from '@island.is/nest/config'
 import {
   createXRoadAPIPath,
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
+
 import { CaseState, CaseType, User } from '@island.is/judicial-system/types'
+
+import { createTestingPoliceModule } from './createTestingPoliceModule'
 
 import { randomDate } from '../../../test'
 import { policeModuleConfig } from '../police.config'
-import { createTestingPoliceModule } from './createTestingPoliceModule'
 
 jest.mock('node-fetch')
 

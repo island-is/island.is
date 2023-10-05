@@ -1,17 +1,19 @@
 import { uuid } from 'uuidv4'
 
 import { EmailService } from '@island.is/email-service'
+
 import {
   CaseType,
   NotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../../../case'
-import { DeliverResponse } from '../../models/deliver.response'
-import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
-import { Notification } from '../../models/notification.model'
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
+
+import { Case } from '../../../case'
+import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
+import { DeliverResponse } from '../../models/deliver.response'
+import { Notification } from '../../models/notification.model'
 
 jest.mock('../../../factories')
 

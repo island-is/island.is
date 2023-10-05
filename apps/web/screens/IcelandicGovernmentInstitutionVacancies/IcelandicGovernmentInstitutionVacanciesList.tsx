@@ -498,12 +498,19 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                 ITEMS_PER_PAGE * selectedPage,
               )
               .map((vacancy) => {
-                const logoUrl =
+                let logoUrl =
                   vacancy.logoUrl ||
                   n(
                     'fallbackLogoUrl',
                     'https://images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg',
                   )
+
+                const vacancyComesFromCms = vacancy.id?.startsWith('c-')
+
+                if (!vacancy.institutionName && vacancyComesFromCms) {
+                  logoUrl = ''
+                }
+
                 return (
                   <GridColumn
                     key={vacancy.id}

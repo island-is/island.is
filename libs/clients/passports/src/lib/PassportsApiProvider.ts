@@ -25,6 +25,7 @@ export const ApiConfiguration = {
     return new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-passports',
+        organizationSlug: 'thjodskra-islands',
         autoAuth: idsClientConfig.isConfigured
           ? {
               mode: 'tokenExchange',

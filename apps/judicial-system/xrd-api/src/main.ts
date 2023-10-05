@@ -1,7 +1,7 @@
 import { bootstrap } from '@island.is/infra-nest-server'
 
-import { openApi } from './openApi'
 import { AppModule } from './app'
+import { openApi } from './openApi'
 
 bootstrap({
   appModule: AppModule,
