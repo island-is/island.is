@@ -31,7 +31,6 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
     // Parse license data into the fields as they're displayed on the physical drivers license
     // see: https://www.samgongustofa.is/umferd/nam-og-rettindi/skirteini-og-rettindi/okurettindi-og-skirteini/
     const data = [
-      // We don't get the name split into two from the API, combine
       {
         name: getLabel('basicInfoLicense', locale, label),
         type: GenericLicenseDataFieldType.Value,
