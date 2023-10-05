@@ -7,10 +7,11 @@ import {
   UseGuards,
 } from '@nestjs/common'
 
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import { JwtInjectBearerAuthGuard } from '@island.is/judicial-system/auth'
 
 import { DefenderService } from './defender.service'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @UseGuards(JwtInjectBearerAuthGuard)
 @Controller('api/defender')

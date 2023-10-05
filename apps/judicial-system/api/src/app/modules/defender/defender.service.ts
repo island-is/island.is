@@ -1,6 +1,8 @@
+import fetch from 'isomorphic-fetch'
+
 import { Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
-import fetch from 'isomorphic-fetch'
+
 import { defenderModuleConfig } from './defender.config'
 
 @Injectable()
@@ -55,15 +57,14 @@ export class DefenderService {
 }
 
 const mapToLawyer = (lawyer: LawyerFull): Lawyer => {
-    return {
-        name: lawyer.Name,
-        practice: lawyer.Practice,
-        email: lawyer.Email,
-        phoneNr: lawyer.GSM,
-        nationalId: lawyer.SSN,
-    }
+  return {
+    name: lawyer.Name,
+    practice: lawyer.Practice,
+    email: lawyer.Email,
+    phoneNr: lawyer.GSM,
+    nationalId: lawyer.SSN,
+  }
 }
-
 
 interface Lawyer {
   name: string
