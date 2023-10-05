@@ -15,7 +15,9 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/libs/clients/aosah/transfer-of-machine-ownership"],
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/clients/aosah/transfer-of-machine-ownership"
+      ],
       "options": {
         "jestConfig": "libs/clients/aosah/transfer-of-machine-ownership/jest.config.ts",
         "passWithNoTests": true
@@ -26,6 +28,8 @@
       "options": {
         "commands": [
           "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10013/Vinnueftirlitid-Protected/getOpenAPI?serviceCode=vinnuvelar-token > src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.ValidationProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
