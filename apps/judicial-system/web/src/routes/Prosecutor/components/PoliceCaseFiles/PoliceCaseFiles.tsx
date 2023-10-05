@@ -79,7 +79,9 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
           }
           warningMessage={
             policeCaseFiles?.files.length === 0
-              ? formatMessage(strings.noFilesFoundInLOKEMessage)
+              ? formatMessage(strings.noFilesFoundInLOKEMessage, {
+                  isIndictmentCase: isIndictmentCase(workingCase.type),
+                })
               : undefined
           }
         />
