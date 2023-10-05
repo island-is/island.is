@@ -192,6 +192,6 @@ describe('AuthProvider', () => {
     const { findByText } = renderAuthenticator()
 
     // Assert
-    await findByText('Innskráning mistókst.')
+    await findByText('Innskráning mistókst')
   })
 })

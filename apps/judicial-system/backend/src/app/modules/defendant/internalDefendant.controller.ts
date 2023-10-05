@@ -8,16 +8,17 @@ import {
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import { TokenGuard } from '@island.is/judicial-system/auth'
 
 import { Case, CaseExistsGuard, CurrentCase } from '../case'
+import { DeliverDefendantToCourtDto } from './dto/deliverDefendantToCourt.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
-import { DeliverDefendantToCourtDto } from './dto/deliverDefendantToCourt.dto'
-import { DeliverResponse } from './models/deliver.response'
 import { Defendant } from './models/defendant.model'
+import { DeliverResponse } from './models/deliver.response'
 import { DefendantService } from './defendant.service'
 
 @Controller('api/internal/case/:caseId/defendant/:defendantId')

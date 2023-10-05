@@ -22,6 +22,7 @@ export const DisabilityLicenseApiProvider: Provider<DefaultApi> = {
         fetchApi: createEnhancedFetch({
           logErrorResponseBody: true,
           name: 'clients-disability-license',
+          organizationSlug: 'tryggingastofnun',
           autoAuth: idsClientConfig.isConfigured
             ? {
                 mode: 'tokenExchange',

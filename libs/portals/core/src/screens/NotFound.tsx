@@ -1,8 +1,8 @@
-import { useLocation } from 'react-router-dom'
 import { MessageDescriptor } from 'react-intl'
+
+import { Box } from '@island.is/island-ui/core'
+import { Problem, m } from '@island.is/react-spa/shared'
 import { useLocale } from '@island.is/localization'
-import { m } from '../lib/messages'
-import { ErrorScreen } from './ErrorScreen/ErrorScreen'
 
 interface NotFoundProps {
   title?: string | MessageDescriptor
@@ -10,18 +10,16 @@ interface NotFoundProps {
 
 export const NotFound = ({ title }: NotFoundProps) => {
   const { formatMessage } = useLocale()
-  const { pathname } = useLocation()
 
   return (
-    <ErrorScreen
-      tag="404"
-      tagVariant="red"
-      title={formatMessage(title || m.notFound)}
-      figure="./assets/images/404.svg"
-    >
-      {formatMessage(m.notFoundMessage, {
-        path: pathname,
-      })}
-    </ErrorScreen>
+    <Box marginY={6} marginX={[0, 6]}>
+      <Problem
+        tag={formatMessage(m.error)}
+        type="not_found"
+        expand
+        title={formatMessage(title || m.notFound)}
+        noBorder
+      />
+    </Box>
   )
 }

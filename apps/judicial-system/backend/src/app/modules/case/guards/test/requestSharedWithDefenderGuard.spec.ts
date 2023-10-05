@@ -6,8 +6,8 @@ import {
 
 import {
   CaseState,
-  RequestSharedWithDefender,
   completedCaseStates,
+  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 
 import { RequestSharedWithDefenderGuard } from '../requestSharedWithDefender.guard'

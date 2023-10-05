@@ -25,7 +25,7 @@ const WorkMachinesDetail = lazy(() =>
 
 export const vehiclesModule: PortalModule = {
   name: 'Ökutæki',
-  routes: ({ userInfo, client }) => [
+  routes: ({ userInfo, ...rest }) => [
     {
       name: m.yourVehicles,
       path: VehiclePaths.AssetsVehicles,
@@ -36,7 +36,7 @@ export const vehiclesModule: PortalModule = {
       name: m.yourVehicles,
       path: VehiclePaths.AssetsMyVehicles,
       enabled: userInfo.scopes.includes(ApiScope.vehicles),
-      loader: translationLoader({ userInfo, client }),
+      loader: translationLoader({ userInfo, ...rest }),
       element: <Overview />,
     },
     {
