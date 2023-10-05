@@ -47,7 +47,10 @@ export class LicenseService {
     const type = mapLicenseIdToLicenseType(licenseId)
 
     if (!type) {
-      this.logger.error(`Invalid license type ${type}`)
+      this.logger.error(`Invalid license type`, {
+        category: LOG_CATEGORY,
+        type,
+      })
       throw new InternalServerErrorException(`Invalid license type`)
     }
 
@@ -56,7 +59,10 @@ export class LicenseService {
     )
 
     if (!service) {
-      this.logger.error(`Client service generation failed`)
+      this.logger.error(`Client service generation failed`, {
+        category: LOG_CATEGORY,
+        type,
+      })
       throw new InternalServerErrorException(`Client service generation failed`)
     }
 
@@ -72,7 +78,9 @@ export class LicenseService {
       )
 
     if (!service) {
-      this.logger.error(`Client service generation failed`)
+      this.logger.error(`Client service generation failed`, {
+        category: LOG_CATEGORY,
+      })
       throw new InternalServerErrorException(`Client service generation failed`)
     }
 

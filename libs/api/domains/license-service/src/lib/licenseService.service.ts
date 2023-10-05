@@ -212,7 +212,7 @@ export class LicenseServiceService {
     user: User,
     locale: Locale,
     licenseType: GenericLicenseType,
-  ): Promise<string | null> {
+  ): Promise<string> {
     const client = await this.licenseClient.getClientByLicenseType(
       licenseType as unknown as LicenseType,
     )
@@ -221,7 +221,9 @@ export class LicenseServiceService {
       this.logger.warn(`Invalid license type. type: ${licenseType}`, {
         category: LOG_CATEGORY,
       })
-      return null
+      throw new InternalServerErrorException(
+        `Invalid license type. type: ${licenseType}`,
+      )
     }
 
     const pkPassRes = await client.getPkPassUrl(user)
@@ -239,7 +241,7 @@ export class LicenseServiceService {
     user: User,
     locale: Locale,
     licenseType: GenericLicenseType,
-  ): Promise<string | null> {
+  ): Promise<string> {
     const client = await this.licenseClient.getClientByLicenseType(
       licenseType as unknown as LicenseType,
     )
@@ -248,7 +250,9 @@ export class LicenseServiceService {
       this.logger.warn(`Invalid license type. type: ${licenseType}`, {
         category: LOG_CATEGORY,
       })
-      return null
+      throw new InternalServerErrorException(
+        `Invalid license type. type: ${licenseType}`,
+      )
     }
 
     const pkPassRes = await client.getPkPassQRCode(user)

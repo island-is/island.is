@@ -129,10 +129,6 @@ export class MainResolver {
       input.licenseType,
     )
 
-    if (!pkpassUrl) {
-      throw new Error('PkPassUrl generation failed')
-    }
-
     return {
       pkpassUrl,
     }
@@ -151,10 +147,6 @@ export class MainResolver {
       locale,
       input.licenseType,
     )
-
-    if (!pkpassQRCode) {
-      throw new Error('PkPassQRCode generation failed')
-    }
 
     return {
       pkpassQRCode,
