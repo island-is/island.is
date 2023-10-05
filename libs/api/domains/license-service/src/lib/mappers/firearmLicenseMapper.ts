@@ -1,4 +1,7 @@
-import { FirearmProperty } from '@island.is/clients/firearm-license'
+import {
+  FirearmCategories,
+  FirearmProperty,
+} from '@island.is/clients/firearm-license'
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
 import {
@@ -7,6 +10,7 @@ import {
   GenericLicenseLabels,
   GenericLicenseMapper,
   GenericUserLicensePayload,
+  LicenseLabelsObject,
 } from '../licenceService.type'
 import { getLabel } from '../utils/translations'
 import { FirearmLicenseDto } from '@island.is/clients/license-client'
@@ -69,24 +73,12 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
         : null,
 
       licenseInfo.qualifications
-        ? {
-            type: GenericLicenseDataFieldType.Group,
-            label: getLabel('classesOfRights', locale, label),
-            fields: licenseInfo.qualifications
-              .split('')
-              .map((qualification) => ({
-                type: GenericLicenseDataFieldType.Category,
-                name: qualification,
-                label:
-                  categories?.[
-                    `${getLabel('category', locale, label)} ${qualification}`
-                  ] ?? '',
-                description:
-                  categories?.[
-                    `${getLabel('category', locale, label)} ${qualification}`
-                  ] ?? '',
-              })),
-          }
+        ? this.parseQualifications(
+            licenseInfo.qualifications,
+            locale,
+            categories ?? undefined,
+            label,
+          )
         : null,
       properties
         ? {
@@ -130,6 +122,34 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
           },
         ],
       },
+    }
+  }
+
+  private parseQualifications = (
+    qualifications: string,
+    locale: Locale = 'is',
+    categories?: FirearmCategories,
+    labels?: LicenseLabelsObject,
+  ): GenericLicenseDataField | null => {
+    if (!categories) {
+      return null
+    }
+
+    return {
+      type: GenericLicenseDataFieldType.Group,
+      label: getLabel('classesOfRights', locale, labels),
+      fields: qualifications.split('').map((qualification) => ({
+        type: GenericLicenseDataFieldType.Category,
+        name: qualification,
+        label:
+          categories?.[
+            `${getLabel('category', locale, labels)} ${qualification}`
+          ] ?? '',
+        description:
+          categories?.[
+            `${getLabel('category', locale, labels)} ${qualification}`
+          ] ?? '',
+      })),
     }
   }
 
