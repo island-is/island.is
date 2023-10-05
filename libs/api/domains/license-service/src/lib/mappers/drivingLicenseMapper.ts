@@ -29,7 +29,7 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
     const label = labels?.labels
 
     // Parse license data into the fields as they're displayed on the physical drivers license
-    // see: https://www.samgongustofa.is/umferd/nam-og-rettindi/skirteini-og-rettindi/okurettindi-og-skirteini/
+    // see: https://www.reglugerd.is/reglugerdir/eftir-raduneytum/srn/nr/18033
     const data = [
       {
         name: getLabel('basicInfoLicense', locale, label),
