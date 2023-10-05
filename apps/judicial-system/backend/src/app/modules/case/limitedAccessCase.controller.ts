@@ -46,7 +46,6 @@ import { CaseExistsGuard } from './guards/caseExists.guard'
 import { CaseReadGuard } from './guards/caseRead.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
 import { CaseWriteGuard } from './guards/caseWrite.guard'
-import { LimitedAccessAccordingToCaseStateGuard } from './guards/limitedAccessAccordingToCaseState.guard'
 import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
 import { RequestSharedWithDefenderGuard } from './guards/requestSharedWithDefender.guard'
 import { defenderTransitionRule, defenderUpdateRule } from './guards/rolesRules'
@@ -75,7 +74,6 @@ export class LimitedAccessCaseController {
     RolesGuard,
     LimitedAccessCaseExistsGuard,
     CaseReadGuard,
-    LimitedAccessAccordingToCaseStateGuard,
   )
   @RolesRules(defenderRule)
   @Get('case/:caseId/limitedAccess')
@@ -199,7 +197,6 @@ export class LimitedAccessCaseController {
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
-    LimitedAccessAccordingToCaseStateGuard,
     RequestSharedWithDefenderGuard,
   )
   @RolesRules(defenderRule)
@@ -229,7 +226,6 @@ export class LimitedAccessCaseController {
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
-    LimitedAccessAccordingToCaseStateGuard,
   )
   @RolesRules(defenderRule)
   @Get('case/:caseId/limitedAccess/caseFilesRecord/:policeCaseNumber')
@@ -325,7 +321,6 @@ export class LimitedAccessCaseController {
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
-    LimitedAccessAccordingToCaseStateGuard,
   )
   @RolesRules(defenderRule)
   @Get('case/:caseId/limitedAccess/indictment')

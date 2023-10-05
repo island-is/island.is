@@ -7,7 +7,6 @@ import {
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseReadGuard } from '../../guards/caseRead.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
-import { LimitedAccessAccordingToCaseStateGuard } from '../../guards/limitedAccessAccordingToCaseState.guard'
 import { RequestSharedWithDefenderGuard } from '../../guards/requestSharedWithDefender.guard'
 import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
 
@@ -23,7 +22,7 @@ describe('LimitedAccessCaseController - Get request pdf guards', () => {
   })
 
   it('should have the right guard configuration', () => {
-    expect(guards).toHaveLength(7)
+    expect(guards).toHaveLength(6)
     expect(new guards[0]()).toBeInstanceOf(JwtAuthGuard)
     expect(new guards[1]()).toBeInstanceOf(RolesGuard)
     expect(new guards[2]()).toBeInstanceOf(CaseExistsGuard)
@@ -32,9 +31,6 @@ describe('LimitedAccessCaseController - Get request pdf guards', () => {
       allowedCaseTypes: [...restrictionCases, ...investigationCases],
     })
     expect(new guards[4]()).toBeInstanceOf(CaseReadGuard)
-    expect(new guards[5]()).toBeInstanceOf(
-      LimitedAccessAccordingToCaseStateGuard,
-    )
-    expect(new guards[6]()).toBeInstanceOf(RequestSharedWithDefenderGuard)
+    expect(new guards[5]()).toBeInstanceOf(RequestSharedWithDefenderGuard)
   })
 })

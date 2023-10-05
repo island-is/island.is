@@ -4,6 +4,7 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
+  completedCaseStates,
   indictmentCases,
   InstitutionType,
   isAppealsCourtUser,
@@ -14,6 +15,7 @@ import {
   isPrisonSystemUser,
   isProsecutionUser,
   isRestrictionCase,
+  RequestSharedWithDefender,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -179,10 +181,14 @@ function canPrisonSystemUserAccessCase(
   }
 
   // Check case state access
+  if (theCase.state !== CaseState.ACCEPTED) {
+    return false
+  }
+
+  // Check prison access to alternative travel ban
   if (
-    theCase.state !== CaseState.ACCEPTED ||
-    (user.institution?.type !== InstitutionType.PRISON_ADMIN &&
-      theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+    theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN &&
+    user.institution?.type !== InstitutionType.PRISON_ADMIN
   ) {
     return false
   }
@@ -191,6 +197,39 @@ function canPrisonSystemUserAccessCase(
 }
 
 function canDefenceUserAccessCase(theCase: Case, user: User): boolean {
+  // Check case state access
+  if (
+    [CaseState.SUBMITTED, CaseState.RECEIVED, ...completedCaseStates].includes(
+      theCase.state,
+    )
+  ) {
+    return false
+  }
+
+  // Check submitted case access
+  const canDefenderAccessSubmittedCase =
+    theCase.requestSharedWithDefender ===
+    RequestSharedWithDefender.READY_FOR_COURT
+
+  if (
+    theCase.state === CaseState.SUBMITTED &&
+    !canDefenderAccessSubmittedCase
+  ) {
+    return false
+  }
+
+  // Check received case access
+  if (theCase.state === CaseState.RECEIVED) {
+    const canDefenderAccessReceivedCase =
+      isIndictmentCase(theCase.type) ||
+      canDefenderAccessSubmittedCase ||
+      Boolean(theCase.courtDate)
+
+    if (!canDefenderAccessReceivedCase) {
+      return false
+    }
+  }
+
   // Check case defender access
   if (isIndictmentCase(theCase.type)) {
     if (

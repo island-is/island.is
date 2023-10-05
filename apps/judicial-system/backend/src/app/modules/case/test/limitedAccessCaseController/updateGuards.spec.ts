@@ -22,7 +22,7 @@ describe('LimitedAccessCaseController - Update guards', () => {
   })
 
   it('should have the right guard configuration', () => {
-    expect(guards).toHaveLength(5)
+    expect(guards).toHaveLength(6)
     expect(new guards[0]()).toBeInstanceOf(JwtAuthGuard)
     expect(new guards[1]()).toBeInstanceOf(RolesGuard)
     expect(new guards[2]()).toBeInstanceOf(LimitedAccessCaseExistsGuard)
