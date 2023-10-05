@@ -42,10 +42,10 @@ import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
-import { CaseDefenderGuard } from './guards/caseDefender.guard'
 import { CaseExistsGuard } from './guards/caseExists.guard'
 import { CaseReadGuard } from './guards/caseRead.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
+import { CaseWriteGuard } from './guards/caseWrite.guard'
 import { LimitedAccessAccordingToCaseStateGuard } from './guards/limitedAccessAccordingToCaseState.guard'
 import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
 import { RequestSharedWithDefenderGuard } from './guards/requestSharedWithDefender.guard'
@@ -108,8 +108,8 @@ export class LimitedAccessCaseController {
     RolesGuard,
     LimitedAccessCaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseWriteGuard,
     CaseCompletedGuard,
-    CaseDefenderGuard,
   )
   @RolesRules(defenderUpdateRule)
   @Patch('case/:caseId/limitedAccess')
@@ -136,8 +136,8 @@ export class LimitedAccessCaseController {
     LimitedAccessCaseExistsGuard,
     RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseWriteGuard,
     CaseCompletedGuard,
-    CaseDefenderGuard,
   )
   @RolesRules(defenderTransitionRule)
   @Patch('case/:caseId/limitedAccess/state')

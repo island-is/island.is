@@ -27,8 +27,8 @@ import { defenderRule } from '../../guards'
 import {
   Case,
   CaseCompletedGuard,
-  CaseDefenderGuard,
   CaseTypeGuard,
+  CaseWriteGuard,
   CurrentCase,
   LimitedAccessCaseExistsGuard,
 } from '../case'
@@ -48,8 +48,8 @@ import { FileService } from './file.service'
   JwtAuthGuard,
   RolesGuard,
   LimitedAccessCaseExistsGuard,
+  CaseWriteGuard,
   CaseCompletedGuard,
-  CaseDefenderGuard,
 )
 @Controller('api/case/:caseId/limitedAccess')
 @ApiTags('files')

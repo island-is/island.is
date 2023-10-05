@@ -18,7 +18,7 @@ describe('LimitedAccessCaseController - Get indictment pdf guards', () => {
     )
   })
 
-  it('should have six guards', () => {
+  it('should have the right guard configuration', () => {
     expect(guards).toHaveLength(6)
     expect(new guards[0]()).toBeInstanceOf(JwtAuthGuard)
     expect(new guards[1]()).toBeInstanceOf(RolesGuard)

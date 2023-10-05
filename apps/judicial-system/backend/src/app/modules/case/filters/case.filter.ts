@@ -190,16 +190,7 @@ function canPrisonSystemUserAccessCase(
   return true
 }
 
-function canDefenceUserAccessCase(
-  theCase: Case,
-  user: User,
-  forUpdate: boolean,
-): boolean {
-  // Defence users cannot update cases
-  if (forUpdate) {
-    return false
-  }
-
+function canDefenceUserAccessCase(theCase: Case, user: User): boolean {
   // Check case defender access
   if (isIndictmentCase(theCase.type)) {
     if (
@@ -240,7 +231,7 @@ export function canUserAccessCase(
   }
 
   if (isDefenceUser(user)) {
-    return canDefenceUserAccessCase(theCase, user, forUpdate)
+    return canDefenceUserAccessCase(theCase, user)
   }
 
   // Other users cannot access cases
