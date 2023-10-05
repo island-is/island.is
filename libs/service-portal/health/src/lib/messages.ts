@@ -403,14 +403,6 @@ export const messages = defineMessages({
     id: 'sp.health:alert',
     defaultMessage: 'Athugið',
   },
-  healthCenterRegistrationModalTitleStart: {
-    id: 'sp.health:health-center-registration-modal-title',
-    defaultMessage: 'Vilt þú skrá',
-  },
-  healthCenterRegistrationModalTitleEnd: {
-    id: 'sp.health:health-center-registration-modal-title-end',
-    defaultMessage: 'sem nýja heilsugæslustöð?',
-  },
   healthCenterRegistrationModalTitle: {
     id: 'sp.health:health-center-registration-modal-title',
     defaultMessage: 'Vilt þú skrá {healthCenter} sem nýja heilsugæslustöð?',
