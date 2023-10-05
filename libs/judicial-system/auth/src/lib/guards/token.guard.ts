@@ -1,9 +1,9 @@
 import {
-  Injectable,
   CanActivate,
   ExecutionContext,
-  UnauthorizedException,
   Inject,
+  Injectable,
+  UnauthorizedException,
 } from '@nestjs/common'
 
 export const SECRET_TOKEN = 'SECRET_TOKEN'

@@ -11,13 +11,14 @@ import {
   UseGuards,
 } from '@nestjs/common'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { AuditedAction } from '@island.is/judicial-system/audit-trail'
 import {
   CurrentHttpUser,
   JwtInjectBearerAuthGuard,
 } from '@island.is/judicial-system/auth'
-import { AuditedAction } from '@island.is/judicial-system/audit-trail'
 import type { User } from '@island.is/judicial-system/types'
 
 import { FileService } from './file.service'

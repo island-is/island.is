@@ -61,6 +61,8 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       NOVA_USERNAME: '/k8s/judicial-system/NOVA_USERNAME',
       NOVA_PASSWORD: '/k8s/judicial-system/NOVA_PASSWORD',
       COURTS_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_MOBILE_NUMBERS',
+      COURTS_ASSISTANT_MOBILE_NUMBERS:
+        '/k8s/judicial-system/COURTS_ASSISTANT_MOBILE_NUMBERS',
       COURTS_EMAILS: '/k8s/judicial-system/COURTS_EMAILS',
       DOKOBIT_ACCESS_TOKEN: '/k8s/judicial-system/DOKOBIT_ACCESS_TOKEN',
       EMAIL_FROM: '/k8s/judicial-system/EMAIL_FROM',

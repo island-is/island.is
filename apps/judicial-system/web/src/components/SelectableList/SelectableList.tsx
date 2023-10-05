@@ -188,18 +188,17 @@ const SelectableList: React.FC<Props> = (props) => {
                           {isHandlingCTA && item.checked && <LoadingDots />}
                         </Box>
                       }
-                      name={item.name}
+                      name={item.id}
                       value={item.name}
                       checked={item.checked}
                       onChange={(evt) =>
-                        setSelectableItems((items) => {
-                          const index = items.findIndex(
-                            (i) => i.name === item.name,
-                          )
-                          const newItems = [...items]
-                          newItems[index].checked = evt.target.checked
-                          return newItems
-                        })
+                        setSelectableItems((items) =>
+                          items.map((i) =>
+                            i.id === item.id
+                              ? { ...i, checked: evt.target.checked }
+                              : i,
+                          ),
+                        )
                       }
                       disabled={isHandlingCTA}
                     />

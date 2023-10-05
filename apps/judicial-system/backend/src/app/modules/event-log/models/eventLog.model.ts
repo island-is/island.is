@@ -1,4 +1,3 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -7,6 +6,9 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript'
+
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+
 import { Case } from '../../case/models/case.model'
 
 @Table({

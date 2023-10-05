@@ -74,4 +74,10 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti í Hætta við takka í modal glugga hjá verjanda þegar frestur til greinargerðar er liðinn.',
   },
+  noCourtNumber: {
+    id: 'judicial.system.core:defender_case_overview.no_court_number',
+    defaultMessage: 'Ekki skráð',
+    description:
+      'Notaður sem texti ef ekkert málsnúmer héraðsdóms er skráð á yfirlitsskjá verjanda.',
+  },
 })

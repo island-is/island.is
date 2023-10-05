@@ -1,17 +1,18 @@
-import fetch, { Headers } from 'node-fetch'
 import { Request, Response } from 'express'
+import fetch, { Headers } from 'node-fetch'
 
 import { Inject, Injectable } from '@nestjs/common'
 
 import type { ConfigType } from '@island.is/nest/config'
 import { ProblemError } from '@island.is/nest/problem'
+
 import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
 
-import { FileExeption } from './file.exception'
 import { fileModuleConfig } from './file.config'
+import { FileExeption } from './file.exception'
 
 @Injectable()
 export class FileService {
