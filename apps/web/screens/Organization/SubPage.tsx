@@ -131,21 +131,24 @@ const SubPage: Screen<SubPageProps> = ({
         />
       )}
       <GridRow className="rs_read">
-        <GridColumn
-          span={['12/12', '12/12', subpage?.links?.length ? '7/12' : '12/12']}
-        >
-          {webRichText(
-            subpage?.description as SliceType[],
-            {
-              renderComponent: {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
-                Form: (slice) => <Form form={slice} namespace={namespace} />,
+        {subpage?.description && subpage.description.length > 0 && (
+          <GridColumn
+            span={['12/12', '12/12', subpage?.links?.length ? '7/12' : '12/12']}
+            paddingBottom={3}
+          >
+            {webRichText(
+              subpage?.description as SliceType[],
+              {
+                renderComponent: {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
+                  Form: (slice) => <Form form={slice} namespace={namespace} />,
+                },
               },
-            },
-            activeLocale,
-          )}
-        </GridColumn>
+              activeLocale,
+            )}
+          </GridColumn>
+        )}
         {subpage?.links && subpage.links.length > 0 && (
           <GridColumn
             span={['12/12', '12/12', '4/12']}
@@ -224,7 +227,6 @@ const SubPage: Screen<SubPageProps> = ({
                       alignItems="center"
                       columnGap={2}
                       rowGap={2}
-                      marginBottom={3}
                       flexWrap="wrap"
                     >
                       <Webreader
