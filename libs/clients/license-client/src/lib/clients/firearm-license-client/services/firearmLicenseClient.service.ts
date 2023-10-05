@@ -83,7 +83,6 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
     }
     let error = null
 
-    //i hate this
     if (responses.licenseInfo.ok) {
       data.licenseInfo = responses.licenseInfo.data
     } else {
