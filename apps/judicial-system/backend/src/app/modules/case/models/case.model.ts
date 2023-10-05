@@ -13,31 +13,31 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import type {
+  CrimeSceneMap,
+  IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
 import {
-  CaseState,
-  CaseLegalProvisions,
   CaseAppealDecision,
+  CaseAppealRulingDecision,
+  CaseAppealState,
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseAppealRulingDecision,
-  CaseType,
-  SessionArrangements,
-  CourtDocument,
+  CaseLegalProvisions,
   CaseOrigin,
-  CaseAppealState,
+  CaseState,
+  CaseType,
+  CourtDocument,
   RequestSharedWithDefender,
-} from '@island.is/judicial-system/types'
-import type {
-  IndictmentSubtypeMap,
-  CrimeSceneMap,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
+import { Defendant } from '../../defendant'
+import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
+import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { User } from '../../user'
-import { Defendant } from '../../defendant'
-import { IndictmentCount } from '../../indictment-count'
-import { EventLog } from '../../event-log'
 
 @Table({
   tableName: 'case',

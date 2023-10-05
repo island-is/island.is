@@ -1,35 +1,36 @@
-import PDFDocument from 'pdfkit'
 import isSameDay from 'date-fns/isSameDay'
+import PDFDocument from 'pdfkit'
 
 import { FormatMessage } from '@island.is/cms-translations'
+
+import {
+  capitalize,
+  formatAppeal,
+  formatDate,
+  formatRequestCaseType,
+  lowercase,
+} from '@island.is/judicial-system/formatters'
 import {
   completedCaseStates,
   isRestrictionCase,
   SessionArrangements,
   User,
 } from '@island.is/judicial-system/types'
-import {
-  formatDate,
-  lowercase,
-  formatRequestCaseType,
-  formatAppeal,
-  capitalize,
-} from '@island.is/judicial-system/formatters'
 
-import { Case } from '../modules/case'
 import { nowFactory } from '../factories'
 import { courtRecord } from '../messages'
+import { Case } from '../modules/case'
 import {
-  addFooter,
   addCoatOfArms,
+  addEmptyLines,
+  addFooter,
   addLargeHeading,
   addMediumHeading,
+  addNormalCenteredText,
+  addNormalJustifiedText,
+  addNormalText,
   setLineGap,
   setTitle,
-  addEmptyLines,
-  addNormalText,
-  addNormalJustifiedText,
-  addNormalCenteredText,
 } from './pdfHelpers'
 
 export function formatCourtEndDate(
