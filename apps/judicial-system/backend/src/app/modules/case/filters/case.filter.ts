@@ -7,6 +7,7 @@ import {
   indictmentCases,
   InstitutionType,
   isAppealsCourtUser,
+  isDefenceUser,
   isDistrictCourtUser,
   isIndictmentCase,
   isInvestigationCase,
@@ -189,6 +190,34 @@ function canPrisonSystemUserAccessCase(
   return true
 }
 
+function canDefenceUserAccessCase(
+  theCase: Case,
+  user: User,
+  forUpdate: boolean,
+): boolean {
+  // Defence users cannot update cases
+  if (forUpdate) {
+    return false
+  }
+
+  // Check case defender access
+  if (isIndictmentCase(theCase.type)) {
+    if (
+      !theCase.defendants?.some(
+        (defendant) => defendant.defenderNationalId === user.nationalId,
+      )
+    ) {
+      return false
+    }
+  } else {
+    if (theCase.defenderNationalId !== user.nationalId) {
+      return false
+    }
+  }
+
+  return true
+}
+
 export function canUserAccessCase(
   theCase: Case,
   user: User,
@@ -208,6 +237,10 @@ export function canUserAccessCase(
 
   if (isPrisonSystemUser(user)) {
     return canPrisonSystemUserAccessCase(theCase, user, forUpdate)
+  }
+
+  if (isDefenceUser(user)) {
+    return canDefenceUserAccessCase(theCase, user, forUpdate)
   }
 
   // Other users cannot access cases

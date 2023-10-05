@@ -1,5 +1,3 @@
-import { CanActivate } from '@nestjs/common'
-
 import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
 import {
   investigationCases,
@@ -7,8 +5,8 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { CaseCompletedGuard } from '../../guards/caseCompleted.guard'
-import { CaseDefenderGuard } from '../../guards/caseDefender.guard'
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
+import { CaseReadGuard } from '../../guards/caseRead.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
 import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
 
@@ -25,80 +23,14 @@ describe('LimitedAccessCaseController - Get court record pdf guards', () => {
 
   it('should have six guards', () => {
     expect(guards).toHaveLength(6)
-  })
-
-  describe('JwtAuthGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[0]()
+    expect(new guards[0]()).toBeInstanceOf(JwtAuthGuard)
+    expect(new guards[1]()).toBeInstanceOf(RolesGuard)
+    expect(new guards[2]()).toBeInstanceOf(CaseExistsGuard)
+    expect(new guards[3]()).toBeInstanceOf(CaseReadGuard)
+    expect(guards[4]).toBeInstanceOf(CaseTypeGuard)
+    expect(guards[4]).toEqual({
+      allowedCaseTypes: [...restrictionCases, ...investigationCases],
     })
-
-    it('should have JwtAuthGuard as guard 1', () => {
-      expect(guard).toBeInstanceOf(JwtAuthGuard)
-    })
-  })
-
-  describe('RolesGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[1]()
-    })
-
-    it('should have RolesGuard as guard 2', () => {
-      expect(guard).toBeInstanceOf(RolesGuard)
-    })
-  })
-
-  describe('CaseExistsGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[2]()
-    })
-
-    it('should have CaseExistsGuard as guard 3', () => {
-      expect(guard).toBeInstanceOf(CaseExistsGuard)
-    })
-  })
-
-  describe('CaseTypeGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = guards[3]
-    })
-
-    it('should have CaseTypeGuard as guard 4', () => {
-      expect(guard).toBeInstanceOf(CaseTypeGuard)
-      expect(guard).toEqual({
-        allowedCaseTypes: [...restrictionCases, ...investigationCases],
-      })
-    })
-  })
-
-  describe('CaseCompletedGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[4]()
-    })
-
-    it('should have CaseCompletedGuard as guard 5', () => {
-      expect(guard).toBeInstanceOf(CaseCompletedGuard)
-    })
-  })
-
-  describe('CaseDefenderGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[5]()
-    })
-
-    it('should have CaseDefenderGuard as guard 6', () => {
-      expect(guard).toBeInstanceOf(CaseDefenderGuard)
-    })
+    expect(new guards[5]()).toBeInstanceOf(CaseCompletedGuard)
   })
 })

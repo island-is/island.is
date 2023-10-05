@@ -44,6 +44,7 @@ import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
 import { CaseDefenderGuard } from './guards/caseDefender.guard'
 import { CaseExistsGuard } from './guards/caseExists.guard'
+import { CaseReadGuard } from './guards/caseRead.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
 import { LimitedAccessAccordingToCaseStateGuard } from './guards/limitedAccessAccordingToCaseState.guard'
 import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
@@ -73,8 +74,8 @@ export class LimitedAccessCaseController {
     JwtAuthGuard,
     RolesGuard,
     LimitedAccessCaseExistsGuard,
+    CaseReadGuard,
     LimitedAccessAccordingToCaseStateGuard,
-    CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
   @Get('case/:caseId/limitedAccess')
@@ -196,10 +197,10 @@ export class LimitedAccessCaseController {
     JwtAuthGuard,
     RolesGuard,
     CaseExistsGuard,
+    CaseReadGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     LimitedAccessAccordingToCaseStateGuard,
     RequestSharedWithDefenderGuard,
-    CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
   @Get('case/:caseId/limitedAccess/request')
@@ -226,9 +227,9 @@ export class LimitedAccessCaseController {
     JwtAuthGuard,
     RolesGuard,
     CaseExistsGuard,
+    CaseReadGuard,
     new CaseTypeGuard(indictmentCases),
     LimitedAccessAccordingToCaseStateGuard,
-    CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
   @Get('case/:caseId/limitedAccess/caseFilesRecord/:policeCaseNumber')
@@ -265,9 +266,9 @@ export class LimitedAccessCaseController {
     JwtAuthGuard,
     RolesGuard,
     CaseExistsGuard,
+    CaseReadGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseCompletedGuard,
-    CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
   @Get('case/:caseId/limitedAccess/courtRecord')
@@ -295,9 +296,9 @@ export class LimitedAccessCaseController {
     JwtAuthGuard,
     RolesGuard,
     CaseExistsGuard,
+    CaseReadGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseCompletedGuard,
-    CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
   @Get('case/:caseId/limitedAccess/ruling')
@@ -322,9 +323,9 @@ export class LimitedAccessCaseController {
     JwtAuthGuard,
     RolesGuard,
     CaseExistsGuard,
+    CaseReadGuard,
     new CaseTypeGuard(indictmentCases),
     LimitedAccessAccordingToCaseStateGuard,
-    CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
   @Get('case/:caseId/limitedAccess/indictment')

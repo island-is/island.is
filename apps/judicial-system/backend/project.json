@@ -59,7 +59,6 @@
       "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "apps/judicial-system/backend/jest.config.ts",
-        "runInBand": true,
         "passWithNoTests": true
       },
       "outputs": ["{workspaceRoot}/coverage/apps/judicial-system/backend"]
