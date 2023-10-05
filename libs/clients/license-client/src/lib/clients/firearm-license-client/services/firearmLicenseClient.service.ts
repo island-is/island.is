@@ -39,7 +39,7 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
     const expired = new Date(data.licenseInfo.expirationDate)
     const comparison = compareAsc(expired, new Date())
 
-    if (isNaN(comparison) || comparison < 0) {
+    if (Number.isNaN(comparison) || comparison < 0) {
       return LicensePkPassAvailability.NotAvailable
     }
 
