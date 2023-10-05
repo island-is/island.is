@@ -44,7 +44,10 @@ export class LifeEventPage {
   seeMoreText?: string
 
   @Field({ nullable: true })
-  pageType?: 'Life Event' | 'Digital Iceland Service'
+  pageType?:
+    | 'Life Event'
+    | 'Digital Iceland Service'
+    | 'Digital Iceland Community Page'
 
   @CacheField(() => Image, { nullable: true })
   featuredImage?: Image | null
