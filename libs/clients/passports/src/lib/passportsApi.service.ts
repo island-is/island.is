@@ -58,8 +58,6 @@ export class PassportsService {
 
   private resolvePassports(passportData: IdentityDocumentResponse[]) {
     const passportArray = passportData.map((passport) => {
-      // const { productionRequestID, ...passport } = item
-
       /**
        * Expiration status: string
        *    if invalid and expirationDate has passed: EXPIRED (ÚTRUNNIÐ)

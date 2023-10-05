@@ -18,7 +18,6 @@ import { ChildsPersonalInfo } from '../lib/constants'
 import { m } from '../lib/messages'
 import { childsOverview } from './overviewSection/childsOverview'
 import {
-  // IdentityDocumentApi,
   SyslumadurPaymentCatalogApi,
   DeliveryAddressApi,
   UserInfoApi,
