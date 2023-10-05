@@ -243,6 +243,8 @@ const DocumentsFilter = ({
               handleDateToChange={handleDateToChange}
               handleShowUnread={handleShowUnread}
               handleClearFilters={handleClearFilters}
+              handleShowArchived={handleShowArchived}
+              handleShowBookmarked={handleShowBookmarked}
             />
 
             <Text

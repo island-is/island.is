@@ -16,6 +16,8 @@ interface Props {
   handleDateFromChange: (date: Date | null) => void
   handleDateToChange: (date: Date | null) => void
   handleClearFilters: () => void
+  handleShowArchived: (value: boolean) => void
+  handleShowBookmarked: (value: boolean) => void
   categories: { label: string; value: string }[]
   senders: { label: string; value: string }[]
 }
@@ -27,6 +29,8 @@ const DocumentsFilterTags = ({
   handleSendersChange,
   handleDateFromChange,
   handleDateToChange,
+  handleShowArchived,
+  handleShowBookmarked,
   categories,
   senders,
 }: Props) => {
@@ -97,6 +101,18 @@ const DocumentsFilterTags = ({
         <FilterTag
           onClick={() => handleShowUnread(false)}
           title={formatMessage(messages.onlyShowUnreadShort)}
+        />
+      )}
+      {filterValue.archived && (
+        <FilterTag
+          onClick={() => handleShowArchived(false)}
+          title={formatMessage(messages.onlyShowArchived)}
+        />
+      )}
+      {filterValue.bookmarked && (
+        <FilterTag
+          onClick={() => handleShowBookmarked(false)}
+          title={formatMessage(messages.onlyShowBookmarked)}
         />
       )}
       <Box marginLeft={1}>

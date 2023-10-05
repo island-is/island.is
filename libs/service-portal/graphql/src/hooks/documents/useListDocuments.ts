@@ -33,6 +33,7 @@ export const useListDocuments = (
     bookmarked,
   } = input ?? {}
   const { data, loading, error, refetch } = useQuery<Query>(LIST_DOCUMENTS, {
+    fetchPolicy: 'network-only',
     variables: {
       input: {
         senderKennitala,
