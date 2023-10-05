@@ -65,7 +65,7 @@ export interface PreregistrationInput {
   deliveryName?: string
 }
 
-export interface DocumentLossInput {
+export interface DocumentLossnInput {
   status: string
   comment: string
   productionRequestId: string

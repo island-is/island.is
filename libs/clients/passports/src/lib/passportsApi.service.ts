@@ -10,7 +10,7 @@ import {
   DocumentLossApi,
 } from '../../gen/fetch'
 import {
-  DocumentLossInput,
+  DocumentLossnInput,
   Gender,
   IdentityDocument,
   IdentityDocumentChild,
@@ -240,7 +240,7 @@ export class PassportsService {
 
   async annulPassport(
     user: User,
-    input: DocumentLossInput,
+    input: DocumentLossnInput,
   ): Promise<PreregisterResponse> {
     const res = await this.documentLossApi
       .withMiddleware(new AuthMiddleware(user))
