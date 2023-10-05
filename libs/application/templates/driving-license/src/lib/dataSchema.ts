@@ -28,12 +28,29 @@ const declaration = z
     },
   )
 
+const glassesDeclaration = z
+  .object({
+    answer: z.enum([YES, NO]),
+    attachment: z.array(FileSchema).optional(),
+    mismatch: z.boolean(),
+  })
+  .refine(
+    ({ answer, attachment, mismatch }) => {
+      return answer === YES || mismatch
+        ? attachment && attachment?.length > 0
+        : true
+    },
+    {
+      path: ['attachment'],
+    },
+  )
+
 export const dataSchema = z.object({
   type: z.array(z.enum(['car', 'trailer', 'motorcycle'])).nonempty(),
   approveExternalData: z.boolean().refine((v) => v),
   jurisdiction: z.string().min(1),
   healthDeclaration: z.object({
-    usesContactGlasses: declaration,
+    usesContactGlasses: glassesDeclaration,
     hasReducedPeripheralVision: declaration,
     hasEpilepsy: declaration,
     hasHeartDisease: declaration,

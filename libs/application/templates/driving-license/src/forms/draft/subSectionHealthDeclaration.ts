@@ -38,6 +38,15 @@ export const subSectionHealthDeclaration = buildSubSection({
             label: m.healthDeclaration1,
           },
         ),
+        buildAlertMessageField({
+          id: 'healthDeclaration.contactGlassesMismatch',
+          title: '',
+          message:
+            'Athugaðu að þar sem þú hefur/hefur ekki verið að nota gleraugu seinast, þá þarftu að skila inn vottorði frá lækninum þínum sem sýnir að þú sért/ekki að nota gleraugu.',
+          alertType: 'warning',
+          condition: (answers) =>
+            (answers.healthDeclaration as any)?.usesContactGlasses.mismatch,
+        }),
         buildFileUploadField({
           id: 'healthDeclaration.usesContactGlasses.attachment',
           title: '',
@@ -46,7 +55,8 @@ export const subSectionHealthDeclaration = buildSubSection({
           uploadAccept: UPLOAD_ACCEPT,
           condition: (answers) =>
             (answers.healthDeclaration as any)?.usesContactGlasses?.answer ===
-            YES,
+              YES ||
+            (answers.healthDeclaration as any)?.usesContactGlasses.mismatch,
         }),
         buildDescriptionField({
           id: 'space1',
@@ -54,7 +64,8 @@ export const subSectionHealthDeclaration = buildSubSection({
           marginBottom: 'containerGutter',
           condition: (answers) =>
             (answers.healthDeclaration as any)?.usesContactGlasses?.answer ===
-            YES,
+              YES ||
+            (answers.healthDeclaration as any)?.usesContactGlasses.mismatch,
         }),
         buildCustomField(
           {

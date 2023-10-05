@@ -69,24 +69,12 @@ export const m = defineMessages({
     defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
     description: 'Your user profile information',
   },
-    glassesPrescriptionSubTitle: {
-    id: 'dl.application:glassesPrescription',
-    defaultMessage: 
-      'Til þess að auðvelda umsóknarferlið er sótt gleraugnavottorð frá samgöngustofu',
-    description:
-      'In order to facilitate the application process, a glasses certificate is obtained from the transport office'
-  },
   userProfileInformationSubTitle: {
     id: 'dl.application:userprofile.subTitle',
     defaultMessage:
       'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
     description:
       'In order to apply for this application we need your email and phone number',
-  },
-  glassesPrescriptionTitle: {
-    id: 'dl.application:glassesPrescription.title',
-    defaultMessage: 'Gleraugnavottorð',
-    description: 'Glasses prescription',
   },
   residenceTitle: {
     id: 'dl.application:residence.title',
@@ -99,6 +87,18 @@ export const m = defineMessages({
       'Ég hef fasta búsetu hér á landi eins og hún er skilgreind í VIII. viðauka reglugerðar um ökuskírteini eða tel mig fullnægja skilyrðum um búsetu hér á landi til að fá gefið út ökuskírteini.',
     description:
       "I've lived in Iceland according to VIII and here by confirm that I meet the conditions to apply for a driving license",
+  },
+  glassesPrescriptionTitle: {
+    id: 'dl.application:glassesPrescription.title',
+    defaultMessage: 'Gleraugnavottorð',
+    description: 'Glasses prescription',
+  },
+  glassesPrescriptionSubTitle: {
+    id: 'dl.application:glassesPrescription.subtitle',
+    defaultMessage:
+      'Til þess að auðvelda umsóknarferlið er sótt gleraugnavottorð frá samgöngustofu',
+    description:
+      'In order to facilitate the application process, a glasses certificate is obtained from the transport office',
   },
   informationSectionTitle: {
     id: 'dl.application:informationSection.title',

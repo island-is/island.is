@@ -43,6 +43,21 @@ function HealthDeclaration({
     }
   }, [error, errors, setValue])
 
+  const checkForGlassesMismatch = (value: string) => {
+    if (field.id === 'healthDeclaration.usesContactGlasses.answer') {
+      const glassesUsedPreviously = application.externalData.glassesCheck.data
+
+      if (
+        (glassesUsedPreviously && value === NO) ||
+        (!glassesUsedPreviously && value === YES)
+      ) {
+        setValue('healthDeclaration.usesContactGlasses.mismatch', true)
+      } else {
+        setValue('healthDeclaration.usesContactGlasses.mismatch', false)
+      }
+    }
+  }
+
   return (
     <GridRow>
       <GridColumn span={['12/12', '8/12']}>
@@ -68,7 +83,11 @@ function HealthDeclaration({
               value: NO,
             },
           ]}
-          onSelect={(value) => setValue(field.id, value)}
+          onSelect={(value) => {
+            if (field.id === 'healthDeclaration.usesContactGlasses.answer') {
+              checkForGlassesMismatch(value)
+            }
+          }}
         />
       </GridColumn>
     </GridRow>
