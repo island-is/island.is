@@ -48,6 +48,10 @@ export class AuthService {
       console.warn('Defender not found', error)
     }
 
+    // If a defender doesn't have any active cases, we look them up
+    // in the lawyer registry because we want to at least display an empty
+    // case list for them to avoid confusion about them not having access to
+    // the judicial system
     try {
       const lawyerRegistryInfo = await this.defenderService.getLawyer(
         nationalId,
