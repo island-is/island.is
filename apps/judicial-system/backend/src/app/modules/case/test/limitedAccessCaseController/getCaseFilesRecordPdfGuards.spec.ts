@@ -23,11 +23,11 @@ describe('LimitedAccessCaseController - Get case files record pdf guards', () =>
     expect(new guards[0]()).toBeInstanceOf(JwtAuthGuard)
     expect(new guards[1]()).toBeInstanceOf(RolesGuard)
     expect(new guards[2]()).toBeInstanceOf(CaseExistsGuard)
-    expect(new guards[3]()).toBeInstanceOf(CaseReadGuard)
-    expect(guards[4]).toBeInstanceOf(CaseTypeGuard)
-    expect(guards[4]).toEqual({
+    expect(guards[3]).toBeInstanceOf(CaseTypeGuard)
+    expect(guards[3]).toEqual({
       allowedCaseTypes: indictmentCases,
     })
+    expect(new guards[4]()).toBeInstanceOf(CaseReadGuard)
     expect(new guards[5]()).toBeInstanceOf(
       LimitedAccessAccordingToCaseStateGuard,
     )
