@@ -31,6 +31,7 @@ export class LicenseUpdateClientService {
           LicenseType[keyAsEnumKey as LicenseTypeType]
 
         if (!valueFromEnum) {
+          this.logger.error(`Invalid license type: ${key}`)
           throw new Error(`Invalid license type: ${key}`)
         }
         return valueFromEnum

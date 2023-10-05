@@ -130,7 +130,7 @@ export class MainResolver {
     )
 
     if (!pkpassUrl) {
-      throw new Error('PkPass generation failed')
+      throw new Error('PkPassUrl generation failed')
     }
 
     return {
@@ -153,7 +153,7 @@ export class MainResolver {
     )
 
     if (!pkpassQRCode) {
-      throw new Error('PkPass generation failed')
+      throw new Error('PkPassQRCode generation failed')
     }
 
     return {

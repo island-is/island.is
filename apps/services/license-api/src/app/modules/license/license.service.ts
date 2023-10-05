@@ -45,13 +45,19 @@ export class LicenseService {
     licenseId: LicenseId,
   ): Promise<BaseLicenseUpdateClient> {
     const type = mapLicenseIdToLicenseType(licenseId)
+
+    if (!type) {
+      this.logger.error(`Invalid license type ${type}`)
+      throw new InternalServerErrorException(`Invalid license type`)
+    }
+
     const service = await this.clientService.getLicenseUpdateClientByType(
       type as LicenseType,
     )
 
     if (!service) {
-      this.logger.warn(`Invalid license type`)
-      throw new InternalServerErrorException(`Invalid license type`)
+      this.logger.error(`Client service generation failed`)
+      throw new InternalServerErrorException(`Client service generation failed`)
     }
 
     return service
@@ -66,8 +72,8 @@ export class LicenseService {
       )
 
     if (!service) {
-      this.logger.warn(`Invalid pass template id`)
-      throw new InternalServerErrorException(`Invalid license type`)
+      this.logger.error(`Client service generation failed`)
+      throw new InternalServerErrorException(`Client service generation failed`)
     }
 
     return service
