@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 
-@InputType('RightsPortalDentistBillsInput')
-export class DentistBillsInput {
+@InputType('RightsPortalHealthCenterHistoryInput')
+export class HealthCenterHistoryInput {
   @Field(() => Date, { nullable: true })
   dateFrom?: Date
 

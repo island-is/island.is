@@ -8,24 +8,24 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Dentist, PaginatedDentistsResponse } from './models/dentist.model'
 import { DentistStatus } from './models/status.model'
-import { UserDentistRegistration } from './models/registration.model'
 import { DentistBill } from './models/bill.model'
 import { DentistsInput } from './dto/dentist.input'
-import { RegisterDentistResponse } from './models/registerResponse.model'
+import { DentistRegistration } from './models/registration.model'
+import { DentistRegisterResponse } from './models/registerResponse.model'
 
 const LOG_CATEGORY = 'rights-portal-dentist'
 
 @Injectable()
-export class RightsPortalService {
+export class DentistService {
   constructor(
-    private dentistApi: DentistApi,
+    private api: DentistApi,
 
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
   async getCurrentDentist(user: User): Promise<Dentist | null> {
     try {
-      const res = await this.dentistApi
+      const res = await this.api
         .withMiddleware(new AuthMiddleware(user as Auth))
         .getCurrentDentist()
 
@@ -46,7 +46,7 @@ export class RightsPortalService {
 
   async getDentistStatus(user: User): Promise<DentistStatus | null> {
     try {
-      const res = await this.dentistApi
+      const res = await this.api
         .withMiddleware(new AuthMiddleware(user as Auth))
         .dentiststatus()
       if (!res) return null
@@ -69,8 +69,8 @@ export class RightsPortalService {
     user: User,
     dateFrom?: Date,
     dateTo?: Date,
-  ): Promise<UserDentistRegistration | null> {
-    const api = this.dentistApi.withMiddleware(new AuthMiddleware(user as Auth))
+  ): Promise<DentistRegistration | null> {
+    const api = this.api.withMiddleware(new AuthMiddleware(user as Auth))
     try {
       const res = await Promise.all([
         api.getCurrentDentist(),
@@ -113,7 +113,7 @@ export class RightsPortalService {
     input: DentistsInput,
   ): Promise<PaginatedDentistsResponse | null> {
     try {
-      const res = await this.dentistApi
+      const res = await this.api
         .withMiddleware(new AuthMiddleware(user as Auth))
         .getDentists({
           ...input,
@@ -163,9 +163,9 @@ export class RightsPortalService {
   async registerDentist(
     user: User,
     id: number,
-  ): Promise<RegisterDentistResponse> {
+  ): Promise<DentistRegisterResponse> {
     try {
-      await this.dentistApi
+      await this.api
         .withMiddleware(new AuthMiddleware(user as Auth))
         .registerDentist({
           id,

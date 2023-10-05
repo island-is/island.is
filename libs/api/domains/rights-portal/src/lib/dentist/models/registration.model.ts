@@ -3,7 +3,7 @@ import { DentistBill } from './bill.model'
 import { DentistInformation } from './information.model'
 
 @ObjectType('RightsPortalUserDentistRegistration')
-export class UserDentistRegistration {
+export class DentistRegistration {
   @Field(() => DentistInformation, { nullable: true })
   dentist?: DentistInformation | null
 
