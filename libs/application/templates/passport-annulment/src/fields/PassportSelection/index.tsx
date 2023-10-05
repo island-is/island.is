@@ -117,7 +117,8 @@ export const PassportSelection: FC<FieldBaseProps> = ({
             },
           ],
           onSelect: (e) => {
-            const [productionRequestID, passportNumber, passportName] = e.split(',')
+            const [productionRequestID, passportNumber, passportName] =
+              e.split(',')
             setValue('productionRequestID', productionRequestID)
             setValue('passportNumber', passportNumber)
             setValue('passportName', passportName)
@@ -170,7 +171,8 @@ export const PassportSelection: FC<FieldBaseProps> = ({
             },
           ),
           onSelect: (e) => {
-            const [productionRequestID, passportNumber, passportName] = e.split(',')
+            const [productionRequestID, passportNumber, passportName] =
+              e.split(',')
             setValue('productionRequestID', productionRequestID)
             setValue('passportNumber', passportNumber)
             setValue('passportName', passportName)
