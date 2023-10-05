@@ -129,27 +129,23 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
   }
 
   async getLicense(user: User): Promise<Result<DriversLicense | null>> {
-    const licenseData = await this.fetchLicense(user)
-    if (!licenseData.ok) {
-      this.logger.info(`Drivers license data fetch failed`)
-      return {
-        ok: false,
-        error: {
-          code: 13,
-          message: 'Service error',
-        },
-      }
+    const licenseResponse = await this.fetchLicense(user)
+    if (!licenseResponse.ok) {
+      this.logger.info(`Drivers license data fetch failed`, {
+        category: LOG_CATEGORY,
+      })
+      return licenseResponse
     }
 
     //the user ain't got no license
-    if (!licenseData.data) {
+    if (!licenseResponse.data) {
       return {
         ok: true,
         data: null,
       }
     }
 
-    return licenseData
+    return licenseResponse
   }
 
   async getLicenseDetail(user: User): Promise<Result<DriversLicense | null>> {

@@ -8,6 +8,7 @@ import {
 } from './licenseClient.type'
 import type { PassTemplateIds, LicenseTypeType } from './licenseClient.type'
 import { BaseLicenseUpdateClient } from './clients/baseLicenseUpdateClient'
+import { LOG_CATEGORY } from '@island.is/clients/smartsolutions'
 
 @Injectable()
 export class LicenseUpdateClientService {
@@ -31,7 +32,10 @@ export class LicenseUpdateClientService {
           LicenseType[keyAsEnumKey as LicenseTypeType]
 
         if (!valueFromEnum) {
-          this.logger.error(`Invalid license type: ${key}`)
+          this.logger.error(`Invalid license type: ${key}`, {
+            category: LOG_CATEGORY,
+            key,
+          })
           throw new Error(`Invalid license type: ${key}`)
         }
         return valueFromEnum

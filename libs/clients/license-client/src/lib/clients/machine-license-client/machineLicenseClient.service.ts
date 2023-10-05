@@ -114,7 +114,7 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
     if (!license.ok || !license.data) {
       this.logger.info(
         `No license data found for user, no pkpass payload to create`,
-        { LOG_CATEGORY },
+        { category: LOG_CATEGORY },
       )
       return null
     }
@@ -136,7 +136,7 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
     if (!license.ok || !license.data) {
       this.logger.info(
         `No license data found for user, no pkpass payload to create`,
-        { LOG_CATEGORY },
+        { category: LOG_CATEGORY },
       )
 
       return {
