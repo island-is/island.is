@@ -17,7 +17,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { getCasesQueryFilter } from './cases.filter'
+import { getCasesQueryFilter } from '../cases.filter'
 
 describe('getCasesQueryFilter', () => {
   it('should get prosecutor filter', () => {

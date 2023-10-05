@@ -15,9 +15,9 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { randomDate } from '../../../test'
-import { Case } from '../models/case.model'
-import { canUserAccessCase } from './case.filter'
+import { randomDate } from '../../../../test'
+import { Case } from '../../models/case.model'
+import { canUserAccessCase } from '../case.filter'
 
 describe('canUserAccessCase', () => {
   describe.each([...restrictionCases, investigationCases])(
