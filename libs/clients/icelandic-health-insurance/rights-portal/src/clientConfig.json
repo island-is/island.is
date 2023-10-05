@@ -12,7 +12,9 @@
   "paths": {
     "/v1/admin/rollnationalid/{nationalid}/{service}": {
       "post": {
-        "tags": ["admin"],
+        "tags": [
+          "admin"
+        ],
         "operationId": "RollNationalId",
         "parameters": [
           {
@@ -66,7 +68,9 @@
     },
     "/v1/aidsandnutrition": {
       "get": {
-        "tags": ["aidsandnutrition"],
+        "tags": [
+          "aidsandnutrition"
+        ],
         "operationId": "GetAidsAndNutrition",
         "responses": {
           "200": {
@@ -103,7 +107,9 @@
     },
     "/v1/dentists/status": {
       "get": {
-        "tags": ["dentist"],
+        "tags": [
+          "dentist"
+        ],
         "operationId": "dentiststatus",
         "responses": {
           "200": {
@@ -140,7 +146,9 @@
     },
     "/v1/dentists/current": {
       "get": {
-        "tags": ["dentist"],
+        "tags": [
+          "dentist"
+        ],
         "operationId": "GetCurrentDentist",
         "responses": {
           "200": {
@@ -177,7 +185,9 @@
     },
     "/v1/dentists": {
       "get": {
-        "tags": ["dentist"],
+        "tags": [
+          "dentist"
+        ],
         "operationId": "GetDentists",
         "parameters": [
           {
@@ -267,7 +277,9 @@
     },
     "/v1/dentists/{id}/register": {
       "post": {
-        "tags": ["dentist"],
+        "tags": [
+          "dentist"
+        ],
         "operationId": "RegisterDentist",
         "parameters": [
           {
@@ -309,7 +321,9 @@
     },
     "/v1/dentists/bills": {
       "get": {
-        "tags": ["dentist"],
+        "tags": [
+          "dentist"
+        ],
         "operationId": "GetDentistBills",
         "parameters": [
           {
@@ -369,7 +383,9 @@
     },
     "/v1/drugs/paymentperiods": {
       "get": {
-        "tags": ["drug"],
+        "tags": [
+          "drug"
+        ],
         "operationId": "GetDrugPaymentPeriods",
         "responses": {
           "200": {
@@ -409,7 +425,9 @@
     },
     "/v1/drugs/paymentperiods/{paymentPeriodId}/bills": {
       "get": {
-        "tags": ["drug"],
+        "tags": [
+          "drug"
+        ],
         "operationId": "GetDrugBills",
         "parameters": [
           {
@@ -461,7 +479,9 @@
     },
     "/v1/drugs/paymentperiods/{paymentPeriodId}/bills/{billId}/lineitems": {
       "get": {
-        "tags": ["drug"],
+        "tags": [
+          "drug"
+        ],
         "operationId": "GetDrugBillLineItems",
         "parameters": [
           {
@@ -523,7 +543,9 @@
     },
     "/v1/drugs/drugs": {
       "get": {
-        "tags": ["drug"],
+        "tags": [
+          "drug"
+        ],
         "operationId": "GetDrugs",
         "parameters": [
           {
@@ -604,7 +626,9 @@
     },
     "/v1/drugs/drugcalculator": {
       "post": {
-        "tags": ["drug"],
+        "tags": [
+          "drug"
+        ],
         "operationId": "DrugCalculator",
         "requestBody": {
           "content": {
@@ -651,7 +675,9 @@
     },
     "/v1/drugs/certificates": {
       "get": {
-        "tags": ["drug"],
+        "tags": [
+          "drug"
+        ],
         "operationId": "GetDrugCertificates",
         "responses": {
           "200": {
@@ -689,58 +715,11 @@
         }
       }
     },
-    "/v1/drugs/certificates/{certificateId}/document": {
-      "get": {
-        "tags": ["drug"],
-        "operationId": "GetDrugCertificateDocument",
-        "parameters": [
-          {
-            "name": "certificateId",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DocumentDTO"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
     "/v1/ehic/cardstatus/{applicantnationalids}": {
       "get": {
-        "tags": ["ehic"],
+        "tags": [
+          "ehic"
+        ],
         "operationId": "GetEhicCardStatus",
         "parameters": [
           {
@@ -791,7 +770,9 @@
     },
     "/v1/ehic/requestcard/{applicantnationalid}/{cardtype}": {
       "post": {
-        "tags": ["ehic"],
+        "tags": [
+          "ehic"
+        ],
         "operationId": "RequestEhicCard",
         "parameters": [
           {
@@ -848,7 +829,9 @@
     },
     "/v1/ehic/fetchtemppdfcard/{applicantnationalid}/{cardnumber}": {
       "get": {
-        "tags": ["ehic"],
+        "tags": [
+          "ehic"
+        ],
         "operationId": "FetchTempEhicPDFCard",
         "parameters": [
           {
@@ -905,7 +888,9 @@
     },
     "/v1/healthcenters": {
       "get": {
-        "tags": ["healthcenter"],
+        "tags": [
+          "healthcenter"
+        ],
         "operationId": "GetHealthCenters",
         "parameters": [
           {
@@ -978,7 +963,9 @@
     },
     "/v1/healthcenters/current": {
       "get": {
-        "tags": ["healthcenter"],
+        "tags": [
+          "healthcenter"
+        ],
         "operationId": "GetCurrentHealthCenter",
         "responses": {
           "200": {
@@ -986,7 +973,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HealthCenterRegistrationDTO"
+                  "$ref": "#/components/schemas/CurrentHealthCenterDTO"
                 }
               }
             }
@@ -1015,7 +1002,9 @@
     },
     "/v1/healthcenters/{id}/register": {
       "post": {
-        "tags": ["healthcenter"],
+        "tags": [
+          "healthcenter"
+        ],
         "operationId": "RegisterHealthCenter",
         "parameters": [
           {
@@ -1056,7 +1045,9 @@
     },
     "/v1/healthcenters/history": {
       "get": {
-        "tags": ["healthcenter"],
+        "tags": [
+          "healthcenter"
+        ],
         "operationId": "GetHealthCenterHistory",
         "parameters": [
           {
@@ -1116,7 +1107,9 @@
     },
     "/v1/overview/insurance": {
       "get": {
-        "tags": ["overview"],
+        "tags": [
+          "overview"
+        ],
         "operationId": "GetInsuranceOverview",
         "responses": {
           "200": {
@@ -1153,7 +1146,9 @@
     },
     "/v1/overview/insurance/confirmation": {
       "get": {
-        "tags": ["overview"],
+        "tags": [
+          "overview"
+        ],
         "operationId": "GetInsuranceConfirmation",
         "responses": {
           "200": {
@@ -1190,7 +1185,9 @@
     },
     "/v1/payments/copayment/status": {
       "get": {
-        "tags": ["payment"],
+        "tags": [
+          "payment"
+        ],
         "operationId": "GetCopaymentStatus",
         "responses": {
           "200": {
@@ -1227,7 +1224,9 @@
     },
     "/v1/payments/copayment/periods": {
       "get": {
-        "tags": ["payment"],
+        "tags": [
+          "payment"
+        ],
         "operationId": "GetCopaymentPeriods",
         "responses": {
           "200": {
@@ -1267,7 +1266,9 @@
     },
     "/v1/payments/copayment/periods/{periodId}/bills": {
       "get": {
-        "tags": ["payment"],
+        "tags": [
+          "payment"
+        ],
         "operationId": "GetCopaymentBills",
         "parameters": [
           {
@@ -1319,7 +1320,9 @@
     },
     "/v1/payments/overview/status": {
       "get": {
-        "tags": ["payment"],
+        "tags": [
+          "payment"
+        ],
         "operationId": "GetPaymentOverviewStatus",
         "responses": {
           "200": {
@@ -1356,7 +1359,9 @@
     },
     "/v1/payments/overview/bills": {
       "get": {
-        "tags": ["payment"],
+        "tags": [
+          "payment"
+        ],
         "operationId": "GetPaymentOverviewBills",
         "responses": {
           "200": {
@@ -1396,7 +1401,9 @@
     },
     "/v1/payments/overview/documents/{documentId}": {
       "get": {
-        "tags": ["payment"],
+        "tags": [
+          "payment"
+        ],
         "operationId": "GetPaymentOverviewDocument",
         "parameters": [
           {
@@ -1445,7 +1452,9 @@
     },
     "/v1/therapies": {
       "get": {
-        "tags": ["therapy"],
+        "tags": [
+          "therapy"
+        ],
         "operationId": "GetTherapies",
         "responses": {
           "200": {
@@ -1787,6 +1796,28 @@
         },
         "additionalProperties": false
       },
+      "CurrentHealthCenterDTO": {
+        "type": "object",
+        "properties": {
+          "healthCenter": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "doctor": {
+            "type": "string",
+            "nullable": true
+          },
+          "canRegister": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "DentistBillDTO": {
         "type": "object",
         "properties": {
@@ -1919,22 +1950,27 @@
             "type": "string",
             "nullable": true
           },
-          "copaymentAmount": {
+          "totalCopaymentAmount": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
-          "customerAmount": {
+          "totalCustomerAmount": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
-          "insuranceAmount": {
+          "totalExcessAmount": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
-          "calculatedForPaymentStepAmount": {
+          "totalInsuranceAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "totalCalculatedForPaymentStepAmount": {
             "type": "integer",
             "format": "int32",
             "nullable": true
@@ -1958,11 +1994,11 @@
             "type": "string",
             "nullable": true
           },
-          "amount": {
+          "quantity": {
             "type": "string",
             "nullable": true
           },
-          "number": {
+          "units": {
             "type": "number",
             "format": "double",
             "nullable": true
@@ -1982,7 +2018,17 @@
             "format": "int32",
             "nullable": true
           },
+          "excessAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "insuranceAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "calculatedForPaymentStepAmount": {
             "type": "integer",
             "format": "int32",
             "nullable": true
@@ -2241,8 +2287,8 @@
             "nullable": true
           },
           "levelPercentage": {
-            "type": "integer",
-            "format": "int32",
+            "type": "number",
+            "format": "double",
             "nullable": true
           }
         },
