@@ -6,7 +6,7 @@ import { uuid } from 'uuidv4'
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 
-import type { User } from '@island.is/judicial-system/types'
+import { type User, UserRole } from '@island.is/judicial-system/types'
 
 import { DefenderService } from '../defender/defender.service'
 import { authModuleConfig } from './auth.config'
