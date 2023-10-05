@@ -117,9 +117,10 @@ export const PassportSelection: FC<FieldBaseProps> = ({
             },
           ],
           onSelect: (e) => {
-            setValue('productionRequestID', e.split(',')[0])
-            setValue('passportNumber', e.split(',')[1])
-            setValue('passportName', e.split(',')[2])
+            let [productionRequestID, passportNumber, passportName] = e.split(',')
+            setValue('productionRequestID', productionRequestID)
+            setValue('passportNumber', passportNumber)
+            setValue('passportName', passportName)
             setValue(childPassportRadio, '')
           },
         }}
@@ -169,10 +170,11 @@ export const PassportSelection: FC<FieldBaseProps> = ({
             },
           ),
           onSelect: (e) => {
-            setValue('productionRequestID', e.split(',')[0])
-            setValue('passportNumber', e.split(',')[1])
-            setValue('passportName', e.split(',')[2])
-            setValue(userPassportRadio, '')
+            let [productionRequestID, passportNumber, passportName] = e.split(',')
+            setValue('productionRequestID', productionRequestID)
+            setValue('passportNumber', passportNumber)
+            setValue('passportName', passportName)
+            setValue(childPassportRadio, '')
           },
         }}
       />
