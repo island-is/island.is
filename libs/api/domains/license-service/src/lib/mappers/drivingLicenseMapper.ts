@@ -45,7 +45,7 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
       {
         type: GenericLicenseDataFieldType.Value,
         label: getLabel('publisher', locale, label),
-        value: '', // todo
+        value: 'Ríkislögreglustjóri',
       },
       {
         type: GenericLicenseDataFieldType.Value,
