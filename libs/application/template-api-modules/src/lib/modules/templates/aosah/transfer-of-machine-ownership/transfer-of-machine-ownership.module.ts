@@ -10,7 +10,10 @@ import { BaseTemplateAPIModuleConfig } from '../../../../types'
 // Here you import your module service
 import { TransferOfMachineOwnershipTemplateService } from './transfer-of-machine-ownership.service'
 import { ConfigModule } from '@nestjs/config'
-import { AosahClientConfig, MachinesApi } from '@island.is/clients/aosah/transfer-of-machine-ownership'
+import {
+  AosahClientConfig,
+  AosahClientModule,
+} from '@island.is/clients/aosah/transfer-of-machine-ownership'
 
 export class TransferOfMachineOwnershipTemplateModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -18,12 +21,13 @@ export class TransferOfMachineOwnershipTemplateModule {
       module: TransferOfMachineOwnershipTemplateModule,
       imports: [
         SharedTemplateAPIModule.register(config),
+        AosahClientModule,
         ConfigModule.forRoot({
           isGlobal: true,
           load: [AosahClientConfig],
         }),
       ],
-      providers: [TransferOfMachineOwnershipTemplateService, MachinesApi],
+      providers: [TransferOfMachineOwnershipTemplateService],
       exports: [TransferOfMachineOwnershipTemplateService],
     }
   }
