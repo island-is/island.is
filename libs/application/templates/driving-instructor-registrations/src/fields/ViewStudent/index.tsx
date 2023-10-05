@@ -321,6 +321,7 @@ const ViewStudent = ({
                       const textStr = getExamString({
                         name: school.schoolTypeName,
                         examDate: school.examDate,
+                        status: school.statusName,
                       })
                       return (
                         <BulletList type="ul" color="dark300">
