@@ -1,3 +1,4 @@
-export { AosahClientModule } from './lib/aosahClient.module'
-export { AosahClientConfig } from './lib/aosahClient.config'
-export * from '../gen/fetch'
+export * from './lib/transferOfMachineOwnershipClient.service'
+export * from './lib/transferOfMachineOwnershipClient.module'
+export * from './lib/transferOfMachineOwnershipClient.types'
+export * from './lib/transferOfMachineOwnershipClient.config'

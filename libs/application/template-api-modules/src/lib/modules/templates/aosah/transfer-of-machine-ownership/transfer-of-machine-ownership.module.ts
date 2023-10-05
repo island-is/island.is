@@ -1,18 +1,11 @@
 import { DynamicModule } from '@nestjs/common'
-
-// This is a shared module that gives you access to common methods
 import { SharedTemplateAPIModule } from '../../../shared'
-
-// The base config that template api modules are registered with by default
-// (configurable inside `template-api.module.ts`)
 import { BaseTemplateAPIModuleConfig } from '../../../../types'
-
-// Here you import your module service
 import { TransferOfMachineOwnershipTemplateService } from './transfer-of-machine-ownership.service'
 import { ConfigModule } from '@nestjs/config'
 import {
-  AosahClientConfig,
-  AosahClientModule,
+  TransferOfMachineOwnershipClientConfig,
+  TransferOfMachineOwnershipClientModule,
 } from '@island.is/clients/aosah/transfer-of-machine-ownership'
 
 export class TransferOfMachineOwnershipTemplateModule {
@@ -21,10 +14,10 @@ export class TransferOfMachineOwnershipTemplateModule {
       module: TransferOfMachineOwnershipTemplateModule,
       imports: [
         SharedTemplateAPIModule.register(config),
-        AosahClientModule,
+        TransferOfMachineOwnershipClientModule,
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [AosahClientConfig],
+          load: [TransferOfMachineOwnershipClientConfig],
         }),
       ],
       providers: [TransferOfMachineOwnershipTemplateService],
