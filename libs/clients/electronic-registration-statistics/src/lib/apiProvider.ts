@@ -14,6 +14,7 @@ export const ApiProvider: Provider<StatisticsApi> = {
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-electronic-registration-statistics',
+          organizationSlug: 'thjodskra-islands',
           ...clientConfig.fetch,
         }),
         basePath: clientConfig.url,

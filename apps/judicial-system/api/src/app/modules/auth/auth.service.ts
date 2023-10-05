@@ -1,14 +1,15 @@
 import fetch from 'isomorphic-fetch'
-import jwksClient from 'jwks-rsa'
 import jwt from 'jsonwebtoken'
+import jwksClient from 'jwks-rsa'
 import { uuid } from 'uuidv4'
 
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
-import { UserRole, type User } from '@island.is/judicial-system/types'
 
-import { authModuleConfig } from './auth.config'
+import type { User } from '@island.is/judicial-system/types'
+
 import { DefenderService } from '../defender/defender.service'
+import { authModuleConfig } from './auth.config'
 
 @Injectable()
 export class AuthService {

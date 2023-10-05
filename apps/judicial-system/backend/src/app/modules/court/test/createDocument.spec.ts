@@ -3,9 +3,10 @@ import { uuid } from 'uuidv4'
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import { User } from '@island.is/judicial-system/types'
 
+import { createTestingCourtModule } from './createTestingCourtModule'
+
 import { randomEnum } from '../../../test'
 import { CourtDocumentFolder } from '../court.service'
-import { createTestingCourtModule } from './createTestingCourtModule'
 
 interface Then {
   result: string

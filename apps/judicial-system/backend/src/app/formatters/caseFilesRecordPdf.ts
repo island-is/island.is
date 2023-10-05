@@ -1,14 +1,15 @@
 import { FormatMessage } from '@island.is/cms-translations'
+
 import {
   capitalize,
-  indictmentSubtypes,
-  formatDOB,
   formatDate,
+  formatDOB,
+  indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 
 import { caseFilesRecord } from '../messages'
-import { Defendant } from '../modules/defendant'
 import { Case } from '../modules/case'
+import { Defendant } from '../modules/defendant'
 import { Alignment, LineLink, PageLink, PdfDocument } from './pdf'
 
 export function formatDefendant(defendant: Defendant) {
