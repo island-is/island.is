@@ -99,3 +99,7 @@ apps/**/index.html
 
 # Next.js
 .next
+
+# depcruiser
+.dependency-cruiser.js
+depgraph.*

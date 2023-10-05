@@ -408,6 +408,7 @@
     "csv-parse": "4.16.0",
     "cypress": "13.0.0",
     "cypress-file-upload": "5.0.8",
+    "dependency-cruiser": "14.1.0",
     "dotenv": "14.3.2",
     "esbuild": "^0.17.17",
     "eslint": "8.46.0",
@@ -481,7 +482,7 @@
     "geoip-lite@1.4.7": "patch:geoip-lite@npm%3A1.4.7#./.yarn/patches/geoip-lite-npm-1.4.7-e0ef6cefb0.patch"
   },
   "volta": {
-    "node": "18.16.0"
+    "node": "18.17.1"
   },
-  "packageManager": "yarn@3.2.3"
+  "packageManager": "yarn@3.6.4"
 }
