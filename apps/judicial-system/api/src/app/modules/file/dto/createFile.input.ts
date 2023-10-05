@@ -1,4 +1,5 @@
 import { Allow, IsNumber, Min, ValidateIf } from 'class-validator'
+
 import { Field, InputType, Int, registerEnumType } from '@nestjs/graphql'
 
 import type { CreateFile } from '@island.is/judicial-system/types'

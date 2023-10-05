@@ -1,4 +1,5 @@
 import { IsNumber, IsOptional, IsString } from 'class-validator'
+
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { CaseFileCategory } from '@island.is/judicial-system/types'

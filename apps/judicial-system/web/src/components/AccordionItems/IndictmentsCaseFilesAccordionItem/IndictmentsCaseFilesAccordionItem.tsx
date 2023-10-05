@@ -35,6 +35,7 @@ import {
   IndictmentInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  TUploadFile,
   useFileList,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -389,7 +390,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
   const [updateFilesMutation] = useUpdateFilesMutation()
 
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({ caseId })
-  const { remove } = useS3Upload(caseId)
+  const { handleRemove } = useS3Upload(caseId)
 
   const [reorderableItems, setReorderableItems] = useState<ReorderableItem[]>(
     [],
@@ -552,16 +553,10 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
     }
   }
 
-  const handleDelete = async (fileId: string) => {
-    const { errors } = await remove(fileId)
-
-    if (errors) {
-      toast.error(formatMessage(m.removeFailedErrorMessage))
-    }
-
-    setReorderableItems((prev) => {
-      return prev.filter((item) => item.id !== fileId)
-    })
+  const handleDelete = (fileId: string) => {
+    handleRemove({ id: fileId } as TUploadFile, (file: TUploadFile) =>
+      setReorderableItems((prev) => prev.filter((item) => item.id !== file.id)),
+    )
   }
 
   return (

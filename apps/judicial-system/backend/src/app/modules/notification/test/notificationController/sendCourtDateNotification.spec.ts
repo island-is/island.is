@@ -1,18 +1,19 @@
 import { uuid } from 'uuidv4'
 
-import { NotificationType, User } from '@island.is/judicial-system/types'
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { NotificationType, User } from '@island.is/judicial-system/types'
+
+import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
 import { SendNotificationResponse } from '../../models/sendNotification.response'
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 interface Then {
   result: SendNotificationResponse
   error: Error
 }
 
-type GivenWhenThen = (caseId: string) => Promise<Then>
+type GivenWhenThen = (caseId: string, eventOnly?: boolean) => Promise<Then>
 
 describe('NotificationController - Send court date notification', () => {
   const userId = uuid()
@@ -31,12 +32,13 @@ describe('NotificationController - Send court date notification', () => {
       messageService.sendMessagesToQueue as jest.Mock
     mockSendMessagesToQueue.mockResolvedValue(undefined)
 
-    givenWhenThen = async (caseId) => {
+    givenWhenThen = async (caseId, eventOnly) => {
       const then = {} as Then
 
       await notificationController
         .sendCaseNotification(caseId, user, { id: caseId } as Case, {
           type: NotificationType.COURT_DATE,
+          eventOnly,
         })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
@@ -57,6 +59,26 @@ describe('NotificationController - Send court date notification', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
           type: MessageType.SEND_COURT_DATE_NOTIFICATION,
+          user,
+          caseId,
+        },
+      ])
+      expect(then.result).toEqual({ notificationSent: true })
+    })
+  })
+
+  describe('message with event only queued', () => {
+    const caseId = uuid()
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(caseId, true)
+    })
+
+    it('should send defender assigned message to queue', () => {
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.SEND_DEFENDER_ASSIGNED_NOTIFICATION,
           user,
           caseId,
         },

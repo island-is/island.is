@@ -16,8 +16,9 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   CurrentHttpUser,
   JwtAuthGuard,
@@ -25,28 +26,30 @@ import {
   RolesRules,
   TokenGuard,
 } from '@island.is/judicial-system/auth'
+import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
   indictmentCases,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
-import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { defenderRule } from '../../guards'
+import { CaseEvent, EventService } from '../event'
 import { User } from '../user'
-import { CaseExistsGuard } from './guards/caseExists.guard'
-import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
+import { TransitionCaseDto } from './dto/transitionCase.dto'
+import { UpdateCaseDto } from './dto/updateCase.dto'
+import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
-import { LimitedAccessAccordingToCaseStateGuard } from './guards/limitedAccessAccordingToCaseState.guard'
 import { CaseDefenderGuard } from './guards/caseDefender.guard'
+import { CaseExistsGuard } from './guards/caseExists.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
+import { LimitedAccessAccordingToCaseStateGuard } from './guards/limitedAccessAccordingToCaseState.guard'
+import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
 import { RequestSharedWithDefenderGuard } from './guards/requestSharedWithDefender.guard'
 import { defenderTransitionRule, defenderUpdateRule } from './guards/rolesRules'
-import { CurrentCase } from './guards/case.decorator'
-import { UpdateCaseDto } from './dto/updateCase.dto'
-import { TransitionCaseDto } from './dto/transitionCase.dto'
+import { CaseInterceptor } from './interceptors/case.interceptor'
 import { Case } from './models/case.model'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
@@ -54,8 +57,6 @@ import {
   LimitedAccessCaseService,
   LimitedAccessUpdateCase,
 } from './limitedAccessCase.service'
-import { CaseEvent, EventService } from '../event'
-import { CaseInterceptor } from './interceptors/case.interceptor'
 
 @Controller('api')
 @ApiTags('limited access cases')
