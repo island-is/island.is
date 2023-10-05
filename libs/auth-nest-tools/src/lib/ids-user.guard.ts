@@ -7,7 +7,7 @@ import { Reflector } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { BYPASS_AUTH_KEY } from './bypass-auth.decorator'
 import { getRequest } from './getRequest'
-import { User } from './user'
+import { User } from './types'
 
 @Injectable()
 export class IdsUserGuard extends AuthGuard('jwt') {

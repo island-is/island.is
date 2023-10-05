@@ -1,12 +1,8 @@
 import { decode } from 'jsonwebtoken'
-import {
-  ExpressJwtOptions,
-  JwksClient,
-  passportJwtSecret,
-  SecretCallback,
-} from 'jwks-rsa'
+import { JwksClient, passportJwtSecret, SecretCallback } from 'jwks-rsa'
 
 import { logger } from '@island.is/logging'
+import { MultiIssuerOptions } from './types'
 
 const JWKS_URI = '/.well-known/openid-configuration/jwks'
 const keyProviderBaseOptions = {
@@ -34,11 +30,6 @@ export const createKeyProvider = (issuer: string | string[]) => {
     ...keyProviderBaseOptions,
     jwksUri: `${issuer[0]}${JWKS_URI}`,
   })
-}
-
-interface MultiIssuerOptions extends Omit<ExpressJwtOptions, 'jwksUri'> {
-  // Array of issuer URLs
-  issuers: string[]
 }
 
 // Copied from jwks-rsa/lib/integrations/passport.js

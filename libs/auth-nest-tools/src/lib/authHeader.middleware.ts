@@ -1,19 +1,4 @@
-/**
- * We proxy the auth header to the subsystem where it is resolved.
- */
-interface FetchParams {
-  url: string
-  init: RequestInit
-}
-
-interface RequestContext {
-  init: RequestInit
-}
-
-interface Middleware {
-  pre?(context: RequestContext): Promise<FetchParams | void>
-}
-
+import type { Middleware, RequestContext } from './types'
 export class AuthHeaderMiddleware implements Middleware {
   constructor(private bearerToken: string) {}
 

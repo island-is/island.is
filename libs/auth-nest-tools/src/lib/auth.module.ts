@@ -1,11 +1,6 @@
 import { DynamicModule, Module } from '@nestjs/common'
 import { JwtStrategy } from './jwt.strategy'
-
-export interface AuthConfig {
-  audience: string | string[]
-  issuer: string | string[]
-  allowClientNationalId?: boolean
-}
+import type { AuthConfig } from './types'
 
 @Module({})
 export class AuthModule {

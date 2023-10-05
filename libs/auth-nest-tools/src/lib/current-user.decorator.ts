@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 
-import { User } from './user'
+import { User } from './types'
 import { getRequest } from './getRequest'
 
 export const getCurrentUser = (context: ExecutionContext): User => {

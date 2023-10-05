@@ -1,7 +1,6 @@
 import { Request } from 'express'
 
-import { Auth } from './auth'
-import { User } from './user'
+import { Auth, User } from './types'
 
 export type GraphQLContext = {
   req: Request & {

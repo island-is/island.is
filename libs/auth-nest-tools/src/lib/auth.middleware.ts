@@ -1,35 +1,10 @@
-import { Auth } from './auth'
 import fetch from 'isomorphic-fetch'
-// These types are copied from our OpenAPI generated api clients.
-type FetchAPI = WindowOrWorkerGlobalScope['fetch']
-
-interface FetchParams {
-  url: string
-  init: RequestInit
-}
-
-interface RequestContext {
-  fetch: FetchAPI
-  url: string
-  init: RequestInit
-}
-
-interface Middleware {
-  pre?(context: RequestContext): Promise<FetchParams | void>
-}
-
-export interface AuthMiddlewareOptions {
-  forwardUserInfo: boolean
-  tokenExchangeOptions?: TokenExchangeOptions
-}
-
-export interface TokenExchangeOptions {
-  issuer: string
-  clientId: string
-  clientSecret: string
-  scope: string
-  requestActorToken?: boolean
-}
+import type {
+  Auth,
+  Middleware,
+  AuthMiddlewareOptions,
+  RequestContext,
+} from './types'
 
 /**
  * Middleware that adds user authorization and information to OpenAPI Client requests.

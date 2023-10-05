@@ -1,8 +1,7 @@
 import { CanActivate, Injectable } from '@nestjs/common'
 import type { ExecutionContext } from '@nestjs/common'
 import { getRequest } from './getRequest'
-import type { Auth } from './auth'
-import type { User } from './user'
+import type { User, Auth } from './types'
 
 @Injectable()
 export class MockAuthGuard implements CanActivate {
