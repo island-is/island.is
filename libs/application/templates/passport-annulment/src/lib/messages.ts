@@ -93,7 +93,7 @@ export const m = defineMessages({
   /* Information Section */
   formName: {
     id: 'paa.application:form.name',
-    defaultMessage: 'Umsókn um vegabréf',
+    defaultMessage: 'Tilkynna glatað vegabréf',
     description: 'Some description',
   },
   infoTitle: {
@@ -215,38 +215,13 @@ export const m = defineMessages({
   },
   applicationComplete: {
     id: 'paa.application:complete',
-    defaultMessage: 'Umsókn staðfest',
+    defaultMessage: 'Tilkynning móttekin',
     description: 'Some description',
   },
   applicationCompleteDescriptionText: {
     id: 'paa.application:complete.descriptionText',
     defaultMessage:
-      'Umsókn þín um vegabréf fyrir **{name}** hefur verið móttekin.',
-    description: 'Some description',
-  },
-  applicationCompleteNumber: {
-    id: 'paa.application:complete.number',
-    defaultMessage: 'Númer umsóknar',
-    description: 'Some description',
-  },
-  applicationCompleteNextSteps: {
-    id: 'paa.application:complete.nextSteps',
-    defaultMessage: 'Næstu skref',
-    description: 'Some description',
-  },
-  applicationCompleteNextStepsDescription: {
-    id: 'paa.application:complete.nextSteps.description#markdown',
-    defaultMessage: `* Fara í myndatöku á næsta afgreiðslustað sýslumanns.`,
-    description: 'Some description',
-  },
-  applicationCompleteNextStepsDescriptionParentA: {
-    id: 'paa.application:complete.nextSteps.descriptionParentA#markdown',
-    defaultMessage: `* Þegar forsjáraðili hefur samþykkt umsóknina mun berast staðfesting í pósthólf ykkar á Ísland.is.\\n\\n * Forsjáraðili skal mæta með einstaklingi í myndatöku á næsta afgreiðslustað sýslumanns og hafa meðferðis núgildandi vegabréf eða löggild skilríki með mynd sé vegabréfið glatað.\\n\\n * Tilkynning mun berast á Mínar síður á Ísland.is þegar vegabréfið er tilbúið auk upplýsinga um hvenær hægt verður að sækja það á þann afhendingarstað sem tilgreindur var í umsóknarferlinu.`,
-    description: 'Some description',
-  },
-  applicationCompleteNextStepsDescriptionPersonalApplication: {
-    id: 'paa.application:complete.nextSteps.descriptionPersonalApplication#markdown',
-    defaultMessage: `* Fara í myndatöku á næsta afgreiðslustað sýslumanns.\\n\\n * Þú færð senda tilkynningu á Mínar síður þegar vegabréfið er tilbúið og hægt er að sækja það á þann afhendingarstað sem þú valdir.`,
+      'Tilkynning um glatað vegabréf fyrir **{name}** hefur verið móttekin.',
     description: 'Some description',
   },
 })

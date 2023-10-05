@@ -1,4 +1,5 @@
 import {
+  buildCustomField,
   buildDescriptionField,
   buildForm,
   buildMultiField,
@@ -26,14 +27,10 @@ export const Done: Form = buildForm({
         },
       }),
       children: [
-        buildDescriptionField({
-          id: 'nextStepsDescription',
-          title: m.applicationCompleteNextSteps,
-          titleVariant: 'h3',
-          description: (application: Application) =>
-            (application.answers.passport as Passport)?.userPassport !== ''
-              ? m.applicationCompleteNextStepsDescriptionPersonalApplication
-              : m.applicationCompleteNextStepsDescription,
+        buildCustomField({
+          id: 'doneImage',
+          component: 'DoneImage',
+          title: '',
         }),
       ],
     }),
