@@ -1,13 +1,13 @@
 import { Application, YES } from '@island.is/application/types'
 
 import { getApplicationAnswers } from '@island.is/application/templates/old-age-pension'
+import { parse } from 'date-fns'
 
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
-  uploads: any
+  uploads: any,
 ): any => {
   const {
-    pensionFundQuestion,
     applicationType,
     selectedYear,
     selectedMonth,
@@ -24,38 +24,31 @@ export const transformApplicationToOldAgePensionDTO = (
     employers,
     rawEmployers,
     childPensionSelectedCustodyKids,
-    childPensionAddChild,
     childPension,
     personalAllowance,
     spouseAllowance,
     personalAllowanceUsage,
     spouseAllowanceUsage,
     taxLevel,
+    earlyRetirementFiles,
   } = getApplicationAnswers(application.answers)
 
+  const custodyKids = Object.entries(childPensionSelectedCustodyKids).map(
+    ([key, value]) => ({
+      name: '',
+      nationalIdOrBirthDate: value,
+      childDoesNotHaveNationalId: true,
+    }),
+  )
 
-
-    console.log('?????????????  Data that dont have any parameters to map to, yet ???????????????')
- 
-    console.log('employmentStatus',employmentStatus)
-    console.log('employers',employers)
-    console.log('rawEmployers',rawEmployers)
-    console.log('childPensionSelectedCustodyKids',childPensionSelectedCustodyKids)
-    console.log('childPensionAddChild',childPensionAddChild)
-    console.log('childPension',childPension)
-    console.log('application',application)
-    console.log('application.application', application.applicant)
-
-
-    const childrens = childPension
+  const childrens = [...custodyKids, ...childPension]
 
   return {
     period: {
-      year: selectedYear,
-      month: selectedMonth, // TODO:
+      year: +selectedYear,
+      month: getMonthNumber(selectedMonth),
     },
     comment: comment,
-    pensionFund: YES === pensionFundQuestion,
     paymentInfo: {
       bank: bank,
       taxLevel: taxLevel,
@@ -64,17 +57,27 @@ export const transformApplicationToOldAgePensionDTO = (
       spouseAllowanceUsage: spouseAllowanceUsage,
       personalAllowanceUsage: personalAllowanceUsage,
     },
-    applicantInfo: application.answers.applicantInfo,
+    applicantInfo: {
+      email: applicantEmail,
+      phonenumber: applicantPhonenumber,
+    },
     applicationType: applicationType,
     hasAbroadResidence: YES === residenceHistoryQuestion,
     hasOneTimePayment: YES === onePaymentPerYear,
-    isSailorPension: true, // TODO:
+    isSailorPension: applicationType === 'sailorPension',
+    isEarlyPension: earlyRetirementFiles && earlyRetirementFiles.length > 0,
     householdSupplement: {
       isRental: householdSupplementHousing !== 'houseOwner',
       childrenUnder18: YES === householdSupplementChildren,
     },
     children: childrens,
     connectedApplications: connectedApplications,
-    uploads
+    uploads,
   }
+}
+
+export const getMonthNumber = (monthName: string): number => {
+  // Parse the month name and get the month number (0-based)
+  const monthNumber = parse(monthName, 'MMMM', new Date())
+  return monthNumber.getMonth() + 1
 }
