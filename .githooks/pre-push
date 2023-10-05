@@ -1,6 +1,5 @@
 #!/bin/bash
 set -euo pipefail
-# echo "HOOK: Running pre-push hook"
 
 : "${GIT_ROOT:="$(git rev-parse --show-toplevel)"}"
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
@@ -29,5 +28,4 @@ if [ "$branch_protected" = true ]; then
   exit 1
 fi
 
-# echo "HOOK: Finished pre-push hook"
 exec "$GIT_ROOT/.githooks/defaulthook" pre-push
