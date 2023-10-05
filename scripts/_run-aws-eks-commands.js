@@ -31,6 +31,7 @@ function buildDockerImage(containerImage, builder, target) {
   const dirnameSafe = `"${__dirname}"`
   execSync(
     `${builder} build -f ${dirnameSafe}/Dockerfile.proxy --target ${target} -t ${containerImage} ${dirnameSafe}`,
+    { stdio: 'inherit' },
   )
 }
 
@@ -74,17 +75,32 @@ async function main() {
               return true
             }),
         async (args) => {
+          console.log('Run proxy args:', { args })
           const credentials = await getCredentials(args.profile)
           const dockerBuild = `proxy-${args.service}`
           buildDockerImage(dockerBuild, args.builder, 'proxy')
-          console.log(`Now running the proxy - \uD83D\uDE31`)
+          console.log(
+            `Now running the proxy (using ${args.builder}) - \uD83D\uDE31`,
+          )
           console.log(
             `Proxy will be listening on http://localhost:${args['proxy-port']} - \uD83D\uDC42`,
           )
-          execSync(
-            `${args.builder} run --name ${args.service} --rm -e AWS_ACCESS_KEY_ID=${credentials.accessKeyId} -e AWS_SECRET_ACCESS_KEY=${credentials.secretAccessKey} -e AWS_SESSION_TOKEN="${credentials.sessionToken}" -e CLUSTER=${args.cluster} -e TARGET_SVC=${args.service} -e TARGET_NAMESPACE=${args.namespace} -e TARGET_PORT=${args.port} -p ${args['proxy-port']}:8080 ${dockerBuild}`,
-            { stdio: 'inherit' },
-          )
+          const runOpts = [
+            `--name ${args.service}`,
+            `--rm`,
+            `-e AWS_ACCESS_KEY_ID=${credentials.accessKeyId}`,
+            `-e AWS_SECRET_ACCESS_KEY=${credentials.secretAccessKey}`,
+            `-e AWS_SESSION_TOKEN="${credentials.sessionToken}"`,
+            `-e CLUSTER=${args.cluster}`,
+            `-e TARGET_SVC=${args.service}`,
+            `-e TARGET_NAMESPACE=${args.namespace}`,
+            `-e TARGET_PORT=${args.port}`,
+            `-p ${args['proxy-port']}:${args['proxy-port']}`,
+          ]
+          console.log('runOpts:', { runOpts })
+          execSync(`${args.builder} run ${runOpts.join(' ')} ${dockerBuild}`, {
+            stdio: 'inherit',
+          })
         },
       )
       .command(
