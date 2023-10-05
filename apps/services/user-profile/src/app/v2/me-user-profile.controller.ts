@@ -17,6 +17,7 @@ import {
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(UserProfileScope.read)
 @ApiTags('user-profile')
+@ApiSecurity('oauth2', [UserProfileScope.read])
 @Controller({
   path: 'me/user-profile',
   version: ['2'],
