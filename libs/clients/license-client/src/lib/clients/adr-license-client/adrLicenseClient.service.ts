@@ -42,7 +42,7 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
     const expired = new Date(licenseInfo.gildirTil)
     const comparison = compareAsc(expired, new Date())
 
-    if (isNaN(comparison) || comparison < 0) {
+    if (Number.isNaN(comparison) || comparison < 0) {
       return LicensePkPassAvailability.NotAvailable
     }
 
