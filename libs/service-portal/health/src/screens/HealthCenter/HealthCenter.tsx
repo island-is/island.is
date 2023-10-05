@@ -148,7 +148,10 @@ const HealthCenter = () => {
             <Divider />
             <UserInfoLine
               label={formatMessage(messages.personalDoctor)}
-              content={healthCenterData.current.doctor ?? ''}
+              content={
+                healthCenterData.current.doctor ??
+                formatMessage(messages.healthCenterNoDoctor)
+              }
             />
             <Divider />
           </Stack>

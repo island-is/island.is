@@ -445,6 +445,10 @@ export const messages = defineMessages({
     id: 'sp.health:health-center-registration-transfer-success-info',
     defaultMessage: 'Þú hefur verið skráður á',
   },
+  healthCenterNoDoctor: {
+    id: 'sp.health:health-center-no-doctor',
+    defaultMessage: 'Enginn læknir skráður',
+  },
   healthRegistrationSave: {
     id: 'sp.health:health-registration-save',
     defaultMessage: 'Vista',
