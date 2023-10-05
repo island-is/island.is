@@ -3,8 +3,16 @@ import jwt from 'jsonwebtoken'
 import jwksClient from 'jwks-rsa'
 import { uuid } from 'uuidv4'
 
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
+
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { type User, UserRole } from '@island.is/judicial-system/types'
 
@@ -17,6 +25,8 @@ export class AuthService {
     private readonly defenderService: DefenderService,
     @Inject(authModuleConfig.KEY)
     private readonly config: ConfigType<typeof authModuleConfig>,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
   async findUser(nationalId: string): Promise<User | undefined> {
@@ -46,7 +56,9 @@ export class AuthService {
         return await res.json()
       }
     } catch (error) {
-      console.warn('Defender not found', error)
+      if (error instanceof NotFoundException) {
+        this.logger.info('Defender not found', error)
+      } else throw error
     }
 
     // If a defender doesn't have any active cases, we look them up
@@ -75,7 +87,10 @@ export class AuthService {
         } as User
       }
     } catch (error) {
-      console.warn('Defender not found in lawyer registry', error)
+      this.logger.info(
+        'Error when looking up defender in lawyer registry',
+        error,
+      )
     }
 
     return undefined

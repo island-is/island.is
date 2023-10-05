@@ -152,6 +152,7 @@ export class AuthController {
 
     const { redirectRoute } = req.cookies[REDIRECT_COOKIE_NAME] ?? {}
     const codeVerifier = req.cookies[CODE_VERIFIER_COOKIE.name]
+    res.clearCookie(CODE_VERIFIER_COOKIE.name, CODE_VERIFIER_COOKIE.options)
 
     try {
       const idsTokens = await this.authService.fetchIdsToken(code, codeVerifier)
@@ -161,7 +162,6 @@ export class AuthController {
 
       if (verifiedUserToken) {
         this.logger.debug('Token verification successful')
-        res.clearCookie(CODE_VERIFIER_COOKIE.name, CODE_VERIFIER_COOKIE.options)
 
         return this.redirectAuthenticatedUser(
           {
@@ -248,7 +248,7 @@ export class AuthController {
     )
 
     if (!authorization) {
-      this.logger.error('Blocking login attempt from an unauthorized user')
+      this.logger.info('Blocking login attempt from an unauthorized user')
 
       return res.redirect('/?villa=innskraning-ekki-notandi')
     }

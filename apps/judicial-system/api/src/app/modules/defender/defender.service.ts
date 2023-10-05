@@ -3,6 +3,9 @@ import fetch from 'isomorphic-fetch'
 import { Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import { Lawyer, mapToLawyer } from '@island.is/judicial-system/types'
 
 import { defenderModuleConfig } from './defender.config'
@@ -12,6 +15,8 @@ export class DefenderService {
   constructor(
     @Inject(defenderModuleConfig.KEY)
     private readonly config: ConfigType<typeof defenderModuleConfig>,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
   async getLawyers(): Promise<Lawyer[]> {
@@ -29,7 +34,7 @@ export class DefenderService {
     }
 
     const reason = await response.text()
-    console.error('Failed to get lawyers:', reason)
+    this.logger.info('Failed to get lawyers from lawyer registry:', reason)
     throw new Error(reason)
   }
 
@@ -53,7 +58,7 @@ export class DefenderService {
     }
 
     const reason = await response.text()
-    console.error('Failed to get lawyer:', reason)
+    this.logger.info('Failed to get lawyer from lawyer registry:', reason)
     throw new Error(reason)
   }
 }
