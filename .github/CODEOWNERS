@@ -113,7 +113,7 @@ libs/clients/rsk/relationships/                                                 
 /apps/download-service/                                                                                  @island-is/hugsmidjan
 /apps/service-portal*/                                                                                   @island-is/hugsmidjan
 /apps/services/regulations-admin-backend/                                                                @island-is/hugsmidjan
-/apps/services/user-profile/                                                                             @island-is/hugsmidjan @island-is/juni
+/apps/services/user-profile/                                                                             @island-is/hugsmidjan @island-is/juni @island-is/aranja
 /apps/web/screens/Regulations/                                                                           @island-is/hugsmidjan
 /apps/web/components/Regulations/                                                                        @island-is/hugsmidjan
 /libs/api/domains/air-discount-scheme                                                                    @island-is/hugsmidjan
@@ -123,7 +123,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/license-service/                                                                       @island-is/hugsmidjan
 /libs/api/domains/work-machines/                                                                         @island-is/hugsmidjan
 /libs/api/domains/national-registry/                                                                     @island-is/hugsmidjan
-/libs/api/domains/user-profile/                                                                          @island-is/hugsmidjan @island-is/juni
+/libs/api/domains/user-profile/                                                                          @island-is/hugsmidjan @island-is/juni @island-is/aranja
 /libs/api/domains/passport/                                                                              @island-is/hugsmidjan
 /libs/api/domains/vehicles/                                                                              @island-is/hugsmidjan
 /libs/api/domains/university-of-iceland/                                                                 @island-is/hugsmidjan
