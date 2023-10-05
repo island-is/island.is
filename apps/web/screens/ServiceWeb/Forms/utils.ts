@@ -80,6 +80,9 @@ export enum DirectorateOfImmigrationCategories {
 
   // Dvalarleyfi
   RESIDENCE_PERMIT = 'dvalarleyfi',
+
+  // Aðstoð við sjálfviljuga heimför
+  ASSISTED_VOLUNTARY_RETURN = 'adstod-vid-sjalfviljuga-heimfor',
 }
 
 export const filterSupportCategories = (
@@ -174,17 +177,32 @@ export const filterSupportCategories = (
             DirectorateOfImmigrationCategories.RESIDENCE_PERMIT_GENERAL_CONDITIONS &&
           c?.id !== DirectorateOfImmigrationCategories.RESIDENCE_PERMIT_TYPES,
       )
-      .concat({
-        id: DirectorateOfImmigrationCategories.RESIDENCE_PERMIT,
-        importance: 0,
-        __typename: 'SupportCategory',
-        description: '',
-        organization: organization,
-        slug: DirectorateOfImmigrationCategories.RESIDENCE_PERMIT,
-        title:
-          namespace?.['directorateOfImmigrationResidencePermit'] ||
-          (locale === 'is' ? 'Dvalarleyfi' : 'Residence permit'),
-      })
+      .concat([
+        {
+          id: DirectorateOfImmigrationCategories.RESIDENCE_PERMIT,
+          importance: 0,
+          __typename: 'SupportCategory',
+          description: '',
+          organization: organization,
+          slug: DirectorateOfImmigrationCategories.RESIDENCE_PERMIT,
+          title:
+            namespace?.['directorateOfImmigrationResidencePermit'] ||
+            (locale === 'is' ? 'Dvalarleyfi' : 'Residence permit'),
+        },
+        {
+          id: DirectorateOfImmigrationCategories.ASSISTED_VOLUNTARY_RETURN,
+          importance: 0,
+          __typename: 'SupportCategory',
+          description: '',
+          organization: organization,
+          slug: DirectorateOfImmigrationCategories.ASSISTED_VOLUNTARY_RETURN,
+          title:
+            namespace?.['directorateOfImmigrationAssistedVoluntaryReturn'] ||
+            (locale === 'is'
+              ? 'Aðstoð við sjálfviljuga heimför'
+              : 'Assisted voluntary return'),
+        },
+      ])
   }
 
   return supportCategories

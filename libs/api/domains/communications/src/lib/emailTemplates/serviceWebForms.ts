@@ -283,6 +283,9 @@ enum DirectorateOfImmigrationCategories {
 
   // Dvalarleyfi
   RESIDENCE_PERMIT = 'dvalarleyfi',
+
+  // Aðstoð við sjálfviljuga heimför
+  ASSISTED_VOLUNTARY_RETURN = 'adstod-vid-sjalfviljuga-heimfor',
 }
 
 const sjukratryggingarEmails = {
@@ -313,6 +316,8 @@ const directorateOfImmigrationEmails = {
   [DirectorateOfImmigrationCategories.TRAVEL_AND_VISITS_TO_ICELAND]:
     'aritanir@utl.is',
   [DirectorateOfImmigrationCategories.CITIZENSHIP]: 'rikisborgararettur@utl.is',
+  [DirectorateOfImmigrationCategories.ASSISTED_VOLUNTARY_RETURN]:
+    'return@utl.is',
 }
 
 export const getTemplate = (

@@ -483,7 +483,7 @@ export const StandardForm = ({
     if (institutionSligBelongsToDirectorateOfImmigration) {
       fields = (
         <>
-          <GridColumn span="12/12">
+          <GridColumn span="12/12" paddingBottom={3}>
             <Text>
               {n(
                 '',
@@ -658,7 +658,12 @@ export const StandardForm = ({
           >
             {!!suggestions.length && (
               <Text variant="h5" marginBottom={3}>
-                {n('weThinkThisMightHelp', 'Við höldum að þetta gæti hjálpað')}
+                {n(
+                  'weThinkThisMightHelp',
+                  activeLocale === 'is'
+                    ? 'Við höldum að þetta gæti hjálpað'
+                    : 'Related topics',
+                )}
               </Text>
             )}
             {isBusy ? (
@@ -713,13 +718,19 @@ export const StandardForm = ({
                     size="small"
                     icon="arrowDown"
                   >
-                    {n('seeMore', 'Sjá meira')}
+                    {n(
+                      'seeMore',
+                      activeLocale === 'is' ? 'Sjá meira' : 'See more',
+                    )}
                   </Button>
                 )}
               </Stack>
             ) : (
               <Text variant="small">
-                {n('nothingWasFound', 'Ekkert fannst')}
+                {n(
+                  'nothingWasFound',
+                  activeLocale === 'is' ? 'Ekkert fannst' : 'Nothing was found',
+                )}
               </Text>
             )}
           </Box>
