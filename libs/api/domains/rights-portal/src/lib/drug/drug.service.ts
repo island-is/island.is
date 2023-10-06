@@ -25,7 +25,7 @@ export class DrugService {
         .withMiddleware(new AuthMiddleware(user as Auth))
         .getDrugPaymentPeriods()
     } catch (e) {
-      this.logger.error('Error getting drug bills', {
+      this.logger.error('Error getting drug periods', {
         ...e,
         category: LOG_CATEGORY,
       })
@@ -53,7 +53,7 @@ export class DrugService {
         .withMiddleware(new AuthMiddleware(user as Auth))
         .getDrugBillLineItems(input)
     } catch (e) {
-      this.logger.error('Error getting drug bills', {
+      this.logger.error('Error getting drug bill lines', {
         ...e,
         category: LOG_CATEGORY,
       })
@@ -75,7 +75,7 @@ export class DrugService {
 
       return response
     } catch (e) {
-      this.logger.error('Error getting drug bills', {
+      this.logger.error('Error getting drugs', {
         ...e,
         category: LOG_CATEGORY,
       })
@@ -91,7 +91,21 @@ export class DrugService {
 
       return results
     } catch (e) {
-      this.logger.error('Error getting drug bills', {
+      this.logger.error('Error getting drug calculations', {
+        ...e,
+        category: LOG_CATEGORY,
+      })
+      return handle404(e)
+    }
+  }
+
+  async getCertificates(user: User) {
+    try {
+      return await this.api
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .getDrugCertificates()
+    } catch (e) {
+      this.logger.error('Error getting drug certificates', {
         ...e,
         category: LOG_CATEGORY,
       })
