@@ -14,7 +14,7 @@ export const UniversityOfIcelandApplicationClientConfig = defineConfig<
   load(env) {
     return {
       xroadPath: env.required(
-        'XROAD_UNIVERSITY_APPLICATION_UNIVERSITY_OF_ICELAND_PATH',
+        'XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH',
         'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1',
       ),
       scope: [],
