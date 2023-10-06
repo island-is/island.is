@@ -17,3 +17,14 @@ Stop proxies
 ```bash
 ./scripts/stop-test-proxies.sh [BUILDER; default="docker"]
 ```
+
+## Dependency cruiser
+
+A visual graph of module import resolution can help with debugging, especially in a large monorepo. The following script will output a `dot` file that can be rendered to svg (with GraphViz) and then to `html` to be opened in any browser.
+
+```bash
+# replace firefox with a browser of your choice
+yarn cruise -p apps/services/sessions && firefox depgraph.html
+```
+
+This uses [dependency-cruiser](https://www.npmjs.com/package/dependency-cruiser) behind the scenes. Feel free to modify [.dependency-cruiser.js](./dependency-cruiser.js) to customize the output.
