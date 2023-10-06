@@ -1,5 +1,6 @@
 import { Op } from 'sequelize'
 
+import type { User } from '@island.is/judicial-system/types'
 import {
   appealsCourtRoles,
   CaseAppealState,
@@ -15,7 +16,6 @@ import {
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
 
 import { getCasesQueryFilter } from './cases.filter'
 

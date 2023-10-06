@@ -1,7 +1,8 @@
 import each from 'jest-each'
-import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize'
+import { uuid } from 'uuidv4'
 
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseAppealState,
   CaseFileCategory,
@@ -15,14 +16,14 @@ import {
   restrictionCases,
   User,
 } from '@island.is/judicial-system/types'
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+
+import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
+import { include, order } from '../../case.service'
 import { TransitionCaseDto } from '../../dto/transitionCase.dto'
 import { Case } from '../../models/case.model'
-import { createTestingCaseModule } from '../createTestingCaseModule'
-import { order, include } from '../../case.service'
 
 jest.mock('../../../factories')
 

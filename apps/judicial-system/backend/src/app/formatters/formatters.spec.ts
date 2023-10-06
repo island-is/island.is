@@ -1,36 +1,37 @@
 import { FormatMessage } from '@island.is/cms-translations'
 import { createTestIntl } from '@island.is/cms-translations/test'
+
 import { caseTypes } from '@island.is/judicial-system/formatters'
 import {
+  CaseCustodyRestrictions,
   CaseLegalProvisions,
-  Gender,
   CaseType,
+  Gender,
+  InstitutionType,
+  RequestSharedWithDefender,
   SessionArrangements,
   User,
   UserRole,
-  InstitutionType,
-  CaseCustodyRestrictions,
-  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 
 import {
-  formatProsecutorCourtDateEmailNotification,
-  formatLegalProvisions,
   formatCourtHeadsUpSmsNotification,
   formatCourtReadyForCourtSmsNotification,
-  formatPrisonCourtDateEmailNotification,
-  stripHtmlTags,
-  formatDefenderCourtDateEmailNotification,
-  formatCourtRevokedSmsNotification,
-  formatPrisonRevokedEmailNotification,
-  formatDefenderRevokedEmailNotification,
-  formatProsecutorReceivedByCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
-  formatProsecutorReadyForCourtEmailNotification,
+  formatCourtRevokedSmsNotification,
   formatCustodyRestrictions,
-  formatPrisonAdministrationRulingNotification,
+  formatDefenderCourtDateEmailNotification,
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
+  formatDefenderRevokedEmailNotification,
+  formatLegalProvisions,
+  formatPrisonAdministrationRulingNotification,
+  formatPrisonCourtDateEmailNotification,
+  formatPrisonRevokedEmailNotification,
+  formatProsecutorCourtDateEmailNotification,
+  formatProsecutorReadyForCourtEmailNotification,
+  formatProsecutorReceivedByCourtSmsNotification,
+  stripHtmlTags,
 } from './formatters'
 
 export const makeProsecutor = (): User => {

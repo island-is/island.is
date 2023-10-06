@@ -1,7 +1,7 @@
-import { Op } from 'sequelize'
 import CryptoJS from 'crypto-js'
-import { Sequelize } from 'sequelize-typescript'
 import format from 'date-fns/format'
+import { Op } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   forwardRef,
@@ -11,11 +11,13 @@ import {
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
-import type { ConfigType } from '@island.is/nest/config'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
+
 import { caseTypes } from '@island.is/judicial-system/formatters'
+import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
   CaseFileCategory,
@@ -27,32 +29,31 @@ import {
   isRestrictionCase,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { User as TUser } from '@island.is/judicial-system/types'
 
-import { uuidFactory, nowFactory } from '../../factories'
+import { nowFactory, uuidFactory } from '../../factories'
 import {
+  createCaseFilesRecord,
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
-  getRequestPdfAsBuffer,
-  createCaseFilesRecord,
-  getRequestPdfAsString,
   getCustodyNoticePdfAsString,
+  getRequestPdfAsBuffer,
+  getRequestPdfAsString,
 } from '../../formatters'
 import { courtUpload } from '../../messages'
-import { CaseEvent, EventService } from '../event'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
-import { PoliceService } from '../police'
-import { Institution } from '../institution'
-import { User, UserService } from '../user'
 import { Defendant, DefendantService } from '../defendant'
-import { IndictmentCount, IndictmentCountService } from '../indictment-count'
+import { CaseEvent, EventService } from '../event'
 import { CaseFile, FileService } from '../file'
+import { IndictmentCount, IndictmentCountService } from '../indictment-count'
+import { Institution } from '../institution'
+import { PoliceService } from '../police'
+import { User, UserService } from '../user'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
+import { ArchiveResponse } from './models/archive.response'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
-import { ArchiveResponse } from './models/archive.response'
 import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
 

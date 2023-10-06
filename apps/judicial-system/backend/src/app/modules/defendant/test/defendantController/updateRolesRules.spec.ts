@@ -1,9 +1,9 @@
 import {
   assistantRule,
   judgeRule,
+  prosecutorRepresentativeRule,
   prosecutorRule,
   registrarRule,
-  prosecutorRepresentativeRule,
 } from '../../../../guards'
 import { DefendantController } from '../../defendant.controller'
 
