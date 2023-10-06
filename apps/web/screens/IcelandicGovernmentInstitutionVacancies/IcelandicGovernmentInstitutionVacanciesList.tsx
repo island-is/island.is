@@ -689,4 +689,6 @@ IcelandicGovernmentInstitutionVacanciesList.getProps = async ({
   }
 }
 
-export default withMainLayout(IcelandicGovernmentInstitutionVacanciesList)
+export default withMainLayout(IcelandicGovernmentInstitutionVacanciesList, {
+  footerVersion: 'organization',
+})
