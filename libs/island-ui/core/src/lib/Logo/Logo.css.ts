@@ -5,5 +5,5 @@ export const root = style({
 })
 
 export const logoHeight = style({
-  minHeight: '26px',
+  minHeight: '28px',
 })
