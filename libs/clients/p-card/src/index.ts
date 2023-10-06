@@ -1,1 +1,1 @@
-export * from './lib/clients-p-card.module'
+export * from './lib/pCard.module'
