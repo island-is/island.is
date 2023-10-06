@@ -13,6 +13,7 @@ import { VerifyInputData } from '../../dto/verifyLicense.input'
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
 import { format as formatNationalId } from 'kennitala'
 import { createPkPassDataInput } from './drivingLicenseMapper'
+import { LOG_CATEGORY } from './drivingLicenseApiClient.type'
 
 @Injectable()
 export class DrivingLicenseApiClientService implements GenericLicenseClient {
@@ -37,6 +38,10 @@ export class DrivingLicenseApiClientService implements GenericLicenseClient {
         this.drivingLicenseApi.getRemarksCodeTable(),
       ])
     } catch (e) {
+      this.logger.error('Service error', {
+        ...e,
+        category: LOG_CATEGORY,
+      })
       return {
         ok: false,
         error: {
