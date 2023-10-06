@@ -120,7 +120,9 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
           (activeDocument.document.content || activeDocument.document.html) && (
             <Tooltip placement="top" as="span" text={formatMessage(m.download)}>
               <a
-                download={`${activeDocument.subject}.html`}
+                download={`${activeDocument.subject}${
+                  activeDocument.document.html ? '.html' : ''
+                }`}
                 href={getDocumentLink(
                   activeDocument,
                   activeDocument.document.html ? 'html' : 'pdf',
