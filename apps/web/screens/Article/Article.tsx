@@ -284,9 +284,6 @@ const ArticleSidebar: FC<React.PropsWithChildren<ArticleSidebarProps>> = ({
           imgContainerDisplay={['block', 'block', 'none', 'block']}
         />
       )}
-      {article?.subArticles && article.subArticles.length > 0 && (
-        <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
-      )}
       <RelatedContent
         title={n('relatedMaterial')}
         articles={article?.relatedArticles ?? []}
@@ -327,7 +324,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
   const n = useNamespace(namespace)
-  const { query, asPath } = useRouter()
+  const { query, asPath, push } = useRouter()
   const { linkResolver } = useLinkResolver()
 
   const subArticle = article?.subArticles.find((sub) => {
@@ -753,6 +750,37 @@ const ArticleScreen: Screen<ArticleProps> = ({
                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                // @ts-ignore make web strict */}
               <ProcessEntry {...processEntry} />
+            </Box>
+          )}
+          {article && article.subArticles.length > 0 && (
+            <Box marginTop={3}>
+              <TableOfContents
+                headings={[
+                  {
+                    headingId: article.slug,
+                    headingTitle: article.shortTitle || article.title,
+                  },
+                ].concat(
+                  article.subArticles.map((s) => ({
+                    headingId: s.slug,
+                    headingTitle: s.title,
+                  })),
+                )}
+                selectedHeadingId={subArticle?.slug || article.slug}
+                tableOfContentsTitle={n('tableOfContentsTitle', 'Efnisyfirlit')}
+                onClick={(selectedSlug) => {
+                  if (selectedSlug === article.slug) {
+                    push(linkResolver('article', [article.slug]).href)
+                    return
+                  }
+                  const selectedSubArticle = article.subArticles.find(
+                    (s) => s.slug === selectedSlug,
+                  )
+                  if (!selectedSubArticle) return
+                  const variables = selectedSubArticle.slug.split('/')
+                  push(linkResolver('subarticle', variables).href)
+                }}
+              />
             </Box>
           )}
           {(subArticle
