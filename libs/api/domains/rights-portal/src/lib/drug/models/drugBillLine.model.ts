@@ -12,10 +12,10 @@ export class DrugBillLine {
   strength?: string
 
   @Field(() => String, { nullable: true })
-  amount?: string
+  quantity?: string
 
   @Field(() => Number, { nullable: true })
-  number?: number
+  units?: number
 
   @Field(() => Number, { nullable: true })
   salesPrice?: number
@@ -24,11 +24,14 @@ export class DrugBillLine {
   copaymentAmount?: number
 
   @Field(() => Number, { nullable: true })
-  excessAmount?: number
-
-  @Field(() => Number, { nullable: true })
   customerAmount?: number
 
   @Field(() => Number, { nullable: true })
+  excessAmount?: number
+
+  @Field(() => Number, { nullable: true })
   insuranceAmount?: number
+
+  @Field(() => Number, { nullable: true })
+  calculatedForPaymentStepAmount?: number
 }

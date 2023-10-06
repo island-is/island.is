@@ -10,10 +10,10 @@ import {
 import { isDefined } from '@island.is/shared/utils'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { HealthCenterTransferResponse } from './models/healthCenterTransfer.model'
+import { HealthCenterRegisterResponse } from './models/healthCenterTransfer.model'
 import { HealthCenterRegistrationHistory } from './models/healthCenterRecordHistory.model'
 import { HealthCenterRecord } from './models/healthCenterRecord.model'
-import { HealthCenterTransferInput } from './dto/healthCenterTransfer.input'
+import { HealthCenterRegisterInput } from './dto/healthCenterTransfer.input'
 
 const LOG_CATEGORY = 'rights-portal-health-center'
 
@@ -121,8 +121,8 @@ export class HealthCenterService {
 
   async registerHealthCenter(
     user: User,
-    input: HealthCenterTransferInput,
-  ): Promise<HealthCenterTransferResponse> {
+    input: HealthCenterRegisterInput,
+  ): Promise<HealthCenterRegisterResponse> {
     try {
       await this.api
         .withMiddleware(new AuthMiddleware(user as Auth))

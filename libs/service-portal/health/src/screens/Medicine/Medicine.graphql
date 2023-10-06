@@ -1,5 +1,5 @@
 query getDrugsData {
-  rightsPortalDrugsPaymentPeroids {
+  rightsPortalDrugPeriods {
     id
     dateFrom
     dateTo
@@ -12,8 +12,8 @@ query getDrugsData {
   }
 }
 
-query getDrugsBills($input: RightsPortalDrugsBillsInput!) {
-  rightsPortalDrugsBills(input: $input) {
+query getDrugsBills($input: RightsPortalDrugBillInput!) {
+  rightsPortalDrugBills(input: $input) {
     id
     date
     description
@@ -25,13 +25,13 @@ query getDrugsBills($input: RightsPortalDrugsBillsInput!) {
   }
 }
 
-query getDrugBillLineItem($input: RightsPortalDrugsBillLineItemInput!) {
-  rightsPortalDrugBillLineItems(input: $input) {
+query getDrugBillLineItem($input: RightsPortalDrugsBillLineInput!) {
+  rightsPortalDrugBillLines(input: $input) {
     billId
     drugName
     strength
-    amount
-    number
+    quantity
+    units
     salesPrice
     copaymentAmount
     excessAmount
@@ -40,9 +40,9 @@ query getDrugBillLineItem($input: RightsPortalDrugsBillLineItemInput!) {
   }
 }
 
-query getDrugs($input: RightsPortalDrugsInput!) {
+query getDrugs($input: RightsPortalDrugInput!) {
   rightsPortalDrugs(input: $input) {
-    drugs {
+    data {
       nordicCode
       atcCode
       name

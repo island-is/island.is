@@ -8,6 +8,7 @@ import { DrugBillInput } from './dto/drugBill.input'
 import { DrugBillLineInput } from './dto/drugBillLine.input'
 import { DrugInput } from './dto/drug.input'
 import { DrugCalculatorInput } from './dto/drugCalculator.input'
+import { PaginatedDrugResponse } from './models/drug.model'
 
 const LOG_CATEGORY = 'rights-portal-drugs'
 @Injectable()
@@ -62,9 +63,17 @@ export class DrugService {
 
   async getDrugs(user: User, input: DrugInput) {
     try {
-      return await this.api
+      const data = await this.api
         .withMiddleware(new AuthMiddleware(user as Auth))
         .getDrugs(input)
+
+      const response = {
+        data: data.drugs,
+        pageInfo: data.pageInfo,
+        totalCount: data.totalCount,
+      } as PaginatedDrugResponse
+
+      return response
     } catch (e) {
       this.logger.error('Error getting drug bills', {
         ...e,

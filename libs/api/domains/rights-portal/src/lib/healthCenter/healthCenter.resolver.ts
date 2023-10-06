@@ -15,11 +15,11 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { HealthCenterService } from './healthCenter.service'
-import { HealthCenterTransferInput } from './dto/healthCenterTransfer.input'
-import { HealthCenterTransferResponse } from './models/healthCenterTransfer.model'
 import { PaginatedHealthCentersResponse } from './models/healthCenter.model'
 import { HealthCenterHistoryInput } from './dto/healthCenterHistory.input'
 import { HealthCenterRegistrationHistory } from './models/healthCenterRecordHistory.model'
+import { HealthCenterRegisterResponse } from './models/healthCenterTransfer.model'
+import { HealthCenterRegisterInput } from './dto/healthCenterTransfer.input'
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.servicePortalHealthRightsModule)
@@ -61,14 +61,14 @@ export class HealthCenterResolver {
   }
 
   @Scopes(ApiScope.health)
-  @Mutation(() => HealthCenterTransferResponse, {
+  @Mutation(() => HealthCenterRegisterResponse, {
     name: 'rightsPortalRegisterHealthCenter',
   })
   @FeatureFlag(Features.servicePortalTransferHealthCenter)
   @Audit()
   registerHealthCenter(
     @CurrentUser() user: User,
-    @Args('input') input: HealthCenterTransferInput,
+    @Args('input') input: HealthCenterRegisterInput,
   ) {
     return this.service.registerHealthCenter(user, input)
   }

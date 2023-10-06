@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('RightsPortalHealthCenterTransferResponse')
-export class HealthCenterTransferResponse {
+@ObjectType('RightsPortalHealthCenterRegisterResponse')
+export class HealthCenterRegisterResponse {
   @Field(() => Boolean)
   success!: boolean
 }

@@ -4,7 +4,7 @@ import { RightsPortalClientModule } from '@island.is/clients/icelandic-health-in
 import { AidAndNutritionResolver } from './aidAndNutrition/aidAndNutrition.resolver'
 import { AidAndNutritionService } from './aidAndNutrition/aidAndNutrition.service'
 import { DentistResolver } from './dentist/dentist.resolver'
-import { DentistService } from './dentist/denstist.service'
+import { DentistService } from './dentist/dentist.service'
 import { DrugResolver } from './drug/drug.resolver'
 import { DrugService } from './drug/drug.service'
 import { HealthCenterResolver } from './healthCenter/healthCenter.resolver'

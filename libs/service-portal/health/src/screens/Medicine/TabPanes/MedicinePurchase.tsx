@@ -20,13 +20,12 @@ import { messages } from '../../../lib/messages'
 import {
   useGetDrugBillLineItemLazyQuery,
   useGetDrugsBillsLazyQuery,
-  useGetDrugsBillsQuery,
   useGetDrugsDataQuery,
 } from '../Medicine.generated'
 import {
-  RightsPortalDrugBillLineItem,
-  RightsPortalDrugsBills,
-  RightsPortalDrugsPaymentPeroids,
+  RightsPortalDrugBillLine,
+  RightsPortalDrugBill,
+  RightsPortalDrugPeriod,
 } from '@island.is/api/schema'
 import { useEffect, useState } from 'react'
 import * as styles from './Medicine.css'
@@ -47,10 +46,10 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
   const { formatDateFns } = useLocale()
 
   const [selectedPeriod, setSelectedPeriod] =
-    useState<RightsPortalDrugsPaymentPeroids | null>(null)
+    useState<RightsPortalDrugPeriod | null>(null)
   const [selectedLineItem, setSelectedLineItem] = useState<string>('')
   const [fetchedLineItems, setFetchedLineItems] = useState<
-    Map<string, RightsPortalDrugBillLineItem[]>
+    Map<string, RightsPortalDrugBillLine[]>
   >(new Map())
   const formatDatePeriod = (dateFrom: Date, dateTo: Date) => {
     if (!dateFrom || !dateTo) return ''
@@ -60,14 +59,12 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
     )}`
   }
 
-  const [bills, setBills] = useState<RightsPortalDrugsBills[] | null>(null)
+  const [bills, setBills] = useState<RightsPortalDrugBill[] | null>(null)
   const [billsLoading, setBillsLoading] = useState<boolean>(false)
 
   const { data, loading, error } = useGetDrugsDataQuery()
 
   const [getPaymenetPeriodsQuery] = useGetDrugsBillsLazyQuery()
-
-  console.log(bills)
 
   useEffect(() => {
     if (selectedPeriod) {
@@ -79,7 +76,7 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
           },
         },
         onCompleted: (data) => {
-          setBills(data.rightsPortalDrugsBills)
+          setBills(data.rightsPortalDrugBills)
           setBillsLoading(false)
         },
         onError: () => {
@@ -94,7 +91,7 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
 
   useEffect(() => {
     if (data) {
-      const firstItem = data?.rightsPortalDrugsPaymentPeroids[0]
+      const firstItem = data.rightsPortalDrugPeriods[0] ?? null
       if (firstItem) setSelectedPeriod(firstItem)
     }
   }, [data])
@@ -102,10 +99,6 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
   return (
     <Box paddingY={4}>
       <Box marginBottom={SECTION_GAP}>
-        {/* <Text marginBottom={CONTENT_GAP} variant="h5">
-          {formatMessage(messages.medicinePurchaseIntroTitle)}
-        </Text>
-        <Text>{formatMessage(messages.medicinePurchaseIntroText)}</Text> */}
         <IntroHeader
           isSubheading
           title={messages.medicinePurchaseTitle}
@@ -122,7 +115,7 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
           />
         </Box>
       )}
-      {data?.rightsPortalDrugsPaymentPeroids?.length && (
+      {data?.rightsPortalDrugPeriods?.length && (
         <Box display="flex" flexDirection="column">
           <Box marginBottom={1}>
             <Text color="blue400" variant="eyebrow" as="h3">
@@ -137,7 +130,7 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
             <Select
               name="paymentPeroid"
               size="sm"
-              options={data.rightsPortalDrugsPaymentPeroids.map((period) => ({
+              options={data.rightsPortalDrugPeriods.map((period) => ({
                 label: formatDatePeriod(period.dateFrom, period.dateTo),
                 value: period.id,
               }))}
@@ -157,7 +150,7 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
               }
               onChange={(option) =>
                 setSelectedPeriod(
-                  data.rightsPortalDrugsPaymentPeroids.find(
+                  data.rightsPortalDrugPeriods.find(
                     (period) => period.id === option?.value,
                   ) ?? null,
                 )
@@ -268,7 +261,7 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
                           onCompleted: (data) =>
                             fetchedLineItems.set(
                               bill.id ?? '',
-                              data.rightsPortalDrugBillLineItems,
+                              data.rightsPortalDrugBillLines,
                             ),
                         })
                       }}
@@ -340,8 +333,8 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
                                   <T.Row key={`${i}-${j}-${k}`}>
                                     <T.Data>{lineItem.drugName}</T.Data>
                                     <T.Data>{lineItem.strength}</T.Data>
-                                    <T.Data>{lineItem.amount}</T.Data>
-                                    <T.Data>{lineItem.number}</T.Data>
+                                    <T.Data>{lineItem.quantity}</T.Data>
+                                    <T.Data>{lineItem.units}</T.Data>
                                     <T.Data>{lineItem.salesPrice}</T.Data>
                                     <T.Data>{lineItem.copaymentAmount}</T.Data>
                                     <T.Data>{lineItem.excessAmount}</T.Data>

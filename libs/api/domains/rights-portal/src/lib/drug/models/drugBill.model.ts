@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('RightsPortalDrugBills')
+@ObjectType('RightsPortalDrugBill')
 export class DrugBill {
   @Field(() => ID, { nullable: true })
   id?: number | null

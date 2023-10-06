@@ -12,16 +12,8 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
-import {
-  CardLoader,
-  EmptyState,
-  ErrorScreen,
-} from '@island.is/service-portal/core'
+import { EmptyState, ErrorScreen } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
-import {
-  useGetHealthCenterQuery,
-  useRightsPortalTransferHealthCenterMutation,
-} from './HealthCenterRegistration.generated'
 import * as styles from './HealthRegistration.css'
 import { m } from '@island.is/service-portal/core'
 import groupBy from 'lodash/groupBy'
@@ -31,6 +23,10 @@ import { useNavigate } from 'react-router-dom'
 import { HealthPaths } from '../../lib/paths'
 import { formatHealthCenterName } from '../../utils/format'
 import { RegisterModal } from '../../components/RegisterModal'
+import {
+  useGetHealthCenterQuery,
+  useRightsPortalTransferHealthCenterMutation,
+} from './HealthCenterRegistration.generated'
 
 type SelectedHealthCenter = Pick<RightsPortalHealthCenter, 'id' | 'name'>
 
@@ -62,7 +58,7 @@ const HealthCenterRegistration = () => {
       setErrorTransfer(true)
     },
     onCompleted: (data) => {
-      if (data.rightsPortalTransferHealthCenter.success) {
+      if (data.rightsPortalRegisterHealthCenter.success) {
         navigate(`${HealthPaths.HealthCenter}`, {
           state: {
             transferSuccess: true,
@@ -75,7 +71,9 @@ const HealthCenterRegistration = () => {
       }
     },
     variables: {
-      id: selectedHealthCenter?.id || '',
+      input: {
+        id: selectedHealthCenter?.id || '',
+      },
     },
   })
 

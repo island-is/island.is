@@ -14,7 +14,7 @@ import {
   FeatureFlag,
   Features,
 } from '@island.is/nest/feature-flags'
-import { DentistService } from './denstist.service'
+import { DentistService } from './dentist.service'
 import { DentistRegistration } from './models/registration.model'
 import { DentistBillsInput } from './dto/bills.input'
 import { DentistStatus } from './models/status.model'

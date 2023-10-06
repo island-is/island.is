@@ -48,7 +48,11 @@ export const MedicineCalulator = () => {
     [search],
   )
 
-  const { data: drugs, loading: drugsLoading } = useGetDrugsQuery({
+  const {
+    data: drugs,
+    loading: drugsLoading,
+    error,
+  } = useGetDrugsQuery({
     variables: {
       input: {
         pageNumber: pageNumber - 1,
@@ -85,6 +89,26 @@ export const MedicineCalulator = () => {
       onCompleted: (data) => {
         // route not implemented
       },
+    })
+  }
+
+  const handleAddDrug = (
+    drug: RightsPortalCalculatorRequestInput,
+    name: string,
+    strength: string,
+  ) => {
+    setSelectedDrugList((list) => {
+      return [
+        ...list,
+        {
+          lineNumber: list.length + 1,
+          nordicCode: drug.nordicCode,
+          price: drug.price,
+          units: 1,
+          name: name,
+          strength: strength,
+        },
+      ]
     })
   }
 
@@ -140,7 +164,7 @@ export const MedicineCalulator = () => {
           </T.Head>
           {SHOW_TABLE && (
             <T.Body>
-              {drugs?.rightsPortalDrugs.drugs?.map((drug, i) => {
+              {drugs?.rightsPortalDrugs.data?.map((drug, i) => {
                 return (
                   <tr
                     onMouseLeave={() => setHoveredDrug(-1)}
@@ -158,26 +182,11 @@ export const MedicineCalulator = () => {
                           size="small"
                           variant="text"
                           icon="pencil"
-                          onClick={() => {
-                            setSelectedDrugList(
-                              [...selectedDrugList, drug]
-                                .filter(
-                                  (drug, index, self) =>
-                                    index ===
-                                    self.findIndex(
-                                      (d) => d.nordicCode === drug.nordicCode,
-                                    ),
-                                )
-                                .map((d, i) => ({
-                                  lineNumber: i + 1,
-                                  nordicCode: d.nordicCode,
-                                  price: d.price,
-                                  units: 1,
-                                  name: drug.name,
-                                  strength: drug.strength,
-                                })),
-                            )
-                          }}
+                          onClick={() =>
+                            drug?.name && drug.strength
+                              ? handleAddDrug(drug, drug.name, drug.strength)
+                              : undefined
+                          }
                         >
                           {formatMessage(messages.medicineSelect)}
                         </Button>

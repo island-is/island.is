@@ -1,4 +1,4 @@
-query getHealthCenter($input: HealthCenterHistoryInput) {
+query getHealthCenter($input: RightsPortalHealthCenterHistoryInput) {
   getOrganizations {
     items {
       id
