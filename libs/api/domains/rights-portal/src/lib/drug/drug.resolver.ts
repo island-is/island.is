@@ -34,7 +34,7 @@ export class DrugResolver {
 
   @Scopes(ApiScope.health)
   @Query(() => [DrugPeriod], {
-    name: 'rightPortalDrugPeriods',
+    name: 'rightsPortalDrugPeriods',
   })
   @Audit()
   getRightsPortalDrugsPaymentPeroids(@CurrentUser() user: User) {
