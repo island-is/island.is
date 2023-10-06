@@ -1,12 +1,20 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
-import { HelloOddurApi, GetStatusApi, Status } from '../../gen/fetch'
+import {
+  HelloOddurApi,
+  GetStatusApi,
+  Status,
+  OldAgePension,
+  SendApplicationApi,
+  OldAgePensionResponse,
+} from '../../gen/fetch'
 
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
   constructor(
     private readonly helloOddurApi: HelloOddurApi,
     private readonly getStatusApi: GetStatusApi,
+    private readonly sendApplicationApi: SendApplicationApi,
   ) {}
 
   private testWithAuth = (user: User) =>
@@ -14,6 +22,9 @@ export class SocialInsuranceAdministrationClientService {
 
   private statusAPIWithAuth = (user: User) =>
     this.getStatusApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private sendAPIWithAuth = (user: User) =>
+    this.sendApplicationApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   /**
    * Hello world
@@ -34,5 +45,14 @@ export class SocialInsuranceAdministrationClientService {
       '-------------------getStatus Begin #45----------------------------',
     )
     return await this.statusAPIWithAuth(user).getStatus()
+  }
+
+  async sendApplication(
+    user: User,
+    oldAgePension: OldAgePension,
+  ): Promise<OldAgePensionResponse> {
+    return await this.sendAPIWithAuth(user).oldAgePensionSendApplication({
+      oldAgePension,
+    })
   }
 }

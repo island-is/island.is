@@ -183,47 +183,47 @@ export function getApplicationAnswers(answers: Application['answers']) {
   ) as TaxLevelOptions
 
 
-  const additionalFiles = getValueViaPath(
+  const additionalAttachments = getValueViaPath(
     answers,
     'fileUploadAdditionalFiles.additionalDocuments',
   ) as FileType[]
 
-  const pensionFiles  = getValueViaPath(
+  const pensionAttachments  = getValueViaPath(
     answers,
     'fileUploadEarlyPenFisher.pension',
   ) as FileType[]
 
-  const fishermenFiles = getValueViaPath(
+  const fishermenAttachments = getValueViaPath(
     answers,
     'fileUploadEarlyPenFisher.fishermen',
   ) as FileType[]
 
-  const selfEmployedFiles = getValueViaPath(
+  const selfEmployedAttachments = getValueViaPath(
     answers,
     'employment.selfEmployedAttachment',
   ) as FileType[]
 
-  const earlyRetirementFiles = getValueViaPath(
+  const earlyRetirementAttachments = getValueViaPath(
     answers,
     'fileUploadEarlyPenFisher.earlyRetirement',
   ) as FileType[]
 
-  const leaseAgreementFiles = getValueViaPath(
+  const leaseAgreementAttachments = getValueViaPath(
     answers,
     'fileUploadHouseholdSupplement.leaseAgreement',
   ) as FileType[]
 
-  const schoolConfirmationFiles = getValueViaPath(
+  const schoolConfirmationAttachments = getValueViaPath(
     answers,
     'fileUploadHouseholdSupplement.schoolConfirmation',
   ) as FileType[]
 
-  const maintenanceFiles = getValueViaPath(
+  const maintenanceAttachments = getValueViaPath(
     answers,
     'fileUploadChildPension.maintenance',
   ) as FileType[]
 
-  const notLivesWithApplicantFiles = getValueViaPath(
+  const notLivesWithApplicantAttachments = getValueViaPath(
     answers,
     'fileUploadChildPension.notLivesWithApplicant',
   ) as FileType[]
@@ -255,15 +255,15 @@ export function getApplicationAnswers(answers: Application['answers']) {
     personalAllowanceUsage,
     spouseAllowanceUsage,
     taxLevel,
-    additionalFiles,
-    pensionFiles,
-    fishermenFiles,
-    selfEmployedFiles,
-    earlyRetirementFiles,
-    leaseAgreementFiles,
-    schoolConfirmationFiles,
-    maintenanceFiles,
-    notLivesWithApplicantFiles
+    additionalAttachments,
+    pensionAttachments,
+    fishermenAttachments,
+    selfEmployedAttachments,
+    earlyRetirementAttachments,
+    leaseAgreementAttachments,
+    schoolConfirmationAttachments,
+    maintenanceAttachments,
+    notLivesWithApplicantAttachments
   }
 }
 

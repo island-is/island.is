@@ -17,6 +17,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { S3 } from 'aws-sdk'
 import { getApplicationAnswers } from '@island.is/application/templates/old-age-pension'
 
+
 interface customError {
   type: string
   title: string
@@ -51,7 +52,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
     }
   }
 
-  private async initFiles(
+  private async initAttachments(
     application: Application,
     id: string,
     type: string,
@@ -77,15 +78,15 @@ export class OldAgePensionService extends BaseTemplateApiService {
 
   private async getAttachments(application: Application): Promise<any> {
     const {
-      additionalFiles,
-      pensionFiles,
-      fishermenFiles,
-      selfEmployedFiles,
-      earlyRetirementFiles,
-      leaseAgreementFiles,
-      schoolConfirmationFiles,
-      maintenanceFiles,
-      notLivesWithApplicantFiles,
+      additionalAttachments,
+      pensionAttachments,
+      fishermenAttachments,
+      selfEmployedAttachments,
+      earlyRetirementAttachments,
+      leaseAgreementAttachments,
+      schoolConfirmationAttachments,
+      maintenanceAttachments,
+      notLivesWithApplicantAttachments,
     } = getApplicationAnswers(application.answers)
 
     const uploads = {
@@ -98,88 +99,88 @@ export class OldAgePensionService extends BaseTemplateApiService {
       earlyRetirement: [] as any,
     }
 
-    if (additionalFiles) {
-      uploads.additional = await this.initFiles(
+    if (additionalAttachments) {
+      uploads.additional = await this.initAttachments(
         application,
         'fileUploadAdditionalFiles.additionalDocuments',
         'other',
-        additionalFiles,
+        additionalAttachments,
       )
     }
 
-    if (pensionFiles) {
-      uploads.pension = await this.initFiles(
+    if (pensionAttachments) {
+      uploads.pension = await this.initAttachments(
         application,
         'fileUploadEarlyPenFisher.pension',
         'pension',
-        pensionFiles,
+        pensionAttachments,
       )
     }
 
-    if (fishermenFiles) {
-      uploads.sailorPension = await this.initFiles(
+    if (fishermenAttachments) {
+      uploads.sailorPension = await this.initAttachments(
         application,
         'fileUploadEarlyPenFisher.fishermen',
         'sailor',
-        fishermenFiles,
+        fishermenAttachments,
       )
     }
 
-    if (leaseAgreementFiles) {
-      uploads.householdSupplement = await this.initFiles(
+    if (leaseAgreementAttachments) {
+      uploads.householdSupplement = await this.initAttachments(
         application,
         'fileUploadHouseholdSupplement.leaseAgreement',
         'leaseAgreement',
-        leaseAgreementFiles,
+        leaseAgreementAttachments,
       )
     }
 
-    if (schoolConfirmationFiles) {
+    if (schoolConfirmationAttachments) {
       uploads.householdSupplement.push(
-        ...(await this.initFiles(
+        ...(await this.initAttachments(
           application,
           'fileUploadHouseholdSupplement.schoolConfirmation',
           'schoolConfirmation',
-          schoolConfirmationFiles,
+          schoolConfirmationAttachments,
         )),
       )
     }
 
-    if (maintenanceFiles) {
-      uploads.childPension = await this.initFiles(
+    if (maintenanceAttachments) {
+      uploads.childPension = await this.initAttachments(
         application,
         'fileUploadChildPension.maintenance',
         'maintenance',
-        maintenanceFiles,
+        maintenanceAttachments,
       )
     }
 
-    if (notLivesWithApplicantFiles) {
+    if (notLivesWithApplicantAttachments) {
       uploads.childPension.push(
-        ...(await this.initFiles(
+        ...(await this.initAttachments(
           application,
           'fileUploadChildPension.notLivesWithApplicant',
           'childSupport',
-          notLivesWithApplicantFiles,
+          notLivesWithApplicantAttachments,
         )),
       )
     }
 
-    if (selfEmployedFiles) {
-      uploads.halfOldAgePension = await this.initFiles(
+    if (selfEmployedAttachments) {
+      uploads.halfOldAgePension = await this.initAttachments(
         application,
         'employment.selfEmployedAttachment',
         'selfEmployed',
-        selfEmployedFiles,
+        selfEmployedAttachments,
       )
     }
 
-    if (earlyRetirementFiles) {
-      uploads.earlyRetirement = await this.initFiles(
+    if (earlyRetirementAttachments) {
+      uploads.earlyRetirement = await this.initAttachments(
         application,
         'fileUploadEarlyPenFisher.earlyRetirement',
         'earlyRetirement',
-        earlyRetirementFiles,
+        earlyRetirementAttachments,
       )
     }
 
@@ -260,32 +261,22 @@ export class OldAgePensionService extends BaseTemplateApiService {
 
   async sendApplication({
     application,
+    auth,
     params = undefined,
   }: TemplateApiModuleActionProps) {
     try {
-      console.log('-------------- OLD AGE  sendApplication  -----------------')
-
       const attachments = await this.getAttachments(application)
 
       const oldAgePensionDTO = transformApplicationToOldAgePensionDTO(
         application,
         attachments,
       )
+      
 
-      /*const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
-        application,
-        periods,
-        attachments,
-        false, // put false in testData as this is not dummy request
-        this.checkActionName(application, actionNameFromParams),
+      const response = await this.siaClientService.sendApplication(
+        auth,
+        oldAgePensionDTO,
       )
-
-*/
-
-      console.log(' !!!!!!!!!!!!!! DATA FOR TR   !!!!!!!!!!!!!!!!!!')
-      console.log(oldAgePensionDTO)
-
-      const response = undefined // await this.siaClientService.()
 
       return response
     } catch (e) {
