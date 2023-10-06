@@ -9,10 +9,7 @@ import {
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
 import subYears from 'date-fns/subYears'
-import {
-  AidOrNutrition,
-  PaginatedAidsAndNutritionResponse,
-} from './models/aidsOrNutrition.model'
+import { PaginatedAidsAndNutritionResponse } from './models/aidsOrNutrition.model'
 import {
   AidOrNutritionType,
   generateAidOrNutrition,

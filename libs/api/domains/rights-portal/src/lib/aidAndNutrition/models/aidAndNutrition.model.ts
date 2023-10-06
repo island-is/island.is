@@ -1,18 +1,11 @@
-import { Field, ID, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { AidOrNutritionType } from '../utils/generateAidOrNutrition'
 import { PaginatedResponse } from '@island.is/nest/pagination'
+import { Refund } from './aidAndNutritionRefund.model'
 
 registerEnumType(AidOrNutritionType, {
   name: 'RightsPortalAidOrNutritionType',
 })
-
-@ObjectType('RightsPortalAidOrNutritionRefund')
-export class Refund {
-  @Field()
-  type!: string
-  @Field(() => Int)
-  value!: number
-}
 
 @ObjectType('RightsPortalAidOrNutrition')
 export class AidOrNutrition {
@@ -57,6 +50,6 @@ export class AidOrNutrition {
 }
 
 @ObjectType('RightsPortalPaginatedAidsAndNutrition')
-export class PaginatedAidsAndNutritionResponse extends PaginatedResponse(
+export class PaginatedAidAndNutritionResponse extends PaginatedResponse(
   AidOrNutrition,
 ) {}

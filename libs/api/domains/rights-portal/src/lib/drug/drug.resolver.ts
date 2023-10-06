@@ -28,7 +28,7 @@ import { DrugCalculatorInput } from './dto/drugCalculator.input'
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.servicePortalHealthRightsModule)
-@Audit({ namespace: '@island.is/api/rights-portal/drugs' })
+@Audit({ namespace: '@island.is/api/rights-portal/drug' })
 export class DrugResolver {
   constructor(private readonly drugService: DrugService) {}
 
