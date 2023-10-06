@@ -35,7 +35,6 @@ import {
   HousingBenefitCalculator,
   OccupationalLicenses,
   ShipRegistry,
-  UniversityGatewayUniversityOfIceland,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -375,7 +374,6 @@ export const serviceSetup = (services: {
       AircraftRegistry,
       HousingBenefitCalculator,
       ShipRegistry,
-      UniversityGatewayUniversityOfIceland,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

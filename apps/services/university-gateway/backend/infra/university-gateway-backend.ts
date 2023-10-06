@@ -1,19 +1,20 @@
 import { service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
+import { UniversityGatewayUniversityOfIceland } from '../../../../../infra/src/dsl/xroad'
 
 export const serviceSetup =
   (): ServiceBuilder<'services-university-gateway-backend'> => {
     return service('services-university-gateway-backend')
       .namespace('university-gateway')
       .image('services-university-gateway-backend')
-      .secrets({
-        AUTH_JWT_SECRET: '/k8s/university-gateway/AUTH_JWT_SECRET',
-        BACKEND_ACCESS_TOKEN: '/k8s/university-gateway/BACKEND_ACCESS_TOKEN',
-      })
       .resources({
         limits: { cpu: '200m', memory: '384Mi' },
         requests: { cpu: '50m', memory: '256Mi' },
       })
-      .secrets({})
+      .secrets({
+        AUTH_JWT_SECRET: '/k8s/university-gateway/AUTH_JWT_SECRET',
+        BACKEND_ACCESS_TOKEN: '/k8s/university-gateway/BACKEND_ACCESS_TOKEN',
+      })
+      .xroad(UniversityGatewayUniversityOfIceland)
       .postgres({
         username: 'university_gateway',
         name: 'university_gateway',
