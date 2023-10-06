@@ -1,8 +1,9 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common'
+import { Logger, ValidationPipe } from '@nestjs/common'
+import type { INestApplication } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
-import { NestExpressApplication } from '@nestjs/platform-express'
-import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
-import bodyParser from 'body-parser'
+import type { NestExpressApplication } from '@nestjs/platform-express'
+import type { OpenAPIObject } from '@nestjs/swagger'
+import { SwaggerModule } from '@nestjs/swagger'
 import cookieParser from 'cookie-parser'
 import * as fs from 'fs'
 import type { Server } from 'http'
@@ -19,12 +20,12 @@ import '@island.is/infra-tracing'
 import { httpRequestDurationMiddleware } from './httpRequestDurationMiddleware'
 import { InfraModule } from './infra/infra.module'
 import { swaggerRedirectMiddleware } from './swaggerMiddlewares'
-import { InfraNestServer, RunServerOptions } from './types'
+import type { InfraNestServer, RunServerOptions } from './types'
 
 // Allow client connections to stay connected for up to 30 seconds of inactivity. For reference, the default value in
 // Node.JS is 5 seconds, Kestrel (.NET) is 120 seconds and Nginx is 75 seconds.
 const KEEP_ALIVE_TIMEOUT = 1000 * 30
-
+const nestLogger = new Logger('InfraNestServer')
 export const createApp = async ({
   stripNonClassValidatorInputs = true,
   appModule,
@@ -72,7 +73,7 @@ export const createApp = async ({
   app.use(cookieParser())
 
   if (options.jsonBodyLimit) {
-    app.use(bodyParser.json({ limit: options.jsonBodyLimit }))
+    app.useBodyParser('json', { limit: options.jsonBodyLimit })
   }
 
   return app
@@ -101,7 +102,6 @@ function setupOpenApi(
   swaggerPath = '/swagger',
 ) {
   app.use(swaggerPath, swaggerRedirectMiddleware(swaggerPath))
-
   const document = SwaggerModule.createDocument(app, openApi)
   SwaggerModule.setup(swaggerPath, app, document)
 

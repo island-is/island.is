@@ -1,20 +1,24 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import addDays from 'date-fns/addDays'
 import { lookup } from 'geoip-lite'
-import { Op, WhereOptions } from 'sequelize'
+import { Op } from 'sequelize'
+import type { WhereOptions } from 'sequelize'
+
 import uaParser from 'ua-parser-js'
 
-import { User } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import { paginate } from '@island.is/nest/pagination'
 
-import { CreateSessionDto } from './create-session.dto'
+import type { CreateSessionDto } from './create-session.dto'
 import { Session } from './session.model'
-import { SessionsQueryDto } from './sessions-query.dto'
-import { SessionsResultDto } from './sessions-result.dto'
+import type { SessionsQueryDto } from './sessions-query.dto'
+import type { SessionsResultDto } from './sessions-result.dto'
 
 @Injectable()
 export class SessionsService {
+  private readonly logger = new Logger(SessionsService.name)
+
   constructor(
     @InjectModel(Session)
     private readonly sessionModel: typeof Session,
@@ -25,6 +29,11 @@ export class SessionsService {
     query: SessionsQueryDto,
     otherUser?: string,
   ): Promise<SessionsResultDto> {
+    this.logger.log('This is a log message')
+    this.logger.error('This is an error message')
+    this.logger.warn('This is a warning message')
+    this.logger.debug('This is a debug message')
+    this.logger.verbose('This is a verbose log message')
     let whereOptions: WhereOptions
 
     if (user.actor) {

@@ -9,7 +9,7 @@ import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { SessionsConfig } from '../sessions.config'
 import { SessionsModule } from '../sessions/sessions.module'
 import { SessionsProcessor } from './sessions-processor'
-import { environment } from '../../environments'
+import { environment } from '../../environments/environment'
 
 @Module({
   imports: [

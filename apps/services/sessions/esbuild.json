@@ -1,6 +1,0 @@
-{
-  "platform": "node",
-  "keepNames": true,
-  "logLevel": "debug",
-  "external": []
-}

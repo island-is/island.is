@@ -230,7 +230,7 @@
         "@typescript-eslint/explicit-function-return-type": "off",
         "@typescript-eslint/no-parameter-properties": "off",
         "@typescript-eslint/ban-types": "warn",
-        "@typescript-eslint/consistent-type-imports": "error",
+        "@typescript-eslint/consistent-type-imports": "warn",
         "@typescript-eslint/no-unused-vars": [
           "warn",
           {

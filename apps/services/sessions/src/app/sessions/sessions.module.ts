@@ -1,6 +1,8 @@
 import { BullModule as NestBullModule } from '@nestjs/bull'
-import { DynamicModule, Module } from '@nestjs/common'
-import { ConfigType } from '@nestjs/config'
+import { Module } from '@nestjs/common'
+import type { DynamicModule } from '@nestjs/common'
+
+import type { ConfigType } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { createRedisCluster } from '@island.is/cache'

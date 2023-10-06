@@ -1,6 +1,6 @@
 const isProduction = process.env.NODE_ENV === 'production'
 
-export default {
+export const environment = {
   audit: {
     defaultNamespace: '@island.is/sessions',
     groupName: process.env.AUDIT_GROUP_NAME,

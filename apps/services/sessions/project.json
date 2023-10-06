@@ -10,10 +10,19 @@
       "options": {
         "outputFileName": "main.cjs",
         "format": ["cjs"],
-        "esbuildConfig": "apps/services/sessions/esbuild.json",
+        "deleteOutputPath": false,
+        "esbuildOptions": {
+          "sourcesContent": false,
+          "keepNames": true,
+          "bundle": true,
+          "packages": "external",
+          "sourcemap": true,
+          "minify": false
+        },
         "outputPath": "dist/apps/services/sessions",
         "main": "apps/services/sessions/src/main.ts",
         "tsConfig": "apps/services/sessions/tsconfig.app.json",
+        "watch": true,
         "assets": [
           {
             "glob": "*",
@@ -31,33 +40,20 @@
             "output": "./"
           }
         ]
-      },
-      "configurations": {
-        "configurations": {
-          "production": {
-            "minify": true,
-            "generatePackageJson": true
-          },
-          "dev": {
-            "watch": true,
-            "minify": false,
-            "sourceMap": true
-          }
-        }
       }
     },
     "serve": {
       "executor": "@nx/js:node",
       "options": {
         "port": 0,
-        "buildTarget": "services-sessions:build:dev"
+        "buildTarget": "services-sessions:build"
       }
     },
     "worker": {
       "executor": "@nx/js:node",
       "options": {
         "port": 0,
-        "buildTarget": "services-sessions:build:dev",
+        "buildTarget": "services-sessions:build",
         "args": ["--job", "worker"]
       }
     },

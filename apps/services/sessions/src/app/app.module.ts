@@ -6,7 +6,7 @@ import { AuditModule } from '@island.is/nest/audit'
 import { ConfigModule } from '@island.is/nest/config'
 import { ProblemModule } from '@island.is/nest/problem'
 
-import { environment } from '../environments'
+import { environment } from '../environments/environment'
 import { SequelizeConfigService } from '../sequelizeConfig.service'
 import { SessionsConfig } from './sessions.config'
 import { SessionsModule } from './sessions/sessions.module'

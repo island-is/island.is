@@ -2,7 +2,7 @@ import { DocumentBuilder } from '@nestjs/swagger'
 
 import { ApiScope, SessionsScope } from '@island.is/auth/scopes'
 
-import { environment } from './environments'
+import { environment } from './environments/environment'
 
 export const openApi = new DocumentBuilder()
   .setTitle('Session log API')

@@ -7,15 +7,15 @@ import {
   Processor,
 } from '@nestjs/bull'
 import { Inject } from '@nestjs/common'
-import { Job } from 'bull'
+import type { Job } from 'bull'
 
-import { AuditService } from '@island.is/nest/audit'
+import type { AuditService } from '@island.is/nest/audit'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { sessionsQueueName, sessionJobName } from '../sessions.config'
-import { SessionsService } from '../sessions/sessions.service'
-import { CreateSessionDto } from '../sessions/create-session.dto'
+import type { SessionsService } from '../sessions/sessions.service'
+import type { CreateSessionDto } from '../sessions/create-session.dto'
 
 @Processor(sessionsQueueName)
 export class SessionsProcessor {
