@@ -27,4 +27,4 @@ A visual graph of module import resolution can help with debugging, especially i
 yarn cruise -p apps/services/sessions && firefox depgraph.html
 ```
 
-This uses [dependency-cruiser](https://www.npmjs.com/package/dependency-cruiser) behind the scenes. Feel free to modify [.dependency-cruiser.js](./dependency-cruiser.js) to customize the output.
+This uses [dependency-cruiser](https://www.npmjs.com/package/dependency-cruiser) behind the scenes. Feel free to add `.dependency-cruiser.local.js` in the repo root to merge your custom config with the default.

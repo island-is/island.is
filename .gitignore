@@ -101,5 +101,5 @@ apps/**/index.html
 .next
 
 # depcruiser
-.dependency-cruiser.js
+.dependency-cruiser.local.js
 depgraph.*
