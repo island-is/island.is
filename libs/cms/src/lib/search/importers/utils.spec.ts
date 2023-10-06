@@ -1,7 +1,7 @@
 import { pruneEntryHyperlink } from './utils'
 
-describe('', () => {
-  it('s', () => {
+describe('pruning entry hyperlink nodes', () => {
+  it('should remove objects at depth 2', () => {
     const test = {
       data: {
         target: {
