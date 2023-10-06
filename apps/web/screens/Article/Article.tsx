@@ -19,6 +19,7 @@ import {
   TableOfContents,
   Button,
   Tag,
+  GridContainer,
 } from '@island.is/island-ui/core'
 import {
   HeadWithSocialSharing,
@@ -265,30 +266,10 @@ const ArticleSidebar: FC<React.PropsWithChildren<ArticleSidebarProps>> = ({
   activeSlug,
   n,
 }) => {
-  const { linkResolver } = useLinkResolver()
   const { activeLocale } = useI18n()
 
   return (
     <Stack space={3}>
-      {!!article?.category?.slug && (
-        <Box display={['none', 'none', 'block']} printHidden>
-          <Link
-            {...linkResolver('articlecategory', [article.category.slug])}
-            skipTab
-          >
-            <Button
-              preTextIcon="arrowBack"
-              preTextIconType="filled"
-              size="small"
-              type="button"
-              variant="text"
-              truncate
-            >
-              {article.category.title}
-            </Button>
-          </Link>
-        </Box>
-      )}
       {article?.organization && article.organization.length > 0 && (
         <InstitutionPanel
           img={article.organization[0].logo?.url}
@@ -580,8 +561,30 @@ const ArticleScreen: Screen<ArticleProps> = ({
         imageWidth={article?.featuredImage?.width.toString()}
         imageHeight={article?.featuredImage?.height.toString()}
       />
+      {!!article?.category?.slug && (
+        <GridContainer>
+          <Box display={['none', 'none', 'block']} printHidden>
+            <Link
+              {...linkResolver('articlecategory', [article.category.slug])}
+              skipTab
+            >
+              <Button
+                preTextIcon="arrowBack"
+                preTextIconType="filled"
+                size="small"
+                type="button"
+                variant="text"
+                truncate
+              >
+                {article.category.title}
+              </Button>
+            </Link>
+          </Box>
+        </GridContainer>
+      )}
       <SidebarLayout
         isSticky={false}
+        flexDirection="rowReverse"
         sidebarContent={
           <Sticky>
             <ArticleSidebar
