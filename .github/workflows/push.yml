@@ -738,6 +738,7 @@ jobs:
       - name: check cache success
         run: '[[ "${{ steps.infra-node-modules.outputs.success }}" != "false" ]] || exit 1'
       - name: Install infra modules
+        if: steps.infra-node-modules.outputs.cache-hit != 'true'
         working-directory: monorepo/infra
         run: |
           CI=true yarn install --immutable

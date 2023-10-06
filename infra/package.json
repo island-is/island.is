@@ -1,5 +1,5 @@
 {
-  "name": "infra",
+ "name": "infra",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -30,5 +30,6 @@
   },
   "volta": {
     "node": "18.12.1"
-  }
+  },
+  "packageManager": "yarn@3.2.3"
 }
