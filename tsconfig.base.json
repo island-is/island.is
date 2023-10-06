@@ -543,6 +543,7 @@
       "@island.is/clients/national-registry-v3": [
         "libs/clients/national-registry/v3/src/index.ts"
       ],
+      "@island.is/clients/p-card": ["libs/clients/p-card/src/index.ts"],
       "@island.is/clients/passports": ["libs/clients/passports/src/index.ts"],
       "@island.is/clients/payment-schedule": [
         "libs/clients/payment-schedule/src/index.ts"
