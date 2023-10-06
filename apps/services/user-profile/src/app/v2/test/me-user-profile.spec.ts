@@ -5,12 +5,18 @@ import { createCurrentUser } from '@island.is/testing/fixtures'
 import { UserProfileScope } from '@island.is/auth/scopes'
 import { FixtureFactory } from './fixtureFactory'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
+import { UserProfile } from '../userProfileV2.model'
+import { getModelToken } from '@nestjs/sequelize'
 
 const testUserProfile = {
   nationalId: '1234567890',
   email: 'test@test.is',
   mobilePhoneNumber: '1234567',
 }
+
+const newEmail = 'test1234@test.is'
+const newPhoneNumber = '9876543'
+
 describe('MeUserProfile', () => {
   describe('Auth and scopes', () => {
     it.each`
@@ -126,6 +132,246 @@ describe('MeUserProfile', () => {
           mobilePhoneNumberVerified: false,
           mobileStatus: DataStatus.NOT_DEFINED,
         })
+
+        await app.cleanUp()
+      },
+    )
+  })
+
+  describe('PATCH user-profile', () => {
+    it.each`
+      method     | endpoint
+      ${'PATCH'} | ${'/v2/me/user-profile'}
+    `(
+      '$method $endpoint should return 201 with changed data in response',
+      async ({ method, endpoint }: TestEndpointOptions) => {
+        // Arrange
+        const app = await setupWithAuth({
+          user: createCurrentUser({
+            nationalId: testUserProfile.nationalId,
+            scope: [UserProfileScope.read, UserProfileScope.write],
+          }),
+        })
+
+        const fixtureFactory = new FixtureFactory(app)
+
+        await fixtureFactory.createUserProfile(testUserProfile)
+
+        const server = request(app.getHttpServer())
+
+        // Act
+        // const res = await getRequestMethod(server, method)(endpoint)
+        const res = await server.patch(endpoint).send({
+          email: newEmail,
+          mobilePhoneNumber: newPhoneNumber,
+        })
+
+        // Assert
+        expect(res.status).toEqual(201)
+        expect(res.body).toMatchObject({
+          email: newEmail,
+          emailStatus: DataStatus.NOT_VERIFIED,
+          emailVerified: false,
+          mobilePhoneNumber: newPhoneNumber,
+          mobilePhoneNumberVerified: false,
+          mobileStatus: DataStatus.NOT_VERIFIED,
+        })
+
+        // Assert Db records
+        const userProfileModel = app.get(getModelToken(UserProfile))
+        const userProfile = await userProfileModel.findOne({
+          where: { nationalId: testUserProfile.nationalId },
+        })
+
+        expect(userProfile.email).toBe(newEmail)
+        expect(userProfile.mobilePhoneNumber).toBe(newPhoneNumber)
+
+        await app.cleanUp()
+      },
+    )
+    it.each`
+      method     | endpoint
+      ${'PATCH'} | ${'/v2/me/user-profile'}
+    `(
+      '$method $endpoint should return 201 with only email changed data in response',
+      async ({ method, endpoint }: TestEndpointOptions) => {
+        // Arrange
+        const app = await setupWithAuth({
+          user: createCurrentUser({
+            nationalId: testUserProfile.nationalId,
+            scope: [UserProfileScope.read, UserProfileScope.write],
+          }),
+        })
+
+        const fixtureFactory = new FixtureFactory(app)
+
+        await fixtureFactory.createUserProfile(testUserProfile)
+
+        const server = request(app.getHttpServer())
+
+        // Act
+        // const res = await getRequestMethod(server, method)(endpoint)
+        const res = await server.patch(endpoint).send({
+          email: newEmail,
+        })
+
+        // Assert
+        expect(res.status).toEqual(201)
+        expect(res.body).toMatchObject({
+          email: newEmail,
+          emailStatus: DataStatus.NOT_VERIFIED,
+          emailVerified: false,
+        })
+
+        // Assert Db records
+        const userProfileModel = app.get(getModelToken(UserProfile))
+        const userProfile = await userProfileModel.findOne({
+          where: { nationalId: testUserProfile.nationalId },
+        })
+
+        expect(userProfile.email).toBe(newEmail)
+        expect(userProfile.mobilePhoneNumber).toBe(
+          testUserProfile.mobilePhoneNumber,
+        )
+
+        await app.cleanUp()
+      },
+    )
+
+    it.each`
+      method     | endpoint
+      ${'PATCH'} | ${'/v2/me/user-profile'}
+    `(
+      '$method $endpoint should return 201 with only phoneNumber changed data in response',
+      async ({ method, endpoint }: TestEndpointOptions) => {
+        // Arrange
+        const app = await setupWithAuth({
+          user: createCurrentUser({
+            nationalId: testUserProfile.nationalId,
+            scope: [UserProfileScope.read, UserProfileScope.write],
+          }),
+        })
+
+        const fixtureFactory = new FixtureFactory(app)
+
+        await fixtureFactory.createUserProfile(testUserProfile)
+
+        const server = request(app.getHttpServer())
+
+        // Act
+        // const res = await getRequestMethod(server, method)(endpoint)
+        const res = await server.patch(endpoint).send({
+          mobilePhoneNumber: newPhoneNumber,
+        })
+
+        // Assert
+        expect(res.status).toEqual(201)
+        expect(res.body).toMatchObject({
+          mobilePhoneNumber: newPhoneNumber,
+          mobilePhoneNumberVerified: false,
+          mobileStatus: DataStatus.NOT_VERIFIED,
+        })
+
+        // Assert Db records
+        const userProfileModel = app.get(getModelToken(UserProfile))
+        const userProfile = await userProfileModel.findOne({
+          where: { nationalId: testUserProfile.nationalId },
+        })
+
+        expect(userProfile.email).toBe(testUserProfile.email)
+        expect(userProfile.mobilePhoneNumber).toBe(newPhoneNumber)
+
+        await app.cleanUp()
+      },
+    )
+
+    it.each`
+      method     | endpoint
+      ${'PATCH'} | ${'/v2/me/user-profile'}
+    `(
+      '$method $endpoint should return 201 and clear email and phoneNumber when empty string is sent',
+      async ({ method, endpoint }: TestEndpointOptions) => {
+        // Arrange
+        const app = await setupWithAuth({
+          user: createCurrentUser({
+            nationalId: testUserProfile.nationalId,
+            scope: [UserProfileScope.read, UserProfileScope.write],
+          }),
+        })
+
+        const fixtureFactory = new FixtureFactory(app)
+
+        await fixtureFactory.createUserProfile(testUserProfile)
+
+        const server = request(app.getHttpServer())
+
+        // Act
+        // const res = await getRequestMethod(server, method)(endpoint)
+        const res = await server.patch(endpoint).send({
+          mobilePhoneNumber: '',
+          email: '',
+        })
+
+        // Assert
+        expect(res.status).toEqual(201)
+        expect(res.body).toMatchObject({
+          mobilePhoneNumber: '',
+          mobilePhoneNumberVerified: false,
+          mobileStatus: DataStatus.NOT_VERIFIED,
+          email: '',
+          emailStatus: DataStatus.NOT_VERIFIED,
+          emailVerified: false,
+        })
+
+        // Assert Db records
+        const userProfileModel = app.get(getModelToken(UserProfile))
+        const userProfile = await userProfileModel.findOne({
+          where: { nationalId: testUserProfile.nationalId },
+        })
+
+        expect(userProfile.email).toBe('')
+        expect(userProfile.mobilePhoneNumber).toBe('')
+
+        await app.cleanUp()
+      },
+    )
+  })
+
+  describe('Nudge confirmation', () => {
+    it.each`
+      method    | endpoint
+      ${'POST'} | ${'/v2/me/user-profile/confirm'}
+    `(
+      '$method $endpoint should return 201 and update the lastNudge field when user confirms nudge',
+      async ({ method, endpoint }: TestEndpointOptions) => {
+        // Arrange
+        const app = await setupWithAuth({
+          user: createCurrentUser({
+            nationalId: testUserProfile.nationalId,
+            scope: [UserProfileScope.read, UserProfileScope.write],
+          }),
+        })
+
+        const fixtureFactory = new FixtureFactory(app)
+
+        await fixtureFactory.createUserProfile(testUserProfile)
+
+        const server = request(app.getHttpServer())
+
+        // Act
+        // const res = await getRequestMethod(server, method)(endpoint)
+        const res = await getRequestMethod(server, method)(endpoint)
+
+        // Assert
+        expect(res.status).toEqual(201)
+
+        // Assert that lastNudge is updated
+        const userProfileModel = app.get(getModelToken(UserProfile))
+        const userProfile = await userProfileModel.findOne({
+          where: { nationalId: testUserProfile.nationalId },
+        })
+
+        expect(userProfile.lastNudge).not.toBeNull()
 
         await app.cleanUp()
       },

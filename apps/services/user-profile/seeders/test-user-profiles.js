@@ -1,20 +1,31 @@
 'use strict'
 
 module.exports = {
-  up: (queryInterface) => {
-    return queryInterface.bulkInsert(
-      'user_profile',
-      [
+  up: async (queryInterface) => {
+    const transaction = await queryInterface.sequelize.transaction()
+
+    try {
+      await queryInterface.bulkInsert(
+        'user_profile',
+        [
+          {
+            id: 'ec23d2ff-4798-43eb-b487-c0c37c2778b1',
+            national_id: '2222222229',
+            mobile_phone_number: '5555555',
+            locale: 'en',
+          },
+        ],
         {
-          id: 'ec23d2ff-4798-43eb-b487-c0c37c2778b1',
-          national_id: '2222222229',
-          mobile_phone_number: '5555555',
-          locale: 'en',
-          email: 'email@email.com',
+          transaction,
         },
-      ],
-      {},
-    )
+      )
+    } catch (err) {
+      console.log(err)
+      await transaction.rollback()
+      throw err
+    }
+
+    await transaction.commit()
   },
 
   down: (queryInterface) => {

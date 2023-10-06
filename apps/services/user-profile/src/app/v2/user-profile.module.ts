@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { UserProfile } from '../user-profile/userProfile.model'
 import { AuditModule } from '@island.is/nest/audit'
 import environment from '../../environments/environment'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { MeUserProfileController } from './me-user-profile.controller'
 import { UserProfileService } from './user-profile.service'
+import { UserProfile } from './userProfileV2.model'
 
 @Module({
   imports: [

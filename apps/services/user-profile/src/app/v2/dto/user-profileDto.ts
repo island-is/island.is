@@ -1,9 +1,16 @@
-import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
+import {
+  IsBoolean,
+  IsDate,
+  IsEnum,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 
 export class UserProfileDto {
   @IsString()
-  readonly nationalId: string
+  @IsOptional()
+  readonly nationalId?: string
 
   @IsOptional()
   @IsString()
@@ -32,4 +39,8 @@ export class UserProfileDto {
   @IsOptional()
   @IsBoolean()
   readonly emailVerified?: boolean
+
+  @IsOptional()
+  @IsDate()
+  readonly lastNudge?: Date
 }
