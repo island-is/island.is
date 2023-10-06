@@ -1,25 +1,11 @@
 import { Box, Link, ProfileCard, Text } from '@island.is/island-ui/core'
 import { IconTitleCard } from '@island.is/web/components'
-import {
-  type LifeEventPage,
-  type LifeEventPageListSlice as LifeEventPageListSliceSchema,
-} from '@island.is/web/graphql/schema'
-import { linkResolver, LinkType, useNamespace } from '@island.is/web/hooks'
+import type { LifeEventPageListSlice as LifeEventPageListSliceSchema } from '@island.is/web/graphql/schema'
+import { linkResolver, useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
+import { extractAnchorPageLinkType } from '@island.is/web/utils/anchorPage'
 
 import * as styles from './LifeEventPageListSlice.css'
-
-const extractLinkType = (page: LifeEventPage) => {
-  let linkType: LinkType = 'lifeeventpage'
-
-  if (page.pageType === 'Digital Iceland Community Page') {
-    linkType = 'digitalicelandcommunitydetailpage'
-  } else if (page.pageType === 'Digital Iceland Service') {
-    linkType = 'digitalicelandservicesdetailpage'
-  }
-
-  return linkType
-}
 
 interface LifeEventPageListSliceProps {
   slice: LifeEventPageListSliceSchema
@@ -37,7 +23,7 @@ export const LifeEventPageListSlice: React.FC<
     return (
       <Box className={styles.profileCardContainer} marginLeft={[0, 0, 0, 0, 6]}>
         {slice.lifeEventPageList?.map((page) => {
-          const linkType = extractLinkType(page)
+          const linkType = extractAnchorPageLinkType(page)
 
           const href = linkResolver(linkType, [page.slug], activeLocale).href
           return (
