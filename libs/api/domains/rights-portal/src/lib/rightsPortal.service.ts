@@ -312,6 +312,7 @@ export class RightsPortalService {
           healthCenterName: res[0].healthCenter ?? undefined,
         },
         history,
+        canRegister: res[0].canRegister,
       }
     } catch (e) {
       return handle404(e)
