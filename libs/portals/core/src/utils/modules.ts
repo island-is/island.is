@@ -1,3 +1,4 @@
+import { FormatMessage } from '@island.is/localization'
 import flatten from 'lodash/flatten'
 import type { User } from '@island.is/shared/types'
 import { FeatureFlagClient } from '@island.is/react/feature-flags'
@@ -44,6 +45,7 @@ interface ArrangeRoutesArgs {
   modules: PortalModule[]
   featureFlagClient: FeatureFlagClient
   client: ApolloClient<NormalizedCacheObject>
+  formatMessage: FormatMessage
 }
 
 export const arrangeRoutes = async ({
@@ -51,6 +53,7 @@ export const arrangeRoutes = async ({
   modules,
   featureFlagClient,
   client,
+  formatMessage,
 }: ArrangeRoutesArgs) => {
   const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
   const portalRoutes = modules.map((module) => {
@@ -60,6 +63,7 @@ export const arrangeRoutes = async ({
     return routesObject({
       userInfo,
       client,
+      formatMessage,
     })
   })
 

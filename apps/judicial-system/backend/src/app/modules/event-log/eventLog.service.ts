@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { EventLog } from './models/eventLog.model'
 import { CreateEventLogDto } from './dto/createEventLog.dto'
+import { EventLog } from './models/eventLog.model'
 
 @Injectable()
 export class EventLogService {

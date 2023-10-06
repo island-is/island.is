@@ -148,7 +148,9 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       params?.validCategories &&
       (!drivingLicense?.categories ||
         !drivingLicense.categories.some((x) =>
-          params.validCategories?.includes(x.name),
+          params.validCategories?.includes(
+            params?.useLegacyVersion ? x.name : x.nr || '',
+          ),
         ))
     ) {
       throw new TemplateApiError(

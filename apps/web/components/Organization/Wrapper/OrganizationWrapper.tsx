@@ -528,17 +528,14 @@ export const OrganizationFooter: React.FC<
         />
       )
       break
-    case 'geislavarnir-rikisins':
-    case 'icelandic-radiation-safety-authority':
+    case 'samgongustofa':
+    case 'transport-authority':
       OrganizationFooterComponent = (
         <WebFooter
           imageUrl={organization.logo?.url}
           heading={organization.title}
           columns={organization.footerItems}
-          background={n(
-            'geislavarnirRikisinsFooterBackground',
-            'linear-gradient(360deg, rgba(182, 211, 216, 0.5092) -27.29%, rgba(138, 181, 185, 0.5776) 33.96%, rgba(69, 135, 138, 0.6384) 129.36%, rgba(19, 101, 103, 0.722) 198.86%)',
-          )}
+          titleVariant="h2"
         />
       )
       break
@@ -547,7 +544,6 @@ export const OrganizationFooter: React.FC<
       if (footerItems.length === 0) break
       OrganizationFooterComponent = (
         <WebFooter
-          imageUrl={organization?.logo?.url}
           heading={organization?.title ?? ''}
           columns={footerItems}
           background={organization?.footerConfig?.background}

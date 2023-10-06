@@ -2,8 +2,8 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import type {
   CaseFile as TCaseFile,
-  CaseFileState,
   CaseFileCategory,
+  CaseFileState,
 } from '@island.is/judicial-system/types'
 
 @ObjectType()

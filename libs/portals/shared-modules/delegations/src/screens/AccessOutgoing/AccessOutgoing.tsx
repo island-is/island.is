@@ -17,14 +17,20 @@ import { AccessForm } from '../../components/access/AccessForm/AccessForm'
 import { useDelegation } from '../../hooks/useDelegation'
 import { AccessHeader } from '../../components/access/AccessHeader/AccessHeader'
 import { m } from '../../lib/messages'
+import { Problem } from '@island.is/react-spa/shared'
 
 const AccessOutgoing = () => {
   useNamespaces(['sp.access-control-delegations'])
   const { md } = useBreakpoint()
   const { formatMessage, lang } = useLocale()
-  const { delegation, scopeTree, delegationLoading } = useDelegation(
-    AuthDomainDirection.outgoing,
-  )
+  const {
+    delegation,
+    scopeTree,
+    delegationLoading,
+    scopeTreeError,
+    delegationError,
+    scopeTreeLoading,
+  } = useDelegation(AuthDomainDirection.outgoing)
 
   /**
    * If validity period is set then user cannot change scopes validity period individually
@@ -112,14 +118,18 @@ const AccessOutgoing = () => {
           )}
         </Box>
       </AccessHeader>
-      {delegation && scopeTree ? (
+      {scopeTreeError || delegationError ? (
+        <Problem error={delegationError || scopeTreeError} />
+      ) : scopeTreeLoading || delegationLoading ? (
+        <SkeletonLoader width="100%" height={250} />
+      ) : delegation && scopeTree ? (
         <AccessForm
           delegation={delegation}
           scopeTree={scopeTree}
           validityPeriod={validityPeriod}
         />
       ) : (
-        <SkeletonLoader width="100%" height={250} />
+        <Problem />
       )}
     </Box>
   )

@@ -1,22 +1,22 @@
 import {
-  SQSClient,
-  Message as SqsMessage,
-  GetQueueUrlCommand,
   CreateQueueCommand,
-  SendMessageCommand,
-  ReceiveMessageCommand,
   DeleteMessageCommand,
+  GetQueueUrlCommand,
+  Message as SqsMessage,
+  ReceiveMessageCommand,
   SendMessageBatchCommand,
+  SendMessageCommand,
+  SQSClient,
 } from '@aws-sdk/client-sqs'
 
 import { Inject, Injectable, ServiceUnavailableException } from '@nestjs/common'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
-import { messageModuleConfig } from './message.config'
 import { CaseMessage } from './message'
+import { messageModuleConfig } from './message.config'
 
 @Injectable()
 export class MessageService {
