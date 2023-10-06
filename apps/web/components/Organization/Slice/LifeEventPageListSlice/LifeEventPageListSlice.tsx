@@ -68,8 +68,11 @@ export const LifeEventPageListSlice: React.FC<
             // @ts-ignore make web strict
             alt={page.tinyThumbnail?.title}
             href={
-              linkResolver(extractLinkType(page), [page.slug], activeLocale)
-                .href
+              linkResolver(
+                extractAnchorPageLinkType(page),
+                [page.slug],
+                activeLocale,
+              ).href
             }
           />
         ))}
