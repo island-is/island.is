@@ -1,6 +1,6 @@
 {
   "platform": "node",
   "keepNames": true,
-  "logLevel": "verbose",
+  "logLevel": "debug",
   "external": []
 }

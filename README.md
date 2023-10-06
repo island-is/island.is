@@ -170,3 +170,14 @@ To be able to access environment variables in purely static projects, you need t
 NOTE: This is only to get environment variables when running in kubernetes, not for when running locally. So you should only use `getStaticEnv` in your `environment.prod.ts` file.
 
 What happens behind the scenes is that static projects have a bash script that runs when the docker container starts up. This script searches for references of `SI_PUBLIC_*` in the code and tries to find a match in the environment. It then puts all the matches inside the index.html which is then served to the client.
+
+### Dependency cruiser
+
+A visual graph of module import resolution can help with debugging, especially in a large monorepo. The following script will output a `dot` file that can be rendered to svg (with GraphViz) and then to `html` to be opened in any browser.
+
+```bash
+# replace firefox with a browser of your choice
+yarn cruise -p apps/services/sessions && firefox depgraph.html
+```
+
+This uses [dependency-cruiser](https://www.npmjs.com/package/dependency-cruiser) behind the scenes. Feel free to modify [.dependency-cruiser.js](./dependency-cruiser.js) to customize the output.

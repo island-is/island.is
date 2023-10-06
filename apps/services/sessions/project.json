@@ -101,6 +101,13 @@
         "parallel": false
       }
     },
+    "dev-kill": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker-compose down --remove-orphans --rmi -v",
+        "cwd": "apps/services/sessions"
+      }
+    },
     "schemas/build-openapi": {
       "executor": "nx:run-commands",
       "options": {
