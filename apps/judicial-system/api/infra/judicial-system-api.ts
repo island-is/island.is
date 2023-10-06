@@ -47,8 +47,8 @@ export const serviceSetup = (services: {
       },
       HIDDEN_FEATURES: {
         dev: '',
-        staging: 'APPEAL_TO_COURT_OF_APPEALS',
-        prod: 'APPEAL_TO_COURT_OF_APPEALS',
+        staging: '',
+        prod: '',
       },
     })
     .secrets({
