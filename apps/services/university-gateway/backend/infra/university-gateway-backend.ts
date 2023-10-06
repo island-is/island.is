@@ -15,8 +15,8 @@ export const serviceSetup =
       })
       .secrets({})
       .postgres({
-        username: 'university-gateway',
-        name: 'university-gateway',
+        username: 'university_gateway',
+        name: 'university_gateway',
         passwordSecret: '/k8s/university-gateway/DB_PASSWORD',
       })
       .ingress({

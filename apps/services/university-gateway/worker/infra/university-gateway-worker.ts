@@ -18,7 +18,7 @@ export const serviceSetup = (services: {
     .args('--no-experimental-fetch', 'main.js')
     .extraAttributes({
       // Schedule to run daily at two in the morning.
-      dev: { schedule: '* * * * *' },
+      dev: { schedule: '0 2 * * *' },
       staging: { schedule: '0 2 * * *' },
       prod: { schedule: '0 2 * * *' },
     })

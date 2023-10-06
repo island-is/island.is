@@ -2460,9 +2460,9 @@ services-university-gateway-backend:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'university-gateway'
+    DB_NAME: 'university_gateway'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'university-gateway'
+    DB_USER: 'university_gateway'
     NODE_OPTIONS: '--max-old-space-size=336'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -2563,7 +2563,7 @@ services-university-gateway-worker:
     requests:
       cpu: '100m'
       memory: '128Mi'
-  schedule: '* * * * *'
+  schedule: '0 2 * * *'
   secrets:
     BACKEND_ACCESS_TOKEN: '/k8s/university-gateway/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
