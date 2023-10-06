@@ -28,7 +28,7 @@ const configFactory = (
   headers: {
     'X-Road-Client': xRoadConfig.xRoadClient,
     'Content-Type': 'application/json',
-    Accept: 'application/json',
+    Accept: 'application/vnd.ver.machines.hateoas.v1+json',
   },
   basePath,
 })

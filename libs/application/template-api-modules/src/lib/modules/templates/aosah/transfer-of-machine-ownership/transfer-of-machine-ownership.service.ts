@@ -4,6 +4,8 @@ import { TemplateApiModuleActionProps } from '../../../../types'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { TransferOfMachineOwnershipClient } from '@island.is/clients/aosah/transfer-of-machine-ownership'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { coreErrorMessages } from '@island.is/application/core'
 
 @Injectable()
 export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiService {
@@ -15,6 +17,19 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
   }
 
   async getMachines({ auth }: TemplateApiModuleActionProps) {
-    return await this.transferOfMachineOwnershipClient.getMachines(auth)
+    const result = await this.transferOfMachineOwnershipClient.getMachines(auth)
+
+    // Validate that user has at least 1 machine
+    if (!result || !result.length) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.vehiclesEmptyListDefault,
+          summary: coreErrorMessages.vehiclesEmptyListDefault,
+        },
+        400,
+      )
+    }
+
+    return result
   }
 }
