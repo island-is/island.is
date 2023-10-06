@@ -27,7 +27,7 @@ import { DentistRegisterResponse } from './models/registerResponse.model'
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.servicePortalHealthRightsModule)
 @Audit({ namespace: '@island.is/api/rights-portal/dentist' })
-export class RightsPortalResolver {
+export class DentistResolver {
   constructor(private readonly service: DentistService) {}
 
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)

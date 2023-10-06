@@ -1,14 +1,32 @@
 import { Module } from '@nestjs/common'
 import { AuthModule } from '@island.is/auth-nest-tools'
-
 import { RightsPortalClientModule } from '@island.is/clients/icelandic-health-insurance/rights-portal'
-import { RightsPortalResolver } from './rightsPortal.resolver'
-import { RightsPortalService } from './rightsPortal.service'
+import { AidAndNutritionResolver } from './aidAndNutrition/aidAndNutrition.resolver'
+import { AidAndNutritionService } from './aidAndNutrition/aidAndNutrition.service'
+import { DentistResolver } from './dentist/dentist.resolver'
+import { DentistService } from './dentist/denstist.service'
+import { DrugResolver } from './drug/drug.resolver'
+import { DrugService } from './drug/drug.service'
+import { HealthCenterResolver } from './healthCenter/healthCenter.resolver'
+import { HealthCenterService } from './healthCenter/healthCenter.service'
+import { TherapyService } from './therapy/therapy.service'
+import { TherapyResolver } from './therapy/therapy.resolver'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 @Module({
   imports: [RightsPortalClientModule, AuthModule, FeatureFlagModule],
-  providers: [RightsPortalResolver, RightsPortalService],
-  exports: [RightsPortalService],
+  providers: [
+    AidAndNutritionResolver,
+    AidAndNutritionService,
+    DentistResolver,
+    DentistService,
+    DrugResolver,
+    DrugService,
+    HealthCenterResolver,
+    HealthCenterService,
+    TherapyService,
+    TherapyResolver,
+  ],
+  exports: [],
 })
 export class RightsPortalModule {}

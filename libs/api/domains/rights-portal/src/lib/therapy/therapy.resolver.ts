@@ -21,7 +21,7 @@ import { PaginatedTherapyResponse } from './models/therapy.model'
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.servicePortalHealthRightsModule)
 @Audit({ namespace: '@island.is/api/rights-portal/therapy' })
-export class RightsPortalResolver {
+export class TherapyResolver {
   constructor(private readonly service: TherapyService) {}
 
   @Scopes(ApiScope.health)
