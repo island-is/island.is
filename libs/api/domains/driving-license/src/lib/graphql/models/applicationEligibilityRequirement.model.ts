@@ -10,4 +10,7 @@ export class ApplicationEligibilityRequirement {
 
   @Field()
   requirementMet!: boolean
+
+  @Field({ nullable: true })
+  metaData?: number
 }

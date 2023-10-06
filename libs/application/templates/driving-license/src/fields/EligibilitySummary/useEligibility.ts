@@ -13,6 +13,7 @@ const QUERY = gql`
       requirements {
         key
         requirementMet
+        metaData
       }
     }
   }

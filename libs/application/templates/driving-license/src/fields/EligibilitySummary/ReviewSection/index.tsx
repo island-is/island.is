@@ -7,7 +7,9 @@ import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './ReviewSection.css'
 import { MessageDescriptor } from '@formatjs/intl'
+import { requirementsMessages } from '../../../lib/messages'
 import { m } from '../../../lib/messages'
+import isNumber from 'lodash/isNumber'
 
 export enum ReviewSectionState {
   inProgress = 'In progress',
@@ -18,7 +20,9 @@ export enum ReviewSectionState {
 export interface Step {
   title: MessageDescriptor
   description: MessageDescriptor
+  residenceRequirement?: MessageDescriptor
   state: ReviewSectionState
+  metaData?: number
 }
 
 type ReviewSectionProps = {
@@ -29,9 +33,14 @@ type ReviewSectionProps = {
 
 const ReviewSection: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
   application,
-  step: { state, description, title },
+  step: { state, description, title, metaData },
 }) => {
   const { formatMessage } = useLocale()
+
+  const showLoclaRequirementDays: boolean =
+    isNumber(metaData) &&
+    state === ReviewSectionState.requiresAction &&
+    title === requirementsMessages.localResidencyTitle
 
   return (
     <Box
@@ -76,6 +85,9 @@ const ReviewSection: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
           <Text marginTop={1} variant="default">
             {formatText(description, application, formatMessage)}
           </Text>
+          {showLoclaRequirementDays && (
+            <Text fontWeight="semiBold">{`Þú hefur búið á Íslandi í ${metaData} daga seinustu 12 mánuði.`}</Text>
+          )}
         </Box>
 
         {state === ReviewSectionState.complete && (
