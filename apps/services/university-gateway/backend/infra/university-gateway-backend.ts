@@ -1,18 +1,18 @@
 import { service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 
 export const serviceSetup =
-  (): ServiceBuilder<'services-university-gateway-backend'> =>
-    service('services-university-gateway-backend')
+  (): ServiceBuilder<'services-university-gateway-backend'> => {
+    return service('services-university-gateway-backend')
       .namespace('university-gateway')
+      .image('services-university-gateway-backend')
       .secrets({
         AUTH_JWT_SECRET: '/k8s/university-gateway/AUTH_JWT_SECRET',
         BACKEND_ACCESS_TOKEN: '/k8s/university-gateway/BACKEND_ACCESS_TOKEN',
       })
       .resources({
-        limits: { cpu: '150m', memory: '384Mi' },
-        requests: { cpu: '15m', memory: '256Mi' },
+        limits: { cpu: '200m', memory: '384Mi' },
+        requests: { cpu: '50m', memory: '256Mi' },
       })
-      .image('university-gateway')
       .secrets({})
       .postgres({
         username: 'university-gateway',
@@ -26,7 +26,7 @@ export const serviceSetup =
             staging: 'university-gateway',
             prod: 'university-gateway',
           },
-          paths: ['/'],
+          paths: ['/api/swagger'],
           public: true,
         },
       })
@@ -38,3 +38,4 @@ export const serviceSetup =
       .liveness('/liveness')
       .readiness('/liveness')
       .grantNamespaces('nginx-ingress-internal')
+  }
