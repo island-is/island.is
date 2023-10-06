@@ -32,7 +32,7 @@ env:
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   CONFIGCAT_MAIN_CONFIG_ID: 08d8c761-021c-46f0-8671-6244663a372f
   CONFIGCAT_MOBILE_APP_CONFIG_ID: 08daf234-7573-4b3b-85f6-189fc7502542
-  DD_ENV: ${{ github.ref == 'refs/heads/main' && 'dev' || (startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/pre-release/')) && 'staging' || 'pr' }}
+  DD_TAGS: env:test_${{ github.ref == 'refs/heads/main' && 'dev' || (startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/pre-release/')) && 'staging' || 'pr' }}
 
 jobs:
   pre-checks:
