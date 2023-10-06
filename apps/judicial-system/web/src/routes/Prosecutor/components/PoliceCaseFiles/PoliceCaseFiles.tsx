@@ -12,7 +12,7 @@ import {
   PoliceCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { policeCaseFiles as m } from './PoliceCaseFiles.strings'
+import { strings } from './PoliceCaseFiles.strings'
 
 export interface PoliceCaseFilesData {
   files: PoliceCaseFile[]
@@ -60,11 +60,11 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
           }))}
           CTAButton={{
             onClick: onUpload,
-            label: formatMessage(m.uploadButtonLabel),
+            label: formatMessage(strings.uploadButtonLabel),
           }}
           errorMessage={
             policeCaseFiles?.hasError
-              ? formatMessage(m.couldNotGetFromLOKEMessage)
+              ? formatMessage(strings.couldNotGetFromLOKEMessage)
               : undefined
           }
           isLoading={
@@ -74,12 +74,14 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
           }
           successMessage={
             policeCaseFileList?.length === 0
-              ? formatMessage(m.allFilesUploadedMessage)
+              ? formatMessage(strings.allFilesUploadedMessage)
               : undefined
           }
           warningMessage={
             policeCaseFiles?.files.length === 0
-              ? formatMessage(m.noFilesFoundInLOKEMessage)
+              ? formatMessage(strings.noFilesFoundInLOKEMessage, {
+                  isIndictmentCase: isIndictmentCase(workingCase.type),
+                })
               : undefined
           }
         />
@@ -87,10 +89,10 @@ const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
       {workingCase.origin !== CaseOrigin.LOKE && (
         <AlertMessage
           type="info"
-          title={formatMessage(m.originNotLokeTitle, {
+          title={formatMessage(strings.originNotLokeTitle, {
             isIndictmentCase: isIndictmentCase(workingCase.type),
           })}
-          message={formatMessage(m.originNotLokeMessage, {
+          message={formatMessage(strings.originNotLokeMessage, {
             isIndictmentCase: isIndictmentCase(workingCase.type),
           })}
         ></AlertMessage>

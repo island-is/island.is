@@ -11,6 +11,7 @@ import {
   DeliveryAddressApi,
   IdentityDocumentApi,
   PreregistrationApi,
+  DocumentLossApi,
 } from '../../gen/fetch'
 import { PassportsClientConfig } from './passports.config'
 
@@ -50,6 +51,7 @@ export const ApiConfiguration = {
 export const PassportsApis = [
   IdentityDocumentApi,
   PreregistrationApi,
+  DocumentLossApi,
   DeliveryAddressApi,
 ].map((Api) => ({
   provide: Api,

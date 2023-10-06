@@ -202,17 +202,24 @@ export class PoliceService {
 
           this.responseStructure.parse(response)
 
-          return (
-            response.skjol?.map((file) => ({
-              id: file.rvMalSkjolMals_ID.toString(),
-              name: file.heitiSkjals.endsWith('.pdf')
-                ? file.heitiSkjals
-                : `${file.heitiSkjals}.pdf`,
-              policeCaseNumber: file.malsnumer,
-              chapter: getChapter(file.domsSkjalsFlokkun),
-              displayDate: file.dagsStofnad,
-            })) ?? []
-          )
+          const files: PoliceCaseFile[] = []
+
+          response.skjol?.forEach((file) => {
+            const id = file.rvMalSkjolMals_ID.toString()
+            if (!files.find((item) => item.id === id)) {
+              files.push({
+                id,
+                name: file.heitiSkjals.endsWith('.pdf')
+                  ? file.heitiSkjals
+                  : `${file.heitiSkjals}.pdf`,
+                policeCaseNumber: file.malsnumer,
+                chapter: getChapter(file.domsSkjalsFlokkun),
+                displayDate: file.dagsStofnad,
+              })
+            }
+          })
+
+          return files
         }
 
         const reason = await res.text()
@@ -260,11 +267,9 @@ export class PoliceService {
     caseId: string,
     user: User,
   ): Promise<PoliceCaseInfo[]> {
-    const promise = this.fetchPoliceDocumentApi(
+    return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/V2/GetDocumentListById/${caseId}`,
     )
-
-    return promise
       .then(async (res: Response) => {
         if (res.ok) {
           const response: z.infer<typeof this.responseStructure> =
