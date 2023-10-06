@@ -66,7 +66,7 @@ const HealthCenter = () => {
     fetchPolicy: 'no-cache',
   })
 
-  const healthCenterData = data?.rightsPortalUserHealthCenterRegistration
+  const healthCenterData = data?.rightsPortalHealthCenterRegistrationHistory
 
   if (loading)
     return (

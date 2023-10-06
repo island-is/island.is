@@ -8,4 +8,7 @@ export class HealthCenterRegistrationHistory {
 
   @Field(() => [HealthCenterRecord], { nullable: true })
   history?: Array<HealthCenterRecord>
+
+  @Field(() => Boolean, { nullable: true })
+  canRegister?: boolean
 }
