@@ -40,7 +40,6 @@ import {
   findProblemInApolloError,
 } from '@island.is/shared/problem'
 import { DelegationsScreen } from '../components/DelegationsScreen'
-import data from './jsonStuff/data'
 
 const ApplicationLoader: FC<
   React.PropsWithChildren<{
@@ -80,7 +79,7 @@ const ApplicationLoader: FC<
   const currentTypeId: ApplicationTypes = application?.typeId
 
   if (ApplicationConfigurations[currentTypeId]?.slug !== slug) {
-    console.log('slug dont match')
+    console.log('slug not found in application config')
     return <ErrorShell errorType="notExist" />
   }
 
@@ -244,9 +243,9 @@ const JShellWrapper: FC<
 
           if (stateInformation?.roles?.length) {
             //use json
-            const applicationFields = await getApplicationUIFields(
-              application.typeId,
-            )
+            //const applicationFields = await getApplicationUIFields(
+            //      application.typeId,
+            ///    )
 
             const role = template.mapUserToRole(nationalRegistryId, application)
 
@@ -261,11 +260,10 @@ const JShellWrapper: FC<
             const form = JSON.parse(
               application.form as string,
             ) as unknown as Form
-            //const formDescriptor2: Form = data as unknown as Form
 
             setForm(form)
             setDataSchema(template.dataSchema)
-            fieldsDispatch(applicationFields)
+            //fieldsDispatch(applicationFields)
           }
         }
       }

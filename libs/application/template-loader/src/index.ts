@@ -9,10 +9,13 @@ import {
   FieldBaseProps,
   RepeaterProps,
   BasicDataProvider,
+  ApplicationFormTypes,
 } from '@island.is/application/types'
 import { EventObject } from 'xstate'
 import templateLoaders from './lib/templateLoaders'
 import { FC } from 'react'
+import { ApplicationConfigurations } from '@island.is/application/types'
+import template from './lib/dynamicTemplate'
 
 type UIFields = Record<
   string,
@@ -60,7 +63,18 @@ export async function getApplicationTemplateByTypeId<
 >(
   templateId: ApplicationTypes,
 ): Promise<ApplicationTemplate<TContext, TStateSchema, TEvents>> {
+  const config = ApplicationConfigurations[templateId]
+
+  if (config.formType === ApplicationFormTypes.DYNAMIC) {
+    return template as unknown as ApplicationTemplate<
+      TContext,
+      TStateSchema,
+      TEvents
+    >
+  }
+
   const templateLib = await loadTemplateLib(templateId)
+
   return templateLib.default as ApplicationTemplate<
     TContext,
     TStateSchema,
@@ -68,9 +82,19 @@ export async function getApplicationTemplateByTypeId<
   >
 }
 
+//
 export async function getApplicationUIFields(
   templateId: ApplicationTypes,
 ): Promise<UIFields> {
+  /* const config = ApplicationConfigurations[templateId]
+  if (config.formType === ApplicationFormTypes.DYNAMIC) {
+    return template as unknown as ApplicationTemplate<
+      TContext,
+      TStateSchema,
+      TEvents
+    >
+  }*/
+
   const templateLib = await loadTemplateLib(templateId)
   if (templateLib.getFields) {
     return await templateLib.getFields()
