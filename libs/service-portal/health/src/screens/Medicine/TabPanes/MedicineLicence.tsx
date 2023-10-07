@@ -26,7 +26,13 @@ export const MedicineLicence = () => {
           isSubheading
         />
       </Box>
-      {loading ? (
+      {error ? (
+        <AlertMessage
+          type="error"
+          title={formatMessage(m.errorPageHeading)}
+          message={formatMessage(m.errorFetch)}
+        />
+      ) : loading ? (
         <SkeletonLoader space={2} repeat={3} />
       ) : (
         <Box marginY={5}>
