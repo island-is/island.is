@@ -2463,6 +2463,7 @@ services-university-gateway-backend:
     DB_NAME: 'university_gateway'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'university_gateway'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=336'
     SERVERSIDE_FEATURES_ON: ''
@@ -2515,6 +2516,7 @@ services-university-gateway-backend:
     BACKEND_ACCESS_TOKEN: '/k8s/university-gateway/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/university-gateway/DB_PASSWORD'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

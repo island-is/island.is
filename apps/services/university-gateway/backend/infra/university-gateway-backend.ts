@@ -11,6 +11,7 @@ export const serviceSetup =
         requests: { cpu: '50m', memory: '256Mi' },
       })
       .env({
+        IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api',
         IDENTITY_SERVER_ISSUER_URL: {
           dev: 'https://identity-server.dev01.devland.is',
           staging: 'https://identity-server.staging01.devland.is',
@@ -18,6 +19,7 @@ export const serviceSetup =
         },
       })
       .secrets({
+        IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
         AUTH_JWT_SECRET: '/k8s/university-gateway/AUTH_JWT_SECRET',
         BACKEND_ACCESS_TOKEN: '/k8s/university-gateway/BACKEND_ACCESS_TOKEN',
       })
