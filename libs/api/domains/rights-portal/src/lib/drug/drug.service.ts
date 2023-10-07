@@ -9,6 +9,7 @@ import { DrugBillLineInput } from './dto/drugBillLine.input'
 import { DrugInput } from './dto/drug.input'
 import { DrugCalculatorInput } from './dto/drugCalculator.input'
 import { PaginatedDrugResponse } from './models/drug.model'
+import { DrugCertificateInput } from './dto/drugCertificate.input'
 
 const LOG_CATEGORY = 'rights-portal-drugs'
 @Injectable()
@@ -106,6 +107,22 @@ export class DrugService {
         .getDrugCertificates()
     } catch (e) {
       this.logger.error('Error getting drug certificates', {
+        ...e,
+        category: LOG_CATEGORY,
+      })
+      return handle404(e)
+    }
+  }
+
+  async getCertificateById(user: User, input: DrugCertificateInput) {
+    try {
+      const certificates = await this.api
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .getDrugCertificates()
+
+      return certificates.find((certificate) => certificate.id === input.id)
+    } catch (e) {
+      this.logger.error('Error getting drug certificate by id', {
         ...e,
         category: LOG_CATEGORY,
       })

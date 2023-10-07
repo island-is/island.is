@@ -24,6 +24,8 @@ import { DrugInput } from './dto/drug.input'
 import { PaginatedDrugResponse } from './models/drug.model'
 import { DrugCalculatorResponse } from './models/drugCalculator.model'
 import { DrugCalculatorInput } from './dto/drugCalculator.input'
+import { DrugCertificate } from './models/drugCertificate.model'
+import { DrugCertificateInput } from './dto/drugCertificate.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -87,5 +89,26 @@ export class DrugResolver {
     @Args('input') input: DrugCalculatorInput,
   ) {
     return this.drugService.getCalculations(user, input)
+  }
+
+  @Scopes(ApiScope.health)
+  @Query(() => [DrugCertificate], {
+    name: 'rightsPortalDrugCertificates',
+  })
+  @Audit()
+  getRightsPortalDrugCertificates(@CurrentUser() user: User) {
+    return this.drugService.getCertificates(user)
+  }
+
+  @Scopes(ApiScope.health)
+  @Query(() => DrugCertificate, {
+    name: 'rightsPortalGetCertificateById',
+  })
+  @Audit()
+  getRightsPortalDrugCertificateById(
+    @CurrentUser() user: User,
+    @Args('input') input: DrugCertificateInput,
+  ) {
+    return this.drugService.getCertificateById(user, input)
   }
 }

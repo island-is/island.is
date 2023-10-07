@@ -78,3 +78,22 @@ mutation getDrugCalculation($input: RightsPortalDrugCalculatorInput!) {
     totalCustomerPrice
   }
 }
+
+query getDrugCertificates {
+  rightsPortalDrugCertificates {
+    id
+    atcCode
+    atcName
+    drugName
+    date
+    validFrom
+    validTo
+    doctor
+    approved
+    comment
+    documentId
+    methylDoctors {
+      name
+    }
+  }
+}

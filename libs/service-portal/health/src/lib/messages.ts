@@ -627,4 +627,36 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-calculator-empty-search',
     defaultMessage: 'Engin lyf birt, finndu lyf',
   },
+  medicineNoIssuedCertificates: {
+    id: 'sp.health:medicine-no-issued-certificates',
+    defaultMessage: 'Ekki hefur verið gefið út lyfjaskírteini',
+  },
+  medicineIsValidCertificate: {
+    id: 'sp.health:medicine-is-valid-certificate',
+    defaultMessage: 'Í gildi',
+  },
+  medicineIsNotValidCertificate: {
+    id: 'sp.health:medicine-is-not-valid-certificate',
+    defaultMessage: 'Ekki í gildi',
+  },
+  medicineAtcCode: {
+    id: 'sp.health:medicine-atc-code',
+    defaultMessage: 'ATC flokkur',
+  },
+  medicineAtcName: {
+    id: 'sp.health:medicine-atc-name',
+    defaultMessage: 'Innihaldsefni',
+  },
+  medicineValidTo: {
+    id: 'sp.health:medicine-valid-to',
+    defaultMessage: 'Gildir til',
+  },
+  medicineValidFrom: {
+    id: 'sp.health:medicine-valid-from',
+    defaultMessage: 'Gildir frá',
+  },
+  medicineNameOfDoctor: {
+    id: 'sp.health:medicine-name-of-doctor',
+    defaultMessage: 'Heiti læknis',
+  },
 })
