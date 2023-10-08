@@ -36,7 +36,7 @@ import {
 
 import { Colors } from '@island.is/island-ui/theme'
 import { SpanType } from '@island.is/island-ui/core/types'
-import { coreDefaultFieldMessages } from '@island.is/application/core/messages'
+import { coreDefaultFieldMessages } from './messages'
 
 const extractCommonFields = (
   data: Omit<BaseField, 'type' | 'component' | 'children'>,
