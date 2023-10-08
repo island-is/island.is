@@ -104,7 +104,6 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
       if (type && !template) {
         const appliTemplate = await getApplicationTemplateByTypeId(type)
         if (appliTemplate) {
-          console.log(`Template found for ${type}, in applications.tsx`)
           setTemplate(appliTemplate)
         }
       }
