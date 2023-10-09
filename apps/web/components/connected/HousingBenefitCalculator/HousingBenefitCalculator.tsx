@@ -79,6 +79,10 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
     data?.housingBenefitCalculatorCalculation?.maximumHousingBenefits
   const reductionsDueToIncome =
     data?.housingBenefitCalculatorCalculation?.reductionsDueToIncome
+  const reductionsDueToAssets =
+    data?.housingBenefitCalculatorCalculation?.reductionsDueToAssets
+  const reductionsDueToHousingCosts =
+    data?.housingBenefitCalculatorCalculation?.reductionsDueToHousingCosts
   const estimatedHousingBenefits =
     data?.housingBenefitCalculatorCalculation?.estimatedHousingBenefits
 
@@ -246,36 +250,65 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
           <Text variant="h3">
             <strong>{n('results', 'Niðurstöður')}</strong>
           </Text>
-          {typeof maximumHousingBenefits === 'number' && (
-            <Text
-              variant="medium"
-              fontWeight="light"
-              paddingBottom={2}
-              paddingTop={5}
-            >
-              {n(
-                'maximumHousingBenefits',
-                'Hámarksbætur miðað við fjölda heimilismanna eru',
-              )}{' '}
-              {formatCurrency(maximumHousingBenefits)}{' '}
-              {n('perMonth', 'á mánuði.')}
-            </Text>
-          )}
-          {typeof reductionsDueToIncome === 'number' && (
-            <Text variant="medium" fontWeight="light" paddingBottom={5}>
-              {n('reductionDueToIncome', 'Skerðing vegna tekna eru')}{' '}
-              {formatCurrency(reductionsDueToIncome)}{' '}
-              {n('perMonth', 'á mánuði.')}
-            </Text>
-          )}
+          <Stack space={5}>
+            <Box>
+              {typeof maximumHousingBenefits === 'number' && (
+                <Text
+                  variant="medium"
+                  fontWeight="light"
+                  paddingBottom={2}
+                  paddingTop={5}
+                >
+                  {n(
+                    'maximumHousingBenefits',
+                    'Hámarksbætur miðað við fjölda heimilismanna eru',
+                  )}{' '}
+                  {formatCurrency(maximumHousingBenefits)}{' '}
+                  {n('perMonth', 'á mánuði.')}
+                </Text>
+              )}
 
-          {typeof estimatedHousingBenefits === 'number' && (
-            <Text variant="medium" fontWeight="light">
-              {n('estimatedHousingBenefits', 'Áætlaðar húsnæðisbætur eru')}{' '}
-              <strong>{formatCurrency(estimatedHousingBenefits)}</strong>{' '}
-              {n('perMonth', 'á mánuði.')}
-            </Text>
-          )}
+              <Stack space={1}>
+                {typeof reductionsDueToIncome === 'number' &&
+                  reductionsDueToIncome > 0 && (
+                    <Text variant="medium" fontWeight="light">
+                      {n('reductionDueToIncome', 'Skerðing vegna tekna eru')}{' '}
+                      {formatCurrency(reductionsDueToIncome)}{' '}
+                      {n('perMonth', 'á mánuði.')}
+                    </Text>
+                  )}
+
+                {typeof reductionsDueToAssets === 'number' &&
+                  reductionsDueToAssets > 0 && (
+                    <Text variant="medium" fontWeight="light">
+                      {n('reductionDueToAssets', 'Skerðing vegna eigna eru')}{' '}
+                      {formatCurrency(reductionsDueToAssets)}{' '}
+                      {n('perMonth', 'á mánuði.')}
+                    </Text>
+                  )}
+
+                {typeof reductionsDueToHousingCosts === 'number' &&
+                  reductionsDueToHousingCosts > 0 && (
+                    <Text variant="medium" fontWeight="light">
+                      {n(
+                        'reductionsDueToHousingCosts',
+                        'Skerðing vegna húsnæðiskostnaðar eru',
+                      )}{' '}
+                      {formatCurrency(reductionsDueToHousingCosts)}{' '}
+                      {n('perMonth', 'á mánuði.')}
+                    </Text>
+                  )}
+              </Stack>
+            </Box>
+
+            {typeof estimatedHousingBenefits === 'number' && (
+              <Text variant="medium" fontWeight="light">
+                {n('estimatedHousingBenefits', 'Áætlaðar húsnæðisbætur eru')}{' '}
+                <strong>{formatCurrency(estimatedHousingBenefits)}</strong>{' '}
+                {n('perMonth', 'á mánuði.')}
+              </Text>
+            )}
+          </Stack>
         </Box>
       )}
       {!loading && called && error && (
