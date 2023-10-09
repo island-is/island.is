@@ -30,6 +30,6 @@ export class QualityPhotoResolver {
 
   @Query(() => QualityPhoto)
   drivingLicenseQualityPhoto(@CurrentUser() user: User) {
-    return this.drivingLicenseService.getQualityPhoto(user.nationalId)
+    return this.drivingLicenseService.getQualityPhoto(user.authorization)
   }
 }
