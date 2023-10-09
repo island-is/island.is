@@ -4,7 +4,7 @@ export const defenderModuleConfig = defineConfig({
   name: 'DefenderModule',
   load: (env) => ({
     lawyerRegistryAPI: env.required(
-      'LAWYERS_ICELAND_API_KEY',
+      'LAWYERS_ICELAND_API_PATH',
       'https://lmfi.is/api/',
     ),
     lawyerRegistryAPIKey: env.required('LAWYERS_ICELAND_API_KEY'),
