@@ -45,6 +45,9 @@ import { serviceSetup as externalContractsTestsSetup } from '../../../apps/exter
 
 import { serviceSetup as rabBackendSetup } from '../../../apps/services/regulations-admin-backend/infra/backend'
 
+import { serviceSetup as universityGatewayBackendSetup } from '../../../apps/services/university-gateway/backend/infra/university-gateway-backend'
+import { serviceSetup as universityGatewayWorkerSetup } from '../../../apps/services/university-gateway/worker/infra/university-gateway-worker'
+
 import {
   serviceSetup as sessionsServiceSetup,
   workerSetup as sessionsWorkerSetup,
@@ -79,6 +82,11 @@ const sessionsWorker = sessionsWorkerSetup()
 const sessionsGeoip = sessionsGeoipSetup()
 
 const authAdminApi = authAdminApiSetup()
+
+const universityGatewayBackend = universityGatewayBackendSetup()
+const universityGatewayWorker = universityGatewayWorkerSetup({
+  backend: universityGatewayBackend,
+})
 
 const api = apiSetup({
   appSystemApi,
@@ -219,6 +227,8 @@ export const Services: EnvironmentServices = {
     sessionsWorker,
     sessionsGeoip,
     contentfulApps,
+    universityGatewayBackend,
+    universityGatewayWorker,
   ],
 }
 

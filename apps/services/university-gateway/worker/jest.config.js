@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'services-university-gateway-scheduler',
+  displayName: 'services-university-gateway-worker',
   preset: './jest.preset.js',
   rootDir: '../../../..',
   roots: [__dirname],
@@ -12,5 +12,5 @@ module.exports = {
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
   testEnvironment: 'node',
   coverageDirectory:
-    '<rootDir>/coverage/apps/services/university-gateway/scheduler',
+    '<rootDir>/coverage/apps/services/university-gateway/worker',
 }

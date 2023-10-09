@@ -1,13 +1,13 @@
 import { ref, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (services: {
-  worker: ServiceBuilder<'university-gateway-worker'>
-}): ServiceBuilder<'services-university-gateway-scheduler'> =>
-  service('services-university-gateway-scheduler')
+  backend: ServiceBuilder<'services-university-gateway-backend'>
+}): ServiceBuilder<'services-university-gateway-worker'> => {
+  return service('services-university-gateway-worker')
     .namespace('university-gateway')
-    .image('services-university-gateway-scheduler')
+    .image('services-university-gateway-worker')
     .env({
-      BACKEND_URL: ref((h) => `http://${h.svc(services.worker)}`),
+      BACKEND_URL: ref((h) => `http://${h.svc(services.backend)}`),
       TIME_TO_LIVE_MINUTES: '1440',
     })
     .secrets({
@@ -18,7 +18,8 @@ export const serviceSetup = (services: {
     .args('--no-experimental-fetch', 'main.js')
     .extraAttributes({
       // Schedule to run daily at two in the morning.
-      dev: { schedule: '* * * * *' },
+      dev: { schedule: '0 2 * * *' },
       staging: { schedule: '0 2 * * *' },
       prod: { schedule: '0 2 * * *' },
     })
+}
