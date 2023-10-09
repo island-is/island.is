@@ -18,7 +18,8 @@ import {
 } from './CreateClient.generated'
 import { redirect } from 'react-router-dom'
 import { IDSAdminPaths } from '../../../lib/paths'
-import { partiallyCreatedQueryName } from '../../../lib/constants'
+import { toast } from '@island.is/island-ui/core'
+import { m } from '../../../lib/messages'
 
 const schema = z
   .object({
@@ -55,7 +56,7 @@ export type CreateClientResult = RouterActionRedirect<
 >
 
 export const createClientAction: WrappedActionFn =
-  ({ client }) =>
+  ({ client, formatMessage }) =>
   async ({ request }): Promise<CreateClientResult | Response> => {
     const formData = await request.formData()
     const result = await validateFormData({ formData, schema })
@@ -88,11 +89,13 @@ export const createClientAction: WrappedActionFn =
           (client) => client.environment,
         )?.length !== data?.environments?.length
 
+      if (partiallyCreated) {
+        toast.warning(formatMessage(m.partiallyCreatedClient))
+      }
+
       return redirect(
         replaceParams({
-          href: IDSAdminPaths.IDSAdminClient.concat(
-            partiallyCreated ? `?${partiallyCreatedQueryName}=true` : '',
-          ),
+          href: IDSAdminPaths.IDSAdminClient,
           params: {
             tenant: data?.tenant,
             client: data?.clientId,
