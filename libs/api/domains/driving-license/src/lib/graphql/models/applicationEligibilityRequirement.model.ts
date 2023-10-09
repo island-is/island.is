@@ -4,12 +4,6 @@ import { RequirementKey } from '../../drivingLicense.type'
 registerEnumType(RequirementKey, { name: 'RequirementKey' })
 
 @ObjectType()
-export class ResidencyDurationType {
-  @Field({ nullable: true })
-  residencyDuration?: number
-}
-
-@ObjectType()
 export class ApplicationEligibilityRequirement {
   @Field(() => RequirementKey)
   key!: RequirementKey
@@ -17,6 +11,6 @@ export class ApplicationEligibilityRequirement {
   @Field()
   requirementMet!: boolean
 
-  @Field(() => ResidencyDurationType, { nullable: true })
-  metaData?: ResidencyDurationType
+  @Field({ nullable: true })
+  metaData?: number
 }

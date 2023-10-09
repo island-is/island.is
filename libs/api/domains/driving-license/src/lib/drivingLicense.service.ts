@@ -278,9 +278,7 @@ export class DrivingLicenseService {
             {
               key: RequirementKey.currentLocalResidency,
               requirementMet: localRecidency,
-              metaData: residenceTime
-                ? { residencyDuration: residenceTime['IS'] }
-                : undefined,
+              metaData: residenceTime ? residenceTime['IS'] : 0,
             },
           ]
         : []),
@@ -289,9 +287,7 @@ export class DrivingLicenseService {
             {
               key: RequirementKey.localResidency,
               requirementMet: localRecidencyHistory,
-              metaData: residenceTime
-                ? { residencyDuration: residenceTime['IS'] }
-                : undefined,
+              metaData: residenceTime ? residenceTime['IS'] : 0,
             },
           ]
         : []),
