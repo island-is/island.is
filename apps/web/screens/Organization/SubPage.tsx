@@ -35,6 +35,7 @@ import {
   SliceDropdown,
   Form,
   Webreader,
+  SignLanguageButton,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -45,6 +46,7 @@ import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
 import { webRichText } from '@island.is/web/utils/richText'
 import { useI18n } from '@island.is/web/i18n'
 import { Locale } from 'locale'
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
 interface SubPageProps {
   organizationPage: Query['getOrganizationPage']
@@ -53,12 +55,17 @@ interface SubPageProps {
   locale: Locale
 }
 
-const TOC: FC<{ slices: Slice[]; title: string }> = ({ slices, title }) => {
+const TOC: FC<React.PropsWithChildren<{ slices: Slice[]; title: string }>> = ({
+  slices,
+  title,
+}) => {
   const navigation = useMemo(
     () =>
       slices
         .map((slice) => ({
           id: slice.id,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           text: slice['title'] ?? slice['leftTitle'] ?? '',
         }))
         .filter((item) => !!item.text),
@@ -93,11 +100,12 @@ const SubPage: Screen<SubPageProps> = ({
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
-  useContentfulId(organizationPage.id, subpage.id)
+  useContentfulId(organizationPage?.id, subpage?.id)
 
   const pathWithoutHash = router.asPath.split('#')[0]
-
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
       href: primaryLink?.url,
@@ -112,15 +120,67 @@ const SubPage: Screen<SubPageProps> = ({
     }),
   )
 
+  const content = (
+    <>
+      {subpage?.showTableOfContents && (
+        <TOC
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          slices={subpage.slices}
+          title={n('navigationTitle', 'Efnisyfirlit')}
+        />
+      )}
+      <GridRow className="rs_read">
+        <GridColumn
+          span={['12/12', '12/12', subpage?.links?.length ? '7/12' : '12/12']}
+        >
+          {webRichText(
+            subpage?.description as SliceType[],
+            {
+              renderComponent: {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                Form: (slice) => <Form form={slice} namespace={namespace} />,
+              },
+            },
+            activeLocale,
+          )}
+        </GridColumn>
+        {subpage?.links && subpage.links.length > 0 && (
+          <GridColumn
+            span={['12/12', '12/12', '4/12']}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            offset={[null, null, '1/12']}
+          >
+            <Stack space={2}>
+              {subpage?.links?.map((link) => (
+                <Link href={link.url} underline="small">
+                  <Text fontWeight="light" color="blue400">
+                    {link.text}
+                  </Text>
+                </Link>
+              ))}
+            </Stack>
+          </GridColumn>
+        )}
+      </GridRow>
+    </>
+  )
+
   return (
     <OrganizationWrapper
       showExternalLinks={true}
       showReadSpeaker={false}
-      pageTitle={subpage.title}
+      pageTitle={subpage?.title ?? ''}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       organizationPage={organizationPage}
       fullWidthContent={true}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       pageFeaturedImage={
-        subpage.featuredImage ?? organizationPage.featuredImage
+        subpage?.featuredImage ?? organizationPage?.featuredImage
       }
       breadcrumbItems={[
         {
@@ -128,10 +188,10 @@ const SubPage: Screen<SubPageProps> = ({
           href: linkResolver('homepage', [], locale).href,
         },
         {
-          title: organizationPage.title,
+          title: organizationPage?.title ?? '',
           href: linkResolver(
             'organizationpage',
-            [organizationPage.slug],
+            [organizationPage?.slug ?? ''],
             locale,
           ).href,
         },
@@ -151,76 +211,75 @@ const SubPage: Screen<SubPageProps> = ({
                     span={[
                       '12/12',
                       '12/12',
-                      subpage.links.length ? '7/12' : '12/12',
+                      subpage?.links?.length ? '7/12' : '12/12',
                     ]}
                   >
                     <Box className="rs_read" marginBottom={2}>
                       <Text variant="h1" as="h1">
-                        {subpage.title}
+                        {subpage?.title}
                       </Text>
                     </Box>
-                    <Webreader
-                      marginTop={0}
-                      readId={null}
-                      readClass="rs_read"
-                    />
-                  </GridColumn>
-                </GridRow>
-                {subpage.showTableOfContents && (
-                  <TOC
-                    slices={subpage.slices}
-                    title={n('navigationTitle', 'Efnisyfirlit')}
-                  />
-                )}
-                <GridRow className="rs_read">
-                  <GridColumn
-                    span={[
-                      '12/12',
-                      '12/12',
-                      subpage.links.length ? '7/12' : '12/12',
-                    ]}
-                  >
-                    {webRichText(
-                      subpage.description as SliceType[],
-                      {
-                        renderComponent: {
-                          Form: (slice) => (
-                            <Form form={slice} namespace={namespace} />
-                          ),
-                        },
-                      },
-                      activeLocale,
-                    )}
-                  </GridColumn>
-                  {subpage.links.length > 0 && (
-                    <GridColumn
-                      span={['12/12', '12/12', '4/12']}
-                      offset={[null, null, '1/12']}
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      columnGap={2}
+                      rowGap={2}
+                      marginBottom={3}
+                      flexWrap="wrap"
                     >
-                      <Stack space={2}>
-                        {subpage.links.map((link) => (
-                          <Link href={link.url} underline="small">
-                            <Text fontWeight="light" color="blue400">
-                              {link.text}
-                            </Text>
-                          </Link>
-                        ))}
-                      </Stack>
-                    </GridColumn>
-                  )}
+                      <Webreader
+                        marginTop={0}
+                        marginBottom={0}
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
+                        readId={null}
+                        readClass="rs_read"
+                      />
+                      {subpage?.signLanguageVideo?.url && (
+                        <SignLanguageButton
+                          videoUrl={subpage.signLanguageVideo.url}
+                          content={
+                            <>
+                              <Box className="rs_read" marginBottom={2}>
+                                <Text variant="h2">{subpage.title}</Text>
+                              </Box>
+                              {content}
+                              {renderSlices(
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                // @ts-ignore make web strict
+                                subpage.slices,
+                                subpage.sliceCustomRenderer,
+                                subpage.sliceExtraText,
+                                namespace,
+                                organizationPage?.slug,
+                              )}
+                            </>
+                          }
+                        />
+                      )}
+                    </Box>
+                  </GridColumn>
                 </GridRow>
+                {content}
               </GridContainer>
             </GridColumn>
           </GridRow>
         </Box>
       </GridContainer>
       {renderSlices(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         subpage.slices,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         subpage.sliceCustomRenderer,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         subpage.sliceExtraText,
         namespace,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         organizationPage.slug,
-        organizationPage,
       )}
     </OrganizationWrapper>
   )
@@ -232,7 +291,6 @@ const renderSlices = (
   extraText: string,
   namespace: Record<string, string>,
   slug: string,
-  organizationPage: Query['getOrganizationPage'],
 ) => {
   switch (renderType) {
     case 'SliceDropdown':
@@ -240,8 +298,6 @@ const renderSlices = (
     default:
       return slices.map((slice, index) => {
         if (slice.__typename === 'LifeEventPageListSlice') {
-          const digitalIcelandDetailPageLinkType: LinkType =
-            'digitalicelandservicesdetailpage'
           return (
             <SliceMachine
               key={slice.id}
@@ -251,10 +307,6 @@ const renderSlices = (
               marginBottom={index === slices.length - 1 ? 5 : 0}
               params={{
                 renderLifeEventPagesAsProfileCards: true,
-                anchorPageLinkType:
-                  organizationPage.theme === 'digital_iceland'
-                    ? digitalIcelandDetailPageLinkType
-                    : undefined,
                 latestNewsSliceBackground: 'white',
                 forceTitleSectionHorizontalPadding: 'true',
               }}
@@ -281,7 +333,9 @@ const renderSlices = (
   }
 }
 
-SubPage.getInitialProps = async ({ apolloClient, locale, query, pathname }) => {
+SubPage.getProps = async ({ apolloClient, locale, query, req }) => {
+  const pathname = safelyExtractPathnameFromUrl(req.url)
+
   const { slug, subSlug } = getSlugAndSubSlug(query, pathname)
   const [
     {
@@ -322,7 +376,7 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query, pathname }) => {
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
@@ -345,7 +399,10 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query, pathname }) => {
     namespace,
     showSearchInHeader: false,
     locale: locale as Locale,
-    ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
+    ...getThemeConfig(
+      getOrganizationPage?.theme,
+      getOrganizationPage?.organization,
+    ),
   }
 }
 

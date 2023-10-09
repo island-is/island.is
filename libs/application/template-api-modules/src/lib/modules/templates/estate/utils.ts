@@ -15,11 +15,10 @@ type EstateData = EstateSchema['estate']
 type RepeaterType<T> = T & { initial?: boolean; enabled?: boolean }
 
 // A helper type that extracts values from an ArrayLike
-export type Extract<
-  T extends ArrayLike<any> | Record<any, any>
-> = T extends ArrayLike<any> ? T[number] : never
+export type Extract<T extends ArrayLike<any> | Record<any, any>> =
+  T extends ArrayLike<any> ? T[number] : never
 
-const initialMapper = <T>(element: T) => {
+const estateAssetMapper = <T>(element: T) => {
   return {
     ...element,
     initial: true,
@@ -28,15 +27,32 @@ const initialMapper = <T>(element: T) => {
   }
 }
 
+const estateMemberMapper = (element: EstateMember) => {
+  return {
+    ...element,
+    initial: true,
+    enabled: true,
+    phone: '',
+    email: '',
+    advocate: element.advocate
+      ? {
+          ...element.advocate,
+          phone: '',
+          email: '',
+        }
+      : undefined,
+  }
+}
+
 export const estateTransformer = (estate: EstateInfo): EstateData => {
-  const assets = estate.assets.map((el) => initialMapper<EstateAsset>(el))
-  const flyers = estate.flyers.map((el) => initialMapper<EstateAsset>(el))
-  const estateMembers = estate.estateMembers.map((el) =>
-    initialMapper<EstateMember>(el),
+  const assets = estate.assets.map((el) => estateAssetMapper<EstateAsset>(el))
+  const flyers = estate.flyers.map((el) => estateAssetMapper<EstateAsset>(el))
+  const ships = estate.ships.map((el) => estateAssetMapper<EstateAsset>(el))
+  const vehicles = estate.vehicles.map((el) =>
+    estateAssetMapper<EstateAsset>(el),
   )
-  const ships = estate.ships.map((el) => initialMapper<EstateAsset>(el))
-  const vehicles = estate.vehicles.map((el) => initialMapper<EstateAsset>(el))
-  const guns = estate.guns.map((el) => initialMapper<EstateAsset>(el))
+  const guns = estate.guns.map((el) => estateAssetMapper<EstateAsset>(el))
+  const estateMembers = estate.estateMembers.map((el) => estateMemberMapper(el))
 
   return {
     ...estate,

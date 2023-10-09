@@ -1,9 +1,11 @@
 import React from 'react';
+import {View, Image, TouchableOpacity} from 'react-native';
 import styled from 'styled-components/native';
 import {dynamicColor} from '../../utils';
 import {font} from '../../utils/font';
 import {Skeleton} from '../skeleton/skeleton';
-
+import CopyIcon from '../../assets/icons/copy.png';
+import Clipboard from '@react-native-clipboard/clipboard';
 const Host = styled.SafeAreaView<{noBorder: boolean; borderDark?: boolean}>`
   flex: 1;
   border-bottom-width: ${({theme}) => theme.border.width.standard}px;
@@ -53,6 +55,7 @@ interface InputProps {
   size?: 'normal' | 'big';
   isCompact?: boolean;
   borderDark?: boolean;
+  copy?: boolean;
 }
 
 export function Input({
@@ -65,9 +68,11 @@ export function Input({
   size = 'normal',
   isCompact = false,
   borderDark = false,
+  copy = false,
 }: InputProps) {
   const tvalue =
     value !== undefined && typeof value === 'string' && value.trim();
+
   return (
     <Host noBorder={noBorder} borderDark={borderDark}>
       <Content isCompact={isCompact}>
@@ -79,9 +84,22 @@ export function Input({
             height={size === 'big' ? 26 : undefined}
           />
         ) : (
-          <Value testID={valueTestID} size={size}>
-            {tvalue === '' || !value ? '-' : value}
-          </Value>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Value testID={valueTestID} selectable size={size}>
+              {tvalue === '' || !value ? '-' : value}
+            </Value>
+            {copy && (
+              <TouchableOpacity
+                onPress={() => Clipboard.setString(value ?? '')}
+                style={{marginLeft: 4}}>
+                <Image
+                  source={CopyIcon}
+                  style={{width: 24, height: 24}}
+                  resizeMode="contain"
+                />
+              </TouchableOpacity>
+            )}
+          </View>
         )}
       </Content>
     </Host>

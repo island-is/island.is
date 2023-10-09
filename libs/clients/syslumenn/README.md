@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Syslumenn" -->
-
 # Syslumenn Client
 
 ## About

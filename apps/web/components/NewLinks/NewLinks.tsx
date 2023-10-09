@@ -45,10 +45,8 @@ export const NewLinks = ({
       <div className={styles.content}>
         <div className={styles.truncate}>
           {items.map(({ date, text, href }, index) => (
-            <NextLink key={index} href={href}>
-              <a className={styles.link}>
-                <strong>{format(new Date(date), 'dd/MM')}</strong> {text}
-              </a>
+            <NextLink key={index} href={href} className={styles.link}>
+              <strong>{format(new Date(date), 'dd/MM')}</strong> {text}
             </NextLink>
           ))}
         </div>

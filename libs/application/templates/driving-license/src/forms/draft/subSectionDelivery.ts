@@ -6,7 +6,7 @@ import {
   buildDividerField,
   buildSubSection,
 } from '@island.is/application/core'
-import { Juristiction, NationalRegistryUser } from '../../types/schema'
+import { Jurisdiction, NationalRegistryUser } from '../../types/schema'
 import { m } from '../../lib/messages'
 import {
   chooseDistrictCommissionerDescription,
@@ -23,15 +23,6 @@ export const subSectionDelivery = buildSubSection({
       title: m.pickupLocationTitle,
       space: 1,
       children: [
-        buildKeyValueField({
-          label: m.informationApplicant,
-          value: ({ externalData: { nationalRegistry } }) =>
-            (nationalRegistry.data as NationalRegistryUser).fullName,
-        }),
-        buildDividerField({
-          title: '',
-          color: 'dark400',
-        }),
         buildDescriptionField({
           id: 'afhending',
           title: m.districtCommisionerTitle,
@@ -39,16 +30,16 @@ export const subSectionDelivery = buildSubSection({
           description: chooseDistrictCommissionerDescription,
         }),
         buildSelectField({
-          id: 'juristiction',
+          id: 'jurisdiction',
           title: m.districtCommisionerPickup,
           disabled: false,
           required: true,
           options: ({
             externalData: {
-              juristictions: { data },
+              jurisdictions: { data },
             },
           }) => {
-            return (data as Juristiction[]).map(({ id, name, zip }) => ({
+            return (data as Jurisdiction[]).map(({ id, name, zip }) => ({
               value: `${id}`,
               label: name,
               tooltip: `Póstnúmer ${zip}`,

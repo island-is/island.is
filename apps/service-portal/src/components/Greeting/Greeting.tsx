@@ -5,7 +5,7 @@ import { useAuth } from '@island.is/auth/react'
 import { m } from '@island.is/service-portal/core'
 import * as styles from './Greeting.css'
 
-const Greeting: FC<{}> = () => {
+const Greeting: FC<React.PropsWithChildren<{}>> = () => {
   const { formatMessage } = useLocale()
   const { userInfo } = useAuth()
   const currentHour = new Date().getHours()

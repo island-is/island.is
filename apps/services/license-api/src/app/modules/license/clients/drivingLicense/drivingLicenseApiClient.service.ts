@@ -95,8 +95,8 @@ export class DrivingLicenseApiClientService implements GenericLicenseClient {
       return {
         ok: false,
         error: {
-          code: 14,
-          message: 'Missing license',
+          code: 3,
+          message: 'No license info found for user',
         },
       }
     }
@@ -105,19 +105,12 @@ export class DrivingLicenseApiClientService implements GenericLicenseClient {
     const name = license.name ?? ''
     const picture = license.photo?.image ?? ''
 
-    if (
-      !licenseNationalId ||
-      !name
-      //TODO: re-enable when testing is over!
-      //|| !picture
-    ) {
+    if (!licenseNationalId || !name || !picture) {
       return {
         ok: false,
         error: {
           code: 14,
-          //TODO: use when testing is over!
-          //message: 'Missing data. NationalId, name or photo missing',
-          message: 'Missing data. NationalId or name missing.',
+          message: 'Missing data. NationalId, name or photo missing',
         },
       }
     }
@@ -125,7 +118,7 @@ export class DrivingLicenseApiClientService implements GenericLicenseClient {
     return {
       ok: true,
       data: {
-        valid: true,
+        valid: licenseNationalId === nationalId,
         passIdentity: {
           nationalId: licenseNationalId,
           name,

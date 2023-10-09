@@ -1,5 +1,6 @@
 {
-  "root": "apps/services/license-api",
+  "name": "license-api",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/license-api/src",
   "projectType": "application",
   "prefix": "license-api",
@@ -30,41 +31,41 @@
       "outputs": ["{options.outputPath}"]
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "license-api:build"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/services/license-api/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/services/license-api/jest.config.js",
+        "jestConfig": "apps/services/license-api/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/services/license-api"]
+      "outputs": ["{workspaceRoot}/coverage/apps/services/license-api"]
     },
     "schemas/build-openapi": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
-        "outputPath": "apps/services/license-api/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/license-api/tsconfig.app.json apps/services/license-api/src/buildOpenApi.ts"
-      }
+      },
+      "outputs": ["{workspaceRoot}/apps/services/license-api/src/openapi.yaml"]
     },
     "dev-init": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": ["yarn get-secrets license-api"],
         "parallel": false
       }
     },
     "dev": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": ["yarn start license-api"],
         "parallel": true

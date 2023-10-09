@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Contentful Apps
 
 This Next.js project is intended to host Contentful Apps that we use to extend and customize the functionality of Contentful.

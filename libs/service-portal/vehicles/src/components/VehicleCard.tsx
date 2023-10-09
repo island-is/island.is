@@ -11,7 +11,9 @@ interface Props {
   vehicle: VehiclesVehicle
 }
 
-export const VehicleCard: FC<Props> = ({ vehicle }) => {
+export const VehicleCard: FC<React.PropsWithChildren<Props>> = ({
+  vehicle,
+}) => {
   const { formatMessage } = useLocale()
   if (!vehicle) {
     return null

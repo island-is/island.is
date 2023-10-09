@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Icelandic Health Insurance" -->
-
 # Icelandic Health Insurance Clients
 
 Currently there are clients for two APIs from Sjúkratryggingar

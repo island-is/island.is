@@ -1,21 +1,22 @@
 {
-  "root": "libs/application/testing",
+  "name": "application-testing",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/testing/src",
   "projectType": "library",
   "tags": ["lib:application-system", "scope:application-system"],
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/application/testing/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/application/testing"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/application/testing"],
       "options": {
-        "jestConfig": "libs/application/testing/jest.config.js",
+        "jestConfig": "libs/application/testing/jest.config.ts",
         "passWithNoTests": true
       }
     }

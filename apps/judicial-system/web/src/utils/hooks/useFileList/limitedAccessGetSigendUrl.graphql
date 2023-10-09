@@ -1,0 +1,5 @@
+query LimitedAccessGetSignedUrl($input: GetSignedUrlInput!) {
+  limitedAccessGetSignedUrl(input: $input) {
+    url
+  }
+}

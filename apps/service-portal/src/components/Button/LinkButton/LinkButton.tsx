@@ -12,7 +12,11 @@ interface Props {
   external?: boolean
 }
 
-const ButtonContent: FC<Props> = ({ onClick, active, children }) => (
+const ButtonContent: FC<React.PropsWithChildren<Props>> = ({
+  onClick,
+  active,
+  children,
+}) => (
   <Box
     display="flex"
     alignItems="center"
@@ -25,7 +29,7 @@ const ButtonContent: FC<Props> = ({ onClick, active, children }) => (
   </Box>
 )
 
-const LinkButton: FC<Props> = (props) => {
+const LinkButton: FC<React.PropsWithChildren<Props>> = (props) => {
   return props.external ? (
     <a
       href={props.url}

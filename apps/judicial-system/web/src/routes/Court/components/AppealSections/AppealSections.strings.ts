@@ -27,16 +27,14 @@ export const appealSections = defineMessages({
       'Notaður sem texti við valmöguleika varnaraðila um að kæra úrskurðinn radio takkann á þingbókar skrefi í öllum málategundum.',
   },
   defendantAnnouncementAutofillSpokespersonAppealV2: {
-    id:
-      'judicial.system.core:appeal_sections.defendant_announcement_autofill_spokesperson_appeal',
+    id: 'judicial.system.core:appeal_sections.defendant_announcement_autofill_spokesperson_appeal',
     defaultMessage:
       'Talsmaður varnaraðila kærir úrskurðinn í því skyni að úrskurðurinn verði felldur úr gildi.',
     description:
       'Notaður sem texti sem segir til um í hvaða skyni er kært þegar talsmaður varnaraðila kærir úrskurð í þinghaldi.',
   },
   defendantAnnouncementAutofillAppealV2: {
-    id:
-      'judicial.system.core:appeal_sections.defendant_announcement_autofill_appeal',
+    id: 'judicial.system.core:appeal_sections.defendant_announcement_autofill_appeal',
     defaultMessage:
       'Varnaraðili kærir úrskurðinn í því skyni að úrskurðurinn verði felldur úr gildi{caseType, select, CUSTODY {, en til vara að gæsluvarðhaldi verði markaður skemmri tími/ honum verði gert að sæta farbanni í stað gæsluvarðahalds} other {}}.',
     description:
@@ -67,8 +65,7 @@ export const appealSections = defineMessages({
       'Notaður sem titill á "Yfirlýsing varnaraðila" innsláttarsvæði á þingbókar skrefi í öllum málategundum.',
   },
   defendantAnnouncementPlaceholderV2: {
-    id:
-      'judicial.system.core:appeal_secions.defendant_announcement_placeholder',
+    id: 'judicial.system.core:appeal_secions.defendant_announcement_placeholder',
     defaultMessage:
       'Hér er hægt að bóka frekar um það sem varnaraðili vill taka fram ef við á.',
     description:
@@ -87,8 +84,7 @@ export const appealSections = defineMessages({
       'Notaður sem texti við valmöguleika sækjanda um að kæra úrskurðinn radio takkann á þingbókar skrefi í öllum málategundum.',
   },
   prosecutorAnnoncementAutofillAppealV2: {
-    id:
-      'judicial.system.core:appeal_sections.prosecutor_announcement_autofill_appeal',
+    id: 'judicial.system.core:appeal_sections.prosecutor_announcement_autofill_appeal',
     defaultMessage:
       'Sækjandi kærir úrskurðinn í því skyni að úrskurðurinn verði felldur úr gildi og krafa hans verði tekin til greina.',
     description:
@@ -119,8 +115,7 @@ export const appealSections = defineMessages({
       'Notaður sem titill á "Yfirlýsing sækjanda" innsláttarsvæði á þingbókar skrefi í í öllum málategundum.',
   },
   prosecutorAnnouncementPlaceholderV2: {
-    id:
-      'judicial.system.core:appeal_sections.prosecutor_announcement_placeholder',
+    id: 'judicial.system.core:appeal_sections.prosecutor_announcement_placeholder',
     defaultMessage:
       'Hér er hægt að bóka frekar um það sem sækjandi vill taka fram ef við á.',
     description:

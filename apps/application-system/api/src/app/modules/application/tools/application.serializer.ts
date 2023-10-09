@@ -33,7 +33,8 @@ import { getApplicationNameTranslationString } from '../utils/application'
 
 @Injectable()
 export class ApplicationSerializer
-  implements NestInterceptor<Application, Promise<unknown>> {
+  implements NestInterceptor<Application, Promise<unknown>>
+{
   constructor(
     private intlService: IntlService,
     private historyService: HistoryService,

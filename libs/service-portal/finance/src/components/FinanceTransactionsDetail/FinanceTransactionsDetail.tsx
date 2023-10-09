@@ -12,7 +12,9 @@ interface Props {
   data: Array<{ title: string; value?: string | number }>
 }
 
-const FinanceTransactionsDetail: FC<Props> = ({ data }) => {
+const FinanceTransactionsDetail: FC<React.PropsWithChildren<Props>> = ({
+  data,
+}) => {
   return (
     <Box padding={2} background="blue100">
       <GridContainer className={styles.grid}>

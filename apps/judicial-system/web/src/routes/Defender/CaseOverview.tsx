@@ -10,36 +10,37 @@ import {
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealDecision,
   CaseState,
   completedCaseStates,
   Feature,
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
+  AlertBanner,
+  AppealCaseFilesOverview,
   CaseDates,
+  CaseResentExplanation,
+  Conclusion,
+  FeatureContext,
   FormContentContainer,
   FormContext,
   InfoCard,
   MarkdownWrapper,
-  PageLayout,
-  RestrictionTags,
-  PageHeader,
   Modal,
-  Conclusion,
-  AppealCaseFilesOverview,
-  CaseResentExplanation,
-  FeatureContext,
-  AppealConclusion,
-  AlertBanner,
   OverviewHeader,
+  PageHeader,
+  PageLayout,
   PdfButton,
+  RestrictionTags,
   SignedDocument,
 } from '@island.is/judicial-system-web/src/components'
-import { core, titles } from '@island.is/judicial-system-web/messages'
+import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
+import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
+import { conclusion } from '../../components/Conclusion/Conclusion.strings'
 import { strings } from './CaseOverview.strings'
 
 type availableModals =
@@ -47,10 +48,9 @@ type availableModals =
   | 'ConfirmAppealAfterDeadline'
   | 'ConfirmStatementAfterDeadline'
 
-export const CaseOverview: React.FC = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
+export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   const { formatMessage } = useIntl()
   const { features } = useContext(FeatureContext)
@@ -102,11 +102,11 @@ export const CaseOverview: React.FC = () => {
                   <Box>
                     <Text variant="h5">
                       {formatMessage(strings.rulingDate, {
-                        courtEndTime: `${formatDate(
-                          workingCase.courtEndTime,
+                        rulingDate: `${formatDate(
+                          workingCase.rulingDate,
                           'PPP',
                         )} kl. ${formatDate(
-                          workingCase.courtEndTime,
+                          workingCase.rulingDate,
                           constants.TIME_FORMAT,
                         )}`,
                       })}
@@ -154,7 +154,9 @@ export const CaseOverview: React.FC = () => {
                 },
                 {
                   title: formatMessage(core.courtCaseNumber),
-                  value: workingCase.courtCaseNumber,
+                  value:
+                    workingCase.courtCaseNumber ??
+                    formatMessage(strings.noCourtNumber),
                 },
                 {
                   title: formatMessage(core.prosecutor),
@@ -168,10 +170,14 @@ export const CaseOverview: React.FC = () => {
                   title: formatMessage(core.prosecutorPerson),
                   value: workingCase.prosecutor?.name,
                 },
-                {
-                  title: formatMessage(core.judge),
-                  value: workingCase.judge?.name,
-                },
+                ...(workingCase.judge
+                  ? [
+                      {
+                        title: formatMessage(core.judge),
+                        value: workingCase.judge?.name,
+                      },
+                    ]
+                  : []),
                 // Conditionally add this field based on case type
                 ...(isInvestigationCase(workingCase.type)
                   ? [
@@ -227,9 +233,13 @@ export const CaseOverview: React.FC = () => {
                         title: formatMessage(core.appealJudgesHeading),
                         value: (
                           <>
-                            <Text>{workingCase.appealJudge1?.name}</Text>
-                            <Text>{workingCase.appealJudge2?.name}</Text>
-                            <Text>{workingCase.appealJudge3?.name}</Text>
+                            {sortByIcelandicAlphabet([
+                              workingCase.appealJudge1?.name || '',
+                              workingCase.appealJudge2?.name || '',
+                              workingCase.appealJudge3?.name || '',
+                            ]).map((judge, index) => (
+                              <Text key={index}>{judge}</Text>
+                            ))}
                           </>
                         ),
                       },
@@ -241,6 +251,7 @@ export const CaseOverview: React.FC = () => {
           {completedCaseStates.includes(workingCase.state) && (
             <Box marginBottom={6}>
               <Conclusion
+                title={formatMessage(conclusion.title)}
                 conclusionText={workingCase.conclusion}
                 judgeName={workingCase.judge?.name}
               />
@@ -248,31 +259,28 @@ export const CaseOverview: React.FC = () => {
           )}
           {workingCase.appealConclusion && (
             <Box marginBottom={6}>
-              <AppealConclusion
+              <Conclusion
+                title={formatMessage(conclusion.appealTitle)}
                 conclusionText={workingCase.appealConclusion}
-                judgeName={workingCase.appealJudge1?.name}
               />
             </Box>
           )}
-
           <AppealCaseFilesOverview />
 
-          {(workingCase.sendRequestToDefender ||
+          {(workingCase.requestSharedWithDefender ||
             completedCaseStates.includes(workingCase.state)) && (
             <Box marginBottom={10}>
               <Text as="h3" variant="h3" marginBottom={3}>
                 {formatMessage(strings.documentHeading)}
               </Text>
               <Box>
-                {(workingCase.sendRequestToDefender ||
-                  completedCaseStates.includes(workingCase.state)) && (
-                  <PdfButton
-                    renderAs="row"
-                    caseId={workingCase.id}
-                    title={formatMessage(core.pdfButtonRequest)}
-                    pdfType={'limitedAccess/request'}
-                  />
-                )}
+                <PdfButton
+                  renderAs="row"
+                  caseId={workingCase.id}
+                  title={formatMessage(core.pdfButtonRequest)}
+                  pdfType={'limitedAccess/request'}
+                />
+
                 {completedCaseStates.includes(workingCase.state) && (
                   <>
                     <PdfButton
@@ -294,10 +302,10 @@ export const CaseOverview: React.FC = () => {
                       title={formatMessage(core.pdfButtonRuling)}
                       pdfType={'limitedAccess/ruling'}
                     >
-                      {workingCase.rulingDate ? (
+                      {workingCase.rulingSignatureDate ? (
                         <SignedDocument
                           signatory={workingCase.judge?.name}
-                          signingDate={workingCase.rulingDate}
+                          signingDate={workingCase.rulingSignatureDate}
                         />
                       ) : (
                         <Text>{formatMessage(strings.unsignedRuling)}</Text>

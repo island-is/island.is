@@ -171,31 +171,31 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Foreldri sem uppfyllir skilyrði um fullt nám öðlast rétt til fæðingarstyrks',
     },
     noPrimaryParentTitle: {
-      id: 'pl.applications:no.primary.parent.title',
+      id: 'pl.application:no.primary.parent.title',
       defaultMessage: 'Staðfesting á faðerni barns',
       description: 'Confirmation of paternity',
     },
     noPrimaryParentQuestionOne: {
-      id: 'pl.applications:no.primary.parent.question.one',
+      id: 'pl.application:no.primary.parent.question.one',
       defaultMessage: 'Er barn að fæðast erlendis?',
       description: 'Is child being born abroad?',
     },
     noPrimaryParentQuestionTwo: {
-      id: 'pl.applications:no.primary.parent.question.two',
+      id: 'pl.application:no.primary.parent.question.two',
       defaultMessage:
         'Er barnshafandi foreldri búsett erlendis og/eða ekki með íslenska kennitölu?',
       description:
         'Is the pregnant parent living abroad and/or does not have an Icelandic social security number?',
     },
     noPrimaryParentQuestionThree: {
-      id: 'pl.applications:no.primary.parent.question.three',
+      id: 'pl.application:no.primary.parent.question.three',
       defaultMessage:
         'Á barnshafandi foreldri rétt á fæðingarorlofi á Íslandi?',
       description:
         'Is the pregnant parent entitled to parental leave in Iceland?',
     },
     noPrimaryParentDatePickerTitle: {
-      id: 'pl.applications:no.primary.parent.date.picker.title',
+      id: 'pl.application:no.primary.parent.date.picker.title',
       defaultMessage:
         'Settu inn áætlaðan/raunverulegan fæðingardagur barnsins/barnanna?',
       description: `Please enter the child's/children's expected/actual date of birth?`,
@@ -1512,8 +1512,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     attachmentMaxSizeError: {
       id: 'pl.application:selfEmployed.attachment.maxSizeError',
-      defaultMessage: 'Hámark 10 MB á skrá',
-      description: 'Max 10 MB per file',
+      defaultMessage: 'Hámark 2 MB á skrá',
+      description: 'Max 2 MB per file',
     },
   }),
 
@@ -1753,8 +1753,7 @@ export const parentalLeaveFormMessages: MessageDir = {
         'The other parent will need to approve the extra days you’ve requested.',
     },
     otherParentDescRequestingPersonalDiscount: {
-      id:
-        'pl.application:review.otherParent.otherParentDescRequestingPersonalDiscount',
+      id: 'pl.application:review.otherParent.otherParentDescRequestingPersonalDiscount',
       defaultMessage:
         'Hitt foreldrið þarf að samþykkja notkun persónuafsláttar síns.',
       description:
@@ -2054,8 +2053,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Confirmation',
     },
     parentWithoutBirthParentDescription: {
-      id:
-        'pl.application:attachmentscreen.parent.without.birth.parent.description',
+      id: 'pl.application:attachmentscreen.parent.without.birth.parent.description',
       defaultMessage:
         'Vottorð um áætlaðan fæðingardag þarf að berast frá viðkomandi landi. Eftir að barn er fætt þarf að berast fæðingarvottorð þess ásamt staðfestingu á faðerni ef foreldrar eru ekki gift eða í sambúð. Ef foreldrar eru gift eða í sambúð má senda afrit af staðfestingu þess lútandi með vottorði um áætlaðan fæðingardag. Athugaðu að skjalið þarf að vera á .pdf formi',
       description: 'father without mother description',
@@ -2418,16 +2416,14 @@ export const errorMessages = defineMessages({
     description: 'Could not fetch child data',
   },
   periodsFirstPeriodStartDateDefinitionMissing: {
-    id:
-      'pl.application:answerValidators.periodsFirstPeriodStartDateDefinitionMissing',
+    id: 'pl.application:answerValidators.periodsFirstPeriodStartDateDefinitionMissing',
     defaultMessage:
       'Ekki er búið að skilgreina hvernig á að hefja fyrsta tímabil.',
     description:
       'Copy for when user has not chosen how to start the first period (expected dob, dob, specific date)',
   },
   periodsFirstPeriodStartDateDefinitionInvalid: {
-    id:
-      'pl.application:answerValidators.periodsFirstPeriodStartDateDefinitionInvalid',
+    id: 'pl.application:answerValidators.periodsFirstPeriodStartDateDefinitionInvalid',
     defaultMessage: 'Skilgreining á upphafi fyrsta tímabils ógild.',
     description:
       'Copy for when user has chosen how to start the period but it is invalid',
@@ -2651,8 +2647,7 @@ export const errorMessages = defineMessages({
     description: 'Unable to request days!',
   },
   notAllowedToGiveRightsOtherParentNotAllowed: {
-    id:
-      'pl.application:errors.not.allowed.to.give.rights.other.parent.not.allowed',
+    id: 'pl.application:errors.not.allowed.to.give.rights.other.parent.not.allowed',
     defaultMessage:
       'Ekki er hægt að færa daga ef forsjárlausa foreldrið hefur ekki samþykki fyrir umgengni í þessu fæðingarorlofi. Vinsamlegast veljið annan möguleika.',
     description: 'Unable to transfer days!',
@@ -2853,5 +2848,103 @@ export const statesMessages = defineMessages({
     id: 'pl.application:residence.grant.in.progress',
     defaultMessage: 'Þú ert að sækja um dvalarstyrk.',
     description: 'You are applying for a residence grant',
+  },
+
+  otherParentRequestApprovalTitle: {
+    id: 'pl.application:otherParentRequestApproval.title',
+    defaultMessage: 'Hitt foreldri óskar eftir samþykki þínu',
+    description: 'The other parent requests your approval',
+  },
+  otherParentRequestApprovalDescription: {
+    id: 'pl.application:otherParentRequestApproval.description',
+    defaultMessage:
+      'Hitt foreldri hefur óskað eftir yfirfærslu á dögum af þínum réttindum til fæðingarorlofs',
+    description:
+      'The other parent has requested a transfer in days of your rights to parental leave',
+  },
+
+  otherParentApproveHistoryLogMessage: {
+    id: 'pl.application:otherParent.approve.historyLogMessage',
+    defaultMessage: 'Hitt foreldrið samþykkti beiðni þína',
+    description: 'The other parent has approved extra time',
+  },
+
+  otherParentActionPendingActionTitle: {
+    id: 'pl.application:otherParentAction.pendingAction.title',
+    defaultMessage: 'Umsókn krefst aðgerða',
+    description: 'Application requires action',
+  },
+  otherParentActionPendingActionContent: {
+    id: 'pl.application:otherParentAction.pendingAction.content',
+    defaultMessage:
+      'Hitt foreldrið samþykkti ekki beiðni þína. Þú getur gert breytingar á umsókn þinni og sent aftur til skoðunar.',
+    description:
+      'The other parent did not approve your request. You can make edits to your application and re-submit for consideration.',
+  },
+
+  editHistoryLogMessage: {
+    id: 'pl.application:editHistoryLogMessage',
+    defaultMessage: 'Umsækjandi gerði breytingu',
+    description: 'Application edited',
+  },
+
+  employerApprovalPendingActionTitle: {
+    id: 'pl.application:employerApproval.pendingAction.title',
+    defaultMessage: 'Starfsmaður óskar eftir samþykki í fæðingarorlof',
+    description: 'An employee requests approval for maternity leave',
+  },
+
+  employerApprovalPendingActionDescription: {
+    id: 'pl.application:employerApproval.pendingAction.description',
+    defaultMessage:
+      'Starfsmaður óskar eftir samþykki fyrirtækis að fara í fæðingarorlof',
+    description:
+      'An employee requests the companys approval to go on maternity leave',
+  },
+
+  employerApprovalApproveHistoryLogMessage: {
+    id: 'pl.application:employerApproval.approve.historyLogMessage',
+    defaultMessage: 'Vinnuveitandi hefur samþykkt dagsetningar',
+    description: 'The employer has approved the dates',
+  },
+
+  vinnumalastofnunApprovalApproveHistoryLogMessage: {
+    id: 'pl.application:vinnumalastofnunApproval.approve.historyLogMessage',
+    defaultMessage: 'Vinnumálastofnun hefur samþykkt umsóknina',
+    description: 'Vinnumálastofnun has approved application',
+  },
+  vinnumalastofnunApprovalSubmitHistoryLogMessage: {
+    id: 'pl.application:vinnumalastofnunApproval.submit.historyLogMessage',
+    defaultMessage: 'Sæki um dvalarstyrk',
+    description: 'Apply for a residence grand',
+  },
+
+  additionalDocumentRequiredApproveHistoryLogMessage: {
+    id: 'pl.application:additionalDocumentRequired.approve.historyLogMessage',
+    defaultMessage: 'Viðbótargögn send',
+    description: 'Additional data sent',
+  },
+
+  vinnumalastofnunApproveEditsRejectHistoryLogMessage: {
+    id: 'pl.application:vinnumalastofnunApproveEdits.reject.historyLogMessage',
+    defaultMessage: 'Vinnumálastofnun hafnaði breytingunum þínum',
+    description: 'Vinnumálastofnun rejected your edits',
+  },
+
+  editOrAddPeriodsSubmitHistoryLogMessage: {
+    id: 'pl.application:editOrAddPeriods.submit.historyLogMessage',
+    defaultMessage: 'Tímabili breytt eða bætt við umsókn',
+    description: 'Period edited or added to application',
+  },
+  editOrAddPeriodsAbortHistoryLogMessage: {
+    id: 'pl.application:editOrAddPeriods.abort.historyLogMessage',
+    defaultMessage: 'Hætti við breytingar',
+    description: 'Changes aborted',
+  },
+
+  approvedClosedHistoryLogMessage: {
+    id: 'pl.application:approved.closed.historyLogMessage',
+    defaultMessage: 'Umsókn lokið',
+    description: 'Application closed',
   },
 })

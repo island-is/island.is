@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # clients-transport-authority-vehicle-infolocks
 
 This library was generated with [Nx](https://nx.dev).

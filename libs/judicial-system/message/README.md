@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # judicial-system-message
 
 This library was generated with [Nx](https://nx.dev).

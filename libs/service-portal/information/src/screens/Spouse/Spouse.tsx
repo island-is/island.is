@@ -1,9 +1,7 @@
-import React from 'react'
 import { defineMessage } from 'react-intl'
 import { useParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 
-import { useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
 import {
   Box,
   Divider,
@@ -20,8 +18,11 @@ import {
   NotFound,
   UserInfoLine,
 } from '@island.is/service-portal/core'
-
-import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
+import { natRegMaritalStatusMessageDescriptorRecord } from '../../helpers/localizationHelpers'
+import { FeatureFlagClient } from '@island.is/feature-flags'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { spmm } from '../../lib/messages'
+import { useNationalRegistrySpouseQuery } from './Spouse.generated'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -41,17 +42,59 @@ const FamilyMember = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
 
-  const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_USER)
-  const { nationalRegistryUser } = data || {}
+  const [useNatRegV3, setUseNatRegV3] = useState<boolean>()
+  const [spouseValue, setSpouseValue] = useState<string>('')
+
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+
+  /* Should use v3? */
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isserviceportalnationalregistryv3enabled`,
+        false,
+      )
+      if (ffEnabled) {
+        setUseNatRegV3(ffEnabled as boolean)
+      } else {
+        setUseNatRegV3(false)
+      }
+    }
+    isFlagEnabled()
+  }, [])
+
+  const { data, loading, error } = useNationalRegistrySpouseQuery({
+    variables: {
+      api: useNatRegV3 ? 'v3' : undefined,
+    },
+  })
+
+  useEffect(() => {
+    if (useNatRegV3 !== undefined) {
+      if (useNatRegV3) {
+        const v3Value =
+          data?.nationalRegistryPerson?.spouse?.cohabitationWithSpouse === true
+            ? formatMessage(spmm.cohabitationWithSpouse)
+            : data?.nationalRegistryPerson?.spouse?.maritalStatus
+            ? data.nationalRegistryPerson.spouse.maritalStatus
+            : ''
+        setSpouseValue(v3Value)
+      } else {
+        const v1Value = data?.nationalRegistryPerson?.maritalStatus
+          ? formatMessage(
+              natRegMaritalStatusMessageDescriptorRecord[
+                data?.nationalRegistryPerson?.maritalStatus
+              ],
+            )
+          : ''
+        setSpouseValue(v1Value ?? '')
+      }
+    }
+  }, [useNatRegV3, data?.nationalRegistryPerson, formatMessage])
 
   const { nationalId } = useParams() as UseParams
 
-  const person =
-    nationalRegistryUser?.spouse?.nationalId === nationalId
-      ? nationalRegistryUser
-      : null
-
-  if (!nationalId || error || (!loading && !person))
+  if (!nationalId || error || (!loading && !data?.nationalRegistryPerson))
     return (
       <NotFound
         title={defineMessage({
@@ -73,8 +116,9 @@ const FamilyMember = () => {
         </Box>
       ) : (
         <IntroHeader
-          title={person?.spouse?.name || ''}
+          title={data?.nationalRegistryPerson?.spouse?.fullName || ''}
           intro={dataInfoSpouse}
+          marginBottom={2}
         />
       )}
 
@@ -82,7 +126,7 @@ const FamilyMember = () => {
         <UserInfoLine
           title={formatMessage(m.myRegistration)}
           label={defineMessage(m.fullName)}
-          content={person?.spouse?.name || '...'}
+          content={data?.nationalRegistryPerson?.spouse?.fullName || '...'}
           loading={loading}
           translate="no"
         />
@@ -98,11 +142,7 @@ const FamilyMember = () => {
             id: 'sp.family:spouseCohab',
             defaultMessage: 'Tengsl',
           })}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : person?.spouse?.cohabitant || ''
-          }
+          content={error ? formatMessage(dataNotFoundMessage) : spouseValue}
           loading={loading}
         />
         <Divider />

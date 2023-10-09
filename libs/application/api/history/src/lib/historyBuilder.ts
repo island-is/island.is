@@ -14,7 +14,7 @@ export class HistoryBuilder {
   async buildApplicationHistory<
     TContext extends ApplicationContext,
     TStateSchema extends ApplicationStateSchema<TEvents>,
-    TEvents extends EventObject
+    TEvents extends EventObject,
   >(
     history: History[],
     formatMessage: FormatMessage,

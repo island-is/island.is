@@ -90,6 +90,7 @@ export class MeClientsController {
   })
   @Audit<AdminClientDto>({
     resources: (client) => client.clientId,
+    alsoLog: true,
   })
   async create(
     @CurrentUser() user: User,
@@ -120,6 +121,7 @@ export class MeClientsController {
         auth: user,
         action: 'update',
         resources: (client) => client.clientId,
+        alsoLog: true,
         meta: {
           fields: Object.keys(input),
         },
@@ -144,6 +146,7 @@ export class MeClientsController {
         namespace,
         action: 'delete',
         resources: clientId,
+        alsoLog: true,
         meta: { tenantId },
       },
       this.clientsService.delete(clientId, tenantId),

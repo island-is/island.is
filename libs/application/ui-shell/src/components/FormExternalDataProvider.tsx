@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { Controller, useFormContext } from 'react-hook-form'
-import Markdown from 'markdown-to-jsx'
 
 import {
   AlertMessage,
@@ -10,6 +9,7 @@ import {
   Icon,
   Text,
 } from '@island.is/island-ui/core'
+import { Markdown } from '@island.is/shared/components'
 import {
   getValueViaPath,
   coreMessages,
@@ -36,15 +36,39 @@ import { verifyExternalData } from '../utils'
 import { handleServerError } from '@island.is/application/ui-components'
 import { ProviderErrorReason } from '@island.is/shared/problem'
 
-const ItemHeader: React.FC<{
-  title: FormText
-  subTitle?: FormText
-  application: Application
-}> = ({ title, subTitle, application }) => {
+const ItemHeader: React.FC<
+  React.PropsWithChildren<{
+    title: FormText
+    subTitle?: FormText
+    pageTitle?: FormText
+    application: Application
+  }>
+> = ({ title, subTitle, application, pageTitle }) => {
   const { formatMessage } = useLocale()
 
   return (
     <>
+      {pageTitle && (
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="flexStart"
+          marginTop={5}
+        >
+          <Box marginRight={1}>
+            <Icon
+              icon="fileTrayFull"
+              size="medium"
+              color="blue400"
+              type="outline"
+            />
+          </Box>
+          <Text variant="h4">
+            {formatText(pageTitle, application, formatMessage)}
+          </Text>
+        </Box>
+      )}
+
       <Text variant="h4" color="blue400">
         {formatText(title, application, formatMessage)}
       </Text>
@@ -60,14 +84,16 @@ const ItemHeader: React.FC<{
   )
 }
 
-const ProviderItem: FC<{
-  dataProviderResult: DataProviderResult
-  provider: DataProviderItem
-  suppressProviderError: boolean
-  application: Application
-}> = ({ dataProviderResult, provider, suppressProviderError, application }) => {
+const ProviderItem: FC<
+  React.PropsWithChildren<{
+    dataProviderResult: DataProviderResult
+    provider: DataProviderItem
+    suppressProviderError: boolean
+    application: Application
+  }>
+> = ({ dataProviderResult, provider, suppressProviderError, application }) => {
   const [reasons, setReasons] = useState<ProviderErrorReason[]>([])
-  const { title, subTitle } = provider
+  const { title, subTitle, pageTitle } = provider
   const { formatMessage } = useLocale()
   const showError =
     provider.id &&
@@ -100,7 +126,12 @@ const ProviderItem: FC<{
 
   return (
     <Box marginBottom={3}>
-      <ItemHeader application={application} title={title} subTitle={subTitle} />
+      <ItemHeader
+        application={application}
+        title={title}
+        subTitle={subTitle}
+        pageTitle={pageTitle}
+      />
 
       {showError &&
         reasons.map((reason, index) => (
@@ -112,15 +143,22 @@ const ProviderItem: FC<{
   )
 }
 
-const PermissionItem: FC<{
-  permission: DataProviderPermissionItem
-  application: Application
-}> = ({ permission, application }) => {
-  const { title, subTitle } = permission
+const PermissionItem: FC<
+  React.PropsWithChildren<{
+    permission: DataProviderPermissionItem
+    application: Application
+  }>
+> = ({ permission, application }) => {
+  const { title, subTitle, pageTitle } = permission
 
   return (
     <Box marginBottom={3}>
-      <ItemHeader application={application} title={title} subTitle={subTitle} />
+      <ItemHeader
+        application={application}
+        title={title}
+        subTitle={subTitle}
+        pageTitle={pageTitle}
+      />
     </Box>
   )
 }
@@ -136,16 +174,18 @@ const getExternalDataFromResponse = (
   responseData: UpdateApplicationExternalDataResponse,
 ) => responseData?.updateApplicationExternalData?.externalData
 
-const FormExternalDataProvider: FC<{
-  application: Application
-  applicationId: string
-  addExternalData(data: ExternalData): void
-  setBeforeSubmitCallback: SetBeforeSubmitCallback
-  externalData: ExternalData
-  externalDataProvider: ExternalDataProviderScreen
-  formValue: FormValue
-  errors: RecordObject
-}> = ({
+const FormExternalDataProvider: FC<
+  React.PropsWithChildren<{
+    application: Application
+    applicationId: string
+    addExternalData(data: ExternalData): void
+    setBeforeSubmitCallback: SetBeforeSubmitCallback
+    externalData: ExternalData
+    externalDataProvider: ExternalDataProviderScreen
+    formValue: FormValue
+    errors: RecordObject
+  }>
+> = ({
   addExternalData,
   setBeforeSubmitCallback,
   application,
@@ -236,7 +276,11 @@ const FormExternalDataProvider: FC<{
               : formatMessage(coreMessages.externalDataTitle)}
           </Text>
         </Box>
-        {description && <Text marginTop={4}>{formatMessage(description)}</Text>}
+        {description && (
+          <Text marginTop={4}>
+            <Markdown>{formatMessage(description)}</Markdown>
+          </Text>
+        )}
       </Box>
       <Box marginBottom={5}>
         {dataProviders.map((provider) => (

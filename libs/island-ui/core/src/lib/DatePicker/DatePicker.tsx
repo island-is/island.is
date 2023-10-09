@@ -34,7 +34,7 @@ const languageConfig = {
   },
 }
 
-export const DatePicker: React.FC<DatePickerProps> = ({
+export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   name,
   id = name,
   label,

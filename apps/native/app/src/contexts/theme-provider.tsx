@@ -46,8 +46,7 @@ export function ThemeProvider({children}: {children: React.ReactNode}) {
 
   return (
     <StyledThemeProvider
-      theme={{...selectedTheme, appearanceMode: preferences.appearanceMode}}
-    >
+      theme={{...selectedTheme, appearanceMode: preferences.appearanceMode}}>
       {children}
     </StyledThemeProvider>
   );

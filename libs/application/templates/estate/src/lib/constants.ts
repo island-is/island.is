@@ -9,10 +9,10 @@ export const NEI = 'Nei'
 export const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .rtf'
 export const FILE_SIZE_LIMIT = 10000000 // 10MB
 
-export const States = {
-  prerequisites: 'prerequisites',
-  draft: 'draft',
-  done: 'done',
+export enum States {
+  prerequisites = 'prerequisites',
+  draft = 'draft',
+  done = 'done',
 }
 
 export type EstateEvent =

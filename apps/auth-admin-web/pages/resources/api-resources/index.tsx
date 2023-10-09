@@ -4,7 +4,7 @@ import React, { useEffect } from 'react'
 import ApiResourcesList from '../../../components/Resource/lists/ApiResourcesList'
 import LocalizationUtils from '../../../utils/localization.utils'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   useEffect(() => {
     document.title = LocalizationUtils.getPageTitle(
       'resources.api-resources.index',

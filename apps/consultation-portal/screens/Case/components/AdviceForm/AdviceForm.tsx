@@ -212,7 +212,7 @@ export const AdviceForm = ({ case: _case, refetchAdvices }: Props) => {
       >
         <Inline alignY="center" collapseBelow="lg">
           <Text variant="eyebrow" color="purple400">
-            {`${loc.card.eyebrowText} ${_case.caseNumber}`}
+            {`${loc.card.eyebrowText} S-${_case.caseNumber}`}
           </Text>
           {!isMobile && (
             <Box style={{ transform: 'rotate(90deg)', width: 16 }}>
@@ -242,7 +242,7 @@ export const AdviceForm = ({ case: _case, refetchAdvices }: Props) => {
         ${sloc.publishLaw.text} 
         `}
 
-        <Link href={sloc.publishLaw.link.href}>
+        <Link href={sloc.publishLaw.link.href} legacyBehavior>
           {sloc.publishLaw.link.label}
         </Link>
       </Text>

@@ -1,6 +1,5 @@
 const DefinePlugin = require('webpack/lib/DefinePlugin')
 const { VanillaExtractPlugin } = require('@vanilla-extract/webpack-plugin')
-const nrwlConfig = require('@nrwl/react/plugins/webpack.js')
 const webpack = require('webpack')
 
 /**
@@ -104,20 +103,61 @@ const addNodeModulesPolyfill = (config) => {
 }
 
 /**
+ * Ignore warnings for broken source maps inside node_modules.
+ * @param {*} config Webpack config object
+ */
+function ignoreSourceMapWarnings(config) {
+  config.ignoreWarnings ??= []
+  config.ignoreWarnings.push(function ignoreSourcemapsLoaderWarnings(warning) {
+    return (
+      warning.module &&
+      warning.module.resource.includes('node_modules') &&
+      warning.details &&
+      warning.details.includes('source-map-loader')
+    )
+  })
+}
+
+/**
+ * NX's withReact loads svg's as React components when imported from js/ts files.
+ * But it doesn't work when dynamically imported like this: import(`./svg/${dynamic}.svg`)
+ *
+ * This pattern is currently used in financial-aid to load logos. It also loads them in an <img> tag, so it expects
+ * URLs rather than react components. Ideally we can devise a better way to manage these logos and get rid of this
+ * hack in the future.
+ *
+ * UPGRADE WARNING: This is designed to catch SVGs which are unhandled by withReact.
+ * @param config
+ */
+function addFallbackSvgLoader(config) {
+  config.module.rules.push({
+    test: /\.svg$/,
+    issuer: { not: /\.(js|ts|md)x?$/ },
+    loader: require.resolve('file-loader'),
+    options: {
+      name: `[name].[contenthash:20].[ext]`,
+    },
+  })
+}
+
+/**
  * Adds common web related configs to webpack
- * @param {*} config
+ * @param {*} config Webpack config object
+ * @param {*} context  NxWebpackExecutionContext
  */
 module.exports = function (config) {
-  // Call @nrwl/react plugin for default webpack config
-  nrwlConfig(config)
-
   setApiMocks(config)
   addNodeModulesPolyfill(config)
+  ignoreSourceMapWarnings(config)
+  addFallbackSvgLoader(config)
 
   fixPostcss(config)
 
   // Add the Vanilla Extract plugin
   config.plugins.push(new VanillaExtractPlugin())
+
+  // Disable stats for child compilations
+  config.stats.children = false
 
   return config
 }

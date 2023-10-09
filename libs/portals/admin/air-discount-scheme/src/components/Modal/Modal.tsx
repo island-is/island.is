@@ -29,7 +29,7 @@ interface ModalProps {
   }
 }
 
-const Modal: FC<ModalProps> = ({
+const Modal: FC<React.PropsWithChildren<ModalProps>> = ({
   show,
   t,
   onCancel,

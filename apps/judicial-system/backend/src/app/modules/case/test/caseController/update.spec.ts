@@ -1,5 +1,5 @@
-import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize/types'
+import { uuid } from 'uuidv4'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
@@ -15,13 +15,14 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
-import { UserService } from '../../../user'
 import { FileService } from '../../../file'
+import { UserService } from '../../../user'
 import { UpdateCaseDto } from '../../dto/updateCase.dto'
 import { Case } from '../../models/case.model'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 
 jest.mock('../../../factories')
 
@@ -55,6 +56,8 @@ describe('CaseController - Update', () => {
     policeCaseNumbers,
     caseFiles: [caseFile],
     courtCaseNumber,
+    caseFacts: uuid(),
+    legalArguments: uuid(),
   } as Case
 
   let mockMessageService: MessageService
@@ -200,6 +203,27 @@ describe('CaseController - Update', () => {
         caseFileId,
         { policeCaseNumber: newPoliceCaseNumber },
         transaction,
+      )
+    })
+  })
+
+  describe('case is resent by prosecutor', () => {
+    const caseToUpdate = {
+      caseResentExplanation: 'Endursending',
+    }
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+    })
+
+    it('should update court case facts and court legal arguments', () => {
+      expect(mockCaseModel.update).toHaveBeenCalledWith(
+        {
+          caseResentExplanation: 'Endursending',
+          courtCaseFacts: `Í greinargerð sóknaraðila er atvikum lýst svo: ${theCase.caseFacts}`,
+          courtLegalArguments: `Í greinargerð er krafa sóknaraðila rökstudd þannig: ${theCase.legalArguments}`,
+        },
+        { where: { id: caseId }, transaction },
       )
     })
   })

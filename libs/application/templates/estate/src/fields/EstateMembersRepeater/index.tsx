@@ -1,5 +1,5 @@
 import { FC, useEffect } from 'react'
-import { useFieldArray } from 'react-hook-form'
+import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import {
@@ -17,16 +17,16 @@ import { getValueViaPath } from '@island.is/application/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
 
-export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
-  application,
-  field,
-  errors,
-}) => {
+export const EstateMembersRepeater: FC<
+  React.PropsWithChildren<FieldBaseProps<Answers>>
+> = ({ application, field, errors }) => {
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove, update } = useFieldArray({
+  const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
+
+  const { clearErrors } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     relationOptions: string[]
@@ -49,7 +49,10 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
 
   useEffect(() => {
     if (fields.length === 0 && externalData.estate.estateMembers) {
-      append(externalData.estate.estateMembers)
+      // ran into a problem with "append", as it appeared to be getting called multiple times
+      // despite checking on the length of the fields
+      // so now using "replace" instead, for the initial setup
+      replace(externalData.estate.estateMembers)
     }
   }, [])
 
@@ -84,6 +87,10 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                       enabled: !member.enabled,
                     }
                     update(index, updatedMember)
+                    clearErrors(`${id}[${index}].phone`)
+                    clearErrors(`${id}[${index}].email`)
+                    clearErrors(`${id}[${index}].advocate.phone`)
+                    clearErrors(`${id}[${index}].advocate.email`)
                   }}
                 >
                   {member.enabled
@@ -205,7 +212,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                       format="###-####"
                       defaultValue={member.advocate?.phone || ''}
                       error={
-                        error && error[index] && error[index].advocate.phone
+                        error && error[index] && error[index].advocate?.phone
                       }
                       size="sm"
                     />
@@ -219,7 +226,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                       disabled={!member.enabled}
                       defaultValue={member.advocate?.email || ''}
                       error={
-                        error && error[index] && error[index].advocate.email
+                        error && error[index] && error[index].advocate?.email
                       }
                       size="sm"
                     />

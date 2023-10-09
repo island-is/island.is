@@ -1,16 +1,4 @@
 {
-  "implicitDependencies": {
-    "eslint-local-rules.js": "*",
-    "workspace.json": "*",
-    "package.json": {
-      "version": "*",
-      "dependencies": "*",
-      "devDependencies": "*",
-      "resolutions": "*"
-    },
-    "nx.json": "*",
-    "tsconfig.base.json": "*"
-  },
   "affected": {
     "defaultBase": "main"
   },
@@ -27,44 +15,44 @@
           "schemas/build-openapi",
           "schemas/openapi-generator",
           "schemas/build-graphql-schema",
-          "schemas/codegen"
+          "schemas/codegen",
+          "generateDevIndexHTML"
         ],
         "cacheDirectory": ".cache/nx",
         "parallel": 1
       }
     },
     "docker-test": {
-      "runner": "@nrwl/workspace/tasks-runners/default",
+      "runner": "@nx/workspace/tasks-runners/default",
       "options": {
         "cacheableOperations": [],
         "cacheDirectory": ".cache/nx"
       }
     }
   },
-  "targetDependencies": {
-    "build": [
-      {
-        "target": "build",
-        "projects": "dependencies"
-      }
-    ]
-  },
-  "cli": {
-    "defaultCollection": "@nrwl/react"
-  },
   "defaultProject": "web",
   "generators": {
-    "@nrwl/workspace": {
+    "@nrwl/nx-plugin": {
+      "plugin": {
+        "linter": "eslint"
+      }
+    },
+    "@nx/workspace": {
       "library": {
         "linter": "eslint"
       }
     },
-    "@nrwl/cypress": {
+    "@nx/cypress": {
       "cypress-project": {
         "linter": "eslint"
       }
     },
-    "@nrwl/react": {
+    "@nx/web": {
+      "application": {
+        "linter": "eslint"
+      }
+    },
+    "@nx/react": {
       "application": {
         "style": "scss",
         "linter": "eslint",
@@ -79,42 +67,70 @@
         "linter": "eslint"
       }
     },
-    "@nrwl/next": {
+    "@nx/node": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
+      }
+    },
+    "@nx/express": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
+      }
+    },
+    "@nx/nest": {
+      "application": {
+        "linter": "eslint"
+      }
+    },
+    "@nx/next": {
       "application": {
         "style": "scss",
         "linter": "eslint"
       }
-    },
-    "@nrwl/web": {
-      "application": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/node": {
-      "application": {
-        "linter": "eslint"
-      },
-      "library": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/nx-plugin": {
-      "plugin": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/nest": {
-      "application": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/express": {
-      "application": {
-        "linter": "eslint"
-      },
-      "library": {
-        "linter": "eslint"
-      }
     }
+  },
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    },
+    "e2e": {
+      "inputs": ["default", "^production"]
+    },
+    "lint": {
+      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
+    },
+    "test": {
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+    },
+    "external-test": {
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+    }
+  },
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "sharedGlobals": [
+      "{workspaceRoot}/eslint-local-rules.js",
+      "{workspaceRoot}/nx.json",
+      "{workspaceRoot}/tsconfig.base.json",
+      "{workspaceRoot}/babel.config.json"
+    ],
+    "production": [
+      "default",
+      "!{projectRoot}/.eslintrc.json",
+      "!{projectRoot}/.storybook/**/*",
+      "!{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)",
+      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+      "!{projectRoot}/tsconfig.spec.json",
+      "!{projectRoot}/jest.config.[jt]s",
+      "!{projectRoot}/src/test-setup.[jt]s"
+    ]
   }
 }

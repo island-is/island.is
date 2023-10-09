@@ -27,6 +27,9 @@ interface Props
   component?: ElementType
   ref?: Ref<HTMLElement>
   color?: ColorSchemes
+  children?:
+    | React.ReactNode
+    | ((props: { isFocused?: boolean; isHovered?: boolean }) => React.ReactNode)
 }
 
 type NoNullColorScheme = Exclude<ColorSchemes, null>

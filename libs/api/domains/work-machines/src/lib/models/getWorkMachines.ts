@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
-import { Action, ExternalLink } from '../api-domains-work-machines.types'
+import { Action, ExternalLink } from '../workMachines.types'
 import { PaginatedResponse } from '@island.is/nest/pagination'
 
 registerEnumType(Action, { name: 'WorkMachinesAction' })

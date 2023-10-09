@@ -51,15 +51,13 @@ export const courtOfAppealRuling = defineMessages({
       'Notaður sem titill á hlaða upp takka á skrefi úrskurður Landsréttar.',
   },
   uploadCompletedModalTitle: {
-    id:
-      'judicial.system.core:court_of_appeal_ruling.upload_completed_modal_title',
+    id: 'judicial.system.core:court_of_appeal_ruling.upload_completed_modal_title',
     defaultMessage: 'Máli hefur verið lokið',
     description:
       'Notaður sem titill á loka máli modal á skrefi úrskurður Landsréttar.',
   },
   uploadCompletedModalText: {
-    id:
-      'judicial.system.core:court_of_appeal_ruling.upload_completed_modal_text',
+    id: 'judicial.system.core:court_of_appeal_ruling.upload_completed_modal_text',
     defaultMessage:
       'Tilkynning um úrskurð Landsréttar hefur verið send á aðila máls, héraðsdóm og fangelsi ef við á',
     description:

@@ -218,60 +218,55 @@ AppLayout.getInitialProps = async ({
   routeKey,
   localeKey,
 }) => {
-  const [
-    upperMenu,
-    lowerMenu,
-    middleMenu,
-    tagsMenu,
-    namespace,
-  ] = await Promise.all([
-    apolloClient
-      .query<Query, QueryGetMenuArgs>({
-        query: GetMenuQuery,
-        variables: {
-          input: { name: 'Footer upper', lang: locale },
-        },
-      })
-      .then((result) => result.data.getMenu),
-    apolloClient
-      .query<Query, QueryGetMenuArgs>({
-        query: GetMenuQuery,
-        variables: {
-          input: { name: 'Footer lower', lang: locale },
-        },
-      })
-      .then((result) => result.data.getMenu),
-    apolloClient
-      .query<Query, QueryGetMenuArgs>({
-        query: GetMenuQuery,
-        variables: {
-          input: { name: 'Footer middle', lang: locale },
-        },
-      })
-      .then((result) => result.data.getMenu),
-    apolloClient
-      .query<Query, QueryGetMenuArgs>({
-        query: GetMenuQuery,
-        variables: {
-          input: { name: 'Footer tags', lang: locale },
-        },
-      })
-      .then((result) => result.data.getMenu),
-    apolloClient
-      .query<Query, QueryGetNamespaceArgs>({
-        query: GetNamespaceQuery,
-        variables: {
-          input: {
-            namespace: 'Global',
-            lang: locale,
+  const [upperMenu, lowerMenu, middleMenu, tagsMenu, namespace] =
+    await Promise.all([
+      apolloClient
+        .query<Query, QueryGetMenuArgs>({
+          query: GetMenuQuery,
+          variables: {
+            input: { name: 'Footer upper', lang: locale },
           },
-        },
-      })
-      .then((content) => {
-        // map data here to reduce data processing in component
-        return JSON.parse(content.data.getNamespace.fields)
-      }),
-  ])
+        })
+        .then((result) => result.data.getMenu),
+      apolloClient
+        .query<Query, QueryGetMenuArgs>({
+          query: GetMenuQuery,
+          variables: {
+            input: { name: 'Footer lower', lang: locale },
+          },
+        })
+        .then((result) => result.data.getMenu),
+      apolloClient
+        .query<Query, QueryGetMenuArgs>({
+          query: GetMenuQuery,
+          variables: {
+            input: { name: 'Footer middle', lang: locale },
+          },
+        })
+        .then((result) => result.data.getMenu),
+      apolloClient
+        .query<Query, QueryGetMenuArgs>({
+          query: GetMenuQuery,
+          variables: {
+            input: { name: 'Footer tags', lang: locale },
+          },
+        })
+        .then((result) => result.data.getMenu),
+      apolloClient
+        .query<Query, QueryGetNamespaceArgs>({
+          query: GetNamespaceQuery,
+          variables: {
+            input: {
+              namespace: 'Global',
+              lang: locale,
+            },
+          },
+        })
+        .then((content) => {
+          // map data here to reduce data processing in component
+          return JSON.parse(content.data.getNamespace.fields)
+        }),
+    ])
 
   const upperMenuLinks = upperMenu ? upperMenu.links : []
   const lowerMenuLinks = lowerMenu ? lowerMenu.links : []

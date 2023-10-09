@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Fixtures" -->
-
 # Testing Fixtures
 
 This library is supposed to help developers hook up fixtures for their tests

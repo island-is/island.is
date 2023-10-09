@@ -11,11 +11,9 @@ export const EnvironmentContext = createContext<
   EnvironmentContextValues | undefined
 >(undefined)
 
-export const EnvironmentProvider: FC<EnvironmentContextValues> = ({
-  availableEnvironments,
-  selectedEnvironment,
-  children,
-}) => {
+export const EnvironmentProvider: FC<
+  React.PropsWithChildren<EnvironmentContextValues>
+> = ({ availableEnvironments, selectedEnvironment, children }) => {
   return (
     <EnvironmentContext.Provider
       value={{

@@ -1,4 +1,7 @@
-import { EphemeralStateLifeCycle } from '@island.is/application/core'
+import {
+  EphemeralStateLifeCycle,
+  coreHistoryMessages,
+} from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -40,6 +43,14 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
           name: 'Prerequisites',
           progress: 0.33,
           lifecycle: EphemeralStateLifeCycle,
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -88,11 +99,17 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
             action: ApiActions.completeApplication,
             shouldPersistToExternalData: true,
           }),
+          actionCard: {
+            pendingAction: {
+              displayStatus: 'success',
+              title: coreHistoryMessages.applicationReceived,
+            },
+          },
           status: 'approved',
           name: 'Approved',
           progress: 1,
           lifecycle: {
-            shouldBeListed: false,
+            shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: 31 * 24 * 3600 * 1000,
           },

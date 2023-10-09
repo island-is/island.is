@@ -36,7 +36,7 @@ interface Props {
   setFormLoading?: (isLoading: boolean) => void
 }
 
-export const ProfileForm: FC<Props> = ({
+export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
   onCloseOverlay,
   onCloseDropModal,
   canDrop,
@@ -51,14 +51,10 @@ export const ProfileForm: FC<Props> = ({
   const [internalLoading, setInternalLoading] = useState(false)
   const [showPaperMail, setShowPaperMail] = useState(false)
   const [showDropModal, setShowDropModal] = useState<DropModalType>()
-  const {
-    updateOrCreateUserProfile,
-    loading: updateLoading,
-  } = useUpdateOrCreateUserProfile()
-  const {
-    deleteIslykillValue,
-    loading: deleteLoading,
-  } = useDeleteIslykillValue()
+  const { updateOrCreateUserProfile, loading: updateLoading } =
+    useUpdateOrCreateUserProfile()
+  const { deleteIslykillValue, loading: deleteLoading } =
+    useDeleteIslykillValue()
 
   const { data: userProfile, loading: userLoading, refetch } = useUserProfile()
 

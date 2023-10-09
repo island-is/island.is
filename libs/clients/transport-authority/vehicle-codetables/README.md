@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Clients Transport Authority Vehicle Codetables
 
 This library was generated with [Nx](https://nx.dev).

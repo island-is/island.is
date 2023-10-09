@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # communications
 
 Endpoint to route information to service desk

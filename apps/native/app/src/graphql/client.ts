@@ -9,16 +9,14 @@ import {setContext} from '@apollo/client/link/context';
 import {onError} from '@apollo/client/link/error';
 import {RetryLink} from '@apollo/client/link/retry';
 import {authStore} from '../stores/auth-store';
-import {config} from '../config';
+import {getConfig} from '../config';
 import {environmentStore} from '../stores/environment-store';
-// import { performanceLink } from './performance-link'
-
-const uri = `${config.apiUrl.replace(/\/$/, '')}/graphql`;
 
 const httpLink = new HttpLink({
-  uri,
+  uri() {
+    return `${getConfig().apiUrl.replace(/\/$/, '')}/graphql`;
+  },
   fetch,
-  // credentials: 'omit',
 });
 
 const getNewToken = async () => {
@@ -62,7 +60,9 @@ const errorLink = onError(
 
       graphQLErrors.map(({message, locations, path}) =>
         console.log(
-          `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
+          `[GraphQL error]: Message: ${message}, Location: ${JSON.stringify(
+            locations,
+          )}, Path: ${JSON.stringify(path)}`,
         ),
       );
     }
@@ -129,5 +129,3 @@ export const client = new ApolloClient({
   },
   cache: new InMemoryCache(),
 });
-
-console.log('client', client);

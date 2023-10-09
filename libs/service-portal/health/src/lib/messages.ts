@@ -10,6 +10,10 @@ export const messages = defineMessages({
     defaultMessage:
       'Sjúkratryggingar greiða hluta af kostnaði við meðferð hjá þjálfara.',
   },
+  at: {
+    id: 'sp.health:at',
+    defaultMessage: 'hjá',
+  },
   dentistsTitle: {
     id: 'sp.health:dentists-title',
     defaultMessage: 'Tannlæknar',
@@ -18,6 +22,56 @@ export const messages = defineMessages({
     id: 'sp.health:dentists-intro',
     defaultMessage:
       'Gjaldskrá tannlækna er frjáls. Sjúkratryggingar Íslands(SÍ) greiða hinsvegar samkvæmt gjaldskrá sem Velferðarráðuneytið hefur sett.',
+  },
+  dentistPractice: {
+    id: 'sp.health:dentist-practice',
+    defaultMessage: 'Stofa',
+  },
+  dentistNumber: {
+    id: 'sp.health:dentist-number',
+    defaultMessage: 'Númer tannlæknis',
+  },
+  dentistCurrent: {
+    id: 'sp.health:dentist-current',
+    defaultMessage: 'Núverandi',
+  },
+  dentistRegisterationPageTitle: {
+    id: 'sp.health:dentist-registeration-page-title',
+    defaultMessage: 'Skrá nýjan tannlækni',
+  },
+  dentistRegisterationPageDescription: {
+    id: 'sp.health:dentist-registeration-page-description',
+    defaultMessage:
+      'Einnig er hægt að velja tannlækni útfrá landshluta (skrifið eitt eftirfarandi: Reykjavík, Höfuðborgarsvæðið, Suðurnes, Vesturland, Vestfirðir, Norðurland vestra, Norðurland eystra, Austurland, Suðurland).',
+  },
+  dentistRegisterationNoRegisterTitle: {
+    id: 'sp.health:dentist-registeration-no-register-title',
+    defaultMessage: 'Þú ert ekki skráður hjá neinum tannlækni',
+  },
+  dentistRegisterForbiddenTitle: {
+    id: 'sp.health:dentist-register-forbidden-title',
+    defaultMessage: 'Þú hefur ekki réttindi',
+  },
+  dentistRegisterForbiddenInfo: {
+    id: 'sp.health:dentist-register-forbidden',
+    defaultMessage: 'Þú hefur ekki réttindi',
+  },
+  dentistModalTitle: {
+    id: 'sp.health:dentist-modal-title',
+    defaultMessage: 'Færa skráningu yfir á:',
+  },
+  dentistModalDescription: {
+    id: 'sp.health:dentist-modal-description',
+    defaultMessage:
+      'Horem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum mattis.',
+  },
+  dentistTransferSuccessTitle: {
+    id: 'sp.health:dentist-transfer-success-title',
+    defaultMessage: 'Ný tannlæknir skráður',
+  },
+  dentistTransferSuccessInfo: {
+    id: 'sp.health:dentist-transfer-success-info',
+    defaultMessage: 'Þú hefur verið skráður á tannlækninn {name}.',
   },
   healthCenterTitle: {
     id: 'sp.health:health-center-title',
@@ -129,6 +183,10 @@ export const messages = defineMessages({
   status: {
     id: 'sp.health:status',
     defaultMessage: 'Staða',
+  },
+  myRegistration: {
+    id: 'sp.health:my-registration',
+    defaultMessage: 'Mín skráning',
   },
   yourInformation: {
     id: 'sp.health:your-information',
@@ -317,5 +375,82 @@ export const messages = defineMessages({
   maxPaidByApplicant: {
     id: 'sp.health:max-paid-by-applicant',
     defaultMessage: 'Fyrst greitt af umsækjanda á mánuði',
+  },
+  healthCenterRegistrationTitle: {
+    id: 'sp.health:health-center-registration',
+    defaultMessage: 'Skráning á heilsugæslustöð',
+  },
+  healthCenterRegistrationInfo: {
+    id: 'sp.health:health-center-registration-info',
+    defaultMessage:
+      'Aðeins er hægt að vera skráð/ur á einum stað. Um leið og skráningu er breytt fellur fyrri skráning úr gildi. Ný skráning tekur gildi næsta virka dag. Vinsamlegast hafðu samband við móttöku heilsugæslustöðvar ef þú vilt skrá þig hjá tilteknum lækni innan heilsugæslustöðvarinnar.',
+  },
+  changeRegistration: {
+    id: 'sp.health:change-registration',
+    defaultMessage: 'Breyta skráningu',
+  },
+  healthCenterOverviewInfo: {
+    id: 'sp.health:health-center-overview-info',
+    defaultMessage:
+      'Allir sjúkratryggðir á Íslandi eiga að vera skráðir á heilsugæslustöð. Hér fyrir neðan sérð þú á hvaða stöð eða hjá hvaða sjálfstætt starfandi heimilislækni þú ert skráð/ur. Þú getur breytt skráningu þinni að vild og skráð þig á þann stað sem þér hentar.',
+  },
+  healthCenterRegistrationWarning: {
+    id: 'sp.health:health-center-registration-warning',
+    defaultMessage:
+      'Með því að óska eftir breytingu á heilsugæslustöð er einnig verið að samþykkja að opnað verði fyrir sjúkraskrárupplýsingar þínar á nýrri heilsugæslustöð / sjálfstætt starfandi heimilislækni.',
+  },
+  alert: {
+    id: 'sp.health:alert',
+    defaultMessage: 'Athugið',
+  },
+  healthCenterRegistrationModalTitle: {
+    id: 'sp.health:health-center-registration-modal-title',
+    defaultMessage: 'Vilt þú skrá {healthCenter} sem nýja heilsugæslustöð?',
+  },
+  closeModal: {
+    id: 'sp.health:close-modal',
+    defaultMessage: 'Loka sprettiglugga',
+  },
+  healthCenterRegistrationModalInfo: {
+    id: 'sp.health:health-center-registration-modal-info',
+    defaultMessage:
+      'Við flutning á heilsugæslustöð verða sjúkraskráningar mínar aðgengilegar á valinni heilsugæslustöð / sjáfstætt starfandi heimilislækni.',
+  },
+  healthCenterListSearchPlaceholder: {
+    id: 'sp.health:health-center-list-search-placeholder',
+    defaultMessage: 'Sláðu inn leitarorð',
+  },
+  healthCenterRegistrationTransferErrorTitle: {
+    id: 'sp.health:health-center-registration-transfer-error-title',
+    defaultMessage: 'Villa hefur komið upp',
+  },
+  healthCenterRegistrationTransferErrorInfo: {
+    id: 'sp.health:health-center-registration-transfer-error-info',
+    defaultMessage:
+      'Ekki tókst að flytja heilsugæslustöð. Vinsamlegast reyndu aftur síðar.',
+  },
+  healthCenterRegistrationTransferSuccessTitle: {
+    id: 'sp.health:health-center-registration-transfer-success-title',
+    defaultMessage: 'Ný heilsugæsla skráð',
+  },
+  healthCenterRegistrationTransferSuccessInfo: {
+    id: 'sp.health:health-center-registration-transfer-success-info',
+    defaultMessage: 'Þú hefur verið skráður á',
+  },
+  healthCenterNoDoctor: {
+    id: 'sp.health:health-center-no-doctor',
+    defaultMessage: 'Enginn læknir skráður',
+  },
+  healthRegistrationSave: {
+    id: 'sp.health:health-registration-save',
+    defaultMessage: 'Vista',
+  },
+  healthRegisterModalAccept: {
+    id: 'sp.health:health-register-modal-accept',
+    defaultMessage: 'Já, ég vil færa mig',
+  },
+  healthRegisterModalDecline: {
+    id: 'sp.health:health-registration-modal-decline',
+    defaultMessage: 'Nei, fara til baka',
   },
 })

@@ -5,10 +5,12 @@ import { DividerField, Application } from '@island.is/application/types'
 import { Box, Text, Divider } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
-export const DividerFormField: FC<{
-  field: DividerField
-  application: Application
-}> = ({ field, application }) => {
+export const DividerFormField: FC<
+  React.PropsWithChildren<{
+    field: DividerField
+    application: Application
+  }>
+> = ({ field, application }) => {
   const { formatMessage } = useLocale()
   if (field.title) {
     return (

@@ -142,14 +142,3 @@ test.describe('MS - Fjármál overview', () => {
     })
   })
 })
-
-test.describe.skip('Fjármál', () => {
-  for (const { testCase } of [
-    { testCase: 'Fjármál Greiðslukvittanir - sjá pdf' },
-    { testCase: 'Fjármál Útsvar sveitafélaga - birtist ???' },
-  ]) {
-    test(testCase, () => {
-      return
-    })
-  }
-})

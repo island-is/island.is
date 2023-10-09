@@ -8,7 +8,9 @@ import { useFormContext } from 'react-hook-form'
 import { YES, NO } from '../lib/constants'
 import { DrivingLicense } from '../lib/types'
 
-const HealthRemarks: FC<FieldBaseProps> = ({ application }) => {
+const HealthRemarks: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
   const remarks: string[] =
     getValueViaPath<DrivingLicense>(

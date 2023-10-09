@@ -8,7 +8,7 @@ import { ResourcesService } from './../../../services/ResourcesService'
 import ApiScopeGroupCreateForm from './../../../components/Resource/forms/ApiScopeGroupCreateForm'
 import { ApiScopeGroup } from './../../../entities/models/api-scope-group.model'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { query } = useRouter()
   const groupId = query.groupId
   const router = useRouter()

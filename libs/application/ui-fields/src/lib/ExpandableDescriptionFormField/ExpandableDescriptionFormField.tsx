@@ -17,10 +17,9 @@ interface Props extends FieldBaseProps {
   field: ExpandableDescriptionField
 }
 
-export const ExpandableDescriptionFormField: FC<Props> = ({
-  application,
-  field,
-}) => {
+export const ExpandableDescriptionFormField: FC<
+  React.PropsWithChildren<Props>
+> = ({ application, field }) => {
   const { formatMessage } = useLocale()
 
   return (

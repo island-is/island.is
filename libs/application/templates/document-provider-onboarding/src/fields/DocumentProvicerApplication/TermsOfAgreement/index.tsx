@@ -13,7 +13,9 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../../forms/messages'
 
 //TODO: Finish error messages.
-const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
+const TermsOfAgreement: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
   const { answers: formValue } = application
   const currentUserTerms = getValueViaPath(

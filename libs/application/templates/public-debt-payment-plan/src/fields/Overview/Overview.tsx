@@ -44,10 +44,8 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
 
   const [bankClaimsTotalAmount, setBankClaimsTotalAmount] = useState<number>(0)
 
-  const [
-    wageDeductionTotalAmount,
-    setWageDeductionTotalAmount,
-  ] = useState<number>(0)
+  const [wageDeductionTotalAmount, setWageDeductionTotalAmount] =
+    useState<number>(0)
 
   // Debts & payment plans
   const paymentPlans = getValueViaPath(

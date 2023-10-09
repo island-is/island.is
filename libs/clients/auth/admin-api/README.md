@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Admin API" -->
-
 # Auth Admin API Client
 
 This library provides a client for the [Auth Admin API](../../../../apps/services/auth/admin-api/README.md).

@@ -33,7 +33,12 @@ describe('Volume Support', () => {
       mountPath: '/storage_two',
     },
   )
-
+  const sutVolumeRef: ServiceBuilder<'api-extra'> = service(
+    'api-extra',
+  ).volumes({
+    ...sut.serviceDef.volumes[0],
+    useExisting: true,
+  })
   let stagingWithVolumes: SerializeSuccess<HelmService>
   beforeEach(async () => {
     stagingWithVolumes = (await generateOutputOne({
@@ -48,12 +53,14 @@ describe('Volume Support', () => {
       name: 'something',
       size: '1Gi',
       accessModes: 'ReadOnlyMany',
+      useExisting: false,
       mountPath: '/storage_one',
       storageClass: 'efs-csi',
     }),
       expect(stagingWithVolumes.serviceDef[0].pvcs![1]).toEqual({
         name: 'somethingelse',
         size: '1Gi',
+        useExisting: false,
         accessModes: 'ReadWriteMany',
         mountPath: '/storage_two',
         storageClass: 'efs-csi',
@@ -74,6 +81,23 @@ describe('Volume Support', () => {
     expect(stagingWithDefaultVolume.serviceDef[0].pvcs![0]).toEqual({
       name: 'api',
       size: '1Gi',
+      useExisting: false,
+      accessModes: 'ReadOnlyMany',
+      mountPath: '/storage_one',
+      storageClass: 'efs-csi',
+    })
+  })
+  it('Support volume reference from another service', async () => {
+    const stagingWithDefaultVolume = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sutVolumeRef,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
+    expect(stagingWithDefaultVolume.serviceDef[0].pvcs![0]).toEqual({
+      name: 'something',
+      size: '1Gi',
+      useExisting: true,
       accessModes: 'ReadOnlyMany',
       mountPath: '/storage_one',
       storageClass: 'efs-csi',

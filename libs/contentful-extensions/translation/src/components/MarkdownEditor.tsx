@@ -32,11 +32,9 @@ const HOTKEYS = {
   'mod+o': 'ol_list',
 }
 
-export const MarkdownEditor: FC<MarkdownEditorProps> = ({
-  value,
-  dialogs,
-  onChange,
-}) => {
+export const MarkdownEditor: FC<
+  React.PropsWithChildren<MarkdownEditorProps>
+> = ({ value, dialogs, onChange }) => {
   const [internalValue, setInternalValue] = useState<Node[]>(value) // We keep track of the original Slate Nodes
   const renderElement = useCallback((props) => <Element {...props} />, [])
   const renderLeaf = useCallback((props) => <Leaf {...props} />, [])

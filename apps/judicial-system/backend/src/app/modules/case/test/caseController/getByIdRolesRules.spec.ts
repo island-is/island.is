@@ -1,10 +1,10 @@
 import {
   assistantRule,
   judgeRule,
+  prisonSystemStaffRule,
+  prosecutorRepresentativeRule,
   prosecutorRule,
   registrarRule,
-  representativeRule,
-  staffRule,
 } from '../../../../guards'
 import { CaseController } from '../../case.controller'
 
@@ -18,14 +18,11 @@ describe('CaseController - Get by id rules', () => {
 
   it('should give permission to six roles', () => {
     expect(rules).toHaveLength(6)
-  })
-
-  it('should give permission to prosecutors, representatives, judges, registrars, assistants and staff', () => {
     expect(rules).toContain(prosecutorRule)
-    expect(rules).toContain(representativeRule)
+    expect(rules).toContain(prosecutorRepresentativeRule)
     expect(rules).toContain(judgeRule)
     expect(rules).toContain(registrarRule)
     expect(rules).toContain(assistantRule)
-    expect(rules).toContain(staffRule)
+    expect(rules).toContain(prisonSystemStaffRule)
   })
 })

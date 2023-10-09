@@ -125,6 +125,9 @@ export class Delegation extends Model<
       toName: this.toName,
       validTo: this.validTo,
       types: [DelegationType.Custom],
+      scopes: this.delegationScopes
+        ? this.delegationScopes.map((scope) => scope.toDTO())
+        : [],
     }
   }
 }

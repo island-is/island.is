@@ -29,6 +29,11 @@ export const attachmentNames = defineMessages({
 })
 
 export const m = defineMessages({
+  institution: {
+    id: 'ol.application:institution',
+    defaultMessage: 'Sýslumenn',
+    description: '',
+  },
   introTitle: {
     id: 'ol.application:intro.title',
     defaultMessage: 'Inngangur',

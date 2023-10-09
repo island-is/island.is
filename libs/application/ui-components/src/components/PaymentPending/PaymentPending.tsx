@@ -16,11 +16,9 @@ export interface PaymentPendingProps {
   refetch: FieldBaseProps['refetch']
 }
 
-export const PaymentPending: FC<PaymentPendingProps> = ({
-  application,
-  refetch,
-  targetEvent,
-}) => {
+export const PaymentPending: FC<
+  React.PropsWithChildren<PaymentPendingProps>
+> = ({ application, refetch, targetEvent }) => {
   const msg = useMsg(application)
 
   const { paymentStatus, stopPolling, pollingError } = usePaymentStatus(

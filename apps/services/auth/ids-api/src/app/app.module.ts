@@ -8,7 +8,7 @@ import {
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
-import { RskProcuringClientConfig } from '@island.is/clients/rsk/procuring'
+import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
 import { UserProfileClientConfig } from '@island.is/clients/user-profile'
 import { AuditModule } from '@island.is/nest/audit'
 import {
@@ -55,7 +55,7 @@ import { UsersModule } from './users/users.module'
         FeatureFlagConfig,
         IdsClientConfig,
         NationalRegistryClientConfig,
-        RskProcuringClientConfig,
+        RskRelationshipsClientConfig,
         UserProfileClientConfig,
         XRoadConfig,
       ],

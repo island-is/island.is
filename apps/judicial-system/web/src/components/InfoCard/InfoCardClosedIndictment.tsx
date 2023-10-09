@@ -1,29 +1,31 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
+import { Text } from '@island.is/island-ui/core'
 import {
   capitalize,
   caseTypes,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { Text } from '@island.is/island-ui/core'
-import { core } from '@island.is/judicial-system-web/messages'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
+import { core } from '@island.is/judicial-system-web/messages'
 
+import { FormContext } from '../FormProvider/FormProvider'
 import InfoCard from './InfoCard'
 import { infoCardActiveIndictment as m } from './InfoCard.strings'
-import { FormContext } from '../FormProvider/FormProvider'
 
-const InfoCardClosedIndictment: React.FC = () => {
+const InfoCardClosedIndictment: React.FC<
+  React.PropsWithChildren<unknown>
+> = () => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const defenders = workingCase.defendants?.map((defendant) => {
     return {
       name: defendant.defenderName || '',
-      defenderNationalId: defendant.defenderNationalId,
+      defenderNationalId: defendant.defenderNationalId || '',
       sessionArrangement: undefined,
-      email: defendant.defenderEmail,
-      phoneNumber: defendant.defenderPhoneNumber,
+      email: defendant.defenderEmail || '',
+      phoneNumber: defendant.defenderPhoneNumber || '',
     }
   })
 

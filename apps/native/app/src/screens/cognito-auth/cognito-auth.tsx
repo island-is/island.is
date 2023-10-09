@@ -127,8 +127,7 @@ export const CognitoAuthScreen: NavigationFunctionComponent = ({
           marginRight: 'auto',
           marginTop: 20,
           marginBottom: 20,
-        }}
-      >
+        }}>
         Cognito: {cognito ? 'Logged in' : 'Not logged in'}
         {'\n'}
         IDS: {user ? 'Logged in' : 'Not logged in'}

@@ -45,6 +45,9 @@
       "@island.is/api/domains/air-discount-scheme": [
         "libs/api/domains/air-discount-scheme/src/index.ts"
       ],
+      "@island.is/api/domains/aircraft-registry": [
+        "libs/api/domains/aircraft-registry/src/index.ts"
+      ],
       "@island.is/api/domains/api-catalogue": [
         "libs/api/domains/api-catalogue/src/index.ts"
       ],
@@ -122,6 +125,9 @@
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],
+      "@island.is/api/domains/housing-benefit-calculator": [
+        "libs/api/domains/housing-benefit-calculator/src/index.ts"
+      ],
       "@island.is/api/domains/icelandic-government-institution-vacancies": [
         "libs/api/domains/icelandic-government-institution-vacancies/src/index.ts"
       ],
@@ -149,6 +155,9 @@
       "@island.is/api/domains/national-registry-x-road": [
         "libs/api/domains/national-registry-x-road/src/index.ts"
       ],
+      "@island.is/api/domains/occupational-licenses": [
+        "libs/api/domains/occupational-licenses/src/index.ts"
+      ],
       "@island.is/api/domains/passport": [
         "libs/api/domains/passport/src/index.ts"
       ],
@@ -172,6 +181,9 @@
       ],
       "@island.is/api/domains/sessions": [
         "libs/api/domains/sessions/src/index.ts"
+      ],
+      "@island.is/api/domains/ship-registry": [
+        "libs/api/domains/ship-registry/src/index.ts"
       ],
       "@island.is/api/domains/syslumenn": [
         "libs/api/domains/syslumenn/src/index.ts"
@@ -366,6 +378,9 @@
       "@island.is/application/templates/passport": [
         "libs/application/templates/passport/src/index.ts"
       ],
+      "@island.is/application/templates/passport-annulment": [
+        "libs/application/templates/passport-annulment/src/index.ts"
+      ],
       "@island.is/application/templates/public-debt-payment-plan": [
         "libs/application/templates/public-debt-payment-plan/src/index.ts"
       ],
@@ -424,11 +439,17 @@
       "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
       "@island.is/auth/shared": ["libs/auth/shared/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
+      "@island.is/clients-rsk-relationships": [
+        "libs/clients/rsk/relationships/src/index.ts"
+      ],
       "@island.is/clients/adr-and-machine-license": [
         "libs/clients/adr-and-machine-license/src/index.ts"
       ],
       "@island.is/clients/air-discount-scheme": [
         "libs/clients/air-discount-scheme/src/index.ts"
+      ],
+      "@island.is/clients/aircraft-registry": [
+        "libs/clients/aircraft-registry/src/index.ts"
       ],
       "@island.is/clients/assets": ["libs/clients/assets/src/index.ts"],
       "@island.is/clients/auth/admin-api": [
@@ -485,6 +506,12 @@
         "libs/clients/fishing-license/src/index.ts"
       ],
       "@island.is/clients/fiskistofa": ["libs/clients/fiskistofa/src/index.ts"],
+      "@island.is/clients/health-directorate": [
+        "libs/clients/health-directorate/src/index.ts"
+      ],
+      "@island.is/clients/housing-benefit-calculator": [
+        "libs/clients/housing-benefit-calculator/src/index.ts"
+      ],
       "@island.is/clients/icelandic-government-institution-vacancies": [
         "libs/clients/icelandic-government-institution-vacancies/src/index.ts"
       ],
@@ -513,6 +540,9 @@
       "@island.is/clients/national-registry-v2": [
         "libs/clients/national-registry/v2/src/index.ts"
       ],
+      "@island.is/clients/national-registry-v3": [
+        "libs/clients/national-registry/v3/src/index.ts"
+      ],
       "@island.is/clients/passports": ["libs/clients/passports/src/index.ts"],
       "@island.is/clients/payment-schedule": [
         "libs/clients/payment-schedule/src/index.ts"
@@ -529,10 +559,10 @@
       "@island.is/clients/rsk/personal-tax-return": [
         "libs/clients/rsk/personal-tax-return/src/index.ts"
       ],
-      "@island.is/clients/rsk/procuring": [
-        "libs/clients/rsk/procuring/src/index.ts"
-      ],
       "@island.is/clients/sessions": ["libs/clients/sessions/src/index.ts"],
+      "@island.is/clients/ship-registry": [
+        "libs/clients/ship-registry/src/index.ts"
+      ],
       "@island.is/clients/smartsolutions": [
         "libs/clients/smartsolutions/src/index.ts"
       ],
@@ -786,6 +816,9 @@
       ],
       "@island.is/service-portal/modules": [
         "libs/service-portal/modules/src/index.ts"
+      ],
+      "@island.is/service-portal/occupational-licenses": [
+        "libs/service-portal/occupational-licenses/src/index.ts"
       ],
       "@island.is/service-portal/petitions": [
         "libs/service-portal/petitions/src/index.ts"

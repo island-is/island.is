@@ -1,15 +1,12 @@
 import compareAsc from 'date-fns/compareAsc'
 
-import { formatDate } from '@island.is/judicial-system/formatters'
-import { CaseFile } from '@island.is/judicial-system/types'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   TempCase as Case,
   TempUpdateCase as UpdateCase,
 } from '@island.is/judicial-system-web/src/types'
-import * as constants from '@island.is/judicial-system/consts'
 
-import { padTimeWithZero, parseTime, replaceTabs } from './formatters'
-import { TUploadFile } from './hooks'
+import { replaceTabs } from './formatters'
 import * as validations from './validate'
 
 export const removeTabsValidateAndSet = (
@@ -94,33 +91,6 @@ export const validateAndSendToServer = (
   }
 }
 
-export const validateAndSendTimeToServer = (
-  field: keyof UpdateCase,
-  currentValue: string | undefined,
-  time: string,
-  validationsToRun: validations.Validation[],
-  theCase: Case,
-  updateCase: (id: string, updateCase: UpdateCase) => void,
-  setErrorMessage?: (value: React.SetStateAction<string>) => void,
-) => {
-  if (currentValue) {
-    const paddedTime = padTimeWithZero(time)
-
-    const validation = validations.validate([[paddedTime, validationsToRun]])
-
-    if (!validation.isValid && setErrorMessage) {
-      setErrorMessage(validation.errorMessage)
-      return
-    }
-
-    const dateMinutes = parseTime(currentValue, paddedTime)
-
-    if (theCase.id !== '') {
-      updateCase(theCase.id, { [field]: dateMinutes })
-    }
-  }
-}
-
 /**If entry is included in values then it is removed
  * otherwise it is appended
  */
@@ -157,12 +127,6 @@ export const setCheckboxAndSendToServer = (
   if (theCase.id !== '') {
     updateCase(theCase.id, { [field]: checks })
   }
-}
-
-export const getTimeFromDate = (date: string | undefined) => {
-  return date?.includes('T')
-    ? formatDate(date, constants.TIME_FORMAT)
-    : undefined
 }
 
 export const hasDateChanged = (
@@ -215,9 +179,6 @@ export type stepValidationsType = {
   [constants.RESTRICTION_CASE_RULING_ROUTE]: (theCase: Case) => boolean
   [constants.RESTRICTION_CASE_COURT_RECORD_ROUTE]: (theCase: Case) => boolean
   [constants.RESTRICTION_CASE_CONFIRMATION_ROUTE]: () => boolean
-  [constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
-    theCase: Case,
-  ) => boolean
   [constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
     theCase: Case,
   ) => boolean
@@ -300,8 +261,6 @@ export const stepValidations = (): stepValidationsType => {
     [constants.RESTRICTION_CASE_COURT_RECORD_ROUTE]: (theCase: Case) =>
       validations.isCourtRecordStepValidRC(theCase),
     [constants.RESTRICTION_CASE_CONFIRMATION_ROUTE]: () => true,
-    [constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE]: (theCase: Case) =>
-      validations.isReceptionAndAssignmentStepValid(theCase),
     [constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
       theCase: Case,
     ) => validations.isReceptionAndAssignmentStepValid(theCase),
@@ -352,15 +311,3 @@ export const findFirstInvalidStep = (steps: string[], theCase: Case) => {
 
   return key
 }
-
-export const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
-  name: file.name,
-  type: file.type,
-  id: file.id,
-  key: file.key,
-  status: 'done',
-  percent: 100,
-  size: file.size,
-  category: file.category,
-  policeCaseNumber: file.policeCaseNumber,
-})

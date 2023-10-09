@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { formatDOB } from '@island.is/judicial-system/formatters'
-import { Defendant } from '@island.is/judicial-system/types'
+import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import * as styles from './DefendantInfo.css'
 
@@ -10,7 +10,9 @@ interface Props {
   defendants?: Defendant[]
 }
 
-const DefendantInfo: React.FC<Props> = ({ defendants }) => {
+const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = ({
+  defendants,
+}) => {
   return defendants && defendants.length > 0 ? (
     <>
       <Text>

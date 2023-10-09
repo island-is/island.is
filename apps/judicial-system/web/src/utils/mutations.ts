@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client'
 
-export const coreCaseListFields = gql`
+const coreCaseListFields = gql`
   fragment CoreCaseListFields on CaseListEntry {
     id
     type
@@ -15,6 +15,9 @@ export const coreCaseListFields = gql`
     validToDate
     policeCaseNumbers
     parentCaseId
+    appealCaseNumber
+    appealState
+    appealRulingDecision
     defendants {
       id
       nationalId
@@ -33,6 +36,7 @@ export const CasesQuery = gql`
       isValidToDateInThePast
       initialRulingDate
       rulingDate
+      rulingSignatureDate
       judge {
         id
       }
@@ -45,9 +49,6 @@ export const CasesQuery = gql`
       creatingProsecutor {
         id
       }
-      appealCaseNumber
-      appealState
-      appealRulingDecision
       ...CoreCaseListFields
     }
   }
@@ -57,13 +58,9 @@ export const AppealedCasesQuery = gql`
   ${coreCaseListFields}
   query AppealedCases($input: CaseListQueryInput) {
     cases(input: $input) {
-      defendants {
-        name
-      }
-      appealCaseNumber
-      appealState
       appealedDate
-      appealRulingDecision
+      initialRulingDate
+      rulingDate
       ...CoreCaseListFields
     }
   }

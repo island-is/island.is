@@ -46,6 +46,10 @@ test.describe('MS - Vehicles', () => {
       const hideName = page
         .locator(`role=button[name="${label(messages.vehicleNameSecret)}"]`)
         .first()
+      const ownershipLink = page
+        .getByRole('button', { name: label(messages.changeOfOwnership) })
+        .first()
+
       const viewLink = page.getByText(label(messages.seeInfo)).first()
 
       const inputField = page.getByRole('textbox', {
@@ -59,6 +63,7 @@ test.describe('MS - Vehicles', () => {
       await expect(recycleLicense).toBeVisible()
       await expect(hideName).toBeVisible()
       await expect(viewLink).toBeVisible()
+      await expect(ownershipLink).toBeVisible()
       await expect(page.locator(`text=${label(messages.found)}`)).toBeVisible()
       await expect(
         page.locator(`text=${label(messages.clearFilter)}`),
@@ -82,15 +87,11 @@ test.describe('MS - Vehicles', () => {
       const reportLink = page
         .locator(`role=button[name="${label(messages.vehicleHistoryReport)}"]`)
         .first()
-      const ownershipLink = page
-        .locator(`role=button[name="${label(messages.changeOfOwnership)}"]`)
-        .first()
 
       // Assert
       await expect(page).toHaveURL(/minarsidur\/okutaeki\/min-okutaeki\/.+/)
       await expect(basicInfoText).toBeVisible()
       await expect(reportLink).toBeVisible()
-      await expect(ownershipLink).toBeVisible()
     })
   })
 
@@ -159,16 +160,4 @@ test.describe('MS - Vehicles', () => {
       await expect(table).toContainText(label(messages.firstReg))
     })
   })
-})
-
-test.describe.skip('Ökutæki', () => {
-  for (const { testCase } of [
-    { testCase: 'Ökutæki ferilskýrsla + eignastöðuvottorð', home: '/en' },
-    { testCase: 'Ökutækjaferill', home: '/en' },
-    { testCase: 'Ökunám', home: '/en' },
-  ]) {
-    test(testCase, () => {
-      return
-    })
-  }
 })

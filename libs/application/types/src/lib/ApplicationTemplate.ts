@@ -16,7 +16,7 @@ import { AllowedDelegation } from './ApplicationAllowedDelegations'
 export interface ApplicationTemplate<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,
-  TEvents extends EventObject
+  TEvents extends EventObject,
 > {
   /**
    * @deprecated Use featureFlag instead.
@@ -33,6 +33,7 @@ export interface ApplicationTemplate<
   readonly translationNamespaces?: string[]
   readonly allowMultipleApplicationsInDraft?: boolean
   readonly allowedDelegations?: AllowedDelegation[]
+  readonly requiredScopes?: string[]
   readonly dataSchema: Schema
   readonly stateMachineConfig: MachineConfig<
     TContext,

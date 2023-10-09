@@ -6,7 +6,7 @@ import { SessionInfo } from './../../entities/common/SessionInfo'
 import LocalizationUtils from '../../utils/localization.utils'
 import { Localization } from '../../entities/common/Localization'
 
-const Header: React.FC = () => {
+const Header: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [session, loading] = useSession()
   const router = useRouter()
   const [localization] = useState<Localization>(
@@ -14,7 +14,7 @@ const Header: React.FC = () => {
   )
 
   useEffect(() => {
-    if (!loading && !isLoggedIn((session as unknown) as SessionInfo, loading)) {
+    if (!loading && !isLoggedIn(session as unknown as SessionInfo, loading)) {
       if (router) {
         router.push('/')
       }
@@ -27,21 +27,21 @@ const Header: React.FC = () => {
         <h1>{localization.header.title}</h1>
       </div>
       <div className="header__container__options">
-        {isLoggedIn((session as unknown) as SessionInfo, loading) && (
+        {isLoggedIn(session as unknown as SessionInfo, loading) && (
           <div className="header__container__user">
             <div className="header__username">{session?.user.name}</div>
             <div className="header__container__logout">
               <button
                 type="button"
                 className="header__button__logout"
-                onClick={() => logout((session as unknown) as SessionInfo)}
+                onClick={() => logout(session as unknown as SessionInfo)}
               >
                 {localization.header.logoutButton}
               </button>
             </div>
           </div>
         )}
-        {!isLoggedIn((session as unknown) as SessionInfo, loading) && (
+        {!isLoggedIn(session as unknown as SessionInfo, loading) && (
           <div className="header__container__login">
             <button
               type="button"

@@ -27,7 +27,7 @@ type ReviewSectionProps = {
   index: number
 }
 
-const ReviewSection: FC<ReviewSectionProps> = ({
+const ReviewSection: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
   application,
   step: { state, description, title },
 }) => {

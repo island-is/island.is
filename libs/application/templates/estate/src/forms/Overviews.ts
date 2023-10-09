@@ -138,7 +138,6 @@ export const overview = buildSection({
           title: '',
           space: 'containerGutter',
         }),
-
         buildCheckboxField({
           id: 'confirmAction',
           title: '',

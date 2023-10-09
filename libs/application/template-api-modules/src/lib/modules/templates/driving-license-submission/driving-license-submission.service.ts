@@ -7,7 +7,11 @@ import {
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
-import { ApplicationTypes, FormValue } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  FormValue,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
 import {
   generateDrivingLicenseSubmittedEmail,
   generateDrivingAssessmentApprovalEmail,
@@ -36,8 +40,6 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    const SYSLUMADUR_NATIONAL_ID = '6509142520'
-
     const applicationFor = getValueViaPath<'B-full' | 'B-temp'>(
       answers,
       'applicationFor',
@@ -49,7 +51,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const response = await this.sharedTemplateAPIService.createCharge(
       auth,
       id,
-      SYSLUMADUR_NATIONAL_ID,
+      InstitutionNationalIds.SYSLUMENN,
       [chargeItemCode],
     )
 
@@ -86,7 +88,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       this.log('error', 'Creating license failed', {
         e,
         applicationFor: answers.applicationFor,
-        jurisdiction: answers.juristictionId,
+        jurisdiction: answers.jurisdictionId,
       })
 
       throw e
@@ -129,20 +131,20 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
     const healthRemarks = answers.hasHealthRemarks === 'yes'
     const needsQualityPhoto = answers.willBringQualityPhoto === 'yes'
-    const juristictionId = answers.juristiction
+    const jurisdictionId = answers.jurisdiction
     const teacher = answers.drivingInstructor as string
     const email = answers.email as string
     const phone = answers.phone as string
 
     if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
-        juristictionId: juristictionId as number,
+        jurisdictionId: jurisdictionId as number,
         needsToPresentHealthCertificate: needsHealthCert || healthRemarks,
         needsToPresentQualityPhoto: needsQualityPhoto,
       })
     } else if (applicationFor === 'B-temp') {
       return this.drivingLicenseService.newTemporaryDrivingLicense(nationalId, {
-        juristictionId: juristictionId as number,
+        jurisdictionId: jurisdictionId as number,
         needsToPresentHealthCertificate: needsHealthCert,
         needsToPresentQualityPhoto: needsQualityPhoto,
         teacherNationalId: teacher,
@@ -183,7 +185,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       }
     } catch (e) {
       if (e instanceof Error && e.name === 'FetchError') {
-        const err = (e as unknown) as FetchError
+        const err = e as unknown as FetchError
         throw new TemplateApiError(
           {
             title:

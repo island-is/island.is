@@ -30,6 +30,10 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
     const chargeItemCode = getValueViaPath<string>(answers, 'chargeItemCode')
 
     if (!chargeItemCode) {
+      this.logger.error(
+        'chargeItemCode missing somehow in application answers',
+        id,
+      )
       throw new Error('chargeItemCode missing in answers')
     }
 
@@ -42,6 +46,7 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
 
     // last chance to validate before the user receives a dummy
     if (!response?.paymentUrl) {
+      this.logger.warn('paymentUrl missing in response', id)
       throw new Error('paymentUrl missing in response')
     }
 
@@ -76,7 +81,11 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
         // that the license is lost or stolen
         stolenOrLost: true,
       })
-      .catch(() => {
+      .catch((e) => {
+        this.logger.error('Error submitting application', {
+          application: application.id,
+          error: e,
+        })
         throw Error('Error submitting application to Samgöngustofa')
       })
     return {

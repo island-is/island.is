@@ -21,7 +21,11 @@ interface Props {
   items: NavigationScreenItem[]
 }
 
-export const NavigationScreen: FC<Props> = ({ title, items, inProgress }) => {
+export const NavigationScreen: FC<React.PropsWithChildren<Props>> = ({
+  title,
+  items,
+  inProgress,
+}) => {
   const { formatMessage } = useLocale()
 
   return (

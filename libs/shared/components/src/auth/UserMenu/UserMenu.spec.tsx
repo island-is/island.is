@@ -52,7 +52,7 @@ const mocks = [
   },
 ]
 
-const wrapper: FC = ({ children }) => (
+const wrapper: FC<React.PropsWithChildren<unknown>> = ({ children }) => (
   <MockedProvider mocks={mocks} addTypename={false}>
     <BrowserRouter>
       <LocaleProvider skipPolyfills>{children}</LocaleProvider>

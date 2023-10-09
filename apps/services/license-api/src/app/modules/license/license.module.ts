@@ -63,22 +63,24 @@ import {
     },
     {
       provide: CLIENT_FACTORY,
-      useFactory: (
-        disabilityClient: DisabilityLicenseClientService,
-        firearmClient: FirearmLicenseApiClientService,
-        drivingClient: DrivingLicenseApiClientService,
-      ) => async (type: LicenseId): Promise<GenericLicenseClient | null> => {
-        switch (type) {
-          case LicenseId.DRIVING_LICENSE:
-            return drivingClient
-          case LicenseId.DISABILITY_LICENSE:
-            return disabilityClient
-          case LicenseId.FIREARM_LICENSE:
-            return firearmClient
-          default:
-            return null
-        }
-      },
+      useFactory:
+        (
+          disabilityClient: DisabilityLicenseClientService,
+          firearmClient: FirearmLicenseApiClientService,
+          drivingClient: DrivingLicenseApiClientService,
+        ) =>
+        async (type: LicenseId): Promise<GenericLicenseClient | null> => {
+          switch (type) {
+            case LicenseId.DRIVING_LICENSE:
+              return drivingClient
+            case LicenseId.DISABILITY_LICENSE:
+              return disabilityClient
+            case LicenseId.FIREARM_LICENSE:
+              return firearmClient
+            default:
+              return null
+          }
+        },
       inject: [
         DisabilityLicenseClientService,
         FirearmLicenseApiClientService,

@@ -24,9 +24,11 @@ export const personalInfo = buildMultiField({
       width: 'half',
       readOnly: true,
       defaultValue: (application: Application) =>
-        (application.externalData.nationalRegistry?.data as {
-          fullName?: string
-        })?.fullName ?? '',
+        (
+          application.externalData.nationalRegistry?.data as {
+            fullName?: string
+          }
+        )?.fullName ?? '',
     }),
     buildTextField({
       id: 'personalInfo.nationalId',
@@ -36,9 +38,11 @@ export const personalInfo = buildMultiField({
       readOnly: true,
       defaultValue: (application: Application) => {
         const nationalId =
-          (application.externalData.nationalRegistry?.data as {
-            nationalId?: string
-          })?.nationalId ?? ''
+          (
+            application.externalData.nationalRegistry?.data as {
+              nationalId?: string
+            }
+          )?.nationalId ?? ''
 
         return formatKennitala(nationalId)
       },
@@ -49,9 +53,11 @@ export const personalInfo = buildMultiField({
       width: 'half',
       required: true,
       defaultValue: (application: Application) =>
-        (application.externalData.userProfile?.data as {
-          email?: string
-        })?.email ?? '',
+        (
+          application.externalData.userProfile?.data as {
+            email?: string
+          }
+        )?.email ?? '',
     }),
     buildTextField({
       id: 'personalInfo.phoneNumber',
@@ -62,9 +68,11 @@ export const personalInfo = buildMultiField({
       required: true,
       defaultValue: (application: Application) => {
         const phone =
-          (application.externalData.userProfile?.data as {
-            mobilePhoneNumber?: string
-          })?.mobilePhoneNumber ?? ''
+          (
+            application.externalData.userProfile?.data as {
+              mobilePhoneNumber?: string
+            }
+          )?.mobilePhoneNumber ?? ''
 
         return removeCountryCode(phone)
       },

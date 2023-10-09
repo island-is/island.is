@@ -30,25 +30,13 @@ export const serviceSetup = (services: {
         staging: 'true',
         prod: 'true',
       },
-      CacheSettings__Memcached__Address: {
-        dev: 'identity-server.5fzau3.cfg.euw1.cache.amazonaws.com',
-        staging: 'identity-server.ab9ckb.cfg.euw1.cache.amazonaws.com',
-        prod: 'identity-server.dnugi2.cfg.euw1.cache.amazonaws.com',
-      },
-      CacheSettings__Memcached__Port: {
-        dev: '11211',
-        staging: '11211',
-        prod: '11211',
-      },
-      CacheSettings__Redis__Address: {
-        dev:
-          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com',
+      RedisSettings__Address: {
+        dev: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com',
         staging:
           'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com',
-        prod:
-          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com',
+        prod: 'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com',
       },
-      CacheSettings__Redis__Port: {
+      RedisSettings__Port: {
         dev: '6379',
         staging: '6379',
         prod: '6379',

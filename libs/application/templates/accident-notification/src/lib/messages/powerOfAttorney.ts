@@ -69,8 +69,7 @@ export const powerOfAttorney = {
       description: 'Proxy document text followed by link',
     },
     powerOfAttorneyFileLinkButtonName: {
-      id:
-        'an.application:powerOfAttorney.upload.powerOfAttorneyFileLinkButtonName',
+      id: 'an.application:powerOfAttorney.upload.powerOfAttorneyFileLinkButtonName',
       defaultMessage: `Umboð.docx.`,
       description: 'Button title for document provided for power of attorney',
     },

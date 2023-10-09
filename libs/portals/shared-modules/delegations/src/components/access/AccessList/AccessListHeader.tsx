@@ -13,11 +13,6 @@ const commonItemProps: Partial<BoxProps> = {
   paddingY: 2,
 }
 
-const validToTranslation = {
-  id: 'sp.settings-access-control:access-valid-to',
-  defaultMessage: 'Í gildi til',
-}
-
 type AccessListHeaderProps = {
   validityPeriod?: Date | null
 }
@@ -41,7 +36,7 @@ export const AccessListHeader = ({ validityPeriod }: AccessListHeaderProps) => {
         {validityPeriod && (
           <Box textAlign="right">
             <Text {...commonTextProps}>
-              {formatMessage(validToTranslation)}
+              {formatMessage(m.validTo)}
               {` ${formatDelegationDate(validityPeriod)}`}
             </Text>
           </Box>
@@ -49,7 +44,7 @@ export const AccessListHeader = ({ validityPeriod }: AccessListHeaderProps) => {
       </Box>
       {!validityPeriod && (
         <Box {...commonItemProps} paddingRight={2}>
-          <Text {...commonTextProps}>{formatMessage(validToTranslation)}</Text>
+          <Text {...commonTextProps}>{formatMessage(m.validTo)}</Text>
         </Box>
       )}
     </>

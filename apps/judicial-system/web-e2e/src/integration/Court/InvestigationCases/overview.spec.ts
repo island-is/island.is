@@ -53,7 +53,7 @@ describe(`${INVESTIGATION_CASE_OVERVIEW_ROUTE}/:id`, () => {
       requestedCourtDate: '2020-09-20T19:50:08.033Z',
       state: CaseState.RECEIVED,
       sessionArrangements: SessionArrangements.ALL_PRESENT,
-      caseFiles: [makeCaseFile()],
+      caseFiles: [{ ...makeCaseFile(), category: undefined }],
       openedByDefender: '2020-09-20T19:50:08.033Z',
     }
 

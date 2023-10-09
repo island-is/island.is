@@ -6,7 +6,12 @@ import {
   vehicleOwnedDataHeader,
 } from './dataHeaders'
 import isValid from 'date-fns/isValid'
-import { VEHICLE_OPERATOR, VEHICLE_OWNER, VEHICLE_COOWNER } from './constants'
+import {
+  VEHICLE_OPERATOR,
+  VEHICLE_OWNER,
+  VEHICLE_COOWNER,
+  LOCALE,
+} from './constants'
 
 export const exportVehicleOwnedDocument = async (
   data: any[],
@@ -41,10 +46,10 @@ export const exportVehicleOwnedDocument = async (
       item.regno,
       item.type,
       firstRegDate && isValid(firstRegDate)
-        ? firstRegDate.toLocaleDateString()
+        ? firstRegDate.toLocaleDateString(LOCALE)
         : '',
       operatorStartDate && isValid(operatorStartDate)
-        ? operatorStartDate.toLocaleDateString()
+        ? operatorStartDate.toLocaleDateString(LOCALE)
         : '',
       nationalId,
       name,
@@ -55,11 +60,11 @@ export const exportVehicleOwnedDocument = async (
       item.useGroup,
       item.lastInspectionResult,
       lastInspectionDate && isValid(lastInspectionDate)
-        ? lastInspectionDate.toLocaleDateString()
+        ? lastInspectionDate.toLocaleDateString(LOCALE)
         : '',
       item.lastInspectionType,
       nextInspectionDate && isValid(nextInspectionDate)
-        ? nextInspectionDate.toLocaleDateString()
+        ? nextInspectionDate.toLocaleDateString(LOCALE)
         : '',
     ]
   })
@@ -78,10 +83,10 @@ export const exportVehicleOwnedDocument = async (
       item.regno,
       item.type,
       firstRegDate && isValid(firstRegDate)
-        ? firstRegDate.toLocaleDateString()
+        ? firstRegDate.toLocaleDateString(LOCALE)
         : '',
       operatorStartDate && isValid(operatorStartDate)
-        ? operatorStartDate.toLocaleDateString()
+        ? operatorStartDate.toLocaleDateString(LOCALE)
         : '',
       nationalId,
       name,
@@ -92,11 +97,11 @@ export const exportVehicleOwnedDocument = async (
       item.useGroup,
       item.lastInspectionResult,
       lastInspectionDate && isValid(lastInspectionDate)
-        ? lastInspectionDate.toLocaleDateString()
+        ? lastInspectionDate.toLocaleDateString(LOCALE)
         : '',
       item.lastInspectionType,
       nextInspectionDate && isValid(nextInspectionDate)
-        ? nextInspectionDate.toLocaleDateString()
+        ? nextInspectionDate.toLocaleDateString(LOCALE)
         : '',
     ]
   })
@@ -116,10 +121,10 @@ export const exportVehicleOwnedDocument = async (
       item.regno,
       item.type,
       firstRegDate && isValid(firstRegDate)
-        ? firstRegDate.toLocaleDateString()
+        ? firstRegDate.toLocaleDateString(LOCALE)
         : '',
       operatorStartDate && isValid(operatorStartDate)
-        ? operatorStartDate.toLocaleDateString()
+        ? operatorStartDate.toLocaleDateString(LOCALE)
         : '',
       item.ownerSsid,
       item.ownerName,
@@ -130,11 +135,11 @@ export const exportVehicleOwnedDocument = async (
       item.useGroup,
       item.lastInspectionResult,
       lastInspectionDate && isValid(lastInspectionDate)
-        ? lastInspectionDate.toLocaleDateString()
+        ? lastInspectionDate.toLocaleDateString(LOCALE)
         : '',
       item.lastInspectionType,
       nextInspectionDate && isValid(nextInspectionDate)
-        ? nextInspectionDate.toLocaleDateString()
+        ? nextInspectionDate.toLocaleDateString(LOCALE)
         : '',
     ]
   })

@@ -32,7 +32,7 @@ import {
   RskProcuringClientMock,
   FeatureFlagServiceMock,
 } from './mocks'
-import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
+import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { ConfigType } from '@island.is/nest/config'
 import {
@@ -138,7 +138,7 @@ export const setupWithAuth = async ({
       builder
         .overrideProvider(NationalRegistryClientService)
         .useValue(createMockEinstaklingurApi(nationalRegistryUser))
-        .overrideProvider(RskProcuringClient)
+        .overrideProvider(RskRelationshipsClient)
         .useValue(RskProcuringClientMock)
         .overrideProvider(DelegationConfig.KEY)
         .useValue(delegationConfig)

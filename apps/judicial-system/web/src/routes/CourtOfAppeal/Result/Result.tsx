@@ -4,8 +4,10 @@ import { useIntl } from 'react-intl'
 import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
   CaseFilesAccordionItem,
+  Conclusion,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -13,23 +15,18 @@ import {
   PageHeader,
   PageLayout,
   UserContext,
-  Conclusion,
-  AppealConclusion,
 } from '@island.is/judicial-system-web/src/components'
-import { core } from '@island.is/judicial-system-web/messages'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
+import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
+import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
+import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 
-const CourtOfAppealResult: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
@@ -122,9 +119,13 @@ const CourtOfAppealResult: React.FC = () => {
                   title: formatMessage(core.appealJudgesHeading),
                   value: (
                     <>
-                      <Text>{workingCase.appealJudge1?.name}</Text>
-                      <Text>{workingCase.appealJudge2?.name}</Text>
-                      <Text>{workingCase.appealJudge3?.name}</Text>
+                      {sortByIcelandicAlphabet([
+                        workingCase.appealJudge1?.name || '',
+                        workingCase.appealJudge2?.name || '',
+                        workingCase.appealJudge3?.name || '',
+                      ]).map((judge, index) => (
+                        <Text key={index}>{judge}</Text>
+                      ))}
                     </>
                   ),
                 },
@@ -142,14 +143,14 @@ const CourtOfAppealResult: React.FC = () => {
           ) : null}
           <Box marginBottom={6}>
             <Conclusion
+              title={formatMessage(conclusion.title)}
               conclusionText={workingCase.conclusion}
-              judgeName={workingCase.judge?.name}
             />
           </Box>
           <Box marginBottom={6}>
-            <AppealConclusion
+            <Conclusion
+              title={formatMessage(conclusion.appealTitle)}
               conclusionText={workingCase.appealConclusion}
-              judgeName={workingCase.appealJudge1?.name}
             />
           </Box>
           <CaseFilesOverview />

@@ -9,6 +9,7 @@ import {
   Tooltip,
   ResponsiveSpace,
   SkeletonLoader,
+  ButtonProps,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
@@ -18,12 +19,14 @@ import { sharedMessages } from '@island.is/shared/translations'
 
 import * as styles from './UserInfoLine.css'
 import { formatPlausiblePathToParams } from '../../utils/formatPlausiblePathToParams'
+import cn from 'classnames'
 
 export type EditLink = {
   external?: boolean
   url: string
   title?: MessageDescriptor
   skipOutboundTrack?: boolean
+  icon?: ButtonProps['icon']
 }
 
 interface Props {
@@ -44,9 +47,10 @@ interface Props {
   className?: string
   translate?: 'yes' | 'no'
   translateLabel?: 'yes' | 'no'
+  printable?: boolean
 }
 
-export const UserInfoLine: FC<Props> = ({
+export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
   label,
   content,
   renderContent,
@@ -64,13 +68,10 @@ export const UserInfoLine: FC<Props> = ({
   className,
   translate = 'yes',
   translateLabel = 'yes',
+  printable = false,
 }) => {
   const { pathname } = useLocation()
   const { formatMessage } = useLocale()
-
-  const trackExternalLinkClick = () => {
-    servicePortalOutboundLink(formatPlausiblePathToParams(pathname))
-  }
 
   return (
     <Box
@@ -78,7 +79,9 @@ export const UserInfoLine: FC<Props> = ({
       paddingY={paddingY}
       paddingBottom={paddingBottom}
       paddingRight={4}
-      className={className}
+      className={cn(className, {
+        [styles.printable]: printable,
+      })}
     >
       {title && (
         <Text variant="eyebrow" color="purple400" paddingBottom={titlePadding}>
@@ -120,7 +123,7 @@ export const UserInfoLine: FC<Props> = ({
               <SkeletonLoader width="70%" height={27} />
             ) : renderContent ? (
               renderContent()
-            ) : (
+            ) : typeof content === 'string' ? (
               <Text
                 translate={translate}
                 color={warning ? 'red600' : undefined}
@@ -128,6 +131,8 @@ export const UserInfoLine: FC<Props> = ({
               >
                 {content}
               </Text>
+            ) : (
+              content
             )}
           </Box>
         </GridColumn>
@@ -147,7 +152,11 @@ export const UserInfoLine: FC<Props> = ({
                   onClick={
                     editLink.skipOutboundTrack
                       ? undefined
-                      : trackExternalLinkClick
+                      : () =>
+                          servicePortalOutboundLink({
+                            url: formatPlausiblePathToParams(pathname).url,
+                            outboundUrl: editLink.url,
+                          })
                   }
                   target="_blank"
                 >
@@ -164,7 +173,12 @@ export const UserInfoLine: FC<Props> = ({
                 </a>
               ) : (
                 <Link to={editLink.url}>
-                  <Button variant="text" size="small">
+                  <Button
+                    variant="text"
+                    size="small"
+                    icon={editLink.icon}
+                    iconType="outline"
+                  >
                     {editLink.title
                       ? formatMessage(editLink.title)
                       : formatMessage(sharedMessages.edit)}

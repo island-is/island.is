@@ -1,10 +1,11 @@
 {
-  "root": "libs/clients/judicial-administration",
+  "name": "clients-judicial-administration",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/judicial-administration/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/clients/judicial-administration/**/*.{ts,tsx,js,jsx}"
@@ -12,15 +13,17 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/judicial-administration"],
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/clients/judicial-administration"
+      ],
       "options": {
-        "jestConfig": "libs/clients/judicial-administration/jest.config.js",
+        "jestConfig": "libs/clients/judicial-administration/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "update-openapi-document": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "curl --location --request GET 'http://localhost:8081/r1/IS-DEV/GOV/10019/Domstolasyslan/getOpenAPI?serviceCode=JusticePortal-v1' --header \"X-Road-Client: $XROAD_CLIENT_ID\" > src/clientConfig.json"
@@ -30,7 +33,7 @@
       }
     },
     "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn openapi-generator -o libs/clients/judicial-administration/gen/fetch -i libs/clients/judicial-administration/src/clientConfig.json"

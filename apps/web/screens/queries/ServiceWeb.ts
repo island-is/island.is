@@ -1,6 +1,17 @@
 import gql from 'graphql-tag'
 import { slices } from './fragments'
 
+export const GET_SERVICE_WEB_PAGE_QUERY = gql`
+  query GetServiceWebPage($input: GetServiceWebPageInput!) {
+    getServiceWebPage(input: $input) {
+      slices {
+        ...AllSlices
+      }
+    }
+  }
+  ${slices}
+`
+
 export const GET_SUPPORT_QNAS = gql`
   query GetSupportQNAs($input: GetSupportQNAsInput!) {
     getSupportQNAs(input: $input) {
@@ -177,6 +188,7 @@ export const GET_SERVICE_WEB_ORGANIZATION = gql`
     id
     document
   }
+
   query GetServiceWebOrganization($input: GetOrganizationInput!) {
     getOrganization(input: $input) {
       id
@@ -190,6 +202,7 @@ export const GET_SERVICE_WEB_ORGANIZATION = gql`
         width
         height
       }
+      footerConfig
       footerItems {
         title
         content {

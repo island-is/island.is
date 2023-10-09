@@ -1,8 +1,11 @@
 import fetch from 'isomorphic-fetch'
+
 import { Inject, Injectable } from '@nestjs/common'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
+
 import {
   capitalize,
   caseTypes,
@@ -11,8 +14,8 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 
-import { environment } from '../../../environments'
 import { Case } from '../case'
+import { eventModuleConfig } from './event.config'
 
 const errorEmojis = [
   ':sos:',
@@ -77,13 +80,15 @@ export enum CaseEvent {
 @Injectable()
 export class EventService {
   constructor(
+    @Inject(eventModuleConfig.KEY)
+    private readonly config: ConfigType<typeof eventModuleConfig>,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
 
   postEvent(event: CaseEvent, theCase: Case, eventOnly = false) {
     try {
-      if (!environment.events.url) {
+      if (!this.config.url) {
         return
       }
 
@@ -120,7 +125,7 @@ export class EventService {
             }`
           : ''
 
-      fetch(`${environment.events.url}`, {
+      fetch(`${this.config.url}`, {
         method: 'POST',
         headers: { 'Content-type': 'application/json' },
         body: JSON.stringify({
@@ -150,7 +155,7 @@ export class EventService {
     reason: Error,
   ) {
     try {
-      if (!environment.events.errorUrl) {
+      if (!this.config.errorUrl) {
         return
       }
 
@@ -163,7 +168,7 @@ export class EventService {
         }
       }
 
-      fetch(`${environment.events.errorUrl}`, {
+      fetch(`${this.config.errorUrl}`, {
         method: 'POST',
         headers: { 'Content-type': 'application/json' },
         body: JSON.stringify({

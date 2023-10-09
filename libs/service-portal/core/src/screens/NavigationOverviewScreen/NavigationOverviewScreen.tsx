@@ -28,7 +28,7 @@ interface Props {
   }[]
 }
 
-export const NavigationOverviewScreen: FC<Props> = ({
+export const NavigationOverviewScreen: FC<React.PropsWithChildren<Props>> = ({
   title,
   intro,
   navigation = [],

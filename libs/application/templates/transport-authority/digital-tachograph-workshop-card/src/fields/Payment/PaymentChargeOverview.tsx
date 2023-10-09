@@ -5,7 +5,9 @@ import { FC } from 'react'
 import { payment } from '../../lib/messages'
 import { formatIsk } from '../../utils'
 
-export const PaymentChargeOverview: FC<FieldBaseProps> = ({ application }) => {
+export const PaymentChargeOverview: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   const { externalData } = application

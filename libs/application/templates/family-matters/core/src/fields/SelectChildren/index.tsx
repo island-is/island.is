@@ -93,9 +93,8 @@ const SelectChildren = ({
   error,
 }: Props) => {
   const { formatMessage } = useIntl()
-  const [selectedChildrenState, setSelectedChildrenState] = useState<string[]>(
-    currentAnswer,
-  )
+  const [selectedChildrenState, setSelectedChildrenState] =
+    useState<string[]>(currentAnswer)
   const childrenNotEligibleForTransfer = children.every(
     (child) => child.livesWithBothParents,
   )

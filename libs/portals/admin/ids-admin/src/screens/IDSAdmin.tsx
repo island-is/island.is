@@ -5,15 +5,15 @@ import {
   matchPath,
   useMatches,
 } from 'react-router-dom'
-import { Button, Stack } from '@island.is/island-ui/core'
+
+import { Stack } from '@island.is/island-ui/core'
 import { replaceParams } from '@island.is/react-spa/shared'
-import { useLocale } from '@island.is/localization'
-import { m } from '../lib/messages'
+import { BackButton } from '@island.is/portals/admin/core'
+
 import { IDSAdminRouteHandle } from '../module'
 import { IDSAdminPaths } from '../lib/paths'
 
 const IDSAdmin = () => {
-  const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const location = useLocation()
   const matches = useMatches()
@@ -61,22 +61,8 @@ const IDSAdmin = () => {
   const showBackButton = location.pathname !== IDSAdminPaths.IDSAdmin
 
   return (
-    <Stack space={'gutter'}>
-      {showBackButton && (
-        <Button
-          colorScheme="default"
-          iconType="filled"
-          onClick={navigateBack}
-          preTextIcon="arrowBack"
-          preTextIconType="filled"
-          size="small"
-          type="button"
-          variant="text"
-        >
-          {formatMessage(m.back)}
-        </Button>
-      )}
-
+    <Stack space="gutter">
+      {showBackButton && <BackButton onClick={navigateBack} />}
       <Outlet />
     </Stack>
   )

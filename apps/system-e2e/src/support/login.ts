@@ -58,7 +58,7 @@ export async function idsLogin(
   if (page.url().startsWith(urls.authUrl)) {
     debug('Still on auth site')
     const delegations = page.locator('button[name="SelectedNationalId"]')
-    await expect(delegations).toHaveCountGreaterThan(0)
+    await expect(delegations).not.toHaveCount(0)
     // Default to the first delegation
     if (!delegation) await delegations.first().click()
     else {
@@ -75,4 +75,20 @@ export async function idsLogin(
   await page.waitForURL(new RegExp(`${home}`), {
     waitUntil: 'domcontentloaded',
   })
+}
+
+export const switchUser = async (
+  page: Page,
+  homeUrl: string,
+  name?: string,
+) => {
+  await page.locator('data-testid=user-menu >> visible=true').click()
+  await page.getByRole('button', { name: 'Skipta um notanda' }).click()
+
+  if (name) {
+    await page.getByRole('button', { name: name }).click()
+    await page.waitForURL(new RegExp(homeUrl), {
+      waitUntil: 'domcontentloaded',
+    })
+  }
 }

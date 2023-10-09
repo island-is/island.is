@@ -1,7 +1,3 @@
-import React from 'react'
-
-import { useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
 import { Stack } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 import {
@@ -14,33 +10,51 @@ import { useUserInfo } from '@island.is/auth/react'
 
 import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMemberCard'
 import { spmm } from '../../lib/messages'
-import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
-import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
+import { useUserInfoOverviewQuery } from './UserInfoOverview.generated'
+import { FeatureFlagClient } from '@island.is/feature-flags'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { useState, useEffect } from 'react'
 
 const UserInfoOverview = () => {
   useNamespaces('sp.family')
   const userInfo = useUserInfo()
 
-  // Current User
-  const { data, loading, error, called } = useQuery<Query>(
-    NATIONAL_REGISTRY_USER,
-  )
-  const { nationalRegistryUser } = data || {}
+  const [useNatRegV3, setUseNatRegV3] = useState(false)
 
-  // User's Children
-  const { data: childrenData, loading: childrenLoading } = useQuery<Query>(
-    NATIONAL_REGISTRY_CHILDREN,
-  )
-  const { nationalRegistryChildren } = childrenData || {}
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
 
-  const spouseData = nationalRegistryUser?.spouse
+  /* Should use v3? */
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isserviceportalnationalregistryv3enabled`,
+        false,
+      )
+      if (ffEnabled) {
+        setUseNatRegV3(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+  }, [])
+
+  const { data, loading, error } = useUserInfoOverviewQuery({
+    variables: {
+      api: useNatRegV3 ? 'v3' : undefined,
+    },
+  })
+
+  const { spouse, childCustody } = data?.nationalRegistryPerson || {}
 
   return (
     <>
-      <IntroHeader title={m.myInfo} intro={spmm.userInfoDesc} />
+      <IntroHeader
+        marginBottom={2}
+        title={m.myInfo}
+        intro={spmm.userInfoDesc}
+      />
 
       <Stack space={2}>
-        {called && !loading && !error && !nationalRegistryUser ? (
+        {!loading && !error && !data?.nationalRegistryPerson ? (
           <EmptyState description={m.noDataPresent} />
         ) : (
           <FamilyMemberCard
@@ -50,21 +64,21 @@ const UserInfoOverview = () => {
           />
         )}
         {loading && <CardLoader />}
-        {spouseData?.nationalId && (
+        {spouse?.nationalId && (
           <FamilyMemberCard
-            key={spouseData.nationalId}
-            title={spouseData?.name || ''}
-            nationalId={spouseData.nationalId}
+            key={spouse.nationalId}
+            title={spouse?.fullName || ''}
+            nationalId={spouse.nationalId}
             familyRelation="spouse"
           />
         )}
-        {childrenLoading &&
+        {loading &&
           [...Array(2)].map((_key, index) => <CardLoader key={index} />)}
-        {nationalRegistryChildren?.map((familyMember) => (
+        {childCustody?.map((child) => (
           <FamilyMemberCard
-            key={familyMember.nationalId}
-            title={familyMember.fullName || familyMember.displayName || ''}
-            nationalId={familyMember.nationalId}
+            key={child.nationalId}
+            title={child.fullName || ''}
+            nationalId={child.nationalId}
             familyRelation="child"
           />
         ))}

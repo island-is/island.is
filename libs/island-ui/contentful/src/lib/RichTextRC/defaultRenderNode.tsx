@@ -196,7 +196,7 @@ export const defaultRenderNodeObject: RenderNode = {
     <Hyperlink href={node.data.uri}>{children}</Hyperlink>
   ),
   [INLINES.ASSET_HYPERLINK]: (node, children) => {
-    const asset = (node.data.target as unknown) as Asset
+    const asset = node.data.target as unknown as Asset
     // The url might not contain a protocol that's why we prepend https:
     // https://www.contentful.com/developers/docs/concepts/images/
     let url: string

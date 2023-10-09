@@ -31,5 +31,3 @@ export interface DrivingLicenseFakeData {
   currentLicense?: FakeCurrentLicense
   healthRemarks?: YesOrNo
 }
-
-export const SYSLUMADUR_NATIONAL_ID = '6509142520'

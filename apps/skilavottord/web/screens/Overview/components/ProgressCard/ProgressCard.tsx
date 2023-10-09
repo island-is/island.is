@@ -24,7 +24,7 @@ interface ProgressCardProps {
   car: VehicleInformation
 }
 
-export const ProgressCard: FC<ProgressCardProps> = ({
+export const ProgressCard: FC<React.PropsWithChildren<ProgressCardProps>> = ({
   onClick,
   car: { permno, type, firstRegDate, status },
 }: ProgressCardProps) => {

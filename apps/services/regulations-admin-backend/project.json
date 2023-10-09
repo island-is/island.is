@@ -1,5 +1,6 @@
 {
-  "root": "apps/services/regulations-admin-backend",
+  "name": "regulations-admin-backend",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/regulations-admin-backend/src",
   "projectType": "application",
   "prefix": "regulations-admin-backend",
@@ -44,13 +45,13 @@
       "outputs": ["{options.outputPath}"]
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "regulations-admin-backend:build"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/services/regulations-admin-backend/**/*.{ts,tsx,js,jsx}"
@@ -58,50 +59,54 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/services/regulations-admin-backend"],
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/services/regulations-admin-backend"
+      ],
       "options": {
-        "jestConfig": "apps/services/regulations-admin-backend/jest.config.js",
+        "jestConfig": "apps/services/regulations-admin-backend/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "dev-services": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "docker-compose up -d",
         "cwd": "apps/services/regulations-admin-backend"
       }
     },
     "schemas/build-openapi": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
-        "outputPath": "apps/services/regulations-admin-backend/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/regulations-admin-backend/tsconfig.app.json apps/services/regulations-admin-backend/src/buildOpenApi.ts"
-      }
+      },
+      "outputs": [
+        "{workspaceRoot}/apps/services/regulations-admin-backend/src/openapi.yaml"
+      ]
     },
     "migrate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "../../../node_modules/.bin/sequelize-cli db:migrate",
         "cwd": "apps/services/regulations-admin-backend"
       }
     },
     "migrate/generate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
         "cwd": "apps/services/regulations-admin-backend"
       }
     },
     "seed": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "../../../node_modules/.bin/sequelize-cli db:seed:all",
         "cwd": "apps/services/regulations-admin-backend"
       }
     },
     "seed/undo": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "../../../node_modules/.bin/sequelize-cli db:seed:undo:all",
         "cwd": "apps/services/regulations-admin-backend"
@@ -109,13 +114,13 @@
     },
     "docker-express": {},
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/services/regulations-admin-backend/src/app/messages/**/*.ts'"
       }
     },
     "dev-init": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn nx run regulations-admin-backend:migrate",
@@ -126,7 +131,7 @@
       }
     },
     "dev": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": ["yarn start regulations-admin-backend"],
         "parallel": true

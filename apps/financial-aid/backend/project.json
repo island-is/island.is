@@ -1,5 +1,6 @@
 {
-  "root": "apps/financial-aid/backend",
+  "name": "financial-aid-backend",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/financial-aid/backend/src",
   "projectType": "application",
   "prefix": "financial-aid-backend",
@@ -40,62 +41,62 @@
       "outputs": ["{options.outputPath}"]
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "financial-aid-backend:build"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/financial-aid/backend/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/financial-aid/backend/jest.config.js",
+        "jestConfig": "apps/financial-aid/backend/jest.config.ts",
         "runInBand": true,
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/financial-aid/backend"]
+      "outputs": ["{workspaceRoot}/coverage/apps/financial-aid/backend"]
     },
     "dev-services": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "docker-compose up -d",
         "cwd": "apps/financial-aid/backend"
       }
     },
     "schemas/build-openapi": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn nx run financial-aid-backend:schemas/build-openapi-internal $NX_OPTIONS"
       }
     },
     "schemas/build-openapi-internal": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
-        "outputPath": "apps/financial-aid/backend/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/financial-aid/backend/tsconfig.app.json apps/financial-aid/backend/src/buildOpenApi.ts"
-      }
+      },
+      "outputs": ["{workspaceRoot}/apps/financial-aid/backend/src/openapi.yaml"]
     },
     "migrate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "../../../node_modules/.bin/sequelize-cli db:migrate",
         "cwd": "apps/financial-aid/backend"
       }
     },
     "migrate/generate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
         "cwd": "apps/financial-aid/backend"
       }
     },
     "seed": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "../../../node_modules/.bin/sequelize-cli db:seed:all",
         "cwd": "apps/financial-aid/backend"

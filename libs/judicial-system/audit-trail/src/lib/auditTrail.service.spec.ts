@@ -2,14 +2,12 @@ import { mock } from 'jest-mock-extended'
 
 import { Test, TestingModule } from '@nestjs/testing'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { ConfigModule } from '@island.is/nest/config'
 
-import {
-  AuditedAction,
-  AuditTrailService,
-  AUDIT_TRAIL_OPTIONS,
-} from './auditTrail.service'
+import { auditTrailModuleConfig } from './auditTrail.config'
+import { AuditedAction, AuditTrailService } from './auditTrail.service'
 
 jest.mock('@island.is/logging', () => {
   return {
@@ -31,13 +29,15 @@ describe('AuditTrailService generic', () => {
   const genericLogger = mock<Logger>()
   let service: AuditTrailService
 
+  process.env.AUDIT_TRAIL_USE_GENERIC_LOGGER = 'true'
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({
+          load: [auditTrailModuleConfig],
+        }),
+      ],
       providers: [
-        {
-          provide: AUDIT_TRAIL_OPTIONS,
-          useFactory: () => ({ useGenericLogger: true }),
-        },
         {
           provide: LOGGER_PROVIDER,
           useValue: genericLogger,
@@ -193,12 +193,14 @@ describe('AuditTrailService generic', () => {
   let service: AuditTrailService
 
   beforeEach(async () => {
+    process.env.AUDIT_TRAIL_USE_GENERIC_LOGGER = undefined
     const module: TestingModule = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({
+          load: [auditTrailModuleConfig],
+        }),
+      ],
       providers: [
-        {
-          provide: AUDIT_TRAIL_OPTIONS,
-          useFactory: () => ({ useGenericLogger: false }),
-        },
         {
           provide: LOGGER_PROVIDER,
           useValue: genericLogger,

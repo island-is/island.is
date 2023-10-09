@@ -6,9 +6,8 @@ describe('license-service/client/firearm-license', () => {
   describe('pkpass status', () => {
     it('should be unknown for empty license', async () => {
       const licenseInfo: LicenseInfo = {}
-      const result = GenericFirearmLicenseService.licenseIsValidForPkpass(
-        licenseInfo,
-      )
+      const result =
+        GenericFirearmLicenseService.licenseIsValidForPkpass(licenseInfo)
       expect(result).toBe(GenericUserLicensePkPassStatus.Unknown)
     })
 
@@ -16,9 +15,8 @@ describe('license-service/client/firearm-license', () => {
       const licenseInfo: LicenseInfo = {
         expirationDate: '2028-06-01',
       }
-      const result = GenericFirearmLicenseService.licenseIsValidForPkpass(
-        licenseInfo,
-      )
+      const result =
+        GenericFirearmLicenseService.licenseIsValidForPkpass(licenseInfo)
       expect(result).toBe(GenericUserLicensePkPassStatus.Available)
     })
 
@@ -26,9 +24,8 @@ describe('license-service/client/firearm-license', () => {
       const licenseInfo: LicenseInfo = {
         expirationDate: '2020-06-01',
       }
-      const result = GenericFirearmLicenseService.licenseIsValidForPkpass(
-        licenseInfo,
-      )
+      const result =
+        GenericFirearmLicenseService.licenseIsValidForPkpass(licenseInfo)
       expect(result).toBe(GenericUserLicensePkPassStatus.NotAvailable)
     })
 
@@ -36,9 +33,8 @@ describe('license-service/client/firearm-license', () => {
       const licenseInfo: LicenseInfo = {
         expirationDate: 'abcc',
       }
-      const result = GenericFirearmLicenseService.licenseIsValidForPkpass(
-        licenseInfo,
-      )
+      const result =
+        GenericFirearmLicenseService.licenseIsValidForPkpass(licenseInfo)
       expect(result).toBe(GenericUserLicensePkPassStatus.NotAvailable)
     })
   })

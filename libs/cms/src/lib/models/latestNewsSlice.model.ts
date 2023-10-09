@@ -7,6 +7,7 @@ import { ILatestNewsSlice } from '../generated/contentfulTypes'
 import { News } from './news.model'
 import { mapGenericTag } from './genericTag.model'
 import { Link, mapLink } from './link.model'
+import { mapOrganization } from './organization.model'
 
 @ObjectType()
 export class LatestNewsSlice {
@@ -44,6 +45,9 @@ export const mapLatestNewsSlice = ({
       sys.locale === 'is-IS' ? 'is' : (sys.locale as ElasticsearchIndexLocale),
     size: 4,
     order: 'desc',
+    organization: fields.organization
+      ? mapOrganization(fields.organization).slug
+      : undefined,
   },
   readMoreLink: fields.readMoreLink ? mapLink(fields.readMoreLink) : null,
 })

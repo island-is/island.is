@@ -105,17 +105,15 @@ export class DocumentProviderService {
   }> {
     this.logger.debug(`Updating organisation ${id}`)
 
-    const [
-      numberOfAffectedRows,
-      [updatedOrganisation],
-    ] = await this.organisationModel.update(
-      { ...update, modifiedBy },
-      {
-        where: { id },
-        returning: true,
-        individualHooks: true,
-      },
-    )
+    const [numberOfAffectedRows, [updatedOrganisation]] =
+      await this.organisationModel.update(
+        { ...update, modifiedBy },
+        {
+          where: { id },
+          returning: true,
+          individualHooks: true,
+        },
+      )
 
     return { numberOfAffectedRows, updatedOrganisation }
   }
@@ -183,17 +181,15 @@ export class DocumentProviderService {
   }> {
     this.logger.debug(`Updating provider ${id}`)
 
-    const [
-      numberOfAffectedRows,
-      [updatedProvider],
-    ] = await this.providerModel.update(
-      { ...update, modifiedBy },
-      {
-        where: { id },
-        returning: true,
-        individualHooks: true,
-      },
-    )
+    const [numberOfAffectedRows, [updatedProvider]] =
+      await this.providerModel.update(
+        { ...update, modifiedBy },
+        {
+          where: { id },
+          returning: true,
+          individualHooks: true,
+        },
+      )
 
     return { numberOfAffectedRows, updatedProvider }
   }
@@ -232,17 +228,15 @@ export class DocumentProviderService {
   }> {
     this.logger.debug(`Updating administrativeContact ${id}`)
 
-    const [
-      numberOfAffectedRows,
-      [updatedContact],
-    ] = await this.administrativeContactModel.update(
-      { ...update, modifiedBy },
-      {
-        where: { id },
-        returning: true,
-        individualHooks: true,
-      },
-    )
+    const [numberOfAffectedRows, [updatedContact]] =
+      await this.administrativeContactModel.update(
+        { ...update, modifiedBy },
+        {
+          where: { id },
+          returning: true,
+          individualHooks: true,
+        },
+      )
 
     return { numberOfAffectedRows, updatedContact }
   }
@@ -272,17 +266,15 @@ export class DocumentProviderService {
   }> {
     this.logger.debug(`Updating technical contact ${id}`)
 
-    const [
-      numberOfAffectedRows,
-      [updatedContact],
-    ] = await this.technicalContactModel.update(
-      { ...update, modifiedBy },
-      {
-        where: { id },
-        returning: true,
-        individualHooks: true,
-      },
-    )
+    const [numberOfAffectedRows, [updatedContact]] =
+      await this.technicalContactModel.update(
+        { ...update, modifiedBy },
+        {
+          where: { id },
+          returning: true,
+          individualHooks: true,
+        },
+      )
 
     return { numberOfAffectedRows, updatedContact }
   }
@@ -312,17 +304,15 @@ export class DocumentProviderService {
   }> {
     this.logger.debug(`Updating helpdesk ${id}`)
 
-    const [
-      numberOfAffectedRows,
-      [updatedHelpdesk],
-    ] = await this.helpdeskModel.update(
-      { ...update, modifiedBy },
-      {
-        where: { id },
-        returning: true,
-        individualHooks: true,
-      },
-    )
+    const [numberOfAffectedRows, [updatedHelpdesk]] =
+      await this.helpdeskModel.update(
+        { ...update, modifiedBy },
+        {
+          where: { id },
+          returning: true,
+          individualHooks: true,
+        },
+      )
 
     return { numberOfAffectedRows, updatedHelpdesk }
   }

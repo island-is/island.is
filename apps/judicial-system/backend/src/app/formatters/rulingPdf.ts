@@ -1,29 +1,29 @@
 import PDFDocument from 'pdfkit'
-import streamBuffers from 'stream-buffers'
 
 import { FormatMessage } from '@island.is/cms-translations'
+
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 
-import { Case } from '../modules/case'
 import { nowFactory } from '../factories'
 import { ruling } from '../messages'
+import { Case } from '../modules/case'
 import {
-  addFooter,
   addCoatOfArms,
+  addEmptyLines,
+  addFooter,
   addLargeHeading,
   addMediumHeading,
+  addNormalCenteredText,
+  addNormalJustifiedText,
+  addNormalText,
   setLineGap,
   setTitle,
-  addEmptyLines,
-  addNormalText,
-  addNormalJustifiedText,
-  addNormalCenteredText,
 } from './pdfHelpers'
 
 function constructRulingPdf(
   theCase: Case,
   formatMessage: FormatMessage,
-): streamBuffers.WritableStreamBuffer {
+): Promise<Buffer> {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -35,7 +35,9 @@ function constructRulingPdf(
     bufferPages: true,
   })
 
-  const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
+  const sinc: Buffer[] = []
+
+  doc.on('data', (chunk) => sinc.push(chunk))
 
   const title = formatMessage(ruling.title)
 
@@ -51,7 +53,7 @@ function constructRulingPdf(
   setLineGap(doc, 2)
   addMediumHeading(
     doc,
-    `${title} ${formatDate(theCase.courtEndTime ?? nowFactory(), 'PPP')}`,
+    `${title} ${formatDate(theCase.rulingDate ?? nowFactory(), 'PPP')}`,
   )
   setLineGap(doc, 30)
   addMediumHeading(
@@ -154,33 +156,23 @@ function constructRulingPdf(
 
   doc.end()
 
-  return stream
+  return new Promise<Buffer>((resolve) =>
+    doc.on('end', () => resolve(Buffer.concat(sinc))),
+  )
 }
 
 export function getRulingPdfAsString(
   theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<string> {
-  const stream = constructRulingPdf(theCase, formatMessage)
-
-  // wait for the writing to finish
-  return new Promise<string>(function (resolve) {
-    stream.on('finish', () => {
-      resolve(stream.getContentsAsString('binary') as string)
-    })
-  })
+  return constructRulingPdf(theCase, formatMessage).then((buffer) =>
+    buffer.toString('binary'),
+  )
 }
 
 export function getRulingPdfAsBuffer(
   theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<Buffer> {
-  const stream = constructRulingPdf(theCase, formatMessage)
-
-  // wait for the writing to finish
-  return new Promise<Buffer>(function (resolve) {
-    stream.on('finish', () => {
-      resolve(stream.getContents() as Buffer)
-    })
-  })
+  return constructRulingPdf(theCase, formatMessage)
 }

@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Core" -->
-
 # Nest Core
 
 This library contains reusable NestJS code to be used in other Nest apps.

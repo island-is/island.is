@@ -53,7 +53,7 @@ interface Props {
   applicationType?: ApplicationTypes
 }
 
-export const ErrorShell: FC<Props> = ({
+export const ErrorShell: FC<React.PropsWithChildren<Props>> = ({
   errorType,
   applicationType,
   title,

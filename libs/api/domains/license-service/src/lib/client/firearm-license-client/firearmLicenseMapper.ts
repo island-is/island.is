@@ -83,7 +83,7 @@ export const parseFirearmLicensePayload = (
       fields: (properties.properties ?? []).map((property) => ({
         type: GenericLicenseDataFieldType.Category,
         fields: parseProperties(labels, property, locale)?.filter(
-          (Boolean as unknown) as ExcludesFalse,
+          Boolean as unknown as ExcludesFalse,
         ),
       })),
     },
@@ -93,11 +93,11 @@ export const parseFirearmLicensePayload = (
       fields: (properties.properties ?? []).map((property) => ({
         type: GenericLicenseDataFieldType.Category,
         fields: parseProperties(labels, property, locale)?.filter(
-          (Boolean as unknown) as ExcludesFalse,
+          Boolean as unknown as ExcludesFalse,
         ),
       })),
     },
-  ].filter((Boolean as unknown) as ExcludesFalse)
+  ].filter(Boolean as unknown as ExcludesFalse)
 
   return {
     data,

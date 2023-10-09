@@ -67,20 +67,19 @@ export class RegulationsAdminClientService {
   }
 
   getDraftRegulation(draftId: string, auth: Auth) {
-    console.log('GET THE DRAFT')
-    return (this.draftRegulationsApiWithAuth(
+    return this.draftRegulationsApiWithAuth(
       auth,
     ).draftRegulationControllerGetById({
       id: draftId,
-    }) as unknown) as RegulationDraft | null
+    }) as unknown as RegulationDraft | null
   }
 
   getImpactsByName(name: string, auth: Auth) {
-    return (this.draftRegulationsApiWithAuth(
+    return this.draftRegulationsApiWithAuth(
       auth,
     ).draftRegulationControllerGetImpactsByName({
       name,
-    }) as unknown) as DraftImpact[] | null
+    }) as unknown as DraftImpact[] | null
   }
 
   create(auth: Auth, input: CreateDraftRegulationDto) {
@@ -146,11 +145,11 @@ export class RegulationsAdminClientService {
     input: CreateDraftRegulationChangeDto,
     auth: Auth,
   ) {
-    return (this.draftRegulationChangeApiWithAuth(
+    return this.draftRegulationChangeApiWithAuth(
       auth,
     ).draftRegulationChangeControllerCreate({
       createDraftRegulationChangeDto: input,
-    }) as unknown) as DraftRegulationChange
+    }) as unknown as DraftRegulationChange
   }
 
   updateDraftRegulationChange(
@@ -158,12 +157,12 @@ export class RegulationsAdminClientService {
     id: string,
     auth: Auth,
   ) {
-    return (this.draftRegulationChangeApiWithAuth(
+    return this.draftRegulationChangeApiWithAuth(
       auth,
     ).draftRegulationChangeControllerUpdate({
       id,
       updateDraftRegulationChangeDto: update,
-    }) as unknown) as DraftRegulationChange
+    }) as unknown as DraftRegulationChange
   }
 
   deleteDraftRegulationChange(id: string, auth: Auth): Promise<any> {

@@ -27,7 +27,9 @@ const getBaseUrl = () => {
   return `${baseUrl}/umsoknir/undirskriftalisti`
 }
 
-export const GeneralPetitionLists: FC<GeneralPetitionProps> = ({ slice }) => {
+export const GeneralPetitionLists: FC<
+  React.PropsWithChildren<GeneralPetitionProps>
+> = ({ slice }) => {
   const router = useRouter()
   const petitionLists = useGetPetitionLists()
   const t = useLocalization(slice.json)

@@ -16,7 +16,9 @@ interface Props {
   dataTestId?: string
 }
 
-const BlueBox: React.FC<Props & TestSupport> = (props) => {
+const BlueBox: React.FC<React.PropsWithChildren<Props & TestSupport>> = (
+  props,
+) => {
   const { children, size = 'large', justifyContent, height, dataTestId } = props
 
   return (

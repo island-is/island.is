@@ -4,6 +4,7 @@ import { INews } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
+import { Organization, mapOrganization } from './organization.model'
 
 @ObjectType()
 export class News {
@@ -42,6 +43,9 @@ export class News {
 
   @Field({ nullable: true })
   initialPublishDate?: string
+
+  @CacheField(() => Organization, { nullable: true })
+  organization?: Organization
 }
 
 export const mapNews = ({ fields, sys }: INews): News => ({
@@ -59,4 +63,7 @@ export const mapNews = ({ fields, sys }: INews): News => ({
   fullWidthImageInContent: fields.fullWidthImageInContent ?? true,
   initialPublishDate: fields.initialPublishDate ?? '',
   featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
+  organization: fields.organization
+    ? mapOrganization(fields.organization)
+    : undefined,
 })

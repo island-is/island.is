@@ -1,67 +1,90 @@
 {
-  "root": "apps/air-discount-scheme/web",
+  "name": "air-discount-scheme-web",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/air-discount-scheme/web",
   "projectType": "application",
   "generators": {},
   "targets": {
     "build": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/air-discount-scheme/web",
-        "commands": [
-          "yarn nx build-next air-discount-scheme-web",
-          "yarn nx build-server air-discount-scheme-web"
-        ]
-      },
-      "configurations": {
-        "production": {
-          "args": "--prod"
-        }
-      }
-    },
-    "build-next": {
-      "executor": "@nrwl/next:build",
-      "options": {
-        "root": "apps/air-discount-scheme/web",
         "outputPath": "dist/apps/air-discount-scheme/web"
       },
       "configurations": {
+        "development": {
+          "outputPath": "apps/air-discount-scheme/web"
+        },
         "production": {}
       },
-      "outputs": ["{options.outputPath}"]
+      "dependsOn": ["build-custom-server"]
     },
-    "build-server": {
-      "executor": "@nrwl/node:webpack",
+    "build-custom-server": {
+      "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/air-discount-scheme/web",
         "main": "apps/air-discount-scheme/web/server.ts",
-        "tsConfig": "apps/air-discount-scheme/web/tsconfig.json",
+        "tsConfig": "apps/air-discount-scheme/web/tsconfig.server.json",
         "maxWorkers": 2,
-        "assets": []
+        "assets": [],
+        "compiler": "tsc",
+        "target": "node"
       },
       "configurations": {
+        "development": {},
         "production": {
           "optimization": true,
           "extractLicenses": true,
           "inspect": false
         }
-      },
-      "outputs": ["{options.outputPath}"]
+      }
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "air-discount-scheme-web:build-server"
+        "buildTarget": "air-discount-scheme-web:build",
+        "dev": true,
+        "customServerTarget": "air-discount-scheme-web:serve-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "air-discount-scheme-web:build:development",
+          "dev": true,
+          "customServerTarget": "air-discount-scheme-web:serve-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "air-discount-scheme-web:build:production",
+          "dev": false,
+          "customServerTarget": "air-discount-scheme-web:serve-custom-server:production"
+        }
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "air-discount-scheme-web:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "air-discount-scheme-web:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "air-discount-scheme-web:build-custom-server:production"
+        }
       }
     },
     "export": {
-      "executor": "@nrwl/next:export",
+      "executor": "@nx/next:export",
       "options": {
         "buildTarget": "air-discount-scheme-web:build:production"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/air-discount-scheme/web/**/*.{ts,tsx,js,jsx}"
@@ -69,15 +92,15 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/air-discount-scheme/web/jest.config.js",
+        "jestConfig": "apps/air-discount-scheme/web/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/air-discount-scheme/web"]
+      "outputs": ["{workspaceRoot}/coverage/apps/air-discount-scheme/web"]
     },
     "translations": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "quicktype is.json -o translation.d.ts --top-level Translation",
         "cwd": "apps/air-discount-scheme/web/i18n/locales"

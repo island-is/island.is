@@ -1,2 +1,2 @@
-export * from './lib/api-domains-work-machines.module'
-export * from './lib/api-domains-work-machines.service'
+export * from './lib/workMachines.module'
+export * from './lib/workMachines.service'

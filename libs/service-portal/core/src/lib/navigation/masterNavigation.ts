@@ -116,12 +116,12 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       },
       // Starfsleyfi
       {
-        name: m.educationLicense,
-        path: ServicePortalPath.EducationLicense,
+        name: m.occupationaLicenses,
+        path: ServicePortalPath.OccupationalLicenses,
         icon: {
           icon: 'receipt',
         },
-        description: m.educationLicenseDescription,
+        description: m.occupationalLicensesNavIntro,
       },
       // Mín réttindi
       {

@@ -2,7 +2,8 @@ import {
   SmartSolutionsApiClientModule,
   SmartSolutionsConfig,
 } from '@island.is/clients/smartsolutions'
-import { CACHE_MANAGER, CacheModule, Module } from '@nestjs/common'
+import { Module } from '@nestjs/common'
+import { CacheModule, CACHE_MANAGER } from '@nestjs/cache-manager'
 import { ConfigType } from '@island.is/nest/config'
 import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
 import { GenericDrivingLicenseConfig } from './genericDrivingLicense.config'

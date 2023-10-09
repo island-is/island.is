@@ -1,10 +1,12 @@
 import React from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { Defendant } from '@island.is/judicial-system/types'
 import { formatDOB } from '@island.is/judicial-system/formatters'
+import {
+  Defendant,
+  SessionArrangements,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as styles from './InfoCard.css'
 
 interface Defender {
@@ -26,7 +28,9 @@ interface Props {
   defenders?: Defender[]
 }
 
-const UniqueDefenders: React.FC<UniqueDefendersProps> = (props) => {
+const UniqueDefenders: React.FC<
+  React.PropsWithChildren<UniqueDefendersProps>
+> = (props) => {
   const { defenders } = props
   const uniqueDefenders = defenders?.filter(
     (defender, index, self) =>
@@ -58,7 +62,7 @@ const UniqueDefenders: React.FC<UniqueDefendersProps> = (props) => {
   )
 }
 
-const InfoCard: React.FC<Props> = (props) => {
+const InfoCard: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { data, defendants, defenders, courtOfAppealData } = props
 
   return (

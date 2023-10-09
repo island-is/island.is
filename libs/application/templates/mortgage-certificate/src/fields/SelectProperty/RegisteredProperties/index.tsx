@@ -12,7 +12,7 @@ interface RegisteredPropertiesProps {
 }
 
 export const RegisteredProperties: FC<
-  FieldBaseProps & RegisteredPropertiesProps
+  React.PropsWithChildren<FieldBaseProps & RegisteredPropertiesProps>
 > = ({ application, field, selectHandler, selectedPropertyNumber }) => {
   const { externalData } = application
 

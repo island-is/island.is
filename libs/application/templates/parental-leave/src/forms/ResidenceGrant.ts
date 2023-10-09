@@ -80,16 +80,14 @@ export const ResidenceGrant: Form = buildForm({
               actions: [
                 {
                   event: 'REJECT',
-                  name:
-                    parentalLeaveFormMessages.residenceGrantMessage
-                      .residenceGrantReject,
+                  name: parentalLeaveFormMessages.residenceGrantMessage
+                    .residenceGrantReject,
                   type: 'reject',
                 },
                 {
                   event: 'APPROVE',
-                  name:
-                    parentalLeaveFormMessages.residenceGrantMessage
-                      .residenceGrantSubmit,
+                  name: parentalLeaveFormMessages.residenceGrantMessage
+                    .residenceGrantSubmit,
                   type: 'primary',
                 },
               ],

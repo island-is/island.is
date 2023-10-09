@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Clients Fiskistofa
 
 This library was generated with [Nx](https://nx.dev).

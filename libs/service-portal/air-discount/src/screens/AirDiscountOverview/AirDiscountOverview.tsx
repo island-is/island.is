@@ -85,11 +85,8 @@ export const AirDiscountOverview = () => {
   const airDiscounts: AirDiscountSchemeDiscount[] | undefined =
     data?.airDiscountSchemeDiscounts
   const flightLegs = flightLegData?.airDiscountSchemeUserAndRelationsFlights
-  const connectionCodes:
-    | AirDiscountSchemeDiscount[]
-    | undefined = airDiscounts?.filter(
-    (x) => x.connectionDiscountCodes.length > 0,
-  )
+  const connectionCodes: AirDiscountSchemeDiscount[] | undefined =
+    airDiscounts?.filter((x) => x.connectionDiscountCodes.length > 0)
 
   if (error && !loading) {
     return (
@@ -136,7 +133,7 @@ export const AirDiscountOverview = () => {
 
             <Text variant="default" paddingTop={2}>
               {formatMessage(m.introLink, {
-                link: (str) => (
+                link: (str: any) => (
                   <a
                     href="https://island.is/loftbru/notendaskilmalar-vegagerdarinnar-fyrir-loftbru"
                     target="_blank"
@@ -228,8 +225,9 @@ export const AirDiscountOverview = () => {
           <Stack space={2}>
             {connectionCodes?.map((item) => {
               return item.connectionDiscountCodes.map((code, codeIndex) => {
-                const isCopied = copiedCodes.find((x) => x.code === code.code)
-                  ?.copied
+                const isCopied = copiedCodes.find(
+                  (x) => x.code === code.code,
+                )?.copied
                 return (
                   <ActionCard
                     key={`loftbru-item-connection-code-${codeIndex}`}

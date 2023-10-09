@@ -6,7 +6,10 @@ import WomanWithLaptopIllustration from '../../assets/Images/WomanWithLaptopIllu
 import ManWithStrollerIllustration from '../../assets/Images/ManWithStrollerIllustration'
 import WomanWithPhoneIllustration from '../../assets/Images/WomanWithPhoneIllustration'
 
-const ImageField: FC<FieldBaseProps> = ({ application, field }) => {
+const ImageField: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+  field,
+}) => {
   const { defaultValue } = field
   const pictures = [
     <ManWithStrollerIllustration />,

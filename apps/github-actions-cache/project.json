@@ -1,5 +1,6 @@
 {
-  "root": "apps/github-actions-cache",
+  "name": "github-actions-cache",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/github-actions-cache/src",
   "projectType": "application",
   "prefix": "github-actions-cache",
@@ -22,22 +23,22 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "github-actions-cache:build"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/github-actions-cache/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/github-actions-cache"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/github-actions-cache"],
       "options": {
-        "jestConfig": "apps/github-actions-cache/jest.config.js",
+        "jestConfig": "apps/github-actions-cache/jest.config.ts",
         "passWithNoTests": true
       }
     },

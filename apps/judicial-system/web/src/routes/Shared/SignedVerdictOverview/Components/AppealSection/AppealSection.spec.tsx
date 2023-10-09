@@ -1,17 +1,15 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
-import { LocaleProvider } from '@island.is/localization'
 import { MockedProvider } from '@apollo/client/testing'
+import { render, screen } from '@testing-library/react'
 
+import { CaseState } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
-  CaseState,
-  Defendant,
-} from '@island.is/judicial-system/types'
-import {
-  CaseType,
   CaseOrigin,
+  CaseType,
+  Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { LocaleProvider } from '@island.is/localization'
 
 import AppealSection from './AppealSection'
 
@@ -36,7 +34,7 @@ describe('Appeal section component', () => {
             workingCase={{
               ...baseWorkingCase,
               isAppealDeadlineExpired: true,
-              courtEndTime: '2020-09-16T19:50:00.000Z',
+              rulingDate: '2020-09-16T19:50:00.000Z',
               accusedAppealDecision: CaseAppealDecision.POSTPONE,
             }}
             setAccusedAppealDate={() => null}
@@ -66,7 +64,7 @@ describe('Appeal section component', () => {
             workingCase={{
               ...baseWorkingCase,
               isAppealDeadlineExpired: false,
-              courtEndTime: `${dd}T19:50:00.000Z`,
+              rulingDate: `${dd}T19:50:00.000Z`,
               prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
             }}
             setAccusedAppealDate={() => null}
@@ -100,7 +98,7 @@ describe('Appeal section component', () => {
             workingCase={{
               ...baseWorkingCase,
               isAppealDeadlineExpired: false,
-              courtEndTime: `${dd}T19:50:00.000Z`,
+              rulingDate: `${dd}T19:50:00.000Z`,
             }}
             setAccusedAppealDate={() => null}
             setProsecutorAppealDate={() => null}

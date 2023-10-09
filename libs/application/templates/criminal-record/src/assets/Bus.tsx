@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-export const Bus: FC = () => (
+export const Bus: FC<React.PropsWithChildren<unknown>> = () => (
   <svg
     width="224"
     height="217"

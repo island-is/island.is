@@ -1,0 +1,28 @@
+query getOccupationalLicenses {
+  getOrganizations {
+    items {
+      id
+      title
+      slug
+      logo {
+        id
+        url
+        title
+      }
+    }
+  }
+  occupationalLicenses {
+    count
+    items {
+      __typename
+      id
+      isValid
+      profession
+      type
+      validFrom
+    }
+    error {
+      hasError
+    }
+  }
+}

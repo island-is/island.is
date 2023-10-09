@@ -86,7 +86,7 @@ export const UpdateCaseMutation = gql`
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
-      sendRequestToDefender
+      requestSharedWithDefender
       isHeightenedSecurityLevel
       court {
         id
@@ -163,6 +163,7 @@ export const UpdateCaseMutation = gql`
       accusedPostponedAppealDate
       prosecutorPostponedAppealDate
       rulingDate
+      rulingSignatureDate
       judge {
         id
         name
@@ -188,11 +189,11 @@ export const UpdateCaseMutation = gql`
         ruling
         caseFiles {
           id
-          name
-          size
           created
+          name
           state
           key
+          size
         }
       }
       childCase {
@@ -207,18 +208,20 @@ export const UpdateCaseMutation = gql`
       }
       caseFiles {
         id
-        name
-        size
         created
         modified
+        name
+        type
+        category
         state
         key
-        category
+        size
         policeCaseNumber
         chapter
         orderWithinChapter
         userGeneratedFilename
         displayDate
+        policeFileId
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
@@ -290,9 +293,9 @@ export const LimitedAccessUpdateCaseMutation = gql`
       policeCaseNumbers
       caseFiles {
         id
+        created
         name
         category
-        created
         key
         policeCaseNumber
       }
@@ -314,7 +317,7 @@ export const LimitedAccessUpdateCaseMutation = gql`
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
-      sendRequestToDefender
+      requestSharedWithDefender
       court {
         id
         name
@@ -349,6 +352,7 @@ export const LimitedAccessUpdateCaseMutation = gql`
       isolationToDate
       conclusion
       rulingDate
+      rulingSignatureDate
       registrar {
         id
         name

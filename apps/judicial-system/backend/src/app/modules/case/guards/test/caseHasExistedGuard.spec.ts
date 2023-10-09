@@ -7,8 +7,9 @@ import {
 } from '@nestjs/common'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
+
+import { include, order } from '../../case.service'
 import { Case } from '../../models/case.model'
-import { order, include } from '../../case.service'
 import { CaseHasExistedGuard } from '../caseHasExisted.guard'
 
 interface Then {
@@ -33,9 +34,9 @@ describe('Case Has Existed Guard', () => {
       const then = {} as Then
 
       try {
-        then.result = await guard.canActivate(({
+        then.result = await guard.canActivate({
           switchToHttp: () => ({ getRequest: mockRequest }),
-        } as unknown) as ExecutionContext)
+        } as unknown as ExecutionContext)
       } catch (error) {
         then.error = error as Error
       }

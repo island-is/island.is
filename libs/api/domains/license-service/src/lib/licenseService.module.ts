@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { CacheModule } from '@island.is/cache'
+import { CacheModule } from '@nestjs/cache-manager'
 import { ConfigType } from '@island.is/nest/config'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { CmsModule } from '@island.is/cms'
@@ -150,50 +150,52 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     },
     {
       provide: GENERIC_LICENSE_FACTORY,
-      useFactory: (
-        genericFirearmService: GenericFirearmLicenseService,
-        genericAdrService: GenericAdrLicenseService,
-        genericMachineService: GenericMachineLicenseService,
-        genericDisabilityService: GenericDisabilityLicenseService,
-        genericDrivingService: GenericDrivingLicenseService,
-        oldGenericDrivingLicenseApi: OldGenericDrivingLicenseApi,
-        featureFlagService: FeatureFlagService,
-      ) => async (
-        type: GenericLicenseType,
-        user: User,
-        forceSpecificDriversLicenseClient?: DriversLicenseClientTypes,
-      ): Promise<GenericLicenseClient<unknown> | null> => {
-        //option for forcing a client since verify is a big pain
-        if (forceSpecificDriversLicenseClient) {
-          return forceSpecificDriversLicenseClient === 'old'
-            ? oldGenericDrivingLicenseApi
-            : genericDrivingService
-        }
+      useFactory:
+        (
+          genericFirearmService: GenericFirearmLicenseService,
+          genericAdrService: GenericAdrLicenseService,
+          genericMachineService: GenericMachineLicenseService,
+          genericDisabilityService: GenericDisabilityLicenseService,
+          genericDrivingService: GenericDrivingLicenseService,
+          oldGenericDrivingLicenseApi: OldGenericDrivingLicenseApi,
+          featureFlagService: FeatureFlagService,
+        ) =>
+        async (
+          type: GenericLicenseType,
+          user: User,
+          forceSpecificDriversLicenseClient?: DriversLicenseClientTypes,
+        ): Promise<GenericLicenseClient<unknown> | null> => {
+          //option for forcing a client since verify is a big pain
+          if (forceSpecificDriversLicenseClient) {
+            return forceSpecificDriversLicenseClient === 'old'
+              ? oldGenericDrivingLicenseApi
+              : genericDrivingService
+          }
 
-        const isNewDriversLicenseEnabled = await featureFlagService.getValue(
-          Features.licenseServiceDrivingLicenseClient,
-          false,
-          user,
-        )
+          const isNewDriversLicenseEnabled = await featureFlagService.getValue(
+            Features.licenseServiceDrivingLicenseClient,
+            false,
+            user,
+          )
 
-        switch (type) {
-          case GenericLicenseType.DriversLicense:
-            return isNewDriversLicenseEnabled
-              ? genericDrivingService
-              : oldGenericDrivingLicenseApi
-          case GenericLicenseType.AdrLicense:
-            return genericAdrService
-          case GenericLicenseType.MachineLicense:
-            return genericMachineService
-          case GenericLicenseType.FirearmLicense:
-            return genericFirearmService
-          case GenericLicenseType.DisabilityLicense:
-            return genericDisabilityService
+          switch (type) {
+            case GenericLicenseType.DriversLicense:
+              return isNewDriversLicenseEnabled
+                ? genericDrivingService
+                : oldGenericDrivingLicenseApi
+            case GenericLicenseType.AdrLicense:
+              return genericAdrService
+            case GenericLicenseType.MachineLicense:
+              return genericMachineService
+            case GenericLicenseType.FirearmLicense:
+              return genericFirearmService
+            case GenericLicenseType.DisabilityLicense:
+              return genericDisabilityService
 
-          default:
-            return null
-        }
-      },
+            default:
+              return null
+          }
+        },
       inject: [
         GenericFirearmLicenseService,
         GenericAdrLicenseService,

@@ -10,6 +10,10 @@ class FiltersInput {
   @Field(() => [String], { nullable: true })
   @IsOptional()
   status?: string[]
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  scopeCheck?: boolean
 }
 
 @InputType()

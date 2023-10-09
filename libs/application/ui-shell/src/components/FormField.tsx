@@ -13,18 +13,20 @@ import {
 import { useFields } from '../context/FieldContext'
 import { FieldDef } from '../types'
 
-const FormField: FC<{
-  application: Application
-  setBeforeSubmitCallback?: SetBeforeSubmitCallback
-  setFieldLoadingState?: SetFieldLoadingState
-  setSubmitButtonDisabled?: SetSubmitButtonDisabled
-  autoFocus?: boolean
-  field: FieldDef
-  showFieldName?: boolean
-  errors: RecordObject
-  goToScreen: (id: string) => void
-  refetch: () => void
-}> = ({
+const FormField: FC<
+  React.PropsWithChildren<{
+    application: Application
+    setBeforeSubmitCallback?: SetBeforeSubmitCallback
+    setFieldLoadingState?: SetFieldLoadingState
+    setSubmitButtonDisabled?: SetSubmitButtonDisabled
+    autoFocus?: boolean
+    field: FieldDef
+    showFieldName?: boolean
+    errors: RecordObject
+    goToScreen: (id: string) => void
+    refetch: () => void
+  }>
+> = ({
   application,
   setBeforeSubmitCallback,
   setFieldLoadingState,

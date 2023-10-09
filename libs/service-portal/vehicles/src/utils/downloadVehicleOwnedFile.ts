@@ -1,4 +1,5 @@
 import XLSX from 'xlsx'
+const locale = 'is-IS'
 
 export const downloadVehicleOwnedFile = async (
   fileName: string,
@@ -24,25 +25,31 @@ export const downloadVehicleOwnedFile = async (
 
   const sheetData = [
     [],
-    [`${fileName} ${new Date().toLocaleDateString()}`],
+    [`${fileName} ${new Date().toLocaleDateString(locale)}`],
     [`${name} ${nationalId}`],
     [],
     [
-      `Ökutæki í eigu kt. ${nationalId} þann ${new Date().toLocaleDateString()}`,
+      `Ökutæki í eigu kt. ${nationalId} þann ${new Date().toLocaleDateString(
+        locale,
+      )}`,
     ],
     [],
     showOwnedVehicles ? header[0] : null,
     ...(showOwnedVehicles ? data[0] : [['Ekkert fannst']]),
     [],
     [
-      `Ökutæki í meðeigu kt. ${nationalId} þann ${new Date().toLocaleDateString()}`,
+      `Ökutæki í meðeigu kt. ${nationalId} þann ${new Date().toLocaleDateString(
+        locale,
+      )}`,
     ],
     [],
     showCoOwnedVehicles ? header[1] : null,
     ...(showCoOwnedVehicles ? data[1] : [['Ekkert fannst']]),
     [],
     [
-      `Ökutæki í umráði kt. ${nationalId} þann ${new Date().toLocaleDateString()}`,
+      `Ökutæki í umráði kt. ${nationalId} þann ${new Date().toLocaleDateString(
+        locale,
+      )}`,
     ],
     [],
     showOperatorVehicles ? header[2] : null,

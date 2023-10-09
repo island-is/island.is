@@ -1,11 +1,12 @@
 {
-  "root": "libs/icelandic-names-registry/types",
+  "name": "icelandic-names-registry-types",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/icelandic-names-registry/types/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/icelandic-names-registry/types/**/*.{ts,tsx,js,jsx}"
@@ -13,12 +14,14 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/icelandic-names-registry/types/jest.config.js",
+        "jestConfig": "libs/icelandic-names-registry/types/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/icelandic-names-registry/types"]
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/icelandic-names-registry/types"
+      ]
     }
   },
   "tags": ["lib:js", "scope:js"]

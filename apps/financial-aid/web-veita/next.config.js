@@ -1,4 +1,4 @@
-const withNx = require('@nrwl/next/plugins/with-nx')
+const withNx = require('@nx/next/plugins/with-nx')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 
 const { API_URL = 'http://localhost:3339' } = process.env
@@ -21,9 +21,6 @@ module.exports = withNx(
     },
     env: {
       API_MOCKS: process.env.API_MOCKS || '',
-    },
-    devIndicators: {
-      autoPrerender: false,
     },
   }),
 )

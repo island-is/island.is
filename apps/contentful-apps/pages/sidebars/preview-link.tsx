@@ -10,6 +10,9 @@ import {
 } from '../../constants'
 
 const previewLinkHandler = {
+  vacancy: (entry: EntryProps<KeyValueMap>) => {
+    return `https://beta.dev01.devland.is/starfatorg/c-${entry.sys.id}`
+  },
   article: (entry: EntryProps<KeyValueMap>) => {
     return `https://beta.dev01.devland.is/${entry.fields.slug[DEFAULT_LOCALE]}`
   },

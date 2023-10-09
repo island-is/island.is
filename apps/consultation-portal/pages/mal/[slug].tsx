@@ -10,7 +10,7 @@ interface CaseProps {
   caseId: number
 }
 
-const CaseDetails: React.FC<CaseProps> = ({
+const CaseDetails: React.FC<React.PropsWithChildren<CaseProps>> = ({
   case: Case,
   caseId,
 }: CaseProps) => {

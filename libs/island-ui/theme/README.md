@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # island-ui-theme
 
 This library was generated with [Nx](https://nx.dev).

@@ -1,20 +1,21 @@
-import { uuid } from 'uuidv4'
 import fetch from 'node-fetch'
+import { uuid } from 'uuidv4'
 
 import type { Logger } from '@island.is/logging'
-import { NotificationType, User } from '@island.is/judicial-system/types'
+
 import {
-  CaseMessage,
   CaseFileMessage,
+  CaseMessage,
+  DefendantMessage,
   MessageService,
   MessageType,
   PoliceCaseMessage,
-  DefendantMessage,
 } from '@island.is/judicial-system/message'
+import { NotificationType, User } from '@island.is/judicial-system/types'
 
 import { appModuleConfig } from '../app.config'
-import { MessageHandlerService } from '../messageHandler.service'
 import { InternalDeliveryService } from '../internalDelivery.service'
+import { MessageHandlerService } from '../messageHandler.service'
 
 jest.mock('@island.is/logging')
 jest.mock('node-fetch')
@@ -28,13 +29,13 @@ type GivenWhenThen = (message: CaseMessage) => Promise<Then>
 
 describe('MessageHandlerService - Handle message', () => {
   const config = appModuleConfig()
-  const logger = ({ debug: jest.fn() } as unknown) as Logger
+  const logger = { debug: jest.fn() } as unknown as Logger
   const user = { id: uuid() } as User
   const caseId = uuid()
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const mockFetch = (fetch as unknown) as jest.Mock
+    const mockFetch = fetch as unknown as jest.Mock
     mockFetch.mockResolvedValueOnce({
       ok: true,
       json: jest.fn().mockResolvedValueOnce({ delivered: true }),
@@ -42,7 +43,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     givenWhenThen = async (message: CaseMessage) => {
       const messageHandlerService = new MessageHandlerService(
-        (undefined as unknown) as MessageService,
+        undefined as unknown as MessageService,
         new InternalDeliveryService(config, logger),
         config,
         logger,
@@ -245,6 +246,33 @@ describe('MessageHandlerService - Handle message', () => {
     it('should deliver signed ruling to court', async () => {
       expect(fetch).toHaveBeenCalledWith(
         `${config.backendUrl}/api/internal/case/${caseId}/deliverSignedRulingToCourt`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ user }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('deliver case conclusion to court', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.DELIVER_CASE_CONCLUSION_TO_COURT,
+        user,
+        caseId,
+      })
+    })
+
+    it('should deliver case conclusion to court', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/deliverCaseConclusionToCourt`,
         {
           method: 'POST',
           headers: {

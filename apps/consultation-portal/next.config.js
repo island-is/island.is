@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const withNx = require('@nrwl/next/plugins/with-nx')
+const withNx = require('@nx/next/plugins/with-nx')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 
 const {
@@ -36,7 +36,6 @@ module.exports = withNx(
       graphqlEndpoint: `${API_URL}${graphqlPath}`,
     },
     basePath: `${BASE_PATH}`,
-    presets: ['next/babel'],
     env: {
       NEXTAUTH_URL: process.env.NEXTAUTH_URL,
       IDENTITY_SERVER_SECRET: process.env.IDENTITY_SERVER_SECRET,

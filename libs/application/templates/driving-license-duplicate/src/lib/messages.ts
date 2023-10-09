@@ -241,7 +241,7 @@ export const m = defineMessages({
     description: 'Title for delivery method section',
   },
   deliveryMethodDescription: {
-    id: 'dld.application:deliveryMethodDescription',
+    id: 'dld.application:deliveryMethodDescription#markdown',
     defaultMessage:
       'Fljótlegast er að sækja samrit hjá Þjóðskrá Íslands í Borgartúni 21, 105 Reykjavík. Á öðrum afhendingarstöðum getur afhending tekið allt að 6 til 10 daga. Sjá afgreiðslutíma.',
     description: 'Description for delivery method section',
@@ -407,5 +407,12 @@ export const m = defineMessages({
     id: 'dld.application:temporaryLicense',
     defaultMessage: 'Bráðabirgðaskírteini',
     description: 'text for temporary license',
+  },
+
+  /* Application log */
+  pendingActionApplicationCompletedTitle: {
+    id: 'dld.application:pendingActionApplicationCompletedTitle',
+    defaultMessage: 'Umsókn þín hefur verið móttekin og skírteini pantað',
+    description: 'text for pending action application completed title',
   },
 })

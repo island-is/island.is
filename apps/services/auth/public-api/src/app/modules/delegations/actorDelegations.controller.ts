@@ -72,6 +72,14 @@ export class ActorDelegationsController {
             },
           },
         },
+        otherUser: {
+          required: false,
+          description:
+            'The ID of another user. We filter out all delegations not related to that national id.',
+          schema: {
+            type: 'string',
+          },
+        },
       },
     },
   })
@@ -82,6 +90,7 @@ export class ActorDelegationsController {
     @CurrentActor() actor: User,
     @Query('direction') direction: DelegationDirection.INCOMING,
     @Query('delegationTypes') delegationTypes?: Array<DelegationType>,
+    @Query('otherUser') otherUser?: string,
   ): Promise<MergedDelegationDTO[]> {
     if (direction !== DelegationDirection.INCOMING) {
       throw new BadRequestException(
@@ -92,6 +101,7 @@ export class ActorDelegationsController {
     return this.delegationsIncomingService.findAllAvailable({
       user: actor,
       delegationTypes,
+      otherUser,
     })
   }
 }

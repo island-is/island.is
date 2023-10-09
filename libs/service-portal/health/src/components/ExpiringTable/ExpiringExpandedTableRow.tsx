@@ -15,7 +15,7 @@ interface Props {
   foldedValues: Array<{ title: string; value?: string | number }>
 }
 
-export const ExpiringExpandedTableRow: FC<Props> = ({
+export const ExpiringExpandedTableRow: FC<React.PropsWithChildren<Props>> = ({
   expiring,
   visibleValues,
   foldedValues,

@@ -30,7 +30,7 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
 
   const minarsidurLink = '/minarsidur/'
 
-  const trackAndNavigateNew = (e) => {
+  const trackAndNavigateNew = (e: { preventDefault: () => void }) => {
     e.preventDefault()
 
     // If the plausible script is not loaded (For example in case of adBlocker) the user will be navigated directly to /minarsidur.
@@ -155,7 +155,7 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
   )
 }
 
-LoginPage.getInitialProps = async ({ apolloClient, locale }) => {
+LoginPage.getProps = async ({ apolloClient, locale }) => {
   const [namespace] = await Promise.all([
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({

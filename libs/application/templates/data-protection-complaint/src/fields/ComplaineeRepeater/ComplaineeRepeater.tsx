@@ -15,11 +15,9 @@ export type ComplaineeField = {
   countryOfOperation: string
 }
 
-export const ComplaineeRepeater: FC<FieldBaseProps> = ({
-  application,
-  field,
-  errors,
-}) => {
+export const ComplaineeRepeater: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application, field, errors }) => {
   const { formatMessage } = useLocale()
   const { answers } = application
   const { id } = field

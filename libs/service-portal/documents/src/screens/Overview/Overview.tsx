@@ -92,14 +92,12 @@ export const ServicePortalDocuments = () => {
     direction: 'Descending',
     key: 'Date',
   })
-  const [searchInteractionEventSent, setSearchInteractionEventSent] = useState(
-    false,
-  )
+  const [searchInteractionEventSent, setSearchInteractionEventSent] =
+    useState(false)
   const { scrollToRef } = useScrollToRefOnUpdate([page])
 
-  const [filterValue, setFilterValue] = useState<FilterValuesType>(
-    defaultFilterValues,
-  )
+  const [filterValue, setFilterValue] =
+    useState<FilterValuesType>(defaultFilterValues)
   const { data, totalCount, loading, error } = useListDocuments({
     senderKennitala: filterValue.activeSenders.join(),
     dateFrom: filterValue.dateFrom?.toISOString(),
@@ -119,13 +117,11 @@ export const ServicePortalDocuments = () => {
     GET_DOCUMENT_CATEGORIES,
   )
 
-  const { data: typesData, loading: typesLoading } = useQuery<Query>(
-    GET_DOCUMENT_TYPES,
-  )
+  const { data: typesData, loading: typesLoading } =
+    useQuery<Query>(GET_DOCUMENT_TYPES)
 
-  const { data: sendersData, loading: sendersLoading } = useQuery<Query>(
-    GET_DOCUMENT_SENDERS,
-  )
+  const { data: sendersData, loading: sendersLoading } =
+    useQuery<Query>(GET_DOCUMENT_SENDERS)
 
   const [categoriesAvailable, setCategoriesAvailable] = useState<
     DocumentCategory[]

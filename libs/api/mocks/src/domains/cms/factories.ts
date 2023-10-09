@@ -60,12 +60,10 @@ export const sectionWithImage = factory<SystemMetadata<SectionWithImage>>({
   image: () => image(),
 })
 
-export const slice = simpleFactory(
-  (): Slice => {
-    const factory = faker.random.arrayElement([html, sectionWithImage])
-    return factory()
-  },
-)
+export const slice = simpleFactory((): Slice => {
+  const factory = faker.random.arrayElement([html, sectionWithImage])
+  return factory()
+})
 
 export const subArticle = factory<SubArticle>({
   id: () => faker.datatype.uuid(),

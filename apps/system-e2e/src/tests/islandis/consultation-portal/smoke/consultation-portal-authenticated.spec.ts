@@ -1,90 +1,88 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
-import {
-  HERO as hero,
-  LOGGED_IN_NAV as nav,
-  FILTERS as filters,
-  FOOTER as footer,
-  LOGGED_IN_STATES as lis,
-  PagesInterface,
-  LOGIN as login,
-  URL,
-  URL_LOCALE,
-} from './consts'
-
-test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Consultation portal authenticated', () => {
   let context: BrowserContext
-  const authLink = new RegExp(`^${urls.authUrl}`)
+  test.use({ baseURL: urls.islandisBaseUrl })
+
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser: browser,
       storageState: 'consultation-auth.json',
-      idsLoginOn: false,
-      homeUrl: URL,
-      phoneNumber: login.phoneNumber,
+      idsLoginOn: {
+        nextAuth: { nextAuthRoot: `${urls.islandisBaseUrl}/samradsgatt` },
+      },
+      phoneNumber: '0102989',
+      homeUrl: `${urls.islandisBaseUrl}/samradsgatt`,
+      authTrigger: async (page) => {
+        await page.goto('/samradsgatt')
+        await page.getByTestId('menu-login-btn').click()
+        return `${urls.islandisBaseUrl}/samradsgatt`
+      },
     })
   })
+
   test.afterAll(async () => {
     await context.close()
   })
 
-  test('front page should have expected static content', async () => {
+  test('logged in user should be shown instead of login', async () => {
     const page = await context.newPage()
-    await page.goto(icelandicAndNoPopupUrl(URL))
+    await page.goto(icelandicAndNoPopupUrl('/samradsgatt'))
 
-    const loggedOut = page.getByRole('button', {
-      name: login.buttons.loggedOut,
-    })
-    const loggedIn = page.getByRole('button', { name: login.buttons.loggedIn })
-
-    if (await loggedOut.isVisible()) {
-      await loggedOut.click()
-      await page.waitForURL(authLink)
-      await page
-        .locator(login.locators.phoneUserIdentifier)
-        .fill(login.phoneNumber)
-      await page.locator(login.locators.submitPhoneUser).isEnabled()
-      await page.locator(login.locators.submitPhoneUser).click()
-      await page.waitForURL(`**${URL_LOCALE}`)
-    } else {
-      await loggedIn.isVisible()
-    }
-
-    for (const { label } of nav) {
-      await expect(page.getByRole('button', { name: label })).toBeVisible()
-    }
-    await expect(page.getByText(hero.text)).toBeVisible()
-    for (const { label } of hero.links) {
-      await expect(page.getByRole('link', { name: label })).toBeVisible()
-    }
-    for (const text of filters) {
-      await expect(page.getByText(text)).toBeVisible()
-    }
-    await expect(page.getByText(footer.text)).toBeVisible()
     await expect(
-      page.getByRole('link', { name: footer.link.label }),
+      page.getByRole('button', { name: 'Gervimaður Ameríku' }),
     ).toBeVisible()
+    await expect(page.getByTestId('menu-login-btn')).not.toBeVisible()
+
+    await page.close()
   })
 
-  for (const item in lis) {
-    const instance = lis[item as keyof PagesInterface]
-    test(`${item} should show logged in state`, async () => {
-      if (item.toLowerCase() == 'subscriptions') test.skip()
-      const page = await context.newPage()
-      await page.goto(icelandicAndNoPopupUrl(`${URL}${instance.href}`))
-      for (const { text } of instance.breadcrumbs) {
-        expect(page.locator('nav', { has: page.getByText(text) }))
-      }
-      expect(page.locator(`text=${instance.title}`)).toBeTruthy()
-      await expect(page.getByText(instance.text)).toBeVisible()
-      if (instance.tabs) {
-        for (const { text } of instance.tabs) {
-          expect(page.locator(`text=${text}`)).toBeTruthy()
-        }
-      }
-    })
-  }
+  test('subscriptions page should show logged in state', async () => {
+    const page = await context.newPage()
+    await page.goto(icelandicAndNoPopupUrl('/samradsgatt'))
+
+    await page.getByTestId('subscriptions-btn').click()
+    await expect(page.getByTestId('subscriptions-title')).toBeVisible()
+    await expect(page.getByTestId('action-card')).toBeVisible()
+    await expect(page.getByTestId('tab-content')).toBeVisible()
+    await expect(
+      page.getByRole('button', {
+        name: 'Skrá mig inn',
+      }),
+    ).not.toBeVisible()
+
+    await page.close()
+  })
+
+  test('my subscriptions page should show logged in state', async () => {
+    const page = await context.newPage()
+    await page.goto(icelandicAndNoPopupUrl('/samradsgatt/minaraskriftir'))
+    await expect(page.getByTestId('subscriptions-title')).toBeVisible()
+    await expect(page.getByTestId('action-card')).not.toBeVisible()
+    await expect(page.getByTestId('tab-content')).toBeVisible()
+
+    await page.close()
+  })
+
+  test('advices page should show logged in state', async () => {
+    const page = await context.newPage()
+    await page.goto(icelandicAndNoPopupUrl('/samradsgatt'))
+
+    await page.goto('/umsagnir')
+    await expect(page.getByTestId('actionCard')).not.toBeVisible()
+
+    await page.close()
+  })
+
+  test('logout button should be visible', async () => {
+    const page = await context.newPage()
+    await page.goto(icelandicAndNoPopupUrl('/samradsgatt'))
+
+    await page.getByRole('button', { name: 'Gervimaður Ameríku' }).click()
+    await expect(page.getByRole('button', { name: 'Útskrá' })).toBeVisible()
+
+    await page.close()
+  })
 })

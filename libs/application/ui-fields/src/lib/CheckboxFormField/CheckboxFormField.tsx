@@ -20,7 +20,7 @@ interface Props extends FieldBaseProps {
   field: CheckboxField
 }
 
-export const CheckboxFormField: FC<Props> = ({
+export const CheckboxFormField: FC<React.PropsWithChildren<Props>> = ({
   error,
   showFieldName = false,
   field,

@@ -7,7 +7,9 @@ import { m } from '../../lib/messages'
 import { getChargeCode, getPrice } from '../../lib/utils'
 import { useFormContext } from 'react-hook-form'
 
-export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
+export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const serviceTypeRegular =

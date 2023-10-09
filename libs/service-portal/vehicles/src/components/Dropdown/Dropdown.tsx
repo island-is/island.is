@@ -16,7 +16,9 @@ interface Props {
     ) => ReactElement
   }[]
 }
-const Dropdown: FC<Props> = ({ dropdownItems = [] }) => {
+const Dropdown: FC<React.PropsWithChildren<Props>> = ({
+  dropdownItems = [],
+}) => {
   const { formatMessage } = useLocale()
   return (
     <Box className={styles.buttonWrapper}>

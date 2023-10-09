@@ -12,7 +12,7 @@ interface Props {
   }>
 }
 
-const ExpandableLine: FC<Props> = ({ data }) => {
+const ExpandableLine: FC<React.PropsWithChildren<Props>> = ({ data }) => {
   return (
     <T.Head>
       <T.Row>

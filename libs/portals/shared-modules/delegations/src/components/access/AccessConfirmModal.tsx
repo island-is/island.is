@@ -1,10 +1,10 @@
 import { isDefined } from '@island.is/shared/utils'
 import { AuthDelegationScope } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
-import { AlertBanner, Box, useBreakpoint } from '@island.is/island-ui/core'
-import { m as coreMessages } from '@island.is/portals/core'
+import { Box, useBreakpoint } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatNationalId } from '@island.is/portals/core'
+import { formatNationalId, m as coreMessages } from '@island.is/portals/core'
+import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { Modal, ModalProps } from '@island.is/react/components'
@@ -76,14 +76,9 @@ export const AccessConfirmModal = ({
       scrollType="inside"
       closeButtonLabel={formatMessage(m.closeModal)}
     >
-      <Box marginY={[4, 4, 8]} display="flex" flexDirection="column" rowGap={3}>
+      <Box marginY={[4, 4, 6]} display="flex" flexDirection="column" rowGap={3}>
         {error && (
-          <Box paddingBottom={3}>
-            <AlertBanner
-              description={formatMessage(m.confirmError)}
-              variant="error"
-            />
-          </Box>
+          <Problem message={formatMessage(m.confirmError)} size="small" />
         )}
         <Box
           width="full"

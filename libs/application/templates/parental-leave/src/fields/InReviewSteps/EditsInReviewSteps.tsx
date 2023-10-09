@@ -32,7 +32,9 @@ const statesMap: StatesMap = {
   },
 }
 
-const EditInReviewSteps: FC<FieldBaseProps> = (props) => {
+const EditInReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (
+  props,
+) => {
   const { application } = props
   const dob = getExpectedDateOfBirthOrAdoptionDate(application)
   const dobDate = dob ? new Date(dob) : null

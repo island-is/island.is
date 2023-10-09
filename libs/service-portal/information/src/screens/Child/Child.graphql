@@ -1,0 +1,41 @@
+query NationalRegistryChildCustody($api: String) {
+  nationalRegistryPerson(api: $api) {
+    nationalId
+    fullName
+    childCustody {
+      nationalId
+      fullName
+      name {
+        firstName
+        middleName
+        lastName
+      }
+      gender
+      religion
+      fate
+      housing {
+        address {
+          streetAddress
+          postalCode
+          city
+        }
+      }
+      custodians {
+        fullName
+        nationalId
+        text
+      }
+      birthParents {
+        fullName
+        nationalId
+      }
+      birthplace {
+        location
+      }
+      citizenship {
+        code
+        name
+      }
+    }
+  }
+}

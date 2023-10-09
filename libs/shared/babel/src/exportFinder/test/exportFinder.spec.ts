@@ -5,12 +5,12 @@ describe('exportFinder', () => {
   it('finds all exports', () => {
     const fixturePath = path.join(__dirname, 'fixture')
     const exports = exportFinder(path.join(fixturePath, 'index.ts'))
-    const relativeExports = Object.entries(
-      exports,
-    ).map(([exportName, modulePath]) => [
-      exportName,
-      path.relative(fixturePath, modulePath),
-    ])
+    const relativeExports = Object.entries(exports).map(
+      ([exportName, modulePath]) => [
+        exportName,
+        path.relative(fixturePath, modulePath),
+      ],
+    )
     expect(relativeExports).toEqual([
       ['name18', 'f.ts'],
       ['name17', 'f.ts'],

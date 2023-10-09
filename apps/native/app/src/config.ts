@@ -1,5 +1,9 @@
 import DeviceInfo from 'react-native-device-info';
 import {Platform} from 'react-native';
+import {
+  environmentStore,
+  useEnvironmentStore,
+} from './stores/environment-store';
 
 // Initial environment
 export const environments = {
@@ -8,7 +12,7 @@ export const environments = {
     label: 'Production',
     idsIssuer: 'https://innskra.island.is/',
     apiUrl: 'https://island.is/api',
-    configcat: 'YcfYCOwBTUeI04mWOWpPdA/qDKG1RMTMkeqM0ifHFlxmQ',
+    configCat: 'YcfYCOwBTUeI04mWOWpPdA/qDKG1RMTMkeqM0ifHFlxmQ',
     datadog: 'pubdb17b5a1eb2e3bc1c7f7ad1595c8cfc7',
   },
   staging: {
@@ -16,7 +20,7 @@ export const environments = {
     label: 'Staging',
     idsIssuer: 'https://identity-server.staging01.devland.is/',
     apiUrl: 'https://beta.staging01.devland.is/api',
-    configcat: 'YcfYCOwBTUeI04mWOWpPdA/7kWZdAnrz0acVfr_paEl5Q',
+    configCat: 'YcfYCOwBTUeI04mWOWpPdA/7kWZdAnrz0acVfr_paEl5Q',
     datadog: 'pubdb17b5a1eb2e3bc1c7f7ad1595c8cfc7',
   },
   dev: {
@@ -24,13 +28,15 @@ export const environments = {
     label: 'Development',
     idsIssuer: 'https://identity-server.dev01.devland.is/',
     apiUrl: 'https://beta.dev01.devland.is/api',
-    configcat: 'YcfYCOwBTUeI04mWOWpPdA/2mYtDGA4oEKdCJt2lnpXEw',
+    configCat: 'YcfYCOwBTUeI04mWOWpPdA/2mYtDGA4oEKdCJt2lnpXEw',
     datadog: null,
   },
 };
 
-const bundleId = DeviceInfo.getBundleId();
-const isTestingApp = true; // bundleId.endsWith('.staging') || bundleId.endsWith('.dev');
+export const bundleId = DeviceInfo.getBundleId();
+
+export const isTestingApp =
+  bundleId.endsWith('.staging') || bundleId.endsWith('.dev');
 
 export const config = {
   bundleId,
@@ -49,6 +55,9 @@ export const config = {
     '@island.is/licenses',
     '@island.is/vehicles',
     '@island.is/assets',
+    '@island.is/finance:overview',
+    '@island.is/finance/salary',
+    '@island.is/finance/schedule:read',
   ],
   cognitoUrl: 'https://cognito.shared.devland.is/login',
   cognitoClientId: 'bre6r7d5e7imkcgbt7et1kqlc',
@@ -57,5 +66,19 @@ export const config = {
     ios: '8And8KYL9BWRsUAhEBFFUxbVfVTdSM4QBQsr6',
     android: '4sXtRa8Q7CWLTrTxKjvcH7g8WJYIDMCENhvYz',
   }),
-  ...(isTestingApp ? environments.dev : environments.prod),
 };
+
+export function useConfig() {
+  const {environment} = useEnvironmentStore();
+  return {
+    ...config,
+    ...environment,
+  };
+}
+
+export function getConfig() {
+  return {
+    ...config,
+    ...environmentStore.getState().environment,
+  };
+}

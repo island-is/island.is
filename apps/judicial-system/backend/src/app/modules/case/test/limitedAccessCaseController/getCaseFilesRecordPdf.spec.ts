@@ -1,16 +1,17 @@
-import { uuid } from 'uuidv4'
 import { Response } from 'express'
+import { uuid } from 'uuidv4'
 
 import { BadRequestException } from '@nestjs/common'
 
 import { CaseFileCategory, CaseState } from '@island.is/judicial-system/types'
 
-import { randomDate } from '../../../../test'
+import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import { createCaseFilesRecord } from '../../../../formatters'
+import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
 import { CaseFile } from '../../../file'
 import { Case } from '../../models/case.model'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 
 jest.mock('../../../../formatters/caseFilesRecordPdf')
 
@@ -42,16 +43,14 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
     caseFiles,
   } as Case
   const pdf = uuid()
-  const res = ({ end: jest.fn() } as unknown) as Response
+  const res = { end: jest.fn() } as unknown as Response
 
   let mockawsS3Service: AwsS3Service
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      awsS3Service,
-      limitedAccessCaseController,
-    } = await createTestingCaseModule()
+    const { awsS3Service, limitedAccessCaseController } =
+      await createTestingCaseModule()
 
     mockawsS3Service = awsS3Service
     const mockGetObject = mockawsS3Service.getObject as jest.Mock

@@ -11,7 +11,7 @@ interface Props {
   extraText?: boolean
   subLabel?: string
 }
-const ConstraintController: FC<Props> = ({
+const ConstraintController: FC<React.PropsWithChildren<Props>> = ({
   id,
   checkboxId,
   label,

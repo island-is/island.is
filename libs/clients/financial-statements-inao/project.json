@@ -1,19 +1,22 @@
 {
-  "root": "libs/clients/financial-statements-inao",
+  "name": "clients-financial-statements-inao",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/financial-statements-inao/src",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/clients/financial-statements-inao/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/financial-statements-inao"],
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/clients/financial-statements-inao"
+      ],
       "options": {
-        "jestConfig": "libs/clients/financial-statements-inao/jest.config.js",
+        "jestConfig": "libs/clients/financial-statements-inao/jest.config.ts",
         "passWithNoTests": true
       }
     }

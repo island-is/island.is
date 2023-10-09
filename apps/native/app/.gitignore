@@ -19,6 +19,7 @@ xcuserdata
 DerivedData
 *.hmap
 *.ipa
+*.dSYM.zip
 *.xcuserstate
 ios/.xcode.env.local
 
@@ -34,6 +35,7 @@ local.properties
 *.keystore
 !debug.keystore
 google-services.json
+service-account.json
 
 # node.js
 #

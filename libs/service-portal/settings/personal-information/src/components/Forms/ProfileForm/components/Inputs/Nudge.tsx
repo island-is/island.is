@@ -26,7 +26,7 @@ interface Props {
  * "Refuse nudge" while the value in the db is of "Accept nudge (canNudge)"
  * So we need to get the value and set it to the opposite of the db value.
  */
-export const Nudge: FC<Props> = ({ refuseMail }) => {
+export const Nudge: FC<React.PropsWithChildren<Props>> = ({ refuseMail }) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
   const { control, handleSubmit, getValues } = useForm<Props>()

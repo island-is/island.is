@@ -1,80 +1,104 @@
 {
-  "root": "apps/reference-next-app",
+  "name": "reference-next-app",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/reference-next-app",
   "projectType": "application",
   "generators": {},
   "targets": {
     "build": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/reference-next-app",
-        "commands": [
-          "yarn nx build-next reference-next-app",
-          "yarn nx build-server reference-next-app"
-        ]
-      },
-      "configurations": {
-        "production": {
-          "args": "--prod"
-        }
-      }
-    },
-    "build-next": {
-      "executor": "@nrwl/next:build",
-      "options": {
-        "root": "apps/reference-next-app",
         "outputPath": "dist/apps/reference-next-app"
       },
       "configurations": {
+        "development": {
+          "outputPath": "apps/reference-next-app"
+        },
         "production": {}
       },
-      "outputs": ["{options.outputPath}"]
+      "dependsOn": ["build-custom-server"]
     },
-    "build-server": {
-      "executor": "@nrwl/node:webpack",
+    "build-custom-server": {
+      "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/reference-next-app",
         "main": "apps/reference-next-app/server.ts",
-        "tsConfig": "apps/reference-next-app/tsconfig.json",
-        "maxWorkers": 2
+        "tsConfig": "apps/reference-next-app/tsconfig.server.json",
+        "maxWorkers": 2,
+        "assets": [],
+        "compiler": "tsc",
+        "target": "node"
       },
       "configurations": {
+        "development": {},
         "production": {
           "optimization": true,
           "extractLicenses": true,
           "inspect": false
         }
-      },
-      "outputs": ["{options.outputPath}"]
+      }
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "reference-next-app:build-server"
+        "buildTarget": "reference-next-app:build",
+        "dev": true,
+        "customServerTarget": "reference-next-app:serve-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "reference-next-app:build:development",
+          "dev": true,
+          "customServerTarget": "reference-next-app:serve-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "reference-next-app:build:production",
+          "dev": false,
+          "customServerTarget": "reference-next-app:serve-custom-server:production"
+        }
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "reference-next-app:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "reference-next-app:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "reference-next-app:build-custom-server:production"
+        }
       }
     },
     "export": {
-      "executor": "@nrwl/next:export",
+      "executor": "@nx/next:export",
       "options": {
         "buildTarget": "reference-next-app:build:production"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/reference-next-app/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/reference-next-app/jest.config.js",
+        "jestConfig": "apps/reference-next-app/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/reference-next-app"]
+      "outputs": ["{workspaceRoot}/coverage/apps/reference-next-app"]
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/reference-next-app/{screens,pages,components}/*.{js,ts,tsx}'"
       }

@@ -1,10 +1,11 @@
 {
-  "root": "libs/application/templates/marriage-conditions",
+  "name": "application-templates-marriage-conditions",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/marriage-conditions/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/application/templates/marriage-conditions/**/*.{ts,tsx,js,jsx}"
@@ -12,13 +13,13 @@
       }
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/marriage-conditions/src/lib/messages.ts"
       }
     },
     "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "graphql-codegen --config libs/application/templates/marriage-conditions/codegen.yml"
       }

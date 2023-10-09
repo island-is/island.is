@@ -48,17 +48,15 @@ function formSubmit(url: string, token: string) {
 export function DownloadDraftButton({ draftId, reviewButton }: Props) {
   const userInfo = useAuth().userInfo
   const t = useLocale().formatMessage
-  const [
-    downloadRegulation,
-    { called, loading, error, data },
-  ] = useLazyQuery<Query>(DownloadRegulationDraftQuery, {
-    variables: {
-      input: {
-        draftId,
+  const [downloadRegulation, { called, loading, error, data }] =
+    useLazyQuery<Query>(DownloadRegulationDraftQuery, {
+      variables: {
+        input: {
+          draftId,
+        },
       },
-    },
-    fetchPolicy: 'no-cache',
-  })
+      fetchPolicy: 'no-cache',
+    })
 
   useEffect(() => {
     if (error) {

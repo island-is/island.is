@@ -26,9 +26,7 @@ ADD . .
 FROM src as builder
 ARG APP
 ARG APP_DIST_HOME
-ARG GEOIP_LICENSE_KEY
 ENV APP=${APP}
-ENV GEOIP_LICENSE_KEY=${GEOIP_LICENSE_KEY}
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
 
@@ -137,7 +135,9 @@ COPY ${APP_HOME}/package.json .
 RUN chown -R pwuser:pwuser .
 
 USER pwuser
-RUN yarn set version berry
+ADD .yarnrc.yml ./
+RUN mkdir ./.yarn
+COPY .yarn/releases ./.yarn/releases
 RUN yarn install
 
 ENV PLAYWRIGHT_BROWSER=chromium

@@ -25,15 +25,13 @@ const Timeline = ({ state, modified, created }: Props) => {
     },
     {
       name: 'Umsókn í vinnslu',
-      text:
-        'Úrvinnsla umsóknarinnar er hafin. Ef þörf er á frekari upplýsingum eða gögnum mun vinnsluaðili óska eftir því hér á þessari stöðusíðu.',
+      text: 'Úrvinnsla umsóknarinnar er hafin. Ef þörf er á frekari upplýsingum eða gögnum mun vinnsluaðili óska eftir því hér á þessari stöðusíðu.',
       state: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
       date: format(new Date(modified), 'dd/MM/yyyy HH:mm'),
     },
     {
       name: 'Niðurstaða',
-      text:
-        'Umsókn verður samþykkt eða henni synjað og umsækjandi látinn vita um niðurstöðuna',
+      text: 'Umsókn verður samþykkt eða henni synjað og umsækjandi látinn vita um niðurstöðuna',
       state: [ApplicationState.REJECTED, ApplicationState.APPROVED],
       date: format(new Date(modified), 'dd/MM/yyyy HH:mm'),
     },

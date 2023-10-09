@@ -1,22 +1,23 @@
 {
-  "root": "libs/infra-metrics",
+  "name": "infra-metrics",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/infra-metrics/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/infra-metrics/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/infra-metrics/jest.config.js",
+        "jestConfig": "libs/infra-metrics/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/infra-metrics"]
+      "outputs": ["{workspaceRoot}/coverage/libs/infra-metrics"]
     }
   },
   "tags": ["lib:node", "scope:node"]

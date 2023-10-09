@@ -11,10 +11,9 @@ interface Props extends FieldBaseProps {
   field: MessageWithLinkButtonField
 }
 
-export const MessageWithLinkButtonFormField: FC<Props> = ({
-  application,
-  field,
-}) => {
+export const MessageWithLinkButtonFormField: FC<
+  React.PropsWithChildren<Props>
+> = ({ application, field }) => {
   const { formatMessage } = useLocale()
 
   const getUrl = () => {

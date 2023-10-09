@@ -121,9 +121,9 @@ describe('DrivingLicenseService', () => {
     })
   })
 
-  describe('getListOfJuristictions', () => {
+  describe('getListOfJurisdictions', () => {
     it('should return a list', async () => {
-      const response = await service.getListOfJuristictions()
+      const response = await service.getListOfJurisdictions()
 
       expect(response).toHaveLength(24)
 
@@ -134,8 +134,8 @@ describe('DrivingLicenseService', () => {
       })
     })
 
-    it('should not include juristiction nr 11', async () => {
-      const response = await service.getListOfJuristictions()
+    it('should not include jurisdiction nr 11', async () => {
+      const response = await service.getListOfJurisdictions()
 
       expect(response.find(({ id }) => id === 11)).toBeUndefined()
     })
@@ -385,7 +385,7 @@ describe('DrivingLicenseService', () => {
   describe('newDrivingLicense', () => {
     it('should handle driving license creation', async () => {
       const response = await service.newDrivingLicense(MOCK_NATIONAL_ID, {
-        juristictionId: 11,
+        jurisdictionId: 11,
         needsToPresentHealthCertificate: false,
         needsToPresentQualityPhoto: false,
       })
@@ -401,7 +401,7 @@ describe('DrivingLicenseService', () => {
 
       return service
         .newDrivingLicense(MOCK_NATIONAL_ID_NO_ASSESSMENT, {
-          juristictionId: 11,
+          jurisdictionId: 11,
           needsToPresentHealthCertificate: false,
           needsToPresentQualityPhoto: true,
         })
@@ -414,7 +414,7 @@ describe('DrivingLicenseService', () => {
       const response = await service.newTemporaryDrivingLicense(
         MOCK_NATIONAL_ID,
         {
-          juristictionId: 11,
+          jurisdictionId: 11,
           needsToPresentHealthCertificate: false,
           needsToPresentQualityPhoto: false,
           teacherNationalId: MOCK_NATIONAL_ID_TEACHER,
@@ -432,7 +432,7 @@ describe('DrivingLicenseService', () => {
     it('should handle error responses when creating a license', async () => {
       return await service
         .newTemporaryDrivingLicense(MOCK_NATIONAL_ID_NO_ASSESSMENT, {
-          juristictionId: 11,
+          jurisdictionId: 11,
           needsToPresentHealthCertificate: false,
           needsToPresentQualityPhoto: true,
           teacherNationalId: MOCK_NATIONAL_ID_TEACHER,

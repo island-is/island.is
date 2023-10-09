@@ -45,7 +45,7 @@ function setIfValueIsNotNan(
 }
 
 export const ReportFieldsRepeater: FC<
-  FieldBaseProps<Answers> & RepeaterProps
+  React.PropsWithChildren<FieldBaseProps<Answers> & RepeaterProps>
 > = ({ application, field, errors }) => {
   const { answers, externalData } = application
   const { id, props } = field

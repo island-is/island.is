@@ -35,7 +35,13 @@ export interface Teacher {
   name: string
 }
 
-export interface Juristiction {
+export interface TeacherV4 {
+  name: string
+  nationalId: string
+  driverLicenseId: number | null | undefined
+}
+
+export interface Jurisdiction {
   id: number
   name: string
   zip: number
@@ -70,7 +76,7 @@ export type CanApplyErrorCodeBFull =
   | 'HAS_DEPRIVATION'
 
 export interface CanApplyForCategoryResult<
-  T extends CanApplyErrorCodeBFull | CanApplyErrorCodeBTemporary
+  T extends CanApplyErrorCodeBFull | CanApplyErrorCodeBTemporary,
 > {
   result: boolean
   errorCode?: T | undefined

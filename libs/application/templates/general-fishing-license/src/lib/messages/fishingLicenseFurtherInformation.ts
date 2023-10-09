@@ -3,8 +3,7 @@ import { defineMessages } from 'react-intl'
 export const fishingLicenseFurtherInformation = {
   general: defineMessages({
     sectionTitle: {
-      id:
-        'gfl.application:fishingLicenseFurtherInformation.general.sectionTitle',
+      id: 'gfl.application:fishingLicenseFurtherInformation.general.sectionTitle',
       defaultMessage: 'Umsókn um veiðileyfi',
       description: 'Fishing license further information section title',
     },
@@ -43,8 +42,7 @@ export const fishingLicenseFurtherInformation = {
       description: 'Area',
     },
     railAndRoenet: {
-      id:
-        'gfl.application:fishingLicenseFurtherInformation.labels.railAndRoenet',
+      id: 'gfl.application:fishingLicenseFurtherInformation.labels.railAndRoenet',
       defaultMessage: 'Veiðifæri',
       description: 'Railnet and roenet',
     },
@@ -61,26 +59,22 @@ export const fishingLicenseFurtherInformation = {
   }),
   fieldInformation: defineMessages({
     date: {
-      id:
-        'gfl.application:fishingLicenseFurtherInformation.fieldInformation.date',
+      id: 'gfl.application:fishingLicenseFurtherInformation.fieldInformation.date',
       defaultMessage: 'Umbeðin gildistaka',
       description: 'Date of validity',
     },
     attachments: {
-      id:
-        'gfl.application:fishingLicenseFurtherInformation.fieldInformation.attachments',
+      id: 'gfl.application:fishingLicenseFurtherInformation.fieldInformation.attachments',
       defaultMessage: 'Vinsamlegast settu inn nauðsynleg fylgiskjöl',
       description: 'Please add a valid attachment',
     },
     area: {
-      id:
-        'gfl.application:fishingLicenseFurtherInformation.fieldInformation.area',
+      id: 'gfl.application:fishingLicenseFurtherInformation.fieldInformation.area',
       defaultMessage: '',
       description: '',
     },
     railAndRoenet: {
-      id:
-        'gfl.application:fishingLicenseFurtherInformation.fieldInformation.railAndRoenet',
+      id: 'gfl.application:fishingLicenseFurtherInformation.fieldInformation.railAndRoenet',
       defaultMessage:
         'Athugið að samtals teinalengd má ekki vera hærri en 7500 metrar',
       description:
@@ -101,47 +95,40 @@ export const fishingLicenseFurtherInformation = {
   }),
   attachmentInfo: defineMessages({
     title: {
-      id:
-        'gfl.application:fishingLicenseFurtherInformation.attachmentInfo.title',
+      id: 'gfl.application:fishingLicenseFurtherInformation.attachmentInfo.title',
       defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
       description: 'Drag files to upload',
     },
     subtitle: {
-      id:
-        'gfl.application:fishingLicenseFurtherInformation.attachmentInfo.subtitle',
+      id: 'gfl.application:fishingLicenseFurtherInformation.attachmentInfo.subtitle',
       defaultMessage:
         'Tekið er við skjölum með endingunum: .jpg, .png, .jpeg, og .pdf ',
       description: 'Approved file formats: .jpg, .png, .jpeg, and .pdf',
     },
     buttonLabel: {
-      id:
-        'gfl.application:fishingLicenseFurtherInformation.attachmentInfo.buttonLabel',
+      id: 'gfl.application:fishingLicenseFurtherInformation.attachmentInfo.buttonLabel',
       defaultMessage: 'Velja skjöl til að hlaða upp',
       description: 'Choose documents to upload',
     },
   }),
   errorMessages: defineMessages({
     railNetTooLarge: {
-      id:
-        'gfl.application:fishingLicenseFurtherInformation.errorMessages.railNetTooLarge',
+      id: 'gfl.application:fishingLicenseFurtherInformation.errorMessages.railNetTooLarge',
       defaultMessage: 'Samtals teinalengd má ekki vera hærri en 7500 metrar',
       description: 'Total rail net length cannot exceed 7500 meters',
     },
     missingRequiredFields: {
-      id:
-        'gfl.application:fishingLicenseFurtherInformation.errorMessages.missingRequiredFields',
+      id: 'gfl.application:fishingLicenseFurtherInformation.errorMessages.missingRequiredFields',
       defaultMessage: 'Vinsamlegast fylltu út alla reiti',
       description: 'Please fill out all required fields',
     },
     attachmentMaxSizeError: {
-      id:
-        'gfl.application:fishingLicenseFurtherInformation.errorMessages.attachmentMaxSizeError',
+      id: 'gfl.application:fishingLicenseFurtherInformation.errorMessages.attachmentMaxSizeError',
       defaultMessage: 'Hámark 5 MB á skrá',
       description: 'Max 5 MB per file',
     },
     attachmentLimitError: {
-      id:
-        'gfl.application:fishingLicenseFurtherInformation.errorMessages.attachmentLimitError',
+      id: 'gfl.application:fishingLicenseFurtherInformation.errorMessages.attachmentLimitError',
       defaultMessage: 'Hlaða má upp að hámarki tveim skrám',
       description: 'Max two file',
     },

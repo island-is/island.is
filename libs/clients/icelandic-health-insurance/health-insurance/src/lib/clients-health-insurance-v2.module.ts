@@ -5,18 +5,14 @@ import { createEnhancedFetch } from '@island.is/clients/middlewares'
 
 export class HealthInsuranceV2Client {
   static register(options: HealthInsuranceV2Options): DynamicModule {
-    const {
-      password,
-      username,
-      xRoadBaseUrl,
-      xRoadClientId,
-      xRoadProviderId,
-    } = options
+    const { password, username, xRoadBaseUrl, xRoadClientId, xRoadProviderId } =
+      options
     const basePath = `${xRoadBaseUrl}/r1/${xRoadProviderId}/islandis`
 
     const configuration = new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-health-insurance',
+        organizationSlug: 'sjukratryggingar',
         treat400ResponsesAsErrors: true,
         logErrorResponseBody: true,
         timeout: 20000, // needed because the external service is taking a while to respond to submitting the document

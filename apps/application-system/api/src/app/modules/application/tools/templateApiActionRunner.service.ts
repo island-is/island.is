@@ -94,7 +94,7 @@ export class TemplateApiActionRunner {
 
     const result = Object.keys(groupedActions).map(
       (value: string): TemplateApi[] => {
-        return groupedActions[(value as unknown) as number]
+        return groupedActions[value as unknown as number]
       },
     )
 

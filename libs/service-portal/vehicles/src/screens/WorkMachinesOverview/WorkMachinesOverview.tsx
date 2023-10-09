@@ -48,36 +48,33 @@ const DEFAULT_PAGE_NUMBER = 1
 const DEFAULT_ORDER_BY = 'RegistrationNumber'
 
 const WorkMachinesOverview = () => {
-  useNamespaces('sp.vehicles')
+  useNamespaces('sp.work-machines')
   const { formatMessage, locale } = useLocale()
 
   const defaultFilterValues: FilterValues = {
     deregistered: {
-      label: formatMessage(messages.showDeregisteredWorkMachines),
+      label: 'showDeregisteredWorkMachines',
       value: false,
     },
     ownerChange: {
-      label: formatMessage(messages.showOwnerChangingWorkMachines),
+      label: 'showOwnerChangingWorkMachines',
       value: false,
     },
     registeredSupervisor: {
-      label: formatMessage(messages.showOwnerSupervisorRegisteredWorkMachines),
+      label: 'showOwnerSupervisorRegisteredWorkMachines',
       value: false,
     },
   }
 
-  const [activeFilters, setActiveFilters] = useState<FilterValues>(
-    defaultFilterValues,
-  )
+  const [activeFilters, setActiveFilters] =
+    useState<FilterValues>(defaultFilterValues)
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [activeSearch, setActiveSearch] = useState<string>('')
 
   const [page, setPage] = useState(DEFAULT_PAGE_NUMBER)
 
-  const [
-    getDocumentExport,
-    { data: fileData },
-  ] = useGetWorkMachineDocumentLazyQuery()
+  const [getDocumentExport, { data: fileData }] =
+    useGetWorkMachineDocumentLazyQuery()
 
   const { loading, error, data } = useGetWorkMachinesQuery({
     variables: {
@@ -190,11 +187,13 @@ const WorkMachinesOverview = () => {
                             (filterKey, index) => {
                               const key = filterKey as keyof FilterValues
                               const filter = activeFilters[key]
+                              const labelKey =
+                                filter.label as keyof typeof messages
                               return (
                                 <Checkbox
                                   key={index}
                                   id={`work-machine-filter-${index}`}
-                                  label={filter.label}
+                                  label={formatMessage(messages[labelKey])}
                                   checked={filter.value}
                                   onChange={() => onFilterChange(key, filter)}
                                 />
@@ -279,10 +278,10 @@ const WorkMachinesOverview = () => {
           <Box>
             <Pagination
               page={page}
-              totalPages={
+              totalPages={Math.ceil(
                 data.workMachinesPaginatedCollection.totalCount /
-                DEFAULT_PAGE_SIZE
-              }
+                  DEFAULT_PAGE_SIZE,
+              )}
               renderLink={(page, className, children) => (
                 <button className={className} onClick={() => setPage(page)}>
                   {children}

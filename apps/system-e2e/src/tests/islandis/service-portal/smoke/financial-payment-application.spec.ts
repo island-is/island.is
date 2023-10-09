@@ -6,6 +6,7 @@ import { m } from '@island.is/service-portal/finance/messages'
 import { disableI18n } from '../../../../support/disablers'
 
 test.use({ baseURL: urls.islandisBaseUrl })
+
 test.describe('MS - Fjármál overview', () => {
   let context: BrowserContext
 
@@ -88,16 +89,4 @@ test.describe('MS - Fjármál overview', () => {
     //   await expect(page.locator('role=table')).toContainText('Skattar og gjöld')
     // })
   })
-})
-
-test.describe.skip('Fjármál', () => {
-  for (const { testCase } of [
-    { testCase: 'Fjármál Greiðslukvittanir - sjá pdf' },
-    { testCase: 'Fjármál Launagreidendakröfur - birtist' },
-    { testCase: 'Fjármál Útsvar sveitafélaga - birtist ???' },
-  ]) {
-    test(testCase, () => {
-      return
-    })
-  }
 })

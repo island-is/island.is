@@ -1,6 +1,7 @@
 import isWithinInterval from 'date-fns/isWithinInterval'
 import parseISO from 'date-fns/parseISO'
 import addMonths from 'date-fns/addMonths'
+import isThisMonth from 'date-fns/isThisMonth'
 import isValid from 'date-fns/isValid'
 import {
   AnswerValidationError,
@@ -18,6 +19,7 @@ import {
   NO,
   PERMANENT_FOSTER_CARE,
   ADOPTION,
+  MINIMUM_PERIOD_LENGTH,
 } from '../../constants'
 import {
   getApplicationAnswers,
@@ -126,9 +128,8 @@ export const validatePeriod = (
     values?: Record<string, unknown>,
   ) => AnswerValidationError,
 ) => {
-  const expectedDateOfBirthOrAdoptionDate = getExpectedDateOfBirthOrAdoptionDate(
-    application,
-  )
+  const expectedDateOfBirthOrAdoptionDate =
+    getExpectedDateOfBirthOrAdoptionDate(application)
 
   if (!expectedDateOfBirthOrAdoptionDate) {
     return buildError(null, errorMessages.dateOfBirth)
@@ -251,14 +252,25 @@ export const validatePeriod = (
       )
     }
 
-    if (calculatePeriodLength(startDateValue, endDateValue) < 14) {
-      return buildError(
-        useLength === YES ? 'endDateDuration' : 'endDate',
-        errorMessages.periodsEndDateMinimumPeriod,
-        {
-          minPeriodDays: minPeriodDays - 1,
-        },
+    // Stop check period in the past from VMST
+    // Sometime they changed period to less than 14 days
+    if (
+      !(
+        endDateValue.getTime() < today.getTime() && !isThisMonth(startDateValue)
       )
+    ) {
+      if (
+        calculatePeriodLength(startDateValue, endDateValue) <
+        MINIMUM_PERIOD_LENGTH
+      ) {
+        return buildError(
+          useLength === YES ? 'endDateDuration' : 'endDate',
+          errorMessages.periodsEndDateMinimumPeriod,
+          {
+            minPeriodDays: minPeriodDays - 1,
+          },
+        )
+      }
     }
   }
 
@@ -293,7 +305,7 @@ export const showResidenceGrant = (application: Application) => {
   const { noChildrenFoundTypeOfApplication } = getApplicationAnswers(
     application.answers,
   )
-  const childrenData = (children as unknown) as ChildInformation[]
+  const childrenData = children as unknown as ChildInformation[]
   if (
     childrenData?.length &&
     childrenData[0]?.parentalRelation?.match('primary') &&

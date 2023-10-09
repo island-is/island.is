@@ -19,7 +19,9 @@ interface SliceProps {
   slice: OverviewLinks
 }
 
-export const OverviewLinksSlice: React.FC<SliceProps> = ({ slice }) => {
+export const OverviewLinksSlice: React.FC<
+  React.PropsWithChildren<SliceProps>
+> = ({ slice }) => {
   const { linkResolver } = useLinkResolver()
 
   const boxProps: BoxProps = slice.hasBorderAbove
@@ -66,6 +68,9 @@ export const OverviewLinksSlice: React.FC<SliceProps> = ({ slice }) => {
                         paddingLeft={leftImage ? undefined : [0, 0, 0, 0, 6]}
                         paddingRight={leftImage ? [10, 0, 0, 0, 6] : [10, 0]}
                       >
+                        {/** 
+                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                         // @ts-ignore make web strict */}
                         <Image
                           url={image?.url + '?w=774&fm=webp&q=80'}
                           thumbnail={image?.url + '?w=50&fm=webp&q=80'}
@@ -90,8 +95,8 @@ export const OverviewLinksSlice: React.FC<SliceProps> = ({ slice }) => {
                                 [
                                   {
                                     __typename: 'Html',
-                                    id: intro.id,
-                                    document: intro.document,
+                                    id: intro?.id,
+                                    document: intro?.document,
                                   },
                                 ] as SliceType[],
                                 undefined,

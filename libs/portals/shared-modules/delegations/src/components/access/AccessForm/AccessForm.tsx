@@ -67,12 +67,10 @@ export const AccessForm = ({
     toast.error(formatMessage(portalMessages.somethingWrong))
   }
 
-  const [
-    updateDelegation,
-    { loading: updateLoading },
-  ] = useUpdateAuthDelegationMutation({
-    onError,
-  })
+  const [updateDelegation, { loading: updateLoading }] =
+    useUpdateAuthDelegationMutation({
+      onError,
+    })
 
   const methods = useForm<{
     scope: AccessFormScope[]

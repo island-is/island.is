@@ -14,9 +14,6 @@ describe('CaseController - Get ruling signature confirmation rules', () => {
 
   it('should give permission to one roles', () => {
     expect(rules).toHaveLength(1)
-  })
-
-  it('should give permission to judges', () => {
     expect(rules).toContain(judgeRule)
   })
 })

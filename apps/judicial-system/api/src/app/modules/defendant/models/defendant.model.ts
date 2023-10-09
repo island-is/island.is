@@ -1,9 +1,9 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
-import type {
-  Defendant as TDefendant,
-  Gender,
-} from '@island.is/judicial-system/types'
+import type { Defendant as TDefendant } from '@island.is/judicial-system/types'
+import { Gender } from '@island.is/judicial-system/types'
+
+registerEnumType(Gender, { name: 'Gender' })
 
 @ObjectType()
 export class Defendant implements TDefendant {
@@ -28,7 +28,7 @@ export class Defendant implements TDefendant {
   @Field({ nullable: true })
   readonly name?: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => Gender, { nullable: true })
   readonly gender?: Gender
 
   @Field({ nullable: true })

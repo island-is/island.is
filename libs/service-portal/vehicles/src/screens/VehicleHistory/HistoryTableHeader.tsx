@@ -6,7 +6,9 @@ interface Props {
   labels: Array<{ value: string }>
 }
 
-export const HistoryTableHeader: FC<Props> = ({ labels }) => {
+export const HistoryTableHeader: FC<React.PropsWithChildren<Props>> = ({
+  labels,
+}) => {
   return (
     <T.Head>
       <T.Row>

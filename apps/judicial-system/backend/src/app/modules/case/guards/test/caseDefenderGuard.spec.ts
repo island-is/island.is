@@ -6,12 +6,13 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { CaseDefenderGuard } from '../caseDefender.guard'
 import {
   indictmentCases,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
+
+import { CaseDefenderGuard } from '../caseDefender.guard'
 
 interface Then {
   result: boolean
@@ -30,9 +31,9 @@ describe('Case Defender Guard', () => {
       const then = {} as Then
 
       try {
-        then.result = guard.canActivate(({
+        then.result = guard.canActivate({
           switchToHttp: () => ({ getRequest: mockRequest }),
-        } as unknown) as ExecutionContext)
+        } as unknown as ExecutionContext)
       } catch (error) {
         then.error = error as Error
       }

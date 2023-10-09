@@ -41,9 +41,9 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-const HeilbrigdisstofnunAusturlandsHeader: React.FC<HeaderProps> = ({
-  organizationPage,
-}) => {
+const HeilbrigdisstofnunAusturlandsHeader: React.FC<
+  React.PropsWithChildren<HeaderProps>
+> = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
 
   const namespace = useMemo(
@@ -65,7 +65,7 @@ const HeilbrigdisstofnunAusturlandsHeader: React.FC<HeaderProps> = ({
       <div className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
-            !!organizationPage.organization.logo && (
+            !!organizationPage.organization?.logo && (
               <Link
                 href={
                   linkResolver('organizationpage', [organizationPage.slug]).href
@@ -81,7 +81,7 @@ const HeilbrigdisstofnunAusturlandsHeader: React.FC<HeaderProps> = ({
             )
           }
         >
-          {!!organizationPage.organization.logo && (
+          {!!organizationPage.organization?.logo && (
             <Hidden above="sm">
               <Link
                 href={

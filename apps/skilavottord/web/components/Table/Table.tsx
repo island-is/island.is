@@ -20,23 +20,23 @@ export type TextVariants =
   | 'intro'
   | 'eyebrow'
 
-export const Table: FC = ({ children }) => {
+export const Table: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   return (
     <div className={styles.container}>
       <table className={styles.table}>{children}</table>
     </div>
   )
 }
-export const Head: FC = ({ children }) => {
+export const Head: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   return <thead className={styles.tHead}>{children}</thead>
 }
-export const Body: FC = ({ children }) => {
+export const Body: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   return <tbody>{children}</tbody>
 }
-export const Row: FC = ({ children }) => {
+export const Row: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   return <tr className={styles.tr}>{children}</tr>
 }
-export const Data: FC<Data> = ({
+export const Data: FC<React.PropsWithChildren<Data>> = ({
   children,
   span = 1,
   alignRight,
@@ -52,7 +52,7 @@ export const Data: FC<Data> = ({
   )
 }
 
-export const HeadData: FC<Data> = ({
+export const HeadData: FC<React.PropsWithChildren<Data>> = ({
   children,
   span,
   alignRight,

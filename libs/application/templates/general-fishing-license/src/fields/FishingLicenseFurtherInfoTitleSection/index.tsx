@@ -22,9 +22,9 @@ import {
   ROENET_FIELD_ID,
 } from '../../utils/fields'
 
-export const FishingLicenseFurtherInfoTitleSection: FC<FieldBaseProps> = ({
-  application,
-}) => {
+export const FishingLicenseFurtherInfoTitleSection: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application }) => {
   const { setValue, getValues } = useFormContext()
   const { formatMessage } = useLocale()
   const selectedChargeType = getValueViaPath(
@@ -75,7 +75,8 @@ export const FishingLicenseFurtherInfoTitleSection: FC<FieldBaseProps> = ({
     <>
       <Box className={styles.sectionTitle} marginBottom={4}>
         <Text variant="h2" as="h2">
-          {licenseName || fishingLicenseFurtherInformation.general.title}
+          {licenseName ||
+            formatMessage(fishingLicenseFurtherInformation.general.title)}
         </Text>
       </Box>
       <Box>

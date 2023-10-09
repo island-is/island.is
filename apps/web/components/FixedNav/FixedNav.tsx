@@ -15,7 +15,7 @@ import SearchInput from '../SearchInput/SearchInput'
 
 import * as styles from './FixedNav.css'
 
-export const FixedNav: FC = () => {
+export const FixedNav: FC<React.PropsWithChildren<unknown>> = () => {
   const [show, setShow] = useState<boolean>(false)
   const { activeLocale, t } = useI18n()
   const { linkResolver } = useLinkResolver()
@@ -34,6 +34,8 @@ export const FixedNav: FC = () => {
       setShow(canShow && !goingDown)
     },
     [setShow],
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     null,
     false,
     150,

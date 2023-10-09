@@ -24,7 +24,7 @@ interface IPdfLib {
   Outline: typeof Outline
 }
 
-export const PdfViewer: FC<PdfViewerProps> = ({
+export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
   file,
   renderMode = 'svg',
   showAllPages = false,

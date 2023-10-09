@@ -11,6 +11,10 @@ export const informationNavigation: PortalNavigationItem = {
   },
   children: [
     {
+      name: m.myInfo,
+      path: InformationPaths.MyInfoRootOverview,
+    },
+    {
       name: m.detailInfo,
       navHide: true,
       path: InformationPaths.UserInfo,

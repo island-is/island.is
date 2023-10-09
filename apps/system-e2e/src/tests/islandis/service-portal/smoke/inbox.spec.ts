@@ -90,13 +90,3 @@ test.describe('MS - Pósthólf overview', () => {
     })
   })
 })
-
-test.describe.skip('Pósthólf', () => {
-  for (const { testCase, home } of [
-    { testCase: 'Pósthólf skjal opnast', home: '/en' },
-  ]) {
-    test(testCase, () => {
-      return
-    })
-  }
-})

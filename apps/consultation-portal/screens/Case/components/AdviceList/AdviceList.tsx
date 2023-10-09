@@ -1,4 +1,4 @@
-import { AdviceResult, Case, UserAdvice } from '../../../../types/interfaces'
+import { AdviceResult, Case } from '../../../../types/interfaces'
 import { Stack, Text, Button, Link, Box } from '@island.is/island-ui/core'
 import AdviceCard from '../AdviceCard/AdviceCard'
 import { SHOW_INITIAL_REVIEWS_AMOUNT } from '../../../../utils/consts/consts'
@@ -28,13 +28,6 @@ export const AdviceList = ({ advices, chosenCase }: Props) => {
   const { advicePublishTypeId, processEnds } = chosenCase
   return (
     <Box dataTestId="advices-list">
-      <Text marginBottom={2}>
-        {` ${sloc[advicePublishTypeKeyHelper[advicePublishTypeId]].present} 
-        ${sloc.publishLaw.text} `}
-        <Link href={sloc.publishLaw.link.href}>
-          {sloc.publishLaw.link.label}
-        </Link>
-      </Text>
       {renderAdvices(advicePublishTypeId, processEnds) && (
         <Stack space={3}>
           {advices?.map((advice: AdviceResult, index) => {

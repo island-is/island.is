@@ -33,6 +33,8 @@ import {
   InsuranceCompaniesApi,
 } from '../dataProviders'
 import { hasReviewerApproved } from '../utils'
+import { Features } from '@island.is/feature-flags'
+import { ApiScope } from '@island.is/auth/scopes'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -90,7 +92,12 @@ const template: ApplicationTemplate<
     {
       type: AuthDelegationType.ProcurationHolder,
     },
+    {
+      type: AuthDelegationType.Custom,
+      featureFlag: Features.transportAuthorityApplicationsCustomDelegation,
+    },
   ],
+  requiredScopes: [ApiScope.samgongustofaVehicles],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -119,10 +126,9 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import(
-                  '../forms/TransferOfVehicleOwnershipForm/index'
-                ).then((module) =>
-                  Promise.resolve(module.TransferOfVehicleOwnershipForm),
+                import('../forms/TransferOfVehicleOwnershipForm/index').then(
+                  (module) =>
+                    Promise.resolve(module.TransferOfVehicleOwnershipForm),
                 ),
               actions: [
                 {

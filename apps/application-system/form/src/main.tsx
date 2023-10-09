@@ -1,6 +1,6 @@
 import '@island.is/api/mocks'
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React, { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
 
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
@@ -20,4 +20,16 @@ if (!isRunningOnEnvironment('local')) {
   })
 }
 
-ReactDOM.render(<App />, document.getElementById('root'))
+const rootEl = document.getElementById('root')
+
+if (!rootEl) {
+  throw new Error('Root element not found')
+}
+
+const root = createRoot(rootEl)
+
+root.render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)

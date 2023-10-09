@@ -10,6 +10,7 @@ import { messages } from '../../lib/messages'
 import { useGetAidsAndNutritionQuery } from './AidsAndNutrition.generated'
 import AidsTable from './AidsTable'
 import NutritionTable from './NutritionTable'
+import { RightsPortalAidOrNutritionType } from '@island.is/api/schema'
 
 const AidsAndNutrition = () => {
   useNamespaces('sp.health')
@@ -17,34 +18,41 @@ const AidsAndNutrition = () => {
 
   const { loading, error, data } = useGetAidsAndNutritionQuery()
 
-  const supportData = {
-    aids: data?.rightsPortalAidsAndNutrition?.aids ?? [],
-    nutrition: data?.rightsPortalAidsAndNutrition?.nutrition ?? [],
-  }
+  const aidsAndNutrition = data?.rightsPortalPaginatedAidsAndNutrition?.data
+
+  const aids = aidsAndNutrition?.filter(
+    (ann) => ann.type === RightsPortalAidOrNutritionType.AID,
+  )
+
+  const nutrition = aidsAndNutrition?.filter(
+    (ann) => ann.type === RightsPortalAidOrNutritionType.NUTRITION,
+  )
 
   const tabs = [
-    supportData.aids.length > 0 && {
-      label: formatMessage(messages.aids),
-      content: (
-        <AidsTable
-          data={supportData.aids}
-          footnote={formatMessage(messages['aidsDisclaimer'])}
-          link={formatMessage(messages['aidsDescriptionLink'])}
-          linkText={formatMessage(messages.aidsDescriptionInfo)}
-        />
-      ),
-    },
-    supportData.nutrition.length > 0 && {
-      label: formatMessage(messages.nutrition),
-      content: (
-        <NutritionTable
-          data={supportData.nutrition}
-          footnote={formatMessage(messages['nutritionDisclaimer'])}
-          link={formatMessage(messages['nutritionDescriptionLink'])}
-          linkText={formatMessage(messages.nutritionDescriptionInfo)}
-        />
-      ),
-    },
+    aids &&
+      aids.length > 0 && {
+        label: formatMessage(messages.aids),
+        content: (
+          <AidsTable
+            data={aids}
+            footnote={formatMessage(messages['aidsDisclaimer'])}
+            link={formatMessage(messages['aidsDescriptionLink'])}
+            linkText={formatMessage(messages.aidsDescriptionInfo)}
+          />
+        ),
+      },
+    nutrition &&
+      nutrition.length > 0 && {
+        label: formatMessage(messages.nutrition),
+        content: (
+          <NutritionTable
+            data={nutrition}
+            footnote={formatMessage(messages['nutritionDisclaimer'])}
+            link={formatMessage(messages['nutritionDescriptionLink'])}
+            linkText={formatMessage(messages.nutritionDescriptionInfo)}
+          />
+        ),
+      },
   ].filter((x) => x !== false) as Array<{ label: string; content: JSX.Element }>
 
   if (error && !loading) {
@@ -68,7 +76,7 @@ const AidsAndNutrition = () => {
       />
       {loading && <SkeletonLoader space={1} height={30} repeat={4} />}
 
-      {!loading && !supportData.aids.length && !supportData.nutrition.length && (
+      {!loading && !aids?.length && !nutrition?.length && (
         <Box width="full" marginTop={4} display="flex" justifyContent="center">
           <Box marginTop={8}>
             <EmptyState />

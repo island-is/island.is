@@ -92,7 +92,7 @@ const SubscriptionsSkeleton = ({
                   </Text>
                   {!isMySubscriptions && (
                     <Link href={loc.unsubscribeLink.href}>
-                      <a>{loc.unsubscribeLink.text}</a>
+                      {loc.unsubscribeLink.text}
                     </Link>
                   )}
                 </Stack>

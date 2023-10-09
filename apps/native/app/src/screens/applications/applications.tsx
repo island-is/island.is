@@ -1,13 +1,13 @@
 import {useQuery} from '@apollo/client';
 import {EmptyList, Heading, ListButton, TopLine} from '@ui';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {useIntl} from 'react-intl';
 import {
   Animated,
   FlatList,
   Image,
-  ListRenderItemInfo,
   RefreshControl,
+  SafeAreaView,
   View,
 } from 'react-native';
 import {NavigationFunctionComponent} from 'react-native-navigation';
@@ -20,58 +20,57 @@ import {
   LIST_APPLICATIONS_QUERY,
 } from '../../graphql/queries/list-applications.query';
 import {LIST_SEARCH_QUERY} from '../../graphql/queries/list-search.query';
-import {useActiveTabItemPress} from '../../hooks/use-active-tab-item-press';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
+import {useActiveTabItemPress} from '../../hooks/use-active-tab-item-press';
 import {openBrowser} from '../../lib/rn-island';
 import {getRightButtons} from '../../utils/get-main-root';
 import {testIDs} from '../../utils/test-ids';
 import {ApplicationsModule} from '../home/applications-module';
+import {getApplicationOverviewUrl} from '../../utils/applications-utils';
 
 type ListItem =
   | {id: string; type: 'skeleton' | 'empty'}
   | (IArticleSearchResults & {type: undefined});
 
-const {
-  useNavigationOptions,
-  getNavigationOptions,
-} = createNavigationOptionHooks(
-  (theme, intl, initialized) => ({
-    topBar: {
-      title: {
-        text: intl.formatMessage({id: 'applications.title'}),
+const {useNavigationOptions, getNavigationOptions} =
+  createNavigationOptionHooks(
+    (theme, intl, initialized) => ({
+      topBar: {
+        title: {
+          text: intl.formatMessage({id: 'applications.title'}),
+        },
+        searchBar: {
+          visible: false,
+        },
+        rightButtons: initialized ? getRightButtons({theme} as any) : [],
       },
-      searchBar: {
-        visible: false,
+      bottomTab: {
+        iconColor: theme.color.blue400,
+        text: initialized
+          ? intl.formatMessage({id: 'applications.bottomTabText'})
+          : '',
       },
-      rightButtons: initialized ? getRightButtons({theme} as any) : [],
+    }),
+    {
+      topBar: {
+        largeTitle: {
+          visible: true,
+        },
+        scrollEdgeAppearance: {
+          active: true,
+          noBorder: true,
+        },
+      },
+      bottomTab: {
+        testID: testIDs.TABBAR_TAB_APPLICATION,
+        iconInsets: {
+          bottom: -4,
+        },
+        icon: require('../../assets/icons/tabbar-applications.png'),
+        selectedIcon: require('../../assets/icons/tabbar-applications-selected.png'),
+      },
     },
-    bottomTab: {
-      iconColor: theme.color.blue400,
-      text: initialized
-        ? intl.formatMessage({id: 'applications.bottomTabText'})
-        : '',
-    },
-  }),
-  {
-    topBar: {
-      largeTitle: {
-        visible: true,
-      },
-      scrollEdgeAppearance: {
-        active: true,
-        noBorder: true,
-      },
-    },
-    bottomTab: {
-      testID: testIDs.TABBAR_TAB_APPLICATION,
-      iconInsets: {
-        bottom: -4,
-      },
-      icon: require('../../assets/icons/tabbar-application.png'),
-      selectedIcon: require('../../assets/icons/tabbar-application-selected.png'),
-    },
-  },
-);
+  );
 
 export const ApplicationsScreen: NavigationFunctionComponent = ({
   componentId,
@@ -111,16 +110,15 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   useEffect(() => {
     if (!res.loading && res.data) {
       setItems(
-        [
-          ...(res?.data?.searchResults?.items || []),
-        ].sort((a: IArticleSearchResults, b: IArticleSearchResults) =>
-          a.title.localeCompare(b.title),
+        [...(res?.data?.searchResults?.items || [])].sort(
+          (a: IArticleSearchResults, b: IArticleSearchResults) =>
+            a.title.localeCompare(b.title),
         ) as any,
       );
     }
   }, [res.data, res.loading]);
 
-  const renderItem = useCallback(({item}: ListRenderItemInfo<ListItem>) => {
+  const renderItem = useCallback(({item}: any) => {
     if (item.type === 'skeleton') {
       return <ListButton title="skeleton" isLoading />;
     }
@@ -136,7 +134,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
             image={
               <Image
                 source={illustrationSrc}
-                style={{width: 176, height: 134, resizeMode: 'contain'}}
+                style={{height: 176, width: 134}}
               />
             }
           />
@@ -144,14 +142,12 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
       );
     }
 
-    const searchResult = item as IArticleSearchResults;
-
     return (
       <ListButton
-        key={searchResult.id}
-        title={searchResult.title}
+        key={item.id}
+        title={item.title}
         onPress={() =>
-          openBrowser(`http://island.is/${searchResult.slug}`, componentId)
+          openBrowser(getApplicationOverviewUrl(item), componentId)
         }
       />
     );
@@ -197,19 +193,19 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         data={isSkeltonView ? skeletonItems : isEmptyView ? emptyItem : items}
         renderItem={renderItem}
         ListHeaderComponent={
-          <>
+          <View style={{flex: 1}}>
             <ApplicationsModule
               applications={applicationsRes.data?.applicationApplications ?? []}
               loading={applicationsRes.loading}
               componentId={componentId}
               hideAction={true}
             />
-            <View style={{paddingHorizontal: 16}}>
+            <SafeAreaView style={{marginHorizontal: 16}}>
               <Heading>
                 {intl.formatMessage({id: 'home.allApplications'})}
               </Heading>
-            </View>
-          </>
+            </SafeAreaView>
+          </View>
         }
         refreshControl={
           <RefreshControl

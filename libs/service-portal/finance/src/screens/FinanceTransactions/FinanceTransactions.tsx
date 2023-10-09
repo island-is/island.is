@@ -53,8 +53,8 @@ const FinanceTransactions = () => {
     loading: chargeTypeDataLoading,
     error: chargeTypeDataError,
   } = useQuery<Query>(GET_CUSTOMER_CHARGETYPE, {
-    onCompleted: () => {
-      if (customerChartypeData?.getCustomerChargeType?.chargeType) {
+    onCompleted: (data) => {
+      if (data?.getCustomerChargeType?.chargeType) {
         setEmptyChargeTypes()
       } else {
         setChargeTypesEmpty(true)
@@ -65,9 +65,8 @@ const FinanceTransactions = () => {
   const chargeTypeData: CustomerChargeType =
     customerChartypeData?.getCustomerChargeType || {}
 
-  const [loadCustomerRecords, { data, loading, called, error }] = useLazyQuery(
-    GET_CUSTOMER_RECORDS,
-  )
+  const [loadCustomerRecords, { data, loading, called, error }] =
+    useLazyQuery(GET_CUSTOMER_RECORDS)
 
   useEffect(() => {
     if (toDate && fromDate && dropdownSelect) {

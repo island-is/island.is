@@ -23,7 +23,7 @@ import {
 import { useTotals } from '../../hooks'
 import { getTotal } from '../../lib/utils/helpers'
 
-export const ElectionEquities: FC<FieldBaseProps> = ({
+export const ElectionEquities: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   setBeforeSubmitCallback,
 }): JSX.Element => {
   const { formatMessage } = useLocale()

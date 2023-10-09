@@ -35,11 +35,10 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         const messageId = job.id
         this.logger.info('Message received by worker ... ...', { messageId })
 
-        const profile = await this.userProfileApi.userTokenControllerFindOneByNationalId(
-          {
+        const profile =
+          await this.userProfileApi.userTokenControllerFindOneByNationalId({
             nationalId: message.recipient,
-          },
-        )
+          })
 
         // can't send message if user has no user profile
         if (!profile) {
@@ -63,10 +62,8 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         }
 
         if (profile.documentNotifications) {
-          const notification = await this.messageProcessor.convertToNotification(
-            message,
-            profile,
-          )
+          const notification =
+            await this.messageProcessor.convertToNotification(message, profile)
 
           await this.notificationDispatch.sendPushNotification({
             nationalId: profile.nationalId,

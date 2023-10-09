@@ -8,7 +8,12 @@ interface Props {
   loading?: boolean
 }
 
-export const InputSection: FC<Props> = ({ title, text, children, loading }) => {
+export const InputSection: FC<React.PropsWithChildren<Props>> = ({
+  title,
+  text,
+  children,
+  loading,
+}) => {
   return (
     <Box paddingTop={4}>
       <Text variant="h5" as="h2" marginBottom={1}>

@@ -28,12 +28,14 @@ import * as styles from './FormShell.css'
 import { ErrorShell } from '../components/ErrorShell'
 import { m } from './messages'
 
-export const FormShell: FC<{
-  application: Application
-  nationalRegistryId: string
-  form: Form
-  dataSchema: Schema
-}> = ({ application, nationalRegistryId, form, dataSchema }) => {
+export const FormShell: FC<
+  React.PropsWithChildren<{
+    application: Application
+    nationalRegistryId: string
+    form: Form
+    dataSchema: Schema
+  }>
+> = ({ application, nationalRegistryId, form, dataSchema }) => {
   const [updateForbidden, setUpdateForbidden] = useState(false)
   const { setInfo } = useHeaderInfo()
   const [state, dispatch] = useReducer(

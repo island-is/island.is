@@ -3,7 +3,7 @@ export default {
   audit: {
     defaultNamespace: '@island.is/reference-backend',
     groupName: process.env.AUDIT_GROUP_NAME,
-    // Same service name as in Nx workspace.json
+    // Same service name as in Nx project.json
     serviceName: 'reference-backend',
   },
   auth: {

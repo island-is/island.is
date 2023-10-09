@@ -5,12 +5,13 @@ import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { getValueViaPath } from '@island.is/application/core'
-import { Operation } from '../../lib/constants'
 import { getChargeItemCode, getCurrencyString } from '../../lib/utils'
 import { PaymentCatalogItem } from '@island.is/api/schema'
 import { useFormContext } from 'react-hook-form'
 
-export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
+export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const chargeCode = getChargeItemCode(application.answers)

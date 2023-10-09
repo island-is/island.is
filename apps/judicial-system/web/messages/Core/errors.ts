@@ -81,17 +81,6 @@ export const errors = defineMessages({
     defaultMessage: 'Ekki tókst að afrita hlekk',
     description: 'Notaður sem villuskilaboð þegar ekki gengur að afrita hlekk',
   },
-  failedUploadFile: {
-    id: 'judicial.system.core:errors.failed_upload_file',
-    defaultMessage: 'Ekki tókst að hlaða upp skrá',
-    description:
-      'Notaður sem villuskilaboð þegar ekki gengur að hlaða upp skrá',
-  },
-  failedDeleteFile: {
-    id: 'judicial.system.core:errors.failed_delete_file',
-    defaultMessage: 'Ekki tókst að eyða skrá',
-    description: 'Notaður sem villuskilaboð þegar ekki gengur að eyða skrá',
-  },
   createIndictmentCount: {
     id: 'judicial.system.core:errors.create_indictment_count',
     defaultMessage: 'Upp kom villa við að stofna nýjan ákærulið',

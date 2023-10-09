@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react'
+import { useMemo, useState } from 'react'
+
 import { CaseListEntry } from '@island.is/judicial-system/types'
 
 const useSortCases = (

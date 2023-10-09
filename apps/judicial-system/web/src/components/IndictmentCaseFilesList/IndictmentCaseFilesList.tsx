@@ -2,25 +2,25 @@ import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
+import { Box, Text } from '@island.is/island-ui/core'
 import {
   CaseFile,
   CaseFileCategory,
   completedCaseStates,
   isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { Box, Text } from '@island.is/island-ui/core'
-import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   FileNotFoundModal,
   PdfButton,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
+import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
-import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { courtRecord } from '../../routes/Court/Indictments/CourtRecord/CourtRecord.strings'
+import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { indictmentCaseFilesList as strings } from './IndictmentCaseFilesList.strings'
 import * as styles from './IndictmentCaseFilesList.css'
 
@@ -33,7 +33,9 @@ interface RenderFilesProps {
   onOpenFile: (fileId: string) => void
 }
 
-const RenderFiles: React.FC<Props & RenderFilesProps> = (props) => {
+const RenderFiles: React.FC<
+  React.PropsWithChildren<Props & RenderFilesProps>
+> = (props) => {
   const { caseFiles, onOpenFile, workingCase } = props
 
   return (
@@ -57,7 +59,9 @@ const RenderFiles: React.FC<Props & RenderFilesProps> = (props) => {
   )
 }
 
-const IndictmentCaseFilesList: React.FC<Props> = (props) => {
+const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const { workingCase } = props
   const { formatMessage } = useIntl()
   const { user, limitedAccess } = useContext(UserContext)

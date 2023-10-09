@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # judicial-system-audit-trail
 
 This library was generated with [Nx](https://nx.dev).

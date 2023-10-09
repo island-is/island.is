@@ -65,9 +65,8 @@ const FinanceStatus = () => {
     GetFinanceStatusQuery,
   )
 
-  const { data: debtStatusData, loading: debtStatusLoading } = useQuery<Query>(
-    GetDebtStatusQuery,
-  )
+  const { data: debtStatusData, loading: debtStatusLoading } =
+    useQuery<Query>(GetDebtStatusQuery)
 
   const debtStatus = debtStatusData?.getDebtStatus?.myDebtStatus
   let scheduleButtonVisible = false
