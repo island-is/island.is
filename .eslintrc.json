@@ -217,13 +217,7 @@
             "skipTemplates": true
           }
         ],
-        "no-restricted-syntax": [
-          "error",
-          {
-            "selector": "CallExpression[arguments.length=1] > MemberExpression.callee > Identifier.property[name='reduce']",
-            "message": "Provide initialValue to .reduce()."
-          }
-        ],
+        "local-rules/require-reduce-defaults": "error",
         "local-rules/disallow-kennitalas": "warn",
         "local-rules/no-async-module-init": "error"
       }
