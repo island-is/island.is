@@ -62,7 +62,7 @@ export class MeUserProfileController {
   @Post('/confirm')
   @Scopes(UserProfileScope.write)
   @Documentation({
-    description: 'Confirms that the user has seen the nudege',
+    description: 'Confirms that the user has seen the nudge',
     response: { status: 201 },
   })
   confirmNudge(@CurrentUser() user: User) {

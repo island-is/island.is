@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { UserProfileDto } from './dto/user-profileDto'
 import { NoContentException } from '@island.is/nest/problem'
@@ -6,12 +6,15 @@ import { PatchUserProfileDto } from './dto/patch-user-profileDto'
 import { DataStatus } from '../user-profile/types/dataStatusTypes'
 import { isDefined } from '@island.is/shared/utils'
 import { UserProfile } from './userProfileV2.model'
+import { VerificationService } from '../user-profile/verification.service'
 
 @Injectable()
 export class UserProfileService {
   constructor(
     @InjectModel(UserProfile)
     private readonly userProfileModel: typeof UserProfile,
+    @Inject(VerificationService)
+    private readonly verificationService: VerificationService,
   ) {}
 
   async findById(nationalId: string) {
@@ -64,6 +67,24 @@ export class UserProfileService {
     await this.userProfileModel.update(update, {
       where: { nationalId: nationalId },
     })
+
+    if (isEmailDefined) {
+      await this.verificationService.createEmailVerification(
+        nationalId,
+        userProfile.email,
+        3,
+      )
+    }
+
+    if (isMobilePhoneNumberDefined) {
+      await this.verificationService.createSmsVerification(
+        {
+          nationalId,
+          mobilePhoneNumber: userProfile.mobilePhoneNumber,
+        },
+        3,
+      )
+    }
 
     return update
   }

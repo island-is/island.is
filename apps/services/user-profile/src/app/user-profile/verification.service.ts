@@ -5,12 +5,10 @@ import { InjectModel } from '@nestjs/sequelize'
 import { EmailVerification } from './emailVerification.model'
 import { randomInt } from 'crypto'
 import addMilliseconds from 'date-fns/addMilliseconds'
-import { parsePhoneNumber, isValidNumber } from 'libphonenumber-js'
+import { parsePhoneNumber } from 'libphonenumber-js'
 import { ConfirmEmailDto } from './dto/confirmEmailDto'
 import { join } from 'path'
-import { UserProfileService } from '../user-profile/userProfile.service'
 import { SmsVerification } from './smsVerification.model'
-import { CreateUserProfileDto } from '../user-profile/dto/createUserProfileDto'
 import { SmsService } from '@island.is/nova-sms'
 import { EmailService } from '@island.is/email-service'
 import environment from '../../environments/environment'
@@ -57,7 +55,6 @@ export class VerificationService {
     private smsVerificationModel: typeof SmsVerification,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private readonly userProfileService: UserProfileService,
     private readonly smsService: SmsService,
     @Inject(EmailService)
     private readonly emailService: EmailService,
@@ -66,8 +63,11 @@ export class VerificationService {
   async createEmailVerification(
     nationalId: string,
     email: string,
+    codeLength: 3 | 6 = 6,
   ): Promise<EmailVerification | null> {
-    const emailCode = randomInt(0, 999999).toString().padStart(6, '0')
+    const emailCode = randomInt(0, Number('9'.repeat(codeLength)))
+      .toString()
+      .padStart(codeLength, '0')
 
     const [record] = await this.emailVerificationModel.upsert(
       { nationalId, email, hash: emailCode, created: new Date() },
@@ -85,8 +85,11 @@ export class VerificationService {
 
   async createSmsVerification(
     createSmsVerification: CreateSmsVerificationDto,
+    codeLength: 3 | 6 = 6,
   ): Promise<SmsVerification | null> {
-    const code = randomInt(0, 999999).toString().padStart(6, '0')
+    const code = randomInt(0, Number('9'.repeat(codeLength)))
+      .toString()
+      .padStart(codeLength, '0')
     const verification = {
       ...createSmsVerification,
       tries: 0,
