@@ -101,7 +101,7 @@ export const numberOfProcessEntries = (contentList: any[]) =>
   getProcessEntries(contentList).length
 
 /**
- * Goes through all keys in an entry-hyperlink node and deletes objects that are at depth 2
+ * Goes through keys in an entry-hyperlink node and deletes objects that are at depth 2
  */
 export const pruneEntryHyperlink = (node: any) => {
   if (node?.data?.target?.fields) {
