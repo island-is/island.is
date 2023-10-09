@@ -1,8 +1,9 @@
 import { uuid } from 'uuidv4'
 
+import { createTestingNotificationModule } from '../createTestingNotificationModule'
+
 import { Case } from '../../../case'
 import { Notification } from '../../models/notification.model'
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 interface Then {
   result: Notification[]

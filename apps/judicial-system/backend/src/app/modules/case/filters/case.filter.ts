@@ -1,20 +1,20 @@
+import type { User } from '@island.is/judicial-system/types'
 import {
+  CaseAppealState,
   CaseDecision,
   CaseState,
   CaseType,
   indictmentCases,
   InstitutionType,
-  isIndictmentCase,
-  UserRole,
-  isProsecutionUser,
-  isDistrictCourtUser,
   isAppealsCourtUser,
-  isPrisonSystemUser,
-  isRestrictionCase,
+  isDistrictCourtUser,
+  isIndictmentCase,
   isInvestigationCase,
-  CaseAppealState,
+  isPrisonSystemUser,
+  isProsecutionUser,
+  isRestrictionCase,
+  UserRole,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
 

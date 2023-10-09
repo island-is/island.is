@@ -9,11 +9,12 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
+import { createTestingFileModule } from '../createTestingFileModule'
+
 import { randomDate } from '../../../../test'
 import { Case } from '../../../case'
 import { CreateFileDto } from '../../dto/createFile.dto'
 import { CaseFile } from '../../models/file.model'
-import { createTestingFileModule } from '../createTestingFileModule'
 
 interface Then {
   result: CaseFile
