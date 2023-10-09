@@ -4,17 +4,17 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
+import { FormatMessage, IntlService } from '@island.is/cms-translations'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   CaseFileCategory,
   CaseState,
   completedCaseStates,
   type User as TUser,
 } from '@island.is/judicial-system/types'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
-import { FormatMessage, IntlService } from '@island.is/cms-translations'
 
-import { AwsS3Service } from '../aws-s3'
 import {
   createCaseFilesRecord,
   createIndictment,
@@ -23,6 +23,7 @@ import {
   getRequestPdfAsBuffer,
   getRulingPdfAsBuffer,
 } from '../../formatters'
+import { AwsS3Service } from '../aws-s3'
 import { Case } from './models/case.model'
 
 @Injectable()
