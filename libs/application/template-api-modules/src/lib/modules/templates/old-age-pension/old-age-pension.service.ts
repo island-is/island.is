@@ -8,7 +8,10 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '@island.is/application/template-api-modules'
 
-import { SocialInsuranceAdministrationClientService } from '@island.is/clients/social-insurance-administration'
+import {
+  SocialInsuranceAdministrationClientService,
+  Uploads,
+} from '@island.is/clients/social-insurance-administration'
 import { transformApplicationToOldAgePensionDTO } from './old-age-pension-utils'
 import { getValueViaPath } from '@island.is/application/core'
 import { S3 } from 'aws-sdk'
@@ -67,11 +70,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
     return attachments
   }
 
-  // TODO: Replace any with attachment types
-  //private async getAttachments(application: Application): Promise<Attachment[]> {
-  //const attachments: Attachment[] = []
-
-  private async getAttachments(application: Application): Promise<any> {
+  private async getAttachments(application: Application): Promise<Uploads> {
     const {
       additionalAttachments,
       pensionAttachments,
@@ -267,6 +266,8 @@ export class OldAgePensionService extends BaseTemplateApiService {
         attachments,
       )
 
+
+      console.log('oldAgePensionDTO',oldAgePensionDTO)
       const response = await this.siaClientService.sendApplication(
         auth,
         oldAgePensionDTO,

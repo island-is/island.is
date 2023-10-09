@@ -138,37 +138,8 @@ components:
           items:
             type: string
         uploads:
-          type: object
-          additionalProperties: false
-          properties:
-            pension:
-              type: array
-              items:
-                $ref: '#/components/schemas/File'
-            additional:
-              type: array
-              items:
-                $ref: '#/components/schemas/File'
-            childPension:
-              type: array
-              items:
-                $ref: '#/components/schemas/File'
-            earlyRetirement:
-              type: array
-              items:
-                $ref: '#/components/schemas/File'
-            sailorPension:
-              type: array
-              items:
-                $ref: '#/components/schemas/File'
-            householdSupplement:
-              type: array
-              items:
-                $ref: '#/components/schemas/File'
-            halfOldAgePension:
-              type: array
-              items:
-                $ref: '#/components/schemas/File'
+          $ref: '#/components/schemas/Uploads'
+         
     Period:
       type: object
       additionalProperties: false
@@ -239,6 +210,38 @@ components:
           type: string
         childDoesNotHaveNationalId:
           type: boolean
+    Uploads:
+      type: object
+      additionalProperties: false
+      properties:
+        pension:
+          type: array
+          items:
+            $ref: '#/components/schemas/File'
+        additional:
+          type: array
+          items:
+            $ref: '#/components/schemas/File'
+        childPension:
+          type: array
+          items:
+            $ref: '#/components/schemas/File'
+        earlyRetirement:
+          type: array
+          items:
+            $ref: '#/components/schemas/File'
+        sailorPension:
+          type: array
+          items:
+            $ref: '#/components/schemas/File'
+        householdSupplement:
+          type: array
+          items:
+            $ref: '#/components/schemas/File'
+        halfOldAgePension:
+          type: array
+          items:
+            $ref: '#/components/schemas/File'
     File:
       type: object
       additionalProperties: false
