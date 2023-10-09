@@ -7,7 +7,6 @@ export const delegationsNavigationChildren: PortalNavigationItem[] = [
     path: DelegationPaths.Delegations,
     navHide: false,
     breadcrumbHide: true,
-    isKeyItem: true,
     children: [
       {
         name: m.accessControlGrant,
@@ -37,5 +36,4 @@ export const delegationsNavigation: PortalNavigationItem = {
   },
   description: m.accessControlDescription,
   children: delegationsNavigationChildren,
-  isKeyItem: true,
 }

@@ -54,14 +54,6 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:accessControl',
     defaultMessage: 'Aðgangsstýring',
   },
-  myAccessControl: {
-    id: 'service.portal:my-accessControl',
-    defaultMessage: 'Mínar aðgangsstýringar',
-  },
-  accessControlDelegations: {
-    id: 'service.portal:delegations',
-    defaultMessage: 'Umboð',
-  },
   accessControlDelegationsIncoming: {
     id: 'sp.access-control-delegations:to-me',
     defaultMessage: 'Til mín',
@@ -69,22 +61,6 @@ export const m = defineMessages({
   accessControlDelegationsOutgoing: {
     id: 'sp.access-control-delegations:from-me',
     defaultMessage: 'Frá mér',
-  },
-  accessControlDelegationsIncomingLong: {
-    id: 'service.portal:to-me-long',
-    defaultMessage: 'Umboð til mín',
-  },
-  accessControlDelegationsOutgoingLong: {
-    id: 'service.portal:from-me-long',
-    defaultMessage: 'Umboð frá mér',
-  },
-  accessControlDescription: {
-    id: 'service.portal:accessControl-description',
-    defaultMessage: 'Umboðsveiting og yfirlit yfir umboð sem þú hefur gefið',
-  },
-  accessControlGrant: {
-    id: 'service.portal:accessControlGrant',
-    defaultMessage: 'Veita aðgang',
   },
   accessControlAccess: {
     id: 'sp.access-control-delegations:accessControlAccess',

@@ -127,6 +127,7 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
                   activeDocument,
                   activeDocument.document.html ? 'html' : 'pdf',
                 )}
+                aria-label={formatMessage(m.getDocument)}
               >
                 <Button
                   circle

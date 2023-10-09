@@ -2,7 +2,6 @@ import React, { ElementType, FC, ReactElement } from 'react'
 import cn from 'classnames'
 import {
   Tooltip as ReakitTooltip,
-  TooltipArrow,
   TooltipReference,
   useTooltipState,
 } from 'reakit'

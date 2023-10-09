@@ -59,19 +59,9 @@ export interface PortalNavigationItem {
   activeIfExact?: boolean
 
   /**
-   * Service provider
+   * Service provider id used for displaying service provider information in the module.
    */
   serviceProvider?: string
-
-  /**
-   * Parent
-   */
-  parent?: PortalNavigationItem
-
-  /**
-   * Is key item? Stafrænt Íslands product
-   */
-  isKeyItem?: boolean
 }
 
 /**
