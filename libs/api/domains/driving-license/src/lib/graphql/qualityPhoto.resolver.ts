@@ -24,7 +24,7 @@ export class QualityPhotoResolver {
     @CurrentUser() user: User,
   ): Promise<String | null> {
     return hasQualityPhoto
-      ? this.drivingLicenseService.getQualityPhotoUri(user.nationalId)
+      ? this.drivingLicenseService.getQualityPhotoUri(user.authorization)
       : Promise.resolve(null)
   }
 
