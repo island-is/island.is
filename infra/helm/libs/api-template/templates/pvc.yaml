@@ -2,6 +2,7 @@
 {{- $namespace := $.Values.namespace -}}
 {{- if .Values.enabled }}
 {{- range .Values.pvcs }}
+{{- if not .useExisting }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -16,6 +17,6 @@ spec:
     requests:
       storage: {{ .size }}
   storageClassName: {{ .storageClass }}
-
+{{- end }}
 {{- end }}
 {{- end }}

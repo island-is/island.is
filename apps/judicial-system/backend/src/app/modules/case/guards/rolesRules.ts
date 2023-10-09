@@ -1,8 +1,8 @@
 import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
 import {
   CaseTransition,
-  UserRole,
   isIndictmentCase,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { UpdateCaseDto } from '../dto/updateCase.dto'
@@ -16,7 +16,7 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'defenderNationalId',
   'defenderEmail',
   'defenderPhoneNumber',
-  'sendRequestToDefender',
+  'requestSharedWithDefender',
   'isHeightenedSecurityLevel',
   'courtId',
   'leadInvestigator',

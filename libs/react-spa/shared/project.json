@@ -19,6 +19,19 @@
         "jestConfig": "libs/react-spa/shared/jest.config.ts",
         "passWithNoTests": true
       }
+    },
+    "schemas/codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/react-spa/shared/src/**/*.generated.ts",
+        "command": "graphql-codegen --config libs/react-spa/shared/codegen.yml"
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/react-spa/shared/src/lib/messages.ts'"
+      }
     }
   }
 }

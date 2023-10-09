@@ -41,6 +41,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:search-placeholder',
     defaultMessage: 'Search',
   },
+  client: {
+    id: 'ap.ids-admin:client',
+    defaultMessage: 'Client',
+  },
   clients: {
     id: 'ap.ids-admin:clients',
     defaultMessage: 'Applications',
@@ -831,5 +835,13 @@ export const m = defineMessages({
   partiallyCreatedClient: {
     id: 'ap.ids-admin:partially-created-client',
     defaultMessage: 'Client creation failed on one or more environments',
+  },
+  typeNotFound: {
+    id: 'ap.ids-admin:type-not-found',
+    defaultMessage: '{type} not found',
+  },
+  typeNotFoundMessage: {
+    id: 'ap.ids-admin:type-not-found-message',
+    defaultMessage: 'It may have been removed or moved',
   },
 })

@@ -1,11 +1,12 @@
-import { uuid } from 'uuidv4'
 import { Response } from 'express'
+import { uuid } from 'uuidv4'
 
 import { Logger } from '@island.is/logging'
 
+import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import { nowFactory } from '../../../../factories'
 import { getRulingPdfAsBuffer } from '../../../../formatters'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 import { AwsS3Service } from '../../../aws-s3'
 import { Case } from '../../models/case.model'
 

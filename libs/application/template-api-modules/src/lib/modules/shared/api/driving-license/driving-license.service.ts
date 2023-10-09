@@ -17,7 +17,7 @@ import {
 } from '@island.is/api/domains/driving-license-book'
 import {
   DrivingLicenseApi,
-  Juristiction,
+  Jurisdiction,
   QualitySignature,
   Teacher,
 } from '@island.is/clients/driving-license'
@@ -158,7 +158,9 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       params?.validCategories &&
       (!drivingLicense?.categories ||
         !drivingLicense.categories.some((x) =>
-          params.validCategories?.includes(x.name),
+          params.validCategories?.includes(
+            params?.useLegacyVersion ? x.name : x.nr || '',
+          ),
         ))
     ) {
       throw new TemplateApiError(
@@ -236,8 +238,8 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
   }
 
-  async juristictions(): Promise<Juristiction[]> {
-    return await this.drivingLicenseService.getListOfJuristictions()
+  async jurisdictions(): Promise<Jurisdiction[]> {
+    return await this.drivingLicenseService.getListOfJurisdictions()
   }
 
   private async getDrivingAssessment(

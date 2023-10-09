@@ -2,11 +2,12 @@ import { uuid } from 'uuidv4'
 
 import { User } from '@island.is/judicial-system/types'
 
-import { CourtService } from '../../../court'
+import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import { Case } from '../../../case'
+import { CourtService } from '../../../court'
 import { DeliverDto } from '../../dto/deliver.dto'
 import { DeliverResponse } from '../../models/deliver.response'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 
 interface Then {
   result: DeliverResponse

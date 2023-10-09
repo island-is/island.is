@@ -6,6 +6,7 @@ export type ColorSchemes =
   | 'red'
   | 'white'
   | 'blueberry'
+  | 'dark'
   | null
 
 export interface ColorSchemeProps {

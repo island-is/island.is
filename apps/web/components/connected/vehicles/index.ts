@@ -12,3 +12,7 @@ export const PlateAvailableSearch = dynamic(
   () => import('./PlateAvailableSearch'),
   { ssr: false },
 )
+
+export const PublicShipSearch = dynamic(() => import('./PublicShipSearch'), {
+  ssr: false,
+})

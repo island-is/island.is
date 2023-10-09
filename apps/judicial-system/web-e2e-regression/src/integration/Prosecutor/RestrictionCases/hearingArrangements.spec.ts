@@ -38,10 +38,12 @@ describe(RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE, () => {
     cy.get('[id="react-select-court-option-0"]').click()
     cy.getByTestid('continueButton').should('be.disabled')
 
-    cy.get('#arrestDate').type('2020-10-10').type('{enter}')
+    cy.get('#arrestDate').type('2020-10-10')
+    cy.get('#arrestDate').type('{enter}')
     cy.get('#arrestDate-time').type('10:10')
 
-    cy.get('#reqCourtDate').type('2020-10-10').type('{enter}')
+    cy.get('#reqCourtDate').type('2020-10-10')
+    cy.get('#reqCourtDate').type('{enter}')
     cy.get('#reqCourtDate-time').type('10:10')
 
     cy.getByTestid('continueButton').click()

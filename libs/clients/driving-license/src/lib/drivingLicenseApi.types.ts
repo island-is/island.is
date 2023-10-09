@@ -41,7 +41,7 @@ export interface TeacherV4 {
   driverLicenseId: number | null | undefined
 }
 
-export interface Juristiction {
+export interface Jurisdiction {
   id: number
   name: string
   zip: number

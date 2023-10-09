@@ -1,8 +1,8 @@
 import { join } from 'path'
 
 import { Message } from '../types'
-import { EmailService } from './email.service'
 import { createTestingEmailModule } from './test/createTestingEmailModule'
+import { EmailService } from './email.service'
 
 const testAccount = {
   smtp: {

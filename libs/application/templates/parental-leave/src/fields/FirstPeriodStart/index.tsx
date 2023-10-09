@@ -121,6 +121,14 @@ const FirstPeriodStart: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                   {
                     label: formatMessage(
                       parentalLeaveFormMessages.firstPeriodStart
+                        .dateOfBirthOption,
+                    ),
+                    value: StartDateOptions.ACTUAL_DATE_OF_BIRTH,
+                    disabled: isDisable,
+                  },
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.firstPeriodStart
                         .estimatedDateOfBirthOption,
                     ),
                     value: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
@@ -128,14 +136,6 @@ const FirstPeriodStart: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                       parentalLeaveFormMessages.firstPeriodStart
                         .specificDateOptionTooltip,
                     ),
-                    disabled: isDisable,
-                  },
-                  {
-                    label: formatMessage(
-                      parentalLeaveFormMessages.firstPeriodStart
-                        .dateOfBirthOption,
-                    ),
-                    value: StartDateOptions.ACTUAL_DATE_OF_BIRTH,
                     disabled: isDisable,
                   },
                   {

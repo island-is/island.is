@@ -12,7 +12,7 @@ import { Application } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import {
   DistrictCommissionerAgencies,
-  Juristiction,
+  Jurisdiction,
   NationalRegistryUser,
 } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
@@ -161,8 +161,8 @@ export const sectionOverview = buildSection({
           value: ({ answers: { district }, externalData }) => {
             const districts = getValueViaPath(
               externalData,
-              'juristictions.data',
-            ) as Juristiction[]
+              'jurisdictions.data',
+            ) as Jurisdiction[]
             const selectedDistrict = districts.find(
               (d) => d.id.toString() === district,
             )

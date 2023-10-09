@@ -8,7 +8,7 @@ import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
 import { LocaleProvider } from '@island.is/localization'
 
-import { caseResult } from './'
+import { formatCaseResult } from './'
 
 interface Props {
   getMessage: (formatMessage: IntlFormatters['formatMessage']) => string
@@ -37,11 +37,12 @@ describe('Page layout utils', () => {
         const workingCase = {
           ...mockCase(CaseType.CUSTODY),
           type: CaseType.AUTOPSY,
-          state: CaseState.REJECTED,
         }
 
         // Act
-        renderMessage((formatMessage) => caseResult(formatMessage, workingCase))
+        renderMessage((formatMessage) =>
+          formatCaseResult(formatMessage, workingCase, CaseState.REJECTED),
+        )
 
         // Assert
         expect(await screen.findByTestId('message')).toHaveTextContent(
@@ -54,11 +55,12 @@ describe('Page layout utils', () => {
         const workingCase = {
           ...mockCase(CaseType.CUSTODY),
           type: CaseType.TRAVEL_BAN,
-          state: CaseState.REJECTED,
         }
 
         // Act
-        renderMessage((formatMessage) => caseResult(formatMessage, workingCase))
+        renderMessage((formatMessage) =>
+          formatCaseResult(formatMessage, workingCase, CaseState.REJECTED),
+        )
 
         // Assert
         expect(await screen.findByTestId('message')).toHaveTextContent(
@@ -74,31 +76,12 @@ describe('Page layout utils', () => {
       const workingCase = {
         ...mockCase(CaseType.CUSTODY),
         type: CaseType.AUTOPSY,
-        state: CaseState.ACCEPTED,
       }
 
       // Act
-      renderMessage((formatMessage) => caseResult(formatMessage, workingCase))
-
-      // Assert
-      expect(await screen.findByTestId('message')).toHaveTextContent(
-        'Krafa um rannsóknarheimild samþykkt',
+      renderMessage((formatMessage) =>
+        formatCaseResult(formatMessage, workingCase, CaseState.ACCEPTED),
       )
-    })
-
-    it(`should return the correct string if the case is an investigation case and it's parent case state is ACCEPTED`, async () => {
-      // Arrange
-      const workingCase = {
-        ...mockCase(CaseType.CUSTODY),
-        type: CaseType.AUTOPSY,
-        parentCase: {
-          ...mockCase(CaseType.CUSTODY),
-          state: CaseState.ACCEPTED,
-        },
-      }
-
-      // Act
-      renderMessage((formatMessage) => caseResult(formatMessage, workingCase))
 
       // Assert
       expect(await screen.findByTestId('message')).toHaveTextContent(
@@ -111,35 +94,16 @@ describe('Page layout utils', () => {
       const workingCase = {
         ...mockCase(CaseType.CUSTODY),
         type: CaseType.TRAVEL_BAN,
-        state: CaseState.ACCEPTED,
       }
 
       // Act
-      renderMessage((formatMessage) => caseResult(formatMessage, workingCase))
+      renderMessage((formatMessage) =>
+        formatCaseResult(formatMessage, workingCase, CaseState.ACCEPTED),
+      )
 
       // Assert
       expect(await screen.findByTestId('message')).toHaveTextContent(
         'Farbann virkt',
-      )
-    })
-
-    it(`should return the correct string if the case is an restriction case and it's parent case state is ACCEPTED`, async () => {
-      // Arrange
-      const workingCase = {
-        ...mockCase(CaseType.CUSTODY),
-        type: CaseType.CUSTODY,
-        parentCase: {
-          ...mockCase(CaseType.CUSTODY),
-          state: CaseState.ACCEPTED,
-        },
-      }
-
-      // Act
-      renderMessage((formatMessage) => caseResult(formatMessage, workingCase))
-
-      // Assert
-      expect(await screen.findByTestId('message')).toHaveTextContent(
-        'Gæsluvarðhald virkt',
       )
     })
 
@@ -153,7 +117,9 @@ describe('Page layout utils', () => {
       }
 
       // Act
-      renderMessage((formatMessage) => caseResult(formatMessage, workingCase))
+      renderMessage((formatMessage) =>
+        formatCaseResult(formatMessage, workingCase, CaseState.ACCEPTED),
+      )
 
       // Assert
       expect(await screen.findByTestId('message')).toHaveTextContent(
@@ -172,7 +138,9 @@ describe('Page layout utils', () => {
       }
 
       // Act
-      renderMessage((formatMessage) => caseResult(formatMessage, workingCase))
+      renderMessage((formatMessage) =>
+        formatCaseResult(formatMessage, workingCase, CaseState.DISMISSED),
+      )
 
       // Assert
       expect(await screen.findByTestId('message')).toHaveTextContent(
@@ -192,7 +160,9 @@ describe('Page layout utils', () => {
       }
 
       // Act
-      renderMessage((formatMessage) => caseResult(formatMessage, workingCase))
+      renderMessage((formatMessage) =>
+        formatCaseResult(formatMessage, workingCase, CaseState.ACCEPTED),
+      )
 
       // Assert
       expect(await screen.findByTestId('message')).toHaveTextContent(
@@ -210,7 +180,9 @@ describe('Page layout utils', () => {
       }
 
       // Act
-      renderMessage((formatMessage) => caseResult(formatMessage, workingCase))
+      renderMessage((formatMessage) =>
+        formatCaseResult(formatMessage, workingCase, CaseState.ACCEPTED),
+      )
 
       // Assert
       expect(await screen.findByTestId('message')).toHaveTextContent(

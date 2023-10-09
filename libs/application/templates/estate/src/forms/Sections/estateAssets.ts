@@ -34,6 +34,7 @@ export const estateAssets = buildSection({
               title: m.realEstate,
               description: m.realEstateDescription,
               titleVariant: 'h3',
+              marginBottom: 2,
             }),
             buildCustomField({
               title: '',
@@ -58,6 +59,7 @@ export const estateAssets = buildSection({
               title: m.inventoryTitle,
               description: m.inventoryDescription,
               titleVariant: 'h3',
+              marginBottom: 2,
             }),
             buildTextField({
               id: 'inventory.info',
@@ -90,6 +92,7 @@ export const estateAssets = buildSection({
               title: m.vehicles,
               description: m.vehiclesDescription,
               titleVariant: 'h3',
+              marginBottom: 2,
             }),
             buildCustomField(
               {
@@ -125,6 +128,7 @@ export const estateAssets = buildSection({
               title: m.guns,
               description: m.gunsDescription,
               titleVariant: 'h3',
+              marginBottom: 2,
             }),
             buildCustomField(
               {
@@ -160,6 +164,7 @@ export const estateAssets = buildSection({
               title: m.estateBankInfo,
               description: m.estateBankInfoDescription,
               titleVariant: 'h3',
+              marginBottom: 2,
             }),
             buildCustomField(
               {
@@ -202,6 +207,7 @@ export const estateAssets = buildSection({
               title: m.claimsTitle,
               description: m.claimsDescription,
               titleVariant: 'h3',
+              marginBottom: 2,
             }),
             buildCustomField(
               {
@@ -243,6 +249,7 @@ export const estateAssets = buildSection({
               title: m.stocksTitle,
               description: m.stocksDescription,
               titleVariant: 'h3',
+              marginBottom: 2,
             }),
             buildCustomField(
               {
@@ -300,6 +307,7 @@ export const estateAssets = buildSection({
               title: m.moneyAndDepositTitle,
               description: m.moneyAndDepositDescription,
               titleVariant: 'h3',
+              marginBottom: 2,
             }),
             buildTextField({
               id: 'moneyAndDeposit.info',
@@ -332,6 +340,7 @@ export const estateAssets = buildSection({
               title: m.otherAssetsTitle,
               description: m.otherAssetsDescription,
               titleVariant: 'h3',
+              marginBottom: 2,
             }),
             buildTextField({
               id: 'otherAssets.info',

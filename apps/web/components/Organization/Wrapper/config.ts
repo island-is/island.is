@@ -78,6 +78,17 @@ export const watsonConfig: Record<
       carbonTheme: 'g10',
       namespaceKey: 'default',
     },
+
+    // Sjúkratryggingar - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/3pZwAagW0UY26giHaxHthe
+    '3pZwAagW0UY26giHaxHthe': {
+      integrationID: 'cba41fa0-12fb-4cb5-bd98-66a57cee42e0',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      region: 'eu-gb',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
   },
   is: {
     // District Commissioners (Sýslumenn) - Organization
@@ -118,6 +129,17 @@ export const watsonConfig: Record<
       integrationID: '89a03e83-5c73-4642-b5ba-cd3771ceca54',
       region: 'eu-gb',
       serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
+
+    // Sjúkratryggingar - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/3pZwAagW0UY26giHaxHthe
+    '3pZwAagW0UY26giHaxHthe': {
+      integrationID: 'e625e707-c9ce-4048-802c-c12b905c28be',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      region: 'eu-gb',
       showLauncher: false,
       carbonTheme: 'g10',
       namespaceKey: 'default',

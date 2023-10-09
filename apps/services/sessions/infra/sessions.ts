@@ -1,8 +1,20 @@
-import { json, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { PersistentVolumeClaim } from '../../../../infra/src/dsl/types/input-types'
+import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const namespace = 'services-sessions'
 const imageName = 'services-sessions'
 const dbName = 'services_sessions'
+const geoDataDir = '/geoip-lite/data'
+const geoTmpDir = `${geoDataDir}/tmp`
+
+const geoipVolume: PersistentVolumeClaim[] = [
+  {
+    name: 'sessions-geoip-db',
+    mountPath: geoDataDir,
+    size: '1Gi',
+    accessModes: 'ReadWrite',
+  },
+]
 
 const servicePostgresInfo = {
   // The service has only read permissions
@@ -32,6 +44,14 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
         prod: 'https://innskra.island.is',
       },
       REDIS_USE_SSL: 'true',
+      GEODATADIR: geoDataDir,
+    })
+    .secrets({
+      GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY',
+    })
+    .volumes({
+      ...geoipSetup().serviceDef.volumes[0],
+      useExisting: true,
     })
     .readiness('/liveness')
     .liveness('/liveness')
@@ -99,3 +119,37 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
       },
       REDIS_USE_SSL: 'true',
     })
+
+export const geoipSetup =
+  (): ServiceBuilder<'services-sessions-geoip-worker'> =>
+    service('services-sessions-geoip-worker')
+      .image(imageName)
+      .namespace(namespace)
+      .redis()
+      .serviceAccount('sessions-geoip')
+      .command('node')
+      .replicaCount({ min: 1, max: 1, default: 1 })
+      .args(
+        './node_modules/geoip-lite/scripts/updatedb.js',
+        'license_key=$(GEOIP_LICENSE_KEY)',
+      )
+      .resources({
+        limits: {
+          cpu: '1',
+          memory: '2Gi',
+        },
+        requests: {
+          cpu: '1',
+          memory: '2Gi',
+        },
+      })
+      .env({ GEODATADIR: geoDataDir, GEOTMPDIR: geoTmpDir })
+      .secrets({
+        GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY',
+      })
+      .volumes(...geoipVolume)
+      .extraAttributes({
+        dev: { schedule: '0 0 * * *' },
+        staging: { schedule: '0 0 * * *' },
+        prod: { schedule: '0 0 * * *' },
+      })

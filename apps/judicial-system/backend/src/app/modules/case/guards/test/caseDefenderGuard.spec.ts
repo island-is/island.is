@@ -6,12 +6,13 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { CaseDefenderGuard } from '../caseDefender.guard'
 import {
   indictmentCases,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
+
+import { CaseDefenderGuard } from '../caseDefender.guard'
 
 interface Then {
   result: boolean

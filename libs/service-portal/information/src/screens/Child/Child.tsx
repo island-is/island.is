@@ -186,14 +186,11 @@ const Child = () => {
             translate="no"
             printable
             content={child?.fullName || '...'}
-            tooltip={formatNameBreaks(
-              (child as NationalRegistryName) ?? undefined,
-              {
-                givenName: formatMessage(spmm.givenName),
-                middleName: formatMessage(spmm.middleName),
-                lastName: formatMessage(spmm.lastName),
-              },
-            )}
+            tooltip={formatNameBreaks(child?.name ?? undefined, {
+              givenName: formatMessage(spmm.givenName),
+              middleName: formatMessage(spmm.middleName),
+              lastName: formatMessage(spmm.lastName),
+            })}
             loading={loading}
             editLink={
               !isChild

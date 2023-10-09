@@ -5,11 +5,7 @@ import is from 'date-fns/locale/is'
 import en from 'date-fns/locale/en-US'
 
 import { LocaleContext } from './LocaleContext'
-import {
-  FormatMessage,
-  FormatMessageValues,
-  FormatMessageValuesWReact,
-} from './types'
+import { FormatMessage } from './types'
 
 export function useLocale() {
   const intl = useIntl()
