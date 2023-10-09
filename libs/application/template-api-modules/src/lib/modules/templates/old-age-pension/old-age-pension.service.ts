@@ -8,15 +8,11 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '@island.is/application/template-api-modules'
 
-import {
-  HelloOddurApi,
-  SocialInsuranceAdministrationClientService,
-} from '@island.is/clients/social-insurance-administration'
+import { SocialInsuranceAdministrationClientService } from '@island.is/clients/social-insurance-administration'
 import { transformApplicationToOldAgePensionDTO } from './old-age-pension-utils'
 import { getValueViaPath } from '@island.is/application/core'
 import { S3 } from 'aws-sdk'
 import { getApplicationAnswers } from '@island.is/application/templates/old-age-pension'
-
 
 interface customError {
   type: string
@@ -35,7 +31,6 @@ export class OldAgePensionService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private siaClientService: SocialInsuranceAdministrationClientService,
-    private helloOddurApi: HelloOddurApi,
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
   ) {
@@ -271,7 +266,6 @@ export class OldAgePensionService extends BaseTemplateApiService {
         application,
         attachments,
       )
-      
 
       const response = await this.siaClientService.sendApplication(
         auth,
