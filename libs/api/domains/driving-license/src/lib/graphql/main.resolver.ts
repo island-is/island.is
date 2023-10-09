@@ -149,7 +149,7 @@ export class MainResolver {
   ) {
     return this.drivingLicenseService.studentCanGetPracticePermit({
       studentSSN: input.studentSSN,
-      token: user.authorization.split(' ')?.[1] ?? '', // Need to remove "Bearer" part
+      token: user.authorization.replace('Bearer ', '') ?? '', // Need to remove "Bearer" part
     })
   }
 }
