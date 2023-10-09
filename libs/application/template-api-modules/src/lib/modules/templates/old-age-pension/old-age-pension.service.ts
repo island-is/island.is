@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 
-import { Application, ApplicationTypes } from '@island.is/application/types'
+import { Application, ApplicationTypes, YES } from '@island.is/application/types'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -81,6 +81,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
       schoolConfirmationAttachments,
       maintenanceAttachments,
       notLivesWithApplicantAttachments,
+      childPensionAddChild
     } = getApplicationAnswers(application.answers)
 
     const uploads = {
@@ -140,7 +141,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
       )
     }
 
-    if (maintenanceAttachments) {
+    if (maintenanceAttachments && childPensionAddChild === YES) {
       uploads.childPension = await this.initAttachments(
         application,
         'fileUploadChildPension.maintenance',

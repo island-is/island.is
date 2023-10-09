@@ -28,6 +28,7 @@ export const transformApplicationToOldAgePensionDTO = (
     rawEmployers,
     childPensionSelectedCustodyKids,
     childPension,
+    childPensionAddChild,
     personalAllowance,
     spouseAllowance,
     personalAllowanceUsage,
@@ -66,7 +67,11 @@ export const transformApplicationToOldAgePensionDTO = (
       isRental: householdSupplementHousing !== 'houseOwner',
       childrenUnder18: YES === householdSupplementChildren,
     },
-    children: initChildrens(childPensionSelectedCustodyKids, childPension),
+    children: initChildrens(
+      childPensionSelectedCustodyKids,
+      childPension,
+      (childPensionAddChild === YES) ,
+    ),
     connectedApplications: connectedApplications,
     uploads,
   }
@@ -94,6 +99,7 @@ export const getTaxLevel = (taxLevel: string): number => {
 export const initChildrens = (
   childPensionSelectedCustodyKids: any,
   childPension: any[],
+  childPensionAddChild: boolean,
 ): any[] => {
   //
   // Map the custody kids to the correct format
@@ -106,6 +112,12 @@ export const initChildrens = (
   )
 
   //
-  // Map both children arrays together
-  return [...custodyKids, ...childPension]
+  // If applicant is not adding children then not send childPension data to TR
+  if (childPensionAddChild) {
+    //
+    // Map both children arrays together
+    return [...custodyKids, ...childPension]
+  }
+
+  return custodyKids
 }
