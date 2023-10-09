@@ -12,6 +12,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   ChildrenCustodyInformationApi,
+  NationalRegistrySpouseApi,
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { childPensionFormMessage } from '../lib/messages'
@@ -68,6 +69,10 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildDataProviderItem({
                   provider: ChildrenCustodyInformationApi,
+                  title: '',
+                }),
+                buildDataProviderItem({
+                  provider: NationalRegistrySpouseApi,
                   title: '',
                 }),
                 buildDataProviderItem({

@@ -130,12 +130,30 @@ export function getApplicationExternalData(
     [],
   ) as NationalRegistryResidenceHistory[]
 
+  const hasSpouse = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data',
+  ) as object
+
+  const spouseName = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data.name',
+  ) as string
+
+  const spouseNationalId = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data.nationalId',
+  ) as string
+
   return {
     applicantName,
     applicantNationalId,
     custodyInformation,
     bank,
     residenceHistory,
+    hasSpouse,
+    spouseName,
+    spouseNationalId,
   }
 }
 

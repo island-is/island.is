@@ -103,7 +103,11 @@ export const validateLastestChild = (
   }
 
   // Reason
-  const validatedField = validateReason(child, `${VALIDATE_LATEST_CHILD}[${i}]`)
+  const validatedField = validateReason(
+    child,
+    `${VALIDATE_LATEST_CHILD}[${i}]`,
+    application,
+  )
 
   if (validatedField !== undefined) {
     return validatedField
