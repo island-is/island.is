@@ -135,12 +135,12 @@ export const geoipSetup =
       )
       .resources({
         limits: {
-          cpu: '4',
-          memory: '4Gi',
+          cpu: '1',
+          memory: '2Gi',
         },
         requests: {
-          cpu: '4',
-          memory: '4Gi',
+          cpu: '1',
+          memory: '2Gi',
         },
       })
       .env({ GEODATADIR: geoDataDir, GEOTMPDIR: geoTmpDir })

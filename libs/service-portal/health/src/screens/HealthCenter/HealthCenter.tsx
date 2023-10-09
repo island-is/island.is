@@ -66,6 +66,9 @@ const HealthCenter = () => {
 
   const healthCenterData = data?.rightsPortalUserHealthCenterRegistration
 
+  const canRegister =
+    (healthCenterData?.canRegister ?? false) && isTransferAvailable
+
   if (loading)
     return (
       <Box>
@@ -129,7 +132,7 @@ const HealthCenter = () => {
               label={formatMessage(messages.healthCenterTitle)}
               content={healthCenterData.current.healthCenterName ?? ''}
               editLink={
-                isTransferAvailable
+                canRegister
                   ? {
                       url: HealthPaths.HealthCenterRegistration,
                       title: hm.changeRegistration,
@@ -140,7 +143,10 @@ const HealthCenter = () => {
             <Divider />
             <UserInfoLine
               label={formatMessage(messages.personalDoctor)}
-              content={healthCenterData.current.doctor ?? ''}
+              content={
+                healthCenterData.current.doctor ??
+                formatMessage(messages.healthCenterNoDoctor)
+              }
             />
             <Divider />
           </Stack>
