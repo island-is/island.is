@@ -78,7 +78,7 @@ export const useDomains = (includeDefaultOption = true) => {
 
     const query = new URLSearchParams({ domain: name })
 
-    const domainQuery = name !== ALL_DOMAINS ? `?${query.toString()}` : ``
+    const domainQuery = name !== ALL_DOMAINS ? `?${query.toString()}` : ''
     setQueryString(domainQuery)
 
     navigate(`${location.pathname}${domainQuery}`, {

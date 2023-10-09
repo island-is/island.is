@@ -71,7 +71,6 @@ const AccessControl = () => {
                   `${DelegationPaths.DelegationsGrant}${location.search}`,
                 )
               }
-              // onClick={() => navigate(DelegationPaths.DelegationsGrant)}
               size="small"
             >
               {formatMessage(m.newAccess)}
