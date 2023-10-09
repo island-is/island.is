@@ -7,6 +7,9 @@ import {
   ErrorScreen,
   EmptyState,
   UserInfoLine,
+  IntroHeader,
+  SJUKRATRYGGINGAR_ID,
+  CardLoader,
 } from '@island.is/service-portal/core'
 import { useLocation } from 'react-router-dom'
 import { useGetHealthCenterQuery } from './HealthCenter.generated'
@@ -18,18 +21,14 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { IntroHeader, useQueryParam } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
 import HistoryTable from './HistoryTable'
 import subYears from 'date-fns/subYears'
 import { HealthPaths } from '../../lib/paths'
 import { messages as hm } from '../../lib/messages'
-import { Organization } from '@island.is/shared/types'
-import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
-const HEALTH_CENTER_LOGO_PATH = 'Sjúkratryggingar'
 
 const HealthCenter = () => {
   useNamespaces('sp.health')
@@ -52,6 +51,9 @@ const HealthCenter = () => {
     isFlagEnabled()
   }, [])
 
+  // Check if the user was transfered from another health center
+  const wasSuccessfulTransfer = location?.state?.transferSuccess
+
   const { loading, error, data } = useGetHealthCenterQuery({
     variables: {
       input: {
@@ -64,8 +66,18 @@ const HealthCenter = () => {
 
   const healthCenterData = data?.rightsPortalUserHealthCenterRegistration
 
-  // Check if the user was transfered from another health center
-  const wasSuccessfulTransfer = location?.state?.transferSuccess
+  const canRegister =
+    (healthCenterData?.canRegister ?? false) && isTransferAvailable
+
+  if (loading)
+    return (
+      <Box>
+        <Stack space={4}>
+          <SkeletonLoader repeat={4} space={2} />
+          <CardLoader />
+        </Stack>
+      </Box>
+    )
 
   if (error && !loading) {
     return (
@@ -80,16 +92,14 @@ const HealthCenter = () => {
       />
     )
   }
+
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
         title={formatMessage(messages.healthCenterTitle)}
         intro={formatMessage(messages.healthCenterDescription)}
-        img={getOrganizationLogoUrl(
-          HEALTH_CENTER_LOGO_PATH,
-          (data?.getOrganizations?.items ?? []) as Array<Organization>,
-          96,
-        )}
+        serviceProviderID={SJUKRATRYGGINGAR_ID}
+        serviceProviderTooltip={formatMessage(m.healthTooltip)}
       />
 
       {!loading && !healthCenterData?.current && (
@@ -122,7 +132,7 @@ const HealthCenter = () => {
               label={formatMessage(messages.healthCenterTitle)}
               content={healthCenterData.current.healthCenterName ?? ''}
               editLink={
-                isTransferAvailable
+                canRegister
                   ? {
                       url: HealthPaths.HealthCenterRegistration,
                       title: hm.changeRegistration,
@@ -133,7 +143,10 @@ const HealthCenter = () => {
             <Divider />
             <UserInfoLine
               label={formatMessage(messages.personalDoctor)}
-              content={healthCenterData.current.doctor ?? ''}
+              content={
+                healthCenterData.current.doctor ??
+                formatMessage(messages.healthCenterNoDoctor)
+              }
             />
             <Divider />
           </Stack>

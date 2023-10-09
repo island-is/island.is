@@ -48,15 +48,16 @@ interface Props {
   translate?: 'yes' | 'no'
   translateLabel?: 'yes' | 'no'
   printable?: boolean
+  tooltipFull?: boolean
 }
 
 export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
   label,
   content,
   renderContent,
-  labelColumnSpan = ['8/12', '4/12'],
-  valueColumnSpan = ['1/1', '5/12'],
-  editColumnSpan = ['1/1', '3/12'],
+  labelColumnSpan = ['12/12', '4/12', '6/12', '6/12', '4/12'],
+  valueColumnSpan = ['1/1', '5/12', '6/12', '6/12', '5/12'],
+  editColumnSpan = ['1/1', '3/12', '1/1', '1/1', '3/12'],
   loading,
   editLink,
   title,
@@ -69,6 +70,7 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
   translate = 'yes',
   translateLabel = 'yes',
   printable = false,
+  tooltipFull,
 }) => {
   const { pathname } = useLocation()
   const { formatMessage } = useLocale()
@@ -89,7 +91,7 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
         </Text>
       )}
 
-      <GridRow align="flexStart">
+      <GridRow rowGap={'smallGutter'} align="flexStart">
         <GridColumn order={1} span={labelColumnSpan}>
           <Box
             display="flex"
@@ -105,7 +107,11 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
             >
               {formatMessage(label)}{' '}
               {tooltip && (
-                <Tooltip placement="right" fullWidth text={tooltip} />
+                <Tooltip
+                  placement="top"
+                  fullWidth={tooltipFull}
+                  text={tooltip}
+                />
               )}
             </Text>
           </Box>
@@ -140,7 +146,13 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
           {editLink ? (
             <Box
               display="flex"
-              justifyContent={['flexStart', 'flexEnd']}
+              justifyContent={[
+                'flexStart',
+                'flexEnd',
+                'flexStart',
+                'flexStart',
+                'flexEnd',
+              ]}
               alignItems="center"
               height="full"
               printHidden

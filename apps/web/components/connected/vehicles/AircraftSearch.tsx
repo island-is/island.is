@@ -407,6 +407,11 @@ const AircraftTable = ({
             </Text>
           </T.HeadData>
           <T.HeadData>
+            <Text fontWeight="semiBold">
+              {n('registrationNumber', 'Skráningarnúmer')}
+            </Text>
+          </T.HeadData>
+          <T.HeadData>
             <Text fontWeight="semiBold">{n('serialNumber', 'Raðnúmer')}</Text>
           </T.HeadData>
           <T.HeadData>
@@ -438,6 +443,9 @@ const AircraftTable = ({
                 >
                   <Text color="blue400">{aircraft?.identifiers}</Text>
                 </Box>
+              </T.Data>
+              <T.Data>
+                <Text>{aircraft?.registrationNumber}</Text>
               </T.Data>
               <T.Data>
                 <Text>{aircraft?.serialNumber}</Text>

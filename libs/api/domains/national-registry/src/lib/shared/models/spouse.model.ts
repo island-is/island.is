@@ -4,7 +4,7 @@ import { MaritalStatus } from '../types'
 
 @ObjectType('NationalRegistrySpouse')
 export class Spouse extends PersonBase {
-  @Field(() => MaritalStatus, { nullable: true })
+  @Field(() => String, { nullable: true })
   maritalStatus?: MaritalStatus | null | string
 
   @Field(() => Boolean, { nullable: true })

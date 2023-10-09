@@ -52,7 +52,11 @@ const RenderAdvice = ({ advice, loc, isOpen = false }: RenderAdviceProps) => {
     const retComp = []
     retComp.push(loc['hiddenContent'])
     retComp.push(' ')
-    retComp.push(<Link loc={loc}>{loc['hiddenContentLink']}</Link>)
+    retComp.push(
+      <Link key={advice.id} loc={loc}>
+        {loc['hiddenContentLink']}
+      </Link>,
+    )
     retComp.push('.')
     return retComp
   }

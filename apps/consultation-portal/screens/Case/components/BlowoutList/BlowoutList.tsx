@@ -20,10 +20,16 @@ import { sortLocale } from '../../../../utils/helpers'
 interface Props {
   list: Array<Stakeholder> | Array<RelatedCase>
   isStakeholder?: boolean
+  isEmpty?: boolean
 }
 
-export const BlowoutList = ({ list, isStakeholder }: Props) => {
+export const BlowoutList = ({
+  list,
+  isStakeholder = false,
+  isEmpty = false,
+}: Props) => {
   const sortOption = isStakeholder ? 'name' : 'caseNumber'
+
   const sortedList = sortLocale({ list: list, sortOption: sortOption })
   const [showList, setShowList] = useState(false)
   const loc = isStakeholder
@@ -49,32 +55,38 @@ export const BlowoutList = ({ list, isStakeholder }: Props) => {
           {showList && (
             <>
               {isStakeholder && <Text>{loc.description}</Text>}
-              {sortedList?.length < 1 && <Text>{loc.noList}</Text>}
-              <Box padding="smallGutter">
-                <BulletList type="ul">
-                  {isStakeholder
-                    ? sortedList.map((item: Stakeholder, index: number) => {
-                        return <Bullet key={index}>{item.name}</Bullet>
-                      })
-                    : sortedList.map((item: RelatedCase, index: number) => {
-                        return (
-                          <Bullet key={index}>
-                            <Inline flexWrap="nowrap" alignY="bottom" space={1}>
-                              <LinkV2
-                                href={`/mal/${item.id}`}
-                                color="blue400"
-                                underline="small"
-                                underlineVisibility="hover"
+              {isStakeholder && isEmpty && <Text>{loc.noList}</Text>}
+              {!isEmpty && (
+                <Box padding="smallGutter">
+                  <BulletList type="ul">
+                    {isStakeholder
+                      ? sortedList.map((item: Stakeholder, index: number) => {
+                          return <Bullet key={index}>{item.name}</Bullet>
+                        })
+                      : sortedList.map((item: RelatedCase, index: number) => {
+                          return (
+                            <Bullet key={index}>
+                              <Inline
+                                flexWrap="nowrap"
+                                alignY="bottom"
+                                space={1}
                               >
-                                {item.caseNumber}
-                              </LinkV2>
-                              <Tooltip placement="bottom" text={item.name} />
-                            </Inline>
-                          </Bullet>
-                        )
-                      })}
-                </BulletList>
-              </Box>
+                                <LinkV2
+                                  href={`/mal/${item.id}`}
+                                  color="blue400"
+                                  underline="small"
+                                  underlineVisibility="hover"
+                                >
+                                  {item.caseNumber}
+                                </LinkV2>
+                                <Tooltip placement="bottom" text={item.name} />
+                              </Inline>
+                            </Bullet>
+                          )
+                        })}
+                  </BulletList>
+                </Box>
+              )}
             </>
           )}
         </StackedTitleAndDescription>

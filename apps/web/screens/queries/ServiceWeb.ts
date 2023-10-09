@@ -202,6 +202,7 @@ export const GET_SERVICE_WEB_ORGANIZATION = gql`
         width
         height
       }
+      footerConfig
       footerItems {
         title
         content {

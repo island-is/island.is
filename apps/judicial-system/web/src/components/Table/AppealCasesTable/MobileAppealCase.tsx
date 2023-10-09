@@ -32,6 +32,7 @@ const MobileAppealCase: React.FC<Props> = ({ theCase, onClick, children }) => {
         <TagAppealState
           appealState={theCase.appealState}
           appealRulingDecision={theCase.appealRulingDecision}
+          appealCaseNumber={theCase.appealCaseNumber}
         />,
       ]}
     >

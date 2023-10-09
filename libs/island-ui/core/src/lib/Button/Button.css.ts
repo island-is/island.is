@@ -283,8 +283,9 @@ const utilityColors = (
   textDisabled: string,
   borderDisabled: string,
   borderHoverWidth = 1,
+  backgroundColor = theme.color.transparent,
 ) => ({
-  backgroundColor: theme.color.transparent,
+  backgroundColor: backgroundColor,
   boxShadow: `inset 0 0 0 1px ${border}`,
   color: text,
   ':disabled': {
@@ -295,13 +296,13 @@ const utilityColors = (
     boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
   },
   ':hover': {
-    backgroundColor: theme.color.transparent,
+    backgroundColor: backgroundColor,
     boxShadow: `inset 0 0 0 ${borderHoverWidth}px ${borderHover}`,
     color: textHover,
   },
   selectors: {
     '&:focus:active': {
-      backgroundColor: theme.color.transparent,
+      backgroundColor: backgroundColor,
       boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
     },
   },
@@ -383,6 +384,11 @@ export const colors = {
       theme.color.blueberry400,
       theme.color.blueberry300,
     ),
+    dark: textColors(
+      theme.color.dark400,
+      theme.color.dark200,
+      theme.color.dark300,
+    ),
   }),
   utility: styleVariants({
     default: utilityColors(
@@ -427,11 +433,30 @@ export const colors = {
       theme.color.blue100,
       2,
     ),
+    dark: utilityColors(
+      theme.color.dark400,
+      theme.color.dark400,
+      theme.color.dark400,
+      theme.color.dark400,
+      theme.color.dark200,
+      theme.color.dark100,
+      2,
+    ),
     primary: primaryColors(
       theme.color.blue400,
       theme.color.white,
       theme.color.blueberry400,
       theme.color.blue300,
+    ),
+    white: utilityColors(
+      theme.color.dark400,
+      theme.color.blue200,
+      theme.color.dark400,
+      theme.color.blue400,
+      theme.color.dark200,
+      theme.color.blue100,
+      1,
+      theme.color.white,
     ),
   }),
 }
@@ -525,6 +550,7 @@ export const icon = style({
       theme.color.red600,
       theme.color.roseTinted400,
     ),
+    ...utilityIconColor('white', theme.color.blue400, theme.color.blue400),
   },
 })
 

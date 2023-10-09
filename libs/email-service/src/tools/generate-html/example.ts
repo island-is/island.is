@@ -1,4 +1,5 @@
 import { resolve } from 'path'
+
 import { Template } from '../../types'
 
 const example: Template['body'] = [

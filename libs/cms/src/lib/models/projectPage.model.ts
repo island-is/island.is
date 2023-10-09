@@ -1,4 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import GraphQLJSON from 'graphql-type-json'
 import { CacheField } from '@island.is/nest/graphql'
 
 import { IProjectPage } from '../generated/contentfulTypes'
@@ -75,6 +76,9 @@ export class ProjectPage {
   @Field()
   featuredDescription!: string
 
+  @CacheField(() => GraphQLJSON, { nullable: true })
+  footerConfig?: { background?: string; textColor?: string } | null
+
   @CacheField(() => [FooterItem], { nullable: true })
   footerItems?: FooterItem[]
 
@@ -121,6 +125,7 @@ export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
   defaultHeaderBackgroundColor: fields.defaultHeaderBackgroundColor ?? '',
   featuredDescription: fields.featuredDescription ?? '',
   footerItems: fields.footerItems ? fields.footerItems.map(mapFooterItem) : [],
+  footerConfig: fields.footerConfig,
   backLink: fields.backLink ? mapLink(fields.backLink) : null,
   contentIsFullWidth: fields.contentIsFullWidth ?? false,
   namespace: fields.namespace ? mapNamespace(fields.namespace) : null,

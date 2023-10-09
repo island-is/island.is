@@ -435,7 +435,7 @@ export const FinanceScreen: NavigationFunctionComponent = ({componentId}) => {
     const organizationChargeTypes = financeStatusData?.organizations?.map(
       org => org.chargeTypes,
     );
-    const allChargeTypes = organizationChargeTypes?.flat();
+    const allChargeTypes = organizationChargeTypes?.flat() ?? [];
 
     const chargeTypeTotal =
       allChargeTypes.length > 0
@@ -540,7 +540,7 @@ export const FinanceScreen: NavigationFunctionComponent = ({componentId}) => {
               `${getConfig().apiUrl.replace(
                 /\/api/,
                 '',
-              )}/umsoknir/greidsluaaetlun/`,
+              )}/umsoknir/greidsluaaetlun`,
               componentId,
             );
           }}

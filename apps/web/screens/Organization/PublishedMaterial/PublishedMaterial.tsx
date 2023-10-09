@@ -547,7 +547,10 @@ PublishedMaterial.getProps = async ({ apolloClient, locale, query }) => {
       (getOrganization ?? getOrganizationPage?.organization)
         ?.publishedMaterialSearchFilterGenericTags ?? [],
     namespace,
-    ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
+    ...getThemeConfig(
+      getOrganizationPage?.theme,
+      getOrganization ?? getOrganizationPage?.organization,
+    ),
   }
 }
 

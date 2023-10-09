@@ -30,8 +30,6 @@ Push a new beta build to TestFlight
 
 ### ios beta
 
-### ios beta_prod
-
 ```sh
 [bundle exec] fastlane ios beta
 ```

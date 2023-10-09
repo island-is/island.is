@@ -3,8 +3,8 @@
 // - Special logic around externalDependencies and option handling.
 // - Modifying workspace object and running executor recursively.
 
-import { runExecutor } from '@nrwl/devkit'
-import type { ExecutorContext } from '@nrwl/devkit'
+import { runExecutor } from '@nx/devkit'
+import type { ExecutorContext } from '@nx/devkit'
 import { createTmpTsConfig } from './utils'
 
 const EXTERNAL_DEPENDENCIES_DEFAULT_VALUE = 'all'
@@ -25,7 +25,7 @@ export default async function* buildExecutor(
   context: ExecutorContext,
 ): AsyncIterableIterator<unknown> {
   const { projectName: project, targetName: target, workspace } = context
-  const projectInfo = workspace.projects[project!]
+  const projectInfo = workspace?.projects[project!]
   const targets = projectInfo?.targets
 
   if (!project || !target || !projectInfo || !targets) {
@@ -37,7 +37,9 @@ export default async function* buildExecutor(
   if (!options.watch) {
     targets[target].executor = '@anatine/esbuildnx:build'
   } else {
-    targets[target].executor = '@nx/node:webpack'
+    targets[target].executor = '@nx/webpack:webpack'
+    targets[target].options.compiler = 'tsc'
+    targets[target].options.target = 'node'
 
     // WARNING -- this is a doozy:
     // webpack5 + es modules + typescript metadata reflection + circular dependencies + barrel files = JS errors

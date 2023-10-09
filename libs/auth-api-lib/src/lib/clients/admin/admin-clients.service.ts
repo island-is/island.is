@@ -103,9 +103,10 @@ export class AdminClientsService {
     tenantId: string,
     clientId: string,
     includeArchived = false,
+    useMaster = false,
   ): Promise<AdminClientDto> {
     const client = await this.clientModel.findOne({
-      useMaster: true,
+      useMaster,
       where: {
         clientId,
         domainName: tenantId,
@@ -121,6 +122,7 @@ export class AdminClientsService {
     const clientTranslation = await this.translationService.findTranslationMap(
       'client',
       [client.clientId],
+      useMaster,
     )
 
     return this.formatClient(client, clientTranslation.get(client.clientId))
@@ -132,6 +134,7 @@ export class AdminClientsService {
     tenantId: string,
   ): Promise<AdminClientDto> {
     const tenant = await this.domainModel.findOne({
+      useMaster: true,
       where: {
         name: tenantId,
       },
@@ -141,6 +144,7 @@ export class AdminClientsService {
     }
 
     const existingClient = await this.clientModel.findOne({
+      useMaster: true,
       where: {
         clientId: clientDto.clientId,
         domainName: tenantId,
@@ -215,7 +219,7 @@ export class AdminClientsService {
       },
     )
 
-    return this.findByTenantIdAndClientId(tenantId, clientId)
+    return this.findByTenantIdAndClientId(tenantId, clientId, false, true)
   }
 
   async delete(clientId: string, tenantId: string) {

@@ -1,9 +1,10 @@
+import type { CourtDocument } from './courtDocument'
 import type { Defendant } from './defendant'
+import { EventLog } from './eventLog'
+import { CaseFile } from './file'
 import type { Institution } from './institution'
 import type { Notification } from './notification'
-import { CaseFile } from './file'
 import { User, UserRole } from './user'
-import type { CourtDocument } from './courtDocument'
 
 export enum CaseOrigin {
   UNKNOWN = 'UNKNOWN',
@@ -27,6 +28,7 @@ export enum CaseType {
   INTERNET_USAGE = 'INTERNET_USAGE',
   OTHER = 'OTHER',
   PHONE_TAPPING = 'PHONE_TAPPING',
+  PAROLE_REVOCATION = 'PAROLE_REVOCATION',
   PSYCHIATRIC_EXAMINATION = 'PSYCHIATRIC_EXAMINATION',
   RESTRAINING_ORDER = 'RESTRAINING_ORDER',
   RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME = 'RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME',
@@ -282,6 +284,7 @@ export interface Case {
   appealConclusion?: string
   appealRulingDecision?: CaseAppealRulingDecision
   requestSharedWithDefender?: RequestSharedWithDefender
+  eventLogs?: EventLog[]
 }
 
 export interface CaseListEntry
@@ -449,6 +452,7 @@ export const investigationCases = [
   CaseType.INTERNET_USAGE,
   CaseType.OTHER,
   CaseType.PHONE_TAPPING,
+  CaseType.PAROLE_REVOCATION,
   CaseType.PSYCHIATRIC_EXAMINATION,
   CaseType.RESTRAINING_ORDER,
   CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,

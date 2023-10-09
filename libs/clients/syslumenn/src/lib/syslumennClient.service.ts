@@ -70,6 +70,7 @@ export class SyslumennService {
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-syslumenn',
+          organizationSlug: 'syslumenn',
           ...this.clientConfig.fetch,
         }),
         basePath: this.clientConfig.url,

@@ -1,5 +1,6 @@
 import { Op } from 'sequelize'
 
+import type { User } from '@island.is/judicial-system/types'
 import {
   appealsCourtRoles,
   CaseAppealState,
@@ -15,7 +16,6 @@ import {
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
 
 import { getCasesQueryFilter } from './cases.filter'
 
@@ -272,7 +272,13 @@ describe('getCasesQueryFilter', () => {
       [Op.and]: [
         { isArchived: false },
         { state: CaseState.ACCEPTED },
-        { type: [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY] },
+        {
+          type: [
+            CaseType.CUSTODY,
+            CaseType.ADMISSION_TO_FACILITY,
+            CaseType.PAROLE_REVOCATION,
+          ],
+        },
         {
           decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
         },
@@ -301,8 +307,9 @@ describe('getCasesQueryFilter', () => {
         { state: CaseState.ACCEPTED },
         {
           type: [
-            CaseType.ADMISSION_TO_FACILITY,
             CaseType.CUSTODY,
+            CaseType.ADMISSION_TO_FACILITY,
+            CaseType.PAROLE_REVOCATION,
             CaseType.TRAVEL_BAN,
           ],
         },
