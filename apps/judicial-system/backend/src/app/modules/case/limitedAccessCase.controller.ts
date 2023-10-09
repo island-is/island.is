@@ -37,7 +37,6 @@ import {
 import { nowFactory } from '../../factories'
 import { defenderRule } from '../../guards'
 import { CaseEvent, EventService } from '../event'
-import { FileService } from '../file/file.service'
 import { User } from '../user'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
@@ -65,7 +64,6 @@ export class LimitedAccessCaseController {
   constructor(
     private readonly limitedAccessCaseService: LimitedAccessCaseService,
     private readonly eventService: EventService,
-    private readonly fileService: FileService,
     private readonly pdfService: PDFService,
 
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -353,10 +351,9 @@ export class LimitedAccessCaseController {
     JwtAuthGuard,
     RolesGuard,
     CaseExistsGuard,
-    new CaseTypeGuard(restrictionCases),
-    LimitedAccessAccordingToCaseStateGuard,
-    CaseDefenderGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseCompletedGuard,
+    CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
   @Get('case/:caseId/limitedAccess/all')
@@ -365,7 +362,7 @@ export class LimitedAccessCaseController {
     content: { 'application/zip': {} },
     description: 'Gets the all files for an existing case as a zip document',
   })
-  async getAllFiles(
+  async getAllFilesZip(
     @CurrentCase() theCase: Case,
     @CurrentHttpUser() user: TUser,
     @Res() res: Response,
@@ -374,7 +371,10 @@ export class LimitedAccessCaseController {
       `Getting all files for case ${theCase.id} as a zip document`,
     )
 
-    const zip = await this.fileService.getAll(theCase, user)
+    const zip = await this.limitedAccessCaseService.getAllFilesZip(
+      theCase,
+      user,
+    )
 
     res.end(zip)
   }

@@ -54,11 +54,6 @@ import { PDFService } from './pdf.service'
     InternalCaseController,
     LimitedAccessCaseController,
   ],
-  exports: [
-    CaseService,
-    LimitedAccessCaseService,
-    InternalCaseService,
-    PDFService,
-  ],
+  exports: [CaseService, LimitedAccessCaseService, InternalCaseService],
 })
 export class CaseModule {}

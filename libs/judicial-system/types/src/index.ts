@@ -79,8 +79,8 @@ export {
   getAppealInfo,
   getStatementDeadline,
   getAppealedDate,
-  availableCaseFileCategoriesForIndictmentCases,
-  availableCaseFileCategoriesForRestrictionAndInvestigationCases,
+  availableCaseFileCategoriesForLimitedIndictmentCases,
+  availableCaseFileCategoriesForLimitedRestrictionAndInvestigationCases,
 } from './lib/case'
 export type {
   Case,

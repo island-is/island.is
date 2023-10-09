@@ -1,7 +1,5 @@
-import archiver from 'archiver'
 import { Op, Sequelize } from 'sequelize'
 import { Transaction } from 'sequelize/types'
-import { Writable } from 'stream'
 import { uuid } from 'uuidv4'
 
 import {
@@ -18,19 +16,13 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import type { User } from '@island.is/judicial-system/types'
 import {
-  availableCaseFileCategoriesForIndictmentCases,
-  availableCaseFileCategoriesForRestrictionAndInvestigationCases,
   CaseFileCategory,
   CaseFileState,
-  indictmentCases,
-  investigationCases,
   isIndictmentCase,
-  restrictionCases,
 } from '@island.is/judicial-system/types'
 
 import { AwsS3Service } from '../aws-s3'
 import { Case } from '../case'
-import { PDFService } from '../case/pdf.service'
 import { CourtDocumentFolder, CourtService } from '../court'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
@@ -58,7 +50,6 @@ export class FileService {
     @InjectModel(CaseFile) private readonly fileModel: typeof CaseFile,
     private readonly courtService: CourtService,
     private readonly awsS3Service: AwsS3Service,
-    private readonly pdfService: PDFService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -170,38 +161,6 @@ export class FileService {
     )
   }
 
-  private zipFiles(
-    files: Array<{ data: Buffer; name: string }>,
-  ): Promise<Buffer> {
-    return new Promise((resolve, reject) => {
-      const buffs: Buffer[] = []
-      const converter = new Writable()
-
-      converter._write = (chunk, _encoding, cb) => {
-        buffs.push(chunk)
-        process.nextTick(cb)
-      }
-
-      converter.on('finish', () => {
-        resolve(Buffer.concat(buffs))
-      })
-
-      const archive = archiver('zip')
-
-      archive.on('error', (err) => {
-        reject(err)
-      })
-
-      archive.pipe(converter)
-
-      for (const file of files) {
-        archive.append(file.data, { name: file.name })
-      }
-
-      archive.finalize()
-    })
-  }
-
   async findById(fileId: string, caseId: string): Promise<CaseFile> {
     const caseFile = await this.fileModel.findOne({
       where: { id: fileId, caseId, state: { [Op.not]: CaseFileState.DELETED } },
@@ -214,56 +173,6 @@ export class FileService {
     }
 
     return caseFile
-  }
-
-  async getAll(theCase: Case, user: User): Promise<Buffer> {
-    const filesToZip: Array<{ data: Buffer; name: string }> = []
-    const allowedCategories = [
-      ...restrictionCases,
-      ...investigationCases,
-    ].includes(theCase.type)
-      ? availableCaseFileCategoriesForRestrictionAndInvestigationCases
-      : indictmentCases.includes(theCase.type)
-      ? availableCaseFileCategoriesForIndictmentCases
-      : []
-
-    const caseFilesByCategory = await this.fileModel.findAll({
-      where: {
-        caseId: theCase.id,
-        state: { [Op.not]: CaseFileState.DELETED },
-        category: allowedCategories,
-      },
-    })
-
-    for (const file of caseFilesByCategory) {
-      await this.awsS3Service
-        .getObject(file.key ?? '')
-        .then((content) => filesToZip.push({ data: content, name: file.name }))
-        .catch((reason) =>
-          // Tolerate failure, but log what happened
-          this.logger.warn(
-            `Could not get file ${file.id} of case ${file.caseId} from AWS S3`,
-            { reason },
-          ),
-        )
-    }
-
-    filesToZip.push(
-      {
-        data: await this.pdfService.getRequestPdf(theCase),
-        name: 'krafa.pdf',
-      },
-      {
-        data: await this.pdfService.getCourtRecordPdf(theCase, user),
-        name: 'þingbok.pdf',
-      },
-      {
-        data: await this.pdfService.getRulingPdf(theCase),
-        name: 'urskurður.pdf',
-      },
-    )
-
-    return this.zipFiles(filesToZip)
   }
 
   createPresignedPost(

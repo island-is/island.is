@@ -463,17 +463,18 @@ export const investigationCases = [
   CaseType.VIDEO_RECORDING_EQUIPMENT,
 ]
 
-export const availableCaseFileCategoriesForRestrictionAndInvestigationCases = [
-  CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
-  CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-  CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-  CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-  CaseFileCategory.APPEAL_RULING,
-]
+export const availableCaseFileCategoriesForLimitedRestrictionAndInvestigationCases =
+  [
+    CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+    CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+    CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+    CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+    CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+    CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+    CaseFileCategory.APPEAL_RULING,
+  ]
 
-export const availableCaseFileCategoriesForIndictmentCases = [
+export const availableCaseFileCategoriesForLimitedIndictmentCases = [
   CaseFileCategory.COURT_RECORD,
   CaseFileCategory.RULING,
   CaseFileCategory.COVER_LETTER,
