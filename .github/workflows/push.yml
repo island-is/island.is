@@ -68,7 +68,7 @@ jobs:
           fi
           echo "GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY}" >> $GITHUB_OUTPUT
           echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> $GITHUB_ENV
-          echo "FEATURE_NAME=$(echo $GIT_BRANCH_DEPLOY | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> $GITHUB_OUTPUT
+          echo "FEATURE_NAME=$(echo $GIT_BRANCH_DEPLOY | tr -cs '[:alnum:]' '-' | sed -e 's/^-//' -e 's/-$//' | tr '[:upper:]' '[:lower:]' | cut -c 1-63)" >> $GITHUB_OUTPUT
 
       - name: Check if we want to run workflow
         id: should-run
