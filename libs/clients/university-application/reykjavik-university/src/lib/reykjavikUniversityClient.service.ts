@@ -83,12 +83,12 @@ class ReykjavikUniversityApplicationClient {
             }) || [],
           extraApplicationFields: program.extraApplicationFields?.map(
             (field) => ({
+              externalId: field.fieldKey || '',
               nameIs: field.nameIs || '',
               nameEn: field.nameEn || '',
               descriptionIs: field.descriptionIs,
               descriptionEn: field.descriptionEn,
               required: field.required || false,
-              fieldKey: field.fieldKey || '',
               fieldType: field.fieldType as unknown as FieldType,
               uploadAcceptedFileType: field.uploadAcceptedFileType,
             }),

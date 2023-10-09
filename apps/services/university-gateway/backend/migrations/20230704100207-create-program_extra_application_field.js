@@ -21,6 +21,10 @@ module.exports = {
               },
               allowNull: false,
             },
+            external_id: {
+              type: Sequelize.STRING,
+              allowNull: false,
+            },
             name_is: {
               type: Sequelize.STRING,
               allowNull: false,
@@ -39,11 +43,6 @@ module.exports = {
             },
             required: {
               type: Sequelize.BOOLEAN,
-              allowNull: false,
-            },
-            field_key: {
-              //TODOx afhverju kallast þessi reitur ekki bara externalId
-              type: Sequelize.STRING,
               allowNull: false,
             },
             field_type: {

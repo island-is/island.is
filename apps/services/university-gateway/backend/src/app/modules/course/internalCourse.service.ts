@@ -126,9 +126,12 @@ class InternalCourseService {
         for (let j = 0; j < courseList.length; j++) {
           const course = courseList[j]
 
-          const programMinor = await this.programMinorModel.findOne({
-            where: { externalId: course.minorExternalId },
-          })
+          let programMinor: ProgramMinor | null = null
+          if (course.minorExternalId) {
+            programMinor = await this.programMinorModel.findOne({
+              where: { externalId: course.minorExternalId },
+            })
+          }
 
           try {
             // Map to courseModel object

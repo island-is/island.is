@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -44,15 +44,11 @@ export class University extends Model {
   })
   contentfulKey!: string
 
-  @ApiProperty({
-    type: String,
-  })
+  @ApiHideProperty()
   @CreatedAt
   readonly created!: Date
 
-  @ApiProperty({
-    type: String,
-  })
+  @ApiHideProperty()
   @UpdatedAt
   readonly modified!: Date
 }
