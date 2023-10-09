@@ -7,17 +7,17 @@ module.exports = {
         'user_profile',
         [
           {
-            id: 'ec23d2ff-4798-43eb-b487-c0c37c2778b1',
-            national_id: '2222222229',
-            mobile_phone_number: '5555555',
+            id: 'ec23d2ff-4798-43eb-b487-c0c37c2778b2',
+            national_id: '0101302399',
+            mobile_phone_number: '5555556',
             locale: 'en',
-            email: 'email@email.com',
+            email: 'email2@email2.com',
           },
         ],
         {},
       )
     } catch (err) {
-      console.log('ERROR MESSAGE', err)
+      console.log(err)
     }
   },
 

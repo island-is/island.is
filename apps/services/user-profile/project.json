@@ -113,7 +113,8 @@
       "options": {
         "commands": [
           "yarn nx run services-user-profile:dev-services",
-          "yarn nx run services-user-profile:migrate"
+          "yarn nx run services-user-profile:migrate",
+          "yarn nx run services-user-profile:seed"
         ],
         "parallel": false
       }

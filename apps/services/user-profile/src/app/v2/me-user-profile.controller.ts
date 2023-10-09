@@ -1,22 +1,24 @@
-import { Controller, Get, UseGuards } from '@nestjs/common'
-import { UserProfileScope } from '@island.is/auth/scopes'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
-import { Audit } from '@island.is/nest/audit'
-import { UserProfile } from '../user-profile/userProfile.model'
-import { Documentation } from '@island.is/nest/swagger'
-import { UserProfileService } from './user-profile.service'
-import { UserProfileDto } from './dto/user-profileDto'
-import type { User } from '@island.is/auth-nest-tools'
+import { Controller, Get, UseGuards } from '@nestjs/common'
+
 import {
   CurrentUser,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import { Audit } from '@island.is/nest/audit'
+import { Documentation } from '@island.is/nest/swagger'
+import { UserProfileScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
+
+import { UserProfile } from '../user-profile/userProfile.model'
+import { UserProfileDto } from './dto/user-profileDto'
+import { UserProfileService } from './user-profile.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(UserProfileScope.read)
-@ApiTags('user-profile')
+@ApiTags('v2/me')
 @ApiSecurity('oauth2', [UserProfileScope.read])
 @Controller({
   path: 'me/user-profile',

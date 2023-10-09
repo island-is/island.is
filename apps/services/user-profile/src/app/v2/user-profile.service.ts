@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common'
-import { UserProfile } from '../user-profile/userProfile.model'
 import { InjectModel } from '@nestjs/sequelize'
-import { UserProfileDto } from './dto/user-profileDto'
+
 import { NoContentException } from '@island.is/nest/problem'
+
+import { UserProfile } from '../user-profile/userProfile.model'
+import { UserProfileDto } from './dto/user-profileDto'
+import { DataStatus } from '../user-profile/types/dataStatusTypes'
 
 @Injectable()
 export class UserProfileService {
@@ -11,24 +14,24 @@ export class UserProfileService {
     private readonly userProfileModel: typeof UserProfile,
   ) {}
 
-  async findById(nationalId: string) {
-    const resp = await this.userProfileModel.findOne({
+  async findById(nationalId: string): Promise<UserProfileDto> {
+    const userProfile = await this.userProfileModel.findOne({
       where: { nationalId: nationalId },
     })
 
-    if (!resp) {
+    if (!userProfile) {
       throw new NoContentException()
     }
 
     return {
-      nationalId: resp.nationalId,
-      email: resp.email,
-      mobilePhoneNumber: resp.mobilePhoneNumber,
-      locale: resp.locale,
-      mobileStatus: resp.mobileStatus,
-      emailStatus: resp.emailStatus,
-      mobilePhoneNumberVerified: resp.mobilePhoneNumberVerified,
-      emailVerified: resp.emailVerified,
-    } as UserProfileDto
+      nationalId: userProfile.nationalId,
+      email: userProfile.email,
+      mobilePhoneNumber: userProfile.mobilePhoneNumber,
+      locale: userProfile.locale,
+      mobileStatus: DataStatus[userProfile.mobileStatus],
+      emailStatus: DataStatus[userProfile.emailStatus],
+      mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
+      emailVerified: userProfile.emailVerified,
+    }
   }
 }
