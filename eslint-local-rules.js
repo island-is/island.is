@@ -1,8 +1,8 @@
 'use strict'
-import { isValid } from 'kennitala'
+const kennitala = require('kennitala')
 const fakeNationalIdPrefixes = ['010130', /(\d+)\1{6,}/]
 
-export default {
+module.exports = {
   'require-reduce-defaults': {
     meta: {
       type: 'problem',
@@ -37,7 +37,7 @@ export default {
     create: function (context) {
       function checkKennitala(value, node) {
         if (
-          isValid(value) &&
+          kennitala.isValid(value) &&
           !fakeNationalIdPrefixes.some(
             (nID) => new String(value).search(nID) >= 0,
           )
