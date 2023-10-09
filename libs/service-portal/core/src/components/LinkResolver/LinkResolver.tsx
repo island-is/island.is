@@ -2,15 +2,16 @@ import React, { ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { formatPlausiblePathToParams, isExternalLink } from '../..'
 import * as styles from './LinkResolver.css'
+import cn from 'classnames'
 import { servicePortalOutboundLink } from '@island.is/plausible'
 interface Props {
   children?: ReactNode
+  className?: string
   href: string
 }
 
-export const LinkResolver = ({ href = '/', children }: Props) => {
+export const LinkResolver = ({ href = '/', children, className }: Props) => {
   const { pathname } = useLocation()
-
   if (isExternalLink(href)) {
     return (
       <a
@@ -30,7 +31,12 @@ export const LinkResolver = ({ href = '/', children }: Props) => {
     )
   }
   return (
-    <Link className={styles.link} to={href}>
+    <Link
+      className={cn(styles.link, {
+        [`${className}`]: className,
+      })}
+      to={href}
+    >
       {children}
     </Link>
   )
