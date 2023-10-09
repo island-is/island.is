@@ -252,7 +252,6 @@ const SubPage: Screen<SubPageProps> = ({
                                 subpage.sliceExtraText,
                                 namespace,
                                 organizationPage?.slug,
-                                organizationPage,
                               )}
                             </>
                           }
@@ -281,7 +280,6 @@ const SubPage: Screen<SubPageProps> = ({
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore make web strict
         organizationPage.slug,
-        organizationPage,
       )}
     </OrganizationWrapper>
   )
@@ -293,7 +291,6 @@ const renderSlices = (
   extraText: string,
   namespace: Record<string, string>,
   slug: string,
-  organizationPage: Query['getOrganizationPage'],
 ) => {
   switch (renderType) {
     case 'SliceDropdown':
@@ -301,8 +298,6 @@ const renderSlices = (
     default:
       return slices.map((slice, index) => {
         if (slice.__typename === 'LifeEventPageListSlice') {
-          const digitalIcelandDetailPageLinkType: LinkType =
-            'digitalicelandservicesdetailpage'
           return (
             <SliceMachine
               key={slice.id}
@@ -312,10 +307,6 @@ const renderSlices = (
               marginBottom={index === slices.length - 1 ? 5 : 0}
               params={{
                 renderLifeEventPagesAsProfileCards: true,
-                anchorPageLinkType:
-                  organizationPage?.theme === 'digital_iceland'
-                    ? digitalIcelandDetailPageLinkType
-                    : undefined,
                 latestNewsSliceBackground: 'white',
                 forceTitleSectionHorizontalPadding: 'true',
               }}
