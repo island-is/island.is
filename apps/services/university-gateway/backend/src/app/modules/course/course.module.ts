@@ -6,7 +6,7 @@ import { InternalCourseController } from './internalCourse.controller'
 import { InternalCourseService } from './internalCourse.service'
 import { Course } from './model'
 import { University } from '../university/model'
-import { ProgramCourse, ProgramTable } from '../program/model'
+import { ProgramCourse, ProgramMinor, ProgramTable } from '../program/model'
 import {
   ReykjavikUniversityApplicationClientConfig,
   ReykjavikUniversityApplicationClientModule,
@@ -24,6 +24,7 @@ import { ConfigModule } from '@nestjs/config'
       Course,
       ProgramTable,
       ProgramCourse,
+      ProgramMinor,
     ]),
     ReykjavikUniversityApplicationClientModule,
     UniversityOfIcelandApplicationClientModule,

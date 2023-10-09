@@ -81,7 +81,7 @@ class ReykjavikUniversityApplicationClient {
                 return mapStringToEnum(m, ModeOfDelivery)
               }
             }) || [],
-          extraApplicationField: program.extraApplicationFields?.map(
+          extraApplicationFields: program.extraApplicationFields?.map(
             (field) => ({
               nameIs: field.nameIs || '',
               nameEn: field.nameEn || '',

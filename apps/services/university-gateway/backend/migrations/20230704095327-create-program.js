@@ -17,8 +17,12 @@ module.exports = {
               type: Sequelize.STRING,
               allowNull: false,
             },
-            active: {
-              type: Sequelize.BOOLEAN,
+            university_id: {
+              type: Sequelize.UUID,
+              references: {
+                model: 'university',
+                key: 'id',
+              },
               allowNull: false,
             },
             name_is: {
@@ -27,14 +31,6 @@ module.exports = {
             },
             name_en: {
               type: Sequelize.STRING,
-              allowNull: false,
-            },
-            university_id: {
-              type: Sequelize.UUID,
-              references: {
-                model: 'university',
-                key: 'id',
-              },
               allowNull: false,
             },
             department_name_is: {
@@ -148,6 +144,10 @@ module.exports = {
             cost_information_en: {
               type: Sequelize.TEXT,
               allowNull: true,
+            },
+            active: {
+              type: Sequelize.BOOLEAN,
+              allowNull: false,
             },
             created: {
               type: Sequelize.DATE,

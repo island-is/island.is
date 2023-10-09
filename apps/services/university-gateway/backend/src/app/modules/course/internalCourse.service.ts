@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Course } from './model'
 import { University } from '../university/model'
-import { ProgramCourse, ProgramTable } from '../program/model'
+import { ProgramCourse, ProgramMinor, ProgramTable } from '../program/model'
 import { ReykjavikUniversityApplicationClient } from '@island.is/clients/university-application/reykjavik-university'
 import { UniversityOfIcelandApplicationClient } from '@island.is/clients/university-application/university-of-iceland'
 import {
@@ -31,6 +31,9 @@ class InternalCourseService {
 
     @InjectModel(ProgramCourse)
     private programCourseModel: typeof ProgramCourse,
+
+    @InjectModel(ProgramMinor)
+    private programMinorModel: typeof ProgramMinor,
   ) {}
 
   async updateCourses(): Promise<void> {
@@ -122,6 +125,11 @@ class InternalCourseService {
         // CREATE program course
         for (let j = 0; j < courseList.length; j++) {
           const course = courseList[j]
+
+          const programMinor = await this.programMinorModel.findOne({
+            where: { externalId: course.minorExternalId },
+          })
+
           try {
             // Map to courseModel object
             const courseObj = {
@@ -162,6 +170,7 @@ class InternalCourseService {
             await this.programCourseModel.create(
               {
                 programId: program.id,
+                programMinorId: programMinor?.id,
                 courseId: courseId,
                 requirement: course.requirement,
                 semesterYear: course.semesterYear,

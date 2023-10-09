@@ -1,6 +1,7 @@
 export * from './program'
 export * from './programCourse'
 export * from './programExtraApplicationField'
+export * from './programMinor'
 export * from './programModeOfDelivery'
 export * from './programTag'
 export * from './tag'

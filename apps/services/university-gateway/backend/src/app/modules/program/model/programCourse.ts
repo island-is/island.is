@@ -13,8 +13,9 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Course } from '../../course/model'
 import { ProgramTable } from './program'
+import { ProgramMinor } from './programMinor'
+import { Course } from '../../course/model'
 import { Requirement, Season } from '@island.is/university-gateway-lib'
 
 export
@@ -38,6 +39,13 @@ class ProgramCourse extends Model {
   })
   @ForeignKey(() => ProgramTable)
   programId!: string
+
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ForeignKey(() => ProgramMinor)
+  programMinorId?: string
 
   @ApiHideProperty()
   @Column({

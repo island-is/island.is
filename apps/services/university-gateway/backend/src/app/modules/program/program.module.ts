@@ -6,6 +6,7 @@ import { InternalProgramService } from './internalProgram.service'
 import { SequelizeModule } from '@nestjs/sequelize'
 import {
   ProgramExtraApplicationField,
+  ProgramMinor,
   ProgramModeOfDelivery,
   ProgramTable,
   ProgramTag,
@@ -33,6 +34,7 @@ import { ConfigModule } from '@nestjs/config'
       ProgramTag,
       ProgramModeOfDelivery,
       ProgramExtraApplicationField,
+      ProgramMinor,
     ]),
     ReykjavikUniversityApplicationClientModule,
     UniversityOfIcelandApplicationClientModule,

@@ -116,7 +116,7 @@ class ProgramDetails extends Program {
   courses!: ProgramCourse[]
 
   // @Field(() => [ProgramExtraApplicationField])
-  // extraApplicationField!: ProgramExtraApplicationField[]
+  // extraApplicationFields!: ProgramExtraApplicationField[]
 }
 
 @ObjectType('ProgramCourse')

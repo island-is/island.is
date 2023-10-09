@@ -47,6 +47,11 @@ export class CourseController {
     description: 'Program ID',
   })
   @ApiQuery({
+    name: 'programMinorId',
+    required: false,
+    description: 'Program minor ID',
+  })
+  @ApiQuery({
     name: 'universityId',
     required: false,
     description: 'University ID',
@@ -63,11 +68,13 @@ export class CourseController {
     @Query('before') before: string,
     @Query('after') after: string,
     @Query('programId') programId: string,
+    @Query('programMinorId') programMinorId: string,
     @Query('universityId') universityId: string,
   ): Promise<CourseResponse> {
     return this.courseService.getCourses(
       { after, before, limit },
       programId,
+      programMinorId,
       universityId,
     )
   }

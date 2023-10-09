@@ -3,6 +3,7 @@ import {
   ProgramCourse,
   ProgramDetailsResponse,
   ProgramExtraApplicationField,
+  ProgramMinor,
   ProgramModeOfDelivery,
   ProgramResponse,
   ProgramTable,
@@ -24,12 +25,6 @@ class ProgramService {
   constructor(
     @InjectModel(ProgramTable)
     private programModel: typeof ProgramTable,
-
-    @InjectModel(ProgramTag)
-    private programTagModel: typeof ProgramTag,
-
-    @InjectModel(University)
-    private universityModel: typeof University,
 
     @InjectModel(Tag)
     private tagModel: typeof Tag,
@@ -75,7 +70,8 @@ class ProgramService {
           'costInformationIs',
           'costInformationEn',
           'courses',
-          'extraApplicationField',
+          'extraApplicationFields',
+          'minors',
         ],
       },
       include: [
@@ -125,6 +121,9 @@ class ProgramService {
         },
         {
           model: ProgramExtraApplicationField,
+        },
+        {
+          model: ProgramMinor,
         },
       ],
     })

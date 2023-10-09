@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import {
   ProgramExtraApplicationField,
+  ProgramMinor,
   ProgramModeOfDelivery,
   ProgramTable,
   ProgramTag,
@@ -41,6 +42,9 @@ class InternalProgramService {
 
     @InjectModel(ProgramExtraApplicationField)
     private programExtraApplicationFieldModel: typeof ProgramExtraApplicationField,
+
+    @InjectModel(ProgramMinor)
+    private programMinorModel: typeof ProgramMinor,
   ) {}
 
   async updatePrograms(): Promise<void> {
@@ -142,7 +146,8 @@ class InternalProgramService {
 
         const tagList = program.tag || []
         const modeOfDeliveryList = program.modeOfDelivery || []
-        const extraApplicationFieldList = program.extraApplicationField || []
+        const extraApplicationFieldList = program.extraApplicationFields || []
+        const minorList = program.minors || []
 
         const oldProgramObj = await this.programModel.findOne({
           attributes: ['id'],
@@ -228,6 +233,25 @@ class InternalProgramService {
               fieldType: extraApplicationFieldList[j].fieldType,
               uploadAcceptedFileType:
                 extraApplicationFieldList[j].uploadAcceptedFileType,
+            },
+            { logging: false },
+          )
+        }
+
+        // DELETE program minor
+        await this.programMinorModel.destroy({
+          where: { programId: programId },
+          logging: false,
+        })
+
+        // CREATE program minor
+        for (let j = 0; j < minorList.length; j++) {
+          await this.programMinorModel.create(
+            {
+              programId: programId,
+              externalId: minorList[j].externalId,
+              nameIs: minorList[j].nameIs,
+              nameEn: minorList[j].nameEn,
             },
             { logging: false },
           )

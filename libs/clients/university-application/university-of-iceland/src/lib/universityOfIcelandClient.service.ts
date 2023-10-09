@@ -1,4 +1,4 @@
-import { Injectable, Req } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { CoursesApi, ProgramsApi } from '../../gen/fetch/apis'
 import {
   ApplicationStatus,
@@ -10,8 +10,6 @@ import {
   ModeOfDelivery,
   Requirement,
   Season,
-  mapEnumToEnum,
-  mapEnumToOtherEnum,
   mapStringToEnum,
 } from '@island.is/university-gateway-lib'
 import { logger } from '@island.is/logging'
@@ -75,7 +73,7 @@ class UniversityOfIcelandApplicationClient {
                 return mapStringToEnum(m, ModeOfDelivery)
               }
             }) || [],
-          extraApplicationField: program.extraApplicationFields?.map(
+          extraApplicationFields: program.extraApplicationFields?.map(
             (field) => ({
               nameIs: field.nameIs || '',
               nameEn: field.nameEn || '',
@@ -87,6 +85,7 @@ class UniversityOfIcelandApplicationClient {
               uploadAcceptedFileType: field.uploadAcceptedFileType,
             }),
           ),
+          minors: [], //TODO missing in api
         })
       } catch (e) {
         logger.error(
@@ -159,6 +158,7 @@ class UniversityOfIcelandApplicationClient {
         for (let j = 0; j < externalIdList.length; j++) {
           mappedRes.push({
             externalId: externalIdList[j],
+            // minorExternalId: course.minorId, //TODO missing in api
             nameIs: course.nameIs || '',
             nameEn: course.nameEn || '',
             credits: Number(course.credits?.replace(',', '.')) || 0,

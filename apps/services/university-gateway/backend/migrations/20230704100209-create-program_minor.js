@@ -5,7 +5,7 @@ module.exports = {
     return queryInterface.sequelize.transaction((t) => {
       return Promise.all([
         queryInterface.createTable(
-          'program_extra_application_field',
+          'program_minor',
           {
             id: {
               type: Sequelize.UUID,
@@ -21,6 +21,10 @@ module.exports = {
               },
               allowNull: false,
             },
+            external_id: {
+              type: Sequelize.STRING,
+              allowNull: false,
+            },
             name_is: {
               type: Sequelize.STRING,
               allowNull: false,
@@ -28,36 +32,6 @@ module.exports = {
             name_en: {
               type: Sequelize.STRING,
               allowNull: false,
-            },
-            description_is: {
-              type: Sequelize.TEXT,
-              allowNull: true,
-            },
-            description_en: {
-              type: Sequelize.TEXT,
-              allowNull: true,
-            },
-            required: {
-              type: Sequelize.BOOLEAN,
-              allowNull: false,
-            },
-            field_key: {
-              //TODOx afhverju kallast þessi reitur ekki bara externalId
-              type: Sequelize.STRING,
-              allowNull: false,
-            },
-            field_type: {
-              type: Sequelize.ENUM(
-                'UPLOAD',
-                'CHECKBOX',
-                'TEXT_INPUT',
-                'TEXT_AREA',
-              ),
-              allowNull: false,
-            },
-            upload_accepted_file_type: {
-              type: Sequelize.STRING,
-              allowNull: true,
             },
             created: {
               type: Sequelize.DATE,
@@ -77,7 +51,7 @@ module.exports = {
   down: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) => {
       return Promise.all([
-        queryInterface.dropTable('program_extra_application_field', {
+        queryInterface.dropTable('program_minor', {
           transaction: t,
         }),
       ])

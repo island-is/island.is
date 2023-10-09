@@ -17,8 +17,9 @@ import {
 import { ProgramExtraApplicationField } from './programExtraApplicationField'
 import { ProgramTag } from './programTag'
 import { ProgramModeOfDelivery } from './programModeOfDelivery'
-import { University } from '../../university/model'
+import { ProgramMinor } from './programMinor'
 import { ProgramCourse } from './programCourse'
+import { University } from '../../university/model'
 import { DegreeType, Season } from '@island.is/university-gateway-lib'
 import { PageInfoDto } from '@island.is/nest/pagination'
 
@@ -46,15 +47,22 @@ class Program extends Model {
   externalId!: string
 
   @ApiProperty({
-    description:
-      'Whether the program is active and should be displayed on the external web',
-    example: true,
+    description: 'University ID',
+    example: '00000000-0000-0000-0000-000000000000',
   })
   @Column({
-    type: DataType.BOOLEAN,
+    type: DataType.UUID,
     allowNull: false,
   })
-  active!: boolean
+  @ForeignKey(() => University)
+  universityId!: string
+
+  @ApiProperty({
+    description: 'University details',
+    type: University,
+  })
+  @BelongsTo(() => University, 'universityId')
+  universityDetails?: University
 
   @ApiProperty({
     description: 'Program name (Icelandic)',
@@ -75,24 +83,6 @@ class Program extends Model {
     allowNull: false,
   })
   nameEn!: string
-
-  @ApiProperty({
-    description: 'University ID',
-    example: '00000000-0000-0000-0000-000000000000',
-  })
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-  })
-  @ForeignKey(() => University)
-  universityId!: string
-
-  @ApiProperty({
-    description: 'University details',
-    type: University,
-  })
-  @BelongsTo(() => University, 'universityId')
-  universityDetails?: University
 
   @ApiProperty({
     description:
@@ -299,6 +289,17 @@ class Program extends Model {
   @HasMany(() => ProgramModeOfDelivery)
   modeOfDelivery!: ProgramModeOfDelivery[]
 
+  @ApiProperty({
+    description:
+      'Whether the program is active and should be displayed on the external web',
+    example: true,
+  })
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  active!: boolean
+
   @ApiHideProperty()
   @CreatedAt
   readonly created!: Date
@@ -412,7 +413,14 @@ class ProgramDetails extends Program {
     type: [ProgramExtraApplicationField],
   })
   @HasMany(() => ProgramExtraApplicationField)
-  extraApplicationField?: ProgramExtraApplicationField[]
+  extraApplicationFields?: ProgramExtraApplicationField[]
+
+  @ApiProperty({
+    description: 'Minors available for the selected program',
+    type: [ProgramMinor],
+  })
+  @HasMany(() => ProgramMinor)
+  minors?: ProgramMinor[]
 }
 
 export
