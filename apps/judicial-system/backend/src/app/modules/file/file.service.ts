@@ -170,6 +170,38 @@ export class FileService {
     )
   }
 
+  private zipFiles(
+    files: Array<{ data: Buffer; name: string }>,
+  ): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      const buffs: Buffer[] = []
+      const converter = new Writable()
+
+      converter._write = (chunk, _encoding, cb) => {
+        buffs.push(chunk)
+        process.nextTick(cb)
+      }
+
+      converter.on('finish', () => {
+        resolve(Buffer.concat(buffs))
+      })
+
+      const archive = archiver('zip')
+
+      archive.on('error', (err) => {
+        reject(err)
+      })
+
+      archive.pipe(converter)
+
+      for (const file of files) {
+        archive.append(file.data, { name: file.name })
+      }
+
+      archive.finalize()
+    })
+  }
+
   async findById(fileId: string, caseId: string): Promise<CaseFile> {
     const caseFile = await this.fileModel.findOne({
       where: { id: fileId, caseId, state: { [Op.not]: CaseFileState.DELETED } },
@@ -204,8 +236,16 @@ export class FileService {
     })
 
     for (const file of caseFilesByCategory) {
-      const content = await this.awsS3Service.getObject(file.key ?? '')
-      filesToZip.push({ data: content, name: file.name })
+      await this.awsS3Service
+        .getObject(file.key ?? '')
+        .then((content) => filesToZip.push({ data: content, name: file.name }))
+        .catch((reason) =>
+          // Tolerate failure, but log what happened
+          this.logger.warn(
+            `Could not get file ${file.id} of case ${file.caseId} from AWS S3`,
+            { reason },
+          ),
+        )
     }
 
     filesToZip.push(
@@ -224,36 +264,6 @@ export class FileService {
     )
 
     return this.zipFiles(filesToZip)
-  }
-
-  zipFiles(files: Array<{ data: Buffer; name: string }>): Promise<Buffer> {
-    return new Promise((resolve, reject) => {
-      const buffs: Buffer[] = []
-      const converter = new Writable()
-
-      converter._write = (chunk, encoding, cb) => {
-        buffs.push(chunk)
-        process.nextTick(cb)
-      }
-
-      converter.on('finish', () => {
-        resolve(Buffer.concat(buffs))
-      })
-
-      const archive = archiver('zip')
-
-      archive.on('error', (err) => {
-        reject(err)
-      })
-
-      archive.pipe(converter)
-
-      for (const file of files) {
-        archive.append(file.data, { name: file.name })
-      }
-
-      archive.finalize()
-    })
   }
 
   createPresignedPost(
