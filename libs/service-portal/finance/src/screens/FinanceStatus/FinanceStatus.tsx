@@ -14,6 +14,7 @@ import {
   SkeletonLoader,
   Stack,
   Table as T,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -21,8 +22,9 @@ import {
   ErrorScreen,
   ExpandHeader,
   ExpandRow,
+  FJARSYSLAN_ID,
+  FootNote,
   formSubmit,
-  IntroHeader,
   m,
 } from '@island.is/service-portal/core'
 import { checkDelegation } from '@island.is/shared/utils'
@@ -36,6 +38,7 @@ import {
 } from './FinanceStatusData.types'
 import * as styles from './Table.css'
 import { useUserInfo } from '@island.is/auth/react'
+import FinanceIntro from '../../components/FinanceIntro'
 
 const GetFinanceStatusQuery = gql`
   query GetFinanceStatusQuery {
@@ -117,17 +120,13 @@ const FinanceStatus = () => {
     )
   }
   return (
-    <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={{
-          id: 'sp.finance-status:title',
-          defaultMessage: 'Staða við ríkissjóð og stofnanir',
-        }}
-        intro={{
+    <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
+      <FinanceIntro
+        text={formatMessage({
           id: 'sp.finance-status:intro',
           defaultMessage:
             'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
-        }}
+        })}
       />
       <Stack space={2}>
         <GridRow>
@@ -271,6 +270,7 @@ const FinanceStatus = () => {
           ) : null}
         </Box>
       </Stack>
+      <FootNote serviceProviderID={FJARSYSLAN_ID} />
     </Box>
   )
 }
