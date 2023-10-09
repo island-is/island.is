@@ -1,5 +1,9 @@
 import { service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
-import { UniversityGatewayUniversityOfIceland } from '../../../../../infra/src/dsl/xroad'
+import {
+  Base,
+  Client,
+  UniversityGatewayUniversityOfIceland,
+} from '../../../../../infra/src/dsl/xroad'
 
 export const serviceSetup =
   (): ServiceBuilder<'services-university-gateway-backend'> => {
@@ -23,7 +27,7 @@ export const serviceSetup =
         AUTH_JWT_SECRET: '/k8s/university-gateway/AUTH_JWT_SECRET',
         BACKEND_ACCESS_TOKEN: '/k8s/university-gateway/BACKEND_ACCESS_TOKEN',
       })
-      .xroad(UniversityGatewayUniversityOfIceland)
+      .xroad(Base, Client, UniversityGatewayUniversityOfIceland)
       .postgres({
         username: 'university_gateway',
         name: 'university_gateway',
