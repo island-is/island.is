@@ -9,64 +9,6 @@ import {
   IsUUID,
 } from 'class-validator'
 
-export class CreateApplicationDto {
-  @IsUUID()
-  @ApiProperty({
-    description: 'University ID',
-    example: '00000000-0000-0000-0000-000000000000',
-  })
-  universityId!: string
-
-  @IsUUID()
-  @ApiProperty({
-    description: 'Program ID',
-    example: '00000000-0000-0000-0000-000000000000',
-  })
-  programId!: string
-
-  @IsEnum(ModeOfDelivery)
-  @ApiProperty({
-    description: 'What mode of delivery was selected in the application',
-    example: ModeOfDelivery.ON_SITE,
-    enum: ModeOfDelivery,
-  })
-  modeOfDelivery!: ModeOfDelivery
-
-  @IsObject()
-  @ApiProperty({
-    description: 'Information about applicant',
-  })
-  applicant!: CreateApplicationApplicantDto
-
-  @IsString()
-  @IsOptional()
-  @ApiProperty({
-    description:
-      'Preferred languange, should be language user used when filling out application in application system',
-    example: 'IS',
-  })
-  @ApiPropertyOptional()
-  preferredLanguage?: string
-
-  @IsArray()
-  @ApiProperty({
-    description: 'List of education',
-  })
-  educationList!: CreateApplicationEducationDto[]
-
-  @IsArray()
-  @ApiProperty({
-    description: 'List of work experience',
-  })
-  workExperienceList!: CreateApplicationWorkExperienceDto[]
-
-  @IsArray()
-  @ApiProperty({
-    description: 'Extra application fields',
-  })
-  extraFieldList!: CreateApplicationExtraFieldsDto[]
-}
-
 class CreateApplicationApplicantDto {
   @IsString()
   @ApiProperty({
@@ -201,4 +143,62 @@ class CreateApplicationExtraFieldsDto {
     example: 'some_base_64_string',
   })
   value!: object
+}
+
+export class CreateApplicationDto {
+  @IsUUID()
+  @ApiProperty({
+    description: 'University ID',
+    example: '00000000-0000-0000-0000-000000000000',
+  })
+  universityId!: string
+
+  @IsUUID()
+  @ApiProperty({
+    description: 'Program ID',
+    example: '00000000-0000-0000-0000-000000000000',
+  })
+  programId!: string
+
+  @IsEnum(ModeOfDelivery)
+  @ApiProperty({
+    description: 'What mode of delivery was selected in the application',
+    example: ModeOfDelivery.ON_SITE,
+    enum: ModeOfDelivery,
+  })
+  modeOfDelivery!: ModeOfDelivery
+
+  @IsObject()
+  @ApiProperty({
+    description: 'Information about applicant',
+  })
+  applicant!: CreateApplicationApplicantDto
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description:
+      'Preferred languange, should be language user used when filling out application in application system',
+    example: 'IS',
+  })
+  @ApiPropertyOptional()
+  preferredLanguage?: string
+
+  @IsArray()
+  @ApiProperty({
+    description: 'List of education',
+  })
+  educationList!: CreateApplicationEducationDto[]
+
+  @IsArray()
+  @ApiProperty({
+    description: 'List of work experience',
+  })
+  workExperienceList!: CreateApplicationWorkExperienceDto[]
+
+  @IsArray()
+  @ApiProperty({
+    description: 'Extra application fields',
+  })
+  extraFieldList!: CreateApplicationExtraFieldsDto[]
 }
