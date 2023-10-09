@@ -1,5 +1,6 @@
 import each from 'jest-each'
 
+import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
   CaseAppealState,
@@ -13,7 +14,6 @@ import {
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
 
 import { randomDate } from '../../../test'
 import { Case } from '../models/case.model'

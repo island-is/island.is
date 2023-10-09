@@ -74,8 +74,8 @@ clean_generated() {
     -o -name "fragmentTypes.json" \
     \) "$(dry && echo -print || echo -delete)"
 
-  find . -type d \( -path "*/gen/fetch" \
-    \) -exec "$(dry && echo 'echo')" rm -rf '{}' +
+  # shellcheck disable=SC2046
+  find . -type d \( -path '*/gen/fetch' \) -exec $(dry && echo 'echo') rm -rf '{}' +
 }
 
 clean_caches() {

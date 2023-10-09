@@ -1,8 +1,8 @@
 import {
   judgeRule,
+  prisonSystemStaffRule,
   prosecutorRule,
   registrarRule,
-  prisonSystemStaffRule,
 } from '../../../../guards'
 import { CaseController } from '../../case.controller'
 

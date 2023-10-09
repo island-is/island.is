@@ -10,8 +10,9 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   CurrentHttpUser,
   JwtAuthGuard,
@@ -24,16 +25,16 @@ import { prosecutorRule } from '../../guards'
 import {
   Case,
   CaseExistsGuard,
-  CaseReadGuard,
   CaseNotCompletedGuard,
   CaseOriginalAncestorInterceptor,
+  CaseReadGuard,
   CurrentCase,
 } from '../case'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
+import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { PoliceService } from './police.service'
-import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 
 @UseGuards(
   JwtAuthGuard,

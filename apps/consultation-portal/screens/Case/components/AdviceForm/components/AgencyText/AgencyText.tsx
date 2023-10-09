@@ -7,13 +7,15 @@ export const AgencyText = () => {
   return (
     <Text marginTop={2} variant="small">
       {loc.textBefore}{' '}
-      <a
-        target="_blank"
-        href="https://samradsgatt.island.is/library/Files/Umbo%C3%B0%20-%20lei%C3%B0beiningar%20fyrir%20samr%C3%A1%C3%B0sg%C3%A1tt%20r%C3%A1%C3%B0uneyta.pdf"
-        rel="noopener noreferrer"
-      >
-        {loc.textAfter}
-      </a>
+      <span>
+        <a
+          target="_blank"
+          href="https://island.is/minar-sidur-adgangsstyring"
+          rel="noopener noreferrer"
+        >
+          {loc.textAfter}
+        </a>
+      </span>
     </Text>
   )
 }
