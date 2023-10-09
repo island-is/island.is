@@ -2,7 +2,6 @@ import React, { ElementType, FC, ReactElement } from 'react'
 import cn from 'classnames'
 import {
   Tooltip as ReakitTooltip,
-  TooltipArrow,
   TooltipReference,
   useTooltipState,
 } from 'reakit'
@@ -84,7 +83,7 @@ export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
   return (
     <>
       {children ? (
-        <TooltipReference {...tooltip} {...children.props}>
+        <TooltipReference aria-label={text} {...tooltip} {...children.props}>
           {(referenceProps) => React.cloneElement(children, referenceProps)}
         </TooltipReference>
       ) : (

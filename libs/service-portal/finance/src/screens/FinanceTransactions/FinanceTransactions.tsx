@@ -12,11 +12,13 @@ import {
   DatePicker,
   FilterInput,
   FilterMultiChoice,
-  GridColumn,
-  GridRow,
+  Text,
   Hidden,
   SkeletonLoader,
   Stack,
+  Column,
+  Columns,
+  GridContainer,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -40,6 +42,7 @@ import {
   CustomerChargeType,
   CustomerRecords,
 } from './FinanceTransactionsData.types'
+import FinanceIntro from '../../components/FinanceIntro'
 
 const FinanceTransactions = () => {
   useNamespaces('sp.finance-transactions')
@@ -121,7 +124,14 @@ const FinanceTransactions = () => {
 
   return (
     <DynamicWrapper>
-      <Box marginTop={[1, 1, 2, 2, 6]} marginBottom={[6, 6, 10]}>
+      <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
+        <FinanceIntro
+          text={formatMessage({
+            id: 'sp.finance-transactions:intro',
+            defaultMessage:
+              'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
+          })}
+        />
         <Stack space={2}>
           <Hidden print={true}>
             <Box marginTop={[1, 1, 2, 2, 5]}>

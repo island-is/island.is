@@ -10,10 +10,11 @@ import {
   AlertBanner,
   Box,
   Button,
+  Column,
+  Columns,
   DatePicker,
   FilterInput,
-  GridColumn,
-  GridRow,
+  GridContainer,
   Hidden,
   Pagination,
   SkeletonLoader,
@@ -39,6 +40,7 @@ import { DocumentsListItemTypes } from './DocumentScreen.types'
 import DropdownExport from '../DropdownExport/DropdownExport'
 import { exportGeneralDocuments } from '../../utils/filesGeneral'
 import * as styles from '../../screens/Finance.css'
+import FinanceIntro from '../FinanceIntro'
 
 const ITEMS_ON_PAGE = 20
 
@@ -136,7 +138,8 @@ const DocumentScreen: FC<React.PropsWithChildren<Props>> = ({
   }
 
   return (
-    <Box marginTop={[1, 1, 2, 2, 6]} marginBottom={[6, 6, 10]}>
+    <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
+      <FinanceIntro text={intro} />
       <Stack space={2}>
         <Hidden print={true}>
           <Box

@@ -21,6 +21,12 @@ export const modalBase = style({
   zIndex: 100,
 })
 
+export const bullet = style({
+  height: 4,
+  width: 4,
+  backgroundColor: theme.color.blue400,
+})
+
 export const modalHeader = style({
   height: '3.5rem',
   display: 'flex',
@@ -62,7 +68,7 @@ export const modalContent = style({
   padding: '1.5rem 1rem',
 })
 
-globalStyle(`${btn} > span`, {
+globalStyle(`${btn} > span, ${btn} > h1`, {
   boxShadow: 'none',
 })
 

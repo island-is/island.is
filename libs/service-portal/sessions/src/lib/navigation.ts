@@ -6,5 +6,4 @@ import { SessionsPaths } from './paths'
 export const sessionsNavigation: PortalNavigationItem = {
   name: m.sessions,
   path: SessionsPaths.Sessions,
-  isKeyItem: true,
 }
