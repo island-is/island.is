@@ -46,15 +46,18 @@ describe(`${RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
 
     //
     // case number validation
-    cy.getByTestid('courtCaseNumber').click().blur()
+    cy.getByTestid('courtCaseNumber').click()
+    cy.getByTestid('courtCaseNumber').blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('courtCaseNumber').type('S-1/2021').blur()
+    cy.getByTestid('courtCaseNumber').type('S-1/2021')
+    cy.getByTestid('courtCaseNumber').blur()
     cy.getByTestid('inputErrorMessage').contains(
       `Dæmi: R-1234/${new Date().getFullYear()}`,
     )
 
     // continue button enabled when form becomes valid
-    cy.getByTestid('courtCaseNumber').clear().type('R-1/2021')
+    cy.getByTestid('courtCaseNumber').clear()
+    cy.getByTestid('courtCaseNumber').type('R-1/2021')
     cy.getByTestid('inputErrorMessage').should('not.exist')
     cy.getByTestid('continueButton').should('be.disabled')
     cy.getByTestid('select-judge').click()

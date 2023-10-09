@@ -1,16 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-  Box,
-  Button,
-  Checkbox,
-  LoadingDots,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
+import SelectableList, {
+  Item,
+} from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
 import { PoliceCaseInfo } from '@island.is/judicial-system-web/src/graphql/schema'
-import { PoliceCaseFilesMessageBox } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
 
 import { PoliceCase } from '../Defendant'
 import { lokeNumberList as strings } from './LokeNumberList.strings'
@@ -21,23 +17,6 @@ interface Props {
   policeCaseInfo?: PoliceCaseInfo[]
   addPoliceCaseNumbers: (policeCases: PoliceCase[]) => void
 }
-interface CheckBoxContainerProps {
-  children: React.ReactNode
-}
-
-const CheckBoxContainer: React.FC<CheckBoxContainerProps> = (props) => {
-  return (
-    <Box
-      paddingX={3}
-      paddingY={2}
-      borderRadius="standard"
-      background="blue100"
-      marginBottom={2}
-    >
-      {props.children}
-    </Box>
-  )
-}
 
 export const LokeNumberList: React.FC<Props> = (props) => {
   const { isLoading, loadingError, policeCaseInfo, addPoliceCaseNumbers } =
@@ -45,12 +24,8 @@ export const LokeNumberList: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
 
-  const [availablePoliceCases, setAvailablePoliceCases] = useState<
-    PoliceCaseInfo[]
-  >([])
-  const [selectedPoliceCases, setSelectedPoliceCases] = useState<
-    PoliceCaseInfo[]
-  >([])
+  const [availablePoliceCases, setAvailablePoliceCases] =
+    useState<PoliceCaseInfo[]>()
 
   useEffect(() => {
     if (policeCaseInfo) {
@@ -62,125 +37,45 @@ export const LokeNumberList: React.FC<Props> = (props) => {
     }
   }, [workingCase, policeCaseInfo])
 
-  function handleSelectedPoliceCases(
-    selected: boolean,
-    policeCase: PoliceCaseInfo,
-  ) {
-    if (selected) {
-      setSelectedPoliceCases([...selectedPoliceCases, policeCase])
-    } else {
-      setSelectedPoliceCases(
-        selectedPoliceCases.filter((item) => item !== policeCase),
+  const handleCreatePoliceCases = (selectedPoliceCases: Item[]) => {
+    const policeCases = selectedPoliceCases.map((policeCase) => {
+      const availablePoliceCase = availablePoliceCases?.find(
+        (p) => p.policeCaseNumber === policeCase.name,
       )
-    }
-  }
 
-  const handleCreatePoliceCases = () => {
-    const policeCases = selectedPoliceCases.map((policeCase) => ({
-      number: policeCase.policeCaseNumber,
-      place: policeCase.place || undefined,
-      date: policeCase.date ? new Date(policeCase.date) : undefined,
-    }))
+      return {
+        number: availablePoliceCase?.policeCaseNumber || '',
+        place: availablePoliceCase?.place || undefined,
+        date: availablePoliceCase?.date
+          ? new Date(availablePoliceCase.date)
+          : undefined,
+      }
+    })
 
     addPoliceCaseNumbers(policeCases)
-    setSelectedPoliceCases([])
-  }
-
-  if (loadingError) {
-    return (
-      <Box
-        marginBottom={6}
-        borderColor="red600"
-        borderWidth="standard"
-        paddingX={4}
-        paddingY={1}
-        borderRadius="standard"
-      >
-        <Text fontWeight="semiBold" color="red600">
-          {formatMessage(strings.errorMessage)}
-        </Text>
-      </Box>
-    )
   }
 
   return (
-    <>
-      <Box
-        marginBottom={3}
-        borderColor="blue200"
-        borderWidth="standard"
-        paddingX={4}
-        paddingY={1}
-        borderRadius="standard"
-      >
-        {isLoading ? (
-          <Box textAlign="center" paddingY={2} paddingX={3} marginBottom={2}>
-            <LoadingDots />
-          </Box>
-        ) : (
-          <>
-            <Box paddingX={3} paddingY={2}>
-              <Checkbox
-                label={formatMessage(strings.selectAllCheckbox)}
-                name="Velja öll"
-                checked={
-                  selectedPoliceCases.length > 0 &&
-                  selectedPoliceCases.length === availablePoliceCases.length
-                }
-                disabled={availablePoliceCases.length === 0}
-                onChange={(event) => {
-                  setSelectedPoliceCases(
-                    event.target.checked ? availablePoliceCases : [],
-                  )
-                }}
-              />
-            </Box>
-            {availablePoliceCases && availablePoliceCases.length > 0 ? (
-              availablePoliceCases.map((info) => (
-                <CheckBoxContainer key={info.policeCaseNumber}>
-                  <Checkbox
-                    label={info.policeCaseNumber}
-                    name={info.policeCaseNumber}
-                    checked={
-                      selectedPoliceCases.find(
-                        (c) => c.policeCaseNumber === info.policeCaseNumber,
-                      )
-                        ? true
-                        : false
-                    }
-                    backgroundColor="blue"
-                    onChange={(e) => {
-                      handleSelectedPoliceCases(
-                        e.target.checked,
-                        info as PoliceCaseInfo,
-                      )
-                    }}
-                  />
-                </CheckBoxContainer>
-              ))
-            ) : (
-              <PoliceCaseFilesMessageBox
-                icon="checkmark"
-                iconColor="blue400"
-                message={formatMessage(strings.allNumbersSelected)}
-              />
-            )}
-          </>
-        )}
-      </Box>
-      <Box
-        display="flex"
-        justifyContent="flexEnd"
-        marginTop={3}
-        marginBottom={5}
-      >
-        <Button
-          onClick={handleCreatePoliceCases}
-          disabled={selectedPoliceCases.length === 0}
-        >
-          {formatMessage(strings.selectNumbersButton)}
-        </Button>
-      </Box>
-    </>
+    <Box marginBottom={5}>
+      <SelectableList
+        items={availablePoliceCases?.map((availablePoliceCase) => ({
+          id: availablePoliceCase.policeCaseNumber,
+          name: availablePoliceCase.policeCaseNumber,
+        }))}
+        CTAButton={{
+          label: formatMessage(strings.selectNumbersButton),
+          onClick: handleCreatePoliceCases,
+        }}
+        isLoading={isLoading}
+        errorMessage={
+          loadingError ? formatMessage(strings.errorMessage) : undefined
+        }
+        successMessage={
+          availablePoliceCases?.length === 0
+            ? formatMessage(strings.allNumbersSelected)
+            : undefined
+        }
+      />
+    </Box>
   )
 }

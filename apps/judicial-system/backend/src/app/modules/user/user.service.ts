@@ -1,17 +1,18 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
+
 import { UserRole } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { Institution } from '../institution'
 import { CreateUserDto } from './dto/createUser.dto'
 import { UpdateUserDto } from './dto/updateUser.dto'
-import { User } from './user.model'
 import { userModuleConfig } from './user.config'
+import { User } from './user.model'
 
 @Injectable()
 export class UserService {

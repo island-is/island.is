@@ -1,6 +1,6 @@
 import {
-  prosecutorRule,
   prosecutorRepresentativeRule,
+  prosecutorRule,
 } from '../../../../guards'
 import { CaseController } from '../../case.controller'
 

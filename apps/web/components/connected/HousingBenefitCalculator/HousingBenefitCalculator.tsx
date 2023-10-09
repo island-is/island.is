@@ -76,8 +76,9 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
   }
 
   const maximumHousingBenefits =
-    data?.housingBenefitCalculatorCalculation.maximumHousingBenefits
-  const reduction = data?.housingBenefitCalculatorCalculation.reductions
+    data?.housingBenefitCalculatorCalculation?.maximumHousingBenefits
+  const reductionsDueToIncome =
+    data?.housingBenefitCalculatorCalculation?.reductionsDueToIncome
   const estimatedHousingBenefits =
     data?.housingBenefitCalculatorCalculation?.estimatedHousingBenefits
 
@@ -260,13 +261,11 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
               {n('perMonth', 'á mánuði.')}
             </Text>
           )}
-          {typeof reduction === 'number' && (
+          {typeof reductionsDueToIncome === 'number' && (
             <Text variant="medium" fontWeight="light" paddingBottom={5}>
-              {n(
-                'reductionDueToHousingCosts',
-                'Skerðing vegna húsnæðiskostnaðar eru',
-              )}{' '}
-              {formatCurrency(reduction)} {n('perMonth', 'á mánuði.')}
+              {n('reductionDueToIncome', 'Skerðing vegna tekna eru')}{' '}
+              {formatCurrency(reductionsDueToIncome)}{' '}
+              {n('perMonth', 'á mánuði.')}
             </Text>
           )}
 
