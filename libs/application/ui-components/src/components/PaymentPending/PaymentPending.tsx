@@ -50,15 +50,6 @@ export const PaymentPending: FC<
         params.delete('cancelled')
         return params
       })
-
-      const params = new URLSearchParams(location.search)
-      params.delete('cancelled')
-
-      // Navigate to the new URL
-      navigate({
-        pathname: location.pathname,
-        search: params.toString(),
-      })
     }
 
     if (hasSubmitted.current) return
