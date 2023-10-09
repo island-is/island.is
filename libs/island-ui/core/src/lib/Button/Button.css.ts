@@ -439,7 +439,7 @@ export const colors = {
       theme.color.dark400,
       theme.color.dark400,
       theme.color.dark200,
-      theme.color.dark100,
+      theme.color.blue100,
       2,
     ),
     primary: primaryColors(
