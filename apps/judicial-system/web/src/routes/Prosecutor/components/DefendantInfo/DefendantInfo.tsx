@@ -159,7 +159,7 @@ const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
               isIndictment: isIndictmentCase(workingCase.type),
             },
           )}
-          checked={defendant.noNationalId || undefined}
+          checked={Boolean(defendant.noNationalId)}
           onChange={() => {
             setNationalIdNotFound(false)
             setNationalIdErrorMessage('')
