@@ -11,11 +11,9 @@ import {
   ApplicationStateSchema,
   DefaultEvents,
   defineTemplateApi,
-  CreateChargeApi,
   Application,
   VerifyPaymentApi,
   InstitutionNationalIds,
-  DeletePaymentApi,
 } from '@island.is/application/types'
 import { ApiActions } from '../shared'
 import { Events, States, Roles } from './constants'
@@ -24,7 +22,8 @@ import { m } from './messages'
 import { PaymentCatalogApi } from '@island.is/application/types'
 import { PaymentForm } from '@island.is/application/ui-forms'
 import { CatalogItem } from '@island.is/clients/charge-fjs-v2'
-import { State, StateNodeConfig } from 'xstate'
+import { StateNodeConfig } from 'xstate'
+import { buildPaymentState } from '@island.is/application/utils'
 
 const getCodes = (application: Application) => {
   // This is where you'd pick and validate that you are going to create a charge for a
@@ -51,15 +50,7 @@ const paymentState: StateNodeConfig<
     progress: 0.9,
     // Note: should be pruned at some time, so we can delete the FJS charge with it
     lifecycle: pruneAfterDays(1),
-    onExit: DeletePaymentApi.configure({
-      triggerEvent: DefaultEvents.ABORT,
-    }),
-    onEntry: CreateChargeApi.configure({
-      params: {
-        organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: getCodes,
-      },
-    }),
+
     roles: [
       {
         id: Roles.APPLICANT,
@@ -128,7 +119,10 @@ const template: ApplicationTemplate<
           },
         },
       },
-      [States.PAYMENT]: paymentState,
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SYSLUMENN,
+        chargeItemCodes: getCodes,
+      }),
       [States.DONE]: {
         meta: {
           status: 'completed',
