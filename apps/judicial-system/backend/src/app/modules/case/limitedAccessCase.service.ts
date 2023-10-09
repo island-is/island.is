@@ -20,11 +20,11 @@ import {
 } from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
-  availableCaseFileCategoriesForLimitedRestrictionAndInvestigationCases,
   CaseAppealState,
   CaseFileCategory,
   CaseFileState,
   CaseState,
+  limitedAccessCaseFileCategoriesForRestrictionAndInvestigationCases,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -382,7 +382,7 @@ export class LimitedAccessCaseService {
         (file) =>
           file.key &&
           file.category &&
-          availableCaseFileCategoriesForLimitedRestrictionAndInvestigationCases.includes(
+          limitedAccessCaseFileCategoriesForRestrictionAndInvestigationCases.includes(
             file.category,
           ),
       ) ?? []

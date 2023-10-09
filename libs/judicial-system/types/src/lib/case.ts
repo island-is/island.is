@@ -463,7 +463,7 @@ export const investigationCases = [
   CaseType.VIDEO_RECORDING_EQUIPMENT,
 ]
 
-export const availableCaseFileCategoriesForLimitedRestrictionAndInvestigationCases =
+export const limitedAccessCaseFileCategoriesForRestrictionAndInvestigationCases =
   [
     CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
     CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
@@ -474,7 +474,7 @@ export const availableCaseFileCategoriesForLimitedRestrictionAndInvestigationCas
     CaseFileCategory.APPEAL_RULING,
   ]
 
-export const availableCaseFileCategoriesForLimitedIndictmentCases = [
+export const limitedAccessCaseFileCategoriesForIndictmentCases = [
   CaseFileCategory.COURT_RECORD,
   CaseFileCategory.RULING,
   CaseFileCategory.COVER_LETTER,

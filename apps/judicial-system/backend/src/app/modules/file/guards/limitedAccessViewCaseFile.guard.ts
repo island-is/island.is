@@ -7,11 +7,11 @@ import {
 } from '@nestjs/common'
 
 import {
-  availableCaseFileCategoriesForLimitedIndictmentCases,
-  availableCaseFileCategoriesForLimitedRestrictionAndInvestigationCases,
   completedCaseStates,
   indictmentCases,
   investigationCases,
+  limitedAccessCaseFileCategoriesForIndictmentCases,
+  limitedAccessCaseFileCategoriesForRestrictionAndInvestigationCases,
   restrictionCases,
   User,
   UserRole,
@@ -49,7 +49,7 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
     ) {
       if (
         [...restrictionCases, ...investigationCases].includes(theCase.type) &&
-        availableCaseFileCategoriesForLimitedRestrictionAndInvestigationCases.includes(
+        limitedAccessCaseFileCategoriesForRestrictionAndInvestigationCases.includes(
           caseFile.category,
         )
       ) {
@@ -58,7 +58,7 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
 
       if (
         indictmentCases.includes(theCase.type) &&
-        availableCaseFileCategoriesForLimitedIndictmentCases.includes(
+        limitedAccessCaseFileCategoriesForIndictmentCases.includes(
           caseFile.category,
         )
       ) {
