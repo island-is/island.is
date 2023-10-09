@@ -21,6 +21,7 @@ import { DelegationScope } from './delegation-scope.model'
 import { Domain } from '../../resources/models/domain.model'
 import { MergedDelegationDTO } from '../dto/merged-delegation.dto'
 import { DelegationType } from '../types/delegationType'
+import max from 'lodash/max'
 
 @Table({
   tableName: 'delegation',
@@ -78,17 +79,13 @@ export class Delegation extends Model<
     }
 
     // 2. Find items with value in the array
-    const arrDates = this.delegationScopes
+    const dates = (this.delegationScopes
       ?.filter((x) => x.validTo !== null && x.validTo !== undefined)
-      .map((x) => x.validTo) as Array<Date>
-    if (arrDates && arrDates.length > 0) {
-      // Return the max value
-      return arrDates.reduce((a, b) => {
-        return a > b ? a : b
-      })
-    }
+      .map((x) => x.validTo) || []) as Array<Date>
 
-    return undefined
+    // Return the max value
+    const m = max(dates)
+    return m
   }
 
   @CreatedAt
