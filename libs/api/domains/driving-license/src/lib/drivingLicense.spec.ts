@@ -297,6 +297,7 @@ describe('DrivingLicenseService', () => {
           },
           {
             key: 'CurrentLocalResidency',
+            metaData: 365,
             requirementMet: true,
           },
           {
@@ -319,6 +320,7 @@ describe('DrivingLicenseService', () => {
         requirements: [
           {
             key: 'LocalResidency',
+            metaData: 365,
             requirementMet: true,
           },
           {
@@ -349,6 +351,7 @@ describe('DrivingLicenseService', () => {
           },
           {
             key: 'CurrentLocalResidency',
+            metaData: 365,
             requirementMet: true,
           },
           {
