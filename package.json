@@ -110,7 +110,6 @@
     "@sindresorhus/slugify": "1.0.0",
     "@statoscope/webpack-plugin": "5.20.1",
     "@storybook/core-server": "7.4.1",
-    "@testing-library/react-hooks": "8.0.1",
     "@types/faker": "5.5.3",
     "@types/nodemailer": "6.4.1",
     "@types/pdfkit": "0.11.2",
