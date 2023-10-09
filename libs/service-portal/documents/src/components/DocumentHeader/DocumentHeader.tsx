@@ -6,6 +6,7 @@ import {
   DocumentActionBar,
   DocumentActionBarProps,
 } from '../DocumentActionBar/DocumentActionBar'
+import { helperStyles } from '@island.is/island-ui/theme'
 
 type DocumentHeaderProps = {
   avatar?: string
@@ -13,6 +14,7 @@ type DocumentHeaderProps = {
   date?: string
   category?: DocumentCategory
   actionBar?: DocumentActionBarProps
+  subject?: string
 }
 
 export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
@@ -21,9 +23,13 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
   date,
   category,
   actionBar,
+  subject,
 }) => {
   return (
     <Box display="flex">
+      <p className={helperStyles.srOnly} aria-live="assertive">
+        {subject}
+      </p>
       {avatar && <AvatarImage large img={avatar} background="blue100" />}
       <Box
         display="flex"

@@ -61,7 +61,10 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
     <>
       {onGoBack && (
         <Box>
-          <button onClick={onGoBack}>
+          <button
+            aria-label={formatMessage(m.closeActiveDocument)}
+            onClick={onGoBack}
+          >
             <Icon color="blue400" icon="arrowBack" />
           </button>
         </Box>

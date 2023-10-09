@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react'
+import { useState, useCallback, useEffect, useMemo } from 'react'
 import { theme } from '@island.is/island-ui/theme'
 import { useQuery, gql } from '@apollo/client'
 import {
@@ -12,7 +12,6 @@ import {
   GridRow,
   Button,
   SkeletonLoader,
-  Checkbox,
 } from '@island.is/island-ui/core'
 import {
   useListDocuments,
@@ -53,9 +52,10 @@ import { useUserInfo } from '@island.is/auth/react'
 import { DocumentRenderer } from '../../components/DocumentRenderer'
 import { DocumentHeader } from '../../components/DocumentHeader'
 import { DocumentActionBar } from '../../components/DocumentActionBar'
-import { FavAndStash } from '../../components/FavAndStash'
 import { useWindowSize } from 'react-use'
 import { downloadFile } from '../../utils/downloadDocument'
+import FocusLock from 'react-focus-lock'
+import { useKeyDown } from '../../hooks/useKeyDown'
 
 export type ActiveDocumentType = {
   document: DocumentDetails
@@ -320,6 +320,8 @@ export const ServicePortalDocuments = () => {
     }
   })
 
+  useKeyDown('Escape', () => setActiveDocument(null))
+
   const debouncedResults = useMemo(() => {
     return debounce(handleSearchChange, 500)
   }, [])
@@ -332,47 +334,52 @@ export const ServicePortalDocuments = () => {
       {activeDocument?.document && !isDesktop && (
         <GridRow>
           <GridColumn span="12/12" position="relative">
-            <Box className={styles.modalBase}>
-              <Box className={styles.modalHeader}>
-                <DocumentActionBar
-                  onGoBack={() => setActiveDocument(null)}
-                  documentId={activeDocument.id}
-                  archived={activeArchive}
-                  bookmarked={
-                    !!filteredDocuments?.filter(
-                      (doc) => doc?.id === activeDocument?.id,
-                    )?.[0]?.bookmarked
-                  }
-                  refetchInboxItems={() => {
-                    if (refetch) {
-                      refetch({
-                        ...fetchObject(),
-                      })
+            <FocusLock autoFocus={false}>
+              <Box className={styles.modalBase}>
+                <Box className={styles.modalHeader}>
+                  <DocumentActionBar
+                    onGoBack={() => setActiveDocument(null)}
+                    documentId={activeDocument.id}
+                    archived={activeArchive}
+                    bookmarked={
+                      !!filteredDocuments?.filter(
+                        (doc) => doc?.id === activeDocument?.id,
+                      )?.[0]?.bookmarked
                     }
-                  }}
-                  activeDocument={activeDocument}
-                  onPrintClick={
-                    activeDocument
-                      ? () => downloadFile(activeDocument, userInfo)
-                      : undefined
-                  }
-                />
+                    refetchInboxItems={() => {
+                      if (refetch) {
+                        refetch({
+                          ...fetchObject(),
+                        })
+                      }
+                    }}
+                    activeDocument={activeDocument}
+                    onPrintClick={
+                      activeDocument
+                        ? () => downloadFile(activeDocument, userInfo)
+                        : undefined
+                    }
+                  />
+                </Box>
+                <Box className={styles.modalContent}>
+                  <DocumentHeader
+                    avatar={activeDocument.img}
+                    sender={activeDocument.sender}
+                    date={activeDocument.date}
+                    category={categoriesAvailable.find(
+                      (i) => i.id === activeDocument.categoryId,
+                    )}
+                    subject={formatMessage(m.activeDocumentOpenAriaLabel, {
+                      subject: activeDocument.subject,
+                    })}
+                  />
+                  <Text variant="h3" as="h3" marginBottom={3}>
+                    {activeDocument?.subject}
+                  </Text>
+                  {<DocumentRenderer document={activeDocument} />}
+                </Box>
               </Box>
-              <Box className={styles.modalContent}>
-                <DocumentHeader
-                  avatar={activeDocument.img}
-                  sender={activeDocument.sender}
-                  date={activeDocument.date}
-                  category={categoriesAvailable.find(
-                    (i) => i.id === activeDocument.categoryId,
-                  )}
-                />
-                <Text variant="h3" as="h3" marginBottom={3}>
-                  {activeDocument?.subject}
-                </Text>
-                {<DocumentRenderer document={activeDocument} />}
-              </Box>
-            </Box>
+            </FocusLock>
           </GridColumn>
         </GridRow>
       )}
@@ -484,6 +491,9 @@ export const ServicePortalDocuments = () => {
                 category={categoriesAvailable.find(
                   (i) => i.id === activeDocument.categoryId,
                 )}
+                subject={formatMessage(m.activeDocumentOpenAriaLabel, {
+                  subject: activeDocument.subject,
+                })}
                 actionBar={{
                   activeDocument: activeDocument,
                   documentId: activeDocument.id,

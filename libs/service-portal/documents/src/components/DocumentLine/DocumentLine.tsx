@@ -1,31 +1,26 @@
 import cn from 'classnames'
 import format from 'date-fns/format'
-import React, { FC, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 
 import {
   Document,
   DocumentDetails,
   GetDocumentListInput,
 } from '@island.is/api/schema'
-import {
-  Box,
-  Text,
-  Icon,
-  AlertBanner,
-  LoadingDots,
-} from '@island.is/island-ui/core'
+import { Box, Text, AlertBanner, LoadingDots } from '@island.is/island-ui/core'
 import { dateFormat } from '@island.is/shared/constants'
-import { CardLoader, LoadModal } from '@island.is/service-portal/core'
+import { CardLoader, LoadModal, m } from '@island.is/service-portal/core'
 import * as styles from './DocumentLine.css'
 import { gql, useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
-import { messages as m } from '../../utils/messages'
+import { messages } from '../../utils/messages'
 import { ActiveDocumentType } from '../../screens/Overview/Overview'
 import AvatarImage from './AvatarImage'
 import { useNavigate } from 'react-router-dom'
 import { DocumentsPaths } from '../../lib/paths'
 import { FavAndStash } from '../FavAndStash'
 import { useSubmitMailAction } from '../../utils/useSubmitMailAction'
+import { useIsChildFocusedorHovered } from '../../hooks/useIsChildFocused'
 
 interface Props {
   documentLine: Document
@@ -73,6 +68,14 @@ export const DocumentLine: FC<Props> = ({
     bookmarkSuccess,
     loading: postLoading,
   } = useSubmitMailAction({ messageId: documentLine.id })
+
+  const wrapperRef = useRef(null)
+
+  const isFocused = useIsChildFocusedorHovered(wrapperRef)
+
+  useEffect(() => {
+    setAvatarCheckmark(isFocused)
+  }, [isFocused])
 
   const displayPdf = (docContent?: DocumentDetails) => {
     if (onClick) {
@@ -134,7 +137,7 @@ export const DocumentLine: FC<Props> = ({
       <Box paddingTop={2}>
         <AlertBanner
           variant="error"
-          description={formatMessage(m.documentFetchError, {
+          description={formatMessage(messages.documentFetchError, {
             senderName: documentLine.senderName,
           })}
         />
@@ -162,12 +165,7 @@ export const DocumentLine: FC<Props> = ({
     <>
       {fileLoading && <LoadModal />}
 
-      <Box
-        className={styles.wrapper}
-        onClick={!isLink ? async () => onLineClick() : undefined}
-        role="button"
-        tabIndex={0}
-      >
+      <Box className={styles.wrapper} ref={wrapperRef}>
         <Box
           display="flex"
           position="relative"
@@ -180,8 +178,6 @@ export const DocumentLine: FC<Props> = ({
             [styles.active]: active,
             [styles.unread]: unread,
           })}
-          onMouseEnter={() => setAvatarCheckmark(true)}
-          onMouseLeave={() => setAvatarCheckmark(false)}
         >
           <AvatarImage
             img={img}
@@ -228,7 +224,15 @@ export const DocumentLine: FC<Props> = ({
                 color="blue400"
                 truncate
               >
-                {documentLine.subject}
+                <button
+                  onClick={!isLink ? async () => onLineClick() : undefined}
+                  aria-label={formatMessage(m.openDocumentAriaLabel, {
+                    subject: documentLine.subject,
+                  })}
+                  type="button"
+                >
+                  {documentLine.subject}
+                </button>
               </Text>
               {(avatarCheckmark || isBookmarked || isArchived) && !postLoading && (
                 <FavAndStash

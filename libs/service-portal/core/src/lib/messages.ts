@@ -1171,4 +1171,16 @@ export const m = defineMessages({
     id: 'service.portal:remove-from-storage',
     defaultMessage: 'Flytja í pósthólf',
   },
+  openDocumentAriaLabel: {
+    id: 'service.portal:open-document',
+    defaultMessage: 'Opna {subject}',
+  },
+  activeDocumentOpenAriaLabel: {
+    id: 'service.portal:active-document-open',
+    defaultMessage: '{subject} opið',
+  },
+  closeActiveDocument: {
+    id: 'service.portal:close-active-document',
+    defaultMessage: 'Loka skjali',
+  },
 })
