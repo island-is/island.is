@@ -254,7 +254,7 @@ export class DrivingLicenseService {
       await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
         nationalId,
       )
-    
+
     const residence = mapResidence(residenceHistory)
     const residenceTime = computeCountryResidence(residence)
     const localRecidencyHistory = hasResidenceHistory(residence)
@@ -278,7 +278,9 @@ export class DrivingLicenseService {
             {
               key: RequirementKey.currentLocalResidency,
               requirementMet: localRecidency,
-              metaData: residenceTime ? residenceTime['IS'] : 0
+              metaData: residenceTime
+                ? { residencyDuration: residenceTime['IS'] }
+                : undefined,
             },
           ]
         : []),
@@ -287,7 +289,9 @@ export class DrivingLicenseService {
             {
               key: RequirementKey.localResidency,
               requirementMet: localRecidencyHistory,
-              metaData: residenceTime ? residenceTime['IS'] : 0
+              metaData: residenceTime
+                ? { residencyDuration: residenceTime['IS'] }
+                : undefined,
             },
           ]
         : []),

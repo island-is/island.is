@@ -26,7 +26,9 @@ interface NationalRegistryAddress {
   municipalityCode?: string | null
 }
 
-export const mapResidence = (history: NationalRegistryResidence[] | undefined): Residence[] => {
+export const mapResidence = (
+  history: NationalRegistryResidence[] | undefined,
+): Residence[] => {
   const mappedHistory = history?.map((residence) => {
     if (residence.country && residence.dateOfChange)
       return {
@@ -43,9 +45,7 @@ export const mapResidence = (history: NationalRegistryResidence[] | undefined): 
   return mappedHistory?.filter(Boolean) as Residence[]
 }
 
-export const hasResidenceHistory = (
-  residence: Residence[] | undefined,
-) => {
+export const hasResidenceHistory = (residence: Residence[] | undefined) => {
   if (residence) {
     const countryResidency = computeCountryResidence(residence)
     return countryResidency ? countryResidency['IS'] >= 185 : false
@@ -53,13 +53,10 @@ export const hasResidenceHistory = (
   return false
 }
 
-export const hasLocalResidence = (
-  residence: Residence[] | undefined,
-) => {
+export const hasLocalResidence = (residence: Residence[] | undefined) => {
   if (residence) {
-    const sorted = residence.sort(
-      ({ dateOfChange: a }, { dateOfChange: b }) =>
-        compareDesc(new Date(a), new Date(b)),
+    const sorted = residence.sort(({ dateOfChange: a }, { dateOfChange: b }) =>
+      compareDesc(new Date(a), new Date(b)),
     )
     return sorted[0]?.country === 'IS' || false
   }

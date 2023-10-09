@@ -9,7 +9,7 @@ export const extractReasons = (eligibility: ApplicationEligibility): Step[] => {
     state: requirementMet
       ? ReviewSectionState.complete
       : ReviewSectionState.requiresAction,
-    metaData: metaData ?? undefined
+    metaData: metaData ?? undefined,
   }))
 }
 
