@@ -12,10 +12,12 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  FootNote,
   formatNationalId,
   IntroHeader,
   m,
   NotFound,
+  THJODSKRA_ID,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { natRegMaritalStatusMessageDescriptorRecord } from '../../helpers/localizationHelpers'
@@ -119,6 +121,8 @@ const FamilyMember = () => {
           title={data?.nationalRegistryPerson?.spouse?.fullName || ''}
           intro={dataInfoSpouse}
           marginBottom={2}
+          serviceProviderID={THJODSKRA_ID}
+          serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
         />
       )}
 
@@ -147,6 +151,7 @@ const FamilyMember = () => {
         />
         <Divider />
       </Stack>
+      <FootNote serviceProviderID={THJODSKRA_ID} />
     </>
   )
 }
