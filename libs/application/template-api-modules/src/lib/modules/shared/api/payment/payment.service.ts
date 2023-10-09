@@ -88,4 +88,30 @@ export class PaymentService extends BaseTemplateApiService {
       )
     }
   }
+
+  async deletePayment({
+    application,
+    auth,
+    params,
+  }: TemplateApiModuleActionProps<CreateChargeParameters>) {
+    console.log('deleting Payment for application ', application.id)
+    const payment = await this.paymentModelService.findPaymentByApplicationId(
+      application.id,
+    )
+
+    if (!payment) {
+      throw new TemplateApiError(
+        {
+          title: 'Payment not found',
+          description: 'Ekki hægt að eyða greiðslu sem finnst ekki.',
+        },
+        500,
+      )
+    }
+    // const delres = await this.chargeFjsV2ClientService.deleteCharge(payment.id)
+    const paymentStatus = await this.paymentModelService.delete(
+      application.id,
+      auth,
+    )
+  }
 }

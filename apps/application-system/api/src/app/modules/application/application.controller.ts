@@ -440,6 +440,7 @@ export class ApplicationController {
           user,
           onEnterStateAction,
           locale,
+          'SUBMIT',
         )
 
       //Programmers responsible for handling failure status
@@ -726,6 +727,7 @@ export class ApplicationController {
     @CurrentUser() user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
+    console.log('SUBMIT APPlicatono ---')
     const existingApplication =
       await this.applicationAccessService.findOneByIdAndNationalId(id, user, {
         shouldThrowIfPruned: true,
@@ -815,19 +817,57 @@ export class ApplicationController {
     auth: User,
     apis: TemplateApi | TemplateApi[],
     locale: Locale,
+    event: string,
   ): Promise<TemplateAPIModuleActionResult> {
     if (!Array.isArray(apis)) {
       apis = [apis]
     }
 
-    this.logger.debug(
+    apis.forEach((api) => {
+      this.logger.info(
+        `Action ${api.action},triggerEvent ${api.triggerEvent}, `,
+      )
+    })
+    //filter out events that should not be triggered through triggerEvent
+    const filteredApis = apis.filter(
+      (api) => api.triggerEvent !== undefined && api.action !== event,
+    )
+
+    //log out the filtered ones with the schema api.action - api.triggerEvent
+    filteredApis.forEach((api) => {
+      this.logger.info(
+        `Action ${api.action} has triggerEvent ${api.triggerEvent} and will not be triggered`,
+      )
+    })
+
+    //Filter out events that should be triggered through triggerEvent or are not defined
+    //if triggerEvent is not defined then it should be triggered
+    apis = apis.filter(
+      (api) => api.triggerEvent === undefined || api.action === event,
+    )
+
+    apis.forEach((api) => {
+      this.logger.info(
+        `not filtered Action ${api.action} has triggerEvent ${api.triggerEvent} and will not be triggered`,
+      )
+    })
+
+    //return early if no apis are left
+    if (apis.length === 0) {
+      return {
+        updatedApplication: application,
+        hasError: false,
+      }
+    }
+
+    this.logger.info(
       `Performing actions ${apis
         .map((api) => api.action)
         .join(', ')} on ${JSON.stringify(template.name)}`,
     )
     const namespaces = await getApplicationTranslationNamespaces(application)
     const intl = await this.intlService.useIntl(namespaces, locale)
-
+    this.logger.info(`API againe s 2  ${JSON.stringify(apis)} `)
     const updatedApplication = await this.templateApiActionRunner.run(
       application,
       apis,
@@ -872,12 +912,15 @@ export class ApplicationController {
     auth: User,
     locale: Locale,
   ): Promise<StateChangeResult> {
+    console.log('change state---------')
     const helper = new ApplicationTemplateHelper(application, template)
     const onExitStateAction = helper.getOnExitStateAPIAction(application.state)
     let updatedApplication: BaseApplication = application
+    console.log('onExitStateAction', onExitStateAction)
 
     await this.applicationService.clearNonces(updatedApplication.id)
     if (onExitStateAction) {
+      console.log('onExitStateAction' + JSON.stringify(onExitStateAction))
       const {
         hasError,
         error,
@@ -888,6 +931,7 @@ export class ApplicationController {
         auth,
         onExitStateAction,
         locale,
+        event,
       )
       updatedApplication = withUpdatedExternalData
 
@@ -936,6 +980,7 @@ export class ApplicationController {
         auth,
         onEnterStateAction,
         locale,
+        event,
       )
       updatedApplication = withUpdatedExternalData
 
