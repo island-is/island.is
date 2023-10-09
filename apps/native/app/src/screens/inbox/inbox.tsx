@@ -160,7 +160,9 @@ const useUnreadCount = () => {
       },
     },
   });
-  const unopened = res?.data?.listDocumentsV2?.data?.filter(item => item.opened === false);
+  const unopened = res?.data?.listDocumentsV2?.data?.filter(
+    item => item.opened === false,
+  );
   return unopened?.length ?? 0;
 };
 
@@ -267,7 +269,7 @@ export const InboxScreen: NavigationFunctionComponent = ({componentId}) => {
         badgeColor: theme.color.red400,
       },
     });
-    setBadgeCountAsync(unreadCount)
+    setBadgeCountAsync(unreadCount);
   }, [intl, theme, unreadCount]);
 
   useEffect(() => {
