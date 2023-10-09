@@ -14,6 +14,7 @@ const Overview = lazy(() => import('./screens/Overview/Overview'))
 
 export const documentsModule: PortalModule = {
   name: rootName,
+  layout: 'full',
   routes: ({ userInfo }) => [
     {
       name: rootName,
