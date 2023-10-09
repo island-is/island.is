@@ -1,0 +1,3456 @@
+"""
+Makes sure that the user is authenticated and has access to the query / mutation
+"""
+directive @authenticated(
+  action: String!
+  actionDescription: String!
+  admin: Boolean!
+  customResource: String!
+  permission: [UserPermission!]!
+  role: UserRole!
+  scannerRoute: ScannerAuthenticatedOptions!
+  status: [IssuerStatus!]!
+) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | SCHEMA | UNION
+
+type AddOnPassTemplate {
+  addOnpassTemplate: UUID!
+  id: UUID!
+  label: String
+}
+
+input AddOnPassTemplateDataInput {
+  addOnPassTemplateId: String!
+  id: String
+  label: String
+}
+
+type ApiKey implements BaseModel {
+  id: UUID!
+  key: UUID!
+  name: String!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input ApiKeyDataInput {
+  id: String
+  name: String!
+}
+
+type ApiKeyPageInfo implements PaginationInfo {
+  data: [ApiKey!]!
+  hasNext: Boolean!
+  hasPrev: Boolean!
+  pageSize: Int!
+  totalCount: Int!
+  totalPageCount: Int!
+}
+
+type AppPassInstance implements BaseModel {
+  appUser: User!
+  id: UUID!
+  inputFieldValues: [PassInputFieldValue!]!
+  passId: UUID!
+  passInstanceId: UUID!
+  passTemplate: PassTemplate!
+  thumbnail: Image
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input AppPassInstanceDataInput {
+  passId: String
+  verifyToken: String
+}
+
+input AppUserDataInput {
+  androidDeviceId: String
+  language: String
+  phoneNumber: String
+  verifyToken: String
+}
+
+type Automation {
+  enabled: Boolean
+  id: UUID!
+  issuer: Issuer
+  name: String
+  nodes: [Node!]!
+}
+
+input AutomationDataInput {
+  enabled: Boolean
+  id: String
+  name: String
+}
+
+type AutomationEditor {
+  automation: Automation!
+  nodes: [Node!]!
+}
+
+input AutomationEditorDataInput {
+  enabled: Boolean
+  id: String
+  name: String
+  nodes: [NodeEditorDataInput!]
+}
+
+type AutomationLog {
+  actionTime: Long!
+  automation: Automation!
+  dataTime: Long!
+  endedAt: Instant!
+  failureReason: String
+  id: UUID!
+  startedAt: Instant!
+  status: AutomationLogStatusType!
+  triggerTime: Long!
+}
+
+input AutomationLogFilterInput {
+  endDate: String
+  startDate: String
+  status: [AutomationLogStatusType!]
+}
+
+type AutomationLogPageInfo implements PaginationInfo {
+  data: [AutomationLog!]!
+  hasNext: Boolean!
+  hasPrev: Boolean!
+  pageSize: Int!
+  totalCount: Int!
+  totalPageCount: Int!
+}
+
+enum AutomationLogStatusType {
+  CANCELLED
+  FAILED
+  RUNNING
+  SUCCESS
+}
+
+enum BarcodeType {
+  CODE_128
+  PDF_417
+  QR
+}
+
+interface BaseModel {
+  id: UUID!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+type BillingInfo implements BaseModel {
+  cancelDate: LocalDate
+  id: UUID!
+  issuerStatus: IssuerStatus
+  passTemplatesPrice: [PassTemplatePrice!]!
+  trialEndDate: LocalDate!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+enum CountryType {
+  IS
+}
+
+enum CurrencyType {
+  ISK
+}
+
+input DAddOnPassInput {
+  addOnPass: UUID!
+  addOnPassTemplate: DAddOnPassTemplatesInput!
+  deleted: Boolean!
+  id: UUID!
+  pass: DPassInput!
+  passDeliveryPageUrl: String
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DAddOnPassTemplatesInput {
+  addOnPassTemplateId: UUID!
+  deleted: Boolean!
+  id: UUID!
+  label: String
+  passTemplate: DPassTemplateInput!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DApiKeyInput {
+  deleted: Boolean!
+  id: UUID!
+  key: UUID!
+  name: String!
+  user: DUserInput!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DAppPassInstanceInput {
+  app_user: DUserInput!
+  deleted: Boolean!
+  id: UUID!
+  pass: DPassInput!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DApplePassTypeIdentifierInput {
+  deleted: Boolean!
+  expirationDate: Instant!
+  id: UUID!
+  identifier: String!
+  isDefault: Boolean!
+  issuer: DIssuerInput
+  name: String!
+  organizationName: String!
+  passTemplates: [DPassTemplateInput!]!
+  teamIdentifier: String!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DAutomationInput {
+  deleted: Boolean!
+  enabled: Boolean
+  id: UUID!
+  issuer: DIssuerInput
+  log: [DAutomationLogInput!]!
+  name: String
+  nodes: [DNodeInput!]!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DAutomationLogInput {
+  actionTime: Long!
+  automation: DAutomationInput!
+  dataTime: Long!
+  deleted: Boolean!
+  failureReason: String
+  id: UUID!
+  memoryUsed: Long!
+  status: AutomationLogStatusType!
+  triggerTime: Long!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DDemoEmailInput {
+  dateSent: Instant!
+  deleted: Boolean!
+  demoEmailType: DemoEmailsType!
+  id: UUID!
+  issuer: DIssuerInput!
+  toEmail: String!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DDeviceInput {
+  deleted: Boolean!
+  deviceLibraryIdentifier: String
+  devicePassInstances: [DDevicePassInstanceInput!]!
+  deviceType: DeviceType!
+  id: UUID!
+  pushToken: String
+  userAgent: String
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DDevicePassInstanceInput {
+  deleted: Boolean!
+  device: DDeviceInput!
+  id: UUID!
+  pass: DPassInput!
+  passAuthenticationToken: DPassAuthenticationTokenInput!
+  status: DevicePassInstanceStatus!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DDiscountInput {
+  deleted: Boolean!
+  discount: Float
+  endDate: Instant
+  id: UUID!
+  passTemplate: DPassTemplateInput!
+  startDate: Instant
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DDistributionInput {
+  expirationDate: Instant
+  token: UUID!
+}
+
+input DEmailInput {
+  content: String
+  contentType: String
+  deleted: Boolean!
+  fromEmail: String
+  id: UUID!
+  pass: DPassInput
+  sendGridId: String
+  sendGridStatus: SendGridStatus
+  statuses: [DSendGridStatusInput!]
+  subject: String!
+  toEmail: String!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+  whenSent: Instant
+}
+
+input DExternalAPIInput {
+  deleted: Boolean!
+  externalAPIType: ExternalAPIType!
+  id: UUID!
+  name: String
+  outputs: [DExternalAPIOutputInput!]!
+  parameters: [DExternalAPIParameterInput!]!
+  passTemplate: DPassTemplateInput!
+  queryType: ExternalAPIQueryType!
+  url: String!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DExternalAPIOutputInput {
+  deleted: Boolean!
+  description: String
+  externalAPI: DExternalAPIInput!
+  id: UUID!
+  innerPath: String
+  label: String!
+  matchType: ExternalAPIArrayMatchType!
+  passInputField: DPassInputFieldInput!
+  path: String!
+  searchMatch: String
+  searchPath: String
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DExternalAPIParameterInput {
+  deleted: Boolean!
+  externalAPI: DExternalAPIInput!
+  id: UUID!
+  name: String!
+  parameterType: ExternalAPIParameterType!
+  passInputField: DPassInputFieldInput
+  secret: DIssuerSecretInput
+  userSecret: DIssuerUserSecretInput
+  value: String
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DFileInput {
+  bucketName: String!
+  deleted: Boolean!
+  filename: String
+  id: UUID!
+  issuer: DIssuerInput
+  originalFilename: String
+  originalUrl: String
+  url: String
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DFixedMonthlyFeeInput {
+  deleted: Boolean!
+  id: UUID!
+  monthlyFeeType: MonthlyFeeType!
+  monthlyPrice: DMoneyInput!
+  plan: DPlanInput
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DImageInput {
+  bucketName: String!
+  deleted: Boolean!
+  description: String
+  filename: String!
+  height: Int!
+  id: UUID!
+  issuer: DIssuerInput
+  orderIndex: Int!
+  originalFilename: String
+  originalUrl: String
+  title: String
+  user: DUserInput
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+  width: Int!
+}
+
+input DIssuerInput {
+  address: String
+  automations: [DAutomationInput!]!
+  cancelDate: Instant
+  confirmDate: Instant
+  contactEmail: String
+  contactName: String
+  contactPhone: String
+  deleted: Boolean!
+  demoEmails: [DDemoEmailInput!]
+  id: UUID!
+  idNumber: String
+  images: [DImageInput!]!
+  invoiceEmail: String
+  issuerUsers: [DIssuerUserInput!]!
+  logoIcon: DImageInput
+  name: String
+  orderInfos: [DOrderInfoInput!]!
+  passTemplates: [DPassTemplateInput!]!
+  paymentInfo: DPaymentInfoInput
+  planSubscription: DPlanSubscriptionInput
+  roles: [DRoleInput!]!
+  scanners: [DScannerInput!]!
+  secrets: [DIssuerSecretInput!]
+  serviceContactEmail: String
+  skipFooter: Boolean!
+  status: IssuerStatus
+  termsAndConditions: [DTermsAndConditionsInput!]!
+  town: String
+  userSecrets: [DIssuerUserSecretInput!]
+  users: [DUserInput!]!
+  version: Long!
+  whenAccepted: Instant
+  whenCreated: Instant!
+  whenModified: Instant!
+  zipcode: String
+}
+
+input DIssuerSecretInput {
+  deleted: Boolean!
+  id: UUID!
+  issuer: DIssuerInput!
+  name: String!
+  value: String!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DIssuerTermsInput {
+  deleted: Boolean!
+  id: UUID!
+  paymentTerms: DFileInput
+  paymentTermsUrl: String
+  privacyPolicy: DFileInput
+  privacyPolicyUrl: String
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DIssuerUserInput {
+  active: Boolean!
+  confirmed: Boolean!
+  deleted: Boolean!
+  id: UUID!
+  inviteEmail: String
+  invitedBy: DUserInput
+  issuer: DIssuerInput!
+  role: DRoleInput
+  user: DUserInput
+  version: Long!
+  whenConfirmed: Instant
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DIssuerUserSecretInput {
+  deleted: Boolean!
+  id: UUID!
+  issuer: DIssuerInput!
+  name: String!
+  values: [DIssuerUserSecretValueInput!]!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DIssuerUserSecretValueInput {
+  deleted: Boolean!
+  id: UUID!
+  secret: DIssuerUserSecretInput!
+  user: DUserInput!
+  value: String!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+type DKPlusCompanyType {
+  ID: String!
+  Name: String!
+}
+
+input DLocationInput {
+  deleted: Boolean!
+  id: UUID!
+  issuer: DIssuerInput!
+  name: String!
+  passTemplates: [DPassTemplateInput!]
+  relevantText: String
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+type DMoney {
+  amount: Float!
+  currency: String!
+}
+
+input DMoneyInput {
+  amount: Float!
+  currency: String!
+}
+
+input DNodeInput {
+  automation: DAutomationInput
+  category: NodeCategories
+  children: [DNodeInput!]!
+  config: [DNodeOptionInput!]!
+  deleted: Boolean!
+  id: UUID!
+  node: String!
+  parent: DNodeInput
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DNodeOptionInput {
+  children: [DNodeOptionInput!]!
+  deleted: Boolean!
+  id: UUID!
+  key: String!
+  node: DNodeInput!
+  parent: DNodeOptionInput
+  value: String
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DOrderInfoInput {
+  amount: String!
+  confirmed: Boolean
+  currency: CurrencyType!
+  deleted: Boolean!
+  id: UUID!
+  issuer: DIssuerInput!
+  orderId: String!
+  pass: DPassInput
+  passTemplate: DPassTemplateInput
+  payed: Boolean
+  paymentProvider: PaymentProvider!
+  productDescription: String
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DPassAuthenticationTokenInput {
+  authenticationToken: UUID!
+  deleted: Boolean!
+  devicePassInstances: [DDevicePassInstanceInput!]!
+  id: UUID!
+  pass: DPassInput!
+  status: PassAuthenticationTokenStatus!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+  whenUsed: Instant
+}
+
+input DPassBackSideInput {
+  deleted: Boolean!
+  expirationDate: Instant
+  id: UUID!
+  label: String
+  orderIndex: Int!
+  pass: DPassInput!
+  value: String
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DPassBeaconInput {
+  deleted: Boolean!
+  id: UUID!
+  major: Int!
+  minor: Int!
+  name: String!
+  passTemplate: DPassTemplateInput!
+  proximityUUID: String!
+  relevantText: String!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DPassFieldInput {
+  deleted: Boolean!
+  deletedText: String
+  expiredText: String
+  hideOnDeleted: Boolean!
+  hideOnExpired: Boolean!
+  hideOnVoided: Boolean!
+  id: UUID!
+  label: String!
+  orderIndex: Int!
+  passInputField: DPassInputFieldInput
+  passTemplate: DPassTemplateInput!
+  textAlignment: TextAlignment
+  type: PassFieldType!
+  value: String
+  version: Long!
+  voidedText: String
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DPassInput {
+  addOnPass: [DAddOnPassInput!]!
+  alreadyPaid: Boolean!
+  appPassInstance: [DAppPassInstanceInput!]!
+  comment: String
+  deleteInProcess: Boolean!
+  deleted: Boolean!
+  devicePassInstances: [DDevicePassInstanceInput!]!
+  distribution: DDistributionInput!
+  emails: [DEmailInput!]!
+  expirationDate: Instant
+  externalIdentifier: String
+  id: UUID!
+  inputFieldValues: [DPassInputFieldValueInput!]!
+  isLegacy: Boolean!
+  isReward: Boolean
+  isVoided: Boolean!
+  issuedBy: DUserInput
+  passAuthenticationTokens: [DPassAuthenticationTokenInput!]!
+  passBackSide: [DPassBackSideInput!]!
+  passTemplate: DPassTemplateInput!
+  posDistributionCode: String
+  savedByCustomer: Boolean!
+  scanTransactions: [DScanTransactionInput!]!
+  stampsLeft: Int
+  stampsStripImage: DStampStripImageInput
+  thumbnailImage: DImageInput
+  validFrom: Instant
+  version: Long!
+  whenCreated: Instant!
+  whenDeactivated: Instant
+  whenModified: Instant!
+}
+
+input DPassInputFieldInput {
+  deleted: Boolean!
+  description: String
+  format: PassInputFieldFormat!
+  id: UUID!
+  identifier: String!
+  isMandatory: Boolean!
+  isUnique: Boolean!
+  label: String!
+  orderIndex: Int!
+  passFields: [DPassFieldInput!]!
+  passTemplate: DPassTemplateInput!
+  type: PassInputFieldType!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DPassInputFieldValueInput {
+  deleted: Boolean!
+  id: UUID!
+  pass: DPassInput!
+  passInputField: DPassInputFieldInput!
+  value: String
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DPassIntegrationInput {
+  additionalRate: Float
+  deleted: Boolean!
+  id: UUID!
+  passIntegrationType: PassIntegrationType!
+  plan: DPlanInput
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DPassPricingInput {
+  deleted: Boolean!
+  id: UUID!
+  passPrice: DMoneyInput!
+  passType: PassType!
+  plan: DPlanInput
+  range: PassesRange!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DPassTemplateInput {
+  addOnPassTemplates: [DAddOnPassTemplatesInput!]!
+  allowReward: Boolean!
+  applePassTypeIdentifier: DApplePassTypeIdentifierInput!
+  backgroundColor: String
+  backgroundImage: DImageInput
+  barcodeFormat: String
+  barcodeTextFormat: String
+  barcodeType: BarcodeType!
+  beacons: [DPassBeaconInput!]!
+  dateFormat: DateFormat
+  dateNumber: Int
+  deleted: Boolean!
+  deletedPassTemplateId: UUID
+  description: String
+  disableCsvDownload: Boolean!
+  disableDeleteUnclaimedPasses: Boolean!
+  disableIssue: Boolean!
+  discount: DDiscountInput
+  distributionToken: UUID
+  dynamicBarcodeExpirationTimeSeconds: Long
+  dynamicBarcodeType: DynamicBarcodeType!
+  expirationDate: Instant
+  expirationType: ExpirationType
+  externalAPIs: [DExternalAPIInput!]!
+  externalAuthEnablePOS: Boolean!
+  externalAuthIdField: DPassInputFieldInput
+  externalAuthNameField: DPassInputFieldInput
+  externalAuthUseIdentifiers: Boolean!
+  fields: [DPassFieldInput!]!
+  firstDeviceOnly: Boolean!
+  footerImage: DImageInput
+  foregroundColor: String
+  grayOnExpired: Boolean!
+  hasDynamicBarcode: Boolean!
+  icon: DImageInput
+  id: UUID!
+  inputFields: [DPassInputFieldInput!]!
+  isDeletedPassTemplate: Boolean!
+  isLegacy: Boolean!
+  isNFC: Boolean!
+  isSharingProhibited: Boolean!
+  issuer: DIssuerInput
+  labelColor: String
+  locations: [DLocationInput!]
+  lockInputFields: Boolean!
+  logScansOnBack: Boolean!
+  logo: DImageInput
+  logoText: String
+  mandatoryThumbnail: Boolean!
+  memberThumbnailImage: Boolean!
+  minAmount: Int
+  name: String
+  nfcValue: String
+  notificationOnScan: Boolean!
+  oncePerDevice: Boolean!
+  oneDeviceAtATime: Boolean!
+  oneDevicePerToken: Boolean!
+  onePassOfTemplateTypePerDevice: Boolean!
+  passPrice: Int
+  passTemplateType: PassTemplateType!
+  posDistributionOnly: Boolean!
+  publicKey: String
+  qrCodeImage: DImageInput
+  quantityRestriction: Int
+  refillRenewal: Boolean!
+  rewardPassTemplate: DRewardPassTemplateInput
+  sendBackUpPass: Boolean!
+  serviceEmail: String
+  serviceEmailType: ServiceEmailType!
+  singleDeviceOnly: Boolean!
+  stampBackgroundColor: String
+  stampStripImage: [DStampStripImageInput!]!
+  stampedImage: DImageInput
+  stamps: Int
+  status: PassTemplateStatus!
+  statusFields: Boolean!
+  stripBackgroundColor: String
+  stripImage: DImageInput
+  thumbnailImage: DImageInput
+  unstampedImage: DImageInput
+  useExternalAuth: Boolean!
+  userDistributionTokens: [DUserDistributionTokenInput!]!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DPaymentInfoInput {
+  accessKey: String
+  country: CountryType
+  currency: CurrencyType
+  customerInfo: Boolean
+  deleted: Boolean!
+  errorUrl: String
+  id: UUID!
+  issuer: DIssuerInput!
+  language: LanguageType
+  merchantEmail: String
+  merchantId: String
+  merchantLogo: DImageInput
+  paymentGatewayId: String
+  paymentProvider: PaymentProvider
+  secretKey: String
+  successUrl: String
+  terms: DIssuerTermsInput
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DPermissionInput {
+  id: UUID!
+  permission: UserPermission
+  user: DUserInput!
+}
+
+input DPlanInput {
+  deleted: Boolean!
+  fixedMonthlyFees: [DFixedMonthlyFeeInput!]!
+  id: UUID!
+  monthlyPrice: DMoneyInput
+  name: String!
+  passIntegrations: [DPassIntegrationInput!]!
+  passPricings: [DPassPricingInput!]!
+  passTemplatesLimit: Int
+  passesLimit: Int
+  planSubscriptions: [DPlanSubscriptionInput!]!
+  planType: PlanType
+  scannerUsersLimit: Int
+  statisticsLimit: String
+  supportLimit: String
+  usersLimit: Int
+  version: Long!
+  visible: Boolean!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DPlanSubscriptionInput {
+  deleted: Boolean!
+  id: UUID!
+  issuer: DIssuerInput!
+  nextBillingDate: Instant
+  plan: DPlanInput!
+  status: PlanSubscriptionStatus!
+  trialEndDate: Instant
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DRewardPassFieldInput {
+  deleted: Boolean!
+  id: UUID!
+  label: String!
+  orderIndex: Int!
+  passInputField: DPassInputFieldInput
+  rewardPassTemplate: DRewardPassTemplateInput!
+  textAlignment: TextAlignment
+  type: PassFieldType!
+  value: String
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DRewardPassTemplateInput {
+  backgroundColor: String
+  dateFormat: DateFormat
+  dateNumber: Int
+  deleted: Boolean!
+  description: String
+  expirationDate: Instant
+  expirationType: ExpirationType
+  fields: [DRewardPassFieldInput!]!
+  foregroundColor: String
+  id: UUID!
+  isSharingProhibited: Boolean!
+  labelColor: String
+  logo: DImageInput
+  logoText: String
+  singleDeviceOnly: Boolean!
+  stripImage: DImageInput
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DRoleInput {
+  deleted: Boolean!
+  id: UUID!
+  issuer: DIssuerInput!
+  name: String!
+  ownerRole: Boolean
+  users: [DIssuerUserInput!]!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DScanTransactionInput {
+  actions: [DScanTransactionInput!]
+  amountUsed: Int
+  dateScanned: Instant!
+  id: UUID!
+  issuer: DIssuerInput
+  pass: DPassInput
+  scan: DScanTransactionInput
+  scanType: ScanType
+  scanner: DScannerInput
+  scannerGroup: DScannerGroupInput
+  stampsUsed: Int
+  user: DUserInput
+}
+
+input DScannerGroupInput {
+  deleted: Boolean!
+  id: UUID!
+  issuer: DIssuerInput!
+  loginCode: String
+  name: String
+  passTemplates: [DPassTemplateInput!]!
+  scanners: [DScannerInput!]!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DScannerInput {
+  active: Boolean!
+  authenticationToken: String!
+  currentUser: DUserInput
+  deleted: Boolean!
+  deviceId: String
+  disabled: Boolean!
+  externalId: String
+  id: UUID!
+  issuer: DIssuerInput!
+  name: String
+  scannerGroup: DScannerGroupInput
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DSendGridStatusInput {
+  email: DEmailInput!
+  id: UUID!
+  reason: String
+  status: SendGridStatus!
+  whenCompleted: Instant!
+  whenCreated: Instant!
+}
+
+input DSessionInput {
+  accessToken: UUID!
+  deleted: Boolean!
+  expires: Instant!
+  id: UUID!
+  sessionToken: UUID!
+  user: DUserInput!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DStampStripImageInput {
+  bucketName: String!
+  deleted: Boolean!
+  description: String
+  filename: String!
+  height: Int!
+  id: UUID!
+  orderIndex: Int!
+  passTemplate: DPassTemplateInput
+  stampsLeft: Int
+  title: String
+  user: DUserInput
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+  width: Int!
+}
+
+input DTermsAndConditionsInput {
+  dateAccepted: Instant!
+  id: UUID!
+  issuer: DIssuerInput!
+}
+
+input DUserDistributionTokenInput {
+  deleted: Boolean!
+  expirationDate: Instant
+  id: UUID!
+  passTemplate: DPassTemplateInput!
+  token: UUID!
+  user: DUserInput!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input DUserInput {
+  androidDeviceId: String
+  apiKeys: [DApiKeyInput!]!
+  appPassInstance: [DAppPassInstanceInput!]!
+  deleted: Boolean!
+  displayName: String
+  email: String!
+  id: UUID!
+  issuer: DIssuerInput
+  issuers: [DIssuerUserInput!]!
+  language: String
+  name: String
+  password: String
+  permissions: [DPermissionInput!]!
+  phoneNumber: String
+  photo: DImageInput
+  role: UserRole!
+  secretValues: [DIssuerUserSecretValueInput!]!
+  sessions: [DSessionInput!]!
+  smartWalletUser: Boolean
+  status: UserStatus
+  token: UUID
+  tokenExpiry: Instant
+  userDistributionTokens: [DUserDistributionTokenInput!]!
+  verifyToken: String
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+enum DateFormat {
+  DAY
+  HOUR
+  MONTH
+  YEAR
+}
+
+enum DemoEmailsType {
+  ONE_DAY_LEFT
+  THREE_DAYS_LEFT
+  TWO_DAYS_LEFT
+  ZERO_DAYS_LEFT
+}
+
+type DemoInfo implements BaseModel {
+  id: UUID!
+  issuerStatus: IssuerStatus
+  trialEndDate: LocalDate!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+type Device implements BaseModel {
+  deviceType: DeviceType!
+  id: UUID!
+  userAgent: String
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+type DeviceHistoryPageInfo implements PaginationInfo {
+  data: [DevicePassInstance!]!
+  hasNext: Boolean!
+  hasPrev: Boolean!
+  pageSize: Int!
+  totalCount: Int!
+  totalPageCount: Int!
+}
+
+type DevicePassInstance implements BaseModel {
+  deleted: Boolean!
+  device: Device!
+  id: UUID!
+  passAuthenticationToken: PassAuthenticationToken!
+  status: DevicePassInstanceStatus!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+enum DevicePassInstanceStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum DeviceType {
+  ANDROID
+  APPLE
+  OTHER
+  SMART_WALLET
+}
+
+type DeviceTypeCount {
+  count: Int!
+  deviceType: DeviceType!
+}
+
+type Discount {
+  discount: Float
+  endDate: Instant
+}
+
+input DiscountDataInput {
+  discount: Float!
+  endDate: String!
+  passTemplateId: String!
+}
+
+input DynamicBarcodeDataInput {
+  code: String!
+  date: String!
+}
+
+enum DynamicBarcodeType {
+  BASIC
+  INCLUDE_TEMPLATE_ID
+}
+
+type Email implements BaseModel {
+  content: String
+  contentType: String
+  fromEmail: String
+  id: UUID!
+  passId: UUID
+  sendGridId: String
+  sendGridStatus: SendGridStatus
+  status: EmailStatus
+  statuses: [EmailStatus!]!
+  subject: String!
+  toEmail: String!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+  whenSent: Instant
+}
+
+type EmailStatus {
+  email: Email!
+  id: UUID!
+  reason: String
+  status: SendGridStatus!
+  whenCompleted: Instant!
+}
+
+input ExpenceDataInput {
+  expenseType: MonthlyFeeType!
+  monthlyPrice: Int!
+  quantity: Int!
+}
+
+type Expense implements BaseModel {
+  expenseType: MonthlyFeeType!
+  id: UUID!
+  monthlyPrice: Float!
+  quantity: Int!
+  version: Long!
+  whenCreated: Instant!
+  whenDeleted: LocalDate
+  whenModified: Instant!
+}
+
+enum ExpirationType {
+  EXPIRATION_DATE
+  SELECTED_TIME
+}
+
+type ExternalAPI implements BaseModel {
+  externalAPIType: ExternalAPIType!
+  id: UUID!
+  name: String
+  outputs: [ExternalAPIOutput!]!
+  parameters: [ExternalAPIParameter!]!
+  queryType: ExternalAPIQueryType!
+  url: String!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+enum ExternalAPIArrayMatchType {
+  FIRST_ITEM
+  LAST_ITEM
+}
+
+input ExternalAPIDataInput {
+  externalAPIType: ExternalAPIType!
+  id: String
+  name: String
+  outputs: [ExternalAPIOutputDataInput!]
+  parameters: [ExternalAPIParameterDataInput!]
+  queryType: ExternalAPIQueryType!
+  url: String
+}
+
+type ExternalAPIOutput implements BaseModel {
+  description: String
+  id: UUID!
+  innerPath: String
+  label: String!
+  matchType: ExternalAPIArrayMatchType!
+  passInputField: PassInputField!
+  path: String!
+  searchMatch: String
+  searchPath: String
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input ExternalAPIOutputDataInput {
+  description: String
+  id: String
+  innerPath: String
+  label: String
+  matchType: ExternalAPIArrayMatchType!
+  passInputFieldId: String!
+  path: String!
+  searchMatch: String
+  searchPath: String
+}
+
+type ExternalAPIParameter implements BaseModel {
+  id: UUID!
+  name: String!
+  parameterType: ExternalAPIParameterType!
+  passInputField: PassInputField
+  secret: IssuerSecret
+  userSecret: IssuerUserSecret
+  value: String
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input ExternalAPIParameterDataInput {
+  id: String
+  name: String
+  parameterType: ExternalAPIParameterType!
+  passInputFieldId: String
+  secretId: String
+  userSecretId: String
+  value: String
+}
+
+enum ExternalAPIParameterType {
+  GET
+  HEADER
+  POST
+  URL_APPEND
+}
+
+enum ExternalAPIQueryType {
+  ON_CREATE_AND_UPDATE
+  ON_CREATE_ONLY
+}
+
+enum ExternalAPIType {
+  JSON
+}
+
+type ExternalIdentifier {
+  externalIdentifier: String!
+}
+
+input ExternalIdentifierDataInput {
+  externalIdentifier: String!
+  id: UUID!
+}
+
+type ExternalIdentifierPageInfo implements PaginationInfo {
+  data: [ExternalIdentifier!]!
+  hasNext: Boolean!
+  hasPrev: Boolean!
+  pageSize: Int!
+  totalCount: Int!
+  totalPageCount: Int!
+}
+
+type FeatureFlag {
+  active: Boolean!
+  activeWhen: Instant
+  key: String!
+  whenActivated: Instant
+  whenCreated: Instant!
+}
+
+type File {
+  displayUrl: String!
+  filename: String
+  id: UUID!
+  originalFilename: String
+  originalUrl: String
+  url: String
+}
+
+input FileDataInput {
+  displayUrl: String
+  filename: String
+  id: String!
+  originalFilename: String
+  originalUrl: String
+  url: String
+}
+
+type FixedMonthlyFee implements BaseModel {
+  id: UUID!
+  monthlyFeeType: MonthlyFeeType!
+  monthlyPrice: Money!
+  plan: Plan
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input FixedMonthlyFeeDataInput {
+  monthlyFeeType: MonthlyFeeType!
+  monthlyPrice: MoneyDataNullableInput!
+}
+
+enum GenericOrderByColumn {
+  VERSION
+  WHEN_CREATED
+  WHEN_MODIFIED
+}
+
+input GenericOrderInput {
+  column: GenericOrderByColumn
+  columnAsString: String
+  dir: OrderByDirection
+}
+
+input GenericOrderMultiInput {
+  column: String!
+  dir: OrderByDirection
+}
+
+input HideByStatusTypeInput {
+  deleted: Boolean
+  expired: Boolean
+  voided: Boolean
+}
+
+type Image {
+  description: String
+  filename: String!
+  height: Int!
+  id: UUID!
+  originalUrl: String
+  title: String
+  url: String!
+  width: Int!
+}
+
+input ImageDataInput {
+  description: String
+  filename: String
+  height: Int
+  id: String
+  imageBase64String: String
+  originalUrl: String
+  title: String
+  url: String
+  width: Int
+}
+
+"""
+A type representing a formatted java.util.Instant
+"""
+scalar Instant
+
+type IntRangeInfo {
+  first: Int!
+  last: Int!
+  step: Int!
+}
+
+type Invite {
+  companyId: UUID!
+  companyName: String
+  email: String
+  hasAccount: Boolean!
+  id: UUID!
+  isAccepted: Boolean!
+  role: String
+}
+
+type Issuer implements BaseModel {
+  address: String
+  contactEmail: String
+  contactName: String
+  contactPhone: String
+  currentPlanSubscription: PlanSubscription
+  id: UUID!
+  idNumber: String
+  invoiceEmail: String
+  logoIcon: Image
+  name: String
+  paymentInfo: PaymentInfo
+  planSubscriptions: [PlanSubscriptionVersion!]!
+  secrets: [IssuerSecret!]
+  serviceContactEmail: String
+  skipFooter: Boolean!
+  status: IssuerStatus
+  termsAndConditionsChecked: Boolean!
+  town: String
+  userSecrets: [IssuerUserSecret!]
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+  zipcode: String
+}
+
+input IssuerDataInput {
+  address: String
+  contactEmail: String
+  contactName: String
+  contactPhone: String
+  email: String
+  idNumber: String
+  invoiceEmail: String
+  logoIcon: ImageDataInput
+  name: String
+  password: String
+  paymentInfo: PaymentInfoDataInput
+  planType: PlanType
+  serviceContactEmail: String
+  skipFooter: Boolean
+  termsAndConditions: Boolean
+  town: String
+  zipcode: String
+}
+
+type IssuerPageInfo implements PaginationInfo {
+  data: [Issuer!]!
+  hasNext: Boolean!
+  hasPrev: Boolean!
+  pageSize: Int!
+  totalCount: Int!
+  totalPageCount: Int!
+}
+
+type IssuerSecret implements BaseModel {
+  id: UUID!
+  name: String!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input IssuerSecretDataInput {
+  id: String
+  name: String!
+  value: String
+}
+
+enum IssuerStatus {
+  ACCEPTED
+  ACTIVE
+  CANCELLED
+  DEMO_EXPIRED
+  IN_REVIEW
+}
+
+type IssuerTerms implements BaseModel {
+  id: UUID!
+  paymentTerms: File
+  paymentTermsUrl: String
+  privacyPolicy: File
+  privacyPolicyUrl: String
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input IssuerTermsDataInput {
+  id: String
+  paymentTerms: FileDataInput
+  paymentTermsUrl: String
+  privacyPolicy: FileDataInput
+  privacyPolicyUrl: String
+}
+
+type IssuerUser {
+  issuer: Issuer!
+  role: Role
+}
+
+type IssuerUserSecret implements BaseModel {
+  id: UUID!
+  name: String!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input IssuerUserSecretDataInput {
+  id: String
+  name: String!
+}
+
+type IssuerUserSecretValue implements BaseModel {
+  id: UUID!
+  secret: IssuerUserSecret!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input IssuerUserSecretValueDataInput {
+  id: String
+  secretId: String!
+  value: String
+}
+
+enum LanguageType {
+  IS
+}
+
+type LastRedeemed {
+  date: String!
+}
+
+"""
+A type representing a formatted java.util.ZonedDateTime
+"""
+scalar LocalDate
+
+type Location {
+  id: UUID!
+  latitude: Float!
+  longitude: Float!
+  name: String!
+  relevantText: String
+}
+
+input LocationDataInput {
+  id: String
+  latitude: Float
+  longitude: Float
+  name: String
+  relevantText: String
+}
+
+"""
+A type representing a formatted Kotlin.Long
+"""
+scalar Long
+
+type Money {
+  amount: Float!
+  currency: String!
+}
+
+input MoneyDataInput {
+  amount: Float!
+  currency: String!
+}
+
+input MoneyDataNullableInput {
+  amount: Float
+  currency: String!
+}
+
+enum MonthlyFeeType {
+  API_CONNECTION
+  DKPLUS
+  EXTERNAL_API
+  EXTERNAL_AUTHENTICATION
+  GENERAL_WORK
+  PASS_TEMPLATE_WORK
+  SCANNER_LICENSE
+  SERVICE_FEE
+  SPECIALIST
+  STARTER_ADVICE
+}
+
+type Mutation {
+  addEmailToInputFields(passTemplateId: String!): PassTemplate!
+  addUserToIssuer(issuerId: String, userId: String!): Boolean!
+  batchUpdateScanner(data: ScannerDataInput!, scannerIds: [String!]!): Boolean!
+  bulkUpsertThumbnails(data: [ThumbnailDataInput!]!): Boolean!
+  cancelSubscription: Boolean!
+  changePassword(currentPassword: String!, newPassword: String!): Boolean!
+  changeUserRole(
+    """
+    ID of issuer, only available to System Admins
+    """
+    issuerId: String
+    roleId: String!
+    userId: String
+  ): Boolean!
+  changeUserStatus(userId: String!): Boolean!
+  clearExternalIdentifiers(passTemplateId: String!): Int!
+  confirmEmail(token: String!): Boolean!
+  confirmOrDenyIssuerInvite(
+    accepted: Boolean!
+    issuerId: String!
+    switchIssuer: Boolean
+  ): Boolean!
+  confirmSubscription: Boolean!
+  createFeatureFlag(key: String!): FeatureFlag!
+  deactivateAllDevicePassInstances(passId: String!): Boolean!
+  deactivateDevicePassInstance(id: String!): Boolean!
+  deleteAllUnclaimedPasses(before: String, passTemplateId: String!): Boolean!
+  deleteApiKey(id: String!): Boolean!
+  deleteAppPassInstance(id: String!): Boolean!
+  deleteExternalIdentifier(
+    externalIdentifier: String!
+    passTemplateId: String!
+  ): PassTemplate!
+  deleteFeatureFlag(key: String!): Boolean!
+  deleteIssuer(id: String!): Boolean!
+  deleteIssuerSecret(id: String!): Boolean!
+  deleteIssuerUserSecret(id: String!): Boolean!
+  deleteIssuerUserSecretValue(id: String!): Boolean!
+  deletePass(id: String!): Boolean!
+  deletePassTemplate(id: String!): Boolean!
+  deletePlan(planId: String!): Boolean!
+  deleteRole(id: String!): Boolean!
+  deleteScanner(id: String!): Boolean!
+  deleteScannerGroup(id: String!): Boolean!
+  deleteStoragePass(passId: String!): Boolean!
+  deleteUser(id: String!, shouldPermanentlyDelete: Boolean): Boolean!
+  disguiseAs(id: String!): Issuer
+  dkPlusLoginStep1(password: String!, username: String!): [DKPlusCompanyType!]!
+  dkPlusLoginStep2(
+    companyId: String!
+    password: String!
+    username: String!
+  ): Boolean!
+  duplicatePassTemplate(passTemplateId: String!): PassTemplate!
+  executeAutomation(id: String!, nodeId: String!): String!
+  expireIssuer(id: String!): Boolean!
+  forgotPassword(email: String!): Boolean!
+  gaman: Boolean!
+  generateNewPassTemplateDistributionToken(id: String!): String!
+  generateNewPosCode(passId: String!): Pass!
+  inviteUserToIssuer(email: String!, roleId: String!): Boolean!
+  login(email: String!, password: String!): User
+  loginSmartScanner(email: String!, password: String!): UserOld
+  loginSmartScannerQR(
+    code: String!
+    deviceId: String!
+    deviceName: String
+  ): Scanner!
+  loginSmartScannerV3(
+    deviceId: String!
+    deviceName: String
+    email: String!
+    password: String!
+  ): Scanner!
+  logout: Boolean!
+  posDistributionPass(
+    code: String!
+    distributionToken: String!
+    passTemplateId: String!
+  ): Pass!
+  reactivateDevicePassInstance(id: String!): Boolean!
+  redeemPassbuilderPass(passId: String!): Boolean!
+  redeemPassbuilderPunchPass(passId: String!, punches: Int!): PassbuilderPass!
+  refreshScannerGroupCode(id: String!): Boolean!
+  register(data: RegistrationDataInput!): Boolean!
+  registerFromInvite(data: RegistrationInviteDataInput!): Boolean!
+  registerUser(data: RegisterDataInput!): Boolean!
+  removeNode(nodeId: String!): Boolean!
+  removeUser(issuerUserId: String!): Boolean!
+  removeUserOption(option: String!, userId: String): Boolean!
+  resendUserInvite(id: String!): Boolean!
+  resetPassword(password: String!, token: String!): Boolean!
+  restoreUser(id: String!): Boolean!
+  scanAction(
+    scannerData: ScannerActionDataInput!
+    transactionId: String!
+  ): Boolean!
+  sendDaysLeftOfDemo(daysLeft: Int!): Boolean!
+  sendPassEmails(
+    content: String!
+    passIds: [String!]
+    passTemplateId: String
+    subject: String!
+  ): SendPassEmailsResponse!
+  sendWelcomeEmail(issuerId: String!): Boolean!
+  setActivePlanForIssuer(issuerId: String!, planId: String!): PlanSubscription!
+  setActivePlanSubscription(planId: String!): PlanSubscription!
+  setDaysLeftOfDemo(daysLeft: Long!): Boolean!
+  setDiscountOnTemplate(data: DiscountDataInput!): Boolean!
+  setInTrial(issuerId: String!): Boolean!
+  setIssuerExpired: Boolean!
+  subtractAmountOnGiftPass(amountToSubtract: Int!, passId: String!): Pass!
+  switchIssuer(issuerId: String!): Boolean!
+  unvoidPass(id: String!): Boolean!
+  unvoidPassTemplate(id: String!): Boolean!
+  updateCount(count: Int!, id: String!): Pass!
+  updateFeatureFlagStatus(
+    """
+    Only used when status=active
+    """
+    activeWhen: String
+    key: String!
+    status: Boolean!
+  ): Boolean!
+  updateIssuer(data: IssuerDataInput!): Issuer!
+  updateIssuerInfo(data: IssuerDataInput!, issuerId: String!): Issuer!
+  updatePassAuthenticationTokenStatus(
+    id: String!
+    status: PassAuthenticationTokenStatus!
+  ): PassAuthenticationToken!
+  updatePassByScannerAction(scannerData: ScannerActionDataInput!): Boolean!
+  updateQrCodeImage(
+    passTemplateId: String!
+    qrCodeImage: ImageDataInput
+  ): PassTemplate!
+  updateStamps(id: String!, stampsLeft: Int!): Pass!
+  updateStatusOnPass(amountToSubtract: Int, passId: String!, stamps: Int): Pass!
+  updateStatusOnPassWithDynamicBarcode(
+    amountToSubtract: Int
+    dynamicBarcodeData: DynamicBarcodeDataInput!
+    stamps: Int
+  ): Pass!
+  updateTrialEndDate(issuerId: String, trialEndDate: String!): Boolean!
+  upsertApiKey(data: ApiKeyDataInput!): ApiKey!
+  upsertAppPassInstance(data: AppPassInstanceDataInput!): AppPassInstance!
+  upsertAppUser(data: AppUserDataInput!): User!
+  upsertAutomation(data: AutomationDataInput!): Automation!
+  upsertAutomationFromEditor(
+    data: AutomationEditorDataInput!
+  ): AutomationEditor!
+  upsertDistributionPass(data: PassDataInput!): Pass!
+  upsertFixedMonthlyFee(data: FixedMonthlyFeeDataInput!): FixedMonthlyFee!
+  upsertFixedMonthlyFees(
+    data: [FixedMonthlyFeeDataInput!]!
+  ): [FixedMonthlyFee!]!
+  upsertIntegration(
+    amountToChange: Int
+    enable: Boolean!
+    integrationType: MonthlyFeeType!
+    issuerId: String
+  ): Boolean!
+  upsertIssuerSecret(data: IssuerSecretDataInput!): IssuerSecret!
+  upsertIssuerUserSecret(data: IssuerUserSecretDataInput!): IssuerUserSecret!
+  upsertIssuerUserSecretValue(
+    data: IssuerUserSecretValueDataInput!
+  ): IssuerUserSecretValue!
+  upsertLocation(data: LocationDataInput!): Location
+  upsertNode(data: NodeDataInput!): Node!
+  upsertNodes(automationId: String!, data: [NodeDataInput!]!): [Node!]!
+  upsertNodesFromEditor(
+    automationId: String!
+    data: [NodeEditorDataInput!]!
+  ): [Node!]!
+  upsertNumberOfPasses(numberOfPasses: Int!, passTemplateId: String!): Int!
+  upsertOption(data: NodeOptionDataInput!, nodeId: String!): NodeOption!
+  upsertOrderInfo(data: OrderInfoDataInput!, issuer: DIssuerInput!): OrderInfo!
+  upsertOtherExpenses(
+    data: SubscriptionDataInput!
+    month: Int!
+    year: Int!
+  ): Subscription!
+  upsertPass(data: PassDataInput!): Pass!
+  upsertPassIntegration(data: PassIntegrationDataInput!): PassIntegration!
+  upsertPassIntegrations(
+    data: [PassIntegrationDataInput!]!
+  ): [PassIntegration!]!
+  upsertPassPricing(data: PassPricingDataInput!): PassPricing!
+  upsertPassPricings(data: [PassPricingDataInput!]!): [PassPricing!]!
+  upsertPassTemplate(data: PassTemplateDataInput!): PassTemplate!
+  upsertPassTemplateExternalIdentifiers(
+    externalIdentifiers: [String!]!
+    passTemplateId: String!
+  ): Int!
+  upsertPasses(data: [PassDataInput!]!): [Pass!]!
+  upsertPaymentInfo(data: PaymentInfoDataInput!): PaymentInfo!
+  upsertPlan(data: PlanDataInput!): Plan!
+  upsertPrices(data: PricesDataInput!): Prices!
+  upsertRole(data: RoleDataInput!): Role!
+  upsertScanner(data: ScannerDataInput!): Scanner!
+  upsertScannerGroup(data: ScannerGroupDataInput!): ScannerGroup!
+  upsertUser(data: UserDataInput!): User!
+  upsertUserAsAdmin(data: UserDataInput!): User!
+  upsertUserOption(
+    option: String!
+    userId: String
+    value: String!
+  ): [UserOptionData!]!
+  voidPass(id: String!): Boolean!
+  voidPassTemplate(id: String!): Boolean!
+}
+
+type Node {
+  automation: Automation
+  children: [Node!]!
+  config: [NodeOption!]!
+  id: UUID!
+  options: String!
+  parent: Node
+  type: String!
+}
+
+type NodeAvailableOptionChoice {
+  displayText: String
+  value: String
+}
+
+type NodeAvailableOptionsType {
+  choices: [NodeAvailableOptionChoice!]!
+  default: String
+  dependentOn: String
+  description: String
+  fieldType: OptionsFieldTypes!
+  match: String
+  name: String!
+  required: Boolean
+  schema: OptionsSchemaTypes
+}
+
+enum NodeCategories {
+  ACTION
+  DATA
+  TRIGGER
+}
+
+input NodeDataInput {
+  automationId: String
+  id: String
+  nodeType: String
+  options: String
+  parentId: String
+}
+
+input NodeEditorDataInput {
+  node: NodeDataInput!
+  options: [NodeOptionDataInput!]!
+  selected: Boolean!
+}
+
+type NodeNotice {
+  message: String
+  type: NodeNoticeType!
+}
+
+enum NodeNoticeType {
+  ERROR
+  INFO
+  WARNING
+}
+
+type NodeOption {
+  children: [NodeOption!]!
+  id: UUID!
+  key: String!
+  node: Node!
+  parent: NodeOption
+  value: String
+}
+
+input NodeOptionDataInput {
+  id: String
+  key: String!
+  parentId: String
+  value: String
+}
+
+type NodeType {
+  category: NodeCategories!
+  info: [NodeTypesNodeInfo!]!
+  name: String!
+  namespace: String!
+  notices: [NodeNotice!]!
+  options: [NodeAvailableOptionsType!]!
+  type: String!
+}
+
+type NodeTypesNodeInfo {
+  key: String!
+  value: String!
+}
+
+enum OptionsFieldTypes {
+  CHECKBOX
+  DATA_VALUE
+  DATA_VALUE_EQUAL
+  DATA_VALUE_EQUAL_INPUT_FIELD
+  JSON
+  NUMBER
+  PASS_TEMPLATE
+  RADIO
+  TEXT
+}
+
+enum OptionsSchemaTypes {
+  MAP_STRING_STRING
+}
+
+enum OrderByDirection {
+  ASC
+  DESC
+}
+
+type OrderInfo implements BaseModel {
+  amount: String!
+  confirmed: Boolean
+  currency: CurrencyType!
+  id: UUID!
+  orderId: String!
+  passId: UUID
+  passTemplateId: UUID
+  passTemplateName: String
+  payed: Boolean
+  paymentProvider: PaymentProvider!
+  productDescription: String
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input OrderInfoDataInput {
+  amount: String!
+  confirmed: Boolean
+  currency: CurrencyType!
+  id: String
+  issuer: DIssuerInput!
+  orderId: String!
+  pass: DPassInput
+  passTemplate: DPassTemplateInput
+  payed: Boolean
+  paymentProvider: PaymentProvider!
+  productDescription: String
+}
+
+interface PaginationInfo {
+  hasNext: Boolean!
+  hasPrev: Boolean!
+  pageSize: Int!
+  totalCount: Int!
+  totalPageCount: Int!
+}
+
+input PaginationInput {
+  skip: Int
+  take: Int
+}
+
+type Pass implements BaseModel {
+  alreadyPaid: Boolean!
+  appPassInstances: [AppPassInstance!]!
+  authenticationTokens(
+    pagination: PaginationInput
+  ): PassAuthenticationTokenPageInfo!
+  deliveryPageUrl: String!
+  devicePassInstances: [DevicePassInstance!]!
+  distributionQRCode: String!
+  distributionUrl: String!
+  emails: [Email!]!
+  expirationDate: Instant
+  expirationDateWithoutTime: String!
+  expirationTime: String!
+  externalIdentifier: String
+  hasMissingMemberInputFieldValues: Boolean!
+  id: UUID!
+  inputFieldValues: [PassInputFieldValue!]!
+  isReward: Boolean
+  isVoided: Boolean!
+  passBackSide: [PassBackSide!]!
+  passTemplate: PassTemplate
+  posDistributionCode: String
+  requiresCustomerInput: Boolean!
+  requiresThumbnail: Boolean!
+  stampsLeft: Int
+  status: PassStatus!
+  thumbnail: Image
+  validFrom: Instant
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+enum PassActionType {
+  ADDED_TO_DEVICE
+  CREATED
+  DELETED
+  DELETION_CANCELLED
+  DELETION_INITIATED
+  DEVICE_INSTANCE_DEACTIVATED
+  DEVICE_INSTANCE_REACTIVATED
+  PASS_SCANNED
+  RECREATED
+  REMOVED_FROM_DEVICE
+  TOKEN_ACTIVATED
+  TOKEN_EXPIRED
+  TOKEN_INVALIDATED
+  UNVOIDED
+  VOIDED
+}
+
+type PassAuthenticationToken implements BaseModel {
+  devicePassInstances: [DevicePassInstance!]!
+  id: UUID!
+  status: PassAuthenticationTokenStatus!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+  whenUsed: Instant
+}
+
+type PassAuthenticationTokenPageInfo implements PaginationInfo {
+  data: [PassAuthenticationToken!]!
+  hasNext: Boolean!
+  hasPrev: Boolean!
+  pageSize: Int!
+  totalCount: Int!
+  totalPageCount: Int!
+}
+
+enum PassAuthenticationTokenStatus {
+  ACTIVE
+  EXPIRED
+  INVALID
+}
+
+type PassBackSide implements BaseModel {
+  expirationDate: Instant
+  id: UUID!
+  label: String
+  orderIndex: Int!
+  value: String
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input PassBackSideDataInput {
+  expirationDate: String
+  id: String
+  label: String
+  orderIndex: Int!
+  value: String
+}
+
+type PassBeacon implements BaseModel {
+  id: UUID!
+  major: Int!
+  minor: Int!
+  name: String!
+  proximityUUID: String!
+  relevantText: String!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input PassBeaconDataInput {
+  id: String
+  major: Int!
+  minor: Int!
+  name: String!
+  proximityUUID: String!
+  relevantText: String!
+}
+
+input PassDataInput {
+  alreadyPaid: Boolean
+  distributionToken: String
+  expirationDate: String
+  expirationDateWithoutTime: String
+  expirationTime: String
+  externalIdentifier: String
+  id: String
+  inputFieldValues: [PassInputFieldValueDataInput!]
+  isVoided: Boolean
+  passBackSide: [PassBackSideDataInput!]
+  passTemplateDistributionToken: String
+  passTemplateId: String
+  posDistributionCode: String
+  stampsLeft: Int
+  thumbnail: ImageDataInput
+  thumbnailUrl: String
+  validFrom: String
+}
+
+type PassField implements BaseModel {
+  deletedText: String
+  expiredText: String
+  hideOnDeleted: Boolean!
+  hideOnExpired: Boolean!
+  hideOnVoided: Boolean!
+  id: UUID!
+  label: String!
+  orderIndex: Int!
+  passInputField: PassInputField
+  textAlignment: TextAlignment
+  type: PassFieldType!
+  value: String
+  version: Long!
+  voidedText: String
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input PassFieldDataInput {
+  deletedText: String
+  expiredText: String
+  hideOnDeleted: Boolean
+  hideOnExpired: Boolean
+  hideOnVoided: Boolean
+  id: String
+  label: String!
+  passInputFieldId: String
+  textAlignment: TextAlignment
+  type: PassFieldType!
+  value: String
+  voidedText: String
+}
+
+enum PassFieldType {
+  AUXILIARY
+  BACK
+  HEADER
+  PRIMARY
+  SECONDARY
+}
+
+type PassHistoryEntry {
+  action: PassActionType!
+  comment: String
+  instance: DevicePassInstance
+  token: PassAuthenticationToken
+  whenModified: Instant!
+}
+
+type PassInputField implements BaseModel {
+  deleted: Boolean!
+  description: String
+  format: PassInputFieldFormat!
+  id: UUID!
+  identifier: String!
+  label: String!
+  mandatory: Boolean!
+  type: PassInputFieldType!
+  unique: Boolean!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input PassInputFieldDataInput {
+  description: String
+  format: PassInputFieldFormat!
+  id: String
+  identifier: String!
+  label: String!
+  mandatory: Boolean!
+  type: PassInputFieldType
+  unique: Boolean!
+  userInputField: Boolean!
+}
+
+enum PassInputFieldFormat {
+  DATE
+  EMAIL
+  NUMBER
+  TEXT
+  URL
+}
+
+enum PassInputFieldType {
+  ISSUER
+  MEMBER
+}
+
+type PassInputFieldValue implements BaseModel {
+  id: UUID!
+  passInputField: PassInputField!
+  value: String
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input PassInputFieldValueDataInput {
+  id: String
+  identifier: String
+  passInputFieldId: String
+  value: String
+}
+
+type PassIntegration implements BaseModel {
+  additionalRate: Float
+  id: UUID!
+  plan: Plan
+  type: PassIntegrationType!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input PassIntegrationDataInput {
+  additionalRate: Float
+  passIntegrationType: PassIntegrationType!
+}
+
+enum PassIntegrationType {
+  DYNAMIC_BARCODE
+  NFC
+}
+
+type PassPageInfo implements PaginationInfo {
+  data: [Pass!]!
+  hasNext: Boolean!
+  hasPrev: Boolean!
+  pageSize: Int!
+  totalCount: Int!
+  totalPageCount: Int!
+}
+
+type PassPricing implements BaseModel {
+  id: UUID!
+  passPrice: Money!
+  passType: PassType!
+  plan: Plan
+  range: PassesRangeInfo!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input PassPricingDataInput {
+  passPrice: MoneyDataNullableInput!
+  passType: PassType!
+  range: PassesRangeDataInput!
+}
+
+input PassSearchDataInput {
+  exact: Boolean
+  hasNoEmail: Boolean
+  query: String
+}
+
+enum PassStatus {
+  ACTIVE
+  DELETED
+  DELETE_IN_PROGRESS
+  EXPIRED
+  INACTIVE
+  REDEEMED
+  UNCLAIMED
+  UPDATES_OFF
+  VOIDED
+}
+
+type PassTemplate implements BaseModel {
+  addOnPassTemplates: [AddOnPassTemplate!]!
+  allowReward: Boolean!
+  backFields: [PassField!]!
+  backgroundColor: String
+  backgroundImage: Image
+  barcodeFormat: String
+  barcodeTextFormat: String
+  barcodeType: BarcodeType!
+  beacons: [PassBeacon!]!
+  dateFormat: DateFormat
+  dateNumber: Int
+  deletedPassTemplateId: UUID
+  deliveryPageUrl: String!
+  description: String
+  disableCsvDownload: Boolean!
+  disableDeleteUnclaimedPasses: Boolean!
+  disableIssue: Boolean!
+  distributionUrl: String!
+  dynamicBarcodeExpirationTimeSeconds: Long
+  dynamicBarcodeType: DynamicBarcodeType!
+  expirationDate: Instant
+  expirationDateWithoutTime: String!
+  expirationTime: String!
+  expirationType: ExpirationType
+  externalAPIs: [ExternalAPI!]!
+  externalAuthEnablePOS: Boolean!
+  externalAuthIdField: PassInputField
+  externalAuthNameField: PassInputField
+  externalAuthUseIdentifiers: Boolean!
+  fields: [PassField!]!
+  firstDeviceOnly: Boolean!
+  footerImage: Image
+  foregroundColor: String
+  grayOnExpired: Boolean!
+  hasDynamicBarcode: Boolean!
+  hasInputFields: Boolean!
+  icon: Image
+  id: UUID!
+  inputFields: [PassInputField!]!
+  isDeletedPassTemplate: Boolean!
+  isNFC: Boolean!
+  isSharingProhibited: Boolean!
+  issuer: Issuer
+  labelColor: String
+  locations: [Location!]
+  lockInputFields: Boolean!
+  logScansOnBack: Boolean!
+  logo: Image
+  logoText: String
+  mandatoryThumbnail: Boolean!
+  memberThumbnailImage: Boolean!
+  minAmount: Int
+  name: String
+  nfcValue: String
+  notificationOnScan: Boolean!
+  oncePerDevice: Boolean!
+  oneDeviceAtATime: Boolean!
+  oneDevicePerToken: Boolean!
+  onePassOfTemplateTypePerDevice: Boolean!
+  passPrice: Int
+  passTemplateInvalidRoute: String!
+  passTemplateType: PassTemplateType!
+  paymentInfo: PaymentInfo
+  posDistributionOnly: Boolean!
+  publicKey: String
+  qrCodeImage: Image
+  quantityRestriction: Int
+  refillRenewal: Boolean!
+  rewardPassTemplate: RewardPassTemplate
+  sendBackUpPass: Boolean!
+  serviceEmail: String
+  serviceEmailType: ServiceEmailType!
+  singleDeviceOnly: Boolean!
+  stampBackgroundColor: String
+  stampStripImage: [StampStripImage!]!
+  stampedImage: Image
+  stamps: Int
+  status: PassTemplateStatus!
+  statusFields: Boolean!
+  stripBackgroundColor: String
+  stripImage: Image
+  thumbnail: Image
+  unstampedImage: Image
+  useExternalAuth: Boolean!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input PassTemplateDataInput {
+  addOnPassTemplates: [AddOnPassTemplateDataInput!]
+  allowReward: Boolean
+  backFields: [PassFieldDataInput!]
+  backgroundColor: String
+  backgroundImage: ImageDataInput
+  barcodeFormat: String
+  barcodeTextFormat: String
+  barcodeType: BarcodeType!
+  beacons: [PassBeaconDataInput!]
+  dateFormat: DateFormat
+  dateNumber: Int
+  deletedPassTemplateId: String
+  description: String
+  disableCsvDownload: Boolean
+  disableDeleteUnclaimedPasses: Boolean
+  disableIssue: Boolean
+  dynamicBarcodeExpirationTimeSeconds: Long
+  dynamicBarcodeType: DynamicBarcodeType
+  expirationDate: String
+  expirationDateWithoutTime: String
+  expirationTime: String
+  expirationType: ExpirationType
+  externalAPIs: [ExternalAPIDataInput!]
+  externalAuthEnablePOS: Boolean
+  externalAuthIdFieldId: String
+  externalAuthNameFieldId: String
+  externalAuthUseIdentifiers: Boolean
+  externalIdentifiers: [ExternalIdentifierDataInput!]
+  fields: [PassFieldDataInput!]
+  firstDeviceOnly: Boolean
+  footerImage: ImageDataInput
+  foregroundColor: String
+  grayOnExpired: Boolean
+  hasDynamicBarcode: Boolean
+  icon: ImageDataInput
+  id: String
+  inputFields: [PassInputFieldDataInput!]
+  isDeletedPassTemplate: Boolean
+  isNFC: Boolean
+  isSharingProhibited: Boolean
+  labelColor: String
+  locationIds: [String!]
+  lockInputFields: Boolean
+  logScansOnBack: Boolean
+  logo: ImageDataInput
+  logoText: String
+  mandatoryThumbnail: Boolean
+  memberThumbnailImage: Boolean
+  minAmount: Int
+  name: String
+  nfcValue: String
+  notificationOnScan: Boolean
+  oncePerDevice: Boolean
+  oneDeviceAtATime: Boolean
+  oneDevicePerToken: Boolean
+  onePassOfTemplateTypePerDevice: Boolean
+  passPrice: Int
+  passTemplateType: PassTemplateType!
+  posDistributionOnly: Boolean
+  publicKey: String
+  qrCodeImage: ImageDataInput
+  quantityRestriction: Int
+  refillRenewal: Boolean
+  rewardPassTemplate: RewardPassTemplateDataInput
+  sendBackUpPass: Boolean
+  sendNotifications: Boolean
+  serviceEmail: String
+  serviceEmailType: ServiceEmailType!
+  singleDeviceOnly: Boolean
+  stampBackgroundColor: String
+  stampedImage: ImageDataInput
+  stamps: Int
+  statusFields: Boolean
+  stripBackgroundColor: String
+  stripImage: ImageDataInput
+  thumbnail: ImageDataInput
+  unstampedImage: ImageDataInput
+  useExternalAuth: Boolean
+}
+
+type PassTemplatePageInfo implements PaginationInfo {
+  data: [PassTemplate!]!
+  hasNext: Boolean!
+  hasPrev: Boolean!
+  pageSize: Int!
+  totalCount: Int!
+  totalPageCount: Int!
+}
+
+type PassTemplatePrice {
+  details: [PassTemplatePriceDetails!]!
+  discountOnTemplate: Discount
+  hasDynamicBarcode: Boolean!
+  isDiscount: Boolean!
+  isNFC: Boolean!
+  passTemplateId: UUID!
+  passTemplateName: String
+  passTemplateType: PassTemplateType!
+  totalPasses: Int!
+  totalPrice: Float!
+}
+
+type PassTemplatePriceDetails {
+  currency: String!
+  discount: Float!
+  passIntegrationType: PassIntegrationType
+  passPrice: Float!
+  plan: Plan!
+  quantity: Int!
+  range: String!
+  ratio: Float!
+  totalPrice: Money!
+}
+
+type PassTemplateStatistics {
+  activePasses: Int!
+  deletedPasses: Int!
+  expiredPasses: Int!
+  passScans: Int!
+  redeemedAmount: Int!
+  redeemedPasses: Int!
+  redeemedStamps: Int!
+  remainingAmount: Int!
+  soldPasses: Int!
+  totalPasses: Int!
+  totalPunchesLeft: Int!
+  totalSoldRevenue: Int!
+  unclaimedPasses: Int!
+  valueUnusedGift: Int!
+  valueUnusedPunches: Int!
+  voidedPasses: Int!
+}
+
+enum PassTemplateStatus {
+  ACTIVE
+  DELETED
+  VOIDED
+}
+
+enum PassTemplateType {
+  COUPON
+  GIFT
+  ID
+  MEMBER
+  MULTI_TICKET
+  PUNCH
+  STORAGE
+  TICKET
+}
+
+enum PassType {
+  ENDLESS
+  SINGLE_USE
+}
+
+type PassbuilderPass {
+  is_expired: Boolean!
+  issuer_id: String!
+  issuer_name: String!
+  last_redeemed: LastRedeemed!
+  last_redeemedOld: String!
+  licenseData: String
+  passID_number: String!
+  pass_type: String!
+  punched: Int!
+  punches_left: Int!
+  status: String!
+  total_punches: Int!
+}
+
+type PassesCount {
+  amount: Int!
+  id: String!
+  name: String!
+}
+
+type PassesIssuedByPassTemplate {
+  date: String!
+  passesCount: [PassesCount!]!
+}
+
+enum PassesRange {
+  EIGHTH
+  FIFTH
+  FIRST
+  FOURTH
+  SECOND
+  SEVENTH
+  SIXTH
+  THIRD
+}
+
+input PassesRangeDataInput {
+  name: String!
+}
+
+type PassesRangeInfo {
+  name: String!
+  type: IntRangeInfo!
+}
+
+type PaymentInfo implements BaseModel {
+  accessKey: String
+  country: CountryType
+  currency: CurrencyType
+  customerInfo: Boolean
+  errorUrl: String
+  id: UUID!
+  language: LanguageType
+  merchantEmail: String
+  merchantId: String
+  merchantLogo: Image
+  paymentGatewayId: String
+  paymentProvider: PaymentProvider
+  successUrl: String
+  terms: IssuerTerms
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input PaymentInfoDataInput {
+  accessKey: String
+  country: String
+  currency: CurrencyType!
+  customerInfo: Boolean
+  errorUrl: String
+  id: String
+  language: String
+  merchantEmail: String
+  merchantId: String
+  merchantLogo: ImageDataInput
+  paymentGatewayId: String
+  paymentProvider: PaymentProvider!
+  secretKey: String
+  successUrl: String
+  terms: IssuerTermsDataInput
+}
+
+enum PaymentProvider {
+  NONE
+  RAPYD
+  SALTPAY
+}
+
+type PendingUser {
+  email: String
+  id: UUID!
+  inviteDate: Instant!
+  invitedBy: User
+  name: String
+  role: Role
+}
+
+type PermissionAssoc {
+  action: String!
+  actionDescription: String
+  path: String!
+}
+
+type PermissionList {
+  policy: [PermissionAssoc!]!
+  resource: String!
+}
+
+type Plan implements BaseModel {
+  finalFixedMonthlyFees: [FixedMonthlyFee!]!
+  finalPassIntegrations: [PassIntegration!]!
+  finalPassPricings: [PassPricing!]!
+  fixedMonthlyFees: [FixedMonthlyFee!]!
+  id: UUID!
+  monthlyPrice: Money
+  name: String!
+  passIntegrations: [PassIntegration!]!
+  passPricings: [PassPricing!]!
+  passTemplatesLimit: Int
+  passesLimit: Int
+  planType: PlanType
+  scannerUsersLimit: Int
+  statisticsLimit: String
+  subscriptionCount: Int!
+  supportLimit: String
+  usersLimit: Int
+  version: Long!
+  visible: Boolean!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input PlanDataInput {
+  fixedMonthlyFees: [FixedMonthlyFeeDataInput!]!
+  id: String
+  monthlyPrice: MoneyDataInput
+  name: String!
+  passIntegrations: [PassIntegrationDataInput!]!
+  passPricings: [PassPricingDataInput!]!
+  passTemplatesLimit: Int
+  passesLimit: Int
+  scannerUsersLimit: Int
+  statisticsLimit: String
+  supportLimit: String
+  usersLimit: Int
+  visible: Boolean!
+}
+
+type PlanPageInfo implements PaginationInfo {
+  data: [Plan!]!
+  hasNext: Boolean!
+  hasPrev: Boolean!
+  pageSize: Int!
+  totalCount: Int!
+  totalPageCount: Int!
+}
+
+type PlanSubscription implements BaseModel {
+  id: UUID!
+  plan: Plan!
+  status: PlanSubscriptionStatus!
+  trialEndDate: Instant
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+enum PlanSubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  INACTIVE
+  IN_TRIAL
+  NON_RENEWING
+}
+
+type PlanSubscriptionVersion {
+  end: Instant
+  id: UUID!
+  plan: Plan!
+  start: Instant!
+  status: PlanSubscriptionStatus!
+  trialEndDate: Instant
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+enum PlanType {
+  DEMO
+  EXPERT
+  GROWING
+  PROFESSIONAL
+  STARTER
+}
+
+type Prices {
+  fixedMonthlyFees: [FixedMonthlyFee!]!
+  passIntegrations: [PassIntegration!]!
+  passPricings: [PassPricing!]!
+}
+
+input PricesDataInput {
+  fixedMonthlyFees: [FixedMonthlyFeeDataInput!]!
+  passIntegrations: [PassIntegrationDataInput!]!
+  passPricings: [PassPricingDataInput!]!
+}
+
+type Pricing implements BaseModel {
+  id: UUID!
+  passPrice: DMoney!
+  passType: PassType!
+  range: String!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+type Query {
+  allowCreatingPassBecauseOfTotalPasses(
+    distributionToken: String!
+    passTemplateId: String!
+  ): Boolean!
+  apiKey(id: String!): ApiKey
+  apiKeys: ApiKeyPageInfo!
+  appPasses: [Pass!]!
+  appPassesQuery: [AppPassInstance!]!
+  appUser(id: String!): User
+  automation(id: String!): Automation!
+  automationLog(
+    filter: AutomationLogFilterInput
+    id: String!
+
+    """
+    Single order field is deprecated, please use orderMultiple
+    """
+    order: GenericOrderInput
+    orderMultiple: [GenericOrderMultiInput!]
+    pagination: PaginationInput
+  ): AutomationLogPageInfo!
+  automations: [Automation!]!
+  billingInfo(month: Int!, year: Int!): BillingInfo!
+  bulkEmailPreview(passTemplateId: String!): String!
+  checkQuantityRestriction(passTemplateId: String!): Boolean!
+  countDeviceTypesOfPasses: [DeviceTypeCount!]!
+  countOfPassesIssuedByPassTemplate(
+    daysBack: Long
+    maxTemplates: Int
+  ): [PassesIssuedByPassTemplate!]!
+  distributionPass(distributionToken: String!, passId: String!): Pass
+  distributionPassTemplate(
+    distributionToken: String!
+    passTemplateId: String!
+  ): PassTemplate
+  externalIdentifiers(
+    pagination: PaginationInput
+    passTemplateId: String!
+  ): ExternalIdentifierPageInfo!
+  featureFlags: [FeatureFlag!]!
+  fixedMonthlyFee: [FixedMonthlyFee!]!
+  fixedMonthlyFees(planId: String): [FixedMonthlyFee!]!
+  getFlag(key: String!): Boolean!
+  getInvite(id: String!): Invite!
+  getNextExternalId(passTemplateId: String!): ExternalIdentifier!
+  getNextIssuerId(exceptIssuerId: String!): String
+  getPassByScannedData(
+    metadata: ScanMetadataInput
+    scanData: String!
+  ): ScannedDataResponse
+  getSaltPayCheckHash(
+    distributionUrl: String!
+    passTemplateId: String!
+  ): SaltpayHashInfo!
+  getScanHistoryDataForPass(passId: String!): [ScanTransaction!]!
+    @deprecated(
+      reason: "Deprecated method. Please refer to scanTransactions query, replace with query scanTransactions"
+    )
+  getScannerHistory(scannerId: String): [ScanTransaction!]!
+    @deprecated(
+      reason: "Deprecated method for normal use, only used for SmartScanner, replace with query scanTransactions"
+    )
+
+  """
+  Not Implemented
+  """
+  getSettingsForScanner: Boolean!
+  globalStatistics: StatisticResponse!
+  globalUsers(pagination: PaginationInput, showDeleted: Boolean): UserPageInfo!
+  hasIntegration(integration: MonthlyFeeType!): Boolean!
+  health: String!
+  issuer(id: String!): Issuer
+  issuerDemoInfo: DemoInfo!
+  issuerSecret(id: String!): IssuerSecret
+  issuerSecrets: [IssuerSecret!]!
+  issuerUserSecret(id: String!): IssuerUserSecret
+  issuerUserSecretValue(id: String!): IssuerUserSecretValue
+  issuerUserSecretValues: [IssuerUserSecretValue!]!
+  issuerUserSecrets: [IssuerUserSecret!]!
+  issuers(
+    """
+    Single order field is deprecated, please use orderMultiple
+    """
+    order: GenericOrderInput
+    orderMultiple: [GenericOrderMultiInput!]
+    pagination: PaginationInput
+  ): IssuerPageInfo!
+  issuersOfUser: [Issuer!]!
+  locations: [Location!]!
+  me: User
+  meScanner: Scanner
+  mostRecentlySentMail(passId: String!): Email
+
+  """
+  Most Valuable Fields, get only the most important input fields of a Pass Template
+  """
+  mostValuableFields(id: String!): [PassInputField!]!
+  nodeTypes: [NodeType!]!
+  orders(
+    """
+    Single order field is deprecated, please use orderMultiple
+    """
+    order: GenericOrderInput
+    orderMultiple: [GenericOrderMultiInput!]
+  ): [OrderInfo!]!
+  pass(id: String!): Pass
+  passAuthenticationTokens(
+    pagination: PaginationInput
+    passId: String!
+  ): PassAuthenticationTokenPageInfo!
+  passDeviceHistory(passId: String!): [DevicePassInstance!]!
+  passHistory(passId: String!): [PassHistoryEntry!]!
+  passIntegration: [PassIntegration!]!
+  passIntegrations(planId: String): [PassIntegration!]!
+  passPricings(planId: String): [PassPricing!]!
+  passTemplate(id: String!): PassTemplate
+  passTemplateStatistics(id: String!): PassTemplateStatistics
+  passTemplates(pagination: PaginationInput): PassTemplatePageInfo!
+  passToApp(id: String!): Pass
+  passbuilderPass(passId: String!, templateId: String!): PassbuilderPass!
+  passes(
+    cheap: Boolean
+    hideByStatus: HideByStatusTypeInput
+    inputFieldOrder: [GenericOrderMultiInput!]
+    order: GenericOrderInput
+    orderMultiple: [GenericOrderMultiInput!]
+    pagination: PaginationInput
+    passTemplateId: String
+    search: PassSearchDataInput
+  ): PassPageInfo!
+  passesCsv(passTemplateId: String!): String!
+  passesOfDevice(id: String!): [Pass!]!
+  passesPricing: [Pricing!]!
+  pendingIssuerInvitesOfUser: [Issuer!]!
+  pendingUsers: [PendingUser!]!
+  plan(id: String!): Plan
+  plans(
+    """
+    Single order field is deprecated, please use orderMultiple
+    """
+    order: GenericOrderInput
+    orderMultiple: [GenericOrderMultiInput!]
+    pagination: PaginationInput
+    visible: Boolean
+  ): PlanPageInfo!
+  policies: [PermissionList!]!
+  remainingIssuerUserSecrets(id: String): [IssuerUserSecret!]!
+  role(id: String!): Role!
+  roles(issuerId: String): [Role!]!
+  scanTransaction(id: String!): ScanTransaction!
+  scanTransactions(
+    filter: ScanTransactionsFilterInput
+    order: ScanTransactionOrderInput
+    pagination: PaginationInput
+  ): ScanTransactionPageInfo!
+  scanTransactionsByLocation(
+    lat: Float!
+    lng: Float!
+    radius: Int!
+  ): [ScanTransaction!]!
+    @deprecated(
+      reason: "Experimental method, may be removed without notice, replace with query scanTransactions"
+    )
+  scanner(id: String!): Scanner
+  scannerGroup(id: String!): ScannerGroup
+  scannerGroupCode(id: String!): String!
+  scannerGroups(paginationInput: PaginationInput): ScannerGroupPageInfo!
+  scannerUserHistory(scannerId: String): Boolean!
+  scanners(pagination: PaginationInput): ScannerPageInfo!
+  subscription(month: Int!, year: Int!): Subscription!
+  totalPassTemplates: Int!
+  totalPasses: Int!
+  totalPassesWithDeleted: Int!
+  unclaimedPasses(
+    """
+    Single order field is deprecated, please use orderMultiple
+    """
+    order: GenericOrderInput
+    orderMultiple: [GenericOrderMultiInput!]
+    pagination: PaginationInput
+    passTemplateId: String
+    search: PassSearchDataInput
+  ): PassPageInfo!
+  user(id: String!): User
+  userDistributionContactInfo(token: String!): UserDistributionContactInfo
+  userDistributionToken(passTemplateId: String!): UserDistributionToken
+  users(
+    """
+    Single order field is deprecated, please use orderMultiple
+    """
+    order: GenericOrderInput
+    orderMultiple: [GenericOrderMultiInput!]
+    pagination: PaginationInput
+  ): UserPageInfo!
+}
+
+input RegisterDataInput {
+  email: String!
+  name: String!
+  password: String!
+  phoneNumber: String!
+}
+
+input RegistrationDataInput {
+  contactName: String!
+  contactPhone: String!
+  email: String!
+  idNumber: String!
+  name: String!
+  password: String!
+  termsAndConditions: Boolean!
+}
+
+input RegistrationInviteDataInput {
+  inviteId: String!
+  name: String!
+  password: String!
+  phone: String!
+}
+
+type RewardPassField implements BaseModel {
+  id: UUID!
+  label: String!
+  orderIndex: Int!
+  passInputField: PassInputField
+  textAlignment: TextAlignment
+  type: PassFieldType!
+  value: String
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input RewardPassFieldDataInput {
+  id: String
+  label: String!
+  passInputFieldId: String
+  textAlignment: TextAlignment
+  type: PassFieldType!
+  value: String
+}
+
+type RewardPassTemplate implements BaseModel {
+  backgroundColor: String
+  dateFormat: DateFormat
+  dateNumber: Int
+  description: String
+  expirationDate: Instant
+  expirationType: ExpirationType
+  fields: [RewardPassField!]!
+  foregroundColor: String
+  id: UUID!
+  isSharingProhibited: Boolean!
+  labelColor: String
+  logo: Image
+  logoText: String
+  singleDeviceOnly: Boolean!
+  stripImage: Image
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input RewardPassTemplateDataInput {
+  backgroundColor: String
+  dateFormat: DateFormat
+  dateNumber: Int
+  description: String
+  expirationDate: String
+  expirationType: ExpirationType
+  fields: [RewardPassFieldDataInput!]
+  foregroundColor: String
+  id: String
+  isSharingProhibited: Boolean
+  labelColor: String
+  logo: ImageDataInput
+  logoText: String
+  singleDeviceOnly: Boolean
+  stripImage: ImageDataInput
+}
+
+type Role {
+  id: UUID!
+  isRootRole: Boolean!
+  name: String!
+  policies: [RolePolicies!]
+  userCount: Int!
+}
+
+input RoleDataInput {
+  id: String
+  name: String
+  policies: [RolePolicyDataInput!]
+}
+
+type RolePolicies {
+  actions: [String!]!
+  resource: String!
+}
+
+input RolePolicyDataInput {
+  action: [String!]!
+  resource: String!
+}
+
+type SaltpayHashInfo {
+  hash: String!
+  orderId: String!
+  successUrl: String!
+}
+
+input ScanMetadataInput {
+  alt: Float
+  lat: Float
+  lng: Float
+  method: String
+}
+
+type ScanTransaction {
+  actions: [ScanTransaction!]!
+  amountUsed: Int
+  dateScanned: Instant!
+  id: UUID!
+  latitude: Float
+  longitude: Float
+  pass: Pass
+  scanType: ScanType
+  scanner: Scanner
+  scannerGroup: ScannerGroup
+  similarScans(
+    limit: Int
+    radius: Int
+    showSimilar: Boolean
+  ): [ScanTransaction!]!
+  stampsUsed: Int
+  user: User
+}
+
+enum ScanTransactionOrderByColumn {
+  AMOUNT_USED
+  DATE_SCANNED
+  SCAN_TYPE
+  STAMPS_USED
+}
+
+input ScanTransactionOrderInput {
+  column: ScanTransactionOrderByColumn
+  dir: OrderByDirection
+}
+
+type ScanTransactionPageInfo implements PaginationInfo {
+  data: [ScanTransaction!]!
+  hasNext: Boolean!
+  hasPrev: Boolean!
+  pageSize: Int!
+  totalCount: Int!
+  totalPageCount: Int!
+}
+
+input ScanTransactionsFilterInput {
+  """
+  Format of YYYY-MM-DDTHH:MM:SS.000Z
+  """
+  dateEnd: String
+
+  """
+  Format of YYYY-MM-DDTHH:MM:SS.000Z
+  """
+  dateStart: String
+  passId: String
+  passTemplateId: String
+  scanTypes: [ScanType!]
+  scannerGroupId: String
+  scannerId: String
+  userId: String
+}
+
+enum ScanType {
+  FETCH
+  PUNCH
+  REDEEM
+  SUBTRACT
+}
+
+type ScannedDataResponse {
+  actions: [ScannerActionData!]!
+  pass: Pass
+  transactionId: String!
+}
+
+type Scanner implements BaseModel {
+  active: Boolean!
+  authenticationToken: String
+  currentUser: User
+  deviceId: String
+  disabled: Boolean!
+  externalId: String
+  id: UUID!
+  issuer: Issuer!
+  name: String
+
+  """
+  Templates scannable by scanner
+  """
+  scannableTemplates: [PassTemplate!]!
+  scannerGroup: ScannerGroup
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+type ScannerActionData {
+  action: ScannerActionType!
+  custom_description: String
+  custom_title: String
+  maxAddAmount: Int
+  maxPunches: Int
+  maxSubtractAmount: Int
+  minAddAmount: Int
+  minSubtractAmount: Int
+}
+
+input ScannerActionDataInput {
+  action: ScannerActionType!
+  addedAmount: Int
+  passId: String
+  punches: Int
+  subtractedAmount: Int
+}
+
+enum ScannerActionType {
+  ADD_AMOUNT
+  CUSTOM_ACTION
+  PUNCHES
+  REDEEM
+  SUBTRACT_AMOUNT
+  VOID
+}
+
+enum ScannerAuthenticatedOptions {
+  NONE
+  ONLY_SCANNER
+  SCANNER_CAN_USE
+}
+
+input ScannerDataInput {
+  active: Boolean
+  disabled: Boolean
+  externalId: String
+  id: String
+  name: String
+  scannerGroupId: String
+  shouldLogout: Boolean
+}
+
+type ScannerGroup implements BaseModel {
+  id: UUID!
+  name: String
+  passTemplates: [PassTemplate!]!
+  scanners: [Scanner!]!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input ScannerGroupDataInput {
+  id: String
+  name: String
+  selectedPassTemplates: [String!]!
+}
+
+type ScannerGroupPageInfo implements PaginationInfo {
+  data: [ScannerGroup!]!
+  hasNext: Boolean!
+  hasPrev: Boolean!
+  pageSize: Int!
+  totalCount: Int!
+  totalPageCount: Int!
+}
+
+type ScannerPageInfo implements PaginationInfo {
+  data: [Scanner!]!
+  hasNext: Boolean!
+  hasPrev: Boolean!
+  pageSize: Int!
+  totalCount: Int!
+  totalPageCount: Int!
+}
+
+type ScannerSettings implements BaseModel {
+  id: UUID!
+  issuer: Issuer!
+  passTemplate: PassTemplate
+  scanner: Scanner
+  settingsType: ScannerSettingsSection!
+  shouldAutoPunch: Boolean
+  shouldAutoRedeem: Boolean
+  showPassScanHistory: Boolean
+  showScanHistory: Boolean
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+enum ScannerSettingsSection {
+  GLOBAL
+  PASS_TEMPLATE
+  SCANNER
+}
+
+enum SendGridStatus {
+  BOUNCE
+  DEFERRED
+  DELIVERED
+  DROPPED
+  FAILED
+  NO_STATUS
+  OPENED
+  PROCESSED
+  SENT
+}
+
+type SendPassEmailsResponse {
+  failedCount: Int!
+  successCount: Int!
+}
+
+enum ServiceEmailType {
+  ISSUER
+  TEMPLATE
+  USER
+}
+
+type StampStripImage {
+  stampsLeft: Int
+  url: String!
+}
+
+type StatisticResponse {
+  totalPassTemplates: Int
+  totalPasses: Int
+  totalPassesRedeemedPastMonth: Int
+  totalRedeemedPasses: Int
+  totalScanners: Int
+  totalScansBySmartScanner: Int
+  totalUsers: Int
+  voidedPasses: Int
+}
+
+type Subscription implements BaseModel {
+  expenses: [Expense!]
+  id: UUID!
+  month: Int!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+  year: Int!
+}
+
+input SubscriptionDataInput {
+  expenses: [ExpenceDataInput!]
+}
+
+enum TextAlignment {
+  CENTER
+  LEFT
+  RIGHT
+}
+
+input ThumbnailDataInput {
+  passId: String!
+  thumbnail: ImageDataInput!
+}
+
+"""
+A type representing a formatted java.util.UUID
+"""
+scalar UUID
+
+type User implements BaseModel {
+  active: Boolean!
+  androidDeviceId: String
+  apiKeys: [ApiKey!]!
+  displayName: String!
+  email: String!
+  globalRole: UserRole!
+  id: UUID!
+  invitedBy: User
+  issuer: Issuer
+  issuerRole: Role
+  issuerUserId: String
+  issuers: [IssuerUser!]
+  language: String
+  name: String
+  options: [UserOptionData!]!
+  permissions: [UserPermission]!
+  phoneNumber: String
+  photo: Image
+  policies: [UserPolicy!]
+  role: Role
+  smartWalletUser: Boolean
+  status: UserStatus
+  verifyToken: String
+  version: Long!
+  whenConfirmed: Instant
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input UserDataInput {
+  active: Boolean
+  email: String!
+  id: String
+  name: String
+  password: String!
+  permissions: [UserPermission]
+  userRole: UserRole
+}
+
+type UserDistributionContactInfo implements BaseModel {
+  email: String!
+  id: UUID!
+  name: String!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+type UserDistributionToken implements BaseModel {
+  id: UUID!
+  token: UUID!
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+type UserOld implements BaseModel {
+  active: Boolean!
+  androidDeviceId: String
+  apiKeys: [ApiKey!]!
+  displayName: String!
+  email: String!
+  id: UUID!
+  invitedBy: UserOld
+  issuer: Issuer
+  issuerRole: Role
+  issuerUserId: String
+  issuers: [IssuerUser!]
+  language: String
+  name: String
+  options: [UserOptionData!]!
+  permissions: [UserPermission]!
+  phoneNumber: String
+  photo: Image
+  policies: [UserPolicy!]
+  role: UserRole!
+  smartWalletUser: Boolean
+  status: UserStatus
+  verifyToken: String
+  version: Long!
+  whenConfirmed: Instant
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+type UserOptionData {
+  key: String!
+  value: String!
+}
+
+type UserPageInfo implements PaginationInfo {
+  data: [User!]!
+  hasNext: Boolean!
+  hasPrev: Boolean!
+  pageSize: Int!
+  totalCount: Int!
+  totalPageCount: Int!
+}
+
+enum UserPermission {
+  BASIC
+  SCANNER_LICENCE
+}
+
+type UserPolicy {
+  actions: [String!]!
+  resource: String!
+}
+
+enum UserRole {
+  ADMIN
+  BASIC_USER
+  CUSTOM_USER
+  USER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  UNCONFIRMED
+}

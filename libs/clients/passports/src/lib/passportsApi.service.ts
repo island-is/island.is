@@ -7,8 +7,10 @@ import {
   IdentityDocumentApi,
   IdentityDocumentResponse,
   PreregistrationApi,
+  DocumentLossApi,
 } from '../../gen/fetch'
 import {
+  DocumentLossnInput,
   Gender,
   IdentityDocument,
   IdentityDocumentChild,
@@ -38,6 +40,7 @@ export class PassportsService {
     private xroadConfig: ConfigType<typeof XRoadConfig>,
     private identityDocumentApi: IdentityDocumentApi,
     private preregistrationApi: PreregistrationApi,
+    private documentLossApi: DocumentLossApi,
     private deliveryAddressApi: DeliveryAddressApi,
   ) {}
 
@@ -54,9 +57,7 @@ export class PassportsService {
   }
 
   private resolvePassports(passportData: IdentityDocumentResponse[]) {
-    const passportArray = passportData.map((item) => {
-      const { productionRequestID, ...passport } = item
-
+    const passportArray = passportData.map((passport) => {
       /**
        * Expiration status: string
        *    if invalid and expirationDate has passed: EXPIRED (ÚTRUNNIÐ)
@@ -235,6 +236,23 @@ export class PassportsService {
       userPassport,
       childPassports: childPassports,
     }
+  }
+
+  async annulPassport(
+    user: User,
+    input: DocumentLossnInput,
+  ): Promise<PreregisterResponse> {
+    const res = await this.documentLossApi
+      .withMiddleware(new AuthMiddleware(user))
+      .documentLossDocumentLoss({
+        xRoadClient: this.xroadConfig.xRoadClient,
+        documentLossAnnouncementRequest: {
+          ...input,
+          announcedByPersonId: user.nationalId,
+          incidentDate: new Date().toISOString(),
+        },
+      })
+    return { success: !!res }
   }
 
   async createDocumentBuffer({
