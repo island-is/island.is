@@ -2,7 +2,10 @@ import { test, BrowserContext, expect } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
-import { messages } from '@island.is/service-portal/vehicles/messages'
+import {
+  vehicleMessage,
+  messages,
+} from '@island.is/service-portal/assets/messages'
 import { m } from '@island.is/service-portal/core/messages'
 import { disableI18n } from '../../../../support/disablers'
 
@@ -33,21 +36,23 @@ test.describe('MS - Vehicles', () => {
     await test.step('should display data and filter overview', async () => {
       // Arrange
       await page.goto(
-        icelandicAndNoPopupUrl('/minarsidur/okutaeki/min-okutaeki'),
+        icelandicAndNoPopupUrl('/minarsidur/eignir/okutaeki/min-okutaeki'),
       )
 
       // Act
       const ownersLicense = page
-        .locator(`role=button[name="${label(messages.myCarsFiles)}"]`)
+        .locator(`role=button[name="${label(vehicleMessage.myCarsFiles)}"]`)
         .first()
       const recycleLicense = page
-        .locator(`role=button[name="${label(messages.recycleCar)}"]`)
+        .locator(`role=button[name="${label(vehicleMessage.recycleCar)}"]`)
         .first()
       const hideName = page
-        .locator(`role=button[name="${label(messages.vehicleNameSecret)}"]`)
+        .locator(
+          `role=button[name="${label(vehicleMessage.vehicleNameSecret)}"]`,
+        )
         .first()
       const ownershipLink = page
-        .getByRole('button', { name: label(messages.changeOfOwnership) })
+        .getByRole('button', { name: label(vehicleMessage.changeOfOwnership) })
         .first()
 
       const viewLink = page.getByText(label(messages.seeInfo)).first()
@@ -64,16 +69,18 @@ test.describe('MS - Vehicles', () => {
       await expect(hideName).toBeVisible()
       await expect(viewLink).toBeVisible()
       await expect(ownershipLink).toBeVisible()
-      await expect(page.locator(`text=${label(messages.found)}`)).toBeVisible()
       await expect(
-        page.locator(`text=${label(messages.clearFilter)}`),
+        page.locator(`text=${label(vehicleMessage.found)}`),
+      ).toBeVisible()
+      await expect(
+        page.locator(`text=${label(vehicleMessage.clearFilter)}`),
       ).toBeVisible()
     })
 
     await test.step('should display detail', async () => {
       // Arrange
       await page.goto(
-        icelandicAndNoPopupUrl('/minarsidur/okutaeki/min-okutaeki'),
+        icelandicAndNoPopupUrl('/minarsidur/eignir/okutaeki/min-okutaeki'),
       )
       await page.waitForLoadState('networkidle')
 
@@ -82,14 +89,18 @@ test.describe('MS - Vehicles', () => {
       await viewLink.click()
 
       const basicInfoText = page
-        .getByText(label(messages.baseInfoTitle))
+        .getByText(label(vehicleMessage.baseInfoTitle))
         .first()
       const reportLink = page
-        .locator(`role=button[name="${label(messages.vehicleHistoryReport)}"]`)
+        .locator(
+          `role=button[name="${label(vehicleMessage.vehicleHistoryReport)}"]`,
+        )
         .first()
 
       // Assert
-      await expect(page).toHaveURL(/minarsidur\/okutaeki\/min-okutaeki\/.+/)
+      await expect(page).toHaveURL(
+        /minarsidur\/eignir\/okutaeki\/min-okutaeki\/.+/,
+      )
       await expect(basicInfoText).toBeVisible()
       await expect(reportLink).toBeVisible()
     })
@@ -101,25 +112,27 @@ test.describe('MS - Vehicles', () => {
 
     await test.step('should allow lookup of cars', async () => {
       // Arrange
-      await page.goto(icelandicAndNoPopupUrl('/minarsidur/okutaeki/leit'))
+      await page.goto(
+        icelandicAndNoPopupUrl('/minarsidur/eignir/okutaeki/leit'),
+      )
 
       // Act
       const terms = page
-        .locator(`role=button[name="${label(messages.acceptTerms)}"]`)
+        .locator(`role=button[name="${label(vehicleMessage.acceptTerms)}"]`)
         .first()
       await terms.click()
 
       const inputField = page.getByRole('textbox', {
-        name: label(messages.searchLabel),
+        name: label(vehicleMessage.searchLabel),
       })
       await inputField.click()
       await inputField.type('ísland.is', { delay: 200 })
       const lookBtn = page
-        .getByRole('button', { name: label(messages.search) })
+        .getByRole('button', { name: label(vehicleMessage.search) })
         .first()
       await lookBtn.click()
       const basicInfoText = page
-        .getByText(label(messages.noVehicleFound))
+        .getByText(label(vehicleMessage.noVehicleFound))
         .first()
 
       // Assert
@@ -134,12 +147,12 @@ test.describe('MS - Vehicles', () => {
     await test.step('should display and filter data', async () => {
       // Arrange
       await page.goto(
-        icelandicAndNoPopupUrl('/minarsidur/okutaeki/okutaekjaferill'),
+        icelandicAndNoPopupUrl('/minarsidur/eignir/okutaeki/okutaekjaferill'),
       )
 
       // Act
       const tabButton = page.getByRole('tab', {
-        name: label(messages.operatorHistory),
+        name: label(vehicleMessage.operatorHistory),
       })
       await tabButton.click()
 
@@ -157,7 +170,7 @@ test.describe('MS - Vehicles', () => {
       // Assert
       await expect(table).not.toContainText('Forskráð')
       await expect(table).toContainText('Í lagi') // API data
-      await expect(table).toContainText(label(messages.firstReg))
+      await expect(table).toContainText(label(vehicleMessage.firstReg))
     })
   })
 })
