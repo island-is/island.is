@@ -1,6 +1,5 @@
 import { defineConfig } from '@island.is/nest/config'
 import { z } from 'zod'
-import { RLSScope } from '@island.is/auth/scopes'
 
 const schema = z.object({
   xRoadServicePath: z.string(),
