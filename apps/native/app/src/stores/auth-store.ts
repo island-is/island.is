@@ -1,5 +1,4 @@
 import {
-  AuthConfiguration,
   authorize,
   AuthorizeResult,
   refresh,
@@ -13,7 +12,6 @@ import create, {State} from 'zustand/vanilla';
 import {client} from '../graphql/client';
 import {getConfig, bundleId} from '../config';
 import {getAppRoot} from '../utils/lifecycle/get-app-root';
-import {inboxStore} from './inbox-store';
 import {preferencesStore} from './preferences-store';
 import {Platform} from 'react-native';
 
@@ -156,14 +154,6 @@ export const authStore = create<AuthStore>((set, get) => ({
     return true;
   },
 }));
-
-authStore.subscribe(
-  (userInfo: UserInfo | undefined) => {
-    inboxStore.getState().actions.setNationalId(userInfo?.nationalId ?? null);
-    // notificationsStore.getState().actions.setNationalId(userInfo?.nationalId);
-  },
-  s => s.userInfo,
-);
 
 export const useAuthStore = createUse(authStore);
 

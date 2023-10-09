@@ -6,7 +6,7 @@ import {
   SearchHeader,
   TopLine,
 } from '@ui';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useIntl} from 'react-intl';
 import {
   Animated,
@@ -30,28 +30,25 @@ import illustrationSrc from '../../assets/illustrations/le-company-s3.png';
 import {BottomTabsIndicator} from '../../components/bottom-tabs-indicator/bottom-tabs-indicator';
 import {PressableHighlight} from '../../components/pressable-highlight/pressable-highlight';
 import {client} from '../../graphql/client';
-import {IDocument} from '../../graphql/fragments/document.fragment';
 import {LIST_DOCUMENTS_QUERY} from '../../graphql/queries/list-documents.query';
 import {useActiveTabItemPress} from '../../hooks/use-active-tab-item-press';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {navigateTo} from '../../lib/deep-linking';
-import {lowerCase} from '../../lib/lowercase';
-import {inboxStore, useInboxStore} from '../../stores/inbox-store';
 import {useOrganizationsStore} from '../../stores/organizations-store';
 import {useUiStore} from '../../stores/ui-store';
 import {ComponentRegistry} from '../../utils/component-registry';
 import {getRightButtons} from '../../utils/get-main-root';
 import {testIDs} from '../../utils/test-ids';
-import {Query} from 'src/graphql/types/schema';
+import {
+  GetDocumentListInput,
+  ListDocumentsV2,
+} from '../../graphql/queries/list-documents.query';
 import {Document} from 'src/graphql/types/schema';
+import {setBadgeCountAsync} from 'expo-notifications';
 
 type ListItem =
   | {id: string; type: 'skeleton' | 'empty'}
   | (Document & {type: undefined});
-
-interface IndexedDocument extends Document {
-  fulltext: string;
-}
 
 const {useNavigationOptions, getNavigationOptions} =
   createNavigationOptionHooks(
@@ -136,39 +133,74 @@ const PressableListItem = React.memo(({item}: {item: Document}) => {
   );
 });
 
+function useThrottleState(state: string, delay = 500) {
+  const [throttledState, setThrottledState] = useState(state);
+  useEffect(() => {
+    const timeout = setTimeout(
+      () => setThrottledState(state),
+      state === '' ? 0 : delay,
+    );
+    return () => clearTimeout(timeout);
+  }, [state, delay]);
+  return throttledState;
+}
+
+const useUnreadCount = () => {
+  const res = useQuery<
+    {listDocumentsV2: ListDocumentsV2},
+    {input: GetDocumentListInput}
+  >(LIST_DOCUMENTS_QUERY, {
+    client,
+    fetchPolicy: 'cache-first',
+    variables: {
+      input: {
+        page: 1,
+        pageSize: 50,
+        opened: false,
+      },
+    },
+  });
+  const unopened = res?.data?.listDocumentsV2?.data?.filter(item => item.opened === false);
+  return unopened?.length ?? 0;
+};
+
 export const InboxScreen: NavigationFunctionComponent = ({componentId}) => {
   useNavigationOptions(componentId);
-
   const ui = useUiStore();
-  const theme = useTheme();
-  const {initialized, readItems, actions} = useInboxStore();
   const intl = useIntl();
   const scrollY = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef<FlatList>(null);
   const keyboardRef = useRef(false);
-  const [loading, setLoading] = useState(false);
-  const [searchLoading, setSearchLoading] = useState(false);
-  const [indexedItems, setIndexedItems] = useState<IndexedDocument[]>([]);
-  const [inboxItems, setInboxItems] = useState<IDocument[]>([]);
-  const res = useQuery<Query>(LIST_DOCUMENTS_QUERY, {
+  const [refreshing, setRefreshing] = useState(true);
+  const queryString = useThrottleState(ui.inboxQuery);
+  const theme = useTheme();
+  const unreadCount = useUnreadCount();
+  const page = useRef(1);
+
+  const res = useQuery<
+    {listDocumentsV2: ListDocumentsV2},
+    {input: GetDocumentListInput}
+  >(LIST_DOCUMENTS_QUERY, {
     client,
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: 'cache-first',
+    variables: {
+      input: {
+        page: 1,
+        pageSize: 50,
+        subjectContains: queryString?.length > 2 ? queryString : undefined,
+      },
+    },
+    onCompleted() {
+      setRefreshing(false);
+    },
   });
 
-  const isFirstLoad = !res.data;
-  const isSearch = ui.inboxQuery.length > 0;
-  const isLoading = res.loading;
-  const isError = !!res.error;
-  const isEmpty = (res?.data?.listDocumentsV2?.data ?? []).length === 0;
+  useEffect(() => {
+    page.current = 1;
+  }, [queryString]);
 
-  const isSkeltonView = isLoading && isFirstLoad && !isError;
-  const isEmptyView = !isLoading && isEmpty;
-
-  const emptyItems = [{id: '0', type: 'empty'}];
-  const skeletonItems = Array.from({length: 11}).map((_, id) => ({
-    id: id.toString(),
-    type: 'skeleton',
-  }));
+  const items = res?.data?.listDocumentsV2?.data ?? [];
+  const isSearch = ui.inboxQuery.length > 2;
 
   const onAppStateBlur = useCallback((status: AppStateStatus) => {
     if (status !== 'inactive') {
@@ -212,67 +244,19 @@ export const InboxScreen: NavigationFunctionComponent = ({componentId}) => {
   });
 
   useNavigationSearchBarUpdate(e => {
-    if (e.text !== ui.inboxQuery) {
-      setSearchLoading(true);
-    }
     ui.setInboxQuery(e.text);
   });
 
   useNavigationSearchBarCancelPress(() => {
-    setSearchLoading(true);
     ui.setInboxQuery('');
   });
 
-  // when res data is loaded
   useEffect(() => {
-    if (res.data && !res.loading) {
-      const items = res?.data?.listDocumentsV2?.data ?? [];
-      if (!initialized) {
-        // mark all as read on first app start
-        actions.setInitialized(true);
-        actions.setRead(items.map(item => item.id));
-      }
-
-      const indexedItems = items.map(item => {
-        return {
-          ...item,
-          fulltext: `${lowerCase(item.subject)} ${lowerCase(item.senderName)}`,
-        };
-      });
-      setIndexedItems(indexedItems);
-    }
-  }, [res.data, res.loading]);
-
-  // search query updates
-  useEffect(() => {
-    setSearchLoading(false);
-    const q = lowerCase(ui.inboxQuery.trim());
-    if (q !== '') {
-      setInboxItems(indexedItems.filter(item => item.fulltext.includes(q)));
-    } else {
-      setInboxItems([...indexedItems]);
-    }
-  }, [ui.inboxQuery, indexedItems]);
-
-  useEffect(() => {
-    if (!initialized) {
-      return;
-    }
-    let unreadCount = 0;
-    indexedItems.forEach(item => {
-      const unread = !readItems.includes(item.id);
-      if (unread) {
-        unreadCount += 1;
-      }
-    });
-
     Navigation.mergeOptions(ComponentRegistry.InboxScreen, {
       bottomTab: {
         iconColor: theme.color.blue400,
         textColor: theme.shade.foreground,
-        text: initialized
-          ? intl.formatMessage({id: 'inbox.bottomTabText'})
-          : '',
+        text: intl.formatMessage({id: 'inbox.bottomTabText'}),
         testID: testIDs.TABBAR_TAB_INBOX,
         iconInsets: {
           bottom: -4,
@@ -283,7 +267,8 @@ export const InboxScreen: NavigationFunctionComponent = ({componentId}) => {
         badgeColor: theme.color.red400,
       },
     });
-  }, [initialized, readItems, indexedItems]);
+    setBadgeCountAsync(unreadCount)
+  }, [intl, theme, unreadCount]);
 
   useEffect(() => {
     if (Platform.OS === 'ios') {
@@ -324,8 +309,21 @@ export const InboxScreen: NavigationFunctionComponent = ({componentId}) => {
       }
       return <PressableListItem item={item as Document} />;
     },
-    [readItems],
+    [intl],
   );
+
+  const data = useMemo(() => {
+    if (refreshing || res.loading) {
+      return Array.from({length: 20}).map((_, id) => ({
+        id: String(id),
+        type: 'skeleton',
+      }));
+    }
+    if (items.length === 0) {
+      return [{id: '0', type: 'empty'}];
+    }
+    return items;
+  }, [refreshing, items, res.loading]) as ListItem[];
 
   return (
     <>
@@ -340,13 +338,7 @@ export const InboxScreen: NavigationFunctionComponent = ({componentId}) => {
           },
         )}
         style={{marginHorizontal: 0, flex: 1}}
-        data={
-          (isSkeltonView
-            ? skeletonItems
-            : isEmptyView
-            ? emptyItems
-            : inboxItems) as ListItem[]
-        }
+        data={data}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         keyboardDismissMode="on-drag"
@@ -356,14 +348,17 @@ export const InboxScreen: NavigationFunctionComponent = ({componentId}) => {
             <SearchHeader
               loadingText={intl.formatMessage({id: 'inbox.loadingText'})}
               resultText={
-                inboxItems.length === 0
+                items.length === 0
                   ? intl.formatMessage({id: 'inbox.noResultText'})
-                  : inboxItems.length === 1
+                  : items.length === 1
                   ? intl.formatMessage({id: 'inbox.singleResultText'})
                   : intl.formatMessage({id: 'inbox.resultText'})
               }
-              count={inboxItems.length}
-              loading={searchLoading}
+              count={items.length}
+              loading={
+                res.loading ||
+                res.variables?.input.subjectContains !== ui.inboxQuery
+              }
               isAndroid={Platform.OS === 'android'}
             />
           ) : undefined
@@ -371,26 +366,36 @@ export const InboxScreen: NavigationFunctionComponent = ({componentId}) => {
         refreshControl={
           isSearch ? undefined : (
             <RefreshControl
-              refreshing={loading}
-              onRefresh={() => {
-                setLoading(true);
+              refreshing={refreshing}
+              onRefresh={async () => {
+                setRefreshing(true);
                 try {
-                  res
-                    ?.refetch?.()
-                    ?.then(() => {
-                      setLoading(false);
-                    })
-                    .catch(() => {
-                      setLoading(false);
-                    });
+                  await res?.refetch?.({
+                    input: {...res.variables?.input, page: 1},
+                  });
                 } catch (err) {
                   // noop
-                  setLoading(false);
                 }
+                setRefreshing(false);
               }}
             />
           )
         }
+        onEndReached={() => {
+          if (res.loading) {
+            return;
+          }
+          page.current += 1;
+          return res.fetchMore({
+            variables: {
+              input: {
+                ...res.variables?.input,
+                page: page.current,
+              },
+            },
+          });
+        }}
+        onEndReachedThreshold={0.5}
       />
       <BottomTabsIndicator index={0} total={5} />
       {!isSearch && <TopLine scrollY={scrollY} />}

@@ -127,5 +127,31 @@ export const client = new ApolloClient({
       fetchPolicy: 'cache-and-network',
     },
   },
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      Query: {
+        fields: {
+          listDocumentsV2: {
+            keyArgs: ['input', ['subjectContains', 'opened']],
+            read(existing = {}) {
+              return existing;
+            },
+            merge(existing = {}, incoming = {}, options) {
+              const {variables} = options ?? {};
+              const {page = 1, pageSize = 20} = variables?.input ?? {};
+              const offset = (page - 1) * pageSize;
+              return {
+                ...existing,
+                ...incoming,
+                data: [
+                  ...(existing?.data ?? []).slice(0, offset),
+                  ...(incoming?.data ?? []).slice(0, pageSize),
+                ],
+              };
+            },
+          }
+        },
+      },
+    },
+  }),
 });

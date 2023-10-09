@@ -182,10 +182,17 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   });
 
   useEffect(() => {
-    if (Document.id) {
-      inboxStore.getState().actions.setRead(Document.id);
-    }
-  }, [res.data]);
+    // Lets mark the document as read
+    client.cache.modify({
+      id: client.cache.identify({
+        __typename: 'Document',
+        id: Document.id,
+      }),
+      fields: {
+        opened: () => true,
+      },
+    });
+  }, [Document.id]);
 
   useEffect(() => {
     const {authorizeResult, refresh} = authStore.getState();
