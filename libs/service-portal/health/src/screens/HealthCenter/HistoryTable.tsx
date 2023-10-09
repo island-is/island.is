@@ -48,19 +48,22 @@ const HistoryTable: FC<Props> = ({ history }: Props) => {
             <T.Row key={index}>
               <T.Data>
                 <Text variant="medium">
-                  {rowItem.dateFrom ? formatDate(rowItem.dateFrom) : '-'}
+                  {rowItem.dateFrom ? formatDate(rowItem.dateFrom) : ''}
                 </Text>
               </T.Data>
               <T.Data>
                 <Text variant="medium">
-                  {rowItem.dateTo ? formatDate(rowItem.dateTo) : '-'}
+                  {rowItem.dateTo ? formatDate(rowItem.dateTo) : ''}
                 </Text>
               </T.Data>
               <T.Data>
-                <Text variant="medium">{rowItem.healthCenterName ?? '-'}</Text>
+                <Text variant="medium">{rowItem.healthCenterName ?? ''}</Text>
               </T.Data>
               <T.Data>
-                <Text variant="medium">{rowItem.doctor ?? '-'}</Text>
+                <Text variant="medium">
+                  {rowItem.doctor ??
+                    formatMessage(messages.healthCenterNoDoctor)}
+                </Text>
               </T.Data>
             </T.Row>
           ))}
