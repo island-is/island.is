@@ -57,7 +57,7 @@ test.describe('Custody Prosecutor', () => {
     await page.keyboard.press('Escape')
     await page.locator('input[id=reqCourtDate-time]').fill('15:00')
     await page.getByRole('button', { name: 'Halda áfram' }).click()
-    await page.getByRole('button', { name: 'Senda tilkynningu' }).click()
+    await page.getByRole('button', { name: 'Halda áfram með kröfu' }).click()
     await expect(page).toHaveURL(/.*\/krafa\/domkrofur-og-lagagrundvollur\/.*/)
 
     // Prosecutor demands

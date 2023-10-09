@@ -12,6 +12,8 @@ import {
   ApplicationTypes,
   DefaultEvents,
   defineTemplateApi,
+  DistrictsApi,
+  PassportsApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
@@ -89,6 +91,8 @@ const PassportTemplate: ApplicationTemplate<
                 NationalRegistryUser,
                 UserInfoApi,
                 SyslumadurPaymentCatalogApi,
+                PassportsApi,
+                DistrictsApi,
                 IdentityDocumentApi,
                 DeliveryAddressApi,
               ],
@@ -189,6 +193,8 @@ const PassportTemplate: ApplicationTemplate<
                 NationalRegistryUserParentB,
                 UserInfoApi,
                 SyslumadurPaymentCatalogApi,
+                PassportsApi,
+                DistrictsApi,
                 IdentityDocumentApi,
                 DeliveryAddressApi,
               ],

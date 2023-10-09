@@ -31,6 +31,8 @@ const Dentists = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   const location = useLocation()
+  // Check if the user was transfered from another health center
+  const wasSuccessfulTransfer = location?.state?.transferSuccess
 
   // Feature flag for transfer option.
   const [isTransferAvailable, setIsTransferAvailable] = useState(false)
@@ -65,9 +67,6 @@ const Dentists = () => {
 
   const { dentist, history } = data?.rightsPortalUserDentistRegistration ?? {}
   const canRegister = dentist?.status?.canRegister ?? false
-
-  // Check if the user was transfered from another health center
-  const wasSuccessfulTransfer = location?.state?.transferSuccess
 
   if (error && !loading) {
     return (

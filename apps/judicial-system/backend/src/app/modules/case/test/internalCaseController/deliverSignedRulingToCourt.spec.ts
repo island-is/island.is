@@ -1,15 +1,16 @@
-import { uuid } from 'uuidv4'
 import format from 'date-fns/format'
+import { uuid } from 'uuidv4'
 
 import { User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
+
+import { nowFactory } from '../../../../factories'
+import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../../../court'
-import { DeliverResponse } from '../../models/deliver.response'
 import { Case } from '../../models/case.model'
-import { randomDate } from '../../../../test'
-import { nowFactory } from '../../../../factories'
+import { DeliverResponse } from '../../models/deliver.response'
 
 jest.mock('../../../../factories/date.factory')
 
