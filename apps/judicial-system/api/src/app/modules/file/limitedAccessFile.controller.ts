@@ -151,7 +151,7 @@ export class LimitedAccessFileController {
 
     return this.fileService.tryGetFile(
       user.id,
-      AuditedAction.GET_ALL_FILES,
+      AuditedAction.GET_ALL_FILES_ZIP,
       id,
       'limitedAccess/all',
       req,

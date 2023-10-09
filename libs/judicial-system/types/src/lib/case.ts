@@ -1,10 +1,10 @@
 import type { CourtDocument } from './courtDocument'
 import type { Defendant } from './defendant'
 import { EventLog } from './eventLog'
-import { CaseFile, CaseFileCategory } from './file'
+import { type CaseFile, CaseFileCategory } from './file'
 import type { Institution } from './institution'
 import type { Notification } from './notification'
-import { User, UserRole } from './user'
+import { type User, UserRole } from './user'
 
 export enum CaseOrigin {
   UNKNOWN = 'UNKNOWN',
