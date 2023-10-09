@@ -222,10 +222,7 @@
           {
             "selector": "CallExpression[arguments.length=1] > MemberExpression.callee > Identifier.property[name='reduce']",
             "message": "Provide initialValue to .reduce()."
-          },
-          "_FunctionExpression",
-          "_WithStatement",
-          "_BinaryExpression[operator='in']"
+          }
         ],
         "local-rules/disallow-kennitalas": "warn",
         "local-rules/no-async-module-init": "error"
