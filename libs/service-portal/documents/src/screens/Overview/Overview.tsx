@@ -12,7 +12,6 @@ import {
   GridRow,
   Button,
   SkeletonLoader,
-  Checkbox,
 } from '@island.is/island-ui/core'
 import {
   useListDocuments,
@@ -378,18 +377,34 @@ export const ServicePortalDocuments = () => {
       )}
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-          <Box marginBottom={1} className={styles.btn} printHidden marginY={3}>
-            <Button
-              preTextIcon="arrowBack"
-              preTextIconType="filled"
-              size="small"
-              type="button"
-              variant="text"
-              truncate
-              onClick={() => navigate('/')}
+          <Box marginBottom={2} printHidden marginY={3}>
+            <Box
+              className={styles.btn}
+              display={'inlineFlex'}
+              alignItems={'center'}
             >
-              {formatMessage(m.goBackToDashboard)}
-            </Button>
+              <Button
+                preTextIcon="arrowBack"
+                preTextIconType="filled"
+                size="small"
+                type="button"
+                variant="text"
+                truncate
+                onClick={() => navigate('/')}
+              >
+                {formatMessage(m.goBackToDashboard)}
+              </Button>
+              <Box
+                borderRadius={'circle'}
+                display={'inlineBlock'}
+                marginY={0}
+                marginX={1}
+                className={styles.bullet}
+              ></Box>
+              <Button unfocusable size="small" variant="text" truncate as="h1">
+                {formatMessage(m.documents)}
+              </Button>
+            </Box>
           </Box>
           <DocumentsFilter
             filterValue={filterValue}

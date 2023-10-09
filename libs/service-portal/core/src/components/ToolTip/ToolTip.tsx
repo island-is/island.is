@@ -83,7 +83,7 @@ export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
   return (
     <>
       {children ? (
-        <TooltipReference {...tooltip} {...children.props}>
+        <TooltipReference aria-label={text} {...tooltip} {...children.props}>
           {(referenceProps) => React.cloneElement(children, referenceProps)}
         </TooltipReference>
       ) : (
