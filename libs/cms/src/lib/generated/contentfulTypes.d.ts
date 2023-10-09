@@ -1545,7 +1545,11 @@ export interface ILifeEventPageFields {
   seeMoreText?: string | undefined
 
   /** page type */
-  pageType?: 'Life Event' | 'Digital Iceland Service' | undefined
+  pageType?:
+    | 'Life Event'
+    | 'Digital Iceland Service'
+    | 'Digital Iceland Community Page'
+    | undefined
 
   /** featured image */
   featuredImage?: Asset | undefined
