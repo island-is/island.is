@@ -248,7 +248,7 @@ export class AuthController {
     )
 
     if (!authorization) {
-      this.logger.error('Blocking login attempt from an unauthorized user')
+      this.logger.info('Blocking login attempt from an unauthorized user')
 
       return res.redirect('/?villa=innskraning-ekki-notandi')
     }
