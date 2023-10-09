@@ -9,7 +9,7 @@ import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useSubmitApplication, usePaymentStatus, useMsg } from './hooks'
 import { getRedirectStatus, getRedirectUrl, isComingFromRedirect } from './util'
 import { Company } from './assets'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 export interface PaymentPendingProps {
   application: Application
@@ -26,6 +26,7 @@ export const PaymentPending: FC<
   const { paymentStatus, stopPolling, pollingError } = usePaymentStatus(
     application.id,
   )
+  const [searchParams, setSearchParams] = useSearchParams()
 
   const shouldRedirect = !isComingFromRedirect() && paymentStatus.paymentUrl
 
@@ -45,7 +46,11 @@ export const PaymentPending: FC<
   // automatically go to done state if payment has been fulfilled
   useEffect(() => {
     const removeCancelledFromURL = () => {
-      console.log('removing cancelled from url')
+      setSearchParams((params) => {
+        params.delete('cancelled')
+        return params
+      })
+
       const params = new URLSearchParams(location.search)
       params.delete('cancelled')
 
@@ -59,8 +64,9 @@ export const PaymentPending: FC<
     if (hasSubmitted.current) return
     if (getRedirectStatus() === 'cancelled') {
       stopPolling()
-      removeCancelledFromURL()
-      submitCancelApplication()
+      submitCancelApplication().then(() => {
+        removeCancelledFromURL()
+      })
       hasSubmitted.current = true
     }
 
@@ -81,6 +87,7 @@ export const PaymentPending: FC<
     location,
     navigate,
     shouldRedirect,
+    setSearchParams,
   ])
 
   if (pollingError) {
