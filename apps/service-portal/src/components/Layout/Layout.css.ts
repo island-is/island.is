@@ -31,5 +31,17 @@ export const fullWidthSplit = style({
       background:
         'linear-gradient( to right, white 0%, white 45%, #F8F8FA 45%, #F8F8FA 100% );',
     },
+    [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
+      background:
+        'linear-gradient( to right, white 0%, white 45.5%, #F8F8FA 45%, #F8F8FA 100% );',
+    },
+    [`screen and (min-width: 2000px)`]: {
+      background:
+        'linear-gradient( to right, white 0%, white 46%, #F8F8FA 45%, #F8F8FA 100% );',
+    },
+    [`screen and (min-width: 2600px)`]: {
+      background:
+        'linear-gradient( to right, white 0%, white 47.5%, #F8F8FA 45%, #F8F8FA 100% );',
+    },
   },
 })
