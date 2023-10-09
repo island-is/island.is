@@ -75,21 +75,12 @@ const ReviewSection: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
       <Box
         alignItems="flexStart"
         display="flex"
-        flexDirection={['columnReverse', 'row']}
+        flexDirection={'row'}
         justifyContent="spaceBetween"
       >
-        <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]}>
-          <Text variant="h3">
-            {formatText(title, application, formatMessage)}
-          </Text>
-          <Text marginTop={1} variant="default">
-            {formatText(description, application, formatMessage)}
-          </Text>
-          {showLocalRequirementDays && (
-            <Text fontWeight="semiBold">{`Þú hefur búið á Íslandi í ${metaData} daga seinustu 12 mánuði.`}</Text>
-          )}
-        </Box>
-
+        <Text variant="h3">
+          {formatText(title, application, formatMessage)}
+        </Text>
         {state === ReviewSectionState.complete && (
           <Box pointerEvents="none">
             <button type="button" className={styles.container}>
@@ -100,7 +91,7 @@ const ReviewSection: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
           </Box>
         )}
         {state === ReviewSectionState.requiresAction && (
-          <Box pointerEvents="none">
+          <Box pointerEvents="none" style={{ whiteSpace: 'nowrap' }}>
             <Tag variant="red">
               {formatText(
                 coreMessages.tagsRequiresAction,
@@ -109,6 +100,17 @@ const ReviewSection: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
               )}
             </Tag>
           </Box>
+        )}
+      </Box>
+      <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]}>
+        <Text marginTop={1} variant="default">
+          {formatText(description, application, formatMessage)}
+        </Text>
+        {showLocalRequirementDays && (
+          <Text
+            marginTop={2}
+            fontWeight="medium"
+          >{`Þú hefur aðeins búið á Íslandi í ${metaData} daga.`}</Text>
         )}
       </Box>
     </Box>
