@@ -211,4 +211,8 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:access-valid-to',
     defaultMessage: 'Í gildi til',
   },
+  accessCreationSuccess: {
+    id: 'sp.access-control-delegations:access-creation-success',
+    defaultMessage: 'Umboð stofnað',
+  },
 })
