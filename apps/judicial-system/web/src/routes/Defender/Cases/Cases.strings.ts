@@ -22,4 +22,14 @@ export const defenderCases = defineMessages({
     defaultMessage: 'Afgreidd mál',
     description: 'Notaður sem titill á flipa sem sýnir afgreidd mál',
   },
+  noActiveCases: {
+    id: 'judicial.system.defender_cases:no_active_cases',
+    defaultMessage: 'Þú ert ekki með mál í vinnslu',
+    description: 'Notaður sem texti þegar engin mál eru í vinnslu hjá verjanda',
+  },
+  noCompletedCases: {
+    id: 'judicial.system.defender_cases:no_completed_cases',
+    defaultMessage: 'Þú ert ekki með nein afgreidd mál',
+    description: 'Notaður sem texti þegar engin mál eru afgreidd hjá verjanda',
+  },
 })
