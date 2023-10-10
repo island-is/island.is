@@ -39,43 +39,6 @@ const getCodes = (application: Application) => {
   return [chargeItemCode]
 }
 
-const paymentState: StateNodeConfig<
-  ApplicationContext,
-  ApplicationStateSchema<Events>,
-  Events
-> = {
-  meta: {
-    name: 'Payment state',
-    status: 'inprogress',
-    progress: 0.9,
-    // Note: should be pruned at some time, so we can delete the FJS charge with it
-    lifecycle: pruneAfterDays(1),
-
-    roles: [
-      {
-        id: Roles.APPLICANT,
-        formLoader: async () => {
-          return PaymentForm
-        },
-        actions: [
-          { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
-          {
-            event: DefaultEvents.ABORT,
-            name: 'Hætta við',
-            type: 'primary',
-          },
-        ],
-        write: 'all',
-        delete: true, // Note: Should be deletable, so user is able to delete the FJS charge with the application
-      },
-    ],
-  },
-  on: {
-    [DefaultEvents.SUBMIT]: { target: States.DONE },
-    [DefaultEvents.ABORT]: { target: States.DRAFT },
-  },
-}
-
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
