@@ -3,7 +3,7 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/child-pension/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["lib:application-system", "scope:application-system"],
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
