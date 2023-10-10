@@ -9,7 +9,7 @@ interface Location {
   postalCode?: string
 }
 
-const LocationFormattedInputField = () => {
+const FormattedLocationInputField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
   const [location, setLocation] = useState<Location>(sdk.field.getValue() ?? {})
   useEffect(() => {
@@ -41,7 +41,7 @@ const LocationFormattedInputField = () => {
           value={location.floor}
           style={{ width: '200px' }}
           size="small"
-          placeholder="floor (optional)"
+          placeholder="Floor (optional)"
           onChange={(ev) => {
             updateLocation('floor', ev.target.value)
           }}
@@ -64,4 +64,4 @@ const LocationFormattedInputField = () => {
   )
 }
 
-export default LocationFormattedInputField
+export default FormattedLocationInputField
