@@ -79,7 +79,14 @@ export const useDomains = (includeDefaultOption = true) => {
    * Updates the domain name in state and query string.
    */
   const updateDomain = (opt?: DomainOption) => {
-    const option = opt ?? allDomainsOption
+    // If opt is empty then we try to read the first option in the list.
+    const option = opt ?? options?.[0]
+
+    // If options is empty we found no option, and we have no domain to update.
+    if (!option) {
+      return
+    }
+
     const name = option.value
     setDomainName(name)
 
