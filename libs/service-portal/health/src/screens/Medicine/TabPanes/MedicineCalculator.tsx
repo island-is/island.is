@@ -177,7 +177,11 @@ export const MedicineCalulator = () => {
                     <T.Data>{drug.packaging}</T.Data>
                     <T.Data>{drug.price}</T.Data>
                     <T.Data>
-                      {hoveredDrug === i && (
+                      <Box
+                        className={styles.saveButtonWrapperStyle({
+                          visible: hoveredDrug === i,
+                        })}
+                      >
                         <Button
                           size="small"
                           variant="text"
@@ -190,7 +194,7 @@ export const MedicineCalulator = () => {
                         >
                           {formatMessage(messages.medicineSelect)}
                         </Button>
-                      )}
+                      </Box>
                     </T.Data>
                   </tr>
                 )

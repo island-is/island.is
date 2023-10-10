@@ -246,8 +246,18 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
                       data={[
                         { value: formatDateFns(bill.date, DATE_FORMAT) },
                         { value: bill.description ?? '' },
-                        { value: bill.totalCopaymentAmount ?? '' },
-                        { value: bill.totalCustomerAmount ?? '' },
+                        {
+                          value: formatMessage(
+                            messages.medicinePaymentPaidAmount,
+                            { amount: bill.totalCopaymentAmount },
+                          ),
+                        },
+                        {
+                          value: formatMessage(
+                            messages.medicinePaymentPaidAmount,
+                            { amount: bill.totalCustomerAmount },
+                          ),
+                        },
                       ]}
                       onExpandCallback={() => {
                         setSelectedLineItem(bill.id ?? '')
@@ -335,10 +345,30 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
                                     <T.Data>{lineItem.strength}</T.Data>
                                     <T.Data>{lineItem.quantity}</T.Data>
                                     <T.Data>{lineItem.units}</T.Data>
-                                    <T.Data>{lineItem.salesPrice}</T.Data>
-                                    <T.Data>{lineItem.copaymentAmount}</T.Data>
-                                    <T.Data>{lineItem.excessAmount}</T.Data>
-                                    <T.Data>{lineItem.customerAmount}</T.Data>
+                                    <T.Data>
+                                      {formatMessage(
+                                        messages.medicinePaymentPaidAmount,
+                                        { amount: lineItem.salesPrice },
+                                      )}
+                                    </T.Data>
+                                    <T.Data>
+                                      {formatMessage(
+                                        messages.medicinePaymentPaidAmount,
+                                        { amount: lineItem.copaymentAmount },
+                                      )}
+                                    </T.Data>
+                                    <T.Data>
+                                      {formatMessage(
+                                        messages.medicinePaymentPaidAmount,
+                                        { amount: lineItem.excessAmount },
+                                      )}
+                                    </T.Data>
+                                    <T.Data>
+                                      {formatMessage(
+                                        messages.medicinePaymentPaidAmount,
+                                        { amount: lineItem.customerAmount },
+                                      )}
+                                    </T.Data>
                                   </T.Row>
                                 )
                               })
@@ -357,7 +387,10 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
                               <T.Data></T.Data>
                               <T.Data>
                                 <span className={styles.subTableHeaderText}>
-                                  {bill.totalCopaymentAmount}
+                                  {formatMessage(
+                                    messages.medicinePaymentPaidAmount,
+                                    { amount: bill.totalCopaymentAmount },
+                                  )}
                                 </span>
                               </T.Data>
                               <T.Data>
