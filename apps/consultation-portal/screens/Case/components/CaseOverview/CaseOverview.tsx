@@ -68,7 +68,7 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
           {chosenCaseSplitted && (
             <Stack space={1}>
               {chosenCaseSplitted.map((split) => {
-                return <Text variant="default">{split}</Text>
+                return <Text>{split}</Text>
               })}
             </Stack>
           )}
