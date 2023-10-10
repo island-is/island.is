@@ -19,10 +19,8 @@ interface Props {
 
 export const Sidebar = ({ position }: Props) => {
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
-  // const { width } = useWindowSize()
   const { signOut } = useAuth()
-  // const isTablet = width < theme.breakpoints.lg && width >= theme.breakpoints.md
-  // const isMobile = width < theme.breakpoints.md
+
   const { unreadCounter } = useListDocuments()
   const { formatMessage } = useLocale()
 
@@ -34,6 +32,7 @@ export const Sidebar = ({ position }: Props) => {
           <Logo width={136} height={22} id="sidebar" />
         </Link>
       </Box>
+
       <Box
         display="flex"
         flexDirection="column"

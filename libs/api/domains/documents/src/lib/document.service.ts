@@ -16,7 +16,10 @@ import { DocumentType } from './models/documentType.model'
 import { DocumentSender } from './models/documentSender.model'
 import { PaperMailBody } from './models/paperMail.model'
 import { PostRequestPaperInput } from './dto/postRequestPaperInput'
+import { PostMailActionInput } from './dto/postMailActionInput'
+import { ActionMailBody } from './models/actionMail.model'
 
+const LOG_CATEGORY = 'documents-api'
 @Injectable()
 export class DocumentService {
   constructor(
@@ -188,10 +191,35 @@ export class DocumentService {
         wantsPaper: res?.wantsPaper,
       }
     } catch (exception) {
-      logger.error(exception)
+      logger.error('Post paper mail failed', {
+        category: LOG_CATEGORY,
+        error: exception,
+      })
       return {
         nationalId,
         wantsPaper: undefined,
+      }
+    }
+  }
+
+  async postMailAction(body: PostMailActionInput): Promise<ActionMailBody> {
+    try {
+      const { action, ...postBody } = body
+      await this.documentClient.postMailAction(postBody, action)
+      return {
+        success: true,
+        messageId: body.messageId,
+        action: body.action,
+      }
+    } catch (e) {
+      logger.error('Post mail action failed', {
+        category: LOG_CATEGORY,
+        error: e,
+      })
+      return {
+        success: false,
+        messageId: body.messageId,
+        action: body.action,
       }
     }
   }
