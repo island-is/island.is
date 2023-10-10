@@ -109,7 +109,6 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
                   {labelOpen}
                 </Button>
               </Box>
-
               {hasFilterInput && filterInput}
             </Inline>
           </Box>

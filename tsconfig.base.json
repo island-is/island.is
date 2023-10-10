@@ -757,6 +757,9 @@
       "@island.is/service-portal/assets": [
         "libs/service-portal/assets/src/index.ts"
       ],
+      "@island.is/service-portal/assets/messages": [
+        "libs/service-portal/assets/src/lib/messages.ts"
+      ],
       "@island.is/service-portal/consent": [
         "libs/service-portal/consent/src/index.ts"
       ],
@@ -831,15 +834,6 @@
       ],
       "@island.is/service-portal/settings/islykill": [
         "libs/service-portal/settings/islykill/src/index.ts"
-      ],
-      "@island.is/service-portal/settings/personal-information": [
-        "libs/service-portal/settings/personal-information/src/index.ts"
-      ],
-      "@island.is/service-portal/vehicles": [
-        "libs/service-portal/vehicles/src/index.ts"
-      ],
-      "@island.is/service-portal/vehicles/messages": [
-        "libs/service-portal/vehicles/src/lib/messages.ts"
       ],
       "@island.is/services/auth/testing": [
         "libs/services/auth/testing/src/index.ts"
