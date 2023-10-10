@@ -14,14 +14,7 @@ describe('pruning entry hyperlink nodes', () => {
             },
           },
           fields: {
-            title: 'some title',
             slug: articleSlug,
-            relatedArticles: [
-              {
-                title: 'some other title',
-                slug: 'some-other-slug',
-              },
-            ],
           },
         },
       },
@@ -45,7 +38,6 @@ describe('pruning entry hyperlink nodes', () => {
             },
           },
           fields: {
-            title: 'some title',
             slug: organizationPageSlug,
           },
         },
@@ -71,7 +63,6 @@ describe('pruning entry hyperlink nodes', () => {
             },
           },
           fields: {
-            title: 'some title',
             slug: organizationSubpageSlug,
             organizationPage: {
               sys: {
@@ -112,7 +103,6 @@ describe('pruning entry hyperlink nodes', () => {
             },
           },
           fields: {
-            title: 'some title',
             slug: subArticleSlug,
             parent: {
               sys: {
