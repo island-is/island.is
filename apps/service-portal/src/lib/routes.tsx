@@ -1,4 +1,4 @@
-import { RouteObject } from 'react-router-dom'
+import { RouteObject, ScrollRestoration } from 'react-router-dom'
 import { Root } from '../components/Root'
 
 /**
@@ -7,7 +7,12 @@ import { Root } from '../components/Root'
  */
 export const createRoutes = (moduleRoutes: RouteObject[]): RouteObject[] => [
   {
-    element: <Root />,
+    element: (
+      <>
+        <Root />
+        <ScrollRestoration />
+      </>
+    ),
     children: moduleRoutes,
   },
 ]

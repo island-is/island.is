@@ -1,5 +1,5 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { m } from '@island.is/service-portal/core'
+import { FJARSYSLAN_ID, m } from '@island.is/service-portal/core'
 import { FinancePaths } from './paths'
 
 export const financeNavigation: PortalNavigationItem = {
@@ -34,5 +34,7 @@ export const financeNavigation: PortalNavigationItem = {
   icon: {
     icon: 'cellular',
   },
-  description: m.financeDescription,
+  heading: m.financeHeading,
+  serviceProvider: FJARSYSLAN_ID,
+  description: m.financeTooltip,
 }

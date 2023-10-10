@@ -1,10 +1,12 @@
 import { Stack } from '@island.is/island-ui/core'
-import { useNamespaces } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   EmptyState,
+  FootNote,
   IntroHeader,
   m,
+  THJODSKRA_ID,
 } from '@island.is/service-portal/core'
 import { useUserInfo } from '@island.is/auth/react'
 
@@ -17,6 +19,7 @@ import { useEffect } from 'react'
 
 const UserInfoOverview = () => {
   useNamespaces('sp.family')
+  const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
 
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
@@ -45,9 +48,10 @@ const UserInfoOverview = () => {
   return (
     <>
       <IntroHeader
-        marginBottom={2}
         title={m.myInfo}
         intro={spmm.userInfoDesc}
+        serviceProviderID={THJODSKRA_ID}
+        serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
       />
 
       <Stack space={2}>
@@ -79,6 +83,7 @@ const UserInfoOverview = () => {
             familyRelation="child"
           />
         ))}
+        <FootNote serviceProviderID={THJODSKRA_ID} />
       </Stack>
     </>
   )
