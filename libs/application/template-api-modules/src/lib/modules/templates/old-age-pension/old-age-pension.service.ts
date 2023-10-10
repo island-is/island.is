@@ -1,6 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common'
 
-import { Application, ApplicationTypes, YES } from '@island.is/application/types'
+import {
+  Application,
+  ApplicationTypes,
+  YES,
+} from '@island.is/application/types'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -18,11 +22,17 @@ import { S3 } from 'aws-sdk'
 import { getApplicationAnswers } from '@island.is/application/templates/old-age-pension'
 
 interface customError {
-  type: string
-  title: string
   status: number
-  traceId: string
-  errors: Record<string, string[]>
+  detail: string
+  code: number
+  message: string
+  errors: {
+    code: 0
+    message: string
+    help: string
+    trackingId: string
+    param: string
+  }[]
 }
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
@@ -45,9 +55,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
       return e.message
     }
 
-    return {
-      message: Object.entries(e.errors).map(([, values]) => values.join(', ')),
-    }
+    return { message: e.detail || e.message }
   }
 
   private async initAttachments(
@@ -81,7 +89,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
       schoolConfirmationAttachments,
       maintenanceAttachments,
       notLivesWithApplicantAttachments,
-      childPensionAddChild
+      childPensionAddChild,
     } = getApplicationAnswers(application.answers)
 
     const uploads = {
@@ -267,8 +275,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
         attachments,
       )
 
-
-      console.log('oldAgePensionDTO',oldAgePensionDTO)
+      console.log('oldAgePensionDTO', oldAgePensionDTO)
       const response = await this.siaClientService.sendApplication(
         auth,
         oldAgePensionDTO,

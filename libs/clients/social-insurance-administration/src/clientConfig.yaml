@@ -70,7 +70,6 @@ paths:
             schema:
               $ref: '#/components/schemas/OldAgePension'
         required: true
-        x-nullable: true
       responses:
         '200':
           description: ''
@@ -118,7 +117,7 @@ components:
         applicantInfo:
           $ref: '#/components/schemas/ApplicantInfo'
         applicationType: 
-          type: string
+          type: int
         hasAbroadResidence: 
           type: boolean
         hasOneTimePayment: 

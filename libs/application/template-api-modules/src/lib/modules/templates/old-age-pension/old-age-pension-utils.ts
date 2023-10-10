@@ -1,10 +1,10 @@
 import { Application, YES } from '@island.is/application/types'
 import {
-  TaxLevelOptions,
+  ApplicationType,
   getApplicationAnswers,
 } from '@island.is/application/templates/old-age-pension'
 import { parse } from 'date-fns'
-import { OldAgePension } from '@island.is/clients/social-insurance-administration'
+import { Child, OldAgePension } from '@island.is/clients/social-insurance-administration'
 
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
@@ -45,20 +45,20 @@ export const transformApplicationToOldAgePensionDTO = (
     comment: comment,
     paymentInfo: {
       bank: bank,
-      taxLevel: getTaxLevel(taxLevel),
+      taxLevel: +taxLevel,
       spouseAllowance: YES === spouseAllowance,
       personalAllowance: YES === personalAllowance,
-      spouseAllowanceUsage: +spouseAllowanceUsage,
-      personalAllowanceUsage: +personalAllowanceUsage,
+      spouseAllowanceUsage: +spouseAllowanceUsage || 0,
+      personalAllowanceUsage: +personalAllowanceUsage || 0,
     },
     applicantInfo: {
       email: applicantEmail,
       phonenumber: applicantPhonenumber,
     },
-    applicationType: applicationType.toLowerCase(),
+    applicationType: +applicationType,
     hasAbroadResidence: YES === residenceHistoryQuestion,
     hasOneTimePayment: YES === onePaymentPerYear,
-    isSailorPension: applicationType === 'sailorPension',
+    isSailorPension: applicationType === ApplicationType.SAILOR_PENSION,
     isEarlyPension:
       earlyRetirementAttachments && earlyRetirementAttachments.length > 0
         ? true
@@ -70,7 +70,7 @@ export const transformApplicationToOldAgePensionDTO = (
     children: initChildrens(
       childPensionSelectedCustodyKids,
       childPension,
-      (childPensionAddChild === YES) ,
+      childPensionAddChild === YES,
     ),
     connectedApplications: connectedApplications,
     uploads,
@@ -83,22 +83,9 @@ export const getMonthNumber = (monthName: string): number => {
   return monthNumber.getMonth() + 1
 }
 
-export const getTaxLevel = (taxLevel: string): number => {
-  const keysAndValues = Object.entries(TaxLevelOptions)
-
-  for (let i = 0; i < keysAndValues.length; i++) {
-    const [key, enumValue] = keysAndValues[i]
-    if (enumValue === taxLevel) {
-      return i
-    }
-  }
-
-  return -1
-}
-
 export const initChildrens = (
   childPensionSelectedCustodyKids: any,
-  childPension: any[],
+  childPension: Child[],
   childPensionAddChild: boolean,
 ): any[] => {
   //

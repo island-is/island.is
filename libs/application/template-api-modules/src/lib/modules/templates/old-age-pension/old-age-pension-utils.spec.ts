@@ -1,16 +1,8 @@
-import {
-  getMonthNumber,
-  getTaxLevel,
-  initChildrens,
-} from './old-age-pension-utils'
+import { getMonthNumber, initChildrens } from './old-age-pension-utils'
 
 describe('Old age pesion utils', () => {
   it('should return 3 for March', () => {
     expect(getMonthNumber('March')).toBe(3)
-  })
-
-  it('should return 1 for firstLevel', () => {
-    expect(getTaxLevel('firstLevel')).toBe(1)
   })
 
   it('should return 3 children', () => {
@@ -29,7 +21,7 @@ describe('Old age pesion utils', () => {
     const childrens = initChildrens(
       childPensionSelectedCustodyKids,
       childPension,
-      true
+      true,
     )
 
     expect(childrens).toHaveLength(3)
@@ -51,7 +43,7 @@ describe('Old age pesion utils', () => {
     const childrens = initChildrens(
       childPensionSelectedCustodyKids,
       childPension,
-      false
+      false,
     )
 
     expect(childrens).toHaveLength(2)

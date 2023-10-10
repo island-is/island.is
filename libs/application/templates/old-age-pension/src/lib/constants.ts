@@ -86,15 +86,15 @@ export enum AnswerValidationConstants {
 }
 
 export enum TaxLevelOptions {
-  INCOME = 'income',
-  FIRST_LEVEL = 'firstLevel',
-  SECOND_LEVEL = 'secondLevel',
+  INCOME = '0',
+  FIRST_LEVEL = '1',
+  SECOND_LEVEL = '2',
 }
 
 export enum ApplicationType {
-  OLD_AGE_PENSION = 'oldAgePension',
-  HALF_OLD_AGE_PENSION = 'halfOldAgePension',
-  SAILOR_PENSION = 'sailorPension',
+  OLD_AGE_PENSION = '1',
+  HALF_OLD_AGE_PENSION = '2', //We need to check with TR what this number is
+  SAILOR_PENSION = '3', //We need to check with TR what this number is
 }
 
 export const AttachmentLabel: {
