@@ -53,7 +53,10 @@ export const useEligibility = (
   if (usingFakeData) {
     return {
       loading: false,
-      eligibility: fakeEligibility(applicationFor),
+      eligibility: fakeEligibility(
+        applicationFor,
+        parseInt(fakeData?.howManyDaysHaveYouLivedInIceland.toString(), 10),
+      ),
     }
   }
 

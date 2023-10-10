@@ -3,6 +3,7 @@ import { DrivingLicenseApplicationFor, B_FULL } from '../../shared/constants'
 
 export const fakeEligibility = (
   applicationFor: DrivingLicenseApplicationFor,
+  daysOfResidency = 365,
 ): ApplicationEligibility => {
   return {
     isEligible: true,
@@ -21,7 +22,8 @@ export const fakeEligibility = (
         : [
             {
               key: RequirementKey.LocalResidency,
-              requirementMet: true,
+              daysOfResidency,
+              requirementMet: daysOfResidency >= 180,
             },
           ]),
       {
