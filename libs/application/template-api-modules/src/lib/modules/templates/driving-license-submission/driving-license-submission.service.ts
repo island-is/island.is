@@ -199,10 +199,9 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     }
   }
 
-  async glassesCheck(token: string): Promise<boolean> {
-    //TODO: Pickout glasess check from driving license service
+  async glassesCheck({ auth }: TemplateApiModuleActionProps): Promise<boolean> {
     const licences: DriverLicenseWithoutImages[] =
-      await this.drivingLicenseService.getAllDriverLicenses(token)
+      await this.drivingLicenseService.getAllDriverLicenses(auth.authorization)
     const hasGlasses: boolean = licences.some((license) => {
       return !!license.comments?.some((comment) => comment.nr?.includes('01'))
     })
