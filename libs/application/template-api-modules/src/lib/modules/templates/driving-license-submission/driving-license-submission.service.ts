@@ -21,6 +21,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { FetchError } from '@island.is/clients/middlewares'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { DriverLicenseWithoutImages } from '@island.is/clients/driving-license'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
@@ -198,7 +199,12 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     }
   }
 
-  async glassesCheck(): Promise<boolean> {
-    return Math.random() < 0.5
+  async glassesCheck(token: string): Promise<boolean> {
+    //TODO: Pickout glasess check from driving license service
+    const licences: DriverLicenseWithoutImages[] = await this.drivingLicenseService.getAllDriverLicenses(token)
+    const hasGlasses: boolean = licences.some((license) => {
+       return !!license.comments?.some((comment) => comment.nr?.includes("01"))
+    })
+    return hasGlasses
   }
 }
