@@ -21,7 +21,7 @@ export const subSectionHealthDeclaration = buildSubSection({
       id: 'overview',
       title: m.healthDeclarationMultiFieldTitle,
       description: m.healthDeclarationMultiFieldSubTitle,
-      space: 2,
+      space: 1,
       condition: (answers, externalData) => {
         return (
           !hasYes(answers?.drivingLicenseInOtherCountry) &&
@@ -330,10 +330,10 @@ export const subSectionHealthDeclaration = buildSubSection({
     }),
     /* Different set of the Health Declaration screen for people over the age of 65 */
     buildMultiField({
-      id: 'healthDeclaration65',
+      id: 'healthDeclarationAge65',
       title: m.healthDeclarationMultiFieldTitle,
-      description: m.healthDeclaration65MultiFieldSubTitle,
-      space: 2,
+      description: m.healthDeclarationAge65MultiFieldSubTitle,
+      space: 1,
       condition: (answers, externalData) => {
         return (
           !hasYes(answers?.drivingLicenseInOtherCountry) &&
@@ -345,7 +345,7 @@ export const subSectionHealthDeclaration = buildSubSection({
       },
       children: [
         buildFileUploadField({
-          id: 'healthDeclaration65.attachment',
+          id: 'healthDeclarationAge65.attachment',
           title: '',
           maxSize: FILE_SIZE_LIMIT,
           maxSizeErrorText: m.attachmentMaxSizeError,

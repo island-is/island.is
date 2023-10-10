@@ -61,7 +61,7 @@ export const dataSchema = z.object({
     isDisabled: declaration,
     hasOtherDiseases: declaration,
   }),
-  healthDeclaration65: z.object({
+  healthDeclarationAge65: z.object({
     attachment: z.array(FileSchema).nonempty(),
   }),
   willBringQualityPhoto: z.union([

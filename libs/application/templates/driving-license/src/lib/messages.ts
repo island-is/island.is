@@ -130,8 +130,8 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlýsing um líkamlegt og andlegt heilbrigði',
     description: 'Statement of physical and mental health',
   },
-  healthDeclaration65MultiFieldSubTitle: {
-    id: 'dl.application:healthDeclarationMultiField.subTitle',
+  healthDeclarationAge65MultiFieldSubTitle: {
+    id: 'dl.application:healthDeclarationAge65MultiFieldSubTitle.subTitle',
     defaultMessage:
       'Við endurnýjun ökuskírteinis fyrir 65 ára og eldri þarf að skila inn læknisvottorði frá heimilislækni. Vottorðið má ekki vera eldra en 3 mánaða.',
     description: 'Health declaration for 65+',
