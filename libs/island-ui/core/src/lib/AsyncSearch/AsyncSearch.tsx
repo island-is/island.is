@@ -340,8 +340,7 @@ export const AsyncSearchInput = forwardRef<
       inputColor = 'white'
     } else if (blueberryColorScheme) {
       inputColor = 'blueberry'
-    }
-    if (darkColorScheme) {
+    } else if (darkColorScheme) {
       inputColor = 'dark'
     }
 

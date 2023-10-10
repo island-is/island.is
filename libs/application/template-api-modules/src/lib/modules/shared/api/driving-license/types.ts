@@ -15,7 +15,7 @@ export interface DrivingLicenseFakeData {
   useFakeData?: YesOrNo
   qualityPhoto?: YesOrNo
   currentLicense?: FakeCurrentLicense
-  healthRemarks?: YesOrNo
+  remarks?: YesOrNo
 }
 
 export type DrivingLicenseCategory = {
@@ -31,7 +31,7 @@ export type DrivingLicenseCategory = {
 
 export type DrivingLicense = {
   currentLicense: string | null
-  healthRemarks?: string[]
+  remarks?: string[]
   categories?: DrivingLicenseCategory[]
   id?: number
   birthCountry?: string | null

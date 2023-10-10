@@ -135,12 +135,9 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
       ProblemType.BAD_SUBJECT,
     ])
 
-    if (
-      slug &&
-      foundError?.type === ProblemType.BAD_SUBJECT &&
-      type &&
-      !delegationsChecked
-    ) {
+    const isBadSubject = foundError?.type === ProblemType.BAD_SUBJECT
+
+    if (slug && isBadSubject && type && !delegationsChecked) {
       return (
         <DelegationsScreen
           slug={slug}
@@ -148,6 +145,9 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
           checkDelegation={setDelegationsChecked}
         />
       )
+    }
+    if (isBadSubject) {
+      return <ErrorShell errorType="badSubject" />
     }
     return <ErrorShell errorType="notExist" />
   }
