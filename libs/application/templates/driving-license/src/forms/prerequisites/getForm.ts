@@ -42,7 +42,7 @@ export const getForm = ({
         children: [],
       }),
       buildSection({
-        id: 'confim',
+        id: 'confirm',
         title: m.overviewDone,
         children: [],
       }),

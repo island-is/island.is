@@ -5,16 +5,17 @@ import {
   buildFileUploadField,
   buildAlertMessageField,
   buildDescriptionField,
+  hasYes,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { hasNoDrivingLicenseInOtherCountry } from '../../lib/utils'
 import { hasHealthRemarks } from '../../lib/utils/formUtils'
 import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT, YES } from '../../lib/constants'
+import { info } from 'kennitala'
+import { NationalRegistryUser } from '@island.is/api/schema'
 
 export const subSectionHealthDeclaration = buildSubSection({
   id: 'healthDeclaration',
   title: m.healthDeclarationSectionTitle,
-  condition: hasNoDrivingLicenseInOtherCountry,
   children: [
     buildMultiField({
       id: 'overview',
@@ -318,5 +319,16 @@ export const subSectionHealthDeclaration = buildSubSection({
         }),
       ],
     }),
+    buildMultiField({
+      id: 'overview',
+      title: m.healthDeclarationMultiFieldTitle,
+      space: 2,
+      condition: (answers, externalData) => {
+        return !hasYes(answers?.drivingLicenseInOtherCountry) && info((externalData.nationalRegistry.data as NationalRegistryUser).nationalId).age >= 65
+      },
+      children: [
+
+      ]
+    })
   ],
 })
