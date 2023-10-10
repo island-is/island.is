@@ -84,8 +84,7 @@ export class Delegation extends Model<
       .map((x) => x.validTo) || []) as Array<Date>
 
     // Return the max value
-    const m = max(dates)
-    return m
+    return max(dates)
   }
 
   @CreatedAt
