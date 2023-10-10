@@ -10,8 +10,8 @@ import {
 import { m } from '../../lib/messages'
 import { hasHealthRemarks } from '../../lib/utils/formUtils'
 import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT, YES } from '../../lib/constants'
-import { info } from 'kennitala'
 import { NationalRegistryUser } from '@island.is/api/schema'
+import { info } from 'kennitala'
 
 export const subSectionHealthDeclaration = buildSubSection({
   id: 'healthDeclaration',
@@ -21,7 +21,16 @@ export const subSectionHealthDeclaration = buildSubSection({
       id: 'overview',
       title: m.healthDeclarationMultiFieldTitle,
       description: m.healthDeclarationMultiFieldSubTitle,
-      space: 1,
+      space: 2,
+      condition: (answers, externalData) => {
+        return (
+          !hasYes(answers?.drivingLicenseInOtherCountry) &&
+          info(
+            (externalData.nationalRegistry.data as NationalRegistryUser)
+              .nationalId,
+          ).age < 65
+        )
+      },
       children: [
         buildCustomField({
           id: 'remarks',
@@ -319,16 +328,30 @@ export const subSectionHealthDeclaration = buildSubSection({
         }),
       ],
     }),
+    /* Different set of the Health Declaration screen for people over the age of 65 */
     buildMultiField({
-      id: 'overview',
+      id: 'healthDeclaration65',
       title: m.healthDeclarationMultiFieldTitle,
+      description: m.healthDeclaration65MultiFieldSubTitle,
       space: 2,
       condition: (answers, externalData) => {
-        return !hasYes(answers?.drivingLicenseInOtherCountry) && info((externalData.nationalRegistry.data as NationalRegistryUser).nationalId).age >= 65
+        return (
+          !hasYes(answers?.drivingLicenseInOtherCountry) &&
+          info(
+            (externalData.nationalRegistry.data as NationalRegistryUser)
+              .nationalId,
+          ).age >= 65
+        )
       },
       children: [
-
-      ]
-    })
+        buildFileUploadField({
+          id: 'healthDeclaration65.attachment',
+          title: '',
+          maxSize: FILE_SIZE_LIMIT,
+          maxSizeErrorText: m.attachmentMaxSizeError,
+          uploadAccept: UPLOAD_ACCEPT,
+        }),
+      ],
+    }),
   ],
 })
