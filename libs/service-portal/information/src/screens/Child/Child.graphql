@@ -1,8 +1,8 @@
-query NationalRegistryChildCustody($api: String) {
+query NationalRegistryChildCustody($api: String, $childNationalId: String) {
   nationalRegistryPerson(api: $api) {
     nationalId
     fullName
-    childCustody {
+    childCustody(childNationalId: $childNationalId) {
       nationalId
       fullName
       name {

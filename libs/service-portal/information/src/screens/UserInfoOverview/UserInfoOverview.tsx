@@ -10,18 +10,19 @@ import { useUserInfo } from '@island.is/auth/react'
 
 import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMemberCard'
 import { spmm } from '../../lib/messages'
-import { useUserInfoOverviewQuery } from './UserInfoOverview.generated'
+import { useUserInfoOverviewLazyQuery } from './UserInfoOverview.generated'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 
 const UserInfoOverview = () => {
   useNamespaces('sp.family')
   const userInfo = useUserInfo()
 
-  const [useNatRegV3, setUseNatRegV3] = useState(false)
-
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+
+  const [getUserInfoOverview, { data, loading, error }] =
+    useUserInfoOverviewLazyQuery()
 
   /* Should use v3? */
   useEffect(() => {
@@ -30,18 +31,14 @@ const UserInfoOverview = () => {
         `isserviceportalnationalregistryv3enabled`,
         false,
       )
-      if (ffEnabled) {
-        setUseNatRegV3(ffEnabled as boolean)
-      }
+      getUserInfoOverview({
+        variables: {
+          api: ffEnabled ? 'v3' : undefined,
+        },
+      })
     }
     isFlagEnabled()
   }, [])
-
-  const { data, loading, error } = useUserInfoOverviewQuery({
-    variables: {
-      api: useNatRegV3 ? 'v3' : undefined,
-    },
-  })
 
   const { spouse, childCustody } = data?.nationalRegistryPerson || {}
 
