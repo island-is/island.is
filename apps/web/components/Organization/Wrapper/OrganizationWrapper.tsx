@@ -38,6 +38,7 @@ import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { WatsonChatPanel } from '@island.is/web/components'
+import { STICKY_NAV_MAX_WIDTH } from '@island.is/web/constants'
 
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import {
@@ -762,6 +763,12 @@ export const OrganizationWrapper: React.FC<
                   >
                     {(organizationPage.sidebarCards ?? []).map((card) => {
                       if (card.__typename === 'SidebarCard') {
+                        let imageUrl =
+                          card.image?.url ||
+                          'https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png'
+
+                        imageUrl += `?w=${STICKY_NAV_MAX_WIDTH}`
+
                         return (
                           <ProfileCard
                             key={card.id}
@@ -770,10 +777,7 @@ export const OrganizationWrapper: React.FC<
                             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                             // @ts-ignore make web strict
                             link={card.link}
-                            image={
-                              card.image?.url ||
-                              'https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png'
-                            }
+                            image={imageUrl}
                             size="small"
                           />
                         )
