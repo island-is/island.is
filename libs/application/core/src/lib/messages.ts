@@ -259,6 +259,25 @@ export const coreMessages = defineMessages({
   },
 })
 
+export const coreDefaultFieldMessages = defineMessages({
+  defaultFileUploadDescription: {
+    id: 'application.system:core.default.fileUpload.description',
+    defaultMessage:
+      'Samþykktar skráartegundir eru .pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
+    description: 'Default file upload description',
+  },
+  defaultFileUploadHeader: {
+    id: 'application.system:core.default.fileUpload.header',
+    defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+    description: 'Default file upload header',
+  },
+  defaultFileUploadButtonLabel: {
+    id: 'application.system:core.default.fileUpload.buttonLabel',
+    defaultMessage: 'Veljið skjöl til að hlaða upp',
+    description: 'Default file upload button label',
+  },
+})
+
 export const coreErrorMessages = defineMessages({
   defaultTemplateApiError: {
     id: 'application.system:core.defaultTemplateApiError',
