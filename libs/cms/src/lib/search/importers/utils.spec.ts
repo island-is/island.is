@@ -1,20 +1,20 @@
 import { pruneEntryHyperlink } from './utils'
 
 describe('pruning entry hyperlink nodes', () => {
-  it('should remove objects at depth 2', () => {
+  it('should handle article content types correctly', () => {
+    const articleSlug = 'some-slug'
     const test = {
       data: {
         target: {
-          fields: {
-            // Depth 1
-            parent: {
-              fields: {
-                slug: 'something',
-                relatedArticles: [{ slug: 'something-else' }], // This is at depth 2 (if we start counting from 1)
+          sys: {
+            contentType: {
+              sys: {
+                id: 'article',
               },
             },
-            title: 'some title',
-            slug: 'some-slug',
+          },
+          fields: {
+            slug: articleSlug,
           },
         },
       },
@@ -22,21 +22,108 @@ describe('pruning entry hyperlink nodes', () => {
 
     pruneEntryHyperlink(test)
 
-    expect(test).toStrictEqual({
+    expect(test.data.target.fields.slug).toBe(articleSlug)
+  })
+
+  it('should handle organization page content types correctly', () => {
+    const organizationPageSlug = 'some-slug'
+    const test = {
       data: {
         target: {
-          fields: {
-            // Only depth 1 remains
-            parent: {
-              fields: {
-                slug: 'something',
+          sys: {
+            contentType: {
+              sys: {
+                id: 'organizationPage',
               },
             },
-            title: 'some title',
-            slug: 'some-slug',
+          },
+          fields: {
+            slug: organizationPageSlug,
           },
         },
       },
-    })
+    }
+
+    pruneEntryHyperlink(test)
+
+    expect(test.data.target.fields.slug).toBe(organizationPageSlug)
+  })
+
+  it('should handle organizationSubpage content types correctly', () => {
+    const organizationSubpageSlug = 'some-slug'
+    const organizationPageSlug = 'some-other-slug'
+    const test = {
+      data: {
+        target: {
+          sys: {
+            contentType: {
+              sys: {
+                id: 'organizationSubpage',
+              },
+            },
+          },
+          fields: {
+            slug: organizationSubpageSlug,
+            organizationPage: {
+              sys: {
+                contentType: {
+                  sys: {
+                    id: 'organizationPage',
+                  },
+                },
+              },
+              fields: {
+                slug: organizationPageSlug,
+              },
+            },
+          },
+        },
+      },
+    }
+
+    pruneEntryHyperlink(test)
+
+    expect(test.data.target.fields.organizationPage.fields.slug).toBe(
+      organizationPageSlug,
+    )
+    expect(test.data.target.fields.slug).toBe(organizationSubpageSlug)
+  })
+
+  it('should handle subArticle content types correctly', () => {
+    const subArticleSlug = 'some-slug'
+    const articleSlug = 'some-other-slug'
+    const test = {
+      data: {
+        target: {
+          sys: {
+            contentType: {
+              sys: {
+                id: 'subArticle',
+              },
+            },
+          },
+          fields: {
+            slug: subArticleSlug,
+            parent: {
+              sys: {
+                contentType: {
+                  sys: {
+                    id: 'article',
+                  },
+                },
+              },
+              fields: {
+                slug: articleSlug,
+              },
+            },
+          },
+        },
+      },
+    }
+
+    pruneEntryHyperlink(test)
+
+    expect(test.data.target.fields.parent.fields.slug).toBe(articleSlug)
+    expect(test.data.target.fields.slug).toBe(subArticleSlug)
   })
 })

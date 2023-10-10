@@ -24,7 +24,7 @@ import { natRegMaritalStatusMessageDescriptorRecord } from '../../helpers/locali
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { spmm } from '../../lib/messages'
-import { useNationalRegistrySpouseQuery } from './Spouse.generated'
+import { useNationalRegistrySpouseLazyQuery } from './Spouse.generated'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -49,6 +49,9 @@ const FamilyMember = () => {
 
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
 
+  const [getNationalRegistrySpouse, { data, loading, error }] =
+    useNationalRegistrySpouseLazyQuery()
+
   /* Should use v3? */
   useEffect(() => {
     const isFlagEnabled = async () => {
@@ -56,23 +59,18 @@ const FamilyMember = () => {
         `isserviceportalnationalregistryv3enabled`,
         false,
       )
-      if (ffEnabled) {
-        setUseNatRegV3(ffEnabled as boolean)
-      } else {
-        setUseNatRegV3(false)
-      }
+      getNationalRegistrySpouse({
+        variables: {
+          api: ffEnabled ? 'v3' : undefined,
+        },
+      })
+      setUseNatRegV3(ffEnabled)
     }
     isFlagEnabled()
   }, [])
 
-  const { data, loading, error } = useNationalRegistrySpouseQuery({
-    variables: {
-      api: useNatRegV3 ? 'v3' : undefined,
-    },
-  })
-
   useEffect(() => {
-    if (useNatRegV3 !== undefined) {
+    if (useNatRegV3 !== undefined && data?.nationalRegistryPerson) {
       if (useNatRegV3) {
         const v3Value =
           data?.nationalRegistryPerson?.spouse?.cohabitationWithSpouse === true
