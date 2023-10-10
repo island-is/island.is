@@ -11,6 +11,14 @@ export enum OccupationalLicenseType {
   HEALTH = 'HEALTH_DIRECTORATE',
 }
 
+export enum HEATLH_DIRECTORATE_STATUS_TYPE {
+  valid = 'Í gildi',
+  limited = 'Í gildi - Takmörkun',
+  error = 'Ógilt',
+}
+
+export type Validity = 'valid' | 'limited' | 'error'
+
 registerEnumType(OccupationalLicenseType, {
   name: 'OccupationalLicenseType',
 })
@@ -32,18 +40,18 @@ export abstract class OccupationalLicense {
   institution!: OccupationalLicenseType
 
   @Field(() => ID)
-  id!: string
+  id!: string | number
   @Field(() => String)
   type!: string
 
   @Field(() => String)
   profession!: string
 
-  @Field(() => Boolean)
-  isValid!: boolean
-
   @Field(() => String)
   validFrom!: string
+
+  @Field(() => String)
+  isValid!: Validity
 }
 
 @ObjectType('OccupationalLicensesEducationalLicense', {

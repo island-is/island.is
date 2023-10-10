@@ -2,6 +2,7 @@ import { Stack, Box, Icon, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader, UserInfoLine } from '@island.is/service-portal/core'
 import { olMessage as om } from '../lib/messages'
+import { Validity } from './LicenceActionCard'
 
 type LicenseDetailProps = {
   title?: string | null
@@ -13,7 +14,7 @@ type LicenseDetailProps = {
   licenseType?: string | null
   publisher?: string | null
   dateOfIssue?: string | null
-  isValid?: boolean
+  isValid?: Validity
   buttonGroup?: React.ReactNode
 }
 
@@ -107,11 +108,29 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
                 columnGap="p1"
               >
                 <Text>
-                  {formatMessage(isValid ? om.validLicense : om.invalidLicense)}
+                  {formatMessage(
+                    isValid === 'valid'
+                      ? om.validLicense
+                      : isValid === 'limited'
+                      ? om.validWithLimitationsLicense
+                      : om.invalidLicense,
+                  )}
                 </Text>
                 <Icon
-                  icon={isValid ? 'checkmarkCircle' : 'closeCircle'}
-                  color={isValid ? 'mint600' : 'red600'}
+                  icon={
+                    isValid === 'valid'
+                      ? 'checkmarkCircle'
+                      : isValid === 'limited'
+                      ? 'warning'
+                      : 'closeCircle'
+                  }
+                  color={
+                    isValid === 'valid'
+                      ? 'mint600'
+                      : isValid === 'limited'
+                      ? 'yellow600'
+                      : 'red600'
+                  }
                   type="filled"
                 />
               </Box>

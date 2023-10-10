@@ -12,7 +12,7 @@ import { Organization } from '@island.is/shared/types'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 
 import { olMessage as om } from '../../lib/messages'
-import LicenceActionCard from '../../components/LicenceActionCard'
+import LicenceActionCard, { Validity } from '../../components/LicenceActionCard'
 import { OccupationalLicensesPaths } from '../../lib/paths'
 
 const OccupationalLicensesOverview = () => {
@@ -22,6 +22,11 @@ const OccupationalLicensesOverview = () => {
   const organizations =
     (data?.getOrganizations?.items as Array<Organization>) ?? []
 
+  const generateUrl = (route: string, id: string, type: string) =>
+    route
+      .replace(':id', id)
+      .replace(':type', type.charAt(0).toUpperCase() + type.slice(1))
+
   if (error)
     return (
       <ErrorScreen
@@ -29,11 +34,6 @@ const OccupationalLicensesOverview = () => {
         tag={formatMessage(m.errorTitle)}
       />
     )
-
-  const generateUrl = (route: string, id: string, type: string) =>
-    route
-      .replace(':id', id)
-      .replace(':type', type.charAt(0).toUpperCase() + type.slice(1))
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -78,7 +78,7 @@ const OccupationalLicensesOverview = () => {
                   organizations,
                   120,
                 )}
-                isValid={license.isValid}
+                isValid={license.isValid as Validity}
               />
             )
           })}

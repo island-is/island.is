@@ -9,11 +9,10 @@ import {
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserInfo } from '@island.is/auth/react'
-import { getOrganizationLogoUrl } from '@island.is/shared/utils'
-import { Organization } from '@island.is/shared/types'
 import { LicenseDetail } from '../../components/LicenseDetail'
 import { olMessage as om } from '../../lib/messages'
 import { m } from '@island.is/service-portal/core'
+import { Validity } from '../../components/LicenceActionCard'
 
 type UseParams = {
   id: string
@@ -54,19 +53,17 @@ export const EducationDetail = () => {
   return (
     <LicenseDetail
       title={license.profession}
-      intro={formatMessage(om.healthDirectorateIntro)}
       serviceProviderID={ICELAND_ID}
       name={user.profile.name}
       dateOfBirth={birthday ? formatDateFns(birthday, 'dd.MM.yyyy') : undefined}
       profession={license.profession}
       licenseType={license.type}
-      publisher={formatMessage(om.theDirectorateOfHealth)}
       dateOfIssue={
         license.validFrom
           ? formatDateFns(license.validFrom, 'dd.MM.yyyy')
           : undefined
       }
-      isValid={license.isValid}
+      isValid={license.isValid as Validity}
     />
   )
 }

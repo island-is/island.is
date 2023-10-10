@@ -9,9 +9,13 @@ import { isDefined } from '@island.is/shared/utils'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   EducationalLicense,
+  HEATLH_DIRECTORATE_STATUS_TYPE,
   HealthDirectorateLicense,
   OccupationalLicenseType,
+  Validity,
 } from './models/occupationalLicense.model'
+
+const LOG_CATEGORY = 'occupational-licenses-service'
 
 @Injectable()
 export class OccupationalLicensesService {
@@ -32,8 +36,6 @@ export class OccupationalLicensesService {
         (await this.healthDirectorateApi.getHealthDirectorateLicense(user)) ??
         []
 
-      const today = new Date()
-
       return (
         licenses
           .map((license) => {
@@ -41,27 +43,26 @@ export class OccupationalLicensesService {
               !license.leyfi ||
               !license.starfsstett ||
               !license.gildirFra ||
-              !license.leyfisnumer
+              !license.leyfisnumer ||
+              !license.id
             )
               return null
-            const isValid =
-              license.gildirTIl && license.gildirFra
-                ? today >= license.gildirFra && today <= license.gildirTIl
-                : license.gildirFra && !license.gildirTIl
-                ? today >= license.gildirFra
-                : false
             if (!license.logadiliID || !license.kennitala || !license.nafn)
               return undefined
             return {
               institution: OccupationalLicenseType.HEALTH,
-              id: license.logadiliID,
+              id: license.id.toString(),
               legalEntityId: license.logadiliID,
               holderName: license.nafn,
               profession: license.starfsstett,
               type: license.leyfi,
               number: license.leyfisnumer,
               validFrom: license.gildirFra?.toString(),
-              isValid: isValid,
+              isValid: (license.stada === HEATLH_DIRECTORATE_STATUS_TYPE.valid
+                ? 'valid'
+                : license.stada === HEATLH_DIRECTORATE_STATUS_TYPE.limited
+                ? 'limited'
+                : 'error') as Validity,
             }
           })
           .filter(isDefined)
@@ -70,6 +71,7 @@ export class OccupationalLicensesService {
     } catch (e) {
       this.logger.error(`Error getting health directorate license by id`, {
         ...e,
+        category: LOG_CATEGORY,
       })
       return null
     }
@@ -83,41 +85,39 @@ export class OccupationalLicensesService {
         (await this.healthDirectorateApi.getHealthDirectorateLicense(user)) ??
         []
 
-      const today = new Date()
-
       return licenses
         .map((license) => {
           if (
             !license.leyfi ||
             !license.starfsstett ||
             !license.gildirFra ||
-            !license.leyfisnumer
+            !license.leyfisnumer ||
+            !license.id
           )
             return null
-          const isValid =
-            license.gildirTIl && license.gildirFra
-              ? today >= license.gildirFra && today <= license.gildirTIl
-              : license.gildirFra && !license.gildirTIl
-              ? today >= license.gildirFra
-              : false
           if (!license.logadiliID || !license.kennitala || !license.nafn)
             return null
           return {
             institution: OccupationalLicenseType.HEALTH,
-            id: license.logadiliID,
+            id: license.id.toString(),
             legalEntityId: license.logadiliID,
             holderName: license.nafn,
             profession: license.starfsstett,
             type: license.leyfi,
             number: license.leyfisnumer,
             validFrom: license.gildirFra?.toString(),
-            isValid: isValid,
+            isValid: (license.stada === HEATLH_DIRECTORATE_STATUS_TYPE.valid
+              ? 'valid'
+              : license.stada === HEATLH_DIRECTORATE_STATUS_TYPE.limited
+              ? 'limited'
+              : 'error') as Validity,
           }
         })
         .filter(isDefined)
     } catch (e) {
       this.logger.error(`Error getting health directorate license`, {
         ...e,
+        category: LOG_CATEGORY,
       })
       return null
     }
@@ -138,13 +138,16 @@ export class OccupationalLicensesService {
             type: license.issuer,
             profession: license.type,
             validFrom: license.issued,
-            isValid: new Date(license.issued) < new Date(),
+            isValid: (new Date(license.issued) < new Date()
+              ? 'valid'
+              : 'error') as Validity,
           }))
           .find((license) => license.id === id) ?? null
       )
     } catch (e) {
       this.logger.error(`Error getting educational license by id`, {
         ...e,
+        category: LOG_CATEGORY,
       })
       return null
     }
@@ -162,11 +165,14 @@ export class OccupationalLicensesService {
         type: license.issuer,
         profession: license.type,
         validFrom: license.issued,
-        isValid: new Date(license.issued) < new Date(),
+        isValid: (new Date(license.issued) < new Date()
+          ? 'valid'
+          : 'error') as Validity,
       }))
     } catch (e) {
       this.logger.error(`Error getting educational license`, {
         ...e,
+        category: LOG_CATEGORY,
       })
       return null
     }

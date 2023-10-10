@@ -43,6 +43,10 @@ export const olMessage = defineMessages({
     id: 'sp.occupational-licenses:invalid-license',
     defaultMessage: 'Útrunnið',
   },
+  validWithLimitationsLicense: {
+    id: 'sp.occupational-licenses:valid-with-limitations-license',
+    defaultMessage: 'Í gildi með takmörkunum',
+  },
   dayOfPublication: {
     id: 'sp.occupational-licenses:day-of-publication',
     defaultMessage: 'Útgáfudagur',

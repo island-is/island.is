@@ -3,12 +3,14 @@ import { ActionCard } from '@island.is/service-portal/core'
 import { olMessage as ol } from '../lib/messages'
 import { m } from '@island.is/service-portal/core'
 
+export type Validity = 'valid' | 'limited' | 'error'
+
 type LicenseActionCardProps = {
   type?: string
   validFrom?: string | Date
   url?: string
   image?: string
-  isValid: boolean
+  isValid: Validity
 }
 
 export const LicenceActionCard: React.FC<LicenseActionCardProps> = ({
@@ -25,10 +27,18 @@ export const LicenceActionCard: React.FC<LicenseActionCardProps> = ({
       heading={type}
       text={`${formatMessage(ol.dayOfPublication)}: ${validFrom}`}
       tag={{
-        label: isValid
-          ? formatMessage(ol.validLicense)
-          : formatMessage(ol.invalidLicense),
-        variant: isValid ? 'blue' : 'red',
+        label:
+          isValid === 'valid'
+            ? formatMessage(ol.validLicense)
+            : isValid === 'limited'
+            ? formatMessage(ol.validWithLimitationsLicense)
+            : formatMessage(ol.invalidLicense),
+        variant:
+          isValid === 'valid'
+            ? 'blue'
+            : isValid === 'limited'
+            ? 'yellow'
+            : 'rose',
         outlined: false,
       }}
       cta={{

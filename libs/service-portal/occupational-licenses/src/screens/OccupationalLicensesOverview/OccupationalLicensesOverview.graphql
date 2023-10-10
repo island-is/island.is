@@ -16,10 +16,10 @@ query getOccupationalLicenses {
     items {
       __typename
       id
-      isValid
       profession
       type
       validFrom
+      isValid
     }
     error {
       hasError

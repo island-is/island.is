@@ -17,6 +17,7 @@ import { LicenseDetail } from '../../components/LicenseDetail'
 import { useEffect, useState } from 'react'
 import { m } from '@island.is/service-portal/core'
 import { olMessage as om } from '../../lib/messages'
+import { Validity } from '../../components/LicenceActionCard'
 
 type UseParams = {
   id: string
@@ -71,7 +72,6 @@ export const EducationDetail = () => {
   return (
     <LicenseDetail
       title={programme}
-      intro={formatMessage(om.educationIntro)}
       serviceProviderID={MENNTAMALASTOFNUN_ID}
       buttonGroup={
         license.downloadUrl ? (
@@ -96,7 +96,7 @@ export const EducationDetail = () => {
           ? formatDateFns(license.validFrom, 'dd.MM.yyyy')
           : undefined
       }
-      isValid={license.isValid}
+      isValid={license.isValid as Validity}
     />
   )
 }
