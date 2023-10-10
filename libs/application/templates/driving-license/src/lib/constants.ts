@@ -29,7 +29,7 @@ export interface DrivingLicenseFakeData {
   useFakeData?: YesOrNo
   qualityPhoto?: YesOrNo
   currentLicense?: FakeCurrentLicense
-  healthRemarks?: YesOrNo
+  remarks?: YesOrNo
 }
 
 export const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic'
