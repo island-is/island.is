@@ -223,23 +223,20 @@ export class CitizenshipService extends BaseTemplateApiService {
       nationalId,
     )
 
-    // get spouse's birthplace
-    const spouseBirthplace =
-      cohabitationInfo &&
-      (await this.getBirthplace(cohabitationInfo.spouseNationalId))
-
-    return (
-      cohabitationInfo && {
-        nationalId: cohabitationInfo.spouseNationalId,
-        name: cohabitationInfo.spouseName,
-        maritalStatus: cohabitationInfo.cohabitationCode,
-        lastModified: cohabitationInfo.lastModified,
-        spouseBirthplace: spouseBirthplace,
-        spouse: await this.getIndividualDetails(
-          cohabitationInfo.spouseNationalId,
-        ),
-      }
-    )
+    return cohabitationInfo?.spouseNationalId
+      ? {
+          nationalId: cohabitationInfo.spouseNationalId,
+          name: cohabitationInfo.spouseName,
+          maritalStatus: cohabitationInfo.cohabitationCode,
+          lastModified: cohabitationInfo.lastModified,
+          spouseBirthplace: await this.getBirthplace(
+            cohabitationInfo.spouseNationalId,
+          ),
+          spouse: await this.getIndividualDetails(
+            cohabitationInfo.spouseNationalId,
+          ),
+        }
+      : null
   }
 
   private async getBirthplace(
