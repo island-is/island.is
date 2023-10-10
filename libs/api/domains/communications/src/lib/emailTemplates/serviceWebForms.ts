@@ -259,6 +259,35 @@ enum SjukratryggingarCategories {
   TULKATHJONUSTA = 'tulkathjonusta',
 }
 
+enum DirectorateOfImmigrationCategories {
+  // ALþjóðleg vernd
+  INTERNATIONAL_PROTECTION = 'vURM4bLHZZefkRTFMMhkW',
+
+  // Dvalarleyfiskort og ferðaskilríki
+  RESIDENCE_PERMIT_CARDS_AND_TRAVEL_DOCUMENTS = '2Z8C7zKJPsAtsbjaClcCAg',
+
+  // Dvalarleyfi - Almenn skilyrði
+  RESIDENCE_PERMIT_GENERAL_CONDITIONS = '5HwuyKorz5r8xmk3UxLE1q',
+
+  // Dvalarleyfi - Tegundir
+  RESIDENCE_PERMIT_TYPES = '3Jrix29x8wFv5X0O7P0KsB',
+
+  // Ferðalög og heimsóknir til Íslands
+  TRAVEL_AND_VISITS_TO_ICELAND = '3jzNnjUIuZAIU2MCwzYi1Q',
+
+  // Ríkisborgararéttur
+  CITIZENSHIP = '2PdX8CTx3uiGFphBbbazzc',
+
+  // Staða umsókna, beiðni um gögn og afgreiðslugjald
+  APPLICATION_STATUS = '7s7yrJ8Nl1YmocagF93QB7',
+
+  // Dvalarleyfi
+  RESIDENCE_PERMIT = 'dvalarleyfi',
+
+  // Aðstoð við sjálfviljuga heimför
+  ASSISTED_VOLUNTARY_RETURN = 'adstod-vid-sjalfviljuga-heimfor',
+}
+
 const sjukratryggingarEmails = {
   [SjukratryggingarCategories.FERDAKOSTNADUR]: 'ferdakostnadur@sjukra.is',
   [SjukratryggingarCategories.HEILBRIGDISSTARFSFOLK]:
@@ -281,6 +310,14 @@ const sjukratryggingarEmails = {
     'sjukra@sjukra.is',
   [SjukratryggingarCategories.HJUKRUNARHEIMILI]: 'hjukrunarheimili@sjukra.is',
   [SjukratryggingarCategories.TULKATHJONUSTA]: 'laeknareikningar@sjukra.is',
+}
+
+const directorateOfImmigrationEmails = {
+  [DirectorateOfImmigrationCategories.TRAVEL_AND_VISITS_TO_ICELAND]:
+    'aritanir@utl.is',
+  [DirectorateOfImmigrationCategories.CITIZENSHIP]: 'rikisborgararettur@utl.is',
+  [DirectorateOfImmigrationCategories.ASSISTED_VOLUNTARY_RETURN]:
+    'return@utl.is',
 }
 
 export const getTemplate = (
@@ -308,6 +345,14 @@ export const getTemplate = (
     toAddress =
       sjukratryggingarEmails[categoryId as SjukratryggingarCategories] ??
       institutionEmail
+  } else if (
+    input.institutionSlug === 'utlendingastofnun' ||
+    input.institutionSlug === 'directorate-of-immigration'
+  ) {
+    toAddress =
+      directorateOfImmigrationEmails[
+        categoryId as keyof typeof directorateOfImmigrationEmails
+      ] ?? institutionEmail
   }
 
   const name = 'Ísland.is aðstoð'

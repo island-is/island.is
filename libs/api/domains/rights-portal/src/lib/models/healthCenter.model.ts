@@ -24,6 +24,9 @@ export class UserHealthCenterRegistration {
 
   @Field(() => [HealthCenterRegistration], { nullable: true })
   history?: Array<HealthCenterRegistration>
+
+  @Field(() => Boolean, { nullable: true })
+  canRegister?: boolean | null
 }
 
 @ObjectType('RightsPortalHealthCenter')

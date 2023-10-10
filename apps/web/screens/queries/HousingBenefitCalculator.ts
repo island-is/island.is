@@ -7,6 +7,8 @@ export const GET_HOUSING_BENEFIT_CALCULATION = gql`
     housingBenefitCalculatorCalculation(input: $input) {
       maximumHousingBenefits
       reductionsDueToIncome
+      reductionsDueToAssets
+      reductionsDueToHousingCosts
       estimatedHousingBenefits
     }
   }
