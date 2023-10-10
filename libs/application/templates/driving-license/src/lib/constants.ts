@@ -29,5 +29,5 @@ export interface DrivingLicenseFakeData {
   useFakeData?: YesOrNo
   qualityPhoto?: YesOrNo
   currentLicense?: FakeCurrentLicense
-  healthRemarks?: YesOrNo
+  remarks?: YesOrNo
 }

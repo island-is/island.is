@@ -141,7 +141,7 @@ export const sectionFakeData = buildSubSection({
           },
         }),
         buildRadioField({
-          id: 'fakeData.healthRemarks',
+          id: 'fakeData.remarks',
           title: 'Heilbrigðis tákntala',
           width: 'half',
           condition: (answers) => {
