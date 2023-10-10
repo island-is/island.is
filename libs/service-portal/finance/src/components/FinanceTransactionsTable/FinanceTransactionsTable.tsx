@@ -107,6 +107,7 @@ const FinanceTransactionsTable: FC<React.PropsWithChildren<Props>> = ({
                 cursor="pointer"
                 className={className}
                 onClick={() => setPage(page)}
+                component="button"
               >
                 {children}
               </Box>
