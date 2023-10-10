@@ -233,7 +233,7 @@ jobs:
       - name: Generate docker image tag
         id: docker_tags
         run: |
-          export DOCKER_BRANCH_TAG=$(echo ${GIT_BRANCH:0:45} | tr "/." "-" )
+          export DOCKER_BRANCH_TAG=$(echo $GIT_BRANCH | tr -cs '[:alnum:]' '-' | sed -e 's/^-//' -e 's/-$//' | tr '[:upper:]' '[:lower:]' | cut -c 1-63)
           SHA="${{ github.event.pull_request.head.sha }}"
           echo "SHA='$SHA' retrieved from event"
           if [[ "$SHA" == "" ]]; then
@@ -241,7 +241,7 @@ jobs:
             echo "SHA='$SHA', retrived from action environment"
           fi
           echo "Using SHA='$SHA' as docker tag sha"
-          export DOCKER_TAG=${DOCKER_BRANCH_TAG}_${SHA:0:7}_${GITHUB_RUN_NUMBER}
+          export DOCKER_TAG=${DOCKER_BRANCH_TAG}_${SHA:0:7}
           echo "Docker tag will be ${DOCKER_TAG}"
           echo "DOCKER_TAG=${DOCKER_TAG}" >> $GITHUB_OUTPUT
           echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
@@ -766,7 +766,7 @@ jobs:
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    if: always() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure'
+    if: always() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure' && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
     needs:
       - retag-unaffected
       - pre-checks
