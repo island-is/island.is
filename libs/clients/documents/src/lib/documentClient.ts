@@ -17,6 +17,7 @@ import { GetDocumentListInput } from './models/DocumentInput'
 import { PaperMailResponse } from './models/PaperMailRes'
 import { RequestPaperDTO } from './models/RequestPaperDTO'
 import { MessageActionDTO } from './models/MessageActionDTO'
+import { BulkMailActionDTO } from './models/BulkMailActionDTO'
 
 export const DOCUMENT_CLIENT_CONFIG = 'DOCUMENT_CLIENT_CONFIG'
 
@@ -202,5 +203,14 @@ export class DocumentClient {
   ): Promise<null> {
     const requestRoute = `/api/mail/v1/customers/${body.nationalId}/messages/${body.messageId}/${action}`
     return await this.postRequest(requestRoute, body)
+  }
+
+  async bulkMailAction(
+    body: BulkMailActionDTO,
+    nationalId: string,
+  ): Promise<any | null> {
+    const { action, ...postBody } = body
+    const requestRoute = `/api/mail/v1/customers/${nationalId}/messages/batch${action}`
+    return await this.postRequest(requestRoute, postBody)
   }
 }

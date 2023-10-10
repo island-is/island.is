@@ -7,7 +7,13 @@ import {
   DocumentDetails,
   GetDocumentListInput,
 } from '@island.is/api/schema'
-import { Box, Text, AlertBanner, LoadingDots } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  AlertBanner,
+  LoadingDots,
+  Icon,
+} from '@island.is/island-ui/core'
 import { dateFormat } from '@island.is/shared/constants'
 import { CardLoader, LoadModal, m } from '@island.is/service-portal/core'
 import * as styles from './DocumentLine.css'
@@ -56,6 +62,7 @@ export const DocumentLine: FC<Props> = ({
   asFrame,
   bookmarked,
   archived,
+  selected,
 }) => {
   const [avatarCheckmark, setAvatarCheckmark] = useState(false)
   const { formatMessage } = useLocale()
@@ -187,9 +194,25 @@ export const DocumentLine: FC<Props> = ({
                 setSelectLine(documentLine.id)
               }
             }}
+            avatar={
+              (avatarCheckmark || selected) && !asFrame ? (
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  background={selected ? 'blue400' : 'blue300'}
+                  borderRadius="circle"
+                  className={styles.checkCircle}
+                >
+                  <Icon icon="checkmark" color="white" type="filled" />
+                </Box>
+              ) : undefined
+            }
             background={
               avatarCheckmark
-                ? 'white'
+                ? asFrame
+                  ? 'white'
+                  : 'blue200'
                 : documentLine.opened
                 ? 'blue100'
                 : 'white'
