@@ -28,7 +28,7 @@ export const PCardApiProvider: Provider<StaediskortaMalApi> = {
                 issuer: idsClientConfig.issuer,
                 clientId: idsClientConfig.clientId,
                 clientSecret: idsClientConfig.clientSecret,
-                scope: [],
+                scope: config.scope,
               }
             : undefined,
         }),
