@@ -2465,7 +2465,7 @@ services-university-gateway-backend:
     DB_USER: 'university_gateway'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=336'
+    NODE_OPTIONS: '--max-old-space-size=345'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -2534,7 +2534,7 @@ services-university-gateway-worker:
   enabled: true
   env:
     BACKEND_URL: 'http://web-services-university-gateway-backend'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
     TIME_TO_LIVE_MINUTES: '1440'
   grantNamespaces:
