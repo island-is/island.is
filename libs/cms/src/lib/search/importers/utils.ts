@@ -1,6 +1,4 @@
-import { writeFileSync } from 'fs'
 import flatten from 'lodash/flatten'
-import { inspect } from 'util'
 import { CONTENT_TYPE } from '../../generated/contentfulTypes'
 
 export const createTerms = (termStrings: string[]): string[] => {
