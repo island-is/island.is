@@ -66,9 +66,7 @@ test.describe('MS - Work Machines', () => {
         .first()
 
       // Assert
-      await expect(page).toHaveURL(
-        /minarsidur\/eignir\/vinnuvelar(\/[^\/]+){2}/,
-      )
+      await expect(page).toHaveURL(/minarsidur\/eignir\/vinnuvelar(\/[^/]+){2}/)
       await expect(basicInfoText).toBeVisible()
     })
   })
