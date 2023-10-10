@@ -12,7 +12,6 @@ query NationalRegistryChildCustody($api: String) {
       }
       gender
       religion
-      fate
       housing {
         address {
           streetAddress
