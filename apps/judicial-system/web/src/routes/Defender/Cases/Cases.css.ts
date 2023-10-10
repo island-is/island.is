@@ -1,11 +1,13 @@
 import { style } from '@vanilla-extract/css'
 
-export const infoContainer = style({
-  maxWidth: '50%',
-})
+import { theme } from '@island.is/island-ui/theme'
 
-export const caseInfoContainer = style({
-  marginLeft: 'auto',
-  marginRight: 'auto',
-  maxWidth: '95%',
+export const infoContainer = style({
+  width: '50%',
+
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.md}px)  `]: {
+      width: '100%',
+    },
+  },
 })

@@ -105,7 +105,7 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
             label: formatMessage(m.activeCasesTabLabel),
             content: (
               <div>
-                {activeCases.length > 0 ? (
+                {activeCases.length > 0 || loading ? (
                   <Box>
                     <FilterCheckboxes
                       filters={filters}
@@ -117,7 +117,7 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
                     />
                   </Box>
                 ) : (
-                  <Box className={styles.caseInfoContainer} marginTop={3}>
+                  <Box className={styles.infoContainer} marginTop={3}>
                     <AlertMessage
                       type="info"
                       message={formatMessage(m.noActiveCases)}
@@ -132,7 +132,7 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
             label: formatMessage(m.completedCasesTabLabel),
             content: (
               <div>
-                {completedCases.length > 0 ? (
+                {completedCases.length > 0 || loading ? (
                   <Box>
                     <FilterCheckboxes
                       filters={filters}
@@ -145,7 +145,7 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
                     />
                   </Box>
                 ) : (
-                  <Box className={styles.caseInfoContainer} marginTop={3}>
+                  <Box className={styles.infoContainer} marginTop={3}>
                     <AlertMessage
                       type="info"
                       message={formatMessage(m.noCompletedCases)}
