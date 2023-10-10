@@ -644,7 +644,7 @@ export const coreDelegationsMessages = defineMessages({
 export const coreErrorScreenMessages = defineMessages({
   notFoundTitle: {
     id: 'application.system:core.errorScreen.notFoundTitle',
-    defaultMessage: 'Umsókn fannst ekki',
+    defaultMessage: 'Engin umsóknartegund skilgreind',
     description: 'Error screen title',
   },
   notFoundSubTitle: {
@@ -655,7 +655,7 @@ export const coreErrorScreenMessages = defineMessages({
   },
   notFoundDescription: {
     id: 'application.system:core.errorScreen.notFoundDescription#markdown',
-    defaultMessage: `* Þú ert á rangri slóð\n`,
+    defaultMessage: `* Umsóknartegund hefur ekki verið skilgreind\n`,
     description: 'Error screen description',
   },
   forbiddenTitle: {
@@ -687,7 +687,45 @@ export const coreErrorScreenMessages = defineMessages({
   },
   notExistDescription: {
     id: 'application.system:core.errorScreen.notExistDescription#markdown',
-    defaultMessage: `* Þú ert á rangri slóð\n`,
+    defaultMessage: `* Það gæti verið stafsetningarvilla í umsóknarnafni\n* Umsóknin gæti verið óaðgengileg\n* Umsóknartegund gæti hafa verið eytt\n* Umsóknartegund gæti verið ógild`,
+  },
+  applicationIdNotOwnedByUserTitle: {
+    id: 'application.system:core.errorScreen.applicationIdNotOwnedByUserTitle',
+    defaultMessage: 'Tiltekin umsókn fannst ekki',
+    description:
+      'Error screen title when application template exists but the specified application cant be found',
+  },
+  applicationIdNotOwnedByUserSubTitle: {
+    id: 'application.system:core.errorScreen.applicationIdNotOwnedByUserSubTitle',
+    defaultMessage:
+      'Eftirfarandi ástæður geta verið fyrir því að umsóknin fannst ekki',
+    description:
+      'Error screen subtitle when application template exists but the specified application cant be found',
+  },
+  applicationIdNotOwnedByUserDescription: {
+    id: 'application.system:core.errorScreen.applicationIdNotOwnedByUserDescription#markdown',
+    defaultMessage: `* Þú ert ekki með aðgang að umsókninni\n* Umsóknin gæti verið eytt\n* Umsóknin er í eigu annars notanda`,
+    description:
+      'Error screen description when application template exists but the specified application cant be found',
+  },
+  badSubjectTitle: {
+    id: 'application.system:core.errorScreen.badSubjectTitle',
+    defaultMessage: 'Rangt umboð',
+    description:
+      'Error screen title when user has a bad subject error after checking delegations',
+  },
+  badSubjectSubTitle: {
+    id: 'application.system:core.errorScreen.badSubjectSubTitle',
+    defaultMessage:
+      'Eftirfarandi ástæður geta verið fyrir því að umsóknin virkar ekki',
+    description:
+      'Error screen subtitle when user has a bad subject error after checking delegations',
+  },
+  badSubjectDescription: {
+    id: 'application.system:core.errorScreen.badSubjectDescription#markdown',
+    defaultMessage: `* Þú hefur ekki rétt umboð til að opna þessa umsóknartegund`,
+    description:
+      'Error screen description when user has a bad subject error after checking delegations',
   },
   lostTitle: {
     id: 'application.system:core.errorScreen.lostTitle',
