@@ -19,6 +19,7 @@ import {
   CanApplyErrorCodeBFull,
   CanApplyErrorCodeBTemporary,
   Disqualification,
+  DriverLicenseWithoutImages,
   DriversLicense,
   DrivingAssessment,
   DrivingLicenseApi,
@@ -59,6 +60,17 @@ export class DrivingLicenseService {
     } catch (e) {
       return this.handleGetLicenseError(e)
     }
+  }
+
+  async getAllDriverLicenses(
+    token: string,
+  ): Promise<DriverLicenseWithoutImages[]> {
+    const drivingLicesnes = await this.drivingLicenseApi
+      .getAllDriverLicenses(token)
+      .catch((e) => {
+        this.logger.log(`${LOGTAG} Error fetching all driver licenses`, e)
+      })
+    return drivingLicesnes ?? []
   }
 
   async legacyGetDrivingLicense(
