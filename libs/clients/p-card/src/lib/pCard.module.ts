@@ -6,4 +6,4 @@ import { PCardService } from './pCard.service'
   providers: [PCardApiProvider, PCardService],
   exports: [PCardService],
 })
-export class PCardModule {}
+export class PCardClientModule {}
