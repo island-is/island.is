@@ -36,7 +36,7 @@ test.describe('MS - Work Machines', () => {
 
       // Act
       const filterButton = page
-        .locator(`role=button[name="${label(m.openFilter)}"]`)
+        .getByRole('button', {name: label(m.openFilter)})
         .first()
       const inputField = page.getByRole('textbox', {
         name: label(m.searchLabel),
@@ -44,8 +44,7 @@ test.describe('MS - Work Machines', () => {
       await inputField.click()
       await inputField.type('hys', { delay: 200 })
       const actionCardButton = page
-        .locator(`[data-testid="action-card-cta"]`)
-        .getByRole('button')
+        .getByTestId("action-card-cta")
         .first()
 
       await filterButton.click()
@@ -54,7 +53,7 @@ test.describe('MS - Work Machines', () => {
       await expect(filterButton).toBeVisible()
       await expect(actionCardButton).toBeVisible()
       await expect(
-        page.locator(`text=${label(m.clearAllFilters)}`),
+        page.getByLabel(label(m.clearAllFilters)),
       ).toBeVisible()
     })
 
@@ -65,8 +64,7 @@ test.describe('MS - Work Machines', () => {
 
       // Act
       const actionCardButton = page
-        .locator(`[data-testid="action-card-cta"]`)
-        .getByRole('button')
+        .getByTestId"action-card-cta")
         .first()
       await actionCardButton.click()
 
@@ -75,7 +73,7 @@ test.describe('MS - Work Machines', () => {
         .first()
 
       // Assert
-      await expect(page).toHaveURL(/minarsidur\/okutaeki\/vinnuvelar\/.+\/.+/)
+      await expect(page).toHaveURL(/minarsidur\/okutaeki\/vinnuvelar(\/[^\/]+){2}/)
       await expect(basicInfoText).toBeVisible()
     })
   })
