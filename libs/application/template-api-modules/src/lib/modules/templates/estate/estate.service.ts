@@ -235,16 +235,19 @@ export class EstateTemplateService extends BaseTemplateApiService {
     const externalData = application.externalData.syslumennOnEntry
       ?.data as EstateSchema
 
+    const applicantData = application.answers
+      .applicant as EstateSchema['applicant']
+
     const person: Person = {
       name: nationalRegistryData?.fullName,
       ssn: application.applicant,
-      phoneNumber: application.answers.applicantPhone as string,
+      phoneNumber: applicantData.phone,
       city: nationalRegistryData?.address.city,
       homeAddress: nationalRegistryData?.address.streetAddress,
       postalCode: nationalRegistryData?.address.postalCode,
       signed: false,
       type: PersonType.AnnouncerOfDeathCertificate,
-      email: application.answers.applicantEmail as string,
+      email: applicantData.email,
     }
 
     const uploadDataName = 'danarbusskipti1.0'

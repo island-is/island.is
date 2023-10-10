@@ -88,7 +88,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
     let result
     try {
-      result = await this.createLicense(nationalId, answers, auth)
+      result = await this.createLicense(nationalId, answers, auth.authorization)
     } catch (e) {
       this.log('error', 'Creating license failed', {
         e,
@@ -135,7 +135,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       'B-full'
 
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
-    const healthRemarks = answers.hasHealthRemarks === 'yes'
+    const remarks = answers.hasHealthRemarks === 'yes'
     const needsQualityPhoto = answers.willBringQualityPhoto === 'yes'
     const jurisdictionId = answers.jurisdiction
     const teacher = answers.drivingInstructor as string
@@ -161,18 +161,22 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
         jurisdictionId: jurisdictionId as number,
-        needsToPresentHealthCertificate: needsHealthCert || healthRemarks,
+        needsToPresentHealthCertificate: needsHealthCert || remarks,
         needsToPresentQualityPhoto: needsQualityPhoto,
       })
     } else if (applicationFor === 'B-temp') {
-      return this.drivingLicenseService.newTemporaryDrivingLicense(nationalId, {
-        jurisdictionId: jurisdictionId as number,
-        needsToPresentHealthCertificate: needsHealthCert,
-        needsToPresentQualityPhoto: needsQualityPhoto,
-        teacherNationalId: teacher,
-        email: email,
-        phone: phone,
-      })
+      return this.drivingLicenseService.newTemporaryDrivingLicense(
+        nationalId,
+        auth,
+        {
+          jurisdictionId: jurisdictionId as number,
+          needsToPresentHealthCertificate: needsHealthCert,
+          needsToPresentQualityPhoto: needsQualityPhoto,
+          teacherNationalId: teacher,
+          email: email,
+          phone: phone,
+        },
+      )
     }
 
     throw new Error('application for unknown type of license')

@@ -1,4 +1,4 @@
-schema: https://smartpages-api-dev.smartsolutions.is/graphql
+schema: libs/clients/smartsolutions/smartsolutions-api.graphql
 generates:
   libs/clients/smartsolutions/gen/schema.ts:
     plugins:

@@ -1,35 +1,36 @@
 import PDFDocument from 'pdfkit'
 
 import { FormatMessage } from '@island.is/cms-translations'
+
+import {
+  capitalize,
+  caseTypes,
+  formatDate,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   CaseType,
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-import {
-  caseTypes,
-  formatNationalId,
-  capitalize,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
 
+import { core, request as m } from '../messages'
 import { Case } from '../modules/case'
-import { request as m, core } from '../messages'
 import { formatLegalProvisions } from './formatters'
 import {
+  addCoatOfArms,
   addEmptyLines,
+  addFooter,
   addHugeHeading,
   addLargeHeading,
   addLargeText,
   addMediumPlusHeading,
   addMediumText,
-  addNormalText,
-  setLineGap,
-  addFooter,
-  setTitle,
   addNormalJustifiedText,
-  addCoatOfArms,
+  addNormalText,
   addPoliceStar,
+  setLineGap,
+  setTitle,
 } from './pdfHelpers'
 
 function constructRestrictionRequestPdf(

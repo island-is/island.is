@@ -2,7 +2,7 @@ import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
 
-import type { UserRole, UpdateUser } from '@island.is/judicial-system/types'
+import type { UpdateUser, UserRole } from '@island.is/judicial-system/types'
 
 @InputType()
 export class UpdateUserInput implements UpdateUser {

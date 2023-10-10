@@ -1,22 +1,25 @@
 import { uuid } from 'uuidv4'
 
-import { ConfigType } from '@island.is/nest/config'
 import { EmailService } from '@island.is/email-service'
+import { ConfigType } from '@island.is/nest/config'
 import { SmsService } from '@island.is/nova-sms'
+
 import {
   DEFENDER_ROUTE,
   INDICTMENTS_COURT_OVERVIEW_ROUTE,
   RESTRICTION_CASE_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
-  NotificationType,
-  CaseType,
   CaseState,
-  Recipient,
+  CaseType,
   IndictmentSubtype,
-  User,
+  NotificationType,
+  Recipient,
   RequestSharedWithDefender,
+  User,
 } from '@island.is/judicial-system/types'
+
+import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 import { randomDate } from '../../../../test'
 import { Case } from '../../../case'
@@ -25,7 +28,6 @@ import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 interface Then {
   result: DeliverResponse

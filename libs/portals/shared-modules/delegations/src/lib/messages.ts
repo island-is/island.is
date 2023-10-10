@@ -121,7 +121,8 @@ export const m = defineMessages({
   },
   confirmError: {
     id: 'sp.access-control-delegations:confirm-error',
-    defaultMessage: 'Ekki tókst að vista réttindi. Vinsamlegast reyndu aftur',
+    defaultMessage:
+      'Ekki tókst að vista réttindi. Vinsamlegast reyndu aftur síðar',
   },
   deleteAccess: {
     id: 'sp.access-control-delegations:delete-access',
@@ -137,7 +138,8 @@ export const m = defineMessages({
   },
   deleteError: {
     id: 'sp.access-control-delegations:delete-error',
-    defaultMessage: 'Ekki tókst að eyða umboði. Vinsamlegast reyndu aftur',
+    defaultMessage:
+      'Ekki tókst að eyða umboði. Vinsamlegast reyndu aftur síðar',
   },
   dateError: {
     id: 'sp.access-control-delegations:date-error',
@@ -208,5 +210,9 @@ export const m = defineMessages({
   validTo: {
     id: 'sp.access-control-delegations:access-valid-to',
     defaultMessage: 'Í gildi til',
+  },
+  accessCreationSuccess: {
+    id: 'sp.access-control-delegations:access-creation-success',
+    defaultMessage: 'Umboð stofnað',
   },
 })

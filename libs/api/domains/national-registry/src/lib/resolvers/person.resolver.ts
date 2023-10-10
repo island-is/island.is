@@ -83,16 +83,29 @@ export class PersonResolver {
     nullable: true,
   })
   @Audit()
-  resolveChildCustody(
+  async resolveChildCustody(
     @Context('req') { user }: { user: User },
     @Parent() person: SharedPerson,
+    @Args('childNationalId', { nullable: true }) childNationalId?: string,
   ): Promise<Array<SharedPerson> | null> {
     if (user.nationalId !== person.nationalId) {
       //might be unnecessary, but better safe than sorry
       return Promise.reject('User and person being queried do not match')
     }
+    const custodyInfo = await this.service.getChildCustody(
+      person.nationalId,
+      person,
+    )
 
-    return this.service.getChildCustody(person.nationalId, person)
+    if (!custodyInfo) {
+      return []
+    }
+
+    const singleChild = (custodyInfo as SharedPerson[]).find(
+      (c) => c.nationalId === childNationalId,
+    )
+
+    return singleChild ? [singleChild as SharedPerson] : custodyInfo
   }
 
   @ResolveField('birthplace', () => Birthplace, {
