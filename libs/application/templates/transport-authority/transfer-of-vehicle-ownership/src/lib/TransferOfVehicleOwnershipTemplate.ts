@@ -179,7 +179,10 @@ const template: ApplicationTemplate<
             },
           },
           progress: 0.4,
-          lifecycle: pruneAfterDays(1 / 24),
+          lifecycle: {
+            ...pruneAfterDays(1 / 24),
+            shouldDeleteChargeIfPaymentFulfilled: true,
+          },
           onEntry: defineTemplateApi({
             action: ApiActions.createCharge,
           }),
