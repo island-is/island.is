@@ -1,6 +1,9 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
-import { ILifeEventPage } from '../generated/contentfulTypes'
+import {
+  ILifeEventPage,
+  ILifeEventPageFields,
+} from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
@@ -43,8 +46,8 @@ export class LifeEventPage {
   @Field({ nullable: true })
   seeMoreText?: string
 
-  @Field({ nullable: true })
-  pageType?: 'Life Event' | 'Digital Iceland Service'
+  @CacheField(() => String, { nullable: true })
+  pageType?: ILifeEventPageFields['pageType']
 
   @CacheField(() => Image, { nullable: true })
   featuredImage?: Image | null
