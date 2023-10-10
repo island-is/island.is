@@ -62,7 +62,7 @@ const RenderAdvice = ({ advice, loc, isOpen = false }: RenderAdviceProps) => {
 
   const content = advice?.content
   const splitContent = content?.split('\n')
-  
+
   return isOpen ? (
     <Stack space={1}>
       {splitContent?.map((text) => (
