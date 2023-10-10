@@ -17,6 +17,8 @@ export const MedicineLicence = () => {
 
   const { data, error, loading } = useGetDrugCertificatesQuery()
 
+  console.log(data?.rightsPortalDrugCertificates)
+
   return (
     <Box paddingY={4}>
       <Box marginBottom={SECTION_GAP}>
@@ -54,7 +56,7 @@ export const MedicineLicence = () => {
                           ? messages.medicineIsValidCertificate
                           : messages.medicineIsNotValidCertificate,
                       ),
-                      variant: 'blue',
+                      variant: certificate?.approved ? 'blue' : 'red',
                     }}
                     text={certificate.atcName ?? undefined}
                     cta={{
