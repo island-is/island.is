@@ -6,6 +6,12 @@
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
+        "import/order": [
+          "warn",
+          {
+            "newlines-between": "always"
+          }
+        ],
         "@nx/enforce-module-boundaries": [
           "error",
           {
