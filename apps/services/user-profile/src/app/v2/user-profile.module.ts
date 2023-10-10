@@ -1,15 +1,17 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { AuditModule } from '@island.is/nest/audit'
-import environment from '../../environments/environment'
+
 import { AuthModule } from '@island.is/auth-nest-tools'
-import { MeUserProfileController } from './me-user-profile.controller'
-import { UserProfileService } from './user-profile.service'
-import { UserProfile } from './userProfileV2.model'
-import { EmailVerification } from '../user-profile/emailVerification.model'
 import { EmailModule } from '@island.is/email-service'
-import { SmsVerification } from '../user-profile/smsVerification.model'
 import { SmsModule } from '@island.is/nova-sms'
+
+import environment from '../../environments/environment'
+import { MeUserProfileController } from './me-user-profile.controller'
+import { UserProfile } from './userProfileV2.model'
+import { UserProfileService } from './user-profile.service'
+import { EmailVerification } from '../user-profile/emailVerification.model'
+import { SmsVerification } from '../user-profile/smsVerification.model'
 import { VerificationService } from '../user-profile/verification.service'
 
 @Module({
@@ -27,4 +29,4 @@ import { VerificationService } from '../user-profile/verification.service'
   controllers: [MeUserProfileController],
   providers: [UserProfileService, VerificationService],
 })
-export class V2UserProfileModule {}
+export class UserProfileModule {}

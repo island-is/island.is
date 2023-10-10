@@ -1,10 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { UserProfileDto } from './dto/user-profileDto'
+
 import { NoContentException } from '@island.is/nest/problem'
+import { isDefined } from '@island.is/shared/utils'
+
+import { UserProfileDto } from './dto/user-profileDto'
 import { PatchUserProfileDto } from './dto/patch-user-profileDto'
 import { DataStatus } from '../user-profile/types/dataStatusTypes'
-import { isDefined } from '@island.is/shared/utils'
 import { UserProfile } from './userProfileV2.model'
 import { VerificationService } from '../user-profile/verification.service'
 
@@ -17,29 +19,32 @@ export class UserProfileService {
     private readonly verificationService: VerificationService,
   ) {}
 
-  async findById(nationalId: string) {
-    const resp = await this.userProfileModel.findOne({
+  async findById(nationalId: string): Promise<UserProfileDto> {
+    const userProfile = await this.userProfileModel.findOne({
       where: { nationalId: nationalId },
     })
 
-    if (!resp) {
+    if (!userProfile) {
       throw new NoContentException()
     }
 
     return {
-      nationalId: resp.nationalId,
-      email: resp.email,
-      mobilePhoneNumber: resp.mobilePhoneNumber,
-      locale: resp.locale,
-      mobileStatus: resp.mobileStatus,
-      emailStatus: resp.emailStatus,
-      mobilePhoneNumberVerified: resp.mobilePhoneNumberVerified,
-      emailVerified: resp.emailVerified,
-      lastNudge: resp.lastNudge,
-    } as UserProfileDto
+      nationalId: userProfile.nationalId,
+      email: userProfile.email,
+      mobilePhoneNumber: userProfile.mobilePhoneNumber,
+      locale: userProfile.locale,
+      mobileStatus: DataStatus[userProfile.mobileStatus],
+      emailStatus: DataStatus[userProfile.emailStatus],
+      mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
+      emailVerified: userProfile.emailVerified,
+      lastNudge: userProfile.lastNudge,
+    }
   }
 
-  async patch(nationalId: string, userProfile: PatchUserProfileDto) {
+  async patch(
+    nationalId: string,
+    userProfile: PatchUserProfileDto,
+  ): Promise<UserProfileDto> {
     const resp = await this.userProfileModel.findOne({
       where: { nationalId: nationalId },
     })
@@ -89,7 +94,7 @@ export class UserProfileService {
     return update
   }
 
-  async confirmNudge(nationalId: string) {
+  async confirmNudge(nationalId: string): Promise<void> {
     const resp = await this.userProfileModel.findOne({
       where: { nationalId: nationalId },
     })
