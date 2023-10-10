@@ -79,10 +79,16 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
     data?.housingBenefitCalculatorCalculation?.maximumHousingBenefits
   const reductionsDueToIncome =
     data?.housingBenefitCalculatorCalculation?.reductionsDueToIncome
-  const reductionsDueToAssets =
-    data?.housingBenefitCalculatorCalculation?.reductionsDueToAssets
-  const reductionsDueToHousingCosts =
-    data?.housingBenefitCalculatorCalculation?.reductionsDueToHousingCosts
+  const reductionsDueToAssets = (
+    data?.housingBenefitCalculatorCalculation as {
+      reductionsDueToAssets?: number
+    }
+  )?.reductionsDueToAssets
+  const reductionsDueToHousingCosts = (
+    data?.housingBenefitCalculatorCalculation as {
+      reductionsDueToHousingCosts?: number
+    }
+  )?.reductionsDueToHousingCosts
   const estimatedHousingBenefits =
     data?.housingBenefitCalculatorCalculation?.estimatedHousingBenefits
 
