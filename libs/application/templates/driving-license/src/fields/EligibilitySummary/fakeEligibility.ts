@@ -23,7 +23,7 @@ export const fakeEligibility = (
             {
               key: RequirementKey.LocalResidency,
               daysOfResidency,
-              requirementMet: daysOfResidency >= 180,
+              requirementMet: daysOfResidency >= 185,
             },
           ]),
       {
