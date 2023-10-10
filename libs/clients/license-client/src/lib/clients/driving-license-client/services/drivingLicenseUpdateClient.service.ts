@@ -4,6 +4,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import {
   Pass,
   PassDataInput,
+  RevokePassData,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
 import {
@@ -13,9 +14,11 @@ import {
 } from '../../../licenseClient.type'
 import { BaseLicenseUpdateClient } from '../../baseLicenseUpdateClient'
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
+import { format as formatNationalId } from 'kennitala'
+import { createPkPassDataInput } from '../drivingLicenseMapper'
 
 /** Category to attach each log message to */
-//const LOG_CATEGORY = 'driving-license-service'
+const LOG_CATEGORY = 'driving-license-service'
 
 @Injectable()
 export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
@@ -27,27 +30,77 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
     super(logger, smartApi)
   }
 
-  async pushUpdate(
+  pushUpdate(
     inputData: PassDataInput,
     nationalId: string,
   ): Promise<Result<Pass | undefined>> {
-    return {
-      ok: false,
-      error: {
-        code: 99,
-        message: 'not implemented yet',
-      },
-    }
+    return this.smartApi.updatePkPass(inputData, formatNationalId(nationalId))
   }
 
-  async pullUpdate(): Promise<Result<Pass>> {
-    return {
-      ok: false,
-      error: {
-        code: 99,
-        message: 'not implemented yet',
-      },
+  async pullUpdate(nationalId: string): Promise<Result<Pass | undefined>> {
+    let data
+    try {
+      data = await Promise.all([
+        this.drivingLicenseApi.getCurrentLicenseV4({ nationalId }),
+        this.drivingLicenseApi.getRemarksCodeTable(),
+      ])
+    } catch (e) {
+      this.logger.error('Service error', {
+        ...e,
+        category: LOG_CATEGORY,
+      })
+      return {
+        ok: false,
+        error: {
+          code: 13,
+          message: 'Service error',
+          data: JSON.stringify(e),
+        },
+      }
     }
+
+    const [licenseInfo, remarks] = data
+
+    if (!licenseInfo) {
+      return {
+        ok: false,
+        error: {
+          code: 3,
+          message: 'No license info found for user',
+        },
+      }
+    }
+
+    const inputValues = createPkPassDataInput(licenseInfo, remarks)
+
+    if (!inputValues || !licenseInfo.dateValidTo) {
+      return {
+        ok: false,
+        error: {
+          code: 4,
+          message: 'Mapping failed, invalid data',
+        },
+      }
+    }
+
+    const image = licenseInfo.photo?.image
+    const thumbnail = image
+      ? {
+          imageBase64String: image.substring(image.indexOf(',') + 1).trim(),
+        }
+      : null
+
+    const payload: PassDataInput = {
+      inputFieldValues: inputValues,
+      expirationDate: licenseInfo.dateValidTo.toISOString(),
+      thumbnail,
+    }
+
+    return this.smartApi.updatePkPass(payload, formatNationalId(nationalId))
+  }
+
+  revoke(nationalId: string): Promise<Result<RevokePassData>> {
+    return this.smartApi.revokePkPass(formatNationalId(nationalId))
   }
 
   /** We need to verify the pk pass AND the license itself! */
