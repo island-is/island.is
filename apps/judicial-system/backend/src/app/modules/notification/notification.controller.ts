@@ -9,22 +9,23 @@ import {
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import type { User } from '@island.is/judicial-system/types'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import type { User } from '@island.is/judicial-system/types'
 
 import {
+  assistantRule,
   judgeRule,
+  prosecutorRepresentativeRule,
   prosecutorRule,
   registrarRule,
-  prosecutorRepresentativeRule,
-  assistantRule,
 } from '../../guards'
 import {
   Case,
@@ -33,13 +34,13 @@ import {
   CaseWriteGuard,
   CurrentCase,
 } from '../case'
+import { SendNotificationDto } from './dto/sendNotification.dto'
 import {
+  assistantNotificationRule,
   judgeNotificationRule,
   prosecutorNotificationRule,
   registrarNotificationRule,
-  assistantNotificationRule,
 } from './guards/rolesRules'
-import { SendNotificationDto } from './dto/sendNotification.dto'
 import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.response'
 import { NotificationService } from './notification.service'

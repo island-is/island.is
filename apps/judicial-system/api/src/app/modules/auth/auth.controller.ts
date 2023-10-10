@@ -1,33 +1,35 @@
+import { createHash, randomBytes } from 'crypto'
 import { Entropy } from 'entropy-string'
 import { CookieOptions, Request, Response } from 'express'
-import { createHash, randomBytes } from 'crypto'
 
-import { Controller, Get, Inject, Res, Query, Req } from '@nestjs/common'
+import { Controller, Get, Inject, Query, Req, Res } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import {
-  CSRF_COOKIE_NAME,
-  CODE_VERIFIER_COOKIE_NAME,
-  ACCESS_TOKEN_COOKIE_NAME,
-  EXPIRES_IN_MILLISECONDS,
-  CASES_ROUTE,
-  USERS_ROUTE,
-  COURT_OF_APPEAL_CASES_ROUTE,
-  IDS_ID_TOKEN,
-} from '@island.is/judicial-system/consts'
-import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
-import { SharedAuthService } from '@island.is/judicial-system/auth'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
+import { SharedAuthService } from '@island.is/judicial-system/auth'
+import {
+  ACCESS_TOKEN_COOKIE_NAME,
+  CASES_ROUTE,
+  CODE_VERIFIER_COOKIE_NAME,
+  COURT_OF_APPEAL_CASES_ROUTE,
+  CSRF_COOKIE_NAME,
+  DEFENDER_CASES_ROUTE,
+  EXPIRES_IN_MILLISECONDS,
+  IDS_ID_TOKEN,
+  USERS_ROUTE,
+} from '@island.is/judicial-system/consts'
+import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
-import { AuthUser, Cookie } from './auth.types'
-import { AuthService } from './auth.service'
 import { authModuleConfig } from './auth.config'
+import { AuthService } from './auth.service'
+import { AuthUser, Cookie } from './auth.types'
 
 const REDIRECT_COOKIE_NAME = 'judicial-system.redirect'
 
@@ -224,7 +226,7 @@ export class AuthController {
         return {
           userId: defender.id,
           jwtToken: this.sharedAuthService.signJwt(defender, csrfToken),
-          redirectRoute: requestedRedirectRoute,
+          redirectRoute: requestedRedirectRoute ?? DEFENDER_CASES_ROUTE,
         }
       }
     }
@@ -246,7 +248,7 @@ export class AuthController {
     )
 
     if (!authorization) {
-      this.logger.error('Blocking login attempt from an unauthorized user')
+      this.logger.info('Blocking login attempt from an unauthorized user')
 
       return res.redirect('/?villa=innskraning-ekki-notandi')
     }

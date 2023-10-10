@@ -10,3 +10,4 @@ export { default as UploadAdditionalFilesInfoScreen } from './UploadAdditionalFi
 export { default as PeriodsSectionImage } from './PeriodsSectionImage/PeriodsSectionImage'
 export { default as ChildDoesNotHaveNationalIdCheckbox } from './ChildDoesNotHaveNationalIdCheckbox/ChildDoesNotHaveNationalIdCheckbox'
 export { default as ChildNationalIdOrBirthDate } from './ChildNationalIdOrBirthDate/ChildNationalIdOrBirthDate'
+export { default as UploadAdditionalDocuments } from './UploadAdditionalDocuments'

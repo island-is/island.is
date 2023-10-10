@@ -10,21 +10,22 @@ import {
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   JwtAuthGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
 
-import { IndictmentCountService } from './indictmentCount.service'
+import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
 import { CaseExistsGuard, CaseWriteGuard } from '../case'
-import { prosecutorRule, prosecutorRepresentativeRule } from '../../guards'
-import { IndictmentCount } from './models/indictmentCount.model'
-import { IndictmentCountExistsGuard } from './guards/indictmentCountExists.guard'
 import { UpdateIndictmentCountDto } from './dto/updateIndictmentCount.dto'
+import { IndictmentCountExistsGuard } from './guards/indictmentCountExists.guard'
 import { DeleteIndictmentCountResponse } from './models/delete.response'
+import { IndictmentCount } from './models/indictmentCount.model'
+import { IndictmentCountService } from './indictmentCount.service'
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:caseId/indictmentCount')

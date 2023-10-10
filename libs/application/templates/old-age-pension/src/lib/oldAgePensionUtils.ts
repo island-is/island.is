@@ -29,10 +29,10 @@ import * as kennitala from 'kennitala'
 import addYears from 'date-fns/addYears'
 import addMonths from 'date-fns/addMonths'
 import addDays from 'date-fns/addDays'
-import { CombinedResidenceHistory, Employer, ChildPensionRow   } from '../types'
+import { CombinedResidenceHistory, Employer, ChildPensionRow } from '../types'
 
 interface FileType {
-  key: string  
+  key: string
   name: string
 }
 
@@ -58,6 +58,7 @@ interface ChildPensionAttachments {
 
 interface AdditionalInformation {
   additionalDocuments?: FileType[]
+  additionalDocumentsRequired?: FileType[]
 }
 
 enum AttachmentTypes {
@@ -182,13 +183,12 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'paymentInfo.taxLevel',
   ) as TaxLevelOptions
 
-
   const additionalAttachments = getValueViaPath(
     answers,
     'fileUploadAdditionalFiles.additionalDocuments',
   ) as FileType[]
 
-  const pensionAttachments  = getValueViaPath(
+  const pensionAttachments = getValueViaPath(
     answers,
     'fileUploadEarlyPenFisher.pension',
   ) as FileType[]
@@ -228,8 +228,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'fileUploadChildPension.notLivesWithApplicant',
   ) as FileType[]
 
-
-
   return {
     pensionFundQuestion,
     applicationType,
@@ -263,7 +261,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     leaseAgreementAttachments,
     schoolConfirmationAttachments,
     maintenanceAttachments,
-    notLivesWithApplicantAttachments
+    notLivesWithApplicantAttachments,
   }
 }
 
@@ -613,19 +611,23 @@ export function getAttachments(application: Application) {
   const additionalInfo =
     answers.fileUploadAdditionalFiles as AdditionalInformation
 
-  if (
-    additionalInfo.additionalDocuments &&
+  const additionalDocuments = [
+    ...(additionalInfo.additionalDocuments &&
     additionalInfo.additionalDocuments?.length > 0
-  ) {
+      ? additionalInfo.additionalDocuments
+      : []),
+    ...(additionalInfo.additionalDocumentsRequired &&
+    additionalInfo.additionalDocumentsRequired?.length > 0
+      ? additionalInfo.additionalDocumentsRequired
+      : []),
+  ]
+
+  if (additionalDocuments.length > 0) {
     getAttachmentDetails(
-      additionalInfo?.additionalDocuments,
+      additionalDocuments,
       AttachmentTypes.ADDITIONAL_DOCUMENTS,
     )
   }
-
-
-
-  console.log('GOT ATTACHMENTS', attachments)
 
   return attachments
 }

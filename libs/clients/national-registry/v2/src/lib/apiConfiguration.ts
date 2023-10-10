@@ -21,6 +21,7 @@ export const ApiConfiguration = {
     return new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-national-registry-v2',
+        organizationSlug: 'thjodskra-islands',
         cache: await getCache(config),
         timeout: config.fetchTimeout,
         autoAuth: idsClientConfig.isConfigured

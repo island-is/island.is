@@ -1,26 +1,26 @@
 import {
   buildCustomField,
-  buildDescriptionField,
-  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import Logo from '../assets/Logo'
-import { FILE_SIZE_LIMIT } from '../lib/constants'
 import { inReviewFormMessages, oldAgePensionFormMessage } from '../lib/messages'
 
 export const AdditionalDocumentsRequired: Form = buildForm({
-  id: 'ParentalLeaveInReviewUpload',
+  id: 'OldAgePensionInReviewUpload',
   title: inReviewFormMessages.formTitle,
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
+  renderLastScreenBackButton: true,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'reviewUpload',
-      title: oldAgePensionFormMessage.fileUpload.additionalFileTitle,
+      title:
+        oldAgePensionFormMessage.fileUpload.additionalDocumentRequiredTitle,
       children: [
         buildCustomField({
           id: 'uploadAdditionalFilesInfoScreen',
@@ -28,50 +28,35 @@ export const AdditionalDocumentsRequired: Form = buildForm({
           component: 'UploadAdditionalFilesInfoScreen',
         }),
         buildMultiField({
-          id: 'additionalDocumentsScreen',
-          title: oldAgePensionFormMessage.fileUpload.additionalFileTitle,
+          id: 'additionalDocumentsRequiredScreen',
+          title:
+            oldAgePensionFormMessage.fileUpload.additionalDocumentRequiredTitle,
+          description:
+            oldAgePensionFormMessage.fileUpload
+              .additionalDocumentRequiredDescription,
           children: [
-            buildFileUploadField({
-              id: 'fileUploadAdditionalFiles.additionalDocuments',
-              title: oldAgePensionFormMessage.fileUpload.additionalFileTitle,
-              description:
-                oldAgePensionFormMessage.fileUpload.additionalFileDescription,
-              introduction:
-                oldAgePensionFormMessage.fileUpload.additionalFileDescription,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                oldAgePensionFormMessage.fileUpload.attachmentHeader,
-              uploadDescription:
-                oldAgePensionFormMessage.fileUpload.attachmentDescription,
-              uploadButtonLabel:
-                oldAgePensionFormMessage.fileUpload.attachmentButton,
-              uploadMultiple: true,
+            buildCustomField({
+              id: 'fileUploadAdditionalFiles.additionalDocumentsRequired',
+              title: '',
+              component: 'UploadAdditionalDocuments',
             }),
             buildSubmitField({
-              id: 'additionalDocumentsSubmit',
+              id: 'submit',
+              placement: 'footer',
               title:
                 oldAgePensionFormMessage.fileUpload
                   .additionalDocumentsEditSubmit,
-              placement: 'footer',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
+                  event: DefaultEvents.SUBMIT,
                   name: oldAgePensionFormMessage.fileUpload
                     .additionalDocumentsEditSubmit,
                   type: 'primary',
-                  event: 'APPROVE',
                 },
               ],
             }),
           ],
-        }),
-        buildDescriptionField({
-          id: 'unused',
-          title: '',
-          description: '',
         }),
       ],
     }),

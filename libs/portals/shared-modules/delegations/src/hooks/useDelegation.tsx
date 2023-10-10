@@ -19,10 +19,14 @@ export const useDelegation = (direction?: AuthDomainDirection) => {
 
   const [
     getAuthScopeTreeQuery,
-    { data: scopeTreeData, loading: scopeTreeLoading },
+    { data: scopeTreeData, loading: scopeTreeLoading, error: scopeTreeError },
   ] = useAuthScopeTreeLazyQuery()
 
-  const { data, loading: delegationLoading } = useAuthDelegationQuery({
+  const {
+    data,
+    loading: delegationLoading,
+    error: delegationError,
+  } = useAuthDelegationQuery({
     fetchPolicy: 'network-only',
     variables: {
       input: {
@@ -58,5 +62,7 @@ export const useDelegation = (direction?: AuthDomainDirection) => {
       : undefined,
     delegationLoading,
     scopeTreeLoading,
+    scopeTreeError,
+    delegationError,
   }
 }

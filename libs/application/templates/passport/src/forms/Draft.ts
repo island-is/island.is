@@ -15,10 +15,10 @@ import {
   DefaultEvents,
   Form,
   FormModes,
+  PassportsApi,
 } from '@island.is/application/types'
 import {
   DeliveryAddressApi,
-  IdentityDocumentApi,
   SyslumadurPaymentCatalogApi,
   UserInfoApi,
   NationalRegistryUser,
@@ -59,7 +59,7 @@ export const Draft: Form = buildForm({
               subTitle: m.dataCollectionUserProfileSubtitle,
             }),
             buildDataProviderItem({
-              provider: IdentityDocumentApi,
+              provider: PassportsApi,
               title: m.dataCollectionIdentityDocumentTitle,
               subTitle: m.dataCollectionIdentityDocumentSubtitle,
             }),
