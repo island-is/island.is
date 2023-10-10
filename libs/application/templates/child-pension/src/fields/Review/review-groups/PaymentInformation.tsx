@@ -25,7 +25,7 @@ export const PaymentInformation = ({
       isEditable={editable}
       editAction={() => goToScreen?.('paymentInfo')}
     >
-      <GridRow marginBottom={3}>
+      <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <DataValue
             label={formatMessage(childPensionFormMessage.confirm.bank)}
