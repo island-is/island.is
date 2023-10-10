@@ -235,6 +235,7 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
             label={formatMessage(strings.conclusionHeading)}
             name="rulingConclusion"
             value={workingCase.appealConclusion || ''}
+            placeholder={formatMessage(strings.conclusionPlaceholder)}
             onChange={(event) => {
               removeTabsValidateAndSet(
                 'appealConclusion',
