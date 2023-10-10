@@ -27,8 +27,6 @@ export const EligibilitySummary: FC<
 
   const requirements = extractReasons(eligibility)
 
-  console.log('requirements', requirements)
-
   return (
     <Box marginBottom={10}>
       <Box

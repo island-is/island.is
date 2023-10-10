@@ -22,7 +22,7 @@ export interface Step {
   description: MessageDescriptor
   residenceRequirement?: MessageDescriptor
   state: ReviewSectionState
-  metaData?: number
+  daysOfResidency?: number
 }
 
 type ReviewSectionProps = {
@@ -33,12 +33,12 @@ type ReviewSectionProps = {
 
 const ReviewSection: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
   application,
-  step: { state, description, title, metaData },
+  step: { state, description, title, daysOfResidency },
 }) => {
   const { formatMessage } = useLocale()
 
   const showLocalRequirementDays: boolean =
-    isNumber(metaData) &&
+    isNumber(daysOfResidency) &&
     state === ReviewSectionState.requiresAction &&
     title === requirementsMessages.localResidencyTitle
 
@@ -110,7 +110,7 @@ const ReviewSection: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
           <Text
             marginTop={2}
             fontWeight="medium"
-          >{`Þú hefur aðeins búið á Íslandi í ${metaData} daga.`}</Text>
+          >{`Þú hefur aðeins búið á Íslandi í ${daysOfResidency} daga.`}</Text>
         )}
       </Box>
     </Box>

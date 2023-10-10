@@ -4,12 +4,12 @@ import { ApplicationEligibility, RequirementKey } from '../../types/schema'
 import { ReviewSectionState, Step } from './ReviewSection'
 
 export const extractReasons = (eligibility: ApplicationEligibility): Step[] => {
-  return eligibility.requirements.map(({ key, requirementMet, metaData }) => ({
+  return eligibility.requirements.map(({ key, requirementMet, daysOfResidency }) => ({
     ...requirementKeyToStep(key, requirementMet),
     state: requirementMet
       ? ReviewSectionState.complete
       : ReviewSectionState.requiresAction,
-    metaData: metaData ?? undefined,
+      daysOfResidency: daysOfResidency ?? undefined,
   }))
 }
 

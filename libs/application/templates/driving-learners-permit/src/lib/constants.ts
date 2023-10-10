@@ -71,7 +71,7 @@ export interface Step {
   title: MessageDescriptor
   description: MessageDescriptor
   state: ReviewSectionState
-  metaData?: number
+  daysOfResidency?: number
 }
 
 export type ReviewSectionProps = {

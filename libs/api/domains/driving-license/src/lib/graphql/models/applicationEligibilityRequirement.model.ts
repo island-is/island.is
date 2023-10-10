@@ -12,5 +12,5 @@ export class ApplicationEligibilityRequirement {
   requirementMet!: boolean
 
   @Field({ nullable: true })
-  metaData?: number
+  daysOfResidency?: number
 }
