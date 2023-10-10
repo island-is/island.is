@@ -1,3 +1,4 @@
+import max from 'lodash/max'
 import type {
   CreationOptional,
   InferAttributes,
@@ -21,7 +22,6 @@ import { DelegationScope } from './delegation-scope.model'
 import { Domain } from '../../resources/models/domain.model'
 import { MergedDelegationDTO } from '../dto/merged-delegation.dto'
 import { DelegationType } from '../types/delegationType'
-import max from 'lodash/max'
 
 @Table({
   tableName: 'delegation',
