@@ -5,6 +5,7 @@ const OrganizationFragment = gql`
     id
     title
     slug
+    link
     logo {
       id
       url

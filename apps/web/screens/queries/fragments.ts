@@ -573,6 +573,7 @@ export const slices = gql`
       title
       shortTitle
       slug
+      pageType
       tinyThumbnail {
         url
         title
