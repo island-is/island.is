@@ -65,8 +65,8 @@ const RenderAdvice = ({ advice, loc, isOpen = false }: RenderAdviceProps) => {
 
   return isOpen ? (
     <Stack space={1}>
-      {splitContent?.map((text) => (
-        <Text>{text}</Text>
+      {splitContent?.map((text, idx) => (
+        <Text key={idx}>{text}</Text>
       ))}
     </Stack>
   ) : (
