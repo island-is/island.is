@@ -324,11 +324,15 @@ export const subSectionHealthDeclaration = buildSubSection({
       title: m.healthDeclarationMultiFieldTitle,
       space: 2,
       condition: (answers, externalData) => {
-        return !hasYes(answers?.drivingLicenseInOtherCountry) && info((externalData.nationalRegistry.data as NationalRegistryUser).nationalId).age >= 65
+        return (
+          !hasYes(answers?.drivingLicenseInOtherCountry) &&
+          info(
+            (externalData.nationalRegistry.data as NationalRegistryUser)
+              .nationalId,
+          ).age >= 65
+        )
       },
-      children: [
-
-      ]
-    })
+      children: [],
+    }),
   ],
 })
