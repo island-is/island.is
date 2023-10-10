@@ -51,7 +51,13 @@ platform :android do
   lane :beta do |options|
     apps = options[:apps] || 'dev,prod'
     # Increment build version
-    increment_build
+    changed = `git diff --name-only HEAD~1`.split("\n")
+    unless changed.include? "apps/native/app/android/app/build.gradle"
+      increment_build
+    else
+      puts "Not incrementing build version because app/build.gradle was changed."
+      puts "If you want to increment the build version, please do it manually."
+    end
     # Build app variants
     gradle(
       task: apps.split(',').map { |app| "bundle#{app.capitalize}Release" }.join(' '),

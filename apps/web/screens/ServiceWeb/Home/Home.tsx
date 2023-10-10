@@ -370,7 +370,7 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
       query: GET_SERVICE_WEB_PAGE_QUERY,
       variables: {
         input: {
-          slug: query.slug as string,
+          slug: slug,
           lang: locale as ContentLanguage,
         },
       },

@@ -13,6 +13,8 @@ import {
   m,
   ErrorScreen,
   IntroHeader,
+  THJODSKRA_ID,
+  FootNote,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import {
@@ -138,6 +140,8 @@ const Child = () => {
               defaultMessage:
                 'Hér fyrir neðan eru gögn um fjölskyldumeðlim. Þú hefur kost á að gera breytingar á eftirfarandi upplýsingum ef þú kýst.',
             }}
+            serviceProviderID={THJODSKRA_ID}
+            serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
           />
         </Box>
       )}
@@ -186,14 +190,12 @@ const Child = () => {
             translate="no"
             printable
             content={child?.fullName || '...'}
-            tooltip={formatNameBreaks(
-              (child as NationalRegistryName) ?? undefined,
-              {
-                givenName: formatMessage(spmm.givenName),
-                middleName: formatMessage(spmm.middleName),
-                lastName: formatMessage(spmm.lastName),
-              },
-            )}
+            tooltip={formatNameBreaks(child?.name ?? undefined, {
+              givenName: formatMessage(spmm.givenName),
+              middleName: formatMessage(spmm.middleName),
+              lastName: formatMessage(spmm.lastName),
+            })}
+            tooltipFull
             loading={loading}
             editLink={
               !isChild

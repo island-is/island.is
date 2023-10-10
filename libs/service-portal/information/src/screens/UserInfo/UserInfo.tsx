@@ -6,9 +6,11 @@ import { info } from 'kennitala'
 import { Box, Divider, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  FootNote,
   formatNationalId,
   IntroHeader,
   m,
+  THJODSKRA_ID,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { useUserInfo } from '@island.is/auth/react'
@@ -67,9 +69,10 @@ const SubjectInfo = () => {
   return (
     <>
       <IntroHeader
-        marginBottom={2}
         title={userInfo.profile.name}
         intro={spmm.userInfoDesc}
+        serviceProviderID={THJODSKRA_ID}
+        serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
       />
       <Stack space={2}>
         <UserInfoLine
@@ -78,14 +81,12 @@ const SubjectInfo = () => {
           loading={loading}
           content={nationalRegistryPerson?.fullName ?? ''}
           translate="no"
-          tooltip={formatNameBreaks(
-            (nationalRegistryPerson as NationalRegistryName) ?? undefined,
-            {
-              givenName: formatMessage(spmm.givenName),
-              middleName: formatMessage(spmm.middleName),
-              lastName: formatMessage(spmm.lastName),
-            },
-          )}
+          tooltip={formatNameBreaks(nationalRegistryPerson?.name ?? undefined, {
+            givenName: formatMessage(spmm.givenName),
+            middleName: formatMessage(spmm.middleName),
+            lastName: formatMessage(spmm.lastName),
+          })}
+          tooltipFull
           editLink={{
             external: true,
             title: spmm.changeInNationalReg,
@@ -139,8 +140,7 @@ const SubjectInfo = () => {
           loading={loading}
           tooltip={formatMessage({
             id: 'sp.family:family-number-tooltip',
-            defaultMessage:
-              'Lögheimilistengsl er samtenging á milli einstaklinga á lögheimili, en veitir ekki upplýsingar um hverjir eru foreldrar barns eða forsjáraðilar.',
+            defaultMessage: `Lögheimilistengsl er samtenging á milli einstaklinga á lögheimili, en veitir ekki upplýsingar um hverjir eru foreldrar barns eða forsjáraðilar.`,
           })}
         />
         {isUserAdult ? (
@@ -265,6 +265,7 @@ const SubjectInfo = () => {
           </>
         )}
       </Stack>
+      <FootNote serviceProviderID={THJODSKRA_ID} />
     </>
   )
 }

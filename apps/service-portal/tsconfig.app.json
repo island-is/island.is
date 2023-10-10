@@ -3,7 +3,11 @@
   "compilerOptions": {
     "sourceMap": true,
     "outDir": "../../dist/out-tsc",
-    "types": ["node"]
+    "types": [
+      "node",
+      "@nx/react/typings/cssmodule.d.ts",
+      "@nx/react/typings/image.d.ts"
+    ]
   },
   "exclude": [
     "**/*.spec.ts",

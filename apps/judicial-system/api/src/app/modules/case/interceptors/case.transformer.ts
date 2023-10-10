@@ -1,4 +1,5 @@
 import { getAppealInfo } from '@island.is/judicial-system/types'
+
 import { Case } from '../models/case.model'
 
 const getDays = (days: number) => days * 24 * 60 * 60 * 1000
@@ -8,7 +9,6 @@ export function transformCase(theCase: Case): Case {
 
   return {
     ...theCase,
-    sendRequestToDefender: theCase.sendRequestToDefender ?? false,
     requestProsecutorOnlySession: theCase.requestProsecutorOnlySession ?? false,
     isClosedCourtHidden: theCase.isClosedCourtHidden ?? false,
     isHeightenedSecurityLevel: theCase.isHeightenedSecurityLevel ?? false,

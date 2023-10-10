@@ -35,7 +35,7 @@ import {
   Footer as WebFooter,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { usePlausiblePageview } from '@island.is/web/hooks'
+import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { WatsonChatPanel } from '@island.is/web/components'
 
@@ -87,11 +87,10 @@ import {
   IcelandicNaturalDisasterInsuranceHeader,
   IcelandicNaturalDisasterInsuranceFooter,
 } from './Themes/IcelandicNaturalDisasterInsuranceTheme'
-import {
-  TransportAuthorityFooter,
-  TransportAuthorityHeader,
-} from './Themes/TransportAuthorityTheme'
+import { TransportAuthorityHeader } from './Themes/TransportAuthorityTheme'
 import { RettindagaeslaFatladsFolksHeader } from './Themes/RettindagaeslaFatladsFolksTheme'
+import { HmsHeader } from './Themes/HmsTheme'
+import { RikissaksoknariHeader } from './Themes/RikissaksoknariTheme'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -122,7 +121,16 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const lightThemes = [
+const darkThemes = ['hms']
+
+const blueberryThemes = [
+  'sjukratryggingar',
+  'rikislogmadur',
+  'tryggingastofnun',
+  'nti',
+]
+
+const lightThemes = [
   'digital_iceland',
   'default',
   'fiskistofa',
@@ -135,73 +143,17 @@ export const lightThemes = [
   'samgongustofa',
   'rettindagaesla-fatlads-folks',
 ]
-export const footerEnabled = [
-  'syslumenn',
-  'district-commissioner',
-
-  'utlendingastofnun',
-  'directorate-of-immigration',
-
-  'landlaeknir',
-  'directorate-of-health',
-
-  'sjukratryggingar',
-  'icelandic-health-insurance',
-
-  'mannaudstorg',
-
-  'fiskistofa',
-  'directorate-of-fisheries',
-
-  'landskjorstjorn',
-
-  'hsn',
-  'hsu',
-
-  'rikislogmadur',
-  'office-of-the-attorney-general-civil-affairs',
-
-  'fjarsyslan',
-  'the-financial-management-authority',
-
-  'sak',
-
-  'hve',
-
-  'tryggingastofnun',
-  'insurance-administration',
-
-  'gev',
-
-  'shh',
-
-  'hsa',
-
-  'nti',
-
-  'samgongustofa',
-  'transport-authority',
-
-  'geislavarnir-rikisins',
-  'icelandic-radiation-safety-authority',
-]
 
 export const getThemeConfig = (
-  theme: string,
-  slug: string,
+  theme?: string,
+  organization?: Organization | null,
 ): { themeConfig: Partial<LayoutProps> } => {
-  let footerVersion: LayoutProps['footerVersion'] = 'default'
+  const footerVersion: LayoutProps['footerVersion'] =
+    theme === 'landing-page' || (organization?.footerItems ?? [])?.length > 0
+      ? 'organization'
+      : 'default'
 
-  if (footerEnabled.includes(slug) || theme === 'landing_page') {
-    footerVersion = 'organization'
-  }
-
-  if (
-    theme === 'sjukratryggingar' ||
-    theme === 'rikislogmadur' ||
-    theme === 'tryggingastofnun' ||
-    theme === 'nti'
-  )
+  if (blueberryThemes.includes(theme ?? ''))
     return {
       themeConfig: {
         headerButtonColorScheme: 'blueberry',
@@ -210,16 +162,27 @@ export const getThemeConfig = (
       },
     }
 
-  const isLightTheme = lightThemes.includes(theme)
-  return !isLightTheme
-    ? {
-        themeConfig: {
-          headerColorScheme: 'white',
-          headerButtonColorScheme: 'negative',
-          footerVersion,
-        },
-      }
-    : { themeConfig: { footerVersion } }
+  if (darkThemes.includes(theme ?? '')) {
+    return {
+      themeConfig: {
+        headerColorScheme: 'dark',
+        headerButtonColorScheme: 'dark',
+        footerVersion,
+      },
+    }
+  }
+
+  if (lightThemes.includes(theme ?? '')) {
+    return { themeConfig: { footerVersion } }
+  }
+
+  return {
+    themeConfig: {
+      headerColorScheme: 'white',
+      headerButtonColorScheme: 'negative',
+      footerVersion,
+    },
+  }
 }
 
 export const OrganizationHeader: React.FC<
@@ -294,6 +257,11 @@ export const OrganizationHeader: React.FC<
       return (
         <RettindagaeslaFatladsFolksHeader organizationPage={organizationPage} />
       )
+    case 'hms':
+      return <HmsHeader organizationPage={organizationPage} />
+
+    case 'rikissaksoknari':
+      return <RikissaksoknariHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -379,12 +347,13 @@ export const OrganizationFooter: React.FC<
 > = ({ organizations, force = false }) => {
   const organization = force
     ? organizations[0]
-    : organizations.find((x) => footerEnabled.includes(x.slug))
+    : organizations.find((x) => x?.footerItems?.length > 0)
 
   const namespace = useMemo(
     () => JSON.parse(organization?.namespace?.fields ?? '{}'),
     [],
   )
+  const n = useNamespace(namespace)
 
   let OrganizationFooterComponent = null
 
@@ -562,25 +531,26 @@ export const OrganizationFooter: React.FC<
     case 'samgongustofa':
     case 'transport-authority':
       OrganizationFooterComponent = (
-        <TransportAuthorityFooter
-          title={organization.title}
-          footerItems={organization.footerItems}
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          logo={organization.logo?.url}
-        />
-      )
-      break
-    case 'geislavarnir-rikisins':
-    case 'icelandic-radiation-safety-authority':
-      OrganizationFooterComponent = (
         <WebFooter
           imageUrl={organization.logo?.url}
           heading={organization.title}
           columns={organization.footerItems}
+          titleVariant="h2"
         />
       )
       break
+    default: {
+      const footerItems = organization?.footerItems ?? []
+      if (footerItems.length === 0) break
+      OrganizationFooterComponent = (
+        <WebFooter
+          heading={organization?.title ?? ''}
+          columns={footerItems}
+          background={organization?.footerConfig?.background}
+          color={organization?.footerConfig?.textColor}
+        />
+      )
+    }
   }
 
   return OrganizationFooterComponent

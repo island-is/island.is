@@ -1,9 +1,10 @@
-import { Box, SkeletonLoader, Tabs } from '@island.is/island-ui/core'
+import { Box, SkeletonLoader, Tabs, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
   ErrorScreen,
   IntroHeader,
+  SJUKRATRYGGINGAR_ID,
   m,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
@@ -73,6 +74,8 @@ const AidsAndNutrition = () => {
       <IntroHeader
         title={formatMessage(messages.aidsAndNutritionTitle)}
         intro={formatMessage(messages.aidsAndNutritionDescription)}
+        serviceProviderID={SJUKRATRYGGINGAR_ID}
+        serviceProviderTooltip={formatMessage(m.healthTooltip)}
       />
       {loading && <SkeletonLoader space={1} height={30} repeat={4} />}
 
@@ -84,15 +87,22 @@ const AidsAndNutrition = () => {
         </Box>
       )}
 
-      {!loading && !error && tabs.length > 0 && (
+      {!loading && !error && tabs.length && (
         <Box>
-          <Tabs
-            label={formatMessage(messages.chooseAidsOrNutrition)}
-            tabs={tabs}
-            contentBackground="transparent"
-            selected="0"
-            size="xs"
-          />
+          {tabs.length === 1 ? (
+            <>
+              <Text variant="h5">{tabs[0].label}</Text>
+              {tabs[0].content}
+            </>
+          ) : (
+            <Tabs
+              label={formatMessage(messages.chooseAidsOrNutrition)}
+              tabs={tabs}
+              contentBackground="transparent"
+              selected="0"
+              size="xs"
+            />
+          )}
         </Box>
       )}
     </Box>

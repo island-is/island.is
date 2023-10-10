@@ -154,7 +154,9 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 },
                 {
                   title: formatMessage(core.courtCaseNumber),
-                  value: workingCase.courtCaseNumber,
+                  value:
+                    workingCase.courtCaseNumber ??
+                    formatMessage(strings.noCourtNumber),
                 },
                 {
                   title: formatMessage(core.prosecutor),
@@ -168,10 +170,14 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   title: formatMessage(core.prosecutorPerson),
                   value: workingCase.prosecutor?.name,
                 },
-                {
-                  title: formatMessage(core.judge),
-                  value: workingCase.judge?.name,
-                },
+                ...(workingCase.judge
+                  ? [
+                      {
+                        title: formatMessage(core.judge),
+                        value: workingCase.judge?.name,
+                      },
+                    ]
+                  : []),
                 // Conditionally add this field based on case type
                 ...(isInvestigationCase(workingCase.type)
                   ? [
@@ -260,22 +266,21 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
             </Box>
           )}
           <AppealCaseFilesOverview />
-          {(workingCase.sendRequestToDefender ||
+
+          {(workingCase.requestSharedWithDefender ||
             completedCaseStates.includes(workingCase.state)) && (
             <Box marginBottom={10}>
               <Text as="h3" variant="h3" marginBottom={3}>
                 {formatMessage(strings.documentHeading)}
               </Text>
               <Box>
-                {(workingCase.sendRequestToDefender ||
-                  completedCaseStates.includes(workingCase.state)) && (
-                  <PdfButton
-                    renderAs="row"
-                    caseId={workingCase.id}
-                    title={formatMessage(core.pdfButtonRequest)}
-                    pdfType={'limitedAccess/request'}
-                  />
-                )}
+                <PdfButton
+                  renderAs="row"
+                  caseId={workingCase.id}
+                  title={formatMessage(core.pdfButtonRequest)}
+                  pdfType={'limitedAccess/request'}
+                />
+
                 {completedCaseStates.includes(workingCase.state) && (
                   <>
                     <PdfButton

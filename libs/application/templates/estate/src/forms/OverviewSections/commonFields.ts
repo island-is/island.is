@@ -50,6 +50,17 @@ export const commonOverviewFields = [
             member.relation,
             formatPhoneNumber(member.phone || ''),
             member.email,
+
+            /* Advocate */
+            member.advocate
+              ? [
+                  [
+                    m.inheritanceAdvocateLabel.defaultMessage +
+                      ': ' +
+                      member.advocate?.name,
+                  ],
+                ]
+              : '',
           ],
         })),
     },

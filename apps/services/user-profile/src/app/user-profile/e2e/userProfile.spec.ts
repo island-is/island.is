@@ -158,14 +158,14 @@ describe('User profile API', () => {
   })
 
   describe('GET /userProfile', () => {
-    it('GET /userProfile should return 204 and empty body for NoContentException', async () => {
+    it('GET /userProfile should return 404 not found error msg', async () => {
       // Act
       const getResponse = await request(app.getHttpServer())
         .get(`/userProfile/${mockProfile.nationalId}`)
-        .expect(204)
+        .expect(404)
 
       // Assert
-      expect(getResponse.body).toStrictEqual({})
+      expect(getResponse.body.message).toBe('Not Found')
     })
 
     it('GET /userProfile should return profile', async () => {

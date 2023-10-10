@@ -100,18 +100,19 @@ export const numberOfLinks = (contentList: object[]) => {
 export const numberOfProcessEntries = (contentList: any[]) =>
   getProcessEntries(contentList).length
 
-const pruneEntryHyperlink = (node: any) => {
+/**
+ * Goes through keys in an entry-hyperlink node and deletes objects that are at depth 2
+ */
+export const pruneEntryHyperlink = (node: any) => {
   if (node?.data?.target?.fields) {
-    for (const field of Object.keys(node.data.target.fields)) {
-      if (field === 'organizationPage') {
-        // Just in case there's an entry-hyperlink that needs an organization page in order to make the url
-        node.data.target.fields[field] = {
-          fields: {
-            slug: node.data.target.fields[field]?.fields?.slug,
-          },
+    const fields = node.data.target.fields
+    for (const key of Object.keys(fields)) {
+      if (typeof fields[key]?.['fields'] === 'object') {
+        for (const nestedKey of Object.keys(fields[key]['fields'])) {
+          if (typeof fields[key]['fields'][nestedKey] === 'object') {
+            delete fields[key]['fields'][nestedKey]
+          }
         }
-      } else if (field !== 'slug' && field !== 'url') {
-        delete node.data.target.fields[field]
       }
     }
   }

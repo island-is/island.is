@@ -1,15 +1,16 @@
-import { uuid } from 'uuidv4'
-import { Transaction } from 'sequelize/types'
 import each from 'jest-each'
+import { Transaction } from 'sequelize/types'
+import { uuid } from 'uuidv4'
 
 import { ForbiddenException } from '@nestjs/common'
 
 import { User } from '@island.is/judicial-system/types'
 
+import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import { AwsS3Service } from '../../../aws-s3'
 import { Case } from '../../models/case.model'
 import { SignatureConfirmationResponse } from '../../models/signatureConfirmation.response'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 
 interface Then {
   result: SignatureConfirmationResponse
@@ -125,7 +126,6 @@ describe('CaseController - Get court record signature confirmation', () => {
         mockPutObject.mockRejectedValueOnce(new Error('Some error'))
 
         then = await givenWhenThen(caseId, user, theCase, documentToken)
-        console.log(then)
       })
 
       it('return failure', () => {

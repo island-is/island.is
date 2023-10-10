@@ -1,13 +1,22 @@
-import { Test } from '@nestjs/testing'
 import { mock } from 'jest-mock-extended'
 
+import { Test } from '@nestjs/testing'
+
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { ConfigModule } from '@island.is/nest/config'
+
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 
+import { courtModuleConfig } from '../court.config'
 import { CourtService } from '../court.service'
 
 export const createTestingCourtModule = async () => {
   const courtModule = await Test.createTestingModule({
+    imports: [
+      ConfigModule.forRoot({
+        load: [courtModuleConfig],
+      }),
+    ],
     providers: [
       {
         provide: LOGGER_PROVIDER,

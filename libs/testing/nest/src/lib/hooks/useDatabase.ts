@@ -10,7 +10,7 @@ import { TestApp } from '../testServer'
 
 type Database = Extract<Dialect, 'postgres' | 'sqlite'>
 
-const Dialect: Record<string, Database> = {
+const dialect: Record<string, Database> = {
   Postgres: 'postgres',
   SQLite: 'sqlite',
 }
@@ -28,12 +28,12 @@ const sharedConfig: SequelizeModuleOptions = {
 
 const config: Record<Database, SequelizeModuleOptions> = {
   sqlite: {
-    dialect: Dialect.SQLite,
+    dialect: dialect.SQLite,
     database: ':memory:',
     ...sharedConfig,
   },
   postgres: {
-    dialect: Dialect.Postgres,
+    dialect: dialect.Postgres,
     username: 'test_db',
     password: 'test_db',
     database: 'test_db',
@@ -117,7 +117,7 @@ export default ({ type, provider, skipTruncate = false }: UseDatabase) => ({
     await sequelize.sync({ logging: false, force: true })
 
     return async () => {
-      if (sequelize?.options.dialect === Dialect.Postgres) {
+      if (sequelize?.options.dialect === dialect.Postgres) {
         // need to return await due to a Bluebird promise
         return await sequelize.close()
       }

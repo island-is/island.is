@@ -1,3 +1,4 @@
+import * as Constants from '@island.is/judicial-system/consts'
 import {
   CaseAppealDecision,
   Gender,
@@ -5,21 +6,19 @@ import {
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 
-import * as Constants from '@island.is/judicial-system/consts'
-
 import {
-  formatDate,
   capitalize,
-  formatGender,
-  formatAppeal,
-  formatNationalId,
-  formatDOB,
-  formatPhoneNumber,
   displayFirstPlusRemaining,
-  splitStringByComma,
-  readableIndictmentSubtypes,
+  formatAppeal,
+  formatDate,
+  formatDOB,
+  formatGender,
+  formatNationalId,
+  formatPhoneNumber,
   indictmentSubtypes,
+  readableIndictmentSubtypes,
   sanitize,
+  splitStringByComma,
 } from './formatters'
 
 describe('formatDate', () => {

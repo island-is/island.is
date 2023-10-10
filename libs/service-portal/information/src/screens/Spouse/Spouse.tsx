@@ -1,5 +1,6 @@
 import { defineMessage } from 'react-intl'
 import { useParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 
 import {
   Box,
@@ -11,16 +12,18 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  FootNote,
   formatNationalId,
   IntroHeader,
   m,
   NotFound,
+  THJODSKRA_ID,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { natRegMaritalStatusMessageDescriptorRecord } from '../../helpers/localizationHelpers'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { useState, useEffect } from 'react'
+import { spmm } from '../../lib/messages'
 import { useNationalRegistrySpouseQuery } from './Spouse.generated'
 
 const dataNotFoundMessage = defineMessage({
@@ -41,7 +44,8 @@ const FamilyMember = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
 
-  const [useNatRegV3, setUseNatRegV3] = useState(false)
+  const [useNatRegV3, setUseNatRegV3] = useState<boolean>()
+  const [spouseValue, setSpouseValue] = useState<string>('')
 
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
 
@@ -54,6 +58,8 @@ const FamilyMember = () => {
       )
       if (ffEnabled) {
         setUseNatRegV3(ffEnabled as boolean)
+      } else {
+        setUseNatRegV3(false)
       }
     }
     isFlagEnabled()
@@ -64,6 +70,29 @@ const FamilyMember = () => {
       api: useNatRegV3 ? 'v3' : undefined,
     },
   })
+
+  useEffect(() => {
+    if (useNatRegV3 !== undefined) {
+      if (useNatRegV3) {
+        const v3Value =
+          data?.nationalRegistryPerson?.spouse?.cohabitationWithSpouse === true
+            ? formatMessage(spmm.cohabitationWithSpouse)
+            : data?.nationalRegistryPerson?.spouse?.maritalStatus
+            ? data.nationalRegistryPerson.spouse.maritalStatus
+            : ''
+        setSpouseValue(v3Value)
+      } else {
+        const v1Value = data?.nationalRegistryPerson?.maritalStatus
+          ? formatMessage(
+              natRegMaritalStatusMessageDescriptorRecord[
+                data?.nationalRegistryPerson?.maritalStatus
+              ],
+            )
+          : ''
+        setSpouseValue(v1Value ?? '')
+      }
+    }
+  }, [useNatRegV3, data?.nationalRegistryPerson, formatMessage])
 
   const { nationalId } = useParams() as UseParams
 
@@ -92,6 +121,8 @@ const FamilyMember = () => {
           title={data?.nationalRegistryPerson?.spouse?.fullName || ''}
           intro={dataInfoSpouse}
           marginBottom={2}
+          serviceProviderID={THJODSKRA_ID}
+          serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
         />
       )}
 
@@ -115,21 +146,12 @@ const FamilyMember = () => {
             id: 'sp.family:spouseCohab',
             defaultMessage: 'Tengsl',
           })}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : data?.nationalRegistryPerson?.maritalStatus
-              ? formatMessage(
-                  natRegMaritalStatusMessageDescriptorRecord[
-                    data?.nationalRegistryPerson?.maritalStatus
-                  ],
-                )
-              : ''
-          }
+          content={error ? formatMessage(dataNotFoundMessage) : spouseValue}
           loading={loading}
         />
         <Divider />
       </Stack>
+      <FootNote serviceProviderID={THJODSKRA_ID} />
     </>
   )
 }
