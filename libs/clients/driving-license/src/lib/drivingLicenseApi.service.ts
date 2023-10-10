@@ -558,7 +558,9 @@ export class DrivingLicenseApi {
     }
   }
 
-  async getAllDriverLicenses(token: string): Promise<DriverLicenseWithoutImagesDto[]>{
+  async getAllDriverLicenses(
+    token: string,
+  ): Promise<DriverLicenseWithoutImagesDto[]> {
     return await this.v5.apiDrivinglicenseV5AllGet({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,

@@ -201,9 +201,10 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
   async glassesCheck(token: string): Promise<boolean> {
     //TODO: Pickout glasess check from driving license service
-    const licences: DriverLicenseWithoutImages[] = await this.drivingLicenseService.getAllDriverLicenses(token)
+    const licences: DriverLicenseWithoutImages[] =
+      await this.drivingLicenseService.getAllDriverLicenses(token)
     const hasGlasses: boolean = licences.some((license) => {
-       return !!license.comments?.some((comment) => comment.nr?.includes("01"))
+      return !!license.comments?.some((comment) => comment.nr?.includes('01'))
     })
     return hasGlasses
   }

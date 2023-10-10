@@ -62,10 +62,14 @@ export class DrivingLicenseService {
     }
   }
 
-  async getAllDriverLicenses(token: string): Promise<DriverLicenseWithoutImages[]>{
-    const drivingLicesnes = await this.drivingLicenseApi.getAllDriverLicenses(token).catch((e) => {
-      this.logger.log(`${LOGTAG} Error fetching all driver licenses`, e)
-    })
+  async getAllDriverLicenses(
+    token: string,
+  ): Promise<DriverLicenseWithoutImages[]> {
+    const drivingLicesnes = await this.drivingLicenseApi
+      .getAllDriverLicenses(token)
+      .catch((e) => {
+        this.logger.log(`${LOGTAG} Error fetching all driver licenses`, e)
+      })
     return drivingLicesnes ?? []
   }
 
