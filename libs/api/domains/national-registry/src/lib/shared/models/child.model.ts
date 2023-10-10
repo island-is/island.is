@@ -79,7 +79,4 @@ export class Child {
 
   @Field(() => String, { nullable: true })
   postal?: string
-
-  @Field(() => String, { nullable: true })
-  fate?: string
 }
