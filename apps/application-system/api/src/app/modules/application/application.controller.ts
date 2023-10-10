@@ -822,33 +822,37 @@ export class ApplicationController {
     if (!Array.isArray(apis)) {
       apis = [apis]
     }
-
+    console.log('CURRENT EVENT IS :', event)
     apis.forEach((api) => {
       this.logger.info(
         `Action ${api.action},triggerEvent ${api.triggerEvent}, `,
       )
+      console.log('api.action !== event', api.action !== event)
+      console.log('api.triggerEvent ', api.triggerEvent)
+      console.log('event:', event)
     })
+
     //filter out events that should not be triggered through triggerEvent
     const filteredApis = apis.filter(
-      (api) => api.triggerEvent !== undefined && api.action !== event,
+      (api) => api.triggerEvent !== undefined && api.triggerEvent !== event,
     )
 
     //log out the filtered ones with the schema api.action - api.triggerEvent
     filteredApis.forEach((api) => {
       this.logger.info(
-        `Action ${api.action} has triggerEvent ${api.triggerEvent} and will not be triggered`,
+        `Action ${api.action} has triggerEvent ${api.triggerEvent} and will NOT be triggered`,
       )
     })
 
     //Filter out events that should be triggered through triggerEvent or are not defined
     //if triggerEvent is not defined then it should be triggered
     apis = apis.filter(
-      (api) => api.triggerEvent === undefined || api.action === event,
+      (api) => api.triggerEvent === undefined || api.triggerEvent === event,
     )
 
     apis.forEach((api) => {
       this.logger.info(
-        `not filtered Action ${api.action} has triggerEvent ${api.triggerEvent} and will not be triggered`,
+        `Action ${api.action} has triggerEvent ${api.triggerEvent} and will now be triggered`,
       )
     })
 

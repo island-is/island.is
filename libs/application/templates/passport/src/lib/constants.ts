@@ -10,6 +10,7 @@ export enum States {
   DONE = 'done',
   PARENT_B_CONFIRM = 'parentBConfirm',
   PAYMENT = 'payment',
+  ASSIGN_PAYMENT = 'assignPayment',
 }
 export enum Roles {
   APPLICANT = 'applicant',

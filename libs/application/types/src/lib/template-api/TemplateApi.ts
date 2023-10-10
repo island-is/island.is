@@ -37,6 +37,7 @@ export class TemplateApi<TParams = unknown> {
       params,
       shouldPersistToExternalData,
       externalDataId,
+      triggerEvent,
     } = definition
 
     this.action = action
@@ -45,6 +46,7 @@ export class TemplateApi<TParams = unknown> {
 
     this.order = order ? order : 0
     this.params = params
+    this.triggerEvent = triggerEvent
 
     shouldPersistToExternalData !== undefined
       ? (this.shouldPersistToExternalData = shouldPersistToExternalData)
@@ -90,6 +92,7 @@ interface DefineTemplateApi<TParams = unknown>
   extends Omit<TemplateApi, 'configure' | 'actionId' | 'externalDataId'> {
   externalDataId?: string
   namespace?: string
+  triggerEvent?: DefaultEvents
   params?: TParams
 }
 

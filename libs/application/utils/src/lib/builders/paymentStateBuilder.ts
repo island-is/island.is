@@ -1,4 +1,9 @@
-import { AnyEventObject, EventObject, StateNodeConfig } from 'xstate'
+import {
+  AnyEventObject,
+  EventObject,
+  StateNodeConfig,
+  TransitionsConfig,
+} from 'xstate'
 
 import { PaymentForm } from '@island.is/application/ui-forms'
 import {
@@ -20,11 +25,6 @@ import {
   corePendingActionMessages,
 } from '@island.is/application/core'
 
-export type Events =
-  | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.PAYMENT }
-  | { type: DefaultEvents.ABORT }
-
 type PaymentStateConfigOptions<
   T extends EventObject = AnyEventObject,
   R = unknown,
@@ -38,7 +38,7 @@ type PaymentStateConfigOptions<
   lifecycle?: StateLifeCycle
   onExit?: TemplateApi<R>[]
   onEntry?: TemplateApi<R>[]
-  roles?: RoleInState<Events>[]
+  roles?: RoleInState<T>[]
 }
 
 export function buildPaymentState<
@@ -46,12 +46,17 @@ export function buildPaymentState<
   R = unknown,
 >(
   options: PaymentStateConfigOptions<T, R>,
-): StateNodeConfig<ApplicationContext, ApplicationStateSchema<Events>, Events> {
+): StateNodeConfig<ApplicationContext, ApplicationStateSchema<T>, T> {
   const { onExit, onEntry } = options
+
+  const transitions = {
+    [DefaultEvents.SUBMIT]: { target: options.submitTarget || 'done' },
+    [DefaultEvents.ABORT]: { target: options.abortTarget || 'draft' },
+  } as TransitionsConfig<ApplicationContext, T>
 
   return {
     meta: {
-      name: 'Payment state',
+      name: 'Greiðsla',
       status: 'inprogress',
       lifecycle: options.lifecycle || pruneAfterDays(1),
       actionCard: {
@@ -80,7 +85,7 @@ export function buildPaymentState<
       onEntry: [
         CreateChargeApi.configure({
           params: {
-            organizationId: InstitutionNationalIds.SYSLUMENN,
+            organizationId: options.organizationId,
             chargeItemCodes: options.chargeItemCodes,
           },
         }),
@@ -93,9 +98,9 @@ export function buildPaymentState<
             return PaymentForm
           },
           actions: [
-            { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
+            { event: 'SUBMIT', name: 'Panta', type: 'primary' },
             {
-              event: DefaultEvents.ABORT,
+              event: 'ABORT',
               name: 'Hætta við',
               type: 'primary',
             },
@@ -105,9 +110,22 @@ export function buildPaymentState<
         },
       ],
     },
-    on: {
-      [DefaultEvents.SUBMIT]: { target: options.submitTarget || 'done' },
-      [DefaultEvents.ABORT]: { target: options.abortTarget || 'draft' },
-    },
+    on: transitions,
   }
 }
+/*
+usage
+import { buildPaymentState } from '@island.is/application/utils'
+
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SYSLUMENN,
+        chargeItemCodes: [ChargeItemCode.MORTGAGE_CERTIFICATE],
+        submitTarget: States.COMPLETED,
+        onExit: [
+          defineTemplateApi({
+            action: ApiActions.submitApplication,
+            triggerEvent: DefaultEvents.SUBMIT,
+          }),
+        ],
+      }),
+*/

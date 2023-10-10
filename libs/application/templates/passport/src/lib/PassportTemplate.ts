@@ -13,6 +13,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   DistrictsApi,
+  InstitutionNationalIds,
   PassportsApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
@@ -36,6 +37,7 @@ import {
   twoDays,
 } from './constants'
 import { dataSchema } from './dataSchema'
+import { buildPaymentState } from '@island.is/application/utils'
 
 const pruneAfter = (time: number) => {
   return {
@@ -44,6 +46,16 @@ const pruneAfter = (time: number) => {
     whenToPrune: time,
     shouldDeleteChargeIfPaymentFulfilled: true,
   }
+}
+const getCode = (application: Application) => {
+  const chargeItemCode = getValueViaPath<string>(
+    application.answers,
+    'chargeItemCode',
+  )
+  if (!chargeItemCode) {
+    throw new Error('chargeItemCode missing in request')
+  }
+  return [chargeItemCode]
 }
 
 const PassportTemplate: ApplicationTemplate<
@@ -110,54 +122,19 @@ const PassportTemplate: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: { target: States.DRAFT },
           [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
+          [DefaultEvents.ASSIGN]: { target: States.ASSIGN_PAYMENT },
         },
       },
-      [States.PAYMENT]: {
-        meta: {
-          name: 'Payment state',
-          status: 'inprogress',
-          lifecycle: pruneAfter(sixtyDays),
-          onEntry: defineTemplateApi({
-            action: ApiActions.createCharge,
-          }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Payment').then((val) =>
-                  Promise.resolve(val.payment),
-                ),
-              actions: [
-                { event: DefaultEvents.ASSIGN, name: '', type: 'primary' },
-                { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-          actionCard: {
-            historyLogs: [
-              {
-                logMessage: coreHistoryMessages.paymentAccepted,
-                onEvent: DefaultEvents.SUBMIT,
-              },
-              {
-                logMessage: coreHistoryMessages.paymentAccepted,
-                onEvent: DefaultEvents.ASSIGN,
-              },
-            ],
-            pendingAction: {
-              title: corePendingActionMessages.paymentPendingTitle,
-              content: corePendingActionMessages.paymentPendingDescription,
-              displayStatus: 'warning',
-            },
-          },
-        },
-        on: {
-          [DefaultEvents.ASSIGN]: { target: States.PARENT_B_CONFIRM },
-          [DefaultEvents.SUBMIT]: { target: States.DONE },
-        },
-      },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SYSLUMENN,
+        chargeItemCodes: getCode,
+        submitTarget: States.DONE,
+      }),
+      [States.ASSIGN_PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SYSLUMENN,
+        chargeItemCodes: getCode,
+        submitTarget: States.PARENT_B_CONFIRM,
+      }),
       [States.PARENT_B_CONFIRM]: {
         entry: 'assignToParentB',
         meta: {
