@@ -1,4 +1,5 @@
 import flatten from 'lodash/flatten'
+import type { CONTENT_TYPE } from '../../generated/contentfulTypes'
 
 export const createTerms = (termStrings: string[]): string[] => {
   const singleWords = termStrings.map((termString = '') => {
@@ -100,21 +101,41 @@ export const numberOfLinks = (contentList: object[]) => {
 export const numberOfProcessEntries = (contentList: any[]) =>
   getProcessEntries(contentList).length
 
-/**
- * Goes through keys in an entry-hyperlink node and deletes objects that are at depth 2
- */
-export const pruneEntryHyperlink = (node: any) => {
-  if (node?.data?.target?.fields) {
-    const fields = node.data.target.fields
-    for (const key of Object.keys(fields)) {
-      if (typeof fields[key]?.['fields'] === 'object') {
-        for (const nestedKey of Object.keys(fields[key]['fields'])) {
-          if (typeof fields[key]['fields'][nestedKey] === 'object') {
-            delete fields[key]['fields'][nestedKey]
-          }
-        }
+const removeNonPrimitiveFields = (node: Record<string, unknown>) => {
+  if (typeof node === 'object') {
+    for (const key of Object.keys(node)) {
+      if (typeof node[key] === 'object') {
+        delete node[key]
       }
     }
+  }
+}
+
+export const pruneEntryHyperlink = (node: any) => {
+  const target = node?.data?.target
+  const contentTypeId: CONTENT_TYPE = target?.sys?.contentType?.sys?.id
+
+  // Keep specific fields since we'll need them when creating the urls
+  if (contentTypeId === 'subArticle' && target.fields?.parent?.fields) {
+    const parentArticle = {
+      ...target.fields.parent,
+      fields: { ...target.fields.parent.fields },
+    }
+    removeNonPrimitiveFields(parentArticle.fields)
+    target.fields.parent = parentArticle
+  } else if (
+    contentTypeId === 'organizationSubpage' &&
+    target.fields?.organizationPage?.fields
+  ) {
+    const organizationPage = {
+      ...target.fields.organizationPage,
+      fields: { ...target.fields.organizationPage.fields },
+    }
+    removeNonPrimitiveFields(organizationPage.fields)
+    target.fields.organizationPage = organizationPage
+  } else {
+    // In case there is no need to preserve non primitive fields we just remove them to prevent potential circularity
+    removeNonPrimitiveFields(target?.fields)
   }
 }
 
