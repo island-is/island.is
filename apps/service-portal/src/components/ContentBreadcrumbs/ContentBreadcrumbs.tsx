@@ -1,20 +1,24 @@
 import { FC } from 'react'
 import { MessageDescriptor } from 'react-intl'
 import { Link, useLocation, PathMatch, matchPath } from 'react-router-dom'
+import { useWindowSize } from 'react-use'
 
 import {
   Box,
   BreadcrumbsDeprecated as Breadcrumbs,
+  Icon,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   ServicePortalNavigationItem,
+  m,
   useDynamicRoutesWithNavigation,
 } from '@island.is/service-portal/core'
+import { theme } from '@island.is/island-ui/theme'
 
 import { isDefined } from '@island.is/shared/utils'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
-
+import * as styles from './ContentBreadcrumbs.css'
 interface ContentBreadcrumb {
   name: string | MessageDescriptor
   path?: string
@@ -46,6 +50,7 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const location = useLocation()
   const { formatMessage } = useLocale()
+  const { width } = useWindowSize()
   let items: ContentBreadcrumb[] = []
 
   const findBreadcrumbsPath = (
@@ -90,19 +95,34 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
 
   findBreadcrumbsPath(navigation, [])
 
+  const isMobile = width < theme.breakpoints.sm
   if (items.length < 2) return null
 
   return (
-    <Box paddingTop={0} paddingBottom={[2, 3]}>
-      <Breadcrumbs color="blue400" separatorColor="blue400">
-        {items.map((item, index) =>
-          isDefined(item.path) && !item.hidden ? (
-            <Link key={index} to={item.path}>
-              {formatMessage(item.name)}
-            </Link>
-          ) : null,
-        )}
-      </Breadcrumbs>
+    <Box
+      display="flex"
+      flexDirection="row"
+      justifyContent="spaceBetween"
+      alignItems="center"
+      paddingBottom={[2, 3]}
+      paddingTop={[4, 4, 0]}
+      paddingLeft="p2"
+    >
+      <Box className={styles.breadcrumbs} paddingTop={0} position="relative">
+        <Breadcrumbs color="blue400" separatorColor="blue400">
+          {items.map((item, index) =>
+            isDefined(item.path) &&
+            !item.hidden &&
+            !(isMobile && index === 0) ? (
+              <Link className={styles.link} key={index} to={item.path}>
+                {index === 0
+                  ? formatMessage(m.overview)
+                  : formatMessage(item.name)}
+              </Link>
+            ) : null,
+          )}
+        </Breadcrumbs>
+      </Box>
     </Box>
   )
 }

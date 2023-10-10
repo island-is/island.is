@@ -15,9 +15,9 @@ import {
 } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
 import {
-  getPathFromProviderId,
   getPathFromType,
   getTitleAndLogo,
+  getPathFromProviderId,
 } from '../../utils/dataMapper'
 
 import LicenseCards from '../../components/LicenseCards/LicenseCards'
@@ -106,10 +106,7 @@ export const UserLicenses: FC<React.PropsWithChildren<Props>> = ({
                   )}
                   cta={{
                     label: formatMessage(m.seeDetails),
-                    url: ServicePortalPath.LicensesDetail.replace(
-                      ':provider',
-                      getPathFromProviderId(license.license.provider.id),
-                    ).replace(':type', getPathFromType(license.license.type)),
+                    url: getPathFromType(license.license.type),
                     variant: 'text',
                   }}
                   tag={
@@ -151,7 +148,7 @@ export const UserLicenses: FC<React.PropsWithChildren<Props>> = ({
       )}
 
       {!isLoading && !hasError && !hasData && (
-        <Box marginTop={8}>
+        <Box marginTop={[0, 8]}>
           <EmptyState />
         </Box>
       )}

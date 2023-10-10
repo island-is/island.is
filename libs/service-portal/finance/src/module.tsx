@@ -3,11 +3,9 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { m } from '@island.is/service-portal/core'
 import { PortalModule } from '@island.is/portals/core'
 import { FinancePaths } from './lib/paths'
+import { Navigate } from 'react-router-dom'
 import { financeRoutesLoader } from './screens/FinanceRoutes.loader'
 
-const FinanceOverview = lazy(() =>
-  import('./screens/FinanceOverview/FinanceOverview'),
-)
 const FinanceStatus = lazy(() => import('./screens/FinanceStatus'))
 const FinanceBills = lazy(() => import('./screens/FinanceBills'))
 const FinanceTransactions = lazy(() => import('./screens/FinanceTransactions'))
@@ -19,6 +17,7 @@ const FinanceSchedule = lazy(() => import('./screens/FinanceSchedule'))
 
 export const financeModule: PortalModule = {
   name: 'Fjármál',
+  layout: 'full',
   routes: ({ userInfo, ...rest }) => [
     {
       name: m.finance,
@@ -28,7 +27,7 @@ export const financeModule: PortalModule = {
         ApiScope.financeSalary,
         ApiScope.financeSchedule,
       ].some((scope) => userInfo.scopes.includes(scope)),
-      element: <FinanceOverview />,
+      element: <Navigate to={FinancePaths.FinanceStatus} replace />,
     },
     {
       name: m.financeStatus,
