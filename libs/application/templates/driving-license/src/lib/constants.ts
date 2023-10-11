@@ -30,6 +30,7 @@ export interface DrivingLicenseFakeData {
   qualityPhoto?: YesOrNo
   currentLicense?: FakeCurrentLicense
   remarks?: YesOrNo
+  howManyDaysHaveYouLivedInIceland: string | number
 }
 
 export const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .rtf, .txt, .odt'
