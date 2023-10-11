@@ -152,6 +152,7 @@ export const geoipSetup = (): ServiceBuilder<'services-sessions-geoip-job'> =>
         memory: '500Mi',
       },
     })
+    .redis()
     .env({ GEODATADIR: geoDataDir, GEOTMPDIR: geoTmpDir })
     .secrets({
       GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY',
