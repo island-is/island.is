@@ -2,7 +2,6 @@ import { useGetOccupationalLicensesQuery } from './OccupationalLicensesOverview.
 import { AlertMessage, Box, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  EmptyState,
   CardLoader,
   IntroHeader,
   m,
@@ -14,6 +13,11 @@ import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { olMessage as om } from '../../lib/messages'
 import LicenceActionCard, { Validity } from '../../components/LicenceActionCard'
 import { OccupationalLicensesPaths } from '../../lib/paths'
+import {
+  OccupationalLicenseType,
+  OccupationalLicensesError,
+  OccupationalLicensesErrorStatus,
+} from '@island.is/api/schema'
 
 const OccupationalLicensesOverview = () => {
   const { data, loading, error } = useGetOccupationalLicensesQuery({})
@@ -26,6 +30,38 @@ const OccupationalLicensesOverview = () => {
     route
       .replace(':id', id)
       .replace(':type', type.charAt(0).toUpperCase() + type.slice(1))
+
+  const formatErrorMessage = (error: OccupationalLicensesError) => {
+    const institution =
+      error.institution === OccupationalLicenseType.HEALTH
+        ? formatMessage(om.theDirectorateOfHealth)
+        : formatMessage(om.theDirectorateOfEducation)
+    switch (error.status) {
+      case OccupationalLicensesErrorStatus.INTERNAL_SERVER_ERROR:
+        return {
+          title: formatMessage(om.fetchServerErrorTitle, {
+            institution,
+          }),
+          message: formatMessage(om.fetchServerErrorMessage, { institution }),
+        }
+      case OccupationalLicensesErrorStatus.NOT_FOUND:
+        return {
+          title: formatMessage(om.fetchNoDataTitle, {
+            institution,
+          }),
+          message: formatMessage(om.fetchNoDataMessage, {
+            institution,
+          }),
+        }
+      default:
+        return {
+          title: formatMessage(om.fetchServerErrorTitle, {
+            institution,
+          }),
+          message: formatMessage(om.fetchServerErrorMessage),
+        }
+    }
+  }
 
   if (error)
     return (
@@ -41,47 +77,45 @@ const OccupationalLicensesOverview = () => {
         title={m.occupationaLicenses}
         intro={formatMessage(m.occupationalLicensesDescription)}
       />
-      {data?.occupationalLicenses?.error.hasError && (
-        <Box marginTop={6}>
-          <AlertMessage
-            type="warning"
-            title={formatMessage(m.errorFetch)}
-            message={formatMessage(om.fetchOverviewErrorMessage)}
-          />
-        </Box>
-      )}
+      {data?.occupationalLicenses?.errors.map((err) => {
+        const message = formatErrorMessage(err)
+        return (
+          <Box marginTop={6}>
+            <AlertMessage type="warning" {...message} />
+          </Box>
+        )
+      })}
+
       <Box marginTop={6}>
         {loading && !error && <CardLoader />}
-        {!loading &&
-          !error &&
-          !data?.occupationalLicenses?.error.hasError &&
-          data?.occupationalLicenses?.count === 0 && (
-            <EmptyState title={m.noDataFound} />
-          )}
         <Stack space={2}>
-          {data?.occupationalLicenses?.items.map((license, index) => {
-            return (
-              <LicenceActionCard
-                key={index}
-                type={license.profession}
-                validFrom={formatDateFns(license.validFrom, 'dd.MM.yyyy')}
-                url={generateUrl(
-                  license.__typename ===
-                    'OccupationalLicensesEducationalLicense'
-                    ? OccupationalLicensesPaths.OccupationalLicensesEducationDetail
-                    : OccupationalLicensesPaths.OccupationalLicensesHealthDirectorateDetail,
-                  license.id,
-                  license.profession,
-                )}
-                image={getOrganizationLogoUrl(
-                  license.type ?? '',
-                  organizations,
-                  120,
-                )}
-                isValid={license.isValid as Validity}
-              />
-            )
-          })}
+          {data?.occupationalLicenses?.count === 0 ? (
+            <AlertMessage type="info" message={formatMessage(om.noLicenses)} />
+          ) : (
+            data?.occupationalLicenses?.items.map((license, index) => {
+              return (
+                <LicenceActionCard
+                  key={index}
+                  type={license.profession}
+                  validFrom={formatDateFns(license.validFrom, 'dd.MM.yyyy')}
+                  url={generateUrl(
+                    license.__typename ===
+                      'OccupationalLicensesEducationalLicense'
+                      ? OccupationalLicensesPaths.OccupationalLicensesEducationDetail
+                      : OccupationalLicensesPaths.OccupationalLicensesHealthDirectorateDetail,
+                    license.id,
+                    license.profession,
+                  )}
+                  image={getOrganizationLogoUrl(
+                    license.type ?? '',
+                    organizations,
+                    120,
+                  )}
+                  isValid={license.isValid as Validity}
+                />
+              )
+            })
+          )}
         </Stack>
       </Box>
     </Box>

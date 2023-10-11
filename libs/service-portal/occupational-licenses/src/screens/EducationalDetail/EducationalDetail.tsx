@@ -40,10 +40,18 @@ export const EducationDetail = () => {
     },
   })
 
-  const license = data?.occupationalLicensesEducationalLicense
+  const license = data?.occupationalLicensesEducationalLicense?.items[0]
+
+  const downloadUrl =
+    license?.__typename === 'OccupationalLicensesEducationalLicense'
+      ? license.downloadUrl
+      : undefined
 
   useEffect(() => {
-    if (shouldDownload && license && license.downloadUrl) {
+    if (
+      shouldDownload &&
+      license?.__typename === 'OccupationalLicensesEducationalLicense'
+    ) {
       formSubmit(license.downloadUrl)
       setShouldDownload(false)
     }
@@ -74,7 +82,7 @@ export const EducationDetail = () => {
       title={programme}
       serviceProviderID={MENNTAMALASTOFNUN_ID}
       buttonGroup={
-        license.downloadUrl ? (
+        downloadUrl ? (
           <Box paddingTop={3}>
             <Button
               variant="utility"

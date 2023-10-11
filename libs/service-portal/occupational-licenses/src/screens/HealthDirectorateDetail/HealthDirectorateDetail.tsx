@@ -31,7 +31,7 @@ export const EducationDetail = () => {
     },
   })
 
-  const license = data?.occupationalLicensesHealthDirectorateLicense
+  const license = data?.occupationalLicensesHealthDirectorateLicense?.items[0]
 
   if (loading)
     return (

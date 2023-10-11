@@ -9,19 +9,58 @@ import { isDefined } from '@island.is/shared/utils'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   EducationalLicense,
-  HEATLH_DIRECTORATE_STATUS_TYPE,
+  HealthDirectorateStatusType,
   HealthDirectorateLicense,
   OccupationalLicenseType,
-  Validity,
+  OccupationalLicenseStatus,
+  OccupationalLicenseResponse,
 } from './models/occupationalLicense.model'
+import {
+  OccupationalLicensesError,
+  OccupationalLicensesErrorStatus,
+} from './models/occupationalLicenseError.model'
+import { ConfigType, DownloadServiceConfig } from '@island.is/nest/config'
 
 const LOG_CATEGORY = 'occupational-licenses-service'
+
+type OccupationalLicenseResult<T> =
+  | {
+      items: T[]
+      type: 'data'
+      error?: never
+    }
+  | {
+      items?: never
+      error: OccupationalLicensesError
+      type: 'error'
+    }
+
+const checkHealthDirectorateValidity = (
+  status: string | null | undefined,
+): OccupationalLicenseStatus => {
+  return status === HealthDirectorateStatusType.valid
+    ? OccupationalLicenseStatus.valid
+    : status === HealthDirectorateStatusType.limited
+    ? OccupationalLicenseStatus.limited
+    : OccupationalLicenseStatus.error
+}
+
+const checkEducationalValidity = (
+  validFrom: string,
+): OccupationalLicenseStatus => {
+  return new Date(validFrom) < new Date()
+    ? OccupationalLicenseStatus.valid
+    : OccupationalLicenseStatus.error
+}
 
 @Injectable()
 export class OccupationalLicensesService {
   constructor(
     private healthDirectorateApi: HealthDirectorateClientService,
     private mmsApi: MMSApi,
+    @Inject(DownloadServiceConfig.KEY)
+    private readonly downloadService: ConfigType<typeof DownloadServiceConfig>,
+
     private readonly featureFlagService: FeatureFlagService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
@@ -30,72 +69,30 @@ export class OccupationalLicensesService {
   async getHealthDirectorateLicenseById(
     user: User,
     id: string,
-  ): Promise<HealthDirectorateLicense | null | undefined> {
+  ): Promise<OccupationalLicenseResponse> {
     try {
-      const licenses =
-        (await this.healthDirectorateApi.getHealthDirectorateLicense(user)) ??
-        []
+      const licenses = await this.healthDirectorateApi
+        .getHealthDirectorateLicense(user)
+        .catch((e) => {
+          if (e.status === 404) {
+            return []
+          }
+          throw new Error('Error getting health directorate license by id')
+        })
+        .then((licenses) => licenses ?? [])
 
-      return (
-        licenses
-          .map((license) => {
-            if (
-              !license.leyfi ||
-              !license.starfsstett ||
-              !license.gildirFra ||
-              !license.leyfisnumer ||
-              !license.id
-            )
-              return null
-            if (!license.logadiliID || !license.kennitala || !license.nafn)
-              return undefined
-            return {
-              institution: OccupationalLicenseType.HEALTH,
-              id: license.id.toString(),
-              legalEntityId: license.logadiliID,
-              holderName: license.nafn,
-              profession: license.starfsstett,
-              type: license.leyfi,
-              number: license.leyfisnumer,
-              validFrom: license.gildirFra?.toString(),
-              isValid: (license.stada === HEATLH_DIRECTORATE_STATUS_TYPE.valid
-                ? 'valid'
-                : license.stada === HEATLH_DIRECTORATE_STATUS_TYPE.limited
-                ? 'limited'
-                : 'error') as Validity,
-            }
-          })
-          .filter(isDefined)
-          .find((license) => license.id === id) ?? undefined
-      )
-    } catch (e) {
-      this.logger.error(`Error getting health directorate license by id`, {
-        ...e,
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
-  }
-
-  async getHealthDirectorateLicense(
-    user: User,
-  ): Promise<HealthDirectorateLicense[] | null> {
-    try {
-      const licenses =
-        (await this.healthDirectorateApi.getHealthDirectorateLicense(user)) ??
-        []
-
-      return licenses
+      const items = licenses
         .map((license) => {
           if (
             !license.leyfi ||
             !license.starfsstett ||
             !license.gildirFra ||
             !license.leyfisnumer ||
-            !license.id
+            !license.id ||
+            !license.logadiliID ||
+            !license.kennitala ||
+            !license.nafn
           )
-            return null
-          if (!license.logadiliID || !license.kennitala || !license.nafn)
             return null
           return {
             institution: OccupationalLicenseType.HEALTH,
@@ -106,31 +103,103 @@ export class OccupationalLicensesService {
             type: license.leyfi,
             number: license.leyfisnumer,
             validFrom: license.gildirFra?.toString(),
-            isValid: (license.stada === HEATLH_DIRECTORATE_STATUS_TYPE.valid
-              ? 'valid'
-              : license.stada === HEATLH_DIRECTORATE_STATUS_TYPE.limited
-              ? 'limited'
-              : 'error') as Validity,
+            isValid: checkHealthDirectorateValidity(license.stada),
           }
         })
         .filter(isDefined)
+        .find((license) => license.id === id)
+
+      return {
+        items: items ? [items] : [],
+        errors: [],
+      }
+    } catch (e) {
+      this.logger.error(`Error getting health directorate license by id`, {
+        ...e,
+        category: LOG_CATEGORY,
+      })
+      return {
+        items: [],
+        errors: [
+          {
+            message: 'Error getting health directorate license by id',
+            institution: OccupationalLicenseType.HEALTH,
+            status: OccupationalLicensesErrorStatus.INTERNAL_SERVER_ERROR,
+          },
+        ],
+      }
+    }
+  }
+
+  async getHealthDirectorateLicense(
+    user: User,
+  ): Promise<OccupationalLicenseResult<HealthDirectorateLicense>> {
+    try {
+      const licenses = await this.healthDirectorateApi
+        .getHealthDirectorateLicense(user)
+        .catch((e) => {
+          if (e.status === 404) {
+            return []
+          }
+          throw new Error('Error getting health directorate licenses')
+        })
+        .then((licenses) => licenses ?? [])
+
+      const items = licenses
+        .map((license) => {
+          if (
+            !license.leyfi ||
+            !license.starfsstett ||
+            !license.gildirFra ||
+            !license.leyfisnumer ||
+            !license.id ||
+            !license.logadiliID ||
+            !license.kennitala ||
+            !license.nafn
+          )
+            return null
+          return {
+            institution: OccupationalLicenseType.HEALTH,
+            id: license.id.toString(),
+            legalEntityId: license.logadiliID,
+            holderName: license.nafn,
+            profession: license.starfsstett,
+            type: license.leyfi,
+            number: license.leyfisnumer,
+            validFrom: license.gildirFra?.toString(),
+            isValid: checkHealthDirectorateValidity(license.stada),
+          }
+        })
+        .filter(isDefined)
+
+      return {
+        items: items,
+        type: 'data',
+      }
     } catch (e) {
       this.logger.error(`Error getting health directorate license`, {
         ...e,
         category: LOG_CATEGORY,
       })
-      return null
+      return {
+        error: {
+          message: 'Error getting health directorate license',
+          institution: OccupationalLicenseType.HEALTH,
+          status: OccupationalLicensesErrorStatus.INTERNAL_SERVER_ERROR,
+        },
+        type: 'error',
+      }
     }
   }
 
   async getEducationalLicensesById(
     user: User,
     id: string,
-  ): Promise<EducationalLicense | null> {
+  ): Promise<OccupationalLicenseResponse> {
     try {
       const licenses = await (this.mmsApi.getLicenses(user.nationalId) ?? [])
 
-      return (
+      const item =
         licenses
           .map((license) => ({
             institution: OccupationalLicenseType.EDUCATION,
@@ -138,43 +207,62 @@ export class OccupationalLicensesService {
             type: license.issuer,
             profession: license.type,
             validFrom: license.issued,
-            isValid: (new Date(license.issued) < new Date()
-              ? 'valid'
-              : 'error') as Validity,
+            isValid: checkEducationalValidity(license.issued),
+            downloadUrl: `${this.downloadService.baseUrl}/download/v1/occupational-licenses/education/${id}`,
           }))
           .find((license) => license.id === id) ?? null
-      )
+
+      return { items: item ? [item] : [], errors: [] }
     } catch (e) {
       this.logger.error(`Error getting educational license by id`, {
         ...e,
         category: LOG_CATEGORY,
       })
-      return null
+      return {
+        items: [],
+        errors: [
+          {
+            message: 'Error getting educational license by id',
+            institution: OccupationalLicenseType.EDUCATION,
+            status: OccupationalLicensesErrorStatus.INTERNAL_SERVER_ERROR,
+          },
+        ],
+      }
     }
   }
 
   async getEducationalLicenses(
     user: User,
-  ): Promise<EducationalLicense[] | null> {
+  ): Promise<OccupationalLicenseResult<EducationalLicense>> {
     try {
       const licenses = await (this.mmsApi.getLicenses(user.nationalId) ?? [])
 
-      return licenses.map((license) => ({
+      const items = licenses.map((license) => ({
         institution: OccupationalLicenseType.EDUCATION,
         id: license.id,
         type: license.issuer,
         profession: license.type,
         validFrom: license.issued,
-        isValid: (new Date(license.issued) < new Date()
-          ? 'valid'
-          : 'error') as Validity,
+        isValid: checkEducationalValidity(license.issued),
       }))
+
+      return {
+        items: items,
+        type: 'data',
+      }
     } catch (e) {
-      this.logger.error(`Error getting educational license`, {
+      this.logger.error(`Error getting educational licenses`, {
         ...e,
         category: LOG_CATEGORY,
       })
-      return null
+      return {
+        type: 'error',
+        error: {
+          message: 'Error getting educational licenses',
+          institution: OccupationalLicenseType.EDUCATION,
+          status: OccupationalLicensesErrorStatus.INTERNAL_SERVER_ERROR,
+        },
+      }
     }
   }
 
@@ -184,24 +272,31 @@ export class OccupationalLicensesService {
       false,
       user,
     )
-    const healthDirectorateLicenses = allowHealthDirectorate
-      ? await this.getHealthDirectorateLicense(user)
-      : []
+    const errors: OccupationalLicensesError[] = []
+    const items: Array<EducationalLicense | HealthDirectorateLicense> = []
 
+    if (allowHealthDirectorate) {
+      const healthDirectorateLicenses = await this.getHealthDirectorateLicense(
+        user,
+      )
+      if (healthDirectorateLicenses.type === 'data') {
+        items.push(...healthDirectorateLicenses.items)
+      } else {
+        errors.push(healthDirectorateLicenses.error)
+      }
+    }
     const educationalLicenses = await this.getEducationalLicenses(user)
 
+    if (educationalLicenses.type === 'data') {
+      items.push(...educationalLicenses.items)
+    } else {
+      errors.push(educationalLicenses.error)
+    }
+
     return {
-      count:
-        (healthDirectorateLicenses?.length ?? 0) +
-        (educationalLicenses?.length ?? 0),
-      items: [
-        ...(healthDirectorateLicenses ?? []),
-        ...(educationalLicenses ?? []),
-      ].filter(isDefined),
-      error: {
-        hasError:
-          healthDirectorateLicenses === null || educationalLicenses === null,
-      },
+      count: items.length,
+      items,
+      errors,
     }
   }
 }

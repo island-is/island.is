@@ -5,22 +5,35 @@ import {
   InterfaceType,
   registerEnumType,
 } from '@nestjs/graphql'
+import { OccupationalLicensesError } from './occupationalLicenseError.model'
 
 export enum OccupationalLicenseType {
   EDUCATION = 'EDUCATIONAL',
   HEALTH = 'HEALTH_DIRECTORATE',
 }
 
-export enum HEATLH_DIRECTORATE_STATUS_TYPE {
+export enum HealthDirectorateStatusType {
   valid = 'Í gildi',
   limited = 'Í gildi - Takmörkun',
   error = 'Ógilt',
 }
 
-export type Validity = 'valid' | 'limited' | 'error'
+export enum OccupationalLicenseStatus {
+  valid = 'valid',
+  error = 'error',
+  limited = 'limited',
+}
 
 registerEnumType(OccupationalLicenseType, {
   name: 'OccupationalLicenseType',
+})
+
+registerEnumType(HealthDirectorateStatusType, {
+  name: 'OccupationalLicenseHealthDirectorateStatusType',
+})
+
+registerEnumType(OccupationalLicenseStatus, {
+  name: 'OccupationalLicenseStatus',
 })
 
 @InterfaceType({
@@ -50,15 +63,15 @@ export abstract class OccupationalLicense {
   @Field(() => String)
   validFrom!: string
 
-  @Field(() => String)
-  isValid!: Validity
+  @Field(() => OccupationalLicenseStatus)
+  isValid!: OccupationalLicenseStatus
 }
 
 @ObjectType('OccupationalLicensesEducationalLicense', {
   implements: OccupationalLicense,
 })
 export class EducationalLicense extends OccupationalLicense {
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   downloadUrl?: string
 }
 
@@ -74,4 +87,13 @@ export class HealthDirectorateLicense extends OccupationalLicense {
 
   @Field(() => String, { nullable: true })
   number?: string | null
+}
+
+@ObjectType('OccupationalLicenseResponse')
+export class OccupationalLicenseResponse {
+  @Field(() => [OccupationalLicense])
+  items!: OccupationalLicense[]
+
+  @Field(() => [OccupationalLicensesError])
+  errors!: OccupationalLicensesError[]
 }

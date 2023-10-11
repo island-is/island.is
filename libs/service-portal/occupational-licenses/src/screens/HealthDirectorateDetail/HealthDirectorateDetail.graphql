@@ -12,11 +12,23 @@ query getHealthDirectorateLicenseById($id: String!) {
     }
   }
   occupationalLicensesHealthDirectorateLicense(id: $id) {
-    holderName
-    profession
-    type
-    number
-    validFrom
-    isValid
+    items {
+      id
+      profession
+      type
+      validFrom
+      isValid
+      institution
+      ... on OccupationalLicensesHealthDirectorateLicense {
+        legalEntityId
+        holderName
+        number
+      }
+    }
+    errors {
+      message
+      status
+      institution
+    }
   }
 }
