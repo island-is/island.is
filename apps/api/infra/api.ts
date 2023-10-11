@@ -237,9 +237,15 @@ export const serviceSetup = (services: {
         '@rsk.is/prokura',
         '@rsk.is/prokura:admin',
       ]),
-      UNIVERSITY_GATEWAY_API_URL: ref(
-        (h) => `http://${h.svc(services.universityGatewayBackend)}`,
-      ),
+      //TODOx
+      // UNIVERSITY_GATEWAY_API_URL: ref(
+      //   (h) => `http://${h.svc(services.universityGatewayBackend)}`,
+      // ),
+      UNIVERSITY_GATEWAY_API_URL: {
+        dev: 'https://university-gateway.dev01.devland.is',
+        staging: 'https://university-gateway.staging01.devland.is',
+        prod: 'https://university-gateway.island.is',
+      },
     })
 
     .secrets({

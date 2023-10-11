@@ -2474,6 +2474,7 @@ services-university-gateway-backend:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1'
   grantNamespaces:
+    - 'islandis'
     - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2538,6 +2539,7 @@ services-university-gateway-worker:
     SERVERSIDE_FEATURES_ON: ''
     TIME_TO_LIVE_MINUTES: '1440'
   grantNamespaces:
+    - 'islandis'
     - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
   healthCheck:

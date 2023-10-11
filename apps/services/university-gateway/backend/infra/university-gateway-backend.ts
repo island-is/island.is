@@ -5,6 +5,12 @@ import {
   UniversityGatewayUniversityOfIceland,
 } from '../../../../../infra/src/dsl/xroad'
 
+const postgresInfo = {
+  username: 'university_gateway',
+  name: 'university_gateway',
+  passwordSecret: '/k8s/university-gateway/DB_PASSWORD',
+}
+
 export const serviceSetup =
   (): ServiceBuilder<'services-university-gateway-backend'> => {
     return service('services-university-gateway-backend')
@@ -28,11 +34,7 @@ export const serviceSetup =
         BACKEND_ACCESS_TOKEN: '/k8s/university-gateway/BACKEND_ACCESS_TOKEN',
       })
       .xroad(Base, Client, UniversityGatewayUniversityOfIceland)
-      .postgres({
-        username: 'university_gateway',
-        name: 'university_gateway',
-        passwordSecret: '/k8s/university-gateway/DB_PASSWORD',
-      })
+      .postgres(postgresInfo)
       .ingress({
         primary: {
           host: {
@@ -49,7 +51,25 @@ export const serviceSetup =
         min: 2,
         max: 10,
       })
+      .initContainer({
+        containers: [
+          {
+            name: 'migrations',
+            command: 'npx',
+            args: ['sequelize-cli', 'db:migrate'],
+          },
+          {
+            name: 'seed',
+            command: 'npx',
+            args: ['sequelize-cli', 'db:seed:all'],
+          },
+        ],
+        postgres: postgresInfo,
+        envs: {
+          NO_UPDATE_NOTIFIER: 'true',
+        },
+      })
       .liveness('/liveness')
       .readiness('/liveness')
-      .grantNamespaces('nginx-ingress-internal')
+      .grantNamespaces('islandis', 'nginx-ingress-internal')
   }
