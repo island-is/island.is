@@ -208,7 +208,7 @@ export class DocumentClient {
   async bulkMailAction(
     body: BulkMailActionDTO,
     nationalId: string,
-  ): Promise<any | null> {
+  ): Promise<null> {
     const { action, ...postBody } = body
     const requestRoute = `/api/mail/v1/customers/${nationalId}/messages/batch${action}`
     return await this.postRequest(requestRoute, postBody)
