@@ -821,11 +821,6 @@ export class CaseService {
       },
       { type: MessageType.DELIVER_CASE_TO_POLICE, user, caseId: theCase.id },
     )
-    messages.push({
-      type: MessageType.SEND_APPEAL_COMPLETED_NOTIFICATION,
-      user,
-      caseId: theCase.id,
-    })
 
     return this.messageService.sendMessagesToQueue(messages)
   }
