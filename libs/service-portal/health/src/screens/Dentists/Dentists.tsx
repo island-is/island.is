@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { FeatureFlagClient } from '@island.is/feature-flags'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import {
   m,
   ErrorScreen,
@@ -31,6 +33,22 @@ const Dentists = () => {
   const location = useLocation()
   // Check if the user was transfered from another health center
   const wasSuccessfulTransfer = location?.state?.transferSuccess
+
+  // Feature flag for transfer option.
+  const [isTransferAvailable, setIsTransferAvailable] = useState(false)
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isServicePortalHealthTransferPageEnabled`,
+        false,
+      )
+      if (ffEnabled) {
+        setIsTransferAvailable(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+  }, [])
 
   const [selectedDateFrom, setSelectedDateFrom] = useState(
     sub(new Date(), { years: 5 }),
@@ -100,7 +118,7 @@ const Dentists = () => {
             label={formatMessage(messages.dentist)}
             content={dentist.name}
             editLink={
-              canRegister
+              canRegister && isTransferAvailable
                 ? {
                     url: HealthPaths.HealthDentistRegistration,
                     title: messages.changeRegistration,
