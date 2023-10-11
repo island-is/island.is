@@ -4,7 +4,7 @@ import fetch from 'isomorphic-fetch'
 import { logger } from '@island.is/logging'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
-import { Configuration, GetStatusApi, HelloOddurApi } from '../../gen/fetch'
+import { Configuration, GetBankInfoApi, GetStatusApi, HelloOddurApi } from '../../gen/fetch'
 import { createWrappedFetchWithLogging } from './utils'
 import { SocialInsuranceAdministrationClientService } from './socialInsuranceAdministrationClient.service'
 
@@ -47,7 +47,7 @@ export class SocialInsuranceAdministrationClientModule {
       headers,
     })
 
-    const exportedApis = [HelloOddurApi, GetStatusApi]
+    const exportedApis = [HelloOddurApi, GetStatusApi, GetBankInfoApi]
 
     return {
       module: SocialInsuranceAdministrationClientModule,

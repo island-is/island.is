@@ -12,6 +12,7 @@ import {
   HelloOddurApi,
   SocialInsuranceAdministrationClientService,
 } from '@island.is/clients/social-insurance-administration'
+import { coreErrorMessages } from '@island.is/application/core'
 
 interface customError {
   type: string
@@ -86,5 +87,20 @@ export class OldAgePensionService extends BaseTemplateApiService {
     }
 
     return true
+  }
+
+  async getBankInfo({ auth }: TemplateApiModuleActionProps) {
+    try {
+      return await this.siaClientService.getBankInfo(auth)
+      // const res = await this.siaClientService.getBankInfo(auth)
+
+      // if(res.bank.) {
+      //   res.bank = '2222',
+      //   res.ledger = '00',
+      //   res.accountNumber = '123456'
+      // }
+    } catch (e) {
+      throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
+    }
   }
 }

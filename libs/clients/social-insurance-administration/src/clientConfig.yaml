@@ -58,6 +58,30 @@ paths:
             application/json:
               schema:
                 type: string
+  /application/bankinfo:
+    get:
+      tags:
+        - Get bank info
+      operationId: Application_GetBankInfo
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankInfo'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        '500':
+          description: internal Error
+          content:
+            application/json:
+              schema:
+                type: string
 components:
   securitySchemes:
     bearerAuth:
@@ -91,5 +115,25 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Application'
+    BankInfo:
+      type: object
+      description: Returns bank information from TR if applicant has one registered there
+      properties:
+        bank: 
+          type: string
+        ledger: 
+          type: string
+        accountNumber: 
+          type: string
+        iban: 
+          type: string
+        swift: 
+          type: string
+        foreignBankName: 
+          type: string
+        foreignBankAddress: 
+          type: string
+        currency: 
+          type: string
 security:
   - bearerAuth: []

@@ -38,3 +38,14 @@ export interface ChildPensionRow {
   editable?: boolean
   childDoesNotHaveNationalId: boolean
 }
+
+export interface BankInfo {
+  bank?: string
+  ledger?: string
+  accountNumber?: string
+  iban?: string
+  swift?: string
+  foreignBankName?: string
+  foreignBankAddress?: string
+  currency?: string
+}

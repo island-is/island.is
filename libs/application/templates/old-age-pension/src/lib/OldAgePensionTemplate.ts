@@ -32,6 +32,7 @@ import {
   NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationTestApi,
   SocialInsuranceAdministrationStatusApi,
+  SocialInsuranceAdministrationBankInfoApi,
 } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
 import {
@@ -93,6 +94,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 ChildrenCustodyInformationApi,
                 SocialInsuranceAdministrationTestApi,
                 SocialInsuranceAdministrationStatusApi,
+                SocialInsuranceAdministrationBankInfoApi
               ],
               delete: true,
             },

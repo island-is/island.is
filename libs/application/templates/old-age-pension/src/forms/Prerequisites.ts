@@ -31,6 +31,7 @@ import {
   NationalRegistryResidenceHistoryApi,
   NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationTestApi,
+  SocialInsuranceAdministrationBankInfoApi,
 } from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
@@ -91,6 +92,10 @@ export const PrerequisitesForm: Form = buildForm({
                   subTitle:
                     oldAgePensionFormMessage.pre
                       .socialInsuranceAdministrationInformationSubTitle,
+                }),
+                buildDataProviderItem({
+                  provider: SocialInsuranceAdministrationBankInfoApi,
+                  title: '',
                 }),
                 buildDataProviderPermissionItem({
                   id: 'link',
