@@ -91,6 +91,7 @@ describe('MeUserProfile', () => {
           AppModule,
           SequelizeConfigService,
           user: createCurrentUser({
+            nationalId: testUserProfile.nationalId,
             scope: [UserProfileScope.read],
           }),
         })
@@ -102,6 +103,18 @@ describe('MeUserProfile', () => {
 
         // Assert
         expect(res.status).toEqual(200)
+        expect(res.body).toMatchObject({
+          nationalId: testUserProfile.nationalId,
+          email: null,
+          emailStatus: DataStatus.NOT_DEFINED,
+          emailVerified: false,
+          mobilePhoneNumber: null,
+          mobilePhoneNumberVerified: false,
+          mobileStatus: DataStatus.NOT_DEFINED,
+          locale: null,
+          profileImageUrl: null,
+          documentNotifications: true,
+        })
 
         await app.cleanUp()
       },

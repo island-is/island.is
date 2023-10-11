@@ -22,14 +22,14 @@ export class UserProfileService {
     if (!userProfile) {
       return {
         nationalId,
-        email: '',
-        mobilePhoneNumber: '',
-        locale: 'is',
+        email: null,
+        mobilePhoneNumber: null,
+        locale: null,
         mobileStatus: DataStatus.NOT_DEFINED,
         emailStatus: DataStatus.NOT_DEFINED,
         mobilePhoneNumberVerified: false,
         emailVerified: false,
-        profileImageUrl: '',
+        profileImageUrl: null,
         documentNotifications: true,
       }
     }
