@@ -2,6 +2,7 @@ import {
   buildDescriptionField,
   buildMultiField,
   buildRadioField,
+  buildSelectField,
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -106,6 +107,17 @@ export const sectionFakeData = buildSubSection({
               label: 'Tákntala',
             },
           ],
+        }),
+        buildSelectField({
+          id: 'fakeData.howManyDaysHaveYouLivedInIceland',
+          title: 'Hversu lengi hefur þú búið á Íslandi (í dögum)?',
+          condition: allowFakeCondition(YES),
+          options: Array(365)
+            .fill(0)
+            .map((_, i) => ({
+              label: `${i + 1}`,
+              value: `${i + 1}`,
+            })),
         }),
       ],
     }),
