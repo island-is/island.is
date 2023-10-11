@@ -9,35 +9,28 @@ import {
   VerifyPassResponseData,
   VerifyPassData,
   LOG_CATEGORY,
-  ListPassesResponseData,
   VoidPassResponseData,
   ListTemplatesResponseData,
-  GetPassResponseData,
   UpsertPassResponseData,
   DeletePassResponseData,
   RevokePassData,
   UnvoidPassResponseData,
+  UpdatePassResponseData,
 } from './smartSolutions.types'
 import {
   DynamicBarcodeDataInput,
   Pass,
   PassDataInput,
-  PassStatus,
   PassTemplate,
 } from '../../gen/schema'
 import { Inject } from '@nestjs/common'
 import { SMART_SOLUTIONS_API_CONFIG } from './smartSolutions.config'
-import {
-  mapErrorMessageToActionStatusCode,
-  mapPassToPassDataInput,
-  mergeInputFields,
-} from './typeMapper'
+import { mapErrorMessageToActionStatusCode } from './typeMapper'
 import {
   DELETE_PASS,
-  GET_PASS,
-  LIST_PASS_STATUSES,
   LIST_TEMPLATES,
   UNVOID_PASS,
+  UPDATE_PASS,
   UPSERT_PASS,
   VERIFY_PKPASS,
   VOID_PASS,
@@ -173,52 +166,7 @@ export class SmartSolutionsApi {
       },
     }
   }
-
-  /**
-   *
-   * @param nationalId the user's national id
-   * @returns A pass if one was found, or undefined
-   */
-  private async findPass(
-    nationalId: string,
-  ): Promise<Result<Pass | undefined>> {
-    const listPassesQuery = JSON.stringify({
-      query: LIST_PASS_STATUSES,
-      variables: {
-        queryId: nationalId,
-        passTemplateId: this.config.passTemplateId,
-      },
-    })
-    const listRes = await this.query<ListPassesResponseData>(listPassesQuery)
-
-    if (!listRes.ok) {
-      //if failure, return the response
-      return listRes
-    }
-
-    for (const pass of listRes.data.passes?.data ?? []) {
-      if (pass.status !== PassStatus.DeleteInProgress) {
-        return {
-          ok: true,
-          data: pass,
-        }
-      }
-    }
-
-    this.logger.info('No pass found for user', {
-      category: LOG_CATEGORY,
-    })
-
-    return {
-      ok: true,
-      data: undefined,
-    }
-  }
-  /**
-   *
-   * @param payload What the created/updated pass should contain
-   * @returns The created/updated pass
-   */
+  /*
   private async postPass(payload: PassDataInput): Promise<Result<Pass>> {
     const graphql = JSON.stringify({
       query: UPSERT_PASS,
@@ -289,7 +237,7 @@ export class SmartSolutionsApi {
     })
     return postRes
   }
-
+*/
   /**
    *
    * @param payload The scanner data
@@ -331,29 +279,32 @@ export class SmartSolutionsApi {
     payload: PassDataInput,
     nationalId: string,
   ): Promise<Result<Pass>> {
-    const findPassRes = await this.findPass(nationalId)
+    const graphql = JSON.stringify({
+      query: UPDATE_PASS,
+      variables: {
+        expirationDate: payload.expirationDate,
+        passTemplateId: payload.passTemplateId,
+        thumbnail: payload.thumbnail,
+        values: payload.inputFieldValues,
+      },
+    })
 
-    if (!findPassRes.ok) {
-      return findPassRes
-    }
+    const res = await this.query<UpdatePassResponseData>(graphql)
 
-    //check if existing pass was found
-    if (!findPassRes.data) {
+    if (res.ok) {
+      this.logger.info('Pass update successful', {
+        passId: res.data.updatePass.id,
+        category: LOG_CATEGORY,
+      })
       return {
-        ok: false,
-        error: {
-          code: 3,
-          message: 'No pass found for user',
-        },
+        ok: true,
+        data: res.data.updatePass,
       }
     }
 
-    const pass = findPassRes.data
-
-    //get the pass data
-
-    //Now we can just call upsert with the correct data
-    return await this.updateExistingPass(payload, pass.id)
+    return {
+      ...res,
+    }
   }
 
   /**
@@ -367,53 +318,43 @@ export class SmartSolutionsApi {
     nationalId: string,
     onCreateCallback?: () => Promise<void>,
   ): Promise<Result<Pass>> {
-    const findPassRes = await this.findPass(nationalId)
-
-    if (!findPassRes.ok) {
-      return findPassRes
-    }
-
-    const pass = findPassRes.data
-
-    if (pass) {
-      if (pass.status === PassStatus.Voided) {
-        //pass is voided, which is an invalid state
-        return {
-          ok: false,
-          error: {
-            code: 5,
-            message: 'Pass is void',
-          },
-        }
-      }
-
-      //if pass is found, update it to reflect the licenses' current status
-
-      await this.updateExistingPass(payload, pass.id)
-
-      //pass is good
-      return {
-        ok: true,
-        data: pass,
-      }
-    }
-
-    this.logger.info('Creating a new pass from scratch', {
-      category: LOG_CATEGORY,
+    const graphql = JSON.stringify({
+      query: UPSERT_PASS,
+      variables: {
+        inputData: {
+          passTemplateId: this.config.passTemplateId,
+          ...payload,
+        },
+      },
     })
 
-    //Create the pass
-    const createdPass = await this.postPass(payload)
+    const res = await this.query<UpsertPassResponseData>(graphql)
 
-    if (createdPass.ok && onCreateCallback) {
-      onCreateCallback()
+    throw Error('todo! fix this')
+
+    /*
+
+    if (res.ok && onCreateCallback) {
+      //onCreateCallback()
     }
 
-    return createdPass
+    if (res.ok) {
+      this.logger.info('Pass posted successfully', {
+        passId: res.data.upsertPass.id,
+        category: LOG_CATEGORY,
+      })
+      return {
+        ok: true,
+        data: res.data.upsertPass,
+      }
+    }
+
+    return res*/
   }
 
   async revokePkPass(nationalId: string): Promise<Result<RevokePassData>> {
-    const findPassRes = await this.findPass(nationalId)
+    throw new Error('not implemented')
+    /*const findPassRes = await this.findPass(nationalId)
 
     if (!findPassRes.ok) {
       return findPassRes
@@ -452,7 +393,7 @@ export class SmartSolutionsApi {
     return {
       ok: true,
       data: { success: deleteResponse.data.deletePass },
-    }
+    } */
   }
 
   private async deletePkPass(

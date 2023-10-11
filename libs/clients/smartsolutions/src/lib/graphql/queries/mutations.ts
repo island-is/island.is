@@ -39,3 +39,22 @@ export const UPSERT_PASS = `
     }
   }
 `
+
+export const UPDATE_PASS = `
+  mutation UPDATE_PASS($passTemplateId: String!, $expirationDate: String, $thumbnail: String, values: [PassInputFieldValueDataInput] ) {
+    updatePass(
+      expirationDate: $expirationDate
+      passTemplateId: $passTemplateId
+      thumbnail: $thumbnail
+      values: $values
+    ) {
+      distributionUrl
+      deliveryPageUrl
+      distributionQRCode
+      id
+      expirationDate
+      whenCreated
+      whenModified
+    }
+  }
+`

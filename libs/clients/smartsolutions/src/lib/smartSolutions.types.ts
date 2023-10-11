@@ -99,6 +99,10 @@ export interface UpsertPassResponseData {
   upsertPass: Pass
 }
 
+export interface UpdatePassResponseData {
+  updatePass: Pass
+}
+
 export interface ListTemplatesResponseData {
   passes?: {
     data: Array<PassTemplate>

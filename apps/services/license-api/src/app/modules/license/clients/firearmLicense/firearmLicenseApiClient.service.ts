@@ -68,11 +68,17 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
     )
 
     if (!inputValues || !licenseInfo.expirationDate) {
+      const message = !(inputValues && licenseInfo.expirationDate)
+        ? 'Mapping failed, input values and expirationDate missing'
+        : !inputValues
+        ? 'Mapping failed, missing input values'
+        : 'Mapping failed, missing expirationDate'
+
       return {
         ok: false,
         error: {
           code: 4,
-          message: 'Mapping failed, invalid data',
+          message,
         },
       }
     }
