@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/product.schema.json",
+  "title": "Product",
+  "description": "Island.is values",
+  "type": "object",
+  "properties": {
+    "name": {
+      "description": "The service name",
+      "type": "string"
+    }
+  }
+}

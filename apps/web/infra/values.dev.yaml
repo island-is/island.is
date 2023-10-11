@@ -1,0 +1,101 @@
+# Most of this would be moved to ./values.yaml
+
+name: web
+env:
+  API_URL: 'http://web-api' # not needed
+  DISABLE_API_CATALOGUE: 'false'
+  DISABLE_ORGANIZATION_CHATBOT: 'false'
+  DISABLE_SYSLUMENN_PAGE: 'false'
+  ENVIRONMENT: 'dev' # not needed
+  NODE_OPTIONS: '--max-old-space-size=460' # not needed, could be calculated
+  SERVERSIDE_FEATURES_ON: ''
+  TRACKING_DOMAIN: 'beta.dev01.devland.is' # not needed
+
+grantNamespaces:
+  - 'nginx-ingress-external'
+  - 'api-catalogue'
+  - 'application-system'
+  - 'consultation-portal'
+
+# not needed, could be set in template if grantNamespaces is not empty
+grantNamespacesEnabled: true
+
+# could be in base.values, we could also require these exact endpoints from devs, or just:
+# healthCheck:
+#  liveness: /liveness
+#  rediness: /readiness
+healthCheck:
+  liveness:
+    initialDelaySeconds: 3
+    path: '/liveness'
+    timeoutSeconds: 3
+  readiness:
+    initialDelaySeconds: 3
+    path: '/readiness'
+    timeoutSeconds: 3
+
+# 90% of our apps use the defaults, web needs higher max, could be simplified like so:
+# cpuAverageUtilization: 70
+# maxReplicas: 50
+hpa:
+  scaling:
+    metric:
+      cpuAverageUtilization: 70
+      nginxRequestsIrate: 5
+    replicas:
+      max: 50
+      min: 2
+
+# not needed, could be repository in base.values and ${{ Values.repository}}/${{ Values.name }} in template
+image:
+  repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
+
+# could be simplified like so:
+# ingress:
+#   external: true (internal can be empty)
+#   internal: true (external can be empty)
+#   hosts:
+#     'beta.dev01.devland.is':
+#         - '/'
+#         - '/foo'
+ingress:
+  primary-alb:
+    annotations:
+      kubernetes.io/ingress.class: 'nginx-external-alb'
+      nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+      nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+    hosts:
+      - host: 'beta.dev01.devland.is'
+        paths:
+          - '/'
+
+namespace: 'islandis'
+
+pvcs: []
+
+# not needed, use defaults and maxReplicas defined above.
+replicaCount:
+  default: 2
+  max: 50
+  min: 2
+
+# we could calculate default requests.memory as 1/2 of limits.memory, and cpu as 1/4
+# cpuLimit: 400m
+# memoryLimit: 512m
+resources:
+  limits:
+    cpu: '400m'
+    memory: '512Mi'
+  requests:
+    cpu: '100m'
+    memory: '256Mi'
+
+secrets:
+  CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+  DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
+  DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
+
+# not needed
+securityContext:
+  allowPrivilegeEscalation: false
+  privileged: false

@@ -26,7 +26,10 @@ spec:
         tags.datadoghq.com/env: {{ .Values.global.env.name }}
         tags.datadoghq.com/service: {{ include "api-template.name" . }}
         tags.datadoghq.com/version: {{ .Values.image.tag | default .Values.global.image.tag }}
-      annotations:
+        # Just noting this down here as an example using the image updater
+        # argocd-image-updater.argoproj.io/image-list: {{ .Values.name }}={{ .Values.repository }}/{{ .Values.name }}
+        # argocd-image-updater.argoproj.io/{{ .Values.name }}.tag-pattern: '^(main)_(.+)_(.+)$'
+        # argocd-image-updater.argoproj.io/{{ .Values.name }}.sort-mode: latest
         prometheus.io/scrape: "true"
         prometheus.io/path: /metrics
         prometheus.io/port: {{ add1 .Values.service.targetPort  | quote }} # The metrics port is +1 on the HTTP service port

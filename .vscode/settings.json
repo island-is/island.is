@@ -1,1 +1,5 @@
-{}
+{
+  "yaml.schemas": {
+    "./infra/helm/schema.json": "**/infra/values*.yaml"
+  }
+}
