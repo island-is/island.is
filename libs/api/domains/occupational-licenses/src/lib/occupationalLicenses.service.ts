@@ -81,7 +81,7 @@ export class OccupationalLicensesService {
         })
         .then((licenses) => licenses ?? [])
 
-      const items = licenses
+      const item = licenses
         .map((license) => {
           if (
             !license.leyfi ||
@@ -110,7 +110,7 @@ export class OccupationalLicensesService {
         .find((license) => license.id === id)
 
       return {
-        items: items ? [items] : [],
+        items: item ? [item] : [],
         errors: [],
       }
     } catch (e) {
