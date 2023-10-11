@@ -242,53 +242,56 @@ export const DocumentLine: FC<Props> = ({
               flexDirection="row"
               justifyContent="spaceBetween"
             >
-              <Text
-                fontWeight={unread ? 'medium' : 'regular'}
-                color="blue400"
-                truncate
+              <button
+                onClick={!isLink ? async () => onLineClick() : undefined}
+                aria-label={formatMessage(m.openDocumentAriaLabel, {
+                  subject: documentLine.subject,
+                })}
+                type="button"
+                className={styles.docLineButton}
               >
-                <button
-                  onClick={!isLink ? async () => onLineClick() : undefined}
-                  aria-label={formatMessage(m.openDocumentAriaLabel, {
-                    subject: documentLine.subject,
-                  })}
-                  type="button"
+                <Text
+                  fontWeight={unread ? 'medium' : 'regular'}
+                  color="blue400"
+                  truncate
                 >
                   {documentLine.subject}
-                </button>
-              </Text>
-              {(avatarCheckmark || isBookmarked || isArchived) && !postLoading && (
-                <FavAndStash
-                  bookmarked={isBookmarked}
-                  archived={isArchived}
-                  onFav={
-                    avatarCheckmark || isBookmarked
-                      ? async (e) => {
-                          e.stopPropagation()
-                          await submitMailAction(
-                            isBookmarked ? 'unbookmark' : 'bookmark',
-                          )
-                          if (refetchInboxItems) {
-                            refetchInboxItems()
+                </Text>
+              </button>
+              {(avatarCheckmark || isBookmarked || isArchived) &&
+                !postLoading &&
+                !asFrame && (
+                  <FavAndStash
+                    bookmarked={isBookmarked}
+                    archived={isArchived}
+                    onFav={
+                      avatarCheckmark || isBookmarked
+                        ? async (e) => {
+                            e.stopPropagation()
+                            await submitMailAction(
+                              isBookmarked ? 'unbookmark' : 'bookmark',
+                            )
+                            if (refetchInboxItems) {
+                              refetchInboxItems()
+                            }
                           }
-                        }
-                      : undefined
-                  }
-                  onStash={
-                    avatarCheckmark || isArchived
-                      ? async (e) => {
-                          e.stopPropagation()
-                          await submitMailAction(
-                            isArchived ? 'unarchive' : 'archive',
-                          )
-                          if (refetchInboxItems) {
-                            refetchInboxItems()
+                        : undefined
+                    }
+                    onStash={
+                      avatarCheckmark || isArchived
+                        ? async (e) => {
+                            e.stopPropagation()
+                            await submitMailAction(
+                              isArchived ? 'unarchive' : 'archive',
+                            )
+                            if (refetchInboxItems) {
+                              refetchInboxItems()
+                            }
                           }
-                        }
-                      : undefined
-                  }
-                />
-              )}
+                        : undefined
+                    }
+                  />
+                )}
               {postLoading && (
                 <Box display="flex" alignItems="center">
                   <LoadingDots single />

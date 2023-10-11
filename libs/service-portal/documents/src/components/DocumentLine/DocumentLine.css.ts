@@ -43,6 +43,10 @@ export const line = style({
   borderBottom: `1px solid ${theme.color.blue100}`,
 })
 
+export const docLineButton = style({
+  overflow: 'hidden',
+})
+
 export const button = style({})
 
 export const unopened = style({
