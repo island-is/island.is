@@ -2043,6 +2043,9 @@ services-sessions:
     allowPrivilegeEscalation: false
     privileged: false
 services-sessions-geoip-job:
+  annotations:
+    helm.sh/hook: 'pre-install,pre-upgrade'
+    helm.sh/hook-delete-policy: 'before-hook-creation,hook-succeeded'
   args:
     - './node_modules/geoip-lite/scripts/updatedb.js'
     - 'license_key=$(GEOIP_LICENSE_KEY)'
@@ -2053,6 +2056,7 @@ services-sessions-geoip-job:
     GEODATADIR: '/geoip-lite/data'
     GEOTMPDIR: '/geoip-lite/data/tmp'
     NODE_OPTIONS: '--max-old-space-size=921'
+    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-internal'
