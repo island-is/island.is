@@ -41,7 +41,7 @@ export const UPSERT_PASS = `
 `
 
 export const UPDATE_PASS = `
-  mutation UPDATE_PASS($passTemplateId: String!, $expirationDate: String, $thumbnail: String, values: [PassInputFieldValueDataInput] ) {
+  mutation UPDATE_PASS($passTemplateId: String!, $expirationDate: String, $thumbnail: String, $values: [PassInputFieldValueDataInput] ) {
     updatePass(
       expirationDate: $expirationDate
       passTemplateId: $passTemplateId
