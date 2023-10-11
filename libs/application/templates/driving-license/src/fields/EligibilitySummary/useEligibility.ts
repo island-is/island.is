@@ -3,7 +3,7 @@ import { Application } from '@island.is/application/types'
 import { ApplicationEligibility } from '../../types/schema'
 import { useQuery, gql } from '@apollo/client'
 import { DrivingLicenseFakeData, YES } from '../../lib/constants'
-import { DrivingLicenseApplicationFor, B_FULL } from '../../shared/constants'
+import { DrivingLicenseApplicationFor, B_FULL } from '../../lib/constants'
 import { fakeEligibility } from './fakeEligibility'
 
 const QUERY = gql`
