@@ -244,7 +244,7 @@ export class DocumentService {
     } catch (e) {
       logger.error('Post batch action failed', {
         category: LOG_CATEGORY,
-        error: e,
+        ...e,
       })
       return {
         success: false,

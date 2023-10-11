@@ -60,6 +60,7 @@ import FocusLock from 'react-focus-lock'
 import { useKeyDown } from '../../hooks/useKeyDown'
 import { usePostBulkMailActionMutation } from './BatchMailAction.generated'
 import { FavAndStash } from '../../components/FavAndStash'
+import { messages } from '../../utils/messages'
 
 export type ActiveDocumentType = {
   document: DocumentDetails
@@ -169,7 +170,7 @@ export const ServicePortalDocuments = () => {
     }
   }
 
-  const { data, totalCount, loading, refetch } = useListDocuments({
+  const { data, totalCount, loading, error, refetch } = useListDocuments({
     ...fetchObject(),
   })
 
@@ -613,6 +614,7 @@ export const ServicePortalDocuments = () => {
               paddingLeft={8}
             >
               {isDesktop &&
+                !error &&
                 (loading ? (
                   <Box
                     display="flex"
@@ -628,6 +630,11 @@ export const ServicePortalDocuments = () => {
             </Box>
           )}
         </GridColumn>
+        {error && (
+          <GridColumn paddingTop={1} span={['12/12', '12/12', '12/12', '5/12']}>
+            <NoPDF text={messages.error} />
+          </GridColumn>
+        )}
       </GridRow>
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
