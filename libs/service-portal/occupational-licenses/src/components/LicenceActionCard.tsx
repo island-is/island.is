@@ -1,16 +1,15 @@
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import { ActionCard } from '@island.is/service-portal/core'
 import { olMessage as ol } from '../lib/messages'
 import { m } from '@island.is/service-portal/core'
-
-export type Validity = 'valid' | 'limited' | 'error'
+import { OccupationalLicenseStatus } from '@island.is/api/schema'
 
 type LicenseActionCardProps = {
   type?: string
   validFrom?: string | Date
   url?: string
   image?: string
-  isValid: Validity
+  isValid: OccupationalLicenseStatus
 }
 
 export const LicenceActionCard: React.FC<LicenseActionCardProps> = ({

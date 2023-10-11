@@ -11,7 +11,7 @@ import { Organization } from '@island.is/shared/types'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 
 import { olMessage as om } from '../../lib/messages'
-import LicenceActionCard, { Validity } from '../../components/LicenceActionCard'
+import { LicenceActionCard } from '../../components/LicenceActionCard'
 import { OccupationalLicensesPaths } from '../../lib/paths'
 import {
   OccupationalLicenseType,
@@ -111,7 +111,7 @@ const OccupationalLicensesOverview = () => {
                     organizations,
                     120,
                   )}
-                  isValid={license.isValid as Validity}
+                  isValid={license.isValid}
                 />
               )
             })

@@ -12,7 +12,6 @@ import { useUserInfo } from '@island.is/auth/react'
 import { LicenseDetail } from '../../components/LicenseDetail'
 import { olMessage as om } from '../../lib/messages'
 import { m } from '@island.is/service-portal/core'
-import { Validity } from '../../components/LicenceActionCard'
 
 type UseParams = {
   id: string
@@ -63,7 +62,7 @@ export const EducationDetail = () => {
           ? formatDateFns(license.validFrom, 'dd.MM.yyyy')
           : undefined
       }
-      isValid={license.isValid as Validity}
+      isValid={license.isValid}
     />
   )
 }

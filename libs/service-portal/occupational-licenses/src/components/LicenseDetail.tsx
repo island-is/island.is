@@ -2,7 +2,7 @@ import { Stack, Box, Icon, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader, UserInfoLine } from '@island.is/service-portal/core'
 import { olMessage as om } from '../lib/messages'
-import { Validity } from './LicenceActionCard'
+import { OccupationalLicenseStatus } from '@island.is/api/schema'
 
 type LicenseDetailProps = {
   title?: string | null
@@ -14,7 +14,7 @@ type LicenseDetailProps = {
   licenseType?: string | null
   publisher?: string | null
   dateOfIssue?: string | null
-  isValid?: Validity
+  isValid?: OccupationalLicenseStatus
   buttonGroup?: React.ReactNode
 }
 

@@ -7,17 +7,13 @@ import {
   ErrorScreen,
   MENNTAMALASTOFNUN_ID,
   formSubmit,
-  formatDate,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserInfo } from '@island.is/auth/react'
-import { getOrganizationLogoUrl } from '@island.is/shared/utils'
-import { Organization } from '@island.is/shared/types'
 import { LicenseDetail } from '../../components/LicenseDetail'
 import { useEffect, useState } from 'react'
 import { m } from '@island.is/service-portal/core'
 import { olMessage as om } from '../../lib/messages'
-import { Validity } from '../../components/LicenceActionCard'
 
 type UseParams = {
   id: string
@@ -104,7 +100,7 @@ export const EducationDetail = () => {
           ? formatDateFns(license.validFrom, 'dd.MM.yyyy')
           : undefined
       }
-      isValid={license.isValid as Validity}
+      isValid={license.isValid}
     />
   )
 }
