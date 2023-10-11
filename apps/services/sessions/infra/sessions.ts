@@ -9,8 +9,8 @@ const geoTmpDir = `${geoDataDir}/tmp`
 
 const geoipExtraValues = {
   schedule: '0 0 * * *',
-  startingDeadlineSeconds: 86400,
-} // 24 hours so it will run immediately after being created for the first time
+}
+
 const geoipVolume: PersistentVolumeClaim[] = [
   {
     name: 'sessions-geoip-db',
@@ -124,35 +124,34 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
       REDIS_USE_SSL: 'true',
     })
 
-export const geoipSetup =
-  (): ServiceBuilder<'services-sessions-geoip-worker'> =>
-    service('services-sessions-geoip-worker')
-      .image(imageName)
-      .namespace(namespace)
-      .serviceAccount('sessions-geoip')
-      .replicaCount({ min: 1, max: 1, default: 1 })
-      .command('node')
-      .args(
-        './node_modules/geoip-lite/scripts/updatedb.js',
-        'license_key=$(GEOIP_LICENSE_KEY)',
-      )
-      .resources({
-        limits: {
-          cpu: '500m',
-          memory: '3Gi',
-        },
-        requests: {
-          cpu: '500m',
-          memory: '2Gi',
-        },
-      })
-      .env({ GEODATADIR: geoDataDir, GEOTMPDIR: geoTmpDir })
-      .secrets({
-        GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY',
-      })
-      .volumes(...geoipVolume)
-      .extraAttributes({
-        dev: geoipExtraValues,
-        staging: geoipExtraValues,
-        prod: geoipExtraValues,
-      })
+export const geoipSetup = (): ServiceBuilder<'services-sessions-geoip-job'> =>
+  service('services-sessions-geoip-job')
+    .image(imageName)
+    .namespace(namespace)
+    .serviceAccount('sessions-geoip')
+    .replicaCount({ min: 1, max: 1, default: 1 })
+    .command('node')
+    .args(
+      './node_modules/geoip-lite/scripts/updatedb.js',
+      'license_key=$(GEOIP_LICENSE_KEY)',
+    )
+    .resources({
+      limits: {
+        cpu: '500m',
+        memory: '1Gi',
+      },
+      requests: {
+        cpu: '500m',
+        memory: '500Mi',
+      },
+    })
+    .env({ GEODATADIR: geoDataDir, GEOTMPDIR: geoTmpDir })
+    .secrets({
+      GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY',
+    })
+    .volumes(...geoipVolume)
+    .extraAttributes({
+      dev: geoipExtraValues,
+      staging: geoipExtraValues,
+      prod: geoipExtraValues,
+    })

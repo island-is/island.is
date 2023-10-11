@@ -2292,7 +2292,7 @@ services-sessions:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-services-sessions-geoip-worker:
+services-sessions-geoip-job:
   args:
     - './node_modules/geoip-lite/scripts/updatedb.js'
     - 'license_key=$(GEOIP_LICENSE_KEY)'
@@ -2302,7 +2302,7 @@ services-sessions-geoip-worker:
   env:
     GEODATADIR: '/geoip-lite/data'
     GEOTMPDIR: '/geoip-lite/data/tmp'
-    NODE_OPTIONS: '--max-old-space-size=2'
+    NODE_OPTIONS: '--max-old-space-size=921'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -2345,11 +2345,10 @@ services-sessions-geoip-worker:
   resources:
     limits:
       cpu: '500m'
-      memory: '3Gi'
+      memory: '1Gi'
     requests:
       cpu: '500m'
-      memory: '2Gi'
-  schedule: '0 0 * * *'
+      memory: '500Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY'
@@ -2361,7 +2360,6 @@ services-sessions-geoip-worker:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/sessions-geoip'
     create: true
     name: 'sessions-geoip'
-  startingDeadlineSeconds: 86400
 services-sessions-worker:
   args:
     - 'main.js'
