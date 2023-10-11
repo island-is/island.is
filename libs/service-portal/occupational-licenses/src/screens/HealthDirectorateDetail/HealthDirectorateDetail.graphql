@@ -17,7 +17,7 @@ query getHealthDirectorateLicenseById($id: String!) {
       profession
       type
       validFrom
-      isValid
+      status
       institution
       ... on OccupationalLicensesHealthDirectorateLicense {
         legalEntityId

@@ -14,7 +14,7 @@ type LicenseDetailProps = {
   licenseType?: string | null
   publisher?: string | null
   dateOfIssue?: string | null
-  isValid?: OccupationalLicenseStatus
+  status?: OccupationalLicenseStatus
   buttonGroup?: React.ReactNode
 }
 
@@ -29,7 +29,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
   licenseType,
   publisher,
   dateOfIssue,
-  isValid,
+  status,
 }) => {
   const { formatMessage } = useLocale()
 
@@ -96,7 +96,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
             valueColumnSpan={['6/12']}
           />
         )}
-        {isValid && (
+        {status && (
           <UserInfoLine
             paddingY={3}
             label={formatMessage(om.licenseStatus)}
@@ -109,25 +109,25 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
               >
                 <Text>
                   {formatMessage(
-                    isValid === 'valid'
+                    status === 'valid'
                       ? om.validLicense
-                      : isValid === 'limited'
+                      : status === 'limited'
                       ? om.validWithLimitationsLicense
                       : om.invalidLicense,
                   )}
                 </Text>
                 <Icon
                   icon={
-                    isValid === 'valid'
+                    status === 'valid'
                       ? 'checkmarkCircle'
-                      : isValid === 'limited'
+                      : status === 'limited'
                       ? 'warning'
                       : 'closeCircle'
                   }
                   color={
-                    isValid === 'valid'
+                    status === 'valid'
                       ? 'mint600'
-                      : isValid === 'limited'
+                      : status === 'limited'
                       ? 'yellow600'
                       : 'red600'
                   }

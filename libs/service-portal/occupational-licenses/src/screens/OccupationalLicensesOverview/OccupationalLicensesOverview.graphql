@@ -19,7 +19,7 @@ query getOccupationalLicenses {
       type
       profession
       validFrom
-      isValid
+      status
 
       ... on OccupationalLicensesHealthDirectorateLicense {
         legalEntityId

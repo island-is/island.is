@@ -111,7 +111,7 @@ const OccupationalLicensesOverview = () => {
                     organizations,
                     120,
                   )}
-                  isValid={license.isValid}
+                  status={license.status}
                 />
               )
             })

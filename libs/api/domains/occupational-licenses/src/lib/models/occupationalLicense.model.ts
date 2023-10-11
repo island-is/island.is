@@ -64,7 +64,7 @@ export abstract class OccupationalLicense {
   validFrom!: string
 
   @Field(() => OccupationalLicenseStatus)
-  isValid!: OccupationalLicenseStatus
+  status!: OccupationalLicenseStatus
 }
 
 @ObjectType('OccupationalLicensesEducationalLicense', {

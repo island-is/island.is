@@ -103,7 +103,7 @@ export class OccupationalLicensesService {
             type: license.leyfi,
             number: license.leyfisnumer,
             validFrom: license.gildirFra?.toString(),
-            isValid: checkHealthDirectorateValidity(license.stada),
+            status: checkHealthDirectorateValidity(license.stada),
           }
         })
         .filter(isDefined)
@@ -167,7 +167,7 @@ export class OccupationalLicensesService {
             type: license.leyfi,
             number: license.leyfisnumer,
             validFrom: license.gildirFra?.toString(),
-            isValid: checkHealthDirectorateValidity(license.stada),
+            status: checkHealthDirectorateValidity(license.stada),
           }
         })
         .filter(isDefined)
@@ -207,7 +207,7 @@ export class OccupationalLicensesService {
             type: license.issuer,
             profession: license.type,
             validFrom: license.issued,
-            isValid: checkEducationalValidity(license.issued),
+            status: checkEducationalValidity(license.issued),
             downloadUrl: `${this.downloadService.baseUrl}/download/v1/occupational-licenses/education/${id}`,
           }))
           .find((license) => license.id === id) ?? null
@@ -243,7 +243,7 @@ export class OccupationalLicensesService {
         type: license.issuer,
         profession: license.type,
         validFrom: license.issued,
-        isValid: checkEducationalValidity(license.issued),
+        status: checkEducationalValidity(license.issued),
       }))
 
       return {

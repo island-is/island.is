@@ -9,7 +9,7 @@ type LicenseActionCardProps = {
   validFrom?: string | Date
   url?: string
   image?: string
-  isValid: OccupationalLicenseStatus
+  status: OccupationalLicenseStatus
 }
 
 export const LicenceActionCard: React.FC<LicenseActionCardProps> = ({
@@ -17,7 +17,7 @@ export const LicenceActionCard: React.FC<LicenseActionCardProps> = ({
   validFrom,
   url,
   image,
-  isValid,
+  status,
 }) => {
   const { formatMessage } = useLocale()
   return (
@@ -27,17 +27,13 @@ export const LicenceActionCard: React.FC<LicenseActionCardProps> = ({
       text={`${formatMessage(ol.dayOfPublication)}: ${validFrom}`}
       tag={{
         label:
-          isValid === 'valid'
+          status === 'valid'
             ? formatMessage(ol.validLicense)
-            : isValid === 'limited'
+            : status === 'limited'
             ? formatMessage(ol.validWithLimitationsLicense)
             : formatMessage(ol.invalidLicense),
         variant:
-          isValid === 'valid'
-            ? 'blue'
-            : isValid === 'limited'
-            ? 'yellow'
-            : 'rose',
+          status === 'valid' ? 'blue' : status === 'limited' ? 'yellow' : 'red',
         outlined: false,
       }}
       cta={{

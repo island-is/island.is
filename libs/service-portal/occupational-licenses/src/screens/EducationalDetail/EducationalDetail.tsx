@@ -100,7 +100,7 @@ export const EducationDetail = () => {
           ? formatDateFns(license.validFrom, 'dd.MM.yyyy')
           : undefined
       }
-      isValid={license.isValid}
+      status={license.status}
     />
   )
 }

@@ -17,7 +17,7 @@ query getEducationalLicenseById($id: String!) {
       profession
       type
       validFrom
-      isValid
+      status
       institution
 
       ... on OccupationalLicensesEducationalLicense {
