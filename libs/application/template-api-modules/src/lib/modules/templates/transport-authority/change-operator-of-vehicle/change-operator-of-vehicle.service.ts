@@ -174,7 +174,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     try {
       const answers = application.answers as ChangeOperatorOfVehicleAnswers
 
-      const chargeItemCodes = getChargeItemCodes(answers)
+      const chargeItemCodes = getChargeItemCodes(application)
 
       if (chargeItemCodes?.length <= 0) {
         throw new Error('Það var hvorki bætt við né eytt umráðamann')

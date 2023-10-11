@@ -196,29 +196,6 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     }
   }
 
-  async createCharge({ application, auth }: TemplateApiModuleActionProps) {
-    try {
-      const answers = application.answers as ChangeCoOwnerOfVehicleAnswers
-
-      const chargeItemCodes = getChargeItemCodes(answers)
-
-      if (chargeItemCodes?.length <= 0) {
-        throw new Error('Það var hvorki bætt við né eytt meðeiganda')
-      }
-
-      const result = this.sharedTemplateAPIService.createCharge(
-        auth,
-        application.id,
-        InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeItemCodes,
-        [{ name: 'vehicle', value: answers?.pickVehicle?.plate }],
-      )
-      return result
-    } catch (exeption) {
-      return { id: '', paymentUrl: '' }
-    }
-  }
-
   // Notify everyone that has been added to the application that they need to review
   async initReview({
     application,

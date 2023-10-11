@@ -13,6 +13,7 @@ import { getChargeItemCodes } from '../../utils'
 import { externalDataSection } from './externalDataSection'
 import { informationSection } from './InformationSection'
 import { Logo } from '../../assets/Logo'
+import { getChargeItemCodeWithAnswers } from '../../utils/getChargeItemCodes'
 
 export const ChangeCoOwnerOfVehicleForm: Form = buildForm({
   id: 'ChangeCoOwnerOfVehicleFormDraft',
@@ -52,7 +53,7 @@ export const ChangeCoOwnerOfVehicleForm: Form = buildForm({
                   name: payment.general.confirm,
                   type: 'primary',
                   condition: (formValue, externalData) => {
-                    const chargeItemCodes = getChargeItemCodes(
+                    const chargeItemCodes = getChargeItemCodeWithAnswers(
                       formValue as ChangeCoOwnerOfVehicle,
                     )
                     const allItems = externalData?.payment?.data as [

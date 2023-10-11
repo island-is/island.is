@@ -95,6 +95,7 @@ export class PaymentService extends BaseTemplateApiService {
     params,
   }: TemplateApiModuleActionProps<CreateChargeParameters>) {
     console.log('deleting Payment for application ', application.id)
+
     const payment = await this.paymentModelService.findPaymentByApplicationId(
       application.id,
     )
@@ -108,7 +109,9 @@ export class PaymentService extends BaseTemplateApiService {
         500,
       )
     }
-    // const delres = await this.chargeFjsV2ClientService.deleteCharge(payment.id)
+
+    const s = await this.chargeFjsV2ClientService.deleteCharge(payment.id)
+    console.log('deleteCharge response : ', s)
     const paymentStatus = await this.paymentModelService.delete(
       application.id,
       auth,

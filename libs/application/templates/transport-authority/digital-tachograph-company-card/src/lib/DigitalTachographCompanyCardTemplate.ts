@@ -8,6 +8,7 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -25,6 +26,7 @@ import {
   UserProfileApi,
   SamgongustofaPaymentCatalogApi,
 } from '../dataProviders'
+import { buildPaymentState } from '@island.is/application/utils'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -89,7 +91,18 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
-      [States.PAYMENT]: {
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
+        chargeItemCodes: [''],
+        submitTarget: States.COMPLETED,
+        onExit: [
+          defineTemplateApi({
+            action: ApiActions.submitApplication,
+            triggerEvent: DefaultEvents.SUBMIT,
+          }),
+        ],
+      }),
+      /*[States.PAYMENT]: {
         meta: {
           name: 'Greiðsla',
           status: 'inprogress',
@@ -139,7 +152,7 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
           [DefaultEvents.ABORT]: { target: States.DRAFT },
         },
-      },
+      },*/
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',

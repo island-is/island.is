@@ -24,6 +24,7 @@ import {
   coreHistoryMessages,
   corePendingActionMessages,
 } from '@island.is/application/core'
+import { ExtraData } from '@island.is/clients/charge-fjs-v2'
 
 type PaymentStateConfigOptions<
   T extends EventObject = AnyEventObject,
@@ -33,12 +34,21 @@ type PaymentStateConfigOptions<
   chargeItemCodes:
     | ((application: Application) => CatalogItem['chargeItemCode'][])
     | string[]
-  submitTarget?: string
+  extraData?:
+    | ExtraData[]
+    | ((application: Application) => ExtraData[] | undefined)
   abortTarget?: string
   lifecycle?: StateLifeCycle
   onExit?: TemplateApi<R>[]
   onEntry?: TemplateApi<R>[]
   roles?: RoleInState<T>[]
+  submitCondition?: (context: ApplicationContext) => boolean
+  submitTarget?:
+    | {
+        target: string
+        cond?: (context: ApplicationContext) => boolean
+      }[]
+    | string
 }
 
 export function buildPaymentState<
@@ -48,9 +58,28 @@ export function buildPaymentState<
   options: PaymentStateConfigOptions<T, R>,
 ): StateNodeConfig<ApplicationContext, ApplicationStateSchema<T>, T> {
   const { onExit, onEntry } = options
+  let submitTransitions: Array<{
+    target: string
+    cond?: (context: ApplicationContext) => boolean
+  }> = []
 
+  if (typeof options.submitTarget === 'string') {
+    submitTransitions = [{ target: options.submitTarget }]
+  } else if (options.submitTarget && Array.isArray(options.submitTarget)) {
+    submitTransitions = options.submitTarget.map((targetObj) => {
+      if (targetObj.cond) {
+        return {
+          target: targetObj.target,
+          cond: targetObj.cond,
+        }
+      }
+      return {
+        target: targetObj.target,
+      }
+    })
+  }
   const transitions = {
-    [DefaultEvents.SUBMIT]: { target: options.submitTarget || 'done' },
+    [DefaultEvents.SUBMIT]: [...submitTransitions, { target: 'done' }], // Fallback to 'done' if no conditions are met
     [DefaultEvents.ABORT]: { target: options.abortTarget || 'draft' },
   } as TransitionsConfig<ApplicationContext, T>
 
@@ -87,6 +116,7 @@ export function buildPaymentState<
           params: {
             organizationId: options.organizationId,
             chargeItemCodes: options.chargeItemCodes,
+            extraData: options.extraData,
           },
         }),
         ...(onEntry || []),

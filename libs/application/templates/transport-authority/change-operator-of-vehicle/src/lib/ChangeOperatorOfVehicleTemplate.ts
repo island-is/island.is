@@ -9,6 +9,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   PendingAction,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
   getValueViaPath,
@@ -33,6 +34,8 @@ import { hasReviewerApproved, isRemovingOperatorOnly } from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { Features } from '@island.is/feature-flags'
 import { ApiScope } from '@island.is/auth/scopes'
+import { buildPaymentState } from '@island.is/application/utils'
+import { getChargeItemCodes, getExtraData } from '../utils/getChargeItemCodes'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -150,63 +153,24 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
-      [States.PAYMENT]: {
-        meta: {
-          name: 'Greiðsla',
-          status: 'inprogress',
-          actionCard: {
-            tag: {
-              label: applicationMessage.actionCardPayment,
-              variant: 'red',
-            },
-            historyLogs: [
-              {
-                logMessage: coreHistoryMessages.paymentAccepted,
-                onEvent: DefaultEvents.SUBMIT,
-              },
-              {
-                logMessage: coreHistoryMessages.paymentCancelled,
-                onEvent: DefaultEvents.ABORT,
-              },
-            ],
-            pendingAction: {
-              title: corePendingActionMessages.paymentPendingTitle,
-              content: corePendingActionMessages.paymentPendingDescription,
-              displayStatus: 'warning',
-            },
-          },
-          progress: 0.8,
-          lifecycle: pruneAfterDays(1 / 24),
-          onEntry: defineTemplateApi({
-            action: ApiActions.createCharge,
-          }),
-          onExit: defineTemplateApi({
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SYSLUMENN,
+        chargeItemCodes: getChargeItemCodes,
+        extraData: getExtraData,
+        onExit: [
+          defineTemplateApi({
             action: ApiActions.initReview,
+            triggerEvent: DefaultEvents.SUBMIT,
           }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Payment').then((val) => val.Payment),
-              actions: [
-                { event: DefaultEvents.SUBMIT, name: 'Áfram', type: 'primary' },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: [
-            {
-              target: States.COMPLETED,
-              cond: isRemovingOperatorOnly,
-            },
-            { target: States.REVIEW },
-          ],
-          [DefaultEvents.ABORT]: { target: States.DRAFT },
-        },
-      },
+        ],
+        submitTarget: [
+          {
+            target: States.COMPLETED,
+            cond: isRemovingOperatorOnly,
+          },
+          { target: States.REVIEW },
+        ],
+      }),
       [States.REVIEW]: {
         entry: 'assignUsers',
         meta: {
