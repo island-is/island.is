@@ -24,7 +24,6 @@ export const getFeatureAffectedServices = async (
         excluded: [] as string[],
       },
     )
-
     return affectedServices
   } else {
     throw new Error('Feature deployment with a feature name not defined')

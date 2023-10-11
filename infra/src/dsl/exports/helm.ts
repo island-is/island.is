@@ -19,10 +19,11 @@ export const renderHelmValueFileContent = async (
   habitat: ServiceBuilder<any>[],
   services: ServiceBuilder<any>[],
   withMocks: Mocks,
+  dockerTag?: string,
 ) => {
   return dumpServiceHelm(
     env,
-    await renderHelmServiceFile(env, habitat, services, withMocks),
+    await renderHelmServiceFile(env, dockerTag, habitat, services, withMocks),
   )
 }
 
@@ -31,12 +32,14 @@ export const renderHelmServiceFile = async (
   habitat: ServiceBuilder<any>[],
   services: ServiceBuilder<any>[],
   withMocks: Mocks,
+  dockerTag?: string,
 ) => {
   const { services: renderedServices, runtime } = await renderHelmServices(
     env,
     habitat,
     services,
     withMocks,
+    dockerTag,
   )
   return getHelmValueFile(runtime, renderedServices, withMocks, env)
 }
@@ -45,15 +48,17 @@ export const renderHelmServices = async (
   habitat: ServiceBuilder<any>[],
   services: ServiceBuilder<any>[],
   withMocks: Mocks,
+  dockerTag?: string,
 ) => {
   let runtime = new Kubernetes(env, withMocks)
-  hacks(services, habitat)
+  hacks(services, habitat, dockerTag)
   return {
     services: await generateOutput({
       runtime: runtime,
       services: services,
       outputFormat: renderers.helm,
       env: env,
+      dockerTag: dockerTag,
     }),
     runtime: runtime,
   }
