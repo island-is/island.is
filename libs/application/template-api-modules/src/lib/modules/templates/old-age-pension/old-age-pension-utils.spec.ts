@@ -6,10 +6,10 @@ describe('Old age pesion utils', () => {
   })
 
   it('should return 3 children', () => {
-    const childPensionSelectedCustodyKids = {
-      '0': '2222222229',
-      '1': '5555555559',
-    }
+    const childPensionSelectedCustodyKids = [
+      '2222222229',
+      '5555555559',
+    ]
     const childPension = [
       {
         name: 'Added Children 1',
@@ -28,10 +28,10 @@ describe('Old age pesion utils', () => {
   })
 
   it('should return 2 children', () => {
-    const childPensionSelectedCustodyKids = {
-      '0': '2222222229',
-      '1': '5555555559',
-    }
+    const childPensionSelectedCustodyKids = [
+      '2222222229',
+      '5555555559',
+    ]
     const childPension = [
       {
         name: 'Added Children 1',
