@@ -2349,6 +2349,7 @@ services-sessions-geoip-job:
     requests:
       cpu: '500m'
       memory: '500Mi'
+  schedule: '0 0 * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY'
