@@ -24,7 +24,7 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { IslykillService } from './islykill.service'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DataStatus } from './types/dataStatus.enum'
-import { FetchError, handle404 } from '@island.is/clients/middlewares'
+import { handle404, handle204 } from '@island.is/clients/middlewares'
 
 export const MAX_OUT_OF_DATE_MONTHS = 6
 const IGNORED_STATUS = 204
@@ -50,25 +50,6 @@ export class UserProfileService {
 
   userProfileApiWithAuth(auth: Auth) {
     return this.userProfileApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
-  private async handleRawRes<T>(
-    promise: Promise<ApiResponse<T>>,
-  ): Promise<T | null> {
-    return promise.then(
-      (response) => {
-        if (response.raw.status === IGNORED_STATUS) {
-          return null
-        }
-        return response.value()
-      },
-      (error) => {
-        if (error instanceof FetchError && error.status === IGNORED_STATUS) {
-          return null
-        }
-        throw error
-      },
-    )
   }
 
   async getIslykillProfile(user: User) {
@@ -98,7 +79,7 @@ export class UserProfileService {
   }
 
   async getUserProfileLocale(user: User) {
-    const locale = await this.handleRawRes(
+    const locale = await handle204(
       this.userProfileApiWithAuth(
         user,
       ).userProfileControllerGetActorLocaleRaw(),
@@ -112,7 +93,7 @@ export class UserProfileService {
 
   async getUserProfile(user: User) {
     try {
-      const profile = await this.handleRawRes(
+      const profile = await handle204(
         this.userProfileApiWithAuth(
           user,
         ).userProfileControllerFindOneByNationalIdRaw({
