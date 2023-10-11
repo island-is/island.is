@@ -210,7 +210,7 @@ const randomTemplate =
   listOfTemplates[Math.floor(Math.random() * listOfTemplates.length)]
 
 const template = createTemplate({
-  type: 'Númer 2',
+  type: ApplicationTypes.NEW_TYPE_OF_APPLICATION,
   name: 'Umsókn 2',
 })
 

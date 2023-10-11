@@ -54,7 +54,7 @@ type TemplateConfig<
 > = {
   readyForProduction?: boolean
   featureFlag?: Features
-  type: ApplicationTypes | string
+  type: ApplicationTypes
   name:
     | StaticText
     | ((

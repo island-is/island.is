@@ -51,7 +51,6 @@ export enum ApplicationTypes {
 
 export enum ApplicationFormTypes {
   DYNAMIC = 'dynamic',
-
   STATIC = 'static',
 }
 
