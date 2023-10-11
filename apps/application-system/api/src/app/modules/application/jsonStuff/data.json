@@ -33,7 +33,48 @@
               "type": "RADIO",
               "component": "RadioFormField",
               "required": true,
-              "children": null
+              "validation": {
+                "isRequired": true,
+                "message": "This field is required"
+              }
+            },
+            {
+              "id": "descriptionField1",
+              "type": "DESCRIPTION",
+              "component": "DescriptionFormField",
+              "description": "You need to set an url for input below to be valid."
+            },
+            {
+              "id": "input1",
+              "width": "half",
+              "type": "TEXT",
+              "component": "TextFormField",
+              "title": "Input 1 Title URL validation",
+              "required": true,
+              "children": null,
+              "validation": {
+                "isURL": true,
+                "message": "Invalid URL format."
+              }
+            },
+            {
+              "id": "descriptionField2",
+              "type": "DESCRIPTION",
+              "component": "DescriptionFormField",
+              "description": "You need to set a phone number for input below to be valid."
+            },
+            {
+              "id": "input2",
+              "width": "half",
+              "type": "TEXT",
+              "component": "TextFormField",
+              "title": "Input 2 Title 7 letter Phone validation",
+              "required": true,
+              "children": null,
+              "validation": {
+                "pattern": "([0-8]\\d{6})$",
+                "message": "Invalid phone number."
+              }
             },
             {
               "id": "radio2",
@@ -52,7 +93,10 @@
               "type": "RADIO",
               "component": "RadioFormField",
               "required": true,
-              "children": null
+              "validation": {
+                "isRequired": true,
+                "message": "This field is required"
+              }
             }
           ]
         }
@@ -80,7 +124,10 @@
           "type": "RADIO",
           "component": "RadioFormField",
           "required": true,
-          "children": null
+          "validation": {
+            "isRequired": true,
+            "message": "This field is required"
+          }
         },
         {
           "id": "submit2",
@@ -96,8 +143,7 @@
               "name": "SUBMIT",
               "type": "primary"
             }
-          ],
-          "refetchApplicationAfterSubmit": true
+          ]
         }
       ]
     }
