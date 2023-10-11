@@ -19,7 +19,7 @@ import {
   SyslumadurPaymentCatalogApi,
   GlassesCheckApi,
 } from '../../dataProviders'
-import build from 'next/dist/build'
+
 export const sectionExternalData = buildSubSection({
   id: 'externalData',
   title: m.externalDataSection,

@@ -29,14 +29,12 @@ function HealthDeclaration({
   const props = field.props as { label: string }
 
   useEffect(() => {
-    const healthDeclarationErrors = getErrorViaPath(errors, 'healthDeclaration')
+    const healthDeclarationErrors = getErrorViaPath(
+      errors,
+      'healthDeclaration.answers',
+    )
 
-    if (
-      !!healthDeclarationErrors &&
-      Object.values(healthDeclarationErrors).some((error) =>
-        Object.keys(error).includes('answer'),
-      )
-    ) {
+    if (!!healthDeclarationErrors) {
       setValue('healthDeclaration.error', true)
     } else {
       setValue('healthDeclaration.error', false)
@@ -44,16 +42,18 @@ function HealthDeclaration({
   }, [error, errors, setValue])
 
   const checkForGlassesMismatch = (value: string) => {
-    if (field.id === 'healthDeclaration.usesContactGlasses.answer') {
+    if (field.id === 'healthDeclaration.answers.usesContactGlasses') {
       const glassesUsedPreviously = application.externalData.glassesCheck.data
+
+      console.log(glassesUsedPreviously)
 
       if (
         (glassesUsedPreviously && value === NO) ||
         (!glassesUsedPreviously && value === YES)
       ) {
-        setValue('healthDeclaration.usesContactGlasses.mismatch', true)
+        setValue('healthDeclaration.contactGlassesMismatch', true)
       } else {
-        setValue('healthDeclaration.usesContactGlasses.mismatch', false)
+        setValue('healthDeclaration.contactGlassesMismatch', false)
       }
     }
   }
@@ -84,7 +84,7 @@ function HealthDeclaration({
             },
           ]}
           onSelect={(value) => {
-            if (field.id === 'healthDeclaration.usesContactGlasses.answer') {
+            if (field.id === 'healthDeclaration.answers.usesContactGlasses') {
               checkForGlassesMismatch(value)
             }
           }}
