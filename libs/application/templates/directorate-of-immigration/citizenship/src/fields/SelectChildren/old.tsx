@@ -16,22 +16,21 @@ import {
   ApplicantChildCustodyInformation,
   FieldComponents,
   FieldTypes,
-  NO,
-  YES,
 } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
-import { MAX_CNT_APPLICANTS } from '../../shared'
-import { getValueViaPath } from '@island.is/application/core'
+import { MAX_CNT_APPLICANTS, ParentsToApplicant } from '../../shared'
 import {
   DatePickerController,
   InputController,
   RadioController,
 } from '@island.is/shared/form-fields'
-import { useForm, useFormContext } from 'react-hook-form'
-import { gql, useLazyQuery } from '@apollo/client'
+import { NO, YES, getValueViaPath } from '@island.is/application/core'
 import { IdentityInput, Query } from '@island.is/api/schema'
+import { gql, useLazyQuery } from '@apollo/client'
+
 import { IDENTITY_QUERY } from '../../graphql/queries'
+import { useForm, useFormContext } from 'react-hook-form'
 import { debounce } from 'lodash'
 
 interface ChildrenCustodyResponseProps {
@@ -42,7 +41,7 @@ interface ChildrenCustodyResponseProps {
   otherParentBirthDate?: string
 }
 
-export const SelectChildren = ({ field, application, error }: any) => {
+export const SelectChildren = ({ field, application, errors }: any) => {
   const { formatMessage } = useLocale()
   const { setValue, getValues } = useFormContext()
 
@@ -53,28 +52,28 @@ export const SelectChildren = ({ field, application, error }: any) => {
   const children =
     childrenCustodyInformation.data as ApplicantChildCustodyInformation[]
 
+  console.log('children', children)
+
   const [selectedChildren, setSelectedChildren] = useState<any[]>(
     getValueViaPath(answers, 'selectedChildren', []) as any[],
   )
-
-  const [mostRecentlyCheckedChildSSN, setMostRecentlyCheckedChildSSN] =
-    useState<string>('')
-
-  const [mostRecentlyCheckedChildIndex, setMostRecentlyCheckedChildIndex] =
-    useState<number>(0)
 
   const [isVisible, setIsVisible] = useState(false)
   const [nationalIdInput, setNationalIdInput] = useState('')
   const [currentName, setCurrentName] = useState('')
   const [currentBirthDate, setCurrentBirthDate] = useState('')
   const [currentFullCustody, setCurrentFullCustody] = useState(true)
-  const [showMoreQuestions, setShowMoreQuestions] = useState(false)
+
   const [childrenCustodyResponses, setChildrenCustodyResponses] = useState<
     Array<ChildrenCustodyResponseProps>
   >([])
-  const currentNameField = `selectedChildren[${mostRecentlyCheckedChildIndex}].otherParentName`
+  const [mostRecentlyCheckedChildIndex, setMostRecentlyCheckedChildIndex] =
+    useState<number>(0)
 
-  const { control } = useForm()
+  const [mostRecentlyCheckedChildSSN, setMostRecentlyCheckedChildSSN] =
+    useState<string>('')
+
+  const currentNameField = `selectedChildren[${mostRecentlyCheckedChildIndex}].otherParentName`
 
   const [getIdentity, { data, loading: queryLoading, error: queryError }] =
     useLazyQuery<Query, { input: IdentityInput }>(
@@ -176,6 +175,35 @@ export const SelectChildren = ({ field, application, error }: any) => {
     rightContent: <div></div>,
   })
 
+  const [numberOfChecked, setNumberOfChecked] = useState(0)
+  const handleCheckboxChange = (length: number) => {
+    setNumberOfChecked(length)
+  }
+
+  const [showMoreQuestions, setShowMoreQuestions] = useState(false)
+
+  useEffect(() => {
+    children.map((child) => {
+      if (child.otherParent) {
+        setChildrenCustodyResponses([
+          ...childrenCustodyResponses,
+          {
+            nationalId: child.nationalId,
+            fullCustody: false,
+            otherParentName: child.otherParent.fullName,
+            otherParentNationalId: child.otherParent.nationalId,
+          },
+        ])
+
+        //TODO how do I add this to the selectedChildren afterwards? if the child is selected?
+      }
+    })
+
+    selectedChildren.map((child: any) => {
+      setChildrenCustodyResponses([...childrenCustodyResponses, child])
+    })
+  }, [])
+
   const handleCustodyRadio = (childSSN: string, value: string) => {
     //if the parent has full custody, no more questions need to be asked
     if (value === 'yes') {
@@ -189,22 +217,69 @@ export const SelectChildren = ({ field, application, error }: any) => {
     }
   }
 
-  const [numberOfChecked, setNumberOfChecked] = useState(0)
-  const handleCheckboxChange = (length: number) => {
-    setNumberOfChecked(length)
+  console.log('application', application)
+
+  //Add the modal answers to form answers, need to do this this way because I reset the form afterwards to avoid multiple forms when many children
+  const addAllAnswers = (
+    index: number,
+    ssn: string,
+    otherParentSsn: string,
+    otherParentName: string,
+    otherParentBirthDate: string,
+    fullCustody: boolean,
+  ) => {
+    setValue(`selectedChildren[${index}].nationalId`, ssn)
+    setValue(`selectedChildren[${index}].otherParentNationalId`, otherParentSsn)
+    setValue(`selectedChildren[${index}].otherParentName`, otherParentName)
+    setValue(`selectedChildren[${index}].fullCustody`, fullCustody)
+    setValue(
+      `selectedChildren[${index}].otherParentBirtDate`,
+      otherParentBirthDate,
+    )
   }
+
   const submitModal = () => {
+    addAllAnswers(
+      mostRecentlyCheckedChildIndex,
+      mostRecentlyCheckedChildSSN,
+      nationalIdInput,
+      currentName,
+      currentBirthDate,
+      currentFullCustody,
+    )
+
+    setChildrenCustodyResponses([
+      ...childrenCustodyResponses,
+      {
+        nationalId: mostRecentlyCheckedChildSSN,
+        fullCustody: currentFullCustody,
+        otherParentName: currentName,
+        otherParentNationalId: nationalIdInput,
+        otherParentBirthDate: currentBirthDate,
+      },
+    ])
+
+    //resetting the form and hiding the modal
+    setMostRecentlyCheckedChildIndex(mostRecentlyCheckedChildIndex + 1)
+    setNationalIdInput('')
+    setCurrentBirthDate('')
+    setCurrentName('')
+    control._reset()
+    setIsVisible(false)
+
     const currentAnswers = getValues()
     console.log('curerntAnswers', currentAnswers)
-    setIsVisible(false)
   }
+
+  const { control } = useForm()
+
   return (
     <Box>
       <Box>
         <CheckboxFormField
           application={application}
           field={{
-            id: field.id,
+            id: `temp.nationalId`,
             title: 'Children',
             large: true,
             backgroundColor: 'blue',
@@ -215,18 +290,22 @@ export const SelectChildren = ({ field, application, error }: any) => {
             options: childrenCheckboxes,
             onSelect: (newAnswer) => {
               console.log('newAnswer', newAnswer)
+              //if the new answer includes ssn that has not been added to the children custody response array -> so still needs to be answered
+              //only one item can be unanswered since this happens every time a child is selected and is never deleted from the response array
               const unansweredSSN = newAnswer.filter((x) => {
                 return (
                   childrenCustodyResponses.filter((y) => y.nationalId === x)
                     .length === 0
                 )
               })
+              console.log('childrenCustodyResponses', childrenCustodyResponses)
+              console.log('unsanswered', unansweredSSN)
               if (unansweredSSN[0]) {
                 setIsVisible(true)
                 setMostRecentlyCheckedChildSSN(unansweredSSN[0])
               }
-              handleCheckboxChange(newAnswer.length)
-              return { ...answers, selectedChildren: newAnswer }
+              // //TODO fix counter
+              // handleCheckboxChange(newAnswer.length)
             },
           }}
         />
@@ -243,87 +322,75 @@ export const SelectChildren = ({ field, application, error }: any) => {
       >
         <Box padding={4}>
           <Text>Ert þú með fulla forsjá?</Text>
-          {children.map((child, index) => {
-            return (
-              <Box>
-                <RadioController
-                  id={`selectedChildrenExtraData[${index}].hasFullCustody`}
-                  split="1/2"
-                  onSelect={(value) => {
-                    handleCustodyRadio(mostRecentlyCheckedChildSSN, value)
-                  }}
-                  defaultValue={false}
-                  options={[
-                    {
-                      value: YES,
-                      label: formatMessage(
-                        information.labels.radioButtons.radioOptionYes,
-                      ),
-                    },
-                    {
-                      value: NO,
-                      label: formatMessage(
-                        information.labels.radioButtons.radioOptionNo,
-                      ),
-                    },
-                  ]}
-                />
+          <RadioController
+            id={`temp.hasFullCustody`}
+            split="1/2"
+            onSelect={(value) => {
+              handleCustodyRadio(mostRecentlyCheckedChildSSN, value)
+            }}
+            defaultValue={false}
+            options={[
+              {
+                value: YES,
+                label: formatMessage(
+                  information.labels.radioButtons.radioOptionYes,
+                ),
+              },
+              {
+                value: NO,
+                label: formatMessage(
+                  information.labels.radioButtons.radioOptionNo,
+                ),
+              },
+            ]}
+          />
 
-                {showMoreQuestions && mostRecentlyCheckedChildIndex === index && (
-                  <Box>
-                    <GridRow>
-                      <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-                        <InputController
-                          control={control}
-                          defaultValue={nationalIdInput}
-                          id={`selectedChildrenExtraData[${index}].otherParentNationalId`}
-                          label={formatMessage(
-                            personal.labels.userInformation.nationalId,
-                          )}
-                          format="######-####"
-                          required={false}
-                          onChange={debounce((v) => {
-                            setNationalIdInput(
-                              v.target.value.replace(/\W/g, ''),
-                            )
-                          })}
-                          loading={queryLoading}
+          {showMoreQuestions && (
+            <Box>
+              <GridRow>
+                <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+                  <InputController
+                    control={control}
+                    defaultValue={nationalIdInput}
+                    id={`temp.otherparentssn`}
+                    label={formatMessage(
+                      personal.labels.userInformation.nationalId,
+                    )}
+                    format="######-####"
+                    required={false}
+                    onChange={debounce((v) => {
+                      setNationalIdInput(v.target.value.replace(/\W/g, ''))
+                    })}
+                    loading={queryLoading}
 
-                          // error={errors && getErrorViaPath(errors, nationaIdField)}
-                        />
-                      </GridColumn>
-                      <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-                        <Input
-                          name={`selectedChildrenExtraData[${index}].otherParentName`}
-                          value={currentName}
-                          label={formatMessage(
-                            personal.labels.userInformation.name,
-                          )}
-                          readOnly={!!nationalIdInput}
-                          onChange={(e) => setCurrentName(e.target.value)}
-                        />
-                      </GridColumn>
-                    </GridRow>
-                    <GridRow>
-                      <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-                        <DatePickerController
-                          defaultValue={currentBirthDate}
-                          id={`selectedChildrenExtraData[${index}].otherParentBirtDate`}
-                          label={formatMessage(
-                            information.labels.staysAbroad.dateFromLabel,
-                          )}
-                          // error={errors && getErrorViaPath(errors, dateFromField)}
-                          onChange={(value) =>
-                            setCurrentBirthDate(value as string)
-                          }
-                        />
-                      </GridColumn>
-                    </GridRow>
-                  </Box>
-                )}
-              </Box>
-            )
-          })}
+                    // error={errors && getErrorViaPath(errors, nationaIdField)}
+                  />
+                </GridColumn>
+                <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+                  <Input
+                    name={`temp.otherParentName`}
+                    value={currentName}
+                    label={formatMessage(personal.labels.userInformation.name)}
+                    readOnly={!!nationalIdInput}
+                    onChange={(e) => setCurrentName(e.target.value)}
+                  />
+                </GridColumn>
+              </GridRow>
+              <GridRow>
+                <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+                  <DatePickerController
+                    defaultValue={currentBirthDate}
+                    id={`temp.otherParentBirtDate`}
+                    label={formatMessage(
+                      information.labels.staysAbroad.dateFromLabel,
+                    )}
+                    // error={errors && getErrorViaPath(errors, dateFromField)}
+                    onChange={(value) => setCurrentBirthDate(value as string)}
+                  />
+                </GridColumn>
+              </GridRow>
+            </Box>
+          )}
 
           <Button onClick={submitModal} variant="text">
             Staðfesta
@@ -341,7 +408,4 @@ export const SelectChildren = ({ field, application, error }: any) => {
       )}
     </Box>
   )
-}
-function setValue(currentNameField: any, currentName: string) {
-  throw new Error('Function not implemented.')
 }
