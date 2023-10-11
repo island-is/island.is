@@ -136,8 +136,8 @@ export class TransportAuthorityApi {
         dateOfPurchase: new Date(answers?.vehicle?.date),
         dateOfPurchaseTimestamp: todayStr.substring(11, todayStr.length),
         saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
-        mileage: answers?.vehicle?.salePrice
-          ? Number(answers?.vehicle?.salePrice) || 0
+        mileage: answers?.vehicle?.mileage
+          ? Number(answers?.vehicle?.mileage) || 0
           : null,
         insuranceCompanyCode: answers?.insurance?.value || '',
         coOwners: buyerCoOwners?.map((coOwner) => ({

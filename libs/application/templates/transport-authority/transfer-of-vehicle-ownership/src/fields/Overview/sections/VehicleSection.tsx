@@ -95,9 +95,6 @@ export const VehicleSection: FC<
                 )}`}
               </Text>
             )}
-          <Text>{`${formatMessage(
-            overview.labels.agreementDate,
-          )} ${dateOfContract}`}</Text>
         </GridColumn>
       </GridRow>
     </ReviewGroup>
