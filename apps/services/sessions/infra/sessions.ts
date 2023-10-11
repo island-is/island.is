@@ -11,6 +11,13 @@ const geoipExtraValues = {
   schedule: '0 0 * * *',
 }
 
+const geoipAnnotations = {
+  annotations: {
+    'helm.sh/hook': 'pre-install,pre-upgrade',
+    'helm.sh/hook-delete-policy': 'before-hook-creation,hook-succeeded',
+  },
+}
+
 const geoipVolume: PersistentVolumeClaim[] = [
   {
     name: 'sessions-geoip-db',
@@ -151,7 +158,7 @@ export const geoipSetup = (): ServiceBuilder<'services-sessions-geoip-job'> =>
     })
     .volumes(...geoipVolume)
     .extraAttributes({
-      dev: geoipExtraValues,
-      staging: geoipExtraValues,
-      prod: geoipExtraValues,
+      dev: { ...geoipExtraValues, ...geoipAnnotations },
+      staging: { ...geoipExtraValues, ...geoipAnnotations },
+      prod: { ...geoipExtraValues, ...geoipAnnotations },
     })
