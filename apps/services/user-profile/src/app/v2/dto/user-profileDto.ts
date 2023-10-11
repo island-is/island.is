@@ -1,10 +1,10 @@
 import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
-import { ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 
 export class UserProfileDto {
-  @ApiPropertyOptional()
+  @ApiProperty()
   @IsString()
   readonly nationalId: string
 

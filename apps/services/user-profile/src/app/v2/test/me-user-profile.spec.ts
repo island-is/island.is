@@ -1,10 +1,18 @@
-import { getRequestMethod, TestEndpointOptions } from '@island.is/testing/nest'
 import request from 'supertest'
-import { setupWithAuth, setupWithoutAuth } from './setup'
+
+import {
+  getRequestMethod,
+  TestEndpointOptions,
+  setupApp,
+  setupAppWithoutAuth,
+} from '@island.is/testing/nest'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { UserProfileScope } from '@island.is/auth/scopes'
+
 import { FixtureFactory } from './fixtureFactory'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
+import { AppModule } from '../../app.module'
+import { SequelizeConfigService } from '../../sequelizeConfig.service'
 
 const testUserProfile = {
   nationalId: '1234567890',
@@ -15,13 +23,16 @@ describe('MeUserProfile', () => {
   describe('Auth and scopes', () => {
     it.each`
       method   | endpoint
-      ${'GET'} | ${'/v2/me/user-profile'}
+      ${'GET'} | ${'/v2/me'}
     `(
       '$method $endpoint should return 401 when user is not authenticated',
       async ({ method, endpoint }: TestEndpointOptions) => {
         // Arrange
 
-        const app = await setupWithoutAuth()
+        const app = await setupAppWithoutAuth({
+          AppModule: AppModule,
+          SequelizeConfigService: SequelizeConfigService,
+        })
 
         const server = request(app.getHttpServer())
 
@@ -41,12 +52,14 @@ describe('MeUserProfile', () => {
 
     it.each`
       method   | endpoint
-      ${'GET'} | ${'/v2/me/user-profile'}
+      ${'GET'} | ${'/v2/me'}
     `(
       '$method $endpoint should return 403 Forbidden when user does not have the correct scope',
       async ({ method, endpoint }: TestEndpointOptions) => {
         // Arrange
-        const app = await setupWithAuth({
+        const app = await setupApp({
+          AppModule,
+          SequelizeConfigService,
           user: createCurrentUser(),
         })
 
@@ -69,12 +82,14 @@ describe('MeUserProfile', () => {
 
     it.each`
       method   | endpoint
-      ${'GET'} | ${'/v2/me/user-profile'}
+      ${'GET'} | ${'/v2/me'}
     `(
       '$method $endpoint should return 204 NoContentException when user has the correct scope but no user profile exists',
       async ({ method, endpoint }: TestEndpointOptions) => {
         // Arrange
-        const app = await setupWithAuth({
+        const app = await setupApp({
+          AppModule,
+          SequelizeConfigService,
           user: createCurrentUser({
             scope: [UserProfileScope.read],
           }),
@@ -94,12 +109,14 @@ describe('MeUserProfile', () => {
 
     it.each`
       method   | endpoint
-      ${'GET'} | ${'/v2/me/user-profile'}
+      ${'GET'} | ${'/v2/me'}
     `(
       '$method $endpoint should return 200 with UserProfileDto for logged in user',
       async ({ method, endpoint }: TestEndpointOptions) => {
         // Arrange
-        const app = await setupWithAuth({
+        const app = await setupApp({
+          AppModule,
+          SequelizeConfigService,
           user: createCurrentUser({
             nationalId: testUserProfile.nationalId,
             scope: [UserProfileScope.read],

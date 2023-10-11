@@ -10,11 +10,7 @@ import { UserProfileService } from './user-profile.service'
 import { MeUserProfileController } from './me-user-profile.controller'
 
 @Module({
-  imports: [
-    AuditModule.forRoot(environment.audit),
-    AuthModule.register(environment.auth),
-    SequelizeModule.forFeature([UserProfile]),
-  ],
+  imports: [SequelizeModule.forFeature([UserProfile])],
   controllers: [MeUserProfileController],
   providers: [UserProfileService],
 })

@@ -16,11 +16,20 @@ export class UserProfileService {
 
   async findById(nationalId: string): Promise<UserProfileDto> {
     const userProfile = await this.userProfileModel.findOne({
-      where: { nationalId: nationalId },
+      where: { nationalId },
     })
 
     if (!userProfile) {
-      throw new NoContentException()
+      return {
+        nationalId,
+        email: '',
+        mobilePhoneNumber: '',
+        locale: '',
+        mobileStatus: DataStatus.NOT_DEFINED,
+        emailStatus: DataStatus.NOT_DEFINED,
+        mobilePhoneNumberVerified: false,
+        emailVerified: false,
+      }
     }
 
     return {
