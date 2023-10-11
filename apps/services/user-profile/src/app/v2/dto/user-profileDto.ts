@@ -2,6 +2,7 @@ import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
+import { DataType } from 'sequelize-typescript'
 
 export class UserProfileDto {
   @ApiProperty()
@@ -20,7 +21,7 @@ export class UserProfileDto {
 
   @ApiPropertyOptional()
   @IsOptional()
-  @IsString()
+  @IsEnum(DataType.ENUM('en', 'is'))
   readonly locale?: string
 
   @ApiPropertyOptional()
@@ -42,4 +43,14 @@ export class UserProfileDto {
   @IsOptional()
   @IsBoolean()
   readonly emailVerified?: boolean
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  readonly documentNotifications?: boolean
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  readonly profileImageUrl?: string
 }

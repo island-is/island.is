@@ -24,11 +24,13 @@ export class UserProfileService {
         nationalId,
         email: '',
         mobilePhoneNumber: '',
-        locale: '',
+        locale: 'is',
         mobileStatus: DataStatus.NOT_DEFINED,
         emailStatus: DataStatus.NOT_DEFINED,
         mobilePhoneNumberVerified: false,
         emailVerified: false,
+        profileImageUrl: '',
+        documentNotifications: true,
       }
     }
 

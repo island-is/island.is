@@ -84,7 +84,7 @@ describe('MeUserProfile', () => {
       method   | endpoint
       ${'GET'} | ${'/v2/me'}
     `(
-      '$method $endpoint should return 204 NoContentException when user has the correct scope but no user profile exists',
+      '$method $endpoint should return 200 with default UserProfileDto when the User Profile does not exist in db',
       async ({ method, endpoint }: TestEndpointOptions) => {
         // Arrange
         const app = await setupApp({
@@ -101,7 +101,7 @@ describe('MeUserProfile', () => {
         const res = await getRequestMethod(server, method)(endpoint)
 
         // Assert
-        expect(res.status).toEqual(204)
+        expect(res.status).toEqual(200)
 
         await app.cleanUp()
       },
