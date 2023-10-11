@@ -64,6 +64,7 @@ export enum RequirementKey {
 export interface ApplicationEligibilityRequirement {
   key: RequirementKey
   requirementMet: boolean
+  daysOfResidency?: number
 }
 
 export interface ApplicationEligibility {
