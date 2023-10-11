@@ -10,7 +10,7 @@ import type { Logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { TemplateApiModuleActionProps } from '@island.is/application/template-api-modules'
+import { TemplateApiModuleActionProps } from '../../../types'
 
 import {
   SocialInsuranceAdministrationClientService,
