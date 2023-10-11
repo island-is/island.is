@@ -10,7 +10,6 @@ import {
 } from '@island.is/island-ui/core'
 import { FILTERS_FRONT_PAGE_KEY } from '../../../../../utils/consts/consts'
 import localization from '../../../Home.json'
-import shared from '../../../../../lib/shared.json'
 import { FilterTypes } from '../../../../../types/enums'
 
 interface FilterBoxProps {
