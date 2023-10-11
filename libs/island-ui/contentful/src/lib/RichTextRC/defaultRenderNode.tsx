@@ -223,10 +223,14 @@ export const defaultRenderNodeObject: RenderNode = {
             {children}
           </Hyperlink>
         ) : null
-      case 'subArticle':
-        return entry?.fields?.url ? (
-          <Hyperlink href={entry.fields.url}>{children}</Hyperlink>
-        ) : null
+      case 'subArticle': {
+        let href = ''
+        const parentSlug = entry?.fields.parent?.fields?.slug ?? ''
+        if (parentSlug) {
+          href = `${parentSlug}/${entry?.fields.url?.split('/')?.pop() ?? ''}`
+        }
+        return href ? <Hyperlink href={href}>{children}</Hyperlink> : null
+      }
       case 'organizationPage': {
         const prefix = getOrganizationPrefix(entry?.sys?.locale)
         return entry.fields.slug ? (

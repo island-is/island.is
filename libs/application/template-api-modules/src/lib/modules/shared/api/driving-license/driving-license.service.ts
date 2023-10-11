@@ -18,12 +18,12 @@ import {
 import {
   DrivingLicenseApi,
   Jurisdiction,
-  QualitySignature,
-  Teacher,
+  TeacherV4,
 } from '@island.is/clients/driving-license'
 import sortTeachers from './sortTeachers'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { CurrentLicenseParameters } from '@island.is/application/types'
+import { EmbaettiDto } from '@island.is/clients/driving-license'
 
 @Injectable()
 export class DrivingLicenseProviderService extends BaseTemplateApiService {
@@ -34,14 +34,14 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     super('DrivingLicenseShared')
   }
 
-  private async hasTeachingRights(nationalId: string): Promise<boolean> {
-    return await this.drivingLicenseService.getIsTeacher({ nationalId })
+  private async hasTeachingRights(token: string): Promise<boolean> {
+    return await this.drivingLicenseService.getIsTeacher({ token })
   }
 
   async getHasTeachingRights({
     auth,
   }: TemplateApiModuleActionProps): Promise<boolean> {
-    const teachingRights = await this.hasTeachingRights(auth.nationalId)
+    const teachingRights = await this.hasTeachingRights(auth.authorization)
     if (teachingRights) {
       return true
     } else {
@@ -101,8 +101,8 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       })
   }
 
-  async teachers(): Promise<Teacher[]> {
-    const teachers = await this.drivingLicenseService.getTeachers()
+  async teachers(): Promise<TeacherV4[]> {
+    const teachers = await this.drivingLicenseService.getTeachersV4()
     if (teachers) {
       return teachers.sort(sortTeachers)
     } else {
@@ -128,26 +128,16 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     if (fakeData?.useFakeData === YES) {
       return {
         currentLicense: fakeData.currentLicense === 'temp' ? 'B' : null,
-        healthRemarks:
-          fakeData.healthRemarks === YES
+        remarks:
+          fakeData.remarks === YES
             ? ['Gervilimur eða gervilimir/stoðtæki fyrir fætur og hendur.']
             : undefined,
       }
     }
 
-    let drivingLicense
-    if (params?.useLegacyVersion) {
-      drivingLicense = await this.drivingLicenseService.legacyGetCurrentLicense(
-        {
-          nationalId: auth.nationalId,
-          token: auth.authorization,
-        },
-      )
-    } else {
-      drivingLicense = await this.drivingLicenseService.getCurrentLicense({
-        token: auth.authorization,
-      })
-    }
+    const drivingLicense = await this.drivingLicenseService.getCurrentLicense({
+      token: auth.authorization,
+    })
 
     const categoryB = (drivingLicense?.categories ?? []).find(
       (cat) => cat.name === 'B' || cat.nr === 'B',
@@ -174,7 +164,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
 
     return {
       currentLicense: categoryB ? categoryB.name : null,
-      healthRemarks: drivingLicense?.healthRemarks,
+      remarks: drivingLicense?.remarks ?? [],
       categories: drivingLicense?.categories,
       id: drivingLicense?.id,
       birthCountry: drivingLicense?.birthCountry,
@@ -199,7 +189,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       return { hasQualityPhoto: hasQualityPhoto === 'yes' }
     }
     const hasQualityPhoto = await this.drivingLicenseService.getHasQualityPhoto(
-      { nationalId: auth.nationalId },
+      { token: auth.authorization },
     )
     return {
       hasQualityPhoto,
@@ -231,7 +221,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
     const hasQualitySignature =
       await this.drivingLicenseService.getHasQualitySignature({
-        nationalId: auth.nationalId,
+        token: auth.authorization,
       })
     return {
       hasQualitySignature,
@@ -243,10 +233,10 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   }
 
   private async getDrivingAssessment(
-    nationalId: string,
+    token: string,
   ): Promise<StudentAssessment | null> {
     const assessment = await this.drivingLicenseService.getDrivingAssessment({
-      nationalId,
+      token,
     })
 
     if (!assessment) {
@@ -287,6 +277,6 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       }
     }
 
-    return await this.getDrivingAssessment(auth.nationalId)
+    return await this.getDrivingAssessment(auth.authorization)
   }
 }

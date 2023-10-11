@@ -254,7 +254,8 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
                     colorScheme="default"
                     iconType="outline"
                     size="small"
-                    type="button"
+                    type="span"
+                    unfocusable
                     variant="text"
                   >
                     {cta.label}

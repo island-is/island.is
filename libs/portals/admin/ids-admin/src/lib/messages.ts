@@ -832,6 +832,10 @@ export const m = defineMessages({
     defaultMessage:
       'The client ID will be deleted from all available environments and cannot be reused. Authentications will stop working immediately for your application.',
   },
+  partiallyCreatedClient: {
+    id: 'ap.ids-admin:partially-created-client',
+    defaultMessage: 'Client creation failed on one or more environments',
+  },
   typeNotFound: {
     id: 'ap.ids-admin:type-not-found',
     defaultMessage: '{type} not found',
