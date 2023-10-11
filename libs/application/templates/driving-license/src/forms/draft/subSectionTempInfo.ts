@@ -14,7 +14,7 @@ import {
   UserProfile,
 } from '../../types/schema'
 import { m } from '../../lib/messages'
-import { B_TEMP } from '../../shared/constants'
+import { B_TEMP } from '../../lib/constants'
 import { isApplicationForCondition } from '../../lib/utils'
 
 export const subSectionTempInfo = buildSubSection({

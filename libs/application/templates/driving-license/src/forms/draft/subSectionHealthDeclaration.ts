@@ -9,7 +9,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { hasHealthRemarks } from '../../lib/utils/formUtils'
-import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT, YES } from '../../lib/constants'
+import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../lib/constants'
 import { NationalRegistryUser } from '@island.is/api/schema'
 import { info } from 'kennitala'
 

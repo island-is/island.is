@@ -11,7 +11,7 @@ import {
   DrivingLicenseApplicationFor,
   B_FULL,
   B_TEMP,
-} from '../../shared/constants'
+} from '../../lib/constants'
 import { hasYes } from '@island.is/application/core'
 
 export const allowFakeCondition =

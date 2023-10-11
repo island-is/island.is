@@ -21,7 +21,7 @@ import {
   ExistingApplicationApi,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
-import { ApiActions } from '../shared'
+import { ApiActions } from '../lib/constants'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import {

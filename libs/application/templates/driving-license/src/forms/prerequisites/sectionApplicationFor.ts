@@ -6,7 +6,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { DrivingLicense } from '../../lib/types'
-import { B_FULL, B_TEMP } from '../../shared'
+import { B_FULL, B_TEMP } from '../../lib/constants'
 
 export const sectionApplicationFor = buildSubSection({
   id: 'applicationFor',

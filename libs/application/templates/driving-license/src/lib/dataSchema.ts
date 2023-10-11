@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { YES, NO } from './constants'
-import { B_FULL, B_TEMP } from '../shared/constants'
+import { B_FULL, B_TEMP } from '../lib/constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { hasYes } from '@island.is/application/core'
 
