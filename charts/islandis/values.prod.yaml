@@ -2052,8 +2052,7 @@ services-sessions-geoip-worker:
   env:
     GEODATADIR: '/geoip-lite/data'
     GEOTMPDIR: '/geoip-lite/data/tmp'
-    NODE_OPTIONS: '--max-old-space-size=1'
-    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
+    NODE_OPTIONS: '--max-old-space-size=2'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -2095,10 +2094,10 @@ services-sessions-geoip-worker:
     min: 1
   resources:
     limits:
-      cpu: '1'
-      memory: '2Gi'
+      cpu: '500m'
+      memory: '3Gi'
     requests:
-      cpu: '1'
+      cpu: '500m'
       memory: '2Gi'
   schedule: '0 0 * * *'
   secrets:
@@ -2112,6 +2111,7 @@ services-sessions-geoip-worker:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/sessions-geoip'
     create: true
     name: 'sessions-geoip'
+  startingDeadlineSeconds: 86400
 services-sessions-worker:
   args:
     - 'main.js'

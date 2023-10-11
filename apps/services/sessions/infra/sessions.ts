@@ -7,6 +7,10 @@ const dbName = 'services_sessions'
 const geoDataDir = '/geoip-lite/data'
 const geoTmpDir = `${geoDataDir}/tmp`
 
+const geoipExtraValues = {
+  schedule: '0 0 * * *',
+  startingDeadlineSeconds: 86400,
+} // 24 hours so it will run immediately after being created for the first time
 const geoipVolume: PersistentVolumeClaim[] = [
   {
     name: 'sessions-geoip-db',
@@ -125,21 +129,20 @@ export const geoipSetup =
     service('services-sessions-geoip-worker')
       .image(imageName)
       .namespace(namespace)
-      .redis()
       .serviceAccount('sessions-geoip')
-      .command('node')
       .replicaCount({ min: 1, max: 1, default: 1 })
+      .command('node')
       .args(
         './node_modules/geoip-lite/scripts/updatedb.js',
         'license_key=$(GEOIP_LICENSE_KEY)',
       )
       .resources({
         limits: {
-          cpu: '1',
-          memory: '2Gi',
+          cpu: '500m',
+          memory: '3Gi',
         },
         requests: {
-          cpu: '1',
+          cpu: '500m',
           memory: '2Gi',
         },
       })
@@ -149,7 +152,7 @@ export const geoipSetup =
       })
       .volumes(...geoipVolume)
       .extraAttributes({
-        dev: { schedule: '0 0 * * *' },
-        staging: { schedule: '0 0 * * *' },
-        prod: { schedule: '0 0 * * *' },
+        dev: geoipExtraValues,
+        staging: geoipExtraValues,
+        prod: geoipExtraValues,
       })
