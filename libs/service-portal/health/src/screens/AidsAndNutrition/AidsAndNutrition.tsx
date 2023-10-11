@@ -87,7 +87,7 @@ const AidsAndNutrition = () => {
         </Box>
       )}
 
-      {!loading && !error && tabs.length && (
+      {!loading && !error && tabs.length > 0 && (
         <Box>
           {tabs.length === 1 ? (
             <>
