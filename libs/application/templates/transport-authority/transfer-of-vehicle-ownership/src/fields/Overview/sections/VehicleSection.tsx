@@ -13,7 +13,7 @@ import {
   ReviewScreenProps,
   UserInformation,
 } from '../../../shared'
-import { formatIsk } from '../../../utils'
+import { formatIsk, formatMileage } from '../../../utils'
 
 export const VehicleSection: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
@@ -33,6 +33,7 @@ export const VehicleSection: FC<
     | undefined
   const carPlate = getValueViaPath(answers, 'pickVehicle.plate', '') as string
   const salePrice = getValueViaPath(answers, 'vehicle.salePrice', '') as string
+  const mileage = getValueViaPath(answers, 'vehicle.mileage', '') as string
   const buyerCoOwnerAndOperator = getValueViaPath(
     answers,
     'buyerCoOwnerAndOperator',
@@ -84,6 +85,16 @@ export const VehicleSection: FC<
           <Text>{`${formatMessage(
             overview.labels.agreementDate,
           )} ${dateOfContract}`}</Text>
+        </GridColumn>
+        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+          {(!isOperator || isSeller || isSellerCoOwner) &&
+            mileage.length > 0 && (
+              <Text>
+                {`${formatMessage(overview.labels.mileage)} ${formatMileage(
+                  parseInt(mileage, 10),
+                )}`}
+              </Text>
+            )}
         </GridColumn>
       </GridRow>
     </ReviewGroup>

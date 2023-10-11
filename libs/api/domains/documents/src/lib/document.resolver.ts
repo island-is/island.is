@@ -24,6 +24,8 @@ import { PaperMailBody } from './models/paperMail.model'
 import { PostRequestPaperInput } from './dto/postRequestPaperInput'
 import { PostMailActionResolverInput } from './dto/postMailActionInput'
 import { ActionMailBody } from './models/actionMail.model'
+import { PostBulkMailActionResolverInput } from './dto/postBulkMailActionInput'
+import { BulkMailAction } from './models/bulkMailAction.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -107,6 +109,18 @@ export class DocumentResolver {
     @Args('input') input: PostMailActionResolverInput,
   ): Promise<ActionMailBody> {
     return this.documentService.postMailAction({
+      ...input,
+      nationalId: user.nationalId,
+    })
+  }
+
+  @Scopes(DocumentsScope.main)
+  @Mutation(() => BulkMailAction, { nullable: true })
+  postBulkMailAction(
+    @CurrentUser() user: User,
+    @Args('input') input: PostBulkMailActionResolverInput,
+  ): Promise<BulkMailAction> {
+    return this.documentService.bulkMailAction({
       ...input,
       nationalId: user.nationalId,
     })
