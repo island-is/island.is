@@ -45,8 +45,6 @@ function HealthDeclaration({
     if (field.id === 'healthDeclaration.answers.usesContactGlasses') {
       const glassesUsedPreviously = application.externalData.glassesCheck.data
 
-      console.log(glassesUsedPreviously)
-
       if (
         (glassesUsedPreviously && value === NO) ||
         (!glassesUsedPreviously && value === YES)

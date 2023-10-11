@@ -130,6 +130,33 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlýsing um líkamlegt og andlegt heilbrigði',
     description: 'Statement of physical and mental health',
   },
+  declaration: {
+    id: 'dl.application:declaration',
+    defaultMessage: 'Yfirlýsing',
+    description: '',
+  },
+  healthDeclarationSubTitle: {
+    id: 'dl.application:healthDeclarationSubTitle',
+    defaultMessage:
+      'Ef einhverri spurningu er svarað játandi í heilbrigðisyfirlýsingu þarf læknisvottorð frá heimilislækni eða viðeigandi sérfræðilækni.',
+    description: '',
+  },
+  uploadHeader: {
+    id: 'dl.application:uploadHeader',
+    defaultMessage: 'Læknisvottorð',
+    description: 'Upload header',
+  },
+  uploadDescription: {
+    id: 'dl.application:uploadDescription',
+    defaultMessage:
+      'Tekið er við skjölum með endingunum: .pdf, .doc, .docx, .rtf',
+    description: 'Upload description',
+  },
+  uploadButtonLabel: {
+    id: 'dl.application:uploadButtonLabel',
+    defaultMessage: 'Velja skjal til að hlaða upp',
+    description: 'Upload button label',
+  },
   healthDeclarationAge65MultiFieldSubTitle: {
     id: 'dl.application:healthDeclarationAge65MultiFieldSubTitle.subTitle',
     defaultMessage:
@@ -205,6 +232,17 @@ export const m = defineMessages({
     id: 'dl.application:overviewSection.title',
     defaultMessage: 'Staðfesting',
     description: 'Confirmation',
+  },
+  errorHealthDeclarationNotFilledOut: {
+    id: 'dl.application:errorHealthDeclarationNotFilledOut',
+    defaultMessage: 'Vinsamlegast fylltu út heilbringðisyfirlýsingu',
+    description: '',
+  },
+  alertHealthDeclarationGlassesMismatch: {
+    id: 'dl.application:alertHealthDeclarationGlassesMismatch',
+    defaultMessage:
+      'Athugaðu að þar sem þú hefur (hefur ekki) verið að nota gleraugu seinast, þá þarftu að skila inn vottorði frá lækninum þínum sem sýnir að þú sért (sért ekki) að nota gleraugu.',
+    description: '',
   },
   overviewMultiFieldTitle: {
     id: 'dl.application:overviewMultiField.title',

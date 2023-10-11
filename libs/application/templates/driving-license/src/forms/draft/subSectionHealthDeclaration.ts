@@ -5,6 +5,7 @@ import {
   buildFileUploadField,
   buildAlertMessageField,
   hasYes,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { hasHealthRemarks } from '../../lib/utils/formUtils'
@@ -19,7 +20,7 @@ export const subSectionHealthDeclaration = buildSubSection({
     buildMultiField({
       id: 'overview',
       title: m.healthDeclarationMultiFieldTitle,
-      description: m.healthDeclarationMultiFieldSubTitle,
+      description: m.healthDeclarationSubTitle,
       space: 2,
       condition: (answers, externalData) => {
         return (
@@ -31,6 +32,11 @@ export const subSectionHealthDeclaration = buildSubSection({
         )
       },
       children: [
+        buildDescriptionField({
+          id: 'healthDeclaration.header',
+          title: 'Yfirlýsing',
+          titleVariant: 'h3',
+        }),
         buildCustomField({
           id: 'remarks',
           title: '',
@@ -140,15 +146,14 @@ export const subSectionHealthDeclaration = buildSubSection({
         buildAlertMessageField({
           id: 'healthDeclaration.error',
           title: '',
-          message: 'Vinsamlegast fylltu út heilbringðisyfirlýsingu',
+          message: m.errorHealthDeclarationNotFilledOut,
           alertType: 'error',
           condition: (answers) => !!(answers.healthDeclaration as any)?.error,
         }),
         buildAlertMessageField({
           id: 'healthDeclaration.contactGlassesMismatch',
           title: '',
-          message:
-            'Athugaðu að þar sem þú hefur/hefur ekki verið að nota gleraugu seinast, þá þarftu að skila inn vottorði frá lækninum þínum sem sýnir að þú sért/ekki að nota gleraugu.',
+          message: m.alertHealthDeclarationGlassesMismatch,
           alertType: 'warning',
           condition: (answers) =>
             (answers.healthDeclaration as any)?.contactGlassesMismatch,
@@ -158,6 +163,9 @@ export const subSectionHealthDeclaration = buildSubSection({
           title: '',
           maxSize: FILE_SIZE_LIMIT,
           maxSizeErrorText: m.attachmentMaxSizeError,
+          uploadHeader: m.uploadHeader,
+          uploadDescription: m.uploadDescription,
+          uploadButtonLabel: m.uploadButtonLabel,
           uploadAccept: UPLOAD_ACCEPT,
           condition: (answers) =>
             hasYes((answers.healthDeclaration as any)?.answers) ||
