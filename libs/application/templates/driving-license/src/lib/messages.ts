@@ -802,7 +802,7 @@ export const requirementsMessages = defineMessages({
   localResidencyDescription: {
     id: 'dl.application:requirementunmet.localResidencyDescription',
     defaultMessage:
-      'Þú þarft að hafa búið að minnsta kosti 180 daga af síðustu 365 dögum á Íslandi til að geta sótt um ökuskírteini.',
+      'Þú þarft að hafa búið að minnsta kosti 185 daga af síðustu 365 dögum á Íslandi til að geta sótt um ökuskírteini.',
     description: 'requirement unmet api returned false',
   },
   currentLocalResidencyDescription: {
