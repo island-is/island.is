@@ -104,38 +104,36 @@ export const DocumentLine: FC<Props> = ({
     }
   }
 
-  const [
-    getDocument,
-    { data: getFileByIdData, loading: fileLoading, error, refetch, called },
-  ] = useLazyQuery(GET_DOCUMENT_BY_ID, {
-    variables: {
-      input: {
-        id: documentLine.id,
+  const [getDocument, { data: getFileByIdData, loading: fileLoading, error }] =
+    useLazyQuery(GET_DOCUMENT_BY_ID, {
+      variables: {
+        input: {
+          id: documentLine.id,
+        },
       },
-    },
-    fetchPolicy: 'no-cache',
-    onCompleted: (data) => {
-      const docContent = data?.getDocument
-      if (asFrame) {
-        navigate(DocumentsPaths.ElectronicDocumentsRoot, {
-          state: {
-            id: documentLine.id,
-            doc: {
-              document: docContent as DocumentDetails,
+      fetchPolicy: 'no-cache',
+      onCompleted: (data) => {
+        const docContent = data?.getDocument
+        if (asFrame) {
+          navigate(DocumentsPaths.ElectronicDocumentsRoot, {
+            state: {
               id: documentLine.id,
-              subject: documentLine.subject,
-              sender: documentLine.senderName,
-              downloadUrl: documentLine.url,
-              date: date,
-              img,
+              doc: {
+                document: docContent as DocumentDetails,
+                id: documentLine.id,
+                subject: documentLine.subject,
+                sender: documentLine.senderName,
+                downloadUrl: documentLine.url,
+                date: date,
+                img,
+              },
             },
-          },
-        })
-      } else {
-        displayPdf(docContent)
-      }
-    },
-  })
+          })
+        } else {
+          displayPdf(docContent)
+        }
+      },
+    })
 
   const isLink = documentLine.fileType === 'url' && documentLine.url
 

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { HttpService } from '@nestjs/axios'
-import { AxiosRequestConfig, Method } from 'axios'
+import { AxiosRequestConfig } from 'axios'
 import {
   CategoriesResponse,
   DocumentDTO,

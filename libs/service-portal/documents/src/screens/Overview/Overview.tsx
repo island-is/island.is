@@ -107,7 +107,6 @@ export const ServicePortalDocuments = () => {
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [selectedLines, setSelectedLines] = useState<Array<string>>([])
-  const [isEmpty, setEmpty] = useState(false)
   const { width } = useWindowSize()
   const navigate = useNavigate()
   const location = useLocation()
@@ -140,10 +139,10 @@ export const ServicePortalDocuments = () => {
   }
   const hideHealthData = isOver15 && isLegal
 
-  const [sortState, setSortState] = useState<SortType>({
+  const sortState = {
     direction: 'Descending',
     key: 'Date',
-  })
+  }
   const [searchInteractionEventSent, setSearchInteractionEventSent] =
     useState(false)
   useScrollTopOnUpdate([page])
@@ -170,7 +169,7 @@ export const ServicePortalDocuments = () => {
     }
   }
 
-  const { data, totalCount, loading, error, refetch } = useListDocuments({
+  const { data, totalCount, loading, refetch } = useListDocuments({
     ...fetchObject(),
   })
 
@@ -228,12 +227,6 @@ export const ServicePortalDocuments = () => {
   }, [categoriesLoading])
 
   const filteredDocuments = data.documents
-
-  useEffect(() => {
-    if (!loading && totalCount === 0 && filterValue === defaultFilterValues) {
-      setEmpty(true)
-    }
-  }, [loading])
 
   const pagedDocuments = {
     from: (page - 1) * pageSize,

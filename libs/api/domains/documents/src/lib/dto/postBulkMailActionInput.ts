@@ -1,6 +1,5 @@
-import { Field, InputType, IntersectionType, OmitType } from '@nestjs/graphql'
+import { Field, InputType, OmitType } from '@nestjs/graphql'
 import { IsArray, IsBoolean, IsString } from 'class-validator'
-import { nullable } from 'zod'
 
 @InputType()
 export class PostBulkMailActionInput {
