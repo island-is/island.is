@@ -4,7 +4,7 @@ import { pruneEntryHyperlink } from './utils'
 describe('pruning entry hyperlink nodes', () => {
   it('should handle article content types correctly', () => {
     const articleSlug = 'some-slug'
-    const test = {
+    const node = {
       data: {
         target: {
           sys: {
@@ -21,14 +21,14 @@ describe('pruning entry hyperlink nodes', () => {
       },
     }
 
-    pruneEntryHyperlink(test)
+    pruneEntryHyperlink(node)
 
-    expect(test.data.target.fields.slug).toBe(articleSlug)
+    expect(node.data.target.fields.slug).toBe(articleSlug)
   })
 
   it('should handle organization page content types correctly', () => {
     const organizationPageSlug = 'some-slug'
-    const test = {
+    const node = {
       data: {
         target: {
           sys: {
@@ -45,15 +45,16 @@ describe('pruning entry hyperlink nodes', () => {
       },
     }
 
-    pruneEntryHyperlink(test)
+    pruneEntryHyperlink(node)
 
-    expect(test.data.target.fields.slug).toBe(organizationPageSlug)
+    expect(node.data.target.fields.slug).toBe(organizationPageSlug)
   })
 
   it('should handle organizationSubpage content types correctly', () => {
     const organizationSubpageSlug = 'some-slug'
     const organizationPageSlug = 'some-other-slug'
-    const test = {
+
+    const node = {
       data: {
         target: {
           sys: {
@@ -82,12 +83,12 @@ describe('pruning entry hyperlink nodes', () => {
       },
     }
 
-    pruneEntryHyperlink(test)
+    pruneEntryHyperlink(node)
 
-    expect(test.data.target.fields.organizationPage.fields.slug).toBe(
+    expect(node.data.target.fields.organizationPage.fields.slug).toBe(
       organizationPageSlug,
     )
-    expect(test.data.target.fields.slug).toBe(organizationSubpageSlug)
+    expect(node.data.target.fields.slug).toBe(organizationSubpageSlug)
   })
 
   it('should handle subArticle content types correctly', () => {
@@ -108,7 +109,7 @@ describe('pruning entry hyperlink nodes', () => {
       },
     }
 
-    const subArticleEntryHyperLinkNode = {
+    const node = {
       nodeType: 'entry-hyperlink',
       data: {
         target: {
@@ -127,22 +128,17 @@ describe('pruning entry hyperlink nodes', () => {
       },
     }
 
-    parentArticle.fields.subArticles.push(
-      subArticleEntryHyperLinkNode.data.target,
-    )
+    // Create a circular structure
+    parentArticle.fields.subArticles.push(node.data.target)
 
-    pruneEntryHyperlink(subArticleEntryHyperLinkNode)
+    pruneEntryHyperlink(node)
 
     // Article and subarticle slug values should still be the same
-    expect(
-      subArticleEntryHyperLinkNode.data.target.fields.parent.fields.slug,
-    ).toBe(articleSlug)
-    expect(subArticleEntryHyperLinkNode.data.target.fields.slug).toBe(
-      subArticleSlug,
-    )
+    expect(node.data.target.fields.parent.fields.slug).toBe(articleSlug)
+    expect(node.data.target.fields.slug).toBe(subArticleSlug)
 
     // It should not have a circular structure
-    expect(isCircular(subArticleEntryHyperLinkNode)).toBeFalsy()
+    expect(isCircular(node)).toBeFalsy()
   })
 
   it('should handle deeply nested organizationSubpage entry-hyperlink references', () => {
@@ -225,32 +221,23 @@ describe('pruning entry hyperlink nodes', () => {
       },
     }
 
-    const organizationSubpageEntryHyperLinkNode =
-      organizationPage.fields.slices[0].fields.content[0]
-    const nestedOrganizationSubpageEntryHyperLinkNode =
-      organizationSubpageEntryHyperLinkNode.data.target.fields.slices[0].fields
-        .content
+    const node = organizationPage.fields.slices[0].fields.content[0]
+    const nestedNode = node.data.target.fields.slices[0].fields.content
 
     // Create a circular structure
-    organizationSubpageEntryHyperLinkNode.data.target.fields.organizationPage =
-      organizationPage
-    nestedOrganizationSubpageEntryHyperLinkNode.data.target.fields.organizationPage =
-      organizationPage
+    node.data.target.fields.organizationPage = organizationPage
+    nestedNode.data.target.fields.organizationPage = organizationPage
 
     pruneEntryHyperlink(organizationPage.fields.slices[0].fields.content[0])
 
     // The circular structure should be gone
-    expect(isCircular(organizationSubpageEntryHyperLinkNode)).toBeFalsy()
+    expect(isCircular(node)).toBeFalsy()
 
     // The slug fields should be the same as they used to be
     expect(
-      (
-        organizationSubpageEntryHyperLinkNode.data.target.fields
-          .organizationPage as typeof organizationPage
-      ).fields.slug,
+      (node.data.target.fields.organizationPage as typeof organizationPage)
+        .fields.slug,
     ).toBe(organizationPageSlug)
-    expect(organizationSubpageEntryHyperLinkNode.data.target.fields.slug).toBe(
-      organizationSubpageSlug,
-    )
+    expect(node.data.target.fields.slug).toBe(organizationSubpageSlug)
   })
 })
