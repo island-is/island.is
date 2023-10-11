@@ -7,6 +7,7 @@ import { FixtureFactory } from './fixtureFactory'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 import { UserProfile } from '../userProfileV2.model'
 import { getModelToken } from '@nestjs/sequelize'
+import { EmailVerification } from '../../user-profile/emailVerification.model'
 
 const testUserProfile = {
   nationalId: '1234567890',
@@ -16,6 +17,12 @@ const testUserProfile = {
 
 const newEmail = 'test1234@test.is'
 const newPhoneNumber = '9876543'
+
+const testEmailVerification = {
+  nationalId: testUserProfile.nationalId,
+  email: testUserProfile.email,
+  hash: '123',
+}
 
 describe('MeUserProfile', () => {
   describe('Auth and scopes', () => {
@@ -317,9 +324,9 @@ describe('MeUserProfile', () => {
         expect(res.body).toMatchObject({
           mobilePhoneNumber: '',
           mobilePhoneNumberVerified: false,
-          mobileStatus: DataStatus.NOT_VERIFIED,
+          mobileStatus: DataStatus.EMPTY,
           email: '',
-          emailStatus: DataStatus.NOT_VERIFIED,
+          emailStatus: DataStatus.EMPTY,
           emailVerified: false,
         })
 

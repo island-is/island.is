@@ -15,6 +15,8 @@ import type { User } from '@island.is/auth-nest-tools'
 import { UserProfileDto } from './dto/user-profileDto'
 import { UserProfileService } from './user-profile.service'
 import { PatchUserProfileDto } from './dto/patch-user-profileDto'
+import { ConfirmPhoneNumberDto } from './dto/confirm-phoneNumber-dto'
+import { ConfirmEmailDto } from './dto/confirm-email-dto'
 
 const namespace = '@island.is/apps/services/user-profile/v2/me'
 
@@ -77,6 +79,58 @@ export class MeUserProfileController {
         alsoLog: true,
       },
       this.userProfileService.confirmNudge(user.nationalId),
+    )
+  }
+
+  @Post('/confirmEmail')
+  @Scopes(UserProfileScope.write)
+  @Documentation({
+    description: 'Confirm previously unconfirmed email',
+    response: { status: 201 },
+  })
+  confirmEmail(
+    @CurrentUser() user: User,
+    @Body() emailConfirmation: ConfirmEmailDto,
+  ): Promise<void> {
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'confirmEmail',
+        resources: user.nationalId,
+        alsoLog: true,
+      },
+      this.userProfileService.confirmEmail(
+        user.nationalId,
+        emailConfirmation.email,
+        emailConfirmation.code,
+      ),
+    )
+  }
+
+  @Post('/confirmPhoneNumber')
+  @Scopes(UserProfileScope.write)
+  @Documentation({
+    description: 'Confirm previously unconfirmed email',
+    response: { status: 201 },
+  })
+  confirmPhoneNumber(
+    @CurrentUser() user: User,
+    @Body() phoneNumberConfirmation: ConfirmPhoneNumberDto,
+  ): Promise<void> {
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'confirmPhoneNumber',
+        resources: user.nationalId,
+        alsoLog: true,
+      },
+      this.userProfileService.confirmMobilePhoneNumber(
+        user.nationalId,
+        phoneNumberConfirmation.phoneNumber,
+        phoneNumberConfirmation.code,
+      ),
     )
   }
 }

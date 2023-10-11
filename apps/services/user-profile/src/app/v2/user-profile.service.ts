@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { NoContentException } from '@island.is/nest/problem'
@@ -55,25 +55,30 @@ export class UserProfileService {
 
     const isEmailDefined = isDefined(userProfile.email)
     const isMobilePhoneNumberDefined = isDefined(userProfile.mobilePhoneNumber)
+    const isEmailEmpty = userProfile.email === ''
+    const isMobilePhoneNumberEmpty = userProfile.mobilePhoneNumber === ''
 
     const update = {
       ...(isMobilePhoneNumberDefined && {
-        mobileStatus: DataStatus.NOT_VERIFIED,
+        mobileStatus: isMobilePhoneNumberEmpty
+          ? DataStatus.EMPTY
+          : DataStatus.NOT_VERIFIED,
         mobilePhoneNumberVerified: false,
         mobilePhoneNumber: userProfile.mobilePhoneNumber,
       }),
       ...(isEmailDefined && {
-        emailStatus: DataStatus.NOT_VERIFIED,
+        emailStatus: isEmailEmpty ? DataStatus.EMPTY : DataStatus.NOT_VERIFIED,
         emailVerified: false,
         email: userProfile.email,
       }),
+      lastNudge: new Date(),
     }
 
     await this.userProfileModel.update(update, {
       where: { nationalId: nationalId },
     })
 
-    if (isEmailDefined) {
+    if (isEmailDefined && userProfile.email !== '') {
       await this.verificationService.createEmailVerification(
         nationalId,
         userProfile.email,
@@ -81,7 +86,7 @@ export class UserProfileService {
       )
     }
 
-    if (isMobilePhoneNumberDefined) {
+    if (isMobilePhoneNumberDefined && userProfile.mobilePhoneNumber !== '') {
       await this.verificationService.createSmsVerification(
         {
           nationalId,
@@ -104,7 +109,55 @@ export class UserProfileService {
     }
 
     await this.userProfileModel.update(
-      { lastNudge: new Date(Date.now()).toISOString() },
+      { lastNudge: new Date() },
+      {
+        where: { nationalId: nationalId },
+      },
+    )
+  }
+
+  async confirmEmail(
+    nationalId: string,
+    email: string,
+    code: string,
+  ): Promise<void> {
+    const { confirmed, message } = await this.verificationService.confirmEmail(
+      { email, hash: code },
+      nationalId,
+    )
+
+    if (!confirmed) {
+      throw new BadRequestException(message)
+    }
+
+    await this.userProfileModel.update(
+      { emailStatus: DataStatus.VERIFIED, emailVerified: true },
+      {
+        where: { nationalId: nationalId },
+      },
+    )
+  }
+
+  async confirmMobilePhoneNumber(
+    nationalId: string,
+    mobilePhoneNumber: string,
+    code: string,
+  ): Promise<void> {
+    console.log('confirmMobilePhoneNumber', nationalId, mobilePhoneNumber, code)
+    const { confirmed, message } = await this.verificationService.confirmSms(
+      { mobilePhoneNumber, code },
+      nationalId,
+    )
+
+    if (!confirmed) {
+      throw new BadRequestException(message)
+    }
+
+    await this.userProfileModel.update(
+      {
+        mobileStatus: DataStatus.VERIFIED,
+        mobilePhoneNumberVerified: true,
+      },
       {
         where: { nationalId: nationalId },
       },
