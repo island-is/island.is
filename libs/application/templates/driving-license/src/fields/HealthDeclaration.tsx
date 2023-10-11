@@ -34,7 +34,7 @@ function HealthDeclaration({
       'healthDeclaration.answers',
     )
 
-    if (!!healthDeclarationErrors) {
+    if (healthDeclarationErrors) {
       setValue('healthDeclaration.error', true)
     } else {
       setValue('healthDeclaration.error', false)
