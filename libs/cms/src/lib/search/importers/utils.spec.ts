@@ -1,3 +1,4 @@
+import isCircular from 'is-circular'
 import { pruneEntryHyperlink } from './utils'
 
 describe('pruning entry hyperlink nodes', () => {
@@ -92,7 +93,23 @@ describe('pruning entry hyperlink nodes', () => {
   it('should handle subArticle content types correctly', () => {
     const subArticleSlug = 'some-slug'
     const articleSlug = 'some-other-slug'
-    const test = {
+
+    const parentArticle = {
+      sys: {
+        contentType: {
+          sys: {
+            id: 'article',
+          },
+        },
+      },
+      fields: {
+        slug: articleSlug,
+        subArticles: [] as unknown[],
+      },
+    }
+
+    const subArticleEntryHyperLinkNode = {
+      nodeType: 'entry-hyperlink',
       data: {
         target: {
           sys: {
@@ -104,26 +121,136 @@ describe('pruning entry hyperlink nodes', () => {
           },
           fields: {
             slug: subArticleSlug,
-            parent: {
-              sys: {
-                contentType: {
-                  sys: {
-                    id: 'article',
-                  },
-                },
-              },
-              fields: {
-                slug: articleSlug,
-              },
-            },
+            parent: parentArticle,
           },
         },
       },
     }
 
-    pruneEntryHyperlink(test)
+    parentArticle.fields.subArticles.push(
+      subArticleEntryHyperLinkNode.data.target,
+    )
 
-    expect(test.data.target.fields.parent.fields.slug).toBe(articleSlug)
-    expect(test.data.target.fields.slug).toBe(subArticleSlug)
+    pruneEntryHyperlink(subArticleEntryHyperLinkNode)
+
+    // Article and subarticle slug values should still be the same
+    expect(
+      subArticleEntryHyperLinkNode.data.target.fields.parent.fields.slug,
+    ).toBe(articleSlug)
+    expect(subArticleEntryHyperLinkNode.data.target.fields.slug).toBe(
+      subArticleSlug,
+    )
+
+    // It should not have a circular structure
+    expect(isCircular(subArticleEntryHyperLinkNode)).toBeFalsy()
+  })
+
+  it('should handle deeply nested organizationSubpage entry-hyperlink references', () => {
+    const organizationPageSlug = 'some-slug'
+    const organizationSubpageSlug = 'some-other-slug'
+
+    const organizationPage = {
+      sys: {
+        contentType: {
+          sys: {
+            id: 'organizationPage',
+          },
+        },
+      },
+      fields: {
+        slug: organizationPageSlug,
+        slices: [
+          {
+            sys: {
+              contentType: {
+                sys: {
+                  id: 'oneColumnText',
+                },
+              },
+            },
+            fields: {
+              content: [
+                {
+                  nodeType: 'entry-hyperlink',
+                  data: {
+                    target: {
+                      sys: {
+                        contentType: {
+                          sys: {
+                            id: 'organizationSubpage',
+                          },
+                        },
+                      },
+                      fields: {
+                        organizationPage: null as unknown,
+                        slug: organizationSubpageSlug,
+                        slices: [
+                          {
+                            sys: {
+                              contentType: {
+                                sys: {
+                                  id: 'oneColumnText',
+                                },
+                              },
+                            },
+                            fields: {
+                              content: {
+                                nodeType: 'entry-hyperlink',
+                                data: {
+                                  target: {
+                                    sys: {
+                                      contentType: {
+                                        sys: {
+                                          id: 'organizationSubpage',
+                                        },
+                                      },
+                                    },
+                                    fields: {
+                                      organizationPage: null as unknown,
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        ],
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    }
+
+    const organizationSubpageEntryHyperLinkNode =
+      organizationPage.fields.slices[0].fields.content[0]
+    const nestedOrganizationSubpageEntryHyperLinkNode =
+      organizationSubpageEntryHyperLinkNode.data.target.fields.slices[0].fields
+        .content
+
+    // Create a circular structure
+    organizationSubpageEntryHyperLinkNode.data.target.fields.organizationPage =
+      organizationPage
+    nestedOrganizationSubpageEntryHyperLinkNode.data.target.fields.organizationPage =
+      organizationPage
+
+    pruneEntryHyperlink(organizationPage.fields.slices[0].fields.content[0])
+
+    // The circular structure should be gone
+    expect(isCircular(organizationSubpageEntryHyperLinkNode)).toBeFalsy()
+
+    // The slug fields should be the same as they used to be
+    expect(
+      (
+        organizationSubpageEntryHyperLinkNode.data.target.fields
+          .organizationPage as typeof organizationPage
+      ).fields.slug,
+    ).toBe(organizationPageSlug)
+    expect(organizationSubpageEntryHyperLinkNode.data.target.fields.slug).toBe(
+      organizationSubpageSlug,
+    )
   })
 })
