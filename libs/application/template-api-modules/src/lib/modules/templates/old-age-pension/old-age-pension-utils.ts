@@ -3,12 +3,12 @@ import {
   ApplicationType,
   getApplicationAnswers,
 } from '@island.is/application/templates/old-age-pension'
-import { parse } from 'date-fns'
-import { Child, OldAgePension } from '@island.is/clients/social-insurance-administration'
+import parse from 'date-fns/parse'
+import { Child, OldAgePension, Uploads } from '@island.is/clients/social-insurance-administration'
 
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
-  uploads: any,
+  uploads: Uploads,
 ): OldAgePension => {
   const {
     applicationType,
@@ -23,9 +23,6 @@ export const transformApplicationToOldAgePensionDTO = (
     connectedApplications,
     householdSupplementHousing,
     householdSupplementChildren,
-    employmentStatus,
-    employers,
-    rawEmployers,
     childPensionSelectedCustodyKids,
     childPension,
     childPensionAddChild,
@@ -84,14 +81,14 @@ export const getMonthNumber = (monthName: string): number => {
 }
 
 export const initChildrens = (
-  childPensionSelectedCustodyKids: any,
+  childPensionSelectedCustodyKids: string[],
   childPension: Child[],
   childPensionAddChild: boolean,
-): any[] => {
+): Child[] => {
   //
   // Map the custody kids to the correct format
-  const custodyKids = Object.entries(childPensionSelectedCustodyKids).map(
-    ([key, value]) => ({
+  const custodyKids = childPensionSelectedCustodyKids.map(
+    (value) => ({
       name: '',
       nationalIdOrBirthDate: value,
       childDoesNotHaveNationalId: false,

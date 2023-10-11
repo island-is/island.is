@@ -21,7 +21,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { S3 } from 'aws-sdk'
 import { getApplicationAnswers } from '@island.is/application/templates/old-age-pension'
 
-interface customError {
+interface CustomError {
   status: number
   detail: string
   code: number
@@ -50,7 +50,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
     super(ApplicationTypes.OLD_AGE_PENSION)
   }
 
-  private parseErrors(e: Error | customError) {
+  private parseErrors(e: Error | CustomError) {
     if (e instanceof Error) {
       return e.message
     }
@@ -265,7 +265,6 @@ export class OldAgePensionService extends BaseTemplateApiService {
   async sendApplication({
     application,
     auth,
-    params = undefined,
   }: TemplateApiModuleActionProps) {
     try {
       const attachments = await this.getAttachments(application)
