@@ -60,7 +60,9 @@ export const UserMenu = ({
         onClick={handleClick}
         small={small}
         iconOnlyMobile={iconOnlyMobile}
+        userMenuOpen={userMenuOpen}
       />
+
       <UserDropdown
         user={user}
         dropdownState={dropdownState}
