@@ -26,7 +26,6 @@ import {
   DocumentCategory,
   DocumentSender,
   DocumentType,
-  Query,
 } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
