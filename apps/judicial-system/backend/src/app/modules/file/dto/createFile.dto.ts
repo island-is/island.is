@@ -46,4 +46,9 @@ export class CreateFileDto {
   @IsString()
   @ApiPropertyOptional()
   readonly policeFileId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly userGeneratedFilename?: string
 }
