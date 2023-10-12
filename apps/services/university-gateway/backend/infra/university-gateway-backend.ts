@@ -58,11 +58,11 @@ export const serviceSetup =
             command: 'npx',
             args: ['sequelize-cli', 'db:migrate'],
           },
-          // {
-          //   name: 'seed',
-          //   command: 'npx',
-          //   args: ['sequelize-cli', 'db:seed:all'],
-          // },
+          {
+            name: 'seed',
+            command: 'npx',
+            args: ['sequelize-cli', 'db:seed:all'],
+          },
         ],
         postgres: postgresInfo,
         envs: {
