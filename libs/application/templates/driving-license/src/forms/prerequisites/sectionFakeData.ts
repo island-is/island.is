@@ -4,6 +4,7 @@ import {
   buildRadioField,
   buildSelectField,
   buildSubSection,
+  buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { DrivingLicenseFakeData, NO, YES } from '../../lib/constants'
@@ -108,16 +109,19 @@ export const sectionFakeData = buildSubSection({
             },
           ],
         }),
-        buildSelectField({
+        buildTextField({
           id: 'fakeData.howManyDaysHaveYouLivedInIceland',
           title: 'Hversu lengi hefur þú búið á Íslandi (í dögum)?',
           condition: allowFakeCondition(YES),
-          options: Array(365)
-            .fill(0)
-            .map((_, i) => ({
-              label: `${i + 1}`,
-              value: `${i + 1}`,
-            })),
+          width: 'half',
+          defaultValue: '185',
+        }),
+        buildTextField({
+          id: 'fakeData.age',
+          title: 'Aldur umsækjanda',
+          width: 'half',
+          condition: allowFakeCondition(YES),
+          defaultValue: '35',
         }),
       ],
     }),

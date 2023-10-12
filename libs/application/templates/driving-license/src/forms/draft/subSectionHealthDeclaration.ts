@@ -23,6 +23,10 @@ export const subSectionHealthDeclaration = buildSubSection({
       description: m.healthDeclarationSubTitle,
       space: 2,
       condition: (answers, externalData) => {
+        if ((answers.fakeData as any).age) {
+          return (answers.fakeData as any).age < 65
+        }
+
         return (
           !hasYes(answers?.drivingLicenseInOtherCountry) &&
           info(
@@ -180,6 +184,10 @@ export const subSectionHealthDeclaration = buildSubSection({
       description: m.healthDeclarationAge65MultiFieldSubTitle,
       space: 1,
       condition: (answers, externalData) => {
+        if ((answers.fakeData as any).age) {
+          return (answers.fakeData as any).age >= 65
+        }
+
         return (
           !hasYes(answers?.drivingLicenseInOtherCountry) &&
           info(
