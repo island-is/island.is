@@ -1,6 +1,52 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
+  seeMore: {
+    id: 'sp.health:see-more',
+    defaultMessage: 'Sjá nánar',
+  },
+  statusOfRights: {
+    id: 'sp.health:status-of-rights',
+    defaultMessage: 'Réttindastaða',
+  },
+  paymentParticipation: {
+    id: 'sp.health:payment-participation',
+    defaultMessage: 'Greiðsluþátttaka',
+  },
+  healthInternalServiceErrorTitle: {
+    id: 'sp.health:internal-service-error-title',
+    defaultMessage: 'Ekki tókst að sækja gögn frá Sjúkratryggingum',
+  },
+  healthInternalServiceErrorInfo: {
+    id: 'sp.health:internal-service-error-info',
+    defaultMessage:
+      'Ekki tókst að sækja gögn frá Sjúkratryggingum. Vinsamlegast reyndu aftur síðar.',
+  },
+  overviewIntro: {
+    id: 'sp.health:overview-intro',
+    defaultMessage:
+      'Hér fyrir neðan eru þín gögn sem hafa verið sótt frá þjóðskrá. Þú hefur kost á að gera breytingar á eftirfarandi upplýsingum ef þú kýst.',
+  },
+  hasHealthInsurance: {
+    id: 'sp.health:has-health-insurance',
+    defaultMessage: 'Sjúkratrygging',
+  },
+  healthInsuranceStart: {
+    id: 'sp.health:health-insurance-start',
+    defaultMessage: 'Sjúkratrygging frá',
+  },
+  healthInsuranceStatus: {
+    id: 'sp.health:health-insurance-status',
+    defaultMessage: 'Staða sjúkratryggingar',
+  },
+  noHealthInsurance: {
+    id: 'sp.health:no-health-insurance',
+    defaultMessage: 'Þú ert ekki með sjúkratryggingu',
+  },
+  paymentTarget: {
+    id: 'sp.health:payment-target',
+    defaultMessage: 'Greiðslumark',
+  },
   therapyTitle: {
     id: 'sp.health:therapies-title',
     defaultMessage: 'Þjálfun',
@@ -470,7 +516,10 @@ export const messages = defineMessages({
     defaultMessage:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore aliqua.',
   },
-
+  medicinePurchacePeriod: {
+    id: 'sp.health:medicine-purchase-period',
+    defaultMessage: 'Lyfjakaup tímabilsins',
+  },
   medicinePurchaseTitle: {
     id: 'sp.health:medicine-purchase-title',
     defaultMessage: 'Lyfjakaup þrepstaða',

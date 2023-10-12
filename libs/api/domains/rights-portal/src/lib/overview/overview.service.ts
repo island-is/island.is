@@ -69,7 +69,7 @@ export class OverviewService {
         items: [],
         errors: [
           {
-            message: 'Internal service error',
+            message: error.message,
             status: InsuranceErrorStatus.INTERNAL_SERVICE_ERROR,
           },
         ],
