@@ -1,8 +1,6 @@
 import { User } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
 
-export type DriversLicenseClientTypes = 'old' | 'new'
-
 export enum GenericLicenseType {
   DriversLicense = 'DriversLicense',
   HuntingLicense = 'HuntingLicense',
@@ -132,6 +130,11 @@ export type GenericLicenseUserdata = {
   pkpassStatus: GenericUserLicensePkPassStatus
 }
 
+export type GenericLicenseFetchResult = {
+  data: unknown
+  fetch: GenericLicenseFetch
+}
+
 // Bit of an awkward type, it contains data from any external API, but we don't know if it's
 // too narrow or not until we bring in more licenses
 export type GenericLicenseUserdataExternal = {
@@ -154,6 +157,7 @@ export type GenericLicenseCached = {
 export type LicenseLabelsObject = {
   [x: string]: string
 }
+
 export type GenericLicenseLabels = {
   labels?: LicenseLabelsObject
 }
@@ -253,12 +257,24 @@ export interface GenericLicenseClient<LicenseType> {
     locale?: Locale,
   ) => Promise<string | null>
 
-  verifyPkPass: (data: string) => Promise<PkPassVerification | null>
+  verifyPkPass: (
+    data: string,
+    passTemplateId: string,
+  ) => Promise<PkPassVerification | null>
 }
 
-export const GENERIC_LICENSE_FACTORY = 'generic_license_factory'
+export interface GenericLicenseMapper {
+  parsePayload: (
+    payload?: unknown,
+    locale?: Locale,
+    labels?: GenericLicenseLabels,
+  ) => GenericUserLicensePayload | null
+}
 
-export const OLD_DRIVING_LICENSE_CLIENT_FACTORY =
-  'old_generic_license_client_factory'
+export const DRIVING_LICENSE_FACTORY = 'driving_license_factory'
+
+export const LICENSE_MAPPER_FACTORY = 'license-mapper-factory'
+
+export const GENERIC_LICENSE_FACTORY = 'generic_license_factory'
 
 export const CONFIG_PROVIDER = 'config_provider'
