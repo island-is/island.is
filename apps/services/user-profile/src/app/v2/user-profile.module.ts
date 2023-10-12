@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { AuditModule } from '@island.is/nest/audit'
 
-import { AuthModule } from '@island.is/auth-nest-tools'
-import { EmailModule } from '@island.is/email-service'
-import { SmsModule } from '@island.is/nova-sms'
+import { EmailModule, EmailService } from '@island.is/email-service'
+import { SmsModule, SmsService } from '@island.is/nova-sms'
 
 import environment from '../../environments/environment'
 import { MeUserProfileController } from './me-user-profile.controller'
@@ -16,8 +14,6 @@ import { VerificationService } from '../user-profile/verification.service'
 
 @Module({
   imports: [
-    AuditModule.forRoot(environment.audit),
-    AuthModule.register(environment.auth),
     SequelizeModule.forFeature([
       UserProfile,
       EmailVerification,

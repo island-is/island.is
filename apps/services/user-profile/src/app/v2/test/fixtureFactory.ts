@@ -25,7 +25,7 @@ export class FixtureFactory {
   }) {
     const userProfileModel = this.get(UserProfile)
 
-    return await userProfileModel.create({
+    return userProfileModel.create({
       nationalId,
       email,
       mobilePhoneNumber,

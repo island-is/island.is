@@ -25,7 +25,7 @@ const namespace = '@island.is/apps/services/user-profile/v2/me'
 @ApiTags('v2/me')
 @ApiSecurity('oauth2', [UserProfileScope.read])
 @Controller({
-  path: 'me/user-profile',
+  path: 'me',
   version: ['2'],
 })
 @Audit({ namespace })

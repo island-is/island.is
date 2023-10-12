@@ -1,13 +1,18 @@
-import { setupWithAuth } from './setup'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { UserProfileScope } from '@island.is/auth/scopes'
 import request from 'supertest'
-import { getRequestMethod, TestEndpointOptions } from '@island.is/testing/nest'
+import {
+  getRequestMethod,
+  setupApp,
+  TestEndpointOptions,
+} from '@island.is/testing/nest'
 import { FixtureFactory } from './fixtureFactory'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 import { getModelToken } from '@nestjs/sequelize'
 import { EmailVerification } from '../../user-profile/emailVerification.model'
 import { UserProfile } from '../userProfileV2.model'
+import { AppModule } from '../../app.module'
+import { SequelizeConfigService } from '../../sequelizeConfig.service'
 
 const testUserProfile = {
   nationalId: '1234567890',
@@ -29,7 +34,9 @@ describe('Email confirmation', () => {
     let app = null
     let server = null
     beforeEach(async () => {
-      app = await setupWithAuth({
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
         user: createCurrentUser({
           nationalId: testUserProfile.nationalId,
           scope: [UserProfileScope.read, UserProfileScope.write],
@@ -45,7 +52,7 @@ describe('Email confirmation', () => {
 
     it.each`
       method    | endpoint
-      ${'POST'} | ${'/v2/me/user-profile/confirmEmail'}
+      ${'POST'} | ${'/v2/me/confirmEmail'}
     `(
       '$method $endpoint should return 400 when email verification does not exist for this user',
       async ({ method, endpoint }: TestEndpointOptions) => {
@@ -72,7 +79,9 @@ describe('Email confirmation', () => {
     let app = null
     let server = null
     beforeEach(async () => {
-      app = await setupWithAuth({
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
         user: createCurrentUser({
           nationalId: testUserProfile.nationalId,
           scope: [UserProfileScope.read, UserProfileScope.write],
@@ -102,7 +111,7 @@ describe('Email confirmation', () => {
 
     it.each`
       method    | endpoint
-      ${'POST'} | ${'/v2/me/user-profile/confirmEmail'}
+      ${'POST'} | ${'/v2/me/confirmEmail'}
     `(
       '$method $endpoint should return 201 and email should be verified when user confirms email',
       async ({ method, endpoint }: TestEndpointOptions) => {
@@ -140,7 +149,7 @@ describe('Email confirmation', () => {
 
     it.each`
       method    | endpoint
-      ${'POST'} | ${'/v2/me/user-profile/confirmEmail'}
+      ${'POST'} | ${'/v2/me/confirmEmail'}
     `(
       '$method $endpoint should return 400 since the hash is incorrect',
       async ({ method, endpoint }: TestEndpointOptions) => {
@@ -181,7 +190,7 @@ describe('Email confirmation', () => {
 
     it.each`
       method    | endpoint
-      ${'POST'} | ${'/v2/me/user-profile/confirmEmail'}
+      ${'POST'} | ${'/v2/me/confirmEmail'}
     `(
       '$method $endpoint should return 400 since the email is incorrect',
       async ({ method, endpoint }: TestEndpointOptions) => {

@@ -21,11 +21,22 @@ export class UserProfileService {
 
   async findById(nationalId: string): Promise<UserProfileDto> {
     const userProfile = await this.userProfileModel.findOne({
-      where: { nationalId: nationalId },
+      where: { nationalId },
     })
 
     if (!userProfile) {
-      throw new NoContentException()
+      return {
+        nationalId,
+        email: null,
+        mobilePhoneNumber: null,
+        locale: null,
+        mobileStatus: DataStatus.NOT_DEFINED,
+        emailStatus: DataStatus.NOT_DEFINED,
+        mobilePhoneNumberVerified: false,
+        emailVerified: false,
+        profileImageUrl: null,
+        documentNotifications: true,
+      }
     }
 
     return {
@@ -59,6 +70,7 @@ export class UserProfileService {
     const isMobilePhoneNumberEmpty = userProfile.mobilePhoneNumber === ''
 
     const update = {
+      nationalId,
       ...(isMobilePhoneNumberDefined && {
         mobileStatus: isMobilePhoneNumberEmpty
           ? DataStatus.EMPTY

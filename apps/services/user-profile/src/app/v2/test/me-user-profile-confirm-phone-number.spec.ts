@@ -1,14 +1,18 @@
-import { setupWithAuth } from './setup'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { UserProfileScope } from '@island.is/auth/scopes'
 import request from 'supertest'
-import { getRequestMethod, TestEndpointOptions } from '@island.is/testing/nest'
+import {
+  getRequestMethod,
+  setupApp,
+  TestEndpointOptions,
+} from '@island.is/testing/nest'
 import { FixtureFactory } from './fixtureFactory'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 import { getModelToken } from '@nestjs/sequelize'
-import { EmailVerification } from '../../user-profile/emailVerification.model'
 import { UserProfile } from '../userProfileV2.model'
 import { SmsVerification } from '../../user-profile/smsVerification.model'
+import { AppModule } from '../../app.module'
+import { SequelizeConfigService } from '../../sequelizeConfig.service'
 
 const testUserProfile = {
   nationalId: '1234567890',
@@ -16,7 +20,6 @@ const testUserProfile = {
   mobilePhoneNumber: '1234567',
 }
 
-const newEmail = 'test1234@test.is'
 const newPhoneNumber = '9876543'
 
 const testPhoneNumberVerification = {
@@ -30,7 +33,9 @@ describe('Phone number confirmation', () => {
     let app = null
     let server = null
     beforeEach(async () => {
-      app = await setupWithAuth({
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
         user: createCurrentUser({
           nationalId: testUserProfile.nationalId,
           scope: [UserProfileScope.read, UserProfileScope.write],
@@ -46,7 +51,7 @@ describe('Phone number confirmation', () => {
 
     it.each`
       method    | endpoint
-      ${'POST'} | ${'/v2/me/user-profile/confirmPhoneNumber'}
+      ${'POST'} | ${'/v2/me/confirmPhoneNumber'}
     `(
       '$method $endpoint should return 400 when phone number verification does not exist for this user',
       async ({ method, endpoint }: TestEndpointOptions) => {
@@ -73,7 +78,9 @@ describe('Phone number confirmation', () => {
     let app = null
     let server = null
     beforeEach(async () => {
-      app = await setupWithAuth({
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
         user: createCurrentUser({
           nationalId: testUserProfile.nationalId,
           scope: [UserProfileScope.read, UserProfileScope.write],
@@ -103,7 +110,7 @@ describe('Phone number confirmation', () => {
 
     it.each`
       method    | endpoint
-      ${'POST'} | ${'/v2/me/user-profile/confirmPhoneNumber'}
+      ${'POST'} | ${'/v2/me/confirmPhoneNumber'}
     `(
       '$method $endpoint should return 201 and phone number should be verified when user confirms the number',
       async ({ method, endpoint }: TestEndpointOptions) => {
@@ -148,7 +155,7 @@ describe('Phone number confirmation', () => {
 
     it.each`
       method    | endpoint
-      ${'POST'} | ${'/v2/me/user-profile/confirmPhoneNumber'}
+      ${'POST'} | ${'/v2/me/confirmPhoneNumber'}
     `(
       '$method $endpoint should return 400 since the code is incorrect',
       async ({ method, endpoint }: TestEndpointOptions) => {
@@ -192,7 +199,7 @@ describe('Phone number confirmation', () => {
 
     it.each`
       method    | endpoint
-      ${'POST'} | ${'/v2/me/user-profile/confirmPhoneNumber'}
+      ${'POST'} | ${'/v2/me/confirmPhoneNumber'}
     `(
       '$method $endpoint should return 400 since the email is incorrect',
       async ({ method, endpoint }: TestEndpointOptions) => {
