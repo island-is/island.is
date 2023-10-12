@@ -384,7 +384,10 @@ export const ServicePortalDocuments = () => {
         </GridRow>
       )}
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+        <GridColumn
+          hiddenBelow={activeDocument?.document ? 'lg' : undefined}
+          span={['12/12', '12/12', '12/12', '5/12']}
+        >
           <Box marginBottom={2} printHidden marginY={3}>
             <Box
               className={styles.btn}
