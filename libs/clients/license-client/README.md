@@ -13,9 +13,7 @@ This library serves as a license client factory for the following clients
 - Disability License
 
 The factory can return two types of clients, however only the license clients are meant for use inside the monorepo!
-The update clients are for external organizations so they can update digital licenses.
-
-1. A client with token based authentication, intended for usage by other services
+The update clients are for external organizations to query so they can update digital licenses
 
 ### License Client
 
