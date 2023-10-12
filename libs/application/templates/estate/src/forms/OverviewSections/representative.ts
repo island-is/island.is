@@ -50,7 +50,7 @@ export const representativeOverview = [
       const parsedPhoneNumber = parse(
         getValueViaPath<string>(answers, 'representative.phone') ?? '',
       )
-      return formatPhoneNumber(parsedPhoneNumber.phone as string)
+      return formatPhoneNumber((parsedPhoneNumber.phone as string) || '')
     },
     condition: (answers) =>
       !!getValueViaPath<string>(answers, 'representative.phone'),
