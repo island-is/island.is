@@ -103,11 +103,11 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
           command: 'npx',
           args: ['sequelize-cli', 'db:migrate'],
         },
-        {
-          name: 'seed',
-          command: 'npx',
-          args: ['sequelize-cli', 'db:seed:all'],
-        },
+        // {
+        //   name: 'seed',
+        //   command: 'npx',
+        //   args: ['sequelize-cli', 'db:seed:all'],
+        // },
       ],
     })
     .resources({
