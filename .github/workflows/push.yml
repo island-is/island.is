@@ -338,7 +338,7 @@ jobs:
         with:
           image: '${{ env.DOCKER_BASE_IMAGE_REGISTRY }}/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0'
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
 
       - name: Cache for NodeJS dependencies - Docker layer
         id: cache-deps
@@ -593,7 +593,7 @@ jobs:
         with:
           image: '${{ env.DOCKER_BASE_IMAGE_REGISTRY }}/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0'
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
 
       - name: Building Docker images
         continue-on-error: true
