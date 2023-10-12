@@ -363,11 +363,10 @@ const Applications: Screen<CategoryProps> = ({
       <GridContainer>
         <GridRow>
           <GridColumn
-            span={['12/12', '12/12', '12/12', '8/12']}
+            span={['12/12']}
             paddingBottom={6}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore make web strict
-            offset={[null, null, null, '2/12']}
           >
             <Stack space={[3, 3, 4]}>
               <Breadcrumbs
@@ -392,7 +391,7 @@ const Applications: Screen<CategoryProps> = ({
               <SearchInput
                 id="search_input_search_page"
                 ref={searchRef}
-                size="large"
+                size="medium"
                 placeholder={n('inputSearchQuery', 'Sláðu inn leitarorð')}
                 quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
                 activeLocale={activeLocale}
@@ -526,14 +525,16 @@ const Applications: Screen<CategoryProps> = ({
                         </T.Data>
                         <T.Data>{organizationTitle}</T.Data>
                         <T.Data>
-                          {processEntry?.processLink && (
-                            <ProcessEntryLinkButton
-                              processTitle={processEntry.processTitle ?? title}
-                              processLink={processEntry.processLink}
-                              buttonText="Apply"
-                              size="small"
-                            />
-                          )}
+                          <Box display="flex" justifyContent="flexEnd">
+                            {processEntry?.processLink && (
+                              <ProcessEntryLinkButton
+                                processTitle={processEntry.processTitle ?? title}
+                                processLink={processEntry.processLink}
+                                buttonText="Apply"
+                                size="small"
+                              />
+                            )}
+                          </Box>
                         </T.Data>
                       </T.Row>
                     )
@@ -626,7 +627,6 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
           countTypes: true,
           size: PERPAGE,
           page,
-          highlightResults: true,
         },
       },
     }),
