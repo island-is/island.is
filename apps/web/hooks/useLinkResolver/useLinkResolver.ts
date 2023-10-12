@@ -37,6 +37,10 @@ export const routesTemplate = {
     is: '/s/stafraent-island/[slug]',
     en: '',
   },
+  applications: {
+    is: '/umsoknir',
+    en: '/en/applications',
+  },
   page: {
     is: '/stafraent-island',
     en: '',
