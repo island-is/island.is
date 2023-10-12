@@ -330,26 +330,30 @@ export class SmartSolutionsApi {
 
     const res = await this.query<UpsertPassResponseData>(graphql)
 
-    throw Error('todo! fix this')
-
-    /*
-
-    if (res.ok && onCreateCallback) {
-      //onCreateCallback()
-    }
-
     if (res.ok) {
-      this.logger.info('Pass posted successfully', {
-        passId: res.data.upsertPass.id,
-        category: LOG_CATEGORY,
-      })
+      //if the values match, the pass is new
+      if (
+        res.data.upsertPass.whenCreated === res.data.upsertPass.whenModified &&
+        onCreateCallback
+      ) {
+        this.logger.info('Pass created successfully', {
+          passId: res.data.upsertPass.id,
+          category: LOG_CATEGORY,
+        })
+        onCreateCallback()
+      } else {
+        this.logger.info('Pass upsert successful', {
+          passId: res.data.upsertPass.id,
+          category: LOG_CATEGORY,
+        })
+      }
       return {
         ok: true,
         data: res.data.upsertPass,
       }
     }
 
-    return res*/
+    return res
   }
 
   async revokePkPass(nationalId: string): Promise<Result<RevokePassData>> {
