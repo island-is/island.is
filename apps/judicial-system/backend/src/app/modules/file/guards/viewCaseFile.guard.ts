@@ -62,6 +62,6 @@ export class ViewCaseFileGuard implements CanActivate {
       return true
     }
 
-    throw new ForbiddenException(`Forbidden for test ${user.role}`)
+    throw new ForbiddenException(`Forbidden for ${user.role}`)
   }
 }
