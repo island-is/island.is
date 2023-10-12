@@ -42,7 +42,7 @@ export const serviceSetup =
             staging: 'university-gateway',
             prod: 'university-gateway',
           },
-          paths: ['/api/swagger'],
+          paths: ['/api'],
           public: true,
         },
       })

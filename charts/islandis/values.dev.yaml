@@ -2503,7 +2503,7 @@ services-university-gateway-backend:
       hosts:
         - host: 'university-gateway.dev01.devland.is'
           paths:
-            - '/api/swagger'
+            - '/api'
   initContainer:
     containers:
       - args:
