@@ -50,7 +50,7 @@ const ApplicationLoader: FC<
     slug: string
     useJSON: boolean
   }>
-> = ({ applicationId, nationalRegistryId, slug }) => {
+> = ({ applicationId, nationalRegistryId, slug, useJSON = false }) => {
   const type = getTypeFromSlug(slug)
   const [delegationsChecked, setDelegationsChecked] = useState(
     type ? false : true,
@@ -115,9 +115,10 @@ const ApplicationLoader: FC<
           refetch()
         }}
       >
-        <JShellWrapper
+        <ShellWrapper
           application={application}
           nationalRegistryId={nationalRegistryId}
+          useJSON={useJSON}
         />
       </RefetchProvider>
     )
@@ -132,97 +133,23 @@ const ApplicationLoader: FC<
       <ShellWrapper
         application={application}
         nationalRegistryId={nationalRegistryId}
+        useJSON={useJSON}
       />
     </RefetchProvider>
   )
 }
 
-const ShellWrapper: FC<
-  React.PropsWithChildren<{
-    application: Application
-    nationalRegistryId: string
-  }>
-> = ({ application, nationalRegistryId }) => {
-  const [dataSchema, setDataSchema] = useState<Schema>()
-  const [form, setForm] = useState<Form>()
-  const [, fieldsDispatch] = useFields()
-  const { formatMessage } = useLocale()
-  const featureFlagClient = useFeatureFlagClient()
-
-  useApplicationNamespaces(application.typeId)
-
-  useEffect(() => {
-    async function populateForm() {
-      console.log('no we here populate form', dataSchema)
-      if (dataSchema === undefined && form === undefined) {
-        const template = await getApplicationTemplateByTypeId(
-          application.typeId,
-        )
-
-        if (template !== null) {
-          const helper = new ApplicationTemplateHelper(application, template)
-          const stateInformation =
-            helper.getApplicationStateInformation() || null
-
-          if (stateInformation?.roles?.length) {
-            const applicationFields = await getApplicationUIFields(
-              application.typeId,
-            )
-
-            const role = template.mapUserToRole(nationalRegistryId, application)
-
-            if (!role) {
-              throw new Error(formatMessage(coreMessages.userRoleError))
-            }
-
-            const currentRole = stateInformation.roles.find(
-              (r) => r.id === role,
-            )
-
-            if (currentRole && currentRole.formLoader) {
-              const formDescriptor = await currentRole.formLoader({
-                featureFlagClient,
-              })
-              setForm(formDescriptor)
-              console.log(template.dataSchema)
-              setDataSchema(template.dataSchema)
-              fieldsDispatch(applicationFields)
-            }
-          }
-        }
-      }
-    }
-    populateForm()
-  }, [
-    fieldsDispatch,
-    application,
-    form,
-    nationalRegistryId,
-    dataSchema,
-    formatMessage,
-    featureFlagClient,
-  ])
-
-  if (!form || !dataSchema) {
-    return <LoadingShell />
-  }
-
-  return (
-    <FormShell
-      application={application}
-      dataSchema={dataSchema}
-      form={form}
-      nationalRegistryId={nationalRegistryId}
-    />
-  )
+interface ShellWrapperProps {
+  application: Application
+  nationalRegistryId: string
+  useJSON?: boolean
 }
 
-const JShellWrapper: FC<
-  React.PropsWithChildren<{
-    application: Application
-    nationalRegistryId: string
-  }>
-> = ({ application, nationalRegistryId }) => {
+const ShellWrapper: FC<ShellWrapperProps> = ({
+  application,
+  nationalRegistryId,
+  useJSON = false,
+}) => {
   const [dataSchema, setDataSchema] = useState<Schema>()
   const [form, setForm] = useState<Form>()
   const [, fieldsDispatch] = useFields()
@@ -233,10 +160,7 @@ const JShellWrapper: FC<
 
   useEffect(() => {
     async function populateForm() {
-      console.log('populateForm')
       if (dataSchema === undefined && form === undefined) {
-        //USE JSON FILE
-        // We will use a shared templates for each type of application
         const template = await getApplicationTemplateByTypeId(
           application.typeId,
         )
@@ -247,11 +171,6 @@ const JShellWrapper: FC<
             helper.getApplicationStateInformation() || null
 
           if (stateInformation?.roles?.length) {
-            //use json
-            //const applicationFields = await getApplicationUIFields(
-            //      application.typeId,
-            ///    )
-
             const role = template.mapUserToRole(nationalRegistryId, application)
 
             if (!role) {
@@ -262,18 +181,27 @@ const JShellWrapper: FC<
               (r) => r.id === role,
             )
 
-            const form = JSON.parse(
-              application.form as string,
-            ) as unknown as Form
+            if (useJSON) {
+              const formFromJSON = JSON.parse(
+                application.form as string,
+              ) as unknown as Form
+              const dataSchemaFromJSON = generateZodSchema(formFromJSON)
+              setForm(formFromJSON)
+              setDataSchema(dataSchemaFromJSON)
+            } else {
+              const applicationFields = await getApplicationUIFields(
+                application.typeId,
+              )
+              if (currentRole && currentRole.formLoader) {
+                const formDescriptor = await currentRole.formLoader({
+                  featureFlagClient,
+                })
 
-            // parse validation from json and make a zod dataschem
-            const dataSchema = generateZodSchema(form)
-            console.log(dataSchema)
-            setForm(form)
-            setDataSchema(template.dataSchema)
-            //fieldsDispatch(applicationFields)
-            setDataSchema(dataSchema)
-            //fieldsDispatch(applicationFields)
+                setForm(formDescriptor)
+                setDataSchema(template.dataSchema)
+                fieldsDispatch(applicationFields)
+              }
+            }
           }
         }
       }
@@ -287,6 +215,7 @@ const JShellWrapper: FC<
     dataSchema,
     formatMessage,
     featureFlagClient,
+    useJSON,
   ])
 
   if (!form || !dataSchema) {

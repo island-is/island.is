@@ -12,6 +12,5 @@ export {
   useHeaderInfo,
 } from './context/HeaderInfoProvider'
 export { DelegationsScreen } from './components/DelegationsScreen'
-export { JFormShell } from './lib/JFormShell'
 
 export default data
