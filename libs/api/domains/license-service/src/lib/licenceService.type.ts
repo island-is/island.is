@@ -8,6 +8,7 @@ export enum GenericLicenseType {
   MachineLicense = 'MachineLicense',
   FirearmLicense = 'FirearmLicense',
   DisabilityLicense = 'DisabilityLicense',
+  PCard = 'PCard',
 }
 
 /**
@@ -21,6 +22,7 @@ export enum GenericLicenseOrganizationSlug {
   AdrLicense = 'vinnueftirlitid',
   MachineLicense = 'vinnueftirlitid',
   DisabilityLicense = 'tryggingastofnun',
+  PCard = 'sýslumenn',
 }
 export type GenericLicenseTypeType = keyof typeof GenericLicenseType
 
