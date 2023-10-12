@@ -11,7 +11,7 @@ interface Props {
   footerItems: FooterItem[]
 }
 
-const renderFooterItems = ({ span, footerItems}: Props) => {
+const renderFooterItems = ({ span, footerItems }: Props) => {
   return footerItems.map((item, idx) => (
     <GridColumn span={span} key={item.id ? item.id : idx}>
       {item.title && (
