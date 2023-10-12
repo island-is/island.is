@@ -13,13 +13,23 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../types'
 
 import {
+  Attachment,
   SocialInsuranceAdministrationClientService,
   Uploads,
 } from '@island.is/clients/social-insurance-administration'
 import { transformApplicationToOldAgePensionDTO } from './old-age-pension-utils'
 import { getValueViaPath } from '@island.is/application/core'
 import { S3 } from 'aws-sdk'
-import { getApplicationAnswers } from '@island.is/application/templates/old-age-pension'
+import {
+  ApplicationType,
+  ConnectedApplications,
+  Employment,
+  FileType,
+  HouseholdSupplementHousing,
+  childCustodyLivesWithApplicant,
+  getApplicationAnswers,
+  isEarlyRetirement,
+} from '@island.is/application/templates/old-age-pension'
 
 interface CustomError {
   status: number
@@ -62,20 +72,20 @@ export class OldAgePensionService extends BaseTemplateApiService {
     application: Application,
     id: string,
     type: string,
-    documents: any[],
-  ): Promise<any[]> {
-    const attachments: any[] = []
+    attachments: FileType[],
+  ): Promise<Attachment[]> {
+    const result: Attachment[] = []
 
-    for (let i = 0; i <= documents.length - 1; i++) {
+    for (let i = 0; i <= attachments.length - 1; i++) {
       const pdf = await this.getPdf(application, i, id)
-      attachments.push({
-        name: documents[i].name,
+      result.push({
+        name: attachments[i].name,
         type: type,
         file: pdf,
       })
     }
 
-    return attachments
+    return result
   }
 
   private async getAttachments(application: Application): Promise<Uploads> {
@@ -90,19 +100,16 @@ export class OldAgePensionService extends BaseTemplateApiService {
       maintenanceAttachments,
       notLivesWithApplicantAttachments,
       childPensionAddChild,
+      applicationType,
+      connectedApplications,
+      householdSupplementHousing,
+      householdSupplementChildren,
+      employmentStatus,
     } = getApplicationAnswers(application.answers)
 
-    const uploads = {
-      childPension: [] as any,
-      sailorPension: [] as any,
-      additional: [] as any,
-      householdSupplement: [] as any,
-      pension: [] as any,
-      halfOldAgePension: [] as any,
-      earlyRetirement: [] as any,
-    }
+    const uploads: Uploads = {}
 
-    if (additionalAttachments) {
+    if (additionalAttachments && additionalAttachments.length > 0) {
       uploads.additional = await this.initAttachments(
         application,
         'fileUploadAdditionalFiles.additionalDocuments',
@@ -120,7 +127,10 @@ export class OldAgePensionService extends BaseTemplateApiService {
       )
     }
 
-    if (fishermenAttachments) {
+    if (
+      fishermenAttachments &&
+      applicationType === ApplicationType.SAILOR_PENSION
+    ) {
       uploads.sailorPension = await this.initAttachments(
         application,
         'fileUploadEarlyPenFisher.fishermen',
@@ -129,7 +139,13 @@ export class OldAgePensionService extends BaseTemplateApiService {
       )
     }
 
-    if (leaseAgreementAttachments) {
+    if (
+      leaseAgreementAttachments &&
+      connectedApplications?.includes(
+        ConnectedApplications.HOUSEHOLDSUPPLEMENT,
+      ) &&
+      householdSupplementHousing === HouseholdSupplementHousing.RENTER
+    ) {
       uploads.householdSupplement = await this.initAttachments(
         application,
         'fileUploadHouseholdSupplement.leaseAgreement',
@@ -138,7 +154,17 @@ export class OldAgePensionService extends BaseTemplateApiService {
       )
     }
 
-    if (schoolConfirmationAttachments) {
+    if (
+      schoolConfirmationAttachments &&
+      connectedApplications?.includes(
+        ConnectedApplications.HOUSEHOLDSUPPLEMENT,
+      ) &&
+      householdSupplementChildren === YES
+    ) {
+      if (!uploads.householdSupplement) {
+        uploads.householdSupplement = []
+      }
+
       uploads.householdSupplement.push(
         ...(await this.initAttachments(
           application,
@@ -149,7 +175,11 @@ export class OldAgePensionService extends BaseTemplateApiService {
       )
     }
 
-    if (maintenanceAttachments && childPensionAddChild === YES) {
+    if (
+      maintenanceAttachments &&
+      connectedApplications?.includes(ConnectedApplications.CHILDPENSION) &&
+      childPensionAddChild === YES
+    ) {
       uploads.childPension = await this.initAttachments(
         application,
         'fileUploadChildPension.maintenance',
@@ -158,7 +188,18 @@ export class OldAgePensionService extends BaseTemplateApiService {
       )
     }
 
-    if (notLivesWithApplicantAttachments) {
+    if (
+      notLivesWithApplicantAttachments &&
+      connectedApplications?.includes(ConnectedApplications.CHILDPENSION) &&
+      childCustodyLivesWithApplicant(
+        application.answers,
+        application.externalData,
+      )
+    ) {
+      if (!uploads.childPension) {
+        uploads.childPension = []
+      }
+
       uploads.childPension.push(
         ...(await this.initAttachments(
           application,
@@ -169,7 +210,10 @@ export class OldAgePensionService extends BaseTemplateApiService {
       )
     }
 
-    if (selfEmployedAttachments) {
+    if (
+      selfEmployedAttachments &&
+      employmentStatus === Employment.SELFEMPLOYED
+    ) {
       uploads.halfOldAgePension = await this.initAttachments(
         application,
         'employment.selfEmployedAttachment',
@@ -178,7 +222,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
       )
     }
 
-    if (earlyRetirementAttachments) {
+    if (isEarlyRetirement(application.answers, application.externalData)) {
       uploads.earlyRetirement = await this.initAttachments(
         application,
         'fileUploadEarlyPenFisher.earlyRetirement',
@@ -262,10 +306,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
     return true
   }
 
-  async sendApplication({
-    application,
-    auth,
-  }: TemplateApiModuleActionProps) {
+  async sendApplication({ application, auth }: TemplateApiModuleActionProps) {
     try {
       const attachments = await this.getAttachments(application)
 

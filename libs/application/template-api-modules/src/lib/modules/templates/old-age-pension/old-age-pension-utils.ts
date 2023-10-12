@@ -1,10 +1,16 @@
 import { Application, YES } from '@island.is/application/types'
 import {
   ApplicationType,
+  ConnectedApplications,
   getApplicationAnswers,
+  isEarlyRetirement,
 } from '@island.is/application/templates/old-age-pension'
 import parse from 'date-fns/parse'
-import { Child, OldAgePension, Uploads } from '@island.is/clients/social-insurance-administration'
+import {
+  Child,
+  OldAgePension,
+  Uploads,
+} from '@island.is/clients/social-insurance-administration'
 
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
@@ -31,10 +37,9 @@ export const transformApplicationToOldAgePensionDTO = (
     personalAllowanceUsage,
     spouseAllowanceUsage,
     taxLevel,
-    earlyRetirementAttachments,
   } = getApplicationAnswers(application.answers)
 
-  return {
+  const oldAgePensionDTO: OldAgePension = {
     period: {
       year: +selectedYear,
       month: getMonthNumber(selectedMonth),
@@ -52,26 +57,36 @@ export const transformApplicationToOldAgePensionDTO = (
       email: applicantEmail,
       phonenumber: applicantPhonenumber,
     },
-    applicationType: +applicationType,
+    applicationType: getApplicationType(applicationType),
     hasAbroadResidence: YES === residenceHistoryQuestion,
     hasOneTimePayment: YES === onePaymentPerYear,
     isSailorPension: applicationType === ApplicationType.SAILOR_PENSION,
-    isEarlyPension:
-      earlyRetirementAttachments && earlyRetirementAttachments.length > 0
-        ? true
-        : false,
-    householdSupplement: {
-      isRental: householdSupplementHousing !== 'houseOwner',
-      childrenUnder18: YES === householdSupplementChildren,
-    },
-    children: initChildrens(
-      childPensionSelectedCustodyKids,
-      childPension,
-      childPensionAddChild === YES,
+    isEarlyPension: isEarlyRetirement(
+      application.answers,
+      application.externalData,
     ),
     connectedApplications: connectedApplications,
     uploads,
   }
+
+  if (
+    connectedApplications?.includes(ConnectedApplications.HOUSEHOLDSUPPLEMENT)
+  ) {
+    oldAgePensionDTO.householdSupplement = {
+      isRental: householdSupplementHousing !== 'houseOwner',
+      childrenUnder18: YES === householdSupplementChildren,
+    }
+  }
+
+  if (connectedApplications?.includes(ConnectedApplications.CHILDPENSION)) {
+    oldAgePensionDTO.children = initChildrens(
+      childPensionSelectedCustodyKids,
+      childPension,
+      childPensionAddChild === YES,
+    )
+  }
+
+  return oldAgePensionDTO
 }
 
 export const getMonthNumber = (monthName: string): number => {
@@ -85,23 +100,27 @@ export const initChildrens = (
   childPension: Child[],
   childPensionAddChild: boolean,
 ): Child[] => {
-  //
   // Map the custody kids to the correct format
-  const custodyKids = childPensionSelectedCustodyKids.map(
-    (value) => ({
-      name: '',
-      nationalIdOrBirthDate: value,
-      childDoesNotHaveNationalId: false,
-    }),
-  )
+  const custodyKids = childPensionSelectedCustodyKids.map((value) => ({
+    name: '',
+    nationalIdOrBirthDate: value,
+    childDoesNotHaveNationalId: false,
+  }))
 
-  //
   // If applicant is not adding children then not send childPension data to TR
   if (childPensionAddChild) {
-    //
     // Map both children arrays together
     return [...custodyKids, ...childPension]
   }
 
   return custodyKids
+}
+
+export const getApplicationType = (applicationType: string): number => {
+  if (applicationType === ApplicationType.HALF_OLD_AGE_PENSION) {
+    return +ApplicationType.HALF_OLD_AGE_PENSION
+  }
+
+  // Sailors pension and Old age pension is the same application type
+  return +ApplicationType.OLD_AGE_PENSION
 }

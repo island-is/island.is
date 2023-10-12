@@ -216,32 +216,32 @@ components:
         pension:
           type: array
           items:
-            $ref: '#/components/schemas/File'
+            $ref: '#/components/schemas/Attachment'
         additional:
           type: array
           items:
-            $ref: '#/components/schemas/File'
+            $ref: '#/components/schemas/Attachment'
         childPension:
           type: array
           items:
-            $ref: '#/components/schemas/File'
+            $ref: '#/components/schemas/Attachment'
         earlyRetirement:
           type: array
           items:
-            $ref: '#/components/schemas/File'
+            $ref: '#/components/schemas/Attachment'
         sailorPension:
           type: array
           items:
-            $ref: '#/components/schemas/File'
+            $ref: '#/components/schemas/Attachment'
         householdSupplement:
           type: array
           items:
-            $ref: '#/components/schemas/File'
+            $ref: '#/components/schemas/Attachment'
         halfOldAgePension:
           type: array
           items:
-            $ref: '#/components/schemas/File'
-    File:
+            $ref: '#/components/schemas/Attachment'
+    Attachment:
       type: object
       additionalProperties: false
       required:
@@ -270,8 +270,8 @@ components:
         errors:
           type: array
           items:
-             $ref: '#/components/schemas/Error'
-    Error:
+             $ref: '#/components/schemas/ErrorDetails'
+    ErrorDetails:
       type: object
       properties:
         code:

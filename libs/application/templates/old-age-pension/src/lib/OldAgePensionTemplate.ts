@@ -24,7 +24,7 @@ import {
   DefaultStateLifeCycle,
   coreHistoryMessages,
 } from '@island.is/application/core'
-import { ConnectedApplications, Events, NO, Roles, States } from './constants'
+import { Actions, ConnectedApplications, Events, NO, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { oldAgePensionFormMessage, statesMessages } from './messages'
 import { answerValidators } from './answerValidators'
@@ -123,7 +123,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
           },
           progress: 0.25,
           onExit: defineTemplateApi({
-            action: 'sendApplication',
+            action: Actions.SEND_APPLICATION,
             throwOnError: true,
           }),
           roles: [

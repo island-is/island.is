@@ -31,7 +31,7 @@ import addMonths from 'date-fns/addMonths'
 import addDays from 'date-fns/addDays'
 import { CombinedResidenceHistory, Employer, ChildPensionRow } from '../types'
 
-interface FileType {
+export interface FileType {
   key: string
   name: string
 }
