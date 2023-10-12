@@ -89,7 +89,10 @@ import {
   IcelandicNaturalDisasterInsuranceFooter,
 } from './Themes/IcelandicNaturalDisasterInsuranceTheme'
 import { TransportAuthorityHeader } from './Themes/TransportAuthorityTheme'
-import { RettindagaeslaFatladsFolksHeader } from './Themes/RettindagaeslaFatladsFolksTheme'
+import {
+  RettindagaeslaFatladsFolksHeader,
+  RettindagaeslaFatladsFolksFooter,
+} from './Themes/RettindagaeslaFatladsFolksTheme'
 import { HmsHeader } from './Themes/HmsTheme'
 import { RikissaksoknariHeader } from './Themes/RikissaksoknariTheme'
 
@@ -537,6 +540,15 @@ export const OrganizationFooter: React.FC<
           heading={organization.title}
           columns={organization.footerItems}
           titleVariant="h2"
+        />
+      )
+      break
+    case 'rettindagaesla-fotlun':
+      OrganizationFooterComponent = (
+        <RettindagaeslaFatladsFolksFooter
+          footerItems={organization.footerItems}
+          title={organization.title}
+          logo={organization.logo}
         />
       )
       break
