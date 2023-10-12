@@ -522,15 +522,18 @@ const Applications: Screen<CategoryProps> = ({
                     return (
                       <T.Row key={index}>
                         <T.Data>
-                          <NextLink
-                            {...link}
-                            passHref
-                            legacyBehavior
-                          >
-                            {title}
-                          </NextLink>
+                          <Link {...link} skipTab>
+                            <Button
+                              variant="text"
+                              as="span"
+                            >
+                              {title}
+                            </Button>
+                          </Link>
                         </T.Data>
-                        <T.Data>{organizationTitle}</T.Data>
+                        <T.Data>
+                          <Text fontWeight="medium">{organizationTitle}</Text>
+                        </T.Data>
                         <T.Data>
                           <Box display="flex" justifyContent="flexEnd">
                             {processEntry?.processLink && (
