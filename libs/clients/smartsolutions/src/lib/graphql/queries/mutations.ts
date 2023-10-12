@@ -36,6 +36,10 @@ export const UPSERT_PASS = `
       distributionUrl
       deliveryPageUrl
       distributionQRCode
+      id
+      expirationDate
+      whenCreated
+      whenModified
     }
   }
 `

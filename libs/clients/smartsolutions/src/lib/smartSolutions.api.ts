@@ -333,6 +333,8 @@ export class SmartSolutionsApi {
     if (res.ok) {
       //if the values match, the pass is new
       if (
+        res.data.upsertPass.whenCreated &&
+        res.data.upsertPass.whenModified &&
         res.data.upsertPass.whenCreated === res.data.upsertPass.whenModified &&
         onCreateCallback
       ) {
