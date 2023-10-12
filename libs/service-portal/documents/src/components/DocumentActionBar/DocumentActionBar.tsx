@@ -10,7 +10,7 @@ import * as styles from './DocumentActionBar.css'
 import { GetDocumentListInput } from '@island.is/api/schema'
 import { Tooltip, m } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
-import { ActiveDocumentType } from '../../screens/Overview/Overview'
+import { ActiveDocumentType } from '../../lib/types'
 
 export type DocumentActionBarProps = {
   onPrintClick?: () => void
