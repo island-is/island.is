@@ -8,11 +8,8 @@ import { Applications } from '../routes/Applications'
 import { AssignApplication } from '../routes/AssignApplication'
 import { Layout } from '../components/Layout/Layout'
 import { Form } from '@island.is/application/types'
-import data from '@island.is/application/ui-shell'
 
 export const BASE_PATH = '/umsoknir'
-
-const newUrl = data.default as unknown as Form
 
 /**
  * Creates routes for application-system. All routes are defined here.

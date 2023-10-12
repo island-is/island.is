@@ -12,15 +12,8 @@ import {
   ApplicationConfigurations,
   ApplicationFormTypes,
   ApplicationTypes,
-  DefaultEvents,
-  FieldComponents,
-  FieldTypes,
   Form,
-  FormItemTypes,
-  FormModes,
-  NO,
   Schema,
-  YES,
 } from '@island.is/application/types'
 import {
   getApplicationTemplateByTypeId,
@@ -40,7 +33,6 @@ import {
   findProblemInApolloError,
 } from '@island.is/shared/problem'
 import { DelegationsScreen } from '../components/DelegationsScreen'
-import data from './jsonStuff/data'
 import { generateZodSchema } from './jsonStuff/jsonToDataSchema'
 
 const ApplicationLoader: FC<
