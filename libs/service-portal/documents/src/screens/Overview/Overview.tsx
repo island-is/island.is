@@ -490,6 +490,7 @@ export const ServicePortalDocuments = () => {
               }
             }}
             loading={loading}
+            error={error}
           />
         </GridColumn>
       </GridRow>
