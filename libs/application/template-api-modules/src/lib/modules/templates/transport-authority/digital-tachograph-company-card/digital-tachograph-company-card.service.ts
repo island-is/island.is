@@ -16,23 +16,6 @@ export class DigitalTachographCompanyCardService extends BaseTemplateApiService 
     super(ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD)
   }
 
-  async createCharge({
-    application: { id },
-    auth,
-  }: TemplateApiModuleActionProps) {
-    try {
-      const result = this.sharedTemplateAPIService.createCharge(
-        auth,
-        id,
-        InstitutionNationalIds.SAMGONGUSTOFA,
-        [ChargeItemCode.TRANSPORT_AUTHORITY_DIGITAL_TACHOGRAPH_COMPANY_CARD],
-      )
-      return result
-    } catch (exeption) {
-      return { id: '', paymentUrl: '' }
-    }
-  }
-
   async submitApplication({
     application,
     auth,

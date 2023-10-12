@@ -21,26 +21,6 @@ export class OrderVehicleRegistrationCertificateService extends BaseTemplateApiS
     super(ApplicationTypes.ORDER_VEHICLE_REGISTRATION_CERTIFICATE)
   }
 
-  async createCharge({ application, auth }: TemplateApiModuleActionProps) {
-    try {
-      const answers =
-        application.answers as OrderVehicleRegistrationCertificateAnswers
-
-      const chargeItemCodes = getChargeItemCodes()
-
-      const result = this.sharedTemplateAPIService.createCharge(
-        auth,
-        application.id,
-        InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeItemCodes,
-        [{ name: 'vehicle', value: answers?.pickVehicle?.plate }],
-      )
-      return result
-    } catch (exeption) {
-      return { id: '', paymentUrl: '' }
-    }
-  }
-
   async submitApplication({
     application,
     auth,

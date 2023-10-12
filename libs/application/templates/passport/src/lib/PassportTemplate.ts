@@ -38,6 +38,7 @@ import {
 } from './constants'
 import { dataSchema } from './dataSchema'
 import { buildPaymentState } from '@island.is/application/utils'
+import { needAssignment } from './utils'
 
 const pruneAfter = (time: number) => {
   return {
@@ -56,6 +57,11 @@ const getCode = (application: Application) => {
     throw new Error('chargeItemCode missing in request')
   }
   return [chargeItemCode]
+}
+
+export const hasReviewer = (context: ApplicationContext) => {
+  const { answers, externalData } = context.application
+  return needAssignment(answers, externalData)
 }
 
 const PassportTemplate: ApplicationTemplate<
@@ -122,18 +128,20 @@ const PassportTemplate: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: { target: States.DRAFT },
           [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
-          [DefaultEvents.ASSIGN]: { target: States.ASSIGN_PAYMENT },
         },
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
         chargeItemCodes: getCode,
-        submitTarget: States.DONE,
-      }),
-      [States.ASSIGN_PAYMENT]: buildPaymentState({
-        organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: getCode,
-        submitTarget: States.PARENT_B_CONFIRM,
+        submitTarget: [
+          {
+            target: States.PARENT_B_CONFIRM,
+            cond: hasReviewer,
+          },
+          {
+            target: States.DONE,
+          },
+        ],
       }),
       [States.PARENT_B_CONFIRM]: {
         entry: 'assignToParentB',

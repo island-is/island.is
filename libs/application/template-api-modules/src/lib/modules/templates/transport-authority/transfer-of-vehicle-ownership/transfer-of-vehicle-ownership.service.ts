@@ -2,14 +2,8 @@ import { Inject, Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import {
-  ApplicationTypes,
-  InstitutionNationalIds,
-} from '@island.is/application/types'
-import {
-  getChargeItemCodes,
-  TransferOfVehicleOwnershipAnswers,
-} from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
+import { ApplicationTypes } from '@island.is/application/types'
+import { TransferOfVehicleOwnershipAnswers } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 import {
   generateRequestReviewEmail,
   generateApplicationSubmittedEmail,
@@ -196,34 +190,6 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         },
         400,
       )
-    }
-  }
-
-  async createCharge({
-    application,
-    auth,
-  }: TemplateApiModuleActionProps): Promise<
-    | {
-        id: string
-        paymentUrl: string
-      }
-    | undefined
-  > {
-    try {
-      const answers = application.answers as TransferOfVehicleOwnershipAnswers
-
-      const chargeItemCodes = getChargeItemCodes()
-
-      const result = this.sharedTemplateAPIService.createCharge(
-        auth,
-        application.id,
-        InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeItemCodes,
-        [{ name: 'vehicle', value: answers?.pickVehicle?.plate }],
-      )
-      return result
-    } catch (exeption) {
-      return { id: '', paymentUrl: '' }
     }
   }
 

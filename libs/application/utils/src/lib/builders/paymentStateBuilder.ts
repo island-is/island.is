@@ -78,8 +78,10 @@ export function buildPaymentState<
       }
     })
   }
+  submitTransitions =
+    submitTransitions.length < 1 ? [{ target: 'done' }] : submitTransitions
   const transitions = {
-    [DefaultEvents.SUBMIT]: [...submitTransitions, { target: 'done' }], // Fallback to 'done' if no conditions are met
+    [DefaultEvents.SUBMIT]: [...submitTransitions], // Fallback to 'done' if no conditions are met
     [DefaultEvents.ABORT]: { target: options.abortTarget || 'draft' },
   } as TransitionsConfig<ApplicationContext, T>
 

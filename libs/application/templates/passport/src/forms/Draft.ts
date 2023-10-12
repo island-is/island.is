@@ -218,15 +218,6 @@ export const Draft: Form = buildForm({
                   event: DefaultEvents.PAYMENT,
                   name: m.proceedToPayment,
                   type: 'primary',
-                  condition: (answers, externalData) =>
-                    !needAssignment(answers, externalData),
-                },
-                {
-                  event: DefaultEvents.ASSIGN,
-                  name: m.proceedToPayment,
-                  type: 'primary',
-                  condition: (answers, externalData) =>
-                    needAssignment(answers, externalData),
                 },
               ],
             }),
