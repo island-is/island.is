@@ -2046,7 +2046,10 @@ services-sessions:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-services-sessions-geoip-worker:
+services-sessions-geoip-job:
+  annotations:
+    helm.sh/hook: 'pre-install,pre-upgrade'
+    helm.sh/hook-delete-policy: 'before-hook-creation,hook-succeeded'
   args:
     - './node_modules/geoip-lite/scripts/updatedb.js'
     - 'license_key=$(GEOIP_LICENSE_KEY)'
@@ -2056,8 +2059,7 @@ services-sessions-geoip-worker:
   env:
     GEODATADIR: '/geoip-lite/data'
     GEOTMPDIR: '/geoip-lite/data/tmp'
-    NODE_OPTIONS: '--max-old-space-size=1'
-    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+    NODE_OPTIONS: '--max-old-space-size=921'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -2099,11 +2101,11 @@ services-sessions-geoip-worker:
     min: 1
   resources:
     limits:
-      cpu: '1'
-      memory: '2Gi'
+      cpu: '500m'
+      memory: '1Gi'
     requests:
-      cpu: '1'
-      memory: '2Gi'
+      cpu: '500m'
+      memory: '500Mi'
   schedule: '0 0 * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'

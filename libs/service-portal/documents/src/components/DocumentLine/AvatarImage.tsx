@@ -1,8 +1,10 @@
 import React, { FC, ReactNode, MouseEvent } from 'react'
+import { messages } from '../../utils/messages'
 
 import { Box } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import * as styles from './DocumentLine.css'
+import { useLocale } from '@island.is/localization'
 
 interface Props {
   background: 'blue100' | 'blue200' | 'white'
@@ -19,6 +21,7 @@ const AvatarImage: FC<Props> = ({
   large,
   onClick,
 }) => {
+  const { formatMessage } = useLocale()
   return (
     <Box
       display="flex"
@@ -32,6 +35,8 @@ const AvatarImage: FC<Props> = ({
       className={cn(styles.imageContainer, {
         [styles.largeAvatar]: large,
       })}
+      component="button"
+      aria-label={formatMessage(messages.markAsBulkSelection)}
       onClick={onClick}
     >
       {avatar ? (
