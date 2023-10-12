@@ -72,16 +72,21 @@ export class ContentSearchService {
   }
 
   async find(input: SearcherInput): Promise<SearchResult> {
-    const { language, sort: sortBy, ...restInput } = input;
+    const {
+      language,
+      sort: sortBy,
+      order = SortDirection.DESC,
+      ...restInput
+    } = input;
     let sort: sortRule[] = [];
 
 
     if (sortBy === SortField.TITLE) {
-      sort = [{ 'title.sort': { order: SortDirection.ASC } }]
+      sort = [{ 'title.sort': { order } }]
     }
 
     if (sortBy === SortField.POPULAR) {
-      sort = [{ popularityScore: { order: SortDirection.DESC } }]
+      sort = [{ popularityScore: { order } }]
     }
 
     const query = {
