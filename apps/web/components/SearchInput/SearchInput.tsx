@@ -232,7 +232,7 @@ export const SearchInput = forwardRef<
       skipContext,
       quickContentLabel,
       dataTestId,
-      page = 'search'
+      page = 'search',
     },
     ref,
   ) => {

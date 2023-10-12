@@ -269,7 +269,8 @@ const Applications: Screen<CategoryProps> = ({
       link: getItemLink(item),
       categorySlug: item.category?.slug ?? item.parent?.category?.slug,
       category: item.category ?? item.parent?.category,
-      organizationTitle: item.organization?.length && item.organization[0].title,
+      organizationTitle:
+        item.organization?.length && item.organization[0].title,
       hasProcessEntry: checkForProcessEntries(item),
       processEntry: item.processEntry,
       group: item.group,
@@ -494,62 +495,61 @@ const Applications: Screen<CategoryProps> = ({
                   </T.Row>
                 </T.Head>
                 <T.Body>
-                {filteredItems.map(
-                  (
-                    {
-                      labels,
-                      link,
-                      title,
-                      organizationTitle,
-                      processEntry,
-                      parentTitle,
-                    },
-                    index,
-                  ) => {
-                    const tags: Array<CardTagsProps> = []
+                  {filteredItems.map(
+                    (
+                      {
+                        labels,
+                        link,
+                        title,
+                        organizationTitle,
+                        processEntry,
+                        parentTitle,
+                      },
+                      index,
+                    ) => {
+                      const tags: Array<CardTagsProps> = []
 
-                    labels.forEach((label) => {
-                      tags.push({
-                        title: label,
-                        tagProps: {
-                          outlined: true,
-                        },
+                      labels.forEach((label) => {
+                        tags.push({
+                          title: label,
+                          tagProps: {
+                            outlined: true,
+                          },
+                        })
                       })
-                    })
 
-                    console.log(processEntry);
+                      console.log(processEntry)
 
-                    return (
-                      <T.Row key={index}>
-                        <T.Data>
-                          <Link {...link} skipTab>
-                            <Button
-                              variant="text"
-                              as="span"
-                            >
-                              {title}
-                            </Button>
-                          </Link>
-                        </T.Data>
-                        <T.Data>
-                          <Text fontWeight="medium">{organizationTitle}</Text>
-                        </T.Data>
-                        <T.Data>
-                          <Box display="flex" justifyContent="flexEnd">
-                            {processEntry?.processLink && (
-                              <ProcessEntryLinkButton
-                                processTitle={processEntry.processTitle ?? title}
-                                processLink={processEntry.processLink}
-                                buttonText="Apply"
-                                size="small"
-                              />
-                            )}
-                          </Box>
-                        </T.Data>
-                      </T.Row>
-                    )
-                  },
-                )}
+                      return (
+                        <T.Row key={index}>
+                          <T.Data>
+                            <Link {...link} skipTab>
+                              <Button variant="text" as="span">
+                                {title}
+                              </Button>
+                            </Link>
+                          </T.Data>
+                          <T.Data>
+                            <Text fontWeight="medium">{organizationTitle}</Text>
+                          </T.Data>
+                          <T.Data>
+                            <Box display="flex" justifyContent="flexEnd">
+                              {processEntry?.processLink && (
+                                <ProcessEntryLinkButton
+                                  processTitle={
+                                    processEntry.processTitle ?? title
+                                  }
+                                  processLink={processEntry.processLink}
+                                  buttonText="Apply"
+                                  size="small"
+                                />
+                              )}
+                            </Box>
+                          </T.Data>
+                        </T.Row>
+                      )
+                    },
+                  )}
                 </T.Body>
               </T.Table>
               <Stack space={2}>
@@ -585,12 +585,14 @@ const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
 Applications.getProps = async ({ apolloClient, locale, query }) => {
   const queryString = single(query.q) || '*'
-  const q = queryString !== '*' ? queryString : '';
+  const q = queryString !== '*' ? queryString : ''
   const page = Number(single(query.page)) || 1
-  const sort = single(query.sort) === 'title' ? SortField.Title : SortField.Popular
-  const order = single(query.order) === 'asc' ? SortDirection.Asc : SortDirection.Desc
+  const sort =
+    single(query.sort) === 'title' ? SortField.Title : SortField.Popular
+  const order =
+    single(query.order) === 'asc' ? SortDirection.Asc : SortDirection.Desc
   const category = query.category ?? ''
-  const types = stringToArray('webArticle') as SearchableContentTypes[];
+  const types = stringToArray('webArticle') as SearchableContentTypes[]
   const organization = query.organization ?? ''
   const processentry = true
   const countTag = {}

@@ -6,7 +6,7 @@ import {
   ProcessEntryAggregationResponse,
   SortDirection,
   sortRule,
-  SortField
+  SortField,
 } from '@island.is/content-search-toolkit'
 import { logger } from '@island.is/logging'
 import { SearchResult } from './models/searchResult.model'
@@ -77,9 +77,8 @@ export class ContentSearchService {
       sort: sortBy,
       order = SortDirection.DESC,
       ...restInput
-    } = input;
-    let sort: sortRule[] = [];
-
+    } = input
+    let sort: sortRule[] = []
 
     if (sortBy === SortField.TITLE) {
       sort = [{ 'title.sort': { order } }]
@@ -93,7 +92,6 @@ export class ContentSearchService {
       ...restInput,
       sort,
     }
-
 
     const { body } = await this.elasticService.search(
       this.getIndex(language),
