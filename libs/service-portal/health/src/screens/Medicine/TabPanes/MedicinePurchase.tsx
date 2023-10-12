@@ -115,7 +115,7 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
           />
         </Box>
       )}
-      {data?.rightsPortalDrugPeriods?.length && (
+      {!!data?.rightsPortalDrugPeriods?.length && (
         <Box display="flex" flexDirection="column">
           <Box marginBottom={1}>
             <Text color="blue400" variant="eyebrow" as="h3">

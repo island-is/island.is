@@ -1,0 +1,33 @@
+query getInsuranceOverview {
+  rightsPortalInsuranceOverview {
+    items {
+      isInsured
+      explanation
+      updated
+      from
+      status {
+        display
+        code
+      }
+      maximumPayment
+    }
+    errors {
+      message
+      status
+    }
+  }
+}
+
+query getInsuranceConfirmation {
+  rightsPortalInsuranceConfirmation {
+    items {
+      fileName
+      contentType
+      data
+    }
+    errors {
+      message
+      status
+    }
+  }
+}

@@ -11,4 +11,5 @@ export {
   HealthcenterApi,
   HealthCenterDTO,
   DrugApi,
+  OverviewApi,
 } from '../gen/fetch'

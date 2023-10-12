@@ -11,6 +11,10 @@ export const healthNavigation: PortalNavigationItem = {
   },
   children: [
     {
+      name: m.overview,
+      path: HealthPaths.HealthRoot,
+    },
+    {
       name: m.therapies,
       path: HealthPaths.HealthTherapies,
     },

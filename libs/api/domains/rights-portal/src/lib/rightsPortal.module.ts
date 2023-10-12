@@ -12,6 +12,8 @@ import { HealthCenterService } from './healthCenter/healthCenter.service'
 import { TherapyService } from './therapy/therapy.service'
 import { TherapyResolver } from './therapy/therapy.resolver'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
+import { OverviewService } from './overview/overview.service'
+import { OverviewResolver } from './overview/overview.resolver'
 
 @Module({
   imports: [RightsPortalClientModule, AuthModule, FeatureFlagModule],
@@ -26,6 +28,8 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
     HealthCenterService,
     TherapyService,
     TherapyResolver,
+    OverviewService,
+    OverviewResolver,
   ],
   exports: [],
 })
