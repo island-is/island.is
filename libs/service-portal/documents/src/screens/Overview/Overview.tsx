@@ -12,6 +12,8 @@ import {
   GridRow,
   Button,
   SkeletonLoader,
+  Checkbox,
+  toast,
 } from '@island.is/island-ui/core'
 import {
   useListDocuments,
@@ -56,6 +58,9 @@ import { useWindowSize } from 'react-use'
 import { downloadFile } from '../../utils/downloadDocument'
 import FocusLock from 'react-focus-lock'
 import { useKeyDown } from '../../hooks/useKeyDown'
+import { usePostBulkMailActionMutation } from './BatchMailAction.generated'
+import { FavAndStash } from '../../components/FavAndStash'
+import { messages } from '../../utils/messages'
 
 export type ActiveDocumentType = {
   document: DocumentDetails
@@ -102,7 +107,7 @@ export const ServicePortalDocuments = () => {
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
-  const [isEmpty, setEmpty] = useState(false)
+  const [selectedLines, setSelectedLines] = useState<Array<string>>([])
   const { width } = useWindowSize()
   const navigate = useNavigate()
   const location = useLocation()
@@ -111,6 +116,23 @@ export const ServicePortalDocuments = () => {
   const isLegal = userInfo.profile.delegationType?.includes(
     AuthDelegationType.LegalGuardian,
   )
+
+  const [bulkMailAction, { loading: bulkMailActionLoading }] =
+    usePostBulkMailActionMutation({
+      onError: (_) => toast.error(formatMessage(m.errorTitle)),
+      onCompleted: (data) => {
+        if (data.postBulkMailAction?.success) {
+          if (refetch) {
+            refetch({
+              ...fetchObject(),
+            })
+          }
+        } else {
+          toast.error(formatMessage(m.errorTitle))
+        }
+      },
+    })
+
   const dateOfBirth = userInfo?.profile.dateOfBirth
   let isOver15 = false
   if (dateOfBirth) {
@@ -118,10 +140,10 @@ export const ServicePortalDocuments = () => {
   }
   const hideHealthData = isOver15 && isLegal
 
-  const [sortState, setSortState] = useState<SortType>({
+  const sortState = {
     direction: 'Descending',
     key: 'Date',
-  })
+  }
   const [searchInteractionEventSent, setSearchInteractionEventSent] =
     useState(false)
   useScrollTopOnUpdate([page])
@@ -206,12 +228,6 @@ export const ServicePortalDocuments = () => {
   }, [categoriesLoading])
 
   const filteredDocuments = data.documents
-
-  useEffect(() => {
-    if (!loading && totalCount === 0 && filterValue === defaultFilterValues) {
-      setEmpty(true)
-    }
-  }, [loading])
 
   const pagedDocuments = {
     from: (page - 1) * pageSize,
@@ -455,9 +471,58 @@ export const ServicePortalDocuments = () => {
               padding={2}
             >
               <Box display="flex">
-                <Text variant="eyebrow">{formatMessage(m.info)}</Text>
+                <Box className={styles.checkboxWrap} marginRight={3}>
+                  {!activeArchive && (
+                    <Checkbox
+                      name="checkbox-select-all"
+                      checked={selectedLines.length > 0}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          const allDocumentIds = filteredDocuments.map(
+                            (item) => item.id,
+                          )
+                          setSelectedLines([...allDocumentIds])
+                        } else {
+                          setSelectedLines([])
+                        }
+                      }}
+                    />
+                  )}
+                </Box>
+                {selectedLines.length > 0 ? null : (
+                  <Text variant="eyebrow">{formatMessage(m.info)}</Text>
+                )}
               </Box>
-              <Text variant="eyebrow">{formatMessage(m.date)}</Text>
+
+              {selectedLines.length > 0 && !activeArchive ? (
+                <FavAndStash
+                  loading={bulkMailActionLoading}
+                  onStash={() =>
+                    bulkMailAction({
+                      variables: {
+                        input: {
+                          messageIds: selectedLines,
+                          action: 'archive',
+                          status: true,
+                        },
+                      },
+                    })
+                  }
+                  onFav={() =>
+                    bulkMailAction({
+                      variables: {
+                        input: {
+                          messageIds: selectedLines,
+                          action: 'bookmark',
+                          status: true,
+                        },
+                      },
+                    })
+                  }
+                />
+              ) : (
+                <Text variant="eyebrow">{formatMessage(m.date)}</Text>
+              )}
             </Box>
             {loading && (
               <Box marginTop={4}>
@@ -479,12 +544,23 @@ export const ServicePortalDocuments = () => {
                     onClick={setActiveDocument}
                     active={doc.id === activeDocument?.id}
                     bookmarked={!!doc.bookmarked}
+                    selected={selectedLines.includes(doc.id)}
                     archived={activeArchive}
                     refetchInboxItems={() => {
                       if (refetch) {
                         refetch({
                           ...fetchObject(),
                         })
+                      }
+                    }}
+                    setSelectLine={(docId) => {
+                      if (selectedLines.includes(doc.id)) {
+                        const filtered = selectedLines.filter(
+                          (item) => item !== doc.id,
+                        )
+                        setSelectedLines([...filtered])
+                      } else {
+                        setSelectedLines([...selectedLines, docId])
                       }
                     }}
                   />
@@ -541,6 +617,7 @@ export const ServicePortalDocuments = () => {
               paddingLeft={8}
             >
               {isDesktop &&
+                !error &&
                 (loading ? (
                   <Box
                     display="flex"
@@ -556,6 +633,11 @@ export const ServicePortalDocuments = () => {
             </Box>
           )}
         </GridColumn>
+        {error && (
+          <GridColumn paddingTop={1} span={['12/12', '12/12', '12/12', '5/12']}>
+            <NoPDF text={messages.error} />
+          </GridColumn>
+        )}
       </GridRow>
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
