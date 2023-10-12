@@ -56,6 +56,7 @@ import {
   OrganizationPage,
   Link as LinkItem,
   ProjectPage,
+  SortField,
 } from '@island.is/web/graphql/schema'
 import { AnchorPageType } from '@island.is/web/utils/anchorPage'
 import { ActionType, reducer, initialState } from '../Search/Search.state'
@@ -80,6 +81,7 @@ type SearchQueryFilters = {
 interface CategoryProps {
   q: string
   page: number
+  sort: string
   searchResults: GetSearchResultsDetailedQuery['searchResults']
   countResults: GetSearchCountTagsQuery['searchResults']
   namespace: GetNamespaceQuery['getNamespace']
@@ -101,6 +103,7 @@ const stringToArray = (value: string | string[]) =>
 const Applications: Screen<CategoryProps> = ({
   q,
   page,
+  sort,
   searchResults,
   countResults,
   namespace,
@@ -496,6 +499,7 @@ const Applications: Screen<CategoryProps> = ({
                       title,
                       organizationTitle,
                       processEntry,
+                      parentTitle,
                     },
                     index,
                   ) => {
@@ -577,6 +581,7 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
   const queryString = single(query.q) || '*'
   const q = queryString !== '*' ? queryString : '';
   const page = Number(single(query.page)) || 1
+  const sort = single(query.sort) === 'title' ? SortField.Title : SortField.Popular
   const category = query.category ?? ''
   const types = stringToArray('webArticle') as SearchableContentTypes[];
   const organization = query.organization ?? ''
@@ -621,6 +626,7 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
         query: {
           language: locale as ContentLanguage,
           queryString,
+          sort,
           types,
           ...(tags.length && { tags }),
           ...countTag,
@@ -676,6 +682,7 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
     namespace,
     showSearchInHeader: false,
     page,
+    sort: single(query.sort) ?? 'popular',
   }
 }
 

@@ -10,6 +10,7 @@ import {
 import { ContentLanguage } from '../enums/contentLanguage.enum'
 import { SearchableContentTypes } from '../enums/searchableContentTypes'
 import { SearchableTags } from '../enums/searchableTags'
+import { SortField } from '@island.is/content-search-toolkit'
 
 @InputType()
 export class Tag {
@@ -84,4 +85,8 @@ export class SearcherInput {
   @Field(() => String, { nullable: true })
   @IsOptional()
   useQuery?: string = 'default'
+
+  @Field(() => SortField, { nullable: true })
+  @IsOptional()
+  sort?: SortField
 }
