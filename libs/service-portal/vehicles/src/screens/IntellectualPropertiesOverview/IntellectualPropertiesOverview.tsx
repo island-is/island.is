@@ -126,7 +126,7 @@ const IntellectualPropertiesOverview = () => {
                 return null
             }
           })
-          .filter((Boolean as unknown) as ExcludesFalse)}
+          .filter(Boolean as unknown as ExcludesFalse)}
     </Box>
   )
 }

@@ -99,7 +99,7 @@ export const MultiImage: FC<MultiImageProps> = ({
                   </Box>
                 )
               })
-              .filter((Boolean as unknown) as ExcludesFalse)}
+              .filter(Boolean as unknown as ExcludesFalse)}
             {lastImage && lastImage.image && (
               <Box
                 className={cn(styles.container)}
@@ -141,7 +141,7 @@ export const MultiImage: FC<MultiImageProps> = ({
                 className={styles.image}
               />
             ))
-            .filter((Boolean as unknown) as ExcludesFalse)}
+            .filter(Boolean as unknown as ExcludesFalse)}
           label="all designs"
         />
       )}

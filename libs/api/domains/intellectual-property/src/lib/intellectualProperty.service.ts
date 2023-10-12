@@ -171,7 +171,7 @@ export class IntellectualPropertyService {
             } as Image),
         ),
       )
-      .filter((Boolean as unknown) as ExcludesFalse)
+      .filter(Boolean as unknown as ExcludesFalse)
 
     return designImages
   }

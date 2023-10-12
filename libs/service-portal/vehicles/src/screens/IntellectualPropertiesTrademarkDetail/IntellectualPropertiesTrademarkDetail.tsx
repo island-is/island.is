@@ -233,7 +233,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
                       ? formatDate(ip.dateExpires, 'dd.MM.yy')
                       : '',
                   },
-                ].filter((Boolean as unknown) as ExcludesFalse),
+                ].filter(Boolean as unknown as ExcludesFalse),
                 2,
               )}
             />
@@ -288,7 +288,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
                   </AccordionItem>
                 )
               })
-              .filter((Boolean as unknown) as ExcludesFalse)}
+              .filter(Boolean as unknown as ExcludesFalse)}
           </Accordion>
         )}
         <Text variant="small" paddingBottom={2}>
