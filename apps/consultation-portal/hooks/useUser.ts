@@ -6,14 +6,26 @@ export const useUser = () => {
   const [user, setUser] = useState<User>()
   const [session, loading] = useSession()
 
+  const timeNow = Math.floor(Date.now() / 1000)
+  const expiryStr = new Date(session?.expires?.replace(/['"]+/g, '')).getTime()
+  const expiry = Math.floor(expiryStr / 1000)
+
+  const hasNotExpired = timeNow < expiry
+
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-    Boolean(session?.user),
+    Boolean(hasNotExpired),
   )
 
   useEffect(() => {
-    if (!user && session?.user) {
-      setUser(session?.user)
-      setIsAuthenticated(Boolean(session?.user))
+    if (!hasNotExpired) {
+      setUser(undefined)
+      setIsAuthenticated(false)
+      sessionStorage.clear()
+    } else {
+      if (!user && session?.user) {
+        setUser(session?.user)
+        setIsAuthenticated(true)
+      }
     }
   }, [setUser, session, user])
 

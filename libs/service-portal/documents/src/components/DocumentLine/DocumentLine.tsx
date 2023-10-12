@@ -7,7 +7,13 @@ import {
   DocumentDetails,
   GetDocumentListInput,
 } from '@island.is/api/schema'
-import { Box, Text, AlertBanner, LoadingDots } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  AlertBanner,
+  LoadingDots,
+  Icon,
+} from '@island.is/island-ui/core'
 import { dateFormat } from '@island.is/shared/constants'
 import { CardLoader, LoadModal, m } from '@island.is/service-portal/core'
 import * as styles from './DocumentLine.css'
@@ -56,6 +62,7 @@ export const DocumentLine: FC<Props> = ({
   asFrame,
   bookmarked,
   archived,
+  selected,
 }) => {
   const [avatarCheckmark, setAvatarCheckmark] = useState(false)
   const { formatMessage } = useLocale()
@@ -97,38 +104,36 @@ export const DocumentLine: FC<Props> = ({
     }
   }
 
-  const [
-    getDocument,
-    { data: getFileByIdData, loading: fileLoading, error, refetch, called },
-  ] = useLazyQuery(GET_DOCUMENT_BY_ID, {
-    variables: {
-      input: {
-        id: documentLine.id,
+  const [getDocument, { data: getFileByIdData, loading: fileLoading, error }] =
+    useLazyQuery(GET_DOCUMENT_BY_ID, {
+      variables: {
+        input: {
+          id: documentLine.id,
+        },
       },
-    },
-    fetchPolicy: 'no-cache',
-    onCompleted: (data) => {
-      const docContent = data?.getDocument
-      if (asFrame) {
-        navigate(DocumentsPaths.ElectronicDocumentsRoot, {
-          state: {
-            id: documentLine.id,
-            doc: {
-              document: docContent as DocumentDetails,
+      fetchPolicy: 'no-cache',
+      onCompleted: (data) => {
+        const docContent = data?.getDocument
+        if (asFrame) {
+          navigate(DocumentsPaths.ElectronicDocumentsRoot, {
+            state: {
               id: documentLine.id,
-              subject: documentLine.subject,
-              sender: documentLine.senderName,
-              downloadUrl: documentLine.url,
-              date: date,
-              img,
+              doc: {
+                document: docContent as DocumentDetails,
+                id: documentLine.id,
+                subject: documentLine.subject,
+                sender: documentLine.senderName,
+                downloadUrl: documentLine.url,
+                date: date,
+                img,
+              },
             },
-          },
-        })
-      } else {
-        displayPdf(docContent)
-      }
-    },
-  })
+          })
+        } else {
+          displayPdf(docContent)
+        }
+      },
+    })
 
   const isLink = documentLine.fileType === 'url' && documentLine.url
 
@@ -187,9 +192,25 @@ export const DocumentLine: FC<Props> = ({
                 setSelectLine(documentLine.id)
               }
             }}
+            avatar={
+              (avatarCheckmark || selected) && !asFrame ? (
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  background={selected ? 'blue400' : 'blue300'}
+                  borderRadius="circle"
+                  className={styles.checkCircle}
+                >
+                  <Icon icon="checkmark" color="white" type="filled" />
+                </Box>
+              ) : undefined
+            }
             background={
               avatarCheckmark
-                ? 'white'
+                ? asFrame
+                  ? 'white'
+                  : 'blue200'
                 : documentLine.opened
                 ? 'blue100'
                 : 'white'
@@ -219,53 +240,56 @@ export const DocumentLine: FC<Props> = ({
               flexDirection="row"
               justifyContent="spaceBetween"
             >
-              <Text
-                fontWeight={unread ? 'medium' : 'regular'}
-                color="blue400"
-                truncate
+              <button
+                onClick={!isLink ? async () => onLineClick() : undefined}
+                aria-label={formatMessage(m.openDocumentAriaLabel, {
+                  subject: documentLine.subject,
+                })}
+                type="button"
+                className={styles.docLineButton}
               >
-                <button
-                  onClick={!isLink ? async () => onLineClick() : undefined}
-                  aria-label={formatMessage(m.openDocumentAriaLabel, {
-                    subject: documentLine.subject,
-                  })}
-                  type="button"
+                <Text
+                  fontWeight={unread ? 'medium' : 'regular'}
+                  color="blue400"
+                  truncate
                 >
                   {documentLine.subject}
-                </button>
-              </Text>
-              {(avatarCheckmark || isBookmarked || isArchived) && !postLoading && (
-                <FavAndStash
-                  bookmarked={isBookmarked}
-                  archived={isArchived}
-                  onFav={
-                    avatarCheckmark || isBookmarked
-                      ? async (e) => {
-                          e.stopPropagation()
-                          await submitMailAction(
-                            isBookmarked ? 'unbookmark' : 'bookmark',
-                          )
-                          if (refetchInboxItems) {
-                            refetchInboxItems()
+                </Text>
+              </button>
+              {(avatarCheckmark || isBookmarked || isArchived) &&
+                !postLoading &&
+                !asFrame && (
+                  <FavAndStash
+                    bookmarked={isBookmarked}
+                    archived={isArchived}
+                    onFav={
+                      avatarCheckmark || isBookmarked
+                        ? async (e) => {
+                            e.stopPropagation()
+                            await submitMailAction(
+                              isBookmarked ? 'unbookmark' : 'bookmark',
+                            )
+                            if (refetchInboxItems) {
+                              refetchInboxItems()
+                            }
                           }
-                        }
-                      : undefined
-                  }
-                  onStash={
-                    avatarCheckmark || isArchived
-                      ? async (e) => {
-                          e.stopPropagation()
-                          await submitMailAction(
-                            isArchived ? 'unarchive' : 'archive',
-                          )
-                          if (refetchInboxItems) {
-                            refetchInboxItems()
+                        : undefined
+                    }
+                    onStash={
+                      avatarCheckmark || isArchived
+                        ? async (e) => {
+                            e.stopPropagation()
+                            await submitMailAction(
+                              isArchived ? 'unarchive' : 'archive',
+                            )
+                            if (refetchInboxItems) {
+                              refetchInboxItems()
+                            }
                           }
-                        }
-                      : undefined
-                  }
-                />
-              )}
+                        : undefined
+                    }
+                  />
+                )}
               {postLoading && (
                 <Box display="flex" alignItems="center">
                   <LoadingDots single />

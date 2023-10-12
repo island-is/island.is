@@ -7,6 +7,17 @@ const dbName = 'services_sessions'
 const geoDataDir = '/geoip-lite/data'
 const geoTmpDir = `${geoDataDir}/tmp`
 
+const geoipExtraValues = {
+  schedule: '0 0 * * *',
+}
+
+const geoipAnnotations = {
+  annotations: {
+    'helm.sh/hook': 'pre-install,pre-upgrade',
+    'helm.sh/hook-delete-policy': 'before-hook-creation,hook-succeeded',
+  },
+}
+
 const geoipVolume: PersistentVolumeClaim[] = [
   {
     name: 'sessions-geoip-db',
@@ -120,36 +131,34 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
       REDIS_USE_SSL: 'true',
     })
 
-export const geoipSetup =
-  (): ServiceBuilder<'services-sessions-geoip-worker'> =>
-    service('services-sessions-geoip-worker')
-      .image(imageName)
-      .namespace(namespace)
-      .redis()
-      .serviceAccount('sessions-geoip')
-      .command('node')
-      .replicaCount({ min: 1, max: 1, default: 1 })
-      .args(
-        './node_modules/geoip-lite/scripts/updatedb.js',
-        'license_key=$(GEOIP_LICENSE_KEY)',
-      )
-      .resources({
-        limits: {
-          cpu: '1',
-          memory: '2Gi',
-        },
-        requests: {
-          cpu: '1',
-          memory: '2Gi',
-        },
-      })
-      .env({ GEODATADIR: geoDataDir, GEOTMPDIR: geoTmpDir })
-      .secrets({
-        GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY',
-      })
-      .volumes(...geoipVolume)
-      .extraAttributes({
-        dev: { schedule: '0 0 * * *' },
-        staging: { schedule: '0 0 * * *' },
-        prod: { schedule: '0 0 * * *' },
-      })
+export const geoipSetup = (): ServiceBuilder<'services-sessions-geoip-job'> =>
+  service('services-sessions-geoip-job')
+    .image(imageName)
+    .namespace(namespace)
+    .serviceAccount('sessions-geoip')
+    .replicaCount({ min: 1, max: 1, default: 1 })
+    .command('node')
+    .args(
+      './node_modules/geoip-lite/scripts/updatedb.js',
+      'license_key=$(GEOIP_LICENSE_KEY)',
+    )
+    .resources({
+      limits: {
+        cpu: '500m',
+        memory: '1Gi',
+      },
+      requests: {
+        cpu: '500m',
+        memory: '500Mi',
+      },
+    })
+    .env({ GEODATADIR: geoDataDir, GEOTMPDIR: geoTmpDir })
+    .secrets({
+      GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY',
+    })
+    .volumes(...geoipVolume)
+    .extraAttributes({
+      dev: { ...geoipExtraValues, ...geoipAnnotations },
+      staging: { ...geoipExtraValues, ...geoipAnnotations },
+      prod: { ...geoipExtraValues, ...geoipAnnotations },
+    })
