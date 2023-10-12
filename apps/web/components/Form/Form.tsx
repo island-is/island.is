@@ -233,7 +233,6 @@ export const Form = ({ form, namespace }: FormProps) => {
     const fields = form.fields
       .filter((field) => field.type !== FormFieldType.INFORMATION)
       .map((field): [string, string] => [slugify(field.title), ''])
-      .concat([])
 
     if (defaultNameFieldIsShown) {
       fields.push(['name', ''])
