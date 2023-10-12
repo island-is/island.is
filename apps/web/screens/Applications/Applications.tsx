@@ -26,8 +26,10 @@ import {
   GridRow,
   GridColumn,
   Button,
+  Table as T,
 } from '@island.is/island-ui/core'
-import { SearchInput, Card, CardTagsProps } from '@island.is/web/components'
+import { ProcessEntryLinkButton } from '@island.is/island-ui/contentful'
+import { SearchInput, CardTagsProps } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -261,7 +263,9 @@ const Applications: Screen<CategoryProps> = ({
       link: getItemLink(item),
       categorySlug: item.category?.slug ?? item.parent?.category?.slug,
       category: item.category ?? item.parent?.category,
+      organizationTitle: item.organization?.length && item.organization[0].title,
       hasProcessEntry: checkForProcessEntries(item),
+      processEntry: item.processEntry,
       group: item.group,
       ...getItemImages(item),
       labels: getLabels(item),
@@ -476,16 +480,23 @@ const Applications: Screen<CategoryProps> = ({
               )}
             </Stack>
             <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
-              <Stack space={2}>
+              <T.Table>
+                <T.Head>
+                  <T.Row>
+                    <T.HeadData>Name</T.HeadData>
+                    <T.HeadData>Government Agency</T.HeadData>
+                    <T.HeadData></T.HeadData>
+                  </T.Row>
+                </T.Head>
+                <T.Body>
                 {filteredItems.map(
                   (
                     {
-                      typename,
-                      image,
-                      thumbnail,
                       labels,
-                      parentTitle,
-                      ...rest
+                      link,
+                      title,
+                      organizationTitle,
+                      processEntry,
                     },
                     index,
                   ) => {
@@ -500,19 +511,37 @@ const Applications: Screen<CategoryProps> = ({
                       })
                     })
 
+                    console.log(processEntry);
+
                     return (
-                      <Card
-                        key={index}
-                        tags={tags}
-                        dataTestId="search-result"
-                        image={thumbnail ? thumbnail : image}
-                        subTitle={parentTitle}
-                        highlightedResults={true}
-                        {...rest}
-                      />
+                      <T.Row key={index}>
+                        <T.Data>
+                          <NextLink
+                            {...link}
+                            passHref
+                            legacyBehavior
+                          >
+                            {title}
+                          </NextLink>
+                        </T.Data>
+                        <T.Data>{organizationTitle}</T.Data>
+                        <T.Data>
+                          {processEntry?.processLink && (
+                            <ProcessEntryLinkButton
+                              processTitle={processEntry.processTitle ?? title}
+                              processLink={processEntry.processLink}
+                              buttonText="Apply"
+                              size="small"
+                            />
+                          )}
+                        </T.Data>
+                      </T.Row>
                     )
                   },
-                )}{' '}
+                )}
+                </T.Body>
+              </T.Table>
+              <Stack space={2}>
                 {totalSearchResults > 0 && (
                   <Box paddingTop={6}>
                     <Pagination

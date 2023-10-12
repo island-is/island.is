@@ -117,9 +117,6 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
               processLink
             }
           }
-          processEntry {
-            id
-          }
           group {
             title
           }
@@ -141,6 +138,7 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           processEntry {
             id
             processTitle
+            processLink
           }
         }
 
