@@ -19,7 +19,8 @@ import {
   OccupationalLicensesError,
   OccupationalLicensesErrorStatus,
 } from './models/occupationalLicenseError.model'
-import { ConfigType, DownloadServiceConfig } from '@island.is/nest/config'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+import type { ConfigType } from '@island.is/nest/config'
 
 const LOG_CATEGORY = 'occupational-licenses-service'
 
