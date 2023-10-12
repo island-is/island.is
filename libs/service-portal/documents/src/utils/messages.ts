@@ -71,12 +71,16 @@ export const messages = defineMessages({
     defaultMessage: 'Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis.',
   },
   documentFetchError: {
-    id: 'sp,documents:fetch-error',
+    id: 'sp.documents:fetch-error',
     defaultMessage:
       'Ekki tókst að sækja umbeðið skjal, við bendum þér á að beina fyrirspurn til sendanda þess: {senderName}',
   },
   pickDocument: {
-    id: 'sp,documents:pick-document',
+    id: 'sp.documents:pick-document',
     defaultMessage: 'Veldu skjal til að lesa',
+  },
+  markAsBulkSelection: {
+    id: 'sp.documents:mark-as-bulk-selection',
+    defaultMessage: 'Merkja skjal fyrir fjöldaframkvæmd',
   },
 })

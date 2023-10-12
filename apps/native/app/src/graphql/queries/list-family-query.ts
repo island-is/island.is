@@ -29,7 +29,6 @@ export const FAMILY_QUERY = gql`
       homeAddress
       religion
       nationality
-      fate
       religion
       homeAddress
       nationality
