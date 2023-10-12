@@ -96,6 +96,12 @@ export const TransferOfVehicleOwnershipSchema = z.object({
         (p) => p === undefined || p === '' || parseInt(p?.split(' ')[0]) >= 0,
       ),
     date: z.string().min(1),
+    mileage: z
+      .string()
+      .optional()
+      .refine(
+        (p) => p === undefined || p === '' || parseInt(p?.split(' ')[0]) >= 0,
+      ),
   }),
   seller: UserInformationSchema,
   sellerCoOwner: z.array(UserInformationSchema),
