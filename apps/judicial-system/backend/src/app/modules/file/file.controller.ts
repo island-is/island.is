@@ -70,8 +70,8 @@ export class FileController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
-    registrarRule,
     judgeRule,
+    registrarRule,
     assistantRule,
   )
   @Post('file/url')
@@ -93,8 +93,8 @@ export class FileController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
-    registrarRule,
     judgeRule,
+    registrarRule,
     assistantRule,
   )
   @Post('file')
@@ -147,8 +147,9 @@ export class FileController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
-    registrarRule,
     judgeRule,
+    registrarRule,
+    assistantRule,
   )
   @Delete('file/:fileId')
   @ApiOkResponse({

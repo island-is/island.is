@@ -25,7 +25,7 @@ const DropdownExport: FC<React.PropsWithChildren<Props>> = ({
 }) => {
   const { formatMessage } = useLocale()
   return (
-    <Box className={styles.buttonWrapper}>
+    <Box>
       <DropdownMenu
         icon="ellipsisHorizontal"
         menuLabel={formatMessage(m.moreOptions)}

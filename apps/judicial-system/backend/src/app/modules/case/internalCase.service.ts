@@ -19,6 +19,7 @@ import type { ConfigType } from '@island.is/nest/config'
 import { caseTypes } from '@island.is/judicial-system/formatters'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
+  CaseAppealState,
   CaseFileCategory,
   CaseOrigin,
   CaseState,
@@ -738,6 +739,20 @@ export class InternalCaseService {
         const rulingPdf = await this.getSignedRulingPdf(theCase).then((pdf) =>
           pdf.toString('binary'),
         )
+        const appealRuling =
+          theCase.appealState === CaseAppealState.COMPLETED && theCase.caseFiles
+            ? await Promise.all(
+                theCase.caseFiles
+                  .filter(
+                    (file) => file.category === CaseFileCategory.APPEAL_RULING,
+                  )
+                  .map((file) =>
+                    this.awsS3Service
+                      .getObject(file.key ?? '')
+                      .then((pdf) => pdf.toString('binary')),
+                  ),
+              )
+            : []
         const custodyNoticePdf =
           [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY].includes(
             theCase.type,
@@ -779,6 +794,7 @@ export class InternalCaseService {
           requestPdf as string,
           courtRecordPdf as string,
           rulingPdf as string,
+          appealRuling,
           custodyNoticePdf,
         )
 
