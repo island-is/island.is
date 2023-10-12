@@ -15,6 +15,8 @@ This library serves as a license client factory for the following clients
 The factory can return two types of clients, however only the license clients are meant for use inside the monorepo!
 The update clients are for external organizations to query so they can update digital licenses
 
+For examples of use, see api/domains/license-service
+
 ### License Client
 
 - Provides interactions with both the digital license issuer and the organisation that issues the license itself.
