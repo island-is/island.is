@@ -5,7 +5,7 @@ import { ActiveDocumentType } from '../../lib/types'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import DesktopOverview from './DesktopOverview'
 import MobileOverview from './MobileOverview'
-import { messages } from '@island.is/service-portal/documents/messages'
+import { messages } from '../../utils/messages'
 import NoPDF from '../NoPDF/NoPDF'
 
 export interface Props {
