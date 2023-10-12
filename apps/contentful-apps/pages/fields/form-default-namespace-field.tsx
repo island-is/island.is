@@ -185,7 +185,7 @@ const FormDefaultNamespaceField = () => {
               <FormLabel>Email placeholder</FormLabel>
               <TextInput
                 isDisabled={!displayEmailField}
-                value={value.namePlaceholder}
+                value={value.emailPlaceholder}
                 onChange={(ev) => {
                   updateTextValue('emailPlaceholder', ev.target.value)
                 }}
