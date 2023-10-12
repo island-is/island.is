@@ -1,4 +1,4 @@
-import { Injectable, Req } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { CoursesApi, ProgramsApi } from '../../gen/fetch/apis'
 import {
   DegreeType,
@@ -8,8 +8,6 @@ import {
   ModeOfDelivery,
   Requirement,
   Season,
-  mapEnumToEnum,
-  mapEnumToOtherEnum,
   mapStringToEnum,
 } from '@island.is/university-gateway-lib'
 import { logger } from '@island.is/logging'
@@ -109,20 +107,14 @@ class UniversityOfIcelandApplicationClient {
       try {
         let requirement: Requirement | undefined = undefined
         switch (course.required) {
-          case 'M':
+          case 'MANDATORY':
             requirement = Requirement.MANDATORY
             break
-          case 'O':
+          case 'ELECTIVE':
             requirement = Requirement.FREE_ELECTIVE
             break
-          case '0':
-            requirement = Requirement.FREE_ELECTIVE
-            break
-          case 'C':
+          case 'RESTRICTED_ELECTIVE':
             requirement = Requirement.RESTRICTED_ELECTIVE
-            break
-          case '':
-            requirement = Requirement.UNDEFINED
             break
         }
         if (requirement === undefined) {
@@ -131,19 +123,19 @@ class UniversityOfIcelandApplicationClient {
 
         let semesterSeason: Season | undefined = undefined
         switch (course.semesterSeason) {
-          case 'V':
+          case 'SPRING':
             semesterSeason = Season.SPRING
             break
-          case 'H':
+          case 'FALL':
             semesterSeason = Season.FALL
             break
-          case 'S':
+          case 'SUMMER':
             semesterSeason = Season.SUMMER
             break
-          case 'A': // TODO what value is this -> "heilsár"
+          case 'WHOLE-YEAR': // TODO what value should this map to ("heilsár")
             semesterSeason = Season.FALL
             break
-          case '': // TODO what value is this -> "á ekki við"
+          case 'ANY': // TODO what value should this map to ("á ekki við")
             semesterSeason = Season.FALL
             break
         }
@@ -153,22 +145,25 @@ class UniversityOfIcelandApplicationClient {
           )
         }
 
-        const externalIdList = course.externalId || []
-        for (let j = 0; j < externalIdList.length; j++) {
-          mappedRes.push({
-            externalId: externalIdList[j],
-            nameIs: course.nameIs || '',
-            nameEn: course.nameEn || '',
-            credits: Number(course.credits?.replace(',', '.')) || 0,
-            descriptionIs: course.descriptionIs,
-            descriptionEn: course.descriptionEn,
-            externalUrlIs: course.externalUrlIs,
-            externalUrlEn: course.externalUrlEn,
-            requirement: requirement,
-            semesterYear: Number(course.semesterYear),
-            semesterSeason: semesterSeason,
-          })
-        }
+        //TODO how should we handle bundin skylda
+        const externalId = (course.externalId || []).join(',')
+
+        //TODO why is externalId empty
+        if (!externalId) continue
+
+        mappedRes.push({
+          externalId: externalId,
+          nameIs: course.nameIs || '',
+          nameEn: course.nameEn || '',
+          credits: Number(course.credits?.replace(',', '.')) || 0,
+          descriptionIs: course.descriptionIs,
+          descriptionEn: course.descriptionEn,
+          externalUrlIs: course.externalUrlIs,
+          externalUrlEn: course.externalUrlEn,
+          requirement: requirement,
+          semesterYear: Number(course.semesterYear),
+          semesterSeason: semesterSeason,
+        })
       } catch (e) {
         logger.error(
           `Failed to map course with externalId ${course.externalId?.toString()} for program with externalId ${externalId} (University of Iceland), reason:`,
