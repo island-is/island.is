@@ -101,41 +101,57 @@ export const numberOfLinks = (contentList: object[]) => {
 export const numberOfProcessEntries = (contentList: any[]) =>
   getProcessEntries(contentList).length
 
-const removeNonPrimitiveFields = (node: Record<string, unknown>) => {
-  if (typeof node === 'object') {
-    for (const key of Object.keys(node)) {
-      if (typeof node[key] === 'object') {
-        delete node[key]
-      }
+const extractPrimitiveFields = (node: Record<string, unknown>) => {
+  if (typeof node !== 'object') return node
+
+  const map = new Map<string, unknown>()
+
+  for (const key of Object.keys(node)) {
+    if (typeof node[key] !== 'object') {
+      map.set(key, node[key])
     }
   }
+
+  return Object.fromEntries(map)
 }
 
 export const pruneEntryHyperlink = (node: any) => {
   const target = node?.data?.target
   const contentTypeId: CONTENT_TYPE = target?.sys?.contentType?.sys?.id
 
-  // Keep specific fields since we'll need them when creating the urls
+  // Keep specific non primitive fields since we'll need them when creating the urls
   if (contentTypeId === 'subArticle' && target.fields?.parent?.fields) {
-    const parentArticle = {
-      ...target.fields.parent,
-      fields: { ...target.fields.parent.fields },
+    node.data.target = {
+      ...target,
+      fields: {
+        ...extractPrimitiveFields(target.fields),
+        parent: {
+          ...target.fields.parent,
+          fields: extractPrimitiveFields(target.fields.parent.fields),
+        },
+      },
     }
-    removeNonPrimitiveFields(parentArticle.fields)
-    target.fields.parent = parentArticle
   } else if (
     contentTypeId === 'organizationSubpage' &&
     target.fields?.organizationPage?.fields
   ) {
-    const organizationPage = {
-      ...target.fields.organizationPage,
-      fields: { ...target.fields.organizationPage.fields },
+    node.data.target = {
+      ...target,
+      fields: {
+        ...extractPrimitiveFields(target.fields),
+        organizationPage: {
+          ...target.fields.organizationPage,
+          fields: extractPrimitiveFields(target.fields.organizationPage.fields),
+        },
+      },
     }
-    removeNonPrimitiveFields(organizationPage.fields)
-    target.fields.organizationPage = organizationPage
-  } else {
-    // In case there is no need to preserve non primitive fields we just remove them to prevent potential circularity
-    removeNonPrimitiveFields(target?.fields)
+  }
+  // In case there is no need to preserve non primitive fields we just remove them to prevent potential circularity
+  else if (target?.fields) {
+    node.data.target = {
+      ...target,
+      fields: extractPrimitiveFields(target.fields),
+    }
   }
 }
 

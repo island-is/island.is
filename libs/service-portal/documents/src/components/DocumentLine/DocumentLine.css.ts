@@ -43,6 +43,10 @@ export const line = style({
   borderBottom: `1px solid ${theme.color.blue100}`,
 })
 
+export const docLineButton = style({
+  overflow: 'hidden',
+})
+
 export const button = style({})
 
 export const unopened = style({
@@ -84,6 +88,7 @@ export const imageContainer = style({
   minHeight: 48,
   maxHeight: 48,
   maxWidth: 48,
+  transition: 'background-color .25s',
 })
 
 export const largeAvatar = style({
@@ -102,6 +107,7 @@ export const checkCircle = style({
   minHeight: 30,
   maxHeight: 30,
   maxWidth: 30,
+  transition: 'background-color .25s',
 })
 
 export const linkWrapper = style({
