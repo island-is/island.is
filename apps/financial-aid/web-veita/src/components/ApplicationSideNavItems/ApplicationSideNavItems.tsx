@@ -50,9 +50,7 @@ const ApplicationSideNavItems = ({ roles, applicationFilters }: Props) => {
                         return applicationFilters[state]
                       }
                     })
-                    .reduce((a?: number, b?: number) => {
-                      return (a || 0) + (b || 0)
-                    })}
+                    .reduce((acc: number, b?: number) => acc + (b || 0), 0)}
                 </Text>
               </Box>
             </Link>
