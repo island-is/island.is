@@ -393,6 +393,7 @@ const Applications: Screen<CategoryProps> = ({
                 quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
                 activeLocale={activeLocale}
                 initialInputValue={q}
+                page="applications"
               />
               <Box width="full">
                 <Inline
@@ -544,6 +545,7 @@ const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
 Applications.getProps = async ({ apolloClient, locale, query }) => {
   const queryString = single(query.q) || '*'
+  const q = queryString !== '*' ? queryString : '';
   const page = Number(single(query.page)) || 1
   const category = query.category ?? ''
   const types = stringToArray('webArticle') as SearchableContentTypes[];
@@ -639,7 +641,7 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404)
   }
   return {
-    q: queryString,
+    q,
     searchResults,
     countResults,
     namespace,
