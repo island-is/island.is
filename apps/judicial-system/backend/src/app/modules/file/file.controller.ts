@@ -30,6 +30,7 @@ import {
 import {
   assistantRule,
   judgeRule,
+  prisonSystemStaffRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
   registrarRule,
@@ -125,6 +126,7 @@ export class FileController {
     judgeRule,
     registrarRule,
     assistantRule,
+    prisonSystemStaffRule,
   )
   @Get('file/:fileId/url')
   @ApiOkResponse({
