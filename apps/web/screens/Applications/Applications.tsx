@@ -25,7 +25,6 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
-  Tag,
   Button,
 } from '@island.is/island-ui/core'
 import { SearchInput, Card, CardTagsProps } from '@island.is/web/components'
@@ -84,12 +83,6 @@ interface CategoryProps {
   namespace: GetNamespaceQuery['getNamespace']
 }
 
-type TagsList = {
-  title: string
-  count: number
-  key: string
-}
-
 type SearchType = Article &
   LifeEventPage &
   News &
@@ -99,25 +92,6 @@ type SearchType = Article &
   OrganizationPage &
   LinkItem &
   ProjectPage
-
-const connectedTypes: Partial<
-  Record<
-    SearchableContentTypes | string,
-    Array<SearchableContentTypes | string>
-  >
-> = {
-  webArticle: [
-    'WebArticle',
-    'WebSubArticle',
-    'WebOrganizationSubpage',
-    'webOrganizationPage',
-    'WebProjectPage',
-  ],
-  webAdgerdirPage: ['WebAdgerdirPage'],
-  webNews: ['WebNews'],
-  webQNA: ['WebQna'],
-  webLifeEventPage: ['WebLifeEventPage'],
-}
 
 const stringToArray = (value: string | string[]) =>
   Array.isArray(value) ? value : value?.length ? [value] : []
@@ -136,7 +110,6 @@ const Applications: Screen<CategoryProps> = ({
       q,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict
-      type: stringToArray(query.type) as SearchableContentTypes[],
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict
       category: stringToArray(query.category),
@@ -170,40 +143,6 @@ const Applications: Screen<CategoryProps> = ({
     category: query.category as string,
     type: query.type as string,
   }
-
-  const getArticleCount = useMemo(
-    () => () => {
-      let total = 0
-
-      total +=
-        (countResults?.typesCount ?? []).find((x) => x.key === 'webArticle')
-          ?.count ?? 0
-
-      total +=
-        (countResults?.typesCount ?? []).find((x) => x.key === 'webSubArticle')
-          ?.count ?? 0
-
-      total +=
-        (countResults?.typesCount ?? []).find(
-          (x) => x.key === 'webOrganizationSubpage',
-        )?.count ?? 0
-
-      total +=
-        (countResults?.typesCount ?? []).find((x) => x.key === 'webProjectPage')
-          ?.count ?? 0
-
-      if (query.processentry) {
-        return total + (countResults?.processEntryCount ?? 0)
-      }
-
-      return total
-    },
-    [
-      countResults?.processEntryCount,
-      countResults?.typesCount,
-      query.processentry,
-    ],
-  )
 
   const getLabels = (item: SearchType) => {
     const labels = []
@@ -260,51 +199,7 @@ const Applications: Screen<CategoryProps> = ({
     return labels
   }
 
-  const tagTitles:
-    | Partial<Record<SearchableContentTypes, string>>
-    | Record<string, string> = useMemo(
-    () => ({
-      webArticle: n('webArticle', 'Greinar'),
-      webSubArticle: n('webSubArticle', 'Undirgreinar'),
-      webLink: n('webLink', 'Tenglar'),
-      webNews: n('webNews', 'Fréttir og tilkynningar'),
-      webQNA: n('webQNA', 'Spurt og svarað'),
-      webLifeEventPage: n('webLifeEventPage', 'Lífsviðburðir'),
-    }),
-    [n],
-  )
-
   const pathname = linkResolver('applications').href
-
-  const tagsList = useMemo((): TagsList[] => {
-    // Check if countResults.typesCount is not defined
-    if (!countResults.typesCount) {
-      // If it's not defined, return an empty array
-      return []
-    }
-    return [
-      ...countResults.typesCount
-        .filter((x) => x.key in tagTitles)
-        .filter((x) =>
-          Object.keys(connectedTypes).some((y) => y.includes(x.key)),
-        )
-        .map((x) => {
-          let count = x.count
-
-          if (x.key === 'webArticle') {
-            count = getArticleCount()
-          }
-
-          return {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            title: tagTitles[x.key] as string,
-            key: x.key,
-            count,
-          }
-        }),
-    ]
-  }, [countResults.typesCount, getArticleCount, tagTitles])
 
   const checkForProcessEntries = (item: SearchType) => {
     if (item.__typename === 'Article') {
@@ -402,10 +297,6 @@ const Applications: Screen<CategoryProps> = ({
       q,
     }
 
-    if (newQuery.processentry === false) {
-      delete newQuery['processentry']
-    }
-
     routerReplace({
       pathname,
       query: newQuery,
@@ -414,16 +305,9 @@ const Applications: Screen<CategoryProps> = ({
     })
   }, [state, pathname, q, routerReplace])
 
-  const getSearchParams = (contentType: string) => {
+  const getSearchParams = () => {
     return {
       q,
-      ...(contentType && {
-        type: Object.prototype.hasOwnProperty.call(connectedTypes, contentType)
-          ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            connectedTypes[contentType].map((x) => firstLower(x))
-          : contentType,
-      }),
       ...(query.category?.length && { category: query.category }),
       ...(query.organization?.length && {
         organization: query.organization,
@@ -512,76 +396,12 @@ const Applications: Screen<CategoryProps> = ({
               />
               <Box width="full">
                 <Inline
-                  justifyContent="spaceBetween"
+                  justifyContent="flexEnd"
                   alignY="center"
-                  space={3}
+                  space={1}
                   flexWrap="nowrap"
                   collapseBelow="md"
                 >
-                  <Inline space={1}>
-                    {countResults.total > 0 && (
-                      <Tag
-                        variant="blue"
-                        active={!query?.type?.length}
-                        onClick={() => {
-                          dispatch({
-                            type: ActionType.RESET_SEARCH,
-                          })
-                        }}
-                      >
-                        {n('showAllResults', 'Sýna allt')}
-                      </Tag>
-                    )}
-                    {tagsList
-                      .filter((x) => x.count > 0)
-                      .map(({ title, key }, index) => (
-                        <Tag
-                          key={index}
-                          variant="blue"
-                          active={
-                            query?.processentry !== 'true' &&
-                            query?.type?.includes(key)
-                          }
-                          onClick={() => {
-                            dispatch({
-                              type: ActionType.SET_PARAMS,
-                              payload: {
-                                query: {
-                                  processentry: false,
-                                  ...getSearchParams(key),
-                                  category: [],
-                                  organization: [],
-                                },
-                                searchLocked: false,
-                              },
-                            })
-                          }}
-                        >
-                          {title}
-                        </Tag>
-                      ))}
-                    {typeof countResults.processEntryCount == 'number' &&
-                      countResults.processEntryCount > 0 && (
-                        <Tag
-                          variant="blue"
-                          active={query?.processentry === 'true'}
-                          onClick={() => {
-                            dispatch({
-                              type: ActionType.SET_PARAMS,
-                              payload: {
-                                query: {
-                                  processentry: true,
-                                  ...getSearchParams('webArticle'),
-                                },
-                                searchLocked: false,
-                              },
-                            })
-                          }}
-                        >
-                          {n('processEntry', 'Umsóknir')}
-                        </Tag>
-                      )}
-                  </Inline>
                   <FilterMenu
                     {...filterLabels}
                     categories={categories}
@@ -595,7 +415,7 @@ const Applications: Screen<CategoryProps> = ({
                         type: ActionType.SET_PARAMS,
                         payload: {
                           query: {
-                            ...getSearchParams('webArticle'),
+                            ...getSearchParams(),
                             ...payload,
                           },
                         },
@@ -723,12 +543,12 @@ const Applications: Screen<CategoryProps> = ({
 const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
 Applications.getProps = async ({ apolloClient, locale, query }) => {
-  const queryString = single(query.q) || ''
+  const queryString = single(query.q) || '*'
   const page = Number(single(query.page)) || 1
   const category = query.category ?? ''
-  const type = query.type ?? ''
+  const types = stringToArray('webArticle') as SearchableContentTypes[];
   const organization = query.organization ?? ''
-  const processentry = query.processentry ?? ''
+  const processentry = true
   const countTag = {}
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
@@ -753,29 +573,6 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
     ]),
   ]
 
-  const types: SearchableContentTypes[] = stringToArray(type).map(
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
-    (x: SearchableContentTypes) => x,
-  )
-  const allTypes: `${SearchableContentTypes}`[] = [
-    'webArticle',
-    'webLifeEventPage',
-    'webDigitalIcelandService',
-    'webAdgerdirPage',
-    'webSubArticle',
-    'webLink',
-    'webNews',
-    'webOrganizationSubpage',
-    'webOrganizationPage',
-    'webProjectPage',
-  ]
-
-  const ensureContentTypeExists = (
-    types: string[],
-  ): types is SearchableContentTypes[] =>
-    !!types.length && allTypes.every((type) => allTypes.includes(type))
-
   const [
     {
       data: { searchResults },
@@ -792,11 +589,7 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
         query: {
           language: locale as ContentLanguage,
           queryString,
-          types: types.length
-            ? types
-            : ensureContentTypeExists(allTypes)
-            ? allTypes
-            : [],
+          types,
           ...(tags.length && { tags }),
           ...countTag,
           countTypes: true,
@@ -818,7 +611,7 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
             'organization' as SearchableTags,
             'processentry' as SearchableTags,
           ],
-          types: ensureContentTypeExists(allTypes) ? allTypes : [],
+          types,
           countTypes: true,
           countProcessEntry: true,
         },
@@ -854,8 +647,6 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
     page,
   }
 }
-
-const firstLower = (t: string) => t.charAt(0).toLowerCase() + t.slice(1)
 
 const useRouterReplace = (): NextRouter['replace'] => {
   const Router = useRouter()
