@@ -18,7 +18,7 @@ export const NewsArticle: React.FC<
 > = ({ newsItem }) => {
   const { format } = useDateUtils()
 
-  const formattedDate = newsItem.date
+  const formattedDate = newsItem?.date
     ? format(new Date(newsItem.date), 'do MMMM yyyy')
     : ''
 
@@ -26,11 +26,17 @@ export const NewsArticle: React.FC<
     <Box paddingBottom={[0, 0, 4]}>
       <Box className="rs_read">
         <Text variant="h1" as="h1" paddingBottom={2}>
-          {newsItem.title}
+          {newsItem?.title}
         </Text>
       </Box>
 
-      <Webreader marginTop={0} readId={null} readClass="rs_read" />
+      <Webreader
+        marginTop={0}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
+        readId={null}
+        readClass="rs_read"
+      />
 
       <Box className="rs_read">
         <Text variant="h4" as="p" paddingBottom={2} color="blue400">
@@ -39,10 +45,10 @@ export const NewsArticle: React.FC<
       </Box>
       <Box className="rs_read">
         <Text variant="intro" as="p" paddingBottom={2}>
-          {newsItem.intro}
+          {newsItem?.intro}
         </Text>
       </Box>
-      {Boolean(newsItem.image) && (
+      {newsItem && newsItem?.image && (
         <Box
           paddingY={2}
           className={cn({
@@ -51,22 +57,37 @@ export const NewsArticle: React.FC<
         >
           <Image
             {...newsItem.image}
-            url={newsItem.image.url + '?w=774&fm=webp&q=80'}
-            thumbnail={newsItem.image.url + '?w=50&fm=webp&q=80'}
+            url={
+              newsItem.image?.url
+                ? newsItem.image?.url + '?w=774&fm=webp&q=80'
+                : ''
+            }
+            thumbnail={
+              newsItem.image?.url
+                ? newsItem.image?.url + '?w=50&fm=webp&q=80'
+                : ''
+            }
           />
         </Box>
       )}
       <Box className="rs_read" paddingBottom={4} width="full">
-        {webRichText(newsItem.content as SliceType[], {
-          renderComponent: {
-            // Make sure that images in the content are full width
-            Image: (slice) => (
-              <Box className={styles.clearBoth}>
-                <Image {...slice} thumbnail={slice.url + '?w=50'} />
-              </Box>
-            ),
+        {webRichText(
+          newsItem?.content
+            ? (newsItem?.content as SliceType[])
+            : ([] as SliceType[]),
+          {
+            renderComponent: {
+              // Make sure that images in the content are full width
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              Image: (slice) => (
+                <Box className={styles.clearBoth}>
+                  <Image {...slice} thumbnail={slice.url + '?w=50'} />
+                </Box>
+              ),
+            },
           },
-        })}
+        )}
       </Box>
     </Box>
   )

@@ -1,37 +1,35 @@
 import React, { useContext, useMemo } from 'react'
+import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
-import { theme } from '@island.is/island-ui/theme'
 import { Box, Text } from '@island.is/island-ui/core'
-import { useIntl } from 'react-intl'
+import { theme } from '@island.is/island-ui/theme'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   CaseListEntry,
   isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
-import { tables, core } from '@island.is/judicial-system-web/messages'
+import { core, tables } from '@island.is/judicial-system-web/messages'
+import {
+  TagAppealState,
+  TagCaseState,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+import {
+  ColumnCaseType,
+  CourtCaseNumber,
+  CreatedDate,
+  DefendantInfo,
+  DurationDate,
+  getDurationDate,
+  SortButton,
+  TableContainer,
+  TableHeaderText,
+} from '@island.is/judicial-system-web/src/components/Table'
 import {
   useSortCases,
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-
-import {
-  UserContext,
-  TagAppealState,
-  TagCaseState,
-} from '@island.is/judicial-system-web/src/components'
-
-import {
-  ColumnCaseType,
-  CourtCaseNumber,
-  DefendantInfo,
-  SortButton,
-  TableContainer,
-  TableHeaderText,
-  DurationDate,
-  getDurationDate,
-  CreatedDate,
-} from '@island.is/judicial-system-web/src/components/Table'
 
 import MobilePastCase from './MobilePastCase'
 import * as styles from '../Table.css'
@@ -48,12 +46,8 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 
-  const {
-    sortedData,
-    requestSort,
-    getClassNamesFor,
-    isActiveColumn,
-  } = useSortCases('createdAt', 'descending', cases)
+  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
+    useSortCases('createdAt', 'descending', cases)
 
   const pastCasesData = useMemo(
     () =>

@@ -18,15 +18,13 @@ export const rcOverview = {
   }),
   openedByDefenderAlert: defineMessages({
     title: {
-      id:
-        'judicial.system.restriction_cases:overview.opened_by_defender_alert.title',
+      id: 'judicial.system.restriction_cases:overview.opened_by_defender_alert.title',
       defaultMessage: 'Mál opnað af verjanda',
       description:
         'Notaður sem titill fyrir "Mál opnað af verjanda" hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
     },
     text: {
-      id:
-        'judicial.system.restriction_cases:overview.opened_by_defender_alert.text',
+      id: 'judicial.system.restriction_cases:overview.opened_by_defender_alert.text',
       defaultMessage: 'Verjandi hefur opnað málið í Réttarvörslugátt {when}.',
       description:
         'Notaður sem titill fyrir "Mál opnað af verjanda" hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
@@ -54,16 +52,14 @@ export const rcOverview = {
           'Notaður sem titill á modal sem birtist þegar krafa hefur verið send til dómstóls',
       },
       notificationSent: {
-        id:
-          'judicial.system.restriction_cases:overview.modal.notification_sent',
+        id: 'judicial.system.restriction_cases:overview.modal.notification_sent',
         defaultMessage:
           'Tilkynning hefur verið send á dómara og dómritara á vakt.\n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
         description:
           'Notaður sem texti í modal þegar tilkynning hefur verið send til dómara og dómritara á vakt',
       },
       notificationNotSent: {
-        id:
-          'judicial.system.restriction_cases:overview.modal.notification_not_sent',
+        id: 'judicial.system.restriction_cases:overview.modal.notification_not_sent',
         defaultMessage:
           'Ekki tókst að senda tilkynningu á dómara og dómritara á vakt.\n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
         description:

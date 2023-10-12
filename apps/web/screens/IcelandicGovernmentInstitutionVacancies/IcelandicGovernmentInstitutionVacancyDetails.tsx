@@ -46,8 +46,10 @@ const InformationPanel = ({ vacancy, namespace }: InformationPanelProps) => {
   const n = useNamespace(namespace)
   return (
     <Stack space={3}>
-      {vacancy.institutionName && (
+      {vacancy?.institutionName && (
         <InstitutionPanel
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           img={vacancy.logoUrl}
           institutionTitle={n('institutionCardTitle', 'Þjónustuaðili')}
           institution={vacancy.institutionName}
@@ -63,9 +65,9 @@ const InformationPanel = ({ vacancy, namespace }: InformationPanelProps) => {
           <Box borderTopWidth="standard" borderColor="dark200" />
           <Box>
             <Text fontWeight="semiBold">{n('fieldOfWork', 'Starf')}</Text>
-            <Text variant="small">{vacancy.title}</Text>
+            <Text variant="small">{vacancy?.title}</Text>
           </Box>
-          {vacancy.locations?.length > 0 && (
+          {vacancy?.locations && vacancy.locations?.length > 0 && (
             <Box>
               <Text fontWeight="semiBold">
                 {vacancy.locations.length === 1
@@ -79,7 +81,7 @@ const InformationPanel = ({ vacancy, namespace }: InformationPanelProps) => {
               ))}
             </Box>
           )}
-          {vacancy.jobPercentage && (
+          {vacancy?.jobPercentage && (
             <Box>
               <Text fontWeight="semiBold">
                 {n('jobPercentage', 'Starfshlutfall')}
@@ -87,7 +89,7 @@ const InformationPanel = ({ vacancy, namespace }: InformationPanelProps) => {
               <Text variant="small">{vacancy.jobPercentage}</Text>
             </Box>
           )}
-          {vacancy.applicationDeadlineFrom && (
+          {vacancy?.applicationDeadlineFrom && (
             <Box>
               <Text fontWeight="semiBold">
                 {n('applicationDeadlineFrom', 'Starf skráð')}
@@ -95,7 +97,7 @@ const InformationPanel = ({ vacancy, namespace }: InformationPanelProps) => {
               <Text variant="small">{vacancy.applicationDeadlineFrom}</Text>
             </Box>
           )}
-          {vacancy.applicationDeadlineTo && (
+          {vacancy?.applicationDeadlineTo && (
             <Box>
               <Text fontWeight="semiBold">
                 {n('applicationDeadlineTo', 'Umsóknarfrestur')}
@@ -114,10 +116,9 @@ interface IcelandicGovernmentInstitutionVacancyDetailsProps {
   namespace: Record<string, string>
 }
 
-const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentInstitutionVacancyDetailsProps> = ({
-  vacancy,
-  namespace,
-}) => {
+const IcelandicGovernmentInstitutionVacancyDetails: Screen<
+  IcelandicGovernmentInstitutionVacancyDetailsProps
+> = ({ vacancy, namespace }) => {
   const { linkResolver } = useLinkResolver()
 
   const n = useNamespace(namespace)
@@ -127,15 +128,15 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
   return (
     <>
       <HeadWithSocialSharing
-        title={`${vacancy.title ? vacancy.title : ''}${
-          vacancy.title ? ogTitlePostfix : ''
-        }`}
+        title={`${vacancy?.title ?? ''}${vacancy?.title ? ogTitlePostfix : ''}`}
         description={shortenText(
-          vacancy.plainTextIntro,
+          vacancy?.plainTextIntro ?? '',
           VACANCY_INTRO_MAX_LENGTH,
         )}
-        imageUrl={n('ogDetailsImageUrl', vacancy.logoUrl)}
-      />
+        imageUrl={n('ogDetailsImageUrl', vacancy?.logoUrl)}
+      >
+        <meta name="robots" content="noindex, nofollow" />
+      </HeadWithSocialSharing>
 
       <SidebarLayout
         sidebarContent={
@@ -181,78 +182,78 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
             </LinkV2>
           </Hidden>
           <Text variant="h1" as="h1">
-            {vacancy.title}
+            {vacancy?.title}
           </Text>
-          {vacancy.intro && (
+          {vacancy?.intro && (
             <Text as="div">{webRichText([vacancy.intro] as SliceType[])}</Text>
           )}
 
-          {vacancy.tasksAndResponsibilities && (
+          {vacancy?.tasksAndResponsibilities && (
             <Text variant="h3" as="h2">
               {n('assignmentsAndResponsibility', 'Helstu verkefni og ábyrgð')}
             </Text>
           )}
 
-          {vacancy.tasksAndResponsibilities && (
+          {vacancy?.tasksAndResponsibilities && (
             <Text as="div">
               {webRichText([vacancy.tasksAndResponsibilities] as SliceType[])}
             </Text>
           )}
 
-          {vacancy.qualificationRequirements && (
+          {vacancy?.qualificationRequirements && (
             <Text variant="h3" as="h2">
               {n('qualificationRequirements', 'Hæfniskröfur')}
             </Text>
           )}
 
-          {vacancy.qualificationRequirements && (
+          {vacancy?.qualificationRequirements && (
             <Text as="div">
               {webRichText([vacancy.qualificationRequirements] as SliceType[])}
             </Text>
           )}
 
-          {(vacancy.salaryTerms ||
-            vacancy.description ||
-            vacancy.jobPercentage ||
-            vacancy.applicationDeadlineTo) && (
+          {(vacancy?.salaryTerms ||
+            vacancy?.description ||
+            vacancy?.jobPercentage ||
+            vacancy?.applicationDeadlineTo) && (
             <Text variant="h3" as="h2">
               {n('moreInfoAboutTheJob', 'Frekari upplýsingar um starfið')}
             </Text>
           )}
 
-          {vacancy.salaryTerms && (
+          {vacancy?.salaryTerms && (
             <Text as="div">
               {webRichText([vacancy.salaryTerms] as SliceType[])}
             </Text>
           )}
 
-          {vacancy.description && (
+          {vacancy?.description && (
             <Text as="div">
               {webRichText([vacancy.description] as SliceType[])}
             </Text>
           )}
 
-          {vacancy.jobPercentage && (
+          {vacancy?.jobPercentage && (
             <Text>
               {n('jobPercentageIs', 'Starfshlutfall er')}{' '}
               {vacancy.jobPercentage}
             </Text>
           )}
 
-          {vacancy.applicationDeadlineTo && (
+          {vacancy?.applicationDeadlineTo && (
             <Text>
               {n('applicationDeadlineIs', 'Umsóknarfrestur er til og með')}{' '}
               {vacancy.applicationDeadlineTo}
             </Text>
           )}
 
-          {vacancy.contacts?.length > 0 && (
+          {vacancy?.contacts && vacancy.contacts.length > 0 && (
             <Text variant="h3" as="h2">
               {n('contacts', 'Nánari upplýsingar veitir')}
             </Text>
           )}
 
-          {vacancy.contacts?.length > 0 && (
+          {vacancy?.contacts && vacancy.contacts.length > 0 && (
             <Stack space={2}>
               {vacancy.contacts.map((contact, index) => (
                 <Box key={index}>
@@ -281,7 +282,7 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
             </Stack>
           )}
 
-          {vacancy.applicationHref && (
+          {vacancy?.applicationHref && (
             <Inline>
               <Box marginTop={3} marginBottom={[0, 0, 5]}>
                 <LinkV2 href={vacancy.applicationHref} pureChildren={true}>

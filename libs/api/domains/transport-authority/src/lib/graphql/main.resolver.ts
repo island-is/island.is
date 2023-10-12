@@ -42,7 +42,11 @@ export class MainResolver {
     return this.transportAuthorityApi.checkTachoNet(user, input)
   }
 
-  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
+  @Scopes(
+    ApiScope.internal,
+    ApiScope.internalProcuring,
+    ApiScope.samgongustofaVehicles,
+  )
   @Query(() => VehicleOwnerchangeChecksByPermno, {
     name: 'vehicleOwnerchangeChecksByPermno',
     nullable: true,
@@ -57,7 +61,11 @@ export class MainResolver {
     )
   }
 
-  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
+  @Scopes(
+    ApiScope.internal,
+    ApiScope.internalProcuring,
+    ApiScope.samgongustofaVehicles,
+  )
   @Query(() => OwnerChangeValidation, { nullable: true })
   vehicleOwnerChangeValidation(
     @CurrentUser() user: User,
@@ -69,7 +77,11 @@ export class MainResolver {
     )
   }
 
-  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
+  @Scopes(
+    ApiScope.internal,
+    ApiScope.internalProcuring,
+    ApiScope.samgongustofaVehicles,
+  )
   @Query(() => OwnerChangeValidation, { nullable: true })
   vehicleCoOwnerChangeValidation(
     @CurrentUser() user: User,
@@ -81,7 +93,11 @@ export class MainResolver {
     )
   }
 
-  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
+  @Scopes(
+    ApiScope.internal,
+    ApiScope.internalProcuring,
+    ApiScope.samgongustofaVehicles,
+  )
   @Query(() => VehicleOperatorChangeChecksByPermno, {
     name: 'vehicleOperatorChangeChecksByPermno',
     nullable: true,
@@ -96,7 +112,11 @@ export class MainResolver {
     )
   }
 
-  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
+  @Scopes(
+    ApiScope.internal,
+    ApiScope.internalProcuring,
+    ApiScope.samgongustofaVehicles,
+  )
   @Query(() => OperatorChangeValidation, { nullable: true })
   vehicleOperatorChangeValidation(
     @CurrentUser() user: User,
@@ -108,7 +128,11 @@ export class MainResolver {
     )
   }
 
-  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
+  @Scopes(
+    ApiScope.internal,
+    ApiScope.internalProcuring,
+    ApiScope.samgongustofaVehicles,
+  )
   @Query(() => VehiclePlateOrderChecksByPermno, {
     name: 'vehiclePlateOrderChecksByPermno',
     nullable: true,

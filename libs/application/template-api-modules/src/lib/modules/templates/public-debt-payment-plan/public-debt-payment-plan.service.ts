@@ -34,9 +34,7 @@ export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService
     return this.paymentScheduleApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  private getValuesFromApplication(
-    application: Application,
-  ): {
+  private getValuesFromApplication(application: Application): {
     email: string
     phoneNumber: string
     paymentPlans: PublicDebtPaymentPlanPayment[]
@@ -77,11 +75,8 @@ export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService
 
   async sendApplication({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const {
-        email,
-        phoneNumber,
-        paymentPlans,
-      } = this.getValuesFromApplication(application)
+      const { email, phoneNumber, paymentPlans } =
+        this.getValuesFromApplication(application)
 
       const schedules = paymentPlans.map((plan) => {
         const distribution = plan.distribution

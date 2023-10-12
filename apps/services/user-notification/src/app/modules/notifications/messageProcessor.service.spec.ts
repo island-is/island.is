@@ -65,9 +65,8 @@ describe('MessageProcessorService', () => {
     }).compile()
 
     service = module.get<MessageProcessorService>(MessageProcessorService)
-    notificationsService = module.get<NotificationsService>(
-      NotificationsService,
-    )
+    notificationsService =
+      module.get<NotificationsService>(NotificationsService)
   })
 
   it('should be defined', () => {

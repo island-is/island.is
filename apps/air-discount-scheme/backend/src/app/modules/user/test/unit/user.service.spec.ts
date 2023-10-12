@@ -168,7 +168,7 @@ describe('UserService', () => {
       )
 
       // This has been known to happen from the National Registry
-      user.postalcode = (null as unknown) as number
+      user.postalcode = null as unknown as number
 
       const custodians: User[] = [
         createTestUser(100),
@@ -233,7 +233,7 @@ describe('UserService', () => {
       )
 
       // This has been known to happen from the National Registry
-      user.postalcode = (null as unknown) as number
+      user.postalcode = null as unknown as number
 
       const custodians: User[] = [
         createTestUser(100),
@@ -244,7 +244,7 @@ describe('UserService', () => {
 
       for (const custodian of custodians) {
         // This has been known to happen from the National Registry
-        custodian.postalcode = (null as unknown) as number
+        custodian.postalcode = null as unknown as number
       }
       const auth = getAuthUser(user.nationalId)
       const flightLegs = {
@@ -469,7 +469,7 @@ describe('UserService', () => {
       const user = createTestUser()
 
       // This has been known to happen from the National Registry
-      user.postalcode = (null as unknown) as number
+      user.postalcode = null as unknown as number
 
       const auth = getAuthUser(user.nationalId)
       const flightLegs = {

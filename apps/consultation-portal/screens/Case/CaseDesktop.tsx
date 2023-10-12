@@ -5,7 +5,12 @@ import {
   GridRow,
   Stack,
 } from '@island.is/island-ui/core'
-import { AdviceResult, Case, CaseExpressions } from '../../types/interfaces'
+import {
+  AdviceResult,
+  Case,
+  CaseExpressions,
+  Stakeholder,
+} from '../../types/interfaces'
 import {
   BlowoutList,
   CaseDocuments,
@@ -21,6 +26,7 @@ import localization from './Case.json'
 
 interface Props {
   chosenCase: Case
+  stakeholders: Array<Stakeholder>
   expressions: CaseExpressions
   advices: Array<AdviceResult>
   advicesLoading: boolean
@@ -29,6 +35,7 @@ interface Props {
 
 const CaseDesktop = ({
   chosenCase,
+  stakeholders,
   expressions,
   advices,
   advicesLoading,
@@ -41,11 +48,11 @@ const CaseDesktop = ({
     documents,
     additionalDocuments,
     statusName,
-    stakeholders,
     relatedCases,
     contactEmail,
     contactName,
     shortDescription,
+    advicePublishTypeId,
   } = chosenCase
   const {
     isDocumentsNotEmpty,
@@ -55,6 +62,7 @@ const CaseDesktop = ({
     isStakeholdersNotEmpty,
     isRelatedCasesNotEmpty,
   } = expressions
+
   return (
     <CaseSkeleton
       caseNumber={caseNumber}
@@ -99,10 +107,15 @@ const CaseDesktop = ({
           </GridColumn>
           <GridColumn span={'3/12'}>
             <Stack space={3}>
-              <CaseStatusBox status={statusName} />
-              {isStakeholdersNotEmpty && (
-                <BlowoutList list={stakeholders} isStakeholder />
-              )}
+              <CaseStatusBox
+                status={statusName}
+                advicePublishTypeId={advicePublishTypeId}
+              />
+              <BlowoutList
+                list={stakeholders}
+                isStakeholder
+                isEmpty={!isStakeholdersNotEmpty}
+              />
               {isRelatedCasesNotEmpty && <BlowoutList list={relatedCases} />}
               <Coordinator
                 contactEmail={contactEmail}

@@ -2,13 +2,13 @@ import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
+  AppealCaseFilesOverview,
   FormContext,
   PdfButton,
   SignedDocument,
-  AppealCaseFilesOverview,
 } from '@island.is/judicial-system-web/src/components'
-import { core } from '@island.is/judicial-system-web/messages'
 
 import { strings } from './CaseFilesOverview.strings'
 

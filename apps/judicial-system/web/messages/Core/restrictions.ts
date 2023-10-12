@@ -1,5 +1,6 @@
 import { defineMessage, defineMessages } from 'react-intl'
-import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
+
+import { CaseCustodyRestrictions } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const restrictionsV2 = {
   [CaseCustodyRestrictions.NECESSITIES]: defineMessages({
@@ -80,23 +81,20 @@ export const restrictionsV2 = {
       description: 'F - Vinnubann',
     },
   }),
-  [CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION]: defineMessages(
-    {
+  [CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION]:
+    defineMessages({
       title: {
-        id:
-          'judicial.system.core:restrictionsV2.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION.title',
+        id: 'judicial.system.core:restrictionsV2.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION.title',
         defaultMessage: 'Tilkynningarskylda',
         description: 'Tilkynningarskylda',
       },
       description: {
-        id:
-          'judicial.system.core:restrictionsV2.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION',
+        id: 'judicial.system.core:restrictionsV2.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION',
         defaultMessage:
           'Sé sakborningi gert að tilkynna sig reglulega á meðan á farbanni stendur er hægt að haka hér í þennan reit og skrifa nánari upplýsingar um tilkynningarskyldu í textareitinn fyrir neðan.',
         description: 'Tilkynningarskylda',
       },
-    },
-  ),
+    }),
   title: defineMessage({
     id: 'judicial.system.core:restrictionsV2_title',
     defaultMessage:

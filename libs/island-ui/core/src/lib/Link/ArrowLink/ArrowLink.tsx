@@ -1,4 +1,4 @@
-import React from 'react'
+import { ReactNode } from 'react'
 import { Link, LinkColor } from '../Link'
 import * as styles from './ArrowLink.css'
 import { Icon } from '../../Icon/Icon'
@@ -8,6 +8,7 @@ import { Text } from '../../Text/Text'
 interface ArrowLinkProps {
   href?: string
   as?: string
+  children?: ReactNode
   color?: LinkColor
   arrowHeight?: number
   onClick?: () => void
@@ -23,7 +24,7 @@ export const ArrowLink: React.FC<React.PropsWithChildren<ArrowLinkProps>> = ({
   color = 'blue400',
   arrowHeight = 12,
   onClick,
-}) => (
+}: ArrowLinkProps) => (
   <Box
     component={href ? Link : 'div'}
     href={href}

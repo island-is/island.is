@@ -4,7 +4,8 @@ import type {
 } from './Consent.generated'
 import type { ReactNode } from 'react'
 
-type PermissionGroup = GetConsentListQuery['consentsList']['data'][0]['tenants'][0]
+type PermissionGroup =
+  GetConsentListQuery['consentsList']['data'][0]['tenants'][0]
 
 export type ConsentSectionProps = {
   clientId: string

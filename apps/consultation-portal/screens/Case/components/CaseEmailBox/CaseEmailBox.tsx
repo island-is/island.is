@@ -52,26 +52,19 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
   const [inputValue, setInputValue] = useState('')
 
   const { postEmailMutation, postEmailLoading } = usePostEmail()
-  const {
-    postCaseSubscriptionMutation,
-    postCaseSubscriptionLoading,
-  } = usePostCaseSubscription()
+  const { postCaseSubscriptionMutation, postCaseSubscriptionLoading } =
+    usePostCaseSubscription()
   const { email, emailVerified, getUserEmailLoading } = useFetchEmail({
     isAuthenticated: isAuthenticated,
   })
-  const {
-    deleteCaseSubscriptionMutation,
-    deleteCaseSubscriptionLoading,
-  } = useDeleteCaseSubscription()
+  const { deleteCaseSubscriptionMutation, deleteCaseSubscriptionLoading } =
+    useDeleteCaseSubscription()
 
-  const {
-    caseSubscription,
-    caseSubscriptionLoading,
-    refetchCaseSubscription,
-  } = useFetchCaseSubscription({
-    isAuthenticated: isAuthenticated,
-    caseId: caseId,
-  })
+  const { caseSubscription, caseSubscriptionLoading, refetchCaseSubscription } =
+    useFetchCaseSubscription({
+      isAuthenticated: isAuthenticated,
+      caseId: caseId,
+    })
 
   useEffect(() => {
     if (!getUserEmailLoading) {

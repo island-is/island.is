@@ -1,24 +1,25 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Checkbox, Tooltip } from '@island.is/island-ui/core'
+import { Box, RadioButton, Tooltip } from '@island.is/island-ui/core'
 import {
   isCourtRole,
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
+  RequestSharedWithDefender,
   SessionArrangements,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { defenderInfo } from './DefenderInfo.strings'
-import { BlueBox, SectionHeading } from '..'
 import { useCase } from '../../utils/hooks'
 import { UserContext } from '../UserProvider/UserProvider'
+import { BlueBox, SectionHeading } from '..'
 import DefenderInput from './DefenderInput'
 import DefenderNotFound from './DefenderNotFound'
+import { defenderInfo } from './DefenderInfo.strings'
 
 interface Props {
   workingCase: Case
@@ -101,45 +102,101 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
         <DefenderInput onDefenderNotFound={setDefenderNotFound} />
         {user?.role === UserRole.PROSECUTOR && (
           <Box marginTop={2}>
-            <Checkbox
-              name="sendRequestToDefender"
-              label={formatMessage(
-                isRestrictionCase(workingCase.type)
-                  ? defenderInfo.restrictionCases.sections.defenderRequestAccess
-                      .label
-                  : defenderInfo.investigationCases.sections
-                      .defenderRequestAccess.label,
-              )}
-              tooltip={
-                isRestrictionCase(workingCase.type)
-                  ? formatMessage(
-                      defenderInfo.restrictionCases.sections
-                        .defenderRequestAccess.tooltip,
+            <Box>
+              <RadioButton
+                name="defender-access"
+                id="defender-access-ready-for-court"
+                label={formatMessage(
+                  isRestrictionCase(workingCase.type)
+                    ? defenderInfo.restrictionCases.sections
+                        .defenderRequestAccess.labelReadyForCourt
+                    : defenderInfo.investigationCases.sections
+                        .defenderRequestAccess.labelReadyForCourt,
+                )}
+                checked={
+                  workingCase.requestSharedWithDefender ===
+                  RequestSharedWithDefender.READY_FOR_COURT
+                }
+                onChange={() => {
+                  setAndSendCaseToServer(
+                    [
                       {
-                        caseType: workingCase.type,
+                        requestSharedWithDefender:
+                          RequestSharedWithDefender.READY_FOR_COURT,
+                        force: true,
                       },
-                    )
-                  : formatMessage(
-                      defenderInfo.investigationCases.sections
-                        .defenderRequestAccess.tooltip,
-                    )
-              }
-              checked={workingCase.sendRequestToDefender}
-              onChange={(event) => {
-                setAndSendCaseToServer(
-                  [
-                    {
-                      sendRequestToDefender: event.target.checked,
-                      force: true,
-                    },
-                  ],
-                  workingCase,
-                  setWorkingCase,
-                )
-              }}
-              large
-              filled
-            />
+                    ],
+                    workingCase,
+                    setWorkingCase,
+                  )
+                }}
+                large
+                backgroundColor="white"
+                disabled={!workingCase.defenderName}
+              />
+            </Box>
+            <Box marginTop={2}>
+              <RadioButton
+                name="defender-access"
+                id="defender-access-court-date"
+                label={formatMessage(
+                  isRestrictionCase(workingCase.type)
+                    ? defenderInfo.restrictionCases.sections
+                        .defenderRequestAccess.labelCourtDate
+                    : defenderInfo.investigationCases.sections
+                        .defenderRequestAccess.labelCourtDate,
+                )}
+                checked={
+                  workingCase.requestSharedWithDefender ===
+                  RequestSharedWithDefender.COURT_DATE
+                }
+                onChange={() => {
+                  setAndSendCaseToServer(
+                    [
+                      {
+                        requestSharedWithDefender:
+                          RequestSharedWithDefender.COURT_DATE,
+                        force: true,
+                      },
+                    ],
+                    workingCase,
+                    setWorkingCase,
+                  )
+                }}
+                large
+                backgroundColor="white"
+                disabled={!workingCase.defenderName}
+              />
+            </Box>
+            <Box marginTop={2}>
+              <RadioButton
+                name="defender-access-no"
+                id="defender-access-no"
+                label={formatMessage(
+                  isRestrictionCase(workingCase.type)
+                    ? defenderInfo.restrictionCases.sections
+                        .defenderRequestAccess.labelNoAccess
+                    : defenderInfo.investigationCases.sections
+                        .defenderRequestAccess.labelNoAccess,
+                )}
+                checked={!workingCase.requestSharedWithDefender}
+                onChange={() => {
+                  setAndSendCaseToServer(
+                    [
+                      {
+                        requestSharedWithDefender: null,
+                        force: true,
+                      },
+                    ],
+                    workingCase,
+                    setWorkingCase,
+                  )
+                }}
+                large
+                backgroundColor="white"
+                disabled={!workingCase.defenderName}
+              />
+            </Box>
           </Box>
         )}
       </BlueBox>

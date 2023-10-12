@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Input } from '@island.is/island-ui/core'
-
 import { Substance as SubstanceEnum } from '@island.is/judicial-system/types'
 import {
   removeErrorMessageIfValid,

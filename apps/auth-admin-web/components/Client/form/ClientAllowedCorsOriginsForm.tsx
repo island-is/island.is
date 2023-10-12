@@ -25,11 +25,8 @@ interface FormOutput {
 const ClientAllowedCorsOriginsForm: React.FC<React.PropsWithChildren<Props>> = (
   props: Props,
 ) => {
-  const {
-    register,
-    handleSubmit,
-    formState,
-  } = useForm<ClientAllowedCorsOriginDTO>()
+  const { register, handleSubmit, formState } =
+    useForm<ClientAllowedCorsOriginDTO>()
   const { isSubmitting, errors } = formState
   const [defaultOrigin, setDefaultOrigin] = useState(
     !props.origins || props.origins.length === 0 ? props.defaultOrigin : '',

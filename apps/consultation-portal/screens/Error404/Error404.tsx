@@ -12,24 +12,26 @@ export const Error404 = () => {
         <Text variant="h5" paddingBottom={3}>
           {loc.notFoundText}
         </Text>
-        <Text>
-          {`${loc.text}:`}
+        <div>
+          <Text>{`${loc.text}:`}</Text>
           <BulletList>
             <Bullet>{loc.bulletOne}</Bullet>
             <Bullet>{loc.bulletTwo}</Bullet>
             <Bullet>{loc.bulletThree}</Bullet>
             <Bullet>{loc.bulletFour}</Bullet>
           </BulletList>{' '}
-          {loc.textAfterBullets}{' '}
-          <Link href="https://island.is/samradsgatt" legacyBehavior>
-            {loc.linkText}
-          </Link>
-          <br />
-          {loc.textAfterBreak}{' '}
-          <LinkV2 href="mailto:samradsgatt@stjornarradid.is">
-            {loc.email}
-          </LinkV2>
-        </Text>
+          <Text>
+            {loc.textAfterBullets}
+            <Link href="https://island.is/samradsgatt" legacyBehavior>
+              {loc.linkText}
+            </Link>
+            <br />
+            {loc.textAfterBreak}
+            <LinkV2 href="mailto:samradsgatt@stjornarradid.is">
+              {loc.email}
+            </LinkV2>
+          </Text>
+        </div>
       </ErrorScreen>
     </Layout>
   )

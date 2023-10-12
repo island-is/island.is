@@ -2,6 +2,15 @@ import React, { useCallback, useContext, useState } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
 import router from 'next/router'
 
+import { Box, Input, Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { enumerate, formatDOB } from '@island.is/judicial-system/formatters'
+import { CaseType } from '@island.is/judicial-system/types'
+import {
+  core,
+  icDemands,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
@@ -11,12 +20,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
-  core,
-  icDemands,
-  titles,
-} from '@island.is/judicial-system-web/messages'
-import { Box, Input, Text } from '@island.is/island-ui/core'
-import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -25,11 +28,7 @@ import {
   useDeb,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseType } from '@island.is/judicial-system/types'
-import { enumerate, formatDOB } from '@island.is/judicial-system/formatters'
 import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-
-import * as constants from '@island.is/judicial-system/consts'
 
 export const formatInstitutionName = (name: string | undefined) => {
   if (!name) return ''
@@ -104,9 +103,8 @@ const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
         format: { court: true, institution: true, accused: true },
       },
       [CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION]: {
-        text:
-          icDemands.sections.demands.prefill
-            .electronicDataDiscoveryInvestigation,
+        text: icDemands.sections.demands.prefill
+          .electronicDataDiscoveryInvestigation,
         format: {
           court: true,
           institution: true,
@@ -114,6 +112,10 @@ const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
           address: true,
           year: true,
         },
+      },
+      [CaseType.PAROLE_REVOCATION]: {
+        text: icDemands.sections.demands.prefill.paroleRevocation,
+        format: { court: true, accused: true },
       },
     }
 

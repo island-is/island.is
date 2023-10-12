@@ -13,11 +13,11 @@ import { ExportCSVButton } from '@island.is/web/components'
 import * as styles from './ChartsCard.css'
 
 interface ChartCardDataProps {
-  graphTitle: string
+  graphTitle?: string
   graphDescription?: string
   organization?: string
-  data: string
-  datakeys: string
+  data?: string
+  datakeys?: string
   type?: string
 }
 
@@ -29,29 +29,31 @@ export interface ChartsCardsProps {
 export const ChartsCard: React.FC<
   React.PropsWithChildren<ChartsCardsProps>
 > = ({ chart, subPage }) => {
-  const {
-    graphTitle,
-    graphDescription,
-    organization,
-    type,
-    data,
-    datakeys,
-  } = chart
+  const { graphTitle, graphDescription, organization, type, data, datakeys } =
+    chart
   const [ref, { width }] = useMeasure()
   const graphData = { title: graphTitle, data: data, datakeys: datakeys }
 
   let children = null
   switch (type) {
     case 'Mixed':
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       children = <MixedChart graphData={graphData} />
       break
     case 'Line':
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       children = <SimpleLineChart graphData={graphData} />
       break
     case 'Bar':
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       children = <SimpleBarChart graphData={graphData} />
       break
     case 'Pie':
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       children = <SimplePieChart graphData={graphData} />
       break
     default:
@@ -94,6 +96,9 @@ export const ChartsCard: React.FC<
                 </Text>
               )}
               <Text variant="h3" color="dark400">
+                {/*
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict */}
                 <Hyphen>{graphTitle}</Hyphen>
               </Text>
               {graphDescription && (
@@ -102,7 +107,14 @@ export const ChartsCard: React.FC<
             </Box>
             {subPage && (
               <Box padding={[2, 2, 4]}>
-                <ExportCSVButton data={data} title={graphTitle} />
+                <ExportCSVButton
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
+                  data={data}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
+                  title={graphTitle}
+                />
               </Box>
             )}
           </Box>

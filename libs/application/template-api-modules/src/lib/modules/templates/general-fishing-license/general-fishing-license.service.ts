@@ -124,10 +124,11 @@ export class GeneralFishingLicenseService extends BaseTemplateApiService {
       ) as Array<{ key: string; name: string }>
       const attachments = await Promise.all(
         attachmentsRaw?.map(async (a) => {
-          const vidhengiBase64 = await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
-            application,
-            a.key,
-          )
+          const vidhengiBase64 =
+            await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
+              application,
+              a.key,
+            )
           return {
             vidhengiBase64,
             vidhengiNafn: a.name,

@@ -26,8 +26,7 @@ export const complaintInformation = defineMessages({
       'The message that appears in the alert when decision is selected',
   },
   proceedingsAlertMessage: {
-    id:
-      'ctao.application:section.complaintInformation.proceedings.alertMessage',
+    id: 'ctao.application:section.complaintInformation.proceedings.alertMessage',
     defaultMessage: `Ef þú vilt kvarta yfir einhverju öðru í samskiptum þínum við stjórnvöld skalt þú haka við þennan reit,
       t.d. ef kvörtun varðar tafir á meðferð stjórnvalda á máli þínu, ef stjórnvöld svara ekki erindum þínum eða 
       ef þú ert ósátt/-ur við framkomu og/eða þjónustu sem þú hefur fengið hjá stjórnvaldi. `,

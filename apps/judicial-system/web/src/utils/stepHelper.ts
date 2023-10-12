@@ -1,21 +1,21 @@
-import parseISO from 'date-fns/parseISO'
 import addDays from 'date-fns/addDays'
+import parseISO from 'date-fns/parseISO'
 import flatten from 'lodash/flatten'
 
 import { TagVariant } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseCustodyRestrictions,
   CaseFileCategory,
   IndictmentSubtype,
   Notification,
   NotificationType,
 } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
+  CaseCustodyRestrictions,
   CaseType,
   Gender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 export const getShortGender = (gender?: Gender): string => {
   switch (gender) {

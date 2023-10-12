@@ -1,14 +1,12 @@
-import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const envs = {
   APPLICATION_URL: 'http://search-indexer-service',
   ELASTIC_NODE: {
-    dev:
-      'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com',
+    dev: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com',
     staging:
       'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com',
-    prod:
-      'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com',
+    prod: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com',
   },
   ELASTIC_INDEX: 'island-is',
   CONTENTFUL_SPACE: '8k0h54kbe6bj',
@@ -22,11 +20,6 @@ const envs = {
     dev: '20',
     staging: '40',
     prod: '40',
-  },
-  SHOULD_SEARCH_INDEXER_RESOLVE_NESTED_ENTRIES: {
-    dev: 'true',
-    staging: 'true',
-    prod: 'true',
   },
   AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: {
     dev: 'loftbru.dev01.devland.is',
@@ -69,11 +62,11 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
           resources: {
             requests: {
               cpu: '300m',
-              memory: '1536Mi',
+              memory: '2048Mi',
             },
             limits: {
               cpu: '700m',
-              memory: '2048Mi',
+              memory: '3072Mi',
             },
           },
         },
@@ -104,16 +97,17 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
       }),
       secrets: {
         CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN',
+        CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',
       },
     })
     .resources({
       requests: {
         cpu: '400m',
-        memory: '1536Mi',
+        memory: '2048Mi',
       },
       limits: {
         cpu: '800m',
-        memory: '2048Mi',
+        memory: '3072Mi',
       },
     })
     .ingress({

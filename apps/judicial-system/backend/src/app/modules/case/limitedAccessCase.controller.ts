@@ -12,11 +12,13 @@ import {
   Query,
   Res,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   CurrentHttpUser,
   JwtAuthGuard,
@@ -24,28 +26,30 @@ import {
   RolesRules,
   TokenGuard,
 } from '@island.is/judicial-system/auth'
+import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
   indictmentCases,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
-import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { defenderRule } from '../../guards'
+import { CaseEvent, EventService } from '../event'
 import { User } from '../user'
-import { CaseExistsGuard } from './guards/caseExists.guard'
-import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
+import { TransitionCaseDto } from './dto/transitionCase.dto'
+import { UpdateCaseDto } from './dto/updateCase.dto'
+import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
-import { LimitedAccessCaseReceivedGuard } from './guards/limitedAccessCaseReceived.guard'
 import { CaseDefenderGuard } from './guards/caseDefender.guard'
+import { CaseExistsGuard } from './guards/caseExists.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
+import { LimitedAccessAccordingToCaseStateGuard } from './guards/limitedAccessAccordingToCaseState.guard'
+import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
 import { RequestSharedWithDefenderGuard } from './guards/requestSharedWithDefender.guard'
 import { defenderTransitionRule, defenderUpdateRule } from './guards/rolesRules'
-import { CurrentCase } from './guards/case.decorator'
-import { UpdateCaseDto } from './dto/updateCase.dto'
-import { TransitionCaseDto } from './dto/transitionCase.dto'
+import { CaseInterceptor } from './interceptors/case.interceptor'
 import { Case } from './models/case.model'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
@@ -53,7 +57,6 @@ import {
   LimitedAccessCaseService,
   LimitedAccessUpdateCase,
 } from './limitedAccessCase.service'
-import { CaseEvent, EventService } from '../event'
 
 @Controller('api')
 @ApiTags('limited access cases')
@@ -70,7 +73,7 @@ export class LimitedAccessCaseController {
     JwtAuthGuard,
     RolesGuard,
     LimitedAccessCaseExistsGuard,
-    LimitedAccessCaseReceivedGuard,
+    LimitedAccessAccordingToCaseStateGuard,
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
@@ -79,6 +82,7 @@ export class LimitedAccessCaseController {
     type: Case,
     description: 'Gets a limited set of properties of an existing case',
   })
+  @UseInterceptors(CaseInterceptor)
   async getById(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
@@ -167,7 +171,7 @@ export class LimitedAccessCaseController {
     )
 
     this.eventService.postEvent(
-      (transition.transition as unknown) as CaseEvent,
+      transition.transition as unknown as CaseEvent,
       updatedCase,
     )
 
@@ -193,7 +197,7 @@ export class LimitedAccessCaseController {
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
-    LimitedAccessCaseReceivedGuard,
+    LimitedAccessAccordingToCaseStateGuard,
     RequestSharedWithDefenderGuard,
     CaseDefenderGuard,
   )
@@ -223,7 +227,7 @@ export class LimitedAccessCaseController {
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
-    LimitedAccessCaseReceivedGuard,
+    LimitedAccessAccordingToCaseStateGuard,
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
@@ -319,7 +323,7 @@ export class LimitedAccessCaseController {
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
-    LimitedAccessCaseReceivedGuard,
+    LimitedAccessAccordingToCaseStateGuard,
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)

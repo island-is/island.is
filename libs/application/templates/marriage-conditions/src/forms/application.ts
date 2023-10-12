@@ -12,6 +12,7 @@ import {
   getValueViaPath,
   buildDateField,
   buildExternalDataProvider,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import {
   Form,
@@ -147,10 +148,11 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     titleVariant: 'h4',
                     space: 'gutter',
                   }),
-                  buildCustomField({
+                  buildAlertMessageField({
                     id: 'alert',
                     title: '',
-                    component: 'InfoAlert',
+                    alertType: 'info',
+                    message: m.informationAlertMessage,
                   }),
                   buildCustomField({
                     id: 'spouse.person',

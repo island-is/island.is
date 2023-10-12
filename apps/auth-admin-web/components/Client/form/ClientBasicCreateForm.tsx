@@ -24,12 +24,8 @@ interface FormOutput {
 const ClientBasicCreateForm: React.FC<React.PropsWithChildren<Props>> = (
   props: Props,
 ) => {
-  const {
-    register,
-    handleSubmit,
-    clearErrors,
-    formState,
-  } = useForm<FormOutput>()
+  const { register, handleSubmit, clearErrors, formState } =
+    useForm<FormOutput>()
   const { isSubmitting, errors } = formState
   const [available, setAvailable] = useState<boolean>(false)
   const [clientIdLength, setClientIdLength] = useState<number>(0)

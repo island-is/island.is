@@ -49,10 +49,11 @@ export class EstateTemplateService extends BaseTemplateApiService {
   async estateProvider({
     application,
   }: TemplateApiModuleActionProps): Promise<boolean> {
-    const applicationData = (application.externalData?.syslumennOnEntry
-      ?.data as { estate: EstateInfo }).estate
+    const applicationData = (
+      application.externalData?.syslumennOnEntry?.data as { estate: EstateInfo }
+    ).estate
 
-    const applicationAnswers = (application.answers as unknown) as EstateSchema
+    const applicationAnswers = application.answers as unknown as EstateSchema
     if (
       !applicationData?.caseNumber?.length ||
       applicationData?.caseNumber.length === 0
@@ -186,7 +187,8 @@ export class EstateTemplateService extends BaseTemplateApiService {
         name: 'Gervimaður Evrópa',
         address: 'Gerviheimili 123, 600 Feneyjar',
         nationalId: '0101302719',
-        email: 'evropa@gervi.com',
+        email: '',
+        phone: '',
       }
 
       const fakeChild = {
@@ -196,6 +198,8 @@ export class EstateTemplateService extends BaseTemplateApiService {
         // This test will stop serving its purpose on the 24th of September 2034
         // eslint-disable-next-line local-rules/disallow-kennitalas
         nationalId: '2409151460',
+        phone: '',
+        email: '',
       }
 
       if (application.applicant.endsWith('7789')) {
@@ -231,22 +235,25 @@ export class EstateTemplateService extends BaseTemplateApiService {
     const externalData = application.externalData.syslumennOnEntry
       ?.data as EstateSchema
 
+    const applicantData = application.answers
+      .applicant as EstateSchema['applicant']
+
     const person: Person = {
       name: nationalRegistryData?.fullName,
       ssn: application.applicant,
-      phoneNumber: application.answers.applicantPhone as string,
+      phoneNumber: applicantData.phone,
       city: nationalRegistryData?.address.city,
       homeAddress: nationalRegistryData?.address.streetAddress,
       postalCode: nationalRegistryData?.address.postalCode,
       signed: false,
       type: PersonType.AnnouncerOfDeathCertificate,
-      email: application.answers.applicantEmail as string,
+      email: applicantData.email,
     }
 
     const uploadDataName = 'danarbusskipti1.0'
     const uploadDataId = 'danarbusskipti1.0'
 
-    const answers = (application.answers as unknown) as EstateSchema
+    const answers = application.answers as unknown as EstateSchema
 
     const relation =
       externalData?.estate.estateMembers?.find(

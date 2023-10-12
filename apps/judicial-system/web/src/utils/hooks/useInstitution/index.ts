@@ -1,10 +1,10 @@
 import { useQuery } from '@apollo/client'
 
-import { InstitutionsQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import {
-  InstitutionType,
   Institution,
+  InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { InstitutionsQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 let rawInstitutions: Institution[]
 
@@ -36,13 +36,13 @@ const useInstitution = (skip = false) => {
     rawInstitutions = data.institutions
 
     institutions.courts = rawInstitutions.filter(
-      (institution) => institution.type === InstitutionType.COURT,
+      (institution) => institution.type === InstitutionType.DISTRICT_COURT,
     )
 
     institutions.allCourts = rawInstitutions.filter(
       (institution) =>
-        institution.type === InstitutionType.COURT ||
-        institution.type === InstitutionType.HIGH_COURT,
+        institution.type === InstitutionType.DISTRICT_COURT ||
+        institution.type === InstitutionType.COURT_OF_APPEALS,
     )
 
     institutions.prosecutorsOffices = rawInstitutions.filter(

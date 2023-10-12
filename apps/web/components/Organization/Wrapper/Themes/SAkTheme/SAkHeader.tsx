@@ -19,7 +19,7 @@ const SAkHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
       <Box className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
-            !!organizationPage.organization.logo && (
+            !!organizationPage.organization?.logo && (
               <Link
                 href={
                   linkResolver('organizationpage', [organizationPage.slug]).href
@@ -35,7 +35,7 @@ const SAkHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
             )
           }
         >
-          {!!organizationPage.organization.logo && (
+          {!!organizationPage.organization?.logo && (
             <Hidden above="sm">
               <Link
                 href={

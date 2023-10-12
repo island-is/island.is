@@ -56,7 +56,7 @@ async function loadTemplateLib(
 export async function getApplicationTemplateByTypeId<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,
-  TEvents extends EventObject
+  TEvents extends EventObject,
 >(
   templateId: ApplicationTypes,
 ): Promise<ApplicationTemplate<TContext, TStateSchema, TEvents>> {

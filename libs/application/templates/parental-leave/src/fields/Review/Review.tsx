@@ -50,9 +50,8 @@ export const Review: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
   errors,
 }) => {
   const editable = field.props?.editable ?? false
-  const [
-    { applicationType, otherParent, employerLastSixMonths },
-  ] = useStatefulAnswers(application)
+  const [{ applicationType, otherParent, employerLastSixMonths }] =
+    useStatefulAnswers(application)
   const selectedChild = getSelectedChild(
     application.answers,
     application.externalData,

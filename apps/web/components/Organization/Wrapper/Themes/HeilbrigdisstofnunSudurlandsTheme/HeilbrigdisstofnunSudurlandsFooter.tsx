@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { ReactNode, useMemo } from 'react'
 import { BLOCKS } from '@contentful/rich-text-types'
 import {
   Box,
@@ -53,7 +53,7 @@ const FooterColumn = ({
 
           {webRichText((item?.content as SliceType[]) ?? [], {
             renderNode: {
-              [BLOCKS.PARAGRAPH]: (_node, children) => (
+              [BLOCKS.PARAGRAPH]: (_node: never, children: ReactNode) => (
                 <Text
                   color="white"
                   variant="eyebrow"

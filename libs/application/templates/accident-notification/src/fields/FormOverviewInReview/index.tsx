@@ -33,12 +33,10 @@ export const FormOverviewInReview: FC<
     '',
   ) as string
 
-  const [rejectModalVisibility, setRejectModalVisibility] = useState<boolean>(
-    false,
-  )
-  const [approveModalVisibility, setApproveModalVisibility] = useState<boolean>(
-    false,
-  )
+  const [rejectModalVisibility, setRejectModalVisibility] =
+    useState<boolean>(false)
+  const [approveModalVisibility, setApproveModalVisibility] =
+    useState<boolean>(false)
   const [comment, setComment] = useState<string>('')
 
   const shouldReview =

@@ -17,7 +17,7 @@ export const complaintOverview = {
   labels: defineMessages({
     externalDataTitle: {
       id: 'ctao.application:overview.label.externalDataTitle',
-      defaultMessage: 'Gangaöflun',
+      defaultMessage: 'Gagnaöflun',
       description: 'Label for external data usage',
     },
     externalDataText: {

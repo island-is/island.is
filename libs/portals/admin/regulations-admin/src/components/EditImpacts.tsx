@@ -34,8 +34,7 @@ import { ImpactBaseSelection } from './impacts/ImpactBaseSelection'
 import { ImpactAmendingSelection } from './impacts/ImpactAmendingSelection'
 import { RegulationDraftTypes, StepNames } from '../types'
 
-export type SelRegOption = Option & {
-  value?: DraftImpactName | ''
+export type SelRegOption = Option<DraftImpactName | ''> & {
   type: RegulationType | ''
   migrated?: boolean
 }

@@ -1,0 +1,19 @@
+query ProsecutorSelectionUsers {
+  users {
+    id
+    created
+    modified
+    name
+    nationalId
+    mobileNumber
+    role
+    email
+    title
+    institution {
+      id
+      type
+      name
+    }
+    active
+  }
+}

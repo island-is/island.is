@@ -93,6 +93,8 @@ import { FeaturedSupportQNAs } from './models/featuredSupportQNAs.model'
 import { PowerBiSlice } from './models/powerBiSlice.model'
 import { GetPowerBiEmbedPropsFromServerResponse } from './dto/getPowerBiEmbedPropsFromServer.response'
 import { GetOrganizationByTitleInput } from './dto/getOrganizationByTitle.input'
+import { ServiceWebPage } from './models/serviceWebPage.model'
+import { GetServiceWebPageInput } from './dto/getServiceWebPage.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -235,6 +237,17 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
+  @Query(() => ServiceWebPage, { nullable: true })
+  getServiceWebPage(
+    @Args('input') input: GetServiceWebPageInput,
+  ): Promise<ServiceWebPage | null> {
+    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
+      getElasticsearchIndex(input.lang),
+      { type: 'webServiceWebPage', slug: input.slug },
+    )
+  }
+
+  @CacheControl(defaultCache)
   @Query(() => [Auction])
   getAuctions(
     @Args('input') input: GetAuctionsInput,
@@ -366,10 +379,11 @@ export class CmsResolver {
   async getSingleArticle(
     @Args('input') { lang, slug }: GetSingleArticleInput,
   ): Promise<(Partial<Article> & { lang: Locale }) | null> {
-    const article: Article | null = await this.cmsElasticsearchService.getSingleDocumentTypeBySlug<Article>(
-      getElasticsearchIndex(lang),
-      { type: 'webArticle', slug },
-    )
+    const article: Article | null =
+      await this.cmsElasticsearchService.getSingleDocumentTypeBySlug<Article>(
+        getElasticsearchIndex(lang),
+        { type: 'webArticle', slug },
+      )
 
     if (!article) return null
 

@@ -53,73 +53,72 @@ interface IndexedDocument extends Document {
   fulltext: string;
 }
 
-const {
-  useNavigationOptions,
-  getNavigationOptions,
-} = createNavigationOptionHooks(
-  (theme, intl, initialized) => ({
-    topBar: {
-      title: {
-        text: intl.formatMessage({id: 'inbox.screenTitle'}),
+const {useNavigationOptions, getNavigationOptions} =
+  createNavigationOptionHooks(
+    (theme, intl, initialized) => ({
+      topBar: {
+        title: {
+          text: intl.formatMessage({id: 'inbox.screenTitle'}),
+        },
+        searchBar: {
+          placeholder: intl.formatMessage({id: 'inbox.searchPlaceholder'}),
+          tintColor: theme.color.blue400,
+          backgroundColor: 'transparent',
+        },
+        rightButtons: initialized ? getRightButtons({theme} as any) : [],
+        background: {
+          component:
+            Platform.OS === 'android'
+              ? {
+                  name: ComponentRegistry.AndroidSearchBar,
+                  passProps: {
+                    placeholder: intl.formatMessage({
+                      id: 'inbox.searchPlaceholder',
+                    }),
+                  },
+                }
+              : undefined,
+        },
       },
-      searchBar: {
-        placeholder: intl.formatMessage({id: 'inbox.searchPlaceholder'}),
-        tintColor: theme.color.blue400,
-        backgroundColor: 'transparent',
+      bottomTab: {
+        iconColor: theme.color.blue400,
+        text: initialized
+          ? intl.formatMessage({id: 'inbox.bottomTabText'})
+          : '',
       },
-      rightButtons: initialized ? getRightButtons({theme} as any) : [],
-      background: {
-        component:
-          Platform.OS === 'android'
-            ? {
-                name: ComponentRegistry.AndroidSearchBar,
-                passProps: {
-                  placeholder: intl.formatMessage({
-                    id: 'inbox.searchPlaceholder',
-                  }),
-                },
-              }
-            : undefined,
+    }),
+    {
+      topBar: {
+        elevation: 0,
+        height: 120,
+        searchBar: {
+          visible: true,
+          hideTopBarOnFocus: true,
+        },
+        largeTitle: {
+          visible: true,
+        },
+        scrollEdgeAppearance: {
+          active: true,
+          noBorder: true,
+        },
+      },
+      bottomTab: {
+        testID: testIDs.TABBAR_TAB_INBOX,
+        iconInsets: {
+          bottom: -4,
+        },
+        icon: require('../../assets/icons/tabbar-inbox.png'),
+        selectedIcon: require('../../assets/icons/tabbar-inbox-selected.png'),
       },
     },
-    bottomTab: {
-      iconColor: theme.color.blue400,
-      text: initialized ? intl.formatMessage({id: 'inbox.bottomTabText'}) : '',
-    },
-  }),
-  {
-    topBar: {
-      elevation: 0,
-      height: 120,
-      searchBar: {
-        visible: true,
-        hideTopBarOnFocus: true,
-      },
-      largeTitle: {
-        visible: true,
-      },
-      scrollEdgeAppearance: {
-        active: true,
-        noBorder: true,
-      },
-    },
-    bottomTab: {
-      testID: testIDs.TABBAR_TAB_INBOX,
-      iconInsets: {
-        bottom: -4,
-      },
-      icon: require('../../assets/icons/tabbar-inbox.png'),
-      selectedIcon: require('../../assets/icons/tabbar-inbox-selected.png'),
-    },
-  },
-);
+  );
 
 const PressableListItem = React.memo(({item}: {item: Document}) => {
   const {getOrganizationLogoUrl} = useOrganizationsStore();
   return (
     <PressableHighlight
-      onPress={() => navigateTo(`/inbox/${item.id}`, {title: item.senderName})}
-    >
+      onPress={() => navigateTo(`/inbox/${item.id}`, {title: item.senderName})}>
       <ListItem
         title={item.senderName}
         subtitle={item.subject}

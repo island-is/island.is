@@ -27,15 +27,19 @@ export const FeaturedArticlesSlice: React.FC<
 
   const sortedArticles =
     slice.sortBy === 'importance'
-      ? slice.resolvedArticles
-          .slice()
-          .sort((a, b) =>
-            a.importance > b.importance
-              ? -1
-              : a.importance === b.importance
-              ? a.title.localeCompare(b.title)
-              : 1,
-          )
+      ? slice.resolvedArticles.slice().sort((a, b) => {
+          if (
+            typeof a.importance !== 'number' ||
+            typeof b.importance !== 'number'
+          ) {
+            return a.title.localeCompare(b.title)
+          }
+          return a.importance > b.importance
+            ? -1
+            : a.importance === b.importance
+            ? a.title.localeCompare(b.title)
+            : 1
+        })
       : slice.resolvedArticles
 
   const borderProps: BoxProps = slice.hasBorderAbove
@@ -69,6 +73,8 @@ export const FeaturedArticlesSlice: React.FC<
                 return (
                   <FocusableBox key={slug} borderRadius="large" href={url.href}>
                     <TopicCard
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore make web strict
                       tag={
                         (!!processEntry || processEntryButtonText) &&
                         n(processEntryButtonText || 'application', 'Umsókn')

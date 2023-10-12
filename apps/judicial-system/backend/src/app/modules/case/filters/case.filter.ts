@@ -1,20 +1,20 @@
+import type { User } from '@island.is/judicial-system/types'
 import {
+  CaseAppealState,
   CaseDecision,
   CaseState,
   CaseType,
   indictmentCases,
   InstitutionType,
-  isIndictmentCase,
-  UserRole,
-  isProsecutionUser,
-  isDistrictCourtUser,
   isAppealsCourtUser,
-  isPrisonSystemUser,
-  isRestrictionCase,
+  isDistrictCourtUser,
+  isIndictmentCase,
   isInvestigationCase,
-  CaseAppealState,
+  isPrisonSystemUser,
+  isProsecutionUser,
+  isRestrictionCase,
+  UserRole,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
 
@@ -161,11 +161,18 @@ function canPrisonSystemUserAccessCase(
 
   // Check case type access
   if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
-    if (!isRestrictionCase(theCase.type)) {
+    if (
+      !isRestrictionCase(theCase.type) &&
+      theCase.type !== CaseType.PAROLE_REVOCATION
+    ) {
       return false
     }
   } else if (
-    ![CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY].includes(theCase.type)
+    ![
+      CaseType.CUSTODY,
+      CaseType.ADMISSION_TO_FACILITY,
+      CaseType.PAROLE_REVOCATION,
+    ].includes(theCase.type)
   ) {
     return false
   }

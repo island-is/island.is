@@ -1,10 +1,11 @@
-import { RightsPortalTherapies as TherapiesType } from '@island.is/api/schema'
+import { RightsPortalTherapy as TherapiesType } from '@island.is/api/schema'
 import { Box, Tabs, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
   ErrorScreen,
   IntroHeader,
+  SJUKRATRYGGINGAR_ID,
   m,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
@@ -24,7 +25,7 @@ const Therapies = () => {
 
   const { loading, error, data } = useGetTherapiesQuery()
 
-  const therapiesData = data?.rightsPortalTherapies ?? []
+  const therapiesData = data?.rightsPortalPaginatedTherapies?.data ?? []
 
   const physicalTherapyData = therapiesData.filter(
     (x: TherapiesType) => x.id === PHYSIO_THERAPY,
@@ -117,6 +118,8 @@ const Therapies = () => {
       <IntroHeader
         title={formatMessage(messages.therapyTitle)}
         intro={formatMessage(messages.therapyDescription)}
+        serviceProviderID={SJUKRATRYGGINGAR_ID}
+        serviceProviderTooltip={formatMessage(m.healthTooltip)}
       />
       {!loading && !error && tabs.length === 0 && (
         <Box marginTop={8}>

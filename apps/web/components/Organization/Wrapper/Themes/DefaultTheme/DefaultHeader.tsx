@@ -45,7 +45,7 @@ const DefaultHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
                 >
                   <img
                     className={styles.logo}
-                    src={organizationPage.organization.logo.url}
+                    src={organizationPage.organization?.logo?.url}
                     alt=""
                   />
                 </Box>
@@ -58,6 +58,8 @@ const DefaultHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
         <div
           className={styles.textContainer}
           style={{
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             background: getBackgroundStyle(organizationPage),
           }}
         >
@@ -77,7 +79,7 @@ const DefaultHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
                   >
                     <img
                       className={styles.logo}
-                      src={organizationPage.organization.logo.url}
+                      src={organizationPage.organization?.logo?.url}
                       alt=""
                     />
                   </Box>
@@ -97,7 +99,7 @@ const DefaultHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
         {imageProvided && (
           <img
             className={styles.headerImage}
-            src={organizationPage.defaultHeaderImage.url}
+            src={organizationPage.defaultHeaderImage?.url}
             alt="header"
           ></img>
         )}

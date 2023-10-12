@@ -9,31 +9,27 @@ export const courtRecordAccordion = {
   sections: {
     timeAndLocation: defineMessages({
       title: {
-        id:
-          'judicial.system.core:court_record_accordion.time_and_location.title',
+        id: 'judicial.system.core:court_record_accordion.time_and_location.title',
         defaultMessage: 'Staður og tími',
         description:
           'Notaður sem titill í "tíma og stað" svæði í þingbókarfellilistanum.',
       },
       text: {
-        id:
-          'judicial.system.core:court_record_accordion.time_and_location.text_v2',
+        id: 'judicial.system.core:court_record_accordion.time_and_location.text_v2',
         defaultMessage:
           'Þinghald frá {courtStartDate} kl. {courtStartTime} til {courtEndDate} kl. {courtEndTime} {courtLocation}.',
         description:
           'Notaður sem texti í "tíma og stað" svæði í þingbókarfellilistanum.',
       },
       textOngoing: {
-        id:
-          'judicial.system.core:court_record_accordion.time_and_location.text_ongoing',
+        id: 'judicial.system.core:court_record_accordion.time_and_location.text_ongoing',
         defaultMessage:
           'Þinghald frá kl. {courtStartTime}. Þinghaldi er ekki lokið.',
         description:
           'Notaður sem texti í "tíma og stað" svæði í þingbókarfellilistanum þegar þinghald er enn í gangi.',
       },
       textSameDay: {
-        id:
-          'judicial.system.core:court_record_accordion.time_and_location.text_same_day',
+        id: 'judicial.system.core:court_record_accordion.time_and_location.text_same_day',
         defaultMessage:
           'Þinghald frá {courtStartDate} kl. {courtStartTime} til {courtEndTime} {courtLocation}.',
         description:
@@ -79,8 +75,7 @@ export const courtRecordAccordion = {
     }),
     sessionBookings: defineMessages({
       title: {
-        id:
-          'judicial.system.core:court_record_accordion.session_bookings.title',
+        id: 'judicial.system.core:court_record_accordion.session_bookings.title',
         defaultMessage: 'Bókanir fyrir úrskurð',
         description:
           'Notaður sem titill fyrir "Bókarnir fyrir úrskurð" hlutann í þingbókarfellilistanum.',
@@ -88,8 +83,7 @@ export const courtRecordAccordion = {
     }),
     appealDecision: defineMessages({
       disclaimer: {
-        id:
-          'judicial.system.core:court_record_accordion.appeal_decision.disclaimer',
+        id: 'judicial.system.core:court_record_accordion.appeal_decision.disclaimer',
         defaultMessage:
           'Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð þennan til Landsréttar innan þriggja sólarhringa.',
         description:
@@ -98,8 +92,7 @@ export const courtRecordAccordion = {
     }),
     endOfSessionBookings: defineMessages({
       title: {
-        id:
-          'judicial.system.core:court_record_accordion.end_of_session_bookings.title',
+        id: 'judicial.system.core:court_record_accordion.end_of_session_bookings.title',
         defaultMessage: 'Bókanir í lok þinghalds',
         description:
           'Notaður sem titill fyrir "Bókanir í lok þinghalds" hlutann í þingbókarfellilistanum.',

@@ -1,35 +1,34 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
-import router from 'next/router'
 import format from 'date-fns/format'
-import parseISO from 'date-fns/parseISO'
 import localeIS from 'date-fns/locale/is'
+import parseISO from 'date-fns/parseISO'
+import router from 'next/router'
 
 import { Box, Text } from '@island.is/island-ui/core'
-
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import { CaseType, isIndictmentCase } from '@island.is/judicial-system/types'
-
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
-import { core, tables } from '@island.is/judicial-system-web/messages'
-import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
 import {
   DEFENDER_INDICTMENT_ROUTE,
   DEFENDER_ROUTE,
 } from '@island.is/judicial-system/consts'
+import { capitalize } from '@island.is/judicial-system/formatters'
+import { CaseType, isIndictmentCase } from '@island.is/judicial-system/types'
+import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
-  TagCaseState,
   TagAppealState,
+  TagCaseState,
 } from '@island.is/judicial-system-web/src/components'
-import { useSortCases } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  TableSkeleton,
+  ColumnCaseType,
   CourtCaseNumber,
-  DefendantInfo,
   CreatedDate,
+  DefendantInfo,
+  getDurationDate,
   SortButton,
+  TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
+import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
+import { useSortCases } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as styles from './DefenderCasesTable.css'
 
@@ -44,12 +43,8 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
 ) => {
   const { formatMessage } = useIntl()
   const { cases, showingCompletedCases, loading } = props
-  const {
-    sortedData,
-    requestSort,
-    getClassNamesFor,
-    isActiveColumn,
-  } = useSortCases('createdAt', 'descending', cases)
+  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
+    useSortCases('createdAt', 'descending', cases)
 
   const handleRowClick = (id: string, type: CaseType) => {
     isIndictmentCase(type)
@@ -138,14 +133,15 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                   <DefendantInfo defendants={c.defendants} />
                 </td>
                 <td className={styles.td}>
-                  <Text as="span">
-                    {displayCaseType(formatMessage, c.type, c.decision)}
-                  </Text>
+                  <ColumnCaseType
+                    type={c.type}
+                    decision={c.decision}
+                    parentCaseId={c.parentCaseId}
+                  />
                 </td>
                 <td className={cn(styles.td)}>
                   <CreatedDate created={c.created} />
                 </td>
-
                 <td className={styles.td} data-testid="tdTag">
                   <Box marginRight={1} marginBottom={1}>
                     <TagCaseState
@@ -165,12 +161,12 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                 {showingCompletedCases ? (
                   <td className={styles.td}>
                     <Text>
-                      {c.validToDate &&
-                        c.rulingDate &&
-                        `${formatDate(c.rulingDate, 'd.M.y')} - ${formatDate(
-                          c.validToDate,
-                          'd.M.y',
-                        )}`}
+                      {getDurationDate(
+                        c.state,
+                        c.validToDate,
+                        c.initialRulingDate,
+                        c.rulingDate,
+                      )}
                     </Text>
                   </td>
                 ) : (

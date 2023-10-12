@@ -1,6 +1,8 @@
-import { useState, useMemo } from 'react'
+import { useMemo, useState } from 'react'
+
 import { CaseListEntry } from '@island.is/judicial-system/types'
 import { sortableTableColumn } from '@island.is/judicial-system-web/src/types'
+import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 const useSortCases = (
   defaultColumn: string,
@@ -50,7 +52,10 @@ const useSortCases = (
           return entry.created
         }
 
-        const compareResult = getColumnValue(a).localeCompare(getColumnValue(b))
+        const compareResult = compareLocaleIS(
+          getColumnValue(a),
+          getColumnValue(b),
+        )
 
         return sortConfig.direction === 'ascending'
           ? compareResult

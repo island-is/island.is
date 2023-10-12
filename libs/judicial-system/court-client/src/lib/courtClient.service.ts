@@ -7,13 +7,13 @@ import {
   Injectable,
   NotFoundException,
   NotImplementedException,
-  UnsupportedMediaTypeException,
   ServiceUnavailableException,
   UnprocessableEntityException,
+  UnsupportedMediaTypeException,
 } from '@nestjs/common'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 import {
   createXRoadAPIPath,
@@ -21,26 +21,26 @@ import {
 } from '@island.is/shared/utils/server'
 
 import {
+  AuthenticateUserApi,
   Configuration,
+  CreateCaseApi,
+  CreateCaseData,
+  CreateDocumentApi,
+  CreateDocumentData,
+  CreateEmailApi,
+  CreateEmailData,
+  CreateThingbokApi,
+  CreateThingbokRequest,
+  CredentialsData,
   FetchParams,
   RequestContext,
-  AuthenticateUserApi,
-  CredentialsData,
-  CreateCaseApi,
-  CreateDocumentApi,
-  CreateThingbokApi,
-  CreateEmailApi,
-  UpdateCaseWithProsecutorApi,
   UpdateCaseWithDefendantApi,
-  CreateCaseData,
-  CreateDocumentData,
-  CreateThingbokRequest,
-  CreateEmailData,
-  UpdateCaseWithProsecutorData,
   UpdateCaseWithDefendantData,
+  UpdateCaseWithProsecutorApi,
+  UpdateCaseWithProsecutorData,
 } from '../../gen/fetch'
-import { UploadFile, UploadStreamApi } from './uploadStreamApi'
 import { courtClientModuleConfig } from './courtClient.config'
+import { UploadFile, UploadStreamApi } from './uploadStreamApi'
 
 export type CreateCaseArgs = Omit<CreateCaseData, 'authenticationToken'>
 export type CreateDocumentArgs = Omit<CreateDocumentData, 'authenticationToken'>
@@ -529,7 +529,8 @@ export class CourtClientServiceImplementation implements CourtClientService {
 
 @Injectable()
 export class CourtClientServiceUnavailableImplementation
-  implements CourtClientService {
+  implements CourtClientService
+{
   async createCase(_courtId: string, _args: CreateCaseArgs): Promise<string> {
     throw new ServiceUnavailableException('Court API is not available')
   }

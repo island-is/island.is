@@ -1,25 +1,23 @@
-import '@testing-library/jest-dom'
 import React from 'react'
-import { render, waitFor, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { MockedProvider } from '@apollo/client/testing'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
+import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import { UserProvider } from '@island.is/judicial-system-web/src/components'
+import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  CaseAppealDecision,
-  CaseState,
-  CaseType,
-} from '@island.is/judicial-system/types'
-import {
-  mockHighCourtQuery,
+  mockCourtOfAppealsQuery,
   mockJudgeQuery,
   mockPrisonUserQuery,
   mockProsecutorQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { LocaleProvider } from '@island.is/localization'
 
 import Cases from './Cases'
+
+import '@testing-library/jest-dom'
 
 const mockCasesQuery = [
   {
@@ -379,11 +377,11 @@ describe('Cases', () => {
     })
   })
 
-  describe('High court users', () => {
+  describe('Court of appeals users', () => {
     test('should only have a single table of cases', async () => {
       render(
         <MockedProvider
-          mocks={[...mockCasesQuery, ...mockHighCourtQuery]}
+          mocks={[...mockCasesQuery, ...mockCourtOfAppealsQuery]}
           addTypename={false}
         >
           <UserProvider authenticated={true}>

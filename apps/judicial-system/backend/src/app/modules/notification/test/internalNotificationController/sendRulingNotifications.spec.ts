@@ -1,7 +1,12 @@
 import { uuid } from 'uuidv4'
 
-import { ConfigType } from '@island.is/nest/config'
 import { EmailService } from '@island.is/email-service'
+import { ConfigType } from '@island.is/nest/config'
+
+import {
+  CLOSED_INDICTMENT_OVERVIEW_ROUTE,
+  SIGNED_VERDICT_OVERVIEW_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   CaseDecision,
   CaseState,
@@ -9,18 +14,15 @@ import {
   NotificationType,
   User,
 } from '@island.is/judicial-system/types'
-import {
-  CLOSED_INDICTMENT_OVERVIEW_ROUTE,
-  SIGNED_VERDICT_OVERVIEW_ROUTE,
-} from '@island.is/judicial-system/consts'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
+
 import { Case } from '../../../case'
 import { Defendant, DefendantService } from '../../../defendant'
-import { DeliverResponse } from '../../models/deliver.response'
 import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
-import { notificationModuleConfig } from '../../notification.config'
+import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
+import { notificationModuleConfig } from '../../notification.config'
 
 jest.mock('../../../factories')
 
@@ -231,9 +233,10 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     } as Case
 
     beforeEach(async () => {
-      const mockGetDefendantsActiveCases = mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
-        typeof mockDefendantService.isDefendantInActiveCustody
-      >
+      const mockGetDefendantsActiveCases =
+        mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
+          typeof mockDefendantService.isDefendantInActiveCustody
+        >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(false)
       await givenWhenThen(caseId, theCase, notificationDto)
     })
@@ -256,9 +259,10 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     } as Case
 
     beforeEach(async () => {
-      const mockGetDefendantsActiveCases = mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
-        typeof mockDefendantService.isDefendantInActiveCustody
-      >
+      const mockGetDefendantsActiveCases =
+        mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
+          typeof mockDefendantService.isDefendantInActiveCustody
+        >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(false)
       await givenWhenThen(caseId, theCase, notificationDto)
     })
@@ -282,9 +286,10 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     } as Case
 
     beforeEach(async () => {
-      const mockGetDefendantsActiveCases = mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
-        typeof mockDefendantService.isDefendantInActiveCustody
-      >
+      const mockGetDefendantsActiveCases =
+        mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
+          typeof mockDefendantService.isDefendantInActiveCustody
+        >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(true)
       await givenWhenThen(caseId, theCase, notificationDto)
     })
@@ -323,9 +328,10 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     } as Case
 
     beforeEach(async () => {
-      const mockGetDefendantsActiveCases = mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
-        typeof mockDefendantService.isDefendantInActiveCustody
-      >
+      const mockGetDefendantsActiveCases =
+        mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
+          typeof mockDefendantService.isDefendantInActiveCustody
+        >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(false)
       await givenWhenThen(caseId, theCase, notificationDto)
     })

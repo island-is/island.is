@@ -7,6 +7,6 @@ import { User } from './user.model'
 export const CurrentUser = createParamDecorator(
   (_: unknown, context: ExecutionContext): User => {
     const req = getRequest(context)
-    return (req['user'] as unknown) as User
+    return req['user'] as unknown as User
   },
 )

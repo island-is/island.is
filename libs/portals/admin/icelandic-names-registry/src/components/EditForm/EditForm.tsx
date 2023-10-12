@@ -10,7 +10,6 @@ import {
   Select,
   Checkbox,
   GridRow,
-  Option,
   GridContainer,
   GridColumn,
 } from '@island.is/island-ui/core'
@@ -171,14 +170,12 @@ const EditForm: React.FC<React.PropsWithChildren<PropTypes>> = ({
                         value={nameTypeOptions.find(
                           (option) => option.value === value,
                         )}
-                        onChange={(option) =>
-                          onChange(String((option as Option).value))
-                        }
+                        onChange={(option) => onChange(option?.value)}
                         size="xs"
                         hasError={Boolean(errors?.type?.message)}
                         errorMessage={errors?.type?.message}
                         backgroundColor="blue"
-                        disabled={inputsDisabled}
+                        isDisabled={inputsDisabled}
                         required
                       />
                     )
@@ -201,14 +198,12 @@ const EditForm: React.FC<React.PropsWithChildren<PropTypes>> = ({
                         value={statusTypeOptions.find(
                           (option) => option.value === value,
                         )}
-                        onChange={(option) =>
-                          onChange(String((option as Option).value))
-                        }
+                        onChange={(option) => onChange(option?.value)}
                         size="xs"
                         hasError={Boolean(errors?.status?.message)}
                         errorMessage={errors?.status?.message}
                         backgroundColor="blue"
-                        disabled={inputsDisabled}
+                        isDisabled={inputsDisabled}
                         required
                       />
                     )

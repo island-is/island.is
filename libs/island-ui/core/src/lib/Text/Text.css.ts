@@ -143,6 +143,18 @@ export const whiteSpace = {
   ),
 }
 
+export const textAlign = {
+  ...styleVariants(
+    {
+      left: { textAlign: 'left' },
+      right: { textAlign: 'right' },
+      center: { textAlign: 'center' },
+      justify: { textAlign: 'justify' },
+    },
+    'textAlign',
+  ),
+}
+
 export const variants: Variants = {
   default: {
     fontSize: availableFontSizes.sm,

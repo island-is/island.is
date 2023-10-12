@@ -41,9 +41,10 @@ export const Icon = ({
 }: IconProps) => {
   const [isMounted, setIsMounted] = useState(false)
   const path = iconMap[type][icon]
-  const IconSvg = useMemo(() => React.lazy(() => import('./icons/' + path)), [
-    path,
-  ])
+  const IconSvg = useMemo(
+    () => React.lazy(() => import('./icons/' + path)),
+    [path],
+  )
 
   useEffect(() => {
     setIsMounted(true)

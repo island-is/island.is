@@ -1,4 +1,4 @@
-import React, { MouseEventHandler } from 'react'
+import React, { MouseEventHandler, ReactNode } from 'react'
 
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
@@ -11,6 +11,7 @@ type ColorScheme = 'blue' | 'red'
 export type TopicCardSize = 'default' | 'small'
 
 interface TopicCardProps {
+  children?: ReactNode
   tag?: string
   colorScheme?: ColorScheme
   href?: string

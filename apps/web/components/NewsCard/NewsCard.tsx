@@ -123,8 +123,8 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
                 ratio="1:1"
                 thumbnailColor="blue100"
                 image={{
-                  url: image.url,
-                  title: image.title,
+                  url: image?.url,
+                  title: image?.title,
                 }}
               />
             </Box>

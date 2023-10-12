@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import { useIntl, IntlShape } from 'react-intl'
+import { IntlShape, useIntl } from 'react-intl'
 
-import { Input, Box } from '@island.is/island-ui/core'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { Box, Input } from '@island.is/island-ui/core'
+import { RequestSharedWithDefender } from '@island.is/judicial-system/types'
 import { caseResubmitModal as m } from '@island.is/judicial-system-web/messages'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { Modal } from '..'
 
@@ -18,8 +19,12 @@ export function getCaseResubmittedText(
   workingCase: Case,
 ) {
   return formatMessage(m.text, {
-    sendRequestToDefender: Boolean(
-      workingCase.sendRequestToDefender && workingCase.courtDate,
+    requestSharedWithDefender: Boolean(
+      (workingCase.requestSharedWithDefender ===
+        RequestSharedWithDefender.COURT_DATE &&
+        workingCase.courtDate) ||
+        workingCase.requestSharedWithDefender ===
+          RequestSharedWithDefender.READY_FOR_COURT,
     ),
   })
 }

@@ -108,6 +108,9 @@ export const form: Form = buildForm({
               width: 'half',
               backgroundColor: 'white',
               minDate: new Date(),
+              maxDate: new Date(
+                new Date().setFullYear(new Date().getFullYear() + 1),
+              ),
             }),
             buildDescriptionField({
               id: 'space',
@@ -122,9 +125,11 @@ export const form: Form = buildForm({
               backgroundColor: 'white',
               defaultValue: (application: Application) => {
                 const phone =
-                  (application.externalData.userProfile?.data as {
-                    mobilePhoneNumber?: string
-                  })?.mobilePhoneNumber ?? ''
+                  (
+                    application.externalData.userProfile?.data as {
+                      mobilePhoneNumber?: string
+                    }
+                  )?.mobilePhoneNumber ?? ''
 
                 return phone
               },
@@ -162,9 +167,11 @@ export const form: Form = buildForm({
             buildKeyValueField({
               label: m.name,
               value: ({ externalData }) =>
-                (externalData.nationalRegistry?.data as {
-                  fullName?: string
-                })?.fullName,
+                (
+                  externalData.nationalRegistry?.data as {
+                    fullName?: string
+                  }
+                )?.fullName,
             }),
             buildKeyValueField({
               label: m.phone,

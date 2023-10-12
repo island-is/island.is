@@ -241,6 +241,39 @@ const DomainCreateForm: React.FC<React.PropsWithChildren<Props>> = (
                     }
                   />
                 </div>
+
+                {/*Contact email*/}
+                <div className="domain-create-form__container__field">
+                  <label
+                    className="domain-create-form__label"
+                    htmlFor="contactEmail"
+                  >
+                    {localization.fields['contactEmail'].label}
+                  </label>
+                  <input
+                    id="contactEmail"
+                    type="text"
+                    {...register('domain.contactEmail', {
+                      required: false,
+                      validate: ValidationUtils.validateEmail,
+                    })}
+                    defaultValue={props.domain.contactEmail}
+                    className="domain-create-form__input"
+                    title={localization.fields['contactEmail'].helpText}
+                    placeholder={
+                      localization.fields['contactEmail'].placeholder
+                    }
+                  />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="domain.contactEmail"
+                    message={localization.fields['contactEmail'].errorMessage}
+                  />
+                  <HelpBox
+                    helpText={localization.fields['contactEmail'].helpText}
+                  />
+                </div>
               </div>
 
               <div className="domain-create-form__buttons__container">

@@ -57,10 +57,8 @@ const Home = ({
     initialReadonlyCheckboxState,
   )
 
-  const [
-    roleNamesThatCanReadAllAssets,
-    setRoleNamesThatCanReadAllAssets,
-  ] = useState<string[]>(initialRoleNamesThatCanReadAllAssets)
+  const [roleNamesThatCanReadAllAssets, setRoleNamesThatCanReadAllAssets] =
+    useState<string[]>(initialRoleNamesThatCanReadAllAssets)
 
   const [nameSearch, setNameSearch] = useState('')
 
@@ -157,9 +155,8 @@ const Home = ({
                           ...prevState,
                           [role.name]: {
                             ...prevState[role.name],
-                            [contentType.name]: !prevState[role.name][
-                              contentType.name
-                            ],
+                            [contentType.name]:
+                              !prevState[role.name][contentType.name],
                           },
                         }))
                       }
@@ -287,9 +284,8 @@ const Home = ({
                           ...prevState,
                           [role.name]: {
                             ...prevState[role.name],
-                            [contentType.name]: !prevState[role.name][
-                              contentType.name
-                            ],
+                            [contentType.name]:
+                              !prevState[role.name][contentType.name],
                           },
                         }))
                       }
@@ -440,22 +436,22 @@ export const getServerSideProps = async () => {
     role.name.toLowerCase().startsWith('owner-'),
   )
 
-  const initialReadonlyCheckboxState = extractInitialReadonlyCheckboxStateFromRolesAndContentTypes(
-    rolesToShow,
-    contentTypes,
-  )
+  const initialReadonlyCheckboxState =
+    extractInitialReadonlyCheckboxStateFromRolesAndContentTypes(
+      rolesToShow,
+      contentTypes,
+    )
 
-  const initialCheckboxState = extractInitialCheckboxStateFromRolesAndContentTypes(
-    rolesToShow,
-    contentTypes,
-  )
+  const initialCheckboxState =
+    extractInitialCheckboxStateFromRolesAndContentTypes(
+      rolesToShow,
+      contentTypes,
+    )
 
   const tagsMap = getTagNameToTagIdMap(tags)
 
-  const initialRoleNamesThatCanReadAllAssets = extractInitialRoleNamesThatCanReadAllAssetsFromRoles(
-    rolesToShow,
-    tagsMap,
-  )
+  const initialRoleNamesThatCanReadAllAssets =
+    extractInitialRoleNamesThatCanReadAllAssetsFromRoles(rolesToShow, tagsMap)
 
   return {
     props: {

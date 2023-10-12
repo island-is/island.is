@@ -14,7 +14,7 @@ const Home: React.FC<React.PropsWithChildren<unknown>> = () => {
     document.title = LocalizationUtils.getPageTitle()
   }, [])
 
-  if (!isLoggedIn((session as unknown) as SessionInfo, loading)) {
+  if (!isLoggedIn(session as unknown as SessionInfo, loading)) {
     return (
       <ContentWrapper>
         <div className="home__logged-out">

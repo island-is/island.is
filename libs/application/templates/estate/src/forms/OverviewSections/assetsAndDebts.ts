@@ -34,7 +34,7 @@ export const overviewAssetsAndDebts = [
     {
       cards: ({ answers }: Application) =>
         (
-          ((answers.estate as unknown) as EstateInfo).assets?.filter(
+          (answers.estate as unknown as EstateInfo).assets?.filter(
             (asset) => asset.enabled,
           ) ?? []
         ).map((asset) => ({
@@ -105,7 +105,7 @@ export const overviewAssetsAndDebts = [
     {
       cards: ({ answers }: Application) =>
         (
-          ((answers.estate as unknown) as EstateInfo)?.vehicles?.filter(
+          (answers.estate as unknown as EstateInfo)?.vehicles?.filter(
             (vehicle) => vehicle.enabled,
           ) ?? []
         ).map((vehicle) => ({
@@ -139,7 +139,7 @@ export const overviewAssetsAndDebts = [
     {
       cards: ({ answers }: Application) =>
         (
-          ((answers.estate as unknown) as EstateInfo)?.guns?.filter(
+          (answers.estate as unknown as EstateInfo)?.guns?.filter(
             (guns) => guns.enabled,
           ) ?? []
         ).map((gun) => ({
@@ -170,7 +170,7 @@ export const overviewAssetsAndDebts = [
     },
     {
       cards: ({ answers }: Application) =>
-        (((answers as unknown) as EstateSchema).bankAccounts ?? []).map(
+        ((answers as unknown as EstateSchema).bankAccounts ?? []).map(
           (account) => ({
             title: formatBankInfo(account.accountNumber ?? ''),
             description: [
@@ -199,7 +199,7 @@ export const overviewAssetsAndDebts = [
     },
     {
       cards: ({ answers }: Application) =>
-        (((answers as unknown) as EstateSchema).claims ?? []).map((claim) => ({
+        ((answers as unknown as EstateSchema).claims ?? []).map((claim) => ({
           title: claim.publisher,
           description: [
             `${m.claimsAmount.defaultMessage}: ${formatCurrency(
@@ -226,7 +226,7 @@ export const overviewAssetsAndDebts = [
     },
     {
       cards: ({ answers }: Application) =>
-        (((answers as unknown) as EstateSchema).stocks ?? []).map((stock) => ({
+        ((answers as unknown as EstateSchema).stocks ?? []).map((stock) => ({
           title: stock.organization,
           description: [
             `${m.stocksNationalId.defaultMessage}: ${formatNationalId(
@@ -338,7 +338,7 @@ export const overviewAssetsAndDebts = [
     },
     {
       cards: ({ answers }: Application) =>
-        (((answers as unknown) as EstateSchema).debts ?? []).map((debt) => ({
+        ((answers as unknown as EstateSchema).debts ?? []).map((debt) => ({
           title: debt.creditorName,
           description: [
             `${m.debtsNationalId.defaultMessage}: ${formatNationalId(

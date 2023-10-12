@@ -180,8 +180,7 @@ export function Alert({
         backgroundColor={variant.background}
         borderColor={variant.borderColor}
         hasBorder={hasBorder}
-        {...rest}
-      >
+        {...rest}>
         <SafeAreaView style={{flexDirection: 'row', alignItems: 'center'}}>
           {!hideIcon && (
             <Icon>

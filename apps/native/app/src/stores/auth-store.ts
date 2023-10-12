@@ -15,6 +15,7 @@ import {getConfig, bundleId} from '../config';
 import {getAppRoot} from '../utils/lifecycle/get-app-root';
 import {inboxStore} from './inbox-store';
 import {preferencesStore} from './preferences-store';
+import {Platform} from 'react-native';
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`;
 
@@ -42,10 +43,12 @@ interface AuthStore extends State {
 
 const getAppAuthConfig = () => {
   const config = getConfig();
+  const android =
+    Platform.OS === 'android' && !config.isTestingApp ? '.auth' : '';
   return {
     issuer: config.idsIssuer,
     clientId: config.idsClientId,
-    redirectUrl: `${config.bundleId}://oauth`,
+    redirectUrl: `${config.bundleId}${android}://oauth`,
     scopes: config.idsScopes,
   };
 };

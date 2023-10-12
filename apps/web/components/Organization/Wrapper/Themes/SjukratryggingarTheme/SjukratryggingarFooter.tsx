@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { ReactNode, useContext } from 'react'
 import { BLOCKS } from '@contentful/rich-text-types'
 import { FooterItem } from '@island.is/web/graphql/schema'
 import {
@@ -177,7 +177,10 @@ const SjukratryggingarFooter: React.FC<
                       ] ?? []) as SliceType[],
                       {
                         renderNode: {
-                          [BLOCKS.PARAGRAPH]: (_node, children) => (
+                          [BLOCKS.PARAGRAPH]: (
+                            _node: never,
+                            children: ReactNode,
+                          ) => (
                             <Text variant="small" color="dark400" marginY={1}>
                               {children}
                             </Text>
@@ -200,7 +203,10 @@ const SjukratryggingarFooter: React.FC<
                         ] as SliceType[],
                         {
                           renderNode: {
-                            [BLOCKS.PARAGRAPH]: (_node, children) => (
+                            [BLOCKS.PARAGRAPH]: (
+                              _node: never,
+                              children: ReactNode,
+                            ) => (
                               <Text variant="small" color="dark400" marginY={1}>
                                 {children}
                               </Text>

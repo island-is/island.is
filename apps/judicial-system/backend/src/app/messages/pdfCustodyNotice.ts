@@ -1,4 +1,5 @@
 import { defineMessage, defineMessages } from '@formatjs/intl'
+
 import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
 
 export const custodyNotice = {
@@ -21,32 +22,27 @@ export const custodyNotice = {
   }),
   rulingRestrictions: defineMessages({
     [CaseCustodyRestrictions.NECESSITIES]: {
-      id:
-        'judicial.system.backend:pdf.custody_notice.ruling_restrictions.necessities',
+      id: 'judicial.system.backend:pdf.custody_notice.ruling_restrictions.necessities',
       defaultMessage: 'banni við útvegun persónulegra nauðsynja',
       description: '',
     },
     [CaseCustodyRestrictions.VISITAION]: {
-      id:
-        'judicial.system.backend:pdf.custody_notice.ruling_restrictions.visitation',
+      id: 'judicial.system.backend:pdf.custody_notice.ruling_restrictions.visitation',
       defaultMessage: 'heimsóknarbanni',
       description: '',
     },
     [CaseCustodyRestrictions.COMMUNICATION]: {
-      id:
-        'judicial.system.backend:pdf.custody_notice.ruling_restrictions.communication',
+      id: 'judicial.system.backend:pdf.custody_notice.ruling_restrictions.communication',
       defaultMessage: 'bréfaskoðun og símabanni',
       description: '',
     },
     [CaseCustodyRestrictions.MEDIA]: {
-      id:
-        'judicial.system.backend:pdf.custody_notice.ruling_restrictions.media',
+      id: 'judicial.system.backend:pdf.custody_notice.ruling_restrictions.media',
       defaultMessage: 'fjölmiðlabanni',
       description: '',
     },
     [CaseCustodyRestrictions.WORKBAN]: {
-      id:
-        'judicial.system.backend:pdf.custody_notice.ruling_restrictions.workban',
+      id: 'judicial.system.backend:pdf.custody_notice.ruling_restrictions.workban',
       defaultMessage: 'vinnubanni',
       description: '',
     },
@@ -58,8 +54,7 @@ export const custodyNotice = {
     description: '',
   }),
   noFutherRestrictions: defineMessage({
-    id:
-      'judicial.system.backend:pdf.custody_notice.ruling_restrictions.no_further_restrictions',
+    id: 'judicial.system.backend:pdf.custody_notice.ruling_restrictions.no_further_restrictions',
     defaultMessage:
       'Sækjandi tekur fram að {caseType, select, ADMISSION_TO_FACILITY {vistun} other {gæsluvarðhaldið}} verði án {hasIsolation, select, true {annara } other {}}takmarkana.',
     description: '',

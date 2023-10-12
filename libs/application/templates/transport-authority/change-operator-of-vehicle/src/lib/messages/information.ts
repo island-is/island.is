@@ -47,8 +47,7 @@ export const information = {
         description: 'Pick vehicle has an error title',
       },
       isNotDebtLessTag: {
-        id:
-          'ta.cov.application:information.labels.pickVehicle.isNotDebtLessTag',
+        id: 'ta.cov.application:information.labels.pickVehicle.isNotDebtLessTag',
         defaultMessage: 'Ógreidd bifreiðagjöld',
         description: 'Pick vehicle is not debt less tag',
       },
@@ -216,8 +215,7 @@ export const information = {
         description: 'Main operator description',
       },
       radioFieldLabel: {
-        id:
-          'ta.cov.application:information.labels.mainOperator.radioFieldLabel',
+        id: 'ta.cov.application:information.labels.mainOperator.radioFieldLabel',
         defaultMessage: 'Skráðir umráðamenn',
         description: 'Main operator radio field label',
       },

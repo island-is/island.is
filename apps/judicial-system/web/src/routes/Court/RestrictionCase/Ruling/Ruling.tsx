@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useState } from 'react'
-import { useIntl, IntlShape } from 'react-intl'
-import { useRouter } from 'next/router'
+import { IntlShape, useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
+import { useRouter } from 'next/router'
 
 import {
   Accordion,
@@ -12,48 +12,48 @@ import {
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
-import {
-  FormFooter,
-  PageLayout,
-  PoliceRequestAccordionItem,
-  BlueBox,
-  CourtCaseInfo,
-  FormContentContainer,
-  CaseFileList,
-  Decision,
-  RulingInput,
-  PdfButton,
-  FormContext,
-  UserContext,
-} from '@island.is/judicial-system-web/src/components'
-import {
-  CaseDecision,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import { DateTime } from '@island.is/judicial-system-web/src/components'
-import {
-  useCase,
-  useOnceOn,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import { core, titles, ruling } from '@island.is/judicial-system-web/messages'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   capitalize,
   formatDate,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
-import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
+import {
+  CaseDecision,
+  isAcceptingCaseDecision,
+} from '@island.is/judicial-system/types'
+import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
+import {
+  BlueBox,
+  CaseFileList,
+  CourtCaseInfo,
+  Decision,
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  PageLayout,
+  PdfButton,
+  PoliceRequestAccordionItem,
+  RulingInput,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+import { DateTime } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  removeTabsValidateAndSet,
+  validateAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  useCase,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
+import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { rcRuling as m } from './Ruling.strings'
 
@@ -125,22 +125,14 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
 
-  const [
-    introductionErrorMessage,
-    setIntroductionErrorMessage,
-  ] = useState<string>('')
-  const [
-    courtCaseFactsErrorMessage,
-    setCourtCaseFactsErrorMessage,
-  ] = useState<string>('')
-  const [
-    courtLegalArgumentsErrorMessage,
-    setCourtLegalArgumentsErrorMessage,
-  ] = useState<string>('')
-  const [
-    prosecutorDemandsErrorMessage,
-    setProsecutorDemandsMessage,
-  ] = useState<string>('')
+  const [introductionErrorMessage, setIntroductionErrorMessage] =
+    useState<string>('')
+  const [courtCaseFactsErrorMessage, setCourtCaseFactsErrorMessage] =
+    useState<string>('')
+  const [courtLegalArgumentsErrorMessage, setCourtLegalArgumentsErrorMessage] =
+    useState<string>('')
+  const [prosecutorDemandsErrorMessage, setProsecutorDemandsMessage] =
+    useState<string>('')
 
   const router = useRouter()
 

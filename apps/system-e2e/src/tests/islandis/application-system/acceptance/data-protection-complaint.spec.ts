@@ -69,9 +69,8 @@ applicationTest.describe('Data protection complaint application', () => {
           await page.goto(`${homeUrl}`, { waitUntil: 'networkidle' })
           await page.getByText(overviewPageText)
 
-          numberOfApplicationsAfterCreationVisible = await countApplicationsVisible(
-            page,
-          )
+          numberOfApplicationsAfterCreationVisible =
+            await countApplicationsVisible(page)
 
           expect(numberOfApplicationsAfterCreationVisible).toBe(
             numOfApplicationsAtStart + 1,
@@ -96,9 +95,8 @@ applicationTest.describe('Data protection complaint application', () => {
           const applicationAtStart = await createApplication(page)
 
           await page.goto(`${homeUrl}`, { waitUntil: 'networkidle' })
-          const visibleApplicationsAfterCreation = await countApplicationsVisible(
-            page,
-          )
+          const visibleApplicationsAfterCreation =
+            await countApplicationsVisible(page)
           await page.getByTestId(iconTrashTestId).first().click()
           await page
             .getByRole('button', { name: deleteConfirmationText })
@@ -107,9 +105,8 @@ applicationTest.describe('Data protection complaint application', () => {
             '**/api/graphql?op=ApplicationApplications',
           )
           if (visibleApplicationsAfterCreation - 1 > 0) {
-            const numberOfApplicationsAfterDeletion = await countApplicationsVisible(
-              page,
-            )
+            const numberOfApplicationsAfterDeletion =
+              await countApplicationsVisible(page)
             expect(numberOfApplicationsAfterDeletion).toBe(applicationAtStart)
           } else {
             await page.getByTestId(agreeToDataProvidersTestId)
@@ -229,8 +226,7 @@ applicationTest.describe('Data protection complaint application', () => {
           // Ensure the "file.rtf" is visible in the file upload field
           await expect(
             page.getByRole('button', {
-              name:
-                'Dragðu umboðsskjöl hingað til að hlaða upp Tekið er við skjölum með endingu: .pdf, .docx, .rtf Velja umboðsskjöl til að hlaða upp file.rtf Fjarlægja skrá',
+              name: 'Dragðu umboðsskjöl hingað til að hlaða upp Tekið er við skjölum með endingu: .pdf, .docx, .rtf Velja umboðsskjöl til að hlaða upp file.rtf Fjarlægja skrá',
             }),
           ).toBeVisible()
         },

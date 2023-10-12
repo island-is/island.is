@@ -22,10 +22,8 @@ export const DelegationIncomingModal = ({
 }: DelegationIncomingModalProps) => {
   const { formatMessage, lang } = useLocale()
   const { userInfo } = useAuth()
-  const [
-    getAuthScopeTree,
-    { data: scopeTreeData, loading: scopeTreeLoading },
-  ] = useAuthScopeTreeLazyQuery()
+  const [getAuthScopeTree, { data: scopeTreeData, loading: scopeTreeLoading }] =
+    useAuthScopeTreeLazyQuery()
 
   useEffect(() => {
     if (delegation) {

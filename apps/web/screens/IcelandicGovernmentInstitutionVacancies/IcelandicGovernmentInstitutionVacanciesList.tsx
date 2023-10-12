@@ -39,7 +39,8 @@ import { CustomNextError } from '@island.is/web/units/errors'
 
 import * as styles from './IcelandicGovernmentInstitutionVacanciesList.css'
 
-type Vacancy = IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]
+type Vacancy =
+  IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]
 
 const ITEMS_PER_PAGE = 8
 export const VACANCY_INTRO_MAX_LENGTH = 80
@@ -113,10 +114,9 @@ interface IcelandicGovernmentInstitutionVacanciesListProps {
   namespace: Record<string, string>
 }
 
-const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentInstitutionVacanciesListProps> = ({
-  vacancies,
-  namespace,
-}) => {
+const IcelandicGovernmentInstitutionVacanciesList: Screen<
+  IcelandicGovernmentInstitutionVacanciesListProps
+> = ({ vacancies, namespace }) => {
   const { query, replace, isReady } = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -158,22 +158,30 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
     let shouldBeShown = searchTermMatches
 
     if (parameters.fieldOfWork.length > 0) {
-      shouldBeShown =
-        shouldBeShown && parameters.fieldOfWork.includes(vacancy.fieldOfWork)
+      shouldBeShown = Boolean(
+        shouldBeShown &&
+          vacancy.fieldOfWork &&
+          parameters.fieldOfWork.includes(vacancy.fieldOfWork),
+      )
     }
 
     if (parameters.location.length > 0) {
       shouldBeShown =
         shouldBeShown &&
-        vacancy.locations.some((location) =>
-          parameters.location.includes(location?.title),
+        Boolean(
+          vacancy.locations?.some(
+            (location) =>
+              location?.title && parameters.location.includes(location?.title),
+          ),
         )
     }
 
     if (parameters.institution.length > 0) {
-      shouldBeShown =
+      shouldBeShown = Boolean(
         shouldBeShown &&
-        parameters.institution.includes(vacancy.institutionName)
+          vacancy.institutionName &&
+          parameters.institution.includes(vacancy.institutionName),
+      )
     }
 
     return shouldBeShown
@@ -230,11 +238,15 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
     const updatedParameters = {}
 
     if (query.location) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       updatedParameters['location'] =
         typeof query.location === 'string' ? [query.location] : query.location
     }
 
     if (query.fieldOfWork) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       updatedParameters['fieldOfWork'] =
         typeof query.fieldOfWork === 'string'
           ? [query.fieldOfWork]
@@ -242,6 +254,8 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
     }
 
     if (query.institution) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       updatedParameters['institution'] =
         typeof query.institution === 'string'
           ? [query.institution]
@@ -450,8 +464,10 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                     onClick={() => {
                       setParameters((prevParameters) => ({
                         ...prevParameters,
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
                         [category]: (prevParameters[category] ?? []).filter(
-                          (prevValue) => prevValue !== value,
+                          (prevValue: string) => prevValue !== value,
                         ),
                       }))
                     }}
@@ -482,12 +498,19 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                 ITEMS_PER_PAGE * selectedPage,
               )
               .map((vacancy) => {
-                const logoUrl =
+                let logoUrl =
                   vacancy.logoUrl ||
                   n(
                     'fallbackLogoUrl',
                     'https://images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg',
                   )
+
+                const vacancyComesFromCms = vacancy.id?.startsWith('c-')
+
+                if (!vacancy.institutionName && vacancyComesFromCms) {
+                  logoUrl = ''
+                }
+
                 return (
                   <GridColumn
                     key={vacancy.id}
@@ -496,6 +519,8 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                     <FocusableBox
                       height="full"
                       href={`${
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
                         linkResolver('vacancydetails', [vacancy.id?.toString()])
                           .href
                       }`}
@@ -510,6 +535,8 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                         <GridRow
                           rowGap={[2, 2, 2, 5]}
                           direction={['column', 'column', 'column', 'row']}
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore make web strict
                           alignItems={[null, null, null, 'center']}
                           align="spaceBetween"
                           className={styles.vacancyCard}
@@ -524,6 +551,8 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                               </Text>
                               <Text>
                                 {shortenText(
+                                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                  // @ts-ignore make web strict
                                   vacancy.intro,
                                   VACANCY_INTRO_MAX_LENGTH,
                                 )}
@@ -660,4 +689,6 @@ IcelandicGovernmentInstitutionVacanciesList.getProps = async ({
   }
 }
 
-export default withMainLayout(IcelandicGovernmentInstitutionVacanciesList)
+export default withMainLayout(IcelandicGovernmentInstitutionVacanciesList, {
+  footerVersion: 'organization',
+})

@@ -16,19 +16,20 @@ export const createTestingPersonalTaxReturnModule = async () => {
     providers: [PersonalTaxReturnService, FileService, PersonalTaxReturnApi],
   }).compile()
 
-  const personalTaxReturnService = personalTaxReturnModule.get<PersonalTaxReturnService>(
-    PersonalTaxReturnService,
-  )
+  const personalTaxReturnService =
+    personalTaxReturnModule.get<PersonalTaxReturnService>(
+      PersonalTaxReturnService,
+    )
 
-  const personalTaxReturnController = personalTaxReturnModule.get<PersonalTaxReturnController>(
-    PersonalTaxReturnController,
-  )
+  const personalTaxReturnController =
+    personalTaxReturnModule.get<PersonalTaxReturnController>(
+      PersonalTaxReturnController,
+    )
 
   const fileService = personalTaxReturnModule.get<FileService>(FileService)
 
-  const personalTaxReturnApi = personalTaxReturnModule.get<PersonalTaxReturnApi>(
-    PersonalTaxReturnApi,
-  )
+  const personalTaxReturnApi =
+    personalTaxReturnModule.get<PersonalTaxReturnApi>(PersonalTaxReturnApi)
 
   return {
     personalTaxReturnApi,

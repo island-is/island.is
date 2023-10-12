@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
-import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
-import { ValueType } from 'react-select'
+import { useQuery } from '@apollo/client'
 
 import {
   AlertMessage,
@@ -12,21 +11,20 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
-import { Loading } from '@island.is/judicial-system-web/src/components'
-import {
-  InstitutionsQuery,
-  UsersQuery,
-} from '@island.is/judicial-system-web/src/utils/mutations'
+import * as constants from '@island.is/judicial-system/consts'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { titles, errors } from '@island.is/judicial-system-web/messages'
+import { errors, titles } from '@island.is/judicial-system-web/messages'
+import { Loading } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   Institution,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  InstitutionsQuery,
+  UsersQuery,
+} from '@island.is/judicial-system-web/src/utils/mutations'
 
 import * as styles from './Users.css'
 
@@ -46,13 +44,11 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
     errorPolicy: 'all',
   })
 
-  const {
-    data: rawInstitutions,
-    loading: loadingInstitutions,
-  } = useQuery<InstitutionData>(InstitutionsQuery, {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
+  const { data: rawInstitutions, loading: loadingInstitutions } =
+    useQuery<InstitutionData>(InstitutionsQuery, {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    })
 
   const users = data?.users.filter((u) => {
     return selectedInstitution
@@ -68,7 +64,7 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
     switch (userRole) {
       case UserRole.PROSECUTOR:
         return 'Saksóknari'
-      case UserRole.REPRESENTATIVE:
+      case UserRole.PROSECUTOR_REPRESENTATIVE:
         return 'Fulltrúi'
       case UserRole.JUDGE:
         return 'Dómari'
@@ -76,7 +72,7 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
         return 'Dómritari'
       case UserRole.ASSISTANT:
         return 'Aðstoðarmaður dómara'
-      case UserRole.STAFF:
+      case UserRole.PRISON_SYSTEM_STAFF:
         return 'Starfsmaður'
     }
   }
@@ -112,11 +108,9 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
               }) || []
             }
             placeholder="Veldu stofnun"
-            disabled={loadingInstitutions}
-            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-              setSelectedInstitution(
-                (selectedOption as ReactSelectOption).value.toString(),
-              )
+            isDisabled={loadingInstitutions}
+            onChange={(selectedOption) =>
+              setSelectedInstitution(selectedOption?.value)
             }
           />
         </Box>

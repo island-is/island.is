@@ -17,6 +17,7 @@ import * as styles from './ActionCard.css'
 import LinkResolver from '../LinkResolver/LinkResolver'
 
 type ActionCardProps = {
+  capitalizeHeading?: boolean
   date?: string
   heading?: string
   text?: string
@@ -71,6 +72,7 @@ const defaultTag = {
 } as const
 
 export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
+  capitalizeHeading = false,
   date,
   heading,
   text,
@@ -111,7 +113,12 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           background="blue100"
           className={styles.avatar}
         >
-          <Text variant="h3" as="p" color="blue400">
+          <Text
+            capitalizeFirstLetter={capitalizeHeading}
+            variant="h3"
+            as="p"
+            color="blue400"
+          >
             {getTitleAbbreviation(heading)}
           </Text>
         </Box>
@@ -247,7 +254,8 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
                     colorScheme="default"
                     iconType="outline"
                     size="small"
-                    type="button"
+                    type="span"
+                    unfocusable
                     variant="text"
                   >
                     {cta.label}
@@ -318,6 +326,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
                 {/* Checking image type so the logo is placed correctly */}
                 {image?.type === 'logo' && renderImage()}
                 <Text
+                  capitalizeFirstLetter={capitalizeHeading}
                   variant="h4"
                   translate={translateLabel}
                   color={

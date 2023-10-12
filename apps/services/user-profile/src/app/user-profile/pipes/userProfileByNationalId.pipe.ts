@@ -4,7 +4,8 @@ import { UserProfileService } from '../userProfile.service'
 
 @Injectable()
 export class UserProfileByNationalIdPipe
-  implements PipeTransform<string, Promise<UserProfile>> {
+  implements PipeTransform<string, Promise<UserProfile>>
+{
   constructor(private readonly userProfileService: UserProfileService) {}
 
   async transform(nationalId: string): Promise<UserProfile> {

@@ -186,9 +186,9 @@ export const ImpactList = (props: ImpactListProps) => {
                       }}
                       text={
                         errorMessage &&
-                        (((
+                        ((
                           <AlertMessage type="error" title={errorMessage} />
-                        ) as unknown) as string)
+                        ) as unknown as string)
                       }
                     />
                   )

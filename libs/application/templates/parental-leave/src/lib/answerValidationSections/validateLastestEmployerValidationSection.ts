@@ -19,7 +19,7 @@ const { EMPLOYERS } = AnswerValidationConstants
 const validateEmployerRepeaterFields = (
   employers: EmployerRow[] | undefined,
 ): AnswerValidationError | undefined => {
-  const periodDictionary = (employers as unknown) as Record<string, EmployerRow>
+  const periodDictionary = employers as unknown as Record<string, EmployerRow>
 
   const verfifyPhoneNumber = (e: string | undefined) => {
     if (e) {

@@ -1,13 +1,13 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
+import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { CaseState, isIndictmentCase } from '@island.is/judicial-system/types'
+import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import {
   TempCase as Case,
   TempUpdateCase as UpdateCase,
 } from '@island.is/judicial-system-web/src/types'
-import { Box, Button, Input, Text } from '@island.is/island-ui/core'
-import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,

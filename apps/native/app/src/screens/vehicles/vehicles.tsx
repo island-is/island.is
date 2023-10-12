@@ -22,16 +22,14 @@ import {navigateTo} from '../../lib/deep-linking';
 import {translateType} from './vehicles-mapper';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 
-const {
-  useNavigationOptions,
-  getNavigationOptions,
-} = createNavigationOptionHooks((theme, intl) => ({
-  topBar: {
-    title: {
-      text: intl.formatMessage({id: 'vehicles.screenTitle'}),
+const {useNavigationOptions, getNavigationOptions} =
+  createNavigationOptionHooks((theme, intl) => ({
+    topBar: {
+      title: {
+        text: intl.formatMessage({id: 'vehicles.screenTitle'}),
+      },
     },
-  },
-}));
+  }));
 
 const VehicleItem = React.memo(({item}: {item: any}) => {
   const theme = useTheme();
@@ -43,15 +41,16 @@ const VehicleItem = React.memo(({item}: {item: any}) => {
   return (
     <View style={{paddingHorizontal: 16}}>
       <TouchableHighlight
-        underlayColor={theme.shade.shade100}
+        underlayColor={
+          theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
+        }
         style={{marginBottom: 16, borderRadius: 16}}
         onPress={() => {
           navigateTo(`/vehicle/`, {
-            id: item.regno,
+            id: item.permno,
             title: item.type,
           });
-        }}
-      >
+        }}>
         <SafeAreaView>
           <VehicleCard
             title={item.type}

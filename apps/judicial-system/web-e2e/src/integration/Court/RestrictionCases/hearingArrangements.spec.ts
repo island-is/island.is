@@ -34,9 +34,8 @@ describe(`${RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   })
 
   it('should display a warning if the user enters a lawyer that is not in the lawyer registry', () => {
-    cy.get('#react-select-defenderName-input')
-      .type('click', { force: true })
-      .type('{enter}')
+    cy.get('#react-select-defenderName-input').type('click', { force: true })
+    cy.get('#react-select-defenderName-input').type('{enter}')
     cy.getByTestid('defenderNotFound').should('exist')
   })
 

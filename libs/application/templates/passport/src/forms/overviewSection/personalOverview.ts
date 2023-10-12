@@ -35,17 +35,21 @@ export const personalOverview = buildMultiField({
       label: m.name,
       width: 'half',
       value: (application: Application) =>
-        (application.answers.personalInfo as {
-          name?: string
-        })?.name,
+        (
+          application.answers.personalInfo as {
+            name?: string
+          }
+        )?.name,
     }),
     buildKeyValueField({
       label: m.nationalId,
       width: 'half',
       value: (application: Application) =>
-        (application.answers.personalInfo as {
-          nationalId?: string
-        })?.nationalId,
+        (
+          application.answers.personalInfo as {
+            nationalId?: string
+          }
+        )?.nationalId,
     }),
     buildDescriptionField({
       id: 'overview.space1',
@@ -57,17 +61,21 @@ export const personalOverview = buildMultiField({
       label: m.email,
       width: 'half',
       value: (application: Application) =>
-        (application.answers.personalInfo as {
-          email?: string
-        })?.email,
+        (
+          application.answers.personalInfo as {
+            email?: string
+          }
+        )?.email,
     }),
     buildKeyValueField({
       label: m.phoneNumber,
       width: 'half',
       value: (application: Application) => {
-        const phone = (application.answers.personalInfo as {
-          phoneNumber?: string
-        })?.phoneNumber
+        const phone = (
+          application.answers.personalInfo as {
+            phoneNumber?: string
+          }
+        )?.phoneNumber
 
         return formatPhoneNumber(phone as string)
       },
@@ -82,12 +90,11 @@ export const personalOverview = buildMultiField({
       label: m.currentPassportStatus,
       width: 'half',
       value: (application: Application) => {
-        const date = (application.externalData.identityDocument
-          .data as IdentityDocumentData).userPassport?.expirationDate
+        const date = (
+          application.externalData.identityDocument.data as IdentityDocumentData
+        ).userPassport?.expirationDate
         return date
-          ? m.currentPassportExpiration.defaultMessage +
-              ' ' +
-              format(new Date(date), 'dd/MM/yy')
+          ? m.validTag + ' ' + format(new Date(date), 'dd/MM/yy')
           : m.noPassport.defaultMessage
       },
     }),

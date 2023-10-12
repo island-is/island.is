@@ -10,10 +10,12 @@ const CitizenshipField: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
 }) => {
   const { id } = field
-  const citizenship = (getValueViaPath(
-    application.externalData,
-    'nationalRegistry',
-  ) as ExternalDataNationalRegistry)?.data?.citizenship
+  const citizenship = (
+    getValueViaPath(
+      application.externalData,
+      'nationalRegistry',
+    ) as ExternalDataNationalRegistry
+  )?.data?.citizenship
 
   const [countryData, setCountryData] = useState<string>(
     JSON.stringify(citizenship),

@@ -1,0 +1,18 @@
+schema:
+  - apps/api/src/api.graphql
+documents:
+  - libs/react-spa/shared/src/**/*.graphql
+generates:
+  libs/react-spa/shared/src/:
+    preset: 'near-operation-file'
+    presetConfig:
+      baseTypesPath: '~@island.is/api/schema'
+    plugins:
+      - typescript-operations
+      - typescript-react-apollo
+    config:
+      scalars:
+        DateTime: Date
+hooks:
+  afterAllFileWrite:
+    - prettier --write

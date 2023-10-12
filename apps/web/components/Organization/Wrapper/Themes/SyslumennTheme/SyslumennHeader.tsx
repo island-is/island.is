@@ -38,8 +38,8 @@ const SyslumennHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
 }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
-    () => JSON.parse(organizationPage.organization.namespace?.fields ?? '{}'),
-    [organizationPage.organization.namespace?.fields],
+    () => JSON.parse(organizationPage.organization?.namespace?.fields ?? '{}'),
+    [organizationPage.organization?.namespace?.fields],
   )
   const n = useNamespace(namespace)
   const { width } = useWindowSize()
@@ -54,7 +54,7 @@ const SyslumennHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
       <div className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
-            !!organizationPage.organization.logo && (
+            !!organizationPage.organization?.logo && (
               <Link
                 href={
                   linkResolver('organizationpage', [organizationPage.slug]).href
@@ -70,7 +70,7 @@ const SyslumennHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
             )
           }
         >
-          {!!organizationPage.organization.logo && (
+          {!!organizationPage.organization?.logo && (
             <Hidden above="sm">
               <Link
                 href={

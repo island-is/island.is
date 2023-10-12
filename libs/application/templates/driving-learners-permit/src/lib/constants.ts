@@ -51,7 +51,7 @@ export interface LearnersPermitFakeData {
   deprivationDateTo?: string
   deprivationDateFrom?: string
   mentorAge?: string
-  healthRemarks?: YesOrNo
+  remarks?: YesOrNo
 }
 
 export type DrivingLearnersPermitTemplateEvent =
@@ -71,6 +71,7 @@ export interface Step {
   title: MessageDescriptor
   description: MessageDescriptor
   state: ReviewSectionState
+  daysOfResidency?: number
 }
 
 export type ReviewSectionProps = {

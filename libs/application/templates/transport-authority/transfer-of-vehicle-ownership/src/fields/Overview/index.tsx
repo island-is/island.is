@@ -57,9 +57,8 @@ export const Overview: FC<
   const answers = application.answers as TransferOfVehicleOwnershipAnswers
   const { formatMessage } = useLocale()
 
-  const [rejectModalVisibility, setRejectModalVisibility] = useState<boolean>(
-    false,
-  )
+  const [rejectModalVisibility, setRejectModalVisibility] =
+    useState<boolean>(false)
   const [noInsuranceError, setNoInsuranceError] = useState<boolean>(false)
 
   const [getApplicationInfo] = useLazyQuery(APPLICATION_APPLICATION, {
@@ -210,6 +209,7 @@ export const Overview: FC<
                 vehicle: {
                   date: currentAnswers?.vehicle?.date,
                   salePrice: currentAnswers?.vehicle?.salePrice,
+                  mileage: currentAnswers?.vehicle?.mileage,
                 },
                 seller: {
                   email: currentAnswers?.seller?.email,
@@ -219,14 +219,13 @@ export const Overview: FC<
                   email: currentAnswers?.buyer?.email,
                   nationalId: currentAnswers?.buyer?.nationalId,
                 },
-                buyerCoOwnerAndOperator: currentAnswers?.buyerCoOwnerAndOperator?.map(
-                  (x) => ({
+                buyerCoOwnerAndOperator:
+                  currentAnswers?.buyerCoOwnerAndOperator?.map((x) => ({
                     nationalId: x.nationalId!,
                     email: x.email!,
                     type: x.type,
                     wasRemoved: x.wasRemoved,
-                  }),
-                ),
+                  })),
                 buyerMainOperator: currentAnswers?.buyerMainOperator
                   ? {
                       nationalId: currentAnswers.buyerMainOperator.nationalId,

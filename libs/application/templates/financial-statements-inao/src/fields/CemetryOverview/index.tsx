@@ -42,14 +42,12 @@ export const CemetryOverview = ({
   const { formatMessage } = useLocale()
   const [approveOverview, setApproveOverview] = useState(false)
 
-  const [
-    submitApplication,
-    { error: submitError, loading },
-  ] = useSubmitApplication({
-    application,
-    refetch,
-    event: DefaultEvents.SUBMIT,
-  })
+  const [submitApplication, { error: submitError, loading }] =
+    useSubmitApplication({
+      application,
+      refetch,
+      event: DefaultEvents.SUBMIT,
+    })
 
   const answers = application.answers as FinancialStatementsInao
   const fileName = answers.attachments?.file?.[0]?.name

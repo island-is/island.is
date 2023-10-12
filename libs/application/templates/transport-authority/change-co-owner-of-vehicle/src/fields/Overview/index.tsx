@@ -29,9 +29,8 @@ export const Overview: FC<
   const { application, refetch } = props
   const { formatMessage } = useLocale()
 
-  const [rejectModalVisibility, setRejectModalVisibility] = useState<boolean>(
-    false,
-  )
+  const [rejectModalVisibility, setRejectModalVisibility] =
+    useState<boolean>(false)
 
   const [getApplicationInfo] = useLazyQuery(APPLICATION_APPLICATION, {
     onError: (e) => {

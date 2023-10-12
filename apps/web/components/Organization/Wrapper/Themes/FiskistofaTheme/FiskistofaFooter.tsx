@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import cn from 'classnames'
 import { BLOCKS } from '@contentful/rich-text-types'
 
@@ -56,7 +57,10 @@ const FiskistofaFooter = ({
                   </Text>
                   {webRichText(item.content as SliceType[], {
                     renderNode: {
-                      [BLOCKS.PARAGRAPH]: (_node, children) => (
+                      [BLOCKS.PARAGRAPH]: (
+                        _node: never,
+                        children: ReactNode,
+                      ) => (
                         <Text
                           variant={'medium'}
                           marginBottom={1}
@@ -77,7 +81,10 @@ const FiskistofaFooter = ({
                 >
                   {webRichText(footerItems[3].content as SliceType[], {
                     renderNode: {
-                      [BLOCKS.PARAGRAPH]: (_node, children) => (
+                      [BLOCKS.PARAGRAPH]: (
+                        _node: never,
+                        children: ReactNode,
+                      ) => (
                         <Text variant={'eyebrow'} fontWeight={'medium'}>
                           {children}
                         </Text>

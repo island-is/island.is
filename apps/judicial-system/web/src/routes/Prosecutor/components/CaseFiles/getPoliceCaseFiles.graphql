@@ -3,5 +3,6 @@ query GetPoliceCaseFiles($input: PoliceCaseFilesQueryInput!) {
     id
     name
     policeCaseNumber
+    displayDate
   }
 }

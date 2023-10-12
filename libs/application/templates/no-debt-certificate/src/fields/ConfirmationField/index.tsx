@@ -49,9 +49,8 @@ export const ConfirmationField: FC<
   const { externalData } = application
   const { formatMessage } = useLocale()
   const [viewNoDebtCertificate, setViewNoDebtCertificate] = useState(false)
-  const {
-    document,
-  } = externalData.noDebtCertificate.data.debtLessCertificateResult.certificate
+  const { document } =
+    externalData.noDebtCertificate.data.debtLessCertificateResult.certificate
 
   function renderFooter() {
     return (

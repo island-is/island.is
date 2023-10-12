@@ -65,7 +65,7 @@ const HeilbrigdisstofnunAusturlandsHeader: React.FC<
       <div className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
-            !!organizationPage.organization.logo && (
+            !!organizationPage.organization?.logo && (
               <Link
                 href={
                   linkResolver('organizationpage', [organizationPage.slug]).href
@@ -81,7 +81,7 @@ const HeilbrigdisstofnunAusturlandsHeader: React.FC<
             )
           }
         >
-          {!!organizationPage.organization.logo && (
+          {!!organizationPage.organization?.logo && (
             <Hidden above="sm">
               <Link
                 href={

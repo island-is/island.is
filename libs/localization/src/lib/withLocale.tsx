@@ -14,62 +14,62 @@ export const GET_TRANSLATIONS = gql`
   }
 `
 
-export const withLocale = (namespaces: string | string[] = 'global') => (
-  Component: NextComponentType,
-) => {
-  const getInitialProps = Component.getInitialProps
+export const withLocale =
+  (namespaces: string | string[] = 'global') =>
+  (Component: NextComponentType) => {
+    const getInitialProps = Component.getInitialProps
 
-  if (!getInitialProps) {
-    // For non Nextjs apps
-    const NewComponent = (props: Record<string, any>) => {
-      const { loadMessages, loadingMessages } = useContext(LocaleContext)
+    if (!getInitialProps) {
+      // For non Nextjs apps
+      const NewComponent = (props: Record<string, any>) => {
+        const { loadMessages, loadingMessages } = useContext(LocaleContext)
 
-      useEffect(() => {
-        loadMessages(namespaces)
-      }, [])
+        useEffect(() => {
+          loadMessages(namespaces)
+        }, [])
 
-      if (loadingMessages) return null
+        if (loadingMessages) return null
 
-      return <Component {...props} />
+        return <Component {...props} />
+      }
+      return NewComponent
     }
-    return NewComponent
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const NewNextComponent: NextComponentType<any> = (props) => (
+      <Component {...props} />
+    )
+
+    NewNextComponent.getInitialProps = async (ctx) => {
+      let locale = defaultLanguage
+
+      if (
+        typeof ctx.query.lang === 'string' &&
+        supportedLocales.includes(ctx.query.lang)
+      ) {
+        locale = ctx.query.lang
+      }
+
+      const newContext = {
+        ...ctx,
+        locale,
+        namespaces: typeof namespaces === 'string' ? [namespaces] : namespaces,
+      } as any
+      const [_, props, messages] = await Promise.all([
+        polyfill(locale),
+        getInitialProps(newContext),
+        getTranslations(newContext),
+      ])
+
+      return {
+        ...props,
+        locale,
+        messages,
+      }
+    }
+
+    return NewNextComponent
   }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const NewNextComponent: NextComponentType<any> = (props) => (
-    <Component {...props} />
-  )
-
-  NewNextComponent.getInitialProps = async (ctx) => {
-    let locale = defaultLanguage
-
-    if (
-      typeof ctx.query.lang === 'string' &&
-      supportedLocales.includes(ctx.query.lang)
-    ) {
-      locale = ctx.query.lang
-    }
-
-    const newContext = {
-      ...ctx,
-      locale,
-      namespaces: typeof namespaces === 'string' ? [namespaces] : namespaces,
-    } as any
-    const [_, props, messages] = await Promise.all([
-      polyfill(locale),
-      getInitialProps(newContext),
-      getTranslations(newContext),
-    ])
-
-    return {
-      ...props,
-      locale,
-      messages,
-    }
-  }
-
-  return NewNextComponent
-}
 
 const getTranslations = ({
   apolloClient,

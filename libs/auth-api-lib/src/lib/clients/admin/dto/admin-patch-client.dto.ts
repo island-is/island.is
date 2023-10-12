@@ -169,6 +169,12 @@ export class AdminPatchClientDto {
   @IsOptional()
   @IsArray()
   removedScopes?: string[]
+
+  @ApiPropertyOptional({
+    description: 'Contact email for owner',
+  })
+  @IsOptional()
+  contactEmail?: string
 }
 
 export const superUserFields = [

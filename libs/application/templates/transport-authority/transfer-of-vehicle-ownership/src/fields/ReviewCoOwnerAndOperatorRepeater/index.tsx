@@ -34,9 +34,8 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
     string | undefined
   >(undefined)
   const [identicalError, setIdenticalError] = useState<boolean>(false)
-  const [tempCoOwnersAndOperators, setTempCoOwnersAndOperators] = useState<
-    CoOwnerAndOperator[]
-  >(coOwnersAndOperators)
+  const [tempCoOwnersAndOperators, setTempCoOwnersAndOperators] =
+    useState<CoOwnerAndOperator[]>(coOwnersAndOperators)
 
   const filteredCoOwnersAndOperators = tempCoOwnersAndOperators.filter(
     ({ wasRemoved }) => wasRemoved !== 'true',

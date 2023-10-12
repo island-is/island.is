@@ -34,56 +34,54 @@ export const TableUnits: FC<React.PropsWithChildren<Props>> = ({
           {title}
         </Text>
       ) : null}
-      {tables
-        ?.filter((Boolean as unknown) as ExcludesFalse)
-        ?.map((table, i) => (
-          <T.Table
-            key={`table-unit-${i}`}
-            box={i > 0 ? { marginTop: 'containerGutter' } : undefined}
-          >
-            <T.Head>
-              <T.Row>
-                {table.header.map((header, ii) => (
-                  <T.HeadData key={`head-${ii}`} style={tableStyles}>
-                    <Text variant="medium" fontWeight="semiBold">
-                      {header}
-                    </Text>
-                  </T.HeadData>
+      {tables?.filter(Boolean as unknown as ExcludesFalse)?.map((table, i) => (
+        <T.Table
+          key={`table-unit-${i}`}
+          box={i > 0 ? { marginTop: 'containerGutter' } : undefined}
+        >
+          <T.Head>
+            <T.Row>
+              {table.header.map((header, ii) => (
+                <T.HeadData key={`head-${ii}`} style={tableStyles}>
+                  <Text variant="medium" fontWeight="semiBold">
+                    {header}
+                  </Text>
+                </T.HeadData>
+              ))}
+            </T.Row>
+          </T.Head>
+          <T.Body>
+            {table.rows.map((row, iii) => (
+              <T.Row key={`trow-${iii}`}>
+                {row.map((rowitem, iiii) => (
+                  <T.Data key={`tdata-${iiii}`} style={tableStyles}>
+                    <Text variant="medium">{rowitem}</Text>
+                  </T.Data>
                 ))}
               </T.Row>
-            </T.Head>
-            <T.Body>
-              {table.rows.map((row, iii) => (
-                <T.Row key={`trow-${iii}`}>
-                  {row.map((rowitem, iiii) => (
-                    <T.Data key={`tdata-${iiii}`} style={tableStyles}>
-                      <Text variant="medium">{rowitem}</Text>
-                    </T.Data>
-                  ))}
-                </T.Row>
-              ))}
-              {table.paginate ? (
-                <T.Row>
-                  <T.Data borderColor="white" colSpan={5} style={tableStyles}>
-                    <Box
-                      alignItems="center"
-                      justifyContent="center"
-                      display="flex"
+            ))}
+            {table.paginate ? (
+              <T.Row>
+                <T.Data borderColor="white" colSpan={5} style={tableStyles}>
+                  <Box
+                    alignItems="center"
+                    justifyContent="center"
+                    display="flex"
+                  >
+                    <Button
+                      size="small"
+                      variant="text"
+                      onClick={() => getMoreItems()}
                     >
-                      <Button
-                        size="small"
-                        variant="text"
-                        onClick={() => getMoreItems()}
-                      >
-                        {formatMessage(m.fetchMore)}
-                      </Button>
-                    </Box>
-                  </T.Data>
-                </T.Row>
-              ) : null}
-            </T.Body>
-          </T.Table>
-        ))}
+                      {formatMessage(m.fetchMore)}
+                    </Button>
+                  </Box>
+                </T.Data>
+              </T.Row>
+            ) : null}
+          </T.Body>
+        </T.Table>
+      ))}
     </>
   )
 }

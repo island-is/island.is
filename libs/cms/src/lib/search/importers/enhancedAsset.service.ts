@@ -8,7 +8,8 @@ import { mapEnhancedAsset } from '../../models/enhancedAsset.model'
 
 @Injectable()
 export class EnhancedAssetSyncService
-  implements CmsSyncProvider<IEnhancedAsset> {
+  implements CmsSyncProvider<IEnhancedAsset>
+{
   processSyncData(entries: processSyncDataInput<IEnhancedAsset>) {
     return entries.filter(
       (entry: Entry<any>): entry is IEnhancedAsset =>

@@ -14,13 +14,13 @@ export enum LicenseUpdateType {
 export enum LicenseId {
   FIREARM_LICENSE = 'firearm',
   DISABILITY_LICENSE = 'disability',
-  DRIVING_LICENSE = 'driving',
+  DRIVERS_LICENSE = 'drivers',
 }
 
 export type PassTemplateIds = {
   firearm: string
   disability: string
-  driving: string
+  drivers: string
 }
 
 export type VerifyLicenseResult = {

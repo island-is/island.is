@@ -1,7 +1,8 @@
 import each from 'jest-each'
-import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize'
+import { uuid } from 'uuidv4'
 
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseAppealState,
   CaseFileCategory,
@@ -15,14 +16,14 @@ import {
   restrictionCases,
   User,
 } from '@island.is/judicial-system/types'
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+
+import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
+import { include, order } from '../../case.service'
 import { TransitionCaseDto } from '../../dto/transitionCase.dto'
 import { Case } from '../../models/case.model'
-import { createTestingCaseModule } from '../createTestingCaseModule'
-import { order, include } from '../../case.service'
 
 jest.mock('../../../factories')
 
@@ -48,12 +49,8 @@ describe('CaseController - Transition', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      messageService,
-      sequelize,
-      caseModel,
-      caseController,
-    } = await createTestingCaseModule()
+    const { messageService, sequelize, caseModel, caseController } =
+      await createTestingCaseModule()
 
     mockMessageService = messageService
     mockCaseModel = caseModel
@@ -393,8 +390,7 @@ describe('CaseController - Transition', () => {
                   caseFileId: prosecutorAppealBriefCaseFileId2,
                 },
                 {
-                  type:
-                    MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+                  type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
                   user: defaultUser,
                   caseId,
                 },
@@ -431,6 +427,11 @@ describe('CaseController - Transition', () => {
                   type: MessageType.SEND_APPEAL_COMPLETED_NOTIFICATION,
                   user: defaultUser,
                   caseId,
+                },
+                {
+                  type: MessageType.DELIVER_CASE_TO_POLICE,
+                  user: defaultUser,
+                  caseId: theCase.id,
                 },
               ])
             }

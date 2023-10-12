@@ -25,10 +25,8 @@ const ProsecutorSectionHeightenedSecurity: React.FC<
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const [substituteProsecutorId, setSubstituteProsecutor] = useState<string>()
-  const [
-    isProsecutorAccessModalVisible,
-    setIsProsecutorAccessModalVisible,
-  ] = useState<boolean>(false)
+  const [isProsecutorAccessModalVisible, setIsProsecutorAccessModalVisible] =
+    useState<boolean>(false)
   const { setAndSendCaseToServer } = useCase()
 
   const setProsecutor = async (prosecutorId: string) => {

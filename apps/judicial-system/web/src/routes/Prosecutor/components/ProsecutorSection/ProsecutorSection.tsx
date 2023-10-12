@@ -1,12 +1,12 @@
 import React, { useContext } from 'react'
 
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { Box } from '@island.is/island-ui/core'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
   FormContext,
   ProsecutorSelection,
 } from '@island.is/judicial-system-web/src/components'
-import { isIndictmentCase } from '@island.is/judicial-system/types'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import ProsecutorSectionHeading from './ProsecutorSectionHeading'
 

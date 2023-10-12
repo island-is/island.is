@@ -1,27 +1,29 @@
-import { Test } from '@nestjs/testing'
-import { getModelToken } from '@nestjs/sequelize'
 import { mock } from 'jest-mock-extended'
 import { uuid } from 'uuidv4'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { ConfigModule, ConfigType } from '@island.is/nest/config'
+import { getModelToken } from '@nestjs/sequelize'
+import { Test } from '@nestjs/testing'
+
 import { IntlService } from '@island.is/cms-translations'
 import { createTestIntl } from '@island.is/cms-translations/test'
 import { EmailService } from '@island.is/email-service'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { ConfigModule, ConfigType } from '@island.is/nest/config'
 import { SmsService } from '@island.is/nova-sms'
+
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 import { MessageService } from '@island.is/judicial-system/message'
 
 import { environment } from '../../../../environments'
-import { CourtService } from '../../court'
 import { awsS3ModuleConfig, AwsS3Service } from '../../aws-s3'
+import { CourtService } from '../../court'
+import { DefendantService } from '../../defendant'
 import { eventModuleConfig, EventService } from '../../event'
 import { InternalNotificationController } from '../internalNotification.controller'
-import { notificationModuleConfig } from '../notification.config'
 import { Notification } from '../models/notification.model'
-import { NotificationService } from '../notification.service'
+import { notificationModuleConfig } from '../notification.config'
 import { NotificationController } from '../notification.controller'
-import { DefendantService } from '../../defendant'
+import { NotificationService } from '../notification.service'
 
 jest.mock('@island.is/judicial-system/message')
 
@@ -107,9 +109,8 @@ export const createTestingNotificationModule = async () => {
 
   const context = {
     messageService: notificationModule.get<MessageService>(MessageService),
-    defendantService: notificationModule.get<DefendantService>(
-      DefendantService,
-    ),
+    defendantService:
+      notificationModule.get<DefendantService>(DefendantService),
     emailService: notificationModule.get<EmailService>(EmailService),
     smsService: notificationModule.get<SmsService>(SmsService),
     courtService: notificationModule.get<CourtService>(CourtService),
@@ -122,9 +123,10 @@ export const createTestingNotificationModule = async () => {
     notificationController: notificationModule.get<NotificationController>(
       NotificationController,
     ),
-    internalNotificationController: notificationModule.get<InternalNotificationController>(
-      InternalNotificationController,
-    ),
+    internalNotificationController:
+      notificationModule.get<InternalNotificationController>(
+        InternalNotificationController,
+      ),
   }
 
   notificationModule.close()

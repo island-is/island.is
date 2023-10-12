@@ -11,14 +11,14 @@ import * as styles from '../../SubscriptionTable.css'
 import { Area } from '../../../../../../types/enums'
 import {
   SubscriptionArray,
-  SubscriptionTableItem,
+  SubscriptionTableItem as SubscriptionTableItemType,
 } from '../../../../../../types/interfaces'
 import localization from '../../../../Subscriptions.json'
 import { tableRowBackgroundColor } from '../../../../utils'
 import cn from 'classnames'
 
 interface Props {
-  item: SubscriptionTableItem
+  item: SubscriptionTableItemType
   idx: number
   currentTab: Area
   mdBreakpoint: boolean

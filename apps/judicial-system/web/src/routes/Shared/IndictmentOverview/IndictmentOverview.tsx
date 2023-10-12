@@ -3,8 +3,9 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
-import { completedCaseStates } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
+import { completedCaseStates } from '@island.is/judicial-system/types'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
   FormContentContainer,
@@ -17,7 +18,9 @@ import {
   PageTitle,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { titles, core } from '@island.is/judicial-system-web/messages'
+import IndictmentsLawsBrokenAccordionItem, {
+  useIndictmentsLawsBroken,
+} from '@island.is/judicial-system-web/src/components/AccordionItems/IndictmentsLawsBrokenAccordionItem/IndictmentsLawsBrokenAccordionItem'
 import IndictmentCaseFilesList from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
 
 import { strings } from './IndictmentOverview.strings'
@@ -25,10 +28,10 @@ import { strings } from './IndictmentOverview.strings'
 const IndictmentOverview = () => {
   const router = useRouter()
   const { limitedAccess } = useContext(UserContext)
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const { formatMessage } = useIntl()
+  const lawsBroken = useIndictmentsLawsBroken(workingCase)
 
   const caseIsClosed = completedCaseStates.includes(workingCase.state)
 
@@ -68,6 +71,11 @@ const IndictmentOverview = () => {
             <InfoCardActiveIndictment />
           )}
         </Box>
+        {lawsBroken.size > 0 && (
+          <Box marginBottom={5}>
+            <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+          </Box>
+        )}
         {workingCase.caseFiles && (
           <Box component="section" marginBottom={10}>
             <IndictmentCaseFilesList workingCase={workingCase} />

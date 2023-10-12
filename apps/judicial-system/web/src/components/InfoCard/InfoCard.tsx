@@ -3,8 +3,8 @@ import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { formatDOB } from '@island.is/judicial-system/formatters'
 import {
-  SessionArrangements,
   Defendant,
+  SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import * as styles from './InfoCard.css'

@@ -1,22 +1,26 @@
 import {
-  CaseType,
-  Institution,
-  User,
-  UserRole,
-  IndictmentCount,
-  SessionArrangements,
-  CaseOrigin,
-  CaseAppealState,
-  CaseAppealRulingDecision,
-  Defendant,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import {
   Case,
   CaseListEntry,
   CreateCase,
   SubstanceMap,
   UpdateCase,
 } from '@island.is/judicial-system/types'
+import {
+  CaseAppealDecision,
+  CaseAppealRulingDecision,
+  CaseAppealState,
+  CaseCustodyRestrictions,
+  CaseLegalProvisions,
+  CaseOrigin,
+  CaseType,
+  Defendant,
+  IndictmentCount,
+  Institution,
+  RequestSharedWithDefender,
+  SessionArrangements,
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 export enum AppealDecisionRole {
   PROSECUTOR = 'PROSECUTOR',
@@ -238,6 +242,11 @@ export interface TempCase
     | 'appealedByRole'
     | 'appealRulingDecision'
     | 'defendants'
+    | 'requestedCustodyRestrictions'
+    | 'legalProvisions'
+    | 'accusedAppealDecision'
+    | 'prosecutorAppealDecision'
+    | 'requestSharedWithDefender'
   > {
   origin: CaseOrigin
   sharedWithProsecutorsOffice?: Institution
@@ -252,6 +261,11 @@ export interface TempCase
   appealedByRole?: UserRole
   appealRulingDecision?: CaseAppealRulingDecision
   defendants?: Defendant[]
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[]
+  legalProvisions?: CaseLegalProvisions[]
+  accusedAppealDecision?: CaseAppealDecision
+  prosecutorAppealDecision?: CaseAppealDecision
+  requestSharedWithDefender?: RequestSharedWithDefender | null
 }
 
 export interface TempUpdateCase
@@ -263,6 +277,7 @@ export interface TempUpdateCase
     | 'appealState'
     | 'appealRulingDecision'
     | 'defendants'
+    | 'requestSharedWithDefender'
   > {
   courtDocuments?: CourtDocument[]
   type?: CaseType
@@ -270,10 +285,13 @@ export interface TempUpdateCase
   appealState?: CaseAppealState
   appealRulingDecision?: CaseAppealRulingDecision
   defendants?: Defendant[]
+  requestSharedWithDefender?: RequestSharedWithDefender | null
 }
 
-export interface TempCreateCase extends Omit<CreateCase, 'type'> {
+export interface TempCreateCase
+  extends Omit<CreateCase, 'type' | 'requestSharedWithDefender'> {
   type: CaseType
+  requestSharedWithDefender?: RequestSharedWithDefender | null
 }
 
 export interface TempCaseListEntry

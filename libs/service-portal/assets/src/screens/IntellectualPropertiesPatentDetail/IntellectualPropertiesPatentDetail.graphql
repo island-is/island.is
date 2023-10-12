@@ -1,0 +1,27 @@
+query getIntellectualPropertyPatentById($input: IntellectualPropertyInput!) {
+  intellectualPropertyPatent(input: $input) {
+    applicationNumber
+    patentName
+    status
+    statusText
+    canRenew
+    applicationDate
+    applicationDatePublishedAsAvailable
+    registeredDate
+    maxValidObjectionDate
+    internalClassifications {
+      category
+    }
+    owner {
+      name
+      home
+    }
+    inventors {
+      name
+    }
+    patentAgent {
+      name
+      address
+    }
+  }
+}

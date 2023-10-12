@@ -17,6 +17,10 @@ export const authModuleConfig = defineConfig({
       'AUTH_IDS_REDIRECT_URI',
       'http://localhost:4200/api/auth/callback/identity-server',
     ),
+    logoutRedirectUri: env.required(
+      'AUTH_IDS_LOGOUT_REDIRECT_URI',
+      'http://localhost:4200',
+    ),
     allowAuthBypass: env.required('ALLOW_AUTH_BYPASS', 'true') === 'true',
     backendUrl: env.required('BACKEND_URL', 'http://localhost:3344'),
     secretToken: env.required(

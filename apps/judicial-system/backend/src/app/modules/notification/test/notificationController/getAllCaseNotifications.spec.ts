@@ -1,8 +1,9 @@
 import { uuid } from 'uuidv4'
 
+import { createTestingNotificationModule } from '../createTestingNotificationModule'
+
 import { Case } from '../../../case'
 import { Notification } from '../../models/notification.model'
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 interface Then {
   result: Notification[]
@@ -17,10 +18,8 @@ describe('NotificationController - Get all case notifications', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      notificationModel,
-      notificationController,
-    } = await createTestingNotificationModule()
+    const { notificationModel, notificationController } =
+      await createTestingNotificationModule()
 
     mockNotificationModel = notificationModel
 

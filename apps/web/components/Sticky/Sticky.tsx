@@ -1,8 +1,16 @@
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
+import React, {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { STICKY_NAV_HEIGHT } from '@island.is/web/constants'
 import { theme } from '@island.is/island-ui/theme'
 
 interface Props {
+  children: ReactNode
   top?: number
   constantSticky?: boolean
 }

@@ -53,10 +53,8 @@ const PlateAvailableSearch = ({ slice }: PlateAvailableSearchProps) => {
   const n = useNamespace(slice?.json ?? {})
   const [hasFocus, setHasFocus] = useState(false)
   const [searchValue, setSearchValue] = useState('')
-  const [
-    shouldDisplayValidationError,
-    setShouldDisplayValidationError,
-  ] = useState(false)
+  const [shouldDisplayValidationError, setShouldDisplayValidationError] =
+    useState(false)
 
   const [search, { data, error, loading }] = useLazyQuery<
     Query,

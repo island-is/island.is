@@ -25,6 +25,13 @@
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/information/src/{lib,screens,components}/**/*.{js,ts,tsx}'"
       }
+    },
+    "schemas/codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/service-portal/information/src/**/*.generated.ts",
+        "command": "graphql-codegen --config libs/service-portal/information/codegen.yml"
+      }
     }
   },
   "tags": ["lib:portals-mypages", "scope:portals-mypages"]

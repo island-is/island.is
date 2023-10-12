@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
 import { defineMessage } from 'react-intl'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ErrorScreen,
   IntroHeader,
+  ICELAND_ID,
   m as coreMessage,
 } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
@@ -13,10 +13,10 @@ import {
   GenericUserLicenseFetchStatus,
   useChildrenPassport,
   useUserProfile,
+  GenericLicenseType,
 } from '@island.is/service-portal/graphql'
 import { Query } from '@island.is/api/schema'
 import { Box, Tabs } from '@island.is/island-ui/core'
-
 import { usePassport } from '@island.is/service-portal/graphql'
 import UserLicenses from './UserLicenses'
 import ChildrenLicenses from './ChildrenLicenses'
@@ -86,6 +86,15 @@ export const LicensesOverview = () => {
   const { data, loading, error } = useQuery<Query>(GenericLicensesQuery, {
     variables: {
       locale,
+      input: {
+        includedTypes: [
+          GenericLicenseType.DriversLicense,
+          GenericLicenseType.AdrLicense,
+          GenericLicenseType.MachineLicense,
+          GenericLicenseType.FirearmLicense,
+          GenericLicenseType.DisabilityLicense,
+        ],
+      },
     },
   })
   const { genericLicenses = [] } = data ?? {}
@@ -129,7 +138,9 @@ export const LicensesOverview = () => {
       <IntroHeader
         title={defineMessage(m.title)}
         intro={defineMessage(m.intro)}
-        marginBottom={1}
+        marginBottom={4}
+        serviceProviderID={ICELAND_ID}
+        serviceProviderTooltip={formatMessage(coreMessage.licensesTooltip)}
       />
       {hasChildren ? (
         <Box>

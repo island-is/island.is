@@ -39,13 +39,10 @@ export class UserService {
     user: NationalRegistryUser,
     auth?: AuthUser,
   ): Promise<Fund> {
-    const {
-      used,
-      unused,
-      total,
-    } = await this.flightService.countThisYearsFlightLegsByNationalId(
-      user.nationalId,
-    )
+    const { used, unused, total } =
+      await this.flightService.countThisYearsFlightLegsByNationalId(
+        user.nationalId,
+      )
     let meetsADSRequirements = false
 
     if (this.flightService.isADSPostalCode(user.postalcode)) {

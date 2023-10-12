@@ -26,19 +26,17 @@ export const VehicleSelectField: FC<
   const currentVehicle = currentVehicleList[parseInt(vehicleValue, 10)]
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [
-    selectedVehicle,
-    setSelectedVehicle,
-  ] = useState<VehiclesCurrentVehicle | null>(
-    currentVehicle && currentVehicle.permno
-      ? {
-          permno: currentVehicle.permno,
-          make: currentVehicle?.make || '',
-          color: currentVehicle?.color || '',
-          role: currentVehicle?.role,
-        }
-      : null,
-  )
+  const [selectedVehicle, setSelectedVehicle] =
+    useState<VehiclesCurrentVehicle | null>(
+      currentVehicle && currentVehicle.permno
+        ? {
+            permno: currentVehicle.permno,
+            make: currentVehicle?.make || '',
+            color: currentVehicle?.color || '',
+            role: currentVehicle?.role,
+          }
+        : null,
+    )
 
   const onChange = (option: Option) => {
     const currentVehicle = currentVehicleList[parseInt(option.value, 10)]

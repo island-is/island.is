@@ -34,9 +34,8 @@ export const DocumentProviderHelpDeskForm: FC<
     control,
     formState: { errors },
   } = useForm<UseFormProps>()
-  const { updateHelpDesk, loading: loadingUpdate } = useUpdateHelpDesk(
-    organisationId,
-  )
+  const { updateHelpDesk, loading: loadingUpdate } =
+    useUpdateHelpDesk(organisationId)
   const { createHelpDesk, loading: loadingCreate } = useCreateHelpDesk(
     organisationId,
     organisationNationalId,

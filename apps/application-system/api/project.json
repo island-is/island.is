@@ -179,8 +179,7 @@
           "yarn nx run api:dev",
           "yarn nx run services-user-profile:dev",
           "yarn start application-system-api",
-          "scripts/run-soffia-proxy.sh",
-          "scripts/run-xroad-proxy.sh"
+          "scripts/run-soffia-proxy.sh"
         ],
         "parallel": true
       }

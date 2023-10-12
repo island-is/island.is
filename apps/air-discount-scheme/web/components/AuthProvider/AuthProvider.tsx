@@ -7,13 +7,8 @@ interface Props {
 }
 
 const AuthProvider = ({ children }: Props) => {
-  const {
-    isAuthenticated,
-    setIsAuthenticated,
-    user,
-    setUser,
-    loadingUser,
-  } = useUser()
+  const { isAuthenticated, setIsAuthenticated, user, setUser, loadingUser } =
+    useUser()
   return (
     <UserContext.Provider
       value={{

@@ -19,7 +19,8 @@ import { useState } from 'react'
 
 const DEFAULT_ITEMS_PER_PAGE = 10
 
-type DrivingInstructor = GetDrivingInstructorsQuery['drivingLicenseTeachersV4'][number]
+type DrivingInstructor =
+  GetDrivingInstructorsQuery['drivingLicenseTeachersV4'][number]
 
 const getSortedAndFilteredDrivingInstructors = (
   instructors: DrivingInstructor[],
@@ -38,6 +39,8 @@ const getSortedAndFilteredDrivingInstructors = (
   const startsWithFullSearchString = (
     instructor: DrivingInstructor,
   ): boolean => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     return (
       instructor.name?.trim().toLowerCase().startsWith(fullSearchString) ||
       instructor.nationalId?.trim().startsWith(fullSearchString) ||

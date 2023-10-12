@@ -120,6 +120,14 @@ const GeneralPetitionTemplate: ApplicationTemplate<
             shouldPersistToExternalData: true,
             throwOnError: true,
           }),
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: m.logListCreated,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,

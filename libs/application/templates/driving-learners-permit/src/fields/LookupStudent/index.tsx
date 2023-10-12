@@ -101,10 +101,8 @@ export const LookupStudent: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     onCompleted: (data) => {
       if (data.drivingLicenseStudentCanGetPracticePermit) {
         clearErrors(fieldNames.studentMentorabilityError)
-        const {
-          isOk,
-          errorCode,
-        } = data.drivingLicenseStudentCanGetPracticePermit
+        const { isOk, errorCode } =
+          data.drivingLicenseStudentCanGetPracticePermit
         const eligible = isOk && errorCode === null
         setValue(
           fieldNames.studentMentorability,

@@ -56,10 +56,8 @@ const ViewSignedList = () => {
 
   const [modalIsOpen, setModalIsOpen] = useState(false)
 
-  const {
-    petitionEndorsements,
-    refetchSinglePetitionEndorsements,
-  } = useGetSinglePetitionEndorsements(listId)
+  const { petitionEndorsements, refetchSinglePetitionEndorsements } =
+    useGetSinglePetitionEndorsements(listId)
 
   useEffect(() => {
     setHasSigned(userHasSigned ? true : false)

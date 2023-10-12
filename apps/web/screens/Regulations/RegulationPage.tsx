@@ -108,9 +108,9 @@ const reRegQueryNameFlex = /^\d{1,4}-\d{4}$/
  */
 const assertRegQueryName = (slug: string): RegQueryName => {
   if (reRegQueryNameFlex.test(slug)) {
-    return (slug.length === 9
-      ? slug
-      : ('000' + slug).substr(-9)) as RegQueryName
+    return (
+      slug.length === 9 ? slug : ('000' + slug).substr(-9)
+    ) as RegQueryName
   }
   throw new CustomNextError(404)
 }
@@ -222,7 +222,7 @@ RegulationPage.getProps = async ({ apolloClient, locale, query, res, req }) => {
         query: GET_REGULATION_QUERY,
         variables: {
           input: {
-            viewType: (viewType as unknown) as Schema_RegulationViewTypes,
+            viewType: viewType as unknown as Schema_RegulationViewTypes,
             name,
             date,
             isCustomDiff,

@@ -1,8 +1,8 @@
 import {
   judgeRule,
+  prisonSystemStaffRule,
   prosecutorRule,
   registrarRule,
-  staffRule,
 } from '../../../../guards'
 import { CaseController } from '../../case.controller'
 
@@ -22,6 +22,6 @@ describe('CaseController - Get custody notice pdf rules', () => {
     expect(rules).toContain(prosecutorRule)
     expect(rules).toContain(judgeRule)
     expect(rules).toContain(registrarRule)
-    expect(rules).toContain(staffRule)
+    expect(rules).toContain(prisonSystemStaffRule)
   })
 })

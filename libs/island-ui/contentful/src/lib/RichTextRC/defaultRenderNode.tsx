@@ -196,7 +196,7 @@ export const defaultRenderNodeObject: RenderNode = {
     <Hyperlink href={node.data.uri}>{children}</Hyperlink>
   ),
   [INLINES.ASSET_HYPERLINK]: (node, children) => {
-    const asset = (node.data.target as unknown) as Asset
+    const asset = node.data.target as unknown as Asset
     // The url might not contain a protocol that's why we prepend https:
     // https://www.contentful.com/developers/docs/concepts/images/
     let url: string
@@ -223,10 +223,14 @@ export const defaultRenderNodeObject: RenderNode = {
             {children}
           </Hyperlink>
         ) : null
-      case 'subArticle':
-        return entry?.fields?.url ? (
-          <Hyperlink href={entry.fields.url}>{children}</Hyperlink>
-        ) : null
+      case 'subArticle': {
+        let href = ''
+        const parentSlug = entry?.fields.parent?.fields?.slug ?? ''
+        if (parentSlug) {
+          href = `${parentSlug}/${entry?.fields.url?.split('/')?.pop() ?? ''}`
+        }
+        return href ? <Hyperlink href={href}>{children}</Hyperlink> : null
+      }
       case 'organizationPage': {
         const prefix = getOrganizationPrefix(entry?.sys?.locale)
         return entry.fields.slug ? (

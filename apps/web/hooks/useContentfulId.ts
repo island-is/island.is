@@ -2,7 +2,7 @@ import { useEffect, useContext } from 'react'
 import { GlobalContext } from '../context'
 
 export const useContentfulId = (
-  pageId: string,
+  pageId?: string,
   subpageId?: string,
   subSubPageId?: string,
 ) => {
@@ -10,6 +10,8 @@ export const useContentfulId = (
 
   useEffect(() => {
     if (pageId) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       setContentfulIds([pageId, subpageId, subSubPageId])
     }
     return () => {

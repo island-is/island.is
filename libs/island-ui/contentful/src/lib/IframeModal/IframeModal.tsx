@@ -59,6 +59,8 @@ export const IframeModal: FC<React.PropsWithChildren<IframeModalProps>> = ({
 
   useEffect(() => {
     if (dialog.visible && initialFocusedRef.current) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       initialFocusedRef.current.focus()
     }
   }, [dialog.visible, initialFocusedRef])

@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
-import { ValueType } from 'react-select/src/types'
 
 import {
   Box,
@@ -10,6 +9,11 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  isExtendedCourtRole,
+  isProsecutionRole,
+} from '@island.is/judicial-system/types'
 import {
   FormContentContainer,
   FormFooter,
@@ -20,7 +24,7 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
 
 import { ReactSelectOption } from '../../../types'
 import {
@@ -29,11 +33,6 @@ import {
   Validation,
 } from '../../../utils/validate'
 import * as styles from './UserForm.css'
-import {
-  isExtendedCourtRole,
-  isProsecutionRole,
-} from '@island.is/judicial-system/types'
-import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
 
 type ExtendedOption = ReactSelectOption & { institution: Institution }
 
@@ -55,10 +54,8 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>()
 
   const [titleErrorMessage, setTitleErrorMessage] = useState<string>()
-  const [
-    mobileNumberErrorMessage,
-    setMobileNumberErrorMessage,
-  ] = useState<string>()
+  const [mobileNumberErrorMessage, setMobileNumberErrorMessage] =
+    useState<string>()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>()
 
   const setName = useCallback(
@@ -85,13 +82,14 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
     }
   }, [personData, personError, setName])
 
-  const selectInstitutions = (isProsecutionRole(user.role)
-    ? props.prosecutorsOffices
-    : isExtendedCourtRole(user.role)
-    ? props.allCourts
-    : user.role === UserRole.STAFF
-    ? props.prisonInstitutions
-    : []
+  const selectInstitutions = (
+    isProsecutionRole(user.role)
+      ? props.prosecutorsOffices
+      : isExtendedCourtRole(user.role)
+      ? props.allCourts
+      : user.role === UserRole.PRISON_SYSTEM_STAFF
+      ? props.prisonInstitutions
+      : []
   ).map((institution) => ({
     label: institution.name,
     value: institution.id,
@@ -111,9 +109,9 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
     return isProsecutionRole(user.role)
       ? user.institution?.type === InstitutionType.PROSECUTORS_OFFICE
       : isExtendedCourtRole(user.role)
-      ? user.institution?.type === InstitutionType.COURT ||
-        user.institution?.type === InstitutionType.HIGH_COURT
-      : user.role === UserRole.STAFF
+      ? user.institution?.type === InstitutionType.DISTRICT_COURT ||
+        user.institution?.type === InstitutionType.COURT_OF_APPEALS
+      : user.role === UserRole.PRISON_SYSTEM_STAFF
       ? user.institution?.type === InstitutionType.PRISON ||
         user.institution?.type === InstitutionType.PRISON_ADMIN
       : false
@@ -233,11 +231,11 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
             <Box className={styles.roleColumn}>
               <RadioButton
                 name="role"
-                id="roleRepresentative"
+                id="roleProsecutorRepresentative"
                 label="Fulltrúi"
-                checked={user.role === UserRole.REPRESENTATIVE}
+                checked={user.role === UserRole.PROSECUTOR_REPRESENTATIVE}
                 onChange={() =>
-                  setUser({ ...user, role: UserRole.REPRESENTATIVE })
+                  setUser({ ...user, role: UserRole.PROSECUTOR_REPRESENTATIVE })
                 }
                 large
               />
@@ -279,10 +277,12 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
             <Box className={styles.roleColumn}>
               <RadioButton
                 name="role"
-                id="roleStaff"
+                id="rolePrisonSystemStaff"
                 label="Fangelsisyfirvöld"
-                checked={user.role === UserRole.STAFF}
-                onChange={() => setUser({ ...user, role: UserRole.STAFF })}
+                checked={user.role === UserRole.PRISON_SYSTEM_STAFF}
+                onChange={() =>
+                  setUser({ ...user, role: UserRole.PRISON_SYSTEM_STAFF })
+                }
                 large
               />
             </Box>
@@ -294,7 +294,7 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
             label="Veldu stofnun"
             value={usersInstitution}
             options={selectInstitutions}
-            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+            onChange={(selectedOption) =>
               setUser({
                 ...user,
                 institution: (selectedOption as ExtendedOption).institution,

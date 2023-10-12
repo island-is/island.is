@@ -148,9 +148,8 @@ export class ApplicationValidationService {
     }
 
     const helper = new ApplicationTemplateHelper(application, template)
-    const writableAnswersAndExternalData = helper.getWritableAnswersAndExternalData(
-      role,
-    )
+    const writableAnswersAndExternalData =
+      helper.getWritableAnswersAndExternalData(role)
 
     let trimmedAnswers: FormValue
 
@@ -218,9 +217,8 @@ export class ApplicationValidationService {
       )
     }
     const helper = new ApplicationTemplateHelper(application, template)
-    const writableAnswersAndExternalData = helper.getWritableAnswersAndExternalData(
-      role,
-    )
+    const writableAnswersAndExternalData =
+      helper.getWritableAnswersAndExternalData(role)
     if (writableAnswersAndExternalData === 'all') {
       return
     }
