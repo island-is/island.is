@@ -143,8 +143,12 @@ export class LicenseServiceService {
     licenseType: GenericLicenseType,
   ): Promise<GenericUserLicense | null> {
     const license = AVAILABLE_LICENSES.find((i) => i.type === licenseType)
+
+    //backwards compatibilty hax
     const licenseService = await this.licenseClient.getClientByLicenseType(
-      licenseType as unknown as LicenseType,
+      licenseType === GenericLicenseType.DriversLicense
+        ? LicenseType.DrivingLicense
+        : (licenseType as unknown as LicenseType),
     )
 
     if (!license || !licenseService) {
