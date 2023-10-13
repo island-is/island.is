@@ -20,15 +20,13 @@ export function hacks(
       (h) => `http://${h.svc(habitat.find((s) => s.name() === 'api')!)}`,
     )
   }
-   if (dockerTag) {
-      for (const serviceDef of fullSetOfServices) {
+  if (dockerTag) {
+    for (const serviceDef of fullSetOfServices) {
       if (!serviceDef.serviceDef.image) {
         serviceDef.serviceDef.image = `${serviceDef.serviceDef.name}:${dockerTag}`
-      }
-      else
-      {
+      } else {
         serviceDef.serviceDef.image = `${serviceDef.serviceDef.image}:${dockerTag}`
       }
     }
-}
+  }
 }
