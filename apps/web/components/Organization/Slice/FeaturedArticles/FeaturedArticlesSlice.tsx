@@ -71,7 +71,7 @@ export const FeaturedArticlesSlice: React.FC<
                       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                       // @ts-ignore make web strict
                       tag={
-                        hasProcessEntries(article) &&
+                        hasProcessEntries(article as Article) &&
                         n(article.processEntryButtonText || 'application', 'Umsókn')
                       }
                     >
