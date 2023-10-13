@@ -114,18 +114,17 @@ export class CitizenshipService extends BaseTemplateApiService {
       nationalId,
     )
 
-    // TODOx add back when we have Gervimenn not with IS citizenship
-    // // dont allow user to continue if already has icelandic citizenship
-    // const citizenshipIceland = 'IS'
-    // if (citizenship?.countryCode === citizenshipIceland) {
-    //   throw new TemplateApiError(
-    //     {
-    //       title: errorMessages.alreadyIcelandicCitizen,
-    //       summary: errorMessages.alreadyIcelandicCitizen,
-    //     },
-    //     404,
-    //   )
-    // }
+    // dont allow user to continue if already has icelandic citizenship
+    const citizenshipIceland = 'IS'
+    if (citizenship?.countryCode === citizenshipIceland) {
+      throw new TemplateApiError(
+        {
+          title: errorMessages.alreadyIcelandicCitizen,
+          summary: errorMessages.alreadyIcelandicCitizen,
+        },
+        404,
+      )
+    }
 
     // get marital title
     const cohabitationInfo = await this.nationalRegistryApi.getCohabitationInfo(

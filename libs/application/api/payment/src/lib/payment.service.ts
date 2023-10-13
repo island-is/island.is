@@ -82,8 +82,42 @@ export class PaymentService {
   }
 
   async getStatus(user: User, applicationId: string): Promise<PaymentStatus> {
-    // TODOx remove, only to skip payment on feature-deploy
-    return { fulfilled: true, paymentUrl: '', paymentId: '' }
+    const foundPayment = await this.findPaymentByApplicationId(applicationId)
+    if (!foundPayment) {
+      throw new NotFoundException(
+        `payment object was not found for application id ${applicationId}`,
+      )
+    }
+
+    if (!foundPayment.user4) {
+      throw new InternalServerErrorException(
+        `valid payment object was not found for application id ${applicationId} - user4 not set`,
+      )
+    }
+    const application = await this.applicationService.findOneById(applicationId)
+
+    let applicationSlug
+    if (application?.typeId) {
+      applicationSlug = getSlugFromType(application.typeId)
+    } else {
+      throw new NotFoundException(
+        `application type id was not found for application id ${applicationId}`,
+      )
+    }
+
+    const callbackUrl = `${this.config.clientLocationOrigin}/${applicationSlug}/${applicationId}?done`
+
+    return {
+      // TODO: maybe treat the case where no payment was found differently?
+      // not sure how/if that case would/could come up.
+      fulfilled: foundPayment.fulfilled || false,
+      paymentUrl: this.makeDelegationPaymentUrl(
+        foundPayment.user4,
+        user.sub ?? user.nationalId,
+        callbackUrl,
+      ),
+      paymentId: foundPayment.id,
+    }
   }
 
   public makePaymentUrl(docNum: string): string {

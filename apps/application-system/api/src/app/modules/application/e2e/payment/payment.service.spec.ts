@@ -140,22 +140,21 @@ describe('Payment Service', () => {
     ).rejects.toThrow()
   })
 
-  // TODOx remove, only to skip payment on feature-deploy
-  // it('should get a payment status', async () => {
-  //   const performingOrganizationID = '1'
-  //   const chargeItemCodes: string[] = ['asdf', 'asdf']
+  it('should get a payment status', async () => {
+    const performingOrganizationID = '1'
+    const chargeItemCodes: string[] = ['asdf', 'asdf']
 
-  //   const charge = await service.createCharge(
-  //     user,
-  //     performingOrganizationID,
-  //     chargeItemCodes,
-  //     applicationId,
-  //     undefined,
-  //   )
+    const charge = await service.createCharge(
+      user,
+      performingOrganizationID,
+      chargeItemCodes,
+      applicationId,
+      undefined,
+    )
 
-  //   const result = await service.getStatus(user, applicationId)
-  //   expect(result.fulfilled).toBe(false)
-  // })
+    const result = await service.getStatus(user, applicationId)
+    expect(result.fulfilled).toBe(false)
+  })
 
   it('should get a fulfilled payment status', async () => {
     const performingOrganizationID = '1'
