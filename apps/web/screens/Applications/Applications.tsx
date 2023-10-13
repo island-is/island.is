@@ -60,6 +60,7 @@ import {
   SortDirection,
 } from '@island.is/web/graphql/schema'
 import { AnchorPageType } from '@island.is/web/utils/anchorPage'
+import { hasProcessEntries } from '@island.is/web/utils/article'
 import { ActionType, reducer, initialState } from '../Search/Search.state'
 import { useLinkResolver, usePlausible } from '@island.is/web/hooks'
 import { Screen } from '../../types'
@@ -70,7 +71,12 @@ import {
   GET_SEARCH_RESULTS_TOTAL,
 } from '../queries'
 
-import { FilterMenu, CategoriesProps, FilterLabels } from '../Search/FilterMenu'
+import {
+  FilterMenu,
+  CategoriesProps,
+  FilterLabels,
+  type SearchEntryType,
+} from '../Search'
 
 const PERPAGE = 10
 
@@ -88,16 +94,6 @@ interface CategoryProps {
   countResults: GetSearchCountTagsQuery['searchResults']
   namespace: GetNamespaceQuery['getNamespace']
 }
-
-type SearchType = Article &
-  LifeEventPage &
-  News &
-  AdgerdirPage &
-  SubArticle &
-  OrganizationSubpage &
-  OrganizationPage &
-  LinkItem &
-  ProjectPage
 
 const stringToArray = (value: string | string[]) =>
   Array.isArray(value) ? value : value?.length ? [value] : []
@@ -152,78 +148,9 @@ const Applications: Screen<CategoryProps> = ({
     type: query.type as string,
   }
 
-  const getLabels = (item: SearchType) => {
-    const labels = []
-
-    switch (item.__typename) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
-      case 'LifeEventPage': {
-        if (item.pageType === AnchorPageType.LIFE_EVENT) {
-          labels.push(n('lifeEvent'))
-        }
-        break
-      }
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
-      case 'News':
-        labels.push(n('newsTitle'))
-        break
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
-      case 'AdgerdirPage':
-        labels.push(n('adgerdirTitle'))
-        break
-      default:
-        break
-    }
-
-    if (checkForProcessEntries(item)) {
-      labels.push(n('applicationForm'))
-    }
-
-    if (item.group) {
-      labels.push(item.group.title)
-    }
-
-    if (item.organization?.length) {
-      labels.push(item.organization[0].title)
-    }
-
-    if (item.parent) {
-      if (item.parent.group) {
-        labels.push(item.parent.group.title)
-      }
-
-      if (item.parent.organization?.length) {
-        labels.push(item.parent.organization[0].title)
-      }
-    }
-
-    if (item.organizationPage?.organization?.title) {
-      labels.push(item.organizationPage.organization.title)
-    }
-
-    return labels
-  }
-
   const pathname = linkResolver('applications').href
 
-  const checkForProcessEntries = (item: SearchType) => {
-    if (item.__typename === 'Article') {
-      const hasMainProcessEntry =
-        !!item.processEntry?.processTitle || !!item.processEntry?.processLink
-      const hasProcessEntryInBody = !!item.body?.filter((content) => {
-        return content.__typename === 'ProcessEntry'
-      }).length
-
-      return hasMainProcessEntry || hasProcessEntryInBody
-    }
-
-    return false
-  }
-
-  const getItemLink = (item: SearchType) => {
+  const getItemLink = (item: SearchEntryType) => {
     if (
       item.__typename === 'LifeEventPage' &&
       item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
@@ -235,7 +162,7 @@ const Applications: Screen<CategoryProps> = ({
     return linkResolver(item.__typename, item.url ?? item.slug?.split('/'))
   }
 
-  const getItemImages = (item: SearchType) => {
+  const getItemImages = (item: SearchEntryType) => {
     if (
       item.__typename === 'LifeEventPage' &&
       item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
@@ -259,7 +186,7 @@ const Applications: Screen<CategoryProps> = ({
     }
   }
 
-  const searchResultsItems = (searchResults.items as Array<SearchType>).map(
+  const searchResultsItems = (searchResults.items as Array<SearchEntryType>).map(
     (item) => ({
       typename: item.__typename,
       title: item.title,
@@ -271,11 +198,10 @@ const Applications: Screen<CategoryProps> = ({
       category: item.category ?? item.parent?.category,
       organizationTitle:
         item.organization?.length && item.organization[0].title,
-      hasProcessEntry: checkForProcessEntries(item),
+      hasProcessEntry: item.__typename === 'Article' && hasProcessEntries(item),
       processEntry: item.processEntry,
       group: item.group,
       ...getItemImages(item),
-      labels: getLabels(item),
     }),
   )
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -498,57 +424,40 @@ const Applications: Screen<CategoryProps> = ({
                   {filteredItems.map(
                     (
                       {
-                        labels,
                         link,
                         title,
                         organizationTitle,
                         processEntry,
-                        parentTitle,
                       },
                       index,
-                    ) => {
-                      const tags: Array<CardTagsProps> = []
-
-                      labels.forEach((label) => {
-                        tags.push({
-                          title: label,
-                          tagProps: {
-                            outlined: true,
-                          },
-                        })
-                      })
-
-                      console.log(processEntry)
-
-                      return (
-                        <T.Row key={index}>
-                          <T.Data>
-                            <Link {...link} skipTab>
-                              <Button variant="text" as="span">
-                                {title}
-                              </Button>
-                            </Link>
-                          </T.Data>
-                          <T.Data>
-                            <Text fontWeight="medium">{organizationTitle}</Text>
-                          </T.Data>
-                          <T.Data>
-                            <Box display="flex" justifyContent="flexEnd">
-                              {processEntry?.processLink && (
-                                <ProcessEntryLinkButton
-                                  processTitle={
-                                    processEntry.processTitle ?? title
-                                  }
-                                  processLink={processEntry.processLink}
-                                  buttonText="Apply"
-                                  size="small"
-                                />
-                              )}
-                            </Box>
-                          </T.Data>
-                        </T.Row>
-                      )
-                    },
+                    ) => (
+                      <T.Row key={index}>
+                        <T.Data>
+                          <Link {...link} skipTab>
+                            <Button variant="text" as="span">
+                              {title}
+                            </Button>
+                          </Link>
+                        </T.Data>
+                        <T.Data>
+                          <Text fontWeight="medium">{organizationTitle}</Text>
+                        </T.Data>
+                        <T.Data>
+                          <Box display="flex" justifyContent="flexEnd">
+                            {processEntry?.processLink && (
+                              <ProcessEntryLinkButton
+                                processTitle={
+                                  processEntry.processTitle ?? title
+                                }
+                                processLink={processEntry.processLink}
+                                buttonText="Apply"
+                                size="small"
+                              />
+                            )}
+                          </Box>
+                        </T.Data>
+                      </T.Row>
+                    )
                   )}
                 </T.Body>
               </T.Table>

@@ -51,6 +51,8 @@ import {
   getHashString,
   updateHashArray,
 } from './utils'
+import { hasProcessEntries } from '@island.is/web/utils/article'
+import { Article } from '@island.is/api/schema'
 
 type Articles = GetArticlesQuery['getArticles']
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
@@ -352,34 +354,27 @@ const Category: Screen<CategoryProps> = ({
                     </Text>
                   )}
                   <Stack space={2}>
-                    {sortedArticles.map(
-                      ({
-                        __typename: typename,
-                        title,
-                        slug,
-                        processEntry,
-                        processEntryButtonText,
-                      }) => {
+                    {sortedArticles.map((article) => {
                         return (
-                          <FocusableBox key={slug} borderRadius="large">
+                          <FocusableBox key={article.slug} borderRadius="large">
                             <TopicCard
                               href={
                                 linkResolver(
-                                  typename?.toLowerCase() as LinkType,
-                                  [slug],
+                                  article.__typename?.toLowerCase() as LinkType,
+                                  [article.slug],
                                 ).href
                               }
                               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                               // @ts-ignore make web strict
                               tag={
-                                (!!processEntry || processEntryButtonText) &&
+                                hasProcessEntries(article as Article) &&
                                 n(
-                                  processEntryButtonText || 'application',
+                                  article.processEntryButtonText || 'application',
                                   'Umsókn',
                                 )
                               }
                             >
-                              {title}
+                              {article.title}
                             </TopicCard>
                           </FocusableBox>
                         )

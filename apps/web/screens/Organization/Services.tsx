@@ -41,6 +41,8 @@ import {
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { hasProcessEntries } from '@island.is/web/utils/article'
+import { Article } from '@island.is/api/schema'
 
 interface ServicesPageProps {
   organizationPage: Query['getOrganizationPage']
@@ -267,8 +269,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore make web strict
                   tag={
-                    (!!article.processEntry ||
-                      article.processEntryButtonText) &&
+                    hasProcessEntries(article) &&
                     n(article.processEntryButtonText || 'application', 'Umsókn')
                   }
                 >

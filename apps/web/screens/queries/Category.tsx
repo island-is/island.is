@@ -21,9 +21,18 @@ export const GET_ARTICLES_QUERY = gql`
       }
       slug
       title
+      body {
+        ... on ProcessEntry {
+          __typename
+          processTitle
+          processLink
+        }
+      }
       processEntryButtonText
       processEntry {
         id
+        processTitle
+        processLink
       }
       group {
         slug

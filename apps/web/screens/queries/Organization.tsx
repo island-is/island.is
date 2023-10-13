@@ -276,9 +276,18 @@ export const GET_ORGANIZATION_SERVICES_QUERY = gql`
     getArticles(input: $input) {
       title
       slug
+      body {
+        ... on ProcessEntry {
+          __typename
+          processTitle
+          processLink
+        }
+      }
       processEntryButtonText
       processEntry {
         id
+        processTitle
+        processLink
       }
       category {
         slug

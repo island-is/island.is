@@ -57,6 +57,7 @@ import {
   ProjectPage,
 } from '@island.is/web/graphql/schema'
 import { AnchorPageType } from '@island.is/web/utils/anchorPage'
+import { hasProcessEntries } from '@island.is/web/utils/article'
 import { ActionType, reducer, initialState } from './Search.state'
 import { useLinkResolver, usePlausible } from '@island.is/web/hooks'
 import { Screen } from '../../types'
@@ -90,7 +91,7 @@ type TagsList = {
   key: string
 }
 
-type SearchType = Article &
+export type SearchEntryType = Article &
   LifeEventPage &
   News &
   AdgerdirPage &
@@ -205,7 +206,7 @@ const Search: Screen<CategoryProps> = ({
     ],
   )
 
-  const getLabels = (item: SearchType) => {
+  const getLabels = (item: SearchEntryType) => {
     const labels = []
 
     switch (item.__typename) {
@@ -231,7 +232,7 @@ const Search: Screen<CategoryProps> = ({
         break
     }
 
-    if (checkForProcessEntries(item)) {
+    if (item.__typename === 'Article' && hasProcessEntries(item)) {
       labels.push(n('applicationForm'))
     }
 
@@ -306,21 +307,7 @@ const Search: Screen<CategoryProps> = ({
     ]
   }, [countResults.typesCount, getArticleCount, tagTitles])
 
-  const checkForProcessEntries = (item: SearchType) => {
-    if (item.__typename === 'Article') {
-      const hasMainProcessEntry =
-        !!item.processEntry?.processTitle || !!item.processEntry?.processLink
-      const hasProcessEntryInBody = !!item.body?.filter((content) => {
-        return content.__typename === 'ProcessEntry'
-      }).length
-
-      return hasMainProcessEntry || hasProcessEntryInBody
-    }
-
-    return false
-  }
-
-  const getItemLink = (item: SearchType) => {
+  const getItemLink = (item: SearchEntryType) => {
     if (
       item.__typename === 'LifeEventPage' &&
       item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
@@ -332,7 +319,7 @@ const Search: Screen<CategoryProps> = ({
     return linkResolver(item.__typename, item.url ?? item.slug?.split('/'))
   }
 
-  const getItemImages = (item: SearchType) => {
+  const getItemImages = (item: SearchEntryType) => {
     if (
       item.__typename === 'LifeEventPage' &&
       item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
@@ -356,7 +343,7 @@ const Search: Screen<CategoryProps> = ({
     }
   }
 
-  const searchResultsItems = (searchResults.items as Array<SearchType>).map(
+  const searchResultsItems = (searchResults.items as Array<SearchEntryType>).map(
     (item) => ({
       typename: item.__typename,
       title: item.title,
@@ -366,7 +353,7 @@ const Search: Screen<CategoryProps> = ({
       link: getItemLink(item),
       categorySlug: item.category?.slug ?? item.parent?.category?.slug,
       category: item.category ?? item.parent?.category,
-      hasProcessEntry: checkForProcessEntries(item),
+      hasProcessEntry: item.__typename === 'Article' && hasProcessEntries(item as Article),
       group: item.group,
       ...getItemImages(item),
       labels: getLabels(item),
