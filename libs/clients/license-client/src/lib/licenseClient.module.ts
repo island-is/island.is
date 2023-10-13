@@ -54,7 +54,7 @@ import {
           switch (type) {
             case LicenseType.FirearmLicense:
               return firearmClient
-            case LicenseType.DriversLicense:
+            case LicenseType.DrivingLicense:
               return drivingClient
             case LicenseType.AdrLicense:
               return adrClient
