@@ -3,7 +3,6 @@ import { logger } from '@island.is/logging'
 import { ApolloError, ForbiddenError } from 'apollo-server-express'
 import {
   ActorLocaleLocaleEnum,
-  ApiResponse,
   ConfirmationDtoResponse,
   CreateUserProfileDto,
   UpdateUserProfileDto,
@@ -27,7 +26,6 @@ import { DataStatus } from './types/dataStatus.enum'
 import { handle404, handle204 } from '@island.is/clients/middlewares'
 
 export const MAX_OUT_OF_DATE_MONTHS = 6
-const IGNORED_STATUS = 204
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'userprofile-service'
