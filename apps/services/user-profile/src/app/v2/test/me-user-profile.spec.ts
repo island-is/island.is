@@ -2,9 +2,9 @@ import request from 'supertest'
 
 import {
   getRequestMethod,
-  TestEndpointOptions,
   setupApp,
   setupAppWithoutAuth,
+  TestEndpointOptions,
 } from '@island.is/testing/nest'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { UserProfileScope } from '@island.is/auth/scopes'
@@ -13,7 +13,6 @@ import { FixtureFactory } from './fixtureFactory'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 import { UserProfile } from '../userProfileV2.model'
 import { getModelToken } from '@nestjs/sequelize'
-import { EmailVerification } from '../../user-profile/emailVerification.model'
 import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
 

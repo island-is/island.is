@@ -1,14 +1,16 @@
+import { getModelToken } from '@nestjs/sequelize'
+import request from 'supertest'
+
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { UserProfileScope } from '@island.is/auth/scopes'
-import request from 'supertest'
 import {
   getRequestMethod,
   setupApp,
   TestEndpointOptions,
 } from '@island.is/testing/nest'
+
 import { FixtureFactory } from './fixtureFactory'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
-import { getModelToken } from '@nestjs/sequelize'
 import { EmailVerification } from '../../user-profile/emailVerification.model'
 import { UserProfile } from '../userProfileV2.model'
 import { AppModule } from '../../app.module'
@@ -21,7 +23,6 @@ const testUserProfile = {
 }
 
 const newEmail = 'test1234@test.is'
-const newPhoneNumber = '9876543'
 
 const testEmailVerification = {
   nationalId: testUserProfile.nationalId,

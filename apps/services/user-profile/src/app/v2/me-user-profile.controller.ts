@@ -15,8 +15,8 @@ import type { User } from '@island.is/auth-nest-tools'
 import { UserProfileDto } from './dto/user-profileDto'
 import { UserProfileService } from './user-profile.service'
 import { PatchUserProfileDto } from './dto/patch-user-profileDto'
-import { ConfirmPhoneNumberDto } from './dto/confirm-phoneNumber-dto'
-import { ConfirmEmailDto } from './dto/confirm-email-dto'
+import { EmailConfirmationDto } from './dto/email-confirmation-dto'
+import { PhoneNumberConfirmationDto } from './dto/phone-number-confirmation-dto'
 
 const namespace = '@island.is/apps/services/user-profile/v2/me'
 
@@ -90,7 +90,7 @@ export class MeUserProfileController {
   })
   confirmEmail(
     @CurrentUser() user: User,
-    @Body() emailConfirmation: ConfirmEmailDto,
+    @Body() emailConfirmation: EmailConfirmationDto,
   ): Promise<void> {
     return this.auditService.auditPromise(
       {
@@ -111,12 +111,12 @@ export class MeUserProfileController {
   @Post('/confirmPhoneNumber')
   @Scopes(UserProfileScope.write)
   @Documentation({
-    description: 'Confirm previously unconfirmed email',
+    description: 'Confirm previously unconfirmed phone number',
     response: { status: 201 },
   })
   confirmPhoneNumber(
     @CurrentUser() user: User,
-    @Body() phoneNumberConfirmation: ConfirmPhoneNumberDto,
+    @Body() phoneNumberConfirmation: PhoneNumberConfirmationDto,
   ): Promise<void> {
     return this.auditService.auditPromise(
       {

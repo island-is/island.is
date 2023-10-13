@@ -7,6 +7,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
+
 import { Locale } from '../user-profile/types/localeTypes'
 
 @Table({

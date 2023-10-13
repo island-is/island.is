@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { EmailModule, EmailService } from '@island.is/email-service'
-import { SmsModule, SmsService } from '@island.is/nova-sms'
+import { EmailModule } from '@island.is/email-service'
+import { SmsModule } from '@island.is/nova-sms'
 
 import environment from '../../environments/environment'
 import { MeUserProfileController } from './me-user-profile.controller'

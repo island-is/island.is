@@ -1,7 +1,9 @@
-import { TestApp } from '@island.is/testing/nest'
-import { UserProfile } from '../../user-profile/userProfile.model'
 import { Model } from 'sequelize'
 import { getModelToken } from '@nestjs/sequelize'
+
+import { TestApp } from '@island.is/testing/nest'
+
+import { UserProfile } from '../../user-profile/userProfile.model'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 import { EmailVerification } from '../../user-profile/emailVerification.model'
 import { SmsVerification } from '../../user-profile/smsVerification.model'
