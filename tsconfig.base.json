@@ -74,9 +74,6 @@
       "@island.is/api/domains/criminal-record": [
         "libs/api/domains/criminal-record/src/index.ts"
       ],
-      "@island.is/api/domains/directorate-of-immigration": [
-        "libs/api/domains/directorate-of-immigration/src/index.ts"
-      ],
       "@island.is/api/domains/directorate-of-labour": [
         "libs/api/domains/directorate-of-labour/src/index.ts"
       ],
