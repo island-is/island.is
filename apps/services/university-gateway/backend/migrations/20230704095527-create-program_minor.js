@@ -5,7 +5,7 @@ module.exports = {
     return queryInterface.sequelize.transaction((t) => {
       return Promise.all([
         queryInterface.createTable(
-          'program_course',
+          'program_minor',
           {
             id: {
               type: Sequelize.UUID,
@@ -21,36 +21,16 @@ module.exports = {
               },
               allowNull: false,
             },
-            program_minor_id: {
-              type: Sequelize.UUID,
-              references: {
-                model: 'program_minor',
-                key: 'id',
-              },
-              allowNull: true,
-            },
-            course_id: {
-              type: Sequelize.UUID,
-              references: {
-                model: 'course',
-                key: 'id',
-              },
+            external_id: {
+              type: Sequelize.STRING,
               allowNull: false,
             },
-            requirement: {
-              type: Sequelize.ENUM(
-                'MANDATORY',
-                'FREE_ELECTIVE',
-                'RESTRICTED_ELECTIVE',
-              ),
+            name_is: {
+              type: Sequelize.STRING,
               allowNull: false,
             },
-            semester_year: {
-              type: Sequelize.INTEGER,
-              allowNull: true,
-            },
-            semester_season: {
-              type: Sequelize.ENUM('FALL', 'SPRING', 'SUMMER'),
+            name_en: {
+              type: Sequelize.STRING,
               allowNull: false,
             },
             created: {
@@ -71,7 +51,9 @@ module.exports = {
   down: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) => {
       return Promise.all([
-        queryInterface.dropTable('program_course', { transaction: t }),
+        queryInterface.dropTable('program_minor', {
+          transaction: t,
+        }),
       ])
     })
   },

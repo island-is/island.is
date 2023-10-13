@@ -38,6 +38,16 @@ class ProgramExtraApplicationField extends Model {
   programId!: string
 
   @ApiProperty({
+    description: 'External id for field',
+    example: 'cv_field',
+  })
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  externalId!: string
+
+  @ApiProperty({
     description: 'Field name (Icelandic)',
     example: 'Ferilskrá',
   })
@@ -88,16 +98,6 @@ class ProgramExtraApplicationField extends Model {
     allowNull: false,
   })
   required!: boolean
-
-  @ApiProperty({
-    description: 'Unique key for field',
-    example: 'cv_field',
-  })
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  fieldKey!: string
 
   @ApiProperty({
     description:

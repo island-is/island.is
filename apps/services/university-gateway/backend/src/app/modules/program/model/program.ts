@@ -412,7 +412,7 @@ class ProgramDetails extends Program {
     type: [ProgramExtraApplicationField],
   })
   @HasMany(() => ProgramExtraApplicationField)
-  extraApplicationField?: ProgramExtraApplicationField[]
+  extraApplicationFields?: ProgramExtraApplicationField[]
 }
 
 export

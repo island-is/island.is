@@ -39,6 +39,12 @@ class ProgramCourse extends Model {
   @ForeignKey(() => ProgramTable)
   programId!: string
 
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  programMinorId?: string
+
   @ApiHideProperty()
   @Column({
     type: DataType.UUID,

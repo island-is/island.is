@@ -71,18 +71,19 @@ class UniversityOfIcelandApplicationClient {
                 return mapStringToEnum(m, ModeOfDelivery)
               }
             }) || [],
-          extraApplicationField: program.extraApplicationFields?.map(
+          extraApplicationFields: program.extraApplicationFields?.map(
             (field) => ({
+              externalId: '', //TODO missing in api
               nameIs: field.nameIs || '',
               nameEn: field.nameEn || '',
               descriptionIs: field.descriptionIs,
               descriptionEn: field.descriptionEn,
               required: field.required || false,
-              fieldKey: '', //TODO missing in api
               fieldType: field.fieldType as unknown as FieldType,
               uploadAcceptedFileType: field.uploadAcceptedFileType,
             }),
           ),
+          minors: [], //TODO missing in api
         })
       } catch (e) {
         logger.error(
@@ -153,6 +154,7 @@ class UniversityOfIcelandApplicationClient {
 
         mappedRes.push({
           externalId: externalId,
+          // minorExternalId: course.minorId, //TODO missing in api
           nameIs: course.nameIs || '',
           nameEn: course.nameEn || '',
           credits: Number(course.credits?.replace(',', '.')) || 0,
