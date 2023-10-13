@@ -137,6 +137,7 @@ import { GraphQLConfig } from './graphql.config'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
 import { MMSClientConfig } from '@island.is/clients/mms'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
+import { PCardClientConfig } from '@island.is/clients/p-card'
 
 const environment = getConfig
 
@@ -289,6 +290,7 @@ const environment = getConfig
         AirDiscountSchemeClientConfig,
         ConsultationPortalClientConfig,
         AssetsClientConfig,
+        PCardClientConfig,
         AdrAndMachineLicenseClientConfig,
         NationalRegistrySoffiaClientConfig,
         NationalRegistryV3ClientConfig,
