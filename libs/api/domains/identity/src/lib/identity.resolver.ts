@@ -14,13 +14,11 @@ export class IdentityResolver {
   constructor(private identityService: IdentityClientService) {}
 
   @Query(() => Identity, { name: 'identity', nullable: true })
-  async getIdentity(
+  getIdentity(
     @CurrentUser() user: User,
     @Args('input', { nullable: true }) input: IdentityInput,
   ): Promise<Identity | null> {
     const nationalId = input?.nationalId || user.nationalId
-    const a = await this.identityService.getIdentity(nationalId)
-    console.log('person here ', a)
-    return a
+    return this.identityService.getIdentity(nationalId)
   }
 }

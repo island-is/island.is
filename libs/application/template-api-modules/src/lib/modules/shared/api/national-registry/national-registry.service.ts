@@ -293,9 +293,8 @@ export class NationalRegistryService extends BaseTemplateApiService {
   async getSpouse({
     auth,
   }: TemplateApiModuleActionProps): Promise<NationalRegistrySpouse | null> {
-    const { nationalId } = auth
     const spouse = await this.nationalRegistryApi.getCohabitationInfo(
-      nationalId,
+      auth.nationalId,
     )
 
     return (

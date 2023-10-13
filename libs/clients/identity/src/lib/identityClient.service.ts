@@ -82,11 +82,10 @@ export class IdentityClientService {
     )
 
     if (!person) {
-      console.log('going in here??')
       return null
     }
 
-    const b = {
+    return {
       nationalId: person.nationalId,
       givenName: person.givenName,
       familyName: person.familyName,
@@ -98,9 +97,5 @@ export class IdentityClientService {
       },
       type: IdentityType.Person,
     } as Identity
-
-    console.log('b', b)
-
-    return b
   }
 }

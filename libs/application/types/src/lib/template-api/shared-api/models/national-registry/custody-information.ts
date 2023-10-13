@@ -1,4 +1,3 @@
-import { Address } from './address'
 import { NationalRegistryIndividual } from './individual'
 
 export interface ApplicantChildCustodyInformation {
