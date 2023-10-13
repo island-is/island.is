@@ -108,6 +108,8 @@ components:
           type: string
     OldAgePension:
       properties:
+        applicationId:
+          type: string
         period:
           $ref: '#/components/schemas/Period'
         comment: 

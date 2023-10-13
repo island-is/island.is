@@ -41,6 +41,7 @@ export const transformApplicationToOldAgePensionDTO = (
   } = getApplicationAnswers(application.answers)
 
   const oldAgePensionDTO: OldAgePension = {
+    applicationId: application.id,
     period: {
       year: +selectedYear,
       month: getMonthNumber(selectedMonth),
