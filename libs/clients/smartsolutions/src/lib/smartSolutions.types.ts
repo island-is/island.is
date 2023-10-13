@@ -110,12 +110,12 @@ export interface ListTemplatesResponseData {
 }
 
 export interface VoidPassResponseData {
-  voidPass: boolean
+  voidUniquePass: boolean
 }
 export interface UnvoidPassResponseData {
   unvoidPass: boolean
 }
 
 export interface DeletePassResponseData {
-  deletePass: boolean
+  deleteUniquePass: boolean
 }
