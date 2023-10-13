@@ -101,8 +101,8 @@ export const AccordionSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
               <ActionCard
                 heading={item.title}
                 text={
-                  (item.content?.[0] as Html)?.document?.content[0]?.content[0]
-                    ?.value
+                  (item.content?.[0] as Html)?.document?.content?.[0]
+                    ?.content?.[0]?.value
                 }
                 cta={{
                   label: item.link?.text ?? 'Default',
@@ -130,8 +130,8 @@ export const AccordionSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
                 href={item.link?.url}
                 heading={item.title}
                 text={
-                  (item.content?.[0] as Html)?.document?.content[0]?.content[0]
-                    ?.value
+                  (item.content?.[0] as Html)?.document?.content?.[0]
+                    ?.content?.[0]?.value
                 }
               />
             </Box>
