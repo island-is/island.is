@@ -41,9 +41,7 @@ export class CitizenshipService extends BaseTemplateApiService {
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const answers = application.answers as CitizenshipAnswers
-
-      const chargeItemCodes = getChargeItemCodes(answers)
+      const chargeItemCodes = getChargeItemCodes()
 
       const result = this.sharedTemplateAPIService.createCharge(
         auth,
