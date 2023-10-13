@@ -3,7 +3,8 @@ import { OrganizationPage } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { Box, Text } from '@island.is/island-ui/core'
 import * as styles from './RettindagaeslaFatladsFolksHeader.css'
-import { useIsMobile } from './helpers'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 interface Props {
   organizationPage: OrganizationPage
@@ -11,13 +12,14 @@ interface Props {
 
 const RettindagaeslaFatladsFolksHeader = ({ organizationPage }: Props) => {
   const { linkResolver } = useLinkResolver()
-  const isMobile = useIsMobile()
+  const { width } = useWindowSize()
+  const isMobileScreenWidth = width < theme.breakpoints.lg
 
   return (
     <div className={styles.headerBg}>
       <div className={styles.contentContainer}>
         <div className={styles.innerContentContainer}>
-          {!isMobile ? (
+          {!isMobileScreenWidth ? (
             <>
               <Box
                 alignItems="center"
