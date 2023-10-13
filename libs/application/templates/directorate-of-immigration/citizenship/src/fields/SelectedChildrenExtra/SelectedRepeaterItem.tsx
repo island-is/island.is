@@ -152,10 +152,6 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
                 readOnly={readOnlyFields}
                 onChange={debounce((v) => {
                   setNationalIdInput(v.target.value.replace(/\W/g, ''))
-                  // setValue(
-                  //   `selectedChildrenExtraData[${index}].otherParentNationalId`,
-                  //   v.target.value.replace(/\W/g, ''),
-                  // )
                 })}
                 loading={queryLoading}
                 // error={errors && getErrorViaPath(errors, nationaIdField)}
