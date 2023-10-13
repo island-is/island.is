@@ -165,7 +165,7 @@ export class LicenseService {
         expiryDate,
         nationalId,
         payload,
-        requestId,
+        inputData.requestId,
       )
     } else {
       updateRes = await this.pullUpdateLicense(service, nationalId)
