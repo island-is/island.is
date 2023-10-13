@@ -30,4 +30,5 @@ export interface DrivingLicenseFakeData {
   qualityPhoto?: YesOrNo
   currentLicense?: FakeCurrentLicense
   remarks?: YesOrNo
+  howManyDaysHaveYouLivedInIceland: string | number
 }
