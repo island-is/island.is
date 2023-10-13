@@ -17,6 +17,7 @@ import {
 import { core } from '@island.is/judicial-system-web/messages'
 import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
 import {
+  BlueBox,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -122,7 +123,7 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
               </Text>
             </Box>
           </Box>
-          <Box background="blue100" padding={3}>
+          <BlueBox>
             <Box marginBottom={2}>
               <RadioButton
                 name="case-decision"
@@ -209,7 +210,7 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
                 large
               />
             </Box>
-            <Box marginBottom={2}>
+            <Box>
               <RadioButton
                 name="case-decision"
                 id="case-decision-unlabeling"
@@ -225,7 +226,7 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
                 large
               />
             </Box>
-          </Box>
+          </BlueBox>
         </Box>
         <Box marginBottom={5}>
           <Text as="h3" variant="h3" marginBottom={3}>
@@ -235,6 +236,7 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
             label={formatMessage(strings.conclusionHeading)}
             name="rulingConclusion"
             value={workingCase.appealConclusion || ''}
+            placeholder={formatMessage(strings.conclusionPlaceholder)}
             onChange={(event) => {
               removeTabsValidateAndSet(
                 'appealConclusion',
