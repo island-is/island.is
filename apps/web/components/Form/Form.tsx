@@ -367,7 +367,7 @@ export const Form = ({ form, namespace }: FormProps) => {
     if (data['name']) {
       firstLine += `Sendandi: ${data['name']}`
       if (data['email']) {
-        firstLine += `<${data['email']}`
+        firstLine += ` <${data['email']}>`
       }
       firstLine += '\n\n'
     } else if (data['email']) {
