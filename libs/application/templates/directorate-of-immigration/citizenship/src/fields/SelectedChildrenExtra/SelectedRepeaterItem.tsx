@@ -25,7 +25,7 @@ import {
 import { information, personal, selectChildren } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { HiddenTextInput } from '../HiddenTextInput'
-import { debounce } from 'lodash'
+import debounce from 'lodash/debounce'
 import { ChildrenOfApplicant } from '../../shared'
 import { getSelectedCustodyChild } from '../../utils'
 
