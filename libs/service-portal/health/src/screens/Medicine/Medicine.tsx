@@ -2,19 +2,33 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Tabs, Text } from '@island.is/island-ui/core'
 import { IntroHeader } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { MedicinePurchase } from './TabPanes/MedicinePurchase'
 import { MedicineTabs, CONTENT_GAP } from './constants'
 import { MedicineCalulator } from './TabPanes/MedicineCalculator'
 import { MedicineLicence } from './TabPanes/MedicineLicence'
+import { useLocation } from 'react-router-dom'
 
 const Medicine = () => {
   useNamespaces('sp.health')
 
+  const { hash } = useLocation()
+
   const { formatMessage } = useLocale()
   const [selectedTab, setSelectedTab] = useState<MedicineTabs>(
-    MedicineTabs.BILLS,
+    hash in MedicineTabs ? (hash as MedicineTabs) : MedicineTabs.BILLS,
   )
+
+  // this ugly code is neccesary to make reakit tab component update its internal state
+  const [forceReRender, setForceReRender] = useState(false)
+
+  useEffect(() => {
+    setForceReRender(true)
+  }, [selectedTab])
+
+  useEffect(() => {
+    if (forceReRender) setForceReRender(false)
+  }, [forceReRender])
 
   const tabs = [
     {
@@ -34,20 +48,31 @@ const Medicine = () => {
     },
   ]
 
+  const renderTabs = (selectedTab: MedicineTabs) => {
+    return (
+      !forceReRender && (
+        <Tabs
+          label={formatMessage(messages.chooseTherapy)}
+          tabs={tabs}
+          contentBackground="transparent"
+          selected={selectedTab}
+          size="xs"
+          onChange={(id) => {
+            if (id !== selectedTab) id !== selectedTab && setForceReRender(true)
+            setSelectedTab(id as MedicineTabs)
+          }}
+        />
+      )
+    )
+  }
+
   return (
     <Box>
       <IntroHeader
         title={formatMessage(messages.medicineTitle)}
         intro={formatMessage(messages.medicineTitleIntro)}
       />
-      <Tabs
-        label={formatMessage(messages.chooseTherapy)}
-        tabs={tabs}
-        contentBackground="transparent"
-        selected={selectedTab}
-        size="xs"
-        onChange={(id) => setSelectedTab(id as MedicineTabs)}
-      />
+      {renderTabs(selectedTab)}
     </Box>
   )
 }

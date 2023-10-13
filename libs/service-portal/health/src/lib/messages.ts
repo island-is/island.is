@@ -5,6 +5,10 @@ export const messages = defineMessages({
     id: 'sp.health:see-more',
     defaultMessage: 'Sjá nánar',
   },
+  seeCertificate: {
+    id: 'sp.health:see-certificate',
+    defaultMessage: 'Sjá vottorð',
+  },
   statusOfRights: {
     id: 'sp.health:status-of-rights',
     defaultMessage: 'Réttindastaða',

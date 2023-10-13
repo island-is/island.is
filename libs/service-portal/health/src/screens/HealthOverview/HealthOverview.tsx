@@ -121,6 +121,15 @@ export const HealthOverview = () => {
                 labelColumnSpan={['5/12']}
                 valueColumnSpan={['5/12']}
                 editColumnSpan={['2/12']}
+                editLink={
+                  insuranceFile && insuranceFile?.data
+                    ? {
+                        external: true,
+                        url: getDocumentLink(insuranceFile?.data),
+                        title: messages.seeCertificate,
+                      }
+                    : undefined
+                }
               />
               <UserInfoLine
                 label={formatMessage(messages.status)}
