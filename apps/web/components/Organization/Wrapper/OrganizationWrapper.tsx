@@ -541,7 +541,7 @@ export const OrganizationFooter: React.FC<
         />
       )
       break
-    case 'rettindagaesla-fotlun':
+    case 'rettindagaesla-fatlads-folks':
     case 'disability-rights-protection':
       OrganizationFooterComponent = (
         <>
