@@ -7,6 +7,7 @@ import {
   ActionCard,
   Box,
   BoxProps,
+  CategoryCard,
   Text,
 } from '@island.is/island-ui/core'
 import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
@@ -118,6 +119,20 @@ export const AccordionSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
                     }
                   },
                 }}
+              />
+            </Box>
+          ))}
+
+        {slice.type === 'category_card' &&
+          (slice.accordionItems ?? []).map((item, index) => (
+            <Box marginTop={index ? 4 : 0} key={item.id}>
+              <CategoryCard
+                href={item.link?.url}
+                heading={item.title}
+                text={
+                  (item.content?.[0] as Html)?.document?.content[0]?.content[0]
+                    ?.value
+                }
               />
             </Box>
           ))}
