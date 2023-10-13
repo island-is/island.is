@@ -23,7 +23,7 @@ export const renderHelmValueFileContent = async (
 ) => {
   return dumpServiceHelm(
     env,
-    await renderHelmServiceFile(env, dockerTag, habitat, services, withMocks),
+    await renderHelmServiceFile(env, habitat, services, withMocks, dockerTag),
   )
 }
 
@@ -58,7 +58,6 @@ export const renderHelmServices = async (
       services: services,
       outputFormat: renderers.helm,
       env: env,
-      dockerTag: dockerTag,
     }),
     runtime: runtime,
   }

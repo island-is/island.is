@@ -31,7 +31,7 @@ interface Arguments {
   feature: string
   images: string
   chart: ChartName
-  dockerTag?: string
+  dockertag?: string
   output?: string
   jobImage?: string
   withMocks?: 'true' | 'false'
@@ -69,8 +69,8 @@ const parseArguments = (argv: Arguments) => {
   const images = argv.images.split(',') // Docker images that have changed
   const envName = 'dev'
   const chart = argv.chart as ChartName
-  const dockerTag = argv.dockerTag
-
+  const dockertag = argv.dockertag
+  console.log(`dockertag after parsing: ${dockertag}`)
   const env = {
     ...Envs[Deployments[chart][envName]],
     feature: feature,
@@ -85,7 +85,7 @@ const parseArguments = (argv: Arguments) => {
         (images.length === 1 && images[0] === '*') ||
         images?.includes(h.serviceDef.image ?? h.serviceDef.name),
     )
-  return { habitat, affectedServices, env, dockerTag }
+  return { habitat, affectedServices, env, dockertag }
 }
 
 const buildIngressComment = (data: HelmService[]): string =>
@@ -121,7 +121,7 @@ yargs(process.argv.slice(2))
     'get helm values file',
     () => {},
     async (argv: Arguments) => {
-      const { habitat, affectedServices, env, dockerTag } = parseArguments(argv)
+      const { habitat, affectedServices, env, dockertag } = parseArguments(argv)
       const { included: featureYaml } = await getFeatureAffectedServices(
         habitat,
         affectedServices.slice(),
@@ -134,7 +134,7 @@ yargs(process.argv.slice(2))
           habitat,
           featureYaml,
           (argv.withMocks ?? 'false') === 'true' ? 'with-mocks' : 'no-mocks',
-          dockerTag,
+          dockertag,
         ),
         argv.output,
       )
@@ -189,7 +189,7 @@ yargs(process.argv.slice(2))
     dockertag: {
       type: 'string',
       description: 'Docker tag to use for the feature deployment',
-      demandOption: false,
+      demandOption: true,
     },
     feature: {
       type: 'string',

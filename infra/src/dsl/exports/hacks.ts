@@ -19,10 +19,16 @@ export function hacks(
     applicationSystemAPI.serviceDef.env[GRAPHQL_API_URL_ENV_VAR_NAME] = ref(
       (h) => `http://${h.svc(habitat.find((s) => s.name() === 'api')!)}`,
     )
-    if (dockerTag) {
+  }
+   if (dockerTag) {
       for (const serviceDef of fullSetOfServices) {
+      if (!serviceDef.serviceDef.image) {
+        serviceDef.serviceDef.image = `${serviceDef.serviceDef.name}:${dockerTag}`
+      }
+      else
+      {
         serviceDef.serviceDef.image = `${serviceDef.serviceDef.image}:${dockerTag}`
       }
     }
-  }
+}
 }

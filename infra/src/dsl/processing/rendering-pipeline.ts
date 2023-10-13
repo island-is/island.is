@@ -44,13 +44,11 @@ export const generateOutput = async <T extends ServiceOutputType>(options: {
   services: ServiceBuilder<any>[] | ServiceBuilder<any>
   outputFormat: OutputFormat<T>
   env: EnvironmentConfig
-  dockerTag?: string
 }) => {
   const runtime = options.runtime
   const services = options.services
   const outputFormat = options.outputFormat
   const env = options.env
-  const dockerTag = options.dockerTag
   const preparedServices = prepareServicesForEnv({
     services: services,
     env: env,
