@@ -5,7 +5,9 @@ export class RevokeLicenseResponse {
   @ApiProperty({ description: 'Has the license been revoked?' })
   @IsBoolean()
   readonly revokeSuccess!: boolean
+}
 
+export class RevokeLicenseRequest {
   @IsOptional()
   @ApiProperty({ description: 'Optional request id for logging purposes' })
   @IsString()

@@ -12,6 +12,7 @@ import {
   UpdateLicenseResponse,
   VerifyLicenseResponse,
   RevokeLicenseResponse,
+  RevokeLicenseRequest,
 } from './dto'
 import { Pass, PassDataInput, Result } from '@island.is/clients/smartsolutions'
 import { ErrorType, LicenseId } from './license.types'
@@ -92,6 +93,7 @@ export class LicenseService {
     expirationDate: string,
     nationalId: string,
     payload?: string,
+    requestId?: string,
   ): Promise<Result<Pass | undefined>> {
     let updatePayload: PassDataInput = {
       expirationDate,
@@ -104,6 +106,8 @@ export class LicenseService {
       } catch (e) {
         this.logger.warn('Unable to parse payload', {
           category: LOG_CATEGORY,
+          updateType: 'push',
+          requestId,
         })
         throw this.getException(
           'BadRequest',
@@ -146,6 +150,8 @@ export class LicenseService {
       if (!expiryDate) {
         this.logger.warn('Invalid request body, missing expiryDate', {
           category: LOG_CATEGORY,
+          requestId: inputData.requestId,
+          updateType: inputData.licenseUpdateType,
         })
 
         throw this.getException(
@@ -159,12 +165,18 @@ export class LicenseService {
         expiryDate,
         nationalId,
         payload,
+        requestId,
       )
     } else {
       updateRes = await this.pullUpdateLicense(service, nationalId)
     }
 
     if (updateRes.ok) {
+      this.logger.debug('update license succeeded', {
+        category: LOG_CATEGORY,
+        requestId: inputData.requestId,
+        updateType: inputData.licenseUpdateType,
+      })
       return {
         updateSuccess: true,
         data: updateRes.data,
@@ -184,16 +196,22 @@ export class LicenseService {
   async revokeLicense(
     licenseId: LicenseId,
     nationalId: string,
+    inputData: RevokeLicenseRequest,
   ): Promise<RevokeLicenseResponse> {
     const service = await this.getClientByLicenseId(licenseId)
     const revokeRes = await service.revoke(nationalId)
 
     if (revokeRes.ok) {
+      this.logger.debug('revoke license succeeded', {
+        category: LOG_CATEGORY,
+        requestId: inputData.requestId,
+      })
       return { revokeSuccess: revokeRes.data.success }
     }
 
-    this.logger.error('Update license failed', {
+    this.logger.error('revoke license failed', {
       category: LOG_CATEGORY,
+      requestId: inputData.requestId,
       ...revokeRes.error,
     })
     throw this.getException(
@@ -219,6 +237,10 @@ export class LicenseService {
     const verifyRes = await service.verify(inputData.barcodeData)
 
     if (verifyRes.ok) {
+      this.logger.debug('update license succeeded', {
+        category: LOG_CATEGORY,
+        requestId: inputData.requestId,
+      })
       return {
         valid: verifyRes.data.valid,
         passIdentity: verifyRes.data.passIdentity,
