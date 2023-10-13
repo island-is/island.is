@@ -17,7 +17,7 @@
       "error",
       {
         "groups": [
-          // Packages `react` related packages come first, followed by all external imports.
+          // React related packages come first, followed by all external imports.
           ["^react", "^\\w", "^@(?!island).+"],
           // Then island.is packages.
           ["^(@island.is).*"],
