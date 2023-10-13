@@ -1,7 +1,4 @@
-import {
-  ApplicantChildCustodyInformation,
-  FieldBaseProps,
-} from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { FC } from 'react'
 import DescriptionText from '../../components/DescriptionText'
@@ -27,8 +24,6 @@ export const DocumentReview: FC<Props> = ({
     application.externalData,
     application.answers,
   )
-
-  console.log('documentsReview', answers)
 
   return (
     <SummaryBlock editAction={() => goToScreen?.(route)}>

@@ -5,16 +5,13 @@ import {
 import { AlertMessage, GridContainer, LinkV2 } from '@island.is/island-ui/core'
 import { FC } from 'react'
 import * as styles from './ChildrenInformationBoxWithLink.css'
-import { MessageDescriptor } from 'react-intl'
 import DescriptionText from '../../components/DescriptionText'
 import { useLocale } from '@island.is/localization'
 import { selectChildren } from '../../lib/messages'
 import { getValueViaPath } from '@island.is/application/core'
 import kennitala from 'kennitala'
-import { Citizenship } from '../../lib/dataSchema'
 
 export const ChildrenInformationBoxWithLink: FC<FieldBaseProps> = ({
-  field,
   application,
 }) => {
   const { formatMessage } = useLocale()

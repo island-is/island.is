@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { ChildrenOfApplicant } from '../../shared'
 import { NO, YES, getValueViaPath } from '@island.is/application/core'
 import { SelectedRepeaterItem } from './SelectedRepeaterItem'
 import { getSelectedCustodyChild } from '../../utils'
+import { FieldBaseProps } from '@island.is/application/types'
 
 const initialCombinedChild = {
   hasFullCustody: YES,
@@ -11,7 +12,7 @@ const initialCombinedChild = {
   otherParentName: '',
 }
 
-export const MoreChildInfo = ({ field, application, error }: any) => {
+export const MoreChildInfo: FC<FieldBaseProps> = ({ field, application }) => {
   const { answers, externalData } = application
 
   const [readOnlyFields, setReadOnlyFields] = useState(false)
@@ -20,13 +21,11 @@ export const MoreChildInfo = ({ field, application, error }: any) => {
     Array<ChildrenOfApplicant>
   >([])
 
-  const [children, setChildren] = useState<string[]>(
+  const [children] = useState<string[]>(
     getValueViaPath(answers, 'selectedChildren', []) as string[],
   )
 
-  const [childrenExtraData, setChildrenExtraData] = useState<
-    ChildrenOfApplicant[]
-  >(
+  const [childrenExtraData] = useState<ChildrenOfApplicant[]>(
     getValueViaPath(
       answers,
       'selectedChildrenExtraData',
@@ -64,7 +63,7 @@ export const MoreChildInfo = ({ field, application, error }: any) => {
       return predefinedChild
     })
     setCombinedChildren(mappedChildren)
-  }, [])
+  }, [answers, children, childrenExtraData, externalData])
 
   return combinedChildren.map((child, index) => {
     return (
@@ -72,7 +71,6 @@ export const MoreChildInfo = ({ field, application, error }: any) => {
         index={index}
         field={field}
         application={application}
-        // errors={errors}
         readOnlyFields={readOnlyFields}
         repeaterField={child}
       />

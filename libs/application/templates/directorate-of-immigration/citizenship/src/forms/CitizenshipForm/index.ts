@@ -1,6 +1,6 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes, Section } from '@island.is/application/types'
-import { confirmation, externalData, review } from '../../lib/messages'
+import { confirmation, externalData } from '../../lib/messages'
 import { InformationSection } from './InformationSection'
 import { PaymentSection } from './PaymentSection'
 import { PersonalSection } from './PersonalSection'

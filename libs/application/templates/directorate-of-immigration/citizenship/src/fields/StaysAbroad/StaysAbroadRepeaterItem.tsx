@@ -23,11 +23,12 @@ import DescriptionText from '../../components/DescriptionText'
 import { getValueViaPath } from '@island.is/application/core'
 import { Country } from '@island.is/clients/directorate-of-immigration'
 import { getErrorViaPath } from '@island.is/application/core'
+import { CountryOfVisit } from '../../shared'
 
 interface Props {
   id: string
   index: number
-  repeaterField: any
+  repeaterField: CountryOfVisit
   handleRemove: (index: number) => void
   itemNumber: number
   addDataToCountryList: (field: string, value: string, index: number) => void
@@ -71,7 +72,7 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
 
   useEffect(() => {
     setValue(wasRemovedField, repeaterField.wasRemoved)
-  }, [repeaterField.wasRemoved, setValue])
+  }, [repeaterField.wasRemoved, setValue, wasRemovedField])
 
   return (
     <Box

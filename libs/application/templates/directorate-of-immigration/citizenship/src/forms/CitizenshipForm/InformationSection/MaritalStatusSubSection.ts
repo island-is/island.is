@@ -146,7 +146,7 @@ export const MaritalStatusSubSection = buildSubSection({
 
             return `${individual?.address?.streetAddress}, ${individual?.address?.postalCode} ${individual?.address?.city}`
           },
-          condition: (_, externalData: any) => {
+          condition: (_, externalData) => {
             const individual = getValueViaPath(
               externalData,
               'individual.data',
@@ -179,7 +179,7 @@ export const MaritalStatusSubSection = buildSubSection({
 
             return `${spouseDetails?.spouse?.address?.streetAddress}, ${spouseDetails?.spouse?.address?.postalCode} ${spouseDetails?.spouse?.address?.city}`
           },
-          condition: (_, externalData: any) => {
+          condition: (_, externalData) => {
             const individual = getValueViaPath(
               externalData,
               'individual.data',
@@ -202,7 +202,7 @@ export const MaritalStatusSubSection = buildSubSection({
           title: information.labels.maritalStatus.explanationTitle,
           titleVariant: 'h5',
           space: 'gutter',
-          condition: (_, externalData: any) => {
+          condition: (_, externalData) => {
             const individual = getValueViaPath(
               externalData,
               'individual.data',
@@ -226,7 +226,7 @@ export const MaritalStatusSubSection = buildSubSection({
           backgroundColor: 'blue',
           width: 'full',
           variant: 'textarea',
-          condition: (_, externalData: any) => {
+          condition: (_, externalData) => {
             const individual = getValueViaPath(
               externalData,
               'individual.data',

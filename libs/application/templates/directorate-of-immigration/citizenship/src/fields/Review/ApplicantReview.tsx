@@ -19,7 +19,6 @@ export const ApplicantReview: FC<Props> = ({
   goToScreen,
   route,
 }) => {
-  console.log('application', application)
   const answers = application.answers as Citizenship
   const { formatMessage } = useLocale()
 

@@ -1,5 +1,8 @@
-import { NationalRegistryParent } from '@island.is/application/types'
-import { useEffect, useState } from 'react'
+import {
+  FieldBaseProps,
+  NationalRegistryParent,
+} from '@island.is/application/types'
+import { FC, useEffect, useState } from 'react'
 import { information } from '../../lib/messages'
 import { Box } from '@island.is/island-ui/core'
 import { RadioController } from '@island.is/shared/form-fields'
@@ -8,28 +11,24 @@ import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import { ParentsToApplicant } from '../../shared'
 import { ParentRepeaterItem } from './ParentRepeaterItem'
 
-export const Parents = ({ field, application, errors }: any) => {
-  const {
-    externalData: { nationalRegistryParents },
-    answers,
-  } = application
+export const Parents: FC<FieldBaseProps> = ({ field, application, errors }) => {
+  const { externalData, answers } = application
+
+  const nationalRegistryParents = externalData.nationalRegistryParents as {
+    data: NationalRegistryParent[]
+  }
 
   const [hasValidParents, setHasValidParents] = useState(
     getValueViaPath(answers, 'parentInformation.hasValidParents', NO) as string,
   )
 
   //This is used to determine weather parent information comes from answer or national registry, to determine if the column is read only or not
-  let parentsFoundFromAnswer: '0' | '1' | '2' =
-    nationalRegistryParents.data.length == 1
+  const parentsFoundFromAnswer: '0' | '1' | '2' =
+    nationalRegistryParents.data.length === 1
       ? '1'
       : nationalRegistryParents.data.length === 2
       ? '2'
       : '0'
-
-  const defaultParents = [
-    { nationalId: '', givenName: '', familyName: '', wasRemoved: 'false' },
-    { nationalId: '', givenName: '', familyName: '', wasRemoved: 'true' },
-  ]
 
   const [parents, setParents] = useState<ParentsToApplicant[]>(
     getValueViaPath(
@@ -44,9 +43,14 @@ export const Parents = ({ field, application, errors }: any) => {
   const { formatMessage } = useLocale()
 
   useEffect(() => {
-    let validParents = parents.filter(
+    const validParents = parents.filter(
       (x) => x.nationalId && x.nationalId !== '',
     )
+
+    const defaultParents = [
+      { nationalId: '', givenName: '', familyName: '', wasRemoved: 'false' },
+      { nationalId: '', givenName: '', familyName: '', wasRemoved: 'true' },
+    ]
 
     //if the user has answered YES previously and is returning to the step and has one valid parent from previous answers
     //set the valid parent and set the second as default wasRemoved=true
@@ -58,7 +62,7 @@ export const Parents = ({ field, application, errors }: any) => {
       //set two parents with wasRemoved = true to pass validation but also to exist if user toggles to Yes
       setParents([defaultParents[1], defaultParents[1]])
     }
-  }, [])
+  }, [hasValidParents, parents])
 
   const addParentToApplication = (newIndex: number) => {
     setParents(

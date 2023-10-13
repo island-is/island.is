@@ -3,14 +3,15 @@ import { CheckboxFormField } from '@island.is/application/ui-fields'
 import { selectChildren } from '../../lib/messages'
 import {
   ApplicantChildCustodyInformation,
+  FieldBaseProps,
   FieldComponents,
   FieldTypes,
 } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
-import { useState } from 'react'
+import { FC, useState } from 'react'
 import { MAX_CNT_APPLICANTS } from '../../shared'
 
-export const SelectChildren = ({ field, application, error }: any) => {
+export const SelectChildren: FC<FieldBaseProps> = ({ field, application }) => {
   const { formatMessage } = useLocale()
 
   const {

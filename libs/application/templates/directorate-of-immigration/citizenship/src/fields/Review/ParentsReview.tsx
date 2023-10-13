@@ -42,7 +42,7 @@ export const ParentsReview: FC<Props> = ({
                     </Text>
                   </GridColumn>
                 )
-              } else return
+              } else return null
             })}
         </GridRow>
       </Box>

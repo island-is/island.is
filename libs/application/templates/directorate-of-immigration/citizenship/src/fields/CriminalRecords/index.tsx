@@ -5,8 +5,10 @@ import { supportingDocuments } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { getValueViaPath } from '@island.is/application/core'
 import { Country } from '@island.is/clients/directorate-of-immigration'
+import { FieldBaseProps } from '@island.is/application/types'
+import { FC } from 'react'
 
-export const CriminalRecords = ({ field, application, error }: any) => {
+export const CriminalRecords: FC<FieldBaseProps> = ({ field, application }) => {
   const answers = application.answers as Citizenship
   const countryList = answers?.countriesOfResidence?.selectedAbroadCountries
 

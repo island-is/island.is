@@ -4,17 +4,15 @@ import {
   buildDescriptionField,
   buildCustomField,
   buildFileUploadField,
-  YES,
 } from '@island.is/application/core'
 import { supportingDocuments } from '../../../lib/messages'
-import { Answer, Application, FormValue } from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
 import { Citizenship } from '../../../lib/dataSchema'
 import {
   getSelectedIndividualAge,
   getSelectedIndividualName,
   getSelectedCustodyChildren,
 } from '../../../utils'
-import * as kennitala from 'kennitala'
 import { Routes } from '../../../lib/constants'
 
 const FILE_SIZE_LIMIT = 10000000

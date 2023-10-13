@@ -10,7 +10,6 @@ import {
 } from '@island.is/application/core'
 import { supportingDocuments } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
-import { getSelectedIndividualName } from '../../../utils'
 import {
   Country,
   TravelDocumentType,

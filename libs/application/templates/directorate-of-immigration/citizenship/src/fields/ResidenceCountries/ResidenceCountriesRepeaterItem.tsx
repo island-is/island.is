@@ -4,7 +4,7 @@ import {
   FieldTypes,
   GenericFormField,
 } from '@island.is/application/types'
-import { Box, Button, Option } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -49,7 +49,7 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
 
   useEffect(() => {
     setValue(wasRemovedField, repeaterField.wasRemoved)
-  }, [repeaterField.wasRemoved, setValue])
+  }, [repeaterField.wasRemoved, setValue, wasRemovedField])
 
   return (
     <Box

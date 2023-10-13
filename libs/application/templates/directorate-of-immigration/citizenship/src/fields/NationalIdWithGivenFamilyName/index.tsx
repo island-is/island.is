@@ -15,7 +15,6 @@ import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 
 interface Props {
   customId?: string
-  // onNameChange?: (s: string) => void
   disabled?: boolean
   readOnly?: boolean
   isRequired?: boolean
@@ -28,7 +27,6 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
   customId = '',
   field,
   application,
-  // onNameChange,
   itemNumber,
   readOnly,
   disabled,
@@ -52,21 +50,23 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
   const nationaIdField = `${usedId}.nationalId`
   const wasRemovedField = `${usedId}.wasRemoved`
 
-  const [getIdentity, { data, loading: queryLoading, error: queryError }] =
-    useLazyQuery<Query, { input: IdentityInput }>(
-      gql`
-        ${IDENTITY_QUERY}
-      `,
-      {
-        onCompleted: (data) => {
-          setValue(givenNameField, data.identity?.givenName ?? undefined)
-          setValue(familyNameField, data.identity?.familyName ?? undefined)
-          const currentName = `${data.identity?.givenName} ${data.identity?.familyName}`
-          setCurrentName(currentName)
-          setValue(currentNameField, currentName)
-        },
+  const [getIdentity, { loading: queryLoading }] = useLazyQuery<
+    Query,
+    { input: IdentityInput }
+  >(
+    gql`
+      ${IDENTITY_QUERY}
+    `,
+    {
+      onCompleted: (data) => {
+        setValue(givenNameField, data.identity?.givenName ?? undefined)
+        setValue(familyNameField, data.identity?.familyName ?? undefined)
+        const currentName = `${data.identity?.givenName} ${data.identity?.familyName}`
+        setCurrentName(currentName)
+        setValue(currentNameField, currentName)
       },
-    )
+    },
+  )
 
   useEffect(() => {
     setValue(wasRemovedField, repeaterField.wasRemoved)
@@ -76,7 +76,13 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
       )
       setValue(nationaIdField, repeaterField.nationalId)
     }
-  }, [repeaterField.wasRemoved, setValue])
+  }, [
+    nationaIdField,
+    repeaterField.nationalId,
+    repeaterField.wasRemoved,
+    setValue,
+    wasRemovedField,
+  ])
 
   useEffect(() => {
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
@@ -111,13 +117,23 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
     } else {
       setValue(wasRemovedField, 'false')
     }
-  }, [nationalIdInput, getIdentity])
+  }, [
+    nationalIdInput,
+    getIdentity,
+    application.answers,
+    givenNameField,
+    familyNameField,
+    isRequired,
+    setValue,
+    wasRemovedField,
+    currentNameField,
+  ])
 
   useEffect(() => {
     if (currentName !== '') {
       addParentToApplication(itemNumber)
     }
-  }, [currentName])
+  }, [addParentToApplication, currentName, itemNumber])
 
   return (
     <Box>

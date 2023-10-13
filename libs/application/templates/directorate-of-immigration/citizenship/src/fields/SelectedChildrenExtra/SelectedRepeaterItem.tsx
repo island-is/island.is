@@ -41,7 +41,7 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
   repeaterField,
   ...props
 }) => {
-  const { application, errors, field } = props
+  const { application, field } = props
   const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -61,19 +61,21 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
   )
   const currentNameField = `selectedChildrenExtraData[${index}].otherParentName`
 
-  const [getIdentity, { data, loading: queryLoading, error: queryError }] =
-    useLazyQuery<Query, { input: IdentityInput }>(
-      gql`
-        ${IDENTITY_QUERY}
-      `,
-      {
-        onCompleted: (data) => {
-          const currentName = `${data.identity?.givenName} ${data.identity?.familyName}`
-          setCurrentName(currentName)
-          setValue(currentNameField, currentName)
-        },
+  const [getIdentity, { loading: queryLoading }] = useLazyQuery<
+    Query,
+    { input: IdentityInput }
+  >(
+    gql`
+      ${IDENTITY_QUERY}
+    `,
+    {
+      onCompleted: (data) => {
+        const currentName = `${data.identity?.givenName} ${data.identity?.familyName}`
+        setCurrentName(currentName)
+        setValue(currentNameField, currentName)
       },
-    )
+    },
+  )
 
   useEffect(() => {
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
@@ -106,7 +108,7 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
       <RadioController
         id={`selectedChildrenExtraData[${index}].hasFullCustody`}
         split="1/2"
-        onSelect={(value) => {
+        onSelect={() => {
           setShowMoreQuestions(!showMoreQuestions)
         }}
         defaultValue={repeaterField.hasFullCustody === 'yes' ? YES : NO}
@@ -154,7 +156,6 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
                   setNationalIdInput(v.target.value.replace(/\W/g, ''))
                 })}
                 loading={queryLoading}
-                // error={errors && getErrorViaPath(errors, nationaIdField)}
               />
             </GridColumn>
             <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
@@ -176,7 +177,6 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
                 defaultValue={currentBirthDate}
                 id={`selectedChildrenExtraData[${index}].otherParentBirtDate`}
                 label={formatMessage(selectChildren.extraInformation.dateLabel)}
-                // error={errors && getErrorViaPath(errors, dateFromField)}
                 onChange={(value) => setCurrentBirthDate(value as string)}
               />
             </GridColumn>
