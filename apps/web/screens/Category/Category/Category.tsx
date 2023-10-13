@@ -355,31 +355,30 @@ const Category: Screen<CategoryProps> = ({
                   )}
                   <Stack space={2}>
                     {sortedArticles.map((article) => {
-                        return (
-                          <FocusableBox key={article.slug} borderRadius="large">
-                            <TopicCard
-                              href={
-                                linkResolver(
-                                  article.__typename?.toLowerCase() as LinkType,
-                                  [article.slug],
-                                ).href
-                              }
-                              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                              // @ts-ignore make web strict
-                              tag={
-                                hasProcessEntries(article as Article) &&
-                                n(
-                                  article.processEntryButtonText || 'application',
-                                  'Umsókn',
-                                )
-                              }
-                            >
-                              {article.title}
-                            </TopicCard>
-                          </FocusableBox>
-                        )
-                      },
-                    )}
+                      return (
+                        <FocusableBox key={article.slug} borderRadius="large">
+                          <TopicCard
+                            href={
+                              linkResolver(
+                                article.__typename?.toLowerCase() as LinkType,
+                                [article.slug],
+                              ).href
+                            }
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore make web strict
+                            tag={
+                              hasProcessEntries(article as Article) &&
+                              n(
+                                article.processEntryButtonText || 'application',
+                                'Umsókn',
+                              )
+                            }
+                          >
+                            {article.title}
+                          </TopicCard>
+                        </FocusableBox>
+                      )
+                    })}
                   </Stack>
                 </React.Fragment>
               )

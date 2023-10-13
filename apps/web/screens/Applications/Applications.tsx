@@ -186,24 +186,23 @@ const Applications: Screen<CategoryProps> = ({
     }
   }
 
-  const searchResultsItems = (searchResults.items as Array<SearchEntryType>).map(
-    (item) => ({
-      typename: item.__typename,
-      title: item.title,
-      parentTitle: item.parent?.title,
-      description:
-        item.intro ?? item.description ?? item.parent?.intro ?? item.subtitle,
-      link: getItemLink(item),
-      categorySlug: item.category?.slug ?? item.parent?.category?.slug,
-      category: item.category ?? item.parent?.category,
-      organizationTitle:
-        item.organization?.length && item.organization[0].title,
-      hasProcessEntry: item.__typename === 'Article' && hasProcessEntries(item),
-      processEntry: item.processEntry,
-      group: item.group,
-      ...getItemImages(item),
-    }),
-  )
+  const searchResultsItems = (
+    searchResults.items as Array<SearchEntryType>
+  ).map((item) => ({
+    typename: item.__typename,
+    title: item.title,
+    parentTitle: item.parent?.title,
+    description:
+      item.intro ?? item.description ?? item.parent?.intro ?? item.subtitle,
+    link: getItemLink(item),
+    categorySlug: item.category?.slug ?? item.parent?.category?.slug,
+    category: item.category ?? item.parent?.category,
+    organizationTitle: item.organization?.length && item.organization[0].title,
+    hasProcessEntry: item.__typename === 'Article' && hasProcessEntries(item),
+    processEntry: item.processEntry,
+    group: item.group,
+    ...getItemImages(item),
+  }))
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
   const noUncategorized = (item) => {
@@ -423,12 +422,7 @@ const Applications: Screen<CategoryProps> = ({
                 <T.Body>
                   {filteredItems.map(
                     (
-                      {
-                        link,
-                        title,
-                        organizationTitle,
-                        processEntry,
-                      },
+                      { link, title, organizationTitle, processEntry },
                       index,
                     ) => (
                       <T.Row key={index}>
@@ -457,7 +451,7 @@ const Applications: Screen<CategoryProps> = ({
                           </Box>
                         </T.Data>
                       </T.Row>
-                    )
+                    ),
                   )}
                 </T.Body>
               </T.Table>

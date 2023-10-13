@@ -1,6 +1,8 @@
 import { Article } from '@island.is/web/graphql/schema'
 
-type ArticleWithProcessEntryType = Partial<Pick<Article, 'processEntry' | 'body'>>
+type ArticleWithProcessEntryType = Partial<
+  Pick<Article, 'processEntry' | 'body'>
+>
 
 export const hasProcessEntries = (article: ArticleWithProcessEntryType) => {
   const hasMainProcessEntry =

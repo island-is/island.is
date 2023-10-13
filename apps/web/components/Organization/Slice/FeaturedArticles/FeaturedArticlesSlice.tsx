@@ -64,23 +64,29 @@ export const FeaturedArticlesSlice: React.FC<
               ? sortedArticles
               : slice.articles
             ).map((article) => {
-                const url = linkResolver('Article' as LinkType, [article.slug])
-                return (
-                  <FocusableBox key={article.slug} borderRadius="large" href={url.href}>
-                    <TopicCard
-                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                      // @ts-ignore make web strict
-                      tag={
-                        hasProcessEntries(article as Article) &&
-                        n(article.processEntryButtonText || 'application', 'Umsókn')
-                      }
-                    >
-                      {article.title}
-                    </TopicCard>
-                  </FocusableBox>
-                )
-              },
-            )}
+              const url = linkResolver('Article' as LinkType, [article.slug])
+              return (
+                <FocusableBox
+                  key={article.slug}
+                  borderRadius="large"
+                  href={url.href}
+                >
+                  <TopicCard
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore make web strict
+                    tag={
+                      hasProcessEntries(article as Article) &&
+                      n(
+                        article.processEntryButtonText || 'application',
+                        'Umsókn',
+                      )
+                    }
+                  >
+                    {article.title}
+                  </TopicCard>
+                </FocusableBox>
+              )
+            })}
           </Stack>
           {!!slice.link && (
             <Box display="flex" justifyContent="flexEnd" paddingTop={6}>

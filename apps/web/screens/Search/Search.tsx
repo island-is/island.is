@@ -343,22 +343,23 @@ const Search: Screen<CategoryProps> = ({
     }
   }
 
-  const searchResultsItems = (searchResults.items as Array<SearchEntryType>).map(
-    (item) => ({
-      typename: item.__typename,
-      title: item.title,
-      parentTitle: item.parent?.title,
-      description:
-        item.intro ?? item.description ?? item.parent?.intro ?? item.subtitle,
-      link: getItemLink(item),
-      categorySlug: item.category?.slug ?? item.parent?.category?.slug,
-      category: item.category ?? item.parent?.category,
-      hasProcessEntry: item.__typename === 'Article' && hasProcessEntries(item as Article),
-      group: item.group,
-      ...getItemImages(item),
-      labels: getLabels(item),
-    }),
-  )
+  const searchResultsItems = (
+    searchResults.items as Array<SearchEntryType>
+  ).map((item) => ({
+    typename: item.__typename,
+    title: item.title,
+    parentTitle: item.parent?.title,
+    description:
+      item.intro ?? item.description ?? item.parent?.intro ?? item.subtitle,
+    link: getItemLink(item),
+    categorySlug: item.category?.slug ?? item.parent?.category?.slug,
+    category: item.category ?? item.parent?.category,
+    hasProcessEntry:
+      item.__typename === 'Article' && hasProcessEntries(item as Article),
+    group: item.group,
+    ...getItemImages(item),
+    labels: getLabels(item),
+  }))
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
   const noUncategorized = (item) => {
