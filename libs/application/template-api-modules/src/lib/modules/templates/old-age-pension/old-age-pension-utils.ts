@@ -2,6 +2,7 @@ import { Application, YES } from '@island.is/application/types'
 import {
   ApplicationType,
   ConnectedApplications,
+  HouseholdSupplementHousing,
   getApplicationAnswers,
   isEarlyRetirement,
 } from '@island.is/application/templates/old-age-pension'
@@ -73,7 +74,7 @@ export const transformApplicationToOldAgePensionDTO = (
     connectedApplications?.includes(ConnectedApplications.HOUSEHOLDSUPPLEMENT)
   ) {
     oldAgePensionDTO.householdSupplement = {
-      isRental: householdSupplementHousing !== 'houseOwner',
+      isRental: householdSupplementHousing == HouseholdSupplementHousing.RENTER,
       childrenUnder18: YES === householdSupplementChildren,
     }
   }

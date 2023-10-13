@@ -5,21 +5,14 @@ import {
   ApplicationTypes,
   YES,
 } from '@island.is/application/types'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 
-import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../types'
+import { BaseTemplateApiService } from '../../base-template-api.service'
 
-import {
-  Attachment,
-  SocialInsuranceAdministrationClientService,
-  Uploads,
-} from '@island.is/clients/social-insurance-administration'
-import { transformApplicationToOldAgePensionDTO } from './old-age-pension-utils'
 import { getValueViaPath } from '@island.is/application/core'
-import { S3 } from 'aws-sdk'
 import {
   ApplicationType,
   ConnectedApplications,
@@ -30,20 +23,14 @@ import {
   getApplicationAnswers,
   isEarlyRetirement,
 } from '@island.is/application/templates/old-age-pension'
-
-interface CustomError {
-  status: number
-  detail: string
-  code: number
-  message: string
-  errors: {
-    code: 0
-    message: string
-    help: string
-    trackingId: string
-    param: string
-  }[]
-}
+import {
+  Attachment,
+  OldAgePensionResponseError,
+  SocialInsuranceAdministrationClientService,
+  Uploads,
+} from '@island.is/clients/social-insurance-administration'
+import { S3 } from 'aws-sdk'
+import { transformApplicationToOldAgePensionDTO } from './old-age-pension-utils'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
@@ -60,12 +47,12 @@ export class OldAgePensionService extends BaseTemplateApiService {
     super(ApplicationTypes.OLD_AGE_PENSION)
   }
 
-  private parseErrors(e: Error | CustomError) {
+  private parseErrors(e: Error | OldAgePensionResponseError) {
     if (e instanceof Error) {
       return e.message
     }
 
-    return { message: e.detail || e.message }
+    return { message: e.message }
   }
 
   private async initAttachments(
@@ -309,6 +296,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
   async sendApplication({ application, auth }: TemplateApiModuleActionProps) {
     try {
       const attachments = await this.getAttachments(application)
+      console.log('application',application)
 
       const oldAgePensionDTO = transformApplicationToOldAgePensionDTO(
         application,
