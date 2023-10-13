@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useWindowSize } from 'react-use'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import * as styles from './RettindagaeslaFatladsFolksHeader.css'
 
 interface Props {
@@ -14,20 +13,13 @@ interface Props {
 const RettindagaeslaFatladsFolksHeader = ({ organizationPage }: Props) => {
   const { linkResolver } = useLinkResolver()
   const { width } = useWindowSize()
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    if (width < theme.breakpoints.lg) {
-      return setIsMobile(true)
-    }
-    return setIsMobile(false)
-  }, [width])
+  const isMobileScreenWidth = width < theme.breakpoints.lg
 
   return (
     <div className={styles.headerBg}>
       <div className={styles.contentContainer}>
         <div className={styles.innerContentContainer}>
-          {!isMobile ? (
+          {!isMobileScreenWidth ? (
             <>
               <Box
                 alignItems="center"

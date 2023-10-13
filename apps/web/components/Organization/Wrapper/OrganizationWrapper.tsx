@@ -24,6 +24,7 @@ import {
   Text,
   Button,
   Inline,
+  Divider,
 } from '@island.is/island-ui/core'
 import {
   HeadWithSocialSharing,
@@ -537,6 +538,21 @@ export const OrganizationFooter: React.FC<
           columns={organization.footerItems}
           titleVariant="h2"
         />
+      )
+      break
+    case 'rettindagaesla-fatlads-folks':
+    case 'disability-rights-protection':
+      OrganizationFooterComponent = (
+        <>
+          <WebFooter
+            imageUrl={organization.logo?.url}
+            heading={organization.title}
+            columns={organization.footerItems}
+            background={organization?.footerConfig?.background}
+            color={organization?.footerConfig?.color}
+          />
+          <Divider />
+        </>
       )
       break
     default: {
