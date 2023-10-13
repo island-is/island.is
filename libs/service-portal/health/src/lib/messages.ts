@@ -1,6 +1,23 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
+  payments: {
+    id: 'sp.health:payments',
+    defaultMessage: 'Greiðslur',
+  },
+  paymentsIntro: {
+    id: 'sp.health:payments-intro',
+    defaultMessage:
+      'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum.',
+  },
+  readAboutPaymentParticipationSystems: {
+    id: 'sp.health:read-about-payment-participation-systems',
+    defaultMessage: 'Lesa um greiðsluþátttökukerfi',
+  },
+  paymentOverview: {
+    id: 'sp.health:payment-overview',
+    defaultMessage: 'Greiðsluyfirlit',
+  },
   seeMore: {
     id: 'sp.health:see-more',
     defaultMessage: 'Sjá nánar',

@@ -1,0 +1,91 @@
+query getCopaymentStatus {
+  rightsPortalCopaymentStatus {
+    items {
+      insuranceStatus {
+        display
+        code
+      }
+      maximumMonthlyPayment
+      maximumPayment
+      basePayment
+    }
+    errors {
+      status
+    }
+  }
+}
+
+query getCopaymentPeriods {
+  rightsPortalCopaymentPeriods {
+    items {
+      id
+      status
+      maximumPayment
+      monthPayment
+      overpaid
+      repaid
+    }
+    errors {
+      status
+    }
+  }
+}
+
+query getCopaymentBills($input: RightsPortalCopaymentBillsInput!) {
+  rightsPortalCopaymentBills(input: $input) {
+    items {
+      id
+      serviceType
+      date
+      totalAmount
+      insuranceAmount
+      ownAmount
+      overpaid
+    }
+    errors {
+      status
+    }
+  }
+}
+
+query getPaymentOverviewStatus {
+  rightsPortalPaymentOverviewStatus {
+    items {
+      credit
+      debit
+    }
+    errors {
+      status
+    }
+  }
+}
+
+query getPaymentOverviewBills {
+  rightsPortalPaymentOverviewBills {
+    items {
+      date
+      serviceType
+      totalAmount
+      insuranceAmount
+      documentId
+    }
+    errors {
+      status
+    }
+  }
+}
+
+query getPaymentOverviewDocument(
+  $input: RightsPortalPaymentOverviewDocumentInput!
+) {
+  rightsPortalPaymentOverviewDocument(input: $input) {
+    items {
+      contentType
+      fileName
+      data
+    }
+    errors {
+      status
+    }
+  }
+}

@@ -32,6 +32,8 @@ const MedicineCertificate = lazy(() =>
   import('./screens/MedicineCertificate/MedicineCertificate'),
 )
 
+const Payments = lazy(() => import('./screens/Payments/Payments'))
+
 export const healthModule: PortalModule = {
   name: 'Heilsa',
   featureFlag: Features.servicePortalHealthRightsModule,
@@ -54,6 +56,12 @@ export const healthModule: PortalModule = {
       path: HealthPaths.HealthAidsAndNutrition,
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <AidsAndNutrition />,
+    },
+    {
+      name: 'Greiðslur',
+      path: HealthPaths.HealthPayments,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <Payments />,
     },
     {
       name: 'Tannlæknar',

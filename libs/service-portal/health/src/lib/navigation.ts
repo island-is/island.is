@@ -19,6 +19,10 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthTherapies,
     },
     {
+      name: m.payments,
+      path: HealthPaths.HealthPayments,
+    },
+    {
       name: m.aidsAndNutrition,
       path: HealthPaths.HealthAidsAndNutrition,
     },
