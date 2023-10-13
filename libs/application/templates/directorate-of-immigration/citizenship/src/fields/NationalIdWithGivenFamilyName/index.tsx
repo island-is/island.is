@@ -70,9 +70,9 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
 
   useEffect(() => {
     setValue(wasRemovedField, repeaterField.wasRemoved)
-    if (!!repeaterField.nationalId) {
+    if (!repeaterField.nationalId) {
       setNationalIdInput(
-        !!repeaterField.nationalId ? repeaterField.nationalId : '',
+        repeaterField.nationalId ? repeaterField.nationalId : '',
       )
       setValue(nationaIdField, repeaterField.nationalId)
     }
