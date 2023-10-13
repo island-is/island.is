@@ -91,10 +91,6 @@ import { DrivingLearnersPermitModule } from './driving-learners-permit/driving-l
 import { DrivingLearnersPermitService } from './driving-learners-permit/driving-learners-permit.service'
 import { CitizenshipModule } from './directorate-of-immigration/citizenship/citizenship.module'
 import { CitizenshipService } from './directorate-of-immigration/citizenship/citizenship.service'
-import { ResidencePermitPermanentModule } from './directorate-of-immigration/residence-permit-permanent/residence-permit-permanent.module'
-import { ResidencePermitPermanentService } from './directorate-of-immigration/residence-permit-permanent/residence-permit-permanent.service'
-import { ResidencePermitRenewalModule } from './directorate-of-immigration/residence-permit-renewal/residence-permit-renewal.module'
-import { ResidencePermitRenewalService } from './directorate-of-immigration/residence-permit-renewal/residence-permit-renewal.service'
 
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
@@ -149,8 +145,6 @@ export const modules = [
   DrivingLearnersPermitModule,
   DrivingLicenseDuplicateModule,
   CitizenshipModule,
-  ResidencePermitPermanentModule,
-  ResidencePermitRenewalModule,
 ]
 
 export const services = [
@@ -203,6 +197,4 @@ export const services = [
   DrivingLearnersPermitService,
   DrivingLicenseDuplicateService,
   CitizenshipService,
-  ResidencePermitPermanentService,
-  ResidencePermitRenewalService,
 ]

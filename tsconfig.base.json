@@ -279,12 +279,6 @@
       "@island.is/application/templates/directorate-of-immigration/citizenship": [
         "libs/application/templates/directorate-of-immigration/citizenship/src/index.ts"
       ],
-      "@island.is/application/templates/directorate-of-immigration/residence-permit-permanent": [
-        "libs/application/templates/directorate-of-immigration/residence-permit-permanent/src/index.ts"
-      ],
-      "@island.is/application/templates/directorate-of-immigration/residence-permit-renewal": [
-        "libs/application/templates/directorate-of-immigration/residence-permit-renewal/src/index.ts"
-      ],
       "@island.is/application/templates/document-provider-onboarding": [
         "libs/application/templates/document-provider-onboarding/src/index.ts"
       ],
