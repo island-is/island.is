@@ -22,7 +22,7 @@ jobs:
   prepare:
     runs-on: ec2-runners
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:9dc8e0f0
     timeout-minutes: 35
 
     env:
@@ -210,7 +210,7 @@ jobs:
     if: needs.prepare.outputs.TEST_CHUNKS
     runs-on: ec2-runners
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:9dc8e0f0
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -269,7 +269,7 @@ jobs:
     if: needs.prepare.outputs.E2E_CHUNKS
     runs-on: ec2-runners
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:9dc8e0f0
     timeout-minutes: 35
     env:
       AFFECTED_PROJECT: ${{ matrix.projects }}
@@ -335,7 +335,7 @@ jobs:
       - prepare
     runs-on: ec2-runners
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:9dc8e0f0
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
@@ -378,7 +378,7 @@ jobs:
       - prepare
     runs-on: ec2-runners
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:9dc8e0f0
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
@@ -418,7 +418,7 @@ jobs:
       - prepare
     runs-on: ec2-runners
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:9dc8e0f0
     timeout-minutes: 35
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
@@ -468,7 +468,7 @@ jobs:
       - prepare
     runs-on: ec2-runners
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:9dc8e0f0
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -515,7 +515,7 @@ jobs:
   success:
     runs-on: ec2-runners
     container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:9dc8e0f0
     if: always()
     needs:
       - prepare
