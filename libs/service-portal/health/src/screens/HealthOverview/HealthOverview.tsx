@@ -14,6 +14,7 @@ import { messages } from '../../lib/messages'
 import {
   AlertMessage,
   Box,
+  Button,
   SkeletonLoader,
   Stack,
   Text,
@@ -38,7 +39,7 @@ export const HealthOverview = () => {
     loading: fileLoading,
   } = useGetInsuranceConfirmationQuery()
 
-  const insuranceFile = file?.rightsPortalInsuranceConfirmation?.items[0]
+  const insuranceCertificate = file?.rightsPortalInsuranceConfirmation?.items[0]
 
   const getDocumentLink = (data: string) =>
     encodeURI(`data:application/pdf;base64,${data}`)
@@ -110,33 +111,35 @@ export const HealthOverview = () => {
               </Text>
               <UserInfoLine
                 label={formatMessage(messages.hasHealthInsurance)}
-                content={formatDateFns(insurance.updated)}
-                labelColumnSpan={['5/12']}
-                valueColumnSpan={['5/12']}
-                editColumnSpan={['2/12']}
+                content={
+                  <Box
+                    display="flex"
+                    justifyContent="spaceBetween"
+                    width="full"
+                  >
+                    <Text>
+                      {formatDateFns(insurance.updated, 'dd.MM.yyyy')}
+                    </Text>
+                    <Button
+                      size="small"
+                      variant="text"
+                      icon="open"
+                      iconType="outline"
+                    >
+                      {formatMessage(messages.seeCertificate)}
+                    </Button>
+                  </Box>
+                }
               />
               <UserInfoLine
                 label={formatMessage(messages.healthInsuranceStart)}
-                content={formatDateFns(insurance.from)}
-                labelColumnSpan={['5/12']}
-                valueColumnSpan={['5/12']}
-                editColumnSpan={['2/12']}
-                editLink={
-                  insuranceFile && insuranceFile?.data
-                    ? {
-                        external: true,
-                        url: getDocumentLink(insuranceFile?.data),
-                        title: messages.seeCertificate,
-                      }
-                    : undefined
-                }
+                content={formatMessage(
+                  formatDateFns(insurance.from, 'dd.MM.yyyy'),
+                )}
               />
               <UserInfoLine
                 label={formatMessage(messages.status)}
                 content={insurance.status?.display ?? undefined}
-                labelColumnSpan={['5/12']}
-                valueColumnSpan={['5/12']}
-                editColumnSpan={['2/12']}
               />
             </Stack>
           </Box>
@@ -156,9 +159,6 @@ export const HealthOverview = () => {
                     amount: insurance.maximumPayment,
                   }) ?? undefined
                 }
-                labelColumnSpan={['5/12']}
-                valueColumnSpan={['5/12']}
-                editColumnSpan={['2/12']}
               />
             </Stack>
           </Box>
