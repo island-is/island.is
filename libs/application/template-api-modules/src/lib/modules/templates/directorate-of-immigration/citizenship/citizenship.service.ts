@@ -379,7 +379,7 @@ export class CitizenshipService extends BaseTemplateApiService {
       auth,
       {
         selectedChildren:
-          answers.selectedChildren?.map((c) => ({
+          answers.selectedChildrenExtraData?.map((c) => ({
             nationalId: c.nationalId,
             otherParentNationalId: c.otherParentNationalId,
             otherParentBirtDate: c.otherParentBirtDate

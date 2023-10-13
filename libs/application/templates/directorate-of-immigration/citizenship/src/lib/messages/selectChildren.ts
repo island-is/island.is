@@ -4,12 +4,12 @@ import { defineMessages } from 'react-intl'
 export const selectChildren = {
   general: defineMessages({
     subSectionTitle: {
-      id: 'doi.cs.application:personal.labels.pickChildren.subSectionTitle',
+      id: 'doi.cs.application:personal.labels.selectChildren.subSectionTitle',
       defaultMessage: 'Börn í þinni forsjá',
       description: 'Pick children sub section title',
     },
     pageTitle: {
-      id: 'doi.cs.application:personal.labels.pickChildren.pageTitle',
+      id: 'doi.cs.application:personal.labels.selectChildren.pageTitle',
       defaultMessage: 'Börn í þinni forsjá',
       description: 'Pick children page title',
     },
@@ -19,10 +19,50 @@ export const selectChildren = {
       description: 'Select children section title',
     },
     description: {
-      id: 'doi.cs.application:personal.labels.pickChildren.description',
+      id: 'doi.cs.application:personal.labels.selectChildren.description',
       defaultMessage:
         'Eftirfarandi börn eru í þinni forsjá og eru skráð með lögheimili á Íslandi. Hakaðu við þau börn sem þú vilt að hljóti íslenskan ríkisborgararétt samhliða því að þú fáir veitingu.',
       description: 'Pick children description',
+    },
+  }),
+  extraInformation: defineMessages({
+    subSectionTitle: {
+      id: 'doi.cs.application:personal.labels.selectChildren.extraInformationSectionTitle',
+      defaultMessage: 'Viðbótarupplýsingar barna',
+      description:
+        'Extra information about selected children sub section title',
+    },
+    description: {
+      id: 'doi.cs.application:personal.labels.selectChildren.extraInformationDescription',
+      defaultMessage:
+        'Vinsamlegast skráðu eftirfarandi upplýsingar fyrir valin börn',
+      description: 'Extra information about selected children description',
+    },
+    pageTitle: {
+      id: 'doi.cs.application:personal.labels.selectChildren.ExtraInformationPageTitle',
+      defaultMessage: 'Viðbótarupplýsingar barna',
+      description: 'Extra information about selected children page title',
+    },
+    fullCustodyQuestion: {
+      id: 'doi.cs.application:personal.labels.selectChildren.fullCustodyQuestion',
+      defaultMessage: 'Ert þú með fulla forsjá?',
+      description: 'Do you have full custody question title',
+    },
+    dateLabel: {
+      id: 'doi.cs.application:personal.labels.selectChildren.dateLabel',
+      defaultMessage: 'Fæðingardagur',
+      description: 'Birth date of other parent date label',
+    },
+    areaSeparator: {
+      id: 'doi.cs.application:personal.labels.selectChildren.areaSeparator',
+      defaultMessage: 'Upplýsingar fyrir {fullName}',
+      description: 'Area label for each child',
+    },
+    detailsDescription: {
+      id: 'doi.cs.application:personal.labels.selectChildren.detailsDescription',
+      defaultMessage:
+        'Vinsamlegast fylltu inn eftirfarandi upplýsingar um hitt foreldrið',
+      description: 'Description for details on other parent',
     },
   }),
   warningAgeChildren: defineMessages({

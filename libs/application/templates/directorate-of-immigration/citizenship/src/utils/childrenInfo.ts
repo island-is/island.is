@@ -33,7 +33,7 @@ export const getSelectedCustodyChildren = (
   const result = []
   for (let i = 0; i < selectedChildren.length; i++) {
     const childInfo = custodyChildren.find(
-      (c) => c.nationalId === selectedChildren[i].nationalId,
+      (c) => c.nationalId === selectedChildren[i],
     )
     if (childInfo) result.push(childInfo)
   }
@@ -57,8 +57,7 @@ export const getSelectedCustodyChild = (
 
   const selectedChildren = (answers as Citizenship).selectedChildren
   const isSelected =
-    selectedChildren &&
-    selectedChildren.find((sc) => sc.nationalId === childNationalId)
+    selectedChildren && selectedChildren.find((sc) => sc === childNationalId)
 
   return isSelected ? childInfo : undefined
 }

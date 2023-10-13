@@ -198,9 +198,9 @@ const ChildrenSupportingDocumentsSchema = z.object({
   custodyDocuments: z.array(FileDocumentSchema).optional(),
 })
 
-const SelectedChildSchema = z.object({
+export const SelectedChildSchema = z.object({
   nationalId: z.string().min(1),
-  hasFullCustody: z.enum([YES, NO]),
+  hasFullCustody: z.string().optional(), //z.enum([YES, NO]),
   otherParentNationalId: z.string().optional(),
   otherParentBirtDate: z.string().optional(),
   otherParentName: z.string().optional(),

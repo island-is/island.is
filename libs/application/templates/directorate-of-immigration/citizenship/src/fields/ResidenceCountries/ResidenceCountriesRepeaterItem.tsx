@@ -81,7 +81,7 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
           component: FieldComponents.SELECT,
           children: undefined,
           type: FieldTypes.SELECT,
-          required: true,
+          required: repeaterField.wasRemoved === 'true' ? false : true,
           onSelect: (value) => addCountryToList(value.value as string, index),
         }}
         errors={errors}

@@ -1,0 +1,81 @@
+import { useEffect, useState } from 'react'
+import { ChildrenOfApplicant } from '../../shared'
+import { NO, YES, getValueViaPath } from '@island.is/application/core'
+import { SelectedRepeaterItem } from './SelectedRepeaterItem'
+import { getSelectedCustodyChild } from '../../utils'
+
+const initialCombinedChild = {
+  hasFullCustody: YES,
+  otherParentNationalId: '',
+  otherParentBirtDate: '',
+  otherParentName: '',
+}
+
+export const MoreChildInfo = ({ field, application, error }: any) => {
+  const { answers, externalData } = application
+
+  const [readOnlyFields, setReadOnlyFields] = useState(false)
+
+  const [combinedChildren, setCombinedChildren] = useState<
+    Array<ChildrenOfApplicant>
+  >([])
+
+  const [children, setChildren] = useState<string[]>(
+    getValueViaPath(answers, 'selectedChildren', []) as string[],
+  )
+
+  const [childrenExtraData, setChildrenExtraData] = useState<
+    ChildrenOfApplicant[]
+  >(
+    getValueViaPath(
+      answers,
+      'selectedChildrenExtraData',
+      [],
+    ) as ChildrenOfApplicant[],
+  )
+
+  useEffect(() => {
+    const mappedChildren = children.map((child, index) => {
+      const childCustodyData = getSelectedCustodyChild(
+        externalData,
+        answers,
+        index,
+      )
+      const predefinedChild: ChildrenOfApplicant = {
+        nationalId: child,
+        ...initialCombinedChild,
+      }
+      const foundInExtra = childrenExtraData.find((x) => x.nationalId === child)
+      //found custody data, that takes priority
+      if (childCustodyData?.otherParent) {
+        setReadOnlyFields(true)
+        return {
+          nationalId: child,
+          otherParentBirtDate: '',
+          otherParentNationalId: childCustodyData.otherParent?.nationalId,
+          otherParentName: childCustodyData.otherParent?.fullName,
+          hasFullCustody: NO,
+        }
+      }
+      //found already filled in data
+      else if (foundInExtra) {
+        return foundInExtra ? foundInExtra : predefinedChild
+      }
+      return predefinedChild
+    })
+    setCombinedChildren(mappedChildren)
+  }, [])
+
+  return combinedChildren.map((child, index) => {
+    return (
+      <SelectedRepeaterItem
+        index={index}
+        field={field}
+        application={application}
+        // errors={errors}
+        readOnlyFields={readOnlyFields}
+        repeaterField={child}
+      />
+    )
+  })
+}

@@ -17,6 +17,7 @@ export enum Roles {
 export enum Routes {
   USERINFORMATION = 'userInformation',
   PICKCHILDREN = 'pickChildren',
+  PICKCHILDRENEXTRA = 'pickChildrenExtra',
   PARENTINFORMATION = 'parentInformation',
   MARITALSTATUS = 'maritalStatus',
   COUNTRIESOFRESIDENCE = 'countriesOfResidence',

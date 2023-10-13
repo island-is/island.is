@@ -33,6 +33,8 @@ import { gql, useLazyQuery } from '@apollo/client'
 import { IdentityInput, Query } from '@island.is/api/schema'
 import { IDENTITY_QUERY } from '../../graphql/queries'
 import { debounce } from 'lodash'
+import { HiddenTextInput } from '../HiddenTextInput'
+import { id } from 'date-fns/locale'
 
 interface ChildrenCustodyResponseProps {
   nationalId: string
@@ -72,7 +74,7 @@ export const SelectChildren = ({ field, application, error }: any) => {
   const [childrenCustodyResponses, setChildrenCustodyResponses] = useState<
     Array<ChildrenCustodyResponseProps>
   >([])
-  const currentNameField = `selectedChildren[${mostRecentlyCheckedChildIndex}].otherParentName`
+  const currentNameField = `selectedChildrenExtraData[${mostRecentlyCheckedChildIndex}].otherParentName`
 
   const { control } = useForm()
 
@@ -193,9 +195,36 @@ export const SelectChildren = ({ field, application, error }: any) => {
   const handleCheckboxChange = (length: number) => {
     setNumberOfChecked(length)
   }
-  const submitModal = () => {
+
+  const updateValues = (
+    index: number,
+    ssn: string,
+    otherParentSsn: string,
+    otherParentName: string,
+    fullCustody: boolean,
+  ) => {
+    setValue(`selectedChildren[${index}].nationalId`, ssn)
+    setValue(`selectedChildren[${index}].otherParentNationalId`, otherParentSsn)
+    setValue(`selectedChildren[${index}].otherParentName`, otherParentName)
+    setValue(`selectedChildren[${index}].fullCustody`, fullCustody)
+
     const currentAnswers = getValues()
     console.log('curerntAnswers', currentAnswers)
+  }
+
+  useEffect(() => {
+    const currentAnswers = getValues()
+    console.log('curerntAnswers', currentAnswers)
+  }, [setValue])
+
+  const submitModal = () => {
+    updateValues(
+      mostRecentlyCheckedChildIndex,
+      mostRecentlyCheckedChildSSN,
+      nationalIdInput,
+      currentName,
+      currentFullCustody,
+    )
     setIsVisible(false)
   }
   return (
@@ -214,122 +243,24 @@ export const SelectChildren = ({ field, application, error }: any) => {
             children: undefined,
             options: childrenCheckboxes,
             onSelect: (newAnswer) => {
-              console.log('newAnswer', newAnswer)
-              const unansweredSSN = newAnswer.filter((x) => {
-                return (
-                  childrenCustodyResponses.filter((y) => y.nationalId === x)
-                    .length === 0
-                )
-              })
-              if (unansweredSSN[0]) {
-                setIsVisible(true)
-                setMostRecentlyCheckedChildSSN(unansweredSSN[0])
-              }
+              // console.log('newAnswer', newAnswer)
+              // const unansweredSSN = newAnswer.filter((x) => {
+              //   return (
+              //     childrenCustodyResponses.filter((y) => y.nationalId === x)
+              //       .length === 0
+              //   )
+              // })
+              // if (unansweredSSN[0]) {
+              //   setIsVisible(true)
+              //   setMostRecentlyCheckedChildSSN(unansweredSSN[0])
+              // }
               handleCheckboxChange(newAnswer.length)
               return { ...answers, selectedChildren: newAnswer }
             },
           }}
         />
       </Box>
-      <ModalBase
-        baseId="myDialog"
-        isVisible={isVisible}
-        backdropWhite
-        onVisibilityChange={(visibility) => {
-          if (visibility !== isVisible) {
-            setIsVisible(visibility)
-          }
-        }}
-      >
-        <Box padding={4}>
-          <Text>Ert þú með fulla forsjá?</Text>
-          {children.map((child, index) => {
-            return (
-              <Box>
-                <RadioController
-                  id={`selectedChildrenExtraData[${index}].hasFullCustody`}
-                  split="1/2"
-                  onSelect={(value) => {
-                    handleCustodyRadio(mostRecentlyCheckedChildSSN, value)
-                  }}
-                  defaultValue={false}
-                  options={[
-                    {
-                      value: YES,
-                      label: formatMessage(
-                        information.labels.radioButtons.radioOptionYes,
-                      ),
-                    },
-                    {
-                      value: NO,
-                      label: formatMessage(
-                        information.labels.radioButtons.radioOptionNo,
-                      ),
-                    },
-                  ]}
-                />
 
-                {showMoreQuestions && mostRecentlyCheckedChildIndex === index && (
-                  <Box>
-                    <GridRow>
-                      <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-                        <InputController
-                          control={control}
-                          defaultValue={nationalIdInput}
-                          id={`selectedChildrenExtraData[${index}].otherParentNationalId`}
-                          label={formatMessage(
-                            personal.labels.userInformation.nationalId,
-                          )}
-                          format="######-####"
-                          required={false}
-                          onChange={debounce((v) => {
-                            setNationalIdInput(
-                              v.target.value.replace(/\W/g, ''),
-                            )
-                          })}
-                          loading={queryLoading}
-
-                          // error={errors && getErrorViaPath(errors, nationaIdField)}
-                        />
-                      </GridColumn>
-                      <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-                        <Input
-                          name={`selectedChildrenExtraData[${index}].otherParentName`}
-                          value={currentName}
-                          label={formatMessage(
-                            personal.labels.userInformation.name,
-                          )}
-                          readOnly={!!nationalIdInput}
-                          onChange={(e) => setCurrentName(e.target.value)}
-                        />
-                      </GridColumn>
-                    </GridRow>
-                    <GridRow>
-                      <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-                        <DatePickerController
-                          defaultValue={currentBirthDate}
-                          id={`selectedChildrenExtraData[${index}].otherParentBirtDate`}
-                          label={formatMessage(
-                            information.labels.staysAbroad.dateFromLabel,
-                          )}
-                          // error={errors && getErrorViaPath(errors, dateFromField)}
-                          onChange={(value) =>
-                            setCurrentBirthDate(value as string)
-                          }
-                        />
-                      </GridColumn>
-                    </GridRow>
-                  </Box>
-                )}
-              </Box>
-            )
-          })}
-
-          <Button onClick={submitModal} variant="text">
-            Staðfesta
-          </Button>
-        </Box>
-      </ModalBase>
       {numberOfChecked > MAX_CNT_APPLICANTS && (
         <Box paddingBottom={1}>
           <AlertMessage

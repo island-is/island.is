@@ -15,11 +15,7 @@ export const Parents = ({ field, application, errors }: any) => {
   } = application
 
   const [hasValidParents, setHasValidParents] = useState(
-    getValueViaPath(
-      answers,
-      'parentInformation.hasValidParents',
-      nationalRegistryParents.data.length > 0 ? YES : NO,
-    ) as string,
+    getValueViaPath(answers, 'parentInformation.hasValidParents', NO) as string,
   )
 
   //This is used to determine weather parent information comes from answer or national registry, to determine if the column is read only or not
