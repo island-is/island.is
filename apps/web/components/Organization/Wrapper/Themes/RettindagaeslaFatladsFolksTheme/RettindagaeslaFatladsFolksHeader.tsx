@@ -2,9 +2,9 @@ import Link from 'next/link'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { Box, Text } from '@island.is/island-ui/core'
-import * as styles from './RettindagaeslaFatladsFolksHeader.css'
-import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import * as styles from './RettindagaeslaFatladsFolksHeader.css'
 
 interface Props {
   organizationPage: OrganizationPage
