@@ -727,7 +727,6 @@ export class ApplicationController {
     @CurrentUser() user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
-    console.log('SUBMIT APPlicatono ---')
     const existingApplication =
       await this.applicationAccessService.findOneByIdAndNationalId(id, user, {
         shouldThrowIfPruned: true,
@@ -822,15 +821,6 @@ export class ApplicationController {
     if (!Array.isArray(apis)) {
       apis = [apis]
     }
-    console.log('CURRENT EVENT IS :', event)
-    apis.forEach((api) => {
-      this.logger.info(
-        `Action ${api.action},triggerEvent ${api.triggerEvent}, `,
-      )
-      console.log('api.action !== event', api.action !== event)
-      console.log('api.triggerEvent ', api.triggerEvent)
-      console.log('event:', event)
-    })
 
     //filter out events that should not be triggered through triggerEvent
     const filteredApis = apis.filter(
@@ -839,7 +829,7 @@ export class ApplicationController {
 
     //log out the filtered ones with the schema api.action - api.triggerEvent
     filteredApis.forEach((api) => {
-      this.logger.info(
+      this.logger.debug(
         `Action ${api.action} has triggerEvent ${api.triggerEvent} and will NOT be triggered`,
       )
     })
@@ -851,7 +841,7 @@ export class ApplicationController {
     )
 
     apis.forEach((api) => {
-      this.logger.info(
+      this.logger.debug(
         `Action ${api.action} has triggerEvent ${api.triggerEvent} and will now be triggered`,
       )
     })

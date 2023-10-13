@@ -4,7 +4,6 @@ import {
   StateNodeConfig,
   TransitionsConfig,
 } from 'xstate'
-
 import { PaymentForm } from '@island.is/application/ui-forms'
 import {
   Application,
@@ -26,23 +25,55 @@ import {
 } from '@island.is/application/core'
 import { ExtraData } from '@island.is/clients/charge-fjs-v2'
 
+/**
+ * Configuration options for creating a payment state.
+ *
+ * @template T The event object type.
+ * @template R The return type.
+ */
 type PaymentStateConfigOptions<
   T extends EventObject = AnyEventObject,
   R = unknown,
 > = {
+  /** The ID of the organization handling the payment. */
   organizationId: InstitutionNationalIds
+
+  /**
+   * The codes for the charge items. This can either be an array of strings
+   * or a function that returns an array based on the application data.
+   */
   chargeItemCodes:
     | ((application: Application) => CatalogItem['chargeItemCode'][])
     | string[]
+
+  /**
+   * Any additional data that needs to be passed for the payment to the create charge function.
+   * This can be an array or a function returning an array.
+   */
   extraData?:
     | ExtraData[]
     | ((application: Application) => ExtraData[] | undefined)
+
+  /** The target state if the payment process is aborted. Defaults to 'draft'. */
   abortTarget?: string
+
+  /** The lifecycle duration of the payment state. */
   lifecycle?: StateLifeCycle
+
+  /** Functions to call when exiting the payment state. */
   onExit?: TemplateApi<R>[]
+
+  /** Functions to call when entering the payment state. */
   onEntry?: TemplateApi<R>[]
+
+  /** Roles associated with the payment state.  Defaults to a single role Roles.APPLICANT */
   roles?: RoleInState<T>[]
-  submitCondition?: (context: ApplicationContext) => boolean
+
+  /**
+   * The target state after the payment is submitted.
+   * This can be a string representing the target state, or an array
+   * of target objects with optional conditions. Defaults to 'done'.
+   */
   submitTarget?:
     | {
         target: string
@@ -51,6 +82,14 @@ type PaymentStateConfigOptions<
     | string
 }
 
+/**
+ * Constructs a payment state based on the provided configuration options.
+ *
+ * @template T The event object type.
+ * @template R The return type.
+ * @param options The configuration options for the payment state.
+ * @returns The constructed payment state.
+ */
 export function buildPaymentState<
   T extends EventObject = AnyEventObject,
   R = unknown,
@@ -81,7 +120,7 @@ export function buildPaymentState<
   submitTransitions =
     submitTransitions.length < 1 ? [{ target: 'done' }] : submitTransitions
   const transitions = {
-    [DefaultEvents.SUBMIT]: [...submitTransitions], // Fallback to 'done' if no conditions are met
+    [DefaultEvents.SUBMIT]: [...submitTransitions],
     [DefaultEvents.ABORT]: { target: options.abortTarget || 'draft' },
   } as TransitionsConfig<ApplicationContext, T>
 
@@ -145,19 +184,3 @@ export function buildPaymentState<
     on: transitions,
   }
 }
-/*
-usage
-import { buildPaymentState } from '@island.is/application/utils'
-
-      [States.PAYMENT]: buildPaymentState({
-        organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: [ChargeItemCode.MORTGAGE_CERTIFICATE],
-        submitTarget: States.COMPLETED,
-        onExit: [
-          defineTemplateApi({
-            action: ApiActions.submitApplication,
-            triggerEvent: DefaultEvents.SUBMIT,
-          }),
-        ],
-      }),
-*/

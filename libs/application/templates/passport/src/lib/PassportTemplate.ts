@@ -1,6 +1,5 @@
 import {
   coreHistoryMessages,
-  corePendingActionMessages,
   getValueViaPath,
 } from '@island.is/application/core'
 import {

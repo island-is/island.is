@@ -82,7 +82,7 @@ export class PaymentService extends BaseTemplateApiService {
         {
           title: 'Payment not completed',
           description:
-            'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
+            'Ekki er hægt að halda áfram umsókn af því að ekki hefur tekist að taka við greiðslu.',
         },
         500,
       )
