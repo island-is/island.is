@@ -116,6 +116,7 @@ export class LicenseServiceService {
       onlyList,
     }: GetGenericLicenseOptions = {},
   ): Promise<GenericUserLicense[]> {
+    const k = 'bleble'
     const licenses: GenericUserLicense[] = []
 
     for await (const license of AVAILABLE_LICENSES) {
