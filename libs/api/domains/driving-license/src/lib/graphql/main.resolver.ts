@@ -18,10 +18,8 @@ import {
   HasTeachingRights,
   StudentInformationResult,
   ApplicationEligibility,
-  Jurisdiction,
   StudentAssessment,
   ApplicationEligibilityInput,
-  Teacher,
   TeacherV4,
 } from './models'
 import { AuditService } from '@island.is/nest/audit'
@@ -68,12 +66,6 @@ export class MainResolver {
     )
   }
 
-  @Scopes(ApiScope.internal)
-  @Query(() => [Teacher])
-  drivingLicenseTeachers() {
-    return this.drivingLicenseService.getTeachers()
-  }
-
   @BypassAuth()
   @CacheControl(defaultCache)
   @Query(() => [TeacherV4])
@@ -91,7 +83,10 @@ export class MainResolver {
         action: 'drivingLicenseTeachingRights',
         resources: user.nationalId,
       },
-      this.drivingLicenseService.getTeachingRights(user.nationalId),
+      this.drivingLicenseService.getTeachingRights({
+        nationalId: user.nationalId,
+        token: user.authorization,
+      }),
     )
   }
 
@@ -141,15 +136,9 @@ export class MainResolver {
   }
 
   @Scopes(ApiScope.internal)
-  @Query(() => [Jurisdiction])
-  drivingLicenseListOfJurisdictions() {
-    return this.drivingLicenseService.getListOfJurisdictions()
-  }
-
-  @Scopes(ApiScope.internal)
   @Query(() => StudentAssessment, { nullable: true })
   drivingLicenseStudentAssessment(@CurrentUser() user: User) {
-    return this.drivingLicenseService.getDrivingAssessment(user.nationalId)
+    return this.drivingLicenseService.getDrivingAssessment(user.authorization)
   }
 
   @Scopes(ApiScope.internal)
@@ -160,7 +149,7 @@ export class MainResolver {
   ) {
     return this.drivingLicenseService.studentCanGetPracticePermit({
       studentSSN: input.studentSSN,
-      token: user.authorization.split(' ')?.[1] ?? '', // Need to remove "Bearer" part
+      token: user.authorization.replace('Bearer ', '') ?? '', // Need to remove "Bearer" part
     })
   }
 }

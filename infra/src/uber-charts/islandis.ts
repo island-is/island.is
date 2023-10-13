@@ -98,6 +98,7 @@ const api = apiSetup({
   regulationsAdminBackend: rabBackend,
   sessionsApi: sessionsService,
   authAdminApi,
+  universityGatewayBackend,
 })
 const servicePortal = servicePortalSetup({ graphql: api })
 const appSystemForm = appSystemFormSetup({ api: api })

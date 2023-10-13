@@ -260,6 +260,16 @@ export const OccupationalLicenses = new XroadConf({
   },
 })
 
+export const DistrictCommissioners = new XroadConf({
+  env: {
+    XROAD_DISTRICT_COMMISSIONERS_PATH: {
+      dev: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
+      staging: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
+      prod: 'IS/GOV/5512201410/Syslumenn-Protected/IslandMinarSidur',
+    },
+  },
+})
+
 export const Firearm = new XroadConf({
   env: {
     XROAD_FIREARM_LICENSE_PATH: {

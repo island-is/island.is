@@ -69,6 +69,14 @@ export const routesTemplate = {
     is: '/s/stafraent-island/thjonustur/[slug]',
     en: '/en/o/digital-iceland/island-services/[slug]',
   },
+  digitalicelandcommunityoverview: {
+    is: '/s/stafraent-island/island-is-samfelagid',
+    en: '/en/o/digital-iceland/island-is-community',
+  },
+  digitalicelandcommunitydetailpage: {
+    is: '/s/stafraent-island/island-is-samfelagid/[slug]',
+    en: '/en/o/digital-iceland/island-is-community/[slug]',
+  },
   organizationservices: {
     is: '/s/[slug]/thjonusta',
     en: '/en/o/[slug]/services',

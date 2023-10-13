@@ -1,5 +1,15 @@
 import { service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
-import { UniversityGatewayUniversityOfIceland } from '../../../../../infra/src/dsl/xroad'
+import {
+  Base,
+  Client,
+  UniversityGatewayUniversityOfIceland,
+} from '../../../../../infra/src/dsl/xroad'
+
+const postgresInfo = {
+  username: 'university_gateway',
+  name: 'university_gateway',
+  passwordSecret: '/k8s/university-gateway/DB_PASSWORD',
+}
 
 export const serviceSetup =
   (): ServiceBuilder<'services-university-gateway-backend'> => {
@@ -23,12 +33,8 @@ export const serviceSetup =
         AUTH_JWT_SECRET: '/k8s/university-gateway/AUTH_JWT_SECRET',
         BACKEND_ACCESS_TOKEN: '/k8s/university-gateway/BACKEND_ACCESS_TOKEN',
       })
-      .xroad(UniversityGatewayUniversityOfIceland)
-      .postgres({
-        username: 'university_gateway',
-        name: 'university_gateway',
-        passwordSecret: '/k8s/university-gateway/DB_PASSWORD',
-      })
+      .xroad(Base, Client, UniversityGatewayUniversityOfIceland)
+      .postgres(postgresInfo)
       .ingress({
         primary: {
           host: {
@@ -36,7 +42,7 @@ export const serviceSetup =
             staging: 'university-gateway',
             prod: 'university-gateway',
           },
-          paths: ['/api/swagger'],
+          paths: ['/api'],
           public: true,
         },
       })
@@ -45,7 +51,25 @@ export const serviceSetup =
         min: 2,
         max: 10,
       })
+      .initContainer({
+        containers: [
+          {
+            name: 'migrations',
+            command: 'npx',
+            args: ['sequelize-cli', 'db:migrate'],
+          },
+          {
+            name: 'seed',
+            command: 'npx',
+            args: ['sequelize-cli', 'db:seed:all'],
+          },
+        ],
+        postgres: postgresInfo,
+        envs: {
+          NO_UPDATE_NOTIFIER: 'true',
+        },
+      })
       .liveness('/liveness')
       .readiness('/liveness')
-      .grantNamespaces('nginx-ingress-internal')
+      .grantNamespaces('islandis', 'nginx-ingress-internal')
   }

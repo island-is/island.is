@@ -209,6 +209,7 @@ export const Overview: FC<
                 vehicle: {
                   date: currentAnswers?.vehicle?.date,
                   salePrice: currentAnswers?.vehicle?.salePrice,
+                  mileage: currentAnswers?.vehicle?.mileage,
                 },
                 seller: {
                   email: currentAnswers?.seller?.email,
