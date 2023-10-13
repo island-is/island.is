@@ -61,7 +61,6 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
         <Box display="flex" flexDirection="row" justifyContent="flexEnd">
           <Button
             variant="text"
-            textSize="sm"
             size="small"
             onClick={() => handleRemove(index)}
           >

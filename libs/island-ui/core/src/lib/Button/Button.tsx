@@ -57,7 +57,6 @@ export interface ButtonProps {
   children?: ReactNode
   size?: ButtonSizes
   disabled?: boolean
-  textSize?: 'sm' | 'md'
   unfocusable?: boolean
   fluid?: boolean
   icon?: IconType
@@ -102,7 +101,6 @@ export const Button = forwardRef<
       unfocusable,
       value,
       name,
-      textSize,
       ...buttonProps
     },
     ref,

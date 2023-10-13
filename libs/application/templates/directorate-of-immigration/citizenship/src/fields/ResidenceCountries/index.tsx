@@ -173,7 +173,6 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
               fluid
               size="large"
               onClick={handleAdd}
-              textSize="md"
             >
               {formatMessage(
                 information.labels.countriesOfResidence.buttonTitle,

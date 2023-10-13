@@ -173,7 +173,6 @@ export const StaysAbroad: FC<FieldBaseProps> = (props) => {
               fluid
               size="large"
               onClick={handleAdd}
-              textSize="md"
             >
               {formatMessage(information.labels.staysAbroad.buttonTitle)}
             </Button>
