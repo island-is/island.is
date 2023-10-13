@@ -4,6 +4,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import {
   Pass,
   PassDataInput,
+  RevokePassData,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
 import {
@@ -37,6 +38,10 @@ export class DisabilityLicenseUpdateClient extends BaseLicenseUpdateClient {
         message: 'not implemented yet',
       },
     }
+  }
+
+  revoke(nationalId: string): Promise<Result<RevokePassData>> {
+    throw new Error('Method not implemented.')
   }
 
   async verify(inputData: string): Promise<Result<PassVerificationData>> {

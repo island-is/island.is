@@ -1,5 +1,6 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
 import { Inject, Injectable } from '@nestjs/common'
 import {
   Pass,
@@ -15,7 +16,8 @@ import {
 import { BaseLicenseUpdateClient } from '../../baseLicenseUpdateClient'
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
 import { format as formatNationalId } from 'kennitala'
-import { createPkPassDataInput } from '../drivingLicenseMapper'
+import { createPkPassDataInput, mapNationalId } from '../drivingLicenseMapper'
+import { DrivingDigitalLicenseClientConfig } from '../drivingLicenseClient.config'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'driving-license-service'
@@ -24,6 +26,8 @@ const LOG_CATEGORY = 'driving-license-service'
 export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
   constructor(
     @Inject(LOGGER_PROVIDER) protected logger: Logger,
+    @Inject(DrivingDigitalLicenseClientConfig.KEY)
+    private config: ConfigType<typeof DrivingDigitalLicenseClientConfig>,
     private drivingLicenseApi: DrivingLicenseApi,
     protected smartApi: SmartSolutionsApi,
   ) {
@@ -100,7 +104,11 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
   }
 
   revoke(nationalId: string): Promise<Result<RevokePassData>> {
-    return this.smartApi.revokePkPass(formatNationalId(nationalId))
+    const passTemplateId = this.config.passTemplateId
+    const payload: PassDataInput = {
+      inputFieldValues: [mapNationalId(nationalId)],
+    }
+    return this.smartApi.revokePkPass(passTemplateId, payload)
   }
 
   /** We need to verify the pk pass AND the license itself! */

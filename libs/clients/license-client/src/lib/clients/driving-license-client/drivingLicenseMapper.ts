@@ -3,6 +3,7 @@ import {
   DriverLicenseDto as DriversLicense,
   RemarkCode,
 } from '@island.is/clients/driving-license'
+import { PassInputFieldValueDataInput } from '@island.is/clients/smartsolutions'
 import format from 'date-fns/format'
 import { info, format as formatSsn } from 'kennitala'
 
@@ -66,11 +67,20 @@ const formatRights = (
   return rights ?? 'Engin réttindi'
 }
 
+export const mapNationalId = (
+  nationalId: string,
+): PassInputFieldValueDataInput => {
+  return {
+    identifier: 'kennitala',
+    value: nationalId ? formatSsn(nationalId) : '',
+  }
+}
+
 export const createPkPassDataInput = (
   license?: DriversLicense | null,
   remarks?: Array<RemarkCode> | null,
 ) => {
-  if (!license || !remarks) return null
+  if (!license || !license.socialSecurityNumber || !remarks) return null
 
   return [
     {
@@ -83,12 +93,7 @@ export const createPkPassDataInput = (
       identifier: 'nafn',
       value: license.name ?? '',
     },
-    {
-      identifier: 'kennitala',
-      value: license.socialSecurityNumber
-        ? formatSsn(license.socialSecurityNumber)
-        : '',
-    },
+    mapNationalId(license.socialSecurityNumber),
     {
       identifier: 'faedingardagur',
       value: license.socialSecurityNumber

@@ -19,6 +19,9 @@ import {
 } from '../../../licenseClient.type'
 import { createPkPassDataInput } from '../firearmLicenseMapper'
 import { BaseLicenseUpdateClient } from '../../baseLicenseUpdateClient'
+import { mapNationalId } from '../firearmLicenseMapper'
+import type { ConfigType } from '@island.is/nest/config'
+import { FirearmDigitalLicenseClientConfig } from '../firearmLicenseClient.config'
 
 /** Category to attach each log message to */
 //const LOG_CATEGORY = 'firearmlicense-service'
@@ -26,6 +29,8 @@ import { BaseLicenseUpdateClient } from '../../baseLicenseUpdateClient'
 export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
   constructor(
     @Inject(LOGGER_PROVIDER) protected logger: Logger,
+    @Inject(FirearmDigitalLicenseClientConfig.KEY)
+    private config: ConfigType<typeof FirearmDigitalLicenseClientConfig>,
     private openFirearmApi: OpenFirearmApi,
     protected smartApi: SmartSolutionsApi,
   ) {
@@ -105,8 +110,12 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
     return this.smartApi.updatePkPass(payload, formatNationalId(nationalId))
   }
 
-  async revoke(nationalId: string): Promise<Result<RevokePassData>> {
-    return super.revoke(formatNationalId(nationalId))
+  revoke(nationalId: string): Promise<Result<RevokePassData>> {
+    const passTemplateId = this.config.passTemplateId
+    const payload: PassDataInput = {
+      inputFieldValues: [mapNationalId(nationalId)],
+    }
+    return this.smartApi.revokePkPass(passTemplateId, payload)
   }
 
   /** We need to verify the pk pass AND the license itself! */

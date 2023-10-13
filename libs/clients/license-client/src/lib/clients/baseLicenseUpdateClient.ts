@@ -24,9 +24,7 @@ export abstract class BaseLicenseUpdateClient {
 
   abstract pullUpdate(nationalId: string): Promise<Result<Pass | undefined>>
 
-  revoke(nationalId: string): Promise<Result<RevokePassData>> {
-    return this.smartApi.revokePkPass(nationalId)
-  }
+  abstract revoke(nationalId: string): Promise<Result<RevokePassData>>
 
   abstract verify(inputData: string): Promise<Result<PassVerificationData>>
 }
