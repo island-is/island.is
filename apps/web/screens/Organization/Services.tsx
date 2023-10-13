@@ -24,6 +24,7 @@ import {
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
   SortField,
+  Article,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
@@ -42,7 +43,6 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { hasProcessEntries } from '@island.is/web/utils/article'
-import { Article } from '@island.is/api/schema'
 
 interface ServicesPageProps {
   organizationPage: Query['getOrganizationPage']

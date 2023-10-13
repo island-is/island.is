@@ -41,7 +41,8 @@ import {
   QueryGetLifeEventsInCategoryArgs,
   Image,
   ArticleGroup,
-} from '../../../graphql/schema'
+  Article,
+} from '@island.is/web/graphql/schema'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
@@ -52,7 +53,6 @@ import {
   updateHashArray,
 } from './utils'
 import { hasProcessEntries } from '@island.is/web/utils/article'
-import { Article } from '@island.is/api/schema'
 
 type Articles = GetArticlesQuery['getArticles']
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']

@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { processEntryFields } from './fragments'
 
 export const GET_CATEGORIES_QUERY = gql`
   query GetArticleCategories($input: GetArticleCategoriesInput!) {
@@ -22,17 +23,11 @@ export const GET_ARTICLES_QUERY = gql`
       slug
       title
       body {
-        ... on ProcessEntry {
-          __typename
-          processTitle
-          processLink
-        }
+        ...ProcessEntryFields
       }
       processEntryButtonText
       processEntry {
-        id
-        processTitle
-        processLink
+        ...ProcessEntryFields
       }
       group {
         slug
@@ -59,4 +54,5 @@ export const GET_ARTICLES_QUERY = gql`
       }
     }
   }
+  ${processEntryFields}
 `

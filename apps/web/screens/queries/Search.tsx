@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { processEntryFields } from './fragments'
 
 export const GET_SEARCH_RESULTS_QUERY = gql`
   query GetSearchResults($query: SearcherInput!) {
@@ -111,11 +112,7 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           slug
           intro
           body {
-            ... on ProcessEntry {
-              __typename
-              processTitle
-              processLink
-            }
+            ...ProcessEntryFields
           }
           group {
             title
@@ -136,9 +133,7 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
             slug
           }
           processEntry {
-            id
-            processTitle
-            processLink
+            ...ProcessEntryFields
           }
         }
 
@@ -262,4 +257,5 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
       processEntryCount
     }
   }
+  ${processEntryFields}
 `

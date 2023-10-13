@@ -1,5 +1,5 @@
 import React from 'react'
-import { FeaturedArticles } from '@island.is/web/graphql/schema'
+import { FeaturedArticles, Article } from '@island.is/web/graphql/schema'
 import {
   Box,
   BoxProps,
@@ -12,6 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useNamespace } from '@island.is/web/hooks'
+import { hasProcessEntries } from '@island.is/web/utils/article'
 
 interface SliceProps {
   slice: FeaturedArticles
@@ -62,25 +63,19 @@ export const FeaturedArticlesSlice: React.FC<
             {(slice.automaticallyFetchArticles
               ? sortedArticles
               : slice.articles
-            ).map(
-              ({
-                title,
-                slug,
-                processEntry = null,
-                processEntryButtonText = null,
-              }) => {
-                const url = linkResolver('Article' as LinkType, [slug])
+            ).map((article) => {
+                const url = linkResolver('Article' as LinkType, [article.slug])
                 return (
-                  <FocusableBox key={slug} borderRadius="large" href={url.href}>
+                  <FocusableBox key={article.slug} borderRadius="large" href={url.href}>
                     <TopicCard
                       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                       // @ts-ignore make web strict
                       tag={
-                        (!!processEntry || processEntryButtonText) &&
-                        n(processEntryButtonText || 'application', 'Umsókn')
+                        hasProcessEntries(article) &&
+                        n(article.processEntryButtonText || 'application', 'Umsókn')
                       }
                     >
-                      {title}
+                      {article.title}
                     </TopicCard>
                   </FocusableBox>
                 )
