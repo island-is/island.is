@@ -733,6 +733,11 @@ export const validatorErrorMessages = defineMessages({
     defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
     description: 'You must upload an attachment to continue.',
   },
+  childPensionNoRightsForPeriod: {
+    id: 'cp.application:child.pension.no.rights.for.period',
+    defaultMessage: 'Þú átt ekki rétt á barnalífeyri fyrir valið tímabil.',
+    description: 'You are not entitled to child pension for the selected period.',
+  },
 })
 
 export const inReviewFormMessages = defineMessages({
@@ -822,12 +827,12 @@ export const statesMessages = defineMessages({
   },
 
   applicationPending: {
-    id: 'oap.application:applicationPending',
+    id: 'cp.application:applicationPending',
     defaultMessage: 'Umsókn í bið hjá Tryggingastofnun',
     description: 'Application pending at Tryggingastofnun',
   },
   applicationPendingDescription: {
-    id: 'oap.application:applicationPendingDescription',
+    id: 'cp.application:applicationPendingDescription',
     defaultMessage: 'Umsókn vegna barnalífeyris hefur verið sett í bið.',
     description: 'The application for child pension has been put on hold.',
   },

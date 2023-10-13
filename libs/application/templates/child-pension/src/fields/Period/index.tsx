@@ -1,8 +1,8 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { FieldErrors, FieldValues } from 'react-hook-form'
 
 import * as styles from './period.css'
-import { Box } from '@island.is/island-ui/core'
+import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { getErrorViaPath } from '@island.is/application/core'
 import {
   FieldBaseProps,
@@ -12,18 +12,19 @@ import {
 } from '@island.is/application/types'
 import { SelectFormField } from '@island.is/application/ui-fields'
 
-import { childPensionFormMessage } from '../../lib/messages'
+import { childPensionFormMessage, validatorErrorMessages } from '../../lib/messages'
 import {
   getApplicationAnswers,
   getAvailableMonths,
   getAvailableYears,
 } from '../../lib/childPensionUtils'
+import { useLocale } from '@island.is/localization'
 
 export const Period: FC<FieldBaseProps> = ({ application, errors }) => {
   const { selectedYear: year, selectedMonth: month } = getApplicationAnswers(
     application.answers,
   )
-
+  const { formatMessage } = useLocale()
   const [selectedYear, setSeletedYear] = useState(year)
   const [, setSeletedMonth] = useState(month)
 
@@ -37,9 +38,15 @@ export const Period: FC<FieldBaseProps> = ({ application, errors }) => {
     errors as FieldErrors<FieldValues>,
     'period.year',
   )
+
   const errorMonth = getErrorViaPath(
     errors as FieldErrors<FieldValues>,
     'period.month',
+  )
+  
+  const periodError = getErrorViaPath(
+    errors as FieldErrors<FieldValues>,
+    'period'
   )
 
   const onSelectYear = (option: SelectOption) => {
@@ -95,6 +102,19 @@ export const Period: FC<FieldBaseProps> = ({ application, errors }) => {
           />
         </Box>
       </Box>
+      { periodError && ( 
+        <Box paddingTop={4}>             
+          <AlertMessage
+            type="warning"
+            title={formatMessage(
+              childPensionFormMessage.info.childPensionNameAlertTitle,
+            )}
+            message={formatMessage(
+              validatorErrorMessages.childPensionNoRightsForPeriod,
+            )}
+          />
+        </Box>
+      )}
     </Box>
   )
 }

@@ -361,3 +361,15 @@ export function getCombinedResidenceHistory(
     ),
   ].reverse()
 }
+
+export function convertDate(str: string) {
+  var date = new Date(str),
+    month = ("0" + (date.getMonth() + 1)).slice(-2),
+    day = ("0" + date.getDate()).slice(-2)
+  return [date.getFullYear(), month, day].join("-")
+}
+
+export let monthNumberFromString = (str: string) => {
+  return new Date(`${str} 01 2000`).toLocaleDateString(`en`, {month:`2-digit`})
+}
+
