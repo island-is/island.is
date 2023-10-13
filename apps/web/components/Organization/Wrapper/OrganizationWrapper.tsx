@@ -24,6 +24,7 @@ import {
   Text,
   Button,
   Inline,
+  Divider,
 } from '@island.is/island-ui/core'
 import {
   HeadWithSocialSharing,
@@ -89,10 +90,7 @@ import {
   IcelandicNaturalDisasterInsuranceFooter,
 } from './Themes/IcelandicNaturalDisasterInsuranceTheme'
 import { TransportAuthorityHeader } from './Themes/TransportAuthorityTheme'
-import {
-  RettindagaeslaFatladsFolksHeader,
-  RettindagaeslaFatladsFolksFooter,
-} from './Themes/RettindagaeslaFatladsFolksTheme'
+import { RettindagaeslaFatladsFolksHeader } from './Themes/RettindagaeslaFatladsFolksTheme'
 import { HmsHeader } from './Themes/HmsTheme'
 import { RikissaksoknariHeader } from './Themes/RikissaksoknariTheme'
 
@@ -544,12 +542,18 @@ export const OrganizationFooter: React.FC<
       )
       break
     case 'rettindagaesla-fotlun':
+    case 'disability-rights-protection':
       OrganizationFooterComponent = (
-        <RettindagaeslaFatladsFolksFooter
-          footerItems={organization.footerItems}
-          title={organization.title}
-          logo={organization.logo}
-        />
+        <>
+          <WebFooter
+            imageUrl={organization.logo?.url}
+            heading={organization.title}
+            columns={organization.footerItems}
+            background={organization?.footerConfig?.background}
+            color={organization?.footerConfig?.color}
+          />
+          <Divider />
+        </>
       )
       break
     default: {
