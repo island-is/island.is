@@ -49,6 +49,7 @@ export class IslykillApiModule {
                 basePath: config.basePath,
                 fetchApi: createEnhancedFetch({
                   name: 'clients-islykill',
+                  organizationSlug: 'stafraent-island',
                   timeout: 20000,
                   clientCertificate: pfx && {
                     pfx,

@@ -7,6 +7,8 @@ import {
   ErrorScreen,
   EmptyState,
   UserInfoLine,
+  IntroHeader,
+  SJUKRATRYGGINGAR_ID,
 } from '@island.is/service-portal/core'
 import { useLocation } from 'react-router-dom'
 import { useGetDentistsQuery } from './Dentists.generated'
@@ -18,9 +20,7 @@ import {
   Inline,
   SkeletonLoader,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
-import { IntroHeader, useQueryParam } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
 import BillsTable from './BillsTable'
 import add from 'date-fns/add'
@@ -31,6 +31,8 @@ const Dentists = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   const location = useLocation()
+  // Check if the user was transfered from another health center
+  const wasSuccessfulTransfer = location?.state?.transferSuccess
 
   // Feature flag for transfer option.
   const [isTransferAvailable, setIsTransferAvailable] = useState(false)
@@ -66,9 +68,6 @@ const Dentists = () => {
   const { dentist, history } = data?.rightsPortalUserDentistRegistration ?? {}
   const canRegister = dentist?.status?.canRegister ?? false
 
-  // Check if the user was transfered from another health center
-  const wasSuccessfulTransfer = location?.state?.transferSuccess
-
   if (error && !loading) {
     return (
       <ErrorScreen
@@ -88,6 +87,8 @@ const Dentists = () => {
       <IntroHeader
         title={formatMessage(messages.dentistsTitle)}
         intro={formatMessage(messages.dentistsDescription)}
+        serviceProviderID={SJUKRATRYGGINGAR_ID}
+        serviceProviderTooltip={formatMessage(m.healthTooltip)}
       />
 
       {!loading && !dentist && (

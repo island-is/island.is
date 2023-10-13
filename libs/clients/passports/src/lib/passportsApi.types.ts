@@ -65,6 +65,12 @@ export interface PreregistrationInput {
   deliveryName?: string
 }
 
+export interface DocumentLossnInput {
+  status: string
+  comment: string
+  productionRequestId: string
+}
+
 export interface Passport {
   userPassport?: IdentityDocument
   childPassports?: IdentityDocumentChild[]

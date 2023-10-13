@@ -1,24 +1,25 @@
 import PDFDocument from 'pdfkit'
 
+import { FormatMessage } from '@island.is/cms-translations'
+
 import {
   capitalize,
   formatDate,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
-import { FormatMessage } from '@island.is/cms-translations'
 import { SessionArrangements } from '@island.is/judicial-system/types'
 
-import { Case } from '../modules/case'
 import { custodyNotice } from '../messages'
+import { Case } from '../modules/case'
 import { formatCustodyRestrictions } from './formatters'
 import {
   addEmptyLines,
+  addFooter,
   addHugeHeading,
   addLargeHeading,
   addMediumText,
   addNormalText,
   setLineGap,
-  addFooter,
   setTitle,
 } from './pdfHelpers'
 

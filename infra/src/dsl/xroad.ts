@@ -260,6 +260,16 @@ export const OccupationalLicenses = new XroadConf({
   },
 })
 
+export const DistrictCommissioners = new XroadConf({
+  env: {
+    XROAD_DISTRICT_COMMISSIONERS_PATH: {
+      dev: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
+      staging: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
+      prod: 'IS/GOV/5512201410/Syslumenn-Protected/IslandMinarSidur',
+    },
+  },
+})
+
 export const Firearm = new XroadConf({
   env: {
     XROAD_FIREARM_LICENSE_PATH: {
@@ -593,7 +603,7 @@ export const HousingBenefitCalculator = new XroadConf({
     XROAD_HOUSING_BENEFIT_CALCULATOR_PATH: {
       dev: 'IS-DEV/GOV/10033/HMS-Protected/calc-v1',
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/calc-v1',
-      prod: 'IS/GOV/5812191480/HMS-Protected/calc-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/calc-v1',
     },
   },
   secrets: {

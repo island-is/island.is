@@ -7,10 +7,7 @@ import { LoggingModule } from '@island.is/logging'
 import { DrivingLicenseApiModule } from './drivingLicenseApi.module'
 import { exportedApis } from './apiConfiguration'
 
-import {
-  MOCK_NATIONAL_IDS,
-  requestHandlers,
-} from './__mock-data__/requestHandlers'
+import { MOCK_TOKEN, requestHandlers } from './__mock-data__/requestHandlers'
 
 startMocking(requestHandlers)
 describe('DrivingLicenseDuplicateService', () => {
@@ -41,28 +38,28 @@ describe('DrivingLicenseDuplicateService', () => {
   describe('Photo And Signature', () => {
     it('GetHasQualityPhoto for a person with no photo', async () => {
       const response = await service.getHasQualityPhoto({
-        nationalId: MOCK_NATIONAL_IDS.LICENSE_NO_PHOTO_NOR_SIGNATURE,
+        token: MOCK_TOKEN.LICENSE_NO_PHOTO_NOR_SIGNATURE,
       })
       expect(response).toBe(false)
     })
 
     it('GetHasQualityPhoto for a person with photo', async () => {
       const response = await service.getHasQualityPhoto({
-        nationalId: MOCK_NATIONAL_IDS.LICENSE_B_CATEGORY,
+        token: MOCK_TOKEN.LICENSE_B_CATEGORY,
       })
       expect(response).toBe(true)
     })
 
     it('GetHasQualitySignature for a person with no signature', async () => {
       const response = await service.getHasQualitySignature({
-        nationalId: MOCK_NATIONAL_IDS.LICENSE_NO_PHOTO_NOR_SIGNATURE,
+        token: MOCK_TOKEN.LICENSE_NO_PHOTO_NOR_SIGNATURE,
       })
       expect(response).toBe(false)
     })
 
     it('GetHasQualitySignature for a person with signature', async () => {
       const response = await service.getHasQualitySignature({
-        nationalId: MOCK_NATIONAL_IDS.LICENSE_B_CATEGORY,
+        token: MOCK_TOKEN.LICENSE_B_CATEGORY,
       })
       expect(response).toBe(true)
     })

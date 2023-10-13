@@ -58,6 +58,9 @@ import { InheritanceReportService } from './inheritance-report/inheritance-repor
 import { InheritanceReportModule } from './inheritance-report/inheritance-report.module'
 import { EstateTemplateModule } from './estate/estate.module'
 import { EstateTemplateService } from './estate/estate.service'
+import { PassportAnnulmentModule } from './passport-annulment/passport-annulment.module'
+import { PassportAnnulmentService } from './passport-annulment/passport-annulment.service'
+
 import { AnonymityInVehicleRegistryModule } from './transport-authority/anonymity-in-vehicle-registry/anonymity-in-vehicle-registry.module'
 import { AnonymityInVehicleRegistryService } from './transport-authority/anonymity-in-vehicle-registry/anonymity-in-vehicle-registry.service'
 import { ChangeCoOwnerOfVehicleModule } from './transport-authority/change-co-owner-of-vehicle/change-co-owner-of-vehicle.module'
@@ -139,6 +142,8 @@ export const modules = [
   OrderVehicleLicensePlateModule,
   OrderVehicleRegistrationCertificateModule,
   TransferOfVehicleOwnershipModule,
+  EstateTemplateModule,
+  PassportAnnulmentModule,
   EuropeanHealthInsuranceCardModule,
   DrivingLicenseBookUpdateInstructorModule,
   DrivingLearnersPermitModule,
@@ -191,6 +196,8 @@ export const services = [
   OrderVehicleLicensePlateService,
   OrderVehicleRegistrationCertificateService,
   TransferOfVehicleOwnershipService,
+  EstateTemplateService,
+  PassportAnnulmentService,
   EuropeanHealthInsuranceCardService,
   DrivingLicenseBookUpdateInstructorService,
   DrivingLearnersPermitService,
