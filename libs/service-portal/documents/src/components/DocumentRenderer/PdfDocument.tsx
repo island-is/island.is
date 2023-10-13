@@ -57,7 +57,6 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({ document }) => {
       >
         <PdfViewer
           file={`data:application/pdf;base64,${document.document.content}`}
-          showAllPages
           scale={scalePDF}
           autoWidth={false}
         />
