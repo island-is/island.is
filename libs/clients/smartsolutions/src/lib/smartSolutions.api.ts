@@ -301,8 +301,6 @@ export class SmartSolutionsApi {
       },
     })
 
-    this.logger.debug('graphql', graphql)
-
     const res = await this.query<VoidPassResponseData>(graphql)
 
     if (!res.ok) {
