@@ -14,7 +14,7 @@
       }
     ],
     "simple-import-sort/imports": [
-      "error",
+      "warn",
       {
         "groups": [
           // React related packages come first, followed by all external imports.
