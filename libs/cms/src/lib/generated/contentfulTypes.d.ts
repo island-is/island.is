@@ -698,6 +698,58 @@ export interface IErrorPage extends Entry<IErrorPageFields> {
   }
 }
 
+export interface IEventFields {
+  /** Organization */
+  organization: IOrganization
+
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Date */
+  startDate: string
+
+  /** Event time duration */
+  time?: Record<string, any> | undefined
+
+  /** Event Location */
+  location?: Record<string, any> | undefined
+
+  /** Content */
+  content?: Document | undefined
+
+  /** video */
+  video?: IEmbeddedVideo | undefined
+
+  /** Image */
+  image: Asset
+
+  /** Full Width Image In Content */
+  fullWidthImageInContent?: boolean | undefined
+
+  /** og:image */
+  featuredImage?: Asset | undefined
+}
+
+export interface IEvent extends Entry<IEventFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'event'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IEventSliceFields {
   /** Title */
   title?: string | undefined
@@ -1474,6 +1526,37 @@ export interface IIntroLinkImage extends Entry<IIntroLinkImageFields> {
   }
 }
 
+export interface ILatestEventsSliceFields {
+  /** Title */
+  title: string
+
+  /** Organization */
+  organization: IOrganization
+
+  /** Read more link */
+  readMoreLink?: ILink | undefined
+
+  /** Read more text */
+  readMoreText?: string | undefined
+}
+
+export interface ILatestEventsSlice extends Entry<ILatestEventsSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'latestEventsSlice'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ILatestNewsSliceFields {
   /** Title */
   title?: string | undefined
@@ -1795,6 +1878,77 @@ export interface ILogoListSlice extends Entry<ILogoListSliceFields> {
     contentType: {
       sys: {
         id: 'logoListSlice'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IManualFields {
+  /** Organization */
+  organization: IOrganization
+
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Info */
+  info?: Document | undefined
+
+  /** Description */
+  description?: Document | undefined
+
+  /** Chapters */
+  chapters: IManualChapter[]
+}
+
+export interface IManual extends Entry<IManualFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'manual'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IManualChapterFields {
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Description */
+  description?: Document | undefined
+
+  /** Chapter Item */
+  chapterItem?: IOneColumnText[] | undefined
+
+  /** Changelog */
+  changelog?: Record<string, any> | undefined
+}
+
+export interface IManualChapter extends Entry<IManualChapterFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'manualChapter'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2369,6 +2523,7 @@ export interface IOrganizationPageFields {
         | IOneColumnText
         | ITimeline
         | ITwoColumnText
+        | ILatestEventsSlice
       )[]
     | undefined
 
@@ -4330,6 +4485,7 @@ export type CONTENT_TYPE =
   | 'embeddedVideo'
   | 'enhancedAsset'
   | 'errorPage'
+  | 'event'
   | 'eventSlice'
   | 'faqList'
   | 'featured'
@@ -4349,6 +4505,7 @@ export type CONTENT_TYPE =
   | 'hnippTemplate'
   | 'iconBullet'
   | 'introLinkImage'
+  | 'latestEventsSlice'
   | 'latestNewsSlice'
   | 'lifeEventPage'
   | 'lifeEventPageListSlice'
@@ -4359,6 +4516,8 @@ export type CONTENT_TYPE =
   | 'linkUrl'
   | 'location'
   | 'logoListSlice'
+  | 'manual'
+  | 'manualChapter'
   | 'menu'
   | 'menuLink'
   | 'menuLinkWithChildren'

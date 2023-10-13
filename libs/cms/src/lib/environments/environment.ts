@@ -19,6 +19,7 @@ export default {
     'enhancedAsset',
     'vacancy',
     'serviceWebPage',
+    'event',
   ],
   nestedContentTypes: [
     'alertBanner',
@@ -81,6 +82,7 @@ export default {
     'sidebarCard',
     'genericTag',
     'latestNewsSlice',
+    'latestEventsSlice',
     'supportCategory',
     'supportSubCategory',
     'lifeEventPageListSlice',

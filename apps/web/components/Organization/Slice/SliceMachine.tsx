@@ -63,6 +63,10 @@ const LatestNewsSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.LatestNewsSlice),
 )
 
+const LatestEventsSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.LatestEventsSlice),
+)
+
 const OverviewLinksSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.OverviewLinksSlice),
 )
@@ -156,6 +160,8 @@ const renderSlice = (
       return <PowerBiSlice slice={slice} />
     case 'SectionWithVideo':
       return <SectionWithVideo slice={slice} />
+    case 'LatestEventsSlice':
+      return <LatestEventsSlice slice={slice} slug={slug} {...params} />
     default:
       return <RichText body={[slice]} />
   }

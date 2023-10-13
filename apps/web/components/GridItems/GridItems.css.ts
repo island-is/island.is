@@ -56,3 +56,39 @@ export const half = style({
     },
   }),
 })
+
+export const third = style({
+  gridTemplateColumns: 'repeat(3, 1fr)',
+  ...themeUtils.responsiveStyle({
+    xs: {
+      width: theme.breakpoints.sm + 70,
+    },
+    sm: {
+      gridTemplateColumns: 'repeat(3, 1fr)',
+    },
+    lg: {
+      gridTemplateColumns: 'repeat(3, 1fr)',
+    },
+    xl: {
+      gridTemplateColumns: 'repeat(3, 1fr)',
+    },
+  }),
+})
+
+export const quarter = style({
+  gridTemplateColumns: 'repeat(4, 1fr)',
+  ...themeUtils.responsiveStyle({
+    xs: {
+      width: theme.breakpoints.sm + 70,
+    },
+    sm: {
+      gridTemplateColumns: 'repeat(4, 1fr)',
+    },
+    lg: {
+      gridTemplateColumns: 'repeat(4, 1fr)',
+    },
+    xl: {
+      gridTemplateColumns: 'repeat(4, 1fr)',
+    },
+  }),
+})

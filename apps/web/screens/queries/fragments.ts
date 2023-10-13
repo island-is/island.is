@@ -712,6 +712,27 @@ export const slices = gql`
     aspectRatio
   }
 
+  fragment LatestEventsSliceFields on LatestEventsSlice {
+    title
+    events {
+      title
+      slug
+      date
+      time
+      location
+      image {
+        url
+        title
+        width
+        height
+      }
+    }
+    readMoreText
+    readMoreLink {
+      url
+    }
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...StoryFields
@@ -751,6 +772,7 @@ export const slices = gql`
     ...EmailSignupFields
     ...SliceDropdownFields
     ...EmbedFields
+    ...LatestEventsSliceFields
   }
 
   fragment AllSlices on Slice {
