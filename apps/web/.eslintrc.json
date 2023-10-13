@@ -12,8 +12,29 @@
           { "sourceTag": "*", "onlyDependOnLibsWithTags": ["*"] }
         ]
       }
+    ],
+    "simple-import-sort/imports": [
+      "error",
+      {
+        "groups": [
+          // Packages `react` related packages come first, followed by all external imports.
+          ["^react", "^\\w", "^@(?!island).+"],
+          // Then island.is packages.
+          ["^(@island.is).*"],
+          // Then all other imports in this order: "../", "./", "./css"
+          [
+            "^\\.\\.(?!/?$)",
+            "^\\.\\./?$",
+            "^\\./(?=.*/)(?!/?$)",
+            "^\\.(?!/?$)",
+            "^\\./?$",
+            "^.+\\.?(css)$"
+          ]
+        ]
+      }
     ]
   },
+  "plugins": ["simple-import-sort"],
   "overrides": [
     { "files": ["*.ts", "*.tsx", "*.js", "*.jsx"], "rules": {} },
     { "files": ["*.ts", "*.tsx"], "rules": {} },
