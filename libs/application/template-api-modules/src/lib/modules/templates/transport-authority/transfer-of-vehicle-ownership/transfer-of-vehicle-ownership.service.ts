@@ -164,6 +164,9 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         dateOfPurchase: new Date(answers?.vehicle?.date),
         dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
         saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
+        mileage: answers?.vehicle?.mileage
+          ? Number(answers?.vehicle?.mileage) || 0
+          : null,
         insuranceCompanyCode: answers?.insurance?.value,
         coOwners: buyerCoOwners?.map((coOwner) => ({
           ssn: coOwner.nationalId!,
@@ -507,6 +510,9 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       dateOfPurchase: new Date(answers?.vehicle?.date),
       dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
       saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
+      mileage: answers?.vehicle?.mileage
+        ? Number(answers?.vehicle?.mileage) || 0
+        : null,
       insuranceCompanyCode: answers?.insurance?.value,
       coOwners: buyerCoOwners?.map((coOwner) => ({
         ssn: coOwner.nationalId!,

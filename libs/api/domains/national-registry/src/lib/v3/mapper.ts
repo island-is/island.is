@@ -64,7 +64,6 @@ export function formatPerson(
     exceptionFromDirectMarketing: individual.bannmerking === true ?? false,
     gender: mapGender(individual.kyn?.kynKodi ?? ''),
     religion: individual.trufelag?.trufelagHeiti ?? null,
-    fate: individual.afdrif ?? null,
     maritalStatus: mapMaritalStatus(
       individual.hjuskaparstada?.hjuskaparstadaKodi ?? '',
     ),

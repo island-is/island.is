@@ -5,6 +5,9 @@ import { TransferOfVehicleOwnershipAnswers } from '..'
 export const formatIsk = (value: number): string =>
   value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 
+export const formatMileage = (value: number): string =>
+  value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+
 export const formatPhoneNumber = (value: string): string =>
   value.length === 7 ? value.substr(0, 3) + '-' + value.substr(3, 6) : value
 
