@@ -137,9 +137,6 @@ export class ApplicationTemplateHelper<
 
     const eventType = typeof event === 'object' ? event.type : event
     const { initialState } = service.start()
-    console.log('initialState', initialState.value)
-    console.log('event', event)
-    console.log(initialState.nextEvents)
 
     if (!initialState.nextEvents.includes(eventType)) {
       throw new Error(`${eventType} is invalid for state ${initialState.value}`)
