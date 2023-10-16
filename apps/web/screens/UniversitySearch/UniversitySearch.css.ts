@@ -62,3 +62,7 @@ export const filterInput = style({
     },
   }),
 })
+
+export const capitalizeText = style({
+  textTransform: 'capitalize',
+})

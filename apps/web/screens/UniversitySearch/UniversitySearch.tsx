@@ -61,7 +61,7 @@ import { Comparison } from './ComparisonComponent'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
-const ITEMS_PER_PAGE = 8
+const ITEMS_PER_PAGE = 9
 const NUMBER_OF_FILTERS = 6
 const MAX_SELECTED_COMPARISON = 3
 
@@ -97,6 +97,12 @@ const initialFilters = {
   // location: [],
   // tuition: [],
   // tags: [],
+}
+
+const stripHtml = (html: string) => {
+  const tmp = document.createElement('DIV')
+  tmp.innerHTML = html
+  return tmp.textContent || tmp.innerText || ''
 }
 
 export interface ComparisonProps {
@@ -423,15 +429,24 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                             if (keyField !== 'OTHER') {
                               return (
                                 <Checkbox
-                                  label={`${n(keyField, keyField)}${
-                                    filter.field === 'durationInYears'
-                                      ? locale === 'en'
-                                        ? keyField === '1'
-                                          ? ' year'
-                                          : ' years'
-                                        : ' ár'
-                                      : ''
-                                  }`}
+                                  label={
+                                    <span
+                                      className={
+                                        filter.field !== 'durationInYears'
+                                          ? styles.capitalizeText
+                                          : ''
+                                      }
+                                    >
+                                      {n(keyField, keyField)}
+                                      {filter.field === 'durationInYears'
+                                        ? locale === 'en'
+                                          ? keyField === '1'
+                                            ? ' year'
+                                            : ' years'
+                                          : ' ár'
+                                        : ''}
+                                    </span>
+                                  }
                                   id={keyField}
                                   value={option}
                                   checked={
@@ -513,7 +528,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               }}
             />
             <ContentBlock>
-              <Box paddingTop={2}>
+              <Box paddingTop={2} hidden>
                 <Inline space={[1, 2]}>
                   <Tag
                     onClick={() => resetFilteredList()}
@@ -708,8 +723,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                             }
                             text={
                               locale === 'en'
-                                ? dataItem.descriptionEn
-                                : dataItem.descriptionIs
+                                ? stripHtml(dataItem.descriptionEn)
+                                : stripHtml(dataItem.descriptionIs)
                             }
                             icon={
                               <img
@@ -781,16 +796,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     ],
                                   )} ${dataItem.startingSemesterYear}`,
                                 },
-                                // {
-                                //   icon: (
-                                //     <Icon
-                                //       icon={'document'}
-                                //       type="outline"
-                                //       color="blue400"
-                                //     />
-                                //   ),
-                                //   title: `${n('entryExam', 'Inntökupróf')}: TODO`,
-                                // },
                                 {
                                   icon: (
                                     <Icon
@@ -835,7 +840,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                       color="blue400"
                                     />
                                   ),
-                                  title: `${dataItem.costPerYear}kr.`,
+                                  title: `${
+                                    dataItem.costPerYear &&
+                                    dataItem.costPerYear.toLocaleString('is-IS')
+                                  } kr.`,
                                 },
                               ],
                             }}
@@ -944,16 +952,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     ],
                                   )} ${dataItem.startingSemesterYear}`,
                                 },
-                                // {
-                                //   icon: (
-                                //     <Icon
-                                //       icon={'document'}
-                                //       type="outline"
-                                //       color="blue400"
-                                //     />
-                                //   ),
-                                //   title: `${n('entryExam', 'Inntökupróf')}: TODO`,
-                                // },
                                 {
                                   icon: (
                                     <Icon
@@ -1005,7 +1003,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                       color="blue400"
                                     />
                                   ),
-                                  title: `${dataItem.costPerYear}kr.`,
+                                  title: `${
+                                    dataItem.costPerYear &&
+                                    dataItem.costPerYear.toLocaleString('is-IS')
+                                  } kr.`,
                                 },
                               ]}
                             />

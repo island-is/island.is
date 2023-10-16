@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import parse from 'html-react-parser'
+import React, { useEffect, useState } from 'react'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   Accordion,
@@ -34,11 +35,13 @@ import { IconTitleCard } from '@island.is/web/components'
 import SidebarLayout from '../Layouts/SidebarLayout'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { TranslationDefaults } from './TranslationDefaults'
-
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
 import getConfig from 'next/config'
+import { ProgramCourse } from '@island.is/api/schema'
+import * as styles from './UniversitySearch.css'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
-
 interface UniversityDetailsProps {
   data: ProgramDetails
   namespace: Record<string, string>
@@ -54,6 +57,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
 }) => {
   const n = useNamespace(namespace)
 
+  const [sortedCourses, setSortedCourses] = useState<Array<ProgramCourse>>([])
   const [isOpen, setIsOpen] = useState<Array<boolean>>([
     false,
     false,
@@ -70,6 +74,18 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
 
     setIsOpen(newIsOpen)
   }
+
+  useEffect(() => {
+    setSortedCourses(
+      data.courses.sort((x, y) =>
+        (x.semesterSeason + x.semesterYear).localeCompare(
+          y.semesterSeason + y.semesterYear,
+        ),
+      ),
+    )
+  }, [data, sortedCourses])
+
+  console.log('all courses', data.courses)
 
   return (
     <SidebarLayout
@@ -122,16 +138,13 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
         </Text>
 
         <Box marginTop={2}>
-          <Text variant="default">{`${data.degreeAbbreviation} - ${data.credits} einingar`}</Text>
+          {data.credits && data.credits > 0 && (
+            <Text variant="default">{`${data.degreeAbbreviation} - ${data.credits} einingar`}</Text>
+          )}
           <Text marginTop={3} marginBottom={3} variant="default">
-            {locale === 'en' ? data.descriptionEn : data.descriptionIs}
-          </Text>
-        </Box>
-
-        <Box marginTop={2}>
-          <Text variant="default">{`${data.degreeAbbreviation} - ${data.credits} einingar`}</Text>
-          <Text marginTop={3} marginBottom={3} variant="default">
-            {locale === 'en' ? data.descriptionEn : data.descriptionIs}
+            {locale === 'en'
+              ? parse(data.descriptionEn)
+              : parse(data.descriptionIs)}
           </Text>
           {data.externalUrlIs && (
             <LinkV2
@@ -204,8 +217,9 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                   </Box>
                   <Text variant="medium">
                     {`${n('yearlyCost', 'Árlegur kostnaður')}: ${
-                      data.costPerYear
-                    }kr.`}
+                      data.costPerYear &&
+                      data.costPerYear.toLocaleString('is-IS')
+                    } kr.`}
                   </Text>
                 </Box>
               </GridColumn>
@@ -217,9 +231,15 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                   <Text variant="medium">{`${n(
                     'applicationPeriod',
                     'Umsóknartímabil',
-                  )}: ${data.applicationStartDate} - ${
-                    data.applicationEndDate
-                  }`}</Text>
+                  )}: ${format(
+                    new Date(data.applicationStartDate),
+                    'd. MMMM yyyy',
+                    { locale: is },
+                  )} - ${format(
+                    new Date(data.applicationEndDate),
+                    'd. MMMM yyyy',
+                    { locale: is },
+                  )}`}</Text>
                 </Box>
               </GridColumn>
 
@@ -288,11 +308,30 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
               onToggle={() => toggleIsOpen(2)}
             >
               <Text as="p">
-                {data.courses &&
-                  data.courses.map((i, index) => {
-                    return `${i.nameIs}${
-                      index === data.courses.length - 1 ? ', ' : ''
-                    }`
+                {sortedCourses &&
+                  sortedCourses.map((i, index) => {
+                    if (
+                      (index > 0 &&
+                        sortedCourses[index - 1].semesterSeason +
+                          sortedCourses[index - 1].semesterYear !==
+                          sortedCourses[index].semesterSeason +
+                            sortedCourses[index].semesterYear) ||
+                      index === 0
+                    ) {
+                      return (
+                        <Box marginTop={1}>
+                          <p className={styles.capitalizeText}>
+                            {n(
+                              i.semesterSeason,
+                              TranslationDefaults[i.semesterSeason],
+                            )}{' '}
+                            - {i.semesterYear}
+                          </p>
+                          <p>{i.nameIs}</p>
+                        </Box>
+                      )
+                    }
+                    return <p>{i.nameIs}</p>
                   })}
               </Text>
             </AccordionItem>

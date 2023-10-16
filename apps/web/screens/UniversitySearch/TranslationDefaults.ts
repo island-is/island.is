@@ -1,6 +1,6 @@
 export const TranslationDefaults: { [key: string]: string } = {
-  FALL: 'Haust',
-  SPRING: 'Vor',
+  FALL: 'haust',
+  SPRING: 'vor',
   DOCTORAL: 'Doktorsnám',
   POSTGRADUATE: 'Meistaranám',
   DIPLOMA: 'Diplóma',
