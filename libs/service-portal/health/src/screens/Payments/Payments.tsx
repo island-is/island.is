@@ -52,7 +52,7 @@ export const Payments = () => {
         size="xs"
         tabs={tabs}
         onlyRenderSelectedTab={true}
-        selected={TabPanes.PAYMENT_PARTICIPATION}
+        selected={TabPanes.PAYMENT_OVERVIEW}
       />
     </Box>
   )

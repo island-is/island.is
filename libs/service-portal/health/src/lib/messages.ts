@@ -1,6 +1,10 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
+  maximumMonthlyPayment: {
+    id: 'sp.health:maximum-monthly-payment',
+    defaultMessage: 'Hámarksgreiðsla þín á mánuði',
+  },
   payments: {
     id: 'sp.health:payments',
     defaultMessage: 'Greiðslur',
