@@ -246,7 +246,7 @@ jobs:
             echo "SHA='$SHA', retrived from action environment"
           fi
           echo "Using SHA='$SHA' as docker tag sha"
-          export DOCKER_TAG=${DOCKER_BRANCH_TAG}_${SHA:0:7}
+          export DOCKER_TAG=${DOCKER_BRANCH_TAG}_${SHA:0:7}_${GITHUB_RUN_NUMBER}
           echo "Docker tag will be ${DOCKER_TAG}"
           echo "DOCKER_TAG=${DOCKER_TAG}" >> $GITHUB_OUTPUT
           echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
