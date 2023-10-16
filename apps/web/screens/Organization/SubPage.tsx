@@ -205,7 +205,7 @@ const SubPage: Screen<SubPageProps> = ({
       }}
     >
       <GridContainer>
-        <Box paddingY={4}>
+        <Box paddingTop={4}>
           <GridRow>
             <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
               <GridContainer>
@@ -227,6 +227,7 @@ const SubPage: Screen<SubPageProps> = ({
                       alignItems="center"
                       columnGap={2}
                       rowGap={2}
+                      marginBottom={3}
                       flexWrap="wrap"
                     >
                       <Webreader
