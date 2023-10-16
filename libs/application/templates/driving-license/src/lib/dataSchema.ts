@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { YES, NO } from './constants'
+import { YES, NO, B_RENEWAL } from './constants'
 import { B_FULL, B_TEMP } from '../lib/constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { hasYes } from '@island.is/application/core'
@@ -53,7 +53,7 @@ export const dataSchema = z.object({
   ]),
   requirementsMet: z.boolean().refine((v) => v),
   certificate: z.array(z.enum([YES, NO])).nonempty(),
-  applicationFor: z.enum([B_FULL, B_TEMP]),
+  applicationFor: z.enum([B_FULL, B_TEMP, B_RENEWAL]),
   email: z.string().email(),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
   drivingInstructor: z.string().min(1),

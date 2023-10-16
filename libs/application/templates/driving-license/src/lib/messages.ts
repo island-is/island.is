@@ -725,6 +725,17 @@ export const m = defineMessages({
     description:
       'Option description for selecting to apply for temporary driving license',
   },
+  applicationForRenewalLicenseTitle: {
+    id: 'dl.application:applicationForRenewalLicenseTitle',
+    defaultMessage: 'Endurnýjun ökuréttinda 65 ára eða eldri',
+    description: 'Option title for selecting to renew driving license',
+  },
+  applicationForRenewalLicenseDescription: {
+    id: 'dl.application:applicationForRenewalLicenseDescription',
+    defaultMessage:
+      'Umsókn um endurnýjun ökuréttinda í B flokki (fólksbifreið), fyrir 65 ára og eldri.',
+    description: 'Option description for selecting to renew driving license',
+  },
   declinedOtherCountryHelpText: {
     id: 'dl.application:declinedOtherCountryHelpText',
     defaultMessage:

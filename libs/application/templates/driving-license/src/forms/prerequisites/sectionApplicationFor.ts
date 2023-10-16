@@ -6,7 +6,13 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { DrivingLicense } from '../../lib/types'
-import { B_FULL, B_TEMP } from '../../lib/constants'
+import {
+  B_FULL,
+  B_RENEWAL,
+  B_TEMP,
+  DrivingLicenseFakeData,
+} from '../../lib/constants'
+import { info } from 'kennitala'
 
 export const sectionApplicationFor = buildSubSection({
   id: 'applicationFor',
@@ -24,10 +30,21 @@ export const sectionApplicationFor = buildSubSection({
           space: 0,
           largeButtons: true,
           options: (app) => {
-            const { currentLicense } = getValueViaPath<DrivingLicense>(
+            let { currentLicense } = getValueViaPath<DrivingLicense>(
               app.externalData,
               'currentLicense.data',
             ) ?? { currentLicense: null }
+
+            let age = info(app.applicant).age
+
+            const fakeData = getValueViaPath<DrivingLicenseFakeData>(
+              app.answers,
+              'fakeData',
+            )
+            if (fakeData?.useFakeData === 'yes') {
+              currentLicense = fakeData.currentLicense ?? null
+              age = fakeData.age
+            }
 
             return [
               {
@@ -40,7 +57,14 @@ export const sectionApplicationFor = buildSubSection({
                 label: m.applicationForFullLicenseTitle,
                 subLabel: m.applicationForFullLicenseDescription.defaultMessage,
                 value: B_FULL,
-                disabled: !currentLicense,
+                disabled: !currentLicense || age >= 65,
+              },
+              {
+                label: m.applicationForRenewalLicenseTitle,
+                subLabel:
+                  m.applicationForRenewalLicenseDescription.defaultMessage,
+                value: B_RENEWAL,
+                disabled: !currentLicense || age < 65,
               },
             ]
           },

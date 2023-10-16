@@ -66,6 +66,10 @@ export const sectionFakeData = buildSubSection({
               value: 'temp',
               label: 'Bráðabirgðaskírteini',
             },
+            {
+              value: 'full',
+              label: 'Fullnaðarskírteini',
+            },
           ],
         }),
         buildRadioField({
