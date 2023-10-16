@@ -21,7 +21,6 @@ import {
   DynamicBarcodeDataInput,
   Pass,
   PassDataInput,
-  PassInputField,
   PassTemplate,
 } from '../../gen/schema'
 import { Inject } from '@nestjs/common'
@@ -51,7 +50,10 @@ export class SmartSolutionsApi {
     private config: SmartSolutionsConfig,
   ) {}
 
-  private async fetch(query: string): Promise<FetchResponse> {
+  private async fetch(
+    query: string,
+    requestId?: string,
+  ): Promise<FetchResponse> {
     let res: Response | null = null
     try {
       res = await fetch(this.config.apiUrl, {
@@ -64,7 +66,8 @@ export class SmartSolutionsApi {
       })
     } catch (e) {
       this.logger.warn('Unable to fetch data', {
-        exception: e,
+        error: e,
+        requestId,
         category: LOG_CATEGORY,
       })
     }
@@ -72,6 +75,7 @@ export class SmartSolutionsApi {
     if (!res) {
       this.logger.warn('Unable to query data, null from fetch', {
         category: LOG_CATEGORY,
+        requestId,
       })
 
       return {
@@ -87,6 +91,7 @@ export class SmartSolutionsApi {
         status: res.status,
         statusText: res.statusText,
         category: LOG_CATEGORY,
+        requestId,
       })
 
       if (!res.status) {
@@ -94,6 +99,7 @@ export class SmartSolutionsApi {
           status: res.status,
           statusText: res.statusText,
           category: LOG_CATEGORY,
+          requestId,
         })
       }
 
@@ -110,8 +116,9 @@ export class SmartSolutionsApi {
       json = await res.json()
     } catch (e) {
       this.logger.warn('Unable to parse JSON', {
-        exception: e,
+        error: e,
         category: LOG_CATEGORY,
+        requestId,
       })
       return {
         error: {
@@ -124,8 +131,11 @@ export class SmartSolutionsApi {
     return { apiResponse: json as ApiResponse }
   }
 
-  private async query<T>(graphql: string): Promise<Result<T>> {
-    const response = await this.fetch(graphql)
+  private async query<T>(
+    graphql: string,
+    requestId?: string,
+  ): Promise<Result<T>> {
+    const response = await this.fetch(graphql, requestId)
 
     const apiRes = response.apiResponse
     if (apiRes) {
@@ -176,6 +186,7 @@ export class SmartSolutionsApi {
 
   async verifyPkPass(
     payload: DynamicBarcodeDataInput,
+    requestId?: string,
   ): Promise<Result<VerifyPassData>> {
     const graphql = JSON.stringify({
       query: VERIFY_PKPASS,
@@ -184,9 +195,14 @@ export class SmartSolutionsApi {
       },
     })
 
-    const res = await this.query<VerifyPassResponseData>(graphql)
+    const res = await this.query<VerifyPassResponseData>(graphql, requestId)
 
     if (res.ok) {
+      this.logger.debug('PkPass verification successful', {
+        requestId,
+        passId: res.data.updateStatusOnPassWithDynamicBarcode?.id,
+        category: LOG_CATEGORY,
+      })
       return {
         ok: true,
         data: {
@@ -196,6 +212,11 @@ export class SmartSolutionsApi {
       }
     }
 
+    this.logger.debug('PkPass verification failed', {
+      error: res.error,
+      requestId,
+      category: LOG_CATEGORY,
+    })
     return res
   }
 
@@ -207,7 +228,8 @@ export class SmartSolutionsApi {
    */
   async updatePkPass(
     payload: PassDataInput,
-    nationalId: string,
+    nationalId?: string,
+    requestId?: string,
   ): Promise<Result<Pass>> {
     const graphql = JSON.stringify({
       query: UPDATE_PASS,
@@ -222,7 +244,8 @@ export class SmartSolutionsApi {
     const res = await this.query<UpdatePassResponseData>(graphql)
 
     if (res.ok) {
-      this.logger.info('Pass update successful', {
+      this.logger.debug('PkPass update successful', {
+        requestId,
         passId: res.data.updatePass.id,
         category: LOG_CATEGORY,
       })
@@ -232,9 +255,13 @@ export class SmartSolutionsApi {
       }
     }
 
-    return {
-      ...res,
-    }
+    this.logger.debug('PkPass update failed', {
+      error: res.error,
+      requestId,
+      category: LOG_CATEGORY,
+    })
+
+    return res
   }
 
   /**
@@ -245,8 +272,9 @@ export class SmartSolutionsApi {
    */
   async generatePkPass(
     payload: PassDataInput,
-    nationalId: string,
+    nationalId?: string,
     onCreateCallback?: () => Promise<void>,
+    requestId?: string,
   ): Promise<Result<Pass>> {
     const graphql = JSON.stringify({
       query: UPSERT_PASS,
@@ -258,7 +286,7 @@ export class SmartSolutionsApi {
       },
     })
 
-    const res = await this.query<UpsertPassResponseData>(graphql)
+    const res = await this.query<UpsertPassResponseData>(graphql, requestId)
 
     if (res.ok) {
       //if the values match, the pass is new
@@ -268,13 +296,15 @@ export class SmartSolutionsApi {
         res.data.upsertPass.whenCreated === res.data.upsertPass.whenModified &&
         onCreateCallback
       ) {
-        this.logger.info('Pass created successfully', {
+        this.logger.debug('PkPass created successfully', {
+          requestId,
           passId: res.data.upsertPass.id,
           category: LOG_CATEGORY,
         })
         onCreateCallback()
       } else {
-        this.logger.info('Pass upsert successful', {
+        this.logger.debug('PkPass upsert successful', {
+          requestId,
           passId: res.data.upsertPass.id,
           category: LOG_CATEGORY,
         })
@@ -285,12 +315,19 @@ export class SmartSolutionsApi {
       }
     }
 
+    this.logger.debug('PkPass generation failed', {
+      error: res.error,
+      requestId,
+      category: LOG_CATEGORY,
+    })
+
     return res
   }
 
   async revokePkPass(
     passTemplateId: string,
     payload: PassDataInput,
+    requestId?: string,
   ): Promise<Result<RevokePassData>> {
     //first, void it
     const graphql = JSON.stringify({
@@ -301,18 +338,21 @@ export class SmartSolutionsApi {
       },
     })
 
-    const res = await this.query<VoidPassResponseData>(graphql)
+    const res = await this.query<VoidPassResponseData>(graphql, requestId)
 
     if (!res.ok) {
-      this.logger.info('Pass void failed', {
+      this.logger.debug('PkPass void failed', {
+        error: res.error,
         category: LOG_CATEGORY,
+        requestId,
         passTemplateId,
       })
 
       return res
     }
 
-    this.logger.info('Pass voided successfully', {
+    this.logger.debug('PkPass voided successfully', {
+      requestId,
       category: LOG_CATEGORY,
       passTemplateId,
     })
@@ -325,18 +365,24 @@ export class SmartSolutionsApi {
       },
     })
 
-    const deleteRes = await this.query<DeletePassResponseData>(deleteGraphql)
+    const deleteRes = await this.query<DeletePassResponseData>(
+      deleteGraphql,
+      requestId,
+    )
 
     if (!deleteRes.ok) {
-      this.logger.info('Pass delete failed', {
+      this.logger.debug('PkPass delete failed', {
+        error: deleteRes.error,
         category: LOG_CATEGORY,
+        requestId,
         passTemplateId,
       })
       return deleteRes
     }
 
-    this.logger.info('Pass deleted successfully', {
+    this.logger.debug('PkPass deleted successfully', {
       category: LOG_CATEGORY,
+      requestId,
       passTemplateId,
     })
     //deletion success
@@ -348,6 +394,7 @@ export class SmartSolutionsApi {
 
   private async unvoidPkPass(
     passId: string,
+    requestId?: string,
   ): Promise<Result<UnvoidPassResponseData>> {
     const unvoidPassMutation = JSON.stringify({
       query: UNVOID_PASS,
@@ -358,6 +405,7 @@ export class SmartSolutionsApi {
 
     const response = await this.query<UnvoidPassResponseData>(
       unvoidPassMutation,
+      requestId,
     )
 
     if (response.ok) {
@@ -380,13 +428,18 @@ export class SmartSolutionsApi {
     return response
   }
 
-  async listTemplates(): Promise<Result<Array<PassTemplate> | undefined>> {
+  async listTemplates(
+    requestId?: string,
+  ): Promise<Result<Array<PassTemplate> | undefined>> {
     const graphql = JSON.stringify({
       query: LIST_TEMPLATES,
       variables: {},
     })
 
-    const response = await this.query<ListTemplatesResponseData>(graphql)
+    const response = await this.query<ListTemplatesResponseData>(
+      graphql,
+      requestId,
+    )
 
     if (response.ok) {
       return {

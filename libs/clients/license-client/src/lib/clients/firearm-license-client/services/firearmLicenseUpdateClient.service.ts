@@ -24,7 +24,8 @@ import type { ConfigType } from '@island.is/nest/config'
 import { FirearmDigitalLicenseClientConfig } from '../firearmLicenseClient.config'
 
 /** Category to attach each log message to */
-//const LOG_CATEGORY = 'firearmlicense-service'
+const LOG_CATEGORY = 'firearmlicense-service'
+
 @Injectable()
 export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
   constructor(
@@ -44,7 +45,10 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
     return super.pushUpdate(inputData, formatNationalId(nationalId))
   }
 
-  async pullUpdate(nationalId: string): Promise<Result<Pass>> {
+  async pullUpdate(
+    nationalId: string,
+    requestId?: string,
+  ): Promise<Result<Pass>> {
     let data
     try {
       data = await Promise.all([
@@ -52,16 +56,28 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
         this.openFirearmApi.getVerificationPropertyInfo(nationalId),
       ])
     } catch (e) {
+      this.logger.error(
+        'License info and/or license property info fetch failed',
+        {
+          error: e,
+          requestId,
+          category: LOG_CATEGORY,
+        },
+      )
       return {
         ok: false,
         error: {
           code: 13,
-          message: 'External service error',
+          message: 'License info and/or license property info fetch failed',
         },
       }
     }
 
     const [licenseInfo, propertyInfo] = data
+    this.logger.warn('No license info found for user', {
+      requestId,
+      category: LOG_CATEGORY,
+    })
     if (!licenseInfo) {
       return {
         ok: false,

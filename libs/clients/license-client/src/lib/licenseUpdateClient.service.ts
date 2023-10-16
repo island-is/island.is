@@ -16,12 +16,13 @@ export class LicenseUpdateClientService {
     @Inject(LICENSE_UPDATE_CLIENT_FACTORY)
     private licenseUpdateClientFactory: (
       type: LicenseType,
+      requestId?: string,
     ) => Promise<BaseLicenseUpdateClient | null>,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @Inject(CONFIG_PROVIDER) private config: PassTemplateIds,
   ) {}
 
-  private getTypeByPassTemplateId(id: string) {
+  private getTypeByPassTemplateId(id: string, requestId?: string) {
     for (const [key, value] of Object.entries(this.config)) {
       // some license Config id === barcode id
       if (value === id) {
@@ -34,6 +35,7 @@ export class LicenseUpdateClientService {
         if (!valueFromEnum) {
           this.logger.error(`Invalid license type: ${key}`, {
             category: LOG_CATEGORY,
+            requestId,
             key,
           })
           throw new Error(`Invalid license type: ${key}`)
@@ -44,12 +46,15 @@ export class LicenseUpdateClientService {
     return null
   }
 
-  getLicenseUpdateClientByType(type: LicenseType) {
-    return this.licenseUpdateClientFactory(type)
+  getLicenseUpdateClientByType(type: LicenseType, requestId?: string) {
+    return this.licenseUpdateClientFactory(type, requestId)
   }
 
-  getLicenseUpdateClientByPassTemplateId(passTemplateId: string) {
-    const type = this.getTypeByPassTemplateId(passTemplateId)
+  getLicenseUpdateClientByPassTemplateId(
+    passTemplateId: string,
+    requestId?: string,
+  ) {
+    const type = this.getTypeByPassTemplateId(passTemplateId, requestId)
 
     return type ? this.licenseUpdateClientFactory(type) : null
   }

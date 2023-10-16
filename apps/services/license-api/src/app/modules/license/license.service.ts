@@ -44,12 +44,20 @@ export class LicenseService {
 
   private async getClientByLicenseId(
     licenseId: LicenseId,
+    requestId?: string,
   ): Promise<BaseLicenseUpdateClient> {
     const type = mapLicenseIdToLicenseType(licenseId)
+
+    this.logger.debug('Retrieving a licence client by license id', {
+      category: LOG_CATEGORY,
+      requestId: requestId,
+      type: type,
+    })
 
     if (!type) {
       this.logger.error(`Invalid license type`, {
         category: LOG_CATEGORY,
+        requestId: requestId,
         type,
       })
       throw new InternalServerErrorException(`Invalid license type`)
@@ -57,7 +65,14 @@ export class LicenseService {
 
     const service = await this.clientService.getLicenseUpdateClientByType(
       type as LicenseType,
+      requestId,
     )
+
+    this.logger.debug('Injecting the proper license client..', {
+      category: LOG_CATEGORY,
+      requestId: requestId,
+      type: type,
+    })
 
     if (!service) {
       this.logger.error(`Client service generation failed`, {
@@ -66,21 +81,42 @@ export class LicenseService {
       })
       throw new InternalServerErrorException(`Client service generation failed`)
     }
+    this.logger.debug('Client injection successful', {
+      category: LOG_CATEGORY,
+      requestId: requestId,
+      type: type,
+    })
 
     return service
   }
 
   private async getClientByPassTemplateId(
     passTemplateId: string,
+    requestId?: string,
   ): Promise<BaseLicenseUpdateClient> {
+    this.logger.debug('Retrieving a licence client by pass template id', {
+      category: LOG_CATEGORY,
+      requestId: requestId,
+      passTemplateId,
+    })
+
     const service =
       await this.clientService.getLicenseUpdateClientByPassTemplateId(
         passTemplateId,
+        requestId,
       )
+
+    this.logger.debug('Injecting the proper license client..', {
+      category: LOG_CATEGORY,
+      requestId: requestId,
+      passTemplateId,
+    })
 
     if (!service) {
       this.logger.error(`Client service generation failed`, {
         category: LOG_CATEGORY,
+        requestId: requestId,
+        passTemplateId,
       })
       throw new InternalServerErrorException(`Client service generation failed`)
     }
@@ -120,18 +156,31 @@ export class LicenseService {
       }
     }
 
+    this.logger.debug('Update input parse successful, executing update', {
+      category: LOG_CATEGORY,
+      updateType: 'push',
+      requestId,
+    })
+
     return await service.pushUpdate(updatePayload, nationalId)
   }
 
   private async pullUpdateLicense(
     service: BaseLicenseUpdateClient,
     nationalId: string,
+    requestId?: string,
   ): Promise<Result<Pass | undefined>> {
     /** PULL - Update electronic license with pulled data from service
      * 1. Fetch data from provider
      * 2. Parse and validate license data
      * 3. With good data, update the electronic license with the validated license data!
      */
+
+    this.logger.debug('Executing update', {
+      category: LOG_CATEGORY,
+      updateType: 'pull',
+      requestId,
+    })
 
     return await service.pullUpdate(nationalId)
   }
@@ -142,6 +191,12 @@ export class LicenseService {
     inputData: UpdateLicenseRequest,
   ): Promise<UpdateLicenseResponse> {
     const service = await this.getClientByLicenseId(licenseId)
+
+    this.logger.debug('Updating license', {
+      category: LOG_CATEGORY,
+      requestId: inputData.requestId,
+      updateType: inputData.licenseUpdateType,
+    })
 
     let updateRes: Result<Pass | undefined>
     if (inputData.licenseUpdateType === 'push') {
@@ -159,7 +214,6 @@ export class LicenseService {
           'Invalid request body, missing expiryDate',
         )
       }
-
       updateRes = await this.pushUpdateLicense(
         service,
         expiryDate,
@@ -168,11 +222,15 @@ export class LicenseService {
         inputData.requestId,
       )
     } else {
-      updateRes = await this.pullUpdateLicense(service, nationalId)
+      updateRes = await this.pullUpdateLicense(
+        service,
+        nationalId,
+        inputData.requestId,
+      )
     }
 
     if (updateRes.ok) {
-      this.logger.debug('update license succeeded', {
+      this.logger.debug('update license successful', {
         category: LOG_CATEGORY,
         requestId: inputData.requestId,
         updateType: inputData.licenseUpdateType,
@@ -185,8 +243,10 @@ export class LicenseService {
 
     this.logger.error('Update license failed', {
       category: LOG_CATEGORY,
+      requestId: inputData.requestId,
       ...updateRes.error,
     })
+
     throw this.getException(
       this.getErrorTypeByCode(updateRes.error.code),
       updateRes.error.message,
@@ -199,7 +259,7 @@ export class LicenseService {
     inputData: RevokeLicenseRequest,
   ): Promise<RevokeLicenseResponse> {
     const service = await this.getClientByLicenseId(licenseId)
-    const revokeRes = await service.revoke(nationalId)
+    const revokeRes = await service.revoke(nationalId, inputData.requestId)
 
     if (revokeRes.ok) {
       this.logger.debug('revoke license succeeded', {
@@ -209,7 +269,7 @@ export class LicenseService {
       return { revokeSuccess: revokeRes.data.success }
     }
 
-    this.logger.error('revoke license failed', {
+    this.logger.error('Revoke license failed', {
       category: LOG_CATEGORY,
       requestId: inputData.requestId,
       ...revokeRes.error,
@@ -228,25 +288,25 @@ export class LicenseService {
     if (!passTemplateId) {
       this.logger.error('No pass template id supplied', {
         category: LOG_CATEGORY,
+        requestId: inputData.requestId,
       })
       throw this.getException('BadRequest', 'Missing pass template id')
     }
 
     const service = await this.getClientByPassTemplateId(passTemplateId)
 
-    const verifyRes = await service.verify(inputData.barcodeData)
+    const verifyRes = await service.verify(
+      inputData.barcodeData,
+      inputData.requestId,
+    )
 
     if (verifyRes.ok) {
-      this.logger.debug('update license succeeded', {
-        category: LOG_CATEGORY,
-        requestId: inputData.requestId,
-      })
       return {
         valid: verifyRes.data.valid,
         passIdentity: verifyRes.data.passIdentity,
       }
     }
-    this.logger.error('verify license failed', {
+    this.logger.error('Verify license failed', {
       category: LOG_CATEGORY,
       ...verifyRes.error,
       requestId: inputData.requestId,

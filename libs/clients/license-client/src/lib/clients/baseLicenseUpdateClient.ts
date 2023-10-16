@@ -28,9 +28,10 @@ export abstract class BaseLicenseUpdateClient {
     requestId?: string,
   ): Promise<Result<Pass | undefined>>
 
-  revoke(nationalId: string): Promise<Result<RevokePassData>> {
-    return this.smartApi.revokePkPass(nationalId)
-  }
+  abstract revoke(
+    nationalId: string,
+    requestId?: string,
+  ): Promise<Result<RevokePassData>>
 
   abstract verify(
     inputData: string,
