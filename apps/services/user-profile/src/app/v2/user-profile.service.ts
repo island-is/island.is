@@ -6,7 +6,6 @@ import { isDefined } from '@island.is/shared/utils'
 
 import { UserProfileDto } from './dto/user-profileDto'
 import { PatchUserProfileDto } from './dto/patch-user-profileDto'
-import { DataStatus } from '../user-profile/types/dataStatusTypes'
 import { UserProfile } from './userProfileV2.model'
 import { VerificationService } from '../user-profile/verification.service'
 
@@ -30,12 +29,10 @@ export class UserProfileService {
         email: null,
         mobilePhoneNumber: null,
         locale: null,
-        mobileStatus: DataStatus.NOT_DEFINED,
-        emailStatus: DataStatus.NOT_DEFINED,
         mobilePhoneNumberVerified: false,
         emailVerified: false,
-        profileImageUrl: null,
         documentNotifications: true,
+        lastNudge: null,
       }
     }
 
@@ -44,10 +41,9 @@ export class UserProfileService {
       email: userProfile.email,
       mobilePhoneNumber: userProfile.mobilePhoneNumber,
       locale: userProfile.locale,
-      mobileStatus: DataStatus[userProfile.mobileStatus],
-      emailStatus: DataStatus[userProfile.emailStatus],
       mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
       emailVerified: userProfile.emailVerified,
+      documentNotifications: userProfile.documentNotifications,
       lastNudge: userProfile.lastNudge,
     }
   }
@@ -56,30 +52,24 @@ export class UserProfileService {
     nationalId: string,
     userProfile: PatchUserProfileDto,
   ): Promise<UserProfileDto> {
-    const resp = await this.userProfileModel.findOne({
+    const existingUSerProfile = await this.userProfileModel.findOne({
       where: { nationalId: nationalId },
     })
 
-    if (!resp) {
+    if (!existingUSerProfile) {
       throw new NoContentException()
     }
 
     const isEmailDefined = isDefined(userProfile.email)
     const isMobilePhoneNumberDefined = isDefined(userProfile.mobilePhoneNumber)
-    const isEmailEmpty = userProfile.email === ''
-    const isMobilePhoneNumberEmpty = userProfile.mobilePhoneNumber === ''
 
     const update = {
       nationalId,
       ...(isMobilePhoneNumberDefined && {
-        mobileStatus: isMobilePhoneNumberEmpty
-          ? DataStatus.EMPTY
-          : DataStatus.NOT_VERIFIED,
         mobilePhoneNumberVerified: false,
         mobilePhoneNumber: userProfile.mobilePhoneNumber,
       }),
       ...(isEmailDefined && {
-        emailStatus: isEmailEmpty ? DataStatus.EMPTY : DataStatus.NOT_VERIFIED,
         emailVerified: false,
         email: userProfile.email,
       }),
@@ -112,11 +102,11 @@ export class UserProfileService {
   }
 
   async confirmNudge(nationalId: string): Promise<void> {
-    const resp = await this.userProfileModel.findOne({
+    const userProfile = await this.userProfileModel.findOne({
       where: { nationalId: nationalId },
     })
 
-    if (!resp) {
+    if (!userProfile) {
       throw new NoContentException()
     }
 
@@ -143,7 +133,7 @@ export class UserProfileService {
     }
 
     await this.userProfileModel.update(
-      { emailStatus: DataStatus.VERIFIED, emailVerified: true },
+      { emailVerified: true },
       {
         where: { nationalId: nationalId },
       },
@@ -155,7 +145,6 @@ export class UserProfileService {
     mobilePhoneNumber: string,
     code: string,
   ): Promise<void> {
-    console.log('confirmMobilePhoneNumber', nationalId, mobilePhoneNumber, code)
     const { confirmed, message } = await this.verificationService.confirmSms(
       { mobilePhoneNumber, code },
       nationalId,
@@ -167,7 +156,6 @@ export class UserProfileService {
 
     await this.userProfileModel.update(
       {
-        mobileStatus: DataStatus.VERIFIED,
         mobilePhoneNumberVerified: true,
       },
       {

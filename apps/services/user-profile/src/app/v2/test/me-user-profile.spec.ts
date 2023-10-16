@@ -10,7 +10,6 @@ import { createCurrentUser } from '@island.is/testing/fixtures'
 import { UserProfileScope } from '@island.is/auth/scopes'
 
 import { FixtureFactory } from './fixtureFactory'
-import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 import { UserProfile } from '../userProfileV2.model'
 import { getModelToken } from '@nestjs/sequelize'
 import { AppModule } from '../../app.module'
@@ -118,13 +117,10 @@ describe('MeUserProfile', () => {
         expect(res.body).toMatchObject({
           nationalId: testUserProfile.nationalId,
           email: null,
-          emailStatus: DataStatus.NOT_DEFINED,
           emailVerified: false,
           mobilePhoneNumber: null,
           mobilePhoneNumberVerified: false,
-          mobileStatus: DataStatus.NOT_DEFINED,
           locale: null,
-          profileImageUrl: null,
           documentNotifications: true,
         })
 
@@ -162,11 +158,10 @@ describe('MeUserProfile', () => {
         expect(res.body).toMatchObject({
           nationalId: testUserProfile.nationalId,
           email: testUserProfile.email,
-          emailStatus: DataStatus.NOT_DEFINED,
           emailVerified: false,
           mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
           mobilePhoneNumberVerified: false,
-          mobileStatus: DataStatus.NOT_DEFINED,
+          documentNotifications: true,
         })
 
         await app.cleanUp()
@@ -208,11 +203,9 @@ describe('MeUserProfile', () => {
         expect(res.status).toEqual(201)
         expect(res.body).toMatchObject({
           email: newEmail,
-          emailStatus: DataStatus.NOT_VERIFIED,
           emailVerified: false,
           mobilePhoneNumber: newPhoneNumber,
           mobilePhoneNumberVerified: false,
-          mobileStatus: DataStatus.NOT_VERIFIED,
         })
 
         // Assert Db records
@@ -259,7 +252,6 @@ describe('MeUserProfile', () => {
         expect(res.status).toEqual(201)
         expect(res.body).toMatchObject({
           email: newEmail,
-          emailStatus: DataStatus.NOT_VERIFIED,
           emailVerified: false,
         })
 
@@ -311,7 +303,6 @@ describe('MeUserProfile', () => {
         expect(res.body).toMatchObject({
           mobilePhoneNumber: newPhoneNumber,
           mobilePhoneNumberVerified: false,
-          mobileStatus: DataStatus.NOT_VERIFIED,
         })
 
         // Assert Db records
@@ -361,9 +352,7 @@ describe('MeUserProfile', () => {
         expect(res.body).toMatchObject({
           mobilePhoneNumber: '',
           mobilePhoneNumberVerified: false,
-          mobileStatus: DataStatus.EMPTY,
           email: '',
-          emailStatus: DataStatus.EMPTY,
           emailVerified: false,
         })
 

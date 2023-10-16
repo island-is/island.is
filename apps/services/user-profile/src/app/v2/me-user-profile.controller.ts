@@ -18,7 +18,7 @@ import { PatchUserProfileDto } from './dto/patch-user-profileDto'
 import { EmailConfirmationDto } from './dto/email-confirmation-dto'
 import { PhoneNumberConfirmationDto } from './dto/phone-number-confirmation-dto'
 
-const namespace = '@island.is/apps/services/user-profile/v2/me'
+const namespace = '@island.is/user-profile/v2/me'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(UserProfileScope.read)

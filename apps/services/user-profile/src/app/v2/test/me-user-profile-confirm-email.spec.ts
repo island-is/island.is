@@ -10,7 +10,6 @@ import {
 } from '@island.is/testing/nest'
 
 import { FixtureFactory } from './fixtureFactory'
-import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 import { EmailVerification } from '../../user-profile/emailVerification.model'
 import { UserProfile } from '../userProfileV2.model'
 import { AppModule } from '../../app.module'
@@ -99,8 +98,6 @@ describe('Email confirmation', () => {
         ...testUserProfile,
         email: testEmailVerification.email,
         nationalId: testEmailVerification.nationalId,
-        mobileStatus: DataStatus.NOT_VERIFIED,
-        emailStatus: DataStatus.NOT_VERIFIED,
       })
 
       server = request(app.getHttpServer())
@@ -144,7 +141,6 @@ describe('Email confirmation', () => {
         })
 
         expect(userProfile.emailVerified).toBe(true)
-        expect(userProfile.emailStatus).toBe(DataStatus.VERIFIED)
       },
     )
 
@@ -185,7 +181,6 @@ describe('Email confirmation', () => {
         })
 
         expect(userProfile.emailVerified).toBe(false)
-        expect(userProfile.emailStatus).toBe(DataStatus.NOT_VERIFIED)
       },
     )
 
@@ -227,7 +222,6 @@ describe('Email confirmation', () => {
         })
 
         expect(userProfile.emailVerified).toBe(false)
-        expect(userProfile.emailStatus).toBe(DataStatus.NOT_VERIFIED)
       },
     )
   })

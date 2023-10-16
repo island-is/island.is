@@ -10,7 +10,6 @@ import {
 } from '@island.is/testing/nest'
 
 import { FixtureFactory } from './fixtureFactory'
-import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 import { UserProfile } from '../userProfileV2.model'
 import { SmsVerification } from '../../user-profile/smsVerification.model'
 import { AppModule } from '../../app.module'
@@ -99,8 +98,6 @@ describe('Phone number confirmation', () => {
         ...testUserProfile,
         mobilePhoneNumber: testPhoneNumberVerification.mobilePhoneNumber,
         nationalId: testPhoneNumberVerification.nationalId,
-        mobileStatus: DataStatus.NOT_VERIFIED,
-        emailStatus: DataStatus.NOT_VERIFIED,
       })
 
       server = request(app.getHttpServer())
@@ -148,7 +145,6 @@ describe('Phone number confirmation', () => {
           })
 
           expect(userProfile.mobilePhoneNumberVerified).toBe(true)
-          expect(userProfile.mobileStatus).toBe(DataStatus.VERIFIED)
         } catch (e) {
           console.log(e)
         }
@@ -195,7 +191,6 @@ describe('Phone number confirmation', () => {
         })
 
         expect(userProfile.mobilePhoneNumberVerified).toBe(false)
-        expect(userProfile.mobileStatus).toBe(DataStatus.NOT_VERIFIED)
       },
     )
 
@@ -239,7 +234,6 @@ describe('Phone number confirmation', () => {
         })
 
         expect(userProfile.mobilePhoneNumberVerified).toBe(false)
-        expect(userProfile.mobileStatus).toBe(DataStatus.NOT_VERIFIED)
       },
     )
   })
