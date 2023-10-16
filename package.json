@@ -297,6 +297,7 @@
     "zod-form-data": "^2.0.0"
   },
   "devDependencies": {
+    "@anatine/esbuild-decorators": "0.2.19",
     "@anev/ts-mountebank": "^1.6.0",
     "@aws-sdk/client-ses": "3.145.0",
     "@aws-sdk/client-ssm": "3.145.0",

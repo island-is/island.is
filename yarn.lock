@@ -50,6 +50,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@anatine/esbuild-decorators@npm:0.2.19":
+  version: 0.2.19
+  resolution: "@anatine/esbuild-decorators@npm:0.2.19"
+  peerDependencies:
+    esbuild: ~0.14.29
+  checksum: c9480485973215341aabb37f569307cdb45a7def27af70c314260ea91a3bdbddce3ae3e102e7dcf6186d3a0be939bc52cf787342409cf0ae4111aea40dd962c2
+  languageName: node
+  linkType: hard
+
 "@anev/ts-mountebank@npm:^1.6.0":
   version: 1.6.0
   resolution: "@anev/ts-mountebank@npm:1.6.0"
@@ -33037,6 +33046,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "island.is@workspace:."
   dependencies:
+    "@anatine/esbuild-decorators": 0.2.19
     "@anev/ts-mountebank": ^1.6.0
     "@apollo/client": 3.7.15
     "@apollo/gateway": 2.1.1

@@ -8,21 +8,16 @@
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputFileName": "main.cjs",
+        "outputFileName": "main.js",
         "format": ["cjs"],
         "deleteOutputPath": false,
-        "esbuildOptions": {
-          "sourcesContent": false,
-          "keepNames": true,
-          "bundle": true,
-          "packages": "external",
-          "sourcemap": true,
-          "minify": false
-        },
+        "generatePackageJson": true,
+        "esbuildConfig": "apps/services/sessions/esbuild.config.js",
         "outputPath": "dist/apps/services/sessions",
         "main": "apps/services/sessions/src/main.ts",
         "tsConfig": "apps/services/sessions/tsconfig.app.json",
-        "watch": true,
+        "minify": false,
+        "watch": false,
         "assets": [
           {
             "glob": "*",
@@ -46,7 +41,10 @@
       "executor": "@nx/js:node",
       "options": {
         "port": 0,
-        "buildTarget": "services-sessions:build"
+        "buildTarget": "services-sessions:build",
+        "buildTargetOptions": {
+          "watch": true
+        }
       }
     },
     "worker": {
