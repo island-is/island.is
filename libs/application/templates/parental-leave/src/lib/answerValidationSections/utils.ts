@@ -170,12 +170,20 @@ export const validatePeriod = (
     return buildError('startDate', errorMessages.periodsStartMissing)
   } else if (hasBeenAnswered(startDate)) {
     if (isFirstPeriod && parseISO(startDate) > today) {
-      startDateValue =
-        firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH ||
+      if (firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH) {
+        const { dateOfBirth } = getApplicationExternalData(
+          application.externalData,
+        )
+        const dateOB = dateOfBirth?.data?.dateOfBirth
+        startDateValue = dateOB ? parseISO(dateOB) : parseISO(startDate)
+      } else if (
         firstPeriodStart === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
         firstPeriodStart === StartDateOptions.ADOPTION_DATE
-          ? dob
-          : parseISO(startDate)
+      ) {
+        startDateValue = dob
+      } else {
+        startDateValue = parseISO(startDate)
+      }
     } else {
       startDateValue = parseISO(startDate)
     }

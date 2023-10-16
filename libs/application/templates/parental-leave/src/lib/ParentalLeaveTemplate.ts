@@ -2,6 +2,7 @@ import { assign } from 'xstate'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
 import cloneDeep from 'lodash/cloneDeep'
+import addDays from 'date-fns/addDays'
 
 import {
   coreMessages,
@@ -36,6 +37,7 @@ import {
   TransferRightsOption,
   SINGLE,
   FileType,
+  StartDateOptions,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -60,6 +62,7 @@ import {
   isParentWithoutBirthParent,
 } from '../lib/parentalLeaveUtils'
 import { ChildrenApi, GetPersonInformation } from '../dataProviders'
+import { calculatePeriodLength } from './directorateOfLabour.utils'
 
 export enum PLEvents {
   MODIFY = 'MODIFY',
@@ -618,6 +621,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             shouldPersistToExternalData: true,
             throwOnError: true,
           }),
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.setBirthDate,
+            externalDataId: 'dateOfBirth',
+            throwOnError: false,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -987,6 +995,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(970),
           progress: 1,
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.setBirthDate,
+            externalDataId: 'dateOfBirth',
+            throwOnError: false,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -1045,7 +1058,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
-        entry: ['createTempPeriods', 'removeNullPeriod', 'setNavId'],
+        entry: [
+          'createTempPeriods',
+          'removeNullPeriod',
+          'setNavId',
+          'updateExpectedDateOfBirth',
+        ],
         exit: [
           'restorePeriodsFromTemp',
           'removeNullPeriod',
@@ -1365,6 +1383,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               throwOnError: true,
             }),
           ],
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.setBirthDate,
+            externalDataId: 'dateOfBirth',
+            throwOnError: false,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -1686,6 +1709,64 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         if (applicationFundId && applicationFundId !== '') {
           set(application.externalData, 'navId', applicationFundId)
+        }
+
+        return context
+      }),
+      updateExpectedDateOfBirth: assign((context) => {
+        const { application } = context
+        const { externalData, answers } = application
+
+        const { dateOfBirth } = getApplicationExternalData(externalData)
+        const { periods } = getApplicationAnswers(answers)
+        const getSelectChild = getSelectedChild(answers, externalData)
+
+        const dob = dateOfBirth?.data.dateOfBirth
+        const expectedDOB = getSelectChild?.expectedDateOfBirth
+
+        if (dob && expectedDOB !== dob) {
+          // TODO: Could not make this to work
+          // set(
+          //   externalData,
+          //   `children.data.children[${selectedChild}].expectedDateOfBirth`,
+          //   dob,
+          // )
+          if (periods.length > 0) {
+            const firstPeriod = periods[0]
+            if (
+              firstPeriod.firstPeriodStart ===
+                StartDateOptions.ACTUAL_DATE_OF_BIRTH &&
+              firstPeriod.useLength === YES &&
+              expectedDOB &&
+              periods[0].startDate !== dob
+            ) {
+              let daysDiff = 0
+              if (new Date(dob) < new Date(expectedDOB)) {
+                daysDiff =
+                  calculatePeriodLength(new Date(dob), new Date(expectedDOB)) -
+                  1
+                daysDiff *= -1
+              } else {
+                daysDiff =
+                  calculatePeriodLength(new Date(expectedDOB), new Date(dob)) -
+                  1
+              }
+              const endDate = addDays(new Date(periods[0].endDate), daysDiff)
+
+              if (
+                periods.length > 1 &&
+                new Date(periods[1].startDate) < endDate
+              ) {
+                set(answers, `periods[1].startDate`, addDays(endDate, 1))
+              }
+              set(
+                answers,
+                `periods[0].endDate`,
+                endDate.toISOString().split('T')[0],
+              )
+              set(answers, `periods[0].startDate`, dob)
+            }
+          }
         }
 
         return context
