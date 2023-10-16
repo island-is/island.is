@@ -31,5 +31,5 @@ export const SocialInsuranceAdministrationStatusApi = defineTemplateApi({
 
 export const SocialInsuranceAdministrationBankInfoApi = defineTemplateApi({
   action: 'getBankInfo',
-  externalDataId: 'socialInsuranceAdministrationBankInfo'
+  externalDataId: 'socialInsuranceAdministrationBankInfo',
 })

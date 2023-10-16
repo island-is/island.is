@@ -119,21 +119,21 @@ components:
       type: object
       description: Returns bank information from TR if applicant has one registered there
       properties:
-        bank: 
+        bank:
           type: string
-        ledger: 
+        ledger:
           type: string
-        accountNumber: 
+        accountNumber:
           type: string
-        iban: 
+        iban:
           type: string
-        swift: 
+        swift:
           type: string
-        foreignBankName: 
+        foreignBankName:
           type: string
-        foreignBankAddress: 
+        foreignBankAddress:
           type: string
-        currency: 
+        currency:
           type: string
 security:
   - bearerAuth: []

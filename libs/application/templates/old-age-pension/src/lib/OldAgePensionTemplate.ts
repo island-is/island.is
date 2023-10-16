@@ -94,7 +94,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 ChildrenCustodyInformationApi,
                 SocialInsuranceAdministrationTestApi,
                 SocialInsuranceAdministrationStatusApi,
-                SocialInsuranceAdministrationBankInfoApi
+                SocialInsuranceAdministrationBankInfoApi,
               ],
               delete: true,
             },

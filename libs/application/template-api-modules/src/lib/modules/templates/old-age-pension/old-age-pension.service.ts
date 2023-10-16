@@ -92,7 +92,6 @@ export class OldAgePensionService extends BaseTemplateApiService {
 
   async getBankInfo({ auth }: TemplateApiModuleActionProps) {
     try {
-      console.log('auth: ', auth)
       const res = await this.siaClientService.getBankInfo(auth)
 
       if (isRunningOnEnvironment('local')) {
@@ -102,7 +101,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
             (res.accountNumber = '123456')
         }
       }
-    
+
       return res
     } catch (e) {
       throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)

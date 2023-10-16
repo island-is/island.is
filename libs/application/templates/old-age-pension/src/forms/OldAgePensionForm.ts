@@ -267,11 +267,11 @@ export const OldAgePensionForm: Form = buildForm({
                     const bankInfo = application.externalData
                       .socialInsuranceAdministrationBankInfo.data as BankInfo
 
-                    if(bankInfo.bank && bankInfo.ledger && bankInfo.accountNumber) {  
-                      return bankInfo.bank + bankInfo.ledger + bankInfo.accountNumber
-                    }
-
-                    return ''
+                    return bankInfo.bank &&
+                      bankInfo.ledger &&
+                      bankInfo.accountNumber
+                      ? bankInfo.bank + bankInfo.ledger + bankInfo.accountNumber
+                      : ''
                   },
                 }),
                 buildRadioField({
