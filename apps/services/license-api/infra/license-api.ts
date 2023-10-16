@@ -43,6 +43,7 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
       PKPASS_CACHE_TOKEN_EXPIRY_DELTA:
         '/k8s/api/PKPASS_CACHE_TOKEN_EXPIRY_DELTA',
       PKPASS_AUTH_RETRIES: '/k8s/api/PKPASS_AUTH_RETRIES',
+      VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY',
     })
     .xroad(Base, Client, Firearm, Disability, DrivingLicense)
     .ingress({
