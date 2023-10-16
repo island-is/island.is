@@ -243,8 +243,6 @@ export class SmartSolutionsApi {
       }
     }
 
-    this.logger.debug('payload', payload)
-
     const graphql = JSON.stringify({
       query: UPDATE_PASS,
       variables: {
