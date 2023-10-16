@@ -126,12 +126,13 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
           <Text marginTop={3} marginBottom={3} variant="default">
             {locale === 'en' ? data.descriptionEn : data.descriptionIs}
           </Text>
+        </Box>
 
-          <Box marginTop={2}>
-            <Text variant="default">{`${data.degreeAbbreviation} - ${data.credits} einingar`}</Text>
-            <Text marginTop={3} marginBottom={3} variant="default">
-              {locale === 'en' ? data.descriptionEn : data.descriptionIs}
-            </Text>
+        <Box marginTop={2}>
+          <Text variant="default">{`${data.degreeAbbreviation} - ${data.credits} einingar`}</Text>
+          <Text marginTop={3} marginBottom={3} variant="default">
+            {locale === 'en' ? data.descriptionEn : data.descriptionIs}
+          </Text>
           {data.externalUrlIs && (
             <LinkV2
               underlineVisibility="always"
