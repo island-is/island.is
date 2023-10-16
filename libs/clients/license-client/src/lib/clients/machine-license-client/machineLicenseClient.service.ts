@@ -16,7 +16,6 @@ import {
   PassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
-import { format } from 'kennitala'
 import { Locale } from 'locale'
 import {
   LicenseClient,

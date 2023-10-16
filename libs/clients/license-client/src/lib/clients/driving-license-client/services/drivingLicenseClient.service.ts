@@ -3,7 +3,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 import { FetchError } from '@island.is/clients/middlewares'
-import { format } from 'kennitala'
 import {
   DriverLicenseDto as DriversLicense,
   DrivingLicenseApi,
