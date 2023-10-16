@@ -22,7 +22,7 @@ import { UserProfileService } from './user-profile.service'
   path: 'me',
   version: ['2'],
 })
-@Audit({ namespace: '@island.is/apps/services/user-profile/v2/me' })
+@Audit({ namespace: '@island.is/user-profile/v2/me' })
 export class MeUserProfileController {
   constructor(private readonly userProfileService: UserProfileService) {}
 

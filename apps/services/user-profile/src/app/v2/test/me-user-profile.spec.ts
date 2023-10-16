@@ -10,7 +10,6 @@ import { createCurrentUser } from '@island.is/testing/fixtures'
 import { UserProfileScope } from '@island.is/auth/scopes'
 
 import { FixtureFactory } from './fixtureFactory'
-import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
 
@@ -106,13 +105,10 @@ describe('MeUserProfile', () => {
         expect(res.body).toMatchObject({
           nationalId: testUserProfile.nationalId,
           email: null,
-          emailStatus: DataStatus.NOT_DEFINED,
           emailVerified: false,
           mobilePhoneNumber: null,
           mobilePhoneNumberVerified: false,
-          mobileStatus: DataStatus.NOT_DEFINED,
           locale: null,
-          profileImageUrl: null,
           documentNotifications: true,
         })
 
@@ -150,11 +146,10 @@ describe('MeUserProfile', () => {
         expect(res.body).toMatchObject({
           nationalId: testUserProfile.nationalId,
           email: testUserProfile.email,
-          emailStatus: DataStatus.NOT_DEFINED,
           emailVerified: false,
           mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
           mobilePhoneNumberVerified: false,
-          mobileStatus: DataStatus.NOT_DEFINED,
+          documentNotifications: true,
         })
 
         await app.cleanUp()
