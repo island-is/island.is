@@ -30,9 +30,7 @@ import {
 } from '@island.is/application/api/history'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { getApplicationNameTranslationString } from '../utils/application'
-import data from '../jsonStuff/data'
-import completedData from '../jsonStuff/completed'
-import prerequisites from '../jsonStuff/prerequisites'
+import { data, payment, completedData, prerequisites } from '../jsonStuff'
 
 @Injectable()
 export class ApplicationSerializer
@@ -136,6 +134,8 @@ export class ApplicationSerializer
       form = JSON.stringify(data)
     } else if (state === 'prerequisites') {
       form = JSON.stringify(prerequisites)
+    } else if (state === 'payment') {
+      form = JSON.stringify(payment)
     }
 
     const dto = plainToInstance(ApplicationResponseDto, {

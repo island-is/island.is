@@ -36,21 +36,31 @@
           },
           "dataProviders": [
             {
-              "id": "userProfile",
-              "actionId": "UserProfile.userProfile",
-              "action": "UserProfile.userProfile",
-              "order": 0,
-              "title": "User profile",
-              "subTitle": "User profile",
-              "source": null
+              "id":"nationalRegistry",
+              "action":"NationalRegistry.nationalRegistry",
+              "order":0,
+              "title": "Persónuupplýsingar úr Þjóðskrá",
+              "subTitle":"Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina"
             },
             {
-              "id": "nationalRegistry",
-              "actionId": "NationalRegistry.nationalRegistry",
-              "action": "NationalRegistry.nationalRegistry",
-              "order": 0,
-              "title": "Þjóðskrá",
-              "subTitle": "Upplýsingar um þig í Þjóðskrá.",
+              "id":"userProfile",
+              "action":"UserProfile.userProfile",
+              "order":0,
+              "title":"Netfang og símanúmer úr þínum stillingum",
+              "subTitle":"Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum"
+            },
+            {
+              "id":"validateCriminalRecord",
+              "action":"CriminalRecordShared.validateCriminalRecord",
+              "order":0,
+              "title":"Information from the criminal record database",
+              "subTitle":"Skjal sem inniheldur sakavottorðið þitt."
+            },
+            {
+              "id":"payment",
+              "action":"Payment.paymentCatalog",
+              "order":0,
+              "title":"something",
               "source": null
             }
           ]

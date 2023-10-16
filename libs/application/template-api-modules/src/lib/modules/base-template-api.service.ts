@@ -43,7 +43,7 @@ export class BaseTemplateApiService {
       error: new TemplateApiError(
         {
           title: 'Template api invalid',
-          summary: 'action could not be found',
+          summary: `action could not be found ${action.action}`,
         },
         500,
       ),
