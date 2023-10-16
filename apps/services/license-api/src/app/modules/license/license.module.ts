@@ -51,7 +51,7 @@ import {
         const ids: PassTemplateIds = {
           firearm: firearmConfig.passTemplateId,
           disability: disabilityConfig.passTemplateId,
-          drivers: drivingConfig.passTemplateId,
+          driving: drivingConfig.passTemplateId,
         }
         return ids
       },

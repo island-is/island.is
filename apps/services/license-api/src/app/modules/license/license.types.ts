@@ -19,7 +19,7 @@ export enum LicenseId {
 export type PassTemplateIds = {
   firearm: string
   disability: string
-  drivers: string
+  driving: string
 }
 
 export type VerifyLicenseResult = {
