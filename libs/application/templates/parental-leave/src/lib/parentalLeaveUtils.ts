@@ -934,6 +934,10 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const previousState = getValueViaPath(answers, 'previousState') as string
 
+  const addEmployer = getValueViaPath(answers, 'addEmployer') as YesOrNo
+
+  const addPeriods = getValueViaPath(answers, 'addPeriods') as YesOrNo
+
   return {
     applicationType,
     noChildrenFoundTypeOfApplication,
@@ -995,6 +999,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     employmentTerminationCertificateFiles,
     hasAppliedForReidenceGrant,
     previousState,
+    addEmployer,
+    addPeriods,
   }
 }
 
@@ -1404,6 +1410,22 @@ export const getPeriodImageTitle = (application: Application) => {
     return parentalLeaveFormMessages.shared.periodsImageGrantTitle
   }
   return parentalLeaveFormMessages.shared.periodsImageTitle
+}
+
+export const getEditOrAddInfoSectionTitle = (application: Application) => {
+  if (isParentalGrant(application)) {
+    return parentalLeaveFormMessages.shared.editOrAddInfoGrantSectionTitle
+  }
+  return parentalLeaveFormMessages.shared.editOrAddInfoSectionTitle
+}
+
+export const getEditOrAddInfoSectionDescription = (
+  application: Application,
+) => {
+  if (isParentalGrant(application)) {
+    return parentalLeaveFormMessages.shared.editOrAddInfoGrantSectionDescription
+  }
+  return parentalLeaveFormMessages.shared.editOrAddInfoSectionDescription
 }
 
 export const getFirstPeriodTitle = (application: Application) => {

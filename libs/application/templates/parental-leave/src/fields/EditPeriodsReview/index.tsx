@@ -1,54 +1,71 @@
 import React, { FC } from 'react'
-
 import { Application } from '@island.is/application/types'
-import { Box, Text } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-
-import { Timeline } from '../components/Timeline/Timeline'
 import {
-  formatPeriods,
-  getExpectedDateOfBirthOrAdoptionDate,
-} from '../../lib/parentalLeaveUtils'
+  Box,
+  Text,
+  AlertMessage,
+  ContentBlock,
+} from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { parentalLeaveFormMessages } from '../../lib/messages'
+import Periods from './Periods'
+import Employers from './Employers'
+import { PrintButton } from '../PrintButton'
+import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
+import { YES } from '../../constants'
 
 interface ReviewScreenProps {
   application: Application
   goToScreen?: (id: string) => void
-  editable?: boolean
 }
 
 const EditPeriodsReview: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
   application,
+  goToScreen,
 }) => {
   const { formatMessage } = useLocale()
-  const dob = getExpectedDateOfBirthOrAdoptionDate(application)
-  const dobDate = dob ? new Date(dob) : null
+  const { employers, addEmployer, addPeriods } = getApplicationAnswers(
+    application.answers,
+  )
+
+  const childProps = {
+    application,
+    goToScreen,
+  }
 
   return (
-    <div>
-      <Box marginTop={[2, 2, 4]} marginBottom={[0, 0, 6]}>
-        <Box paddingY={4}>
-          {(dobDate && (
-            <Timeline
-              initDate={dobDate}
-              title={formatMessage(
-                parentalLeaveFormMessages.shared.expectedDateOfBirthTitle,
-              )}
-              titleSmall={formatMessage(
-                parentalLeaveFormMessages.shared.dateOfBirthTitle,
-              )}
-              periods={formatPeriods(application, formatMessage)}
-            />
-          )) || (
-            <Text>
-              {formatMessage(
-                parentalLeaveFormMessages.shared.dateOfBirthNotAvailable,
-              )}
-            </Text>
-          )}
+    <>
+      <Box>
+        <PrintButton />
+        <Box marginBottom={2}>
+          <Text variant="h2">
+            {formatMessage(parentalLeaveFormMessages.confirmation.title)}
+          </Text>
+        </Box>
+        <Box marginBottom={10}>
+          <Text variant="default">
+            {formatMessage(parentalLeaveFormMessages.confirmation.description)}
+          </Text>
         </Box>
       </Box>
-    </div>
+      {addEmployer !== YES && addPeriods !== YES && (
+        <Box marginBottom={3}>
+          <ContentBlock>
+            <AlertMessage
+              type="warning"
+              title={formatMessage(
+                parentalLeaveFormMessages.shared.editPeriodsReviewAlertTitle,
+              )}
+              message={formatMessage(
+                parentalLeaveFormMessages.shared.editPeriodsReviewAlertMessage,
+              )}
+            />
+          </ContentBlock>
+        </Box>
+      )}
+      {employers.length !== 0 && <Employers {...childProps} />}
+      <Periods {...childProps} />
+    </>
   )
 }
 

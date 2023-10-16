@@ -101,13 +101,18 @@ export function currentDateStartTime() {
 export function findActionName(context: ApplicationContext) {
   const { application } = context
   const { state } = application
+  const { addEmployer, addPeriods } = getApplicationAnswers(application.answers)
   if (
     state === States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE ||
     state === States.RESIDENCE_GRAND_APPLICATION
   )
     return 'documentPeriod'
   if (state === States.ADDITIONAL_DOCUMENTS_REQUIRED) return 'document'
-  if (state === States.EDIT_OR_ADD_PERIODS) return 'period'
+  if (state === States.EDIT_OR_ADD_PERIODS) {
+    if (addEmployer === YES && addPeriods === YES) return 'empper'
+    if (addEmployer === YES) return 'employer'
+    if (addPeriods === YES) return 'period'
+  }
 
   return 'period' // Have default on period so we always reset actionName
 }

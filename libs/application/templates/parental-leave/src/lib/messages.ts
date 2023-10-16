@@ -27,7 +27,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     formEditTitle: {
       id: 'pl.application:form.edit.title',
-      defaultMessage: 'Breyta eða bæta við tímabilum',
+      defaultMessage: 'Breyta',
       description: 'Edit or Add Periods',
     },
     prerequisitesSection: {
@@ -885,6 +885,73 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Aðalforeldri hefur ekki gefið þér samþykki sitt fyrir umgengi í fæðingarorlofinu.',
       description:
         'Primary parent has not given you their consent for right of access during the parental leave.',
+    },
+
+    editOrAddEmployer: {
+      id: 'pl.application:edit.or.add.employer',
+      defaultMessage: 'Viltu breyta eða bæta við vinnuveitanda?',
+      description: 'Do you want to edit or add an employer?',
+    },
+    employerSection: {
+      id: 'pl.application:employerSection',
+      defaultMessage: 'Vinnuveitandi',
+      description: 'Employer',
+    },
+    employerSubSection: {
+      id: 'pl.application:employerSubSection',
+      defaultMessage: 'Breyta eða bæta við vinnuveitanda',
+      description: 'Edit or add an employer',
+    },
+
+    periodReview: {
+      id: 'pl.application:periodReview',
+      defaultMessage: 'Tímabil',
+      description: 'Period',
+    },
+    editOrAddInfoSection: {
+      id: 'pl.application:editOrAddInfoSection',
+      defaultMessage: 'Upplýsingar',
+      description: 'Information',
+    },
+    editOrAddInfoSectionTitle: {
+      id: 'pl.application:editOrAddInfoSectionTitle',
+      defaultMessage: 'Þú ert að fara breyta umsókn um fæðingarorlof',
+      description: 'english description',
+    },
+    editOrAddInfoSectionDescription: {
+      id: 'pl.application:editOrAddInfoSectionDescription',
+      defaultMessage:
+        'Í næstu skrefum geturu breytt eða bætt við upplýsingum um vinnuveitanda og tímabil fæðingarorlofsins.',
+      description: 'english description',
+    },
+
+    editOrAddInfoGrantSectionTitle: {
+      id: 'pl.application:editOrAddInfoGrantSectionTitle',
+      defaultMessage: 'Þú ert að fara breyta umsókn um fæðingarstyrk',
+      description: 'english description',
+    },
+    editOrAddInfoGrantSectionDescription: {
+      id: 'pl.application:editOrAddInfoGrantSectionDescription',
+      defaultMessage:
+        'Í næstu skrefum geturu breytt eða bætt við upplýsingum um vinnuveitanda og tímabil fæðingarstyrksins.',
+      description: 'english description',
+    },
+
+    editOrAddPeriods: {
+      id: 'pl.application:edit.or.add.periods',
+      defaultMessage: 'Viltu breyta eða bæta við tímabili?',
+      description: 'Do you want to edit or add a period?',
+    },
+
+    editPeriodsReviewAlertTitle: {
+      id: 'pl.application:edit.periods.review.alert.title',
+      defaultMessage: 'Athugið! ',
+      description: 'Attention!',
+    },
+    editPeriodsReviewAlertMessage: {
+      id: 'pl.application:edit.periods.review.alert.message',
+      defaultMessage: 'Engar breytingar fundust.',
+      description: 'No changes were found.',
     },
   }),
 
