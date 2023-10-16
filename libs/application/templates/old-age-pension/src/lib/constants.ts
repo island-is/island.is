@@ -83,7 +83,7 @@ export enum HouseholdSupplementHousing {
 
 export enum AnswerValidationConstants {
   PERIOD = 'period',
-  FILEUPLOADPENEARLYFISHER = 'fileUploadEarlyPenFisher',
+  FILEUPLOAD = 'fileUpload',
   FILEUPLOADHOUSEHOLDSUPPLEMENT = 'fileUploadHouseholdSupplement',
   FILEUPLOADCHILDPENSION = 'fileUploadChildPension',
   EMPLOYMENT = 'employment',
@@ -116,8 +116,8 @@ export const AttachmentLabel: {
   selfEmployedAttachment:
     oldAgePensionFormMessage.review.selfEmployedAttachment,
   maintenance: oldAgePensionFormMessage.review.maintenanceAttachment,
-  notLivesWithApplicant:
-    oldAgePensionFormMessage.review.notLivesWithApplicantAttachment,
+  childSupport:
+    oldAgePensionFormMessage.review.childSupportAttachment,
   additionalDocuments:
     oldAgePensionFormMessage.review.additionalDocumentsAttachment,
 }

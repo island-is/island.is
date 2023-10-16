@@ -672,8 +672,8 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Staðfesting á að þú sért með barn á framfærslu',
       description: 'Confirmation that you have a dependent child',
     },
-    notLivesWithApplicantAttachment: {
-      id: 'oap.application:review.not.lives.with.applicant.attachment',
+    childSupportAttachment: {
+      id: 'oap.application:review.child.support.attachment',
       defaultMessage:
         'Meðlagsúrskurður eða samningur frá sýslumanni vegna barns/barna sem er ekki með lögheimili hjá þér',
       description:
@@ -963,12 +963,12 @@ export const oldAgePensionFormMessage: MessageDir = {
         "Here you can upload a certificate of a young person's school attendance. Note that the document must be in .pdf format.",
     },
     childPensionTitle: {
-      id: 'oap.application:fileUpload.child.pension.not.lives.with.applicant.title',
+      id: 'oap.application:fileUpload.child.pension.child.support.title',
       defaultMessage: 'Fylgiskjöl barnalífeyris',
       description: 'Child pension agreement',
     },
-    childPensionNotLivesWithApplicantDescription: {
-      id: 'oap.application:fileUpload.child.pension.not.lives.with.applicant.description',
+    childPensionChildSupport: {
+      id: 'oap.application:fileUpload.child.pension.child.support.description',
       defaultMessage:
         'Hér getur þú skilað meðlagsúrskurði eða samningi frá sýslumanni vegna barns/barna sem er ekki með lögheimili hjá þér. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description: 'english translation',

@@ -36,7 +36,7 @@ interface FileType {
   name: string
 }
 
-interface EarlyRetirementPensionfundFishermen {
+interface FileUpload {
   earlyRetirement?: FileType[]
   pension?: FileType[]
   fishermen?: FileType[]
@@ -53,7 +53,7 @@ interface SelfEmployed {
 
 interface ChildPensionAttachments {
   maintenance?: FileType[]
-  notLivesWithApplicant?: FileType[]
+  childSupport?: FileType[]
 }
 
 interface AdditionalInformation {
@@ -69,7 +69,7 @@ enum AttachmentTypes {
   SCHOOL_CONFIRMATION = 'schoolConfirmation',
   SELF_EMPLOYED_ATTACHMENT = 'SelfEmployedAttachment',
   MAINTENANCE = 'maintenance',
-  NOT_LIVES_WITH_APPLICANT = 'notLivesWithApplicant',
+  CHILD_SUPPORT = 'childSupport',
   ADDITIONAL_DOCUMENTS = 'additionalDocuments',
 }
 
@@ -484,18 +484,18 @@ export function getAttachments(application: Application) {
   const attachments: Attachments[] = []
 
   // Early retirement, pension fund, fishermen
-  const earlyPenFisher =
-    answers.fileUploadEarlyPenFisher as EarlyRetirementPensionfundFishermen
+  const fileUpload =
+    answers.fileUpload as FileUpload
 
-  getAttachmentDetails(earlyPenFisher?.pension, AttachmentTypes.PENSION)
+  getAttachmentDetails(fileUpload?.pension, AttachmentTypes.PENSION)
   if (earlyRetirement) {
     getAttachmentDetails(
-      earlyPenFisher?.earlyRetirement,
+      fileUpload?.earlyRetirement,
       AttachmentTypes.EARLY_RETIREMENT,
     )
   }
   if (applicationType === ApplicationType.SAILOR_PENSION) {
-    getAttachmentDetails(earlyPenFisher?.fishermen, AttachmentTypes.FISHERMAN)
+    getAttachmentDetails(fileUpload?.fishermen, AttachmentTypes.FISHERMAN)
   }
 
   // leaseAgreement, schoolAgreement
@@ -549,8 +549,8 @@ export function getAttachments(application: Application) {
 
   if (childCustodyLivesWithApplicant(answers, externalData) && isChildPension) {
     getAttachmentDetails(
-      childPensionAttachments?.notLivesWithApplicant,
-      AttachmentTypes.NOT_LIVES_WITH_APPLICANT,
+      childPensionAttachments?.childSupport,
+      AttachmentTypes.CHILD_SUPPORT,
     )
   }
 

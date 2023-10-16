@@ -107,7 +107,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
           'clearHouseholdSupplement',
           'clearChildPension',
           'clearChildPensionAddChild',
-          'clearChildPensionNotLivesWithApplicant',
+          'clearChildPensionChildSupport',
         ],
         meta: {
           name: States.DRAFT,
@@ -459,7 +459,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
 
         return context
       }),
-      clearChildPensionNotLivesWithApplicant: assign((context) => {
+      clearChildPensionChildSupport: assign((context) => {
         const { application } = context
 
         const doesNotLiveWithApplicant = childCustodyLivesWithApplicant(
@@ -470,7 +470,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
         if (!doesNotLiveWithApplicant)
           unset(
             application.answers,
-            'fileUploadChildPension.notLivesWithApplicant',
+            'fileUploadChildPension.childSupport',
           )
 
         return context

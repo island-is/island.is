@@ -551,11 +551,11 @@ export const OldAgePensionForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'fileUploadEarlyPenFisher',
+          id: 'fileUpload',
           title: oldAgePensionFormMessage.fileUpload.title,
           children: [
             buildFileUploadField({
-              id: 'fileUploadEarlyPenFisher.earlyRetirement',
+              id: 'fileUpload.earlyRetirement',
               title: oldAgePensionFormMessage.fileUpload.earlyRetirementTitle,
               description:
                 oldAgePensionFormMessage.fileUpload.earlyRetirementDescription,
@@ -577,7 +577,7 @@ export const OldAgePensionForm: Form = buildForm({
               },
             }),
             buildFileUploadField({
-              id: 'fileUploadEarlyPenFisher.pension',
+              id: 'fileUpload.pension',
               title: oldAgePensionFormMessage.fileUpload.pensionFileTitle,
               description:
                 oldAgePensionFormMessage.fileUpload.pensionFileDescription,
@@ -596,7 +596,7 @@ export const OldAgePensionForm: Form = buildForm({
               uploadMultiple: true,
             }),
             buildFileUploadField({
-              id: 'fileUploadEarlyPenFisher.fishermen',
+              id: 'fileUpload.fishermen',
               title: oldAgePensionFormMessage.fileUpload.fishermenFileTitle,
               description:
                 oldAgePensionFormMessage.fileUpload.fishermenFileDescription,
@@ -1018,14 +1018,14 @@ export const OldAgePensionForm: Form = buildForm({
               },
             }),
             buildFileUploadField({
-              id: 'fileUploadChildPension.notLivesWithApplicant',
+              id: 'fileUploadChildPension.childSupport',
               title: oldAgePensionFormMessage.fileUpload.childPensionTitle,
               description:
                 oldAgePensionFormMessage.fileUpload
-                  .childPensionNotLivesWithApplicantDescription,
+                  .childPensionChildSupporttDescription,
               introduction:
                 oldAgePensionFormMessage.fileUpload
-                  .childPensionNotLivesWithApplicantDescription,
+                  .childPensionChildSupportDescription,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,

@@ -33,15 +33,15 @@ export const fileUploadChildPension = (
     }
   }
 
-  if (DoesNotLiveWithApplicant && obj.notLivesWithApplicant) {
+  if (DoesNotLiveWithApplicant && obj.childSupport) {
     if (
       isEmpty(
-        (obj as { notLivesWithApplicant: unknown[] }).notLivesWithApplicant,
+        (obj as { childSupport: unknown[] }).childSupport,
       )
     ) {
       return buildError(
         validatorErrorMessages.requireAttachment,
-        `${FILEUPLOADCHILDPENSION}.notLivesWithApplicant`,
+        `${FILEUPLOADCHILDPENSION}.childSupport`,
       )
     }
   }
