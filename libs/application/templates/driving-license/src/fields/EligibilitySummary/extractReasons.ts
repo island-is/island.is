@@ -4,12 +4,15 @@ import { ApplicationEligibility, RequirementKey } from '../../types/schema'
 import { ReviewSectionState, Step } from './ReviewSection'
 
 export const extractReasons = (eligibility: ApplicationEligibility): Step[] => {
-  return eligibility.requirements.map(({ key, requirementMet }) => ({
-    ...requirementKeyToStep(key, requirementMet),
-    state: requirementMet
-      ? ReviewSectionState.complete
-      : ReviewSectionState.requiresAction,
-  }))
+  return eligibility.requirements.map(
+    ({ key, requirementMet, daysOfResidency }) => ({
+      ...requirementKeyToStep(key, requirementMet),
+      state: requirementMet
+        ? ReviewSectionState.complete
+        : ReviewSectionState.requiresAction,
+      daysOfResidency: daysOfResidency ?? undefined,
+    }),
+  )
 }
 
 const getDeniedByServiceMessageDescription = (

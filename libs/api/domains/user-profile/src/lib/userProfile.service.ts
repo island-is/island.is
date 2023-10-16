@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
-import differenceInMonths from 'date-fns/differenceInMonths'
 import { ApolloError, ForbiddenError } from 'apollo-server-express'
 import {
+  ActorLocaleLocaleEnum,
   ConfirmationDtoResponse,
   CreateUserProfileDto,
   UpdateUserProfileDto,
@@ -75,48 +75,16 @@ export class UserProfileService {
     }
   }
 
-  async getUserProfileStatus(user: User) {
-    /**
-     * this.getUserProfile can be a bit slower with the addition of islyklar data call.
-     * getUserProfileStatus can be used for a check if the userprofile exists, or if the userdata is old
-     * Old userdata can mean a user will be prompted to verify their info in the UI.
-     */
-    try {
-      const profile = await this.userProfileApiWithAuth(
-        user,
-      ).userProfileControllerFindOneByNationalId({
-        nationalId: user.nationalId,
-      })
+  async getUserProfileLocale(user: User) {
+    const locale = await this.userProfileApiWithAuth(
+      user,
+    ).userProfileControllerGetActorLocale()
 
-      /**
-       * If user has empty email or tel data
-       * Then the user will be prompted every 6 months (MAX_OUT_OF_DATE_MONTHS)
-       * to verify if they want to keep their info empty
-       */
-      const emptyMail = profile?.emailStatus === 'EMPTY'
-      const emptyMobile = profile?.mobileStatus === 'EMPTY'
-      const modifiedProfileDate = profile?.modified
-      const dateNow = new Date()
-      const dateModified = new Date(modifiedProfileDate)
-      const diffInMonths = differenceInMonths(dateNow, dateModified)
-      const diffOutOfDate = diffInMonths >= MAX_OUT_OF_DATE_MONTHS
-      const outOfDateEmailMobile = (emptyMail || emptyMobile) && diffOutOfDate
-
-      return {
-        hasData: !!modifiedProfileDate,
-        hasModifiedDateLate: outOfDateEmailMobile,
-      }
-    } catch (error) {
-      if (error.status === 404) {
-        return {
-          hasData: false,
-          hasModifiedDateLate: true,
-        }
-      }
-      handleError(error, `getUserProfileStatus error`)
+    return {
+      nationalId: locale.nationalId,
+      locale: locale.locale === ActorLocaleLocaleEnum.En ? 'en' : 'is',
     }
   }
-
   async getUserProfile(user: User) {
     try {
       const profile = await this.userProfileApiWithAuth(

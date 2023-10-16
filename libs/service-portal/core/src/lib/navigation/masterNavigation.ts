@@ -4,7 +4,7 @@ import { ServicePortalPath } from './paths'
 
 export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
   {
-    name: m.overview,
+    name: m.frontpage,
     systemRoute: true,
     path: ServicePortalPath.MinarSidurRoot,
     icon: {
@@ -58,26 +58,53 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Min Gogn
       {
-        name: m.userInfo,
+        name: m.myInfo,
         path: ServicePortalPath.MyInfoRoot,
         icon: {
           icon: 'person',
         },
+        description: m.info,
         children: [
           {
-            name: m.detailInfo,
-            navHide: true,
-            path: ServicePortalPath.UserInfo,
+            name: m.userInfo,
+            path: ServicePortalPath.MyInfoRoot,
+            children: [
+              {
+                name: m.detailInfo,
+                navHide: true,
+                path: ServicePortalPath.UserInfo,
+                children: [
+                  {
+                    name: m.familySpouse,
+                    navHide: true,
+                    path: ServicePortalPath.Spouse,
+                  },
+                  {
+                    name: m.familyChild,
+                    navHide: true,
+                    path: ServicePortalPath.Child,
+                  },
+                ],
+              },
+            ],
           },
+          // Starfsleyfi
           {
-            name: m.familySpouse,
-            navHide: true,
-            path: ServicePortalPath.Spouse,
+            name: m.educationLicense,
+            path: ServicePortalPath.EducationLicense,
+            icon: {
+              icon: 'receipt',
+            },
+            description: m.educationLicenseDescription,
           },
+          // Menntun
           {
-            name: m.familyChild,
-            navHide: true,
-            path: ServicePortalPath.Child,
+            name: m.education,
+            path: ServicePortalPath.EducationRoot,
+            icon: {
+              icon: 'school',
+            },
+            description: m.educationDescription,
           },
           {
             // Petitions
@@ -90,8 +117,8 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.PetitionsAdminView,
           },
         ],
-        description: m.userInfoDescription,
       },
+
       // Mín skírteini
       {
         name: m.licenses,
@@ -103,8 +130,23 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         children: [
           {
             navHide: true,
-            name: m.detailInfo,
-            path: ServicePortalPath.LicensesDetail,
+            name: m.drivingLicense,
+            path: ServicePortalPath.DrivingLicensesDetail,
+          },
+          {
+            navHide: true,
+            name: m.firearmLicense,
+            path: ServicePortalPath.FirearmLicensesDetail,
+          },
+          {
+            navHide: true,
+            name: m.adrLicense,
+            path: ServicePortalPath.ADRLicensesDetail,
+          },
+          {
+            navHide: true,
+            name: m.machineLicense,
+            path: ServicePortalPath.MachineLicensesDetail,
           },
           {
             navHide: true,
@@ -121,7 +163,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'receipt',
         },
-        description: m.occupationalLicensesDescription,
+        description: m.occupationalLicensesNavIntro,
       },
       // Mín réttindi
       {
@@ -209,51 +251,49 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         description: m.financeDescription,
       },
 
-      // Ökutæki
+      // Samgöngur
       {
-        name: m.vehicles,
-        path: ServicePortalPath.AssetsMyVehicles,
+        name: m.transports,
+        path: ServicePortalPath.TransportRoot,
+        description: m.transports,
         icon: {
           icon: 'car',
         },
         children: [
+          // Ökutæki
           {
-            name: m.myVehicles,
-            path: ServicePortalPath.AssetsMyVehicles,
+            name: m.vehicles,
+            path: ServicePortalPath.TransportVehicles,
+            icon: {
+              icon: 'car',
+            },
+            description: m.vehiclesDescription,
             children: [
+              {
+                name: m.myVehicles,
+                path: ServicePortalPath.TransportMyVehicles,
+              },
               {
                 // Path param reference
                 name: 'id',
                 navHide: true,
-                path: ServicePortalPath.AssetsVehiclesDetail,
+                path: ServicePortalPath.TransportVehiclesDetail,
+              },
+              {
+                name: m.vehiclesLookup,
+                path: ServicePortalPath.TransportVehiclesLookup,
+              },
+              {
+                name: m.vehiclesDrivingLessons,
+                path: ServicePortalPath.EducationDrivingLessons,
+              },
+              {
+                name: m.vehiclesHistory,
+                path: ServicePortalPath.TransportVehiclesHistory,
               },
             ],
           },
-          {
-            name: m.vehiclesLookup,
-            path: ServicePortalPath.AssetsVehiclesLookup,
-          },
-          {
-            name: m.vehiclesDrivingLessons,
-            path: ServicePortalPath.AssetsVehiclesDrivingLessons,
-          },
-          {
-            name: m.vehiclesHistory,
-            path: ServicePortalPath.AssetsVehiclesHistory,
-          },
         ],
-        description: m.vehiclesDescription,
-      },
-
-      // Loftbrú
-      {
-        name: m.airDiscount,
-        path: ServicePortalPath.AirDiscountRoot,
-
-        icon: {
-          icon: 'globe',
-          type: 'outline',
-        },
       },
 
       // Stillingar - hidden from nav
@@ -278,22 +318,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           {
             name: m.mySettings,
             path: ServicePortalPath.SettingsPersonalInformation,
-          },
-          {
-            name: m.email,
-            path: ServicePortalPath.SettingsPersonalInformationEditEmail,
-          },
-          {
-            name: m.phone,
-            path: ServicePortalPath.SettingsPersonalInformationEditPhoneNumber,
-          },
-          {
-            name: m.nudge,
-            path: ServicePortalPath.SettingsPersonalInformationEditNudge,
-          },
-          {
-            name: m.language,
-            path: ServicePortalPath.SettingsPersonalInformationEditLanguage,
           },
         ],
       },

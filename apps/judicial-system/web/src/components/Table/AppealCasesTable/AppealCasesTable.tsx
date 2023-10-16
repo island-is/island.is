@@ -139,6 +139,7 @@ const AppealCasesTable: React.FC<Props> = (props) => {
               <TagAppealState
                 appealState={column.appealState}
                 appealRulingDecision={column.appealRulingDecision}
+                appealCaseNumber={column.appealCaseNumber}
               />
             </td>
             <td>

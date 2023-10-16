@@ -56,7 +56,8 @@ describe(RESTRICTION_CASE_COURT_RECORD_ROUTE, () => {
     cy.get('#accused-accept').check()
     cy.get('#prosecutor-appeal').check()
 
-    cy.get('#courtEndTime').type('2020-10-10').type('{enter}')
+    cy.get('#courtEndTime').type('2020-10-10')
+    cy.get('#courtEndTime').type('{enter}')
     cy.get('#courtEndTime-time').type('10:10')
 
     cy.getByTestid('continueButton').click()

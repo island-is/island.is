@@ -20,7 +20,6 @@ import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   AlertBanner,
   AppealCaseFilesOverview,
-  AppealConclusion,
   CaseDates,
   CaseResentExplanation,
   Conclusion,
@@ -41,6 +40,7 @@ import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/s
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
+import { conclusion } from '../../components/Conclusion/Conclusion.strings'
 import { strings } from './CaseOverview.strings'
 
 type availableModals =
@@ -154,7 +154,9 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 },
                 {
                   title: formatMessage(core.courtCaseNumber),
-                  value: workingCase.courtCaseNumber,
+                  value:
+                    workingCase.courtCaseNumber ??
+                    formatMessage(strings.noCourtNumber),
                 },
                 {
                   title: formatMessage(core.prosecutor),
@@ -168,10 +170,14 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   title: formatMessage(core.prosecutorPerson),
                   value: workingCase.prosecutor?.name,
                 },
-                {
-                  title: formatMessage(core.judge),
-                  value: workingCase.judge?.name,
-                },
+                ...(workingCase.judge
+                  ? [
+                      {
+                        title: formatMessage(core.judge),
+                        value: workingCase.judge?.name,
+                      },
+                    ]
+                  : []),
                 // Conditionally add this field based on case type
                 ...(isInvestigationCase(workingCase.type)
                   ? [
@@ -245,6 +251,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
           {completedCaseStates.includes(workingCase.state) && (
             <Box marginBottom={6}>
               <Conclusion
+                title={formatMessage(conclusion.title)}
                 conclusionText={workingCase.conclusion}
                 judgeName={workingCase.judge?.name}
               />
@@ -252,31 +259,28 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
           )}
           {workingCase.appealConclusion && (
             <Box marginBottom={6}>
-              <AppealConclusion
+              <Conclusion
+                title={formatMessage(conclusion.appealTitle)}
                 conclusionText={workingCase.appealConclusion}
-                judgeName={workingCase.appealJudge1?.name}
               />
             </Box>
           )}
-
           <AppealCaseFilesOverview />
 
-          {(workingCase.sendRequestToDefender ||
+          {(workingCase.requestSharedWithDefender ||
             completedCaseStates.includes(workingCase.state)) && (
             <Box marginBottom={10}>
               <Text as="h3" variant="h3" marginBottom={3}>
                 {formatMessage(strings.documentHeading)}
               </Text>
               <Box>
-                {(workingCase.sendRequestToDefender ||
-                  completedCaseStates.includes(workingCase.state)) && (
-                  <PdfButton
-                    renderAs="row"
-                    caseId={workingCase.id}
-                    title={formatMessage(core.pdfButtonRequest)}
-                    pdfType={'limitedAccess/request'}
-                  />
-                )}
+                <PdfButton
+                  renderAs="row"
+                  caseId={workingCase.id}
+                  title={formatMessage(core.pdfButtonRequest)}
+                  pdfType={'limitedAccess/request'}
+                />
+
                 {completedCaseStates.includes(workingCase.state) && (
                   <>
                     <PdfButton

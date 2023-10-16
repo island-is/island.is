@@ -25,6 +25,7 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import {
   CaseOrigin,
   Defendant as TDefendant,
+  PoliceCaseInfo as TPoliceCaseInfo,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
@@ -35,6 +36,7 @@ import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/
 import { DefendantInfo } from '../../components'
 import { LokeNumberList } from './LokeNumberList/LokeNumberList'
 import { PoliceCaseInfo } from './PoliceCaseInfo/PoliceCaseInfo'
+import { useGetPoliceCaseInfoQuery } from './getPoliceCaseInfo.generated'
 import { defendant } from './Defendant.strings'
 
 export interface PoliceCase {
@@ -113,6 +115,37 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
     setPoliceCases(getPoliceCases(workingCase))
   }, [workingCase])
 
+  const { data, loading, error } = useGetPoliceCaseInfoQuery({
+    variables: {
+      input: {
+        caseId: workingCase.id,
+      },
+    },
+    skip: !workingCase.id,
+    fetchPolicy: 'no-cache',
+    onCompleted: (data) => {
+      if (!data.policeCaseInfo) {
+        return
+      }
+
+      if (
+        policeCases.length > 0 &&
+        (policeCases[0].place === undefined || policeCases[0].place === null) &&
+        (policeCases[0].date === undefined || policeCases[0].date === null) &&
+        (data.policeCaseInfo[0].place || data.policeCaseInfo[0].date)
+      ) {
+        handleUpdatePoliceCase(0, {
+          crimeScene: {
+            place: data.policeCaseInfo[0].place ?? '',
+            date: data.policeCaseInfo[0].date
+              ? new Date(data.policeCaseInfo[0].date)
+              : undefined,
+          },
+        })
+      }
+    },
+  })
+
   const handleCreatePoliceCase = async (policeCaseInfo?: PoliceCase) => {
     const newPoliceCase = policeCaseInfo ?? { number: '' }
 
@@ -144,7 +177,10 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
             ...allCases.map((policeCase) => policeCase.number),
           ],
           indictmentSubtypes: allCases.reduce<IndictmentSubtypeMap>(
-            (acc, policeCase) => ({ ...acc, [policeCase.number]: [] }),
+            (acc, policeCase) => ({
+              ...acc,
+              [policeCase.number]: policeCase.subtypes ?? [],
+            }),
             {},
           ),
           crimeScenes: allCases.reduce<CrimeSceneMap>(
@@ -388,7 +424,9 @@ const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
           />
           {workingCase.origin === CaseOrigin.LOKE && (
             <LokeNumberList
-              caseId={workingCase.id}
+              isLoading={loading}
+              loadingError={Boolean(error)}
+              policeCaseInfo={data?.policeCaseInfo as TPoliceCaseInfo[]}
               addPoliceCaseNumbers={handleCreatePoliceCases}
             />
           )}

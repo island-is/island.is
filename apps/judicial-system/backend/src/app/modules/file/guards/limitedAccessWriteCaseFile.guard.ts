@@ -1,15 +1,15 @@
 import {
-  Injectable,
   CanActivate,
   ExecutionContext,
-  InternalServerErrorException,
   ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
 } from '@nestjs/common'
 
 import {
+  CaseFileCategory,
   User,
   UserRole,
-  CaseFileCategory,
 } from '@island.is/judicial-system/types'
 
 @Injectable()

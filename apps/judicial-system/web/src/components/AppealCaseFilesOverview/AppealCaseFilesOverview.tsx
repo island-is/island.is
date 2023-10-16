@@ -66,7 +66,7 @@ const AppealCaseFilesOverview: React.FC<
   )
 
   const allFiles =
-    user?.role === UserRole.STAFF
+    user?.role === UserRole.PRISON_SYSTEM_STAFF
       ? appealRulingFiles
       : appealCaseFiles?.concat(appealRulingFiles ?? [])
 

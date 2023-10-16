@@ -35,6 +35,8 @@ import { assign } from 'xstate'
 import set from 'lodash/set'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { hasReviewerApproved } from '../utils'
+import { Features } from '@island.is/feature-flags'
+import { ApiScope } from '@island.is/auth/scopes'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -92,7 +94,12 @@ const template: ApplicationTemplate<
     {
       type: AuthDelegationType.ProcurationHolder,
     },
+    {
+      type: AuthDelegationType.Custom,
+      featureFlag: Features.transportAuthorityApplicationsCustomDelegation,
+    },
   ],
+  requiredScopes: [ApiScope.samgongustofaVehicles],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -173,7 +180,10 @@ const template: ApplicationTemplate<
             },
           },
           progress: 0.5,
-          lifecycle: pruneAfterDays(1 / 24),
+          lifecycle: {
+            ...pruneAfterDays(1 / 24),
+            shouldDeleteChargeIfPaymentFulfilled: true,
+          },
           onEntry: defineTemplateApi({
             action: ApiActions.createCharge,
           }),

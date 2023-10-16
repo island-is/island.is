@@ -1,4 +1,4 @@
-import {Bubble} from '@ui';
+import {Bubble, Button, theme} from '@ui';
 import {BarCodeEvent, Constants} from 'expo-barcode-scanner';
 import {Camera, FlashMode} from 'expo-camera';
 import {impactAsync, ImpactFeedbackStyle} from 'expo-haptics';
@@ -17,6 +17,7 @@ import styled from 'styled-components/native';
 import flashligth from '../../assets/icons/flashlight.png';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {ComponentRegistry} from '../../utils/component-registry';
+import DeviceInfo from 'react-native-device-info';
 
 const BottomRight = styled.View`
   position: absolute;
@@ -61,6 +62,8 @@ const {useNavigationOptions, getNavigationOptions} =
     },
   );
 
+const isSimulator = Platform.OS === 'ios' && DeviceInfo.isEmulatorSync();
+
 export const LicenseScannerScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
@@ -79,7 +82,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   const intl = useIntl();
 
   useEffect(() => {
-    Camera.requestPermissionsAsync().then(({status}) => {
+    Camera.requestCameraPermissionsAsync().then(({status}) => {
       setHasPermission(status === 'granted');
     });
   }, []);
@@ -174,6 +177,31 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   const onCameraReady = () => {
     prepareRatio();
   };
+
+  if (isSimulator) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: theme.color.blue200,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Button
+          title="Paste barcode"
+          onPress={() => {
+            Alert.prompt('Paste barcode', '', text => {
+              console.log('oki', text);
+              void onBarCodeScanned({
+                type: Constants.BarCodeType.pdf417,
+                data: text,
+              } as any);
+            });
+          }}
+        />
+      </View>
+    );
+  }
 
   return (
     <View

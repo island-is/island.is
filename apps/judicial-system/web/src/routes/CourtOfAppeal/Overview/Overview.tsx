@@ -17,6 +17,7 @@ import {
   PageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 
@@ -122,8 +123,8 @@ const CourtOfAppealOverview: React.FC<
           ) : null}
           <Box marginBottom={6}>
             <Conclusion
+              title={formatMessage(conclusion.title)}
               conclusionText={workingCase.conclusion}
-              judgeName={workingCase.judge?.name}
             />
           </Box>
           <CaseFilesOverview />

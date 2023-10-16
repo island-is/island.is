@@ -37,7 +37,6 @@ import {
 import {
   AlertBanner,
   AppealCaseFilesOverview,
-  AppealConclusion,
   CaseDates,
   CaseFilesAccordionItem,
   CommentsAccordionItem,
@@ -61,6 +60,7 @@ import {
   UserContext,
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components'
+import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
 import {
   CaseAppealDecision,
   InstitutionType,
@@ -691,7 +691,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 />
               </Box>
             )}
-          {user?.role !== UserRole.STAFF && (
+          {user?.role !== UserRole.PRISON_SYSTEM_STAFF && (
             <Box marginBottom={5} data-testid="accordionItems">
               <Accordion>
                 <PoliceRequestAccordionItem workingCase={workingCase} />
@@ -714,15 +714,16 @@ export const SignedVerdictOverview: React.FC = () => {
           )}
           <Box marginBottom={6}>
             <Conclusion
+              title={formatMessage(conclusion.title)}
               conclusionText={workingCase.conclusion}
               judgeName={workingCase.judge?.name}
             />
           </Box>
           {workingCase.appealConclusion && (
             <Box marginBottom={6}>
-              <AppealConclusion
+              <Conclusion
+                title={formatMessage(conclusion.appealTitle)}
                 conclusionText={workingCase.appealConclusion}
-                judgeName={workingCase.appealJudge1?.name}
               />
             </Box>
           )}

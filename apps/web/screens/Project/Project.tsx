@@ -10,11 +10,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { Screen } from '../../types'
-import {
-  linkResolver,
-  useFeatureFlag,
-  useNamespace,
-} from '@island.is/web/hooks'
+import { linkResolver, useNamespace } from '@island.is/web/hooks'
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { GET_PROJECT_PAGE_QUERY } from '@island.is/web/screens/queries/Project'
@@ -42,6 +38,7 @@ import { ProjectWrapper } from './components/ProjectWrapper'
 import { Locale } from 'locale'
 import { ProjectFooter } from './components/ProjectFooter'
 import { webRichText } from '@island.is/web/utils/richText'
+import { TOC } from './ProjectTableOfContents'
 
 interface PageProps {
   projectPage: Query['getProjectPage']
@@ -52,7 +49,6 @@ interface PageProps {
   stepperNamespace: Record<string, string>
   locale: Locale
 }
-
 const ProjectPage: Screen<PageProps> = ({
   projectPage,
   namespace,
@@ -61,10 +57,6 @@ const ProjectPage: Screen<PageProps> = ({
   stepOptionsFromNamespace,
   locale,
 }) => {
-  const { value: isWebReaderEnabledForProjectPages } = useFeatureFlag(
-    'isWebReaderEnabledForProjectPages',
-    false,
-  )
   const n = useNamespace(namespace)
   const p = useNamespace(projectNamespace)
 
@@ -136,6 +128,9 @@ const ProjectPage: Screen<PageProps> = ({
   const bottomSlices =
     (!subpage ? projectPage?.bottomSlices : subpage.bottomSlices) ?? []
 
+  const shouldDisplayWebReader =
+    projectNamespace?.shouldDisplayWebReader ?? true
+
   return (
     <>
       <HeadWithSocialSharing
@@ -154,7 +149,7 @@ const ProjectPage: Screen<PageProps> = ({
         sidebarNavigationTitle={navigationTitle}
         withSidebar={projectPage?.sidebar}
       >
-        {!subpage && isWebReaderEnabledForProjectPages && (
+        {!subpage && shouldDisplayWebReader && (
           <Webreader
             marginTop={0}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -164,11 +159,11 @@ const ProjectPage: Screen<PageProps> = ({
           />
         )}
         {!!subpage && (
-          <Box marginBottom={1}>
+          <Box marginBottom={1} className="rs_read">
             <Text as="h1" variant="h1">
               {subpage.title}
             </Text>
-            {isWebReaderEnabledForProjectPages && (
+            {shouldDisplayWebReader && (
               <Webreader
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore make web strict
@@ -176,18 +171,28 @@ const ProjectPage: Screen<PageProps> = ({
                 readClass="rs_read"
               />
             )}
-            {subpage.content &&
-              webRichText(subpage.content as SliceType[], {
-                renderComponent: {
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
-                  Form: (slice) => <Form form={slice} namespace={namespace} />,
-                },
-              })}
+            {subpage.showTableOfContents && (
+              <Box className="rs_read">
+                <TOC slices={subpage.slices} title={navigationTitle} />
+              </Box>
+            )}
+            {subpage.content && (
+              <Box className="rs_read">
+                {webRichText(subpage.content as SliceType[], {
+                  renderComponent: {
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore make web strict
+                    Form: (slice) => (
+                      <Form form={slice} namespace={namespace} />
+                    ),
+                  },
+                })}
+              </Box>
+            )}
           </Box>
         )}
         {renderSlicesAsTabs && !!subpage && subpage.slices.length > 1 && (
-          <Box marginBottom={2}>
+          <Box marginBottom={2} className="rs_read">
             <TableOfContents
               tableOfContentsTitle={n('tableOfContentsTitle', 'Undirkaflar')}
               headings={subpage.slices.map((slice) => ({
@@ -210,29 +215,34 @@ const ProjectPage: Screen<PageProps> = ({
           </Box>
         )}
         {renderSlicesAsTabs && selectedSliceTab && (
-          <Text paddingTop={4} as="h2" variant="h2">
-            {selectedSliceTab.title}
-          </Text>
+          <Box className="rs_read">
+            <Text paddingTop={4} as="h2" variant="h2">
+              {selectedSliceTab.title}
+            </Text>
+          </Box>
         )}
-        {content &&
-          webRichText(content, {
-            renderComponent: {
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
-              Form: (slice) => <Form form={slice} namespace={namespace} />,
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
-              TabSection: (slice) => (
-                <TabSectionSlice
-                  slice={slice}
-                  contentColumnProps={{ span: '1/1' }}
-                  contentPaddingTop={0}
-                />
-              ),
-            },
-          })}
+        {content && (
+          <Box className="rs_read">
+            {webRichText(content, {
+              renderComponent: {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                Form: (slice) => <Form form={slice} namespace={namespace} />,
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                TabSection: (slice) => (
+                  <TabSectionSlice
+                    slice={slice}
+                    contentColumnProps={{ span: '1/1' }}
+                    contentPaddingTop={0}
+                  />
+                ),
+              },
+            })}
+          </Box>
+        )}
         {!subpage && projectPage?.stepper && (
-          <Box marginTop={6}>
+          <Box marginTop={6} className="rs_read">
             <Stepper
               scrollUpWhenNextStepAppears={false}
               stepper={projectPage.stepper}
@@ -246,7 +256,7 @@ const ProjectPage: Screen<PageProps> = ({
           // @ts-ignore make web strict
           (subpage ?? projectPage).slices.map((slice) =>
             slice.__typename === 'OneColumnText' ? (
-              <Box marginTop={6}>
+              <Box marginTop={6} className="rs_read">
                 <SliceMachine
                   key={slice.id}
                   slice={slice}
@@ -256,13 +266,15 @@ const ProjectPage: Screen<PageProps> = ({
                 />
               </Box>
             ) : (
-              <SliceMachine
-                key={slice.id}
-                slice={slice}
-                namespace={namespace}
-                fullWidth={true}
-                slug={projectPage?.slug}
-              />
+              <Box className="rs_read">
+                <SliceMachine
+                  key={slice.id}
+                  slice={slice}
+                  namespace={namespace}
+                  fullWidth={true}
+                  slug={projectPage?.slug}
+                />
+              </Box>
             ),
           )}
       </ProjectWrapper>
@@ -388,7 +400,7 @@ ProjectPage.getProps = async ({ apolloClient, locale, query }) => {
     stepperNamespace,
     showSearchInHeader: false,
     locale: locale as Locale,
-    ...getThemeConfig(getProjectPage.theme),
+    ...getThemeConfig(getProjectPage),
   }
 }
 

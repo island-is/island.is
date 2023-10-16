@@ -76,7 +76,6 @@ export { default as FileNotFoundModal } from './FileNotFoundModal/FileNotFoundMo
 export { default as AppealCaseFilesOverview } from './AppealCaseFilesOverview/AppealCaseFilesOverview'
 export { default as Conclusion } from './Conclusion/Conclusion'
 export { default as CaseResentExplanation } from './CaseResentExplanation/CaseResentExplanation'
-export { default as AppealConclusion } from './Conclusion/AppealConclusion'
 export { AlertBanner } from './AlertBanner'
 export { default as RulingDateLabel } from './RulingDateLabel/RulingDateLabel'
 export { default as SharedPageLayout } from './SharedPageLayout/SharedPageLayout'

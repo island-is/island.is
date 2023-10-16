@@ -28,6 +28,12 @@ yarn run android
 yarn start
 ```
 
+### Publishing a Beta
+
+```bash
+yarn run beta
+```
+
 ## NX commands
 
 NX command example to proxy arguments to `package.json` scripts

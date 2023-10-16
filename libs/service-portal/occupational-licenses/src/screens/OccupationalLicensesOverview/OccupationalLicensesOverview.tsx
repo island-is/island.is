@@ -64,7 +64,7 @@ const OccupationalLicensesOverview = () => {
               <LicenceActionCard
                 key={index}
                 type={license.profession}
-                validFrom={formatDateFns(license.validFrom, 'dd.mm.yyyy')}
+                validFrom={formatDateFns(license.validFrom, 'dd.MM.yyyy')}
                 url={generateUrl(
                   license.__typename ===
                     'OccupationalLicensesEducationalLicense'

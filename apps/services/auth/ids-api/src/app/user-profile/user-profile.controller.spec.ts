@@ -101,11 +101,12 @@ describe('UserProfileController', () => {
     let server: request.SuperTest<request.Test>
 
     beforeAll(async () => {
-      const user = createCurrentUser({
-        nationalIdType: 'person',
-        scope: ['@identityserver.api/authentication'],
+      app = await setupWithAuth({
+        user: createCurrentUser({
+          nationalIdType: 'person',
+          scope: ['@identityserver.api/authentication'],
+        }),
       })
-      app = await setupWithAuth({ user })
       server = request(app.getHttpServer())
     })
 

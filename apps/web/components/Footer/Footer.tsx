@@ -7,6 +7,7 @@ import {
   GridRow,
   Hyphen,
   Text,
+  TextProps,
 } from '@island.is/island-ui/core'
 import type { SliceType } from '@island.is/island-ui/contentful'
 import type { FooterItem } from '@island.is/web/graphql/schema'
@@ -21,37 +22,62 @@ interface FooterProps {
   imageUrl?: string
   heading: string
   columns: FooterItem[]
+  color?: TextProps['color']
+  background?: string
+  titleVariant?: TextProps['variant']
 }
 
-export const Footer = ({ imageUrl, heading, columns }: FooterProps) => {
+export const Footer = ({
+  imageUrl,
+  heading,
+  columns,
+  color,
+  background,
+  titleVariant = 'h3',
+}: FooterProps) => {
   const { width } = useWindowSize()
 
   const isMobileScreenWidth = width < theme.breakpoints.sm
 
   return (
-    <footer className={styles.footer}>
-      <Box paddingTop={3} paddingBottom={5}>
+    <footer className={styles.footer} style={{ background }}>
+      <Box paddingTop={5} paddingBottom={5}>
         <GridContainer>
           <GridRow className={styles.noWrap}>
-            <GridColumn hiddenBelow="sm">
-              <img width={IMAGE_WIDTH} src={imageUrl} alt="" />
-            </GridColumn>
-            <GridColumn offset={isMobileScreenWidth ? '2/12' : undefined}>
+            {imageUrl && (
+              <GridColumn hiddenBelow="sm">
+                <img width={IMAGE_WIDTH} src={imageUrl} alt="" />
+              </GridColumn>
+            )}
+            <GridColumn
+              offset={isMobileScreenWidth ? '2/12' : undefined}
+              className={styles.fullWidth}
+            >
               <GridRow marginBottom={3} marginTop={2}>
                 <GridColumn>
-                  <Text variant="h2">{heading}</Text>
+                  <Text color={color} variant={titleVariant} as="h2">
+                    {heading}
+                  </Text>
                 </GridColumn>
               </GridRow>
               <GridRow>
                 {columns.map((column, index) => (
                   <GridColumn
                     key={index}
-                    span={isMobileScreenWidth ? '1/1' : undefined}
+                    span={
+                      isMobileScreenWidth
+                        ? '1/1'
+                        : `${columns.length < 4 ? 4 : 3}/12`
+                    }
                     paddingBottom={3}
                   >
-                    <Box marginRight={5}>
+                    <Box>
                       {column.title && (
-                        <Text fontWeight="semiBold" marginBottom={1}>
+                        <Text
+                          color={color}
+                          fontWeight="semiBold"
+                          marginBottom={1}
+                        >
                           <Hyphen>{column.title}</Hyphen>
                         </Text>
                       )}
@@ -61,7 +87,11 @@ export const Footer = ({ imageUrl, heading, columns }: FooterProps) => {
                           // @ts-ignore make web strict
                           [BLOCKS.PARAGRAPH]: (_node, children) => {
                             return (
-                              <Text variant="medium" marginBottom={1}>
+                              <Text
+                                color={color}
+                                variant="medium"
+                                marginBottom={1}
+                              >
                                 {children}
                               </Text>
                             )

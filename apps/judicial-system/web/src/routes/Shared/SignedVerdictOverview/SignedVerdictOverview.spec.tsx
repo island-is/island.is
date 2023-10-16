@@ -25,7 +25,7 @@ describe('shouldHideNextButton', () => {
     ${UserRole.DEFENDER}
     ${UserRole.JUDGE}
     ${UserRole.REGISTRAR}
-    ${UserRole.STAFF}
+    ${UserRole.PRISON_SYSTEM_STAFF}
   `('should hide next button for user role: $role', ({ role }) => {
     const theCase = {} as Case
     const res = shouldHideNextButton(theCase, { id: uuid(), role } as User)
@@ -108,7 +108,7 @@ describe('getExtensionInfoText', () => {
     ${UserRole.DEFENDER}
     ${UserRole.JUDGE}
     ${UserRole.REGISTRAR}
-    ${UserRole.STAFF}
+    ${UserRole.PRISON_SYSTEM_STAFF}
   `('should return undefined for user role: $role', ({ role }) => {
     const theCase = {
       type: CaseType.CUSTODY,
