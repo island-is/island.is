@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { OldAgePensionService } from './old-age-pension.service'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { createApplication } from '@island.is/application/testing'
-import { User } from 'oidc-client-ts'
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 import {
   HelloOddurApi,

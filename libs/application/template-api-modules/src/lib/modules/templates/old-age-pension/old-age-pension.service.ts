@@ -13,6 +13,7 @@ import {
   SocialInsuranceAdministrationClientService,
 } from '@island.is/clients/social-insurance-administration'
 import { coreErrorMessages } from '@island.is/application/core'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 interface customError {
   type: string
@@ -91,14 +92,18 @@ export class OldAgePensionService extends BaseTemplateApiService {
 
   async getBankInfo({ auth }: TemplateApiModuleActionProps) {
     try {
-      return await this.siaClientService.getBankInfo(auth)
-      // const res = await this.siaClientService.getBankInfo(auth)
+      console.log('auth: ', auth)
+      const res = await this.siaClientService.getBankInfo(auth)
 
-      // if(res.bank.) {
-      //   res.bank = '2222',
-      //   res.ledger = '00',
-      //   res.accountNumber = '123456'
-      // }
+      if (isRunningOnEnvironment('local')) {
+        if (!res.bank) {
+          ;(res.bank = '2222'),
+            (res.ledger = '00'),
+            (res.accountNumber = '123456')
+        }
+      }
+    
+      return res
     } catch (e) {
       throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
     }

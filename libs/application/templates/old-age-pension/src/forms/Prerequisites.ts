@@ -53,6 +53,7 @@ export const PrerequisitesForm: Form = buildForm({
             buildExternalDataProvider({
               id: 'approveExternalData',
               title: oldAgePensionFormMessage.pre.externalDataSubSection,
+              subTitle: oldAgePensionFormMessage.pre.externalDataDescription,
               checkboxLabel: oldAgePensionFormMessage.pre.checkboxProvider,
               dataProviders: [
                 buildDataProviderItem({
@@ -91,25 +92,11 @@ export const PrerequisitesForm: Form = buildForm({
                       .socialInsuranceAdministrationInformationTitle,
                   subTitle:
                     oldAgePensionFormMessage.pre
-                      .socialInsuranceAdministrationInformationSubTitle,
+                      .socialInsuranceAdministrationInformationDescription,
                 }),
                 buildDataProviderItem({
                   provider: SocialInsuranceAdministrationBankInfoApi,
                   title: '',
-                }),
-                buildDataProviderPermissionItem({
-                  id: 'link',
-                  title: '',
-                  subTitle:
-                    oldAgePensionFormMessage.pre
-                      .socialInsuranceAdministrationInformationSubTitleMoreInfo,
-                }),
-                buildDataProviderPermissionItem({
-                  id: 'incomes',
-                  title: '',
-                  subTitle:
-                    oldAgePensionFormMessage.pre
-                      .socialInsuranceAdministrationInformationSubTitleAboutIncomes,
                 }),
               ],
             }),

@@ -41,10 +41,15 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Gagnaöflun',
       description: 'External Data',
     },
+    externalDataDescription: {
+      id: 'oap.application:externalData.description',
+      defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt',
+      description: 'english translation',
+    },
     checkboxProvider: {
       id: 'oap.application:prerequisites.checkbox.provider',
       defaultMessage:
-        'Ég skil að ofangreindra gagna verður aflað í umsóknarferlinu',
+        'Ég skil að ofangreindra upplýsinga verður aflað í umsóknarferlinu',
       description: 'Checbox to confirm data provider',
     },
     skraInformationTitle: {
@@ -55,9 +60,9 @@ export const oldAgePensionFormMessage: MessageDir = {
     skraInformationSubTitle: {
       id: 'oap.application:prerequisites.national.registry.subtitle',
       defaultMessage:
-        'Upplýsingar um þig, maka og börn frá Þjóðskrá. Einnig eru sóttar upplýsingar um búsetu, íbúaskrá og forsjá',
+        'Upplýsingar um þig, maka og börn. Upplýsingar um búsetu, íbúaskrá og forsjá.',
       description:
-        'Information about you, spouse and children will be retrieved from Registers Iceland. Information about residence will also be retrieved.',
+        'Information about you, spouse and children. Information about residence, cohabitants and custody.',
     },
     userProfileInformationTitle: {
       id: 'oap.application:prerequisites.userprofile.title',
@@ -67,35 +72,20 @@ export const oldAgePensionFormMessage: MessageDir = {
     userProfileInformationSubTitle: {
       id: 'oap.application:prerequisites.userprofile.subtitle',
       defaultMessage:
-        'Upplýsingar um netfang, símanúmer og bankareikning eru sóttar frá mínum síðum á Ísland.is.',
+        'Upplýsingar um netfang og símanúmer eru sóttar á mínar síður á Ísland.is.',
       description:
-        'Information about email address, phone number and bank account will be retrieved from your account at Ísland.is.',
+        'Information about email address and phone number will be retrieved from your account at Ísland.is.',
     },
     socialInsuranceAdministrationInformationTitle: {
       id: 'oap.application:prerequisites.socialInsuranceAdministration.title',
       defaultMessage: 'Upplýsingar um tekjur og aðstæður',
       description: 'Information about income and circumstances',
     },
-    socialInsuranceAdministrationInformationSubTitle: {
-      id: 'oap.application:prerequisites.socialInsuranceAdministration.subtitle',
+    socialInsuranceAdministrationInformationDescription: {
+      id: 'oap.application:prerequisites.socialInsuranceAdministration.description#markdown',
       defaultMessage:
-        'TR sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðsla mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar. Ef við á þá hefur TR heimild að ná í upplýsingar frá öðrum stofnunum.',
-      description:
-        'TR collects only necessary information for processing applications and processing cases. That information can relate to both your income and other circumstances. If applicable, TR is authorized to obtain information from other organizations.',
-    },
-    socialInsuranceAdministrationInformationSubTitleMoreInfo: {
-      id: 'oap.application:prerequisites.socialInsuranceAdministration.subtitle.moreInfo#markdown',
-      defaultMessage:
-        'Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar, [https://www.tr.is/tryggingastofnun/personuvernd](https://www.tr.is/tryggingastofnun/personuvernd)',
-      description:
-        'More information on data collection authority and processing of personal information can be found in the privacy policy of the Insurance Administration, [https://www.tr.is/tryggingastofnun/personuvernd](https://www.tr.is/tryggingastofnun/personuvernd)',
-    },
-    socialInsuranceAdministrationInformationSubTitleAboutIncomes: {
-      id: 'oap.application:prerequisites.socialInsuranceAdministration.subtitle.incomes',
-      defaultMessage:
-        'Ef tekjur eða aðrar aðstæður þínar breytast verður þú að láta TR vita þar sem það getur haft áhrif á greiðslur þínar.',
-      description:
-        'If your income or other circumstances change, you must notify TR as this may affect your payments.',
+        'TR sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðsla mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar. Ef við á þá hefur TR heimild að ná í upplýsingar frá öðrum stofnunum. Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar, [https://www.tr.is/tryggingastofnun/personuvernd](https://www.tr.is/tryggingastofnun/personuvernd). Ef tekjur eða aðrar aðstæður þínar breytast verður þú að láta TR vita þar sem það getur haft áhrif á greiðslur þínar.',
+      description: 'english translation',
     },
     startApplication: {
       id: 'oap.application:prerequisites.start.application',
