@@ -156,7 +156,7 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
       <Greeting />
       <Box paddingTop={[0, 0, 0, 4]} marginBottom={3}>
         <GridContainer>
-          <GridRow>
+          <GridRow data-testid="service-portal-dashboard">
             <GridColumn
               hiddenBelow="lg"
               span={['12/12', '12/12', '12/12', '5/12']}
