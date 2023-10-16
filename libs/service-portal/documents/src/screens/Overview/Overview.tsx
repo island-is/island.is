@@ -1,10 +1,7 @@
 import { useState, useCallback, useEffect, useMemo } from 'react'
-import { theme } from '@island.is/island-ui/theme'
-import { useQuery, gql } from '@apollo/client'
 import {
   Box,
   Stack,
-  LoadingDots,
   Pagination,
   Text,
   GridContainer,
@@ -12,6 +9,8 @@ import {
   GridRow,
   Button,
   SkeletonLoader,
+  Checkbox,
+  toast,
 } from '@island.is/island-ui/core'
 import {
   useListDocuments,
@@ -25,10 +24,8 @@ import {
 } from '@island.is/service-portal/core'
 import {
   DocumentCategory,
-  DocumentDetails,
   DocumentSender,
   DocumentType,
-  Query,
 } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
@@ -38,62 +35,21 @@ import isAfter from 'date-fns/isAfter'
 import differenceInYears from 'date-fns/differenceInYears'
 import DocumentsFilter from '../../components/DocumentFilter/DocumentsFilter'
 import debounce from 'lodash/debounce'
-import {
-  defaultFilterValues,
-  FilterValuesType,
-  SortType,
-} from '../../utils/types'
+import { defaultFilterValues, FilterValuesType } from '../../utils/types'
 import * as styles from './Overview.css'
 import { AuthDelegationType } from '@island.is/shared/types'
 import DocumentLine from '../../components/DocumentLine/DocumentLine'
-import NoPDF from '../../components/NoPDF/NoPDF'
-import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/service-portal/constants'
 import { useUserInfo } from '@island.is/auth/react'
-import { DocumentRenderer } from '../../components/DocumentRenderer'
-import { DocumentHeader } from '../../components/DocumentHeader'
-import { DocumentActionBar } from '../../components/DocumentActionBar'
-import { useWindowSize } from 'react-use'
-import { downloadFile } from '../../utils/downloadDocument'
-import FocusLock from 'react-focus-lock'
 import { useKeyDown } from '../../hooks/useKeyDown'
-
-export type ActiveDocumentType = {
-  document: DocumentDetails
-  id: string
-  subject: string
-  date: string
-  sender: string
-  downloadUrl: string
-  img?: string
-  categoryId?: string
-}
-
-const GET_DOCUMENT_CATEGORIES = gql`
-  query documentCategories {
-    getDocumentCategories {
-      id
-      name
-    }
-  }
-`
-
-const GET_DOCUMENT_TYPES = gql`
-  query documentTypes {
-    getDocumentTypes {
-      id
-      name
-    }
-  }
-`
-
-const GET_DOCUMENT_SENDERS = gql`
-  query documentSenders {
-    getDocumentSenders {
-      id
-      name
-    }
-  }
-`
+import { usePostBulkMailActionMutation } from './BatchMailAction.generated'
+import { FavAndStash } from '../../components/FavAndStash'
+import DocumentDisplay from '../../components/OverviewDisplay/OverviewDocumentDisplay'
+import { ActiveDocumentType } from '../../lib/types'
+import {
+  useDocumentCategoriesQuery,
+  useDocumentSendersQuery,
+  useDocumentTypesQuery,
+} from './DocumentExtra.generated'
 
 const pageSize = 10
 
@@ -102,8 +58,7 @@ export const ServicePortalDocuments = () => {
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
-  const [isEmpty, setEmpty] = useState(false)
-  const { width } = useWindowSize()
+  const [selectedLines, setSelectedLines] = useState<Array<string>>([])
   const navigate = useNavigate()
   const location = useLocation()
   const [activeDocument, setActiveDocument] =
@@ -111,6 +66,23 @@ export const ServicePortalDocuments = () => {
   const isLegal = userInfo.profile.delegationType?.includes(
     AuthDelegationType.LegalGuardian,
   )
+
+  const [bulkMailAction, { loading: bulkMailActionLoading }] =
+    usePostBulkMailActionMutation({
+      onError: (_) => toast.error(formatMessage(m.errorTitle)),
+      onCompleted: (data) => {
+        if (data.postBulkMailAction?.success) {
+          if (refetch) {
+            refetch({
+              ...fetchObject(),
+            })
+          }
+        } else {
+          toast.error(formatMessage(m.errorTitle))
+        }
+      },
+    })
+
   const dateOfBirth = userInfo?.profile.dateOfBirth
   let isOver15 = false
   if (dateOfBirth) {
@@ -118,10 +90,10 @@ export const ServicePortalDocuments = () => {
   }
   const hideHealthData = isOver15 && isLegal
 
-  const [sortState, setSortState] = useState<SortType>({
+  const sortState = {
     direction: 'Descending',
     key: 'Date',
-  })
+  }
   const [searchInteractionEventSent, setSearchInteractionEventSent] =
     useState(false)
   useScrollTopOnUpdate([page])
@@ -152,15 +124,13 @@ export const ServicePortalDocuments = () => {
     ...fetchObject(),
   })
 
-  const { data: categoriesData, loading: categoriesLoading } = useQuery<Query>(
-    GET_DOCUMENT_CATEGORIES,
-  )
+  const { data: categoriesData, loading: categoriesLoading } =
+    useDocumentCategoriesQuery()
 
-  const { data: typesData, loading: typesLoading } =
-    useQuery<Query>(GET_DOCUMENT_TYPES)
+  const { data: typesData, loading: typesLoading } = useDocumentTypesQuery()
 
   const { data: sendersData, loading: sendersLoading } =
-    useQuery<Query>(GET_DOCUMENT_SENDERS)
+    useDocumentSendersQuery()
 
   const [categoriesAvailable, setCategoriesAvailable] = useState<
     DocumentCategory[]
@@ -206,12 +176,6 @@ export const ServicePortalDocuments = () => {
   }, [categoriesLoading])
 
   const filteredDocuments = data.documents
-
-  useEffect(() => {
-    if (!loading && totalCount === 0 && filterValue === defaultFilterValues) {
-      setEmpty(true)
-    }
-  }, [loading])
 
   const pagedDocuments = {
     from: (page - 1) * pageSize,
@@ -326,65 +290,17 @@ export const ServicePortalDocuments = () => {
     return debounce(handleSearchChange, 500)
   }, [])
 
-  const isDesktop = width > theme.breakpoints.lg
   const activeArchive = filterValue.archived === true
 
   return (
     <GridContainer>
-      {activeDocument?.document && !isDesktop && (
-        <GridRow>
-          <GridColumn span="12/12" position="relative">
-            <FocusLock autoFocus={false}>
-              <Box className={styles.modalBase}>
-                <Box className={styles.modalHeader}>
-                  <DocumentActionBar
-                    onGoBack={() => setActiveDocument(null)}
-                    documentId={activeDocument.id}
-                    archived={activeArchive}
-                    bookmarked={
-                      !!filteredDocuments?.filter(
-                        (doc) => doc?.id === activeDocument?.id,
-                      )?.[0]?.bookmarked
-                    }
-                    refetchInboxItems={() => {
-                      if (refetch) {
-                        refetch({
-                          ...fetchObject(),
-                        })
-                      }
-                    }}
-                    activeDocument={activeDocument}
-                    onPrintClick={
-                      activeDocument
-                        ? () => downloadFile(activeDocument, userInfo)
-                        : undefined
-                    }
-                  />
-                </Box>
-                <Box className={styles.modalContent}>
-                  <DocumentHeader
-                    avatar={activeDocument.img}
-                    sender={activeDocument.sender}
-                    date={activeDocument.date}
-                    category={categoriesAvailable.find(
-                      (i) => i.id === activeDocument.categoryId,
-                    )}
-                    subject={formatMessage(m.activeDocumentOpenAriaLabel, {
-                      subject: activeDocument.subject,
-                    })}
-                  />
-                  <Text variant="h3" as="h3" marginBottom={3}>
-                    {activeDocument?.subject}
-                  </Text>
-                  {<DocumentRenderer document={activeDocument} />}
-                </Box>
-              </Box>
-            </FocusLock>
-          </GridColumn>
-        </GridRow>
-      )}
-      <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+      <GridRow
+        direction={['columnReverse', 'columnReverse', 'columnReverse', 'row']}
+      >
+        <GridColumn
+          hiddenBelow={activeDocument?.document ? 'lg' : undefined}
+          span={['12/12', '12/12', '12/12', '5/12']}
+        >
           <Box marginBottom={2} printHidden marginY={3}>
             <Box
               className={styles.btn}
@@ -452,9 +368,58 @@ export const ServicePortalDocuments = () => {
               padding={2}
             >
               <Box display="flex">
-                <Text variant="eyebrow">{formatMessage(m.info)}</Text>
+                <Box className={styles.checkboxWrap} marginRight={3}>
+                  {!activeArchive && (
+                    <Checkbox
+                      name="checkbox-select-all"
+                      checked={selectedLines.length > 0}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          const allDocumentIds = filteredDocuments.map(
+                            (item) => item.id,
+                          )
+                          setSelectedLines([...allDocumentIds])
+                        } else {
+                          setSelectedLines([])
+                        }
+                      }}
+                    />
+                  )}
+                </Box>
+                {selectedLines.length > 0 ? null : (
+                  <Text variant="eyebrow">{formatMessage(m.info)}</Text>
+                )}
               </Box>
-              <Text variant="eyebrow">{formatMessage(m.date)}</Text>
+
+              {selectedLines.length > 0 && !activeArchive ? (
+                <FavAndStash
+                  loading={bulkMailActionLoading}
+                  onStash={() =>
+                    bulkMailAction({
+                      variables: {
+                        input: {
+                          messageIds: selectedLines,
+                          action: 'archive',
+                          status: true,
+                        },
+                      },
+                    })
+                  }
+                  onFav={() =>
+                    bulkMailAction({
+                      variables: {
+                        input: {
+                          messageIds: selectedLines,
+                          action: 'bookmark',
+                          status: true,
+                        },
+                      },
+                    })
+                  }
+                />
+              ) : (
+                <Text variant="eyebrow">{formatMessage(m.date)}</Text>
+              )}
             </Box>
             {loading && (
               <Box marginTop={4}>
@@ -476,6 +441,7 @@ export const ServicePortalDocuments = () => {
                     onClick={setActiveDocument}
                     active={doc.id === activeDocument?.id}
                     bookmarked={!!doc.bookmarked}
+                    selected={selectedLines.includes(doc.id)}
                     archived={activeArchive}
                     refetchInboxItems={() => {
                       if (refetch) {
@@ -484,74 +450,48 @@ export const ServicePortalDocuments = () => {
                         })
                       }
                     }}
+                    setSelectLine={(docId) => {
+                      if (selectedLines.includes(doc.id)) {
+                        const filtered = selectedLines.filter(
+                          (item) => item !== doc.id,
+                        )
+                        setSelectedLines([...filtered])
+                      } else {
+                        setSelectedLines([...selectedLines, docId])
+                      }
+                    }}
                   />
                 </Box>
               ))}
             </Stack>
           </Box>
         </GridColumn>
-        <GridColumn span="7/12" position="relative">
-          {activeDocument?.document && isDesktop ? (
-            <Box
-              marginLeft={8}
-              marginTop={3}
-              padding={5}
-              borderRadius="large"
-              background="white"
-              className={styles.docWrap}
-            >
-              <DocumentHeader
-                avatar={activeDocument.img}
-                sender={activeDocument.sender}
-                date={activeDocument.date}
-                category={categoriesAvailable.find(
-                  (i) => i.id === activeDocument.categoryId,
-                )}
-                subject={formatMessage(m.activeDocumentOpenAriaLabel, {
-                  subject: activeDocument.subject,
-                })}
-                actionBar={{
-                  activeDocument: activeDocument,
-                  documentId: activeDocument.id,
-                  archived: activeArchive,
-                  bookmarked: !!filteredDocuments?.filter(
-                    (doc) => doc?.id === activeDocument?.id,
-                  )?.[0]?.bookmarked,
-                  refetchInboxItems: () => {
-                    if (refetch) {
-                      refetch({
-                        ...fetchObject(),
-                      })
-                    }
-                  },
-                  onPrintClick: activeDocument
-                    ? () => downloadFile(activeDocument, userInfo)
-                    : undefined,
-                }}
-              />
-              <Box>{<DocumentRenderer document={activeDocument} />}</Box>
-            </Box>
-          ) : (
-            <Box
-              position="sticky"
-              style={{ top: SERVICE_PORTAL_HEADER_HEIGHT_LG + 50 }}
-              paddingLeft={8}
-            >
-              {isDesktop &&
-                (loading ? (
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    paddingTop={6}
-                  >
-                    <LoadingDots />
-                  </Box>
-                ) : (
-                  <NoPDF />
-                ))}
-            </Box>
-          )}
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '7/12']}
+          position="relative"
+        >
+          <DocumentDisplay
+            activeDocument={activeDocument}
+            activeArchive={activeArchive}
+            activeBookmark={
+              !!filteredDocuments?.filter(
+                (doc) => doc?.id === activeDocument?.id,
+              )?.[0]?.bookmarked
+            }
+            category={categoriesAvailable.find(
+              (i) => i.id === activeDocument?.categoryId,
+            )}
+            onPressBack={() => setActiveDocument(null)}
+            onRefetch={() => {
+              if (refetch) {
+                refetch({
+                  ...fetchObject(),
+                })
+              }
+            }}
+            loading={loading}
+            error={error}
+          />
         </GridColumn>
       </GridRow>
       <GridRow>
