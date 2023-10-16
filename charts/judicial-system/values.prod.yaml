@@ -11,6 +11,8 @@ global:
     NO_UPDATE_NOTIFIER: 'true'
     PORT: '3333'
     name: 'prod'
+  image:
+    tag: 'latest_master'
   initContainer:
     env:
       AWS_REGION: 'eu-west-1'
