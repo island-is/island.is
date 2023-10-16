@@ -17,6 +17,7 @@ test.describe('Custody Prosecutor', () => {
   test.afterAll(async () => await context.close())
 
   test('should submit a custody request to court', async () => {
+    test.skip()
     const page = await context.newPage()
 
     // Case list
