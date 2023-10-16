@@ -32,7 +32,10 @@ import {
   IcelandicGovernmentInstitutionVacancies,
   RskProcuring,
   AircraftRegistry,
+  HousingBenefitCalculator,
   OccupationalLicenses,
+  ShipRegistry,
+  DistrictCommissioners,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -290,9 +293,9 @@ export const serviceSetup = (services: {
       MACHINE_LICENSE_PASS_TEMPLATE_ID:
         '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID',
       ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID',
-      ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT',
       DRIVING_LICENSE_PASS_TEMPLATE_ID:
         '/k8s/api/DRIVING_LICENSE_PASS_TEMPLATE_ID',
+      ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT',
       DRIVING_LICENSE_FETCH_TIMEOUT: '/k8s/api/DRIVING_LICENSE_FETCH_TIMEOUT',
       FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT',
       DISABILITY_LICENSE_FETCH_TIMEOUT:
@@ -344,6 +347,7 @@ export const serviceSetup = (services: {
       Labor,
       DrivingLicense,
       Payment,
+      DistrictCommissioners,
       Finance,
       Education,
       NationalRegistry,
@@ -365,6 +369,8 @@ export const serviceSetup = (services: {
       RskProcuring,
       NationalRegistryB2C,
       AircraftRegistry,
+      HousingBenefitCalculator,
+      ShipRegistry,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

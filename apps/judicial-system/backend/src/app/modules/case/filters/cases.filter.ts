@@ -1,25 +1,26 @@
 import { Op, WhereOptions } from 'sequelize'
 
+import { ForbiddenException } from '@nestjs/common'
+
+import type { User } from '@island.is/judicial-system/types'
 import {
+  CaseAppealState,
   CaseDecision,
   CaseState,
   CaseType,
+  completedCaseStates,
   indictmentCases,
   InstitutionType,
   investigationCases,
+  isAppealsCourtUser,
+  isDefenceUser,
+  isDistrictCourtUser,
+  isPrisonSystemUser,
+  isProsecutionUser,
+  RequestSharedWithDefender,
   restrictionCases,
   UserRole,
-  isProsecutionUser,
-  CaseAppealState,
-  isDistrictCourtUser,
-  isAppealsCourtUser,
-  isPrisonSystemUser,
-  isDefenceUser,
-  completedCaseStates,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
-
-import { ForbiddenException } from '@nestjs/common'
 
 function getProsecutionUserCasesQueryFilter(user: User): WhereOptions {
   const options: WhereOptions = [
@@ -143,7 +144,7 @@ function getAppealsCourtUserCasesQueryFilter(): WhereOptions {
   }
 }
 
-function getStaffUserCasesQueryFilter(user: User): WhereOptions {
+function getPrisonSystemStaffUserCasesQueryFilter(user: User): WhereOptions {
   const options: WhereOptions = [
     { isArchived: false },
     { state: CaseState.ACCEPTED },
@@ -152,14 +153,21 @@ function getStaffUserCasesQueryFilter(user: User): WhereOptions {
   if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
     options.push({
       type: [
-        CaseType.ADMISSION_TO_FACILITY,
         CaseType.CUSTODY,
+        CaseType.ADMISSION_TO_FACILITY,
+        CaseType.PAROLE_REVOCATION,
         CaseType.TRAVEL_BAN,
       ],
     })
   } else {
     options.push(
-      { type: [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY] },
+      {
+        type: [
+          CaseType.CUSTODY,
+          CaseType.ADMISSION_TO_FACILITY,
+          CaseType.PAROLE_REVOCATION,
+        ],
+      },
       {
         decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
       },
@@ -179,6 +187,15 @@ function getDefenceUserCasesQueryFilter(user: User): WhereOptions {
             { type: [...restrictionCases, ...investigationCases] },
             {
               [Op.or]: [
+                {
+                  [Op.and]: [
+                    { state: [CaseState.SUBMITTED, CaseState.RECEIVED] },
+                    {
+                      request_shared_with_defender:
+                        RequestSharedWithDefender.READY_FOR_COURT,
+                    },
+                  ],
+                },
                 {
                   [Op.and]: [
                     { state: CaseState.RECEIVED },
@@ -224,7 +241,7 @@ export function getCasesQueryFilter(user: User): WhereOptions {
   }
 
   if (isPrisonSystemUser(user)) {
-    return getStaffUserCasesQueryFilter(user)
+    return getPrisonSystemStaffUserCasesQueryFilter(user)
   }
 
   if (isDefenceUser(user)) {

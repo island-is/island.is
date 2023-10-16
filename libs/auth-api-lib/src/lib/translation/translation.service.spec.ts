@@ -106,6 +106,7 @@ describe('TranslationService', () => {
     const result = await translationService.findTranslationMap(
       'client',
       ['1', '2'],
+      false,
       'en',
     )
 
@@ -123,6 +124,7 @@ describe('TranslationService', () => {
     const result = await translationService.findTranslationMap(
       'client',
       ['1'],
+      false,
       'en',
     )
 

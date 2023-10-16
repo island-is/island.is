@@ -40,13 +40,35 @@ const ItemHeader: React.FC<
   React.PropsWithChildren<{
     title: FormText
     subTitle?: FormText
+    pageTitle?: FormText
     application: Application
   }>
-> = ({ title, subTitle, application }) => {
+> = ({ title, subTitle, application, pageTitle }) => {
   const { formatMessage } = useLocale()
 
   return (
     <>
+      {pageTitle && (
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="flexStart"
+          marginTop={5}
+        >
+          <Box marginRight={1}>
+            <Icon
+              icon="fileTrayFull"
+              size="medium"
+              color="blue400"
+              type="outline"
+            />
+          </Box>
+          <Text variant="h4">
+            {formatText(pageTitle, application, formatMessage)}
+          </Text>
+        </Box>
+      )}
+
       <Text variant="h4" color="blue400">
         {formatText(title, application, formatMessage)}
       </Text>
@@ -71,7 +93,7 @@ const ProviderItem: FC<
   }>
 > = ({ dataProviderResult, provider, suppressProviderError, application }) => {
   const [reasons, setReasons] = useState<ProviderErrorReason[]>([])
-  const { title, subTitle } = provider
+  const { title, subTitle, pageTitle } = provider
   const { formatMessage } = useLocale()
   const showError =
     provider.id &&
@@ -104,7 +126,12 @@ const ProviderItem: FC<
 
   return (
     <Box marginBottom={3}>
-      <ItemHeader application={application} title={title} subTitle={subTitle} />
+      <ItemHeader
+        application={application}
+        title={title}
+        subTitle={subTitle}
+        pageTitle={pageTitle}
+      />
 
       {showError &&
         reasons.map((reason, index) => (
@@ -122,11 +149,16 @@ const PermissionItem: FC<
     application: Application
   }>
 > = ({ permission, application }) => {
-  const { title, subTitle } = permission
+  const { title, subTitle, pageTitle } = permission
 
   return (
     <Box marginBottom={3}>
-      <ItemHeader application={application} title={title} subTitle={subTitle} />
+      <ItemHeader
+        application={application}
+        title={title}
+        subTitle={subTitle}
+        pageTitle={pageTitle}
+      />
     </Box>
   )
 }

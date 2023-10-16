@@ -1,5 +1,5 @@
 query GetTherapies {
-  rightsPortalPaginatedTherapiesResponse {
+  rightsPortalPaginatedTherapies {
     data {
       id
       name

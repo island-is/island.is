@@ -1,6 +1,6 @@
-import { defineMessage } from 'react-intl'
+import { defineMessages } from 'react-intl'
 
-export const olMessage = defineMessage({
+export const olMessage = defineMessages({
   occupationalLicense: {
     id: 'sp.occupational-licenses:occupational-license',
     defaultMessage: 'Starfsleyfi',

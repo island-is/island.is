@@ -1,4 +1,4 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
 import { UseGuards } from '@nestjs/common'
 import { Audit } from '@island.is/nest/audit'
@@ -15,12 +15,23 @@ import {
   FeatureFlag,
   Features,
 } from '@island.is/nest/feature-flags'
-import { HealthCenterHistory } from './models/healthCenter.model'
 import { GetDentistBillsInput } from './dto/getDentistBills.input'
 import { GetHealthCenterHistoryInput } from './dto/getHealthCenterHistory.input'
 import { PaginatedTherapiesResponse } from './models/therapies.model'
-import { UserDentist } from './models/userDentist.model'
 import { PaginatedAidsAndNutritionResponse } from './models/aidsOrNutrition.model'
+import {
+  DentistStatus,
+  PaginatedDentistsResponse,
+  UserDentistRegistration,
+} from './models/dentist.model'
+import {
+  PaginatedHealthCentersResponse,
+  UserHealthCenterRegistration,
+} from './models/healthCenter.model'
+import { HealthCenterResponse } from './models/healthCenterResponse.model'
+import { GetDentistsInput } from './dto/getDentists.input'
+import { RegisterDentistResponse } from './models/registerDentistResponse'
+import { RegisterDentistInput } from './dto/RegisterDentist.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -31,7 +42,7 @@ export class RightsPortalResolver {
 
   @Scopes(ApiScope.health)
   @Query(() => PaginatedTherapiesResponse, {
-    name: 'rightsPortalPaginatedTherapiesResponse',
+    name: 'rightsPortalPaginatedTherapies',
     nullable: true,
   })
   @Audit()
@@ -49,7 +60,7 @@ export class RightsPortalResolver {
 
   @Scopes(ApiScope.health)
   @Query(() => PaginatedAidsAndNutritionResponse, {
-    name: 'rightsPortalPaginatedAidsAndNutritionResponse',
+    name: 'rightsPortalPaginatedAidsAndNutrition',
     nullable: true,
   })
   @Audit()
@@ -59,8 +70,19 @@ export class RightsPortalResolver {
 
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
   @Scopes(ApiScope.health)
-  @Query(() => UserDentist, {
-    name: 'rightsPortalUserDentist',
+  @Query(() => UserDentistRegistration, {
+    name: 'rightsPortalUserDentistRegistration',
+    nullable: true,
+  })
+  @Audit()
+  getRightsPortalDentist(@CurrentUser() user: User) {
+    return this.rightsPortalService.getCurrentDentist(user)
+  }
+
+  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
+  @Scopes(ApiScope.health)
+  @Query(() => UserDentistRegistration, {
+    name: 'rightsPortalUserDentistRegistration',
     nullable: true,
   })
   @Audit()
@@ -72,7 +94,7 @@ export class RightsPortalResolver {
     })
     input?: GetDentistBillsInput,
   ) {
-    return this.rightsPortalService.getDentists(
+    return this.rightsPortalService.getDentistRegistrations(
       user,
       input?.dateFrom,
       input?.dateTo,
@@ -81,12 +103,12 @@ export class RightsPortalResolver {
 
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
   @Scopes(ApiScope.health)
-  @Query(() => HealthCenterHistory, {
-    name: 'rightsPortalHealthCenterHistory',
+  @Query(() => UserHealthCenterRegistration, {
+    name: 'rightsPortalUserHealthCenterRegistration',
     nullable: true,
   })
   @Audit()
-  getRightsPortalHealthCenterHistory(
+  getRightsPortalHealthCenterRegistration(
     @CurrentUser() user: User,
     @Args({
       name: 'input',
@@ -94,7 +116,7 @@ export class RightsPortalResolver {
     })
     input?: GetHealthCenterHistoryInput,
   ) {
-    return this.rightsPortalService.getHealthCenterHistory(
+    return this.rightsPortalService.getUserHealthCenterRegistrations(
       user,
       input?.dateFrom,
       input?.dateTo,
@@ -103,23 +125,69 @@ export class RightsPortalResolver {
 
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
   @Scopes(ApiScope.health)
-  @Query(() => HealthCenterHistory, {
-    name: 'rightsPortalHealthCenterHistory',
+  @Query(() => PaginatedHealthCentersResponse, {
+    name: 'rightsPortalPaginatedHealthCenters',
     nullable: true,
   })
   @Audit()
-  getRightsPortalHealthCenterList(
+  getRightsPortalHealthCenterList(@CurrentUser() user: User) {
+    return this.rightsPortalService.getHealthCenters(user)
+  }
+
+  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
+  @Scopes(ApiScope.health)
+  @Query(() => DentistStatus, {
+    name: 'rightsPortalDentistStatus',
+    nullable: true,
+  })
+  @Audit()
+  getDentistStatus(@CurrentUser() user: User) {
+    return this.rightsPortalService.getDentistStatus(user)
+  }
+
+  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
+  @Scopes(ApiScope.health)
+  @Query(() => DentistStatus, {
+    name: 'rightsPortalCurrentDentist',
+    nullable: true,
+  })
+  @Audit()
+  getCurrentDentist(@CurrentUser() user: User) {
+    return this.rightsPortalService.getDentistStatus(user)
+  }
+
+  @Scopes(ApiScope.health)
+  @Mutation(() => RegisterDentistResponse, {
+    name: 'rightsPortalRegisterDentist',
+  })
+  @Audit()
+  registerDentist(
     @CurrentUser() user: User,
-    @Args({
-      name: 'input',
-      nullable: true,
-    })
-    input?: GetHealthCenterHistoryInput,
+    @Args('input') input: RegisterDentistInput,
   ) {
-    return this.rightsPortalService.getHealthCenterHistory(
-      user,
-      input?.dateFrom,
-      input?.dateTo,
-    )
+    return this.rightsPortalService.registerDentist(user, input.id)
+  }
+
+  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
+  @Scopes(ApiScope.health)
+  @Query(() => PaginatedDentistsResponse, {
+    name: 'rightsPortalPaginatedDentists',
+    nullable: true,
+  })
+  @Audit()
+  getRightsPortalDentistList(
+    @CurrentUser() user: User,
+    @Args('input') input: GetDentistsInput,
+  ) {
+    return this.rightsPortalService.getDentists(user, input)
+  }
+
+  @Scopes(ApiScope.health)
+  @Mutation(() => HealthCenterResponse, {
+    name: 'rightsPortalTransferHealthCenter',
+  })
+  @Audit()
+  transferHealthCenter(@CurrentUser() user: User, @Args('id') id: string) {
+    return this.rightsPortalService.transferHealthCenter(user, id)
   }
 }

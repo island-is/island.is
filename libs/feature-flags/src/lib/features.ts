@@ -8,6 +8,7 @@ export enum Features {
   accidentNotification = 'isAccidentNotificationEnabled',
   europeanHealthInsuranceCard = 'isEuropeanHealthInsuranceCardApplicationEnabled',
   passportApplication = 'isPassportApplicationEnabled',
+  passportAnnulmentApplication = 'isPassportAnnulmentApplicationEnabled',
   financialStatementInao = 'financialStatementInao',
   inheritanceReport = 'isInheritanceReportApplicationEnabled',
   transportAuthorityDigitalTachographCompanyCard = 'isTransportAuthorityDigitalTachographCompanyCardEnabled',
@@ -36,9 +37,13 @@ export enum Features {
 
   // Application delegation flags
   isFishingLicenceCustomDelegationEnabled = 'isFishingLicenceCustomDelegationEnabled',
+  transportAuthorityApplicationsCustomDelegation = 'isTransportAuthorityApplicationsCustomDelegationEnabled',
 
   //Application system
   applicationSystemHistory = 'applicationSystemHistory',
+
+  // Search indexer
+  shouldSearchIndexerResolveNestedEntries = 'shouldSearchIndexerResolveNestedEntries',
 }
 
 export enum ServerSideFeature {

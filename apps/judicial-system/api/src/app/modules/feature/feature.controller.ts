@@ -1,6 +1,7 @@
 import { Controller, Get, Inject, Param } from '@nestjs/common'
 
 import type { ConfigType } from '@island.is/nest/config'
+
 import type { Feature } from '@island.is/judicial-system/types'
 
 import { featureModuleConfig } from './feature.config'

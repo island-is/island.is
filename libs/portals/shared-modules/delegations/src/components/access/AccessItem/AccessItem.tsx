@@ -19,7 +19,7 @@ import * as styles from './AccessItem.css'
 import format from 'date-fns/format'
 import { isDefined } from '@island.is/shared/utils'
 import { Scope } from '../access.types'
-import { accessMessages, DATE_FORMAT, isApiScopeGroup } from '../access.utils'
+import { DATE_FORMAT, isApiScopeGroup } from '../access.utils'
 import classNames from 'classnames'
 import { AuthCustomDelegation } from '../../../types/customDelegation'
 import * as commonAccessStyles from '../access.css'
@@ -218,7 +218,7 @@ export const AccessItem = ({
                   <DatePickerController
                     id={`${item.model}.validTo`}
                     size="sm"
-                    label={formatMessage(accessMessages.dateValidTo)}
+                    label={formatMessage(m.validTo)}
                     backgroundColor="blue"
                     minDate={new Date()}
                     defaultValue={
@@ -254,7 +254,7 @@ export const AccessItem = ({
                     >
                       {!md && (
                         <Text variant="small" fontWeight="semiBold">
-                          {formatMessage(accessMessages.dateValidTo)}
+                          {formatMessage(m.validTo)}
                         </Text>
                       )}
                       <Box display="flex" className={styles.rowGap}>

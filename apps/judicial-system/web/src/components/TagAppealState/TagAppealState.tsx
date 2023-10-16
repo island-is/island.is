@@ -8,21 +8,26 @@ import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appea
 import {
   CaseAppealRulingDecision,
   CaseAppealState,
+  InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { FeatureContext } from '../FeatureProvider/FeatureProvider'
+import { UserContext } from '../UserProvider/UserProvider'
 
 interface Props {
   appealState?: CaseAppealState | null
   appealRulingDecision?: CaseAppealRulingDecision | null
+  appealCaseNumber?: string | null
 }
 
 const TagAppealState: React.FC<React.PropsWithChildren<Props>> = ({
   appealRulingDecision,
   appealState,
+  appealCaseNumber,
 }) => {
   const { formatMessage } = useIntl()
   const { features } = useContext(FeatureContext)
+  const { user } = useContext(UserContext)
 
   if (!features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS)) {
     return null
@@ -44,10 +49,19 @@ const TagAppealState: React.FC<React.PropsWithChildren<Props>> = ({
       }
     }
     if (state === CaseAppealState.RECEIVED) {
-      return {
-        color: 'darkerBlue',
-        text: formatMessage(tables.receivedTag),
-      }
+      if (
+        user?.institution?.type === InstitutionType.COURT_OF_APPEALS &&
+        !appealCaseNumber
+      ) {
+        return {
+          color: 'purple',
+          text: formatMessage(tables.newTag),
+        }
+      } else
+        return {
+          color: 'darkerBlue',
+          text: formatMessage(tables.receivedTag),
+        }
     }
     if (state === CaseAppealState.COMPLETED) {
       if (ruling === CaseAppealRulingDecision.ACCEPTING) {

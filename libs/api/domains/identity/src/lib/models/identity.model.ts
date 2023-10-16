@@ -32,6 +32,12 @@ export class Identity {
   @Field(() => ID)
   nationalId!: string
 
+  @Field(() => String, { nullable: true })
+  givenName?: string | null
+
+  @Field(() => String, { nullable: true })
+  familyName?: string | null
+
   @Field(() => String)
   name!: string
 
@@ -56,6 +62,8 @@ const isExternalUser = ({ context, source }: MiddlewareContext): boolean => {
       'birthday',
       'type',
       'name',
+      'givenName',
+      'familyName',
       'nationalId',
     ],
   },

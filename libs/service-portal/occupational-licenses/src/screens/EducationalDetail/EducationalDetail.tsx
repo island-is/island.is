@@ -5,7 +5,9 @@ import {
   CardLoader,
   EmptyState,
   ErrorScreen,
+  MENNTAMALASTOFNUN_ID,
   formSubmit,
+  formatDate,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserInfo } from '@island.is/auth/react'
@@ -66,20 +68,11 @@ export const EducationDetail = () => {
   const programme =
     license.profession.charAt(0).toUpperCase() + license.profession.slice(1)
 
-  const organizations =
-    (data?.getOrganizations?.items as Array<Organization>) ?? []
-
-  const organizationImage = getOrganizationLogoUrl(
-    license.type,
-    organizations,
-    120,
-  )
-
   return (
     <LicenseDetail
       title={programme}
       intro={formatMessage(om.educationIntro)}
-      img={organizationImage}
+      serviceProviderID={MENNTAMALASTOFNUN_ID}
       buttonGroup={
         license.downloadUrl ? (
           <Box paddingTop={3}>
@@ -94,13 +87,13 @@ export const EducationDetail = () => {
         ) : undefined
       }
       name={user.profile.name}
-      dateOfBirth={birthday ? formatDateFns(birthday, 'dd.mm.yyyy') : undefined}
+      dateOfBirth={birthday ? formatDateFns(birthday, 'dd.MM.yyyy') : undefined}
       profession={programme}
       licenseType={programme}
       publisher={license.type}
       dateOfIssue={
         !Number.isNaN(Date.parse(license.validFrom))
-          ? formatDateFns(license.validFrom, 'dd.mm.yyyy')
+          ? formatDateFns(license.validFrom, 'dd.MM.yyyy')
           : undefined
       }
       isValid={license.isValid}

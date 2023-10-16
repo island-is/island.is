@@ -21,7 +21,7 @@ export class OccupationalLicensesEducationController {
     private readonly auditService: AuditService,
   ) {}
 
-  @Post('/education')
+  @Post('/education/:licenceId')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -29,20 +29,20 @@ export class OccupationalLicensesEducationController {
       'Get a occupational license from Directorate of Education service',
   })
   async getOccupationalLicenseEducationPdf(
-    @Param('id') id: string,
+    @Param('licenceId') licenceId: string,
     @CurrentUser() user: User,
     @Res() res: Response,
   ) {
     const documentResponse = await this.mmsApi.downloadLicensePDF(
       user.nationalId,
-      id,
+      licenceId,
     )
 
     if (documentResponse) {
       this.auditService.audit({
         action: 'getOccupationalLicenseEducationPdf',
         auth: user,
-        resources: id,
+        resources: licenceId,
       })
 
       const contentArrayBuffer = await documentResponse.arrayBuffer()
@@ -51,7 +51,7 @@ export class OccupationalLicensesEducationController {
       res.header('Content-length', buffer.length.toString())
       res.header(
         'Content-Disposition',
-        `inline; filename=${user.nationalId}-starfsleyfi-${id}.pdf`,
+        `inline; filename=${user.nationalId}-starfsleyfi-${licenceId}.pdf`,
       )
       res.header('Content-Type: application/pdf')
       res.header('Pragma: no-cache')

@@ -65,6 +65,12 @@ export const vehicleSubSection = buildSubSection({
           },
           defaultValue: new Date().toISOString().substring(0, 10),
         }),
+        buildTextField({
+          id: 'vehicle.mileage',
+          title: information.labels.vehicle.mileage,
+          width: 'full',
+          variant: 'number',
+        }),
       ],
     }),
   ],

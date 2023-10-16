@@ -1,4 +1,10 @@
-import type { SettingValue, SettingTypeOf } from 'configcat-common'
+import type {
+  SettingValue,
+  SettingTypeOf,
+  IAutoPollOptions,
+  IConfigCatClient,
+  PollingMode,
+} from 'configcat-common'
 import { ServerSideFeature } from './features'
 
 export interface FeatureFlagUser {
@@ -7,13 +13,12 @@ export interface FeatureFlagUser {
 }
 
 export interface FeatureFlagClient {
-  getValue<T extends SettingValue>(
+  dispose: () => void
+  getValue: <T extends SettingValue>(
     key: string,
     defaultValue: T,
     user?: FeatureFlagUser,
-  ): Promise<SettingTypeOf<T>>
-
-  dispose(): void
+  ) => Promise<SettingTypeOf<T>>
 }
 
 export interface FeatureFlagClientProps {
@@ -26,3 +31,11 @@ export interface ServerSideFeatureClientType {
 }
 
 export type { SettingTypeOf, SettingValue }
+
+export interface ConfigCatModule {
+  getClient: (
+    sdkKey: string,
+    pollingMode: PollingMode,
+    config: IAutoPollOptions,
+  ) => IConfigCatClient
+}

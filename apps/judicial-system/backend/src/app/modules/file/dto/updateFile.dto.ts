@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { Type } from 'class-transformer'
 import {
   Allow,
   IsArray,
@@ -9,7 +9,8 @@ import {
   ValidateIf,
   ValidateNested,
 } from 'class-validator'
-import { Type } from 'class-transformer'
+
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class UpdateFileDto {
   @IsString()

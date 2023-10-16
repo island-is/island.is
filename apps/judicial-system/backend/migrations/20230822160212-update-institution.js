@@ -30,7 +30,7 @@ module.exports = {
             ),
             queryInterface.sequelize.query(
               `UPDATE institution SET type = 'COURT_OF_APPEALS'
-                 WHERE type = 'HIGH_COURT'`,
+               WHERE type = 'HIGH_COURT'`,
               { transaction },
             ),
           ]),
@@ -76,12 +76,12 @@ module.exports = {
           Promise.all([
             queryInterface.sequelize.query(
               `UPDATE institution SET type = 'COURT'
-             WHERE type = 'DISTRICT_COURT'`,
+               WHERE type = 'DISTRICT_COURT'`,
               { transaction },
             ),
             queryInterface.sequelize.query(
               `UPDATE institution SET type = 'HIGH_COURT'
-             WHERE type = 'COURT_OF_APPEALS'`,
+               WHERE type = 'COURT_OF_APPEALS'`,
               { transaction },
             ),
           ]),

@@ -260,6 +260,16 @@ export const OccupationalLicenses = new XroadConf({
   },
 })
 
+export const DistrictCommissioners = new XroadConf({
+  env: {
+    XROAD_DISTRICT_COMMISSIONERS_PATH: {
+      dev: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
+      staging: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
+      prod: 'IS/GOV/5512201410/Syslumenn-Protected/IslandMinarSidur',
+    },
+  },
+})
+
 export const Firearm = new XroadConf({
   env: {
     XROAD_FIREARM_LICENSE_PATH: {
@@ -584,6 +594,32 @@ export const AircraftRegistry = new XroadConf({
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1',
       staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Loftfaraskra-V1',
+    },
+  },
+})
+
+export const HousingBenefitCalculator = new XroadConf({
+  env: {
+    XROAD_HOUSING_BENEFIT_CALCULATOR_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/calc-v1',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/calc-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/calc-v1',
+    },
+  },
+  secrets: {
+    HOUSING_BENEFIT_CALCULATOR_USERNAME:
+      '/k8s/xroad/client/HOUSING_BENEFIT_CALCULATOR_USERNAME',
+    HOUSING_BENEFIT_CALCULATOR_PASSWORD:
+      '/k8s/xroad/client/HOUSING_BENEFIT_CALCULATOR_PASSWORD',
+  },
+})
+
+export const ShipRegistry = new XroadConf({
+  env: {
+    XROAD_SHIP_REGISTRY_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-V1',
+      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/skipaskra-V1',
     },
   },
 })

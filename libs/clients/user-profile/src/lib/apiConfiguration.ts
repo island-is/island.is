@@ -29,6 +29,7 @@ export const UserProfileApiProvider = {
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-user-profile',
+          organizationSlug: 'stafraent-island',
           cache,
         }),
         basePath: config.basePath,

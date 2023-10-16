@@ -5,6 +5,7 @@ import {
   CardLoader,
   EmptyState,
   ErrorScreen,
+  ICELAND_ID,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserInfo } from '@island.is/auth/react'
@@ -50,28 +51,19 @@ export const EducationDetail = () => {
 
   if (!license) return <EmptyState />
 
-  const organizations =
-    (data?.getOrganizations?.items as Array<Organization>) ?? []
-
-  const organizationImage = getOrganizationLogoUrl(
-    license.type ?? '',
-    organizations,
-    120,
-  )
-
   return (
     <LicenseDetail
       title={license.profession}
       intro={formatMessage(om.healthDirectorateIntro)}
-      img={organizationImage}
+      serviceProviderID={ICELAND_ID}
       name={user.profile.name}
-      dateOfBirth={birthday ? formatDateFns(birthday, 'dd.mm.yyyy') : undefined}
+      dateOfBirth={birthday ? formatDateFns(birthday, 'dd.MM.yyyy') : undefined}
       profession={license.profession}
       licenseType={license.type}
       publisher={formatMessage(om.theDirectorateOfHealth)}
       dateOfIssue={
         license.validFrom
-          ? formatDateFns(license.validFrom, 'dd.mm.yyyy')
+          ? formatDateFns(license.validFrom, 'dd.MM.yyyy')
           : undefined
       }
       isValid={license.isValid}

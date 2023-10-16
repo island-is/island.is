@@ -1,4 +1,4 @@
-import { prosecutorRule, representativeRule } from '../../../guards'
+import { prosecutorRepresentativeRule, prosecutorRule } from '../../../guards'
 import { IndictmentCountController } from '../indictmentCount.controller'
 
 describe('IndictmentCountController - Delete rules', () => {
@@ -15,6 +15,6 @@ describe('IndictmentCountController - Delete rules', () => {
   it('should give permission to two role', () => {
     expect(rules).toHaveLength(2)
     expect(rules).toContain(prosecutorRule)
-    expect(rules).toContain(representativeRule)
+    expect(rules).toContain(prosecutorRepresentativeRule)
   })
 })

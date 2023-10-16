@@ -6,6 +6,7 @@ module.exports = {
       {
         alias: {
           '@ui': './src/ui',
+          '@island.is/application/types': '../../../libs/application/types/src',
         },
       },
     ],

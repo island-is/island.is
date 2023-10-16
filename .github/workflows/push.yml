@@ -22,12 +22,20 @@ defaults:
   run:
     shell: bash
 
+concurrency:
+  # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
+  group: push-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
   DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
   SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
   COMPOSE_HTTP_TIMEOUT: 180
   GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
+  SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
+  CONFIGCAT_MAIN_CONFIG_ID: 08d8c761-021c-46f0-8671-6244663a372f
+  CONFIGCAT_MOBILE_APP_CONFIG_ID: 08daf234-7573-4b3b-85f6-189fc7502542
 
 jobs:
   pre-checks:
@@ -373,7 +381,7 @@ jobs:
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Generate schemas
-        if: steps.generated-files-cache.outputs.cache-hit != 'true'
+        if: steps.generated-files-cache.outputs.cache-hit != 'true' || env.SKIP_GENERATED_CACHE == 'true'
         run: |
           node --version
           tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn schemas --skip-cache | xargs realpath --relative-to $(pwd))
@@ -426,10 +434,10 @@ jobs:
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 25
+    timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      MAX_JOBS: 1
+      MAX_JOBS: 3
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
@@ -492,7 +500,6 @@ jobs:
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       PUBLISH: true
-      GEOIP_LICENSE_KEY: ${{ secrets.GEOIP_LICENSE_KEY }}
     strategy:
       fail-fast: false
       matrix:
@@ -594,13 +601,13 @@ jobs:
         if: steps.gather.outcome == 'success'
         run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
         env:
-          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg GEOIP_LICENSE_KEY=${{ env.GEOIP_LICENSE_KEY }}'
+          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }}'
 
       - name: Building Docker images Retry #This only exists until GHA starts supporting this
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
         run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
         env:
-          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg GEOIP_LICENSE_KEY=${{ env.GEOIP_LICENSE_KEY }}'
+          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }}'
 
   helm-docker-build:
     needs:
@@ -792,3 +799,26 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # optional
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+
+  scanflags:
+    # Run on PR merge
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Scan & upload main config
+        uses: configcat/scan-repository@v2
+        with:
+          api-user: ${{ secrets.CONFIGCAT_API_USER }}
+          api-pass: ${{ secrets.CONFIGCAT_API_PASS }}
+          config-id: ${{ env.CONFIGCAT_MAIN_CONFIG_ID }}
+      - name: Scan & upload mobile app config
+        uses: configcat/scan-repository@v2
+        with:
+          api-user: ${{ secrets.CONFIGCAT_API_USER }}
+          api-pass: ${{ secrets.CONFIGCAT_API_PASS }}
+          config-id: ${{ env.CONFIGCAT_MOBILE_APP_CONFIG_ID }}
+          sub-folder: apps/native

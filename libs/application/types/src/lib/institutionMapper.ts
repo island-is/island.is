@@ -4,6 +4,7 @@ import { InstitutionTypes } from './InstitutionTypes'
 export const institutionMapper = {
   [ApplicationTypes.EXAMPLE]: InstitutionTypes.STAFRAENT_ISLAND,
   [ApplicationTypes.PASSPORT]: InstitutionTypes.SYSLUMENN,
+  [ApplicationTypes.PASSPORT_ANNULMENT]: InstitutionTypes.SYSLUMENN,
   [ApplicationTypes.DRIVING_LEARNERS_PERMIT]:
     InstitutionTypes.RIKISLOGREGLUSTJORI,
   [ApplicationTypes.DRIVING_LICENSE]: InstitutionTypes.RIKISLOGREGLUSTJORI,

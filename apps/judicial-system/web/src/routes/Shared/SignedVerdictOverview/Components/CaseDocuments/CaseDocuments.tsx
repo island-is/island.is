@@ -83,7 +83,7 @@ const CaseDocuments: React.FC<React.PropsWithChildren<Props>> = ({
         {formatMessage(m.caseDocuments)}
       </Text>
       <Box marginBottom={2}>
-        {user?.role !== UserRole.STAFF && (
+        {user?.role !== UserRole.PRISON_SYSTEM_STAFF && (
           <PdfButton
             renderAs="row"
             caseId={workingCase.id}
@@ -131,7 +131,7 @@ const CaseDocuments: React.FC<React.PropsWithChildren<Props>> = ({
               <Text>{formatMessage(m.unsignedDocument)}</Text>
             ))}
         </PdfButton>
-        {user?.role !== UserRole.STAFF && (
+        {user?.role !== UserRole.PRISON_SYSTEM_STAFF && (
           <PdfButton
             renderAs="row"
             caseId={workingCase.id}

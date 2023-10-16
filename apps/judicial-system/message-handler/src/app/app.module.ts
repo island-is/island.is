@@ -1,16 +1,17 @@
 import { Module } from '@nestjs/common'
 
-import { ConfigModule } from '@island.is/nest/config'
 import { LoggingModule } from '@island.is/logging'
+import { ConfigModule } from '@island.is/nest/config'
+
 import {
-  messageModuleConfig,
   MessageModule,
+  messageModuleConfig,
 } from '@island.is/judicial-system/message'
 
-import { HealthController } from './health.controller'
-import { MessageHandlerService } from './messageHandler.service'
-import { InternalDeliveryService } from './internalDelivery.service'
 import { appModuleConfig } from './app.config'
+import { HealthController } from './health.controller'
+import { InternalDeliveryService } from './internalDelivery.service'
+import { MessageHandlerService } from './messageHandler.service'
 
 @Module({
   imports: [

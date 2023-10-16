@@ -13,6 +13,8 @@ import {
   m,
   ErrorScreen,
   IntroHeader,
+  THJODSKRA_ID,
+  FootNote,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import {
@@ -29,8 +31,7 @@ import ChildRegistrationModal from './ChildRegistrationModal'
 import { TwoColumnUserInfoLine } from '../../components/TwoColumnUserInfoLine/TwoColumnUserInfoLine'
 import { formatNameBreaks } from '../../helpers/formatting'
 import { spmm } from '../../lib/messages'
-import { useNationalRegistryChildCustodyQuery } from './Child.generated'
-import { NationalRegistryName } from '@island.is/api/schema'
+import { useNationalRegistryChildCustodyLazyQuery } from './Child.generated'
 import { natRegGenderMessageDescriptorRecord } from '../../helpers/localizationHelpers'
 import { ChildView } from '../../components/ChildView/ChildView'
 
@@ -41,30 +42,29 @@ type UseParams = {
 const Child = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-  const [useNatRegV3, setUseNatRegV3] = useState(false)
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const userInfo = useUserInfo()
   const { nationalId } = useParams() as UseParams
 
+  const [getNationalRegistryChildCustodyQuery, { data, loading, error }] =
+    useNationalRegistryChildCustodyLazyQuery()
+
   /* Should show name breakdown tooltip? */
   useEffect(() => {
     const isFlagEnabled = async () => {
-      const ffNatRegV3Enabled = await featureFlagClient.getValue(
+      const ffEnabled = await featureFlagClient.getValue(
         `isserviceportalnationalregistryv3enabled`,
         false,
       )
-      if (ffNatRegV3Enabled) {
-        setUseNatRegV3(ffNatRegV3Enabled as boolean)
-      }
+      getNationalRegistryChildCustodyQuery({
+        variables: {
+          api: ffEnabled ? 'v3' : undefined,
+          childNationalId: nationalId,
+        },
+      })
     }
     isFlagEnabled()
   }, [])
-
-  const { data, loading, error } = useNationalRegistryChildCustodyQuery({
-    variables: {
-      api: useNatRegV3 ? 'v3' : undefined,
-    },
-  })
 
   const dataNotFoundMessage = defineMessage({
     id: 'sp.family:data-not-found',
@@ -76,10 +76,7 @@ const Child = () => {
     defaultMessage: 'Breyta hjá Þjóðskrá',
   })
 
-  const child =
-    data?.nationalRegistryPerson?.childCustody?.find(
-      (x) => x.nationalId === nationalId,
-    ) || null
+  const child = data?.nationalRegistryPerson?.childCustody?.[0]
 
   const parent1 = child?.birthParents ? child.birthParents[0] : undefined
   const parent2 = child?.birthParents ? child.birthParents[1] : undefined
@@ -138,6 +135,8 @@ const Child = () => {
               defaultMessage:
                 'Hér fyrir neðan eru gögn um fjölskyldumeðlim. Þú hefur kost á að gera breytingar á eftirfarandi upplýsingum ef þú kýst.',
             }}
+            serviceProviderID={THJODSKRA_ID}
+            serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
           />
         </Box>
       )}
@@ -186,14 +185,12 @@ const Child = () => {
             translate="no"
             printable
             content={child?.fullName || '...'}
-            tooltip={formatNameBreaks(
-              (child as NationalRegistryName) ?? undefined,
-              {
-                givenName: formatMessage(spmm.givenName),
-                middleName: formatMessage(spmm.middleName),
-                lastName: formatMessage(spmm.lastName),
-              },
-            )}
+            tooltip={formatNameBreaks(child?.name ?? undefined, {
+              givenName: formatMessage(spmm.givenName),
+              middleName: formatMessage(spmm.middleName),
+              lastName: formatMessage(spmm.lastName),
+            })}
+            tooltipFull
             loading={loading}
             editLink={
               !isChild
@@ -304,27 +301,6 @@ const Child = () => {
             loading={loading}
             printable
           />
-          <Box printHidden>
-            <Divider />
-          </Box>
-          {child?.fate && (
-            <>
-              <UserInfoLine
-                label={formatMessage({
-                  id: 'sp.family:fate',
-                  defaultMessage: 'Afdrif',
-                })}
-                content={
-                  error ? formatMessage(dataNotFoundMessage) : child?.fate || ''
-                }
-                loading={loading}
-                printable
-              />
-              <Box printHidden>
-                <Divider />
-              </Box>
-            </>
-          )}
         </Stack>
         {(parent1 || parent2 || loading) && (
           <Stack component="ul" space={2}>
@@ -354,7 +330,7 @@ const Child = () => {
             </Box>
           </Stack>
         )}
-        {!child?.fate && !error && (
+        {!error && (
           <Stack component="ul" space={2}>
             <TwoColumnUserInfoLine
               title={formatMessage({

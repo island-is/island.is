@@ -14,6 +14,7 @@ import {
   buildTextField,
   getValueViaPath,
   buildDateField,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import { Form, FormModes, UserProfileApi } from '@island.is/application/types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
@@ -530,11 +531,11 @@ export const PrerequisitesForm: Form = buildForm({
                   description: '',
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
                 }),
-                buildCustomField({
+                buildAlertMessageField({
                   id: 'noPrimaryParent.alertMessage',
                   title: errorMessages.noChildData,
-                  component: 'FieldAlertMessage',
-                  description: parentalLeaveFormMessages.shared.childrenError,
+                  message: parentalLeaveFormMessages.shared.childrenError,
+                  alertType: 'warning',
                   doesNotRequireAnswer: true,
                   condition: (answers) =>
                     isNotEligibleForParentWithoutBirthParent(answers),

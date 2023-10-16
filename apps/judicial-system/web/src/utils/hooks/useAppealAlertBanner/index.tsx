@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   APPEAL_ROUTE,
   DEFENDER_APPEAL_ROUTE,
@@ -25,7 +25,8 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase } from '@island.is/judicial-system-web/src/types'
 
-import { strings } from './strings'
+import { strings } from './useAppealAlertBanner.strings'
+import * as styles from './useAppealAlertBanner.css'
 
 const renderLinkButton = (text: string, href: string) => {
   return (
@@ -207,9 +208,14 @@ const useAppealAlertBanner = (
           )
     } else if (isCourtRoleUser) {
       child = (
-        <Button variant="text" size="small" onClick={onReceiveAppeal}>
-          {formatMessage(strings.appealReceivedNotificationLinkText)}
-        </Button>
+        <Box>
+          <Button variant="text" size="small" onClick={onReceiveAppeal}>
+            {`${formatMessage(strings.appealReceivedNotificationLinkText)} `}
+          </Button>
+          <span className={styles.tooltipContainer}>
+            <Tooltip text={formatMessage(strings.notifyCOATooltip)} />
+          </span>
+        </Box>
       )
     }
   }

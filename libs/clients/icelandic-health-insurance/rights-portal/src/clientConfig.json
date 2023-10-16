@@ -10,10 +10,64 @@
     }
   ],
   "paths": {
+    "/v1/admin/rollnationalid/{nationalid}/{service}": {
+      "post": {
+        "tags": ["admin"],
+        "operationId": "RollNationalId",
+        "parameters": [
+          {
+            "name": "nationalid",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "service",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
     "/v1/aidsandnutrition": {
       "get": {
         "tags": ["aidsandnutrition"],
-        "operationId": "aidsandnutrition",
+        "operationId": "GetAidsAndNutrition",
         "responses": {
           "200": {
             "description": "OK",
@@ -47,10 +101,47 @@
         }
       }
     },
+    "/v1/dentists/status": {
+      "get": {
+        "tags": ["dentist"],
+        "operationId": "dentiststatus",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DentistStatusDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/v1/dentists/current": {
       "get": {
         "tags": ["dentist"],
-        "operationId": "dentists/current",
+        "operationId": "GetCurrentDentist",
         "responses": {
           "200": {
             "description": "OK",
@@ -87,7 +178,7 @@
     "/v1/dentists": {
       "get": {
         "tags": ["dentist"],
-        "operationId": "dentists",
+        "operationId": "GetDentists",
         "parameters": [
           {
             "name": "contractType",
@@ -99,7 +190,24 @@
             }
           },
           {
+            "name": "nameStartsWith",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "limit",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageNumber",
             "in": "query",
             "style": "form",
             "schema": {
@@ -158,9 +266,9 @@
       }
     },
     "/v1/dentists/{id}/register": {
-      "get": {
+      "post": {
         "tags": ["dentist"],
-        "operationId": "dentists/register",
+        "operationId": "RegisterDentist",
         "parameters": [
           {
             "name": "id",
@@ -202,7 +310,7 @@
     "/v1/dentists/bills": {
       "get": {
         "tags": ["dentist"],
-        "operationId": "dentists/bills",
+        "operationId": "GetDentistBills",
         "parameters": [
           {
             "name": "dateFrom",
@@ -259,22 +367,10 @@
         }
       }
     },
-    "/v1/drugs/paymentPeriods/{paymentPeriodId}": {
+    "/v1/drugs/paymentperiods": {
       "get": {
         "tags": ["drug"],
-        "operationId": "drugs/paymentPeriods",
-        "parameters": [
-          {
-            "name": "paymentPeriodId",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
+        "operationId": "GetDrugPaymentPeriods",
         "responses": {
           "200": {
             "description": "OK",
@@ -311,10 +407,10 @@
         }
       }
     },
-    "/v1/drugs/bills/{paymentPeriodId}": {
+    "/v1/drugs/paymentperiods/{paymentPeriodId}/bills": {
       "get": {
         "tags": ["drug"],
-        "operationId": "drugs/bills",
+        "operationId": "GetDrugBills",
         "parameters": [
           {
             "name": "paymentPeriodId",
@@ -363,13 +459,417 @@
         }
       }
     },
+    "/v1/drugs/paymentperiods/{paymentPeriodId}/bills/{billId}/lineitems": {
+      "get": {
+        "tags": ["drug"],
+        "operationId": "GetDrugBillLineItems",
+        "parameters": [
+          {
+            "name": "paymentPeriodId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "billId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DrugBillLineItemDTO"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/drugs/drugs": {
+      "get": {
+        "tags": ["drug"],
+        "operationId": "GetDrugs",
+        "parameters": [
+          {
+            "name": "nameStartsWith",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "before",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDrugsResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/drugs/drugcalculator": {
+      "post": {
+        "tags": ["drug"],
+        "operationId": "DrugCalculator",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrugCalculatorRequestDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrugCalculatorResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/drugs/certificates": {
+      "get": {
+        "tags": ["drug"],
+        "operationId": "GetDrugCertificates",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DrugCertificateDTO"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/ehic/cardstatus/{applicantnationalids}": {
+      "get": {
+        "tags": ["ehic"],
+        "operationId": "GetEhicCardStatus",
+        "parameters": [
+          {
+            "name": "applicantnationalids",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CardStatusResponseDTO"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/ehic/requestcard/{applicantnationalid}/{cardtype}": {
+      "post": {
+        "tags": ["ehic"],
+        "operationId": "RequestEhicCard",
+        "parameters": [
+          {
+            "name": "applicantnationalid",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cardtype",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardStatusResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/ehic/fetchtemppdfcard/{applicantnationalid}/{cardnumber}": {
+      "get": {
+        "tags": ["ehic"],
+        "operationId": "FetchTempEhicPDFCard",
+        "parameters": [
+          {
+            "name": "applicantnationalid",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cardnumber",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TempPDFCardResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/v1/healthcenters": {
       "get": {
         "tags": ["healthcenter"],
-        "operationId": "healthcenters",
+        "operationId": "GetHealthCenters",
         "parameters": [
           {
             "name": "limit",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageNumber",
             "in": "query",
             "style": "form",
             "schema": {
@@ -430,14 +930,14 @@
     "/v1/healthcenters/current": {
       "get": {
         "tags": ["healthcenter"],
-        "operationId": "healthcenters/current",
+        "operationId": "GetCurrentHealthCenter",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HealthCenterRegistrationDTO"
+                  "$ref": "#/components/schemas/CurrentHealthCenterDTO"
                 }
               }
             }
@@ -465,9 +965,9 @@
       }
     },
     "/v1/healthcenters/{id}/register": {
-      "get": {
+      "post": {
         "tags": ["healthcenter"],
-        "operationId": "healthcenters/register",
+        "operationId": "RegisterHealthCenter",
         "parameters": [
           {
             "name": "id",
@@ -508,7 +1008,7 @@
     "/v1/healthcenters/history": {
       "get": {
         "tags": ["healthcenter"],
-        "operationId": "healthcenters/history",
+        "operationId": "GetHealthCenterHistory",
         "parameters": [
           {
             "name": "dateFrom",
@@ -565,10 +1065,339 @@
         }
       }
     },
+    "/v1/overview/insurance": {
+      "get": {
+        "tags": ["overview"],
+        "operationId": "GetInsuranceOverview",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InsuranceOverviewDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/overview/insurance/confirmation": {
+      "get": {
+        "tags": ["overview"],
+        "operationId": "GetInsuranceConfirmation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InsuranceConfirmationDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/payments/copayment/status": {
+      "get": {
+        "tags": ["payment"],
+        "operationId": "GetCopaymentStatus",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CopaymentStatusDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/payments/copayment/periods": {
+      "get": {
+        "tags": ["payment"],
+        "operationId": "GetCopaymentPeriods",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CopaymentPeriodDTO"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/payments/copayment/periods/{periodId}/bills": {
+      "get": {
+        "tags": ["payment"],
+        "operationId": "GetCopaymentBills",
+        "parameters": [
+          {
+            "name": "periodId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CopaymentBillDTO"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/payments/overview/status": {
+      "get": {
+        "tags": ["payment"],
+        "operationId": "GetPaymentOverviewStatus",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentOverviewStatusDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/payments/overview/bills": {
+      "get": {
+        "tags": ["payment"],
+        "operationId": "GetPaymentOverviewBills",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaymentOverviewBillDTO"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/payments/overview/documents/{documentId}": {
+      "get": {
+        "tags": ["payment"],
+        "operationId": "GetPaymentOverviewDocument",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/v1/therapies": {
       "get": {
         "tags": ["therapy"],
-        "operationId": "therapies",
+        "operationId": "GetTherapies",
         "responses": {
           "200": {
             "description": "OK",
@@ -698,6 +1527,202 @@
         },
         "additionalProperties": false
       },
+      "CardInfoDTO": {
+        "type": "object",
+        "properties": {
+          "cardNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "expiryDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "issued": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "sent": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "resent": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "cardType": {
+            "type": "string",
+            "nullable": true
+          },
+          "sentStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "isPlastic": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "isTemp": {
+            "type": "boolean",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CardStatusResponseDTO": {
+        "type": "object",
+        "properties": {
+          "applicantNationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "isInsured": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "canApply": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "canApplyForPDF": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "cards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CardInfoDTO"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CopaymentBillDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "serviceType": {
+            "type": "string",
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "totalAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "insuranceAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ownAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "overpaid": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CopaymentInsuranceStatusDTO": {
+        "type": "object",
+        "properties": {
+          "display": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CopaymentPeriodDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "month": {
+            "type": "string",
+            "nullable": true
+          },
+          "maximumPayment": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "monthPayment": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "overpaid": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "repaid": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CopaymentStatusDTO": {
+        "type": "object",
+        "properties": {
+          "insuranceStatus": {
+            "$ref": "#/components/schemas/CopaymentInsuranceStatusDTO"
+          },
+          "maximumMonthlyPayment": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maximumPayment": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "basePayment": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CurrentDentistDTO": {
         "type": "object",
         "properties": {
@@ -708,6 +1733,28 @@
           },
           "name": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CurrentHealthCenterDTO": {
+        "type": "object",
+        "properties": {
+          "healthCenter": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "doctor": {
+            "type": "string",
+            "nullable": true
+          },
+          "canRegister": {
+            "type": "boolean",
             "nullable": true
           }
         },
@@ -746,11 +1793,6 @@
       "DentistDTO": {
         "type": "object",
         "properties": {
-          "lineNumber": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
           "id": {
             "type": "integer",
             "format": "int32",
@@ -764,6 +1806,19 @@
             "type": "string",
             "nullable": true
           },
+          "practices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DentistPracticeDTO"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DentistPracticeDTO": {
+        "type": "object",
+        "properties": {
           "practice": {
             "type": "string",
             "nullable": true
@@ -772,16 +1827,49 @@
             "type": "string",
             "nullable": true
           },
-          "postcode": {
+          "postalCode": {
             "type": "string",
             "nullable": true
           },
           "address": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DentistStatusDTO": {
+        "type": "object",
+        "properties": {
+          "isInsured": {
+            "type": "boolean",
+            "nullable": true
           },
-          "phone": {
+          "canRegister": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "contractType": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DocumentDTO": {
+        "type": "object",
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "contentType": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "type": "string",
+            "format": "byte",
             "nullable": true
           }
         },
@@ -800,12 +1888,79 @@
             "format": "date",
             "nullable": true
           },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "totalCopaymentAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "totalCustomerAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "totalExcessAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "totalInsuranceAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "totalCalculatedForPaymentStepAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrugBillLineItemDTO": {
+        "type": "object",
+        "properties": {
+          "billId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "drugName": {
+            "type": "string",
+            "nullable": true
+          },
+          "strength": {
+            "type": "string",
+            "nullable": true
+          },
+          "quantity": {
+            "type": "string",
+            "nullable": true
+          },
+          "units": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "salesPrice": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "copaymentAmount": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
-          "individualAmount": {
+          "customerAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "excessAmount": {
             "type": "integer",
             "format": "int32",
             "nullable": true
@@ -816,6 +1971,214 @@
             "nullable": true
           },
           "calculatedForPaymentStepAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrugCalculationInDTO": {
+        "type": "object",
+        "properties": {
+          "lineNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "nordicCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "units": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "price": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrugCalculationOutDTO": {
+        "type": "object",
+        "properties": {
+          "lineNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "referencePrice": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "customerPrice": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "calculatedCustomerPrice": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "insurancePrice": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "excessPrice": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "fullPrice": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrugCalculatorRequestDTO": {
+        "type": "object",
+        "properties": {
+          "drugs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrugCalculationInDTO"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrugCalculatorResponseDTO": {
+        "type": "object",
+        "properties": {
+          "drugs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrugCalculationOutDTO"
+            },
+            "nullable": true
+          },
+          "totalUnits": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "totalPrice": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "totalCustomerPrice": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrugCertificateDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "atcCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "atcName": {
+            "type": "string",
+            "nullable": true
+          },
+          "drugName": {
+            "type": "string",
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "validFrom": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "validTo": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "doctor": {
+            "type": "string",
+            "nullable": true
+          },
+          "approved": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "documentId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "methylDoctors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MethylDoctorDTO"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrugDTO": {
+        "type": "object",
+        "properties": {
+          "nordicCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "atcCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "form": {
+            "type": "string",
+            "nullable": true
+          },
+          "strength": {
+            "type": "string",
+            "nullable": true
+          },
+          "packaging": {
+            "type": "string",
+            "nullable": true
+          },
+          "price": {
             "type": "integer",
             "format": "int32",
             "nullable": true
@@ -866,8 +2229,8 @@
             "nullable": true
           },
           "levelPercentage": {
-            "type": "integer",
-            "format": "int32",
+            "type": "number",
+            "format": "double",
             "nullable": true
           }
         },
@@ -880,6 +2243,27 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/DentistDTO"
+            },
+            "nullable": true
+          },
+          "pageInfo": {
+            "$ref": "#/components/schemas/PageInfoDTO"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetDrugsResponseDTO": {
+        "type": "object",
+        "properties": {
+          "drugs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrugDTO"
             },
             "nullable": true
           },
@@ -930,6 +2314,18 @@
             "type": "string",
             "nullable": true
           },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
           "region": {
             "type": "string",
             "nullable": true
@@ -959,6 +2355,15 @@
             "format": "date",
             "nullable": true
           },
+          "registrationType": {
+            "type": "string",
+            "nullable": true
+          },
+          "registrationTypeCode": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "healthCenter": {
             "$ref": "#/components/schemas/HealthCenterRegistrationDTO"
           }
@@ -983,6 +2388,81 @@
         },
         "additionalProperties": false
       },
+      "InsuranceConfirmationDTO": {
+        "type": "object",
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "contentType": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "InsuranceOverviewDTO": {
+        "type": "object",
+        "properties": {
+          "isInsured": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "explanation": {
+            "type": "string",
+            "nullable": true
+          },
+          "updated": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "from": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/InsuranceStatusDTO"
+          },
+          "maximumPayment": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "InsuranceStatusDTO": {
+        "type": "object",
+        "properties": {
+          "display": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MethylDoctorDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "PageInfoDTO": {
         "type": "object",
         "properties": {
@@ -991,13 +2471,79 @@
             "nullable": true
           },
           "hasNextPage": {
-            "type": "boolean"
+            "type": "boolean",
+            "nullable": true
           },
           "startCursor": {
             "type": "string",
             "nullable": true
           },
           "endCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PaymentOverviewBillDTO": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "serviceType": {
+            "type": "string",
+            "nullable": true
+          },
+          "totalAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "insuranceAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "documentId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PaymentOverviewStatusDTO": {
+        "type": "object",
+        "properties": {
+          "credit": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "debit": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TempPDFCardResponseDTO": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true
+          },
+          "fileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "contentType": {
             "type": "string",
             "nullable": true
           }

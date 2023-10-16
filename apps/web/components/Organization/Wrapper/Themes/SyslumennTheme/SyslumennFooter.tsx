@@ -17,6 +17,7 @@ import { SliceType } from '@island.is/island-ui/contentful'
 import { GlobalContext } from '@island.is/web/context'
 import { BLOCKS } from '@contentful/rich-text-types'
 import { webRichText } from '@island.is/web/utils/richText'
+import { useI18n } from '@island.is/web/i18n'
 
 import * as styles from './SyslumennFooter.css'
 
@@ -38,6 +39,7 @@ const SyslumennFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
   const n = useNamespace(namespace)
   const questionsAndAnswersText = n('questionsAndAnswers', 'Spurningar og svör')
   const canWeHelpText = n('canWeHelp', 'Getum við aðstoðað?')
+  const { activeLocale } = useI18n()
 
   const { isServiceWeb } = useContext(GlobalContext)
   const { linkResolver } = useLinkResolver()
@@ -122,8 +124,14 @@ const SyslumennFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
                   <Box marginTop={3}>
                     <Link
                       href={
-                        linkResolver('serviceweborganization', ['syslumenn'])
-                          ?.href
+                        linkResolver('serviceweborganization', [
+                          n(
+                            'organizationSlug',
+                            activeLocale === 'is'
+                              ? 'syslumenn'
+                              : 'district-commissioner',
+                          ) as string,
+                        ])?.href
                       }
                       skipTab
                     >

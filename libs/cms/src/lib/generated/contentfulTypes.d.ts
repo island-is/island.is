@@ -75,12 +75,14 @@ export interface IAlertBannerFields {
         | 'umsoknir'
         | 'min-gogn'
         | 'skirteini'
-        | 'leyfisbref'
         | 'menntun'
         | 'fasteignir'
         | 'fjarmal'
         | 'okutaeki'
         | 'stillingar'
+        | 'starfsleyfi'
+        | 'loftbru'
+        | 'heilsa'
       )[]
     | undefined
 }
@@ -562,6 +564,39 @@ export interface IEmailSignup extends Entry<IEmailSignupFields> {
     contentType: {
       sys: {
         id: 'emailSignup'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IEmbedFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Embed link */
+  embedUrl?: string | undefined
+
+  /** Alt Text */
+  altText: string
+
+  /** Aspect Ratio */
+  aspectRatio?: '713/630' | '16/9' | undefined
+}
+
+/** A content type which allows you to embed an iframe (but only from sources that have been approved of) */
+
+export interface IEmbed extends Entry<IEmbedFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'embed'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1510,7 +1545,11 @@ export interface ILifeEventPageFields {
   seeMoreText?: string | undefined
 
   /** page type */
-  pageType?: 'Life Event' | 'Digital Iceland Service' | undefined
+  pageType?:
+    | 'Life Event'
+    | 'Digital Iceland Service'
+    | 'Digital Iceland Community Page'
+    | undefined
 
   /** featured image */
   featuredImage?: Asset | undefined
@@ -2210,6 +2249,9 @@ export interface IOrganizationFields {
   /** Logo */
   logo?: Asset | undefined
 
+  /** Footer Config */
+  footerConfig?: Record<string, any> | undefined
+
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
 
@@ -2384,6 +2426,9 @@ export interface IOrganizationPageFields {
     | 'nti'
     | 'samgongustofa'
     | 'geislavarnir-rikisins'
+    | 'rettindagaesla-fatlads-folks'
+    | 'hms'
+    | 'rikissaksoknari'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
@@ -2701,6 +2746,9 @@ export interface IProjectPageFields {
   /** Sidebar Links */
   sidebarLinks?: ILinkGroup[] | undefined
 
+  /** Secondary Sidebar */
+  secondarySidebar?: ILinkGroup | undefined
+
   /** Subtitle */
   subtitle?: string | undefined
 
@@ -2768,6 +2816,9 @@ export interface IProjectPageFields {
       )[]
     | undefined
 
+  /** Footer Config */
+  footerConfig?: Record<string, any> | undefined
+
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
 
@@ -2832,6 +2883,9 @@ export interface IProjectSubpageFields {
         | ITwoColumnText
       )[]
     | undefined
+
+  /** Show Table of Contents */
+  showTableOfContents?: boolean | undefined
 
   /** Bottom Slices */
   bottomSlices?: (IPowerBiSlice | IOneColumnText)[] | undefined
@@ -2976,6 +3030,34 @@ export interface ISectionWithVideo extends Entry<ISectionWithVideoFields> {
   }
 }
 
+export interface IServiceWebPageFields {
+  /** Title */
+  title: string
+
+  /** Organization */
+  organization: IOrganization
+
+  /** Slices */
+  slices?: IFeaturedArticles[] | undefined
+}
+
+export interface IServiceWebPage extends Entry<IServiceWebPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'serviceWebPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ISidebarCardFields {
   /** Type */
   type?:
@@ -3047,6 +3129,8 @@ export interface ISliceConnectedComponentFields {
     | 'PlateAvailableSearch'
     | 'AircraftSearch'
     | 'DrivingInstructorList'
+    | 'HousingBenefitCalculator'
+    | 'PublicShipSearch'
     | undefined
 
   /** Localized JSON */
@@ -3988,9 +4072,10 @@ export interface IVacancyFields {
 
   /** Locations */
   locations: (
-    | 'Án staðsetningar'
+    | 'Óstaðbundið'
     | 'Höfuðborgarsvæðið'
-    | 'Norðurland'
+    | 'Norðurland vestra'
+    | 'Norðurland eystra'
     | 'Vesturland'
     | 'Austurland'
     | 'Suðurland'
@@ -4236,6 +4321,7 @@ export type CONTENT_TYPE =
   | 'contactUs'
   | 'districts'
   | 'emailSignup'
+  | 'embed'
   | 'embeddedVideo'
   | 'enhancedAsset'
   | 'errorPage'
@@ -4294,6 +4380,7 @@ export type CONTENT_TYPE =
   | 'sectionHeading'
   | 'sectionWithImage'
   | 'sectionWithVideo'
+  | 'serviceWebPage'
   | 'sidebarCard'
   | 'sliceConnectedComponent'
   | 'sliceDropdown'

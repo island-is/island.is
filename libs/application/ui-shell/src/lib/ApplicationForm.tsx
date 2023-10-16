@@ -73,8 +73,7 @@ const ApplicationLoader: FC<
   const currentTypeId: ApplicationTypes = application?.typeId
 
   if (ApplicationConfigurations[currentTypeId]?.slug !== slug) {
-    console.log('slug not found in application config')
-    return <ErrorShell errorType="notExist" />
+    return <ErrorShell errorType="idNotFound" />
   }
 
   const formType = ApplicationConfigurations[currentTypeId].formType

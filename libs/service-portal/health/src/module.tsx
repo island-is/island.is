@@ -4,6 +4,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { HealthPaths } from './lib/paths'
 import { PortalModule } from '@island.is/portals/core'
 import { Features } from '@island.is/feature-flags'
+import { messages as hm } from './lib/messages'
 
 const HealthOverview = lazy(() =>
   import('./screens/HealthOverview/HealthOverview'),
@@ -14,6 +15,14 @@ const AidsAndNutrition = lazy(() =>
 )
 const Dentists = lazy(() => import('./screens/Dentists/Dentists'))
 const HealthCenter = lazy(() => import('./screens/HealthCenter/HealthCenter'))
+
+const HealthCenterRegistration = lazy(() =>
+  import('./screens/HealthCenterRegistration/HealthCenterRegistration'),
+)
+
+const DentistRegistration = lazy(() =>
+  import('./screens/DentistRegistration/DentistRegistration'),
+)
 
 export const healthModule: PortalModule = {
   name: 'Heilsa',
@@ -51,6 +60,18 @@ export const healthModule: PortalModule = {
       key: 'HealthCenter',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <HealthCenter />,
+    },
+    {
+      name: hm.healthCenterRegistrationTitle,
+      path: HealthPaths.HealthCenterRegistration,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <HealthCenterRegistration />,
+    },
+    {
+      name: hm.dentistRegisterationPageTitle,
+      path: HealthPaths.HealthDentistRegistration,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <DentistRegistration />,
     },
   ],
 }

@@ -87,7 +87,7 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
       ? props.prosecutorsOffices
       : isExtendedCourtRole(user.role)
       ? props.allCourts
-      : user.role === UserRole.STAFF
+      : user.role === UserRole.PRISON_SYSTEM_STAFF
       ? props.prisonInstitutions
       : []
   ).map((institution) => ({
@@ -111,7 +111,7 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
       : isExtendedCourtRole(user.role)
       ? user.institution?.type === InstitutionType.DISTRICT_COURT ||
         user.institution?.type === InstitutionType.COURT_OF_APPEALS
-      : user.role === UserRole.STAFF
+      : user.role === UserRole.PRISON_SYSTEM_STAFF
       ? user.institution?.type === InstitutionType.PRISON ||
         user.institution?.type === InstitutionType.PRISON_ADMIN
       : false
@@ -231,11 +231,11 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
             <Box className={styles.roleColumn}>
               <RadioButton
                 name="role"
-                id="roleRepresentative"
+                id="roleProsecutorRepresentative"
                 label="Fulltrúi"
-                checked={user.role === UserRole.REPRESENTATIVE}
+                checked={user.role === UserRole.PROSECUTOR_REPRESENTATIVE}
                 onChange={() =>
-                  setUser({ ...user, role: UserRole.REPRESENTATIVE })
+                  setUser({ ...user, role: UserRole.PROSECUTOR_REPRESENTATIVE })
                 }
                 large
               />
@@ -277,10 +277,12 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
             <Box className={styles.roleColumn}>
               <RadioButton
                 name="role"
-                id="roleStaff"
+                id="rolePrisonSystemStaff"
                 label="Fangelsisyfirvöld"
-                checked={user.role === UserRole.STAFF}
-                onChange={() => setUser({ ...user, role: UserRole.STAFF })}
+                checked={user.role === UserRole.PRISON_SYSTEM_STAFF}
+                onChange={() =>
+                  setUser({ ...user, role: UserRole.PRISON_SYSTEM_STAFF })
+                }
                 large
               />
             </Box>
