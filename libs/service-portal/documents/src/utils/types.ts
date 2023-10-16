@@ -7,6 +7,8 @@ export type FilterValuesType = {
   dateTo: Date | null
   searchQuery: string
   showUnread: boolean | undefined
+  archived: boolean | undefined
+  bookmarked: boolean | undefined
   activeCategories: string[]
   activeSenders: string[]
 }
@@ -18,4 +20,8 @@ export const defaultFilterValues = {
   activeSenders: [],
   searchQuery: '',
   showUnread: false,
+  archived: false,
+  bookmarked: false,
 }
+
+export type MailActions = 'archive' | 'unarchive' | 'bookmark' | 'unbookmark'

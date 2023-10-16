@@ -6,12 +6,14 @@ import {
   buildDividerField,
   buildSubSection,
 } from '@island.is/application/core'
-import { Jurisdiction, NationalRegistryUser } from '../../types/schema'
+import { NationalRegistryUser } from '../../types/schema'
 import { m } from '../../lib/messages'
 import {
   chooseDistrictCommissionerDescription,
   hasNoDrivingLicenseInOtherCountry,
 } from '../../lib/utils'
+
+import { Jurisdiction } from '@island.is/clients/driving-license'
 
 export const subSectionDelivery = buildSubSection({
   id: 'user',
