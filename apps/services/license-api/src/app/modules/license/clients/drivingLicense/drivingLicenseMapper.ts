@@ -67,12 +67,11 @@ const formatRights = (
 }
 
 export const mapNationalId = (nationalId: string) => {
-  return ({
-  identifier: 'kennitala',
-  value: nationalId
-    ? formatNationalId(nationalId)
-    : '',})
-},
+  return {
+    identifier: 'kennitala',
+    value: nationalId ? formatNationalId(nationalId) : '',
+  }
+}
 
 export const createPkPassDataInput = (
   license?: DriversLicense | null,

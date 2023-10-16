@@ -24,7 +24,6 @@ import {
   PassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
-import { format } from 'kennitala'
 import { Locale } from 'locale'
 
 /** Category to attach each log message to */
@@ -114,10 +113,7 @@ export class GenericMachineLicenseService
       return null
     }
 
-    const pass = await this.smartApi.generatePkPass(
-      payload,
-      format(user.nationalId),
-    )
+    const pass = await this.smartApi.generatePkPass(payload)
     if (pass.ok) {
       if (!pass.data.distributionUrl) {
         this.logger.warn('Missing pkpass distribution url', {
@@ -150,10 +146,7 @@ export class GenericMachineLicenseService
       return null
     }
 
-    const pass = await this.smartApi.generatePkPass(
-      payload,
-      format(user.nationalId),
-    )
+    const pass = await this.smartApi.generatePkPass(payload)
     if (pass.ok) {
       if (!pass.data.distributionQRCode) {
         this.logger.warn('Missing pkpass distribution qr code', {
