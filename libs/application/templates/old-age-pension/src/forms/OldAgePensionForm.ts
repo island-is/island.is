@@ -51,6 +51,7 @@ import {
   isEarlyRetirement,
   isExistsCohabitantOlderThan25,
 } from '../lib/oldAgePensionUtils'
+import { BankInfo } from '../types'
 
 export const OldAgePensionForm: Form = buildForm({
   id: 'OldAgePensionDraft',
@@ -260,13 +261,17 @@ export const OldAgePensionForm: Form = buildForm({
                   id: 'paymentInfo.bank',
                   title: oldAgePensionFormMessage.payment.bank,
                   backgroundColor: 'white',
-                  //disabled: true,
                   format: '####-##-######',
                   placeholder: '0000-00-000000',
                   defaultValue: (application: Application) => {
-                    const userProfile = application.externalData.userProfile
-                      .data as UserProfile
-                    return userProfile.bankInfo
+                    const bankInfo = application.externalData
+                      .socialInsuranceAdministrationBankInfo.data as BankInfo
+
+                    return bankInfo.bank &&
+                      bankInfo.ledger &&
+                      bankInfo.accountNumber
+                      ? bankInfo.bank + bankInfo.ledger + bankInfo.accountNumber
+                      : ''
                   },
                 }),
                 buildRadioField({
