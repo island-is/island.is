@@ -1420,6 +1420,7 @@ license-api:
     RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY'
     SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
     TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY'
+    VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY'
     XROAD_DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
