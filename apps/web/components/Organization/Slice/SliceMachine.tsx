@@ -161,7 +161,14 @@ const renderSlice = (
     case 'SectionWithVideo':
       return <SectionWithVideo slice={slice} />
     case 'LatestEventsSlice':
-      return <LatestEventsSlice slice={slice} slug={slug} {...params} />
+      return (
+        <LatestEventsSlice
+          slice={slice}
+          slug={slug}
+          namespace={namespace}
+          {...params}
+        />
+      )
     default:
       return <RichText body={[slice]} />
   }
