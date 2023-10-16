@@ -25,7 +25,6 @@ export enum Features {
   servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
   servicePortalConsentModule = 'isServicePortalConsentModuleEnabled',
   servicePortalHealthRightsModule = 'isServicePortalHealthRightsModuleEnabled',
-  servicePortalTransferHealthCenter = 'isServicePortalHealthTransferPageEnabled',
   servicePortalSecondaryEducationPages = 'isServicePortalSecondaryEducationPageEnabled',
   servicePortalHealthCenterDentistPage = 'isServicePortalHealthCenterPageEnabled',
   servicePortalWorkMachinesModule = 'isServicePortalWorkMachinesPageEnabled',

@@ -135,8 +135,6 @@ export const DocumentLine: FC<Props> = ({
       },
     })
 
-  const isLink = documentLine.fileType === 'url' && documentLine.url
-
   const displayError = () => {
     return (
       <Box paddingTop={2}>
@@ -178,7 +176,6 @@ export const DocumentLine: FC<Props> = ({
           borderBottomWidth="standard"
           paddingX={2}
           width="full"
-          href={isLink ? documentLine.url : undefined}
           className={cn(styles.docline, {
             [styles.active]: active,
             [styles.unread]: unread,
@@ -241,7 +238,7 @@ export const DocumentLine: FC<Props> = ({
               justifyContent="spaceBetween"
             >
               <button
-                onClick={!isLink ? async () => onLineClick() : undefined}
+                onClick={async () => onLineClick()}
                 aria-label={formatMessage(m.openDocumentAriaLabel, {
                   subject: documentLine.subject,
                 })}
