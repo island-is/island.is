@@ -189,7 +189,7 @@ yargs(process.argv.slice(2))
     dockertag: {
       type: 'string',
       description: 'Docker tag to use for the feature deployment',
-      demandOption: true,
+      demandOption: false,
     },
     feature: {
       type: 'string',
