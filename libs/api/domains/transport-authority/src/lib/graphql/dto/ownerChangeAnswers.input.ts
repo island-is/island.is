@@ -13,6 +13,9 @@ export class OwnerChangeAnswersVehicle {
 
   @Field(() => String, { nullable: false })
   date!: string
+
+  @Field(() => String, { nullable: true })
+  mileage?: string
 }
 
 @InputType()

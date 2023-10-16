@@ -18,6 +18,7 @@ import { PaperMailBody } from './models/paperMail.model'
 import { PostRequestPaperInput } from './dto/postRequestPaperInput'
 import { PostMailActionInput } from './dto/postMailActionInput'
 import { ActionMailBody } from './models/actionMail.model'
+import { PostBulkMailActionInput } from './dto/postBulkMailActionInput'
 
 const LOG_CATEGORY = 'documents-api'
 @Injectable()
@@ -220,6 +221,34 @@ export class DocumentService {
         success: false,
         messageId: body.messageId,
         action: body.action,
+      }
+    }
+  }
+
+  async bulkMailAction(body: PostBulkMailActionInput): Promise<ActionMailBody> {
+    const messageIds = body.messageIds ?? []
+    const stringIds = messageIds.toString()
+    try {
+      await this.documentClient.bulkMailAction(
+        {
+          ids: messageIds,
+          action: body.action,
+          status: body.status,
+        },
+        body.nationalId,
+      )
+      return {
+        success: true,
+        messageId: stringIds,
+      }
+    } catch (e) {
+      logger.error('Post batch action failed', {
+        category: LOG_CATEGORY,
+        ...e,
+      })
+      return {
+        success: false,
+        messageId: stringIds,
       }
     }
   }
