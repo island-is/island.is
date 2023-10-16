@@ -223,14 +223,28 @@ export class SmartSolutionsApi {
   /**
    *
    * @param payload License properties to update
-   * @param nationalId The NationalID of the user
    * @returns The updated pass, if the update succeeded. If not, an error object
    */
   async updatePkPass(
     payload: PassDataInput,
-    nationalId?: string,
     requestId?: string,
   ): Promise<Result<Pass>> {
+    if (!payload.passTemplateId) {
+      this.logger.warn('Invalid input data, missing passTemplateId', {
+        requestId,
+        category: LOG_CATEGORY,
+      })
+      return {
+        ok: false,
+        error: {
+          code: 10,
+          message: 'Invalid input data, missing passTemplateId',
+        },
+      }
+    }
+
+    this.logger.debug('payload', payload)
+
     const graphql = JSON.stringify({
       query: UPDATE_PASS,
       variables: {
@@ -267,12 +281,10 @@ export class SmartSolutionsApi {
   /**
    *
    * @param payload The new pass data
-   * @param nationalId the user's national id
    * @returns the newly created pass, or an updated old one if a pass was previously created,
    */
   async generatePkPass(
     payload: PassDataInput,
-    nationalId?: string,
     onCreateCallback?: () => Promise<void>,
     requestId?: string,
   ): Promise<Result<Pass>> {
