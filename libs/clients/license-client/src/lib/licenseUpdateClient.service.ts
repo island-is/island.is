@@ -46,6 +46,22 @@ export class LicenseUpdateClientService {
     return null
   }
 
+  getPassTemplateIdByLicenseId(type: LicenseType, requestId?: string) {
+    const licenseId = (type.slice(0, 1).toLowerCase() +
+      type.slice(1)) as keyof PassTemplateIds
+
+    if (!this.config[licenseId]) {
+      this.logger.error(`Invalid license type`, {
+        category: LOG_CATEGORY,
+        requestId,
+        type,
+      })
+      return null
+    }
+
+    return this.config[licenseId]
+  }
+
   getLicenseUpdateClientByType(type: LicenseType, requestId?: string) {
     return this.licenseUpdateClientFactory(type, requestId)
   }

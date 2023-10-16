@@ -220,10 +220,7 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
       }
     }
 
-    const pass = await this.smartApi.generatePkPass(
-      payload,
-      formatNationalId(user.nationalId),
-    )
+    const pass = await this.smartApi.generatePkPass(payload)
 
     return pass
   }

@@ -15,13 +15,11 @@ export abstract class BaseLicenseUpdateClient {
     protected smartApi: SmartSolutionsApi,
   ) {}
 
-  pushUpdate(
+  abstract pushUpdate(
     inputData: PassDataInput,
     nationalId: string,
     requestId?: string,
-  ): Promise<Result<Pass | undefined>> {
-    return this.smartApi.updatePkPass(inputData, nationalId, requestId)
-  }
+  ): Promise<Result<Pass | undefined>>
 
   abstract pullUpdate(
     nationalId: string,

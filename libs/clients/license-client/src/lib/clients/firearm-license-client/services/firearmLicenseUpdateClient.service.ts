@@ -2,10 +2,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { OpenFirearmApi } from '@island.is/clients/firearm-license'
-import {
-  format as formatNationalId,
-  sanitize as sanitizeNationalId,
-} from 'kennitala'
+import { sanitize as sanitizeNationalId } from 'kennitala'
 import {
   Pass,
   PassDataInput,
@@ -17,7 +14,7 @@ import {
   Result,
   VerifyInputData,
 } from '../../../licenseClient.type'
-import { createPkPassDataInput } from '../firearmLicenseMapper'
+import { createPkPassDataInput, nationalIdIndex } from '../firearmLicenseMapper'
 import { BaseLicenseUpdateClient } from '../../baseLicenseUpdateClient'
 import { mapNationalId } from '../firearmLicenseMapper'
 import type { ConfigType } from '@island.is/nest/config'
@@ -41,8 +38,25 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
   pushUpdate(
     inputData: PassDataInput,
     nationalId: string,
+    requestId?: string,
   ): Promise<Result<Pass | undefined>> {
-    return super.pushUpdate(inputData, formatNationalId(nationalId))
+    const inputFieldValues = inputData.inputFieldValues ?? []
+    //small check that nationalId doesnt' already exist
+    if (
+      inputFieldValues &&
+      !inputFieldValues?.some((nt) => nt.identifier === nationalIdIndex)
+    ) {
+      inputFieldValues.push(mapNationalId(nationalId))
+    }
+
+    return this.smartApi.updatePkPass(
+      {
+        ...inputData,
+        inputFieldValues,
+        passTemplateId: this.config.passTemplateId,
+      },
+      requestId,
+    )
   }
 
   async pullUpdate(
@@ -57,7 +71,7 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
       ])
     } catch (e) {
       this.logger.error(
-        'License info and/or license property info fetch failed',
+        `Either license info- or license property info fetch failed`,
         {
           error: e,
           requestId,
@@ -68,7 +82,7 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
         ok: false,
         error: {
           code: 13,
-          message: 'License info and/or license property info fetch failed',
+          message: `Either license info- or license property info fetch failed`,
         },
       }
     }
@@ -114,6 +128,7 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
     const payload: PassDataInput = {
       inputFieldValues: inputValues,
       expirationDate: new Date(licenseInfo?.expirationDate).toISOString(),
+      passTemplateId: this.config.passTemplateId,
       thumbnail: thumbnail
         ? {
             imageBase64String: thumbnail
@@ -123,19 +138,25 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
         : null,
     }
 
-    return this.smartApi.updatePkPass(payload, formatNationalId(nationalId))
+    return this.smartApi.updatePkPass(payload, requestId)
   }
 
-  revoke(nationalId: string): Promise<Result<RevokePassData>> {
+  revoke(
+    nationalId: string,
+    requestId?: string,
+  ): Promise<Result<RevokePassData>> {
     const passTemplateId = this.config.passTemplateId
     const payload: PassDataInput = {
       inputFieldValues: [mapNationalId(nationalId)],
     }
-    return this.smartApi.revokePkPass(passTemplateId, payload)
+    return this.smartApi.revokePkPass(passTemplateId, payload, requestId)
   }
 
   /** We need to verify the pk pass AND the license itself! */
-  async verify(inputData: string): Promise<Result<PassVerificationData>> {
+  async verify(
+    inputData: string,
+    requestId?: string,
+  ): Promise<Result<PassVerificationData>> {
     //need to parse the scanner data
     let parsedInput
     try {
@@ -163,7 +184,10 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
       }
     }
 
-    const verifyRes = await this.smartApi.verifyPkPass({ code, date })
+    const verifyRes = await this.smartApi.verifyPkPass(
+      { code, date },
+      requestId,
+    )
 
     if (!verifyRes.ok) {
       return verifyRes

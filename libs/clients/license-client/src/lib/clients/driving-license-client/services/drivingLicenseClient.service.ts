@@ -212,14 +212,11 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
       }
     }
 
-    const pass = await this.smartApi.generatePkPass(
-      payload,
-      format(user.nationalId),
-      () =>
-        this.drivingApi.notifyOnPkPassCreation({
-          nationalId: user.nationalId,
-          token: user.authorization.replace(/^bearer /i, ''),
-        }),
+    const pass = await this.smartApi.generatePkPass(payload, () =>
+      this.drivingApi.notifyOnPkPassCreation({
+        nationalId: user.nationalId,
+        token: user.authorization.replace(/^bearer /i, ''),
+      }),
     )
     return pass
   }

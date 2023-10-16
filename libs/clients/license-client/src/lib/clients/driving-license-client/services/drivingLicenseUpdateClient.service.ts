@@ -15,8 +15,11 @@ import {
 } from '../../../licenseClient.type'
 import { BaseLicenseUpdateClient } from '../../baseLicenseUpdateClient'
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
-import { format as formatNationalId } from 'kennitala'
-import { createPkPassDataInput, mapNationalId } from '../drivingLicenseMapper'
+import {
+  createPkPassDataInput,
+  mapNationalId,
+  nationalIdIndex,
+} from '../drivingLicenseMapper'
 import { DrivingDigitalLicenseClientConfig } from '../drivingLicenseClient.config'
 
 /** Category to attach each log message to */
@@ -37,8 +40,24 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
   pushUpdate(
     inputData: PassDataInput,
     nationalId: string,
+    requestId?: string,
   ): Promise<Result<Pass | undefined>> {
-    return this.smartApi.updatePkPass(inputData, formatNationalId(nationalId))
+    const inputFieldValues = inputData.inputFieldValues ?? []
+    //small check that nationalId doesnt' already exist
+    if (
+      inputFieldValues &&
+      !inputFieldValues?.some((nt) => nt.identifier === nationalIdIndex)
+    ) {
+      inputFieldValues.push(mapNationalId(nationalId))
+    }
+    return this.smartApi.updatePkPass(
+      {
+        ...inputData,
+        inputFieldValues,
+        passTemplateId: this.config.passTemplateId,
+      },
+      requestId,
+    )
   }
 
   async pullUpdate(
@@ -64,7 +83,7 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
         ok: false,
         error: {
           code: 13,
-          message: 'Current driving license fetch and/or remarks fetch failed',
+          message: `Either current driving license fetch or remarks fetch failed`,
           data: JSON.stringify(e),
         },
       }
@@ -115,14 +134,11 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
     const payload: PassDataInput = {
       inputFieldValues: inputValues,
       expirationDate: licenseInfo.dateValidTo.toISOString(),
+      passTemplateId: this.config.passTemplateId,
       thumbnail,
     }
 
-    return this.smartApi.updatePkPass(
-      payload,
-      formatNationalId(nationalId),
-      requestId,
-    )
+    return this.smartApi.updatePkPass(payload, requestId)
   }
 
   revoke(
@@ -147,7 +163,7 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
       parsedInput = JSON.parse(inputData) as VerifyInputData
     } catch (ex) {
       this.logger.error(
-        'pkpass verification data input mapping failed, data may be invalid',
+        'Pkpass verification data input mapping failed, data may be invalid',
         {
           requestId,
           category: LOG_CATEGORY,
@@ -183,7 +199,10 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
       }
     }
 
-    const verifyRes = await this.smartApi.verifyPkPass({ code, date })
+    const verifyRes = await this.smartApi.verifyPkPass(
+      { code, date },
+      requestId,
+    )
 
     if (!verifyRes.ok) {
       return verifyRes

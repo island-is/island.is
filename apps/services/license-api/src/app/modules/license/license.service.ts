@@ -162,7 +162,7 @@ export class LicenseService {
       requestId,
     })
 
-    return await service.pushUpdate(updatePayload, nationalId)
+    return await service.pushUpdate(updatePayload, nationalId, requestId)
   }
 
   private async pullUpdateLicense(
@@ -182,7 +182,7 @@ export class LicenseService {
       requestId,
     })
 
-    return await service.pullUpdate(nationalId)
+    return await service.pullUpdate(nationalId, requestId)
   }
 
   async updateLicense(
@@ -192,7 +192,7 @@ export class LicenseService {
   ): Promise<UpdateLicenseResponse> {
     const service = await this.getClientByLicenseId(licenseId)
 
-    this.logger.debug('Updating license', {
+    this.logger.debug('License update initiated', {
       category: LOG_CATEGORY,
       requestId: inputData.requestId,
       updateType: inputData.licenseUpdateType,
@@ -230,7 +230,7 @@ export class LicenseService {
     }
 
     if (updateRes.ok) {
-      this.logger.debug('update license successful', {
+      this.logger.debug('License update successful', {
         category: LOG_CATEGORY,
         requestId: inputData.requestId,
         updateType: inputData.licenseUpdateType,
@@ -241,7 +241,7 @@ export class LicenseService {
       }
     }
 
-    this.logger.error('Update license failed', {
+    this.logger.error('License update failed', {
       category: LOG_CATEGORY,
       requestId: inputData.requestId,
       ...updateRes.error,
@@ -261,15 +261,20 @@ export class LicenseService {
     const service = await this.getClientByLicenseId(licenseId)
     const revokeRes = await service.revoke(nationalId, inputData?.requestId)
 
+    this.logger.debug('License revoking initiated', {
+      category: LOG_CATEGORY,
+      requestId: inputData?.requestId,
+    })
+
     if (revokeRes.ok) {
-      this.logger.debug('revoke license succeeded', {
+      this.logger.debug('License revoked successfully', {
         category: LOG_CATEGORY,
         requestId: inputData?.requestId,
       })
       return { revokeSuccess: revokeRes.data.success }
     }
 
-    this.logger.error('Revoke license failed', {
+    this.logger.error('License revoke failure', {
       category: LOG_CATEGORY,
       requestId: inputData?.requestId,
       ...revokeRes.error,
@@ -284,6 +289,11 @@ export class LicenseService {
     inputData: VerifyLicenseRequest,
   ): Promise<VerifyLicenseResponse> {
     const { passTemplateId } = JSON.parse(inputData.barcodeData)
+
+    this.logger.debug('License verification initiated', {
+      category: LOG_CATEGORY,
+      requestId: inputData.requestId,
+    })
 
     if (!passTemplateId) {
       this.logger.error('No pass template id supplied', {
@@ -306,7 +316,7 @@ export class LicenseService {
         passIdentity: verifyRes.data.passIdentity,
       }
     }
-    this.logger.error('Verify license failed', {
+    this.logger.error('Verify license failure', {
       category: LOG_CATEGORY,
       ...verifyRes.error,
       requestId: inputData.requestId,

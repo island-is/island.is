@@ -25,11 +25,13 @@ const parsePropertyForPkpassInput = (properties?: Array<FirearmProperty>) => {
   return propertyString
 }
 
+export const nationalIdIndex = 'kt'
+
 export const mapNationalId = (
   nationalId: string,
 ): PassInputFieldValueDataInput => {
   return {
-    identifier: 'kt',
+    identifier: nationalIdIndex,
     value: nationalId ? formatSsn(nationalId) : '',
   }
 }

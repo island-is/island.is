@@ -171,10 +171,7 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
       }
     }
 
-    const pass = await this.smartApi.generatePkPass(
-      payload,
-      format(user.nationalId),
-    )
+    const pass = await this.smartApi.generatePkPass(payload)
 
     return pass
   }
