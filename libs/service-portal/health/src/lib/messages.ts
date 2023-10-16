@@ -1,6 +1,80 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
+  month: {
+    id: 'service.portal:month',
+    defaultMessage: 'Mánuður',
+  },
+  dateOfOnvoiceShort: {
+    id: 'service.portal:date-of-invoice',
+    defaultMessage: 'Dags. reiknings',
+  },
+  totalPrice: {
+    id: 'service.portal:total-price',
+    defaultMessage: 'Heildarverð',
+  },
+  typeofService: {
+    id: 'sp.health:typeof-service',
+    defaultMessage: 'Tegund þjónustu',
+  },
+  totalPayment: {
+    id: 'sp.health:total-amount',
+    defaultMessage: 'Heildarupphæð',
+  },
+  credit: {
+    id: 'sp.health:credit',
+    defaultMessage: 'Inneign',
+  },
+  insuranceShare: {
+    id: 'sp.health:insurance-share',
+    defaultMessage: 'Hlutur trygginga',
+  },
+  paymentDocument: {
+    id: 'sp.health:payment-document',
+    defaultMessage: 'Greiðsluskjal',
+  },
+  invoices: {
+    id: 'sp.health:invoices',
+    defaultMessage: 'Reikningar',
+  },
+  debit: {
+    id: 'sp.health:debit',
+    defaultMessage: 'Skuld',
+  },
+  yourPayment: {
+    id: 'sp.health:your-payment',
+    defaultMessage: 'Greiðsla þín',
+  },
+  overpayment: {
+    id: 'sp.health:overpayment',
+    defaultMessage: 'Ofgreiðsla',
+  },
+  repaid: {
+    id: 'sp.health:repaid',
+    defaultMessage: 'Endurgreitt',
+  },
+  monthlyBreakdownOfInvoices: {
+    id: 'service.portal:monthly-breakdown-of-invoices',
+    defaultMessage: 'Sundurliðun reikninga í völdum mánuði',
+  },
+  right: {
+    id: 'sp.health:right',
+    defaultMessage: 'Réttur',
+  },
+  monthlyPaymentShort: {
+    id: 'sp.health:monthly-payment-short',
+    defaultMessage: 'Greitt í mán.',
+  },
+  paymentParticationExplination: {
+    id: 'sp.health:payment-partication-info',
+    defaultMessage:
+      'Við útreikning á greiðsluþátttöku er tekið mið af greiðslum fyrir heilbrigðisþjónustu s.l. fimm mánuði. Eigir þú á rétt á hámarksafslætti vegna fyrri greiðslna verður hámarksgreiðsla þín í mánuði 4.694 kr. Fjárhæðin miðar við greiðslumark þitt eins og það birtist í Réttindagátt í dag. Birt með þeim fyrirvara að fjárhæðin tekur mið af þeim reikningum sem hafa borist Sjúkratryggingar.',
+  },
+  paymentParticationFooterExplination: {
+    id: 'sp.health:payment-partication-footer-info',
+    defaultMessage:
+      'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum. Einnig heilbrigðisþjónusta sem veitt er hjá sjálfstætt starfandi læknum, sjúkraþjálfurum, iðjuþjálfum, talmeinafræðingum og sálfræðingum sem Sjúkratryggingar Íslands hafa samið við. Enn fremur greiðslur fyrir meðferð húðsjúkdóma, sem veitt er af öðrum heilbrigðisstarfsmönnum en læknum, samkvæmt samningum við Sjúkratryggingar Íslands.',
+  },
   maximumMonthlyPayment: {
     id: 'sp.health:maximum-monthly-payment',
     defaultMessage: 'Hámarksgreiðsla þín á mánuði',
@@ -647,6 +721,10 @@ export const messages = defineMessages({
   medicinePaidByInsurance: {
     id: 'sp.health:medicine-paid-by-insurance',
     defaultMessage: 'Greitt af sjúkratryggingum',
+  },
+  medicinePaidByInsuranceShort: {
+    id: 'sp.health:medicine-paid-by-insurance-short',
+    defaultMessage: 'Greitt af SÍ',
   },
   medicineExcessPrice: {
     id: 'sp.health:medicine-excess-price',
