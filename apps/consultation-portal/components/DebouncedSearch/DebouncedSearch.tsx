@@ -66,7 +66,6 @@ const DebouncedSearch = ({
       }
       value={value}
       onChange={onChange}
-      disabled={isDisabled}
     />
   )
 }
