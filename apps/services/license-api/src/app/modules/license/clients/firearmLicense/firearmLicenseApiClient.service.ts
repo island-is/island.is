@@ -10,17 +10,21 @@ import {
   RevokePassData,
   Result,
 } from '@island.is/clients/smartsolutions'
-import { createPkPassDataInput } from './firearmLicenseMapper'
-import {
-  format as formatNationalId,
-  sanitize as sanitizeNationalId,
-} from 'kennitala'
+import { createPkPassDataInput, mapNationalId } from './firearmLicenseMapper'
+import { sanitize as sanitizeNationalId } from 'kennitala'
 import { VerifyInputData } from '../../dto/verifyLicense.input'
+import type { ConfigType } from '@island.is/nest/config'
+import { FirearmLicenseApiClientConfig } from './firearmLicenseApiClient.config'
+
+/** Category to attach each log message to */
+const LOG_CATEGORY = 'firearmlicense-service'
 
 @Injectable()
 export class FirearmLicenseApiClientService implements GenericLicenseClient {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject(FirearmLicenseApiClientConfig.KEY)
+    private config: ConfigType<typeof FirearmLicenseApiClientConfig>,
     private firearmApi: OpenFirearmApi,
     private smartApi: SmartSolutionsApi,
   ) {}
@@ -28,11 +32,31 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
   pushUpdate(
     inputData: PassDataInput,
     nationalId: string,
+    requestId?: string,
   ): Promise<Result<Pass | undefined>> {
-    return this.smartApi.updatePkPass(inputData, formatNationalId(nationalId))
+    const inputFieldValues = inputData.inputFieldValues ?? []
+    //small check that nationalId doesnt' already exist
+    if (
+      inputFieldValues &&
+      !inputFieldValues?.some((nt) => nt.identifier === 'kt')
+    ) {
+      inputFieldValues.push(mapNationalId(nationalId))
+    }
+
+    return this.smartApi.updatePkPass(
+      {
+        ...inputData,
+        inputFieldValues,
+        passTemplateId: this.config.passTemplateId,
+      },
+      requestId,
+    )
   }
 
-  async pullUpdate(nationalId: string): Promise<Result<Pass | undefined>> {
+  async pullUpdate(
+    nationalId: string,
+    requestId?: string,
+  ): Promise<Result<Pass>> {
     let data
     try {
       data = await Promise.all([
@@ -40,17 +64,28 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
         this.firearmApi.getVerificationPropertyInfo(nationalId),
       ])
     } catch (e) {
+      this.logger.error(
+        `Either license info- or license property info fetch failed`,
+        {
+          error: e,
+          requestId,
+          category: LOG_CATEGORY,
+        },
+      )
       return {
         ok: false,
         error: {
           code: 13,
-          message: 'Service error',
-          data: JSON.stringify(e),
+          message: `Either license info- or license property info fetch failed`,
         },
       }
     }
 
     const [licenseInfo, propertyInfo] = data
+    this.logger.warn('No license info found for user', {
+      requestId,
+      category: LOG_CATEGORY,
+    })
     if (!licenseInfo) {
       return {
         ok: false,
@@ -68,11 +103,17 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
     )
 
     if (!inputValues || !licenseInfo.expirationDate) {
+      const message = !(inputValues && licenseInfo.expirationDate)
+        ? 'Mapping failed, input values and expirationDate missing'
+        : !inputValues
+        ? 'Mapping failed, missing input values'
+        : 'Mapping failed, missing expirationDate'
+
       return {
         ok: false,
         error: {
           code: 4,
-          message: 'Mapping failed, invalid data',
+          message,
         },
       }
     }
@@ -81,6 +122,7 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
     const payload: PassDataInput = {
       inputFieldValues: inputValues,
       expirationDate: new Date(licenseInfo?.expirationDate).toISOString(),
+      passTemplateId: this.config.passTemplateId,
       thumbnail: thumbnail
         ? {
             imageBase64String: thumbnail
@@ -90,15 +132,25 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
         : null,
     }
 
-    return this.smartApi.updatePkPass(payload, formatNationalId(nationalId))
+    return this.smartApi.updatePkPass(payload, requestId)
   }
 
-  revoke(nationalId: string): Promise<Result<RevokePassData>> {
-    return this.smartApi.revokePkPass(formatNationalId(nationalId))
+  revoke(
+    nationalId: string,
+    requestId?: string,
+  ): Promise<Result<RevokePassData>> {
+    const passTemplateId = this.config.passTemplateId
+    const payload: PassDataInput = {
+      inputFieldValues: [mapNationalId(nationalId)],
+    }
+    return this.smartApi.revokePkPass(passTemplateId, payload, requestId)
   }
 
   /** We need to verify the pk pass AND the license itself! */
-  async verify(inputData: string): Promise<Result<VerifyLicenseResult>> {
+  async verify(
+    inputData: string,
+    requestId?: string,
+  ): Promise<Result<VerifyLicenseResult>> {
     //need to parse the scanner data
     let parsedInput
     try {
@@ -126,7 +178,10 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
       }
     }
 
-    const verifyRes = await this.smartApi.verifyPkPass({ code, date })
+    const verifyRes = await this.smartApi.verifyPkPass(
+      { code, date },
+      requestId,
+    )
 
     if (!verifyRes.ok) {
       return verifyRes
@@ -154,7 +209,6 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
         },
       }
     }
-
     const sanitizedPassNationalId = sanitizeNationalId(passNationalId)
 
     const licenseInfo = await this.firearmApi.getVerificationLicenseInfo(
@@ -182,6 +236,7 @@ export class FirearmLicenseApiClientService implements GenericLicenseClient {
     }
 
     //now we compare the data
+
     return {
       ok: true,
       data: {

@@ -3,6 +3,7 @@ import {
   FirearmPropertyList,
   LicenseInfo,
 } from '@island.is/clients/firearm-license'
+import { PassInputFieldValueDataInput } from '@island.is/clients/smartsolutions'
 import format from 'date-fns/format'
 import { format as formatNationalId } from 'kennitala'
 
@@ -20,6 +21,15 @@ const formatPropertyForPkpassInput = (properties?: Array<FirearmProperty>) => {
     .join('\n\n')
 
   return propertyString
+}
+
+export const mapNationalId = (
+  nationalId: string,
+): PassInputFieldValueDataInput => {
+  return {
+    identifier: 'kt',
+    value: nationalId ? formatNationalId(nationalId) : '',
+  }
 }
 
 export const createPkPassDataInput = (
