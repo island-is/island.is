@@ -17,7 +17,9 @@ test.describe('Custody Prosecutor', () => {
   test.afterAll(async () => await context.close())
 
   test('should submit a custody request to court', async () => {
-    test.skip()
+    // This test is failing 100% of the time. Skipping for now until fixed.
+    // Setting an "expiration date" to make sure the test isn't skipped in perpetuity
+    if (!process.env.CI && new Date() < new Date('2023-11-1')) test.skip()
     const page = await context.newPage()
 
     // Case list
