@@ -46,6 +46,7 @@ import {
   NewsCard,
   HeadWithSocialSharing,
   Webreader,
+  NewsArticle,
 } from '@island.is/web/components'
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
@@ -217,79 +218,6 @@ const NewsListNew: Screen<NewsListProps> = ({
   const newsItemDate =
     newsItem?.date && format(new Date(newsItem.date), 'do MMMM yyyy')
 
-  const newsItemContent = !!newsItem && (
-    <>
-      {/**
-       // eslint-disable-next-line @typescript-eslint/ban-ts-comment 
-       // @ts-ignore make web strict */}
-      <Box display={['none', 'none', 'block']} width="full">
-        <Divider />
-        {/**
-       // eslint-disable-next-line @typescript-eslint/ban-ts-comment 
-       // @ts-ignore make web strict */}
-      </Box>
-      {/**
-       // eslint-disable-next-line @typescript-eslint/ban-ts-comment 
-       // @ts-ignore make web strict */}
-      <Box
-        display={['block', 'block', 'block', 'none']}
-        paddingTop={5}
-        width="full"
-      >
-        <Text variant="eyebrow">{newsItemDate}</Text>
-        {/**
-       // eslint-disable-next-line @typescript-eslint/ban-ts-comment 
-       // @ts-ignore make web strict */}
-      </Box>
-      <Text variant="h1" as="h1" paddingTop={[3, 3, 3, 5]} paddingBottom={2}>
-        {newsItem.title}
-      </Text>
-
-      <Webreader
-        marginTop={0}
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        readId={null}
-        readClass="rs_read"
-      />
-
-      <Text variant="intro" as="p" paddingBottom={2}>
-        {newsItem.intro}
-      </Text>
-      {Boolean(newsItem.image) && (
-        <Box
-          paddingY={2}
-          className={cn({
-            [styles.floatedImage]: newsItem.fullWidthImageInContent === false,
-          })}
-        >
-          {/**
-       // eslint-disable-next-line @typescript-eslint/ban-ts-comment 
-       // @ts-ignore make web strict */}
-          <Image
-            {...newsItem.image}
-            url={newsItem.image?.url + '?w=774&fm=webp&q=80'}
-            thumbnail={newsItem.image?.url + '?w=50&fm=webp&q=80'}
-          />
-        </Box>
-      )}
-      <Box paddingBottom={4} width="full">
-        {webRichText(newsItem.content as SliceType[], {
-          renderComponent: {
-            // Make sure that images in the content are full width
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            Image: (slice) => (
-              <Box className={styles.clearBoth}>
-                <Image {...slice} thumbnail={slice.url + '?w=50'} />
-              </Box>
-            ),
-          },
-        })}
-      </Box>
-    </>
-  )
-
   const metaTitle = `${newsItem?.title ?? n('pageTitle')} | Ísland.is`
 
   const socialImage = newsItem?.featuredImage ?? newsItem?.image
@@ -396,7 +324,7 @@ const NewsListNew: Screen<NewsListProps> = ({
             {n('newsListEmptyMonth', 'Engar fréttir fundust í þessum mánuði.')}
           </Text>
         )}
-        {!newsItemContent && (
+        {!newsItem && (
           <Webreader
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore make web strict
@@ -404,10 +332,20 @@ const NewsListNew: Screen<NewsListProps> = ({
             readClass="rs_read"
           />
         )}
-        {newsItemContent && (
-          <Box className="rs_read" width="full">
-            {newsItemContent}
-          </Box>
+        {newsItem && (
+          <Stack space={3}>
+            <Box display={['none', 'none', 'block']} width="full">
+              <Divider />
+            </Box>
+            <Box
+              display={['block', 'block', 'block', 'none']}
+              width="full"
+              paddingTop={[2, 2, 0]}
+            >
+              <Text variant="eyebrow">{newsItemDate}</Text>
+            </Box>
+            <NewsArticle newsItem={newsItem} showDate={false} />
+          </Stack>
         )}
         {!!newsList.length && (
           <Box className="rs_read" marginTop={spacing}>
