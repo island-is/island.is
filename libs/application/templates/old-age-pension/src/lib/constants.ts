@@ -116,8 +116,7 @@ export const AttachmentLabel: {
   selfEmployedAttachment:
     oldAgePensionFormMessage.review.selfEmployedAttachment,
   maintenance: oldAgePensionFormMessage.review.maintenanceAttachment,
-  childSupport:
-    oldAgePensionFormMessage.review.childSupportAttachment,
+  childSupport: oldAgePensionFormMessage.review.childSupportAttachment,
   additionalDocuments:
     oldAgePensionFormMessage.review.additionalDocumentsAttachment,
 }

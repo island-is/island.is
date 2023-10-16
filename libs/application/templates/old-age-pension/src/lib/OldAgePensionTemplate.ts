@@ -470,10 +470,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
         )
 
         if (!doesNotLiveWithApplicant)
-          unset(
-            application.answers,
-            'fileUploadChildPension.childSupport',
-          )
+          unset(application.answers, 'fileUploadChildPension.childSupport')
 
         return context
       }),
