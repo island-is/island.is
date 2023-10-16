@@ -3,11 +3,12 @@ import { uuid } from 'uuidv4'
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import { User } from '@island.is/judicial-system/types'
 
-import { CourtService } from '../../../court'
-import { Case } from '../../../case'
-import { DeliverResponse } from '../../models/deliver.response'
-import { Defendant } from '../../models/defendant.model'
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
+
+import { Case } from '../../../case'
+import { CourtService } from '../../../court'
+import { Defendant } from '../../models/defendant.model'
+import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {
   result: DeliverResponse

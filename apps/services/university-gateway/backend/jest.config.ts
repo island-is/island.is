@@ -5,8 +5,6 @@ export default {
   roots: [__dirname],
   coverageDirectory:
     '<rootDir>/coverage/apps/services/university-gateway/backend',
-  globalSetup: `${__dirname}/test/globalSetup.ts`,
-  globalTeardown: `${__dirname}/test/globalTeardown.ts`,
   setupFilesAfterEnv: [`${__dirname}/test/setup.ts`],
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
   globals: {},
@@ -18,6 +16,6 @@ export default {
       },
     ],
   },
-  displayName: 'university-gateway-backend',
+  displayName: 'services-university-gateway-backend',
   testEnvironment: 'node',
 }

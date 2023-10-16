@@ -3,9 +3,10 @@ import { uuid } from 'uuidv4'
 import { User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
+
+import { caseListInclude, listOrder } from '../../case.service'
 import { getCasesQueryFilter } from '../../filters/cases.filter'
 import { Case } from '../../models/case.model'
-import { caseListInclude, listOrder } from '../../case.service'
 
 jest.mock('../../filters/cases.filter')
 

@@ -17,6 +17,7 @@ export type TagVariant =
   | 'blueberry'
   | 'dark'
   | 'mint'
+  | 'yellow'
   | 'disabled'
 
 export interface TagProps {

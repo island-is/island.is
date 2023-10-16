@@ -4,10 +4,7 @@ import {
   IdsClientConfig,
   XRoadConfig,
 } from '@island.is/nest/config'
-import {
-  ExampleEndpointsForUniversitiesApi,
-  Configuration,
-} from '../../gen/fetch'
+import { Configuration, CoursesApi, ProgramsApi } from '../../gen/fetch'
 import { UniversityOfIcelandApplicationClientConfig } from './universityOfIcelandClient.config'
 
 const configFactory = (
@@ -27,6 +24,7 @@ const configFactory = (
           scope: config.scope,
         }
       : undefined,
+    timeout: config.fetchTimeout,
   }),
   headers: {
     'X-Road-Client': xRoadConfig.xRoadClient,
@@ -38,13 +36,37 @@ const configFactory = (
 
 export const exportedApis = [
   {
-    provide: ExampleEndpointsForUniversitiesApi,
+    provide: ProgramsApi,
     useFactory: (
       xRoadConfig: ConfigType<typeof XRoadConfig>,
       config: ConfigType<typeof UniversityOfIcelandApplicationClientConfig>,
       idsClientConfig: ConfigType<typeof IdsClientConfig>,
     ) => {
-      return new ExampleEndpointsForUniversitiesApi(
+      return new ProgramsApi(
+        new Configuration(
+          configFactory(
+            xRoadConfig,
+            config,
+            idsClientConfig,
+            `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
+          ),
+        ),
+      )
+    },
+    inject: [
+      XRoadConfig.KEY,
+      UniversityOfIcelandApplicationClientConfig.KEY,
+      IdsClientConfig.KEY,
+    ],
+  },
+  {
+    provide: CoursesApi,
+    useFactory: (
+      xRoadConfig: ConfigType<typeof XRoadConfig>,
+      config: ConfigType<typeof UniversityOfIcelandApplicationClientConfig>,
+      idsClientConfig: ConfigType<typeof IdsClientConfig>,
+    ) => {
+      return new CoursesApi(
         new Configuration(
           configFactory(
             xRoadConfig,

@@ -22,5 +22,6 @@ query getHealthCenter($input: HealthCenterHistoryInput) {
       healthCenterName
       doctor
     }
+    canRegister
   }
 }

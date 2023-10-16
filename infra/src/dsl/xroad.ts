@@ -260,6 +260,16 @@ export const OccupationalLicenses = new XroadConf({
   },
 })
 
+export const DistrictCommissioners = new XroadConf({
+  env: {
+    XROAD_DISTRICT_COMMISSIONERS_PATH: {
+      dev: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
+      staging: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
+      prod: 'IS/GOV/5512201410/Syslumenn-Protected/IslandMinarSidur',
+    },
+  },
+})
+
 export const Firearm = new XroadConf({
   env: {
     XROAD_FIREARM_LICENSE_PATH: {
@@ -610,6 +620,16 @@ export const ShipRegistry = new XroadConf({
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-V1',
       staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/skipaskra-V1',
+    },
+  },
+})
+
+export const UniversityGatewayUniversityOfIceland = new XroadConf({
+  env: {
+    XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH: {
+      dev: 'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1',
+      staging: 'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1',
+      prod: 'IS/EDU/6001692039/HI-Protected/umsoknir-v1',
     },
   },
 })

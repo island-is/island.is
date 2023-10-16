@@ -1,6 +1,7 @@
 import { DegreeType, ModeOfDelivery, Season } from '../types'
 import { ITag } from './tag'
 import { IProgramExtraApplicationField } from './programExtraApplicationField'
+import { IProgramMinor } from './programMinor'
 
 export interface IProgram {
   externalId: string
@@ -34,5 +35,6 @@ export interface IProgram {
   costInformationEn?: string
   tag?: ITag[]
   modeOfDelivery: ModeOfDelivery[]
-  extraApplicationField?: IProgramExtraApplicationField[]
+  extraApplicationFields?: IProgramExtraApplicationField[]
+  minors?: IProgramMinor[]
 }

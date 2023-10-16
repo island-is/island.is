@@ -1,0 +1,60 @@
+{
+  "name": "services-university-gateway-worker",
+  "sourceRoot": "apps/services/university-gateway/worker/src",
+  "projectType": "application",
+  "prefix": "services-university-gateway-worker",
+  "targets": {
+    "build": {
+      "executor": "./tools/executors/node:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/services/university-gateway/worker",
+        "main": "apps/services/university-gateway/worker/src/main.ts",
+        "tsConfig": "apps/services/university-gateway/worker/tsconfig.app.json",
+        "maxWorkers": 2
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-university-gateway-worker:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/services/university-gateway/worker/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["coverage/apps/services/university-gateway/worker"],
+      "options": {
+        "jestConfig": "apps/services/university-gateway/worker/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "docker-express": {},
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn start services-university-gateway-backend",
+          "echo \"Waiting for backend to start...\" && sleep 10",
+          "yarn start services-university-gateway-worker"
+        ],
+        "parallel": true
+      }
+    }
+  },
+  "tags": ["scope:university-gateway-api"]
+}

@@ -1,10 +1,10 @@
-import { SQSClient } from '@aws-sdk/client-sqs'
-import { uuid } from 'uuidv4'
 import each from 'jest-each'
+import { uuid } from 'uuidv4'
+import { SQSClient } from '@aws-sdk/client-sqs'
 
 import { User } from '@island.is/judicial-system/types'
 
-import { MessageType, CaseMessage } from '../message'
+import { CaseMessage, MessageType } from '../message'
 import { createTestingMessageModule } from './createTestingMessageModule'
 
 interface Then {

@@ -97,7 +97,6 @@ export class SoffiaService {
       religion: user.Trufelag,
       exceptionFromDirectMarketing:
         user.Bannmerking === '1' || user.Bannmerking?.toLowerCase() === 'já',
-      fate: user.Afdrif1 || user.Afdrif2,
       maritalStatus: mapMaritalStatus(user.hju),
 
       //Deprecate below
@@ -188,7 +187,6 @@ export class SoffiaService {
         homeAddress: familyMember.Logheimili,
         municipality: familyMember.LogheimiliSveitarfelag,
         postal: `${familyMember.Postnr} ${familyMember.LogheimiliSveitarfelag}`, // Same structure as familyChild.Postaritun
-        fate: familyMember.Afdrif1 || familyMember.Afdrif2,
       }
     } else {
       throw new ForbiddenException('Family member not found')

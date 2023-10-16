@@ -1,5 +1,5 @@
-import React, { ElementType, MouseEventHandler, ReactNode } from 'react'
-import { FocusableBox, Link, Text, Box } from '@island.is/island-ui/core'
+import React, { MouseEventHandler, ReactNode } from 'react'
+import { FocusableBox, Box } from '@island.is/island-ui/core'
 import * as styles from './Comparison.css'
 
 type ColorScheme = 'blue' | 'red'

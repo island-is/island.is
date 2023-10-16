@@ -116,7 +116,7 @@ class ProgramDetails extends Program {
   courses!: ProgramCourse[]
 
   // @Field(() => [ProgramExtraApplicationField])
-  // extraApplicationField!: ProgramExtraApplicationField[]
+  // extraApplicationFields!: ProgramExtraApplicationField[]
 }
 
 @ObjectType('ProgramCourse')
@@ -176,6 +176,9 @@ class ProgramTag {
 // @ObjectType('ProgramExtraApplicationField')
 // class ProgramExtraApplicationField {
 //   @Field()
+//   externalId!: string
+
+//   @Field()
 //   nameIs!: string
 
 //   @Field()
@@ -189,9 +192,6 @@ class ProgramTag {
 
 //   @Field()
 //   required!: boolean
-
-//   @Field()
-//   fieldKey!: string
 
 //   @Field()
 //   fieldType!: string

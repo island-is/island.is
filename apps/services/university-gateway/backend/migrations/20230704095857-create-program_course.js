@@ -21,6 +21,14 @@ module.exports = {
               },
               allowNull: false,
             },
+            program_minor_id: {
+              type: Sequelize.UUID,
+              references: {
+                model: 'program_minor',
+                key: 'id',
+              },
+              allowNull: true,
+            },
             course_id: {
               type: Sequelize.UUID,
               references: {

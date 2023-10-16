@@ -72,55 +72,59 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
   }
 
   return (
-    <>
-      <SidebarLayout
-        sidebarContent={
-          <Stack space={3}>
-            <LinkV2 href="/haskolanam" skipTab>
-              <Button
-                preTextIcon="arrowBack"
-                preTextIconType="filled"
-                size="small"
-                type="button"
-                variant="text"
-                truncate
-              >
-                {n('goBack', 'Til baka í yfirlit')}
-              </Button>
-            </LinkV2>
-            <IconTitleCard
-              heading={
-                universities.filter((x) => x.id === data.universityId)[0].title
-              }
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
-              href="/"
-              imgSrc={
-                universities.filter((x) => x.id === data.universityId)[0]
-                  .logoUrl
-              }
-              alt="University infomation"
-            />
-          </Stack>
-        }
-      >
+    <SidebarLayout
+      sidebarContent={
         <Stack space={3}>
-          <Hidden above="sm">
-            <LinkV2 href="/haskolanam" skipTab>
-              <Button
-                preTextIcon="arrowBack"
-                preTextIconType="filled"
-                size="small"
-                type="button"
-                variant="text"
-                truncate
-              >
-                {n('goBack', 'Til baka í yfirlit')}
-              </Button>
-            </LinkV2>
-          </Hidden>
-          <Text variant="h1" as="h1">
-            {locale === 'en' ? data.nameEn : data.nameIs}
+          <LinkV2 href="/haskolanam" skipTab>
+            <Button
+              preTextIcon="arrowBack"
+              preTextIconType="filled"
+              size="small"
+              type="button"
+              variant="text"
+              truncate
+            >
+              {n('goBack', 'Til baka í yfirlit')}
+            </Button>
+          </LinkV2>
+          <IconTitleCard
+            heading={
+              universities.filter((x) => x.id === data.universityId)[0].title
+            }
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            href="/"
+            imgSrc={
+              universities.filter((x) => x.id === data.universityId)[0].logoUrl
+            }
+            alt="University infomation"
+          />
+        </Stack>
+      }
+    >
+      <Stack space={3}>
+        <Hidden above="sm">
+          <LinkV2 href="/haskolanam" skipTab>
+            <Button
+              preTextIcon="arrowBack"
+              preTextIconType="filled"
+              size="small"
+              type="button"
+              variant="text"
+              truncate
+            >
+              {n('goBack', 'Til baka í yfirlit')}
+            </Button>
+          </LinkV2>
+        </Hidden>
+        <Text variant="h1" as="h1">
+          {locale === 'en' ? data.nameEn : data.nameIs}
+        </Text>
+
+        <Box marginTop={2}>
+          <Text variant="default">{`${data.degreeAbbreviation} - ${data.credits} einingar`}</Text>
+          <Text marginTop={3} marginBottom={3} variant="default">
+            {locale === 'en' ? data.descriptionEn : data.descriptionIs}
           </Text>
 
           <Box marginTop={2}>
@@ -128,193 +132,188 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
             <Text marginTop={3} marginBottom={3} variant="default">
               {locale === 'en' ? data.descriptionEn : data.descriptionIs}
             </Text>
-            {data.externalUrlIs && (
-              <LinkV2
-                underlineVisibility="always"
-                color="blue400"
-                as="h5"
-                href={
-                  locale === 'en'
+          {data.externalUrlIs && (
+            <LinkV2
+              underlineVisibility="always"
+              color="blue400"
+              as="h5"
+              href={
+                locale === 'en'
+                  ? data.externalUrlEn
                     ? data.externalUrlEn
-                      ? data.externalUrlEn
-                      : data.externalUrlIs
                     : data.externalUrlIs
-                }
-              >
-                <Box display="flex" flexDirection="row">
-                  {`${n('seeMoreWeb', 'Sjá meira á vef skóla')}`}
-                  <Box marginLeft={1}>
-                    <Icon icon="open" type="outline" />
-                  </Box>
-                </Box>
-              </LinkV2>
-            )}
-          </Box>
-          <Box marginTop={7}>
-            <GridContainer>
-              <GridRow rowGap={1}>
-                <GridColumn span="1/2">
-                  <Box display="flex" flexDirection="row">
-                    <Box marginRight={1}>
-                      <Icon icon={'school'} type="outline" color="blue400" />
-                    </Box>
-                    <Text variant="medium">
-                      {n(data.degreeType, TranslationDefaults[data.degreeType])}
-                    </Text>
-                  </Box>
-                </GridColumn>
-                <GridColumn span="1/2">
-                  <Box display="flex" flexDirection="row">
-                    <Box marginRight={1}>
-                      <Icon icon={'calendar'} type="outline" color="blue400" />
-                    </Box>
-                    <Text variant="medium">{`${n('begins', 'Hefst')} ${n(
-                      data.startingSemesterSeason,
-                      TranslationDefaults[data.startingSemesterSeason],
-                    )} ${data.startingSemesterYear}`}</Text>
-                  </Box>
-                </GridColumn>
-
-                <GridColumn span="1/2">
-                  <Box display="flex" flexDirection="row">
-                    <Box marginRight={1}>
-                      <Icon icon={'time'} type="outline" color="blue400" />
-                    </Box>
-                    <Text variant="medium">{`${n(
-                      'educationLength',
-                      'Námstími',
-                    )}: ${data.durationInYears} ${
-                      locale === 'en'
-                        ? data.durationInYears === 1
-                          ? 'year'
-                          : 'years'
-                        : 'ár'
-                    }`}</Text>
-                  </Box>
-                </GridColumn>
-
-                <GridColumn span="1/2">
-                  <Box display="flex" flexDirection="row">
-                    <Box marginRight={1}>
-                      <Icon icon={'wallet'} type="outline" color="blue400" />
-                    </Box>
-                    <Text variant="medium">
-                      {`${n('yearlyCost', 'Árlegur kostnaður')}: ${
-                        data.costPerYear
-                      }kr.`}
-                    </Text>
-                  </Box>
-                </GridColumn>
-                <GridColumn span="1/2">
-                  <Box display="flex" flexDirection="row">
-                    <Box marginRight={1}>
-                      <Icon icon={'calendar'} type="outline" color="blue400" />
-                    </Box>
-                    <Text variant="medium">{`${n(
-                      'applicationPeriod',
-                      'Umsóknartímabil',
-                    )}: ${data.applicationStartDate} - ${
-                      data.applicationEndDate
-                    }`}</Text>
-                  </Box>
-                </GridColumn>
-
-                <GridColumn span="1/2">
-                  <Box display="flex" flexDirection="row">
-                    <Box marginRight={1}>
-                      <Icon icon={'person'} type="outline" color="blue400" />
-                    </Box>
-                    <Text variant="medium">{`${data.modeOfDelivery.map(
-                      (delivery, index) => {
-                        if (index !== 0) {
-                          return `, ${n(
-                            delivery,
-                            TranslationDefaults[delivery],
-                          )}`
-                        } else {
-                          return n(delivery, TranslationDefaults[delivery])
-                        }
-                      },
-                    )}`}</Text>
-                  </Box>
-                </GridColumn>
-              </GridRow>
-            </GridContainer>
-          </Box>
-          <Box>
-            <Accordion
-              singleExpand={false}
-              dividerOnTop={false}
-              dividerOnBottom={false}
+                  : data.externalUrlIs
+              }
             >
-              <AccordionItem
-                id="application-rules"
-                label={n('admissionRequirements', 'Inntökuskilyrði')}
-                labelUse="p"
-                labelVariant="h3"
-                iconVariant="default"
-                expanded={isOpen[0]}
-                onToggle={() => toggleIsOpen(0)}
-              >
-                <Text as="p">
-                  {locale === 'en'
-                    ? data.admissionRequirementsEn
-                    : data.admissionRequirementsIs}
-                </Text>
-              </AccordionItem>
-              <AccordionItem
-                id="education-requirements"
-                label={n('educationRequirements', 'Námskröfur')}
-                labelUse="p"
-                labelVariant="h3"
-                iconVariant="default"
-                expanded={isOpen[1]}
-                onToggle={() => toggleIsOpen(1)}
-              >
-                <Text as="p">
-                  {locale === 'en'
-                    ? data.studyRequirementsEn
-                    : data.studyRequirementsIs}
-                </Text>
-              </AccordionItem>
-              <AccordionItem
-                id="education-orginization"
-                label={n('educationOrganization', 'Skipulag náms')}
-                labelUse="p"
-                labelVariant="h3"
-                iconVariant="default"
-                expanded={isOpen[2]}
-                onToggle={() => toggleIsOpen(2)}
-              >
-                <Text as="p">
-                  {data.courses &&
-                    data.courses.map((i, index) => {
-                      return `${i.nameIs}${
-                        index === data.courses.length - 1 ? ', ' : ''
-                      }`
-                    })}
-                </Text>
-              </AccordionItem>
-              <AccordionItem
-                id="annual-cost"
-                label={n('yearlyCost', 'Árlegt gjald')}
-                labelUse="p"
-                labelVariant="h3"
-                iconVariant="default"
-                expanded={isOpen[3]}
-                onToggle={() => toggleIsOpen(3)}
-              >
-                <Text as="p">
-                  {locale === 'en'
-                    ? data.costInformationEn
-                    : data.costInformationIs}
-                </Text>
-              </AccordionItem>
-            </Accordion>
-          </Box>
-        </Stack>
-      </SidebarLayout>
-    </>
+              <Box display="flex" flexDirection="row">
+                {`${n('seeMoreWeb', 'Sjá meira á vef skóla')}`}
+                <Box marginLeft={1}>
+                  <Icon icon="open" type="outline" />
+                </Box>
+              </Box>
+            </LinkV2>
+          )}
+        </Box>
+        <Box marginTop={7}>
+          <GridContainer>
+            <GridRow rowGap={1}>
+              <GridColumn span="1/2">
+                <Box display="flex" flexDirection="row">
+                  <Box marginRight={1}>
+                    <Icon icon={'school'} type="outline" color="blue400" />
+                  </Box>
+                  <Text variant="medium">
+                    {n(data.degreeType, TranslationDefaults[data.degreeType])}
+                  </Text>
+                </Box>
+              </GridColumn>
+              <GridColumn span="1/2">
+                <Box display="flex" flexDirection="row">
+                  <Box marginRight={1}>
+                    <Icon icon={'calendar'} type="outline" color="blue400" />
+                  </Box>
+                  <Text variant="medium">{`${n('begins', 'Hefst')} ${n(
+                    data.startingSemesterSeason,
+                    TranslationDefaults[data.startingSemesterSeason],
+                  )} ${data.startingSemesterYear}`}</Text>
+                </Box>
+              </GridColumn>
+
+              <GridColumn span="1/2">
+                <Box display="flex" flexDirection="row">
+                  <Box marginRight={1}>
+                    <Icon icon={'time'} type="outline" color="blue400" />
+                  </Box>
+                  <Text variant="medium">{`${n(
+                    'educationLength',
+                    'Námstími',
+                  )}: ${data.durationInYears} ${
+                    locale === 'en'
+                      ? data.durationInYears === 1
+                        ? 'year'
+                        : 'years'
+                      : 'ár'
+                  }`}</Text>
+                </Box>
+              </GridColumn>
+              <GridColumn span="1/2">
+                <Box display="flex" flexDirection="row">
+                  <Box marginRight={1}>
+                    <Icon icon={'wallet'} type="outline" color="blue400" />
+                  </Box>
+                  <Text variant="medium">
+                    {`${n('yearlyCost', 'Árlegur kostnaður')}: ${
+                      data.costPerYear
+                    }kr.`}
+                  </Text>
+                </Box>
+              </GridColumn>
+              <GridColumn span="1/2">
+                <Box display="flex" flexDirection="row">
+                  <Box marginRight={1}>
+                    <Icon icon={'calendar'} type="outline" color="blue400" />
+                  </Box>
+                  <Text variant="medium">{`${n(
+                    'applicationPeriod',
+                    'Umsóknartímabil',
+                  )}: ${data.applicationStartDate} - ${
+                    data.applicationEndDate
+                  }`}</Text>
+                </Box>
+              </GridColumn>
+
+              <GridColumn span="1/2">
+                <Box display="flex" flexDirection="row">
+                  <Box marginRight={1}>
+                    <Icon icon={'person'} type="outline" color="blue400" />
+                  </Box>
+                  <Text variant="medium">{`${data.modeOfDelivery.map(
+                    (delivery, index) => {
+                      if (index !== 0) {
+                        return `, ${n(delivery, TranslationDefaults[delivery])}`
+                      } else {
+                        return n(delivery, TranslationDefaults[delivery])
+                      }
+                    },
+                  )}`}</Text>
+                </Box>
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
+        </Box>
+        <Box>
+          <Accordion
+            singleExpand={false}
+            dividerOnTop={false}
+            dividerOnBottom={false}
+          >
+            <AccordionItem
+              id="application-rules"
+              label={n('admissionRequirements', 'Inntökuskilyrði')}
+              labelUse="p"
+              labelVariant="h3"
+              iconVariant="default"
+              expanded={isOpen[0]}
+              onToggle={() => toggleIsOpen(0)}
+            >
+              <Text as="p">
+                {locale === 'en'
+                  ? data.admissionRequirementsEn
+                  : data.admissionRequirementsIs}
+              </Text>
+            </AccordionItem>
+            <AccordionItem
+              id="education-requirements"
+              label={n('educationRequirements', 'Námskröfur')}
+              labelUse="p"
+              labelVariant="h3"
+              iconVariant="default"
+              expanded={isOpen[1]}
+              onToggle={() => toggleIsOpen(1)}
+            >
+              <Text as="p">
+                {locale === 'en'
+                  ? data.studyRequirementsEn
+                  : data.studyRequirementsIs}
+              </Text>
+            </AccordionItem>
+            <AccordionItem
+              id="education-orginization"
+              label={n('educationOrganization', 'Skipulag náms')}
+              labelUse="p"
+              labelVariant="h3"
+              iconVariant="default"
+              expanded={isOpen[2]}
+              onToggle={() => toggleIsOpen(2)}
+            >
+              <Text as="p">
+                {data.courses &&
+                  data.courses.map((i, index) => {
+                    return `${i.nameIs}${
+                      index === data.courses.length - 1 ? ', ' : ''
+                    }`
+                  })}
+              </Text>
+            </AccordionItem>
+            <AccordionItem
+              id="annual-cost"
+              label={n('yearlyCost', 'Árlegt gjald')}
+              labelUse="p"
+              labelVariant="h3"
+              iconVariant="default"
+              expanded={isOpen[3]}
+              onToggle={() => toggleIsOpen(3)}
+            >
+              <Text as="p">
+                {locale === 'en'
+                  ? data.costInformationEn
+                  : data.costInformationIs}
+              </Text>
+            </AccordionItem>
+          </Accordion>
+        </Box>
+      </Stack>
+    </SidebarLayout>
   )
 }
 

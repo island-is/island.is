@@ -11,7 +11,7 @@ interface SearchProductsProps {
   activeFilters: Array<FilterProps>
 }
 
-interface queryMakerProps {
+interface QueryMakerProps {
   $and: Array<any>
 }
 export const SearchProducts = ({
@@ -19,7 +19,7 @@ export const SearchProducts = ({
   query,
   activeFilters,
 }: SearchProductsProps) => {
-  const queryMaker: queryMakerProps = { $and: [] }
+  const queryMaker: QueryMakerProps = { $and: [] }
 
   if (query) {
     queryMaker.$and.push({

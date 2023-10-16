@@ -1,9 +1,9 @@
 import {
+  assistantRule,
   judgeRule,
+  prosecutorRepresentativeRule,
   prosecutorRule,
   registrarRule,
-  prosecutorRepresentativeRule,
-  assistantRule,
 } from '../../../../guards'
 import { NotificationController } from '../../notification.controller'
 

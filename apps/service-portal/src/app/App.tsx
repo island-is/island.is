@@ -11,29 +11,25 @@ import { ServicePortalPaths } from '../lib/paths'
 import { environment } from '../environments'
 import * as styles from './App.css'
 
-export const App = () => {
-  return (
-    <div className={styles.page}>
-      <ApolloProvider client={client}>
-        <LocaleProvider locale={defaultLanguage} messages={{}}>
-          <AuthProvider basePath={ServicePortalPaths.Base}>
-            <ApplicationErrorBoundary>
-              <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
-                <PortalRouter
-                  modules={modules}
-                  createRoutes={createRoutes}
-                  portalMeta={{
-                    basePath: ServicePortalPaths.Base,
-                    portalType: 'my-pages',
-                  }}
-                />
-              </FeatureFlagProvider>
-            </ApplicationErrorBoundary>
-          </AuthProvider>
-        </LocaleProvider>
-      </ApolloProvider>
-    </div>
-  )
-}
-
-export default App
+export const App = () => (
+  <div className={styles.page}>
+    <ApolloProvider client={client}>
+      <LocaleProvider locale={defaultLanguage} messages={{}}>
+        <AuthProvider basePath={ServicePortalPaths.Base}>
+          <ApplicationErrorBoundary>
+            <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+              <PortalRouter
+                modules={modules}
+                createRoutes={createRoutes}
+                portalMeta={{
+                  basePath: ServicePortalPaths.Base,
+                  portalType: 'my-pages',
+                }}
+              />
+            </FeatureFlagProvider>
+          </ApplicationErrorBoundary>
+        </AuthProvider>
+      </LocaleProvider>
+    </ApolloProvider>
+  </div>
+)

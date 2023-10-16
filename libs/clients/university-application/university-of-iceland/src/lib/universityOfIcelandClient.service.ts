@@ -1,5 +1,5 @@
-import { Injectable, Req } from '@nestjs/common'
-import { ExampleEndpointsForUniversitiesApi } from '../../gen/fetch/apis'
+import { Injectable } from '@nestjs/common'
+import { CoursesApi, ProgramsApi } from '../../gen/fetch/apis'
 import {
   DegreeType,
   FieldType,
@@ -8,26 +8,20 @@ import {
   ModeOfDelivery,
   Requirement,
   Season,
-  mapEnumToEnum,
-  mapEnumToOtherEnum,
+  mapStringToEnum,
 } from '@island.is/university-gateway-lib'
-import {
-  ExampleProgramDegreeTypeEnum,
-  ExampleProgramModeOfDeliveryEnum,
-  ExampleProgramStartingSemesterSeasonEnum,
-} from '../../gen/fetch'
 import { logger } from '@island.is/logging'
 
 export
 @Injectable()
 class UniversityOfIcelandApplicationClient {
   constructor(
-    private readonly exampleEndpointsForUniversitiesApi: ExampleEndpointsForUniversitiesApi,
+    private readonly programsApi: ProgramsApi,
+    private readonly coursesApi: CoursesApi,
   ) {}
 
   async getPrograms(): Promise<IProgram[]> {
-    const res =
-      await this.exampleEndpointsForUniversitiesApi.exampleControllerGetActivePrograms()
+    const res = await this.programsApi.activeProgramsGet()
 
     const mappedRes = []
     const programList = res.data || []
@@ -35,28 +29,23 @@ class UniversityOfIcelandApplicationClient {
       const program = programList[i]
       try {
         mappedRes.push({
-          externalId: program.externalId,
-          nameIs: program.nameIs,
-          nameEn: program.nameEn,
-          departmentNameIs: program.departmentNameIs,
-          departmentNameEn: program.departmentNameEn,
-          startingSemesterYear: program.startingSemesterYear,
-          startingSemesterSeason: mapEnumToEnum(
+          externalId: program.externalId || '',
+          nameIs: program.nameIs || '',
+          nameEn: program.nameEn || '',
+          departmentNameIs: program.departmentNameIs || '',
+          departmentNameEn: program.departmentNameEn || '',
+          startingSemesterYear: Number(program.startingSemesterYear) || 0,
+          startingSemesterSeason: mapStringToEnum(
             program.startingSemesterSeason,
-            ExampleProgramStartingSemesterSeasonEnum,
             Season,
           ),
-          applicationStartDate: program.applicationStartDate,
-          applicationEndDate: program.applicationEndDate || new Date(),
-          schoolAnswerDate: undefined, //TODO missing in api
-          studentAnswerDate: undefined, //TODO missing in api
-          degreeType: mapEnumToEnum(
-            program.degreeType,
-            ExampleProgramDegreeTypeEnum,
-            DegreeType,
-          ),
-          degreeAbbreviation: program.degreeAbbreviation,
-          credits: Number(program.credits) || 0, // TODO swagger says number, but api returns string
+          applicationStartDate: program.applicationStartDate || new Date(),
+          applicationEndDate: new Date(), //TODO missing in api
+          schoolAnswerDate: undefined, //TODO will not be used yet
+          studentAnswerDate: undefined, //TODO will not be used yet
+          degreeType: mapStringToEnum(program.degreeType, DegreeType),
+          degreeAbbreviation: program.degreeAbbreviation || '',
+          credits: program.credits || 0,
           descriptionIs: program.descriptionIs || '',
           descriptionEn: program.descriptionEn || '',
           durationInYears: program.durationInYears || 0,
@@ -73,30 +62,28 @@ class UniversityOfIcelandApplicationClient {
           costInformationIs: program.costInformationIs,
           costInformationEn: program.costInformationEn,
           tag: [], //TODO will not be used yet
-          modeOfDelivery: program.modeOfDelivery.map((m) => {
-            // TODO handle when ráðuneyti has made decisions
-            if (m.toString() === 'MIXED') {
-              return ModeOfDelivery.OTHER
-            } else {
-              return mapEnumToOtherEnum(
-                m,
-                ExampleProgramModeOfDeliveryEnum,
-                ModeOfDelivery,
-              )
-            }
-          }),
-          extraApplicationField: program.extraApplicationFields.map(
+          modeOfDelivery:
+            program.modeOfDelivery?.map((m) => {
+              // TODO handle when ráðuneyti has made decisions
+              if (m.toString() === 'MIXED') {
+                return ModeOfDelivery.OTHER
+              } else {
+                return mapStringToEnum(m, ModeOfDelivery)
+              }
+            }) || [],
+          extraApplicationFields: program.extraApplicationFields?.map(
             (field) => ({
-              nameIs: field.nameIs,
+              externalId: '', //TODO missing in api
+              nameIs: field.nameIs || '',
               nameEn: field.nameEn || '',
               descriptionIs: field.descriptionIs,
               descriptionEn: field.descriptionEn,
-              required: field.required === 'true', //TODO change to boolean not string
-              fieldKey: '', //TODO missing in api
+              required: field.required || false,
               fieldType: field.fieldType as unknown as FieldType,
               uploadAcceptedFileType: field.uploadAcceptedFileType,
             }),
           ),
+          minors: [], //TODO missing in api
         })
       } catch (e) {
         logger.error(
@@ -110,10 +97,9 @@ class UniversityOfIcelandApplicationClient {
   }
 
   async getCourses(externalId: string): Promise<ICourse[]> {
-    const res =
-      await this.exampleEndpointsForUniversitiesApi.exampleControllerGetProgramsCourses(
-        { externalId },
-      )
+    const res = await this.coursesApi.programExternalIdCoursesGet({
+      externalId,
+    })
 
     const mappedRes = []
     const courseList = res.data || []
@@ -121,22 +107,15 @@ class UniversityOfIcelandApplicationClient {
       const course = courseList[i]
       try {
         let requirement: Requirement | undefined = undefined
-        //TODO swagger says boolean, but api returns string
         switch (course.required) {
-          case 'M':
+          case 'MANDATORY':
             requirement = Requirement.MANDATORY
             break
-          case 'O':
+          case 'ELECTIVE':
             requirement = Requirement.FREE_ELECTIVE
             break
-          case '0':
-            requirement = Requirement.FREE_ELECTIVE
-            break
-          case 'C':
+          case 'RESTRICTED_ELECTIVE':
             requirement = Requirement.RESTRICTED_ELECTIVE
-            break
-          case '':
-            requirement = Requirement.UNDEFINED
             break
         }
         if (requirement === undefined) {
@@ -144,46 +123,52 @@ class UniversityOfIcelandApplicationClient {
         }
 
         let semesterSeason: Season | undefined = undefined
-        //TODO swagger says enum, but api returns string not in enum
-        switch (course.semesterSeason.toString()) {
-          case 'V':
+        switch (course.semesterSeason) {
+          case 'SPRING':
             semesterSeason = Season.SPRING
             break
-          case 'H':
+          case 'FALL':
             semesterSeason = Season.FALL
             break
-          case 'S':
+          case 'SUMMER':
             semesterSeason = Season.SUMMER
             break
-          case 'A': // TODO what value is this -> "heilsár"
+          case 'WHOLE-YEAR': // TODO what value should this map to ("heilsár")
             semesterSeason = Season.FALL
             break
-          case '': // TODO what value is this -> "á ekki við"
+          case 'ANY': // TODO what value should this map to ("á ekki við")
             semesterSeason = Season.FALL
             break
         }
         if (!semesterSeason) {
           throw new Error(
-            `Not able to map semester season: ${course.semesterSeason.toString()}`,
+            `Not able to map semester season: ${course.semesterSeason?.toString()}`,
           )
         }
 
+        //TODO how should we handle bundin skylda
+        const externalId = (course.externalId || []).join(',')
+
+        //TODO why is externalId empty
+        if (!externalId) continue
+
         mappedRes.push({
-          externalId: course.externalId,
-          nameIs: course.nameIs,
-          nameEn: course.nameEn,
-          credits: Number(course.credits.toString().replace(',', '.')) || 0, //TODO swagger says number, but api returns string (e.g. '7,5')
+          externalId: externalId,
+          // minorExternalId: course.minorId, //TODO missing in api
+          nameIs: course.nameIs || '',
+          nameEn: course.nameEn || '',
+          credits: Number(course.credits?.replace(',', '.')) || 0,
           descriptionIs: course.descriptionIs,
           descriptionEn: course.descriptionEn,
           externalUrlIs: course.externalUrlIs,
           externalUrlEn: course.externalUrlEn,
           requirement: requirement,
-          semesterYear: course.semesterYear,
+          semesterYear: Number(course.semesterYear),
           semesterSeason: semesterSeason,
         })
       } catch (e) {
         logger.error(
-          `Failed to map course with externalId ${course.externalId} for program with externalId ${externalId} (University of Iceland), reason:`,
+          `Failed to map course with externalId ${course.externalId?.toString()} for program with externalId ${externalId} (University of Iceland), reason:`,
           e,
         )
       }

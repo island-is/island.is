@@ -139,7 +139,7 @@ class InternalProgramService {
 
         const tagList = program.tag || []
         const modeOfDeliveryList = program.modeOfDelivery || []
-        const extraApplicationFieldList = program.extraApplicationField || []
+        const extraApplicationFieldList = program.extraApplicationFields || []
 
         const oldProgramObj = await this.programModel.findOne({
           attributes: ['id'],
@@ -216,12 +216,12 @@ class InternalProgramService {
           await this.programExtraApplicationFieldModel.create(
             {
               programId: programId,
+              externalId: extraApplicationFieldList[j].externalId,
               nameIs: extraApplicationFieldList[j].nameIs,
               nameEn: extraApplicationFieldList[j].nameEn,
               descriptionIs: extraApplicationFieldList[j].descriptionIs,
               descriptionEn: extraApplicationFieldList[j].descriptionEn,
               required: extraApplicationFieldList[j].required,
-              fieldKey: extraApplicationFieldList[j].fieldKey,
               fieldType: extraApplicationFieldList[j].fieldType,
               uploadAcceptedFileType:
                 extraApplicationFieldList[j].uploadAcceptedFileType,

@@ -74,7 +74,7 @@ class ProgramService {
           'costInformationIs',
           'costInformationEn',
           'courses',
-          'extraApplicationField',
+          'extraApplicationFields',
         ],
       },
       include: [

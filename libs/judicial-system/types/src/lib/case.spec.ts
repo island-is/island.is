@@ -1,16 +1,16 @@
 import each from 'jest-each'
 
+import type { Case } from './case'
 import {
   CaseAppealDecision,
+  CaseAppealState,
   CaseState,
   CaseType,
+  getAppealInfo,
   hasCaseBeenAppealed,
   isInvestigationCase,
   isRestrictionCase,
-  getAppealInfo,
-  CaseAppealState,
 } from './case'
-import type { Case } from './case'
 import { UserRole } from './user'
 
 describe('Case Type', () => {

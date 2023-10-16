@@ -5,6 +5,7 @@ import {
   EmptyState,
   ErrorScreen,
   IntroHeader,
+  SJUKRATRYGGINGAR_ID,
   m,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
@@ -117,6 +118,8 @@ const Therapies = () => {
       <IntroHeader
         title={formatMessage(messages.therapyTitle)}
         intro={formatMessage(messages.therapyDescription)}
+        serviceProviderID={SJUKRATRYGGINGAR_ID}
+        serviceProviderTooltip={formatMessage(m.healthTooltip)}
       />
       {!loading && !error && tabs.length === 0 && (
         <Box marginTop={8}>
