@@ -59,6 +59,13 @@ export function isProsecutionRole(role?: string): boolean {
   return prosecutionRoles.includes(role)
 }
 
+export function isProsecutionUser(user: User): boolean {
+  return (
+    user.institution?.type === InstitutionType.PROSECUTORS_OFFICE &&
+    isProsecutionRole(user.role)
+  )
+}
+
 export const courtRoles: string[] = [UserRole.JUDGE, UserRole.REGISTRAR]
 
 export function isCourtRole(role?: string): boolean {
@@ -80,13 +87,6 @@ export function isExtendedCourtRole(role?: string): boolean {
     return false
   }
   return extendedCourtRoles.includes(role)
-}
-
-export function isProsecutionUser(user: User): boolean {
-  return (
-    user.institution?.type === InstitutionType.PROSECUTORS_OFFICE &&
-    isProsecutionRole(user.role)
-  )
 }
 
 export function isDistrictCourtUser(user: User): boolean {

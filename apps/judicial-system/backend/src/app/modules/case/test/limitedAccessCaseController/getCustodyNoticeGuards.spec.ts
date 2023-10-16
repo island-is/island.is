@@ -1,20 +1,20 @@
 import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
 import { CaseType } from '@island.is/judicial-system/types'
 
-import { CaseController } from '../../case.controller'
 import { CaseCompletedGuard } from '../../guards/caseCompleted.guard'
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseReadGuard } from '../../guards/caseRead.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
+import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
 
-describe('CaseController - Get custody notice pdf guards', () => {
+describe('LimitedAccessCaseController - Get custody notice pdf guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      CaseController.prototype.getCustodyNoticePdf,
+      LimitedAccessCaseController.prototype.getCustodyNoticePdf,
     )
   })
 

@@ -3,9 +3,12 @@ import Cookies from 'js-cookie'
 
 import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import {
-  User,
-  UserRole,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+  isAppealsCourtUser,
+  isDistrictCourtUser,
+  isProsecutionUser,
+  type User as TUser,
+} from '@island.is/judicial-system/types'
+import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useGetCurrentUserQuery } from './getCurrentUser.generated'
 
@@ -49,7 +52,11 @@ export const UserProvider: React.FC<React.PropsWithChildren<Props>> = ({
     <UserContext.Provider
       value={{
         isAuthenticated,
-        limitedAccess: user?.role === UserRole.DEFENDER,
+        limitedAccess:
+          !user ||
+          (!isProsecutionUser(user as TUser) &&
+            !isDistrictCourtUser(user as TUser) &&
+            !isAppealsCourtUser(user as TUser)),
         user,
       }}
     >

@@ -114,6 +114,28 @@ export class LimitedAccessFileController {
     )
   }
 
+  @Get('custodyNotice')
+  @Header('Content-Type', 'application/pdf')
+  async getCustodyNoticePdf(
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.logger.debug(
+      `Getting the custody notice for case ${id} as a pdf document`,
+    )
+
+    return this.fileService.tryGetPdf(
+      user.id,
+      AuditedAction.GET_CUSTODY_NOTICE_PDF,
+      id,
+      'limitedAccess/custodyNotice',
+      req,
+      res,
+    )
+  }
+
   @Get('indictment')
   @Header('Content-Type', 'application/pdf')
   async getIndictmentPdf(

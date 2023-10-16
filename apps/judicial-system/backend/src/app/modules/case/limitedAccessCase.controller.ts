@@ -29,13 +29,15 @@ import {
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
+  CaseState,
+  CaseType,
   indictmentCases,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
-import { defenderRule } from '../../guards'
+import { defenderRule, prisonSystemStaffRule } from '../../guards'
 import { CaseEvent, EventService } from '../event'
 import { User } from '../user'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
@@ -75,7 +77,7 @@ export class LimitedAccessCaseController {
     LimitedAccessCaseExistsGuard,
     CaseReadGuard,
   )
-  @RolesRules(defenderRule)
+  @RolesRules(prisonSystemStaffRule, defenderRule)
   @Get('case/:caseId/limitedAccess')
   @ApiOkResponse({
     type: Case,
@@ -266,7 +268,7 @@ export class LimitedAccessCaseController {
     CaseReadGuard,
     CaseCompletedGuard,
   )
-  @RolesRules(defenderRule)
+  @RolesRules(prisonSystemStaffRule, defenderRule)
   @Get('case/:caseId/limitedAccess/courtRecord')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -312,6 +314,41 @@ export class LimitedAccessCaseController {
 
     const pdf = await this.caseService.getRulingPdf(theCase)
 
+    res.end(pdf)
+  }
+
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard([CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY]),
+    CaseReadGuard,
+    CaseCompletedGuard,
+  )
+  @RolesRules(prisonSystemStaffRule)
+  @Get('case/:caseId/limitedAccess/custodyNotice')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description:
+      'Gets custody notice for an existing custody case as a pdf document',
+  })
+  async getCustodyNoticePdf(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting the custody notice for case ${caseId} as a pdf document`,
+    )
+
+    if (theCase.state !== CaseState.ACCEPTED) {
+      throw new BadRequestException(
+        `Cannot generate a custody notice for ${theCase.state} cases`,
+      )
+    }
+
+    const pdf = await this.caseService.getCustodyNoticePdf(theCase)
     res.end(pdf)
   }
 
