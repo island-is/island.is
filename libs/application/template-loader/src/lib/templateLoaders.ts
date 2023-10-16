@@ -120,7 +120,7 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: () =>
     import('@island.is/application/templates/european-health-insurance-card'),
   [ApplicationTypes.VECHICLE_RECYCLING_CERTIFICATE]: () =>
-    import('@island.is/application/templates/european-health-insurance-card'),
+    import('@island.is/application/templates/vehicle-recycling-certificate'),
 }
 
 export default templates
