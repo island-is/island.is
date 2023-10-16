@@ -192,9 +192,6 @@ const NewsListNew: Screen<NewsListProps> = ({
 
   const sidebar = (
     <Stack space={3}>
-      {/**
-       // eslint-disable-next-line @typescript-eslint/ban-ts-comment 
-       // @ts-ignore make web strict */}
       <Box display={['none', 'none', 'block']} printHidden>
         {backButton}
       </Box>
