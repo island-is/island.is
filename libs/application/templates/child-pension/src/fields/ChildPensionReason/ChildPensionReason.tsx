@@ -106,11 +106,7 @@ const ChildPensionReason: FC<
                   value.includes(ChildPensionReasonEnum.PARENTS_PENITENTIARY) &&
                   option.value ===
                     ChildPensionReasonEnum.PARENTS_PENITENTIARY && (
-                    <ParentsPenitentiary
-                      id={id}
-                      application={application}
-                      errors={errors}
-                    />
+                    <ParentsPenitentiary id={id} application={application} />
                   )}
               </GridColumn>
             ))}

@@ -1,14 +1,20 @@
+import { Application } from '@island.is/application/types'
 import { buildValidationError } from '@island.is/application/core'
 import { StaticText } from '@island.is/application/types'
 import { validatorErrorMessages } from '../messages'
 import { ChildPensionReason } from '../constants'
 import { ChildPensionRow } from '../../types'
 import * as kennitala from 'kennitala'
+import { getApplicationExternalData } from '../childPensionUtils'
 
 export const buildError = (message: StaticText, path: string) =>
   buildValidationError(`${path}`)(message)
 
-export const validateReason = (child: ChildPensionRow, path: string) => {
+export const validateReason = (
+  child: ChildPensionRow,
+  path: string,
+  application: Application,
+) => {
   if (!child.reason || child.reason.length === 0) {
     return buildError(
       validatorErrorMessages.childPensionReason,
@@ -104,25 +110,10 @@ export const validateReason = (child: ChildPensionRow, path: string) => {
 
   // Parents penitentiary
   if (child.reason.includes(ChildPensionReason.PARENTS_PENITENTIARY)) {
-    if (child.parentsPenitentiary) {
-      if (!child.parentsPenitentiary.nationalId) {
-        return buildError(
-          validatorErrorMessages.nationalIdRequired,
-          `${path}.parentsPenitentiary.nationalId`,
-        )
-      }
-      if (
-        !(
-          child.parentsPenitentiary.nationalId.length !== 0 &&
-          kennitala.isValid(child.parentsPenitentiary.nationalId) &&
-          kennitala.isPerson(child.parentsPenitentiary.nationalId)
-        )
-      ) {
-        return buildError(
-          validatorErrorMessages.nationalIdMustBeValid,
-          `${path}.parentsPenitentiary.nationalId`,
-        )
-      }
+    const { hasSpouse } = getApplicationExternalData(application.externalData)
+
+    if (!hasSpouse) {
+      return buildError('', `${path}.reason`)
     }
   }
 }

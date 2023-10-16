@@ -12,6 +12,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   ChildrenCustodyInformationApi,
+  NationalRegistrySpouseApi,
 } from '@island.is/application/types'
 
 import {
@@ -79,6 +80,7 @@ const ChildPensionTemplate: ApplicationTemplate<
                 UserProfileApi,
                 ChildrenCustodyInformationApi,
                 NationalRegistryResidenceHistoryApi,
+                NationalRegistrySpouseApi,
               ],
               delete: true,
             },

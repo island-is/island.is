@@ -1,9 +1,13 @@
+import { Application } from '@island.is/application/types'
 import { validatorErrorMessages } from '../messages'
 import { AnswerValidationConstants } from '../constants'
 import { buildError, validateReason } from './utils'
 import { ChildPensionRow } from '../../types'
 
-export const validateSelectedChildrenInCustodyReason = (newAnswer: unknown) => {
+export const validateSelectedChildrenInCustodyReason = (
+  newAnswer: unknown,
+  application: Application,
+) => {
   const rawSelectedChildrenInCustody = newAnswer as
     | ChildPensionRow[]
     | undefined
@@ -22,6 +26,7 @@ export const validateSelectedChildrenInCustodyReason = (newAnswer: unknown) => {
       const validatedField = validateReason(
         child,
         `${VALIDATE_SELECTED_CHILDREN_IN_CUSTODY_REASON}[${i}]`,
+        application,
       )
 
       if (validatedField !== undefined) {

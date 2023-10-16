@@ -296,6 +296,13 @@ export const childPensionFormMessage: MessageDir = {
       defaultMessage: 'Kennitala foreldris í refsivist',
       description: 'english translation',
     },
+
+    childPensionParentsPenitentiaryNoSpouse: {
+      id: 'cp.application:info.child.pension.parentsPenitentiary.no.spouse',
+      defaultMessage:
+        'Samkvæmt upplýsingum í þjóðskrá ert þú ekki gift/ur eða skráð/ur í sambúð.',
+      description: 'english translation',
+    },
   }),
 
   fileUpload: defineMessages({
