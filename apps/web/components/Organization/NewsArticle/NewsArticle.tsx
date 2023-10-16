@@ -53,6 +53,9 @@ export const NewsArticle: React.FC<
   const { activeLocale } = useI18n()
 
   const displaySignLanguageVideo = Boolean(newsItem?.signLanguageVideo?.url)
+  const displayImageAboveContent =
+    !newsItem?.fullWidthImageInContent ||
+    (!displaySignLanguageVideo && newsItem?.fullWidthImageInContent)
 
   return (
     <Box paddingBottom={[0, 0, 4]}>
@@ -79,7 +82,7 @@ export const NewsArticle: React.FC<
       )}
 
       {displaySignLanguageVideo && (
-        <Box marginBottom={3}>
+        <Box paddingBottom={3}>
           <EmbeddedVideo
             url={newsItem?.signLanguageVideo?.url ?? ''}
             locale={activeLocale}
@@ -93,10 +96,7 @@ export const NewsArticle: React.FC<
         </Text>
       </Box>
 
-      {(!newsItem?.fullWidthImageInContent ||
-        (!displaySignLanguageVideo && newsItem?.fullWidthImageInContent)) && (
-        <NewsItemImage newsItem={newsItem} />
-      )}
+      {displayImageAboveContent && <NewsItemImage newsItem={newsItem} />}
 
       <Box className="rs_read" paddingBottom={4} width="full">
         {webRichText(
@@ -118,9 +118,11 @@ export const NewsArticle: React.FC<
         )}
       </Box>
 
-      {displaySignLanguageVideo && newsItem?.fullWidthImageInContent && (
-        <NewsItemImage newsItem={newsItem} />
-      )}
+      {!displayImageAboveContent &&
+        displaySignLanguageVideo &&
+        newsItem?.fullWidthImageInContent && (
+          <NewsItemImage newsItem={newsItem} />
+        )}
     </Box>
   )
 }
