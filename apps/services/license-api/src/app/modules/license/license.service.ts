@@ -256,22 +256,22 @@ export class LicenseService {
   async revokeLicense(
     licenseId: LicenseId,
     nationalId: string,
-    inputData: RevokeLicenseRequest,
+    inputData?: RevokeLicenseRequest,
   ): Promise<RevokeLicenseResponse> {
     const service = await this.getClientByLicenseId(licenseId)
-    const revokeRes = await service.revoke(nationalId, inputData.requestId)
+    const revokeRes = await service.revoke(nationalId, inputData?.requestId)
 
     if (revokeRes.ok) {
       this.logger.debug('revoke license succeeded', {
         category: LOG_CATEGORY,
-        requestId: inputData.requestId,
+        requestId: inputData?.requestId,
       })
       return { revokeSuccess: revokeRes.data.success }
     }
 
     this.logger.error('Revoke license failed', {
       category: LOG_CATEGORY,
-      requestId: inputData.requestId,
+      requestId: inputData?.requestId,
       ...revokeRes.error,
     })
     throw this.getException(
