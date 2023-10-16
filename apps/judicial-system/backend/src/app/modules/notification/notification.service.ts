@@ -8,17 +8,13 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import type { ConfigType } from '@island.is/nest/config'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
-import { SmsService } from '@island.is/nova-sms'
 import { EmailService } from '@island.is/email-service'
-import {
-  CaseMessage,
-  MessageService,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
+import { SmsService } from '@island.is/nova-sms'
+
 import {
   CLOSED_INDICTMENT_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_OVERVIEW_ROUTE,
@@ -27,50 +23,55 @@ import {
   RESTRICTION_CASE_OVERVIEW_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  CaseMessage,
+  MessageService,
+  MessageType,
+} from '@island.is/judicial-system/message'
+import type { User } from '@island.is/judicial-system/types'
 import {
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseType,
-  NotificationType,
-  isRestrictionCase,
-  SessionArrangements,
-  isInvestigationCase,
-  isIndictmentCase,
   CaseState,
-  Recipient,
-  UserRole,
+  CaseType,
   getStatementDeadline,
+  isIndictmentCase,
+  isInvestigationCase,
+  isRestrictionCase,
+  NotificationType,
+  Recipient,
   RequestSharedWithDefender,
+  SessionArrangements,
+  UserRole,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
-import { formatDate } from '@island.is/judicial-system/formatters'
 
 import {
-  formatProsecutorCourtDateEmailNotification,
   formatCourtHeadsUpSmsNotification,
-  formatPrisonCourtDateEmailNotification,
-  formatCourtReadyForCourtSmsNotification,
-  formatDefenderCourtDateEmailNotification,
-  stripHtmlTags,
-  formatCourtRevokedSmsNotification,
-  formatPrisonRevokedEmailNotification,
-  formatDefenderRevokedEmailNotification,
-  formatProsecutorReceivedByCourtSmsNotification,
-  formatCourtResubmittedToCourtSmsNotification,
-  formatProsecutorReadyForCourtEmailNotification,
-  formatPrisonAdministrationRulingNotification,
-  formatDefenderCourtDateLinkEmailNotification,
-  formatDefenderResubmittedToCourtEmailNotification,
-  formatDefenderAssignedEmailNotification,
   formatCourtIndictmentReadyForCourtEmailNotification,
-  formatDefenderRoute,
+  formatCourtReadyForCourtSmsNotification,
+  formatCourtResubmittedToCourtSmsNotification,
+  formatCourtRevokedSmsNotification,
+  formatDefenderAssignedEmailNotification,
+  formatDefenderCourtDateEmailNotification,
+  formatDefenderCourtDateLinkEmailNotification,
   formatDefenderReadyForCourtEmailNotification,
+  formatDefenderResubmittedToCourtEmailNotification,
+  formatDefenderRevokedEmailNotification,
+  formatDefenderRoute,
+  formatPrisonAdministrationRulingNotification,
+  formatPrisonCourtDateEmailNotification,
+  formatPrisonRevokedEmailNotification,
+  formatProsecutorCourtDateEmailNotification,
+  formatProsecutorReadyForCourtEmailNotification,
+  formatProsecutorReceivedByCourtSmsNotification,
+  stripHtmlTags,
 } from '../../formatters'
 import { notifications } from '../../messages'
 import { Case } from '../case'
 import { CourtService } from '../court'
-import { CaseEvent, EventService } from '../event'
 import { Defendant, DefendantService } from '../defendant'
+import { CaseEvent, EventService } from '../event'
 import { SendNotificationDto } from './dto/sendNotification.dto'
 import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.response'

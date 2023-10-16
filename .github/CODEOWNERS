@@ -72,6 +72,8 @@
 /libs/clients/driving-license-book/                                                                      @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/passport                                @island-is/juni
 /libs/application/templates/passport/                                                                    @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/passport-annulment                      @island-is/juni
+/libs/application/templates/passport-annulment/                                                          @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/driving-school-confirmation/            @island-is/juni
 /libs/application/templates/operating-license/                                                           @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/operating-license/                      @island-is/juni
@@ -138,6 +140,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/disability-license/                                                                        @island-is/hugsmidjan
 /libs/clients/firearm-license/                                                                           @island-is/hugsmidjan
 /libs/clients/smartsolutions/                                                                            @island-is/hugsmidjan
+/libs/clients/license-client/                                                                            @island-is/hugsmidjan
 /libs/clients/islykill/                                                                                  @island-is/hugsmidjan
 /libs/clients/national-registry/v1/                                                                      @island-is/hugsmidjan
 /libs/clients/national-registry/v3/                                                                      @island-is/hugsmidjan
@@ -153,6 +156,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/portals/admin/regulations-admin/                                                                   @island-is/hugsmidjan
 /libs/clients/icelandic-health-insurance/rights-portal/                                                  @island-is/hugsmidjan
 /libs/clients/health-directorate                                                                         @island-is/hugsmidjan
+/libs/portals/admin/air-discount-scheme                                                                  @island-is/hugsmidjan
 
 /libs/application/templates/data-protection-complaint/                                                   @island-is/norda
 /libs/application/templates/institution-collaboration/                                                   @island-is/norda @island-is/fuglar
