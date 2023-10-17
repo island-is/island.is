@@ -27,6 +27,7 @@ import {
   GridColumn,
   Button,
   Table as T,
+  Select,
 } from '@island.is/island-ui/core'
 import { ProcessEntryLinkButton } from '@island.is/island-ui/contentful'
 import { SearchInput, CardTagsProps } from '@island.is/web/components'
@@ -320,46 +321,71 @@ const Applications: Screen<CategoryProps> = ({
                   )
                 }}
               />
-              <SearchInput
-                id="search_input_search_page"
-                ref={searchRef}
-                size="medium"
-                placeholder={n('inputSearchQuery', 'Sláðu inn leitarorð')}
-                quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
-                activeLocale={activeLocale}
-                initialInputValue={q}
-                page="applications"
-              />
               <Box width="full">
                 <Inline
                   justifyContent="flexEnd"
                   alignY="center"
-                  space={1}
+                  space={2}
                   flexWrap="nowrap"
                   collapseBelow="md"
                 >
-                  <FilterMenu
-                    {...filterLabels}
-                    categories={categories}
-                    resultCount={totalSearchResults}
-                    filter={{
-                      category: state.query.category ?? [],
-                      organization: state.query.organization ?? [],
-                    }}
-                    setFilter={(payload) =>
-                      dispatch({
-                        type: ActionType.SET_PARAMS,
-                        payload: {
-                          query: {
-                            ...getSearchParams(),
-                            ...payload,
+                  {/* TODO - sorting should be a component */}
+                  {/* <Select
+                    name="sort-option-select"
+                    size="xs"
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore make web strict
+                    // onChange={(option) => {
+                    //   setSelectedTitleSortOption(option as TitleSortOption)
+                    // }}
+                    value={{ label: n('sortByPopularityDescending', 'Mest notað'), value: 'popularity-desc' }}
+                    options={[
+                      { label: n('sortByTitleAscending', 'Heiti (a-ö)'), value: 'title-asc' },
+                      { label: n('sortByTitleDescending', 'Heiti (ö-a)'), value: 'title-desc' },
+                      { label: n('sortByPopularityDescending', 'Mest notað'), value: 'popularity-desc' },
+                      { label: n('sortByPopularityAscending', 'Minnst notað'), value: 'popularity-asc' },
+                    ]}
+                  /> */}
+                  <Inline
+                    justifyContent="flexEnd"
+                    alignY="center"
+                    space={2}
+                    flexWrap="nowrap"
+                    collapseBelow="md"
+                  >
+                    <SearchInput
+                      id="search_input_search_page"
+                      ref={searchRef}
+                      size="medium"
+                      placeholder={n('inputSearchQuery', 'Sláðu inn leitarorð')}
+                      quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
+                      activeLocale={activeLocale}
+                      initialInputValue={q}
+                      page="applications"
+                    />
+                    <FilterMenu
+                      {...filterLabels}
+                      categories={categories}
+                      resultCount={totalSearchResults}
+                      filter={{
+                        category: state.query.category ?? [],
+                        organization: state.query.organization ?? [],
+                      }}
+                      setFilter={(payload) =>
+                        dispatch({
+                          type: ActionType.SET_PARAMS,
+                          payload: {
+                            query: {
+                              ...getSearchParams(),
+                              ...payload,
+                            },
                           },
-                        },
-                      })
-                    }
-                    align="right"
-                    variant={isMobile ? 'dialog' : 'popover'}
-                  />
+                        })
+                      }
+                      align="right"
+                      variant={isMobile ? 'dialog' : 'popover'}
+                    />
+                  </Inline>
                 </Inline>
               </Box>
               {nothingFound && !!q ? (
@@ -414,8 +440,8 @@ const Applications: Screen<CategoryProps> = ({
               <T.Table>
                 <T.Head>
                   <T.Row>
-                    <T.HeadData>Name</T.HeadData>
-                    <T.HeadData>Government Agency</T.HeadData>
+                    <T.HeadData>{n('applicationName', 'Heiti umsóknar')}</T.HeadData>
+                    <T.HeadData>{n('organization', 'Þjónustuaðili')}</T.HeadData>
                     <T.HeadData></T.HeadData>
                   </T.Row>
                 </T.Head>
@@ -444,7 +470,7 @@ const Applications: Screen<CategoryProps> = ({
                                   processEntry.processTitle ?? title
                                 }
                                 processLink={processEntry.processLink}
-                                buttonText="Apply"
+                                buttonText={n('application', 'Sækja um')}
                                 size="small"
                               />
                             )}
