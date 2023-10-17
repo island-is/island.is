@@ -55,7 +55,16 @@ export enum ApplicationFormTypes {
   STATIC = 'static',
 }
 
-export const ApplicationConfigurations = {
+interface ApplicationConfiguration {
+  slug: string
+  translation: string
+  formType: ApplicationFormTypes
+}
+
+export const ApplicationConfigurations: Record<
+  ApplicationTypes,
+  ApplicationConfiguration
+> = {
   [ApplicationTypes.EXAMPLE]: {
     slug: 'example',
     translation: 'example.application',
@@ -69,6 +78,7 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.PASSPORT_ANNULMENT]: {
     slug: 'tilkynna-vegabref',
     translation: 'paa.application',
+    formType: ApplicationFormTypes.STATIC,
   },
   [ApplicationTypes.DRIVING_LEARNERS_PERMIT]: {
     slug: 'aefingaakstur',

@@ -76,7 +76,7 @@ const ApplicationLoader: FC<
     return <ErrorShell errorType="idNotFound" />
   }
 
-  const formType = ApplicationConfigurations[currentTypeId].formType
+  const formType = ApplicationConfigurations[currentTypeId]?.formType
 
   if (!applicationId || error) {
     const foundError = findProblemInApolloError(error, [
