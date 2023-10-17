@@ -1,11 +1,12 @@
 import React from 'react'
-import { Text, Box, FocusableBox, Stack } from '@island.is/island-ui/core'
-import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+
+import { Box, FocusableBox, Stack, Text } from '@island.is/island-ui/core'
 import { Image } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 import * as styles from './EventSliceCard.css'
-import { useI18n } from '@island.is/web/i18n'
-import { useNamespace } from '@island.is/web/hooks'
 
 interface EventCardProps {
   title: string
@@ -39,9 +40,9 @@ export const EventSliceCard: React.FC<
   const formattedDate = date && format(new Date(date), 'do MMMM yyyy')
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
+
   return (
     <FocusableBox
-      className={styles.container}
       href={href}
       display="flex"
       flexDirection="column"
@@ -52,11 +53,11 @@ export const EventSliceCard: React.FC<
       height="full"
       color="blue"
     >
-      <div className={styles.wrapper}>
-        <Box marginBottom={2} width={'full'}>
+      <Box>
+        <Box marginBottom={2} width="full">
           <img src={image?.url} alt={image?.title} className={styles.image} />
         </Box>
-        <div className={styles.content}>
+        <Box>
           <Box
             height="full"
             paddingBottom={2}
@@ -64,7 +65,7 @@ export const EventSliceCard: React.FC<
             flexGrow={1}
           >
             <Stack space={1}>
-              <Text color={'purple400'} variant="eyebrow">
+              <Text color="purple400" variant="eyebrow">
                 {formattedDate}
               </Text>
               <Text as="h3" variant="h3" title={title}>
@@ -90,8 +91,8 @@ export const EventSliceCard: React.FC<
               </Text>
             </Stack>
           </Box>
-        </div>
-      </div>
+        </Box>
+      </Box>
     </FocusableBox>
   )
 }

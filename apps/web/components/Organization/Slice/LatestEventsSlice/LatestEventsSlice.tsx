@@ -7,8 +7,8 @@ import {
   LinkV2,
   Text,
 } from '@island.is/island-ui/core'
-import { LatestEventsSlice as LatestEventsSliceSchema } from '@island.is/web/graphql/schema'
 import { EventSliceCard, GridItems } from '@island.is/web/components'
+import { LatestEventsSlice as LatestEventsSliceSchema } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface LatestEventsSliceProps {
@@ -23,18 +23,13 @@ export const LatestEventsSlice = ({
   slice,
   slug,
   namespace,
-  linkType = 'organizationevent',
-  overview = 'organizationeventoverview',
 }: LatestEventsSliceProps) => {
   const { linkResolver } = useLinkResolver()
-  const linkProps = slice.readMoreLink?.url
-    ? { href: slice.readMoreLink?.url }
-    : linkResolver(overview, [slug])
 
-  const parameters = [slug]
+  const overviewHref = linkResolver('organizationeventoverview', [slug]).href
 
   return (
-    slice.events.length > 0 && (
+    slice.events?.length > 0 && (
       <>
         <GridContainer>
           <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
@@ -42,7 +37,7 @@ export const LatestEventsSlice = ({
               {slice.title}
             </Text>
             <Box display={['none', 'none', 'none', 'block']}>
-              <LinkV2 {...linkProps} skipTab>
+              <LinkV2 href={overviewHref}>
                 <Button
                   icon="arrowForward"
                   iconType="filled"
@@ -66,24 +61,31 @@ export const LatestEventsSlice = ({
         >
           {slice.events
             .slice(0, 3)
-            .map(({ title, image, slug, date, time, location }, index) => (
-              <EventSliceCard
-                key={index}
-                title={title}
-                startTime={time.startTime}
-                endTime={time.endTime}
-                href={linkResolver(linkType, [...parameters, slug]).href}
-                date={date}
-                streetAddress={location.streetAddress}
-                postalCode={location.postalCode}
-                floor={location.floor}
-                namespace={namespace}
-                image={{
-                  url: image?.url || '',
-                  title: image?.title || '',
-                }}
-              ></EventSliceCard>
-            ))}
+            .map(
+              (
+                { title, image, slug: eventSlug, date, time, location },
+                index,
+              ) => (
+                <EventSliceCard
+                  key={index}
+                  title={title}
+                  startTime={time.startTime}
+                  endTime={time.endTime}
+                  href={
+                    linkResolver('organizationevent', [slug, eventSlug]).href
+                  }
+                  date={date}
+                  streetAddress={location.streetAddress}
+                  postalCode={location.postalCode}
+                  floor={location.floor}
+                  namespace={namespace}
+                  image={{
+                    url: image?.url || '',
+                    title: image?.title || '',
+                  }}
+                />
+              ),
+            )}
         </GridItems>
         <Hidden above="md">
           <GridContainer>
@@ -95,7 +97,7 @@ export const LatestEventsSlice = ({
               paddingTop={3}
               paddingBottom={5}
             >
-              <Link {...linkProps} skipTab>
+              <Link href={overviewHref} skipTab>
                 <Button
                   icon="arrowForward"
                   iconType="filled"
