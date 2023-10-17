@@ -17,10 +17,7 @@ import {
 } from '../constants'
 import { buildError } from './utils'
 
-export const fileUpload = (
-  newAnswer: unknown,
-  application: Application,
-) => {
+export const fileUpload = (newAnswer: unknown, application: Application) => {
   const obj = newAnswer as Record<string, Answer>
   const { FILEUPLOAD } = AnswerValidationConstants
 
