@@ -99,7 +99,7 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
           marginTop={2}
           marginBottom={4}
           className={cn({
-            [`${styles.displayNone}`]: showAllPages,
+            [`${styles.displayNone}`]: showAllPages || numPages <= 1,
           })}
         >
           <Pagination
