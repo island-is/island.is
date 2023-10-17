@@ -48,7 +48,6 @@ const serializeService: SerializeMethod<HelmService> = async (
     securityContext,
   } = serviceDef
   const result: HelmService = {
-
     enabled: true,
     grantNamespaces: grantNamespaces,
     grantNamespacesEnabled: grantNamespacesEnabled,
@@ -57,7 +56,7 @@ const serializeService: SerializeMethod<HelmService> = async (
       repository: `${serviceDef.image?.repository ?? defaultRepository}`,
       name: `${serviceDef.image?.name ?? serviceDef.name}`,
       tag: `${serviceDef.image?.tag ?? 'latest_master'}`,
-      },
+    },
     env: {
       SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
       NODE_OPTIONS: `--max-old-space-size=${getScaledValue(

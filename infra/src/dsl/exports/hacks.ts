@@ -24,9 +24,9 @@ export function hacks(
 
   if (dockerTag) {
     for (const serviceDef of fullSetOfServices) {
-        serviceDef.serviceDef.image = {
+      serviceDef.serviceDef.image = {
         tag: dockerTag,
-    }
+      }
     }
   }
 }
