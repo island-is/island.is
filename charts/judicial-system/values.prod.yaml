@@ -53,7 +53,9 @@ judicial-system-api:
         max: 10
         min: 3
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-api'
+    name: 'judicial-system-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -151,7 +153,9 @@ judicial-system-backend:
         max: 10
         min: 2
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-backend'
+    name: 'judicial-system-backend'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   initContainer:
     containers:
       - args:
@@ -262,7 +266,9 @@ judicial-system-message-handler:
         max: 10
         min: 3
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-message-handler'
+    name: 'judicial-system-message-handler'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   namespace: 'judicial-system'
   podSecurityContext:
     fsGroup: 65534
@@ -322,7 +328,9 @@ judicial-system-scheduler:
         max: 1
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-scheduler'
+    name: 'judicial-system-scheduler'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   namespace: 'judicial-system'
   pvcs: []
   replicaCount:
@@ -371,7 +379,9 @@ judicial-system-web:
         max: 10
         min: 3
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-web'
+    name: 'judicial-system-web'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -433,7 +443,9 @@ judicial-system-xrd-api:
         max: 10
         min: 3
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-xrd-api'
+    name: 'judicial-system-xrd-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:

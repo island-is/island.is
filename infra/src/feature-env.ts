@@ -70,7 +70,6 @@ const parseArguments = (argv: Arguments) => {
   const envName = 'dev'
   const chart = argv.chart as ChartName
   const dockertag = argv.dockertag
-  console.log(`dockertag after parsing: ${dockertag}`)
   const env = {
     ...Envs[Deployments[chart][envName]],
     feature: feature,
@@ -83,7 +82,7 @@ const parseArguments = (argv: Arguments) => {
     .filter(
       (h) =>
         (images.length === 1 && images[0] === '*') ||
-        images?.includes(h.serviceDef.image ?? h.serviceDef.name),
+        images?.includes(h.serviceDef.image?.name ?? h.serviceDef.name),
     )
   return { habitat, affectedServices, env, dockertag }
 }

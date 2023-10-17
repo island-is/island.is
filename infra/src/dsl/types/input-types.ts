@@ -76,6 +76,12 @@ export type Feature = {
   secrets: Secrets
 }
 
+export type DockerImage = {
+  name?: string
+  repository?: string
+  tag?: string
+}
+
 export type Features = { [name in FeatureNames]: Feature }
 export type MountedFile = { filename: string; env: string }
 
@@ -94,7 +100,7 @@ export type ServiceDefinitionCore = {
   serviceAccountEnabled: boolean
   cmds?: string
   args?: string[]
-  image?: string
+  image?: DockerImage
   resources: Resources
   replicaCount?: ReplicaCount
   securityContext: {

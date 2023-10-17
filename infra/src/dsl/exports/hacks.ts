@@ -24,11 +24,9 @@ export function hacks(
 
   if (dockerTag) {
     for (const serviceDef of fullSetOfServices) {
-      if (!serviceDef.serviceDef.image) {
-        serviceDef.serviceDef.image = `${serviceDef.serviceDef.name}:${dockerTag}`
-      } else {
-        serviceDef.serviceDef.image = `${serviceDef.serviceDef.image}:${dockerTag}`
-      }
+        serviceDef.serviceDef.image = {
+        tag: dockerTag,
+    }
     }
   }
 }

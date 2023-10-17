@@ -18,6 +18,13 @@ export type ContainerRunHelm = {
     }
   }
 }
+
+export type DockerImage = {
+  name?: string
+  repository?: string
+  tag?: string
+}
+
 export type OutputAccessModes = 'ReadWriteMany' | 'ReadOnlyMany'
 export type OutputPersistentVolumeClaim = {
   name?: string
@@ -121,9 +128,7 @@ export interface HelmService {
   secrets: ContainerSecrets
   enabled: boolean
   namespace: string
-  image: {
-    repository: string
-  }
+  image: DockerImage
   extra?: Hash
   files?: string[]
 }
