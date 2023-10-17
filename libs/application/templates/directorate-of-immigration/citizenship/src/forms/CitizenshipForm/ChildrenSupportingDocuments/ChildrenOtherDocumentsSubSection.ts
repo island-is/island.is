@@ -14,6 +14,7 @@ import {
   getSelectedCustodyChildren,
 } from '../../../utils'
 import { Routes } from '../../../lib/constants'
+import { MIN_AGE_WRITTEN_CONSENT } from '../../../shared'
 
 const FILE_SIZE_LIMIT = 10000000
 
@@ -88,7 +89,7 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
                 index,
               )
 
-              return !!age && age >= 12
+              return !!age && age >= MIN_AGE_WRITTEN_CONSENT
             },
           }),
           buildFileUploadField({

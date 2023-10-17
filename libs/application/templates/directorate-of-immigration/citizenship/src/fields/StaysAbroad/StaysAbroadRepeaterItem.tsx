@@ -114,7 +114,7 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
         error={errors && getErrorViaPath(errors, countryField)}
         field={{
           id: countryField,
-          title: `Dvalarland`,
+          title: formatMessage(information.labels.staysAbroad.splitterTitle),
           options: countryOptions,
           component: FieldComponents.SELECT,
           children: undefined,

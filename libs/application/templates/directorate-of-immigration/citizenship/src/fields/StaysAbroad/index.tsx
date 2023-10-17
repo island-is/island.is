@@ -24,6 +24,7 @@ export const StaysAbroad: FC<FieldBaseProps> = (props) => {
     getValueViaPath(
       application.answers,
       'staysAbroad.hasStayedAbroad',
+      '',
     ) as string,
   )
 

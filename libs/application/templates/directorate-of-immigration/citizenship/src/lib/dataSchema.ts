@@ -200,7 +200,7 @@ const ChildrenSupportingDocumentsSchema = z.object({
 
 export const SelectedChildSchema = z.object({
   nationalId: z.string().min(1),
-  hasFullCustody: z.string().optional(), //z.enum([YES, NO]),
+  hasFullCustody: z.string().optional(),
   otherParentNationalId: z.string().optional(),
   otherParentBirtDate: z.string().optional(),
   otherParentName: z.string().optional(),

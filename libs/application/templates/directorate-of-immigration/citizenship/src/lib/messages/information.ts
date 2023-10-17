@@ -229,6 +229,11 @@ export const information = {
         defaultMessage: 'Dvalartími þarf að vera lengur en 3 mánuðir',
         description: 'Validation error for 3 month date range',
       },
+      splitterTitle: {
+        id: 'doi.cs.application:information.labels.staysAbroad.splitterTitle',
+        defaultMessage: 'Dvalarland',
+        description: 'Item splitter title',
+      },
     }),
     radioButtons: defineMessages({
       radioOptionYes: {
