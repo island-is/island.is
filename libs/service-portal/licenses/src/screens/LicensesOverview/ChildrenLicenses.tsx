@@ -43,7 +43,7 @@ export const ChildrenLicenses: FC<React.PropsWithChildren<Props>> = ({
       ))}
 
       {!loading && !data && (
-        <Box marginTop={8}>
+        <Box marginTop={[0, 8]}>
           <EmptyState />
         </Box>
       )}

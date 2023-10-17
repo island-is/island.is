@@ -75,7 +75,7 @@ const AidsTable: FC<React.PropsWithChildren<Props>> = ({
           key={idx}
           expiring={rowItem.expiring}
           visibleValues={[
-            rowItem.name,
+            rowItem.name.split('/').join(' / '),
             rowItem.maxUnitRefund ?? '',
             rowItem.refund.type === 'amount'
               ? amountFormat(rowItem.refund.value)

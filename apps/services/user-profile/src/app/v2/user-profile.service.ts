@@ -1,7 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { NoContentException } from '@island.is/nest/problem'
 import { isDefined } from '@island.is/shared/utils'
 
 import { UserProfileDto } from './dto/user-profileDto'
