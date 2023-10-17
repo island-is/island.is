@@ -15,7 +15,6 @@ const DetailHeader: FC<React.PropsWithChildren<Props>> = ({ title }) => {
         <Text variant="h3" marginBottom={5}>
           {title}
         </Text>
-
         <Button
           colorScheme="default"
           icon="print"

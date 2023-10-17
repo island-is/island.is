@@ -1,30 +1,39 @@
 import { Response } from 'express'
 
 import {
+  BadRequestException,
   Body,
   Controller,
-  Get,
-  Param,
-  Post,
-  Patch,
   ForbiddenException,
-  Query,
-  Res,
+  Get,
   Header,
-  UseGuards,
-  BadRequestException,
   HttpException,
   Inject,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Res,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import {
+  CurrentHttpUser,
+  JwtAuthGuard,
+  RolesGuard,
+  RolesRules,
+} from '@island.is/judicial-system/auth'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
   CaseState,
@@ -38,53 +47,46 @@ import {
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import {
-  CurrentHttpUser,
-  JwtAuthGuard,
-  RolesRules,
-  RolesGuard,
-} from '@island.is/judicial-system/auth'
 
+import { nowFactory } from '../../factories'
 import {
-  judgeRule,
-  prosecutorRule,
-  registrarRule,
-  prosecutorRepresentativeRule,
-  prisonSystemStaffRule,
   assistantRule,
   defenderRule,
+  judgeRule,
+  prisonSystemStaffRule,
+  prosecutorRepresentativeRule,
+  prosecutorRule,
+  registrarRule,
 } from '../../guards'
-import { nowFactory } from '../../factories'
-import { UserService } from '../user'
 import { CaseEvent, EventService } from '../event'
+import { UserService } from '../user'
+import { CreateCaseDto } from './dto/createCase.dto'
+import { TransitionCaseDto } from './dto/transitionCase.dto'
+import { UpdateCaseDto } from './dto/updateCase.dto'
+import { CurrentCase } from './guards/case.decorator'
 import { CaseExistsGuard } from './guards/caseExists.guard'
 import { CaseReadGuard } from './guards/caseRead.guard'
-import { CaseWriteGuard } from './guards/caseWrite.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
-import { CurrentCase } from './guards/case.decorator'
+import { CaseWriteGuard } from './guards/caseWrite.guard'
 import {
+  assistantTransitionRule,
+  assistantUpdateRule,
   judgeTransitionRule,
   judgeUpdateRule,
+  prosecutorRepresentativeTransitionRule,
+  prosecutorRepresentativeUpdateRule,
   prosecutorTransitionRule,
   prosecutorUpdateRule,
   registrarTransitionRule,
   registrarUpdateRule,
-  prosecutorRepresentativeTransitionRule,
-  prosecutorRepresentativeUpdateRule,
-  assistantUpdateRule,
-  assistantTransitionRule,
 } from './guards/rolesRules'
-import { CreateCaseDto } from './dto/createCase.dto'
-import { TransitionCaseDto } from './dto/transitionCase.dto'
-import { UpdateCaseDto } from './dto/updateCase.dto'
+import { CaseInterceptor } from './interceptors/case.interceptor'
+import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
-import { CaseListInterceptor } from './interceptors/caseList.interceptor'
-import { CaseInterceptor } from './interceptors/case.interceptor'
 import { transitionCase } from './state/case.state'
 import { CaseService, UpdateCase } from './case.service'
+import { PDFService } from './pdf.service'
 
 @Controller('api')
 @ApiTags('cases')
@@ -93,6 +95,7 @@ export class CaseController {
     private readonly caseService: CaseService,
     private readonly userService: UserService,
     private readonly eventService: EventService,
+    private readonly pdfService: PDFService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -386,7 +389,7 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
   )
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, assistantRule)
   @Get('case/:caseId/request')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -402,7 +405,7 @@ export class CaseController {
       `Getting the request for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.caseService.getRequestPdf(theCase)
+    const pdf = await this.pdfService.getRequestPdf(theCase)
 
     res.end(pdf)
   }
@@ -443,7 +446,7 @@ export class CaseController {
       )
     }
 
-    const pdf = await this.caseService.getCaseFilesRecordPdf(
+    const pdf = await this.pdfService.getCaseFilesRecordPdf(
       theCase,
       policeCaseNumber,
     )
@@ -458,7 +461,13 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
   )
-  @RolesRules(prosecutorRule, judgeRule, registrarRule, prisonSystemStaffRule)
+  @RolesRules(
+    prosecutorRule,
+    judgeRule,
+    registrarRule,
+    prisonSystemStaffRule,
+    assistantRule,
+  )
   @Get('case/:caseId/courtRecord')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -475,7 +484,7 @@ export class CaseController {
       `Getting the court record for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.caseService.getCourtRecordPdf(theCase, user)
+    const pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
 
     res.end(pdf)
   }
@@ -487,7 +496,13 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
   )
-  @RolesRules(prosecutorRule, judgeRule, registrarRule, prisonSystemStaffRule)
+  @RolesRules(
+    prosecutorRule,
+    judgeRule,
+    registrarRule,
+    prisonSystemStaffRule,
+    assistantRule,
+  )
   @Get('case/:caseId/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -501,7 +516,7 @@ export class CaseController {
   ): Promise<void> {
     this.logger.debug(`Getting the ruling for case ${caseId} as a pdf document`)
 
-    const pdf = await this.caseService.getRulingPdf(theCase)
+    const pdf = await this.pdfService.getRulingPdf(theCase)
 
     res.end(pdf)
   }
@@ -536,7 +551,7 @@ export class CaseController {
       )
     }
 
-    const pdf = await this.caseService.getCustodyPdf(theCase)
+    const pdf = await this.pdfService.getCustodyPdf(theCase)
     res.end(pdf)
   }
 
@@ -569,7 +584,7 @@ export class CaseController {
       `Getting the indictment for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.caseService.getIndictmentPdf(theCase)
+    const pdf = await this.pdfService.getIndictmentPdf(theCase)
 
     res.end(pdf)
   }

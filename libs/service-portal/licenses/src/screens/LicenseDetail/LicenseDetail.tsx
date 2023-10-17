@@ -23,7 +23,7 @@ import {
 import ExpandableLine from './ExpandableLine'
 import { m } from '../../lib/messages'
 import { gql, useQuery } from '@apollo/client'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
 import { GenericLicenseDataField, Query } from '@island.is/api/schema'
@@ -297,6 +297,7 @@ const DataFields = ({
                           cursor="pointer"
                           className={className}
                           onClick={() => setPage(page)}
+                          component="button"
                         >
                           {children}
                         </Box>
@@ -322,6 +323,7 @@ const LicenseDetail = () => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile()
+  const { pathname } = useLocation()
   const locale = userProfile?.locale ?? 'is'
   const { type } = useParams() as UseParams
   const licenseType = type ? getTypeFromPath(type) : undefined

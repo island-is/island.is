@@ -3,8 +3,8 @@ import { CanActivate } from '@nestjs/common'
 import { RolesGuard } from '@island.is/judicial-system/auth'
 
 import { CaseExistsGuard, CaseWriteGuard } from '../../../case'
-import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
 import { FileController } from '../../file.controller'
+import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
 
 describe('FileController - Delete case file guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

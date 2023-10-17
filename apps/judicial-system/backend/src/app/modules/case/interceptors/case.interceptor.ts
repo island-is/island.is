@@ -1,15 +1,17 @@
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
+
 import {
+  CallHandler,
+  ExecutionContext,
   Injectable,
   NestInterceptor,
-  ExecutionContext,
-  CallHandler,
 } from '@nestjs/common'
+
 import {
   CaseAppealState,
-  User,
   EventType,
+  User,
   UserRole,
 } from '@island.is/judicial-system/types'
 

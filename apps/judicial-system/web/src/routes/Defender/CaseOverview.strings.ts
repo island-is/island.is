@@ -74,6 +74,12 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti í Hætta við takka í modal glugga hjá verjanda þegar frestur til greinargerðar er liðinn.',
   },
+  getAllDocuments: {
+    id: 'judicial.system.core:defender_case_overview.get_all_documents',
+    defaultMessage: 'Sækja öll skjöl',
+    description:
+      'Notaður sem texti í "Sækja öll skjöl" takka á yfirlitsskjá verjanda.',
+  },
   noCourtNumber: {
     id: 'judicial.system.core:defender_case_overview.no_court_number',
     defaultMessage: 'Ekki skráð',

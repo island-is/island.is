@@ -24,6 +24,7 @@ import {
   Text,
   Button,
   Inline,
+  Divider,
 } from '@island.is/island-ui/core'
 import {
   HeadWithSocialSharing,
@@ -38,6 +39,7 @@ import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { WatsonChatPanel } from '@island.is/web/components'
+import { STICKY_NAV_MAX_WIDTH } from '@island.is/web/constants'
 
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import {
@@ -528,18 +530,30 @@ export const OrganizationFooter: React.FC<
         />
       )
       break
-    case 'geislavarnir-rikisins':
-    case 'icelandic-radiation-safety-authority':
+    case 'samgongustofa':
+    case 'transport-authority':
       OrganizationFooterComponent = (
         <WebFooter
           imageUrl={organization.logo?.url}
           heading={organization.title}
           columns={organization.footerItems}
-          background={n(
-            'geislavarnirRikisinsFooterBackground',
-            'linear-gradient(360deg, rgba(182, 211, 216, 0.5092) -27.29%, rgba(138, 181, 185, 0.5776) 33.96%, rgba(69, 135, 138, 0.6384) 129.36%, rgba(19, 101, 103, 0.722) 198.86%)',
-          )}
+          titleVariant="h2"
         />
+      )
+      break
+    case 'rettindagaesla-fatlads-folks':
+    case 'disability-rights-protection':
+      OrganizationFooterComponent = (
+        <>
+          <WebFooter
+            imageUrl={organization.logo?.url}
+            heading={organization.title}
+            columns={organization.footerItems}
+            background={organization?.footerConfig?.background}
+            color={organization?.footerConfig?.color}
+          />
+          <Divider />
+        </>
       )
       break
     default: {
@@ -547,7 +561,6 @@ export const OrganizationFooter: React.FC<
       if (footerItems.length === 0) break
       OrganizationFooterComponent = (
         <WebFooter
-          imageUrl={organization?.logo?.url}
           heading={organization?.title ?? ''}
           columns={footerItems}
           background={organization?.footerConfig?.background}
@@ -766,6 +779,12 @@ export const OrganizationWrapper: React.FC<
                   >
                     {(organizationPage.sidebarCards ?? []).map((card) => {
                       if (card.__typename === 'SidebarCard') {
+                        let imageUrl =
+                          card.image?.url ||
+                          'https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png'
+
+                        imageUrl += `?w=${STICKY_NAV_MAX_WIDTH}`
+
                         return (
                           <ProfileCard
                             key={card.id}
@@ -774,10 +793,7 @@ export const OrganizationWrapper: React.FC<
                             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                             // @ts-ignore make web strict
                             link={card.link}
-                            image={
-                              card.image?.url ||
-                              'https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png'
-                            }
+                            image={imageUrl}
                             size="small"
                           />
                         )

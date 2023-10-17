@@ -96,6 +96,18 @@ export const LifeEvent: Screen<LifeEventProps> = ({
         title: n('digitalIcelandServices', 'Þjónusta'),
         href: overviewUrl,
       })
+    } else if (
+      linkResolver('digitalicelandcommunityoverview', [], locale).href ===
+      overviewUrl
+    ) {
+      items.push({
+        title: n('digitalIceland', 'Stafrænt Ísland'),
+        href: overviewUrl.slice(0, overviewUrl.lastIndexOf('/')),
+      })
+      items.push({
+        title: n('digitalIcelandCommunity', 'Ísland.is samfélagið'),
+        href: overviewUrl,
+      })
     } else {
       items.push({
         title: n('lifeEvents', 'Lífsviðburðir'),

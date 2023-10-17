@@ -11,15 +11,15 @@ import { useQuery, useLazyQuery, gql } from '@apollo/client'
 import { Query, PropertyOwner } from '@island.is/api/schema'
 import { useNamespaces, useLocale } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
-import { NotFound, amountFormat } from '@island.is/service-portal/core'
+import { NotFound, amountFormat, HMS_ID } from '@island.is/service-portal/core'
 import AssetGrid from '../../components/AssetGrid'
 import AssetLoader from '../../components/AssetLoader'
-import AssetDisclaimer from '../../components/AssetDisclaimer'
 import { ownersArray } from '../../utils/createUnits'
 import { messages } from '../../lib/messages'
 import DetailHeader from '../../components/DetailHeader'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 import { TableGrid, TableUnits } from '@island.is/service-portal/core'
+import { FootNote } from '@island.is/service-portal/core'
 
 export const ownerFragment = gql`
   fragment Owner on PropertyOwner {
@@ -85,7 +85,7 @@ type UseParams = {
   id: string
 }
 
-export const AssetsOverview = () => {
+export const AssetsDetail = () => {
   useNamespaces('sp.assets')
   const { formatMessage } = useLocale()
   const { id } = useParams() as UseParams
@@ -252,10 +252,16 @@ export const AssetsOverview = () => {
         ) : null}
       </Box>
       <Box marginTop={8}>
-        <AssetDisclaimer />
+        <FootNote
+          notes={[
+            { text: formatMessage(messages.disclaimerA) },
+            { text: formatMessage(messages.disclaimerB) },
+          ]}
+          serviceProviderID={HMS_ID}
+        />
       </Box>
     </>
   )
 }
 
-export default AssetsOverview
+export default AssetsDetail
