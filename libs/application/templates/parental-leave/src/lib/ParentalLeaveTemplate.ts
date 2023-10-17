@@ -1045,13 +1045,21 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
-        entry: ['createTempPeriods', 'removeNullPeriod', 'setNavId'],
+        entry: [
+          'createTempPeriods',
+          'removeNullPeriod',
+          'setNavId',
+          'createTempEmployers',
+        ],
         exit: [
           'restorePeriodsFromTemp',
           'removeNullPeriod',
           'setNavId',
           'setActionName',
           'clearEmployers',
+          'restoreEmployersFromTemp',
+          'removeAddedEmployers',
+          'removeAddedPeriods',
         ],
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
@@ -1124,6 +1132,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: [
           'setEmployerReviewerNationalRegistryId',
           'restorePeriodsFromTemp',
+          'restoreEmployersFromTemp',
         ],
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
@@ -1166,6 +1175,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'clearAssignees',
           'setIsApprovedOnEmployer',
           'restorePeriodsFromTemp',
+          'restoreEmployersFromTemp',
         ],
         meta: {
           name: States.EMPLOYER_APPROVE_EDITS,
@@ -1256,7 +1266,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_EDITS_ACTION]: {
-        exit: 'restorePeriodsFromTemp',
+        exit: ['restorePeriodsFromTemp', 'restoreEmployersFromTemp'],
         meta: {
           name: States.EMPLOYER_EDITS_ACTION,
           status: 'inprogress',
@@ -1406,7 +1416,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_EDITS_ACTION]: {
-        exit: 'restorePeriodsFromTemp',
+        exit: ['restorePeriodsFromTemp', 'restoreEmployersFromTemp'],
         meta: {
           name: States.VINNUMALASTOFNUN_EDITS_ACTION,
           status: 'inprogress',
@@ -1486,12 +1496,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
        * Restore the periods to their original state from temp.
        */
       restorePeriodsFromTemp: assign((context, event) => {
-        if (
-          !(
-            event.type === DefaultEvents.ABORT ||
-            event.type === DefaultEvents.EDIT
-          )
-        ) {
+        if (event.type !== DefaultEvents.ABORT) {
           return context
         }
 
@@ -1501,6 +1506,77 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         if (answers.tempPeriods) {
           set(answers, 'periods', cloneDeep(answers.tempPeriods))
           unset(answers, 'tempPeriods')
+        }
+
+        return context
+      }),
+      /**
+       * Copy the current employers to temp. If the user cancels the edits,
+       * we will restore the employers to their original state from temp.
+       */
+      createTempEmployers: assign((context, event) => {
+        if (event.type !== DefaultEvents.EDIT) {
+          return context
+        }
+
+        const { application } = context
+        const { answers } = application
+
+        set(answers, 'tempEmployers', answers.employers)
+
+        return context
+      }),
+      /**
+       * The user canceled the edits.
+       * Restore the employers to their original state from temp.
+       */
+      restoreEmployersFromTemp: assign((context, event) => {
+        if (event.type !== DefaultEvents.ABORT) {
+          return context
+        }
+
+        const { application } = context
+        const { answers } = application
+
+        if (answers.tempEmployers) {
+          set(answers, 'employers', cloneDeep(answers.tempEmployers))
+          unset(answers, 'tempEmployers')
+        }
+
+        return context
+      }),
+      /**
+       * The user submitted the edits but did not make any changes to the employer.
+       * Restore the employers to their original state from temp.
+       */
+      removeAddedEmployers: assign((context, event) => {
+        if (event.type !== DefaultEvents.SUBMIT) {
+          return context
+        }
+
+        const { application } = context
+        const { answers } = application
+
+        if (answers.tempEmployers && answers.addEmployer === NO) {
+          set(answers, 'employers', cloneDeep(answers.tempEmployers))
+        }
+
+        return context
+      }),
+      /**
+       * The user submitted the edits but did not make any changes to the periods.
+       * Restore the periods to their original state from temp.
+       */
+      removeAddedPeriods: assign((context, event) => {
+        if (event.type !== DefaultEvents.SUBMIT) {
+          return context
+        }
+
+        const { application } = context
+        const { answers } = application
+
+        if (answers.tempPeriods && answers.addPeriods === NO) {
+          set(answers, 'periods', cloneDeep(answers.tempPeriods))
         }
 
         return context
@@ -1573,6 +1649,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { answers } = application
 
         unset(answers, 'tempPeriods')
+        unset(answers, 'tempEmployers')
 
         return context
       }),

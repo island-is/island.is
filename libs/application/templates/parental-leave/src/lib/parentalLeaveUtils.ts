@@ -36,6 +36,7 @@ import {
   PERMANENT_FOSTER_CARE,
   ADOPTION,
   OTHER_NO_CHILDREN_FOUND,
+  States,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 
@@ -104,16 +105,22 @@ export function formatPeriods(
   application: Application,
   formatMessage: FormatMessage,
 ): TimelinePeriod[] {
-  const { periods, firstPeriodStart } = getApplicationAnswers(
-    application.answers,
-  )
+  const { periods, firstPeriodStart, addPeriods, tempPeriods } =
+    getApplicationAnswers(application.answers)
   const { applicationFundId } = getApplicationExternalData(
     application.externalData,
   )
 
   const timelinePeriods: TimelinePeriod[] = []
 
-  periods?.forEach((period, index) => {
+  const periodsArray =
+    application.state === States.EDIT_OR_ADD_PERIODS
+      ? addPeriods === YES
+        ? periods
+        : tempPeriods
+      : periods
+
+  periodsArray?.forEach((period, index) => {
     const isActualDob =
       index === 0 && firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
 
@@ -938,6 +945,13 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const addPeriods = getValueViaPath(answers, 'addPeriods') as YesOrNo
 
+  const tempPeriods = getValueViaPath(answers, 'tempPeriods', []) as Period[]
+  const tempEmployers = getValueViaPath(
+    answers,
+    'tempEmployers',
+    [],
+  ) as EmployerRow[]
+
   return {
     applicationType,
     noChildrenFoundTypeOfApplication,
@@ -1001,6 +1015,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     previousState,
     addEmployer,
     addPeriods,
+    tempPeriods,
+    tempEmployers,
   }
 }
 

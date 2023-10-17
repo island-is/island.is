@@ -8,6 +8,7 @@ import { parentalLeaveFormMessages } from '../../lib/messages'
 import { ReviewGroup, Label } from '@island.is/application/ui-components'
 import { EmployersTable } from '../components/EmployersTable'
 import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
+import { YES } from '../../constants'
 
 interface ReviewScreenProps {
   application: Application
@@ -20,7 +21,10 @@ const Employers: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
 }) => {
   const { formatMessage } = useLocale()
 
-  const [{ employers }] = useStatefulAnswers(application)
+  const [{ addEmployer, employers, tempEmployers }] =
+    useStatefulAnswers(application)
+
+  const employersArray = addEmployer === YES ? employers : tempEmployers
 
   return (
     <ReviewGroup isEditable editAction={() => goToScreen?.('addEmployer')}>
@@ -29,9 +33,9 @@ const Employers: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
           <Label>
             {formatMessage(parentalLeaveFormMessages.employer.title)}
           </Label>
-          {employers?.length > 0 && (
+          {employersArray?.length > 0 && (
             <Box paddingTop={3}>
-              <EmployersTable employers={employers} />
+              <EmployersTable employers={employersArray} />
             </Box>
           )}
         </GridColumn>
