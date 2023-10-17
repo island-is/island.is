@@ -43,13 +43,7 @@ import {
 
 import { nowFactory } from '../../factories'
 import {
-  createCaseFilesRecord,
-  createIndictment,
-  getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
-  getCustodyNoticePdfAsBuffer,
-  getRequestPdfAsBuffer,
-  getRulingPdfAsBuffer,
   getRulingPdfAsString,
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
@@ -273,8 +267,6 @@ export const listOrder: OrderItem[] = [
 
 @Injectable()
 export class CaseService {
-  private throttle = Promise.resolve(Buffer.from(''))
-
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
@@ -336,60 +328,6 @@ export class CaseService {
 
         return false
       })
-  }
-
-  private async throttleGetCaseFilesRecordPdf(
-    theCase: Case,
-    policeCaseNumber: string,
-  ): Promise<Buffer> {
-    // Serialize all case files pdf generations in this process
-    await this.throttle.catch((reason) => {
-      this.logger.info('Previous case files pdf generation failed', { reason })
-    })
-
-    await this.refreshFormatMessage()
-
-    const caseFiles = theCase.caseFiles
-      ?.filter(
-        (caseFile) =>
-          caseFile.policeCaseNumber === policeCaseNumber &&
-          caseFile.category === CaseFileCategory.CASE_FILE &&
-          caseFile.type === 'application/pdf' &&
-          caseFile.key &&
-          caseFile.chapter !== null &&
-          caseFile.orderWithinChapter !== null,
-      )
-      ?.sort(
-        (caseFile1, caseFile2) =>
-          (caseFile1.chapter ?? 0) - (caseFile2.chapter ?? 0) ||
-          (caseFile1.orderWithinChapter ?? 0) -
-            (caseFile2.orderWithinChapter ?? 0),
-      )
-      ?.map((caseFile) => async () => {
-        const buffer = await this.awsS3Service
-          .getObject(caseFile.key ?? '')
-          .catch((reason) => {
-            // Tolerate failure, but log error
-            this.logger.error(
-              `Unable to get file ${caseFile.id} of case ${theCase.id} from AWS S3`,
-              { reason },
-            )
-          })
-
-        return {
-          chapter: caseFile.chapter as number,
-          date: caseFile.displayDate ?? caseFile.created,
-          name: caseFile.userGeneratedFilename ?? caseFile.name,
-          buffer: buffer ?? undefined,
-        }
-      })
-
-    return createCaseFilesRecord(
-      theCase,
-      policeCaseNumber,
-      caseFiles ?? [],
-      this.formatMessage,
-    )
   }
 
   private async createCase(
@@ -1039,98 +977,6 @@ export class CaseService {
           return updatedCase
         }
       })
-  }
-
-  async getRequestPdf(theCase: Case): Promise<Buffer> {
-    await this.refreshFormatMessage()
-
-    return getRequestPdfAsBuffer(theCase, this.formatMessage)
-  }
-
-  async getCourtRecordPdf(theCase: Case, user: TUser): Promise<Buffer> {
-    if (theCase.courtRecordSignatureDate) {
-      try {
-        return await this.awsS3Service.getObject(
-          `generated/${theCase.id}/courtRecord.pdf`,
-        )
-      } catch (error) {
-        this.logger.info(
-          `The court record for case ${theCase.id} was not found in AWS S3`,
-          { error },
-        )
-      }
-    }
-
-    await this.refreshFormatMessage()
-
-    return getCourtRecordPdfAsBuffer(theCase, this.formatMessage, user)
-  }
-
-  async getCaseFilesRecordPdf(
-    theCase: Case,
-    policeCaseNumber: string,
-  ): Promise<Buffer> {
-    if (
-      ![CaseState.NEW, CaseState.DRAFT, CaseState.SUBMITTED].includes(
-        theCase.state,
-      )
-    ) {
-      if (completedCaseStates.includes(theCase.state)) {
-        try {
-          return await this.awsS3Service.getObject(
-            `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-          )
-        } catch {
-          // Ignore the error and try the original key
-        }
-      }
-
-      try {
-        return await this.awsS3Service.getObject(
-          `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-        )
-      } catch {
-        // Ignore the error and generate the pdf
-      }
-    }
-
-    this.throttle = this.throttleGetCaseFilesRecordPdf(
-      theCase,
-      policeCaseNumber,
-    )
-
-    return this.throttle
-  }
-
-  async getRulingPdf(theCase: Case): Promise<Buffer> {
-    if (theCase.rulingSignatureDate) {
-      try {
-        return await this.awsS3Service.getObject(
-          `generated/${theCase.id}/ruling.pdf`,
-        )
-      } catch (error) {
-        this.logger.info(
-          `The ruling for case ${theCase.id} was not found in AWS S3`,
-          { error },
-        )
-      }
-    }
-
-    await this.refreshFormatMessage()
-
-    return getRulingPdfAsBuffer(theCase, this.formatMessage)
-  }
-
-  async getIndictmentPdf(theCase: Case): Promise<Buffer> {
-    await this.refreshFormatMessage()
-
-    return createIndictment(theCase, this.formatMessage)
-  }
-
-  async getCustodyNoticePdf(theCase: Case): Promise<Buffer> {
-    await this.refreshFormatMessage()
-
-    return getCustodyNoticePdfAsBuffer(theCase, this.formatMessage)
   }
 
   async requestCourtRecordSignature(

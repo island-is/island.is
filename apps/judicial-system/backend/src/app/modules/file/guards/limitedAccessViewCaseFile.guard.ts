@@ -13,6 +13,8 @@ import {
   investigationCases,
   isDefenceUser,
   isPrisonSystemUser,
+  limitedAccessCaseFileCategoriesForIndictmentCases,
+  limitedAccessCaseFileCategoriesForRestrictionAndInvestigationCases,
   restrictionCases,
   User,
 } from '@island.is/judicial-system/types'
@@ -47,30 +49,18 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
       if (isDefenceUser(user)) {
         if (
           [...restrictionCases, ...investigationCases].includes(theCase.type) &&
-          [
-            CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
-            CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-            CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-            CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-            CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-            CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-            CaseFileCategory.APPEAL_RULING,
-          ].includes(caseFile.category)
+          limitedAccessCaseFileCategoriesForRestrictionAndInvestigationCases.includes(
+            caseFile.category,
+          )
         ) {
           return true
         }
 
         if (
           indictmentCases.includes(theCase.type) &&
-          [
-            CaseFileCategory.COURT_RECORD,
-            CaseFileCategory.RULING,
-            CaseFileCategory.COVER_LETTER,
-            CaseFileCategory.INDICTMENT,
-            CaseFileCategory.CRIMINAL_RECORD,
-            CaseFileCategory.COST_BREAKDOWN,
-            CaseFileCategory.CASE_FILE,
-          ].includes(caseFile.category)
+          limitedAccessCaseFileCategoriesForIndictmentCases.includes(
+            caseFile.category,
+          )
         ) {
           return true
         }

@@ -54,19 +54,19 @@ import { defenderTransitionRule, defenderUpdateRule } from './guards/rolesRules'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { Case } from './models/case.model'
 import { transitionCase } from './state/case.state'
-import { CaseService } from './case.service'
 import {
   LimitedAccessCaseService,
   LimitedAccessUpdateCase,
 } from './limitedAccessCase.service'
+import { PDFService } from './pdf.service'
 
 @Controller('api')
 @ApiTags('limited access cases')
 export class LimitedAccessCaseController {
   constructor(
-    private readonly caseService: CaseService,
     private readonly limitedAccessCaseService: LimitedAccessCaseService,
     private readonly eventService: EventService,
+    private readonly pdfService: PDFService,
 
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -217,7 +217,7 @@ export class LimitedAccessCaseController {
       `Getting the request for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.caseService.getRequestPdf(theCase)
+    const pdf = await this.pdfService.getRequestPdf(theCase)
 
     res.end(pdf)
   }
@@ -252,7 +252,7 @@ export class LimitedAccessCaseController {
       )
     }
 
-    const pdf = await this.caseService.getCaseFilesRecordPdf(
+    const pdf = await this.pdfService.getCaseFilesRecordPdf(
       theCase,
       policeCaseNumber,
     )
@@ -285,7 +285,7 @@ export class LimitedAccessCaseController {
       `Getting the court record for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.caseService.getCourtRecordPdf(theCase, user)
+    const pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
 
     res.end(pdf)
   }
@@ -312,7 +312,7 @@ export class LimitedAccessCaseController {
   ): Promise<void> {
     this.logger.debug(`Getting the ruling for case ${caseId} as a pdf document`)
 
-    const pdf = await this.caseService.getRulingPdf(theCase)
+    const pdf = await this.pdfService.getRulingPdf(theCase)
 
     res.end(pdf)
   }
@@ -348,7 +348,8 @@ export class LimitedAccessCaseController {
       )
     }
 
-    const pdf = await this.caseService.getCustodyNoticePdf(theCase)
+    const pdf = await this.pdfService.getCustodyNoticePdf(theCase)
+
     res.end(pdf)
   }
 
@@ -375,8 +376,40 @@ export class LimitedAccessCaseController {
       `Getting the indictment for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.caseService.getIndictmentPdf(theCase)
+    const pdf = await this.pdfService.getIndictmentPdf(theCase)
 
     res.end(pdf)
+  }
+
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseReadGuard,
+    CaseCompletedGuard,
+  )
+  @RolesRules(defenderRule)
+  @Get('case/:caseId/limitedAccess/all')
+  @Header('Content-Type', 'application/zip')
+  @ApiOkResponse({
+    content: { 'application/zip': {} },
+    description: 'Gets the all files for an existing case as a zip document',
+  })
+  async getAllFilesZip(
+    @CurrentCase() theCase: Case,
+    @CurrentHttpUser() user: TUser,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting all files for case ${theCase.id} as a zip document`,
+    )
+
+    const zip = await this.limitedAccessCaseService.getAllFilesZip(
+      theCase,
+      user,
+    )
+
+    res.end(zip)
   }
 }

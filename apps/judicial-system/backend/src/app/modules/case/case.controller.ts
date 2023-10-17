@@ -87,6 +87,7 @@ import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService, UpdateCase } from './case.service'
+import { PDFService } from './pdf.service'
 
 @Controller('api')
 @ApiTags('cases')
@@ -95,6 +96,7 @@ export class CaseController {
     private readonly caseService: CaseService,
     private readonly userService: UserService,
     private readonly eventService: EventService,
+    private readonly pdfService: PDFService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -403,7 +405,7 @@ export class CaseController {
       `Getting the request for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.caseService.getRequestPdf(theCase)
+    const pdf = await this.pdfService.getRequestPdf(theCase)
 
     res.end(pdf)
   }
@@ -444,7 +446,7 @@ export class CaseController {
       )
     }
 
-    const pdf = await this.caseService.getCaseFilesRecordPdf(
+    const pdf = await this.pdfService.getCaseFilesRecordPdf(
       theCase,
       policeCaseNumber,
     )
@@ -476,7 +478,7 @@ export class CaseController {
       `Getting the court record for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.caseService.getCourtRecordPdf(theCase, user)
+    const pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
 
     res.end(pdf)
   }
@@ -502,7 +504,7 @@ export class CaseController {
   ): Promise<void> {
     this.logger.debug(`Getting the ruling for case ${caseId} as a pdf document`)
 
-    const pdf = await this.caseService.getRulingPdf(theCase)
+    const pdf = await this.pdfService.getRulingPdf(theCase)
 
     res.end(pdf)
   }
@@ -538,7 +540,8 @@ export class CaseController {
       )
     }
 
-    const pdf = await this.caseService.getCustodyNoticePdf(theCase)
+    const pdf = await this.pdfService.getCustodyNoticePdf(theCase)
+
     res.end(pdf)
   }
 
@@ -571,7 +574,7 @@ export class CaseController {
       `Getting the indictment for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.caseService.getIndictmentPdf(theCase)
+    const pdf = await this.pdfService.getIndictmentPdf(theCase)
 
     res.end(pdf)
   }
