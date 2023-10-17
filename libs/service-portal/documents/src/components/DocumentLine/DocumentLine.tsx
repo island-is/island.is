@@ -32,6 +32,7 @@ interface Props {
   documentLine: Document
   img?: string
   onClick?: (doc: ActiveDocumentType) => void
+  onError?: (error?: string) => void
   setSelectLine?: (id: string) => void
   refetchInboxItems?: (input?: GetDocumentListInput) => void
   active: boolean
@@ -55,6 +56,7 @@ export const DocumentLine: FC<Props> = ({
   documentLine,
   img,
   onClick,
+  onError,
   setSelectLine,
   refetchInboxItems,
   active,
@@ -131,13 +133,25 @@ export const DocumentLine: FC<Props> = ({
           })
         } else {
           displayPdf(docContent)
+          if (onError) {
+            onError(undefined)
+          }
+        }
+      },
+      onError: () => {
+        if (onError) {
+          onError(
+            formatMessage(messages.documentFetchError, {
+              senderName: documentLine.senderName,
+            }),
+          )
         }
       },
     })
 
   const displayError = () => {
     return (
-      <Box paddingTop={2}>
+      <Box paddingTop={0}>
         <AlertBanner
           variant="error"
           description={formatMessage(messages.documentFetchError, {

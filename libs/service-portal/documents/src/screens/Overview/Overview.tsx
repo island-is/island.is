@@ -43,6 +43,7 @@ import { useUserInfo } from '@island.is/auth/react'
 import { useKeyDown } from '../../hooks/useKeyDown'
 import { usePostBulkMailActionMutation } from './BatchMailAction.generated'
 import { FavAndStash } from '../../components/FavAndStash'
+import { messages } from '../../utils/messages'
 import DocumentDisplay from '../../components/OverviewDisplay/OverviewDocumentDisplay'
 import { ActiveDocumentType } from '../../lib/types'
 import {
@@ -59,6 +60,8 @@ export const ServicePortalDocuments = () => {
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [selectedLines, setSelectedLines] = useState<Array<string>>([])
+  const [documentDisplayError, setDocumentDisplayError] = useState<string>()
+  const [totalPages, setTotalPages] = useState<number>()
   const navigate = useNavigate()
   const location = useLocation()
   const [activeDocument, setActiveDocument] =
@@ -177,11 +180,12 @@ export const ServicePortalDocuments = () => {
 
   const filteredDocuments = data.documents
 
-  const pagedDocuments = {
-    from: (page - 1) * pageSize,
-    to: pageSize * page,
-    totalPages: Math.ceil(totalCount / pageSize),
-  }
+  useEffect(() => {
+    const pageCount = Math.ceil(totalCount / pageSize)
+    if (pageCount !== totalPages && pageCount !== 0) {
+      setTotalPages(pageCount)
+    }
+  }, [pageSize, totalCount])
 
   const { data: organizations } = useOrganizations()
 
@@ -292,11 +296,10 @@ export const ServicePortalDocuments = () => {
 
   const activeArchive = filterValue.archived === true
 
+  const rowDirection = error ? 'column' : 'columnReverse'
   return (
     <GridContainer>
-      <GridRow
-        direction={['columnReverse', 'columnReverse', 'columnReverse', 'row']}
-      >
+      <GridRow direction={[rowDirection, rowDirection, rowDirection, 'row']}>
         <GridColumn
           hiddenBelow={activeDocument?.document ? 'lg' : undefined}
           span={['12/12', '12/12', '12/12', '5/12']}
@@ -422,13 +425,13 @@ export const ServicePortalDocuments = () => {
               )}
             </Box>
             {loading && (
-              <Box marginTop={4}>
+              <Box marginTop={2}>
                 <SkeletonLoader
                   space={2}
-                  repeat={6}
+                  repeat={pageSize}
                   display="block"
                   width="full"
-                  height={65}
+                  height={57}
                 />
               </Box>
             )}
@@ -439,6 +442,7 @@ export const ServicePortalDocuments = () => {
                     img={getOrganizationLogoUrl(doc.senderName, organizations)}
                     documentLine={doc}
                     onClick={setActiveDocument}
+                    onError={(err) => setDocumentDisplayError(err)}
                     active={doc.id === activeDocument?.id}
                     bookmarked={!!doc.bookmarked}
                     selected={selectedLines.includes(doc.id)}
@@ -489,18 +493,22 @@ export const ServicePortalDocuments = () => {
                 })
               }
             }}
-            loading={loading}
-            error={error}
+            error={{
+              message: error
+                ? formatMessage(messages.error)
+                : documentDisplayError ?? undefined,
+              code: error ? 'list' : 'single',
+            }}
           />
         </GridColumn>
       </GridRow>
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-          {filteredDocuments && (
+          {totalPages && (
             <Box paddingBottom={4} marginTop={4}>
               <Pagination
                 page={page}
-                totalPages={pagedDocuments.totalPages}
+                totalPages={totalPages}
                 renderLink={(page, className, children) => (
                   <button
                     className={className}
