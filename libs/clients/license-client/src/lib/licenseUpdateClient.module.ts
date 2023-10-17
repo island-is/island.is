@@ -41,34 +41,7 @@ import {
       provide: LOGGER_PROVIDER,
       useValue: logger,
     },
-    {
-      provide: CONFIG_PROVIDER,
-      useFactory: (
-        firearmConfig: ConfigType<typeof FirearmDigitalLicenseClientConfig>,
-        adrConfig: ConfigType<typeof AdrDigitalLicenseClientConfig>,
-        machineConfig: ConfigType<typeof MachineDigitalLicenseClientConfig>,
-        disabilityConfig: ConfigType<
-          typeof DisabilityDigitalLicenseClientConfig
-        >,
-        drivingConfig: ConfigType<typeof DrivingDigitalLicenseClientConfig>,
-      ) => {
-        const ids: PassTemplateIds = {
-          firearmLicense: firearmConfig.passTemplateId,
-          adrLicense: adrConfig.passTemplateId,
-          machineLicense: machineConfig.passTemplateId,
-          disabilityLicense: disabilityConfig.passTemplateId,
-          drivingLicense: drivingConfig.passTemplateId,
-        }
-        return ids
-      },
-      inject: [
-        FirearmDigitalLicenseClientConfig.KEY,
-        AdrDigitalLicenseClientConfig.KEY,
-        MachineDigitalLicenseClientConfig.KEY,
-        DisabilityDigitalLicenseClientConfig.KEY,
-        DrivingDigitalLicenseClientConfig.KEY,
-      ],
-    },
+    PassTemplateIdsProvider,
     {
       provide: LICENSE_UPDATE_CLIENT_FACTORY,
       useFactory:
