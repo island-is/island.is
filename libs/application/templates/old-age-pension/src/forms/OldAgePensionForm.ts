@@ -291,6 +291,7 @@ export const OldAgePensionForm: Form = buildForm({
                     return personalAllowance === YES
                   },
                   placeholder: '1%',
+                  defaultValue: '100%',
                   variant: 'number',
                   width: 'half',
                   maxLength: 4,
@@ -323,6 +324,7 @@ export const OldAgePensionForm: Form = buildForm({
                     return hasSpouse && spouseAllowance === YES
                   },
                   placeholder: '1%',
+                  defaultValue: '100%',
                   variant: 'number',
                   width: 'half',
                   maxLength: 4,
