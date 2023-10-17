@@ -70,6 +70,16 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     timeout: 100,
     orgSlug: GenericLicenseOrganizationSlug.DisabilityLicense,
   },
+  {
+    type: GenericLicenseType.PCard,
+    provider: {
+      id: GenericLicenseProviderId.DistrictCommissioners,
+    },
+    pkpass: false,
+    pkpassVerify: false,
+    timeout: 100,
+    orgSlug: GenericLicenseOrganizationSlug.PCard,
+  },
 ]
 @Module({
   imports: [LicenseClientModule, LicenseMapperModule, CmsModule],
