@@ -46,7 +46,8 @@ export const EducationDetail = () => {
   useEffect(() => {
     if (
       shouldDownload &&
-      license?.__typename === 'OccupationalLicensesEducationalLicense'
+      license?.__typename === 'OccupationalLicensesEducationalLicense' &&
+      license.downloadUrl
     ) {
       formSubmit(license.downloadUrl)
       setShouldDownload(false)
