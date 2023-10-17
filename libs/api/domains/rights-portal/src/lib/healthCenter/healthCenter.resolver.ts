@@ -64,7 +64,6 @@ export class HealthCenterResolver {
   @Mutation(() => HealthCenterRegisterResponse, {
     name: 'rightsPortalRegisterHealthCenter',
   })
-  @FeatureFlag(Features.servicePortalTransferHealthCenter)
   @Audit()
   registerHealthCenter(
     @CurrentUser() user: User,

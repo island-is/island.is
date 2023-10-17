@@ -223,7 +223,7 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
           <SkeletonLoader repeat={3} borderRadius="large" space={1} />
         ) : (
           bills?.length && (
-            <T.Table>
+            <T.Table data-testid="invoices">
               <ExpandHeader
                 data={[
                   { value: '' },

@@ -256,6 +256,7 @@ export const MedicineCalulator = () => {
             </Button>
           </Box>
           <Button
+            dataTestId="calculate-button"
             size="medium"
             variant="primary"
             disabled={CALCULATOR_DISABLED}

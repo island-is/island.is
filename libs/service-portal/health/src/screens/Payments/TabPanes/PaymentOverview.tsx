@@ -8,10 +8,6 @@ import {
   Table as T,
   Button,
 } from '@island.is/island-ui/core'
-import {
-  useGetMockPaymentOverviewBillsQuery,
-  useGetMockPaymentOverviewStatusQuery,
-} from '../mocks/mocks'
 import { UserInfoLine, m } from '@island.is/service-portal/core'
 import { messages } from '../../../lib/messages'
 import { useLocale } from '@island.is/localization'
@@ -22,14 +18,6 @@ import * as styles from './Payments.css'
 export const PaymentOverview = () => {
   const [startDate, setStartDate] = useState<Date | null>(null)
   const [endDate, setEndDate] = useState<Date | null>(null)
-
-  const { data, loading, error } = useGetMockPaymentOverviewStatusQuery()
-
-  const {
-    data: bills,
-    loading: billsLoading,
-    error: billsError,
-  } = useGetMockPaymentOverviewBillsQuery()
 
   const { formatMessage, formatDateFns } = useLocale()
 

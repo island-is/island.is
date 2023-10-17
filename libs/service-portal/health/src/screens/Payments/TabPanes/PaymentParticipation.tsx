@@ -7,11 +7,6 @@ import {
   Text,
   Table as T,
 } from '@island.is/island-ui/core'
-import {
-  useGetMockCopaymentPeriodBillsQuery,
-  useGetMockCopaymentPeriodsQuery,
-  useGetMockCopaymentStatusQuery,
-} from '../mocks/mocks'
 import { UserInfoLine, m } from '@island.is/service-portal/core'
 import { messages } from '../../../lib/messages'
 import { useLocale } from '@island.is/localization'
@@ -22,24 +17,6 @@ import * as styles from './Payments.css'
 export const PaymentPartication = () => {
   const [startDate, setStartDate] = useState<Date | null>(null)
   const [endDate, setEndDate] = useState<Date | null>(null)
-
-  const { data, loading, error } = useGetMockCopaymentStatusQuery()
-
-  const {
-    data: bills,
-    loading: billsLoading,
-    error: billsError,
-  } = useGetMockCopaymentPeriodsQuery()
-
-  const {
-    data: periodBills,
-    loading: periodBillsLoading,
-    error: periodBillsError,
-  } = useGetMockCopaymentPeriodBillsQuery({
-    input: {
-      periodId: 1,
-    },
-  })
 
   const { formatMessage, formatDateFns } = useLocale()
 
