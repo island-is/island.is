@@ -175,7 +175,7 @@ export const validatePeriod = (
           application.externalData,
         )
         const dateOB = dateOfBirth?.data?.dateOfBirth
-        startDateValue = dateOB ? parseISO(dateOB) : parseISO(startDate)
+        startDateValue = dateOB ? parseISO(dateOB) : dob
       } else if (
         firstPeriodStart === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
         firstPeriodStart === StartDateOptions.ADOPTION_DATE
