@@ -22,9 +22,7 @@ const Staging: EnvironmentConfig = {
 describe('Basic serialization', () => {
   const sut = service('api')
     .namespace('islandis')
-    .image({ name: 'test',
-      repository: 'testrepo',
-      tag: 'testtag' })
+    .image({ name: 'test', repository: 'testrepo', tag: 'testtag' })
     .env({ A: 'B' })
     .secrets({
       SECRET: '/path',
@@ -64,18 +62,15 @@ describe('Basic serialization', () => {
   })
 
   it('repo', () => {
-    expect(result.serviceDef[0].image.repository).toBe(
-      'testrepo',
-    )
+    expect(result.serviceDef[0].image.repository).toBe('testrepo')
   })
-  it ('image', () => {
+  it('image', () => {
     expect(result.serviceDef[0].image.name).toBe('test')
   })
 
-  it ('image tag', () => {
+  it('image tag', () => {
     expect(result.serviceDef[0].image.tag).toBe('testtag')
   })
-
 
   it('command and args', () => {
     expect(result.serviceDef[0].command).toStrictEqual(['node'])
