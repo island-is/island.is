@@ -119,7 +119,7 @@ components:
         applicantInfo:
           $ref: '#/components/schemas/ApplicantInfo'
         applicationType:
-          type: int
+          type: string
         hasAbroadResidence:
           type: boolean
         hasOneTimePayment:

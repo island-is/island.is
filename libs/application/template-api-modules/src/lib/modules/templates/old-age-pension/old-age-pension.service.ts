@@ -105,7 +105,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
       )
     }
 
-    if (pensionAttachments) {
+    if (pensionAttachments && pensionAttachments.length > 0) {
       uploads.pension = await this.initAttachments(
         application,
         'fileUploadEarlyPenFisher.pension',
@@ -116,6 +116,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
 
     if (
       fishermenAttachments &&
+      fishermenAttachments.length > 0 &&
       applicationType === ApplicationType.SAILOR_PENSION
     ) {
       uploads.sailorPension = await this.initAttachments(
@@ -128,6 +129,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
 
     if (
       leaseAgreementAttachments &&
+      leaseAgreementAttachments.length > 0 &&
       connectedApplications?.includes(
         ConnectedApplications.HOUSEHOLDSUPPLEMENT,
       ) &&
@@ -143,6 +145,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
 
     if (
       schoolConfirmationAttachments &&
+      schoolConfirmationAttachments.length > 0 &&
       connectedApplications?.includes(
         ConnectedApplications.HOUSEHOLDSUPPLEMENT,
       ) &&
@@ -164,6 +167,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
 
     if (
       maintenanceAttachments &&
+      maintenanceAttachments.length > 0 &&
       connectedApplications?.includes(ConnectedApplications.CHILDPENSION) &&
       childPensionAddChild === YES
     ) {
@@ -177,6 +181,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
 
     if (
       notLivesWithApplicantAttachments &&
+      notLivesWithApplicantAttachments.length > 0 &&
       connectedApplications?.includes(ConnectedApplications.CHILDPENSION) &&
       childCustodyLivesWithApplicant(
         application.answers,
@@ -199,6 +204,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
 
     if (
       selfEmployedAttachments &&
+      selfEmployedAttachments.length > 0 &&
       employmentStatus === Employment.SELFEMPLOYED
     ) {
       uploads.halfOldAgePension = await this.initAttachments(
@@ -209,7 +215,11 @@ export class OldAgePensionService extends BaseTemplateApiService {
       )
     }
 
-    if (isEarlyRetirement(application.answers, application.externalData)) {
+    if (
+      isEarlyRetirement(application.answers, application.externalData) &&
+      earlyRetirementAttachments &&
+      earlyRetirementAttachments.length > 0
+    ) {
       uploads.earlyRetirement = await this.initAttachments(
         application,
         'fileUploadEarlyPenFisher.earlyRetirement',
@@ -302,6 +312,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
         attachments,
       )
 
+      console.log('oldAgePensionDTO', oldAgePensionDTO)
       const response = await this.siaClientService.sendApplication(
         auth,
         oldAgePensionDTO,

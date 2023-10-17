@@ -126,11 +126,11 @@ export const initChildrens = (
   return custodyKids
 }
 
-export const getApplicationType = (applicationType: string): number => {
+export const getApplicationType = (applicationType: string): string => {
   if (applicationType === ApplicationType.HALF_OLD_AGE_PENSION) {
-    return +ApplicationType.HALF_OLD_AGE_PENSION
+    return ApplicationType.HALF_OLD_AGE_PENSION
   }
 
   // Sailors pension and Old age pension is the same application type
-  return +ApplicationType.OLD_AGE_PENSION
+  return ApplicationType.OLD_AGE_PENSION
 }
