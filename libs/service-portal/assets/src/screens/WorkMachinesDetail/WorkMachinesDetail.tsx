@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom'
 import { useGetWorkMachineByIdQuery } from './WorkMachinesDetail.generated'
 import {
   ErrorScreen,
-  ExcludesFalse,
   IntroHeader,
   NotFound,
   TableGrid,
@@ -29,6 +28,7 @@ import {
 import { format } from 'kennitala'
 import chunk from 'lodash/chunk'
 import { WorkMachinesAction, WorkMachinesLink } from '@island.is/api/schema'
+import { isDefined } from '@island.is/shared/utils'
 
 type UseParams = {
   id: string
@@ -107,9 +107,7 @@ const WorkMachinesDetail = () => {
     }
 
     const buttons: Array<React.ReactNode> = []
-    const keys = links
-      .map((l) => l.rel)
-      .filter(Boolean as unknown as ExcludesFalse)
+    const keys = links.map((l) => l.rel).filter(isDefined)
 
     OrderedLinks.forEach((ol, index) => {
       if (keys.includes(ol)) {
@@ -206,47 +204,67 @@ const WorkMachinesDetail = () => {
           title={formatMessage(messages.baseInfoWorkMachineTitle)}
           dataArray={chunk(
             [
-              workMachine?.type && {
-                title: labels.type,
-                value: workMachine.type,
-              },
-              workMachine?.status && {
-                title: labels.status,
-                value: workMachine.status,
-              },
-              workMachine?.category && {
-                title: labels.category,
-                value: workMachine.category,
-              },
-              workMachine?.productionNumber && {
-                title: labels.productionNumber,
-                value: workMachine.productionNumber,
-              },
-              workMachine?.subCategory && {
-                title: labels.subCategory,
-                value: workMachine.subCategory,
-              },
-              workMachine?.productionCountry && {
-                title: labels.productionCountry,
-                value: workMachine.productionCountry,
-              },
-              workMachine?.productionYear && {
-                title: labels.productionYear,
-                value: workMachine.productionYear.toString(),
-              },
-              workMachine?.importer && {
-                title: labels.importer,
-                value: workMachine.importer,
-              },
-              workMachine?.insurer && {
-                title: labels.insurer,
-                value: workMachine.insurer,
-              },
-              workMachine?.registrationDate && {
-                title: labels.registrationDate,
-                value: formatDate(workMachine.registrationDate),
-              },
-            ].filter(Boolean as unknown as ExcludesFalse),
+              workMachine?.type
+                ? {
+                    title: labels.type,
+                    value: workMachine.type,
+                  }
+                : undefined,
+              workMachine?.status
+                ? {
+                    title: labels.status,
+                    value: workMachine.status,
+                  }
+                : undefined,
+              workMachine?.category
+                ? {
+                    title: labels.category,
+                    value: workMachine.category,
+                  }
+                : undefined,
+              workMachine?.productionNumber
+                ? {
+                    title: labels.productionNumber,
+                    value: workMachine.productionNumber,
+                  }
+                : undefined,
+              workMachine?.subCategory
+                ? {
+                    title: labels.subCategory,
+                    value: workMachine.subCategory,
+                  }
+                : undefined,
+              workMachine?.productionCountry
+                ? {
+                    title: labels.productionCountry,
+                    value: workMachine.productionCountry,
+                  }
+                : undefined,
+              workMachine?.productionYear
+                ? {
+                    title: labels.productionYear,
+                    value: workMachine.productionYear.toString(),
+                  }
+                : undefined,
+              workMachine?.importer
+                ? {
+                    title: labels.importer,
+                    value: workMachine.importer,
+                  }
+                : undefined,
+              workMachine?.insurer
+                ? {
+                    title: labels.insurer,
+                    value: workMachine.insurer,
+                  }
+                : undefined,
+              workMachine?.registrationDate
+                ? {
+                    title: labels.registrationDate,
+                    value: formatDate(workMachine.registrationDate),
+                  }
+                : undefined,
+            ].filter(isDefined),
             2,
           )}
           mt
