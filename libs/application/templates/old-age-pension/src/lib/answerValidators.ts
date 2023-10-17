@@ -1,7 +1,7 @@
 import { AnswerValidator } from '@island.is/application/core'
 
 import { AnswerValidationConstants } from './constants'
-import { fileUploadPenEarlyFisher } from './answerValidationSections/fileUploadPenEarlyFisher'
+import { fileUpload } from './answerValidationSections/fileUpload'
 import { period } from './answerValidationSections/period'
 import { fileUploadHouseholdSupplement } from './answerValidationSections/fileUploadHouseholdSupplement'
 import { employment } from './answerValidationSections/employment'
@@ -12,7 +12,7 @@ import { validateLastestChild } from './answerValidationSections/validateLastest
 
 const {
   PERIOD,
-  FILEUPLOADPENEARLYFISHER,
+  FILEUPLOAD,
   FILEUPLOADHOUSEHOLDSUPPLEMENT,
   EMPLOYMENT,
   VALIDATE_LATEST_EMPLOYER,
@@ -25,7 +25,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
   [PERIOD]: period,
   [EMPLOYMENT]: employment,
   [VALIDATE_LATEST_EMPLOYER]: validateLastestEmployer,
-  [FILEUPLOADPENEARLYFISHER]: fileUploadPenEarlyFisher,
+  [FILEUPLOAD]: fileUpload,
   [FILEUPLOADHOUSEHOLDSUPPLEMENT]: fileUploadHouseholdSupplement,
   [FILEUPLOADCHILDPENSION]: fileUploadChildPension,
   [PAYMENTINFO]: paymentInfo,

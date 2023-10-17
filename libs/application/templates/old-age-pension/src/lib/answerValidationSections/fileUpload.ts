@@ -17,12 +17,12 @@ import {
 } from '../constants'
 import { buildError } from './utils'
 
-export const fileUploadPenEarlyFisher = (
+export const fileUpload = (
   newAnswer: unknown,
   application: Application,
 ) => {
   const obj = newAnswer as Record<string, Answer>
-  const { FILEUPLOADPENEARLYFISHER } = AnswerValidationConstants
+  const { FILEUPLOAD } = AnswerValidationConstants
 
   const { selectedMonth, selectedYear, applicationType } =
     getApplicationAnswers(application.answers)
@@ -44,7 +44,7 @@ export const fileUploadPenEarlyFisher = (
     if (isEmpty((obj as { pension: unknown[] }).pension)) {
       return buildError(
         validatorErrorMessages.requireAttachment,
-        `${FILEUPLOADPENEARLYFISHER}.pension`,
+        `${FILEUPLOAD}.pension`,
       )
     }
   }
@@ -57,7 +57,7 @@ export const fileUploadPenEarlyFisher = (
     if (isEmpty((obj as { earlyRetirement: unknown[] }).earlyRetirement)) {
       return buildError(
         validatorErrorMessages.requireAttachment,
-        `${FILEUPLOADPENEARLYFISHER}.earlyRetirement`,
+        `${FILEUPLOAD}.earlyRetirement`,
       )
     }
   }
@@ -66,7 +66,7 @@ export const fileUploadPenEarlyFisher = (
     if (isEmpty((obj as { fishermen: unknown[] }).fishermen)) {
       return buildError(
         validatorErrorMessages.requireAttachment,
-        `${FILEUPLOADPENEARLYFISHER}.fishermen`,
+        `${FILEUPLOAD}.fishermen`,
       )
     }
   }
