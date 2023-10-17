@@ -1,7 +1,6 @@
 import {
   buildAlertMessageField,
   buildDataProviderItem,
-  buildDataProviderPermissionItem,
   buildDescriptionField,
   buildExternalDataProvider,
   buildForm,

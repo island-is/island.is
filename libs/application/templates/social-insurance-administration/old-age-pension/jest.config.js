@@ -1,5 +1,6 @@
 module.exports = {
-  displayName: 'application-templates-social-insurance-administration-old-age-pension',
+  displayName:
+    'application-templates-social-insurance-administration-old-age-pension',
   preset: './jest.preset.js',
   rootDir: '../../../../..',
   roots: [__dirname],
