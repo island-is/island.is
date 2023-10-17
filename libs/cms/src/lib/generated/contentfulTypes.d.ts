@@ -8,7 +8,7 @@ export interface IAccordionSliceFields {
   title?: string | undefined
 
   /** Type */
-  type: 'accordion' | 'accordion_minimal' | 'CTA'
+  type: 'accordion' | 'accordion_minimal' | 'CTA' | 'category_card'
 
   /** Accordion Items */
   accordionItems?: IOneColumnText[] | undefined
@@ -1439,11 +1439,10 @@ export interface IIntroLinkImageFields {
   leftImage?: boolean | undefined
 
   /** Link Title */
-  linkTitle: string
+  linkTitle?: string | undefined
 
   /** Link */
-  link:
-    | IAboutSubPage
+  link?:
     | IArticle
     | IArticleCategory
     | ISubArticle
@@ -1452,9 +1451,10 @@ export interface IIntroLinkImageFields {
     | INews
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
+    | undefined
 
   /** Open Link in New Tab */
-  openLinkInNewTab: boolean
+  openLinkInNewTab?: boolean | undefined
 }
 
 export interface IIntroLinkImage extends Entry<IIntroLinkImageFields> {
@@ -2021,6 +2021,9 @@ export interface INewsFields {
 
   /** og:image */
   featuredImage?: Asset | undefined
+
+  /** Sign Language Video */
+  signLanguageVideo?: IEmbeddedVideo | undefined
 }
 
 export interface INews extends Entry<INewsFields> {
@@ -4016,6 +4019,7 @@ export interface IUrlFields {
     | IProjectPage
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
+    | IOrganizationPage
     | undefined
 
   /** Urls list */
@@ -4068,7 +4072,7 @@ export interface IVacancyFields {
     | 'Sumarstörf'
 
   /** Organization */
-  organization: IOrganization
+  organization?: IOrganization | undefined
 
   /** Locations */
   locations: (
@@ -4081,6 +4085,7 @@ export interface IVacancyFields {
     | 'Suðurland'
     | 'Vestfirðir'
     | 'Suðurnes'
+    | 'Erlendis'
   )[]
 
   /** Job Percentage */

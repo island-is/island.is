@@ -20,13 +20,13 @@ import * as styles from './DocumentLine.css'
 import { gql, useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../utils/messages'
-import { ActiveDocumentType } from '../../screens/Overview/Overview'
 import AvatarImage from './AvatarImage'
 import { useNavigate } from 'react-router-dom'
 import { DocumentsPaths } from '../../lib/paths'
 import { FavAndStash } from '../FavAndStash'
 import { useSubmitMailAction } from '../../utils/useSubmitMailAction'
 import { useIsChildFocusedorHovered } from '../../hooks/useIsChildFocused'
+import { ActiveDocumentType } from '../../lib/types'
 
 interface Props {
   documentLine: Document
