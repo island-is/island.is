@@ -661,6 +661,85 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
       },
+      [States.VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE]: {
+        entry: ['assignToVMST', 'removeNullPeriod'],
+        exit: ['clearAssignees', 'setPreviousState'],
+        meta: {
+          name: States.VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE,
+          status: 'inprogress',
+          actionCard: {
+            pendingAction: {
+              title: statesMessages.vinnumalastofnunApprovalDescription,
+              content: parentalLeaveFormMessages.reviewScreen.deptDesc,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage:
+                  statesMessages.vinnumalastofnunApprovalApproveHistoryLogMessage,
+              },
+              {
+                onEvent: PLEvents.ADDITIONALDOCUMENTSREQUIRED,
+                logMessage:
+                  statesMessages.additionalDocumentRequiredDescription,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage:
+                  parentalLeaveFormMessages.draftFlow.draftNotApprovedVMLSTDesc,
+              },
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: statesMessages.editHistoryLogMessage,
+              },
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage:
+                  statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage,
+              },
+            ],
+          },
+          lifecycle: pruneAfterDays(970),
+          progress: 0.75,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: { target: States.APPROVED },
+          ADDITIONALDOCUMENTSREQUIRED: {
+            target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
+          },
+          [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
+          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+          SUBMIT: [
+            {
+              cond: hasDateOfBirth,
+              target: States.RESIDENCE_GRAND_APPLICATION,
+            },
+            {
+              target: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
+            },
+          ],
+        },
+      },
       [States.VINNUMALASTOFNUN_ACTION]: {
         meta: {
           name: States.VINNUMALASTOFNUN_ACTION,
@@ -843,11 +922,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             {
               cond: (application) =>
-                goToState(application, States.VINNUMALASTOFNUN_APPROVAL),
-              target: States.VINNUMALASTOFNUN_APPROVAL,
+                goToState(application, States.VINNUMALASTOFNUN_APPROVAL) ||
+                goToState(
+                  application,
+                  States.VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE,
+                ),
+              target: States.VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE,
             },
             {
-              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS_ABORT,
             },
           ],
           APPROVE: {
@@ -918,11 +1001,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             {
               cond: (application) =>
-                goToState(application, States.VINNUMALASTOFNUN_APPROVAL),
-              target: States.VINNUMALASTOFNUN_APPROVAL,
+                goToState(application, States.VINNUMALASTOFNUN_APPROVAL) ||
+                goToState(
+                  application,
+                  States.VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE,
+                ),
+              target: States.VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE,
             },
             {
-              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS_ABORT,
             },
           ],
         },
@@ -1120,11 +1207,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             {
               cond: (application) =>
-                goToState(application, States.VINNUMALASTOFNUN_APPROVAL),
-              target: States.VINNUMALASTOFNUN_APPROVAL,
+                goToState(application, States.VINNUMALASTOFNUN_APPROVAL) ||
+                goToState(
+                  application,
+                  States.VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE,
+                ),
+              target: States.VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE,
             },
             {
-              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS_ABORT,
             },
           ],
         },
@@ -1420,6 +1511,95 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
       },
+      [States.VINNUMALASTOFNUN_APPROVE_EDITS_ABORT]: {
+        entry: [
+          'assignToVMST',
+          'removeNullPeriod',
+          'setHasAppliedForReidenceGrant',
+        ],
+        exit: [
+          'resetAdditionalDocumentsArray',
+          'clearAssignees',
+          'setPreviousState',
+        ],
+        meta: {
+          name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+          status: 'inprogress',
+          actionCard: {
+            pendingAction: {
+              title: statesMessages.vinnumalastofnunApprovalDescription,
+              content: statesMessages.vinnumalastofnunApproveEditsDescription,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage:
+                  statesMessages.vinnumalastofnunApprovalApproveHistoryLogMessage,
+              },
+              {
+                onEvent: PLEvents.ADDITIONALDOCUMENTSREQUIRED,
+                logMessage:
+                  statesMessages.additionalDocumentRequiredDescription,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage:
+                  statesMessages.vinnumalastofnunApproveEditsRejectHistoryLogMessage,
+              },
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: statesMessages.editHistoryLogMessage,
+              },
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage:
+                  statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage,
+              },
+            ],
+          },
+          lifecycle: pruneAfterDays(970),
+          progress: 0.75,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/EditsInReview').then((val) =>
+                  Promise.resolve(val.EditsInReview),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: { target: States.APPROVED },
+          ADDITIONALDOCUMENTSREQUIRED: {
+            target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
+          },
+          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+          [DefaultEvents.REJECT]: {
+            target: States.VINNUMALASTOFNUN_EDITS_ACTION,
+          },
+          SUBMIT: [
+            {
+              cond: hasDateOfBirth,
+              target: States.RESIDENCE_GRAND_APPLICATION,
+            },
+            {
+              target: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
+            },
+          ],
+        },
+      },
       [States.VINNUMALASTOFNUN_EDITS_ACTION]: {
         exit: 'restorePeriodsFromTemp',
         meta: {
@@ -1472,7 +1652,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             target: States.EDIT_OR_ADD_PERIODS,
           },
           [DefaultEvents.ABORT]: {
-            target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+            target: States.VINNUMALASTOFNUN_APPROVE_EDITS_ABORT,
           },
         },
       },
