@@ -65,9 +65,7 @@ export class VerificationService {
     email: string,
     codeLength: 3 | 6 = 6,
   ): Promise<EmailVerification | null> {
-    const emailCode = randomInt(0, Number('9'.repeat(codeLength)))
-      .toString()
-      .padStart(codeLength, '0')
+    const emailCode = this.generateVerificationCode(codeLength)
 
     const [record] = await this.emailVerificationModel.upsert(
       { nationalId, email, hash: emailCode, created: new Date() },
@@ -87,9 +85,7 @@ export class VerificationService {
     createSmsVerification: CreateSmsVerificationDto,
     codeLength: 3 | 6 = 6,
   ): Promise<SmsVerification | null> {
-    const code = randomInt(0, Number('9'.repeat(codeLength)))
-      .toString()
-      .padStart(codeLength, '0')
+    const code = this.generateVerificationCode(codeLength)
     const verification = {
       ...createSmsVerification,
       tries: 0,
@@ -348,5 +344,11 @@ export class VerificationService {
     await this.emailVerificationModel.destroy({
       where: { nationalId },
     })
+  }
+
+  private generateVerificationCode(length: number): string {
+    return randomInt(0, Number('9'.repeat(length)))
+      .toString()
+      .padStart(length, '0')
   }
 }

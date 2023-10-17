@@ -5,11 +5,10 @@ export class EmailConfirmationDto {
   @ApiProperty()
   @IsEmail()
   @IsNotEmpty()
-  email: string
+  readonly email!: string
 
   @ApiProperty()
   @IsString()
   @Length(3, 3)
-  @IsNotEmpty()
-  code: string
+  readonly code!: string
 }

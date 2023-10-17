@@ -4,10 +4,10 @@ import { IsString, Length } from 'class-validator'
 export class PhoneNumberConfirmationDto {
   @ApiProperty()
   @IsString()
-  phoneNumber: string
+  readonly phoneNumber!: string
 
   @ApiProperty()
   @IsString()
   @Length(3, 3)
-  code: string
+  readonly code!: string
 }

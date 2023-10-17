@@ -7,6 +7,7 @@ import { UserProfileDto } from './dto/user-profileDto'
 import { PatchUserProfileDto } from './dto/patch-user-profileDto'
 import { VerificationService } from '../user-profile/verification.service'
 import { UserProfile } from '../user-profile/userProfile.model'
+import { parsePhoneNumber } from 'libphonenumber-js'
 
 @Injectable()
 export class UserProfileService {
@@ -54,11 +55,21 @@ export class UserProfileService {
     const isEmailDefined = isDefined(userProfile.email)
     const isMobilePhoneNumberDefined = isDefined(userProfile.mobilePhoneNumber)
 
+    let parsedPhoneNumber = userProfile.mobilePhoneNumber
+    if (isMobilePhoneNumberDefined && userProfile.mobilePhoneNumber !== '') {
+      const tempPhoneNumber = parsePhoneNumber(
+        userProfile.mobilePhoneNumber,
+        'IS',
+      )
+      tempPhoneNumber.country === 'IS' &&
+        (parsedPhoneNumber = tempPhoneNumber.nationalNumber as string)
+    }
+
     const update: UserProfileDto = {
       nationalId,
       ...(isMobilePhoneNumberDefined && {
         mobilePhoneNumberVerified: false,
-        mobilePhoneNumber: userProfile.mobilePhoneNumber,
+        mobilePhoneNumber: parsedPhoneNumber,
       }),
       ...(isEmailDefined && {
         emailVerified: false,
@@ -80,7 +91,7 @@ export class UserProfileService {
       await this.verificationService.createSmsVerification(
         {
           nationalId,
-          mobilePhoneNumber: userProfile.mobilePhoneNumber,
+          mobilePhoneNumber: parsedPhoneNumber,
         },
         3,
       )
