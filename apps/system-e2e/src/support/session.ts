@@ -168,7 +168,7 @@ export async function judicialSystemSession({ browser }: { browser: Browser }) {
     if (cookies.length > 0) {
       break
     }
-    await sleep(5000)  // from ../utils.ts
+    await sleep(5000) // from ../utils.ts
   }
 
   return context
