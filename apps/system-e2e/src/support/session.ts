@@ -155,13 +155,26 @@ export async function session({
 
 export async function judicialSystemSession({ browser }: { browser: Browser }) {
   const context = await browser.newContext()
+
   const page = await context.newPage()
   const authUrlPrefix = urls.authUrl
-  await ensureCognitoSessionIfNeeded(
-    page,
-    JUDICIAL_SYSTEM_HOME_URL,
-    authUrlPrefix,
-  )
-  await page.close()
+
+  // Retry a few times in case login fails due to deployment not being ready
+  for (let i = 0; i < 5; i++) {
+    await ensureCognitoSessionIfNeeded(
+      page,
+      JUDICIAL_SYSTEM_HOME_URL,
+      authUrlPrefix,
+    )
+
+    const cookies = await context.cookies()
+
+    if (cookies.length > 0) {
+      break
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 5000))
+  }
+
   return context
 }
