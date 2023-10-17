@@ -3,7 +3,7 @@ import { existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
 import { cognitoLogin, idsLogin } from './login'
 import { JUDICIAL_SYSTEM_HOME_URL, urls } from './urls'
-import { debug } from './utils'
+import { debug, sleep } from './utils'
 
 export const sessionsPath = join(__dirname, 'tmp-sessions')
 if (!existsSync(sessionsPath)) {
