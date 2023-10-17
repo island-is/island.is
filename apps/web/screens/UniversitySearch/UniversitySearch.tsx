@@ -157,6 +157,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   useEffect(() => {
     const comp = localStorage.getItem('comparison')
     const viewChoice = localStorage.getItem('viewChoice')
+    const savedFilters = localStorage.getItem('savedFilters')
 
     if (comp) {
       const comparison = JSON.parse(comp)
@@ -165,6 +166,11 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
     if (viewChoice) {
       setGridView(viewChoice === 'true' ? true : false)
+    }
+
+    if (savedFilters) {
+      const parsedFilters = JSON.parse(savedFilters)
+      setFilters(parsedFilters)
     }
   }, [])
 
@@ -218,6 +224,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
       setFilteredResults(results)
     }
+    localStorage.setItem('savedFilters', JSON.stringify(filters))
   }, [filters, query])
 
   const resetFilteredList = () => {
