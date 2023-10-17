@@ -1,8 +1,5 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  useGetInsuranceConfirmationQuery,
-  useGetInsuranceOverviewQuery,
-} from './HealthOverview.generated'
+import { useGetInsuranceOverviewQuery } from './HealthOverview.generated'
 import {
   ErrorScreen,
   ICELAND_ID,
@@ -15,13 +12,16 @@ import {
   AlertMessage,
   Box,
   Button,
+  LinkV2,
   SkeletonLoader,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { useUserInfo } from '@island.is/auth/react'
 import { CONTENT_GAP, SECTION_GAP } from '../Medicine/constants'
-
+import { HealthPaths } from '../../lib/paths'
+import { PaymentTabs } from '../Payments/Payments'
+import { Link } from 'react-router-dom'
 export const HealthOverview = () => {
   useNamespaces('sp.health')
 
@@ -32,17 +32,6 @@ export const HealthOverview = () => {
 
   const insurance = data?.rightsPortalInsuranceOverview.items[0]
   const errors = data?.rightsPortalInsuranceOverview.errors
-
-  const {
-    data: file,
-    error: fileError,
-    loading: fileLoading,
-  } = useGetInsuranceConfirmationQuery()
-
-  const insuranceCertificate = file?.rightsPortalInsuranceConfirmation?.items[0]
-
-  const getDocumentLink = (data: string) =>
-    encodeURI(`data:application/pdf;base64,${data}`)
 
   if (error) {
     return (
@@ -67,7 +56,7 @@ export const HealthOverview = () => {
           serviceProviderID={ICELAND_ID}
         />
       </Box>
-      {loading || fileLoading ? (
+      {loading ? (
         <SkeletonLoader
           repeat={3}
           space={2}
@@ -112,23 +101,7 @@ export const HealthOverview = () => {
               <UserInfoLine
                 label={formatMessage(messages.hasHealthInsurance)}
                 content={
-                  <Box
-                    display="flex"
-                    justifyContent="spaceBetween"
-                    width="full"
-                  >
-                    <Text>
-                      {formatDateFns(insurance.updated, 'dd.MM.yyyy')}
-                    </Text>
-                    <Button
-                      size="small"
-                      variant="text"
-                      icon="open"
-                      iconType="outline"
-                    >
-                      {formatMessage(messages.seeCertificate)}
-                    </Button>
-                  </Box>
+                  <Text>{formatDateFns(insurance.updated, 'dd.MM.yyyy')}</Text>
                 }
               />
               <UserInfoLine
@@ -155,9 +128,32 @@ export const HealthOverview = () => {
               <UserInfoLine
                 label={formatMessage(messages.paymentTarget)}
                 content={
-                  formatMessage(messages.medicinePaymentPaidAmount, {
-                    amount: insurance.maximumPayment,
-                  }) ?? undefined
+                  <Box
+                    display="flex"
+                    width="full"
+                    justifyContent="spaceBetween"
+                  >
+                    <Text>
+                      {formatMessage(messages.medicinePaymentPaidAmount, {
+                        amount: insurance.maximumPayment,
+                      }) ?? undefined}
+                    </Text>
+                    <Link
+                      to={HealthPaths.HealthPaymentsWithHash.replace(
+                        ':hash',
+                        `#${PaymentTabs.PAYMENT_OVERVIEW}`,
+                      )}
+                    >
+                      <Button
+                        icon="open"
+                        iconType="outline"
+                        variant="text"
+                        size="small"
+                      >
+                        {formatMessage(messages.seeMore)}
+                      </Button>
+                    </Link>
+                  </Box>
                 }
               />
             </Stack>

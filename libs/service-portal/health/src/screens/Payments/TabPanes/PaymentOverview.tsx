@@ -116,9 +116,6 @@ export const PaymentOverview = () => {
                         {formatMessage(messages.totalPayment)}
                       </T.HeadData>
                       <T.HeadData>
-                        {formatMessage(messages.monthlyPaymentShort)}
-                      </T.HeadData>
-                      <T.HeadData>
                         {formatMessage(messages.insuranceShare)}
                       </T.HeadData>
                       <T.HeadData>

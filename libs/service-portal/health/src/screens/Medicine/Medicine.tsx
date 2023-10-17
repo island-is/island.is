@@ -13,10 +13,13 @@ const Medicine = () => {
   useNamespaces('sp.health')
 
   const { hash } = useLocation()
+  const hashValue = hash.split('#')[1]
 
   const { formatMessage } = useLocale()
   const [selectedTab, setSelectedTab] = useState<MedicineTabs>(
-    hash in MedicineTabs ? (hash as MedicineTabs) : MedicineTabs.BILLS,
+    Object.values(MedicineTabs).includes(hashValue as MedicineTabs)
+      ? (hashValue as MedicineTabs)
+      : MedicineTabs.BILLS,
   )
 
   // this ugly code is neccesary to make reakit tab component update its internal state

@@ -1,4 +1,4 @@
-import { lazy } from 'react'
+import { lazy, useEffect, useState } from 'react'
 import { Box, Button, LinkV2, Tabs, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
@@ -6,13 +6,14 @@ import {
   IntroHeader,
   SJUKRATRYGGINGAR_ID,
 } from '@island.is/service-portal/core'
+import { useLocation } from 'react-router-dom'
 
 const PaymentOverview = lazy(() => import('./TabPanes/PaymentOverview'))
 const PaymentParticipation = lazy(() =>
   import('./TabPanes/PaymentParticipation'),
 )
 
-export enum TabPanes {
+export enum PaymentTabs {
   PAYMENT_PARTICIPATION = 'participation',
   PAYMENT_OVERVIEW = 'overview',
 }
@@ -20,15 +21,31 @@ export enum TabPanes {
 export const Payments = () => {
   const { formatMessage } = useLocale()
 
+  const { hash } = useLocation()
+  const hashValue = hash.split('#')[1]
+
+  const [activeTab, setActiveTab] = useState<PaymentTabs>(
+    Object.values(PaymentTabs).includes(hashValue as PaymentTabs)
+      ? (hashValue as PaymentTabs)
+      : PaymentTabs.PAYMENT_PARTICIPATION,
+  )
+
+  // Needed to update internal state of tab component..
+  const [forceRerender, setForceRerender] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (forceRerender) setForceRerender(false)
+  }, [forceRerender])
+
   const tabs = [
     {
       label: formatMessage(messages.paymentParticipation),
-      id: TabPanes.PAYMENT_PARTICIPATION,
+      id: PaymentTabs.PAYMENT_PARTICIPATION,
       content: <PaymentParticipation />,
     },
     {
       label: formatMessage(messages.paymentOverview),
-      id: TabPanes.PAYMENT_OVERVIEW,
+      id: PaymentTabs.PAYMENT_OVERVIEW,
       content: <PaymentOverview />,
     },
   ]
@@ -47,13 +64,15 @@ export const Payments = () => {
           </Button>
         </LinkV2>
       </Box>
-      <Tabs
-        label={formatMessage(messages.payments)}
-        size="xs"
-        tabs={tabs}
-        onlyRenderSelectedTab={true}
-        selected={TabPanes.PAYMENT_PARTICIPATION}
-      />
+      {!forceRerender && (
+        <Tabs
+          label={formatMessage(messages.payments)}
+          size="xs"
+          tabs={tabs}
+          onlyRenderSelectedTab={true}
+          selected={activeTab}
+        />
+      )}
     </Box>
   )
 }
