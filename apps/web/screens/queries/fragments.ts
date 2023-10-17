@@ -727,10 +727,6 @@ export const slices = gql`
         height
       }
     }
-    readMoreText
-    readMoreLink {
-      url
-    }
   }
 
   fragment BaseSlices on Slice {

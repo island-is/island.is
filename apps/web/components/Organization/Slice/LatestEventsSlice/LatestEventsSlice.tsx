@@ -9,7 +9,9 @@ import {
 } from '@island.is/island-ui/core'
 import { EventSliceCard, GridItems } from '@island.is/web/components'
 import { LatestEventsSlice as LatestEventsSliceSchema } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useI18n } from '@island.is/web/i18n'
 
 interface LatestEventsSliceProps {
   slice: LatestEventsSliceSchema
@@ -24,9 +26,15 @@ export const LatestEventsSlice = ({
   slug,
   namespace,
 }: LatestEventsSliceProps) => {
+  const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-
+  const { activeLocale } = useI18n()
   const overviewHref = linkResolver('organizationeventoverview', [slug]).href
+
+  const seeMoreEventsText = n(
+    'seeMoreEvents',
+    activeLocale === 'is' ? 'Sjá fleiri viðburði' : 'View more events',
+  )
 
   return (
     slice.events?.length > 0 && (
@@ -44,7 +52,7 @@ export const LatestEventsSlice = ({
                   variant="text"
                   as="span"
                 >
-                  {slice.readMoreText}
+                  {seeMoreEventsText}
                 </Button>
               </LinkV2>
             </Box>
@@ -97,14 +105,14 @@ export const LatestEventsSlice = ({
               paddingTop={3}
               paddingBottom={5}
             >
-              <Link href={overviewHref} skipTab>
+              <Link href={overviewHref}>
                 <Button
                   icon="arrowForward"
                   iconType="filled"
                   variant="text"
                   as="span"
                 >
-                  {slice.readMoreText}
+                  {seeMoreEventsText}
                 </Button>
               </Link>
             </Box>

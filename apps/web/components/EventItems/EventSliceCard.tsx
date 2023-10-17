@@ -44,6 +44,7 @@ export const EventSliceCard: React.FC<
   return (
     <FocusableBox
       href={href}
+      overflow="hidden"
       display="flex"
       flexDirection="column"
       background="white"

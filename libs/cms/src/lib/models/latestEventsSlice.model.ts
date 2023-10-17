@@ -6,7 +6,6 @@ import { ILatestEventsSlice } from '../generated/contentfulTypes'
 import { mapOrganization } from './organization.model'
 import { GetEventsInput } from '../dto/getEvents.input'
 import { Event as EventModel } from './event.model'
-import { Link, mapLink } from './link.model'
 
 @ObjectType()
 export class LatestEventsSlice {
@@ -18,12 +17,6 @@ export class LatestEventsSlice {
 
   @CacheField(() => [EventModel])
   events!: GetEventsInput
-
-  @CacheField(() => Link, { nullable: true })
-  readMoreLink?: Link | null
-
-  @Field()
-  readMoreText?: string
 }
 
 export const mapLatestEventsSlice = ({
@@ -42,6 +35,4 @@ export const mapLatestEventsSlice = ({
       ? mapOrganization(fields.organization).slug
       : undefined,
   },
-  readMoreLink: fields.readMoreLink ? mapLink(fields.readMoreLink) : null,
-  readMoreText: fields.readMoreText ?? '',
 })

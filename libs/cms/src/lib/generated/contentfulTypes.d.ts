@@ -1532,12 +1532,6 @@ export interface ILatestEventsSliceFields {
 
   /** Organization */
   organization: IOrganization
-
-  /** Read more link */
-  readMoreLink?: ILink | undefined
-
-  /** Read more text */
-  readMoreText?: string | undefined
 }
 
 export interface ILatestEventsSlice extends Entry<ILatestEventsSliceFields> {

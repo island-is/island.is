@@ -1,17 +1,18 @@
 import React from 'react'
+
 import {
-  Text,
   Box,
   FocusableBox,
-  Stack,
   Hidden,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
-import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { Image } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 import * as styles from './EventCard.css'
-import { useI18n } from '@island.is/web/i18n'
-import { useNamespace } from '@island.is/web/hooks'
 
 interface EventCardProps {
   title: string
@@ -41,7 +42,6 @@ export const EventCard: React.FC<React.PropsWithChildren<EventCardProps>> = ({
   href,
   date,
   titleAs = 'h3',
-  mini,
 }) => {
   const { format } = useDateUtils()
   const { activeLocale } = useI18n()

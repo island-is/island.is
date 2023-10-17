@@ -58,7 +58,6 @@ export const mapEvent = ({ sys, fields }: IEvent): SystemMetadata<Event> => ({
     floor: '',
     postalCode: '',
   },
-
   content: fields.content
     ? mapDocument(fields.content, sys.id + ':content')
     : [],
