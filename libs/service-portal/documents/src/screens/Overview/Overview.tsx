@@ -61,6 +61,7 @@ export const ServicePortalDocuments = () => {
   const [page, setPage] = useState(1)
   const [selectedLines, setSelectedLines] = useState<Array<string>>([])
   const [documentDisplayError, setDocumentDisplayError] = useState<string>()
+  const [docLoading, setDocLoading] = useState(false)
   const [totalPages, setTotalPages] = useState<number>()
   const navigate = useNavigate()
   const location = useLocation()
@@ -443,6 +444,7 @@ export const ServicePortalDocuments = () => {
                     documentLine={doc}
                     onClick={setActiveDocument}
                     onError={(err) => setDocumentDisplayError(err)}
+                    onLoading={(l) => setDocLoading(l)}
                     active={doc.id === activeDocument?.id}
                     bookmarked={!!doc.bookmarked}
                     selected={selectedLines.includes(doc.id)}
@@ -499,6 +501,7 @@ export const ServicePortalDocuments = () => {
                 : documentDisplayError ?? undefined,
               code: error ? 'list' : 'single',
             }}
+            loading={docLoading}
           />
         </GridColumn>
       </GridRow>
