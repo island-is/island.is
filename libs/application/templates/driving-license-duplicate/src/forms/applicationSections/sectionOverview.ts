@@ -10,16 +10,15 @@ import {
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
-import {
-  DistrictCommissionerAgencies,
-  Jurisdiction,
-  NationalRegistryUser,
-} from '@island.is/api/schema'
+import { NationalRegistryUser } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
 import { allowFakeCondition } from '../../lib/utils'
 import { IGNORE, YES } from '../../lib/constants'
-import { DriversLicense } from '@island.is/clients/driving-license'
+import {
+  DriversLicense,
+  Jurisdiction,
+} from '@island.is/clients/driving-license'
 
 export const sectionOverview = buildSection({
   id: 'overview',

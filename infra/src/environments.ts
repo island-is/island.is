@@ -25,9 +25,6 @@ const dev01: EnvironmentConfig = {
         NO_UPDATE_NOTIFIER: 'true',
         AUDIT_GROUP_NAME: '/island-is/audit-log',
       },
-      image: {
-        tag: 'latest_master',
-      },
       initContainer: {
         env: {
           AWS_REGION: 'eu-west-1',
@@ -57,9 +54,6 @@ const staging01: EnvironmentConfig = {
         name: 'staging',
         NO_UPDATE_NOTIFIER: 'true',
         AUDIT_GROUP_NAME: '/island-is/audit-log',
-      },
-      image: {
-        tag: 'latest_master',
       },
       initContainer: {
         env: {
@@ -105,9 +99,6 @@ export let Envs: EnvironmentConfigs = {
           NO_UPDATE_NOTIFIER: 'true',
           AUDIT_GROUP_NAME: '/island-is/audit-log',
         },
-        image: {
-          tag: 'latest_master',
-        },
         initContainer: {
           env: {
             AWS_REGION: 'eu-west-1',
@@ -137,9 +128,6 @@ export let Envs: EnvironmentConfigs = {
           name: 'prod',
           NO_UPDATE_NOTIFIER: 'true',
           AUDIT_GROUP_NAME: '/identity-server/audit-log',
-        },
-        image: {
-          tag: 'latest_master',
         },
         initContainer: {
           env: {
