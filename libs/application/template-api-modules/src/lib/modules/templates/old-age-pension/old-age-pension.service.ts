@@ -296,14 +296,12 @@ export class OldAgePensionService extends BaseTemplateApiService {
   async sendApplication({ application, auth }: TemplateApiModuleActionProps) {
     try {
       const attachments = await this.getAttachments(application)
-      console.log('application',application)
 
       const oldAgePensionDTO = transformApplicationToOldAgePensionDTO(
         application,
         attachments,
       )
 
-      console.log('oldAgePensionDTO', oldAgePensionDTO)
       const response = await this.siaClientService.sendApplication(
         auth,
         oldAgePensionDTO,

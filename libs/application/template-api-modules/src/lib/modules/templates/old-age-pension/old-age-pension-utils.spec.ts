@@ -2,9 +2,13 @@ import { createApplication } from '@island.is/application/testing'
 import {
   getMonthNumber,
   initChildrens,
-  transformApplicationToOldAgePensionDTO
+  transformApplicationToOldAgePensionDTO,
 } from './old-age-pension-utils'
-import { ConnectedApplications, HouseholdSupplementHousing, YES } from '@island.is/application/templates/old-age-pension'
+import {
+  ConnectedApplications,
+  HouseholdSupplementHousing,
+  YES,
+} from '@island.is/application/templates/old-age-pension'
 
 describe('Old age pesion utils', () => {
   it('should return 3 for March', () => {
@@ -49,8 +53,7 @@ describe('Old age pesion utils', () => {
     expect(childrens).toHaveLength(2)
   })
 
-
-  it('should be Household renter, and childrenUnder18' , async () => {
+  it('should be Household renter, and childrenUnder18', async () => {
     const application = createApplication({
       answers: {
         connectedApplications: [ConnectedApplications.HOUSEHOLDSUPPLEMENT],
@@ -68,6 +71,4 @@ describe('Old age pesion utils', () => {
     expect(oldAgePensionDTO.householdSupplement?.isRental).toBeTruthy()
     expect(oldAgePensionDTO.householdSupplement?.childrenUnder18).toBeTruthy()
   })
-
-
 })

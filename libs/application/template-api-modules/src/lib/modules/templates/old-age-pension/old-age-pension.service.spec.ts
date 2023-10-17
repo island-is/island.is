@@ -60,7 +60,9 @@ describe('OldAgePensionService', () => {
     const application = createApplication({
       answers: {
         'period.year': '2023',
-        'fileUploadAdditionalFiles.additionalDocuments': [{key:'key', name:'name'}]
+        'fileUploadAdditionalFiles.additionalDocuments': [
+          { key: 'key', name: 'name' },
+        ],
       },
     })
 

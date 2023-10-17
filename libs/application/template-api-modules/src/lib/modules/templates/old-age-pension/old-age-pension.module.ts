@@ -7,7 +7,10 @@ import {
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
 
-import { APPLICATION_ATTACHMENT_BUCKET, OldAgePensionService } from './old-age-pension.service'
+import {
+  APPLICATION_ATTACHMENT_BUCKET,
+  OldAgePensionService,
+} from './old-age-pension.service'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 import { SocialInsuranceAdministrationClientModule } from '@island.is/clients/social-insurance-administration'
@@ -42,7 +45,8 @@ export class OldAgePensionModule {
         {
           provide: APPLICATION_ATTACHMENT_BUCKET,
           useFactory: () => config.attachmentBucket,
-        }],
+        },
+      ],
       exports: [OldAgePensionService],
     }
   }

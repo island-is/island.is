@@ -24,7 +24,14 @@ import {
   DefaultStateLifeCycle,
   coreHistoryMessages,
 } from '@island.is/application/core'
-import { Actions, ConnectedApplications, Events, NO, Roles, States } from './constants'
+import {
+  Actions,
+  ConnectedApplications,
+  Events,
+  NO,
+  Roles,
+  States,
+} from './constants'
 import { dataSchema } from './dataSchema'
 import { oldAgePensionFormMessage, statesMessages } from './messages'
 import { answerValidators } from './answerValidators'

@@ -1,4 +1,4 @@
-import { Application, YES } from '@island.is/application/types'
+import { Application, YES, YesOrNo } from '@island.is/application/types'
 import {
   ApplicationType,
   ConnectedApplications,
@@ -12,6 +12,7 @@ import {
   OldAgePension,
   Uploads,
 } from '@island.is/clients/social-insurance-administration'
+import { getValueViaPath } from '@island.is/application/core'
 
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
@@ -24,7 +25,6 @@ export const transformApplicationToOldAgePensionDTO = (
     applicantEmail,
     applicantPhonenumber,
     bank,
-    residenceHistoryQuestion,
     onePaymentPerYear,
     comment,
     connectedApplications,
@@ -40,6 +40,13 @@ export const transformApplicationToOldAgePensionDTO = (
     taxLevel,
   } = getApplicationAnswers(application.answers)
 
+  // If foreign residence is found then this is always true
+  const residenceHistoryQuestion = getValueViaPath(
+    application.answers,
+    'residenceHistory.question',
+    YES,
+  ) as YesOrNo
+
   const oldAgePensionDTO: OldAgePension = {
     applicationId: application.id,
     period: {
@@ -52,8 +59,9 @@ export const transformApplicationToOldAgePensionDTO = (
       taxLevel: +taxLevel,
       spouseAllowance: YES === spouseAllowance,
       personalAllowance: YES === personalAllowance,
-      spouseAllowanceUsage: +spouseAllowanceUsage || 0,
-      personalAllowanceUsage: +personalAllowanceUsage || 0,
+      spouseAllowanceUsage: YES === spouseAllowance ? +spouseAllowanceUsage : 0,
+      personalAllowanceUsage:
+        YES === personalAllowance ? +personalAllowanceUsage : 0,
     },
     applicantInfo: {
       email: applicantEmail,

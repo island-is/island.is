@@ -150,5 +150,5 @@ export enum RatioType {
 }
 
 export enum Actions {
-  SEND_APPLICATION = 'sendApplication'
+  SEND_APPLICATION = 'sendApplication',
 }

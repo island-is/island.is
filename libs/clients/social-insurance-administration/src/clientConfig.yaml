@@ -78,11 +78,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/OldAgePensionResponse'
         '500':
-            description: internal Error
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/OldAgePensionResponseError' 
+          description: internal Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OldAgePensionResponseError'
 components:
   securitySchemes:
     bearerAuth:
@@ -112,24 +112,24 @@ components:
           type: string
         period:
           $ref: '#/components/schemas/Period'
-        comment: 
+        comment:
           type: string
         paymentInfo:
           $ref: '#/components/schemas/PaymentInfo'
         applicantInfo:
           $ref: '#/components/schemas/ApplicantInfo'
-        applicationType: 
+        applicationType:
           type: int
-        hasAbroadResidence: 
+        hasAbroadResidence:
           type: boolean
-        hasOneTimePayment: 
+        hasOneTimePayment:
           type: boolean
         isSailorPension:
           type: boolean
         isEarlyPension:
           type: boolean
         householdSupplement:
-           $ref: '#/components/schemas/HouseholdSupplement'
+          $ref: '#/components/schemas/HouseholdSupplement'
         children:
           type: array
           items:
@@ -140,7 +140,7 @@ components:
             type: string
         uploads:
           $ref: '#/components/schemas/Uploads'
-         
+
     Period:
       type: object
       additionalProperties: false
@@ -163,15 +163,15 @@ components:
         - spouseAllowance
         - personalAllowance
       properties:
-        bank: 
+        bank:
           type: string
-        taxLevel: 
+        taxLevel:
           type: number
-        spouseAllowance: 
+        spouseAllowance:
           type: boolean
-        personalAllowance: 
+        personalAllowance:
           type: boolean
-        spouseAllowanceUsage: 
+        spouseAllowanceUsage:
           type: number
           format: float
         personalAllowanceUsage:
@@ -184,9 +184,9 @@ components:
         - email
         - phonenumber
       properties:
-        email: 
+        email:
           type: string
-        phonenumber: 
+        phonenumber:
           type: string
     HouseholdSupplement:
       type: object
@@ -195,9 +195,9 @@ components:
         - isRental
         - childrenUnder18
       properties:
-        isRental: 
+        isRental:
           type: boolean
-        childrenUnder18: 
+        childrenUnder18:
           type: boolean
     Child:
       type: object
@@ -248,14 +248,14 @@ components:
       additionalProperties: false
       required:
         - name
-        - type 
+        - type
         - file
       properties:
-        name: 
+        name:
           type: string
-        type: 
+        type:
           type: string
-        file: 
+        file:
           type: string
     OldAgePensionResponse:
       type: object
@@ -265,26 +265,26 @@ components:
     OldAgePensionResponseError:
       type: object
       properties:
-        code: 
+        code:
           type: number
-        message: 
+        message:
           type: string
         errors:
           type: array
           items:
-             $ref: '#/components/schemas/ErrorDetails'
+            $ref: '#/components/schemas/ErrorDetails'
     ErrorDetails:
       type: object
       properties:
         code:
           type: number
-        message: 
+        message:
           type: string
-        help: 
+        help:
           type: string
-        trackingId: 
+        trackingId:
           type: string
-        param: 
+        param:
           type: string
     Status:
       type: object
