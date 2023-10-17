@@ -69,6 +69,7 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.PASSPORT_ANNULMENT]: {
     slug: 'tilkynna-vegabref',
     translation: 'paa.application',
+    formType: ApplicationFormTypes.STATIC,
   },
   [ApplicationTypes.DRIVING_LEARNERS_PERMIT]: {
     slug: 'aefingaakstur',
