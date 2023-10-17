@@ -13,6 +13,8 @@ import {
   DefaultEvents,
   NationalRegistryUserApi,
   UserProfileApi,
+  ValidateCriminalRecordApi,
+  PaymentCatalogApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import {
@@ -147,7 +149,11 @@ const basicMachineConfig: MachineConfig<
             actions: [{ event: 'SUBMIT', name: 'Staðfesta', type: 'primary' }],
             write: 'all',
             read: 'all',
-            api: [NationalRegistryUserApi, UserProfileApi],
+            api: [
+              NationalRegistryUserApi,
+              UserProfileApi,
+              ValidateCriminalRecordApi,
+            ],
             delete: true,
           },
         ],
@@ -243,7 +249,12 @@ const paymentMachineConfig: MachineConfig<
             actions: [{ event: 'SUBMIT', name: 'Staðfesta', type: 'primary' }],
             write: 'all',
             read: 'all',
-            api: [NationalRegistryUserApi, UserProfileApi],
+            api: [
+              NationalRegistryUserApi,
+              UserProfileApi,
+              PaymentCatalogApi,
+              ValidateCriminalRecordApi,
+            ],
             delete: true,
           },
         ],

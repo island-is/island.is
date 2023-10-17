@@ -16,6 +16,8 @@ import { VehiclesModule } from './vehicles/vehicles.module'
 import { VehiclesService } from './vehicles/vehicles.service'
 import { PassportModule } from './passport/passport.module'
 import { PassportService } from './passport/passport.service'
+import { CriminalRecordProviderService } from './criminal-record/criminal-record.service'
+import { CriminalRecordProviderModule } from './criminal-record/criminal-record.module'
 
 export const modules = [
   NationalRegistryModule,
@@ -27,6 +29,7 @@ export const modules = [
   SyslumennModule,
   VehiclesModule,
   PassportModule,
+  CriminalRecordProviderModule,
 ]
 
 export const services = [
@@ -39,4 +42,5 @@ export const services = [
   SyslumennService,
   VehiclesService,
   PassportService,
+  CriminalRecordProviderService,
 ]
