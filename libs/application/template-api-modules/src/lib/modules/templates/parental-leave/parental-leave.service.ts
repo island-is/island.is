@@ -234,7 +234,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   async setBirthDate({ application }: TemplateApiModuleActionProps) {
     const { dateOfBirth } = getApplicationExternalData(application.externalData)
     if (dateOfBirth?.data?.dateOfBirth) {
-      return dateOfBirth?.data?.dateOfBirth
+      return { dateOfBirth: dateOfBirth?.data?.dateOfBirth }
     }
     /*
     If you want to MOCK getting dateOfBirth from API use this.
