@@ -10,10 +10,10 @@ import { createCurrentUser } from '@island.is/testing/fixtures'
 import { UserProfileScope } from '@island.is/auth/scopes'
 
 import { FixtureFactory } from './fixtureFactory'
-import { UserProfile } from '../userProfileV2.model'
 import { getModelToken } from '@nestjs/sequelize'
 import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
+import { UserProfile } from '../../user-profile/userProfile.model'
 
 const testUserProfile = {
   nationalId: '1234567890',
@@ -162,6 +162,99 @@ describe('MeUserProfile', () => {
           mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
           mobilePhoneNumberVerified: false,
           documentNotifications: true,
+          needsNudge: true,
+        })
+
+        await app.cleanUp()
+      },
+    )
+
+    it.each`
+      method   | endpoint
+      ${'GET'} | ${'/v2/me'}
+    `(
+      '$method $endpoint should return 200 with UserProfileDto for logged in user with no need for nudge',
+      async ({ method, endpoint }: TestEndpointOptions) => {
+        // Arrange
+        const app = await setupApp({
+          AppModule,
+          SequelizeConfigService,
+          user: createCurrentUser({
+            nationalId: testUserProfile.nationalId,
+            scope: [UserProfileScope.read],
+          }),
+        })
+
+        const fixtureFactory = new FixtureFactory(app)
+
+        await fixtureFactory.createUserProfile({
+          ...testUserProfile,
+          lastNudge: new Date(),
+        })
+
+        const server = request(app.getHttpServer())
+
+        // Act
+        const res = await getRequestMethod(server, method)(endpoint)
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toMatchObject({
+          nationalId: testUserProfile.nationalId,
+          email: testUserProfile.email,
+          emailVerified: false,
+          mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+          mobilePhoneNumberVerified: false,
+          documentNotifications: true,
+          needsNudge: false,
+        })
+
+        await app.cleanUp()
+      },
+    )
+
+    it.each`
+      method   | endpoint
+      ${'GET'} | ${'/v2/me'}
+    `(
+      '$method $endpoint should return 200 with UserProfileDto for logged in user with need for nudge since its been 6 months since last nudge',
+      async ({ method, endpoint }: TestEndpointOptions) => {
+        // Arrange
+        const app = await setupApp({
+          AppModule,
+          SequelizeConfigService,
+          user: createCurrentUser({
+            nationalId: testUserProfile.nationalId,
+            scope: [UserProfileScope.read],
+          }),
+        })
+
+        const fixtureFactory = new FixtureFactory(app)
+
+        const lastNudge = new Date().setMonth(new Date().getMonth() - 7)
+
+        await fixtureFactory.createUserProfile({
+          nationalId: testUserProfile.nationalId,
+          email: testUserProfile.email,
+          mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+          lastNudge: new Date(lastNudge),
+        })
+
+        const server = request(app.getHttpServer())
+
+        // Act
+        const res = await getRequestMethod(server, method)(endpoint)
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toMatchObject({
+          nationalId: testUserProfile.nationalId,
+          email: testUserProfile.email,
+          emailVerified: false,
+          mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+          mobilePhoneNumberVerified: false,
+          documentNotifications: true,
+          needsNudge: true,
         })
 
         await app.cleanUp()

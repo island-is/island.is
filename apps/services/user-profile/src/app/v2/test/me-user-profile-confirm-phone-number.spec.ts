@@ -10,7 +10,7 @@ import {
 } from '@island.is/testing/nest'
 
 import { FixtureFactory } from './fixtureFactory'
-import { UserProfile } from '../userProfileV2.model'
+import { UserProfile } from '../../user-profile/userProfile.model'
 import { SmsVerification } from '../../user-profile/smsVerification.model'
 import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'

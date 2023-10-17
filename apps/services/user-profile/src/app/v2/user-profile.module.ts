@@ -6,7 +6,7 @@ import { SmsModule } from '@island.is/nova-sms'
 
 import environment from '../../environments/environment'
 import { MeUserProfileController } from './me-user-profile.controller'
-import { UserProfile } from './userProfileV2.model'
+import { UserProfile } from '../user-profile/userProfile.model'
 import { UserProfileService } from './user-profile.service'
 import { EmailVerification } from '../user-profile/emailVerification.model'
 import { SmsVerification } from '../user-profile/smsVerification.model'

@@ -11,7 +11,7 @@ import {
 
 import { FixtureFactory } from './fixtureFactory'
 import { EmailVerification } from '../../user-profile/emailVerification.model'
-import { UserProfile } from '../userProfileV2.model'
+import { UserProfile } from '../../user-profile/userProfile.model'
 import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
 
@@ -212,7 +212,6 @@ describe('Email confirmation', () => {
           where: { nationalId: testEmailVerification.nationalId },
         })
 
-        console.log(emailVerification)
         expect(emailVerification.confirmed).toBe(false)
 
         // Assert that email is verified

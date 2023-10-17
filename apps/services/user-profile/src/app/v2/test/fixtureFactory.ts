@@ -3,10 +3,9 @@ import { getModelToken } from '@nestjs/sequelize'
 
 import { TestApp } from '@island.is/testing/nest'
 
-import { UserProfile } from '../../user-profile/userProfile.model'
-import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 import { EmailVerification } from '../../user-profile/emailVerification.model'
 import { SmsVerification } from '../../user-profile/smsVerification.model'
+import { UserProfile } from '../../user-profile/userProfile.model'
 
 export class FixtureFactory {
   constructor(private app: TestApp) {}
@@ -15,27 +14,25 @@ export class FixtureFactory {
     return this.app.get(getModelToken(model))
   }
 
-  async createUserProfile({
+  createUserProfile({
     nationalId,
-    email = '',
-    mobilePhoneNumber = '',
-    locale = '',
-    mobileStatus = DataStatus.NOT_DEFINED,
-    emailStatus = DataStatus.NOT_DEFINED,
+    email = null,
+    mobilePhoneNumber = null,
+    locale = null,
     mobilePhoneNumberVerified = false,
     emailVerified = false,
+    lastNudge = null,
   }) {
     const userProfileModel = this.get(UserProfile)
 
-    return userProfileModel.create({
+    return userProfileModel.create<UserProfile>({
       nationalId,
       email,
       mobilePhoneNumber,
       locale,
-      mobileStatus,
-      emailStatus,
       mobilePhoneNumberVerified,
       emailVerified,
+      lastNudge: lastNudge && lastNudge.toISOString(),
     })
   }
 

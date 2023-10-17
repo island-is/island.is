@@ -6,8 +6,8 @@ import { isDefined } from '@island.is/shared/utils'
 
 import { UserProfileDto } from './dto/user-profileDto'
 import { PatchUserProfileDto } from './dto/patch-user-profileDto'
-import { UserProfile } from './userProfileV2.model'
 import { VerificationService } from '../user-profile/verification.service'
+import { UserProfile } from '../user-profile/userProfile.model'
 
 @Injectable()
 export class UserProfileService {
@@ -32,7 +32,7 @@ export class UserProfileService {
         mobilePhoneNumberVerified: false,
         emailVerified: false,
         documentNotifications: true,
-        lastNudge: null,
+        needsNudge: true,
       }
     }
 
@@ -44,7 +44,7 @@ export class UserProfileService {
       mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
       emailVerified: userProfile.emailVerified,
       documentNotifications: userProfile.documentNotifications,
-      lastNudge: userProfile.lastNudge,
+      needsNudge: this.checkNeedsNudge(userProfile.lastNudge as Date),
     }
   }
 
@@ -63,7 +63,7 @@ export class UserProfileService {
     const isEmailDefined = isDefined(userProfile.email)
     const isMobilePhoneNumberDefined = isDefined(userProfile.mobilePhoneNumber)
 
-    const update = {
+    const update: UserProfileDto = {
       nationalId,
       ...(isMobilePhoneNumberDefined && {
         mobilePhoneNumberVerified: false,
@@ -73,12 +73,14 @@ export class UserProfileService {
         emailVerified: false,
         email: userProfile.email,
       }),
-      lastNudge: new Date(),
     }
 
-    await this.userProfileModel.update(update, {
-      where: { nationalId: nationalId },
-    })
+    await this.userProfileModel.update(
+      { ...update, lastNudge: new Date() },
+      {
+        where: { nationalId: nationalId },
+      },
+    )
 
     if (isEmailDefined && userProfile.email !== '') {
       await this.verificationService.createEmailVerification(
@@ -162,5 +164,16 @@ export class UserProfileService {
         where: { nationalId: nationalId },
       },
     )
+  }
+
+  private checkNeedsNudge(lastNudge: Date | null): boolean {
+    if (!lastNudge) {
+      return true
+    }
+
+    const sixMonthsAgoDate = new Date()
+    sixMonthsAgoDate.setMonth(sixMonthsAgoDate.getMonth() - 6)
+
+    return new Date(lastNudge) < sixMonthsAgoDate
   }
 }

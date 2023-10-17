@@ -1,12 +1,12 @@
 import {
   IsBoolean,
-  IsDate,
   IsEmail,
   IsEnum,
   IsOptional,
   IsString,
 } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+
 import { Locale } from '../../user-profile/types/localeTypes'
 
 export class UserProfileDto {
@@ -49,7 +49,8 @@ export class UserProfileDto {
   @IsString()
   readonly profileImageUrl?: string
 
+  @ApiPropertyOptional()
   @IsOptional()
-  @IsDate()
-  readonly lastNudge?: Date
+  @IsBoolean()
+  readonly needsNudge?: boolean
 }
