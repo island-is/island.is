@@ -8,7 +8,7 @@ export interface IAccordionSliceFields {
   title?: string | undefined
 
   /** Type */
-  type: 'accordion' | 'accordion_minimal' | 'CTA'
+  type: 'accordion' | 'accordion_minimal' | 'CTA' | 'category_card'
 
   /** Accordion Items */
   accordionItems?: IOneColumnText[] | undefined
