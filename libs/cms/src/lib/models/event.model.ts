@@ -23,7 +23,10 @@ export class Event {
   slug!: string
 
   @Field(() => String)
-  date!: string
+  startDate!: string
+
+  @Field(() => String)
+  endDate!: string
 
   @Field(() => GraphQLJSON)
   time!: { startTime: string; endTime: string }
@@ -47,26 +50,43 @@ export class Event {
   featuredImage?: Image | null
 }
 
-export const mapEvent = ({ sys, fields }: IEvent): SystemMetadata<Event> => ({
-  typename: 'Event',
-  id: sys.id,
-  title: fields.title ?? '',
-  date: fields.startDate ?? '',
-  time: (fields.time as Event['time']) ?? { startTime: '', endTime: '' },
-  location: (fields.location as Event['location']) ?? {
-    streetAddress: '',
-    floor: '',
-    postalCode: '',
-  },
-  content: fields.content
-    ? mapDocument(fields.content, sys.id + ':content')
-    : [],
-  video: fields.video ? mapEmbeddedVideo(fields.video) : null,
-  image: fields.image ? mapImage(fields.image) : null,
-  slug: fields.slug ?? '',
-  featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
-  fullWidthImageInContent: fields.fullWidthImageInContent ?? true,
-  organization: fields.organization
-    ? mapOrganization(fields.organization)
-    : null,
-})
+export const mapEvent = ({ sys, fields }: IEvent): SystemMetadata<Event> => {
+  let endDate = ''
+
+  // TODO: verify this works
+  if (fields.startDate && fields.location?.endTime) {
+    const date = new Date(fields.startDate)
+
+    const [hours, minutes] = fields.location.endTime.split(':')
+
+    date.setHours(Number(hours))
+    date.setMinutes(Number(minutes))
+
+    endDate = date.getTime().toString()
+  }
+
+  return {
+    typename: 'Event',
+    id: sys.id,
+    title: fields.title ?? '',
+    startDate: fields.startDate ?? '',
+    endDate,
+    time: (fields.time as Event['time']) ?? { startTime: '', endTime: '' },
+    location: (fields.location as Event['location']) ?? {
+      streetAddress: '',
+      floor: '',
+      postalCode: '',
+    },
+    content: fields.content
+      ? mapDocument(fields.content, sys.id + ':content')
+      : [],
+    video: fields.video ? mapEmbeddedVideo(fields.video) : null,
+    image: fields.image ? mapImage(fields.image) : null,
+    slug: fields.slug ?? '',
+    featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
+    fullWidthImageInContent: fields.fullWidthImageInContent ?? true,
+    organization: fields.organization
+      ? mapOrganization(fields.organization)
+      : null,
+  }
+}

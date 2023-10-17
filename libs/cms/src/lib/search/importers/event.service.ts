@@ -61,9 +61,9 @@ export class EventSyncService implements CmsSyncProvider<IEvent> {
             termPool: createTerms([mapped.title]),
             response: JSON.stringify({ ...mapped, typename: 'Event' }),
             tags,
-            dateCreated: mapped.date,
+            dateCreated: mapped.startDate,
             dateUpdated: new Date().getTime().toString(),
-            releaseDate: entry.sys.createdAt,
+            releaseDate: mapped.endDate || mapped.startDate,
           }
         } catch (error) {
           logger.warn('Failed to import Event', {

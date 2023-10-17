@@ -125,6 +125,9 @@ export class CmsElasticsearchService {
       ...tagQuery,
       page,
       size,
+      releaseDate: {
+        to: 'now',
+      },
     }
 
     const eventsResponse = await this.elasticService.getDocumentsByMetaData(
