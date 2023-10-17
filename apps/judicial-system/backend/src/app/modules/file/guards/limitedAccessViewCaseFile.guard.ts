@@ -9,12 +9,12 @@ import {
 import {
   CaseFileCategory,
   completedCaseStates,
+  defenderCaseFileCategoriesForIndictmentCases,
+  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
   indictmentCases,
   investigationCases,
   isDefenceUser,
   isPrisonSystemUser,
-  limitedAccessCaseFileCategoriesForIndictmentCases,
-  limitedAccessCaseFileCategoriesForRestrictionAndInvestigationCases,
   restrictionCases,
   User,
 } from '@island.is/judicial-system/types'
@@ -49,7 +49,7 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
       if (isDefenceUser(user)) {
         if (
           [...restrictionCases, ...investigationCases].includes(theCase.type) &&
-          limitedAccessCaseFileCategoriesForRestrictionAndInvestigationCases.includes(
+          defenderCaseFileCategoriesForRestrictionAndInvestigationCases.includes(
             caseFile.category,
           )
         ) {
@@ -58,7 +58,7 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
 
         if (
           indictmentCases.includes(theCase.type) &&
-          limitedAccessCaseFileCategoriesForIndictmentCases.includes(
+          defenderCaseFileCategoriesForIndictmentCases.includes(
             caseFile.category,
           )
         ) {
