@@ -9,7 +9,10 @@ export const B_FULL = 'B-full'
 export const B_TEMP = 'B-temp'
 export const B_RENEWAL = 'B-renewal'
 
-export type DrivingLicenseApplicationFor = typeof B_FULL | typeof B_TEMP
+export type DrivingLicenseApplicationFor =
+  | typeof B_FULL
+  | typeof B_TEMP
+  | typeof B_RENEWAL
 
 export type Events =
   | { type: DefaultEvents.SUBMIT }
