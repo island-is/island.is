@@ -7,7 +7,7 @@ import {
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
 
-import { OldAgePensionService } from './old-age-pension.service'
+import { OldAgePensionService } from './social-insurance-administration.service'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 import { SocialInsuranceAdministrationClientModule } from '@island.is/clients/social-insurance-administration'

@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { OldAgePensionService } from './old-age-pension.service'
+import { OldAgePensionService } from './social-insurance-administration.service'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { createApplication } from '@island.is/application/testing'
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
