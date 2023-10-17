@@ -10,24 +10,24 @@ import {
   NavigationItem,
   Text,
 } from '@island.is/island-ui/core'
-import { LinkType, useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import {
   getThemeConfig,
-  SliceMachine,
-  OrganizationWrapper,
   IconTitleCard,
+  OrganizationWrapper,
+  SliceMachine,
 } from '@island.is/web/components'
-import { CustomNextError } from '@island.is/web/units/errors'
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
+import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
 
-import { Screen } from '../../../types'
+import type { Screen } from '../../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
