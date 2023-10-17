@@ -156,7 +156,6 @@ export class RightsPortalResolver {
     return this.rightsPortalService.getDentistStatus(user)
   }
 
-  @FeatureFlag(Features.servicePortalTransferHealthCenter)
   @Scopes(ApiScope.health)
   @Mutation(() => RegisterDentistResponse, {
     name: 'rightsPortalRegisterDentist',
@@ -187,7 +186,6 @@ export class RightsPortalResolver {
   @Mutation(() => HealthCenterResponse, {
     name: 'rightsPortalTransferHealthCenter',
   })
-  @FeatureFlag(Features.servicePortalTransferHealthCenter)
   @Audit()
   transferHealthCenter(@CurrentUser() user: User, @Args('id') id: string) {
     return this.rightsPortalService.transferHealthCenter(user, id)

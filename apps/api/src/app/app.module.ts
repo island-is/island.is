@@ -35,21 +35,20 @@ import { OccupationalLicensesModule } from '@island.is/api/domains/occupational-
 import { HealthInsuranceModule } from '@island.is/api/domains/health-insurance'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import {
+  FirearmDigitalLicenseClientConfig,
+  DisabilityDigitalLicenseClientConfig,
+  AdrDigitalLicenseClientConfig,
+  MachineDigitalLicenseClientConfig,
+  DrivingDigitalLicenseClientConfig,
+} from '@island.is/clients/license-client'
+import {
   CommunicationsConfig,
   CommunicationsModule,
 } from '@island.is/api/domains/communications'
 import { IdentityModule } from '@island.is/api/domains/identity'
 import { NationalRegistrySoffiaClientConfig } from '@island.is/clients/national-registry-v1'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
-import {
-  GenericAdrLicenseConfig,
-  GenericDisabilityLicenseConfig,
-  GenericDrivingLicenseConfig,
-  GenericFirearmLicenseConfig,
-  GenericMachineLicenseConfig,
-  OldGenericDrivingLicenseConfig,
-  LicenseServiceModule,
-} from '@island.is/api/domains/license-service'
+import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
@@ -138,6 +137,7 @@ import { GraphQLConfig } from './graphql.config'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
 import { MMSClientConfig } from '@island.is/clients/mms'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
+import { PCardClientConfig } from '@island.is/clients/p-card'
 
 const environment = getConfig
 
@@ -286,21 +286,21 @@ const environment = getConfig
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
-        AdrAndMachineLicenseClientConfig,
         WorkMachinesClientConfig,
         AirDiscountSchemeClientConfig,
         ConsultationPortalClientConfig,
         AssetsClientConfig,
+        PCardClientConfig,
+        AdrAndMachineLicenseClientConfig,
         NationalRegistrySoffiaClientConfig,
         NationalRegistryV3ClientConfig,
         FirearmLicenseClientConfig,
         DisabilityLicenseClientConfig,
-        GenericFirearmLicenseConfig,
-        GenericMachineLicenseConfig,
-        GenericAdrLicenseConfig,
-        GenericDrivingLicenseConfig,
-        OldGenericDrivingLicenseConfig,
-        GenericDisabilityLicenseConfig,
+        AdrDigitalLicenseClientConfig,
+        FirearmDigitalLicenseClientConfig,
+        DisabilityDigitalLicenseClientConfig,
+        MachineDigitalLicenseClientConfig,
+        DrivingDigitalLicenseClientConfig,
         GraphQLConfig,
         VehiclesClientConfig,
         RightsPortalClientConfig,
@@ -327,7 +327,6 @@ const environment = getConfig
         FileStorageConfig,
         FiskistofaClientConfig,
         ChargeFjsV2ClientConfig,
-        DisabilityLicenseClientConfig,
         ZenterSignupConfig,
         PaymentScheduleClientConfig,
         JudicialAdministrationClientConfig,

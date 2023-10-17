@@ -323,6 +323,7 @@ api:
     XROAD_CRIMINAL_RECORD_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2'
     XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1'
     XROAD_DISABILITY_LICENSE_PATH: 'IS-DEV/GOV/10008/TR-Protected/oryrki-v1'
+    XROAD_DISTRICT_COMMISSIONERS_PATH: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur'
     XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2'
@@ -1445,8 +1446,6 @@ global:
     NO_UPDATE_NOTIFIER: 'true'
     PORT: '3333'
     name: 'dev'
-  image:
-    tag: 'latest_master'
   initContainer:
     env:
       AWS_REGION: 'eu-west-1'
@@ -2292,7 +2291,10 @@ services-sessions:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-services-sessions-geoip-worker:
+services-sessions-geoip-job:
+  annotations:
+    helm.sh/hook: 'pre-install,pre-upgrade'
+    helm.sh/hook-delete-policy: 'before-hook-creation,hook-succeeded'
   args:
     - './node_modules/geoip-lite/scripts/updatedb.js'
     - 'license_key=$(GEOIP_LICENSE_KEY)'
@@ -2302,8 +2304,7 @@ services-sessions-geoip-worker:
   env:
     GEODATADIR: '/geoip-lite/data'
     GEOTMPDIR: '/geoip-lite/data/tmp'
-    NODE_OPTIONS: '--max-old-space-size=1'
-    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    NODE_OPTIONS: '--max-old-space-size=921'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -2345,11 +2346,11 @@ services-sessions-geoip-worker:
     min: 1
   resources:
     limits:
-      cpu: '1'
-      memory: '2Gi'
+      cpu: '500m'
+      memory: '1Gi'
     requests:
-      cpu: '1'
-      memory: '2Gi'
+      cpu: '500m'
+      memory: '500Mi'
   schedule: '0 0 * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
