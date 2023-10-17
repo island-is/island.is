@@ -20,7 +20,7 @@ interface UserProvider {
 
 export const UserContext = createContext<UserProvider>({})
 
-// Setting authenticated to true forces current user query in tests
+// Setting authenticated to true forces current user query in unit tests
 interface Props {
   authenticated?: boolean
 }
@@ -53,10 +53,10 @@ export const UserProvider: React.FC<React.PropsWithChildren<Props>> = ({
       value={{
         isAuthenticated,
         limitedAccess:
-          !user ||
-          (!isProsecutionUser(user as TUser) &&
-            !isDistrictCourtUser(user as TUser) &&
-            !isAppealsCourtUser(user as TUser)),
+          user && // Needed for e2e tests as they do not have a logged in user
+          !isProsecutionUser(user as TUser) &&
+          !isDistrictCourtUser(user as TUser) &&
+          !isAppealsCourtUser(user as TUser),
         user,
       }}
     >
