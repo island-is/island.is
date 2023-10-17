@@ -159,7 +159,7 @@ export async function judicialSystemSession({ browser }: { browser: Browser }) {
   const page = await context.newPage()
   const authUrlPrefix = urls.authUrl
 
-  // Retry a few times in case login fails due to deployment not being ready
+  // Retry a few times in case login fails due to deployment not being stable
   for (let i = 0; i < 5; i++) {
     await ensureCognitoSessionIfNeeded(
       page,

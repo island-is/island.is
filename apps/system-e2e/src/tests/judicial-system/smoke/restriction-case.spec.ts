@@ -17,12 +17,8 @@ test.describe('Restriction case', () => {
   test.afterAll(async () => await context.close())
 
   test('should have a table visible on the screen', async () => {
-    const isLoggedIn = (await context.cookies()).length > 0
-
-    if (isLoggedIn) {
-      const page = await context.newPage()
-      page.goto('/krofur')
-      await expect(page.getByRole('table')).toHaveCount(2)
-    }
+    const page = await context.newPage()
+    page.goto('/krofur')
+    await expect(page.getByRole('table')).toHaveCount(2)
   })
 })
