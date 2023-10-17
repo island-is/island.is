@@ -14,6 +14,7 @@ import { getModelToken } from '@nestjs/sequelize'
 import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { UserProfile } from '../../user-profile/userProfile.model'
+import { VerificationService } from '../../user-profile/verification.service'
 
 const testUserProfile = {
   nationalId: '1234567890',
@@ -162,7 +163,7 @@ describe('MeUserProfile', () => {
           mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
           mobilePhoneNumberVerified: false,
           documentNotifications: true,
-          needsNudge: true,
+          needsNudge: null,
         })
 
         await app.cleanUp()
@@ -279,6 +280,11 @@ describe('MeUserProfile', () => {
           }),
         })
 
+        // Mock confirmation email and sms
+        const verificationService = app.get(VerificationService)
+        verificationService.sendConfirmationEmail = jest.fn()
+        verificationService.sendConfirmationSms = jest.fn()
+
         const fixtureFactory = new FixtureFactory(app)
 
         await fixtureFactory.createUserProfile(testUserProfile)
@@ -328,6 +334,11 @@ describe('MeUserProfile', () => {
             scope: [UserProfileScope.read, UserProfileScope.write],
           }),
         })
+
+        // Mock confirmation email and sms
+        const verificationService = app.get(VerificationService)
+        verificationService.sendConfirmationEmail = jest.fn()
+        verificationService.sendConfirmationSms = jest.fn()
 
         const fixtureFactory = new FixtureFactory(app)
 
@@ -379,6 +390,11 @@ describe('MeUserProfile', () => {
           }),
         })
 
+        // Mock confirmation email and sms
+        const verificationService = app.get(VerificationService)
+        verificationService.sendConfirmationEmail = jest.fn()
+        verificationService.sendConfirmationSms = jest.fn()
+
         const fixtureFactory = new FixtureFactory(app)
 
         await fixtureFactory.createUserProfile(testUserProfile)
@@ -426,6 +442,11 @@ describe('MeUserProfile', () => {
             scope: [UserProfileScope.read, UserProfileScope.write],
           }),
         })
+
+        // Mock confirmation email and sms
+        const verificationService = app.get(VerificationService)
+        verificationService.sendConfirmationEmail = jest.fn()
+        verificationService.sendConfirmationSms = jest.fn()
 
         const fixtureFactory = new FixtureFactory(app)
 
@@ -479,6 +500,10 @@ describe('MeUserProfile', () => {
         })
 
         const server = request(app.getHttpServer())
+
+        const verificationService = app.get(VerificationService)
+        verificationService.sendConfirmationEmail = jest.fn()
+        verificationService.sendConfirmationSms = jest.fn()
 
         // Act
         // const res = await getRequestMethod(server, method)(endpoint)

@@ -55,5 +55,5 @@ export class UserProfileDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
-  readonly needsNudge?: boolean
+  readonly needsNudge?: boolean | null
 }

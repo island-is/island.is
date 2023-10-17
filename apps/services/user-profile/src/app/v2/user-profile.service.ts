@@ -152,7 +152,7 @@ export class UserProfileService {
 
   private checkNeedsNudge(lastNudge: Date | null): boolean {
     if (!lastNudge) {
-      return true
+      return null
     }
 
     const sixMonthsAgoDate = new Date()
