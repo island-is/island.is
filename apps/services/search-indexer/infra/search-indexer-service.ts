@@ -29,7 +29,7 @@ const envs = {
 }
 export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
   service('search-indexer-service')
-    .image({name: 'services-search-indexer'})
+    .image({ name: 'services-search-indexer' })
     .namespace('search-indexer')
     .serviceAccount('search-indexer')
     .secrets({

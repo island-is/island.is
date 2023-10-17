@@ -4,7 +4,7 @@ import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 export const serviceSetup = (): ServiceBuilder<'xroad-collector'> =>
   service('xroad-collector')
     .namespace('xroad-collector')
-    .image({name: 'services-xroad-collector'})
+    .image({ name: 'services-xroad-collector' })
     .serviceAccount()
     .env({
       NODE_TLS_REJECT_UNAUTHORIZED: '0',
