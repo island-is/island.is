@@ -43,7 +43,7 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
 import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
-import type { Screen } from '../../types'
+import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
