@@ -70,6 +70,7 @@ export enum States {
   EMPLOYER_ACTION = 'employerRequiresAction',
 
   VINNUMALASTOFNUN_APPROVAL = 'vinnumalastofnunApproval',
+  VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE = 'vinnumalastofnunApprovalAbortChange',
   VINNUMALASTOFNUN_ACTION = 'vinnumalastofnunRequiresAction',
 
   ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired',
@@ -86,6 +87,7 @@ export enum States {
   EMPLOYER_EDITS_ACTION = 'employerRequiresActionOnEdits',
 
   VINNUMALASTOFNUN_APPROVE_EDITS = 'vinnumalastofnunApproveEdits',
+  VINNUMALASTOFNUN_APPROVE_EDITS_ABORT = 'vinnumalastofnunApproveEditsAbort',
   VINNUMALASTOFNUN_EDITS_ACTION = 'vinnumalastofnunRequiresActionOnEdits',
 
   RESIDENCE_GRAND_APPLICATION = 'residenceGrantApplication',

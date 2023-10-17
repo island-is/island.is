@@ -172,8 +172,6 @@ const OrganizationHomePage: Screen<HomeProps> = ({
             </GridContainer>
           )}
           {organizationPage?.slices?.map((slice, index) => {
-            const digitalIcelandDetailPageLinkType: LinkType =
-              'digitalicelandservicesdetailpage'
             return (
               <SliceMachine
                 key={slice.id}
@@ -186,12 +184,6 @@ const OrganizationHomePage: Screen<HomeProps> = ({
                 marginBottom={
                   index === organizationPage.slices.length - 1 ? 5 : 0
                 }
-                params={{
-                  anchorPageLinkType:
-                    organizationPage.theme === 'digital_iceland'
-                      ? digitalIcelandDetailPageLinkType
-                      : undefined,
-                }}
                 paddingTop={
                   !organizationPage.description && index === 0 ? 0 : 6
                 }

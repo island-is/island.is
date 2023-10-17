@@ -389,7 +389,7 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
   )
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, assistantRule)
   @Get('case/:caseId/request')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -461,7 +461,13 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
   )
-  @RolesRules(prosecutorRule, judgeRule, registrarRule, prisonSystemStaffRule)
+  @RolesRules(
+    prosecutorRule,
+    judgeRule,
+    registrarRule,
+    prisonSystemStaffRule,
+    assistantRule,
+  )
   @Get('case/:caseId/courtRecord')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -490,7 +496,13 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
   )
-  @RolesRules(prosecutorRule, judgeRule, registrarRule, prisonSystemStaffRule)
+  @RolesRules(
+    prosecutorRule,
+    judgeRule,
+    registrarRule,
+    prisonSystemStaffRule,
+    assistantRule,
+  )
   @Get('case/:caseId/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({

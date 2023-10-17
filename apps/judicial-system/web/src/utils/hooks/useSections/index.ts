@@ -39,6 +39,7 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
 import { isTrafficViolationCase } from '../../stepHelper'
+import useStringHelpers from '../useStringHelpers/useStringHelpers'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
@@ -67,6 +68,7 @@ const useSections = (
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { features } = useContext(FeatureContext)
+  const { getAppealResultText } = useStringHelpers()
 
   const getRestrictionCaseProsecutorSection = (
     workingCase: Case,
@@ -84,7 +86,6 @@ const useSections = (
              */
             (route) => route === router.pathname.slice(0, -5),
           )
-
     return {
       name: formatMessage(sections.restrictionCaseProsecutorSection.caseTitle, {
         caseType: type,
@@ -1192,7 +1193,7 @@ const useSections = (
   }
 
   const getCourtOfAppealSections = (workingCase: Case, user?: User) => {
-    const { id } = workingCase
+    const { id, appealRulingDecision, appealState } = workingCase
     const routeIndex = courtOfAppealRoutes.findIndex(
       /**
        * We do .slice here because router.pathname is /something/[:id]
@@ -1258,7 +1259,10 @@ const useSections = (
         ],
       },
       {
-        name: formatMessage(sections.caseResults.result),
+        name:
+          appealState === CaseAppealState.COMPLETED
+            ? getAppealResultText(appealRulingDecision)
+            : formatMessage(sections.caseResults.result),
         isActive:
           routeIndex === 3 ||
           workingCase.appealState === CaseAppealState.COMPLETED,
@@ -1348,13 +1352,10 @@ const useSections = (
             },
           ]
         : []),
-      ...(!features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS)
+      ...(!features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) ||
+      !workingCase.appealState
         ? []
-        : isRestrictionCase(workingCase.type) && workingCase.appealState
-        ? getCourtOfAppealSections(workingCase, user)
-        : isInvestigationCase(workingCase.type) && workingCase.appealState
-        ? getCourtOfAppealSections(workingCase, user)
-        : []),
+        : getCourtOfAppealSections(workingCase, user)),
     ]
   }
 

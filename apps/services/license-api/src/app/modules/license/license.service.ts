@@ -14,14 +14,13 @@ import {
   RevokeLicenseResponse,
 } from './dto'
 import { Pass, PassDataInput, Result } from '@island.is/clients/smartsolutions'
+import { ErrorType, LicenseId } from './license.types'
 import {
-  CLIENT_FACTORY,
-  ErrorType,
-  GenericLicenseClient,
-  LicenseId,
-  PASS_TEMPLATE_IDS,
-} from './license.types'
-import type { PassTemplateIds } from './license.types'
+  BaseLicenseUpdateClient,
+  LicenseType,
+  LicenseUpdateClientService,
+} from '@island.is/clients/license-client'
+import { mapLicenseIdToLicenseType } from './utils/mapLicenseId'
 
 const LOG_CATEGORY = 'license-api'
 
@@ -29,11 +28,7 @@ const LOG_CATEGORY = 'license-api'
 export class LicenseService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    @Inject(PASS_TEMPLATE_IDS) private config: PassTemplateIds,
-    @Inject(CLIENT_FACTORY)
-    private clientFactory: (
-      licenseId: LicenseId,
-    ) => Promise<GenericLicenseClient>,
+    private readonly clientService: LicenseUpdateClientService,
   ) {}
 
   private getErrorTypeByCode = (code: number): ErrorType =>
@@ -46,8 +41,54 @@ export class LicenseService {
       : new InternalServerErrorException([details ?? 'Unknown error'])
   }
 
+  private async getClientByLicenseId(
+    licenseId: LicenseId,
+  ): Promise<BaseLicenseUpdateClient> {
+    const type = mapLicenseIdToLicenseType(licenseId)
+
+    if (!type) {
+      this.logger.error(`Invalid license type`, {
+        category: LOG_CATEGORY,
+        type,
+      })
+      throw new InternalServerErrorException(`Invalid license type`)
+    }
+
+    const service = await this.clientService.getLicenseUpdateClientByType(
+      type as LicenseType,
+    )
+
+    if (!service) {
+      this.logger.error(`Client service generation failed`, {
+        category: LOG_CATEGORY,
+        type,
+      })
+      throw new InternalServerErrorException(`Client service generation failed`)
+    }
+
+    return service
+  }
+
+  private async getClientByPassTemplateId(
+    passTemplateId: string,
+  ): Promise<BaseLicenseUpdateClient> {
+    const service =
+      await this.clientService.getLicenseUpdateClientByPassTemplateId(
+        passTemplateId,
+      )
+
+    if (!service) {
+      this.logger.error(`Client service generation failed`, {
+        category: LOG_CATEGORY,
+      })
+      throw new InternalServerErrorException(`Client service generation failed`)
+    }
+
+    return service
+  }
+
   private async pushUpdateLicense(
-    service: GenericLicenseClient,
+    service: BaseLicenseUpdateClient,
     expirationDate: string,
     nationalId: string,
     payload?: string,
@@ -79,7 +120,7 @@ export class LicenseService {
   }
 
   private async pullUpdateLicense(
-    service: GenericLicenseClient,
+    service: BaseLicenseUpdateClient,
     nationalId: string,
   ): Promise<Result<Pass | undefined>> {
     /** PULL - Update electronic license with pulled data from service
@@ -96,7 +137,7 @@ export class LicenseService {
     nationalId: string,
     inputData: UpdateLicenseRequest,
   ): Promise<UpdateLicenseResponse> {
-    const service = await this.clientFactory(licenseId)
+    const service = await this.getClientByLicenseId(licenseId)
 
     let updateRes: Result<Pass | undefined>
     if (inputData.licenseUpdateType === 'push') {
@@ -144,7 +185,7 @@ export class LicenseService {
     licenseId: LicenseId,
     nationalId: string,
   ): Promise<RevokeLicenseResponse> {
-    const service = await this.clientFactory(licenseId)
+    const service = await this.getClientByLicenseId(licenseId)
     const revokeRes = await service.revoke(nationalId)
 
     if (revokeRes.ok) {
@@ -173,16 +214,8 @@ export class LicenseService {
       throw this.getException('BadRequest', 'Missing pass template id')
     }
 
-    const licenseId = this.getTypeFromPassTemplateId(passTemplateId)
+    const service = await this.getClientByPassTemplateId(passTemplateId)
 
-    if (!licenseId) {
-      this.logger.error('Invalid passTemplate id', {
-        category: LOG_CATEGORY,
-      })
-      throw this.getException('BadRequest', 'Invalid pass template id')
-    }
-
-    const service = await this.clientFactory(licenseId)
     const verifyRes = await service.verify(inputData.barcodeData)
 
     if (verifyRes.ok) {
@@ -200,25 +233,5 @@ export class LicenseService {
       message: verifyRes.error.message,
       requestId: inputData.requestId,
     })
-  }
-
-  private getTypeFromPassTemplateId(passTemplateId: string): LicenseId | null {
-    for (const [key, value] of Object.entries(this.config)) {
-      // some license Config id === barcode id
-      if (value === passTemplateId) {
-        const keyAsEnumKey = `${key.toUpperCase()}_LICENSE`
-        const valueFromEnum: LicenseId | undefined =
-          LicenseId[keyAsEnumKey as keyof typeof LicenseId]
-
-        if (!valueFromEnum) {
-          this.logger.warn('Invalid license type', {
-            category: LOG_CATEGORY,
-          })
-          throw new Error(`Invalid license type: ${key}`)
-        }
-        return valueFromEnum
-      }
-    }
-    return null
   }
 }
