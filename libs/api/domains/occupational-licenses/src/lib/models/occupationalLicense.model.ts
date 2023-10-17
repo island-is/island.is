@@ -12,12 +12,6 @@ export enum OccupationalLicenseType {
   HEALTH = 'HEALTH_DIRECTORATE',
 }
 
-export enum HealthDirectorateStatusType {
-  valid = 'Í gildi',
-  limited = 'Í gildi - Takmörkun',
-  error = 'Ógilt',
-}
-
 export enum OccupationalLicenseStatus {
   valid = 'valid',
   error = 'error',
@@ -26,10 +20,6 @@ export enum OccupationalLicenseStatus {
 
 registerEnumType(OccupationalLicenseType, {
   name: 'OccupationalLicenseType',
-})
-
-registerEnumType(HealthDirectorateStatusType, {
-  name: 'OccupationalLicenseHealthDirectorateStatusType',
 })
 
 registerEnumType(OccupationalLicenseStatus, {
@@ -71,7 +61,7 @@ export abstract class OccupationalLicense {
   implements: OccupationalLicense,
 })
 export class EducationalLicense extends OccupationalLicense {
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   downloadUrl?: string
 }
 

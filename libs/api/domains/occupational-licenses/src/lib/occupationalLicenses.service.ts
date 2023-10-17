@@ -9,10 +9,9 @@ import { isDefined } from '@island.is/shared/utils'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   EducationalLicense,
-  HealthDirectorateStatusType,
+  OccupationalLicenseStatus,
   HealthDirectorateLicense,
   OccupationalLicenseType,
-  OccupationalLicenseStatus,
   OccupationalLicenseResponse,
 } from './models/occupationalLicense.model'
 import {
@@ -23,6 +22,8 @@ import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 
 const LOG_CATEGORY = 'occupational-licenses-service'
+
+type HealthDirectorateStatusValues = 'Í gildi' | 'Ógilt' | 'Í gildi - Takmörkun'
 
 type OccupationalLicenseResult<T> =
   | {
@@ -36,24 +37,6 @@ type OccupationalLicenseResult<T> =
       type: 'error'
     }
 
-const checkHealthDirectorateValidity = (
-  status: string | null | undefined,
-): OccupationalLicenseStatus => {
-  return status === HealthDirectorateStatusType.valid
-    ? OccupationalLicenseStatus.valid
-    : status === HealthDirectorateStatusType.limited
-    ? OccupationalLicenseStatus.limited
-    : OccupationalLicenseStatus.error
-}
-
-const checkEducationalValidity = (
-  validFrom: string,
-): OccupationalLicenseStatus => {
-  return new Date(validFrom) < new Date()
-    ? OccupationalLicenseStatus.valid
-    : OccupationalLicenseStatus.error
-}
-
 @Injectable()
 export class OccupationalLicensesService {
   constructor(
@@ -66,6 +49,33 @@ export class OccupationalLicensesService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
+
+  private checkHealthDirectorateValidity = (
+    status: HealthDirectorateStatusValues | string,
+  ): OccupationalLicenseStatus => {
+    switch (status) {
+      case 'Í gildi':
+        return OccupationalLicenseStatus.valid
+      case 'Í gildi - Takmörkun':
+        return OccupationalLicenseStatus.limited
+      case 'Ógilt':
+        return OccupationalLicenseStatus.error
+      default:
+        this.logger.log('Unknown health directorate status', {
+          category: LOG_CATEGORY,
+          status: status,
+        })
+        return OccupationalLicenseStatus.error
+    }
+  }
+
+  private checkEducationalValidity = (
+    validFrom: string,
+  ): OccupationalLicenseStatus => {
+    return new Date(validFrom) < new Date()
+      ? OccupationalLicenseStatus.valid
+      : OccupationalLicenseStatus.error
+  }
 
   async getHealthDirectorateLicenseById(
     user: User,
@@ -92,7 +102,8 @@ export class OccupationalLicensesService {
             !license.id ||
             !license.logadiliID ||
             !license.kennitala ||
-            !license.nafn
+            !license.nafn ||
+            !license.stada
           )
             return null
           return {
@@ -104,7 +115,7 @@ export class OccupationalLicensesService {
             type: license.leyfi,
             number: license.leyfisnumer,
             validFrom: license.gildirFra?.toString(),
-            status: checkHealthDirectorateValidity(license.stada),
+            status: this.checkHealthDirectorateValidity(license.stada),
           }
         })
         .filter(isDefined)
@@ -156,7 +167,8 @@ export class OccupationalLicensesService {
             !license.id ||
             !license.logadiliID ||
             !license.kennitala ||
-            !license.nafn
+            !license.nafn ||
+            !license.stada
           )
             return null
           return {
@@ -168,7 +180,7 @@ export class OccupationalLicensesService {
             type: license.leyfi,
             number: license.leyfisnumer,
             validFrom: license.gildirFra?.toString(),
-            status: checkHealthDirectorateValidity(license.stada),
+            status: this.checkHealthDirectorateValidity(license.stada),
           }
         })
         .filter(isDefined)
@@ -208,7 +220,7 @@ export class OccupationalLicensesService {
             type: license.issuer,
             profession: license.type,
             validFrom: license.issued,
-            status: checkEducationalValidity(license.issued),
+            status: this.checkEducationalValidity(license.issued),
             downloadUrl: `${this.downloadService.baseUrl}/download/v1/occupational-licenses/education/${id}`,
           }))
           .find((license) => license.id === id) ?? null
@@ -244,7 +256,7 @@ export class OccupationalLicensesService {
         type: license.issuer,
         profession: license.type,
         validFrom: license.issued,
-        status: checkEducationalValidity(license.issued),
+        status: this.checkEducationalValidity(license.issued),
       }))
 
       return {
