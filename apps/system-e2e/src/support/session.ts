@@ -155,10 +155,8 @@ export async function session({
 
 export async function judicialSystemSession({ browser }: { browser: Browser }) {
   const context = await browser.newContext()
-
   const page = await context.newPage()
   const authUrlPrefix = urls.authUrl
-
   // Retry a few times in case login fails due to deployment not being stable
   for (let i = 0; i < 5; i++) {
     await ensureCognitoSessionIfNeeded(
@@ -166,13 +164,10 @@ export async function judicialSystemSession({ browser }: { browser: Browser }) {
       JUDICIAL_SYSTEM_HOME_URL,
       authUrlPrefix,
     )
-
     const cookies = await context.cookies()
-
     if (cookies.length > 0) {
       break
     }
-
     await new Promise((resolve) => setTimeout(resolve, 5000))
   }
 
