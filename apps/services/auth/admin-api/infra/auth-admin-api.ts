@@ -3,7 +3,6 @@ import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
   return service('services-auth-admin-api')
     .namespace('identity-server-admin')
-    .image('services-auth-admin-api')
     .postgres({
       username: 'servicesauth',
       name: 'servicesauth',

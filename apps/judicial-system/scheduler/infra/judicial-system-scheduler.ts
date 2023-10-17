@@ -5,7 +5,6 @@ export const serviceSetup = (services: {
 }): ServiceBuilder<'judicial-system-scheduler'> =>
   service('judicial-system-scheduler')
     .namespace('judicial-system')
-    .image('judicial-system-scheduler')
     .env({
       BACKEND_URL: ref((h) => `http://${h.svc(services.backend)}`),
       TIME_TO_LIVE_MINUTES: '30',

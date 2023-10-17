@@ -13,7 +13,6 @@ export const serviceSetup = (services: {
   regulationsAdminBackend: ServiceBuilder<'regulations-admin-backend'>
 }): ServiceBuilder<'download-service'> =>
   service('download-service')
-    .image('download-service')
     .namespace('download-service')
     .env({
       IDENTITY_SERVER_ISSUER_URL: {

@@ -45,7 +45,7 @@ export const workerSetup =
   (): ServiceBuilder<'application-system-api-worker'> =>
     service('application-system-api-worker')
       .namespace(namespace)
-      .image('application-system-api')
+      .image({ name: 'application-system-api'})
       .postgres(postgresInfo)
       .serviceAccount('application-system-api-worker')
       .redis()

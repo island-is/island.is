@@ -41,7 +41,7 @@ const Prod: EnvironmentConfig = {
 describe('Server-side toggles', () => {
   const sut = service('api')
     .namespace('islandis')
-    .image('test')
+    .image({name: 'test'})
     .env({
       B: 'A',
     })
@@ -179,7 +179,7 @@ describe('Server-side toggles', () => {
   describe('Collision of feature config with main one', () => {
     const sut = service('api')
       .namespace('islandis')
-      .image('test')
+      .image({name: 'test'})
       .env({
         B: 'A',
       })

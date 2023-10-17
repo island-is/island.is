@@ -45,7 +45,7 @@ const workerPostgresInfo = {
 export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
   service('services-sessions')
     .namespace(namespace)
-    .image(imageName)
+    .image({name: imageName})
     .redis()
     .postgres(servicePostgresInfo)
     .env({
@@ -96,7 +96,7 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
 
 export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
   service('services-sessions-worker')
-    .image(imageName)
+    .image({name: imageName})
     .namespace(namespace)
     .redis()
     .serviceAccount('sessions-worker')
@@ -133,7 +133,7 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
 
 export const geoipSetup = (): ServiceBuilder<'services-sessions-geoip-job'> =>
   service('services-sessions-geoip-job')
-    .image(imageName)
+    .image({name: imageName})
     .namespace(namespace)
     .serviceAccount('sessions-geoip')
     .replicaCount({ min: 1, max: 1, default: 1 })

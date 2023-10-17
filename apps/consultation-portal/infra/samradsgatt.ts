@@ -5,7 +5,6 @@ export const serviceSetup = (services: {
 }): ServiceBuilder<'consultation-portal'> => {
   const consultationService = service('consultation-portal')
   consultationService
-    .image('consultation-portal')
     .namespace('consultation-portal')
     .liveness('/liveness')
     .readiness('/liveness')

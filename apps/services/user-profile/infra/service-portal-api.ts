@@ -3,7 +3,7 @@ import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
   service('service-portal-api')
     .namespace('service-portal')
-    .image('services-user-profile')
+    .image({name: 'services-user-profile'})
     .serviceAccount('service-portal-api')
     .env({
       SERVICE_PORTAL_BASE_URL: {

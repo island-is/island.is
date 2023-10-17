@@ -4,7 +4,6 @@ import { Base, Client, NationalRegistry } from '../../../../infra/src/dsl/xroad'
 const postgresInfo = {}
 export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
   service('regulations-admin-backend')
-    .image('regulations-admin-backend')
     .namespace('regulations-admin')
     .env({
       IDENTITY_SERVER_ISSUER_URL: {

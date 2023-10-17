@@ -4,7 +4,6 @@ export const serviceSetup =
   (): ServiceBuilder<'services-auth-personal-representative'> => {
     return service('services-auth-personal-representative')
       .namespace('personal-representative')
-      .image('services-auth-personal-representative')
       .postgres({
         username: 'servicesauth',
         name: 'servicesauth',

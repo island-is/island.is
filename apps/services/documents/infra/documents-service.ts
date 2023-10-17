@@ -6,7 +6,6 @@ const postgresInfo = {
 
 export const serviceSetup = (): ServiceBuilder<'services-documents'> =>
   service('services-documents')
-    .image('services-documents')
     .namespace('services-documents')
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
