@@ -88,7 +88,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
     let result
     try {
-      result = await this.createLicense(nationalId, answers, auth.authorization)
+      result = await this.createLicense(nationalId, answers, auth)
     } catch (e) {
       this.log('error', 'Creating license failed', {
         e,
@@ -167,7 +167,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     } else if (applicationFor === 'B-temp') {
       return this.drivingLicenseService.newTemporaryDrivingLicense(
         nationalId,
-        auth,
+        auth.authorization.split(' ')[1] ?? '',
         {
           jurisdictionId: jurisdictionId as number,
           needsToPresentHealthCertificate: needsHealthCert,
