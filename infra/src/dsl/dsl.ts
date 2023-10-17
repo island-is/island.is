@@ -16,6 +16,7 @@ import {
   Secrets,
   ServiceDefinition,
   XroadConfig,
+  DockerImage,
 } from './types/input-types'
 type Optional<T, L extends keyof T> = Omit<T, L> & Partial<Pick<T, L>>
 
@@ -112,8 +113,8 @@ export class ServiceBuilder<ServiceType> {
     return this
   }
 
-  image(name: string) {
-    this.serviceDef.image = name
+  image(image?: DockerImage) {
+    this.serviceDef.image = image
     return this
   }
 
