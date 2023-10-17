@@ -265,32 +265,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Vilt þú nýta persónuafsláttinn maka þíns?',
       description: 'Do you want to use your spouse personal allowance?',
     },
-    taxLevel: {
-      id: 'oap.application:payment.tax.level',
-      defaultMessage: 'Skattþrep',
-      description: 'Tax level',
-    },
-    taxIncomeLevel: {
-      id: 'oap.application:payment.tax.first.level',
-      defaultMessage:
-        'Ég vil að staðgreiðslan sé reiknuð út frá tekjuáætlun minni',
-      description:
-        'I want the withholding tax to be calculated based on my income estimate',
-    },
-    taxFirstLevel: {
-      id: 'oap.application:payment.tax.second.level',
-      defaultMessage:
-        'Ég vil að miðað sé við Skattþrep 1 í útreikningum staðgreiðslu (31,45% af tekjum: 0 - 409.986 kr.)',
-      description:
-        'I want tax level 1 to be taken into account in the withholding calculations (31.45% of income: 0 - 409,986 ISK)',
-    },
-    taxSecondLevel: {
-      id: 'oap.application:payment.tax.third.level',
-      defaultMessage:
-        'Ég vil að miðað sé við Skattþrep 2 í útreikningum staðgreiðslu (37,95% af tekjum: 409.986 - 1.151.012 kr.)',
-      description:
-        'I want tax level 2 to be taken into account in the withholding calculations (37.95% of income: ISK 409,986 - ISK 1,151,012)',
-    },
     personalAllowancePercentage: {
       id: 'oap.application:payment.personal.allowance.percentage',
       defaultMessage: 'Skráðu tölu á bilinu 1-100',

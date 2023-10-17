@@ -4,7 +4,6 @@ import {
   ApplicationType,
   HouseholdSupplementHousing,
   NO,
-  TaxLevelOptions,
   YES,
 } from './constants'
 import { errorMessages } from './messages'
@@ -70,11 +69,6 @@ export const dataSchema = z.object({
     spouseAllownaceUsage: z.string().optional(),
     personalAllowance: z.enum([YES, NO]),
     personalAllowanceUsage: z.string().optional(),
-    taxLevel: z.enum([
-      TaxLevelOptions.INCOME,
-      TaxLevelOptions.FIRST_LEVEL,
-      TaxLevelOptions.SECOND_LEVEL,
-    ]),
   }),
   childPensionAddChild: z.enum([YES, NO]),
 })
