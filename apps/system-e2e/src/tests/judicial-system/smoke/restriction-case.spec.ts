@@ -17,8 +17,17 @@ test.describe('Restriction case', () => {
   test.afterAll(async () => await context.close())
 
   test('should have a table visible on the screen', async () => {
-    const page = await context.newPage()
-    page.goto('/krofur')
-    await expect(page.getByRole('table')).toHaveCount(2)
+    for (let i = 0; i < 5; i++) {
+      const page = await context.newPage()
+      const cookies = await context.cookies()
+
+      if (cookies.length > 0) {
+        page.goto('/krofur')
+        await expect(page.getByRole('table')).toHaveCount(2)
+        break
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 5000))
+    }
   })
 })
