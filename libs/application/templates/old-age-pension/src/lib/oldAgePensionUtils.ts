@@ -201,7 +201,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     spouseAllowance,
     personalAllowanceUsage,
     spouseAllowanceUsage,
-  //  taxLevel,
+    //  taxLevel,
   }
 }
 
