@@ -23,6 +23,7 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
     getValueViaPath(
       application.answers,
       'countriesOfResidence.hasLivedAbroad',
+      '',
     ) as string,
   )
 

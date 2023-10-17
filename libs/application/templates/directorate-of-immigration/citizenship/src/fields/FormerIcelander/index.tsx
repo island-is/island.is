@@ -10,7 +10,7 @@ export const FormerIcelander: FC<FieldBaseProps> = ({ application }) => {
   const { answers } = application
 
   const [isFormerIcelander, setIsFormerIcelander] = useState(
-    getValueViaPath(answers, 'formerIcelander') as string,
+    getValueViaPath(answers, 'formerIcelander', '') as string,
   )
 
   const { formatMessage } = useLocale()
@@ -27,7 +27,7 @@ export const FormerIcelander: FC<FieldBaseProps> = ({ application }) => {
         onSelect={(value) => {
           handleIsFormerIcelanderChange(value)
         }}
-        defaultValue={isFormerIcelander ? YES : ''}
+        defaultValue={isFormerIcelander}
         options={[
           {
             value: YES,

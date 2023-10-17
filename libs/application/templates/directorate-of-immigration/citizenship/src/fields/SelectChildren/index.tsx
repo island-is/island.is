@@ -94,8 +94,8 @@ export const SelectChildren: FC<FieldBaseProps> = ({ field, application }) => {
         <Box paddingBottom={1}>
           <AlertMessage
             type="error"
-            title="TODO: Ekki hægt"
-            message="TODO: Ekki hægt að sækja um fyrir svona mörg börn"
+            title={formatMessage(selectChildren.general.maxNumberTitle)}
+            message={formatMessage(selectChildren.general.maxNumberDescription)}
           />
         </Box>
       )}

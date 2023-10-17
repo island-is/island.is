@@ -160,6 +160,11 @@ export const information = {
         defaultMessage: 'Eyða færslu',
         description: 'Add more countries button title',
       },
+      splitterTitle: {
+        id: 'doi.cs.application:information.labels.countriesOfResidence.splitterTitle',
+        defaultMessage: 'Búsetuland',
+        description: 'Item splitter title',
+      },
     }),
     staysAbroad: defineMessages({
       subSectionTitle: {

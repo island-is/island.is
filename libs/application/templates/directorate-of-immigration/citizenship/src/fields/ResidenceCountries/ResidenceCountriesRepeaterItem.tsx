@@ -75,7 +75,9 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
         error={errors && getErrorViaPath(errors, countryField)}
         field={{
           id: countryField,
-          title: `Búsetuland ${itemNumber + 1}`,
+          title: `${formatMessage(
+            information.labels.countriesOfResidence.splitterTitle,
+          )} ${itemNumber + 1}`,
           options: countryOptions,
           component: FieldComponents.SELECT,
           children: undefined,

@@ -112,7 +112,7 @@ export const Parents: FC<FieldBaseProps> = ({ field, application, errors }) => {
         onSelect={(value) => {
           handleValidParentsChange(value)
         }}
-        defaultValue={hasValidParents === YES ? hasValidParents : ''}
+        defaultValue={hasValidParents === YES ? hasValidParents : NO}
         options={[
           {
             value: YES,

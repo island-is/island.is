@@ -24,6 +24,16 @@ export const selectChildren = {
         'Eftirfarandi börn eru í þinni forsjá og eru skráð með lögheimili á Íslandi. Hakaðu við þau börn sem þú vilt að hljóti íslenskan ríkisborgararétt samhliða því að þú fáir veitingu.',
       description: 'Pick children description',
     },
+    maxNumberTitle: {
+      id: 'doi.cs.application:personal.labels.selectChildren.maxNumberTitle',
+      defaultMessage: 'Fjöldatakmörkun',
+      description: 'Maximum number of children title',
+    },
+    maxNumberDescription: {
+      id: 'doi.cs.application:personal.labels.selectChildren.maxNumberDescription',
+      defaultMessage: 'Ekki hægt að sækja um fyrir svona mörg börn',
+      description: 'Maximum number of children description',
+    },
   }),
   extraInformation: defineMessages({
     subSectionTitle: {

@@ -41,7 +41,6 @@ export const DocumentReview: FC<Props> = ({
             />
           </GridColumn>
           {selectedChildren &&
-            selectedChildren.length > 0 &&
             selectedChildren.map((child) => {
               return (
                 <GridColumn span="1/2">
