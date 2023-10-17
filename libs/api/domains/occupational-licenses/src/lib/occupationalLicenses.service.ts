@@ -20,6 +20,7 @@ import {
 } from './models/occupationalLicenseError.model'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
+import { handle404 } from '@island.is/clients/middlewares'
 
 const LOG_CATEGORY = 'occupational-licenses-service'
 
@@ -84,42 +85,38 @@ export class OccupationalLicensesService {
     try {
       const licenses = await this.healthDirectorateApi
         .getHealthDirectorateLicense(user)
-        .catch((e) => {
-          if (e.status === 404) {
-            return []
-          }
-          throw new Error('Error getting health directorate license by id')
-        })
-        .then((licenses) => licenses ?? [])
+        .catch(handle404)
 
-      const item = licenses
-        .map((license) => {
-          if (
-            !license.leyfi ||
-            !license.starfsstett ||
-            !license.gildirFra ||
-            !license.leyfisnumer ||
-            !license.id ||
-            !license.logadiliID ||
-            !license.kennitala ||
-            !license.nafn ||
-            !license.stada
-          )
-            return null
-          return {
-            institution: OccupationalLicenseType.HEALTH,
-            id: license.id.toString(),
-            legalEntityId: license.logadiliID,
-            holderName: license.nafn,
-            profession: license.starfsstett,
-            type: license.leyfi,
-            number: license.leyfisnumer,
-            validFrom: license.gildirFra?.toString(),
-            status: this.checkHealthDirectorateValidity(license.stada),
-          }
-        })
-        .filter(isDefined)
-        .find((license) => license.id === id)
+      const item =
+        licenses &&
+        licenses
+          .map((license) => {
+            if (
+              !license.leyfi ||
+              !license.starfsstett ||
+              !license.gildirFra ||
+              !license.leyfisnumer ||
+              !license.id ||
+              !license.logadiliID ||
+              !license.kennitala ||
+              !license.nafn ||
+              !license.stada
+            )
+              return null
+            return {
+              institution: OccupationalLicenseType.HEALTH,
+              id: license.id.toString(),
+              legalEntityId: license.logadiliID,
+              holderName: license.nafn,
+              profession: license.starfsstett,
+              type: license.leyfi,
+              number: license.leyfisnumer,
+              validFrom: license.gildirFra?.toString(),
+              status: this.checkHealthDirectorateValidity(license.stada),
+            }
+          })
+          .filter(isDefined)
+          .find((license) => license.id === id)
 
       return {
         items: item ? [item] : [],
@@ -149,44 +146,40 @@ export class OccupationalLicensesService {
     try {
       const licenses = await this.healthDirectorateApi
         .getHealthDirectorateLicense(user)
-        .catch((e) => {
-          if (e.status === 404) {
-            return []
-          }
-          throw new Error('Error getting health directorate licenses')
-        })
-        .then((licenses) => licenses ?? [])
+        .catch(handle404)
 
-      const items = licenses
-        .map((license) => {
-          if (
-            !license.leyfi ||
-            !license.starfsstett ||
-            !license.gildirFra ||
-            !license.leyfisnumer ||
-            !license.id ||
-            !license.logadiliID ||
-            !license.kennitala ||
-            !license.nafn ||
-            !license.stada
-          )
-            return null
-          return {
-            institution: OccupationalLicenseType.HEALTH,
-            id: license.id.toString(),
-            legalEntityId: license.logadiliID,
-            holderName: license.nafn,
-            profession: license.starfsstett,
-            type: license.leyfi,
-            number: license.leyfisnumer,
-            validFrom: license.gildirFra?.toString(),
-            status: this.checkHealthDirectorateValidity(license.stada),
-          }
-        })
-        .filter(isDefined)
+      const items =
+        licenses &&
+        licenses
+          .map((license) => {
+            if (
+              !license.leyfi ||
+              !license.starfsstett ||
+              !license.gildirFra ||
+              !license.leyfisnumer ||
+              !license.id ||
+              !license.logadiliID ||
+              !license.kennitala ||
+              !license.nafn ||
+              !license.stada
+            )
+              return null
+            return {
+              institution: OccupationalLicenseType.HEALTH,
+              id: license.id.toString(),
+              legalEntityId: license.logadiliID,
+              holderName: license.nafn,
+              profession: license.starfsstett,
+              type: license.leyfi,
+              number: license.leyfisnumer,
+              validFrom: license.gildirFra?.toString(),
+              status: this.checkHealthDirectorateValidity(license.stada),
+            }
+          })
+          .filter(isDefined)
 
       return {
-        items: items,
+        items: items ? items : [],
         type: 'data',
       }
     } catch (e) {
