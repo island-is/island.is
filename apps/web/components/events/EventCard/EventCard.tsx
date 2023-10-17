@@ -76,11 +76,11 @@ export const EventCard: React.FC<React.PropsWithChildren<EventCardProps>> = ({
           </Text>
           <Box>
             <Text>
-              {location.streetAddress as string}
+              {location?.streetAddress}
               {', '}
-              {location.floor + ', '}
+              {location?.floor ? location?.floor + ', ' : ''}
             </Text>
-            <Text>{location.postalCode as string}</Text>
+            <Text>{location?.postalCode}</Text>
           </Box>
           <Text>
             {startTime as string}

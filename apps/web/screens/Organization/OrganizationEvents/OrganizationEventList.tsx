@@ -8,13 +8,13 @@ import {
   Pagination,
 } from '@island.is/island-ui/core'
 import {
-  EventsList,
+  EventList,
   getThemeConfig,
   OrganizationWrapper,
 } from '@island.is/web/components'
 import {
   ContentLanguage,
-  EventList,
+  EventList as EventListSchema,
   GetNamespaceQuery,
   OrganizationPage,
   Query,
@@ -36,7 +36,7 @@ const PAGE_SIZE = 10
 
 interface OrganizationEventListProps {
   organizationPage: OrganizationPage
-  eventList: EventList
+  eventList: EventListSchema
   namespace: Record<string, string>
   selectedPage: number
 }
@@ -83,14 +83,17 @@ const OrganizationEventList: Screen<OrganizationEventListProps> = ({
       showReadSpeaker={false}
       breadcrumbItems={breadCrumbs}
       navigationData={{
-        title: n('navigationTitle', 'Efnisyfirlit'),
+        title: n(
+          'navigationTitle',
+          activeLocale === 'is' ? 'Efnisyfirlit' : 'Menu',
+        ),
         items: getOrganizationSidebarNavigationItems(
           organizationPage,
           baseRouterPath,
         ),
       }}
     >
-      <EventsList
+      <EventList
         title={eventsHeading}
         namespace={namespace}
         eventList={eventList?.items}

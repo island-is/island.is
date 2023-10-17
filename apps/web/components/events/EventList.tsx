@@ -1,30 +1,39 @@
+import { useEffect, useState } from 'react'
+
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { EventCard, EventSliceCard, Webreader } from '@island.is/web/components'
+import {
+  EventCard,
+  LatestEventSliceCard,
+  Webreader,
+} from '@island.is/web/components'
 import { GetEventsQuery } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { useI18n } from '@island.is/web/i18n'
 
-interface EventsListProps {
+interface EventListProps {
   title: string
   namespace: Record<string, string>
   eventList: GetEventsQuery['getEvents']['items']
   parentPageSlug: string
 }
 
-export const EventsList = ({
+export const EventList = ({
   title,
   eventList,
   namespace,
   parentPageSlug,
-}: EventsListProps) => {
+}: EventListProps) => {
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const { width } = useWindowSize()
   const { activeLocale } = useI18n()
+  const [isMobile, setIsMobile] = useState(false)
 
-  const isMobile = width < theme.breakpoints.md
+  useEffect(() => {
+    setIsMobile(width < theme.breakpoints.md)
+  }, [width])
 
   return (
     <Box className="rs_read">
@@ -86,7 +95,7 @@ export const EventsList = ({
                 eventItem.slug,
               ]).href
               return (
-                <EventSliceCard
+                <LatestEventSliceCard
                   key={index}
                   title={eventItem.title}
                   postalCode={eventItem.location.postalCode}

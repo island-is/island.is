@@ -6,7 +6,7 @@ import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
-import * as styles from './EventSliceCard.css'
+import * as styles from './LatestEventSliceCard.css'
 
 interface EventCardProps {
   title: string
@@ -22,7 +22,7 @@ interface EventCardProps {
   floor: string
 }
 
-export const EventSliceCard: React.FC<
+export const LatestEventSliceCard: React.FC<
   React.PropsWithChildren<EventCardProps>
 > = ({
   title,
@@ -98,4 +98,4 @@ export const EventSliceCard: React.FC<
   )
 }
 
-export default EventSliceCard
+export default LatestEventSliceCard

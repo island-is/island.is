@@ -1,5 +1,8 @@
+import { useEffect, useState } from 'react'
 import type { Locale } from 'locale'
 import { useRouter } from 'next/router'
+
+import { EmbeddedVideo } from '@island.is/island-ui/contentful'
 import {
   Box,
   BreadCrumbItem,
@@ -12,35 +15,34 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
+  getThemeConfig,
   HeadWithSocialSharing,
   OrganizationWrapper,
-  getThemeConfig,
 } from '@island.is/web/components'
 import {
-  OrganizationPage,
-  Query,
-  QueryGetOrganizationPageArgs,
-  QueryGetSingleEventArgs,
+  ContentLanguage,
   Event as EventModel,
   GetNamespaceQuery,
+  OrganizationPage,
+  Query,
   QueryGetNamespaceArgs,
-  ContentLanguage,
+  QueryGetOrganizationPageArgs,
+  QueryGetSingleEventArgs,
 } from '@island.is/web/graphql/schema'
+import { useNamespaceStrict } from '@island.is/web/hooks'
+import { linkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { useI18n } from '@island.is/web/i18n'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { getOrganizationSidebarNavigationItems } from '@island.is/web/utils/organization'
-import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import { webRichText } from '@island.is/web/utils/richText'
-import { useI18n } from '@island.is/web/i18n'
+
+import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import { GET_SINGLE_EVENT_QUERY } from '../../queries/Events'
-import { linkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { useNamespaceStrict } from '@island.is/web/hooks'
-import { EmbeddedVideo } from '@island.is/island-ui/contentful'
 import * as styles from './OrganizationEventArticle.css'
-import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import { useWindowSize } from '@island.is/web/hooks/useViewport'
-import { useEffect, useState } from 'react'
 
 interface OrganizationEventArticleProps {
   organizationPage: OrganizationPage
@@ -99,7 +101,6 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
           ),
         }}
       >
-        {' '}
         <Text variant="h1" as="h1" paddingBottom={5}>
           {event.title}
         </Text>
@@ -118,7 +119,11 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
             paddingTop={event.video?.url ? [2, 2, 2, 0, 0] : 2}
             paddingBottom={2}
           >
-            <Box className={styles.infoCard} padding={[3, 3, 3, 2, 3]}>
+            <Box
+              background="blue100"
+              borderRadius="large"
+              padding={[3, 3, 3, 2, 3]}
+            >
               <Stack space={3}>
                 <Inline space={ICON_TEXT_SPACE}>
                   <Icon color="blue400" icon={'calendar'} type="outline"></Icon>
@@ -138,15 +143,16 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
                   </Text>
                 </Inline>
                 <Inline space={ICON_TEXT_SPACE}>
-                  <Icon color="blue400" icon={'home'} type="outline"></Icon>
+                  <Icon color="blue400" icon="home" type="outline"></Icon>
                   <Box>
                     <Text>
-                      {(event.location.streetAddress as string) +
-                        ', ' +
-                        event.location.floor +
-                        ', '}
+                      {event.location?.streetAddress}
+                      {', '}
+                      {event.location?.floor
+                        ? event.location?.floor + ', '
+                        : ''}
                     </Text>
-                    <Text>{event.location.postalCode as string}</Text>
+                    <Text>{event.location?.postalCode}</Text>
                   </Box>
                 </Inline>
               </Stack>
@@ -169,7 +175,6 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
   )
 }
 OrganizationEventArticle.getProps = async ({ apolloClient, query, locale }) => {
-  console.log(query)
   const [organizationPageResponse, eventResponse, namespace] =
     await Promise.all([
       apolloClient.query<Query, QueryGetOrganizationPageArgs>({
@@ -202,7 +207,7 @@ OrganizationEventArticle.getProps = async ({ apolloClient, query, locale }) => {
         })
         // map data here to reduce data processing in component
         .then((variables) =>
-          variables.data.getNamespace?.fields
+          variables?.data?.getNamespace?.fields
             ? JSON.parse(variables.data.getNamespace.fields)
             : {},
         ),

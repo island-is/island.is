@@ -7,7 +7,7 @@ import {
   LinkV2,
   Text,
 } from '@island.is/island-ui/core'
-import { EventSliceCard, GridItems } from '@island.is/web/components'
+import { GridItems, LatestEventSliceCard } from '@island.is/web/components'
 import { LatestEventsSlice as LatestEventsSliceSchema } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
@@ -74,7 +74,7 @@ export const LatestEventsSlice = ({
                 { title, image, slug: eventSlug, date, time, location },
                 index,
               ) => (
-                <EventSliceCard
+                <LatestEventSliceCard
                   key={index}
                   title={title}
                   startTime={time.startTime}
