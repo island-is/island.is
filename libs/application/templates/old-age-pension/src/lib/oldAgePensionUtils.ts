@@ -484,8 +484,7 @@ export function getAttachments(application: Application) {
   const attachments: Attachments[] = []
 
   // Early retirement, pension fund, fishermen
-  const fileUpload =
-    answers.fileUpload as FileUpload
+  const fileUpload = answers.fileUpload as FileUpload
 
   getAttachmentDetails(fileUpload?.pension, AttachmentTypes.PENSION)
   if (earlyRetirement) {
