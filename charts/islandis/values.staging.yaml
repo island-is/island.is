@@ -794,7 +794,7 @@ application-system-api-worker:
         max: 3
         min: 1
   image:
-    name: 'application-system-api-worker'
+    name: 'application-system-api'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
     tag: 'latest_master'
   namespace: 'application-system'
@@ -1158,7 +1158,7 @@ endorsement-system-api:
         max: 3
         min: 1
   image:
-    name: 'endorsement-system-api'
+    name: 'services-endorsements-api'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
     tag: 'latest_master'
   initContainer:
@@ -1667,7 +1667,7 @@ search-indexer-service:
         max: 1
         min: 1
   image:
-    name: 'search-indexer-service'
+    name: 'services-search-indexer'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
     tag: 'latest_master'
   ingress:
@@ -1869,7 +1869,7 @@ service-portal-api:
         max: 30
         min: 2
   image:
-    name: 'service-portal-api'
+    name: 'services-user-profile'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
     tag: 'latest_master'
   ingress:
@@ -2125,7 +2125,7 @@ services-sessions-geoip-job:
         max: 1
         min: 1
   image:
-    name: 'services-sessions-geoip-job'
+    name: 'services-sessions'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
     tag: 'latest_master'
   namespace: 'services-sessions'
@@ -2202,7 +2202,7 @@ services-sessions-worker:
         max: 3
         min: 1
   image:
-    name: 'services-sessions-worker'
+    name: 'services-sessions'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
     tag: 'latest_master'
   initContainer:
@@ -2449,7 +2449,7 @@ user-notification:
         max: 3
         min: 1
   image:
-    name: 'user-notification'
+    name: 'services-user-notification'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
     tag: 'latest_master'
   ingress:
@@ -2527,7 +2527,7 @@ user-notification-worker:
         max: 3
         min: 1
   image:
-    name: 'user-notification-worker'
+    name: 'services-user-notification'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
     tag: 'latest_master'
   namespace: 'user-notification'
@@ -2665,7 +2665,7 @@ xroad-collector:
         max: 3
         min: 1
   image:
-    name: 'xroad-collector'
+    name: 'services-xroad-collector'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
     tag: 'latest_master'
   namespace: 'xroad-collector'
