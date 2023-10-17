@@ -52,14 +52,6 @@ export class UserProfileService {
     nationalId: string,
     userProfile: PatchUserProfileDto,
   ): Promise<UserProfileDto> {
-    const existingUSerProfile = await this.userProfileModel.findOne({
-      where: { nationalId: nationalId },
-    })
-
-    if (!existingUSerProfile) {
-      throw new NoContentException()
-    }
-
     const isEmailDefined = isDefined(userProfile.email)
     const isMobilePhoneNumberDefined = isDefined(userProfile.mobilePhoneNumber)
 
@@ -75,12 +67,7 @@ export class UserProfileService {
       }),
     }
 
-    await this.userProfileModel.update(
-      { ...update, lastNudge: new Date() },
-      {
-        where: { nationalId: nationalId },
-      },
-    )
+    await this.userProfileModel.upsert({ ...update, lastNudge: new Date() })
 
     if (isEmailDefined && userProfile.email !== '') {
       await this.verificationService.createEmailVerification(
@@ -104,20 +91,7 @@ export class UserProfileService {
   }
 
   async confirmNudge(nationalId: string): Promise<void> {
-    const userProfile = await this.userProfileModel.findOne({
-      where: { nationalId: nationalId },
-    })
-
-    if (!userProfile) {
-      throw new NoContentException()
-    }
-
-    await this.userProfileModel.update(
-      { lastNudge: new Date() },
-      {
-        where: { nationalId: nationalId },
-      },
-    )
+    await this.userProfileModel.upsert({ nationalId, lastNudge: new Date() })
   }
 
   async confirmEmail(

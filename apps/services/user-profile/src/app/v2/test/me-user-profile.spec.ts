@@ -461,6 +461,56 @@ describe('MeUserProfile', () => {
         await app.cleanUp()
       },
     )
+
+    it.each`
+      method     | endpoint
+      ${'PATCH'} | ${'/v2/me'}
+    `(
+      '$method $endpoint should return 201 and create profile with email and phoneNumber',
+      async ({ method, endpoint }: TestEndpointOptions) => {
+        // Arrange
+        const app = await setupApp({
+          AppModule,
+          SequelizeConfigService,
+          user: createCurrentUser({
+            nationalId: testUserProfile.nationalId,
+            scope: [UserProfileScope.read, UserProfileScope.write],
+          }),
+        })
+
+        const server = request(app.getHttpServer())
+
+        // Act
+        // const res = await getRequestMethod(server, method)(endpoint)
+        const res = await server.patch(endpoint).send({
+          mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+          email: testUserProfile.email,
+        })
+
+        // Assert
+        expect(res.status).toEqual(201)
+        expect(res.body).toMatchObject({
+          mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+          mobilePhoneNumberVerified: false,
+          email: testUserProfile.email,
+          emailVerified: false,
+        })
+
+        // Assert Db records
+        const userProfileModel = app.get(getModelToken(UserProfile))
+        const userProfile = await userProfileModel.findOne({
+          where: { nationalId: testUserProfile.nationalId },
+        })
+
+        expect(userProfile).not.toBe(null)
+        expect(userProfile.email).toBe(testUserProfile.email)
+        expect(userProfile.mobilePhoneNumber).toBe(
+          testUserProfile.mobilePhoneNumber,
+        )
+
+        await app.cleanUp()
+      },
+    )
   })
 
   describe('Nudge confirmation', () => {
@@ -499,6 +549,44 @@ describe('MeUserProfile', () => {
           where: { nationalId: testUserProfile.nationalId },
         })
 
+        expect(userProfile.lastNudge).not.toBeNull()
+
+        await app.cleanUp()
+      },
+    )
+
+    it.each`
+      method    | endpoint
+      ${'POST'} | ${'/v2/me/confirm'}
+    `(
+      '$method $endpoint should return 201, and create a user profile with updated lastNudge field when user confirms nudge and no user profile exists',
+      async ({ method, endpoint }: TestEndpointOptions) => {
+        // Arrange
+        const app = await setupApp({
+          AppModule,
+          SequelizeConfigService,
+          user: createCurrentUser({
+            nationalId: testUserProfile.nationalId,
+            scope: [UserProfileScope.read, UserProfileScope.write],
+          }),
+        })
+
+        const server = request(app.getHttpServer())
+
+        // Act
+        // const res = await getRequestMethod(server, method)(endpoint)
+        const res = await getRequestMethod(server, method)(endpoint)
+
+        // Assert
+        expect(res.status).toEqual(201)
+
+        // Assert that lastNudge is updated
+        const userProfileModel = app.get(getModelToken(UserProfile))
+        const userProfile = await userProfileModel.findOne({
+          where: { nationalId: testUserProfile.nationalId },
+        })
+
+        expect(userProfile).not.toBeNull()
         expect(userProfile.lastNudge).not.toBeNull()
 
         await app.cleanUp()
