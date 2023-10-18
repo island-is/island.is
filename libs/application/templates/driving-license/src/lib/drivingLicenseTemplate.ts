@@ -158,9 +158,10 @@ const template: ApplicationTemplate<
           status: 'inprogress',
           progress: 0.9,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: defineTemplateApi({
-            action: ApiActions.createCharge,
-          }),
+          //TODO: take this back
+          //onEntry: defineTemplateApi({
+          //  action: ApiActions.createCharge,
+          //}),
           roles: [
             {
               id: Roles.APPLICANT,
