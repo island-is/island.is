@@ -54,7 +54,7 @@ export const messages = defineMessages({
     defaultMessage: 'Endurgreitt',
   },
   monthlyBreakdownOfInvoices: {
-    id: 'service.portal:monthly-breakdown-of-invoices',
+    id: 'sp.health:monthly-breakdown-of-invoices',
     defaultMessage: 'Sundurliðun reikninga í völdum mánuði',
   },
   right: {

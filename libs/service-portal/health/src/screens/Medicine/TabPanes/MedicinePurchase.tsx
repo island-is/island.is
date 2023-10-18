@@ -260,20 +260,25 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
                         },
                       ]}
                       onExpandCallback={() => {
-                        setSelectedLineItem(bill.id ?? '')
-                        lineItemQuery({
-                          variables: {
-                            input: {
-                              billId: bill.id,
-                              paymentPeriodId: selectedPeriod?.id ?? '',
+                        if (bill?.id && selectedPeriod?.id) {
+                          setSelectedLineItem(bill.id)
+                          lineItemQuery({
+                            variables: {
+                              input: {
+                                billId: bill.id,
+                                paymentPeriodId: selectedPeriod.id,
+                              },
                             },
-                          },
-                          onCompleted: (data) =>
-                            fetchedLineItems.set(
-                              bill.id ?? '',
-                              data.rightsPortalDrugBillLines,
-                            ),
-                        })
+                            onCompleted: (data) => {
+                              if (bill && bill.id) {
+                                fetchedLineItems.set(
+                                  bill.id,
+                                  data.rightsPortalDrugBillLines,
+                                )
+                              }
+                            },
+                          })
+                        }
                       }}
                     >
                       <Box

@@ -33,10 +33,6 @@ export class OverviewService {
         errors: [],
       }
     } catch (error) {
-      this.logger.error(`Failed to get insurance confirmation`, {
-        ...error,
-        category: LOG_CATEGORY,
-      })
       return {
         items: [],
         errors: [
@@ -61,10 +57,6 @@ export class OverviewService {
         errors: [],
       }
     } catch (error) {
-      this.logger.error(`Failed to get insurance overview`, {
-        ...error,
-        category: LOG_CATEGORY,
-      })
       return {
         items: [],
         errors: [

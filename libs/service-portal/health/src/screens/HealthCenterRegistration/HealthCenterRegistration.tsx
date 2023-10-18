@@ -51,11 +51,15 @@ const HealthCenterRegistration = () => {
   const [selectedHealthCenter, setSelectedHealthCenter] =
     useState<SelectedHealthCenter | null>(null)
 
+  const handleOnError = () => {
+    setSelectedHealthCenter(null)
+    setLoadingTransfer(false)
+    setErrorTransfer(true)
+  }
+
   const [transferHealthCenter] = useRightsPortalTransferHealthCenterMutation({
     onError: (e) => {
-      setSelectedHealthCenter(null)
-      setLoadingTransfer(false)
-      setErrorTransfer(true)
+      handleOnError()
     },
     onCompleted: (data) => {
       if (data.rightsPortalRegisterHealthCenter.success) {
@@ -65,15 +69,8 @@ const HealthCenterRegistration = () => {
           },
         })
       } else {
-        setSelectedHealthCenter(null)
-        setLoadingTransfer(false)
-        setErrorTransfer(true)
+        handleOnError()
       }
-    },
-    variables: {
-      input: {
-        id: selectedHealthCenter?.id || '',
-      },
     },
   })
 
@@ -88,7 +85,17 @@ const HealthCenterRegistration = () => {
 
   const handleHealthCenterTransfer = async () => {
     setLoadingTransfer(true)
-    await transferHealthCenter()
+    if (selectedHealthCenter && selectedHealthCenter?.id) {
+      await transferHealthCenter({
+        variables: {
+          input: {
+            id: selectedHealthCenter.id,
+          },
+        },
+      })
+    } else {
+      handleOnError()
+    }
   }
 
   const healthCenterGroups = useMemo(() => {

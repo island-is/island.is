@@ -1,10 +1,10 @@
-import { ObjectType, Field } from '@nestjs/graphql'
+import { ObjectType, Field, Int } from '@nestjs/graphql'
 
 @ObjectType('RightsPortalTherapySession')
 export class TherapySession {
-  @Field(() => Number)
+  @Field(() => Int)
   available!: number
 
-  @Field(() => Number)
+  @Field(() => Int)
   used!: number
 }

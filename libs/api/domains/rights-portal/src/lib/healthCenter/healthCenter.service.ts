@@ -27,49 +27,41 @@ export class HealthCenterService {
   async getHealthCenters(
     user: User,
   ): Promise<PaginatedHealthCentersResponse | null> {
-    try {
-      const res = await this.api
-        .withMiddleware(new AuthMiddleware(user as Auth))
-        .getHealthCenters({})
+    const res = await this.api
+      .withMiddleware(new AuthMiddleware(user as Auth))
+      .getHealthCenters({})
+      .catch(handle404)
 
-      if (!res || !res.healthCenters || !res.totalCount || !res.pageInfo) {
-        return null
-      }
+    if (!res || !res.healthCenters || !res.totalCount || !res.pageInfo) {
+      return null
+    }
 
-      const healthCenters: Array<HealthCenter> = res.healthCenters
-        .map((hc) => {
-          if (!hc.id) {
-            return null
-          }
-          return {
-            ...hc,
-            id: hc.id,
-            address: {
-              postalCode: hc.postalCode,
-              municipality: hc.city,
-              streetAddress: hc.address,
-            },
-          }
-        })
-        .filter(isDefined)
-
-      return {
-        data: healthCenters,
-        totalCount: res.totalCount,
-        pageInfo: {
-          hasNextPage: res.pageInfo.hasNextPage ?? false,
-          hasPreviousPage: res.pageInfo.hasPreviousPage ?? undefined,
-          startCursor: res.pageInfo.startCursor ?? undefined,
-          endCursor: res.pageInfo.endCursor ?? undefined,
-        },
-      }
-    } catch (e) {
-      this.logger.error('Failed to get health centers', {
-        ...e,
-        category: LOG_CATEGORY,
+    const healthCenters: Array<HealthCenter> = res.healthCenters
+      .map((hc) => {
+        if (!hc.id) {
+          return null
+        }
+        return {
+          ...hc,
+          id: hc.id,
+          address: {
+            postalCode: hc.postalCode,
+            municipality: hc.city,
+            streetAddress: hc.address,
+          },
+        }
       })
+      .filter(isDefined)
 
-      return handle404(e)
+    return {
+      data: healthCenters,
+      totalCount: res.totalCount,
+      pageInfo: {
+        hasNextPage: res.pageInfo.hasNextPage ?? false,
+        hasPreviousPage: res.pageInfo.hasPreviousPage ?? undefined,
+        startCursor: res.pageInfo.startCursor ?? undefined,
+        endCursor: res.pageInfo.endCursor ?? undefined,
+      },
     }
   }
 
@@ -79,43 +71,39 @@ export class HealthCenterService {
     dateTo?: Date,
   ): Promise<HealthCenterRegistrationHistory | null> {
     const api = this.api.withMiddleware(new AuthMiddleware(user as Auth))
-
-    try {
-      const res = await Promise.all([
-        api.getCurrentHealthCenter(),
-        api.getHealthCenterHistory({
+    const res = await Promise.all([
+      api.getCurrentHealthCenter().catch(handle404),
+      api
+        .getHealthCenterHistory({
           dateFrom: dateFrom
             ? dateFrom.toDateString()
             : subYears(new Date(), 5).toDateString(),
           dateTo: dateTo ? dateTo.toDateString() : new Date().toDateString(),
-        }),
-      ])
+        })
+        .catch(handle404),
+    ])
 
-      const history = res[1]
-        ? res[1].map(
-            (h) =>
-              ({
-                ...h,
-                healthCenterName: h.healthCenter?.healthCenter,
-                doctor: h.healthCenter?.doctor,
-              } as HealthCenterRecord),
-          )
-        : []
+    const [healthCenterRes, historyRes] = res
 
-      if (!res) return null
-      return {
-        current: {
-          ...res[0],
-          healthCenterName: res[0].healthCenter ?? undefined,
-        },
-        history,
-      }
-    } catch (e) {
-      this.logger.error('Failed to get health center registration history', {
-        ...e,
-        category: LOG_CATEGORY,
-      })
-      return handle404(e)
+    if (!healthCenterRes || !historyRes) return null
+
+    const history = historyRes
+      ? historyRes.map(
+          (h) =>
+            ({
+              ...h,
+              healthCenterName: h.healthCenter?.healthCenter,
+              doctor: h.healthCenter?.doctor,
+            } as HealthCenterRecord),
+        )
+      : []
+
+    return {
+      current: {
+        ...res[0],
+        healthCenterName: healthCenterRes.healthCenter ?? undefined,
+      },
+      history,
     }
   }
 
@@ -123,26 +111,10 @@ export class HealthCenterService {
     user: User,
     input: HealthCenterRegisterInput,
   ): Promise<HealthCenterRegisterResponse> {
-    try {
-      await this.api
-        .withMiddleware(new AuthMiddleware(user as Auth))
-        .registerHealthCenter(input)
-      return {
-        success: true,
-      }
-    } catch (e) {
-      this.logger.error('Failed to register health center', {
-        ...e,
-        category: LOG_CATEGORY,
-      })
-
-      if (e.response?.status === 400) {
-        handle404(e)
-      }
-
-      return {
-        success: false,
-      }
-    }
+    return await this.api
+      .withMiddleware(new AuthMiddleware(user as Auth))
+      .registerHealthCenter(input)
+      .then(() => ({ success: true }))
+      .catch(() => ({ success: false }))
   }
 }

@@ -1,7 +1,7 @@
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, InputType, Int } from '@nestjs/graphql'
 
 @InputType('RightsPortalPaymentOverviewDocumentInput')
 export class PaymentOverviewDocumentInput {
-  @Field(() => Number)
+  @Field(() => Int)
   documentId!: number
 }

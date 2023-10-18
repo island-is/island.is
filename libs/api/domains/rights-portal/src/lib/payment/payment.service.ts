@@ -12,6 +12,7 @@ import { PaymentOverviewDocumentInput } from './dto/paymentOverviewDocument.inpu
 import { PaymentOverviewDocument } from './models/paymentOverviewDocument.model'
 import { CopaymentBillsInput } from './dto/copaymentBills.input'
 import { PaymentOverviewBill } from './models/paymentOverviewBill.model'
+import { handle404 } from '@island.is/clients/middlewares'
 
 const LOG_CATEGORY = 'rights-portal-payment'
 
@@ -35,17 +36,13 @@ export class PaymentService {
       const data = await this.api
         .withMiddleware(new AuthMiddleware(user as Auth))
         .getCopaymentStatus()
+        .catch(handle404)
 
       return {
-        items: [data],
+        items: data ? [data] : [],
         errors: [],
       }
     } catch (error) {
-      this.logger.error('Failed to get copayment status', {
-        ...error,
-        category: LOG_CATEGORY,
-      })
-
       return {
         items: [],
         errors: [{ status: PaymentErrorStatus.INTERNAL_SERVICE_ERROR }],
@@ -60,17 +57,13 @@ export class PaymentService {
       const data = await this.api
         .withMiddleware(new AuthMiddleware(user as Auth))
         .getCopaymentPeriods()
+        .catch(handle404)
 
       return {
-        items: data,
+        items: data ? data : [],
         errors: [],
       }
     } catch (error) {
-      this.logger.error('Failed to get copayment periods', {
-        ...error,
-        category: LOG_CATEGORY,
-      })
-
       return {
         items: [],
         errors: [{ status: PaymentErrorStatus.INTERNAL_SERVICE_ERROR }],
@@ -86,17 +79,13 @@ export class PaymentService {
       const data = await this.api
         .withMiddleware(new AuthMiddleware(user as Auth))
         .getCopaymentBills(input)
+        .catch(handle404)
 
       return {
-        items: data,
+        items: data ? data : [],
         errors: [],
       }
     } catch (error) {
-      this.logger.error('Failed to get copayment bills', {
-        ...error,
-        category: LOG_CATEGORY,
-      })
-
       return {
         items: [],
         errors: [{ status: PaymentErrorStatus.INTERNAL_SERVICE_ERROR }],
@@ -111,17 +100,13 @@ export class PaymentService {
       const data = await this.api
         .withMiddleware(new AuthMiddleware(user as Auth))
         .getPaymentOverviewStatus()
+        .catch(handle404)
 
       return {
-        items: [data],
+        items: data ? [data] : [],
         errors: [],
       }
     } catch (error) {
-      this.logger.error('Failed to get payment overview status', {
-        ...error,
-        category: LOG_CATEGORY,
-      })
-
       return {
         items: [],
         errors: [{ status: PaymentErrorStatus.INTERNAL_SERVICE_ERROR }],
@@ -136,17 +121,13 @@ export class PaymentService {
       const data = await this.api
         .withMiddleware(new AuthMiddleware(user as Auth))
         .getPaymentOverviewBills()
+        .catch(handle404)
 
       return {
-        items: data,
+        items: data ? data : [],
         errors: [],
       }
     } catch (error) {
-      this.logger.error('Failed to get payment overview bills', {
-        ...error,
-        category: LOG_CATEGORY,
-      })
-
       return {
         items: [],
         errors: [{ status: PaymentErrorStatus.INTERNAL_SERVICE_ERROR }],
@@ -162,6 +143,7 @@ export class PaymentService {
       const data = await this.api
         .withMiddleware(new AuthMiddleware(user as Auth))
         .getPaymentOverviewDocument(input)
+        .catch(handle404)
 
       if (!data)
         return {
@@ -174,11 +156,6 @@ export class PaymentService {
         errors: [],
       }
     } catch (error) {
-      this.logger.error('Failed to get payment overview bills pdf', {
-        ...error,
-        category: LOG_CATEGORY,
-      })
-
       return {
         items: [],
         errors: [{ status: PaymentErrorStatus.INTERNAL_SERVICE_ERROR }],

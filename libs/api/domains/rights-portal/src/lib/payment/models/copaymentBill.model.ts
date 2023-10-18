@@ -1,8 +1,8 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('RightsPortalCopaymentBill')
 export class CopaymentBill {
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   id?: number | null
 
   @Field(() => String, { nullable: true })
@@ -11,15 +11,15 @@ export class CopaymentBill {
   @Field(() => Date, { nullable: true })
   date?: Date | null
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   totalAmount?: number | null
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   insuranceAmount?: number | null
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   ownAmount?: number | null
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   overpaid?: number | null
 }

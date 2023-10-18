@@ -1,7 +1,7 @@
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, ID, InputType } from '@nestjs/graphql'
 
 @InputType('RightsPortalDentistRegisterInput')
 export class DentistRegisterInput {
-  @Field(() => Number)
+  @Field(() => ID)
   id!: number
 }

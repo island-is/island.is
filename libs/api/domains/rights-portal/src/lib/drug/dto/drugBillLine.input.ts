@@ -2,8 +2,8 @@ import { Field, ID, InputType } from '@nestjs/graphql'
 
 @InputType('RightsPortalDrugsBillLineInput')
 export class DrugBillLineInput {
-  @Field(() => ID, { nullable: true })
+  @Field(() => ID)
   billId!: number
-  @Field(() => ID, { nullable: true })
+  @Field(() => ID)
   paymentPeriodId!: number
 }

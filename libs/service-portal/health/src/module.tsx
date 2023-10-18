@@ -36,7 +36,7 @@ const Payments = lazy(() => import('./screens/Payments/Payments'))
 
 export const healthModule: PortalModule = {
   name: 'Heilsa',
-  featureFlag: Features.servicePortalHealthRightsModule,
+  // featureFlag: Features.servicePortalHealthRightsModule,
   enabled: ({ isCompany }) => !isCompany,
   routes: ({ userInfo }) => [
     {
@@ -78,7 +78,7 @@ export const healthModule: PortalModule = {
       element: <HealthCenter />,
     },
     {
-      name: 'Lyf',
+      name: hm.medicineTitle,
       path: HealthPaths.HealthMedicine,
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <Medicine />,

@@ -21,112 +21,65 @@ export class DrugService {
   ) {}
 
   async getPeriods(user: User) {
-    try {
-      return await this.api
-        .withMiddleware(new AuthMiddleware(user as Auth))
-        .getDrugPaymentPeriods()
-    } catch (e) {
-      this.logger.error('Error getting drug periods', {
-        ...e,
-        category: LOG_CATEGORY,
-      })
-      return handle404(e)
-    }
+    return await this.api
+      .withMiddleware(new AuthMiddleware(user as Auth))
+      .getDrugPaymentPeriods()
+      .catch(handle404)
   }
 
   async getBills(user: User, input: DrugBillInput) {
-    try {
-      return await this.api
-        .withMiddleware(new AuthMiddleware(user as Auth))
-        .getDrugBills(input)
-    } catch (e) {
-      this.logger.error('Error getting drug bills', {
-        ...e,
-        category: LOG_CATEGORY,
-      })
-      return handle404(e)
-    }
+    return await this.api
+      .withMiddleware(new AuthMiddleware(user as Auth))
+      .getDrugBills(input)
+      .catch(handle404)
   }
 
   async getBillLines(user: User, input: DrugBillLineInput) {
-    try {
-      return await this.api
-        .withMiddleware(new AuthMiddleware(user as Auth))
-        .getDrugBillLineItems(input)
-    } catch (e) {
-      this.logger.error('Error getting drug bill lines', {
-        ...e,
-        category: LOG_CATEGORY,
-      })
-      return handle404(e)
-    }
+    return await this.api
+      .withMiddleware(new AuthMiddleware(user as Auth))
+      .getDrugBillLineItems(input)
+      .catch(handle404)
   }
 
   async getDrugs(user: User, input: DrugInput) {
-    try {
-      const data = await this.api
-        .withMiddleware(new AuthMiddleware(user as Auth))
-        .getDrugs(input)
+    const data = await this.api
+      .withMiddleware(new AuthMiddleware(user as Auth))
+      .getDrugs(input)
+      .catch(handle404)
 
-      const response = {
-        data: data.drugs,
-        pageInfo: data.pageInfo,
-        totalCount: data.totalCount,
-      } as PaginatedDrugResponse
+    if (!data) return null
 
-      return response
-    } catch (e) {
-      this.logger.error('Error getting drugs', {
-        ...e,
-        category: LOG_CATEGORY,
-      })
-      return handle404(e)
-    }
+    const response = {
+      data: data.drugs,
+      pageInfo: data.pageInfo,
+      totalCount: data.totalCount,
+    } as PaginatedDrugResponse
+
+    return response
   }
 
   async getCalculations(user: User, input: DrugCalculatorInput) {
-    try {
-      const results = await this.api
-        .withMiddleware(new AuthMiddleware(user as Auth))
-        .drugCalculator(input)
-
-      return results
-    } catch (e) {
-      this.logger.error('Error getting drug calculations', {
-        ...e,
-        category: LOG_CATEGORY,
-      })
-      return handle404(e)
-    }
+    return await this.api
+      .withMiddleware(new AuthMiddleware(user as Auth))
+      .drugCalculator(input)
+      .catch(handle404)
   }
 
   async getCertificates(user: User) {
-    try {
-      return await this.api
-        .withMiddleware(new AuthMiddleware(user as Auth))
-        .getDrugCertificates()
-    } catch (e) {
-      this.logger.error('Error getting drug certificates', {
-        ...e,
-        category: LOG_CATEGORY,
-      })
-      return handle404(e)
-    }
+    return await this.api
+      .withMiddleware(new AuthMiddleware(user as Auth))
+      .getDrugCertificates()
+      .catch(handle404)
   }
 
   async getCertificateById(user: User, input: DrugCertificateInput) {
-    try {
-      const certificates = await this.api
-        .withMiddleware(new AuthMiddleware(user as Auth))
-        .getDrugCertificates()
+    const certificates = await this.api
+      .withMiddleware(new AuthMiddleware(user as Auth))
+      .getDrugCertificates()
+      .catch(handle404)
 
-      return certificates.find((certificate) => certificate.id === input.id)
-    } catch (e) {
-      this.logger.error('Error getting drug certificate by id', {
-        ...e,
-        category: LOG_CATEGORY,
-      })
-      return handle404(e)
-    }
+    if (!certificates) return null
+
+    return certificates.find((certificate) => certificate.id === input.id)
   }
 }
