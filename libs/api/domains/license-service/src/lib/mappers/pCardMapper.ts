@@ -7,7 +7,7 @@ import {
   GenericLicenseMapper,
   GenericUserLicensePayload,
 } from '../licenceService.type'
-import { getLabel, i18n } from '../utils/translations'
+import { getLabel } from '../utils/translations'
 import { Injectable } from '@nestjs/common'
 import { Staediskortamal } from '@island.is/clients/p-card'
 import { isDefined } from '@island.is/shared/utils'
@@ -38,32 +38,32 @@ export class PCardPayloadMapper implements GenericLicenseMapper {
             value: typedPayload.kennitala,
           }
         : null,
-      typedPayload.nafn
+      typedPayload.malsnumer
         ? {
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('name', locale, label),
-            value: typedPayload.nafn,
+            label: getLabel('cardNumber', locale, label),
+            value: typedPayload.malsnumer,
           }
         : null,
-      typedPayload.nafn
+      typedPayload.utgafudagur
         ? {
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('name', locale, label),
-            value: typedPayload.nafn,
+            label: getLabel('publishDate', locale, label),
+            value: typedPayload.utgafudagur.toISOString(),
           }
         : null,
-      typedPayload.nafn
+      typedPayload.gildistimi
         ? {
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('name', locale, label),
-            value: typedPayload.nafn,
+            label: getLabel('validTo', locale, label),
+            value: typedPayload.gildistimi.toISOString(),
           }
         : null,
-      typedPayload.nafn
+      typedPayload.utgefandi
         ? {
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('name', locale, label),
-            value: typedPayload.nafn,
+            label: getLabel('publisher', locale, label),
+            value: typedPayload.utgefandi,
           }
         : null,
     ].filter(isDefined)
@@ -72,9 +72,12 @@ export class PCardPayloadMapper implements GenericLicenseMapper {
       data,
       rawData: JSON.stringify(typedPayload),
       metadata: {
-        licenseNumber: typedPayload.kennitala?.toString() ?? '',
-        expired: typedPayload.gildirtil
-          ? !isAfter(new Date(typedPayload.gildirtil), new Date())
+        licenseNumber: typedPayload.malsnumer?.toString() ?? '',
+        expired: typedPayload.gildistimi
+          ? !isAfter(
+              new Date(typedPayload.gildistimi.toISOString()),
+              new Date(),
+            )
           : null,
       },
     }
