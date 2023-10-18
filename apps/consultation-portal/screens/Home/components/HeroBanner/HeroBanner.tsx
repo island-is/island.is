@@ -10,12 +10,13 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import * as styles from './HeroBanner.css'
-import { LESchoolMobile, Splash } from '../../../../components/svg'
+import { HeroImage } from '../../../../components/svg'
 import { StatisticBox, HeroTiles } from './components'
 import { ArrOfStatistics } from '../../../../types/interfaces'
 import { useIsMobile } from '../../../../hooks'
 import localization from '../../Home.json'
 import { LogoText } from '../../../../components'
+import { useCallback, useState } from 'react'
 
 interface HeroBannerProps {
   statistics: ArrOfStatistics
@@ -24,6 +25,18 @@ interface HeroBannerProps {
 export const HeroBanner = ({ statistics }: HeroBannerProps) => {
   const { isMobile } = useIsMobile()
   const loc = localization['heroBanner']
+
+  const [_height, setHeight] = useState(null)
+  const [_width, setWidth] = useState(null)
+  const div = useCallback((node) => {
+    if (node !== null) {
+      setHeight(node.getBoundingClientRect().height)
+      setWidth(node.getBoundingClientRect().width)
+    }
+  }, [])
+
+  console.log('_height', _height)
+  console.log('_width', _width)
 
   return (
     <Box
@@ -38,9 +51,9 @@ export const HeroBanner = ({ statistics }: HeroBannerProps) => {
         {isMobile ? (
           <Box paddingY={6}>
             <Stack space={2}>
-              <Stack space={6}>
+              <Stack space={3}>
                 <LogoText />
-                <LESchoolMobile />
+                <HeroImage className={styles.heroImage} />
               </Stack>
               <StatisticBox
                 statistic={statistics?.casesInReview?.toLocaleString('de-DE')}
@@ -73,9 +86,7 @@ export const HeroBanner = ({ statistics }: HeroBannerProps) => {
               </Stack>
             </GridColumn>
             <GridColumn span={'6/12'}>
-              <Box className={styles.bg}>
-                <Splash />
-              </Box>
+              <HeroImage className={styles.heroImage} />
               <Box className={styles.alignTiles}>
                 <HeroTiles space={2} columns={[1]}>
                   <StatisticBox
