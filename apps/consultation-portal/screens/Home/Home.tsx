@@ -22,7 +22,11 @@ import {
   CaseFilter,
 } from '../../types/interfaces'
 import { Card, EmptyState, Pagination, Layout } from '../../components'
-import { useFrontPageFilters, useIsMobile } from '../../hooks'
+import {
+  useFetchStatistics,
+  useFrontPageFilters,
+  useIsMobile,
+} from '../../hooks'
 import {
   CARDS_PER_PAGE,
   FILTERS_FRONT_PAGE_KEY,
@@ -31,10 +35,9 @@ import { MapCaseStatuses } from '../../types/enums'
 
 interface HomeProps {
   types: ArrOfTypes
-  statistics: ArrOfStatistics
 }
 
-export const Index = ({ types, statistics }: HomeProps) => {
+export const Index = ({ types }: HomeProps) => {
   const { isMobile } = useIsMobile()
   const loc = localization['home']
   const locSeo = loc['seo']
@@ -53,6 +56,8 @@ export const Index = ({ types, statistics }: HomeProps) => {
   } = useFrontPageFilters({
     types: types,
   })
+
+  const { statistics } = useFetchStatistics()
 
   const renderCards = () => {
     if (getCasesLoading) {
