@@ -66,18 +66,17 @@ export class NationalRegistryService {
     data?: SharedPerson,
   ): Promise<Housing | null> {
     if (data?.api === 'v1') {
-      if (!data.rawData || !data.rawData.Fjolsknr) {
-        return null
-      }
       const family = await this.v1.getFamily(nationalId)
       return {
-        domicileId: data.rawData.Fjolsknr,
+        domicileId: data?.rawData?.Fjolsknr ?? '',
         address: {
-          code: data.rawData.LoghHusk,
-          lastUpdated: data.rawData.LoghHuskBreytt,
-          streetAddress: data.rawData.Logheimili,
-          city: data.rawData.LogheimiliSveitarfelag,
-          postalCode: data.rawData.Postnr,
+          code: data?.rawData?.LoghHusk,
+          lastUpdated: data?.rawData?.LoghHuskBreytt,
+          streetAddress:
+            data?.rawData?.Logheimili || data?.address?.streetAddress,
+          city:
+            data?.rawData?.LogheimiliSveitarfelag || data?.address?.city || '',
+          postalCode: data?.rawData?.Postnr || data?.address?.postalCode,
         },
         domicileInhabitants: family,
       }

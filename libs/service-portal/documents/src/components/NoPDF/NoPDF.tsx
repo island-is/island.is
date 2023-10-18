@@ -1,15 +1,17 @@
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
+import { m } from '@island.is/service-portal/core'
 import { Text, Box } from '@island.is/island-ui/core'
 import { EmptyImageSmall } from './EmptyImage'
 import { messages } from '../../utils/messages'
-import { MessageDescriptor } from 'react-intl'
+import { Problem } from '@island.is/react-spa/shared'
 
 type DocumentRendererProps = {
-  text?: MessageDescriptor
+  text?: string
+  error?: boolean
 }
 
-export const NoPDF: FC<DocumentRendererProps> = ({ text }) => {
+export const NoPDF: FC<DocumentRendererProps> = ({ text, error }) => {
   const { formatMessage } = useLocale()
   return (
     <Box
@@ -20,21 +22,45 @@ export const NoPDF: FC<DocumentRendererProps> = ({ text }) => {
       height="full"
       width="full"
     >
-      <Box width="full" display="flex" justifyContent="center" marginBottom={3}>
-        <EmptyImageSmall style={{ maxHeight: 140 }} />
-      </Box>
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        flexDirection="column"
-        paddingTop={[3, 0]}
-        style={{ maxWidth: 370 }}
-      >
-        <Text marginBottom={1} variant="h3" fontWeight="medium">
-          {formatMessage(text ?? messages.pickDocument)}
-        </Text>
-      </Box>
+      {error ? (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          flexDirection="column"
+          paddingTop={[3, 0]}
+          style={{ maxWidth: 640 }}
+        >
+          <Problem
+            type="not_found"
+            message={text}
+            title={formatMessage(m.errorFetch)}
+          />
+        </Box>
+      ) : (
+        <>
+          <Box
+            width="full"
+            display="flex"
+            justifyContent="center"
+            marginBottom={3}
+          >
+            <EmptyImageSmall style={{ maxHeight: 140 }} />
+          </Box>
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            flexDirection="column"
+            paddingTop={[3, 0]}
+            style={{ maxWidth: 370 }}
+          >
+            <Text marginBottom={1} variant="h3" fontWeight="medium">
+              {text ?? formatMessage(messages.pickDocument)}
+            </Text>
+          </Box>
+        </>
+      )}
     </Box>
   )
 }
