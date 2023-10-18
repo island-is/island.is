@@ -3,7 +3,7 @@ import { existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
 import { cognitoLogin, idsLogin } from './login'
 import { JUDICIAL_SYSTEM_HOME_URL, urls } from './urls'
-import { debug, sleep } from './utils'
+import { debug } from './utils'
 
 export const sessionsPath = join(__dirname, 'tmp-sessions')
 if (!existsSync(sessionsPath)) {
@@ -157,19 +157,11 @@ export async function judicialSystemSession({ browser }: { browser: Browser }) {
   const context = await browser.newContext()
   const page = await context.newPage()
   const authUrlPrefix = urls.authUrl
-  // Retry a few times in case login fails due to deployment not being stable
-  for (let i = 0; i < 5; i++) {
-    await ensureCognitoSessionIfNeeded(
-      page,
-      JUDICIAL_SYSTEM_HOME_URL,
-      authUrlPrefix,
-    )
-    const cookies = await context.cookies()
-    if (cookies.length > 0) {
-      break
-    }
-    await sleep(5000)
-  }
-
+  await ensureCognitoSessionIfNeeded(
+    page,
+    JUDICIAL_SYSTEM_HOME_URL,
+    authUrlPrefix,
+  )
+  await page.close()
   return context
 }
