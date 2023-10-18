@@ -20,7 +20,7 @@ export const serviceSetup = (services: {
       SUPPORT_EMAIL: '/k8s/judicial-system/SUPPORT_EMAIL',
     })
     .liveness('/liveness')
-    .readiness('/readiness')
+    .readiness({ path: '/liveness', initialDelaySeconds: 10 })
     .resources({
       limits: {
         cpu: '200m',
