@@ -3,7 +3,6 @@ import {
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  User,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import {
@@ -11,6 +10,7 @@ import {
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
+import type { User } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { PaymentService } from './payment.service'

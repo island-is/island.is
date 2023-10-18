@@ -7,13 +7,13 @@ import {
   ScopesGuard,
   Scopes,
   CurrentUser,
-  User,
 } from '@island.is/auth-nest-tools'
 import {
   FeatureFlag,
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
+import type { User } from '@island.is/auth-nest-tools'
 import { OverviewService } from './overview.service'
 import { InsuranceConfirmationResponse } from './models/insuranceConfirmation.response'
 import { InsuranceOverviewResponse } from './models/insuranceOverview.response'
