@@ -4,6 +4,9 @@ import {
   HelloOddurApi,
   GetStatusApi,
   Status,
+  OldAgePension,
+  SendApplicationApi,
+  OldAgePensionResponse,
   BankInfo,
   GetBankInfoApi,
 } from '../../gen/fetch'
@@ -13,6 +16,7 @@ export class SocialInsuranceAdministrationClientService {
   constructor(
     private readonly helloOddurApi: HelloOddurApi,
     private readonly getStatusApi: GetStatusApi,
+    private readonly sendApplicationApi: SendApplicationApi,
     private readonly getBankInfoApi: GetBankInfoApi,
   ) {}
 
@@ -22,6 +26,8 @@ export class SocialInsuranceAdministrationClientService {
   private statusAPIWithAuth = (user: User) =>
     this.getStatusApi.withMiddleware(new AuthMiddleware(user as Auth))
 
+  private sendAPIWithAuth = (user: User) =>
+    this.sendApplicationApi.withMiddleware(new AuthMiddleware(user as Auth))
   private bankInfoAPIWithAuth = (user: User) =>
     this.getBankInfoApi.withMiddleware(new AuthMiddleware(user as Auth))
 
@@ -44,10 +50,15 @@ export class SocialInsuranceAdministrationClientService {
       '-------------------getStatus Begin #45----------------------------',
     )
     return await this.statusAPIWithAuth(user).getStatus()
+  }
 
-    console.log(
-      '-------------------getStatus DONE #45 ----------------------------',
-    )
+  async sendApplication(
+    user: User,
+    oldAgePension: OldAgePension,
+  ): Promise<OldAgePensionResponse> {
+    return await this.sendAPIWithAuth(user).oldAgePensionSendApplication({
+      oldAgePension,
+    })
   }
 
   async getBankInfo(user: User): Promise<BankInfo> {

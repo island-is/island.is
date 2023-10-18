@@ -30,7 +30,7 @@ import addMonths from 'date-fns/addMonths'
 import addDays from 'date-fns/addDays'
 import { CombinedResidenceHistory, Employer, ChildPensionRow } from '../types'
 
-interface FileType {
+export interface FileType {
   key: string
   name: string
 }
@@ -177,6 +177,51 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'paymentInfo.spouseAllowanceUsage',
   ) as string
 
+  const additionalAttachments = getValueViaPath(
+    answers,
+    'fileUploadAdditionalFiles.additionalDocuments',
+  ) as FileType[]
+
+  const pensionAttachments = getValueViaPath(
+    answers,
+    'fileUpload.pension',
+  ) as FileType[]
+
+  const fishermenAttachments = getValueViaPath(
+    answers,
+    'fileUpload.fishermen',
+  ) as FileType[]
+
+  const selfEmployedAttachments = getValueViaPath(
+    answers,
+    'employment.selfEmployedAttachment',
+  ) as FileType[]
+
+  const earlyRetirementAttachments = getValueViaPath(
+    answers,
+    'fileUpload.earlyRetirement',
+  ) as FileType[]
+
+  const leaseAgreementAttachments = getValueViaPath(
+    answers,
+    'fileUploadHouseholdSupplement.leaseAgreement',
+  ) as FileType[]
+
+  const schoolConfirmationAttachments = getValueViaPath(
+    answers,
+    'fileUploadHouseholdSupplement.schoolConfirmation',
+  ) as FileType[]
+
+  const maintenanceAttachments = getValueViaPath(
+    answers,
+    'fileUploadChildPension.maintenance',
+  ) as FileType[]
+
+  const notLivesWithApplicantAttachments = getValueViaPath(
+    answers,
+    'fileUploadChildPension.notLivesWithApplicant',
+  ) as FileType[]
+
   return {
     pensionFundQuestion,
     applicationType,
@@ -201,6 +246,15 @@ export function getApplicationAnswers(answers: Application['answers']) {
     spouseAllowance,
     personalAllowanceUsage,
     spouseAllowanceUsage,
+    additionalAttachments,
+    pensionAttachments,
+    fishermenAttachments,
+    selfEmployedAttachments,
+    earlyRetirementAttachments,
+    leaseAgreementAttachments,
+    schoolConfirmationAttachments,
+    maintenanceAttachments,
+    notLivesWithApplicantAttachments,
     //  taxLevel,
   }
 }

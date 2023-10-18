@@ -1,12 +1,12 @@
-import { Test, TestingModule } from '@nestjs/testing'
-import { OldAgePensionService } from './social-insurance-administration.service'
-import { createCurrentUser } from '@island.is/testing/fixtures'
 import { createApplication } from '@island.is/application/testing'
-import { LOGGER_PROVIDER, logger } from '@island.is/logging'
+import { SocialInsuranceAdministrationClientService } from '@island.is/clients/social-insurance-administration'
+import { Test, TestingModule } from '@nestjs/testing'
 import {
-  HelloOddurApi,
-  SocialInsuranceAdministrationClientService,
-} from '@island.is/clients/social-insurance-administration'
+  APPLICATION_ATTACHMENT_BUCKET,
+  OldAgePensionService,
+} from './social-insurance-administration.service'
+import { createCurrentUser } from '@island.is/testing/fixtures'
+import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 
 describe('OldAgePensionService', () => {
   let oldAgePensionService: OldAgePensionService
@@ -23,13 +23,15 @@ describe('OldAgePensionService', () => {
           provide: SocialInsuranceAdministrationClientService,
           useClass: jest.fn(() => ({
             getOddur: () => 'OK FROM Oddur',
+            sendApplication: () =>
+              Promise.resolve({
+                applicationLineId: '123',
+              }),
           })),
         },
         {
-          provide: HelloOddurApi,
-          useClass: jest.fn(() => ({
-            applicationGetApplicationInformation: () => Promise.reject(),
-          })),
+          provide: APPLICATION_ATTACHMENT_BUCKET,
+          useValue: 'attachmentBucket',
         },
       ],
     }).compile()
@@ -51,5 +53,28 @@ describe('OldAgePensionService', () => {
         currentUserLocale: 'is',
       }),
     ).resolves.toBe('OK FROM Oddur')
+  })
+
+  it('should send old age pension application', async () => {
+    const auth = createCurrentUser()
+    const application = createApplication({
+      answers: {
+        'period.year': '2023',
+        'fileUploadAdditionalFiles.additionalDocuments': [
+          { key: 'key', name: 'name' },
+        ],
+      },
+    })
+
+    // Also need to mock the pdf here
+    jest.spyOn(oldAgePensionService, 'getPdf').mockImplementation(jest.fn())
+
+    const result = await oldAgePensionService.sendApplication({
+      application,
+      auth,
+      currentUserLocale: 'is',
+    })
+
+    expect(result).toMatchObject({ applicationLineId: '123' })
   })
 })

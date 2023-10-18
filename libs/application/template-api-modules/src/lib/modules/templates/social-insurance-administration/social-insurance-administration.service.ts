@@ -1,45 +1,260 @@
 import { Inject, Injectable } from '@nestjs/common'
 
-import { ApplicationTypes } from '@island.is/application/types'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import {
+  Application,
+  ApplicationTypes,
+  YES,
+} from '@island.is/application/types'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 
+import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { TemplateApiModuleActionProps } from '@island.is/application/template-api-modules'
 
+import { getValueViaPath } from '@island.is/application/core'
 import {
-  HelloOddurApi,
+  ApplicationType,
+  ConnectedApplications,
+  Employment,
+  FileType,
+  HouseholdSupplementHousing,
+  childCustodyLivesWithApplicant,
+  getApplicationAnswers,
+  isEarlyRetirement,
+} from '@island.is/application/templates/social-insurance-administration/old-age-pension'
+import {
+  Attachment,
+  OldAgePensionResponseError,
   SocialInsuranceAdministrationClientService,
+  Uploads,
 } from '@island.is/clients/social-insurance-administration'
+import { S3 } from 'aws-sdk'
+import { transformApplicationToOldAgePensionDTO } from './social-insurance-administration-utils'
 import { coreErrorMessages } from '@island.is/application/core'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
-interface customError {
-  type: string
-  title: string
-  status: number
-  traceId: string
-  errors: Record<string, string[]>
-}
+export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
 @Injectable()
 export class OldAgePensionService extends BaseTemplateApiService {
+  s3 = new S3()
+
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private siaClientService: SocialInsuranceAdministrationClientService,
-    private helloOddurApi: HelloOddurApi,
+    @Inject(APPLICATION_ATTACHMENT_BUCKET)
+    private readonly attachmentBucket: string,
   ) {
     super(ApplicationTypes.OLD_AGE_PENSION)
   }
 
-  private parseErrors(e: Error | customError) {
+  private parseErrors(e: Error | OldAgePensionResponseError) {
     if (e instanceof Error) {
       return e.message
     }
 
-    return {
-      message: Object.entries(e.errors).map(([, values]) => values.join(', ')),
+    return { message: e.message }
+  }
+
+  private async initAttachments(
+    application: Application,
+    id: string,
+    type: string,
+    attachments: FileType[],
+  ): Promise<Attachment[]> {
+    const result: Attachment[] = []
+
+    for (let i = 0; i <= attachments.length - 1; i++) {
+      const pdf = await this.getPdf(application, i, id)
+      result.push({
+        name: attachments[i].name,
+        type: type,
+        file: pdf,
+      })
+    }
+
+    return result
+  }
+
+  private async getAttachments(application: Application): Promise<Uploads> {
+    const {
+      additionalAttachments,
+      pensionAttachments,
+      fishermenAttachments,
+      selfEmployedAttachments,
+      earlyRetirementAttachments,
+      leaseAgreementAttachments,
+      schoolConfirmationAttachments,
+      maintenanceAttachments,
+      notLivesWithApplicantAttachments,
+      childPensionAddChild,
+      applicationType,
+      connectedApplications,
+      householdSupplementHousing,
+      householdSupplementChildren,
+      employmentStatus,
+    } = getApplicationAnswers(application.answers)
+
+    const uploads: Uploads = {}
+
+    if (additionalAttachments && additionalAttachments.length > 0) {
+      uploads.additional = await this.initAttachments(
+        application,
+        'fileUploadAdditionalFiles.additionalDocuments',
+        'other',
+        additionalAttachments,
+      )
+    }
+
+    if (pensionAttachments && pensionAttachments.length > 0) {
+      uploads.pension = await this.initAttachments(
+        application,
+        'fileUpload.pension',
+        'pension',
+        pensionAttachments,
+      )
+    }
+
+    if (
+      fishermenAttachments &&
+      fishermenAttachments.length > 0 &&
+      applicationType === ApplicationType.SAILOR_PENSION
+    ) {
+      uploads.sailorPension = await this.initAttachments(
+        application,
+        'fileUpload.fishermen',
+        'sailor',
+        fishermenAttachments,
+      )
+    }
+
+    if (
+      leaseAgreementAttachments &&
+      leaseAgreementAttachments.length > 0 &&
+      connectedApplications?.includes(
+        ConnectedApplications.HOUSEHOLDSUPPLEMENT,
+      ) &&
+      householdSupplementHousing === HouseholdSupplementHousing.RENTER
+    ) {
+      uploads.householdSupplement = await this.initAttachments(
+        application,
+        'fileUploadHouseholdSupplement.leaseAgreement',
+        'leaseAgreement',
+        leaseAgreementAttachments,
+      )
+    }
+
+    if (
+      schoolConfirmationAttachments &&
+      schoolConfirmationAttachments.length > 0 &&
+      connectedApplications?.includes(
+        ConnectedApplications.HOUSEHOLDSUPPLEMENT,
+      ) &&
+      householdSupplementChildren === YES
+    ) {
+      if (!uploads.householdSupplement) {
+        uploads.householdSupplement = []
+      }
+
+      uploads.householdSupplement.push(
+        ...(await this.initAttachments(
+          application,
+          'fileUploadHouseholdSupplement.schoolConfirmation',
+          'schoolConfirmation',
+          schoolConfirmationAttachments,
+        )),
+      )
+    }
+
+    if (
+      maintenanceAttachments &&
+      maintenanceAttachments.length > 0 &&
+      connectedApplications?.includes(ConnectedApplications.CHILDPENSION) &&
+      childPensionAddChild === YES
+    ) {
+      uploads.childPension = await this.initAttachments(
+        application,
+        'fileUploadChildPension.maintenance',
+        'maintenance',
+        maintenanceAttachments,
+      )
+    }
+
+    if (
+      notLivesWithApplicantAttachments &&
+      notLivesWithApplicantAttachments.length > 0 &&
+      connectedApplications?.includes(ConnectedApplications.CHILDPENSION) &&
+      childCustodyLivesWithApplicant(
+        application.answers,
+        application.externalData,
+      )
+    ) {
+      if (!uploads.childPension) {
+        uploads.childPension = []
+      }
+
+      uploads.childPension.push(
+        ...(await this.initAttachments(
+          application,
+          'fileUploadChildPension.notLivesWithApplicant',
+          'childSupport',
+          notLivesWithApplicantAttachments,
+        )),
+      )
+    }
+
+    if (
+      selfEmployedAttachments &&
+      selfEmployedAttachments.length > 0 &&
+      employmentStatus === Employment.SELFEMPLOYED
+    ) {
+      uploads.halfOldAgePension = await this.initAttachments(
+        application,
+        'employment.selfEmployedAttachment',
+        'selfEmployed',
+        selfEmployedAttachments,
+      )
+    }
+
+    if (
+      isEarlyRetirement(application.answers, application.externalData) &&
+      earlyRetirementAttachments &&
+      earlyRetirementAttachments.length > 0
+    ) {
+      uploads.earlyRetirement = await this.initAttachments(
+        application,
+        'fileUpload.earlyRetirement',
+        'earlyRetirement',
+        earlyRetirementAttachments,
+      )
+    }
+
+    return uploads
+  }
+
+  async getPdf(application: Application, index = 0, fileUpload: string) {
+    try {
+      const filename = getValueViaPath(
+        application.answers,
+        fileUpload + `[${index}].key`,
+      )
+
+      const Key = `${application.id}/${filename}`
+
+      const file = await this.s3
+        .getObject({ Bucket: this.attachmentBucket, Key })
+        .promise()
+      const fileContent = file.Body as Buffer
+
+      if (!fileContent) {
+        throw new Error('File content was undefined')
+      }
+
+      return fileContent.toString('base64')
+    } catch (e) {
+      this.logger.error('Cannot get ' + fileUpload + ' attachment', { e })
+      throw new Error('Failed to get the ' + fileUpload + ' attachment')
     }
   }
 
@@ -88,6 +303,27 @@ export class OldAgePensionService extends BaseTemplateApiService {
     }
 
     return true
+  }
+
+  async sendApplication({ application, auth }: TemplateApiModuleActionProps) {
+    try {
+      const attachments = await this.getAttachments(application)
+
+      const oldAgePensionDTO = transformApplicationToOldAgePensionDTO(
+        application,
+        attachments,
+      )
+
+      const response = await this.siaClientService.sendApplication(
+        auth,
+        oldAgePensionDTO,
+      )
+
+      return response
+    } catch (e) {
+      this.logger.error('Failed to send the old age pension application', e)
+      throw this.parseErrors(e)
+    }
   }
 
   async getBankInfo({ auth }: TemplateApiModuleActionProps) {
