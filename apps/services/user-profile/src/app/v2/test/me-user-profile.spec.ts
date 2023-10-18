@@ -91,6 +91,27 @@ describe('MeUserProfile', () => {
         await app.cleanUp()
       },
     )
+  })
+  describe('GET user-profile', () => {
+    let app = null
+    let server = null
+
+    beforeEach(async () => {
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: createCurrentUser({
+          nationalId: testUserProfile.nationalId,
+          scope: [UserProfileScope.read],
+        }),
+      })
+
+      server = request(app.getHttpServer())
+    })
+
+    afterEach(() => {
+      app.cleanUp()
+    })
 
     it.each`
       method   | endpoint
@@ -98,18 +119,6 @@ describe('MeUserProfile', () => {
     `(
       '$method $endpoint should return 200 with default UserProfileDto when the User Profile does not exist in db',
       async ({ method, endpoint }: TestEndpointOptions) => {
-        // Arrange
-        const app = await setupApp({
-          AppModule,
-          SequelizeConfigService,
-          user: createCurrentUser({
-            nationalId: testUserProfile.nationalId,
-            scope: [UserProfileScope.read],
-          }),
-        })
-
-        const server = request(app.getHttpServer())
-
         // Act
         const res = await getRequestMethod(server, method)(endpoint)
 
@@ -124,8 +133,6 @@ describe('MeUserProfile', () => {
           locale: null,
           documentNotifications: true,
         })
-
-        await app.cleanUp()
       },
     )
 
@@ -135,22 +142,8 @@ describe('MeUserProfile', () => {
     `(
       '$method $endpoint should return 200 with UserProfileDto for logged in user',
       async ({ method, endpoint }: TestEndpointOptions) => {
-        // Arrange
-        const app = await setupApp({
-          AppModule,
-          SequelizeConfigService,
-          user: createCurrentUser({
-            nationalId: testUserProfile.nationalId,
-            scope: [UserProfileScope.read],
-          }),
-        })
-
         const fixtureFactory = new FixtureFactory(app)
-
         await fixtureFactory.createUserProfile(testUserProfile)
-
-        const server = request(app.getHttpServer())
-
         // Act
         const res = await getRequestMethod(server, method)(endpoint)
 
@@ -165,8 +158,6 @@ describe('MeUserProfile', () => {
           documentNotifications: true,
           needsNudge: null,
         })
-
-        await app.cleanUp()
       },
     )
 
@@ -176,24 +167,11 @@ describe('MeUserProfile', () => {
     `(
       '$method $endpoint should return 200 with UserProfileDto for logged in user with no need for nudge',
       async ({ method, endpoint }: TestEndpointOptions) => {
-        // Arrange
-        const app = await setupApp({
-          AppModule,
-          SequelizeConfigService,
-          user: createCurrentUser({
-            nationalId: testUserProfile.nationalId,
-            scope: [UserProfileScope.read],
-          }),
-        })
-
         const fixtureFactory = new FixtureFactory(app)
-
         await fixtureFactory.createUserProfile({
           ...testUserProfile,
           lastNudge: new Date(),
         })
-
-        const server = request(app.getHttpServer())
 
         // Act
         const res = await getRequestMethod(server, method)(endpoint)
@@ -209,8 +187,6 @@ describe('MeUserProfile', () => {
           documentNotifications: true,
           needsNudge: false,
         })
-
-        await app.cleanUp()
       },
     )
 
@@ -220,18 +196,7 @@ describe('MeUserProfile', () => {
     `(
       '$method $endpoint should return 200 with UserProfileDto for logged in user with need for nudge since its been 6 months since last nudge',
       async ({ method, endpoint }: TestEndpointOptions) => {
-        // Arrange
-        const app = await setupApp({
-          AppModule,
-          SequelizeConfigService,
-          user: createCurrentUser({
-            nationalId: testUserProfile.nationalId,
-            scope: [UserProfileScope.read],
-          }),
-        })
-
         const fixtureFactory = new FixtureFactory(app)
-
         const lastNudge = new Date().setMonth(new Date().getMonth() - 7)
 
         await fixtureFactory.createUserProfile({
@@ -240,8 +205,6 @@ describe('MeUserProfile', () => {
           mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
           lastNudge: new Date(lastNudge),
         })
-
-        const server = request(app.getHttpServer())
 
         // Act
         const res = await getRequestMethod(server, method)(endpoint)
@@ -257,13 +220,36 @@ describe('MeUserProfile', () => {
           documentNotifications: true,
           needsNudge: true,
         })
-
-        await app.cleanUp()
       },
     )
   })
 
   describe('PATCH user-profile', () => {
+    let app = null
+    let server = null
+
+    beforeEach(async () => {
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: createCurrentUser({
+          nationalId: testUserProfile.nationalId,
+          scope: [UserProfileScope.read, UserProfileScope.write],
+        }),
+      })
+
+      // Mock confirmation email and sms
+      const verificationService = app.get(VerificationService)
+      verificationService.sendConfirmationEmail = jest.fn()
+      verificationService.sendConfirmationSms = jest.fn()
+
+      server = request(app.getHttpServer())
+    })
+
+    afterEach(() => {
+      app.cleanUp()
+    })
+
     it.each`
       method     | endpoint
       ${'PATCH'} | ${'/v2/me'}
@@ -271,25 +257,9 @@ describe('MeUserProfile', () => {
       '$method $endpoint should return 201 with changed data in response',
       async ({ method, endpoint }: TestEndpointOptions) => {
         // Arrange
-        const app = await setupApp({
-          AppModule,
-          SequelizeConfigService,
-          user: createCurrentUser({
-            nationalId: testUserProfile.nationalId,
-            scope: [UserProfileScope.read, UserProfileScope.write],
-          }),
-        })
-
-        // Mock confirmation email and sms
-        const verificationService = app.get(VerificationService)
-        verificationService.sendConfirmationEmail = jest.fn()
-        verificationService.sendConfirmationSms = jest.fn()
-
         const fixtureFactory = new FixtureFactory(app)
 
         await fixtureFactory.createUserProfile(testUserProfile)
-
-        const server = request(app.getHttpServer())
 
         // Act
         // const res = await getRequestMethod(server, method)(endpoint)
@@ -315,8 +285,6 @@ describe('MeUserProfile', () => {
 
         expect(userProfile.email).toBe(newEmail)
         expect(userProfile.mobilePhoneNumber).toBe(newPhoneNumber)
-
-        await app.cleanUp()
       },
     )
     it.each`
@@ -325,26 +293,8 @@ describe('MeUserProfile', () => {
     `(
       '$method $endpoint should return 201 with only email changed data in response',
       async ({ method, endpoint }: TestEndpointOptions) => {
-        // Arrange
-        const app = await setupApp({
-          AppModule,
-          SequelizeConfigService,
-          user: createCurrentUser({
-            nationalId: testUserProfile.nationalId,
-            scope: [UserProfileScope.read, UserProfileScope.write],
-          }),
-        })
-
-        // Mock confirmation email and sms
-        const verificationService = app.get(VerificationService)
-        verificationService.sendConfirmationEmail = jest.fn()
-        verificationService.sendConfirmationSms = jest.fn()
-
         const fixtureFactory = new FixtureFactory(app)
-
         await fixtureFactory.createUserProfile(testUserProfile)
-
-        const server = request(app.getHttpServer())
 
         // Act
         // const res = await getRequestMethod(server, method)(endpoint)
@@ -369,8 +319,6 @@ describe('MeUserProfile', () => {
         expect(userProfile.mobilePhoneNumber).toBe(
           testUserProfile.mobilePhoneNumber,
         )
-
-        await app.cleanUp()
       },
     )
 
@@ -380,26 +328,8 @@ describe('MeUserProfile', () => {
     `(
       '$method $endpoint should return 201 with only phoneNumber changed data in response',
       async ({ method, endpoint }: TestEndpointOptions) => {
-        // Arrange
-        const app = await setupApp({
-          AppModule,
-          SequelizeConfigService,
-          user: createCurrentUser({
-            nationalId: testUserProfile.nationalId,
-            scope: [UserProfileScope.read, UserProfileScope.write],
-          }),
-        })
-
-        // Mock confirmation email and sms
-        const verificationService = app.get(VerificationService)
-        verificationService.sendConfirmationEmail = jest.fn()
-        verificationService.sendConfirmationSms = jest.fn()
-
         const fixtureFactory = new FixtureFactory(app)
-
         await fixtureFactory.createUserProfile(testUserProfile)
-
-        const server = request(app.getHttpServer())
 
         // Act
         // const res = await getRequestMethod(server, method)(endpoint)
@@ -422,8 +352,6 @@ describe('MeUserProfile', () => {
 
         expect(userProfile.email).toBe(testUserProfile.email)
         expect(userProfile.mobilePhoneNumber).toBe(newPhoneNumber)
-
-        await app.cleanUp()
       },
     )
 
@@ -433,26 +361,8 @@ describe('MeUserProfile', () => {
     `(
       '$method $endpoint should return 201 and clear email and phoneNumber when empty string is sent',
       async ({ method, endpoint }: TestEndpointOptions) => {
-        // Arrange
-        const app = await setupApp({
-          AppModule,
-          SequelizeConfigService,
-          user: createCurrentUser({
-            nationalId: testUserProfile.nationalId,
-            scope: [UserProfileScope.read, UserProfileScope.write],
-          }),
-        })
-
-        // Mock confirmation email and sms
-        const verificationService = app.get(VerificationService)
-        verificationService.sendConfirmationEmail = jest.fn()
-        verificationService.sendConfirmationSms = jest.fn()
-
         const fixtureFactory = new FixtureFactory(app)
-
         await fixtureFactory.createUserProfile(testUserProfile)
-
-        const server = request(app.getHttpServer())
 
         // Act
         // const res = await getRequestMethod(server, method)(endpoint)
@@ -478,8 +388,6 @@ describe('MeUserProfile', () => {
 
         expect(userProfile.email).toBe('')
         expect(userProfile.mobilePhoneNumber).toBe('')
-
-        await app.cleanUp()
       },
     )
 
@@ -489,22 +397,6 @@ describe('MeUserProfile', () => {
     `(
       '$method $endpoint should return 201 and create profile with email and phoneNumber',
       async ({ method, endpoint }: TestEndpointOptions) => {
-        // Arrange
-        const app = await setupApp({
-          AppModule,
-          SequelizeConfigService,
-          user: createCurrentUser({
-            nationalId: testUserProfile.nationalId,
-            scope: [UserProfileScope.read, UserProfileScope.write],
-          }),
-        })
-
-        const server = request(app.getHttpServer())
-
-        const verificationService = app.get(VerificationService)
-        verificationService.sendConfirmationEmail = jest.fn()
-        verificationService.sendConfirmationSms = jest.fn()
-
         // Act
         // const res = await getRequestMethod(server, method)(endpoint)
         const res = await server.patch(endpoint).send({
@@ -532,13 +424,31 @@ describe('MeUserProfile', () => {
         expect(userProfile.mobilePhoneNumber).toBe(
           testUserProfile.mobilePhoneNumber,
         )
-
-        await app.cleanUp()
       },
     )
   })
 
   describe('Nudge confirmation', () => {
+    let app = null
+    let server = null
+
+    beforeEach(async () => {
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: createCurrentUser({
+          nationalId: testUserProfile.nationalId,
+          scope: [UserProfileScope.read, UserProfileScope.write],
+        }),
+      })
+
+      server = request(app.getHttpServer())
+    })
+
+    afterEach(() => {
+      app.cleanUp()
+    })
+
     it.each`
       method    | endpoint
       ${'POST'} | ${'/v2/me/confirm'}
@@ -546,20 +456,10 @@ describe('MeUserProfile', () => {
       '$method $endpoint should return 201 and update the lastNudge field when user confirms nudge',
       async ({ method, endpoint }: TestEndpointOptions) => {
         // Arrange
-        const app = await setupApp({
-          AppModule,
-          SequelizeConfigService,
-          user: createCurrentUser({
-            nationalId: testUserProfile.nationalId,
-            scope: [UserProfileScope.read, UserProfileScope.write],
-          }),
-        })
 
         const fixtureFactory = new FixtureFactory(app)
 
         await fixtureFactory.createUserProfile(testUserProfile)
-
-        const server = request(app.getHttpServer())
 
         // Act
         // const res = await getRequestMethod(server, method)(endpoint)
@@ -575,8 +475,6 @@ describe('MeUserProfile', () => {
         })
 
         expect(userProfile.lastNudge).not.toBeNull()
-
-        await app.cleanUp()
       },
     )
 
@@ -586,18 +484,6 @@ describe('MeUserProfile', () => {
     `(
       '$method $endpoint should return 201, and create a user profile with updated lastNudge field when user confirms nudge and no user profile exists',
       async ({ method, endpoint }: TestEndpointOptions) => {
-        // Arrange
-        const app = await setupApp({
-          AppModule,
-          SequelizeConfigService,
-          user: createCurrentUser({
-            nationalId: testUserProfile.nationalId,
-            scope: [UserProfileScope.read, UserProfileScope.write],
-          }),
-        })
-
-        const server = request(app.getHttpServer())
-
         // Act
         // const res = await getRequestMethod(server, method)(endpoint)
         const res = await getRequestMethod(server, method)(endpoint)
@@ -613,8 +499,6 @@ describe('MeUserProfile', () => {
 
         expect(userProfile).not.toBeNull()
         expect(userProfile.lastNudge).not.toBeNull()
-
-        await app.cleanUp()
       },
     )
   })
