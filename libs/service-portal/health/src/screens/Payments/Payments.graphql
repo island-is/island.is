@@ -24,6 +24,7 @@ query getCopaymentPeriods {
       monthPayment
       overpaid
       repaid
+      month
     }
     errors {
       status
