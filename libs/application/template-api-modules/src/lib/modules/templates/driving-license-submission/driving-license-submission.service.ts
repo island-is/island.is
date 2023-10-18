@@ -41,12 +41,14 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    const applicationFor = getValueViaPath<'B-full' | 'B-temp'>(
+    const applicationFor = getValueViaPath<'B-full' | 'B-temp' | 'B-renewal'>(
       answers,
       'applicationFor',
       'B-full',
     )
 
+    // TODO: switch on applicationFor for chargeItemCode?
+    // What is the chargeItemCode for renewal 65+?
     const chargeItemCode = applicationFor === 'B-full' ? 'AY110' : 'AY114'
 
     const response = await this.sharedTemplateAPIService.createCharge(
