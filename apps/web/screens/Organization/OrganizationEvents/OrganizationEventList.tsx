@@ -67,7 +67,7 @@ const OrganizationEventList: Screen<OrganizationEventListProps> = ({
   ]
 
   const eventsHeading = n(
-    'eventPageTitle',
+    'eventListPageTitle',
     activeLocale === 'is' ? 'Viðburðir' : 'Events',
   )
 
