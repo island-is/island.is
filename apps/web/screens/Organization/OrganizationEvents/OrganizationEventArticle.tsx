@@ -32,7 +32,7 @@ import {
   QueryGetSingleEventArgs,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { linkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -44,6 +44,9 @@ import { webRichText } from '@island.is/web/utils/richText'
 
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import { GET_SINGLE_EVENT_QUERY } from '../../queries/Events'
+
+const LAYOUT_CHANGE_BREAKPOINT = 1120
+const ICON_TEXT_SPACE: ResponsiveSpace = [3, 3, 3, 2, 3]
 
 interface OrganizationEventArticleProps {
   organizationPage: OrganizationPage
@@ -65,24 +68,35 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
     event.startDate && format(new Date(event.startDate), 'do MMMM yyyy')
   const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
   const { activeLocale } = useI18n()
-  const ICON_TEXT_SPACE: ResponsiveSpace = [3, 3, 3, 2, 3]
+  const { linkResolver } = useLinkResolver()
 
   const { width } = useWindowSize()
   const [isSmall, setIsSmall] = useState<boolean | null>(null)
-  //setting a specific breakpoint to change the layout
+
   useEffect(() => {
-    setIsSmall(width <= 1120)
+    setIsSmall(width <= LAYOUT_CHANGE_BREAKPOINT)
   }, [width])
+
+  const eventsHeading = n(
+    'eventListPageTitle',
+    activeLocale === 'is' ? 'Viðburðir' : 'Events',
+  )
 
   const breadCrumbs: BreadCrumbItem[] = [
     {
       title: 'Ísland.is',
-      href: linkResolver('homepage', [], locale).href,
+      href: linkResolver('homepage', []).href,
       typename: 'homepage',
     },
     {
       title: organizationPage.title,
-      href: linkResolver('organizationpage', [organizationPage.slug], locale)
+      href: linkResolver('organizationpage', [organizationPage.slug]).href,
+      typename: 'organizationpage',
+    },
+
+    {
+      title: eventsHeading,
+      href: linkResolver('organizationeventoverview', [organizationPage.slug])
         .href,
       typename: 'organizationpage',
     },
