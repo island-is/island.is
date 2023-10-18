@@ -34,7 +34,7 @@ export const information = {
       description: {
         id: 'aosah.application:information.labels.pickVehicle.description',
         defaultMessage:
-          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
+          'Hér að neðan er listi yfir vélar og tæki í þinni eigu. Veldu það tæki sem þú vilt selja',
         description: 'Pick machine description',
       },
       vehicle: {
@@ -77,7 +77,7 @@ export const information = {
       },
       plate: {
         id: 'aosah.application:information.labels.vehicle.plate',
-        defaultMessage: 'Númer tækis',
+        defaultMessage: 'Plötuskráningarnúmer',
         description: 'Machine plate number label',
       },
       type: {
@@ -99,6 +99,26 @@ export const information = {
         id: 'aosah.application:information.labels.vehicle.date',
         defaultMessage: 'Dagsetning kaupsamnings',
         description: 'Date of purchase agreement label',
+      },
+      registrationNumber: {
+        id: 'aosah.application:information.labels.vehicle.registrationNumber',
+        defaultMessage: 'Skráningarnúmer',
+        description: 'Registration number label',
+      },
+      category: {
+        id: 'aosah.application:information.labels.vehicle.category',
+        defaultMessage: 'Yfirflokkur',
+        description: 'Category label',
+      },
+      ownerNumber: {
+        id: 'aosah.application:information.labels.vehicle.ownerNumber',
+        defaultMessage: 'Eigandanúmer',
+        description: 'Owner number label',
+      },
+      subType: {
+        id: 'aosah.application:information.labels.vehicle.subType',
+        defaultMessage: 'Gerð',
+        description: 'Sub type label',
       },
     }),
     seller: defineMessages({

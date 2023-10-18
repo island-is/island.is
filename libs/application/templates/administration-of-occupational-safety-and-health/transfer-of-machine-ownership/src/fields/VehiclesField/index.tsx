@@ -4,7 +4,7 @@ import { FC, useCallback, useEffect } from 'react'
 import { VehicleSelectField } from './VehicleSelectField'
 import { VehicleRadioField } from './VehicleRadioField'
 import { useFormContext } from 'react-hook-form'
-import { VehiclesCurrentVehicle } from '../../shared'
+import { Machine, VehiclesCurrentVehicle } from '../../shared'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
@@ -16,9 +16,9 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const { setValue } = useFormContext()
   const { application } = props
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
-  console.log("application", application);
-  const currentVehicleList = []as VehiclesCurrentVehicle[];//application?.externalData.currentVehicleList
-    //.data as VehiclesCurrentVehicle[]
+  const currentMachineList = application?.externalData.machinesList
+    .data as Machine[]
+
 
   const updateData = useCallback(async () => {
     await updateApplication({
@@ -39,13 +39,13 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   }, [setValue])
   return (
     <Box paddingTop={2}>
-      {currentVehicleList.length > 5 ? (
+      {currentMachineList.length > 5 ? (
         <VehicleSelectField
-          currentVehicleList={currentVehicleList}
+        currentMachineList={currentMachineList}
           {...props}
         />
       ) : (
-        <VehicleRadioField currentVehicleList={currentVehicleList} {...props} />
+        <VehicleRadioField currentMachineList={currentMachineList} {...props} />
       )}
     </Box>
   )

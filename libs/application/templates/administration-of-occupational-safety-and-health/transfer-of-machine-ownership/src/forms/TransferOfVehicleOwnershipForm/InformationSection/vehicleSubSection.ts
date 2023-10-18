@@ -6,7 +6,7 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-import { VehiclesCurrentVehicle } from '../../../shared'
+import { Machine, VehiclesCurrentVehicle } from '../../../shared'
 import { getSelectedVehicle } from '../../../utils'
 
 export const vehicleSubSection = buildSubSection({
@@ -19,44 +19,95 @@ export const vehicleSubSection = buildSubSection({
       description: information.labels.vehicle.description,
       children: [
         buildTextField({
-          id: 'vehicle.plate',
-          title: information.labels.vehicle.plate,
+          id: 'vehicle.registrationNumber',
+          title: information.labels.vehicle.registrationNumber,
           backgroundColor: 'white',
-          width: 'full',
+          width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const vehicle = getSelectedVehicle(
+            const machine = getSelectedVehicle(
               application.externalData,
               application.answers,
-            ) as VehiclesCurrentVehicle
-            return vehicle.permno
+            ) as Machine
+            console.log('application', application)
+            return machine.registrationNumber
+          },
+        }),
+        buildTextField({
+          id: 'vehicle.category',
+          title: information.labels.vehicle.category,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) => {
+            const machine = getSelectedVehicle(
+              application.externalData,
+              application.answers,
+            ) as Machine
+            return machine.category
           },
         }),
         buildTextField({
           id: 'vehicle.type',
           title: information.labels.vehicle.type,
           backgroundColor: 'white',
-          width: 'full',
+          width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const vehicle = getSelectedVehicle(
+            const machine = getSelectedVehicle(
               application.externalData,
               application.answers,
-            ) as VehiclesCurrentVehicle
-            return vehicle.make
+            ) as Machine
+            return machine.type?.split(' - ')[0].trim();
           },
         }),
         buildTextField({
-          id: 'vehicle.salePrice',
-          title: information.labels.vehicle.salePrice,
-          width: 'full',
-          variant: 'currency',
+          id: 'vehicle.subType',
+          title: information.labels.vehicle.subType,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) => {
+            const machine = getSelectedVehicle(
+              application.externalData,
+              application.answers,
+            ) as Machine
+            return machine.type?.split(' - ')[1].trim();
+          },
+        }),
+        buildTextField({
+          id: 'vehicle.plate',
+          title: information.labels.vehicle.plate,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) => {
+            const machine = getSelectedVehicle(
+              application.externalData,
+              application.answers,
+            ) as Machine
+            return 'plötunúmer'
+          },
+        }),
+        buildTextField({
+          id: 'vehicle.ownerNumber',
+          title: information.labels.vehicle.ownerNumber,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) => {
+            const machine = getSelectedVehicle(
+              application.externalData,
+              application.answers,
+            ) as Machine
+            return 'machine.ownerNumber'
+          },
         }),
         buildDateField({
           id: 'vehicle.date',
           title: information.labels.vehicle.date,
           required: true,
-          width: 'full',
+          width: 'half',
           maxDate: new Date(),
           minDate: () => {
             const minDate = new Date()
@@ -65,6 +116,7 @@ export const vehicleSubSection = buildSubSection({
           },
           defaultValue: new Date().toISOString().substring(0, 10),
         }),
+        
       ],
     }),
   ],

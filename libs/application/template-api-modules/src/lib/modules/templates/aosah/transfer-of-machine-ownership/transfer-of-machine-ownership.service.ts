@@ -32,4 +32,23 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
 
     return result
   }
+
+  async getMachineDetail({ auth }: TemplateApiModuleActionProps, id: string) {
+    const result = await this.transferOfMachineOwnershipClient.getMachineDetail(
+      auth,
+      id,
+    )
+
+    if (!result) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.vehiclesEmptyListDefault,
+          summary: coreErrorMessages.vehiclesEmptyListDefault,
+        },
+        400,
+      )
+    }
+    
+    return result
+  }
 }

@@ -38,6 +38,7 @@ import {
   CommunicationsConfig,
   CommunicationsModule,
 } from '@island.is/api/domains/communications'
+import { AosahModule } from '@island.is/api/domains/administration-of-occupational-safety-and-health'
 import { IdentityModule } from '@island.is/api/domains/identity'
 import { NationalRegistrySoffiaClientConfig } from '@island.is/clients/national-registry-v1'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
@@ -111,6 +112,7 @@ import {
   HealthDirectorateClientConfig,
   HealthDirectorateClientModule,
 } from '@island.is/clients/health-directorate'
+import { TransferOfMachineOwnershipClientConfig } from '@island.is/clients/aosah/transfer-of-machine-ownership'
 import { CmsModule, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
@@ -277,7 +279,7 @@ const environment = getConfig
     WorkMachinesModule,
     SessionsModule,
     AuthAdminModule,
-    //AosahModule,
+    AosahModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -339,6 +341,7 @@ const environment = getConfig
         RskRelationshipsClientConfig,
         AircraftRegistryClientConfig,
         MMSClientConfig,
+        TransferOfMachineOwnershipClientConfig
       ],
     }),
   ],

@@ -17,38 +17,42 @@ import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import {
+  Machine,
   VehiclesCurrentVehicle,
   VehiclesCurrentVehicleWithOwnerchangeChecks,
 } from '../../shared'
+import { stat } from 'fs'
+import { ConsoleLogger } from '@nestjs/common'
 
 interface VehicleSearchFieldProps {
-  currentVehicleList: VehiclesCurrentVehicle[]
+  currentMachineList: Machine[]
 }
 
 export const VehicleSelectField: FC<
   React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>
-> = ({ currentVehicleList, application, errors, setFieldLoadingState }) => {
+> = ({ currentMachineList, application, errors, setFieldLoadingState }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
-
   const vehicleValue = getValueViaPath(
     application.answers,
     'pickVehicle.vehicle',
     '',
   ) as string
-  const currentVehicle = currentVehicleList[parseInt(vehicleValue, 10)]
+  const currentVehicle = currentMachineList[parseInt(vehicleValue, 10)]
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [selectedVehicle, setSelectedVehicle] =
-    useState<VehiclesCurrentVehicleWithOwnerchangeChecks | null>(
-      currentVehicle && currentVehicle.permno
+  const [selectedMachine, setSelectedMachine] =
+    useState<Machine | null>(
+      currentVehicle && currentVehicle.registrationNumber
         ? {
-            permno: currentVehicle.permno,
-            make: currentVehicle?.make || '',
-            color: currentVehicle?.color || '',
-            role: currentVehicle?.role,
-            isDebtLess: true,
-            validationErrorMessages: [],
+            id : currentVehicle.id,
+            registrationNumber : currentVehicle.registrationNumber,
+            type : currentVehicle.type,
+            owner : currentVehicle.owner,
+            supervisor : currentVehicle.supervisor,
+            status : currentVehicle.status,
+            dateLastInspection : currentVehicle.dateLastInspection,
+            category: currentVehicle.category,
           }
         : null,
     )
@@ -58,43 +62,68 @@ export const VehicleSelectField: FC<
 
   const getVehicleDetails = useLazyVehicleDetails()
 
+  
+  // Statuses for Machines for if they appear disabled or not
+  //"Forskráð" 
+  // "Læst" DISABLED
+  // "Í skráningarferli" DISABLED
+  // "Eigandaskipti í gangi" DISABLED
+  // "Umráðamannaskipti í gangi" DISABLED
+  // "Í notkun" 
+  // "Götuskráning í gangi"
+  // "Afskráð tímabundið" DISABLED
+  // "Afskráð endanlega" DISABLED
   const onChange = (option: Option) => {
-    const currentVehicle = currentVehicleList[parseInt(option.value, 10)]
+    const currentVehicle = currentMachineList[parseInt(option.value, 10)]
     setIsLoading(true)
-    if (currentVehicle.permno) {
-      getVehicleDetailsCallback({
-        permno: currentVehicle.permno,
+    if (currentVehicle.registrationNumber) {
+      setSelectedMachine({
+        id : currentVehicle.id,
+        registrationNumber : currentVehicle.registrationNumber,
+        type : currentVehicle.type,
+        owner : currentVehicle.owner,
+        supervisor : currentVehicle.supervisor,
+        status : currentVehicle.status,
+        dateLastInspection : currentVehicle.dateLastInspection,
+        _links : currentVehicle._links,
+        category : currentVehicle.category,
       })
-        .then((response) => {
-          setSelectedVehicle({
-            permno: currentVehicle.permno,
-            make: currentVehicle?.make || '',
-            color: currentVehicle?.color || '',
-            role: currentVehicle?.role,
-            isDebtLess: response?.vehicleOwnerchangeChecksByPermno?.isDebtLess,
-            validationErrorMessages:
-              response?.vehicleOwnerchangeChecksByPermno
-                ?.validationErrorMessages,
-          })
 
-          const disabled =
-            !response?.vehicleOwnerchangeChecksByPermno?.isDebtLess ||
-            !!response?.vehicleOwnerchangeChecksByPermno
-              ?.validationErrorMessages?.length
-          setPlate(disabled ? '' : currentVehicle.permno || '')
-          setValue('vehicle.plate', currentVehicle.permno)
-          setValue('vehicle.type', currentVehicle.make)
+          const disabled = isCurrentMachineDisabled(selectedMachine?.status);
+          console.log("currentMachine", selectedMachine)
+          setPlate(disabled ? '' : currentVehicle.registrationNumber || '')
+          setValue('vehicle.plate', currentVehicle.registrationNumber)
+          setValue('vehicle.type', currentVehicle.type)
           setValue('vehicle.date', new Date().toISOString().substring(0, 10))
           setValue(
             'pickVehicle.plate',
-            disabled ? '' : currentVehicle.permno || '',
+            disabled ? '' : currentVehicle.registrationNumber || '',
           )
-          setValue('pickVehicle.color', currentVehicle.color || undefined)
+          //setValue('pickVehicle.color', currentVehicle.color || undefined)
           setIsLoading(false)
-        })
-        .catch((error) => console.error(error))
     }
   }
+  // Use this when Links have been added to machine
+  // const isCurrentMachineDisabled = (machine: Machine | undefined | null) => !machine?._links?.some((link) => link.rel === "ownerChange");
+
+   function isCurrentMachineDisabled(status?: string): boolean {
+
+     const disabledStatuses = [
+         "Læst",
+         "Í skráningarferli",
+         "Eigandaskipti í gangi",
+         "Umráðamannaskipti í gangi",
+         "Afskráð tímabundið",
+         "Afskráð endanlega"
+     ];
+     if (status === undefined) 
+       return true;
+     if (disabledStatuses.includes(status)) {
+         return true;
+     } else {
+         return false;
+     }
+   }
 
   const getVehicleDetailsCallback = useCallback(
     async ({ permno }: GetVehicleDetailInput) => {
@@ -106,10 +135,10 @@ export const VehicleSelectField: FC<
     [getVehicleDetails],
   )
 
-  const disabled =
-    selectedVehicle &&
-    (!selectedVehicle.isDebtLess ||
-      !!selectedVehicle.validationErrorMessages?.length)
+  // const disabled =
+  //   selectedVehicle &&
+  //   (!selectedVehicle.isDebtLess ||
+  //     !!selectedVehicle.validationErrorMessages?.length)
 
   useEffect(() => {
     setFieldLoadingState?.(isLoading)
@@ -122,10 +151,10 @@ export const VehicleSelectField: FC<
         id="pickVehicle.vehicle"
         name="pickVehicle.vehicle"
         onSelect={(option) => onChange(option as Option)}
-        options={currentVehicleList.map((vehicle, index) => {
+        options={currentMachineList.map((vehicle, index) => {
           return {
             value: index.toString(),
-            label: `${vehicle.make} - ${vehicle.permno}` || '',
+            label: `${vehicle.type}` || '',
           }
         })}
         placeholder={formatMessage(information.labels.pickVehicle.placeholder)}
@@ -136,14 +165,14 @@ export const VehicleSelectField: FC<
           <SkeletonLoader />
         ) : (
           <Box>
-            {selectedVehicle && (
+            {selectedMachine && (
               <CategoryCard
-                colorScheme={disabled ? 'red' : 'blue'}
-                heading={selectedVehicle.make || ''}
-                text={`${selectedVehicle.color} - ${selectedVehicle.permno}`}
+                colorScheme={isCurrentMachineDisabled(selectedMachine.status) ? 'red' : 'blue'}
+                heading={selectedMachine.registrationNumber || ''} //selectedMachine.make || ''}
+                text={`${selectedMachine.type}`}
               />
             )}
-            {selectedVehicle && disabled && (
+            {selectedMachine && isCurrentMachineDisabled(selectedMachine.status) && (
               <Box marginTop={2}>
                 <AlertMessage
                   type="error"
@@ -153,38 +182,20 @@ export const VehicleSelectField: FC<
                   message={
                     <Box>
                       <BulletList>
-                        {!selectedVehicle.isDebtLess && (
+                        {/* {!selectedMachine.isDebtLess && (
                           <Bullet>
                             {formatMessage(
                               information.labels.pickVehicle.isNotDebtLessTag,
                             )}
                           </Bullet>
-                        )}
-                        {!!selectedVehicle.validationErrorMessages?.length &&
-                          selectedVehicle.validationErrorMessages?.map(
-                            (error) => {
-                              const message = formatMessage(
-                                getValueViaPath(
-                                  applicationCheck.validation,
-                                  error.errorNo || '',
-                                ),
-                              )
-                              const defaultMessage = error.defaultMessage
-                              const fallbackMessage =
-                                formatMessage(
-                                  applicationCheck.validation
-                                    .fallbackErrorMessage,
-                                ) +
-                                ' - ' +
-                                error.errorNo
-
-                              return (
+                        )} */}
+                        {isCurrentMachineDisabled(selectedMachine.status) && (
+                          
                                 <Bullet>
-                                  {message || defaultMessage || fallbackMessage}
+                                  { selectedMachine.status }
                                 </Bullet>
-                              )
-                            },
-                          )}
+                              
+                        )}
                       </BulletList>
                     </Box>
                   }

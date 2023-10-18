@@ -12,9 +12,9 @@ import {
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FC, useEffect } from 'react'
-import { GET_VEHICLE_INFORMATION } from '../../graphql/queries'
+import { GET_MACHINE_DETAILS, GET_VEHICLE_INFORMATION } from '../../graphql/queries'
 import { information } from '../../lib/messages'
-import { VehiclesCurrentVehicle } from '../../shared'
+import { Machine, VehiclesCurrentVehicle } from '../../shared'
 import { getSelectedVehicle } from '../../utils'
 
 export const CoOwner: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
@@ -28,28 +28,50 @@ export const CoOwner: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
     application.answers,
   ) as VehiclesCurrentVehicle
 
+  const machine = getSelectedVehicle(
+    application.externalData,
+    application.answers,
+  ) as Machine
+  
+  console.log('application.answers', application.answers)
+
+  // const { data, loading, error } = useQuery(
+  //   gql`
+  //     ${GET_VEHICLE_INFORMATION}
+  //   `,
+  //   {
+  //     variables: {
+  //       input: {
+  //         permno: vehicle.permno,
+  //         regno: '',
+  //         vin: '',
+  //       },
+  //     },
+  //   },
+  // )
+
   const { data, loading, error } = useQuery(
     gql`
-      ${GET_VEHICLE_INFORMATION}
+      ${GET_MACHINE_DETAILS}
     `,
     {
       variables: {
         input: {
-          permno: vehicle.permno,
-          regno: '',
-          vin: '',
+          id: machine.id
         },
       },
     },
   )
+
 
   useEffect(() => {
     setFieldLoadingState?.(loading || !!error)
   }, [loading, error])
 
   return !loading && !error ? (
-    data?.vehiclesDetail?.coOwners &&
-    data.vehiclesDetail.coOwners.length > 0 ? (
+    data.registrationNumber ? (
+    //data?.vehiclesDetail?.coOwners &&
+    //data.vehiclesDetail.coOwners.length > 0 ? (
       <Box>
         {data.vehiclesDetail.coOwners.map(
           (coOwner: VehiclesCurrentOwnerInfo, index: number) => (

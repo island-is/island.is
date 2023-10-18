@@ -18,6 +18,11 @@ export const MachinesApi = defineTemplateApi({
   externalDataId: 'machinesList',
 })
 
+export const MachineDetailApi = defineTemplateApi({
+  action: 'getMachineDetail',
+  externalDataId: 'machineDetail',
+})
+
 export const CurrentVehiclesApi = defineTemplateApi({
   action: 'getCurrentVehiclesWithOwnerchangeChecks',
   externalDataId: 'currentVehicleList',

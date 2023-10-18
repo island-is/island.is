@@ -68,7 +68,7 @@ export const review = {
     title: defineMessages({
       transferOfVehicle: {
         id: 'aosah.application:review.step.title.transferOfVehicle',
-        defaultMessage: 'Skráning eigendaskipta á ökutæki {variable}',
+        defaultMessage: 'Skráning eigendaskipta á tæki {variable}',
         description:
           'Transfer of vehicle title in status step part of review process',
       },
@@ -105,7 +105,7 @@ export const review = {
       transferOfVehicle: {
         id: 'aosah.application:review.step.description.transferOfVehicle',
         defaultMessage:
-          'Tilkynning um eigendaskiptu hefur borist til Samgöngustofu',
+          'Tilkynning um eigendaskiptu hefur borist Vinnueftirlitinu',
         description:
           'Transfer of vehicle description in status step part of review process',
       },

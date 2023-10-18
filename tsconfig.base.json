@@ -51,6 +51,7 @@
       "@island.is/api/domains/aircraft-registry": [
         "libs/api/domains/aircraft-registry/src/index.ts"
       ],
+      "@island.is/api/domains/aosah": ["libs/api/domains/aosah/src/index.ts"],
       "@island.is/api/domains/api-catalogue": [
         "libs/api/domains/api-catalogue/src/index.ts"
       ],

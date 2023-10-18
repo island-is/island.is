@@ -5,7 +5,7 @@ export class GetVehicleDetailInput {
   @Field()
   permno!: string
 
-  @Field({ nullable: true })
+  @Field({ nullable: true }) 
   regno?: string
 
   @Field({ nullable: true })

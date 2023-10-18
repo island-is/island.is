@@ -45,3 +45,27 @@ export const VALIDATE_VEHICLE_OWNER_CHANGE = `
     }
   } 
 `
+
+export const GET_MACHINE_DETAILS = `
+  query GetMachineDetails($id: String) {
+    machineDetails(id: $id) {
+      id
+      registrationNumber
+      type
+      status
+      category
+      subCategory
+      productionYear
+      registrationDate
+      ownerNumber
+      productionNumber
+      productionCountry
+      _links {
+        href
+        rel
+        method
+        displayTitle
+      }
+    }
+  }
+`;

@@ -8,12 +8,16 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
-import { VehiclesCurrentVehicleWithOwnerchangeChecks } from '../../shared'
+import { Machine, MachineDetails, VehiclesCurrentVehicleWithOwnerchangeChecks } from '../../shared'
 import { information, applicationCheck, error } from '../../lib/messages'
 import { RadioController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
+import { machine } from 'os'
+import { gql, useQuery } from '@apollo/client'
+import { GET_MACHINE_DETAILS } from '../../graphql/queries'
+import { } from '@island.is/api/domains/administration-of-occupational-safety-and-health'
 
 interface Option {
   value: string
@@ -22,12 +26,12 @@ interface Option {
 }
 
 interface VehicleSearchFieldProps {
-  currentVehicleList: VehiclesCurrentVehicleWithOwnerchangeChecks[]
+  currentMachineList: Machine[]
 }
 
 export const VehicleRadioField: FC<
   React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>
-> = ({ currentVehicleList, application, errors }) => {
+> = ({ currentMachineList, application, errors }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 
@@ -36,33 +40,79 @@ export const VehicleRadioField: FC<
   )
 
   const onRadioControllerSelect = (s: string) => {
-    const currentVehicle = currentVehicleList[parseInt(s, 10)]
-    setPlate(currentVehicle.permno || '')
-    setValue('vehicle.plate', currentVehicle.permno)
-    setValue('vehicle.type', currentVehicle.make)
+    
+    
+
+    const currentVehicle = currentMachineList[parseInt(s, 10)]
+    console.log('currentVehicle', currentVehicle)
+    // call this 
+    const { data, loading, error } = useQuery<MachineDetails>(
+      gql`
+        ${GET_MACHINE_DETAILS}
+      `,
+      {
+        variables: {
+          input: {
+            id: currentVehicle.id
+          },
+        },
+      },
+    )
+
+    if (!loading && !error) {
+      // Once the data is available, assign it to the queryData variable
+    }
+
+    setPlate(currentVehicle.registrationNumber || '')
+    setValue('vehicle.plate', currentVehicle.registrationNumber)
+    setValue('vehicle.type', currentVehicle.type)
     setValue('vehicle.date', new Date().toISOString().substring(0, 10))
-    setValue('pickVehicle.plate', currentVehicle.permno || '')
-    setValue('pickVehicle.color', currentVehicle.color || undefined)
+    setValue('pickVehicle.plate', currentVehicle.registrationNumber || '')
+    setValue('pickVehicle.color', 'color' || undefined)
+  }
+
+  function isCurrentMachineDisabled(status?: string): boolean {
+
+    const disabledStatuses = [
+        "Læst",
+        "Í skráningarferli",
+        "Eigandaskipti í gangi",
+        "Umráðamannaskipti í gangi",
+        "Afskráð tímabundið",
+        "Afskráð endanlega"
+    ];
+    if (status === undefined) 
+      return true;
+    if (disabledStatuses.includes(status)) {
+        return true;
+    } else {
+        return false;
+    }
   }
 
   const vehicleOptions = (
-    vehicles: VehiclesCurrentVehicleWithOwnerchangeChecks[],
+    machines: Machine[],
   ) => {
     const options = [] as Option[]
-    for (const [index, vehicle] of vehicles.entries()) {
+    for (const [index, machine] of machines.entries()) {
       const disabled =
-        !vehicle.isDebtLess || !!vehicle.validationErrorMessages?.length
+        isCurrentMachineDisabled(machine.status)
       options.push({
         value: `${index}`,
         label: (
           <Box display="flex" flexDirection="column">
             <Box>
               <Text variant="default" color={disabled ? 'dark200' : 'dark400'}>
-                {vehicle.make}
+                {machine.registrationNumber}
               </Text>
               <Text variant="small" color={disabled ? 'dark200' : 'dark400'}>
-                {vehicle.color} - {vehicle.permno}
+                {machine.category}: {machine.type}
               </Text>
+              {!disabled && (
+                <Text variant="small" color={disabled ? 'dark200' : 'dark400'}>
+                    {machine.supervisor}
+                </Text>
+              )}
             </Box>
             {disabled && (
               <Box marginTop={2}>
@@ -74,36 +124,19 @@ export const VehicleRadioField: FC<
                   message={
                     <Box>
                       <BulletList>
-                        {!vehicle.isDebtLess && (
+                        {!true && (
                           <Bullet>
                             {formatMessage(
                               information.labels.pickVehicle.isNotDebtLessTag,
                             )}
                           </Bullet>
                         )}
-                        {!!vehicle.validationErrorMessages?.length &&
-                          vehicle.validationErrorMessages?.map((error) => {
-                            const message = formatMessage(
-                              getValueViaPath(
-                                applicationCheck.validation,
-                                error.errorNo || '',
-                              ),
-                            )
-                            const defaultMessage = error.defaultMessage
-                            const fallbackMessage =
-                              formatMessage(
-                                applicationCheck.validation
-                                  .fallbackErrorMessage,
-                              ) +
-                              ' - ' +
-                              error.errorNo
-
-                            return (
+                        {!!machine.status?.length &&  (
                               <Bullet>
-                                {message || defaultMessage || fallbackMessage}
+                                {machine.status}
                               </Bullet>
                             )
-                          })}
+                          }
                       </BulletList>
                     </Box>
                   }
@@ -126,7 +159,7 @@ export const VehicleRadioField: FC<
         backgroundColor="blue"
         onSelect={onRadioControllerSelect}
         options={vehicleOptions(
-          currentVehicleList as VehiclesCurrentVehicleWithOwnerchangeChecks[],
+          currentMachineList as Machine[],
         )}
       />
       {plate.length === 0 && (errors as any)?.pickVehicle && (

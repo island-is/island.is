@@ -73,3 +73,48 @@ export type VehiclesCurrentVehicleWithOwnerchangeChecks = {
   isDebtLess?: boolean | null
   validationErrorMessages?: VehicleValidationErrorMessage[] | null
 }
+
+type MachineLink = {
+  href: string;
+  rel: string;
+  method: string;
+  displayTitle: string;
+}
+
+export type Machine = {
+  id?: string
+  registrationNumber?: string
+  type?: string
+  owner?: string
+  supervisor?: string
+  status?: string
+  dateLastInspection?: string
+  category?: string
+  _links?: MachineLink[] | null
+}
+
+export type MachineDetails = {
+  id?: string;
+  registrationNumber?: string;
+  type?: string;
+  status?: string;
+  category?: string;
+  subCategory?: string;
+  productionYear?: number;
+  registrationDate?: string;
+  ownerNumber?: string | null;
+  productionNumber?: string;
+  productionCountry?: string;
+  licensePlateNumber?: string | null;
+  importer?: string;
+  insurer?: string;
+  ownerName?: string;
+  ownerNationalId?: string;
+  ownerAddress?: string;
+  ownerPostcode?: string;
+  supervisorName?: string;
+  supervisorNationalId?: string;
+  supervisorAddress?: string;
+  supervisorPostcode?: string;
+  _links?: MachineLink[] | null;
+}
