@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import { useIntl } from 'react-intl'
-import { uuid } from 'uuidv4'
+import React, { useEffect, useMemo, useState } from 'react'
 import InputMask from 'react-input-mask'
+import { useIntl } from 'react-intl'
+import { useMeasure } from 'react-use'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
 import {
@@ -13,36 +13,35 @@ import {
   useDragControls,
   useMotionValue,
 } from 'framer-motion'
-
-import { useMeasure } from 'react-use'
+import { uuid } from 'uuidv4'
 
 import {
   AccordionItem,
-  Text,
+  AlertMessage,
   Box,
   Icon,
-  AlertMessage,
   Input,
+  Text,
   toast,
 } from '@island.is/island-ui/core'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseFile as TCaseFile,
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import {
-  useFileList,
-  useS3Upload,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import { formatDate } from '@island.is/judicial-system/formatters'
-import {
   FileNotFoundModal,
   IndictmentInfo,
 } from '@island.is/judicial-system-web/src/components'
+import {
+  TUploadFile,
+  useFileList,
+  useS3Upload,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
 import { useUpdateFilesMutation } from './updateFiles.generated'
-
+import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 
 const DDMMYYYY = 'dd.MM.yyyy'
@@ -391,7 +390,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
   const [updateFilesMutation] = useUpdateFilesMutation()
 
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({ caseId })
-  const { remove } = useS3Upload(caseId)
+  const { handleRemove } = useS3Upload(caseId)
 
   const [reorderableItems, setReorderableItems] = useState<ReorderableItem[]>(
     [],
@@ -554,16 +553,10 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
     }
   }
 
-  const handleDelete = async (fileId: string) => {
-    const { errors } = await remove(fileId)
-
-    if (errors) {
-      toast.error(formatMessage(m.removeFailedErrorMessage))
-    }
-
-    setReorderableItems((prev) => {
-      return prev.filter((item) => item.id !== fileId)
-    })
+  const handleDelete = (fileId: string) => {
+    handleRemove({ id: fileId } as TUploadFile, (file: TUploadFile) =>
+      setReorderableItems((prev) => prev.filter((item) => item.id !== file.id)),
+    )
   }
 
   return (

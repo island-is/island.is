@@ -14,7 +14,6 @@ interface Props {
   localStorageId?: string
   label?: string
   isSubscriptions?: boolean
-  isDisabled?: boolean
 }
 
 const loc = localization.debouncedSearch
@@ -28,7 +27,6 @@ const DebouncedSearch = ({
   localStorageId,
   label = loc.label,
   isSubscriptions,
-  isDisabled,
 }: Props) => {
   const [value, setValue] = useState(
     isSubscriptions ? searchValue : filters?.searchQuery,
@@ -66,7 +64,6 @@ const DebouncedSearch = ({
       }
       value={value}
       onChange={onChange}
-      disabled={isDisabled}
     />
   )
 }

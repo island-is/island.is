@@ -24,6 +24,7 @@ import {
 import { ApiActions } from '../dataProviders/apiActions.enum'
 import {
   DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
   coreHistoryMessages,
 } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
@@ -54,7 +55,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Prerequisites',
           status: 'draft',
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: EphemeralStateLifeCycle,
           actionCard: {
             historyLogs: [
               {
@@ -185,7 +186,6 @@ const template: ApplicationTemplate<
               api: [EhicGetTemporaryCardApi],
               write: 'all',
               read: 'all',
-              delete: true,
             },
           ],
         },
@@ -203,6 +203,7 @@ const template: ApplicationTemplate<
               formLoader: () =>
                 import('../forms/Declined').then((val) => val.Declined),
               read: 'all',
+              delete: true,
             },
           ],
         },
@@ -220,6 +221,7 @@ const template: ApplicationTemplate<
               formLoader: () =>
                 import('../forms/NoApplicants').then((val) => val.NoApplicants),
               read: 'all',
+              delete: true,
             },
           ],
         },

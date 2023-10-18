@@ -1,16 +1,15 @@
 import React, { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Select, Option } from '@island.is/island-ui/core'
+import { Option, Select } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
-  UserContext,
   FormContext,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { useProsecutorSelectionUsersQuery } from './prosecutorSelectionUsers.generated'
-
 import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { useProsecutorSelectionUsersQuery } from './prosecutorSelectionUsers.generated'
 import { strings } from './ProsecutorSelection.strings'
 
 interface Props {

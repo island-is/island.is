@@ -53,6 +53,7 @@ export class ClientsDataProtectionComplaintModule {
               new Configuration({
                 fetchApi: createEnhancedFetch({
                   name: 'data-protection-complaint-client',
+                  organizationSlug: 'personuvernd',
                   logErrorResponseBody: true,
                   timeout: 60 * 1000, // 60 sec
                 }),

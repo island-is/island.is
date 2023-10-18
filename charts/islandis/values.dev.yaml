@@ -12,7 +12,7 @@ air-discount-scheme-api:
     CONTENTFUL_HOST: 'preview.contentful.com'
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=464'
+    NODE_OPTIONS: '--max-old-space-size=460'
     NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -88,7 +88,7 @@ air-discount-scheme-backend:
     ENVIRONMENT: 'dev'
     IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=464'
+    NODE_OPTIONS: '--max-old-space-size=460'
     NO_UPDATE_NOTIFIER: 'true'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
@@ -194,7 +194,7 @@ air-discount-scheme-web:
     ENVIRONMENT: 'dev'
     IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.dev01.devland.is'
     NEXTAUTH_URL: 'https://loftbru.dev01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -301,7 +301,7 @@ api:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=2000'
+    NODE_OPTIONS: '--max-old-space-size=1843'
     NO_UPDATE_NOTIFIER: 'true'
     REGULATIONS_ADMIN_URL: 'http://web-regulations-admin-backend.regulations-admin.svc.cluster.local'
     SEND_FROM_EMAIL: 'development@island.is'
@@ -323,6 +323,7 @@ api:
     XROAD_CRIMINAL_RECORD_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2'
     XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1'
     XROAD_DISABILITY_LICENSE_PATH: 'IS-DEV/GOV/10008/TR-Protected/oryrki-v1'
+    XROAD_DISTRICT_COMMISSIONERS_PATH: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur'
     XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2'
@@ -336,6 +337,7 @@ api:
     XROAD_HEALTH_INSURANCE_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected'
     XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS-DEV/GOV/10007/SJUKRA-Protected/minarsidur'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
+    XROAD_HOUSING_BENEFIT_CALCULATOR_PATH: 'IS-DEV/GOV/10033/HMS-Protected/calc-v1'
     XROAD_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PATH: 'IS-DEV/GOV/10021/FJS-Protected/recruitment-v1'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS-DEV/EDU/10020/MMS-Protected/grade-api-v1'
     XROAD_MMS_LICENSE_SERVICE_ID: 'IS-DEV/EDU/10020/MMS-Protected/license-api-v1'
@@ -352,6 +354,7 @@ api:
     XROAD_RSK_PROCURING_PATH: 'IS-DEV/GOV/10006/Skatturinn/relationships-v1'
     XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     XROAD_RSK_PROCURING_SCOPE: '["@rsk.is/prokura","@rsk.is/prokura:admin"]'
+    XROAD_SHIP_REGISTRY_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-V1'
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '10001'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
@@ -464,6 +467,8 @@ api:
     FISKISTOFA_ZENTER_CLIENT_PASSWORD: '/k8s/api/FISKISTOFA_ZENTER_CLIENT_PASSWORD'
     FISKISTOFA_ZENTER_EMAIL: '/k8s/api/FISKISTOFA_ZENTER_EMAIL'
     FISKISTOFA_ZENTER_PASSWORD: '/k8s/api/FISKISTOFA_ZENTER_PASSWORD'
+    HOUSING_BENEFIT_CALCULATOR_PASSWORD: '/k8s/xroad/client/HOUSING_BENEFIT_CALCULATOR_PASSWORD'
+    HOUSING_BENEFIT_CALCULATOR_USERNAME: '/k8s/xroad/client/HOUSING_BENEFIT_CALCULATOR_USERNAME'
     HSN_WEB_FORM_RESPONSE_SECRET: '/k8s/api/HSN_WEB_FORM_RESPONSE_SECRET'
     HSN_WEB_FORM_RESPONSE_URL: '/k8s/api/HSN_WEB_FORM_RESPONSE_URL'
     ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PASSWORD: '/k8s/xroad/client/ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PASSWORD'
@@ -554,7 +559,7 @@ application-system-api:
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
     LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'gunnar.ingi@fjr.is'
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: 'Gunnar Ingi'
-    NODE_OPTIONS: '--max-old-space-size=976'
+    NODE_OPTIONS: '--max-old-space-size=921'
     NOVA_ACCEPT_UNAUTHORIZED: 'true'
     NOVA_USERNAME: 'IslandIs_User_Development'
     NO_UPDATE_NOTIFIER: 'true'
@@ -747,7 +752,7 @@ application-system-api-worker:
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
@@ -827,7 +832,7 @@ application-system-form:
   enabled: true
   env:
     BASEPATH: '/umsoknir'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'dev'
     SI_PUBLIC_GRAPHQL_PATH: ''
@@ -895,7 +900,7 @@ consultation-portal:
     ENVIRONMENT: 'dev'
     IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.dev01.devland.is'
     NEXTAUTH_URL: 'https://beta.dev01.devland.is/samradsgatt/api/auth'
-    NODE_OPTIONS: '--max-old-space-size=464'
+    NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -952,7 +957,7 @@ consultation-portal:
 contentful-apps:
   enabled: true
   env:
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -1012,7 +1017,7 @@ contentful-apps:
 contentful-entry-tagger-service:
   enabled: true
   env:
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -1074,7 +1079,7 @@ contentful-entry-tagger-service:
 contentful-translation-extension:
   enabled: true
   env:
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -1130,7 +1135,7 @@ download-service:
   env:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=464'
+    NODE_OPTIONS: '--max-old-space-size=460'
     REGULATIONS_ADMIN_URL: 'http://web-regulations-admin-backend.regulations-admin.svc.cluster.local'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
@@ -1220,7 +1225,7 @@ endorsement-system-api:
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/endorsement'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
@@ -1313,7 +1318,7 @@ endorsement-system-api:
 external-contracts-tests:
   enabled: true
   env:
-    NODE_OPTIONS: '--max-old-space-size=976'
+    NODE_OPTIONS: '--max-old-space-size=921'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -1376,7 +1381,7 @@ github-actions-cache:
     - 'node'
   enabled: true
   env:
-    NODE_OPTIONS: '--max-old-space-size=464'
+    NODE_OPTIONS: '--max-old-space-size=460'
     REDIS_NODES: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
@@ -1441,8 +1446,6 @@ global:
     NO_UPDATE_NOTIFIER: 'true'
     PORT: '3333'
     name: 'dev'
-  image:
-    tag: 'latest_master'
   initContainer:
     env:
       AWS_REGION: 'eu-west-1'
@@ -1454,7 +1457,7 @@ icelandic-names-registry-backend:
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'icelandic_names_registry_backend'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -1538,7 +1541,7 @@ icelandic-names-registry-backend:
 island-ui-storybook:
   enabled: true
   env:
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -1593,7 +1596,7 @@ license-api:
   enabled: true
   env:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=464'
+    NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -1701,7 +1704,7 @@ portals-admin:
   enabled: true
   env:
     BASEPATH: '/stjornbord'
-    NODE_OPTIONS: '--max-old-space-size=464'
+    NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'dev'
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
@@ -1766,7 +1769,7 @@ regulations-admin-backend:
     DB_USER: 'regulations_admin_backend'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/regulations-admin-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=464'
+    NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -1857,9 +1860,8 @@ search-indexer-service:
     CONTENTFUL_SPACE: '8k0h54kbe6bj'
     ELASTIC_INDEX: 'island-is'
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
-    NODE_OPTIONS: '--max-old-space-size=2000'
+    NODE_OPTIONS: '--max-old-space-size=2764'
     SERVERSIDE_FEATURES_ON: ''
-    SHOULD_SEARCH_INDEXER_RESOLVE_NESTED_ENTRIES: 'true'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -1912,10 +1914,10 @@ search-indexer-service:
         resources:
           limits:
             cpu: '700m'
-            memory: '2048Mi'
+            memory: '3072Mi'
           requests:
             cpu: '300m'
-            memory: '1536Mi'
+            memory: '2048Mi'
       - args:
           - '/webapp/migrateKibana.js'
         command:
@@ -1941,8 +1943,8 @@ search-indexer-service:
       NODE_OPTIONS: '--max-old-space-size=2048'
       S3_BUCKET: 'dev-es-custom-packages'
       SERVERSIDE_FEATURES_ON: ''
-      SHOULD_SEARCH_INDEXER_RESOLVE_NESTED_ENTRIES: 'true'
     secrets:
+      CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
   namespace: 'search-indexer'
   podSecurityContext:
@@ -1956,10 +1958,10 @@ search-indexer-service:
   resources:
     limits:
       cpu: '800m'
-      memory: '2048Mi'
+      memory: '3072Mi'
     requests:
       cpu: '400m'
-      memory: '1536Mi'
+      memory: '2048Mi'
   secrets:
     API_CMS_DELETION_TOKEN: '/k8s/search-indexer/API_CMS_DELETION_TOKEN'
     API_CMS_SYNC_TOKEN: '/k8s/search-indexer/API_CMS_SYNC_TOKEN'
@@ -1977,7 +1979,7 @@ service-portal:
   enabled: true
   env:
     BASEPATH: '/minarsidur'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'dev'
     SI_PUBLIC_GRAPHQL_API: '/api/graphql'
@@ -2048,7 +2050,7 @@ service-portal-api:
     DB_USER: 'service_portal_api'
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=976'
+    NODE_OPTIONS: '--max-old-space-size=921'
     NOVA_ACCEPT_UNAUTHORIZED: 'true'
     NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
@@ -2150,7 +2152,7 @@ services-documents:
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'services_documents'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -2225,8 +2227,9 @@ services-sessions:
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'services_sessions_read'
+    GEODATADIR: '/geoip-lite/data'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=464'
+    NODE_OPTIONS: '--max-old-space-size=460'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: ''
@@ -2263,7 +2266,13 @@ services-sessions:
           paths:
             - '/'
   namespace: 'services-sessions'
-  pvcs: []
+  pvcs:
+    - accessModes: 'ReadWriteMany'
+      mountPath: '/geoip-lite/data'
+      name: 'sessions-geoip-db'
+      size: '1Gi'
+      storageClass: 'efs-csi'
+      useExisting: true
   replicaCount:
     default: 1
     max: 10
@@ -2278,9 +2287,82 @@ services-sessions:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-sessions/readonly/DB_PASSWORD'
+    GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+services-sessions-geoip-job:
+  annotations:
+    helm.sh/hook: 'pre-install,pre-upgrade'
+    helm.sh/hook-delete-policy: 'before-hook-creation,hook-succeeded'
+  args:
+    - './node_modules/geoip-lite/scripts/updatedb.js'
+    - 'license_key=$(GEOIP_LICENSE_KEY)'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    GEODATADIR: '/geoip-lite/data'
+    GEOTMPDIR: '/geoip-lite/data/tmp'
+    NODE_OPTIONS: '--max-old-space-size=921'
+    SERVERSIDE_FEATURES_ON: ''
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'islandis'
+    - 'identity-server'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 5
+      replicas:
+        max: 1
+        min: 1
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
+  namespace: 'services-sessions'
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs:
+    - accessModes: 'ReadWriteMany'
+      mountPath: '/geoip-lite/data'
+      name: 'sessions-geoip-db'
+      size: '1Gi'
+      storageClass: 'efs-csi'
+      useExisting: false
+  replicaCount:
+    default: 1
+    max: 1
+    min: 1
+  resources:
+    limits:
+      cpu: '500m'
+      memory: '1Gi'
+    requests:
+      cpu: '500m'
+      memory: '500Mi'
+  schedule: '0 0 * * *'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/sessions-geoip'
+    create: true
+    name: 'sessions-geoip'
 services-sessions-worker:
   args:
     - 'main.js'
@@ -2295,7 +2377,7 @@ services-sessions-worker:
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'services_sessions'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=464'
+    NODE_OPTIONS: '--max-old-space-size=460'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: ''
@@ -2378,7 +2460,7 @@ skilavottord-web:
   env:
     API_URL: 'http://web-skilavottord-ws'
     ENVIRONMENT: 'dev'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -2445,7 +2527,7 @@ skilavottord-ws:
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'skilavottord'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -2540,7 +2622,7 @@ user-notification:
   env:
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     MAIN_QUEUE_NAME: 'user-notification'
-    NODE_OPTIONS: '--max-old-space-size=336'
+    NODE_OPTIONS: '--max-old-space-size=345'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -2614,7 +2696,7 @@ user-notification-worker:
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     IDENTITY_SERVER_PATH: 'https://identity-server.dev01.devland.is'
     MAIN_QUEUE_NAME: 'user-notification'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_USER_PROFILE_BASEPATH: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev'
@@ -2677,7 +2759,7 @@ web:
     DISABLE_ORGANIZATION_CHATBOT: 'false'
     DISABLE_SYSLUMENN_PAGE: 'false'
     ENVIRONMENT: 'dev'
-    NODE_OPTIONS: '--max-old-space-size=464'
+    NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: ''
     TRACKING_DOMAIN: 'beta.dev01.devland.is'
   grantNamespaces:
@@ -2744,7 +2826,7 @@ xroad-collector:
   enabled: true
   env:
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     NODE_TLS_REJECT_UNAUTHORIZED: '0'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'

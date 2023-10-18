@@ -1,22 +1,22 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { useMutation } from '@apollo/client'
 import { useRouter } from 'next/router'
+import { useMutation } from '@apollo/client'
 
+import { Box } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { titles } from '@island.is/judicial-system-web/messages'
 import { Skeleton } from '@island.is/judicial-system-web/src/components'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { CreateUserMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages'
-import { Box } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { CreateUserMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 
-import * as styles from '../Users/Users.css'
 import UserForm from '../UserForm/UserForm'
+import * as styles from '../Users/Users.css'
 
 const user: User = {
   id: '',

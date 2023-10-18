@@ -11,8 +11,6 @@ global:
     NO_UPDATE_NOTIFIER: 'true'
     PORT: '3333'
     name: 'prod'
-  image:
-    tag: 'latest_master'
   initContainer:
     env:
       AWS_REGION: 'eu-west-1'
@@ -30,9 +28,9 @@ judicial-system-api:
     BACKEND_URL: 'http://web-judicial-system-backend'
     CONTENTFUL_ENVIRONMENT: 'master'
     CONTENTFUL_HOST: 'cdn.contentful.com'
-    HIDDEN_FEATURES: 'APPEAL_TO_COURT_OF_APPEALS'
+    HIDDEN_FEATURES: ''
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -90,6 +88,7 @@ judicial-system-api:
     BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN'
+    LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -101,7 +100,7 @@ judicial-system-api:
 judicial-system-backend:
   enabled: true
   env:
-    BLOCKED_API_INTEGRATION: 'POLICE_CASE_V2'
+    BLOCKED_API_INTEGRATION: ''
     CLIENT_URL: 'https://rettarvorslugatt.island.is'
     CONTENTFUL_ENVIRONMENT: 'master'
     CONTENTFUL_HOST: 'cdn.contentful.com'
@@ -111,7 +110,7 @@ judicial-system-backend:
     DB_USER: 'judicial_system'
     DOKOBIT_URL: 'https://ws.dokobit.com'
     EMAIL_REGION: 'eu-west-1'
-    NODE_OPTIONS: '--max-old-space-size=976'
+    NODE_OPTIONS: '--max-old-space-size=921'
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
     NO_UPDATE_NOTIFIER: 'true'
     S3_BUCKET: 'island-is-prod-upload-judicial-system'
@@ -198,8 +197,10 @@ judicial-system-backend:
     BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN'
+    COURTS_ASSISTANT_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_ASSISTANT_MOBILE_NUMBERS'
     COURTS_EMAILS: '/k8s/judicial-system/COURTS_EMAILS'
     COURTS_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_MOBILE_NUMBERS'
+    COURT_ROBOT_EMAIL: '/k8s/judicial-system/COURT_ROBOT_EMAIL'
     DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
     DOKOBIT_ACCESS_TOKEN: '/k8s/judicial-system/DOKOBIT_ACCESS_TOKEN'
     EMAIL_FROM: '/k8s/judicial-system/EMAIL_FROM'
@@ -235,7 +236,7 @@ judicial-system-message-handler:
   enabled: true
   env:
     BACKEND_URL: 'http://web-judicial-system-backend'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq'
     SQS_QUEUE_NAME: 'sqs-judicial-system'
@@ -297,7 +298,7 @@ judicial-system-scheduler:
   enabled: true
   env:
     BACKEND_URL: 'http://web-judicial-system-backend'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     TIME_TO_LIVE_MINUTES: '30'
   grantNamespaces:
@@ -347,7 +348,7 @@ judicial-system-web:
   env:
     API_URL: 'https://rettarvorslugatt.island.is'
     INTERNAL_API_URL: 'http://web-judicial-system-api'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -409,7 +410,7 @@ judicial-system-xrd-api:
     AUDIT_TRAIL_REGION: 'eu-west-1'
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BACKEND_URL: 'http://web-judicial-system-backend'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-internal'

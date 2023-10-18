@@ -46,20 +46,20 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
 
     // Check if photo and signature exists in RLS database
     const hasQualityPhotoRLS = await this.drivingLicenseApi.getHasQualityPhoto({
-      nationalId: auth.nationalId,
+      token: auth.authorization,
     })
     const hasQualitySignatureRLS =
       await this.drivingLicenseApi.getHasQualitySignature({
-        nationalId: auth.nationalId,
+        token: auth.authorization,
       })
 
     // First we'll try to use photo and signature from the RLS database
     if (hasQualityPhotoRLS && hasQualitySignatureRLS) {
       const photo = await this.drivingLicenseApi.getQualityPhoto({
-        nationalId: auth.nationalId,
+        token: auth.authorization,
       })
       const signature = await this.drivingLicenseApi.getQualitySignature({
-        nationalId: auth.nationalId,
+        token: auth.authorization,
       })
 
       result = {

@@ -15,7 +15,6 @@ import { ReactNode } from 'react'
 import { getTagVariants } from './utils'
 import { Eyebrows } from '../../components'
 import localization from './Card.json'
-import shared from '../../lib/shared.json'
 import * as styles from './Card.css'
 
 type CardInfo = {
@@ -46,9 +45,6 @@ const Card = ({
   children,
 }: CardProps) => {
   const loc = localization['card']
-  const locShared = shared['mapInProcess']
-
-  const cardTag = card.tag === locShared.pre ? locShared.post : card.tag
 
   const child = (
     <>
@@ -60,7 +56,7 @@ const Card = ({
           justifyContent="spaceBetween"
           paddingBottom={2}
         >
-          <Tag variant={getTagVariants(card.tag)}>{cardTag}</Tag>
+          <Tag variant={getTagVariants(card.tag)}>{card.tag}</Tag>
           <Text as="p" variant="eyebrow" color="purple400">
             {`${loc.tagText} S-${card.caseNumber}`}
           </Text>

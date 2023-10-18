@@ -1,10 +1,10 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
+import { render, screen } from '@testing-library/react'
 
-import { LocaleProvider } from '@island.is/localization'
-import { mockJudgeQuery } from '@island.is/judicial-system-web/src/utils/mocks'
 import { Header } from '@island.is/judicial-system-web/src/components'
+import { mockJudgeQuery } from '@island.is/judicial-system-web/src/utils/mocks'
+import { LocaleProvider } from '@island.is/localization'
 
 import { UserProvider } from './UserProvider'
 

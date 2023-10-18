@@ -4,14 +4,15 @@ import {
   Delete,
   Inject,
   Param,
-  Post,
   Patch,
+  Post,
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   CurrentHttpUser,
   JwtAuthGuard,
@@ -21,19 +22,19 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import {
+  assistantRule,
   judgeRule,
+  prosecutorRepresentativeRule,
   prosecutorRule,
   registrarRule,
-  representativeRule,
-  assistantRule,
 } from '../../guards'
 import { Case, CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
-import { DefendantExistsGuard } from './guards/defendantExists.guard'
-import { CurrentDefendant } from './guards/defendant.decorator'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
-import { DeleteDefendantResponse } from './models/delete.response'
+import { CurrentDefendant } from './guards/defendant.decorator'
+import { DefendantExistsGuard } from './guards/defendantExists.guard'
 import { Defendant } from './models/defendant.model'
+import { DeleteDefendantResponse } from './models/delete.response'
 import { DefendantService } from './defendant.service'
 
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -46,7 +47,7 @@ export class DefendantController {
   ) {}
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard)
-  @RolesRules(prosecutorRule, representativeRule)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Post()
   @ApiCreatedResponse({
     type: Defendant,
@@ -66,7 +67,7 @@ export class DefendantController {
   @UseGuards(CaseExistsGuard, CaseWriteGuard, DefendantExistsGuard)
   @RolesRules(
     prosecutorRule,
-    representativeRule,
+    prosecutorRepresentativeRule,
     judgeRule,
     registrarRule,
     assistantRule,
@@ -95,7 +96,7 @@ export class DefendantController {
   }
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard, DefendantExistsGuard)
-  @RolesRules(prosecutorRule, representativeRule)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Delete(':defendantId')
   @ApiOkResponse({ description: 'Deletes a defendant' })
   async delete(

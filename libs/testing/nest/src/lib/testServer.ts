@@ -36,20 +36,20 @@ export const testServer = async ({
     builder = override(builder)
   }
 
-  hooks.forEach(async (hook) => {
+  hooks.forEach((hook) => {
     if (hook.override) {
-      builder = await hook.override(builder)
+      builder = hook.override(builder)
     }
   })
 
   const moduleRef = await builder.compile()
-  const app = (await moduleRef.createNestApplication().useGlobalPipes(
+  const app = moduleRef.createNestApplication().useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
       forbidUnknownValues: false,
     }),
-  )) as TestApp
+  ) as TestApp
 
   if (enableVersioning) {
     app.enableVersioning()
@@ -58,16 +58,12 @@ export const testServer = async ({
   await app.init()
 
   const hookCleanups = await Promise.all(
-    hooks.map((hook) => {
-      if (hook.extend) {
-        return hook.extend(app)
-      }
-    }),
+    hooks.map((hook) => hook.extend && hook.extend(app)),
   )
 
   app.cleanUp = async () => {
     await app.close()
-    await Promise.all(hookCleanups.map((cleanup) => cleanup && cleanup()))
+    await Promise.all(hookCleanups.map((cleanup) => cleanup?.()))
   }
 
   return app

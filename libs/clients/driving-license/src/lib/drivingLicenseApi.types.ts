@@ -1,3 +1,17 @@
+import {
+  DriverLicenseDto as DriverLicenseDtoV4,
+  DriverLicenseWithoutImagesDto as DriverLicenseWithoutImagesDtoV4,
+} from '../v4'
+import {
+  DriverLicenseDto as DriverLicenseDtoV5,
+  DriverLicenseWithoutImagesDto as DriverLicenseWithoutImagesDtoV5,
+} from '../v5'
+
+export type DrivingLicenseV4V5Dto =
+  | DriverLicenseDtoV4
+  | DriverLicenseDtoV5
+  | DriverLicenseWithoutImagesDtoV4
+  | DriverLicenseWithoutImagesDtoV5
 export interface DriversLicenseCategory {
   id: number
   name: string
@@ -10,8 +24,8 @@ export interface DriversLicenseCategory {
 }
 
 export interface Disqualification {
-  to: Date
-  from: Date
+  to?: Date | null
+  from?: Date | null
 }
 
 export interface DriversLicense {
@@ -20,7 +34,7 @@ export interface DriversLicense {
   issued?: Date | null
   expires?: Date | null
   categories: DriversLicenseCategory[]
-  healthRemarks?: string[]
+  remarks?: string[]
   disqualification?: Disqualification | null
   birthCountry?: string | null
 }
@@ -30,18 +44,13 @@ export interface RemarkCode {
   name: string
 }
 
-export interface Teacher {
-  nationalId: string
-  name: string
-}
-
 export interface TeacherV4 {
   name: string
   nationalId: string
   driverLicenseId: number | null | undefined
 }
 
-export interface Juristiction {
+export interface Jurisdiction {
   id: number
   name: string
   zip: number

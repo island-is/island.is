@@ -8,7 +8,7 @@ import {
   validateFormData,
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
-import { validateClientId } from '@island.is/auth/shared'
+import { validatePermissionId } from '@island.is/auth/shared'
 import { AuthAdminEnvironment } from '@island.is/api/schema'
 
 import { IDSAdminPaths } from '../../../lib/paths'
@@ -36,7 +36,7 @@ const schema = z
   // Second refine is to check if the scope id is prefixed with the tenant and matches the regex
   .refine(
     (data) =>
-      validateClientId({
+      validatePermissionId({
         prefix: data.tenantId,
         value: data.name,
       }),

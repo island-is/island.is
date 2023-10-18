@@ -1,6 +1,18 @@
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
+import {
+  courtIndictmentRoutes,
+  courtInvestigationCasesRoutes,
+  courtOfAppealRoutes,
+  courtRestrictionCasesRoutes,
+  prosecutorIndictmentRoutes,
+  prosecutorInvestigationCasesRoutes,
+  prosecutorRestrictionCasesRoutes,
+} from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
+import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealState,
   CaseState,
@@ -13,11 +25,9 @@ import {
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
-import { caseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
-import { capitalize } from '@island.is/judicial-system/formatters'
-import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
-
+import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
+import { formatCaseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import {
   CaseType,
   Gender,
@@ -26,20 +36,10 @@ import {
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import {
-  courtIndictmentRoutes,
-  courtInvestigationCasesRoutes,
-  courtOfAppealRoutes,
-  courtRestrictionCasesRoutes,
-  prosecutorIndictmentRoutes,
-  prosecutorInvestigationCasesRoutes,
-  prosecutorRestrictionCasesRoutes,
-} from '@island.is/judicial-system/consts'
-import * as constants from '@island.is/judicial-system/consts'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
 import { isTrafficViolationCase } from '../../stepHelper'
-import { useContext } from 'react'
+import useStringHelpers from '../useStringHelpers/useStringHelpers'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
@@ -68,6 +68,7 @@ const useSections = (
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { features } = useContext(FeatureContext)
+  const { getAppealResultText } = useStringHelpers()
 
   const getRestrictionCaseProsecutorSection = (
     workingCase: Case,
@@ -85,7 +86,6 @@ const useSections = (
              */
             (route) => route === router.pathname.slice(0, -5),
           )
-
     return {
       name: formatMessage(sections.restrictionCaseProsecutorSection.caseTitle, {
         caseType: type,
@@ -1012,7 +1012,8 @@ const useSections = (
       isActive:
         user?.role === UserRole.PROSECUTOR &&
         isRestrictionCase(type) &&
-        parentCase !== undefined,
+        parentCase !== undefined &&
+        !completedCaseStates.includes(workingCase.state),
       children:
         user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
           ? []
@@ -1111,7 +1112,8 @@ const useSections = (
       isActive:
         user?.role === UserRole.PROSECUTOR &&
         isInvestigationCase(type) &&
-        parentCase !== undefined,
+        parentCase !== undefined &&
+        !completedCaseStates.includes(workingCase.state),
       children:
         user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
           ? []
@@ -1191,7 +1193,7 @@ const useSections = (
   }
 
   const getCourtOfAppealSections = (workingCase: Case, user?: User) => {
-    const { id } = workingCase
+    const { id, appealRulingDecision, appealState } = workingCase
     const routeIndex = courtOfAppealRoutes.findIndex(
       /**
        * We do .slice here because router.pathname is /something/[:id]
@@ -1204,7 +1206,8 @@ const useSections = (
         name: formatMessage(sections.courtOfAppealSection.appealed),
         isActive:
           user?.institution?.type !== InstitutionType.COURT_OF_APPEALS &&
-          workingCase.appealState === CaseAppealState.RECEIVED,
+          (workingCase.appealState === CaseAppealState.RECEIVED ||
+            workingCase.appealState === CaseAppealState.APPEALED),
         children: [],
       },
       {
@@ -1256,7 +1259,10 @@ const useSections = (
         ],
       },
       {
-        name: formatMessage(sections.caseResults.result),
+        name:
+          appealState === CaseAppealState.COMPLETED
+            ? getAppealResultText(appealRulingDecision)
+            : formatMessage(sections.caseResults.result),
         isActive:
           routeIndex === 3 ||
           workingCase.appealState === CaseAppealState.COMPLETED,
@@ -1273,7 +1279,10 @@ const useSections = (
 
     return {
       ...getRestrictionCaseCourtSections(workingCase, user),
-      isActive: isRestrictionCase(type) && isCourtRole(user?.role),
+      isActive:
+        !completedCaseStates.includes(workingCase.state) &&
+        isRestrictionCase(type) &&
+        isCourtRole(user?.role),
     }
   }
 
@@ -1285,7 +1294,10 @@ const useSections = (
 
     return {
       ...getInvestigationCaseCourtSections(workingCase, user),
-      isActive: isInvestigationCase(type) && isCourtRole(user?.role),
+      isActive:
+        !completedCaseStates.includes(workingCase.state) &&
+        isInvestigationCase(type) &&
+        isCourtRole(user?.role),
     }
   }
 
@@ -1302,21 +1314,21 @@ const useSections = (
         ? getInvestigationCaseCourtSections(workingCase, user)
         : getIndictmentsCourtSections(workingCase, user),
       {
-        name: caseResult(formatMessage, workingCase),
+        name: formatCaseResult(
+          formatMessage,
+          workingCase,
+          workingCase.parentCase
+            ? workingCase.parentCase.state
+            : workingCase.state,
+        ),
         isActive:
+          !workingCase.parentCase &&
           completedCaseStates.includes(workingCase.state) &&
           !workingCase.prosecutorPostponedAppealDate &&
           !workingCase.accusedPostponedAppealDate &&
           workingCase.appealState !== CaseAppealState.COMPLETED,
         children: [],
       },
-      ...(!features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS)
-        ? []
-        : isRestrictionCase(workingCase.type) && workingCase.appealState
-        ? getCourtOfAppealSections(workingCase, user)
-        : isInvestigationCase(workingCase.type) && workingCase.appealState
-        ? getCourtOfAppealSections(workingCase, user)
-        : []),
       ...(workingCase.parentCase
         ? [
             isRestrictionCase(workingCase.type)
@@ -1325,8 +1337,25 @@ const useSections = (
             isRestrictionCase(workingCase.type)
               ? getRestrictionCaseExtensionCourtSections(workingCase, user)
               : getInvestigationCaseExtensionCourtSections(workingCase, user),
+            {
+              name: formatCaseResult(
+                formatMessage,
+                workingCase,
+                workingCase.state,
+              ),
+              isActive:
+                completedCaseStates.includes(workingCase.state) &&
+                !workingCase.prosecutorPostponedAppealDate &&
+                !workingCase.accusedPostponedAppealDate &&
+                workingCase.appealState !== CaseAppealState.COMPLETED,
+              children: [],
+            },
           ]
         : []),
+      ...(!features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) ||
+      !workingCase.appealState
+        ? []
+        : getCourtOfAppealSections(workingCase, user)),
     ]
   }
 

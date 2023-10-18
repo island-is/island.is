@@ -10,22 +10,22 @@ import {
   NavigationItem,
   Text,
 } from '@island.is/island-ui/core'
-import { LinkType, useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import {
   getThemeConfig,
-  SliceMachine,
-  OrganizationWrapper,
   IconTitleCard,
+  OrganizationWrapper,
+  SliceMachine,
 } from '@island.is/web/components'
-import { CustomNextError } from '@island.is/web/units/errors'
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
+import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
 
 import { Screen } from '../../../types'
 import {
@@ -172,8 +172,6 @@ const OrganizationHomePage: Screen<HomeProps> = ({
             </GridContainer>
           )}
           {organizationPage?.slices?.map((slice, index) => {
-            const digitalIcelandDetailPageLinkType: LinkType =
-              'digitalicelandservicesdetailpage'
             return (
               <SliceMachine
                 key={slice.id}
@@ -186,12 +184,6 @@ const OrganizationHomePage: Screen<HomeProps> = ({
                 marginBottom={
                   index === organizationPage.slices.length - 1 ? 5 : 0
                 }
-                params={{
-                  anchorPageLinkType:
-                    organizationPage.theme === 'digital_iceland'
-                      ? digitalIcelandDetailPageLinkType
-                      : undefined,
-                }}
                 paddingTop={
                   !organizationPage.description && index === 0 ? 0 : 6
                 }
@@ -314,9 +306,7 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
     showSearchInHeader: false,
     ...getThemeConfig(
       getOrganizationPage?.theme ?? 'landing_page',
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
-      getOrganizationPage?.slug ?? getOrganization?.slug,
+      getOrganization ?? getOrganizationPage?.organization,
     ),
   }
 }

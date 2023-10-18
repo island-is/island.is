@@ -135,7 +135,7 @@ export const is = {
   // home
   'home.screenTitle': 'Yfirlit',
   'home.applicationsStatus': 'Staða umsókna',
-  'home.allApplications': 'Allar stafrænar umsóknir',
+  'home.allApplications': 'Stafrænar umsóknir',
   'home.notifications': 'Tilkynningar',
   'home.welcomeText': 'Hæ',
   'home.onboardingModule.card1':
@@ -199,6 +199,7 @@ export const is = {
   'vehicleDetail.vehicleWeight': 'Eigin þyngd',
   'vehicleDetail.totalWeight': 'Heildarþyngd',
   'vehicleDetail.capacityWeight': 'Þyngd vagnlestar',
+  'vehicleDetail.odometer': 'Kílómetrastaða',
 
   // assets overview
   'assetsOvervies.screenTitle': 'Fasteignir',
@@ -385,12 +386,18 @@ export const is = {
   'edit.phone.description': 'Hér getur þú breytt símanúmeri',
   'edit.phone.inputlabel': 'Símanúmer',
   'edit.phone.button': 'Vista',
+  'edit.phone.button.empty': 'Vista tómt',
+  'edit.phone.button.error': 'Villa',
+  'edit.phone.button.errorMessage': 'Gat ekki sent staðfestingarkóða',
 
   // edit email
   'edit.email.screenTitle': 'Breyta Netfangi',
   'edit.email.description': 'Hér getur þú breytt netfangi',
   'edit.email.inputlabel': 'Netfang',
   'edit.email.button': 'Vista',
+  'edit.email.button.empty': 'Vista tómt',
+  'edit.email.button.error': 'Villa',
+  'edit.email.button.errorMessage': 'Gat ekki sent staðfestingarkóða',
 
   // edit bank info
   'edit.bankinfo.screenTitle': 'Breyta banka upplýsingum',

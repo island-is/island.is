@@ -1,8 +1,8 @@
-//import yargs from 'yargs'
-const yargs = require('yargs');
-const { argv } = yargs(process.argv.slice(2))
+import { processJob } from '@island.is/infra-nest-server'
 
-if (argv.job === 'worker') {
+const job = processJob()
+
+if (job === 'worker') {
   import('./worker').then((app) => {
     app.worker()
   })

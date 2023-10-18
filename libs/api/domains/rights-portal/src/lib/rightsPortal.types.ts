@@ -1,4 +1,5 @@
 import { AidOrNutritionDTO } from '@island.is/clients/icelandic-health-insurance/rights-portal'
+import { AidOrNutrition } from './models/aidsOrNutrition.model'
 
 export enum AidOrNutritionType {
   AID,
@@ -8,15 +9,13 @@ export enum AidOrNutritionType {
 export function generateAidOrNutrition(
   data: AidOrNutritionDTO,
   type: AidOrNutritionType,
-) {
+): AidOrNutrition | null {
   if (
     !data.id ||
     !data.iso ||
     !data.name ||
-    !data.maxUnitRefund ||
     !data.refund?.type ||
-    !data.refund?.value ||
-    !data.expiring
+    !data.refund?.value
   ) {
     return null
   }
@@ -24,16 +23,18 @@ export function generateAidOrNutrition(
     id: data.id,
     iso: data.iso,
     name: data.name,
-    maxUnitRefund: data.maxUnitRefund,
+    maxUnitRefund: data.maxUnitRefund ?? undefined,
     refund: {
       type: data.refund.type,
       value: data.refund.value,
     },
     type,
+    explanation: data.explanation ?? undefined,
+    allowed12MonthPeriod: data.allowed12MonthPeriod ?? undefined,
+    validUntil: data.validUntil ? data.validUntil : undefined,
+    nextAllowedMonth: data.nextAllowedMonth ?? undefined,
     available: data.available ?? undefined,
     location: data.location ?? undefined,
-    expiring: data.expiring,
+    expiring: data.expiring ? data.expiring : false,
   }
 }
-
-export type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T

@@ -134,6 +134,7 @@ export interface DataProviderItem {
   readonly order?: number
   readonly title: FormText
   readonly subTitle?: FormText
+  readonly pageTitle?: FormText
   readonly source?: string //TODO see if we can remove this
 }
 
@@ -142,6 +143,7 @@ export interface DataProviderBuilderItem {
   type?: string //TODO REMOVE THIS
   title: FormText
   subTitle?: FormText
+  pageTitle?: FormText
   source?: string
   provider?: Provider
 }

@@ -49,5 +49,5 @@ export class Therapy {
   state?: State
 }
 
-@ObjectType('RightsPortalPaginatedTherapiesResponse')
+@ObjectType('RightsPortalPaginatedTherapies')
 export class PaginatedTherapiesResponse extends PaginatedResponse(Therapy) {}

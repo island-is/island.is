@@ -1,8 +1,8 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
+import { useWindowSize } from 'react-use'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
-import { useWindowSize } from 'react-use'
-import { useIntl } from 'react-intl'
 
 import {
   Box,

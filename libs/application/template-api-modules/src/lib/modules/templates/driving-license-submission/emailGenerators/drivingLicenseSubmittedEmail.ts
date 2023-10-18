@@ -53,21 +53,21 @@ export const generateDrivingLicenseSubmittedEmail: EmailTemplateGenerator = (
 
   const selectedJurisdictionId = getValueViaPath<number>(
     application.answers,
-    'juristiction',
+    'jurisdiction',
   )
 
-  const juristictions = getValueViaPath<{ name: string; id: number }[]>(
+  const jurisdictions = getValueViaPath<{ name: string; id: number }[]>(
     application.externalData,
-    'juristictions.data',
+    'jurisdictions.data',
   )
 
-  if (!juristictions || !selectedJurisdictionId) {
+  if (!jurisdictions || !selectedJurisdictionId) {
     throw new Error(
-      'no juristiction or selected juristication ID - not handled',
+      'no jurisdiction or selected juristication ID - not handled',
     )
   }
 
-  const juristictionInfo = juristictions.find(
+  const jurisdictionInfo = jurisdictions.find(
     (x) => x.id == selectedJurisdictionId,
   )
 
@@ -95,7 +95,7 @@ export const generateDrivingLicenseSubmittedEmail: EmailTemplateGenerator = (
         ...(willBringQualityPhoto || willBringHealthCert
           ? []
           : EmailComplete({
-              selectedDistrictCommissioner: juristictionInfo?.name,
+              selectedDistrictCommissioner: jurisdictionInfo?.name,
             })),
       ],
     },

@@ -1,10 +1,10 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import { CaseDecision } from '@island.is/judicial-system/types'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import { Box, Button, IconMapIcon, Text } from '@island.is/island-ui/core'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
+import { CaseDecision } from '@island.is/judicial-system/types'
 import { caseDates } from '@island.is/judicial-system-web/messages'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'

@@ -17,6 +17,7 @@ export const ApiConfiguration = {
     new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-ehic-client-v1',
+        organizationSlug: 'sjukratryggingar',
         timeout: 60000,
         logErrorResponseBody: true,
         autoAuth: idsClientConfig.isConfigured

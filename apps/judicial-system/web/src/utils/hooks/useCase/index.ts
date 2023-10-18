@@ -1,28 +1,24 @@
 import { useContext, useMemo } from 'react'
-import router from 'next/router'
-import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
-import omitBy from 'lodash/omitBy'
-import isUndefined from 'lodash/isUndefined'
 import isNil from 'lodash/isNil'
+import isUndefined from 'lodash/isUndefined'
+import omitBy from 'lodash/omitBy'
+import router from 'next/router'
+import { useMutation } from '@apollo/client'
 
+import { toast } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
 import {
+  CaseState,
+  CaseTransition,
+  isExtendedCourtRole,
+  isIndictmentCase,
+  isInvestigationCase,
+  isRestrictionCase,
   NotificationType,
   SendNotificationResponse,
-  CaseTransition,
-  CaseState,
-  isIndictmentCase,
-  isExtendedCourtRole,
-  isRestrictionCase,
-  isInvestigationCase,
 } from '@island.is/judicial-system/types'
-import {
-  TempCase as Case,
-  TempUpdateCase as UpdateCase,
-  TempCreateCase as CreateCase,
-} from '@island.is/judicial-system-web/src/types'
-import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
@@ -30,19 +26,23 @@ import {
   useCaseLazyQuery,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  TempCase as Case,
+  TempCreateCase as CreateCase,
+  TempUpdateCase as UpdateCase,
+} from '@island.is/judicial-system-web/src/types'
 
-import { isTrafficViolationCase } from '../../stepHelper'
 import { findFirstInvalidStep } from '../../formHelper'
+import { isTrafficViolationCase } from '../../stepHelper'
 import {
   CreateCaseMutation,
   CreateCourtCaseMutation,
-  UpdateCaseMutation,
-  LimitedAccessUpdateCaseMutation,
-  TransitionCaseMutation,
-  LimitedAccessTransitionCaseMutation,
-  SendNotificationMutation,
   ExtendCaseMutation,
+  LimitedAccessTransitionCaseMutation,
+  LimitedAccessUpdateCaseMutation,
+  SendNotificationMutation,
+  TransitionCaseMutation,
+  UpdateCaseMutation,
 } from './mutations'
 
 type ChildKeys = Pick<
@@ -313,7 +313,7 @@ const useCase = () => {
                   defenderNationalId: theCase.defenderNationalId,
                   defenderEmail: theCase.defenderEmail,
                   defenderPhoneNumber: theCase.defenderPhoneNumber,
-                  sendRequestToDefender: theCase.sendRequestToDefender,
+                  requestSharedWithDefender: theCase.requestSharedWithDefender,
                   leadInvestigator: theCase.leadInvestigator,
                   crimeScenes: theCase.crimeScenes,
                 },

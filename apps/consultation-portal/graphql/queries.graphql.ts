@@ -141,6 +141,7 @@ export const CASE_GET_CASE_BY_ID = gql`
       created
       changed
       oldInstitutionName
+      extraStakeholderList
       statusName
       stakeholders {
         name

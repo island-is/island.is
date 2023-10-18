@@ -3,16 +3,16 @@ import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 
 import { Box, Select, Tooltip } from '@island.is/island-ui/core'
-import { ReactSelectOption, TempCase as Case } from '../../types'
 import {
+  CaseType,
   User,
   UserRole,
-  CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { selectCourtOfficials as strings } from './SelectCourtOfficials.strings'
+import { ReactSelectOption, TempCase as Case } from '../../types'
 import BlueBox from '../BlueBox/BlueBox'
 import SectionHeading from '../SectionHeading/SectionHeading'
+import { selectCourtOfficials as strings } from './SelectCourtOfficials.strings'
 
 interface Props {
   workingCase: Case

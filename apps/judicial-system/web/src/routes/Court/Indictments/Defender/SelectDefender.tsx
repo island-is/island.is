@@ -2,14 +2,14 @@ import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Checkbox, Text } from '@island.is/island-ui/core'
+import { capitalize } from '@island.is/judicial-system/formatters'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   DefenderInput,
   DefenderNotFound,
 } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { core } from '@island.is/judicial-system-web/messages'
-import { capitalize } from '@island.is/judicial-system/formatters'
 import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 

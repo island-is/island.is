@@ -1,21 +1,21 @@
 import React, { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-  ReactSelectOption,
-  TempIndictmentCount as TIndictmentCount,
-} from '@island.is/judicial-system-web/src/types'
+import { Box, Select } from '@island.is/island-ui/core'
 import {
   offenseSubstances,
   Substance as SubstanceEnum,
 } from '@island.is/judicial-system/types'
-import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
-import { Box, Select } from '@island.is/island-ui/core'
 import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  ReactSelectOption,
+  TempIndictmentCount as TIndictmentCount,
+} from '@island.is/judicial-system-web/src/types'
+import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
 
 import { Substance } from '../Substance/Substance'
-import { substanceEnum } from './SubstancesEnum.strings'
 import { substances as strings } from './Substances.strings'
+import { substanceEnum } from './SubstancesEnum.strings'
 import * as styles from './Substances.css'
 
 interface Props {

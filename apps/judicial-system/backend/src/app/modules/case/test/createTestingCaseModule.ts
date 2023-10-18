@@ -1,35 +1,37 @@
+import { mock } from 'jest-mock-extended'
 import { Sequelize } from 'sequelize-typescript'
 
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
-import { mock } from 'jest-mock-extended'
 
-import { ConfigModule, ConfigType } from '@island.is/nest/config'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { IntlService } from '@island.is/cms-translations'
 import { createTestIntl } from '@island.is/cms-translations/test'
 import { signingModuleConfig, SigningService } from '@island.is/dokobit-signing'
-import { MessageService } from '@island.is/judicial-system/message'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { ConfigModule, ConfigType } from '@island.is/nest/config'
+
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import { MessageService } from '@island.is/judicial-system/message'
 
 import { environment } from '../../../../environments'
-import { CourtService } from '../../court'
-import { PoliceService } from '../../police'
-import { EventService } from '../../event'
-import { UserService } from '../../user'
-import { FileService } from '../../file'
 import { AwsS3Service } from '../../aws-s3'
+import { CourtService } from '../../court'
 import { DefendantService } from '../../defendant'
+import { EventService } from '../../event'
+import { FileService } from '../../file'
 import { IndictmentCountService } from '../../indictment-count'
+import { PoliceService } from '../../police'
+import { UserService } from '../../user'
+import { caseModuleConfig } from '../case.config'
+import { CaseController } from '../case.controller'
+import { CaseService } from '../case.service'
+import { InternalCaseController } from '../internalCase.controller'
+import { InternalCaseService } from '../internalCase.service'
+import { LimitedAccessCaseController } from '../limitedAccessCase.controller'
+import { LimitedAccessCaseService } from '../limitedAccessCase.service'
 import { Case } from '../models/case.model'
 import { CaseArchive } from '../models/caseArchive.model'
-import { caseModuleConfig } from '../case.config'
-import { CaseService } from '../case.service'
-import { InternalCaseService } from '../internalCase.service'
-import { LimitedAccessCaseService } from '../limitedAccessCase.service'
-import { CaseController } from '../case.controller'
-import { InternalCaseController } from '../internalCase.controller'
-import { LimitedAccessCaseController } from '../limitedAccessCase.controller'
+import { PDFService } from '../pdf.service'
 
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../court/court.service')
@@ -103,6 +105,7 @@ export const createTestingCaseModule = async () => {
       CaseService,
       InternalCaseService,
       LimitedAccessCaseService,
+      PDFService,
     ],
   })
     .useMocker((token) => {

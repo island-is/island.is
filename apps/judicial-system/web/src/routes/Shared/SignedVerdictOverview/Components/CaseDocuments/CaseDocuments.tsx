@@ -1,29 +1,29 @@
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { FetchResult, MutationFunctionOptions } from '@apollo/client'
-import { Exact } from '@island.is/api/schema'
 
+import { Exact } from '@island.is/api/schema'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import {
   CaseDecision,
   CaseState,
   CaseType,
-  UserRole,
   isAcceptingCaseDecision,
   isCourtRole,
   isInvestigationCase,
   isRestrictionCase,
+  UserRole,
 } from '@island.is/judicial-system/types'
+import {
+  core,
+  signedVerdictOverview as m,
+} from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
   PdfButton,
   SignedDocument,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  core,
-  signedVerdictOverview as m,
-} from '@island.is/judicial-system-web/messages'
 import { RequestRulingSignatureMutation } from '@island.is/judicial-system-web/src/components/SigningModal/requestRulingSignature.generated'
 import { RequestSignatureInput } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -83,7 +83,7 @@ const CaseDocuments: React.FC<React.PropsWithChildren<Props>> = ({
         {formatMessage(m.caseDocuments)}
       </Text>
       <Box marginBottom={2}>
-        {user?.role !== UserRole.STAFF && (
+        {user?.role !== UserRole.PRISON_SYSTEM_STAFF && (
           <PdfButton
             renderAs="row"
             caseId={workingCase.id}
@@ -131,7 +131,7 @@ const CaseDocuments: React.FC<React.PropsWithChildren<Props>> = ({
               <Text>{formatMessage(m.unsignedDocument)}</Text>
             ))}
         </PdfButton>
-        {user?.role !== UserRole.STAFF && (
+        {user?.role !== UserRole.PRISON_SYSTEM_STAFF && (
           <PdfButton
             renderAs="row"
             caseId={workingCase.id}

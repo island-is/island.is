@@ -1,9 +1,11 @@
-import { useQuery } from '@apollo/client'
-import { useRouter } from 'next/router'
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client'
 
 import { Box, Input, Select } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   FormContentContainer,
@@ -15,25 +17,23 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  InstitutionType,
   User,
   UserRole,
-  InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  ReactSelectOption,
+  UserData,
+} from '@island.is/judicial-system-web/src/types'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import * as constants from '@island.is/judicial-system/consts'
-import {
-  UserData,
-  ReactSelectOption,
-} from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { isCourtOfAppealCaseStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { appealCase as strings } from './AppealCase.strings'
-import { core } from '@island.is/judicial-system-web/messages'
 
 type JudgeSelectOption = ReactSelectOption & { judge: User }
 type AssistantSelectOption = ReactSelectOption & { assistant: User }

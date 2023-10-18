@@ -130,6 +130,9 @@
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],
+      "@island.is/api/domains/housing-benefit-calculator": [
+        "libs/api/domains/housing-benefit-calculator/src/index.ts"
+      ],
       "@island.is/api/domains/icelandic-government-institution-vacancies": [
         "libs/api/domains/icelandic-government-institution-vacancies/src/index.ts"
       ],
@@ -183,6 +186,9 @@
       ],
       "@island.is/api/domains/sessions": [
         "libs/api/domains/sessions/src/index.ts"
+      ],
+      "@island.is/api/domains/ship-registry": [
+        "libs/api/domains/ship-registry/src/index.ts"
       ],
       "@island.is/api/domains/syslumenn": [
         "libs/api/domains/syslumenn/src/index.ts"
@@ -380,6 +386,9 @@
       "@island.is/application/templates/passport": [
         "libs/application/templates/passport/src/index.ts"
       ],
+      "@island.is/application/templates/passport-annulment": [
+        "libs/application/templates/passport-annulment/src/index.ts"
+      ],
       "@island.is/application/templates/public-debt-payment-plan": [
         "libs/application/templates/public-debt-payment-plan/src/index.ts"
       ],
@@ -514,6 +523,9 @@
       "@island.is/clients/health-directorate": [
         "libs/clients/health-directorate/src/index.ts"
       ],
+      "@island.is/clients/housing-benefit-calculator": [
+        "libs/clients/housing-benefit-calculator/src/index.ts"
+      ],
       "@island.is/clients/icelandic-government-institution-vacancies": [
         "libs/clients/icelandic-government-institution-vacancies/src/index.ts"
       ],
@@ -528,6 +540,9 @@
       "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
       "@island.is/clients/judicial-administration": [
         "libs/clients/judicial-administration/src/index.ts"
+      ],
+      "@island.is/clients/license-client": [
+        "libs/clients/license-client/src/index.ts"
       ],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
@@ -545,6 +560,7 @@
       "@island.is/clients/national-registry-v3": [
         "libs/clients/national-registry/v3/src/index.ts"
       ],
+      "@island.is/clients/p-card": ["libs/clients/p-card/src/index.ts"],
       "@island.is/clients/passports": ["libs/clients/passports/src/index.ts"],
       "@island.is/clients/payment-schedule": [
         "libs/clients/payment-schedule/src/index.ts"
@@ -562,6 +578,9 @@
         "libs/clients/rsk/personal-tax-return/src/index.ts"
       ],
       "@island.is/clients/sessions": ["libs/clients/sessions/src/index.ts"],
+      "@island.is/clients/ship-registry": [
+        "libs/clients/ship-registry/src/index.ts"
+      ],
       "@island.is/clients/smartsolutions": [
         "libs/clients/smartsolutions/src/index.ts"
       ],
@@ -753,6 +772,9 @@
       "@island.is/service-portal/assets": [
         "libs/service-portal/assets/src/index.ts"
       ],
+      "@island.is/service-portal/assets/messages": [
+        "libs/service-portal/assets/src/lib/messages.ts"
+      ],
       "@island.is/service-portal/consent": [
         "libs/service-portal/consent/src/index.ts"
       ],
@@ -827,15 +849,6 @@
       ],
       "@island.is/service-portal/settings/islykill": [
         "libs/service-portal/settings/islykill/src/index.ts"
-      ],
-      "@island.is/service-portal/settings/personal-information": [
-        "libs/service-portal/settings/personal-information/src/index.ts"
-      ],
-      "@island.is/service-portal/vehicles": [
-        "libs/service-portal/vehicles/src/index.ts"
-      ],
-      "@island.is/service-portal/vehicles/messages": [
-        "libs/service-portal/vehicles/src/lib/messages.ts"
       ],
       "@island.is/services/auth/testing": [
         "libs/services/auth/testing/src/index.ts"

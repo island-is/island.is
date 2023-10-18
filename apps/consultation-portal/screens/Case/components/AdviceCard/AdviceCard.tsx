@@ -8,7 +8,6 @@ import {
 } from '@island.is/island-ui/core'
 import { CardSkeleton } from '../../../../components/'
 import { ReactNode, useEffect, useRef, useState } from 'react'
-import * as styles from './AdviceCard.css'
 import { getShortDate } from '../../../../utils/helpers/dateFunctions'
 import { REVIEW_CARD_SCROLL_HEIGHT } from '../../../../utils/consts/consts'
 import localization from '../../Case.json'
@@ -52,12 +51,27 @@ const RenderAdvice = ({ advice, loc, isOpen = false }: RenderAdviceProps) => {
     const retComp = []
     retComp.push(loc['hiddenContent'])
     retComp.push(' ')
-    retComp.push(<Link loc={loc}>{loc['hiddenContentLink']}</Link>)
+    retComp.push(
+      <Link key={advice.id} loc={loc}>
+        {loc['hiddenContentLink']}
+      </Link>,
+    )
     retComp.push('.')
     return retComp
   }
+
   const content = advice?.content
-  return isOpen ? <span className={styles.divStyle}>{content}</span> : content
+  const splitContent = content?.split('\n')
+
+  return isOpen ? (
+    <Stack space={1}>
+      {splitContent?.map((text, idx) => (
+        <Text key={idx}>{text}</Text>
+      ))}
+    </Stack>
+  ) : (
+    content
+  )
 }
 
 export const AdviceCard = ({ advice }: Props) => {

@@ -1,10 +1,10 @@
 import { useQuery } from '@apollo/client'
 
-import { InstitutionsQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import {
-  InstitutionType,
   Institution,
+  InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { InstitutionsQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 let rawInstitutions: Institution[]
 

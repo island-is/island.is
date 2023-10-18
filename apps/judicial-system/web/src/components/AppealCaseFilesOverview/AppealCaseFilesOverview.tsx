@@ -3,8 +3,8 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import * as constants from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   completedCaseStates,
@@ -16,8 +16,8 @@ import {
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseAppealState } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './AppealCaseFilesOverview.strings'
 
@@ -66,7 +66,7 @@ const AppealCaseFilesOverview: React.FC<
   )
 
   const allFiles =
-    user?.role === UserRole.STAFF
+    user?.role === UserRole.PRISON_SYSTEM_STAFF
       ? appealRulingFiles
       : appealCaseFiles?.concat(appealRulingFiles ?? [])
 

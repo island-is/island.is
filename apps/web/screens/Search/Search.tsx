@@ -56,6 +56,7 @@ import {
   Link as LinkItem,
   ProjectPage,
 } from '@island.is/web/graphql/schema'
+import { AnchorPageType } from '@island.is/web/utils/anchorPage'
 import { ActionType, reducer, initialState } from './Search.state'
 import { useLinkResolver, usePlausible } from '@island.is/web/hooks'
 import { Screen } from '../../types'
@@ -120,11 +121,6 @@ const connectedTypes: Partial<
 
 const stringToArray = (value: string | string[]) =>
   Array.isArray(value) ? value : value?.length ? [value] : []
-
-enum AnchorPageType {
-  LIFE_EVENT = 'Life Event',
-  DIGITAL_ICELAND_SERVICE = 'Digital Iceland Service',
-}
 
 const Search: Screen<CategoryProps> = ({
   q,
@@ -216,7 +212,7 @@ const Search: Screen<CategoryProps> = ({
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict
       case 'LifeEventPage': {
-        if (item.pageType !== AnchorPageType.DIGITAL_ICELAND_SERVICE) {
+        if (item.pageType === AnchorPageType.LIFE_EVENT) {
           labels.push(n('lifeEvent'))
         }
         break
@@ -471,7 +467,6 @@ const Search: Screen<CategoryProps> = ({
     labelResult: n('labelResult', 'Sjá niðurstöður'),
     inputPlaceholder: n('inputPlaceholder', 'Leita að nafni'),
   }
-
   return (
     <>
       <Head>
@@ -565,8 +560,8 @@ const Search: Screen<CategoryProps> = ({
                           {title}
                         </Tag>
                       ))}
-                    {countResults.processEntryCount &&
-                      countResults?.processEntryCount > 0 && (
+                    {typeof countResults.processEntryCount == 'number' &&
+                      countResults.processEntryCount > 0 && (
                         <Tag
                           variant="blue"
                           active={query?.processentry === 'true'}
@@ -767,6 +762,7 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
     'webArticle',
     'webLifeEventPage',
     'webDigitalIcelandService',
+    'webDigitalIcelandCommunityPage',
     'webAdgerdirPage',
     'webSubArticle',
     'webLink',

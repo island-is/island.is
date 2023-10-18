@@ -3,7 +3,6 @@ import * as faker from 'faker'
 
 /**
  * Private helper to create ApiScope with random values.
- * @returns
  */
 const createRandomApiScope = (): ApiScopeDTO => {
   return {
@@ -29,8 +28,7 @@ const createRandomApiScope = (): ApiScopeDTO => {
 /**
  * Creates ApiScope fixture to be used for testing.
  * @param apiScope Partial definition of the required ApiScopesDTO used for creating ApiScopes.
- *                 Give the user control to provide predfined values for some properties.
- * @returns
+ *                 Give the user control to provide predefined values for some properties.
  */
 export const createApiScope = (
   apiScope?: Partial<ApiScopeDTO>,

@@ -2,7 +2,8 @@ import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   capitalize,
   caseTypes,
@@ -15,33 +16,34 @@ import {
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
+  AlertBanner,
+  AppealCaseFilesOverview,
   CaseDates,
+  CaseResentExplanation,
+  Conclusion,
+  FeatureContext,
   FormContentContainer,
   FormContext,
   InfoCard,
   MarkdownWrapper,
-  PageLayout,
-  RestrictionTags,
-  PageHeader,
   Modal,
-  Conclusion,
-  AppealCaseFilesOverview,
-  CaseResentExplanation,
-  FeatureContext,
-  AppealConclusion,
-  AlertBanner,
   OverviewHeader,
+  PageHeader,
+  PageLayout,
   PdfButton,
+  RestrictionTags,
   SignedDocument,
 } from '@island.is/judicial-system-web/src/components'
-import { core, titles } from '@island.is/judicial-system-web/messages'
-import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
+import { api } from '../../services'
+import { conclusion } from '../../components/Conclusion/Conclusion.strings'
 import { strings } from './CaseOverview.strings'
+import * as styles from './CaseOverview.css'
 
 type availableModals =
   | 'NoModal'
@@ -154,7 +156,9 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 },
                 {
                   title: formatMessage(core.courtCaseNumber),
-                  value: workingCase.courtCaseNumber,
+                  value:
+                    workingCase.courtCaseNumber ??
+                    formatMessage(strings.noCourtNumber),
                 },
                 {
                   title: formatMessage(core.prosecutor),
@@ -168,10 +172,14 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   title: formatMessage(core.prosecutorPerson),
                   value: workingCase.prosecutor?.name,
                 },
-                {
-                  title: formatMessage(core.judge),
-                  value: workingCase.judge?.name,
-                },
+                ...(workingCase.judge
+                  ? [
+                      {
+                        title: formatMessage(core.judge),
+                        value: workingCase.judge?.name,
+                      },
+                    ]
+                  : []),
                 // Conditionally add this field based on case type
                 ...(isInvestigationCase(workingCase.type)
                   ? [
@@ -245,6 +253,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
           {completedCaseStates.includes(workingCase.state) && (
             <Box marginBottom={6}>
               <Conclusion
+                title={formatMessage(conclusion.title)}
                 conclusionText={workingCase.conclusion}
                 judgeName={workingCase.judge?.name}
               />
@@ -252,31 +261,28 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
           )}
           {workingCase.appealConclusion && (
             <Box marginBottom={6}>
-              <AppealConclusion
+              <Conclusion
+                title={formatMessage(conclusion.appealTitle)}
                 conclusionText={workingCase.appealConclusion}
-                judgeName={workingCase.appealJudge1?.name}
               />
             </Box>
           )}
-
           <AppealCaseFilesOverview />
 
-          {(workingCase.sendRequestToDefender ||
+          {(workingCase.requestSharedWithDefender ||
             completedCaseStates.includes(workingCase.state)) && (
             <Box marginBottom={10}>
               <Text as="h3" variant="h3" marginBottom={3}>
                 {formatMessage(strings.documentHeading)}
               </Text>
               <Box>
-                {(workingCase.sendRequestToDefender ||
-                  completedCaseStates.includes(workingCase.state)) && (
-                  <PdfButton
-                    renderAs="row"
-                    caseId={workingCase.id}
-                    title={formatMessage(core.pdfButtonRequest)}
-                    pdfType={'limitedAccess/request'}
-                  />
-                )}
+                <PdfButton
+                  renderAs="row"
+                  caseId={workingCase.id}
+                  title={formatMessage(core.pdfButtonRequest)}
+                  pdfType={'limitedAccess/request'}
+                />
+
                 {completedCaseStates.includes(workingCase.state) && (
                   <>
                     <PdfButton
@@ -307,6 +313,22 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                         <Text>{formatMessage(strings.unsignedRuling)}</Text>
                       )}
                     </PdfButton>
+                    <Box marginTop={7}>
+                      <a
+                        href={`${api.apiUrl}/api/case/${workingCase.id}/limitedAccess/allFiles`}
+                        download={`mal_${workingCase.courtCaseNumber}`}
+                        className={styles.downloadAllButton}
+                      >
+                        <Button
+                          variant="ghost"
+                          size="small"
+                          icon="download"
+                          iconType="outline"
+                        >
+                          {formatMessage(strings.getAllDocuments)}
+                        </Button>
+                      </a>
+                    </Box>
                   </>
                 )}
               </Box>

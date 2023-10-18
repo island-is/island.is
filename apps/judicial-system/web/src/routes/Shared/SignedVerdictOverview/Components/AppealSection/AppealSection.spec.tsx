@@ -1,15 +1,15 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
-import { LocaleProvider } from '@island.is/localization'
 import { MockedProvider } from '@apollo/client/testing'
+import { render, screen } from '@testing-library/react'
 
 import { CaseState } from '@island.is/judicial-system/types'
 import {
-  CaseType,
-  CaseOrigin,
-  Defendant,
   CaseAppealDecision,
+  CaseOrigin,
+  CaseType,
+  Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { LocaleProvider } from '@island.is/localization'
 
 import AppealSection from './AppealSection'
 

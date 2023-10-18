@@ -8,6 +8,7 @@ export interface BoostChatPanelProps {
 export interface LiveChatIncChatPanelProps {
   license: number
   version: string
+  group?: number
 }
 
 export interface WatsonChatPanelProps {
@@ -44,6 +45,12 @@ export type WatsonIntegration =
 
   // Útlendingastofnun
   | '89a03e83-5c73-4642-b5ba-cd3771ceca54'
+
+  // Sjúkratryggingar
+  | 'e625e707-c9ce-4048-802c-c12b905c28be'
+
+  // Sjúkratryggingar - english
+  | 'cba41fa0-12fb-4cb5-bd98-66a57cee42e0'
 
 export type WatsonServiceInstance =
   // Askur

@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
-import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client'
 
 import {
   AlertMessage,
@@ -11,20 +11,20 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
-import { Loading } from '@island.is/judicial-system-web/src/components'
-import {
-  InstitutionsQuery,
-  UsersQuery,
-} from '@island.is/judicial-system-web/src/utils/mutations'
+import * as constants from '@island.is/judicial-system/consts'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
-import { titles, errors } from '@island.is/judicial-system-web/messages'
+import { errors, titles } from '@island.is/judicial-system-web/messages'
+import { Loading } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   Institution,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  InstitutionsQuery,
+  UsersQuery,
+} from '@island.is/judicial-system-web/src/utils/mutations'
 
 import * as styles from './Users.css'
 
@@ -64,7 +64,7 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
     switch (userRole) {
       case UserRole.PROSECUTOR:
         return 'Saksóknari'
-      case UserRole.REPRESENTATIVE:
+      case UserRole.PROSECUTOR_REPRESENTATIVE:
         return 'Fulltrúi'
       case UserRole.JUDGE:
         return 'Dómari'
@@ -72,7 +72,7 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
         return 'Dómritari'
       case UserRole.ASSISTANT:
         return 'Aðstoðarmaður dómara'
-      case UserRole.STAFF:
+      case UserRole.PRISON_SYSTEM_STAFF:
         return 'Starfsmaður'
     }
   }

@@ -2,12 +2,6 @@ import React, { useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 
-import { isIndictmentCase } from '@island.is/judicial-system/types'
-import {
-  ReactSelectOption,
-  TempCase as Case,
-} from '@island.is/judicial-system-web/src/types'
-import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import {
   Box,
   Button,
@@ -19,18 +13,24 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
+import { BlueBox } from '@island.is/judicial-system-web/src/components'
+import {
+  Defendant,
+  Gender,
+  UpdateDefendantInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  ReactSelectOption,
+  TempCase as Case,
+} from '@island.is/judicial-system-web/src/types'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import {
-  Defendant,
-  Gender,
-  UpdateDefendantInput,
-} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import * as strings from './DefendantInfo.strings'
 
@@ -159,7 +159,7 @@ const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
               isIndictment: isIndictmentCase(workingCase.type),
             },
           )}
-          checked={defendant.noNationalId || undefined}
+          checked={Boolean(defendant.noNationalId)}
           onChange={() => {
             setNationalIdNotFound(false)
             setNationalIdErrorMessage('')

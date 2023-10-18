@@ -5,12 +5,11 @@ import {
   CardLoader,
   EmptyState,
   ErrorScreen,
+  MENNTAMALASTOFNUN_ID,
   formSubmit,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserInfo } from '@island.is/auth/react'
-import { getOrganizationLogoUrl } from '@island.is/shared/utils'
-import { Organization } from '@island.is/shared/types'
 import { LicenseDetail } from '../../components/LicenseDetail'
 import { useEffect, useState } from 'react'
 import { m } from '@island.is/service-portal/core'
@@ -37,10 +36,19 @@ export const EducationDetail = () => {
     },
   })
 
-  const license = data?.occupationalLicensesEducationalLicense
+  const license = data?.occupationalLicensesEducationalLicense?.items[0]
+
+  const downloadUrl =
+    license?.__typename === 'OccupationalLicensesEducationalLicense'
+      ? license.downloadUrl
+      : undefined
 
   useEffect(() => {
-    if (shouldDownload && license && license.downloadUrl) {
+    if (
+      shouldDownload &&
+      license?.__typename === 'OccupationalLicensesEducationalLicense' &&
+      license.downloadUrl
+    ) {
       formSubmit(license.downloadUrl)
       setShouldDownload(false)
     }
@@ -66,22 +74,12 @@ export const EducationDetail = () => {
   const programme =
     license.profession.charAt(0).toUpperCase() + license.profession.slice(1)
 
-  const organizations =
-    (data?.getOrganizations?.items as Array<Organization>) ?? []
-
-  const organizationImage = getOrganizationLogoUrl(
-    license.type,
-    organizations,
-    120,
-  )
-
   return (
     <LicenseDetail
       title={programme}
-      intro={formatMessage(om.educationIntro)}
-      img={organizationImage}
+      serviceProviderID={MENNTAMALASTOFNUN_ID}
       buttonGroup={
-        license.downloadUrl ? (
+        downloadUrl ? (
           <Box paddingTop={3}>
             <Button
               variant="utility"
@@ -94,16 +92,16 @@ export const EducationDetail = () => {
         ) : undefined
       }
       name={user.profile.name}
-      dateOfBirth={birthday ? formatDateFns(birthday, 'dd.mm.yyyy') : undefined}
+      dateOfBirth={birthday ? formatDateFns(birthday, 'dd.MM.yyyy') : undefined}
       profession={programme}
       licenseType={programme}
       publisher={license.type}
       dateOfIssue={
         !Number.isNaN(Date.parse(license.validFrom))
-          ? formatDateFns(license.validFrom, 'dd.mm.yyyy')
+          ? formatDateFns(license.validFrom, 'dd.MM.yyyy')
           : undefined
       }
-      isValid={license.isValid}
+      status={license.status}
     />
   )
 }

@@ -8,14 +8,15 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import {
   getCourtRecordPdfAsString,
   getCustodyNoticePdfAsString,
   getRequestPdfAsString,
 } from '../../../../formatters'
 import { randomDate } from '../../../../test'
-import { PoliceService } from '../../../police'
 import { AwsS3Service } from '../../../aws-s3'
+import { PoliceService } from '../../../police'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
@@ -108,21 +109,22 @@ describe('InternalCaseController - Deliver case to police', () => {
 
       then = await givenWhenThen(caseId, theCase)
     })
-
-    it('should generate the court record pdf', async () => {
+    it('should update the police case', async () => {
+      expect(getRequestPdfAsString).toHaveBeenCalledWith(
+        theCase,
+        expect.any(Function),
+      )
       expect(getCourtRecordPdfAsString).toHaveBeenCalledWith(
         theCase,
         expect.any(Function),
       )
-    })
-
-    it('should generate the ruling pdf', async () => {
       expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
         `generated/${caseId}/ruling.pdf`,
       )
-    })
-
-    it('should update the police case', async () => {
+      expect(getCustodyNoticePdfAsString).toHaveBeenCalledWith(
+        theCase,
+        expect.any(Function),
+      )
       expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
         user,
         caseId,
@@ -135,11 +137,9 @@ describe('InternalCaseController - Deliver case to police', () => {
         requestPdf,
         courtRecordPdf,
         rulingPdf,
+        [],
         custodyNoticePdf,
       )
-    })
-
-    it('should return a success response', async () => {
       expect(then.result.delivered).toEqual(true)
     })
   })

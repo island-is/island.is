@@ -17,6 +17,8 @@ export type {
   SendNotification,
   SendNotificationResponse,
 } from './lib/notification'
+export type { EventLog } from './lib/eventLog'
+export { EventType } from './lib/eventLog'
 
 export { CaseFileState, CaseFileCategory } from './lib/file'
 
@@ -62,6 +64,7 @@ export {
   CaseAppealDecision,
   CaseDecision,
   CaseAppealRulingDecision,
+  RequestSharedWithDefender,
   SessionArrangements,
   restrictionCases,
   investigationCases,
@@ -76,6 +79,8 @@ export {
   getAppealInfo,
   getStatementDeadline,
   getAppealedDate,
+  limitedAccessCaseFileCategoriesForIndictmentCases,
+  limitedAccessCaseFileCategoriesForRestrictionAndInvestigationCases,
 } from './lib/case'
 export type {
   Case,
@@ -101,6 +106,9 @@ export {
   Substance,
   offenseSubstances,
 } from './lib/indictmentCount'
+
+export { type LawyerFull, type Lawyer, mapToLawyer } from './lib/defender'
+
 export type { SubstanceMap } from './lib/indictmentCount'
 
 export type { CourtDocument } from './lib/courtDocument'

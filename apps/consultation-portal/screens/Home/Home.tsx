@@ -70,7 +70,7 @@ export const Index = ({ types, statistics }: HomeProps) => {
     }
 
     if (cases?.length === 0) {
-      return <EmptyState />
+      return <EmptyState isCase />
     }
 
     return (

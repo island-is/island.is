@@ -1,4 +1,4 @@
-import { defineMessages, defineMessage } from 'react-intl'
+import { defineMessage, defineMessages } from 'react-intl'
 
 export const sections = {
   title: defineMessage({

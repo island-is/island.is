@@ -31,7 +31,7 @@ const Footer = () => {
                   align="center"
                 >
                   <FooterColumn justifyContent="flexStart">
-                    <LogoText isFooter />
+                    <LogoText isSmall />
                   </FooterColumn>
                   <FooterColumn isDivider />
                   <FooterColumn justifyContent="center">

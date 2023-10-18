@@ -1,37 +1,34 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
-import router from 'next/router'
 import format from 'date-fns/format'
-import parseISO from 'date-fns/parseISO'
 import localeIS from 'date-fns/locale/is'
+import parseISO from 'date-fns/parseISO'
+import router from 'next/router'
 
 import { Box, Text } from '@island.is/island-ui/core'
-
-import { capitalize } from '@island.is/judicial-system/formatters'
-import { CaseType, isIndictmentCase } from '@island.is/judicial-system/types'
-
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
-import { core, tables } from '@island.is/judicial-system-web/messages'
-
 import {
   DEFENDER_INDICTMENT_ROUTE,
   DEFENDER_ROUTE,
 } from '@island.is/judicial-system/consts'
+import { capitalize } from '@island.is/judicial-system/formatters'
+import { CaseType, isIndictmentCase } from '@island.is/judicial-system/types'
+import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
-  TagCaseState,
   TagAppealState,
+  TagCaseState,
 } from '@island.is/judicial-system-web/src/components'
-import { useSortCases } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  TableSkeleton,
-  CourtCaseNumber,
-  DefendantInfo,
-  CreatedDate,
-  SortButton,
-  getDurationDate,
   ColumnCaseType,
+  CourtCaseNumber,
+  CreatedDate,
+  DefendantInfo,
+  getDurationDate,
+  SortButton,
+  TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
+import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
+import { useSortCases } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as styles from './DefenderCasesTable.css'
 
