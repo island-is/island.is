@@ -5,3 +5,7 @@ export enum ApiActions {
   getReferenceData = 'getReferenceData',
   getAnotherReferenceData = 'getAnotherReferenceData',
 }
+
+export enum Actions {
+  SEND_APPLICATION = 'sendApplication',
+}

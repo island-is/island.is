@@ -72,6 +72,5 @@ export const institutionMapper = {
   [ApplicationTypes.DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR]:
     InstitutionTypes.SAMGONGUSTOFA,
   [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: InstitutionTypes.STAFRAENT_ISLAND,
-  [ApplicationTypes.VECHICLE_RECYCLING_CERTIFICATE]:
-    InstitutionTypes.URVINNSLUSJODUR,
+  [ApplicationTypes.CAR_RECYCLING]: InstitutionTypes.URVINNSLUSJODUR,
 }

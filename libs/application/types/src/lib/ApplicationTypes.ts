@@ -47,7 +47,7 @@ export enum ApplicationTypes {
   DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR = 'DrivingLicenseBookUpdateInstructor',
   ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
   EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
-  VECHICLE_RECYCLING_CERTIFICATE = 'VehicleRecyclingCertificate',
+  CAR_RECYCLING = 'CarRecycling',
 }
 
 export const ApplicationConfigurations = {
@@ -243,8 +243,8 @@ export const ApplicationConfigurations = {
     slug: 'evropska-sjukratryggingakortid',
     translation: 'ehic.application',
   },
-  [ApplicationTypes.VECHICLE_RECYCLING_CERTIFICATE]: {
+  [ApplicationTypes.CAR_RECYCLING]: {
     slug: 'skilavottord',
-    translation: 'vrc.application',
+    translation: 'rf.cr.application',
   },
 }

@@ -92,7 +92,7 @@ export enum ServicePortalPath {
   TransportLowerAirfare = '/samgongur/loftbru',
   AssetsWorkMachines = '/samgongur/okutaeki/vinnuvelar',
   AssetsWorkMachinesDetail = '/samgongur/okutaeki/vinnuvelar/:regNumber/:id',
-  VehicleRecyclingCertificate = '/skilavottord',
+  CarRecycling = '/skilavottord',
 
   // Education
   EducationHaskoli = '/menntun/haskoli',

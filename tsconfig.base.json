@@ -417,8 +417,8 @@
       "@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership": [
         "libs/application/templates/transport-authority/transfer-of-vehicle-ownership/src/index.ts"
       ],
-      "@island.is/application/templates/vehicle-recycling-certificate": [
-        "libs/application/templates/vehicle-recycling-certificate/src/index.ts"
+      "@island.is/application/templates/car-recycling": [
+        "libs/application/templates/car-recycling/src/index.ts"
       ],
       "@island.is/application/testing": [
         "libs/application/testing/src/index.ts"
