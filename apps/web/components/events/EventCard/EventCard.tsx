@@ -83,13 +83,8 @@ export const EventCard: React.FC<React.PropsWithChildren<EventCardProps>> = ({
             <Text>{location?.postalCode}</Text>
           </Box>
           <Text>
-            {startTime as string}
-            {
-              n(
-                'timeSuffix',
-                activeLocale === 'is' ? ' til ' : ' to ',
-              ) as string
-            }
+            {startTime as string}{' '}
+            {n('timeSuffix', activeLocale === 'is' ? 'til' : 'to') as string}{' '}
             {endTime as string}
           </Text>
         </Stack>

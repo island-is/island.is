@@ -29,7 +29,7 @@ import {
   QueryGetOrganizationPageArgs,
   QueryGetSingleEventArgs,
 } from '@island.is/web/graphql/schema'
-import { useNamespaceStrict } from '@island.is/web/hooks'
+import { useNamespace } from '@island.is/web/hooks'
 import { linkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { useI18n } from '@island.is/web/i18n'
@@ -56,7 +56,7 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
   namespace,
   locale,
 }) => {
-  const n = useNamespaceStrict(namespace)
+  const n = useNamespace(namespace)
   const router = useRouter()
   const { format } = useDateUtils()
   const formattedDate =
@@ -85,6 +85,9 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
       typename: 'organizationpage',
     },
   ]
+
+  const socialImage = event.featuredImage ?? event.image
+
   return (
     <>
       <OrganizationWrapper
@@ -93,7 +96,10 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
         breadcrumbItems={breadCrumbs}
         showReadSpeaker={false}
         navigationData={{
-          title: n('navigationTitle', 'Efnisyfirlit'),
+          title: n(
+            'navigationTitle',
+            activeLocale === 'is' ? 'Efnisyfirlit' : 'Menu',
+          ),
           items: getOrganizationSidebarNavigationItems(
             organizationPage,
             baseRouterPath,
@@ -166,9 +172,9 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
       </OrganizationWrapper>
       <HeadWithSocialSharing
         title={`${event.title ?? ''} | ${organizationPage.title}`}
-        imageUrl={event.featuredImage?.url}
-        imageWidth={event.featuredImage?.width.toString()}
-        imageHeight={event.featuredImage?.height.toString()}
+        imageUrl={socialImage?.url}
+        imageWidth={socialImage?.width.toString()}
+        imageHeight={socialImage?.height.toString()}
       />
     </>
   )
@@ -200,7 +206,7 @@ OrganizationEventArticle.getProps = async ({ apolloClient, query, locale }) => {
           variables: {
             input: {
               lang: locale as ContentLanguage,
-              namespace: 'Eventpages',
+              namespace: 'OrganizationPages',
             },
           },
         })

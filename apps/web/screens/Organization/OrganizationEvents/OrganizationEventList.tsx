@@ -45,7 +45,6 @@ const OrganizationEventList: Screen<OrganizationEventListProps> = ({
   organizationPage,
   eventList,
   namespace,
-
   selectedPage,
 }) => {
   const router = useRouter()
@@ -176,7 +175,7 @@ OrganizationEventList.getProps = async ({ apolloClient, query, locale }) => {
         variables: {
           input: {
             lang: locale as ContentLanguage,
-            namespace: 'EventList',
+            namespace: 'OrganizationPages',
           },
         },
       })

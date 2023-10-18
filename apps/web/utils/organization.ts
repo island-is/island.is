@@ -1,6 +1,7 @@
 import { Locale } from 'locale'
-import { linkResolver } from '../hooks'
+
 import { OrganizationPage } from '../graphql/schema'
+import { linkResolver } from '../hooks'
 
 // TODO: Perhaps add this functionality to the linkResolver
 export const getOrganizationLink = (
