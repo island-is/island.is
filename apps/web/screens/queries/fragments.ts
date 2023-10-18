@@ -717,7 +717,7 @@ export const slices = gql`
     events {
       title
       slug
-      date
+      startDate
       time
       location
       image {

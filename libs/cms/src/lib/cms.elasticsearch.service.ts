@@ -126,7 +126,7 @@ export class CmsElasticsearchService {
       page,
       size,
       releaseDate: {
-        to: 'now',
+        from: 'now',
       },
     }
 

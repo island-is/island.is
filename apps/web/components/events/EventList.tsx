@@ -81,7 +81,7 @@ export const EventList = ({
                   endTime={eventItem.time.endTime}
                   titleAs="h2"
                   href={eventHref}
-                  date={eventItem.date}
+                  date={eventItem.startDate}
                 />
               )
             })}

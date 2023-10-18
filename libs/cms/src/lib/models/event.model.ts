@@ -53,11 +53,10 @@ export class Event {
 export const mapEvent = ({ sys, fields }: IEvent): SystemMetadata<Event> => {
   let endDate = ''
 
-  // TODO: verify this works
-  if (fields.startDate && fields.location?.endTime) {
+  if (fields.startDate && fields.time?.endTime) {
     const date = new Date(fields.startDate)
 
-    const [hours, minutes] = fields.location.endTime.split(':')
+    const [hours, minutes] = fields.time.endTime.split(':')
 
     date.setHours(Number(hours))
     date.setMinutes(Number(minutes))

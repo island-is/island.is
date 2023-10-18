@@ -42,7 +42,6 @@ import { webRichText } from '@island.is/web/utils/richText'
 
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import { GET_SINGLE_EVENT_QUERY } from '../../queries/Events'
-import * as styles from './OrganizationEventArticle.css'
 
 interface OrganizationEventArticleProps {
   organizationPage: OrganizationPage
@@ -61,7 +60,7 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
   const router = useRouter()
   const { format } = useDateUtils()
   const formattedDate =
-    event.date && format(new Date(event.date), 'do MMMM yyyy')
+    event.startDate && format(new Date(event.startDate), 'do MMMM yyyy')
   const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
   const { activeLocale } = useI18n()
   const ICON_TEXT_SPACE: ResponsiveSpace = [3, 3, 3, 2, 3]

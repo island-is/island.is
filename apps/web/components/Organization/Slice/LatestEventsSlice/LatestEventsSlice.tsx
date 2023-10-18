@@ -71,7 +71,7 @@ export const LatestEventsSlice = ({
             .slice(0, 3)
             .map(
               (
-                { title, image, slug: eventSlug, date, time, location },
+                { title, image, slug: eventSlug, startDate, time, location },
                 index,
               ) => (
                 <LatestEventSliceCard
@@ -82,7 +82,7 @@ export const LatestEventsSlice = ({
                   href={
                     linkResolver('organizationevent', [slug, eventSlug]).href
                   }
-                  date={date}
+                  date={startDate}
                   streetAddress={location.streetAddress}
                   postalCode={location.postalCode}
                   floor={location.floor}

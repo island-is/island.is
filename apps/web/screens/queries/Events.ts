@@ -7,7 +7,7 @@ export const GET_SINGLE_EVENT_QUERY = gql`
     getSingleEvent(input: $input) {
       title
       slug
-      date
+      startDate
       time
       location
       image {
@@ -42,7 +42,7 @@ export const GET_EVENTS_QUERY = gql`
         id
         title
         slug
-        date
+        startDate
         time
         location
         image {
