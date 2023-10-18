@@ -6,6 +6,7 @@ import {
   buildDividerField,
   buildTextField,
   buildSubSection,
+  buildPhoneField,
 } from '@island.is/application/core'
 import {
   Application,
@@ -14,38 +15,37 @@ import {
   UserProfile,
 } from '../../types/schema'
 import { m } from '../../lib/messages'
-import { B_TEMP } from '../../lib/constants'
-import { isApplicationForCondition } from '../../lib/utils'
+import { B_FULL_RENEWAL_65, B_TEMP } from '../../lib/constants'
 
 export const subSectionTempInfo = buildSubSection({
   id: 'infoStep',
   title: m.informationApplicant,
-  condition: isApplicationForCondition(B_TEMP),
+  condition: (answers) =>
+    answers.applicationFor === B_TEMP ||
+    answers.applicationFor === B_FULL_RENEWAL_65,
   children: [
     buildMultiField({
       id: 'info',
       title: m.informationTitle,
       space: 1,
       children: [
-        buildKeyValueField({
-          label: m.drivingLicenseTypeRequested,
-          value: 'Almenn ökuréttindi - B flokkur (Fólksbifreið)',
-        }),
-        buildDividerField({
-          title: '',
-          color: 'dark400',
-        }),
-        buildKeyValueField({
-          label: m.informationApplicant,
-          value: ({ externalData: { nationalRegistry } }) =>
-            (nationalRegistry.data as NationalRegistryUser).fullName,
+        buildTextField({
+          id: 'applicant.name',
+          title: m.overviewName,
+          readOnly: true,
           width: 'half',
+          defaultValue: ({ externalData }: Application) =>
+            externalData.nationalRegistry?.data.fullName,
         }),
-        buildKeyValueField({
-          label: m.informationStreetAddress,
-          value: ({ externalData: { nationalRegistry } }) => {
-            const address = (nationalRegistry.data as NationalRegistryUser)
-              .address
+        buildTextField({
+          id: 'applicant.address',
+          title: m.informationStreetAddress,
+          readOnly: true,
+          width: 'half',
+          defaultValue: ({ externalData }: Application) => {
+            const address =
+              (externalData.nationalRegistry.data as NationalRegistryUser)
+                .address ?? ''
 
             if (!address) {
               return ''
@@ -55,7 +55,6 @@ export const subSectionTempInfo = buildSubSection({
 
             return `${streetAddress}${city ? ', ' + city : ''}`
           },
-          width: 'half',
         }),
         buildTextField({
           id: 'email',
@@ -67,31 +66,40 @@ export const subSectionTempInfo = buildSubSection({
             return data.email
           },
         }),
-        buildTextField({
+        buildPhoneField({
           id: 'phone',
           title: m.informationYourPhone,
-          placeholder: 'Símanúmer',
           width: 'half',
+          disableDropdown: true,
+          allowedCountryCodes: ['IS'],
           defaultValue: ({ externalData }: Application) => {
-            const data = externalData.userProfile.data as UserProfile
-            return data.mobilePhoneNumber
+            const phone =
+              (
+                externalData.userProfile?.data as {
+                  mobilePhoneNumber?: string
+                }
+              )?.mobilePhoneNumber ?? ''
+
+            return phone
           },
         }),
         buildDividerField({
           title: '',
           color: 'dark400',
+          condition: (answers) => answers.applicationFor !== B_FULL_RENEWAL_65,
         }),
         buildDescriptionField({
           id: 'drivingInstructorTitle',
           title: m.drivingInstructor,
-          titleVariant: 'h4',
+          titleVariant: 'h3',
           description: m.chooseDrivingInstructor,
+          condition: (answers) => answers.applicationFor !== B_FULL_RENEWAL_65,
         }),
         buildSelectField({
           id: 'drivingInstructor',
           title: m.drivingInstructor,
-          disabled: false,
           required: true,
+          condition: (answers) => answers.applicationFor !== B_FULL_RENEWAL_65,
           options: ({
             externalData: {
               teachers: { data },

@@ -6,23 +6,22 @@ import {
   buildSubSection,
   getValueViaPath,
   hasYes,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { HasQualityPhotoData } from '../../lib/types'
-import { NO, YES, B_FULL } from '../../lib/constants'
-import {
-  hasNoDrivingLicenseInOtherCountry,
-  isApplicationForCondition,
-  isVisible,
-} from '../../lib/utils'
+import { NO, YES, B_FULL, B_FULL_RENEWAL_65 } from '../../lib/constants'
 
 export const subSectionQualityPhoto = buildSubSection({
   id: 'photoStep',
   title: m.applicationQualityPhotoTitle,
-  condition: isVisible(
-    isApplicationForCondition(B_FULL),
-    hasNoDrivingLicenseInOtherCountry,
-  ),
+  condition: (answers) => {
+    return (
+      (answers.applicationFor === B_FULL ||
+        answers.applicationFor === B_FULL_RENEWAL_65) &&
+      !hasYes(answers?.drivingLicenseInOtherCountry)
+    )
+  },
   children: [
     buildMultiField({
       id: 'info',
@@ -75,6 +74,11 @@ export const subSectionQualityPhoto = buildSubSection({
           id: 'photodescription',
           title: '',
           component: 'Bullets',
+        }),
+        buildDescriptionField({
+          id: 'space',
+          title: '',
+          space: 'containerGutter',
         }),
         buildCheckboxField({
           id: 'willBringQualityPhoto',

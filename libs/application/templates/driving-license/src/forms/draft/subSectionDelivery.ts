@@ -1,5 +1,4 @@
 import {
-  buildDescriptionField,
   buildMultiField,
   buildSelectField,
   buildSubSection,
@@ -20,14 +19,8 @@ export const subSectionDelivery = buildSubSection({
     buildMultiField({
       id: 'info',
       title: m.pickupLocationTitle,
-      space: 1,
+      description: chooseDistrictCommissionerDescription,
       children: [
-        buildDescriptionField({
-          id: 'afhending',
-          title: m.districtCommisionerTitle,
-          titleVariant: 'h4',
-          description: chooseDistrictCommissionerDescription,
-        }),
         buildSelectField({
           id: 'jurisdiction',
           title: m.districtCommisionerPickup,

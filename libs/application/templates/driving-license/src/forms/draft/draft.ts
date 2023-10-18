@@ -1,6 +1,5 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { LogreglanLogo } from '../../assets'
 import { m } from '../../lib/messages'
 import { subSectionTempInfo } from './subSectionTempInfo'
 import { subSectionOtherCountry } from './subSectionOtherCountry'
@@ -9,11 +8,12 @@ import { subSectionQualityPhoto } from './subSectionQualityPhoto'
 import { subSectionDelivery } from './subSectionDelivery'
 import { subSectionHealthDeclaration } from './subSectionHealthDeclaration'
 import { subSectionSummary } from './subSectionSummary'
+import { Syslumenn } from '../../assets'
 
 export const draft: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
   title: '',
-  logo: LogreglanLogo,
+  logo: Syslumenn,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
@@ -30,9 +30,9 @@ export const draft: Form = buildForm({
         subSectionTempInfo,
         subSectionOtherCountry,
         subSectionOtherCountryDirections,
+        subSectionHealthDeclaration,
         subSectionQualityPhoto,
         subSectionDelivery,
-        subSectionHealthDeclaration,
         subSectionSummary,
       ],
     }),
@@ -42,7 +42,7 @@ export const draft: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'confim',
+      id: 'confirm',
       title: m.overviewSectionTitle,
       children: [],
     }),

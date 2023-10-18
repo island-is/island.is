@@ -8,7 +8,7 @@ import { m } from '../../lib/messages'
 import { DrivingLicense } from '../../lib/types'
 import {
   B_FULL,
-  B_RENEWAL,
+  B_FULL_RENEWAL_65,
   B_TEMP,
   DrivingLicenseFakeData,
 } from '../../lib/constants'
@@ -63,7 +63,7 @@ export const sectionApplicationFor = buildSubSection({
                 label: m.applicationForRenewalLicenseTitle,
                 subLabel:
                   m.applicationForRenewalLicenseDescription.defaultMessage,
-                value: B_RENEWAL,
+                value: B_FULL_RENEWAL_65,
                 disabled: !currentLicense || age < 65,
               },
             ]

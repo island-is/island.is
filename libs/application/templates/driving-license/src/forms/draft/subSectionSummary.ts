@@ -12,13 +12,17 @@ import { DefaultEvents, StaticText } from '@island.is/application/types'
 import { NationalRegistryUser, TeacherV4 } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
-import { StudentAssessment } from '@island.is/api/schema'
+import {
+  NationalRegistryAddress,
+  StudentAssessment,
+} from '@island.is/api/schema'
 import { YES, B_TEMP } from '../../lib/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
   isApplicationForCondition,
   needsHealthCertificateCondition,
 } from '../../lib/utils'
+import { formatPhoneNumber } from '@island.is/application/ui-components'
 
 export const subSectionSummary = buildSubSection({
   id: 'overview',
@@ -70,7 +74,7 @@ export const subSectionSummary = buildSubSection({
           label: m.overviewPhoneNumber,
           width: 'half',
           condition: (answers) => !!answers?.phone,
-          value: ({ answers: { phone } }) => phone as string,
+          value: ({ answers: { phone } }) => formatPhoneNumber(phone as string),
         }),
         buildKeyValueField({
           label: m.overviewEmail,
@@ -81,21 +85,19 @@ export const subSectionSummary = buildSubSection({
         buildKeyValueField({
           label: m.overviewStreetAddress,
           width: 'half',
-          value: ({ externalData: { nationalRegistry } }) =>
-            (nationalRegistry.data as NationalRegistryUser).address
-              ?.streetAddress,
+          value: ({ externalData: { nationalRegistry } }) => {
+            const address = (nationalRegistry.data as NationalRegistryUser)
+              .address as NationalRegistryAddress
+            return `${address.streetAddress}${
+              address.city ? ', ' + address.city : ''
+            }`
+          },
         }),
         buildKeyValueField({
           label: m.overviewPostalCode,
           width: 'half',
           value: ({ externalData: { nationalRegistry } }) =>
             (nationalRegistry.data as NationalRegistryUser).address?.postalCode,
-        }),
-        buildKeyValueField({
-          label: m.overviewCity,
-          width: 'half',
-          value: ({ externalData: { nationalRegistry } }) =>
-            (nationalRegistry.data as NationalRegistryUser).address?.city,
         }),
         buildDividerField({
           condition: isApplicationForCondition(B_TEMP),
@@ -149,14 +151,14 @@ export const subSectionSummary = buildSubSection({
         buildKeyValueField({
           label: m.overviewPaymentCharge,
           value: ({ externalData, answers }) => {
-            const items = externalData.payment.data as {
+            const items = externalData.payment?.data as {
               priceAmount: number
               chargeItemCode: string
             }[]
             const targetCode =
               answers.applicationFor === B_TEMP ? 'AY114' : 'AY110'
 
-            const item = items.find(
+            const item = items?.find(
               ({ chargeItemCode }) => chargeItemCode === targetCode,
             )
             return (item?.priceAmount?.toLocaleString('de-DE') +

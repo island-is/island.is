@@ -7,9 +7,12 @@ export enum ApiActions {
 
 export const B_FULL = 'B-full'
 export const B_TEMP = 'B-temp'
-export const B_RENEWAL = 'B-renewal'
+export const B_FULL_RENEWAL_65 = 'B-full-renewal-65'
 
-export type DrivingLicenseApplicationFor = typeof B_FULL | typeof B_TEMP
+export type DrivingLicenseApplicationFor =
+  | typeof B_FULL
+  | typeof B_TEMP
+  | typeof B_FULL_RENEWAL_65
 
 export type Events =
   | { type: DefaultEvents.SUBMIT }

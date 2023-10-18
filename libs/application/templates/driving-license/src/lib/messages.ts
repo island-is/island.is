@@ -235,13 +235,13 @@ export const m = defineMessages({
   },
   errorHealthDeclarationNotFilledOut: {
     id: 'dl.application:errorHealthDeclarationNotFilledOut',
-    defaultMessage: 'Vinsamlegast fylltu út heilbringðisyfirlýsingu',
+    defaultMessage: 'Vinsamlegast fylltu út heilbrigðisyfirlýsingu',
     description: '',
   },
   alertHealthDeclarationGlassesMismatch: {
     id: 'dl.application:alertHealthDeclarationGlassesMismatch',
     defaultMessage:
-      'Athugaðu að þar sem þú hefur (hefur ekki) verið að nota gleraugu seinast, þá þarftu að skila inn vottorði frá lækninum þínum sem sýnir að þú sért (sért ekki) að nota gleraugu.',
+      'Athugaðu að þar sem breyting hefur orðið á sjón síðan síðast var sótt um ökuskírteini þarftu að skila vottorði frá heimilislækni þess efnis.',
     description: '',
   },
   overviewMultiFieldTitle: {
@@ -588,6 +588,13 @@ export const m = defineMessages({
     description:
       'Choose district commissioner for returning a temporary license and recieve a new full license',
   },
+  chooseDistrictCommisionerForFullLicenseRenewal65: {
+    id: 'dl.application:chooseDistrictCommisionerForFullLicenseRenewal65',
+    defaultMessage:
+      'Veldu sýslumannsembætti þar sem þú vilt fá afhent nýtt ökuskírteini.',
+    description:
+      'Choose district commissioner for recieving a new full license',
+  },
   chooseDistrictCommisionerForTempLicense: {
     id: 'dl.application:chooseDistrictCommisionerForTempLicense',
     defaultMessage:
@@ -652,11 +659,6 @@ export const m = defineMessages({
     defaultMessage: 'Finndu og veldu nafn ökukennara þíns úr listanum',
     description:
       'Find and select the name of your driving instructor from the list',
-  },
-  drivingLicenseTypeRequested: {
-    id: 'dl.application:drivingLicenseTypeRequested',
-    defaultMessage: 'Réttindi sem sótt er um',
-    description: 'Driving license type that is requested',
   },
   informationStreetAddress: {
     id: 'dl.application:informationStreetAddress',
@@ -727,7 +729,7 @@ export const m = defineMessages({
   },
   applicationForRenewalLicenseTitle: {
     id: 'dl.application:applicationForRenewalLicenseTitle',
-    defaultMessage: 'Endurnýjun ökuréttinda 65 ára eða eldri',
+    defaultMessage: 'Endurnýjun ökuskírteina fyrir 65 ára og eldri',
     description: 'Option title for selecting to renew driving license',
   },
   applicationForRenewalLicenseDescription: {
@@ -764,10 +766,10 @@ export const m = defineMessages({
       'Umsækjandi með ökuskírteini utan EES getur sótt um að skipta yfir í íslenskt ökuskírteini eftir 6 mánaða fasta búsetu. Taka þarf bæði bóklegt og verklegt próf og öðlast fullnaðarskírteini.',
     description: 'Driving license from other country description',
   },
-  nationalCommissionerOfPolice: {
-    id: 'dl.application:nationalCommissionerOfPolice',
-    defaultMessage: 'Ríkislögreglustjóri',
-    description: 'National Commissioner of Police',
+  institution: {
+    id: 'dl.application:institution',
+    defaultMessage: 'Sýslumenn',
+    description: '',
   },
   countryDirectionsTitle: {
     id: 'dl.application:countryDirectionsTitle',
