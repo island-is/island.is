@@ -23,7 +23,7 @@ export const alignTiles = style({
       position: 'absolute',
       bottom: 0,
       right: 0,
-    }
+    },
   }),
 })
 
