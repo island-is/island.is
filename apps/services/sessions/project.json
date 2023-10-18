@@ -47,7 +47,7 @@
     "serve": {
       "executor": "@nx/js:node",
       "options": {
-        "buildTarget": "services-sessions:esbuild"
+        "buildTarget": "services-sessions:build"
       }
     },
     "lint": {
