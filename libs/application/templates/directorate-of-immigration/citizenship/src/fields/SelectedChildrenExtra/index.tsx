@@ -16,7 +16,6 @@ const initialCombinedChild = {
 export const MoreChildInfo: FC<FieldBaseProps> = (props) => {
   const { application } = props
   const { answers, externalData } = application
-  console.log('answers', answers)
   const [readOnlyFields, setReadOnlyFields] = useState(false)
 
   const [combinedChildren, setCombinedChildren] = useState<
