@@ -74,9 +74,6 @@ export const hasCompletedPrerequisitesStep =
         'requirementsMet',
         false,
       ) === true
-
-    // TODO: check for gdpr approval as well?
-
     return requirementsMet === value
   }
 
