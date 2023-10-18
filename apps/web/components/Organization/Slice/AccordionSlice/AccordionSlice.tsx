@@ -7,6 +7,7 @@ import {
   ActionCard,
   Box,
   BoxProps,
+  CategoryCard,
   Text,
 } from '@island.is/island-ui/core'
 import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
@@ -16,7 +17,6 @@ import {
 } from '@island.is/web/graphql/schema'
 import { SliceType } from '@island.is/island-ui/contentful'
 import { webRichText } from '@island.is/web/utils/richText'
-import * as styles from './AccordionSlice.css'
 
 const headingLevels = ['h2', 'h3', 'h4', 'h5'] as const
 type HeadingType = typeof headingLevels[number]
@@ -74,9 +74,7 @@ export const AccordionSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
                 labelUse={childHeading}
                 startExpanded={slice.accordionItems?.length === 1}
               >
-                <Box className={styles.accordionBox}>
-                  {webRichText(item.content ?? [])}
-                </Box>
+                <Box>{webRichText(item.content ?? [])}</Box>
               </AccordionCard>
             </Box>
           ))}
@@ -103,8 +101,8 @@ export const AccordionSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
               <ActionCard
                 heading={item.title}
                 text={
-                  (item.content?.[0] as Html)?.document?.content[0]?.content[0]
-                    ?.value
+                  (item.content?.[0] as Html)?.document?.content?.[0]
+                    ?.content?.[0]?.value
                 }
                 cta={{
                   label: item.link?.text ?? 'Default',
@@ -121,6 +119,20 @@ export const AccordionSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
                     }
                   },
                 }}
+              />
+            </Box>
+          ))}
+
+        {slice.type === 'category_card' &&
+          (slice.accordionItems ?? []).map((item, index) => (
+            <Box marginTop={index ? 4 : 0} key={item.id}>
+              <CategoryCard
+                href={item.link?.url}
+                heading={item.title}
+                text={
+                  (item.content?.[0] as Html)?.document?.content?.[0]
+                    ?.content?.[0]?.value
+                }
               />
             </Box>
           ))}

@@ -1,5 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { FC, useMemo } from 'react'
+import { Locale } from 'locale'
+import { useRouter } from 'next/router'
+import { ParsedUrlQuery } from 'querystring'
+
+import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   GridColumn,
@@ -11,7 +16,15 @@ import {
   TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import {
+  Form,
+  getThemeConfig,
+  OrganizationWrapper,
+  SignLanguageButton,
+  SliceDropdown,
+  SliceMachine,
+  Webreader,
+} from '@island.is/web/components'
 import {
   ContentLanguage,
   Query,
@@ -20,33 +33,22 @@ import {
   QueryGetOrganizationSubpageArgs,
   Slice,
 } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
+import { useI18n } from '@island.is/web/i18n'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
+import { webRichText } from '@island.is/web/utils/richText'
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
+
+import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_SUBPAGE_QUERY,
 } from '../queries'
-import { Screen } from '../../types'
-import { useNamespace } from '@island.is/web/hooks'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import {
-  getThemeConfig,
-  SliceMachine,
-  OrganizationWrapper,
-  SliceDropdown,
-  Form,
-  Webreader,
-  SignLanguageButton,
-} from '@island.is/web/components'
-import { CustomNextError } from '@island.is/web/units/errors'
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { SliceType } from '@island.is/island-ui/contentful'
-import { ParsedUrlQuery } from 'querystring'
-import { useRouter } from 'next/router'
-import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
-import { webRichText } from '@island.is/web/utils/richText'
-import { useI18n } from '@island.is/web/i18n'
-import { Locale } from 'locale'
-import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
 interface SubPageProps {
   organizationPage: Query['getOrganizationPage']
@@ -131,21 +133,24 @@ const SubPage: Screen<SubPageProps> = ({
         />
       )}
       <GridRow className="rs_read">
-        <GridColumn
-          span={['12/12', '12/12', subpage?.links?.length ? '7/12' : '12/12']}
-        >
-          {webRichText(
-            subpage?.description as SliceType[],
-            {
-              renderComponent: {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
-                Form: (slice) => <Form form={slice} namespace={namespace} />,
+        {subpage?.description && subpage.description.length > 0 && (
+          <GridColumn
+            span={['12/12', '12/12', subpage?.links?.length ? '7/12' : '12/12']}
+            paddingBottom={3}
+          >
+            {webRichText(
+              subpage?.description as SliceType[],
+              {
+                renderComponent: {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
+                  Form: (slice) => <Form form={slice} namespace={namespace} />,
+                },
               },
-            },
-            activeLocale,
-          )}
-        </GridColumn>
+              activeLocale,
+            )}
+          </GridColumn>
+        )}
         {subpage?.links && subpage.links.length > 0 && (
           <GridColumn
             span={['12/12', '12/12', '4/12']}
@@ -202,7 +207,7 @@ const SubPage: Screen<SubPageProps> = ({
       }}
     >
       <GridContainer>
-        <Box paddingY={4}>
+        <Box paddingTop={4}>
           <GridRow>
             <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
               <GridContainer>
@@ -252,7 +257,6 @@ const SubPage: Screen<SubPageProps> = ({
                                 subpage.sliceExtraText,
                                 namespace,
                                 organizationPage?.slug,
-                                organizationPage,
                               )}
                             </>
                           }
@@ -281,7 +285,6 @@ const SubPage: Screen<SubPageProps> = ({
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore make web strict
         organizationPage.slug,
-        organizationPage,
       )}
     </OrganizationWrapper>
   )
@@ -293,7 +296,6 @@ const renderSlices = (
   extraText: string,
   namespace: Record<string, string>,
   slug: string,
-  organizationPage: Query['getOrganizationPage'],
 ) => {
   switch (renderType) {
     case 'SliceDropdown':
@@ -301,8 +303,6 @@ const renderSlices = (
     default:
       return slices.map((slice, index) => {
         if (slice.__typename === 'LifeEventPageListSlice') {
-          const digitalIcelandDetailPageLinkType: LinkType =
-            'digitalicelandservicesdetailpage'
           return (
             <SliceMachine
               key={slice.id}
@@ -312,10 +312,6 @@ const renderSlices = (
               marginBottom={index === slices.length - 1 ? 5 : 0}
               params={{
                 renderLifeEventPagesAsProfileCards: true,
-                anchorPageLinkType:
-                  organizationPage?.theme === 'digital_iceland'
-                    ? digitalIcelandDetailPageLinkType
-                    : undefined,
                 latestNewsSliceBackground: 'white',
                 forceTitleSectionHorizontalPadding: 'true',
               }}
@@ -408,7 +404,10 @@ SubPage.getProps = async ({ apolloClient, locale, query, req }) => {
     namespace,
     showSearchInHeader: false,
     locale: locale as Locale,
-    ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
+    ...getThemeConfig(
+      getOrganizationPage?.theme,
+      getOrganizationPage?.organization,
+    ),
   }
 }
 

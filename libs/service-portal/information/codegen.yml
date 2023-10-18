@@ -3,7 +3,7 @@ schema:
 documents:
   - libs/service-portal/information/src/**/**/*.graphql
 generates:
-  libs/service-portal/informatioin/src/:
+  libs/service-portal/information/src/:
     preset: 'near-operation-file'
     presetConfig:
       baseTypesPath: '~@island.is/api/schema'

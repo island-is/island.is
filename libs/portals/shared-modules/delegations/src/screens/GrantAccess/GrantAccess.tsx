@@ -1,3 +1,4 @@
+import { Problem } from '@island.is/react-spa/shared'
 import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { Control, FormProvider, useForm } from 'react-hook-form'
@@ -39,6 +40,7 @@ const GrantAccess = () => {
   useNamespaces(['sp.access-control-delegations'])
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
+  const [formError, setFormError] = useState<Error | undefined>()
   const [name, setName] = useState('')
   const inputRef = React.useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
@@ -48,23 +50,27 @@ const GrantAccess = () => {
     selectedOption,
     loading: domainLoading,
     updateDomain,
+    queryString,
   } = useDomains(false)
 
   const [createAuthDelegation, { loading: mutationLoading }] =
     useCreateAuthDelegationMutation()
 
   const noUserFoundToast = () => {
-    toast.error(formatMessage(m.grantIdentityError))
+    toast.warning(formatMessage(m.grantIdentityError))
   }
 
-  const [getIdentity, { data, loading: queryLoading }] = useIdentityLazyQuery({
-    onError: noUserFoundToast,
-    onCompleted: (data) => {
-      if (!data.identity) {
-        noUserFoundToast()
-      }
-    },
-  })
+  const [getIdentity, { data, loading: queryLoading, error }] =
+    useIdentityLazyQuery({
+      onError: (error) => {
+        setFormError(error)
+      },
+      onCompleted: (data) => {
+        if (!data.identity) {
+          noUserFoundToast()
+        }
+      },
+    })
 
   const { identity } = data || {}
 
@@ -99,7 +105,9 @@ const GrantAccess = () => {
       if (kennitala.isCompany(value)) {
         setName(value)
       } else {
-        getIdentity({ variables: { input: { nationalId: value } } })
+        getIdentity({
+          variables: { input: { nationalId: value } },
+        })
       }
     } else {
       setName('')
@@ -124,11 +132,11 @@ const GrantAccess = () => {
       })
       if (data) {
         navigate(
-          `${DelegationPaths.Delegations}/${data.createAuthDelegation.id}`,
+          `${DelegationPaths.Delegations}/${data.createAuthDelegation.id}${queryString}`,
         )
       }
     } catch (error) {
-      toast.error(formatMessage(m.grantCreateError))
+      setFormError(error)
     }
   })
 
@@ -251,6 +259,7 @@ const GrantAccess = () => {
               </div>
             </Box>
             <Box display="flex" flexDirection="column" rowGap={5} marginTop={5}>
+              {formError && <Problem error={formError} size="small" />}
               <Text variant="small">
                 {formatMessage(m.grantNextStepDescription)}
               </Text>

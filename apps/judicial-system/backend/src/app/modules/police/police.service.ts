@@ -1,7 +1,7 @@
-import { uuid } from 'uuidv4'
-import { Base64 } from 'js-base64'
 import { Agent } from 'https'
 import fetch from 'isomorphic-fetch'
+import { Base64 } from 'js-base64'
+import { uuid } from 'uuidv4'
 import { z } from 'zod'
 
 import {
@@ -12,27 +12,28 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common'
 
-import type { ConfigType } from '@island.is/nest/config'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
 import {
   createXRoadAPIPath,
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
+
+import type { User } from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseType,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
 
-import { EventService } from '../event'
 import { AwsS3Service } from '../aws-s3'
+import { EventService } from '../event'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
+import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { policeModuleConfig } from './police.config'
-import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 
 function getChapter(category?: string): number | undefined {
   if (!category) {
@@ -53,6 +54,7 @@ export class PoliceService {
   private xRoadPath: string
   private agent: Agent
   private throttle = Promise.resolve({} as UploadPoliceCaseFileResponse)
+
   private policeCaseFileStructure = z.object({
     rvMalSkjolMals_ID: z.number(),
     heitiSkjals: z.string(),
@@ -60,17 +62,15 @@ export class PoliceService {
     domsSkjalsFlokkun: z.optional(z.string()),
     dagsStofnad: z.optional(z.string()),
   })
-
+  private readonly crimeSceneStructure = z.object({
+    vettvangur: z.optional(z.string()),
+    brotFra: z.optional(z.string()),
+    upprunalegtMalsnumer: z.string(),
+  })
   private responseStructure = z.object({
     malsnumer: z.string(),
-    skjol: z.array(this.policeCaseFileStructure),
-    malseinings: z.array(
-      z.object({
-        vettvangur: z.optional(z.string()),
-        brotFra: z.optional(z.string()),
-        upprunalegtMalsnumer: z.string(),
-      }),
-    ),
+    skjol: z.optional(z.array(this.policeCaseFileStructure)),
+    malseinings: z.optional(z.array(this.crimeSceneStructure)),
   })
 
   constructor(
@@ -202,15 +202,24 @@ export class PoliceService {
 
           this.responseStructure.parse(response)
 
-          return response.skjol.map((file) => ({
-            id: file.rvMalSkjolMals_ID.toString(),
-            name: file.heitiSkjals.endsWith('.pdf')
-              ? file.heitiSkjals
-              : `${file.heitiSkjals}.pdf`,
-            policeCaseNumber: file.malsnumer,
-            chapter: getChapter(file.domsSkjalsFlokkun),
-            displayDate: file.dagsStofnad,
-          }))
+          const files: PoliceCaseFile[] = []
+
+          response.skjol?.forEach((file) => {
+            const id = file.rvMalSkjolMals_ID.toString()
+            if (!files.find((item) => item.id === id)) {
+              files.push({
+                id,
+                name: file.heitiSkjals.endsWith('.pdf')
+                  ? file.heitiSkjals
+                  : `${file.heitiSkjals}.pdf`,
+                policeCaseNumber: file.malsnumer,
+                chapter: getChapter(file.domsSkjalsFlokkun),
+                displayDate: file.dagsStofnad,
+              })
+            }
+          })
+
+          return files
         }
 
         const reason = await res.text()
@@ -258,11 +267,9 @@ export class PoliceService {
     caseId: string,
     user: User,
   ): Promise<PoliceCaseInfo[]> {
-    const promise = this.fetchPoliceDocumentApi(
+    return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/V2/GetDocumentListById/${caseId}`,
     )
-
-    return promise
       .then(async (res: Response) => {
         if (res.ok) {
           const response: z.infer<typeof this.responseStructure> =
@@ -274,7 +281,7 @@ export class PoliceService {
             { policeCaseNumber: response.malsnumer },
           ]
 
-          response.skjol?.map((info: { malsnumer: string }) => {
+          response.skjol?.forEach((info: { malsnumer: string }) => {
             if (
               !cases.find((item) => item.policeCaseNumber === info.malsnumer)
             ) {
@@ -282,25 +289,29 @@ export class PoliceService {
             }
           })
 
-          response.malseinings.forEach(
+          response.malseinings?.forEach(
             (info: {
               upprunalegtMalsnumer: string
               vettvangur?: string
               brotFra?: string
             }) => {
+              const policeCaseNumber = info.upprunalegtMalsnumer
+              const place = info.vettvangur
+              const date = info.brotFra ? new Date(info.brotFra) : undefined
+
               const foundCase = cases.find(
-                (item) => item.policeCaseNumber === info.upprunalegtMalsnumer,
+                (item) => item.policeCaseNumber === policeCaseNumber,
               )
+
               if (!foundCase) {
-                cases.push({ policeCaseNumber: info.upprunalegtMalsnumer })
-              } else {
-                foundCase.place = info.vettvangur
-                foundCase.date = info.brotFra
-                  ? new Date(info.brotFra)
-                  : undefined
+                cases.push({ policeCaseNumber, place, date })
+              } else if (date && (!foundCase.date || date > foundCase.date)) {
+                foundCase.place = place
+                foundCase.date = date
               }
             },
           )
+
           return cases
         }
 
@@ -373,6 +384,7 @@ export class PoliceService {
     requestPdf: string,
     courtRecordPdf: string,
     rulingPdf: string,
+    appealRuling: string[],
     custodyNoticePdf?: string,
   ): Promise<boolean> {
     return this.fetchPoliceCaseApi(
@@ -398,6 +410,10 @@ export class PoliceService {
             { type: 'RVKR', courtDocument: Base64.btoa(requestPdf) },
             { type: 'RVTB', courtDocument: Base64.btoa(courtRecordPdf) },
             { type: 'RVUR', courtDocument: Base64.btoa(rulingPdf) },
+            ...appealRuling.map((ruling) => ({
+              type: 'RVUL',
+              courtDocument: Base64.btoa(ruling),
+            })),
             ...(custodyNoticePdf
               ? [
                   {

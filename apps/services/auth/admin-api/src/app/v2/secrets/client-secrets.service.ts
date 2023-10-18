@@ -97,6 +97,7 @@ export class ClientSecretsService {
 
   private async belongsToTenant(clientId: string, tenantId: string) {
     const client = await this.clientModel.findOne({
+      useMaster: true,
       where: {
         clientId,
         domainName: tenantId,

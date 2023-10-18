@@ -97,7 +97,6 @@ export class SoffiaService {
       religion: user.Trufelag,
       exceptionFromDirectMarketing:
         user.Bannmerking === '1' || user.Bannmerking?.toLowerCase() === 'já',
-      fate: user.Afdrif1 || user.Afdrif2,
       maritalStatus: mapMaritalStatus(user.hju),
 
       //Deprecate below
@@ -188,7 +187,6 @@ export class SoffiaService {
         homeAddress: familyMember.Logheimili,
         municipality: familyMember.LogheimiliSveitarfelag,
         postal: `${familyMember.Postnr} ${familyMember.LogheimiliSveitarfelag}`, // Same structure as familyChild.Postaritun
-        fate: familyMember.Afdrif1 || familyMember.Afdrif2,
       }
     } else {
       throw new ForbiddenException('Family member not found')
@@ -202,7 +200,6 @@ export class SoffiaService {
     const myChildren =
       data?.children ??
       (await this.nationalRegistryApi.getMyChildren(nationalId))
-
     const members = myChildren
       .filter((familyChild) => {
         const isNotUser = familyChild.Barn !== nationalId
@@ -228,9 +225,38 @@ export class SoffiaService {
     if (nationalId || data) {
       //just some nationalId fallback which won't ever get used
       const children = await this.getChildren(nationalId ?? '0', data)
-      const childrenData: Array<PersonV1> = await Promise.all(
-        children.map((c) => this.getPerson(c.nationalId)),
-      )
+
+      const childrenData = children.map((c) => {
+        return {
+          api: 'v1' as PersonV1['api'],
+          nationalId: c.nationalId,
+          fullName: c.fullName,
+          nationalIdType: null,
+          gender: c.gender ? mapGender(c.gender) : undefined,
+          religion: c.religion,
+          exceptionFromDirectMarketing: undefined,
+          maritalStatus: undefined,
+
+          //Deprecate below
+          familyNr: undefined,
+          firstName: c.firstName,
+          middleName: c.middleName,
+          lastName: c.lastName,
+          banMarking: undefined,
+          birthPlace: c.birthplace,
+          age: kennitala.info(c.nationalId).age,
+          birthday: kennitala.info(c.nationalId).birthday,
+          legalResidence: `${c.homeAddress}, ${c.postal}`,
+          address: {
+            code: undefined,
+            lastUpdated: undefined,
+            streetAddress: c.homeAddress,
+            city: c.municipality ?? '',
+            postalCode: c.postal,
+          },
+        }
+      })
+
       return childrenData
     }
 

@@ -47,7 +47,7 @@ const VehicleItem = React.memo(({item}: {item: any}) => {
         style={{marginBottom: 16, borderRadius: 16}}
         onPress={() => {
           navigateTo(`/vehicle/`, {
-            id: item.regno,
+            id: item.permno,
             title: item.type,
           });
         }}>

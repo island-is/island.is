@@ -12,11 +12,13 @@ import {
   Query,
   Res,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   CurrentHttpUser,
   JwtAuthGuard,
@@ -24,44 +26,45 @@ import {
   RolesRules,
   TokenGuard,
 } from '@island.is/judicial-system/auth'
+import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
   indictmentCases,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
-import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { defenderRule } from '../../guards'
+import { CaseEvent, EventService } from '../event'
 import { User } from '../user'
-import { CaseExistsGuard } from './guards/caseExists.guard'
-import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
+import { TransitionCaseDto } from './dto/transitionCase.dto'
+import { UpdateCaseDto } from './dto/updateCase.dto'
+import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
-import { LimitedAccessCaseReceivedGuard } from './guards/limitedAccessCaseReceived.guard'
 import { CaseDefenderGuard } from './guards/caseDefender.guard'
+import { CaseExistsGuard } from './guards/caseExists.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
+import { LimitedAccessAccordingToCaseStateGuard } from './guards/limitedAccessAccordingToCaseState.guard'
+import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
 import { RequestSharedWithDefenderGuard } from './guards/requestSharedWithDefender.guard'
 import { defenderTransitionRule, defenderUpdateRule } from './guards/rolesRules'
-import { CurrentCase } from './guards/case.decorator'
-import { UpdateCaseDto } from './dto/updateCase.dto'
-import { TransitionCaseDto } from './dto/transitionCase.dto'
+import { CaseInterceptor } from './interceptors/case.interceptor'
 import { Case } from './models/case.model'
 import { transitionCase } from './state/case.state'
-import { CaseService } from './case.service'
 import {
   LimitedAccessCaseService,
   LimitedAccessUpdateCase,
 } from './limitedAccessCase.service'
-import { CaseEvent, EventService } from '../event'
+import { PDFService } from './pdf.service'
 
 @Controller('api')
 @ApiTags('limited access cases')
 export class LimitedAccessCaseController {
   constructor(
-    private readonly caseService: CaseService,
     private readonly limitedAccessCaseService: LimitedAccessCaseService,
     private readonly eventService: EventService,
+    private readonly pdfService: PDFService,
 
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -70,7 +73,7 @@ export class LimitedAccessCaseController {
     JwtAuthGuard,
     RolesGuard,
     LimitedAccessCaseExistsGuard,
-    LimitedAccessCaseReceivedGuard,
+    LimitedAccessAccordingToCaseStateGuard,
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
@@ -79,6 +82,7 @@ export class LimitedAccessCaseController {
     type: Case,
     description: 'Gets a limited set of properties of an existing case',
   })
+  @UseInterceptors(CaseInterceptor)
   async getById(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
@@ -193,7 +197,7 @@ export class LimitedAccessCaseController {
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
-    LimitedAccessCaseReceivedGuard,
+    LimitedAccessAccordingToCaseStateGuard,
     RequestSharedWithDefenderGuard,
     CaseDefenderGuard,
   )
@@ -213,7 +217,7 @@ export class LimitedAccessCaseController {
       `Getting the request for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.caseService.getRequestPdf(theCase)
+    const pdf = await this.pdfService.getRequestPdf(theCase)
 
     res.end(pdf)
   }
@@ -223,7 +227,7 @@ export class LimitedAccessCaseController {
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
-    LimitedAccessCaseReceivedGuard,
+    LimitedAccessAccordingToCaseStateGuard,
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
@@ -249,7 +253,7 @@ export class LimitedAccessCaseController {
       )
     }
 
-    const pdf = await this.caseService.getCaseFilesRecordPdf(
+    const pdf = await this.pdfService.getCaseFilesRecordPdf(
       theCase,
       policeCaseNumber,
     )
@@ -282,7 +286,7 @@ export class LimitedAccessCaseController {
       `Getting the court record for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.caseService.getCourtRecordPdf(theCase, user)
+    const pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
 
     res.end(pdf)
   }
@@ -309,7 +313,7 @@ export class LimitedAccessCaseController {
   ): Promise<void> {
     this.logger.debug(`Getting the ruling for case ${caseId} as a pdf document`)
 
-    const pdf = await this.caseService.getRulingPdf(theCase)
+    const pdf = await this.pdfService.getRulingPdf(theCase)
 
     res.end(pdf)
   }
@@ -319,7 +323,7 @@ export class LimitedAccessCaseController {
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
-    LimitedAccessCaseReceivedGuard,
+    LimitedAccessAccordingToCaseStateGuard,
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
@@ -338,8 +342,40 @@ export class LimitedAccessCaseController {
       `Getting the indictment for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.caseService.getIndictmentPdf(theCase)
+    const pdf = await this.pdfService.getIndictmentPdf(theCase)
 
     res.end(pdf)
+  }
+
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseCompletedGuard,
+    CaseDefenderGuard,
+  )
+  @RolesRules(defenderRule)
+  @Get('case/:caseId/limitedAccess/all')
+  @Header('Content-Type', 'application/zip')
+  @ApiOkResponse({
+    content: { 'application/zip': {} },
+    description: 'Gets the all files for an existing case as a zip document',
+  })
+  async getAllFilesZip(
+    @CurrentCase() theCase: Case,
+    @CurrentHttpUser() user: TUser,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting all files for case ${theCase.id} as a zip document`,
+    )
+
+    const zip = await this.limitedAccessCaseService.getAllFilesZip(
+      theCase,
+      user,
+    )
+
+    res.end(zip)
   }
 }

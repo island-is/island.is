@@ -3,10 +3,10 @@ import { CanActivate } from '@nestjs/common'
 import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
+import { CaseController } from '../../case.controller'
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseReadGuard } from '../../guards/caseRead.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
-import { CaseController } from '../../case.controller'
 
 describe('CaseController - Get case files record pdf guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

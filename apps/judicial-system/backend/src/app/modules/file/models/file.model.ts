@@ -11,8 +11,8 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
-  CaseFileState,
   CaseFileCategory,
+  CaseFileState,
 } from '@island.is/judicial-system/types'
 
 // TODO Find a way to import from an index file

@@ -15,10 +15,6 @@ const devConfig = {
       region: process.env.EMAIL_REGION ?? '',
     },
   },
-  events: {
-    url: process.env.EVENT_URL,
-    errorUrl: process.env.ERROR_EVENT_URL,
-  },
 }
 
 if (process.env.NODE_ENV === 'production') {
@@ -58,10 +54,6 @@ const prodConfig = {
     options: {
       region: process.env.EMAIL_REGION ?? '',
     },
-  },
-  events: {
-    url: process.env.EVENT_URL,
-    errorUrl: process.env.ERROR_EVENT_URL,
   },
 }
 

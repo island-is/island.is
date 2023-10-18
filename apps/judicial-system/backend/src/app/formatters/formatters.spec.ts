@@ -1,35 +1,37 @@
 import { FormatMessage } from '@island.is/cms-translations'
 import { createTestIntl } from '@island.is/cms-translations/test'
+
 import { caseTypes } from '@island.is/judicial-system/formatters'
 import {
+  CaseCustodyRestrictions,
   CaseLegalProvisions,
-  Gender,
   CaseType,
+  Gender,
+  InstitutionType,
+  RequestSharedWithDefender,
   SessionArrangements,
   User,
   UserRole,
-  InstitutionType,
-  CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
 
 import {
-  formatProsecutorCourtDateEmailNotification,
-  formatLegalProvisions,
   formatCourtHeadsUpSmsNotification,
   formatCourtReadyForCourtSmsNotification,
-  formatPrisonCourtDateEmailNotification,
-  stripHtmlTags,
-  formatDefenderCourtDateEmailNotification,
-  formatCourtRevokedSmsNotification,
-  formatPrisonRevokedEmailNotification,
-  formatDefenderRevokedEmailNotification,
-  formatProsecutorReceivedByCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
-  formatProsecutorReadyForCourtEmailNotification,
+  formatCourtRevokedSmsNotification,
   formatCustodyRestrictions,
-  formatPrisonAdministrationRulingNotification,
+  formatDefenderCourtDateEmailNotification,
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
+  formatDefenderRevokedEmailNotification,
+  formatLegalProvisions,
+  formatPrisonAdministrationRulingNotification,
+  formatPrisonCourtDateEmailNotification,
+  formatPrisonRevokedEmailNotification,
+  formatProsecutorCourtDateEmailNotification,
+  formatProsecutorReadyForCourtEmailNotification,
+  formatProsecutorReceivedByCourtSmsNotification,
+  stripHtmlTags,
 } from './formatters'
 
 export const makeProsecutor = (): User => {
@@ -1392,7 +1394,7 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
     const court = 'Héraðsdómur Norðurlands'
     const courtCaseNumber = 'R-77/2021'
     const overviewUrl = 'https://example.com/overview'
-    const sendRequestToDefender = true
+    const requestSharedWithDefender = RequestSharedWithDefender.COURT_DATE
 
     // Act
     const res = formatDefenderCourtDateLinkEmailNotification(
@@ -1400,7 +1402,7 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
       overviewUrl,
       court,
       courtCaseNumber,
-      sendRequestToDefender,
+      requestSharedWithDefender === RequestSharedWithDefender.COURT_DATE,
     )
 
     // Assert
@@ -1414,7 +1416,6 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
     const court = 'Héraðsdómur Norðurlands'
     const courtCaseNumber = 'R-77/2021'
     const overviewUrl = 'https://example.com/overview'
-    const sendRequestToDefender = false
 
     // Act
     const res = formatDefenderCourtDateLinkEmailNotification(
@@ -1422,7 +1423,6 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
       overviewUrl,
       court,
       courtCaseNumber,
-      sendRequestToDefender,
     )
 
     // Assert

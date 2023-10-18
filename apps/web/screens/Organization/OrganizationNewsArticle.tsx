@@ -226,7 +226,7 @@ OrganizationNewsArticle.getProps = async ({ apolloClient, locale, query }) => {
     newsItem,
     namespace,
     locale: locale as Locale,
-    ...getThemeConfig(organizationPage.theme, organizationPage.slug),
+    ...getThemeConfig(organizationPage?.theme, organizationPage?.organization),
   }
 }
 

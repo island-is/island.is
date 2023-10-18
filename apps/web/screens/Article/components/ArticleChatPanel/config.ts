@@ -181,6 +181,34 @@ export const watsonConfig: Record<
       carbonTheme: 'g10',
       namespaceKey: 'default',
     },
+
+    // Sjúkratryggingar - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/3pZwAagW0UY26giHaxHthe
+    '3pZwAagW0UY26giHaxHthe': {
+      integrationID: 'cba41fa0-12fb-4cb5-bd98-66a57cee42e0',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      region: 'eu-gb',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
+
+    // European health insurance card
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/1AKWfq2dh9YnEyiG1yNeR8
+    '1AKWfq2dh9YnEyiG1yNeR8': {
+      integrationID: 'cba41fa0-12fb-4cb5-bd98-66a57cee42e0',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      region: 'eu-gb',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+      onLoad: (instance) =>
+        setupOneScreenWatsonChatBot(
+          instance,
+          'eucard',
+          'cba41fa0-12fb-4cb5-bd98-66a57cee42e0',
+        ),
+    },
   },
   is: {
     // Rafræn skilríki
@@ -401,6 +429,85 @@ export const watsonConfig: Record<
       showLauncher: false,
       carbonTheme: 'g10',
       namespaceKey: 'default',
+    },
+
+    // Sjúkratryggingar - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/3pZwAagW0UY26giHaxHthe
+    '3pZwAagW0UY26giHaxHthe': {
+      integrationID: 'e625e707-c9ce-4048-802c-c12b905c28be',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      region: 'eu-gb',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
+
+    // Evrópska sjúkratryggingakortið
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/1AKWfq2dh9YnEyiG1yNeR8
+    '1AKWfq2dh9YnEyiG1yNeR8': {
+      integrationID: 'e625e707-c9ce-4048-802c-c12b905c28be',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      region: 'eu-gb',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+      onLoad: (instance) =>
+        setupOneScreenWatsonChatBot(
+          instance,
+          'eukort',
+          'e625e707-c9ce-4048-802c-c12b905c28be',
+        ),
+    },
+
+    // Tannlækningar
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/qS7y3WKsqEnWCbiISVU3Q
+    qS7y3WKsqEnWCbiISVU3Q: {
+      integrationID: 'e625e707-c9ce-4048-802c-c12b905c28be',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      region: 'eu-gb',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+      onLoad: (instance) =>
+        setupOneScreenWatsonChatBot(
+          instance,
+          'tannlaekningar',
+          'e625e707-c9ce-4048-802c-c12b905c28be',
+        ),
+    },
+
+    // Sjúkradagpeningar
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/7ela1JGeFHHxFgWPj6cGp7
+    '7ela1JGeFHHxFgWPj6cGp7': {
+      integrationID: 'e625e707-c9ce-4048-802c-c12b905c28be',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      region: 'eu-gb',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+      onLoad: (instance) =>
+        setupOneScreenWatsonChatBot(
+          instance,
+          'sjukradagpeningar',
+          'e625e707-c9ce-4048-802c-c12b905c28be',
+        ),
+    },
+
+    // Greiðsluþáttökukerfi lyfja
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/1P80AT2eqbQKT3eEpW79u7
+    '1P80AT2eqbQKT3eEpW79u7': {
+      integrationID: 'e625e707-c9ce-4048-802c-c12b905c28be',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      region: 'eu-gb',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+      onLoad: (instance) =>
+        setupOneScreenWatsonChatBot(
+          instance,
+          'greidsluthatttakalyfja',
+          'e625e707-c9ce-4048-802c-c12b905c28be',
+        ),
     },
   },
 }

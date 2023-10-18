@@ -18,6 +18,8 @@ import {
 } from './CreateClient.generated'
 import { redirect } from 'react-router-dom'
 import { IDSAdminPaths } from '../../../lib/paths'
+import { toast } from '@island.is/island-ui/core'
+import { m } from '../../../lib/messages'
 
 const schema = z
   .object({
@@ -54,7 +56,7 @@ export type CreateClientResult = RouterActionRedirect<
 >
 
 export const createClientAction: WrappedActionFn =
-  ({ client }) =>
+  ({ client, formatMessage }) =>
   async ({ request }): Promise<CreateClientResult | Response> => {
     const formData = await request.formData()
     const result = await validateFormData({ formData, schema })
@@ -66,7 +68,10 @@ export const createClientAction: WrappedActionFn =
     const { data } = result
 
     try {
-      await client.mutate<CreateClientMutation, CreateClientMutationVariables>({
+      const createdClient = await client.mutate<
+        CreateClientMutation,
+        CreateClientMutationVariables
+      >({
         mutation: CreateClientDocument,
         variables: {
           input: {
@@ -79,7 +84,15 @@ export const createClientAction: WrappedActionFn =
         },
       })
 
-      // TODO: Check for partial creation, and show a warning modal
+      const partiallyCreated =
+        createdClient.data?.createAuthAdminClient.map(
+          (client) => client.environment,
+        )?.length !== data?.environments?.length
+
+      if (partiallyCreated) {
+        toast.warning(formatMessage(m.partiallyCreatedClient))
+      }
+
       return redirect(
         replaceParams({
           href: IDSAdminPaths.IDSAdminClient,

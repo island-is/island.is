@@ -4,6 +4,7 @@ import { ReferenceResolver, EnvironmentConfig } from './charts'
 // Output types
 export type ContainerRunHelm = {
   command: string[]
+  image?: string
   args?: string[]
   name?: string
   resources: {
@@ -22,6 +23,7 @@ export type OutputPersistentVolumeClaim = {
   name?: string
   size: string
   accessModes: OutputAccessModes
+  useExisting?: boolean
   mountPath: string
   /**
    * Sets the storageClass, leave empty if storageClass means little to you(defaults to efs-csi),
