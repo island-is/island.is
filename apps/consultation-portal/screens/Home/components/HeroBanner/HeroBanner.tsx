@@ -16,7 +16,6 @@ import { ArrOfStatistics } from '../../../../types/interfaces'
 import { useIsMobile } from '../../../../hooks'
 import localization from '../../Home.json'
 import { LogoText } from '../../../../components'
-import { useCallback, useState } from 'react'
 
 interface HeroBannerProps {
   statistics: ArrOfStatistics
@@ -25,18 +24,6 @@ interface HeroBannerProps {
 export const HeroBanner = ({ statistics }: HeroBannerProps) => {
   const { isMobile } = useIsMobile()
   const loc = localization['heroBanner']
-
-  const [_height, setHeight] = useState(null)
-  const [_width, setWidth] = useState(null)
-  const div = useCallback((node) => {
-    if (node !== null) {
-      setHeight(node.getBoundingClientRect().height)
-      setWidth(node.getBoundingClientRect().width)
-    }
-  }, [])
-
-  console.log('_height', _height)
-  console.log('_width', _width)
 
   return (
     <Box
