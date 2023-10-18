@@ -11,6 +11,7 @@ import {
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import useStringHelpers from '../../utils/hooks/useStringHelpers/useStringHelpers'
 import { FeatureContext } from '../FeatureProvider/FeatureProvider'
 import { UserContext } from '../UserProvider/UserProvider'
 
@@ -28,6 +29,7 @@ const TagAppealState: React.FC<React.PropsWithChildren<Props>> = ({
   const { formatMessage } = useIntl()
   const { features } = useContext(FeatureContext)
   const { user } = useContext(UserContext)
+  const { getAppealResultText } = useStringHelpers()
 
   if (!features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS)) {
     return null
@@ -64,43 +66,18 @@ const TagAppealState: React.FC<React.PropsWithChildren<Props>> = ({
         }
     }
     if (state === CaseAppealState.COMPLETED) {
-      if (ruling === CaseAppealRulingDecision.ACCEPTING) {
-        return {
-          color: 'mint',
-          text: formatMessage(appealRuling.tagDecisionAccept),
-        }
-      }
-      if (ruling === CaseAppealRulingDecision.REPEAL) {
-        return {
-          color: 'rose',
-          text: formatMessage(appealRuling.tagDecisionChange),
-        }
-      }
-      if (ruling === CaseAppealRulingDecision.CHANGED) {
-        return {
-          color: 'rose',
-          text: formatMessage(appealRuling.tagDecisionChange),
-        }
-      }
-      if (ruling === CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL) {
-        return {
-          color: 'blueberry',
-          text: formatMessage(appealRuling.tagDecisionDismissed),
-        }
-      }
-      if (ruling === CaseAppealRulingDecision.DISMISSED_FROM_COURT) {
-        return {
-          color: 'blueberry',
-          text: formatMessage(appealRuling.tagDecisionDismissed),
-        }
-      }
-      if (ruling === CaseAppealRulingDecision.REMAND) {
-        return {
-          color: 'blueberry',
-          text: formatMessage(appealRuling.tagDecisionRemand),
-        }
+      return {
+        color:
+          ruling === CaseAppealRulingDecision.ACCEPTING
+            ? 'mint'
+            : ruling === CaseAppealRulingDecision.CHANGED ||
+              ruling === CaseAppealRulingDecision.REPEAL
+            ? 'rose'
+            : 'blueberry',
+        text: getAppealResultText(ruling),
       }
     }
+
     return undefined
   }
 

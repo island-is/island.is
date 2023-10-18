@@ -8,4 +8,5 @@ bootstrap({
   name: 'services-user-profile',
   openApi,
   port: environment.port,
+  enableVersioning: true,
 })
