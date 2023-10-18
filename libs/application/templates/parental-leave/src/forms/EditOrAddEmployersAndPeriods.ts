@@ -36,8 +36,8 @@ import {
 } from '../lib/parentalLeaveUtils'
 import { minPeriodDays } from '../config'
 
-export const EditOrAddPeriods: Form = buildForm({
-  id: 'ParentalLeaveEditOrAddPeriods',
+export const EditOrAddEmployersAndPeriods: Form = buildForm({
+  id: 'ParentalLeaveEditOrAddEmployersAndPeriods',
   title: parentalLeaveFormMessages.shared.formEditTitle,
   logo: Logo,
   mode: FormModes.DRAFT,
@@ -55,7 +55,7 @@ export const EditOrAddPeriods: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'editOrAddEmployer',
+      id: 'editOrAddEmployers',
       title: parentalLeaveFormMessages.shared.employerSection,
       condition: (answers) => {
         // Only show section if applicant has registered employer
@@ -326,7 +326,7 @@ export const EditOrAddPeriods: Form = buildForm({
                 buildCustomField({
                   id: 'confirmationScreen',
                   title: '',
-                  component: 'EditPeriodsReview',
+                  component: 'EditOrAddEmployersAndPeriodsReview',
                 }),
                 buildSubmitField({
                   id: 'submit',

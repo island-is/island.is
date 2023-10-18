@@ -19,10 +19,9 @@ interface ReviewScreenProps {
   goToScreen?: (id: string) => void
 }
 
-const EditPeriodsReview: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
-  application,
-  goToScreen,
-}) => {
+const EditOrAddEmployersAndPeriodsReview: FC<
+  React.PropsWithChildren<ReviewScreenProps>
+> = ({ application, goToScreen }) => {
   const { formatMessage } = useLocale()
   const { employers, addEmployer, addPeriods } = getApplicationAnswers(
     application.answers,
@@ -69,4 +68,4 @@ const EditPeriodsReview: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
   )
 }
 
-export default EditPeriodsReview
+export default EditOrAddEmployersAndPeriodsReview

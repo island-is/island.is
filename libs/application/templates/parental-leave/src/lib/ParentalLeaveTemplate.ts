@@ -649,7 +649,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           },
           [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
-          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+          [DefaultEvents.EDIT]: {
+            target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+          },
           SUBMIT: [
             {
               cond: hasDateOfBirth,
@@ -728,7 +730,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           },
           [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
-          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+          [DefaultEvents.EDIT]: {
+            target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+          },
           SUBMIT: [
             {
               cond: hasDateOfBirth,
@@ -1045,7 +1049,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       //     ADDITIONALDOCUMENTSREQUIRED: { target: States.ADDITIONAL_DOCUMENTS_REQUIRED },
       //     [DefaultEvents.APPROVE]: { target: States.APPROVED },
       //     [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
-      //     [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+      //     [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS },
       //   },
       // },
       [States.APPROVED]: {
@@ -1106,7 +1110,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           CLOSED: { target: States.CLOSED },
-          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+          [DefaultEvents.EDIT]: {
+            target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+          },
           SUBMIT: [
             {
               target: States.RESIDENCE_GRAND_APPLICATION,
@@ -1141,7 +1147,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       // Edit Flow States
-      [States.EDIT_OR_ADD_PERIODS]: {
+      [States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS]: {
         entry: [
           'createTempPeriods',
           'removeNullPeriod',
@@ -1159,7 +1165,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'removeAddedPeriods',
         ],
         meta: {
-          name: States.EDIT_OR_ADD_PERIODS,
+          name: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
           status: 'inprogress',
           actionCard: {
             pendingAction: {
@@ -1190,8 +1196,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/EditOrAddPeriods').then((val) =>
-                  Promise.resolve(val.EditOrAddPeriods),
+                import('../forms/EditOrAddEmployersAndPeriods').then((val) =>
+                  Promise.resolve(val.EditOrAddEmployersAndPeriods),
                 ),
               read: 'all',
               write: 'all',
@@ -1199,7 +1205,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: [
+          SUBMIT: [
             {
               target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
               cond: hasEmployer,
@@ -1267,7 +1273,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.ASSIGN]: { target: States.EMPLOYER_APPROVE_EDITS },
-          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+          [DefaultEvents.EDIT]: {
+            target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+          },
         },
       },
       [States.EMPLOYER_APPROVE_EDITS]: {
@@ -1362,7 +1370,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
             },
           ],
-          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+          [DefaultEvents.EDIT]: {
+            target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+          },
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_EDITS_ACTION },
         },
       },
@@ -1410,7 +1420,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           MODIFY: {
-            target: States.EDIT_OR_ADD_PERIODS,
+            target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
           },
           [DefaultEvents.ABORT]: { target: States.APPROVED },
         },
@@ -1506,7 +1516,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ADDITIONALDOCUMENTSREQUIRED: {
             target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           },
-          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+          [DefaultEvents.EDIT]: {
+            target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+          },
           [DefaultEvents.REJECT]: {
             target: States.VINNUMALASTOFNUN_EDITS_ACTION,
           },
@@ -1595,7 +1607,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ADDITIONALDOCUMENTSREQUIRED: {
             target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           },
-          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+          [DefaultEvents.EDIT]: {
+            target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+          },
           [DefaultEvents.REJECT]: {
             target: States.VINNUMALASTOFNUN_EDITS_ACTION,
           },
@@ -1659,7 +1673,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           MODIFY: {
-            target: States.EDIT_OR_ADD_PERIODS,
+            target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
           },
           [DefaultEvents.ABORT]: {
             target: States.VINNUMALASTOFNUN_APPROVE_EDITS_ABORT,

@@ -2829,13 +2829,15 @@ export const statesMessages = defineMessages({
 
   editOrAddPeriodsTitle: {
     id: 'pl.application:editOrAddPeriods.title',
-    defaultMessage: 'Breyta eða bæta við tímabil',
-    description: 'Title of the state - editOrAddPeriods',
+    defaultMessage: 'Breyta eða bæta við vinnuveitanda og tímabili',
+    description: 'Edit or add employers and periods',
   },
   editOrAddPeriodsDescription: {
     id: 'pl.application:editOrAddPeriods.description',
-    defaultMessage: 'Þú ert að breyta eða bæta tímabil við umsókn.',
-    description: 'Description of the state - editOrAddPeriods',
+    defaultMessage:
+      'Þú ert að breyta eða bæta vinnuveitanda og tímabili við umsókn.',
+    description:
+      'You are editing or adding new employers and periods to your application.',
   },
 
   employerWaitingToAssignForEditsTitle: {
@@ -3000,8 +3002,8 @@ export const statesMessages = defineMessages({
 
   editOrAddPeriodsSubmitHistoryLogMessage: {
     id: 'pl.application:editOrAddPeriods.submit.historyLogMessage',
-    defaultMessage: 'Tímabili breytt eða bætt við umsókn',
-    description: 'Period edited or added to application',
+    defaultMessage: 'Vinnuveitanda og tímabili breytt eða bætt við umsókn',
+    description: 'Employer and period edited or added to application',
   },
   editOrAddPeriodsAbortHistoryLogMessage: {
     id: 'pl.application:editOrAddPeriods.abort.historyLogMessage',

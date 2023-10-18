@@ -91,7 +91,7 @@ const EmployersOverview: FC<React.PropsWithChildren<RepeaterProps>> = ({
           employers={employers}
           editable={
             application.state === States.DRAFT ||
-            application.state === States.EDIT_OR_ADD_PERIODS
+            application.state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
           }
           onDeleteEmployer={onDeleteEmployer}
         />

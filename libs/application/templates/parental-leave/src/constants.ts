@@ -80,7 +80,7 @@ export enum States {
   CLOSED = 'closed',
 
   // Edit Flow
-  EDIT_OR_ADD_PERIODS = 'editOrAddPeriods',
+  EDIT_OR_ADD_EMPLOYERS_AND_PERIODS = 'editOrAddEmployersAndPeriods',
 
   EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS = 'employerWaitingToAssignForEdits',
   EMPLOYER_APPROVE_EDITS = 'employerApproveEdits',

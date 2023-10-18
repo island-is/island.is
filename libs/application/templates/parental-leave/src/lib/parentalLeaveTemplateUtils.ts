@@ -108,7 +108,7 @@ export function findActionName(context: ApplicationContext) {
   )
     return 'documentPeriod'
   if (state === States.ADDITIONAL_DOCUMENTS_REQUIRED) return 'document'
-  if (state === States.EDIT_OR_ADD_PERIODS) {
+  if (state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS) {
     if (addEmployer === YES && addPeriods === YES) return 'empper'
     if (addEmployer === YES) return 'employer'
     if (addPeriods === YES) return 'period'

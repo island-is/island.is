@@ -114,7 +114,7 @@ export function formatPeriods(
   const timelinePeriods: TimelinePeriod[] = []
 
   const periodsArray =
-    application.state === States.EDIT_OR_ADD_PERIODS
+    application.state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
       ? addPeriods === YES
         ? periods
         : tempPeriods
