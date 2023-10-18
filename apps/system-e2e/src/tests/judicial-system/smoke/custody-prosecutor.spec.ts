@@ -64,17 +64,21 @@ test.describe('Custody Prosecutor', () => {
     await page.locator('input[id=reqValidToDate]').fill(today)
     await page.keyboard.press('Escape')
     await page.locator('input[id=reqValidToDate-time]').fill('16:00')
-    await page.waitForTimeout(1000)
-    await page.locator('textarea[name=lawsBroken]').click()
-    await page.keyboard.type('Einhver lög voru brotin')
+    await page.waitForResponse((response) => {
+      return response.request().url().includes('/graphql')
+    })
+    await page.locator('textarea[name=lawsBroken]').click({ delay: 50 })
+    await page.keyboard.type('Einhver lög voru brotin', { delay: 50 })
     await page.getByTestId('checkbox').first().click()
     await page.getByRole('button', { name: 'Halda áfram' }).click()
     await expect(page).toHaveURL(/.*\/krafa\/greinargerd\/.*/)
 
     // Prosecutor statement
-    await page.waitForTimeout(3000)
-    await page.locator('textarea[name=caseFacts]').click()
-    await page.keyboard.type('Eitthvað gerðist')
+    await page.waitForResponse((response) => {
+      return response.request().url().includes('/graphql')
+    })
+    await page.locator('textarea[name=caseFacts]').click({ delay: 50 })
+    await page.keyboard.type('Eitthvað gerðist', { delay: 50 })
     await page.locator('textarea[name=legalArguments]').click()
     await page.keyboard.type('Þetta er ekki löglegt')
     await page.locator('textarea[name=comments]').click()
