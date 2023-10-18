@@ -8,8 +8,15 @@ export const GET_SINGLE_EVENT_QUERY = gql`
       title
       slug
       startDate
-      time
-      location
+      time {
+        startTime
+        endTime
+      }
+      location {
+        streetAddress
+        floor
+        postalCode
+      }
       image {
         url
         title
@@ -43,8 +50,15 @@ export const GET_EVENTS_QUERY = gql`
         title
         slug
         startDate
-        time
-        location
+        time {
+          startTime
+          endTime
+        }
+        location {
+          streetAddress
+          floor
+          postalCode
+        }
         image {
           url
           title

@@ -15,6 +15,8 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
+  EventLocation,
+  EventTime,
   getThemeConfig,
   HeadWithSocialSharing,
   OrganizationWrapper,
@@ -134,32 +136,31 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
                   <Icon color="blue400" icon={'calendar'} type="outline"></Icon>
                   <Text>{formattedDate}</Text>
                 </Inline>
-                <Inline space={ICON_TEXT_SPACE}>
-                  <Icon color="blue400" icon={'time'} type="outline"></Icon>
-                  <Text>
-                    {event.time.startTime as string}
-                    {
-                      n(
-                        'timeSuffix',
-                        activeLocale === 'is' ? ' til ' : ' to ',
-                      ) as string
-                    }
-                    {event.time.endTime as string}
-                  </Text>
-                </Inline>
-                <Inline space={ICON_TEXT_SPACE}>
-                  <Icon color="blue400" icon="home" type="outline"></Icon>
-                  <Box>
-                    <Text>
-                      {event.location?.streetAddress}
-                      {', '}
-                      {event.location?.floor
-                        ? event.location?.floor + ', '
-                        : ''}
-                    </Text>
-                    <Text>{event.location?.postalCode}</Text>
-                  </Box>
-                </Inline>
+                {event.time?.startTime && (
+                  <Inline space={ICON_TEXT_SPACE}>
+                    <Icon color="blue400" icon={'time'} type="outline"></Icon>
+                    <EventTime
+                      startTime={event.time?.startTime ?? ''}
+                      endTime={event.time?.endTime ?? ''}
+                      timeSuffix={
+                        n(
+                          'timeSuffix',
+                          activeLocale === 'is' ? 'til' : 'to',
+                        ) as string
+                      }
+                    />
+                  </Inline>
+                )}
+                {event.location?.streetAddress && (
+                  <Inline space={ICON_TEXT_SPACE}>
+                    <Icon color="blue400" icon="home" type="outline"></Icon>
+                    <EventLocation
+                      streetAddress={event.location?.streetAddress ?? ''}
+                      floor={event.location?.floor ?? ''}
+                      postalCode={event.location?.postalCode ?? ''}
+                    />
+                  </Inline>
+                )}
               </Stack>
             </Box>
           </GridColumn>

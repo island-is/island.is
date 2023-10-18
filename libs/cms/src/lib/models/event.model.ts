@@ -6,7 +6,27 @@ import { Image, mapImage } from './image.model'
 import { Organization, mapOrganization } from './organization.model'
 import { SliceUnion, mapDocument } from '../unions/slice.union'
 import { EmbeddedVideo, mapEmbeddedVideo } from './embeddedVideo.model'
-import GraphQLJSON from 'graphql-type-json'
+
+@ObjectType()
+class EventLocation {
+  @Field(() => String, { nullable: true })
+  streetAddress?: string | null
+
+  @Field(() => String, { nullable: true })
+  floor?: string | null
+
+  @Field(() => String, { nullable: true })
+  postalCode?: string | null
+}
+
+@ObjectType()
+class EventTime {
+  @Field(() => String, { nullable: true })
+  startTime?: string | null
+
+  @Field(() => String, { nullable: true })
+  endTime?: string | null
+}
 
 @ObjectType()
 export class Event {
@@ -28,11 +48,11 @@ export class Event {
   @Field(() => String)
   endDate!: string
 
-  @Field(() => GraphQLJSON)
-  time!: { startTime: string; endTime: string }
+  @CacheField(() => EventTime)
+  time!: EventTime
 
-  @Field(() => GraphQLJSON)
-  location!: { streetAddress: string; floor: string; postalCode: string }
+  @CacheField(() => EventLocation)
+  location!: EventLocation
 
   @CacheField(() => [SliceUnion], { nullable: true })
   content: Array<typeof SliceUnion> = []
@@ -55,12 +75,9 @@ export const mapEvent = ({ sys, fields }: IEvent): SystemMetadata<Event> => {
 
   if (fields.startDate && fields.time?.endTime) {
     const date = new Date(fields.startDate)
-
     const [hours, minutes] = fields.time.endTime.split(':')
-
     date.setHours(Number(hours))
     date.setMinutes(Number(minutes))
-
     endDate = date.getTime().toString()
   }
 

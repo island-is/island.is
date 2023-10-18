@@ -19,7 +19,8 @@ export class EventSyncService implements CmsSyncProvider<IEvent> {
         entry.sys.contentType.sys.id === 'event' &&
         !!entry.fields.title &&
         !!entry.fields.startDate &&
-        !!entry.fields.slug,
+        !!entry.fields.slug &&
+        !!entry.fields.image,
     )
   }
 

@@ -6,6 +6,8 @@ import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
+import { EventLocation } from '../EventLocation'
+import { EventTime } from '../EventTime'
 import * as styles from './LatestEventSliceCard.css'
 
 interface EventCardProps {
@@ -17,9 +19,9 @@ interface EventCardProps {
   endTime: string
   href: string
   date?: string
-  streetAddress: string
-  postalCode: string
-  floor: string
+  streetAddress?: string
+  postalCode?: string
+  floor?: string
 }
 
 export const LatestEventSliceCard: React.FC<
@@ -72,24 +74,21 @@ export const LatestEventSliceCard: React.FC<
               <Text as="h3" variant="h3" title={title}>
                 {title}
               </Text>
-              <Box>
-                <Text>
-                  {streetAddress}
-                  {', '}
-                  {floor ? floor + ', ' : ''}
-                </Text>
-                <Text>{postalCode}</Text>
-              </Box>
-              <Text>
-                {startTime as string}
-                {
+              <EventLocation
+                streetAddress={streetAddress}
+                floor={floor}
+                postalCode={postalCode}
+              />
+              <EventTime
+                startTime={startTime}
+                endTime={endTime}
+                timeSuffix={
                   n(
                     'timeSuffix',
-                    activeLocale === 'is' ? ' til ' : ' to ',
+                    activeLocale === 'is' ? 'til' : 'to',
                   ) as string
                 }
-                {endTime as string}
-              </Text>
+              />
             </Stack>
           </Box>
         </Box>

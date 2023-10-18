@@ -12,11 +12,13 @@ import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
+import { EventLocation } from '../EventLocation'
+import { EventTime } from '../EventTime'
 import * as styles from './EventCard.css'
 
 interface EventCardProps {
   title: string
-  image?: Partial<Image>
+  image?: Partial<Image> | null
   namespace: Record<string, string>
   readMoreText?: string
   startTime: string
@@ -24,10 +26,10 @@ interface EventCardProps {
   href: string
   date?: string
   location: {
-    streetAddress?: string
-    postalCode?: string
-    floor?: string
-  }
+    streetAddress?: string | null
+    postalCode?: string | null
+    floor?: string | null
+  } | null
   titleAs?: 'h2' | 'h3' | 'h4'
   mini?: boolean
 }
@@ -74,21 +76,20 @@ export const EventCard: React.FC<React.PropsWithChildren<EventCardProps>> = ({
           <Text variant="h3" as={titleAs}>
             {title}
           </Text>
-          <Box>
-            <Text>
-              {location?.streetAddress}
-              {', '}
-              {location?.floor ? location?.floor + ', ' : ''}
-            </Text>
-            <Text>{location?.postalCode}</Text>
-          </Box>
-          <Text>
-            {startTime as string}{' '}
-            {n('timeSuffix', activeLocale === 'is' ? 'til' : 'to') as string}{' '}
-            {endTime as string}
-          </Text>
+          <EventLocation
+            streetAddress={location?.streetAddress}
+            floor={location?.floor}
+            postalCode={location?.postalCode}
+          />
+          <EventTime
+            startTime={startTime}
+            endTime={endTime}
+            timeSuffix={
+              n('timeSuffix', activeLocale === 'is' ? 'til' : 'to') as string
+            }
+          />
         </Stack>
-        <Hidden below={'lg'}>
+        <Hidden below="lg">
           <Box className={styles.imageContainer}>
             <img
               className={styles.image}

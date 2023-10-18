@@ -718,8 +718,15 @@ export const slices = gql`
       title
       slug
       startDate
-      time
-      location
+      time {
+        startTime
+        endTime
+      }
+      location {
+        streetAddress
+        floor
+        postalCode
+      }
       image {
         url
         title

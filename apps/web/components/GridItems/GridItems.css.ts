@@ -75,21 +75,3 @@ export const third = style({
     },
   }),
 })
-
-export const quarter = style({
-  gridTemplateColumns: 'repeat(4, 1fr)',
-  ...themeUtils.responsiveStyle({
-    xs: {
-      width: theme.breakpoints.sm + 70,
-    },
-    sm: {
-      gridTemplateColumns: 'repeat(4, 1fr)',
-    },
-    lg: {
-      gridTemplateColumns: 'repeat(4, 1fr)',
-    },
-    xl: {
-      gridTemplateColumns: 'repeat(4, 1fr)',
-    },
-  }),
-})

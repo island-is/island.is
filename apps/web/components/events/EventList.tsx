@@ -71,14 +71,10 @@ export const EventList = ({
                   key={index}
                   namespace={namespace}
                   title={eventItem.title}
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
                   location={eventItem.location}
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
                   image={eventItem.image}
-                  startTime={eventItem.time.startTime}
-                  endTime={eventItem.time.endTime}
+                  startTime={eventItem.time?.startTime ?? ''}
+                  endTime={eventItem.time?.endTime ?? ''}
                   titleAs="h2"
                   href={eventHref}
                   date={eventItem.startDate}
@@ -98,18 +94,18 @@ export const EventList = ({
                 <LatestEventSliceCard
                   key={index}
                   title={eventItem.title}
-                  postalCode={eventItem.location.postalCode}
-                  streetAddress={eventItem.location.streetAddress}
-                  floor={eventItem.location.floor}
+                  postalCode={eventItem.location.postalCode ?? ''}
+                  streetAddress={eventItem.location.streetAddress ?? ''}
+                  floor={eventItem.location.floor ?? ''}
                   namespace={namespace}
                   image={{
                     url: eventItem.image?.url || '',
                     title: eventItem.image?.title || '',
                   }}
-                  startTime={eventItem.time.startTime}
-                  endTime={eventItem.time.endTime}
+                  startTime={eventItem.time?.startTime ?? ''}
+                  endTime={eventItem.time?.endTime ?? ''}
                   href={eventHref}
-                  date={eventItem.date}
+                  date={eventItem.startDate}
                 />
               )
             })}
