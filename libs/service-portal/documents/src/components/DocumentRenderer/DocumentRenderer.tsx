@@ -5,6 +5,7 @@ import { UrlDocument } from './UrlDocment'
 import NoPDF from '../NoPDF/NoPDF'
 import { messages } from '../../utils/messages'
 import { ActiveDocumentType } from '../../lib/types'
+import { useLocale } from '@island.is/localization'
 
 const parseDocmentType = (doc: DocumentDetails) => {
   if (doc.html && doc.html.length > 0) {
@@ -26,9 +27,10 @@ type DocumentRendererProps = {
 export const DocumentRenderer: React.FC<DocumentRendererProps> = ({
   document,
 }) => {
+  const { formatMessage } = useLocale()
   const type = parseDocmentType(document.document)
 
-  if (type === 'unknown') return <NoPDF text={messages.error} />
+  if (type === 'unknown') return <NoPDF text={formatMessage(messages.error)} />
 
   if (type === 'html') {
     return <HtmlDocument html={document.document.html} />

@@ -106,7 +106,6 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
       alignItems="center"
       paddingBottom={[2, 3]}
       paddingTop={[4, 4, 0]}
-      paddingLeft="p2"
     >
       <Box className={styles.breadcrumbs} paddingTop={0} position="relative">
         <Breadcrumbs color="blue400" separatorColor="blue400">
