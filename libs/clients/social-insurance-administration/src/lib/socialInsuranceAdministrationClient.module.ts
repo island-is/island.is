@@ -9,6 +9,7 @@ import {
   GetStatusApi,
   HelloOddurApi,
   SendApplicationApi,
+  GetBankInfoApi,
 } from '../../gen/fetch'
 import { createWrappedFetchWithLogging } from './utils'
 import { SocialInsuranceAdministrationClientService } from './socialInsuranceAdministrationClient.service'
@@ -52,7 +53,12 @@ export class SocialInsuranceAdministrationClientModule {
       headers,
     })
 
-    const exportedApis = [HelloOddurApi, GetStatusApi, SendApplicationApi]
+    const exportedApis = [
+      HelloOddurApi,
+      GetStatusApi,
+      GetBankInfoApi,
+      SendApplicationApi,
+    ]
 
     return {
       module: SocialInsuranceAdministrationClientModule,

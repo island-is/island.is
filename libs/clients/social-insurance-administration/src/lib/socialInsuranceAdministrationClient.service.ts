@@ -7,6 +7,8 @@ import {
   OldAgePension,
   SendApplicationApi,
   OldAgePensionResponse,
+  BankInfo,
+  GetBankInfoApi,
 } from '../../gen/fetch'
 
 @Injectable()
@@ -15,6 +17,7 @@ export class SocialInsuranceAdministrationClientService {
     private readonly helloOddurApi: HelloOddurApi,
     private readonly getStatusApi: GetStatusApi,
     private readonly sendApplicationApi: SendApplicationApi,
+    private readonly getBankInfoApi: GetBankInfoApi,
   ) {}
 
   private testWithAuth = (user: User) =>
@@ -25,6 +28,8 @@ export class SocialInsuranceAdministrationClientService {
 
   private sendAPIWithAuth = (user: User) =>
     this.sendApplicationApi.withMiddleware(new AuthMiddleware(user as Auth))
+  private bankInfoAPIWithAuth = (user: User) =>
+    this.getBankInfoApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   /**
    * Hello world
@@ -54,5 +59,9 @@ export class SocialInsuranceAdministrationClientService {
     return await this.sendAPIWithAuth(user).oldAgePensionSendApplication({
       oldAgePension,
     })
+  }
+
+  async getBankInfo(user: User): Promise<BankInfo> {
+    return await this.bankInfoAPIWithAuth(user).applicationGetBankInfo()
   }
 }
