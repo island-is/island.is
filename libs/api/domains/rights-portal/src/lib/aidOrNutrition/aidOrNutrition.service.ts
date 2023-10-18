@@ -8,21 +8,20 @@ import {
   AidOrNutritionType,
   generateAidOrNutrition,
 } from './utils/generateAidOrNutrition'
-import { PaginatedAidAndNutritionResponse } from './models/aidAndNutrition.model'
+import { PaginatedAidOrNutritionResponse } from './models/aidOrNutrition.model'
 import { handle404 } from '@island.is/clients/middlewares'
 
-const LOG_CATEGORY = 'rights-portal-aids-and-nutrition'
 @Injectable()
-export class AidAndNutritionService {
+export class AidOrNutritionService {
   constructor(
     private api: AidsandnutritionApi,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
 
-  async getAidAndNutrition(
+  async getAidOrNutrition(
     user: User,
-  ): Promise<PaginatedAidAndNutritionResponse | null> {
+  ): Promise<PaginatedAidOrNutritionResponse | null> {
     try {
       const res = await this.api
         .withMiddleware(new AuthMiddleware(user as Auth))
@@ -49,10 +48,6 @@ export class AidAndNutritionService {
         },
       }
     } catch (e) {
-      this.logger.error('Failed to get aids and nutrition', {
-        ...e,
-        category: LOG_CATEGORY,
-      })
       return handle404(e)
     }
   }

@@ -14,23 +14,23 @@ import type { User } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 import { Audit } from '@island.is/nest/audit'
 import { ApiScope } from '@island.is/auth/scopes'
-import { PaginatedAidAndNutritionResponse } from './models/aidAndNutrition.model'
-import { AidAndNutritionService } from './aidAndNutrition.service'
+import { PaginatedAidOrNutritionResponse } from './models/aidOrNutrition.model'
+import { AidOrNutritionService } from './aidOrNutrition.service'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.servicePortalHealthRightsModule)
 @Audit({ namespace: '@island.is/api/rights-portal/aid-and-nutrition' })
-export class AidAndNutritionResolver {
-  constructor(private readonly service: AidAndNutritionService) {}
+export class AidOrNutritionResolver {
+  constructor(private readonly service: AidOrNutritionService) {}
 
   @Scopes(ApiScope.health)
-  @Query(() => PaginatedAidAndNutritionResponse, {
-    name: 'rightsPortalPaginatedAidAndNutrition',
+  @Query(() => PaginatedAidOrNutritionResponse, {
+    name: 'rightsPortalPaginatedAidOrNutrition',
     nullable: true,
   })
   @Audit()
-  async getRightsPortalAidAndNutrition(@CurrentUser() user: User) {
-    return this.service.getAidAndNutrition(user)
+  async getRightsPortalAidOrNutrition(@CurrentUser() user: User) {
+    return this.service.getAidOrNutrition(user)
   }
 }

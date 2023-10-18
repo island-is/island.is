@@ -1,5 +1,5 @@
 import { AidOrNutritionDTO } from '@island.is/clients/icelandic-health-insurance/rights-portal'
-import { AidOrNutrition } from '../models/aidAndNutrition.model'
+import { AidOrNutrition } from '../models/aidOrNutrition.model'
 
 export enum AidOrNutritionType {
   AID,

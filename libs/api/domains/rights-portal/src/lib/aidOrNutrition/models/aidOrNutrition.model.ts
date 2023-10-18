@@ -1,7 +1,7 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { AidOrNutritionType } from '../utils/generateAidOrNutrition'
 import { PaginatedResponse } from '@island.is/nest/pagination'
-import { Refund } from './aidAndNutritionRefund.model'
+import { Refund } from './aidOrNutritionRefund.model'
 
 registerEnumType(AidOrNutritionType, {
   name: 'RightsPortalAidOrNutritionType',
@@ -49,7 +49,7 @@ export class AidOrNutrition {
   expiring!: boolean
 }
 
-@ObjectType('RightsPortalPaginatedAidsAndNutrition')
-export class PaginatedAidAndNutritionResponse extends PaginatedResponse(
+@ObjectType('RightsPortalPaginatedAidsOrNutrition')
+export class PaginatedAidOrNutritionResponse extends PaginatedResponse(
   AidOrNutrition,
 ) {}
