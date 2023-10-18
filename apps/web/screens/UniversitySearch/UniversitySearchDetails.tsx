@@ -85,8 +85,6 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
     )
   }, [data, sortedCourses])
 
-  console.log('all courses', data.courses)
-
   return (
     <SidebarLayout
       sidebarContent={
