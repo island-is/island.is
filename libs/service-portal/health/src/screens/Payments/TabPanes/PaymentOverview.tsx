@@ -12,16 +12,28 @@ import { UserInfoLine, m } from '@island.is/service-portal/core'
 import { messages } from '../../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useState } from 'react'
-import { CONTENT_GAP, SECTION_GAP } from '../../Medicine/constants'
+import { SECTION_GAP } from '../../Medicine/constants'
 import * as styles from './Payments.css'
+import {
+  useGetPaymentOverviewBillsQuery,
+  useGetPaymentOverviewStatusQuery,
+} from '../Payments.generated'
 
 export const PaymentOverview = () => {
   const [startDate, setStartDate] = useState<Date | null>(null)
   const [endDate, setEndDate] = useState<Date | null>(null)
 
+  const { data, loading, error } = useGetPaymentOverviewStatusQuery()
+
+  const {
+    data: bills,
+    loading: billsLoading,
+    error: billsError,
+  } = useGetPaymentOverviewBillsQuery()
+
   const { formatMessage, formatDateFns } = useLocale()
 
-  const status = data?.items[0]
+  const status = data?.rightsPortalPaymentOverviewStatus.items[0]
 
   return (
     <Box paddingY={4} background="white">
@@ -112,31 +124,33 @@ export const PaymentOverview = () => {
                     </tr>
                   </T.Head>
                   <T.Body>
-                    {bills?.items.map((item, index) => (
-                      <tr key={index} className={styles.tableRowStyle}>
-                        <T.Data>
-                          {formatDateFns(item.date, 'dd.MM.yyyy')}
-                        </T.Data>
-                        <T.Data>{item.serviceType}</T.Data>
-                        <T.Data>{item.totalAmount}</T.Data>
-                        <T.Data>{item.insuranceAmount}</T.Data>
-                        <T.Data>
-                          <Button
-                            iconType="outline"
-                            onClick={
-                              item.documentId === 44
-                                ? () => console.log('download doc')
-                                : undefined
-                            }
-                            variant="text"
-                            icon="open"
-                            size="small"
-                          >
-                            Sækja skjal
-                          </Button>
-                        </T.Data>
-                      </tr>
-                    ))}
+                    {bills?.rightsPortalPaymentOverviewBills.items.map(
+                      (item, index) => (
+                        <tr key={index} className={styles.tableRowStyle}>
+                          <T.Data>
+                            {formatDateFns(item.date, 'dd.MM.yyyy')}
+                          </T.Data>
+                          <T.Data>{item.serviceType}</T.Data>
+                          <T.Data>{item.totalAmount}</T.Data>
+                          <T.Data>{item.insuranceAmount}</T.Data>
+                          <T.Data>
+                            <Button
+                              iconType="outline"
+                              onClick={
+                                item.documentId === 44
+                                  ? () => console.log('download doc')
+                                  : undefined
+                              }
+                              variant="text"
+                              icon="open"
+                              size="small"
+                            >
+                              Sækja skjal
+                            </Button>
+                          </T.Data>
+                        </tr>
+                      ),
+                    )}
                   </T.Body>
                 </T.Table>
               )}
