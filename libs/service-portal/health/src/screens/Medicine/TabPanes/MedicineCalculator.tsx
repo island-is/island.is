@@ -3,14 +3,13 @@ import {
   Box,
   Pagination,
   Table as T,
-  SkeletonLoader,
   FilterInput,
   Button,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../../lib/messages'
 import { CONTENT_GAP_LG, SECTION_GAP } from '../constants'
-import { IntroHeader } from '@island.is/service-portal/core'
+import { IntroHeader, m } from '@island.is/service-portal/core'
 import { useState } from 'react'
 import { useDebounce } from 'react-use'
 import {
@@ -64,9 +63,8 @@ export const MedicineCalulator = () => {
 
   const [drugCalcQuery] = useGetDrugCalculationMutation()
 
-  const [calculatorResults, setCalculatorResults] = useState<
-    RightsPortalDrugCalculatorResponse[]
-  >([])
+  const [calculatorResults, setCalculatorResults] =
+    useState<RightsPortalDrugCalculatorResponse | null>(null)
 
   const SHOW_TABLE = debouncedSearch.length > 0
   const CALCULATOR_DISABLED = selectedDrugList.length === 0
@@ -87,7 +85,7 @@ export const MedicineCalulator = () => {
         input: input,
       },
       onCompleted: (data) => {
-        // route not implemented
+        setCalculatorResults(data.rightsPortalDrugsCalculator)
       },
     })
   }
@@ -136,7 +134,6 @@ export const MedicineCalulator = () => {
           placeholder={formatMessage(messages.medicineSearchForDrug)}
           onChange={(value) => setSearch(value)}
           value={search}
-          loading={drugsLoading}
         />
       </Box>
       <Box
@@ -147,7 +144,7 @@ export const MedicineCalulator = () => {
       >
         <T.Table>
           <T.Head>
-            <T.Row>
+            <tr className={styles.tableRowStyles}>
               <T.HeadData>
                 {formatMessage(messages.medicineDrugName)}
               </T.HeadData>
@@ -160,7 +157,7 @@ export const MedicineCalulator = () => {
               </T.HeadData>
               <T.HeadData>{formatMessage(messages.medicinePrice)}</T.HeadData>
               <T.HeadData></T.HeadData>
-            </T.Row>
+            </tr>
           </T.Head>
           {SHOW_TABLE && (
             <T.Body>
@@ -268,7 +265,7 @@ export const MedicineCalulator = () => {
         <Box className={CALCULATOR_DISABLED ? styles.disabledTable : ''}>
           <T.Table>
             <T.Head>
-              <T.Row>
+              <tr className={styles.tableRowStyles}>
                 <T.HeadData>
                   {formatMessage(messages.medicineDrugName)}
                 </T.HeadData>
@@ -285,7 +282,7 @@ export const MedicineCalulator = () => {
                   {formatMessage(messages.medicinePaidByCustomer)}
                 </T.HeadData>
                 <T.HeadData></T.HeadData>
-              </T.Row>
+              </tr>
             </T.Head>
             <T.Body>
               {selectedDrugList.map((d, i) => {
@@ -318,6 +315,26 @@ export const MedicineCalulator = () => {
                 )
               })}
             </T.Body>
+            <T.Foot>
+              {calculatorResults && (
+                <tr className={styles.tableRowStyles}>
+                  <T.Data>{formatMessage(m.total)}</T.Data>
+                  <T.Data></T.Data>
+                  <T.Data></T.Data>
+                  <T.Data>
+                    {formatMessage(messages.medicinePaymentPaidAmount, {
+                      amount: calculatorResults.totalPrice,
+                    })}
+                  </T.Data>
+                  <T.Data>
+                    {formatMessage(messages.medicinePaymentPaidAmount, {
+                      amount: calculatorResults.totalCustomerPrice,
+                    })}
+                  </T.Data>
+                  <T.Data></T.Data>
+                </tr>
+              )}
+            </T.Foot>
           </T.Table>
         </Box>
         {CALCULATOR_DISABLED && (

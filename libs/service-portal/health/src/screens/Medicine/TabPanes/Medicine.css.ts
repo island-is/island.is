@@ -11,6 +11,8 @@ export const disabledTable = style({
   opacity: 0.5,
 })
 
+export const tableRowStyles = style({})
+
 export const saveButtonWrapperStyle = recipe({
   base: {
     position: 'relative',
@@ -27,4 +29,10 @@ export const saveButtonWrapperStyle = recipe({
       },
     },
   },
+})
+
+globalStyle(`${tableRowStyles} td, ${tableRowStyles} th`, {
+  fontSize: '14px',
+  fontWeight: 600,
+  whiteSpace: 'nowrap',
 })

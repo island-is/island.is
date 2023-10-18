@@ -99,12 +99,6 @@ export const HealthOverview = () => {
                 {formatMessage(messages.statusOfRights)}
               </Text>
               <UserInfoLine
-                label={formatMessage(messages.hasHealthInsurance)}
-                content={
-                  <Text>{formatDateFns(insurance.updated, 'dd.MM.yyyy')}</Text>
-                }
-              />
-              <UserInfoLine
                 label={formatMessage(messages.healthInsuranceStart)}
                 content={formatMessage(
                   formatDateFns(insurance.from, 'dd.MM.yyyy'),
@@ -113,6 +107,12 @@ export const HealthOverview = () => {
               <UserInfoLine
                 label={formatMessage(messages.status)}
                 content={insurance.status?.display ?? undefined}
+              />
+              <UserInfoLine
+                label={formatMessage(messages.hasHealthInsurance)}
+                content={
+                  <Text>{formatDateFns(insurance.updated, 'dd.MM.yyyy')}</Text>
+                }
               />
             </Stack>
           </Box>
