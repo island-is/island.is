@@ -138,13 +138,15 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
         </Text>
 
         <Box marginTop={2}>
-          {data.credits && data.credits > 0 && (
+          {data.credits && parseInt(data.credits) > 0 ? (
             <Text variant="default">{`${data.degreeAbbreviation} - ${data.credits} einingar`}</Text>
+          ) : (
+            <Text variant="default">{`${data.degreeAbbreviation}`}</Text>
           )}
           <Text marginTop={3} marginBottom={3} variant="default">
             {locale === 'en'
-              ? parse(data.descriptionEn)
-              : parse(data.descriptionIs)}
+              ? parse(data.descriptionEn ? data.descriptionEn : '')
+              : parse(data.descriptionIs ? data.descriptionIs : '')}
           </Text>
           {data.externalUrlIs && (
             <LinkV2
@@ -218,7 +220,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                   <Text variant="medium">
                     {`${n('yearlyCost', 'Árlegur kostnaður')}: ${
                       data.costPerYear &&
-                      data.costPerYear.toLocaleString('is-IS')
+                      data.costPerYear.toLocaleString('de-DE')
                     } kr.`}
                   </Text>
                 </Box>
@@ -279,8 +281,16 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
             >
               <Text as="p">
                 {locale === 'en'
-                  ? data.admissionRequirementsEn
-                  : data.admissionRequirementsIs}
+                  ? parse(
+                      data.admissionRequirementsEn
+                        ? data.admissionRequirementsEn
+                        : '',
+                    )
+                  : parse(
+                      data.admissionRequirementsIs
+                        ? data.admissionRequirementsIs
+                        : '',
+                    )}
               </Text>
             </AccordionItem>
             <AccordionItem
@@ -294,8 +304,12 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
             >
               <Text as="p">
                 {locale === 'en'
-                  ? data.studyRequirementsEn
-                  : data.studyRequirementsIs}
+                  ? parse(
+                      data.studyRequirementsEn ? data.studyRequirementsEn : '',
+                    )
+                  : parse(
+                      data.studyRequirementsIs ? data.studyRequirementsIs : '',
+                    )}
               </Text>
             </AccordionItem>
             <AccordionItem

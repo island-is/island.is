@@ -849,7 +849,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   ),
                                   title: `${
                                     dataItem.costPerYear &&
-                                    dataItem.costPerYear.toLocaleString('is-IS')
+                                    dataItem.costPerYear.toLocaleString('de-DE')
                                   } kr.`,
                                 },
                               ],
@@ -1012,7 +1012,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   ),
                                   title: `${
                                     dataItem.costPerYear &&
-                                    dataItem.costPerYear.toLocaleString('is-IS')
+                                    dataItem.costPerYear.toLocaleString('de-DE')
                                   } kr.`,
                                 },
                               ]}
