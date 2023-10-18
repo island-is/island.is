@@ -11,6 +11,7 @@ import { getLabel } from '../utils/translations'
 import { Injectable } from '@nestjs/common'
 import { Staediskortamal } from '@island.is/clients/p-card'
 import { isDefined } from '@island.is/shared/utils'
+import { format } from 'kennitala'
 
 @Injectable()
 export class PCardPayloadMapper implements GenericLicenseMapper {
@@ -21,6 +22,10 @@ export class PCardPayloadMapper implements GenericLicenseMapper {
   ): GenericUserLicensePayload | null {
     if (!payload) return null
     const typedPayload = payload as Staediskortamal
+
+    const expired = typedPayload.gildistimi
+      ? !isAfter(new Date(typedPayload.gildistimi.toISOString()), new Date())
+      : null
 
     const label = labels?.labels
     const data: Array<GenericLicenseDataField> = [
@@ -35,7 +40,7 @@ export class PCardPayloadMapper implements GenericLicenseMapper {
         ? {
             type: GenericLicenseDataFieldType.Value,
             label: getLabel('nationalId', locale, label),
-            value: typedPayload.kennitala,
+            value: format(typedPayload.kennitala),
           }
         : null,
       typedPayload.malsnumer
@@ -48,7 +53,7 @@ export class PCardPayloadMapper implements GenericLicenseMapper {
       typedPayload.utgafudagur
         ? {
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('publishDate', locale, label),
+            label: getLabel('publishedDate', locale, label),
             value: typedPayload.utgafudagur.toISOString(),
           }
         : null,
@@ -73,12 +78,8 @@ export class PCardPayloadMapper implements GenericLicenseMapper {
       rawData: JSON.stringify(typedPayload),
       metadata: {
         licenseNumber: typedPayload.malsnumer?.toString() ?? '',
-        expired: typedPayload.gildistimi
-          ? !isAfter(
-              new Date(typedPayload.gildistimi.toISOString()),
-              new Date(),
-            )
-          : null,
+        expired,
+        expireDate: typedPayload.gildistimi?.toISOString(),
       },
     }
   }
