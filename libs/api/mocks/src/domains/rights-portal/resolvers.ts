@@ -19,6 +19,7 @@ export const resolvers: Resolvers = {
       return store.copaymentPeriodBills
     },
     rightsPortalPaymentOverviewBills: () => {
+      console.log('yehaw')
       return store.paymentOverviewBills
     },
     rightsPortalPaymentOverviewStatus: () => {
