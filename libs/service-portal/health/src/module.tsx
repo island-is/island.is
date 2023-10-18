@@ -42,6 +42,7 @@ export const healthModule: PortalModule = {
     {
       name: 'Heilsa',
       path: HealthPaths.HealthRoot,
+      key: 'HealthOverview',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <HealthOverview />,
     },
@@ -60,6 +61,7 @@ export const healthModule: PortalModule = {
     {
       name: 'Greiðslur',
       path: HealthPaths.HealthPayments,
+      key: 'HealthPayment',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <Payments />,
     },
@@ -80,6 +82,7 @@ export const healthModule: PortalModule = {
     {
       name: hm.medicineTitle,
       path: HealthPaths.HealthMedicine,
+      key: 'HealthMedicine',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <Medicine />,
     },

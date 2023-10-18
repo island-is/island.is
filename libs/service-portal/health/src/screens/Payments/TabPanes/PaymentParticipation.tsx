@@ -34,8 +34,6 @@ export const PaymentPartication = () => {
     error: periodsError,
   } = useGetCopaymentPeriodsQuery()
 
-  console.log('periods', periods)
-
   const {
     data: bills,
     loading: billsLoading,
@@ -47,8 +45,6 @@ export const PaymentPartication = () => {
       },
     },
   })
-
-  console.log('bills', bills)
 
   const { formatMessage, formatDateFns } = useLocale()
 
