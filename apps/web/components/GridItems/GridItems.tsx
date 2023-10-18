@@ -1,8 +1,9 @@
-import React, { FC, Children, useEffect, useState } from 'react'
+import React, { Children, FC, useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
 import cx from 'classnames'
-import { theme } from '@island.is/island-ui/theme'
+
 import { Box, BoxProps, GridContainer } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 
 import * as styles from './GridItems.css'
 
