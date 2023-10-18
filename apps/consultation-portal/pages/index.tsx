@@ -1,6 +1,7 @@
 import initApollo from '../graphql/client'
 import { HOME_GET_TYPES } from '../graphql/queries.graphql'
 import { HomeGetTypesQuery } from '../graphql/queries.graphql.generated'
+import { withApollo } from '../graphql/withApollo'
 import Home from '../screens/Home/Home'
 import { ArrOfTypes } from '../types/interfaces'
 
@@ -39,4 +40,4 @@ export const Index = ({ types }: HomeProps) => {
   return <Home types={types} />
 }
 
-export default Index
+export default withApollo(Index)

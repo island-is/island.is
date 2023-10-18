@@ -1,3 +1,4 @@
+import { getSession } from 'next-auth/client'
 import initApollo from '../../graphql/client'
 import SubscriptionScreen from '../../screens/Subscriptions/Subscriptions'
 import {
@@ -11,7 +12,7 @@ import {
   SubGetTypesQuery,
 } from '../../graphql/queries.graphql.generated'
 import { SUB_PAGE_SIZE, SUB_STATUSES_TO_FETCH } from '../../utils/consts/consts'
-import { getSession } from 'next-auth/client'
+import { withApollo } from '../../graphql/withApollo'
 
 interface SubProps {
   cases: CaseForSubscriptions[]
@@ -70,4 +71,4 @@ export const getServerSideProps = async (ctx) => {
 export const Index = ({ cases, types }: SubProps) => {
   return <SubscriptionScreen cases={cases} types={types} />
 }
-export default Index
+export default withApollo(Index)
