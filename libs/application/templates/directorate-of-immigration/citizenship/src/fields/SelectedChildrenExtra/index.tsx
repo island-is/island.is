@@ -10,11 +10,13 @@ const initialCombinedChild = {
   otherParentNationalId: '',
   otherParentBirtDate: '',
   otherParentName: '',
+  wasRemoved: 'false',
 }
 
-export const MoreChildInfo: FC<FieldBaseProps> = ({ field, application }) => {
+export const MoreChildInfo: FC<FieldBaseProps> = (props) => {
+  const { application } = props
   const { answers, externalData } = application
-
+  console.log('answers', answers)
   const [readOnlyFields, setReadOnlyFields] = useState(false)
 
   const [combinedChildren, setCombinedChildren] = useState<
@@ -54,6 +56,7 @@ export const MoreChildInfo: FC<FieldBaseProps> = ({ field, application }) => {
           otherParentNationalId: childCustodyData.otherParent?.nationalId,
           otherParentName: childCustodyData.otherParent?.fullName,
           hasFullCustody: NO,
+          wasRemoved: 'false',
         }
       }
       //found already filled in data
@@ -69,10 +72,9 @@ export const MoreChildInfo: FC<FieldBaseProps> = ({ field, application }) => {
     return (
       <SelectedRepeaterItem
         index={index}
-        field={field}
-        application={application}
         readOnlyFields={readOnlyFields}
         repeaterField={child}
+        {...props}
       />
     )
   })

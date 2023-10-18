@@ -198,13 +198,36 @@ const ChildrenSupportingDocumentsSchema = z.object({
   custodyDocuments: z.array(FileDocumentSchema).optional(),
 })
 
-export const SelectedChildSchema = z.object({
-  nationalId: z.string().min(1),
-  hasFullCustody: z.string().optional(),
-  otherParentNationalId: z.string().optional(),
-  otherParentBirtDate: z.string().optional(),
-  otherParentName: z.string().optional(),
-})
+export const SelectedChildSchema = z
+  .object({
+    nationalId: z.string().min(1),
+    hasFullCustody: z.string().optional(),
+    otherParentNationalId: z.string().optional(),
+    otherParentBirtDate: z.string().optional(),
+    otherParentName: z.string().optional(),
+    wasRemoved: z.string().min(1).optional(),
+  })
+  .refine(
+    ({ wasRemoved, otherParentName }) => {
+      return (
+        wasRemoved === 'true' || (otherParentName && otherParentName.length > 0)
+      )
+    },
+    {
+      path: ['otherParentName'],
+    },
+  )
+  .refine(
+    ({ wasRemoved, otherParentBirtDate }) => {
+      return (
+        wasRemoved === 'true' ||
+        (otherParentBirtDate && otherParentBirtDate.length > 0)
+      )
+    },
+    {
+      path: ['otherParentBirtDate'],
+    },
+  )
 
 export const CitizenshipSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),

@@ -9,6 +9,7 @@ import {
   GridColumn,
   GridRow,
   Input,
+  InputError,
   Text,
 } from '@island.is/island-ui/core'
 import {
@@ -28,6 +29,7 @@ import { HiddenTextInput } from '../HiddenTextInput'
 import debounce from 'lodash/debounce'
 import { ChildrenOfApplicant } from '../../shared'
 import { getSelectedCustodyChild } from '../../utils'
+import { getErrorViaPath } from '@island.is/application/core'
 
 interface Props {
   index: number
@@ -41,7 +43,7 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
   repeaterField,
   ...props
 }) => {
-  const { application, field } = props
+  const { application, field, errors } = props
   const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -59,7 +61,12 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
   const [currentBirthDate, setCurrentBirthDate] = useState(
     repeaterField.otherParentBirtDate ? repeaterField.otherParentBirtDate : '',
   )
+
   const currentNameField = `selectedChildrenExtraData[${index}].otherParentName`
+  const wasRemovedField = `selectedChildrenExtraData[${index}].wasRemoved`
+  const otherParentNationalIdField = `selectedChildrenExtraData[${index}].otherParentNationalId`
+  const otherParentNameField = `selectedChildrenExtraData[${index}].otherParentName`
+  const otherParentBirthDateField = `selectedChildrenExtraData[${index}].otherParentBirtDate`
 
   const [getIdentity, { loading: queryLoading }] = useLazyQuery<
     Query,
@@ -94,6 +101,21 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
     application.answers,
     index,
   )
+
+  const nameError =
+    errors &&
+    getErrorViaPath(errors, otherParentNameField) &&
+    getErrorViaPath(errors, otherParentNameField).length > 0
+      ? getErrorViaPath(errors, otherParentNameField)
+      : ''
+
+  useEffect(() => {
+    if (!showMoreQuestions) {
+      setValue(wasRemovedField, 'true')
+    } else {
+      setValue(wasRemovedField, 'false')
+    }
+  }, [showMoreQuestions, wasRemovedField, setValue])
 
   return (
     <Box>
@@ -145,7 +167,7 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
           <GridRow>
             <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
               <InputController
-                id={`selectedChildrenExtraData[${index}].otherParentNationalId`}
+                id={otherParentNationalIdField}
                 label={formatMessage(
                   personal.labels.userInformation.nationalId,
                 )}
@@ -155,15 +177,20 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
                 onChange={debounce((v) => {
                   setNationalIdInput(v.target.value.replace(/\W/g, ''))
                 })}
+                error={
+                  errors && getErrorViaPath(errors, otherParentNationalIdField)
+                }
                 loading={queryLoading}
               />
             </GridColumn>
             <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
               <Input
-                name={`selectedChildrenExtraData[${index}].otherParentName`}
+                name={otherParentNameField}
                 value={currentName}
                 readOnly={readOnlyFields}
                 label={formatMessage(personal.labels.userInformation.name)}
+                hasError={!!nameError}
+                errorMessage={nameError}
                 onChange={(e) => {
                   setCurrentName(e.target.value)
                   setValue(currentNameField, e.target.value)
@@ -175,9 +202,12 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
             <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
               <DatePickerController
                 defaultValue={currentBirthDate}
-                id={`selectedChildrenExtraData[${index}].otherParentBirtDate`}
+                id={otherParentBirthDateField}
                 label={formatMessage(selectChildren.extraInformation.dateLabel)}
                 onChange={(value) => setCurrentBirthDate(value as string)}
+                error={
+                  errors && getErrorViaPath(errors, otherParentBirthDateField)
+                }
               />
             </GridColumn>
           </GridRow>
