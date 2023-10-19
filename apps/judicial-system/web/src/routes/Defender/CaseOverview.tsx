@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   capitalize,
@@ -40,8 +40,10 @@ import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/s
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
+import { api } from '../../services'
 import { conclusion } from '../../components/Conclusion/Conclusion.strings'
 import { strings } from './CaseOverview.strings'
+import * as styles from './CaseOverview.css'
 
 type availableModals =
   | 'NoModal'
@@ -278,7 +280,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   renderAs="row"
                   caseId={workingCase.id}
                   title={formatMessage(core.pdfButtonRequest)}
-                  pdfType={'limitedAccess/request'}
+                  pdfType={'request'}
                 />
 
                 {completedCaseStates.includes(workingCase.state) && (
@@ -287,7 +289,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                       renderAs="row"
                       caseId={workingCase.id}
                       title={formatMessage(core.pdfButtonRulingShortVersion)}
-                      pdfType={'limitedAccess/courtRecord'}
+                      pdfType={'courtRecord'}
                     >
                       {workingCase.courtRecordSignatory ? (
                         <SignedDocument
@@ -300,7 +302,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                       renderAs="row"
                       caseId={workingCase.id}
                       title={formatMessage(core.pdfButtonRuling)}
-                      pdfType={'limitedAccess/ruling'}
+                      pdfType={'ruling'}
                     >
                       {workingCase.rulingSignatureDate ? (
                         <SignedDocument
@@ -311,6 +313,22 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                         <Text>{formatMessage(strings.unsignedRuling)}</Text>
                       )}
                     </PdfButton>
+                    <Box marginTop={7}>
+                      <a
+                        href={`${api.apiUrl}/api/case/${workingCase.id}/limitedAccess/allFiles`}
+                        download={`mal_${workingCase.courtCaseNumber}`}
+                        className={styles.downloadAllButton}
+                      >
+                        <Button
+                          variant="ghost"
+                          size="small"
+                          icon="download"
+                          iconType="outline"
+                        >
+                          {formatMessage(strings.getAllDocuments)}
+                        </Button>
+                      </a>
+                    </Box>
                   </>
                 )}
               </Box>
