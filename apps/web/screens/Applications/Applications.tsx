@@ -1,17 +1,8 @@
-import React, {
-  useRef,
-  useEffect,
-  useState,
-  FC,
-  useMemo,
-  useReducer,
-} from 'react'
+import { useMemo, type FC } from 'react'
 import { useLazyQuery } from '@apollo/client'
 import Head from 'next/head'
-import { useWindowSize } from 'react-use'
-import { NextRouter, useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import NextLink from 'next/link'
-import { theme } from '@island.is/island-ui/theme'
 import {
   Box,
   Text,
@@ -28,41 +19,29 @@ import {
   Button,
   Table as T,
   Select,
+  StringOption,
 } from '@island.is/island-ui/core'
 import { ProcessEntryLinkButton } from '@island.is/island-ui/contentful'
-import { SearchInput, CardTagsProps } from '@island.is/web/components'
+import { SearchInput, SearchableTagsFilter, useSearchableTagsFilter } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
-import { useNamespace } from '@island.is/web/hooks'
+import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
-  Image,
   Tag as TagType,
   GetSearchResultsDetailedQuery,
-  GetSearchResultsNewsQuery,
   GetSearchCountTagsQuery,
   QuerySearchResultsArgs,
   ContentLanguage,
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
-  Article,
-  LifeEventPage,
-  News,
   SearchableContentTypes,
   SearchableTags,
-  AdgerdirPage,
-  SubArticle,
   GetSearchResultsTotalQuery,
-  OrganizationSubpage,
-  OrganizationPage,
-  Link as LinkItem,
-  ProjectPage,
   SortField,
   SortDirection,
 } from '@island.is/web/graphql/schema'
-import { AnchorPageType } from '@island.is/web/utils/anchorPage'
 import { hasProcessEntries } from '@island.is/web/utils/article'
-import { ActionType, reducer, initialState } from '../Search/Search.state'
 import { useLinkResolver, usePlausible } from '@island.is/web/hooks'
 import { Screen } from '../../types'
 import {
@@ -72,120 +51,88 @@ import {
   GET_SEARCH_RESULTS_TOTAL,
 } from '../queries'
 
+import type { SearchEntryType } from '../Search'
 import {
-  FilterMenu,
-  CategoriesProps,
-  FilterLabels,
-  type SearchEntryType,
-} from '../Search'
+  parseAsString,
+  useQueryState,
+  useQueryStates,
+  type Options,
+} from 'next-usequerystate'
+import type { ApplicationsTexts } from './ApplicationsText.types';
 
 const PERPAGE = 10
-
-type SearchQueryFilters = {
-  category: string
-  type: string
-}
-
 interface CategoryProps {
-  q: string
   page: number
-  sort: string
-  order: string
   searchResults: GetSearchResultsDetailedQuery['searchResults']
   countResults: GetSearchCountTagsQuery['searchResults']
-  namespace: GetNamespaceQuery['getNamespace']
+  namespace: ApplicationsTexts
+}
+interface SortByOption extends StringOption {
+  sort: 'title' | 'popular',
+  order: 'asc' | 'desc',
 }
 
 const stringToArray = (value: string | string[]) =>
   Array.isArray(value) ? value : value?.length ? [value] : []
 
+// TODO - extract to util hook
+const defaultQueryStateOptions: Options = { shallow: false }
+
 const Applications: Screen<CategoryProps> = ({
-  q,
   page,
-  sort,
-  order,
   searchResults,
   countResults,
   namespace,
 }) => {
-  const { query } = useRouter()
-  const [state, dispatch] = useReducer(reducer, {
-    ...initialState,
-    query: {
-      q,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
-      category: stringToArray(query.category),
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
-      organization: stringToArray(query.organization),
+  const { query } = useRouter();
+  const [q] = useQueryState('q')
+  const [sortOrder, setSortOrder] = useQueryStates(
+    {
+      sort: parseAsString.withDefault('popular'),
+      order: parseAsString.withDefault('desc')
     },
-  })
-  usePlausible('Search Query', {
-    query: (q ?? '').trim().toLowerCase(),
-    source: 'Web',
-  })
-  const { width } = useWindowSize()
-  const [isMobile, setIsMobile] = useState(false)
+    defaultQueryStateOptions
+  )
+
+  const { sort, order } = sortOrder;
+
   const { activeLocale } = useI18n()
-  const searchRef = useRef<HTMLInputElement | null>(null)
-  const routerReplace = useRouterReplace()
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
+  const { category, organization, reset: resetFilters } = useSearchableTagsFilter()
 
-  useMemo(() => {
-    if (width < theme.breakpoints.md) {
-      return setIsMobile(true)
-    }
-    setIsMobile(false)
-  }, [width])
+  const sortByOptions = useMemo<SortByOption[]>(() => ([
+      {
+        label: n('sortByPopularityDescending', 'Mest notað'),
+        value: 'sort-by-popularity-descending',
+        sort: 'popular',
+        order: 'desc',
+      },
+      {
+        label: n('sortByPopularityAscending', 'Minnst notað'),
+        value: 'sort-by-popularity-ascending',
+        sort: 'popular',
+        order: 'asc',
+      },
+      {
+        label: n('orderByTitleAscending', 'Titill (a-ö)'),
+        value: 'sort-by-title-ascending',
+        sort: 'title',
+        order: 'asc',
+      },
+      {
+        label: n('orderByTitleDescending', 'Titill (ö-a)'),
+        value: 'sort-by-title-descending',
+        sort: 'title',
+        order: 'desc',
+      },
+    ]
+  ), [])
 
-  const filters: SearchQueryFilters = {
-    category: query.category as string,
-    type: query.type as string,
-  }
 
-  const pathname = linkResolver('applications').href
 
-  const getItemLink = (item: SearchEntryType) => {
-    if (
-      item.__typename === 'LifeEventPage' &&
-      item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
-    ) {
-      return linkResolver('digitalicelandservicesdetailpage', [item.slug])
-    }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
-    return linkResolver(item.__typename, item.url ?? item.slug?.split('/'))
-  }
 
-  const getItemImages = (item: SearchEntryType) => {
-    if (
-      item.__typename === 'LifeEventPage' &&
-      item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
-    ) {
-      return {
-        image: undefined,
-        thumbnail: undefined,
-      }
-    }
-    if (item.__typename === 'OrganizationPage') {
-      return {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        image: (item as any)?.singleOrganization?.logo,
-        thumbnail: undefined,
-      }
-    }
-
-    return {
-      ...(item.image && { image: item.image as Image }),
-      ...(item.thumbnail && { thumbnail: item.thumbnail as Image }),
-    }
-  }
+  const selectedSortByOption = sortByOptions.find((option) => option.sort === sort && option.order === order) ?? sortByOptions[0]
 
   const searchResultsItems = (
     searchResults.items as Array<SearchEntryType>
@@ -193,28 +140,18 @@ const Applications: Screen<CategoryProps> = ({
     typename: item.__typename,
     title: item.title,
     parentTitle: item.parent?.title,
+    link: linkResolver('article', item.url ?? item.slug?.split('/')),
     description:
       item.intro ?? item.description ?? item.parent?.intro ?? item.subtitle,
-    link: getItemLink(item),
     categorySlug: item.category?.slug ?? item.parent?.category?.slug,
     category: item.category ?? item.parent?.category,
     organizationTitle: item.organization?.length && item.organization[0].title,
     hasProcessEntry: item.__typename === 'Article' && hasProcessEntries(item),
     processEntry: item.processEntry,
     group: item.group,
-    ...getItemImages(item),
   }))
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  const noUncategorized = (item) => {
-    if (!item.category && filters.category === 'uncategorized') {
-      return true
-    }
 
-    return !filters.category || filters.category === item.categorySlug
-  }
-
-  const filteredItems = [...searchResultsItems].filter(noUncategorized)
+  const filteredItems = [...searchResultsItems]
   const nothingFound = filteredItems.length === 0
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
@@ -224,75 +161,11 @@ const Applications: Screen<CategoryProps> = ({
       ? (n('searchResult', 'leitarniðurstaða') as string).toLowerCase()
       : (n('searchResults', 'leitarniðurstöður') as string).toLowerCase()
 
-  useEffect(() => {
-    if (state.searchLocked) {
-      return
-    }
-
-    const newQuery = {
-      ...state.query,
-      q,
-    }
-
-    routerReplace({
-      pathname,
-      query: newQuery,
-    }).then(() => {
-      window.scrollTo(0, 0)
-    })
-  }, [state, pathname, q, routerReplace])
-
-  const getSearchParams = () => {
-    return {
-      q,
-      ...(query.category?.length && { category: query.category }),
-      ...(query.organization?.length && {
-        organization: query.organization,
-      }),
-    }
-  }
-
-  const categories: CategoriesProps[] = [
-    {
-      id: 'category',
-      label: n('categories', 'Þjónustuflokkar'),
-      selected: state.query.category ?? [],
-      singleOption: true,
-      filters: (countResults?.tagCounts ?? [])
-        .filter((x) => x.value.trim() && x.type === 'category')
-        .map(({ key, value }) => ({
-          label: value,
-          value: key,
-        })),
-    },
-    {
-      id: 'organization',
-      label: n('organizations', 'Opinberir aðilar'),
-      selected: state.query.organization ?? [],
-      singleOption: true,
-      filters: (countResults?.tagCounts ?? [])
-        .filter((x) => x.value.trim() && x.type === 'organization')
-        .map(({ key, value }) => ({
-          label: value,
-          value: key,
-        })),
-    },
-  ]
-
-  const filterLabels: FilterLabels = {
-    labelClearAll: n('labelClearAll', 'Hreinsa allar síur'),
-    labelClear: n('labelClear', 'Hreinsa síu'),
-    labelOpen: n('labelOpen', 'Sía niðurstöður'),
-    labelClose: n('labelClose', 'Loka síu'),
-    labelTitle: n('labelTitle', 'Sía mannanöfn'),
-    labelResult: n('labelResult', 'Sjá niðurstöður'),
-    inputPlaceholder: n('inputPlaceholder', 'Leita að nafni'),
-  }
   return (
     <>
-      <Head>
+      {/* <Head>
         <title>{n('searchResults', 'Leitarniðurstöður')} | Ísland.is</title>
-      </Head>
+      </Head> */}
       <GridContainer>
         <GridRow>
           <GridColumn
@@ -330,22 +203,17 @@ const Applications: Screen<CategoryProps> = ({
                   collapseBelow="md"
                 >
                   {/* TODO - sorting should be a component */}
-                  {/* <Select
+                  <Select
                     name="sort-option-select"
                     size="xs"
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore make web strict
-                    // onChange={(option) => {
-                    //   setSelectedTitleSortOption(option as TitleSortOption)
-                    // }}
-                    value={{ label: n('sortByPopularityDescending', 'Mest notað'), value: 'popularity-desc' }}
-                    options={[
-                      { label: n('sortByTitleAscending', 'Heiti (a-ö)'), value: 'title-asc' },
-                      { label: n('sortByTitleDescending', 'Heiti (ö-a)'), value: 'title-desc' },
-                      { label: n('sortByPopularityDescending', 'Mest notað'), value: 'popularity-desc' },
-                      { label: n('sortByPopularityAscending', 'Minnst notað'), value: 'popularity-asc' },
-                    ]}
-                  /> */}
+                    onChange={(option: SortByOption) => {
+                      setSortOrder(option)
+                    }}
+                    value={selectedSortByOption}
+                    options={sortByOptions}
+                  />
                   <Inline
                     justifyContent="flexEnd"
                     alignY="center"
@@ -355,35 +223,16 @@ const Applications: Screen<CategoryProps> = ({
                   >
                     <SearchInput
                       id="search_input_search_page"
-                      ref={searchRef}
                       size="medium"
                       placeholder={n('inputSearchQuery', 'Sláðu inn leitarorð')}
                       quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
                       activeLocale={activeLocale}
-                      initialInputValue={q}
+                      initialInputValue={q ?? ''}
                       page="applications"
                     />
-                    <FilterMenu
-                      {...filterLabels}
-                      categories={categories}
+                    <SearchableTagsFilter
                       resultCount={totalSearchResults}
-                      filter={{
-                        category: state.query.category ?? [],
-                        organization: state.query.organization ?? [],
-                      }}
-                      setFilter={(payload) =>
-                        dispatch({
-                          type: ActionType.SET_PARAMS,
-                          payload: {
-                            query: {
-                              ...getSearchParams(),
-                              ...payload,
-                            },
-                          },
-                        })
-                      }
-                      align="right"
-                      variant={isMobile ? 'dialog' : 'popover'}
+                      tags={countResults.tagCounts ?? []}
                     />
                   </Inline>
                 </Inline>
@@ -397,21 +246,17 @@ const Applications: Screen<CategoryProps> = ({
                     )}{' '}
                     <strong>{q}</strong>
                     {!!(
-                      state.query.organization?.length ||
-                      state.query.category?.length
+                      organization.length ||
+                      category.length
                     ) && ` ${n('withChosenFilters', 'með völdum síum')}. `}
                   </Text>
                   {!!(
-                    state.query.organization?.length ||
-                    state.query.category?.length
+                    organization.length ||
+                    category.length
                   ) && (
                     <Button
                       variant="text"
-                      onClick={() =>
-                        dispatch({
-                          type: ActionType.RESET_SEARCH,
-                        })
-                      }
+                      onClick={resetFilters}
                     >
                       {`${n(
                         'clickHereToRemoveFilters',
@@ -485,7 +330,7 @@ const Applications: Screen<CategoryProps> = ({
                 {totalSearchResults > 0 && (
                   <Box paddingTop={6}>
                     <Pagination
-                      page={page}
+                      page={page ?? 1}
                       totalPages={totalPages}
                       variant="blue"
                       renderLink={(page, className, children) => (
@@ -575,7 +420,7 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
-    apolloClient.query<GetSearchResultsNewsQuery, QuerySearchResultsArgs>({
+    apolloClient.query<GetSearchCountTagsQuery, QuerySearchResultsArgs>({
       fetchPolicy: 'no-cache', // overriding because at least local caching is broken
       query: GET_SEARCH_COUNT_QUERY,
       variables: {
@@ -585,7 +430,6 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
           countTag: [
             'category' as SearchableTags,
             'organization' as SearchableTags,
-            'processentry' as SearchableTags,
           ],
           types,
           countTypes: true,
@@ -603,11 +447,8 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      // map data here to reduce data processing in component
       .then((variables) =>
-        variables.data.getNamespace?.fields
-          ? JSON.parse(variables.data.getNamespace.fields)
-          : {},
+        JSON.parse(variables?.data?.getNamespace?.fields || '[]'),
       ),
   ])
 
@@ -624,21 +465,6 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
     sort: single(query.sort) ?? 'popular',
     order: single(query.order) ?? 'desc',
   }
-}
-
-const useRouterReplace = (): NextRouter['replace'] => {
-  const Router = useRouter()
-  const routerRef = useRef(Router)
-
-  routerRef.current = Router
-
-  const [{ replace }] = useState<Pick<NextRouter, 'replace'>>({
-    replace: (path) => {
-      return routerRef.current.push(path)
-    },
-  })
-
-  return replace
 }
 
 interface EnglishResultsLinkProps {
