@@ -29,7 +29,7 @@ const devConfig = {
     restUsername: process.env.FJARSYSLA_REST_USER ?? 'xxxxxxxxxxxxx',
     restPassword: process.env.FJARSYSLA_REST_PASS ?? 'xxxxxxxxx',
   },
-  backendUrl: 'http://localhost:3333',
+  backendUrl: 'http://localhost:3339',
 }
 
 const prodConfig = {
