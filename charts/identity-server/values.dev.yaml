@@ -45,6 +45,7 @@ auth-admin-web:
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/proxy-buffers-number: '4'
         nginx.ingress.kubernetes.io/server-snippet: 'client_header_buffer_size 16k; large_client_header_buffers 4 16k;'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'identity-server.dev01.devland.is'
           paths:
@@ -144,6 +145,7 @@ identity-server:
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'identity-server.dev01.devland.is'
           paths:
@@ -237,6 +239,7 @@ services-auth-admin-api:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'identity-server.dev01.devland.is'
           paths:
@@ -310,6 +313,7 @@ services-auth-delegation-api:
     internal-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'auth-delegation-api.internal.dev01.devland.is'
           paths:
@@ -479,6 +483,7 @@ services-auth-personal-representative:
     demo-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'personal-representative-xrd.dev01.devland.is'
           paths:
@@ -486,6 +491,7 @@ services-auth-personal-representative:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'personal-representative-xrd.internal.dev01.devland.is'
           paths:
@@ -544,6 +550,7 @@ services-auth-personal-representative-public:
     demo-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'personal-representative-public-xrd.dev01.devland.is'
           paths:
@@ -551,6 +558,7 @@ services-auth-personal-representative-public:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'personal-representative-public-xrd.internal.dev01.devland.is'
           paths:
@@ -631,6 +639,7 @@ services-auth-public-api:
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/rewrite-target: '/$2'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'identity-server.dev01.devland.is'
           paths:

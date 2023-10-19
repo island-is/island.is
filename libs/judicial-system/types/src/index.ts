@@ -48,7 +48,9 @@ export {
   isDistrictCourtUser,
   appealsCourtRoles,
   isAppealsCourtUser,
+  prisonSystemRoles,
   isPrisonSystemUser,
+  defenceRoles,
   isDefenceUser,
 } from './lib/user'
 export type { User, CreateUser, UpdateUser } from './lib/user'
@@ -79,8 +81,8 @@ export {
   getAppealInfo,
   getStatementDeadline,
   getAppealedDate,
-  limitedAccessCaseFileCategoriesForIndictmentCases,
-  limitedAccessCaseFileCategoriesForRestrictionAndInvestigationCases,
+  defenderAccessCaseFileCategoriesForIndictmentCases as defenderCaseFileCategoriesForIndictmentCases,
+  defenderCaseFileCategoriesForRestrictionAndInvestigationCases as defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
 } from './lib/case'
 export type {
   Case,

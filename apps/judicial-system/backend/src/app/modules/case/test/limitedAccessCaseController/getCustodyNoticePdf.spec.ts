@@ -1,12 +1,16 @@
 import { Response } from 'express'
 import { uuid } from 'uuidv4'
 
+import { BadRequestException } from '@nestjs/common'
+
+import { CaseState } from '@island.is/judicial-system/types'
+
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
-import { getRequestPdfAsBuffer } from '../../../../formatters'
+import { getCustodyNoticePdfAsBuffer } from '../../../../formatters'
 import { Case } from '../../models/case.model'
 
-jest.mock('../../../../formatters/requestPdf')
+jest.mock('../../../../formatters/custodyNoticePdf')
 
 interface Then {
   error: Error
@@ -18,7 +22,7 @@ type GivenWhenThen = (
   res: Response,
 ) => Promise<Then>
 
-describe('LimitedAccessCaseController - Get request pdf', () => {
+describe('LimitedAccessCaseController - Get custody notice pdf', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -28,7 +32,11 @@ describe('LimitedAccessCaseController - Get request pdf', () => {
       const then = {} as Then
 
       try {
-        await limitedAccessCaseController.getRequestPdf(caseId, theCase, res)
+        await limitedAccessCaseController.getCustodyNoticePdf(
+          caseId,
+          theCase,
+          res,
+        )
       } catch (error) {
         then.error = error as Error
       }
@@ -37,21 +45,21 @@ describe('LimitedAccessCaseController - Get request pdf', () => {
     }
   })
 
-  describe('pdf generated', () => {
+  describe('generate pdf', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = { id: caseId, state: CaseState.ACCEPTED } as Case
     const res = { end: jest.fn() } as unknown as Response
-    const pdf = 'Request pdf'
+    const pdf = 'Custody notice pdf'
 
     beforeEach(async () => {
-      const getMock = getRequestPdfAsBuffer as jest.Mock
+      const getMock = getCustodyNoticePdfAsBuffer as jest.Mock
       getMock.mockResolvedValueOnce(pdf)
 
       await givenWhenThen(caseId, theCase, res)
     })
 
     it('should generate pdf', () => {
-      expect(getRequestPdfAsBuffer).toHaveBeenCalledWith(
+      expect(getCustodyNoticePdfAsBuffer).toHaveBeenCalledWith(
         theCase,
         expect.any(Function),
       )
@@ -59,14 +67,32 @@ describe('LimitedAccessCaseController - Get request pdf', () => {
     })
   })
 
-  describe('pdf generation fails', () => {
+  describe('case not accepted', () => {
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = { id: caseId, state: CaseState.REJECTED } as Case
     let then: Then
     const res = {} as Response
 
     beforeEach(async () => {
-      const getMock = getRequestPdfAsBuffer as jest.Mock
+      then = await givenWhenThen(caseId, theCase, res)
+    })
+
+    it('should throw BadRequestException', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(then.error.message).toBe(
+        'Cannot generate a custody notice for REJECTED cases',
+      )
+    })
+  })
+
+  describe('pdf generation fails', () => {
+    const caseId = uuid()
+    const theCase = { id: caseId, state: CaseState.ACCEPTED } as Case
+    let then: Then
+    const res = {} as Response
+
+    beforeEach(async () => {
+      const getMock = getCustodyNoticePdfAsBuffer as jest.Mock
       getMock.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId, theCase, res)
