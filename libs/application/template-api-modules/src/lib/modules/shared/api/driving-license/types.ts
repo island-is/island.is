@@ -35,6 +35,7 @@ export type DrivingLicense = {
   categories?: DrivingLicenseCategory[]
   id?: number
   birthCountry?: string | null
+  publishPlaceName?: string | null
 }
 
 export interface StudentAssessment {
