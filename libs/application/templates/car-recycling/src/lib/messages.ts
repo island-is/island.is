@@ -27,5 +27,43 @@ export const carRecyclingMessages: MessageDir = {
       defaultMessage: 'Forsendur',
       description: 'Prerequisites',
     },
+    externalDataSubSection: {
+      id: 'rf.cr.application:externalData.sub.section',
+      defaultMessage: 'Gagnaöflun',
+      description: 'External Data',
+    },
+    externalDataDescription: {
+      id: 'rf.cr.application:externalData.description',
+      defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt',
+      description: 'english translation',
+    },
+    checkboxProvider: {
+      id: 'rf.cr.application:prerequisites.checkbox.provider',
+      defaultMessage:
+        'Ég skil að ofangreindra upplýsinga verður aflað í umsóknarferlinu',
+      description: 'Checbox to confirm data provider',
+    },
+  }),
+  vehicles: defineMessages({
+    list: {
+      id: 'rf.cr.application:vehicles.list',
+      defaultMessage: 'Ökutækjalisti',
+      description: 'Prerequisites',
+    },
+  }),
+  review: defineMessages({
+    confirmSectionTitle: {
+      id: 'rf.cr.application:confirmation.section.title',
+      defaultMessage: 'Staðfesting',
+      description: 'Confirm',
+    },
   }),
 }
+
+export const statesMessages = defineMessages({
+  draftDescription: {
+    id: 'rf.cr.application:draft.description',
+    defaultMessage: 'Þú hefur útbúið drög að umsókn.',
+    description: 'Description of the state - draft',
+  },
+})

@@ -3,8 +3,10 @@ import {
   buildExternalDataProvider,
   buildForm,
   buildSection,
+  buildSubmitField,
+  coreMessages,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { carRecyclingMessages } from '../lib/messages'
 
@@ -22,7 +24,22 @@ export const Prerequisites: Form = buildForm({
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: 'Utanaðkomandi gögn',
+          title: carRecyclingMessages.pre.externalDataSubSection,
+          subTitle: carRecyclingMessages.pre.externalDataDescription,
+          checkboxLabel: carRecyclingMessages.pre.checkboxProvider,
+          submitField: buildSubmitField({
+            id: 'submit',
+            placement: 'footer',
+            title: '',
+            refetchApplicationAfterSubmit: true,
+            actions: [
+              {
+                event: 'SUBMIT',
+                name: coreMessages.buttonNext,
+                type: 'primary',
+              },
+            ],
+          }),
           dataProviders: [
             /* buildDataProviderItem({
               provider: UserProfileApi,
@@ -46,21 +63,16 @@ export const Prerequisites: Form = buildForm({
             }),*/
           ],
         }),
-        buildDescriptionField({
-          id: 'neverDisplayed',
-          title: '',
-          description: '',
-        }),
       ],
     }),
     buildSection({
-      id: 'carsOverview',
-      title: 'xxx-conditions',
+      id: 'vehiclesList',
+      title: carRecyclingMessages.vehicles.list,
       children: [],
     }),
     buildSection({
       id: 'confirm',
-      title: 'xxx-confirmation',
+      title: carRecyclingMessages.review.confirmSectionTitle,
       children: [],
     }),
   ],

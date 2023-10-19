@@ -18,7 +18,7 @@ import {
 import { assign } from 'xstate'
 import { Actions } from '../shared'
 import { DataSchema } from './dataSchema'
-import { carRecyclingMessages } from './messages'
+import { carRecyclingMessages, statesMessages } from './messages'
 
 const States = {
   PREREQUISITES: 'prerequisites',
@@ -65,6 +65,8 @@ const CarRecyclingTemplate: ApplicationTemplate<
         meta: {
           name: States.PREREQUISITES,
           status: 'draft',
+          lifecycle: pruneAfterDays(1),
+          progress: 0.25,
           actionCard: {
             historyLogs: [
               {
@@ -73,8 +75,6 @@ const CarRecyclingTemplate: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: pruneAfterDays(9),
-          progress: 0.25,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -105,18 +105,18 @@ const CarRecyclingTemplate: ApplicationTemplate<
           name: States.DRAFT,
           status: 'draft',
           lifecycle: pruneAfterDays(30),
+          progress: 0.25,
+          /* onExit: defineTemplateApi({
+            action: Actions.SEND_APPLICATION,
+            throwOnError: true,
+          }),*/
           actionCard: {
-            description: 'XXX- statesMessages.draftDescription',
+            description: statesMessages.draftDescription,
             historyLogs: {
               onEvent: DefaultEvents.SUBMIT,
               logMessage: coreHistoryMessages.applicationSent,
             },
           },
-          progress: 0.25,
-          onExit: defineTemplateApi({
-            action: Actions.SEND_APPLICATION,
-            throwOnError: true,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -136,22 +136,12 @@ const CarRecyclingTemplate: ApplicationTemplate<
             },
           ],
         },
-        on: {
-          SUBMIT: [{ target: States.APPROVED }],
-        },
+        on: {},
       },
     },
   },
   stateMachineOptions: {
-    actions: {
-      clearAssignees: assign((context) => ({
-        ...context,
-        application: {
-          ...context.application,
-          assignees: [],
-        },
-      })),
-    },
+    actions: {},
   },
   mapUserToRole(
     nationalId: string,
