@@ -53,7 +53,7 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
     try {
       const licenseInfo = await this.adrApi
         .withMiddleware(new AuthMiddleware(user as Auth))
-        .getAdr()
+        .getAdr({ kennitala: user.nationalId })
       return { ok: true, data: licenseInfo }
     } catch (e) {
       //404 - no license for user, still ok!

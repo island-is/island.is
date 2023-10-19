@@ -50,7 +50,7 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
     try {
       const licenseInfo = await this.machineApi
         .withMiddleware(new AuthMiddleware(user as Auth))
-        .getVinnuvela()
+        .getVinnuvela({ kennitala: user.nationalId })
       return { ok: true, data: licenseInfo }
     } catch (e) {
       //404 - no license for user, still ok!
