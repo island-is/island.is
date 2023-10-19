@@ -77,15 +77,15 @@ export const LatestEventsSlice = ({
                 <LatestEventSliceCard
                   key={index}
                   title={title}
-                  startTime={time.startTime}
-                  endTime={time.endTime}
+                  startTime={time.startTime ?? ''}
+                  endTime={time.endTime ?? ''}
                   href={
                     linkResolver('organizationevent', [slug, eventSlug]).href
                   }
                   date={startDate}
-                  streetAddress={location.streetAddress}
-                  postalCode={location.postalCode}
-                  floor={location.floor}
+                  streetAddress={location.streetAddress ?? ''}
+                  postalCode={location.postalCode ?? ''}
+                  floor={location.floor ?? ''}
                   namespace={namespace}
                   image={{
                     url: image?.url || '',

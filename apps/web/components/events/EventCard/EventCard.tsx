@@ -77,9 +77,9 @@ export const EventCard: React.FC<React.PropsWithChildren<EventCardProps>> = ({
             {title}
           </Text>
           <EventLocation
-            streetAddress={location?.streetAddress}
-            floor={location?.floor}
-            postalCode={location?.postalCode}
+            streetAddress={location?.streetAddress ?? ''}
+            floor={location?.floor ?? ''}
+            postalCode={location?.postalCode ?? ''}
           />
           <EventTime
             startTime={startTime}

@@ -55,6 +55,7 @@ export const LatestEventSliceCard: React.FC<
       borderWidth="standard"
       height="full"
       color="blue"
+      className={styles.container}
     >
       <Box>
         <Box marginBottom={2} width="full">
