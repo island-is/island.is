@@ -48,9 +48,7 @@ export const PrisonCases: React.FC = () => {
     }, [resCases])
 
   const handleRowClick = (id: string) => {
-    getCaseToOpen({
-      variables: { input: { id } },
-    })
+    getCaseToOpen(id)
   }
 
   return (
