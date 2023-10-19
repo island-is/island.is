@@ -30,6 +30,7 @@ import { DrugCertificateInput } from './dto/drugCertificate.input'
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.servicePortalHealthRightsModule)
+@FeatureFlag(Features.servicePortalHealthMedicinePages)
 @Audit({ namespace: '@island.is/api/rights-portal/drug' })
 export class DrugResolver {
   constructor(private readonly drugService: DrugService) {}

@@ -27,6 +27,7 @@ import { PaymentOverviewDocumentInput } from './dto/paymentOverviewDocument.inpu
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.servicePortalHealthRightsModule)
+@FeatureFlag(Features.servicePortalHealthPaymentPages)
 @Audit({ namespace: '@island.is/api/rights-portal/payment' })
 export class PaymentResolver {
   constructor(private readonly service: PaymentService) {}

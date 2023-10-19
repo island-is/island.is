@@ -21,6 +21,7 @@ import { InsuranceOverviewResponse } from './models/insuranceOverview.response'
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.servicePortalHealthRightsModule)
+@FeatureFlag(Features.servicePortalHealthOverviewPage)
 @Audit({ namespace: '@island.is/api/rights-portal/overview' })
 export class OverviewResolver {
   constructor(private readonly service: OverviewService) {}
