@@ -205,7 +205,7 @@ jobs:
           fi
       - name: Check release-manager approval
         id: check-release-manager-approval
-        if: ${{ contains(github.event.pull_request.labels.*.name, 'automerge') && startsWith(github.event.pull_request.head.ref, 'pre-release/') }}
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'automerge') && startsWith(github.event.pull_request.head.ref, 'ci-check-release') }}
         run: |
           node -r esbuild-register ./github/actions/check-team-approval.ts release-managers
   tests:
