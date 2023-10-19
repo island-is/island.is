@@ -153,4 +153,7 @@ export class VehiclesList {
 
   @Field(() => String, { nullable: true })
   downloadServiceURL?: string
+
+  @Field({ nullable: true })
+  nextCursor?: string
 }
