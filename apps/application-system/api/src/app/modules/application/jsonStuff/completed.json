@@ -13,18 +13,26 @@
       "children": [
         {
           "id": "multifield1",
-          "title": "Vei Vei",
+          "title": "Sakavottorð",
           "type": "MULTI_FIELD",
           "children": [
             {
+              "id": "pdfViewer",
+              "title": "PDF viewer",
+              "type": "PDF_VIEWER",
               "children": null,
-              "id": "uiForms.conclusionAlert",
-              "title": "Þetta virkar!",
-              "message": "Já maður þetta er bara til að sýna að þetta virkar!",
-              "alertType": "success",
-              "condition": null,
-              "type": "ALERT_MESSAGE",
-              "component": "AlertMessageFormField"
+              "component": "PdfViewerFormField",
+              "pdfKey": "criminalRecord.data.contentBase64",
+              "openMySitesLabel": "Opna í Mínum síðum",
+              "downloadPdfButtonLabel": "Sækja PDF",
+              "successTitle": "Tókst",
+              "successDescription": "Umsókn þín hefur verið móttekin.",
+              "verificationDescription": "Vinsamlegast staðfestu upplýsingar hér að neðan.",
+              "verificationLinkTitle": "Leiðbeiningar um staðfestingu",
+              "verificationLinkUrl": "https://verification-url-example.com",
+              "viewPdfButtonLabel": "Skoða PDF",
+              "openInboxButtonLabel": "Opna tölvupóstinn",
+              "confirmationMessage": "Upplýsingum þínum hefur verið staðfest."
             }
           ]
         }

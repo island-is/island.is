@@ -276,6 +276,57 @@ export const coreDefaultFieldMessages = defineMessages({
     defaultMessage: 'Veljið skjöl til að hlaða upp',
     description: 'Default file upload button label',
   },
+  openMySitesLabel: {
+    id: 'application.system:core.default.openMySitesLabel',
+    defaultMessage: 'Opna í Mínum síðum',
+    description: 'Merki fyrir hnappinn til að opna í Mínum síðum',
+  },
+  downloadPdfButtonLabel: {
+    id: 'application.system:core.default.downloadPdfButtonLabel',
+    defaultMessage: 'Sækja PDF',
+    description: 'Merki fyrir hnappinn til að sækja PDF skjal',
+  },
+  successTitle: {
+    id: 'application.system:core.default.successTitle',
+    defaultMessage: 'Tókst',
+    description: 'Titill sem birtist þegar aðgerð er tókst',
+  },
+  successDescription: {
+    id: 'application.system:core.default.successDescription',
+    defaultMessage: 'Umsókn þín hefur verið móttekin.',
+    description: 'Lýsing sem birtist þegar aðgerð er tókst',
+  },
+  verificationDescription: {
+    id: 'application.system:core.default.verificationDescription',
+    defaultMessage: 'Vinsamlegast staðfestu upplýsingar hér að neðan.',
+    description: 'Leiðbeiningar fyrir notendur um að staðfesta upplýsingar',
+  },
+  verificationLinkTitle: {
+    id: 'application.system:core.default.verificationLinkTitle',
+    defaultMessage: 'Leiðbeiningar um staðfestingu',
+    description:
+      'Titill fyrir tengil sem leiðbeinir notendum um hvernig á að staðfesta',
+  },
+  verificationLinkUrl: {
+    id: 'application.system:core.default.verificationLinkUrl',
+    defaultMessage: 'https://verification-url-example.com',
+    description: 'URL fyrir tengilinn sem leiðbeinir um staðfestingu',
+  },
+  viewPdfButtonLabel: {
+    id: 'application.system:core.default.viewPdfButtonLabel',
+    defaultMessage: 'Skoða PDF',
+    description: 'Merki fyrir hnappinn til að skoða PDF skjal',
+  },
+  openInboxButtonLabel: {
+    id: 'application.system:core.default.openInboxButtonLabel',
+    defaultMessage: 'Opna tölvupóstinn',
+    description: 'Merki fyrir hnappinn til að opna tölvupóstinn',
+  },
+  confirmationMessage: {
+    id: 'application.system:core.default.confirmationMessage',
+    defaultMessage: 'Upplýsingum þínum hefur verið staðfest.',
+    description: 'Skilaboð sem birtast þegar upplýsingar hafa verið staðfestar',
+  },
 })
 
 export const coreErrorMessages = defineMessages({

@@ -25,6 +25,7 @@ import {
   MessageWithLinkButtonField,
   Option,
   PaymentPendingField,
+  PdfViewerField,
   PhoneField,
   RadioField,
   RecordObject,
@@ -539,5 +540,52 @@ export function buildLinkField(
     children: undefined,
     type: FieldTypes.LINK,
     component: FieldComponents.LINK,
+  }
+}
+
+export function buildPdfPreviewField(data: PdfViewerField): PdfViewerField {
+  const {
+    confirmationMessage,
+    openInboxButtonLabel,
+    openMySitesLabel,
+    downloadPdfButtonLabel,
+    successTitle,
+    successDescription,
+    verificationDescription,
+    verificationLinkUrl,
+    verificationLinkTitle,
+    viewPdfButtonLabel,
+    pdfKey,
+  } = data
+
+  console.log(data)
+  console.log('message', coreDefaultFieldMessages.downloadPdfButtonLabel)
+
+  return {
+    ...extractCommonFields(data),
+    openMySitesLabel:
+      openMySitesLabel || coreDefaultFieldMessages.downloadPdfButtonLabel,
+    downloadPdfButtonLabel:
+      downloadPdfButtonLabel || coreDefaultFieldMessages.downloadPdfButtonLabel,
+    successTitle: successTitle || coreDefaultFieldMessages.successTitle,
+    successDescription:
+      successDescription || coreDefaultFieldMessages.successDescription,
+    verificationDescription:
+      verificationDescription ||
+      coreDefaultFieldMessages.verificationDescription,
+    verificationLinkUrl:
+      verificationLinkUrl || coreDefaultFieldMessages.verificationLinkUrl,
+    verificationLinkTitle:
+      verificationLinkTitle || coreDefaultFieldMessages.verificationLinkTitle,
+    viewPdfButtonLabel:
+      viewPdfButtonLabel || coreDefaultFieldMessages.viewPdfButtonLabel,
+    confirmationMessage:
+      confirmationMessage || coreDefaultFieldMessages.confirmationMessage,
+    openInboxButtonLabel:
+      openInboxButtonLabel || coreDefaultFieldMessages.openInboxButtonLabel,
+    pdfKey: pdfKey || 'test',
+    children: undefined,
+    type: FieldTypes.PDF_VIEWER,
+    component: FieldComponents.PDF_VIEWER,
   }
 }

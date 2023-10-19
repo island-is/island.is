@@ -55,13 +55,6 @@
               "order":0,
               "title":"Information from the criminal record database",
               "subTitle":"Skjal sem inniheldur sakavottorðið þitt."
-            },
-            {
-              "id":"payment",
-              "action":"Payment.paymentCatalog",
-              "order":0,
-              "title":"something",
-              "source": null
             }
           ]
         }

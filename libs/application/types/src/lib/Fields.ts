@@ -116,6 +116,7 @@ export enum FieldTypes {
   EXPANDABLE_DESCRIPTION = 'EXPANDABLE_DESCRIPTION',
   ALERT_MESSAGE = 'ALERT_MESSAGE',
   LINK = 'LINK',
+  PDF_VIEWER = 'PDF_VIEWER',
 }
 
 export enum FieldComponents {
@@ -138,6 +139,7 @@ export enum FieldComponents {
   EXPANDABLE_DESCRIPTION = 'ExpandableDescriptionFormField',
   ALERT_MESSAGE = 'AlertMessageFormField',
   LINK = 'LinkFormField',
+  PDF_VIEWER = 'PdfViewerFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -342,6 +344,22 @@ export interface LinkField extends BaseField {
   iconProps?: Pick<IconProps, 'icon' | 'type'>
 }
 
+export interface PdfViewerField extends BaseField {
+  readonly type: FieldTypes.PDF_VIEWER
+  component: FieldComponents.PDF_VIEWER
+  openMySitesLabel: FormText | string
+  downloadPdfButtonLabel: FormText
+  successTitle: FormText
+  successDescription: FormText
+  verificationDescription: FormText
+  verificationLinkUrl: FormText
+  verificationLinkTitle: FormText
+  viewPdfButtonLabel: FormText
+  openInboxButtonLabel: FormText
+  confirmationMessage: FormText
+  pdfKey: string
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -363,3 +381,4 @@ export type Field =
   | ExpandableDescriptionField
   | AlertMessageField
   | LinkField
+  | PdfViewerField

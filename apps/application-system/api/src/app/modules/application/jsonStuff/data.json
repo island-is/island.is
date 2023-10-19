@@ -39,109 +39,20 @@
               }
             },
             {
-              "id": "descriptionField1",
-              "type": "DESCRIPTION",
-              "component": "DescriptionFormField",
-              "description": "You need to set an url for input below to be valid."
-            },
-            {
-              "id": "input1",
-              "width": "half",
-              "type": "TEXT",
-              "component": "TextFormField",
-              "title": "Input 1 Title URL validation",
-              "required": true,
+              "id": "submit2",
+              "title": "Submit Title",
+              "type": "SUBMIT",
+              "placement": "footer",
               "children": null,
-              "validation": {
-                "isURL": true,
-                "message": "Invalid URL format."
-              }
-            },
-            {
-              "id": "descriptionField2",
-              "type": "DESCRIPTION",
-              "component": "DescriptionFormField",
-              "description": "You need to set a phone number for input below to be valid."
-            },
-            {
-              "id": "input2",
-              "width": "half",
-              "type": "TEXT",
-              "component": "TextFormField",
-              "title": "Input 2 Title 7 letter Phone validation",
-              "required": true,
-              "children": null,
-              "validation": {
-                "pattern": "([0-8]\\d{6})$",
-                "message": "Invalid phone number."
-              }
-            },
-            {
-              "id": "radio2",
-              "width": "half",
-              "title": "Radio 2 Title",
-              "options": [
+              "doesNotRequireAnswer": false,
+              "component": "SubmitFormField",
+              "actions": [
                 {
-                  "value": "option3",
-                  "label": "Option 3"
-                },
-                {
-                  "value": "option4",
-                  "label": "Option 4"
+                  "event": "SUBMIT",
+                  "name": "SUBMIT",
+                  "type": "primary"
                 }
-              ],
-              "type": "RADIO",
-              "component": "RadioFormField",
-              "required": true,
-              "validation": {
-                "isRequired": true,
-                "message": "This field is required"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "section2",
-      "title": "Section 2 Title",
-      "type": "SECTION",
-      "children": [
-        {
-          "id": "radio3",
-          "width": "full",
-          "title": "Radio 3 Title",
-          "options": [
-            {
-              "value": "option5",
-              "label": "Option 5"
-            },
-            {
-              "value": "option6",
-              "label": "Option 6"
-            }
-          ],
-          "type": "RADIO",
-          "component": "RadioFormField",
-          "required": true,
-          "validation": {
-            "isRequired": true,
-            "message": "This field is required"
-          }
-        },
-        {
-          "id": "submit2",
-          "title": "Submit Title",
-          "type": "SUBMIT",
-          "placement": "footer",
-          "children": null,
-          "doesNotRequireAnswer": false,
-          "component": "SubmitFormField",
-          "actions": [
-            {
-              "event": "SUBMIT",
-              "name": "SUBMIT",
-              "type": "primary"
+              ]
             }
           ]
         }
