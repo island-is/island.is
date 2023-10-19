@@ -6,7 +6,7 @@ import localization from '../../Home.json'
 import {
   CARDS_PER_PAGE,
   FILTERS_FRONT_PAGE_KEY,
-} from '@island.is/consultation-portal/utils/consts/consts'
+} from '../../../../utils/consts/consts'
 
 interface CardsProps {
   getCasesLoading?: boolean
