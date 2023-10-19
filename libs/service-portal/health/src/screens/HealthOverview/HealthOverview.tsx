@@ -22,6 +22,8 @@ import { CONTENT_GAP, SECTION_GAP } from '../Medicine/constants'
 import { HealthPaths } from '../../lib/paths'
 import { PaymentTabs } from '../Payments/Payments'
 import { Link } from 'react-router-dom'
+import { useIntl } from 'react-intl'
+
 export const HealthOverview = () => {
   useNamespaces('sp.health')
 
@@ -29,6 +31,8 @@ export const HealthOverview = () => {
   const user = useUserInfo()
 
   const { data, error, loading } = useGetInsuranceOverviewQuery()
+
+  const intl = useIntl()
 
   const insurance = data?.rightsPortalInsuranceOverview.items[0]
   const errors = data?.rightsPortalInsuranceOverview.errors
@@ -108,12 +112,6 @@ export const HealthOverview = () => {
                 label={formatMessage(messages.status)}
                 content={insurance.status?.display ?? undefined}
               />
-              <UserInfoLine
-                label={formatMessage(messages.hasHealthInsurance)}
-                content={
-                  <Text>{formatDateFns(insurance.updated, 'dd.MM.yyyy')}</Text>
-                }
-              />
             </Stack>
           </Box>
           <Box
@@ -135,8 +133,10 @@ export const HealthOverview = () => {
                   >
                     <Text>
                       {formatMessage(messages.medicinePaymentPaidAmount, {
-                        amount: insurance.maximumPayment,
-                      }) ?? undefined}
+                        amount: insurance.maximumPayment
+                          ? intl.formatNumber(insurance.maximumPayment)
+                          : insurance.maximumPayment,
+                      })}
                     </Text>
                     <Link
                       to={HealthPaths.HealthPaymentsWithHash.replace(

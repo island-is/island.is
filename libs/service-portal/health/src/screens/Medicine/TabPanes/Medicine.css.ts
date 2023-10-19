@@ -15,6 +15,7 @@ export const tableRowStyles = style({})
 
 export const saveButtonWrapperStyle = recipe({
   base: {
+    whiteSpace: 'nowrap',
     position: 'relative',
   },
   variants: {

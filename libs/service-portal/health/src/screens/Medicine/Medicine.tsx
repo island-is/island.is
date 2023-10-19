@@ -55,7 +55,7 @@ const Medicine = () => {
     return (
       !forceReRender && (
         <Tabs
-          label={formatMessage(messages.chooseTherapy)}
+          label={formatMessage(messages.chooseMedicineTabs)}
           tabs={tabs}
           contentBackground="transparent"
           selected={selectedTab}

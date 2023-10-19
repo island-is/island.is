@@ -18,6 +18,7 @@ import {
   useGetPaymentOverviewBillsQuery,
   useGetPaymentOverviewStatusQuery,
 } from '../Payments.generated'
+import { useIntl } from 'react-intl'
 
 export const PaymentOverview = () => {
   const [startDate, setStartDate] = useState<Date | null>(null)
@@ -30,7 +31,7 @@ export const PaymentOverview = () => {
     loading: billsLoading,
     error: billsError,
   } = useGetPaymentOverviewBillsQuery()
-
+  const intl = useIntl()
   const { formatMessage, formatDateFns } = useLocale()
 
   const status = data?.rightsPortalPaymentOverviewStatus.items[0]
@@ -58,13 +59,17 @@ export const PaymentOverview = () => {
                 titlePadding={2}
                 label={formatMessage(messages.credit)}
                 content={formatMessage(messages.medicinePaymentPaidAmount, {
-                  amount: status?.credit ?? 0,
+                  amount: status?.credit
+                    ? intl.formatNumber(status.credit)
+                    : status?.credit,
                 })}
               />
               <UserInfoLine
                 label={formatMessage(messages.debit)}
                 content={formatMessage(messages.medicinePaymentPaidAmount, {
-                  amount: status?.debit ?? 0,
+                  amount: status?.debit
+                    ? intl.formatNumber(status.debit)
+                    : status?.debit,
                 })}
               />
             </Stack>

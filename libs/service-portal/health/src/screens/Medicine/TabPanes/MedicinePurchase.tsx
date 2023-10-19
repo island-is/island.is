@@ -35,6 +35,8 @@ import {
   MedicineTabs,
   SECTION_GAP,
 } from '../constants'
+import { useIntl } from 'react-intl'
+
 type Props = {
   onTabChange: (id: MedicineTabs) => void
 }
@@ -42,9 +44,8 @@ type Props = {
 export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
   useNamespaces('sp.health')
 
-  const { formatMessage } = useLocale()
-  const { formatDateFns } = useLocale()
-
+  const { formatMessage, formatDateFns } = useLocale()
+  const intl = useIntl()
   const [selectedPeriod, setSelectedPeriod] =
     useState<RightsPortalDrugPeriod | null>(null)
   const [selectedLineItem, setSelectedLineItem] = useState<string>('')
@@ -101,6 +102,7 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
       <Box marginBottom={SECTION_GAP}>
         <IntroHeader
           isSubheading
+          span={['8/8', '8/8', '8/8', '5/8', '5/8']}
           title={messages.medicinePurchaseTitle}
           intro={messages.medicinePurchaseIntroText}
         />
@@ -180,7 +182,9 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
                 paddingY={3}
                 label={formatMessage(messages.medicinePaymentStatus)}
                 content={formatMessage(messages.medicinePaymentPaidAmount, {
-                  amount: selectedPeriod?.paidAmount,
+                  amount: selectedPeriod?.paidAmount
+                    ? intl.formatNumber(selectedPeriod?.paidAmount)
+                    : selectedPeriod?.paidAmount,
                 })}
               />
               <UserInfoLine
@@ -249,13 +253,21 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
                         {
                           value: formatMessage(
                             messages.medicinePaymentPaidAmount,
-                            { amount: bill.totalCopaymentAmount },
+                            {
+                              amount: bill.totalCopaymentAmount
+                                ? intl.formatNumber(bill.totalCopaymentAmount)
+                                : bill.totalCopaymentAmount,
+                            },
                           ),
                         },
                         {
                           value: formatMessage(
                             messages.medicinePaymentPaidAmount,
-                            { amount: bill.totalCustomerAmount },
+                            {
+                              amount: bill.totalCustomerAmount
+                                ? intl.formatNumber(bill.totalCustomerAmount)
+                                : bill.totalCustomerAmount,
+                            },
                           ),
                         },
                       ]}
@@ -353,25 +365,49 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
                                     <T.Data>
                                       {formatMessage(
                                         messages.medicinePaymentPaidAmount,
-                                        { amount: lineItem.salesPrice },
+                                        {
+                                          amount: lineItem.salesPrice
+                                            ? intl.formatNumber(
+                                                lineItem.salesPrice,
+                                              )
+                                            : lineItem.salesPrice,
+                                        },
                                       )}
                                     </T.Data>
                                     <T.Data>
                                       {formatMessage(
                                         messages.medicinePaymentPaidAmount,
-                                        { amount: lineItem.copaymentAmount },
+                                        {
+                                          amount: lineItem.copaymentAmount
+                                            ? intl.formatNumber(
+                                                lineItem.copaymentAmount,
+                                              )
+                                            : lineItem.copaymentAmount,
+                                        },
                                       )}
                                     </T.Data>
                                     <T.Data>
                                       {formatMessage(
                                         messages.medicinePaymentPaidAmount,
-                                        { amount: lineItem.excessAmount },
+                                        {
+                                          amount: lineItem.excessAmount
+                                            ? intl.formatNumber(
+                                                lineItem.excessAmount,
+                                              )
+                                            : lineItem.excessAmount,
+                                        },
                                       )}
                                     </T.Data>
                                     <T.Data>
                                       {formatMessage(
                                         messages.medicinePaymentPaidAmount,
-                                        { amount: lineItem.customerAmount },
+                                        {
+                                          amount: lineItem.customerAmount
+                                            ? intl.formatNumber(
+                                                lineItem.customerAmount,
+                                              )
+                                            : lineItem.customerAmount,
+                                        },
                                       )}
                                     </T.Data>
                                   </T.Row>
@@ -394,7 +430,13 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
                                 <span className={styles.subTableHeaderText}>
                                   {formatMessage(
                                     messages.medicinePaymentPaidAmount,
-                                    { amount: bill.totalCopaymentAmount },
+                                    {
+                                      amount: bill.totalCopaymentAmount
+                                        ? intl.formatNumber(
+                                            bill.totalCopaymentAmount,
+                                          )
+                                        : bill.totalCopaymentAmount,
+                                    },
                                   )}
                                 </span>
                               </T.Data>

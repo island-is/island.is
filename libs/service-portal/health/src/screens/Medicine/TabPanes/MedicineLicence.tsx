@@ -5,11 +5,10 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { IntroHeader, m } from '@island.is/portals/core'
 import { messages } from '../../../lib/messages'
 import { useGetDrugCertificatesQuery } from '../Medicine.generated'
 import { SECTION_GAP } from '../constants'
-import { ActionCard } from '@island.is/service-portal/core'
+import { ActionCard, IntroHeader, m } from '@island.is/service-portal/core'
 import { HealthPaths } from '../../../lib/paths'
 
 export const MedicineLicence = () => {
@@ -17,13 +16,12 @@ export const MedicineLicence = () => {
 
   const { data, error, loading } = useGetDrugCertificatesQuery()
 
-  console.log(data?.rightsPortalDrugCertificates)
-
   return (
     <Box paddingY={4}>
       <Box marginBottom={SECTION_GAP}>
         <IntroHeader
           title={formatMessage(messages.medicineLicenseIntroTitle)}
+          span={['8/8', '8/8', '8/8', '5/8', '5/8']}
           intro={formatMessage(messages.medicineLicenseIntroText)}
           isSubheading
         />
@@ -31,7 +29,7 @@ export const MedicineLicence = () => {
       {error ? (
         <AlertMessage
           type="error"
-          title={formatMessage(m.errorPageHeading)}
+          title={formatMessage(m.errorTitle)}
           message={formatMessage(m.errorFetch)}
         />
       ) : loading ? (

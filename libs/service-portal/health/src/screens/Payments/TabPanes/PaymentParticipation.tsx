@@ -19,11 +19,12 @@ import {
   useGetCopaymentBillsLazyQuery,
   useGetCopaymentBillsQuery,
 } from '../Payments.generated'
+import { useIntl } from 'react-intl'
 
 export const PaymentPartication = () => {
   const [startDate, setStartDate] = useState<Date | null>(null)
   const [endDate, setEndDate] = useState<Date | null>(null)
-
+  const intl = useIntl()
   const [selectedPeriodId, setSelectedPeriodId] = useState<number>(1)
 
   const { data, loading, error } = useGetCopaymentStatusQuery()
@@ -69,13 +70,17 @@ export const PaymentPartication = () => {
                 titlePadding={2}
                 label={formatMessage(messages.maximumMonthlyPayment)}
                 content={formatMessage(messages.medicinePaymentPaidAmount, {
-                  amount: status?.maximumMonthlyPayment ?? 0,
+                  amount: status?.maximumMonthlyPayment
+                    ? intl.formatNumber(status?.maximumMonthlyPayment)
+                    : status?.maximumMonthlyPayment,
                 })}
               />
               <UserInfoLine
                 label={formatMessage(messages.paymentTarget)}
                 content={formatMessage(messages.medicinePaymentPaidAmount, {
-                  amount: status?.maximumPayment ?? 0,
+                  amount: status?.maximumPayment
+                    ? intl.formatNumber(status?.maximumPayment)
+                    : status?.maximumPayment,
                 })}
               />
             </Stack>
@@ -147,7 +152,9 @@ export const PaymentPartication = () => {
                               {formatMessage(
                                 messages.medicinePaymentPaidAmount,
                                 {
-                                  amount: period.maximumPayment,
+                                  amount: period.maximumPayment
+                                    ? intl.formatNumber(period.maximumPayment)
+                                    : period.maximumPayment,
                                 },
                               )}
                             </T.Data>
@@ -155,7 +162,9 @@ export const PaymentPartication = () => {
                               {formatMessage(
                                 messages.medicinePaymentPaidAmount,
                                 {
-                                  amount: period.monthPayment,
+                                  amount: period.monthPayment
+                                    ? intl.formatNumber(period.monthPayment)
+                                    : period.monthPayment,
                                 },
                               )}
                             </T.Data>
@@ -163,7 +172,9 @@ export const PaymentPartication = () => {
                               {formatMessage(
                                 messages.medicinePaymentPaidAmount,
                                 {
-                                  amount: period.status,
+                                  amount: period.status
+                                    ? intl.formatNumber(parseInt(period.status))
+                                    : period.status,
                                 },
                               )}
                             </T.Data>
@@ -171,7 +182,9 @@ export const PaymentPartication = () => {
                               {formatMessage(
                                 messages.medicinePaymentPaidAmount,
                                 {
-                                  amount: period.repaid,
+                                  amount: period.repaid
+                                    ? intl.formatNumber(period.repaid)
+                                    : period.repaid,
                                 },
                               )}
                             </T.Data>
@@ -222,22 +235,30 @@ export const PaymentPartication = () => {
                         </T.Data>
                         <T.Data>
                           {formatMessage(messages.medicinePaymentPaidAmount, {
-                            amount: bill.totalAmount,
+                            amount: bill.totalAmount
+                              ? intl.formatNumber(bill.totalAmount)
+                              : bill.totalAmount,
                           })}
                         </T.Data>
                         <T.Data>
                           {formatMessage(messages.medicinePaymentPaidAmount, {
-                            amount: bill.insuranceAmount,
+                            amount: bill.insuranceAmount
+                              ? intl.formatNumber(bill.insuranceAmount)
+                              : bill.insuranceAmount,
                           })}
                         </T.Data>
                         <T.Data>
                           {formatMessage(messages.medicinePaymentPaidAmount, {
-                            amount: bill.ownAmount,
+                            amount: bill.ownAmount
+                              ? intl.formatNumber(bill.ownAmount)
+                              : bill.ownAmount,
                           })}
                         </T.Data>
                         <T.Data>
                           {formatMessage(messages.medicinePaymentPaidAmount, {
-                            amount: bill.overpaid,
+                            amount: bill.overpaid
+                              ? intl.formatNumber(bill.overpaid)
+                              : bill.overpaid,
                           })}
                         </T.Data>
                       </tr>
@@ -253,22 +274,22 @@ export const PaymentPartication = () => {
                       <T.Data></T.Data>
                       <T.Data>
                         {formatMessage(messages.medicinePaymentPaidAmount, {
-                          amount: 0,
+                          amount: intl.formatNumber(0),
                         })}
                       </T.Data>
                       <T.Data>
                         {formatMessage(messages.medicinePaymentPaidAmount, {
-                          amount: 0,
+                          amount: intl.formatNumber(0),
                         })}
                       </T.Data>
                       <T.Data>
                         {formatMessage(messages.medicinePaymentPaidAmount, {
-                          amount: 0,
+                          amount: intl.formatNumber(0),
                         })}
                       </T.Data>
                       <T.Data>
                         {formatMessage(messages.medicinePaymentPaidAmount, {
-                          amount: 0,
+                          amount: intl.formatNumber(0),
                         })}
                       </T.Data>
                     </T.Row>
@@ -291,10 +312,3 @@ export const PaymentPartication = () => {
 }
 
 export default PaymentPartication
-
-{
-  /*
-
-
-*/
-}

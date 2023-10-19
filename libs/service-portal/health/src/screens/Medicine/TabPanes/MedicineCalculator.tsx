@@ -5,13 +5,14 @@ import {
   Table as T,
   FilterInput,
   Button,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../../lib/messages'
 import { CONTENT_GAP_LG, SECTION_GAP } from '../constants'
 import { IntroHeader, m } from '@island.is/service-portal/core'
 import { useState } from 'react'
-import { useDebounce } from 'react-use'
+import { useDebounce, useWindowSize } from 'react-use'
 import {
   useGetDrugCalculationMutation,
   useGetDrugsQuery,
@@ -23,6 +24,7 @@ import {
 import * as styles from './Medicine.css'
 import { EmptyTable } from '../components/EmptyTable/EmptyTable'
 import { DrugRow } from '../components/DrugRow/DrugRow'
+import { useIntl } from 'react-intl'
 
 const DEFAULT_PAGE_NUMBER = 1
 const DEFAULT_PAGE_SIZE = 8
@@ -37,6 +39,8 @@ export const MedicineCalulator = () => {
   const [selectedDrugList, setSelectedDrugList] = useState<
     RightsPortalCalculatorRequestInput[]
   >([])
+
+  const intl = useIntl()
 
   useDebounce(
     () => {
@@ -66,7 +70,10 @@ export const MedicineCalulator = () => {
   const [calculatorResults, setCalculatorResults] =
     useState<RightsPortalDrugCalculatorResponse | null>(null)
 
-  const SHOW_TABLE = debouncedSearch.length > 0
+  const SHOW_TABLE = !!(
+    debouncedSearch.length > 0 && drugs?.rightsPortalDrugs.data.length
+  )
+
   const CALCULATOR_DISABLED = selectedDrugList.length === 0
 
   const handleCalculate = () => {
@@ -89,6 +96,10 @@ export const MedicineCalulator = () => {
       },
     })
   }
+
+  const { width } = useWindowSize()
+
+  const isMobile = width < 992
 
   const handleAddDrug = (
     drug: RightsPortalCalculatorRequestInput,
@@ -115,6 +126,7 @@ export const MedicineCalulator = () => {
       <Box marginBottom={SECTION_GAP}>
         <IntroHeader
           isSubheading
+          span={['8/8', '8/8', '8/8', '5/8', '5/8']}
           title={formatMessage(messages.medicineCalculatorIntroTitle)}
           intro={formatMessage(messages.medicineCalculatorIntroText)}
         />
@@ -129,12 +141,15 @@ export const MedicineCalulator = () => {
         <Text color="blue400" variant="eyebrow">
           {formatMessage(messages.medicineFindDrug)}
         </Text>
-        <FilterInput
-          name="drugs"
-          placeholder={formatMessage(messages.medicineSearchForDrug)}
-          onChange={(value) => setSearch(value)}
-          value={search}
-        />
+        <Box display="flex" alignItems="center" columnGap={2}>
+          <FilterInput
+            name="drugs"
+            placeholder={formatMessage(messages.medicineSearchForDrug)}
+            onChange={(value) => setSearch(value)}
+            value={search}
+          />
+          {drugsLoading && <LoadingDots />}
+        </Box>
       </Box>
       <Box
         display="flex"
@@ -176,7 +191,7 @@ export const MedicineCalulator = () => {
                     <T.Data>
                       <Box
                         className={styles.saveButtonWrapperStyle({
-                          visible: hoveredDrug === i,
+                          visible: hoveredDrug === i || isMobile,
                         })}
                       >
                         <Button
@@ -323,12 +338,18 @@ export const MedicineCalulator = () => {
                   <T.Data></T.Data>
                   <T.Data>
                     {formatMessage(messages.medicinePaymentPaidAmount, {
-                      amount: calculatorResults.totalPrice,
+                      amount: calculatorResults.totalPrice
+                        ? intl.formatNumber(calculatorResults.totalPrice)
+                        : calculatorResults.totalPrice,
                     })}
                   </T.Data>
                   <T.Data>
                     {formatMessage(messages.medicinePaymentPaidAmount, {
-                      amount: calculatorResults.totalCustomerPrice,
+                      amount: calculatorResults.totalCustomerPrice
+                        ? intl.formatNumber(
+                            calculatorResults.totalCustomerPrice,
+                          )
+                        : calculatorResults.totalCustomerPrice,
                     })}
                   </T.Data>
                   <T.Data></T.Data>

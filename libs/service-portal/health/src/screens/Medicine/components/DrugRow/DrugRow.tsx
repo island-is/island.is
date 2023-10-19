@@ -4,6 +4,7 @@ import { RightsPortalDrug } from '@island.is/api/schema'
 import { useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../../../lib/messages'
+import { useIntl } from 'react-intl'
 
 type Props = {
   drug: RightsPortalDrug
@@ -17,6 +18,7 @@ export const DrugRow: React.FC<Props> = ({
   handleRemove,
 }) => {
   const { formatMessage } = useLocale()
+  const intl = useIntl()
 
   const [quantity, setQuantity] = useState(1)
 
@@ -47,7 +49,7 @@ export const DrugRow: React.FC<Props> = ({
       </T.Data>
       <T.Data>
         {formatMessage(messages.medicinePaymentPaidAmount, {
-          amount: currentPrice,
+          amount: intl.formatNumber(currentPrice),
         })}
       </T.Data>
       <T.Data>Vantar gögn</T.Data>
