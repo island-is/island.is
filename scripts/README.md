@@ -28,3 +28,19 @@ yarn cruise -p apps/services/sessions && firefox depgraph.html
 ```
 
 This uses [dependency-cruiser](https://www.npmjs.com/package/dependency-cruiser) behind the scenes. Feel free to add `.dependency-cruiser.local.js` in the repo root to merge your custom config with the default.
+
+## HMR benchmark
+
+The following command can be used to benchmark the startup and hot-reload time of any NX `serve` targets. The default message is the service ready output for NestJS services.
+
+Run `yarn hmr-benchmark --help` for available options
+
+```bash
+yarn hmr-benchmark --app <service name> --message <the output message to watch> --logfile [default: workspace root]
+```
+
+Example:
+
+```bash
+yarn hmr-benchmark --app services-sessions --message 'Nest application successfully started'
+```
