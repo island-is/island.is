@@ -28,22 +28,6 @@ export const stringifyObject = <T extends Record<string, unknown>>(
   return result
 }
 
-/*
-stringifyObject(obj: UploadData): Record<string, string> {
-    const result: Record<string, string> = {}
-    // Curiously: https://github.com/Microsoft/TypeScript/issues/12870
-    for (const key of Object.keys(obj) as Array<keyof typeof obj>) {
-      if (typeof obj[key] === 'string') {
-        result[key] = obj[key] as string
-      } else {
-        result[key] = JSON.stringify(obj[key])
-      }
-    }
-
-    return result
-  }
-*/
-
 export const generateRawUploadData = (
   answers: EstateSchema,
   externalData: EstateSchema,
