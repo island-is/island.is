@@ -537,7 +537,7 @@ export const getTitleAndLogo = (type: string) => {
     case LicenseType.PCard:
       return {
         title: m.pCard,
-        logo: './assets/images/coffee.svg',
+        logo: './assets/images/island.svg',
       }
     default:
       return { title: m.license, logo: './assets/images/island.svg' }
