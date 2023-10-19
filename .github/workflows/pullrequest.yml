@@ -203,7 +203,11 @@ jobs:
           if [[ $CHUNKS != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
           fi
-
+      - name: Check release-manager approval
+        id: check-release-manager-approval
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'automerge') && startsWith(github.event.pull_request.head.ref, 'pre-release/') }}
+        run: |
+          node -r esbuild-register ./github/actions/check-team-approval.ts release-managers
   tests:
     needs:
       - prepare
