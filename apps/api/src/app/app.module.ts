@@ -348,7 +348,7 @@ const environment = getConfig
         ShipRegistryClientConfig,
         HousingBenefitCalculatorClientConfig,
         MMSClientConfig,
-        TransferOfMachineOwnershipClientConfig
+        TransferOfMachineOwnershipClientConfig,
       ],
     }),
   ],

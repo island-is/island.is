@@ -67,7 +67,8 @@ export const externalData = {
   currentVehicles: defineMessages({
     title: {
       id: 'aosah.application:externalData.currentVehicles.title',
-      defaultMessage: 'Upplýsingar um vélar og tæki í þinni eigu og stöðu þeirra',
+      defaultMessage:
+        'Upplýsingar um vélar og tæki í þinni eigu og stöðu þeirra',
       description: 'Your vehicles from the vehicle registry',
     },
     subTitle: {
@@ -76,5 +77,5 @@ export const externalData = {
         'Upplýsingar úr ökutækjaskrá  - Upplýsingar um þínar vélar, tæki og stöðu þeirra.',
       description: 'To make stuff easier',
     },
-  })
+  }),
 }

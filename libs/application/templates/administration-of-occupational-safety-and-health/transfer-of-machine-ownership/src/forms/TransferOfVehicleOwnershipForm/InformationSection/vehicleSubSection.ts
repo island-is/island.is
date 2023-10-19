@@ -58,7 +58,7 @@ export const vehicleSubSection = buildSubSection({
               application.externalData,
               application.answers,
             ) as Machine
-            return machine.type?.split(' - ')[0].trim();
+            return machine.type?.split(' - ')[0].trim()
           },
         }),
         buildTextField({
@@ -72,7 +72,7 @@ export const vehicleSubSection = buildSubSection({
               application.externalData,
               application.answers,
             ) as Machine
-            return machine.type?.split(' - ')[1].trim();
+            return machine.type?.split(' - ')[1].trim()
           },
         }),
         buildTextField({
@@ -116,7 +116,6 @@ export const vehicleSubSection = buildSubSection({
           },
           defaultValue: new Date().toISOString().substring(0, 10),
         }),
-        
       ],
     }),
   ],

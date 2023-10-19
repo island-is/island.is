@@ -1,3 +1,3 @@
 export enum AosahScope {
-    aosah = '@ver.is/umsyslavinnuvela'
+  aosah = '@ver.is/umsyslavinnuvela',
 }

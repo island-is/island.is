@@ -19,7 +19,6 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const currentMachineList = application?.externalData.machinesList
     .data as Machine[]
 
-
   const updateData = useCallback(async () => {
     await updateApplication({
       variables: {
@@ -41,7 +40,7 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
     <Box paddingTop={2}>
       {currentMachineList.length > 5 ? (
         <VehicleSelectField
-        currentMachineList={currentMachineList}
+          currentMachineList={currentMachineList}
           {...props}
         />
       ) : (

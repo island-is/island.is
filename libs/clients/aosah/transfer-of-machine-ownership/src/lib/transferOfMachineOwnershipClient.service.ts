@@ -1,7 +1,10 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import { MachinesApi } from '../../gen/fetch/apis'
-import { Machine, MachineDetails } from './transferOfMachineOwnershipClient.types'
+import {
+  Machine,
+  MachineDetails,
+} from './transferOfMachineOwnershipClient.types'
 
 @Injectable()
 export class TransferOfMachineOwnershipClient {
@@ -20,28 +23,32 @@ export class TransferOfMachineOwnershipClient {
       // showDeregisteredMachines: undefined,
       // supervisorRegistered: undefined,
       // onlyInOwnerChangeProcess: undefined,
-       onlyShowOwnedMachines: true,
+      onlyShowOwnedMachines: true,
       // locale: 'is',
     })
-    console.log('rsult', result);
+    console.log('rsult', result)
 
-    const machines: Machine[] = result.value?.map((m) => ({
-      id: m.id,
-      registrationNumber: m.registrationNumber || null,
-      type: m.type || null,
-      owner: m.owner || null,
-      supervisor: m.supervisor || null,
-      status: m.status || null,
-      dateLastInspection: m.dateLastInspection || null,
-      category: m.category || null,
-      subCategory: m.subCategory || null,
-      _links: result.links || null,
-    })) || [];
-    
-    return machines;
+    const machines: Machine[] =
+      result.value?.map((m) => ({
+        id: m.id,
+        registrationNumber: m.registrationNumber || null,
+        type: m.type || null,
+        owner: m.owner || null,
+        supervisor: m.supervisor || null,
+        status: m.status || null,
+        dateLastInspection: m.dateLastInspection || null,
+        category: m.category || null,
+        subCategory: m.subCategory || null,
+        _links: result.links || null,
+      })) || []
+
+    return machines
   }
 
-  public async getMachineDetail(auth: User, id: string): Promise<MachineDetails> {
+  public async getMachineDetail(
+    auth: User,
+    id: string,
+  ): Promise<MachineDetails> {
     const result = await this.machinesApiWithAuth(auth).getMachine({
       id,
       // locale: 'is',
@@ -73,6 +80,6 @@ export class TransferOfMachineOwnershipClient {
       _links: result.links || null,
     }
 
-    return machine;
+    return machine
   }
 }

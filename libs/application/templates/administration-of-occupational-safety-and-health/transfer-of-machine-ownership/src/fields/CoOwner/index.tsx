@@ -12,7 +12,10 @@ import {
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FC, useEffect } from 'react'
-import { GET_MACHINE_DETAILS, GET_VEHICLE_INFORMATION } from '../../graphql/queries'
+import {
+  GET_MACHINE_DETAILS,
+  GET_VEHICLE_INFORMATION,
+} from '../../graphql/queries'
 import { information } from '../../lib/messages'
 import { Machine, VehiclesCurrentVehicle } from '../../shared'
 import { getSelectedVehicle } from '../../utils'
@@ -32,7 +35,7 @@ export const CoOwner: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
     application.externalData,
     application.answers,
   ) as Machine
-  
+
   console.log('application.answers', application.answers)
 
   // const { data, loading, error } = useQuery(
@@ -57,12 +60,11 @@ export const CoOwner: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
     {
       variables: {
         input: {
-          id: machine.id
+          id: machine.id,
         },
       },
     },
   )
-
 
   useEffect(() => {
     setFieldLoadingState?.(loading || !!error)
@@ -70,8 +72,8 @@ export const CoOwner: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
 
   return !loading && !error ? (
     data.registrationNumber ? (
-    //data?.vehiclesDetail?.coOwners &&
-    //data.vehiclesDetail.coOwners.length > 0 ? (
+      //data?.vehiclesDetail?.coOwners &&
+      //data.vehiclesDetail.coOwners.length > 0 ? (
       <Box>
         {data.vehiclesDetail.coOwners.map(
           (coOwner: VehiclesCurrentOwnerInfo, index: number) => (

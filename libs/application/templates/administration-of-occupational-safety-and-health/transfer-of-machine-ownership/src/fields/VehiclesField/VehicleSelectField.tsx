@@ -41,35 +41,33 @@ export const VehicleSelectField: FC<
   const currentVehicle = currentMachineList[parseInt(vehicleValue, 10)]
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [selectedMachine, setSelectedMachine] =
-    useState<Machine | null>(
-      currentVehicle && currentVehicle.registrationNumber
-        ? {
-            id : currentVehicle.id,
-            registrationNumber : currentVehicle.registrationNumber,
-            type : currentVehicle.type,
-            owner : currentVehicle.owner,
-            supervisor : currentVehicle.supervisor,
-            status : currentVehicle.status,
-            dateLastInspection : currentVehicle.dateLastInspection,
-            category: currentVehicle.category,
-          }
-        : null,
-    )
+  const [selectedMachine, setSelectedMachine] = useState<Machine | null>(
+    currentVehicle && currentVehicle.registrationNumber
+      ? {
+          id: currentVehicle.id,
+          registrationNumber: currentVehicle.registrationNumber,
+          type: currentVehicle.type,
+          owner: currentVehicle.owner,
+          supervisor: currentVehicle.supervisor,
+          status: currentVehicle.status,
+          dateLastInspection: currentVehicle.dateLastInspection,
+          category: currentVehicle.category,
+        }
+      : null,
+  )
   const [plate, setPlate] = useState<string>(
     getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
   )
 
   const getVehicleDetails = useLazyVehicleDetails()
 
-  
   // Statuses for Machines for if they appear disabled or not
-  //"Forskráð" 
+  //"Forskráð"
   // "Læst" DISABLED
   // "Í skráningarferli" DISABLED
   // "Eigandaskipti í gangi" DISABLED
   // "Umráðamannaskipti í gangi" DISABLED
-  // "Í notkun" 
+  // "Í notkun"
   // "Götuskráning í gangi"
   // "Afskráð tímabundið" DISABLED
   // "Afskráð endanlega" DISABLED
@@ -78,52 +76,50 @@ export const VehicleSelectField: FC<
     setIsLoading(true)
     if (currentVehicle.registrationNumber) {
       setSelectedMachine({
-        id : currentVehicle.id,
-        registrationNumber : currentVehicle.registrationNumber,
-        type : currentVehicle.type,
-        owner : currentVehicle.owner,
-        supervisor : currentVehicle.supervisor,
-        status : currentVehicle.status,
-        dateLastInspection : currentVehicle.dateLastInspection,
-        _links : currentVehicle._links,
-        category : currentVehicle.category,
+        id: currentVehicle.id,
+        registrationNumber: currentVehicle.registrationNumber,
+        type: currentVehicle.type,
+        owner: currentVehicle.owner,
+        supervisor: currentVehicle.supervisor,
+        status: currentVehicle.status,
+        dateLastInspection: currentVehicle.dateLastInspection,
+        _links: currentVehicle._links,
+        category: currentVehicle.category,
       })
 
-          const disabled = isCurrentMachineDisabled(selectedMachine?.status);
-          console.log("currentMachine", selectedMachine)
-          setPlate(disabled ? '' : currentVehicle.registrationNumber || '')
-          setValue('vehicle.plate', currentVehicle.registrationNumber)
-          setValue('vehicle.type', currentVehicle.type)
-          setValue('vehicle.date', new Date().toISOString().substring(0, 10))
-          setValue(
-            'pickVehicle.plate',
-            disabled ? '' : currentVehicle.registrationNumber || '',
-          )
-          //setValue('pickVehicle.color', currentVehicle.color || undefined)
-          setIsLoading(false)
+      const disabled = isCurrentMachineDisabled(selectedMachine?.status)
+      console.log('currentMachine', selectedMachine)
+      setPlate(disabled ? '' : currentVehicle.registrationNumber || '')
+      setValue('vehicle.plate', currentVehicle.registrationNumber)
+      setValue('vehicle.type', currentVehicle.type)
+      setValue('vehicle.date', new Date().toISOString().substring(0, 10))
+      setValue(
+        'pickVehicle.plate',
+        disabled ? '' : currentVehicle.registrationNumber || '',
+      )
+      //setValue('pickVehicle.color', currentVehicle.color || undefined)
+      setIsLoading(false)
     }
   }
   // Use this when Links have been added to machine
   // const isCurrentMachineDisabled = (machine: Machine | undefined | null) => !machine?._links?.some((link) => link.rel === "ownerChange");
 
-   function isCurrentMachineDisabled(status?: string): boolean {
-
-     const disabledStatuses = [
-         "Læst",
-         "Í skráningarferli",
-         "Eigandaskipti í gangi",
-         "Umráðamannaskipti í gangi",
-         "Afskráð tímabundið",
-         "Afskráð endanlega"
-     ];
-     if (status === undefined) 
-       return true;
-     if (disabledStatuses.includes(status)) {
-         return true;
-     } else {
-         return false;
-     }
-   }
+  function isCurrentMachineDisabled(status?: string): boolean {
+    const disabledStatuses = [
+      'Læst',
+      'Í skráningarferli',
+      'Eigandaskipti í gangi',
+      'Umráðamannaskipti í gangi',
+      'Afskráð tímabundið',
+      'Afskráð endanlega',
+    ]
+    if (status === undefined) return true
+    if (disabledStatuses.includes(status)) {
+      return true
+    } else {
+      return false
+    }
+  }
 
   const getVehicleDetailsCallback = useCallback(
     async ({ permno }: GetVehicleDetailInput) => {
@@ -167,41 +163,42 @@ export const VehicleSelectField: FC<
           <Box>
             {selectedMachine && (
               <CategoryCard
-                colorScheme={isCurrentMachineDisabled(selectedMachine.status) ? 'red' : 'blue'}
+                colorScheme={
+                  isCurrentMachineDisabled(selectedMachine.status)
+                    ? 'red'
+                    : 'blue'
+                }
                 heading={selectedMachine.registrationNumber || ''} //selectedMachine.make || ''}
                 text={`${selectedMachine.type}`}
               />
             )}
-            {selectedMachine && isCurrentMachineDisabled(selectedMachine.status) && (
-              <Box marginTop={2}>
-                <AlertMessage
-                  type="error"
-                  title={formatMessage(
-                    information.labels.pickVehicle.hasErrorTitle,
-                  )}
-                  message={
-                    <Box>
-                      <BulletList>
-                        {/* {!selectedMachine.isDebtLess && (
+            {selectedMachine &&
+              isCurrentMachineDisabled(selectedMachine.status) && (
+                <Box marginTop={2}>
+                  <AlertMessage
+                    type="error"
+                    title={formatMessage(
+                      information.labels.pickVehicle.hasErrorTitle,
+                    )}
+                    message={
+                      <Box>
+                        <BulletList>
+                          {/* {!selectedMachine.isDebtLess && (
                           <Bullet>
                             {formatMessage(
                               information.labels.pickVehicle.isNotDebtLessTag,
                             )}
                           </Bullet>
                         )} */}
-                        {isCurrentMachineDisabled(selectedMachine.status) && (
-                          
-                                <Bullet>
-                                  { selectedMachine.status }
-                                </Bullet>
-                              
-                        )}
-                      </BulletList>
-                    </Box>
-                  }
-                />
-              </Box>
-            )}
+                          {isCurrentMachineDisabled(selectedMachine.status) && (
+                            <Bullet>{selectedMachine.status}</Bullet>
+                          )}
+                        </BulletList>
+                      </Box>
+                    }
+                  />
+                </Box>
+              )}
           </Box>
         )}
       </Box>
