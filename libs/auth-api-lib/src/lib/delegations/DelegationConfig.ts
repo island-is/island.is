@@ -60,6 +60,11 @@ export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
         scopeName: ApiScope.company,
         onlyForDelegationType: ['ProcurationHolder', 'Custom'],
       },
+      {
+        // This scope is not in use in our repo hence plain string instead of enum.
+        scopeName: '@akureyri.is/service-portal',
+        onlyForDelegationType: ['ProcurationHolder', 'Custom'],
+      },
     ],
     userInfoUrl:
       env.required(

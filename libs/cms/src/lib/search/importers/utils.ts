@@ -119,23 +119,32 @@ export const pruneEntryHyperlink = (node: any) => {
   const target = node?.data?.target
   const contentTypeId: CONTENT_TYPE = target?.sys?.contentType?.sys?.id
 
-  // Keep specific fields since we'll need them when creating the urls
+  // Keep specific non primitive fields since we'll need them when creating the urls
   if (contentTypeId === 'subArticle' && target.fields?.parent?.fields) {
-    const parentArticle = {
-      ...target.fields.parent,
-      fields: extractPrimitiveFields(target.fields.parent.fields),
+    node.data.target = {
+      ...target,
+      fields: {
+        ...extractPrimitiveFields(target.fields),
+        parent: {
+          ...target.fields.parent,
+          fields: extractPrimitiveFields(target.fields.parent.fields),
+        },
+      },
     }
-    target.fields.parent = parentArticle
   } else if (
     contentTypeId === 'organizationSubpage' &&
     target.fields?.organizationPage?.fields
   ) {
-    const organizationPage = {
-      ...target.fields.organizationPage,
-      fields: extractPrimitiveFields(target.fields.organizationPage.fields),
+    node.data.target = {
+      ...target,
+      fields: {
+        ...extractPrimitiveFields(target.fields),
+        organizationPage: {
+          ...target.fields.organizationPage,
+          fields: extractPrimitiveFields(target.fields.organizationPage.fields),
+        },
+      },
     }
-
-    target.fields.organizationPage = organizationPage
   }
   // In case there is no need to preserve non primitive fields we just remove them to prevent potential circularity
   else if (target?.fields) {

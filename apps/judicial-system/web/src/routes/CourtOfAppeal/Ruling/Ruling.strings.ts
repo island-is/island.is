@@ -32,6 +32,11 @@ export const courtOfAppealRuling = defineMessages({
     defaultMessage: 'Úrskurður Landsréttar',
     description: 'Notaður sem fyrirsögn á úrskurður Landsréttar.',
   },
+  conclusionPlaceholder: {
+    id: 'judicial.system.core:court_of_appeal_ruling.conclusionPlaceholder',
+    defaultMessage: 'Hver eru úrskurðarorð Landsréttar?',
+    description: 'Notaður sem skýritexti í úrskurðarorð textaboxi.',
+  },
   nextButtonFooter: {
     id: 'judicial.system.core:court_of_appeal_ruling.nextButtonFooter',
     defaultMessage: 'Ljúka máli',
