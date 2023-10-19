@@ -24,13 +24,16 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
     .secrets({
       SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL',
       RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY',
+      VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY',
+      TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY',
       RLS_OPEN_LOOKUP_API_KEY: '/k8s/api/RLS_OPEN_LOOKUP_API_KEY',
+      MACHINE_LICENSE_PASS_TEMPLATE_ID:
+        '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID',
+      ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID',
       DRIVING_LICENSE_PASS_TEMPLATE_ID:
         '/k8s/api/DRIVING_LICENSE_PASS_TEMPLATE_ID',
-      ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID',
       FIREARM_LICENSE_PASS_TEMPLATE_ID:
         '/k8s/api/FIREARM_LICENSE_PASS_TEMPLATE_ID',
-      TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY',
       DISABILITY_LICENSE_PASS_TEMPLATE_ID:
         '/k8s/DISABILITY_LICENSE_PASS_TEMPLATE_ID',
       DISABILITY_LICENSE_FETCH_TIMEOUT:
@@ -44,7 +47,6 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
       PKPASS_CACHE_TOKEN_EXPIRY_DELTA:
         '/k8s/api/PKPASS_CACHE_TOKEN_EXPIRY_DELTA',
       PKPASS_AUTH_RETRIES: '/k8s/api/PKPASS_AUTH_RETRIES',
-      VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY',
     })
     .xroad(Base, Client, Firearm, Disability, DrivingLicense)
     .ingress({
