@@ -107,22 +107,26 @@ export class CitizenshipService extends BaseTemplateApiService {
     // get basic information about indiviual
     const person = await this.nationalRegistryApi.getIndividual(nationalId)
 
+    console.log('person _____', person)
+
     // get information about indiviual citizenship
     const citizenship = await this.nationalRegistryApi.getCitizenship(
       nationalId,
     )
 
+    console.log('citizenship', citizenship)
+
     // dont allow user to continue if already has icelandic citizenship
     const citizenshipIceland = 'IS'
-    if (citizenship?.countryCode === citizenshipIceland) {
-      throw new TemplateApiError(
-        {
-          title: errorMessages.alreadyIcelandicCitizen,
-          summary: errorMessages.alreadyIcelandicCitizen,
-        },
-        404,
-      )
-    }
+    // if (citizenship?.countryCode === citizenshipIceland) {
+    //   throw new TemplateApiError(
+    //     {
+    //       title: errorMessages.alreadyIcelandicCitizen,
+    //       summary: errorMessages.alreadyIcelandicCitizen,
+    //     },
+    //     404,
+    //   )
+    // }
 
     // get marital title
     const cohabitationInfo = await this.nationalRegistryApi.getCohabitationInfo(
@@ -171,6 +175,8 @@ export class CitizenshipService extends BaseTemplateApiService {
       nationalId,
     )
 
+    console.log('residenceHistory', residenceHistory)
+
     // sort residence history so newest items are first, and if two items have the same date,
     // then the Iceland item will be first
     const countryIceland = 'IS'
@@ -197,15 +203,15 @@ export class CitizenshipService extends BaseTemplateApiService {
       }
     }
 
-    if (!lastChangeDate) {
-      throw new TemplateApiError(
-        {
-          title: errorMessages.residenceInIcelandLastChangeDateMissing,
-          summary: errorMessages.residenceInIcelandLastChangeDateMissing,
-        },
-        404,
-      )
-    }
+    // if (!lastChangeDate) {
+    //   throw new TemplateApiError(
+    //     {
+    //       title: errorMessages.residenceInIcelandLastChangeDateMissing,
+    //       summary: errorMessages.residenceInIcelandLastChangeDateMissing,
+    //     },
+    //     404,
+    //   )
+    // }
 
     return lastChangeDate
   }
@@ -241,15 +247,15 @@ export class CitizenshipService extends BaseTemplateApiService {
   ): Promise<NationalRegistryBirthplace | null> {
     const birthplace = await this.nationalRegistryApi.getBirthplace(nationalId)
 
-    if (!birthplace?.locality) {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.nationalRegistryBirthplaceMissing,
-          summary: coreErrorMessages.nationalRegistryBirthplaceMissing,
-        },
-        404,
-      )
-    }
+    // if (!birthplace?.locality) {
+    //   throw new TemplateApiError(
+    //     {
+    //       title: coreErrorMessages.nationalRegistryBirthplaceMissing,
+    //       summary: coreErrorMessages.nationalRegistryBirthplaceMissing,
+    //     },
+    //     404,
+    //   )
+    // }
 
     return (
       birthplace && {

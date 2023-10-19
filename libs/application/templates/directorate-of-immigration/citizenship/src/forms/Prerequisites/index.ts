@@ -48,6 +48,10 @@ export const Prerequisites: Form = buildForm({
           subTitle: externalData.dataProvider.subTitle,
           description: externalData.dataProvider.description,
           checkboxLabel: externalData.dataProvider.checkboxLabel,
+          condition: (_, externalData) => {
+            console.log('externalData', externalData)
+            return true
+          },
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
@@ -117,10 +121,10 @@ export const Prerequisites: Form = buildForm({
               provider: OldPassportItemApi,
               title: '',
             }),
-            buildDataProviderItem({
-              provider: UtlendingastofnunPaymentCatalogApi,
-              title: '',
-            }),
+            // buildDataProviderItem({
+            //   provider: UtlendingastofnunPaymentCatalogApi,
+            //   title: '',
+            // }),
             buildDataProviderItem({
               pageTitle: externalData.dataProvider.subTitle2,
               title: '',
