@@ -280,7 +280,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   renderAs="row"
                   caseId={workingCase.id}
                   title={formatMessage(core.pdfButtonRequest)}
-                  pdfType={'limitedAccess/request'}
+                  pdfType={'request'}
                 />
 
                 {completedCaseStates.includes(workingCase.state) && (
@@ -289,7 +289,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                       renderAs="row"
                       caseId={workingCase.id}
                       title={formatMessage(core.pdfButtonRulingShortVersion)}
-                      pdfType={'limitedAccess/courtRecord'}
+                      pdfType={'courtRecord'}
                     >
                       {workingCase.courtRecordSignatory ? (
                         <SignedDocument
@@ -302,7 +302,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                       renderAs="row"
                       caseId={workingCase.id}
                       title={formatMessage(core.pdfButtonRuling)}
-                      pdfType={'limitedAccess/ruling'}
+                      pdfType={'ruling'}
                     >
                       {workingCase.rulingSignatureDate ? (
                         <SignedDocument
