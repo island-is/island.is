@@ -106,6 +106,10 @@ export class DigitalTachographDriversCardClient {
         paymentDatetime: request.paymentReceivedAt,
         photo: request.photo,
         signature: request.signature,
+        driverslicenceNumber: '',
+        driverslicencePlaceOfPublication: '',
+        driverslicenceValidFrom: new Date(),
+        driverslicenceValidTo: new Date(),
       },
     })
   }
