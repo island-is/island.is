@@ -168,6 +168,8 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       categories: drivingLicense?.categories,
       id: drivingLicense?.id,
       birthCountry: drivingLicense?.birthCountry,
+      issued: drivingLicense?.issued,
+      expires: drivingLicense?.expires,
       publishPlaceName: drivingLicense?.publishPlaceName,
     }
   }
