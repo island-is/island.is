@@ -17,6 +17,7 @@ import {
 import { Form, FormModes, Application } from '@island.is/application/types'
 import {
   NO,
+  PARENTAL_LEAVE,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   StartDateOptions,
@@ -58,9 +59,22 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
       id: 'editOrAddEmployers',
       title: parentalLeaveFormMessages.shared.employerSection,
       condition: (answers) => {
-        // Only show section if applicant has registered employer
-        const { employers } = getApplicationAnswers(answers)
-        return employers.length !== 0
+        const {
+          applicationType,
+          isReceivingUnemploymentBenefits,
+          isSelfEmployed,
+          employerLastSixMonths,
+        } = getApplicationAnswers(answers)
+        const isNotSelfEmployed = isSelfEmployed !== YES
+
+        return (
+          (applicationType === PARENTAL_LEAVE &&
+            isReceivingUnemploymentBenefits === NO &&
+            isNotSelfEmployed) ||
+          ((applicationType === PARENTAL_GRANT ||
+            applicationType === PARENTAL_GRANT_STUDENTS) &&
+            employerLastSixMonths === YES)
+        )
       },
       children: [
         buildSubSection({

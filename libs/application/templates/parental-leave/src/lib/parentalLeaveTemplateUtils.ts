@@ -114,7 +114,7 @@ export function findActionName(context: ApplicationContext) {
     if (addPeriods === YES) return 'period'
   }
 
-  return 'period' // Have default on period so we always reset actionName
+  return undefined
 }
 
 export function hasDateOfBirth(context: ApplicationContext) {

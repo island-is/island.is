@@ -937,6 +937,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     | 'period'
     | 'document'
     | 'documentPeriod'
+    | 'empper'
+    | 'employer'
     | undefined
 
   const previousState = getValueViaPath(answers, 'previousState') as string

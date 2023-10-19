@@ -1155,14 +1155,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'createTempEmployers',
         ],
         exit: [
+          'removeAddedEmployers',
+          'removeAddedPeriods',
           'restorePeriodsFromTemp',
           'removeNullPeriod',
           'setNavId',
           'setActionName',
           'clearEmployers',
           'restoreEmployersFromTemp',
-          'removeAddedEmployers',
-          'removeAddedPeriods',
         ],
         meta: {
           name: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,

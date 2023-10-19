@@ -121,4 +121,6 @@ export enum FileType {
   PERIOD = 'period',
   DOCUMENT = 'document',
   DOCUMENTPERIOD = 'documentPeriod',
+  EMPPER = 'empper',
+  EMPLOYER = 'employer',
 }
