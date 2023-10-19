@@ -52,7 +52,7 @@ describe('Phone number confirmation', () => {
 
     it.each`
       method    | endpoint
-      ${'POST'} | ${'/v2/me/confirmPhoneNumber'}
+      ${'POST'} | ${'/v2/me/verify'}
     `(
       '$method $endpoint should return 400 when phone number verification does not exist for this user',
       async ({ method, endpoint }: TestEndpointOptions) => {
@@ -61,7 +61,7 @@ describe('Phone number confirmation', () => {
           server,
           method,
         )(endpoint).send({
-          phoneNumber: testUserProfile.mobilePhoneNumber,
+          mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
           code: '123',
         })
 
@@ -109,7 +109,7 @@ describe('Phone number confirmation', () => {
 
     it.each`
       method    | endpoint
-      ${'POST'} | ${'/v2/me/confirmPhoneNumber'}
+      ${'POST'} | ${'/v2/me/verify'}
     `(
       '$method $endpoint should return 201 and phone number should be verified when user confirms the number',
       async ({ method, endpoint }: TestEndpointOptions) => {
@@ -119,7 +119,7 @@ describe('Phone number confirmation', () => {
             server,
             method,
           )(endpoint).send({
-            phoneNumber: testPhoneNumberVerification.mobilePhoneNumber,
+            mobilePhoneNumber: testPhoneNumberVerification.mobilePhoneNumber,
             code: testPhoneNumberVerification.smsCode,
           })
 
@@ -153,7 +153,7 @@ describe('Phone number confirmation', () => {
 
     it.each`
       method    | endpoint
-      ${'POST'} | ${'/v2/me/confirmPhoneNumber'}
+      ${'POST'} | ${'/v2/me/verify'}
     `(
       '$method $endpoint should return 400 since the code is incorrect',
       async ({ method, endpoint }: TestEndpointOptions) => {
@@ -162,7 +162,7 @@ describe('Phone number confirmation', () => {
           server,
           method,
         )(endpoint).send({
-          phoneNumber: testPhoneNumberVerification.mobilePhoneNumber,
+          mobilePhoneNumber: testPhoneNumberVerification.mobilePhoneNumber,
           code: '000',
         })
 
@@ -196,7 +196,7 @@ describe('Phone number confirmation', () => {
 
     it.each`
       method    | endpoint
-      ${'POST'} | ${'/v2/me/confirmPhoneNumber'}
+      ${'POST'} | ${'/v2/me/verify'}
     `(
       '$method $endpoint should return 400 since the email is incorrect',
       async ({ method, endpoint }: TestEndpointOptions) => {
@@ -205,7 +205,7 @@ describe('Phone number confirmation', () => {
           server,
           method,
         )(endpoint).send({
-          phoneNumber: newPhoneNumber,
+          mobilePhoneNumber: newPhoneNumber,
           code: testPhoneNumberVerification.smsCode,
         })
 

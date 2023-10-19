@@ -1,5 +1,13 @@
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
-import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common'
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common'
 
 import {
   CurrentUser,
@@ -15,8 +23,8 @@ import type { User } from '@island.is/auth-nest-tools'
 import { UserProfileDto } from './dto/user-profileDto'
 import { UserProfileService } from './user-profile.service'
 import { PatchUserProfileDto } from './dto/patch-user-profileDto'
-import { EmailConfirmationDto } from './dto/email-confirmation-dto'
-import { PhoneNumberConfirmationDto } from './dto/phone-number-confirmation-dto'
+import { VerifyDto } from './dto/verify-dto'
+import { CreateVerificationDto } from './dto/create-verificationDto'
 
 const namespace = '@island.is/user-profile/v2/me'
 
@@ -62,8 +70,85 @@ export class MeUserProfileController {
   ): Promise<UserProfileDto> {
     return this.userProfileService.patch(user.nationalId, userProfile)
   }
+  @Post('/create-verification')
+  @Scopes(UserProfileScope.write)
+  @Documentation({
+    description: 'Creates a verification for the user for either email or sms',
+    response: { status: 201 },
+  })
+  async createVerification(
+    @CurrentUser() user: User,
+    @Body() input: CreateVerificationDto,
+  ) {
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'create-verification',
+        resources: user.nationalId,
+        alsoLog: true,
+      },
+      (async (userProfileService: UserProfileService) => {
+        if (input.email && !input.mobilePhoneNumber) {
+          await userProfileService.createEmailVerification({
+            nationalId: user.nationalId,
+            email: input.email,
+          })
+        } else if (input.mobilePhoneNumber && !input.email) {
+          await userProfileService.createSmsVerification({
+            nationalId: user.nationalId,
+            mobilePhoneNumber: input.mobilePhoneNumber,
+          })
+        } else {
+          throw new BadRequestException(
+            'Either email or mobile phone number must be provided',
+          )
+        }
+      })(this.userProfileService),
+    )
+  }
 
-  @Post('/confirm')
+  @Post('/verify')
+  @Scopes(UserProfileScope.write)
+  @Documentation({
+    description: 'Creates a verification for the user for either email or sms',
+    response: { status: 201 },
+  })
+  async verify(
+    @CurrentUser() user: User,
+    @Body() input: VerifyDto,
+  ): Promise<void> {
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'verify',
+        resources: user.nationalId,
+        alsoLog: true,
+      },
+      (async (userProfileService: UserProfileService) => {
+        if (input.email && !input.mobilePhoneNumber) {
+          await userProfileService.confirmEmail(
+            user.nationalId,
+            input.email,
+            input.code,
+          )
+        } else if (input.mobilePhoneNumber && !input.email) {
+          await userProfileService.confirmMobilePhoneNumber(
+            user.nationalId,
+            input.mobilePhoneNumber,
+            input.code,
+          )
+        } else {
+          throw new BadRequestException(
+            'Either email or mobile phone number must be provided',
+          )
+        }
+      })(this.userProfileService),
+    )
+  }
+
+  @Post('/nudge')
   @Scopes(UserProfileScope.write)
   @Documentation({
     description: 'Confirms that the user has seen the nudge',
@@ -79,58 +164,6 @@ export class MeUserProfileController {
         alsoLog: true,
       },
       this.userProfileService.confirmNudge(user.nationalId),
-    )
-  }
-
-  @Post('/confirmEmail')
-  @Scopes(UserProfileScope.write)
-  @Documentation({
-    description: 'Confirm previously unconfirmed email',
-    response: { status: 201 },
-  })
-  confirmEmail(
-    @CurrentUser() user: User,
-    @Body() emailConfirmation: EmailConfirmationDto,
-  ): Promise<void> {
-    return this.auditService.auditPromise(
-      {
-        auth: user,
-        namespace,
-        action: 'confirmEmail',
-        resources: user.nationalId,
-        alsoLog: true,
-      },
-      this.userProfileService.confirmEmail(
-        user.nationalId,
-        emailConfirmation.email,
-        emailConfirmation.code,
-      ),
-    )
-  }
-
-  @Post('/confirmPhoneNumber')
-  @Scopes(UserProfileScope.write)
-  @Documentation({
-    description: 'Confirm previously unconfirmed phone number',
-    response: { status: 201 },
-  })
-  confirmPhoneNumber(
-    @CurrentUser() user: User,
-    @Body() phoneNumberConfirmation: PhoneNumberConfirmationDto,
-  ): Promise<void> {
-    return this.auditService.auditPromise(
-      {
-        auth: user,
-        namespace,
-        action: 'confirmPhoneNumber',
-        resources: user.nationalId,
-        alsoLog: true,
-      },
-      this.userProfileService.confirmMobilePhoneNumber(
-        user.nationalId,
-        phoneNumberConfirmation.phoneNumber,
-        phoneNumberConfirmation.code,
-      ),
     )
   }
 }

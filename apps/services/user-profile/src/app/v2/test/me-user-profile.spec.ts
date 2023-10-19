@@ -451,7 +451,7 @@ describe('MeUserProfile', () => {
 
     it.each`
       method    | endpoint
-      ${'POST'} | ${'/v2/me/confirm'}
+      ${'POST'} | ${'/v2/me/nudge'}
     `(
       '$method $endpoint should return 201 and update the lastNudge field when user confirms nudge',
       async ({ method, endpoint }: TestEndpointOptions) => {
@@ -480,7 +480,7 @@ describe('MeUserProfile', () => {
 
     it.each`
       method    | endpoint
-      ${'POST'} | ${'/v2/me/confirm'}
+      ${'POST'} | ${'/v2/me/nudge'}
     `(
       '$method $endpoint should return 201, and create a user profile with updated lastNudge field when user confirms nudge and no user profile exists',
       async ({ method, endpoint }: TestEndpointOptions) => {

@@ -8,6 +8,7 @@ import { UserProfileDto } from './dto/user-profileDto'
 import { PatchUserProfileDto } from './dto/patch-user-profileDto'
 import { VerificationService } from '../user-profile/verification.service'
 import { UserProfile } from '../user-profile/userProfile.model'
+import { isEmail } from 'class-validator'
 
 @Injectable()
 export class UserProfileService {
@@ -100,6 +101,52 @@ export class UserProfileService {
     return update
   }
 
+  async createEmailVerification({
+    nationalId,
+    email,
+  }: {
+    nationalId: string
+    email: string
+  }) {
+    if (email === '') {
+      await this.patch(nationalId, { email })
+    } else {
+      if (!isEmail(email)) {
+        throw new BadRequestException('Email is required')
+      }
+      await this.verificationService.createEmailVerification(
+        nationalId,
+        email,
+        3,
+      )
+    }
+  }
+
+  async createSmsVerification({
+    nationalId,
+    mobilePhoneNumber,
+  }: {
+    nationalId: string
+    mobilePhoneNumber: string
+  }) {
+    if (mobilePhoneNumber === '') {
+      await this.patch(nationalId, { mobilePhoneNumber })
+    } else {
+      let parsedPhoneNumber = mobilePhoneNumber
+      const tempPhoneNumber = parsePhoneNumber(mobilePhoneNumber, 'IS')
+      tempPhoneNumber.country === 'IS' &&
+        (parsedPhoneNumber = tempPhoneNumber.nationalNumber as string)
+
+      await this.verificationService.createSmsVerification(
+        {
+          nationalId,
+          mobilePhoneNumber: parsedPhoneNumber,
+        },
+        3,
+      )
+    }
+  }
+
   async confirmNudge(nationalId: string): Promise<void> {
     await this.userProfileModel.upsert({ nationalId, lastNudge: new Date() })
   }
@@ -119,7 +166,7 @@ export class UserProfileService {
     }
 
     await this.userProfileModel.update(
-      { emailVerified: true },
+      { emailVerified: true, email },
       {
         where: { nationalId: nationalId },
       },
@@ -143,6 +190,7 @@ export class UserProfileService {
     await this.userProfileModel.update(
       {
         mobilePhoneNumberVerified: true,
+        mobilePhoneNumber,
       },
       {
         where: { nationalId: nationalId },

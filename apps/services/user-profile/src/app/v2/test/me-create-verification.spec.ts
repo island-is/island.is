@@ -14,6 +14,8 @@ import { EmailVerification } from '../../user-profile/emailVerification.model'
 import { UserProfile } from '../../user-profile/userProfile.model'
 import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
+import { VerificationService } from '../../user-profile/verification.service'
+import { SmsVerification } from '../../user-profile/smsVerification.model'
 
 const testUserProfile = {
   nationalId: '1234567890',
@@ -22,6 +24,7 @@ const testUserProfile = {
 }
 
 const newEmail = 'test1234@test.is'
+const newPhoneNumber = '9876543'
 
 const testEmailVerification = {
   nationalId: testUserProfile.nationalId,
@@ -90,9 +93,9 @@ describe('Email confirmation', () => {
 
       const fixtureFactory = new FixtureFactory(app)
 
-      await fixtureFactory.createEmailVerification({
-        ...testEmailVerification,
-      })
+      const verificationService = app.get(VerificationService)
+      verificationService.sendConfirmationEmail = jest.fn()
+      verificationService.sendConfirmationSms = jest.fn()
 
       await fixtureFactory.createUserProfile({
         ...testUserProfile,
@@ -109,17 +112,16 @@ describe('Email confirmation', () => {
 
     it.each`
       method    | endpoint
-      ${'POST'} | ${'/v2/me/verify'}
+      ${'POST'} | ${'/v2/me/create-verification'}
     `(
-      '$method $endpoint should return 201 and email should be verified when user confirms email',
+      '$method $endpoint should return 201 and email verification should exist for this user and userprofile should not be changed  ',
       async ({ method, endpoint }: TestEndpointOptions) => {
         // Act
         const res = await getRequestMethod(
           server,
           method,
         )(endpoint).send({
-          email: testEmailVerification.email,
-          code: testEmailVerification.hash,
+          email: newEmail,
         })
 
         // Assert
@@ -132,7 +134,7 @@ describe('Email confirmation', () => {
           where: { nationalId: testEmailVerification.nationalId },
         })
 
-        expect(emailVerification).toBe(null)
+        expect(emailVerification).not.toBe(null)
 
         // Assert that email is verified
         const userProfileModel = app.get(getModelToken(UserProfile))
@@ -140,40 +142,35 @@ describe('Email confirmation', () => {
           where: { nationalId: testUserProfile.nationalId },
         })
 
-        expect(userProfile.emailVerified).toBe(true)
         expect(userProfile.email).toBe(testUserProfile.email)
       },
     )
 
     it.each`
       method    | endpoint
-      ${'POST'} | ${'/v2/me/verify'}
+      ${'POST'} | ${'/v2/me/create-verification'}
     `(
-      '$method $endpoint should return 400 since the hash is incorrect',
+      '$method $endpoint should return 201 and sms verification should exist for this user and userprofile should not be changed',
       async ({ method, endpoint }: TestEndpointOptions) => {
         // Act
         const res = await getRequestMethod(
           server,
           method,
         )(endpoint).send({
-          email: testEmailVerification.email,
-          code: '000',
+          mobilePhoneNumber: newPhoneNumber,
         })
 
         // Assert
-        expect(res.status).toEqual(400)
-        expect(res.body).toMatchObject({
-          statusCode: 400,
-          message: 'Email verification with hash 000 does not exist',
-        })
+        expect(res.status).toEqual(201)
+        expect(res.body).toMatchObject({})
 
-        // Assert that the email has not been confirmed in EmailVerification table
-        const emailVerificationModel = app.get(getModelToken(EmailVerification))
-        const emailVerification = await emailVerificationModel.findOne({
+        // Assert that email verification has been removed from DB
+        const smsVerificationModel = app.get(getModelToken(SmsVerification))
+        const smsVerification = await smsVerificationModel.findOne({
           where: { nationalId: testEmailVerification.nationalId },
         })
 
-        expect(emailVerification.confirmed).toBe(false)
+        expect(smsVerification).not.toBe(null)
 
         // Assert that email is verified
         const userProfileModel = app.get(getModelToken(UserProfile))
@@ -181,47 +178,29 @@ describe('Email confirmation', () => {
           where: { nationalId: testUserProfile.nationalId },
         })
 
-        expect(userProfile.emailVerified).toBe(false)
+        expect(userProfile.mobilePhoneNumber).toBe(
+          testUserProfile.mobilePhoneNumber,
+        )
       },
     )
 
     it.each`
       method    | endpoint
-      ${'POST'} | ${'/v2/me/verify'}
+      ${'POST'} | ${'/v2/me/create-verification'}
     `(
-      '$method $endpoint should return 400 since the email is incorrect',
+      '$method $endpoint should return 201 and sms verification should exist for this user and userprofile should not be changed',
       async ({ method, endpoint }: TestEndpointOptions) => {
         // Act
         const res = await getRequestMethod(
           server,
           method,
         )(endpoint).send({
+          mobilePhoneNumber: newPhoneNumber,
           email: newEmail,
-          code: testEmailVerification.hash,
         })
 
         // Assert
         expect(res.status).toEqual(400)
-        expect(res.body).toMatchObject({
-          statusCode: 400,
-          message: 'Email verification does not exist for this user',
-        })
-
-        // Assert that the email has not been confirmed in EmailVerification table
-        const emailVerificationModel = app.get(getModelToken(EmailVerification))
-        const emailVerification = await emailVerificationModel.findOne({
-          where: { nationalId: testEmailVerification.nationalId },
-        })
-
-        expect(emailVerification.confirmed).toBe(false)
-
-        // Assert that email is verified
-        const userProfileModel = app.get(getModelToken(UserProfile))
-        const userProfile = await userProfileModel.findOne({
-          where: { nationalId: testUserProfile.nationalId },
-        })
-
-        expect(userProfile.emailVerified).toBe(false)
       },
     )
   })
