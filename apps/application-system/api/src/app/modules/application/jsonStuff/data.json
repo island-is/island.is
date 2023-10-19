@@ -45,6 +45,7 @@
               "placement": "footer",
               "children": null,
               "doesNotRequireAnswer": false,
+              "refetchApplicationAfterSubmit": true,
               "component": "SubmitFormField",
               "actions": [
                 {

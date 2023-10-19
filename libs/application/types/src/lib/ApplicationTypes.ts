@@ -55,7 +55,16 @@ export enum ApplicationFormTypes {
   STATIC = 'static',
 }
 
-export const ApplicationConfigurations = {
+interface ApplicationConfiguration {
+  slug: string
+  translation: string
+  formType: ApplicationFormTypes
+}
+
+export const ApplicationConfigurations: Record<
+  ApplicationTypes,
+  ApplicationConfiguration
+> = {
   [ApplicationTypes.EXAMPLE]: {
     slug: 'example',
     translation: 'example.application',
