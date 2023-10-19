@@ -4,7 +4,6 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
-  indictmentCases,
   InstitutionType,
   isAppealsCourtUser,
   isDefenceUser,
@@ -70,7 +69,7 @@ function canProsecutionUserAccessCase(
 function canDistrictCourtUserAccessCase(theCase: Case, user: User): boolean {
   // Check case type access
   if (![UserRole.JUDGE, UserRole.REGISTRAR].includes(user.role)) {
-    if (!indictmentCases.includes(theCase.type)) {
+    if (!isIndictmentCase(theCase.type)) {
       return false
     }
   }
