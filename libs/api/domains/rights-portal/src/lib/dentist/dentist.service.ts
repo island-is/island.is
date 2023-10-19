@@ -13,8 +13,6 @@ import { DentistsInput } from './dto/dentist.input'
 import { DentistRegistration } from './models/registration.model'
 import { DentistRegisterResponse } from './models/registerResponse.model'
 
-const LOG_CATEGORY = 'rights-portal-dentist'
-
 @Injectable()
 export class DentistService {
   constructor(
@@ -75,19 +73,25 @@ export class DentistService {
 
     const [current, status, bills] = res
 
-    if (!current || !status || !bills) return null
-
     return {
-      dentist: {
+      dentist: current && {
         name: current.name,
         id: current.id,
-        status: {
+        status: status && {
           isInsured: status.isInsured,
           canRegister: status.canRegister,
           contractType: status.contractType,
         },
       },
-      history: bills as Array<DentistBill>,
+      history: bills
+        ? (bills.map((b) => ({
+            number: b.number,
+            amount: b.amount,
+            coveredAmount: b.coveredAmount,
+            date: b.date,
+            refundDate: b.refundDate,
+          })) as DentistBill[])
+        : [],
     }
   }
 

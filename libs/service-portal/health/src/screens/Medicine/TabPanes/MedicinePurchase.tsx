@@ -208,7 +208,9 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
         columnGap={2}
       >
         <Button variant="utility" icon="open" iconType="outline">
-          <LinkV2 href="#">{formatMessage(messages.medicinePriceList)}</LinkV2>
+          <LinkV2 href="https://rg.sjukra.is/lyfjaverdskra" newTab>
+            {formatMessage(messages.medicinePriceList)}
+          </LinkV2>
         </Button>
         <Button
           variant="utility"
@@ -442,12 +444,30 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
                               </T.Data>
                               <T.Data>
                                 <span className={styles.subTableHeaderText}>
-                                  {bill.totalExcessAmount}
+                                  {formatMessage(
+                                    messages.medicinePaymentPaidAmount,
+                                    {
+                                      amount: bill.totalExcessAmount
+                                        ? intl.formatNumber(
+                                            bill.totalExcessAmount,
+                                          )
+                                        : bill.totalExcessAmount,
+                                    },
+                                  )}
                                 </span>
                               </T.Data>
                               <T.Data>
                                 <span className={styles.subTableHeaderText}>
-                                  {bill.totalCustomerAmount}
+                                  {formatMessage(
+                                    messages.medicinePaymentPaidAmount,
+                                    {
+                                      amount: bill.totalCustomerAmount
+                                        ? intl.formatNumber(
+                                            bill.totalCustomerAmount,
+                                          )
+                                        : bill.totalCustomerAmount,
+                                    },
+                                  )}
                                 </span>
                               </T.Data>
                             </T.Row>
