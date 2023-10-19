@@ -114,11 +114,11 @@ export const debts = buildSection({
     }),
     buildSubSection({
       id: 'debtsOverview',
-      title: m.overview,
+      title: m.debtsOverview,
       children: [
         buildMultiField({
           id: 'debtsOverview',
-          title: m.overview,
+          title: m.debtsOverview,
           description: m.overviewDescription,
           children: [
             buildDividerField({}),

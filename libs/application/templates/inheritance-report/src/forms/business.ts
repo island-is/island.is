@@ -122,7 +122,7 @@ export const business = buildSection({
     }),
     buildSubSection({
       id: 'businessOverview',
-      title: m.overview,
+      title: m.businessOverview,
       children: [
         buildMultiField({
           id: 'businessOverview',

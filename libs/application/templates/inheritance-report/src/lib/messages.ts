@@ -596,6 +596,11 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlit eigna',
     description: '',
   },
+  debtsOverview: {
+    id: 'ir.application:debtsOverview',
+    defaultMessage: 'Yfirlit skulda',
+    description: '',
+  },
   assetOverviewDescription: {
     id: 'ir.application:assetOverviewDescription',
     defaultMessage:

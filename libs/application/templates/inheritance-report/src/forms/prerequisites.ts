@@ -137,5 +137,36 @@ export const prerequisites: Form = buildForm({
         }),
       ],
     }),
+    /* Set up for the consistency of the right side bar */
+    buildSection({
+      id: 'step3',
+      title: m.applicantsInfo,
+      children: [],
+    }),
+    buildSection({
+      id: 'step4',
+      title: m.properties,
+      children: [],
+    }),
+    buildSection({
+      id: 'step5',
+      title: m.debtsTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'step6',
+      title: m.funeralCostTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'step7',
+      title: m.business,
+      children: [],
+    }),
+    buildSection({
+      id: 'step8',
+      title: m.propertyForExchangeAndHeirs,
+      children: [],
+    }),
   ],
 })

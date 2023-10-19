@@ -10,7 +10,6 @@ import {
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { DefaultEvents } from '@island.is/application/types'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { InheritanceReport } from '../lib/dataSchema'
 import { m } from '../lib/messages'
@@ -375,18 +374,6 @@ export const heirs = buildSection({
               label: m.info,
               value: ({ answers }) =>
                 getValueViaPath<string>(answers, 'heirsAdditionalInfo'),
-            }),
-            buildSubmitField({
-              id: 'inheritanceReport.submit',
-              title: '',
-              refetchApplicationAfterSubmit: true,
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: m.submitReport,
-                  type: 'primary',
-                },
-              ],
             }),
             buildCustomField({
               title: '',

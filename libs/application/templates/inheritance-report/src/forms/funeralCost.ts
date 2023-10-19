@@ -23,11 +23,6 @@ export const funeralCost = buildSection({
           title: m.funeralCostTitle,
           description: m.funeralCostDescription,
           children: [
-            buildDescriptionField({
-              id: 'funeralCostHeader',
-              title: m.funeralCostTitle,
-              titleVariant: 'h3',
-            }),
             buildTextField({
               id: 'funeralCostAmount',
               title: m.amount,

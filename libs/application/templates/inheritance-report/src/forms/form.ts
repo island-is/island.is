@@ -2,6 +2,7 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
+  buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
@@ -9,7 +10,7 @@ import { UserProfile, Application } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
 import { removeCountryCode } from '@island.is/application/ui-components'
 
-import { Form, FormModes } from '@island.is/application/types'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { assets } from './assets'
 import { debts } from './debts'
 import { business } from './business'
@@ -23,6 +24,16 @@ export const form: Form = buildForm({
   renderLastScreenBackButton: true,
   renderLastScreenButton: true,
   children: [
+    buildSection({
+      id: 'step1',
+      title: m.dataCollectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'step2',
+      title: m.irSubmitTitle,
+      children: [],
+    }),
     buildSection({
       id: 'applicantsInformation',
       title: m.applicantsInfo,
@@ -95,5 +106,30 @@ export const form: Form = buildForm({
     funeralCost,
     business,
     heirs,
+    buildSection({
+      id: 'finalStep',
+      title: 'Skila inn erfðafjárskýrslu',
+      children: [
+        buildMultiField({
+          id: 'finalStep',
+          title: 'Skila inn erfðafjárskýrslu',
+          description: '',
+          children: [
+            buildSubmitField({
+              id: 'inheritanceReport.submit',
+              title: '',
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.submitReport,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
   ],
 })
