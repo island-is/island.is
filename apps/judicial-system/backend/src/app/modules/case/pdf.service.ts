@@ -149,7 +149,7 @@ export class PDFService {
     return getRulingPdfAsBuffer(theCase, this.formatMessage)
   }
 
-  async getCustodyPdf(theCase: Case): Promise<Buffer> {
+  async getCustodyNoticePdf(theCase: Case): Promise<Buffer> {
     await this.refreshFormatMessage()
 
     return getCustodyNoticePdfAsBuffer(theCase, this.formatMessage)
