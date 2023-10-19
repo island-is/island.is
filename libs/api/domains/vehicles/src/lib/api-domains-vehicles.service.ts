@@ -31,20 +31,13 @@ export class VehiclesService {
     showDeregistered: boolean,
     showHistory: boolean,
     nextCursor?: string,
-  ): Promise<PersidnoLookupResultDto | undefined> {
-    const res = await this.getVehiclesWithAuth(auth)
-      .vehicleHistoryGet({
-        requestedPersidno: auth.nationalId,
-        showDeregistered: showDeregistered,
-        showHistory: showHistory,
-        cursor: nextCursor,
-      })
-      .catch(handle404)
-    if (!res) {
-      return {}
-    }
-
-    return res
+  ): Promise<PersidnoLookupResultDto> {
+    return await this.getVehiclesWithAuth(auth).vehicleHistoryGet({
+      requestedPersidno: auth.nationalId,
+      showDeregistered: showDeregistered,
+      showHistory: showHistory,
+      cursor: nextCursor,
+    })
   }
 
   async getVehiclesSearch(
