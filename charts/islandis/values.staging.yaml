@@ -42,6 +42,7 @@ air-discount-scheme-api:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'loftbru.staging01.devland.is'
           paths:
@@ -129,6 +130,7 @@ air-discount-scheme-backend:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'loftbru.staging01.devland.is'
           paths:
@@ -228,6 +230,7 @@ air-discount-scheme-web:
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/proxy-buffers-number: '4'
         nginx.ingress.kubernetes.io/server-snippet: 'client_header_buffer_size 16k; large_client_header_buffers 4 16k;'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'loftbru.staging01.devland.is'
           paths:
@@ -405,6 +408,7 @@ api:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'beta.staging01.devland.is'
           paths:
@@ -635,6 +639,7 @@ application-system-api:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'application-payment-callback-xrd.internal.staging01.devland.is'
           paths:
@@ -865,6 +870,7 @@ application-system-form:
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'beta.staging01.devland.is'
           paths:
@@ -929,6 +935,7 @@ consultation-portal:
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'beta.staging01.devland.is'
           paths:
@@ -986,6 +993,7 @@ contentful-translation-extension:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'contentful-translation-extension.staging01.devland.is'
           paths:
@@ -1055,6 +1063,7 @@ download-service:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'api.staging01.devland.is'
           paths:
@@ -1325,6 +1334,7 @@ island-ui-storybook:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'ui.staging01.devland.is'
           paths:
@@ -1391,6 +1401,7 @@ license-api:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'license-api-xrd.internal.staging01.devland.is'
           paths:
@@ -1491,6 +1502,7 @@ portals-admin:
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'beta.staging01.devland.is'
           paths:
@@ -1644,6 +1656,7 @@ search-indexer-service:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'search-indexer-service.staging01.devland.is'
           paths:
@@ -1773,6 +1786,7 @@ service-portal:
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'beta.staging01.devland.is'
           paths:
@@ -1841,6 +1855,7 @@ service-portal-api:
     internal-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'service-portal-api.internal.staging01.devland.is'
           paths:
@@ -2018,6 +2033,7 @@ services-sessions:
     internal-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'sessions-api.internal.staging01.devland.is'
           paths:
@@ -2248,6 +2264,7 @@ skilavottord-web:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'beta.staging01.devland.is'
           paths:
@@ -2313,6 +2330,7 @@ skilavottord-ws:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'beta.staging01.devland.is'
           paths:
@@ -2409,6 +2427,7 @@ user-notification:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'user-notification-xrd.internal.staging01.devland.is'
           paths:
@@ -2551,6 +2570,7 @@ web:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'beta.staging01.devland.is'
           paths:
