@@ -66,7 +66,7 @@ export class VehiclesResolver {
   @Audit()
   async getVehicleHistory(@CurrentUser() user: User) {
     const res = await this.vehiclesService.getVehiclesForUser(user, true, true)
-    return { ...res?.data, nextCursor: res?.nextCursor }
+    return { ...res?.data }
   }
 
   @Scopes(
