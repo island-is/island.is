@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
+import cn from 'classnames'
 import type { Locale } from 'locale'
 import { useRouter } from 'next/router'
 
-import { EmbeddedVideo } from '@island.is/island-ui/contentful'
+import { EmbeddedVideo, Image } from '@island.is/island-ui/contentful'
 import {
   Box,
   BreadCrumbItem,
@@ -44,10 +44,40 @@ import { webRichText } from '@island.is/web/utils/richText'
 
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import { GET_SINGLE_EVENT_QUERY } from '../../queries/Events'
+import * as styles from './OrganizationEventArticle.css'
 
 const LAYOUT_CHANGE_BREAKPOINT = 1120
 const ICON_TEXT_SPACE: ResponsiveSpace = [3, 3, 3, 2, 3]
 
+const EventItemImage = ({
+  eventItem,
+  floatRight = true,
+}: {
+  eventItem: EventModel
+  floatRight?: boolean
+}) =>
+  eventItem?.image && (
+    <Box
+      paddingY={2}
+      className={cn({
+        [styles.floatedImage]: floatRight,
+      })}
+    >
+      <Image
+        {...eventItem.image}
+        url={
+          eventItem.image?.url
+            ? eventItem.image?.url + '?w=774&fm=webp&q=80'
+            : ''
+        }
+        thumbnail={
+          eventItem.image?.url
+            ? eventItem.image?.url + '?w=50&fm=webp&q=80'
+            : ''
+        }
+      />
+    </Box>
+  )
 interface OrganizationEventArticleProps {
   organizationPage: OrganizationPage
   event: EventModel
@@ -71,11 +101,8 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
   const { linkResolver } = useLinkResolver()
 
   const { width } = useWindowSize()
-  const [isSmall, setIsSmall] = useState<boolean | null>(null)
 
-  useEffect(() => {
-    setIsSmall(width <= LAYOUT_CHANGE_BREAKPOINT)
-  }, [width])
+  const isSmall = width <= LAYOUT_CHANGE_BREAKPOINT
 
   const eventsHeading = n(
     'eventListPageTitle',
@@ -147,12 +174,12 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
             >
               <Stack space={3}>
                 <Inline space={ICON_TEXT_SPACE}>
-                  <Icon color="blue400" icon={'calendar'} type="outline"></Icon>
+                  <Icon color="blue400" icon="calendar" type="outline"></Icon>
                   <Text>{formattedDate}</Text>
                 </Inline>
                 {event.time?.startTime && (
                   <Inline space={ICON_TEXT_SPACE}>
-                    <Icon color="blue400" icon={'time'} type="outline"></Icon>
+                    <Icon color="blue400" icon="time" type="outline"></Icon>
                     <EventTime
                       startTime={event.time?.startTime ?? ''}
                       endTime={event.time?.endTime ?? ''}
@@ -178,12 +205,47 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
               </Stack>
             </Box>
           </GridColumn>
+          {!isSmall && !event.video?.url && event.image && (
+            <GridColumn paddingBottom={3} span={isSmall ? '12/12' : '7/12'}>
+              <EventItemImage eventItem={event} />
+            </GridColumn>
+          )}
         </GridRow>
-        <GridColumn span={'12/12'}>
-          <Text>
-            {webRichText(event.content ?? [], undefined, activeLocale)}
-          </Text>
-        </GridColumn>
+        {isSmall && !event.video?.url && event.image && (
+          <GridColumn paddingBottom={3} span="1/1">
+            <EventItemImage eventItem={event} />
+          </GridColumn>
+        )}
+
+        {!isSmall && event.video?.url && event.image && (
+          <GridColumn>
+            <EventItemImage eventItem={event} />
+          </GridColumn>
+        )}
+        <Text>
+          {webRichText(
+            event.content ?? [],
+            {
+              renderComponent: {
+                // Make sure that images in the content are full width
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                Image: (slice) => (
+                  <Box className={styles.clearBoth}>
+                    <Image {...slice} thumbnail={slice.url + '?w=50'} />
+                  </Box>
+                ),
+              },
+            },
+            activeLocale,
+          )}
+        </Text>
+
+        {isSmall && event.video?.url && event.image && (
+          <GridColumn paddingTop={3} paddingBottom={3}>
+            <EventItemImage eventItem={event} floatRight={false} />
+          </GridColumn>
+        )}
       </OrganizationWrapper>
       <HeadWithSocialSharing
         title={`${event.title ?? ''} | ${organizationPage.title}`}
