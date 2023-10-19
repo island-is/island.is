@@ -2,6 +2,7 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import { DriverCardsApiApi, IndividualApiApi } from '../../gen/fetch/apis'
 import {
+  CardIssueType,
   DeliveryMethodEnum,
   IsActiveEnum,
   IsValidEnum,
@@ -11,6 +12,7 @@ import {
   NewestDriversCard,
   IndividualPhotoAndSignature,
   TachoNetCheckRequest,
+  CardType,
 } from './digitalTachographDriversCardClient.types'
 
 @Injectable()
@@ -89,6 +91,26 @@ export class DigitalTachographDriversCardClient {
     auth: User,
     request: DriversCardApplicationRequest,
   ): Promise<void> {
+    // Map card issue type
+    let cardIssueType: CardIssueType | null = null
+    switch (request.cardType) {
+      case CardType.FIRST_EDITION:
+        cardIssueType = CardIssueType.Primary
+        break
+      case CardType.REISSUE:
+        cardIssueType = CardIssueType.Reissue
+        break
+      case CardType.RENEWAL:
+        cardIssueType = CardIssueType.Renewal
+        break
+      case CardType.REPRINT:
+        cardIssueType = CardIssueType.Republication
+        break
+    }
+    if (!cardIssueType) {
+      throw new Error('Invalid card issue type')
+    }
+
     await this.driversCardApiWithAuth(auth).v1DrivercardsPost({
       driverCardApplicationRequest: {
         personIdNumber: request.ssn,
@@ -103,13 +125,15 @@ export class DigitalTachographDriversCardClient {
         deliveryMethod: request.deliveryMethodIsSend
           ? DeliveryMethodEnum.Send
           : DeliveryMethodEnum.PickUp,
+        cardIssueType: cardIssueType,
         paymentDatetime: request.paymentReceivedAt,
         photo: request.photo,
         signature: request.signature,
-        driverslicenceNumber: '',
-        driverslicencePlaceOfPublication: '',
-        driverslicenceValidFrom: new Date(),
-        driverslicenceValidTo: new Date(),
+        driverslicenceNumber: request.driverslicenceNumber,
+        driverslicencePlaceOfPublication:
+          request.driverslicencePlaceOfPublication,
+        driverslicenceValidFrom: request.driverslicenceValidFrom,
+        driverslicenceValidTo: request.driverslicenceValidTo,
       },
     })
   }

@@ -151,6 +151,9 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
       .nationalRegistryBirthplace?.data as NationalRegistryBirthplace
     const currentLicenseData = application.externalData.currentLicense
       ?.data as DrivingLicense
+    const currentLicenseCategory = currentLicenseData?.categories?.find(
+      (x) => x.nr === currentLicenseData?.currentLicense,
+    )
     const createChargeDate = application.externalData.createCharge?.date
     const qualityPhotoData = application.externalData.qualityPhoto
       ?.data as QualityPhoto
@@ -169,9 +172,19 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
       emailAddress: answers.applicant.email,
       phoneNumber: answers.applicant.phone,
       deliveryMethodIsSend: answers.cardDelivery.deliveryMethodIsSend === YES,
+      cardType: answers.cardTypeSelection.cardType,
       paymentReceivedAt: new Date(createChargeDate),
       photo: qualityPhotoData?.dataUri,
       signature: qualitySignatureData?.dataUri,
+      driverslicenceNumber: currentLicenseData?.id?.toString() || '',
+      driverslicencePlaceOfPublication:
+        currentLicenseData?.publishPlaceName || '',
+      driverslicenceValidFrom: new Date(
+        currentLicenseCategory?.issued || new Date().toISOString(),
+      ),
+      driverslicenceValidTo: new Date(
+        currentLicenseCategory?.expires || new Date().toISOString(),
+      ),
     })
   }
 }
