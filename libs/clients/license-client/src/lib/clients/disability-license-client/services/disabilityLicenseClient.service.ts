@@ -146,7 +146,7 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
     if (!license.ok || !license.data) {
       this.logger.info(
         `No license data found for user, no pkpass payload to create`,
-        { LOG_CATEGORY },
+        { category: LOG_CATEGORY },
       )
       return {
         ok: false,
@@ -168,7 +168,7 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
       }
     }
 
-    return this.smartApi.generatePkPass(payload, user.nationalId)
+    return this.smartApi.generatePkPass(payload)
   }
 
   async getPkPassQRCode(user: User): Promise<Result<string>> {
