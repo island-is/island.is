@@ -35,9 +35,9 @@ export class NationalRegistryService extends BaseTemplateApiService {
     const result = await this.getIndividual(auth.nationalId)
     individuals.push(result)
 
-    if(params?.allowDomicilePassOnChild) {
+    if (params?.allowDomicilePassOnChild) {
       const children = await this.nationalRegistryApi.getCustodyChildren(auth)
-      children.forEach(async child => {
+      children.forEach(async (child) => {
         const childResult = await this.getIndividual(child)
         individuals.push(childResult)
       })
@@ -51,7 +51,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
         let domicileInIceland = true
         const domicileCode = individual?.address?.municipalityCode
 
-        if(!domicileCode || domicileCode.substring(0, 2) === '99') {
+        if (!domicileCode || domicileCode.substring(0, 2) === '99') {
           domicileInIceland = false
         }
         return domicileInIceland

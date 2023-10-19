@@ -25,7 +25,7 @@ const defaultParams = {
     summary: error.invalidAgeDescription,
   },
   icelandicCitizenship: false,
-  allowDomicilePassOnChild: true
+  allowDomicilePassOnChild: true,
 }
 
 export const NationalRegistryUser = NationalRegistryUserApi.configure({
