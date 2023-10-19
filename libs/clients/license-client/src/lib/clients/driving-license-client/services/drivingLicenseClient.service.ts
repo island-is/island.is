@@ -35,13 +35,13 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
   private checkLicenseValidity(
     license: DriversLicense,
   ): LicensePkPassAvailability {
-    if (!license || license.photo === undefined) {
+    if (!license /*|| license.photo === undefined*/) {
       return LicensePkPassAvailability.Unknown
     }
 
-    if (!license.photo.image) {
+    /* if (!license.photo.image) {
       return LicensePkPassAvailability.NotAvailable
-    }
+    }*/
 
     return LicensePkPassAvailability.Available
   }

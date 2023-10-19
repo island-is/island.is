@@ -172,6 +172,10 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
 
     const pass = await this.smartApi.generatePkPass(payload)
 
+    if (user.nationalId === '0101302719') {
+      throw new Error('test - get pkpass fail')
+    }
+
     return pass
   }
 

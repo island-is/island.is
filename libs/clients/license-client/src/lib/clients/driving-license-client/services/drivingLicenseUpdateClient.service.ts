@@ -124,6 +124,16 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
       }
     }
 
+    if (nationalId === '0101303019') {
+      return {
+        ok: false,
+        error: {
+          code: 99,
+          message: 'test error - if 010-3019',
+        },
+      }
+    }
+
     const image = licenseInfo.photo?.image
     const thumbnail = image
       ? {
