@@ -7,14 +7,15 @@ import {
   BasicVehicleInformationGetRequest,
   PdfApi,
   VehicleSearchDto,
-  PersidnoLookupDto,
   PublicVehicleSearchApi,
+  PersidnoLookupResultDto,
 } from '@island.is/clients/vehicles'
 import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { ApolloError } from 'apollo-server-express'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
+import { handle404 } from '@island.is/clients/middlewares'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'vehicles-service'
@@ -29,19 +30,12 @@ export class VehiclesService {
     private publicVehiclesApi: PublicVehicleSearchApi,
   ) {}
 
-  handleError(error: any, detail?: string): ApolloError | null {
-    this.logger.error(detail || 'Vehicles error', {
-      error: JSON.stringify(error),
+  handleError(error: any, detail: string): ApolloError | null {
+    this.logger.error(detail, {
+      ...error,
       category: LOG_CATEGORY,
     })
-    throw new ApolloError('Failed to resolve request', error.status)
-  }
-
-  private handle4xx(error: any, detail?: string): ApolloError | null {
-    if (error.status === 403 || error.status === 404) {
-      return null
-    }
-    return this.handleError(error, detail)
+    throw new Error(detail)
   }
 
   private getVehiclesWithAuth(auth: Auth) {
@@ -55,18 +49,25 @@ export class VehiclesService {
     auth: User,
     showDeregistered: boolean,
     showHistory: boolean,
-  ): Promise<PersidnoLookupDto | null | ApolloError> {
+    nextCursor?: string,
+  ): Promise<PersidnoLookupResultDto | undefined> {
     try {
-      const res = await this.getVehiclesWithAuth(auth).vehicleHistoryGet({
-        requestedPersidno: auth.nationalId,
-        showDeregistered: showDeregistered,
-        showHistory: showHistory,
-      })
-      const { data } = res
-      if (!data) return {}
-      return data
-    } catch (e) {
-      return this.handle4xx(e, 'Failed to get vehicle list')
+      const res = await this.getVehiclesWithAuth(auth)
+        .vehicleHistoryGet({
+          requestedPersidno: auth.nationalId,
+          showDeregistered: showDeregistered,
+          showHistory: showHistory,
+          cursor: nextCursor,
+        })
+        .catch(handle404)
+      if (!res) {
+        return {}
+      }
+      console.log('nextCursor', res.nextCursor)
+
+      return res
+    } catch (error) {
+      this.handleError(error, 'Could not fetch vehicles for user')
     }
   }
 
@@ -81,8 +82,8 @@ export class VehiclesService {
       const { data } = res
       if (!data) return null
       return data[0]
-    } catch (e) {
-      return this.handle4xx(e, 'Failed to get vehicle search')
+    } catch (error) {
+      return this.handleError(error, 'Failed to get vehicle search')
     }
   }
 
@@ -92,8 +93,8 @@ export class VehiclesService {
         search,
       })
       return data
-    } catch (e) {
-      return this.handle4xx(e)
+    } catch (error) {
+      return this.handleError(error, 'Failet to get public vehicle search')
     }
   }
 
@@ -102,8 +103,8 @@ export class VehiclesService {
       const res = await this.getVehiclesWithAuth(auth).searchesRemainingGet()
       if (!res) return null
       return res
-    } catch (e) {
-      return this.handle4xx(e, 'Failed to get vehicle search limit')
+    } catch (error) {
+      return this.handleError(error, 'Failed to get vehicle search limit')
     }
   }
 
@@ -124,8 +125,8 @@ export class VehiclesService {
       if (!res) return null
 
       return basicVehicleInformationMapper(res, auth.nationalId)
-    } catch (e) {
-      return this.handle4xx(e, 'Failed to get vehicle details')
+    } catch (error) {
+      return this.handleError(error, 'Failed to get vehicle details')
     }
   }
 }
