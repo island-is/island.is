@@ -19,12 +19,13 @@ export const UserInfoApi = UserProfileApi.configure({
 
 const defaultParams = {
   ageToValidate: 18,
-  legalDomicileIceland: true,
+  legalDomicileIceland: false,
   ageToValidateError: {
     title: error.invalidAgeTitle,
     summary: error.invalidAgeDescription,
   },
-  icelandicCitizenship: true,
+  icelandicCitizenship: false,
+  allowDomicilePassOnChild: true
 }
 
 export const NationalRegistryUser = NationalRegistryUserApi.configure({

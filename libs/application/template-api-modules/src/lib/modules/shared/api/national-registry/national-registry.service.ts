@@ -31,11 +31,34 @@ export class NationalRegistryService extends BaseTemplateApiService {
     auth,
     params,
   }: TemplateApiModuleActionProps<NationalRegistryParameters>): Promise<NationalRegistryIndividual | null> {
+    const individuals: Array<NationalRegistryIndividual | null> = []
     const result = await this.getIndividual(auth.nationalId)
+    individuals.push(result)
+
+    if(params?.allowDomicilePassOnChild) {
+      const children = await this.nationalRegistryApi.getCustodyChildren(auth)
+      children.forEach(async child => {
+        const childResult = await this.getIndividual(child)
+        individuals.push(childResult)
+      })
+    }
+
     // Make sure user has domicile country as Iceland
     if (params?.legalDomicileIceland) {
-      const domicileCode = result?.address?.municipalityCode
-      if (!domicileCode || domicileCode.substring(0, 2) === '99') {
+      // Check if any of the individuals has domicile in Iceland
+      // Should be a single individual unless allowDomicilePassOnChild is true
+      const passes = individuals.some((individual) => {
+        let domicileInIceland = true
+        const domicileCode = individual?.address?.municipalityCode
+
+        if(!domicileCode || domicileCode.substring(0, 2) === '99') {
+          domicileInIceland = false
+        }
+        return domicileInIceland
+      })
+
+      // If no individual has a domicile in Iceland, then we fail this check
+      if (!passes) {
         throw new TemplateApiError(
           {
             title: coreErrorMessages.nationalRegistryLegalDomicileNotIceland,
@@ -47,8 +70,18 @@ export class NationalRegistryService extends BaseTemplateApiService {
     }
 
     if (params?.icelandicCitizenship) {
-      const citizenship = result?.citizenship
-      if (!citizenship || citizenship.code !== 'IS') {
+      const passes = individuals.some((individual) => {
+        let icelandicCitizenship = true
+        const citizenship = individual?.citizenship
+
+        if (!citizenship || citizenship.code !== 'IS') {
+          icelandicCitizenship = false
+        }
+        return icelandicCitizenship
+      })
+
+      // If no individual has a citizenship in Iceland, then we fail this check
+      if (!passes) {
         throw new TemplateApiError(
           {
             title: coreErrorMessages.nationalRegistryCitizenshipNotIcelandic,
@@ -77,17 +110,6 @@ export class NationalRegistryService extends BaseTemplateApiService {
       }
     }
 
-    if (!result) {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.nationalIdNotFoundInNationalRegistryTitle,
-          summary:
-            coreErrorMessages.nationalIdNotFoundInNationalRegistrySummary,
-        },
-        400,
-      )
-    }
-
     return result
   }
 
@@ -105,7 +127,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
     return age
   }
 
-  private async getIndividual(
+  async getIndividual(
     nationalId: string,
   ): Promise<NationalRegistryIndividual | null> {
     const person = await this.nationalRegistryApi.getIndividual(nationalId)
