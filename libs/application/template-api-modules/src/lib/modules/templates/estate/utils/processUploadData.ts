@@ -110,6 +110,10 @@ export const generateRawUploadData = (
     },
     stocks: expandStocks(answers.stocks ?? []),
     vehicles: expandAssetFrames(processedVehicles),
+    estateWithoutAssetsInfo: {
+      estateAssetsExist: answers?.estateWithoutAssets?.estateAssetsExist ?? '',
+      estateDebtsExist: answers?.estateWithoutAssets?.estateDebtsExist ?? '',
+    },
     ...(answers.representative?.name
       ? {
           representative: {

@@ -7,10 +7,10 @@ import {
 import { estateSchema } from '@island.is/application/templates/estate'
 import { infer as zinfer } from 'zod'
 import { UploadData } from '../types'
+import { filterEmptyObjects } from './filters'
 
 type EstateSchema = zinfer<typeof estateSchema>
 type EstateData = EstateSchema['estate']
-type RepeaterType<T> = T & { initial?: boolean; enabled?: boolean }
 
 const estateAssetMapper = <T>(element: T) => {
   return {
@@ -74,7 +74,7 @@ export const expandAssetFrames = (
 ): UploadData['assets'] => {
   const expandedAssetFrames: UploadData['assets'] = []
 
-  assetFrames.forEach((assetFrame) => {
+  assetFrames.filter(filterEmptyObjects).forEach((assetFrame) => {
     expandedAssetFrames.push({
       assetNumber: assetFrame.assetNumber ?? '',
       description: assetFrame.description ?? '',
@@ -91,7 +91,7 @@ export const expandClaims = (
 ): UploadData['claims'] => {
   const expandedClaims: UploadData['claims'] = []
 
-  claims.forEach((claim) => {
+  claims.filter(filterEmptyObjects).forEach((claim) => {
     expandedClaims.push({
       publisher: claim?.publisher ?? '',
       value: claim?.value ?? '',
@@ -105,7 +105,7 @@ export const expandEstateMembers = (
 ): UploadData['estateMembers'] => {
   const expandedMembers: UploadData['estateMembers'] = []
 
-  members.forEach((member) => {
+  members.filter(filterEmptyObjects).forEach((member) => {
     expandedMembers.push({
       ...member,
       dateOfBirth: member.dateOfBirth ?? '',
@@ -127,7 +127,7 @@ export const expandBankAccounts = (
 ): UploadData['bankAccounts'] => {
   const expandedBankAccounts: UploadData['bankAccounts'] = []
 
-  bankAccounts.forEach((bankAccount) => {
+  bankAccounts.filter(filterEmptyObjects).forEach((bankAccount) => {
     expandedBankAccounts.push({
       accountNumber: bankAccount.accountNumber ?? '',
       balance: bankAccount.balance ?? '',
@@ -142,7 +142,7 @@ export const expandDebts = (
 ): UploadData['debts'] => {
   const expandedDebts: UploadData['debts'] = []
 
-  debts.forEach((debt) => {
+  debts.filter(filterEmptyObjects).forEach((debt) => {
     expandedDebts.push({
       balance: debt.balance ?? '',
       creditorName: debt.creditorName ?? '',
@@ -160,7 +160,7 @@ export const expandStocks = (
 ): UploadData['stocks'] => {
   const expandedStocks: UploadData['stocks'] = []
 
-  stocks.forEach((stock) => {
+  stocks.filter(filterEmptyObjects).forEach((stock) => {
     expandedStocks.push({
       faceValue: stock.faceValue ?? '',
       nationalId: stock.nationalId ?? '',

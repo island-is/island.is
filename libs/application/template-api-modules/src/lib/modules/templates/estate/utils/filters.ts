@@ -16,7 +16,7 @@ export const filterAndRemoveRepeaterMetadata = <T>(
 }
 
 export const filterEmptyObjects = <T extends Record<string, unknown>>(
-  objs: T[],
+  obj: T,
 ) => {
-  return objs.filter((obj) => Object.keys(obj).length > 0)
+  return Object.keys(obj).length > 0
 }
