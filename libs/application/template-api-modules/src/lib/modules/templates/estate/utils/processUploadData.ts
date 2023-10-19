@@ -3,6 +3,14 @@ import { estateSchema } from '@island.is/application/templates/estate'
 import { filterAndRemoveRepeaterMetadata } from './filters'
 import { ApplicationWithAttachments } from '@island.is/application/types'
 import { UploadData } from '../types'
+import {
+  expandAssetFrames,
+  expandBankAccounts,
+  expandClaims,
+  expandDebts,
+  expandEstateMembers,
+  expandStocks,
+} from './mappers'
 type EstateSchema = zinfer<typeof estateSchema>
 
 export const stringifyObject = <T extends Record<string, unknown>>(
@@ -58,6 +66,10 @@ export const generateRawUploadData = (
     EstateSchema['estate']['estateMembers']
   >(answers?.estate?.estateMembers ?? externalData?.estate?.estateMembers ?? [])
 
+  const processedGuns = filterAndRemoveRepeaterMetadata<
+    EstateSchema['estate']['guns']
+  >(answers?.estate?.guns ?? [])
+
   const uploadData: UploadData = {
     deceased: {
       name: externalData.estate.nameOfDeceased ?? '',
@@ -69,14 +81,14 @@ export const generateRawUploadData = (
     settlement: answers.estate?.testament?.agreement ?? '',
     dividedEstate: answers.estate?.testament?.dividedEstate ?? '',
     remarksOnTestament: answers.estate?.testament?.additionalInfo ?? '',
-    guns: answers.estate?.guns ?? [],
+    guns: expandAssetFrames(processedGuns),
     applicationType: answers.selectedEstate,
     caseNumber: externalData?.estate?.caseNumber ?? '',
-    assets: processedAssets,
-    claims: answers.claims ?? [],
-    bankAccounts: answers.bankAccounts ?? [],
-    debts: answers.debts ?? [],
-    estateMembers: processedEstateMembers,
+    assets: expandAssetFrames(processedAssets),
+    claims: expandClaims(answers?.claims ?? []),
+    bankAccounts: expandBankAccounts(answers.bankAccounts ?? []),
+    debts: expandDebts(answers.debts ?? []),
+    estateMembers: expandEstateMembers(processedEstateMembers),
     inventory: {
       info: answers.inventory?.info ?? '',
       value: answers.inventory?.value ?? '',
@@ -96,8 +108,8 @@ export const generateRawUploadData = (
       info: answers.otherAssets?.info ?? '',
       value: answers.otherAssets?.value ?? '',
     },
-    stocks: answers.stocks ?? [],
-    vehicles: processedVehicles,
+    stocks: expandStocks(answers.stocks ?? []),
+    vehicles: expandAssetFrames(processedVehicles),
     ...(answers.representative?.name
       ? {
           representative: {

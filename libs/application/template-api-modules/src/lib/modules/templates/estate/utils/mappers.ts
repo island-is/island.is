@@ -62,22 +62,114 @@ export const estateTransformer = (estate: EstateInfo): EstateData => {
 // -----------------------------------------------------------------
 // ----------------------- EXPANDERS -------------------------------
 // -----------------------------------------------------------------
-// Sometimes, if the application frontend doesn't include properties
-// The properties are omitted from the application.answers
-// We need to reattach them to the answers such that the
-// uploadData is consistent no matter what the frontend decides.
-// In other words, if undefined, we need to set them to default empty values
-export const expandGuns = (guns: UploadData['guns']): UploadData['guns'] => {
-  const expandedGuns: UploadData['guns'] = []
+// Optional properties do not appear as part of the data entry object
+// When coming from the frontend.
+// For processing on their end, the district commissioner requires that
+// we maximally expand everything to include the same properties but with
+// some sensible defaults on missing properties.
+// Therefore we just expand these properties according to the upload data specifications.
 
-  guns.forEach((gun) => {
-    expandedGuns.push({
-      assetNumber: gun.assetNumber ?? '',
-      description: gun.description ?? '',
-      enabled: gun.enabled ?? false,
-      marketValue: gun.marketValue ?? '',
+export const expandAssetFrames = (
+  assetFrames: UploadData['assets'],
+): UploadData['assets'] => {
+  const expandedAssetFrames: UploadData['assets'] = []
+
+  assetFrames.forEach((assetFrame) => {
+    expandedAssetFrames.push({
+      assetNumber: assetFrame.assetNumber ?? '',
+      description: assetFrame.description ?? '',
+      enabled: assetFrame.enabled ?? true,
+      marketValue: assetFrame.marketValue ?? '',
     })
   })
 
-  return expandedGuns
+  return expandedAssetFrames
+}
+
+export const expandClaims = (
+  claims: UploadData['claims'],
+): UploadData['claims'] => {
+  const expandedClaims: UploadData['claims'] = []
+
+  claims.forEach((claim) => {
+    expandedClaims.push({
+      publisher: claim?.publisher ?? '',
+      value: claim?.value ?? '',
+    })
+  })
+  return expandedClaims
+}
+
+export const expandEstateMembers = (
+  members: UploadData['estateMembers'],
+): UploadData['estateMembers'] => {
+  const expandedMembers: UploadData['estateMembers'] = []
+
+  members.forEach((member) => {
+    expandedMembers.push({
+      ...member,
+      dateOfBirth: member.dateOfBirth ?? '',
+      enabled: member.enabled ?? true,
+      email: member.email ?? '',
+      foreignCitizenShip: member.foreignCitizenShip ?? 'no',
+      // TODO: investigate better why nationalId and SSN is required
+      nationalId: member.nationalId ?? '',
+      ssn: member.ssn ?? '',
+      phone: member.phone ?? '',
+      relation: member.relation ?? 'Óþekkt',
+    })
+  })
+  return expandedMembers
+}
+
+export const expandBankAccounts = (
+  bankAccounts: UploadData['bankAccounts'],
+): UploadData['bankAccounts'] => {
+  const expandedBankAccounts: UploadData['bankAccounts'] = []
+
+  bankAccounts.forEach((bankAccount) => {
+    expandedBankAccounts.push({
+      accountNumber: bankAccount.accountNumber ?? '',
+      balance: bankAccount.balance ?? '',
+    })
+  })
+
+  return expandedBankAccounts
+}
+
+export const expandDebts = (
+  debts: UploadData['debts'],
+): UploadData['debts'] => {
+  const expandedDebts: UploadData['debts'] = []
+
+  debts.forEach((debt) => {
+    expandedDebts.push({
+      balance: debt.balance ?? '',
+      creditorName: debt.creditorName ?? '',
+      loanIdentity: debt.loanIdentity ?? '',
+      nationalId: debt.nationalId ?? '',
+      ssn: debt.ssn ?? '',
+    })
+  })
+
+  return expandedDebts
+}
+
+export const expandStocks = (
+  stocks: UploadData['stocks'],
+): UploadData['stocks'] => {
+  const expandedStocks: UploadData['stocks'] = []
+
+  stocks.forEach((stock) => {
+    expandedStocks.push({
+      faceValue: stock.faceValue ?? '',
+      nationalId: stock.nationalId ?? '',
+      organization: stock.organization ?? '',
+      rateOfExchange: stock.rateOfExchange ?? '',
+      ssn: stock.ssn ?? '',
+      value: stock.value ?? '',
+    })
+  })
+
+  return expandedStocks
 }
