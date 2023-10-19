@@ -207,13 +207,13 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
           </GridColumn>
           {!isSmall && !event.video?.url && event.image && (
             <GridColumn paddingBottom={3} span={isSmall ? '12/12' : '7/12'}>
-              <EventItemImage eventItem={event} />
+              <EventItemImage eventItem={event} floatRight={false} />
             </GridColumn>
           )}
         </GridRow>
         {isSmall && !event.video?.url && event.image && (
-          <GridColumn paddingBottom={3} span="1/1">
-            <EventItemImage eventItem={event} />
+          <GridColumn paddingBottom={3}>
+            <EventItemImage eventItem={event} floatRight={false} />
           </GridColumn>
         )}
 
