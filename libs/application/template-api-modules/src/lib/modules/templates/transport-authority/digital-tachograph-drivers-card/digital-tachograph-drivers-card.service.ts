@@ -22,6 +22,8 @@ import {
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
 import { externalData } from '@island.is/application/templates/transport-authority/digital-tachograph-drivers-card'
 import { getUriFromImageStr } from './digital-tachograph-drivers-card.util'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { logger } from '@island.is/logging'
 
 @Injectable()
 export class DigitalTachographDriversCardService extends BaseTemplateApiService {
@@ -44,64 +46,101 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
       hasSignature: false,
     }
 
-    // Check if photo and signature exists in RLS database
-    const hasQualityPhotoRLS = await this.drivingLicenseApi.getHasQualityPhoto({
-      token: auth.authorization,
-    })
-    const hasQualitySignatureRLS =
-      await this.drivingLicenseApi.getHasQualitySignature({
-        token: auth.authorization,
-      })
+    try {
+      // Check if photo and signature exists in RLS database
+      const hasQualityPhotoRLS =
+        await this.drivingLicenseApi.getHasQualityPhoto({
+          token: auth.authorization,
+        })
+      const hasQualitySignatureRLS =
+        await this.drivingLicenseApi.getHasQualitySignature({
+          token: auth.authorization,
+        })
 
-    // First we'll try to use photo and signature from the RLS database
-    if (hasQualityPhotoRLS && hasQualitySignatureRLS) {
-      const photo = await this.drivingLicenseApi.getQualityPhoto({
-        token: auth.authorization,
-      })
-      const signature = await this.drivingLicenseApi.getQualitySignature({
-        token: auth.authorization,
-      })
+      // First we'll try to use photo and signature from the RLS database
+      if (hasQualityPhotoRLS && hasQualitySignatureRLS) {
+        const photo = await this.drivingLicenseApi.getQualityPhoto({
+          token: auth.authorization,
+        })
+        const signature = await this.drivingLicenseApi.getQualitySignature({
+          token: auth.authorization,
+        })
 
-      result = {
-        hasPhoto: true,
-        photoDataUri: getUriFromImageStr(photo?.data),
-        hasSignature: true,
-        signatureDataUri: getUriFromImageStr(signature?.data),
-      }
-    } else {
-      // If not exists in RLS, then we need to check the SGS database and use that
-      const qualityPhotoAndSignatureSGS =
-        await this.digitalTachographDriversCardClient.getPhotoAndSignature(auth)
-      if (
-        qualityPhotoAndSignatureSGS?.photo &&
-        qualityPhotoAndSignatureSGS?.signature
-      ) {
         result = {
           hasPhoto: true,
-          photoDataUri: getUriFromImageStr(qualityPhotoAndSignatureSGS.photo),
+          photoDataUri: getUriFromImageStr(photo?.data),
           hasSignature: true,
-          signatureDataUri: getUriFromImageStr(
-            qualityPhotoAndSignatureSGS.signature,
-          ),
+          signatureDataUri: getUriFromImageStr(signature?.data),
+        }
+      } else {
+        // If not exists in RLS, then we need to check the SGS database and use that
+        const qualityPhotoAndSignatureSGS =
+          await this.digitalTachographDriversCardClient.getPhotoAndSignature(
+            auth,
+          )
+        if (
+          qualityPhotoAndSignatureSGS?.photo &&
+          qualityPhotoAndSignatureSGS?.signature
+        ) {
+          result = {
+            hasPhoto: true,
+            photoDataUri: getUriFromImageStr(qualityPhotoAndSignatureSGS.photo),
+            hasSignature: true,
+            signatureDataUri: getUriFromImageStr(
+              qualityPhotoAndSignatureSGS.signature,
+            ),
+          }
         }
       }
+    } catch (e) {
+      logger.error(
+        'Error fetching quality photo and signature for digital tachograph drivers card',
+        e,
+      )
+
+      throw new TemplateApiError(
+        {
+          title: externalData.qualityPhotoAndSignature.error,
+          summary: externalData.qualityPhotoAndSignature.error,
+        },
+        400,
+      )
     }
 
     // Make sure user has quality photo and signature (from either RLS or SGS),
     // if not then user cannot continue (will allow upload in phase 2)
     if (!result?.hasPhoto || !result?.hasSignature) {
-      return Promise.reject({
-        reason: externalData.qualityPhotoAndSignature.missing.defaultMessage,
-      })
+      throw new TemplateApiError(
+        {
+          title: externalData.qualityPhotoAndSignature.missing,
+          summary: externalData.qualityPhotoAndSignature.missing,
+        },
+        400,
+      )
     }
 
     return result
   }
 
   async getNewestDriversCard({ auth }: TemplateApiModuleActionProps) {
-    return await this.digitalTachographDriversCardClient.getNewestDriversCard(
-      auth,
-    )
+    try {
+      return await this.digitalTachographDriversCardClient.getNewestDriversCard(
+        auth,
+      )
+    } catch (e) {
+      logger.error(
+        'Error fetching newest drivers card for digital tachograph drivers card',
+        e,
+      )
+
+      throw new TemplateApiError(
+        {
+          title: externalData.newestDriversCard.error,
+          summary: externalData.newestDriversCard.error,
+        },
+        400,
+      )
+    }
   }
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
@@ -144,47 +183,62 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
       )
     }
 
-    const answers = application.answers as DigitalTachographDriversCardAnswers
-    const nationalRegistryData = application.externalData.nationalRegistry
-      ?.data as NationalRegistry
-    const nationalRegistryBirthplaceData = application.externalData
-      .nationalRegistryBirthplace?.data as NationalRegistryBirthplace
-    const currentLicenseData = application.externalData.currentLicense
-      ?.data as DrivingLicense
-    const currentLicenseCategory = currentLicenseData?.categories?.find(
-      (x) => x.nr === currentLicenseData?.currentLicense,
-    )
-    const createChargeDate = application.externalData.createCharge?.date
-    const qualityPhotoData = application.externalData.qualityPhoto
-      ?.data as QualityPhoto
-    const qualitySignatureData = application.externalData.qualitySignature
-      ?.data as QualitySignature
+    try {
+      const answers = application.answers as DigitalTachographDriversCardAnswers
+      const nationalRegistryData = application.externalData.nationalRegistry
+        ?.data as NationalRegistry
+      const nationalRegistryBirthplaceData = application.externalData
+        .nationalRegistryBirthplace?.data as NationalRegistryBirthplace
+      const currentLicenseData = application.externalData.currentLicense
+        ?.data as DrivingLicense
+      const currentLicenseCategory = currentLicenseData?.categories?.find(
+        (x) => x.nr === currentLicenseData?.currentLicense,
+      )
+      const createChargeDate = application.externalData.createCharge?.date
+      const qualityPhotoData = application.externalData.qualityPhoto
+        ?.data as QualityPhoto
+      const qualitySignatureData = application.externalData.qualitySignature
+        ?.data as QualitySignature
 
-    // Submit the application
-    await this.digitalTachographDriversCardClient.saveDriversCard(auth, {
-      ssn: auth.nationalId,
-      fullName: nationalRegistryData?.fullName,
-      address: nationalRegistryData?.address?.streetAddress,
-      postalCode: nationalRegistryData?.address?.postalCode,
-      place: nationalRegistryData?.address?.city,
-      birthCountry: currentLicenseData?.birthCountry,
-      birthPlace: nationalRegistryBirthplaceData?.location,
-      emailAddress: answers.applicant.email,
-      phoneNumber: answers.applicant.phone,
-      deliveryMethodIsSend: answers.cardDelivery.deliveryMethodIsSend === YES,
-      cardType: answers.cardTypeSelection.cardType,
-      paymentReceivedAt: new Date(createChargeDate),
-      photo: qualityPhotoData?.dataUri,
-      signature: qualitySignatureData?.dataUri,
-      driverslicenceNumber: currentLicenseData?.id?.toString() || '',
-      driverslicencePlaceOfPublication:
-        currentLicenseData?.publishPlaceName || '',
-      driverslicenceValidFrom: new Date(
-        currentLicenseCategory?.issued || new Date().toISOString(),
-      ),
-      driverslicenceValidTo: new Date(
-        currentLicenseCategory?.expires || new Date().toISOString(),
-      ),
-    })
+      // Submit the application
+      await this.digitalTachographDriversCardClient.saveDriversCard(auth, {
+        ssn: auth.nationalId,
+        fullName: nationalRegistryData?.fullName,
+        address: nationalRegistryData?.address?.streetAddress,
+        postalCode: nationalRegistryData?.address?.postalCode,
+        place: nationalRegistryData?.address?.city,
+        birthCountry: currentLicenseData?.birthCountry,
+        birthPlace: nationalRegistryBirthplaceData?.location,
+        emailAddress: answers.applicant.email,
+        phoneNumber: answers.applicant.phone,
+        deliveryMethodIsSend: answers.cardDelivery.deliveryMethodIsSend === YES,
+        cardType: answers.cardTypeSelection.cardType,
+        paymentReceivedAt: new Date(createChargeDate),
+        photo: qualityPhotoData?.dataUri,
+        signature: qualitySignatureData?.dataUri,
+        driverslicenceNumber: currentLicenseData?.id?.toString() || '',
+        driverslicencePlaceOfPublication:
+          currentLicenseData?.publishPlaceName || '',
+        driverslicenceValidFrom: new Date(
+          currentLicenseCategory?.issued || new Date().toISOString(),
+        ),
+        driverslicenceValidTo: new Date(
+          currentLicenseCategory?.expires || new Date().toISOString(),
+        ),
+      })
+    } catch (e) {
+      logger.error(
+        'Error submitting application for digital tachograph drivers card',
+        e,
+      )
+
+      throw new TemplateApiError(
+        {
+          title: externalData.submit.error,
+          summary: externalData.submit.error,
+        },
+        400,
+      )
+    }
   }
 }
