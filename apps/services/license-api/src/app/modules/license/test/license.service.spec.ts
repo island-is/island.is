@@ -193,6 +193,7 @@ describe('LicenseService', () => {
         {
           provide: LOGGER_PROVIDER,
           useClass: jest.fn(() => ({
+            debug: () => ({}),
             error: () => ({}),
           })),
         },
@@ -205,7 +206,7 @@ describe('LicenseService', () => {
           useValue: {
             disability: LicenseId.DISABILITY_LICENSE,
             firearm: LicenseId.FIREARM_LICENSE,
-            driving: LicenseId.DRIVERS_LICENSE,
+            driving: LicenseId.DRIVING_LICENSE,
           },
         },
         {

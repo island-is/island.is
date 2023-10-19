@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { m } from '@island.is/service-portal/core'
+import { LoadModal, m } from '@island.is/service-portal/core'
 import { Box, Text, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { DocumentCategory } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -29,10 +29,15 @@ export const MobileOverview: FC<Props> = ({
   activeArchive,
   activeBookmark,
   category,
+  loading,
 }) => {
   useNamespaces('sp.documents')
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
+
+  if (loading) {
+    return <LoadModal />
+  }
 
   if (!activeDocument) {
     return null
