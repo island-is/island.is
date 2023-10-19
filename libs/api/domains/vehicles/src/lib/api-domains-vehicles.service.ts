@@ -11,7 +11,6 @@ import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
-import { handle404 } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class VehiclesService {
