@@ -1,10 +1,10 @@
-import initApollo from '@island.is/web/graphql/client'
-import { GET_DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_IDENTITY_TOKEN } from '@island.is/web/screens/queries/WatsonAssistantChat'
 import { storageFactory, stringHash } from '@island.is/shared/utils'
+import initApollo from '@island.is/web/graphql/client'
 import {
   Query,
   QueryWatsonAssistantChatIdentityTokenArgs,
 } from '@island.is/web/graphql/schema'
+import { GET_DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_IDENTITY_TOKEN } from '@island.is/web/screens/queries/WatsonAssistantChat'
 
 const emailInputId = 'utlendingastofnun-chat-email'
 const nameInputId = 'utlendingastofnun-chat-name'
@@ -39,7 +39,16 @@ const getUserInformation = async (
 
   customPanel.hostElement.innerHTML = `
           <div style="padding: 16px">
+
+            <p style="font-size: 14px">Hefurðu kannað hvort spurningu þinni hafi þegar verið svarað á <a href="/adstod/utlendingastofnun">þjónustuvef Útlendingastofnunar</a>?</p>
+            
+            <br />
+
+            <p style="font-size: 14px">Did you check if your question was already answered on the <a href="/en/help/directorate-of-immigration">Directorate's service web</a>?</p>
   
+            <br />
+            <br />
+
             <div class="bx--form-item">
               <label for="${emailInputId}" class="bx--label">Netfang/Email <span style="color: red">*</span></label>
               <input id="${emailInputId}" name="${emailInputId}" type="text" class="bx--text-input">
