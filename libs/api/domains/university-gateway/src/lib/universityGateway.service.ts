@@ -131,6 +131,9 @@ class UniversityGatewayApi {
         externalUrlEn: c.details.externalUrlEn,
         requirement: c.requirement.toString(),
         semesterYear: c.semesterYear,
+        semesterYearNumber: c.semesterYear
+          ? item.startingSemesterYear - c.semesterYear + 1
+          : undefined,
         semesterSeason: c.semesterSeason.toString(),
       })),
     }
