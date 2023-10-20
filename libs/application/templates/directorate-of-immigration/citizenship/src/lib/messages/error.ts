@@ -32,6 +32,11 @@ export const error = defineMessages({
     defaultMessage: 'Villa kom upp við að skila inn umsókn',
     description: 'Failed to submit application',
   },
+  notOldEnough: {
+    id: 'ta.tvo.application:error.notOldEnough',
+    defaultMessage: 'Innskráður notandi er ekki orðinn 18 ára',
+    description: 'Logged in user is not 18 years old',
+  },
   alreadyIcelandicCitizen: {
     id: 'ta.tvo.application:error.alreadyIcelandicCitizen',
     defaultMessage: 'Innskráður notandi er nú þegar með íslenskt ríkisfang',

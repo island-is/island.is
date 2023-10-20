@@ -114,6 +114,19 @@ export class CitizenshipService extends BaseTemplateApiService {
       nationalId,
     )
 
+    const personAge = person && kennitala.info(person.nationalId).age
+
+    // dont allow user to continue if under 18 years old
+    if (!personAge || personAge < 18) {
+      throw new TemplateApiError(
+        {
+          title: errorMessages.notOldEnough,
+          summary: errorMessages.notOldEnough,
+        },
+        404,
+      )
+    }
+
     // dont allow user to continue if already has icelandic citizenship
     const citizenshipIceland = 'IS'
     if (citizenship?.countryCode === citizenshipIceland) {
@@ -144,7 +157,7 @@ export class CitizenshipService extends BaseTemplateApiService {
         givenName: person.givenName,
         familyName: person.familyName,
         fullName: person.name,
-        age: kennitala.info(person.nationalId).age,
+        age: personAge,
         citizenship: citizenship && {
           code: citizenship.countryCode,
           name: citizenship.countryName,
