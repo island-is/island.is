@@ -15,6 +15,8 @@ import {
   UserProfileApi,
   ValidateCriminalRecordApi,
   PaymentCatalogApi,
+  GetCriminalRecordPDF,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import {
@@ -149,11 +151,7 @@ const basicMachineConfig: MachineConfig<
             actions: [{ event: 'SUBMIT', name: 'Staðfesta', type: 'primary' }],
             write: 'all',
             read: 'all',
-            api: [
-              NationalRegistryUserApi,
-              UserProfileApi,
-              ValidateCriminalRecordApi,
-            ],
+            api: [NationalRegistryUserApi, UserProfileApi],
             delete: true,
           },
         ],
@@ -254,6 +252,7 @@ const paymentMachineConfig: MachineConfig<
               UserProfileApi,
               PaymentCatalogApi,
               ValidateCriminalRecordApi,
+              GetCriminalRecordPDF,
             ],
             delete: true,
           },
@@ -350,6 +349,14 @@ const paymentMachineConfig: MachineConfig<
             displayStatus: 'success',
           },
         },
+        onEntry: [
+          defineTemplateApi({
+            action: 'getCriminalRecordPDF',
+            order: 0,
+            externalDataId: 'criminalRecord',
+            namespace: 'CriminalRecordShared',
+          }),
+        ],
         roles: [
           {
             id: Roles.APPLICANT,

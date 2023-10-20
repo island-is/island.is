@@ -86,7 +86,7 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
+          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
       },
       [States.PAYMENT]: {
