@@ -15,10 +15,6 @@ import { Routes } from '../../../lib/constants'
 export const UserInformationSubSection = buildSubSection({
   id: Routes.USERINFORMATION,
   title: personal.labels.userInformation.subSectionTitle,
-  condition: (_, externalData) => {
-    console.log('externalData', externalData)
-    return true
-  },
   children: [
     buildMultiField({
       id: Routes.USERINFORMATION,
