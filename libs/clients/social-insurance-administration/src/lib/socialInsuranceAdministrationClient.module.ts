@@ -10,6 +10,7 @@ import {
   HelloOddurApi,
   SendApplicationApi,
   GetBankInfoApi,
+  GetSpouseInNursingHomeApi,
 } from '../../gen/fetch'
 import { createWrappedFetchWithLogging } from './utils'
 import { SocialInsuranceAdministrationClientService } from './socialInsuranceAdministrationClient.service'
@@ -58,6 +59,7 @@ export class SocialInsuranceAdministrationClientModule {
       GetStatusApi,
       GetBankInfoApi,
       SendApplicationApi,
+      GetSpouseInNursingHomeApi,
     ]
 
     return {

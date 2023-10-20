@@ -343,4 +343,12 @@ export class OldAgePensionService extends BaseTemplateApiService {
       throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
     }
   }
+
+  async getSpouseInNursingHome({ auth }: TemplateApiModuleActionProps) {
+    try {
+      return await this.siaClientService.getSpouseInNursingHome(auth)
+    } catch (e) {
+      throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
+    }
+  }
 }

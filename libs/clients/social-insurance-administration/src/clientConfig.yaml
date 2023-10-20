@@ -107,7 +107,30 @@ paths:
             application/json:
               schema:
                 type: string
-
+  /Applicant/spouseinnursinghome:
+    get:
+      tags:
+        - Get spouse in nursing home
+      operationId: Application_GetSpouseInNursingHome
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpouseInNursingHome'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        '500':
+          description: internal Error
+          content:
+            application/json:
+              schema:
+                type: string
 components:
   securitySchemes:
     bearerAuth:
@@ -338,5 +361,11 @@ components:
           type: string
         currency:
           type: string
+    SpouseInNursingHome:
+      type: object
+      description: Returns true if applicant has a spouse that is a resident at a nursing home
+      properties:
+        isSpouseInNursingHome:
+          type: boolean
 security:
   - bearerAuth: []
