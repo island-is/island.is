@@ -7,7 +7,7 @@ import {
   InputError,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import {
   Machine,
   MachineDetails,
@@ -41,8 +41,9 @@ export const VehicleRadioField: FC<
   const [plate, setPlate] = useState<string>(
     getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
   )
-  const OnRadioControllerSelect = (machineIndex: number) => {
-    const currentVehicle = currentMachineList[machineIndex]
+
+  const onRadioControllerSelect = (s: string) => {
+    const currentVehicle = currentMachineList[parseInt(s, 10)]
 
     setPlate(currentVehicle.registrationNumber || '')
     setValue('vehicle.plate', currentVehicle.registrationNumber)
@@ -67,10 +68,6 @@ export const VehicleRadioField: FC<
     } else {
       return false
     }
-  }
-
-  function parseMachineIndex(value: string): number {
-    return parseInt(value, 10)
   }
 
   const vehicleOptions = (machines: Machine[]) => {
@@ -134,7 +131,7 @@ export const VehicleRadioField: FC<
         id="pickVehicle.vehicle"
         largeButtons
         backgroundColor="blue"
-        onSelect={(value) => OnRadioControllerSelect(parseMachineIndex(value))}
+        onSelect={onRadioControllerSelect}
         options={vehicleOptions(currentMachineList as Machine[])}
       />
       {plate.length === 0 && (errors as any)?.pickVehicle && (
