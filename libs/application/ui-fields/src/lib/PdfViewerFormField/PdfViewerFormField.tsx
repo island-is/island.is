@@ -155,9 +155,7 @@ export const PdfViewerFormField: FC<
 
       <Box marginBottom={3}>
         <TopicCard
-          href="/"
           onClick={(event) => {
-            event.preventDefault()
             setViewPdf(true)
           }}
           tag="Pdf"
