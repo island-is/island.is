@@ -40,6 +40,7 @@ export interface RoleInState<
   write?: ReadWriteValues
   delete?: boolean
   formLoader?: FormLoader
+  form?: string
   actions?: CallToAction<T>[]
   shouldBeListedForRole?: boolean
   api?: TemplateApi<R>[]
@@ -84,6 +85,13 @@ export type HistoryEventMessage<T extends EventObject = AnyEventObject> = {
   logMessage: StaticText
 }
 
+export type ApplicationStateMachineStatus =
+  | 'approved'
+  | 'rejected'
+  | 'draft'
+  | 'completed'
+  | 'inprogress'
+
 export interface ApplicationStateMeta<
   T extends EventObject = AnyEventObject,
   R = unknown,
@@ -125,7 +133,7 @@ export interface ApplicationStateMeta<
   /**
    * Represents the current status of the application in the state, defaults to draft
    */
-  status: 'approved' | 'rejected' | 'draft' | 'completed' | 'inprogress'
+  status: ApplicationStateMachineStatus
   roles?: RoleInState<T>[]
   onExit?: TemplateApi<R>[] | TemplateApi<R>
   onEntry?: TemplateApi<R>[] | TemplateApi<R>

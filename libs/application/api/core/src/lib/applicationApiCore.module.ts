@@ -3,6 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { Application } from './application/application.model'
 import { ApplicationService } from './application/application.service'
 import { SequelizeConfigService } from './sequelizeConfig.service'
+import { TemplateService } from './template/template.service'
 
 @Module({
   imports: [
@@ -11,7 +12,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     }),
     SequelizeModule.forFeature([Application]),
   ],
-  providers: [ApplicationService],
-  exports: [ApplicationService],
+  providers: [ApplicationService, TemplateService],
+  exports: [ApplicationService, TemplateService],
 })
 export class ApplicationApiCoreModule {}

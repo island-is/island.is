@@ -6,6 +6,7 @@ import { User } from '@island.is/auth-nest-tools'
 import {
   Application as BaseApplication,
   ApplicationService,
+  TemplateService,
 } from '@island.is/application/api/core'
 import {
   ApplicationTemplateHelper,
@@ -20,7 +21,6 @@ import {
   ApplicationTypes,
   RoleInState,
 } from '@island.is/application/types'
-import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { EventObject } from 'xstate'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { ProblemType } from '@island.is/shared/problem'
@@ -44,6 +44,7 @@ export class ApplicationAccessService {
     private readonly featureFlagService: FeatureFlagService,
     private readonly actorDelegationsApi: ActorDelegationsApi,
     private readonly validationService: ApplicationValidationService,
+    private readonly templateService: TemplateService,
   ) {}
 
   async findOneByIdAndNationalId(id: string, user: User, config?: config) {
@@ -105,7 +106,9 @@ export class ApplicationAccessService {
     nationalId: string,
   ): Promise<RoleInState<EventObject> | undefined> {
     const templateId = application.typeId as ApplicationTypes
-    const template = await getApplicationTemplateByTypeId(templateId)
+    const template = await this.templateService.getApplicationTemplate(
+      templateId,
+    )
     const helper = new ApplicationTemplateHelper(application, template)
     const currentUserRole =
       template.mapUserToRole(nationalId, application) || ''

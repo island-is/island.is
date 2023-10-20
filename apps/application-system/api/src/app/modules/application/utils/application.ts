@@ -11,15 +11,17 @@ import {
   ApplicationStateSchema,
   ApplicationTemplate,
 } from '@island.is/application/types'
-import { Unwrap } from '@island.is/shared/types'
-import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import isObject from 'lodash/isObject'
 import { EventObject } from 'xstate'
 import { FormatMessage } from '@island.is/cms-translations'
 
 export const getApplicationLifecycle = (
   application: Application,
-  template: Unwrap<typeof getApplicationTemplateByTypeId>,
+  template: ApplicationTemplate<
+    ApplicationContext,
+    ApplicationStateSchema<EventObject>,
+    EventObject
+  >,
 ): ApplicationLifecycle => {
   const stateConfig = template.stateMachineConfig.states[application.state]
 

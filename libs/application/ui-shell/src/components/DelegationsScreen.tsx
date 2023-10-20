@@ -70,7 +70,11 @@ export const DelegationsScreen = ({
   useEffect(() => {
     async function applicationSupportsDelegations() {
       if (type) {
-        const template = await getApplicationTemplateByTypeId(type)
+        const template = {
+          allowedDelegations: [
+            { featureFlag: 'delegations', type: 'LegalGuardian' },
+          ],
+        } //await getApplicationTemplateByTypeId(type)
         const featureFlagEnabled = await featureFlagClient.getValue(
           Features.applicationSystemDelegations,
           false,

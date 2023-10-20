@@ -6,6 +6,9 @@ import {
 } from '@island.is/application/core'
 import {
   Application,
+  ApplicationContext,
+  ApplicationStateSchema,
+  ApplicationTemplate,
   FormValue,
   TemplateApi,
 } from '@island.is/application/types'
@@ -16,12 +19,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 import { Unwrap } from '@island.is/shared/types'
-import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { environment } from '../../../../environments'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 import type { FormatMessage } from '@island.is/cms-translations'
+import { TemplateService } from '@island.is/application/api/core'
+import { EventObject } from 'xstate'
 
 const isRunningOnProductionEnvironment = () => {
   return (
@@ -38,15 +42,15 @@ export class ApplicationValidationService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly templateService: TemplateService,
   ) {}
 
   async validateThatApplicationIsReady(
     application: Application,
     user: User,
   ): Promise<void> {
-    const applicationTemplate = await getApplicationTemplateByTypeId(
-      application.typeId,
-    )
+    const applicationTemplate =
+      await this.templateService.getApplicationTemplate(application.typeId)
 
     if (!applicationTemplate) {
       throw new BadRequestException(
@@ -63,9 +67,10 @@ export class ApplicationValidationService {
 
   // Determines if a template is ready based on the presence of a configcat flag or the readyForProduction flag.
   async isTemplateReady(
-    template: Pick<
-      Unwrap<typeof getApplicationTemplateByTypeId>,
-      'readyForProduction' | 'featureFlag'
+    template: ApplicationTemplate<
+      ApplicationContext,
+      ApplicationStateSchema<EventObject>,
+      EventObject
     >,
     user?: User,
   ): Promise<boolean> {
@@ -85,7 +90,11 @@ export class ApplicationValidationService {
   }
 
   async validateThatTemplateIsReady(
-    template: Unwrap<typeof getApplicationTemplateByTypeId>,
+    template: ApplicationTemplate<
+      ApplicationContext,
+      ApplicationStateSchema<EventObject>,
+      EventObject
+    >,
     user?: User,
   ): Promise<void> {
     const results = await this.isTemplateReady(template, user)
@@ -102,9 +111,8 @@ export class ApplicationValidationService {
     formatMessage: FormatMessage,
     user: User,
   ): Promise<void> {
-    const applicationTemplate = await getApplicationTemplateByTypeId(
-      application.typeId,
-    )
+    const applicationTemplate =
+      await this.templateService.getApplicationTemplate(application.typeId)
 
     if (applicationTemplate === null) {
       throw new BadRequestException(
@@ -138,7 +146,9 @@ export class ApplicationValidationService {
       return {}
     }
 
-    const template = await getApplicationTemplateByTypeId(application.typeId)
+    const template = await this.templateService.getApplicationTemplate(
+      application.typeId,
+    )
     const role = template.mapUserToRole(nationalId, application)
 
     if (!role) {
@@ -209,7 +219,9 @@ export class ApplicationValidationService {
     if (!templateApis) {
       return
     }
-    const template = await getApplicationTemplateByTypeId(application.typeId)
+    const template = await this.templateService.getApplicationTemplate(
+      application.typeId,
+    )
     const role = template.mapUserToRole(nationalId, application)
     if (!role) {
       throw new UnauthorizedException(

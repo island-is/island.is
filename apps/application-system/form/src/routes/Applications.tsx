@@ -54,6 +54,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
   const [delegationsChecked, setDelegationsChecked] = useState(
     !!query.get('delegationChecked'),
   )
+  /*
   const [template, setTemplate] = useState<
     | ApplicationTemplate<
         ApplicationContext,
@@ -61,7 +62,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
         EventObject
       >
     | undefined
-  >(undefined)
+  >(undefined)*/
 
   useApplicationNamespaces(type)
 
@@ -99,6 +100,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
     })
   }
 
+  /*
   useEffect(() => {
     const getTemplate = async () => {
       if (type && !template) {
@@ -110,7 +112,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
     }
     getTemplate().catch(console.error)
   }, [type, template])
-
+*/
   useEffect(() => {
     if (
       type &&
@@ -125,10 +127,10 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
   if (loading) {
     return <ApplicationLoading />
   }
-
+  /*
   if (!template) {
     return <ErrorShell errorType="notExist" />
-  }
+  }*/
 
   if (!type || applicationsError) {
     const foundError = findProblemInApolloError(applicationsError as any, [
@@ -173,13 +175,13 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
   const numberOfApplicationsInDraft = data?.applicationApplications.filter(
     (x: Application) => x.state === 'draft',
   ).length
-
+  /*
   const shouldRenderNewApplicationButton =
     template.allowMultipleApplicationsInDraft === undefined
       ? true
       : template.allowMultipleApplicationsInDraft ||
         numberOfApplicationsInDraft < 1
-
+*/
   return (
     <Page>
       <GridContainer>
@@ -195,7 +197,8 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
               <Text variant="h1">
                 {formatMessage(coreMessages.applications)}
               </Text>
-              {shouldRenderNewApplicationButton ? (
+              {
+                //shouldRenderNewApplicationButton ? (
                 <Box marginTop={[2, 0]}>
                   <Button
                     onClick={createApplication}
@@ -204,7 +207,8 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
                     {formatMessage(coreMessages.newApplication)}
                   </Button>
                 </Box>
-              ) : null}
+                //): null
+              }
             </Box>
 
             {data?.applicationApplications && (

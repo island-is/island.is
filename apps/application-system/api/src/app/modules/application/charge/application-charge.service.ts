@@ -1,9 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { Application } from '@island.is/application/api/core'
+import { Application, TemplateService } from '@island.is/application/api/core'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
-import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { PaymentService } from '@island.is/application/api/payment'
 
 @Injectable()
@@ -13,6 +12,7 @@ export class ApplicationChargeService {
     private logger: Logger,
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private paymentService: PaymentService,
+    private readonly templateService: TemplateService,
   ) {
     this.logger = logger.child({ context: 'ApplicationChargeService' })
   }
@@ -32,7 +32,7 @@ export class ApplicationChargeService {
 
       // No need to delete charge if already paid (and should not be refunded)
       if (payment.fulfilled) {
-        const template = await getApplicationTemplateByTypeId(
+        const template = await this.templateService.getApplicationTemplate(
           application.typeId,
         )
 

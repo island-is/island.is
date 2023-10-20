@@ -45,7 +45,7 @@ import {
   ApplicationContext,
   ApplicationStateSchema,
 } from '@island.is/application/types'
-import type { Unwrap, Locale } from '@island.is/shared/types'
+import type { Locale } from '@island.is/shared/types'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -54,14 +54,13 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { ApplicationScope } from '@island.is/auth/scopes'
-import {
-  getApplicationTemplateByTypeId,
-  getApplicationTranslationNamespaces,
-} from '@island.is/application/template-loader'
 import { IntlService } from '@island.is/cms-translations'
 import { Audit, AuditService } from '@island.is/nest/audit'
 
-import { ApplicationService } from '@island.is/application/api/core'
+import {
+  ApplicationService,
+  TemplateService,
+} from '@island.is/application/api/core'
 import { FileService } from '@island.is/application/api/files'
 import { HistoryService } from '@island.is/application/api/history'
 import { CreateApplicationDto } from './dto/createApplication.dto'
@@ -114,7 +113,11 @@ import { BypassDelegation } from './guards/bypass-delegation.decorator'
   description: 'Front-end language selected',
 })
 @Controller()
-export class ApplicationController {
+export class ApplicationController<
+  TContext extends ApplicationContext,
+  TStateSchema extends ApplicationStateSchema<TEvents>,
+  TEvents extends EventObject,
+> {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly fileService: FileService,
@@ -128,6 +131,7 @@ export class ApplicationController {
     private applicationChargeService: ApplicationChargeService,
     private readonly historyService: HistoryService,
     private readonly templateApiActionRunner: TemplateApiActionRunner,
+    private readonly templateService: TemplateService,
   ) {}
 
   @Scopes(ApplicationScope.read)
@@ -297,7 +301,9 @@ export class ApplicationController {
   > {
     if (!cache[typeId]) {
       try {
-        cache[typeId] = await getApplicationTemplateByTypeId(typeId)
+        cache[typeId] = await this.templateService.getApplicationTemplate(
+          typeId,
+        )
       } catch (e) {
         this.logger.info(
           `Could not get application template for type ${typeId}`,
@@ -345,7 +351,7 @@ export class ApplicationController {
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
     const { typeId } = application
-    const template = await getApplicationTemplateByTypeId(typeId)
+    const template = await this.templateService.getApplicationTemplate(typeId)
 
     if (template === null) {
       throw new BadRequestException(
@@ -506,7 +512,9 @@ export class ApplicationController {
     }
 
     const templateId = existingApplication.typeId as ApplicationTypes
-    const template = await getApplicationTemplateByTypeId(templateId)
+    const template = await this.templateService.getApplicationTemplate(
+      templateId,
+    )
 
     // TODO
     if (template === null) {
@@ -575,9 +583,10 @@ export class ApplicationController {
       await this.applicationAccessService.findOneByIdAndNationalId(id, user, {
         shouldThrowIfPruned: true,
       })
-    const namespaces = await getApplicationTranslationNamespaces(
-      existingApplication as BaseApplication,
-    )
+    const namespaces =
+      await this.templateService.getApplicationTranslationNamespaces(
+        existingApplication as BaseApplication,
+      )
     const newAnswers = application.answers as FormValue
     const intl = await this.intlService.useIntl(namespaces, locale)
 
@@ -642,7 +651,9 @@ export class ApplicationController {
       await this.applicationAccessService.findOneByIdAndNationalId(id, user)
 
     const templateId = existingApplication.typeId as ApplicationTypes
-    const template = await getApplicationTemplateByTypeId(templateId)
+    const template = await this.templateService.getApplicationTemplate(
+      templateId,
+    )
 
     const helper = new ApplicationTemplateHelper(
       existingApplication as BaseApplication,
@@ -658,9 +669,10 @@ export class ApplicationController {
       ? helper.getApisFromRoleInState(userRole)
       : []
 
-    const namespaces = await getApplicationTranslationNamespaces(
-      existingApplication as BaseApplication,
-    )
+    const namespaces =
+      await this.templateService.getApplicationTranslationNamespaces(
+        existingApplication as BaseApplication,
+      )
     const intl = await this.intlService.useIntl(namespaces, locale)
 
     const templateApis: TemplateApi[] = []
@@ -731,7 +743,9 @@ export class ApplicationController {
         shouldThrowIfPruned: true,
       })
     const templateId = existingApplication.typeId as ApplicationTypes
-    const template = await getApplicationTemplateByTypeId(templateId)
+    const template = await this.templateService.getApplicationTemplate(
+      templateId,
+    )
 
     // TODO
     if (template === null) {
@@ -741,9 +755,10 @@ export class ApplicationController {
     }
 
     const newAnswers = (updateApplicationStateDto.answers ?? {}) as FormValue
-    const namespaces = await getApplicationTranslationNamespaces(
-      existingApplication as BaseApplication,
-    )
+    const namespaces =
+      await this.templateService.getApplicationTranslationNamespaces(
+        existingApplication as BaseApplication,
+      )
     const intl = await this.intlService.useIntl(namespaces, locale)
 
     const permittedAnswers =
@@ -811,7 +826,11 @@ export class ApplicationController {
 
   async performActionOnApplication(
     application: BaseApplication,
-    template: Unwrap<typeof getApplicationTemplateByTypeId>,
+    template: ApplicationTemplate<
+      ApplicationContext,
+      ApplicationStateSchema<EventObject>,
+      EventObject
+    >,
     auth: User,
     apis: TemplateApi | TemplateApi[],
     locale: Locale,
@@ -825,7 +844,10 @@ export class ApplicationController {
         .map((api) => api.action)
         .join(', ')} on ${JSON.stringify(template.name)}`,
     )
-    const namespaces = await getApplicationTranslationNamespaces(application)
+    const namespaces =
+      await this.templateService.getApplicationTranslationNamespaces(
+        application,
+      )
     const intl = await this.intlService.useIntl(namespaces, locale)
 
     const updatedApplication = await this.templateApiActionRunner.run(
@@ -867,7 +889,11 @@ export class ApplicationController {
 
   private async changeState(
     application: BaseApplication,
-    template: Unwrap<typeof getApplicationTemplateByTypeId>,
+    template: ApplicationTemplate<
+      ApplicationContext,
+      ApplicationStateSchema<EventObject>,
+      EventObject
+    >,
     event: string,
     auth: User,
     locale: Locale,

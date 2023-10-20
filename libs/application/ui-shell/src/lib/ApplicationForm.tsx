@@ -76,8 +76,6 @@ const ApplicationLoader: FC<
     return <ErrorShell errorType="idNotFound" />
   }
 
-  const formType = ApplicationConfigurations[currentTypeId]?.formType
-
   if (!applicationId || error) {
     const foundError = findProblemInApolloError(error, [
       ProblemType.BAD_SUBJECT,
@@ -97,22 +95,6 @@ const ApplicationLoader: FC<
     }
     console.log('error maaan')
     return <ErrorShell />
-  }
-
-  if (formType === ApplicationFormTypes.DYNAMIC) {
-    return (
-      <RefetchProvider
-        value={() => {
-          refetch()
-        }}
-      >
-        <ShellWrapper
-          application={application}
-          nationalRegistryId={nationalRegistryId}
-          useJSON={useJSON}
-        />
-      </RefetchProvider>
-    )
   }
 
   return (
@@ -141,45 +123,54 @@ const ShellWrapper: FC<ShellWrapperProps> = ({
   nationalRegistryId,
   useJSON = false,
 }) => {
+  console.log('ShellWrapper')
   const [dataSchema, setDataSchema] = useState<Schema>()
   const [form, setForm] = useState<Form>()
   const [, fieldsDispatch] = useFields()
   const { formatMessage } = useLocale()
   const featureFlagClient = useFeatureFlagClient()
+  const applicationType = application.typeId as ApplicationTypes
 
+  const config = ApplicationConfigurations[applicationType]
+  console.log('config', config)
   useApplicationNamespaces(application.typeId)
 
   useEffect(() => {
     async function populateForm() {
+      console.log('populateForm')
       if (dataSchema === undefined && form === undefined) {
-        const template = await getApplicationTemplateByTypeId(
-          application.typeId,
-        )
+        if (config.formType === ApplicationFormTypes.DYNAMIC) {
+          console.log('Formtype DYnamic')
+          const formFromJSON = JSON.parse(
+            application.form as string,
+          ) as unknown as Form
+          const dataSchemaFromJSON = generateZodSchema(formFromJSON)
+          setForm(formFromJSON)
+          setDataSchema(dataSchemaFromJSON)
+        } else {
+          console.log('Formtype Static')
+          const template = await getApplicationTemplateByTypeId(
+            application.typeId,
+          )
+          if (template !== null) {
+            const helper = new ApplicationTemplateHelper(application, template)
+            const stateInformation =
+              helper.getApplicationStateInformation() || null
 
-        if (template !== null) {
-          const helper = new ApplicationTemplateHelper(application, template)
-          const stateInformation =
-            helper.getApplicationStateInformation() || null
+            if (stateInformation?.roles?.length) {
+              const role = template.mapUserToRole(
+                nationalRegistryId,
+                application,
+              )
 
-          if (stateInformation?.roles?.length) {
-            const role = template.mapUserToRole(nationalRegistryId, application)
+              if (!role) {
+                throw new Error(formatMessage(coreMessages.userRoleError))
+              }
 
-            if (!role) {
-              throw new Error(formatMessage(coreMessages.userRoleError))
-            }
+              const currentRole = stateInformation.roles.find(
+                (r) => r.id === role,
+              )
 
-            const currentRole = stateInformation.roles.find(
-              (r) => r.id === role,
-            )
-
-            if (useJSON) {
-              const formFromJSON = JSON.parse(
-                application.form as string,
-              ) as unknown as Form
-              const dataSchemaFromJSON = generateZodSchema(formFromJSON)
-              setForm(formFromJSON)
-              setDataSchema(dataSchemaFromJSON)
-            } else {
               const applicationFields = await getApplicationUIFields(
                 application.typeId,
               )
@@ -199,6 +190,7 @@ const ShellWrapper: FC<ShellWrapperProps> = ({
     }
     populateForm()
   }, [
+    config.formType,
     fieldsDispatch,
     application,
     form,

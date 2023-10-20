@@ -12,15 +12,11 @@ import {
   ApplicationTypes,
   Application as BaseApplication,
 } from '@island.is/application/types'
-import {
-  getApplicationTemplateByTypeId,
-  getApplicationTranslationNamespaces,
-} from '@island.is/application/template-loader'
 import { IntlService } from '@island.is/cms-translations'
 import { Locale } from '@island.is/shared/types'
 import { getCurrentUser } from '@island.is/auth-nest-tools'
 
-import { Application } from '@island.is/application/api/core'
+import { Application, TemplateService } from '@island.is/application/api/core'
 import { ApplicationResponseDto } from '../dto/application.response.dto'
 import { getCurrentLocale } from '../utils/currentLocale'
 import {
@@ -46,6 +42,7 @@ export class ApplicationAdminSerializer
     private historyBuilder: HistoryBuilder,
     private featureFlagService: FeatureFlagService,
     private paymentService: PaymentService,
+    private readonly templateService: TemplateService,
   ) {}
 
   intercept(
@@ -100,12 +97,15 @@ export class ApplicationAdminSerializer
     showHistory = true,
   ) {
     const application = model.toJSON() as BaseApplication
-    const template = await getApplicationTemplateByTypeId(
+    const template = await this.templateService.getApplicationTemplate(
       application.typeId as ApplicationTypes,
     )
     const helper = new ApplicationTemplateHelper(application, template)
     const actionCardMeta = helper.getApplicationActionCardMeta()
-    const namespaces = await getApplicationTranslationNamespaces(application)
+    const namespaces =
+      await this.templateService.getApplicationTranslationNamespaces(
+        application,
+      )
     const intl = await this.intlService.useIntl(namespaces, locale)
 
     const userRole = template.mapUserToRole(nationalId, application) ?? ''

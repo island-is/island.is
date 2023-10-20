@@ -12,15 +12,11 @@ import {
   ApplicationTypes,
   Application as BaseApplication,
 } from '@island.is/application/types'
-import {
-  getApplicationTemplateByTypeId,
-  getApplicationTranslationNamespaces,
-} from '@island.is/application/template-loader'
 import { IntlService } from '@island.is/cms-translations'
 import { Locale } from '@island.is/shared/types'
 import { getCurrentUser } from '@island.is/auth-nest-tools'
 
-import { Application } from '@island.is/application/api/core'
+import { Application, TemplateService } from '@island.is/application/api/core'
 import { ApplicationResponseDto } from '../dto/application.response.dto'
 import { getCurrentLocale } from '../utils/currentLocale'
 import {
@@ -30,7 +26,6 @@ import {
 } from '@island.is/application/api/history'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { getApplicationNameTranslationString } from '../utils/application'
-import { data, payment, completedData, prerequisites } from '../jsonStuff'
 
 @Injectable()
 export class ApplicationSerializer
@@ -41,6 +36,7 @@ export class ApplicationSerializer
     private historyService: HistoryService,
     private historyBuilder: HistoryBuilder,
     private featureFlagService: FeatureFlagService,
+    private readonly templateService: TemplateService,
   ) {}
 
   intercept(
@@ -95,12 +91,15 @@ export class ApplicationSerializer
     showHistory = true,
   ) {
     const application = model.toJSON() as BaseApplication
-    const template = await getApplicationTemplateByTypeId(
+    const template = await this.templateService.getApplicationTemplate(
       application.typeId as ApplicationTypes,
     )
     const helper = new ApplicationTemplateHelper(application, template)
     const actionCardMeta = helper.getApplicationActionCardMeta()
-    const namespaces = await getApplicationTranslationNamespaces(application)
+    const namespaces =
+      await this.templateService.getApplicationTranslationNamespaces(
+        application,
+      )
     const intl = await this.intlService.useIntl(namespaces, locale)
 
     const userRole = template.mapUserToRole(nationalId, application) ?? ''
@@ -126,17 +125,7 @@ export class ApplicationSerializer
         )
       : undefined
 
-    const state = application.state
-    let form = ''
-    if (state === 'completed') {
-      form = JSON.stringify(completedData)
-    } else if (state === 'draft') {
-      form = JSON.stringify(data)
-    } else if (state === 'prerequisites') {
-      form = JSON.stringify(prerequisites)
-    } else if (state === 'payment') {
-      form = JSON.stringify(payment)
-    }
+    const form = helper.getRoleInState(userRole)?.form
 
     const dto = plainToInstance(ApplicationResponseDto, {
       ...application,

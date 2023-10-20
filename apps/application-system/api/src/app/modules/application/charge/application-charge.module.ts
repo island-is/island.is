@@ -11,6 +11,7 @@ import {
   PaymentModule,
   PaymentModuleConfig,
 } from '@island.is/application/api/payment'
+import { TemplateService } from '@island.is/application/api/core'
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import {
     }),
     PaymentModule,
   ],
-  providers: [ApplicationChargeService],
+  providers: [ApplicationChargeService, TemplateService],
   exports: [ApplicationChargeService],
 })
 export class ApplicationChargeModule {}

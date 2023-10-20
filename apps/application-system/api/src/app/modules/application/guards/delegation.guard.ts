@@ -1,8 +1,10 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
-import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { User } from '@island.is/auth-nest-tools'
 import { Reflector } from '@nestjs/core'
-import { ApplicationService } from '@island.is/application/api/core'
+import {
+  ApplicationService,
+  TemplateService,
+} from '@island.is/application/api/core'
 import { verifyToken } from '../utils/tokenUtils'
 import { DecodedAssignmentToken } from '../types'
 import { BadSubject } from '@island.is/nest/problem'
@@ -17,6 +19,7 @@ export class DelegationGuard implements CanActivate {
     private readonly reflector: Reflector,
     private readonly applicationAccessService: ApplicationAccessService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly templateService: TemplateService,
   ) {}
 
   async getTypeIdFromApplicationId(
@@ -72,7 +75,8 @@ export class DelegationGuard implements CanActivate {
 
       // Get the delegation types the application type supports
       if (typeId) {
-        const applicationTemplate = await getApplicationTemplateByTypeId(typeId)
+        const applicationTemplate =
+          await this.templateService.getApplicationTemplate(typeId)
         const delegations = applicationTemplate.allowedDelegations || []
         // Prepare an array of promises that will be resolved in parallel.
         // Each promise represents a permission check.

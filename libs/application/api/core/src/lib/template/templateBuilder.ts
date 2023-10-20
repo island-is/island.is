@@ -319,6 +319,7 @@ const paymentMachineConfig: MachineConfig<
           ],
         },
         lifecycle: pruneAfterDays(1 / 24),
+
         roles: [
           {
             id: Roles.APPLICANT,

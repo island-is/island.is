@@ -1,0 +1,34 @@
+{
+  "id": "SampleFormId",
+  "title": "Sample Form",
+  "mode": "draft",
+  "type": "FORM",
+  "renderLastScreenBackButton": false,
+  "renderLastScreenButton": false,
+  "children": [
+    {
+      "id": "section1",
+      "title": "Umsókn send inn!",
+      "type": "SECTION",
+      "children": [
+        {
+          "id": "multifield1",
+          "title": "Vei Vei",
+          "type": "MULTI_FIELD",
+          "children": [
+            {
+              "children": null,
+              "id": "uiForms.conclusionAlert",
+              "title": "Þetta virkar!",
+              "message": "Já maður þetta er bara til að sýna að þetta virkar!",
+              "alertType": "success",
+              "condition": null,
+              "type": "ALERT_MESSAGE",
+              "component": "AlertMessageFormField"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
