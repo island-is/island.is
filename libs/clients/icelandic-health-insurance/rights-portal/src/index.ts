@@ -10,4 +10,6 @@ export {
   DentistDTO,
   HealthcenterApi,
   HealthCenterDTO,
+  EhicApi,
+  BasicCardInfoDTO,
 } from '../gen/fetch'

@@ -25,6 +25,7 @@ import {
   DrivingLicenseClient,
 } from './clients/driving-license-client'
 import { PCardClient, PCardModule } from './clients/p-card-client'
+import { EhicClient } from './clients/ehic-card-client'
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { PCardClient, PCardModule } from './clients/p-card-client'
           disabilityClient: DisabilityLicenseClient,
           drivingClient: DrivingLicenseClient,
           pCardClient: PCardClient,
+          ehicCardClient: EhicClient,
         ) =>
         async (type: LicenseType): Promise<LicenseClient<unknown> | null> => {
           switch (type) {
@@ -67,6 +69,8 @@ import { PCardClient, PCardModule } from './clients/p-card-client'
               return disabilityClient
             case LicenseType.PCard:
               return pCardClient
+            case LicenseType.EHIC:
+              return ehicCardClient
             default:
               return null
           }
@@ -78,6 +82,7 @@ import { PCardClient, PCardModule } from './clients/p-card-client'
         DisabilityLicenseClient,
         DrivingLicenseClient,
         PCardClient,
+        EhicClient,
       ],
     },
   ],

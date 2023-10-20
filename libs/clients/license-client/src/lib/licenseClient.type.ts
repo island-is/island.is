@@ -12,6 +12,7 @@ export enum LicenseType {
   DisabilityLicense = 'DisabilityLicense',
   DrivingLicense = 'DrivingLicense',
   PCard = 'PCard',
+  EHIC = 'EHIC',
 }
 
 export type LicenseTypeType = keyof typeof LicenseType
