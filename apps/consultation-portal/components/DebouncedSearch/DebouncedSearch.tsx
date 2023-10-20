@@ -45,14 +45,9 @@ const DebouncedSearch = ({
   }, 500)
 
   const onChange = (e: BaseSyntheticEvent) => {
-    const searchValue = e.target.value
-    setValue(searchValue)
+    setValue(e.target.value)
     debouncedHandleSearch()
   }
-
-  useEffect(() => {
-    setValue(filters?.searchQuery)
-  }, [filters])
 
   return (
     <Input
