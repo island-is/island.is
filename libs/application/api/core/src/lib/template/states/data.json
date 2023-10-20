@@ -7,40 +7,58 @@
   "renderLastScreenButton": true,
   "children": [
     {
-      "id": "section1",
-      "title": "Section 1 Title",
+      "id": "section",
+      "title": "Greiðsla",
       "type": "SECTION",
       "children": [
         {
-          "id": "multifield1",
-          "title": "Multi-Field Title",
+          "id": "multifield_payment_approval",
+          "title": "Greiðsla",
           "type": "MULTI_FIELD",
           "children": [
             {
-              "id": "radio1",
+              "id": "descriptionOfPaymentTitle",
+              "component": "DescriptionFormField",
+              "type": "DESCRIPTION",
+              "description": "**Til greiðslu**"
+            },
+            {
+              "id": "descriptionOfPayment",
+              "component": "DescriptionFormField",
+              "type": "DESCRIPTION",
               "width": "half",
-              "title": "Radio 1 Title",
-              "options": [
-                {
-                  "value": "option1",
-                  "label": "Option 1"
-                },
-                {
-                  "value": "option2",
-                  "label": "Option 2"
-                }
-              ],
-              "type": "RADIO",
-              "component": "RadioFormField",
-              "required": true,
-              "validation": {
-                "isRequired": true,
-                "message": "This field is required"
-              }
+              "description": "Sakavottorð"
+            },
+            {
+              "id": "descriptionOfPayment",
+              "component": "DescriptionFormField",
+              "width": "half",
+              "type": "DESCRIPTION",
+              "description": "\n\n2.700 kr."
+            },
+            {
+              "id": "divider",
+              "component": "DividerFormField",
+              "children": null,
+              "type": "DIVIDER"
+            },
+            {
+              "id": "descriptionOfPaymentTotal",
+              "component": "DescriptionFormField",
+              "type": "DESCRIPTION",
+              "width": "half",
+              "description": "**Samtals**"
+            },
+            {
+              "id": "descriptionOfPaymentTotalAmount",
+              "component": "DescriptionFormField",
+              "type": "DESCRIPTION",
+              "width": "half",
+              "description": "**2700 kr.**"
             },
             {
               "id": "submit2",
-              "title": "Submit Title",
+              "title": "Greiðslu upplýsingar",
               "type": "SUBMIT",
               "placement": "footer",
               "children": null,
@@ -50,7 +68,7 @@
               "actions": [
                 {
                   "event": "SUBMIT",
-                  "name": "SUBMIT",
+                  "name": "Staðfesta",
                   "type": "primary"
                 }
               ]

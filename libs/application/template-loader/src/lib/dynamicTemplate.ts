@@ -207,7 +207,7 @@ const listOfTemplates = [
 
 const template = createTemplate({
   type: ApplicationTypes.NEW_TYPE_OF_APPLICATION,
-  name: 'Umsókn 2',
+  name: 'Sakavottorð',
 })
 
 export default template
