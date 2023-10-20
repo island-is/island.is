@@ -14,6 +14,10 @@ const createBaseApplication = (): Application => ({
   answers: {
     someAnswer: 'someValue',
     applicationType: { option: 'oldAgePension' },
+    period: {
+      year: '2023',
+      month: 'February',
+    }
   },
   assignees: [],
   applicant: '0101307789',
@@ -621,7 +625,7 @@ describe('answerValidators', () => {
     })
   })
 
-  it('should return an error if child is 18 or older', () => {
+  it('should return an error if child is 18 or older at period', () => {
     const newAnswers = [
       {
         name: '',
@@ -634,13 +638,13 @@ describe('answerValidators', () => {
     expect(
       answerValidators['childPensionRepeater'](newAnswers, application),
     ).toStrictEqual({
-      message: validatorErrorMessages.childPensionChildMustBeUnder18,
+      message: validatorErrorMessages.childPensionChildMustBeUnder18AtPeriod,
       path: 'childPensionRepeater[0].nationalIdOrBirthDate',
       values: undefined,
     })
   })
 
-  it('should return an error if child is 18 or older', () => {
+  it('should return an error if child is 18 or older at period', () => {
     const newAnswers = [
       {
         name: '',
@@ -652,7 +656,7 @@ describe('answerValidators', () => {
     expect(
       answerValidators['childPensionRepeater'](newAnswers, application),
     ).toStrictEqual({
-      message: validatorErrorMessages.childPensionChildMustBeUnder18,
+      message: validatorErrorMessages.childPensionChildMustBeUnder18AtPeriod,
       path: 'childPensionRepeater[0].nationalIdOrBirthDate',
       values: undefined,
     })

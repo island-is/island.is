@@ -1261,10 +1261,10 @@ export const validatorErrorMessages = defineMessages({
     defaultMessage: 'Svar þarf að vera listi af börnum',
     description: 'Answer must be a list of children',
   },
-  childPensionChildMustBeUnder18: {
-    id: 'oap.application:child.pension.child.must.be.under.18',
-    defaultMessage: 'Barnið verður að vera yngra en 18 ára.',
-    description: 'The child must be under 18 years of age.',
+  childPensionChildMustBeUnder18AtPeriod: {
+    id: 'oap.application:child.pension.child.must.be.under.18.at.period',
+    defaultMessage: 'Barnið verður að vera yngra en 18 ára á völdu tímabili.',
+    description: 'The child must be under 18 years of age for selected period.',
   },
 })
 

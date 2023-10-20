@@ -4,9 +4,7 @@ import { AnswerValidationConstants } from '../constants'
 import { buildError } from './utils'
 import { ChildPensionRow } from '../../types'
 import * as kennitala from 'kennitala'
-import subYears from 'date-fns/subYears'
-import startOfYear from 'date-fns/startOfYear'
-import { getApplicationExternalData } from '../oldAgePensionUtils'
+import { getApplicationAnswers, getApplicationExternalData, isOver18AtDate } from '../oldAgePensionUtils'
 
 export const validateLastestChild = (
   newAnswer: unknown,
@@ -18,6 +16,10 @@ export const validateLastestChild = (
   const { custodyInformation } = getApplicationExternalData(
     application.externalData,
   )
+  const { selectedYear, selectedMonth } = getApplicationAnswers(
+    application.answers
+  )
+  const pensionPeriod = new Date(selectedYear + selectedMonth)
 
   if (!Array.isArray(rawChildPensionRow)) {
     return buildError(
@@ -40,11 +42,12 @@ export const validateLastestChild = (
       )
     }
 
-    const finalMinDate = startOfYear(subYears(new Date(), 17))
-    const selectedDate = new Date(child.nationalIdOrBirthDate)
-    if (!(finalMinDate <= selectedDate)) {
+    const finalMinDate = new Date(pensionPeriod.setFullYear(pensionPeriod.getFullYear() - 18))
+    const birthDate = new Date(child.nationalIdOrBirthDate)
+
+    if (!(finalMinDate <= birthDate)) {
       return buildError(
-        validatorErrorMessages.childPensionChildMustBeUnder18,
+        validatorErrorMessages.childPensionChildMustBeUnder18AtPeriod,
         `${VALIDATE_LATEST_CHILD}[${i}].nationalIdOrBirthDate`,
       )
     }
@@ -87,9 +90,9 @@ export const validateLastestChild = (
       kennitala.isValid(child.nationalIdOrBirthDate) &&
       kennitala.isPerson(child.nationalIdOrBirthDate)
     ) {
-      if (kennitala.info(child.nationalIdOrBirthDate).age >= 18) {
+      if (isOver18AtDate((kennitala.info(child.nationalIdOrBirthDate).birthday), pensionPeriod)) {
         return buildError(
-          validatorErrorMessages.childPensionChildMustBeUnder18,
+          validatorErrorMessages.childPensionChildMustBeUnder18AtPeriod,
           `${VALIDATE_LATEST_CHILD}[${i}].nationalIdOrBirthDate`,
         )
       }

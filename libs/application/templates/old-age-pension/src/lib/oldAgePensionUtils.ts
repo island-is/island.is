@@ -717,6 +717,11 @@ export const filterValidEmployers = (
   return filtered as Employer[]
 }
 
+export function isOver18AtDate(dob: Date, minDate: Date) {
+  minDate.setFullYear(minDate.getFullYear() - 18)
+  return minDate > dob
+}
+
 export const formatBankInfo = (bankInfo: string) => {
   const formattedBankInfo = bankInfo.replace(/[^0-9]/g, '')
   if (formattedBankInfo && formattedBankInfo.length === 12) {

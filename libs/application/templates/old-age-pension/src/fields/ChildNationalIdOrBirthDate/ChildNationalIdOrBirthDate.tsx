@@ -18,9 +18,8 @@ import { IdentityInput, Query } from '@island.is/api/schema'
 import { useLazyQuery } from '@apollo/client'
 import { TextFormField } from '@island.is/application/ui-fields'
 import { IDENTITY_QUERY } from '../../graphql/queries'
-import subYears from 'date-fns/subYears'
-import startOfYear from 'date-fns/startOfYear'
 import * as kennitala from 'kennitala'
+import { getApplicationAnswers } from '../../lib/oldAgePensionUtils'
 
 const ChildNationalIdOrBirthDate: FC<FieldBaseProps> = ({
   error,
@@ -96,7 +95,11 @@ const ChildNationalIdOrBirthDate: FC<FieldBaseProps> = ({
     }
   }, [personNationalId, getIdentity, id, setValue, nameFieldId])
 
-  const finalMinDate = startOfYear(subYears(new Date(), 17))
+  const { selectedYear, selectedMonth } = getApplicationAnswers(
+    application.answers
+  )
+  const pensionPeriod = new Date(selectedYear + selectedMonth)
+  const finalMinDate = new Date(pensionPeriod.setFullYear(pensionPeriod.getFullYear() - 18))
   const finalMaxDate = new Date()
 
   return (
