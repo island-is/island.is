@@ -41,7 +41,7 @@ export const LatestEventsSlice = ({
       <>
         <GridContainer>
           <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
-            <Text variant="h2" as="h2">
+            <Text variant="h3" as="h2">
               {slice.title}
             </Text>
             <Box display={['none', 'none', 'none', 'block']}>
