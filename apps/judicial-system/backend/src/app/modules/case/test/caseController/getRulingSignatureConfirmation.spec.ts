@@ -1,21 +1,22 @@
-import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize/types'
+import { uuid } from 'uuidv4'
 
 import { ForbiddenException } from '@nestjs/common'
 
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileState,
   CaseOrigin,
   User,
 } from '@island.is/judicial-system/types'
-import { MessageType, MessageService } from '@island.is/judicial-system/message'
+
+import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
 import { Case } from '../../models/case.model'
 import { SignatureConfirmationResponse } from '../../models/signatureConfirmation.response'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 
 jest.mock('../../../factories')
 

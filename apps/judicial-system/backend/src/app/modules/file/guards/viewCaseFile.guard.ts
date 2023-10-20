@@ -1,17 +1,19 @@
 import {
-  Injectable,
   CanActivate,
   ExecutionContext,
-  InternalServerErrorException,
   ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
 } from '@nestjs/common'
 
 import {
+  CaseAppealState,
   CaseState,
   completedCaseStates,
-  User,
-  isProsecutionRole,
   isExtendedCourtRole,
+  isPrisonSystemUser,
+  isProsecutionRole,
+  User,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case'
@@ -48,6 +50,14 @@ export class ViewCaseFileGuard implements CanActivate {
         CaseState.RECEIVED,
         ...completedCaseStates,
       ].includes(theCase.state)
+    ) {
+      return true
+    }
+
+    if (
+      isPrisonSystemUser(user) &&
+      theCase.appealState &&
+      [CaseAppealState.COMPLETED].includes(theCase.appealState)
     ) {
       return true
     }

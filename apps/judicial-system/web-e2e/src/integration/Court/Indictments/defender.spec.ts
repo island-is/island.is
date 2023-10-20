@@ -35,11 +35,15 @@ describe(`${INDICTMENTS_DEFENDER_ROUTE}/:id`, () => {
 
   it('should validate the form', () => {
     cy.getByTestid('continueButton').should('be.disabled')
-    cy.getByTestid(`creatable-select-defenderName-${defendant1.id}`)
-      .click()
+    const createableSelectTestId = `creatable-select-defenderName-${defendant1.id}`
+    cy.getByTestid(createableSelectTestId).click()
+    cy.getByTestid(createableSelectTestId)
       .find('input')
       .get('.island-select__option')
       .should('contain', 'Logmadur')
+    cy.getByTestid(createableSelectTestId)
+      .find('input')
+      .get('.island-select__option')
       .click()
     cy.getByTestid(`defenderEmail-${defendant1.id}`).should(
       'have.value',
@@ -54,11 +58,16 @@ describe(`${INDICTMENTS_DEFENDER_ROUTE}/:id`, () => {
     cy.getByTestid('continueButton').should('be.disabled')
 
     cy.getByTestid('continueButton').should('be.disabled')
-    cy.getByTestid(`creatable-select-defenderName-${defendant2.id}`)
-      .click()
+    const createableSelectTestId2 = `creatable-select-defenderName-${defendant2.id}`
+
+    cy.getByTestid(createableSelectTestId2).click()
+    cy.getByTestid(createableSelectTestId2)
       .find('input')
       .get('.island-select__option')
       .should('contain', 'Logmadur')
+    cy.getByTestid(createableSelectTestId2)
+      .find('input')
+      .get('.island-select__option')
       .click()
     cy.getByTestid(`defenderEmail-${defendant2.id}`).should(
       'have.value',
@@ -95,11 +104,15 @@ describe(`${INDICTMENTS_DEFENDER_ROUTE}/:id`, () => {
   })
 
   it('should send notification to defender', () => {
-    cy.getByTestid(`creatable-select-defenderName-${defendant1.id}`)
-      .click()
+    const createableSelectTestId = `creatable-select-defenderName-${defendant1.id}`
+    cy.getByTestid(createableSelectTestId).click()
+    cy.getByTestid(createableSelectTestId)
       .find('input')
       .get('.island-select__option')
       .should('contain', 'Logmadur')
+    cy.getByTestid(createableSelectTestId)
+      .find('input')
+      .get('.island-select__option')
       .click()
 
     cy.getByTestid(`defenderEmail-${defendant1.id}`).should(
@@ -107,11 +120,15 @@ describe(`${INDICTMENTS_DEFENDER_ROUTE}/:id`, () => {
       'logmadur@logmenn.is',
     )
 
-    cy.getByTestid(`creatable-select-defenderName-${defendant2.id}`)
-      .click()
+    const createableSelectTestId2 = `creatable-select-defenderName-${defendant2.id}`
+    cy.getByTestid(createableSelectTestId2).click()
+    cy.getByTestid(createableSelectTestId2)
       .find('input')
       .get('.island-select__option')
       .should('contain', 'Logmadur')
+    cy.getByTestid(createableSelectTestId2)
+      .find('input')
+      .get('.island-select__option')
       .click()
 
     cy.getByTestid(`defenderEmail-${defendant2.id}`).should(

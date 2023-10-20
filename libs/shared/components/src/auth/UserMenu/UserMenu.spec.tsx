@@ -186,7 +186,7 @@ describe('UserMenu', () => {
     // Arrange
     renderAuthenticated(
       <>
-        <UserMenu fullscreen />
+        <UserMenu fullscreen showLanguageSwitcher />
         <LocaleContext.Consumer>
           {({ lang }) => <span>Current: {lang}</span>}
         </LocaleContext.Consumer>

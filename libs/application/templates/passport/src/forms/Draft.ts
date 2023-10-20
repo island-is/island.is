@@ -15,10 +15,10 @@ import {
   DefaultEvents,
   Form,
   FormModes,
+  PassportsApi,
 } from '@island.is/application/types'
 import {
   DeliveryAddressApi,
-  IdentityDocumentApi,
   SyslumadurPaymentCatalogApi,
   UserInfoApi,
   NationalRegistryUser,
@@ -38,25 +38,6 @@ export const Draft: Form = buildForm({
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
-    buildSection({
-      id: 'introSection',
-      title: m.introTitle,
-      children: [
-        buildMultiField({
-          id: 'introApplicant',
-          title: m.passport,
-          description: m.introDescription,
-          children: [
-            buildDescriptionField({
-              id: 'introDescription',
-              title: '',
-              description: '',
-            }),
-          ],
-        }),
-      ],
-    }),
-
     buildSection({
       id: 'externalDataSection',
       title: m.dataCollectionTitle,
@@ -78,7 +59,7 @@ export const Draft: Form = buildForm({
               subTitle: m.dataCollectionUserProfileSubtitle,
             }),
             buildDataProviderItem({
-              provider: IdentityDocumentApi,
+              provider: PassportsApi,
               title: m.dataCollectionIdentityDocumentTitle,
               subTitle: m.dataCollectionIdentityDocumentSubtitle,
             }),

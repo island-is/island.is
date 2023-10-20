@@ -1,4 +1,5 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { FormatMessage } from '@island.is/localization'
 import { FC } from 'react'
 import { MessageDescriptor } from 'react-intl'
 import { RouteObject } from 'react-router-dom'
@@ -56,6 +57,11 @@ export interface PortalNavigationItem {
    * Active state if current path is exact match
    */
   activeIfExact?: boolean
+
+  /**
+   * Service provider id used for displaying service provider information in the module.
+   */
+  serviceProvider?: string
 }
 
 /**
@@ -67,6 +73,7 @@ export interface PortalModuleProps {
 
 export interface PortalModuleRoutesProps extends PortalModuleProps {
   client: ApolloClient<NormalizedCacheObject>
+  formatMessage: FormatMessage
 }
 
 /**

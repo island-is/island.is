@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { UpdateIndictmentCountDto } from './dto/updateIndictmentCount.dto'
 import { IndictmentCount } from './models/indictmentCount.model'

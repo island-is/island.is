@@ -24,7 +24,7 @@
   "stakeholders": {
     "title": "Boð um þátttöku",
     "description": "Allir geta sent inn umsögn og verið áskrifendur að málum í Samráðsgátt. Í þessu máli var boð um þátttöku að auki sent eftirtöldum:",
-    "noList": "Enginn listi skráður."
+    "noList": "Enginn listi skráður"
   },
   "relatedCases": {
     "title": "Tenging við önnur mál",
@@ -89,10 +89,10 @@
       }
     },
     "notSubbedCardSkeleton": {
-      "text": "Tilkyningar um breyttan umsagnarfrest, umsagnarfrest sem er að renna út og birtingu niðurstaðna verða sendar á skráð netfang.",
+      "text": "Tilkynningar um breyttan umsagnarfrest, umsagnarfrest sem er að renna út og birtingu niðurstaðna verða sendar á skráð netfang.",
       "button": "Skrá í áskrift"
     },
-    "buttonLabel": "Skrá áskrift"
+    "buttonLabel": "Skrá áskrift að máli"
   },
   "adviceList": {
     "buttonShow": "Sjá allar umsagnir",

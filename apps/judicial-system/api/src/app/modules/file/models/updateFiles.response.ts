@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+
 import { CaseFile } from './file.model'
 
 @ObjectType()

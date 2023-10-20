@@ -9,6 +9,8 @@ import {navigateTo} from '../../lib/deep-linking';
 import {useUserProfile} from './profile-queries';
 import {client} from '../../graphql/client';
 import {CREATE_EMAIL_VERIFICATION} from '../../graphql/queries/create-email-verification.mutation';
+import {UPDATE_ISLYKILL_DELETE_INPUT} from '../../graphql/queries/update-islykill-settings.mutation';
+import {USER_PROFILE_QUERY} from '../../graphql/queries/user-profile.query';
 
 const {getNavigationOptions, useNavigationOptions} =
   createNavigationOptionHooks(() => ({
@@ -27,8 +29,8 @@ export const EditEmailScreen: NavigationFunctionComponent<{
   const [text, onChangeText] = React.useState(email ?? '');
 
   const originalEmail = userProfile.data?.getUserProfile?.email ?? email ?? '';
-  const disabled =
-    text?.trim() === originalEmail?.trim() || text?.trim() === '';
+  const isEmpty = text?.trim() === '';
+  const disabled = text?.trim() === originalEmail?.trim();
 
   useEffect(() => {
     if (userProfile.data?.getUserProfile?.email) {
@@ -65,29 +67,54 @@ export const EditEmailScreen: NavigationFunctionComponent<{
             />
           </View>
           <Button
-            title={intl.formatMessage({id: 'edit.email.button'})}
+            title={
+              isEmpty
+                ? intl.formatMessage({id: 'edit.email.button.empty'})
+                : intl.formatMessage({id: 'edit.email.button'})
+            }
             onPress={async () => {
               setLoading(true);
               try {
-                const res = await client.mutate({
-                  mutation: CREATE_EMAIL_VERIFICATION,
-                  variables: {
-                    input: {
-                      email: text,
+                if (isEmpty) {
+                  const res = await client.mutate({
+                    mutation: UPDATE_ISLYKILL_DELETE_INPUT,
+                    variables: {
+                      input: {
+                        email: true,
+                      },
                     },
-                  },
-                });
-                if (res.data) {
-                  navigateTo('/editconfirm/email', {
-                    type: 'email',
-                    email: text,
-                    parentComponentId: componentId,
+                    refetchQueries: [USER_PROFILE_QUERY],
                   });
+                  if (res.data) {
+                    Navigation.dismissModal(componentId);
+                    console.log(res.data, 'Uppfærði tómt netfang');
+                  } else {
+                    throw new Error('Failed to delete email');
+                  }
                 } else {
-                  throw new Error('Failed to create sms verification');
+                  const res = await client.mutate({
+                    mutation: CREATE_EMAIL_VERIFICATION,
+                    variables: {
+                      input: {
+                        email: text,
+                      },
+                    },
+                  });
+                  if (res.data) {
+                    navigateTo('/editconfirm/email', {
+                      type: 'email',
+                      email: text,
+                      parentComponentId: componentId,
+                    });
+                  } else {
+                    throw new Error('Failed to create sms verification');
+                  }
                 }
               } catch (e) {
-                Alert.alert('Villa', 'Gat ekki sent staðfestingarkóða');
+                Alert.alert(
+                  intl.formatMessage({id: 'edit.email.error'}),
+                  intl.formatMessage({id: 'edit.email.errorMessage'}),
+                );
               }
               setLoading(false);
             }}

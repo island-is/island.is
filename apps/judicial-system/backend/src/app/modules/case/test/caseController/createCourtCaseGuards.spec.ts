@@ -2,9 +2,9 @@ import { CanActivate } from '@nestjs/common'
 
 import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
 
+import { CaseController } from '../../case.controller'
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseWriteGuard } from '../../guards/caseWrite.guard'
-import { CaseController } from '../../case.controller'
 
 describe('CaseController - Create court case guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

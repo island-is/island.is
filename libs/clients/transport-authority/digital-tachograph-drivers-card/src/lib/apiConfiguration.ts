@@ -19,6 +19,7 @@ const configFactory = (
 ) => ({
   fetchApi: createEnhancedFetch({
     name: 'clients-transport-authority-digital-tachograph-drivers-card',
+    organizationSlug: 'samgongustofa',
     timeout: config.fetchTimeout,
     autoAuth: idsClientConfig.isConfigured
       ? {

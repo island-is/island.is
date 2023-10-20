@@ -108,29 +108,29 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
                   : '-'
               }
             />
+            {inspectionInfo?.odometer && (
+              <Input
+                loading={loading}
+                error={isError}
+                label={intl.formatMessage({id: 'vehicleDetail.odometer'})}
+                value={`${inspectionInfo?.odometer} km`}
+              />
+            )}
+          </InputRow>
+
+          <InputRow>
             <Input
               loading={loading}
               error={isError}
               label={intl.formatMessage({id: 'vehicleDetail.vehicleWeight'})}
               value={`${technicalInfo?.vehicleWeight} kg`}
             />
-          </InputRow>
-
-          <InputRow>
             {technicalInfo?.totalWeight ? (
               <Input
                 loading={loading}
                 error={isError}
                 label={intl.formatMessage({id: 'vehicleDetail.totalWeight'})}
                 value={`${technicalInfo?.totalWeight ?? '-'} kg`}
-              />
-            ) : null}
-            {technicalInfo?.capacityWeight ? (
-              <Input
-                loading={loading}
-                error={isError}
-                label={intl.formatMessage({id: 'vehicleDetail.capacityWeight'})}
-                value={`${technicalInfo?.capacityWeight ?? '-'} kg`}
               />
             ) : null}
           </InputRow>
@@ -152,17 +152,6 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
               value={`${inspectionInfo?.carTax} kr.`}
             />
           </InputRow>
-
-          {mainInfo?.co2 ? (
-            <InputRow>
-              <Input
-                loading={loading}
-                error={isError}
-                label={intl.formatMessage({id: 'vehicleDetail.nedc'})}
-                value={`${mainInfo?.co2} g/km`}
-              />
-            </InputRow>
-          ) : null}
 
           {mainInfo ? (
             <InputRow>
@@ -188,6 +177,25 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
               ) : null}
             </InputRow>
           ) : null}
+
+          <InputRow>
+            {technicalInfo?.capacityWeight ? (
+              <Input
+                loading={loading}
+                error={isError}
+                label={intl.formatMessage({id: 'vehicleDetail.capacityWeight'})}
+                value={`${technicalInfo?.capacityWeight ?? '-'} kg`}
+              />
+            ) : null}
+            {mainInfo?.co2 ? (
+              <Input
+                loading={loading}
+                error={isError}
+                label={intl.formatMessage({id: 'vehicleDetail.nedc'})}
+                value={`${mainInfo?.co2 ?? 0} g/km`}
+              />
+            ) : null}
+          </InputRow>
         </View>
       </ScrollView>
     </View>

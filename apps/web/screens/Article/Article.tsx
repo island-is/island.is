@@ -28,7 +28,6 @@ import {
   Sticky,
   Webreader,
   AppendedArticleComponents,
-  footerEnabled,
   Stepper,
   stepperUtils,
   Form,
@@ -71,8 +70,8 @@ type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
 
 const getThemeConfig = (article: Article) => {
-  const organizationFooterPresent = article?.organization?.some((o) =>
-    footerEnabled.includes(o.slug),
+  const organizationFooterPresent = article?.organization?.some(
+    (o) => o?.footerItems?.length > 0,
   )
   return {
     themeConfig: {

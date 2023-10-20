@@ -8,7 +8,7 @@ export interface IAccordionSliceFields {
   title?: string | undefined
 
   /** Type */
-  type: 'accordion' | 'accordion_minimal' | 'CTA'
+  type: 'accordion' | 'accordion_minimal' | 'CTA' | 'category_card'
 
   /** Accordion Items */
   accordionItems?: IOneColumnText[] | undefined
@@ -75,7 +75,6 @@ export interface IAlertBannerFields {
         | 'umsoknir'
         | 'min-gogn'
         | 'skirteini'
-        | 'leyfisbref'
         | 'menntun'
         | 'fasteignir'
         | 'fjarmal'
@@ -1440,11 +1439,10 @@ export interface IIntroLinkImageFields {
   leftImage?: boolean | undefined
 
   /** Link Title */
-  linkTitle: string
+  linkTitle?: string | undefined
 
   /** Link */
-  link:
-    | IAboutSubPage
+  link?:
     | IArticle
     | IArticleCategory
     | ISubArticle
@@ -1453,9 +1451,10 @@ export interface IIntroLinkImageFields {
     | INews
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
+    | undefined
 
   /** Open Link in New Tab */
-  openLinkInNewTab: boolean
+  openLinkInNewTab?: boolean | undefined
 }
 
 export interface IIntroLinkImage extends Entry<IIntroLinkImageFields> {
@@ -1546,7 +1545,11 @@ export interface ILifeEventPageFields {
   seeMoreText?: string | undefined
 
   /** page type */
-  pageType?: 'Life Event' | 'Digital Iceland Service' | undefined
+  pageType?:
+    | 'Life Event'
+    | 'Digital Iceland Service'
+    | 'Digital Iceland Community Page'
+    | undefined
 
   /** featured image */
   featuredImage?: Asset | undefined
@@ -2018,6 +2021,9 @@ export interface INewsFields {
 
   /** og:image */
   featuredImage?: Asset | undefined
+
+  /** Sign Language Video */
+  signLanguageVideo?: IEmbeddedVideo | undefined
 }
 
 export interface INews extends Entry<INewsFields> {
@@ -2246,6 +2252,9 @@ export interface IOrganizationFields {
   /** Logo */
   logo?: Asset | undefined
 
+  /** Footer Config */
+  footerConfig?: Record<string, any> | undefined
+
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
 
@@ -2421,6 +2430,8 @@ export interface IOrganizationPageFields {
     | 'samgongustofa'
     | 'geislavarnir-rikisins'
     | 'rettindagaesla-fatlads-folks'
+    | 'hms'
+    | 'rikissaksoknari'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
@@ -2808,6 +2819,9 @@ export interface IProjectPageFields {
       )[]
     | undefined
 
+  /** Footer Config */
+  footerConfig?: Record<string, any> | undefined
+
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
 
@@ -2872,6 +2886,9 @@ export interface IProjectSubpageFields {
         | ITwoColumnText
       )[]
     | undefined
+
+  /** Show Table of Contents */
+  showTableOfContents?: boolean | undefined
 
   /** Bottom Slices */
   bottomSlices?: (IPowerBiSlice | IOneColumnText)[] | undefined
@@ -4002,6 +4019,7 @@ export interface IUrlFields {
     | IProjectPage
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
+    | IOrganizationPage
     | undefined
 
   /** Urls list */
@@ -4054,7 +4072,7 @@ export interface IVacancyFields {
     | 'Sumarstörf'
 
   /** Organization */
-  organization: IOrganization
+  organization?: IOrganization | undefined
 
   /** Locations */
   locations: (
@@ -4067,6 +4085,7 @@ export interface IVacancyFields {
     | 'Suðurland'
     | 'Vestfirðir'
     | 'Suðurnes'
+    | 'Erlendis'
   )[]
 
   /** Job Percentage */
