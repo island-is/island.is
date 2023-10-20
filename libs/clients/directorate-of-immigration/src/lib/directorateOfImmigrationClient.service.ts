@@ -8,7 +8,7 @@ import {
   StayAbroad,
   TravelDocumentType,
 } from './directorateOfImmigrationClient.types'
-import { Inject, Injectable, Logger } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import {
   ApplicantApi,
   ApplicantResidenceConditionApi,
@@ -16,7 +16,6 @@ import {
   ApplicationAttachmentApi,
   AttachmentType,
   CountryOfResidenceApi,
-  CriminalRecordApi,
   LookupType,
   OptionSetApi,
   ResidenceAbroadApi,
@@ -24,7 +23,6 @@ import {
   StudyApi,
   TravelDocumentApi,
 } from '../../gen/fetch'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 
 export
 @Injectable()
@@ -35,15 +33,11 @@ class DirectorateOfImmigrationClient {
     private applicationApi: ApplicationApi,
     private applicationAttachmentApi: ApplicationAttachmentApi,
     private countryOfResidenceApi: CountryOfResidenceApi,
-    private criminalRecordApi: CriminalRecordApi,
     private optionSetApi: OptionSetApi,
     private residenceAbroadApi: ResidenceAbroadApi,
     private staticDataApi: StaticDataApi,
     private studyApi: StudyApi,
     private travelDocumentApi: TravelDocumentApi,
-
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
   ) {}
 
   private applicantApiWithAuth(auth: Auth) {
@@ -68,10 +62,6 @@ class DirectorateOfImmigrationClient {
 
   private countryOfResidenceApiWithAuth(auth: Auth) {
     return this.countryOfResidenceApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
-  private criminalRecordApiWithAuth(auth: Auth) {
-    return this.criminalRecordApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   private residenceAbroadApiWithAuth(auth: Auth) {
