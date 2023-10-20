@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react'
 import { BLOCKS } from '@contentful/rich-text-types'
-import { theme } from '@island.is/island-ui/theme'
+
+import type { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   GridColumn,
@@ -9,7 +11,7 @@ import {
   Text,
   TextProps,
 } from '@island.is/island-ui/core'
-import type { SliceType } from '@island.is/island-ui/contentful'
+import { theme } from '@island.is/island-ui/theme'
 import type { FooterItem } from '@island.is/web/graphql/schema'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { webRichText } from '@island.is/web/utils/richText'
@@ -36,8 +38,11 @@ export const Footer = ({
   titleVariant = 'h3',
 }: FooterProps) => {
   const { width } = useWindowSize()
+  const [isMobileScreenWidth, setIsMobileScreenWidth] = useState(false)
 
-  const isMobileScreenWidth = width < theme.breakpoints.sm
+  useEffect(() => {
+    setIsMobileScreenWidth(width < theme.breakpoints.sm)
+  }, [width])
 
   return (
     <footer className={styles.footer} style={{ background }}>
