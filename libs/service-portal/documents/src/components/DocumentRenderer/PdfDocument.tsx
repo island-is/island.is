@@ -3,7 +3,8 @@ import * as styles from './DocumentRenderer.css'
 import { m, Tooltip } from '@island.is/service-portal/core'
 import { Box, Button, PdfViewer, Text } from '@island.is/island-ui/core'
 import { useState } from 'react'
-import { ActiveDocumentType } from '../../screens/Overview/Overview'
+import { ActiveDocumentType } from '../../lib/types'
+
 type PdfDocumentProps = {
   document: ActiveDocumentType
 }
@@ -57,7 +58,6 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({ document }) => {
       >
         <PdfViewer
           file={`data:application/pdf;base64,${document.document.content}`}
-          showAllPages
           scale={scalePDF}
           autoWidth={false}
         />
