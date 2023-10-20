@@ -199,11 +199,14 @@ class DirectorateOfImmigrationClient {
         municipality: application.city,
         phone: application.phone,
         nationality: application.citizenshipCode,
-        dateOfDomicileRegistration:
-          application.residenceInIcelandLastChangeDate?.toISOString(),
+        dateOfDomicileRegistration: application.residenceInIcelandLastChangeDate
+          ? new Date(application.residenceInIcelandLastChangeDate).toISOString()
+          : undefined,
         countryOfBirth: application.birthCountry,
         maritalStatus: application.maritalStatusCode,
-        dateOfMarriage: application.dateOfMaritalStatus?.toISOString(),
+        dateOfMarriage: application.dateOfMaritalStatus
+          ? new Date(application.dateOfMaritalStatus).toISOString()
+          : undefined,
         spouseSSN: application.spouse?.nationalId,
         spouseName:
           application.spouse &&
@@ -367,7 +370,9 @@ class DirectorateOfImmigrationClient {
           ssn: childInfo.nationalId,
           name: childInfo.givenName + ' ' + childInfo.familyName,
           parent2SSN: selectedChild.otherParentNationalId,
-          parent2BirthDate: selectedChild.otherParentBirtDate?.toISOString(),
+          parent2BirthDate: selectedChild.otherParentBirtDate
+            ? new Date(selectedChild.otherParentBirtDate).toISOString()
+            : undefined,
           parent2Name: selectedChild.otherParentName,
         },
       })

@@ -293,16 +293,18 @@ export class CitizenshipService extends BaseTemplateApiService {
     }
 
     const answers = application.answers as CitizenshipAnswers
-    const individual = application.externalData.individual.data as
+    const individual = application.externalData.individual?.data as
       | CitizenIndividual
       | undefined
     const nationalRegistryBirthplace = application.externalData
-      .nationalRegistryBirthplace.data as NationalRegistryBirthplace | undefined
-    const spouseDetails = application.externalData.spouseDetails.data as
+      .nationalRegistryBirthplace?.data as
+      | NationalRegistryBirthplace
+      | undefined
+    const spouseDetails = application.externalData.spouseDetails?.data as
       | SpouseIndividual
       | undefined
     const childrenCustodyInformation = application.externalData
-      .childrenCustodyInformation.data as
+      .childrenCustodyInformation?.data as
       | ApplicantChildCustodyInformation[]
       | undefined
     const applicantPassport = answers.passport
