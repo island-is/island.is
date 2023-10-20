@@ -11,12 +11,10 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  NationalRegistryUserApi,
   UserProfileApi,
-  defineTemplateApi,
 } from '@island.is/application/types'
 
-import { assign } from 'xstate'
-import { Actions } from '../shared'
 import { DataSchema } from './dataSchema'
 import { carRecyclingMessages, statesMessages } from './messages'
 
@@ -91,7 +89,7 @@ const CarRecyclingTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [UserProfileApi],
+              api: [UserProfileApi, NationalRegistryUserApi],
             },
           ],
         },

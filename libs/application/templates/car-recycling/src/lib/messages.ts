@@ -44,9 +44,9 @@ export const carRecyclingMessages: MessageDir = {
       description: 'Checbox to confirm data provider',
     },
   }),
-  vehicles: defineMessages({
+  cars: defineMessages({
     list: {
-      id: 'rf.cr.application:vehicles.list',
+      id: 'rf.cr.application:cars.list',
       defaultMessage: 'Ökutækjalisti',
       description: 'Prerequisites',
     },
@@ -54,8 +54,39 @@ export const carRecyclingMessages: MessageDir = {
   review: defineMessages({
     confirmSectionTitle: {
       id: 'rf.cr.application:confirmation.section.title',
-      defaultMessage: 'Staðfesting',
-      description: 'Confirm',
+      defaultMessage: 'Senda inn umsókn',
+      description: 'Submit an application',
+    },
+    confirmationDescription: {
+      id: 'rf.cr.application:confirmation.description',
+      defaultMessage:
+        'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
+      description: 'Please review the application before submitting.',
+    },
+    name: {
+      id: 'rf.cr.application:review.name',
+      defaultMessage: 'Nafn',
+      description: 'Name',
+    },
+    nationalId: {
+      id: 'rf.cr.application:review.nationalId',
+      defaultMessage: 'Kennitala',
+      description: 'National registry ID',
+    },
+    address: {
+      id: 'rf.cr.application:review.address',
+      defaultMessage: 'Heimilisfang',
+      description: 'Address',
+    },
+    municipality: {
+      id: 'rf.cr.application:review.municipality',
+      defaultMessage: 'Sveitarfélag',
+      description: 'Municipality',
+    },
+    carsSectionTitle: {
+      id: 'rf.cr.application:review.cars.section.title',
+      defaultMessage: 'Ökutæki í afskrá til endurvinnslu',
+      description: 'Vehicles deregistered for recycling',
     },
   }),
 }

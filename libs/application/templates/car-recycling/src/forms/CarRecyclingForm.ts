@@ -1,21 +1,13 @@
 import {
   buildAlertMessageField,
   buildCustomField,
-  buildDescriptionField,
   buildForm,
   buildMultiField,
   buildSection,
   buildSubSection,
   buildSubmitField,
-  buildTextField,
 } from '@island.is/application/core'
-import {
-  Application,
-  DefaultEvents,
-  Form,
-  FormModes,
-  NationalRegistryIndividual,
-} from '@island.is/application/types'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { carRecyclingMessages } from '../lib/messages'
 
@@ -31,8 +23,8 @@ export const CarRecyclingForm: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'vehiclesList',
-      title: carRecyclingMessages.vehicles.list,
+      id: 'carsList22',
+      title: carRecyclingMessages.cars.list,
       children: [
         buildAlertMessageField({
           id: 'paymentInfo.alert',
@@ -44,14 +36,15 @@ export const CarRecyclingForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'confirm',
+      id: 'confirmSection',
       title: carRecyclingMessages.review.confirmSectionTitle,
       children: [
         buildSubSection({
+          id: 'confirmSubSection',
           title: '',
           children: [
             buildMultiField({
-              id: 'confirm',
+              id: 'reviews',
               title: '',
               description: '',
               children: [
