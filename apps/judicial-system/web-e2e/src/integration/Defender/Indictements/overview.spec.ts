@@ -1,7 +1,4 @@
-import {
-  DEFENDER_ROUTE,
-  DEFENDER_INDICTMENT_ROUTE,
-} from '@island.is/judicial-system/consts'
+import { DEFENDER_INDICTMENT_ROUTE } from '@island.is/judicial-system/consts'
 import {
   Case,
   CaseFileCategory,
