@@ -17,7 +17,7 @@ const createBaseApplication = (): Application => ({
     period: {
       year: '2023',
       month: 'February',
-    }
+    },
   },
   assignees: [],
   applicant: '0101307789',

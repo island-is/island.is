@@ -4,7 +4,11 @@ import { AnswerValidationConstants } from '../constants'
 import { buildError } from './utils'
 import { ChildPensionRow } from '../../types'
 import * as kennitala from 'kennitala'
-import { getApplicationAnswers, getApplicationExternalData, isOver18AtDate } from '../oldAgePensionUtils'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+  isOver18AtDate,
+} from '../oldAgePensionUtils'
 
 export const validateLastestChild = (
   newAnswer: unknown,
@@ -17,7 +21,7 @@ export const validateLastestChild = (
     application.externalData,
   )
   const { selectedYear, selectedMonth } = getApplicationAnswers(
-    application.answers
+    application.answers,
   )
   const pensionPeriod = new Date(selectedYear + selectedMonth)
 
@@ -42,7 +46,9 @@ export const validateLastestChild = (
       )
     }
 
-    const finalMinDate = new Date(pensionPeriod.setFullYear(pensionPeriod.getFullYear() - 18))
+    const finalMinDate = new Date(
+      pensionPeriod.setFullYear(pensionPeriod.getFullYear() - 18),
+    )
     const birthDate = new Date(child.nationalIdOrBirthDate)
 
     if (!(finalMinDate <= birthDate)) {
@@ -90,7 +96,12 @@ export const validateLastestChild = (
       kennitala.isValid(child.nationalIdOrBirthDate) &&
       kennitala.isPerson(child.nationalIdOrBirthDate)
     ) {
-      if (isOver18AtDate((kennitala.info(child.nationalIdOrBirthDate).birthday), pensionPeriod)) {
+      if (
+        isOver18AtDate(
+          kennitala.info(child.nationalIdOrBirthDate).birthday,
+          pensionPeriod,
+        )
+      ) {
         return buildError(
           validatorErrorMessages.childPensionChildMustBeUnder18AtPeriod,
           `${VALIDATE_LATEST_CHILD}[${i}].nationalIdOrBirthDate`,

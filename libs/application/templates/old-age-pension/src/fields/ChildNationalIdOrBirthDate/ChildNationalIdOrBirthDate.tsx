@@ -96,10 +96,12 @@ const ChildNationalIdOrBirthDate: FC<FieldBaseProps> = ({
   }, [personNationalId, getIdentity, id, setValue, nameFieldId])
 
   const { selectedYear, selectedMonth } = getApplicationAnswers(
-    application.answers
+    application.answers,
   )
   const pensionPeriod = new Date(selectedYear + selectedMonth)
-  const finalMinDate = new Date(pensionPeriod.setFullYear(pensionPeriod.getFullYear() - 18))
+  const finalMinDate = new Date(
+    pensionPeriod.setFullYear(pensionPeriod.getFullYear() - 18),
+  )
   const finalMaxDate = new Date()
 
   return (
