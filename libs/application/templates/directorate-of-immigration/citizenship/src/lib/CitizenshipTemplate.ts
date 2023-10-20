@@ -23,7 +23,7 @@ import { CitizenshipSchema } from './dataSchema'
 import {
   UserProfileApi,
   UtlendingastofnunPaymentCatalogApi,
-  NationalRegistryBirthplaceApi,
+  BirthplaceApi,
   ChildrenCustodyInformationApi,
   NationalRegistryParentsApi,
   NationalRegistrySpouseDetailsApi,
@@ -87,7 +87,7 @@ const template: ApplicationTemplate<
               api: [
                 NationalRegistryIndividualApi,
                 NationalRegistrySpouseDetailsApi,
-                NationalRegistryBirthplaceApi,
+                BirthplaceApi,
                 NationalRegistryParentsApi,
                 ChildrenCustodyInformationApi,
                 UserProfileApi,

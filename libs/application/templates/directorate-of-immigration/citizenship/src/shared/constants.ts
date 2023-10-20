@@ -10,6 +10,7 @@ export enum ApiActions {
   getNationalRegistrySpouseDetails = 'getNationalRegistrySpouseDetails',
   submitApplication = 'submitApplication',
   validateApplication = 'validateApplication',
+  getBirthplace = 'getBirthplace',
 }
 
 export const MAX_CNT_APPLICANTS = 18

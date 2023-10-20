@@ -57,10 +57,9 @@ export const NationalRegistrySpouseDetailsApi = defineTemplateApi({
   externalDataId: 'spouseDetails',
 })
 
-export const NationalRegistryBirthplaceApi = defineTemplateApi({
-  action: 'getBirthplace',
-  externalDataId: 'nationalRegistryBirthplace',
-  namespace: 'NationalRegistry',
+export const BirthplaceApi = defineTemplateApi({
+  action: ApiActions.getBirthplace,
+  externalDataId: 'birthplace',
 })
 
 export const NationalRegistryParentsApi = defineTemplateApi({

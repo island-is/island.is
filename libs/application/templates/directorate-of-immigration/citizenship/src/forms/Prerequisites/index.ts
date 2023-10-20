@@ -18,7 +18,7 @@ import {
 import {
   ChildrenCustodyInformationApi,
   CountriesApi,
-  NationalRegistryBirthplaceApi,
+  BirthplaceApi,
   NationalRegistryIndividualApi,
   NationalRegistryParentsApi,
   NationalRegistrySpouseDetailsApi,
@@ -77,7 +77,7 @@ export const Prerequisites: Form = buildForm({
               subTitle: '',
             }),
             buildDataProviderItem({
-              provider: NationalRegistryBirthplaceApi,
+              provider: BirthplaceApi,
               title: '',
             }),
             buildDataProviderItem({
