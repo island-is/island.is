@@ -1,5 +1,4 @@
 import { defineTemplateApi } from '@island.is/application/types'
-import { DEFINITIONS_FILE_HEADER } from '@nestjs/graphql'
 
 export {
   NationalRegistryUserApi,

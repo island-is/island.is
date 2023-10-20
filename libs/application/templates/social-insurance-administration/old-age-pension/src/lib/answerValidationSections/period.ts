@@ -1,11 +1,11 @@
 import { Application, Answer } from '@island.is/application/types'
 
-import { validatorErrorMessages } from './../messages'
+import { validatorErrorMessages } from '../messages'
 import {
   getApplicationAnswers,
   getStartDateAndEndDate,
-} from './../oldAgePensionUtils'
-import { AnswerValidationConstants, MONTHS } from './../constants'
+} from '../oldAgePensionUtils'
+import { AnswerValidationConstants, MONTHS } from '../constants'
 import { buildError } from './utils'
 
 export const period = (newAnswer: unknown, application: Application) => {

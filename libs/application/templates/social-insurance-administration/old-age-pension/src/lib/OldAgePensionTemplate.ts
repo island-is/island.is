@@ -16,6 +16,7 @@ import {
   NationalRegistrySpouseApi,
   ChildrenCustodyInformationApi,
   InstitutionNationalIds,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import {
   coreMessages,
@@ -23,7 +24,14 @@ import {
   DefaultStateLifeCycle,
   coreHistoryMessages,
 } from '@island.is/application/core'
-import { ConnectedApplications, Events, NO, Roles, States } from './constants'
+import {
+  Actions,
+  ConnectedApplications,
+  Events,
+  NO,
+  Roles,
+  States,
+} from './constants'
 import { dataSchema } from './dataSchema'
 import { oldAgePensionFormMessage, statesMessages } from './messages'
 import { answerValidators } from './answerValidators'
@@ -123,6 +131,10 @@ const OldAgePensionTemplate: ApplicationTemplate<
             },
           },
           progress: 0.25,
+          onExit: defineTemplateApi({
+            action: Actions.SEND_APPLICATION,
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

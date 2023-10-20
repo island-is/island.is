@@ -92,8 +92,8 @@ import { DrivingLearnersPermitService } from './driving-learners-permit/driving-
 
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
-import { OldAgePensionModule } from './old-age-pension/old-age-pension.module'
-import { OldAgePensionService } from './old-age-pension/old-age-pension.service'
+import { OldAgePensionModule } from './social-insurance-administration/social-insurance-administration.module'
+import { OldAgePensionService } from './social-insurance-administration/social-insurance-administration.service'
 
 export const modules = [
   ReferenceTemplateModule,

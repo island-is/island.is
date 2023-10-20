@@ -6,9 +6,10 @@ import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import {
   Configuration,
-  GetBankInfoApi,
   GetStatusApi,
   HelloOddurApi,
+  SendApplicationApi,
+  GetBankInfoApi,
 } from '../../gen/fetch'
 import { createWrappedFetchWithLogging } from './utils'
 import { SocialInsuranceAdministrationClientService } from './socialInsuranceAdministrationClient.service'
@@ -52,7 +53,12 @@ export class SocialInsuranceAdministrationClientModule {
       headers,
     })
 
-    const exportedApis = [HelloOddurApi, GetStatusApi, GetBankInfoApi]
+    const exportedApis = [
+      HelloOddurApi,
+      GetStatusApi,
+      GetBankInfoApi,
+      SendApplicationApi,
+    ]
 
     return {
       module: SocialInsuranceAdministrationClientModule,

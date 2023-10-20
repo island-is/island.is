@@ -58,6 +58,31 @@ paths:
             application/json:
               schema:
                 type: string
+  /Application:
+    post:
+      tags:
+        - Send application
+      operationId: OldAgePension_SendApplication
+      requestBody:
+        x-name: parentalLeave
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OldAgePension'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OldAgePensionResponse'
+        '500':
+          description: internal Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OldAgePensionResponseError'
   /application/bankinfo:
     get:
       tags:
@@ -82,6 +107,7 @@ paths:
             application/json:
               schema:
                 type: string
+
 components:
   securitySchemes:
     bearerAuth:
@@ -104,6 +130,183 @@ components:
           type: string
         applicationCreateDate:
           format: date-time
+          type: string
+    OldAgePension:
+      properties:
+        applicationId:
+          type: string
+        period:
+          $ref: '#/components/schemas/Period'
+        comment:
+          type: string
+        paymentInfo:
+          $ref: '#/components/schemas/PaymentInfo'
+        applicantInfo:
+          $ref: '#/components/schemas/ApplicantInfo'
+        applicationType:
+          type: string
+        hasAbroadResidence:
+          type: boolean
+        hasOneTimePayment:
+          type: boolean
+        isSailorPension:
+          type: boolean
+        isEarlyPension:
+          type: boolean
+        householdSupplement:
+          $ref: '#/components/schemas/HouseholdSupplement'
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Child'
+        connectedApplications:
+          type: array
+          items:
+            type: string
+        uploads:
+          $ref: '#/components/schemas/Uploads'
+
+    Period:
+      type: object
+      additionalProperties: false
+      required:
+        - year
+        - month
+      properties:
+        year:
+          type: integer
+          format: int32e
+        month:
+          type: integer
+          format: int32e
+    PaymentInfo:
+      type: object
+      additionalProperties: false
+      required:
+        - bank
+        - spouseAllowance
+        - personalAllowance
+      properties:
+        bank:
+          type: string
+        spouseAllowance:
+          type: boolean
+        personalAllowance:
+          type: boolean
+        spouseAllowanceUsage:
+          type: number
+          format: float
+        personalAllowanceUsage:
+          type: number
+          format: float
+    ApplicantInfo:
+      type: object
+      additionalProperties: false
+      required:
+        - email
+        - phonenumber
+      properties:
+        email:
+          type: string
+        phonenumber:
+          type: string
+    HouseholdSupplement:
+      type: object
+      additionalProperties: false
+      required:
+        - isRental
+        - childrenUnder18
+      properties:
+        isRental:
+          type: boolean
+        childrenUnder18:
+          type: boolean
+    Child:
+      type: object
+      additionalProperties: false
+      required:
+        - nationalIdOrBirthDate
+      properties:
+        name:
+          type: string
+        nationalIdOrBirthDate:
+          type: string
+        childDoesNotHaveNationalId:
+          type: boolean
+    Uploads:
+      type: object
+      additionalProperties: false
+      properties:
+        pension:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+        additional:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+        childPension:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+        earlyRetirement:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+        sailorPension:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+        householdSupplement:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+        halfOldAgePension:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+    Attachment:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - type
+        - file
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        file:
+          type: string
+    OldAgePensionResponse:
+      type: object
+      properties:
+        applicationLineId:
+          type: number
+    OldAgePensionResponseError:
+      type: object
+      properties:
+        code:
+          type: number
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorDetails'
+    ErrorDetails:
+      type: object
+      properties:
+        code:
+          type: number
+        message:
+          type: string
+        help:
+          type: string
+        trackingId:
+          type: string
+        param:
           type: string
     Status:
       type: object
