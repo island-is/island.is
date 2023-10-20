@@ -48,6 +48,7 @@ export enum ApplicationTypes {
   ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
   EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
   NEW_TYPE_OF_APPLICATION = 'NewTypeOfApplication',
+  CARAMEL = 'Caramel',
 }
 
 export enum ApplicationFormTypes {
@@ -65,6 +66,11 @@ export const ApplicationConfigurations: Record<
   ApplicationTypes,
   ApplicationConfiguration
 > = {
+  [ApplicationTypes.CARAMEL]: {
+    slug: 'caramel',
+    translation: 'caramel.application',
+    formType: ApplicationFormTypes.DYNAMIC,
+  },
   [ApplicationTypes.EXAMPLE]: {
     slug: 'example',
     translation: 'example.application',

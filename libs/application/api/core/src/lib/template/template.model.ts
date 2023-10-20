@@ -20,6 +20,12 @@ import {
   StaticText,
   TemplateApi,
   ApplicationStateMeta,
+  DataProviderBuilderItem,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  PaymentCatalogApi,
+  ValidateCriminalRecordApi,
+  DataProviderItem,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import {
@@ -33,6 +39,9 @@ import {
 } from 'xstate'
 
 import { z } from 'zod'
+
+import { data, completedData } from './states'
+import { buildDataProviderItem } from '@island.is/application/core'
 
 type TemplateConfig<
   TContext extends ApplicationContext,
@@ -83,6 +92,8 @@ export interface StateBlueprint {
   transitions: Transition[]
   status: ApplicationStateMachineStatus
   lifecycle: StateLifeCycle
+  onEntry?: TemplateApi[] | TemplateApi
+  onExit?: TemplateApi[] | TemplateApi
 }
 
 export type Events =
@@ -119,6 +130,8 @@ export function buildTemplate<
           name: state.name,
           status: state.status,
           lifecycle: state.lifecycle,
+          onEntry: state.onEntry,
+          onExit: state.onExit,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -290,4 +303,131 @@ export function buildState<T extends EventObject = AnyEventObject, R = unknown>(
     },
     on: transitions,
   }
+}
+
+export function buildCertificateTemplate<
+  TContext extends ApplicationContext,
+  TStateSchema extends ApplicationStateSchema<TEvents>,
+  TEvents extends EventObject,
+>(
+  name: string,
+  certificateProvider: DataProviderBuilderItem,
+  getPdfApi: TemplateApi,
+  templateId: ApplicationTypes,
+): ApplicationTemplate<TContext, TStateSchema, TEvents> {
+  const dataString: string = JSON.stringify(data)
+  const completedDataString: string = JSON.stringify(completedData)
+
+  const providers = [
+    buildDataProviderItem({
+      provider: NationalRegistryUserApi,
+      title: 'Persónuupplýsingar úr Þjóðskrá',
+      subTitle:
+        'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
+    }),
+    buildDataProviderItem({
+      provider: UserProfileApi,
+      title: 'Netfang og símanúmer úr þínum stillingum',
+      subTitle:
+        'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
+    }),
+    buildDataProviderItem(certificateProvider),
+  ]
+
+  function generatePrerequisites(dataProviders: DataProviderItem[]): string {
+    const prerequisites = {
+      id: 'SampleFormId',
+      title: 'Sample Form',
+      mode: 'notstarted',
+      type: 'FORM',
+      renderLastScreenBackButton: true,
+      renderLastScreenButton: true,
+      children: [
+        {
+          id: 'section1',
+          title: 'Umsókn send inn!',
+          type: 'SECTION',
+          children: [
+            {
+              id: 'approveExternalData',
+              title: 'Utanaðkomandi gögn',
+              type: 'EXTERNAL_DATA_PROVIDER',
+              isPartOfRepeater: false,
+              children: null,
+              submitField: {
+                id: 'submit2',
+                title: 'Submit Title',
+                type: 'SUBMIT',
+                placement: 'footer',
+                children: null,
+                doesNotRequireAnswer: true,
+                component: 'SubmitFormField',
+                actions: [
+                  {
+                    event: 'SUBMIT',
+                    name: 'Samþykkja',
+                    type: 'primary',
+                  },
+                ],
+                refetchApplicationAfterSubmit: true,
+              },
+              dataProviders: dataProviders,
+            },
+          ],
+        },
+      ],
+    }
+    return JSON.stringify(prerequisites)
+  }
+
+  const prerequisitesString: string = generatePrerequisites(providers)
+
+  const blueprint: ApplicationBlueprint = {
+    ApplicatonType: templateId,
+    initalState: 'prerequisites',
+    name: name,
+    dataProviders: [
+      PaymentCatalogApi,
+      UserProfileApi,
+      NationalRegistryUserApi,
+      ValidateCriminalRecordApi,
+    ],
+    states: [
+      {
+        name: 'prerequisites',
+        status: 'draft',
+        form: prerequisitesString,
+        transitions: [{ event: 'SUBMIT', target: 'draft' }],
+        lifecycle: {
+          shouldBeListed: true,
+          shouldBePruned: true,
+          whenToPrune: 1 * 24 * 3600 * 1000,
+        },
+      },
+      {
+        name: 'draft',
+        status: 'draft',
+        form: dataString,
+        transitions: [{ event: 'SUBMIT', target: 'completed' }],
+        lifecycle: {
+          shouldBeListed: true,
+          shouldBePruned: true,
+          whenToPrune: 1 * 24 * 3600 * 1000,
+        },
+      },
+      {
+        name: 'completed',
+        status: 'completed',
+        form: completedDataString,
+        transitions: [{ event: 'SUBMIT', target: 'prerequisites' }],
+        onEntry: [getPdfApi],
+        lifecycle: {
+          shouldBeListed: true,
+          shouldBePruned: true,
+          whenToPrune: 1 * 24 * 3600 * 1000,
+        },
+      },
+    ],
+  }
+  return buildTemplate(blueprint)
 }

@@ -1,16 +1,8 @@
 import { DataProviderItem } from '@island.is/application/types'
 
-type DataProvider = {
-  id: string
-  action: string
-  order: number
-  title: string
-  subTitle: string
-}
-
-export const generatePrerequisites = (
+export function generatePrerequisites(
   dataProviders: DataProviderItem[],
-): string => {
+): string {
   const prerequisites = {
     id: 'SampleFormId',
     title: 'Sample Form',

@@ -122,6 +122,9 @@ const templates: Record<ApplicationTypes, () => Promise<unknown> | void> = {
   [ApplicationTypes.NEW_TYPE_OF_APPLICATION]: () => {
     return
   },
+  [ApplicationTypes.CARAMEL]: () => {
+    return
+  },
 }
 
 export default templates
