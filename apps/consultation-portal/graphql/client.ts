@@ -9,27 +9,13 @@ import authLink from './authLink'
 import httpLink from './httpLink'
 import retryLink from './retryLink'
 import errorLink from './errorLink'
-const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
 const isBrowser: boolean = process.browser
 
 let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
 
 function create(initialState?: any) {
-  // handle server vs client side calls
-  const {
-    graphqlUrl: graphqlServerUrl,
-    graphqlEndpoint: graphqlServerEndpoint,
-  } = serverRuntimeConfig
-  const {
-    graphqlUrl: graphqlClientUrl,
-    graphqlEndpoint: graphqlClientEndpoint,
-  } = publicRuntimeConfig
-  // const graphqlUrl = graphqlServerUrl || graphqlClientUrl
-  const graphqlEndpoint = graphqlServerEndpoint || graphqlClientEndpoint
-  // const httpLink = new BatchHttpLink({ uri: `${graphqlEndpoint}`, credentials: "include" })
   const link = ApolloLink.from([retryLink, errorLink, authLink, httpLink])
 
-  // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
   return new ApolloClient({
     name: 'consultation-portal-client',
     version: '0.1',
