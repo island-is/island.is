@@ -64,15 +64,15 @@ export const externalData = {
         'In order to apply for this application we need your email and phone number',
     },
   }),
-  currentVehicles: defineMessages({
+  myMachines: defineMessages({
     title: {
-      id: 'aosah.application:externalData.currentVehicles.title',
+      id: 'aosah.application:externalData.myMachines.title',
       defaultMessage:
         'Upplýsingar um vélar og tæki í þinni eigu og stöðu þeirra',
-      description: 'Your vehicles from the vehicle registry',
+      description: 'Your machines',
     },
     subTitle: {
-      id: 'aosah.application:externalData.currentVehicles.subTitle',
+      id: 'aosah.application:externalData.myMachines.subTitle',
       defaultMessage:
         'Upplýsingar úr ökutækjaskrá  - Upplýsingar um þínar vélar, tæki og stöðu þeirra.',
       description: 'To make stuff easier',

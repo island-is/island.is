@@ -28,9 +28,7 @@ import set from 'lodash/set'
 import {
   IdentityApi,
   UserProfileApi,
-  SamgongustofaPaymentCatalogApi,
-  CurrentVehiclesApi,
-  InsuranceCompaniesApi,
+  VinnueftirlitidPaymentCatalogApi,
   MachinesApi,
 } from '../dataProviders'
 import { hasReviewerApproved } from '../utils'
@@ -138,9 +136,8 @@ const template: ApplicationTemplate<
               api: [
                 IdentityApi,
                 UserProfileApi,
-                SamgongustofaPaymentCatalogApi,
+                VinnueftirlitidPaymentCatalogApi,
                 MachinesApi,
-                InsuranceCompaniesApi,
               ],
             },
           ],
