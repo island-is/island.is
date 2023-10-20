@@ -48,7 +48,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
         400,
       )
     }
-    
+
     return result
   }
 }

@@ -24,7 +24,7 @@ export const prerequisitesSection = buildSection({
       checkboxLabel: externalData.dataProvider.checkboxLabel,
       dataProviders: [
         buildDataProviderItem({
-          provider: MachinesApi,//CurrentVehiclesApi,
+          provider: MachinesApi, //CurrentVehiclesApi,
           title: externalData.currentVehicles.title,
           subTitle: externalData.currentVehicles.subTitle,
         }),
@@ -34,7 +34,7 @@ export const prerequisitesSection = buildSection({
           subTitle: externalData.nationalRegistry.subTitle,
         }),
         buildDataProviderItem({
-          provider: undefined,//UserProfileApi,
+          provider: undefined, //UserProfileApi,
           title: externalData.userProfile.title,
           subTitle: externalData.userProfile.subTitle,
         }),

@@ -84,7 +84,8 @@ const template: ApplicationTemplate<
   name: determineMessageFromApplicationAnswers,
   institution: applicationMessage.institutionName,
   translationNamespaces: [
-    ApplicationConfigurations.AdministrationOfOccupationalSafetyAndHealth.translation,
+    ApplicationConfigurations.AdministrationOfOccupationalSafetyAndHealth
+      .translation,
   ],
   dataSchema: AdministrationOfOccupationalSafetyAndHealthSchema,
   allowedDelegations: [
@@ -116,7 +117,7 @@ const template: ApplicationTemplate<
           onExit: defineTemplateApi({
             action: ApiActions.validateApplication,
           }),
-          
+
           roles: [
             {
               id: Roles.APPLICANT,

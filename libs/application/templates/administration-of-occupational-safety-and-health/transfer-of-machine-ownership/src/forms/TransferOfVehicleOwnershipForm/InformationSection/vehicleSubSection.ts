@@ -6,8 +6,33 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-import { Machine, VehiclesCurrentVehicle } from '../../../shared'
+import {
+  Machine,
+  MachineDetails,
+  VehiclesCurrentVehicle,
+} from '../../../shared'
 import { getSelectedVehicle } from '../../../utils'
+import { gql, useQuery } from '@apollo/client'
+import { GET_MACHINE_DETAILS } from '../../../graphql/queries'
+
+const FetchMachineDetails = (currentVehicleId?: string) => {
+  const { data, loading, error } = useQuery<MachineDetails>(
+    gql(GET_MACHINE_DETAILS),
+    {
+      variables: {
+        input: {
+          id: currentVehicleId,
+        },
+      },
+    },
+  )
+
+  if (!loading && !error) {
+    return data // Return the data if available
+  }
+
+  return null // Return null if data is loading or an error occurred
+}
 
 export const vehicleSubSection = buildSubSection({
   id: 'vehicle',
@@ -58,7 +83,7 @@ export const vehicleSubSection = buildSubSection({
               application.externalData,
               application.answers,
             ) as Machine
-            return machine.type?.split(' - ')[0].trim();
+            return machine.type?.split(' - ')[0].trim()
           },
         }),
         buildTextField({
@@ -72,7 +97,7 @@ export const vehicleSubSection = buildSubSection({
               application.externalData,
               application.answers,
             ) as Machine
-            return machine.type?.split(' - ')[1].trim();
+            return machine.type?.split(' - ')[1].trim()
           },
         }),
         buildTextField({
@@ -100,7 +125,9 @@ export const vehicleSubSection = buildSubSection({
               application.externalData,
               application.answers,
             ) as Machine
-            return 'machine.ownerNumber'
+            console.log('machine-ID', machine.id)
+            const machineDetails = FetchMachineDetails(machine.id)
+            return machineDetails?.ownerNumber
           },
         }),
         buildDateField({
@@ -116,7 +143,6 @@ export const vehicleSubSection = buildSubSection({
           },
           defaultValue: new Date().toISOString().substring(0, 10),
         }),
-        
       ],
     }),
   ],

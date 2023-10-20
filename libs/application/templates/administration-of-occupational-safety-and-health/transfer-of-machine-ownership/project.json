@@ -3,7 +3,7 @@
   "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/administration-of-occupational-safety-and-health/transfer-of-machine-ownership/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["scope:application-system", "lib:application-system"],
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",

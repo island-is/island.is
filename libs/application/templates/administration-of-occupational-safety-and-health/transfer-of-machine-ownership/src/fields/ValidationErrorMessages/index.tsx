@@ -16,7 +16,8 @@ export const ValidationErrorMessages: FC<
 
   const { formatMessage } = useLocale()
 
-  const answers = application.answers as AdministrationOfOccupationalSafetyAndHealthAnswers
+  const answers =
+    application.answers as AdministrationOfOccupationalSafetyAndHealthAnswers
 
   const { data, loading } = useQuery(
     gql`

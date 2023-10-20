@@ -54,7 +54,8 @@ export const Overview: FC<
   ...props
 }) => {
   const { application, refetch, insurance = undefined } = props
-  const answers = application.answers as AdministrationOfOccupationalSafetyAndHealthAnswers
+  const answers =
+    application.answers as AdministrationOfOccupationalSafetyAndHealthAnswers
   const { formatMessage } = useLocale()
 
   const [rejectModalVisibility, setRejectModalVisibility] =

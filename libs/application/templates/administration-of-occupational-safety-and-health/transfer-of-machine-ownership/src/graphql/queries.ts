@@ -68,4 +68,4 @@ export const GET_MACHINE_DETAILS = `
       }
     }
   }
-`;
+`

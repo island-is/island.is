@@ -15,4 +15,3 @@ export const getSelectedVehicle = (
   ) as string
   return currentVehicleList[parseInt(vehicleValue, 10)]
 }
- 
