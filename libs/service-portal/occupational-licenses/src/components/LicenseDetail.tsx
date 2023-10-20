@@ -1,6 +1,10 @@
 import { Stack, Box, Icon, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { IntroHeader, UserInfoLine } from '@island.is/service-portal/core'
+import {
+  IntroHeader,
+  UserInfoLine,
+  FootNote,
+} from '@island.is/service-portal/core'
 import { olMessage as om } from '../lib/messages'
 import { OccupationalLicenseStatus } from '@island.is/api/schema'
 
@@ -140,6 +144,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
           />
         )}
       </Stack>
+      <FootNote serviceProviderID={serviceProviderID ?? undefined} />
     </Box>
   )
 }
