@@ -143,7 +143,11 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const email = answers.email as string
     const phone = answers.phone as string
 
-    const postHealthDeclaration = async (nationalId: string, answers: FormValue, auth: User) => {
+    const postHealthDeclaration = async (
+      nationalId: string,
+      answers: FormValue,
+      auth: User,
+    ) => {
       await this.drivingLicenseService
         .postHealthDeclaration(
           nationalId,
@@ -166,7 +170,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         needsToPresentQualityPhoto: needsQualityPhoto,
       })
     } else if (applicationFor === 'B-temp') {
-      if (needsHealthCert){
+      if (needsHealthCert) {
         await postHealthDeclaration(nationalId, answers, auth)
       }
       return this.drivingLicenseService.newTemporaryDrivingLicense(
