@@ -106,7 +106,7 @@ class DirectorateOfImmigrationClient {
 
   // Citizenship:
 
-  async getOldCountryOfResidenceList(
+  async getCurrentCountryOfResidenceList(
     auth: Auth,
   ): Promise<CountryOfResidence[]> {
     const res = await this.countryOfResidenceApiWithAuth(
@@ -119,7 +119,7 @@ class DirectorateOfImmigrationClient {
     }))
   }
 
-  async getOldStayAbroadList(auth: Auth): Promise<StayAbroad[]> {
+  async getCurrentStayAbroadList(auth: Auth): Promise<StayAbroad[]> {
     const res = await this.residenceAbroadApiWithAuth(
       auth,
     ).apiResidenceAbroadGetAllGet()
@@ -133,7 +133,7 @@ class DirectorateOfImmigrationClient {
     }))
   }
 
-  async getOldPassportItem(auth: Auth): Promise<Passport | undefined> {
+  async getCurrentPassportItem(auth: Auth): Promise<Passport | undefined> {
     const res = await this.travelDocumentApiWithAuth(
       auth,
     ).apiTravelDocumentGetAllGet()

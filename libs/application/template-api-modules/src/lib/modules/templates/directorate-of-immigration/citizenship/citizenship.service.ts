@@ -71,24 +71,24 @@ export class CitizenshipService extends BaseTemplateApiService {
     return this.directorateOfImmigrationClient.getTravelDocumentTypes()
   }
 
-  async getOldCountryOfResidenceList({
+  async getCurrentCountryOfResidenceList({
     auth,
   }: TemplateApiModuleActionProps): Promise<CountryOfResidence[]> {
-    return this.directorateOfImmigrationClient.getOldCountryOfResidenceList(
+    return this.directorateOfImmigrationClient.getCurrentCountryOfResidenceList(
       auth,
     )
   }
 
-  async getOldStayAbroadList({
+  async getCurrentStayAbroadList({
     auth,
   }: TemplateApiModuleActionProps): Promise<StayAbroad[]> {
-    return this.directorateOfImmigrationClient.getOldStayAbroadList(auth)
+    return this.directorateOfImmigrationClient.getCurrentStayAbroadList(auth)
   }
 
-  async getOldPassportItem({
+  async getCurrentPassportItem({
     auth,
   }: TemplateApiModuleActionProps): Promise<Passport | undefined> {
-    return this.directorateOfImmigrationClient.getOldPassportItem(auth)
+    return this.directorateOfImmigrationClient.getCurrentPassportItem(auth)
   }
 
   async getNationalRegistryIndividual({
