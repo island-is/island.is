@@ -1,5 +1,4 @@
 import { useMemo, type FC } from 'react'
-import { useLazyQuery } from '@apollo/client'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
@@ -10,7 +9,6 @@ import {
   Breadcrumbs,
   Pagination,
   Link,
-  LinkContext,
   ColorSchemeContext,
   Inline,
   GridContainer,
@@ -37,26 +35,25 @@ import {
   GetNamespaceQuery,
   SearchableContentTypes,
   SearchableTags,
-  GetSearchResultsTotalQuery,
   SortField,
   SortDirection,
+  Article,
 } from '@island.is/web/graphql/schema'
-import { hasProcessEntries } from '@island.is/web/utils/article'
-import { useLinkResolver, usePlausible } from '@island.is/web/hooks'
+import { useLinkResolver } from '@island.is/web/hooks'
 import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_SEARCH_RESULTS_QUERY_DETAILED,
   GET_SEARCH_COUNT_QUERY,
-  GET_SEARCH_RESULTS_TOTAL,
 } from '../queries'
 
-import type { SearchEntryType } from '../Search'
 import {
   parseAsString,
+  parseAsInteger,
   useQueryState,
   useQueryStates,
   type Options,
+  parseAsArrayOf,
 } from 'next-usequerystate'
 import type { ApplicationsTexts } from './ApplicationsText.types';
 
@@ -72,12 +69,6 @@ interface SortByOption extends StringOption {
   order: 'asc' | 'desc',
 }
 
-const stringToArray = (value: string | string[]) =>
-  Array.isArray(value) ? value : value?.length ? [value] : []
-
-// TODO - extract to util hook
-const defaultQueryStateOptions: Options = { shallow: false }
-
 const Applications: Screen<CategoryProps> = ({
   page,
   searchResults,
@@ -91,11 +82,9 @@ const Applications: Screen<CategoryProps> = ({
       sort: parseAsString.withDefault('popular'),
       order: parseAsString.withDefault('desc')
     },
-    defaultQueryStateOptions
+    { shallow: false }
   )
-
   const { sort, order } = sortOrder;
-
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -133,26 +122,8 @@ const Applications: Screen<CategoryProps> = ({
 
 
   const selectedSortByOption = sortByOptions.find((option) => option.sort === sort && option.order === order) ?? sortByOptions[0]
-
-  const searchResultsItems = (
-    searchResults.items as Array<SearchEntryType>
-  ).map((item) => ({
-    typename: item.__typename,
-    title: item.title,
-    parentTitle: item.parent?.title,
-    link: linkResolver('article', item.url ?? item.slug?.split('/')),
-    description:
-      item.intro ?? item.description ?? item.parent?.intro ?? item.subtitle,
-    categorySlug: item.category?.slug ?? item.parent?.category?.slug,
-    category: item.category ?? item.parent?.category,
-    organizationTitle: item.organization?.length && item.organization[0].title,
-    hasProcessEntry: item.__typename === 'Article' && hasProcessEntries(item),
-    processEntry: item.processEntry,
-    group: item.group,
-  }))
-
-  const filteredItems = [...searchResultsItems]
-  const nothingFound = filteredItems.length === 0
+  const articles = searchResults.items as Article[]
+  const nothingFound = searchResults.items.length === 0
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
 
@@ -267,11 +238,6 @@ const Applications: Screen<CategoryProps> = ({
                   <Text variant="intro" as="p">
                     {n('nothingFoundExtendedExplanation')}
                   </Text>
-                  {q.length &&
-                  searchResultsItems.length === 0 &&
-                  activeLocale === 'is' ? (
-                    <EnglishResultsLink q={q} />
-                  ) : null}
                 </>
               ) : (
                 <Box marginBottom={2}>
@@ -291,30 +257,27 @@ const Applications: Screen<CategoryProps> = ({
                   </T.Row>
                 </T.Head>
                 <T.Body>
-                  {filteredItems.map(
-                    (
-                      { link, title, organizationTitle, processEntry },
-                      index,
-                    ) => (
+                  {articles.map(
+                    (article, index) => (
                       <T.Row key={index}>
                         <T.Data>
-                          <Link {...link} skipTab>
+                          <Link {...linkResolver('article', [article.slug])} skipTab>
                             <Button variant="text" as="span">
-                              {title}
+                              {article.title}
                             </Button>
                           </Link>
                         </T.Data>
                         <T.Data>
-                          <Text fontWeight="medium">{organizationTitle}</Text>
+                          <Text fontWeight="medium">{article.organization?.[0]?.title}</Text>
                         </T.Data>
                         <T.Data>
                           <Box display="flex" justifyContent="flexEnd">
-                            {processEntry?.processLink && (
+                            {article.processEntry?.processLink && (
                               <ProcessEntryLinkButton
                                 processTitle={
-                                  processEntry.processTitle ?? title
+                                  article.processEntry.processTitle ?? article.title
                                 }
-                                processLink={processEntry.processLink}
+                                processLink={article.processEntry.processLink}
                                 buttonText={n('application', 'Sækja um')}
                                 size="small"
                               />
@@ -355,42 +318,40 @@ const Applications: Screen<CategoryProps> = ({
   )
 }
 
-const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
-
 Applications.getProps = async ({ apolloClient, locale, query }) => {
-  const queryString = single(query.q) || '*'
-  const q = queryString !== '*' ? queryString : ''
-  const page = Number(single(query.page)) || 1
-  const sort =
-    single(query.sort) === 'title' ? SortField.Title : SortField.Popular
-  const order =
-    single(query.order) === 'asc' ? SortDirection.Asc : SortDirection.Desc
-  const category = query.category ?? ''
-  const types = stringToArray('webArticle') as SearchableContentTypes[]
-  const organization = query.organization ?? ''
-  const processentry = true
-  const countTag = {}
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
+  // TODO - file bugreport with next-usequerystate regarding missing default on server
+  const {
+    q = '*',
+    page: pageParam = '1',
+    sort: sortParam = 'popular',
+    order: orderParam = 'desc',
+    category: categoryParam,
+    organization: organizationParam,
+  } = query;
+  const queryString = parseAsString.withDefault('*').parseServerSide(q)
+  const page = parseAsInteger.withDefault(1).parseServerSide(pageParam)
+  const sort = parseAsString.parseServerSide(sortParam) === 'title' ? SortField.Title : SortField.Popular
+  const order = parseAsString.parseServerSide(orderParam) === 'asc' ? SortDirection.Asc : SortDirection.Desc
+  const category = parseAsArrayOf(parseAsString).withDefault([]).parseServerSide(categoryParam)
+  const organization = parseAsArrayOf(parseAsString).withDefault([]).parseServerSide(organizationParam)
+  const types = ['webArticle'] as SearchableContentTypes[]
   const tags: TagType[] = [
-    ...stringToArray(category).map(
+    ...category.map(
       (key: string): TagType => ({
-        type: 'category' as SearchableTags,
+        type: SearchableTags.Category,
         key,
       }),
     ),
-    ...stringToArray(organization).map(
+    ...organization.map(
       (key: string): TagType => ({
-        type: 'organization' as SearchableTags,
+        type: SearchableTags.Organization,
         key,
       }),
     ),
-    ...(processentry && [
-      {
-        type: 'processentry' as SearchableTags,
-        key: 'true',
-      },
-    ]),
+    {
+      type: SearchableTags.Processentry,
+      key: 'true',
+    },
   ]
 
   const [
@@ -413,8 +374,6 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
           order,
           types,
           ...(tags.length && { tags }),
-          ...countTag,
-          countTypes: true,
           size: PERPAGE,
           page,
         },
@@ -427,12 +386,8 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
         query: {
           language: locale as ContentLanguage,
           queryString,
-          countTag: [
-            'category' as SearchableTags,
-            'organization' as SearchableTags,
-          ],
+          countTag: [SearchableTags.Category, SearchableTags.Organization],
           types,
-          countTypes: true,
           countProcessEntry: true,
         },
       },
@@ -456,66 +411,12 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404)
   }
   return {
-    q,
     searchResults,
     countResults,
     namespace,
     showSearchInHeader: false,
     page,
-    sort: single(query.sort) ?? 'popular',
-    order: single(query.order) ?? 'desc',
   }
-}
-
-interface EnglishResultsLinkProps {
-  q: string
-}
-
-const EnglishResultsLink: FC<
-  React.PropsWithChildren<EnglishResultsLinkProps>
-> = ({ q }) => {
-  const { linkResolver } = useLinkResolver()
-  const [getCount, { data }] = useLazyQuery<
-    GetSearchResultsTotalQuery,
-    QuerySearchResultsArgs
-  >(GET_SEARCH_RESULTS_TOTAL)
-
-  useMemo(() => {
-    getCount({
-      variables: {
-        query: {
-          queryString: q,
-          language: 'en' as ContentLanguage,
-        },
-      },
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [q])
-
-  const total = data?.searchResults?.total ?? 0
-
-  if (total > 0) {
-    return (
-      <LinkContext.Provider
-        value={{
-          linkRenderer: (href, children) => (
-            <Link color="blue600" underline="normal" href={href}>
-              {children}
-            </Link>
-          ),
-        }}
-      >
-        <Text variant="intro" as="p">
-          <a href={linkResolver('applications', [], 'en').href + `?q=${q}`}>
-            {total} niðurstöður
-          </a>{' '}
-          fundust á ensku.
-        </Text>
-      </LinkContext.Provider>
-    )
-  }
-
-  return null
 }
 
 export default withMainLayout(Applications, { showSearchInHeader: false })
