@@ -43,7 +43,7 @@ export class Document {
 
   static fromDocumentInfo(docInfo: DocumentInfoDTO): Document {
     const doc = new Document()
-    doc.date = new Date(docInfo.documentDate)
+    doc.date = new Date(docInfo.publicationDate || docInfo.documentDate)
     doc.id = docInfo.id
     doc.opened = docInfo.opened
     doc.senderName = docInfo.senderName
