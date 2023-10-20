@@ -139,6 +139,9 @@ class ProgramCourse {
   @Field({ nullable: true })
   semesterYear?: number
 
+  @Field({ nullable: true })
+  semesterYearNumber?: number
+
   @Field()
   semesterSeason!: string
 

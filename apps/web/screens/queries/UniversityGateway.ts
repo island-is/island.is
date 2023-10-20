@@ -112,6 +112,7 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM = gql`
         requirement
         semesterSeason
         semesterYear
+        semesterYearNumber
       }
       tag {
         code
