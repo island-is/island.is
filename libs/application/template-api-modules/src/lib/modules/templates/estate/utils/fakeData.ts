@@ -4,7 +4,7 @@ import { EstateInfo } from '@island.is/clients/syslumenn'
 export const getFakeData = (
   application: ApplicationWithAttachments,
 ): EstateInfo => {
-  let data: EstateInfo = {
+  const data: EstateInfo = {
     addressOfDeceased: 'Gerviheimili 123, 600 Feneyjar',
     cash: [],
     marriageSettlement: false,
