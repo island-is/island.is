@@ -66,11 +66,18 @@ const formatRights = (
   return rights ?? 'Engin réttindi'
 }
 
+export const mapNationalId = (nationalId: string) => {
+  return {
+    identifier: 'kennitala',
+    value: nationalId ? formatNationalId(nationalId) : '',
+  }
+}
+
 export const createPkPassDataInput = (
   license?: DriversLicense | null,
   remarks?: Array<RemarkCode> | null,
 ) => {
-  if (!license || !remarks) return null
+  if (!license || !license.socialSecurityNumber || !remarks) return null
 
   return [
     {
@@ -83,12 +90,7 @@ export const createPkPassDataInput = (
       identifier: 'nafn',
       value: license.name ?? '',
     },
-    {
-      identifier: 'kennitala',
-      value: license.socialSecurityNumber
-        ? formatNationalId(license.socialSecurityNumber)
-        : '',
-    },
+    mapNationalId(license.socialSecurityNumber),
     {
       identifier: 'faedingardagur',
       value: license.socialSecurityNumber

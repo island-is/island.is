@@ -11,14 +11,17 @@ import {
 } from '@island.is/clients/smartsolutions'
 import { VerifyInputData } from '../../dto/verifyLicense.input'
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
-import { format as formatNationalId } from 'kennitala'
-import { createPkPassDataInput } from './drivingLicenseMapper'
+import { createPkPassDataInput, mapNationalId } from './drivingLicenseMapper'
 import { LOG_CATEGORY } from './drivingLicenseApiClient.type'
+import { DrivingLicenseApiClientConfig } from './drivingLicenseApiClient.config'
+import type { ConfigType } from '@island.is/nest/config'
 
 @Injectable()
 export class DrivingLicenseApiClientService implements GenericLicenseClient {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject(DrivingLicenseApiClientConfig.KEY)
+    private config: ConfigType<typeof DrivingLicenseApiClientConfig>,
     private drivingLicenseApi: DrivingLicenseApi,
     private smartApi: SmartSolutionsApi,
   ) {}
@@ -26,11 +29,30 @@ export class DrivingLicenseApiClientService implements GenericLicenseClient {
   pushUpdate(
     inputData: PassDataInput,
     nationalId: string,
+    requestId?: string,
   ): Promise<Result<Pass | undefined>> {
-    return this.smartApi.updatePkPass(inputData, formatNationalId(nationalId))
+    const inputFieldValues = inputData.inputFieldValues ?? []
+    //small check that nationalId doesnt' already exist
+    if (
+      inputFieldValues &&
+      !inputFieldValues?.some((nt) => nt.identifier === 'kennitala')
+    ) {
+      inputFieldValues.push(mapNationalId(nationalId))
+    }
+    return this.smartApi.updatePkPass(
+      {
+        ...inputData,
+        inputFieldValues,
+        passTemplateId: this.config.passTemplateId,
+      },
+      requestId,
+    )
   }
 
-  async pullUpdate(nationalId: string): Promise<Result<Pass | undefined>> {
+  async pullUpdate(
+    nationalId: string,
+    requestId?: string,
+  ): Promise<Result<Pass | undefined>> {
     let data
     try {
       data = await Promise.all([
@@ -38,15 +60,19 @@ export class DrivingLicenseApiClientService implements GenericLicenseClient {
         this.drivingLicenseApi.getRemarksCodeTable(),
       ])
     } catch (e) {
-      this.logger.error('Service error', {
-        ...e,
-        category: LOG_CATEGORY,
-      })
+      this.logger.error(
+        'Current driving license fetch and/or remarks fetch failed',
+        {
+          error: e,
+          requestId,
+          category: LOG_CATEGORY,
+        },
+      )
       return {
         ok: false,
         error: {
           code: 13,
-          message: 'Service error',
+          message: `Either current driving license fetch or remarks fetch failed`,
           data: JSON.stringify(e),
         },
       }
@@ -55,6 +81,10 @@ export class DrivingLicenseApiClientService implements GenericLicenseClient {
     const [licenseInfo, remarks] = data
 
     if (!licenseInfo) {
+      this.logger.warn('No license info found for user, exiting update', {
+        requestId,
+        category: LOG_CATEGORY,
+      })
       return {
         ok: false,
         error: {
@@ -67,11 +97,18 @@ export class DrivingLicenseApiClientService implements GenericLicenseClient {
     const inputValues = createPkPassDataInput(licenseInfo, remarks)
 
     if (!inputValues || !licenseInfo.dateValidTo) {
+      this.logger.error(
+        'pkpass data input mapping failed, data may be invalid',
+        {
+          requestId,
+          category: LOG_CATEGORY,
+        },
+      )
       return {
         ok: false,
         error: {
           code: 4,
-          message: 'Mapping failed, invalid data',
+          message: 'pkpass data input mapping failed, data may be invalid',
         },
       }
     }
@@ -86,28 +123,47 @@ export class DrivingLicenseApiClientService implements GenericLicenseClient {
     const payload: PassDataInput = {
       inputFieldValues: inputValues,
       expirationDate: licenseInfo.dateValidTo.toISOString(),
+      passTemplateId: this.config.passTemplateId,
       thumbnail,
     }
 
-    return this.smartApi.updatePkPass(payload, formatNationalId(nationalId))
+    return this.smartApi.updatePkPass(payload, requestId)
   }
 
-  revoke(nationalId: string): Promise<Result<RevokePassData>> {
-    return this.smartApi.revokePkPass(formatNationalId(nationalId))
+  revoke(
+    nationalId: string,
+    requestId?: string,
+  ): Promise<Result<RevokePassData>> {
+    const passTemplateId = this.config.passTemplateId
+    const payload: PassDataInput = {
+      inputFieldValues: [mapNationalId(nationalId)],
+    }
+    return this.smartApi.revokePkPass(passTemplateId, payload, requestId)
   }
 
   /** We need to verify the pk pass AND the license itself! */
-  async verify(inputData: string): Promise<Result<VerifyLicenseResult>> {
+  async verify(
+    inputData: string,
+    requestId?: string,
+  ): Promise<Result<VerifyLicenseResult>> {
     //need to parse the scanner data
     let parsedInput
     try {
       parsedInput = JSON.parse(inputData) as VerifyInputData
     } catch (ex) {
+      this.logger.error(
+        'Pkpass verification data input mapping failed, data may be invalid',
+        {
+          requestId,
+          category: LOG_CATEGORY,
+        },
+      )
       return {
         ok: false,
         error: {
           code: 12,
-          message: 'Invalid input data',
+          message:
+            'Pkpass verification data input mapping failed, data may be invalid',
         },
       }
     }
@@ -115,23 +171,37 @@ export class DrivingLicenseApiClientService implements GenericLicenseClient {
     const { code, date } = parsedInput
 
     if (!code || !date) {
+      this.logger.error(
+        'Invalid verification input data, either code or date are missing or invalid ',
+        {
+          requestId,
+          category: LOG_CATEGORY,
+        },
+      )
       return {
         ok: false,
         error: {
           code: 4,
           message:
-            'Invalid input data,  either code or date are missing or invalid',
+            'Invalid verification input data, either code or date are missing or invalid',
         },
       }
     }
 
-    const verifyRes = await this.smartApi.verifyPkPass({ code, date })
+    const verifyRes = await this.smartApi.verifyPkPass(
+      { code, date },
+      requestId,
+    )
 
     if (!verifyRes.ok) {
       return verifyRes
     }
 
     if (!verifyRes.data.valid) {
+      this.logger.debug('PkPass is valid', {
+        requestId,
+        category: LOG_CATEGORY,
+      })
       return {
         ok: true,
         data: {
@@ -145,11 +215,15 @@ export class DrivingLicenseApiClientService implements GenericLicenseClient {
     )?.value
 
     if (!passNationalId) {
+      this.logger.error('Missing unique identifier in pkpass input', {
+        requestId,
+        category: LOG_CATEGORY,
+      })
       return {
         ok: false,
         error: {
           code: 14,
-          message: 'Missing pass data',
+          message: 'Missing unique identifier in pkpass input',
         },
       }
     }
@@ -159,6 +233,10 @@ export class DrivingLicenseApiClientService implements GenericLicenseClient {
     })
 
     if (!license) {
+      this.logger.warn('No license info found for user', {
+        requestId,
+        category: LOG_CATEGORY,
+      })
       return {
         ok: false,
         error: {
@@ -173,6 +251,10 @@ export class DrivingLicenseApiClientService implements GenericLicenseClient {
     const picture = license.photo?.image ?? ''
 
     if (!licenseNationalId || !name || !picture) {
+      this.logger.error('Missing data. NationalId, name or photo missing', {
+        requestId,
+        category: LOG_CATEGORY,
+      })
       return {
         ok: false,
         error: {

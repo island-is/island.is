@@ -30,7 +30,7 @@ export class DisabilityLicenseClientService implements GenericLicenseClient {
   }
 
   revoke(nationalId: string): Promise<Result<RevokePassData>> {
-    return this.smartApi.revokePkPass(nationalId)
+    throw new Error('Method not implemented.')
   }
 
   /** We need to verify the pk pass AND the license itself! */

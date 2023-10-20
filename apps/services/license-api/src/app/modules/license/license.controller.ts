@@ -18,6 +18,7 @@ import {
   RevokeLicenseResponse,
   VerifyLicenseRequest,
   VerifyLicenseResponse,
+  RevokeLicenseRequest,
 } from './dto'
 import { ApiHeader, ApiTags } from '@nestjs/swagger'
 import { LicenseId } from './license.types'
@@ -98,6 +99,7 @@ export class UserLicensesController {
   @Delete(':licenseId')
   async revoke(
     @NationalId() nationalId: string,
+    @Body() data: RevokeLicenseRequest,
     @Param(
       'licenseId',
       new ParseEnumPipe(LicenseId, {
@@ -110,6 +112,7 @@ export class UserLicensesController {
     const response = await this.licenseService.revokeLicense(
       licenseId,
       nationalId,
+      data,
     )
     return response
   }

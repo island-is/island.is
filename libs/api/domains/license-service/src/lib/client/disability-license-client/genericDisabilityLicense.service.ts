@@ -130,7 +130,7 @@ export class GenericDisabilityLicenseService
       return null
     }
 
-    const pass = await this.smartApi.generatePkPass(payload, user.nationalId)
+    const pass = await this.smartApi.generatePkPass(payload)
 
     if (pass.ok) {
       if (!pass.data.distributionUrl) {
@@ -165,7 +165,7 @@ export class GenericDisabilityLicenseService
     if (!payload) {
       return null
     }
-    const pass = await this.smartApi.generatePkPass(payload, user.nationalId)
+    const pass = await this.smartApi.generatePkPass(payload)
 
     if (pass.ok) {
       if (!pass.data.distributionQRCode) {

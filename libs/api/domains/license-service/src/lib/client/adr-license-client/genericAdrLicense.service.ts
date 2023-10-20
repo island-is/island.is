@@ -118,10 +118,7 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
       return null
     }
 
-    const pass = await this.smartApi.generatePkPass(
-      payload,
-      format(user.nationalId),
-    )
+    const pass = await this.smartApi.generatePkPass(payload)
 
     if (pass.ok) {
       if (!pass.data.distributionUrl) {
@@ -150,10 +147,7 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
     if (!payload) {
       return null
     }
-    const pass = await this.smartApi.generatePkPass(
-      payload,
-      format(user.nationalId),
-    )
+    const pass = await this.smartApi.generatePkPass(payload)
 
     if (pass.ok) {
       if (!pass.data.distributionQRCode) {

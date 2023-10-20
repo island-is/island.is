@@ -3,7 +3,6 @@ import {
   PassDataInput,
   Result,
   RevokePassData,
-  VerifyPassData,
 } from '@island.is/clients/smartsolutions'
 
 export enum LicenseUpdateType {
@@ -42,10 +41,20 @@ export interface GenericLicenseClient {
   pushUpdate: (
     inputData: PassDataInput,
     nationalId: string,
+    requestId?: string,
   ) => Promise<Result<Pass | undefined>>
-  pullUpdate: (nationalId: string) => Promise<Result<Pass | undefined>>
-  revoke: (nationalId: string) => Promise<Result<RevokePassData>>
-  verify: (inputData: string) => Promise<Result<VerifyLicenseResult>>
+  pullUpdate: (
+    nationalId: string,
+    requestId?: string,
+  ) => Promise<Result<Pass | undefined>>
+  revoke: (
+    nationalId: string,
+    requestId?: string,
+  ) => Promise<Result<RevokePassData>>
+  verify: (
+    inputData: string,
+    requestId?: string,
+  ) => Promise<Result<VerifyLicenseResult>>
 }
 
 export const CLIENT_FACTORY = 'client-factory'
