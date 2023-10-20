@@ -58,7 +58,8 @@
     "postinstall": "node -e 'process.exit(process.env.CI || process.env.SKIP_POSTINSTALL ? 0 : 1);' || node ./scripts/postinstall.js",
     "check-tags": "yarn ts scripts/check-tags.ts",
     "charts": "cd ./infra && yarn charts",
-    "infra": "cd ./infra && yarn cli"
+    "infra": "cd ./infra && yarn cli",
+    "hmr-benchmark": "node -r esbuild-register scripts/hmr-benchmark.ts"
   },
   "dependencies": {
     "@apollo/client": "3.7.15",
