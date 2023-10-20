@@ -346,7 +346,7 @@ const paymentMachineConfig: MachineConfig<
         lifecycle: pruneAfterDays(3 * 30),
         actionCard: {
           pendingAction: {
-            title: 'Pending action',
+            title: 'Greiðsluferli lokið',
             displayStatus: 'success',
           },
         },
