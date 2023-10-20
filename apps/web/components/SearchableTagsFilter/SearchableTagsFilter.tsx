@@ -21,8 +21,7 @@ type SearchableTagsFilterProps = {
 
 const SearchableTagsFilter: FC<SearchableTagsFilterProps> = (props) => {
   const { resultCount, tags = [] } = props;
-  const { globalNamespace } =
-    useContext(GlobalContext)
+  const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(globalNamespace)
   const { width } = useWindowSize()
   const { category, organization, setValue, reset } = useSearchableTagsFilter();
