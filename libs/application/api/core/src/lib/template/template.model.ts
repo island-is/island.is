@@ -26,6 +26,8 @@ import {
   PaymentCatalogApi,
   ValidateCriminalRecordApi,
   DataProviderItem,
+  HistoryEventMessage,
+  PendingAction,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import {
@@ -42,36 +44,6 @@ import { z } from 'zod'
 
 import { data, completedData } from './states'
 import { buildDataProviderItem } from '@island.is/application/core'
-
-type TemplateConfig<
-  TContext extends ApplicationContext,
-  TStateSchema extends ApplicationStateSchema<TEvents>,
-  TEvents extends EventObject,
-> = {
-  readyForProduction?: boolean
-  featureFlag?: Features
-  type: ApplicationTypes
-  name:
-    | StaticText
-    | ((
-        application: Application,
-      ) => StaticText | { name: StaticText; value: string })
-  institution?: StaticText
-  translationNamespaces?: string[]
-  allowMultipleApplicationsInDraft?: boolean
-  allowedDelegations?: AllowedDelegation[]
-  requiredScopes?: string[]
-  dataSchema?: Schema
-  stateMachineConfig?: MachineConfig<TContext, TStateSchema, TEvents> & {
-    states: StatesConfig<TContext, TStateSchema, TEvents>
-  }
-  stateMachineOptions?: Partial<MachineOptions<TContext, TEvents>>
-  mapUserToRole?: (
-    nationalId: string,
-    application: Application,
-  ) => ApplicationRole | undefined
-  answerValidators?: Record<string, AnswerValidator>
-}
 
 export interface ApplicationBlueprint {
   ApplicatonType: ApplicationTypes
@@ -92,6 +64,8 @@ export interface StateBlueprint {
   transitions: Transition[]
   status: ApplicationStateMachineStatus
   lifecycle: StateLifeCycle
+  pendingAction?: PendingAction
+  historyLogs?: HistoryEventMessage[] | HistoryEventMessage
   onEntry?: TemplateApi[] | TemplateApi
   onExit?: TemplateApi[] | TemplateApi
 }
@@ -100,6 +74,9 @@ export type Events =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.ABORT }
+  | { type: DefaultEvents.PAYMENT }
+  | { type: DefaultEvents.EDIT }
+  | { type: DefaultEvents.REJECT }
 
 export enum States {
   DRAFT = 'draft',
@@ -132,6 +109,10 @@ export function buildTemplate<
           lifecycle: state.lifecycle,
           onEntry: state.onEntry,
           onExit: state.onExit,
+          actionCard: {
+            historyLogs: state.historyLogs,
+            pendingAction: state.pendingAction,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -380,8 +361,6 @@ export function buildCertificateTemplate<
     return JSON.stringify(prerequisites)
   }
 
-  const prerequisitesString: string = generatePrerequisites(providers)
-
   const blueprint: ApplicationBlueprint = {
     ApplicatonType: templateId,
     initalState: 'prerequisites',
@@ -396,12 +375,15 @@ export function buildCertificateTemplate<
       {
         name: 'prerequisites',
         status: 'draft',
-        form: prerequisitesString,
+        form: generatePrerequisites(providers),
         transitions: [{ event: 'SUBMIT', target: 'draft' }],
+        historyLogs: {
+          onEvent: 'SUBMIT',
+          logMessage: 'Umsókn hafin',
+        },
         lifecycle: {
           shouldBeListed: true,
-          shouldBePruned: true,
-          whenToPrune: 1 * 24 * 3600 * 1000,
+          shouldBePruned: false,
         },
       },
       {
@@ -409,6 +391,10 @@ export function buildCertificateTemplate<
         status: 'draft',
         form: dataString,
         transitions: [{ event: 'SUBMIT', target: 'completed' }],
+        historyLogs: {
+          onEvent: 'SUBMIT',
+          logMessage: 'Greiðsla móttekin.',
+        },
         lifecycle: {
           shouldBeListed: true,
           shouldBePruned: true,
@@ -419,7 +405,12 @@ export function buildCertificateTemplate<
         name: 'completed',
         status: 'completed',
         form: completedDataString,
-        transitions: [{ event: 'SUBMIT', target: 'prerequisites' }],
+        transitions: [{ event: 'SUBMIT', target: 'completed' }],
+        pendingAction: {
+          displayStatus: 'success',
+          title: 'Vottord afhent',
+          content: 'Vottord aðgengilegt í umsókn og á mínum síðum',
+        },
         onEntry: [getPdfApi],
         lifecycle: {
           shouldBeListed: true,
