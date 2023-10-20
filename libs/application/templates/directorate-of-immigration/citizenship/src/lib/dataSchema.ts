@@ -19,8 +19,8 @@ const UserSchemaBase = z.object({
   email: z.string().min(1),
   phone: z.string().min(1),
   citizenship: z.string().min(1),
-  residenceInIcelandLastChangeDate: z.string().min(1),
-  birthCountry: z.string().min(1),
+  residenceInIcelandLastChangeDate: z.string().optional(),
+  birthCountry: z.string().optional(),
 })
 
 export const UserInformationSchema = z.intersection(

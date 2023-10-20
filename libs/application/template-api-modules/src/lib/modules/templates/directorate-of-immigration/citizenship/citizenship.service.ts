@@ -27,7 +27,7 @@ import {
   TravelDocumentType,
 } from '@island.is/clients/directorate-of-immigration'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { coreErrorMessages, YES } from '@island.is/application/core'
+import { YES } from '@island.is/application/core'
 
 @Injectable()
 export class CitizenshipService extends BaseTemplateApiService {

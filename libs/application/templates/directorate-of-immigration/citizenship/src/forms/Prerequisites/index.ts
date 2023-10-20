@@ -28,6 +28,7 @@ import {
   ResidenceConditionInfoApi,
   TravelDocumentTypesApi,
   UserProfileApi,
+  UtlendingastofnunPaymentCatalogApi,
 } from '../../dataProviders'
 
 export const Prerequisites: Form = buildForm({
@@ -114,6 +115,10 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: CurrentPassportItemApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: UtlendingastofnunPaymentCatalogApi,
               title: '',
             }),
             buildDataProviderItem({
