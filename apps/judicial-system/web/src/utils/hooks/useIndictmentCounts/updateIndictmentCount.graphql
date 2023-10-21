@@ -1,0 +1,15 @@
+mutation UpdateIndictmentCount($input: UpdateIndictmentCountInput!) {
+  updateIndictmentCount(input: $input) {
+    id
+    created
+    modified
+    caseId
+    policeCaseNumber
+    vehicleRegistrationNumber
+    offenses
+    substances
+    lawsBroken
+    incidentDescription
+    legalArguments
+  }
+}

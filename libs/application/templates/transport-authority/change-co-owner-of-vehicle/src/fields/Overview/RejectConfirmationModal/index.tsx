@@ -16,7 +16,9 @@ type RejectConfirmationModalProps = {
   reviewerNationalId?: string
 }
 
-export const RejectConfirmationModal: FC<RejectConfirmationModalProps> = ({
+export const RejectConfirmationModal: FC<
+  React.PropsWithChildren<RejectConfirmationModalProps>
+> = ({
   visibility,
   setVisibility,
   application,

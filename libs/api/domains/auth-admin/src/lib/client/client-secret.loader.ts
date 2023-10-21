@@ -16,7 +16,8 @@ export type ClientSecretDataLoader = DataLoader<
 
 @Injectable()
 export class ClientSecretLoader
-  implements NestDataLoader<ClientSecretInput, ClientSecret[]> {
+  implements NestDataLoader<ClientSecretInput, ClientSecret[]>
+{
   constructor(private readonly clientsService: ClientsService) {}
 
   keyFn(input: ClientSecretInput): string {

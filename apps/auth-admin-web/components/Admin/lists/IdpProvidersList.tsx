@@ -8,7 +8,7 @@ import { IdpProvider } from '../../../entities/models/IdpProvider.model'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { ListControl } from '../../../entities/common/Localization'
 
-const IdpProvidersList: React.FC = () => {
+const IdpProvidersList: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [idpProviders, setIdpProviders] = useState<IdpProvider[]>([])
   const [page, setPage] = useState(1)
   const [lastPage, setLastPage] = useState(1)
@@ -89,14 +89,13 @@ const IdpProvidersList: React.FC = () => {
             <h1>{localization.title}</h1>
             <div className="idp-providers-list__container__options">
               <div className="idp-providers-list__container__options__button">
-                <Link href={'/admin/idp-provider'}>
-                  <a
-                    className="idp-providers-list__button__new"
-                    title={localization.buttons['new'].helpText}
-                  >
-                    <i className="icon__new"></i>
-                    {localization.buttons['new'].text}
-                  </a>
+                <Link
+                  href={'/admin/idp-provider'}
+                  className="idp-providers-list__button__new"
+                  title={localization.buttons['new'].helpText}
+                >
+                  <i className="icon__new"></i>
+                  {localization.buttons['new'].text}
                 </Link>
               </div>
               <form onSubmit={search}>
@@ -142,6 +141,7 @@ const IdpProvidersList: React.FC = () => {
                             href={`admin/idp-provider/${encodeURIComponent(
                               idpItem.name,
                             )}`}
+                            legacyBehavior
                           >
                             <button
                               type="button"

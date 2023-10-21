@@ -21,7 +21,9 @@ interface Props {
   confirmationText: string
 }
 
-const ConfirmModal: React.FC<Props> = (props: Props) => {
+const ConfirmModal: React.FC<React.PropsWithChildren<Props>> = (
+  props: Props,
+) => {
   return (
     <Modal isOpen={props.modalIsOpen} style={customStyles} ariaHideApp={false}>
       <div className="confirm-modal">

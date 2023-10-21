@@ -20,7 +20,9 @@ interface Props {
   handleChanges?: () => void
 }
 
-const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
+const ApiResourceSecretForm: React.FC<React.PropsWithChildren<Props>> = (
+  props: Props,
+) => {
   const { register, handleSubmit, formState } = useForm<ApiResourceSecretDTO>()
   const { isSubmitting, errors } = formState
   const defaultSecretLength = 25

@@ -57,10 +57,13 @@ export class AdminTranslationService {
         locale: 'is',
         value: defaultValueIS ?? '',
       },
-      ...Array.from(translations || []).map(([locale, translation]) => ({
-        locale,
-        value: translation.get(key) ?? '',
-      })),
+      ...Array.from(translations || [])
+        .map(([locale, translation]) => ({
+          locale,
+          value: translation.get(key) ?? '',
+        }))
+        // Filter out empty translations so our sync check doesn't fail
+        .filter((translation) => translation.value !== ''),
     ]
   }
 

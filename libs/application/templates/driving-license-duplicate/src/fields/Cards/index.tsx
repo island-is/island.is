@@ -14,9 +14,7 @@ import NotFilledOut from '../NotFilledOut'
 type Props = {
   field: {
     props: {
-      cards: (
-        application: Application,
-      ) => {
+      cards: (application: Application) => {
         title?: string
         description?:
           | string

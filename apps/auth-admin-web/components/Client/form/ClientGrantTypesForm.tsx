@@ -16,7 +16,9 @@ interface Props {
   handleChanges?: () => void
 }
 
-const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
+const ClientGrantTypesForm: React.FC<React.PropsWithChildren<Props>> = (
+  props: Props,
+) => {
   const [grantTypes, setGrantTypes] = useState<GrantType[]>([])
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('ClientGrantTypesForm'),

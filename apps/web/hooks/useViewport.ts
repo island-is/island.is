@@ -20,7 +20,9 @@ export const useScrollPosition = (): Position => {
   useEffect(() => {
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+    }
   }, [onScroll])
 
   return position
@@ -45,7 +47,9 @@ export const useWindowSize = (): Rect => {
   useEffect(() => {
     onResize()
     window.addEventListener('resize', onResize, { passive: true })
-    return () => window.removeEventListener('resize', onResize)
+    return () => {
+      window.removeEventListener('resize', onResize)
+    }
   }, [onResize])
 
   return size

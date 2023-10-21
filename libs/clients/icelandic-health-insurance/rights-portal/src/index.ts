@@ -5,6 +5,7 @@ export {
   TherapyDTO,
   AidsandnutritionApi,
   AidsAndNutritionDTO,
+  AidOrNutritionDTO,
   DentistApi,
   DentistDTO,
   HealthcenterApi,

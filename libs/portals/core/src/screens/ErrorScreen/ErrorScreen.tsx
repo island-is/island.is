@@ -9,7 +9,7 @@ interface ErrorScreenProps {
   figure?: string
 }
 
-export const ErrorScreen: FC<ErrorScreenProps> = ({
+export const ErrorScreen: FC<React.PropsWithChildren<ErrorScreenProps>> = ({
   title,
   tag,
   figure,

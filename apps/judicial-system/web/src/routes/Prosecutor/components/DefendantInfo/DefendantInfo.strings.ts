@@ -2,8 +2,7 @@ import { defineMessages } from 'react-intl'
 
 export const defendantInfo = defineMessages({
   doesNotHaveIcelandicNationalId: {
-    id:
-      'judicial.system.core:defendant_info.does_not_have_icelandic_national_id_v2',
+    id: 'judicial.system.core:defendant_info.does_not_have_icelandic_national_id_v2',
     defaultMessage:
       '{isIndictment, select, true {Ákærði} other {Varnaraðili}} er ekki með íslenska kennitölu',
     description:

@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useContext } from 'react'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { api } from '@island.is/judicial-system-web/src/services'
 
+import { UserContext } from '../UserProvider/UserProvider'
 import * as styles from './PdfButton.css'
 
 interface Props {
@@ -15,18 +16,13 @@ interface Props {
     | 'request'
     | 'custodyNotice'
     | 'indictment'
-    | 'limitedAccess/ruling'
-    | 'limitedAccess/caseFilesRecord'
-    | 'limitedAccess/courtRecord'
-    | 'limitedAccess/request'
-    | 'limitedAccess/indictment'
   disabled?: boolean
   renderAs?: 'button' | 'row'
   handleClick?: () => void
   policeCaseNumber?: string // Only used if pdfType ends with caseFilesRecord
 }
 
-const PdfButton: React.FC<Props> = ({
+const PdfButton: React.FC<React.PropsWithChildren<Props>> = ({
   caseId,
   title,
   pdfType,
@@ -36,11 +32,14 @@ const PdfButton: React.FC<Props> = ({
   handleClick, // Overwrites the default onClick handler
   policeCaseNumber,
 }) => {
+  const { limitedAccess } = useContext(UserContext)
+
   const handlePdfClick = async () => {
-    const newPdfType = pdfType?.endsWith('caseFilesRecord')
-      ? `${pdfType}/${policeCaseNumber}`
-      : pdfType
-    const url = `${api.apiUrl}/api/case/${caseId}/${newPdfType}`
+    const prefix = limitedAccess ? 'limitedAccess/' : ''
+    const postfix = pdfType?.endsWith('caseFilesRecord')
+      ? `/${policeCaseNumber}`
+      : ''
+    const url = `${api.apiUrl}/api/case/${caseId}/${prefix}${pdfType}${postfix}`
 
     window.open(url, '_blank')
   }

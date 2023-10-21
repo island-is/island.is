@@ -3,8 +3,8 @@ import {
   PaymentCatalogApi,
   UserProfileApi,
   NationalRegistryUserApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
-import { SYSLUMADUR_NATIONAL_ID } from '../lib/constants'
 import { error } from '../lib/error'
 export { MockProviderApi } from '@island.is/application/types'
 
@@ -17,21 +17,30 @@ export const UserInfoApi = UserProfileApi.configure({
   },
 })
 
+const defaultParams = {
+  ageToValidate: 18,
+  legalDomicileIceland: true,
+  ageToValidateError: {
+    title: error.invalidAgeTitle,
+    summary: error.invalidAgeDescription,
+  },
+  icelandicCitizenship: true,
+}
+
 export const NationalRegistryUser = NationalRegistryUserApi.configure({
+  params: defaultParams,
+})
+
+export const NationalRegistryUserParentB = NationalRegistryUserApi.configure({
   params: {
-    ageToValidate: 18,
-    legalDomicileIceland: true,
-    ageToValidateError: {
-      title: error.invalidAgeTitle,
-      summary: error.invalidAgeDescription,
-    },
-    icelandicCitizenship: true,
+    ...defaultParams,
+    icelandicCitizenship: false,
   },
 })
 
 export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
   params: {
-    organizationId: SYSLUMADUR_NATIONAL_ID,
+    organizationId: InstitutionNationalIds.SYSLUMENN,
   },
   externalDataId: 'payment',
 })

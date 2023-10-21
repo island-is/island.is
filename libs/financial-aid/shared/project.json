@@ -1,22 +1,23 @@
 {
-  "root": "libs/financial-aid/shared",
+  "name": "financial-aid-shared",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/financial-aid/shared/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/financial-aid/shared/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/financial-aid/shared/jest.config.js",
+        "jestConfig": "libs/financial-aid/shared/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/financial-aid/shared"]
+      "outputs": ["{workspaceRoot}/coverage/libs/financial-aid/shared"]
     }
   },
   "tags": ["lib:js", "scope:react", "TODO:splitUp"]

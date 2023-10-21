@@ -41,7 +41,7 @@ type FieldProps = FieldBaseProps & {
 }
 type ScreenProps = RepeaterProps & FieldProps
 
-const PeriodsRepeater: FC<ScreenProps> = ({
+const PeriodsRepeater: FC<React.PropsWithChildren<ScreenProps>> = ({
   application,
   expandRepeater,
   field,

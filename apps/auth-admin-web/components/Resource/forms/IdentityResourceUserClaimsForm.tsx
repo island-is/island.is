@@ -14,7 +14,9 @@ interface Props {
   handleNewClaimsAdded: () => void
 }
 
-const IdentityResourceUserClaims: React.FC<Props> = (props: Props) => {
+const IdentityResourceUserClaims: React.FC<React.PropsWithChildren<Props>> = (
+  props: Props,
+) => {
   const [claims, setClaims] = useState<string[]>([])
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('IdentityResourceUserClaims'),

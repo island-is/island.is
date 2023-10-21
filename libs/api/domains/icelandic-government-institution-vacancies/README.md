@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # API Domains Icelandic Government Institution Vacancies
 
 This library was generated with [Nx](https://nx.dev).

@@ -15,7 +15,10 @@ interface PaymentsTableProps {
   payments?: Payment[]
 }
 
-const PaymentsTable: FC<PaymentsTableProps> = ({ application, payments }) => {
+const PaymentsTable: FC<React.PropsWithChildren<PaymentsTableProps>> = ({
+  application,
+  payments,
+}) => {
   const { formatMessage } = useLocale()
 
   const formattedPayments =

@@ -1,28 +1,29 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { ValueType } from 'react-select'
+import { SingleValue } from 'react-select'
 
-import { Box, Select, Option, Tooltip } from '@island.is/island-ui/core'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { Box, Select, Tooltip } from '@island.is/island-ui/core'
 import {
+  CaseType,
   User,
   UserRole,
-  CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { selectCourtOfficials as strings } from './SelectCourtOfficials.strings'
-import { ReactSelectOption } from '../../types'
+import { ReactSelectOption, TempCase as Case } from '../../types'
 import BlueBox from '../BlueBox/BlueBox'
 import SectionHeading from '../SectionHeading/SectionHeading'
+import { selectCourtOfficials as strings } from './SelectCourtOfficials.strings'
 
 interface Props {
   workingCase: Case
-  handleJudgeChange: (value: ValueType<ReactSelectOption>) => void
-  handleRegistrarChange: (value: ValueType<ReactSelectOption>) => void
+  handleJudgeChange(value: SingleValue<ReactSelectOption>): void
+  handleRegistrarChange(value?: ReactSelectOption): void
   users?: User[]
 }
 
-const SelectCourtOfficials: React.FC<Props> = (props) => {
+const SelectCourtOfficials: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const { workingCase, handleJudgeChange, handleRegistrarChange, users } = props
   const { formatMessage } = useIntl()
 
@@ -49,11 +50,11 @@ const SelectCourtOfficials: React.FC<Props> = (props) => {
     })
 
   const defaultJudge = judges?.find(
-    (judge: Option) => judge.value === workingCase.judge?.id,
+    (judge) => judge.value === workingCase.judge?.id,
   )
 
   const defaultRegistrar = registrars?.find(
-    (registrar: Option) => registrar.value === workingCase.registrar?.id,
+    (registrar) => registrar.value === workingCase.registrar?.id,
   )
 
   return (
@@ -72,9 +73,7 @@ const SelectCourtOfficials: React.FC<Props> = (props) => {
             placeholder={formatMessage(strings.setJudgePlaceholder)}
             value={defaultJudge}
             options={judges}
-            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-              handleJudgeChange(selectedOption)
-            }
+            onChange={handleJudgeChange}
             required
           />
         </Box>
@@ -84,7 +83,7 @@ const SelectCourtOfficials: React.FC<Props> = (props) => {
           placeholder={formatMessage(strings.setRegistrarPlaceholder)}
           value={defaultRegistrar}
           options={registrars}
-          onChange={(selectedOption: ValueType<ReactSelectOption>) => {
+          onChange={(selectedOption) => {
             if (selectedOption) {
               handleRegistrarChange(selectedOption)
             } else {

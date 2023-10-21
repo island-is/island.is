@@ -8,7 +8,10 @@ interface PageProps {
   component?: BoxProps['component']
 }
 
-export const Page: React.FC<PageProps> = ({ component = 'main', children }) => (
+export const Page: React.FC<React.PropsWithChildren<PageProps>> = ({
+  component = 'main',
+  children,
+}) => (
   <Box className={styles.container} component={component}>
     {children}
   </Box>

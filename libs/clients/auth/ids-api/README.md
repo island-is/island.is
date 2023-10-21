@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "IDS API" -->
-
 # Auth IDS API Client
 
 ## About

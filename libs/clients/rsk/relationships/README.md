@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Relationships" -->
-
 # RSK Relationships (Prókúra) Client
 
 This library was generated with [Nx](https://nx.dev).

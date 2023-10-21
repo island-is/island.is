@@ -254,6 +254,11 @@ export const m = defineMessages({
     defaultMessage: 'Staðfesting',
     description: 'Confirmation',
   },
+  submit: {
+    id: 'dla.application:submit',
+    defaultMessage: 'Staðfesta',
+    description: 'Confirm',
+  },
   studentLookupToShow: {
     id: 'dla.application:student.lookupToShow',
     defaultMessage: 'Uppfletting nemanda',
@@ -269,6 +274,11 @@ export const m = defineMessages({
     id: 'dla.application:finalAssessmentTitle',
     defaultMessage: 'Akstursmat móttekið',
     description: 'Driving assessment received.',
+  },
+  assessmentReceived: {
+    id: 'dla.application:assessmentReceived',
+    defaultMessage: 'Móttekið',
+    description: 'Assessment received.',
   },
   finalAssessmentDescription: {
     id: 'dla.application:finalAssessmentDescription',

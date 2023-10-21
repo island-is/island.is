@@ -2,15 +2,15 @@ import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Checkbox, Text } from '@island.is/island-ui/core'
+import { capitalize } from '@island.is/judicial-system/formatters'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   DefenderInput,
   DefenderNotFound,
 } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { core } from '@island.is/judicial-system-web/messages'
-import { capitalize } from '@island.is/judicial-system/formatters'
-import { Defendant, UpdateDefendant } from '@island.is/judicial-system/types'
+import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 
 import { defender as m } from './Defender.strings'
@@ -19,7 +19,7 @@ interface Props {
   defendant: Defendant
 }
 
-const SelectDefender: React.FC<Props> = (props) => {
+const SelectDefender: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { defendant } = props
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
@@ -34,7 +34,9 @@ const SelectDefender: React.FC<Props> = (props) => {
       defendant: Defendant,
       defendantWaivesRightToCounsel: boolean,
     ) => {
-      const updateDefendantInput: UpdateDefendant = {
+      const updateDefendantInput = {
+        caseId,
+        defendantId: defendant.id,
         defenderNationalId: defendantWaivesRightToCounsel
           ? ''
           : defendant.defenderNationalId,

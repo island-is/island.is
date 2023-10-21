@@ -12,6 +12,9 @@ export const GET_ARTICLE_QUERY = gql`
       importance
       showTableOfContents
       processEntryButtonText
+      signLanguageVideo {
+        url
+      }
       alertBanner {
         showAlertBanner
         bannerVariant
@@ -59,6 +62,7 @@ export const GET_ARTICLE_QUERY = gql`
         link
         hasALandingPage
         trackingDomain
+        footerConfig
         logo {
           url
           width
@@ -122,6 +126,9 @@ export const GET_ARTICLE_QUERY = gql`
         id
         title
         slug
+        signLanguageVideo {
+          url
+        }
         body {
           ...AllSlices
           ${nestedFields}

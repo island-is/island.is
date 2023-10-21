@@ -1,6 +1,7 @@
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useMemo, useState } from 'react'
 
-import { useState, useMemo } from 'react'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 const useSortAppealCases = (
   defaultColumn: string,
@@ -20,6 +21,13 @@ const useSortAppealCases = (
     }
 
     setSortConfig({ column, direction })
+  }
+
+  const isActiveColumn = (column: string) => {
+    if (!sortConfig) {
+      return false
+    }
+    return sortConfig.column === column
   }
 
   const getClassNamesFor = (column: string) => {
@@ -42,8 +50,10 @@ const useSortAppealCases = (
           }
           return entry.appealedDate ?? ''
         }
-        const compareResult = getColumnValue(a).localeCompare(getColumnValue(b))
-
+        const compareResult = compareLocaleIS(
+          getColumnValue(a),
+          getColumnValue(b),
+        )
         return sortConfig.direction === 'ascending'
           ? compareResult
           : -compareResult
@@ -52,7 +62,7 @@ const useSortAppealCases = (
     return data
   }, [data, sortConfig])
 
-  return { sortedData, requestSort, getClassNamesFor }
+  return { sortedData, requestSort, getClassNamesFor, isActiveColumn }
 }
 
 export default useSortAppealCases

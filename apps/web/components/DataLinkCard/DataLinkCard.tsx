@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import { useMeasure } from 'react-use'
 import {
   Box,
@@ -67,7 +67,7 @@ export const DataLinkCard = ({ title, body, link }: DataLinkCardProps) => {
   return <FrameWrapper>{items}</FrameWrapper>
 }
 
-const FrameWrapper = ({ children }) => {
+const FrameWrapper = ({ children }: { children: ReactNode }) => {
   return (
     <Box
       className={styles.card}

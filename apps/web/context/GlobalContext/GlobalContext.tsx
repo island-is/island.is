@@ -29,11 +29,9 @@ export const GlobalContext = createContext<GlobalContextProps>({
   setResolveLinkTypeLocally: () => null,
 })
 
-export const GlobalContextProvider: FC<GlobalContextProviderProps> = ({
-  namespace = {},
-  isServiceWeb = false,
-  children,
-}) => {
+export const GlobalContextProvider: FC<
+  React.PropsWithChildren<GlobalContextProviderProps>
+> = ({ namespace = {}, isServiceWeb = false, children }) => {
   const setContentfulIds = (ids: string[]) => {
     setState((prevState) => ({
       ...prevState,

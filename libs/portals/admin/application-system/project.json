@@ -1,5 +1,6 @@
 {
-  "root": "libs/portals/admin/application-system",
+  "name": "portals-admin-application-system",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/portals/admin/application-system/src",
   "projectType": "library",
   "tags": [
@@ -9,7 +10,7 @@
   ],
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
@@ -18,15 +19,17 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/portals/admin/application-system"],
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/portals/admin/application-system"
+      ],
       "options": {
-        "jestConfig": "libs/portals/admin/application-system/jest.config.js",
+        "jestConfig": "libs/portals/admin/application-system/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "output": "libs/portals/admin/application-system/src/**/*.codegen.ts",
         "command": "graphql-codegen --config libs/portals/admin/application-system/codegen.yml"

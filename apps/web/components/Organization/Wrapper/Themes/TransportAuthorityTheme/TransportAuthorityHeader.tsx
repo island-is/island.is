@@ -37,8 +37,8 @@ const TransportAuthorityHeader: React.FC<HeaderProps> = ({
 }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
-    () => JSON.parse(organizationPage.organization.namespace?.fields ?? '{}'),
-    [organizationPage.organization.namespace?.fields],
+    () => JSON.parse(organizationPage.organization?.namespace?.fields ?? '{}'),
+    [organizationPage.organization?.namespace?.fields],
   )
   const n = useNamespace(namespace)
   const { width } = useWindowSize()
@@ -56,7 +56,7 @@ const TransportAuthorityHeader: React.FC<HeaderProps> = ({
       <div>
         <SidebarLayout
           sidebarContent={
-            !!organizationPage.organization.logo && (
+            !!organizationPage.organization?.logo && (
               <Link
                 href={
                   linkResolver('organizationpage', [organizationPage.slug]).href
@@ -72,7 +72,7 @@ const TransportAuthorityHeader: React.FC<HeaderProps> = ({
             )
           }
         >
-          {!!organizationPage.organization.logo && (
+          {!!organizationPage.organization?.logo && (
             <Hidden above="sm">
               <Link
                 href={

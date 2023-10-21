@@ -1,39 +1,26 @@
-import { BrowserContext, expect, Page, test } from '@playwright/test'
+import { BrowserContext, expect, test } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
 test.describe('Consultation portal authenticated', () => {
   let context: BrowserContext
-  const authLink = new RegExp(`^${urls.authUrl}`)
+  test.use({ baseURL: urls.islandisBaseUrl })
 
-  test.use({ baseURL: `${urls.islandisBaseUrl}/samradsgatt` })
-
-  const checkIfLoggedOutOrLoggedIn = async (page: Page) => {
-    await page.goto(icelandicAndNoPopupUrl('/samradsgatt'))
-    const loggedOut = page.getByTestId('menu-login-btn')
-    const loggedIn = page.getByRole('button', { name: 'Gervimaður Afríka' })
-    if (await loggedOut.isVisible()) {
-      await loggedOut.click()
-      await page.waitForURL(authLink)
-      await page.locator('#phoneUserIdentifier').fill('0103019')
-      await page.locator('#submitPhoneNumber').isEnabled()
-      await page.locator('#submitPhoneNumber').click()
-      await page.waitForURL(`**${icelandicAndNoPopupUrl('/samradsgatt')}`)
-    } else {
-      await loggedIn.isVisible()
-    }
-  }
-
-  test.beforeAll(async ({ browser, baseURL }) => {
+  test.beforeAll(async ({ browser }) => {
     context = await session({
       browser: browser,
       storageState: 'consultation-auth.json',
-      idsLoginOn: false,
-      phoneNumber: '0103019',
-      homeUrl: baseURL,
+      idsLoginOn: {
+        nextAuth: { nextAuthRoot: `${urls.islandisBaseUrl}/samradsgatt` },
+      },
+      phoneNumber: '0102989',
+      homeUrl: `${urls.islandisBaseUrl}/samradsgatt`,
+      authTrigger: async (page) => {
+        await page.goto('/samradsgatt')
+        await page.getByTestId('menu-login-btn').click()
+        return `${urls.islandisBaseUrl}/samradsgatt`
+      },
     })
-    const page = await context.newPage()
-    await checkIfLoggedOutOrLoggedIn(page)
   })
 
   test.afterAll(async () => {
@@ -45,7 +32,7 @@ test.describe('Consultation portal authenticated', () => {
     await page.goto(icelandicAndNoPopupUrl('/samradsgatt'))
 
     await expect(
-      page.getByRole('button', { name: 'Gervimaður Afríka' }),
+      page.getByRole('button', { name: 'Gervimaður Ameríku' }),
     ).toBeVisible()
     await expect(page.getByTestId('menu-login-btn')).not.toBeVisible()
 
@@ -93,7 +80,7 @@ test.describe('Consultation portal authenticated', () => {
     const page = await context.newPage()
     await page.goto(icelandicAndNoPopupUrl('/samradsgatt'))
 
-    await page.getByRole('button', { name: 'Gervimaður Afríka' }).click()
+    await page.getByRole('button', { name: 'Gervimaður Ameríku' }).click()
     await expect(page.getByRole('button', { name: 'Útskrá' })).toBeVisible()
 
     await page.close()

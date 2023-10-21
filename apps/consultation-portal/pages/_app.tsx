@@ -3,7 +3,6 @@ import { getSession, Provider } from 'next-auth/client'
 import { AppContext } from 'next/app'
 import { AppLayout, PageLoader, AuthProvider } from '../components'
 import initApollo from '../graphql/client'
-import { isAuthenticated } from '../utils/helpers'
 
 const ConsultationPortalApplication: any = ({ Component, pageProps }) => {
   return (
@@ -26,22 +25,17 @@ const ConsultationPortalApplication: any = ({ Component, pageProps }) => {
 ConsultationPortalApplication.getInitialProps = async (
   appContext: AppContext,
 ) => {
-  const { Component, ctx } = appContext
+  const { ctx } = appContext
   const apolloClient = initApollo({})
   const customContext = {
     ...ctx,
     apolloClient,
-  }
-  let pageProps
-  if (Component.getInitialProps) {
-    pageProps = (await Component.getInitialProps(customContext)) as any
   }
   const apolloState = apolloClient.cache.extract()
   const session = await getSession(customContext)
   return {
     pageProps: {
       session: session,
-      isAuthenticated: isAuthenticated(customContext),
       apolloState: apolloState,
     },
   }

@@ -49,10 +49,11 @@ export class PrivateUserController {
       ...(await this.userService.getRelations(authUser)),
     ]
 
-    const userAndRelatives = await this.userService.getMultipleUsersByNationalIdArray(
-      relations,
-      authUser,
-    )
+    const userAndRelatives =
+      await this.userService.getMultipleUsersByNationalIdArray(
+        relations,
+        authUser,
+      )
 
     return userAndRelatives
   }

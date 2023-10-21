@@ -1,10 +1,11 @@
-import { useQuery } from '@apollo/client'
-import { useRouter } from 'next/router'
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { ValueType } from 'react-select'
+import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client'
 
-import { Box, Input, Option, Select } from '@island.is/island-ui/core'
+import { Box, Input, Select } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   FormContentContainer,
@@ -16,25 +17,23 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  InstitutionType,
   User,
   UserRole,
-  InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  ReactSelectOption,
+  UserData,
+} from '@island.is/judicial-system-web/src/types'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import * as constants from '@island.is/judicial-system/consts'
-import {
-  UserData,
-  ReactSelectOption,
-} from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { isCourtOfAppealCaseStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { appealCase as strings } from './AppealCase.strings'
-import { core } from '@island.is/judicial-system-web/messages'
 
 type JudgeSelectOption = ReactSelectOption & { judge: User }
 type AssistantSelectOption = ReactSelectOption & { assistant: User }
@@ -47,10 +46,8 @@ const AppealCase = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const [
-    appealCaseNumberErrorMessage,
-    setAppealCaseNumberErrorMessage,
-  ] = useState<string>('')
+  const [appealCaseNumberErrorMessage, setAppealCaseNumberErrorMessage] =
+    useState<string>('')
 
   const { data: userData } = useQuery<UserData>(UsersQuery, {
     fetchPolicy: 'no-cache',
@@ -61,7 +58,7 @@ const AppealCase = () => {
     .filter(
       (user: User) =>
         user.role === UserRole.ASSISTANT &&
-        user.institution?.type === InstitutionType.HIGH_COURT,
+        user.institution?.type === InstitutionType.COURT_OF_APPEALS,
     )
     .map((assistant: User) => {
       return { label: assistant.name, value: assistant.id, assistant }
@@ -71,7 +68,7 @@ const AppealCase = () => {
     .filter(
       (user: User) =>
         user.role === UserRole.JUDGE &&
-        user.institution?.type === InstitutionType.HIGH_COURT &&
+        user.institution?.type === InstitutionType.COURT_OF_APPEALS &&
         workingCase.appealJudge1?.id !== user.id &&
         workingCase.appealJudge2?.id !== user.id &&
         workingCase.appealJudge3?.id !== user.id,
@@ -87,7 +84,8 @@ const AppealCase = () => {
   ]
 
   const defaultAssistant = assistants?.find(
-    (assistant: Option) => assistant.value === workingCase.appealAssistant?.id,
+    (assistant: AssistantSelectOption) =>
+      assistant.value === workingCase.appealAssistant?.id,
   )
 
   const previousUrl = `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`
@@ -95,11 +93,15 @@ const AppealCase = () => {
     router.push(`${destination}/${workingCase.id}`)
 
   return (
-    <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
+    <PageLayout
+      workingCase={workingCase}
+      isLoading={false}
+      notFound={false}
+      onNavigationTo={handleNavigationTo}
+    >
       <PageHeader title={formatMessage(strings.title)} />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
-
         <Box component="section" marginBottom={5}>
           <SectionHeading title={formatMessage(core.appealCaseNumberHeading)} />
           <Input
@@ -142,7 +144,7 @@ const AppealCase = () => {
             placeholder={formatMessage(strings.assistantPlaceholder)}
             value={defaultAssistant}
             options={assistants}
-            onChange={(so: ValueType<ReactSelectOption>) => {
+            onChange={(so) => {
               const assistantUpdate = (so as AssistantSelectOption).assistant
 
               setAndSendCaseToServer(
@@ -167,15 +169,23 @@ const AppealCase = () => {
                 <Box marginBottom={2} key={`judgeBox${index + 1}`}>
                   <Select
                     name="judge"
-                    label={formatMessage(strings.judgeLabel)}
-                    placeholder={formatMessage(strings.judgePlaceholder)}
+                    label={formatMessage(
+                      index === 0
+                        ? strings.judgeForepersonLabel
+                        : strings.judgeLabel,
+                    )}
+                    placeholder={formatMessage(
+                      index === 0
+                        ? strings.judgeForepersonPlaceholder
+                        : strings.judgePlaceholder,
+                    )}
                     value={
                       judge?.id
                         ? { label: judge.name, value: judge.id }
                         : undefined
                     }
                     options={judges}
-                    onChange={(so: ValueType<ReactSelectOption>) => {
+                    onChange={(so) => {
                       const judgeUpdate = (so as JudgeSelectOption).judge
                       const judgeProperty = `appealJudge${index + 1}Id`
 

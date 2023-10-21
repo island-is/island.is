@@ -37,7 +37,7 @@ const SkilavottordVehiclesQuery = gql`
   }
 `
 
-const Overview: FC = () => {
+const Overview: FC<React.PropsWithChildren<unknown>> = () => {
   const {
     t: {
       myCars: t,

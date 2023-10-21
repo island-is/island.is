@@ -1,17 +1,21 @@
-import { Controller, Get, Param } from '@nestjs/common'
+import { Controller, Get, Inject, Param } from '@nestjs/common'
+
+import type { ConfigType } from '@island.is/nest/config'
 
 import type { Feature } from '@island.is/judicial-system/types'
-import { splitStringByComma } from '@island.is/judicial-system/formatters'
 
-import { environment } from '../../../environments'
-
-const hiddenFeatures = splitStringByComma(environment.features?.hidden)
+import { featureModuleConfig } from './feature.config'
 
 // This controller is not guearded as it should also be available to users not logged in
 @Controller('api/feature')
 export class FeatureController {
+  constructor(
+    @Inject(featureModuleConfig.KEY)
+    private readonly config: ConfigType<typeof featureModuleConfig>,
+  ) {}
+
   @Get(':name')
   async getFeature(@Param('name') name: Feature) {
-    return !hiddenFeatures?.includes(name)
+    return !this.config.hiddenFeatures?.includes(name)
   }
 }

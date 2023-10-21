@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Financial Statemens for the Icelandic National Audit Office (INAO)
 
 Endpoint to return financial statements for cemeteries, political parties, and individuals in personal elections to the Icelandic National Audit Office (Ríkisendurskoðun). These are organisations/individuals who are exempt from submitting financial statements to the Icelandic Revenue and Customs (Skatturinn).

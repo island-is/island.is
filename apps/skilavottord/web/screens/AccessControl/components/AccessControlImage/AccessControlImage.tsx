@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-export const AccessControlImage: FC = () => (
+export const AccessControlImage: FC<React.PropsWithChildren<unknown>> = () => (
   <svg
     width="169"
     height="250"

@@ -1,84 +1,110 @@
 {
-  "root": "apps/web",
+  "name": "web",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/web",
   "projectType": "application",
   "generators": {},
   "targets": {
     "build": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/web",
-        "commands": ["yarn nx build-next web", "yarn nx build-server web"]
-      },
-      "configurations": {
-        "production": {
-          "args": "--prod"
-        }
-      }
-    },
-    "build-next": {
-      "executor": "@nrwl/next:build",
-      "options": {
-        "root": "apps/web",
         "outputPath": "dist/apps/web"
       },
       "configurations": {
+        "development": {
+          "outputPath": "apps/web"
+        },
         "production": {}
       },
-      "outputs": ["{options.outputPath}"]
+      "dependsOn": ["build-custom-server"]
     },
-    "build-server": {
-      "executor": "@nrwl/node:webpack",
+    "serve": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "web:build",
+        "dev": true,
+        "customServerTarget": "web:serve-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "web:build:development",
+          "dev": true,
+          "customServerTarget": "web:serve-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "web:build:production",
+          "dev": false,
+          "customServerTarget": "web:serve-custom-server:production"
+        }
+      }
+    },
+    "build-custom-server": {
+      "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/web",
         "main": "apps/web/server.ts",
-        "tsConfig": "apps/web/tsconfig.json",
+        "tsConfig": "apps/web/tsconfig.server.json",
         "maxWorkers": 2,
-        "assets": []
+        "assets": [],
+        "compiler": "tsc",
+        "target": "node"
       },
       "configurations": {
+        "development": {},
         "production": {
           "optimization": true,
           "extractLicenses": true,
           "inspect": false
         }
-      },
-      "outputs": ["{options.outputPath}"]
+      }
     },
-    "serve": {
-      "executor": "@nrwl/node:node",
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "web:build-server"
+        "buildTarget": "web:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "web:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "web:build-custom-server:production"
+        }
       }
     },
     "export": {
-      "executor": "@nrwl/next:export",
+      "executor": "@nx/next:export",
       "options": {
         "buildTarget": "web:build:production"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/web/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/web/jest.config.js",
+        "jestConfig": "apps/web/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/web"]
+      "outputs": ["{workspaceRoot}/coverage/apps/web"]
     },
     "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "graphql-codegen --config apps/web/codegen.yml"
       }
     },
     "dev-init": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn get-secrets web",
@@ -96,7 +122,7 @@
       }
     },
     "dev": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "./scripts/run-es-proxy.sh",

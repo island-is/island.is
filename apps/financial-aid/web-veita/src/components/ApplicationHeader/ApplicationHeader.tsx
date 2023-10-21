@@ -171,14 +171,15 @@ const ApplicationHeader = ({
             <Box marginX={1}>
               <Text variant="small">·</Text>
             </Box>
-            <Link href={Routes.printApplicationProfile(application.id)}>
-              <a target="_blank" className={styles.button}>
-                <Box marginRight={1} display="flex" alignItems="center">
-                  <Icon icon="print" type="outline" size="small" />
-                </Box>
-
-                <span>Prenta umsókn </span>
-              </a>
+            <Link
+              href={Routes.printApplicationProfile(application.id)}
+              target="_blank"
+              className={styles.button}
+            >
+              <Box marginRight={1} display="flex" alignItems="center">
+                <Icon icon="print" type="outline" size="small" />
+              </Box>
+              <span>Prenta umsókn </span>
             </Link>
           </>
         )}

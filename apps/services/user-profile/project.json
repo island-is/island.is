@@ -1,5 +1,6 @@
 {
-  "root": "apps/services/user-profile",
+  "name": "services-user-profile",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/user-profile/src",
   "projectType": "application",
   "prefix": "services-user-profile",
@@ -46,71 +47,80 @@
       "outputs": ["{options.outputPath}"]
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "services-user-profile:build"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/services/user-profile/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/services/user-profile/jest.config.js",
+        "jestConfig": "apps/services/user-profile/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/services/user-profile"]
+      "outputs": ["{workspaceRoot}/coverage/apps/services/user-profile"]
     },
     "dev-services": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "docker-compose up -d",
         "cwd": "apps/services/user-profile"
       }
     },
     "schemas/build-openapi": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn nx run services-user-profile:schemas/build-openapi-internal $NX_OPTIONS"
       }
     },
     "schemas/build-openapi-internal": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
-        "outputPath": "apps/services/user-profile/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/user-profile/tsconfig.app.json apps/services/user-profile/src/buildOpenApi.ts"
-      }
+      },
+      "outputs": ["{workspaceRoot}/apps/services/user-profile/src/openapi.yaml"]
     },
     "migrate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "../../../node_modules/.bin/sequelize-cli db:migrate",
         "cwd": "apps/services/user-profile/"
       }
     },
     "migrate/generate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
         "cwd": "apps/services/user-profile/"
       }
     },
+    "seed": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["sequelize-cli db:seed:all --seeders-path ./seeders"],
+        "parallel": false,
+        "cwd": "apps/services/user-profile/"
+      }
+    },
     "dev-init": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn nx run services-user-profile:dev-services",
-          "yarn nx run services-user-profile:migrate"
+          "yarn nx run services-user-profile:migrate",
+          "yarn nx run services-user-profile:seed"
         ],
         "parallel": false
       }
     },
     "dev": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn start services-user-profile",

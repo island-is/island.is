@@ -10,6 +10,7 @@ interface UseListDocumentsProps {
   unreadCounter: number
   loading?: boolean
   error?: any
+  refetch?: (input?: GetDocumentListInput) => void
 }
 
 export const useListDocuments = (
@@ -28,8 +29,11 @@ export const useListDocuments = (
     page,
     pageSize,
     isLegalGuardian,
+    archived,
+    bookmarked,
   } = input ?? {}
-  const { data, loading, error } = useQuery<Query>(LIST_DOCUMENTS, {
+  const { data, loading, error, refetch } = useQuery<Query>(LIST_DOCUMENTS, {
+    fetchPolicy: 'network-only',
     variables: {
       input: {
         senderKennitala,
@@ -44,6 +48,8 @@ export const useListDocuments = (
         page,
         pageSize,
         isLegalGuardian,
+        archived,
+        bookmarked,
       },
     },
   })
@@ -56,5 +62,6 @@ export const useListDocuments = (
     unreadCounter: documents.filter((x) => x.opened === false).length,
     loading,
     error,
+    refetch,
   }
 }

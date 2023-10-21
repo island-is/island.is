@@ -31,11 +31,8 @@ import {
 import { EndorsementList as EndorsementListLoaderType } from '../../lib/utils/types'
 
 const PetitionList = () => {
-  const {
-    listId,
-    petition,
-    endorsements,
-  } = useLoaderData() as EndorsementListLoaderType
+  const { listId, petition, endorsements } =
+    useLoaderData() as EndorsementListLoaderType
   const { formatMessage } = useLocale()
   const navigation = useNavigation()
   const navigate = useNavigate()
@@ -55,9 +52,8 @@ const PetitionList = () => {
   const actionData = useActionData() as UpdateListMutation
 
   const [isLockListModalVisible, setIsLockListModalVisible] = useState(false)
-  const [isUnlockListModalVisible, setIsUnlockListModalVisible] = useState(
-    false,
-  )
+  const [isUnlockListModalVisible, setIsUnlockListModalVisible] =
+    useState(false)
 
   useEffect(() => {
     if (actionData) {
@@ -91,7 +87,7 @@ const PetitionList = () => {
                 <AlertMessage
                   type="error"
                   title={formatMessage(m.listIsLocked)}
-                  message={formatMessage(m.intro)}
+                  message={formatMessage(m.listIsLockedMessage)}
                 />
               </Box>
             )}
@@ -166,7 +162,7 @@ const PetitionList = () => {
                 ) : (
                   <>
                     <Button
-                      icon="reload"
+                      icon="lockOpened"
                       iconType="outline"
                       onClick={() => setIsUnlockListModalVisible(true)}
                     >

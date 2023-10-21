@@ -23,10 +23,8 @@ export const PublishClient = () => {
     updatePublishData,
     changeEnvironment,
   } = useClient()
-  const [
-    publishClient,
-    { data, loading, error: publishError },
-  ] = usePublishClientMutation()
+  const [publishClient, { data, loading, error: publishError }] =
+    usePublishClientMutation()
   const [error, setError] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
 
@@ -114,3 +112,5 @@ export const PublishClient = () => {
     />
   )
 }
+
+export default PublishClient

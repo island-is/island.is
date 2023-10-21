@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Court Bankruptcy Certificate Client
 
 This library was generated with [Nx](https://nx.dev). (yarn generate @nrwl/node:lib clients/judicial-administrationificate)

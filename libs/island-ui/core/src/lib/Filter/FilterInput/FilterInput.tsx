@@ -15,7 +15,9 @@ export interface FilterInputProps {
   backgroundColor?: ResponsiveProp<InputBackgroundColor>
 }
 
-export const FilterInput: React.FC<FilterInputProps> = ({
+export const FilterInput: React.FC<
+  React.PropsWithChildren<FilterInputProps>
+> = ({
   name,
   id = name,
   placeholder = '',

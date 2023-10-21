@@ -22,14 +22,9 @@ interface Props {
   handleRemove: (index: number) => void
 }
 
-export const OldOperatorItem: FC<Props & FieldBaseProps> = ({
-  id,
-  index,
-  rowLocation,
-  handleRemove,
-  repeaterField,
-  errors,
-}) => {
+export const OldOperatorItem: FC<
+  React.PropsWithChildren<Props & FieldBaseProps>
+> = ({ id, index, rowLocation, handleRemove, repeaterField, errors }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const fieldIndex = `${id}[${index}]`

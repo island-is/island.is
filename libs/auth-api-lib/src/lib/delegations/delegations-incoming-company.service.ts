@@ -57,12 +57,13 @@ export class IncomingDelegationsCompanyService {
           procuringHolderApiScopes &&
           procuringHolderApiScopes.every((s) => s.isAccessControlled)
         ) {
-          const fromNationalIdsWithSomeAccess = await this.findNationalIdsWithSomeAccess(
-            delegations.map((d) => d.fromNationalId),
-            procuringHolderApiScopes
-              .filter((s) => s.isAccessControlled)
-              .map((s) => s.name),
-          )
+          const fromNationalIdsWithSomeAccess =
+            await this.findNationalIdsWithSomeAccess(
+              delegations.map((d) => d.fromNationalId),
+              procuringHolderApiScopes
+                .filter((s) => s.isAccessControlled)
+                .map((s) => s.name),
+            )
 
           return delegations.filter((d) =>
             fromNationalIdsWithSomeAccess.includes(d.fromNationalId),

@@ -1,0 +1,34 @@
+import React, { FC, ReactNode } from 'react'
+import { Text, Divider, Box, LoadingDots } from '@island.is/island-ui/core'
+
+interface Props {
+  title: string
+  text: string
+  children?: ReactNode
+  loading?: boolean
+}
+
+export const InputSection: FC<React.PropsWithChildren<Props>> = ({
+  title,
+  text,
+  children,
+  loading,
+}) => {
+  return (
+    <Box paddingTop={4}>
+      <Text variant="h5" as="h2" marginBottom={1}>
+        {title}
+      </Text>
+      <Text variant="medium" marginBottom={4}>
+        {text}
+      </Text>
+      {!loading && <Box marginBottom={4}>{children}</Box>}
+      {loading && (
+        <Box paddingBottom={3}>
+          <LoadingDots />
+        </Box>
+      )}
+      <Divider />
+    </Box>
+  )
+}

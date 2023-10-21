@@ -1,5 +1,4 @@
 import { CaseState } from '@island.is/judicial-system/types'
-
 import { getDurationDate } from '@island.is/judicial-system-web/src/components/Table'
 
 const date1 = '2022-08-04T19:50:08.033Z'
@@ -29,16 +28,16 @@ describe('getDurationDate', () => {
     expect(res).toBe('4.8.2022 - 4.9.2022')
   })
 
-  test('should use court end time if initialRulingDate is not set', () => {
+  test('should use ruling date if initialRulingDate is not set', () => {
     const initialRulingDate = undefined
-    const courtEndTime = date2
+    const rulingDate = date2
     const validToDate = date3
 
     const res = getDurationDate(
       CaseState.ACCEPTED,
       validToDate,
       initialRulingDate,
-      courtEndTime,
+      rulingDate,
     )
 
     expect(res).toBe('4.9.2022 - 13.9.2022')
@@ -46,14 +45,14 @@ describe('getDurationDate', () => {
 
   test('should fallback to use validToDate', () => {
     const initialRulingDate = undefined
-    const courtEndTime = undefined
+    const rulingDate = undefined
     const validToDate = date4
 
     const res = getDurationDate(
       CaseState.ACCEPTED,
       validToDate,
       initialRulingDate,
-      courtEndTime,
+      rulingDate,
     )
 
     expect(res).toBe('24.12.2022')
@@ -61,14 +60,14 @@ describe('getDurationDate', () => {
 
   test('should return null if all dates are undefined', () => {
     const initialRulingDate = undefined
-    const courtEndTime = undefined
+    const rulingDate = undefined
     const validToDate = undefined
 
     const res = getDurationDate(
       CaseState.ACCEPTED,
       validToDate,
       initialRulingDate,
-      courtEndTime,
+      rulingDate,
     )
 
     expect(res).toBeNull()

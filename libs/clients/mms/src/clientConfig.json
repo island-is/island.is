@@ -1,0 +1,208 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "License API",
+    "description": "This is the API for the License system.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [{ "name": "license-api", "description": "" }],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "Liveness": {
+        "type": "object",
+        "properties": { "ok": { "type": "boolean" } },
+        "required": ["ok"]
+      },
+      "Version": {
+        "type": "object",
+        "properties": { "version": { "type": "string" } },
+        "required": ["version"]
+      },
+      "License": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "created": { "format": "date-time", "type": "string" },
+          "modified": { "format": "date-time", "type": "string" },
+          "issued": { "format": "date-time", "type": "string" },
+          "nationalId": { "type": "string" },
+          "type": { "type": "object" },
+          "fullName": { "type": "string" },
+          "issuer": { "type": "string" },
+          "country": { "type": "string" }
+        },
+        "required": [
+          "id",
+          "created",
+          "modified",
+          "issued",
+          "nationalId",
+          "type",
+          "fullName",
+          "issuer",
+          "country"
+        ]
+      },
+      "CreateLicenseBody": {
+        "type": "object",
+        "properties": {
+          "issued": { "format": "date-time", "type": "string" },
+          "nationalId": { "type": "string" },
+          "fullName": { "type": "string" },
+          "type": { "type": "string", "enum": ["kennari"] },
+          "issuer": { "type": "string" },
+          "country": { "type": "string" }
+        },
+        "required": [
+          "issued",
+          "nationalId",
+          "fullName",
+          "type",
+          "issuer",
+          "country"
+        ]
+      },
+      "CreateLicensesBody": {
+        "type": "object",
+        "properties": {
+          "licenses": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CreateLicenseBody" }
+          }
+        },
+        "required": ["licenses"]
+      }
+    }
+  },
+  "paths": {
+    "/liveness": {
+      "get": {
+        "operationId": "InfraController_liveness",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Liveness" }
+              }
+            }
+          }
+        },
+        "tags": ["internal"]
+      }
+    },
+    "/version": {
+      "get": {
+        "operationId": "InfraController_version",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Version" }
+              }
+            }
+          }
+        },
+        "tags": ["internal"]
+      }
+    },
+    "/api/public/licenses/types": {
+      "get": {
+        "operationId": "PublicLicenseController_getAvailableTypes",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/License" }
+              }
+            }
+          }
+        },
+        "tags": ["Licenses"]
+      }
+    },
+    "/api/public/licenses": {
+      "post": {
+        "operationId": "PublicLicenseController_createLicenses",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateLicensesBody" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/License" }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Licenses"]
+      }
+    },
+    "/api/public/users/{nationalId}/licenses": {
+      "get": {
+        "operationId": "PublicLicenseController_getUserLicenses",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/License" }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Licenses"]
+      }
+    },
+    "/api/public/users/{nationalId}/licenses/{licenseId}/pdf": {
+      "get": {
+        "operationId": "PublicLicenseController_getPDFLicense",
+        "parameters": [
+          {
+            "name": "licenseId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "nationalId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "200": { "description": "" } },
+        "tags": ["Licenses"]
+      }
+    }
+  }
+}

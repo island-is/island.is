@@ -8,7 +8,10 @@ import { useLocale } from '@island.is/localization'
 
 import { m } from '../../../forms/messages'
 
-const Review: FC<FieldBaseProps> = ({ field, application }) => {
+const Review: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  field,
+  application,
+}) => {
   const { description } = field
   const { register } = useFormContext()
   const { formatMessage } = useLocale()

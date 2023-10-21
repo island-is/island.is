@@ -106,22 +106,19 @@ export const Header = ({
                                       ]).href
                                     : linkResolver('serviceweb').href
                                 }
+                                className={cn(
+                                  getTextStyles({
+                                    variant: 'h4',
+                                    color: dark
+                                      ? 'dark400'
+                                      : textMode === 'blueberry'
+                                      ? 'blueberry600'
+                                      : 'white',
+                                  }),
+                                  styles.headingLink,
+                                )}
                               >
-                                <a
-                                  className={cn(
-                                    getTextStyles({
-                                      variant: 'h4',
-                                      color: dark
-                                        ? 'dark400'
-                                        : textMode === 'blueberry'
-                                        ? 'blueberry600'
-                                        : 'white',
-                                    }),
-                                    styles.headingLink,
-                                  )}
-                                >
-                                  {title}
-                                </a>
+                                {title}
                               </NextLink>
                             </div>
                           </Hidden>

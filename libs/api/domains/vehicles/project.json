@@ -1,19 +1,20 @@
 {
-  "root": "libs/api/domains/vehicles",
+  "name": "api-domains-vehicles",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/vehicles/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/api/domains/vehicles/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/vehicles"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/vehicles"],
       "options": {
-        "jestConfig": "libs/api/domains/vehicles/jest.config.js",
+        "jestConfig": "libs/api/domains/vehicles/jest.config.ts",
         "passWithNoTests": true
       }
     }

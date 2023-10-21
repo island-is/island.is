@@ -1,0 +1,35 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Push a new beta build to TestFlight"
+
+  lane :increment_version do
+    increment_version_number(xcodeproj: "IslandApp.xcodeproj")
+  end
+
+  lane :increment_build do
+    increment_build_number(xcodeproj: "IslandApp.xcodeproj")
+  end
+
+  lane :beta do |options|
+    apps = options[:apps] || 'dev,prod'
+    changed = `git diff --name-only HEAD~1`.split("\n")
+    unless changed.include? "apps/native/app/ios/IslandApp/Info.plist"
+      increment_build
+    else
+      puts "Not incrementing build version because IslandApp/Info.plist was changed."
+      puts "If you want to increment the build version, please do it manually."
+    end
+    # Build and upload to TestFlight
+    apps.split(',').each do |app|
+      build_app(
+        workspace: "IslandApp.xcworkspace",
+        scheme: app == 'dev' ? "Ísland.dev" : "Ísland.is",
+        suppress_xcode_output: true
+      )
+      upload_to_testflight(
+        skip_waiting_for_build_processing: true
+      )
+    end
+  end
+end

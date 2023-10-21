@@ -6,7 +6,9 @@ import { configureMock } from '../userManager'
 import { useAuth } from './AuthContext'
 import { AuthProvider } from './AuthProvider'
 
-const Wrapper: FC = ({ children }) => <MemoryRouter>{children}</MemoryRouter>
+const Wrapper: FC<React.PropsWithChildren<unknown>> = ({ children }) => (
+  <MemoryRouter>{children}</MemoryRouter>
+)
 const Greeting = () => {
   const { userInfo } = useAuth()
   return <>Hello {userInfo?.profile.name}</>

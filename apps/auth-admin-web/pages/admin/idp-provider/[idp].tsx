@@ -8,7 +8,7 @@ import IdpProviderCreateForm from './../../../components/Admin/form/IdpProviderC
 import { AdminTab } from './../../../entities/common/AdminTab'
 import LocalizationUtils from '../../../utils/localization.utils'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { query } = useRouter()
   const idpProviderName = query.idp
   const [idpProvider, setIdpProvider] = useState<IdpProvider>()

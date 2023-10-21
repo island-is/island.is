@@ -24,6 +24,14 @@ export const GET_PROJECT_PAGE_QUERY = gql`
           url
         }
       }
+      secondarySidebar {
+        name
+        childrenLinks {
+          text
+          url
+        }
+      }
+      footerConfig
       footerItems {
         title
         content {
@@ -72,11 +80,6 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         title
         slug
       }
-      secondaryNewsTags {
-        id
-        title
-        slug
-      }
       projectSubpages {
         id
         title
@@ -90,6 +93,7 @@ export const GET_PROJECT_PAGE_QUERY = gql`
           ...NestedOneColumnTextFields
           ${nestedFields}
         }
+        showTableOfContents
         bottomSlices {
           ...AllSlices
           ...NestedOneColumnTextFields

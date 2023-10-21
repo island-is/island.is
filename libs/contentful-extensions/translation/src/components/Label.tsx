@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-export const Label: FC = ({ children }) => (
+export const Label: FC<React.PropsWithChildren<unknown>> = ({ children }) => (
   <p
     style={{
       display: 'inline-block',

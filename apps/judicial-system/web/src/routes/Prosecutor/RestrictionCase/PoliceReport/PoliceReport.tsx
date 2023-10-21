@@ -2,40 +2,34 @@ import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
-import { isPoliceReportStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { rcReportForm, titles } from '@island.is/judicial-system-web/messages'
 import {
+  FormContentContainer,
+  FormContext,
   FormFooter,
   PageLayout,
-  FormContentContainer,
   ProsecutorCaseInfo,
-  FormContext,
 } from '@island.is/judicial-system-web/src/components'
+import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
-  validateAndSendToServer,
   removeTabsValidateAndSet,
+  validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { rcReportForm, titles } from '@island.is/judicial-system-web/messages'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
-import * as constants from '@island.is/judicial-system/consts'
+import { isPoliceReportStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
-export const PoliceReport: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+export const PoliceReport: React.FC<React.PropsWithChildren<unknown>> = () => {
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const router = useRouter()
   const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
   const [caseFactsErrorMessage, setCaseFactsErrorMessage] = useState<string>('')
-  const [
-    legalArgumentsErrorMessage,
-    setLegalArgumentsErrorMessage,
-  ] = useState<string>('')
+  const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] =
+    useState<string>('')
 
   const { formatMessage } = useIntl()
 

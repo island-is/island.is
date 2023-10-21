@@ -4,7 +4,9 @@ import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
 import * as styles from './Blockquote.css'
 
-export const Blockquote: FC = ({ children }) => (
+export const Blockquote: FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => (
   <Box
     display="flex"
     width="full"

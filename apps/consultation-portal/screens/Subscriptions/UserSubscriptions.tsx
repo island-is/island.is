@@ -48,13 +48,10 @@ export const UserSubscriptions = ({ allcases, types }: SubProps) => {
     isMySubscriptions: true,
   })
 
-  const {
-    userSubscriptions,
-    getUserSubsLoading,
-    refetchUserSubs,
-  } = useFetchSubscriptions({
-    isAuthenticated: isAuthenticated,
-  })
+  const { userSubscriptions, getUserSubsLoading, refetchUserSubs } =
+    useFetchSubscriptions({
+      isAuthenticated: isAuthenticated,
+    })
 
   const { postSubsMutation } = usePostSubscription()
 

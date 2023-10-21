@@ -151,13 +151,10 @@ describe('Parental Leave Application Template', () => {
         newApplication,
         ParentalLeaveTemplate,
       )
-      const [
-        hasChangedAgain,
-        finalState,
-        finalApplication,
-      ] = finalHelper.changeState({
-        type: DefaultEvents.APPROVE,
-      })
+      const [hasChangedAgain, finalState, finalApplication] =
+        finalHelper.changeState({
+          type: DefaultEvents.APPROVE,
+        })
       expect(hasChangedAgain).toBe(true)
       expect(finalState).toBe('employerWaitingToAssign')
       expect(finalApplication.assignees).toEqual([])
@@ -198,13 +195,10 @@ describe('Parental Leave Application Template', () => {
       )
 
       const VMST_ID = process.env.VMST_ID
-      const [
-        hasChangedAgain,
-        finalState,
-        finalApplication,
-      ] = finalHelper.changeState({
-        type: DefaultEvents.APPROVE,
-      })
+      const [hasChangedAgain, finalState, finalApplication] =
+        finalHelper.changeState({
+          type: DefaultEvents.APPROVE,
+        })
 
       expect(hasChangedAgain).toBe(true)
       expect(finalState).toBe('vinnumalastofnunApproval')
@@ -560,7 +554,9 @@ describe('Parental Leave Application Template', () => {
         type: DefaultEvents.ABORT,
       })
       expect(hasChanged).toBe(true)
-      expect(newState).toBe(ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS)
+      expect(newState).toBe(
+        ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS_ABORT,
+      )
       expect(newApplication.answers.tempPeriods).toEqual(undefined)
     })
 
@@ -592,7 +588,9 @@ describe('Parental Leave Application Template', () => {
         type: DefaultEvents.ABORT,
       })
       expect(hasChanged).toBe(true)
-      expect(newState).toBe(ApplicationStates.VINNUMALASTOFNUN_APPROVAL)
+      expect(newState).toBe(
+        ApplicationStates.VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE,
+      )
       expect(newApplication.answers.tempPeriods).toEqual(undefined)
     })
 
@@ -778,27 +776,27 @@ describe('Parental Leave Application Template', () => {
 
 test.each([
   {
-    data: ({
+    data: {
       application: { answers: { previousState: ApplicationStates.APPROVED } },
-    } as unknown) as ApplicationContext,
+    } as unknown as ApplicationContext,
     state: ApplicationStates.APPROVED,
     expected: true,
   },
   {
-    data: ({
+    data: {
       application: { answers: { previousState: ApplicationStates.APPROVED } },
-    } as unknown) as ApplicationContext,
+    } as unknown as ApplicationContext,
     state: ApplicationStates.EDIT_OR_ADD_PERIODS,
     expected: false,
   },
   {
-    data: ({
+    data: {
       application: {
         answers: {
           previousState: ApplicationStates.VINNUMALASTOFNUN_EDITS_ACTION,
         },
       },
-    } as unknown) as ApplicationContext,
+    } as unknown as ApplicationContext,
     state: ApplicationStates.VINNUMALASTOFNUN_EDITS_ACTION,
     expected: true,
   },

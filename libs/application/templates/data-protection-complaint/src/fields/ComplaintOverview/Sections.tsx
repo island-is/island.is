@@ -9,9 +9,9 @@ import {
   subjectOfComplaintValueLabelMapper,
 } from '../../shared'
 
-export const Applicant: FC<{ answers: DataProtectionComplaint }> = ({
-  answers,
-}) => (
+export const Applicant: FC<
+  React.PropsWithChildren<{ answers: DataProtectionComplaint }>
+> = ({ answers }) => (
   <>
     <SectionHeading title={info.general.applicantPageTitle} />
     <ValueLine label={info.labels.name} value={answers.applicant.name} />
@@ -37,9 +37,11 @@ export const Applicant: FC<{ answers: DataProtectionComplaint }> = ({
   </>
 )
 
-export const OrganizationOrInstitution: FC<{
-  answers: DataProtectionComplaint
-}> = ({ answers }) => (
+export const OrganizationOrInstitution: FC<
+  React.PropsWithChildren<{
+    answers: DataProtectionComplaint
+  }>
+> = ({ answers }) => (
   <>
     <SectionHeading title={info.general.organizationOrInstitutionPageTitle} />
     <ValueLine
@@ -77,9 +79,9 @@ export const OrganizationOrInstitution: FC<{
   </>
 )
 
-export const Commissions: FC<{ answers: DataProtectionComplaint }> = ({
-  answers,
-}) => (
+export const Commissions: FC<
+  React.PropsWithChildren<{ answers: DataProtectionComplaint }>
+> = ({ answers }) => (
   <>
     <SectionHeading title={info.general.commissionsPageTitle} />
     <ValueList
@@ -97,9 +99,9 @@ export const Commissions: FC<{ answers: DataProtectionComplaint }> = ({
   </>
 )
 
-export const Complainees: FC<{ answers: DataProtectionComplaint }> = ({
-  answers,
-}) => (
+export const Complainees: FC<
+  React.PropsWithChildren<{ answers: DataProtectionComplaint }>
+> = ({ answers }) => (
   <>
     <SectionHeading title={complaint.general.complaineePageTitle} />
     {answers.complainees?.map((complainee, index) => (
@@ -140,9 +142,9 @@ const GenerateComplaintList = (
   return complaintData
 }
 
-export const Complaint: FC<{ answers: DataProtectionComplaint }> = ({
-  answers,
-}) => {
+export const Complaint: FC<
+  React.PropsWithChildren<{ answers: DataProtectionComplaint }>
+> = ({ answers }) => {
   const { formatMessage } = useLocale()
   return (
     <>

@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Core" -->
-
 # Portals Core
 
 This library contains all the core functionality needed to build a library into our service or admin portals.

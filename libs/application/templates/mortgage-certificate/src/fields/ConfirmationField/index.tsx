@@ -38,9 +38,9 @@ type ConfirmationFieldProps = {
   }
 }
 
-export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
-  application,
-}) => {
+export const ConfirmationField: FC<
+  React.PropsWithChildren<FieldBaseProps & ConfirmationFieldProps>
+> = ({ application }) => {
   const { externalData } = application
   const { formatMessage } = useLocale()
   const [viewMortgageCertificate, setViewMortgageCertificate] = useState(false)
@@ -102,7 +102,6 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
 
         <PdfViewer
           file={`data:application/pdf;base64,${externalData.getMortgageCertificate.data.contentBase64}`}
-          renderMode="canvas"
         />
         {renderFooter()}
       </>

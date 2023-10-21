@@ -43,17 +43,33 @@ const messageTypes = {
     subTitle: coreErrorScreenMessages.notExistSubTitle,
     description: coreErrorScreenMessages.notExistDescription,
   },
+  idNotFound: {
+    title: coreErrorScreenMessages.applicationIdNotOwnedByUserTitle,
+    subTitle: coreErrorScreenMessages.applicationIdNotOwnedByUserSubTitle,
+    description: coreErrorScreenMessages.applicationIdNotOwnedByUserDescription,
+  },
+  badSubject: {
+    title: coreErrorScreenMessages.badSubjectTitle,
+    subTitle: coreErrorScreenMessages.badSubjectSubTitle,
+    description: coreErrorScreenMessages.badSubjectDescription,
+  },
 }
 
 interface Props {
   title?: StaticText
   subTitle?: StaticText
   description?: StaticText
-  errorType?: 'notFound' | 'forbidden' | 'lost' | 'notExist'
+  errorType?:
+    | 'notFound'
+    | 'forbidden'
+    | 'lost'
+    | 'notExist'
+    | 'idNotFound'
+    | 'badSubject'
   applicationType?: ApplicationTypes
 }
 
-export const ErrorShell: FC<Props> = ({
+export const ErrorShell: FC<React.PropsWithChildren<Props>> = ({
   errorType,
   applicationType,
   title,

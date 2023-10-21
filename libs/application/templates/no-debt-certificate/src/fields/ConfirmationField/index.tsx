@@ -43,15 +43,14 @@ type ConfirmationFieldProps = {
   }
 }
 
-export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
-  application,
-}) => {
+export const ConfirmationField: FC<
+  React.PropsWithChildren<FieldBaseProps & ConfirmationFieldProps>
+> = ({ application }) => {
   const { externalData } = application
   const { formatMessage } = useLocale()
   const [viewNoDebtCertificate, setViewNoDebtCertificate] = useState(false)
-  const {
-    document,
-  } = externalData.noDebtCertificate.data.debtLessCertificateResult.certificate
+  const { document } =
+    externalData.noDebtCertificate.data.debtLessCertificateResult.certificate
 
   function renderFooter() {
     return (
@@ -106,10 +105,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
             </Button>
           </a>
         </Box>
-        <PdfViewer
-          renderMode="svg"
-          file={`data:application/pdf;base64,${document}`}
-        />
+        <PdfViewer file={`data:application/pdf;base64,${document}`} />
         {renderFooter()}
       </>
     )

@@ -12,6 +12,8 @@ jobs:
   codeowners-check:
     name: Lint CODEOWNERS
     runs-on: ec2-runners
+    env:
+      CHECK: 'false'
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
 
@@ -30,7 +32,7 @@ jobs:
             fi
           fi
       - name: Check indentation
-        if: env.CHECK
+        if: env.CHECK == 'true'
         run: |
           no_different_indentations=$(cat .github/CODEOWNERS | grep -v '^#' | awk NF | sed s/@.*//g | awk '{ print length }' | sort | uniq | wc -l)
           if [[ "$no_different_indentations" != "1" ]]; then
@@ -40,7 +42,7 @@ jobs:
             exit 1
           fi
       - name: Codeowners validation
-        if: env.CHECK
+        if: env.CHECK == 'true'
         run: |
           curl -sfL https://raw.githubusercontent.com/mszostok/codeowners-validator/main/install.sh | sh -s -- -b $HOME v0.7.4
           REPOSITORY_PATH="." \
@@ -51,67 +53,3 @@ jobs:
           ~/codeowners-validator
         env:
           GH_TOKEN: ${{secrets.OWNERS_VALIDATOR_GITHUB_SECRET}}
-
-  gitbook-check:
-    name: Lint gitbook
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-
-    steps:
-      - uses: actions/checkout@v3
-        if: ${{ github.ref == 'ref/heads/main' }}
-        with:
-          fetch-depth: 0
-      - uses: actions/checkout@v3
-        if: ${{ github.event_name == 'pull_request' }}
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Setup yarn
-        run: npm install -g yarn
-
-      - name: Run gitbook format
-        if: ${{ github.ref == 'ref/heads/main' }}
-        run: node ./scripts/gitbook.js
-
-      - name: Run gitbook format and commit changes
-        if: ${{ github.event_name == 'pull_request' }}
-        run: |
-          node ./scripts/gitbook.js
-          ./infra/scripts/ci/git-check-dirty.sh "SUMMARY.md" "Gitbook"
-
-      - name: Check if the git repo is dirty
-        id: changes
-        if: ${{ github.ref == 'ref/heads/main' }}
-        run: |
-          set -e
-
-          function check() {
-            if [[ -z "$(git status --porcelain)" ]];
-            then
-              echo "0"
-            else
-              echo "1"
-            fi
-          }
-
-          echo ::set-output name=changed::$(check)
-      - name: Comment on PR
-        if: steps.changes.outputs.changed == 1
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: 'Markdown formatting is invalid. Please run `yarn gitbook` from the repository root.'
-            })
-      - name: Exit if repo is dirty
-        if: steps.changes.outputs.changed == 1
-        run: exit 1

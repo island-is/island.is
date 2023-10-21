@@ -19,17 +19,19 @@ function getSubSectionsInSection(
   return (section.children ?? []).filter((child) => child.type === subSection)
 }
 
-export const FormStepperSection: FC<{
-  theme?: types.FormStepperThemes
-  section: types.FormStepperSection
-  subSection: string
-  sectionIndex: number
-  isActive: boolean
-  isComplete: boolean
-  isLastSection: boolean
-  activeSubSection: number
-  showSubSectionIcon?: boolean
-}> = ({
+export const FormStepperSection: FC<
+  React.PropsWithChildren<{
+    theme?: types.FormStepperThemes
+    section: types.FormStepperSection
+    subSection: string
+    sectionIndex: number
+    isActive: boolean
+    isComplete: boolean
+    isLastSection: boolean
+    activeSubSection: number
+    showSubSectionIcon?: boolean
+  }>
+> = ({
   theme = types.FormStepperThemes.PURPLE,
   section,
   subSection,
@@ -44,9 +46,8 @@ export const FormStepperSection: FC<{
   const subSections = getSubSectionsInSection(section, subSection)
   const hasSubSections = subSections.length > 0
   const containerRef = useRef<HTMLDivElement>(null)
-  const { height: activeHeight, width: activeWidth } = useComponentSize(
-    containerRef,
-  )
+  const { height: activeHeight, width: activeWidth } =
+    useComponentSize(containerRef)
   const { width } = useWindowSize()
   const [containerHeight, setContainerHeight] = useState(0)
   const [containerWidth, setContainerWidth] = useState(0)

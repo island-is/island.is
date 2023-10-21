@@ -7,8 +7,8 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 # shellcheck disable=SC1091
 source "$DIR"/_common.sh
 
-APP_HOME=$(jq ".projects[\"$APP\"]" -r <"$PROJECT_ROOT"/workspace.json)
-APP_DIST_HOME=$(jq ".targets.build.options.outputPath" -r <"$PROJECT_ROOT"/"$APP_HOME"/project.json)
+APP_HOME=$(yarn nx show project $APP | jq ".root" -r)
+APP_DIST_HOME=$(yarn nx show project $APP | jq ".targets.build.options | .outputPath // .outputDir" -r)
 DOCKERFILE=${1:-Dockerfile}
 TARGET=${TARGET:-${2:-'<You need to set a target (e.g. output-local, output-jest)>'}}
 ACTION=${3:-docker_build}

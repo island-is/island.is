@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components/native';
 
 const Host = styled.View`
-  flex-direction: row; ;
+  flex-direction: row;
 `;
 
 interface InputRowProps {

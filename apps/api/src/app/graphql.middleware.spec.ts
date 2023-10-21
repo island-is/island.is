@@ -3,9 +3,7 @@ import { MiddlewareContext } from '@nestjs/graphql'
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 
 describe('GraphQL Middlewares', () => {
-  const unMaskedValue = Promise.resolve({})
   const fields = ['a', 'b', 'c', 'd']
-  const nextFn = () => unMaskedValue
   const createContext = (
     fieldName: string,
     extensions: MiddlewareContext['info']['parentType']['extensions'],
@@ -27,7 +25,9 @@ describe('GraphQL Middlewares', () => {
       // Act & Assert
       fields.forEach((field) => {
         const ctx = createContext(field, extensions)
-        expect(maskOutFieldsMiddleware(ctx, nextFn)).toEqual(unMaskedValue)
+        const nextFn = jest.fn()
+        maskOutFieldsMiddleware(ctx, nextFn)
+        expect(nextFn).toHaveBeenCalled()
       })
     })
 
@@ -38,7 +38,9 @@ describe('GraphQL Middlewares', () => {
       // Act & Assert
       fields.forEach((field) => {
         const ctx = createContext(field, extensions)
-        expect(maskOutFieldsMiddleware(ctx, nextFn)).toEqual(unMaskedValue)
+        const nextFn = jest.fn()
+        maskOutFieldsMiddleware(ctx, nextFn)
+        expect(nextFn).toHaveBeenCalled()
       })
     })
 
@@ -54,10 +56,14 @@ describe('GraphQL Middlewares', () => {
 
       // Act & Assert
       fields.forEach((field) => {
+        const nextFn = jest.fn()
         const ctx = createContext(field, extensions)
-        expect(maskOutFieldsMiddleware(ctx, nextFn)).toEqual(
-          validFields.includes(field) ? unMaskedValue : Promise.resolve(null),
-        )
+        maskOutFieldsMiddleware(ctx, nextFn)
+        if (validFields.includes(field)) {
+          expect(nextFn).toHaveBeenCalled()
+        } else {
+          expect(nextFn).not.toHaveBeenCalled()
+        }
       })
     })
 
@@ -73,8 +79,10 @@ describe('GraphQL Middlewares', () => {
 
       // Act & Assert
       fields.forEach((field) => {
+        const nextFn = jest.fn()
         const ctx = createContext(field, extensions)
-        expect(maskOutFieldsMiddleware(ctx, nextFn)).toEqual(unMaskedValue)
+        maskOutFieldsMiddleware(ctx, nextFn)
+        expect(nextFn).toHaveBeenCalled()
       })
     })
   })

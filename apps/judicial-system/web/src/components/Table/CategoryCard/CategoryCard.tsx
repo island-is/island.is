@@ -1,5 +1,6 @@
 import React from 'react'
-import { Box, Text, FocusableBox } from '@island.is/island-ui/core'
+
+import { Box, FocusableBox, Text } from '@island.is/island-ui/core'
 
 import * as styles from './CategoryCard.css'
 
@@ -7,6 +8,7 @@ interface CategoryCardProps {
   heading: string | React.ReactNode
   tags?: React.ReactNode
   onClick: () => void
+  children: React.ReactNode
 }
 
 const CategoryCard: React.FC<CategoryCardProps> = ({

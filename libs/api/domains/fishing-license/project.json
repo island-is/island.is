@@ -1,10 +1,11 @@
 {
-  "root": "libs/api/domains/fishing-license",
+  "name": "api-domains-fishing-license",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/fishing-license/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/api/domains/fishing-license/**/*.{ts,tsx,js,jsx}"
@@ -12,10 +13,10 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/fishing-license"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/fishing-license"],
       "options": {
-        "jestConfig": "libs/api/domains/fishing-license/jest.config.js",
+        "jestConfig": "libs/api/domains/fishing-license/jest.config.ts",
         "passWithNoTests": true
       }
     }

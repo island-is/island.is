@@ -15,13 +15,15 @@ import * as styles from './Chart.css'
 import { TimelinePeriod } from './Timeline'
 import { useLocale } from '@island.is/localization'
 
-const ChartMonths: FC<{
-  initDate: Date
-  rowWidth: string
-  chartColumns: string
-  totalDays: Date[]
-  lastDayInTimespan: Date
-}> = ({ initDate, rowWidth, chartColumns, totalDays, lastDayInTimespan }) => {
+const ChartMonths: FC<
+  React.PropsWithChildren<{
+    initDate: Date
+    rowWidth: string
+    chartColumns: string
+    totalDays: Date[]
+    lastDayInTimespan: Date
+  }>
+> = ({ initDate, rowWidth, chartColumns, totalDays, lastDayInTimespan }) => {
   const { formatDateFns } = useLocale()
   return (
     <Box
@@ -74,12 +76,14 @@ const ChartMonths: FC<{
   )
 }
 
-export const Chart: FC<{
-  initDate: Date
-  periods: TimelinePeriod[]
-  dayWidth: number
-  spanInMonths?: number
-}> = ({ initDate, dayWidth, periods, spanInMonths = 18 }) => {
+export const Chart: FC<
+  React.PropsWithChildren<{
+    initDate: Date
+    periods: TimelinePeriod[]
+    dayWidth: number
+    spanInMonths?: number
+  }>
+> = ({ initDate, dayWidth, periods, spanInMonths = 18 }) => {
   const padStart = subMonths(initDate, 1).setDate(1)
   const lastDayInTimespan = addMonths(initDate, spanInMonths)
   const padEnd = endOfMonth(lastDayInTimespan)

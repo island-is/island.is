@@ -1,9 +1,10 @@
-import { uuid } from 'uuidv4'
 import { Response } from 'express'
+import { uuid } from 'uuidv4'
+
+import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { createIndictment } from '../../../../formatters'
 import { Case } from '../../models/case.model'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 
 jest.mock('../../../../formatters/indictmentPdf')
 
@@ -19,7 +20,7 @@ describe('CaseController - Get indictment pdf', () => {
     id: caseId,
   } as Case
   const pdf = uuid()
-  const res = ({ end: jest.fn() } as unknown) as Response
+  const res = { end: jest.fn() } as unknown as Response
 
   let givenWhenThen: GivenWhenThen
 

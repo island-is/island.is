@@ -14,7 +14,7 @@ import { useLocale } from '@island.is/localization'
 import { NO, YES } from '../../constants'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 
-export const PersonalAllowance: FC<FieldBaseProps> = ({
+export const PersonalAllowance: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   field,
 }) => {

@@ -26,22 +26,19 @@ export const confirmation = {
       description: 'Confirmation next steps',
     },
     contentMissingFiles: {
-      id:
-        'fa.application:section.confirmation.nextSteps.contentMissingFiles#markdown',
+      id: 'fa.application:section.confirmation.nextSteps.contentMissingFiles#markdown',
       defaultMessage:
         '* Þú hleður upp nauðsynlegum gögnum í gegnum stöðusíðu umsóknar.',
       description: 'Confirmation first step if missing files',
     },
     contentSpouseMissingFiles: {
-      id:
-        'fa.application:section.confirmation.nextSteps.contentSpouseMissingFiles#markdown',
+      id: 'fa.application:section.confirmation.nextSteps.contentSpouseMissingFiles#markdown',
       defaultMessage:
         '* Maki hleður upp nauðsynlegum gögnum sem þarf til úrvinnslu umsóknar.',
       description: 'Confirmation first step if spouse missing files',
     },
     contentBothMissingFiles: {
-      id:
-        'fa.application:section.confirmation.nextSteps.contentBothMissingFiles#markdown',
+      id: 'fa.application:section.confirmation.nextSteps.contentBothMissingFiles#markdown',
       defaultMessage:
         '* Þú og maki þinn hlaðið upp nauðsynlegum gögnum sem þarf til úrvinnslu umsóknar.',
       description: 'Confirmation first step if both are missing files',
@@ -80,28 +77,24 @@ export const confirmation = {
   }),
   alertMessagesInRelationship: defineMessages({
     success: {
-      id:
-        'fa.application:section.confirmation.alertMessagesInRelationship.success',
+      id: 'fa.application:section.confirmation.alertMessagesInRelationship.success',
       defaultMessage: 'Þinn hluti umsóknar um fjárhagsaðstoð er móttekinn',
       description:
         'Alert message when application has successfully sent his side of application',
     },
     dataNeeded: {
-      id:
-        'fa.application:section.confirmation.alertMessagesInRelationship.dataNeeded',
+      id: 'fa.application:section.confirmation.alertMessagesInRelationship.dataNeeded',
       defaultMessage: 'Gögn maka vantar',
       description: 'Alert message when files are needed from spouse',
     },
     dataNeededText: {
-      id:
-        'fa.application:section.confirmation.alertMessagesInRelationship.dataNeededText',
+      id: 'fa.application:section.confirmation.alertMessagesInRelationship.dataNeededText',
       defaultMessage:
         'Maki fær sendan hlekk á umsókn til að hlaða upp gögnum svo hægt sé að vinna umsóknina',
       description: 'Alert message when spouse gets email to send in files.',
     },
     dataNeededAlternativeText: {
-      id:
-        'fa.application:section.confirmation.alertMessagesInRelationship.dataNeededAlternativeText',
+      id: 'fa.application:section.confirmation.alertMessagesInRelationship.dataNeededAlternativeText',
       defaultMessage:
         'Maki þarf að fylgja hlekknum hér að neðan til að hlaða upp gögnum svo hægt sé að vinna umsóknina',
       description:

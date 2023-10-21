@@ -1,13 +1,29 @@
+import { mock } from 'jest-mock-extended'
+
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { ConfigModule } from '@island.is/nest/config'
 
+import { SharedAuthModule } from '@island.is/judicial-system/auth'
+
+import { environment } from '../../../../environments'
+import { userModuleConfig } from '../user.config'
+import { UserController } from '../user.controller'
 import { User } from '../user.model'
 import { UserService } from '../user.service'
 
 export const createTestingUserModule = async () => {
-  const defendantModule = await Test.createTestingModule({
+  const userModule = await Test.createTestingModule({
+    imports: [
+      SharedAuthModule.register({
+        jwtSecret: environment.auth.jwtSecret,
+        secretToken: environment.auth.secretToken,
+      }),
+      ConfigModule.forRoot({ load: [userModuleConfig] }),
+    ],
+    controllers: [UserController],
     providers: [
       {
         provide: LOGGER_PROVIDER,
@@ -20,26 +36,35 @@ export const createTestingUserModule = async () => {
       {
         provide: getModelToken(User),
         useValue: {
-          findOne: jest.fn(),
-          findAll: jest.fn(),
-          create: jest.fn(),
-          update: jest.fn(),
-          destroy: jest.fn(),
-          findByPk: jest.fn(),
+          findOne: jest.fn().mockRejectedValue(new Error('Some found')),
+          findAll: jest.fn().mockRejectedValue(new Error('Some found')),
+          create: jest.fn().mockRejectedValue(new Error('Some found')),
+          update: jest.fn().mockRejectedValue(new Error('Some found')),
+          destroy: jest.fn().mockRejectedValue(new Error('Some found')),
+          findByPk: jest.fn().mockRejectedValue(new Error('Some found')),
         },
       },
       UserService,
     ],
-  }).compile()
+  })
+    .useMocker((token) => {
+      if (typeof token === 'function') {
+        return mock()
+      }
+    })
+    .compile()
 
-  const userModel = await defendantModule.resolve<typeof User>(
-    getModelToken(User),
-  )
+  const userModel = await userModule.resolve<typeof User>(getModelToken(User))
 
-  const userService = defendantModule.get<UserService>(UserService)
+  const userService = userModule.get<UserService>(UserService)
+
+  const userController = userModule.get<UserController>(UserController)
+
+  userModule.close()
 
   return {
     userModel,
     userService,
+    userController,
   }
 }

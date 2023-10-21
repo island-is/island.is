@@ -1,19 +1,22 @@
 import { createIntl } from 'react-intl'
 
+import { RequestSharedWithDefender } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { getCaseResubmittedText } from './CaseResubmitModal'
 
 describe('getCaseResubmittedText', () => {
-  const formatMessage = createIntl({ locale: 'is', onError: jest.fn() })
-    .formatMessage
+  const formatMessage = createIntl({
+    locale: 'is',
+    onError: jest.fn(),
+  }).formatMessage
 
   const fn = (theCase: Case) => getCaseResubmittedText(formatMessage, theCase)
 
-  test('should format correctly when court date has been set and sendRequestToDefender=true', () => {
+  test('should format correctly when court date has been set and defender is set to receive access when the court date is set', () => {
     const theCase = {
       courtDate: '2022-06-13T13:37:00Z',
-      sendRequestToDefender: true,
+      requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
     } as Case
 
     const res = fn(theCase)
@@ -24,14 +27,14 @@ describe('getCaseResubmittedText', () => {
   })
 
   it.each`
-    courtDate                 | sendRequestToDefender
-    ${undefined}              | ${true}
-    ${'2022-06-13T13:37:00Z'} | ${false}
-    ${undefined}              | ${false}
+    courtDate                 | requestSharedWithDefender
+    ${undefined}              | ${RequestSharedWithDefender.COURT_DATE}
+    ${'2022-06-13T13:37:00Z'} | ${undefined}
+    ${undefined}              | ${undefined}
   `(
     'should not include section about notification',
-    ({ courtDate, sendRequestToDefender }) => {
-      const theCase = { courtDate, sendRequestToDefender } as Case
+    ({ courtDate, requestSharedWithDefender }) => {
+      const theCase = { courtDate, requestSharedWithDefender } as Case
 
       const res = fn(theCase)
 

@@ -14,7 +14,7 @@ interface SliceProps {
   forceTitleSectionHorizontalPadding?: boolean
 }
 
-export const LatestNewsSlice: React.FC<SliceProps> = ({
+export const LatestNewsSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
   slice,
   slug,
   linkType = 'organizationnews',

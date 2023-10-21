@@ -1,20 +1,21 @@
 {
-  "root": "libs/react/components",
+  "name": "react-components",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/react/components/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/react/components/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/react/components"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/react/components"],
       "options": {
-        "jestConfig": "libs/react/components/jest.config.js",
+        "jestConfig": "libs/react/components/jest.config.ts",
         "passWithNoTests": true
       }
     }

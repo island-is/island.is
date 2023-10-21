@@ -36,20 +36,18 @@ const PermissionContext = createContext<PermissionContextProps | undefined>(
   undefined,
 )
 
-export const PermissionProvider: FC = ({ children }) => {
+export const PermissionProvider: FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => {
   const permissionResult = useLoaderData() as PermissionLoaderResult
   const actionData = useActionData() as EditPermissionResult
   const [publishData, setPublishData] = useState<PublishData | null>(null)
 
-  const {
-    environment: selectedPermission,
-    updateEnvironment,
-  } = useEnvironmentQuery(permissionResult.environments)
+  const { environment: selectedPermission, updateEnvironment } =
+    useEnvironmentQuery(permissionResult.environments)
 
-  const [
-    currentEnvironment,
-    setCurrentEnvironment,
-  ] = useState<AuthAdminEnvironment>(selectedPermission.environment)
+  const [currentEnvironment, setCurrentEnvironment] =
+    useState<AuthAdminEnvironment>(selectedPermission.environment)
 
   const onEnvironmentChange = (environment: AuthAdminEnvironment) => {
     const newEnvironment = updateEnvironment(environment)

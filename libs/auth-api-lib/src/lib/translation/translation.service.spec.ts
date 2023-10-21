@@ -66,6 +66,10 @@ describe('TranslationService', () => {
     ])
   })
 
+  afterAll(async () => {
+    await app.cleanUp()
+  })
+
   it('findTranslationMap should return a map of translations for a given set of class instances for all languages', async () => {
     // Arrange
     const expected = new Map([
@@ -106,6 +110,7 @@ describe('TranslationService', () => {
     const result = await translationService.findTranslationMap(
       'client',
       ['1', '2'],
+      false,
       'en',
     )
 
@@ -123,6 +128,7 @@ describe('TranslationService', () => {
     const result = await translationService.findTranslationMap(
       'client',
       ['1'],
+      false,
       'en',
     )
 

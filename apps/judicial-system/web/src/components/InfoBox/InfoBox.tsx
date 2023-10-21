@@ -12,7 +12,7 @@ interface Props {
   light?: boolean
 }
 
-const InfoBox: React.FC<Props> = (props) => {
+const InfoBox: React.FC<React.PropsWithChildren<Props>> = (props) => {
   return (
     <div
       data-testid="infobox"

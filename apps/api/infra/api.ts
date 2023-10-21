@@ -18,6 +18,7 @@ import {
   Labor,
   MunicipalitiesFinancialAid,
   NationalRegistry,
+  NationalRegistryB2C,
   Passports,
   Payment,
   PaymentSchedule,
@@ -30,6 +31,11 @@ import {
   WorkMachines,
   IcelandicGovernmentInstitutionVacancies,
   RskProcuring,
+  AircraftRegistry,
+  HousingBenefitCalculator,
+  OccupationalLicenses,
+  ShipRegistry,
+  DistrictCommissioners,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -75,12 +81,10 @@ export const serviceSetup = (services: {
         prod: 'https://innskra.island.is/api',
       },
       ELASTIC_NODE: {
-        dev:
-          'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com',
+        dev: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com',
         staging:
           'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com/',
-        prod:
-          'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/',
+        prod: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/',
       },
 
       CONTENTFUL_HOST: {
@@ -139,8 +143,7 @@ export const serviceSetup = (services: {
       XROAD_FINANCES_TIMEOUT: '20000',
       XROAD_CHARGE_FJS_V2_TIMEOUT: '20000',
       AUTH_DELEGATION_API_URL: {
-        dev:
-          'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+        dev: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
         staging:
           'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
         prod: 'https://auth-delegation-api.internal.innskra.island.is',
@@ -207,6 +210,17 @@ export const serviceSetup = (services: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
+      },
+      XROAD_RSK_PROCURING_REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        ]),
       },
       APOLLO_CACHE_REDIS_NODES: {
         dev: json([
@@ -280,9 +294,9 @@ export const serviceSetup = (services: {
       MACHINE_LICENSE_PASS_TEMPLATE_ID:
         '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID',
       ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID',
-      ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT',
       DRIVING_LICENSE_PASS_TEMPLATE_ID:
         '/k8s/api/DRIVING_LICENSE_PASS_TEMPLATE_ID',
+      ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT',
       DRIVING_LICENSE_FETCH_TIMEOUT: '/k8s/api/DRIVING_LICENSE_FETCH_TIMEOUT',
       FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT',
       DISABILITY_LICENSE_FETCH_TIMEOUT:
@@ -311,6 +325,8 @@ export const serviceSetup = (services: {
       FISKISTOFA_POWERBI_CLIENT_SECRET:
         '/k8s/api/FISKISTOFA_POWERBI_CLIENT_SECRET',
       FISKISTOFA_POWERBI_TENANT_ID: '/k8s/api/FISKISTOFA_POWERBI_TENANT_ID',
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
       HSN_WEB_FORM_RESPONSE_URL: '/k8s/api/HSN_WEB_FORM_RESPONSE_URL',
       HSN_WEB_FORM_RESPONSE_SECRET: '/k8s/api/HSN_WEB_FORM_RESPONSE_SECRET',
       DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_RSA_KEY:
@@ -327,10 +343,12 @@ export const serviceSetup = (services: {
       Disability,
       Base,
       Client,
+      OccupationalLicenses,
       HealthInsurance,
       Labor,
       DrivingLicense,
       Payment,
+      DistrictCommissioners,
       Finance,
       Education,
       NationalRegistry,
@@ -350,6 +368,10 @@ export const serviceSetup = (services: {
       WorkMachines,
       IcelandicGovernmentInstitutionVacancies,
       RskProcuring,
+      NationalRegistryB2C,
+      AircraftRegistry,
+      HousingBenefitCalculator,
+      ShipRegistry,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

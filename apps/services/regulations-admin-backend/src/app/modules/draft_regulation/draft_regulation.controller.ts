@@ -78,14 +78,12 @@ export class DraftRegulationController {
     @Body() draftRegulationToUpdate: UpdateDraftRegulationDto,
     @CurrentUser() user: User,
   ): Promise<DraftRegulationModel> {
-    const {
-      numberOfAffectedRows,
-      updatedDraftRegulation,
-    } = await this.draftRegulationService.update(
-      id,
-      draftRegulationToUpdate,
-      user,
-    )
+    const { numberOfAffectedRows, updatedDraftRegulation } =
+      await this.draftRegulationService.update(
+        id,
+        draftRegulationToUpdate,
+        user,
+      )
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`DraftRegulation ${id} does not exist`)
@@ -176,9 +174,8 @@ export class DraftRegulationController {
     @Param('name') name: RegQueryName,
     @CurrentUser() user: User,
   ): Promise<DraftImpact[]> {
-    const draftRegulationImpacts = await this.draftRegulationService.getRegulationImpactsByName(
-      name,
-    )
+    const draftRegulationImpacts =
+      await this.draftRegulationService.getRegulationImpactsByName(name)
 
     return draftRegulationImpacts
   }

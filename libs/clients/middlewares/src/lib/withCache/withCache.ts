@@ -197,17 +197,15 @@ export function withCache({
       }
     }
 
-    const {
-      modified,
-      policy: revalidatedPolicy,
-    } = cacheResponse.policy.revalidatedPolicy(
-      policyRequestFrom(revalidationRequest),
-      policyResponseFrom(
-        revalidationResponse,
-        revalidationRequest,
-        await getCacheControl(revalidationRequest, revalidationResponse),
-      ),
-    )
+    const { modified, policy: revalidatedPolicy } =
+      cacheResponse.policy.revalidatedPolicy(
+        policyRequestFrom(revalidationRequest),
+        policyResponseFrom(
+          revalidationResponse,
+          revalidationRequest,
+          await getCacheControl(revalidationRequest, revalidationResponse),
+        ),
+      )
 
     // Working around a bug where the revalidated policy does not inherit the
     // parent's _isShared value.
@@ -267,6 +265,21 @@ function defaultCacheKey(request: Request) {
   // Enhanced Cache name.
   const url = new URL(request.url)
   return `${url.pathname}${url.search}`
+}
+
+/**
+ * Create a cache key that includes a header value based on a header name if header is present.
+ *
+ * This is required for clients that are using cache and the URL contains a static placeholder
+ * for the resource identifier, e.g. /users/.national-id where the actual resource identifier is
+ * passed in a header.
+ */
+export function defaultCacheKeyWithHeader(header: string) {
+  return (request: Request) => {
+    const cacheKey = defaultCacheKey(request)
+    const paramHeader = request.headers.get(header)
+    return paramHeader ? `${cacheKey}#${paramHeader}` : cacheKey
+  }
 }
 
 function headersToObject(headers: Headers) {

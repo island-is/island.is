@@ -98,16 +98,18 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         // Only validate if fewer than 5 items
         if (result.length <= 5) {
           // Get debt status
-          debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
-            auth,
-            vehicle.permno || '',
-          )
+          debtStatus =
+            await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
+              auth,
+              vehicle.permno || '',
+            )
 
           // Get validation
-          validation = await this.vehicleOwnerChangeClient.validateVehicleForOwnerChange(
-            auth,
-            vehicle.permno || '',
-          )
+          validation =
+            await this.vehicleOwnerChangeClient.validateVehicleForOwnerChange(
+              auth,
+              vehicle.permno || '',
+            )
         }
 
         return {
@@ -143,9 +145,10 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       return
     }
 
-    const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
-      ({ wasRemoved }) => wasRemoved !== 'true',
-    )
+    const filteredBuyerCoOwnerAndOperator =
+      answers?.buyerCoOwnerAndOperator?.filter(
+        ({ wasRemoved }) => wasRemoved !== 'true',
+      )
     const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
     )
@@ -153,9 +156,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       (x) => x.type === 'operator',
     )
 
-    const result = await this.vehicleOwnerChangeClient.validateAllForOwnerChange(
-      auth,
-      {
+    const result =
+      await this.vehicleOwnerChangeClient.validateAllForOwnerChange(auth, {
         permno: answers?.pickVehicle?.plate,
         seller: {
           ssn: sellerSsn,
@@ -168,6 +170,9 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         dateOfPurchase: new Date(answers?.vehicle?.date),
         dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
         saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
+        mileage: answers?.vehicle?.mileage
+          ? Number(answers?.vehicle?.mileage) || 0
+          : null,
         insuranceCompanyCode: answers?.insurance?.value,
         coOwners: buyerCoOwners?.map((coOwner) => ({
           ssn: coOwner.nationalId!,
@@ -181,8 +186,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
               ? operator.nationalId === answers?.buyerMainOperator?.nationalId
               : true,
         })),
-      },
-    )
+      })
 
     // If we get any error messages, we will just throw an error with a default title
     // We will fetch these error messages again through graphql in the template, to be able
@@ -244,12 +248,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     }
 
     // 1b. Make sure payment is fulfilled (has been paid)
-    const payment:
-      | { fulfilled: boolean }
-      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
-      application.id,
-    )
+    const payment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
     if (!payment?.fulfilled) {
       throw new Error(
         'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
@@ -326,9 +326,10 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
 
     const newlyAddedRecipientList: Array<EmailRecipient> = []
 
-    const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
-      ({ wasRemoved }) => wasRemoved !== 'true',
-    )
+    const filteredBuyerCoOwnerAndOperator =
+      answers?.buyerCoOwnerAndOperator?.filter(
+        ({ wasRemoved }) => wasRemoved !== 'true',
+      )
 
     // Buyer's co-owners
     const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
@@ -342,10 +343,10 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         })
         const emailChanged = oldEntry
           ? oldEntry.email !== buyerCoOwners[i].email
-          : false
+          : true
         const phoneChanged = oldEntry
           ? oldEntry.phone !== buyerCoOwners[i].phone
-          : false
+          : true
         if (!oldEntry || emailChanged || phoneChanged) {
           newlyAddedRecipientList.push({
             ssn: buyerCoOwners[i].nationalId!,
@@ -370,10 +371,10 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         })
         const emailChanged = oldEntry
           ? oldEntry.email !== buyerOperators[i].email
-          : false
+          : true
         const phoneChanged = oldEntry
           ? oldEntry.phone !== buyerOperators[i].phone
-          : false
+          : true
         if (!oldEntry || emailChanged || phoneChanged) {
           newlyAddedRecipientList.push({
             ssn: buyerOperators[i].nationalId!,
@@ -496,12 +497,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     }
 
     // 1b. Make sure payment is fulfilled (has been paid)
-    const payment:
-      | { fulfilled: boolean }
-      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
-      application.id,
-    )
+    const payment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
     if (!payment?.fulfilled) {
       throw new Error(
         'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
@@ -523,9 +520,10 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         400,
       )
     }
-    const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
-      ({ wasRemoved }) => wasRemoved !== 'true',
-    )
+    const filteredBuyerCoOwnerAndOperator =
+      answers?.buyerCoOwnerAndOperator?.filter(
+        ({ wasRemoved }) => wasRemoved !== 'true',
+      )
     const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
     )
@@ -546,6 +544,9 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       dateOfPurchase: new Date(answers?.vehicle?.date),
       dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
       saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
+      mileage: answers?.vehicle?.mileage
+        ? Number(answers?.vehicle?.mileage) || 0
+        : null,
       insuranceCompanyCode: answers?.insurance?.value,
       coOwners: buyerCoOwners?.map((coOwner) => ({
         ssn: coOwner.nationalId!,

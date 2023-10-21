@@ -39,7 +39,7 @@ interface HomeProps {
 }
 
 const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
-  const namespace = JSON.parse(page.namespace.fields)
+  const namespace = JSON.parse(page?.namespace?.fields ?? '{}')
   const { activeLocale } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(namespace)
@@ -118,7 +118,7 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
           <NewLinks
             heading={n('newsTickerHeading')}
             seeMoreText={n('newsTickerSeeMore')}
-            items={(page.linkList?.links ?? [])
+            items={(page?.linkList?.links ?? [])
               .filter((x) => x.date)
               .map(({ date, text, url }) => {
                 return {
@@ -130,12 +130,16 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
           />
         </GridContainer>
       </Box>
-      {watsonConfig[locale] && <WatsonChatPanel {...watsonConfig[locale]} />}
+      {watsonConfig[locale] && (
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
+        <WatsonChatPanel {...watsonConfig[locale]} />
+      )}
     </Box>
   )
 }
 
-Home.getInitialProps = async ({ apolloClient, locale }) => {
+Home.getProps = async ({ apolloClient, locale }) => {
   const [
     {
       data: { getArticleCategories },

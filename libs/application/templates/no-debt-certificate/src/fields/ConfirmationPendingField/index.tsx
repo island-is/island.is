@@ -4,10 +4,9 @@ import { FieldBaseProps, DefaultEvents } from '@island.is/application/types'
 import { Box, LoadingDots } from '@island.is/island-ui/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 
-export const ConfirmationPendingField: FC<FieldBaseProps> = ({
-  application,
-  refetch,
-}) => {
+export const ConfirmationPendingField: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application, refetch }) => {
   const applicationId = application.id
 
   const [finishSubmit, setFinishSubmit] = useState<boolean>(false)

@@ -21,7 +21,9 @@ import { EndorsementList } from '../../types/schema'
 import Skeleton from './Skeleton'
 import Illustration from '../../assets/Illustration'
 
-const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
+const SignPetitionView: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
 
   const listId = (application.externalData?.createEndorsementList.data as any)

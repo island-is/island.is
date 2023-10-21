@@ -1,14 +1,16 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 
-import { Box, Text, FocusableBox } from '@island.is/island-ui/core'
-
+import { Box, FocusableBox, Text } from '@island.is/island-ui/core'
 import {
   displayFirstPlusRemaining,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
+import { tables } from '@island.is/judicial-system-web/messages'
 import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
+import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 
 import { displayCaseType } from './utils'
 import * as styles from './MobileCase.css'
@@ -19,7 +21,7 @@ interface CategoryCardProps {
   onClick: () => void
 }
 
-const CategoryCard: React.FC<CategoryCardProps> = ({
+const CategoryCard: React.FC<React.PropsWithChildren<CategoryCardProps>> = ({
   heading,
   onClick,
   tags,
@@ -50,7 +52,7 @@ interface Props {
   isCourtRole: boolean
 }
 
-const MobileCase: React.FC<Props> = ({
+const MobileCase: React.FC<React.PropsWithChildren<Props>> = ({
   theCase,
   onClick,
   isCourtRole,
@@ -90,6 +92,17 @@ const MobileCase: React.FC<Props> = ({
           ) : (
             <Text>{`+ ${theCase.defendants.length - 1}`}</Text>
           )}
+        </>
+      )}
+      {theCase.created && (
+        <>
+          <br />
+          <Text variant="small" fontWeight={'medium'}>
+            {`${formatMessage(tables.created)} ${format(
+              parseISO(theCase.created),
+              'd.M.y',
+            )}`}
+          </Text>
         </>
       )}
       <Box marginTop={1}>{children}</Box>

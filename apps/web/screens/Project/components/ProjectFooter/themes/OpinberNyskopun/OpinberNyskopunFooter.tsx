@@ -1,4 +1,5 @@
 import { BLOCKS } from '@contentful/rich-text-types'
+import { ReactNode } from 'react'
 import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
@@ -20,10 +21,9 @@ interface OpinberNyskopunFooterProps {
   namespace: Record<string, string>
 }
 
-export const OpinberNyskopunFooter: React.FC<OpinberNyskopunFooterProps> = ({
-  footerItems,
-  namespace,
-}) => {
+export const OpinberNyskopunFooter: React.FC<
+  React.PropsWithChildren<OpinberNyskopunFooterProps>
+> = ({ footerItems, namespace }) => {
   const n = useNamespace(namespace)
   return (
     <footer className={styles.container}>
@@ -55,7 +55,10 @@ export const OpinberNyskopunFooter: React.FC<OpinberNyskopunFooterProps> = ({
                   </Text>
                   {webRichText(item.content as SliceType[], {
                     renderNode: {
-                      [BLOCKS.PARAGRAPH]: (_node, children) => (
+                      [BLOCKS.PARAGRAPH]: (
+                        _node: never,
+                        children: ReactNode,
+                      ) => (
                         <Text color="white" variant="medium" marginBottom={2}>
                           {children}
                         </Text>

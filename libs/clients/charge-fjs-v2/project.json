@@ -1,24 +1,25 @@
 {
-  "root": "libs/clients/charge-fjs-v2",
+  "name": "clients-charge-fjs-v2",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/charge-fjs-v2/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/clients/charge-fjs-v2/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/charge-fjs-v2"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/charge-fjs-v2"],
       "options": {
-        "jestConfig": "libs/clients/charge-fjs-v2/jest.config.js",
+        "jestConfig": "libs/clients/charge-fjs-v2/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "update-openapi-document": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8080/r1/IS-DEV/GOV/10021/FJS-Public/getOpenAPI?serviceCode=chargeFJS_v2 -H 'Accept: application/json' > src/clientConfig.json"
@@ -28,7 +29,7 @@
       }
     },
     "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn openapi-generator -o libs/clients/charge-fjs-v2/gen/fetch -i libs/clients/charge-fjs-v2/src/clientConfig.json"

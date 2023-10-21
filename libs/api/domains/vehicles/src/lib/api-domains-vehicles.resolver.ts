@@ -22,6 +22,7 @@ import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
 import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
 import { GetPublicVehicleSearchInput } from '../dto/getPublicVehicleSearchInput'
 import { VehiclesPublicVehicleSearch } from '../models/getPublicVehicleSearch.model'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -35,30 +36,45 @@ export class VehiclesResolver {
     private readonly downloadServiceConfig: ConfigType<
       typeof DownloadServiceConfig
     >,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
   @Scopes(ApiScope.vehicles)
   @Query(() => VehiclesList, { name: 'vehiclesList', nullable: true })
   @Audit()
-  async getVehicleList(@CurrentUser() user: User) {
-    const data = await this.vehiclesService.getVehiclesForUser(
+  async getVehicleList(
+    @CurrentUser() user: User,
+    @Args('nextCursor', { type: () => String, nullable: true })
+    nextCursor?: string,
+  ) {
+    const res = await this.vehiclesService.getVehiclesForUser(
       user,
       false,
       false,
+      nextCursor,
     )
     const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/${user.nationalId}`
-
-    return { ...data, downloadServiceURL }
+    return { ...res?.data, nextCursor: res?.nextCursor, downloadServiceURL }
   }
 
   @Scopes(ApiScope.vehicles)
-  @Query(() => VehiclesHistory, { name: 'vehiclesHistoryList', nullable: true })
+  @Query(() => VehiclesHistory, {
+    name: 'vehiclesHistoryList',
+    nullable: true,
+  })
   @Audit()
   async getVehicleHistory(@CurrentUser() user: User) {
-    return await this.vehiclesService.getVehiclesForUser(user, true, true)
+    const res = await this.vehiclesService.getVehiclesForUser(user, true, true)
+    return { ...res.data }
   }
 
-  @Scopes(ApiScope.vehicles, ApiScope.internal, ApiScope.internalProcuring)
+  @Scopes(
+    ApiScope.vehicles,
+    ApiScope.internal,
+    ApiScope.internalProcuring,
+    ApiScope.samgongustofaVehicles,
+  )
   @Query(() => VehiclesDetail, { name: 'vehiclesDetail', nullable: true })
   @Audit()
   async getVehicleDetail(

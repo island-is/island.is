@@ -6,11 +6,11 @@ import {
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 
 import { useFilter as m } from './useFilter.strings'
 
@@ -80,7 +80,7 @@ export function filterOptionsForUser(
 ) {
   return options.filter((option) => {
     if (
-      user?.role === UserRole.REPRESENTATIVE ||
+      user?.role === UserRole.PROSECUTOR_REPRESENTATIVE ||
       user?.role === UserRole.ASSISTANT
     ) {
       return option.value !== 'INVESTIGATION'
@@ -130,10 +130,7 @@ export const useFilter = (
     [setFilter],
   )
 
-  const [activeCases, pastCases]: [
-    CaseListEntry[],
-    CaseListEntry[],
-  ] = useMemo(
+  const [activeCases, pastCases]: [CaseListEntry[], CaseListEntry[]] = useMemo(
     () => [
       filterCases(filter.value, allActiveCases, user),
       filterCases(filter.value, allPastCases, user),

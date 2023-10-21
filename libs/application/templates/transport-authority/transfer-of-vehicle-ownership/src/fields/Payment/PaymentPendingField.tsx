@@ -6,7 +6,9 @@ import { useLazyQuery } from '@apollo/client'
 import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
 import { States } from '../../lib/constants'
 
-export const PaymentPendingField: FC<FieldBaseProps> = (props) => {
+export const PaymentPendingField: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = (props) => {
   const { application, refetch } = props
 
   const [conclusionScreen, setConclusionScreen] = useState(false)

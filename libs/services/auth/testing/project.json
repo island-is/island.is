@@ -1,19 +1,20 @@
 {
-  "root": "libs/services/auth/testing",
+  "name": "services-auth-testing",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/services/auth/testing/src",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/services/auth/testing/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/services/auth/testing"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/services/auth/testing"],
       "options": {
-        "jestConfig": "libs/services/auth/testing/jest.config.js",
+        "jestConfig": "libs/services/auth/testing/jest.config.ts",
         "passWithNoTests": true
       }
     }

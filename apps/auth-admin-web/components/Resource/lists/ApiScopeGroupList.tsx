@@ -8,7 +8,7 @@ import { ListControl } from '../../../entities/common/Localization'
 import { ResourcesService } from './../../../services/ResourcesService'
 import { ApiScopeGroup } from './../../../entities/models/api-scope-group.model'
 
-const ApiScopeGroupList: React.FC = () => {
+const ApiScopeGroupList: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [apiScopeGroups, setApiScopeGroups] = useState<ApiScopeGroup[]>([])
   const [page, setPage] = useState(1)
   const [lastPage, setLastPage] = useState(1)
@@ -92,14 +92,13 @@ const ApiScopeGroupList: React.FC = () => {
             <h1>{localization.title}</h1>
             <div className="api-scope-group-list__container__options">
               <div className="api-scope-group-list__container__options__button">
-                <Link href={'/admin/api-scope-group'}>
-                  <a
-                    className="api-scope-group-list__button__new"
-                    title={localization.buttons['new'].helpText}
-                  >
-                    <i className="icon__new"></i>
-                    {localization.buttons['new'].text}
-                  </a>
+                <Link
+                  href={'/admin/api-scope-group'}
+                  className="api-scope-group-list__button__new"
+                  title={localization.buttons['new'].helpText}
+                >
+                  <i className="icon__new"></i>
+                  {localization.buttons['new'].text}
                 </Link>
               </div>
               <form onSubmit={search}>
@@ -150,6 +149,7 @@ const ApiScopeGroupList: React.FC = () => {
                             href={`/admin/api-scope-group/${encodeURIComponent(
                               group.id,
                             )}`}
+                            legacyBehavior
                           >
                             <button
                               type="button"

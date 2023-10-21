@@ -18,7 +18,7 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
   const loc = localization['caseOverview']
 
   const upperInstances = [
-    `${loc.upperInstances.case} ${chosenCase?.caseNumber}`,
+    `${loc.upperInstances.case} S-${chosenCase?.caseNumber}`,
     `${loc.upperInstances.show}: ${getShortDate(chosenCase.created)}`,
     `${loc.upperInstances.advicesCount}: ${chosenCase?.adviceCount}`,
   ]
@@ -28,6 +28,9 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
     `${chosenCase?.institutionName}`,
     `${chosenCase?.policyAreaName}`,
   ]
+
+  const chosenCaseSplitted = chosenCase?.detailedDescription?.split('\n')
+
   return (
     <Stack space={[4, 4, 4, 6, 6]}>
       <Stack space={3}>
@@ -62,9 +65,13 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
         </Box>
         <Box>
           <Text variant="h4">{loc.detailedDescriptionTitle}</Text>
-          <Text variant="default" whiteSpace="preWrap">
-            {chosenCase.detailedDescription}
-          </Text>
+          {chosenCaseSplitted && (
+            <Stack space={1}>
+              {chosenCaseSplitted.map((split, idx) => {
+                return <Text key={idx}>{split}</Text>
+              })}
+            </Stack>
+          )}
         </Box>
       </Stack>
     </Stack>

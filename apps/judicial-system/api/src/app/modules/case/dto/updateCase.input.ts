@@ -5,16 +5,17 @@ import { Field, InputType } from '@nestjs/graphql'
 
 import type {
   CaseAppealDecision,
-  CaseLegalProvisions,
+  CaseAppealRulingDecision,
   CaseCustodyRestrictions,
   CaseDecision,
-  UpdateCase,
-  SessionArrangements,
-  CourtDocument,
+  CaseLegalProvisions,
   CaseType,
-  IndictmentSubtypeMap,
+  CourtDocument,
   CrimeSceneMap,
-  CaseAppealRulingDecision,
+  IndictmentSubtypeMap,
+  RequestSharedWithDefender,
+  SessionArrangements,
+  UpdateCase,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -56,8 +57,8 @@ export class UpdateCaseInput implements UpdateCase {
   readonly defenderPhoneNumber?: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly sendRequestToDefender?: boolean
+  @Field(() => String, { nullable: true })
+  readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @Allow()
   @Field({ nullable: true })
@@ -246,14 +247,6 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly prosecutorAppealAnnouncement?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly accusedPostponedAppealDate?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly prosecutorPostponedAppealDate?: string
 
   @Allow()
   @Field({ nullable: true })

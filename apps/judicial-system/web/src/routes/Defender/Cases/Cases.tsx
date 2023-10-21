@@ -7,22 +7,19 @@ import { AlertMessage, Box, Tabs, Text } from '@island.is/island-ui/core'
 import {
   CaseListEntry,
   completedCaseStates,
-  isIndictmentCase,
 } from '@island.is/judicial-system/types'
-
+import { errors, titles } from '@island.is/judicial-system-web/messages'
 import { PageHeader } from '@island.is/judicial-system-web/src/components'
-import { titles, errors } from '@island.is/judicial-system-web/messages'
-import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import SharedPageLayout from '@island.is/judicial-system-web/src/components/SharedPageLayout/SharedPageLayout'
+import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 import DefenderCasesTable from './components/DefenderCasesTable'
 import FilterCheckboxes from './components/FilterCheckboxes'
 import useFilterCases, { Filters } from './hooks/useFilterCases'
-
 import { defenderCases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
-export const Cases: React.FC = () => {
+export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { formatMessage } = useIntl()
 
   const availableTabs = ['active', 'completed']
@@ -46,22 +43,14 @@ export const Cases: React.FC = () => {
 
   const cases = data?.cases
 
-  const [activeCases, completedCases]: [
-    CaseListEntry[],
-    CaseListEntry[],
-  ] = useMemo(() => {
-    if (!cases) {
-      return [[], []]
-    }
-
-    return partition(cases, (c) => {
-      if (isIndictmentCase(c.type)) {
-        return !completedCaseStates.includes(c.state)
-      } else {
-        return !(completedCaseStates.includes(c.state) && c.rulingDate)
+  const [activeCases, completedCases]: [CaseListEntry[], CaseListEntry[]] =
+    useMemo(() => {
+      if (!cases) {
+        return [[], []]
       }
-    })
-  }, [cases])
+
+      return partition(cases, (c) => !completedCaseStates.includes(c.state))
+    }, [cases])
 
   const {
     filteredCases: activeFilteredCases,
@@ -115,33 +104,55 @@ export const Cases: React.FC = () => {
             id: 'active',
             label: formatMessage(m.activeCasesTabLabel),
             content: (
-              <Box>
-                <FilterCheckboxes
-                  filters={filters}
-                  toggleFilter={toggleFilters}
-                />
-                <DefenderCasesTable
-                  cases={activeFilteredCases}
-                  loading={loading}
-                />
-              </Box>
+              <div>
+                {activeCases.length > 0 || loading ? (
+                  <Box>
+                    <FilterCheckboxes
+                      filters={filters}
+                      toggleFilter={toggleFilters}
+                    />
+                    <DefenderCasesTable
+                      cases={activeFilteredCases}
+                      loading={loading}
+                    />
+                  </Box>
+                ) : (
+                  <Box className={styles.infoContainer} marginTop={3}>
+                    <AlertMessage
+                      type="info"
+                      message={formatMessage(m.noActiveCases)}
+                    />
+                  </Box>
+                )}
+              </div>
             ),
           },
           {
             id: 'completed',
             label: formatMessage(m.completedCasesTabLabel),
             content: (
-              <Box>
-                <FilterCheckboxes
-                  filters={filters}
-                  toggleFilter={toggleFilters}
-                />
-                <DefenderCasesTable
-                  cases={completedFilteredCases}
-                  showingCompletedCases={true}
-                  loading={loading}
-                />
-              </Box>
+              <div>
+                {completedCases.length > 0 || loading ? (
+                  <Box>
+                    <FilterCheckboxes
+                      filters={filters}
+                      toggleFilter={toggleFilters}
+                    />
+                    <DefenderCasesTable
+                      cases={completedFilteredCases}
+                      showingCompletedCases={true}
+                      loading={loading}
+                    />
+                  </Box>
+                ) : (
+                  <Box className={styles.infoContainer} marginTop={3}>
+                    <AlertMessage
+                      type="info"
+                      message={formatMessage(m.noCompletedCases)}
+                    />
+                  </Box>
+                )}
+              </div>
             ),
           },
         ]}

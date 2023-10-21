@@ -30,7 +30,7 @@ interface Props {
 
 const df = 'yyyy-MM-dd'
 
-export const DatePickerController: FC<Props> = ({
+export const DatePickerController: FC<React.PropsWithChildren<Props>> = ({
   error,
   defaultValue,
   disabled = false,

@@ -1,5 +1,6 @@
 {
-  "root": "apps/judicial-system/xrd-api",
+  "name": "judicial-system-xrd-api",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/judicial-system/xrd-api/src",
   "projectType": "application",
   "prefix": "judicial-system-xrd-api",
@@ -23,13 +24,13 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "judicial-system-xrd-api:build"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/judicial-system/xrd-api/**/*.{ts,tsx,js,jsx}"
@@ -37,18 +38,20 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/judicial-system/xrd-api/jest.config.js",
+        "jestConfig": "apps/judicial-system/xrd-api/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "schemas/build-openapi": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
-        "outputPath": "apps/judicial-system/xrd-api/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/judicial-system/xrd-api/tsconfig.app.json apps/judicial-system/xrd-api/src/buildOpenApi.ts"
-      }
+      },
+      "outputs": [
+        "{workspaceRoot}/apps/judicial-system/xrd-api/src/openapi.yaml"
+      ]
     },
     "docker-express": {}
   },

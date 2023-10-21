@@ -1,10 +1,11 @@
 {
-  "root": "libs/api/domains/payment-schedule",
+  "name": "api-domains-payment-schedule",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/payment-schedule/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/api/domains/payment-schedule/**/*.{ts,tsx,js,jsx}"
@@ -12,10 +13,10 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/payment-schedule"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/payment-schedule"],
       "options": {
-        "jestConfig": "libs/api/domains/payment-schedule/jest.config.js",
+        "jestConfig": "libs/api/domains/payment-schedule/jest.config.ts",
         "passWithNoTests": true
       }
     }

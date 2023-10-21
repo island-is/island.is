@@ -1,3 +1,4 @@
+import * as Constants from '@island.is/judicial-system/consts'
 import {
   CaseAppealDecision,
   Gender,
@@ -5,20 +6,19 @@ import {
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 
-import * as Constants from '@island.is/judicial-system/consts'
-
 import {
-  formatDate,
   capitalize,
-  formatGender,
-  formatAppeal,
-  formatNationalId,
-  formatDOB,
-  formatPhoneNumber,
   displayFirstPlusRemaining,
-  splitStringByComma,
-  readableIndictmentSubtypes,
+  formatAppeal,
+  formatDate,
+  formatDOB,
+  formatGender,
+  formatNationalId,
+  formatPhoneNumber,
   indictmentSubtypes,
+  readableIndictmentSubtypes,
+  sanitize,
+  splitStringByComma,
 } from './formatters'
 
 describe('formatDate', () => {
@@ -86,7 +86,7 @@ describe('formatPhoneNumber', () => {
 describe('capitalize', () => {
   test('should return empty string if text is empty', () => {
     // Arrange
-    const text = (undefined as unknown) as string
+    const text = undefined as unknown as string
 
     // Act
     const r = capitalize(text)
@@ -350,5 +350,18 @@ describe('readableIndictmentSubtypes', () => {
       indictmentSubtypes[IndictmentSubtype.RAPE],
       indictmentSubtypes[IndictmentSubtype.THEFT],
     ])
+  })
+})
+
+describe('sanitize', () => {
+  test('should return empty string if text is empty', () => {
+    // Arrange
+    const text = `bla"bla.pdf`
+
+    // Act
+    const r = sanitize(text)
+
+    // Assert
+    expect(r).toBe('blabla.pdf')
   })
 })

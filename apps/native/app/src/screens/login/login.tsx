@@ -168,8 +168,7 @@ export const LoginScreen: NavigationFunctionComponent = ({componentId}) => {
             justifyContent: 'center',
             paddingTop: 32,
             zIndex: 3,
-          }}
-        >
+          }}>
           <Image
             source={logo}
             resizeMode="contain"

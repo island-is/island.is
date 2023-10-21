@@ -34,6 +34,7 @@ import {
   useRoutes,
 } from '@island.is/portals/core'
 import { useDynamicShadow } from '../../../hooks/useDynamicShadow'
+import { useDomains } from '../../../hooks/useDomains/useDomains'
 
 type AccessFormProps = {
   delegation: AuthCustomDelegationOutgoing
@@ -60,6 +61,7 @@ export const AccessForm = ({
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [formError, setFormError] = useState(false)
   const [updateError, setUpdateError] = useState(false)
+  const { queryString } = useDomains()
 
   const { showShadow, pxProps } = useDynamicShadow({ rootMargin: '-112px' })
 
@@ -67,12 +69,10 @@ export const AccessForm = ({
     toast.error(formatMessage(portalMessages.somethingWrong))
   }
 
-  const [
-    updateDelegation,
-    { loading: updateLoading },
-  ] = useUpdateAuthDelegationMutation({
-    onError,
-  })
+  const [updateDelegation, { loading: updateLoading }] =
+    useUpdateAuthDelegationMutation({
+      onError,
+    })
 
   const methods = useForm<{
     scope: AccessFormScope[]
@@ -112,7 +112,9 @@ export const AccessForm = ({
       })
 
       if (data && !errors && !err) {
-        navigate(DelegationPaths.Delegations)
+        navigate(`${DelegationPaths.Delegations}${queryString}`)
+        toast.success(formatMessage(m.accessCreationSuccess))
+
         servicePortalSaveAccessControl(
           formatPlausiblePathToParams({
             path: DelegationPaths.DelegationsGrant,

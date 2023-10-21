@@ -3,6 +3,7 @@ import type {
   DatePickerBackgroundColor,
   IconProps,
   InputBackgroundColor,
+  ResponsiveProp,
   SpanType,
 } from '@island.is/island-ui/core/types'
 import { FormItem, FormText, FormTextArray, StaticText } from './Form'
@@ -10,11 +11,14 @@ import { FormItem, FormText, FormTextArray, StaticText } from './Form'
 import { ApolloClient } from '@apollo/client'
 import { Application } from './Application'
 import { CallToAction } from './StateMachine'
-import { Colors } from '@island.is/island-ui/theme'
+import { Colors, theme } from '@island.is/island-ui/theme'
 import { Condition } from './Condition'
 import { FormatInputValueFunction } from 'react-number-format'
 import React from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
+import { MessageDescriptor } from 'react-intl'
+
+type Space = keyof typeof theme.spacing
 
 export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplicationAndField<T> =
@@ -48,13 +52,19 @@ export type TagVariant =
   | 'mint'
   | 'disabled'
 
+export type AlertMessageLink = {
+  title: MessageDescriptor | string
+  url: MessageDescriptor | string
+  isExternal: boolean
+}
 export interface Option extends TestSupport {
   value: string
   label: FormText
   subLabel?: FormText
   tooltip?: FormText
   excludeOthers?: boolean
-  illustration?: React.FC
+  illustration?: React.FC<React.PropsWithChildren<unknown>>
+  rightContent?: React.ReactNode
   disabled?: boolean
   tag?: {
     label: string
@@ -320,6 +330,9 @@ export interface AlertMessageField extends BaseField {
   component: FieldComponents.ALERT_MESSAGE
   alertType?: 'default' | 'warning' | 'error' | 'info' | 'success'
   message?: FormText
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  links?: AlertMessageLink[]
 }
 
 export interface LinkField extends BaseField {

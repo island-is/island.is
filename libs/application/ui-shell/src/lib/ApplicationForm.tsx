@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState, useCallback } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 
 import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
@@ -33,18 +33,17 @@ import {
 } from '@island.is/shared/problem'
 import { DelegationsScreen } from '../components/DelegationsScreen'
 
-const ApplicationLoader: FC<{
-  applicationId: string
-  nationalRegistryId: string
-  slug: string
-}> = ({ applicationId, nationalRegistryId, slug }) => {
+const ApplicationLoader: FC<
+  React.PropsWithChildren<{
+    applicationId: string
+    nationalRegistryId: string
+    slug: string
+  }>
+> = ({ applicationId, nationalRegistryId, slug }) => {
   const type = getTypeFromSlug(slug)
   const [delegationsChecked, setDelegationsChecked] = useState(
     type ? false : true,
   )
-  const checkDelegation = useCallback(() => {
-    setDelegationsChecked((d) => !d)
-  }, [])
 
   const { lang: locale } = useLocale()
   const { data, error, loading, refetch } = useQuery(APPLICATION_APPLICATION, {
@@ -68,9 +67,9 @@ const ApplicationLoader: FC<{
     return <LoadingShell />
   }
 
-  const currentTypeId: ApplicationTypes = application.typeId
+  const currentTypeId: ApplicationTypes = application?.typeId
   if (ApplicationConfigurations[currentTypeId]?.slug !== slug) {
-    return <ErrorShell errorType="notExist" />
+    return <ErrorShell errorType="idNotFound" />
   }
 
   if (!applicationId || error) {
@@ -86,7 +85,7 @@ const ApplicationLoader: FC<{
         <DelegationsScreen
           slug={slug}
           alternativeSubjects={foundError.alternativeSubjects}
-          checkDelegation={checkDelegation}
+          checkDelegation={setDelegationsChecked}
         />
       )
     }
@@ -107,10 +106,12 @@ const ApplicationLoader: FC<{
   )
 }
 
-const ShellWrapper: FC<{
-  application: Application
-  nationalRegistryId: string
-}> = ({ application, nationalRegistryId }) => {
+const ShellWrapper: FC<
+  React.PropsWithChildren<{
+    application: Application
+    nationalRegistryId: string
+  }>
+> = ({ application, nationalRegistryId }) => {
   const [dataSchema, setDataSchema] = useState<Schema>()
   const [form, setForm] = useState<Form>()
   const [, fieldsDispatch] = useFields()
@@ -183,11 +184,13 @@ const ShellWrapper: FC<{
   )
 }
 
-export const ApplicationForm: FC<{
-  applicationId: string
-  nationalRegistryId: string
-  slug: string
-}> = ({ applicationId, nationalRegistryId, slug }) => {
+export const ApplicationForm: FC<
+  React.PropsWithChildren<{
+    applicationId: string
+    nationalRegistryId: string
+    slug: string
+  }>
+> = ({ applicationId, nationalRegistryId, slug }) => {
   return (
     <FieldProvider>
       <ApplicationLoader

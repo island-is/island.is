@@ -1,8 +1,8 @@
 import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
 import {
   CaseTransition,
-  UserRole,
   isIndictmentCase,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { UpdateCaseDto } from '../dto/updateCase.dto'
@@ -16,7 +16,7 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'defenderNationalId',
   'defenderEmail',
   'defenderPhoneNumber',
-  'sendRequestToDefender',
+  'requestSharedWithDefender',
   'isHeightenedSecurityLevel',
   'courtId',
   'leadInvestigator',
@@ -79,8 +79,6 @@ const courtFields: (keyof UpdateCaseDto)[] = [
   'accusedAppealAnnouncement',
   'prosecutorAppealDecision',
   'prosecutorAppealAnnouncement',
-  'accusedPostponedAppealDate',
-  'prosecutorPostponedAppealDate',
   'judgeId',
   'registrarId',
   'caseModifiedExplanation',
@@ -105,9 +103,9 @@ export const prosecutorUpdateRule: RolesRule = {
   dtoFields: prosecutorFields,
 }
 
-// Allows representatives to update a specific set of fields
-export const representativeUpdateRule: RolesRule = {
-  role: UserRole.REPRESENTATIVE,
+// Allows prosecutor representatives to update a specific set of fields
+export const prosecutorRepresentativeUpdateRule: RolesRule = {
+  role: UserRole.PROSECUTOR_REPRESENTATIVE,
   type: RulesType.FIELD,
   dtoFields: prosecutorFields,
 }
@@ -171,10 +169,10 @@ export const prosecutorTransitionRule: RolesRule = {
   },
 }
 
-// Allows representatives to open, submit and delete cases
-// Note that representatives can only access indictment cases
-export const representativeTransitionRule: RolesRule = {
-  role: UserRole.REPRESENTATIVE,
+// Allows prosecutor representatives to open, submit and delete cases
+// Note that prosecutor representatives can only access indictment cases
+export const prosecutorRepresentativeTransitionRule: RolesRule = {
+  role: UserRole.PROSECUTOR_REPRESENTATIVE,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [

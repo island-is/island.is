@@ -9,14 +9,12 @@ import {useQuery} from '@apollo/client';
 import {client} from '../../graphql/client';
 import {GET_SINGLE_PROPERTY_QUERY} from '../../graphql/queries/get-single-property-query';
 
-const {
-  getNavigationOptions,
-  useNavigationOptions,
-} = createNavigationOptionHooks(() => ({
-  topBar: {
-    visible: false,
-  },
-}));
+const {getNavigationOptions, useNavigationOptions} =
+  createNavigationOptionHooks(() => ({
+    topBar: {
+      visible: false,
+    },
+  }));
 
 export const AssetsDetailScreen: NavigationFunctionComponent<{item: any}> = ({
   componentId,

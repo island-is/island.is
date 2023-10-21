@@ -1,13 +1,13 @@
 import React from 'react'
-import { AnimatePresence } from 'framer-motion'
 import { useIntl } from 'react-intl'
+import { AnimatePresence } from 'framer-motion'
 
+import { core } from '@island.is/judicial-system-web/messages'
 import {
   ConclusionDraft,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { core } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case
@@ -18,7 +18,9 @@ interface Props {
   >
 }
 
-const DraftConclusionModal: React.FC<Props> = (props) => {
+const DraftConclusionModal: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const {
     workingCase,
     setWorkingCase,

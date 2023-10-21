@@ -3,11 +3,11 @@ import { Box, FocusableBox, Text, Tag } from '@island.is/island-ui/core'
 import { EnhancedAsset } from '@island.is/web/graphql/schema'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
-const getFileEnding = (url: string): string => {
+const getFileEnding = (url: string): string | undefined => {
   const lastChunk = url.split('/').pop()
-  const filenameChunks = lastChunk.split('.')
-  if (filenameChunks.length === 1) return ''
-  return filenameChunks.pop()
+  const filenameChunks = lastChunk?.split('.')
+  if (filenameChunks?.length === 1) return ''
+  return filenameChunks?.pop()
 }
 
 interface PublishedMaterialItemProps {

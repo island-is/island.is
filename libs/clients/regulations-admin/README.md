@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Clients Regulations Admin
 
 This library was generated with [Nx](https://nx.dev).

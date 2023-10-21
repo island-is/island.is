@@ -401,9 +401,10 @@ describe('MeClientsController with auth', () => {
         supportsLegalGuardians: typeSpecificDefaults.supportsLegalGuardians
           ? typeSpecificDefaults.supportsLegalGuardians
           : false,
-        supportsPersonalRepresentatives: typeSpecificDefaults.supportsPersonalRepresentatives
-          ? typeSpecificDefaults.supportsPersonalRepresentatives
-          : false,
+        supportsPersonalRepresentatives:
+          typeSpecificDefaults.supportsPersonalRepresentatives
+            ? typeSpecificDefaults.supportsPersonalRepresentatives
+            : false,
         supportsProcuringHolders: typeSpecificDefaults.supportsProcuringHolders
           ? typeSpecificDefaults.supportsProcuringHolders
           : false,
@@ -511,6 +512,37 @@ describe('MeClientsController with auth', () => {
         ],
       })
     })
+
+    it('should return 400 Bad Request with invalid fields', async () => {
+      // Arrange
+      const app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user,
+      })
+      const server = request(app.getHttpServer())
+      await createTestClientData(app, user)
+      const newClient = {
+        clientId: '@test.is/new-test-client',
+        clientName: 'test-client',
+        clientType: 'web',
+        enabled: false,
+      }
+
+      // Act
+      const res = await server
+        .post(`/v2/me/tenants/${tenantId}/clients`)
+        .send(newClient)
+
+      // Assert
+      expect(res.status).toEqual(400)
+      expect(res.body).toEqual({
+        type: 'https://httpstatuses.org/400',
+        title: 'Bad Request',
+        status: 400,
+        detail: ['property enabled should not exist'],
+      })
+    })
   })
 
   describe('update client', () => {
@@ -601,6 +633,38 @@ describe('MeClientsController with auth', () => {
           title: 'Bad Request',
           status: 400,
           detail: 'Client name in Icelandic is required',
+        })
+      })
+
+      it('should return 400 Bad Request for unexpected input fields', async () => {
+        // Arrange
+        const app = await setupApp({
+          AppModule,
+          SequelizeConfigService,
+          user: currentUser,
+        })
+        const server = request(app.getHttpServer())
+        await createTestClientData(app, user)
+        const updatedClient = {
+          enabled: false,
+        }
+
+        // Act
+        const res = await server
+          .patch(
+            `/v2/me/tenants/${tenantId}/clients/${encodeURIComponent(
+              clientId,
+            )}`,
+          )
+          .send(updatedClient)
+
+        // Assert
+        expect(res.status).toEqual(400)
+        expect(res.body).toEqual({
+          type: 'https://httpstatuses.org/400',
+          title: 'Bad Request',
+          status: 400,
+          detail: ['property enabled should not exist'],
         })
       })
 

@@ -1,9 +1,12 @@
-import React, { useState, useCallback, useEffect, useContext } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
+import { IntlShape, useIntl } from 'react-intl'
 import compareAsc from 'date-fns/compareAsc'
 import formatISO from 'date-fns/formatISO'
-import { useIntl, IntlShape } from 'react-intl'
 import { motion } from 'framer-motion'
 
+import { Box, Input, Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import {
   core,
   signedVerdictOverview as m,
@@ -14,19 +17,16 @@ import {
   Modal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { Box, Input, Text } from '@island.is/island-ui/core'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import * as constants from '@island.is/judicial-system/consts'
-import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-import { hasDateChanged } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   TempCase as Case,
   TempUpdateCase as UpdateCase,
 } from '@island.is/judicial-system-web/src/types'
-import {
-  UserRole,
-  CaseType,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { hasDateChanged } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 interface DateTime {
   value?: Date
@@ -157,7 +157,7 @@ const getModificationSuccessText = (
   })
 }
 
-const ModifyDatesModal: React.FC<Props> = ({
+const ModifyDatesModal: React.FC<React.PropsWithChildren<Props>> = ({
   workingCase,
   onSubmit,
   isSendingNotification,
@@ -165,14 +165,10 @@ const ModifyDatesModal: React.FC<Props> = ({
   setIsModifyingDates,
 }) => {
   const [modifiedValidToDate, setModifiedValidToDate] = useState<DateTime>()
-  const [
-    modifiedIsolationToDate,
-    setModifiedIsolationToDate,
-  ] = useState<DateTime>()
-  const [
-    caseModifiedExplanation,
-    setCaseModifiedExplanation,
-  ] = useState<string>()
+  const [modifiedIsolationToDate, setModifiedIsolationToDate] =
+    useState<DateTime>()
+  const [caseModifiedExplanation, setCaseModifiedExplanation] =
+    useState<string>()
 
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
@@ -346,7 +342,7 @@ const ModifyDatesModal: React.FC<Props> = ({
       transition={{ duration: 0.5 }}
     >
       <Modal
-        title={formatMessage(m.sections.modifyDatesModal.successTitleV3, {
+        title={formatMessage(m.sections.modifyDatesModal.successTitle, {
           caseType: workingCase.type,
         })}
         text={successText}
@@ -367,13 +363,13 @@ const ModifyDatesModal: React.FC<Props> = ({
       transition={{ duration: 0.5 }}
     >
       <Modal
-        title={formatMessage(m.sections.modifyDatesModal.titleV3, {
+        title={formatMessage(m.sections.modifyDatesModal.title, {
           caseType: workingCase.type,
         })}
         text={
           workingCase.type === CaseType.TRAVEL_BAN
             ? formatMessage(m.sections.modifyDatesModal.travelBanText)
-            : formatMessage(m.sections.modifyDatesModal.textV2, {
+            : formatMessage(m.sections.modifyDatesModal.text, {
                 caseType: workingCase.type,
               })
         }
@@ -417,7 +413,7 @@ const ModifyDatesModal: React.FC<Props> = ({
               m.sections.modifyDatesModal.reasonForChangeLabel,
             )}
             placeholder={formatMessage(
-              m.sections.modifyDatesModal.reasonForChangePlaceholderV3,
+              m.sections.modifyDatesModal.reasonForChangePlaceholder,
               { caseType: workingCase.type },
             )}
             onChange={(event) => {
@@ -439,7 +435,7 @@ const ModifyDatesModal: React.FC<Props> = ({
               name="modifiedValidToDate"
               size="sm"
               datepickerLabel={formatMessage(
-                m.sections.modifyDatesModal.modifiedValidToDateLabelV3,
+                m.sections.modifyDatesModal.modifiedValidToDateLabel,
                 {
                   caseType: workingCase.type,
                 },

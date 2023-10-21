@@ -49,50 +49,50 @@ type WalletItem =
   | IIdentityDocumentModel
   | {id: string; type: 'empty' | 'skeleton' | 'error'};
 
-const {
-  useNavigationOptions,
-  getNavigationOptions,
-} = createNavigationOptionHooks(
-  (theme, intl, initialized) => ({
-    topBar: {
-      title: {
-        text: intl.formatMessage({id: 'wallet.screenTitle'}),
-      },
-      rightButtons: initialized ? getRightButtons({theme} as any) : [],
-      leftButtons: [
-        {
-          id: ButtonRegistry.ScanLicenseButton,
-          testID: testIDs.TOPBAR_SCAN_LICENSE_BUTTON,
-          icon: require('../../assets/icons/navbar-scan.png'),
-          color: theme.color.blue400,
+const {useNavigationOptions, getNavigationOptions} =
+  createNavigationOptionHooks(
+    (theme, intl, initialized) => ({
+      topBar: {
+        title: {
+          text: intl.formatMessage({id: 'wallet.screenTitle'}),
         },
-      ],
-    },
-    bottomTab: {
-      iconColor: theme.color.blue400,
-      text: initialized ? intl.formatMessage({id: 'wallet.bottomTabText'}) : '',
-    },
-  }),
-  {
-    topBar: {
-      largeTitle: {
-        visible: true,
+        rightButtons: initialized ? getRightButtons({theme} as any) : [],
+        leftButtons: [
+          {
+            id: ButtonRegistry.ScanLicenseButton,
+            testID: testIDs.TOPBAR_SCAN_LICENSE_BUTTON,
+            icon: require('../../assets/icons/navbar-scan.png'),
+            color: theme.color.blue400,
+          },
+        ],
       },
-      scrollEdgeAppearance: {
-        active: true,
-        noBorder: true,
+      bottomTab: {
+        iconColor: theme.color.blue400,
+        text: initialized
+          ? intl.formatMessage({id: 'wallet.bottomTabText'})
+          : '',
+      },
+    }),
+    {
+      topBar: {
+        largeTitle: {
+          visible: true,
+        },
+        scrollEdgeAppearance: {
+          active: true,
+          noBorder: true,
+        },
+      },
+      bottomTab: {
+        testID: testIDs.TABBAR_TAB_WALLET,
+        iconInsets: {
+          bottom: -4,
+        },
+        icon: require('../../assets/icons/tabbar-wallet.png'),
+        selectedIcon: require('../../assets/icons/tabbar-wallet-selected.png'),
       },
     },
-    bottomTab: {
-      testID: testIDs.TABBAR_TAB_WALLET,
-      iconInsets: {
-        bottom: -4,
-      },
-      icon: require('../../assets/icons/tabbar-wallet.png'),
-      selectedIcon: require('../../assets/icons/tabbar-wallet-selected.png'),
-    },
-  },
-);
+  );
 
 const WalletItem = React.memo(
   ({item}: {item: IGenericUserLicense | IIdentityDocumentModel}) => {
@@ -106,8 +106,7 @@ const WalletItem = React.memo(
           style={{paddingHorizontal: 16}}
           onLayout={e => {
             cardHeight = Math.round(e.nativeEvent.layout.height);
-          }}
-        >
+          }}>
           <TouchableHighlight
             style={{marginBottom: 16, borderRadius: 16}}
             onPress={() => {
@@ -116,8 +115,7 @@ const WalletItem = React.memo(
                 toId: `license-${LicenseType.PASSPORT}_destination`,
                 cardHeight: cardHeight,
               });
-            }}
-          >
+            }}>
             <SafeAreaView>
               <LicenceCard
                 nativeID={`license-${LicenseType.PASSPORT}_source`}
@@ -138,8 +136,7 @@ const WalletItem = React.memo(
         style={{paddingHorizontal: 16}}
         onLayout={e => {
           cardHeight = Math.round(e.nativeEvent.layout.height);
-        }}
-      >
+        }}>
         <TouchableHighlight
           style={{marginBottom: 16, borderRadius: 16}}
           onPress={() => {
@@ -149,8 +146,7 @@ const WalletItem = React.memo(
               toId: `license-${item?.license?.type}_destination`,
               cardHeight: cardHeight,
             });
-          }}
-        >
+          }}>
           <SafeAreaView>
             <LicenceCard
               nativeID={`license-${item?.license?.type}_source`}

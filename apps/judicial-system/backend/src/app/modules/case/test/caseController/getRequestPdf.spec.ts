@@ -1,9 +1,10 @@
-import { uuid } from 'uuidv4'
 import { Response } from 'express'
+import { uuid } from 'uuidv4'
+
+import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { getRequestPdfAsBuffer } from '../../../../formatters'
 import { Case } from '../../models/case.model'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 
 jest.mock('../../../../formatters/requestPdf')
 
@@ -56,7 +57,7 @@ describe('CaseController - Get request pdf', () => {
   describe('pdf returned', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
-    const res = ({ end: jest.fn() } as unknown) as Response
+    const res = { end: jest.fn() } as unknown as Response
     const pdf = {}
 
     beforeEach(async () => {

@@ -1,11 +1,12 @@
 {
-  "root": "libs/application/templates/transport-authority/license-plate-renewal",
+  "name": "application-templates-transport-authority-license-plate-renewal",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/transport-authority/license-plate-renewal/src",
   "projectType": "library",
   "tags": ["scope:application-system", "lib:application-system"],
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
@@ -14,17 +15,17 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": [
-        "coverage/libs/application/templates/transport-authority/license-plate-renewal"
+        "{workspaceRoot}/coverage/libs/application/templates/transport-authority/license-plate-renewal"
       ],
       "options": {
-        "jestConfig": "libs/application/templates/transport-authority/license-plate-renewal/jest.config.js",
+        "jestConfig": "libs/application/templates/transport-authority/license-plate-renewal/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/transport-authority/license-plate-renewal/src/lib/messages/*.ts'"
       }

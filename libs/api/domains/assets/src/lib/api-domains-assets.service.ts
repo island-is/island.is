@@ -126,59 +126,62 @@ export class AssetsXRoadService {
           },
           registeredOwners: {
             paging: singleFasteignResponse.thinglystirEigendur?.paging,
-            registeredOwners: singleFasteignResponse.thinglystirEigendur?.thinglystirEigendur?.map(
-              (owner) => ({
-                name: owner.nafn,
-                ssn: owner.kennitala,
-                ownership: owner.eignarhlutfall,
-                purchaseDate: owner.kaupdagur,
-                grantDisplay: owner.heimildBirting,
-              }),
-            ),
+            registeredOwners:
+              singleFasteignResponse.thinglystirEigendur?.thinglystirEigendur?.map(
+                (owner) => ({
+                  name: owner.nafn,
+                  ssn: owner.kennitala,
+                  ownership: owner.eignarhlutfall,
+                  purchaseDate: owner.kaupdagur,
+                  grantDisplay: owner.heimildBirting,
+                }),
+              ),
           },
           unitsOfUse: {
             paging: singleFasteignResponse.notkunareiningar?.paging,
-            unitsOfUse: singleFasteignResponse.notkunareiningar?.notkunareiningar?.map(
-              (unit) => ({
-                propertyNumber: unit.fasteignanumer,
-                unitOfUseNumber: unit.notkunareininganumer,
-                address: {
-                  // This does not come from the service as the service is set up today. Needs to come from parent as things stand.
-                  displayShort:
-                    singleFasteignResponse.sjalfgefidStadfang?.birtingStutt,
-                  display: singleFasteignResponse.sjalfgefidStadfang?.birting,
-                  propertyNumber:
-                    singleFasteignResponse.sjalfgefidStadfang?.landeignarnumer,
-                  municipality:
-                    singleFasteignResponse.sjalfgefidStadfang
-                      ?.sveitarfelagBirting,
-                  postNumber:
-                    singleFasteignResponse.sjalfgefidStadfang?.postnumer,
-                  locationNumber:
-                    singleFasteignResponse.sjalfgefidStadfang?.stadfanganumer,
-                },
-                marking: unit.merking,
-                usageDisplay: unit.notkunBirting,
-                displaySize: unit.birtStaerd,
-                buildYearDisplay: unit.byggingararBirting,
-                fireAssessment: unit.brunabotamat,
-                explanation: unit.skyring,
-                appraisal: {
-                  activeAppraisal: unit.fasteignamat?.gildandiFasteignamat,
-                  plannedAppraisal: unit.fasteignamat?.fyrirhugadFasteignamat,
-                  activeStructureAppraisal:
-                    unit.fasteignamat?.gildandiMannvirkjamat,
-                  plannedStructureAppraisal:
-                    unit.fasteignamat?.fyrirhugadFasteignamat,
-                  activePlotAssessment:
-                    unit.fasteignamat?.gildandiLodarhlutamat,
-                  plannedPlotAssessment:
-                    unit.fasteignamat?.fyrirhugadLodarhlutamat,
-                  activeYear: unit.fasteignamat?.gildandiAr,
-                  plannedYear: unit.fasteignamat?.fyrirhugadAr,
-                },
-              }),
-            ),
+            unitsOfUse:
+              singleFasteignResponse.notkunareiningar?.notkunareiningar?.map(
+                (unit) => ({
+                  propertyNumber: unit.fasteignanumer,
+                  unitOfUseNumber: unit.notkunareininganumer,
+                  address: {
+                    // This does not come from the service as the service is set up today. Needs to come from parent as things stand.
+                    displayShort:
+                      singleFasteignResponse.sjalfgefidStadfang?.birtingStutt,
+                    display: singleFasteignResponse.sjalfgefidStadfang?.birting,
+                    propertyNumber:
+                      singleFasteignResponse.sjalfgefidStadfang
+                        ?.landeignarnumer,
+                    municipality:
+                      singleFasteignResponse.sjalfgefidStadfang
+                        ?.sveitarfelagBirting,
+                    postNumber:
+                      singleFasteignResponse.sjalfgefidStadfang?.postnumer,
+                    locationNumber:
+                      singleFasteignResponse.sjalfgefidStadfang?.stadfanganumer,
+                  },
+                  marking: unit.merking,
+                  usageDisplay: unit.notkunBirting,
+                  displaySize: unit.birtStaerd,
+                  buildYearDisplay: unit.byggingararBirting,
+                  fireAssessment: unit.brunabotamat,
+                  explanation: unit.skyring,
+                  appraisal: {
+                    activeAppraisal: unit.fasteignamat?.gildandiFasteignamat,
+                    plannedAppraisal: unit.fasteignamat?.fyrirhugadFasteignamat,
+                    activeStructureAppraisal:
+                      unit.fasteignamat?.gildandiMannvirkjamat,
+                    plannedStructureAppraisal:
+                      unit.fasteignamat?.fyrirhugadFasteignamat,
+                    activePlotAssessment:
+                      unit.fasteignamat?.gildandiLodarhlutamat,
+                    plannedPlotAssessment:
+                      unit.fasteignamat?.fyrirhugadLodarhlutamat,
+                    activeYear: unit.fasteignamat?.gildandiAr,
+                    plannedYear: unit.fasteignamat?.fyrirhugadAr,
+                  },
+                }),
+              ),
           },
           land: {
             landNumber: singleFasteignResponse.landeign?.landeignarnumer,
@@ -189,15 +192,16 @@ export class AssetsXRoadService {
             registeredOwners: {
               paging:
                 singleFasteignResponse.landeign?.thinglystirEigendur?.paging,
-              registeredOwners: singleFasteignResponse.landeign?.thinglystirEigendur?.thinglystirEigendur?.map(
-                (owner) => ({
-                  name: owner.nafn,
-                  ssn: owner.kennitala,
-                  ownership: owner.eignarhlutfall,
-                  purchaseDate: owner.kaupdagur,
-                  grantDisplay: owner.heimildBirting,
-                }),
-              ),
+              registeredOwners:
+                singleFasteignResponse.landeign?.thinglystirEigendur?.thinglystirEigendur?.map(
+                  (owner) => ({
+                    name: owner.nafn,
+                    ssn: owner.kennitala,
+                    ownership: owner.eignarhlutfall,
+                    purchaseDate: owner.kaupdagur,
+                    grantDisplay: owner.heimildBirting,
+                  }),
+                ),
             },
           },
         }

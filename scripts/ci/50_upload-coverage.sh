@@ -6,8 +6,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 # shellcheck disable=SC1091
 source "$DIR"/_common.sh
 
-APP_HOME=$(jq ".projects[\"$APP\"]" -r < "$PROJECT_ROOT"/workspace.json)
-COVERAGE_DIR=$(jq ".targets.test.outputs[0]" -r < "$PROJECT_ROOT"/"$APP_HOME"/project.json)
+COVERAGE_DIR=$(yarn nx show project $APP | jq '.targets.test.outputs[0] | sub("{workspaceRoot}/";"")' -r)
 COVERAGE_FILE="$PROJECT_ROOT/$COVERAGE_DIR/coverage-final.json"
 
 echo "Uploading coverage report $COVERAGE_FILE"

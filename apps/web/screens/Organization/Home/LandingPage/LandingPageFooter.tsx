@@ -1,4 +1,5 @@
 import cn from 'classnames'
+import { ReactNode } from 'react'
 import { INLINES } from '@contentful/rich-text-types'
 import { Box, GridContainer, Link, Text } from '@island.is/island-ui/core'
 import { FooterItem } from '@island.is/web/graphql/schema'
@@ -11,9 +12,9 @@ interface LandingPageFooterProps {
   footerItems?: FooterItem[]
 }
 
-const LandingPageFooter: React.FC<LandingPageFooterProps> = ({
-  footerItems,
-}) => {
+const LandingPageFooter: React.FC<
+  React.PropsWithChildren<LandingPageFooterProps>
+> = ({ footerItems }) => {
   if (!footerItems?.length) return null
 
   return (
@@ -33,7 +34,9 @@ const LandingPageFooter: React.FC<LandingPageFooterProps> = ({
                 {item.content?.length &&
                   webRichText(item.content as SliceType[], {
                     renderNode: {
-                      [INLINES.HYPERLINK]: (node, children) => (
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore make web strict
+                      [INLINES.HYPERLINK]: (node, children: ReactNode) => (
                         <Link
                           underlineVisibility="always"
                           underline="small"

@@ -2,26 +2,22 @@
   "publishingRules": {
     "publishNow": {
       "present": "Umsagnir eru birtar jafnóðum og þær berast.",
-      "past": ""
+      "past": "Umsagnir voru birtar jafnóðum og þær bárust."
     },
     "publishAfter": {
       "present": "Umsagnir eru birtar að loknum umsagnarfresti.",
-      "past": ""
+      "past": "Umsagnir voru birtar að loknum umsagnarfresti."
     },
     "publishNever": {
       "present": "Umsagnir eru ekki birtar.",
-      "past": ""
+      "past": "Umsagnir voru ekki birtar."
     },
     "publishLaw": {
       "text": "Upplýsingalög gilda, sjá nánar í",
       "link": {
         "label": "um samráðsgáttina.",
-        "href": "/um"
+        "href": "/samradsgatt/um"
       }
     }
-  },
-  "mapInProcess": {
-    "pre": "Í vinnslu frá",
-    "post": "Í vinnslu"
   }
 }

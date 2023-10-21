@@ -1,20 +1,21 @@
 {
-  "root": "libs/api/domains/rights-portal",
+  "name": "api-domains-rights-portal",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/rights-portal/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/api/domains/rights-portal/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/rights-portal"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/rights-portal"],
       "options": {
-        "jestConfig": "libs/api/domains/rights-portal/jest.config.js",
+        "jestConfig": "libs/api/domains/rights-portal/jest.config.ts",
         "passWithNoTests": true
       }
     }

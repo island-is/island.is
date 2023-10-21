@@ -13,6 +13,7 @@ import { FooterItem } from '@island.is/web/graphql/schema'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import * as styles from './RikislogmadurFooter.css'
+import { ReactNode } from 'react'
 
 interface RikislogmadurFooterProps {
   footerItems: FooterItem[]
@@ -57,7 +58,7 @@ const RikislogmadurFooter = ({
                 </Text>
                 {webRichText(item.content as SliceType[], {
                   renderNode: {
-                    [BLOCKS.PARAGRAPH]: (_node, children) => (
+                    [BLOCKS.PARAGRAPH]: (_node: never, children: ReactNode) => (
                       <Text
                         color="blueberry600"
                         variant="medium"

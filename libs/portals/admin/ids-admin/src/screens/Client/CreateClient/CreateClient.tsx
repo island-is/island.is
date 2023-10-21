@@ -61,14 +61,11 @@ export default function CreateClient() {
   const [clientType, setClientState] = useState<AuthAdminClientType>(
     AuthAdminClientType.web,
   )
-  const [clientIdState, setClientIdState] = useState<InputState>(
-    initialClientIdState,
-  )
+  const [clientIdState, setClientIdState] =
+    useState<InputState>(initialClientIdState)
 
-  const [
-    getClientAvailabilityQuery,
-    { data: availabilityData },
-  ] = useGetClientAvailabilityLazyQuery()
+  const [getClientAvailabilityQuery, { data: availabilityData }] =
+    useGetClientAvailabilityLazyQuery()
   const clientIdAlreadyExists = isDefined(availabilityData?.authAdminClient)
 
   const validateUniqueClientId = async () => {
@@ -230,7 +227,7 @@ export default function CreateClient() {
             <InputError
               id="environments"
               errorMessage={formatErrorMessage(
-                (actionData?.errors?.environments as unknown) as string,
+                actionData?.errors?.environments as unknown as string,
               )}
             />
           )}
@@ -259,7 +256,7 @@ export default function CreateClient() {
             <InputError
               id="applicationType"
               errorMessage={formatErrorMessage(
-                (actionData?.errors?.clientType as unknown) as string,
+                actionData?.errors?.clientType as unknown as string,
               )}
             />
           )}

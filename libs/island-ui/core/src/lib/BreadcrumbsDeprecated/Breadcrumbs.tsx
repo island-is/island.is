@@ -12,7 +12,7 @@ interface BreadcrumbsProps {
   separatorColor?: Colors
 }
 
-export const Breadcrumbs: FC<BreadcrumbsProps> = ({
+export const Breadcrumbs: FC<React.PropsWithChildren<BreadcrumbsProps>> = ({
   label = 'breadcrumb',
   color = 'blue400',
   separatorColor = 'blue400',

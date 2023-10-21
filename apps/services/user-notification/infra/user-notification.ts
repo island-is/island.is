@@ -3,59 +3,61 @@ import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 const MAIN_QUEUE_NAME = 'user-notification'
 const DEAD_LETTER_QUEUE_NAME = 'user-notification-failure'
 
-export const userNotificationServiceSetup = (): ServiceBuilder<'user-notification'> =>
-  service('user-notification')
-    .image('services-user-notification')
-    .namespace('user-notification')
-    .serviceAccount('user-notification')
-    .command('node')
-    .args('--no-experimental-fetch', 'main.js')
-    .env({
-      MAIN_QUEUE_NAME,
-      DEAD_LETTER_QUEUE_NAME,
-    })
-    .secrets({
-      FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials',
-      CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN',
-    })
-    .liveness('/liveness')
-    .readiness('/liveness')
-    .ingress({
-      primary: {
-        host: {
-          dev: 'user-notification-xrd',
-          staging: 'user-notification-xrd',
-          prod: 'user-notification-xrd',
+export const userNotificationServiceSetup =
+  (): ServiceBuilder<'user-notification'> =>
+    service('user-notification')
+      .image('services-user-notification')
+      .namespace('user-notification')
+      .serviceAccount('user-notification')
+      .command('node')
+      .args('--no-experimental-fetch', 'main.js')
+      .env({
+        MAIN_QUEUE_NAME,
+        DEAD_LETTER_QUEUE_NAME,
+      })
+      .secrets({
+        FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials',
+        CONTENTFUL_ACCESS_TOKEN:
+          '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN',
+      })
+      .liveness('/liveness')
+      .readiness('/liveness')
+      .ingress({
+        primary: {
+          host: {
+            dev: 'user-notification-xrd',
+            staging: 'user-notification-xrd',
+            prod: 'user-notification-xrd',
+          },
+          paths: ['/'],
+          public: false,
+          extraAnnotations: {
+            dev: {
+              'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+              'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+            },
+            staging: {
+              'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+              'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+            },
+            prod: {
+              'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+              'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+            },
+          },
         },
-        paths: ['/'],
-        public: false,
-        extraAnnotations: {
-          dev: {
-            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-          },
-          staging: {
-            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-          },
-          prod: {
-            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-          },
+      })
+      .resources({
+        limits: {
+          cpu: '200m',
+          memory: '384Mi',
         },
-      },
-    })
-    .resources({
-      limits: {
-        cpu: '200m',
-        memory: '384Mi',
-      },
-      requests: {
-        cpu: '15m',
-        memory: '256Mi',
-      },
-    })
-    .grantNamespaces('nginx-ingress-internal')
+        requests: {
+          cpu: '15m',
+          memory: '256Mi',
+        },
+      })
+      .grantNamespaces('nginx-ingress-internal')
 
 export const userNotificationWorkerSetup = (services: {
   userProfileApi: ServiceBuilder<'service-portal-api'>

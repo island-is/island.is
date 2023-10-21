@@ -1,9 +1,9 @@
 import {
   assistantRule,
   judgeRule,
+  prosecutorRepresentativeRule,
   prosecutorRule,
   registrarRule,
-  representativeRule,
 } from '../../../../guards'
 import { FileController } from '../../file.controller'
 
@@ -20,11 +20,8 @@ describe('FileController - Create case file rules', () => {
 
   it('should give permission to five role', () => {
     expect(rules).toHaveLength(5)
-  })
-
-  it('should give permission to prosecutors, representatives, judges, registrars and assistants', () => {
     expect(rules).toContain(prosecutorRule)
-    expect(rules).toContain(representativeRule)
+    expect(rules).toContain(prosecutorRepresentativeRule)
     expect(rules).toContain(judgeRule)
     expect(rules).toContain(registrarRule)
     expect(rules).toContain(assistantRule)

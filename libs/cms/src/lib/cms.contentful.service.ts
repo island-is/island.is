@@ -146,11 +146,16 @@ export class CmsContentfulService {
       'fields.title[in]': input.organizationTitles.join(','),
     }
 
+    const organizationReferenceIdentifiers = input?.referenceIdentifiers && {
+      'fields.referenceIdentifier[in]': input.referenceIdentifiers.join(','),
+    }
+
     const params = {
       ['content_type']: 'organization',
       include: 10,
       limit: 1000,
       ...organizationTitles,
+      ...organizationReferenceIdentifiers,
     }
 
     const result = await this.contentfulRepository
@@ -766,7 +771,7 @@ export class CmsContentfulService {
 
     return (result.items as types.ISupportQna[])
       .map(mapSupportQNA)
-      .filter((qna) => qna?.title && qna?.answer)
+      .filter((qna) => qna?.title && qna?.answer && qna?.slug)
   }
 
   async getSupportCategory({

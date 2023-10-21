@@ -31,7 +31,7 @@ interface Props {
   figure?: string
 }
 
-export const NoDataScreen: FC<Props> = ({
+export const NoDataScreen: FC<React.PropsWithChildren<Props>> = ({
   title,
   children,
   button,

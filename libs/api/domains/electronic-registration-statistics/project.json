@@ -1,10 +1,11 @@
 {
-  "root": "libs/api/domains/electronic-registration-statistics",
+  "name": "api-domains-electronic-registration-statistics",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/electronic-registration-statistics/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
@@ -13,12 +14,12 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": [
-        "coverage/libs/api/domains/electronic-registration-statistics"
+        "{workspaceRoot}/coverage/libs/api/domains/electronic-registration-statistics"
       ],
       "options": {
-        "jestConfig": "libs/api/domains/electronic-registration-statistics/jest.config.js",
+        "jestConfig": "libs/api/domains/electronic-registration-statistics/jest.config.ts",
         "passWithNoTests": true
       }
     }

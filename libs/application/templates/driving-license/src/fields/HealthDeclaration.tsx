@@ -25,10 +25,10 @@ function HealthDeclaration({ field, application }: PropTypes): JSX.Element {
         </Box>
       )}
       <GridRow>
-        <GridColumn span={['12/12', '9/12']} paddingBottom={1}>
+        <GridColumn span={['12/12', '8/12']} paddingBottom={1}>
           <Text>{formatText(props.label, application, formatMessage)}</Text>
         </GridColumn>
-        <GridColumn span={['8/12', '3/12']}>
+        <GridColumn span={['8/12', '3/12']} offset={['0', '1/12']}>
           <RadioController
             id={field.id}
             split="1/2"

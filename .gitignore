@@ -6,6 +6,7 @@
 /out-tsc
 **/tsconfig.tsbuildinfo
 infra/mountebank-imposter-config.json
+infra/helm/**/*.tgz
 # Contentful extensions
 libs/contentful-extensions/translation/build
 libs/contentful-extensions/translation/.cache
@@ -31,6 +32,7 @@ TODO
 *.todo
 .env
 .env.*
+.envrc.*
 .nvmrc
 .node-version
 # IDE - VSCode
@@ -50,6 +52,7 @@ yarn-error.log
 testem.log
 /typings
 /debug.log
+*.log
 
 # System Files
 .DS_Store
@@ -84,9 +87,12 @@ fragmentTypes.json
 *.suo
 /.vs
 
-# Gitbook/Honkit
+# Honkit
 _book
 .vscode/settings.json
 
 # Ignore generated .html files when running `serve`
 apps/**/index.html
+
+# Next.js
+.next

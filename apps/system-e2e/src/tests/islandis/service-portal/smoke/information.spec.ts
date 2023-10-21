@@ -27,7 +27,7 @@ test.describe('MS - Mínar upplýsingar', () => {
     // Arrange
     const page = await context.newPage()
     await disableI18n(page)
-    await page.goto(icelandicAndNoPopupUrl('/minarsidur/min-gogn'))
+    await page.goto(icelandicAndNoPopupUrl('/minarsidur/min-gogn/yfirlit'))
 
     // Act
     const element = page.getByText(label(m.natreg)).first()
@@ -43,7 +43,7 @@ test.describe('MS - Mínar upplýsingar', () => {
     const page = await context.newPage()
     await disableI18n(page)
     await page.goto(
-      icelandicAndNoPopupUrl('/minarsidur/min-gogn/minar-upplysingar'),
+      icelandicAndNoPopupUrl('/minarsidur/min-gogn/yfirlit/minar-upplysingar'),
     )
 
     // Act
@@ -62,7 +62,7 @@ test.describe('MS - Mínar upplýsingar', () => {
   test.skip('should display child information', async () => {
     const page = await context.newPage()
     await disableI18n(page)
-    await page.goto(icelandicAndNoPopupUrl('/minarsidur/min-gogn'))
+    await page.goto(icelandicAndNoPopupUrl('/minarsidur/min-gogn/yfirlit'))
     await page.waitForLoadState('networkidle')
 
     // Act
@@ -77,7 +77,9 @@ test.describe('MS - Mínar upplýsingar', () => {
       .first()
 
     // Assert
-    await expect(page).toHaveURL(/.*minarsidur\/min-gogn\/barn\/\d{10}$/)
+    await expect(page).toHaveURL(
+      /.*minarsidur\/min-gogn\/yfirlit\/barn\/\d{10}$/,
+    )
     await expect(registrationButton).toBeVisible()
   })
 })

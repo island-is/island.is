@@ -36,10 +36,8 @@ const LicenseCards = () => {
   const { data, loading: queryLoading } = useQuery<Query>(EducationLicenseQuery)
   const [href, setHref] = useState('')
   const [expiry, setExpiry] = useState(0)
-  const [
-    fetchEducationSignedLicenseUrl,
-    { loading: mutationLoading },
-  ] = useMutation<Mutation>(FetchEducationSignedLicenseUrlMutation)
+  const [fetchEducationSignedLicenseUrl, { loading: mutationLoading }] =
+    useMutation<Mutation>(FetchEducationSignedLicenseUrlMutation)
   useNamespaces('sp.education-license')
   const { formatMessage } = useLocale()
 
@@ -104,7 +102,7 @@ const LicenseCards = () => {
         </Box>
       ))}
       {educationLicense.length === 0 && (
-        <Box marginTop={8}>
+        <Box marginTop={[0, 8]}>
           <EmptyState title={m.noDataFound} />
         </Box>
       )}

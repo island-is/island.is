@@ -26,18 +26,16 @@ import {BottomTabsIndicator} from '../../components/bottom-tabs-indicator/bottom
 import {navigateTo} from '../../lib/deep-linking';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {FAMILY_QUERY} from '../../graphql/queries/list-family-query';
-import {formatNationalId} from '../profile/tab-personal-info';
+import {formatNationalId} from '../more/personal-info-content';
 
-const {
-  useNavigationOptions,
-  getNavigationOptions,
-} = createNavigationOptionHooks((theme, intl) => ({
-  topBar: {
-    title: {
-      text: intl.formatMessage({id: 'family.screenTitle'}),
+const {useNavigationOptions, getNavigationOptions} =
+  createNavigationOptionHooks((theme, intl) => ({
+    topBar: {
+      title: {
+        text: intl.formatMessage({id: 'family.screenTitle'}),
+      },
     },
-  },
-}));
+  }));
 
 const FamilyMember = React.memo(({item}: {item: any}) => {
   const theme = useTheme();
@@ -45,14 +43,15 @@ const FamilyMember = React.memo(({item}: {item: any}) => {
   return (
     <View style={{paddingHorizontal: 16}}>
       <TouchableHighlight
-        underlayColor={theme.shade.shade100}
+        underlayColor={
+          theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
+        }
         style={{marginBottom: 16, borderRadius: 16}}
         onPress={() => {
           navigateTo(`/family/${item.type}/${item.nationalId}`, {
             id: item?.nationalId,
           });
-        }}
-      >
+        }}>
         <SafeAreaView>
           <FamilyMemberCard
             name={item?.name || item?.displayName}

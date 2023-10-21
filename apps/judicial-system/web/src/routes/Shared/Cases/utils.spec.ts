@@ -5,8 +5,10 @@ import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { displayCaseType } from './utils'
 
-const formatMessage = createIntl({ locale: 'is-IS', onError: jest.fn })
-  .formatMessage
+const formatMessage = createIntl({
+  locale: 'is-IS',
+  onError: jest.fn,
+}).formatMessage
 
 describe('displayCaseType', () => {
   const fn = (caseType: CaseType, decision?: CaseDecision) =>

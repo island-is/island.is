@@ -408,4 +408,11 @@ export const m = defineMessages({
     defaultMessage: 'Bráðabirgðaskírteini',
     description: 'text for temporary license',
   },
+
+  /* Application log */
+  pendingActionApplicationCompletedTitle: {
+    id: 'dld.application:pendingActionApplicationCompletedTitle',
+    defaultMessage: 'Umsókn þín hefur verið móttekin og skírteini pantað',
+    description: 'text for pending action application completed title',
+  },
 })

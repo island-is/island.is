@@ -21,16 +21,14 @@ import {navigateTo} from '../../lib/deep-linking';
 import {GET_REAL_ESTATE_QUREY} from '../../graphql/queries/get-real-estate-query';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 
-const {
-  useNavigationOptions,
-  getNavigationOptions,
-} = createNavigationOptionHooks((theme, intl) => ({
-  topBar: {
-    title: {
-      text: intl.formatMessage({id: 'assetsOvervies.screenTitle'}),
+const {useNavigationOptions, getNavigationOptions} =
+  createNavigationOptionHooks((theme, intl) => ({
+    topBar: {
+      title: {
+        text: intl.formatMessage({id: 'assetsOvervies.screenTitle'}),
+      },
     },
-  },
-}));
+  }));
 
 const AssetItem = React.memo(({item}: {item: any}) => {
   const theme = useTheme();
@@ -42,14 +40,15 @@ const AssetItem = React.memo(({item}: {item: any}) => {
   return (
     <View style={{paddingHorizontal: 16}}>
       <TouchableHighlight
-        underlayColor={theme.shade.shade100}
+        underlayColor={
+          theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
+        }
         style={{marginBottom: 16, borderRadius: 16}}
         onPress={() => {
           navigateTo(`/asset/${item.propertyNumber}`, {
             item,
           });
-        }}
-      >
+        }}>
         <SafeAreaView>
           <AssetCard
             address={item?.defaultAddress?.displayShort}

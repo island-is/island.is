@@ -4,7 +4,9 @@
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "rules": {}
+      "rules": {
+        "local-rules/require-cache-control": "error"
+      }
     },
     {
       "files": ["*.ts", "*.tsx"],

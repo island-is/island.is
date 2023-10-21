@@ -1,19 +1,20 @@
 {
-  "root": "libs/nest/swagger",
+  "name": "nest-swagger",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/nest/swagger/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/nest/swagger/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/nest/swagger"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/nest/swagger"],
       "options": {
-        "jestConfig": "libs/nest/swagger/jest.config.js",
+        "jestConfig": "libs/nest/swagger/jest.config.ts",
         "passWithNoTests": true
       }
     }

@@ -10,7 +10,7 @@ import { useLazyIsHealthInsured } from '../../hooks/useLazyIsHealthInsured'
 import { AccidentNotification } from '../../lib/dataSchema'
 import { accidentDetails } from '../../lib/messages'
 
-export const DateOfAccident: FC<FieldBaseProps> = ({
+export const DateOfAccident: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   field,
   error,

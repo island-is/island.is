@@ -20,7 +20,9 @@ interface FormOutput {
   translation: Translation
 }
 
-const TranslationCreateForm: React.FC<Props> = (props: Props) => {
+const TranslationCreateForm: React.FC<React.PropsWithChildren<Props>> = (
+  props: Props,
+) => {
   const { register, handleSubmit, formState } = useForm<FormOutput>()
   const { isSubmitting, errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)

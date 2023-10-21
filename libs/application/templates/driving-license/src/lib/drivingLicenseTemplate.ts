@@ -1,6 +1,8 @@
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  coreHistoryMessages,
+  corePendingActionMessages,
 } from '@island.is/application/core'
 import {
   ApplicationTemplate,
@@ -9,7 +11,7 @@ import {
   ApplicationStateSchema,
   DefaultEvents,
   defineTemplateApi,
-  JuristictionApi,
+  JurisdictionApi,
   CurrentLicenseApi,
   DrivingAssessmentApi,
   NationalRegistryUserApi,
@@ -82,7 +84,7 @@ const template: ApplicationTemplate<
                   },
                 }),
                 DrivingAssessmentApi,
-                JuristictionApi,
+                JurisdictionApi,
                 QualityPhotoApi,
                 ExistingApplicationApi.configure({
                   params: {
@@ -95,6 +97,18 @@ const template: ApplicationTemplate<
               ],
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+              {
+                logMessage: coreHistoryMessages.applicationRejected,
+                onEvent: DefaultEvents.REJECT,
+              },
+            ],
+          },
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.DRAFT },
@@ -104,9 +118,6 @@ const template: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: m.applicationForDrivingLicense.defaultMessage,
-          actionCard: {
-            description: m.actionCardDraft,
-          },
           status: 'draft',
           progress: 0.4,
           lifecycle: DefaultStateLifeCycle,
@@ -145,9 +156,6 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Payment state',
           status: 'inprogress',
-          actionCard: {
-            description: m.actionCardPayment,
-          },
           progress: 0.9,
           lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
@@ -170,6 +178,19 @@ const template: ApplicationTemplate<
               delete: true,
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentAccepted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+            pendingAction: {
+              title: corePendingActionMessages.paymentPendingTitle,
+              content: corePendingActionMessages.paymentPendingDescription,
+              displayStatus: 'warning',
+            },
+          },
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.DONE },
@@ -192,6 +213,13 @@ const template: ApplicationTemplate<
               read: 'all',
             },
           ],
+          actionCard: {
+            pendingAction: {
+              title: coreHistoryMessages.applicationReceived,
+              content: '',
+              displayStatus: 'success',
+            },
+          },
         },
       },
       [States.DECLINED]: {

@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-export const Toolbar: FC = ({ children }) => (
+export const Toolbar: FC<React.PropsWithChildren<unknown>> = ({ children }) => (
   <div
     style={{
       display: 'flex',

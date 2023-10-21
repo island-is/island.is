@@ -31,9 +31,8 @@ export const useSubscriptions = ({
     institutionsData: Institutions,
     policyAreasData: PolicyAreas,
   })
-  const [subscriptionArray, setSubscriptionArray] = useState<SubscriptionArray>(
-    initSubs,
-  )
+  const [subscriptionArray, setSubscriptionArray] =
+    useState<SubscriptionArray>(initSubs)
 
   const [sortTitle, setSortTitle] = useState<SortTitle>({
     Mál: SortOptions.latest,

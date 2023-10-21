@@ -14,6 +14,7 @@ import {
   CreateChargeApi,
   Application,
   VerifyPaymentApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { ApiActions } from '../shared'
 import { Events, States, Roles } from './constants'
@@ -89,7 +90,7 @@ const template: ApplicationTemplate<
           lifecycle: pruneAfterDays(1),
           onEntry: CreateChargeApi.configure({
             params: {
-              organizationId: '6509142520',
+              organizationId: InstitutionNationalIds.SYSLUMENN,
               chargeItemCodes: getCodes,
             },
           }),

@@ -16,7 +16,7 @@ interface LinkProps {
   as?: TypographyProps['as']
 }
 
-export const Link: FC<LinkProps> = ({
+export const Link: FC<React.PropsWithChildren<LinkProps>> = ({
   href,
   variant = 'p',
   as = 'span',
@@ -49,7 +49,7 @@ export const Link: FC<LinkProps> = ({
           </span>
         </a>
       ) : (
-        <NextLink href={href}>
+        <NextLink href={href} legacyBehavior>
           {childIsString ? <a>{children}</a> : children}
         </NextLink>
       )}

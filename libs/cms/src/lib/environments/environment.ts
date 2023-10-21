@@ -18,6 +18,7 @@ export default {
     'frontpage',
     'enhancedAsset',
     'vacancy',
+    'serviceWebPage',
   ],
   nestedContentTypes: [
     'alertBanner',
@@ -36,6 +37,7 @@ export default {
     'questionAndAnswer',
     'sectionHeading',
     'sectionWithImage',
+    'sectionWithVideo',
     'url',
     'articleGroup',
     'articleSubgroup',
@@ -81,6 +83,7 @@ export default {
     'latestNewsSlice',
     'supportCategory',
     'supportSubCategory',
+    'lifeEventPageListSlice',
   ],
   // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article'],

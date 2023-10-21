@@ -9,8 +9,9 @@ import cn from 'classnames'
 
 export interface PdfViewerProps {
   file: string
-  renderMode?: 'svg' | 'canvas'
   showAllPages?: boolean
+  scale?: number
+  autoWidth?: boolean
 }
 interface PdfProps {
   numPages: number
@@ -24,10 +25,11 @@ interface IPdfLib {
   Outline: typeof Outline
 }
 
-export const PdfViewer: FC<PdfViewerProps> = ({
+export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
   file,
-  renderMode = 'svg',
   showAllPages = false,
+  scale = 1,
+  autoWidth = true,
 }) => {
   const [numPages, setNumPages] = useState(0)
   const [pageNumber, setPageNumber] = useState(1)
@@ -72,16 +74,26 @@ export const PdfViewer: FC<PdfViewerProps> = ({
         <pdfLib.Document
           file={file}
           onLoadSuccess={onDocumentLoadSuccess}
-          renderMode={renderMode}
-          className={styles.pdfViewer}
+          className={cn(styles.pdfViewer, { [styles.pdfSvgPage]: autoWidth })}
           loading={() => loadingView()}
         >
           {showAllPages ? (
             [...Array(numPages)].map((x, page) => (
-              <pdfLib.Page key={`page_${page + 1}`} pageNumber={page + 1} />
+              <pdfLib.Page
+                key={`page_${page + 1}`}
+                pageNumber={page + 1}
+                renderTextLayer={false}
+                renderAnnotationLayer={false}
+                scale={scale}
+              />
             ))
           ) : (
-            <pdfLib.Page pageNumber={pageNumber} />
+            <pdfLib.Page
+              renderTextLayer={false}
+              renderAnnotationLayer={false}
+              pageNumber={pageNumber}
+              scale={scale}
+            />
           )}
         </pdfLib.Document>
 
