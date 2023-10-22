@@ -19,8 +19,8 @@ export class Manual {
   @Field()
   slug!: string
 
-  @CacheField(() => [SliceUnion])
-  description: Array<typeof SliceUnion> = []
+  @CacheField(() => [SliceUnion], { nullable: true })
+  description?: Array<typeof SliceUnion>
 
   @CacheField(() => [ManualChapter])
   chapters!: ManualChapter[]

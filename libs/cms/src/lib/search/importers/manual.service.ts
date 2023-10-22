@@ -33,7 +33,7 @@ export class ManualSyncService implements CmsSyncProvider<IManual> {
             return false
           }
 
-          const content = extractStringsFromObject(mapped.description)
+          const content = extractStringsFromObject(mapped.description ?? [])
 
           const tags = [
             {
