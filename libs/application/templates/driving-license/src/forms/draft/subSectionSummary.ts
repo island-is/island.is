@@ -151,8 +151,8 @@ export const subSectionSummary = buildSubSection({
           label: m.overviewPaymentCharge,
           value: ({ externalData, answers }) => {
             const items = externalData.payment.data as {
-             priceAmount: number
-             chargeItemCode: string
+              priceAmount: number
+              chargeItemCode: string
             }[]
             const targetCode =
               answers.applicationFor === B_TEMP ? 'AY114' : 'AY110'

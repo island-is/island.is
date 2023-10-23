@@ -55,8 +55,8 @@ export const sectionExternalData = buildSubSection({
           title: '',
         }),
         buildDataProviderItem({
-         provider: SyslumadurPaymentCatalogApi,
-         title: '',
+          provider: SyslumadurPaymentCatalogApi,
+          title: '',
         }),
         buildDataProviderItem({
           provider: TeachersApi,

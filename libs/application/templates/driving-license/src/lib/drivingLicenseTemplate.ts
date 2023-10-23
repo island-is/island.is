@@ -159,7 +159,7 @@ const template: ApplicationTemplate<
           progress: 0.9,
           lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
-           action: ApiActions.createCharge,
+            action: ApiActions.createCharge,
           }),
           roles: [
             {
