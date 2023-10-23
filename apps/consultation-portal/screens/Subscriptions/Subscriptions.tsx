@@ -1,5 +1,5 @@
-import { toast } from '@island.is/island-ui/core'
 import { useState } from 'react'
+import { toast } from '@island.is/island-ui/core'
 import { Area, SubscriptionTypes } from '../../types/enums'
 import {
   ArrOfTypesForSubscriptions,
@@ -43,7 +43,7 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
 
   const { postSubsMutation } = usePostSubscription()
 
-  const { searchIsLoading } = useSearchSubscriptions({
+  useSearchSubscriptions({
     searchValue: searchValue,
     sortTitle: sortTitle,
     subscriptionArray: subscriptionArray,

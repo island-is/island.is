@@ -9858,36 +9858,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hugsmidjan/htmldiff-js@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "@hugsmidjan/htmldiff-js@npm:1.2.1"
-  checksum: 1289d9446b984beb8dce10e108c00bba87f41ec320f232d7d3cfa4d18e7257da366c0cf19cad408026e043683c4afff6d10bf6857682172359957f559fe9634c
+"@hugsmidjan/qj@npm:^4.19.0, @hugsmidjan/qj@npm:^4.7.0":
+  version: 4.22.1
+  resolution: "@hugsmidjan/qj@npm:4.22.1"
+  checksum: 9bc8999a625b31f59b1ef1dc636d253440a2b55a81384cd83dad651be2b0d05ccf140bd1f5b9393c99e7e09f6bcc69db7af8963bacf087fe062e30d84659894a
   languageName: node
   linkType: hard
 
-"@hugsmidjan/qj@npm:^4.1.1":
-  version: 4.9.0
-  resolution: "@hugsmidjan/qj@npm:4.9.0"
-  checksum: 1ccc21559fd3f9aee553935142145dcc1b074614cf0e33f30cd30edd7eb38dfc4c13a1d938cf59e31defa9c6d437ee49730b8c11ca5d64e1e51195e1830cb1e1
-  languageName: node
-  linkType: hard
-
-"@hugsmidjan/qj@npm:^4.10.2":
-  version: 4.18.0
-  resolution: "@hugsmidjan/qj@npm:4.18.0"
-  checksum: 53d2a75747441c216053de327a331fe01b1a48a6a685f66f07af9d27d96e9db403bd23c77cfbfad212fbd25535eb3dd240f73e1ec63345e8e2c6dad5f8b14d15
-  languageName: node
-  linkType: hard
-
-"@hugsmidjan/react@npm:^0.4.23":
-  version: 0.4.27
-  resolution: "@hugsmidjan/react@npm:0.4.27"
+"@hugsmidjan/react@npm:^0.4.4":
+  version: 0.4.33
+  resolution: "@hugsmidjan/react@npm:0.4.33"
   dependencies:
-    "@hugsmidjan/qj": ^4.1.1
+    "@hugsmidjan/qj": ^4.19.0
   peerDependencies:
     react: ">=16.8 <19"
     react-dom: ">=16.8 <19"
-  checksum: 8346aa4d56fd97504183ae8ceba2f3323fb8935473d00972fd4c6eea7b8fe9094af35ef66b7b17e30d12b69b8211d98b2d08afa6179f44121d3f21f3a0c70545
+  checksum: c204cf76075d27de6d01ff75879c1a44256e64ecb1929ecb80bb93c57c3cd191aada3ee2d0a1030b3e2743e05084e05a0209348de8e0b08690711102c5602a98
   languageName: node
   linkType: hard
 
@@ -10039,22 +10025,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@island.is/regulations-tools@npm:0.7.11":
-  version: 0.7.11
-  resolution: "@island.is/regulations-tools@npm:0.7.11"
+"@island.is/regulations-tools@npm:0.7.9":
+  version: 0.7.9
+  resolution: "@island.is/regulations-tools@npm:0.7.9"
   dependencies:
-    "@hugsmidjan/htmldiff-js": ^1.2.1
-    "@hugsmidjan/qj": ^4.10.2
-    "@hugsmidjan/react": ^0.4.23
+    "@hugsmidjan/qj": ^4.7.0
+    "@hugsmidjan/react": ^0.4.4
     "@tinymce/tinymce-react": ^3.13.0
     cleanup-prettier: "npm:prettier@2.2.0"
+    htmldiff-js: "github:hugsmidjan-is/htmldiff-js#semver:^1.1.1"
     jsdom: ^16.4.0
     tinymce: ^5.10.2
     translate.js: ^1.3.2
   peerDependencies:
     react: ">=16.8 <19"
     react-dom: ">=16.8 <19"
-  checksum: f3fba70becfadb2c0f87027f2d84ba2a7429da7eaf8fbf5e10d000f41b92e02117a974f72a28f761cf10f8bdfb6c9ed0f51c525d3a58fbdefa632d63c95253d3
+  checksum: 6d72d77cd045bcb237a675033d5afd39f4952f34e26718da22b50b62d2c683670dae328dc13e23187ae9ea97b87dc8409cd44b8043c13119c432000c83fc848a
   languageName: node
   linkType: hard
 
@@ -22492,6 +22478,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"canvas@npm:^2.11.2":
+  version: 2.11.2
+  resolution: "canvas@npm:2.11.2"
+  dependencies:
+    "@mapbox/node-pre-gyp": ^1.0.0
+    nan: ^2.17.0
+    node-gyp: latest
+    simple-get: ^3.0.3
+  checksum: 61e554aef80022841dc836964534082ec21435928498032562089dfb7736215f039c7d99ee546b0cf10780232d9bf310950f8b4d489dc394e0fb6f6adfc97994
+  languageName: node
+  linkType: hard
+
 "capital-case@npm:^1.0.4":
   version: 1.0.4
   resolution: "capital-case@npm:1.0.4"
@@ -23232,6 +23230,13 @@ __metadata:
   version: 1.1.1
   resolution: "clsx@npm:1.1.1"
   checksum: ff052650329773b9b245177305fc4c4dc3129f7b2be84af4f58dc5defa99538c61d4207be7419405a5f8f3d92007c954f4daba5a7b74e563d5de71c28c830063
+  languageName: node
+  linkType: hard
+
+"clsx@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "clsx@npm:2.0.0"
+  checksum: a2cfb2351b254611acf92faa0daf15220f4cd648bdf96ce369d729813b85336993871a4bf6978ddea2b81b5a130478339c20d9d0b5c6fc287e5147f0c059276e
   languageName: node
   linkType: hard
 
@@ -31602,6 +31607,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"htmldiff-js@github:hugsmidjan-is/htmldiff-js#semver:^1.1.1":
+  version: 1.1.1
+  resolution: "htmldiff-js@https://github.com/hugsmidjan-is/htmldiff-js.git#commit=b2400db41f329180cedf33547f1cc5b6da85f15f"
+  checksum: 34acbed7bbf829a2f99075d54979b3c20ffb5dadf94e754c2d8b3f2ba88ef5a71dcb9d07ce73f12636cfa225110d6dff01c54c594cf6e0853332248016f7ccf6
+  languageName: node
+  linkType: hard
+
 "htmlnano@npm:0.2.7":
   version: 0.2.7
   resolution: "htmlnano@npm:0.2.7"
@@ -33561,7 +33573,7 @@ __metadata:
     "@graphql-codegen/typescript-resolvers": 2.7.3
     "@hookform/error-message": 2.0.1
     "@island.is/login": 1.2.1
-    "@island.is/regulations-tools": 0.7.11
+    "@island.is/regulations-tools": 0.7.9
     "@jeremybarbet/contentful-extension-scripts": 0.22.7
     "@keyv/redis": 2.6.1
     "@nestjs/apollo": 10.1.0
@@ -33832,7 +33844,7 @@ __metadata:
     react-keyed-flatten-children: 1.2.0
     react-modal: 3.15.1
     react-number-format: 4.9.1
-    react-pdf: 5.2.0
+    react-pdf: 7.5.0
     react-popper: 2.3.0
     react-remove-scroll: 2.5.6
     react-router-dom: 6.11.2
@@ -37467,10 +37479,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"make-cancellable-promise@npm:^1.0.0":
-  version: 1.1.0
-  resolution: "make-cancellable-promise@npm:1.1.0"
-  checksum: e036fa6164acb52b0e6298c4d5f4e0ba887e4c96de15ef1e316fcc8374995c29543e8a3ea48d38e1c2c767e985c8869c744774af5881700a90d21128b7535a68
+"make-cancellable-promise@npm:^1.3.1":
+  version: 1.3.1
+  resolution: "make-cancellable-promise@npm:1.3.1"
+  checksum: f7ca52cdf6f22381600406c05a332e776bf9b71085d17e62a5f9860351de4fc696a9ed03e7bfdd36d3058c0307d33e97166bc210f5e8c842921a92986158361d
   languageName: node
   linkType: hard
 
@@ -37500,10 +37512,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"make-event-props@npm:^1.1.0":
-  version: 1.3.0
-  resolution: "make-event-props@npm:1.3.0"
-  checksum: 92b8845f63a25fc7da80ed2a5cc5055fba30066b83ad88e4f8c090cd99ae53a13297156df0bd0487d340507994362deaed5580266f73dfe142dc46163b5b8a6a
+"make-event-props@npm:^1.6.0":
+  version: 1.6.1
+  resolution: "make-event-props@npm:1.6.1"
+  checksum: 0457abdaf0c5edea1a284ec58ca5afed0e3de96efd3754dca02fbe767b6d17607eb28862802bc769656e06bb6374cd0b568e960d23996798dc872d09de537f71
   languageName: node
   linkType: hard
 
@@ -38147,13 +38159,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"merge-class-names@npm:^1.1.1":
-  version: 1.4.2
-  resolution: "merge-class-names@npm:1.4.2"
-  checksum: 569c333ab0d7fa1e06ae6e637d58e0d4623d7b165ea78d085c1bbd042568d8793bb7ce54ec55580679416046b11fc6eaf4956d68d19964cb320edc034e182c1d
-  languageName: node
-  linkType: hard
-
 "merge-descriptors@npm:1.0.1":
   version: 1.0.1
   resolution: "merge-descriptors@npm:1.0.1"
@@ -38161,10 +38166,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"merge-refs@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "merge-refs@npm:1.0.0"
-  checksum: 3b4ea1a178c52349a0e725281aa34b130fb6819d22f8e616ae30da6f4da223d9c3a53f6e1a427c5ba56bf6b162c98de95a53f76e01a343e10162823fee33f64a
+"merge-refs@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "merge-refs@npm:1.2.1"
+  dependencies:
+    "@types/react": "*"
+  checksum: 22b1177105b112f34753eb6b899a9c1f7ad06f47c06b16173d16ba3f183f37c557a2f837fea69d3997e0f8c0643d942f3068138993790c800601bae62acde070
   languageName: node
   linkType: hard
 
@@ -39799,6 +39806,15 @@ __metadata:
   dependencies:
     node-gyp: latest
   checksum: 33e1bb4dfca447fe37d4bb5889be55de154828632c8d38646db67293a21afd61ed9909cdf1b886214a64707d935926c4e60e2b09de9edfc2ad58de31d6ce8f39
+  languageName: node
+  linkType: hard
+
+"nan@npm:^2.17.0":
+  version: 2.18.0
+  resolution: "nan@npm:2.18.0"
+  dependencies:
+    node-gyp: latest
+  checksum: 4fe42f58456504eab3105c04a5cffb72066b5f22bd45decf33523cb17e7d6abc33cca2a19829407b9000539c5cb25f410312d4dc5b30220167a3594896ea6a0a
   languageName: node
   linkType: hard
 
@@ -42166,6 +42182,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"path2d-polyfill@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "path2d-polyfill@npm:2.0.1"
+  checksum: e38a4f920be3550e8334b899cc56f4fca0a976ca69404ee10d656a45d422996b7e27e294e2cf0aac2e410ce59d6977cde9f95586e62a24e6c904716695e059f8
+  languageName: node
+  linkType: hard
+
 "path@npm:^0.12.7":
   version: 0.12.7
   resolution: "path@npm:0.12.7"
@@ -42215,10 +42238,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pdfjs-dist@npm:2.5.207":
-  version: 2.5.207
-  resolution: "pdfjs-dist@npm:2.5.207"
-  checksum: 253c7f44e7412d96b373162928b4ab820a4c1589e684c8cb8beb6306ffd62416402006edbe4a817789cb3f2f25ac21f217478aa335bb18bf66ca94d8fe65186e
+"pdfjs-dist@npm:3.11.174":
+  version: 3.11.174
+  resolution: "pdfjs-dist@npm:3.11.174"
+  dependencies:
+    canvas: ^2.11.2
+    path2d-polyfill: ^2.0.1
+  dependenciesMeta:
+    canvas:
+      optional: true
+    path2d-polyfill:
+      optional: true
+  checksum: 62f5a64ca0b2dbc855701ebf9a65c3e48c3c9aa5d64c50eb42bb9ff50a326f3eddab7f2a134ef0398398b1ccff9d842935b9f31358c9103bdc71406632d1a7fa
   languageName: node
   linkType: hard
 
@@ -45172,22 +45203,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-pdf@npm:5.2.0":
-  version: 5.2.0
-  resolution: "react-pdf@npm:5.2.0"
+"react-pdf@npm:7.5.0":
+  version: 7.5.0
+  resolution: "react-pdf@npm:7.5.0"
   dependencies:
-    "@babel/runtime": ^7.0.0
-    make-cancellable-promise: ^1.0.0
-    make-event-props: ^1.1.0
-    merge-class-names: ^1.1.1
-    merge-refs: ^1.0.0
-    pdfjs-dist: 2.5.207
+    clsx: ^2.0.0
+    make-cancellable-promise: ^1.3.1
+    make-event-props: ^1.6.0
+    merge-refs: ^1.2.1
+    pdfjs-dist: 3.11.174
     prop-types: ^15.6.2
-    worker-loader: ^3.0.0
+    tiny-invariant: ^1.0.0
+    tiny-warning: ^1.0.0
   peerDependencies:
-    react: ^16.3.0 || ^17.0.0-0
-    react-dom: ^16.3.0 || ^17.0.0-0
-  checksum: 14002f405e671af094fa4255e9e12c8b6c1c8b0884e18e83a2818e274aae261e078ebf3c9be8239f546968e5aaf8b6c4b117a822555eae975115b69fdf0930cf
+    "@types/react": ^16.8.0 || ^17.0.0 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 53d6ebe47f4562409c47ff99bc133b83abe6d12d0c63266e4f1b9e7bf630cdca7da5b0a7545f40ec0dd207d0d3944b94ef5d7863bffd9cb8a4162e734367ff42
   languageName: node
   linkType: hard
 
@@ -47984,6 +48019,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"simple-concat@npm:^1.0.0":
+  version: 1.0.1
+  resolution: "simple-concat@npm:1.0.1"
+  checksum: 4d211042cc3d73a718c21ac6c4e7d7a0363e184be6a5ad25c8a1502e49df6d0a0253979e3d50dbdd3f60ef6c6c58d756b5d66ac1e05cda9cacd2e9fc59e3876a
+  languageName: node
+  linkType: hard
+
+"simple-get@npm:^3.0.3":
+  version: 3.1.1
+  resolution: "simple-get@npm:3.1.1"
+  dependencies:
+    decompress-response: ^4.2.0
+    once: ^1.3.1
+    simple-concat: ^1.0.0
+  checksum: 80195e70bf171486e75c31e28e5485468195cc42f85940f8b45c4a68472160144d223eb4d07bc82ef80cb974b7c401db021a540deb2d34ac4b3b8883da2d6401
+  languageName: node
+  linkType: hard
+
 "simple-plist@npm:^1.1.0":
   version: 1.4.0
   resolution: "simple-plist@npm:1.4.0"
@@ -50394,14 +50447,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tiny-invariant@npm:^1.3.1":
+"tiny-invariant@npm:^1.0.0, tiny-invariant@npm:^1.3.1":
   version: 1.3.1
   resolution: "tiny-invariant@npm:1.3.1"
   checksum: 872dbd1ff20a21303a2fd20ce3a15602cfa7fcf9b228bd694a52e2938224313b5385a1078cb667ed7375d1612194feaca81c4ecbe93121ca1baebe344de4f84c
   languageName: node
   linkType: hard
 
-"tiny-warning@npm:^1.0.2, tiny-warning@npm:^1.0.3":
+"tiny-warning@npm:^1.0.0, tiny-warning@npm:^1.0.2, tiny-warning@npm:^1.0.3":
   version: 1.0.3
   resolution: "tiny-warning@npm:1.0.3"
   checksum: da62c4acac565902f0624b123eed6dd3509bc9a8d30c06e017104bedcf5d35810da8ff72864400ad19c5c7806fc0a8323c68baf3e326af7cb7d969f846100d71
@@ -53279,18 +53332,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"worker-loader@npm:^3.0.0":
-  version: 3.0.8
-  resolution: "worker-loader@npm:3.0.8"
-  dependencies:
-    loader-utils: ^2.0.0
-    schema-utils: ^3.0.0
-  peerDependencies:
-    webpack: ^4.0.0 || ^5.0.0
-  checksum: 84f4a7eeb2a1d8b9704425837e017c91eedfae67ac89e0b866a2dcf283323c1dcabe0258196278b7d5fd0041392da895c8a0c59ddf3a94f1b2e003df68ddfec3
-  languageName: node
-  linkType: hard
-
 "workerpool@npm:6.1.0":
   version: 6.1.0
   resolution: "workerpool@npm:6.1.0"
@@ -53533,17 +53574,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xmldom@npm:0.1.27":
-  version: 0.1.27
-  resolution: "xmldom@npm:0.1.27"
-  checksum: a61ad9bd04c87f6df1dc69e88c0f14e3a761d85a9e3f5047b89c2db2b84491ebe25e1ac9a69e4bfc2a9d142b78614a476cc256932606b8a4bb91f342d43f034a
-  languageName: node
-  linkType: hard
-
-"xmldom@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "xmldom@npm:0.3.0"
-  checksum: a4d1e48dc7fa5f5e460c24e26d9d2d98edc52cdfcbf3b2c0edbb61d1808d1af986bc3ef7f4cafa673edf3f08130ed2def9ec6d0a993e2f33c2804b1726cab100
+"xmldom@github:xmldom/xmldom#0.7.0":
+  version: 0.7.0
+  resolution: "xmldom@https://github.com/xmldom/xmldom.git#commit=c568938641cc1f121cef5b4df80fcfda1e489b6e"
+  checksum: 86beb4f90675610ad4c2de68a46c7747b90b2a077fa73069973bd681b07fe4384361cfe1785d090e42f499095a7cfaadc3988a1aca2a3ef55c3d9d9a98d9e1d0
   languageName: node
   linkType: hard
 
