@@ -2,7 +2,6 @@
   "affected": {
     "defaultBase": "main"
   },
-  "npmScope": "island.is",
   "tasksRunnerOptions": {
     "default": {
       "runner": "nx/tasks-runners/default",
