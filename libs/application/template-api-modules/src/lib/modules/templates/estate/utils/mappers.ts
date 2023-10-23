@@ -117,6 +117,13 @@ export const expandEstateMembers = (
       ssn: member.ssn ?? '',
       phone: member.phone ?? '',
       relation: member.relation ?? 'Óþekkt',
+      advocate: {
+        address: member.advocate?.address ?? '',
+        email: member.advocate?.email ?? '',
+        name: member.advocate?.name ?? '',
+        nationalId: member.advocate?.nationalId ?? '',
+        phone: member.advocate?.phone ?? '',
+      }
     })
   })
   return expandedMembers

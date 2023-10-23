@@ -18,6 +18,14 @@ type Notifier = {
   relation: string
 }
 
+type Advocate = {
+  name?: string
+  address?: string
+  nationalId?: string
+  email?: string
+  phone?: string
+}
+
 type EstateMember = {
   name: string
   ssn?: string
@@ -27,6 +35,7 @@ type EstateMember = {
   foreignCitizenShip?: 'yes' | 'no'
   phone?: string
   email?: string
+  advocate?: Advocate
 } & SystemMetadata
 
 type Representative = {
