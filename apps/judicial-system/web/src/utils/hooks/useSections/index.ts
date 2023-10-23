@@ -989,7 +989,7 @@ const useSections = (
     }
   }
 
-  const getRestrictionCaseExtenstionSections = (
+  const getRestrictionCaseExtensionSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
@@ -1089,7 +1089,7 @@ const useSections = (
     }
   }
 
-  const getInvestigationCaseExtenstionSections = (
+  const getInvestigationCaseExtensionSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
@@ -1328,8 +1328,8 @@ const useSections = (
       ...(workingCase.parentCase
         ? [
             isRestrictionCase(workingCase.type)
-              ? getRestrictionCaseExtenstionSections(workingCase, user)
-              : getInvestigationCaseExtenstionSections(workingCase, user),
+              ? getRestrictionCaseExtensionSections(workingCase, user)
+              : getInvestigationCaseExtensionSections(workingCase, user),
             isRestrictionCase(workingCase.type)
               ? getRestrictionCaseExtensionCourtSections(workingCase, user)
               : getInvestigationCaseExtensionCourtSections(workingCase, user),
