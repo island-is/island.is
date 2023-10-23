@@ -24,7 +24,7 @@ export const modalHeader = style({
 export const docWrap = style({
   ...themeUtils.responsiveStyle({
     md: {
-      minHeight: `calc(50vh - ${hheight}px)`,
+      minHeight: `650px`,
     },
   }),
 })
