@@ -6,8 +6,15 @@ import { useLocale } from '@island.is/localization'
 import { messages } from '../../../../lib/messages'
 import { useIntl } from 'react-intl'
 
+type DrugRowDrug = {
+  name?: string | null
+  strength?: string | null
+  totalPrice?: number | null
+  totalPaidIndividual?: number | null
+}
+
 type Props = {
-  drug: RightsPortalDrug
+  drug: DrugRowDrug
   handleQuantityChange: (val: number) => void
   handleRemove: () => void
 }
@@ -21,8 +28,6 @@ export const DrugRow: React.FC<Props> = ({
   const intl = useIntl()
 
   const [quantity, setQuantity] = useState(1)
-
-  const currentPrice = (drug?.price ?? 0) * quantity
 
   const handleIncrement = () => {
     setQuantity((prev) => prev + 1)
@@ -49,10 +54,18 @@ export const DrugRow: React.FC<Props> = ({
       </T.Data>
       <T.Data>
         {formatMessage(messages.medicinePaymentPaidAmount, {
-          amount: intl.formatNumber(currentPrice),
+          amount: drug.totalPrice
+            ? intl.formatNumber(drug.totalPrice)
+            : drug.totalPrice,
         })}
       </T.Data>
-      <T.Data>Vantar gögn</T.Data>
+      <T.Data>
+        {formatMessage(messages.medicinePaymentPaidAmount, {
+          amount: drug.totalPaidIndividual
+            ? intl.formatNumber(drug.totalPaidIndividual)
+            : drug.totalPaidIndividual,
+        })}
+      </T.Data>
       <T.Data>
         <button onClick={handleRemove}>
           <Icon icon="trash" color="blue400" type="outline" size="small" />

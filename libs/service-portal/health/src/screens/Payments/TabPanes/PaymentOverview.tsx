@@ -46,7 +46,7 @@ export const PaymentOverview = () => {
         />
       ) : loading ? (
         <SkeletonLoader space={2} repeat={3} height={24} />
-      ) : (
+      ) : status ? (
         <Box>
           <Box
             marginBottom={SECTION_GAP}
@@ -141,11 +141,7 @@ export const PaymentOverview = () => {
                           <T.Data>
                             <Button
                               iconType="outline"
-                              onClick={
-                                item.documentId === 44
-                                  ? () => console.log('download doc')
-                                  : undefined
-                              }
+                              onClick={() => undefined} // TODO: Add download functionality
                               variant="text"
                               icon="open"
                               size="small"
@@ -162,6 +158,12 @@ export const PaymentOverview = () => {
             </Box>
           </Box>
         </Box>
+      ) : (
+        <AlertMessage
+          title={formatMessage(m.noData)}
+          message={formatMessage(m.noDataFound)}
+          type="warning"
+        />
       )}
     </Box>
   )

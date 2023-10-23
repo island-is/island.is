@@ -11,7 +11,7 @@ import { useLocale } from '@island.is/localization'
 import { messages } from '../../../lib/messages'
 import { CONTENT_GAP_LG, SECTION_GAP } from '../constants'
 import { IntroHeader, m } from '@island.is/service-portal/core'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
 import {
   useGetDrugCalculationMutation,
@@ -34,7 +34,7 @@ export const MedicineCalulator = () => {
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [pageNumber, setPageNumber] = useState(DEFAULT_PAGE_NUMBER)
-
+  const [hasCalculated, setHasCalculated] = useState(false)
   const [hoveredDrug, setHoveredDrug] = useState(-1)
   const [selectedDrugList, setSelectedDrugList] = useState<
     RightsPortalCalculatorRequestInput[]
@@ -77,6 +77,7 @@ export const MedicineCalulator = () => {
   const CALCULATOR_DISABLED = selectedDrugList.length === 0
 
   const handleCalculate = () => {
+    if (!hasCalculated) setHasCalculated(true)
     const input = {
       drugCalculatorRequestDTO: {
         drugs: selectedDrugList.map((d) => ({
@@ -199,7 +200,11 @@ export const MedicineCalulator = () => {
                           variant="text"
                           icon="pencil"
                           onClick={() =>
-                            drug?.name && drug.strength
+                            drug?.name &&
+                            drug.strength &&
+                            selectedDrugList.find(
+                              (d) => d.nordicCode === drug.nordicCode,
+                            ) === undefined
                               ? handleAddDrug(drug, drug.name, drug.strength)
                               : undefined
                           }
@@ -238,35 +243,34 @@ export const MedicineCalulator = () => {
         )}
       </Box>
       <Box marginBottom={SECTION_GAP}>
-        <Text marginBottom={CONTENT_GAP_LG} variant="h5">
-          {formatMessage(messages.medicineResults)}
-        </Text>
         <Box
           marginBottom={CONTENT_GAP_LG}
           display="flex"
           justifyContent="spaceBetween"
+          alignItems="center"
           flexWrap="wrap"
         >
-          <Box display="flex" columnGap={CONTENT_GAP_LG}>
+          {/* <Box display="flex" hidden={true} columnGap={CONTENT_GAP_LG}>
             <Button
               variant="utility"
               icon="print"
               size="small"
-              onClick={() => console.log('print')}
+              onClick={() => undefined} // TODO: Add funcitonality
               disabled={CALCULATOR_DISABLED}
             >
-              Prenta
+              {formatMessage(m.print)}
             </Button>
             <Button
               variant="utility"
               icon="download"
               size="small"
-              onClick={() => console.log('download')}
+              onClick={() => undefined} // TODO: Add funcitonality
               disabled={CALCULATOR_DISABLED}
             >
-              Sækja
+              {formatMessage(m.download)}
             </Button>
-          </Box>
+          </Box> */}
+          <Text variant="h5">{formatMessage(messages.medicineResults)}</Text>
           <Button
             dataTestId="calculate-button"
             size="medium"
@@ -274,7 +278,7 @@ export const MedicineCalulator = () => {
             disabled={CALCULATOR_DISABLED}
             onClick={handleCalculate}
           >
-            Reikna
+            {formatMessage(messages.calculate)}
           </Button>
         </Box>
         <Box className={CALCULATOR_DISABLED ? styles.disabledTable : ''}>
@@ -304,7 +308,17 @@ export const MedicineCalulator = () => {
                 return (
                   <tr key={i}>
                     <DrugRow
-                      drug={d}
+                      drug={{
+                        ...d,
+                        totalPrice: d.lineNumber
+                          ? calculatorResults?.drugs?.at(d.lineNumber - 1)
+                              ?.fullPrice
+                          : undefined,
+                        totalPaidIndividual: d.lineNumber
+                          ? calculatorResults?.drugs?.at(d.lineNumber - 1)
+                              ?.customerPrice
+                          : undefined,
+                      }}
                       handleQuantityChange={(val) =>
                         setSelectedDrugList((list) =>
                           list.map((drug) => {
@@ -318,20 +332,21 @@ export const MedicineCalulator = () => {
                           }),
                         )
                       }
-                      handleRemove={() =>
+                      handleRemove={() => {
                         setSelectedDrugList((list) =>
                           list.filter(
                             (drug) => drug.nordicCode !== d.nordicCode,
                           ),
                         )
-                      }
+                        handleCalculate()
+                      }}
                     />
                   </tr>
                 )
               })}
             </T.Body>
             <T.Foot>
-              {calculatorResults && (
+              {calculatorResults && !!selectedDrugList.length && (
                 <tr className={styles.tableRowStyles}>
                   <T.Data>{formatMessage(m.total)}</T.Data>
                   <T.Data></T.Data>

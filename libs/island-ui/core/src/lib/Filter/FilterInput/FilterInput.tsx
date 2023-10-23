@@ -13,7 +13,6 @@ export interface FilterInputProps {
     event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void
   backgroundColor?: ResponsiveProp<InputBackgroundColor>
-  loading?: boolean
 }
 
 export const FilterInput: React.FC<
@@ -26,7 +25,6 @@ export const FilterInput: React.FC<
   onChange,
   onKeyDown,
   backgroundColor = ['blue', 'blue', 'white'],
-  loading = false,
 }) => {
   return (
     <Input
@@ -39,7 +37,6 @@ export const FilterInput: React.FC<
       value={value}
       onChange={(event) => onChange(event.target.value)}
       onKeyDown={onKeyDown}
-      loading={loading}
     />
   )
 }

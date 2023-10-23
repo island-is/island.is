@@ -1,6 +1,10 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
+  calculate: {
+    id: 'sp.health:calculate',
+    defaultMessage: 'Reikna',
+  },
   chooseMedicineTabs: {
     id: 'sp.health:choose-medicine-tabs',
     defaultMessage: 'Veldu flokk',

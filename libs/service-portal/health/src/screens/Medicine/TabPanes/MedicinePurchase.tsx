@@ -65,12 +65,12 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
 
   const { data, loading, error } = useGetDrugsDataQuery()
 
-  const [getPaymenetPeriodsQuery] = useGetDrugsBillsLazyQuery()
+  const [getPaymentPeriodsQuery] = useGetDrugsBillsLazyQuery()
 
   useEffect(() => {
     if (selectedPeriod) {
       setBillsLoading(true)
-      getPaymenetPeriodsQuery({
+      getPaymentPeriodsQuery({
         variables: {
           input: {
             paymentPeriodId: selectedPeriod?.id ?? '',
@@ -85,7 +85,7 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
         },
       })
     }
-  }, [selectedPeriod])
+  }, [selectedPeriod, getPaymentPeriodsQuery])
 
   const [lineItemQuery, { loading: lineItemLoading }] =
     useGetDrugBillLineItemLazyQuery()
@@ -214,8 +214,8 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
         </Button>
         <Button
           variant="utility"
-          onClick={() => onTabChange(MedicineTabs.CALCULATOR)} // Does not update the Tabs component internal state (useTabState).. needs further investigation
-          icon="print"
+          onClick={() => onTabChange(MedicineTabs.CALCULATOR)}
+          icon="calculator"
           iconType="outline"
         >
           {formatMessage(messages.medicineCalculatorTitle)}

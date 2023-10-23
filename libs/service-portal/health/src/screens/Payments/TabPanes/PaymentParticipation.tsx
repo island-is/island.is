@@ -16,7 +16,6 @@ import * as styles from './Payments.css'
 import {
   useGetCopaymentStatusQuery,
   useGetCopaymentPeriodsQuery,
-  useGetCopaymentBillsLazyQuery,
   useGetCopaymentBillsQuery,
 } from '../Payments.generated'
 import { useIntl } from 'react-intl'
@@ -56,12 +55,12 @@ export const PaymentPartication = () => {
       {error ? (
         <AlertMessage
           type="error"
-          title="Villa kom upp"
-          message="Ekki tókst að sækja greiðsluupplýsingar"
+          title={formatMessage(m.errorTitle)}
+          message={formatMessage(m.errorFetch)}
         />
       ) : loading ? (
         <SkeletonLoader space={2} repeat={3} height={24} />
-      ) : (
+      ) : status ? (
         <Box>
           <Box borderBottomWidth="standard" borderColor="blueberry200">
             <Stack dividers="blueberry200" space={1}>
@@ -118,8 +117,8 @@ export const PaymentPartication = () => {
               {periodsError ? (
                 <AlertMessage
                   type="error"
-                  title="Villa kom upp"
-                  message="Ekki tókst að sækja greiðsluupplýsingar"
+                  title={formatMessage(m.errorTitle)}
+                  message={formatMessage(m.errorFetch)}
                 />
               ) : periodsLoading ? (
                 <SkeletonLoader space={2} repeat={3} height={24} />
@@ -172,9 +171,9 @@ export const PaymentPartication = () => {
                               {formatMessage(
                                 messages.medicinePaymentPaidAmount,
                                 {
-                                  amount: period.status
-                                    ? intl.formatNumber(parseInt(period.status))
-                                    : period.status,
+                                  amount: period.overpaid
+                                    ? intl.formatNumber(period.overpaid)
+                                    : period.overpaid,
                                 },
                               )}
                             </T.Data>
@@ -201,7 +200,11 @@ export const PaymentPartication = () => {
                 {formatMessage(messages.monthlyBreakdownOfInvoices)}
               </Text>
               {billsError ? (
-                <AlertMessage type="error" title="Villa kom upp" />
+                <AlertMessage
+                  type="error"
+                  title={formatMessage(m.errorTitle)}
+                  message={formatMessage(m.errorFetch)}
+                />
               ) : billsLoading ? (
                 <SkeletonLoader space={2} repeat={3} height={24} />
               ) : (
@@ -306,6 +309,12 @@ export const PaymentPartication = () => {
             </Box>
           </Box>
         </Box>
+      ) : (
+        <AlertMessage
+          title={formatMessage(m.noData)}
+          message={formatMessage(m.noDataFound)}
+          type="warning"
+        />
       )}
     </Box>
   )
