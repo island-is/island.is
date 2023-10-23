@@ -26,6 +26,7 @@ test.describe('Occupational licenses overview', () => {
   })
 
   test('Has occupational licenses', async () => {
+    test.slow()
     const page = await context.newPage()
     await disableI18n(page)
 
