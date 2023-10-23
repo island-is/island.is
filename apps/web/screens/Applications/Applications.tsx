@@ -16,10 +16,8 @@ import {
   GridColumn,
   Button,
   Table as T,
-  Select,
   StringOption,
 } from '@island.is/island-ui/core'
-import { ProcessEntryLinkButton } from '@island.is/island-ui/contentful'
 import { SearchInput, SearchableTagsFilter, useSearchableTagsFilter } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
@@ -64,10 +62,6 @@ interface CategoryProps {
   countResults: GetSearchCountTagsQuery['searchResults']
   namespace: ApplicationsTexts
 }
-interface SortByOption extends StringOption {
-  sort: 'title' | 'popular',
-  order: 'asc' | 'desc',
-}
 
 const Applications: Screen<CategoryProps> = ({
   page,
@@ -77,51 +71,11 @@ const Applications: Screen<CategoryProps> = ({
 }) => {
   const { query } = useRouter();
   const [q] = useQueryState('q')
-  const [sortOrder, setSortOrder] = useQueryStates(
-    {
-      sort: parseAsString.withDefault('popular'),
-      order: parseAsString.withDefault('desc')
-    },
-    { shallow: false }
-  )
-  const { sort, order } = sortOrder;
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const { category, organization, reset: resetFilters } = useSearchableTagsFilter()
 
-  const sortByOptions = useMemo<SortByOption[]>(() => ([
-      {
-        label: n('sortByPopularityDescending', 'Mest notað'),
-        value: 'sort-by-popularity-descending',
-        sort: 'popular',
-        order: 'desc',
-      },
-      {
-        label: n('sortByPopularityAscending', 'Minnst notað'),
-        value: 'sort-by-popularity-ascending',
-        sort: 'popular',
-        order: 'asc',
-      },
-      {
-        label: n('orderByTitleAscending', 'Titill (a-ö)'),
-        value: 'sort-by-title-ascending',
-        sort: 'title',
-        order: 'asc',
-      },
-      {
-        label: n('orderByTitleDescending', 'Titill (ö-a)'),
-        value: 'sort-by-title-descending',
-        sort: 'title',
-        order: 'desc',
-      },
-    ]
-  ), [])
-
-
-
-
-  const selectedSortByOption = sortByOptions.find((option) => option.sort === sort && option.order === order) ?? sortByOptions[0]
   const articles = searchResults.items as Article[]
   const nothingFound = searchResults.items.length === 0
   const totalSearchResults = searchResults.total
@@ -173,18 +127,6 @@ const Applications: Screen<CategoryProps> = ({
                   flexWrap="nowrap"
                   collapseBelow="md"
                 >
-                  {/* TODO - sorting should be a component */}
-                  <Select
-                    name="sort-option-select"
-                    size="xs"
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore make web strict
-                    onChange={(option: SortByOption) => {
-                      setSortOrder(option)
-                    }}
-                    value={selectedSortByOption}
-                    options={sortByOptions}
-                  />
                   <Inline
                     justifyContent="flexEnd"
                     alignY="center"
@@ -208,7 +150,7 @@ const Applications: Screen<CategoryProps> = ({
                   </Inline>
                 </Inline>
               </Box>
-              {nothingFound && !!q ? (
+              {nothingFound && !!q && (
                 <>
                   <Text variant="intro" as="p">
                     {n(
@@ -239,56 +181,45 @@ const Applications: Screen<CategoryProps> = ({
                     {n('nothingFoundExtendedExplanation')}
                   </Text>
                 </>
-              ) : (
-                <Box marginBottom={2}>
-                  <Text variant="intro" as="p">
-                    {totalSearchResults} {searchResultsText}
-                  </Text>
-                </Box>
               )}
             </Stack>
             <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
-              <T.Table>
-                <T.Head>
-                  <T.Row>
-                    <T.HeadData>{n('applicationName', 'Heiti umsóknar')}</T.HeadData>
-                    <T.HeadData>{n('organization', 'Þjónustuaðili')}</T.HeadData>
-                    <T.HeadData></T.HeadData>
-                  </T.Row>
-                </T.Head>
-                <T.Body>
-                  {articles.map(
-                    (article, index) => (
-                      <T.Row key={index}>
-                        <T.Data>
-                          <Link {...linkResolver('article', [article.slug])} skipTab>
-                            <Button variant="text" as="span">
-                              {article.title}
-                            </Button>
-                          </Link>
-                        </T.Data>
-                        <T.Data>
-                          <Text fontWeight="medium">{article.organization?.[0]?.title}</Text>
-                        </T.Data>
-                        <T.Data>
-                          <Box display="flex" justifyContent="flexEnd">
-                            {article.processEntry?.processLink && (
-                              <ProcessEntryLinkButton
-                                processTitle={
-                                  article.processEntry.processTitle ?? article.title
-                                }
-                                processLink={article.processEntry.processLink}
-                                buttonText={n('application', 'Sækja um')}
-                                size="small"
-                              />
-                            )}
-                          </Box>
-                        </T.Data>
-                      </T.Row>
-                    ),
-                  )}
-                </T.Body>
-              </T.Table>
+              <Box marginTop={4}>
+                <T.Table>
+                  <T.Head>
+                    <T.Row>
+                      <T.HeadData>{n('applicationName', 'Heiti umsóknar')}</T.HeadData>
+                      <T.HeadData>{n('organization', 'Þjónustuaðili')}</T.HeadData>
+                      <T.HeadData></T.HeadData>
+                    </T.Row>
+                  </T.Head>
+                  <T.Body>
+                    {articles.map(
+                      (article, index) => (
+                        <T.Row key={index}>
+                          <T.Data>
+                            <Link {...linkResolver('article', [article.slug])} skipTab>
+                              <Button variant="text" as="span">
+                                {article.title}
+                              </Button>
+                            </Link>
+                          </T.Data>
+                          <T.Data>
+                            <Text fontWeight="medium">{article.organization?.[0]?.title}</Text>
+                          </T.Data>
+                          <T.Data align="right">
+                            <Link {...linkResolver('article', [article.slug])} skipTab>
+                              <Button variant="text" as="span">
+                                {n('seeMore', 'Nánar')}
+                              </Button>
+                            </Link>
+                          </T.Data>
+                        </T.Row>
+                      ),
+                    )}
+                  </T.Body>
+                </T.Table>
+              </Box>
               <Stack space={2}>
                 {totalSearchResults > 0 && (
                   <Box paddingTop={6}>
@@ -323,14 +254,12 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
   const {
     q = '*',
     page: pageParam = '1',
-    sort: sortParam = 'popular',
     order: orderParam = 'desc',
     category: categoryParam,
     organization: organizationParam,
   } = query;
   const queryString = parseAsString.withDefault('*').parseServerSide(q)
   const page = parseAsInteger.withDefault(1).parseServerSide(pageParam)
-  const sort = parseAsString.parseServerSide(sortParam) === 'title' ? SortField.Title : SortField.Popular
   const order = parseAsString.parseServerSide(orderParam) === 'asc' ? SortDirection.Asc : SortDirection.Desc
   const category = parseAsArrayOf(parseAsString).withDefault([]).parseServerSide(categoryParam)
   const organization = parseAsArrayOf(parseAsString).withDefault([]).parseServerSide(organizationParam)
@@ -370,7 +299,7 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
         query: {
           language: locale as ContentLanguage,
           queryString,
-          sort,
+          sort: SortField.Popular,
           order,
           types,
           ...(tags.length && { tags }),
