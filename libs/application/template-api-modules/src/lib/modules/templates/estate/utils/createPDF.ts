@@ -1,79 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  EstateAsset,
-  EstateInfo,
-  EstateMember,
-} from '@island.is/clients/syslumenn'
-import { estateSchema } from '@island.is/application/templates/estate'
-import { infer as zinfer } from 'zod'
-import { UploadData } from './types'
+import { UploadData } from '../types'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
 
-type EstateSchema = zinfer<typeof estateSchema>
-type EstateData = EstateSchema['estate']
-type RepeaterType<T> = T & { initial?: boolean; enabled?: boolean }
-
-// A helper type that extracts values from an ArrayLike
-export type Extract<T extends ArrayLike<any> | Record<any, any>> =
-  T extends ArrayLike<any> ? T[number] : never
-
-const estateAssetMapper = <T>(element: T) => {
-  return {
-    ...element,
-    initial: true,
-    enabled: true,
-    marketValue: '',
-  }
+const someValueIsSet = (object: Record<string, unknown>) => {
+  return Object.values(object).some((value) => value !== undefined)
 }
 
-const estateMemberMapper = (element: EstateMember) => {
-  return {
-    ...element,
-    initial: true,
-    enabled: true,
-    phone: '',
-    email: '',
-    advocate: element.advocate
-      ? {
-          ...element.advocate,
-          phone: '',
-          email: '',
-        }
-      : undefined,
+const moveDownBy = (n: number, doc: PDFKit.PDFDocument) => {
+  for (let i = 0; i < n; i++) {
+    doc.moveDown()
   }
-}
-
-export const estateTransformer = (estate: EstateInfo): EstateData => {
-  const assets = estate.assets.map((el) => estateAssetMapper<EstateAsset>(el))
-  const flyers = estate.flyers.map((el) => estateAssetMapper<EstateAsset>(el))
-  const ships = estate.ships.map((el) => estateAssetMapper<EstateAsset>(el))
-  const vehicles = estate.vehicles.map((el) =>
-    estateAssetMapper<EstateAsset>(el),
-  )
-  const guns = estate.guns.map((el) => estateAssetMapper<EstateAsset>(el))
-  const estateMembers = estate.estateMembers.map((el) => estateMemberMapper(el))
-
-  return {
-    ...estate,
-    estateMembers,
-    assets,
-    flyers,
-    ships,
-    vehicles,
-    guns,
-  }
-}
-
-export const filterAndRemoveRepeaterMetadata = <T>(
-  elements: RepeaterType<Extract<NonNullable<T>>>[],
-): Omit<Extract<NonNullable<T>>, 'initial' | 'enabled' | 'dummy'>[] => {
-  elements.forEach((element) => {
-    delete element.initial
-    delete element.dummy
-  })
-
-  return elements
 }
 
 // Doing generic so the object retains attributes across the map function
@@ -89,16 +25,6 @@ const transformEmptyStrings = <T extends Record<string, unknown>>(
     }
   })
   return object
-}
-
-const someValueIsSet = (object: Record<string, unknown>) => {
-  return Object.values(object).some((value) => value !== undefined)
-}
-
-const moveDownBy = (n: number, doc: PDFKit.PDFDocument) => {
-  for (let i = 0; i < n; i++) {
-    doc.moveDown()
-  }
 }
 
 export const transformUploadDataToPDFStream = async (
