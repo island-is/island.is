@@ -32,7 +32,7 @@ type EstateMember = {
   nationalId?: string
   relation?: string
   dateOfBirth?: string
-  foreignCitizenShip?: string
+  foreignCitizenship?: string | string[]
   phone?: string
   email?: string
   advocate?: Advocate
