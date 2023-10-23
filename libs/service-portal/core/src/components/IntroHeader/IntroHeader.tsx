@@ -54,10 +54,7 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
 
   return (
     <GridRow marginBottom={marginBottom ?? 4}>
-      <GridColumn
-        className="yeeehaw"
-        span={props.span ? props.span : columnSpan}
-      >
+      <GridColumn span={props.span ? props.span : columnSpan}>
         <Text variant="h3" as={props.isSubheading ? 'h2' : 'h1'}>
           {formatMessage(props.title)}
         </Text>
