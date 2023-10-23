@@ -1,7 +1,6 @@
-import { NationalRegistryScope } from '@island.is/auth/scopes'
+import { HmsScope } from '@island.is/auth/scopes'
 import { defineConfig } from '@island.is/nest/config'
 import { z } from 'zod'
-import {HmsScope} from "../../../../auth/scopes/src/lib/hms.scope";
 
 const schema = z.object({
   xRoadServicePath: z.string(),
