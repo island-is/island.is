@@ -113,15 +113,11 @@ export const expandEstateMembers = (
   const expandedMembers: UploadData['estateMembers'] = []
 
   members.filter(filterEmptyObjects).forEach((member) => {
-    const foreignCitizenship = Array.isArray(member.foreignCitizenship)
-      ? member.foreignCitizenship[0]
-      : member.foreignCitizenship
     expandedMembers.push({
       ...member,
       dateOfBirth: member.dateOfBirth ?? '',
       enabled: member.enabled ?? true,
       email: member.email ?? '',
-      foreignCitizenship: trueOrHasYes(foreignCitizenship ?? 'false'),
       // TODO: investigate better why nationalId and SSN is required
       nationalId: member.nationalId ?? '',
       ssn: member.ssn ?? '',
