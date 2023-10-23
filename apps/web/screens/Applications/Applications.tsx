@@ -1,4 +1,3 @@
-import { useMemo, type FC } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
@@ -16,16 +15,15 @@ import {
   GridColumn,
   Button,
   Table as T,
-  StringOption,
 } from '@island.is/island-ui/core'
-import { SearchInput, SearchableTagsFilter, useSearchableTagsFilter } from '@island.is/web/components'
+import { SearchInput, SearchableTagsFilter, useSearchableTagsFilter, BackgroundImage } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   Tag as TagType,
-  GetSearchResultsDetailedQuery,
+  GetApplicationsQuery,
   GetSearchCountTagsQuery,
   QuerySearchResultsArgs,
   ContentLanguage,
@@ -41,7 +39,7 @@ import { useLinkResolver } from '@island.is/web/hooks'
 import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
-  GET_SEARCH_RESULTS_QUERY_DETAILED,
+  GET_APPLICATIONS_QUERY,
   GET_SEARCH_COUNT_QUERY,
 } from '../queries'
 
@@ -49,8 +47,6 @@ import {
   parseAsString,
   parseAsInteger,
   useQueryState,
-  useQueryStates,
-  type Options,
   parseAsArrayOf,
 } from 'next-usequerystate'
 import type { ApplicationsTexts } from './ApplicationsText.types';
@@ -58,7 +54,7 @@ import type { ApplicationsTexts } from './ApplicationsText.types';
 const PERPAGE = 10
 interface CategoryProps {
   page: number
-  searchResults: GetSearchResultsDetailedQuery['searchResults']
+  searchResults: GetApplicationsQuery['searchResults']
   countResults: GetSearchCountTagsQuery['searchResults']
   namespace: ApplicationsTexts
 }
@@ -80,11 +76,6 @@ const Applications: Screen<CategoryProps> = ({
   const nothingFound = searchResults.items.length === 0
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
-
-  const searchResultsText =
-    totalSearchResults === 1
-      ? (n('searchResult', 'leitarniðurstaða') as string).toLowerCase()
-      : (n('searchResults', 'leitarniðurstöður') as string).toLowerCase()
 
   return (
     <>
@@ -198,19 +189,32 @@ const Applications: Screen<CategoryProps> = ({
                       (article, index) => (
                         <T.Row key={index}>
                           <T.Data>
-                            <Link {...linkResolver('article', [article.slug])} skipTab>
-                              <Button variant="text" as="span">
-                                {article.title}
-                              </Button>
-                            </Link>
+                            <Text variant="h5">
+                              {article.title}
+                            </Text>
                           </T.Data>
                           <T.Data>
-                            <Text fontWeight="medium">{article.organization?.[0]?.title}</Text>
+                            <Inline
+                              justifyContent="flexStart"
+                              alignY="center"
+                              space={2}
+                              flexWrap="nowrap"
+                            >
+                              <Box position="relative" style={{ width: '28px', height: '28px' }}>
+                                <BackgroundImage
+                                  width={60}
+                                  backgroundSize="contain"
+                                  image={{ ...article.organization?.[0]?.logo }}
+                                  format="png"
+                                />
+                              </Box>
+                              <Text>{article.organization?.[0]?.title}</Text>
+                            </Inline>
                           </T.Data>
-                          <T.Data align="right">
+                          <T.Data align="right" style={{ whiteSpace: 'nowrap' }}>
                             <Link {...linkResolver('article', [article.slug])} skipTab>
-                              <Button variant="text" as="span">
-                                {n('seeMore', 'Nánar')}
+                              <Button variant="text" size="small" icon="arrowForward">
+                                {n('seeMore', 'Sjá nánar')}
                               </Button>
                             </Link>
                           </T.Data>
@@ -292,9 +296,9 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<GetSearchResultsDetailedQuery, QuerySearchResultsArgs>({
+    apolloClient.query<GetApplicationsQuery, QuerySearchResultsArgs>({
       fetchPolicy: 'no-cache', // overriding because at least local caching is broken
-      query: GET_SEARCH_RESULTS_QUERY_DETAILED,
+      query: GET_APPLICATIONS_QUERY,
       variables: {
         query: {
           language: locale as ContentLanguage,
