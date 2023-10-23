@@ -14,6 +14,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   DistrictsApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { assign } from 'xstate'
 import { getSpouseNationalId } from './utils'
@@ -23,10 +24,8 @@ import {
   MarriageCondtionsFeatureFlags,
 } from './getApplicationFeatureFlags'
 import { MaritalStatusApi, ReligionCodesApi } from '../dataProviders'
-import {
-  coreHistoryMessages,
-  corePendingActionMessages,
-} from '@island.is/application/core'
+import { coreHistoryMessages } from '@island.is/application/core'
+import { buildPaymentState } from '@island.is/application/utils'
 
 const pruneAfter = (time: number) => {
   return {
@@ -100,52 +99,11 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
         },
       },
-      [States.PAYMENT]: {
-        meta: {
-          name: 'Payment state',
-          status: 'inprogress',
-          progress: 0.9,
-          lifecycle: pruneAfter(sixtyDays),
-          onEntry: defineTemplateApi({
-            action: ApiActions.createCharge,
-          }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/payment').then((val) =>
-                  Promise.resolve(val.getPayment()),
-                ),
-              actions: [
-                { event: DefaultEvents.ASSIGN, name: '', type: 'primary' },
-                {
-                  event: DefaultEvents.ABORT,
-                  name: 'Hætta við',
-                  type: 'reject',
-                },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-          actionCard: {
-            historyLogs: [
-              {
-                logMessage: coreHistoryMessages.paymentAccepted,
-                onEvent: DefaultEvents.ASSIGN,
-              },
-            ],
-            pendingAction: {
-              title: corePendingActionMessages.paymentPendingTitle,
-              content: corePendingActionMessages.paymentPendingDescription,
-              displayStatus: 'warning',
-            },
-          },
-        },
-        on: {
-          [DefaultEvents.ASSIGN]: { target: States.SPOUSE_CONFIRM },
-        },
-      },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SYSLUMENN,
+        chargeItemCodes: ['AY129'],
+        submitTarget: States.SPOUSE_CONFIRM,
+      }),
       [States.SPOUSE_CONFIRM]: {
         entry: 'assignToSpouse',
         meta: {
