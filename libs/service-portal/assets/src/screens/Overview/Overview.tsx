@@ -1,8 +1,7 @@
 import isEqual from 'lodash/isEqual'
-import React, { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
-import { gql, useQuery } from '@apollo/client'
-import { Query, VehiclesVehicle } from '@island.is/api/schema'
+import { VehiclesVehicle } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -29,55 +28,7 @@ import { VehicleCard } from '../../components/VehicleCard'
 import { vehicleMessage as messages, urls } from '../../lib/messages'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
-
-export const GET_USERS_VEHICLES = gql`
-  query GetUsersVehicles {
-    vehiclesList {
-      persidno
-      name
-      address
-      postStation
-      vehicleList {
-        isCurrent
-        permno
-        regno
-        vin
-        type
-        color
-        firstRegDate
-        modelYear
-        productYear
-        registrationType
-        role
-        operatorStartDate
-        operatorEndDate
-        outOfUse
-        otherOwners
-        termination
-        buyerPersidno
-        ownerPersidno
-        vehicleStatus
-        useGroup
-        vehGroup
-        plateStatus
-        nextInspection {
-          nextInspectionDate
-          nextInspectionDateIfPassedInspectionToday
-        }
-        operatorNumber
-        primaryOperator
-        ownerSsid
-        ownerName
-        lastInspectionResult
-        lastInspectionDate
-        lastInspectionType
-        nextInspectionDate
-      }
-      downloadServiceURL
-      createdTimestamp
-    }
-  }
-`
+import { useGetUsersVehiclesLazyQuery } from './Overview.generated'
 
 const defaultFilterValues = {
   searchQuery: '',
@@ -91,7 +42,9 @@ const getFilteredVehicles = (
   filterValues: FilterValues,
 ): VehiclesVehicle[] => {
   const { searchQuery } = filterValues
-
+  if (!vehicles) {
+    return []
+  }
   if (searchQuery) {
     return vehicles.filter(
       (x: VehiclesVehicle) =>
@@ -107,17 +60,47 @@ const VehiclesOverview = () => {
   useNamespaces('sp.vehicles')
   const userInfo = useUserInfo()
   const { formatMessage, lang } = useLocale()
-  const [page, setPage] = useState(1)
+
   const [searchInteractionEventSent, setSearchInteractionEventSent] =
     useState(false)
   const [filterValue, setFilterValue] =
     useState<FilterValues>(defaultFilterValues)
-  const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLES)
-  const ownershipPdf = data?.vehiclesList?.downloadServiceURL
-  const vehicles = data?.vehiclesList?.vehicleList || []
-  const filteredVehicles = getFilteredVehicles(vehicles, filterValue)
+  const [
+    GetUsersVehiclesLazyQuery,
+    { loading, error, fetchMore, ...usersVehicleQuery },
+  ] = useGetUsersVehiclesLazyQuery()
+
+  useEffect(() => {
+    GetUsersVehiclesLazyQuery()
+  }, [])
+
+  const paginate = () => {
+    fetchMore({
+      variables: {
+        nextCursor: usersVehicleQuery.data?.vehiclesList?.nextCursor ?? '',
+      },
+      updateQuery: (prevResult, { fetchMoreResult }) => {
+        if (
+          fetchMoreResult.vehiclesList?.vehicleList &&
+          prevResult.vehiclesList?.vehicleList
+        ) {
+          fetchMoreResult.vehiclesList.vehicleList = [
+            ...prevResult.vehiclesList.vehicleList,
+            ...fetchMoreResult.vehiclesList.vehicleList,
+          ]
+        }
+        return fetchMoreResult
+      },
+    })
+  }
+  const nextCursor = usersVehicleQuery.data?.vehiclesList?.nextCursor
+  const vehicles = usersVehicleQuery.data?.vehiclesList?.vehicleList || []
+  const ownershipPdf = usersVehicleQuery.data?.vehiclesList?.downloadServiceURL
+  const filteredVehicles = getFilteredVehicles(
+    usersVehicleQuery?.data?.vehiclesList?.vehicleList ?? [],
+    filterValue,
+  )
   const handleSearchChange = useCallback((value: string) => {
-    setPage(1)
     setFilterValue({ ...defaultFilterValues, searchQuery: value })
     if (!searchInteractionEventSent) {
       setSearchInteractionEventSent(true)
@@ -132,7 +115,6 @@ const VehiclesOverview = () => {
   const hasActiveFilters = () => !isEqual(filterValue, defaultFilterValues)
 
   const handleClearFilters = useCallback(() => {
-    setPage(1)
     setFilterValue({ ...defaultFilterValues })
   }, [])
 
@@ -174,8 +156,10 @@ const VehiclesOverview = () => {
                   exportVehicleOwnedDocument(
                     filteredVehicles,
                     formatMessage(messages.myCarsFiles),
-                    data?.vehiclesList?.name ?? userInfo.profile.name,
-                    data?.vehiclesList?.persidno ?? userInfo.profile.nationalId,
+                    usersVehicleQuery?.data?.vehiclesList?.name ??
+                      userInfo.profile.name,
+                    usersVehicleQuery?.data?.vehiclesList?.persidno ??
+                      userInfo.profile.nationalId,
                   )
                 }
               />
@@ -234,24 +218,27 @@ const VehiclesOverview = () => {
         </Box>
       )}
       <Stack space={2}>
-        {!loading && !error && vehicles.length > 4 && (
-          <GridRow>
-            <GridColumn span={['9/9', '9/9', '5/9', '4/9', '3/9']}>
-              <Box marginBottom={1}>
-                <Input
-                  icon={{ name: 'search' }}
-                  backgroundColor="blue"
-                  size="xs"
-                  value={filterValue.searchQuery}
-                  onChange={(ev) => handleSearchChange(ev.target.value)}
-                  name="okutaeki-leit"
-                  label={formatMessage(m.searchLabel)}
-                  placeholder={formatMessage(m.searchPlaceholder)}
-                />
-              </Box>
-            </GridColumn>
-          </GridRow>
-        )}
+        {!loading &&
+          !error &&
+          vehicles.length > 4 &&
+          false && ( //will be visited again on next version of service.
+            <GridRow>
+              <GridColumn span={['9/9', '9/9', '5/9', '4/9', '3/9']}>
+                <Box marginBottom={1}>
+                  <Input
+                    icon={{ name: 'search' }}
+                    backgroundColor="blue"
+                    size="xs"
+                    value={filterValue.searchQuery}
+                    onChange={(ev) => handleSearchChange(ev.target.value)}
+                    name="okutaeki-leit"
+                    label={formatMessage(m.searchLabel)}
+                    placeholder={formatMessage(m.searchPlaceholder)}
+                  />
+                </Box>
+              </GridColumn>
+            </GridRow>
+          )}
         {hasActiveFilters() && (
           <GridRow>
             <GridColumn span={['9/9', '9/9']}>
@@ -283,6 +270,18 @@ const VehiclesOverview = () => {
                 return <VehicleCard vehicle={item} key={index} />
               })}
             </Stack>
+            {nextCursor !== '' && (
+              <Box
+                marginTop={3}
+                alignItems="center"
+                justifyContent="center"
+                display="flex"
+              >
+                <Button size="small" variant="text" onClick={() => paginate()}>
+                  {formatMessage(m.fetchMore)}
+                </Button>
+              </Box>
+            )}
           </Box>
         )}
       </Stack>

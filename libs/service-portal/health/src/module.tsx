@@ -10,11 +10,15 @@ const HealthOverview = lazy(() =>
   import('./screens/HealthOverview/HealthOverview'),
 )
 const Therapies = lazy(() => import('./screens/Therapies/Therapies'))
+
 const AidsAndNutrition = lazy(() =>
   import('./screens/AidsAndNutrition/AidsAndNutrition'),
 )
 const Dentists = lazy(() => import('./screens/Dentists/Dentists'))
+
 const HealthCenter = lazy(() => import('./screens/HealthCenter/HealthCenter'))
+
+const Medicine = lazy(() => import('./screens/Medicine/Medicine'))
 
 const HealthCenterRegistration = lazy(() =>
   import('./screens/HealthCenterRegistration/HealthCenterRegistration'),
@@ -24,14 +28,20 @@ const DentistRegistration = lazy(() =>
   import('./screens/DentistRegistration/DentistRegistration'),
 )
 
+const MedicineCertificate = lazy(() =>
+  import('./screens/MedicineCertificate/MedicineCertificate'),
+)
+
+const Payments = lazy(() => import('./screens/Payments/Payments'))
+
 export const healthModule: PortalModule = {
   name: 'Heilsa',
-  featureFlag: Features.servicePortalHealthRightsModule,
   enabled: ({ isCompany }) => !isCompany,
   routes: ({ userInfo }) => [
     {
       name: 'Heilsa',
       path: HealthPaths.HealthRoot,
+      key: 'HealthOverview',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <HealthOverview />,
     },
@@ -48,6 +58,13 @@ export const healthModule: PortalModule = {
       element: <AidsAndNutrition />,
     },
     {
+      name: 'Greiðslur',
+      path: HealthPaths.HealthPayments,
+      key: 'HealthPayment',
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <Payments />,
+    },
+    {
       name: 'Tannlæknar',
       path: HealthPaths.HealthDentists,
       key: 'HealthCenter',
@@ -60,6 +77,19 @@ export const healthModule: PortalModule = {
       key: 'HealthCenter',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <HealthCenter />,
+    },
+    {
+      name: hm.medicineTitle,
+      path: HealthPaths.HealthMedicine,
+      key: 'HealthMedicine',
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <Medicine />,
+    },
+    {
+      name: hm.medicineLicenseTitle,
+      path: HealthPaths.HealthMedicineCertificate,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <MedicineCertificate />,
     },
     {
       name: hm.healthCenterRegistrationTitle,
