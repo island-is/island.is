@@ -15,7 +15,11 @@ export interface NationalRegistryBirthplace {
 }
 
 export interface DrivingLicense {
+  id?: number
   birthCountry: string
+  issued?: Date | null
+  expires?: Date | null
+  publishPlaceName?: string | null
 }
 
 export interface QualityPhoto {
