@@ -13,3 +13,7 @@ export const inputContainer = style({
     },
   }),
 })
+
+export const smallLink = style({
+  fontSize: '14px',
+})

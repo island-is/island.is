@@ -43,5 +43,9 @@ export const mapManual = ({ sys, fields }: IManual): Manual => ({
     ? mapDocument(fields.description, sys.id + ':description')
     : [],
   // TODO: What if a chapter is unpublished but we publish a manual?
-  chapters: fields.chapters ? fields.chapters.map(mapManualChapter) : [],
+  chapters: fields.chapters
+    ? fields.chapters
+        .filter((chapter) => chapter?.fields?.title && chapter?.fields?.slug)
+        .map(mapManualChapter)
+    : [],
 })

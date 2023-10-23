@@ -1,7 +1,5 @@
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
-import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import type { Block } from '@contentful/rich-text-types'
 
 import { SliceType } from '@island.is/island-ui/contentful'
 import {
@@ -16,79 +14,25 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import {
-  GetNamespaceQuery,
-  GetNamespaceQueryVariables,
-  GetSingleManualQuery,
-  GetSingleManualQueryVariables,
-  Html,
-} from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import type { Screen } from '@island.is/web/types'
-import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
 
-import { GET_NAMESPACE_QUERY } from '../queries'
-import { GET_SINGLE_MANUAL_QUERY } from '../queries/Manual'
+import {
+  extractLastUpdatedDateFromManual,
+  extractTextFromManualChapterDescription,
+  getProps,
+  ManualScreen,
+} from './utils'
 import * as styles from './Manual.css'
-
-type ManualType = GetSingleManualQuery['getSingleManual']
-
-interface ManualProps {
-  manual: ManualType
-  manualChapter: ReturnType<typeof extractChapterFromManual>
-  namespace: Record<string, string>
-}
-
-const extractChapterFromManual = (manual: ManualType, chapterSlug: string) => {
-  return manual?.chapters.find((c) => c?.slug === chapterSlug)
-}
-
-const extractLastUpdatedDateFromManual = (manual: ManualType) => {
-  let lastUpdatedDate: Date | null = null
-  for (const chapter of manual?.chapters ?? []) {
-    for (const changelogItem of chapter?.changelog?.items ?? []) {
-      const date = changelogItem?.dateOfChange
-        ? new Date(changelogItem.dateOfChange)
-        : null
-      if (!date) {
-        continue
-      }
-      if (!lastUpdatedDate || lastUpdatedDate < date) {
-        lastUpdatedDate = date
-      }
-    }
-  }
-  return lastUpdatedDate
-}
-
-const extractTextFromManualChapterDescription = (
-  manualChapter: ManualProps['manualChapter'],
-) => {
-  const htmlSlices = manualChapter?.description?.filter(
-    (chapter) => chapter?.__typename === 'Html',
-  )
-
-  if (!htmlSlices) return ''
-
-  let text = ''
-
-  for (const htmlSlice of htmlSlices) {
-    const document = (htmlSlice as Html)?.document
-    if (document) {
-      text += documentToPlainTextString(document as Block)
-    }
-  }
-
-  return text
-}
 
 // TODO: Make 'EN' button work
 
-const Manual: Screen<ManualProps> = ({ manual, manualChapter, namespace }) => {
+const Manual: ManualScreen = ({ manual, manualChapter, namespace }) => {
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
   const { activeLocale } = useI18n()
@@ -96,6 +40,9 @@ const Manual: Screen<ManualProps> = ({ manual, manualChapter, namespace }) => {
   const [searchInputHasFocus, setSearchInputHasFocus] = useState(false)
   const { format } = useDateUtils()
   const router = useRouter()
+
+  useLocalLinkTypeResolver()
+  useContentfulId(manual?.id, manualChapter?.id)
 
   const handleSearch = () => {
     if (!searchValue) {
@@ -198,15 +145,39 @@ const Manual: Screen<ManualProps> = ({ manual, manualChapter, namespace }) => {
             </Box>
           </Stack>
 
-          <Stack space={3}>
-            <Divider />
-            <Box>
-              <Text variant="eyebrow">
-                {n('manualPageAboutEyebrowText', 'Um handbókina')}
-              </Text>
-              {webRichText((manual?.description ?? []) as SliceType[])}
-            </Box>
-          </Stack>
+          {!manualChapter &&
+            typeof manual?.description?.length === 'number' &&
+            manual.description.length > 0 && (
+              <Stack space={3}>
+                <Divider />
+                <Box>
+                  <Text variant="eyebrow">
+                    {n('manualPageAboutEyebrowText', 'Um handbókina')}
+                  </Text>
+                  {webRichText((manual?.description ?? []) as SliceType[])}
+                </Box>
+              </Stack>
+            )}
+
+          {manualChapter && (
+            <Stack space={2}>
+              <LinkV2
+                className={styles.smallLink}
+                underline="small"
+                underlineVisibility="always"
+                href={linkResolver('manual', [manual?.slug as string]).href}
+              >
+                {n('manualFrontpage', 'Forsíða handbókar')}
+              </LinkV2>
+              <Divider />
+              <Box paddingTop={2}>
+                <Text variant="h2" as="h2">
+                  {manualChapter.title}
+                </Text>
+                {webRichText((manualChapter?.description ?? []) as SliceType[])}
+              </Box>
+            </Stack>
+          )}
 
           <Stack space={3}>
             {!manualChapter &&
@@ -255,45 +226,6 @@ const Manual: Screen<ManualProps> = ({ manual, manualChapter, namespace }) => {
   )
 }
 
-Manual.getProps = async ({ apolloClient, locale, query }) => {
-  const [manualResponse, namespaceResponse] = await Promise.all([
-    apolloClient.query<GetSingleManualQuery, GetSingleManualQueryVariables>({
-      query: GET_SINGLE_MANUAL_QUERY,
-      variables: {
-        input: {
-          slug: query.slug as string,
-          lang: locale,
-        },
-      },
-    }),
-    apolloClient.query<GetNamespaceQuery, GetNamespaceQueryVariables>({
-      query: GET_NAMESPACE_QUERY,
-      variables: {
-        input: {
-          lang: locale,
-          namespace: 'OrganizationPages',
-        },
-      },
-    }),
-  ])
-
-  if (!manualResponse.data.getSingleManual) {
-    throw new CustomNextError(404, `Manual page with slug: ${query.slug}`)
-  }
-
-  const manual = manualResponse.data.getSingleManual
-  const namespace = JSON.parse(
-    namespaceResponse?.data?.getNamespace?.fields || '{}',
-  ) as Record<string, string>
-
-  return {
-    manual,
-    manualChapter: extractChapterFromManual(
-      manual,
-      query.chapterSlug as string,
-    ),
-    namespace,
-  }
-}
+Manual.getProps = getProps
 
 export default withMainLayout(Manual)
