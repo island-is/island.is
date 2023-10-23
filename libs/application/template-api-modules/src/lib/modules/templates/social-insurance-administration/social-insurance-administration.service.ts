@@ -30,7 +30,10 @@ import {
   Uploads,
 } from '@island.is/clients/social-insurance-administration'
 import { S3 } from 'aws-sdk'
-import { transformApplicationToOldAgePensionDTO } from './social-insurance-administration-utils'
+import {
+  getApplicationType,
+  transformApplicationToOldAgePensionDTO,
+} from './social-insurance-administration-utils'
 import { coreErrorMessages } from '@island.is/application/core'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
@@ -314,9 +317,12 @@ export class OldAgePensionService extends BaseTemplateApiService {
         attachments,
       )
 
+      const applicationType = getApplicationType(application).toLowerCase()
+
       const response = await this.siaClientService.sendApplication(
         auth,
         oldAgePensionDTO,
+        applicationType,
       )
 
       return response
