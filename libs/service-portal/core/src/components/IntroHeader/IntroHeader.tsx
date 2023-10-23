@@ -67,7 +67,7 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
             loading={loading}
             linkHref={currentOrganization?.link ?? ''}
             img={currentOrganization?.logo?.url ?? ''}
-            imgContainerDisplay="flex"
+            imgContainerDisplay={isMobile ? 'block' : 'flex'}
             tooltipText={props.serviceProviderTooltip}
             backgroundColor={props.backgroundColor}
           />

@@ -58,7 +58,12 @@ export const InstitutionPanel = ({
               background="purple200"
             />
           ) : (
-            <Box display="flex" flexDirection="row">
+            <Box
+              display="flex"
+              flexDirection="row"
+              justifyContent="center"
+              alignItems="center"
+            >
               <Box
                 component="img"
                 alt=""
