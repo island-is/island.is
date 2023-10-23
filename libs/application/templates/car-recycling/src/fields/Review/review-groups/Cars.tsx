@@ -13,7 +13,7 @@ export const Cars = ({
 
   const cars = [
     { name: 'Audi', year: '2006', number: 'BMX45' },
-    { name: 'BNW', year: '2008', number: 'BMX46' },
+    { name: 'BMW', year: '2008', number: 'BMX46' },
     { name: 'Mercedes', year: '2009', number: 'BMX47' },
   ]
 

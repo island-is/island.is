@@ -48,7 +48,47 @@ export const carRecyclingMessages: MessageDir = {
     list: {
       id: 'rf.cr.application:cars.list',
       defaultMessage: 'Ökutækjalisti',
-      description: 'Prerequisites',
+      description: 'Cars list',
+    },
+    sectionTitle: {
+      id: 'rf.cr.application:section.title',
+      defaultMessage: 'Afskrá til endurvinnslu',
+      description: 'Unregister for recycling',
+    },
+    filter: {
+      id: 'rf.cr.application:cars.filter',
+      defaultMessage: 'Sía ökutæki',
+      description: 'Filter vehicles',
+    },
+    overview: {
+      id: 'rf.cr.application:cars.overview',
+      defaultMessage: 'Ökutæki',
+      description: 'Vehicles',
+    },
+    recycle: {
+      id: 'rf.cr.application:cars.recycle',
+      defaultMessage: 'Endurvinna',
+      description: 'Recycle',
+    },
+    cantBeRecycled: {
+      id: 'rf.cr.application:cant.be.recycled',
+      defaultMessage: 'Ekki hægt að endurvinna',
+      description: 'Cant be recycled',
+    },
+    coOwner: {
+      id: 'rf.cr.application:co.owner',
+      defaultMessage: 'Meðeigandi',
+      description: 'Co-owner',
+    },
+    cancel: {
+      id: 'rf.cr.application:cancel',
+      defaultMessage: 'Hætta við',
+      description: 'Cancel',
+    },
+    selectedTitle: {
+      id: 'rf.cr.application:selected.title',
+      defaultMessage: 'Ökutæki valin í afskrá til endurvinnslu',
+      description: 'Vehicles selected in deregistration for recycling',
     },
   }),
   review: defineMessages({
