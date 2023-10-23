@@ -1,10 +1,12 @@
 import {useQuery} from '@apollo/client';
 import {
+  Button,
   EmptyList,
   ListItem,
   ListItemSkeleton,
   SearchHeader,
   TopLine,
+  dynamicColor,
 } from '@ui';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useIntl} from 'react-intl';
@@ -17,11 +19,13 @@ import {
   ListRenderItemInfo,
   Platform,
   RefreshControl,
+  TextInput,
   View,
 } from 'react-native';
 import KeyboardManager from 'react-native-keyboard-manager';
 import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
 import {
+  useNavigationComponentDidAppear,
   useNavigationSearchBarCancelPress,
   useNavigationSearchBarUpdate,
 } from 'react-native-navigation-hooks/dist';
@@ -45,6 +49,12 @@ import {
 } from '../../graphql/queries/list-documents.query';
 import {Document} from 'src/graphql/types/schema';
 import {setBadgeCountAsync} from 'expo-notifications';
+import SearchIcon from '../../assets/icons/search.png';
+import {
+  POST_MAIL_ACTION,
+  toggleAction,
+} from '../../graphql/queries/inbox-actions';
+import FilterIcon from '../../assets/icons/filter-icon.png';
 
 type ListItem =
   | {id: string; type: 'skeleton' | 'empty'}
@@ -61,6 +71,7 @@ const {useNavigationOptions, getNavigationOptions} =
           placeholder: intl.formatMessage({id: 'inbox.searchPlaceholder'}),
           tintColor: theme.color.blue400,
           backgroundColor: 'transparent',
+          visible: false,
         },
         rightButtons: initialized ? getRightButtons({theme} as any) : [],
         background: {
@@ -111,27 +122,41 @@ const {useNavigationOptions, getNavigationOptions} =
     },
   );
 
-const PressableListItem = React.memo(({item}: {item: Document}) => {
-  const {getOrganizationLogoUrl} = useOrganizationsStore();
-  return (
-    <PressableHighlight
-      onPress={() => navigateTo(`/inbox/${item.id}`, {title: item.senderName})}>
-      <ListItem
-        title={item.senderName}
-        subtitle={item.subject}
-        date={new Date(item.date)}
-        unread={!item.opened}
-        icon={
-          <Image
-            source={getOrganizationLogoUrl(item.senderName, 75)}
-            resizeMode="contain"
-            style={{width: 25, height: 25}}
-          />
-        }
-      />
-    </PressableHighlight>
-  );
-});
+const PressableListItem = React.memo(
+  ({item, listParams}: {item: Document; listParams: any}) => {
+    const {getOrganizationLogoUrl} = useOrganizationsStore();
+    const [starred, setStarred] = useState<boolean>(!!item.bookmarked);
+    useEffect(() => setStarred(!!item.bookmarked), [item.bookmarked]);
+    return (
+      <PressableHighlight
+        onPress={() =>
+          navigateTo(`/inbox/${item.id}`, {
+            title: item.senderName,
+            listParams,
+          })
+        }>
+        <ListItem
+          title={item.senderName}
+          subtitle={item.subject}
+          date={new Date(item.date)}
+          unread={!item.opened}
+          starred={starred}
+          onStarPress={() => {
+            toggleAction(!item.bookmarked ? 'bookmark' : 'unbookmark', item.id);
+            setStarred(!item.bookmarked);
+          }}
+          icon={
+            <Image
+              source={getOrganizationLogoUrl(item.senderName, 75)}
+              resizeMode="contain"
+              style={{width: 25, height: 25}}
+            />
+          }
+        />
+      </PressableHighlight>
+    );
+  },
+);
 
 function useThrottleState(state: string, delay = 500) {
   const [throttledState, setThrottledState] = useState(state);
@@ -166,42 +191,151 @@ const useUnreadCount = () => {
   return unopened?.length ?? 0;
 };
 
-export const InboxScreen: NavigationFunctionComponent = ({componentId}) => {
+type Filters = {
+  opened?: boolean;
+  archived?: boolean;
+  bookmarked?: boolean;
+  subjectContains?: string;
+};
+
+function applyFilters(filters?: Filters) {
+  return {
+    archived: filters?.archived ? true : undefined,
+    bookmarked: filters?.bookmarked ? true : undefined,
+    opened: filters?.opened ? false : undefined,
+    subjectContains: filters?.subjectContains ?? '',
+  };
+}
+
+function useInboxQuery(incomingFilters?: Filters) {
+  const [filters, setFilters] = useState(applyFilters(incomingFilters));
+  const [page, setPage] = useState<number>(1);
+  const [data, setData] = useState<ListDocumentsV2>();
+  const [refetching, setRefetching] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [refetcher, setRefetcher] = useState(0);
+  const pageSize = 50;
+
+  useEffect(() => {
+    const appliedFilters = applyFilters(incomingFilters);
+    // deep equal incoming filters
+    if (
+      JSON.stringify(appliedFilters) === JSON.stringify(filters) ||
+      incomingFilters === undefined
+    ) {
+      return;
+    }
+    // Reset page on filter changes
+    setFilters(appliedFilters);
+  }, [incomingFilters, filters]);
+
+  useEffect(() => {
+    // Reset page on filter changes
+    setPage(1);
+    setRefetching(true);
+  }, [filters]);
+
+  useEffect(() => {
+    const numItems = data?.totalCount ?? pageSize;
+    if (pageSize * (page - 1) > numItems) {
+      return;
+    }
+    setLoading(true);
+    // Fetch data
+    client
+      .query<{listDocumentsV2: ListDocumentsV2}>({
+        query: LIST_DOCUMENTS_QUERY,
+        fetchPolicy: 'network-only',
+        variables: {
+          input: {
+            page,
+            pageSize,
+            ...filters,
+          },
+        },
+      })
+      .then(res => {
+        if (page > 1) {
+          setData(prevData => ({
+            data: [...(prevData?.data ?? []), ...res.data.listDocumentsV2.data],
+            totalCount: res.data.listDocumentsV2.totalCount,
+          }));
+        } else {
+          setData(res.data.listDocumentsV2);
+        }
+      })
+      .finally(() => {
+        setRefetching(false);
+        setLoading(false);
+      });
+  }, [filters, page, refetcher]);
+
+  const loadMore = () => {
+    if (loading) {
+      return;
+    }
+    setPage(prevPage => prevPage + 1);
+  };
+
+  const refetch = () => {
+    setRefetching(true);
+    setPage(1);
+    setRefetcher(prev => prev + 1);
+  };
+
+  return {
+    data,
+    page,
+    pageSize,
+    filters,
+    loading,
+    refetching,
+    refetch,
+    loadMore,
+  };
+}
+
+export const InboxScreen: NavigationFunctionComponent<{
+  opened?: boolean;
+  archived?: boolean;
+  bookmarked?: boolean;
+  refresh?: number;
+}> = ({
+  componentId,
+  opened = false,
+  archived = false,
+  bookmarked = false,
+  refresh,
+}) => {
   useNavigationOptions(componentId);
   const ui = useUiStore();
   const intl = useIntl();
   const scrollY = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef<FlatList>(null);
   const keyboardRef = useRef(false);
-  const [refreshing, setRefreshing] = useState(true);
-  const queryString = useThrottleState(ui.inboxQuery);
+  const [query, setQuery] = useState('');
+  const queryString = useThrottleState(query);
   const theme = useTheme();
   const unreadCount = useUnreadCount();
-  const page = useRef(1);
+  const [visible, setVisible] = useState(false);
+  const [refetching, setRefetching] = useState(false);
 
-  const res = useQuery<
-    {listDocumentsV2: ListDocumentsV2},
-    {input: GetDocumentListInput}
-  >(LIST_DOCUMENTS_QUERY, {
-    client,
-    fetchPolicy: 'cache-first',
-    variables: {
-      input: {
-        page: 1,
-        pageSize: 50,
-        subjectContains: queryString?.length > 2 ? queryString : undefined,
-      },
-    },
-    onCompleted() {
-      setRefreshing(false);
-    },
+  const res = useInboxQuery({
+    opened,
+    archived,
+    bookmarked,
+    subjectContains: queryString,
   });
 
   useEffect(() => {
-    page.current = 1;
-  }, [queryString]);
+    setRefetching(false);
+  }, [res.refetching]);
 
-  const items = res?.data?.listDocumentsV2?.data ?? [];
+  useEffect(() => {
+    res.refetch();
+  }, [refresh]);
+
+  const items = res.data?.data ?? [];
   const isSearch = ui.inboxQuery.length > 2;
 
   const onAppStateBlur = useCallback((status: AppStateStatus) => {
@@ -243,14 +377,6 @@ export const InboxScreen: NavigationFunctionComponent = ({componentId}) => {
       offset: -200,
       animated: true,
     });
-  });
-
-  useNavigationSearchBarUpdate(e => {
-    ui.setInboxQuery(e.text);
-  });
-
-  useNavigationSearchBarCancelPress(() => {
-    ui.setInboxQuery('');
   });
 
   useEffect(() => {
@@ -309,13 +435,20 @@ export const InboxScreen: NavigationFunctionComponent = ({componentId}) => {
           </View>
         );
       }
-      return <PressableListItem item={item as Document} />;
+      return (
+        <PressableListItem
+          item={item as Document}
+          listParams={{
+            ...res.filters,
+          }}
+        />
+      );
     },
-    [intl],
+    [intl, res.filters],
   );
 
   const data = useMemo(() => {
-    if (refreshing || res.loading) {
+    if (res.refetching) {
       return Array.from({length: 20}).map((_, id) => ({
         id: String(id),
         type: 'skeleton',
@@ -325,7 +458,15 @@ export const InboxScreen: NavigationFunctionComponent = ({componentId}) => {
       return [{id: '0', type: 'empty'}];
     }
     return items;
-  }, [refreshing, items, res.loading]) as ListItem[];
+  }, [res.refetching, items]) as ListItem[];
+
+  useNavigationComponentDidAppear(() => {
+    setVisible(true);
+  }, componentId);
+
+  if (!visible) {
+    return null;
+  }
 
   return (
     <>
@@ -346,56 +487,70 @@ export const InboxScreen: NavigationFunctionComponent = ({componentId}) => {
         keyboardDismissMode="on-drag"
         stickyHeaderIndices={isSearch ? [0] : undefined}
         ListHeaderComponent={
-          isSearch ? (
-            <SearchHeader
-              loadingText={intl.formatMessage({id: 'inbox.loadingText'})}
-              resultText={
-                items.length === 0
-                  ? intl.formatMessage({id: 'inbox.noResultText'})
-                  : items.length === 1
-                  ? intl.formatMessage({id: 'inbox.singleResultText'})
-                  : intl.formatMessage({id: 'inbox.resultText'})
-              }
-              count={items.length}
-              loading={
-                res.loading ||
-                res.variables?.input.subjectContains !== ui.inboxQuery
-              }
-              isAndroid={Platform.OS === 'android'}
-            />
-          ) : undefined
-        }
-        refreshControl={
-          isSearch ? undefined : (
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={async () => {
-                setRefreshing(true);
-                try {
-                  await res?.refetch?.({
-                    input: {...res.variables?.input, page: 1},
-                  });
-                } catch (err) {
-                  // noop
-                }
-                setRefreshing(false);
+          <View
+            style={{padding: 16, marginTop: -8, flexDirection: 'row', gap: 15}}>
+            <TextInput
+              style={{
+                borderRadius: 8,
+                backgroundColor: 'rgba(118, 118, 128, 0.12)',
+                flex: 1,
+                paddingHorizontal: 8,
+                paddingVertical: 7,
+                paddingLeft: 30,
+                fontSize: 14,
+                color: '#00003C',
+              }}
+              placeholder="Leita"
+              placeholderTextColor="#3C3C4399"
+              onChangeText={text => {
+                setQuery(text);
               }}
             />
-          )
+            <Button
+              title="Opna síu"
+              isOutlined
+              style={{
+                minWidth: 0,
+                paddingTop: 12,
+                paddingBottom: 12,
+                minHeight: 0,
+                borderColor: '#CCDFFF',
+              }}
+              icon={FilterIcon}
+              iconStyle={{tintColor: theme.color.blue400}}
+              textStyle={{fontSize: 12, color: '#00003C'}}
+              onPress={() => {
+                navigateTo('/inbox-filter', {
+                  opened,
+                  archived,
+                  bookmarked,
+                });
+              }}
+            />
+            <Image
+              source={SearchIcon}
+              style={{
+                position: 'absolute',
+                top: 31,
+                left: 26,
+                width: 16,
+                height: 17,
+                tintColor: '#3C3C4399',
+              }}
+            />
+          </View>
+        }
+        refreshControl={
+          <RefreshControl
+            refreshing={refetching}
+            onRefresh={() => {
+              setRefetching(true);
+              res.refetch();
+            }}
+          />
         }
         onEndReached={() => {
-          if (res.loading) {
-            return;
-          }
-          page.current += 1;
-          return res.fetchMore({
-            variables: {
-              input: {
-                ...res.variables?.input,
-                page: page.current,
-              },
-            },
-          });
+          res.loadMore();
         }}
         onEndReachedThreshold={0.5}
       />

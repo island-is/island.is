@@ -1,9 +1,19 @@
-import {useQuery} from '@apollo/client';
-import {dynamicColor, Header, Loader, Typography} from '@ui';
-import React, {useEffect, useRef, useState} from 'react';
+import {
+  ApolloProvider,
+  useFragment_experimental,
+  useQuery,
+} from '@apollo/client';
+import {blue400, dynamicColor, Header, Loader, Typography} from '@ui';
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from 'react';
 import {FormattedDate, useIntl} from 'react-intl';
 import {Animated, Platform, StyleSheet, View} from 'react-native';
-import {NavigationFunctionComponent} from 'react-native-navigation';
+import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
 import {
   useNavigationButtonPress,
   useNavigationComponentDidAppear,
@@ -18,13 +28,24 @@ import {
   GetDocumentResponse,
   GET_DOCUMENT_QUERY,
 } from '../../graphql/queries/get-document.query';
-import {LIST_DOCUMENTS_QUERY} from '../../graphql/queries/list-documents.query';
+import {
+  DocumentV2,
+  LIST_DOCUMENT_FRAGMENT,
+  LIST_DOCUMENTS_QUERY,
+  ListDocumentsV2,
+} from '../../graphql/queries/list-documents.query';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {authStore} from '../../stores/auth-store';
 import {inboxStore} from '../../stores/inbox-store';
 import {useOrganizationsStore} from '../../stores/organizations-store';
-import {ButtonRegistry} from '../../utils/component-registry';
-import {Query} from 'src/graphql/types/schema';
+import {
+  ButtonRegistry,
+  ComponentRegistry,
+} from '../../utils/component-registry';
+import {
+  toggleAction,
+  useSubmitMailAction,
+} from '../../graphql/queries/inbox-actions';
 
 const Host = styled.SafeAreaView`
   margin-left: 24px;
@@ -44,6 +65,58 @@ const PdfWrapper = styled.View`
   background-color: ${dynamicColor('background')};
 `;
 
+function getRightButtons({
+  archived,
+  bookmarked,
+}: {
+  archived?: boolean;
+  bookmarked?: boolean;
+} = {}) {
+  console.log('getRightButtons', {archived, bookmarked});
+  return [
+    {
+      id: ButtonRegistry.ShareButton,
+      icon: require('../../assets/icons/navbar-share.png'),
+      color: blue400,
+      accessibilityLabel: 'Share',
+      iconBackground: {
+        color: 'transparent',
+        cornerRadius: 8,
+        width: 32,
+        height: 32,
+      },
+    },
+    {
+      id: ButtonRegistry.DocumentArchiveButton,
+      icon: archived
+        ? require('../../assets/icons/tray-filled.png')
+        : require('../../assets/icons/tray.png'),
+      color: blue400,
+      accessibilityLabel: 'Archive',
+      iconBackground: {
+        color: 'transparent',
+        cornerRadius: 8,
+        width: 32,
+        height: 32,
+      },
+    },
+    {
+      id: ButtonRegistry.DocumentStarButton,
+      icon: bookmarked
+        ? require('../../assets/icons/star-filled.png')
+        : require('../../assets/icons/star.png'),
+      color: blue400,
+      accessibilityLabel: 'Star',
+      iconBackground: {
+        color: 'transparent',
+        cornerRadius: 8,
+        width: 32,
+        height: 32,
+      },
+    },
+  ];
+}
+
 const {useNavigationOptions, getNavigationOptions} =
   createNavigationOptionHooks(
     (theme, intl) => ({
@@ -60,13 +133,7 @@ const {useNavigationOptions, getNavigationOptions} =
       },
       topBar: {
         noBorder: true,
-        rightButtons: [
-          {
-            id: ButtonRegistry.ShareButton,
-            icon: require('../../assets/icons/navbar-share.png'),
-            accessibilityLabel: 'Share',
-          },
-        ],
+        rightButtons: getRightButtons(),
       },
     },
   );
@@ -131,9 +198,15 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const [accessToken, setAccessToken] = useState<string>();
   const [error, setError] = useState(false);
 
-  const res = useQuery<Query>(LIST_DOCUMENTS_QUERY, {
-    client,
+  const doc = useFragment_experimental<DocumentV2>({
+    fragment: LIST_DOCUMENT_FRAGMENT,
+    from: {
+      __typename: 'Document',
+      id: docId,
+    },
+    returnPartialData: true,
   });
+
   const docRes = useQuery<GetDocumentResponse>(GET_DOCUMENT_QUERY, {
     client,
     variables: {
@@ -142,19 +215,49 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       },
     },
   });
+
   const Document = {
     ...(docRes.data?.getDocument || {}),
-    ...(res.data?.listDocumentsV2?.data?.find(d => d.id === docId) || {}),
+    ...doc.data,
   };
 
   const [visible, setVisible] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [pdfUrl, setPdfUrl] = useState('');
+  const [touched, setTouched] = useState(false);
   const hasPdf = Document.fileType === 'pdf';
   const isHtml = typeof Document.html === 'string' && Document.html !== '';
 
-  useNavigationButtonPress(
-    e => {
+  useEffect(() => {
+    console.log(doc.data);
+    Navigation.mergeOptions(componentId, {
+      topBar: {
+        rightButtons: getRightButtons({
+          archived: doc.data?.archived,
+          bookmarked: doc.data?.bookmarked,
+        }),
+      },
+    });
+  }, [componentId, doc.data]);
+
+  useNavigationButtonPress(({buttonId}) => {
+    if (buttonId === ButtonRegistry.DocumentArchiveButton) {
+      toggleAction(
+        Document.archived ? 'unarchive' : 'archive',
+        Document.id!,
+        // true,
+      );
+      setTouched(true);
+    }
+    if (buttonId === ButtonRegistry.DocumentStarButton) {
+      toggleAction(
+        Document.bookmarked ? 'unbookmark' : 'bookmark',
+        Document.id!,
+        // true,
+      );
+      setTouched(true);
+    }
+    if (buttonId === ButtonRegistry.ShareButton) {
       if (Platform.OS === 'android') {
         authStore.setState({noLockScreenUntilNextAppStateActive: true});
       }
@@ -165,10 +268,8 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         type: hasPdf ? 'application/pdf' : undefined,
         url: hasPdf ? `file://${pdfUrl}` : Document.url!,
       });
-    },
-    componentId,
-    ButtonRegistry.ShareButton,
-  );
+    }
+  }, componentId);
 
   useNavigationComponentDidAppear(() => {
     setVisible(true);
@@ -178,6 +279,11 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     setVisible(false);
     if (hasPdf) {
       setLoaded(false);
+    }
+    if (touched) {
+      Navigation.updateProps(ComponentRegistry.InboxScreen, {
+        refresh: Math.random(),
+      });
     }
   });
 
@@ -209,7 +315,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     }
   }, []);
 
-  const loading = res.loading || !accessToken;
+  const loading = docRes.loading || !accessToken;
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
 

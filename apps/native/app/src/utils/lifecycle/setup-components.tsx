@@ -40,6 +40,7 @@ import {isTestingApp} from '../../config';
 import {TestingLoginScreen} from '../../screens/login/testing-login';
 import {FinanceScreen} from '../../screens/finance/finance';
 import {FinanceStatusDetailScreen} from '../../screens/finance/finance-status-detail';
+import {InboxFilterScreen} from '../../screens/inbox/inbox-filter';
 
 export function registerAllComponents() {
   // dev only
@@ -88,6 +89,7 @@ export function registerAllComponents() {
   registerComponent(CR.CognitoAuthScreen, CognitoAuthScreen);
   registerComponent(CR.FinanceScreen, FinanceScreen);
   registerComponent(CR.FinanceStatusDetailScreen, FinanceStatusDetailScreen);
+  registerComponent(CR.InboxFilterScreen, InboxFilterScreen);
 
   // ui components
   // if (Platform.OS === 'android') {

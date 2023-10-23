@@ -1,18 +1,27 @@
 import {gql} from '@apollo/client';
 
+export const LIST_DOCUMENT_FRAGMENT = gql`
+  fragment ListDocument on Document {
+    id
+    subject
+    senderName
+    senderNatReg
+    date
+    fileType
+    url
+    opened
+    categoryId
+    bookmarked
+    archived @client
+  }
+`;
+
 export const LIST_DOCUMENTS_QUERY = gql`
+  ${LIST_DOCUMENT_FRAGMENT}
   query listDocumentsV2($input: GetDocumentListInput!) {
     listDocumentsV2(input: $input) {
       data {
-        id
-        subject
-        senderName
-        senderNatReg
-        date
-        fileType
-        url
-        opened
-        categoryId
+        ...ListDocument
       }
       totalCount
     }
@@ -27,8 +36,10 @@ export type DocumentV2 = {
   senderNatReg: string;
   opened: boolean;
   fileType: string;
+  bookmarked: boolean;
   url: string;
   categoryId?: string;
+  archived?: boolean;
 };
 
 export type ListDocumentsV2 = {
@@ -46,6 +57,8 @@ export type GetDocumentListInput = {
   sortBy?: string;
   order?: string;
   opened?: boolean;
+  bookmarked?: boolean;
+  archived?: boolean;
   page?: number;
   pageSize?: number;
   isLegalGuardian?: boolean | null;

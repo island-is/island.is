@@ -4,6 +4,7 @@ import {
   fromPromise,
   HttpLink,
   InMemoryCache,
+  makeVar,
 } from '@apollo/client/index';
 import {setContext} from '@apollo/client/link/context';
 import {onError} from '@apollo/client/link/error';
@@ -114,6 +115,7 @@ const authLink = setContext(async (_, {headers}) => ({
   },
 }));
 
+export const archivedCache = new Map();
 export const client = new ApolloClient({
   link: ApolloLink.from([
     // performanceLink,
@@ -129,25 +131,22 @@ export const client = new ApolloClient({
   },
   cache: new InMemoryCache({
     typePolicies: {
-      Query: {
+      Document: {
         fields: {
-          listDocumentsV2: {
-            keyArgs: ['input', ['subjectContains', 'opened']],
-            read(existing = {}) {
-              return existing;
-            },
-            merge(existing = {}, incoming = {}, options) {
-              const {variables} = options ?? {};
-              const {page = 1, pageSize = 20} = variables?.input ?? {};
-              const offset = (page - 1) * pageSize;
-              return {
-                ...existing,
-                ...incoming,
-                data: [
-                  ...(existing?.data ?? []).slice(0, offset),
-                  ...(incoming?.data ?? []).slice(0, pageSize),
-                ],
-              };
+          archived: {
+            read(_value, {readField, variables}) {
+              const defaultState = variables?.input?.archived ? true : false;
+              const id = readField('id');
+              if (!archivedCache.has(id)) {
+                archivedCache.set(id, defaultState);
+              }
+              console.log(
+                'read archived',
+                id,
+                defaultState,
+                archivedCache.get(id),
+              );
+              return archivedCache.get(id);
             },
           },
         },
