@@ -54,7 +54,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": ["apps/skilavottord/ws/**/*.{ts,tsx,js,jsx}"]
       }

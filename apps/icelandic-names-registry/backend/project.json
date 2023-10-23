@@ -56,7 +56,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": [
           "apps/icelandic-names-registry/backend/**/*.{ts,tsx,js,jsx}"

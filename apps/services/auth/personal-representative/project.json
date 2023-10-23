@@ -29,7 +29,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": [
           "apps/services/auth/personal-representative/**/*.{ts,tsx,js,jsx}"

@@ -99,7 +99,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": ["apps/consultation-portal/**/*.{ts,tsx,js,jsx}"]
       }

@@ -6,7 +6,7 @@
   "tags": ["lib:application-system", "scope:application-system"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/application/testing/**/*.{ts,tsx,js,jsx}"]

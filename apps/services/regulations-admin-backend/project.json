@@ -51,7 +51,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": [
           "apps/services/regulations-admin-backend/**/*.{ts,tsx,js,jsx}"

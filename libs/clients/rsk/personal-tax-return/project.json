@@ -5,7 +5,7 @@
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": [
           "libs/clients/rsk/personal-tax-return/**/*.{ts,tsx,js,jsx}"

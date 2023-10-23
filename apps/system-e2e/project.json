@@ -22,7 +22,7 @@
       "outputs": ["{workspaceRoot}/dist/apps/system-e2e"]
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": ["apps/system-e2e/**/*.{ts,tsx,js,jsx}"]
       }

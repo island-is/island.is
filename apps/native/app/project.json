@@ -27,7 +27,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": ["apps/native/app/**/*.{ts,tsx,js,jsx}"]
       }

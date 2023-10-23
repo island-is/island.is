@@ -98,7 +98,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": ["apps/application-system/api/**/*.{ts,tsx,js,jsx}"]
       }

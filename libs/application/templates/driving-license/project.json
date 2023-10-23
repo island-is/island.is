@@ -6,7 +6,7 @@
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": [
           "libs/application/templates/driving-license/**/*.{ts,tsx,js,jsx}"

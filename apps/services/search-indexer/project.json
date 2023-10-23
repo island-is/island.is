@@ -61,7 +61,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": [
           "apps/services/search-indexer/**/*.{ts,tsx,js,jsx}"

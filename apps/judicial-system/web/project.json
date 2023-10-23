@@ -84,7 +84,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": ["apps/judicial-system/web/**/*.{ts,tsx,js,jsx}"]
       }

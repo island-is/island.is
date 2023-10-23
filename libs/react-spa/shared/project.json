@@ -6,7 +6,7 @@
   "tags": ["lib:react-spa", "scope:react-spa"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/react-spa/shared/**/*.{ts,tsx,js,jsx}"]

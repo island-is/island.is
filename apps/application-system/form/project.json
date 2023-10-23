@@ -77,7 +77,7 @@
       ]
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": [
           "apps/application-system/form/**/*.{ts,tsx,js,jsx}"

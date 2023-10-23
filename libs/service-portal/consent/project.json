@@ -6,7 +6,7 @@
   "tags": ["lib:portals-mypages", "scope:portals-mypages"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/service-portal/consent/**/*.{ts,tsx,js,jsx}"]

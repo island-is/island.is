@@ -35,7 +35,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": [
           "apps/judicial-system/message-handler/**/*.{ts,tsx,js,jsx}"

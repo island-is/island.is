@@ -19,7 +19,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": [
           "apps/judicial-system/web-e2e-regression/**/*.{ts,tsx,js,jsx}"

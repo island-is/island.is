@@ -91,7 +91,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": ["apps/financial-aid/web-osk/**/*.{ts,tsx,js,jsx}"]
       }

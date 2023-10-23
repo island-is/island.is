@@ -27,7 +27,7 @@
       "version": "17.0.0-beta.7",
       "description": "update-17-0-0-rename-to-eslint",
       "implementation": "./src/migrations/update-17-0-0-rename-to-eslint/update-17-0-0-rename-to-eslint",
-      "package": "@nx/linter",
+      "package": "@nx/eslint",
       "name": "update-17-0-0-rename-to-eslint"
     }
   ]

@@ -48,7 +48,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": [
           "apps/services/user-notification/**/*.{ts,tsx,js,jsx}"

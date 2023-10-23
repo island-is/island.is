@@ -29,7 +29,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": [
           "apps/judicial-system/scheduler/**/*.{ts,tsx,js,jsx}"

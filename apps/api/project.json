@@ -31,7 +31,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": ["apps/api/**/*.{ts,tsx,js,jsx}"]
       }

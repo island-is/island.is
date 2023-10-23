@@ -6,7 +6,7 @@
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": [
           "libs/judicial-system/formatters/**/*.{ts,tsx,js,jsx}"

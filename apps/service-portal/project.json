@@ -76,7 +76,7 @@
       ]
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": ["apps/service-portal/**/*.{ts,tsx,js,jsx}"]
       }

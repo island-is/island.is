@@ -47,7 +47,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": ["apps/reference-backend/**/*.{ts,tsx,js,jsx}"]
       }

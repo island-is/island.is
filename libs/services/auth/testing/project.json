@@ -4,7 +4,7 @@
   "sourceRoot": "libs/services/auth/testing/src",
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/services/auth/testing/**/*.ts"]

@@ -4,7 +4,7 @@
   "sourceRoot": "libs/application/api/payment/src",
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/application/api/payment/**/*.ts"]
