@@ -69,6 +69,7 @@ export class MeUserProfileController {
   ): Promise<UserProfileDto> {
     return this.userProfileService.patch(user.nationalId, userProfile)
   }
+
   @Post('/create-verification')
   @Scopes(UserProfileScope.write)
   @Documentation({

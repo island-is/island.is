@@ -123,13 +123,13 @@ export class UserProfileService {
       const update = {
         nationalId,
         ...(isEmailDefined && {
-          email: userProfile.email,
+          email: userProfile.email === '' ? null : userProfile.email,
           emailVerified: true,
         }),
         ...(isMobilePhoneNumberDefined && {
           mobilePhoneNumberVerified: true,
           mobilePhoneNumber:
-            userProfile.mobilePhoneNumber === '' ? '' : nationalNumber,
+            userProfile.mobilePhoneNumber === '' ? null : nationalNumber,
         }),
         ...(isDefined(userProfile.locale) && {
           locale: userProfile.locale,

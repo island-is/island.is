@@ -456,9 +456,9 @@ describe('MeUserProfile', () => {
         // Assert
         expect(res.status).toEqual(201)
         expect(res.body).toMatchObject({
-          mobilePhoneNumber: '',
+          mobilePhoneNumber: null,
           mobilePhoneNumberVerified: true,
-          email: '',
+          email: null,
           emailVerified: true,
         })
 
@@ -468,8 +468,8 @@ describe('MeUserProfile', () => {
           where: { nationalId: testUserProfile.nationalId },
         })
 
-        expect(userProfile.email).toBe('')
-        expect(userProfile.mobilePhoneNumber).toBe('')
+        expect(userProfile.email).toBe(null)
+        expect(userProfile.mobilePhoneNumber).toBe(null)
       },
     )
   })
