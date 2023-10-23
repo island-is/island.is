@@ -124,7 +124,7 @@ const CourtOfAppealCaseOverviewHeader: React.FC<
         <Box marginBottom={5}>
           <AlertMessage
             type="info"
-            title={formatMessage(m.sections.modifyDatesInfo.titleV3, {
+            title={formatMessage(m.sections.modifyDatesInfo.title, {
               caseType: workingCase.type,
             })}
             message={

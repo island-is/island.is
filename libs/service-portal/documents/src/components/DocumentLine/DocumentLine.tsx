@@ -7,29 +7,30 @@ import {
   DocumentDetails,
   GetDocumentListInput,
 } from '@island.is/api/schema'
-import { Box, Text, AlertBanner, LoadingDots } from '@island.is/island-ui/core'
+import { Box, Text, LoadingDots, Icon } from '@island.is/island-ui/core'
 import { dateFormat } from '@island.is/shared/constants'
-import { CardLoader, LoadModal, m } from '@island.is/service-portal/core'
+import { m } from '@island.is/service-portal/core'
 import * as styles from './DocumentLine.css'
 import { gql, useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../utils/messages'
-import { ActiveDocumentType } from '../../screens/Overview/Overview'
 import AvatarImage from './AvatarImage'
 import { useNavigate } from 'react-router-dom'
 import { DocumentsPaths } from '../../lib/paths'
 import { FavAndStash } from '../FavAndStash'
 import { useSubmitMailAction } from '../../utils/useSubmitMailAction'
 import { useIsChildFocusedorHovered } from '../../hooks/useIsChildFocused'
+import { ActiveDocumentType } from '../../lib/types'
 
 interface Props {
   documentLine: Document
   img?: string
   onClick?: (doc: ActiveDocumentType) => void
+  onError?: (error?: string) => void
+  onLoading?: (loading: boolean) => void
   setSelectLine?: (id: string) => void
   refetchInboxItems?: (input?: GetDocumentListInput) => void
   active: boolean
-  loading?: boolean
   asFrame?: boolean
   selected?: boolean
   bookmarked?: boolean
@@ -49,13 +50,15 @@ export const DocumentLine: FC<Props> = ({
   documentLine,
   img,
   onClick,
+  onError,
+  onLoading,
   setSelectLine,
   refetchInboxItems,
   active,
-  loading,
   asFrame,
   bookmarked,
   archived,
+  selected,
 }) => {
   const [avatarCheckmark, setAvatarCheckmark] = useState(false)
   const { formatMessage } = useLocale()
@@ -97,53 +100,54 @@ export const DocumentLine: FC<Props> = ({
     }
   }
 
-  const [
-    getDocument,
-    { data: getFileByIdData, loading: fileLoading, error, refetch, called },
-  ] = useLazyQuery(GET_DOCUMENT_BY_ID, {
-    variables: {
-      input: {
-        id: documentLine.id,
+  const [getDocument, { data: getFileByIdData, loading: fileLoading }] =
+    useLazyQuery(GET_DOCUMENT_BY_ID, {
+      variables: {
+        input: {
+          id: documentLine.id,
+        },
       },
-    },
-    fetchPolicy: 'no-cache',
-    onCompleted: (data) => {
-      const docContent = data?.getDocument
-      if (asFrame) {
-        navigate(DocumentsPaths.ElectronicDocumentsRoot, {
-          state: {
-            id: documentLine.id,
-            doc: {
-              document: docContent as DocumentDetails,
+      fetchPolicy: 'no-cache',
+      onCompleted: (data) => {
+        const docContent = data?.getDocument
+        if (asFrame) {
+          navigate(DocumentsPaths.ElectronicDocumentsRoot, {
+            state: {
               id: documentLine.id,
-              subject: documentLine.subject,
-              sender: documentLine.senderName,
-              downloadUrl: documentLine.url,
-              date: date,
-              img,
+              doc: {
+                document: docContent as DocumentDetails,
+                id: documentLine.id,
+                subject: documentLine.subject,
+                sender: documentLine.senderName,
+                downloadUrl: documentLine.url,
+                date: date,
+                img,
+              },
             },
-          },
-        })
-      } else {
-        displayPdf(docContent)
-      }
-    },
-  })
+          })
+        } else {
+          displayPdf(docContent)
+          if (onError) {
+            onError(undefined)
+          }
+        }
+      },
+      onError: () => {
+        if (onError) {
+          onError(
+            formatMessage(messages.documentFetchError, {
+              senderName: documentLine.senderName,
+            }),
+          )
+        }
+      },
+    })
 
-  const isLink = documentLine.fileType === 'url' && documentLine.url
-
-  const displayError = () => {
-    return (
-      <Box paddingTop={2}>
-        <AlertBanner
-          variant="error"
-          description={formatMessage(messages.documentFetchError, {
-            senderName: documentLine.senderName,
-          })}
-        />
-      </Box>
-    )
-  }
+  useEffect(() => {
+    if (onLoading) {
+      onLoading(fileLoading)
+    }
+  }, [fileLoading])
 
   const onLineClick = async () => {
     getFileByIdData
@@ -153,88 +157,95 @@ export const DocumentLine: FC<Props> = ({
         })
   }
 
-  if (loading) {
-    return <CardLoader />
-  }
-
   const unread = !documentLine.opened
   const isBookmarked = bookmarked || bookmarkSuccess
   const isArchived = archived || archiveSuccess
 
   return (
-    <>
-      {fileLoading && <LoadModal />}
-
-      <Box className={styles.wrapper} ref={wrapperRef}>
-        <Box
-          display="flex"
-          position="relative"
-          borderColor="blue200"
-          borderBottomWidth="standard"
-          paddingX={2}
-          width="full"
-          href={isLink ? documentLine.url : undefined}
-          className={cn(styles.docline, {
-            [styles.active]: active,
-            [styles.unread]: unread,
-          })}
-        >
-          <AvatarImage
-            img={img}
-            onClick={(e) => {
-              e.stopPropagation()
-              if (documentLine.id && setSelectLine) {
-                setSelectLine(documentLine.id)
-              }
-            }}
-            background={
-              avatarCheckmark
-                ? 'white'
-                : documentLine.opened
-                ? 'blue100'
-                : 'white'
+    <Box className={styles.wrapper} ref={wrapperRef}>
+      <Box
+        display="flex"
+        position="relative"
+        borderColor="blue200"
+        borderBottomWidth="standard"
+        paddingX={2}
+        width="full"
+        className={cn(styles.docline, {
+          [styles.active]: active,
+          [styles.unread]: unread,
+        })}
+      >
+        <AvatarImage
+          img={img}
+          onClick={(e) => {
+            e.stopPropagation()
+            if (documentLine.id && setSelectLine) {
+              setSelectLine(documentLine.id)
             }
-          />
+          }}
+          avatar={
+            (avatarCheckmark || selected) && !asFrame ? (
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                background={selected ? 'blue400' : 'blue300'}
+                borderRadius="circle"
+                className={styles.checkCircle}
+              >
+                <Icon icon="checkmark" color="white" type="filled" />
+              </Box>
+            ) : undefined
+          }
+          background={
+            avatarCheckmark
+              ? asFrame
+                ? 'white'
+                : 'blue200'
+              : documentLine.opened
+              ? 'blue100'
+              : 'white'
+          }
+        />
+        <Box
+          width="full"
+          display="flex"
+          flexDirection="column"
+          paddingLeft={2}
+          minWidth={0}
+        >
+          {active && <div className={styles.fakeBorder} />}
+          <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
+            <Text variant="small" truncate>
+              {documentLine.senderName}
+            </Text>
+            <Text variant="small">{date}</Text>
+          </Box>
           <Box
-            width="full"
+            className={styles.title}
             display="flex"
-            flexDirection="column"
-            paddingLeft={2}
-            minWidth={0}
+            flexDirection="row"
+            justifyContent="spaceBetween"
           >
-            {active && <div className={styles.fakeBorder} />}
-            <Box
-              display="flex"
-              flexDirection="row"
-              justifyContent="spaceBetween"
-            >
-              <Text variant="small" truncate>
-                {documentLine.senderName}
-              </Text>
-              <Text variant="small">{date}</Text>
-            </Box>
-            <Box
-              className={styles.title}
-              display="flex"
-              flexDirection="row"
-              justifyContent="spaceBetween"
+            <button
+              onClick={async () => onLineClick()}
+              aria-label={formatMessage(m.openDocumentAriaLabel, {
+                subject: documentLine.subject,
+              })}
+              type="button"
+              className={styles.docLineButton}
             >
               <Text
                 fontWeight={unread ? 'medium' : 'regular'}
                 color="blue400"
                 truncate
               >
-                <button
-                  onClick={!isLink ? async () => onLineClick() : undefined}
-                  aria-label={formatMessage(m.openDocumentAriaLabel, {
-                    subject: documentLine.subject,
-                  })}
-                  type="button"
-                >
-                  {documentLine.subject}
-                </button>
+                {documentLine.subject}
               </Text>
-              {(avatarCheckmark || isBookmarked || isArchived) && !postLoading && (
+            </button>
+            {(avatarCheckmark || isBookmarked || isArchived) &&
+              !postLoading &&
+              !asFrame && (
                 <FavAndStash
                   bookmarked={isBookmarked}
                   archived={isArchived}
@@ -266,17 +277,15 @@ export const DocumentLine: FC<Props> = ({
                   }
                 />
               )}
-              {postLoading && (
-                <Box display="flex" alignItems="center">
-                  <LoadingDots single />
-                </Box>
-              )}
-            </Box>
+            {postLoading && (
+              <Box display="flex" alignItems="center">
+                <LoadingDots single />
+              </Box>
+            )}
           </Box>
         </Box>
       </Box>
-      {error && displayError()}
-    </>
+    </Box>
   )
 }
 

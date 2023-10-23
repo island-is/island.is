@@ -1,6 +1,7 @@
 export interface DocumentInfoDTO {
   id: string
   documentDate: string
+  publicationDate?: string
   senderKennitala: string
   senderName?: string
   subject: string

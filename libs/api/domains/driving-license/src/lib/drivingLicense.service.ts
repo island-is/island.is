@@ -38,8 +38,10 @@ import { NationalRegistryXRoadService } from '@island.is/api/domains/national-re
 import {
   hasLocalResidence,
   hasResidenceHistory,
+  mapResidence,
 } from './util/hasResidenceHistory'
 import { info } from 'kennitala'
+import { computeCountryResidence } from '@island.is/residence-history'
 import { Jurisdiction } from './graphql/models'
 
 const LOGTAG = '[api-domains-driving-license]'
@@ -252,8 +254,10 @@ export class DrivingLicenseService {
         nationalId,
       )
 
-    const localRecidencyHistory = hasResidenceHistory(residenceHistory)
-    const localRecidency = hasLocalResidence(residenceHistory)
+    const residence = mapResidence(residenceHistory)
+    const residenceTime = computeCountryResidence(residence)
+    const localRecidencyHistory = hasResidenceHistory(residence)
+    const localRecidency = hasLocalResidence(residence)
 
     const canApply = await this.canApplyFor(type, token)
 
@@ -273,6 +277,7 @@ export class DrivingLicenseService {
             {
               key: RequirementKey.currentLocalResidency,
               requirementMet: localRecidency,
+              daysOfResidency: residenceTime ? residenceTime['IS'] : 0,
             },
           ]
         : []),
@@ -281,6 +286,7 @@ export class DrivingLicenseService {
             {
               key: RequirementKey.localResidency,
               requirementMet: localRecidencyHistory,
+              daysOfResidency: residenceTime ? residenceTime['IS'] : 0,
             },
           ]
         : []),

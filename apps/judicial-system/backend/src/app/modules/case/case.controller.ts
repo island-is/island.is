@@ -64,6 +64,7 @@ import { CreateCaseDto } from './dto/createCase.dto'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
+import { CaseCompletedGuard } from './guards/caseCompleted.guard'
 import { CaseExistsGuard } from './guards/caseExists.guard'
 import { CaseReadGuard } from './guards/caseRead.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
@@ -86,6 +87,7 @@ import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService, UpdateCase } from './case.service'
+import { PDFService } from './pdf.service'
 
 @Controller('api')
 @ApiTags('cases')
@@ -94,6 +96,7 @@ export class CaseController {
     private readonly caseService: CaseService,
     private readonly userService: UserService,
     private readonly eventService: EventService,
+    private readonly pdfService: PDFService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -369,7 +372,6 @@ export class CaseController {
     judgeRule,
     registrarRule,
     assistantRule,
-    prisonSystemStaffRule,
   )
   @Get('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
@@ -403,7 +405,7 @@ export class CaseController {
       `Getting the request for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.caseService.getRequestPdf(theCase)
+    const pdf = await this.pdfService.getRequestPdf(theCase)
 
     res.end(pdf)
   }
@@ -444,7 +446,7 @@ export class CaseController {
       )
     }
 
-    const pdf = await this.caseService.getCaseFilesRecordPdf(
+    const pdf = await this.pdfService.getCaseFilesRecordPdf(
       theCase,
       policeCaseNumber,
     )
@@ -459,13 +461,7 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
   )
-  @RolesRules(
-    prosecutorRule,
-    judgeRule,
-    registrarRule,
-    prisonSystemStaffRule,
-    assistantRule,
-  )
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, assistantRule)
   @Get('case/:caseId/courtRecord')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -482,7 +478,7 @@ export class CaseController {
       `Getting the court record for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.caseService.getCourtRecordPdf(theCase, user)
+    const pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
 
     res.end(pdf)
   }
@@ -494,13 +490,7 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
   )
-  @RolesRules(
-    prosecutorRule,
-    judgeRule,
-    registrarRule,
-    prisonSystemStaffRule,
-    assistantRule,
-  )
+  @RolesRules(prosecutorRule, judgeRule, registrarRule, assistantRule)
   @Get('case/:caseId/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -514,7 +504,7 @@ export class CaseController {
   ): Promise<void> {
     this.logger.debug(`Getting the ruling for case ${caseId} as a pdf document`)
 
-    const pdf = await this.caseService.getRulingPdf(theCase)
+    const pdf = await this.pdfService.getRulingPdf(theCase)
 
     res.end(pdf)
   }
@@ -525,8 +515,9 @@ export class CaseController {
     CaseExistsGuard,
     new CaseTypeGuard([CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY]),
     CaseReadGuard,
+    CaseCompletedGuard,
   )
-  @RolesRules(prosecutorRule, judgeRule, registrarRule, prisonSystemStaffRule)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('case/:caseId/custodyNotice')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -549,7 +540,8 @@ export class CaseController {
       )
     }
 
-    const pdf = await this.caseService.getCustodyPdf(theCase)
+    const pdf = await this.pdfService.getCustodyNoticePdf(theCase)
+
     res.end(pdf)
   }
 
@@ -582,7 +574,7 @@ export class CaseController {
       `Getting the indictment for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.caseService.getIndictmentPdf(theCase)
+    const pdf = await this.pdfService.getIndictmentPdf(theCase)
 
     res.end(pdf)
   }
