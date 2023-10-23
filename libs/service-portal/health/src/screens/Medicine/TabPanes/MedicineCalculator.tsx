@@ -102,10 +102,11 @@ export const MedicineCalulator = () => {
   }
 
   useEffect(() => {
+    if (selectedDrugList.length === 0) setCalculatorResults(null)
     if (hasCalculated) {
       handleCalculate()
     }
-  }, [JSON.stringify(selectedDrugList)])
+  }, [[...selectedDrugList]])
 
   const { width } = useWindowSize()
 
@@ -255,26 +256,6 @@ export const MedicineCalulator = () => {
           alignItems="center"
           flexWrap="wrap"
         >
-          {/* <Box display="flex" hidden={true} columnGap={CONTENT_GAP_LG}>
-            <Button
-              variant="utility"
-              icon="print"
-              size="small"
-              onClick={() => undefined} // TODO: Add funcitonality
-              disabled={CALCULATOR_DISABLED}
-            >
-              {formatMessage(m.print)}
-            </Button>
-            <Button
-              variant="utility"
-              icon="download"
-              size="small"
-              onClick={() => undefined} // TODO: Add funcitonality
-              disabled={CALCULATOR_DISABLED}
-            >
-              {formatMessage(m.download)}
-            </Button>
-          </Box> */}
           <Text variant="h5">{formatMessage(messages.medicineResults)}</Text>
           <Button
             dataTestId="calculate-button"

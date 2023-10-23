@@ -36,7 +36,6 @@ const Payments = lazy(() => import('./screens/Payments/Payments'))
 
 export const healthModule: PortalModule = {
   name: 'Heilsa',
-  // featureFlag: Features.servicePortalHealthRightsModule,
   enabled: ({ isCompany }) => !isCompany,
   routes: ({ userInfo }) => [
     {
