@@ -33,7 +33,8 @@ export const SocialInsuranceAdministrationBankInfoApi = defineTemplateApi({
   externalDataId: 'socialInsuranceAdministrationBankInfo',
 })
 
-export const SocialInsuranceAdministrationSpouseInNursingHomeApi = defineTemplateApi({
-  action: 'getSpouseInNursingHome',
-  externalDataId: 'socialInsuranceAdministrationSpouseInNursingHome',
-})
+export const SocialInsuranceAdministrationSpouseInNursingHomeApi =
+  defineTemplateApi({
+    action: 'getSpouseInNursingHome',
+    externalDataId: 'socialInsuranceAdministrationSpouseInNursingHome',
+  })
