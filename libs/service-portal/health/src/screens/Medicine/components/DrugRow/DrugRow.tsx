@@ -53,18 +53,16 @@ export const DrugRow: React.FC<Props> = ({
         />
       </T.Data>
       <T.Data>
-        {formatMessage(messages.medicinePaymentPaidAmount, {
-          amount: drug.totalPrice
-            ? intl.formatNumber(drug.totalPrice)
-            : drug.totalPrice,
-        })}
+        {!!drug.totalPrice &&
+          formatMessage(messages.medicinePaymentPaidAmount, {
+            amount: intl.formatNumber(drug.totalPrice),
+          })}
       </T.Data>
       <T.Data>
-        {formatMessage(messages.medicinePaymentPaidAmount, {
-          amount: drug.totalPaidIndividual
-            ? intl.formatNumber(drug.totalPaidIndividual)
-            : drug.totalPaidIndividual,
-        })}
+        {!!drug.totalPaidIndividual &&
+          formatMessage(messages.medicinePaymentPaidAmount, {
+            amount: drug.totalPaidIndividual,
+          })}
       </T.Data>
       <T.Data>
         <button onClick={handleRemove}>
