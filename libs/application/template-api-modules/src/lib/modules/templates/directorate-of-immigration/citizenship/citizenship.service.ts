@@ -5,13 +5,11 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 import {
   ApplicantChildCustodyInformation,
   ApplicationTypes,
-  InstitutionNationalIds,
   NationalRegistryBirthplace,
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
-  getChargeItemCodes,
   CitizenshipAnswers,
   SpouseIndividual,
   CitizenIndividual,
@@ -36,22 +34,6 @@ export class CitizenshipService extends BaseTemplateApiService {
     private readonly nationalRegistryApi: NationalRegistryClientService,
   ) {
     super(ApplicationTypes.CITIZENSHIP)
-  }
-
-  async createCharge({ application, auth }: TemplateApiModuleActionProps) {
-    try {
-      const chargeItemCodes = getChargeItemCodes()
-
-      const result = this.sharedTemplateAPIService.createCharge(
-        auth,
-        application.id,
-        InstitutionNationalIds.UTLENDINGASTOFNUN,
-        chargeItemCodes,
-      )
-      return result
-    } catch (exeption) {
-      return { id: '', paymentUrl: '' }
-    }
   }
 
   async getResidenceConditionInfo({
