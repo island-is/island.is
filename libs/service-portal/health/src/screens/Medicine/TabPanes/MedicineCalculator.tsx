@@ -19,6 +19,7 @@ import {
 } from '../Medicine.generated'
 import {
   RightsPortalCalculatorRequestInput,
+  RightsPortalDrug,
   RightsPortalDrugCalculatorResponse,
 } from '@island.is/api/schema'
 import * as styles from './Medicine.css'
@@ -88,25 +89,29 @@ export const MedicineCalulator = () => {
         })),
       },
     }
-    drugCalcQuery({
-      variables: {
-        input: input,
-      },
-      onCompleted: (data) => {
-        setCalculatorResults(data.rightsPortalDrugsCalculator)
-      },
-    })
+    if (input.drugCalculatorRequestDTO.drugs.length) {
+      drugCalcQuery({
+        variables: {
+          input: input,
+        },
+        onCompleted: (data) => {
+          setCalculatorResults(data.rightsPortalDrugsCalculator)
+        },
+      })
+    }
   }
+
+  useEffect(() => {
+    if (hasCalculated) {
+      handleCalculate()
+    }
+  }, [JSON.stringify(selectedDrugList)])
 
   const { width } = useWindowSize()
 
   const isMobile = width < 992
 
-  const handleAddDrug = (
-    drug: RightsPortalCalculatorRequestInput,
-    name: string,
-    strength: string,
-  ) => {
+  const handleAddDrug = (drug: RightsPortalDrug) => {
     setSelectedDrugList((list) => {
       return [
         ...list,
@@ -115,8 +120,8 @@ export const MedicineCalulator = () => {
           nordicCode: drug.nordicCode,
           price: drug.price,
           units: 1,
-          name: name,
-          strength: strength,
+          name: drug.name,
+          strength: drug.strength,
         },
       ]
     })
@@ -205,7 +210,7 @@ export const MedicineCalulator = () => {
                             selectedDrugList.find(
                               (d) => d.nordicCode === drug.nordicCode,
                             ) === undefined
-                              ? handleAddDrug(drug, drug.name, drug.strength)
+                              ? handleAddDrug(drug)
                               : undefined
                           }
                         >
@@ -276,7 +281,10 @@ export const MedicineCalulator = () => {
             size="medium"
             variant="primary"
             disabled={CALCULATOR_DISABLED}
-            onClick={handleCalculate}
+            onClick={() => {
+              if (!hasCalculated) setHasCalculated(true)
+              handleCalculate()
+            }}
           >
             {formatMessage(messages.calculate)}
           </Button>
@@ -334,11 +342,10 @@ export const MedicineCalulator = () => {
                       }
                       handleRemove={() => {
                         setSelectedDrugList((list) =>
-                          list.filter(
-                            (drug) => drug.nordicCode !== d.nordicCode,
-                          ),
+                          list
+                            .filter((drug) => drug.nordicCode !== d.nordicCode)
+                            .map((drug, i) => ({ ...drug, lineNumber: i + 1 })),
                         )
-                        handleCalculate()
                       }}
                     />
                   </tr>
