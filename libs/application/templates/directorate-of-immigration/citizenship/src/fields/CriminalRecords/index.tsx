@@ -4,7 +4,7 @@ import { FileUploadController } from '@island.is/application/ui-components'
 import { supportingDocuments } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { getValueViaPath } from '@island.is/application/core'
-import { Country } from '@island.is/clients/directorate-of-immigration'
+import { OptionSetItem } from '@island.is/clients/directorate-of-immigration'
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
 
@@ -20,7 +20,7 @@ export const CriminalRecords: FC<FieldBaseProps> = ({ field, application }) => {
     application.externalData,
     'countries.data',
     [],
-  ) as Country[]
+  ) as OptionSetItem[]
 
   const { formatMessage } = useLocale()
 
@@ -34,7 +34,9 @@ export const CriminalRecords: FC<FieldBaseProps> = ({ field, application }) => {
               application={application}
               id={`${field.id}.${x.countryId}`}
               header={`Sakavottorð - ${
-                countryOptions.filter((z) => z.id === x.countryId)[0]?.name
+                countryOptions.filter(
+                  (z) => z.id?.toString() === x.countryId,
+                )[0]?.name
               }`}
               description={formatMessage(
                 supportingDocuments.labels.otherDocuments.acceptedFileTypes,

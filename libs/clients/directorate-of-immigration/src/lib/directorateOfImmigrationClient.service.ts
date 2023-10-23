@@ -1,27 +1,23 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import {
-  CitizenshipApplication,
-  Country,
-  CountryOfResidence,
-  Passport,
-  ResidenceConditionInfo,
-  StayAbroad,
-  TravelDocumentType,
-} from './directorateOfImmigrationClient.types'
+import { CitizenshipApplication } from './directorateOfImmigrationClient.types'
 import { Injectable } from '@nestjs/common'
 import {
   ApplicantApi,
   ApplicantResidenceConditionApi,
+  ApplicantResidenceConditionViewModel,
   ApplicationApi,
   ApplicationAttachmentApi,
   AttachmentType,
   CountryOfResidenceApi,
+  CountryOfResidenceViewModel,
   LookupType,
   OptionSetApi,
+  OptionSetItem,
   ResidenceAbroadApi,
+  ResidenceAbroadViewModel,
   StaticDataApi,
-  StudyApi,
   TravelDocumentApi,
+  TravelDocumentViewModel,
 } from '../../gen/fetch'
 
 export
@@ -36,7 +32,6 @@ class DirectorateOfImmigrationClient {
     private optionSetApi: OptionSetApi,
     private residenceAbroadApi: ResidenceAbroadApi,
     private staticDataApi: StaticDataApi,
-    private studyApi: StudyApi,
     private travelDocumentApi: TravelDocumentApi,
   ) {}
 
@@ -72,103 +67,74 @@ class DirectorateOfImmigrationClient {
     return this.staticDataApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  private studyApiWithAuth(auth: Auth) {
-    return this.studyApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
   private travelDocumentApiWithAuth(auth: Auth) {
     return this.travelDocumentApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   // Common:
 
-  async getCountries(): Promise<Country[]> {
+  async getCountries(): Promise<OptionSetItem[]> {
     const res = await this.optionSetApi.apiOptionSetLookupTypeGet({
       lookupType: LookupType.Countries,
     })
 
-    return res.map((item) => ({
-      id: item.id?.toString() || '',
-      name: item.name || '',
-    }))
+    return res
   }
 
-  async getTravelDocumentTypes(): Promise<TravelDocumentType[]> {
+  async getTravelDocumentTypes(): Promise<OptionSetItem[]> {
     const res = await this.optionSetApi.apiOptionSetLookupTypeGet({
       lookupType: LookupType.TravelDocumentTypes,
     })
 
-    return res.map((item) => ({
-      id: item.id || 0,
-      name: item.name || '',
-    }))
+    return res
   }
 
   // Citizenship:
 
   async getCurrentCountryOfResidenceList(
     auth: Auth,
-  ): Promise<CountryOfResidence[]> {
+  ): Promise<CountryOfResidenceViewModel[]> {
     const res = await this.countryOfResidenceApiWithAuth(
       auth,
     ).apiCountryOfResidenceGetAllGet()
 
-    return res.map((item) => ({
-      countryId: item.countryId?.toString() || '',
-      countryName: item.countryName || '',
-    }))
+    return res
   }
 
-  async getCurrentStayAbroadList(auth: Auth): Promise<StayAbroad[]> {
+  async getCurrentStayAbroadList(
+    auth: Auth,
+  ): Promise<ResidenceAbroadViewModel[]> {
     const res = await this.residenceAbroadApiWithAuth(
       auth,
     ).apiResidenceAbroadGetAllGet()
 
-    return res.map((item) => ({
-      countryId: item.countryId?.toString() || '',
-      countryName: item.countryName || '',
-      dateFrom: item.dateFrom,
-      dateTo: item.dateTo,
-      purposeOfStay: item.purposeOfStay,
-    }))
+    return res
   }
 
-  async getCurrentPassportItem(auth: Auth): Promise<Passport | undefined> {
+  async getCurrentPassportItem(
+    auth: Auth,
+  ): Promise<TravelDocumentViewModel | undefined> {
     const res = await this.travelDocumentApiWithAuth(
       auth,
     ).apiTravelDocumentGetAllGet()
 
     // Select the most recent entry
-    const newestItem = res.sort(
+    const sortedList = res.sort(
       (a, b) => (b.createdOn?.getTime() || 0) - (a.createdOn?.getTime() || 0),
-    )[0]
-
-    return (
-      newestItem && {
-        dateOfIssue: newestItem.dateOfIssue,
-        dateOfExpiry: newestItem.dateOfExpiry,
-        name: newestItem.name,
-        passportNo: newestItem.travelDocumentNo,
-        passportTypeId: newestItem.travelDocumentTypeId,
-        passportTypeName: newestItem.travelDocumentTypeName,
-        issuingCountryId: newestItem.issuingCountryId?.toString(),
-        issuingCountryName: newestItem.issuingCountryName,
-      }
     )
+    const newestItem = sortedList.length > 0 ? sortedList[0] : undefined
+
+    return newestItem
   }
 
   async getCitizenshipResidenceConditionInfo(
     auth: Auth,
-  ): Promise<ResidenceConditionInfo> {
+  ): Promise<ApplicantResidenceConditionViewModel> {
     const res = await this.applicantResidenceConditionApiWithAuth(
       auth,
     ).apiApplicantResidenceConditionGetGet()
 
-    return {
-      hasValid: res.isAnyResConValid || false,
-      hasOnlyTypeMaritalStatus:
-        res.isOnlyMarriedOrCohabitationWithISCitizen || false,
-    }
+    return res
   }
 
   async submitApplicationForCitizenship(

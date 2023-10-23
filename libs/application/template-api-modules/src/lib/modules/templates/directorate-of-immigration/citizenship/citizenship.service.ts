@@ -18,13 +18,12 @@ import {
   error as errorMessages,
 } from '@island.is/application/templates/directorate-of-immigration/citizenship'
 import {
-  Country,
-  CountryOfResidence,
+  ApplicantResidenceConditionViewModel,
+  CountryOfResidenceViewModel,
   DirectorateOfImmigrationClient,
-  Passport,
-  ResidenceConditionInfo,
-  StayAbroad,
-  TravelDocumentType,
+  OptionSetItem,
+  ResidenceAbroadViewModel,
+  TravelDocumentViewModel,
 } from '@island.is/clients/directorate-of-immigration'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { YES } from '@island.is/application/core'
@@ -57,23 +56,23 @@ export class CitizenshipService extends BaseTemplateApiService {
 
   async getResidenceConditionInfo({
     auth,
-  }: TemplateApiModuleActionProps): Promise<ResidenceConditionInfo> {
+  }: TemplateApiModuleActionProps): Promise<ApplicantResidenceConditionViewModel> {
     return this.directorateOfImmigrationClient.getCitizenshipResidenceConditionInfo(
       auth,
     )
   }
 
-  async getCountries(): Promise<Country[]> {
+  async getCountries(): Promise<OptionSetItem[]> {
     return this.directorateOfImmigrationClient.getCountries()
   }
 
-  async getTravelDocumentTypes(): Promise<TravelDocumentType[]> {
+  async getTravelDocumentTypes(): Promise<OptionSetItem[]> {
     return this.directorateOfImmigrationClient.getTravelDocumentTypes()
   }
 
   async getCurrentCountryOfResidenceList({
     auth,
-  }: TemplateApiModuleActionProps): Promise<CountryOfResidence[]> {
+  }: TemplateApiModuleActionProps): Promise<CountryOfResidenceViewModel[]> {
     return this.directorateOfImmigrationClient.getCurrentCountryOfResidenceList(
       auth,
     )
@@ -81,13 +80,15 @@ export class CitizenshipService extends BaseTemplateApiService {
 
   async getCurrentStayAbroadList({
     auth,
-  }: TemplateApiModuleActionProps): Promise<StayAbroad[]> {
+  }: TemplateApiModuleActionProps): Promise<ResidenceAbroadViewModel[]> {
     return this.directorateOfImmigrationClient.getCurrentStayAbroadList(auth)
   }
 
   async getCurrentPassportItem({
     auth,
-  }: TemplateApiModuleActionProps): Promise<Passport | undefined> {
+  }: TemplateApiModuleActionProps): Promise<
+    TravelDocumentViewModel | undefined
+  > {
     return this.directorateOfImmigrationClient.getCurrentPassportItem(auth)
   }
 
@@ -256,7 +257,7 @@ export class CitizenshipService extends BaseTemplateApiService {
     // throw error in case the residence condition list changed since prerequisite step and
     // user does not fulfill any other condition
     if (
-      !residenceConditionInfo.hasValid &&
+      !residenceConditionInfo.isAnyResConValid &&
       answers.parentInformation?.hasValidParents !== YES &&
       answers.formerIcelander !== YES
     ) {
