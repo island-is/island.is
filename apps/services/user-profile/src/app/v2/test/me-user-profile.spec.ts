@@ -15,6 +15,7 @@ import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { UserProfile } from '../../user-profile/userProfile.model'
 import { VerificationService } from '../../user-profile/verification.service'
+import { IslyklarApi, PublicUser } from '@island.is/clients/islykill'
 
 const testUserProfile = {
   nationalId: '1234567890',
@@ -22,13 +23,22 @@ const testUserProfile = {
   mobilePhoneNumber: '1234567',
 }
 
+const smsVerificationCode = '123'
+const emailVerificationCode = '321'
+
 const newEmail = 'test1234@test.is'
 const newPhoneNumber = '9876543'
 
 const testEmailVerification = {
   nationalId: testUserProfile.nationalId,
   email: testUserProfile.email,
-  hash: '123',
+  hash: emailVerificationCode,
+}
+
+const testSMSVerification = {
+  nationalId: testUserProfile.nationalId,
+  mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+  smsCode: smsVerificationCode,
 }
 
 describe('MeUserProfile', () => {
@@ -227,7 +237,7 @@ describe('MeUserProfile', () => {
   describe('PATCH user-profile', () => {
     let app = null
     let server = null
-
+    let islyklarApi = null
     beforeEach(async () => {
       app = await setupApp({
         AppModule,
@@ -238,10 +248,31 @@ describe('MeUserProfile', () => {
         }),
       })
 
+      const fixtureFactory = new FixtureFactory(app)
+
+      await fixtureFactory.createUserProfile(testUserProfile)
+      await fixtureFactory.createEmailVerification({
+        ...testEmailVerification,
+        email: newEmail,
+      })
+
+      await fixtureFactory.createMobileVerification({
+        ...testSMSVerification,
+        mobilePhoneNumber: newPhoneNumber,
+      })
+
       // Mock confirmation email and sms
       const verificationService = app.get(VerificationService)
       verificationService.sendConfirmationEmail = jest.fn()
       verificationService.sendConfirmationSms = jest.fn()
+
+      islyklarApi = app.get(IslyklarApi)
+      islyklarApi.islyklarPut = jest
+        .fn()
+        .mockImplementation((user: PublicUser) => {
+          return new Promise<PublicUser>((resolve) => resolve(user))
+        })
+      islyklarApi.islyklarGet = jest.fn()
 
       server = request(app.getHttpServer())
     })
@@ -257,24 +288,23 @@ describe('MeUserProfile', () => {
       '$method $endpoint should return 201 with changed data in response',
       async ({ method, endpoint }: TestEndpointOptions) => {
         // Arrange
-        const fixtureFactory = new FixtureFactory(app)
-
-        await fixtureFactory.createUserProfile(testUserProfile)
 
         // Act
         // const res = await getRequestMethod(server, method)(endpoint)
         const res = await server.patch(endpoint).send({
           email: newEmail,
           mobilePhoneNumber: newPhoneNumber,
+          emailVerificationCode: emailVerificationCode,
+          mobilePhoneNumberVerificationCode: smsVerificationCode,
         })
 
         // Assert
         expect(res.status).toEqual(201)
         expect(res.body).toMatchObject({
           email: newEmail,
-          emailVerified: false,
+          emailVerified: true,
           mobilePhoneNumber: newPhoneNumber,
-          mobilePhoneNumberVerified: false,
+          mobilePhoneNumberVerified: true,
         })
 
         // Assert Db records
@@ -287,26 +317,57 @@ describe('MeUserProfile', () => {
         expect(userProfile.mobilePhoneNumber).toBe(newPhoneNumber)
       },
     )
+
     it.each`
       method     | endpoint
       ${'PATCH'} | ${'/v2/me'}
     `(
-      '$method $endpoint should return 201 with only email changed data in response',
+      '$method $endpoint should return 201 with changed mobile data in response',
       async ({ method, endpoint }: TestEndpointOptions) => {
-        const fixtureFactory = new FixtureFactory(app)
-        await fixtureFactory.createUserProfile(testUserProfile)
-
         // Act
         // const res = await getRequestMethod(server, method)(endpoint)
         const res = await server.patch(endpoint).send({
-          email: newEmail,
+          mobilePhoneNumber: newPhoneNumber,
+          mobilePhoneNumberVerificationCode: smsVerificationCode,
         })
 
         // Assert
         expect(res.status).toEqual(201)
         expect(res.body).toMatchObject({
+          nationalId: testUserProfile.nationalId,
+          mobilePhoneNumber: newPhoneNumber,
+          mobilePhoneNumberVerified: true,
+        })
+
+        // Assert Db records
+        const userProfileModel = app.get(getModelToken(UserProfile))
+        const userProfile = await userProfileModel.findOne({
+          where: { nationalId: testUserProfile.nationalId },
+        })
+
+        expect(userProfile.mobilePhoneNumber).toBe(newPhoneNumber)
+      },
+    )
+
+    it.each`
+      method     | endpoint
+      ${'PATCH'} | ${'/v2/me'}
+    `(
+      '$method $endpoint should return 201 with changed email data in response',
+      async ({ method, endpoint }: TestEndpointOptions) => {
+        // Act
+        // const res = await getRequestMethod(server, method)(endpoint)
+        const res = await server.patch(endpoint).send({
           email: newEmail,
-          emailVerified: false,
+          emailVerificationCode: emailVerificationCode,
+        })
+
+        // Assert
+        expect(res.status).toEqual(201)
+        expect(res.body).toMatchObject({
+          nationalId: testUserProfile.nationalId,
+          email: newEmail,
+          emailVerified: true,
         })
 
         // Assert Db records
@@ -316,9 +377,6 @@ describe('MeUserProfile', () => {
         })
 
         expect(userProfile.email).toBe(newEmail)
-        expect(userProfile.mobilePhoneNumber).toBe(
-          testUserProfile.mobilePhoneNumber,
-        )
       },
     )
 
@@ -326,22 +384,20 @@ describe('MeUserProfile', () => {
       method     | endpoint
       ${'PATCH'} | ${'/v2/me'}
     `(
-      '$method $endpoint should return 201 with only phoneNumber changed data in response',
+      '$method $endpoint should return 400 when email verification code is incorrect',
       async ({ method, endpoint }: TestEndpointOptions) => {
-        const fixtureFactory = new FixtureFactory(app)
-        await fixtureFactory.createUserProfile(testUserProfile)
-
         // Act
         // const res = await getRequestMethod(server, method)(endpoint)
         const res = await server.patch(endpoint).send({
-          mobilePhoneNumber: newPhoneNumber,
+          email: newEmail,
+          emailVerificationCode: '000',
         })
 
         // Assert
-        expect(res.status).toEqual(201)
+        expect(res.status).toEqual(400)
         expect(res.body).toMatchObject({
-          mobilePhoneNumber: newPhoneNumber,
-          mobilePhoneNumberVerified: false,
+          statusCode: 400,
+          message: 'Email verification with hash 000 does not exist',
         })
 
         // Assert Db records
@@ -351,19 +407,45 @@ describe('MeUserProfile', () => {
         })
 
         expect(userProfile.email).toBe(testUserProfile.email)
-        expect(userProfile.mobilePhoneNumber).toBe(newPhoneNumber)
       },
     )
+    it.each`
+      method     | endpoint
+      ${'PATCH'} | ${'/v2/me'}
+    `(
+      '$method $endpoint should return 400 when mobile verification code is incorrect',
+      async ({ method, endpoint }: TestEndpointOptions) => {
+        // Act
+        // const res = await getRequestMethod(server, method)(endpoint)
+        const res = await server.patch(endpoint).send({
+          mobilePhoneNumber: newPhoneNumber,
+          mobilePhoneNumberVerificationCode: '000',
+        })
 
+        // Assert
+        expect(res.status).toEqual(400)
+        expect(res.body).toMatchObject({
+          statusCode: 400,
+          message: 'SMS code is not a match. 5 tries remaining.',
+        })
+
+        // Assert Db records
+        const userProfileModel = app.get(getModelToken(UserProfile))
+        const userProfile = await userProfileModel.findOne({
+          where: { nationalId: testUserProfile.nationalId },
+        })
+
+        expect(userProfile.mobilePhoneNumber).toBe(
+          testUserProfile.mobilePhoneNumber,
+        )
+      },
+    )
     it.each`
       method     | endpoint
       ${'PATCH'} | ${'/v2/me'}
     `(
       '$method $endpoint should return 201 and clear email and phoneNumber when empty string is sent',
       async ({ method, endpoint }: TestEndpointOptions) => {
-        const fixtureFactory = new FixtureFactory(app)
-        await fixtureFactory.createUserProfile(testUserProfile)
-
         // Act
         // const res = await getRequestMethod(server, method)(endpoint)
         const res = await server.patch(endpoint).send({
@@ -375,9 +457,9 @@ describe('MeUserProfile', () => {
         expect(res.status).toEqual(201)
         expect(res.body).toMatchObject({
           mobilePhoneNumber: '',
-          mobilePhoneNumberVerified: false,
+          mobilePhoneNumberVerified: true,
           email: '',
-          emailVerified: false,
+          emailVerified: true,
         })
 
         // Assert Db records
@@ -388,42 +470,6 @@ describe('MeUserProfile', () => {
 
         expect(userProfile.email).toBe('')
         expect(userProfile.mobilePhoneNumber).toBe('')
-      },
-    )
-
-    it.each`
-      method     | endpoint
-      ${'PATCH'} | ${'/v2/me'}
-    `(
-      '$method $endpoint should return 201 and create profile with email and phoneNumber',
-      async ({ method, endpoint }: TestEndpointOptions) => {
-        // Act
-        // const res = await getRequestMethod(server, method)(endpoint)
-        const res = await server.patch(endpoint).send({
-          mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
-          email: testUserProfile.email,
-        })
-
-        // Assert
-        expect(res.status).toEqual(201)
-        expect(res.body).toMatchObject({
-          mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
-          mobilePhoneNumberVerified: false,
-          email: testUserProfile.email,
-          emailVerified: false,
-        })
-
-        // Assert Db records
-        const userProfileModel = app.get(getModelToken(UserProfile))
-        const userProfile = await userProfileModel.findOne({
-          where: { nationalId: testUserProfile.nationalId },
-        })
-
-        expect(userProfile).not.toBe(null)
-        expect(userProfile.email).toBe(testUserProfile.email)
-        expect(userProfile.mobilePhoneNumber).toBe(
-          testUserProfile.mobilePhoneNumber,
-        )
       },
     )
   })

@@ -33,51 +33,6 @@ const testEmailVerification = {
 }
 
 describe('Email confirmation', () => {
-  describe('Test without existing email verification', () => {
-    let app = null
-    let server = null
-    beforeEach(async () => {
-      app = await setupApp({
-        AppModule,
-        SequelizeConfigService,
-        user: createCurrentUser({
-          nationalId: testUserProfile.nationalId,
-          scope: [UserProfileScope.read, UserProfileScope.write],
-        }),
-      })
-
-      server = request(app.getHttpServer())
-    })
-
-    afterEach(() => {
-      app.cleanUp()
-    })
-
-    it.each`
-      method    | endpoint
-      ${'POST'} | ${'/v2/me/verify'}
-    `(
-      '$method $endpoint should return 400 when email verification does not exist for this user',
-      async ({ method, endpoint }: TestEndpointOptions) => {
-        // Act
-        const res = await getRequestMethod(
-          server,
-          method,
-        )(endpoint).send({
-          email: testUserProfile.email,
-          code: '123',
-        })
-
-        // Assert
-        expect(res.status).toEqual(400)
-        expect(res.body).toMatchObject({
-          statusCode: 400,
-          message: 'Email verification does not exist for this user',
-        })
-      },
-    )
-  })
-
   describe('Test with existing email verification', () => {
     let app = null
     let server = null

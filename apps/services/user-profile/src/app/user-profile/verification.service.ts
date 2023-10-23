@@ -15,6 +15,7 @@ import environment from '../../environments/environment'
 import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
+import { Transaction } from 'sequelize'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'verification-service'
@@ -106,8 +107,10 @@ export class VerificationService {
   async confirmEmail(
     confirmEmailDto: ConfirmEmailDto,
     nationalId: string,
+    transaction?: Transaction,
   ): Promise<ConfirmationDtoResponse> {
     const verification = await this.emailVerificationModel.findOne({
+      ...(transaction && { transaction }),
       where: { nationalId, email: confirmEmailDto.email },
       order: [['created', 'DESC']],
     })
@@ -142,6 +145,7 @@ export class VerificationService {
       await this.emailVerificationModel.update(
         { confirmed: true },
         {
+          ...(transaction && { transaction }),
           where: { nationalId },
           returning: true,
         },
@@ -158,7 +162,7 @@ export class VerificationService {
     }
 
     try {
-      await this.removeEmailVerification(nationalId)
+      await this.removeEmailVerification(nationalId, transaction)
     } catch (e) {
       this.logger.error('Email verification removal error', {
         error: JSON.stringify(e),
@@ -174,6 +178,7 @@ export class VerificationService {
   async confirmSms(
     confirmSmsDto: ConfirmSmsDto,
     nationalId: string,
+    transaction?: Transaction,
   ): Promise<ConfirmationDtoResponse> {
     const phoneNumber = parsePhoneNumber(confirmSmsDto.mobilePhoneNumber, 'IS')
     const mobileNumber =
@@ -183,6 +188,7 @@ export class VerificationService {
     const verification = await this.smsVerificationModel.findOne({
       where: { nationalId, mobilePhoneNumber: mobileNumber },
       order: [['created', 'DESC']],
+      ...(transaction && { transaction }),
     })
 
     if (!verification) {
@@ -224,6 +230,7 @@ export class VerificationService {
       await this.smsVerificationModel.update(
         { confirmed: true },
         {
+          ...(transaction && { transaction }),
           where: { nationalId },
           returning: true,
         },
@@ -240,7 +247,7 @@ export class VerificationService {
     }
 
     try {
-      await this.removeSmsVerification(nationalId)
+      await this.removeSmsVerification(nationalId, transaction)
     } catch (e) {
       this.logger.error('SMS verification removal error', {
         error: JSON.stringify(e),
@@ -334,15 +341,17 @@ export class VerificationService {
     }
   }
 
-  async removeSmsVerification(nationalId: string) {
+  async removeSmsVerification(nationalId: string, transaction?: Transaction) {
     await this.smsVerificationModel.destroy({
       where: { nationalId },
+      ...(transaction && { transaction }),
     })
   }
 
-  async removeEmailVerification(nationalId: string) {
+  async removeEmailVerification(nationalId: string, transaction?: Transaction) {
     await this.emailVerificationModel.destroy({
       where: { nationalId },
+      ...(transaction && { transaction }),
     })
   }
 

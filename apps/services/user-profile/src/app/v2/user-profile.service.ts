@@ -1,6 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { parsePhoneNumber } from 'libphonenumber-js'
+import { isEmail } from 'class-validator'
 
 import { isDefined } from '@island.is/shared/utils'
 
@@ -8,7 +9,8 @@ import { UserProfileDto } from './dto/user-profileDto'
 import { PatchUserProfileDto } from './dto/patch-user-profileDto'
 import { VerificationService } from '../user-profile/verification.service'
 import { UserProfile } from '../user-profile/userProfile.model'
-import { isEmail } from 'class-validator'
+import { IslykillService } from './islykill.service'
+import { Sequelize } from 'sequelize-typescript'
 
 @Injectable()
 export class UserProfileService {
@@ -17,6 +19,8 @@ export class UserProfileService {
     private readonly userProfileModel: typeof UserProfile,
     @Inject(VerificationService)
     private readonly verificationService: VerificationService,
+    private readonly islykillService: IslykillService,
+    private sequelize: Sequelize,
   ) {}
 
   async findById(nationalId: string): Promise<UserProfileDto> {
@@ -56,49 +60,97 @@ export class UserProfileService {
     const isEmailDefined = isDefined(userProfile.email)
     const isMobilePhoneNumberDefined = isDefined(userProfile.mobilePhoneNumber)
 
-    let parsedPhoneNumber = userProfile.mobilePhoneNumber
-    if (isMobilePhoneNumberDefined && userProfile.mobilePhoneNumber !== '') {
-      const tempPhoneNumber = parsePhoneNumber(
-        userProfile.mobilePhoneNumber,
-        'IS',
+    if (
+      isEmailDefined &&
+      userProfile.email !== '' &&
+      !isDefined(userProfile.emailVerificationCode)
+    ) {
+      throw new BadRequestException('Email verification code is required')
+    }
+
+    if (
+      isMobilePhoneNumberDefined &&
+      userProfile.mobilePhoneNumber !== '' &&
+      !isDefined(userProfile.mobilePhoneNumberVerificationCode)
+    ) {
+      throw new BadRequestException(
+        'Mobile phone number verification code is required',
       )
-      tempPhoneNumber.country === 'IS' &&
-        (parsedPhoneNumber = tempPhoneNumber.nationalNumber as string)
     }
 
-    const update: UserProfileDto = {
-      nationalId,
-      ...(isMobilePhoneNumberDefined && {
-        mobilePhoneNumberVerified: false,
-        mobilePhoneNumber: parsedPhoneNumber,
-      }),
-      ...(isEmailDefined && {
-        emailVerified: false,
-        email: userProfile.email,
-      }),
-    }
+    const { nationalNumber, parsedPhoneNumber } =
+      isMobilePhoneNumberDefined &&
+      userProfile.mobilePhoneNumber !== '' &&
+      this.formatPhoneNumber(userProfile.mobilePhoneNumber)
 
-    await this.userProfileModel.upsert({ ...update, lastNudge: new Date() })
+    return await this.sequelize.transaction(async (transaction) => {
+      if (userProfile.email !== '') {
+        isEmailDefined &&
+          (await this.verificationService
+            .confirmEmail(
+              {
+                email: userProfile.email,
+                hash: userProfile.emailVerificationCode,
+              },
+              nationalId,
+              transaction,
+            )
+            .then((res) => {
+              if (!res.confirmed) {
+                throw new BadRequestException(res.message)
+              }
+            }))
+      }
 
-    if (isEmailDefined && userProfile.email !== '') {
-      await this.verificationService.createEmailVerification(
+      if (userProfile.mobilePhoneNumber !== '') {
+        isMobilePhoneNumberDefined &&
+          (await this.verificationService
+            .confirmSms(
+              {
+                mobilePhoneNumber: userProfile.mobilePhoneNumber,
+                code: userProfile.mobilePhoneNumberVerificationCode,
+              },
+              nationalId,
+              transaction,
+            )
+            .then((res) => {
+              if (!res.confirmed) {
+                throw new BadRequestException(res.message)
+              }
+            }))
+      }
+
+      const update = {
         nationalId,
-        userProfile.email,
-        3,
-      )
-    }
+        ...(isEmailDefined && {
+          email: userProfile.email,
+          emailVerified: true,
+        }),
+        ...(isMobilePhoneNumberDefined && {
+          mobilePhoneNumberVerified: true,
+          mobilePhoneNumber:
+            userProfile.mobilePhoneNumber === '' ? '' : nationalNumber,
+        }),
+        ...(isDefined(userProfile.locale) && {
+          locale: userProfile.locale,
+        }),
+      }
 
-    if (isMobilePhoneNumberDefined && userProfile.mobilePhoneNumber !== '') {
-      await this.verificationService.createSmsVerification(
+      await this.userProfileModel.upsert(
         {
-          nationalId,
-          mobilePhoneNumber: parsedPhoneNumber,
+          ...update,
+          lastNudge: new Date(),
         },
-        3,
+        { transaction },
       )
-    }
 
-    return update
+      await this.islykillService.updateIslykillSettings({
+        nationalId,
+        phoneNumber: parsedPhoneNumber,
+        email: userProfile.email,
+      })
+      return update
+    })
   }
 
   async createEmailVerification({
@@ -108,18 +160,10 @@ export class UserProfileService {
     nationalId: string
     email: string
   }) {
-    if (email === '') {
-      await this.patch(nationalId, { email })
-    } else {
-      if (!isEmail(email)) {
-        throw new BadRequestException('Email is required')
-      }
-      await this.verificationService.createEmailVerification(
-        nationalId,
-        email,
-        3,
-      )
+    if (!isEmail(email)) {
+      throw new BadRequestException('Email is required')
     }
+    await this.verificationService.createEmailVerification(nationalId, email, 3)
   }
 
   async createSmsVerification({
@@ -129,73 +173,19 @@ export class UserProfileService {
     nationalId: string
     mobilePhoneNumber: string
   }) {
-    if (mobilePhoneNumber === '') {
-      await this.patch(nationalId, { mobilePhoneNumber })
-    } else {
-      let parsedPhoneNumber = mobilePhoneNumber
-      const tempPhoneNumber = parsePhoneNumber(mobilePhoneNumber, 'IS')
-      tempPhoneNumber.country === 'IS' &&
-        (parsedPhoneNumber = tempPhoneNumber.nationalNumber as string)
+    const { nationalNumber } = this.formatPhoneNumber(mobilePhoneNumber)
 
-      await this.verificationService.createSmsVerification(
-        {
-          nationalId,
-          mobilePhoneNumber: parsedPhoneNumber,
-        },
-        3,
-      )
-    }
+    await this.verificationService.createSmsVerification(
+      {
+        nationalId,
+        mobilePhoneNumber: nationalNumber,
+      },
+      3,
+    )
   }
 
   async confirmNudge(nationalId: string): Promise<void> {
     await this.userProfileModel.upsert({ nationalId, lastNudge: new Date() })
-  }
-
-  async confirmEmail(
-    nationalId: string,
-    email: string,
-    code: string,
-  ): Promise<void> {
-    const { confirmed, message } = await this.verificationService.confirmEmail(
-      { email, hash: code },
-      nationalId,
-    )
-
-    if (!confirmed) {
-      throw new BadRequestException(message)
-    }
-
-    await this.userProfileModel.update(
-      { emailVerified: true, email },
-      {
-        where: { nationalId: nationalId },
-      },
-    )
-  }
-
-  async confirmMobilePhoneNumber(
-    nationalId: string,
-    mobilePhoneNumber: string,
-    code: string,
-  ): Promise<void> {
-    const { confirmed, message } = await this.verificationService.confirmSms(
-      { mobilePhoneNumber, code },
-      nationalId,
-    )
-
-    if (!confirmed) {
-      throw new BadRequestException(message)
-    }
-
-    await this.userProfileModel.update(
-      {
-        mobilePhoneNumberVerified: true,
-        mobilePhoneNumber,
-      },
-      {
-        where: { nationalId: nationalId },
-      },
-    )
   }
 
   private checkNeedsNudge(lastNudge: Date | null): boolean {
@@ -207,5 +197,27 @@ export class UserProfileService {
     sixMonthsAgoDate.setMonth(sixMonthsAgoDate.getMonth() - 6)
 
     return new Date(lastNudge) < sixMonthsAgoDate
+  }
+
+  private formatPhoneNumber(phoneNumber: string): {
+    nationalNumber: string
+    parsedPhoneNumber: string
+  } {
+    if (phoneNumber === '') {
+      return null
+    }
+
+    let nationalNumber = phoneNumber
+    const tempPhoneNumber = parsePhoneNumber(phoneNumber, 'IS')
+    tempPhoneNumber.country === 'IS' &&
+      (nationalNumber = tempPhoneNumber.nationalNumber as string)
+
+    return {
+      nationalNumber: nationalNumber,
+      parsedPhoneNumber: [
+        `+${tempPhoneNumber.countryCallingCode}`,
+        tempPhoneNumber.nationalNumber,
+      ].join('-'),
+    }
   }
 }

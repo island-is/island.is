@@ -23,7 +23,6 @@ import type { User } from '@island.is/auth-nest-tools'
 import { UserProfileDto } from './dto/user-profileDto'
 import { UserProfileService } from './user-profile.service'
 import { PatchUserProfileDto } from './dto/patch-user-profileDto'
-import { VerifyDto } from './dto/verify-dto'
 import { CreateVerificationDto } from './dto/create-verificationDto'
 
 const namespace = '@island.is/user-profile/v2/me'
@@ -99,46 +98,6 @@ export class MeUserProfileController {
             nationalId: user.nationalId,
             mobilePhoneNumber: input.mobilePhoneNumber,
           })
-        } else {
-          throw new BadRequestException(
-            'Either email or mobile phone number must be provided',
-          )
-        }
-      })(this.userProfileService),
-    )
-  }
-
-  @Post('/verify')
-  @Scopes(UserProfileScope.write)
-  @Documentation({
-    description: 'Creates a verification for the user for either email or sms',
-    response: { status: 201 },
-  })
-  async verify(
-    @CurrentUser() user: User,
-    @Body() input: VerifyDto,
-  ): Promise<void> {
-    return this.auditService.auditPromise(
-      {
-        auth: user,
-        namespace,
-        action: 'verify',
-        resources: user.nationalId,
-        alsoLog: true,
-      },
-      (async (userProfileService: UserProfileService) => {
-        if (input.email && !input.mobilePhoneNumber) {
-          await userProfileService.confirmEmail(
-            user.nationalId,
-            input.email,
-            input.code,
-          )
-        } else if (input.mobilePhoneNumber && !input.email) {
-          await userProfileService.confirmMobilePhoneNumber(
-            user.nationalId,
-            input.mobilePhoneNumber,
-            input.code,
-          )
         } else {
           throw new BadRequestException(
             'Either email or mobile phone number must be provided',
