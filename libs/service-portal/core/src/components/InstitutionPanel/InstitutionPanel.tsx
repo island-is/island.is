@@ -58,12 +58,7 @@ export const InstitutionPanel = ({
               background="purple200"
             />
           ) : (
-            <Box
-              display="flex"
-              flexDirection="row"
-              justifyContent="center"
-              alignItems="center"
-            >
+            <Box display="flex" flexDirection="row" alignItems="center">
               <Box
                 component="img"
                 alt=""
@@ -80,7 +75,7 @@ export const InstitutionPanel = ({
               )}
               {tooltipText && (
                 <div className={styles.tooltip}>
-                  <Tooltip placement="bottom" text={tooltipText} />
+                  <Tooltip placement="top" text={tooltipText} />
                 </div>
               )}
             </Box>
