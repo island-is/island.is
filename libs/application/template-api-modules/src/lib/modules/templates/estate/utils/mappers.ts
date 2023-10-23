@@ -118,7 +118,7 @@ export const expandEstateMembers = (
       dateOfBirth: member.dateOfBirth ?? '',
       enabled: member.enabled ?? true,
       email: member.email ?? '',
-      foreignCitizenShip: member.foreignCitizenShip ?? 'no',
+      foreignCitizenShip: trueOrHasYes(member.foreignCitizenShip ?? 'false'),
       // TODO: investigate better why nationalId and SSN is required
       nationalId: member.nationalId ?? '',
       ssn: member.ssn ?? '',
