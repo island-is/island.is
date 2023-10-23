@@ -80,6 +80,7 @@ export const expandAssetFrames = (
       description: assetFrame.description ?? '',
       enabled: assetFrame.enabled ?? true,
       marketValue: assetFrame.marketValue ?? '',
+      share: assetFrame.share ?? '',
     })
   })
 

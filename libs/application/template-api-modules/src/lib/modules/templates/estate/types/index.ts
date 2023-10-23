@@ -49,6 +49,7 @@ type AssetFrame = {
   assetNumber?: string
   description?: string
   marketValue?: string | number
+  share?: string | number
 } & SystemMetadata
 
 type BankAccount = {
