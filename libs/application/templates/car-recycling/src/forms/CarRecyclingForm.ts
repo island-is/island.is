@@ -23,7 +23,7 @@ export const CarRecyclingForm: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'carsList22',
+      id: 'carsList',
       title: carRecyclingMessages.cars.list,
       children: [
         buildAlertMessageField({

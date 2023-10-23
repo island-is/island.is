@@ -21,7 +21,7 @@ export const Cars = ({
     <ReviewGroup
       isLast
       isEditable={editable}
-      editAction={() => goToScreen?.('fooobar')}
+      editAction={() => goToScreen?.('carsList')}
     >
       <Box position="relative" marginBottom={'containerGutter'}>
         <Label>
