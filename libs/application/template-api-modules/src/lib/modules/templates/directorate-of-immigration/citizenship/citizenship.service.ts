@@ -27,7 +27,7 @@ import {
   TravelDocumentType,
 } from '@island.is/clients/directorate-of-immigration'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { coreErrorMessages, YES } from '@island.is/application/core'
+import { YES } from '@island.is/application/core'
 
 @Injectable()
 export class CitizenshipService extends BaseTemplateApiService {
@@ -71,24 +71,24 @@ export class CitizenshipService extends BaseTemplateApiService {
     return this.directorateOfImmigrationClient.getTravelDocumentTypes()
   }
 
-  async getOldCountryOfResidenceList({
+  async getCurrentCountryOfResidenceList({
     auth,
   }: TemplateApiModuleActionProps): Promise<CountryOfResidence[]> {
-    return this.directorateOfImmigrationClient.getOldCountryOfResidenceList(
+    return this.directorateOfImmigrationClient.getCurrentCountryOfResidenceList(
       auth,
     )
   }
 
-  async getOldStayAbroadList({
+  async getCurrentStayAbroadList({
     auth,
   }: TemplateApiModuleActionProps): Promise<StayAbroad[]> {
-    return this.directorateOfImmigrationClient.getOldStayAbroadList(auth)
+    return this.directorateOfImmigrationClient.getCurrentStayAbroadList(auth)
   }
 
-  async getOldPassportItem({
+  async getCurrentPassportItem({
     auth,
   }: TemplateApiModuleActionProps): Promise<Passport | undefined> {
-    return this.directorateOfImmigrationClient.getOldPassportItem(auth)
+    return this.directorateOfImmigrationClient.getCurrentPassportItem(auth)
   }
 
   async getNationalRegistryIndividual({
@@ -293,16 +293,18 @@ export class CitizenshipService extends BaseTemplateApiService {
     }
 
     const answers = application.answers as CitizenshipAnswers
-    const individual = application.externalData.individual.data as
+    const individual = application.externalData.individual?.data as
       | CitizenIndividual
       | undefined
     const nationalRegistryBirthplace = application.externalData
-      .nationalRegistryBirthplace.data as NationalRegistryBirthplace | undefined
-    const spouseDetails = application.externalData.spouseDetails.data as
+      .nationalRegistryBirthplace?.data as
+      | NationalRegistryBirthplace
+      | undefined
+    const spouseDetails = application.externalData.spouseDetails?.data as
       | SpouseIndividual
       | undefined
     const childrenCustodyInformation = application.externalData
-      .childrenCustodyInformation.data as
+      .childrenCustodyInformation?.data as
       | ApplicantChildCustodyInformation[]
       | undefined
     const applicantPassport = answers.passport
