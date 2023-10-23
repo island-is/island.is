@@ -120,7 +120,9 @@ const template: ApplicationTemplate<
             ],
           },
           progress: 0.25,
-          lifecycle: EphemeralStateLifeCycle,
+          lifecycle: {
+            ...pruneAfterDays(6),
+          },
           onExit: defineTemplateApi({
             action: ApiActions.validateApplication,
           }),
@@ -160,7 +162,7 @@ const template: ApplicationTemplate<
         chargeItemCodes: getChargeItemCodes(),
         submitTarget: States.REVIEW,
         lifecycle: {
-          ...pruneAfterDays(1 / 24),
+          ...pruneAfterDays(1),
           shouldDeleteChargeIfPaymentFulfilled: true,
         },
         onExit: [
@@ -215,8 +217,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Review').then((module) =>
-                  Promise.resolve(module.ReviewForm),
+                import('../forms/ReviewSeller').then((module) =>
+                  Promise.resolve(module.ReviewSellerForm),
                 ),
               write: {
                 answers: [
