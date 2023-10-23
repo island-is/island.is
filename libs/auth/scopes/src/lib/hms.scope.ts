@@ -1,3 +1,3 @@
 ﻿export enum HmsScope {
-  properties = '@hms.is/properties'
+  properties = '@hms.is/properties',
 }
