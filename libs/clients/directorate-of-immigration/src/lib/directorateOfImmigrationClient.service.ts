@@ -188,9 +188,8 @@ class DirectorateOfImmigrationClient {
     })
 
     // applicant: post static stata
-    const staticDataId = await this.staticDataApiWithAuth(
-      auth,
-    ).apiStaticDataPost({
+    let staticDataId: string
+    staticDataId = await this.staticDataApiWithAuth(auth).apiStaticDataPost({
       staticDataNewModel: {
         ssn: auth.nationalId,
         name: application.givenName + ' ' + application.familyName,
@@ -232,6 +231,9 @@ class DirectorateOfImmigrationClient {
       },
     })
 
+    // clean staticDataId and remove double quotes that is added by the openapi generator (bug in )
+    staticDataId = staticDataId.replace(/["]/g, '')
+
     // applicant: create application
     let applicationId: string
     applicationId = await this.applicationApiWithAuth(
@@ -243,7 +245,7 @@ class DirectorateOfImmigrationClient {
     })
 
     // clean applicationId and remove double quotes that is added by the openapi generator
-    applicationId = applicationId.replace('"', '').replace('"', '')
+    applicationId = applicationId.replace(/["]/g, '')
 
     // applicant: submit information about countries of residence
     const countriesOfResidence = application.countriesOfResidence
