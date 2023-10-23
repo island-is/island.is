@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
+import type { Block } from '@contentful/rich-text-types'
 
 import { SliceType } from '@island.is/island-ui/contentful'
 import {
@@ -7,6 +9,7 @@ import {
   AccordionItem,
   AsyncSearchInput,
   Box,
+  Divider,
   GridContainer,
   Inline,
   LinkV2,
@@ -18,6 +21,7 @@ import {
   GetNamespaceQueryVariables,
   GetSingleManualQuery,
   GetSingleManualQueryVariables,
+  Html,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
@@ -29,6 +33,7 @@ import { webRichText } from '@island.is/web/utils/richText'
 
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { GET_SINGLE_MANUAL_QUERY } from '../queries/Manual'
+import * as styles from './Manual.css'
 
 type ManualType = GetSingleManualQuery['getSingleManual']
 
@@ -58,6 +63,27 @@ const extractLastUpdatedDateFromManual = (manual: ManualType) => {
     }
   }
   return lastUpdatedDate
+}
+
+const extractTextFromManualChapterDescription = (
+  manualChapter: ManualProps['manualChapter'],
+) => {
+  const htmlSlices = manualChapter?.description?.filter(
+    (chapter) => chapter?.__typename === 'Html',
+  )
+
+  if (!htmlSlices) return ''
+
+  let text = ''
+
+  for (const htmlSlice of htmlSlices) {
+    const document = (htmlSlice as Html)?.document
+    if (document) {
+      text += documentToPlainTextString(document as Block)
+    }
+  }
+
+  return text
 }
 
 // TODO: Make 'EN' button work
@@ -104,6 +130,7 @@ const Manual: Screen<ManualProps> = ({ manual, manualChapter, namespace }) => {
                     {n('manualPageOrganizationPrefix', 'Þjónustuaðili')}:
                   </Text>
                   <LinkV2
+                    className={styles.link}
                     color="blue400"
                     underlineVisibility="always"
                     underline="small"
@@ -122,6 +149,7 @@ const Manual: Screen<ManualProps> = ({ manual, manualChapter, namespace }) => {
                   <Text>{n('manualPageLastUpdated', 'Síðast uppfært')}:</Text>
                   <Text>{lastUpdatedDate} - </Text>
                   <LinkV2
+                    className={styles.link}
                     href={
                       linkResolver('manualchangelog', [manual?.slug as string])
                         .href
@@ -131,59 +159,81 @@ const Manual: Screen<ManualProps> = ({ manual, manualChapter, namespace }) => {
                   </LinkV2>
                 </Inline>
               )}
+              {typeof manual?.info?.length === 'number' &&
+                manual.info.length > 0 &&
+                webRichText(
+                  manual.info as SliceType[],
+                  undefined,
+                  activeLocale,
+                )}
             </Stack>
 
-            <AsyncSearchInput
-              buttonProps={{
-                onClick: () => handleSearch(),
-                onFocus: () => setSearchInputHasFocus(true),
-                onBlur: () => setSearchInputHasFocus(false),
-              }}
-              inputProps={{
-                onFocus: () => setSearchInputHasFocus(true),
-                onBlur: () => setSearchInputHasFocus(false),
-                name: 'manual-page-search-input',
-                inputSize: 'medium',
-                placeholder: n(
-                  'manualPageSearchInputPlaceholder',
-                  'Leitaðu í handbókinni',
-                ),
-                colored: true,
-                onChange: (ev) => setSearchValue(ev.target.value),
-                value: searchValue,
-                onKeyDown: (ev) => {
-                  if (ev.key === 'Enter') {
-                    handleSearch()
-                  }
-                },
-              }}
-              hasFocus={searchInputHasFocus}
-            />
+            <Box className={styles.inputContainer}>
+              <AsyncSearchInput
+                buttonProps={{
+                  onClick: () => handleSearch(),
+                  onFocus: () => setSearchInputHasFocus(true),
+                  onBlur: () => setSearchInputHasFocus(false),
+                }}
+                inputProps={{
+                  onFocus: () => setSearchInputHasFocus(true),
+                  onBlur: () => setSearchInputHasFocus(false),
+                  name: 'manual-page-search-input',
+                  inputSize: 'medium',
+                  placeholder: n(
+                    'manualPageSearchInputPlaceholder',
+                    'Leitaðu í handbókinni',
+                  ),
+                  colored: true,
+                  onChange: (ev) => setSearchValue(ev.target.value),
+                  value: searchValue,
+                  onKeyDown: (ev) => {
+                    if (ev.key === 'Enter') {
+                      handleSearch()
+                    }
+                  },
+                }}
+                hasFocus={searchInputHasFocus}
+              />
+            </Box>
           </Stack>
 
-          <Box>
-            <Text variant="eyebrow">
-              {n('manualPageAboutEyebrowText', 'Um handbókina')}
-            </Text>
-            {webRichText((manual?.description ?? []) as SliceType[])}
-          </Box>
+          <Stack space={3}>
+            <Divider />
+            <Box>
+              <Text variant="eyebrow">
+                {n('manualPageAboutEyebrowText', 'Um handbókina')}
+              </Text>
+              {webRichText((manual?.description ?? []) as SliceType[])}
+            </Box>
+          </Stack>
 
           <Stack space={3}>
             {!manualChapter &&
-              manual?.chapters.map((chapter) => (
-                <Box key={chapter.id}>
-                  <LinkV2
-                    underlineVisibility="always"
-                    underline="small"
-                    color="blue400"
-                    href={
-                      linkResolver('manualchapter', [manual.slug, chapter.slug])
-                        .href
-                    }
-                  >
-                    {chapter.title}
-                  </LinkV2>
-                </Box>
+              manual?.chapters.map((chapter, index) => (
+                <Stack space={3}>
+                  {index === 0 && <Divider />}
+                  <Stack space={1} key={chapter.id}>
+                    <LinkV2
+                      className={styles.link}
+                      underlineVisibility="always"
+                      underline="small"
+                      color="blue400"
+                      href={
+                        linkResolver('manualchapter', [
+                          manual.slug,
+                          chapter.slug,
+                        ]).href
+                      }
+                    >
+                      {chapter.title}
+                    </LinkV2>
+                    <Text variant="medium" fontWeight="light">
+                      {extractTextFromManualChapterDescription(chapter)}
+                    </Text>
+                  </Stack>
+                  <Divider />
+                </Stack>
               ))}
             {manualChapter && (
               <Accordion>

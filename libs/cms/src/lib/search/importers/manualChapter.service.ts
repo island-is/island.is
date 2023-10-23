@@ -40,7 +40,7 @@ export class ManualChapterSyncService
           }
 
           // TODO: what is searchable, should the content inside the items be searchable?
-          const content = extractStringsFromObject(mapped.description)
+          const content = extractStringsFromObject(mapped.description ?? [])
 
           const tags = [
             {

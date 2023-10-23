@@ -29,6 +29,10 @@ export const GET_SINGLE_MANUAL_QUERY = gql`
       id
       title
       slug
+      info {
+        ...AllSlices
+        ${nestedFields}
+      }
       description {
         ...AllSlices
         ${nestedFields}
@@ -67,6 +71,10 @@ export const GET_SINGLE_MANUAL_QUERY = gql`
             dateOfChange
             textualDescription
           }
+        }
+        description {
+          ...AllSlices
+          ${nestedFields}
         }
         chapterItems {
           id

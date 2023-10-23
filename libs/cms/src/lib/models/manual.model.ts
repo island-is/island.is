@@ -20,6 +20,9 @@ export class Manual {
   slug!: string
 
   @CacheField(() => [SliceUnion], { nullable: true })
+  info?: Array<typeof SliceUnion>
+
+  @CacheField(() => [SliceUnion], { nullable: true })
   description?: Array<typeof SliceUnion>
 
   @CacheField(() => [ManualChapter])
@@ -33,6 +36,8 @@ export const mapManual = ({ sys, fields }: IManual): Manual => ({
   organization: fields.organization
     ? mapOrganization(fields.organization)
     : null,
+  // TODO: What if this is empty?
+  info: fields.info ? mapDocument(fields.info, sys.id + ':info') : [],
   // TODO: What if this is empty?
   description: fields.description
     ? mapDocument(fields.description, sys.id + ':description')
