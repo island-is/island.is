@@ -24,7 +24,7 @@
 /libs/api/domains/identity/                                                                              @island-is/core
 /libs/testing/                                                                                           @island-is/core
 /libs/nest/swagger/                                                                                      @island-is/core
-
+/libs/testing-system/                                                                                    @island-is/qa
 /apps/services/endorsements/                                                                             @island-is/juni
 /apps/icelandic-names-registry*/                                                                         @island-is/juni
 /apps/web/screens/PetitionView/                                                                          @island-is/juni
