@@ -38,6 +38,12 @@ const estateMemberMapper = (element: EstateMember) => {
   }
 }
 
+export const trueOrHasYes = (element: string | boolean): string => {
+  const elementString = element.toString().toLowerCase()
+  const value = elementString === 'yes' || elementString === 'true'
+  return value.toString()
+}
+
 export const estateTransformer = (estate: EstateInfo): EstateData => {
   const assets = estate.assets.map((el) => estateAssetMapper<EstateAsset>(el))
   const flyers = estate.flyers.map((el) => estateAssetMapper<EstateAsset>(el))
