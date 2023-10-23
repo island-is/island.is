@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useState } from 'react'
 import { ApolloError, useQuery } from '@apollo/client'
 import { PAYMENT_STATUS } from '@island.is/application/graphql'
 
@@ -22,19 +22,17 @@ export const usePaymentStatus = (applicationId: string): UsePaymentStatus => {
     },
     skip: !continuePolling,
     pollInterval: 4000,
+    //Using the default fetchPolicy 'cache-first' will cache the paymentUrl that results in an error from ARK when a payment is requested for a deleted charge.
+    fetchPolicy: 'network-only',
   })
 
-  const paymentStatus: ApplicationPayment = useMemo(() => {
-    return (
-      data?.applicationPaymentStatus ?? {
-        fulfilled: false,
-      }
-    )
-  }, [data])
-  const stopPolling = useCallback(() => setContinuePolling(false), [])
+  const paymentStatus: ApplicationPayment = data?.applicationPaymentStatus ?? {
+    fulfilled: false,
+  }
+
   return {
     pollingError: error,
-    stopPolling,
+    stopPolling: () => setContinuePolling(false),
     paymentStatus,
   }
 }
