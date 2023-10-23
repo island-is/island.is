@@ -233,6 +233,21 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
         [document.sys.id].concat(subArticles.map((s) => s.sys.id)),
       )
     }
+    // TODO: add hidden parent field?
+    // if (document.sys.contentType.sys.id === 'manual') {
+    //   const manualChapters = await this.contentfulService.getContentfulData(
+    //     100,
+    //     {
+    //       content_type: 'manualChapter',
+    //       'fields.manual.sys.id': document.sys.id,
+    //     },
+    //   )
+
+    //   return this.elasticService.deleteByIds(
+    //     elasticIndex,
+    //     [document.sys.id].concat(manualChapters.map((s) => s.sys.id)),
+    //   )
+    // }
 
     return this.elasticService.deleteByIds(elasticIndex, [document.sys.id])
   }

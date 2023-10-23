@@ -558,9 +558,6 @@ export class CmsResolver {
       { type: 'webManual', slug: input.slug },
     )
   }
-
-  // TODO: add endpoint for getting many manuals
-  // TODO: add endpoint for getting many manual chapters
 }
 
 @Resolver(() => LatestNewsSlice)
