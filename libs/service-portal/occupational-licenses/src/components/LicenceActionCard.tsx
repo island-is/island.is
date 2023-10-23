@@ -1,14 +1,15 @@
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import { ActionCard } from '@island.is/service-portal/core'
 import { olMessage as ol } from '../lib/messages'
 import { m } from '@island.is/service-portal/core'
+import { OccupationalLicenseStatus } from '@island.is/api/schema'
 
 type LicenseActionCardProps = {
   type?: string
   validFrom?: string | Date
   url?: string
   image?: string
-  isValid: boolean
+  status: OccupationalLicenseStatus
 }
 
 export const LicenceActionCard: React.FC<LicenseActionCardProps> = ({
@@ -16,7 +17,7 @@ export const LicenceActionCard: React.FC<LicenseActionCardProps> = ({
   validFrom,
   url,
   image,
-  isValid,
+  status,
 }) => {
   const { formatMessage } = useLocale()
   return (
@@ -25,10 +26,14 @@ export const LicenceActionCard: React.FC<LicenseActionCardProps> = ({
       heading={type}
       text={`${formatMessage(ol.dayOfPublication)}: ${validFrom}`}
       tag={{
-        label: isValid
-          ? formatMessage(ol.validLicense)
-          : formatMessage(ol.invalidLicense),
-        variant: isValid ? 'blue' : 'red',
+        label:
+          status === 'valid'
+            ? formatMessage(ol.validLicense)
+            : status === 'limited'
+            ? formatMessage(ol.validWithLimitationsLicense)
+            : formatMessage(ol.invalidLicense),
+        variant:
+          status === 'valid' ? 'blue' : status === 'limited' ? 'yellow' : 'red',
         outlined: false,
       }}
       cta={{

@@ -7,6 +7,7 @@ import { Sequelize } from 'sequelize-typescript'
 import { UserIdentity } from './models/user-identity.model'
 import { UserIdentityDto } from './dto/user-identity.dto'
 import { ClaimDto } from './dto/claim.dto'
+import { Op } from 'sequelize'
 
 @Injectable()
 export class UserIdentitiesService {
@@ -224,26 +225,26 @@ export class UserIdentitiesService {
   ): Promise<ClaimDto[]> {
     await this.sequelize.transaction(async (t) => {
       await this.claimModel.destroy({
-        where: { subjectId: subjectId },
+        where: { subjectId, type: { [Op.notIn]: claims.map((c) => c.type) } },
         transaction: t,
       })
 
       await this.claimModel.bulkCreate(
         claims.map((c) => ({
-          subjectId: subjectId,
+          subjectId,
           type: c.type,
           value: c.value,
           valueType: c.valueType,
           issuer: c.issuer,
           originalIssuer: c.originalIssuer,
         })),
-        { transaction: t },
+        {
+          transaction: t,
+          updateOnDuplicate: ['value', 'valueType', 'issuer', 'originalIssuer'],
+        },
       )
     })
 
-    return this.claimModel.findAll({
-      where: { subjectId: subjectId },
-      useMaster: true,
-    })
+    return claims
   }
 }

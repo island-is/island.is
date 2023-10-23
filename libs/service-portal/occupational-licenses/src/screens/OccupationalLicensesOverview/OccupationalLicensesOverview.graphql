@@ -14,15 +14,21 @@ query getOccupationalLicenses {
   occupationalLicenses {
     count
     items {
-      __typename
       id
-      isValid
-      profession
+      institution
       type
+      profession
       validFrom
+      status
+
+      ... on OccupationalLicensesHealthDirectorateLicense {
+        legalEntityId
+      }
     }
-    error {
-      hasError
+    errors {
+      message
+      status
+      institution
     }
   }
 }
