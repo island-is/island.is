@@ -1,4 +1,6 @@
+import { Application, ExtraData } from '@island.is/application/types'
 import { ChargeItemCode } from '@island.is/shared/constants'
+import { TransferOfVehicleOwnershipAnswers } from '..'
 
 export const formatIsk = (value: number): string =>
   value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
@@ -21,4 +23,9 @@ export const getChargeItemCodes = (): Array<string> => {
     ChargeItemCode.TRANSPORT_AUTHORITY_TRANSFER_OF_VEHICLE_OWNERSHIP.toString(),
     ChargeItemCode.TRANSPORT_AUTHORITY_TRAFFIC_SAFETY_FEE.toString(),
   ]
+}
+
+export const getExtraData = (application: Application): ExtraData[] => {
+  const answers = application.answers as TransferOfVehicleOwnershipAnswers
+  return [{ name: 'vehicle', value: answers?.pickVehicle?.plate }]
 }
