@@ -9,7 +9,6 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { ChangeCoOwnerOfVehicle } from '../../lib/dataSchema'
 import { payment, conclusion } from '../../lib/messages'
-import { getChargeItemCodes } from '../../utils'
 import { externalDataSection } from './externalDataSection'
 import { informationSection } from './InformationSection'
 import { Logo } from '../../assets/Logo'

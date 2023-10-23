@@ -2,7 +2,6 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   getValueViaPath,
-  pruneAfterDays,
 } from '@island.is/application/core'
 import {
   ApplicationTemplate,
@@ -20,9 +19,7 @@ import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { PaymentCatalogApi } from '@island.is/application/types'
-import { PaymentForm } from '@island.is/application/ui-forms'
 import { CatalogItem } from '@island.is/clients/charge-fjs-v2'
-import { StateNodeConfig } from 'xstate'
 import { buildPaymentState } from '@island.is/application/utils'
 
 const getCodes = (application: Application) => {

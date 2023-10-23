@@ -2,14 +2,8 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import {
-  ApplicationTypes,
-  InstitutionNationalIds,
-} from '@island.is/application/types'
-import {
-  getChargeItemCodes,
-  OrderVehicleRegistrationCertificateAnswers,
-} from '@island.is/application/templates/transport-authority/order-vehicle-registration-certificate'
+import { ApplicationTypes } from '@island.is/application/types'
+import { OrderVehicleRegistrationCertificateAnswers } from '@island.is/application/templates/transport-authority/order-vehicle-registration-certificate'
 import { VehiclePrintingClient } from '@island.is/clients/transport-authority/vehicle-printing'
 
 @Injectable()

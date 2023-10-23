@@ -128,7 +128,11 @@ export function buildPaymentState<
     meta: {
       name: 'Greiðsla',
       status: 'inprogress',
-      lifecycle: options.lifecycle || pruneAfterDays(1),
+      lifecycle: {
+        ...pruneAfterDays(1),
+        shouldDeleteChargeIfPaymentFulfilled: true,
+        ...options.lifecycle,
+      },
       actionCard: {
         historyLogs: [
           {

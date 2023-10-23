@@ -159,10 +159,6 @@ const template: ApplicationTemplate<
         organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
         chargeItemCodes: getChargeItemCodes(),
         submitTarget: States.REVIEW,
-        lifecycle: {
-          ...pruneAfterDays(1 / 24),
-          shouldDeleteChargeIfPaymentFulfilled: true,
-        },
         onExit: [
           defineTemplateApi({
             action: ApiActions.initReview,

@@ -30,6 +30,7 @@ import { gflPendingActionMessages } from './messages/actionCards'
 import { Features } from '@island.is/feature-flags'
 import { buildPaymentState } from '@island.is/application/utils'
 import { GeneralFishingLicenseAnswers } from '..'
+import { ChargeItemCode } from '@island.is/shared/constants'
 
 const pruneAtMidnight = () => {
   const date = new Date()
@@ -52,12 +53,14 @@ const getCodes = (application: Application) => {
   ) as string
 
   if (!chargeItemCode) {
-    //this.logger.error('Charge item code missing in General Fishing License.')
     throw new Error('Vörunúmer fyrir FJS vantar.')
   }
 
   // If strandveiðileyfi, then we set the const to "Sérstakt gjald vegna strandleyfa", otherwise null.
-  const strandveidileyfi = chargeItemCode === 'L5108' ? 'L5112' : false
+  const strandveidileyfi =
+    chargeItemCode === ChargeItemCode.GENERAL_FISHING_LICENSE_COASTAL
+      ? ChargeItemCode.GENERAL_FISHING_LICENSE_SPECIAL_COASTAL
+      : false
 
   return strandveidileyfi
     ? [chargeItemCode, strandveidileyfi]

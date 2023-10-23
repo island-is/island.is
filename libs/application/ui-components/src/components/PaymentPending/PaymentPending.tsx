@@ -9,7 +9,7 @@ import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useSubmitApplication, usePaymentStatus, useMsg } from './hooks'
 import { getRedirectStatus, getRedirectUrl, isComingFromRedirect } from './util'
 import { Company } from './assets'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 
 export interface PaymentPendingProps {
   application: Application
@@ -21,8 +21,6 @@ export const PaymentPending: FC<
   React.PropsWithChildren<PaymentPendingProps>
 > = ({ application, refetch, targetEvent }) => {
   const msg = useMsg(application)
-  const navigate = useNavigate()
-  const location = useLocation()
   const { paymentStatus, stopPolling, pollingError } = usePaymentStatus(
     application.id,
   )
@@ -75,8 +73,6 @@ export const PaymentPending: FC<
     submitApplication,
     paymentStatus,
     stopPolling,
-    location,
-    navigate,
     shouldRedirect,
     setSearchParams,
   ])
