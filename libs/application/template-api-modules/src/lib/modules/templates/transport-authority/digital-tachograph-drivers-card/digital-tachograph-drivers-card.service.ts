@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import {
-  DigitalTachographDriversCardAnswers,
-  getChargeItemCodes,
-} from '@island.is/application/templates/transport-authority/digital-tachograph-drivers-card'
+import { DigitalTachographDriversCardAnswers } from '@island.is/application/templates/transport-authority/digital-tachograph-drivers-card'
 import {
   DrivingLicense,
   NationalRegistry,
@@ -15,10 +12,7 @@ import {
 import { YES } from '@island.is/application/core'
 import { DigitalTachographDriversCardClient } from '@island.is/clients/transport-authority/digital-tachograph-drivers-card'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import {
-  ApplicationTypes,
-  InstitutionNationalIds,
-} from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/application/types'
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
 import { externalData } from '@island.is/application/templates/transport-authority/digital-tachograph-drivers-card'
 import { getUriFromImageStr } from './digital-tachograph-drivers-card.util'
@@ -102,24 +96,6 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
     return await this.digitalTachographDriversCardClient.getNewestDriversCard(
       auth,
     )
-  }
-
-  async createCharge({ application, auth }: TemplateApiModuleActionProps) {
-    try {
-      const chargeItemCodes = getChargeItemCodes(
-        application.answers as DigitalTachographDriversCardAnswers,
-      )
-
-      const result = this.sharedTemplateAPIService.createCharge(
-        auth,
-        application.id,
-        InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeItemCodes,
-      )
-      return result
-    } catch (exeption) {
-      return { id: '', paymentUrl: '' }
-    }
   }
 
   async submitApplication({

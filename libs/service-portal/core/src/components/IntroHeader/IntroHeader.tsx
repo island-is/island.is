@@ -4,6 +4,8 @@ import {
   GridRow,
   Text,
   LoadingDots,
+  BoxProps,
+  GridColumnProps,
 } from '@island.is/island-ui/core'
 import { IntroHeaderProps } from '@island.is/portals/core'
 import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
@@ -19,6 +21,7 @@ import { theme } from '@island.is/island-ui/theme'
 interface Props {
   serviceProviderID?: string
   serviceProviderTooltip?: string
+  span?: GridColumnProps['span']
   narrow?: boolean
   loading?: boolean
 }
@@ -43,14 +46,16 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
     }
   }, [loading, pathname])
 
+  const columnSpan = isMobile ? '8/8' : props.narrow ? '4/8' : '5/8'
+
   if (props.loading) {
     return <LoadingDots />
   }
 
   return (
     <GridRow marginBottom={marginBottom ?? 4}>
-      <GridColumn span={isMobile ? '8/8' : props.narrow ? '4/8' : '5/8'}>
-        <Text variant="h3" as="h1">
+      <GridColumn span={props.span ? props.span : columnSpan}>
+        <Text variant="h3" as={props.isSubheading ? 'h2' : 'h1'}>
           {formatMessage(props.title)}
         </Text>
         {props.intro && (
