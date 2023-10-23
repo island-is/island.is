@@ -11,8 +11,8 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
-import { InheritanceReport } from '../lib/dataSchema'
-import { m } from '../lib/messages'
+import { InheritanceReport } from '../../lib/dataSchema'
+import { m } from '../../lib/messages'
 
 export const heirs = buildSection({
   id: 'heirs',

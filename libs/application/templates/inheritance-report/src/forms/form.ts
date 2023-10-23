@@ -11,11 +11,11 @@ import { format as formatNationalId } from 'kennitala'
 import { removeCountryCode } from '@island.is/application/ui-components'
 
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { assets } from './assets'
-import { debts } from './debts'
-import { business } from './business'
-import { heirs } from './heirs'
-import { funeralCost } from './funeralCost'
+import { assets } from './sections/assets'
+import { debts } from './sections/debts'
+import { business } from './sections/business'
+import { heirs } from './sections/heirs'
+import { funeralCost } from './sections/funeralCost'
 
 export const form: Form = buildForm({
   id: 'inheritanceReport',

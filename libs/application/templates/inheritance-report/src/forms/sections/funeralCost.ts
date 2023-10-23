@@ -7,7 +7,7 @@ import {
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
-import { m } from '../lib/messages'
+import { m } from '../../lib/messages'
 import { formatCurrency } from '@island.is/application/ui-components'
 
 export const funeralCost = buildSection({
