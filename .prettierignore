@@ -12,3 +12,4 @@
 **/*.hbs
 .yarn
 /infra/helm/
+/.nx/cache
