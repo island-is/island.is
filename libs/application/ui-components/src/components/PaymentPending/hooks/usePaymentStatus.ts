@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { ApolloError, useQuery } from '@apollo/client'
 import { PAYMENT_STATUS } from '@island.is/application/graphql'
 
@@ -26,13 +26,17 @@ export const usePaymentStatus = (applicationId: string): UsePaymentStatus => {
     fetchPolicy: 'network-only',
   })
 
-  const paymentStatus: ApplicationPayment = data?.applicationPaymentStatus ?? {
-    fulfilled: false,
-  }
-
+  const paymentStatus: ApplicationPayment = useMemo(() => {
+    return (
+      data?.applicationPaymentStatus ?? {
+        fulfilled: false,
+      }
+    )
+  }, [data])
+  const stopPolling = useCallback(() => setContinuePolling(false), [])
   return {
     pollingError: error,
-    stopPolling: () => setContinuePolling(false),
+    stopPolling,
     paymentStatus,
   }
 }
