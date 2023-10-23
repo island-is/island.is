@@ -18,15 +18,24 @@ type Notifier = {
   relation: string
 }
 
+type Advocate = {
+  name?: string
+  address?: string
+  nationalId?: string
+  email?: string
+  phone?: string
+}
+
 type EstateMember = {
   name: string
   ssn?: string
   nationalId?: string
   relation?: string
   dateOfBirth?: string
-  foreignCitizenShip?: 'yes' | 'no'
+  foreignCitizenship?: string | string[]
   phone?: string
   email?: string
+  advocate?: Advocate
 } & SystemMetadata
 
 type Representative = {
@@ -40,6 +49,7 @@ type AssetFrame = {
   assetNumber?: string
   description?: string
   marketValue?: string | number
+  share?: string | number
 } & SystemMetadata
 
 type BankAccount = {
