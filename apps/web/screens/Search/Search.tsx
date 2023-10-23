@@ -774,7 +774,6 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
     'webOrganizationPage',
     'webProjectPage',
     'webManual',
-    'webManualChapter',
   ]
 
   const ensureContentTypeExists = (
