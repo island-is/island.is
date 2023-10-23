@@ -150,20 +150,10 @@ export const subSectionSummary = buildSubSection({
         buildKeyValueField({
           label: m.overviewPaymentCharge,
           value: ({ externalData, answers }) => {
-            //const items = externalData.payment.data as {
-            //  priceAmount: number
-            //  chargeItemCode: string
-            //}[]
-            const items = [
-              {
-                priceAmount: 10000,
-                chargeItemCode: 'AY114',
-              },
-              {
-                priceAmount: 8000,
-                chargeItemCode: 'AY110',
-              },
-            ]
+            const items = externalData.payment.data as {
+             priceAmount: number
+             chargeItemCode: string
+            }[]
             const targetCode =
               answers.applicationFor === B_TEMP ? 'AY114' : 'AY110'
 

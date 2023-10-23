@@ -54,10 +54,10 @@ export const sectionExternalData = buildSubSection({
           provider: JurisdictionApi,
           title: '',
         }),
-        //buildDataProviderItem({
-        //  provider: SyslumadurPaymentCatalogApi,
-        //  title: '',
-        //}),
+        buildDataProviderItem({
+         provider: SyslumadurPaymentCatalogApi,
+         title: '',
+        }),
         buildDataProviderItem({
           provider: TeachersApi,
           title: '',

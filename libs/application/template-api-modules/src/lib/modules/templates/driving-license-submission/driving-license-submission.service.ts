@@ -75,17 +75,16 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const { answers } = application
     const nationalId = application.applicant
 
-    // TODO: re-enable once payment is ready again
-    //const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-    //  auth,
-    //  application.id,
-    //)
+    const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
+     auth,
+     application.id,
+    )
 
-    //if (!isPayment?.fulfilled) {
-    //  return {
-    //    success: false,
-    //  }
-    //}
+    if (!isPayment?.fulfilled) {
+     return {
+       success: false,
+     }
+    }
 
     let result
     try {
