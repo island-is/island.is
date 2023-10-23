@@ -26,4 +26,5 @@ export enum Routes {
   CHILDRENPASSPORT = 'childrenPassport',
   SUPPORTINGDOCUMENTS = 'supportingDocuments',
   CHILDSUPPORTINGDOCUMENTS = 'childrenSupportingDocuments',
+  FORMERICELANDER = 'formerIcelander',
 }

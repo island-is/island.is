@@ -7,6 +7,7 @@ import {
   buildFileUploadField,
   buildSelectField,
   getValueViaPath,
+  buildValidationError,
 } from '@island.is/application/core'
 import { supportingDocuments } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
@@ -101,7 +102,7 @@ export const PassportSubSection = buildSubSection({
           },
         }),
         buildFileUploadField({
-          id: `${Routes.PASSPORT}.attachment`,
+          id: `${Routes.PASSPORT}.file`,
           title: supportingDocuments.labels.passport.fileUpload,
           introduction: '',
           maxSize: FILE_SIZE_LIMIT,
