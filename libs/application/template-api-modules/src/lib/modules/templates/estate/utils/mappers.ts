@@ -123,7 +123,7 @@ export const expandEstateMembers = (
         name: member.advocate?.name ?? '',
         nationalId: member.advocate?.nationalId ?? '',
         phone: member.advocate?.phone ?? '',
-      }
+      },
     })
   })
   return expandedMembers
