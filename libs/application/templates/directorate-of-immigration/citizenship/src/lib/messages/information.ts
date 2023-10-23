@@ -23,7 +23,7 @@ export const information = {
       description: {
         id: 'doi.cs.application:information.labels.formerIcelander.description',
         defaultMessage:
-          'Ertu fyrrum íslenskur ríkisborgari og hefur átt lögheimili á Íslandi í 1 ár? \\n (Þú hefur missti íslenskt ríkisfang vegna umsóknar og veitingar erlends ríkisfangs)',
+          'Ertu fyrrum íslenskur ríkisborgari og hefur átt lögheimili á Íslandi í 1 ár? (Þú hefur missti íslenskt ríkisfang vegna umsóknar og veitingar erlends ríkisfangs)',
         description: 'formerIcelander description',
       },
       alertTitle: {
