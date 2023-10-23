@@ -7,6 +7,8 @@ import {
   ErrorScreen,
   EmptyState,
   UserInfoLine,
+  IntroHeader,
+  SJUKRATRYGGINGAR_ID,
   CardLoader,
 } from '@island.is/service-portal/core'
 import { useLocation } from 'react-router-dom'
@@ -19,39 +21,19 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { IntroHeader } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
 import HistoryTable from './HistoryTable'
 import subYears from 'date-fns/subYears'
 import { HealthPaths } from '../../lib/paths'
 import { messages as hm } from '../../lib/messages'
-import { Organization } from '@island.is/shared/types'
-import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
-const HEALTH_CENTER_LOGO_PATH = 'Sjúkratryggingar'
 
 const HealthCenter = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   const location = useLocation()
-
-  // Feature flag for transfer option.
-  const [isTransferAvailable, setIsTransferAvailable] = useState(false)
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalHealthTransferPageEnabled`,
-        false,
-      )
-      if (ffEnabled) {
-        setIsTransferAvailable(ffEnabled as boolean)
-      }
-    }
-    isFlagEnabled()
-  }, [])
 
   // Check if the user was transfered from another health center
   const wasSuccessfulTransfer = location?.state?.transferSuccess
@@ -68,8 +50,7 @@ const HealthCenter = () => {
 
   const healthCenterData = data?.rightsPortalUserHealthCenterRegistration
 
-  const canRegister =
-    (healthCenterData?.canRegister ?? false) && isTransferAvailable
+  const canRegister = healthCenterData?.canRegister ?? false
 
   if (loading)
     return (
@@ -100,11 +81,8 @@ const HealthCenter = () => {
       <IntroHeader
         title={formatMessage(messages.healthCenterTitle)}
         intro={formatMessage(messages.healthCenterDescription)}
-        img={getOrganizationLogoUrl(
-          HEALTH_CENTER_LOGO_PATH,
-          (data?.getOrganizations?.items ?? []) as Array<Organization>,
-          96,
-        )}
+        serviceProviderID={SJUKRATRYGGINGAR_ID}
+        serviceProviderTooltip={formatMessage(m.healthTooltip)}
       />
 
       {!loading && !healthCenterData?.current && (

@@ -1,6 +1,6 @@
 import {
+  assistantRule,
   judgeRule,
-  prisonSystemStaffRule,
   prosecutorRule,
   registrarRule,
 } from '../../../../guards'
@@ -17,11 +17,11 @@ describe('CaseController - Get ruling pdf rules', () => {
     )
   })
 
-  it('should give permission to four roles', () => {
+  it('should give permission to roles', () => {
     expect(rules).toHaveLength(4)
     expect(rules).toContain(prosecutorRule)
     expect(rules).toContain(judgeRule)
     expect(rules).toContain(registrarRule)
-    expect(rules).toContain(prisonSystemStaffRule)
+    expect(rules).toContain(assistantRule)
   })
 })

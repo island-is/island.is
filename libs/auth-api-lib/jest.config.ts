@@ -3,6 +3,7 @@ export default {
   preset: './jest.preset.js',
   rootDir: '../..',
   roots: [__dirname],
+  globalSetup: `${__dirname}/test/globalSetup.ts`,
   transform: {
     '^.+\\.[tj]sx?$': [
       'ts-jest',

@@ -1,7 +1,7 @@
 name: 'Close stale issues and PRs'
 on:
   schedule:
-    - cron: '0 18 * * *'
+    - cron: '0 8 * * *'
 
 jobs:
   stale:
@@ -12,11 +12,12 @@ jobs:
           repo-token: ${{ secrets.STALEBOT_TOKEN }}
           stale-issue-label: stale
           stale-pr-label: stale
-          stale-issue-message: 'This issue is stale because it has been open 5 days with no activity. Remove stale label or comment or this will be closed in 1 day.'
-          stale-pr-message: 'This PR is stale because it has been open 15 days with no activity. Remove stale label or comment or this will be closed in 5 days.'
-          close-issue-message: 'This issue was closed because no activity was received 1 day after it was marked as stale.'
-          close-pr-message: 'This PR was closed because no activity was received 1 day after it was marked as stale.'
+          stale-issue-message: "This issue's been twiddling its thumbs for 5 days. Daydreaming, perhaps? Best do something or it's curtains in 1 day. Nudge off the stale label to give it another go."
+          stale-pr-message: "This PR's had a 15-day siesta. Lost its spark, did it? It's making an exit in 5 days unless the stale label disappears."
+          close-issue-message: "This issue's shut up shop. Gave it a day post-stale, then decided, \"Enough's enough!\""
+          close-pr-message: "This PR closed its doors. Sat around for a day after the stale tag, then reckoned it's not worth the fuss."
           days-before-issue-stale: 5
           days-before-pr-stale: 15
           days-before-issue-close: 1
           days-before-pr-close: 5
+          operations-per-run: 100

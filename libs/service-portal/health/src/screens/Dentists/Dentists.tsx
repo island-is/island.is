@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { FeatureFlagClient } from '@island.is/feature-flags'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import {
   m,
   ErrorScreen,
   EmptyState,
   UserInfoLine,
+  IntroHeader,
+  SJUKRATRYGGINGAR_ID,
 } from '@island.is/service-portal/core'
 import { useLocation } from 'react-router-dom'
 import { useGetDentistsQuery } from './Dentists.generated'
@@ -18,9 +18,7 @@ import {
   Inline,
   SkeletonLoader,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
-import { IntroHeader, useQueryParam } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
 import BillsTable from './BillsTable'
 import add from 'date-fns/add'
@@ -33,22 +31,6 @@ const Dentists = () => {
   const location = useLocation()
   // Check if the user was transfered from another health center
   const wasSuccessfulTransfer = location?.state?.transferSuccess
-
-  // Feature flag for transfer option.
-  const [isTransferAvailable, setIsTransferAvailable] = useState(false)
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalHealthTransferPageEnabled`,
-        false,
-      )
-      if (ffEnabled) {
-        setIsTransferAvailable(ffEnabled as boolean)
-      }
-    }
-    isFlagEnabled()
-  }, [])
 
   const [selectedDateFrom, setSelectedDateFrom] = useState(
     sub(new Date(), { years: 5 }),
@@ -87,6 +69,8 @@ const Dentists = () => {
       <IntroHeader
         title={formatMessage(messages.dentistsTitle)}
         intro={formatMessage(messages.dentistsDescription)}
+        serviceProviderID={SJUKRATRYGGINGAR_ID}
+        serviceProviderTooltip={formatMessage(m.healthTooltip)}
       />
 
       {!loading && !dentist && (
@@ -116,7 +100,7 @@ const Dentists = () => {
             label={formatMessage(messages.dentist)}
             content={dentist.name}
             editLink={
-              canRegister && isTransferAvailable
+              canRegister
                 ? {
                     url: HealthPaths.HealthDentistRegistration,
                     title: messages.changeRegistration,

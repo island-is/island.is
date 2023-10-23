@@ -15,7 +15,6 @@ import { ReactNode } from 'react'
 import { getTagVariants } from './utils'
 import { Eyebrows } from '../../components'
 import localization from './Card.json'
-import shared from '../../lib/shared.json'
 import * as styles from './Card.css'
 
 type CardInfo = {

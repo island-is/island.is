@@ -3,6 +3,8 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ErrorScreen,
   IntroHeader,
+  FootNote,
+  ICELAND_ID,
   m as coreMessage,
 } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
@@ -16,7 +18,6 @@ import {
 } from '@island.is/service-portal/graphql'
 import { Query } from '@island.is/api/schema'
 import { Box, Tabs } from '@island.is/island-ui/core'
-
 import { usePassport } from '@island.is/service-portal/graphql'
 import UserLicenses from './UserLicenses'
 import ChildrenLicenses from './ChildrenLicenses'
@@ -138,7 +139,9 @@ export const LicensesOverview = () => {
       <IntroHeader
         title={defineMessage(m.title)}
         intro={defineMessage(m.intro)}
-        marginBottom={1}
+        marginBottom={4}
+        serviceProviderID={ICELAND_ID}
+        serviceProviderTooltip={formatMessage(coreMessage.licensesTooltip)}
       />
       {hasChildren ? (
         <Box>
@@ -181,6 +184,7 @@ export const LicensesOverview = () => {
           genericLicenses={genericLicenses}
         />
       )}
+      <FootNote serviceProviderID={ICELAND_ID} />
     </>
   )
 }

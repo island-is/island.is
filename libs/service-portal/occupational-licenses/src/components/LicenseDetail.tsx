@@ -1,27 +1,31 @@
 import { Stack, Box, Icon, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { IntroHeader } from '@island.is/portals/core'
-import { UserInfoLine } from '@island.is/service-portal/core'
+import {
+  IntroHeader,
+  UserInfoLine,
+  FootNote,
+} from '@island.is/service-portal/core'
 import { olMessage as om } from '../lib/messages'
+import { OccupationalLicenseStatus } from '@island.is/api/schema'
 
 type LicenseDetailProps = {
   title?: string | null
   intro?: string | null
-  img?: string | null
+  serviceProviderID?: string | null
   name?: string | null
   dateOfBirth?: string | null
   profession?: string | null
   licenseType?: string | null
   publisher?: string | null
   dateOfIssue?: string | null
-  isValid?: boolean
+  status?: OccupationalLicenseStatus
   buttonGroup?: React.ReactNode
 }
 
 export const LicenseDetail: React.FC<LicenseDetailProps> = ({
   title,
   intro,
-  img,
+  serviceProviderID,
   buttonGroup,
   name,
   dateOfBirth,
@@ -29,7 +33,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
   licenseType,
   publisher,
   dateOfIssue,
-  isValid,
+  status,
 }) => {
   const { formatMessage } = useLocale()
 
@@ -38,7 +42,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
       <IntroHeader
         title={title ? title : om.occupationalLicense}
         intro={intro ? intro : undefined}
-        img={img ? img : undefined}
+        serviceProviderID={serviceProviderID ?? undefined}
         buttonGroup={buttonGroup}
       />
       <Stack dividers space="auto">
@@ -96,7 +100,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
             valueColumnSpan={['6/12']}
           />
         )}
-        {isValid && (
+        {status && (
           <UserInfoLine
             paddingY={3}
             label={formatMessage(om.licenseStatus)}
@@ -108,11 +112,29 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
                 columnGap="p1"
               >
                 <Text>
-                  {formatMessage(isValid ? om.validLicense : om.invalidLicense)}
+                  {formatMessage(
+                    status === 'valid'
+                      ? om.validLicense
+                      : status === 'limited'
+                      ? om.validWithLimitationsLicense
+                      : om.invalidLicense,
+                  )}
                 </Text>
                 <Icon
-                  icon={isValid ? 'checkmarkCircle' : 'closeCircle'}
-                  color={isValid ? 'mint600' : 'red600'}
+                  icon={
+                    status === 'valid'
+                      ? 'checkmarkCircle'
+                      : status === 'limited'
+                      ? 'warning'
+                      : 'closeCircle'
+                  }
+                  color={
+                    status === 'valid'
+                      ? 'mint600'
+                      : status === 'limited'
+                      ? 'yellow600'
+                      : 'red600'
+                  }
                   type="filled"
                 />
               </Box>
@@ -122,6 +144,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
           />
         )}
       </Stack>
+      <FootNote serviceProviderID={serviceProviderID ?? undefined} />
     </Box>
   )
 }

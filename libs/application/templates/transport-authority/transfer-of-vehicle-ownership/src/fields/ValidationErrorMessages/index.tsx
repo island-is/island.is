@@ -31,6 +31,7 @@ export const ValidationErrorMessages: FC<
           vehicle: {
             date: answers?.vehicle?.date,
             salePrice: answers?.vehicle?.salePrice,
+            mileage: answers?.vehicle?.mileage,
           },
           seller: {
             email: answers?.seller?.email,
