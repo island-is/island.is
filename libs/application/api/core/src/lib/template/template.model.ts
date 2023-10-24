@@ -24,6 +24,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   PaymentCatalogApi,
+  InstitutionNationalIds,
   ValidateCriminalRecordApi,
   DataProviderItem,
   HistoryEventMessage,
@@ -313,6 +314,14 @@ export function buildCertificateTemplate<
         'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
     }),
     buildDataProviderItem(certificateProvider),
+    buildDataProviderItem({
+      provider: PaymentCatalogApi.configure({
+        params: {
+          organizationId: InstitutionNationalIds.SYSLUMENN,
+        },
+      }),
+      title: '',
+    }),
   ]
 
   function generatePrerequisites(dataProviders: DataProviderItem[]): string {

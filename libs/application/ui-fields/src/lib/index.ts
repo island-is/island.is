@@ -18,3 +18,4 @@ export { AlertMessageFormField } from './AlertMessageFormField/AlertMessageFormF
 export { ExpandableDescriptionFormField } from './ExpandableDescriptionFormField/ExpandableDescriptionFormField'
 export { LinkFormField } from './LinkFormField/LinkFormField'
 export { PdfViewerFormField } from './PdfViewerFormField/PdfViewerFormField'
+export { PaymentChargeOverviewFormField } from './PaymentChargeOverviewFormField/PaymentChargeOverviewFormField'

@@ -17,6 +17,7 @@ import { FormatInputValueFunction } from 'react-number-format'
 import React from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MessageDescriptor } from 'react-intl'
+import { ChargeItemCode } from '@island.is/shared/constants'
 
 type Space = keyof typeof theme.spacing
 
@@ -117,6 +118,7 @@ export enum FieldTypes {
   ALERT_MESSAGE = 'ALERT_MESSAGE',
   LINK = 'LINK',
   PDF_VIEWER = 'PDF_VIEWER',
+  PAYMENT_CHARGE_OVERVIEW = 'PAYMENT_CHARGE_OVERVIEW',
 }
 
 export enum FieldComponents {
@@ -140,6 +142,7 @@ export enum FieldComponents {
   ALERT_MESSAGE = 'AlertMessageFormField',
   LINK = 'LinkFormField',
   PDF_VIEWER = 'PdfViewerFormField',
+  PAYMENT_CHARGE_OVERVIEW = 'PaymentChargeOverviewFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -360,6 +363,12 @@ export interface PdfViewerField extends BaseField {
   pdfKey: string
 }
 
+export interface PaymentChargeOverviewField extends BaseField {
+  readonly type: FieldTypes.PAYMENT_CHARGE_OVERVIEW
+  component: FieldComponents.PAYMENT_CHARGE_OVERVIEW
+  chargeItemCode: ChargeItemCode
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -382,3 +391,4 @@ export type Field =
   | AlertMessageField
   | LinkField
   | PdfViewerField
+  | PaymentChargeOverviewField

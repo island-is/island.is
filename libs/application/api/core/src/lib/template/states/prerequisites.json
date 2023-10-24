@@ -1,6 +1,6 @@
 {
   "id": "SampleFormId",
-  "title": "Sample Form",
+  "title": "Sakavottorð",
   "mode": "notstarted",
   "type": "FORM",
   "renderLastScreenBackButton": true,
@@ -36,25 +36,35 @@
           },
           "dataProviders": [
             {
-              "id": "nationalRegistry",
-              "action": "NationalRegistry.nationalRegistry",
-              "order": 0,
+              "id":"nationalRegistry",
+              "action":"NationalRegistry.nationalRegistry",
+              "order":0,
               "title": "Persónuupplýsingar úr Þjóðskrá",
-              "subTitle": "Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina"
+              "subTitle":"Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina"
             },
             {
-              "id": "userProfile",
-              "action": "UserProfile.userProfile",
-              "order": 0,
-              "title": "Netfang og símanúmer úr þínum stillingum",
-              "subTitle": "Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum"
+              "id":"userProfile",
+              "action":"UserProfile.userProfile",
+              "order":0,
+              "title":"Netfang og símanúmer úr þínum stillingum",
+              "subTitle":"Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum"
             },
             {
-              "id": "validateCriminalRecord",
-              "action": "CriminalRecordShared.validateCriminalRecord",
-              "order": 0,
-              "title": "Information from the criminal record database",
-              "subTitle": "Skjal sem inniheldur sakavottorðið þitt."
+              "id":"validateCriminalRecord",
+              "action":"CriminalRecordShared.validateCriminalRecord",
+              "order":0,
+              "title":"Information from the criminal record database",
+              "subTitle":"Skjal sem inniheldur sakavottorðið þitt."
+            },
+            {
+              "id":"payment",
+              "action":"Payment.paymentCatalog",
+              "order":0,
+              "title":"something",
+              "params": {
+                "organizationId": "6509142520"
+              },
+              "externalDataId": "payment"
             }
           ]
         }

@@ -14,6 +14,7 @@ import { useLocale } from '@island.is/localization'
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps, PdfViewerField } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
+import { applicationUiFields as m } from '../../messages'
 
 interface PdfViewerFieldProps extends FieldBaseProps {
   field: PdfViewerField
@@ -38,7 +39,7 @@ export const PdfViewerFormField: FC<
   } = field
   const { formatMessage } = useLocale()
   const [viewPdf, setViewPdf] = useState(false)
-  const pdfExt = getValueViaPath(application.externalData, pdfKey)
+  const pdfExt = getValueViaPath(externalData, pdfKey)
   function renderFooter() {
     return (
       <>
@@ -56,7 +57,11 @@ export const PdfViewerFormField: FC<
               window.open(`${window.location.origin}/minarsidur`, '_blank')
             }}
           >
-            {formatText(openMySitesLabel, application, formatMessage)}
+            {formatText(
+              openMySitesLabel || m.openMySitesLabel,
+              application,
+              formatMessage,
+            )}
           </Button>
         </Box>
       </>
@@ -84,7 +89,11 @@ export const PdfViewerFormField: FC<
             download="sakavottord.pdf"
           >
             <Button icon="download" iconType="outline" variant="text">
-              {formatText(downloadPdfButtonLabel, application, formatMessage)}
+              {formatText(
+                downloadPdfButtonLabel || m.downloadPdfButtonLabel,
+                application,
+                formatMessage,
+              )}
             </Button>
           </a>
         </Box>
@@ -98,16 +107,28 @@ export const PdfViewerFormField: FC<
   return (
     <>
       <Text variant="h2" marginBottom={4}>
-        {formatText(confirmationMessage, application, formatMessage)}
+        {formatText(
+          confirmationMessage || m.confirmationMessage,
+          application,
+          formatMessage,
+        )}
       </Text>
       <Box marginBottom={3} paddingTop={0}>
         <AlertMessage
           type="success"
-          title={formatText(successTitle, application, formatMessage)}
+          title={formatText(
+            successTitle || m.successTitle,
+            application,
+            formatMessage,
+          )}
           message={
             <Box component="span" display="block">
               <Text variant="small">
-                {formatText(successDescription, application, formatMessage)}
+                {formatText(
+                  successDescription || m.successDescription,
+                  application,
+                  formatMessage,
+                )}
               </Text>
             </Box>
           }
@@ -140,14 +161,26 @@ export const PdfViewerFormField: FC<
           }}
         >
           <Text variant="small">
-            {formatText(verificationDescription, application, formatMessage)}
+            {formatText(
+              verificationDescription || m.verificationDescription,
+              application,
+              formatMessage,
+            )}
             <Link
-              href={formatText(verificationLinkUrl, application, formatMessage)}
+              href={formatText(
+                verificationLinkUrl || m.verificationLinkUrl,
+                application,
+                formatMessage,
+              )}
               color="blue400"
               underline="normal"
               underlineVisibility="always"
             >
-              {formatText(verificationLinkTitle, application, formatMessage)}
+              {formatText(
+                verificationLinkTitle || m.verificationLinkTitle,
+                application,
+                formatMessage,
+              )}
             </Link>
           </Text>
         </LinkContext.Provider>
@@ -161,7 +194,11 @@ export const PdfViewerFormField: FC<
           tag="Pdf"
           colorScheme="blue"
         >
-          {formatText(viewPdfButtonLabel, application, formatMessage)}
+          {formatText(
+            viewPdfButtonLabel || m.viewPdfButtonLabel,
+            application,
+            formatMessage,
+          )}
         </TopicCard>
       </Box>
 
@@ -180,7 +217,11 @@ export const PdfViewerFormField: FC<
         }}
         variant="text"
       >
-        {formatText(openInboxButtonLabel, application, formatMessage)}
+        {formatText(
+          openInboxButtonLabel || m.openInboxButtonLabel,
+          application,
+          formatMessage,
+        )}
       </Button>
 
       <Box

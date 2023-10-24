@@ -18,6 +18,12 @@
         "passWithNoTests": true
       },
       "outputs": ["{workspaceRoot}/coverage/libs/application/ui-fields"]
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/ui-fields/src/**/*.{js,ts,tsx}'"
+      }
     }
   },
   "tags": ["lib:application-system", "scope:application-system"]

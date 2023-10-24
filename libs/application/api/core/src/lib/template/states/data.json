@@ -1,6 +1,6 @@
 {
   "id": "SampleFormId",
-  "title": "Sample Form",
+  "title": "Sakavottorð",
   "mode": "draft",
   "type": "FORM",
   "renderLastScreenBackButton": true,
@@ -17,44 +17,10 @@
           "type": "MULTI_FIELD",
           "children": [
             {
-              "id": "descriptionOfPaymentTitle",
-              "component": "DescriptionFormField",
-              "type": "DESCRIPTION",
-              "description": "**Til greiðslu**"
-            },
-            {
-              "id": "descriptionOfPayment",
-              "component": "DescriptionFormField",
-              "type": "DESCRIPTION",
-              "width": "half",
-              "description": "Sakavottorð"
-            },
-            {
-              "id": "descriptionOfPayment",
-              "component": "DescriptionFormField",
-              "width": "half",
-              "type": "DESCRIPTION",
-              "description": "\n\n2.700 kr."
-            },
-            {
-              "id": "divider",
-              "component": "DividerFormField",
-              "children": null,
-              "type": "DIVIDER"
-            },
-            {
-              "id": "descriptionOfPaymentTotal",
-              "component": "DescriptionFormField",
-              "type": "DESCRIPTION",
-              "width": "half",
-              "description": "**Samtals**"
-            },
-            {
-              "id": "descriptionOfPaymentTotalAmount",
-              "component": "DescriptionFormField",
-              "type": "DESCRIPTION",
-              "width": "half",
-              "description": "**2700 kr.**"
+              "id": "paymentChargeOverviewField",
+              "component": "PaymentChargeOverviewFormField",
+              "type": "PAYMENT_CHARGE_OVERVIEW",
+              "chargeItemCode": "AY101"
             },
             {
               "id": "submit2",
