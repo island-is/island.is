@@ -24,8 +24,8 @@ export const information = {
       defaultMessage: 'Lögheimili',
       description: 'Complainers home address',
     },
-    postcode: {
-      id: 'ctao.application:information.aboutTheComplainer.postcode',
+    postalCode: {
+      id: 'ctao.application:information.aboutTheComplainer.postalCode',
       defaultMessage: 'Póstnúmer',
       description: 'Complainers post code',
     },
