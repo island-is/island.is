@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 import {
   Box,
   Text,
-  Stack,
   Pagination,
   Link,
   Inline,
@@ -106,105 +105,99 @@ const Applications: Screen<CategoryProps> = ({
             <Text variant="intro" as="p" marginBottom={8}>
               {n('pageBody', 'Hér getur þú fundið allar umsóknir island.is á einum stað.')}
             </Text>
-            <Stack space={[3, 3, 4]}>
-              <Box width="full">
-                <Inline
-                  justifyContent="flexEnd"
-                  alignY="center"
-                  space={2}
-                  flexWrap="nowrap"
-                  collapseBelow="md"
-                >
-                  <QueryFilterInput />
-                  <SearchableTagsFilter
-                    resultCount={totalSearchResults}
-                    tags={countResults.tagCounts ?? []}
-                  />
-                </Inline>
+            <Inline
+              justifyContent="flexEnd"
+              alignY="center"
+              space={2}
+              flexWrap="nowrap"
+              collapseBelow="md"
+            >
+              <QueryFilterInput />
+              <SearchableTagsFilter
+                resultCount={totalSearchResults}
+                tags={countResults.tagCounts ?? []}
+              />
+            </Inline>
+            <Box marginTop={5}>
+              {nothingFound ? (
+                <>
+                  <Text variant="intro" as="p" marginBottom={1}>
+                    {gn(
+                      'cantFindWhatYouAreLookingForText',
+                      'Finnurðu ekki það sem þig vantar?',
+                    )}
+                  </Text>
+                  <Button variant="text" onClick={handleCLearAllFilter} icon="reload" nowrap>
+                    {gn('filterClearAll', 'Hreinsa allar síur')}
+                  </Button>
+                </>
+              ) : (
+                <T.Table>
+                  <T.Head>
+                    <T.Row>
+                      <T.HeadData text={{ variant: "small" }}>{n('applicationName', 'Heiti umsóknar')}</T.HeadData>
+                      <T.HeadData text={{ variant: "small" }} box={{ className: styles.organizationColumn }}>{n('organization', 'Þjónustuaðili')}</T.HeadData>
+                      <T.HeadData></T.HeadData>
+                    </T.Row>
+                  </T.Head>
+                  <T.Body>
+                    {articles.map(
+                      (article, index) => (
+                        <T.Row key={index}>
+                          <T.Data text={{ variant: "h5" }}>
+                            {article.title}
+                          </T.Data>
+                          <T.Data text={{ variant: "default" }} box={{ className: styles.organizationColumn }}>
+                            <Inline
+                              justifyContent="flexStart"
+                              alignY="center"
+                              space={2}
+                              flexWrap="nowrap"
+                            >
+                              <Box className={styles.organizationLogo}>
+                                <BackgroundImage
+                                  width={60}
+                                  backgroundSize="contain"
+                                  image={{ ...article.organization?.[0]?.logo }}
+                                  format="png"
+                                />
+                              </Box>
+                              {article.organization?.[0]?.title}
+                            </Inline>
+                          </T.Data>
+                          <T.Data align="right">
+                            <Link {...linkResolver('article', [article.slug])} skipTab>
+                              <Button variant="text" size="small" icon="arrowForward" nowrap>
+                                {gn('readMore', 'Sjá nánar')}
+                              </Button>
+                            </Link>
+                          </T.Data>
+                        </T.Row>
+                      ),
+                    )}
+                  </T.Body>
+                </T.Table>
+              )}
+            </Box>
+            {totalSearchResults > 0 && (
+              <Box paddingTop={6}>
+                <Pagination
+                  page={page ?? 1}
+                  totalPages={totalPages}
+                  variant="blue"
+                  renderLink={(page, className, children) => (
+                    <Link
+                      href={{
+                        pathname: linkResolver('applications').href,
+                        query: { ...query, page },
+                      }}
+                    >
+                      <span className={className}>{children}</span>
+                    </Link>
+                  )}
+                />
               </Box>
-            </Stack>
-              <Box marginTop={5}>
-                {nothingFound ? (
-                  <>
-                    <Text variant="intro" as="p" marginBottom={1}>
-                      {gn(
-                        'cantFindWhatYouAreLookingForText',
-                        'Finnurðu ekki það sem þig vantar?',
-                      )}
-                    </Text>
-                    <Button variant="text" onClick={handleCLearAllFilter} icon="reload" nowrap>
-                      {gn('filterClearAll', 'Hreinsa allar síur')}
-                    </Button>
-                  </>
-                ) : (
-                  <T.Table>
-                    <T.Head>
-                      <T.Row>
-                        <T.HeadData text={{ variant: "small" }}>{n('applicationName', 'Heiti umsóknar')}</T.HeadData>
-                        <T.HeadData text={{ variant: "small" }} box={{ className: styles.organizationColumn }}>{n('organization', 'Þjónustuaðili')}</T.HeadData>
-                        <T.HeadData></T.HeadData>
-                      </T.Row>
-                    </T.Head>
-                    <T.Body>
-                      {articles.map(
-                        (article, index) => (
-                          <T.Row key={index}>
-                            <T.Data text={{ variant: "h5" }}>
-                              {article.title}
-                            </T.Data>
-                            <T.Data text={{ variant: "default" }} box={{ className: styles.organizationColumn }}>
-                              <Inline
-                                justifyContent="flexStart"
-                                alignY="center"
-                                space={2}
-                                flexWrap="nowrap"
-                              >
-                                <Box className={styles.organizationLogo}>
-                                  <BackgroundImage
-                                    width={60}
-                                    backgroundSize="contain"
-                                    image={{ ...article.organization?.[0]?.logo }}
-                                    format="png"
-                                  />
-                                </Box>
-                                {article.organization?.[0]?.title}
-                              </Inline>
-                            </T.Data>
-                            <T.Data align="right">
-                              <Link {...linkResolver('article', [article.slug])} skipTab>
-                                <Button variant="text" size="small" icon="arrowForward" nowrap>
-                                  {gn('readMore', 'Sjá nánar')}
-                                </Button>
-                              </Link>
-                            </T.Data>
-                          </T.Row>
-                        ),
-                      )}
-                    </T.Body>
-                  </T.Table>
-                )}
-              </Box>
-              <Stack space={2}>
-                {totalSearchResults > 0 && (
-                  <Box paddingTop={6}>
-                    <Pagination
-                      page={page ?? 1}
-                      totalPages={totalPages}
-                      variant="blue"
-                      renderLink={(page, className, children) => (
-                        <Link
-                          href={{
-                            pathname: linkResolver('applications').href,
-                            query: { ...query, page },
-                          }}
-                        >
-                          <span className={className}>{children}</span>
-                        </Link>
-                      )}
-                    />
-                  </Box>
-                )}
-              </Stack>
+            )}
           </GridColumn>
         </GridRow>
       </GridContainer>
