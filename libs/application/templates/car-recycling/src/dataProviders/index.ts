@@ -32,6 +32,11 @@ export const MyMockProvider = MockProviderApi.configure({
   },
 })
 
+export const VehiclesAPI = defineTemplateApi({
+  action: 'getVehicles',
+  externalDataId: 'vehicles',
+})
+
 export interface MyParameterType {
   id: number
 }

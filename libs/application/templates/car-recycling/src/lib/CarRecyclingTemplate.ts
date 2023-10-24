@@ -16,6 +16,7 @@ import {
 } from '@island.is/application/types'
 
 import { assign } from 'xstate'
+import { ApiActions } from '../shared'
 import { DataSchema } from './dataSchema'
 import { carRecyclingMessages } from './messages'
 
@@ -109,10 +110,12 @@ const CarRecyclingTemplate: ApplicationTemplate<
             },
           },
           progress: 0.25,
-          // onExit: defineTemplateApi({
-          //   action: ApiModuleActions.SEND_APPLICATION,
-          //   throwOnError: true,
-          // }),
+          
+          onEntry: defineTemplateApi({
+            action: ApiActions.getVehicles,
+            externalDataId: 'vehicles',
+            throwOnError: false,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

@@ -1,5 +1,6 @@
 import { ReferenceTemplateModule } from './reference-template/reference-template.module'
 import { ParentalLeaveModule } from './parental-leave/parental-leave.module'
+import { SkilavottordModule } from './skilavottord/skilavottord.module'
 import { DocumentProviderOnboardingModule } from './document-provider-onboarding/document-provider-onboarding.module'
 import { InstitutionCollaborationModule } from './institution-collaboration/institution-collaboration.module'
 import { HealthInsuranceModule } from './health-insurance/health-insurance.module'
@@ -26,6 +27,7 @@ import { PassportModule } from './passport/passport.module'
 import { OperatingLicenseModule } from './operating-license/operatingLicense.module'
 import { ReferenceTemplateService } from './reference-template/reference-template.service'
 import { ParentalLeaveService } from './parental-leave/parental-leave.service'
+import { SkilavottordService } from './skilavottord/skilavottord.service'
 import { DocumentProviderOnboardingService } from './document-provider-onboarding/document-provider-onboarding.service'
 import { InstitutionCollaborationService } from './institution-collaboration/institution-collaboration.service'
 import { HealthInsuranceService } from './health-insurance/health-insurance.service'
@@ -99,6 +101,7 @@ export const modules = [
   DataProtectionComplaintModule,
   PublicDebtPaymentPlanTemplateModule,
   ParentalLeaveModule,
+  SkilavottordModule,
   DocumentProviderOnboardingModule,
   InstitutionCollaborationModule,
   HealthInsuranceModule,
@@ -150,6 +153,7 @@ export const services = [
   DataProtectionComplaintService,
   PublicDebtPaymentPlanTemplateService,
   ParentalLeaveService,
+  SkilavottordService,
   DocumentProviderOnboardingService,
   InstitutionCollaborationService,
   HealthInsuranceService,

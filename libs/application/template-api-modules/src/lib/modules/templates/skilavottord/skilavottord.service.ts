@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { S3 } from 'aws-sdk'
 
 import { GetVehiclesApi } from '@island.is/clients/skilavottord'
 import type { Logger } from '@island.is/logging'
@@ -23,13 +22,12 @@ interface VMSTError {
 
 @Injectable()
 export class SkilavottordService extends BaseTemplateApiService {
-  s3 = new S3()
 
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private getVehiclesApi: GetVehiclesApi,
   ) {
-    super(ApplicationTypes.PARENTAL_LEAVE)
+    super(ApplicationTypes.CAR_RECYCLING)
   }
 
   private parseErrors(e: Error | VMSTError) {

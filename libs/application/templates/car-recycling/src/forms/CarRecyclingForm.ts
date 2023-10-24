@@ -1,6 +1,8 @@
 import {
   buildAsyncSelectField,
   buildCustomField,
+  buildDataProviderItem,
+  buildExternalDataProvider,
   buildForm,
   buildMultiField,
   buildRadioField,
@@ -14,6 +16,8 @@ import {
   FormModes,
   NationalRegistryIndividual,
 } from '@island.is/application/types'
+
+import { VehiclesAPI } from '../dataProviders'
 import { carRecyclingMessages } from '../lib/messages'
 import Logo from '../assets/Logo'
 import gql from 'graphql-tag'
@@ -53,9 +57,22 @@ export const CarRecyclingForm: Form = buildForm({
   mode: FormModes.DRAFT,
   children: [
     // buildSection({
-    //   id: 'prerequisites',
-    //   title: carRecyclingMessages.pre.prerequisitesSection,
-    //   children: [],
+    //   id: 'externalData',
+    //   title: 'm.step.externalDataTitle',
+    //   children: [
+    //     buildExternalDataProvider({
+    //       title: 'm.draft.externalDataTitle',
+    //       id: 'approveExternalData',
+    //       subTitle: 'm.draft.externalDataTitle',
+    //       checkboxLabel: 'm.draft.externalDataTitle',
+    //       dataProviders: [
+    //         buildDataProviderItem({
+    //           provider: VehiclesAPI,
+    //           title: 'vehicles',
+    //         }),
+    //       ],
+    //     }),
+    //   ],
     // }),
     buildSection({
       id: 'carsOverview',
@@ -110,27 +127,27 @@ export const CarRecyclingForm: Form = buildForm({
                 //   description:
                 //     "testing",
                 // }),
-                buildAsyncSelectField({
-                  title: 'parentalLeaveFormMessages.shared.pensionFund',
-                  id: 'payments.pensionFund',
-                  loadingError: 'parentalLeaveFormMessages.errors.loading',
-                  isSearchable: true,
-                  placeholder:
-                    'nothing',
-                  loadOptions: async ({ apolloClient }) => {
-                    const { data } =
-                      await apolloClient.query<permoVehicle>({
-                        query: GetVehicles,
-                      })
+                // buildAsyncSelectField({
+                //   title: 'parentalLeaveFormMessages.shared.pensionFund',
+                //   id: 'payments.pensionFund',
+                //   loadingError: 'parentalLeaveFormMessages.errors.loading',
+                //   isSearchable: true,
+                //   placeholder:
+                //     'nothing',
+                //   loadOptions: async ({ apolloClient }) => {
+                //     const { data } =
+                //       await apolloClient.query<permoVehicle>({
+                //         query: GetVehicles,
+                //       })
 
-                    return (
-                      data?.GetVehiclesApi?.map(({ permno }) => ({
-                        label: permno,
-                        value: permno,
-                      })) ?? []
-                    )
-                  },
-                }),
+                //     return (
+                //       data?.GetVehiclesApi?.map(({ permno }) => ({
+                //         label: permno,
+                //         value: permno,
+                //       })) ?? []
+                //     )
+                //   },
+                // }),
               ],
             }),
           ],

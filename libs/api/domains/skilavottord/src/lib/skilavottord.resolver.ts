@@ -10,19 +10,22 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 
-import { SkilavottordService } from './skilavottord.service'
+// import { SkilavottordService } from './skilavottord.service'
 import { Vehicle } from '../models/vehicle.model'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
 @Resolver()
 export class SkilavottordResolver {
-  constructor(private skilavottordService: SkilavottordService) {}
+  // constructor(private skilavottordService: SkilavottordService) {}
 
-  @Query(() => [Vehicle], { nullable: true })
+  // @Query(() => [Vehicle], { nullable: true })
+  @Query()
   async getVehicles(
     @CurrentUser() user: User,
-  ): Promise<Vehicle[] | null> {
-    return this.skilavottordService.getVehicles(user.nationalId)
+  ): Promise<void> {
+  // ): Promise<Vehicle[] | null> {
+    // return this.skilavottordService.getVehicles(user.nationalId)
+    console.log('hello..........')
   }
 }
