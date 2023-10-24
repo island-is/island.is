@@ -45,7 +45,7 @@ export const ManualHeader = ({ manual, namespace }: ManualHeaderProps) => {
   // TODO: test this
   const lastUpdatedDate = useMemo(() => {
     const date = extractLastUpdatedDateFromManual(manual)
-    return date ? format(date, 'dd.mm.yyyy') : ''
+    return date ? format(date, 'do MMMM yyyy') : ''
   }, [format, manual])
 
   return (
@@ -98,6 +98,9 @@ export const ManualHeader = ({ manual, namespace }: ManualHeaderProps) => {
             <Text>{lastUpdatedDate} - </Text>
             <LinkV2
               className={styles.link}
+              color="blue400"
+              underlineVisibility="always"
+              underline="small"
               href={
                 linkResolver('manualchangelog', [manual?.slug as string]).href
               }

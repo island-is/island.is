@@ -1,3 +1,4 @@
+import groupBy from 'lodash/groupBy'
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 import { Block } from '@contentful/rich-text-types'
 
@@ -67,6 +68,79 @@ export const extractTextFromManualChapterDescription = (
   }
 
   return text
+}
+
+interface ChangelogItem {
+  dateOfChange: string
+  textualDescription: string
+  chapterTitle: string
+  manualSlug: string
+  chapterSlug: string
+}
+
+type Changelog = {
+  year: number
+  dates: { date: string; items: ChangelogItem[] }[]
+}[]
+
+export const extractChangelogFromManual = (manual: ManualType) => {
+  const yearMap = new Map<number, ChangelogItem[]>()
+
+  // Order changelog items by year
+  for (const chapter of manual?.chapters ?? []) {
+    for (const changelogItem of chapter?.changelog?.items ?? []) {
+      if (changelogItem?.dateOfChange && changelogItem?.textualDescription) {
+        const year = new Date(changelogItem.dateOfChange).getFullYear()
+        const items = yearMap.get(year)
+
+        const parsedItem: ChangelogItem = {
+          manualSlug: manual?.slug as string,
+          chapterSlug: chapter.slug,
+          chapterTitle: chapter.title,
+          dateOfChange: changelogItem.dateOfChange,
+          textualDescription: changelogItem.textualDescription,
+        }
+
+        if (!items) {
+          yearMap.set(year, [parsedItem])
+        } else {
+          items.push(parsedItem)
+        }
+      }
+    }
+  }
+
+  // Sort the years in descending order
+  const years = Array.from(yearMap.keys())
+  years.sort().reverse()
+
+  const changelog: Changelog = []
+  for (const year of years) {
+    const items = yearMap.get(year)
+    if (items) {
+      const itemsGroupedByDate = groupBy(items, 'dateOfChange')
+
+      const dates: Changelog[number]['dates'] = []
+
+      const descendingOrderedDates = Object.keys(itemsGroupedByDate)
+        .sort()
+        .reverse()
+
+      for (const date of descendingOrderedDates) {
+        dates.push({
+          date,
+          items: itemsGroupedByDate[date],
+        })
+      }
+
+      changelog.push({
+        year,
+        dates,
+      })
+    }
+  }
+
+  return changelog
 }
 
 export const getProps: ManualScreen['getProps'] = async ({
