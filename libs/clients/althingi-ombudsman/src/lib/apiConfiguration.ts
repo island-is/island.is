@@ -21,7 +21,7 @@ export const ApiConfiguration = {
         logErrorResponseBody: true,
         autoAuth: idsClientConfig.isConfigured
           ? {
-              mode: 'tokenExchange',
+              mode: 'token',
               issuer: idsClientConfig.issuer,
               clientId: idsClientConfig.clientId,
               clientSecret: idsClientConfig.clientSecret,

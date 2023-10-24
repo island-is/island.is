@@ -10,7 +10,7 @@ import {
 import { generateConfirmationEmail } from './emailGenerators'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
-import { CaseApi } from '@island.is/clients/althingi-ombudsman'
+import { CaseApi, TokenMiddleware } from '@island.is/clients/althingi-ombudsman'
 import { ApplicationAttachmentProvider } from './attachments/providers/applicationAttachmentProvider'
 import { applicationToCaseRequest } from './complaints-to-althingi-ombudsman.utils'
 
@@ -21,6 +21,7 @@ export class ComplaintsToAlthingiOmbudsmanTemplateService extends BaseTemplateAp
     @Inject(COMPLAINTS_TO_ALTHINGI_OMBUDSMAN_CONFIG)
     private readonly complaintConfig: ComplaintsToAlthingiOmbudsmanConfig,
     private readonly caseApi: CaseApi,
+    private readonly tokenMiddleware: TokenMiddleware,
     private readonly applicationAttachmentProvider: ApplicationAttachmentProvider,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
@@ -45,15 +46,19 @@ export class ComplaintsToAlthingiOmbudsmanTemplateService extends BaseTemplateAp
       application,
       attachedFiles,
     )
-    await this.sharedTemplateAPIService.sendEmail(
-      (props) =>
-        generateConfirmationEmail(
-          props,
-          this.complaintConfig.applicationSenderName,
-          this.complaintConfig.applicationSenderEmail,
-        ),
-      application,
-    )
+    await this.caseApi
+      .withMiddleware(this.tokenMiddleware)
+      .createCase({ requestData: caseRequest })
+    // TODO: Check if email is still required, if so, fix email sender.
+    //   await this.sharedTemplateAPIService.sendEmail(
+    //     (props) =>
+    //       generateConfirmationEmail(
+    //         props,
+    //         this.complaintConfig.applicationSenderName,
+    //         this.complaintConfig.applicationSenderEmail,
+    //       ),
+    //     application,
+    //   )
     return null
   }
 }
