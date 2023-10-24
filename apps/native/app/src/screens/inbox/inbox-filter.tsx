@@ -1,21 +1,34 @@
-import {Button, TableViewCell, theme} from '@ui';
-import {Image, Pressable, ScrollView, Switch, Text, View} from 'react-native';
+import {TableViewCell, theme} from '@ui';
+import {ScrollView, Switch} from 'react-native';
 import {Navigation} from 'react-native-navigation';
 import {ComponentRegistry} from '../../utils/component-registry';
-import {FormattedMessage, useIntl} from 'react-intl';
-import ChevronDown from '../../ui/assets/icons/chevron-down.png';
+import {useIntl} from 'react-intl';
 import {useEffect, useState} from 'react';
 import {PressableHighlight} from '../../components/pressable-highlight/pressable-highlight';
+import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 
+const {useNavigationOptions, getNavigationOptions} =
+  createNavigationOptionHooks((theme, intl) => ({
+    topBar: {
+      title: {
+        text: intl.formatMessage({
+          id: 'inboxFilters.screenTitle',
+        }),
+      },
+    },
+  }));
 export function InboxFilterScreen(props: {
   opened: boolean;
   bookmarked: boolean;
   archived: boolean;
+  componentId: string;
 }) {
   const intl = useIntl();
   const [opened, setOpened] = useState(props.opened);
   const [bookmarked, setBookmarked] = useState(props.bookmarked);
   const [archived, setArchived] = useState(props.archived);
+
+  useNavigationOptions(props.componentId);
 
   useEffect(() => {
     Navigation.updateProps(ComponentRegistry.InboxScreen, {
@@ -33,8 +46,7 @@ export function InboxFilterScreen(props: {
         }}>
         <TableViewCell
           title={intl.formatMessage({
-            id: 'inbox.filters.unreadOnly',
-            defaultMessage: 'Sýna einungis ólesið',
+            id: 'inboxFilters.unreadOnly',
           })}
           accessory={
             <Switch
@@ -55,8 +67,7 @@ export function InboxFilterScreen(props: {
         }}>
         <TableViewCell
           title={intl.formatMessage({
-            id: 'inbox.filters.starred',
-            defaultMessage: 'Stjörnumerkt',
+            id: 'inboxFilters.starred',
           })}
           accessory={
             <Switch
@@ -77,8 +88,7 @@ export function InboxFilterScreen(props: {
         }}>
         <TableViewCell
           title={intl.formatMessage({
-            id: 'inbox.filters.archived',
-            defaultMessage: 'Geymsla',
+            id: 'inboxFilters.archived',
           })}
           accessory={
             <Switch
@@ -92,38 +102,8 @@ export function InboxFilterScreen(props: {
           }
         />
       </PressableHighlight>
-      {/* <TableViewCell
-        title={intl.formatMessage({
-          id: 'inbox.filters.archived2',
-          defaultMessage: 'Stofnun',
-        })}
-        accessory={<Image source={ChevronDown} />}
-        border
-      />
-      <TableViewCell
-        title={intl.formatMessage({
-          id: 'inbox.filters.archived2',
-          defaultMessage: 'Flokkur',
-        })}
-        accessory={<Image source={ChevronDown} />}
-        border
-      />
-      <TableViewCell
-        title={intl.formatMessage({
-          id: 'inbox.filters.archived2',
-          defaultMessage: 'Dagsetningar',
-        })}
-        accessory={<Image source={ChevronDown} />}
-        border
-      /> */}
     </ScrollView>
   );
 }
 
-InboxFilterScreen.options = {
-  topBar: {
-    title: {
-      text: 'Sía pósthólf',
-    },
-  },
-};
+InboxFilterScreen.options = getNavigationOptions;

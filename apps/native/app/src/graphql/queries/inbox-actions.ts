@@ -1,6 +1,4 @@
-import {gql, useMutation} from '@apollo/client';
-import {useState} from 'react';
-import {Alert} from 'react-native';
+import {gql} from '@apollo/client';
 import {archivedCache, client} from '../client';
 import {
   LIST_DOCUMENTS_QUERY,
@@ -18,90 +16,6 @@ export const POST_MAIL_ACTION = gql`
     }
   }
 `;
-
-export const useSubmitMailAction = (input?: {messageId: string}) => {
-  const [postMailAction, {data, loading}] = useMutation(POST_MAIL_ACTION, {
-    client,
-  });
-
-  const [bookmarkSuccess, setBookmarkSuccess] = useState(false);
-  const [archiveSuccess, setArchiveSuccess] = useState(false);
-  const [dataSuccess, setDataSuccess] = useState({
-    bookmark: false,
-    unbookmark: false,
-    unarchive: false,
-    archive: false,
-  });
-
-  const submitMailAction = async (action: MailActions) => {
-    try {
-      await postMailAction({
-        variables: {
-          input: {
-            messageId: input?.messageId,
-            action,
-          },
-        },
-        update(cache, {data}) {
-          const success = data?.postMailAction?.success;
-          const id = cache.identify({
-            __typename: 'Document',
-            id: input?.messageId,
-          });
-          const flag =
-            action === 'archive' || action === 'bookmark' ? true : false;
-        },
-      }).then(d => {
-        const actionName = d.data?.postMailAction?.action as MailActions;
-
-        if (!d.data?.postMailAction?.success) {
-          Alert.alert('Villa kom upp');
-          return;
-        }
-
-        if (actionName === 'bookmark') {
-          setBookmarkSuccess(true);
-          setDataSuccess({
-            ...dataSuccess,
-            bookmark: true,
-          });
-        }
-        if (actionName === 'unbookmark') {
-          setBookmarkSuccess(false);
-          setDataSuccess({
-            ...dataSuccess,
-            unbookmark: true,
-          });
-        }
-        if (actionName === 'archive') {
-          setArchiveSuccess(true);
-          setDataSuccess({
-            ...dataSuccess,
-            archive: true,
-          });
-        }
-        if (actionName === 'unarchive') {
-          setArchiveSuccess(false);
-          setDataSuccess({
-            ...dataSuccess,
-            unarchive: true,
-          });
-        }
-      });
-    } catch (err) {
-      Alert.alert('Villa kom upp');
-    }
-  };
-
-  return {
-    data,
-    submitMailAction,
-    loading,
-    archiveSuccess,
-    bookmarkSuccess,
-    dataSuccess,
-  };
-};
 
 export async function toggleAction(
   action: 'archive' | 'unarchive' | 'bookmark' | 'unbookmark',
@@ -127,11 +41,9 @@ export async function toggleAction(
         return;
       }
       const flag = action === 'archive' || action === 'bookmark' ? true : false;
-      // Hack for now
       if (action === 'archive' || action === 'unarchive') {
         archivedCache.set(messageId, flag);
       }
-      console.log('updated fragment!!', action, flag);
       client.cache.updateFragment(
         {
           id,
@@ -151,27 +63,4 @@ export async function toggleAction(
       );
     },
   });
-
-  // await postMailAction({
-  //   variables: {
-  //     input: {
-  //       messageId: input?.messageId,
-  //       action,
-  //     },
-  //   },
-  //   update(cache, {data}) {
-  //     const success = data?.postMailAction?.success;
-  //     const id = cache.identify({
-  //       __typename: 'Document',
-  //       id: input?.messageId,
-  //     });
-  //     const flag = (action === 'archive' || action === 'bookmark') ? true : false;
-  //     if (action === 'archive' || action === 'unarchive') {
-  //       cache.modify({
-  //         id,
-  //         fields: {
-  //           archived: () => success ? flag : ,
-  //         }
-  //       })
-  //   }
 }

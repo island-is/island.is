@@ -140,12 +140,6 @@ export const client = new ApolloClient({
               if (!archivedCache.has(id)) {
                 archivedCache.set(id, defaultState);
               }
-              console.log(
-                'read archived',
-                id,
-                defaultState,
-                archivedCache.get(id),
-              );
               return archivedCache.get(id);
             },
           },

@@ -13,7 +13,6 @@ import {setupRoutes} from './utils/lifecycle/setup-routes';
 import {showAppLockOverlay} from './utils/app-lock';
 import {readAuthorizeResult} from './stores/auth-store';
 import {performanceMetricsAppLaunched} from './utils/performance-metrics';
-import {LogBox, YellowBox} from 'react-native';
 
 async function startApp() {
   // setup global packages and polyfills

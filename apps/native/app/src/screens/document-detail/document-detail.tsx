@@ -30,22 +30,17 @@ import {
 } from '../../graphql/queries/get-document.query';
 import {
   DocumentV2,
-  LIST_DOCUMENT_FRAGMENT,
   LIST_DOCUMENTS_QUERY,
-  ListDocumentsV2,
+  LIST_DOCUMENT_FRAGMENT,
 } from '../../graphql/queries/list-documents.query';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {authStore} from '../../stores/auth-store';
-import {inboxStore} from '../../stores/inbox-store';
 import {useOrganizationsStore} from '../../stores/organizations-store';
 import {
   ButtonRegistry,
   ComponentRegistry,
 } from '../../utils/component-registry';
-import {
-  toggleAction,
-  useSubmitMailAction,
-} from '../../graphql/queries/inbox-actions';
+import {toggleAction} from '../../graphql/queries/inbox-actions';
 
 const Host = styled.SafeAreaView`
   margin-left: 24px;
@@ -72,7 +67,6 @@ function getRightButtons({
   archived?: boolean;
   bookmarked?: boolean;
 } = {}) {
-  console.log('getRightButtons', {archived, bookmarked});
   return [
     {
       id: ButtonRegistry.ShareButton,
@@ -221,15 +215,28 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     ...doc.data,
   };
 
+  useEffect(() => {
+    if (doc.missing) {
+      client.query({
+        query: LIST_DOCUMENTS_QUERY,
+        variables: {
+          input: {
+            page: 1,
+            pageSize: 50,
+          },
+        },
+      });
+    }
+  }, [doc]);
+
   const [visible, setVisible] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [pdfUrl, setPdfUrl] = useState('');
   const [touched, setTouched] = useState(false);
-  const hasPdf = Document.fileType === 'pdf';
+  const hasPdf = Document.fileType?.toLocaleLowerCase() === 'pdf';
   const isHtml = typeof Document.html === 'string' && Document.html !== '';
 
   useEffect(() => {
-    console.log(doc.data);
     Navigation.mergeOptions(componentId, {
       topBar: {
         rightButtons: getRightButtons({

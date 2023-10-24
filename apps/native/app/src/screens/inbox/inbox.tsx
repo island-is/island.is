@@ -4,31 +4,23 @@ import {
   EmptyList,
   ListItem,
   ListItemSkeleton,
-  SearchHeader,
+  SearchBar,
   TopLine,
-  dynamicColor,
+  Tag,
+  useDynamicColor,
 } from '@ui';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useIntl} from 'react-intl';
 import {
   Animated,
-  AppState,
-  AppStateStatus,
   FlatList,
   Image,
   ListRenderItemInfo,
-  Platform,
   RefreshControl,
-  TextInput,
   View,
 } from 'react-native';
-import KeyboardManager from 'react-native-keyboard-manager';
 import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
-import {
-  useNavigationComponentDidAppear,
-  useNavigationSearchBarCancelPress,
-  useNavigationSearchBarUpdate,
-} from 'react-native-navigation-hooks/dist';
+import {useNavigationComponentDidAppear} from 'react-native-navigation-hooks/dist';
 import {useTheme} from 'styled-components/native';
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png';
 import {BottomTabsIndicator} from '../../components/bottom-tabs-indicator/bottom-tabs-indicator';
@@ -49,11 +41,7 @@ import {
 } from '../../graphql/queries/list-documents.query';
 import {Document} from 'src/graphql/types/schema';
 import {setBadgeCountAsync} from 'expo-notifications';
-import SearchIcon from '../../assets/icons/search.png';
-import {
-  POST_MAIL_ACTION,
-  toggleAction,
-} from '../../graphql/queries/inbox-actions';
+import {toggleAction} from '../../graphql/queries/inbox-actions';
 import FilterIcon from '../../assets/icons/filter-icon.png';
 
 type ListItem =
@@ -67,26 +55,7 @@ const {useNavigationOptions, getNavigationOptions} =
         title: {
           text: intl.formatMessage({id: 'inbox.screenTitle'}),
         },
-        searchBar: {
-          placeholder: intl.formatMessage({id: 'inbox.searchPlaceholder'}),
-          tintColor: theme.color.blue400,
-          backgroundColor: 'transparent',
-          visible: false,
-        },
         rightButtons: initialized ? getRightButtons({theme} as any) : [],
-        background: {
-          component:
-            Platform.OS === 'android'
-              ? {
-                  name: ComponentRegistry.AndroidSearchBar,
-                  passProps: {
-                    placeholder: intl.formatMessage({
-                      id: 'inbox.searchPlaceholder',
-                    }),
-                  },
-                }
-              : undefined,
-        },
       },
       bottomTab: {
         iconColor: theme.color.blue400,
@@ -99,10 +68,6 @@ const {useNavigationOptions, getNavigationOptions} =
       topBar: {
         elevation: 0,
         height: 120,
-        searchBar: {
-          visible: true,
-          hideTopBarOnFocus: true,
-        },
         largeTitle: {
           visible: true,
         },
@@ -319,6 +284,7 @@ export const InboxScreen: NavigationFunctionComponent<{
   const unreadCount = useUnreadCount();
   const [visible, setVisible] = useState(false);
   const [refetching, setRefetching] = useState(false);
+  const dynamicColor = useDynamicColor();
 
   const res = useInboxQuery({
     opened,
@@ -337,40 +303,6 @@ export const InboxScreen: NavigationFunctionComponent<{
 
   const items = res.data?.data ?? [];
   const isSearch = ui.inboxQuery.length > 2;
-
-  const onAppStateBlur = useCallback((status: AppStateStatus) => {
-    if (status !== 'inactive') {
-      if (keyboardRef.current) {
-        Navigation.mergeOptions(componentId, {
-          topBar: {
-            searchBar: {
-              visible: true,
-              focus: true,
-              placeholder: intl.formatMessage({
-                id: 'inbox.searchPlaceholder',
-              }),
-            },
-          },
-        });
-      }
-    } else {
-      KeyboardManager.isKeyboardShowing().then(value => {
-        if (value === true) {
-          keyboardRef.current = value;
-          Navigation.mergeOptions(componentId, {
-            topBar: {
-              searchBar: {
-                visible: false,
-                placeholder: intl.formatMessage({
-                  id: 'inbox.searchPlaceholder',
-                }),
-              },
-            },
-          });
-        }
-      });
-    }
-  }, []);
 
   useActiveTabItemPress(0, () => {
     flatListRef.current?.scrollToOffset({
@@ -397,15 +329,6 @@ export const InboxScreen: NavigationFunctionComponent<{
     });
     setBadgeCountAsync(unreadCount);
   }, [intl, theme, unreadCount]);
-
-  useEffect(() => {
-    if (Platform.OS === 'ios') {
-      const listener = AppState.addEventListener('change', onAppStateBlur);
-      return () => {
-        listener.remove();
-      };
-    }
-  }, []);
 
   const keyExtractor = useCallback((item: ListItem) => {
     return item.id;
@@ -485,60 +408,100 @@ export const InboxScreen: NavigationFunctionComponent<{
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         keyboardDismissMode="on-drag"
-        stickyHeaderIndices={isSearch ? [0] : undefined}
+        keyboardShouldPersistTaps="handled"
         ListHeaderComponent={
-          <View
-            style={{padding: 16, marginTop: -8, flexDirection: 'row', gap: 15}}>
-            <TextInput
+          <>
+            <View
               style={{
-                borderRadius: 8,
-                backgroundColor: 'rgba(118, 118, 128, 0.12)',
-                flex: 1,
-                paddingHorizontal: 8,
-                paddingVertical: 7,
-                paddingLeft: 30,
-                fontSize: 14,
-                color: '#00003C',
-              }}
-              placeholder="Leita"
-              placeholderTextColor="#3C3C4399"
-              onChangeText={text => {
-                setQuery(text);
-              }}
-            />
-            <Button
-              title="Opna síu"
-              isOutlined
-              style={{
-                minWidth: 0,
-                paddingTop: 12,
-                paddingBottom: 12,
-                minHeight: 0,
-                borderColor: '#CCDFFF',
-              }}
-              icon={FilterIcon}
-              iconStyle={{tintColor: theme.color.blue400}}
-              textStyle={{fontSize: 12, color: '#00003C'}}
-              onPress={() => {
-                navigateTo('/inbox-filter', {
-                  opened,
-                  archived,
-                  bookmarked,
-                });
-              }}
-            />
-            <Image
-              source={SearchIcon}
-              style={{
-                position: 'absolute',
-                top: 31,
-                left: 26,
-                width: 16,
-                height: 17,
-                tintColor: '#3C3C4399',
-              }}
-            />
-          </View>
+                padding: 16,
+                flexDirection: 'row',
+                gap: 15,
+              }}>
+              <SearchBar
+                placeholder={intl.formatMessage({
+                  id: 'inbox.searchPlaceholder',
+                })}
+                value={query}
+                onChangeText={text => setQuery(text)}
+              />
+              <Button
+                title={intl.formatMessage({
+                  id: 'inbox.filterButtonTitle',
+                })}
+                isOutlined
+                style={{
+                  minWidth: 0,
+                  paddingTop: 0,
+                  paddingBottom: 0,
+                  minHeight: 0,
+                  borderColor: dynamicColor({
+                    light: '#CCDFFF',
+                    dark: '#CCDFFF55',
+                  }),
+                }}
+                icon={FilterIcon}
+                iconStyle={{tintColor: theme.color.blue400}}
+                textStyle={{
+                  fontSize: 12,
+                  color: dynamicColor({
+                    light: '#00003C',
+                    dark: '#fff',
+                  }),
+                }}
+                onPress={() => {
+                  navigateTo('/inbox-filter', {
+                    opened,
+                    archived,
+                    bookmarked,
+                  });
+                }}
+              />
+            </View>
+            {opened || archived || bookmarked ? (
+              <View
+                style={{
+                  paddingHorizontal: 16,
+                  paddingBottom: 16,
+                  marginTop: -4,
+                  flexDirection: 'row',
+                  gap: 15,
+                }}>
+                {opened && (
+                  <Tag
+                    title={intl.formatMessage({
+                      id: 'inbox.filterOpenedTagTitle',
+                    })}
+                    closable
+                    onClose={() =>
+                      Navigation.updateProps(componentId, {opened: false})
+                    }
+                  />
+                )}
+                {archived && (
+                  <Tag
+                    title={intl.formatMessage({
+                      id: 'inbox.filterArchivedTagTitle',
+                    })}
+                    closable
+                    onClose={() =>
+                      Navigation.updateProps(componentId, {archived: false})
+                    }
+                  />
+                )}
+                {bookmarked && (
+                  <Tag
+                    title={intl.formatMessage({
+                      id: 'inbox.filterStarredTagTitle',
+                    })}
+                    closable
+                    onClose={() =>
+                      Navigation.updateProps(componentId, {bookmarked: false})
+                    }
+                  />
+                )}
+              </View>
+            ) : null}
+          </>
         }
         refreshControl={
           <RefreshControl

@@ -42,9 +42,6 @@ export const ComponentRegistry = {
   FinanceScreen: `${prefix}.screens.FinanceScreen`,
   FinanceStatusDetailScreen: `${prefix}.screens.FinanceStatusDetailScreen`,
   InboxFilterScreen: `${prefix}.screens.InboxFilterScreen`,
-
-  // ui components
-  AndroidSearchBar: `${prefix}.ui.AndroidSearchBar`,
 };
 
 export const ButtonRegistry = {

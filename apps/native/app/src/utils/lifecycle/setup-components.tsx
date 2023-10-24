@@ -1,6 +1,5 @@
 // import { Platform } from 'react-native'
 import {Navigation} from 'react-native-navigation';
-import {AndroidSearchBar} from '../../components/android-search-bar/android-search-bar';
 import {AppLockScreen} from '../../screens/app-lock/app-lock';
 // import { CognitoAuthScreen } from '../../screens/devtools/cognito-auth'
 // import { StorybookScreen } from '../../screens/devtools/storybook'
@@ -90,9 +89,4 @@ export function registerAllComponents() {
   registerComponent(CR.FinanceScreen, FinanceScreen);
   registerComponent(CR.FinanceStatusDetailScreen, FinanceStatusDetailScreen);
   registerComponent(CR.InboxFilterScreen, InboxFilterScreen);
-
-  // ui components
-  // if (Platform.OS === 'android') {
-  Navigation.registerComponent(CR.AndroidSearchBar, () => AndroidSearchBar);
-  // }
 }

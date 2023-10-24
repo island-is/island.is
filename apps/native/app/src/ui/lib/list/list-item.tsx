@@ -135,6 +135,9 @@ const StarImage = styled.Image<{active?: boolean}>`
     dark: active ? theme.color.blue400 : theme.color.dark300,
     light: active ? theme.color.blue400 : theme.color.dark300,
   }))};
+  width: 16px;
+  height: 16px;
+  margin-top: -4px;
 `;
 
 interface ListItemAction {
@@ -183,7 +186,7 @@ export function ListItem({
               {unread && <Dot />}
             </Date>
           </Row>
-          <Row>
+          <Row style={{alignItems: 'center', paddingBottom: 0}}>
             <Message numberOfLines={1}>{subtitle}</Message>
             <Pressable hitSlop={16} onPress={onStarPress}>
               <StarImage

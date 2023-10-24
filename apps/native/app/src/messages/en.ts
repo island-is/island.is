@@ -159,6 +159,20 @@ export const en: TranslatedMessages = {
   'inbox.emptyListTitle': 'There are currently no documents',
   'inbox.emptyListDescription':
     'When you receive electronic documents from the government, they will appear here.',
+  'inbox.filterButtonTitle': 'Open filter',
+  'inbox.filterOpenedTagTitle': 'Unread',
+  'inbox.filterArchivedTagTitle': 'Archived',
+  'inbox.filterStarredTagTitle': 'Starred',
+
+  // inbox filters
+  'inboxFilters.screenTitle': 'Filter documents',
+  'inboxFilters.unreadOnly': 'Show only unread',
+  'inboxFilters.starred': 'Starred',
+  'inboxFilters.archived': 'Archived',
+
+  // document detail
+  'documentDetail.screenTitle': 'Document',
+  'documentDetail.loadingText': 'Loading document',
 
   // wallet
   'wallet.screenTitle': 'Wallet',
@@ -244,10 +258,6 @@ export const en: TranslatedMessages = {
 
   // notification detail
   'notificationDetail.screenTitle': 'Notification',
-
-  // document detail
-  'documentDetail.screenTitle': 'Document',
-  'documentDetail.loadingText': 'Loading document',
 
   // profile
   'profile.screenTitle': 'More',
