@@ -15,7 +15,7 @@ import {
   Button,
   Table as T,
 } from '@island.is/island-ui/core'
-import { SearchInput, SearchableTagsFilter, useSearchableTagsFilter, BackgroundImage } from '@island.is/web/components'
+import { SearchableTagsFilterInput, SearchableTagsFilter, useSearchableTagsFilter, BackgroundImage } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { GlobalContext } from '@island.is/web/context'
@@ -53,13 +53,14 @@ import type { ApplicationsTexts } from './Applications.types';
 
 import * as styles from './Applications.css'
 
-const PERPAGE = 10
 interface CategoryProps {
   page: number
   searchResults: GetApplicationsQuery['searchResults']
   countResults: GetSearchCountTagsQuery['searchResults']
   namespace: ApplicationsTexts
 }
+
+const PERPAGE = 10
 
 const Applications: Screen<CategoryProps> = ({
   page,
@@ -114,27 +115,11 @@ const Applications: Screen<CategoryProps> = ({
                   flexWrap="nowrap"
                   collapseBelow="md"
                 >
-                  <Inline
-                    justifyContent="flexEnd"
-                    alignY="center"
-                    space={2}
-                    flexWrap="nowrap"
-                    collapseBelow="md"
-                  >
-                    <SearchInput
-                      id="search_input_search_page"
-                      size="medium"
-                      placeholder={n('searchInputPlaceholder', 'Sláðu inn leitarorð')}
-                      quickContentLabel={gn('searchQuickConnect', 'Beint að efninu')}
-                      activeLocale={activeLocale}
-                      initialInputValue={q ?? ''}
-                      page="applications"
-                    />
-                    <SearchableTagsFilter
-                      resultCount={totalSearchResults}
-                      tags={countResults.tagCounts ?? []}
-                    />
-                  </Inline>
+                  <SearchableTagsFilterInput />
+                  <SearchableTagsFilter
+                    resultCount={totalSearchResults}
+                    tags={countResults.tagCounts ?? []}
+                  />
                 </Inline>
               </Box>
             </Stack>
@@ -243,7 +228,7 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
   const order = parseAsString.parseServerSide(orderParam) === 'asc' ? SortDirection.Asc : SortDirection.Desc
   const category = parseAsArrayOf(parseAsString).withDefault([]).parseServerSide(categoryParam)
   const organization = parseAsArrayOf(parseAsString).withDefault([]).parseServerSide(organizationParam)
-  const types = ['webArticle'] as SearchableContentTypes[]
+  const types = [SearchableContentTypes['WebArticle']]
   const tags: TagType[] = [
     ...category.map(
       (key: string): TagType => ({

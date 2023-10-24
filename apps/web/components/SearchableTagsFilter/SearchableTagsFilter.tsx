@@ -1,9 +1,11 @@
-import { useContext, type FC } from 'react'
+import { useContext, useState, type FC, useEffect } from 'react'
 import { useWindowSize } from 'react-use'
 import {
   Filter,
   FilterMultiChoice,
   FilterMultiChoiceProps,
+  FilterInput,
+  type FilterInputProps,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { parseAsArrayOf, parseAsString, useQueryStates } from 'next-usequerystate'
@@ -68,6 +70,36 @@ const SearchableTagsFilter: FC<SearchableTagsFilterProps> = (props) => {
   )
 }
 
+const SearchableTagsFilterInput: FC = () => {
+  const { globalNamespace } = useContext(GlobalContext)
+  const n = useNamespace(globalNamespace)
+  const { query, setValue: setQueryValue } = useSearchableTagsFilter();
+  const [value, setValue] = useState<string>('')
+
+  const handleKeyDown: FilterInputProps['onKeyDown'] = (event) => {
+    const { value } = event.currentTarget
+
+    if (event.key === 'Enter') {
+      event.currentTarget.blur()
+      setQueryValue('q', value);
+    }
+  }
+
+  useEffect(() => {
+    setValue(query ?? '')
+  }, [query])
+
+  return (
+    <FilterInput
+      name="filter-input"
+      placeholder={n('filterInputPlaceholder', 'Sláðu inn leitarorð')}
+      value={value}
+      onChange={setValue} // Why is this a requred prop?
+      onKeyDown={handleKeyDown}
+    />
+  )
+}
+
 function filtersFromTags(tags: TagCount[], category: string) {
   return (tags)
     .filter((x) => x.value.trim() && x.type === category)
@@ -81,10 +113,11 @@ function useSearchableTagsFilter() {
   const [filter, setFilter] = useQueryStates({
     category: parseAsArrayOf(parseAsString).withDefault([]),
     organization: parseAsArrayOf(parseAsString).withDefault([]),
+    q: parseAsString,
   }, { shallow: false })
-  const { category, organization } = filter
+  const { q: query, category, organization } = filter
 
-  const setValue = (key: string, value: string[] | null) => {
+  const setValue = (key: string, value: string | string[] | null) => {
     setFilter({ [key]: value })
   }
 
@@ -92,12 +125,13 @@ function useSearchableTagsFilter() {
     setFilter({
       category: null,
       organization: null,
+      q: null,
     })
   }
 
-  return { category, organization, reset, setValue }
+  return { query, category, organization, reset, setValue }
 
 }
 
-export { SearchableTagsFilter, useSearchableTagsFilter }
+export { SearchableTagsFilter, SearchableTagsFilterInput, useSearchableTagsFilter }
 export type { SearchableTagsFilterProps, SearchableTagsFilterCategories }
