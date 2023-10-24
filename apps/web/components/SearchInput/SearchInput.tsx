@@ -52,8 +52,6 @@ type SearchState = {
   isLoading: boolean
 }
 
-type PageType = Extract<LinkType, 'search' | 'applications'>
-
 const isEmpty = ({ results, suggestions }: SearchState): boolean =>
   suggestions?.length === 0 && (results?.total ?? 0) === 0
 
@@ -169,7 +167,7 @@ type SubmitType = {
   string: string
 }
 
-const useSubmit = (locale: Locale, page: PageType, onRouting?: () => void) => {
+const useSubmit = (locale: Locale, onRouting?: () => void) => {
   const Router = useRouter()
   const { linkResolver } = useLinkResolver()
 
@@ -177,7 +175,7 @@ const useSubmit = (locale: Locale, page: PageType, onRouting?: () => void) => {
     (item: SubmitType) => {
       Router.push({
         ...(item.type === 'query' && {
-          pathname: linkResolver(page).href,
+          pathname: linkResolver('search').href,
           query: { q: item.string },
         }),
         ...(item.type === 'link' && {
@@ -209,7 +207,6 @@ interface SearchInputProps {
   onRouting?: () => void
   skipContext?: boolean
   quickContentLabel?: string
-  page?: PageType
 }
 
 export const SearchInput = forwardRef<
@@ -232,14 +229,13 @@ export const SearchInput = forwardRef<
       skipContext,
       quickContentLabel,
       dataTestId,
-      page = 'search',
     },
     ref,
   ) => {
     const [searchTerm, setSearchTerm] = useState(initialInputValue)
     const search = useSearch(locale, searchTerm, autocomplete)
 
-    const onSubmit = useSubmit(locale, page)
+    const onSubmit = useSubmit(locale)
     const [hasFocus, setHasFocus] = useState(false)
     const onBlur = useCallback(() => setHasFocus(false), [setHasFocus])
     const onFocus = useCallback(() => {
