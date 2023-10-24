@@ -63,6 +63,11 @@ export const authStore = create<AuthStore>((set, get) => ({
   cookies: '',
   async fetchUserInfo(_refresh = false) {
     const appAuthConfig = getAppAuthConfig();
+    // Detect expired token
+    const expiresAt = get().authorizeResult?.accessTokenExpirationDate ?? 0;
+    if (new Date(expiresAt) < new Date()) {
+      await get().refresh();
+    }
     return fetch(
       `${appAuthConfig.issuer.replace(/\/$/, '')}/connect/userinfo`,
       {
