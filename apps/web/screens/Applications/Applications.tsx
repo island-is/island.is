@@ -1,11 +1,10 @@
+import { useContext } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import NextLink from 'next/link'
 import {
   Box,
   Text,
   Stack,
-  Breadcrumbs,
   Pagination,
   Link,
   ColorSchemeContext,
@@ -16,9 +15,10 @@ import {
   Button,
   Table as T,
 } from '@island.is/island-ui/core'
-import { SearchInput, SearchableTagsFilter, useSearchableTagsFilter, BackgroundImage, Heading } from '@island.is/web/components'
+import { SearchInput, SearchableTagsFilter, useSearchableTagsFilter, BackgroundImage } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
+import { GlobalContext } from '@island.is/web/context'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -68,16 +68,23 @@ const Applications: Screen<CategoryProps> = ({
   namespace,
 }) => {
   const { query } = useRouter();
-  const [q] = useQueryState('q')
+  const [q, setQ] = useQueryState('q')
   const { activeLocale } = useI18n()
+  const { globalNamespace } = useContext(GlobalContext)
+  const gn = useNamespace(globalNamespace)
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-  const { category, organization, reset: resetFilters } = useSearchableTagsFilter()
+  const { reset: resetFilters } = useSearchableTagsFilter()
 
   const articles = searchResults.items as Article[]
   const nothingFound = searchResults.items.length === 0
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
+
+  const handleCLearAllFilter = () => {
+    setQ(null)
+    resetFilters()
+  }
 
   return (
     <>
@@ -117,8 +124,8 @@ const Applications: Screen<CategoryProps> = ({
                     <SearchInput
                       id="search_input_search_page"
                       size="medium"
-                      placeholder={n('inputSearchQuery', 'Sláðu inn leitarorð')}
-                      quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
+                      placeholder={n('searchInputPlaceholder', 'Sláðu inn leitarorð')}
+                      quickContentLabel={gn('searchQuickConnect', 'Beint að efninu')}
                       activeLocale={activeLocale}
                       initialInputValue={q ?? ''}
                       page="applications"
@@ -130,86 +137,68 @@ const Applications: Screen<CategoryProps> = ({
                   </Inline>
                 </Inline>
               </Box>
-              {nothingFound && !!q && (
-                <>
-                  <Text variant="intro" as="p">
-                    {n(
-                      'nothingFoundWhenSearchingFor',
-                      'Ekkert fannst við leit á',
-                    )}{' '}
-                    <strong>{q}</strong>
-                    {!!(
-                      organization.length ||
-                      category.length
-                    ) && ` ${n('withChosenFilters', 'með völdum síum')}. `}
-                  </Text>
-                  {!!(
-                    organization.length ||
-                    category.length
-                  ) && (
-                    <Button
-                      variant="text"
-                      onClick={resetFilters}
-                    >
-                      {`${n(
-                        'clickHereToRemoveFilters',
-                        'Smelltu hér til að fjarlægja allar síur.',
-                      )}`}
-                    </Button>
-                  )}
-                  <Text variant="intro" as="p">
-                    {n('nothingFoundExtendedExplanation')}
-                  </Text>
-                </>
-              )}
             </Stack>
             <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
               <Box marginTop={5}>
-                <T.Table>
-                  <T.Head>
-                    <T.Row>
-                      <T.HeadData text={{ variant: "small" }}>{n('applicationName', 'Heiti umsóknar')}</T.HeadData>
-                      <T.HeadData text={{ variant: "small" }} box={{ className: styles.organizationColumn }}>{n('organization', 'Þjónustuaðili')}</T.HeadData>
-                      <T.HeadData></T.HeadData>
-                    </T.Row>
-                  </T.Head>
-                  <T.Body>
-                    {articles.map(
-                      (article, index) => (
-                        <T.Row key={index}>
-                          <T.Data text={{ variant: "h5" }}>
-                            {article.title}
-                          </T.Data>
-                          <T.Data text={{ variant: "default" }} box={{ className: styles.organizationColumn }}>
-                            <Inline
-                              justifyContent="flexStart"
-                              alignY="center"
-                              space={2}
-                              flexWrap="nowrap"
-                            >
-                              <Box className={styles.organizationLogo}>
-                                <BackgroundImage
-                                  width={60}
-                                  backgroundSize="contain"
-                                  image={{ ...article.organization?.[0]?.logo }}
-                                  format="png"
-                                />
-                              </Box>
-                              {article.organization?.[0]?.title}
-                            </Inline>
-                          </T.Data>
-                          <T.Data align="right" box={{ className: styles.readMoreColumn }}>
-                            <Link {...linkResolver('article', [article.slug])} skipTab>
-                              <Button variant="text" size="small" icon="arrowForward">
-                                {n('seeMore', 'Sjá nánar')}
-                              </Button>
-                            </Link>
-                          </T.Data>
-                        </T.Row>
-                      ),
-                    )}
-                  </T.Body>
-                </T.Table>
+                {nothingFound ? (
+                  <>
+                    <Text variant="intro" as="p" marginBottom={1}>
+                      {gn(
+                        'cantFindWhatYouAreLookingForText',
+                        'Finnurðu ekki það sem þig vantar?',
+                      )}
+                    </Text>
+                    <Button variant="text" onClick={handleCLearAllFilter} icon="reload" nowrap>
+                      {gn('filterClearAll', 'Hreinsa allar síur')}
+                    </Button>
+                  </>
+                ) : (
+                  <T.Table>
+                    <T.Head>
+                      <T.Row>
+                        <T.HeadData text={{ variant: "small" }}>{n('applicationName', 'Heiti umsóknar')}</T.HeadData>
+                        <T.HeadData text={{ variant: "small" }} box={{ className: styles.organizationColumn }}>{n('organization', 'Þjónustuaðili')}</T.HeadData>
+                        <T.HeadData></T.HeadData>
+                      </T.Row>
+                    </T.Head>
+                    <T.Body>
+                      {articles.map(
+                        (article, index) => (
+                          <T.Row key={index}>
+                            <T.Data text={{ variant: "h5" }}>
+                              {article.title}
+                            </T.Data>
+                            <T.Data text={{ variant: "default" }} box={{ className: styles.organizationColumn }}>
+                              <Inline
+                                justifyContent="flexStart"
+                                alignY="center"
+                                space={2}
+                                flexWrap="nowrap"
+                              >
+                                <Box className={styles.organizationLogo}>
+                                  <BackgroundImage
+                                    width={60}
+                                    backgroundSize="contain"
+                                    image={{ ...article.organization?.[0]?.logo }}
+                                    format="png"
+                                  />
+                                </Box>
+                                {article.organization?.[0]?.title}
+                              </Inline>
+                            </T.Data>
+                            <T.Data align="right">
+                              <Link {...linkResolver('article', [article.slug])} skipTab>
+                                <Button variant="text" size="small" icon="arrowForward" nowrap>
+                                  {gn('readMore', 'Sjá nánar')}
+                                </Button>
+                              </Link>
+                            </T.Data>
+                          </T.Row>
+                        ),
+                      )}
+                    </T.Body>
+                  </T.Table>
+                )}
               </Box>
               <Stack space={2}>
                 {totalSearchResults > 0 && (
@@ -317,7 +306,7 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'Search',
+            namespace: 'Applications',
             lang: locale,
           },
         },
