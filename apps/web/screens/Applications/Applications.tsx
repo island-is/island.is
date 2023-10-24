@@ -99,8 +99,6 @@ const Applications: Screen<CategoryProps> = ({
           <GridColumn
             span={['12/12']}
             paddingBottom={6}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
           >
             <Text variant="h1" as="h2" marginBottom={2}>
               {n('pageTitle', 'Umsóknir á Ísland.is')}
@@ -219,13 +217,12 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
   const {
     q = '*',
     page: pageParam = '1',
-    order: orderParam = 'desc',
     category: categoryParam,
     organization: organizationParam,
   } = query;
   const queryString = parseAsString.withDefault('*').parseServerSide(q)
   const page = parseAsInteger.withDefault(1).parseServerSide(pageParam)
-  const order = parseAsString.parseServerSide(orderParam) === 'asc' ? SortDirection.Asc : SortDirection.Desc
+  const order = SortDirection.Desc
   const category = parseAsArrayOf(parseAsString).withDefault([]).parseServerSide(categoryParam)
   const organization = parseAsArrayOf(parseAsString).withDefault([]).parseServerSide(organizationParam)
   const types = [SearchableContentTypes['WebArticle']]
