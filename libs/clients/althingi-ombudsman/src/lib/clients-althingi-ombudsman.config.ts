@@ -5,9 +5,6 @@ const schema = z.object({
   xRoadServicePath: z.string(),
   username: z.string(),
   password: z.string(),
-  xRoadBaseUrl: z.string(),
-  XRoadProviderId: z.string(),
-  xRoadClientId: z.string(),
 })
 
 export const AlthingiOmbudsmanClientConfig = defineConfig<
@@ -18,18 +15,9 @@ export const AlthingiOmbudsmanClientConfig = defineConfig<
   load(env) {
     return {
       scope: env.optionalJSON('') ?? [''],
-      xRoadServicePath: '',
-      // xRoadServicePath: env.required(''),
-      // username: env.required(''),
-      // password: env.required(''),
-      // xRoadBaseUrl: env.required(''),
-      // XRoadProviderId: env.required(''),
-      // xRoadClientId: env.required(''),
-      username: '',
-      password: '',
-      xRoadBaseUrl: '',
-      XRoadProviderId: '',
-      xRoadClientId: '',
+      xRoadServicePath: env.required('ALTHINGI_OMBUDSMAN_XROAD_SERVICE_PATH'),
+      username: env.required('ALTHINGI_OMBUDSMAN_XROAD_USERNAME'),
+      password: env.required('ALTHINGI_OMBUDSMAN_XROAD_PASSWORD'),
     }
   },
 })
