@@ -16,3 +16,7 @@ export const organizationColumn = style({
   }),
 })
 
+export const readMoreColumn = style({
+  whiteSpace: 'nowrap',
+})
+

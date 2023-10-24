@@ -198,7 +198,7 @@ const Applications: Screen<CategoryProps> = ({
                               {article.organization?.[0]?.title}
                             </Inline>
                           </T.Data>
-                          <T.Data align="right" style={{ whiteSpace: 'nowrap' }}>
+                          <T.Data align="right" box={{ className: styles.readMoreColumn }}>
                             <Link {...linkResolver('article', [article.slug])} skipTab>
                               <Button variant="text" size="small" icon="arrowForward">
                                 {n('seeMore', 'Sjá nánar')}
