@@ -49,7 +49,9 @@ import {
   useQueryState,
   parseAsArrayOf,
 } from 'next-usequerystate'
-import type { ApplicationsTexts } from './ApplicationsText.types';
+import type { ApplicationsTexts } from './Applications.types';
+
+import * as styles from './Applications.css'
 
 const PERPAGE = 10
 interface CategoryProps {
@@ -175,12 +177,12 @@ const Applications: Screen<CategoryProps> = ({
               )}
             </Stack>
             <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
-              <Box marginTop={4}>
+              <Box marginTop={5}>
                 <T.Table>
                   <T.Head>
                     <T.Row>
-                      <T.HeadData>{n('applicationName', 'Heiti umsóknar')}</T.HeadData>
-                      <T.HeadData>{n('organization', 'Þjónustuaðili')}</T.HeadData>
+                      <T.HeadData text={{ variant: "small" }}>{n('applicationName', 'Heiti umsóknar')}</T.HeadData>
+                      <T.HeadData text={{ variant: "small" }} box={{ className: styles.organizationColumn }}>{n('organization', 'Þjónustuaðili')}</T.HeadData>
                       <T.HeadData></T.HeadData>
                     </T.Row>
                   </T.Head>
@@ -188,19 +190,17 @@ const Applications: Screen<CategoryProps> = ({
                     {articles.map(
                       (article, index) => (
                         <T.Row key={index}>
-                          <T.Data>
-                            <Text variant="h5">
-                              {article.title}
-                            </Text>
+                          <T.Data text={{ variant: "h5" }}>
+                            {article.title}
                           </T.Data>
-                          <T.Data>
+                          <T.Data text={{ variant: "default" }} box={{ className: styles.organizationColumn }}>
                             <Inline
                               justifyContent="flexStart"
                               alignY="center"
                               space={2}
                               flexWrap="nowrap"
                             >
-                              <Box position="relative" style={{ width: '28px', height: '28px' }}>
+                              <Box className={styles.organizationLogo}>
                                 <BackgroundImage
                                   width={60}
                                   backgroundSize="contain"
@@ -208,7 +208,7 @@ const Applications: Screen<CategoryProps> = ({
                                   format="png"
                                 />
                               </Box>
-                              <Text>{article.organization?.[0]?.title}</Text>
+                              {article.organization?.[0]?.title}
                             </Inline>
                           </T.Data>
                           <T.Data align="right" style={{ whiteSpace: 'nowrap' }}>
