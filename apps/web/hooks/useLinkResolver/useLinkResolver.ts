@@ -38,7 +38,7 @@ export const routesTemplate = {
     en: '',
   },
   applications: {
-    is: '/umsoknir',
+    is: '/umsokn',
     en: '/en/applications',
   },
   page: {
