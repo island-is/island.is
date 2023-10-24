@@ -7,7 +7,6 @@ import {
   Stack,
   Pagination,
   Link,
-  ColorSchemeContext,
   Inline,
   GridContainer,
   GridRow,
@@ -15,7 +14,13 @@ import {
   Button,
   Table as T,
 } from '@island.is/island-ui/core'
-import { QueryFilterInput, SearchableTagsFilter, useSearchableTagsFilter, BackgroundImage } from '@island.is/web/components'
+import {
+  QueryFilterInput,
+  SearchableTagsFilter,
+  BackgroundImage,
+  useSearchableTagsFilter,
+  useQueryFilter,
+} from '@island.is/web/components'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { GlobalContext } from '@island.is/web/context'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -45,7 +50,6 @@ import {
 import {
   parseAsString,
   parseAsInteger,
-  useQueryState,
   parseAsArrayOf,
 } from 'next-usequerystate'
 import type { ApplicationsTexts } from './Applications.types';
@@ -68,12 +72,12 @@ const Applications: Screen<CategoryProps> = ({
   namespace,
 }) => {
   const { query } = useRouter();
-  const [q, setQ] = useQueryState('q')
   const { globalNamespace } = useContext(GlobalContext)
   const gn = useNamespace(globalNamespace)
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const { reset: resetFilters } = useSearchableTagsFilter()
+  const { reset: resetFilterInput } = useQueryFilter();
 
   const articles = searchResults.items as Article[]
   const nothingFound = searchResults.items.length === 0
@@ -81,7 +85,7 @@ const Applications: Screen<CategoryProps> = ({
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
 
   const handleCLearAllFilter = () => {
-    setQ(null)
+    resetFilterInput()
     resetFilters()
   }
 
@@ -121,7 +125,6 @@ const Applications: Screen<CategoryProps> = ({
                 </Inline>
               </Box>
             </Stack>
-            <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
               <Box marginTop={5}>
                 {nothingFound ? (
                   <>
@@ -204,7 +207,6 @@ const Applications: Screen<CategoryProps> = ({
                   </Box>
                 )}
               </Stack>
-            </ColorSchemeContext.Provider>
           </GridColumn>
         </GridRow>
       </GridContainer>
