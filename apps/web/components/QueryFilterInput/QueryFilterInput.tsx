@@ -26,7 +26,7 @@ const QueryFilterInput: FC = () => {
   return (
     <FilterInput
       name="filter-input"
-      placeholder={n('filterInputPlaceholder', 'Sláðu inn leitarorð')}
+      placeholder={n('filterInputPlaceholder', 'Sía eftir leitarorði')}
       value={value}
       onChange={setValue}
       onKeyDown={handleKeyDown}
