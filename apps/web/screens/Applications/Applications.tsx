@@ -15,8 +15,7 @@ import {
   Button,
   Table as T,
 } from '@island.is/island-ui/core'
-import { SearchableTagsFilterInput, SearchableTagsFilter, useSearchableTagsFilter, BackgroundImage } from '@island.is/web/components'
-import { useI18n } from '@island.is/web/i18n'
+import { QueryFilterInput, SearchableTagsFilter, useSearchableTagsFilter, BackgroundImage } from '@island.is/web/components'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { GlobalContext } from '@island.is/web/context'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -70,7 +69,6 @@ const Applications: Screen<CategoryProps> = ({
 }) => {
   const { query } = useRouter();
   const [q, setQ] = useQueryState('q')
-  const { activeLocale } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
   const gn = useNamespace(globalNamespace)
   const n = useNamespace(namespace)
@@ -115,7 +113,7 @@ const Applications: Screen<CategoryProps> = ({
                   flexWrap="nowrap"
                   collapseBelow="md"
                 >
-                  <SearchableTagsFilterInput />
+                  <QueryFilterInput />
                   <SearchableTagsFilter
                     resultCount={totalSearchResults}
                     tags={countResults.tagCounts ?? []}
