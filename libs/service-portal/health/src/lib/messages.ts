@@ -1,6 +1,14 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
+  from: {
+    id: 'sp.health:from',
+    defaultMessage: 'Frá',
+  },
+  to: {
+    id: 'sp.health:to',
+    defaultMessage: 'Til',
+  },
   calculate: {
     id: 'sp.health:calculate',
     defaultMessage: 'Reikna',
