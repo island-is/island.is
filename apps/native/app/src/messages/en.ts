@@ -253,6 +253,11 @@ export const en: TranslatedMessages = {
   'licenseScannerResult.birthDate': 'Birthdate',
   'licenseScannerResult.driverLicenseNumber': 'Driver license number',
 
+  // license details
+  'licenseDetail.pcard.alert.title': 'Remember the parking card!',
+  'licenseDetail.pcard.alert.description':
+    'This summary is not valid as a parking card.',
+
   // notifications
   'notifications.screenTitle': 'Notifications',
 

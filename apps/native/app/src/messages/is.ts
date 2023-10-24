@@ -359,6 +359,11 @@ export const is = {
   'licenseScannerResult.nationalId': 'Kennitala',
   'licenseScannerResult.driverLicenseNumber': 'Númer ökuskírteinis',
 
+  // license details
+  'licenseDetail.pcard.alert.title': 'Mundu eftir stæðiskortinu!',
+  'licenseDetail.pcard.alert.description':
+    'Þetta yfirlit gildir ekki sem stæðiskort.',
+
   // notifications
   'notifications.screenTitle': 'Tilkynningar',
 
