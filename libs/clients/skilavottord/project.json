@@ -1,0 +1,30 @@
+{
+  "name": "clients-skilavottord",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/skilavottord/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/clients/skilavottord/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/skilavottord"],
+      "options": {
+        "jestConfig": "libs/clients/skilavottord/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/skilavottord/gen/fetch -i libs/clients/skilavottord/src/clientConfig.yaml"
+      }
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}

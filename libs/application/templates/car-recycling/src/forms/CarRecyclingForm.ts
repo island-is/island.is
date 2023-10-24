@@ -1,7 +1,11 @@
 import {
+  buildAsyncSelectField,
+  buildCustomField,
   buildForm,
   buildMultiField,
+  buildRadioField,
   buildSection,
+  buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
 import {
@@ -12,6 +16,35 @@ import {
 } from '@island.is/application/types'
 import { carRecyclingMessages } from '../lib/messages'
 import Logo from '../assets/Logo'
+import gql from 'graphql-tag'
+
+type permoVehicle = {
+  GetVehiclesApi?: Array<{
+    permno: string
+    type: string
+    color: string
+    vinNumber: string
+    firstRegDate: string
+    isRecyclable: string
+    hasCoOwner: string
+    status: string
+  }>
+}
+
+export const GetVehicles = gql`
+  query GetVehicles {
+    getVehicles {
+      permno
+      type
+      color
+      firstRegDate
+      vinNumber
+      isRecyclable
+      hasCoOwner
+      status
+    }
+  }
+`
 
 export const CarRecyclingForm: Form = buildForm({
   id: 'CarRecyclingDraft',
@@ -19,34 +52,100 @@ export const CarRecyclingForm: Form = buildForm({
   logo: Logo,
   mode: FormModes.DRAFT,
   children: [
+    // buildSection({
+    //   id: 'prerequisites',
+    //   title: carRecyclingMessages.pre.prerequisitesSection,
+    //   children: [],
+    // }),
     buildSection({
-      id: 'prerequisites',
-      title: carRecyclingMessages.pre.prerequisitesSection,
-      children: [],
-    }),
-    buildSection({
-      id: 'cars',
+      id: 'carsOverview',
       title: 'oldAgePensionFormMessage.applicant.applicantSection',
       children: [
-        buildMultiField({
-          id: 'CarsOverview',
-          title:
-            'oldAgePensionFormMessage.applicant.applicantInfoSubSectionTitle',
-          description:
-            'oldAgePensionFormMessage.applicant.applicantInfoSubSectionDescription',
+        buildSubSection({
+          id: 'emailAndPhoneNumber',
+          title: 'subSection',
           children: [
-            buildTextField({
-              id: 'applicantInfo.name',
-              title: 'oldAgePensionFormMessage.applicant.applicantInfoName',
-              backgroundColor: 'white',
-              disabled: true,
-              defaultValue: (application: Application) => {
-                const nationalRegistry = application.externalData
-                  .nationalRegistry.data as NationalRegistryIndividual
-                return nationalRegistry.fullName
-              },
+            buildMultiField({
+              id: 'CarsOverview',
+              title:
+                'oldAgePensionFormMessage.applicant.applicantInfoSubSectionTitle',
+              description:
+                'oldAgePensionFormMessage.applicant.applicantInfoSubSectionDescription',
+              children: [
+                // buildTextField({
+                //   id: 'applicantInfo.name',
+                //   title: 'oldAgePensionFormMessage.applicant.applicantInfoName',
+                //   backgroundColor: 'white',
+                //   disabled: false,
+                //   defaultValue: 'bæla dfjajfeanviaje',
+                // }),
+                // buildTextField({
+                //   id: 'otherParentPhoneNumber',
+                //   title: 'phoneNumber',
+                //   variant: 'tel',
+                //   format: '###-####',
+                //   placeholder: '000-0000',
+                // }),
+                buildRadioField({
+                  id: 'useLength',
+                  title: 'radio',
+                  description: 'parentalLeaveFormMessages.duration.description',
+                  defaultValue: 'yes',
+                  options: [
+                    {
+                      label: 'yes',
+                      value: 'yes',
+                    },
+                    {
+                      label:
+                        'no',
+                      value: 'no',
+                    },
+                  ],
+                }),
+                // buildCustomField({
+                //   component: 'ShowQueries',
+                //   id: 'testing',
+                //   title: "testing",
+                //   description:
+                //     "testing",
+                // }),
+                buildAsyncSelectField({
+                  title: 'parentalLeaveFormMessages.shared.pensionFund',
+                  id: 'payments.pensionFund',
+                  loadingError: 'parentalLeaveFormMessages.errors.loading',
+                  isSearchable: true,
+                  placeholder:
+                    'nothing',
+                  loadOptions: async ({ apolloClient }) => {
+                    const { data } =
+                      await apolloClient.query<permoVehicle>({
+                        query: GetVehicles,
+                      })
+
+                    return (
+                      data?.GetVehiclesApi?.map(({ permno }) => ({
+                        label: permno,
+                        value: permno,
+                      })) ?? []
+                    )
+                  },
+                }),
+              ],
             }),
           ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'tmp',
+      title: 'conclusion.general.sectionTitle',
+      children: [
+        // Only to have submit button visible
+        buildTextField({
+          id: 'tmp',
+          title: '',
+          description: '',
         }),
       ],
     }),

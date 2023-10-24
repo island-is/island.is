@@ -12,9 +12,7 @@ export const Prerequisites: Form = buildForm({
   id: 'CarRecyclingPrerequisites',
   title: carRecyclingMessages.shared.formTitle,
   logo: Logo,
-  mode: FormModes.NOT_STARTED,
-  renderLastScreenButton: true,
-  renderLastScreenBackButton: true,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'prerequisites',

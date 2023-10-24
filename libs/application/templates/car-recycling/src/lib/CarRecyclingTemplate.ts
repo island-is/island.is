@@ -16,17 +16,13 @@ import {
 } from '@island.is/application/types'
 
 import { assign } from 'xstate'
-import { Actions } from '../shared'
 import { DataSchema } from './dataSchema'
 import { carRecyclingMessages } from './messages'
 
-const States = {
-  PREREQUISITES: 'prerequisites',
-  DRAFT: 'draft',
-  IN_REVIEW: 'inReview',
-  APPROVED: 'approved',
-  REJECTED: 'rejected',
-  WAITING_TO_ASSING: 'waitingToAssign',
+const enum States {
+  PREREQUISITES = 'prerequisites',
+  DRAFT = 'draft',
+  IN_REVIEW = 'inReview',
 }
 
 type ReferenceTemplateEvent =
@@ -58,47 +54,47 @@ const CarRecyclingTemplate: ApplicationTemplate<
   allowMultipleApplicationsInDraft: true,
 
   stateMachineConfig: {
-    initial: States.PREREQUISITES,
+    initial: States.DRAFT,
     states: {
-      [States.PREREQUISITES]: {
-        exit: [],
-        meta: {
-          name: States.PREREQUISITES,
-          status: 'draft',
-          actionCard: {
-            historyLogs: [
-              {
-                logMessage: coreHistoryMessages.applicationStarted,
-                onEvent: DefaultEvents.SUBMIT,
-              },
-            ],
-          },
-          lifecycle: pruneAfterDays(9),
-          progress: 0.25,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Prerequisites').then((val) =>
-                  Promise.resolve(val.Prerequisites),
-                ),
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Submit',
-                  type: 'primary',
-                },
-              ],
-              write: 'all',
-              delete: true,
-              api: [UserProfileApi],
-            },
-          ],
-        },
-        on: {
-          SUBMIT: States.DRAFT,
-        },
-      },
+      // [States.PREREQUISITES]: {
+      //   exit: [],
+      //   meta: {
+      //     name: States.PREREQUISITES,
+      //     status: 'draft',
+      //     actionCard: {
+      //       historyLogs: [
+      //         {
+      //           logMessage: coreHistoryMessages.applicationStarted,
+      //           onEvent: DefaultEvents.SUBMIT,
+      //         },
+      //       ],
+      //     },
+      //     lifecycle: pruneAfterDays(9),
+      //     progress: 0.25,
+      //     roles: [
+      //       {
+      //         id: Roles.APPLICANT,
+      //         formLoader: () =>
+      //           import('../forms/Prerequisites').then((val) =>
+      //             Promise.resolve(val.Prerequisites),
+      //           ),
+      //         actions: [
+      //           {
+      //             event: DefaultEvents.SUBMIT,
+      //             name: 'Submit',
+      //             type: 'primary',
+      //           },
+      //         ],
+      //         write: 'all',
+      //         delete: true,
+      //         api: [UserProfileApi],
+      //       },
+      //     ],
+      //   },
+      //   on: {
+      //     SUBMIT: States.DRAFT,
+      //   },
+      // },
       [States.DRAFT]: {
         exit: [],
         meta: {
@@ -113,10 +109,10 @@ const CarRecyclingTemplate: ApplicationTemplate<
             },
           },
           progress: 0.25,
-          onExit: defineTemplateApi({
-            action: Actions.SEND_APPLICATION,
-            throwOnError: true,
-          }),
+          // onExit: defineTemplateApi({
+          //   action: ApiModuleActions.SEND_APPLICATION,
+          //   throwOnError: true,
+          // }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -137,7 +133,7 @@ const CarRecyclingTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: [{ target: States.APPROVED }],
+          SUBMIT: [{ target: States.IN_REVIEW }],
         },
       },
     },

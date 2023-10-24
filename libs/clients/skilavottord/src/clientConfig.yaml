@@ -1,0 +1,63 @@
+x-generator: NSwag v13.9.4.0 (NJsonSchema v10.3.1.0 (Newtonsoft.Json v12.0.0.0))
+openapi: 3.0.0
+info:
+  title: Skilavottord
+  version: 1.0.0
+servers:
+  - url: 'localhost:3339'
+paths:
+  '/app/skilavottord/api/graphql/skilavottordVehicles':
+    get:
+      tags:
+        - GetVehicles
+      operationId: Application_GetVehicles
+      parameters:
+        - name: nationalId
+          in: query
+          schema:
+            type: string
+            format: string
+            nullable: true
+          x-position: 1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VehicleInformationResponse'
+components:
+  schemas:
+    VehicleInformationResponse:
+      type: array
+      additionalProperties: false
+      items:
+        $ref: '#/components/schemas/Vehicles'
+    Vehicles:
+      type: object
+      additionalProperties: false
+      properties:
+        permno:
+          type: string
+        type:
+          type: string
+        color:
+          type: string
+        vinNumber:
+          type: string
+        firstRegDate:
+          type: string
+        isRecyclable:
+          type: string
+        hasCoOwner:
+          type: string
+        status:
+          type: string
+    nationalId:
+      type: string
+      additionalProperties: false
+      required:
+        - nationalId
+      properties:
+        nationalId:
+          type: string
