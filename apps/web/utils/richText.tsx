@@ -10,45 +10,49 @@ import {
   defaultRenderMarkObject,
   defaultRenderNodeObject,
 } from '@island.is/island-ui/contentful'
+import { Locale } from '@island.is/shared/types'
 import {
   AccordionSlice,
+  AircraftSearch,
+  AlcoholLicencesList,
+  BrokersList,
   CatchQuotaCalculator,
   ChartsCard,
+  DrivingInstructorList,
   EmailSignup,
   OneColumnTextSlice,
+  OverviewLinksSlice,
+  PlateAvailableSearch,
   PowerBiSlice,
+  PublicShipSearch,
+  PublicVehicleSearch,
+  SectionWithVideo,
   SelectedShip,
   ShipSearch,
   ShipSearchBoxedInput,
   SidebarShipSearchInput,
-  StraddlingStockCalculator,
-  TwoColumnTextSlice,
-  AlcoholLicencesList,
-  TemporaryEventLicencesList,
-  BrokersList,
   SliceDropdown,
-  PublicVehicleSearch,
-  AircraftSearch,
-  DrivingInstructorList,
-  PlateAvailableSearch,
-  SectionWithVideo,
+  StraddlingStockCalculator,
   TableSlice,
-  PublicShipSearch,
+  TemporaryEventLicencesList,
+  TwoColumnTextSlice,
 } from '@island.is/web/components'
 import {
-  PowerBiSlice as PowerBiSliceSchema,
-  Slice,
   AccordionSlice as AccordionSliceSchema,
-  FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
-  SliceDropdown as SliceDropdownSchema,
-  SectionWithVideo as SectionWithVideoSchema,
-  TableSlice as TableSliceSchema,
   Embed as EmbedSchema,
+  FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
+  IntroLinkImage as IntroLinkImageSchema,
+  OverviewLinks as OverviewLinksSliceSchema,
+  PowerBiSlice as PowerBiSliceSchema,
+  SectionWithVideo as SectionWithVideoSchema,
+  Slice,
+  SliceDropdown as SliceDropdownSchema,
+  TableSlice as TableSliceSchema,
 } from '@island.is/web/graphql/schema'
-import { Locale } from '@island.is/shared/types'
+
 import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
-import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator'
+import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
 import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -136,6 +140,9 @@ const defaultRenderComponent = {
   ),
   TableSlice: (slice: TableSliceSchema) => <TableSlice slice={slice} />,
   Embed: (slice: EmbedSchema) => <EmbedSlice slice={slice} />,
+  OverviewLinks: (slice: OverviewLinksSliceSchema) => (
+    <OverviewLinksSlice slice={slice} />
+  ),
 }
 
 export const webRichText = (
