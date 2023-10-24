@@ -9,6 +9,18 @@ services:
       - 4566:4566
     environment:
       - SERVICES=sqs
+  db_user_notification:
+    image: public.ecr.aws/docker/library/postgres:11.14-alpine
+    container_name: db_user_notification
+    networks:
+      - local
+    environment:
+      - POSTGRES_DB=dev_db
+      - POSTGRES_USER=dev_db
+      - POSTGRES_PASSWORD=dev_db
+    ports:
+      - 5432:5432
+
 
 networks:
   local:

@@ -33864,6 +33864,7 @@ __metadata:
     sanitize-html: 2.10.0
     sequelize: 6.19.0
     sequelize-cli: 6.4.1
+    sequelize-cursor-pagination: 3.4.0
     sequelize-replace-enum-postgres: 1.5.0
     sequelize-typescript: 2.1.3
     shorthash: 0.0.2
@@ -47601,6 +47602,15 @@ __metadata:
     sequelize: lib/sequelize
     sequelize-cli: lib/sequelize
   checksum: 4708f3a07420949c5f47280de02f358dce1ceb29936dd6dcf7d89c3817a7335ef83caa1dc390e91cfcbd47de2788c363a5dc560681fa823b64899246c0a7cbdc
+  languageName: node
+  linkType: hard
+
+"sequelize-cursor-pagination@npm:3.4.0":
+  version: 3.4.0
+  resolution: "sequelize-cursor-pagination@npm:3.4.0"
+  peerDependencies:
+    sequelize: ">= 6.0.0"
+  checksum: b6542c59a238f385e14356b215c47bd8e4321dd70d028d6c2047e5cc114ab6e1e8f69b475495775b0a912cc6052ba2807a9839a3f7aa8472c07063e3776c8f23
   languageName: node
   linkType: hard
 

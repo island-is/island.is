@@ -32,7 +32,7 @@ import { NotificationsService } from './notifications.service'
 
 @Controller('notifications')
 @ApiExtraModels(CreateNotificationDto)
-@UseInterceptors(CacheInterceptor) // auto-caching GET responses
+@UseInterceptors(CacheInterceptor) // auto-caching GET responses TODO only for TEMPLATES ...
 export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
@@ -166,4 +166,16 @@ export class NotificationsController {
     this.logger.info('Message queued ... ...', { messageId: id, ...body })
     return { id }
   }
+
+  // @Documentation({
+  //   description: 'Get list of notifications by userProfileId',
+  //   summary: 'Get list of notifications by userProfileId'  })
+  // @Get('/:userProfileId') // or pass auth object
+  // @Version('1')
+  // async getHnippNotifications(
+  //   @Param() userProfileId: string,
+  // ): Promise<Notification[]> {
+  //   return userProfileId
+  // }
+  
 }
