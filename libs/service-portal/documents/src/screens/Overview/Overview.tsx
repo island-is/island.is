@@ -469,6 +469,22 @@ export const ServicePortalDocuments = () => {
                   />
                 </Box>
               ))}
+              {totalPages && (
+                <Box paddingBottom={4} marginTop={4}>
+                  <Pagination
+                    page={page}
+                    totalPages={totalPages}
+                    renderLink={(page, className, children) => (
+                      <button
+                        className={className}
+                        onClick={handlePageChange.bind(null, page)}
+                      >
+                        {children}
+                      </button>
+                    )}
+                  />
+                </Box>
+              )}
             </Stack>
           </Box>
         </GridColumn>
@@ -503,26 +519,6 @@ export const ServicePortalDocuments = () => {
             }}
             loading={docLoading}
           />
-        </GridColumn>
-      </GridRow>
-      <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-          {totalPages && (
-            <Box paddingBottom={4} marginTop={4}>
-              <Pagination
-                page={page}
-                totalPages={totalPages}
-                renderLink={(page, className, children) => (
-                  <button
-                    className={className}
-                    onClick={handlePageChange.bind(null, page)}
-                  >
-                    {children}
-                  </button>
-                )}
-              />
-            </Box>
-          )}
         </GridColumn>
       </GridRow>
     </GridContainer>
