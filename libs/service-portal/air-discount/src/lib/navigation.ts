@@ -10,4 +10,5 @@ export const airDiscountNavigation: PortalNavigationItem = {
     icon: 'airplane',
     type: 'outline',
   },
+  children: [{ name: m.airDiscount, path: AirDiscountPaths.AirDiscountRoot }],
 }
