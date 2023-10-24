@@ -26,21 +26,21 @@ import { GlobalContext } from '@island.is/web/context'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
-  Tag as TagType,
-  GetApplicationsQuery,
-  GetSearchCountTagsQuery,
-  QuerySearchResultsArgs,
-  ContentLanguage,
-  QueryGetNamespaceArgs,
-  GetNamespaceQuery,
   SearchableContentTypes,
   SearchableTags,
   SortField,
   SortDirection,
-  Article,
+  type Tag as TagType,
+  type GetApplicationsQuery,
+  type GetSearchCountTagsQuery,
+  type QuerySearchResultsArgs,
+  type ContentLanguage,
+  type  QueryGetNamespaceArgs,
+  type GetNamespaceQuery,
+  type Article,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
-import { Screen } from '../../types'
+import type { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_APPLICATIONS_QUERY,
