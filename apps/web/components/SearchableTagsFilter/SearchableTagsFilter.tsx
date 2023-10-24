@@ -3,13 +3,13 @@ import { useWindowSize } from 'react-use'
 import {
   Filter,
   FilterMultiChoice,
-  FilterMultiChoiceProps,
+  type FilterMultiChoiceProps,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { parseAsArrayOf, parseAsString, useQueryStates } from 'next-usequerystate'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { GlobalContext } from '@island.is/web/context'
-import { TagCount } from '@island.is/web/graphql/schema'
+import type { TagCount } from '@island.is/web/graphql/schema'
 
 type SearchableTagsFilterCategories = FilterMultiChoiceProps['categories'];
 type SearchableTagsFilterItems = FilterMultiChoiceProps['categories'][number]['filters'];
