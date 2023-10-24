@@ -12,4 +12,7 @@ export {
   HealthCenterDTO,
   EhicApi,
   BasicCardInfoDTO,
+  DrugApi,
+  OverviewApi,
+  PaymentApi,
 } from '../gen/fetch'

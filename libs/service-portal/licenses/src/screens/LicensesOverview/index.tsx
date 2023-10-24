@@ -3,6 +3,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ErrorScreen,
   IntroHeader,
+  FootNote,
   ICELAND_ID,
   m as coreMessage,
 } from '@island.is/service-portal/core'
@@ -184,6 +185,7 @@ export const LicensesOverview = () => {
           genericLicenses={genericLicenses}
         />
       )}
+      <FootNote serviceProviderID={ICELAND_ID} />
     </>
   )
 }

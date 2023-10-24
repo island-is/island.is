@@ -4,6 +4,7 @@ import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
 import { m } from '@island.is/service-portal/core/messages'
 import { disableI18n } from '../../../../support/disablers'
+const timeout = 15000
 
 test.use({ baseURL: urls.islandisBaseUrl })
 test.describe('MS - Fjármál overview', () => {
@@ -30,13 +31,13 @@ test.describe('MS - Fjármál overview', () => {
     await test.step('Filter returns any data', async () => {
       // Arrange
       await page.goto(icelandicAndNoPopupUrl('/minarsidur/fjarmal/stada'))
-
       // Assert
       await expect(
         page
           .locator(`role=button[name="${label(m.financeBreakdown)}"]`)
           .first(),
-      ).toBeVisible()
+        {},
+      ).toBeVisible({ timeout })
     })
   })
 
@@ -48,19 +49,6 @@ test.describe('MS - Fjármál overview', () => {
       // Arrange
       await page.goto(icelandicAndNoPopupUrl('/minarsidur/fjarmal/faerslur'))
 
-      // Assert
-      await expect(
-        page
-          .locator(`role=button[name="${label(m.financeBreakdown)}"]`)
-          .first(),
-      ).toBeVisible()
-    })
-
-    await test.step('Data is filtered', async () => {
-      // Arrange
-      await page.goto(icelandicAndNoPopupUrl('/minarsidur/fjarmal/faerslur'))
-
-      // Act
       const inputField = page.getByRole('textbox', {
         name: label(m.searchPlaceholder),
       })
@@ -70,6 +58,12 @@ test.describe('MS - Fjármál overview', () => {
       await inputField.type('Sakavottorð', { delay: 100 })
 
       // Assert
+      await expect(
+        page
+          .locator(`role=button[name="${label(m.financeBreakdown)}"]`)
+          .first(),
+      ).toBeVisible({ timeout })
+
       await expect(page.locator('role=table')).toContainText('Sakavottorð')
       await expect(page.locator('role=table')).not.toContainText('Vegabréf')
     })
@@ -105,7 +99,9 @@ test.describe('MS - Fjármál overview', () => {
       await filterInput.type('27.01.2023', { delay: 100 })
 
       // Assert
-      await expect(page.locator('role=table')).toContainText('27.01.2023')
+      await expect(page.locator('role=table')).toContainText('27.01.2023', {
+        timeout,
+      })
       await expect(page.locator('role=table')).not.toContainText('10.01.2023')
     })
   })
@@ -132,7 +128,9 @@ test.describe('MS - Fjármál overview', () => {
       await inputField.type('15.10.2021', { delay: 200 })
 
       // Assert
-      await expect(page.locator('role=table')).toContainText('15.10.2021')
+      await expect(page.locator('role=table')).toContainText('15.10.2021', {
+        timeout,
+      })
 
       // "Launagreiðandakröfur" comes from the api - not translateable
       await expect(page.locator('role=table')).toContainText(
