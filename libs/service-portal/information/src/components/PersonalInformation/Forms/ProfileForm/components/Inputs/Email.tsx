@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { m } from '@island.is/service-portal/core'
 import { msg } from '../../../../../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Box, Text, LoadingDots } from '@island.is/island-ui/core'
+import { Box, Text, SkeletonLoader } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import {
   useVerifyEmail,
@@ -272,7 +272,7 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
               </>
             )}
             {(createLoading || deleteLoading || fetchLoading) && (
-              <LoadingDots />
+              <SkeletonLoader />
             )}
           </Box>
         </Box>
@@ -333,7 +333,7 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
                 )}
                 {saveLoading && (
                   <Box>
-                    <LoadingDots />
+                    <SkeletonLoader />
                   </Box>
                 )}
               </Box>

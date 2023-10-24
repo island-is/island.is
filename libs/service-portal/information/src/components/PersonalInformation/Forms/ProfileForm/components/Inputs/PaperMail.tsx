@@ -6,9 +6,9 @@ import {
   Columns,
   Column,
   Icon,
-  LoadingDots,
   Checkbox,
   Hidden,
+  SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import { msg } from '../../../../../../lib/messages'
@@ -66,7 +66,7 @@ export const PaperMail = () => {
   }
 
   if (loading) {
-    return <LoadingDots />
+    return <SkeletonLoader />
   }
   if (typeof data?.getPaperMailInfo?.wantsPaper !== 'boolean') {
     return null
@@ -128,7 +128,7 @@ export const PaperMail = () => {
                   {formatMessage(msg.saveSettings)}
                 </FormButton>
               )}
-              {isLoading && <LoadingDots />}
+              {isLoading && <SkeletonLoader />}
             </Box>
           </Box>
         </Column>
