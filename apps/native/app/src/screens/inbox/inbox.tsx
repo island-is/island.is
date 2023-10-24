@@ -67,7 +67,6 @@ const {useNavigationOptions, getNavigationOptions} =
     {
       topBar: {
         elevation: 0,
-        height: 120,
         largeTitle: {
           visible: true,
         },

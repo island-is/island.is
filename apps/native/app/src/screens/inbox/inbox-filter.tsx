@@ -1,5 +1,5 @@
 import {TableViewCell, theme} from '@ui';
-import {ScrollView, Switch} from 'react-native';
+import {Platform, ScrollView, Switch} from 'react-native';
 import {Navigation} from 'react-native-navigation';
 import {ComponentRegistry} from '../../utils/component-registry';
 import {useIntl} from 'react-intl';
@@ -52,9 +52,10 @@ export function InboxFilterScreen(props: {
             <Switch
               value={opened}
               onValueChange={() => setOpened(!opened)}
+              thumbColor={Platform.select({android: theme.color.dark100})}
               trackColor={{
+                false: theme.color.dark200,
                 true: theme.color.blue400,
-                false: undefined,
               }}
             />
           }
@@ -73,9 +74,10 @@ export function InboxFilterScreen(props: {
             <Switch
               value={bookmarked}
               onValueChange={() => setBookmarked(!bookmarked)}
+              thumbColor={Platform.select({android: theme.color.dark100})}
               trackColor={{
+                false: theme.color.dark200,
                 true: theme.color.blue400,
-                false: undefined,
               }}
             />
           }
@@ -94,9 +96,10 @@ export function InboxFilterScreen(props: {
             <Switch
               value={archived}
               onValueChange={() => setArchived(!archived)}
+              thumbColor={Platform.select({android: theme.color.dark100})}
               trackColor={{
+                false: theme.color.dark200,
                 true: theme.color.blue400,
-                false: undefined,
               }}
             />
           }
