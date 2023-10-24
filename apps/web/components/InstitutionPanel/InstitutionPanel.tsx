@@ -53,7 +53,7 @@ export const InstitutionPanel = ({
             {institutionTitle}
           </Text>
           <Text
-            variant={institution.length > 24 ? 'h5' : 'h3'}
+            variant={institution.length > 24 ? 'h5' : 'h4'}
             as="h3"
             color="purple600"
             lineHeight="sm"
