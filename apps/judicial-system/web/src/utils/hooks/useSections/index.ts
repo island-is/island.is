@@ -1,4 +1,3 @@
-import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -17,7 +16,6 @@ import {
   CaseAppealState,
   CaseState,
   completedCaseStates,
-  Feature,
   isCourtRole,
   isExtendedCourtRole,
   isIndictmentCase,
@@ -25,7 +23,6 @@ import {
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 import { formatCaseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import {
@@ -67,7 +64,6 @@ const useSections = (
 ) => {
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { features } = useContext(FeatureContext)
   const { getAppealResultText } = useStringHelpers()
 
   const getRestrictionCaseProsecutorSection = (
@@ -1352,8 +1348,7 @@ const useSections = (
             },
           ]
         : []),
-      ...(!features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) ||
-      !workingCase.appealState
+      ...(!workingCase.appealState
         ? []
         : getCourtOfAppealSections(workingCase, user)),
     ]

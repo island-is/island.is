@@ -1,12 +1,12 @@
 import { FC } from 'react'
-import { RightsPortalHealthCenterRegistration } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { formatDate, m } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
+import { RightsPortalHealthCenterRecord } from '@island.is/api/schema'
 
 interface Props {
-  history: Array<RightsPortalHealthCenterRegistration>
+  history: Array<RightsPortalHealthCenterRecord>
 }
 
 const HistoryTable: FC<Props> = ({ history }: Props) => {

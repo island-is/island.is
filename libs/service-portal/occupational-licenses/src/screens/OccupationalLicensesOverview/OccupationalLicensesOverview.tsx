@@ -4,6 +4,8 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   IntroHeader,
+  FootNote,
+  ICELAND_ID,
   m,
   ErrorScreen,
 } from '@island.is/service-portal/core'
@@ -76,6 +78,8 @@ const OccupationalLicensesOverview = () => {
       <IntroHeader
         title={m.occupationaLicenses}
         intro={formatMessage(m.occupationalLicensesDescription)}
+        serviceProviderID={ICELAND_ID}
+        serviceProviderTooltip={formatMessage(m.licensesTooltip)}
       />
       {data?.occupationalLicenses?.errors.map((err) => {
         const message = formatErrorMessage(err)
@@ -118,6 +122,7 @@ const OccupationalLicensesOverview = () => {
           )}
         </Stack>
       </Box>
+      <FootNote serviceProviderID={ICELAND_ID} />
     </Box>
   )
 }
