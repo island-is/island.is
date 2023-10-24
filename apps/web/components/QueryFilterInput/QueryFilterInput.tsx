@@ -1,5 +1,5 @@
-import { useContext, useState, type FC, useEffect } from 'react'
-import {FilterInput, type FilterInputProps } from '@island.is/island-ui/core'
+import { useContext, useState, useEffect, type FC } from 'react'
+import { FilterInput, type FilterInputProps } from '@island.is/island-ui/core'
 import { useQueryState } from 'next-usequerystate'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { GlobalContext } from '@island.is/web/context'
