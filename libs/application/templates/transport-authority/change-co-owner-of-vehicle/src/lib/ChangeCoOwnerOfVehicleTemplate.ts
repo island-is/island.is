@@ -9,6 +9,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   PendingAction,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -34,9 +35,11 @@ import { application as applicationMessage } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import { AuthDelegationType } from '@island.is/shared/types'
-import { hasReviewerApproved } from '../utils'
+import { getChargeItemCodes, hasReviewerApproved } from '../utils'
 import { Features } from '@island.is/feature-flags'
 import { ApiScope } from '@island.is/auth/scopes'
+import { buildPaymentState } from '@island.is/application/utils'
+import { getExtraData } from '../utils/getChargeItemCodes'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -154,61 +157,18 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
-      [States.PAYMENT]: {
-        meta: {
-          name: 'Greiðsla',
-          status: 'inprogress',
-          actionCard: {
-            tag: {
-              label: applicationMessage.actionCardPayment,
-              variant: 'red',
-            },
-            historyLogs: [
-              {
-                logMessage: coreHistoryMessages.paymentAccepted,
-                onEvent: DefaultEvents.SUBMIT,
-              },
-              {
-                logMessage: coreHistoryMessages.paymentCancelled,
-                onEvent: DefaultEvents.ABORT,
-              },
-            ],
-            pendingAction: {
-              title: corePendingActionMessages.paymentPendingTitle,
-              content: corePendingActionMessages.paymentPendingDescription,
-              displayStatus: 'warning',
-            },
-          },
-          progress: 0.5,
-          lifecycle: {
-            ...pruneAfterDays(1 / 24),
-            shouldDeleteChargeIfPaymentFulfilled: true,
-          },
-          onEntry: defineTemplateApi({
-            action: ApiActions.createCharge,
-          }),
-          onExit: defineTemplateApi({
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
+        chargeItemCodes: getChargeItemCodes,
+        extraData: getExtraData,
+        submitTarget: States.REVIEW,
+        onExit: [
+          defineTemplateApi({
             action: ApiActions.initReview,
+            triggerEvent: DefaultEvents.SUBMIT,
           }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Payment').then((val) => val.Payment),
-              actions: [
-                { event: DefaultEvents.SUBMIT, name: 'Áfram', type: 'primary' },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: { target: States.REVIEW },
-          [DefaultEvents.ABORT]: { target: States.DRAFT },
-        },
-      },
-
+        ],
+      }),
       [States.REVIEW]: {
         entry: 'assignUsers',
         meta: {
