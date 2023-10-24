@@ -1,6 +1,6 @@
 import { DynamicModule } from '@nestjs/common'
 
-import { SkilavottordModule as SModule } from '@island.is/clients/skilavottord'
+import { SkilavottordModule } from '@island.is/clients/skilavottord'
 
 import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { SharedTemplateAPIModule } from '../../shared'
@@ -9,12 +9,12 @@ import {
 } from './skilavottord.service'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 
-export class SkilavottordModule {
+export class SkilavottordsModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
-      module: SModule,
+      module: SkilavottordsModule,
       imports: [
-        SModule,
+        SkilavottordModule.register(),
         SharedTemplateAPIModule.register(config),
         ApplicationApiCoreModule,
       ],

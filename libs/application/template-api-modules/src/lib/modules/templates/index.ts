@@ -1,6 +1,6 @@
 import { ReferenceTemplateModule } from './reference-template/reference-template.module'
 import { ParentalLeaveModule } from './parental-leave/parental-leave.module'
-import { SkilavottordModule } from './skilavottord/skilavottord.module'
+import { SkilavottordsModule } from './skilavottord/skilavottord.module'
 import { DocumentProviderOnboardingModule } from './document-provider-onboarding/document-provider-onboarding.module'
 import { InstitutionCollaborationModule } from './institution-collaboration/institution-collaboration.module'
 import { HealthInsuranceModule } from './health-insurance/health-insurance.module'
@@ -101,7 +101,7 @@ export const modules = [
   DataProtectionComplaintModule,
   PublicDebtPaymentPlanTemplateModule,
   ParentalLeaveModule,
-  SkilavottordModule,
+  SkilavottordsModule,
   DocumentProviderOnboardingModule,
   InstitutionCollaborationModule,
   HealthInsuranceModule,

@@ -48,9 +48,9 @@ export class SkilavottordService extends BaseTemplateApiService {
     try {
 
       const response =
-        await this.getVehiclesApi.applicationGetVehicles(application.applicant)
+        await this.getVehiclesApi.applicationGetVehicles({nationalId:application.applicant})
 
-      if (!response.id) {
+      if (!response) {
         throw new Error(
           `Failed to send the parental leave application, no response.id from VMST API: ${response}`,
         )
