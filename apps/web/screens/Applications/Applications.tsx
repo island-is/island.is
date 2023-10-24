@@ -16,7 +16,7 @@ import {
   Button,
   Table as T,
 } from '@island.is/island-ui/core'
-import { SearchInput, SearchableTagsFilter, useSearchableTagsFilter, BackgroundImage } from '@island.is/web/components'
+import { SearchInput, SearchableTagsFilter, useSearchableTagsFilter, BackgroundImage, Heading } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -81,9 +81,9 @@ const Applications: Screen<CategoryProps> = ({
 
   return (
     <>
-      {/* <Head>
-        <title>{n('searchResults', 'Leitarniðurstöður')} | Ísland.is</title>
-      </Head> */}
+      <Head>
+        <title>{n('pageTitle', 'Umsóknir á Ísland.is')} | Ísland.is</title>
+      </Head>
       <GridContainer>
         <GridRow>
           <GridColumn
@@ -92,26 +92,13 @@ const Applications: Screen<CategoryProps> = ({
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore make web strict
           >
+            <Text variant="h1" as="h2" marginBottom={2}>
+              {n('pageTitle', 'Umsóknir á Ísland.is')}
+            </Text>
+            <Text variant="intro" as="p" marginBottom={8}>
+              {n('pageBody', 'Hér getur þú fundið allar umsóknir island.is á einum stað.')}
+            </Text>
             <Stack space={[3, 3, 4]}>
-              <Breadcrumbs
-                items={[
-                  {
-                    title: 'Ísland.is',
-                    href: '/',
-                  },
-                ]}
-                renderLink={(link) => {
-                  return (
-                    <NextLink
-                      {...linkResolver('homepage')}
-                      passHref
-                      legacyBehavior
-                    >
-                      {link}
-                    </NextLink>
-                  )
-                }}
-              />
               <Box width="full">
                 <Inline
                   justifyContent="flexEnd"
