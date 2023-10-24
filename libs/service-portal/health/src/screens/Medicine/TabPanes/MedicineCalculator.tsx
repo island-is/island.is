@@ -186,6 +186,9 @@ export const MedicineCalulator = () => {
               {drugs?.rightsPortalDrugs.data?.map((drug, i) => {
                 return (
                   <tr
+                    tabIndex={0}
+                    onFocus={() => setHoveredDrug(i)}
+                    onBlur={() => setHoveredDrug(-1)}
                     onMouseLeave={() => setHoveredDrug(-1)}
                     onMouseOver={() => setHoveredDrug(i)}
                     key={i}

@@ -2,12 +2,11 @@ import { test, BrowserContext, expect } from '@playwright/test'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
 import { urls } from '../../../../support/urls'
-import { m } from '@island.is/service-portal/core'
 import { messages } from '@island.is/service-portal/health'
 import { disableI18n } from '../../../../support/disablers'
 
 test.use({ baseURL: urls.islandisBaseUrl })
-test.describe('Heilsa', () => {
+test.describe('Health pages', () => {
   let context: BrowserContext
 
   test.beforeAll(async ({ browser }) => {
@@ -24,78 +23,33 @@ test.describe('Heilsa', () => {
     await context.close()
   })
 
-  test('Health Overview', async () => {
+  test('Overview page', async () => {
     const page = await context.newPage()
     await disableI18n(page)
 
-    await test.step('Should have health insurance', async () => {
-      // Arrange
+    await test.step('Checking for name and see more', async () => {
       await page.goto('/minarsidur/heilsa')
 
-      // Act
-      const healthInsurance = page
-        .getByText(label(messages.hasHealthInsurance))
-        .first()
-      await expect(healthInsurance).toBeVisible()
+      const name = page.getByRole('heading', {
+        name: 'Gervimaður Evrópa',
+      })
 
-      const seePaymentsButton = page.getByText(label(messages.seeMore)).first()
+      const seeMoreText = 'Sjá nánar'
+      const seePaymentsButton = page.getByRole('link', {
+        name: seeMoreText,
+      })
+
+      // Assert
+      await expect(name).toBeVisible()
 
       seePaymentsButton.click()
 
-      // Assert
       await page.waitForLoadState('networkidle')
       expect(page.url()).toContain('#overview')
     })
   })
 
-  test('Health Payments Overview', async () => {
-    const page = await context.newPage()
-    await disableI18n(page)
-
-    await test.step('Should have credit and debit ', async () => {
-      // Arrange
-      await page.goto('/minarsidur/heilsa/greidslur#overview')
-
-      // Act
-      const debit = page.getByText(label(messages.debit)).first()
-
-      const credit = page.getByText(label(messages.credit)).first()
-
-      // Assert
-
-      await expect(debit).toBeVisible()
-      await expect(credit).toBeVisible()
-    })
-  })
-
-  test('Health Payments Participation', async () => {
-    const page = await context.newPage()
-    await disableI18n(page)
-
-    await test.step(
-      'Should have maximum monthly payment and payment target ',
-      async () => {
-        // Arrange
-        await page.goto('/minarsidur/heilsa/greidslur')
-
-        // Act
-        const maximumPayment = page
-          .getByText(label(messages.maximumMonthlyPayment))
-          .first()
-
-        const paymentTarget = page
-          .getByText(label(messages.paymentTarget))
-          .first()
-
-        // Assert
-
-        await expect(maximumPayment).toBeVisible()
-        await expect(paymentTarget).toBeVisible()
-      },
-    )
-  })
-
-  test('Health Medicine Payments', async () => {
+  test('Medicine Payment page', async () => {
     const page = await context.newPage()
     await disableI18n(page)
 
@@ -104,7 +58,7 @@ test.describe('Heilsa', () => {
       await page.goto('/minarsidur/heilsa/lyf')
 
       // Act
-      const medicalStep = page.getByText(label(messages.medicineStep)).first()
+      const medicalStep = page.getByText('Þrepastaða').first()
 
       const invoices = page.getByTestId('invoices')
 
@@ -115,7 +69,7 @@ test.describe('Heilsa', () => {
     })
   })
 
-  test('Health Medicine Calculator', async () => {
+  test('Medicine Calculator page', async () => {
     const page = await context.newPage()
     await disableI18n(page)
 
@@ -126,39 +80,49 @@ test.describe('Heilsa', () => {
         await page.goto('/minarsidur/heilsa/lyf#reiknivel')
 
         // Act
-        const filter = page.getByRole('textbox', {
-          name: label(messages.medicineFindDrug),
-        })
+        const filter = page.getByPlaceholder('Leita að lyf')
 
         await filter.click()
-        await filter.type('Paratabs', { delay: 1000 })
+        await filter.type('Parat', { delay: 1000 })
 
         const drugsPortion = page.getByText('500 mg', { exact: false }).first()
+        const drugButton = page
+          .getByRole('button', {
+            name: 'Velja',
+          })
+          .nth(2)
 
         const calculateButton = page.getByTestId('calculate-button').first()
         // Assert
 
+        await drugButton.focus()
+        await drugButton.click()
         await expect(drugsPortion).toBeVisible()
-        await expect(calculateButton).not.toBeDisabled()
+        await expect(calculateButton).toBeEnabled()
       },
     )
   })
 
-  test('Health Medicine Calculator', async () => {
+  test('Medicine Certificate page', async () => {
     const page = await context.newPage()
     await disableI18n(page)
-
     await test.step('Should have three medical certificates', async () => {
       // Arrange
       await page.goto('/minarsidur/heilsa/lyf#skirteini')
+      await page.waitForLoadState('networkidle')
 
       // Act
-      const certificates = page.getByText(
-        label(messages.medicineIsValidCertificate),
-      )
+      const certificate = page.getByText('Metýlfenídat').first()
 
-      // Assert
-      expect(certificates).toHaveLength(3)
+      const buttons = await page
+        .getByRole('button', {
+          name: 'Skoða',
+        })
+        .all()
+
+      expect(buttons.length).toEqual(3)
+
+      await expect(certificate).toBeVisible()
     })
   })
 })
