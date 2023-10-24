@@ -38,11 +38,9 @@ export const ManualHeader = ({ manual, namespace }: ManualHeaderProps) => {
     if (!searchValue) {
       return
     }
-    // TODO: redirect user to search page with manual filter pre-selected
     router.push(linkResolver('search').href + '?q=' + searchValue)
   }
 
-  // TODO: test this
   const lastUpdatedDate = useMemo(() => {
     const date = extractLastUpdatedDateFromManual(manual)
     return date ? format(date, 'do MMMM yyyy') : ''
@@ -117,36 +115,38 @@ export const ManualHeader = ({ manual, namespace }: ManualHeaderProps) => {
           webRichText(manual.info as SliceType[], undefined, activeLocale)}
       </Stack>
 
-      <Box className={styles.inputContainer}>
-        <AsyncSearchInput
-          buttonProps={{
-            onClick: () => handleSearch(),
-            onFocus: () => setSearchInputHasFocus(true),
-            onBlur: () => setSearchInputHasFocus(false),
-          }}
-          inputProps={{
-            onFocus: () => setSearchInputHasFocus(true),
-            onBlur: () => setSearchInputHasFocus(false),
-            name: 'manual-page-search-input',
-            inputSize: 'medium',
-            placeholder: n(
-              'manualPageSearchInputPlaceholder',
-              activeLocale === 'is'
-                ? 'Leitaðu í handbókinni'
-                : 'Search the manual',
-            ),
-            colored: true,
-            onChange: (ev) => setSearchValue(ev.target.value),
-            value: searchValue,
-            onKeyDown: (ev) => {
-              if (ev.key === 'Enter') {
-                handleSearch()
-              }
-            },
-          }}
-          hasFocus={searchInputHasFocus}
-        />
-      </Box>
+      {namespace?.displayManualSearchInput && (
+        <Box className={styles.inputContainer}>
+          <AsyncSearchInput
+            buttonProps={{
+              onClick: () => handleSearch(),
+              onFocus: () => setSearchInputHasFocus(true),
+              onBlur: () => setSearchInputHasFocus(false),
+            }}
+            inputProps={{
+              onFocus: () => setSearchInputHasFocus(true),
+              onBlur: () => setSearchInputHasFocus(false),
+              name: 'manual-page-search-input',
+              inputSize: 'medium',
+              placeholder: n(
+                'manualPageSearchInputPlaceholder',
+                activeLocale === 'is'
+                  ? 'Leitaðu í handbókinni'
+                  : 'Search the manual',
+              ),
+              colored: true,
+              onChange: (ev) => setSearchValue(ev.target.value),
+              value: searchValue,
+              onKeyDown: (ev) => {
+                if (ev.key === 'Enter') {
+                  handleSearch()
+                }
+              },
+            }}
+            hasFocus={searchInputHasFocus}
+          />
+        </Box>
+      )}
     </Stack>
   )
 }

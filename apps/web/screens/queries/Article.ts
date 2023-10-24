@@ -60,7 +60,6 @@ export const GET_ARTICLE_QUERY = gql`
         shortTitle
         slug
         link
-        description
         hasALandingPage
         trackingDomain
         footerConfig

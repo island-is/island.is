@@ -86,7 +86,6 @@ type Changelog = {
 export const extractChangelogFromManual = (manual: ManualType) => {
   const yearMap = new Map<number, ChangelogItem[]>()
 
-  // Order changelog items by year
   for (const chapter of manual?.chapters ?? []) {
     for (const changelogItem of chapter?.changelog?.items ?? []) {
       if (changelogItem?.dateOfChange && changelogItem?.textualDescription) {
@@ -110,7 +109,6 @@ export const extractChangelogFromManual = (manual: ManualType) => {
     }
   }
 
-  // Sort the years in descending order
   const years = Array.from(yearMap.keys())
   years.sort().reverse()
 

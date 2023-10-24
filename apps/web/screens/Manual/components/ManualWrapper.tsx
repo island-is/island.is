@@ -32,7 +32,6 @@ export const ManualWrapper = ({
     <GridContainer>
       <Box paddingBottom={6}>
         <Stack space={2}>
-          {/* TODO: should this dissapear below xl screens? */}
           <Hidden below="xl">
             <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
               <LinkV2 href="/">

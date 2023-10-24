@@ -55,7 +55,7 @@ export class ManualSyncService implements CmsSyncProvider<IManual> {
             content,
             contentWordCount: content.split(/\s+/).length,
             type: 'webManual',
-            termPool: createTerms([mapped.title]), // TODO: test out what this does exactly
+            termPool: createTerms([mapped.title]),
             response: JSON.stringify({ ...mapped, typename: 'Manual' }),
             tags,
             dateCreated: entry.sys.createdAt,

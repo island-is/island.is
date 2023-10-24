@@ -50,12 +50,10 @@ export const mapManualChapter = ({
     id: sys.id,
     slug: fields.slug,
     title: fields.title,
-    // TODO: test out mapping this when we've got draft one column text items in a published chapter
     chapterItems: fields.chapterItems
       ? fields.chapterItems.map(mapOneColumnText)
       : [],
     changelog: fields.changelog as ManualChapterChangelog,
-    // TODO: What if this is empty?
     description: fields.description
       ? mapDocument(fields.description, sys.id + ':description')
       : [],

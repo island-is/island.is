@@ -26,7 +26,6 @@ import { EnhancedAssetSyncService } from './importers/enhancedAsset.service'
 import { VacancySyncService } from './importers/vacancy.service'
 import { ServiceWebPageSyncService } from './importers/serviceWebPage.service'
 import { ManualSyncService } from './importers/manual.service'
-import { ManualChapterSyncService } from './importers/manualChapter.service'
 
 @Module({
   imports: [
@@ -58,7 +57,6 @@ import { ManualChapterSyncService } from './importers/manualChapter.service'
     VacancySyncService,
     ServiceWebPageSyncService,
     ManualSyncService,
-    ManualChapterSyncService,
   ],
   exports: [CmsSyncService],
 })
