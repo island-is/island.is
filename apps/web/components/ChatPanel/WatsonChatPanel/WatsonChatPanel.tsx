@@ -1,12 +1,14 @@
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery } from '@apollo/client'
-import { useMemo, useEffect, useRef, useState } from 'react'
-import { ChatBubble } from '../ChatBubble'
+
 import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
-import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
-import { useI18n } from '@island.is/web/i18n'
 import { useNamespaceStrict } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
+import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
+
+import { ChatBubble } from '../ChatBubble'
 import { WatsonChatPanelProps } from '../types'
-import { onDirectorateOfImmigrationChatLoad } from './utils'
+import { onDirectorateOfImmigrationChatLoad } from './directorateOfImmigrationChatUtils'
 
 const URL = 'https://web-chat.global.assistant.watson.appdomain.cloud'
 const FILENAME = 'WatsonAssistantChatEntry.js'
@@ -88,7 +90,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
           instance.updateLanguagePack(languagePack)
         }
         if (props.integrationID === '89a03e83-5c73-4642-b5ba-cd3771ceca54') {
-          onDirectorateOfImmigrationChatLoad(instance)
+          onDirectorateOfImmigrationChatLoad(instance, namespace, activeLocale)
         }
 
         if (onLoad) {
