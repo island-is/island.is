@@ -59,7 +59,7 @@ export const conclusion = {
     },
     showOverviewLink: {
       id: 'ta.tvo.application:conclusion.default.showOverviewLink',
-      defaultMessage: 'Skoða yfirlit umsóknar',
+      defaultMessage: 'Staða tilkynningar',
       description: 'Show overview link title',
     },
   }),
