@@ -41,9 +41,7 @@
       "options": {
         "command": "yarn openapi-generator -o libs/clients/p-card/gen/fetch -i libs/clients/p-card/src/clientConfig.json"
       },
-      "outputs": [
-        "{projectRoot}/gen/fetch"
-      ]
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]
