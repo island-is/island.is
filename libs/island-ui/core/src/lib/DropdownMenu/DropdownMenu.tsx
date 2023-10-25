@@ -56,8 +56,12 @@ export const DropdownMenu = ({
   fixed = false,
   openOnHover = false,
 }: DropdownMenuProps) => {
-  const menu = useMenuState({ placement: 'bottom', gutter: 8, unstable_fixed: fixed })
-  
+  const menu = useMenuState({
+    placement: 'bottom',
+    gutter: 8,
+    unstable_fixed: fixed,
+  })
+
   const hoverProps = useMenuHoverProps(menu, openOnHover)
   const menuBoxStyle = useBoxStyles({
     component: 'div',
