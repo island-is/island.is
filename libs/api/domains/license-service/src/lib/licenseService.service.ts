@@ -132,7 +132,11 @@ export class LicenseServiceService {
 
       if (!onlyList) {
         const genericLicense = await this.getLicense(user, locale, license.type)
-        if (genericLicense) {
+
+        if (
+          genericLicense &&
+          genericLicense.license.status === GenericUserLicenseStatus.HasLicense
+        ) {
           licenses.push(genericLicense)
         }
       }
