@@ -63,10 +63,10 @@ export const Draft: Form = buildForm({
               title: m.dataCollectionIdentityDocumentTitle,
               subTitle: m.dataCollectionIdentityDocumentSubtitle,
             }),
-            // buildDataProviderItem({
-            //   provider: SyslumadurPaymentCatalogApi,
-            //   title: '',
-            // }),
+            buildDataProviderItem({
+              provider: SyslumadurPaymentCatalogApi,
+              title: '',
+            }),
             buildDataProviderItem({
               provider: DeliveryAddressApi,
               title: '',
@@ -184,36 +184,36 @@ export const Draft: Form = buildForm({
       title: m.overview,
       children: [personalOverview, childsOverview],
     }),
-    // buildSection({
-    //   id: 'payment',
-    //   title: m.paymentSection,
-    //   children: [
-    //     buildMultiField({
-    //       id: 'payment',
-    //       title: m.paymentSectionTitle,
-    //       children: [
-    //         buildCustomField({
-    //           id: 'paymentCharge',
-    //           title: '',
-    //           component: 'PaymentCharge',
-    //           doesNotRequireAnswer: true,
-    //         }),
-    //         buildSubmitField({
-    //           id: 'payment',
-    //           placement: 'footer',
-    //           title: '',
-    //           refetchApplicationAfterSubmit: true,
-    //           actions: [
-    //             {
-    //               event: DefaultEvents.PAYMENT,
-    //               name: m.proceedToPayment,
-    //               type: 'primary',
-    //             },
-    //           ],
-    //         }),
-    //       ],
-    //     }),
-    //   ],
-    // }),
+    buildSection({
+      id: 'payment',
+      title: m.paymentSection,
+      children: [
+        buildMultiField({
+          id: 'payment',
+          title: m.paymentSectionTitle,
+          children: [
+            buildCustomField({
+              id: 'paymentCharge',
+              title: '',
+              component: 'PaymentCharge',
+              doesNotRequireAnswer: true,
+            }),
+            buildSubmitField({
+              id: 'payment',
+              placement: 'footer',
+              title: '',
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: m.proceedToPayment,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
   ],
 })

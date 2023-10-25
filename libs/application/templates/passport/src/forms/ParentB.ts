@@ -82,10 +82,10 @@ export const ParentB: Form = buildForm({
               title: m.dataCollectionIdentityDocumentTitle,
               subTitle: m.dataCollectionIdentityDocumentSubtitle,
             }),
-            // buildDataProviderItem({
-            //   provider: SyslumadurPaymentCatalogApi,
-            //   title: '',
-            // }),
+            buildDataProviderItem({
+              provider: SyslumadurPaymentCatalogApi,
+              title: '',
+            }),
             buildDataProviderItem({
               provider: DeliveryAddressApi,
               title: '',

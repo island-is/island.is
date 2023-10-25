@@ -41,8 +41,6 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const identityDocumentData = application.externalData.identityDocument
     .data as IdentityDocumentData
 
-  console.log('identityDocumentData', identityDocumentData)
-
   const individual = application.externalData.nationalRegistry
     .data as NationalRegistryIndividual
 
@@ -58,7 +56,6 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     identityDocument: IdentityDocument,
     isChild: boolean,
   ): TagCheck => {
-    console.log('identityDocument', identityDocument)
     const today = new Date()
     const expirationDate = new Date(identityDocument?.expirationDate)
     const todayPlus6Months = new Date(
@@ -106,7 +103,14 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         variant: 'mint',
         outlined: true,
       }
-    } //TODO: handle ordered passports
+    } else if (identityDocument.status === 'ISSUED') {
+      isDisabled = true
+      tagObject = {
+        label: formatMessage(m.orderedTag),
+        variant: 'purple',
+        outlined: true,
+      }
+    }
 
     return { tag: tagObject, isDisabled }
   }
