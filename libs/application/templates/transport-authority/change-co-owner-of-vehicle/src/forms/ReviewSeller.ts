@@ -4,7 +4,13 @@ import {
   buildCustomField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { information, externalData, payment, review } from '../lib/messages'
+import {
+  information,
+  externalData,
+  payment,
+  review,
+  conclusion,
+} from '../lib/messages'
 import { Logo } from '../assets/Logo'
 
 export const ReviewSellerForm: Form = buildForm({
@@ -26,6 +32,11 @@ export const ReviewSellerForm: Form = buildForm({
     buildSection({
       id: 'payment',
       title: payment.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'confirmation',
+      title: conclusion.general.sectionTitle,
       children: [],
     }),
     buildSection({
