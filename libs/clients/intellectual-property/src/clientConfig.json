@@ -1,13 +1,44 @@
 {
   "openapi": "3.0.1",
   "info": {
+    "title": "Hugverkastofan WebAPI",
     "description": "Hugverkastofan WebAPI v3",
     "contact": { "name": "Nói Steinn Einarsson", "email": "ut@hugverk.is" },
-    "version": "v3",
-    "title": "Hugverkastofa"
+    "version": "v3"
   },
   "servers": [{ "url": "/apiv3" }],
   "paths": {
+    "/Certificate/CreateTrademarkCertificate": {
+      "get": {
+        "tags": ["Certificate"],
+        "parameters": [
+          { "name": "vmid", "in": "query", "schema": { "type": "string" } },
+          { "name": "email", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "enum": ["Renewal", "Confirmation", "Registered"],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "format": "byte" }
+              },
+              "application/json": {
+                "schema": { "type": "string", "format": "byte" }
+              },
+              "text/json": { "schema": { "type": "string", "format": "byte" } }
+            }
+          }
+        }
+      }
+    },
     "/getPriceListBySource": {
       "get": {
         "tags": ["Common"],
@@ -2157,6 +2188,228 @@
           }
         }
       }
+    },
+    "/Trademarks/getAllAvailableStatuses": {
+      "get": {
+        "tags": ["Trademarks"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InternalClient.TermInfo"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InternalClient.TermInfo"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InternalClient.TermInfo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/TrademarkUpdate/UpdateTrademarkImageCategories": {
+      "post": {
+        "tags": ["TrademarkUpdate"],
+        "parameters": [
+          { "name": "vmid", "in": "query", "schema": { "type": "string" } },
+          { "name": "userName", "in": "query", "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": { "type": "array", "items": { "type": "string" } }
+            },
+            "application/json": {
+              "schema": { "type": "array", "items": { "type": "string" } }
+            },
+            "text/json": {
+              "schema": { "type": "array", "items": { "type": "string" } }
+            },
+            "application/*+json": {
+              "schema": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/TrademarkUpdate/UpdateTrademarkOwner": {
+      "post": {
+        "tags": ["TrademarkUpdate"],
+        "parameters": [
+          { "name": "vmid", "in": "query", "schema": { "type": "string" } },
+          { "name": "ownerID", "in": "query", "schema": { "type": "string" } },
+          { "name": "userName", "in": "query", "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SharePointAPI.UpdateOwner"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SharePointAPI.UpdateOwner"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SharePointAPI.UpdateOwner"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SharePointAPI.UpdateOwner"
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/TrademarkUpdate/UpdateTrademarkCategories": {
+      "post": {
+        "tags": ["TrademarkUpdate"],
+        "parameters": [
+          { "name": "vmid", "in": "query", "schema": { "type": "string" } },
+          { "name": "userName", "in": "query", "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SharePointAPI.Category"
+                }
+              }
+            },
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SharePointAPI.Category"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SharePointAPI.Category"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SharePointAPI.Category"
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/TrademarkUpdate/UpdateTrademarStatus": {
+      "post": {
+        "tags": ["TrademarkUpdate"],
+        "parameters": [
+          { "name": "vmid", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "newStatus",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          { "name": "userName", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/TrademarkUpdate/RegisterTrademarkInspector": {
+      "post": {
+        "tags": ["TrademarkUpdate"],
+        "parameters": [
+          { "name": "vmid", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "inspectorName",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "inspectorSSN",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          { "name": "userName", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/TrademarkUpdate/GetTrademarksByInspector": {
+      "get": {
+        "tags": ["TrademarkUpdate"],
+        "parameters": [
+          {
+            "name": "inspectorSSN",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          { "name": "userName", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Trademarks"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Trademarks"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Trademarks"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3023,6 +3276,7 @@
         "type": "object",
         "properties": {
           "patentName": { "type": "string", "nullable": true },
+          "applicationNumber": { "type": "string", "nullable": true },
           "patentNameInOrgLanguage": { "type": "string", "nullable": true },
           "numberOfClaims": { "type": "integer", "format": "int32" },
           "referenceNumber": { "type": "string", "nullable": true },
@@ -3774,6 +4028,16 @@
         },
         "additionalProperties": false
       },
+      "HUX.ELS.API.Common.TrademarkModels.Observation": {
+        "type": "object",
+        "properties": {
+          "text": { "type": "string", "nullable": true },
+          "date": { "type": "string", "format": "date-time" },
+          "subject": { "type": "string", "nullable": true },
+          "person": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
       "HUX.ELS.API.Common.TrademarkModels.Owners": {
         "type": "object",
         "properties": {
@@ -3803,7 +4067,8 @@
         "properties": {
           "text": { "type": "string", "nullable": true },
           "number": { "type": "integer", "format": "int32" },
-          "title": { "type": "string", "nullable": true }
+          "title": { "type": "string", "nullable": true },
+          "overlap": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -3831,6 +4096,7 @@
           "applicationNumber": { "type": "string", "nullable": true },
           "registrationNumber": { "type": "string", "nullable": true },
           "status": { "type": "string", "nullable": true },
+          "detailStatus": { "type": "string", "nullable": true },
           "statusEN": { "type": "string", "nullable": true },
           "markOwners": {
             "type": "array",
@@ -3850,6 +4116,13 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Diary"
+            },
+            "nullable": true
+          },
+          "markObservations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Observation"
             },
             "nullable": true
           },
@@ -3892,7 +4165,9 @@
           },
           "certificationMark": { "type": "boolean" },
           "canRenew": { "type": "boolean" },
-          "canRenewWithResumption": { "type": "boolean" }
+          "canRenewWithResumption": { "type": "boolean" },
+          "inspectorName": { "type": "string", "nullable": true },
+          "inspectorSSN": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -4276,6 +4551,30 @@
         },
         "additionalProperties": false
       },
+      "InternalClient.TermInfo": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "parent": { "$ref": "#/components/schemas/InternalClient.TermInfo" },
+          "children": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/InternalClient.TermInfo" },
+            "nullable": true
+          },
+          "url": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "SharePointAPI.Category": {
+        "type": "object",
+        "properties": {
+          "categoryNumber": { "type": "string", "nullable": true },
+          "categoryDescription": { "type": "string", "nullable": true },
+          "dropCategory": { "type": "boolean", "nullable": true }
+        },
+        "additionalProperties": false
+      },
       "SharePointAPI.TrademarkTypes": {
         "type": "object",
         "properties": {
@@ -4288,6 +4587,17 @@
           "format": { "type": "string", "nullable": true },
           "webAPIValue": { "type": "string", "nullable": true },
           "termStoreValue": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "SharePointAPI.UpdateOwner": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "county": { "type": "string", "nullable": true },
+          "country": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
