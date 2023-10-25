@@ -58,26 +58,7 @@ Currently, there is no DI container. Everything is hooked up manually in tests a
 
 ### Type Generation
 
-We use [graphql-codegen](https://graphql-code-generator.com/) to generate TypeScript types for all GraphQL schemas. We also generate type definitions for all resolvers, which provides strong typing for parent, input and context arguments as well as the return payload.
-
-To gain these benefits, resolvers should be defined like this:
-
-```typescript
-import { Resolvers } from '@island.is/api/schema'
-
-export const resolvers: Resolvers = {
-  Person: {
-    application(person, input, context) {},
-  },
-  Query: {
-    allApplications(_, input, context) {},
-  },
-}
-```
-
-For more information, read the following article. It also explains how to specify a typed context as well as custom model types:
-
-[Better Type Safety for your GraphQL resolvers with GraphQL Codegen](https://the-guild.dev/blog/better-type-safety-for-resolvers-with-graphql-codegen)
+We use [graphql-codegen](https://graphql-code-generator.com/) to generate TypeScript types for the GraphQL schema.
 
 In addition, client apps can use `graphql-codegen` to join together the API schema with client operations. This validates that operations match the schema, and generates type definitions for operation inputs and payloads.
 
@@ -126,7 +107,7 @@ yarn start api
 If you change a GraphQL schema, you need to update the generated TypeScript types which are used by resolvers and client applications:
 
 ```bash
-yarn nx run api:schemas/codegen
+yarn nx run api:codegen/frontend-client
 ```
 
 ### Tests
