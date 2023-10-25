@@ -99,6 +99,9 @@ export const GET_SINGLE_NEWS_ITEM_QUERY = gql`
       organization {
         slug
       }
+      signLanguageVideo {
+        url
+      }
     }
   }
   ${slices}

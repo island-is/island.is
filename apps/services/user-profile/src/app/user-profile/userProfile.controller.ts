@@ -89,7 +89,7 @@ export class UserProfileController {
       nationalId,
     )
     if (!userProfile) {
-      throw new NotFoundException()
+      throw new NoContentException()
     }
 
     return userProfile
@@ -108,7 +108,7 @@ export class UserProfileController {
       actor.nationalId,
     )
     if (!userProfile) {
-      throw new NotFoundException()
+      throw new NoContentException()
     }
 
     return {

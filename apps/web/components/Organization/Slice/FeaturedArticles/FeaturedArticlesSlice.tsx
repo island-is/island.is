@@ -10,6 +10,7 @@ import {
   Text,
   TopicCard,
 } from '@island.is/island-ui/core'
+
 import { FeaturedArticles, Article } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
@@ -57,7 +58,7 @@ export const FeaturedArticlesSlice: React.FC<
     (!!slice.articles.length || !!slice.resolvedArticles.length) && (
       <section key={slice.id} id={slice.id} aria-labelledby={labelId}>
         <Box {...borderProps}>
-          <Text as="h2" variant="h3" paddingBottom={6} id={labelId}>
+          <Text as="h2" variant="h3" paddingBottom={3} id={labelId}>
             {slice.title}
           </Text>
           <Stack space={2}>

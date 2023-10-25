@@ -244,6 +244,11 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           intro
           labels
         }
+
+        ... on Manual {
+          title
+          slug
+        }
       }
       tagCounts {
         key

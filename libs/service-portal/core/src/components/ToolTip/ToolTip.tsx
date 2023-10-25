@@ -62,7 +62,7 @@ interface TooltipProps {
 }
 
 export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
-  placement,
+  placement = 'bottom',
   text,
   iconSize = 'small',
   color = 'dark200',

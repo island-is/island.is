@@ -58,6 +58,7 @@ export const GET_ARTICLE_QUERY = gql`
         link
         hasALandingPage
         trackingDomain
+        footerConfig
         logo {
           url
           width

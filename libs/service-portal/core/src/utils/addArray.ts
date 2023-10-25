@@ -11,5 +11,5 @@ export const addArray = (arr: Array<string | number>) => {
         return sum
       }
       return sum + it
-    })
+    }, 0)
 }

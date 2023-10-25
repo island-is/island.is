@@ -119,6 +119,7 @@ const connectedTypes: Partial<
   webNews: ['WebNews'],
   webQNA: ['WebQna'],
   webLifeEventPage: ['WebLifeEventPage'],
+  webManual: ['WebManual'],
 }
 
 const stringToArray = (value: string | string[]) =>
@@ -272,6 +273,7 @@ const Search: Screen<CategoryProps> = ({
       webNews: n('webNews', 'Fréttir og tilkynningar'),
       webQNA: n('webQNA', 'Spurt og svarað'),
       webLifeEventPage: n('webLifeEventPage', 'Lífsviðburðir'),
+      webManual: n('webManual', 'Handbækur'),
     }),
     [n],
   )
@@ -759,6 +761,7 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
     'webOrganizationSubpage',
     'webOrganizationPage',
     'webProjectPage',
+    'webManual',
   ]
 
   const ensureContentTypeExists = (

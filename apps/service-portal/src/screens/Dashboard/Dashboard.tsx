@@ -156,7 +156,7 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
       <Greeting />
       <Box paddingTop={[0, 0, 0, 4]} marginBottom={3}>
         <GridContainer>
-          <GridRow>
+          <GridRow data-testid="service-portal-dashboard">
             <GridColumn
               hiddenBelow="lg"
               span={['12/12', '12/12', '12/12', '5/12']}
@@ -177,6 +177,7 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
                     display="flex"
                     flexDirection="row"
                     alignItems="center"
+                    paddingBottom={1}
                   >
                     <Box
                       paddingRight={1}
@@ -213,7 +214,7 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
                     />
                   </Box>
                 ) : data.documents.length > 0 ? (
-                  data.documents.map((doc) => (
+                  data.documents.map((doc, i) => (
                     <Box key={doc.id}>
                       <DocumentLine
                         img={getOrganizationLogoUrl(
@@ -223,6 +224,7 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
                         documentLine={doc}
                         active={false}
                         asFrame
+                        includeTopBorder={i === 0}
                       />
                     </Box>
                   ))
