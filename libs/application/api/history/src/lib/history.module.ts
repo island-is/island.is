@@ -7,13 +7,7 @@ import { HistoryBuilder } from './historyBuilder'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 
 @Module({
-  imports: [
-    SequelizeModule.forRootAsync({
-      useClass: SequelizeConfigService,
-    }),
-    SequelizeModule.forFeature([History]),
-    CmsTranslationsModule,
-  ],
+  imports: [SequelizeModule.forFeature([History]), CmsTranslationsModule],
   providers: [HistoryService, HistoryBuilder],
   exports: [HistoryService, HistoryBuilder],
 })

@@ -18,9 +18,6 @@ import { XRoadConfig } from '@island.is/nest/config'
 
 @Module({
   imports: [
-    SequelizeModule.forRootAsync({
-      useClass: SequelizeConfigService,
-    }),
     SequelizeModule.forFeature([Payment]),
     ApplicationApiCoreModule,
     LoggingModule,
