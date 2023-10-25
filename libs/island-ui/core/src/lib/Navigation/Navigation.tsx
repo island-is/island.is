@@ -321,6 +321,7 @@ const MobileNavigationDialog = ({
   onClick,
   menuState,
   asSpan,
+  isVisible,
 }: MobileNavigationDialogProps) => {
   return (
     <Box
@@ -339,6 +340,7 @@ const MobileNavigationDialog = ({
         >
           <FocusableBox
             component="button"
+            aria-expanded={isVisible ? true : false}
             onClick={onClick}
             background={colorSchemeColors[colorScheme]['dividerColor']}
             className={styles.dropdownIcon}
