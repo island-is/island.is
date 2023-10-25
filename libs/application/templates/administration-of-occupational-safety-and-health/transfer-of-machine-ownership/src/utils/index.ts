@@ -14,6 +14,6 @@ export { getApproveAnswers } from './getApproveAnswers'
 export { isLastReviewer } from './isLastReviewer'
 export { getRejecter } from './getRejecter'
 
-export const getChargeItemCodes = (applicaiton: Application): Array<string> => {
+export const getChargeItemCodes = (application: Application): Array<string> => {
   return [ChargeItemCode.AOSH_TRANSFER_OF_MACHINE_OWNERSHIP.toString()]
 }

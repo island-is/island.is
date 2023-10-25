@@ -1,15 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import {
-  ApplicationTypes,
-  InstitutionNationalIds,
-} from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { TransferOfMachineOwnershipClient } from '@island.is/clients/aosah/transfer-of-machine-ownership'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
-import { getChargeItemCodes } from '@island.is/application/templates/administration-of-occupational-safety-and-health/transfer-of-machine-ownership'
 
 @Injectable()
 export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiService {
@@ -18,31 +14,6 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
     private readonly transferOfMachineOwnershipClient: TransferOfMachineOwnershipClient,
   ) {
     super(ApplicationTypes.ADMINISTRATION_OF_OCCUPATIONAL_SAFETY_AND_HEALTH) // Maybe change
-  }
-
-  async createCharge({
-    application,
-    auth,
-  }: TemplateApiModuleActionProps): Promise<
-    | {
-        id: string
-        paymentUrl: string
-      }
-    | undefined
-  > {
-    try {
-      const chargeItemCodes = getChargeItemCodes(application)
-
-      const result = this.sharedTemplateAPIService.createCharge(
-        auth,
-        application.id,
-        InstitutionNationalIds.VINNUEFTIRLITID,
-        chargeItemCodes,
-      )
-      return result
-    } catch (exeption) {
-      return { id: '', paymentUrl: '' }
-    }
   }
 
   async getMachines({ auth }: TemplateApiModuleActionProps) {
