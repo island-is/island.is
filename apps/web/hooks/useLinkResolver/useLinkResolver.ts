@@ -1,6 +1,8 @@
 import { useContext } from 'react'
+
 import { defaultLanguage } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
+
 import { I18nContext, isLocale } from '../../i18n/I18n'
 
 export interface LinkResolverResponse {
@@ -60,6 +62,18 @@ export const routesTemplate = {
   newsoverview: {
     is: '/frett',
     en: '/en/news',
+  },
+  manual: {
+    is: '/handbaekur/[slug]',
+    en: '/en/manuals/[slug]',
+  },
+  manualchangelog: {
+    is: '/handbaekur/[slug]/breytingasaga',
+    en: '/en/manuals/[slug]/changelog',
+  },
+  manualchapter: {
+    is: '/handbaekur/[slug]/[chapterSlug]',
+    en: '/en/manuals/[slug]/[chapterSlug]',
   },
   digitalicelandservices: {
     is: '/s/stafraent-island/thjonustur',

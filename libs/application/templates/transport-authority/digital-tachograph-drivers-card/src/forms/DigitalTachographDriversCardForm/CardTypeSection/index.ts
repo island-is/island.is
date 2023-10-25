@@ -16,6 +16,7 @@ import {
   newestCardExpiresInMonths,
   newestCardIsExpired,
 } from '../../../utils'
+import { CardType } from '../../../shared'
 
 export const cardTypeSection = buildSection({
   id: 'cardTypeSection',
@@ -125,7 +126,7 @@ export const cardTypeSection = buildSection({
           condition: (_, externalData) => !newestCardExists(externalData),
           options: [
             {
-              value: 'firstEdition',
+              value: CardType.FIRST_EDITION,
               label: cardType.labels.cardType.firstEditionOptionTitle,
               subLabel: cardType.labels.cardType.firstEditionOptionSubTitle,
             },
@@ -141,7 +142,7 @@ export const cardTypeSection = buildSection({
             newestCardExists(externalData) && newestCardIsExpired(externalData),
           options: [
             {
-              value: 'reissue',
+              value: CardType.REISSUE,
               label: cardType.labels.cardType.reissueOptionTitle,
               subLabel: cardType.labels.cardType.reissueOptionSubTitle,
             },
@@ -159,17 +160,17 @@ export const cardTypeSection = buildSection({
             newestCardExpiresInMonths(externalData) < 3,
           options: [
             {
-              value: 'reissue',
+              value: CardType.REISSUE,
               label: cardType.labels.cardType.reissueOptionTitle,
               subLabel: cardType.labels.cardType.reissueOptionSubTitle,
             },
             {
-              value: 'renewal',
+              value: CardType.RENEWAL,
               label: cardType.labels.cardType.renewalOptionTitle,
               subLabel: cardType.labels.cardType.renewalOptionSubTitle,
             },
             {
-              value: 'reprint',
+              value: CardType.REPRINT,
               label: cardType.labels.cardType.reprintOptionTitle,
               subLabel: cardType.labels.cardType.reprintOptionSubTitle,
             },
@@ -187,12 +188,12 @@ export const cardTypeSection = buildSection({
             newestCardExpiresInMonths(externalData) >= 3,
           options: [
             {
-              value: 'reissue',
+              value: CardType.REISSUE,
               label: cardType.labels.cardType.reissueOptionTitle,
               subLabel: cardType.labels.cardType.reissueOptionSubTitle,
             },
             {
-              value: 'reprint',
+              value: CardType.REPRINT,
               label: cardType.labels.cardType.reprintOptionTitle,
               subLabel: cardType.labels.cardType.reprintOptionSubTitle,
             },
@@ -209,17 +210,17 @@ export const cardTypeSection = buildSection({
             !newestCardIsValid(externalData),
           options: [
             {
-              value: 'reissue',
+              value: CardType.REISSUE,
               label: cardType.labels.cardType.reissueOptionTitle,
               subLabel: cardType.labels.cardType.reissueOptionSubTitle,
             },
             {
-              value: 'renewal',
+              value: CardType.RENEWAL,
               label: cardType.labels.cardType.renewalOptionTitle,
               subLabel: cardType.labels.cardType.renewalOptionSubTitle,
             },
             {
-              value: 'reprint',
+              value: CardType.REPRINT,
               label: cardType.labels.cardType.reprintOptionTitle,
               subLabel: cardType.labels.cardType.reprintOptionSubTitle,
             },
