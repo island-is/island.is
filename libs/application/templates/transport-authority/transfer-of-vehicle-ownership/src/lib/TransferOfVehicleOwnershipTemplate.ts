@@ -120,9 +120,7 @@ const template: ApplicationTemplate<
             ],
           },
           progress: 0.25,
-          lifecycle: {
-            ...pruneAfterDays(6),
-          },
+          lifecycle: EphemeralStateLifeCycle,
           onExit: defineTemplateApi({
             action: ApiActions.validateApplication,
           }),
@@ -161,10 +159,6 @@ const template: ApplicationTemplate<
         organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
         chargeItemCodes: getChargeItemCodes(),
         submitTarget: States.REVIEW,
-        lifecycle: {
-          ...pruneAfterDays(1),
-          shouldDeleteChargeIfPaymentFulfilled: true,
-        },
         onExit: [
           defineTemplateApi({
             action: ApiActions.initReview,
