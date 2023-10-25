@@ -1,5 +1,5 @@
 import React from 'react'
-import { FeaturedArticles, Article } from '@island.is/web/graphql/schema'
+
 import {
   Box,
   BoxProps,
@@ -10,8 +10,9 @@ import {
   Text,
   TopicCard,
 } from '@island.is/island-ui/core'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { FeaturedArticles, Article } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { hasProcessEntries } from '@island.is/web/utils/article'
 
 interface SliceProps {
