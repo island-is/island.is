@@ -23,6 +23,7 @@ import { PaymentOverviewStatusResponse } from './models/paymentOverviewStatus.re
 import { PaymentOverviewBillResponse } from './models/paymentOverviewBill.response'
 import { PaymentOverviewDocumentResponse } from './models/paymentOverviewDocument.response'
 import { PaymentOverviewDocumentInput } from './dto/paymentOverviewDocument.input'
+import { PeriodInput } from './dto/copaymentPeriod.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -50,8 +51,9 @@ export class PaymentResolver {
   @Audit()
   async getCopaymentPeriods(
     @CurrentUser() user: User,
+    @Args('input') input: PeriodInput,
   ): Promise<CopaymentPeriodResponse> {
-    return await this.service.getCopaymentPeriods(user)
+    return await this.service.getCopaymentPeriods(user, input)
   }
 
   @Query(() => CopaymentBillResponse, {
@@ -66,26 +68,16 @@ export class PaymentResolver {
     return await this.service.getCopaymentBills(user, input)
   }
 
-  @Query(() => PaymentOverviewStatusResponse, {
-    name: 'rightsPortalPaymentOverviewStatus',
+  @Query(() => PaymentOverviewResponse, {
+    name: 'rightsPortalPaymentOverview',
   })
   @Scopes(ApiScope.health)
   @Audit()
   async getPaymentOverviewStatus(
     @CurrentUser() user: User,
+    @Args('input') input: PeriodInput,
   ): Promise<PaymentOverviewStatusResponse> {
-    return await this.service.getPaymentOverviewStatus(user)
-  }
-
-  @Query(() => PaymentOverviewBillResponse, {
-    name: 'rightsPortalPaymentOverviewBills',
-  })
-  @Scopes(ApiScope.health)
-  @Audit()
-  async getPaymentOverviewBills(
-    @CurrentUser() user: User,
-  ): Promise<PaymentOverviewBillResponse> {
-    return await this.service.getPaymentOverviewBills(user)
+    return await this.service.getPaymentOverview(user, input)
   }
 
   @Query(() => PaymentOverviewDocumentResponse, {
