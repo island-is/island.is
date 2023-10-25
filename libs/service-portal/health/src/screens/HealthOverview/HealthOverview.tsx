@@ -43,7 +43,7 @@ export const HealthOverview = () => {
   useEffect(() => {
     const isFlagEnabled = async () => {
       const ffEnabled = await featureFlagClient.getValue(
-        `isLicenseServiceDrivingLicenceClientV2Enabled`,
+        `isServicePortalHealthPaymentPageEnabled`,
         false,
       )
       if (ffEnabled) {
