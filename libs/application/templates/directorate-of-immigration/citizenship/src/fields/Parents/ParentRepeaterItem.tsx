@@ -1,9 +1,4 @@
-import {
-  FieldBaseProps,
-  FieldComponents,
-  FieldTypes,
-  GenericFormField,
-} from '@island.is/application/types'
+import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { FC } from 'react'
 import { ParentsToApplicant } from '../../shared'
@@ -13,7 +8,6 @@ import { NationalIdWithGivenFamilyName } from '../NationalIdWithGivenFamilyName'
 
 interface Props {
   index: number
-  // onNameChange?: (s: string) => void
   isHidden?: boolean
   disabled?: boolean
   readOnly?: boolean
@@ -25,7 +19,6 @@ interface Props {
 
 export const ParentRepeaterItem: FC<Props & FieldBaseProps> = ({
   index,
-  //   onNameChange,
   isHidden,
   disabled,
   readOnly,

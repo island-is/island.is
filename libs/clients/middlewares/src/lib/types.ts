@@ -19,3 +19,8 @@ export type EnhancedFetchAPI = (
   input: EnhancedRequestInfo,
   init?: EnhancedRequestInit,
 ) => Promise<Response>
+
+export interface ApiResponse<T> {
+  raw: Response
+  value(): Promise<T>
+}

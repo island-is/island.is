@@ -6,10 +6,7 @@ import {
   CaseType,
   Defendant,
 } from '@island.is/judicial-system/types'
-import {
-  DEFENDER_ROUTE,
-  RESTRICTION_CASE_OVERVIEW_ROUTE,
-} from '@island.is/judicial-system/consts'
+import { RESTRICTION_CASE_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 
 import {
   makeCourt,

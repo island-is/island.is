@@ -12,6 +12,7 @@ export const ApiConfiguration = {
     return new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-directorate-of-immigration',
+        organizationSlug: 'utlendingastofnun',
         logErrorResponseBody: true,
         autoAuth: idsClientConfig.isConfigured
           ? {

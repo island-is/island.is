@@ -24,6 +24,7 @@ export const StaysAbroad: FC<FieldBaseProps> = (props) => {
     getValueViaPath(
       application.answers,
       'staysAbroad.hasStayedAbroad',
+      '',
     ) as string,
   )
 
@@ -84,7 +85,7 @@ export const StaysAbroad: FC<FieldBaseProps> = (props) => {
 
   const addDataToCountryList = (
     field: string,
-    value: any,
+    value: string,
     newIndex: number,
   ) => {
     setSelectedCountries(

@@ -8,6 +8,11 @@ import { selectChildren } from '../../../lib/messages'
 import * as kennitala from 'kennitala'
 import { ApplicantChildCustodyInformation } from '@island.is/application/types'
 import { Routes } from '../../../lib/constants'
+import {
+  MAX_AGE_CHILD_INFORMATION_BOX,
+  MIN_AGE_CHILD_INFORMATION_BOX,
+  MIN_AGE_CHILD_WARNING,
+} from '../../../shared'
 
 export const PickChildrenSubSection = buildSubSection({
   id: Routes.PICKCHILDREN,
@@ -41,7 +46,7 @@ export const PickChildrenSubSection = buildSubSection({
 
               const childrenInAgeRange = childWithInfo.filter((child) => {
                 const childInfo = kennitala.info(child.nationalId)
-                return childInfo.age >= 17
+                return childInfo.age >= MIN_AGE_CHILD_WARNING
               })
 
               return childrenInAgeRange ? childrenInAgeRange.length > 0 : false
@@ -72,7 +77,10 @@ export const PickChildrenSubSection = buildSubSection({
 
             const childrenInAgeRange = childWithInfo.filter((child) => {
               const childInfo = kennitala.info(child.nationalId)
-              return childInfo.age >= 11 || childInfo.age <= 18
+              return (
+                childInfo.age >= MIN_AGE_CHILD_INFORMATION_BOX ||
+                childInfo.age <= MAX_AGE_CHILD_INFORMATION_BOX
+              )
             })
 
             const showSharedCustodyWarning = childWithInfo.filter((child) => {

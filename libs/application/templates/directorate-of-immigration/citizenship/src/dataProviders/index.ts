@@ -32,19 +32,19 @@ export const TravelDocumentTypesApi = defineTemplateApi({
   externalDataId: 'travelDocumentTypes',
 })
 
-export const OldCountryOfResidenceListApi = defineTemplateApi({
-  action: ApiActions.getOldCountryOfResidenceList,
-  externalDataId: 'oldCountryOfResidenceList',
+export const CurrentCountryOfResidenceListApi = defineTemplateApi({
+  action: ApiActions.getCurrentCountryOfResidenceList,
+  externalDataId: 'currentCountryOfResidenceList',
 })
 
-export const OldStayAbroadListApi = defineTemplateApi({
-  action: ApiActions.getOldStayAbroadList,
-  externalDataId: 'oldStayAbroadList',
+export const CurrentStayAbroadListApi = defineTemplateApi({
+  action: ApiActions.getCurrentStayAbroadList,
+  externalDataId: 'currentStayAbroadList',
 })
 
-export const OldPassportItemApi = defineTemplateApi({
-  action: ApiActions.getOldPassportItem,
-  externalDataId: 'oldPassportItem',
+export const CurrentPassportItemApi = defineTemplateApi({
+  action: ApiActions.getCurrentPassportItem,
+  externalDataId: 'currentPassportItem',
 })
 
 export const NationalRegistryIndividualApi = defineTemplateApi({
@@ -57,10 +57,9 @@ export const NationalRegistrySpouseDetailsApi = defineTemplateApi({
   externalDataId: 'spouseDetails',
 })
 
-export const NationalRegistryBirthplaceApi = defineTemplateApi({
-  action: 'getBirthplace',
-  externalDataId: 'nationalRegistryBirthplace',
-  namespace: 'NationalRegistry',
+export const BirthplaceApi = defineTemplateApi({
+  action: ApiActions.getBirthplace,
+  externalDataId: 'birthplace',
 })
 
 export const NationalRegistryParentsApi = defineTemplateApi({

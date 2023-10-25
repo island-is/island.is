@@ -42,13 +42,14 @@ export class FileController {
   ): Promise<Response> {
     this.logger.debug(`Getting the request for case ${id} as a pdf document`)
 
-    return this.fileService.tryGetPdf(
+    return this.fileService.tryGetFile(
       user.id,
       AuditedAction.GET_REQUEST_PDF,
       id,
       'request',
       req,
       res,
+      'pdf',
     )
   }
 
@@ -63,13 +64,14 @@ export class FileController {
   ): Promise<Response> {
     this.logger.debug(`Getting the case files for case ${id} as a pdf document`)
 
-    return this.fileService.tryGetPdf(
+    return this.fileService.tryGetFile(
       user.id,
       AuditedAction.GET_CASE_FILES_PDF,
       id,
       `caseFilesRecord/${policeCaseNumber}`,
       req,
       res,
+      'pdf',
     )
   }
 
@@ -85,13 +87,14 @@ export class FileController {
       `Getting the court record for case ${id} as a pdf document`,
     )
 
-    return this.fileService.tryGetPdf(
+    return this.fileService.tryGetFile(
       user.id,
       AuditedAction.GET_COURT_RECORD,
       id,
       'courtRecord',
       req,
       res,
+      'pdf',
     )
   }
 
@@ -105,13 +108,14 @@ export class FileController {
   ): Promise<Response> {
     this.logger.debug(`Getting the ruling for case ${id} as a pdf document`)
 
-    return this.fileService.tryGetPdf(
+    return this.fileService.tryGetFile(
       user.id,
       AuditedAction.GET_RULING_PDF,
       id,
       'ruling',
       req,
       res,
+      'pdf',
     )
   }
 
@@ -127,13 +131,14 @@ export class FileController {
       `Getting the custody notice for case ${id} as a pdf document`,
     )
 
-    return this.fileService.tryGetPdf(
+    return this.fileService.tryGetFile(
       user.id,
       AuditedAction.GET_CUSTODY_NOTICE_PDF,
       id,
       'custodyNotice',
       req,
       res,
+      'pdf',
     )
   }
 
@@ -147,13 +152,14 @@ export class FileController {
   ): Promise<Response> {
     this.logger.debug(`Getting the indictment for case ${id} as a pdf document`)
 
-    return this.fileService.tryGetPdf(
+    return this.fileService.tryGetFile(
       user.id,
       AuditedAction.GET_INDICTMENT_PDF,
       id,
       'indictment',
       req,
       res,
+      'pdf',
     )
   }
 }

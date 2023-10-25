@@ -12,10 +12,7 @@ import {
 import { supportingDocuments } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
 import { getSelectedIndividualName } from '../../../utils'
-import {
-  Country,
-  TravelDocumentType,
-} from '@island.is/clients/directorate-of-immigration'
+import { OptionSetItem } from '@island.is/clients/directorate-of-immigration'
 import { Routes } from '../../../lib/constants'
 
 const FILE_SIZE_LIMIT = 10000000
@@ -85,11 +82,11 @@ export const ChildrenPassportSubSection = (index: number) =>
                 application.externalData,
                 'travelDocumentTypes.data',
                 [],
-              ) as TravelDocumentType[]
+              ) as OptionSetItem[]
 
               return travelDocumentTypes.map(({ id, name }) => ({
-                value: id.toString(),
-                label: name,
+                value: id?.toString() || '',
+                label: name || '',
               }))
             },
           }),
@@ -103,11 +100,11 @@ export const ChildrenPassportSubSection = (index: number) =>
                 application.externalData,
                 'countries.data',
                 [],
-              ) as Country[]
+              ) as OptionSetItem[]
 
               return countryOptions.map(({ id, name }) => ({
-                value: id.toString(),
-                label: name,
+                value: id?.toString() || '',
+                label: name || '',
               }))
             },
           }),

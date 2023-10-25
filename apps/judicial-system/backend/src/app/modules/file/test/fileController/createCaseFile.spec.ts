@@ -90,6 +90,7 @@ describe('FileController - Create case file', () => {
           size: 99,
           caseId,
           name: 'test.txt',
+          userGeneratedFilename: 'test.txt',
         })
       })
 
@@ -135,6 +136,7 @@ describe('FileController - Create case file', () => {
         size: 99,
         caseId,
         name: 'test.txt',
+        userGeneratedFilename: 'test.txt',
       })
     })
 

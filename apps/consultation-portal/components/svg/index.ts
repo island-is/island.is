@@ -1,2 +1,1 @@
-export { default as LESchoolMobile } from './LESchoolMobile'
-export { default as Splash } from './Splash'
+export { default as HeroImage } from './HeroImage'

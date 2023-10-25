@@ -9,7 +9,6 @@ import cn from 'classnames'
 
 export interface PdfViewerProps {
   file: string
-  renderMode?: 'svg' | 'canvas'
   showAllPages?: boolean
   scale?: number
   autoWidth?: boolean
@@ -28,7 +27,6 @@ interface IPdfLib {
 
 export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
   file,
-  renderMode = 'svg',
   showAllPages = false,
   scale = 1,
   autoWidth = true,
@@ -76,7 +74,6 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
         <pdfLib.Document
           file={file}
           onLoadSuccess={onDocumentLoadSuccess}
-          renderMode={renderMode}
           className={cn(styles.pdfViewer, { [styles.pdfSvgPage]: autoWidth })}
           loading={() => loadingView()}
         >
@@ -91,7 +88,12 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
               />
             ))
           ) : (
-            <pdfLib.Page pageNumber={pageNumber} scale={scale} />
+            <pdfLib.Page
+              renderTextLayer={false}
+              renderAnnotationLayer={false}
+              pageNumber={pageNumber}
+              scale={scale}
+            />
           )}
         </pdfLib.Document>
 

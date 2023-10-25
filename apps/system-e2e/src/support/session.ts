@@ -80,10 +80,7 @@ async function ensureIDSsession(
       )
     }
     const sessionObject = JSON.parse(sessionMatch[1])
-    if (
-      sessionObject.status === 'No Session' ||
-      sessionObject.expiresIn < 5 * 60
-    ) {
+    if (sessionObject.status === 'No Session' || sessionObject.isExpired) {
       const idsPage = await context.newPage()
       if (typeof authTrigger === 'string') await idsPage.goto(authTrigger)
       else authTrigger = await authTrigger(idsPage)

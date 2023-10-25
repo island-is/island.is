@@ -16,7 +16,6 @@ import {
   PassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
-import { format } from 'kennitala'
 import { Locale } from 'locale'
 import {
   LicenseClient,
@@ -171,10 +170,7 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
       }
     }
 
-    const pass = await this.smartApi.generatePkPass(
-      payload,
-      format(user.nationalId),
-    )
+    const pass = await this.smartApi.generatePkPass(payload)
 
     return pass
   }

@@ -1,4 +1,9 @@
-import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseType,
+  IndictmentSubtype,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import {
   INDICTMENTS_DEFENDER_ROUTE,
   INDICTMENTS_SUBPOENA_ROUTE,
@@ -7,7 +12,10 @@ import {
 import { makeCourt, intercept, mockCase } from '../../../utils'
 
 describe(`${INDICTMENTS_SUBPOENA_ROUTE}/:id`, () => {
-  const caseData = mockCase(CaseType.MAJOR_ASSAULT)
+  const caseData = mockCase(
+    CaseType.INDICTMENT,
+    IndictmentSubtype.MAJOR_ASSAULT,
+  )
 
   beforeEach(() => {
     const caseDataAddition = {

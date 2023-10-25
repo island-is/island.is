@@ -174,9 +174,7 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   const handleRowClick = (id: string) => {
-    getCaseToOpen({
-      variables: { input: { id } },
-    })
+    getCaseToOpen(id)
   }
 
   return (

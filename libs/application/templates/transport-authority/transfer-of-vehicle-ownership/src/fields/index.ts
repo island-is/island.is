@@ -1,7 +1,6 @@
 export { NationalIdWithName } from './NationalIdWithName'
 export { ApplicationStatus } from './ApplicationStatus'
 export { PaymentChargeOverview } from './Payment/PaymentChargeOverview'
-export { PaymentPendingField } from './Payment/PaymentPendingField'
 export { Conclusion } from './Conclusion'
 export { VehiclesField } from './VehiclesField'
 export { CoOwner } from './CoOwner'

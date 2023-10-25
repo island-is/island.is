@@ -1,7 +1,15 @@
+import { Application } from '@island.is/application/types'
 import { ChangeCoOwnerOfVehicle } from '../lib/dataSchema'
 import { ChargeItemCode } from '@island.is/shared/constants'
 
-export const getChargeItemCodes = (
+import { ExtraData } from '@island.is/clients/charge-fjs-v2'
+
+export const getChargeItemCodes = (applicaiton: Application): Array<string> => {
+  const answers = applicaiton.answers as ChangeCoOwnerOfVehicle
+  return getChargeItemCodeWithAnswers(answers)
+}
+
+export const getChargeItemCodeWithAnswers = (
   answers: ChangeCoOwnerOfVehicle,
 ): Array<string> => {
   const coOwnerWasAdded =
@@ -26,4 +34,9 @@ export const getChargeItemCodes = (
   }
 
   return result
+}
+
+export const getExtraData = (application: Application): ExtraData[] => {
+  const answers = application.answers as ChangeCoOwnerOfVehicle
+  return [{ name: 'vehicle', value: answers?.pickVehicle?.plate }]
 }

@@ -10,7 +10,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "esbuild --bundle $(find apps/system-e2e -name '*.ts' -not -path '*/node_modules/*') --outdir=dist/apps/system-e2e --tsconfig=apps/system-e2e/tsconfig.json --platform=node $(jq -r '.dependencies|keys[]|(\"--external:\"+.)' apps/system-e2e/package.json | xargs) --external:@nestjs/microservices --external:@nestjs/websockets --external:fsevents --external:class-transformer",
+          "esbuild --bundle $(find apps/system-e2e -name '*.ts' -not -path '*/node_modules/*') --outdir=dist/apps/system-e2e --tsconfig=apps/system-e2e/tsconfig.json --platform=node $(jq -r '.dependencies|keys[]|(\"--external:\"+.)' apps/system-e2e/package.json | xargs) --external:@nestjs/microservices --external:@nestjs/websockets --external:fsevents --external:class-transformer --external:canvas",
           "cp apps/system-e2e/package.json dist/apps/system-e2e/"
         ],
         "outputPath": "dist/apps/system-e2e",

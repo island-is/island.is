@@ -1,10 +1,10 @@
 import type { CourtDocument } from './courtDocument'
 import type { Defendant } from './defendant'
 import { EventLog } from './eventLog'
-import { CaseFile } from './file'
+import { type CaseFile, CaseFileCategory } from './file'
 import type { Institution } from './institution'
 import type { Notification } from './notification'
-import { User, UserRole } from './user'
+import { type User, UserRole } from './user'
 
 export enum CaseOrigin {
   UNKNOWN = 'UNKNOWN',
@@ -389,8 +389,6 @@ export interface UpdateCase
     | 'accusedAppealAnnouncement'
     | 'prosecutorAppealDecision'
     | 'prosecutorAppealAnnouncement'
-    | 'accusedPostponedAppealDate'
-    | 'prosecutorPostponedAppealDate'
     | 'caseModifiedExplanation'
     | 'rulingModifiedHistory'
     | 'caseResentExplanation'
@@ -461,6 +459,26 @@ export const investigationCases = [
   CaseType.TELECOMMUNICATIONS,
   CaseType.TRACKING_EQUIPMENT,
   CaseType.VIDEO_RECORDING_EQUIPMENT,
+]
+
+export const defenderCaseFileCategoriesForRestrictionAndInvestigationCases = [
+  CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+  CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+  CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+  CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+  CaseFileCategory.APPEAL_RULING,
+]
+
+export const defenderAccessCaseFileCategoriesForIndictmentCases = [
+  CaseFileCategory.COURT_RECORD,
+  CaseFileCategory.RULING,
+  CaseFileCategory.COVER_LETTER,
+  CaseFileCategory.INDICTMENT,
+  CaseFileCategory.CRIMINAL_RECORD,
+  CaseFileCategory.COST_BREAKDOWN,
+  CaseFileCategory.CASE_FILE,
 ]
 
 export function isIndictmentCase(type: string): boolean {

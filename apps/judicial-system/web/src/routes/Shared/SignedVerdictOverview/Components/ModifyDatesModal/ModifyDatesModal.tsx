@@ -342,7 +342,7 @@ const ModifyDatesModal: React.FC<React.PropsWithChildren<Props>> = ({
       transition={{ duration: 0.5 }}
     >
       <Modal
-        title={formatMessage(m.sections.modifyDatesModal.successTitleV3, {
+        title={formatMessage(m.sections.modifyDatesModal.successTitle, {
           caseType: workingCase.type,
         })}
         text={successText}
@@ -363,13 +363,13 @@ const ModifyDatesModal: React.FC<React.PropsWithChildren<Props>> = ({
       transition={{ duration: 0.5 }}
     >
       <Modal
-        title={formatMessage(m.sections.modifyDatesModal.titleV3, {
+        title={formatMessage(m.sections.modifyDatesModal.title, {
           caseType: workingCase.type,
         })}
         text={
           workingCase.type === CaseType.TRAVEL_BAN
             ? formatMessage(m.sections.modifyDatesModal.travelBanText)
-            : formatMessage(m.sections.modifyDatesModal.textV2, {
+            : formatMessage(m.sections.modifyDatesModal.text, {
                 caseType: workingCase.type,
               })
         }
@@ -413,7 +413,7 @@ const ModifyDatesModal: React.FC<React.PropsWithChildren<Props>> = ({
               m.sections.modifyDatesModal.reasonForChangeLabel,
             )}
             placeholder={formatMessage(
-              m.sections.modifyDatesModal.reasonForChangePlaceholderV3,
+              m.sections.modifyDatesModal.reasonForChangePlaceholder,
               { caseType: workingCase.type },
             )}
             onChange={(event) => {
@@ -435,7 +435,7 @@ const ModifyDatesModal: React.FC<React.PropsWithChildren<Props>> = ({
               name="modifiedValidToDate"
               size="sm"
               datepickerLabel={formatMessage(
-                m.sections.modifyDatesModal.modifiedValidToDateLabelV3,
+                m.sections.modifyDatesModal.modifiedValidToDateLabel,
                 {
                   caseType: workingCase.type,
                 },

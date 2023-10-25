@@ -34,7 +34,7 @@ export const cognitoLogin = async (
   if (home === JUDICIAL_SYSTEM_HOME_URL) {
     return
   }
-  await page.waitForURL(new RegExp(`${home}|${authUrl}/delegation`))
+  await page.waitForURL(new RegExp(`${home}|${authUrl}`))
 }
 
 export async function idsLogin(
@@ -71,10 +71,10 @@ export async function idsLogin(
 
       await filteredDelegations.first().click()
     }
+    await page.waitForURL(new RegExp(`${home}`), {
+      waitUntil: 'domcontentloaded',
+    })
   }
-  await page.waitForURL(new RegExp(`${home}`), {
-    waitUntil: 'domcontentloaded',
-  })
 }
 
 export const switchUser = async (

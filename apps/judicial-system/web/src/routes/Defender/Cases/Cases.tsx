@@ -104,33 +104,55 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
             id: 'active',
             label: formatMessage(m.activeCasesTabLabel),
             content: (
-              <Box>
-                <FilterCheckboxes
-                  filters={filters}
-                  toggleFilter={toggleFilters}
-                />
-                <DefenderCasesTable
-                  cases={activeFilteredCases}
-                  loading={loading}
-                />
-              </Box>
+              <div>
+                {activeCases.length > 0 || loading ? (
+                  <Box>
+                    <FilterCheckboxes
+                      filters={filters}
+                      toggleFilter={toggleFilters}
+                    />
+                    <DefenderCasesTable
+                      cases={activeFilteredCases}
+                      loading={loading}
+                    />
+                  </Box>
+                ) : (
+                  <Box className={styles.infoContainer} marginTop={3}>
+                    <AlertMessage
+                      type="info"
+                      message={formatMessage(m.noActiveCases)}
+                    />
+                  </Box>
+                )}
+              </div>
             ),
           },
           {
             id: 'completed',
             label: formatMessage(m.completedCasesTabLabel),
             content: (
-              <Box>
-                <FilterCheckboxes
-                  filters={filters}
-                  toggleFilter={toggleFilters}
-                />
-                <DefenderCasesTable
-                  cases={completedFilteredCases}
-                  showingCompletedCases={true}
-                  loading={loading}
-                />
-              </Box>
+              <div>
+                {completedCases.length > 0 || loading ? (
+                  <Box>
+                    <FilterCheckboxes
+                      filters={filters}
+                      toggleFilter={toggleFilters}
+                    />
+                    <DefenderCasesTable
+                      cases={completedFilteredCases}
+                      showingCompletedCases={true}
+                      loading={loading}
+                    />
+                  </Box>
+                ) : (
+                  <Box className={styles.infoContainer} marginTop={3}>
+                    <AlertMessage
+                      type="info"
+                      message={formatMessage(m.noCompletedCases)}
+                    />
+                  </Box>
+                )}
+              </div>
             ),
           },
         ]}

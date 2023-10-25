@@ -1,11 +1,9 @@
-import { CanActivate } from '@nestjs/common'
-
 import {
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { CaseTypeGuard } from '../../../case'
+import { CaseTypeGuard, CaseWriteGuard } from '../../../case'
 import { LimitedAccessWriteCaseFileGuard } from '../../guards/limitedAccessWriteCaseFile.guard'
 import { LimitedAccessFileController } from '../../limitedAccessFile.controller'
 
@@ -20,34 +18,13 @@ describe('LimitedAccessFileController - Create case file guards', () => {
     )
   })
 
-  it('should have two guards', () => {
-    expect(guards).toHaveLength(2)
-  })
-
-  describe('CaseTypeGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = guards[0]
+  it('should have the right guard configuration', () => {
+    expect(guards).toHaveLength(3)
+    expect(guards[0]).toBeInstanceOf(CaseTypeGuard)
+    expect(guards[0]).toEqual({
+      allowedCaseTypes: [...restrictionCases, ...investigationCases],
     })
-
-    it('should have CaseTypeGuard as guard 1', () => {
-      expect(guard).toBeInstanceOf(CaseTypeGuard)
-      expect(guard).toEqual({
-        allowedCaseTypes: [...restrictionCases, ...investigationCases],
-      })
-    })
-  })
-
-  describe('LimitedAccessWriteCaseFileGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[1]()
-    })
-
-    it('should have LimitedAccessWriteCaseFileGuard as guard 2', () => {
-      expect(guard).toBeInstanceOf(LimitedAccessWriteCaseFileGuard)
-    })
+    expect(new guards[1]()).toBeInstanceOf(CaseWriteGuard)
+    expect(new guards[2]()).toBeInstanceOf(LimitedAccessWriteCaseFileGuard)
   })
 })

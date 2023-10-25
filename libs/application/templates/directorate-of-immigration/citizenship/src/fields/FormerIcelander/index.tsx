@@ -1,22 +1,16 @@
-import { useState } from 'react'
+import { FC, useState } from 'react'
 import { information } from '../../lib/messages'
-import DescriptionText from '../../components/DescriptionText'
-import {
-  AlertMessage,
-  Box,
-  GridColumn,
-  GridRow,
-} from '@island.is/island-ui/core'
+import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { getValueViaPath, NO, YES } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 
-export const FormerIcelander = ({ application }: any) => {
+export const FormerIcelander: FC<FieldBaseProps> = ({ application }) => {
   const { answers } = application
 
-  console.log('ansers', answers)
   const [isFormerIcelander, setIsFormerIcelander] = useState(
-    getValueViaPath(answers, 'formerIcelander') as string,
+    getValueViaPath(answers, 'formerIcelander', '') as string,
   )
 
   const { formatMessage } = useLocale()
@@ -33,7 +27,7 @@ export const FormerIcelander = ({ application }: any) => {
         onSelect={(value) => {
           handleIsFormerIcelanderChange(value)
         }}
-        defaultValue={isFormerIcelander ? YES : ''}
+        defaultValue={isFormerIcelander}
         options={[
           {
             value: YES,

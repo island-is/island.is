@@ -25,15 +25,11 @@ const ConsultationPortalApplication: any = ({ Component, pageProps }) => {
 ConsultationPortalApplication.getInitialProps = async (
   appContext: AppContext,
 ) => {
-  const { Component, ctx } = appContext
+  const { ctx } = appContext
   const apolloClient = initApollo({})
   const customContext = {
     ...ctx,
     apolloClient,
-  }
-  let pageProps
-  if (Component.getInitialProps) {
-    pageProps = (await Component.getInitialProps(customContext)) as any
   }
   const apolloState = apolloClient.cache.extract()
   const session = await getSession(customContext)

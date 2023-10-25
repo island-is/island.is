@@ -19,8 +19,8 @@ const UserSchemaBase = z.object({
   email: z.string().min(1),
   phone: z.string().min(1),
   citizenship: z.string().min(1),
-  residenceInIcelandLastChangeDate: z.string().min(1),
-  birthCountry: z.string().min(1),
+  residenceInIcelandLastChangeDate: z.string().optional(),
+  birthCountry: z.string().optional(),
 })
 
 export const UserInformationSchema = z.intersection(
@@ -153,7 +153,7 @@ const PassportSchema = z.object({
   passportNumber: z.string().min(1),
   passportTypeId: z.string().min(1),
   countryOfIssuerId: z.string().min(1),
-  file: z.array(FileDocumentSchema).optional(),
+  file: z.array(FileDocumentSchema).min(1),
 })
 
 const ChildrenPassportSchema = z.object({
@@ -198,13 +198,36 @@ const ChildrenSupportingDocumentsSchema = z.object({
   custodyDocuments: z.array(FileDocumentSchema).optional(),
 })
 
-export const SelectedChildSchema = z.object({
-  nationalId: z.string().min(1),
-  hasFullCustody: z.string().optional(), //z.enum([YES, NO]),
-  otherParentNationalId: z.string().optional(),
-  otherParentBirtDate: z.string().optional(),
-  otherParentName: z.string().optional(),
-})
+export const SelectedChildSchema = z
+  .object({
+    nationalId: z.string().min(1),
+    hasFullCustody: z.string().optional(),
+    otherParentNationalId: z.string().optional(),
+    otherParentBirtDate: z.string().optional(),
+    otherParentName: z.string().optional(),
+    wasRemoved: z.string().min(1).optional(),
+  })
+  .refine(
+    ({ wasRemoved, otherParentName }) => {
+      return (
+        wasRemoved === 'true' || (otherParentName && otherParentName.length > 0)
+      )
+    },
+    {
+      path: ['otherParentName'],
+    },
+  )
+  .refine(
+    ({ wasRemoved, otherParentBirtDate }) => {
+      return (
+        wasRemoved === 'true' ||
+        (otherParentBirtDate && otherParentBirtDate.length > 0)
+      )
+    },
+    {
+      path: ['otherParentBirtDate'],
+    },
+  )
 
 export const CitizenshipSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),

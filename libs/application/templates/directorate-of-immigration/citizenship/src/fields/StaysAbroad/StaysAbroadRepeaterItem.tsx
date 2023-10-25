@@ -21,13 +21,14 @@ import { information } from '../../lib/messages'
 import { SelectFormField } from '@island.is/application/ui-fields'
 import DescriptionText from '../../components/DescriptionText'
 import { getValueViaPath } from '@island.is/application/core'
-import { Country } from '@island.is/clients/directorate-of-immigration'
+import { OptionSetItem } from '@island.is/clients/directorate-of-immigration'
 import { getErrorViaPath } from '@island.is/application/core'
+import { CountryOfVisit } from '../../shared'
 
 interface Props {
   id: string
   index: number
-  repeaterField: any
+  repeaterField: CountryOfVisit
   handleRemove: (index: number) => void
   itemNumber: number
   addDataToCountryList: (field: string, value: string, index: number) => void
@@ -63,15 +64,19 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
       : false
 
   const countryOptions = (
-    getValueViaPath(application.externalData, 'countries.data', []) as Country[]
+    getValueViaPath(
+      application.externalData,
+      'countries.data',
+      [],
+    ) as OptionSetItem[]
   ).map(({ id, name }) => ({
-    value: id.toString(),
-    label: name,
+    value: id?.toString() || '',
+    label: name || '',
   }))
 
   useEffect(() => {
     setValue(wasRemovedField, repeaterField.wasRemoved)
-  }, [repeaterField.wasRemoved, setValue])
+  }, [repeaterField.wasRemoved, setValue, wasRemovedField])
 
   return (
     <Box
@@ -113,7 +118,7 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
         error={errors && getErrorViaPath(errors, countryField)}
         field={{
           id: countryField,
-          title: `Dvalarland`,
+          title: formatMessage(information.labels.staysAbroad.splitterTitle),
           options: countryOptions,
           component: FieldComponents.SELECT,
           children: undefined,

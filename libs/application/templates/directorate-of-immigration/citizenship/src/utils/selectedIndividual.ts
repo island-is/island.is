@@ -1,8 +1,6 @@
 import { ExternalData, FormValue } from '@island.is/application/types'
-import { getValueViaPath } from '@island.is/application/core'
 import { getSelectedCustodyChild } from './'
 import * as kennitala from 'kennitala'
-import { CitizenIndividual } from '../shared'
 
 export const isIndividualSelected = (
   externalData: ExternalData,

@@ -105,10 +105,7 @@ export const ConfirmationField: FC<
             </Button>
           </a>
         </Box>
-        <PdfViewer
-          renderMode="svg"
-          file={`data:application/pdf;base64,${document}`}
-        />
+        <PdfViewer file={`data:application/pdf;base64,${document}`} />
         {renderFooter()}
       </>
     )

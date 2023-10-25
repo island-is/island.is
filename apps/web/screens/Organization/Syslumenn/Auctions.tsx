@@ -41,6 +41,8 @@ import { useRouter } from 'next/router'
 import { theme } from '@island.is/island-ui/theme'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
+import { webRichText } from '@island.is/web/utils/richText'
+import type { SliceType } from '@island.is/island-ui/contentful'
 
 interface AuctionsProps {
   organizationPage: Query['getOrganizationPage']
@@ -671,6 +673,7 @@ const Auctions: Screen<AuctionsProps> = ({
           readId={null}
           readClass="rs_read"
         />
+        {webRichText((subpage?.description ?? []) as SliceType[])}
       </Box>
       <GridContainer>
         <GridRow>

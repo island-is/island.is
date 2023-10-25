@@ -1,7 +1,12 @@
 import { Stack, Box, Icon, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { IntroHeader, UserInfoLine } from '@island.is/service-portal/core'
+import {
+  IntroHeader,
+  UserInfoLine,
+  FootNote,
+} from '@island.is/service-portal/core'
 import { olMessage as om } from '../lib/messages'
+import { OccupationalLicenseStatus } from '@island.is/api/schema'
 
 type LicenseDetailProps = {
   title?: string | null
@@ -13,7 +18,7 @@ type LicenseDetailProps = {
   licenseType?: string | null
   publisher?: string | null
   dateOfIssue?: string | null
-  isValid?: boolean
+  status?: OccupationalLicenseStatus
   buttonGroup?: React.ReactNode
 }
 
@@ -28,7 +33,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
   licenseType,
   publisher,
   dateOfIssue,
-  isValid,
+  status,
 }) => {
   const { formatMessage } = useLocale()
 
@@ -95,7 +100,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
             valueColumnSpan={['6/12']}
           />
         )}
-        {isValid && (
+        {status && (
           <UserInfoLine
             paddingY={3}
             label={formatMessage(om.licenseStatus)}
@@ -107,11 +112,29 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
                 columnGap="p1"
               >
                 <Text>
-                  {formatMessage(isValid ? om.validLicense : om.invalidLicense)}
+                  {formatMessage(
+                    status === 'valid'
+                      ? om.validLicense
+                      : status === 'limited'
+                      ? om.validWithLimitationsLicense
+                      : om.invalidLicense,
+                  )}
                 </Text>
                 <Icon
-                  icon={isValid ? 'checkmarkCircle' : 'closeCircle'}
-                  color={isValid ? 'mint600' : 'red600'}
+                  icon={
+                    status === 'valid'
+                      ? 'checkmarkCircle'
+                      : status === 'limited'
+                      ? 'warning'
+                      : 'closeCircle'
+                  }
+                  color={
+                    status === 'valid'
+                      ? 'mint600'
+                      : status === 'limited'
+                      ? 'yellow600'
+                      : 'red600'
+                  }
                   type="filled"
                 />
               </Box>
@@ -121,6 +144,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
           />
         )}
       </Stack>
+      <FootNote serviceProviderID={serviceProviderID ?? undefined} />
     </Box>
   )
 }

@@ -207,15 +207,18 @@ export class FileService {
       )
     }
 
+    const fileName = createFile.key.slice(
+      isIndictmentCase(theCase.type)
+        ? INDICTMENT_NAME_BEGINS_INDEX
+        : NAME_BEGINS_INDEX,
+    )
+
     return this.fileModel.create({
       ...createFile,
       state: CaseFileState.STORED_IN_RVG,
       caseId: theCase.id,
-      name: createFile.key.slice(
-        isIndictmentCase(theCase.type)
-          ? INDICTMENT_NAME_BEGINS_INDEX
-          : NAME_BEGINS_INDEX,
-      ),
+      name: fileName,
+      userGeneratedFilename: fileName.replace(/\.pdf$/, ''),
     })
   }
 

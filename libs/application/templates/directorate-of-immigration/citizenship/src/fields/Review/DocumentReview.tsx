@@ -1,7 +1,4 @@
-import {
-  ApplicantChildCustodyInformation,
-  FieldBaseProps,
-} from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { FC } from 'react'
 import DescriptionText from '../../components/DescriptionText'
@@ -28,8 +25,6 @@ export const DocumentReview: FC<Props> = ({
     application.answers,
   )
 
-  console.log('documentsReview', answers)
-
   return (
     <SummaryBlock editAction={() => goToScreen?.(route)}>
       <Box paddingBottom={4}>
@@ -46,7 +41,6 @@ export const DocumentReview: FC<Props> = ({
             />
           </GridColumn>
           {selectedChildren &&
-            selectedChildren.length > 0 &&
             selectedChildren.map((child) => {
               return (
                 <GridColumn span="1/2">

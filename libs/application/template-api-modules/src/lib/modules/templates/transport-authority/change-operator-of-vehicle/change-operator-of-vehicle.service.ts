@@ -2,10 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import {
-  ApplicationTypes,
-  InstitutionNationalIds,
-} from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/application/types'
 import { EmailRecipient, EmailRole } from './types'
 import {
   getAllRoles,
@@ -16,10 +13,7 @@ import {
   ChargeFjsV2ClientService,
   getPaymentIdFromExternalData,
 } from '@island.is/clients/charge-fjs-v2'
-import {
-  ChangeOperatorOfVehicleAnswers,
-  getChargeItemCodes,
-} from '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
+import { ChangeOperatorOfVehicleAnswers } from '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
 import {
   OperatorChangeValidation,
   VehicleOperatorsClient,
@@ -167,29 +161,6 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
         },
         400,
       )
-    }
-  }
-
-  async createCharge({ application, auth }: TemplateApiModuleActionProps) {
-    try {
-      const answers = application.answers as ChangeOperatorOfVehicleAnswers
-
-      const chargeItemCodes = getChargeItemCodes(answers)
-
-      if (chargeItemCodes?.length <= 0) {
-        throw new Error('Það var hvorki bætt við né eytt umráðamann')
-      }
-
-      const result = this.sharedTemplateAPIService.createCharge(
-        auth,
-        application.id,
-        InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeItemCodes,
-        [{ name: 'vehicle', value: answers?.pickVehicle?.plate }],
-      )
-      return result
-    } catch (exeption) {
-      return { id: '', paymentUrl: '' }
     }
   }
 

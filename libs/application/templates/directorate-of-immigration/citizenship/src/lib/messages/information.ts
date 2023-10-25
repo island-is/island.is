@@ -23,7 +23,7 @@ export const information = {
       description: {
         id: 'doi.cs.application:information.labels.formerIcelander.description',
         defaultMessage:
-          'Ertu fyrrum íslenskur ríkisborgari og hefur átt lögheimili á Íslandi í 1 ár? \\n (Þú hefur missti íslenskt ríkisfang vegna umsóknar og veitingar erlends ríkisfangs)',
+          'Ertu fyrrum íslenskur ríkisborgari og hefur átt lögheimili á Íslandi í 1 ár? (Þú hefur missti íslenskt ríkisfang vegna umsóknar og veitingar erlends ríkisfangs)',
         description: 'formerIcelander description',
       },
       alertTitle: {
@@ -160,6 +160,11 @@ export const information = {
         defaultMessage: 'Eyða færslu',
         description: 'Add more countries button title',
       },
+      splitterTitle: {
+        id: 'doi.cs.application:information.labels.countriesOfResidence.splitterTitle',
+        defaultMessage: 'Búsetuland',
+        description: 'Item splitter title',
+      },
     }),
     staysAbroad: defineMessages({
       subSectionTitle: {
@@ -223,6 +228,11 @@ export const information = {
         id: 'doi.cs.application:information.labels.staysAbroad.dateRangeError',
         defaultMessage: 'Dvalartími þarf að vera lengur en 3 mánuðir',
         description: 'Validation error for 3 month date range',
+      },
+      splitterTitle: {
+        id: 'doi.cs.application:information.labels.staysAbroad.splitterTitle',
+        defaultMessage: 'Dvalarland',
+        description: 'Item splitter title',
       },
     }),
     radioButtons: defineMessages({

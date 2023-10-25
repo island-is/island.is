@@ -2,14 +2,8 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import {
-  ApplicationTypes,
-  InstitutionNationalIds,
-} from '@island.is/application/types'
-import {
-  getChargeItemCodes,
-  LicensePlateRenewalAnswers,
-} from '@island.is/application/templates/transport-authority/license-plate-renewal'
+import { ApplicationTypes } from '@island.is/application/types'
+import { LicensePlateRenewalAnswers } from '@island.is/application/templates/transport-authority/license-plate-renewal'
 import {
   PlateOwnership,
   PlateOwnershipValidation,
@@ -91,25 +85,6 @@ export class LicensePlateRenewalService extends BaseTemplateApiService {
         },
         400,
       )
-    }
-  }
-
-  async createCharge({ application, auth }: TemplateApiModuleActionProps) {
-    try {
-      const answers = application.answers as LicensePlateRenewalAnswers
-
-      const chargeItemCodes = getChargeItemCodes(answers)
-
-      const result = this.sharedTemplateAPIService.createCharge(
-        auth,
-        application.id,
-        InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeItemCodes,
-        [{ name: 'vehicle', value: answers?.pickPlate?.regno }],
-      )
-      return result
-    } catch (exeption) {
-      return { id: '', paymentUrl: '' }
     }
   }
 

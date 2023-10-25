@@ -10,8 +10,8 @@ describe('Utils', () => {
         )
       })
       it('should map driversLicense to DriversLicense', () => {
-        expect(mapLicenseIdToLicenseType(LicenseId.DRIVERS_LICENSE)).toMatch(
-          'DriversLicense',
+        expect(mapLicenseIdToLicenseType(LicenseId.DRIVING_LICENSE)).toMatch(
+          'DrivingLicense',
         )
       })
       it('should map disabilityLicense to DisabilityLicense', () => {

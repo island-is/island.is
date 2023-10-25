@@ -7,4 +7,5 @@ buildOpenApi({
   path: 'apps/services/user-profile/src/openapi.yaml',
   appModule: AppModule,
   openApi,
+  enableVersioning: true,
 })

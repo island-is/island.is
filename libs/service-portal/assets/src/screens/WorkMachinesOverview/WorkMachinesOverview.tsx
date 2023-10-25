@@ -14,6 +14,7 @@ import {
   IntroHeader,
   VINNUEFTIRLITID_ID,
   Filter,
+  FootNote,
 } from '@island.is/service-portal/core'
 import {
   Box,
@@ -298,6 +299,9 @@ const WorkMachinesOverview = () => {
             />
           </Box>
         )}
+      <Box marginTop={2}>
+        <FootNote serviceProviderID={VINNUEFTIRLITID_ID} />
+      </Box>
     </Box>
   )
 }

@@ -4,12 +4,11 @@ import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { payment } from '../../lib/messages'
 import { formatIsk, getChargeItemCodes } from '../../utils'
-import { Citizenship } from '../../lib/dataSchema'
 
 export const PaymentChargeOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
-  const chargeItemCodes = getChargeItemCodes(application.answers as Citizenship)
+  const chargeItemCodes = getChargeItemCodes()
   const { externalData } = application
   const allItems = externalData?.payment?.data as [
     {

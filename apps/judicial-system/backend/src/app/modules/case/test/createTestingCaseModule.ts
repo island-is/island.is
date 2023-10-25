@@ -31,6 +31,7 @@ import { LimitedAccessCaseController } from '../limitedAccessCase.controller'
 import { LimitedAccessCaseService } from '../limitedAccessCase.service'
 import { Case } from '../models/case.model'
 import { CaseArchive } from '../models/caseArchive.model'
+import { PDFService } from '../pdf.service'
 
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../court/court.service')
@@ -104,6 +105,7 @@ export const createTestingCaseModule = async () => {
       CaseService,
       InternalCaseService,
       LimitedAccessCaseService,
+      PDFService,
     ],
   })
     .useMocker((token) => {

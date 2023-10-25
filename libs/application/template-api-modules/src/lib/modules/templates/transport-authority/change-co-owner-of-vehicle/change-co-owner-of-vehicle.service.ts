@@ -2,14 +2,10 @@ import { Inject, Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import {
-  ApplicationTypes,
-  InstitutionNationalIds,
-} from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/application/types'
 import {
   applicationCheck,
   ChangeCoOwnerOfVehicleAnswers,
-  getChargeItemCodes,
 } from '@island.is/application/templates/transport-authority/change-co-owner-of-vehicle'
 import {
   OwnerChangeValidation,
@@ -193,29 +189,6 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
         },
         400,
       )
-    }
-  }
-
-  async createCharge({ application, auth }: TemplateApiModuleActionProps) {
-    try {
-      const answers = application.answers as ChangeCoOwnerOfVehicleAnswers
-
-      const chargeItemCodes = getChargeItemCodes(answers)
-
-      if (chargeItemCodes?.length <= 0) {
-        throw new Error('Það var hvorki bætt við né eytt meðeiganda')
-      }
-
-      const result = this.sharedTemplateAPIService.createCharge(
-        auth,
-        application.id,
-        InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeItemCodes,
-        [{ name: 'vehicle', value: answers?.pickVehicle?.plate }],
-      )
-      return result
-    } catch (exeption) {
-      return { id: '', paymentUrl: '' }
     }
   }
 

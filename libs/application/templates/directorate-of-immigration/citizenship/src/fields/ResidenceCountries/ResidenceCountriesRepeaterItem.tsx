@@ -4,7 +4,7 @@ import {
   FieldTypes,
   GenericFormField,
 } from '@island.is/application/types'
-import { Box, Button, Option } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -12,7 +12,7 @@ import { SelectFormField } from '@island.is/application/ui-fields'
 import { CountryOfResidence } from '../../shared'
 import { information } from '../../lib/messages'
 import { getValueViaPath } from '@island.is/application/core'
-import { Country } from '@island.is/clients/directorate-of-immigration'
+import { OptionSetItem } from '@island.is/clients/directorate-of-immigration'
 import { getErrorViaPath } from '@island.is/application/core'
 
 interface Props {
@@ -41,15 +41,19 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
   const wasRemovedField = `${fieldIndex}.wasRemoved`
 
   const countryOptions = (
-    getValueViaPath(application.externalData, 'countries.data', []) as Country[]
+    getValueViaPath(
+      application.externalData,
+      'countries.data',
+      [],
+    ) as OptionSetItem[]
   ).map(({ id, name }) => ({
-    value: id.toString(),
-    label: name,
+    value: id?.toString() || '',
+    label: name || '',
   }))
 
   useEffect(() => {
     setValue(wasRemovedField, repeaterField.wasRemoved)
-  }, [repeaterField.wasRemoved, setValue])
+  }, [repeaterField.wasRemoved, setValue, wasRemovedField])
 
   return (
     <Box
@@ -75,7 +79,9 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
         error={errors && getErrorViaPath(errors, countryField)}
         field={{
           id: countryField,
-          title: `Búsetuland ${itemNumber + 1}`,
+          title: `${formatMessage(
+            information.labels.countriesOfResidence.splitterTitle,
+          )} ${itemNumber + 1}`,
           options: countryOptions,
           component: FieldComponents.SELECT,
           children: undefined,

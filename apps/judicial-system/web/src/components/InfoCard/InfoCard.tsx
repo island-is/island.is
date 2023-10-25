@@ -45,9 +45,9 @@ const UniqueDefenders: React.FC<
           ? 'Talsmaður'
           : `Verj${uniqueDefenders.length > 1 ? 'endur' : 'andi'}`}
       </Text>
-      {uniqueDefenders.map((defender) =>
+      {uniqueDefenders.map((defender, index) =>
         defender?.name ? (
-          <Box display="flex" key={`${defender.name}`}>
+          <Box display="flex" key={defender.name}>
             <Text>
               {`${defender.name}${defender.email ? `, ${defender.email}` : ''}${
                 defender.phoneNumber ? `, s. ${defender.phoneNumber}` : ''
@@ -55,7 +55,7 @@ const UniqueDefenders: React.FC<
             </Text>
           </Box>
         ) : (
-          <Text>Hefur ekki verið skráður</Text>
+          <Text key={index}>Hefur ekki verið skráður</Text>
         ),
       )}
     </>

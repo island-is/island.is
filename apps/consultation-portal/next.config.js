@@ -1,31 +1,38 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const withNx = require('@nx/next/plugins/with-nx')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
 const {
   API_URL = 'http://localhost:4444',
-  WEB_PUBLIC_URL = 'http://localhost:4200',
   BASE_PATH = '/samradsgatt',
-  NODE_ENV,
-  DISABLE_API_CATALOGUE,
-  DD_RUM_APPLICATION_ID,
-  DD_RUM_CLIENT_TOKEN,
   APP_VERSION,
   ENVIRONMENT,
   CONFIGCAT_SDK_KEY,
+  DD_RUM_APPLICATION_ID,
+  DD_RUM_CLIENT_TOKEN,
 } = process.env
 const apiPath = '/api'
 const graphqlPath = '/api/graphql'
 const withVanillaExtract = createVanillaExtractPlugin()
 module.exports = withNx(
   withVanillaExtract({
-    webpack: (config, options) => {
+    webpack: (config, { isServer }) => {
+      if (process.env.ANALYZE === 'true' && !isServer) {
+        config.plugins.push(
+          new BundleAnalyzerPlugin({
+            analyzerMode: 'static',
+          }),
+        )
+      }
       return config
     },
     publicRuntimeConfig: {
       // Will be available on both server and client
       graphqlUrl: '',
       graphqlEndpoint: graphqlPath,
+      ddRumApplicationId: DD_RUM_APPLICATION_ID,
+      ddRumClientToken: DD_RUM_CLIENT_TOKEN,
       appVersion: APP_VERSION,
       environment: ENVIRONMENT,
       configCatSdkKey: CONFIGCAT_SDK_KEY,

@@ -40,7 +40,7 @@ const data: Data[] = [
       defaultMessage:
         'Hér er hægt að skoða stöðu núverandi ökuskírteinis, ásamt því að sækja um og eða endurnýja ökupróf í öllum flokkum.',
     }),
-    link: ServicePortalPath.LicensesDriving,
+    link: ServicePortalPath.LicensesRoot,
     image: '/assets/images/movingTruck.svg',
   },
 ]

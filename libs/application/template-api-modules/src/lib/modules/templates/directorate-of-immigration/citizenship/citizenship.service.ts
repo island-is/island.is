@@ -5,29 +5,26 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 import {
   ApplicantChildCustodyInformation,
   ApplicationTypes,
-  InstitutionNationalIds,
   NationalRegistryBirthplace,
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
-  getChargeItemCodes,
   CitizenshipAnswers,
   SpouseIndividual,
   CitizenIndividual,
   error as errorMessages,
 } from '@island.is/application/templates/directorate-of-immigration/citizenship'
 import {
-  Country,
-  CountryOfResidence,
+  ApplicantResidenceConditionViewModel,
+  CountryOfResidenceViewModel,
   DirectorateOfImmigrationClient,
-  Passport,
-  ResidenceConditionInfo,
-  StayAbroad,
-  TravelDocumentType,
+  OptionSetItem,
+  ResidenceAbroadViewModel,
+  TravelDocumentViewModel,
 } from '@island.is/clients/directorate-of-immigration'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { coreErrorMessages, YES } from '@island.is/application/core'
+import { YES } from '@island.is/application/core'
 
 @Injectable()
 export class CitizenshipService extends BaseTemplateApiService {
@@ -39,64 +36,48 @@ export class CitizenshipService extends BaseTemplateApiService {
     super(ApplicationTypes.CITIZENSHIP)
   }
 
-  async createCharge({ application, auth }: TemplateApiModuleActionProps) {
-    try {
-      const answers = application.answers as CitizenshipAnswers
-
-      const chargeItemCodes = getChargeItemCodes(answers)
-
-      const result = this.sharedTemplateAPIService.createCharge(
-        auth,
-        application.id,
-        InstitutionNationalIds.UTLENDINGASTOFNUN,
-        chargeItemCodes,
-      )
-      return result
-    } catch (exeption) {
-      return { id: '', paymentUrl: '' }
-    }
-  }
-
   async getResidenceConditionInfo({
     auth,
-  }: TemplateApiModuleActionProps): Promise<ResidenceConditionInfo> {
+  }: TemplateApiModuleActionProps): Promise<ApplicantResidenceConditionViewModel> {
     return this.directorateOfImmigrationClient.getCitizenshipResidenceConditionInfo(
       auth,
     )
   }
 
-  async getCountries(): Promise<Country[]> {
+  async getCountries(): Promise<OptionSetItem[]> {
     return this.directorateOfImmigrationClient.getCountries()
   }
 
-  async getTravelDocumentTypes(): Promise<TravelDocumentType[]> {
+  async getTravelDocumentTypes(): Promise<OptionSetItem[]> {
     return this.directorateOfImmigrationClient.getTravelDocumentTypes()
   }
 
-  async getOldCountryOfResidenceList({
+  async getCurrentCountryOfResidenceList({
     auth,
-  }: TemplateApiModuleActionProps): Promise<CountryOfResidence[]> {
-    return this.directorateOfImmigrationClient.getOldCountryOfResidenceList(
+  }: TemplateApiModuleActionProps): Promise<CountryOfResidenceViewModel[]> {
+    return this.directorateOfImmigrationClient.getCurrentCountryOfResidenceList(
       auth,
     )
   }
 
-  async getOldStayAbroadList({
+  async getCurrentStayAbroadList({
     auth,
-  }: TemplateApiModuleActionProps): Promise<StayAbroad[]> {
-    return this.directorateOfImmigrationClient.getOldStayAbroadList(auth)
+  }: TemplateApiModuleActionProps): Promise<ResidenceAbroadViewModel[]> {
+    return this.directorateOfImmigrationClient.getCurrentStayAbroadList(auth)
   }
 
-  async getOldPassportItem({
+  async getCurrentPassportItem({
     auth,
-  }: TemplateApiModuleActionProps): Promise<Passport | undefined> {
-    return this.directorateOfImmigrationClient.getOldPassportItem(auth)
+  }: TemplateApiModuleActionProps): Promise<
+    TravelDocumentViewModel | undefined
+  > {
+    return this.directorateOfImmigrationClient.getCurrentPassportItem(auth)
   }
 
   async getNationalRegistryIndividual({
     auth,
   }: TemplateApiModuleActionProps): Promise<CitizenIndividual | null> {
-    const individual = await this.getIndividualDetails(auth.nationalId)
+    const individual = await this.getIndividualDetails(auth.nationalId, true)
     if (individual)
       individual.residenceInIcelandLastChangeDate =
         await this.getResidenceInIcelandLastChangeDate(auth.nationalId)
@@ -105,6 +86,7 @@ export class CitizenshipService extends BaseTemplateApiService {
 
   private async getIndividualDetails(
     nationalId: string,
+    isApplicant: boolean,
   ): Promise<CitizenIndividual | null> {
     // get basic information about indiviual
     const person = await this.nationalRegistryApi.getIndividual(nationalId)
@@ -129,7 +111,7 @@ export class CitizenshipService extends BaseTemplateApiService {
 
     // dont allow user to continue if already has icelandic citizenship
     const citizenshipIceland = 'IS'
-    if (citizenship?.countryCode === citizenshipIceland) {
+    if (citizenship?.countryCode === citizenshipIceland && isApplicant) {
       throw new TemplateApiError(
         {
           title: errorMessages.alreadyIcelandicCitizen,
@@ -212,16 +194,6 @@ export class CitizenshipService extends BaseTemplateApiService {
       }
     }
 
-    if (!lastChangeDate) {
-      throw new TemplateApiError(
-        {
-          title: errorMessages.residenceInIcelandLastChangeDateMissing,
-          summary: errorMessages.residenceInIcelandLastChangeDateMissing,
-        },
-        404,
-      )
-    }
-
     return lastChangeDate
   }
 
@@ -246,6 +218,7 @@ export class CitizenshipService extends BaseTemplateApiService {
           ),
           spouse: await this.getIndividualDetails(
             cohabitationInfo.spouseNationalId,
+            false,
           ),
         }
       : null
@@ -255,16 +228,6 @@ export class CitizenshipService extends BaseTemplateApiService {
     nationalId: string,
   ): Promise<NationalRegistryBirthplace | null> {
     const birthplace = await this.nationalRegistryApi.getBirthplace(nationalId)
-
-    if (!birthplace?.locality) {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.nationalRegistryBirthplaceMissing,
-          summary: coreErrorMessages.nationalRegistryBirthplaceMissing,
-        },
-        404,
-      )
-    }
 
     return (
       birthplace && {
@@ -289,7 +252,7 @@ export class CitizenshipService extends BaseTemplateApiService {
     // throw error in case the residence condition list changed since prerequisite step and
     // user does not fulfill any other condition
     if (
-      !residenceConditionInfo.hasValid &&
+      !residenceConditionInfo.isAnyResConValid &&
       answers.parentInformation?.hasValidParents !== YES &&
       answers.formerIcelander !== YES
     ) {
@@ -326,16 +289,18 @@ export class CitizenshipService extends BaseTemplateApiService {
     }
 
     const answers = application.answers as CitizenshipAnswers
-    const individual = application.externalData.individual.data as
+    const individual = application.externalData.individual?.data as
       | CitizenIndividual
       | undefined
     const nationalRegistryBirthplace = application.externalData
-      .nationalRegistryBirthplace.data as NationalRegistryBirthplace | undefined
-    const spouseDetails = application.externalData.spouseDetails.data as
+      .nationalRegistryBirthplace?.data as
+      | NationalRegistryBirthplace
+      | undefined
+    const spouseDetails = application.externalData.spouseDetails?.data as
       | SpouseIndividual
       | undefined
     const childrenCustodyInformation = application.externalData
-      .childrenCustodyInformation.data as
+      .childrenCustodyInformation?.data as
       | ApplicantChildCustodyInformation[]
       | undefined
     const applicantPassport = answers.passport

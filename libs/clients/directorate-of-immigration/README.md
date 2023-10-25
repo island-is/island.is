@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # clients-directorate-of-immigration
 
 This library was generated with [Nx](https://nx.dev).

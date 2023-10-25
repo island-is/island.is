@@ -9,6 +9,7 @@ import {
   buildSection,
   buildSelectField,
   buildSubmitField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   Application,
@@ -23,13 +24,22 @@ import {
   UserInfoApi,
   NationalRegistryUser,
 } from '../dataProviders'
-import { DistrictCommissionerAgencies, Services } from '../lib/constants'
+import {
+  DistrictCommissionerAgencies,
+  Passport,
+  Services,
+} from '../lib/constants'
 import { m } from '../lib/messages'
 import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
 import { personalInfo } from './infoSection/personalInfo'
 import { childsOverview } from './overviewSection/childsOverview'
 import { personalOverview } from './overviewSection/personalOverview'
-import { getChargeCode, getPrice } from '../lib/utils'
+import {
+  getChargeCode,
+  getPrice,
+  hasSecondGuardian,
+  needAssignment,
+} from '../lib/utils'
 
 export const Draft: Form = buildForm({
   id: 'PassportApplicationDraftForm',

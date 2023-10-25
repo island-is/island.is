@@ -1,32 +1,32 @@
-import { useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { ChildrenOfApplicant } from '../../shared'
 import { NO, YES, getValueViaPath } from '@island.is/application/core'
 import { SelectedRepeaterItem } from './SelectedRepeaterItem'
 import { getSelectedCustodyChild } from '../../utils'
+import { FieldBaseProps } from '@island.is/application/types'
 
 const initialCombinedChild = {
   hasFullCustody: YES,
   otherParentNationalId: '',
   otherParentBirtDate: '',
   otherParentName: '',
+  wasRemoved: 'false',
 }
 
-export const MoreChildInfo = ({ field, application, error }: any) => {
+export const MoreChildInfo: FC<FieldBaseProps> = (props) => {
+  const { application } = props
   const { answers, externalData } = application
-
   const [readOnlyFields, setReadOnlyFields] = useState(false)
 
   const [combinedChildren, setCombinedChildren] = useState<
     Array<ChildrenOfApplicant>
   >([])
 
-  const [children, setChildren] = useState<string[]>(
+  const [children] = useState<string[]>(
     getValueViaPath(answers, 'selectedChildren', []) as string[],
   )
 
-  const [childrenExtraData, setChildrenExtraData] = useState<
-    ChildrenOfApplicant[]
-  >(
+  const [childrenExtraData] = useState<ChildrenOfApplicant[]>(
     getValueViaPath(
       answers,
       'selectedChildrenExtraData',
@@ -55,6 +55,7 @@ export const MoreChildInfo = ({ field, application, error }: any) => {
           otherParentNationalId: childCustodyData.otherParent?.nationalId,
           otherParentName: childCustodyData.otherParent?.fullName,
           hasFullCustody: NO,
+          wasRemoved: 'false',
         }
       }
       //found already filled in data
@@ -64,17 +65,15 @@ export const MoreChildInfo = ({ field, application, error }: any) => {
       return predefinedChild
     })
     setCombinedChildren(mappedChildren)
-  }, [])
+  }, [answers, children, childrenExtraData, externalData])
 
   return combinedChildren.map((child, index) => {
     return (
       <SelectedRepeaterItem
         index={index}
-        field={field}
-        application={application}
-        // errors={errors}
         readOnlyFields={readOnlyFields}
         repeaterField={child}
+        {...props}
       />
     )
   })

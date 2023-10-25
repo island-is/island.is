@@ -3,6 +3,7 @@ import {
   FirearmPropertyList,
   LicenseInfo,
 } from '@island.is/clients/firearm-license'
+import { PassInputFieldValueDataInput } from '@island.is/clients/smartsolutions'
 import format from 'date-fns/format'
 import { format as formatSsn } from 'kennitala'
 
@@ -24,12 +25,23 @@ const parsePropertyForPkpassInput = (properties?: Array<FirearmProperty>) => {
   return propertyString
 }
 
+export const nationalIdIndex = 'kt'
+
+export const mapNationalId = (
+  nationalId: string,
+): PassInputFieldValueDataInput => {
+  return {
+    identifier: nationalIdIndex,
+    value: nationalId ? formatSsn(nationalId) : '',
+  }
+}
+
 export const createPkPassDataInput = (
   licenseInfo?: LicenseInfo | null,
   propertyInfo?: FirearmPropertyList | null,
   nationalId?: string,
 ) => {
-  if (!licenseInfo || !nationalId) return null
+  if (!licenseInfo || !licenseInfo.ssn || !nationalId) return null
 
   const parseAddress = (address?: string) => {
     if (!address) return
@@ -54,10 +66,7 @@ export const createPkPassDataInput = (
       identifier: 'nafn',
       value: licenseInfo.name ?? '',
     },
-    {
-      identifier: 'kt',
-      value: licenseInfo.ssn ? formatSsn(licenseInfo.ssn) : '',
-    },
+    mapNationalId(licenseInfo.ssn),
     {
       identifier: 'heimilisfang',
       value: parsedAddress?.address ?? '',

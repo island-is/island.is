@@ -1660,6 +1660,10 @@ type Mutation {
   deleteScanner(id: String!): Boolean!
   deleteScannerGroup(id: String!): Boolean!
   deleteStoragePass(passId: String!): Boolean!
+  deleteUniquePass(
+    passTemplateId: String!
+    values: [PassInputFieldValueDataInput!]!
+  ): Boolean!
   deleteUser(id: String!, shouldPermanentlyDelete: Boolean): Boolean!
   disguiseAs(id: String!): Issuer
   dkPlusLoginStep1(password: String!, username: String!): [DKPlusCompanyType!]!
@@ -1741,6 +1745,13 @@ type Mutation {
   ): Boolean!
   updateIssuer(data: IssuerDataInput!): Issuer!
   updateIssuerInfo(data: IssuerDataInput!, issuerId: String!): Issuer!
+  updatePass(
+    expirationDate: String
+    passId: String
+    passTemplateId: String!
+    thumbnail: ImageDataInput
+    values: [PassInputFieldValueDataInput!]
+  ): Pass!
   updatePassAuthenticationTokenStatus(
     id: String!
     status: PassAuthenticationTokenStatus!
@@ -1824,6 +1835,10 @@ type Mutation {
   ): [UserOptionData!]!
   voidPass(id: String!): Boolean!
   voidPassTemplate(id: String!): Boolean!
+  voidUniquePass(
+    passTemplateId: String!
+    values: [PassInputFieldValueDataInput!]!
+  ): Boolean!
 }
 
 type Node {

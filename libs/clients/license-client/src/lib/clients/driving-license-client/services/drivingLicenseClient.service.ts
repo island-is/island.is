@@ -3,7 +3,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 import { FetchError } from '@island.is/clients/middlewares'
-import { format } from 'kennitala'
 import {
   DriverLicenseDto as DriversLicense,
   DrivingLicenseApi,
@@ -131,9 +130,6 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
   async getLicense(user: User): Promise<Result<DriversLicense | null>> {
     const licenseResponse = await this.fetchLicense(user)
     if (!licenseResponse.ok) {
-      this.logger.info(`Drivers license data fetch failed`, {
-        category: LOG_CATEGORY,
-      })
       return licenseResponse
     }
 
@@ -159,9 +155,6 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
     ])
 
     if (!license) {
-      this.logger.warn('License data fetch failed', {
-        category: LOG_CATEGORY,
-      })
       return {
         ok: false,
         error: {
@@ -172,9 +165,9 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
     }
 
     if (!license[0].ok || !license[0].data) {
-      this.logger.info(
+      this.logger.debug(
         `No license data found for user, no pkpass payload to create`,
-        { LOG_CATEGORY },
+        { category: LOG_CATEGORY },
       )
       return {
         ok: false,
@@ -212,14 +205,11 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
       }
     }
 
-    const pass = await this.smartApi.generatePkPass(
-      payload,
-      format(user.nationalId),
-      () =>
-        this.drivingApi.notifyOnPkPassCreation({
-          nationalId: user.nationalId,
-          token: user.authorization.replace(/^bearer /i, ''),
-        }),
+    const pass = await this.smartApi.generatePkPass(payload, () =>
+      this.drivingApi.notifyOnPkPassCreation({
+        nationalId: user.nationalId,
+        token: user.authorization.replace(/^bearer /i, ''),
+      }),
     )
     return pass
   }

@@ -99,6 +99,10 @@ export interface UpsertPassResponseData {
   upsertPass: Pass
 }
 
+export interface UpdatePassResponseData {
+  updatePass: Pass
+}
+
 export interface ListTemplatesResponseData {
   passes?: {
     data: Array<PassTemplate>
@@ -106,12 +110,12 @@ export interface ListTemplatesResponseData {
 }
 
 export interface VoidPassResponseData {
-  voidPass: boolean
+  voidUniquePass: boolean
 }
 export interface UnvoidPassResponseData {
   unvoidPass: boolean
 }
 
 export interface DeletePassResponseData {
-  deletePass: boolean
+  deleteUniquePass: boolean
 }

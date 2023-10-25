@@ -14,15 +14,23 @@ import {
 import {
   BlowoutList,
   CaseDocuments,
-  CaseEmailBox,
   CaseOverview,
   CaseStatusBox,
   CaseTimeline,
   Coordinator,
-  RenderAdvices,
 } from './components'
 import CaseSkeleton from './components/CaseSkeleton/CaseSkeleton'
 import localization from './Case.json'
+import dynamic from 'next/dynamic'
+
+const CaseEmailBox = dynamic(
+  () => import('./components/CaseEmailBox/CaseEmailBox'),
+  { ssr: false },
+)
+const RenderAdvices = dynamic(
+  () => import('./components/RenderAdvices/RenderAdvices'),
+  { ssr: false },
+)
 
 interface Props {
   chosenCase: Case

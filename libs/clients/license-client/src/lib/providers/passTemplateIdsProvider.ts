@@ -21,7 +21,7 @@ export const PassTemplateIdsProvider: Provider = {
       adrLicense: adrConfig.passTemplateId,
       machineLicense: machineConfig.passTemplateId,
       disabilityLicense: disabilityConfig.passTemplateId,
-      driversLicense: drivingConfig.passTemplateId,
+      drivingLicense: drivingConfig.passTemplateId,
     }
     return ids
   },

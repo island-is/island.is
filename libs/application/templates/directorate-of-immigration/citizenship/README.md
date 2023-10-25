@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # application-templates-directorate-of-immigration-citizenship
 
 This library was generated with [Nx](https://nx.dev).

@@ -100,12 +100,21 @@
         "cwd": "apps/services/user-profile/"
       }
     },
+    "seed": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["sequelize-cli db:seed:all --seeders-path ./seeders"],
+        "parallel": false,
+        "cwd": "apps/services/user-profile/"
+      }
+    },
     "dev-init": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn nx run services-user-profile:dev-services",
-          "yarn nx run services-user-profile:migrate"
+          "yarn nx run services-user-profile:migrate",
+          "yarn nx run services-user-profile:seed"
         ],
         "parallel": false
       }

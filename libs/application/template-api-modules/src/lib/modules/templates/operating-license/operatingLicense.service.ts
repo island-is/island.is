@@ -182,29 +182,6 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     return cert[0]
   }
 
-  async createCharge({
-    application: { id, answers },
-    auth,
-  }: TemplateApiModuleActionProps) {
-    const chargeItemCode = getValueViaPath<string>(answers, 'chargeItemCode')
-    if (!chargeItemCode) {
-      throw new Error('chargeItemCode missing in request')
-    }
-
-    const response = await this.sharedTemplateAPIService.createCharge(
-      auth,
-      id,
-      InstitutionNationalIds.SYSLUMENN,
-      [chargeItemCode],
-    )
-    // last chance to validate before the user receives a dummy
-    if (!response?.paymentUrl) {
-      throw new Error('paymentUrl missing in response')
-    }
-
-    return response
-  }
-
   async submitOperatingLicenseApplication({
     application,
     auth,

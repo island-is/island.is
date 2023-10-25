@@ -79,8 +79,6 @@ const courtFields: (keyof UpdateCaseDto)[] = [
   'accusedAppealAnnouncement',
   'prosecutorAppealDecision',
   'prosecutorAppealAnnouncement',
-  'accusedPostponedAppealDate',
-  'prosecutorPostponedAppealDate',
   'judgeId',
   'registrarId',
   'caseModifiedExplanation',

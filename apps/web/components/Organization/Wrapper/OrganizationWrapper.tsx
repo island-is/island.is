@@ -1,98 +1,99 @@
-import React, { ReactNode, useEffect, useState, useMemo } from 'react'
+import React, { ReactNode, useEffect, useMemo, useState } from 'react'
 import { useWindowSize } from 'react-use'
-import { useRouter } from 'next/router'
 import NextLink from 'next/link'
-import { theme } from '@island.is/island-ui/theme'
-import { LayoutProps } from '@island.is/web/layouts/main'
-import {
-  Image,
-  Organization,
-  OrganizationPage,
-} from '@island.is/web/graphql/schema'
+import { useRouter } from 'next/router'
+
 import {
   Box,
   BreadCrumbItem,
   Breadcrumbs,
+  Button,
+  Divider,
   GridColumn,
   GridContainer,
   GridRow,
+  Inline,
   Link,
   Navigation,
   NavigationItem,
   ProfileCard,
   Stack,
   Text,
-  Button,
-  Inline,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import {
+  Footer as WebFooter,
   HeadWithSocialSharing,
   LiveChatIncChatPanel,
-  Sticky,
-  SidebarShipSearchInput,
-  Webreader,
   SearchBox,
-  Footer as WebFooter,
+  SidebarShipSearchInput,
+  Sticky,
+  Webreader,
 } from '@island.is/web/components'
-import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
-import { useI18n } from '@island.is/web/i18n'
 import { WatsonChatPanel } from '@island.is/web/components'
 import { STICKY_NAV_MAX_WIDTH } from '@island.is/web/constants'
+import {
+  Image,
+  Organization,
+  OrganizationPage,
+} from '@island.is/web/graphql/schema'
+import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
+import { LayoutProps } from '@island.is/web/layouts/main'
+import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 
-import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
-import {
-  SjukratryggingarHeader,
-  SjukratryggingarFooter,
-} from './Themes/SjukratryggingarTheme'
-import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
+import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
 import { DefaultHeader } from './Themes/DefaultTheme'
-import { MannaudstorgFooter } from './Themes/MannaudstorgTheme'
-import { liveChatIncConfig, watsonConfig } from './config'
-import { LandlaeknirFooter } from './Themes/LandlaeknirTheme'
-import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/HeilbrigdisstofnunNordurlandsTheme'
-import { LandlaeknirHeader } from './Themes/LandlaeknirTheme'
-import { HeilbrigdisstofnunNordurlandsFooter } from './Themes/HeilbrigdisstofnunNordurlandsTheme'
-import {
-  UtlendingastofnunFooter,
-  UtlendingastofnunHeader,
-} from './Themes/UtlendingastofnunTheme'
-import { IcelandicRadiationSafetyAuthorityHeader } from './Themes/IcelandicRadiationSafetyAuthority'
+import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
 import { FiskistofaHeader } from './Themes/FiskistofaTheme'
 import { FiskistofaFooter } from './Themes/FiskistofaTheme'
-import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme'
-import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
-import { RikislogmadurHeader } from './Themes/RikislogmadurTheme'
-import { RikislogmadurFooter } from './Themes/RikislogmadurTheme'
-import { LandskjorstjornHeader } from './Themes/LandkjorstjornTheme'
 import {
-  FjarsyslaRikisinsHeader,
   FjarsyslaRikisinsFooter,
+  FjarsyslaRikisinsHeader,
 } from './Themes/FjarsyslaRikisinsTheme'
-import { HeilbrigdisstofnunSudurlandsFooter } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
-import { HeilbrigdisstofnunSudurlandsHeader } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
-import {
-  TryggingastofnunFooter,
-  TryggingastofnunHeader,
-} from './Themes/TryggingastofnunTheme'
-import { SAkFooter, SAkHeader } from './Themes/SAkTheme'
 import { GevFooter, GevHeader } from './Themes/GevTheme'
-import { HveHeader, HveFooter } from './Themes/HveTheme'
-import { ShhFooter, ShhHeader } from './Themes/SHHTheme'
 import {
   HeilbrigdisstofnunAusturlandsFooter,
   HeilbrigdisstofnunAusturlandsHeader,
 } from './Themes/HeilbrigdisstofnunAusturlandsTheme'
+import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/HeilbrigdisstofnunNordurlandsTheme'
+import { HeilbrigdisstofnunNordurlandsFooter } from './Themes/HeilbrigdisstofnunNordurlandsTheme'
+import { HeilbrigdisstofnunSudurlandsFooter } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
+import { HeilbrigdisstofnunSudurlandsHeader } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
+import { HmsHeader } from './Themes/HmsTheme'
+import { HveFooter, HveHeader } from './Themes/HveTheme'
+import {
+  IcelandicNaturalDisasterInsuranceFooter,
+  IcelandicNaturalDisasterInsuranceHeader,
+} from './Themes/IcelandicNaturalDisasterInsuranceTheme'
+import { IcelandicRadiationSafetyAuthorityHeader } from './Themes/IcelandicRadiationSafetyAuthority'
+import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme'
+import { LandskjorstjornHeader } from './Themes/LandkjorstjornTheme'
+import { LandlaeknirFooter } from './Themes/LandlaeknirTheme'
+import { LandlaeknirHeader } from './Themes/LandlaeknirTheme'
+import { MannaudstorgFooter } from './Themes/MannaudstorgTheme'
+import { RettindagaeslaFatladsFolksHeader } from './Themes/RettindagaeslaFatladsFolksTheme'
+import { RikislogmadurHeader } from './Themes/RikislogmadurTheme'
+import { RikislogmadurFooter } from './Themes/RikislogmadurTheme'
+import { RikissaksoknariHeader } from './Themes/RikissaksoknariTheme'
+import { SAkFooter, SAkHeader } from './Themes/SAkTheme'
+import { ShhFooter, ShhHeader } from './Themes/SHHTheme'
+import {
+  SjukratryggingarFooter,
+  SjukratryggingarHeader,
+} from './Themes/SjukratryggingarTheme'
+import { SyslumennFooter, SyslumennHeader } from './Themes/SyslumennTheme'
+import { TransportAuthorityHeader } from './Themes/TransportAuthorityTheme'
+import {
+  TryggingastofnunFooter,
+  TryggingastofnunHeader,
+} from './Themes/TryggingastofnunTheme'
 import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
 import {
-  IcelandicNaturalDisasterInsuranceHeader,
-  IcelandicNaturalDisasterInsuranceFooter,
-} from './Themes/IcelandicNaturalDisasterInsuranceTheme'
-import { TransportAuthorityHeader } from './Themes/TransportAuthorityTheme'
-import { RettindagaeslaFatladsFolksHeader } from './Themes/RettindagaeslaFatladsFolksTheme'
-import { HmsHeader } from './Themes/HmsTheme'
-import { RikissaksoknariHeader } from './Themes/RikissaksoknariTheme'
-
+  UtlendingastofnunFooter,
+  UtlendingastofnunHeader,
+} from './Themes/UtlendingastofnunTheme'
+import { liveChatIncConfig, watsonConfig } from './config'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -540,6 +541,21 @@ export const OrganizationFooter: React.FC<
         />
       )
       break
+    case 'rettindagaesla-fatlads-folks':
+    case 'disability-rights-protection':
+      OrganizationFooterComponent = (
+        <>
+          <WebFooter
+            imageUrl={organization.logo?.url}
+            heading={organization.title}
+            columns={organization.footerItems}
+            background={organization?.footerConfig?.background}
+            color={organization?.footerConfig?.color}
+          />
+          <Divider />
+        </>
+      )
+      break
     default: {
       const footerItems = organization?.footerItems ?? []
       if (footerItems.length === 0) break
@@ -887,6 +903,7 @@ export const OrganizationWrapper: React.FC<
                   <Box
                     className="rs_read"
                     paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}
+                    paddingBottom={6}
                   >
                     <Text variant="default">{pageDescription}</Text>
                   </Box>

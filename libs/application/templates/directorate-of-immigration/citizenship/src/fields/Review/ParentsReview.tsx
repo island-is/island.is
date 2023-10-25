@@ -32,7 +32,6 @@ export const ParentsReview: FC<Props> = ({
         />
         <GridRow>
           {answers?.parentInformation?.parents &&
-            answers?.parentInformation?.parents?.length > 0 &&
             answers?.parentInformation?.parents?.map((parent) => {
               if (parent.wasRemoved === 'false') {
                 return (
@@ -42,7 +41,7 @@ export const ParentsReview: FC<Props> = ({
                     </Text>
                   </GridColumn>
                 )
-              } else return
+              } else return null
             })}
         </GridRow>
       </Box>

@@ -48,9 +48,7 @@ const CourtOfAppealCases = () => {
         <AppealCasesTable
           loading={loading}
           onRowClick={(id) => {
-            getCaseToOpen({
-              variables: { input: { id } },
-            })
+            getCaseToOpen(id)
           }}
           cases={
             appealedCasesData?.filter(
@@ -63,9 +61,7 @@ const CourtOfAppealCases = () => {
       <AppealCasesTable
         loading={loading}
         onRowClick={(id) => {
-          getCaseToOpen({
-            variables: { input: { id } },
-          })
+          getCaseToOpen(id)
         }}
         cases={
           appealedCasesData?.filter(

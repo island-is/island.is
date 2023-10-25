@@ -1,7 +1,6 @@
 import React, { ReactNode, useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
-import formatISO from 'date-fns/formatISO'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
 
@@ -20,7 +19,6 @@ import {
   CaseDecision,
   CaseState,
   CaseTransition,
-  Feature,
   isCourtRole,
   isInvestigationCase,
   isProsecutionRole,
@@ -42,7 +40,6 @@ import {
   CommentsAccordionItem,
   Conclusion,
   CourtRecordAccordionItem,
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -78,7 +75,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
-import AppealSection from './Components/AppealSection/AppealSection'
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
 import ReopenModal from './Components/ReopenModal/ReopenModal'
@@ -163,7 +159,7 @@ export const getExtensionInfoText = (
 
   return rejectReason === 'none'
     ? undefined
-    : formatMessage(m.sections.caseExtension.extensionInfoV2, {
+    : formatMessage(m.sections.caseExtension.extensionInfo, {
         hasChildCase: Boolean(workingCase.childCase),
         caseType: workingCase.type,
         rejectReason,
@@ -212,7 +208,6 @@ export const SignedVerdictOverview: React.FC = () => {
     setModalVisible('SigningModal'),
   )
   const { user } = useContext(UserContext)
-  const { features } = useContext(FeatureContext)
   const router = useRouter()
   const { formatMessage } = useIntl()
   const {
@@ -341,58 +336,6 @@ export const SignedVerdictOverview: React.FC = () => {
     })
   }
 
-  const setAccusedAppealDate = (date?: Date) => {
-    if (workingCase && date) {
-      setWorkingCase({
-        ...workingCase,
-        accusedPostponedAppealDate: formatISO(date),
-      })
-
-      updateCase(workingCase.id, {
-        accusedPostponedAppealDate: formatISO(date),
-      })
-    }
-  }
-
-  const setProsecutorAppealDate = (date?: Date) => {
-    if (workingCase && date) {
-      setWorkingCase({
-        ...workingCase,
-        prosecutorPostponedAppealDate: formatISO(date),
-      })
-
-      updateCase(workingCase.id, {
-        prosecutorPostponedAppealDate: formatISO(date),
-      })
-    }
-  }
-
-  const withdrawAccusedAppealDate = () => {
-    if (workingCase) {
-      setWorkingCase({
-        ...workingCase,
-        accusedPostponedAppealDate: undefined,
-      })
-
-      updateCase(workingCase.id, {
-        accusedPostponedAppealDate: null as unknown as string,
-      })
-    }
-  }
-
-  const withdrawProsecutorAppealDate = () => {
-    if (workingCase) {
-      setWorkingCase({
-        ...workingCase,
-        prosecutorPostponedAppealDate: undefined,
-      })
-
-      updateCase(workingCase.id, {
-        prosecutorPostponedAppealDate: null as unknown as string,
-      })
-    }
-  }
-
   const shareCaseWithAnotherInstitution = (
     institution?: SingleValue<ReactSelectOption>,
   ) => {
@@ -482,16 +425,11 @@ export const SignedVerdictOverview: React.FC = () => {
 
   return (
     <>
-      {features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) &&
-        shouldDisplayAlertBanner && (
-          <AlertBanner
-            variant="warning"
-            title={title}
-            description={description}
-          >
-            {child}
-          </AlertBanner>
-        )}
+      {shouldDisplayAlertBanner && (
+        <AlertBanner variant="warning" title={title} description={description}>
+          {child}
+        </AlertBanner>
+      )}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
@@ -548,7 +486,7 @@ export const SignedVerdictOverview: React.FC = () => {
             <Box marginBottom={5}>
               <AlertMessage
                 type="info"
-                title={formatMessage(m.sections.modifyDatesInfo.titleV3, {
+                title={formatMessage(m.sections.modifyDatesInfo.title, {
                   caseType: workingCase.type,
                 })}
                 message={
@@ -673,24 +611,6 @@ export const SignedVerdictOverview: React.FC = () => {
               }
             />
           </Box>
-          {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
-            workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
-            workingCase.prosecutorAppealDecision ===
-              CaseAppealDecision.POSTPONE ||
-            workingCase.prosecutorAppealDecision ===
-              CaseAppealDecision.APPEAL) &&
-            user?.role &&
-            isCourtRole(user.role) && (
-              <Box marginBottom={7}>
-                <AppealSection
-                  workingCase={workingCase}
-                  setAccusedAppealDate={setAccusedAppealDate}
-                  setProsecutorAppealDate={setProsecutorAppealDate}
-                  withdrawAccusedAppealDate={withdrawAccusedAppealDate}
-                  withdrawProsecutorAppealDate={withdrawProsecutorAppealDate}
-                />
-              </Box>
-            )}
           {user?.role !== UserRole.PRISON_SYSTEM_STAFF && (
             <Box marginBottom={5} data-testid="accordionItems">
               <Accordion>

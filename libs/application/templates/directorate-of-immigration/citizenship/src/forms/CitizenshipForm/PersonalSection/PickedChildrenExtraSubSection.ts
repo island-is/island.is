@@ -5,14 +5,12 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { selectChildren } from '../../../lib/messages'
-import * as kennitala from 'kennitala'
-import { ApplicantChildCustodyInformation } from '@island.is/application/types'
 import { Routes } from '../../../lib/constants'
 
 export const PickChildrenExtraSubSection = buildSubSection({
   id: Routes.PICKCHILDRENEXTRA,
   title: selectChildren.extraInformation.subSectionTitle,
-  condition: (answers, externalData) => {
+  condition: (answers) => {
     const childWithInfo = getValueViaPath(
       answers,
       'selectedChildren',

@@ -1,5 +1,5 @@
 import { User } from '@island.is/auth/react'
-import { ActiveDocumentType } from '../screens/Overview/Overview'
+import { ActiveDocumentType } from '../lib/types'
 
 export const downloadFile = async (doc: ActiveDocumentType, userInfo: User) => {
   let html: string | undefined = undefined

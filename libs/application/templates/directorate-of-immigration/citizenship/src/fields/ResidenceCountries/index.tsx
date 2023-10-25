@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Button, Option } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import { ResidenceCountriesRepeaterItem } from './ResidenceCountriesRepeaterItem'
 import { CountryOfResidence } from '../../shared'
 import {
@@ -23,6 +23,7 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
     getValueViaPath(
       application.answers,
       'countriesOfResidence.hasLivedAbroad',
+      '',
     ) as string,
   )
 
@@ -41,7 +42,6 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
   )
 
   useEffect(() => {
-    console.log('selectedCountries', selectedCountries)
     setFilteredSelectedCountries(
       selectedCountries.filter((x) => x.wasRemoved !== 'true'),
     )

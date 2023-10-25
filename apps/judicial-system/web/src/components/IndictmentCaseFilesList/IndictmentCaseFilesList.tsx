@@ -64,7 +64,7 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
 ) => {
   const { workingCase } = props
   const { formatMessage } = useIntl()
-  const { user, limitedAccess } = useContext(UserContext)
+  const { user } = useContext(UserContext)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
   })
@@ -137,7 +137,7 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
               <PdfButton
                 caseId={workingCase.id}
                 title={formatMessage(caseFiles.trafficViolationIndictmentTitle)}
-                pdfType={`${limitedAccess ? 'limitedAccess/' : ''}indictment`}
+                pdfType={'indictment'}
                 renderAs="row"
               />
             </Box>
@@ -195,9 +195,7 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
                 title={formatMessage(strings.caseFileButtonText, {
                   policeCaseNumber,
                 })}
-                pdfType={`${
-                  limitedAccess ? 'limitedAccess/' : ''
-                }caseFilesRecord`}
+                pdfType={'caseFilesRecord'}
                 policeCaseNumber={policeCaseNumber}
                 renderAs="row"
               />
