@@ -213,4 +213,3 @@ globalStyle(`${base} mark`, {
   color: theme.color.dark400,
   fontWeight: theme.typography.regular,
 })
-
