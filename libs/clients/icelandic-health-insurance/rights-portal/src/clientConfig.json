@@ -1065,6 +1065,17 @@
         }
       }
     },
+    "/v1/healthcheck": {
+      "get": {
+        "tags": ["healthcheck"],
+        "operationId": "HealthCheck",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/v1/overview/insurance": {
       "get": {
         "tags": ["overview"],
@@ -1803,6 +1814,22 @@
             "nullable": true
           },
           "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "practice": {
+            "type": "string",
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
             "type": "string",
             "nullable": true
           },

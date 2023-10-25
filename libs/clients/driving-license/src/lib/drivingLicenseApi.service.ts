@@ -189,6 +189,7 @@ export class DrivingLicenseApi {
       ...license,
       id: license.id ?? -1,
       name: license.name ?? '',
+      publishPlaceName: license.publishPlaceName,
       categories:
         license.categories?.map((category) => {
           return {

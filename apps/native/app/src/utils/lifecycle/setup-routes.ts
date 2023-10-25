@@ -350,7 +350,7 @@ export function setupRoutes() {
     });
   });
 
-  addRoute('/inbox/:docId', async ({docId, title}: any) => {
+  addRoute('/inbox/:docId', async passProps => {
     selectTab(0);
 
     // ensure INBOX_SCREEN doesn't already have same screen with same componentId etc.
@@ -359,10 +359,19 @@ export function setupRoutes() {
     await Navigation.push(StackRegistry.InboxStack, {
       component: {
         name: ComponentRegistry.DocumentDetailScreen,
-        passProps: {
-          docId,
-        },
+        passProps,
         options: DocumentDetailScreen.options as Options,
+      },
+    });
+  });
+
+  addRoute('/inbox-filter', async passProps => {
+    selectTab(0);
+    await Navigation.popToRoot(StackRegistry.InboxStack);
+    await Navigation.push(StackRegistry.InboxStack, {
+      component: {
+        name: ComponentRegistry.InboxFilterScreen,
+        passProps,
       },
     });
   });
