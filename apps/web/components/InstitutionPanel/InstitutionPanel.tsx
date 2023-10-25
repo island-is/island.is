@@ -1,13 +1,14 @@
+import React from 'react'
+
 import {
   Box,
-  Text,
+  BoxProps,
   Hyphen,
   HyphenProps,
   Link,
   LinkProps,
-  BoxProps,
+  Text,
 } from '@island.is/island-ui/core'
-import React from 'react'
 
 interface InstitutionPanelProps {
   img?: string
