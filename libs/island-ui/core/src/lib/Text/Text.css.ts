@@ -213,3 +213,12 @@ globalStyle(`${base} mark`, {
   color: theme.color.dark400,
   fontWeight: theme.typography.regular,
 })
+
+globalStyle(`${base} a svg path`, {
+  transition: 'fill .2s, box-shadow .2s',
+  fill: theme.color.blue400,
+})
+
+globalStyle(`${base} a:hover svg path`, {
+  fill: theme.color.blueberry400,
+})
