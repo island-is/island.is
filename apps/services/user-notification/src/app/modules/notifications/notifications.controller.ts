@@ -177,5 +177,4 @@ export class NotificationsController {
   // ): Promise<Notification[]> {
   //   return userProfileId
   // }
-  
 }
