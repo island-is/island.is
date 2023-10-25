@@ -640,11 +640,11 @@ export const messages = defineMessages({
     defaultMessage: 'Lyfjakaup þrepstaða',
   },
   medicinePurchaseIntroTitle: {
-    id: 'sp.health:medicine-purchase-title',
+    id: 'sp.health:medicine-purchase-intro-title',
     defaultMessage: 'Þrepastaða þín',
   },
   medicinePurchaseIntroText: {
-    id: 'sp.health:medicine-purchase-intro',
+    id: 'sp.health:medicine-purchase-intro-text',
     defaultMessage:
       'Greiðsluþátttökukerfið vegna lyfjakaupa byggir á þrepaskiptri greiðsluþátttöku þar sem hver einstaklingur greiðir hlutfallslega minna eftir því sem lyfjakostnaður hans eykst innan tólf mánaða tímabils. Tólf mánaða greiðslutímabil hefst við fyrstu lyfjakaup eftir að seinna tólf mánaða tímabili lýkur.',
   },
