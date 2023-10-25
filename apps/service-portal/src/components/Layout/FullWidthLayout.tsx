@@ -119,6 +119,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
                           ? formatMessage(activeParent.description)
                           : undefined
                       }
+                      backgroundColor="white"
                     />
                   </GridColumn>
                 </GridRow>
