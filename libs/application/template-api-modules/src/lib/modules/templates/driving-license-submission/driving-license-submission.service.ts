@@ -174,7 +174,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       }
       return this.drivingLicenseService.newTemporaryDrivingLicense(
         nationalId,
-        auth.authorization.split(' ')[1] ?? '',
+        auth.authorization.replace('Bearer ', ''),
         {
           jurisdictionId: jurisdictionId as number,
           needsToPresentHealthCertificate: needsHealthCert,

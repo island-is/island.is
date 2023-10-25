@@ -67,7 +67,5 @@ export const PostTemporaryLicenseWithHealthDeclarationMapper = (
     }
   }
 
-  console.log(mappedAnswers)
-
   return mappedAnswers
 }
