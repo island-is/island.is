@@ -436,6 +436,7 @@
       "@island.is/application/ui-shell": [
         "libs/application/ui-shell/src/index.ts"
       ],
+      "@island.is/application/utils": ["libs/application/utils/src/index.ts"],
       "@island.is/auth-api-lib": ["libs/auth-api-lib/src/index.ts"],
       "@island.is/auth-nest-tools": ["libs/auth-nest-tools/src/index.ts"],
       "@island.is/auth/react": ["libs/auth/react/src/index.ts"],
@@ -552,6 +553,7 @@
       "@island.is/clients/national-registry-v3": [
         "libs/clients/national-registry/v3/src/index.ts"
       ],
+      "@island.is/clients/p-card": ["libs/clients/p-card/src/index.ts"],
       "@island.is/clients/passports": ["libs/clients/passports/src/index.ts"],
       "@island.is/clients/payment-schedule": [
         "libs/clients/payment-schedule/src/index.ts"

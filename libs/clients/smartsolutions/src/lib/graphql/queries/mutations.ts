@@ -1,6 +1,6 @@
 export const VOID_PASS = `
-  mutation VoidPass($id: String!) {
-    voidPass(id: $id)
+  mutation VoidPass($passTemplateId: String!, $values: [PassInputFieldValueDataInput!]! ) {
+    voidUniquePass(passTemplateId: $passTemplateId, values: $values )
   }
 `
 
@@ -11,8 +11,8 @@ export const UNVOID_PASS = `
 `
 
 export const DELETE_PASS = `
-  mutation DeletePass($id: String!) {
-    deletePass(id: $id)
+  mutation DeletePass($passTemplateId: String!, $values: [PassInputFieldValueDataInput!]! ) {
+    deleteUniquePass(passTemplateId: $passTemplateId, values: $values)
   }
 `
 
@@ -36,6 +36,29 @@ export const UPSERT_PASS = `
       distributionUrl
       deliveryPageUrl
       distributionQRCode
+      id
+      expirationDate
+      whenCreated
+      whenModified
+    }
+  }
+`
+
+export const UPDATE_PASS = `
+  mutation UPDATE_PASS($passTemplateId: String!, $expirationDate: String, $thumbnail: ImageDataInput, $values: [PassInputFieldValueDataInput!] ) {
+    updatePass(
+      expirationDate: $expirationDate
+      passTemplateId: $passTemplateId
+      thumbnail: $thumbnail
+      values: $values
+    ) {
+      distributionUrl
+      deliveryPageUrl
+      distributionQRCode
+      id
+      expirationDate
+      whenCreated
+      whenModified
     }
   }
 `

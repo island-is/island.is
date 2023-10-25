@@ -6,7 +6,6 @@ import {
   GridColumn,
   Tabs,
   BreadcrumbsDeprecated as Breadcrumbs,
-  Icon,
   Button,
 } from '@island.is/island-ui/core'
 import { m, ModuleAlertBannerSection } from '@island.is/service-portal/core'
@@ -120,6 +119,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
                           ? formatMessage(activeParent.description)
                           : undefined
                       }
+                      backgroundColor="white"
                     />
                   </GridColumn>
                 </GridRow>
@@ -145,6 +145,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
                       content: children,
                     }))}
                     contentBackground="white"
+                    onlyRenderSelectedTab
                   />
                 </GridColumn>
               </GridRow>
