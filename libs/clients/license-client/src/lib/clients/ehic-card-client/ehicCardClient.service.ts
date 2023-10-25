@@ -14,7 +14,6 @@ import {
 export class EhicClient implements LicenseClient<BasicCardInfoDTO> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private readonly userProfileApi: UserProfileApi,
     private ehicApi: EhicApi,
   ) {}
   clientSupportsPkPass = false

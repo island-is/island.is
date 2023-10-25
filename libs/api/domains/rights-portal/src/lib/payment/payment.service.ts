@@ -2,7 +2,10 @@ import { Inject, Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { PaymentApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
+import {
+  PaymentApi,
+  PaymentOverviewDTO,
+} from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { CopaymentStatus } from './models/copaymentStatus.model'
 import { CopaymentPeriod } from './models/copaymentPeriod.model'
 import { CopaymentBill } from './models/copaymentBill.model'
@@ -56,7 +59,10 @@ export class PaymentService {
     try {
       const data = await this.api
         .withMiddleware(new AuthMiddleware(user as Auth))
-        .getCopaymentPeriods()
+        .getCopaymentPeriods({
+          dateFrom: new Date().toISOString(),
+          dateTo: new Date().toISOString(),
+        })
         .catch(handle404)
 
       return {
@@ -93,13 +99,16 @@ export class PaymentService {
     }
   }
 
-  async getPaymentOverviewStatus(
+  private async fetchPaymentOverview(
     user: User,
-  ): Promise<PaymentResponse<PaymentOverviewStatus>> {
+  ): Promise<PaymentResponse<PaymentOverviewDTO>> {
     try {
       const data = await this.api
         .withMiddleware(new AuthMiddleware(user as Auth))
-        .getPaymentOverviewStatus()
+        .getPaymentOverview({
+          dateFrom: new Date().toISOString(),
+          dateTo: new Date().toISOString(),
+        })
         .catch(handle404)
 
       return {
@@ -114,17 +123,36 @@ export class PaymentService {
     }
   }
 
+  async getPaymentOverviewStatus(
+    user: User,
+  ): Promise<PaymentResponse<PaymentOverviewStatus>> {
+    try {
+      const data = await this.fetchPaymentOverview(user)
+
+      const payment = data?.items?.[0]
+
+      return {
+        items: payment ? [payment] : [],
+        errors: [],
+      }
+    } catch (error) {
+      return {
+        items: [],
+        errors: [{ status: PaymentErrorStatus.INTERNAL_SERVICE_ERROR }],
+      }
+    }
+  }
+
   async getPaymentOverviewBills(
     user: User,
   ): Promise<PaymentResponse<PaymentOverviewBill>> {
     try {
-      const data = await this.api
-        .withMiddleware(new AuthMiddleware(user as Auth))
-        .getPaymentOverviewBills()
-        .catch(handle404)
+      const data = await this.fetchPaymentOverview(user)
+
+      const payment = data?.items?.[0]
 
       return {
-        items: data ? data : [],
+        items: payment.bills ? [...payment.bills] : [],
         errors: [],
       }
     } catch (error) {

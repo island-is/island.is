@@ -15,4 +15,5 @@ export {
   DrugApi,
   OverviewApi,
   PaymentApi,
+  PaymentOverviewDTO,
 } from '../gen/fetch'

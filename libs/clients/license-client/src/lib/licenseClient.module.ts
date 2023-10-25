@@ -25,7 +25,7 @@ import {
   DrivingLicenseClient,
 } from './clients/driving-license-client'
 import { PCardClient, PCardModule } from './clients/p-card-client'
-import { EhicClient } from './clients/ehic-card-client'
+import { EhicClient, EhicModule } from './clients/ehic-card-client'
 
 @Module({
   imports: [
@@ -35,6 +35,7 @@ import { EhicClient } from './clients/ehic-card-client'
     DisabilityClientModule,
     DrivingClientModule,
     PCardModule,
+    EhicModule,
   ],
   providers: [
     LicenseClientService,
