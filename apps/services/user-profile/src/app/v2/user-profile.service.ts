@@ -9,8 +9,8 @@ import { UserProfileDto } from './dto/user-profileDto'
 import { PatchUserProfileDto } from './dto/patch-user-profileDto'
 import { VerificationService } from '../user-profile/verification.service'
 import { UserProfile } from '../user-profile/userProfile.model'
-import { IslykillService } from './islykill.service'
 import { Sequelize } from 'sequelize-typescript'
+import { IslykillService } from './islykill.service'
 
 @Injectable()
 export class UserProfileService {
@@ -144,7 +144,7 @@ export class UserProfileService {
         { transaction },
       )
 
-      await this.islykillService.updateIslykillSettings({
+      await this.islykillService.upsertIslykillSettings({
         nationalId,
         phoneNumber: parsedPhoneNumber,
         email: userProfile.email,
