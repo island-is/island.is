@@ -11,7 +11,7 @@ export const organizationColumn = style({
   display: 'none',
   ...themeUtils.responsiveStyle({
     md: {
-      display: 'table-cell'
+      display: 'table-cell',
     },
   }),
 })
@@ -19,4 +19,3 @@ export const organizationColumn = style({
 export const readMoreColumn = style({
   whiteSpace: 'nowrap',
 })
-

@@ -6,13 +6,18 @@ import {
   type FilterMultiChoiceProps,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { parseAsArrayOf, parseAsString, useQueryStates } from 'next-usequerystate'
+import {
+  parseAsArrayOf,
+  parseAsString,
+  useQueryStates,
+} from 'next-usequerystate'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { GlobalContext } from '@island.is/web/context'
 import type { TagCount } from '@island.is/web/graphql/schema'
 
-type SearchableTagsFilterCategories = FilterMultiChoiceProps['categories'];
-type SearchableTagsFilterItems = FilterMultiChoiceProps['categories'][number]['filters'];
+type SearchableTagsFilterCategories = FilterMultiChoiceProps['categories']
+type SearchableTagsFilterItems =
+  FilterMultiChoiceProps['categories'][number]['filters']
 
 type SearchableTagsFilterProps = {
   resultCount: number
@@ -20,11 +25,11 @@ type SearchableTagsFilterProps = {
 }
 
 const SearchableTagsFilter: FC<SearchableTagsFilterProps> = (props) => {
-  const { resultCount, tags = [] } = props;
+  const { resultCount, tags = [] } = props
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(globalNamespace)
   const { width } = useWindowSize()
-  const { category, organization, setValue, reset } = useSearchableTagsFilter();
+  const { category, organization, setValue, reset } = useSearchableTagsFilter()
   const labelClear = n('filterClear', 'Hreinsa síu')
 
   const categories: SearchableTagsFilterCategories = [
@@ -33,15 +38,15 @@ const SearchableTagsFilter: FC<SearchableTagsFilterProps> = (props) => {
       label: n('serviceCategories', 'Þjónustuflokkar'),
       singleOption: true,
       filters: filtersFromTags(tags, 'category'),
-      selected: category
+      selected: category,
     },
     {
       id: 'organization',
       label: n('organizations', 'Opinberir aðilar'),
       singleOption: true,
       filters: filtersFromTags(tags, 'organization'),
-      selected: organization
-    }
+      selected: organization,
+    },
   ]
 
   return (
@@ -69,7 +74,7 @@ const SearchableTagsFilter: FC<SearchableTagsFilterProps> = (props) => {
 }
 
 function filtersFromTags(tags: TagCount[], category: string) {
-  return (tags)
+  return tags
     .filter((x) => x.value.trim() && x.type === category)
     .map(({ key, value }) => ({
       label: value,
@@ -78,10 +83,13 @@ function filtersFromTags(tags: TagCount[], category: string) {
 }
 
 function useSearchableTagsFilter() {
-  const [filter, setFilter] = useQueryStates({
-    category: parseAsArrayOf(parseAsString).withDefault([]),
-    organization: parseAsArrayOf(parseAsString).withDefault([]),
-  }, { shallow: false })
+  const [filter, setFilter] = useQueryStates(
+    {
+      category: parseAsArrayOf(parseAsString).withDefault([]),
+      organization: parseAsArrayOf(parseAsString).withDefault([]),
+    },
+    { shallow: false },
+  )
   const { category, organization } = filter
 
   const setValue = (key: string, value: string | string[] | null) => {
@@ -96,7 +104,6 @@ function useSearchableTagsFilter() {
   }
 
   return { category, organization, reset, setValue }
-
 }
 
 export { SearchableTagsFilter, useSearchableTagsFilter }

@@ -34,7 +34,7 @@ import {
   type GetSearchCountTagsQuery,
   type QuerySearchResultsArgs,
   type ContentLanguage,
-  type  QueryGetNamespaceArgs,
+  type QueryGetNamespaceArgs,
   type GetNamespaceQuery,
   type Article,
 } from '@island.is/web/graphql/schema'
@@ -51,7 +51,7 @@ import {
   parseAsInteger,
   parseAsArrayOf,
 } from 'next-usequerystate'
-import type { ApplicationsTexts } from './Applications.types';
+import type { ApplicationsTexts } from './Applications.types'
 
 import * as styles from './Applications.css'
 
@@ -70,13 +70,13 @@ const Applications: Screen<CategoryProps> = ({
   countResults,
   namespace,
 }) => {
-  const { query } = useRouter();
+  const { query } = useRouter()
   const { globalNamespace } = useContext(GlobalContext)
   const gn = useNamespace(globalNamespace)
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const { reset: resetFilters } = useSearchableTagsFilter()
-  const { reset: resetFilterInput } = useQueryFilter();
+  const { reset: resetFilterInput } = useQueryFilter()
 
   const articles = searchResults.items as Article[]
   const nothingFound = searchResults.items.length === 0
@@ -95,15 +95,15 @@ const Applications: Screen<CategoryProps> = ({
       </Head>
       <GridContainer>
         <GridRow>
-          <GridColumn
-            span={['12/12']}
-            paddingBottom={6}
-          >
+          <GridColumn span={['12/12']} paddingBottom={6}>
             <Text variant="h1" as="h2" marginBottom={2}>
               {n('pageTitle', 'Umsóknir á Ísland.is')}
             </Text>
             <Text variant="intro" as="p" marginBottom={8}>
-              {n('pageBody', 'Hér getur þú fundið allar umsóknir island.is á einum stað.')}
+              {n(
+                'pageBody',
+                'Hér getur þú fundið allar umsóknir island.is á einum stað.',
+              )}
             </Text>
             <Inline
               justifyContent="flexEnd"
@@ -127,7 +127,12 @@ const Applications: Screen<CategoryProps> = ({
                       'Finnurðu ekki það sem þig vantar?',
                     )}
                   </Text>
-                  <Button variant="text" onClick={handleCLearAllFilter} icon="reload" nowrap>
+                  <Button
+                    variant="text"
+                    onClick={handleCLearAllFilter}
+                    icon="reload"
+                    nowrap
+                  >
                     {gn('filterClearAll', 'Hreinsa allar síur')}
                   </Button>
                 </>
@@ -135,46 +140,62 @@ const Applications: Screen<CategoryProps> = ({
                 <T.Table>
                   <T.Head>
                     <T.Row>
-                      <T.HeadData text={{ variant: "small" }}>{n('applicationName', 'Heiti umsóknar')}</T.HeadData>
-                      <T.HeadData text={{ variant: "small" }} box={{ className: styles.organizationColumn }}>{n('organization', 'Þjónustuaðili')}</T.HeadData>
+                      <T.HeadData text={{ variant: 'small' }}>
+                        {n('applicationName', 'Heiti umsóknar')}
+                      </T.HeadData>
+                      <T.HeadData
+                        text={{ variant: 'small' }}
+                        box={{ className: styles.organizationColumn }}
+                      >
+                        {n('organization', 'Þjónustuaðili')}
+                      </T.HeadData>
                       <T.HeadData></T.HeadData>
                     </T.Row>
                   </T.Head>
                   <T.Body>
-                    {articles.map(
-                      (article, index) => (
-                        <T.Row key={index}>
-                          <T.Data text={{ variant: "h5" }}>
-                            {article.title}
-                          </T.Data>
-                          <T.Data text={{ variant: "default" }} box={{ className: styles.organizationColumn }}>
-                            <Inline
-                              justifyContent="flexStart"
-                              alignY="center"
-                              space={2}
-                              flexWrap="nowrap"
+                    {articles.map((article, index) => (
+                      <T.Row key={index}>
+                        <T.Data text={{ variant: 'h5' }}>
+                          {article.title}
+                        </T.Data>
+                        <T.Data
+                          text={{ variant: 'default' }}
+                          box={{ className: styles.organizationColumn }}
+                        >
+                          <Inline
+                            justifyContent="flexStart"
+                            alignY="center"
+                            space={2}
+                            flexWrap="nowrap"
+                          >
+                            <Box className={styles.organizationLogo}>
+                              <BackgroundImage
+                                width={60}
+                                backgroundSize="contain"
+                                image={{ ...article.organization?.[0]?.logo }}
+                                format="png"
+                              />
+                            </Box>
+                            {article.organization?.[0]?.title}
+                          </Inline>
+                        </T.Data>
+                        <T.Data align="right">
+                          <Link
+                            {...linkResolver('article', [article.slug])}
+                            skipTab
+                          >
+                            <Button
+                              variant="text"
+                              size="small"
+                              icon="arrowForward"
+                              nowrap
                             >
-                              <Box className={styles.organizationLogo}>
-                                <BackgroundImage
-                                  width={60}
-                                  backgroundSize="contain"
-                                  image={{ ...article.organization?.[0]?.logo }}
-                                  format="png"
-                                />
-                              </Box>
-                              {article.organization?.[0]?.title}
-                            </Inline>
-                          </T.Data>
-                          <T.Data align="right">
-                            <Link {...linkResolver('article', [article.slug])} skipTab>
-                              <Button variant="text" size="small" icon="arrowForward" nowrap>
-                                {gn('readMore', 'Sjá nánar')}
-                              </Button>
-                            </Link>
-                          </T.Data>
-                        </T.Row>
-                      ),
-                    )}
+                              {gn('readMore', 'Sjá nánar')}
+                            </Button>
+                          </Link>
+                        </T.Data>
+                      </T.Row>
+                    ))}
                   </T.Body>
                 </T.Table>
               )}
@@ -212,12 +233,16 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
     page: pageParam = '1',
     category: categoryParam,
     organization: organizationParam,
-  } = query;
+  } = query
   const queryString = parseAsString.withDefault('*').parseServerSide(q)
   const page = parseAsInteger.withDefault(1).parseServerSide(pageParam)
   const order = SortDirection.Desc
-  const category = parseAsArrayOf(parseAsString).withDefault([]).parseServerSide(categoryParam)
-  const organization = parseAsArrayOf(parseAsString).withDefault([]).parseServerSide(organizationParam)
+  const category = parseAsArrayOf(parseAsString)
+    .withDefault([])
+    .parseServerSide(categoryParam)
+  const organization = parseAsArrayOf(parseAsString)
+    .withDefault([])
+    .parseServerSide(organizationParam)
   const types = [SearchableContentTypes['WebArticle']]
   const tags: TagType[] = [
     ...category.map(

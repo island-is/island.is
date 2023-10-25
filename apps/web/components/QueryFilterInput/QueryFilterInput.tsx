@@ -7,7 +7,7 @@ import { GlobalContext } from '@island.is/web/context'
 const QueryFilterInput: FC = () => {
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(globalNamespace)
-  const { query, setQuery } = useQueryFilter();
+  const { query, setQuery } = useQueryFilter()
   const [value, setValue] = useState<string>('')
 
   const handleKeyDown: FilterInputProps['onKeyDown'] = (event) => {
@@ -15,7 +15,7 @@ const QueryFilterInput: FC = () => {
 
     if (event.key === 'Enter') {
       event.currentTarget.blur()
-      setQuery(value || null);
+      setQuery(value || null)
     }
   }
 
@@ -42,7 +42,6 @@ function useQueryFilter() {
   }
 
   return { query, setQuery, reset }
-
 }
 
 export { QueryFilterInput, useQueryFilter }
