@@ -1,7 +1,4 @@
-import { useEffect, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { FeatureFlagClient } from '@island.is/feature-flags'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import {
   m,
   ErrorScreen,
@@ -19,7 +16,6 @@ import {
   Divider,
   SkeletonLoader,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
 import { messages } from '../../lib/messages'
 import HistoryTable from './HistoryTable'
@@ -141,11 +137,6 @@ const HealthCenter = () => {
       {!loading && !error && healthCenterData?.history && (
         <HistoryTable history={healthCenterData.history} />
       )}
-      <Box marginTop={6}>
-        <Text fontWeight="regular" variant="small">
-          {formatMessage(hm.healthCenterOverviewInfo)}
-        </Text>
-      </Box>
     </Box>
   )
 }
