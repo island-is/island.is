@@ -36,6 +36,16 @@ export const hasSecondGuardian = (
   return !!child?.secondParent
 }
 
+export const needAssignment = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const userHasPassport = (answers.passport as Passport).userPassport !== ''
+  const thereIsSecondGuardian = hasSecondGuardian(answers, externalData)
+
+  return !userHasPassport && thereIsSecondGuardian
+}
+
 export const hasDiscount = (answers: FormValue, externalData: ExternalData) => {
   const isChildPassport = (answers.passport as Passport)?.childPassport !== ''
   const hasDisabilityDiscount =

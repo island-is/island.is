@@ -38,6 +38,12 @@ const estateMemberMapper = (element: EstateMember) => {
   }
 }
 
+export const trueOrHasYes = (element: string | boolean): string => {
+  const elementString = element.toString().toLowerCase()
+  const value = elementString === 'yes' || elementString === 'true'
+  return value.toString()
+}
+
 export const estateTransformer = (estate: EstateInfo): EstateData => {
   const assets = estate.assets.map((el) => estateAssetMapper<EstateAsset>(el))
   const flyers = estate.flyers.map((el) => estateAssetMapper<EstateAsset>(el))
@@ -80,6 +86,7 @@ export const expandAssetFrames = (
       description: assetFrame.description ?? '',
       enabled: assetFrame.enabled ?? true,
       marketValue: assetFrame.marketValue ?? '',
+      share: assetFrame.share ?? '',
     })
   })
 
@@ -111,12 +118,18 @@ export const expandEstateMembers = (
       dateOfBirth: member.dateOfBirth ?? '',
       enabled: member.enabled ?? true,
       email: member.email ?? '',
-      foreignCitizenShip: member.foreignCitizenShip ?? 'no',
       // TODO: investigate better why nationalId and SSN is required
       nationalId: member.nationalId ?? '',
       ssn: member.ssn ?? '',
       phone: member.phone ?? '',
       relation: member.relation ?? 'Óþekkt',
+      advocate: {
+        address: member.advocate?.address ?? '',
+        email: member.advocate?.email ?? '',
+        name: member.advocate?.name ?? '',
+        nationalId: member.advocate?.nationalId ?? '',
+        phone: member.advocate?.phone ?? '',
+      },
     })
   })
   return expandedMembers

@@ -3,7 +3,7 @@ import { style } from '@vanilla-extract/css'
 
 export const link = style({
   display: 'flex',
-  height: 72,
+  minHeight: 72,
   width: '100%',
   ':hover': {
     textDecoration: 'none',

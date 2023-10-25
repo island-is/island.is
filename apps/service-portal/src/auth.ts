@@ -41,6 +41,7 @@ const SERVICE_PORTAL_SCOPES = [
   ApiScope.vehicles,
   ApiScope.health,
   ApiScope.workMachines,
+  ApiScope.health,
 ]
 
 const userMocked = process.env.API_MOCKS === 'true'
