@@ -629,7 +629,7 @@ export const messages = defineMessages({
   medicineTitleIntro: {
     id: 'sp.health:medicine-title-intro',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore aliqua.',
+      'Sjúkratryggingar greiða samkvæmt lyfjaverðskrá í almennum lyfjum á markaði hér á landi. Greiðsla sjúkratryggðs fer eftir þrepastöðu. Lyfjaeining Sjúkratrygginga annast afgreiðslu umsókna um lyfjaskírteini (einstaklingsbundin greiðsluþátttaka)',
   },
   medicinePurchacePeriod: {
     id: 'sp.health:medicine-purchase-period',
@@ -646,7 +646,7 @@ export const messages = defineMessages({
   medicinePurchaseIntroText: {
     id: 'sp.health:medicine-purchase-intro',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore aliqua.',
+      'Greiðsluþátttökukerfið vegna lyfjakaupa byggir á þrepaskiptri greiðsluþátttöku þar sem hver einstaklingur greiðir hlutfallslega minna eftir því sem lyfjakostnaður hans eykst innan tólf mánaða tímabils. Tólf mánaða greiðslutímabil hefst við fyrstu lyfjakaup eftir að seinna tólf mánaða tímabili lýkur.',
   },
   medicineCalculatorTitle: {
     id: 'sp.health:medicine-calculator-title',
