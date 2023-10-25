@@ -12,7 +12,6 @@ import {
 import {
   CaseState,
   completedCaseStates,
-  Feature,
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
@@ -23,7 +22,6 @@ import {
   CaseDates,
   CaseResentExplanation,
   Conclusion,
-  FeatureContext,
   FormContentContainer,
   FormContext,
   InfoCard,
@@ -55,7 +53,6 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
     useContext(FormContext)
 
   const { formatMessage } = useIntl()
-  const { features } = useContext(FeatureContext)
   const { title, description, child } = useAppealAlertBanner(
     workingCase,
     () => setModalVisible('ConfirmAppealAfterDeadline'),
@@ -71,16 +68,11 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   return (
     <>
-      {features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) &&
-        shouldDisplayAlertBanner && (
-          <AlertBanner
-            variant="warning"
-            title={title}
-            description={description}
-          >
-            {child}
-          </AlertBanner>
-        )}
+      {shouldDisplayAlertBanner && (
+        <AlertBanner variant="warning" title={title} description={description}>
+          {child}
+        </AlertBanner>
+      )}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
