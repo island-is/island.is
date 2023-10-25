@@ -1,8 +1,9 @@
-import { style, styleVariants } from '@vanilla-extract/css'
+import { globalStyle, style, styleVariants } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 import { recipe } from '@vanilla-extract/recipes'
 
 export const button = style({})
+export const iconWrap = style({})
 
 export const iconTilted = style({
   transform: 'rotate(45deg)',
@@ -183,4 +184,8 @@ export const showRemoveIcon = style({
 export const hideAddIcon = style({
   transform: 'translateX(-50%) rotateZ(90deg)',
   opacity: 0,
+})
+
+globalStyle(`${button}:focus-visible ${iconWrap}`, {
+  boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
 })
