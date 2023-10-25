@@ -2,8 +2,8 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { useGetInsuranceOverviewQuery } from './HealthOverview.generated'
 import {
   ErrorScreen,
-  ICELAND_ID,
   IntroHeader,
+  SJUKRATRYGGINGAR_ID,
   UserInfoLine,
   m,
 } from '@island.is/service-portal/core'
@@ -12,7 +12,6 @@ import {
   AlertMessage,
   Box,
   Button,
-  LinkV2,
   SkeletonLoader,
   Stack,
   Text,
@@ -76,7 +75,7 @@ export const HealthOverview = () => {
         <IntroHeader
           title={formatMessage(user.profile.name)}
           intro={formatMessage(messages.overviewIntro)}
-          serviceProviderID={ICELAND_ID}
+          serviceProviderID={SJUKRATRYGGINGAR_ID}
         />
       </Box>
       {loading ? (

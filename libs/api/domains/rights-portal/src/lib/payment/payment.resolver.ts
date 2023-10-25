@@ -19,8 +19,7 @@ import { CopaymentStatusResponse } from './models/copaymentStatus.response'
 import { CopaymentPeriodResponse } from './models/copaymentPeriods.response'
 import { CopaymentBillsInput } from './dto/copaymentBills.input'
 import { CopaymentBillResponse } from './models/copaymentBill.response'
-import { PaymentOverviewStatusResponse } from './models/paymentOverviewStatus.response'
-import { PaymentOverviewBillResponse } from './models/paymentOverviewBill.response'
+import { PaymentOverviewResponse } from './models/paymentOverview.response'
 import { PaymentOverviewDocumentResponse } from './models/paymentOverviewDocument.response'
 import { PaymentOverviewDocumentInput } from './dto/paymentOverviewDocument.input'
 import { PeriodInput } from './dto/copaymentPeriod.input'
@@ -73,10 +72,10 @@ export class PaymentResolver {
   })
   @Scopes(ApiScope.health)
   @Audit()
-  async getPaymentOverviewStatus(
+  async getPaymentOverview(
     @CurrentUser() user: User,
     @Args('input') input: PeriodInput,
-  ): Promise<PaymentOverviewStatusResponse> {
+  ): Promise<PaymentOverviewResponse> {
     return await this.service.getPaymentOverview(user, input)
   }
 

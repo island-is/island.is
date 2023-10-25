@@ -15,8 +15,8 @@ query getCopaymentStatus {
   }
 }
 
-query getCopaymentPeriods {
-  rightsPortalCopaymentPeriods {
+query getCopaymentPeriods($input: RightsPortalPeriodInput!) {
+  rightsPortalCopaymentPeriods(input: $input) {
     items {
       id
       status
@@ -49,26 +49,18 @@ query getCopaymentBills($input: RightsPortalCopaymentBillsInput!) {
   }
 }
 
-query getPaymentOverviewStatus {
-  rightsPortalPaymentOverviewStatus {
+query getPaymentOverview($input: RightsPortalPeriodInput!) {
+  rightsPortalPaymentOverview(input: $input) {
     items {
       credit
       debit
-    }
-    errors {
-      status
-    }
-  }
-}
-
-query getPaymentOverviewBills {
-  rightsPortalPaymentOverviewBills {
-    items {
-      date
-      serviceType
-      totalAmount
-      insuranceAmount
-      documentId
+      bills {
+        date
+        serviceType
+        totalAmount
+        insuranceAmount
+        documentId
+      }
     }
     errors {
       status

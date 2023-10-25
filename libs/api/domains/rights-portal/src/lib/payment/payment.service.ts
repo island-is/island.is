@@ -5,7 +5,7 @@ import { CopaymentStatus } from './models/copaymentStatus.model'
 import { CopaymentPeriod } from './models/copaymentPeriod.model'
 import { CopaymentBill } from './models/copaymentBill.model'
 import { PaymentError, PaymentErrorStatus } from './models/paymentError.model'
-import { PaymentOverviewStatus } from './models/paymentOverviewStatus.model'
+import { PaymentOverview } from './models/paymentOverview.model'
 import { PaymentOverviewDocumentInput } from './dto/paymentOverviewDocument.input'
 import { PaymentOverviewDocument } from './models/paymentOverviewDocument.model'
 import { CopaymentBillsInput } from './dto/copaymentBills.input'
@@ -89,7 +89,7 @@ export class PaymentService {
   async getPaymentOverview(
     user: User,
     input: PeriodInput,
-  ): Promise<PaymentResponse<PaymentOverviewStatus>> {
+  ): Promise<PaymentResponse<PaymentOverview>> {
     try {
       const data = await this.api
         .withMiddleware(new AuthMiddleware(user as Auth))

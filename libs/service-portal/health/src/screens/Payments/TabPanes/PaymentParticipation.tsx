@@ -15,14 +15,14 @@ import { CONTENT_GAP, SECTION_GAP } from '../../Medicine/constants'
 import * as styles from './Payments.css'
 import {
   useGetCopaymentStatusQuery,
-  useGetCopaymentPeriodsQuery,
   useGetCopaymentBillsQuery,
+  useGetCopaymentPeriodsQuery,
 } from '../Payments.generated'
 import { useIntl } from 'react-intl'
-
+import sub from 'date-fns/sub'
 export const PaymentPartication = () => {
-  const [startDate, setStartDate] = useState<Date | null>(null)
-  const [endDate, setEndDate] = useState<Date | null>(null)
+  const [startDate, setStartDate] = useState<Date>(new Date())
+  const [endDate, setEndDate] = useState<Date>(sub(new Date(), { years: 5 }))
   const intl = useIntl()
   const [selectedPeriodId, setSelectedPeriodId] = useState<number>(1)
 
@@ -32,7 +32,14 @@ export const PaymentPartication = () => {
     data: periods,
     loading: periodsLoading,
     error: periodsError,
-  } = useGetCopaymentPeriodsQuery()
+  } = useGetCopaymentPeriodsQuery({
+    variables: {
+      input: {
+        dateFrom: startDate.toString(),
+        dateTo: endDate.toString(),
+      },
+    },
+  })
 
   const {
     data: bills,
