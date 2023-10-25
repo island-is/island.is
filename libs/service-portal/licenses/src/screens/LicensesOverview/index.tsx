@@ -95,6 +95,7 @@ export const LicensesOverview = () => {
           GenericLicenseType.FirearmLicense,
           GenericLicenseType.DisabilityLicense,
           GenericLicenseType.PCard,
+          GenericLicenseType.Ehic,
         ],
       },
     },

@@ -20,8 +20,9 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
     locale: Locale = 'is',
     labels?: GenericLicenseLabels,
   ): GenericUserLicensePayload | null {
-    if (!payload) return null
     const typedPayload = payload as BasicCardInfoDTO
+
+    if (!typedPayload || !typedPayload.expiryDate) return null
 
     const expired = typedPayload.expiryDate
       ? !isAfter(new Date(typedPayload.expiryDate?.toISOString()), new Date())
@@ -33,53 +34,44 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
         ? {
             type: GenericLicenseDataFieldType.Value,
             label: getLabel('name', locale, label),
-            value: typedPayload.nafn,
+            value: typedPayload.cardHolder ?? '',
           }
         : null,
-      typedPayload.kennitala
-        ? {
-            type: GenericLicenseDataFieldType.Value,
-            label: getLabel('nationalId', locale, label),
-            value: format(typedPayload.kennitala),
-          }
-        : null,
-      typedPayload.malsnumer
+      typedPayload.cardNumber
         ? {
             type: GenericLicenseDataFieldType.Value,
             label: getLabel('cardNumber', locale, label),
-            value: typedPayload.malsnumer,
+            value: typedPayload.cardNumber,
           }
         : null,
-      typedPayload.utgafudagur
+      typedPayload.issued
         ? {
             type: GenericLicenseDataFieldType.Value,
             label: getLabel('publishedDate', locale, label),
-            value: typedPayload.utgafudagur.toISOString(),
+            value: typedPayload.issued.toISOString(),
           }
         : null,
-      typedPayload.gildistimi
+      typedPayload.expiryDate
         ? {
             type: GenericLicenseDataFieldType.Value,
             label: getLabel('validTo', locale, label),
-            value: typedPayload.gildistimi.toISOString(),
+            value: typedPayload.expiryDate.toISOString(),
           }
         : null,
-      typedPayload.utgefandi
-        ? {
-            type: GenericLicenseDataFieldType.Value,
-            label: getLabel('publisher', locale, label),
-            value: typedPayload.utgefandi,
-          }
-        : null,
+      {
+        type: GenericLicenseDataFieldType.Value,
+        label: getLabel('publisher', locale, label),
+        value: 'Sjúkratryggingar Íslands',
+      },
     ].filter(isDefined)
 
     return {
       data,
       rawData: JSON.stringify(typedPayload),
       metadata: {
-        licenseNumber: typedPayload.malsnumer?.toString() ?? '',
+        licenseNumber: typedPayload.cardNumber?.toString() ?? '',
         expired,
-        expireDate: typedPayload.gildistimi?.toISOString(),
+        expireDate: typedPayload.expiryDate.toISOString(),
       },
     }
   }

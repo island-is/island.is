@@ -82,13 +82,18 @@ export const m = defineMessages({
     id: 'sp.license:p-card',
     defaultMessage: 'P-kort',
   },
-  yourPCard: {
-    id: 'sp.license:your-p-card',
-    defaultMessage: 'P-kort',
-  },
   yourPCardDescription: {
     id: 'sp.license:p-card-description',
     defaultMessage: 'Stæðiskort fyrir hreyfihamlaða',
+  },
+  ehic: {
+    id: 'sp.license:ehic',
+    defaultMessage: 'Evrópska sjúkratryggingakortið',
+  },
+  ehicDescription: {
+    id: 'sp.license:ehic-description',
+    defaultMessage:
+      'Evrópska sjúkratryggingakortið veitir korthafa rétt til heilbrigðisþjónustu í öðrum EES löndum, og Sviss. ',
   },
   expiresIn: {
     id: 'sp.license:expires-in',

@@ -442,6 +442,7 @@ enum LicenseType {
   FirearmLicense = 'FirearmLicense',
   DisabilityLicense = 'DisabilityLicense',
   PCard = 'PCard',
+  Ehic = 'Ehic',
 }
 enum LicenseTypePath {
   okurettindi = 'okurettindi',
@@ -450,6 +451,7 @@ enum LicenseTypePath {
   vinnuvelarettindi = 'vinnuvelarettindi',
   ororkuskirteini = 'ororkuskirteini',
   pcard = 'pkort',
+  ehic = 'ehic',
 }
 enum LicenseProviderId {
   NationalPoliceCommissioner = 'NationalPoliceCommissioner',
@@ -457,6 +459,7 @@ enum LicenseProviderId {
   AdministrationOfOccupationalSafetyAndHealth = 'AdministrationOfOccupationalSafetyAndHealth',
   SocialInsuranceAdministration = 'SocialInsuranceAdministration',
   DistrictCommissioners = 'DistrictCommissioners',
+  IcelandicHealthInsurance = 'IcelandicHealthInsurance',
 }
 enum LicenseProviderPath {
   vinnueftirlitid = 'vinnueftirlitid',
@@ -464,6 +467,7 @@ enum LicenseProviderPath {
   rikislogreglustjori = 'rikislogreglustjori',
   tryggingastofnun = 'tryggingastofnun',
   syslumenn = 'syslumenn',
+  sjukratryggingar = 'sjukratryggingar',
 }
 
 export const getLicenseDetailHeading = (type: string) => {
@@ -497,8 +501,14 @@ export const getLicenseDetailHeading = (type: string) => {
       break
     case LicenseType.PCard:
       return {
-        title: m.yourPCard,
+        title: m.pCard,
         text: m.yourPCardDescription,
+      }
+      break
+    case LicenseType.Ehic:
+      return {
+        title: m.ehic,
+        text: m.ehicDescription,
       }
       break
     default:
@@ -539,6 +549,11 @@ export const getTitleAndLogo = (type: string) => {
         title: m.pCard,
         logo: './assets/images/island.svg',
       }
+    case LicenseType.Ehic:
+      return {
+        title: m.ehic,
+        logo: './assets/images/movingTruck.svg',
+      }
     default:
       return { title: m.license, logo: './assets/images/island.svg' }
   }
@@ -558,6 +573,8 @@ export const getPathFromType = (type: string) => {
       return ServicePortalPath.DisabilityLicense
     case LicenseType.PCard:
       return ServicePortalPath.PCardDetail
+    case LicenseType.Ehic:
+      return ServicePortalPath.EhicDetail
     default:
       return ''
   }
@@ -577,6 +594,8 @@ export const getTypeFromPath = (path: string) => {
       return LicenseType.DisabilityLicense
     case LicenseTypePath.pcard:
       return LicenseType.PCard
+    case LicenseTypePath.ehic:
+      return LicenseType.Ehic
     default:
       return undefined
   }
@@ -593,6 +612,8 @@ export const getPathFromProviderId = (id: string) => {
       return LicenseProviderPath.tryggingastofnun
     case LicenseProviderId.DistrictCommissioners:
       return LicenseProviderPath.syslumenn
+    case LicenseProviderId.IcelandicHealthInsurance:
+      return LicenseProviderPath.sjukratryggingar
     default:
       return ''
   }

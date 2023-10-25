@@ -9,6 +9,7 @@ export enum GenericLicenseType {
   FirearmLicense = 'FirearmLicense',
   DisabilityLicense = 'DisabilityLicense',
   PCard = 'PCard',
+  Ehic = 'Ehic',
 }
 
 /**
@@ -22,7 +23,8 @@ export enum GenericLicenseOrganizationSlug {
   AdrLicense = 'vinnueftirlitid',
   MachineLicense = 'vinnueftirlitid',
   DisabilityLicense = 'tryggingastofnun',
-  PCard = 'sýslumenn',
+  PCard = 'syslumenn',
+  EHIC = 'sjukratryggingar-islands',
 }
 export type GenericLicenseTypeType = keyof typeof GenericLicenseType
 
@@ -32,6 +34,7 @@ export enum GenericLicenseProviderId {
   AdministrationOfOccupationalSafetyAndHealth = 'AdministrationOfOccupationalSafetyAndHealth',
   SocialInsuranceAdministration = 'SocialInsuranceAdministration', // Tryggingastofnun
   DistrictCommissioners = 'DistrictCommissioners', // Sýslumenn
+  IcelandicHealthInsurance = 'IcelandicHealthInsurance', // Sjúkratryggingar Íslands
 }
 
 export type GenericLicenseProviderIdType = keyof typeof GenericLicenseProviderId

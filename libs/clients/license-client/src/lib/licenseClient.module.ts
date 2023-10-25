@@ -70,7 +70,7 @@ import { EhicClient, EhicModule } from './clients/ehic-card-client'
               return disabilityClient
             case LicenseType.PCard:
               return pCardClient
-            case LicenseType.EHIC:
+            case LicenseType.Ehic:
               return ehicCardClient
             default:
               return null
