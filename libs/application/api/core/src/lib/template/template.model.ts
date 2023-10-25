@@ -296,6 +296,7 @@ export function buildCertificateTemplate<
   certificateProvider: DataProviderBuilderItem,
   getPdfApi: TemplateApi,
   templateId: ApplicationTypes,
+  title: string,
 ): ApplicationTemplate<TContext, TStateSchema, TEvents> {
   const dataString: string = JSON.stringify(data)
   const completedDataString: string = JSON.stringify(completedData)
@@ -324,10 +325,112 @@ export function buildCertificateTemplate<
     }),
   ]
 
-  function generatePrerequisites(dataProviders: DataProviderItem[]): string {
+  const generatePayment = (title: string): string => {
+    const payment = {
+      id: 'SampleFormId',
+      title: title,
+      mode: 'draft',
+      type: 'FORM',
+      renderLastScreenBackButton: true,
+      renderLastScreenButton: true,
+      children: [
+        {
+          id: 'section',
+          title: 'Greiðsla',
+          type: 'SECTION',
+          children: [
+            {
+              id: 'multifield_payment_approval',
+              title: 'Greiðsla',
+              type: 'MULTI_FIELD',
+              children: [
+                {
+                  id: 'paymentChargeOverviewField',
+                  component: 'PaymentChargeOverviewFormField',
+                  type: 'PAYMENT_CHARGE_OVERVIEW',
+                  chargeItemCode: 'AY101',
+                },
+                {
+                  id: 'submit2',
+                  title: 'Greiðslu upplýsingar',
+                  type: 'SUBMIT',
+                  placement: 'footer',
+                  children: null,
+                  doesNotRequireAnswer: false,
+                  refetchApplicationAfterSubmit: true,
+                  component: 'SubmitFormField',
+                  actions: [
+                    {
+                      event: 'SUBMIT',
+                      name: 'Staðfesta',
+                      type: 'primary',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    }
+    return JSON.stringify(payment)
+  }
+
+  const generateCompleted = (title: string): string => {
+    const completed = {
+      id: 'SampleFormId',
+      title: title,
+      mode: 'draft',
+      type: 'FORM',
+      renderLastScreenBackButton: false,
+      renderLastScreenButton: false,
+      children: [
+        {
+          id: 'section1',
+          title: 'Umsókn send inn!',
+          type: 'SECTION',
+          children: [
+            {
+              id: 'multifield1',
+              title: title,
+              type: 'MULTI_FIELD',
+              children: [
+                {
+                  id: 'pdfViewer',
+                  title: 'PDF viewer',
+                  type: 'PDF_VIEWER',
+                  children: null,
+                  component: 'PdfViewerFormField',
+                  pdfKey: 'criminalRecord.data.contentBase64',
+                  openMySitesLabel: 'Opna í Mínum síðum',
+                  downloadPdfButtonLabel: 'Sækja PDF',
+                  successTitle: 'Tókst',
+                  successDescription: 'Umsókn þín hefur verið móttekin.',
+                  verificationDescription:
+                    'Vinsamlegast staðfestu upplýsingar hér að neðan.',
+                  verificationLinkTitle: 'Leiðbeiningar um staðfestingu',
+                  verificationLinkUrl: 'https://verification-url-example.com',
+                  viewPdfButtonLabel: 'Skoða PDF',
+                  openInboxButtonLabel: 'Opna tölvupóstinn',
+                  confirmationMessage:
+                    'Upplýsingum þínum hefur verið staðfest.',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    }
+    return JSON.stringify(completed)
+  }
+
+  function generatePrerequisites(
+    dataProviders: DataProviderItem[],
+    title: string,
+  ): string {
     const prerequisites = {
       id: 'SampleFormId',
-      title: 'Sample Form',
+      title: title,
       mode: 'notstarted',
       type: 'FORM',
       renderLastScreenBackButton: true,
@@ -335,7 +438,7 @@ export function buildCertificateTemplate<
       children: [
         {
           id: 'section1',
-          title: 'Umsókn send inn!',
+          title: 'Gagnaöflun',
           type: 'SECTION',
           children: [
             {
@@ -384,7 +487,7 @@ export function buildCertificateTemplate<
       {
         name: 'prerequisites',
         status: 'draft',
-        form: generatePrerequisites(providers),
+        form: generatePrerequisites(providers, title),
         transitions: [{ event: 'SUBMIT', target: 'draft' }],
         historyLogs: {
           onEvent: 'SUBMIT',
@@ -398,7 +501,7 @@ export function buildCertificateTemplate<
       {
         name: 'draft',
         status: 'draft',
-        form: dataString,
+        form: generatePayment(title),
         transitions: [{ event: 'SUBMIT', target: 'completed' }],
         historyLogs: {
           onEvent: 'SUBMIT',
@@ -413,7 +516,7 @@ export function buildCertificateTemplate<
       {
         name: 'completed',
         status: 'completed',
-        form: completedDataString,
+        form: generateCompleted(title),
         transitions: [{ event: 'SUBMIT', target: 'completed' }],
         pendingAction: {
           displayStatus: 'success',

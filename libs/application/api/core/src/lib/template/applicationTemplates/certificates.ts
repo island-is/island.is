@@ -29,17 +29,19 @@ export const criminalRecord = buildCertificateTemplate(
   },
   pdfApi,
   ApplicationTypes.NEW_TYPE_OF_APPLICATION,
+  'Sakavottorð',
 )
 
 export const caramelPermission = buildCertificateTemplate(
   'Karamellur',
   {
     provider: ValidateCriminalRecordApi,
-    title: 'Information from the criminal record database',
-    subTitle: 'Skjal sem inniheldur sakavottorðið þitt.',
+    title: 'Information from the international caramel database',
+    subTitle: 'Skjal sem inniheldur þín karmellu réttindi.',
   },
   caramelPdfApi,
   ApplicationTypes.CARAMEL,
+  'Karamellukast',
 )
 
 export const CertificateTemplateMapper: Partial<
