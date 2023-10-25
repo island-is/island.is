@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useState } from 'react'
 import { FieldErrors, FieldValues } from 'react-hook-form'
 
 import * as styles from './period.css'
@@ -12,7 +12,10 @@ import {
 } from '@island.is/application/types'
 import { SelectFormField } from '@island.is/application/ui-fields'
 
-import { childPensionFormMessage, validatorErrorMessages } from '../../lib/messages'
+import {
+  childPensionFormMessage,
+  validatorErrorMessages,
+} from '../../lib/messages'
 import {
   getApplicationAnswers,
   getAvailableMonths,
@@ -43,10 +46,10 @@ export const Period: FC<FieldBaseProps> = ({ application, errors }) => {
     errors as FieldErrors<FieldValues>,
     'period.month',
   )
-  
+
   const periodError = getErrorViaPath(
     errors as FieldErrors<FieldValues>,
-    'period'
+    'period',
   )
 
   const onSelectYear = (option: SelectOption) => {
@@ -102,8 +105,8 @@ export const Period: FC<FieldBaseProps> = ({ application, errors }) => {
           />
         </Box>
       </Box>
-      { periodError && ( 
-        <Box paddingTop={4}>             
+      {periodError && (
+        <Box paddingTop={4}>
           <AlertMessage
             type="warning"
             title={formatMessage(

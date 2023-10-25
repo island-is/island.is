@@ -743,7 +743,8 @@ export const validatorErrorMessages = defineMessages({
   childPensionNoRightsForPeriod: {
     id: 'cp.application:child.pension.no.rights.for.period',
     defaultMessage: 'Þú átt ekki rétt á barnalífeyri fyrir valið tímabil.',
-    description: 'You are not entitled to child pension for the selected period.',
+    description:
+      'You are not entitled to child pension for the selected period.',
   },
 })
 
