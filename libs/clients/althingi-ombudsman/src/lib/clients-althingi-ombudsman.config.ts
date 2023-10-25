@@ -15,9 +15,12 @@ export const AlthingiOmbudsmanClientConfig = defineConfig<
   load(env) {
     return {
       scope: env.optionalJSON('') ?? [''],
-      xRoadServicePath: env.required('ALTHINGI_OMBUDSMAN_XROAD_SERVICE_PATH'),
-      username: env.required('ALTHINGI_OMBUDSMAN_XROAD_USERNAME'),
-      password: env.required('ALTHINGI_OMBUDSMAN_XROAD_PASSWORD'),
+      xRoadServicePath: env.required(
+        'ALTHINGI_OMBUDSMAN_XROAD_SERVICE_PATH',
+        '',
+      ),
+      username: env.required('ALTHINGI_OMBUDSMAN_XROAD_USERNAME', ''),
+      password: env.required('ALTHINGI_OMBUDSMAN_XROAD_PASSWORD', ''),
     }
   },
 })
