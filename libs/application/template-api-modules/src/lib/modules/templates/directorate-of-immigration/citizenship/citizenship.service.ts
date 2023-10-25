@@ -24,7 +24,7 @@ import {
   TravelDocumentViewModel,
 } from '@island.is/clients/directorate-of-immigration'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { YES } from '@island.is/application/core'
+import { YES, coreErrorMessages } from '@island.is/application/core'
 
 @Injectable()
 export class CitizenshipService extends BaseTemplateApiService {
@@ -194,6 +194,16 @@ export class CitizenshipService extends BaseTemplateApiService {
       }
     }
 
+    if (!lastChangeDate) {
+      throw new TemplateApiError(
+        {
+          title: errorMessages.residenceInIcelandLastChangeDateMissing,
+          summary: errorMessages.residenceInIcelandLastChangeDateMissing,
+        },
+        404,
+      )
+    }
+
     return lastChangeDate
   }
 
@@ -228,6 +238,16 @@ export class CitizenshipService extends BaseTemplateApiService {
     nationalId: string,
   ): Promise<NationalRegistryBirthplace | null> {
     const birthplace = await this.nationalRegistryApi.getBirthplace(nationalId)
+
+    if (!birthplace?.locality) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryBirthplaceMissing,
+          summary: coreErrorMessages.nationalRegistryBirthplaceMissing,
+        },
+        404,
+      )
+    }
 
     return (
       birthplace && {
