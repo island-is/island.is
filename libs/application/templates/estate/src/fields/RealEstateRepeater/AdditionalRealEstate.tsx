@@ -67,7 +67,7 @@ export const AdditionalRealEstate = ({
     // Has the prefix F.
     if (
       /^[Ff]{0,1}\d{7}$|^[Ll]{0,1}\d{6}$/.test(
-        propertyNumberInput.trim().toUpperCase(),
+        propertyNumberInput.trim(),
       )
     ) {
       getProperty({
