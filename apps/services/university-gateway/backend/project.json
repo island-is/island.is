@@ -102,12 +102,6 @@
       }
     },
     "docker-express": {},
-    "extract-strings": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/services/university-gateway/backend/src/app/messages/**/*.ts'"
-      }
-    },
     "dev-init": {
       "executor": "nx:run-commands",
       "options": {
