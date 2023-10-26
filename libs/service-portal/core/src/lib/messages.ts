@@ -1175,4 +1175,16 @@ export const m = defineMessages({
     id: 'service.portal:close-active-document',
     defaultMessage: 'Loka skjali',
   },
+  month: {
+    id: 'service.portal:month',
+    defaultMessage: 'Mánuður',
+  },
+  dateOfOnvoiceShort: {
+    id: 'service.portal:date-of-invoice',
+    defaultMessage: 'Dags. reiknings',
+  },
+  totalPrice: {
+    id: 'service.portal:total-price',
+    defaultMessage: 'Heildarverð',
+  },
 })
