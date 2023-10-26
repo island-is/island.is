@@ -1,7 +1,6 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
-import { UserProfileApi } from '@island.is/clients/user-profile'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { LicenseClient, Result } from '../../licenseClient.type'
 import { FetchError } from '@island.is/clients/middlewares'

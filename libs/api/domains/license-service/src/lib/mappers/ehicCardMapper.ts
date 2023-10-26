@@ -30,11 +30,20 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
 
     const label = labels?.labels
     const data: Array<GenericLicenseDataField> = [
-      typedPayload
+      typedPayload.cardHolderName
         ? {
             type: GenericLicenseDataFieldType.Value,
             label: getLabel('name', locale, label),
-            value: typedPayload.cardHolder ?? '',
+            value: typedPayload.cardHolderName ?? '',
+          }
+        : null,
+      typedPayload.cardHolderNationalId
+        ? {
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('nationalId', locale, label),
+            value: typedPayload.cardHolderNationalId
+              ? format(typedPayload.cardHolderNationalId)
+              : '',
           }
         : null,
       typedPayload.cardNumber
