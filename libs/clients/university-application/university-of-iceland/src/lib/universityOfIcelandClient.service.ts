@@ -66,7 +66,7 @@ class UniversityOfIcelandApplicationClient {
             program.modeOfDelivery?.map((m) => {
               // TODO handle when ráðuneyti has made decisions
               if (m.toString() === 'MIXED') {
-                return ModeOfDelivery.OTHER
+                return ModeOfDelivery.UNDEFINED
               } else {
                 return mapStringToEnum(m, ModeOfDelivery)
               }

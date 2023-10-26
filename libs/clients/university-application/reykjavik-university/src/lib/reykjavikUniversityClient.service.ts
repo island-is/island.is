@@ -67,7 +67,7 @@ class ReykjavikUniversityApplicationClient {
             program.modeOfDelivery?.map((m) => {
               // TODO why is this value empty
               if (!m) {
-                return ModeOfDelivery.OTHER
+                return ModeOfDelivery.UNDEFINED
               } else {
                 return mapStringToEnum(m, ModeOfDelivery)
               }
