@@ -13,10 +13,8 @@ import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNo
 import {
   ApplicationTypes,
   ApplicationWithAttachments as Application,
-  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { NationalRegistry, UserProfile } from './types'
-import { ChargeItemCode } from '@island.is/shared/constants'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { info } from 'kennitala'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -30,23 +28,6 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
     private readonly syslumennService: SyslumennService,
   ) {
     super(ApplicationTypes.CRIMINAL_RECORD)
-  }
-
-  async createCharge({
-    application: { id },
-    auth,
-  }: TemplateApiModuleActionProps) {
-    try {
-      const result = this.sharedTemplateAPIService.createCharge(
-        auth,
-        id,
-        InstitutionNationalIds.SYSLUMENN,
-        [ChargeItemCode.CRIMINAL_RECORD],
-      )
-      return result
-    } catch (exeption) {
-      return { id: '', paymentUrl: '' }
-    }
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {

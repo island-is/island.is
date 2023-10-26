@@ -8,10 +8,7 @@ import { useLocale } from '@island.is/localization'
 import { Routes } from '../../lib/constants'
 import SummaryBlock from '../../components/SummaryBlock'
 import { getValueViaPath } from '@island.is/application/core'
-import {
-  Country,
-  TravelDocumentType,
-} from '@island.is/clients/directorate-of-immigration'
+import { OptionSetItem } from '@island.is/clients/directorate-of-immigration'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -30,13 +27,13 @@ export const PassportReview: FC<Props> = ({
     application.externalData,
     'travelDocumentTypes.data',
     [],
-  ) as TravelDocumentType[]
+  ) as OptionSetItem[]
 
   const countryOptions = getValueViaPath(
     application.externalData,
     'countries.data',
     [],
-  ) as Country[]
+  ) as OptionSetItem[]
 
   const passport = answers.passport
   const {
@@ -82,7 +79,7 @@ export const PassportReview: FC<Props> = ({
                 supportingDocuments.labels.passport.passportType,
               )}: ${
                 travelDocumentTypes.find(
-                  (x) => x.id === parseInt(passportTypeId),
+                  (x) => x.id?.toString() === passportTypeId,
                 )?.name
               }`}
             </Text>
@@ -95,7 +92,9 @@ export const PassportReview: FC<Props> = ({
               {`${formatMessage(
                 supportingDocuments.labels.passport.publisher,
               )}: ${
-                countryOptions.find((x) => x.id === countryOfIssuerId)?.name
+                countryOptions.find(
+                  (x) => x.id?.toString() === countryOfIssuerId,
+                )?.name
               }`}
             </Text>
           </GridColumn>

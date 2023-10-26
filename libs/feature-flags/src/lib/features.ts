@@ -29,6 +29,9 @@ export enum Features {
   servicePortalSecondaryEducationPages = 'isServicePortalSecondaryEducationPageEnabled',
   servicePortalHealthCenterDentistPage = 'isServicePortalHealthCenterPageEnabled',
   servicePortalWorkMachinesModule = 'isServicePortalWorkMachinesPageEnabled',
+  servicePortalHealthMedicinePages = 'isServicePortalHealthMedicinePageEnabled',
+  servicePortalHealthPaymentPages = 'isServicePortalHealthPaymentPageEnabled',
+  servicePortalHealthOverviewPage = 'isServicePortalHealthOverviewPageEnabled',
 
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',

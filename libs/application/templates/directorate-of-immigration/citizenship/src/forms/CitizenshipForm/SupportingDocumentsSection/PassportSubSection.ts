@@ -7,14 +7,10 @@ import {
   buildFileUploadField,
   buildSelectField,
   getValueViaPath,
-  buildValidationError,
 } from '@island.is/application/core'
 import { supportingDocuments } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
-import {
-  Country,
-  TravelDocumentType,
-} from '@island.is/clients/directorate-of-immigration'
+import { OptionSetItem } from '@island.is/clients/directorate-of-immigration'
 import { Routes } from '../../../lib/constants'
 import { CitizenIndividual } from '../../../shared'
 
@@ -75,11 +71,11 @@ export const PassportSubSection = buildSubSection({
               application.externalData,
               'travelDocumentTypes.data',
               [],
-            ) as TravelDocumentType[]
+            ) as OptionSetItem[]
 
             return travelDocumentTypes.map(({ id, name }) => ({
-              value: id.toString(),
-              label: name,
+              value: id?.toString() || '',
+              label: name || '',
             }))
           },
         }),
@@ -93,11 +89,11 @@ export const PassportSubSection = buildSubSection({
               application.externalData,
               'countries.data',
               [],
-            ) as Country[]
+            ) as OptionSetItem[]
 
             return countryOptions.map(({ id, name }) => ({
-              value: id.toString(),
-              label: name,
+              value: id?.toString() || '',
+              label: name || '',
             }))
           },
         }),

@@ -8,7 +8,7 @@ import {
 import { information } from '../../../lib/messages'
 import { Application } from '@island.is/api/schema'
 import { CitizenIndividual, SpouseIndividual } from '../../../shared'
-import { ResidenceConditionInfo } from '@island.is/clients/directorate-of-immigration'
+import { ApplicantResidenceConditionViewModel } from '@island.is/clients/directorate-of-immigration'
 import { formatDate } from '../../../utils'
 import { Routes } from '../../../lib/constants'
 
@@ -24,13 +24,15 @@ export const MaritalStatusSubSection = buildSubSection({
           externalData,
           'residenceConditionInfo.data',
           {},
-        ) as ResidenceConditionInfo
+        ) as ApplicantResidenceConditionViewModel
 
+        // Check if the only residence condition that the applicant can apply for, is related to marital status
         const hasOnlyMaritalStatus =
-          residenceConditionInfo.hasOnlyTypeMaritalStatus
+          residenceConditionInfo.isAnyResConValid &&
+          residenceConditionInfo.isOnlyMarriedOrCohabitationWithISCitizen
 
-        //Only show if individual only has an option of marriageType in Hjúskapaskilyrði
-        return hasOnlyMaritalStatus
+        // Only show if individual only has an option related to marital status for residence condition
+        return hasOnlyMaritalStatus || false
       },
       children: [
         buildDescriptionField({

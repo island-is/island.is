@@ -21,7 +21,7 @@ import { information } from '../../lib/messages'
 import { SelectFormField } from '@island.is/application/ui-fields'
 import DescriptionText from '../../components/DescriptionText'
 import { getValueViaPath } from '@island.is/application/core'
-import { Country } from '@island.is/clients/directorate-of-immigration'
+import { OptionSetItem } from '@island.is/clients/directorate-of-immigration'
 import { getErrorViaPath } from '@island.is/application/core'
 import { CountryOfVisit } from '../../shared'
 
@@ -64,10 +64,14 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
       : false
 
   const countryOptions = (
-    getValueViaPath(application.externalData, 'countries.data', []) as Country[]
+    getValueViaPath(
+      application.externalData,
+      'countries.data',
+      [],
+    ) as OptionSetItem[]
   ).map(({ id, name }) => ({
-    value: id.toString(),
-    label: name,
+    value: id?.toString() || '',
+    label: name || '',
   }))
 
   useEffect(() => {

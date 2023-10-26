@@ -62,7 +62,7 @@ export const Parents: FC<FieldBaseProps> = ({ field, application, errors }) => {
       //set two parents with wasRemoved = true to pass validation but also to exist if user toggles to Yes
       setParents([defaultParents[1], defaultParents[1]])
     }
-  }, [hasValidParents])
+  }, [hasValidParents, parents])
 
   const addParentToApplication = (newIndex: number) => {
     setParents(

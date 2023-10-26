@@ -8,6 +8,7 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -35,6 +36,8 @@ import {
   CurrentStayAbroadListApi,
   CurrentPassportItemApi,
 } from '../dataProviders'
+import { buildPaymentState } from '@island.is/application/utils'
+import { getChargeItemCodes } from '../utils'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -143,59 +146,17 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
-      [States.PAYMENT]: {
-        meta: {
-          name: 'Greiðsla',
-          status: 'inprogress',
-          actionCard: {
-            tag: {
-              label: applicationMessage.actionCardPayment,
-              variant: 'red',
-            },
-            historyLogs: [
-              {
-                logMessage: coreHistoryMessages.paymentAccepted,
-                onEvent: DefaultEvents.SUBMIT,
-              },
-              {
-                logMessage: coreHistoryMessages.paymentCancelled,
-                onEvent: DefaultEvents.ABORT,
-              },
-            ],
-            pendingAction: {
-              title: corePendingActionMessages.paymentPendingTitle,
-              content: corePendingActionMessages.paymentPendingDescription,
-              displayStatus: 'warning',
-            },
-          },
-          progress: 0.8,
-          lifecycle: pruneAfterDays(1 / 24),
-          onEntry: defineTemplateApi({
-            action: ApiActions.createCharge,
-          }),
-          onExit: defineTemplateApi({
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.UTLENDINGASTOFNUN,
+        chargeItemCodes: getChargeItemCodes,
+        submitTarget: States.COMPLETED,
+        onExit: [
+          defineTemplateApi({
             action: ApiActions.submitApplication,
+            triggerEvent: DefaultEvents.SUBMIT,
           }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/PaymentPending').then(
-                  (val) => val.PaymentPending,
-                ),
-              actions: [
-                { event: DefaultEvents.SUBMIT, name: 'Áfram', type: 'primary' },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
-          [DefaultEvents.ABORT]: { target: States.DRAFT },
-        },
-      },
+        ],
+      }),
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',

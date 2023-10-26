@@ -7,7 +7,7 @@ import { Citizenship } from '../../lib/dataSchema'
 import { useLocale } from '@island.is/localization'
 import { Routes } from '../../lib/constants'
 import SummaryBlock from '../../components/SummaryBlock'
-import { Country } from '@island.is/clients/directorate-of-immigration'
+import { OptionSetItem } from '@island.is/clients/directorate-of-immigration'
 import { YES, getValueViaPath } from '@island.is/application/core'
 
 interface Props extends FieldBaseProps {
@@ -27,7 +27,7 @@ export const ResidencyReview: FC<Props> = ({
     application.externalData,
     'countries.data',
     [],
-  ) as Country[]
+  ) as OptionSetItem[]
 
   return (
     <SummaryBlock editAction={() => goToScreen?.(route)}>
@@ -47,7 +47,7 @@ export const ResidencyReview: FC<Props> = ({
             answers?.countriesOfResidence?.selectedAbroadCountries?.map(
               (country) => {
                 const countryInfo = countryOptions.filter(
-                  (z) => z.id === country.countryId,
+                  (z) => z.id?.toString() === country.countryId,
                 )[0]
                 return (
                   <GridColumn span="1/2">
