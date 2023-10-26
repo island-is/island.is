@@ -211,8 +211,8 @@ export const estateSchema = z.object({
   // is: Innistæður í bönkum
   bankAccounts: z
     .object({
-      accountNumber: z.string().optional(),
-      balance: z.string().optional(),
+      accountNumber: z.string(),
+      balance: z.string(),
     })
     .refine(
       ({ accountNumber, balance }) => {
@@ -236,8 +236,8 @@ export const estateSchema = z.object({
   // is: Verðbréf og kröfur
   claims: z
     .object({
-      publisher: z.string().optional(),
-      value: z.string().optional(),
+      publisher: z.string(),
+      value: z.string(),
     })
     .refine(
       ({ publisher, value }) => {
@@ -261,10 +261,10 @@ export const estateSchema = z.object({
   // is: Hlutabréf
   stocks: z
     .object({
-      organization: z.string().optional(),
-      nationalId: z.string().optional(),
-      faceValue: z.string().optional(),
-      rateOfExchange: z.string().optional(),
+      organization: z.string(),
+      nationalId: z.string(),
+      faceValue: z.string(),
+      rateOfExchange: z.string(),
       value: z.string().optional(),
     })
     /* ---- Validating whether the fields are either all filled out or all empty ---- */
@@ -314,8 +314,8 @@ export const estateSchema = z.object({
   // is: Peningar og bankahólf
   moneyAndDeposit: z
     .object({
-      info: z.string().optional(),
-      value: z.string().optional(),
+      info: z.string(),
+      value: z.string(),
     })
     .refine(
       ({ info, value }) => {
@@ -338,8 +338,8 @@ export const estateSchema = z.object({
   // is: Aðrar eignir
   otherAssets: z
     .object({
-      info: z.string().optional(),
-      value: z.string().optional(),
+      info: z.string(),
+      value: z.string(),
     })
     .refine(
       ({ info, value }) => {
