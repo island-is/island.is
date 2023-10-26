@@ -12,7 +12,7 @@ export const occupationalLicensesNavigation: PortalNavigationItem = {
   description: m.occupationalLicensesNavIntro,
   children: [
     {
-      name: om.occupationalLicense,
+      name: om.myLicenses,
       path: OccupationalLicensesPaths.OccupationalLicensesRoot,
     },
     {
