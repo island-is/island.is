@@ -99,6 +99,7 @@ export class HealthCenterService {
       : []
 
     return {
+      canRegister: healthCenterRes.canRegister ?? false,
       current: {
         ...res[0],
         healthCenterName: healthCenterRes.healthCenter ?? undefined,
