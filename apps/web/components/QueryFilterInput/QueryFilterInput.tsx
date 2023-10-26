@@ -9,7 +9,7 @@ type QueryFilterInputProps = {
 }
 
 const QueryFilterInput: FC<QueryFilterInputProps> = (props) => {
-  const { shallow } = props;
+  const { shallow } = props
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(globalNamespace)
   const { query, setQuery } = useQueryFilter(shallow)

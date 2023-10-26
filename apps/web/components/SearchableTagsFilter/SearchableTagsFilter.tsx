@@ -30,7 +30,8 @@ const SearchableTagsFilter: FC<SearchableTagsFilterProps> = (props) => {
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(globalNamespace)
   const { width } = useWindowSize()
-  const { category, organization, setValue, reset } = useSearchableTagsFilter(shallow)
+  const { category, organization, setValue, reset } =
+    useSearchableTagsFilter(shallow)
   const labelClear = n('filterClear', 'Hreinsa síu')
 
   const categories: SearchableTagsFilterCategories = [
