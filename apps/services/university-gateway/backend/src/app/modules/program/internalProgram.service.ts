@@ -38,31 +38,18 @@ export class InternalProgramService {
   ) {}
 
   async updatePrograms(): Promise<void> {
-    try {
-      logger.info('Updating programs for Reykjavik University')
+    Promise.allSettled([
       await this.doUpdateProgramsForUniversity(
         UniversityNationalIds.REYKJAVIK_UNIVERSITY,
         await this.reykjavikUniversityClient.getPrograms(),
-      )
-    } catch (e) {
-      logger.error(
-        'Failed to update programs for Reykjavik University, reason:',
-        e,
-      )
-    }
-
-    try {
-      logger.info('Updating programs for University of Iceland')
+      ),
       await this.doUpdateProgramsForUniversity(
         UniversityNationalIds.UNIVERSITY_OF_ICELAND,
         await this.universityOfIcelandClient.getPrograms(),
-      )
-    } catch (e) {
-      logger.error(
-        'Failed to update programs for University of Iceland, reason:',
-        e,
-      )
-    }
+      ),
+    ]).catch((e) => {
+      logger.error('Failed to update programs, reason:', e)
+    })
   }
 
   private async doUpdateProgramsForUniversity(

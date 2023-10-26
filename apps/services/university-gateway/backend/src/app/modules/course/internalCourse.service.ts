@@ -30,33 +30,20 @@ export class InternalCourseService {
   ) {}
 
   async updateCourses(): Promise<void> {
-    try {
-      logger.info('Updating courses for Reykjavik University')
+    Promise.allSettled([
       await this.doUpdateCoursesForUniversity(
         UniversityNationalIds.REYKJAVIK_UNIVERSITY,
         (externalId: string) =>
           this.reykjavikUniversityClient.getCourses(externalId),
-      )
-    } catch (e) {
-      logger.error(
-        'Failed to update courses for Reykjavik University, reason:',
-        e,
-      )
-    }
-
-    try {
-      logger.info('Updating courses for University of Iceland')
+      ),
       await this.doUpdateCoursesForUniversity(
         UniversityNationalIds.UNIVERSITY_OF_ICELAND,
         (externalId: string) =>
           this.universityOfIcelandClient.getCourses(externalId),
-      )
-    } catch (e) {
-      logger.error(
-        'Failed to update courses for University of Iceland, reason:',
-        e,
-      )
-    }
+      ),
+    ]).catch((e) => {
+      logger.error('Failed to update courses, reason:', e)
+    })
   }
 
   private async doUpdateCoursesForUniversity(
