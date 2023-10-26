@@ -15,6 +15,7 @@ import { PaginateInput } from './types/paginateInput'
 import { InjectModel } from '@nestjs/sequelize'
 import { paginate } from '@island.is/nest/pagination'
 import { DegreeType, Season } from '@island.is/university-gateway'
+import { NoContentException } from '@island.is/nest/problem'
 
 @Injectable()
 export class ProgramService {
@@ -126,7 +127,7 @@ export class ProgramService {
     })
 
     if (!program) {
-      throw Error('Not found')
+      throw new NoContentException()
     }
 
     return { data: program }

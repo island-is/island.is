@@ -4,6 +4,7 @@ import { Course, CourseDetailsResponse, CourseResponse } from './model/course'
 import { PaginateInput, ProgramCourse } from '../program'
 import { paginate } from '@island.is/nest/pagination'
 import { Op } from 'sequelize'
+import { NoContentException } from '@island.is/nest/problem'
 
 @Injectable()
 export class CourseService {
@@ -48,7 +49,7 @@ export class CourseService {
     const course = await this.courseModel.findByPk(id)
 
     if (!course) {
-      throw Error('Not found')
+      throw new NoContentException()
     }
 
     return { data: course }
