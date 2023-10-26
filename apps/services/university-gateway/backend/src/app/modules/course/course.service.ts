@@ -33,7 +33,7 @@ export class CourseService {
     }
     if (universityId !== undefined) where.universityId = universityId
 
-    return await paginate({
+    return paginate({
       Model: this.courseModel,
       limit: limit,
       after: after,

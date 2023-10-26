@@ -53,7 +53,7 @@ export class ProgramService {
     if (universityId !== undefined) where.universityId = universityId
     if (degreeType !== undefined) where.degreeType = degreeType
 
-    return await paginate({
+    return paginate({
       Model: this.programModel,
       limit: limit,
       after: after,
