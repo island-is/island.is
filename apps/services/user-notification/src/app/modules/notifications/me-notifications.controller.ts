@@ -1,4 +1,3 @@
-import { CacheInterceptor } from '@nestjs/cache-manager'
 import {
   Inject,
   Body,
@@ -9,196 +8,57 @@ import {
   BadRequestException,
   Version,
   VERSION_NEUTRAL,
+  UseGuards,
+  Patch,
 } from '@nestjs/common'
 import { Controller, Post, HttpCode } from '@nestjs/common'
 import {
-  ApiOkResponse,
-  ApiBody,
-  ApiExtraModels,
-  getSchemaPath,
-  ApiOperation,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { CreateNotificationDto } from './dto/createNotification.dto'
-import { InjectQueue, QueueService } from '@island.is/message-queue'
-import { CreateNotificationResponse } from './dto/createNotification.response'
 
-import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
-import { Documentation } from '@island.is/nest/swagger'
-import { HnippTemplate } from './dto/hnippTemplate.response'
+import { UserNotificationScope } from '@island.is/auth/scopes'
 
 import { NotificationsService } from './notifications.service'
-// import { BypassAuth } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
-@Controller('notifications')
-@ApiExtraModels(CreateNotificationDto)
-@UseInterceptors(CacheInterceptor) // auto-caching GET responses TODO only for TEMPLATES ...
-export class NotificationsController {
+
+@Controller({
+  path: 'me/notifications',
+})
+@UseGuards(IdsUserGuard, ScopesGuard)
+export class MeNotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    @InjectQueue('notifications') private queue: QueueService,
     private readonly notificationsService: NotificationsService,
   ) {}
-
-  // redirecting legacy endpoint to new one with fixed values
-  @ApiBody({
-    schema: {
-      type: 'object',
-      oneOf: [{ $ref: getSchemaPath(CreateNotificationDto) }],
-    },
-  })
-  @ApiOkResponse({ type: CreateNotificationResponse })
-  @ApiOperation({ deprecated: true })
-  @HttpCode(201)
-  @Post()
-  @Version(VERSION_NEUTRAL)
-  async createNotification(
-    @Body() body: CreateNotificationDto,
-  ): Promise<CreateNotificationResponse> {
-    return this.createHnippNotification({
-      recipient: body.recipient,
-      templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
-      args: [
-        {
-          key: 'organization',
-          value: body.organization,
-        },
-        {
-          key: 'documentId',
-          value: body.documentId,
-        },
-      ],
-    })
-  }
-
-  @Documentation({
-    description: 'Fetches all templates',
-    summary: 'Fetches all templates',
-    includeNoContentResponse: true,
-    response: { status: 200, type: [HnippTemplate] },
-    request: {
-      query: {
-        locale: {
-          required: false,
-          type: 'string',
-          example: 'is-IS',
-        },
-      },
-    },
-  })
-  @Get('/templates')
-  // @BypassAuth()
-
+  
+  @Get('')
+  @Scopes(UserNotificationScope.read) // IDS TODO
+  @ApiSecurity('oauth2', [UserNotificationScope.read])
+  @ApiTags("user notification")
   @Version('1')
-  async getNotificationTemplates(
-    @Query('locale') locale: string,
-  ): Promise<HnippTemplate[]> {
-    return await this.notificationsService.getTemplates(locale)
+  findAll(@Query('cursor') cursor: number): Promise<Notification[]> {
+    return this.notificationsService.findAll(cursor);
   }
-
-  @Documentation({
-    description: 'Fetches a single template',
-    summary: 'Fetches a single template',
-    includeNoContentResponse: true,
-    response: { status: 200, type: HnippTemplate },
-    request: {
-      query: {
-        locale: {
-          required: false,
-          type: 'string',
-          example: 'is-IS',
-        },
-      },
-      params: {
-        templateId: {
-          type: 'string',
-          description: 'ID of the template',
-          example: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
-        },
-      },
-    },
-  })
-  @Get('/template/:templateId')
-  @Version('1')
-  async getNotificationTemplate(
-    @Param('templateId')
-    templateId: string,
-    @Query('locale') locale: string,
-  ): Promise<HnippTemplate> {
-    return await this.notificationsService.getTemplate(templateId, locale)
-  }
-
-  @Documentation({
-    description: 'Creates a new notification and adds to queue',
-    summary: 'Creates a new notification and adds to queue',
-    includeNoContentResponse: true,
-    response: { status: 201, type: CreateNotificationResponse },
-  })
-  @Post('/')
-  @Version('1')
-  async createHnippNotification(
-    @Body() body: CreateHnippNotificationDto,
-  ): Promise<CreateNotificationResponse> {
-    const template = await this.notificationsService.getTemplate(
-      body.templateId,
-    )
-    // check counts
-    if (!this.notificationsService.validateArgCounts(body, template)) {
-      throw new BadRequestException(
-        "Number of arguments doesn't match - template requires " +
-          template.args.length +
-          ' arguments but ' +
-          body.args.length +
-          ' were provided',
-      )
-    }
-    // check keys/args/properties
-    for (const arg of body.args) {
-      if (!template.args.includes(arg.key)) {
-        throw new BadRequestException(
-          arg.key +
-            ' is not a valid argument for template: ' +
-            template.templateId,
-        )
-      }
-    }
-
-    // add to queue
-    const id = await this.queue.add(body)
-    this.logger.info('Message queued ... ...', { messageId: id, ...body })
-    return { id }
-  }
-
-  // @Documentation({
-  //   description: 'Get list of notifications by userProfileId',
-  //   summary: 'Get list of notifications by userProfileId'  })
-  // @Get('/:userProfileId') // or pass auth object
-  // @Version('1')
-  // async getHnippNotifications(
-  //   @Param() userProfileId: string,
-  // ): Promise<Notification[]> {
-  //   return userProfileId
-  // }
-
+  
   @Get(':id')
-  @ApiSecurity('oauth2', ["some scope"])
-  @ApiTags("Under Development")
+  @Scopes(UserNotificationScope.read) // IDS TODO
+  @ApiSecurity('oauth2', [UserNotificationScope.read])
+  @ApiTags("user notification")
   @Version('1')
   findOne(@Param('id') id: number): Promise<Notification> {
     return this.notificationsService.findOne(id);
   }
 
-  @Get()
-  @ApiSecurity('oauth2', ["some scope"])
-  @ApiTags("Under Development")
+  @Patch(':id')
+  @Scopes(UserNotificationScope.write) // IDS TODO
+  @ApiSecurity('oauth2', [UserNotificationScope.write])
+  @ApiTags("user notification")
   @Version('1')
-  findAll(@Query('cursor') cursor: number): Promise<Notification[]> {
-    return this.notificationsService.findAll(cursor);
+  update(@Param('id') id: number): Promise<Notification> {
+    return this.notificationsService.update(id);
   }
 }
-
-
-// SCOPES

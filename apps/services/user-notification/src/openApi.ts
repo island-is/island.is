@@ -16,7 +16,7 @@ export const openApi = new DocumentBuilder()
         scopes: {
           ['openid']: '',
           ['profile']: '',
-          [UserProfileScope.read]: 'User Profile READ',
+          [UserProfileScope.read]: '',
          
         },
         // authorizationUrl: `${environment.auth.issuer}/connect/authorize`,

@@ -17,8 +17,6 @@ import {
   ApiExtraModels,
   getSchemaPath,
   ApiOperation,
-  ApiSecurity,
-  ApiTags,
 } from '@nestjs/swagger'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
