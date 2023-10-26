@@ -129,7 +129,7 @@ export const PaymentPartication = () => {
                       <T.HeadData>
                         {formatMessage(messages.statusOfRights)}
                       </T.HeadData>
-                      <T.HeadData>{formatMessage(messages.month)}</T.HeadData>
+                      <T.HeadData>{formatMessage(m.month)}</T.HeadData>
                       <T.HeadData>
                         {formatMessage(messages.paymentTarget)}
                       </T.HeadData>
@@ -213,11 +213,9 @@ export const PaymentPartication = () => {
                     <tr className={styles.tableRowStyle}>
                       <T.HeadData>{formatMessage(m.service)}</T.HeadData>
                       <T.HeadData>
-                        {formatMessage(messages.dateOfOnvoiceShort)}
+                        {formatMessage(m.dateOfInvoiceShort)}
                       </T.HeadData>
-                      <T.HeadData>
-                        {formatMessage(messages.totalPrice)}
-                      </T.HeadData>
+                      <T.HeadData>{formatMessage(m.totalPrice)}</T.HeadData>
                       <T.HeadData>
                         {formatMessage(messages.medicinePaidByInsuranceShort)}
                       </T.HeadData>
