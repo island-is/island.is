@@ -682,4 +682,19 @@ export const notifications = {
       description: 'Nafn á Landsrétti í tölvupóstum',
     },
   }),
+  COAJudgedAssigned: defineMessages({
+    subject: {
+      id: 'judicial.system.backend:notifications.coa_judged_assigned.subject',
+      defaultMessage: 'Úthlutun máls nr. {caseNumber}',
+      description:
+        'Fyrirsögn í pósti til dómara og aðstoðarmanna dómara þegar máli er úthlutað í landsrétti',
+    },
+    body: {
+      id: 'judicial.system.backend:notifications.coa_judged_assigned.body',
+      defaultMessage:
+        'Landsréttur hefur skráð þig sem {role, select, JUDGE {dómara} other {aðstoðarmann dómara}} í máli nr. {caseNumber}. Þú getur nálgast yfirlit málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt.{linkEnd}',
+      description:
+        'Texti í pósti til dómara og aðstoðarmanna dómara þegar máli er úthlutað í landsrétti',
+    },
+  }),
 }

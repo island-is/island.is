@@ -17,6 +17,7 @@ export const judgeNotificationRule: RolesRule = {
   dtoFieldValues: [
     NotificationType.COURT_DATE,
     NotificationType.DEFENDER_ASSIGNED,
+    NotificationType.APPEAL_JUDGES_ASSIGNED,
   ],
 }
 

@@ -67,6 +67,7 @@ import {
   formatProsecutorReceivedByCourtSmsNotification,
   stripHtmlTags,
 } from '../../formatters'
+import { formatCourtOfAppealJudgeAssignedEmailNotification } from '../../formatters/formatters'
 import { notifications } from '../../messages'
 import { Case } from '../case'
 import { CourtService } from '../court'
@@ -123,6 +124,16 @@ export class NotificationService {
     const previousNotifications = await this.notificationModel.findAll({
       where: { caseId, type },
     })
+
+    console.log(
+      address,
+      previousNotifications.some((notification) => {
+        return notification.recipients.some((recipient) => {
+          console.log(recipient)
+          recipient.address === address && recipient.success
+        })
+      }),
+    )
 
     return previousNotifications.some((notification) => {
       return notification.recipients.some(
@@ -1414,6 +1425,81 @@ export class NotificationService {
     )
   }
 
+  /* COURT_OF_APPEAL_JUDGE_ASSIGNED notifications */
+
+  private async sendCourtOfAppealJudgeAssignedNotification(theCase: Case) {
+    const promises: Promise<Recipient>[] = []
+    const recipientRoles = [
+      theCase.appealAssistant,
+      theCase.appealJudge1,
+      theCase.appealJudge2,
+      theCase.appealJudge3,
+    ]
+
+    // if (
+    //   await Promise.all([
+    //     this.hasReceivedNotification(
+    //       theCase.id,
+    //       NotificationType.APPEAL_JUDGES_ASSIGNED,
+    //       theCase.appealAssistant?.email,
+    //     ),
+    //     this.hasReceivedNotification(
+    //       theCase.id,
+    //       NotificationType.APPEAL_JUDGES_ASSIGNED,
+    //       theCase.appealJudge1?.email,
+    //     ),
+    //     this.hasReceivedNotification(
+    //       theCase.id,
+    //       NotificationType.APPEAL_JUDGES_ASSIGNED,
+    //       theCase.appealJudge2?.email,
+    //     ),
+    //     this.hasReceivedNotification(
+    //       theCase.id,
+    //       NotificationType.APPEAL_JUDGES_ASSIGNED,
+    //       theCase.appealJudge3?.email,
+    //     ),
+    //   ])
+    // ) {
+    //   return { notificationSent: false }
+    // }
+
+    // recipientRoles.map(async (recipient) => {
+    //   if (theCase.appealCaseNumber && recipient) {
+    //     const { subject, body } =
+    //       formatCourtOfAppealJudgeAssignedEmailNotification(
+    //         this.formatMessage,
+    //         theCase.appealCaseNumber,
+    //         recipient.role,
+    //         `${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}`,
+    //       )
+
+    //     if (
+    //       !(await this.hasReceivedNotification(
+    //         theCase.id,
+    //         NotificationType.APPEAL_JUDGES_ASSIGNED,
+    //         recipient.email,
+    //       ))
+    //     ) {
+    //       promises.push(
+    //         this.sendEmail(subject, body, recipient.name, recipient.email),
+    //       )
+    //     }
+    //   }
+    // })
+
+    // if (promises.length === 0) {
+    //   return { notificationSent: false }
+    // }
+
+    // const recipients = await Promise.all(promises)
+    return { notificationSent: false }
+    // return this.recordNotification(
+    //   theCase.id,
+    //   NotificationType.APPEAL_JUDGES_ASSIGNED,
+    //   recipients,
+    // )
+  }
+
   /* DEFENDANTS_NOT_UPDATED_AT_COURT notifications */
 
   private async sendDefendantsNotUpdatedAtCourtNotifications(
@@ -1948,6 +2034,8 @@ export class NotificationService {
         return this.sendAppealStatementNotifications(theCase, user)
       case NotificationType.APPEAL_COMPLETED:
         return this.sendAppealCompletedNotifications(theCase)
+      case NotificationType.APPEAL_JUDGES_ASSIGNED:
+        return this.sendCourtOfAppealJudgeAssignedNotification(theCase)
     }
   }
 
@@ -2020,6 +2108,16 @@ export class NotificationService {
           messages = [
             this.getNotificationMessage(
               MessageType.SEND_DEFENDER_ASSIGNED_NOTIFICATION,
+              user,
+              theCase,
+            ),
+          ]
+          break
+
+        case NotificationType.APPEAL_JUDGES_ASSIGNED:
+          messages = [
+            this.getNotificationMessage(
+              MessageType.SEND_APPEAL_JUDGES_ASSIGNED_NOTIFICATION,
               user,
               theCase,
             ),
