@@ -13,15 +13,8 @@ import {
 } from './model'
 import { Course } from '../course/model'
 import { University } from '../university/model'
-import {
-  ReykjavikUniversityApplicationClientConfig,
-  ReykjavikUniversityApplicationClientModule,
-} from '@island.is/clients/university-application/reykjavik-university'
-import {
-  UniversityOfIcelandApplicationClientConfig,
-  UniversityOfIcelandApplicationClientModule,
-} from '@island.is/clients/university-application/university-of-iceland'
-import { ConfigModule } from '@nestjs/config'
+import { ReykjavikUniversityApplicationClientModule } from '@island.is/clients/university-application/reykjavik-university'
+import { UniversityOfIcelandApplicationClientModule } from '@island.is/clients/university-application/university-of-iceland'
 import { AuditModule } from '@island.is/nest/audit'
 import { environment } from '../../../environments'
 
@@ -39,13 +32,6 @@ import { environment } from '../../../environments'
     ]),
     ReykjavikUniversityApplicationClientModule,
     UniversityOfIcelandApplicationClientModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [
-        ReykjavikUniversityApplicationClientConfig,
-        UniversityOfIcelandApplicationClientConfig,
-      ],
-    }),
   ],
   controllers: [InternalProgramController, ProgramController],
   providers: [InternalProgramService, ProgramService],
