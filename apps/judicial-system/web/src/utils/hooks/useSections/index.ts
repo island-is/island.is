@@ -412,7 +412,8 @@ const useSections = (
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
       isActive:
-        user?.role === UserRole.PROSECUTOR &&
+        (user?.role === UserRole.PROSECUTOR ||
+          user?.role === UserRole.PROSECUTOR_REPRESENTATIVE) &&
         isIndictmentCase(type) &&
         !completedCaseStates.includes(workingCase.state),
       // Prosecutor can only view the overview when case has been received by court
@@ -989,7 +990,7 @@ const useSections = (
     }
   }
 
-  const getRestrictionCaseExtenstionSections = (
+  const getRestrictionCaseExtensionSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
@@ -1089,7 +1090,7 @@ const useSections = (
     }
   }
 
-  const getInvestigationCaseExtenstionSections = (
+  const getInvestigationCaseExtensionSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
@@ -1120,7 +1121,7 @@ const useSections = (
                 ),
                 isActive: routeIndex === 0,
                 href:
-                  (section.children.length > 0 && section.children[5].href) ||
+                  (section.children.length > 0 && section.children[0].href) ||
                   undefined,
               },
               {
@@ -1328,8 +1329,8 @@ const useSections = (
       ...(workingCase.parentCase
         ? [
             isRestrictionCase(workingCase.type)
-              ? getRestrictionCaseExtenstionSections(workingCase, user)
-              : getInvestigationCaseExtenstionSections(workingCase, user),
+              ? getRestrictionCaseExtensionSections(workingCase, user)
+              : getInvestigationCaseExtensionSections(workingCase, user),
             isRestrictionCase(workingCase.type)
               ? getRestrictionCaseExtensionCourtSections(workingCase, user)
               : getInvestigationCaseExtensionCourtSections(workingCase, user),
