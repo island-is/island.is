@@ -26,7 +26,7 @@ export const Conclusion: FC<React.PropsWithChildren<FieldBaseProps>> = (
 
   const [showOverview, setShowOverview] = useState(false)
 
-  if (showOverview) {
+  if (!showOverview) {
     return (
       <Box marginTop={2}>
         <Box marginBottom={5}>
