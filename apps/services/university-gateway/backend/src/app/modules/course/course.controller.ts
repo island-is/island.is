@@ -17,12 +17,15 @@ import { CourseDetailsResponse, CourseResponse } from './model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('Course')
-@Controller('api')
+@Controller({
+  path: 'courses',
+  version: ['1'],
+})
 export class CourseController {
   constructor(private readonly courseService: CourseService) {}
 
   @BypassAuth()
-  @Get('courses')
+  @Get()
   @ApiQuery({
     name: 'limit',
     required: false,
@@ -73,7 +76,7 @@ export class CourseController {
   }
 
   @BypassAuth()
-  @Get('courses/:id')
+  @Get(':id')
   @ApiParam({
     name: 'id',
     required: true,

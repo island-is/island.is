@@ -6,11 +6,14 @@ import { InternalCourseService } from './internalCourse.service'
 
 @UseGuards(TokenGuard)
 @ApiTags('Internal course')
-@Controller('api/internal')
+@Controller({
+  path: 'internal/courses',
+  version: ['1'],
+})
 export class InternalCourseController {
   constructor(private readonly internalCourseService: InternalCourseService) {}
 
-  @Post('courses/update')
+  @Post('update')
   @ApiNoContentResponse()
   @ApiOperation({
     summary:

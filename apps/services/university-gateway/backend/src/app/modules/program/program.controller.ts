@@ -18,12 +18,15 @@ import { DegreeType, Season } from '@island.is/university-gateway'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('Program')
-@Controller('api')
+@Controller({
+  path: 'programs',
+  version: ['1'],
+})
 export class ProgramController {
   constructor(private readonly programService: ProgramService) {}
 
   @BypassAuth()
-  @Get('programs')
+  @Get()
   @ApiQuery({
     name: 'limit',
     required: false,
@@ -98,7 +101,7 @@ export class ProgramController {
   }
 
   @BypassAuth()
-  @Get('programs/:id')
+  @Get(':id')
   @ApiParam({
     name: 'id',
     required: true,

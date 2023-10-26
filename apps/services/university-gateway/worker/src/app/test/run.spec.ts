@@ -45,7 +45,7 @@ describe('AppService - Run', () => {
 
     it('should call the backend', () => {
       expect(fetch).toHaveBeenCalledWith(
-        `${appModuleConfig().backendUrl}/api/internal/programs/update`,
+        `${appModuleConfig().backendUrl}/internal/programs/update`,
         {
           method: 'POST',
           headers: {

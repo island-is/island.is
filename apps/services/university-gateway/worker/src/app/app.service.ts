@@ -24,16 +24,13 @@ export class AppService {
 
     do {
       // Update programs
-      done = await fetch(
-        `${this.config.backendUrl}/api/internal/programs/update`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            authorization: `Bearer ${this.config.backendAccessToken}`,
-          },
+      done = await fetch(`${this.config.backendUrl}/internal/programs/update`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `Bearer ${this.config.backendAccessToken}`,
         },
-      )
+      })
         .then(async (res) => {
           if (res.ok) {
             return true
@@ -48,16 +45,13 @@ export class AppService {
         })
 
       // Update courses
-      done = await fetch(
-        `${this.config.backendUrl}/api/internal/courses/update`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            authorization: `Bearer ${this.config.backendAccessToken}`,
-          },
+      done = await fetch(`${this.config.backendUrl}/internal/courses/update`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `Bearer ${this.config.backendAccessToken}`,
         },
-      )
+      })
         .then(async (res) => {
           if (res.ok) {
             return true

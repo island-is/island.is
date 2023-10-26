@@ -6,13 +6,16 @@ import { InternalProgramService } from './internalProgram.service'
 
 @UseGuards(TokenGuard)
 @ApiTags('Internal program')
-@Controller('api/internal')
+@Controller({
+  path: 'internal/programs',
+  version: ['1'],
+})
 export class InternalProgramController {
   constructor(
     private readonly internalProgramService: InternalProgramService,
   ) {}
 
-  @Post('programs/update')
+  @Post('update')
   @ApiNoContentResponse()
   @ApiOperation({
     summary:

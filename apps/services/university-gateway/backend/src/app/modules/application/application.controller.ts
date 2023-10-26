@@ -17,11 +17,14 @@ import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(UniversityGatewayScope.main)
 @ApiTags('Application')
-@Controller('api')
+@Controller({
+  path: 'applications',
+  version: ['1'],
+})
 export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
-  @Get('applications/:id')
+  @Get(':id')
   @ApiParam({
     name: 'id',
     required: true,
@@ -39,7 +42,7 @@ export class ApplicationController {
     return this.applicationService.getApplication(id)
   }
 
-  @Post('applications')
+  @Post()
   @ApiBody({
     type: CreateApplicationDto,
   })
@@ -56,7 +59,7 @@ export class ApplicationController {
     return this.applicationService.createApplication(applicationDto)
   }
 
-  @Patch('applications/:id')
+  @Patch(':id')
   @ApiParam({
     name: 'id',
     required: true,

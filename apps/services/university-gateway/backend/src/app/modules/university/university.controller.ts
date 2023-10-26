@@ -11,12 +11,15 @@ import { UniversityResponse } from './model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('University')
-@Controller('api')
+@Controller({
+  path: 'universities',
+  version: ['1'],
+})
 export class UniversityController {
   constructor(private readonly universityService: UniversityService) {}
 
   @BypassAuth()
-  @Get('universities')
+  @Get()
   @ApiOkResponse({
     type: UniversityResponse,
     description: 'Returns all universities',
