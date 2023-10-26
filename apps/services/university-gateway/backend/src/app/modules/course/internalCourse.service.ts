@@ -9,9 +9,8 @@ import { ICourse, UniversityNationalIds } from '@island.is/university-gateway'
 import { logger } from '@island.is/logging'
 import { Op } from 'sequelize'
 
-export
 @Injectable()
-class InternalCourseService {
+export class InternalCourseService {
   constructor(
     private readonly reykjavikUniversityClient: ReykjavikUniversityApplicationClient,
 

@@ -11,9 +11,8 @@ import { UniversityOfIcelandApplicationClient } from '@island.is/clients/univers
 import { IProgram, UniversityNationalIds } from '@island.is/university-gateway'
 import { logger } from '@island.is/logging'
 
-export
 @Injectable()
-class InternalProgramService {
+export class InternalProgramService {
   constructor(
     private readonly reykjavikUniversityClient: ReykjavikUniversityApplicationClient,
 

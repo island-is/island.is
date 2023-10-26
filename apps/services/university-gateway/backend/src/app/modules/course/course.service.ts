@@ -5,9 +5,8 @@ import { PaginateInput, ProgramCourse } from '../program'
 import { paginate } from '@island.is/nest/pagination'
 import { Op } from 'sequelize'
 
-export
 @Injectable()
-class CourseService {
+export class CourseService {
   constructor(
     @InjectModel(Course)
     private courseModel: typeof Course,

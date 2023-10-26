@@ -16,9 +16,8 @@ import { InjectModel } from '@nestjs/sequelize'
 import { paginate } from '@island.is/nest/pagination'
 import { DegreeType, Season } from '@island.is/university-gateway'
 
-export
 @Injectable()
-class ProgramService {
+export class ProgramService {
   constructor(
     @InjectModel(ProgramTable)
     private programModel: typeof ProgramTable,
