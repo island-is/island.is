@@ -12,9 +12,8 @@ type PdfDocumentProps = {
 }
 
 export const PdfDocument: React.FC<PdfDocumentProps> = ({ document }) => {
-  const { formatMessage } = useLocale()
   const [scalePDF, setScalePDF] = useState(1.0)
-
+  const { formatMessage } = useLocale()
   return (
     <>
       <Box
