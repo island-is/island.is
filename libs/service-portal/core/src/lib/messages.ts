@@ -1179,7 +1179,7 @@ export const m = defineMessages({
     id: 'service.portal:month',
     defaultMessage: 'Mánuður',
   },
-  dateOfOnvoiceShort: {
+  dateOfInvoiceShort: {
     id: 'service.portal:date-of-invoice',
     defaultMessage: 'Dags. reiknings',
   },

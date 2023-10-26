@@ -213,7 +213,7 @@ export const PaymentPartication = () => {
                     <tr className={styles.tableRowStyle}>
                       <T.HeadData>{formatMessage(m.service)}</T.HeadData>
                       <T.HeadData>
-                        {formatMessage(m.dateOfOnvoiceShort)}
+                        {formatMessage(m.dateOfInvoiceShort)}
                       </T.HeadData>
                       <T.HeadData>{formatMessage(m.totalPrice)}</T.HeadData>
                       <T.HeadData>
