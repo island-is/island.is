@@ -137,7 +137,6 @@ import { GraphQLConfig } from './graphql.config'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
 import { MMSClientConfig } from '@island.is/clients/mms'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
-import { AlthingiOmbudsmanClientConfig } from '@island.is/clients/althingi-ombudsman'
 import { PCardClientConfig } from '@island.is/clients/p-card'
 
 const environment = getConfig
@@ -346,7 +345,6 @@ const environment = getConfig
         ShipRegistryClientConfig,
         HousingBenefitCalculatorClientConfig,
         MMSClientConfig,
-        AlthingiOmbudsmanClientConfig,
       ],
     }),
   ],
