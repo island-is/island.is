@@ -26,7 +26,21 @@ export class DrivingLicenseApi {
     private readonly v5CodeTable: v5.CodeTableV5,
   ) {}
 
-  //TODO: look into creating a wrapper such that v5 calls just pass along apiVersion and apiVersion2
+  public async postTemporaryLicenseWithHealthDeclaratio(input: {
+    nationalId: string
+    token?: string
+    healthDecleration: v5.PostTemporaryLicenseWithHealthDeclaration
+  }): Promise<v5.NewTemporaryLicsenseDto> {
+    return this.v5.apiDrivinglicenseV5ApplicationsNewTemporarywithhealthdeclarationPost(
+      {
+        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+        jwttoken: input.token ?? '',
+        postTemporaryLicenseWithHealthDeclaration: input.healthDecleration,
+      },
+    )
+  }
+
   public notifyOnPkPassCreation(input: {
     nationalId: string
     token?: string
