@@ -44,8 +44,7 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const individual = application.externalData.nationalRegistry
     .data as NationalRegistryIndividual
 
-  let domicileCode = individual?.address?.municipalityCode
-  domicileCode = '9999'
+  const domicileCode = individual?.address?.municipalityCode
 
   type TagCheck = {
     tag: Tag
