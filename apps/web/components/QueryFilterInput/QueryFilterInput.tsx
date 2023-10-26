@@ -4,10 +4,15 @@ import { useQueryState } from 'next-usequerystate'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { GlobalContext } from '@island.is/web/context'
 
-const QueryFilterInput: FC = () => {
+type QueryFilterInputProps = {
+  shallow?: boolean
+}
+
+const QueryFilterInput: FC<QueryFilterInputProps> = (props) => {
+  const { shallow } = props;
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(globalNamespace)
-  const { query, setQuery } = useQueryFilter()
+  const { query, setQuery } = useQueryFilter(shallow)
   const [value, setValue] = useState<string>('')
 
   const handleKeyDown: FilterInputProps['onKeyDown'] = (event) => {
@@ -34,8 +39,8 @@ const QueryFilterInput: FC = () => {
   )
 }
 
-function useQueryFilter() {
-  const [query, setQuery] = useQueryState('q', { shallow: false })
+function useQueryFilter(shallow = false) {
+  const [query, setQuery] = useQueryState('q', { shallow })
 
   const reset = () => {
     setQuery(null)
@@ -45,3 +50,4 @@ function useQueryFilter() {
 }
 
 export { QueryFilterInput, useQueryFilter }
+export type { QueryFilterInputProps }

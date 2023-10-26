@@ -22,14 +22,15 @@ type SearchableTagsFilterItems =
 type SearchableTagsFilterProps = {
   resultCount: number
   tags?: TagCount[]
+  shallow?: boolean
 }
 
 const SearchableTagsFilter: FC<SearchableTagsFilterProps> = (props) => {
-  const { resultCount, tags = [] } = props
+  const { resultCount, tags = [], shallow } = props
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(globalNamespace)
   const { width } = useWindowSize()
-  const { category, organization, setValue, reset } = useSearchableTagsFilter()
+  const { category, organization, setValue, reset } = useSearchableTagsFilter(shallow)
   const labelClear = n('filterClear', 'Hreinsa síu')
 
   const categories: SearchableTagsFilterCategories = [
@@ -82,13 +83,13 @@ function filtersFromTags(tags: TagCount[], category: string) {
     })) as SearchableTagsFilterItems
 }
 
-function useSearchableTagsFilter() {
+function useSearchableTagsFilter(shallow = false) {
   const [filter, setFilter] = useQueryStates(
     {
       category: parseAsArrayOf(parseAsString).withDefault([]),
       organization: parseAsArrayOf(parseAsString).withDefault([]),
     },
-    { shallow: false },
+    { shallow },
   )
   const { category, organization } = filter
 
