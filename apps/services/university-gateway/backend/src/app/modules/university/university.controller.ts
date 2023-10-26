@@ -27,7 +27,7 @@ export class UniversityController {
   @ApiOperation({
     summary: 'Get all universities',
   })
-  async getUniversities(): Promise<UniversityResponse> {
+  getUniversities(): Promise<UniversityResponse> {
     return this.universityService.getUniversities()
   }
 }

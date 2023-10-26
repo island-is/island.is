@@ -81,7 +81,7 @@ export class ProgramController {
   @ApiOperation({
     summary: 'Get all programs',
   })
-  async getPrograms(
+  getPrograms(
     @Query('limit') limit: number,
     @Query('before') before: string,
     @Query('after') after: string,
@@ -116,9 +116,7 @@ export class ProgramController {
   @ApiOperation({
     summary: 'Get program (and courses) by ID',
   })
-  async getProgramDetails(
-    @Param('id') id: string,
-  ): Promise<ProgramDetailsResponse> {
+  getProgramDetails(@Param('id') id: string): Promise<ProgramDetailsResponse> {
     return this.programService.getProgramDetails(id)
   }
 
@@ -131,7 +129,7 @@ export class ProgramController {
   @ApiOperation({
     summary: 'Get all tags',
   })
-  async getTags(): Promise<TagResponse> {
+  getTags(): Promise<TagResponse> {
     return this.programService.getTags()
   }
 
@@ -144,7 +142,7 @@ export class ProgramController {
   @ApiOperation({
     summary: 'Get all possible values for duration in years',
   })
-  async getDurationInYears(): Promise<string[]> {
+  getDurationInYears(): Promise<string[]> {
     return this.programService.getDurationInYears()
   }
 }

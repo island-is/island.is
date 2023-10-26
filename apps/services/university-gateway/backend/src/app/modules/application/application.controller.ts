@@ -45,7 +45,7 @@ export class ApplicationController {
   @ApiOperation({
     summary: 'Get application by ID',
   })
-  async getApplication(
+  getApplication(
     @Param('id') id: string,
     @CurrentUser() user: User,
   ): Promise<ApplicationResponse> {
@@ -63,7 +63,7 @@ export class ApplicationController {
   @ApiOperation({
     summary: 'Create application',
   })
-  async createApplication(
+  createApplication(
     @Body() applicationDto: CreateApplicationDto,
     @CurrentUser() user: User,
   ): Promise<Application> {
@@ -87,7 +87,7 @@ export class ApplicationController {
   @ApiOperation({
     summary: 'Update application status, and extradata (if applies)',
   })
-  async updateApplication(
+  updateApplication(
     @Param('id') id: string,
     @Body() applicationDto: UpdateApplicationDto,
     @CurrentUser() user: User,

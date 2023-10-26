@@ -21,7 +21,7 @@ export class InternalProgramController {
     summary:
       'Updates program in our DB by fetching data from the university APIs',
   })
-  async updatePrograms(): Promise<void> {
-    await this.internalProgramService.updatePrograms()
+  updatePrograms() {
+    this.internalProgramService.updatePrograms()
   }
 }

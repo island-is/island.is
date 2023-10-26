@@ -61,7 +61,7 @@ export class CourseController {
   @ApiOperation({
     summary: 'Get all courses',
   })
-  async getCourses(
+  getCourses(
     @Query('limit') limit: number,
     @Query('before') before: string,
     @Query('after') after: string,
@@ -90,9 +90,7 @@ export class CourseController {
   @ApiOperation({
     summary: 'Get course by ID',
   })
-  async getCourseDetails(
-    @Param('id') id: string,
-  ): Promise<CourseDetailsResponse> {
+  getCourseDetails(@Param('id') id: string): Promise<CourseDetailsResponse> {
     return this.courseService.getCourseDetails(id)
   }
 }
