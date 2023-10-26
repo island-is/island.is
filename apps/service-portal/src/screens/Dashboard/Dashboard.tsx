@@ -220,6 +220,8 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
                         img={getOrganizationLogoUrl(
                           doc.senderName,
                           organizations,
+                          60,
+                          'none',
                         )}
                         documentLine={doc}
                         active={false}

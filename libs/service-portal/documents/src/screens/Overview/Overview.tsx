@@ -440,7 +440,12 @@ export const ServicePortalDocuments = () => {
               {filteredDocuments.map((doc) => (
                 <Box key={doc.id}>
                   <DocumentLine
-                    img={getOrganizationLogoUrl(doc.senderName, organizations)}
+                    img={getOrganizationLogoUrl(
+                      doc.senderName,
+                      organizations,
+                      60,
+                      'none',
+                    )}
                     documentLine={doc}
                     onClick={setActiveDocument}
                     onError={(err) => setDocumentDisplayError(err)}
