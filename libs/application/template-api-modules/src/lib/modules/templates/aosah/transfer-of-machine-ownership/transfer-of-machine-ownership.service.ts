@@ -51,4 +51,32 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
 
     return result
   }
+
+  async submitApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<void> {
+    // Validate payment
+
+    // Make sure a paymentUrl was created
+    const { paymentUrl } = application.externalData.createCharge.data as {
+      paymentUrl: string
+    }
+    if (!paymentUrl) {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
+    }
+
+    // Make sure payment is fulfilled (has been paid)
+    const payment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
+    if (!payment?.fulfilled) {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
+    }
+
+    // TODO continue...
+  }
 }

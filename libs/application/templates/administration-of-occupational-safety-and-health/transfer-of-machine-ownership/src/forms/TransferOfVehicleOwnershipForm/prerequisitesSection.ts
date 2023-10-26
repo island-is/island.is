@@ -7,9 +7,7 @@ import { externalData } from '../../lib/messages'
 import {
   IdentityApi,
   UserProfileApi,
-  SamgongustofaPaymentCatalogApi,
-  CurrentVehiclesApi,
-  InsuranceCompaniesApi,
+  VinnueftirlitidPaymentCatalogApi,
   MachinesApi,
 } from '../../dataProviders'
 
@@ -24,20 +22,25 @@ export const prerequisitesSection = buildSection({
       checkboxLabel: externalData.dataProvider.checkboxLabel,
       dataProviders: [
         buildDataProviderItem({
-          provider: MachinesApi, //CurrentVehiclesApi,
-          title: externalData.currentVehicles.title,
-          subTitle: externalData.currentVehicles.subTitle,
-        }),
-        buildDataProviderItem({
           provider: IdentityApi,
           title: externalData.nationalRegistry.title,
           subTitle: externalData.nationalRegistry.subTitle,
         }),
         buildDataProviderItem({
-          provider: undefined, //UserProfileApi,
+          provider: UserProfileApi,
           title: externalData.userProfile.title,
           subTitle: externalData.userProfile.subTitle,
         }),
+        buildDataProviderItem({
+          provider: MachinesApi,
+          title: externalData.myMachines.title,
+          subTitle: externalData.myMachines.subTitle,
+        }),
+        //TODOx add back when payment is working on DEV
+        // buildDataProviderItem({
+        //   provider: VinnueftirlitidPaymentCatalogApi,
+        //   title: '',
+        // }),
       ],
     }),
   ],

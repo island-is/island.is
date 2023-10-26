@@ -89,6 +89,11 @@ type SpouseField = {
   selection: string
 }
 
+type EstateWithoutAssetsInfo = {
+  estateAssetsExist?: string
+  estateDebtsExist?: string
+}
+
 type SystemMetadata = {
   enabled?: boolean
 }
@@ -115,4 +120,5 @@ export type UploadData = {
   remarksOnTestament: string
   dividedEstate: string
   deceasedWithUndividedEstate?: SpouseField
+  estateWithoutAssetsInfo: EstateWithoutAssetsInfo
 }

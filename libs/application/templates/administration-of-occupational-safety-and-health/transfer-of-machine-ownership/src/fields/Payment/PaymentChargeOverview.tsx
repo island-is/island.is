@@ -10,7 +10,7 @@ export const PaymentChargeOverview: FC<
 > = ({ application }) => {
   const { formatMessage } = useLocale()
 
-  const chargeItemCodes = getChargeItemCodes()
+  const chargeItemCodes = getChargeItemCodes(application)
   const { externalData } = application
   const allItems = externalData?.payment?.data as [
     {
