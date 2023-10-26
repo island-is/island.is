@@ -15,7 +15,7 @@ import {
 } from 'sequelize-typescript'
 import { Course } from '../../course/model'
 import { ProgramTable } from './program'
-import { Requirement, Season } from '@island.is/university-gateway-lib'
+import { Requirement, Season } from '@island.is/university-gateway'
 
 export
 @Table({

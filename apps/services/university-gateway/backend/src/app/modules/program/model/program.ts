@@ -19,7 +19,7 @@ import { ProgramTag } from './programTag'
 import { ProgramModeOfDelivery } from './programModeOfDelivery'
 import { University } from '../../university/model'
 import { ProgramCourse } from './programCourse'
-import { DegreeType, Season } from '@island.is/university-gateway-lib'
+import { DegreeType, Season } from '@island.is/university-gateway'
 import { PageInfoDto } from '@island.is/nest/pagination'
 
 class Program extends Model {

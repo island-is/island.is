@@ -1,21 +1,21 @@
 {
-  "name": "university-gateway-lib",
+  "name": "university-gateway",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/university-gateway-lib/src",
+  "sourceRoot": "libs/university-gateway/src",
   "projectType": "library",
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/university-gateway-lib/**/*.ts"]
+        "lintFilePatterns": ["libs/university-gateway/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/university-gateway-lib/jest.config.ts",
+        "jestConfig": "libs/university-gateway/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {

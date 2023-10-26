@@ -10,10 +10,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { University } from '../university/model'
 import { ReykjavikUniversityApplicationClient } from '@island.is/clients/university-application/reykjavik-university'
 import { UniversityOfIcelandApplicationClient } from '@island.is/clients/university-application/university-of-iceland'
-import {
-  IProgram,
-  UniversityNationalIds,
-} from '@island.is/university-gateway-lib'
+import { IProgram, UniversityNationalIds } from '@island.is/university-gateway'
 import { logger } from '@island.is/logging'
 
 export

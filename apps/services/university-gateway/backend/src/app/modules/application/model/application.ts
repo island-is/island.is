@@ -13,7 +13,7 @@ import { University } from '../../university/model'
 import {
   ApplicationStatus,
   ModeOfDelivery,
-} from '@island.is/university-gateway-lib'
+} from '@island.is/university-gateway'
 
 @Table({
   tableName: 'application',

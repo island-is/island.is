@@ -1,4 +1,4 @@
-import { ModeOfDelivery } from '@island.is/university-gateway-lib'
+import { ModeOfDelivery } from '@island.is/university-gateway'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { IsEnum, IsOptional, IsString, IsUUID } from 'class-validator'
 

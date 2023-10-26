@@ -1,11 +1,11 @@
 /* eslint-disable */
 export default {
-  displayName: 'university-gateway-lib',
+  displayName: 'university-gateway',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
   transform: {
     '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../coverage/libs/university-gateway-lib',
+  coverageDirectory: '../../coverage/libs/university-gateway',
 }

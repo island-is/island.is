@@ -13,7 +13,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ProgramTable } from './program'
-import { FieldType } from '@island.is/university-gateway-lib'
+import { FieldType } from '@island.is/university-gateway'
 
 export
 @Table({

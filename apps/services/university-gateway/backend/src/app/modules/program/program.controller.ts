@@ -14,7 +14,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { ProgramDetailsResponse, ProgramResponse, TagResponse } from './model'
-import { DegreeType, Season } from '@island.is/university-gateway-lib'
+import { DegreeType, Season } from '@island.is/university-gateway'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('Program')

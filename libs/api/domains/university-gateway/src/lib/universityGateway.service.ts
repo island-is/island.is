@@ -10,7 +10,7 @@ import {
   DegreeType,
   ModeOfDelivery,
   Season,
-} from '@island.is/university-gateway-lib'
+} from '@island.is/university-gateway'
 
 const defaultLang = 'is'
 export

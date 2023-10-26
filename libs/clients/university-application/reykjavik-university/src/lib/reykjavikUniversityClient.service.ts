@@ -9,7 +9,7 @@ import {
   Requirement,
   Season,
   mapStringToEnum,
-} from '@island.is/university-gateway-lib'
+} from '@island.is/university-gateway'
 import { logger } from '@island.is/logging'
 
 export
