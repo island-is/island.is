@@ -1,6 +1,7 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useParams } from 'react-router-dom'
 import {
+  EmptyState,
   ErrorScreen,
   ExcludesFalse,
   IntroHeader,
@@ -54,12 +55,11 @@ const IntellectualPropertiesDesignDetail = () => {
       />
     )
   }
-
-  if (!data?.intellectualPropertyDesign && !loading) {
-    return <NotFound title={formatMessage(m.notFound)} />
-  }
-
   const ip = data?.intellectualPropertyDesign
+
+  if (!ip && !loading) {
+    return <EmptyState />
+  }
 
   return (
     <>
@@ -130,66 +130,74 @@ const IntellectualPropertiesDesignDetail = () => {
           />
           <Divider />
         </Stack>
-        {!loading && !error && (
-          <>
-            <Timeline
-              title={'Tímalína'}
-              maxDate={ip?.expiryDate}
-              minDate={ip?.internationalRegistrationDate}
-            >
-              <Stack space="smallGutter">
-                <Text variant="h5">
-                  {ip?.internationalRegistrationDate
-                    ? formatDate(ip.internationalRegistrationDate, 'dd.MM.yy')
-                    : ''}
-                </Text>
-                <Text>
-                  {formatMessage(ipMessages.internationalRegistration)}
-                </Text>
-              </Stack>
-              <Stack space="smallGutter">
-                <Text variant="h5">
-                  {ip?.expiryDate ? formatDate(ip.expiryDate, 'dd.MM.yy') : ''}
-                </Text>
-                <Text>{formatMessage(ipMessages.expires)}</Text>
-              </Stack>
-            </Timeline>
-            <TableGrid
-              title={'Aðrar upplýsingar'}
-              dataArray={chunk(
-                [
-                  {
-                    title: formatMessage(
-                      ipMessages.internationalRegistrationDate,
-                    ),
-                    value: ip?.internationalRegistrationDate
+        {!loading &&
+          !error &&
+          ip?.expiryDate &&
+          ip?.internationalRegistrationDate && (
+            <>
+              <Timeline
+                title={'Tímalína'}
+                maxDate={new Date(ip.expiryDate)}
+                minDate={new Date(ip.internationalRegistrationDate)}
+              >
+                <Stack space="smallGutter">
+                  <Text variant="h5">
+                    {ip?.internationalRegistrationDate
                       ? formatDate(ip.internationalRegistrationDate, 'dd.MM.yy')
-                      : '',
-                  },
-                  {
-                    title: 'Umsóknarnúmer',
-                    value: ip?.applicationNumber ?? '',
-                  },
-                  {
-                    title: 'Flokkun',
-                    value: ip?.classification?.[0] ?? '',
-                  },
-                  {
-                    title: 'Umsóknardagur',
-                    value: ip?.registrationDate
-                      ? formatDate(ip.registrationDate, 'dd.MM.yy')
-                      : '',
-                  },
-                  {
-                    title: 'Flokkun',
-                    value: ip?.status ?? '',
-                  },
-                ].filter(Boolean as unknown as ExcludesFalse),
-                2,
-              )}
-            />
-          </>
-        )}
+                      : ''}
+                  </Text>
+                  <Text>
+                    {formatMessage(ipMessages.internationalRegistration)}
+                  </Text>
+                </Stack>
+                <Stack space="smallGutter">
+                  <Text variant="h5">
+                    {ip?.expiryDate
+                      ? formatDate(ip.expiryDate, 'dd.MM.yy')
+                      : ''}
+                  </Text>
+                  <Text>{formatMessage(ipMessages.expires)}</Text>
+                </Stack>
+              </Timeline>
+              <TableGrid
+                title={'Aðrar upplýsingar'}
+                dataArray={chunk(
+                  [
+                    {
+                      title: formatMessage(
+                        ipMessages.internationalRegistrationDate,
+                      ),
+                      value: ip?.internationalRegistrationDate
+                        ? formatDate(
+                            ip.internationalRegistrationDate,
+                            'dd.MM.yy',
+                          )
+                        : '',
+                    },
+                    {
+                      title: 'Umsóknarnúmer',
+                      value: ip?.applicationNumber ?? '',
+                    },
+                    {
+                      title: 'Flokkun',
+                      value: ip?.classification?.[0] ?? '',
+                    },
+                    {
+                      title: 'Umsóknardagur',
+                      value: ip?.registrationDate
+                        ? formatDate(ip.registrationDate, 'dd.MM.yy')
+                        : '',
+                    },
+                    {
+                      title: 'Flokkun',
+                      value: ip?.status ?? '',
+                    },
+                  ].filter(Boolean as unknown as ExcludesFalse),
+                  2,
+                )}
+              />
+            </>
+          )}
         <Stack space="p2">
           <UserInfoLine
             title="Eigandi"

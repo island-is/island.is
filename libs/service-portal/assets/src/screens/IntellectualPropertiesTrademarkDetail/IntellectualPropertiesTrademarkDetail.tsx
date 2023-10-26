@@ -2,6 +2,7 @@ import React from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useParams } from 'react-router-dom'
 import {
+  EmptyState,
   ErrorScreen,
   ExcludesFalse,
   IntroHeader,
@@ -64,7 +65,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
   const ip = data?.intellectualPropertyTrademark
 
   if (!ip && !loading) {
-    return <NotFound title={formatMessage(messages.notFound)} />
+    return <EmptyState />
   }
 
   return (
@@ -137,12 +138,12 @@ const IntellectualPropertiesTrademarkDetail = () => {
           />
           <Divider />
         </Stack>
-        {!loading && !error && (
+        {!loading && !error && ip?.dateExpires && ip.applicationDate && (
           <>
             <Timeline
               title={'Tímalína'}
-              maxDate={ip?.dateExpires}
-              minDate={ip?.applicationDate}
+              maxDate={new Date(ip.dateExpires)}
+              minDate={new Date(ip.applicationDate)}
             >
               {[
                 <Stack space="smallGutter">
