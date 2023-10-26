@@ -1,11 +1,18 @@
 import { FC } from 'react'
 import { MessageDescriptor } from 'react-intl'
-import { Link, useLocation, PathMatch, matchPath } from 'react-router-dom'
+import {
+  Link,
+  useLocation,
+  PathMatch,
+  matchPath,
+  useNavigate,
+} from 'react-router-dom'
 import { useWindowSize } from 'react-use'
 
 import {
   Box,
   BreadcrumbsDeprecated as Breadcrumbs,
+  Button,
   Icon,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -51,6 +58,7 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
   const location = useLocation()
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
+  const navigate = useNavigate()
   let items: ContentBreadcrumb[] = []
 
   const findBreadcrumbsPath = (
@@ -95,7 +103,7 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
 
   findBreadcrumbsPath(navigation, [])
 
-  const isMobile = width < theme.breakpoints.sm
+  const isMobile = width < theme.breakpoints.md
   if (items.length < 2) return null
 
   return (
@@ -118,7 +126,20 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
                   ? formatMessage(m.overview)
                   : formatMessage(item.name)}
               </Link>
-            ) : null,
+            ) : (
+              <span className={styles.noUnderline}>
+                <Button
+                  preTextIcon="arrowBack"
+                  preTextIconType="filled"
+                  size="small"
+                  type="button"
+                  variant="text"
+                  onClick={() => navigate('/')}
+                >
+                  {formatMessage(m.goBackToDashboard)}
+                </Button>
+              </span>
+            ),
           )}
         </Breadcrumbs>
       </Box>

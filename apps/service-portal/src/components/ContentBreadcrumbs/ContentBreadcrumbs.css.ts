@@ -12,3 +12,9 @@ export const link = style({
 globalStyle(`${breadcrumbs} ${link}:hover`, {
   textDecoration: 'underline',
 })
+
+export const noUnderline = style({})
+
+globalStyle(`${noUnderline} span`, {
+  boxShadow: 'none',
+})
