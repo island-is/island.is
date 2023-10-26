@@ -3,10 +3,10 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { m, formatDate, amountFormat } from '@island.is/service-portal/core'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { messages } from '../../lib/messages'
-import { RightsPortalBill } from '@island.is/api/schema'
+import { RightsPortalDentistBill } from '@island.is/api/schema'
 
 interface Props {
-  bills: Array<RightsPortalBill>
+  bills: Array<RightsPortalDentistBill>
 }
 
 type TotalBills = {
@@ -46,7 +46,7 @@ const BillsTable: FC<Props> = ({ bills }: Props) => {
             </T.HeadData>
             <T.HeadData>
               <Text variant="medium" fontWeight="medium">
-                {formatMessage(m.refundDate)}
+                {formatMessage(messages.repaid)}
               </Text>
             </T.HeadData>
             <T.HeadData>
