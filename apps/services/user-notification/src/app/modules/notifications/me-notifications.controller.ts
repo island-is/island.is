@@ -91,7 +91,6 @@ export class NotificationsController {
   })
   @Get('/templates')
   // @BypassAuth()
-
   @Version('1')
   async getNotificationTemplates(
     @Query('locale') locale: string,
@@ -184,21 +183,20 @@ export class NotificationsController {
   // }
 
   @Get(':id')
-  @ApiSecurity('oauth2', ["some scope"])
-  @ApiTags("Under Development")
+  @ApiSecurity('oauth2', ['some scope'])
+  @ApiTags('Under Development')
   @Version('1')
   findOne(@Param('id') id: number): Promise<Notification> {
-    return this.notificationsService.findOne(id);
+    return this.notificationsService.findOne(id)
   }
 
   @Get()
-  @ApiSecurity('oauth2', ["some scope"])
-  @ApiTags("Under Development")
+  @ApiSecurity('oauth2', ['some scope'])
+  @ApiTags('Under Development')
   @Version('1')
   findAll(@Query('cursor') cursor: number): Promise<Notification[]> {
-    return this.notificationsService.findAll(cursor);
+    return this.notificationsService.findAll(cursor)
   }
 }
-
 
 // SCOPES
