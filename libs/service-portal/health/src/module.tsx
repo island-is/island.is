@@ -88,6 +88,7 @@ export const healthModule: PortalModule = {
     {
       name: hm.medicineLicenseTitle,
       path: HealthPaths.HealthMedicineCertificate,
+      key: 'HealthMedicine',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <MedicineCertificate />,
     },
