@@ -6,7 +6,6 @@ export * from "./i18n";
 export * from "./locator-helpers";
 export * from "./login";
 export * from "./session";
-export * from "./support";
 export * from "./urls";
 export * from "./utils"
 export * from "./wire-mocks";

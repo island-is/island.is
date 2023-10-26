@@ -5,7 +5,10 @@ const customResolver = path.join(__dirname, 'jest.resolver.js')
 
 module.exports = {
   ...nxPresetRest,
-  testMatch: ['**/+(*.)+(spec|test).+(ts|js)?(x)'],
+  testMatch: [
+    '**/+(*.)+(spec|test).+(ts|js)?(x)',
+    '!**/system-tests/**/+(*.)+(spec|test).+(ts|js)?(x)',
+  ],
   resolver: customResolver,
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageReporters: ['json'],

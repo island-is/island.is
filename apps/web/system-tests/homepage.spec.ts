@@ -1,6 +1,8 @@
+
 import { BrowserContext, expect, test } from '@playwright/test'
-import { urls } from '../../../../support/urls'
-import { session } from '../../../../support/session'
+
+import { urls } from '@island.is/testing-system'
+import { session } from '@island.is/testing-system'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
@@ -39,7 +41,7 @@ test.describe('Front page', () => {
       await page.goto(home)
       const lifeEventsCards = page.locator('[data-testid="lifeevent-card"]')
 
-      await expect(lifeEventsCards).toHaveCountGreaterThan(3)
+      expect(await lifeEventsCards.count()).toBeGreaterThan(3)
       const lifeEventHandles = await lifeEventsCards.elementHandles()
       const lifeEventUrls = await Promise.all(
         lifeEventHandles.map((item) => item.getAttribute('href')),
@@ -59,7 +61,7 @@ test.describe('Front page', () => {
       const page = await context.newPage()
       await page.goto(home)
       const featuredLinks = page.locator('[data-testid="featured-link"]')
-      await expect(featuredLinks).toHaveCountGreaterThan(3)
+      expect(await featuredLinks.count()).toBeGreaterThan(3)
       const featuredLinksHandles = await featuredLinks.elementHandles()
       const featuresLinksUrls = await Promise.all(
         featuredLinksHandles.map((item) => item.getAttribute('href')),
@@ -112,9 +114,9 @@ test.describe('Front page', () => {
     await page
       .locator('[data-testid="frontpage-burger-button"]:nth-child(2)')
       .click()
-    await expect(
-      page.locator('[data-testid="mega-menu-link"] > a'),
-    ).toHaveCountGreaterThan(18)
+    expect(
+      await page.locator('[data-testid="mega-menu-link"] > a').count(),
+    ).toBeGreaterThan(18)
   })
 
   test('burger menu should open and close', async () => {

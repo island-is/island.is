@@ -1,6 +1,7 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { urls } from '../../../../support/urls'
-import { session } from '../../../../support/session'
+
+import { urls } from '@island.is/testing-system'
+import { session } from '@island.is/testing-system'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
@@ -28,7 +29,7 @@ test.describe('Search feature', () => {
       .type(testPhrase, { delay: 100 })
     await page.keyboard.press('Enter')
     const testResults = page.locator('[data-testid="search-result"]')
-    await expect(testResults).toHaveCountGreaterThan(9)
+    await expect(testResults.count()).toBeGreaterThan(9)
     const searchUrl = page.url()
     await testResults.nth(0).click()
     await page.waitForLoadState('networkidle')

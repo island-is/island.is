@@ -20,6 +20,15 @@
       },
       "dependsOn": ["build-custom-server"]
     },
+    "system-tests": {
+      "executor": "@nx/playwright:playwright",
+      "outputs": ["{workspaceRoot}/dist/.playwright/apps/web"],
+      "options": {
+        "debug": false,
+        "fullyParallel": true,
+        "config": "apps/web/playwright.ts"
+      }
+    },
     "serve": {
       "executor": "@nx/next:server",
       "defaultConfiguration": "development",

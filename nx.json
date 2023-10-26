@@ -11,6 +11,7 @@
           "build",
           "lint",
           "test",
+          "system-tests",
           "e2e",
           "schemas/build-openapi",
           "schemas/openapi-generator",
@@ -100,6 +101,17 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
+    },
+    "system-tests": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/playwright.ts",
+        "{workspaceRoot}/system-tests/**",
+        "{workspaceRoot}/src/playwright.ts",
+        "{workspaceRoot}/src/system-tests/**"
+      ]
     },
     "e2e": {
       "inputs": ["default", "^production"]
