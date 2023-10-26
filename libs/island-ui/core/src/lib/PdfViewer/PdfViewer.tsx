@@ -7,6 +7,8 @@ import { LoadingDots } from '../LoadingDots/LoadingDots'
 import { AlertMessage } from '../AlertMessage/AlertMessage'
 import cn from 'classnames'
 
+const pdfError = 'Villa kom upp við að birta skjal, reyndu aftur síðar.'
+
 export interface PdfViewerProps {
   file: string
   renderMode?: 'svg' | 'canvas'
@@ -64,12 +66,7 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
   }
 
   if (pdfLibError) {
-    return (
-      <AlertMessage
-        type="error"
-        title="Villa kom upp við að birta skjal, reyndu aftur síðar."
-      />
-    )
+    return <AlertMessage type="error" title={pdfError} />
   }
 
   if (pdfLib) {
@@ -81,7 +78,7 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
           renderMode={renderMode}
           className={cn(styles.pdfViewer, { [styles.pdfSvgPage]: autoWidth })}
           loading={() => loadingView()}
-          error={errorComponent}
+          error={errorComponent ?? pdfError}
         >
           {showAllPages ? (
             [...Array(numPages)].map((x, page) => (
