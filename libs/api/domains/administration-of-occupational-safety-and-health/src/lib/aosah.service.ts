@@ -5,6 +5,8 @@ import {
   MachineDetails,
 } from '@island.is/clients/aosah/transfer-of-machine-ownership'
 import { Injectable } from '@nestjs/common'
+import { ChangeMachineOwner } from './graphql/ownerChange.input'
+import { ConfirmOwnerChange } from './graphql/confirmOwnerChange.input'
 
 @Injectable()
 export class AosahApi {
@@ -31,9 +33,30 @@ export class AosahApi {
       ownerNumber: result.ownerNumber || null,
       productionNumber: result.productionNumber || null,
       productionCountry: result.productionCountry || null,
+      licensePlateNumber: result.licensePlateNumber || null,
       _links: result._links || null,
     }
 
     return machine
+  }
+
+  async changeMachineOwner(
+    auth: User,
+    changeOwner: ChangeMachineOwner,
+  ): Promise<void> {
+    await this.transferOfMachineOwnershipClient.changeMachineOwner(
+      auth,
+      changeOwner,
+    )
+  }
+
+  async confirmOwnerChange(
+    auth: User,
+    confirmChange: ConfirmOwnerChange,
+  ): Promise<void> {
+    await this.transferOfMachineOwnershipClient.conformOwnerChange(
+      auth,
+      confirmChange,
+    )
   }
 }

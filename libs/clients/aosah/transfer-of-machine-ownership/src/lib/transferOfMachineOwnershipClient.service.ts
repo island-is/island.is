@@ -1,55 +1,86 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
-import { MachinesApi } from '../../gen/fetch/apis'
+import { MachineOwnerChangeApi, MachinesApi } from '../../gen/fetch/apis'
 import {
+  ChangeMachineOwner,
+  ConfirmOwnerChange,
   Machine,
   MachineDetails,
 } from './transferOfMachineOwnershipClient.types'
+import { CustomMachineApi } from './customMachineApi'
+import {
+  apiChangeMachineOwnerToApiRequest,
+  confirmChangeToApiRequest,
+} from './transferOfMachineOwnershipClient.utils'
 
 @Injectable()
 export class TransferOfMachineOwnershipClient {
-  constructor(private readonly machinesApi: MachinesApi) {}
+  constructor(
+    private readonly machinesApi: MachinesApi,
+    private readonly machineApi: CustomMachineApi,
+    private readonly machineOwnerChangeApi: MachineOwnerChangeApi,
+  ) {}
 
   private machinesApiWithAuth(auth: Auth) {
     return this.machinesApi.withMiddleware(new AuthMiddleware(auth))
   }
 
+  private machineApiWithAuth(auth: Auth) {
+    return this.machineApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private machineOwnerChangeApiWithAuth(auth: Auth) {
+    return this.machineOwnerChangeApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
   public async getMachines(auth: User): Promise<Machine[]> {
-    const result = await this.machinesApiWithAuth(auth).apiMachinesGet({
-      // searchQuery: undefined,
-      // pageNumber: undefined,
-      // pageSize: undefined,
-      // orderBy: undefined,
-      // showDeregisteredMachines: undefined,
-      // supervisorRegistered: undefined,
-      // onlyInOwnerChangeProcess: undefined,
-      onlyShowOwnedMachines: true,
-      // locale: 'is',
-    })
-    console.log('rsult', result)
+    console.log('Start fetching machines...')
+    try {
+      const result = await this.machinesApiWithAuth(auth).apiMachinesGet({
+        // searchQuery: undefined,
+        // pageNumber: undefined,
+        // pageSize: undefined,
+        // orderBy: undefined,
+        // showDeregisteredMachines: undefined,
+        // supervisorRegistered: undefined,
+        // onlyInOwnerChangeProcess: undefined,
+        onlyShowOwnedMachines: true,
+        // locale: 'is',
+      })
 
-    const machines: Machine[] =
-      result.value?.map((m) => ({
-        id: m.id,
-        registrationNumber: m.registrationNumber || null,
-        type: m.type || null,
-        owner: m.owner || null,
-        supervisor: m.supervisor || null,
-        status: m.status || null,
-        dateLastInspection: m.dateLastInspection || null,
-        category: m.category || null,
-        subCategory: m.subCategory || null,
-        _links: result.links || null,
-      })) || []
+      if (result.value) {
+        const machines: Machine[] = result.value.map((m) => ({
+          id: m.id,
+          registrationNumber: m.registrationNumber || null,
+          type: m.type || null,
+          owner: m.owner || null,
+          supervisor: m.supervisor || null,
+          status: m.status || null,
+          dateLastInspection: m.dateLastInspection || null,
+          category: m.category || null,
+          subCategory: m.subCategory || null,
+          _links: result.links || null,
+        }))
 
-    return machines
+        console.log('Machines fetched successfully')
+        return machines
+      } else {
+        console.error('Response value is empty or undefined')
+        throw new Error('Empty response from the server')
+      }
+    } catch (error) {
+      console.error('Error fetching machines:', error)
+
+      // You can handle different types of errors here, or re-throw them if needed
+      throw error
+    }
   }
 
   public async getMachineDetail(
     auth: User,
     id: string,
   ): Promise<MachineDetails> {
-    const result = await this.machinesApiWithAuth(auth).getMachine({
+    const result = await this.machineApiWithAuth(auth).getMachine({
       id,
       // locale: 'is',
     })
@@ -81,5 +112,24 @@ export class TransferOfMachineOwnershipClient {
     }
 
     return machine
+  }
+
+  public async changeMachineOwner(auth: Auth, ownerChange: ChangeMachineOwner) {
+    const input = apiChangeMachineOwnerToApiRequest(ownerChange)
+
+    await this.machineOwnerChangeApiWithAuth(auth).apiMachineOwnerChangePost(
+      input,
+    )
+  }
+
+  public async conformOwnerChange(
+    auth: Auth,
+    confirmChange: ConfirmOwnerChange,
+  ) {
+    const input = confirmChangeToApiRequest(confirmChange)
+
+    await this.machineOwnerChangeApiWithAuth(auth).apiMachineOwnerChangePut(
+      input,
+    )
   }
 }

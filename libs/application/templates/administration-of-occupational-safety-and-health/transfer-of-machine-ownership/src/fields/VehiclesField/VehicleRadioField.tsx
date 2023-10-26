@@ -7,20 +7,15 @@ import {
   InputError,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useState } from 'react'
-import {
-  Machine,
-  MachineDetails,
-  VehiclesCurrentVehicleWithOwnerchangeChecks,
-} from '../../shared'
-import { information, applicationCheck, error } from '../../lib/messages'
+import { FC, useCallback, useState } from 'react'
+import { Machine } from '../../shared'
+import { information, error } from '../../lib/messages'
 import { RadioController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { machine } from 'os'
-import { gql, useQuery } from '@apollo/client'
-import { GET_MACHINE_DETAILS } from '../../graphql/queries'
+import { useLazyMachineDetails } from '../../hooks/useLazyVehicleDetails'
+import { MachineDetailsInput } from '@island.is/api/schema'
 
 interface Option {
   value: string
@@ -38,19 +33,68 @@ export const VehicleRadioField: FC<
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 
-  const [plate, setPlate] = useState<string>(
-    getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [regNumber, setPlate] = useState<string>(
+    getValueViaPath(application.answers, 'machine.regNumber', '') as string,
+  )
+  const getMachineDetails = useLazyMachineDetails()
+  const getMachineDetailsCallback = useCallback(
+    async ({ id }: MachineDetailsInput) => {
+      const { data } = await getMachineDetails({
+        input: {
+          id: id,
+        },
+      })
+      return data
+    },
+    [getMachineDetails],
   )
 
   const onRadioControllerSelect = (s: string) => {
-    const currentVehicle = currentMachineList[parseInt(s, 10)]
+    const currentMachine = currentMachineList[parseInt(s, 10)]
+    console.log('onRadioController')
+    setIsLoading(true)
+    if (currentMachine.id) {
+      getMachineDetailsCallback({
+        id: currentMachine.id,
+      }).then((response) => {
+        console.log('response', response)
+        // setSelectedMachine({
+        //   id: currentVehicle.id,
+        //   registrationNumber: currentVehicle.registrationNumber,
+        //   type: currentVehicle.type,
+        //   ownerName: currentVehicle.owner,
+        //   supervisorName: currentVehicle.supervisor,
+        //   status: currentVehicle.status,
+        //   _links: currentVehicle._links,
+        //   category: currentVehicle.category,
+        //   ownerNumber: response.machineDetails.ownerNumber,
+        // })
+        //currentVehicle.ownerNumber = response?.machineDetails?.ownerNumber || ''
+        const disabled = isCurrentMachineDisabled(currentMachine?.status)
+        console.log('currentMachine', currentMachine)
+        setValue(
+          'machine.regNumber',
+          response.machineDetails.registrationNumber,
+        )
+        setValue('machine.category', response.machineDetails.category)
+        setValue(
+          'machine.type',
+          response.machineDetails?.type?.split(' ')[0].trim(),
+        )
+        setValue(
+          'machine.subType',
+          response.machineDetails?.type?.split(' ')[1].trim(),
+        )
+        setValue('machine.plate', response.machineDetails.licensePlateNumber)
+        setValue('machine.ownerNumber', response.machineDetails.ownerNumber)
+        setPlate(disabled ? '' : currentMachine.registrationNumber || '')
 
-    setPlate(currentVehicle.registrationNumber || '')
-    setValue('vehicle.plate', currentVehicle.registrationNumber)
-    setValue('vehicle.type', currentVehicle.type)
-    setValue('vehicle.date', new Date().toISOString().substring(0, 10))
-    setValue('pickVehicle.plate', currentVehicle.registrationNumber || '')
-    setValue('pickVehicle.color', 'color' || undefined)
+        setIsLoading(false)
+      })
+    }
+
+    setPlate(currentMachine.registrationNumber || '')
   }
 
   function isCurrentMachineDisabled(status?: string): boolean {
@@ -101,13 +145,6 @@ export const VehicleRadioField: FC<
                   message={
                     <Box>
                       <BulletList>
-                        {!true && (
-                          <Bullet>
-                            {formatMessage(
-                              information.labels.pickVehicle.isNotDebtLessTag,
-                            )}
-                          </Bullet>
-                        )}
                         {!!machine.status?.length && (
                           <Bullet>{machine.status}</Bullet>
                         )}
@@ -128,13 +165,13 @@ export const VehicleRadioField: FC<
   return (
     <div>
       <RadioController
-        id="pickVehicle.vehicle"
+        id="machine"
         largeButtons
         backgroundColor="blue"
         onSelect={onRadioControllerSelect}
         options={vehicleOptions(currentMachineList as Machine[])}
       />
-      {plate.length === 0 && (errors as any)?.pickVehicle && (
+      {regNumber.length === 0 && (errors as any)?.machine && (
         <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />
       )}
     </div>

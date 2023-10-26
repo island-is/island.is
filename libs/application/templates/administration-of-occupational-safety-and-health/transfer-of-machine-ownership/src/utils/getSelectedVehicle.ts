@@ -7,11 +7,7 @@ export const getSelectedVehicle = (
   answers: FormValue,
 ) => {
   const currentVehicleList =
-    (externalData?.machinesList?.data as object[]) || []
-  const vehicleValue = getValueViaPath(
-    answers,
-    'pickVehicle.vehicle',
-    '',
-  ) as string
+    (externalData?.machinesList?.data as Machine[]) || []
+  const vehicleValue = getValueViaPath(answers, 'machine', '') as string
   return currentVehicleList[parseInt(vehicleValue, 10)]
 }

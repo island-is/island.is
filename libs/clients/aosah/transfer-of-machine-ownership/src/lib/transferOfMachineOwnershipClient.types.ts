@@ -42,3 +42,20 @@ export type MachineDetails = {
   supervisorPostcode?: string | null
   _links?: MachineLink[] | null
 }
+
+export type ChangeMachineOwner = {
+  id?: string
+  machineId?: string | null
+  buyerNationalId?: string | null
+  delegateNationalId?: string | null
+  sellerNationalId?: string | null
+  dateOfOwnerChange?: Date | null
+  paymentId?: string | null
+  phoneNumber?: string | null
+  email?: string | null
+}
+
+export type ConfirmOwnerChange = {
+  id?: string
+  machineId?: string | null
+}

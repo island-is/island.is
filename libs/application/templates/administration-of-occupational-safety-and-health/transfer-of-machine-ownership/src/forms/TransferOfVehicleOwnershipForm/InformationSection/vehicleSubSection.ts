@@ -6,45 +6,20 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-import {
-  Machine,
-  MachineDetails,
-  VehiclesCurrentVehicle,
-} from '../../../shared'
+import { Machine } from '../../../shared'
 import { getSelectedVehicle } from '../../../utils'
-import { gql, useQuery } from '@apollo/client'
-import { GET_MACHINE_DETAILS } from '../../../graphql/queries'
-
-const FetchMachineDetails = (currentVehicleId?: string) => {
-  const { data, loading, error } = useQuery<MachineDetails>(
-    gql(GET_MACHINE_DETAILS),
-    {
-      variables: {
-        input: {
-          id: currentVehicleId,
-        },
-      },
-    },
-  )
-
-  if (!loading && !error) {
-    return data // Return the data if available
-  }
-
-  return null // Return null if data is loading or an error occurred
-}
 
 export const vehicleSubSection = buildSubSection({
-  id: 'vehicle',
+  id: 'machine',
   title: information.labels.vehicle.sectionTitle,
   children: [
     buildMultiField({
-      id: 'vehicleMultiField',
+      id: 'machineMultiField',
       title: information.labels.vehicle.title,
       description: information.labels.vehicle.description,
       children: [
         buildTextField({
-          id: 'vehicle.registrationNumber',
+          id: 'machine.regNumber',
           title: information.labels.vehicle.registrationNumber,
           backgroundColor: 'white',
           width: 'half',
@@ -54,12 +29,11 @@ export const vehicleSubSection = buildSubSection({
               application.externalData,
               application.answers,
             ) as Machine
-            console.log('application', application)
-            return machine.registrationNumber
+            return machine?.registrationNumber
           },
         }),
         buildTextField({
-          id: 'vehicle.category',
+          id: 'machine.category',
           title: information.labels.vehicle.category,
           backgroundColor: 'white',
           width: 'half',
@@ -69,11 +43,11 @@ export const vehicleSubSection = buildSubSection({
               application.externalData,
               application.answers,
             ) as Machine
-            return machine.category
+            return machine?.category
           },
         }),
         buildTextField({
-          id: 'vehicle.type',
+          id: 'machine.type',
           title: information.labels.vehicle.type,
           backgroundColor: 'white',
           width: 'half',
@@ -83,11 +57,11 @@ export const vehicleSubSection = buildSubSection({
               application.externalData,
               application.answers,
             ) as Machine
-            return machine.type?.split(' - ')[0].trim()
+            return machine?.type?.split(' - ')[0].trim() || ''
           },
         }),
         buildTextField({
-          id: 'vehicle.subType',
+          id: 'machine.subType',
           title: information.labels.vehicle.subType,
           backgroundColor: 'white',
           width: 'half',
@@ -97,11 +71,11 @@ export const vehicleSubSection = buildSubSection({
               application.externalData,
               application.answers,
             ) as Machine
-            return machine.type?.split(' - ')[1].trim()
+            return machine?.type?.split(' - ')[1].trim() || ''
           },
         }),
         buildTextField({
-          id: 'vehicle.plate',
+          id: 'machine.plate',
           title: information.labels.vehicle.plate,
           backgroundColor: 'white',
           width: 'half',
@@ -111,11 +85,11 @@ export const vehicleSubSection = buildSubSection({
               application.externalData,
               application.answers,
             ) as Machine
-            return 'plötunúmer'
+            return machine?.licensePlateNumber
           },
         }),
         buildTextField({
-          id: 'vehicle.ownerNumber',
+          id: 'machine.ownerNumber',
           title: information.labels.vehicle.ownerNumber,
           backgroundColor: 'white',
           width: 'half',
@@ -125,13 +99,11 @@ export const vehicleSubSection = buildSubSection({
               application.externalData,
               application.answers,
             ) as Machine
-            console.log('machine-ID', machine.id)
-            const machineDetails = FetchMachineDetails(machine.id)
-            return machineDetails?.ownerNumber
+            return machine?.ownerNumber
           },
         }),
         buildDateField({
-          id: 'vehicle.date',
+          id: 'machine.date',
           title: information.labels.vehicle.date,
           required: true,
           width: 'half',

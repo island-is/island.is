@@ -90,6 +90,8 @@ export type Machine = {
   status?: string
   dateLastInspection?: string
   category?: string
+  ownerNumber?: string
+  licensePlateNumber?: string
   _links?: MachineLink[] | null
 }
 

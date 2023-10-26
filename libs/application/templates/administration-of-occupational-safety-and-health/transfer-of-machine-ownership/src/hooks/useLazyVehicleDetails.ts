@@ -1,11 +1,14 @@
 import { gql } from '@apollo/client'
-import { VehicleOwnerchangeChecksByPermno } from '@island.is/api/schema'
+import {
+  MachineDetails,
+  MachineDetailsInput,
+  VehicleOwnerchangeChecksByPermno,
+} from '@island.is/api/schema'
 import {
   GET_MACHINE_DETAILS,
   GET_VEHICLE_OWNERCHANGE_CHECKS_BY_PERMNO,
 } from '../graphql/queries'
 import { useLazyQuery } from './useLazyQuery'
-import { MachineDetails } from '../shared'
 
 export const useLazyVehicleDetails = () => {
   return useLazyQuery<
@@ -28,7 +31,7 @@ export const useLazyMachineDetails = () => {
       machineDetails: MachineDetails
     },
     {
-      id: string
+      input: MachineDetailsInput
     }
   >(
     gql`

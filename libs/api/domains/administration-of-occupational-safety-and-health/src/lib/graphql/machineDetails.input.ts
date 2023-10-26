@@ -2,7 +2,7 @@
 import { ObjectType, Field, ID, InputType } from '@nestjs/graphql'
 
 @ObjectType()
-export class MachineDetailsDto {
+export class MachineDetails {
   @Field(() => String)
   id!: string
 
@@ -36,7 +36,26 @@ export class MachineDetailsDto {
   @Field(() => String, { nullable: true })
   productionCountry?: string | null
 
-  // Define other fields as needed
+  @Field(() => String, { nullable: true })
+  licensePlateNumber?: string | null
+
+  @Field(() => MachineLinks, { nullable: true })
+  links?: MachineLinks | null
+}
+
+@ObjectType()
+export class MachineLinks {
+  @Field(() => String, { nullable: true })
+  href?: string
+
+  @Field(() => String, { nullable: true })
+  rel?: string
+
+  @Field(() => String, { nullable: true })
+  method?: string
+
+  @Field(() => String, { nullable: true })
+  displayTitle?: string
 }
 
 @InputType()
