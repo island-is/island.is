@@ -9858,21 +9858,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hugsmidjan/htmldiff-js@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "@hugsmidjan/htmldiff-js@npm:1.2.1"
-  checksum: 1289d9446b984beb8dce10e108c00bba87f41ec320f232d7d3cfa4d18e7257da366c0cf19cad408026e043683c4afff6d10bf6857682172359957f559fe9634c
-  languageName: node
-  linkType: hard
-
-"@hugsmidjan/qj@npm:^4.10.2, @hugsmidjan/qj@npm:^4.19.0":
+"@hugsmidjan/qj@npm:^4.19.0, @hugsmidjan/qj@npm:^4.7.0":
   version: 4.22.1
   resolution: "@hugsmidjan/qj@npm:4.22.1"
   checksum: 9bc8999a625b31f59b1ef1dc636d253440a2b55a81384cd83dad651be2b0d05ccf140bd1f5b9393c99e7e09f6bcc69db7af8963bacf087fe062e30d84659894a
   languageName: node
   linkType: hard
 
-"@hugsmidjan/react@npm:^0.4.23":
+"@hugsmidjan/react@npm:^0.4.4":
   version: 0.4.33
   resolution: "@hugsmidjan/react@npm:0.4.33"
   dependencies:
@@ -10032,22 +10025,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@island.is/regulations-tools@npm:0.7.11":
-  version: 0.7.11
-  resolution: "@island.is/regulations-tools@npm:0.7.11"
+"@island.is/regulations-tools@npm:0.7.9":
+  version: 0.7.9
+  resolution: "@island.is/regulations-tools@npm:0.7.9"
   dependencies:
-    "@hugsmidjan/htmldiff-js": ^1.2.1
-    "@hugsmidjan/qj": ^4.10.2
-    "@hugsmidjan/react": ^0.4.23
+    "@hugsmidjan/qj": ^4.7.0
+    "@hugsmidjan/react": ^0.4.4
     "@tinymce/tinymce-react": ^3.13.0
     cleanup-prettier: "npm:prettier@2.2.0"
+    htmldiff-js: "github:hugsmidjan-is/htmldiff-js#semver:^1.1.1"
     jsdom: ^16.4.0
     tinymce: ^5.10.2
     translate.js: ^1.3.2
   peerDependencies:
     react: ">=16.8 <19"
     react-dom: ">=16.8 <19"
-  checksum: f3fba70becfadb2c0f87027f2d84ba2a7429da7eaf8fbf5e10d000f41b92e02117a974f72a28f761cf10f8bdfb6c9ed0f51c525d3a58fbdefa632d63c95253d3
+  checksum: 6d72d77cd045bcb237a675033d5afd39f4952f34e26718da22b50b62d2c683670dae328dc13e23187ae9ea97b87dc8409cd44b8043c13119c432000c83fc848a
   languageName: node
   linkType: hard
 
@@ -31645,6 +31638,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"htmldiff-js@github:hugsmidjan-is/htmldiff-js#semver:^1.1.1":
+  version: 1.1.1
+  resolution: "htmldiff-js@https://github.com/hugsmidjan-is/htmldiff-js.git#commit=b2400db41f329180cedf33547f1cc5b6da85f15f"
+  checksum: 34acbed7bbf829a2f99075d54979b3c20ffb5dadf94e754c2d8b3f2ba88ef5a71dcb9d07ce73f12636cfa225110d6dff01c54c594cf6e0853332248016f7ccf6
+  languageName: node
+  linkType: hard
+
 "htmlnano@npm:0.2.7":
   version: 0.2.7
   resolution: "htmlnano@npm:0.2.7"
@@ -33623,7 +33623,7 @@ __metadata:
     "@graphql-codegen/typescript-resolvers": 2.7.3
     "@hookform/error-message": 2.0.1
     "@island.is/login": 1.2.1
-    "@island.is/regulations-tools": 0.7.11
+    "@island.is/regulations-tools": 0.7.9
     "@jeremybarbet/contentful-extension-scripts": 0.22.7
     "@keyv/redis": 2.6.1
     "@nestjs/apollo": 10.1.0
