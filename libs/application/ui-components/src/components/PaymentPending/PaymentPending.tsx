@@ -26,8 +26,6 @@ export const PaymentPending: FC<
   )
   const [searchParams, setSearchParams] = useSearchParams()
 
-  console.log('application', application)
-
   const shouldRedirect = !isComingFromRedirect() && paymentStatus.paymentUrl
 
   const [submitApplication, { error: submitError }] = useSubmitApplication({
