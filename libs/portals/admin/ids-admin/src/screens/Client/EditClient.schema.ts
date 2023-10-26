@@ -45,7 +45,8 @@ const checkIfStringIsListOfUrls = (urls: string) => {
 
   for (const url of urlsArray) {
     try {
-      new URL(url)
+      // Firefox does not support wildcard subdomains, so we need to remove it before validating the url
+      new URL(url.replace('*.', ''))
     } catch (e) {
       return false
     }
