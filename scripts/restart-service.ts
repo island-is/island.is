@@ -64,6 +64,6 @@ void (async function () {
   const targetService = out[0]
   execSync(
     `${__dirname}/_run-aws-eks-commands.js restart-service --namespace ${targetService.namespace} --service web-${targetService.name}  --cluster ${argv.argv.cluster}`,
-    { stdio: 'inherit' },
+    { stdio: 'inherit', encoding: 'utf-8' },
   )
 })()

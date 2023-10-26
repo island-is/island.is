@@ -31,6 +31,9 @@ function buildDockerImage(containerImage, builder, target) {
   const dirnameSafe = `"${__dirname}"`
   execSync(
     `${builder} build -f ${dirnameSafe}/Dockerfile.proxy --target ${target} -t ${containerImage} ${dirnameSafe}`,
+    {
+      encoding: 'utf-8',
+    },
   )
 }
 
@@ -83,7 +86,7 @@ async function main() {
           )
           execSync(
             `${args.builder} run --name ${args.service} --rm -e AWS_ACCESS_KEY_ID=${credentials.accessKeyId} -e AWS_SECRET_ACCESS_KEY=${credentials.secretAccessKey} -e AWS_SESSION_TOKEN="${credentials.sessionToken}" -e CLUSTER=${args.cluster} -e TARGET_SVC=${args.service} -e TARGET_NAMESPACE=${args.namespace} -e TARGET_PORT=${args.port} -p ${args['proxy-port']}:8080 ${dockerBuild}`,
-            { stdio: 'inherit' },
+            { stdio: 'inherit', encoding: 'utf-8' },
           )
         },
       )
@@ -115,7 +118,7 @@ async function main() {
           console.log(`Now running the restart - \uD83D\uDE31`)
           execSync(
             `${args.builder} run --rm --name ${args.service} -e AWS_ACCESS_KEY_ID=${credentials.accessKeyId} -e AWS_SECRET_ACCESS_KEY=${credentials.secretAccessKey} -e AWS_SESSION_TOKEN=${credentials.sessionToken} -e CLUSTER=${args.cluster} -e TARGET_SVC=${args.service} -e TARGET_NAMESPACE=${args.namespace} ${containerImage}`,
-            { stdio: 'inherit' },
+            { stdio: 'inherit', encoding: 'utf-8' },
           )
         },
       )
