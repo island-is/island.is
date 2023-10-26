@@ -34,14 +34,7 @@ export class ApplicationStatusHistory extends Model {
     values: Object.values(ApplicationStatus),
     allowNull: false,
   })
-  oldStatus!: ApplicationStatus
-
-  @Column({
-    type: DataType.ENUM,
-    values: Object.values(ApplicationStatus),
-    allowNull: false,
-  })
-  newStatus!: ApplicationStatus
+  status!: ApplicationStatus
 
   @CreatedAt
   readonly created!: Date
