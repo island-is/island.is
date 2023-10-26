@@ -1,5 +1,11 @@
 import { UseGuards } from '@nestjs/common'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  User,
+} from '@island.is/auth-nest-tools'
 import { UniversityGatewayScope } from '@island.is/auth/scopes'
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
 import { ApplicationService } from './application.service'
@@ -38,8 +44,11 @@ export class ApplicationController {
   @ApiOperation({
     summary: 'Get application by ID',
   })
-  async getApplication(@Param('id') id: string): Promise<ApplicationResponse> {
-    return this.applicationService.getApplication(id)
+  async getApplication(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationResponse> {
+    return this.applicationService.getApplication(id, user)
   }
 
   @Post()
@@ -55,8 +64,9 @@ export class ApplicationController {
   })
   async createApplication(
     @Body() applicationDto: CreateApplicationDto,
+    @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.createApplication(applicationDto)
+    return this.applicationService.createApplication(applicationDto, user)
   }
 
   @Patch(':id')
@@ -79,7 +89,8 @@ export class ApplicationController {
   async updateApplication(
     @Param('id') id: string,
     @Body() applicationDto: UpdateApplicationDto,
+    @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.updateApplication(id, applicationDto)
+    return this.applicationService.updateApplication(id, applicationDto, user)
   }
 }
