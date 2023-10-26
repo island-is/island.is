@@ -633,7 +633,7 @@ export const notifications = {
     courtOfAppealsBody: {
       id: 'judicial.system.backend:notifications.case_appeal_received_by_court.court_of_appeals_body_v2',
       defaultMessage:
-        'Kæra í máli {courtCaseNumber} hefur borist Landsrétti. Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
+        'Kæra í máli {courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til {statementDeadline}. Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description: 'Texti í pósti til Landsréttar þegar að kæra er móttekin',
     },
   }),
