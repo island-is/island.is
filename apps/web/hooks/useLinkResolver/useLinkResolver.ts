@@ -79,6 +79,14 @@ export const routesTemplate = {
     is: '/handbaekur/[slug]/[chapterSlug]',
     en: '/en/manuals/[slug]/[chapterSlug]',
   },
+  vacancies: {
+    is: '/starfatorg',
+    en: '',
+  },
+  vacancydetails: {
+    is: '/starfatorg/[id]',
+    en: '',
+  },
   digitalicelandservices: {
     is: '/s/stafraent-island/thjonustur',
     en: '/en/o/digital-iceland/island-services',
@@ -227,14 +235,6 @@ export const routesTemplate = {
   undirskriftalistar: {
     is: '/undirskriftalistar',
     en: '/en/petitions',
-  },
-  vacancies: {
-    is: '/starfatorg',
-    en: '',
-  },
-  vacancydetails: {
-    is: '/starfatorg/[id]',
-    en: '',
   },
 }
 
