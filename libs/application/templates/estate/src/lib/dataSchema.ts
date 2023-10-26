@@ -456,4 +456,5 @@ export const estateSchema = z.object({
     ),
 
   confirmAction: z.array(z.enum([YES])).length(1),
+  confirmActionUndividedEstate: z.array(z.enum([YES])).length(1),
 })
