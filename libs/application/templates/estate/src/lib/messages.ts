@@ -70,8 +70,26 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar um hinn látna',
     description: '',
   },
-  deceasedInfoProviderSubtitle: {
-    id: 'es.application:deceasedInfoProviderSubtitle',
+  providerSubtitleDivisionOfEstateByHeirs: {
+    id: 'es.application:providerSubtitleDivisionOfEstateByHeirs',
+    defaultMessage:
+      'Upplýsingar frá sýslumanni um kennitölu, dánardag, lögheimili, erfingja, eignir og hvort arfleifandi hafi skilað inn erfðaskrá eða gert kaupmála.',
+    description: '',
+  },
+  providerSubtitleEstateWithoutAssets: {
+    id: 'es.application:providerSubtitleEstateWithoutAssets',
+    defaultMessage:
+      'Upplýsingar frá sýslumanni um kennitölu, dánardag, lögheimili, erfingja, eignir og hvort arfleifandi hafi skilað inn erfðaskrá eða gert kaupmála.',
+    description: '',
+  },
+  providerSubtitleOfficialDivision: {
+    id: 'es.application:providerSubtitleOfficialDivision',
+    defaultMessage:
+      'Upplýsingar frá sýslumanni um kennitölu, dánardag, lögheimili, erfingja, eignir og hvort arfleifandi hafi skilað inn erfðaskrá eða gert kaupmála.',
+    description: '',
+  },
+  providerSubtitleUndividedEstate: {
+    id: 'es.application:providerSubtitleUndividedEstate',
     defaultMessage:
       'Upplýsingar frá sýslumanni um kennitölu, dánardag, lögheimili, erfingja, eignir og hvort arfleifandi hafi skilað inn erfðaskrá eða gert kaupmála.',
     description: '',
@@ -274,7 +292,7 @@ export const m = defineMessages({
   },
   propertiesDescription: {
     id: 'es.application:propertiesDescription#markdown',
-    defaultMessage: 'Tilgreina skal allar hjúskapareignir beggja hjóna.',
+    defaultMessage: 'Tilgreina skal allar hjúskapaeignir beggja hjóna.',
     description: '',
   },
   realEstate: {

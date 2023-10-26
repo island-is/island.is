@@ -159,10 +159,6 @@ const template: ApplicationTemplate<
         organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
         chargeItemCodes: getChargeItemCodes(),
         submitTarget: States.REVIEW,
-        lifecycle: {
-          ...pruneAfterDays(1 / 24),
-          shouldDeleteChargeIfPaymentFulfilled: true,
-        },
         onExit: [
           defineTemplateApi({
             action: ApiActions.initReview,
@@ -215,8 +211,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Review').then((module) =>
-                  Promise.resolve(module.ReviewForm),
+                import('../forms/ReviewSeller').then((module) =>
+                  Promise.resolve(module.ReviewSellerForm),
                 ),
               write: {
                 answers: [

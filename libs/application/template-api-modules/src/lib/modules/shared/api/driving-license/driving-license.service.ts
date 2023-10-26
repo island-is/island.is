@@ -23,7 +23,6 @@ import {
 import sortTeachers from './sortTeachers'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { CurrentLicenseParameters } from '@island.is/application/types'
-import { EmbaettiDto } from '@island.is/clients/driving-license'
 
 @Injectable()
 export class DrivingLicenseProviderService extends BaseTemplateApiService {
