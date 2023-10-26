@@ -16,9 +16,12 @@ import {
   UniversityOfIcelandApplicationClientModule,
 } from '@island.is/clients/university-application/university-of-iceland'
 import { ConfigModule } from '@nestjs/config'
+import { AuditModule } from '@island.is/nest/audit'
+import { environment } from '../../../environments'
 
 @Module({
   imports: [
+    AuditModule.forRoot(environment.audit),
     SequelizeModule.forFeature([
       University,
       Course,
