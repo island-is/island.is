@@ -21,6 +21,11 @@
               "enum": ["Renewal", "Confirmation", "Registered"],
               "type": "string"
             }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": { "enum": ["Icelandic", "English"], "type": "string" }
           }
         ],
         "responses": {
@@ -2299,7 +2304,7 @@
               "schema": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/SharePointAPI.Category"
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Category"
                 }
               }
             },
@@ -2307,7 +2312,7 @@
               "schema": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/SharePointAPI.Category"
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Category"
                 }
               }
             },
@@ -2315,7 +2320,7 @@
               "schema": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/SharePointAPI.Category"
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Category"
                 }
               }
             },
@@ -2323,7 +2328,7 @@
               "schema": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/SharePointAPI.Category"
+                  "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Category"
                 }
               }
             }
@@ -3994,6 +3999,15 @@
         },
         "additionalProperties": false
       },
+      "HUX.ELS.API.Common.TrademarkModels.Category": {
+        "type": "object",
+        "properties": {
+          "number": { "type": "string", "nullable": true },
+          "description": { "type": "string", "nullable": true },
+          "dropCategory": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
       "HUX.ELS.API.Common.TrademarkModels.Diary": {
         "type": "object",
         "properties": {
@@ -4563,15 +4577,6 @@
             "nullable": true
           },
           "url": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
-      "SharePointAPI.Category": {
-        "type": "object",
-        "properties": {
-          "categoryNumber": { "type": "string", "nullable": true },
-          "categoryDescription": { "type": "string", "nullable": true },
-          "dropCategory": { "type": "boolean", "nullable": true }
         },
         "additionalProperties": false
       },
