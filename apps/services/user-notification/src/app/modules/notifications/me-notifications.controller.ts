@@ -31,10 +31,11 @@ import { Documentation } from '@island.is/nest/swagger'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 
 import { NotificationsService } from './notifications.service'
+// import { BypassAuth } from '@island.is/auth-nest-tools'
 
 @Controller('notifications')
 @ApiExtraModels(CreateNotificationDto)
-@UseInterceptors(CacheInterceptor)
+@UseInterceptors(CacheInterceptor) // auto-caching GET responses TODO only for TEMPLATES ...
 export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
@@ -89,6 +90,8 @@ export class NotificationsController {
     },
   })
   @Get('/templates')
+  // @BypassAuth()
+
   @Version('1')
   async getNotificationTemplates(
     @Query('locale') locale: string,
@@ -168,4 +171,34 @@ export class NotificationsController {
     this.logger.info('Message queued ... ...', { messageId: id, ...body })
     return { id }
   }
+
+  // @Documentation({
+  //   description: 'Get list of notifications by userProfileId',
+  //   summary: 'Get list of notifications by userProfileId'  })
+  // @Get('/:userProfileId') // or pass auth object
+  // @Version('1')
+  // async getHnippNotifications(
+  //   @Param() userProfileId: string,
+  // ): Promise<Notification[]> {
+  //   return userProfileId
+  // }
+
+  @Get(':id')
+  @ApiSecurity('oauth2', ["some scope"])
+  @ApiTags("Under Development")
+  @Version('1')
+  findOne(@Param('id') id: number): Promise<Notification> {
+    return this.notificationsService.findOne(id);
+  }
+
+  @Get()
+  @ApiSecurity('oauth2', ["some scope"])
+  @ApiTags("Under Development")
+  @Version('1')
+  findAll(@Query('cursor') cursor: number): Promise<Notification[]> {
+    return this.notificationsService.findAll(cursor);
+  }
 }
+
+
+// SCOPES
