@@ -180,12 +180,6 @@ export const AssetsRepeater: FC<
                   defaultValue={field.assetNumber}
                   error={fieldError?.assetNumber}
                   size="sm"
-                  /* onChange={(v) => {
-                    if(v.target.value === '') {
-                      setValue(assetNumberField, '')
-                    }
-                  } 
-                } */
                 />
               </GridColumn>
               <GridColumn
