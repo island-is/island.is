@@ -18,8 +18,8 @@ export const createApplication = async (page: Page): Promise<number> => {
     '**/api/graphql?op=ApplicationApplications',
   )
   const responseData = await response.json()
-  const numberOfApplications =
-    (responseData.data.applicationApplications.length || 0) as number
+  const numberOfApplications = (responseData.data.applicationApplications
+    .length || 0) as number
   // if there is an application, the overview won't redirect to a new application and we need
   // to click the button to create a new application
   if (numberOfApplications > 0) {

@@ -106,7 +106,7 @@ const makeEmailAccount = async (name: string): Promise<EmailAccount> => {
     }> {
       // makes debugging very simple
       debug('getting the last email', emailConfig)
-      
+
       debug('connecting to mail server...')
       const connection = await connect(emailConfig)
       debug('connected')
@@ -138,8 +138,8 @@ const makeEmailAccount = async (name: string): Promise<EmailAccount> => {
           const mail = await simpleParser(
             messages[messages.length - 1].parts[0].body,
           )
-          debug("mail subject", mail.subject)
-          debug("mail text", mail.text)
+          debug('mail subject', mail.subject)
+          debug('mail text', mail.text)
 
           // and returns the main fields
           return {

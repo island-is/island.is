@@ -1,4 +1,3 @@
-
 import { BrowserContext, expect, test } from '@playwright/test'
 
 import { urls } from '@island.is/testing-system'

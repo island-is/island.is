@@ -35,7 +35,6 @@ export async function graphqlSpy(page: Page, url: string, operation: string) {
   }
 }
 
-
 /**
  * To mock Gql response
  * @deprecated We are phasing out this function for Montebank
