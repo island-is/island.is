@@ -125,16 +125,6 @@ export class NotificationService {
       where: { caseId, type },
     })
 
-    console.log(
-      address,
-      previousNotifications.some((notification) => {
-        return notification.recipients.some((recipient) => {
-          console.log(recipient)
-          recipient.address === address && recipient.success
-        })
-      }),
-    )
-
     return previousNotifications.some((notification) => {
       return notification.recipients.some(
         (recipient) => recipient.address === address && recipient.success,
@@ -1427,7 +1417,9 @@ export class NotificationService {
 
   /* COURT_OF_APPEAL_JUDGE_ASSIGNED notifications */
 
-  private async sendCourtOfAppealJudgeAssignedNotification(theCase: Case) {
+  private async sendCourtOfAppealJudgeAssignedNotification(
+    theCase: Case,
+  ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = []
     const recipientRoles = [
       theCase.appealAssistant,
@@ -1436,68 +1428,33 @@ export class NotificationService {
       theCase.appealJudge3,
     ]
 
-    // if (
-    //   await Promise.all([
-    //     this.hasReceivedNotification(
-    //       theCase.id,
-    //       NotificationType.APPEAL_JUDGES_ASSIGNED,
-    //       theCase.appealAssistant?.email,
-    //     ),
-    //     this.hasReceivedNotification(
-    //       theCase.id,
-    //       NotificationType.APPEAL_JUDGES_ASSIGNED,
-    //       theCase.appealJudge1?.email,
-    //     ),
-    //     this.hasReceivedNotification(
-    //       theCase.id,
-    //       NotificationType.APPEAL_JUDGES_ASSIGNED,
-    //       theCase.appealJudge2?.email,
-    //     ),
-    //     this.hasReceivedNotification(
-    //       theCase.id,
-    //       NotificationType.APPEAL_JUDGES_ASSIGNED,
-    //       theCase.appealJudge3?.email,
-    //     ),
-    //   ])
-    // ) {
-    //   return { notificationSent: false }
-    // }
+    recipientRoles.map((recipient) => {
+      if (theCase.appealCaseNumber && recipient) {
+        const { subject, body } =
+          formatCourtOfAppealJudgeAssignedEmailNotification(
+            this.formatMessage,
+            theCase.appealCaseNumber,
+            recipient.role,
+            `${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}`,
+          )
 
-    // recipientRoles.map(async (recipient) => {
-    //   if (theCase.appealCaseNumber && recipient) {
-    //     const { subject, body } =
-    //       formatCourtOfAppealJudgeAssignedEmailNotification(
-    //         this.formatMessage,
-    //         theCase.appealCaseNumber,
-    //         recipient.role,
-    //         `${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}`,
-    //       )
+        promises.push(
+          this.sendEmail(subject, body, recipient.name, recipient.email),
+        )
+      }
+    })
 
-    //     if (
-    //       !(await this.hasReceivedNotification(
-    //         theCase.id,
-    //         NotificationType.APPEAL_JUDGES_ASSIGNED,
-    //         recipient.email,
-    //       ))
-    //     ) {
-    //       promises.push(
-    //         this.sendEmail(subject, body, recipient.name, recipient.email),
-    //       )
-    //     }
-    //   }
-    // })
+    const recipients = await Promise.all(promises)
 
-    // if (promises.length === 0) {
-    //   return { notificationSent: false }
-    // }
+    if (recipients.length > 0) {
+      return this.recordNotification(
+        theCase.id,
+        NotificationType.APPEAL_JUDGES_ASSIGNED,
+        recipients,
+      )
+    }
 
-    // const recipients = await Promise.all(promises)
-    return { notificationSent: false }
-    // return this.recordNotification(
-    //   theCase.id,
-    //   NotificationType.APPEAL_JUDGES_ASSIGNED,
-    //   recipients,
-    // )
+    return { notificationSent: true }
   }
 
   /* DEFENDANTS_NOT_UPDATED_AT_COURT notifications */
@@ -2113,7 +2070,6 @@ export class NotificationService {
             ),
           ]
           break
-
         case NotificationType.APPEAL_JUDGES_ASSIGNED:
           messages = [
             this.getNotificationMessage(

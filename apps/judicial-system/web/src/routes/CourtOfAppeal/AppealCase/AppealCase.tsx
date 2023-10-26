@@ -35,6 +35,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isCourtOfAppealCaseStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { appealCase as strings } from './AppealCase.strings'
@@ -111,14 +112,15 @@ const AppealCase = () => {
   const handleNavigationTo = async (destination: keyof stepValidationsType) => {
     setNavigateTo(destination)
 
-    const success = await sendNotifications()
-    const hasPreviouslyReceivedNotification = !success && !sendNotificationError
-
-    console.log(success, sendNotificationError)
-
-    if (hasPreviouslyReceivedNotification) {
+    if (
+      hasSentNotification(
+        NotificationType.APPEAL_JUDGES_ASSIGNED,
+        workingCase.notifications,
+      )
+    ) {
       router.push(`${destination}/${id}`)
     } else {
+      await sendNotifications()
       setModalVisible(true)
     }
   }
