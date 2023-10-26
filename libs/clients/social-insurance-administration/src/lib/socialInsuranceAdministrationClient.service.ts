@@ -63,9 +63,11 @@ export class SocialInsuranceAdministrationClientService {
   async sendApplication(
     user: User,
     oldAgePension: OldAgePension,
+    applicationType: string,
   ): Promise<OldAgePensionResponse> {
     return await this.sendAPIWithAuth(user).oldAgePensionSendApplication({
       oldAgePension,
+      applicationType,
     })
   }
 

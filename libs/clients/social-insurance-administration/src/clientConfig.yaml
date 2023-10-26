@@ -58,13 +58,21 @@ paths:
             application/json:
               schema:
                 type: string
-  /Application:
+  /Application/{applicationType}:
     post:
       tags:
         - Send application
       operationId: OldAgePension_SendApplication
+      parameters:
+        - name: applicationType
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: false
+          x-position: 1
       requestBody:
-        x-name: parentalLeave
+        x-name: oldAgePension
         content:
           application/json:
             schema:
@@ -156,8 +164,6 @@ components:
           type: string
     OldAgePension:
       properties:
-        applicationId:
-          type: string
         period:
           $ref: '#/components/schemas/Period'
         comment:
@@ -166,8 +172,6 @@ components:
           $ref: '#/components/schemas/PaymentInfo'
         applicantInfo:
           $ref: '#/components/schemas/ApplicantInfo'
-        applicationType:
-          type: string
         hasAbroadResidence:
           type: boolean
         hasOneTimePayment:

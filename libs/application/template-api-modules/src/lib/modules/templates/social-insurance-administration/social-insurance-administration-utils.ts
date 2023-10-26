@@ -47,7 +47,6 @@ export const transformApplicationToOldAgePensionDTO = (
   ) as YesOrNo
 
   const oldAgePensionDTO: OldAgePension = {
-    applicationId: application.id,
     period: {
       year: +selectedYear,
       month: getMonthNumber(selectedMonth),
@@ -65,7 +64,6 @@ export const transformApplicationToOldAgePensionDTO = (
       email: applicantEmail,
       phonenumber: applicantPhonenumber,
     },
-    applicationType: getApplicationType(applicationType).toLowerCase(),
     hasAbroadResidence: YES === residenceHistoryQuestion,
     hasOneTimePayment: YES === onePaymentPerYear,
     isSailorPension: applicationType === ApplicationType.SAILOR_PENSION,
@@ -124,7 +122,9 @@ export const initChildrens = (
   return custodyKids
 }
 
-export const getApplicationType = (applicationType: string): string => {
+export const getApplicationType = (application: Application): string => {
+  const { applicationType } = getApplicationAnswers(application.answers)
+
   if (applicationType === ApplicationType.HALF_OLD_AGE_PENSION) {
     return ApplicationType.HALF_OLD_AGE_PENSION
   }
