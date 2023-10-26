@@ -1,6 +1,6 @@
 import { ModeOfDelivery } from '@island.is/university-gateway'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsEnum, IsOptional, IsString, IsUUID } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
+import { IsEnum, IsUUID } from 'class-validator'
 
 export class CreateApplicationDto {
   @IsUUID()
@@ -24,12 +24,4 @@ export class CreateApplicationDto {
     enum: ModeOfDelivery,
   })
   modeOfDelivery!: ModeOfDelivery
-
-  @IsString()
-  @IsOptional()
-  @ApiPropertyOptional({
-    description: 'Extra data that should follow application',
-    example: 'TBD',
-  })
-  extraData?: string
 }
