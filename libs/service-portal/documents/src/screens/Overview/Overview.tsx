@@ -17,6 +17,7 @@ import {
   useOrganizations,
 } from '@island.is/service-portal/graphql'
 import {
+  GoBack,
   ServicePortalPath,
   formatPlausiblePathToParams,
   m,
@@ -311,17 +312,11 @@ export const ServicePortalDocuments = () => {
               display={'inlineFlex'}
               alignItems={'center'}
             >
-              <Button
-                preTextIcon="arrowBack"
-                preTextIconType="filled"
-                size="small"
-                type="button"
-                variant="text"
-                truncate
-                onClick={() => navigate('/')}
-              >
-                {formatMessage(m.goBackToDashboard)}
-              </Button>
+              <GoBack
+                display={['inline', 'inline']}
+                noUnderline
+                marginBottom={0}
+              />
               <Box
                 borderRadius={'circle'}
                 display={'inlineBlock'}

@@ -13,10 +13,10 @@ import {
   Box,
   BreadcrumbsDeprecated as Breadcrumbs,
   Button,
-  Icon,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
+  GoBack,
   ServicePortalNavigationItem,
   m,
   useDynamicRoutesWithNavigation,
@@ -127,18 +127,7 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
                   : formatMessage(item.name)}
               </Link>
             ) : (
-              <span className={styles.noUnderline}>
-                <Button
-                  preTextIcon="arrowBack"
-                  preTextIconType="filled"
-                  size="small"
-                  type="button"
-                  variant="text"
-                  onClick={() => navigate('/')}
-                >
-                  {formatMessage(m.goBackToDashboard)}
-                </Button>
-              </span>
+              <GoBack noUnderline={true} display={['inline', 'inline']} />
             ),
           )}
         </Breadcrumbs>
