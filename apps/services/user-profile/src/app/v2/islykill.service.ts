@@ -15,7 +15,7 @@ export class IslykillService {
     email?: string
     phoneNumber?: string
   }): Promise<PublicUser> {
-    return await this.islyklarApi
+    return this.islyklarApi
       .islyklarPut({
         user: {
           ssn: nationalId,
@@ -23,9 +23,7 @@ export class IslykillService {
           ...(phoneNumber && { mobile: phoneNumber }),
         },
       })
-      .then((publicUser) => {
-        return publicUser
-      })
+      .then((publicUser) => publicUser)
       .catch(() => {
         throw new InternalServerErrorException(
           'Unable to update islykill settings for user',

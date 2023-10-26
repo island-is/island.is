@@ -73,38 +73,40 @@ export class MeUserProfileController {
   @Post('/create-verification')
   @Scopes(UserProfileScope.write)
   @Documentation({
-    description: 'Creates a verification for the user for either email or sms',
+    description:
+      'Creates a verification code for the user for either email or sms',
     response: { status: 201 },
   })
   async createVerification(
     @CurrentUser() user: User,
     @Body() input: CreateVerificationDto,
   ) {
+    const validateInputs = async () => {
+      if (input.email && !input.mobilePhoneNumber) {
+        await this.userProfileService.createEmailVerification({
+          nationalId: user.nationalId,
+          email: input.email,
+        })
+      } else if (input.mobilePhoneNumber && !input.email) {
+        await this.userProfileService.createSmsVerification({
+          nationalId: user.nationalId,
+          mobilePhoneNumber: input.mobilePhoneNumber,
+        })
+      } else {
+        throw new BadRequestException(
+          'Either email or mobile phone number must be provided',
+        )
+      }
+    }
     return this.auditService.auditPromise(
       {
         auth: user,
         namespace,
-        action: 'create-verification',
+        action: 'verify',
         resources: user.nationalId,
         alsoLog: true,
       },
-      (async (userProfileService: UserProfileService) => {
-        if (input.email && !input.mobilePhoneNumber) {
-          await userProfileService.createEmailVerification({
-            nationalId: user.nationalId,
-            email: input.email,
-          })
-        } else if (input.mobilePhoneNumber && !input.email) {
-          await userProfileService.createSmsVerification({
-            nationalId: user.nationalId,
-            mobilePhoneNumber: input.mobilePhoneNumber,
-          })
-        } else {
-          throw new BadRequestException(
-            'Either email or mobile phone number must be provided',
-          )
-        }
-      })(this.userProfileService),
+      validateInputs(),
     )
   }
 
@@ -119,7 +121,7 @@ export class MeUserProfileController {
       {
         auth: user,
         namespace,
-        action: 'confirm',
+        action: 'confirmNudge',
         resources: user.nationalId,
         alsoLog: true,
       },
