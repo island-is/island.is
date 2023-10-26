@@ -36,7 +36,7 @@ export const expandButtonWrapper = style({
 export const centerColumn = style({
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'start',
+  justifyContent: 'flex-start',
   position: 'relative',
 
   ...themeUtils.responsiveStyle({

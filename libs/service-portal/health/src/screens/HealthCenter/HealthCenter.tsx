@@ -1,7 +1,4 @@
-import { useEffect, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { FeatureFlagClient } from '@island.is/feature-flags'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import {
   m,
   ErrorScreen,
@@ -19,7 +16,6 @@ import {
   Divider,
   SkeletonLoader,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
 import { messages } from '../../lib/messages'
 import HistoryTable from './HistoryTable'
@@ -35,22 +31,6 @@ const HealthCenter = () => {
   const { formatMessage } = useLocale()
   const location = useLocation()
 
-  // Feature flag for transfer option.
-  const [isTransferAvailable, setIsTransferAvailable] = useState(false)
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalHealthTransferPageEnabled`,
-        false,
-      )
-      if (ffEnabled) {
-        setIsTransferAvailable(ffEnabled as boolean)
-      }
-    }
-    isFlagEnabled()
-  }, [])
-
   // Check if the user was transfered from another health center
   const wasSuccessfulTransfer = location?.state?.transferSuccess
 
@@ -64,10 +44,9 @@ const HealthCenter = () => {
     fetchPolicy: 'no-cache',
   })
 
-  const healthCenterData = data?.rightsPortalUserHealthCenterRegistration
+  const healthCenterData = data?.rightsPortalHealthCenterRegistrationHistory
 
-  const canRegister =
-    (healthCenterData?.canRegister ?? false) && isTransferAvailable
+  const canRegister = healthCenterData?.canRegister ?? false
 
   if (loading)
     return (
@@ -158,11 +137,6 @@ const HealthCenter = () => {
       {!loading && !error && healthCenterData?.history && (
         <HistoryTable history={healthCenterData.history} />
       )}
-      <Box marginTop={6}>
-        <Text fontWeight="regular" variant="small">
-          {formatMessage(hm.healthCenterOverviewInfo)}
-        </Text>
-      </Box>
     </Box>
   )
 }

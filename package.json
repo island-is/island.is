@@ -58,7 +58,8 @@
     "postinstall": "node -e 'process.exit(process.env.CI || process.env.SKIP_POSTINSTALL ? 0 : 1);' || node ./scripts/postinstall.js",
     "check-tags": "yarn ts scripts/check-tags.ts",
     "charts": "cd ./infra && yarn charts",
-    "infra": "cd ./infra && yarn cli"
+    "infra": "cd ./infra && yarn cli",
+    "hmr-benchmark": "node -r esbuild-register scripts/hmr-benchmark.ts"
   },
   "dependencies": {
     "@apollo/client": "3.7.15",
@@ -130,6 +131,7 @@
     "apollo-datasource-rest": "0.9.2",
     "apollo-server-express": "3.10.2",
     "apollo-server-plugin-response-cache": "3.8.2",
+    "archiver": "6.0.1",
     "aws-elasticsearch-connector": "9.0.0",
     "aws-sdk": "2.814.0",
     "aws4": "1.11.0",
@@ -246,7 +248,7 @@
     "react-keyed-flatten-children": "1.2.0",
     "react-modal": "3.15.1",
     "react-number-format": "4.9.1",
-    "react-pdf": "5.2.0",
+    "react-pdf": "7.5.0",
     "react-popper": "2.3.0",
     "react-remove-scroll": "2.5.6",
     "react-router-dom": "6.11.2",

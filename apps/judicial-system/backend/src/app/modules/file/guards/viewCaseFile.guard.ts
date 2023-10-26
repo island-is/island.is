@@ -7,9 +7,11 @@ import {
 } from '@nestjs/common'
 
 import {
+  CaseAppealState,
   CaseState,
   completedCaseStates,
   isExtendedCourtRole,
+  isPrisonSystemUser,
   isProsecutionRole,
   User,
 } from '@island.is/judicial-system/types'
@@ -48,6 +50,14 @@ export class ViewCaseFileGuard implements CanActivate {
         CaseState.RECEIVED,
         ...completedCaseStates,
       ].includes(theCase.state)
+    ) {
+      return true
+    }
+
+    if (
+      isPrisonSystemUser(user) &&
+      theCase.appealState &&
+      [CaseAppealState.COMPLETED].includes(theCase.appealState)
     ) {
       return true
     }

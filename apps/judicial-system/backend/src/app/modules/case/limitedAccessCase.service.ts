@@ -1,4 +1,6 @@
+import archiver from 'archiver'
 import { Includeable, Op, OrderItem } from 'sequelize'
+import { Writable } from 'stream'
 
 import {
   Inject,
@@ -22,15 +24,18 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseState,
+  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory, uuidFactory } from '../../factories'
+import { AwsS3Service } from '../aws-s3'
 import { Defendant, DefendantService } from '../defendant'
 import { CaseFile } from '../file'
 import { Institution } from '../institution'
 import { User } from '../user'
 import { Case } from './models/case.model'
+import { PDFService } from './pdf.service'
 
 export const attributes: (keyof Case)[] = [
   'id',
@@ -180,6 +185,8 @@ export class LimitedAccessCaseService {
   constructor(
     private readonly messageService: MessageService,
     private readonly defendantService: DefendantService,
+    private readonly pdfService: PDFService,
+    private readonly awsS3Service: AwsS3Service,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -333,5 +340,81 @@ export class LimitedAccessCaseService {
             throw new NotFoundException('Defender not found')
           })
       })
+  }
+
+  private zipFiles(
+    files: Array<{ data: Buffer; name: string }>,
+  ): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      const buffs: Buffer[] = []
+      const converter = new Writable()
+
+      converter._write = (chunk, _encoding, cb) => {
+        buffs.push(chunk)
+        process.nextTick(cb)
+      }
+
+      converter.on('finish', () => {
+        resolve(Buffer.concat(buffs))
+      })
+
+      const archive = archiver('zip')
+
+      archive.on('error', (err) => {
+        reject(err)
+      })
+
+      archive.pipe(converter)
+
+      for (const file of files) {
+        archive.append(file.data, { name: file.name })
+      }
+
+      archive.finalize()
+    })
+  }
+
+  async getAllFilesZip(theCase: Case, user: TUser): Promise<Buffer> {
+    const filesToZip: Array<{ data: Buffer; name: string }> = []
+
+    const caseFilesByCategory =
+      theCase.caseFiles?.filter(
+        (file) =>
+          file.key &&
+          file.category &&
+          defenderCaseFileCategoriesForRestrictionAndInvestigationCases.includes(
+            file.category,
+          ),
+      ) ?? []
+
+    for (const file of caseFilesByCategory) {
+      await this.awsS3Service
+        .getObject(file.key ?? '')
+        .then((content) => filesToZip.push({ data: content, name: file.name }))
+        .catch((reason) =>
+          // Tolerate failure, but log what happened
+          this.logger.warn(
+            `Could not get file ${file.id} of case ${file.caseId} from AWS S3`,
+            { reason },
+          ),
+        )
+    }
+
+    filesToZip.push(
+      {
+        data: await this.pdfService.getRequestPdf(theCase),
+        name: 'krafa.pdf',
+      },
+      {
+        data: await this.pdfService.getCourtRecordPdf(theCase, user),
+        name: 'þingbok.pdf',
+      },
+      {
+        data: await this.pdfService.getRulingPdf(theCase),
+        name: 'urskurður.pdf',
+      },
+    )
+
+    return this.zipFiles(filesToZip)
   }
 }

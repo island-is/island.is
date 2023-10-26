@@ -35,6 +35,7 @@ import {
   HousingBenefitCalculator,
   OccupationalLicenses,
   ShipRegistry,
+  DistrictCommissioners,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -350,6 +351,7 @@ export const serviceSetup = (services: {
       Labor,
       DrivingLicense,
       Payment,
+      DistrictCommissioners,
       Finance,
       Education,
       NationalRegistry,

@@ -48,8 +48,6 @@ import { LatestNewsSlice } from './models/latestNewsSlice.model'
 import { GetNewsInput } from './dto/getNews.input'
 import { GetNewsDatesInput } from './dto/getNewsDates.input'
 import { NewsList } from './models/newsList.model'
-import { GetTellUsAStoryInput } from './dto/getTellUsAStory.input'
-import { TellUsAStory } from './models/tellUsAStory.model'
 import { GroupedMenu } from './models/groupedMenu.model'
 import { GetSingleMenuInput } from './dto/getSingleMenu.input'
 import { SubpageHeader } from './models/subpageHeader.model'
@@ -95,6 +93,8 @@ import { GetPowerBiEmbedPropsFromServerResponse } from './dto/getPowerBiEmbedPro
 import { GetOrganizationByTitleInput } from './dto/getOrganizationByTitle.input'
 import { ServiceWebPage } from './models/serviceWebPage.model'
 import { GetServiceWebPageInput } from './dto/getServiceWebPage.input'
+import { Manual } from './models/manual.model'
+import { GetSingleManualInput } from './dto/getSingleManual.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -546,6 +546,17 @@ export class CmsResolver {
     @Args('input') input: GetGenericTagBySlugInput,
   ): Promise<GenericTag | null> {
     return this.cmsContentfulService.getGenericTagBySlug(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => Manual, { nullable: true })
+  getSingleManual(
+    @Args('input') input: GetSingleManualInput,
+  ): Promise<Manual | null> {
+    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
+      getElasticsearchIndex(input.lang),
+      { type: 'webManual', slug: input.slug },
+    )
   }
 }
 

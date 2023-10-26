@@ -10,6 +10,7 @@ export type Icon =
   | 'arrowDown'
   | 'attach'
   | 'business'
+  | 'calculator'
   | 'calendar'
   | 'call'
   | 'car'
@@ -93,6 +94,7 @@ export default {
     arrowUp: 'ArrowUp',
     attach: 'Attach',
     business: 'Business',
+    calculator: 'Calculator',
     calendar: 'Calendar',
     call: 'Call',
     car: 'Car',
@@ -175,6 +177,7 @@ export default {
     arrowUp: 'ArrowUp',
     attach: 'AttachOutline',
     business: 'BusinessOutline',
+    calculator: 'CalculatorOutline',
     calendar: 'CalendarOutline',
     call: 'CallOutline',
     car: 'CarOutline',
