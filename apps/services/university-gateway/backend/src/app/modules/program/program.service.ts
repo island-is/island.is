@@ -95,8 +95,7 @@ export class ProgramService {
   }
 
   async getProgramDetails(id: string): Promise<ProgramDetailsResponse> {
-    const program = await this.programModel.findOne({
-      where: { id: id },
+    const program = await this.programModel.findByPk(id, {
       include: [
         {
           model: University,

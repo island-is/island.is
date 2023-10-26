@@ -45,7 +45,7 @@ export class CourseService {
   }
 
   async getCourseDetails(id: string): Promise<CourseDetailsResponse> {
-    const course = await this.courseModel.findOne({ where: { id: id } })
+    const course = await this.courseModel.findByPk(id)
 
     if (!course) {
       throw Error('Not found')
