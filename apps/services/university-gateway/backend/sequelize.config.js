@@ -1,12 +1,12 @@
 /* eslint-env node */
 module.exports = {
   development: {
-    username: 'dev_db',
-    password: 'dev_db',
-    database: 'dev_db',
+    username: process.env.DB_USER_UNIVERSITY_GATEWAY || 'dev_db',
+    password: process.env.DB_PASS_UNIVERSITY_GATEWAY || 'dev_db',
+    database: process.env.DB_NAME_UNIVERSITY_GATEWAY || 'dev_db',
     host: 'localhost',
     dialect: 'postgres',
-    port: 5438,
+    port: process.env.DB_PORT_UNIVERSITY_GATEWAY || 5438,
     seederStorage: 'sequelize',
   },
   test: {
