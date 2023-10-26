@@ -13,7 +13,8 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
-import { ProgramDetailsResponse, ProgramResponse, TagResponse } from './model'
+import { ProgramDetailsResponse, ProgramResponse } from './model/program'
+import { TagResponse } from './model/tag'
 import { DegreeType, Season } from '@island.is/university-gateway'
 
 @UseGuards(IdsUserGuard, ScopesGuard)

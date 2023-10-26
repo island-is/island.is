@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Course, CourseDetailsResponse, CourseResponse } from './model'
-import { PaginateInput } from '../program/types'
+import { Course, CourseDetailsResponse, CourseResponse } from './model/course'
+import { PaginateInput, ProgramCourse } from '../program'
 import { paginate } from '@island.is/nest/pagination'
-import { ProgramCourse } from '../program/model'
 import { Op } from 'sequelize'
 
 export

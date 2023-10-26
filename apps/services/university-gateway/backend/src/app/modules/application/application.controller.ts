@@ -17,8 +17,9 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger'
-import { Application, ApplicationResponse } from './model'
-import { CreateApplicationDto, UpdateApplicationDto } from './dto'
+import { Application, ApplicationResponse } from './model/application'
+import { CreateApplicationDto } from './dto/createApplicationDto'
+import { UpdateApplicationDto } from './dto/updateApplicationDto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(UniversityGatewayScope.main)

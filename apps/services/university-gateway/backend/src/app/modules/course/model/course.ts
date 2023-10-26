@@ -12,7 +12,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { University } from '../../university/model'
+import { University } from '../../university'
 import { PageInfoDto } from '@island.is/nest/pagination'
 
 export

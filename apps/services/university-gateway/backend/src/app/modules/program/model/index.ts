@@ -1,6 +1,0 @@
-export * from './program'
-export * from './programCourse'
-export * from './programExtraApplicationField'
-export * from './programModeOfDelivery'
-export * from './programTag'
-export * from './tag'

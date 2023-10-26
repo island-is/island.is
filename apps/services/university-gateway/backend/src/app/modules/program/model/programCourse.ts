@@ -13,7 +13,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Course } from '../../course/model'
+import { Course } from '../../course'
 import { ProgramTable } from './program'
 import { Requirement, Season } from '@island.is/university-gateway'
 

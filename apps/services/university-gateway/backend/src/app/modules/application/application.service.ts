@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
-import { Application, ApplicationResponse } from './model'
-import { CreateApplicationDto, UpdateApplicationDto } from './dto'
+import { Application, ApplicationResponse } from './model/application'
+import { CreateApplicationDto } from './dto/createApplicationDto'
+import { UpdateApplicationDto } from './dto/updateApplicationDto'
 import { User } from '@island.is/auth-nest-tools'
 
 // TODO connect to university APIs when POST endpoints from them are ready

@@ -1,18 +1,17 @@
 import { Injectable } from '@nestjs/common'
 import {
-  ProgramCourse,
   ProgramDetailsResponse,
-  ProgramExtraApplicationField,
-  ProgramModeOfDelivery,
   ProgramResponse,
   ProgramTable,
-  ProgramTag,
-  Tag,
-  TagResponse,
-} from './model'
-import { Course } from '../course/model'
-import { University } from '../university/model'
-import { PaginateInput } from './types'
+} from './model/program'
+import { ProgramTag } from './model/programTag'
+import { Tag, TagResponse } from './model/tag'
+import { ProgramModeOfDelivery } from './model/programModeOfDelivery'
+import { ProgramCourse } from './model/programCourse'
+import { ProgramExtraApplicationField } from './model/programExtraApplicationField'
+import { Course } from '../course'
+import { University } from '../university'
+import { PaginateInput } from './types/paginateInput'
 import { InjectModel } from '@nestjs/sequelize'
 import { paginate } from '@island.is/nest/pagination'
 import { DegreeType, Season } from '@island.is/university-gateway'

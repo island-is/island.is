@@ -17,7 +17,7 @@ import {
 import { ProgramExtraApplicationField } from './programExtraApplicationField'
 import { ProgramTag } from './programTag'
 import { ProgramModeOfDelivery } from './programModeOfDelivery'
-import { University } from '../../university/model'
+import { University } from '../../university'
 import { ProgramCourse } from './programCourse'
 import { DegreeType, Season } from '@island.is/university-gateway'
 import { PageInfoDto } from '@island.is/nest/pagination'
