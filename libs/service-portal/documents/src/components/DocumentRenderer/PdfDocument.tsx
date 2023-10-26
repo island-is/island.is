@@ -4,6 +4,8 @@ import { m, Tooltip } from '@island.is/service-portal/core'
 import { Box, Button, PdfViewer, Text } from '@island.is/island-ui/core'
 import { useState } from 'react'
 import { ActiveDocumentType } from '../../lib/types'
+import { messages } from '../../utils/messages'
+import { Problem } from '@island.is/react-spa/shared'
 
 type PdfDocumentProps = {
   document: ActiveDocumentType
@@ -60,6 +62,15 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({ document }) => {
           file={`data:application/pdf;base64,${document.document.content}`}
           scale={scalePDF}
           autoWidth={false}
+          errorComponent={
+            <Problem
+              message={formatMessage(messages.documentFetchError, {
+                senderName: document.sender,
+              })}
+              title={formatMessage(messages.documentNotFoundError)}
+              type="not_found"
+            />
+          }
         />
       </Box>
     </>

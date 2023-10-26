@@ -70,6 +70,10 @@ export const messages = defineMessages({
     id: 'sp.documents:error',
     defaultMessage: 'Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis.',
   },
+  documentNotFoundError: {
+    id: 'sp.documents:not-found-error-title',
+    defaultMessage: 'Skjal finnst ekki',
+  },
   documentFetchError: {
     id: 'sp.documents:fetch-error',
     defaultMessage:

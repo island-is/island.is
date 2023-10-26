@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState, ReactNode } from 'react'
 import { Box } from '../Box/Box'
 import type { Document, Page, Outline, pdfjs } from 'react-pdf'
 import * as styles from './PdfViewer.css'
@@ -13,6 +13,7 @@ export interface PdfViewerProps {
   showAllPages?: boolean
   scale?: number
   autoWidth?: boolean
+  errorComponent?: ReactNode
 }
 interface PdfProps {
   numPages: number
@@ -32,6 +33,7 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
   showAllPages = false,
   scale = 1,
   autoWidth = true,
+  errorComponent,
 }) => {
   const [numPages, setNumPages] = useState(0)
   const [pageNumber, setPageNumber] = useState(1)
@@ -79,6 +81,7 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
           renderMode={renderMode}
           className={cn(styles.pdfViewer, { [styles.pdfSvgPage]: autoWidth })}
           loading={() => loadingView()}
+          error={errorComponent}
         >
           {showAllPages ? (
             [...Array(numPages)].map((x, page) => (
