@@ -36,13 +36,12 @@ module.exports = {
             },
             allowNull: false,
           },
-          mode_of_delivery: {
-            type: Sequelize.ENUM(
-              'ON_SITE',
-              'ONLINE',
-              'ONLINE_WITH_SESSION',
-              'UNDEFINED',
-            ),
+          program_mode_of_delivery_id: {
+            type: Sequelize.UUID,
+            references: {
+              model: 'program_mode_of_delivery',
+              key: 'id',
+            },
             allowNull: false,
           },
           status: {

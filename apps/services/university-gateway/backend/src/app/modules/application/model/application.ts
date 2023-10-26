@@ -8,12 +8,9 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ProgramTable } from '../../program/model'
+import { ProgramModeOfDelivery, ProgramTable } from '../../program/model'
 import { University } from '../../university/model'
-import {
-  ApplicationStatus,
-  ModeOfDelivery,
-} from '@island.is/university-gateway'
+import { ApplicationStatus } from '@island.is/university-gateway'
 
 @Table({
   tableName: 'application',
@@ -64,16 +61,15 @@ export class Application extends Model {
   programId!: string
 
   @ApiProperty({
-    description: 'What mode of delivery was selected in the application',
-    example: ModeOfDelivery.ON_SITE,
-    enum: ModeOfDelivery,
+    description: 'Program mode of delivery ID',
+    example: '00000000-0000-0000-0000-000000000000',
   })
   @Column({
-    type: DataType.ENUM,
-    values: Object.values(ModeOfDelivery),
+    type: DataType.UUID,
     allowNull: false,
   })
-  modeOfDelivery!: ModeOfDelivery
+  @ForeignKey(() => ProgramModeOfDelivery)
+  programModeOfDeliveryId!: string
 
   @ApiProperty({
     description: 'Application status',
