@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common'
 import { NotificationsModule } from './modules/notifications/notifications.module'
 
-
 import { SequelizeModule } from '@nestjs/sequelize'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { APP_GUARD } from '@nestjs/core'
-import { AuthConfig, AuthModule, IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
-
+import {
+  AuthConfig,
+  AuthModule,
+  IdsUserGuard,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 
 @Module({
   imports: [
@@ -18,18 +21,19 @@ import { AuthConfig, AuthModule, IdsUserGuard, ScopesGuard } from '@island.is/au
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
-    
-    NotificationsModule],
-    // providers: [
-    //   {
-    //     provide: APP_GUARD,
-    //     useClass: IdsUserGuard,
-    //   },
-    //   {
-    //     provide: APP_GUARD,
-    //     useClass: ScopesGuard,
-    //   },
-      
-    // ],
+
+    NotificationsModule,
+  ],
+  // providers: [
+  //   {
+  //     provide: APP_GUARD,
+  //     useClass: IdsUserGuard,
+  //   },
+  //   {
+  //     provide: APP_GUARD,
+  //     useClass: ScopesGuard,
+  //   },
+
+  // ],
 })
 export class AppModule {}

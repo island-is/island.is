@@ -16,12 +16,16 @@ export const openApi = new DocumentBuilder()
         scopes: {
           ['openid']: '',
           ['profile']: '',
+<<<<<<< HEAD
           [UserProfileScope.read]: '',
          
+=======
+          [UserProfileScope.read]: 'User Profile READ',
+>>>>>>> 436e7eeb8a6df349e63f8b358f409d919fd22171
         },
         // authorizationUrl: `${environment.auth.issuer}/connect/authorize`,
         // tokenUrl: `${environment.auth.issuer}/connect/token`,
-        
+
         authorizationUrl: `https://identity-server.dev01.devland.is/connect/authorize`,
         tokenUrl: `https://identity-server.dev01.devland.is/connect/token`,
       },

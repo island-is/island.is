@@ -50,7 +50,7 @@ export class MeNotificationsController {
   @ApiTags("user notification")
   @Version('1')
   findOne(@Param('id') id: number): Promise<Notification> {
-    return this.notificationsService.findOne(id);
+    return this.notificationsService.findOne(id)
   }
 
   @Patch(':id')
