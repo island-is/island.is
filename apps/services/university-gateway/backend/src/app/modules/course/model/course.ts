@@ -83,47 +83,43 @@ class Course extends Model {
   })
   credits!: number
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Course description (Icelandic)',
     example: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   })
-  @ApiPropertyOptional()
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   descriptionIs?: string
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Course description (English)',
     example: 'Mauris a justo arcu. Orci varius natoque penatibus.',
   })
-  @ApiPropertyOptional()
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   descriptionEn?: string
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description:
       'External url  for the course from the university web page (Icelandic)',
     example: 'https://www.hi.is/grunnnam/tolvunarfraedi/staerdfraedigreining-i',
   })
-  @ApiPropertyOptional()
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   externalUrlIs?: string
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description:
       'External url  for the course from the university web page (English)',
     example:
       'https://www.en.hi.is/undergraduate-study/computer-science/mathematical-analysis-i',
   })
-  @ApiPropertyOptional()
   @Column({
     type: DataType.STRING,
     allowNull: true,

@@ -157,23 +157,21 @@ class Program extends Model {
   })
   applicationEndDate!: Date
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Last date for school to accept/decline student into program',
     example: new Date('2023-08-15'),
   })
-  @ApiPropertyOptional()
   @Column({
     type: DataType.DATE,
     allowNull: true,
   })
   schoolAnswerDate?: Date
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description:
       'Last date for student to accept enrollment in school (after school accepts student)',
     example: new Date('2023-09-01'),
   })
-  @ApiPropertyOptional()
   @Column({
     type: DataType.DATE,
     allowNull: true,
@@ -242,11 +240,10 @@ class Program extends Model {
   })
   durationInYears!: number
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Cost for program (per year)',
     example: 75000,
   })
-  @ApiPropertyOptional()
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
@@ -309,90 +306,82 @@ class Program extends Model {
 }
 
 class ProgramDetails extends Program {
-  @ApiProperty({
+  @ApiPropertyOptional({
     description:
       'External url  for the program from the university web page (Icelandic)',
     example: 'https://www.ru.is/grunnnam/tolvunarfraedi',
   })
-  @ApiPropertyOptional()
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   externalUrlIs?: string
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description:
       'External url  for the program from the university web page (English)',
     example: 'https://en.ru.is/st/dcs/undergraduate-study/bsc-computer-science',
   })
-  @ApiPropertyOptional()
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   externalUrlEn?: string
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Admission requirements for program (Icelandic)',
     example: 'Nemandinn verður að hafa klárað stúdentspróf',
   })
-  @ApiPropertyOptional()
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   admissionRequirementsIs?: string
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Admission requirements for program (English)',
     example: 'The student needs to have finished the matriculation exam',
   })
-  @ApiPropertyOptional()
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   admissionRequirementsEn?: string
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Study requirements for program (Icelandic)',
     example: 'Nemandinn verður að vera með lágmarkseinkunn 6 í öllum áföngum',
   })
-  @ApiPropertyOptional()
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   studyRequirementsIs?: string
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Study requirements for program (English)',
     example: 'The student must have a minimum grade of 6 in all courses',
   })
-  @ApiPropertyOptional()
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   studyRequirementsEn?: string
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Cost information for program (Icelandic)',
     example: 'Það verður að borga 10.000 kr staðfestingargjald fyrir 1. ágúst',
   })
-  @ApiPropertyOptional()
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   costInformationIs?: string
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Cost information for program (English)',
     example: 'A confirmation fee of ISK 10.000 must be paid before August 1',
   })
-  @ApiPropertyOptional()
   @Column({
     type: DataType.STRING,
     allowNull: true,

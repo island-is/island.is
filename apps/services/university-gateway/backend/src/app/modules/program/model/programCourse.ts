@@ -72,11 +72,10 @@ class ProgramCourse extends Model {
   })
   requirement!: Requirement
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Which year this course is taught on',
     example: 2023,
   })
-  @ApiPropertyOptional()
   @Column({
     type: DataType.INTEGER,
     allowNull: true,

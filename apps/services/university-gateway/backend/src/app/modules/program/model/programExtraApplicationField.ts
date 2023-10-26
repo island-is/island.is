@@ -67,22 +67,20 @@ class ProgramExtraApplicationField extends Model {
   })
   nameEn!: string
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Field description (Icelandic)',
     example: 'Fusce sit amet pellentesque magna.',
   })
-  @ApiPropertyOptional()
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   descriptionIs?: string
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Field description (English)',
     example: 'Phasellus nisi turpis, rutrum vitae congue sed.',
   })
-  @ApiPropertyOptional()
   @Column({
     type: DataType.STRING,
     allowNull: true,
@@ -112,12 +110,11 @@ class ProgramExtraApplicationField extends Model {
   })
   fieldType!: FieldType
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description:
       'If field type is UPLOAD, then this field is required and should list up all file types that should be accepted',
     example: '.pdf, .jpg, .jpeg, .png',
   })
-  @ApiPropertyOptional()
   @Column({
     type: DataType.STRING,
     allowNull: true,
