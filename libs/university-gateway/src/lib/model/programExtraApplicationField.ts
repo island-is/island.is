@@ -1,4 +1,4 @@
-import { FieldType } from '../types'
+import { FieldType } from '../types/fieldType'
 
 export interface IProgramExtraApplicationField {
   externalId: string

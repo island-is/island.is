@@ -1,4 +1,5 @@
-import { Requirement, Season } from '../types'
+import { Requirement } from '../types/requirement'
+import { Season } from '../types/season'
 
 export interface ICourse {
   externalId: string

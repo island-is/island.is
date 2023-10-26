@@ -1,7 +1,9 @@
-import { DegreeType, ModeOfDelivery, Season } from '../types'
 import { ITag } from './tag'
 import { IProgramExtraApplicationField } from './programExtraApplicationField'
 import { IProgramMinor } from './programMinor'
+import { Season } from '../types/season'
+import { DegreeType } from '../types/degreeType'
+import { ModeOfDelivery } from '../types/modeOfDelivery'
 
 export interface IProgram {
   externalId: string
