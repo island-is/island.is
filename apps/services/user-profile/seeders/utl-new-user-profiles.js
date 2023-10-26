@@ -3,7 +3,7 @@
 module.exports = {
   up: (queryInterface) => {
     return queryInterface.bulkInsert(
-      'userprofile',
+      'user_profile',
       [
         {
           id: 'fc24d2ff-4798-43ee-e487-d0c37c27-178b1',
@@ -74,6 +74,6 @@ module.exports = {
   },
 
   down: (queryInterface) => {
-    return queryInterface.bulkDelete('userprofile', null, {})
+    return queryInterface.bulkDelete('user_profile', null, {})
   },
 }
