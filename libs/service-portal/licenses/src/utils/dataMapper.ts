@@ -552,7 +552,7 @@ export const getTitleAndLogo = (type: string) => {
     case LicenseType.Ehic:
       return {
         title: m.ehic,
-        logo: './assets/images/movingTruck.svg',
+        logo: 'https://images.ctfassets.net/8k0h54kbe6bj/7nYUF5kbiw29mRSrAfz2Ul/acf3cdb2d69f1ff900527f41c55fdfa9/merki.png',
       }
     default:
       return { title: m.license, logo: './assets/images/island.svg' }
