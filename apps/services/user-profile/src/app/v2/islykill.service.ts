@@ -24,9 +24,10 @@ export class IslykillService {
         },
       })
       .then((publicUser) => publicUser)
-      .catch(() => {
+      .catch((e) => {
         throw new InternalServerErrorException(
           'Unable to update islykill settings for user',
+          e,
         )
       })
   }
