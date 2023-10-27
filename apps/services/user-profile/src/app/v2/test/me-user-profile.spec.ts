@@ -396,7 +396,7 @@ describe('MeUserProfile', () => {
       })
     })
 
-    it('PATCH /v2/me should return 201 and clear email and phoneNumber when empty string is sent', async () => {
+    it('PATCH /v2/me should return 201 and clear email and phoneNumber null is sent', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
         mobilePhoneNumber: null,

@@ -42,6 +42,8 @@ export class UserProfileService {
       }
     }
 
+    console.log('userProfile', userProfile.lastNudge)
+
     return {
       nationalId: userProfile.nationalId,
       email: userProfile.email,
@@ -50,7 +52,10 @@ export class UserProfileService {
       mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
       emailVerified: userProfile.emailVerified,
       documentNotifications: userProfile.documentNotifications,
-      needsNudge: this.checkNeedsNudge(userProfile.lastNudge),
+      needsNudge:
+        userProfile.lastNudge !== null
+          ? this.checkNeedsNudge(userProfile.lastNudge)
+          : null,
     }
   }
 
@@ -184,11 +189,8 @@ export class UserProfileService {
     await this.userProfileModel.upsert({ nationalId, lastNudge: new Date() })
   }
 
-  private checkNeedsNudge(lastNudge: Date): boolean {
-    if (!lastNudge) {
-      return null
-    }
-
+  private checkNeedsNudge(lastNudge: NonNullable<Date>): boolean {
+    console.log('lastNudge', lastNudge)
     const sixMonthsAgoDate = new Date()
     sixMonthsAgoDate.setMonth(sixMonthsAgoDate.getMonth() - 6)
 

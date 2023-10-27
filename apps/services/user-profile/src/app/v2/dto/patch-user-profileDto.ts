@@ -4,6 +4,7 @@ import {
   IsEnum,
   IsOptional,
   IsString,
+  MinLength,
   ValidateIf,
 } from 'class-validator'
 import { Locale } from '../../user-profile/types/localeTypes'
@@ -28,6 +29,7 @@ export class PatchUserProfileDto {
   })
   @IsOptional()
   @IsString()
+  @MinLength(7)
   @ValidateIf((e) => e.mobilePhoneNumber !== null)
   mobilePhoneNumber?: string
 
