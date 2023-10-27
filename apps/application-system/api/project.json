@@ -161,6 +161,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
+          "./scripts/run-soffia-proxy.sh &",
           "yarn get-secrets application-system-api",
           "yarn nx run application-system-api:dev-services",
           "yarn nx run application-system-api:migrate",
