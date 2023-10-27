@@ -66,7 +66,7 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         label:
           formatMessage(m.validTag) +
           ' ' +
-          format(new Date(expirationDate), 'dd/MM/yy'),
+          format(new Date(expirationDate), 'dd.MM.yy'),
         variant: 'red',
         outlined: true,
       }
@@ -75,7 +75,7 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         label:
           formatMessage(m.validTag) +
           ' ' +
-          format(new Date(expirationDate), 'dd/MM/yy'),
+          format(new Date(expirationDate), 'dd.MM.yy'),
         variant: 'mint',
         outlined: true,
       }

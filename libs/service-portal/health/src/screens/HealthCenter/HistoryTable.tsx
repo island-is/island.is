@@ -23,12 +23,12 @@ const HistoryTable: FC<Props> = ({ history }: Props) => {
           <T.Row>
             <T.HeadData>
               <Text variant="medium" fontWeight="medium">
-                {formatMessage(m.dateFromShort)}
+                {formatMessage(messages.from)}
               </Text>
             </T.HeadData>
             <T.HeadData>
               <Text variant="medium" fontWeight="medium">
-                {formatMessage(m.dateToShort)}
+                {formatMessage(messages.to)}
               </Text>
             </T.HeadData>
             <T.HeadData>
