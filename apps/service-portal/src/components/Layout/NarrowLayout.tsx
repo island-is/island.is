@@ -10,13 +10,13 @@ import {
   m,
   ServicePortalNavigationItem,
   ModuleAlertBannerSection,
+  GoBack,
 } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { useWindowSize } from 'react-use'
 import SidebarLayout from './SidebarLayout'
 import Sticky from '../Sticky/Sticky'
 import { Link as ReactLink } from 'react-router-dom'
-import GoBack from '../GoBack/GoBack'
 import { theme } from '@island.is/island-ui/theme'
 import * as styles from './Layout.css'
 import { PortalNavigationItem } from '@island.is/portals/core'
