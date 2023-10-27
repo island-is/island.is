@@ -97,9 +97,16 @@ async function main() {
             `-p ${args['proxy-port']}:${args['proxy-port']}`,
             dockerBuild,
           ]
-          console.log('Now running the proxy - \uD83D\uDE31')
-          console.log('Args: ' + runCmd.join(' '))
-          execSync(runCmd.join(' '), { stdio: 'inherit' })
+          // console.debug('Args: ' + runCmd.join(' '))
+          try {
+            execSync(runCmd.join(' '), { stdio: 'inherit' })
+          } catch (err) {
+            console.error("Couldn't run the proxy - \uD83D\uDE31")
+            console.error(
+              `If the proxy is already running, try stopping it first with`,
+            )
+            console.error(`\n    ${args.builder} stop ${args.service}\n`)
+          }
         },
       )
       .command(
