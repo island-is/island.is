@@ -32,6 +32,9 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
     private adrApi: AdrApi,
     private smartApi: SmartSolutionsApi,
   ) {}
+
+  clientSupportsPkPass = true
+
   private checkLicenseValidityForPkPass(
     licenseInfo: AdrDto,
   ): LicensePkPassAvailability {
