@@ -270,6 +270,39 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Skráðu tölu á bilinu 1-100',
       description: 'Enter a number between 1-100',
     },
+    taxLevel: {
+      id: 'oap.application:payment.tax.level',
+      defaultMessage: 'Skattþrep',
+      description: 'Tax level',
+    },
+    taxIncomeLevel: {
+      id: 'oap.application:payment.tax.first.level',
+      defaultMessage:
+        'Ég vil að staðgreiðslan sé reiknuð út frá tekjuáætlun minni',
+      description:
+        'I want the withholding tax to be calculated based on my income estimate',
+    },
+    taxFirstLevel: {
+      id: 'oap.application:payment.tax.second.level',
+      defaultMessage:
+        'Ég vil að miðað sé við Skattþrep 1 í útreikningum staðgreiðslu (31,45% af tekjum: 0 - 409.986 kr.)',
+      description:
+        'I want tax level 1 to be taken into account in the withholding calculations (31.45% of income: 0 - 409,986 ISK)',
+    },
+    taxSecondLevel: {
+      id: 'oap.application:payment.tax.third.level',
+      defaultMessage:
+        'Ég vil að miðað sé við Skattþrep 2 í útreikningum staðgreiðslu (37,95% af tekjum: 409.986 - 1.151.012 kr.)',
+      description:
+        'I want tax level 2 to be taken into account in the withholding calculations (37.95% of income: ISK 409,986 - ISK 1,151,012)',
+    },
+    taxThirdLevel: {
+      id: 'oap.application:payment.tax.forth.level',
+      defaultMessage:
+        'Ég vil að miðað sé við Skattþrep 3 í útreikningum staðgreiðslu (46,25% af tekjum yfir 1.151.012 kr.)',
+      description:
+        'I want tax level 3 to be taken into account in the withholding calculations (46,25% of income over ISK 1,151,012)',
+    },
   }),
 
   onePaymentPerYear: defineMessages({

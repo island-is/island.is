@@ -12,6 +12,7 @@ import {
   ApplicationType,
   Employment,
   RatioType,
+  TaxLevelOptions,
   MONTHS,
   AttachmentLabel,
 } from './constants'
@@ -177,6 +178,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'paymentInfo.spouseAllowanceUsage',
   ) as string
 
+  const taxLevel = getValueViaPath(
+    answers,
+    'paymentInfo.taxLevel',
+  ) as TaxLevelOptions
+
   const additionalAttachments = getValueViaPath(
     answers,
     'fileUploadAdditionalFiles.additionalDocuments',
@@ -255,7 +261,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     schoolConfirmationAttachments,
     maintenanceAttachments,
     notLivesWithApplicantAttachments,
-    //  taxLevel,
+    taxLevel,
   }
 }
 
@@ -657,6 +663,29 @@ export function getYesNOOptions() {
     {
       value: NO,
       label: oldAgePensionFormMessage.shared.no,
+    },
+  ]
+
+  return options
+}
+
+export function getTaxOptions() {
+  const options: Option[] = [
+    {
+      value: TaxLevelOptions.INCOME,
+      label: oldAgePensionFormMessage.payment.taxIncomeLevel,
+    },
+    {
+      value: TaxLevelOptions.FIRST_LEVEL,
+      label: oldAgePensionFormMessage.payment.taxFirstLevel,
+    },
+    {
+      value: TaxLevelOptions.SECOND_LEVEL,
+      label: oldAgePensionFormMessage.payment.taxSecondLevel,
+    },
+    {
+      value: TaxLevelOptions.THIRD_LEVEL,
+      label: oldAgePensionFormMessage.payment.taxThirdLevel,
     },
   ]
 

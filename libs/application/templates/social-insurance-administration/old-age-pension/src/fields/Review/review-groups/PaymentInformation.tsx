@@ -10,6 +10,7 @@ import { getApplicationExternalData } from '../../../lib/oldAgePensionUtils'
 import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
+import { getTaxLevelOption } from './utils'
 import { YES } from '../../../lib/constants'
 
 export const PaymentInformation = ({
@@ -19,6 +20,7 @@ export const PaymentInformation = ({
 }: ReviewGroupProps) => {
   const [
     {
+      taxLevel,
       personalAllowance,
       spouseAllowance,
       personalAllowanceUsage,
@@ -87,6 +89,15 @@ export const PaymentInformation = ({
           )}
         </GridRow>
       )}
+
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+          <DataValue
+            label={formatMessage(oldAgePensionFormMessage.review.taxLevel)}
+            value={formatMessage(getTaxLevelOption(taxLevel))}
+          />
+        </GridColumn>
+      </GridRow>
     </ReviewGroup>
   )
 }

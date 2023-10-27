@@ -37,6 +37,7 @@ export const transformApplicationToOldAgePensionDTO = (
     spouseAllowance,
     personalAllowanceUsage,
     spouseAllowanceUsage,
+    taxLevel,
   } = getApplicationAnswers(application.answers)
 
   // If foreign residence is found then this is always true
@@ -59,6 +60,7 @@ export const transformApplicationToOldAgePensionDTO = (
       spouseAllowanceUsage: YES === spouseAllowance ? +spouseAllowanceUsage : 0,
       personalAllowanceUsage:
         YES === personalAllowance ? +personalAllowanceUsage : 0,
+      taxLevel: taxLevel,
     },
     applicantInfo: {
       email: applicantEmail,

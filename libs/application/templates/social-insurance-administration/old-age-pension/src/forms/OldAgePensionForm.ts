@@ -38,6 +38,7 @@ import {
   YES,
   IS,
   maritalStatuses,
+  TaxLevelOptions,
 } from '../lib/constants'
 import {
   childCustodyLivesWithApplicant,
@@ -45,6 +46,7 @@ import {
   getApplicationExternalData,
   getChildPensionDescription,
   getChildPensionTitle,
+  getTaxOptions,
   getYesNOOptions,
   isEarlyRetirement,
   isExistsCohabitantOlderThan25,
@@ -328,6 +330,15 @@ export const OldAgePensionForm: Form = buildForm({
                   variant: 'number',
                   width: 'half',
                   maxLength: 4,
+                }),
+                buildRadioField({
+                  id: 'paymentInfo.taxLevel',
+                  title: oldAgePensionFormMessage.payment.taxLevel,
+                  options: getTaxOptions(),
+                  width: 'full',
+                  largeButtons: true,
+                  space: 'containerGutter',
+                  defaultValue: TaxLevelOptions.INCOME,
                 }),
               ],
             }),

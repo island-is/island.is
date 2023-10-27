@@ -226,6 +226,8 @@ components:
         personalAllowanceUsage:
           type: number
           format: float
+        taxLevel:
+          type: string
     ApplicantInfo:
       type: object
       additionalProperties: false
