@@ -2,6 +2,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { parsePhoneNumber } from 'libphonenumber-js'
 import { isEmail } from 'class-validator'
+import pick from 'lodash/pick'
 
 import { isDefined } from '@island.is/shared/utils'
 
@@ -108,7 +109,7 @@ export class UserProfileService {
         ].filter(Boolean),
       )
 
-      promises.map(({ confirmed, message }, index) => {
+      promises.map(({ confirmed, message }) => {
         if (confirmed === false) {
           throw new BadRequestException(message)
         }
@@ -130,7 +131,7 @@ export class UserProfileService {
         }),
       }
 
-      await this.userProfileModel.upsert(
+      const [userProfileUpdated] = await this.userProfileModel.upsert(
         {
           ...update,
           lastNudge: new Date(),
@@ -143,7 +144,8 @@ export class UserProfileService {
         phoneNumber: parsedPhoneNumber,
         email: userProfile.email,
       })
-      return update
+
+      return pick(userProfileUpdated, Object.keys(update)) as typeof update
     })
   }
 
