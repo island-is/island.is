@@ -32,7 +32,9 @@ export class ProgramService {
   ) {}
 
   async getPrograms(
-    { after, before, limit }: PaginateInput,
+    limit: number,
+    after: string,
+    before?: string,
     active?: boolean,
     year?: number,
     season?: Season,

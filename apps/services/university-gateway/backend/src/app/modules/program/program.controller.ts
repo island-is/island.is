@@ -93,7 +93,9 @@ export class ProgramController {
     @Query('degreeType') degreeType?: DegreeType,
   ): Promise<ProgramResponse> {
     return this.programService.getPrograms(
-      { after, before, limit },
+      limit,
+      after,
+      before,
       active,
       year,
       season,

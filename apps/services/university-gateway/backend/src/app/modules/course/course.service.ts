@@ -19,9 +19,11 @@ export class CourseService {
   ) {}
 
   async getCourses(
-    { after, before, limit }: PaginateInput,
-    programId: string,
-    universityId: string,
+    limit: number,
+    after: string,
+    before?: string,
+    programId?: string,
+    universityId?: string,
   ): Promise<CourseResponse> {
     const where: {
       id?: { [Op.in]: string[] }

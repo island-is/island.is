@@ -70,7 +70,9 @@ export class CourseController {
     @Query('universityId') universityId: string,
   ): Promise<CourseResponse> {
     return this.courseService.getCourses(
-      { after, before, limit },
+      limit,
+      after,
+      before,
       programId,
       universityId,
     )
