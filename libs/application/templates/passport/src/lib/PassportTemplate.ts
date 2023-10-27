@@ -1,6 +1,5 @@
 import {
   coreHistoryMessages,
-  corePendingActionMessages,
   getValueViaPath,
 } from '@island.is/application/core'
 import {
@@ -12,6 +11,9 @@ import {
   ApplicationTypes,
   DefaultEvents,
   defineTemplateApi,
+  DistrictsApi,
+  InstitutionNationalIds,
+  PassportsApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
@@ -34,6 +36,8 @@ import {
   twoDays,
 } from './constants'
 import { dataSchema } from './dataSchema'
+import { buildPaymentState } from '@island.is/application/utils'
+import { needAssignment } from './utils'
 
 const pruneAfter = (time: number) => {
   return {
@@ -42,6 +46,21 @@ const pruneAfter = (time: number) => {
     whenToPrune: time,
     shouldDeleteChargeIfPaymentFulfilled: true,
   }
+}
+const getCode = (application: Application) => {
+  const chargeItemCode = getValueViaPath<string>(
+    application.answers,
+    'chargeItemCode',
+  )
+  if (!chargeItemCode) {
+    throw new Error('chargeItemCode missing in request')
+  }
+  return [chargeItemCode]
+}
+
+export const hasReviewer = (context: ApplicationContext) => {
+  const { answers, externalData } = context.application
+  return needAssignment(answers, externalData)
 }
 
 const PassportTemplate: ApplicationTemplate<
@@ -89,6 +108,8 @@ const PassportTemplate: ApplicationTemplate<
                 NationalRegistryUser,
                 UserInfoApi,
                 SyslumadurPaymentCatalogApi,
+                PassportsApi,
+                DistrictsApi,
                 IdentityDocumentApi,
                 DeliveryAddressApi,
               ],
@@ -108,52 +129,19 @@ const PassportTemplate: ApplicationTemplate<
           [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
         },
       },
-      [States.PAYMENT]: {
-        meta: {
-          name: 'Payment state',
-          status: 'inprogress',
-          lifecycle: pruneAfter(sixtyDays),
-          onEntry: defineTemplateApi({
-            action: ApiActions.createCharge,
-          }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Payment').then((val) =>
-                  Promise.resolve(val.payment),
-                ),
-              actions: [
-                { event: DefaultEvents.ASSIGN, name: '', type: 'primary' },
-                { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-          actionCard: {
-            historyLogs: [
-              {
-                logMessage: coreHistoryMessages.paymentAccepted,
-                onEvent: DefaultEvents.SUBMIT,
-              },
-              {
-                logMessage: coreHistoryMessages.paymentAccepted,
-                onEvent: DefaultEvents.ASSIGN,
-              },
-            ],
-            pendingAction: {
-              title: corePendingActionMessages.paymentPendingTitle,
-              content: corePendingActionMessages.paymentPendingDescription,
-              displayStatus: 'warning',
-            },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SYSLUMENN,
+        chargeItemCodes: getCode,
+        submitTarget: [
+          {
+            target: States.PARENT_B_CONFIRM,
+            cond: hasReviewer,
           },
-        },
-        on: {
-          [DefaultEvents.ASSIGN]: { target: States.PARENT_B_CONFIRM },
-          [DefaultEvents.SUBMIT]: { target: States.DONE },
-        },
-      },
+          {
+            target: States.DONE,
+          },
+        ],
+      }),
       [States.PARENT_B_CONFIRM]: {
         entry: 'assignToParentB',
         meta: {
@@ -189,6 +177,8 @@ const PassportTemplate: ApplicationTemplate<
                 NationalRegistryUserParentB,
                 UserInfoApi,
                 SyslumadurPaymentCatalogApi,
+                PassportsApi,
+                DistrictsApi,
                 IdentityDocumentApi,
                 DeliveryAddressApi,
               ],

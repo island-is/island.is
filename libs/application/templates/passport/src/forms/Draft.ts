@@ -9,27 +9,37 @@ import {
   buildSection,
   buildSelectField,
   buildSubmitField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   Application,
   DefaultEvents,
   Form,
   FormModes,
+  PassportsApi,
 } from '@island.is/application/types'
 import {
   DeliveryAddressApi,
-  IdentityDocumentApi,
   SyslumadurPaymentCatalogApi,
   UserInfoApi,
   NationalRegistryUser,
 } from '../dataProviders'
-import { DistrictCommissionerAgencies, Services } from '../lib/constants'
+import {
+  DistrictCommissionerAgencies,
+  Passport,
+  Services,
+} from '../lib/constants'
 import { m } from '../lib/messages'
 import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
 import { personalInfo } from './infoSection/personalInfo'
 import { childsOverview } from './overviewSection/childsOverview'
 import { personalOverview } from './overviewSection/personalOverview'
-import { getChargeCode, getPrice } from '../lib/utils'
+import {
+  getChargeCode,
+  getPrice,
+  hasSecondGuardian,
+  needAssignment,
+} from '../lib/utils'
 
 export const Draft: Form = buildForm({
   id: 'PassportApplicationDraftForm',
@@ -59,7 +69,7 @@ export const Draft: Form = buildForm({
               subTitle: m.dataCollectionUserProfileSubtitle,
             }),
             buildDataProviderItem({
-              provider: IdentityDocumentApi,
+              provider: PassportsApi,
               title: m.dataCollectionIdentityDocumentTitle,
               subTitle: m.dataCollectionIdentityDocumentSubtitle,
             }),

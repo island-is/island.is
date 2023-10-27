@@ -8,6 +8,7 @@ export enum Features {
   accidentNotification = 'isAccidentNotificationEnabled',
   europeanHealthInsuranceCard = 'isEuropeanHealthInsuranceCardApplicationEnabled',
   passportApplication = 'isPassportApplicationEnabled',
+  passportAnnulmentApplication = 'isPassportAnnulmentApplicationEnabled',
   financialStatementInao = 'financialStatementInao',
   inheritanceReport = 'isInheritanceReportApplicationEnabled',
   transportAuthorityDigitalTachographCompanyCard = 'isTransportAuthorityDigitalTachographCompanyCardEnabled',
@@ -24,10 +25,12 @@ export enum Features {
   servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
   servicePortalConsentModule = 'isServicePortalConsentModuleEnabled',
   servicePortalHealthRightsModule = 'isServicePortalHealthRightsModuleEnabled',
-  servicePortalTransferHealthCenter = 'isServicePortalHealthTransferPageEnabled',
   servicePortalSecondaryEducationPages = 'isServicePortalSecondaryEducationPageEnabled',
   servicePortalHealthCenterDentistPage = 'isServicePortalHealthCenterPageEnabled',
   servicePortalWorkMachinesModule = 'isServicePortalWorkMachinesPageEnabled',
+  servicePortalHealthMedicinePages = 'isServicePortalHealthMedicinePageEnabled',
+  servicePortalHealthPaymentPages = 'isServicePortalHealthPaymentPageEnabled',
+  servicePortalHealthOverviewPage = 'isServicePortalHealthOverviewPageEnabled',
 
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',

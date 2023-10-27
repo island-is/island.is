@@ -14,6 +14,7 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           id
           title
           slug
+          pageType
         }
         ... on News {
           id
@@ -249,6 +250,11 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           slug: url
           intro
           labels
+        }
+
+        ... on Manual {
+          title
+          slug
         }
       }
       tagCounts {

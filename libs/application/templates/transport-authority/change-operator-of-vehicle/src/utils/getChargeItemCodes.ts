@@ -1,7 +1,13 @@
+import { Application, ExtraData } from '@island.is/application/types'
 import { ChangeOperatorOfVehicle } from '../lib/dataSchema'
 import { ChargeItemCode } from '@island.is/shared/constants'
 
-export const getChargeItemCodes = (
+export const getChargeItemCodes = (applicaiton: Application): Array<string> => {
+  const answers = applicaiton.answers as ChangeOperatorOfVehicle
+  return getChargeItemCodeWithAnswers(answers)
+}
+
+export const getChargeItemCodeWithAnswers = (
   answers: ChangeOperatorOfVehicle,
 ): Array<string> => {
   const operatorWasAdded =
@@ -25,4 +31,9 @@ export const getChargeItemCodes = (
     )
   }
   return result
+}
+
+export const getExtraData = (application: Application): ExtraData[] => {
+  const answers = application.answers as ChangeOperatorOfVehicle
+  return [{ name: 'vehicle', value: answers?.pickVehicle?.plate }]
 }

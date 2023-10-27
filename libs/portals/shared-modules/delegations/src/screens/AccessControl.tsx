@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-use'
 import { Box, Button, GridColumn, Tabs } from '@island.is/island-ui/core'
-import { IntroHeader } from '@island.is/portals/core'
+import { IntroHeader, usePortalMeta } from '@island.is/portals/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useAuth } from '@island.is/auth/react'
 import { isDefined } from '@island.is/shared/utils'
@@ -10,7 +10,6 @@ import { DelegationsIncoming } from '../components/delegations/incoming/Delegati
 import { DelegationsOutgoing } from '../components/delegations/outgoing/DelegationsOutgoing'
 import { m } from '../lib/messages'
 import { DelegationPaths } from '../lib/paths'
-import { usePortalMeta } from '@island.is/portals/core'
 
 const TAB_DELEGATION_OUTGOING_ID = 'outgoing'
 const TAB_DELEGATION_INCOMING_ID = 'incoming'
@@ -67,7 +66,11 @@ const AccessControl = () => {
             paddingTop={[3, 6]}
           >
             <Button
-              onClick={() => navigate(DelegationPaths.DelegationsGrant)}
+              onClick={() =>
+                navigate(
+                  `${DelegationPaths.DelegationsGrant}${location.search}`,
+                )
+              }
               size="small"
             >
               {formatMessage(m.newAccess)}
