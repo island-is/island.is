@@ -420,6 +420,7 @@ services-auth-ids-api:
       DB_NAME: 'servicesauth'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'servicesauth'
+      NPM_CONFIG_UPDATE_NOTIFIER: 'false'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
