@@ -230,7 +230,8 @@ const VehicleDetail = () => {
   const technicalArr =
     technicalInfo && technicalInfoArray(technicalInfo, formatMessage)
 
-  const hasPrivateRegistration = basicInfo?.permno !== basicInfo?.regno
+  const hasPrivateRegistration =
+    basicInfo?.regno && basicInfo?.permno !== basicInfo?.regno
 
   const dropdownArray = [
     {
@@ -317,7 +318,7 @@ const VehicleDetail = () => {
         {hasPrivateRegistration ? (
           <UserInfoLine
             label={formatMessage(messages.numberPlate)}
-            content={basicInfo?.permno ?? ''}
+            content={`${basicInfo?.regno} (${basicInfo?.permno})`}
             editLink={{
               title: messages.renewPrivateRegistration,
               url: formatMessage(urls.renewPrivate),
@@ -328,7 +329,7 @@ const VehicleDetail = () => {
         ) : (
           <UserInfoLine
             label={formatMessage(messages.numberPlate)}
-            content={mainInfo?.regno ?? ''}
+            content={mainInfo?.regno ?? basicInfo?.permno ?? ''}
             editLink={{
               title: messages.orderRegistrationNumber,
               url: formatMessage(urls.regNumber),
