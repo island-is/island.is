@@ -509,6 +509,7 @@ export const getLicenseDetailHeading = (type: string) => {
       return {
         title: m.ehic,
         text: m.ehicDescription,
+        link: m.ehicDescriptionLink,
       }
       break
     default:

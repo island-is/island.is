@@ -19,6 +19,7 @@ import {
   CardLoader,
   ErrorScreen,
   m as coreMessages,
+  LinkButton,
 } from '@island.is/service-portal/core'
 import ExpandableLine from './ExpandableLine'
 import { m } from '../../lib/messages'
@@ -34,6 +35,7 @@ import {
 } from '../../utils/dataMapper'
 import { isExpired } from '../../utils/dateUtils'
 import isValid from 'date-fns/isValid'
+import { head } from 'lodash'
 
 const dataFragment = gql`
   fragment genericLicenseDataFieldFragment on GenericLicenseDataField {
@@ -376,6 +378,14 @@ const LicenseDetail = () => {
           </GridColumn>
         </GridRow>
       </Box>
+      {heading.link && (
+        <Text marginTop={5}>
+          <LinkButton
+            to={formatMessage(heading.link)}
+            text={formatMessage(m.externalLicenseDetailLink)}
+          />
+        </Text>
+      )}
       {queryLoading && <CardLoader />}
 
       {!error && !queryLoading && (
