@@ -82,7 +82,7 @@ async function main() {
             `Proxy will be listening on http://localhost:${args['proxy-port']} - \uD83D\uDC42`,
           )
           execSync(
-            `${args.builder} run --name ${args.service} --rm -e AWS_ACCESS_KEY_ID=${credentials.accessKeyId} -e AWS_SECRET_ACCESS_KEY=${credentials.secretAccessKey} -e AWS_SESSION_TOKEN="${credentials.sessionToken}" -e CLUSTER=${args.cluster} -e TARGET_SVC=${args.service} -e TARGET_NAMESPACE=${args.namespace} -e TARGET_PORT=${args.port} -p ${args['proxy-port']}:8080 ${dockerBuild}`,
+            `${args.builder} run --name ${args.service} --rm -e AWS_ACCESS_KEY_ID=${credentials.accessKeyId} -e AWS_SECRET_ACCESS_KEY=${credentials.secretAccessKey} -e AWS_SESSION_TOKEN="${credentials.sessionToken}" -e CLUSTER=${args.cluster} -e TARGET_SVC=${args.service} -e TARGET_NAMESPACE=${args.namespace} -e TARGET_PORT=${args.port} -e PROXY_PORT=${args['proxy-port']} -p ${args['proxy-port']}:${args.port} ${dockerBuild}`,
             { stdio: 'inherit' },
           )
         },
