@@ -30,6 +30,9 @@ mkargs() {
     --build-arg="APP_DIST_HOME=${APP_DIST_HOME}"
     -t "${DOCKER_REGISTRY}""${APP}":"${DOCKER_TAG}"
     --build-arg="PLAYWRIGHT_VERSION=${PLAYWRIGHT_VERSION}"
+    # https://github.com/opencontainers/image-spec/blob/main/annotations.md#pre-defined-annotation-keys
+    --label org.opencontainers.image.revision="$(git rev-parse HEAD)"
+    --label org.opencontainers.image.source="$(git config --get remote.origin.url)"
   )
   for extra_arg in ${EXTRA_DOCKER_BUILD_ARGS:-}; do
     BUILD_ARGS+=("$extra_arg")
