@@ -1,4 +1,3 @@
-export { CompanyInfoFragment } from './lib/fragments/companyInfo'
 export { dataFragment } from './lib/fragments/license'
 export {
   unitsOfUseFragment,
@@ -25,7 +24,6 @@ export * from './hooks/content/useFooterContent'
 export * from './hooks/profile/useUserProfile'
 export * from './hooks/profile/useUpdateUserProfile'
 export * from './hooks/profile/useCreateUserProfile'
-export * from './hooks/companies/useCompanyRegistry'
 export * from './hooks/profile/useVerifySms'
 export * from './hooks/profile/useVerifyEmail'
 export * from './hooks/profile/useResendEmailVerification'
