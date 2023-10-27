@@ -27,7 +27,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     formEditTitle: {
       id: 'pl.application:form.edit.title',
-      defaultMessage: 'Breyta eða bæta við tímabilum',
+      defaultMessage: 'Breyta',
       description: 'Edit or Add Periods',
     },
     prerequisitesSection: {
@@ -885,6 +885,73 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Aðalforeldri hefur ekki gefið þér samþykki sitt fyrir umgengi í fæðingarorlofinu.',
       description:
         'Primary parent has not given you their consent for right of access during the parental leave.',
+    },
+
+    editOrAddEmployer: {
+      id: 'pl.application:edit.or.add.employer',
+      defaultMessage: 'Viltu breyta eða bæta við vinnuveitanda?',
+      description: 'Do you want to edit or add an employer?',
+    },
+    employerSection: {
+      id: 'pl.application:employerSection',
+      defaultMessage: 'Vinnuveitandi',
+      description: 'Employer',
+    },
+    employerSubSection: {
+      id: 'pl.application:employerSubSection',
+      defaultMessage: 'Breyta eða bæta við vinnuveitanda',
+      description: 'Edit or add an employer',
+    },
+
+    periodReview: {
+      id: 'pl.application:periodReview',
+      defaultMessage: 'Tímabil',
+      description: 'Period',
+    },
+    editOrAddInfoSection: {
+      id: 'pl.application:editOrAddInfoSection',
+      defaultMessage: 'Upplýsingar',
+      description: 'Information',
+    },
+    editOrAddInfoSectionTitle: {
+      id: 'pl.application:editOrAddInfoSectionTitle',
+      defaultMessage: 'Þú ert að fara breyta umsókn um fæðingarorlof',
+      description: 'english description',
+    },
+    editOrAddInfoSectionDescription: {
+      id: 'pl.application:editOrAddInfoSectionDescription',
+      defaultMessage:
+        'Í næstu skrefum geturu breytt eða bætt við upplýsingum um vinnuveitanda og tímabil fæðingarorlofsins.',
+      description: 'english description',
+    },
+
+    editOrAddInfoGrantSectionTitle: {
+      id: 'pl.application:editOrAddInfoGrantSectionTitle',
+      defaultMessage: 'Þú ert að fara breyta umsókn um fæðingarstyrk',
+      description: 'english description',
+    },
+    editOrAddInfoGrantSectionDescription: {
+      id: 'pl.application:editOrAddInfoGrantSectionDescription',
+      defaultMessage:
+        'Í næstu skrefum geturu breytt eða bætt við upplýsingum um vinnuveitanda og tímabil fæðingarstyrksins.',
+      description: 'english description',
+    },
+
+    editOrAddPeriods: {
+      id: 'pl.application:edit.or.add.periods',
+      defaultMessage: 'Viltu breyta eða bæta við tímabili?',
+      description: 'Do you want to edit or add a period?',
+    },
+
+    editPeriodsReviewAlertTitle: {
+      id: 'pl.application:edit.periods.review.alert.title',
+      defaultMessage: 'Athugið! ',
+      description: 'Attention!',
+    },
+    editPeriodsReviewAlertMessage: {
+      id: 'pl.application:edit.periods.review.alert.message',
+      defaultMessage: 'Engar breytingar fundust.',
+      description: 'No changes were found.',
     },
   }),
 
@@ -2762,13 +2829,15 @@ export const statesMessages = defineMessages({
 
   editOrAddPeriodsTitle: {
     id: 'pl.application:editOrAddPeriods.title',
-    defaultMessage: 'Breyta eða bæta við tímabil',
-    description: 'Title of the state - editOrAddPeriods',
+    defaultMessage: 'Breyta eða bæta við vinnuveitanda og tímabili',
+    description: 'Edit or add employers and periods',
   },
   editOrAddPeriodsDescription: {
     id: 'pl.application:editOrAddPeriods.description',
-    defaultMessage: 'Þú ert að breyta eða bæta tímabil við umsókn.',
-    description: 'Description of the state - editOrAddPeriods',
+    defaultMessage:
+      'Þú ert að breyta eða bæta vinnuveitanda og tímabili við umsókn.',
+    description:
+      'You are editing or adding new employers and periods to your application.',
   },
 
   employerWaitingToAssignForEditsTitle: {
@@ -2933,8 +3002,8 @@ export const statesMessages = defineMessages({
 
   editOrAddPeriodsSubmitHistoryLogMessage: {
     id: 'pl.application:editOrAddPeriods.submit.historyLogMessage',
-    defaultMessage: 'Tímabili breytt eða bætt við umsókn',
-    description: 'Period edited or added to application',
+    defaultMessage: 'Vinnuveitanda og tímabili breytt eða bætt við umsókn',
+    description: 'Employer and period edited or added to application',
   },
   editOrAddPeriodsAbortHistoryLogMessage: {
     id: 'pl.application:editOrAddPeriods.abort.historyLogMessage',

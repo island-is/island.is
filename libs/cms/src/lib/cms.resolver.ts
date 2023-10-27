@@ -98,6 +98,8 @@ import { Event as EventModel } from './models/event.model'
 import { GetSingleEventInput } from './dto/getSingleEvent.input'
 import { GetEventsInput } from './dto/getEvents.input'
 import { EventList } from './models/eventList.model'
+import { Manual } from './models/manual.model'
+import { GetSingleManualInput } from './dto/getSingleManual.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -569,6 +571,17 @@ export class CmsResolver {
     @Args('input') input: GetGenericTagBySlugInput,
   ): Promise<GenericTag | null> {
     return this.cmsContentfulService.getGenericTagBySlug(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => Manual, { nullable: true })
+  getSingleManual(
+    @Args('input') input: GetSingleManualInput,
+  ): Promise<Manual | null> {
+    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
+      getElasticsearchIndex(input.lang),
+      { type: 'webManual', slug: input.slug },
+    )
   }
 }
 

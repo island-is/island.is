@@ -24,7 +24,7 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseState,
-  limitedAccessCaseFileCategoriesForRestrictionAndInvestigationCases,
+  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -382,7 +382,7 @@ export class LimitedAccessCaseService {
         (file) =>
           file.key &&
           file.category &&
-          limitedAccessCaseFileCategoriesForRestrictionAndInvestigationCases.includes(
+          defenderCaseFileCategoriesForRestrictionAndInvestigationCases.includes(
             file.category,
           ),
       ) ?? []

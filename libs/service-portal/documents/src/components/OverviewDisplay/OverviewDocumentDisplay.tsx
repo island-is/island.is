@@ -5,7 +5,6 @@ import { ActiveDocumentType } from '../../lib/types'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import DesktopOverview from './DesktopOverview'
 import MobileOverview from './MobileOverview'
-import { messages } from '../../utils/messages'
 import NoPDF from '../NoPDF/NoPDF'
 
 export interface Props {
@@ -15,7 +14,10 @@ export interface Props {
   activeArchive: boolean
   activeBookmark: boolean
   loading?: boolean
-  error?: boolean
+  error?: {
+    message?: string
+    code: 'list' | 'single'
+  }
   category?: DocumentCategory
 }
 
@@ -24,8 +26,11 @@ export const DocumentDisplay: FC<Props> = (props) => {
 
   const isDesktop = width > theme.breakpoints.lg
 
-  if (props.error) {
-    return <NoPDF text={messages.error} />
+  if (props.error?.message) {
+    if (props.error?.code === 'single' && !isDesktop) {
+      return null
+    }
+    return <NoPDF text={props.error?.message} error />
   }
 
   if (isDesktop) {

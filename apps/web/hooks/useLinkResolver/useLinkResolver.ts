@@ -67,6 +67,26 @@ export const routesTemplate = {
     is: '/frett',
     en: '/en/news',
   },
+  manual: {
+    is: '/handbaekur/[slug]',
+    en: '/en/manuals/[slug]',
+  },
+  manualchangelog: {
+    is: '/handbaekur/[slug]/breytingasaga',
+    en: '/en/manuals/[slug]/changelog',
+  },
+  manualchapter: {
+    is: '/handbaekur/[slug]/[chapterSlug]',
+    en: '/en/manuals/[slug]/[chapterSlug]',
+  },
+  vacancies: {
+    is: '/starfatorg',
+    en: '',
+  },
+  vacancydetails: {
+    is: '/starfatorg/[id]',
+    en: '',
+  },
   digitalicelandservices: {
     is: '/s/stafraent-island/thjonustur',
     en: '/en/o/digital-iceland/island-services',
@@ -219,14 +239,6 @@ export const routesTemplate = {
   undirskriftalistar: {
     is: '/undirskriftalistar',
     en: '/en/petitions',
-  },
-  vacancies: {
-    is: '/starfatorg',
-    en: '',
-  },
-  vacancydetails: {
-    is: '/starfatorg/[id]',
-    en: '',
   },
 }
 

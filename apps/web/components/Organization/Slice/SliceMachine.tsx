@@ -94,7 +94,7 @@ interface SliceMachineProps {
   slug?: string
   marginBottom?: ResponsiveSpace
   params?: Record<string, any>
-  paddingTop?: ResponsiveSpace
+  paddingBottom?: ResponsiveSpace
   wrapWithGridContainer?: boolean
 }
 
@@ -181,14 +181,14 @@ export const SliceMachine = ({
   slug = '',
   marginBottom = 0,
   params,
-  paddingTop = 6,
+  paddingBottom = 6,
   wrapWithGridContainer = false,
 }: SliceMachineProps) => {
   return !fullWidth ? (
     <GridContainer>
       <GridRow marginBottom={marginBottom}>
         <GridColumn
-          paddingTop={paddingTop}
+          paddingBottom={paddingBottom}
           span={
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore make web strict

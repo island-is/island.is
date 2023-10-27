@@ -63,6 +63,14 @@ export class LicenseServiceService {
     return organization
   }
 
+  //backwards compatibilty hax
+  private mapLicenseType = (type: GenericLicenseType) =>
+    this.licenseClient.getClientByLicenseType(
+      type === GenericLicenseType.DriversLicense
+        ? LicenseType.DrivingLicense
+        : (type as unknown as LicenseType),
+    )
+
   private async getLicenseLabels(locale: Locale) {
     const licenseLabels = await this.cmsContentfulService.getNamespace(
       'Licenses',
@@ -129,7 +137,11 @@ export class LicenseServiceService {
 
       if (!onlyList) {
         const genericLicense = await this.getLicense(user, locale, license.type)
-        if (genericLicense) {
+
+        if (
+          genericLicense &&
+          genericLicense.license.status === GenericUserLicenseStatus.HasLicense
+        ) {
           licenses.push(genericLicense)
         }
       }
@@ -144,12 +156,7 @@ export class LicenseServiceService {
   ): Promise<GenericUserLicense | null> {
     const license = AVAILABLE_LICENSES.find((i) => i.type === licenseType)
 
-    //backwards compatibilty hax
-    const licenseService = await this.licenseClient.getClientByLicenseType(
-      licenseType === GenericLicenseType.DriversLicense
-        ? LicenseType.DrivingLicense
-        : (licenseType as unknown as LicenseType),
-    )
+    const licenseService = await this.mapLicenseType(licenseType)
 
     if (!license || !licenseService) {
       this.logger.error(`Invalid license type. type: ${licenseType}`, {
@@ -217,9 +224,7 @@ export class LicenseServiceService {
     locale: Locale,
     licenseType: GenericLicenseType,
   ): Promise<string> {
-    const client = await this.licenseClient.getClientByLicenseType(
-      licenseType as unknown as LicenseType,
-    )
+    const client = await this.mapLicenseType(licenseType)
 
     if (!client) {
       this.logger.warn(`Invalid license type. type: ${licenseType}`, {
@@ -246,9 +251,7 @@ export class LicenseServiceService {
     locale: Locale,
     licenseType: GenericLicenseType,
   ): Promise<string> {
-    const client = await this.licenseClient.getClientByLicenseType(
-      licenseType as unknown as LicenseType,
-    )
+    const client = await this.mapLicenseType(licenseType)
 
     if (!client) {
       this.logger.warn(`Invalid license type. type: ${licenseType}`, {

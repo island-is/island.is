@@ -1,4 +1,5 @@
 export const ICELAND_ID = 'kENblMMMvZ3DlyXw1dwxQ'
+export const ISLANDIS_ID = '1JHJe1NDwbBjEr7OVdjuFD'
 export const MENNTAMALASTOFNUN_ID = '6JoPZKqmUVnRAVrj0vadTy'
 export const FJARSYSLAN_ID = '6AoSHJJRDHQFfLiwBZvZi2'
 export const THJODSKRA_ID = 'i5go5A4ikV8muPfvr9o2v'

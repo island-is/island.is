@@ -1,7 +1,6 @@
 import {
   assistantRule,
   judgeRule,
-  prisonSystemStaffRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
   registrarRule,
@@ -16,13 +15,12 @@ describe('CaseController - Get by id rules', () => {
     rules = Reflect.getMetadata('roles-rules', CaseController.prototype.getById)
   })
 
-  it('should give permission to six roles', () => {
-    expect(rules).toHaveLength(6)
+  it('should give permission to roles', () => {
+    expect(rules).toHaveLength(5)
     expect(rules).toContain(prosecutorRule)
     expect(rules).toContain(prosecutorRepresentativeRule)
     expect(rules).toContain(judgeRule)
     expect(rules).toContain(registrarRule)
     expect(rules).toContain(assistantRule)
-    expect(rules).toContain(prisonSystemStaffRule)
   })
 })

@@ -1926,8 +1926,8 @@ export interface IManualChapterFields {
   /** Description */
   description?: Document | undefined
 
-  /** Chapter Item */
-  chapterItem?: IOneColumnText[] | undefined
+  /** Chapter Items */
+  chapterItems?: IOneColumnText[] | undefined
 
   /** Changelog */
   changelog?: Record<string, any> | undefined

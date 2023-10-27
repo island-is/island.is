@@ -4,7 +4,6 @@ import {
   ActionCard,
   EmptyState,
   CardLoader,
-  ServicePortalPath,
   formatDate,
 } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
@@ -14,11 +13,7 @@ import {
   IdentityDocumentModel,
 } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
-import {
-  getPathFromType,
-  getTitleAndLogo,
-  getPathFromProviderId,
-} from '../../utils/dataMapper'
+import { getPathFromType, getTitleAndLogo } from '../../utils/dataMapper'
 
 import LicenseCards from '../../components/LicenseCards/LicenseCards'
 import { getExpiresIn } from '../../utils/dateUtils'
