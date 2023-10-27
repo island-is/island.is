@@ -70,7 +70,7 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
       {
         type: GenericLicenseDataFieldType.Value,
         label: getLabel('publisher', locale, label),
-        value: 'Sjúkratryggingar Íslands',
+        value: 'Sjúkratryggingar',
       },
     ].filter(isDefined)
 
