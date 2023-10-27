@@ -74,9 +74,11 @@ const PdfButton: React.FC<React.PropsWithChildren<Props>> = ({
         }
       }}
     >
-      <Text color="blue400" variant="h4">
-        {title}
-      </Text>
+      <span className={styles.fileNameContainer}>
+        <Text color="blue400" variant="h4">
+          {title}
+        </Text>
+      </span>
       {children}
     </Box>
   )
