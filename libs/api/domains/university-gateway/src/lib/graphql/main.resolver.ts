@@ -1,7 +1,7 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UniversityGatewayApi } from '../universityGateway.service'
 import {
-  UniversityGatewayGetProgramByIdInput,
+  UniversityGatewayGetPogramInput,
   UniversityGatewayProgramsPaginated,
 } from './dto'
 import {
@@ -21,7 +21,7 @@ export class MainResolver {
 
   @Query(() => UniversityGatewayProgramDetails)
   universityGatewayProgramById(
-    @Args('input') input: UniversityGatewayGetProgramByIdInput,
+    @Args('input') input: UniversityGatewayGetPogramInput,
   ) {
     return this.universityGatewayApi.getProgramById(input)
   }

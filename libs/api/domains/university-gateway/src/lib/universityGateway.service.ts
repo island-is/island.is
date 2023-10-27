@@ -5,7 +5,7 @@ import {
 } from '@island.is/clients/university-gateway-api'
 import { CmsContentfulService } from '@island.is/cms'
 import {
-  UniversityGatewayGetProgramByIdInput,
+  UniversityGatewayGetPogramInput,
   UniversityGatewayProgramsPaginated,
 } from './graphql/dto'
 import {
@@ -76,7 +76,7 @@ export class UniversityGatewayApi {
   }
 
   async getProgramById(
-    input: UniversityGatewayGetProgramByIdInput,
+    input: UniversityGatewayGetPogramInput,
   ): Promise<UniversityGatewayProgramDetails> {
     const res = await this.programApi.programControllerGetProgramDetails({
       id: input.id,
