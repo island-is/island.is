@@ -8,7 +8,6 @@ import { UniversityGatewayApi } from './universityGateway.service'
 import { ConfigModule } from '@nestjs/config'
 import { CmsModule } from '@island.is/cms'
 
-export
 @Module({
   imports: [
     UniversityGatewayApiClientModule,
@@ -21,4 +20,4 @@ export
   providers: [MainResolver, UniversityGatewayApi],
   exports: [UniversityGatewayApi],
 })
-class UniversityGatewayApiModule {}
+export class UniversityGatewayApiModule {}

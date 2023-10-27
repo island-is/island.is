@@ -1,7 +1,8 @@
 import { ObjectType } from '@nestjs/graphql'
 import { PaginatedResponse } from '@island.is/nest/pagination'
-import { Program } from '../models/program.model'
+import { UniversityGatewayProgram } from '../models/program.model'
 
-export
-@ObjectType('ProgramsPaginated')
-class ProgramsPaginated extends PaginatedResponse(Program) {}
+@ObjectType('UniversityGatewayProgramsPaginated')
+export class UniversityGatewayProgramsPaginated extends PaginatedResponse(
+  UniversityGatewayProgram,
+) {}

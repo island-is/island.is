@@ -63,7 +63,9 @@ export const GET_UNIVERSITY_GATEWAY_FILTERS = gql`
 `
 
 export const GET_UNIVERSITY_GATEWAY_PROGRAM = gql`
-  query GetUniversityGatewayById($input: GetProgramByIdInput!) {
+  query GetUniversityGatewayById(
+    $input: UniversityGatewayGetProgramByIdInput!
+  ) {
     universityGatewayProgramById(input: $input) {
       active
       nameIs

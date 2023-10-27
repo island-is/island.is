@@ -1,8 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 
-export
 @InputType()
-class GetProgramByIdInput {
+export class UniversityGatewayGetProgramByIdInput {
   @Field()
   id!: string
 }

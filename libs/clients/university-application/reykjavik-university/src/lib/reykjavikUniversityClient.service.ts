@@ -12,9 +12,8 @@ import {
 } from '@island.is/university-gateway'
 import { logger } from '@island.is/logging'
 
-export
 @Injectable()
-class ReykjavikUniversityApplicationClient {
+export class ReykjavikUniversityApplicationClient {
   constructor(private hvinApi: HvinApi) {}
 
   async getPrograms(): Promise<IProgram[]> {

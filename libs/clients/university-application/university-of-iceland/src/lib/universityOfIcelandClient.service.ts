@@ -12,9 +12,8 @@ import {
 } from '@island.is/university-gateway'
 import { logger } from '@island.is/logging'
 
-export
 @Injectable()
-class UniversityOfIcelandApplicationClient {
+export class UniversityOfIcelandApplicationClient {
   constructor(
     private readonly programsApi: ProgramsApi,
     private readonly coursesApi: CoursesApi,

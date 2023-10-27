@@ -1,29 +1,37 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UniversityGatewayApi } from '../universityGateway.service'
-import { GetProgramByIdInput, ProgramsPaginated } from './dto'
-import { ProgramDetails, ProgramFilter, University } from './models'
+import {
+  UniversityGatewayGetProgramByIdInput,
+  UniversityGatewayProgramsPaginated,
+} from './dto'
+import {
+  UniversityGatewayProgramDetails,
+  UniversityGatewayProgramFilter,
+  UniversityGatewayUniversity,
+} from './models'
 
-export
 @Resolver()
-class MainResolver {
+export class MainResolver {
   constructor(private readonly universityGatewayApi: UniversityGatewayApi) {}
 
-  @Query(() => ProgramsPaginated)
+  @Query(() => UniversityGatewayProgramsPaginated)
   universityGatewayActivePrograms() {
     return this.universityGatewayApi.getActivePrograms()
   }
 
-  @Query(() => ProgramDetails)
-  universityGatewayProgramById(@Args('input') input: GetProgramByIdInput) {
+  @Query(() => UniversityGatewayProgramDetails)
+  universityGatewayProgramById(
+    @Args('input') input: UniversityGatewayGetProgramByIdInput,
+  ) {
     return this.universityGatewayApi.getProgramById(input)
   }
 
-  @Query(() => [University])
+  @Query(() => [UniversityGatewayUniversity])
   universityGatewayUniversities() {
     return this.universityGatewayApi.getUniversities()
   }
 
-  @Query(() => [ProgramFilter])
+  @Query(() => [UniversityGatewayProgramFilter])
   universityGatewayProgramFilters() {
     return this.universityGatewayApi.getProgramFilters()
   }

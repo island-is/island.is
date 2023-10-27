@@ -1,8 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-export
-@ObjectType('ProgramFilter')
-class ProgramFilter {
+@ObjectType('UniversityGatewayProgramFilter')
+export class UniversityGatewayProgramFilter {
   @Field()
   field!: string
 
