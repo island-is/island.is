@@ -422,7 +422,7 @@ UniversityDetails.getProps = async ({ query, apolloClient, locale }) => {
       query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
     })
 
-  const data = newResponse.data.universityGatewayProgramById
+  const data = newResponse.data.universityGatewayProgram
 
   return {
     data,

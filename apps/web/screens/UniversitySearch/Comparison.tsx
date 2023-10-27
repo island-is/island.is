@@ -311,7 +311,7 @@ Comparison.getProps = async ({ query, apolloClient, locale }) => {
   )
 
   const mappedData = allResolvedPromises.map(
-    (resolved) => resolved.data.universityGatewayProgramById,
+    (resolved) => resolved.data.universityGatewayProgram,
   )
 
   const universities =

@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const GET_UNIVERSITY_GATEWAY_PROGRAM_LIST = gql`
-  query GetUniversityGatewayActivePrograms {
-    universityGatewayActivePrograms {
+  query GetUniversityGatewayPrograms {
+    universityGatewayPrograms {
       data {
         active
         nameIs
@@ -63,8 +63,8 @@ export const GET_UNIVERSITY_GATEWAY_FILTERS = gql`
 `
 
 export const GET_UNIVERSITY_GATEWAY_PROGRAM = gql`
-  query GetUniversityGatewayById($input: UniversityGatewayGetPogramInput!) {
-    universityGatewayProgramById(input: $input) {
+  query GetUniversityGateway($input: UniversityGatewayGetPogramInput!) {
+    universityGatewayProgram(input: $input) {
       active
       nameIs
       nameEn

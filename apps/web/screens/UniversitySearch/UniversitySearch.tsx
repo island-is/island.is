@@ -1225,11 +1225,11 @@ UniversitySearch.getProps = async ({ apolloClient, locale }) => {
   }
 
   const newResponse =
-    await apolloClient.query<GetUniversityGatewayActiveProgramsQuery>({
+    await apolloClient.query<GetUniversityGatewayProgramsQuery>({
       query: GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
     })
 
-  const data = newResponse.data.universityGatewayActivePrograms.data
+  const data = newResponse.data.universityGatewayPrograms.data
 
   const filters =
     await apolloClient.query<GetUniversityGatewayProgramFiltersQuery>({

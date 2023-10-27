@@ -15,12 +15,12 @@ export class MainResolver {
   constructor(private readonly universityGatewayApi: UniversityGatewayApi) {}
 
   @Query(() => UniversityGatewayProgramsPaginated)
-  universityGatewayActivePrograms() {
+  universityGatewayPrograms() {
     return this.universityGatewayApi.getActivePrograms()
   }
 
   @Query(() => UniversityGatewayProgramDetails)
-  universityGatewayProgramById(
+  universityGatewayProgram(
     @Args('input') input: UniversityGatewayGetPogramInput,
   ) {
     return this.universityGatewayApi.getProgramById(input)
