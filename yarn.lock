@@ -9858,22 +9858,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hugsmidjan/qj@npm:^4.1.1, @hugsmidjan/qj@npm:^4.7.0":
-  version: 4.9.0
-  resolution: "@hugsmidjan/qj@npm:4.9.0"
-  checksum: 1ccc21559fd3f9aee553935142145dcc1b074614cf0e33f30cd30edd7eb38dfc4c13a1d938cf59e31defa9c6d437ee49730b8c11ca5d64e1e51195e1830cb1e1
+"@hugsmidjan/htmldiff-js@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "@hugsmidjan/htmldiff-js@npm:1.2.1"
+  checksum: 1289d9446b984beb8dce10e108c00bba87f41ec320f232d7d3cfa4d18e7257da366c0cf19cad408026e043683c4afff6d10bf6857682172359957f559fe9634c
   languageName: node
   linkType: hard
 
-"@hugsmidjan/react@npm:^0.4.4":
-  version: 0.4.5
-  resolution: "@hugsmidjan/react@npm:0.4.5"
+"@hugsmidjan/qj@npm:^4.10.2, @hugsmidjan/qj@npm:^4.19.0":
+  version: 4.22.1
+  resolution: "@hugsmidjan/qj@npm:4.22.1"
+  checksum: 9bc8999a625b31f59b1ef1dc636d253440a2b55a81384cd83dad651be2b0d05ccf140bd1f5b9393c99e7e09f6bcc69db7af8963bacf087fe062e30d84659894a
+  languageName: node
+  linkType: hard
+
+"@hugsmidjan/react@npm:^0.4.23":
+  version: 0.4.33
+  resolution: "@hugsmidjan/react@npm:0.4.33"
   dependencies:
-    "@hugsmidjan/qj": ^4.1.1
+    "@hugsmidjan/qj": ^4.19.0
   peerDependencies:
     react: ">=16.8 <19"
     react-dom: ">=16.8 <19"
-  checksum: 6eda878e20e3ddaaf19ae19b76a9c912d9d549a471863057e1d84a62fe123713f3a9a895c3e0f8a8e71cd3e3e9a09ded5ce0b53fa182e071af1a398d2f847214
+  checksum: c204cf76075d27de6d01ff75879c1a44256e64ecb1929ecb80bb93c57c3cd191aada3ee2d0a1030b3e2743e05084e05a0209348de8e0b08690711102c5602a98
   languageName: node
   linkType: hard
 
@@ -10025,22 +10032,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@island.is/regulations-tools@npm:0.7.9":
-  version: 0.7.9
-  resolution: "@island.is/regulations-tools@npm:0.7.9"
+"@island.is/regulations-tools@npm:0.7.11":
+  version: 0.7.11
+  resolution: "@island.is/regulations-tools@npm:0.7.11"
   dependencies:
-    "@hugsmidjan/qj": ^4.7.0
-    "@hugsmidjan/react": ^0.4.4
+    "@hugsmidjan/htmldiff-js": ^1.2.1
+    "@hugsmidjan/qj": ^4.10.2
+    "@hugsmidjan/react": ^0.4.23
     "@tinymce/tinymce-react": ^3.13.0
     cleanup-prettier: "npm:prettier@2.2.0"
-    htmldiff-js: "github:hugsmidjan-is/htmldiff-js#semver:^1.1.1"
     jsdom: ^16.4.0
     tinymce: ^5.10.2
     translate.js: ^1.3.2
   peerDependencies:
     react: ">=16.8 <19"
     react-dom: ">=16.8 <19"
-  checksum: 6d72d77cd045bcb237a675033d5afd39f4952f34e26718da22b50b62d2c683670dae328dc13e23187ae9ea97b87dc8409cd44b8043c13119c432000c83fc848a
+  checksum: f3fba70becfadb2c0f87027f2d84ba2a7429da7eaf8fbf5e10d000f41b92e02117a974f72a28f761cf10f8bdfb6c9ed0f51c525d3a58fbdefa632d63c95253d3
   languageName: node
   linkType: hard
 
@@ -31607,13 +31614,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"htmldiff-js@github:hugsmidjan-is/htmldiff-js#semver:^1.1.1":
-  version: 1.1.1
-  resolution: "htmldiff-js@https://github.com/hugsmidjan-is/htmldiff-js.git#commit=b2400db41f329180cedf33547f1cc5b6da85f15f"
-  checksum: 34acbed7bbf829a2f99075d54979b3c20ffb5dadf94e754c2d8b3f2ba88ef5a71dcb9d07ce73f12636cfa225110d6dff01c54c594cf6e0853332248016f7ccf6
-  languageName: node
-  linkType: hard
-
 "htmlnano@npm:0.2.7":
   version: 0.2.7
   resolution: "htmlnano@npm:0.2.7"
@@ -33573,7 +33573,7 @@ __metadata:
     "@graphql-codegen/typescript-resolvers": 2.7.3
     "@hookform/error-message": 2.0.1
     "@island.is/login": 1.2.1
-    "@island.is/regulations-tools": 0.7.9
+    "@island.is/regulations-tools": 0.7.11
     "@jeremybarbet/contentful-extension-scripts": 0.22.7
     "@keyv/redis": 2.6.1
     "@nestjs/apollo": 10.1.0
@@ -53574,10 +53574,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xmldom@github:xmldom/xmldom#0.7.0":
-  version: 0.7.0
-  resolution: "xmldom@https://github.com/xmldom/xmldom.git#commit=c568938641cc1f121cef5b4df80fcfda1e489b6e"
-  checksum: 86beb4f90675610ad4c2de68a46c7747b90b2a077fa73069973bd681b07fe4384361cfe1785d090e42f499095a7cfaadc3988a1aca2a3ef55c3d9d9a98d9e1d0
+"xmldom@npm:0.1.27":
+  version: 0.1.27
+  resolution: "xmldom@npm:0.1.27"
+  checksum: a61ad9bd04c87f6df1dc69e88c0f14e3a761d85a9e3f5047b89c2db2b84491ebe25e1ac9a69e4bfc2a9d142b78614a476cc256932606b8a4bb91f342d43f034a
+  languageName: node
+  linkType: hard
+
+"xmldom@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "xmldom@npm:0.3.0"
+  checksum: a4d1e48dc7fa5f5e460c24e26d9d2d98edc52cdfcbf3b2c0edbb61d1808d1af986bc3ef7f4cafa673edf3f08130ed2def9ec6d0a993e2f33c2804b1726cab100
   languageName: node
   linkType: hard
 
