@@ -22,7 +22,7 @@ import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/util
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
-import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
+import CaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 
 const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -44,7 +44,7 @@ const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
       >
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>
-          <CourtOfAppealCaseOverviewHeader />
+          <CaseOverviewHeader />
 
           <Box marginBottom={5}>
             <InfoCard

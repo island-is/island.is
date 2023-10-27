@@ -22,7 +22,7 @@ import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/h
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
-import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
+import CaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 
 const CourtOfAppealOverview: React.FC<
   React.PropsWithChildren<unknown>
@@ -49,7 +49,7 @@ const CourtOfAppealOverview: React.FC<
       >
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>
-          <CourtOfAppealCaseOverviewHeader />
+          <CaseOverviewHeader />
           <Box marginBottom={5}>
             <InfoCard
               defendants={

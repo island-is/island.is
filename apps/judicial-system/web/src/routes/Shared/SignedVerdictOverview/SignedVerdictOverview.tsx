@@ -46,13 +46,10 @@ import {
   InfoCard,
   MarkdownWrapper,
   Modal,
-  OverviewHeader,
   PageHeader,
   PageLayout,
   PoliceRequestAccordionItem,
-  RestrictionTags,
   RulingAccordionItem,
-  RulingDateLabel,
   SigningModal,
   UserContext,
   useRequestRulingSignature,
@@ -75,6 +72,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
+import CaseOverviewHeader from '../../CourtOfAppeal/components/CaseOverviewHeader/CaseOverviewHeader'
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
 import ReopenModal from './Components/ReopenModal/ReopenModal'
@@ -451,19 +449,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 {formatMessage(core.back)}
               </Button>
             </Box>
-            <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
-              <Box>
-                <OverviewHeader />
-                {workingCase.rulingDate && (
-                  <Box>
-                    <RulingDateLabel rulingDate={workingCase.rulingDate} />
-                  </Box>
-                )}
-              </Box>
-              <Box display="flex" flexDirection="column">
-                <RestrictionTags workingCase={workingCase} />
-              </Box>
-            </Box>
+            <CaseOverviewHeader />
             {isRestrictionCase(workingCase.type) &&
               workingCase.decision !==
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN &&
