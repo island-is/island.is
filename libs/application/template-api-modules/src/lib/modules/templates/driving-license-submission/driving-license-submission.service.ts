@@ -21,6 +21,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { FetchError } from '@island.is/clients/middlewares'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { removeCountryCode } from './utils'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
@@ -135,7 +136,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const jurisdictionId = answers.jurisdiction
     const teacher = answers.drivingInstructor as string
     const email = answers.email as string
-    const phone = answers.phone as string
+    const phone = removeCountryCode(answers.phone as string)
 
     if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
