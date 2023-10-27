@@ -105,7 +105,7 @@
     "@nestjs/platform-express": "10.0.5",
     "@nestjs/sequelize": "9.0.2",
     "@nestjs/swagger": "7.1.1",
-    "@nestjs/terminus": "9.2.2",
+    "@nestjs/terminus": "10.1.1",
     "@react-pdf/renderer": "^3.1.9",
     "@rehooks/component-size": "1.0.3",
     "@sindresorhus/slugify": "1.0.0",
