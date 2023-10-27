@@ -31,10 +31,8 @@ globalStyle(`${checkboxWrap} label > div`, {
 
 globalStyle(`${btn} > span, ${btn} > h1`, {
   boxShadow: 'none',
-  marginTop: 3,
+  marginTop: 4,
   ...themeUtils.responsiveStyle({
-    xs: {
-      marginTop: 4,
-    },
+    md: { marginTop: 3 },
   }),
 })

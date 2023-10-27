@@ -9,7 +9,7 @@ import {
   Column,
   Input,
   Text,
-  SkeletonLoader,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import {
@@ -301,7 +301,7 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
               </>
             )}
             {(createLoading || deleteLoading || fetchLoading) && (
-              <SkeletonLoader />
+              <LoadingDots />
             )}
           </Box>
         </Box>
@@ -361,7 +361,7 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
                 )}
                 {saveLoading && (
                   <Box>
-                    <SkeletonLoader />
+                    <LoadingDots />
                   </Box>
                 )}
               </Box>

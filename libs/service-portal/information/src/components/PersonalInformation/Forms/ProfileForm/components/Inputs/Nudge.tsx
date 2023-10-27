@@ -6,7 +6,7 @@ import {
   Icon,
   Checkbox,
   Hidden,
-  SkeletonLoader,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import { useUpdateOrCreateUserProfile } from '@island.is/service-portal/graphql'
@@ -109,7 +109,7 @@ export const Nudge: FC<React.PropsWithChildren<Props>> = ({ refuseMail }) => {
                   {formatMessage(msg.saveSettings)}
                 </FormButton>
               )}
-              {loading && <SkeletonLoader />}
+              {loading && <LoadingDots />}
             </Box>
           </Box>
         </Column>

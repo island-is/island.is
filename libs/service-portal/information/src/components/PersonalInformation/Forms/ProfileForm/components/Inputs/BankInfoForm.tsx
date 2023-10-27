@@ -4,7 +4,7 @@ import {
   Columns,
   Column,
   InputError,
-  SkeletonLoader,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import { useUpdateOrCreateUserProfile } from '@island.is/service-portal/graphql'
@@ -219,7 +219,7 @@ export const BankInfoForm: FC<React.PropsWithChildren<Props>> = ({
               {formatMessage(msg.buttonAccountSave)}
             </FormButton>
           )}
-          {loading && <SkeletonLoader />}
+          {loading && <LoadingDots />}
         </Box>
       </Box>
     </form>

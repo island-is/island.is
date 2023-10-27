@@ -1,18 +1,11 @@
 import { FC } from 'react'
 import { MessageDescriptor } from 'react-intl'
-import {
-  Link,
-  useLocation,
-  PathMatch,
-  matchPath,
-  useNavigate,
-} from 'react-router-dom'
+import { Link, useLocation, PathMatch, matchPath } from 'react-router-dom'
 import { useWindowSize } from 'react-use'
 
 import {
   Box,
   BreadcrumbsDeprecated as Breadcrumbs,
-  Button,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -58,7 +51,6 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
   const location = useLocation()
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
-  const navigate = useNavigate()
   let items: ContentBreadcrumb[] = []
 
   const findBreadcrumbsPath = (
@@ -127,7 +119,7 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
                   : formatMessage(item.name)}
               </Link>
             ) : (
-              <GoBack noUnderline={true} display={['inline', 'inline']} />
+              <GoBack noUnderline={true} display="inline" />
             ),
           )}
         </Breadcrumbs>
