@@ -24,10 +24,7 @@ export class UserProfileDto {
   @IsString()
   readonly mobilePhoneNumber?: string
 
-  @ApiPropertyOptional({
-    enum: Locale,
-    enumName: 'Locale',
-  })
+  @ApiPropertyOptional()
   @IsOptional()
   @IsEnum(Locale)
   readonly locale?: Locale

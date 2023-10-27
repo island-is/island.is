@@ -3,11 +3,7 @@ import request from 'supertest'
 
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { UserProfileScope } from '@island.is/auth/scopes'
-import {
-  getRequestMethod,
-  setupApp,
-  TestEndpointOptions,
-} from '@island.is/testing/nest'
+import { setupApp } from '@island.is/testing/nest'
 
 import { FixtureFactory } from './fixtureFactory'
 import { EmailVerification } from '../../user-profile/emailVerification.model'
@@ -46,12 +42,13 @@ describe('Email confirmation', () => {
         }),
       })
 
-      const fixtureFactory = new FixtureFactory(app)
-
+      // Mock
       const verificationService = app.get(VerificationService)
       verificationService.sendConfirmationEmail = jest.fn()
       verificationService.sendConfirmationSms = jest.fn()
 
+      // Arrange
+      const fixtureFactory = new FixtureFactory(app)
       await fixtureFactory.createUserProfile({
         ...testUserProfile,
         email: testEmailVerification.email,
@@ -65,98 +62,71 @@ describe('Email confirmation', () => {
       app.cleanUp()
     })
 
-    it.each`
-      method    | endpoint
-      ${'POST'} | ${'/v2/me/create-verification'}
-    `(
-      '$method $endpoint should return 201 and email verification should exist for this user and userprofile should not be changed  ',
-      async ({ method, endpoint }: TestEndpointOptions) => {
-        // Act
-        const res = await getRequestMethod(
-          server,
-          method,
-        )(endpoint).send({
-          email: newEmail,
-        })
+    it('POST /v2/me/create-verification should return 201, email verification should be created and user profile email unchanged', async () => {
+      // Act
+      const res = await server.post('/v2/me/create-verification').send({
+        email: newEmail,
+      })
 
-        // Assert
-        expect(res.status).toEqual(201)
-        expect(res.body).toMatchObject({})
+      // Assert
+      expect(res.status).toEqual(201)
+      expect(res.body).toMatchObject({})
 
-        // Assert that email verification has been removed from DB
-        const emailVerificationModel = app.get(getModelToken(EmailVerification))
-        const emailVerification = await emailVerificationModel.findOne({
-          where: { nationalId: testEmailVerification.nationalId },
-        })
+      // Assert that email verification has been removed from DB
+      const emailVerificationModel = app.get(getModelToken(EmailVerification))
+      const emailVerification = await emailVerificationModel.findOne({
+        where: { nationalId: testEmailVerification.nationalId },
+      })
 
-        expect(emailVerification).not.toBe(null)
+      expect(emailVerification).not.toBe(null)
 
-        // Assert that email is verified
-        const userProfileModel = app.get(getModelToken(UserProfile))
-        const userProfile = await userProfileModel.findOne({
-          where: { nationalId: testUserProfile.nationalId },
-        })
+      // Assert that email is changed
+      const userProfileModel = app.get(getModelToken(UserProfile))
+      const userProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
 
-        expect(userProfile.email).toBe(testUserProfile.email)
-      },
-    )
+      expect(userProfile.email).toBe(testUserProfile.email)
+    })
 
-    it.each`
-      method    | endpoint
-      ${'POST'} | ${'/v2/me/create-verification'}
-    `(
-      '$method $endpoint should return 201 and sms verification should exist for this user and userprofile should not be changed',
-      async ({ method, endpoint }: TestEndpointOptions) => {
-        // Act
-        const res = await getRequestMethod(
-          server,
-          method,
-        )(endpoint).send({
-          mobilePhoneNumber: newPhoneNumber,
-        })
+    it('POST /v2/me/create-verification should return 201, sms verification should be created and user profile phone number unchanged', async () => {
+      // Act
+      const res = await server.post('/v2/me/create-verification').send({
+        mobilePhoneNumber: newPhoneNumber,
+      })
 
-        // Assert
-        expect(res.status).toEqual(201)
-        expect(res.body).toMatchObject({})
+      // Assert
+      expect(res.status).toEqual(201)
+      expect(res.body).toMatchObject({})
 
-        // Assert that email verification has been removed from DB
-        const smsVerificationModel = app.get(getModelToken(SmsVerification))
-        const smsVerification = await smsVerificationModel.findOne({
-          where: { nationalId: testEmailVerification.nationalId },
-        })
+      // Assert that sms verification has been added to DB
+      const smsVerificationModel = app.get(getModelToken(SmsVerification))
+      const smsVerification = await smsVerificationModel.findOne({
+        where: { nationalId: testEmailVerification.nationalId },
+      })
 
-        expect(smsVerification).not.toBe(null)
+      expect(smsVerification).not.toBe(null)
 
-        // Assert that email is verified
-        const userProfileModel = app.get(getModelToken(UserProfile))
-        const userProfile = await userProfileModel.findOne({
-          where: { nationalId: testUserProfile.nationalId },
-        })
+      // Assert that phone number is verified
+      const userProfileModel = app.get(getModelToken(UserProfile))
+      const userProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
 
-        expect(userProfile.mobilePhoneNumber).toBe(
-          testUserProfile.mobilePhoneNumber,
-        )
-      },
-    )
+      expect(userProfile.mobilePhoneNumber).toBe(
+        testUserProfile.mobilePhoneNumber,
+      )
+    })
 
-    it.each`
-      method    | endpoint
-      ${'POST'} | ${'/v2/me/create-verification'}
-    `(
-      '$method $endpoint should return 201 and sms verification should exist for this user and userprofile should not be changed',
-      async ({ method, endpoint }: TestEndpointOptions) => {
-        // Act
-        const res = await getRequestMethod(
-          server,
-          method,
-        )(endpoint).send({
-          mobilePhoneNumber: newPhoneNumber,
-          email: newEmail,
-        })
+    it('POST /v2/me/create-verification should return 400 when bot email and phone number are posted', async () => {
+      // Act
+      const res = await server.post('/v2/me/create-verification').send({
+        mobilePhoneNumber: newPhoneNumber,
+        email: newEmail,
+      })
 
-        // Assert
-        expect(res.status).toEqual(400)
-      },
-    )
+      // Assert
+      expect(res.status).toEqual(400)
+    })
   })
 })

@@ -4,39 +4,42 @@ import {
   IsEnum,
   IsOptional,
   IsString,
+  MinLength,
   ValidateIf,
 } from 'class-validator'
 import { Locale } from '../../user-profile/types/localeTypes'
 
 export class PatchUserProfileDto {
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    nullable: true,
+  })
   @IsOptional()
-  @ValidateIf((e) => e.email !== '')
+  @ValidateIf((e) => e.email !== null)
   @IsEmail()
   email?: string
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  @ValidateIf((e) => e.email !== '')
+  @ValidateIf((e) => e.email !== null)
   emailVerificationCode?: string
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    nullable: true,
+  })
   @IsOptional()
   @IsString()
-  @ValidateIf((e) => e.mobilePhoneNumber !== '')
+  @MinLength(7)
+  @ValidateIf((e) => e.mobilePhoneNumber !== null)
   mobilePhoneNumber?: string
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  @ValidateIf((e) => e.mobilePhoneNumber !== '')
+  @ValidateIf((e) => e.mobilePhoneNumber !== null)
   mobilePhoneNumberVerificationCode?: string
 
-  @ApiPropertyOptional({
-    enum: Locale,
-    enumName: 'Locale',
-  })
+  @ApiPropertyOptional()
   @IsOptional()
   @IsEnum(Locale)
   locale?: Locale

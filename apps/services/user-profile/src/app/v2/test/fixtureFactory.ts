@@ -47,7 +47,7 @@ export class FixtureFactory {
     })
   }
 
-  async createMobileVerification({ nationalId, mobilePhoneNumber, smsCode }) {
+  async createSmsVerification({ nationalId, mobilePhoneNumber, smsCode }) {
     const verificationModel = this.get(SmsVerification)
 
     return await verificationModel.create({

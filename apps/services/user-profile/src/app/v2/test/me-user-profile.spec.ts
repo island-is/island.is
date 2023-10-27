@@ -1,11 +1,6 @@
 import request from 'supertest'
 
-import {
-  getRequestMethod,
-  setupApp,
-  setupAppWithoutAuth,
-  TestEndpointOptions,
-} from '@island.is/testing/nest'
+import { setupApp, setupAppWithoutAuth } from '@island.is/testing/nest'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { UserProfileScope } from '@island.is/auth/scopes'
 
@@ -43,64 +38,51 @@ const testSMSVerification = {
 
 describe('MeUserProfile', () => {
   describe('Auth and scopes', () => {
-    it.each`
-      method   | endpoint
-      ${'GET'} | ${'/v2/me'}
-    `(
-      '$method $endpoint should return 401 when user is not authenticated',
-      async ({ method, endpoint }: TestEndpointOptions) => {
-        // Arrange
+    it('GET /v2/me should return 401 when user is not authenticated', async () => {
+      // Arrange
+      const app = await setupAppWithoutAuth({
+        AppModule: AppModule,
+        SequelizeConfigService: SequelizeConfigService,
+      })
 
-        const app = await setupAppWithoutAuth({
-          AppModule: AppModule,
-          SequelizeConfigService: SequelizeConfigService,
-        })
+      const server = request(app.getHttpServer())
 
-        const server = request(app.getHttpServer())
+      // Act
+      const res = await server.get('/v2/me')
 
-        // Act
-        const res = await getRequestMethod(server, method)(endpoint)
+      // Assert
+      expect(res.status).toEqual(401)
+      expect(res.body).toMatchObject({
+        statusCode: 401,
+        message: 'Unauthorized',
+      })
 
-        // Assert
-        expect(res.status).toEqual(401)
-        expect(res.body).toMatchObject({
-          statusCode: 401,
-          message: 'Unauthorized',
-        })
+      await app.cleanUp()
+    })
 
-        await app.cleanUp()
-      },
-    )
+    it('GET /v2/me should return 403 Forbidden when user does not have the correct scope', async () => {
+      // Arrange
+      const app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: createCurrentUser(),
+      })
 
-    it.each`
-      method   | endpoint
-      ${'GET'} | ${'/v2/me'}
-    `(
-      '$method $endpoint should return 403 Forbidden when user does not have the correct scope',
-      async ({ method, endpoint }: TestEndpointOptions) => {
-        // Arrange
-        const app = await setupApp({
-          AppModule,
-          SequelizeConfigService,
-          user: createCurrentUser(),
-        })
+      const server = request(app.getHttpServer())
 
-        const server = request(app.getHttpServer())
+      // Act
+      const res = await server.get('/v2/me')
 
-        // Act
-        const res = await getRequestMethod(server, method)(endpoint)
+      // Assert
+      expect(res.status).toEqual(403)
+      expect(res.body).toMatchObject({
+        statusCode: 403,
+        error: 'Forbidden',
+        message: 'Forbidden resource',
+      })
 
-        // Assert
-        expect(res.status).toEqual(403)
-        expect(res.body).toMatchObject({
-          statusCode: 403,
-          error: 'Forbidden',
-          message: 'Forbidden resource',
-        })
-
-        await app.cleanUp()
-      },
-    )
+      await app.cleanUp()
+    })
   })
   describe('GET user-profile', () => {
     let app = null
@@ -123,121 +105,102 @@ describe('MeUserProfile', () => {
       app.cleanUp()
     })
 
-    it.each`
-      method   | endpoint
-      ${'GET'} | ${'/v2/me'}
-    `(
-      '$method $endpoint should return 200 with default UserProfileDto when the User Profile does not exist in db',
-      async ({ method, endpoint }: TestEndpointOptions) => {
-        // Act
-        const res = await getRequestMethod(server, method)(endpoint)
+    it('GET /v2/me should return 200 with default UserProfileDto when the User Profile does not exist in db', async () => {
+      const res = await server.get('/v2/me')
 
-        // Assert
-        expect(res.status).toEqual(200)
-        expect(res.body).toMatchObject({
-          nationalId: testUserProfile.nationalId,
-          email: null,
-          emailVerified: false,
-          mobilePhoneNumber: null,
-          mobilePhoneNumberVerified: false,
-          locale: null,
-          documentNotifications: true,
-        })
-      },
-    )
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({
+        nationalId: testUserProfile.nationalId,
+        email: null,
+        emailVerified: false,
+        mobilePhoneNumber: null,
+        mobilePhoneNumberVerified: false,
+        locale: null,
+        documentNotifications: true,
+      })
+    })
 
-    it.each`
-      method   | endpoint
-      ${'GET'} | ${'/v2/me'}
-    `(
-      '$method $endpoint should return 200 with UserProfileDto for logged in user',
-      async ({ method, endpoint }: TestEndpointOptions) => {
-        const fixtureFactory = new FixtureFactory(app)
-        await fixtureFactory.createUserProfile(testUserProfile)
-        // Act
-        const res = await getRequestMethod(server, method)(endpoint)
+    it('GET /v2/me should return 200 with UserProfileDto for logged in user', async () => {
+      // Arrange
+      const fixtureFactory = new FixtureFactory(app)
 
-        // Assert
-        expect(res.status).toEqual(200)
-        expect(res.body).toMatchObject({
-          nationalId: testUserProfile.nationalId,
-          email: testUserProfile.email,
-          emailVerified: false,
-          mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
-          mobilePhoneNumberVerified: false,
-          documentNotifications: true,
-          needsNudge: null,
-        })
-      },
-    )
+      await fixtureFactory.createUserProfile(testUserProfile)
+      // Act
+      const res = await server.get('/v2/me')
 
-    it.each`
-      method   | endpoint
-      ${'GET'} | ${'/v2/me'}
-    `(
-      '$method $endpoint should return 200 with UserProfileDto for logged in user with no need for nudge',
-      async ({ method, endpoint }: TestEndpointOptions) => {
-        const fixtureFactory = new FixtureFactory(app)
-        await fixtureFactory.createUserProfile({
-          ...testUserProfile,
-          lastNudge: new Date(),
-        })
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({
+        nationalId: testUserProfile.nationalId,
+        email: testUserProfile.email,
+        emailVerified: false,
+        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+        mobilePhoneNumberVerified: false,
+        documentNotifications: true,
+        needsNudge: null,
+      })
+    })
 
-        // Act
-        const res = await getRequestMethod(server, method)(endpoint)
+    it('GET /v2/me should return 200 with UserProfileDto for logged in user with no need for nudge', async () => {
+      // Arrange
+      const fixtureFactory = new FixtureFactory(app)
 
-        // Assert
-        expect(res.status).toEqual(200)
-        expect(res.body).toMatchObject({
-          nationalId: testUserProfile.nationalId,
-          email: testUserProfile.email,
-          emailVerified: false,
-          mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
-          mobilePhoneNumberVerified: false,
-          documentNotifications: true,
-          needsNudge: false,
-        })
-      },
-    )
+      await fixtureFactory.createUserProfile({
+        ...testUserProfile,
+        lastNudge: new Date(),
+      })
 
-    it.each`
-      method   | endpoint
-      ${'GET'} | ${'/v2/me'}
-    `(
-      '$method $endpoint should return 200 with UserProfileDto for logged in user with need for nudge since its been 6 months since last nudge',
-      async ({ method, endpoint }: TestEndpointOptions) => {
-        const fixtureFactory = new FixtureFactory(app)
-        const lastNudge = new Date().setMonth(new Date().getMonth() - 7)
+      // Act
+      const res = await server.get('/v2/me')
 
-        await fixtureFactory.createUserProfile({
-          nationalId: testUserProfile.nationalId,
-          email: testUserProfile.email,
-          mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
-          lastNudge: new Date(lastNudge),
-        })
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({
+        nationalId: testUserProfile.nationalId,
+        email: testUserProfile.email,
+        emailVerified: false,
+        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+        mobilePhoneNumberVerified: false,
+        documentNotifications: true,
+        needsNudge: false,
+      })
+    })
 
-        // Act
-        const res = await getRequestMethod(server, method)(endpoint)
+    it('GET /v2/me should return 200 with UserProfileDto for logged in user with need for nudge since its been 6 months since last nudge', async () => {
+      // Arrange
+      const fixtureFactory = new FixtureFactory(app)
+      const lastNudge = new Date().setMonth(new Date().getMonth() - 7)
 
-        // Assert
-        expect(res.status).toEqual(200)
-        expect(res.body).toMatchObject({
-          nationalId: testUserProfile.nationalId,
-          email: testUserProfile.email,
-          emailVerified: false,
-          mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
-          mobilePhoneNumberVerified: false,
-          documentNotifications: true,
-          needsNudge: true,
-        })
-      },
-    )
+      await fixtureFactory.createUserProfile({
+        nationalId: testUserProfile.nationalId,
+        email: testUserProfile.email,
+        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+        lastNudge: new Date(lastNudge),
+      })
+
+      // Act
+      const res = await server.get('/v2/me')
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({
+        nationalId: testUserProfile.nationalId,
+        email: testUserProfile.email,
+        emailVerified: false,
+        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+        mobilePhoneNumberVerified: false,
+        documentNotifications: true,
+        needsNudge: true,
+      })
+    })
   })
 
   describe('PATCH user-profile', () => {
     let app = null
     let server = null
     let islyklarApi = null
+
     beforeEach(async () => {
       app = await setupApp({
         AppModule,
@@ -248,6 +211,9 @@ describe('MeUserProfile', () => {
         }),
       })
 
+      server = request(app.getHttpServer())
+
+      // Arrange
       const fixtureFactory = new FixtureFactory(app)
 
       await fixtureFactory.createUserProfile(testUserProfile)
@@ -255,8 +221,7 @@ describe('MeUserProfile', () => {
         ...testEmailVerification,
         email: newEmail,
       })
-
-      await fixtureFactory.createMobileVerification({
+      await fixtureFactory.createSmsVerification({
         ...testSMSVerification,
         mobilePhoneNumber: newPhoneNumber,
       })
@@ -266,212 +231,243 @@ describe('MeUserProfile', () => {
       verificationService.sendConfirmationEmail = jest.fn()
       verificationService.sendConfirmationSms = jest.fn()
 
+      // Mock islyklar api responses
       islyklarApi = app.get(IslyklarApi)
       islyklarApi.islyklarPut = jest
         .fn()
-        .mockImplementation((user: PublicUser) => {
-          return new Promise<PublicUser>((resolve) => resolve(user))
+        .mockResolvedValue((user: PublicUser) => {
+          return { ssn: user.ssn }
         })
-      islyklarApi.islyklarGet = jest.fn()
-
-      server = request(app.getHttpServer())
+      islyklarApi.islyklarPost = jest
+        .fn()
+        .mockResolvedValue((user: PublicUser) => {
+          return { ssn: user.ssn }
+        })
+      islyklarApi.islyklarGet = jest.fn().mockResolvedValue(() => {
+        return {
+          ssn: testUserProfile.nationalId,
+        }
+      })
     })
 
     afterEach(() => {
       app.cleanUp()
     })
 
-    it.each`
-      method     | endpoint
-      ${'PATCH'} | ${'/v2/me'}
-    `(
-      '$method $endpoint should return 201 with changed data in response',
-      async ({ method, endpoint }: TestEndpointOptions) => {
-        // Arrange
+    it('PATCH /v2/me should return 201 with changed data in response', async () => {
+      // Act
+      const res = await server.patch('/v2/me').send({
+        email: newEmail,
+        mobilePhoneNumber: newPhoneNumber,
+        emailVerificationCode: emailVerificationCode,
+        mobilePhoneNumberVerificationCode: smsVerificationCode,
+      })
 
-        // Act
-        // const res = await getRequestMethod(server, method)(endpoint)
-        const res = await server.patch(endpoint).send({
-          email: newEmail,
-          mobilePhoneNumber: newPhoneNumber,
-          emailVerificationCode: emailVerificationCode,
-          mobilePhoneNumberVerificationCode: smsVerificationCode,
-        })
+      // Assert
+      expect(res.status).toEqual(201)
+      expect(res.body).toMatchObject({
+        email: newEmail,
+        emailVerified: true,
+        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumberVerified: true,
+      })
 
-        // Assert
-        expect(res.status).toEqual(201)
-        expect(res.body).toMatchObject({
-          email: newEmail,
-          emailVerified: true,
-          mobilePhoneNumber: newPhoneNumber,
-          mobilePhoneNumberVerified: true,
-        })
+      // Assert Db records
+      const userProfileModel = app.get(getModelToken(UserProfile))
+      const userProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
 
-        // Assert Db records
-        const userProfileModel = app.get(getModelToken(UserProfile))
-        const userProfile = await userProfileModel.findOne({
-          where: { nationalId: testUserProfile.nationalId },
-        })
+      expect(userProfile.email).toBe(newEmail)
+      expect(userProfile.mobilePhoneNumber).toBe(newPhoneNumber)
+    })
 
-        expect(userProfile.email).toBe(newEmail)
-        expect(userProfile.mobilePhoneNumber).toBe(newPhoneNumber)
-      },
-    )
+    it('PATCH /v2/me should return 201 with changed mobile data in response', async () => {
+      // Act
+      const res = await server.patch('/v2/me').send({
+        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumberVerificationCode: smsVerificationCode,
+      })
 
-    it.each`
-      method     | endpoint
-      ${'PATCH'} | ${'/v2/me'}
-    `(
-      '$method $endpoint should return 201 with changed mobile data in response',
-      async ({ method, endpoint }: TestEndpointOptions) => {
-        // Act
-        // const res = await getRequestMethod(server, method)(endpoint)
-        const res = await server.patch(endpoint).send({
-          mobilePhoneNumber: newPhoneNumber,
-          mobilePhoneNumberVerificationCode: smsVerificationCode,
-        })
+      // Assert
+      expect(res.status).toEqual(201)
+      expect(res.body).toMatchObject({
+        nationalId: testUserProfile.nationalId,
+        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumberVerified: true,
+      })
 
-        // Assert
-        expect(res.status).toEqual(201)
-        expect(res.body).toMatchObject({
-          nationalId: testUserProfile.nationalId,
-          mobilePhoneNumber: newPhoneNumber,
-          mobilePhoneNumberVerified: true,
-        })
+      // Assert Db records
+      const userProfileModel = app.get(getModelToken(UserProfile))
+      const userProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
 
-        // Assert Db records
-        const userProfileModel = app.get(getModelToken(UserProfile))
-        const userProfile = await userProfileModel.findOne({
-          where: { nationalId: testUserProfile.nationalId },
-        })
+      expect(userProfile.mobilePhoneNumber).toBe(newPhoneNumber)
+    })
 
-        expect(userProfile.mobilePhoneNumber).toBe(newPhoneNumber)
-      },
-    )
+    it('PATCH /v2/me should return 201 with changed email data in response', async () => {
+      // Act
+      const res = await server.patch('/v2/me').send({
+        email: newEmail,
+        emailVerificationCode: emailVerificationCode,
+      })
 
-    it.each`
-      method     | endpoint
-      ${'PATCH'} | ${'/v2/me'}
-    `(
-      '$method $endpoint should return 201 with changed email data in response',
-      async ({ method, endpoint }: TestEndpointOptions) => {
-        // Act
-        // const res = await getRequestMethod(server, method)(endpoint)
-        const res = await server.patch(endpoint).send({
-          email: newEmail,
-          emailVerificationCode: emailVerificationCode,
-        })
+      // Assert
+      expect(res.status).toEqual(201)
+      expect(res.body).toMatchObject({
+        nationalId: testUserProfile.nationalId,
+        email: newEmail,
+        emailVerified: true,
+      })
 
-        // Assert
-        expect(res.status).toEqual(201)
-        expect(res.body).toMatchObject({
-          nationalId: testUserProfile.nationalId,
-          email: newEmail,
-          emailVerified: true,
-        })
+      // Assert Db records
+      const userProfileModel = app.get(getModelToken(UserProfile))
+      const userProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
 
-        // Assert Db records
-        const userProfileModel = app.get(getModelToken(UserProfile))
-        const userProfile = await userProfileModel.findOne({
-          where: { nationalId: testUserProfile.nationalId },
-        })
+      expect(userProfile.email).toBe(newEmail)
+    })
 
-        expect(userProfile.email).toBe(newEmail)
-      },
-    )
+    it('PATCH /v2/me should return 400 when email verification code is not sent', async () => {
+      // Act
+      const res = await server.patch('/v2/me').send({
+        email: newEmail,
+        emailVerificationCode: '000',
+      })
 
-    it.each`
-      method     | endpoint
-      ${'PATCH'} | ${'/v2/me'}
-    `(
-      '$method $endpoint should return 400 when email verification code is incorrect',
-      async ({ method, endpoint }: TestEndpointOptions) => {
-        // Act
-        // const res = await getRequestMethod(server, method)(endpoint)
-        const res = await server.patch(endpoint).send({
-          email: newEmail,
-          emailVerificationCode: '000',
-        })
+      // Assert
+      expect(res.status).toEqual(400)
+      expect(res.body).toMatchObject({
+        statusCode: 400,
+        message: 'Email verification with hash 000 does not exist',
+      })
 
-        // Assert
-        expect(res.status).toEqual(400)
-        expect(res.body).toMatchObject({
-          statusCode: 400,
-          message: 'Email verification with hash 000 does not exist',
-        })
+      // Assert Db records
+      const userProfileModel = app.get(getModelToken(UserProfile))
+      const userProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
 
-        // Assert Db records
-        const userProfileModel = app.get(getModelToken(UserProfile))
-        const userProfile = await userProfileModel.findOne({
-          where: { nationalId: testUserProfile.nationalId },
-        })
+      expect(userProfile.email).toBe(testUserProfile.email)
+    })
 
-        expect(userProfile.email).toBe(testUserProfile.email)
-      },
-    )
-    it.each`
-      method     | endpoint
-      ${'PATCH'} | ${'/v2/me'}
-    `(
-      '$method $endpoint should return 400 when mobile verification code is incorrect',
-      async ({ method, endpoint }: TestEndpointOptions) => {
-        // Act
-        // const res = await getRequestMethod(server, method)(endpoint)
-        const res = await server.patch(endpoint).send({
-          mobilePhoneNumber: newPhoneNumber,
-          mobilePhoneNumberVerificationCode: '000',
-        })
+    it('PATCH /v2/me should return 400 when mobile verification code is incorrect', async () => {
+      // Act
+      const res = await server.patch('/v2/me').send({
+        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumberVerificationCode: '000',
+      })
 
-        // Assert
-        expect(res.status).toEqual(400)
-        expect(res.body).toMatchObject({
-          statusCode: 400,
-          message: 'SMS code is not a match. 5 tries remaining.',
-        })
+      // Assert
+      expect(res.status).toEqual(400)
+      expect(res.body).toMatchObject({
+        statusCode: 400,
+        message: 'SMS code is not a match. 5 tries remaining.',
+      })
 
-        // Assert Db records
-        const userProfileModel = app.get(getModelToken(UserProfile))
-        const userProfile = await userProfileModel.findOne({
-          where: { nationalId: testUserProfile.nationalId },
-        })
+      // Assert Db records
+      const userProfileModel = app.get(getModelToken(UserProfile))
+      const userProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
 
-        expect(userProfile.mobilePhoneNumber).toBe(
-          testUserProfile.mobilePhoneNumber,
+      expect(userProfile.mobilePhoneNumber).toBe(
+        testUserProfile.mobilePhoneNumber,
+      )
+    })
+
+    it('PATCH /v2/me should return 400 when there is no email verification code', async () => {
+      // Act
+      const res = await server.patch('/v2/me').send({
+        email: newEmail,
+      })
+
+      // Assert
+      expect(res.status).toEqual(400)
+      expect(res.body).toMatchObject({
+        statusCode: 400,
+        message: 'Email verification code is required',
+      })
+    })
+
+    it('PATCH /v2/me should return 400 when there is no sms verification code', async () => {
+      // Act
+      const res = await server.patch('/v2/me').send({
+        mobilePhoneNumber: newPhoneNumber,
+      })
+
+      // Assert
+      expect(res.status).toEqual(400)
+      expect(res.body).toMatchObject({
+        statusCode: 400,
+        message: 'Mobile phone number verification code is required',
+      })
+    })
+
+    it('PATCH /v2/me should return 201 and clear email and phoneNumber null is sent', async () => {
+      // Act
+      const res = await server.patch('/v2/me').send({
+        mobilePhoneNumber: null,
+        email: null,
+      })
+
+      // Assert
+      expect(res.status).toEqual(201)
+      expect(res.body).toMatchObject({
+        mobilePhoneNumber: null,
+        mobilePhoneNumberVerified: false,
+        email: null,
+        emailVerified: false,
+      })
+
+      // Assert Db records
+      const userProfileModel = await app.get(getModelToken(UserProfile))
+      const userProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      expect(userProfile.email).toBe(null)
+      expect(userProfile.mobilePhoneNumber).toBe(null)
+    })
+
+    it('PATCH /v2/me should return 201 and create islyklar profile when it does not exist', async () => {
+      // Arrange
+      islyklarApi.islyklarGet = jest.fn().mockImplementation(() => {
+        return new Promise((resolve, reject) =>
+          reject({
+            status: 404,
+          }),
         )
-      },
-    )
-    it.each`
-      method     | endpoint
-      ${'PATCH'} | ${'/v2/me'}
-    `(
-      '$method $endpoint should return 201 and clear email and phoneNumber when empty string is sent',
-      async ({ method, endpoint }: TestEndpointOptions) => {
-        // Act
-        // const res = await getRequestMethod(server, method)(endpoint)
-        const res = await server.patch(endpoint).send({
-          mobilePhoneNumber: '',
-          email: '',
-        })
+      })
 
-        // Assert
-        expect(res.status).toEqual(201)
-        expect(res.body).toMatchObject({
-          mobilePhoneNumber: null,
-          mobilePhoneNumberVerified: true,
-          email: null,
-          emailVerified: true,
-        })
+      // Act
+      const res = await server.patch('/v2/me').send({
+        mobilePhoneNumber: null,
+        email: null,
+      })
 
-        // Assert Db records
-        const userProfileModel = app.get(getModelToken(UserProfile))
-        const userProfile = await userProfileModel.findOne({
-          where: { nationalId: testUserProfile.nationalId },
-        })
+      // Assert
+      expect(res.status).toEqual(201)
+      expect(islyklarApi.islyklarPut).not.toBeCalled()
+      expect(islyklarApi.islyklarPost).toBeCalled()
+    })
 
-        expect(userProfile.email).toBe(null)
-        expect(userProfile.mobilePhoneNumber).toBe(null)
-      },
-    )
+    it('PATCH /v2/me should return 201 and should call the islyklar put method and not post', async () => {
+      // Arrange
+
+      // Act
+      const res = await server.patch('/v2/me').send({
+        mobilePhoneNumber: null,
+        email: null,
+      })
+
+      // Assert
+      expect(res.status).toEqual(201)
+      expect(islyklarApi.islyklarPost).not.toBeCalled()
+      expect(islyklarApi.islyklarPut).toBeCalled()
+    })
   })
 
   describe('Nudge confirmation', () => {
@@ -495,57 +491,42 @@ describe('MeUserProfile', () => {
       app.cleanUp()
     })
 
-    it.each`
-      method    | endpoint
-      ${'POST'} | ${'/v2/me/nudge'}
-    `(
-      '$method $endpoint should return 201 and update the lastNudge field when user confirms nudge',
-      async ({ method, endpoint }: TestEndpointOptions) => {
-        // Arrange
+    it('POST /v2/me/nudge should return 201 and update the lastNudge field when user confirms nudge', async () => {
+      // Arrange
+      const fixtureFactory = new FixtureFactory(app)
 
-        const fixtureFactory = new FixtureFactory(app)
+      await fixtureFactory.createUserProfile(testUserProfile)
 
-        await fixtureFactory.createUserProfile(testUserProfile)
+      // Act
+      const res = await server.post('/v2/me/nudge')
 
-        // Act
-        // const res = await getRequestMethod(server, method)(endpoint)
-        const res = await getRequestMethod(server, method)(endpoint)
+      // Assert
+      expect(res.status).toEqual(201)
 
-        // Assert
-        expect(res.status).toEqual(201)
+      // Assert that lastNudge is updated
+      const userProfileModel = app.get(getModelToken(UserProfile))
+      const userProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
 
-        // Assert that lastNudge is updated
-        const userProfileModel = app.get(getModelToken(UserProfile))
-        const userProfile = await userProfileModel.findOne({
-          where: { nationalId: testUserProfile.nationalId },
-        })
+      expect(userProfile.lastNudge).not.toBeNull()
+    })
 
-        expect(userProfile.lastNudge).not.toBeNull()
-      },
-    )
+    it(`POST /v2/me/nudge should return 201 and update the lastNudge field when user confirms nudge`, async () => {
+      // Act
+      const res = await server.post('/v2/me/nudge')
 
-    it.each`
-      method    | endpoint
-      ${'POST'} | ${'/v2/me/nudge'}
-    `(
-      '$method $endpoint should return 201, and create a user profile with updated lastNudge field when user confirms nudge and no user profile exists',
-      async ({ method, endpoint }: TestEndpointOptions) => {
-        // Act
-        // const res = await getRequestMethod(server, method)(endpoint)
-        const res = await getRequestMethod(server, method)(endpoint)
+      // Assert
+      expect(res.status).toEqual(201)
 
-        // Assert
-        expect(res.status).toEqual(201)
+      // Assert that lastNudge is updated
+      const userProfileModel = app.get(getModelToken(UserProfile))
+      const userProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
 
-        // Assert that lastNudge is updated
-        const userProfileModel = app.get(getModelToken(UserProfile))
-        const userProfile = await userProfileModel.findOne({
-          where: { nationalId: testUserProfile.nationalId },
-        })
-
-        expect(userProfile).not.toBeNull()
-        expect(userProfile.lastNudge).not.toBeNull()
-      },
-    )
+      expect(userProfile).not.toBeNull()
+      expect(userProfile.lastNudge).not.toBeNull()
+    })
   })
 })
