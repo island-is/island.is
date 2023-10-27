@@ -230,11 +230,9 @@ const VehicleDetail = () => {
   const technicalArr =
     technicalInfo && technicalInfoArray(technicalInfo, formatMessage)
 
+  const hasPrivateRegistration = basicInfo?.permno !== basicInfo?.regno
+
   const dropdownArray = [
-    {
-      title: formatMessage(messages.orderRegistrationNumber),
-      href: formatMessage(urls.regNumber),
-    },
     {
       title: formatMessage(messages.orderRegistrationLicense),
       href: formatMessage(urls.regCert),
@@ -248,12 +246,19 @@ const VehicleDetail = () => {
       href: formatMessage(urls.operator),
     },
   ]
-  if (basicInfo?.permno !== basicInfo?.regno) {
-    dropdownArray.push({
+
+  if (hasPrivateRegistration) {
+    dropdownArray.unshift({
       title: formatMessage(messages.renewPrivateRegistration),
-      href: formatMessage(urls.operator),
+      href: formatMessage(urls.renewPrivate),
+    })
+  } else {
+    dropdownArray.unshift({
+      title: formatMessage(messages.orderRegistrationNumber),
+      href: formatMessage(urls.regNumber),
     })
   }
+
   return (
     <>
       <Box marginBottom={[2, 2, 6]}>
@@ -298,7 +303,10 @@ const VehicleDetail = () => {
                   </Button>
                 </Box>
                 <Box paddingRight={2}>
-                  <Dropdown dropdownItems={dropdownArray} />
+                  <Dropdown
+                    label={formatMessage(messages.actions)}
+                    dropdownItems={dropdownArray}
+                  />
                 </Box>
               </Box>
             </GridColumn>
@@ -306,16 +314,29 @@ const VehicleDetail = () => {
         )}
       </Box>
       <Stack space={2}>
-        <UserInfoLine
-          label={formatMessage(messages.numberPlate)}
-          content={mainInfo?.regno ?? ''}
-          editLink={{
-            title: messages.orderRegistrationNumber,
-            url: formatMessage(urls.regNumber),
-            external: true,
-          }}
-          loading={loading}
-        />
+        {hasPrivateRegistration ? (
+          <UserInfoLine
+            label={formatMessage(messages.numberPlate)}
+            content={basicInfo?.permno ?? ''}
+            editLink={{
+              title: messages.renewPrivateRegistration,
+              url: formatMessage(urls.renewPrivate),
+              external: true,
+            }}
+            loading={loading}
+          />
+        ) : (
+          <UserInfoLine
+            label={formatMessage(messages.numberPlate)}
+            content={mainInfo?.regno ?? ''}
+            editLink={{
+              title: messages.orderRegistrationNumber,
+              url: formatMessage(urls.regNumber),
+              external: true,
+            }}
+            loading={loading}
+          />
+        )}
         <Divider />
         <UserInfoLine
           label={formatMessage(messages.trailerWithBrakes)}
