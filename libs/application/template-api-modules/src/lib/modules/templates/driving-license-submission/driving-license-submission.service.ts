@@ -135,7 +135,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const jurisdictionId = answers.jurisdiction
     const teacher = answers.drivingInstructor as string
     const email = answers.email as string
-    const phone = answers.phone as string
+    const phone = removeCountryCode(answers.phone as string)
 
     if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
