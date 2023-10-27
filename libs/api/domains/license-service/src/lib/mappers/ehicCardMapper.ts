@@ -33,7 +33,7 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
       typedPayload.cardHolderName
         ? {
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('name', locale, label),
+            label: getLabel('fullName', locale, label),
             value: typedPayload.cardHolderName ?? '',
           }
         : null,

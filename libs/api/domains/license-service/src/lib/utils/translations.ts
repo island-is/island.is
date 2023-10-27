@@ -133,7 +133,7 @@ export const i18n = {
     en: 'SSN',
   },
   cardNumber: {
-    is: 'Númer stæðiskorts',
+    is: 'Númer korts',
     en: 'Card number',
   },
 }
