@@ -45,7 +45,7 @@ export class AppService {
         })
 
       // Update courses
-      done = await fetch(`${this.config.backendUrl}/internal/courses/update`, {
+      fetch(`${this.config.backendUrl}/internal/courses/update`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

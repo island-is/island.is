@@ -1,7 +1,12 @@
-import { UseGuards } from '@nestjs/common'
+import { HttpStatus, UseGuards } from '@nestjs/common'
 import { TokenGuard } from '@island.is/judicial-system/auth'
 import { Controller, Post } from '@nestjs/common'
-import { ApiNoContentResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
+import {
+  ApiAcceptedResponse,
+  ApiNoContentResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger'
 import { InternalCourseService } from './internalCourse.service'
 
 @UseGuards(TokenGuard)
@@ -15,11 +20,13 @@ export class InternalCourseController {
 
   @Post('update')
   @ApiNoContentResponse()
+  @ApiAcceptedResponse()
   @ApiOperation({
     summary:
       'Updates courses (in program) in our DB by fetching data from the university APIs',
   })
-  updatePrograms() {
+  updateCourses(): HttpStatus {
     this.internalCourseService.updateCourses()
+    return HttpStatus.ACCEPTED
   }
 }
