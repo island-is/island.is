@@ -9,9 +9,9 @@ import { FormContext } from '../FormProvider/FormProvider'
 import OverviewHeader from '../OverviewHeader/OverviewHeader'
 import RestrictionTags from '../RestrictionTags/RestrictionTags'
 import RulingDateLabel from '../RulingDateLabel/RulingDateLabel'
-import { CaseOverviewHeader as strings } from './CaseOverviewHeader.strings'
+import { CaseTitleInfoAndTags as strings } from './CaseTitleInfoAndTags.strings'
 
-const CaseOverviewHeader: React.FC = () => {
+const CaseTitleInfoAndTags: React.FC = () => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
 
@@ -20,9 +20,7 @@ const CaseOverviewHeader: React.FC = () => {
       <Box>
         <OverviewHeader />
         {workingCase.rulingDate && (
-          <Box>
-            <RulingDateLabel rulingDate={workingCase.rulingDate} />
-          </Box>
+          <RulingDateLabel rulingDate={workingCase.rulingDate} />
         )}
         {workingCase.appealedDate && (
           <Box marginTop={1}>
@@ -53,4 +51,4 @@ const CaseOverviewHeader: React.FC = () => {
   )
 }
 
-export default CaseOverviewHeader
+export default CaseTitleInfoAndTags

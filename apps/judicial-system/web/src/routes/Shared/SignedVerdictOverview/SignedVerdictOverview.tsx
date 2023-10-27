@@ -54,6 +54,7 @@ import {
   UserContext,
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components'
+import CaseTitleInfoAndTags from '@island.is/judicial-system-web/src/components/CaseTitleInfoAndTags/CaseTitleInfoAndTags'
 import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
 import {
   CaseAppealDecision,
@@ -72,7 +73,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
-import CaseOverviewHeader from '../../CourtOfAppeal/components/CaseOverviewHeader/CaseOverviewHeader'
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
 import ReopenModal from './Components/ReopenModal/ReopenModal'
@@ -449,7 +449,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 {formatMessage(core.back)}
               </Button>
             </Box>
-            <CaseOverviewHeader />
+            <CaseTitleInfoAndTags />
             {isRestrictionCase(workingCase.type) &&
               workingCase.decision !==
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN &&

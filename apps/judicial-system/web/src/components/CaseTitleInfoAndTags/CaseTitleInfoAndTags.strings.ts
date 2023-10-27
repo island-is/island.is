@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const CaseOverviewHeader = defineMessages({
+export const CaseTitleInfoAndTags = defineMessages({
   appealedBy: {
     id: 'judicial.system.core:case_overview_header.appealed_by',
     defaultMessage:
