@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Course, CourseDetailsResponse, CourseResponse } from './model/course'
+import { Course } from './model/course'
 import { PaginateInput, ProgramCourse } from '../program'
 import { paginate } from '@island.is/nest/pagination'
 import { Op } from 'sequelize'
 import { NoContentException } from '@island.is/nest/problem'
+import { CourseResponse } from './dto/courseResponse'
+import { CourseDetailsResponse } from './dto/courseDetailsResponse'
 
 @Injectable()
 export class CourseService {

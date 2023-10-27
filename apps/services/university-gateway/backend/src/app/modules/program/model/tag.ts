@@ -8,11 +8,10 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 
-export
 @Table({
   tableName: 'tag',
 })
-class Tag extends Model {
+export class Tag extends Model {
   @ApiHideProperty()
   @Column({
     type: DataType.UUID,
@@ -59,12 +58,4 @@ class Tag extends Model {
   @ApiHideProperty()
   @UpdatedAt
   readonly modified!: Date
-}
-
-export class TagResponse {
-  @ApiProperty({
-    description: 'Tag data',
-    type: [Tag],
-  })
-  data!: Tag[]
 }

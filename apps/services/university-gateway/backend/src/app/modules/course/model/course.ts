@@ -13,13 +13,11 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { University } from '../../university'
-import { PageInfoDto } from '@island.is/nest/pagination'
 
-export
 @Table({
   tableName: 'course',
 })
-class Course extends Model {
+export class Course extends Model {
   @ApiProperty({
     description: 'Course ID',
     example: '00000000-0000-0000-0000-000000000000',
@@ -133,30 +131,4 @@ class Course extends Model {
   @ApiHideProperty()
   @UpdatedAt
   readonly modified!: Date
-}
-
-export class CourseResponse {
-  @ApiProperty({
-    description: 'Course data',
-    type: [Course],
-  })
-  data!: Course[]
-
-  @ApiProperty({
-    description: 'Page information (for pagination)',
-  })
-  pageInfo!: PageInfoDto
-
-  @ApiProperty({
-    description: 'Total number of items in result (for pagination)',
-  })
-  totalCount!: number
-}
-
-export class CourseDetailsResponse {
-  @ApiProperty({
-    description: 'Course data',
-    type: Course,
-  })
-  data!: Course
 }

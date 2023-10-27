@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { University, UniversityResponse } from './model/university'
+import { University } from './model/university'
+import { UniversityResponse } from './dto/universityResponse'
 import { InjectModel } from '@nestjs/sequelize'
 
 @Injectable()

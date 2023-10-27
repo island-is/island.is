@@ -20,9 +20,8 @@ import { ProgramModeOfDelivery } from './programModeOfDelivery'
 import { University } from '../../university'
 import { ProgramCourse } from './programCourse'
 import { DegreeType, Season } from '@island.is/university-gateway'
-import { PageInfoDto } from '@island.is/nest/pagination'
 
-class Program extends Model {
+export class Program extends Model {
   @ApiProperty({
     description: 'Program ID',
     example: '00000000-0000-0000-0000-000000000000',
@@ -305,7 +304,7 @@ class Program extends Model {
   readonly modified!: Date
 }
 
-class ProgramDetails extends Program {
+export class ProgramDetails extends Program {
   @ApiPropertyOptional({
     description:
       'External url  for the program from the university web page (Icelandic)',
@@ -404,34 +403,7 @@ class ProgramDetails extends Program {
   extraApplicationFields?: ProgramExtraApplicationField[]
 }
 
-export
 @Table({
   tableName: 'program',
 })
-class ProgramTable extends ProgramDetails {}
-
-export class ProgramResponse {
-  @ApiProperty({
-    description: 'Total number of items in result (for pagination)',
-  })
-  totalCount!: number
-
-  @ApiProperty({
-    description: 'Program data',
-    type: [Program],
-  })
-  data!: Program[]
-
-  @ApiProperty({
-    description: 'Page information (for pagination)',
-  })
-  pageInfo!: PageInfoDto
-}
-
-export class ProgramDetailsResponse {
-  @ApiProperty({
-    description: 'Program data',
-    type: ProgramDetails,
-  })
-  data!: ProgramDetails
-}
+export class ProgramTable extends ProgramDetails {}

@@ -15,11 +15,10 @@ import {
 import { ProgramTable } from './program'
 import { FieldType } from '@island.is/university-gateway'
 
-export
 @Table({
   tableName: 'program_extra_application_field',
 })
-class ProgramExtraApplicationField extends Model {
+export class ProgramExtraApplicationField extends Model {
   @ApiHideProperty()
   @Column({
     type: DataType.UUID,

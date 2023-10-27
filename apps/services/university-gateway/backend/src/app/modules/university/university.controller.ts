@@ -7,7 +7,7 @@ import {
 import { Controller, Get } from '@nestjs/common'
 import { UniversityService } from './university.service'
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
-import { UniversityResponse } from './model/university'
+import { UniversityResponse } from './dto/universityResponse'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('University')

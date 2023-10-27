@@ -17,11 +17,10 @@ import { Course } from '../../course'
 import { ProgramTable } from './program'
 import { Requirement, Season } from '@island.is/university-gateway'
 
-export
 @Table({
   tableName: 'program_course',
 })
-class ProgramCourse extends Model {
+export class ProgramCourse extends Model {
   @ApiHideProperty()
   @Column({
     type: DataType.UUID,

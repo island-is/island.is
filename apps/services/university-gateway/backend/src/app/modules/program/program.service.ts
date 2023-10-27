@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common'
-import {
-  ProgramDetailsResponse,
-  ProgramResponse,
-  ProgramTable,
-} from './model/program'
+import { ProgramTable } from './model/program'
 import { ProgramTag } from './model/programTag'
-import { Tag, TagResponse } from './model/tag'
+import { Tag } from './model/tag'
 import { ProgramModeOfDelivery } from './model/programModeOfDelivery'
 import { ProgramCourse } from './model/programCourse'
 import { ProgramExtraApplicationField } from './model/programExtraApplicationField'
+import { ProgramResponse } from './dto/programResponse'
+import { ProgramDetailsResponse } from './dto/programDetailsResponse'
+import { TagResponse } from './dto/tagResponse'
 import { Course } from '../course'
 import { University } from '../university'
 import { PaginateInput } from './types/paginateInput'

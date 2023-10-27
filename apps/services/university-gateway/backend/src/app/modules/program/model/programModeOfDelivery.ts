@@ -11,11 +11,10 @@ import {
 import { ProgramTable } from './program'
 import { ModeOfDelivery } from '@island.is/university-gateway'
 
-export
 @Table({
   tableName: 'program_mode_of_delivery',
 })
-class ProgramModeOfDelivery extends Model {
+export class ProgramModeOfDelivery extends Model {
   @ApiHideProperty()
   @Column({
     type: DataType.UUID,

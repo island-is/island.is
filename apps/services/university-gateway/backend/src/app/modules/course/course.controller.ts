@@ -13,7 +13,8 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
-import { CourseDetailsResponse, CourseResponse } from './model/course'
+import { CourseResponse } from './dto/courseResponse'
+import { CourseDetailsResponse } from './dto/courseDetailsResponse'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('Course')

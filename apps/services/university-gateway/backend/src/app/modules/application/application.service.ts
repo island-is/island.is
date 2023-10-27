@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { Application, ApplicationResponse } from './model/application'
+import { Application } from './model/application'
+import { ApplicationResponse } from './dto/applicationResponse'
 import { CreateApplicationDto } from './dto/createApplicationDto'
 import { UpdateApplicationDto } from './dto/updateApplicationDto'
 import { User } from '@island.is/auth-nest-tools'

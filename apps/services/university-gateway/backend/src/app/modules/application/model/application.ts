@@ -95,11 +95,3 @@ export class Application extends Model {
   @UpdatedAt
   readonly modified!: Date
 }
-
-export class ApplicationResponse {
-  @ApiProperty({
-    description: 'Application data',
-    type: Application,
-  })
-  data!: Application
-}

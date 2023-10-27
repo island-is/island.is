@@ -56,11 +56,3 @@ export class University extends Model {
   @UpdatedAt
   readonly modified!: Date
 }
-
-export class UniversityResponse {
-  @ApiProperty({
-    description: 'University data',
-    type: [University],
-  })
-  data!: University[]
-}
