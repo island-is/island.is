@@ -9,7 +9,7 @@ ENV CLUSTER=dev-cluster01
 FROM base as proxy
 USER runner
 CMD aws eks --region eu-west-1 update-kubeconfig --name $CLUSTER ; \
-    kubectl port-forward -n $TARGET_NAMESPACE svc/$TARGET_SVC --address localhost $PROXY_PORT:$TARGET_PORT
+    kubectl port-forward -n $TARGET_NAMESPACE svc/$TARGET_SVC --address 0.0.0.0 $PROXY_PORT:$TARGET_PORT
 
 FROM base as restart-deployment
 CMD aws eks --region eu-west-1 update-kubeconfig --name $CLUSTER ; \
