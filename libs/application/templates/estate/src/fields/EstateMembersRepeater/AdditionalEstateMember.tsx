@@ -40,6 +40,7 @@ export const AdditionalEstateMember = ({
   const fieldIndex = `${fieldName}[${index}]`
   const nameField = `${fieldIndex}.name`
   const relationField = `${fieldIndex}.relation`
+  const relationWithApplicantField = `${fieldIndex}.relationWithApplicant`
   const dateOfBirthField = `${fieldIndex}.dateOfBirth`
   const foreignCitizenshipField = `${fieldIndex}.foreignCitizenship`
   const initialField = `${fieldIndex}.initial`
@@ -143,6 +144,31 @@ export const AdditionalEstateMember = ({
             required
           />
         </GridColumn>
+        {/*<GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+          <SelectController
+            key={relationWithApplicantField}
+            id={relationWithApplicantField}
+            name={relationWithApplicantField}
+            label={formatMessage(m.inheritanceRelationWithApplicantLabel)}
+            // TEMP: change to relationWithApplicant when backend is ready
+            //defaultValue={field.relation}
+            options={relationOptions}
+            error={error?.relation}
+            backgroundColor="blue"
+            required
+          />
+      </GridColumn>*/}
+        <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+          <InputController
+            id={emailField}
+            name={emailField}
+            label={m.email.defaultMessage}
+            defaultValue={field.email || ''}
+            backgroundColor="blue"
+            error={error?.email}
+            required
+          />
+        </GridColumn>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
           <InputController
             id={phoneField}
@@ -152,16 +178,7 @@ export const AdditionalEstateMember = ({
             backgroundColor="blue"
             format={'###-####'}
             error={error?.phone}
-          />
-        </GridColumn>
-        <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-          <InputController
-            id={emailField}
-            name={emailField}
-            label={m.email.defaultMessage}
-            defaultValue={field.email || ''}
-            backgroundColor="blue"
-            error={error?.email}
+            required
           />
         </GridColumn>
         <GridColumn span="1/1" paddingBottom={2}>

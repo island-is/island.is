@@ -7,6 +7,7 @@ import {
   Button,
   GridColumn,
   GridRow,
+  Select,
   Text,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
@@ -14,7 +15,9 @@ import { EstateRegistrant, EstateMember } from '@island.is/clients/syslumenn'
 import { Answers } from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
 import { getValueViaPath } from '@island.is/application/core'
-import { InputController } from '@island.is/shared/form-fields'
+import {
+  InputController,
+} from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
 
 export const EstateMembersRepeater: FC<
@@ -130,9 +133,42 @@ export const EstateMembersRepeater: FC<
                   name={`${id}[${index}].relation`}
                   label={formatMessage(m.inheritanceRelationLabel)}
                   readOnly
-                  defaultValue={member.relation || ''}
+                  defaultValue={member.relation}
                   backgroundColor="white"
                   disabled={!member.enabled}
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                <Select
+                  label={formatMessage(m.inheritanceRelationWithApplicantLabel)}
+                  name={`${id}[${index}].relationWithApplicant`}
+                  options={relations}
+                  backgroundColor='blue'
+                  hasError={error && error[index] && error[index].relationWithApplicant}
+                  value={relations.find((option) => option.value === (member as any).relationWithApplicant)}
+                  //required
+                  isDisabled={!member.enabled}
+                  onChange={(newVal) => {
+                    clearErrors(`${id}[${index}].relationWithApplicant`)
+                    const updatedMember = {
+                      ...member,
+                      relationWithApplicant: newVal?.value,
+                    }
+                    update(index, updatedMember)
+                  }
+                }
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                <InputController
+                  id={`${id}[${index}].email`}
+                  name={`${id}[${index}].email`}
+                  label={m.email.defaultMessage}
+                  backgroundColor="blue"
+                  disabled={!member.enabled}
+                  defaultValue={member.email || ''}
+                  error={error && error[index] && error[index].email}
+                  required
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -145,17 +181,7 @@ export const EstateMembersRepeater: FC<
                   format="###-####"
                   defaultValue={member.phone || ''}
                   error={error && error[index] && error[index].phone}
-                />
-              </GridColumn>
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                <InputController
-                  id={`${id}[${index}].email`}
-                  name={`${id}[${index}].email`}
-                  label={m.email.defaultMessage}
-                  backgroundColor="blue"
-                  disabled={!member.enabled}
-                  defaultValue={member.email || ''}
-                  error={error && error[index] && error[index].email}
+                  required
                 />
               </GridColumn>
             </GridRow>

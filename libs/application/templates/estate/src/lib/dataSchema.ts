@@ -77,6 +77,7 @@ export const estateSchema = z.object({
       .object({
         name: z.string(),
         relation: customZodError(z.string().min(1), m.errorRelation),
+        relationWithApplicant: z.string(),
         nationalId: z.string().optional(),
         custodian: z.string().length(10).optional(),
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
@@ -107,7 +108,6 @@ export const estateSchema = z.object({
       /* Validating email and phone depending on whether the field is enabled */
       .refine(
         ({ enabled, phone }) => {
-          console.log(enabled, isValidPhoneNumber(phone))
           return enabled ? isValidPhoneNumber(phone) : true
         },
         {
@@ -120,6 +120,14 @@ export const estateSchema = z.object({
         },
         {
           path: ['email'],
+        },
+      )
+      .refine(
+        ({ enabled, relationWithApplicant }) => {
+          return enabled ? relationWithApplicant !== '' : true
+        },
+        {
+          path: ['relationWithApplicant'],
         },
       )
 

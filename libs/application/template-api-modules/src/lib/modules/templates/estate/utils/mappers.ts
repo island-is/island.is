@@ -28,6 +28,7 @@ const estateMemberMapper = (element: EstateMember) => {
     enabled: true,
     phone: '',
     email: '',
+    relationWithApplicant: '',
     advocate: element.advocate
       ? {
           ...element.advocate,

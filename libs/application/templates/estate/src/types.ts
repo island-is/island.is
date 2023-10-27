@@ -61,6 +61,7 @@ export interface EstateMember {
   name: string
   nationalId: string
   relation: RelationEnum | string
+  relationWithApplicant: RelationEnum | string
   initial?: boolean
   dateOfBirth?: string
   custodian?: string
