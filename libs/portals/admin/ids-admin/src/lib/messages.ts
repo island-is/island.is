@@ -39,7 +39,7 @@ export const m = defineMessages({
   },
   searchPlaceholder: {
     id: 'ap.ids-admin:search-placeholder',
-    defaultMessage: 'Search',
+    defaultMessage: 'Search by name or ID',
   },
   client: {
     id: 'ap.ids-admin:client',
@@ -663,10 +663,6 @@ export const m = defineMessages({
     id: 'ap.ids-admin:permission-list-description',
     defaultMessage: 'Here you can view and create permissions.',
   },
-  permissionsSearchPlaceholder: {
-    id: 'ap.ids-admin:permissions-search-placeholder',
-    defaultMessage: 'Search by name or ID',
-  },
   dangerZone: {
     id: 'ap.ids-admin:danger-zone',
     defaultMessage: 'Danger zone',
@@ -750,6 +746,10 @@ export const m = defineMessages({
   english: {
     id: 'ap.ids-admin:english',
     defaultMessage: 'English',
+  },
+  accessControlDescription: {
+    id: 'ap.ids-admin:access-control-description',
+    defaultMessage: 'Configure access control settings for this permission.',
   },
   isAccessControlled: {
     id: 'ap.ids-admin:is-access-controlled',

@@ -41,7 +41,10 @@ export const PermissionAccessControl = () => {
   return (
     <FormCard
       title={formatMessage(m.accessControl)}
+      description={formatMessage(m.accessControlDescription)}
       intent={PermissionFormTypes.ACCESS_CONTROL}
+      accordionLabel={formatMessage(m.settings)}
+      headerMarginBottom={3}
       inSync={checkEnvironmentsSync(permission.environments, [
         'isAccessControlled',
         'grantToAuthenticatedUser',

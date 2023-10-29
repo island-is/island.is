@@ -19,6 +19,7 @@ import { IDSAdminPaths } from '../../lib/paths'
 import IdsAdminCard from '../../components/IdsAdminCard/IdsAdminCard'
 import { PermissionsLoaderData } from './Permissions.loader'
 import { useLooseSearch } from '../../hooks/useLooseSearch'
+import { SearchInput } from '../../components/SearchInput/SearchInput'
 
 function Permissions() {
   const { formatMessage, locale } = useLocale()
@@ -58,8 +59,7 @@ function Permissions() {
       borderRadius="large"
       borderColor="blue200"
       borderWidth="standard"
-      paddingY={[5, 8]}
-      paddingX={[5, 8]}
+      padding={[5, 6]}
       textAlign="center"
       maxLength={10}
     >
@@ -67,7 +67,7 @@ function Permissions() {
         display="flex"
         flexDirection="column"
         alignItems="center"
-        rowGap={3}
+        rowGap={2}
         className={styles.emptyContainer}
         marginX="auto"
       >
@@ -78,14 +78,6 @@ function Permissions() {
           {formatMessage(m.permissionEmptyDescription)}
         </Text>
         {createButton}
-        <LinkV2
-          href="#"
-          color="blue400"
-          underline="normal"
-          underlineVisibility="always"
-        >
-          {formatMessage(m.learnMore)}
-        </LinkV2>
       </Box>
     </Box>
   )
@@ -106,15 +98,10 @@ function Permissions() {
   const renderList = () => {
     return (
       <Box marginY={1}>
-        <Box className={styles.filterContainer} marginBottom={3}>
-          <FilterInput
-            placeholder={formatMessage(m.permissionsSearchPlaceholder)}
-            name="permission-search"
-            value={inputSearchValue}
-            onChange={handleSearch}
-            backgroundColor="blue"
-          />
-        </Box>
+        <SearchInput
+          inputSearchValue={inputSearchValue}
+          onChange={handleSearch}
+        />
 
         <Stack space={2}>
           {filteredPermissions.map((item) => {
