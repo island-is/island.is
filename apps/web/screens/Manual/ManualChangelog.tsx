@@ -34,8 +34,17 @@ const ManualChangelog: ManualScreen = ({ manual, namespace }) => {
     return extractChangelogFromManual(manual)
   }, [manual])
 
+  const manualChangelogTitle = n(
+    'manualChangelogTitle',
+    activeLocale === 'is' ? 'Breytingasaga' : 'Changelog',
+  ) as string
+
   return (
-    <ManualWrapper manual={manual} namespace={namespace}>
+    <ManualWrapper
+      manual={manual}
+      namespace={namespace}
+      socialTitle={`${manualChangelogTitle} | Ísland.is`}
+    >
       <Stack space={2}>
         <LinkV2
           className={styles.smallLink}
@@ -52,10 +61,7 @@ const ManualChangelog: ManualScreen = ({ manual, namespace }) => {
         <Box paddingTop={2}>
           <Stack space={2}>
             <Text variant="h2" as="h2">
-              {n(
-                'manualChangelogTitle',
-                activeLocale === 'is' ? 'Breytingasaga' : 'Changelog',
-              )}
+              {manualChangelogTitle}
             </Text>
             <Text>
               {nlToBr(

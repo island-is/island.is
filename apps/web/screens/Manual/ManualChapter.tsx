@@ -28,7 +28,11 @@ const ManualChapter: ManualScreen = ({ manual, manualChapter, namespace }) => {
   useContentfulId(manual?.id, manualChapter?.id)
 
   return (
-    <ManualWrapper manual={manual} namespace={namespace}>
+    <ManualWrapper
+      manual={manual}
+      namespace={namespace}
+      socialTitle={`${manualChapter?.title ?? manual?.title} | Ísland.is`}
+    >
       {manualChapter && (
         <Stack space={2}>
           <LinkV2
