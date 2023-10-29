@@ -18,7 +18,12 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { nlToBr } from '@island.is/web/utils/nlToBr'
 
 import { ManualWrapper } from './components/ManualWrapper'
-import { extractChangelogFromManual, getProps, ManualScreen } from './utils'
+import {
+  extractChangelogFromManual,
+  generateOgTitle,
+  getProps,
+  ManualScreen,
+} from './utils'
 import * as styles from './Manual.css'
 
 const ManualChangelog: ManualScreen = ({ manual, namespace }) => {
@@ -43,7 +48,7 @@ const ManualChangelog: ManualScreen = ({ manual, namespace }) => {
     <ManualWrapper
       manual={manual}
       namespace={namespace}
-      socialTitle={`${manualChangelogTitle} | Ísland.is`}
+      socialTitle={generateOgTitle(manual?.title, manualChangelogTitle)}
     >
       <Stack space={2}>
         <LinkV2
