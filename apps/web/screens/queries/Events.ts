@@ -16,6 +16,8 @@ export const GET_SINGLE_EVENT_QUERY = gql`
         streetAddress
         floor
         postalCode
+        useFreeText
+        freeText
       }
       image {
         url
@@ -58,6 +60,8 @@ export const GET_EVENTS_QUERY = gql`
           streetAddress
           floor
           postalCode
+          useFreeText
+          freeText
         }
         image {
           url

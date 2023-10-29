@@ -1,7 +1,10 @@
 import React from 'react'
 
 import { Box, FocusableBox, Stack, Text } from '@island.is/island-ui/core'
-import { Image } from '@island.is/web/graphql/schema'
+import {
+  EventLocation as EventLocationSchema,
+  Image,
+} from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -19,25 +22,12 @@ interface EventCardProps {
   endTime: string
   href: string
   date?: string
-  streetAddress?: string
-  postalCode?: string
-  floor?: string
+  location?: EventLocationSchema
 }
 
 export const LatestEventSliceCard: React.FC<
   React.PropsWithChildren<EventCardProps>
-> = ({
-  title,
-  image,
-  streetAddress,
-  namespace,
-  postalCode,
-  floor,
-  startTime,
-  endTime,
-  href,
-  date,
-}) => {
+> = ({ title, image, namespace, location, startTime, endTime, href, date }) => {
   const { format } = useDateUtils()
   const formattedDate = date && format(new Date(date), 'do MMMM yyyy')
   const { activeLocale } = useI18n()
@@ -75,11 +65,7 @@ export const LatestEventSliceCard: React.FC<
               <Text as="h3" variant="h3" title={title}>
                 {title}
               </Text>
-              <EventLocation
-                streetAddress={streetAddress}
-                floor={floor}
-                postalCode={postalCode}
-              />
+              <EventLocation location={location} />
               <EventTime
                 startTime={startTime}
                 endTime={endTime}

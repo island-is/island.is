@@ -83,9 +83,7 @@ export const LatestEventsSlice = ({
                     linkResolver('organizationevent', [slug, eventSlug]).href
                   }
                   date={startDate}
-                  streetAddress={location.streetAddress ?? ''}
-                  postalCode={location.postalCode ?? ''}
-                  floor={location.floor ?? ''}
+                  location={location}
                   namespace={namespace}
                   image={{
                     url: image?.url || '',

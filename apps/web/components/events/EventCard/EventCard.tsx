@@ -7,7 +7,10 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { Image } from '@island.is/web/graphql/schema'
+import {
+  EventLocation as EventLocationSchema,
+  Image,
+} from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -25,11 +28,7 @@ interface EventCardProps {
   endTime: string
   href: string
   date?: string
-  location: {
-    streetAddress?: string | null
-    postalCode?: string | null
-    floor?: string | null
-  } | null
+  location?: EventLocationSchema
   titleAs?: 'h2' | 'h3' | 'h4'
   mini?: boolean
 }
@@ -76,11 +75,7 @@ export const EventCard: React.FC<React.PropsWithChildren<EventCardProps>> = ({
           <Text variant="h3" as={titleAs}>
             {title}
           </Text>
-          <EventLocation
-            streetAddress={location?.streetAddress ?? ''}
-            floor={location?.floor ?? ''}
-            postalCode={location?.postalCode ?? ''}
-          />
+          <EventLocation location={location} />
           <EventTime
             startTime={startTime}
             endTime={endTime}

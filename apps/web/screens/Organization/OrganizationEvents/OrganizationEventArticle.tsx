@@ -173,13 +173,21 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
               padding={[3, 3, 3, 2, 3]}
             >
               <Stack space={3}>
-                <Inline space={ICON_TEXT_SPACE}>
-                  <Icon color="blue400" icon="calendar" type="outline"></Icon>
+                <Box
+                  display="flex"
+                  flexWrap="nowrap"
+                  columnGap={ICON_TEXT_SPACE}
+                >
+                  <Icon color="blue400" icon="calendar" type="outline" />
                   <Text>{formattedDate}</Text>
-                </Inline>
+                </Box>
                 {event.time?.startTime && (
-                  <Inline space={ICON_TEXT_SPACE}>
-                    <Icon color="blue400" icon="time" type="outline"></Icon>
+                  <Box
+                    display="flex"
+                    flexWrap="nowrap"
+                    columnGap={ICON_TEXT_SPACE}
+                  >
+                    <Icon color="blue400" icon="time" type="outline" />
                     <EventTime
                       startTime={event.time?.startTime ?? ''}
                       endTime={event.time?.endTime ?? ''}
@@ -190,17 +198,20 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
                         ) as string
                       }
                     />
-                  </Inline>
+                  </Box>
                 )}
-                {event.location?.streetAddress && (
-                  <Inline space={ICON_TEXT_SPACE}>
-                    <Icon color="blue400" icon="home" type="outline"></Icon>
-                    <EventLocation
-                      streetAddress={event.location?.streetAddress ?? ''}
-                      floor={event.location?.floor ?? ''}
-                      postalCode={event.location?.postalCode ?? ''}
-                    />
-                  </Inline>
+                {event.location && (
+                  <Box
+                    display="flex"
+                    flexWrap="nowrap"
+                    columnGap={ICON_TEXT_SPACE}
+                  >
+                    <Box>
+                      <Icon color="blue400" icon="home" type="outline" />
+                    </Box>
+
+                    <EventLocation location={event.location} />
+                  </Box>
                 )}
               </Stack>
             </Box>

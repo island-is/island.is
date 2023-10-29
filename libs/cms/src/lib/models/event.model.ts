@@ -17,6 +17,12 @@ class EventLocation {
 
   @Field(() => String, { nullable: true })
   postalCode?: string | null
+
+  @Field(() => Boolean, { nullable: true })
+  useFreeText?: boolean
+
+  @Field(() => String, { nullable: true })
+  freeText?: string
 }
 
 @ObjectType()
@@ -92,6 +98,8 @@ export const mapEvent = ({ sys, fields }: IEvent): SystemMetadata<Event> => {
       streetAddress: '',
       floor: '',
       postalCode: '',
+      freeText: '',
+      useFreeText: false,
     },
     content: fields.content
       ? mapDocument(fields.content, sys.id + ':content')

@@ -94,9 +94,7 @@ export const EventList = ({
                 <LatestEventSliceCard
                   key={index}
                   title={eventItem.title}
-                  postalCode={eventItem.location.postalCode ?? ''}
-                  streetAddress={eventItem.location.streetAddress ?? ''}
-                  floor={eventItem.location.floor ?? ''}
+                  location={eventItem.location}
                   namespace={namespace}
                   image={{
                     url: eventItem.image?.url || '',
