@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { parsePhoneNumber } from 'libphonenumber-js'
 import { isEmail } from 'class-validator'
 import pick from 'lodash/pick'
+import { Sequelize } from 'sequelize-typescript'
 
 import { isDefined } from '@island.is/shared/utils'
 
@@ -10,7 +11,6 @@ import { UserProfileDto } from './dto/user-profileDto'
 import { PatchUserProfileDto } from './dto/patch-user-profileDto'
 import { VerificationService } from '../user-profile/verification.service'
 import { UserProfile } from '../user-profile/userProfile.model'
-import { Sequelize } from 'sequelize-typescript'
 import { IslykillService } from './islykill.service'
 
 @Injectable()

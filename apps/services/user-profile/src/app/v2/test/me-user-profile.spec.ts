@@ -455,8 +455,6 @@ describe('MeUserProfile', () => {
     })
 
     it('PATCH /v2/me should return 201 and should call the islyklar put method and not post', async () => {
-      // Arrange
-
       // Act
       const res = await server.patch('/v2/me').send({
         mobilePhoneNumber: null,
