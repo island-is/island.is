@@ -3,11 +3,10 @@ import * as z from 'zod'
 import {
   ComplainedForTypes,
   ComplaineeTypes,
-  NO,
   OmbudsmanComplaintTypeEnum,
-  YES,
 } from '../shared'
 import { error } from './messages/error'
+import { NO, YES } from '@island.is/application/types'
 
 const FileSchema = z.object({
   name: z.string(),

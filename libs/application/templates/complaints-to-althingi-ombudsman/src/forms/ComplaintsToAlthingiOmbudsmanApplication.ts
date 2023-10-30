@@ -20,6 +20,8 @@ import {
   Form,
   FormModes,
   FormValue,
+  NO,
+  YES,
 } from '@island.is/application/types'
 import {
   applicantInformationMultiField,
@@ -45,8 +47,6 @@ import {
 import {
   ComplainedForTypes,
   ComplaineeTypes,
-  YES,
-  NO,
   OmbudsmanComplaintTypeEnum,
   UPLOAD_ACCEPT,
 } from '../shared/constants'
