@@ -33,7 +33,7 @@ import {
 
 export const GET_USERS_VEHICLES_HISTORY = gql`
   query GetUsersVehicles {
-    vehiclesHistoryList {
+    vehiclesList {
       vehicleList {
         permno
         regno
@@ -107,7 +107,7 @@ const VehiclesHistory = () => {
   const [toDate, setToDate] = useState<Date | null>()
 
   const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLES_HISTORY)
-  const vehicles = data?.vehiclesHistoryList?.vehicleList || []
+  const vehicles = data?.vehiclesList?.vehicleList || []
   const filteredVehicles = getFilteredVehicles(
     vehicles,
     checkbox,

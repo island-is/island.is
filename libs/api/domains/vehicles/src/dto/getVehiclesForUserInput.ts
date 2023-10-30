@@ -22,7 +22,7 @@ export class GetVehiclesForUserInput {
   type?: VehicleUserTypeEnum
 
   @Field()
-  showDegeristered!: boolean
+  showDeregeristered!: boolean
 
   @Field()
   showHistory!: boolean

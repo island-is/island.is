@@ -134,8 +134,8 @@ export class VehiclesRegistrationInfo {
   @Field(() => String, { nullable: true })
   useGroup?: string | null
 
-  @Field(() => Boolean, { nullable: true })
-  driversPassengers?: boolean | null
+  @Field(() => Number, { nullable: true })
+  driversPassengers?: number | null
 
   @Field(() => Number, { nullable: true })
   standingPassengers?: number | null

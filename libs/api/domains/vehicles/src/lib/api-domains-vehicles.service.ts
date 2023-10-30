@@ -3,19 +3,14 @@ import {
   VehicleSearchApi,
   BasicVehicleInformationGetRequest,
   PdfApi,
-  VehicleSearchDto,
   PublicVehicleSearchApi,
-  PersidnoLookupResultDto,
   VehicleDtoListPagedResponse,
 } from '@island.is/clients/vehicles'
 import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
-import {
-  GetVehiclesForUserInput,
-  VehicleUserTypeEnum,
-} from '../dto/getVehiclesForUserInput'
+import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
 
 @Injectable()
 export class VehiclesService {
@@ -38,7 +33,7 @@ export class VehiclesService {
       auth,
     ).vehicleHistoryRequestedPersidnoGet({
       requestedPersidno: auth.nationalId,
-      showDeregistered: input.showDegeristered,
+      showDeregistered: input.showDeregeristered,
       showHistory: input.showHistory,
       page: input.page,
       pageSize: input.pageSize,

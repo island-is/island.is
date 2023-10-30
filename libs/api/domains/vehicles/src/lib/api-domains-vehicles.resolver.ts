@@ -49,9 +49,16 @@ export class VehiclesResolver {
     @Args('input') input: GetVehiclesForUserInput,
   ) {
     const res = await this.vehiclesService.getVehiclesForUser(user, input)
+    console.log(res)
     const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/${user.nationalId}`
     return {
-      ...res?.data,
+      vehicleList: res.data,
+      paging: {
+        pageNumber: res.pageNumber,
+        pageSize: res.pageSize,
+        totalPages: res.totalPages,
+        totalRecords: res.totalRecords,
+      },
       downloadServiceURL: !input.type ? downloadServiceURL : null,
     }
   }

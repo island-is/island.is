@@ -68,7 +68,16 @@ const VehiclesOverview = () => {
   const [
     GetUsersVehiclesLazyQuery,
     { loading, error, fetchMore, ...usersVehicleQuery },
-  ] = useGetUsersVehiclesLazyQuery()
+  ] = useGetUsersVehiclesLazyQuery({
+    variables: {
+      input: {
+        pageSize: 50,
+        page: 1,
+        showDeregeristered: false,
+        showHistory: false,
+      },
+    },
+  })
 
   useEffect(() => {
     GetUsersVehiclesLazyQuery()
@@ -77,7 +86,12 @@ const VehiclesOverview = () => {
   const paginate = () => {
     fetchMore({
       variables: {
-        nextCursor: usersVehicleQuery.data?.vehiclesList?.nextCursor ?? '',
+        input: {
+          pageSize: 50,
+          page: 1,
+          showDeregistered: false,
+          showHistory: false,
+        },
       },
       updateQuery: (prevResult, { fetchMoreResult }) => {
         if (
@@ -93,7 +107,6 @@ const VehiclesOverview = () => {
       },
     })
   }
-  const nextCursor = usersVehicleQuery.data?.vehiclesList?.nextCursor
   const vehicles = usersVehicleQuery.data?.vehiclesList?.vehicleList || []
   const ownershipPdf = usersVehicleQuery.data?.vehiclesList?.downloadServiceURL
   const filteredVehicles = getFilteredVehicles(
@@ -156,10 +169,8 @@ const VehiclesOverview = () => {
                   exportVehicleOwnedDocument(
                     filteredVehicles,
                     formatMessage(messages.myCarsFiles),
-                    usersVehicleQuery?.data?.vehiclesList?.name ??
-                      userInfo.profile.name,
-                    usersVehicleQuery?.data?.vehiclesList?.persidno ??
-                      userInfo.profile.nationalId,
+                    userInfo.profile.name,
+                    userInfo.profile.nationalId,
                   )
                 }
               />
@@ -270,18 +281,6 @@ const VehiclesOverview = () => {
                 return <VehicleCard vehicle={item} key={index} />
               })}
             </Stack>
-            {nextCursor !== '' && (
-              <Box
-                marginTop={3}
-                alignItems="center"
-                justifyContent="center"
-                display="flex"
-              >
-                <Button size="small" variant="text" onClick={() => paginate()}>
-                  {formatMessage(m.fetchMore)}
-                </Button>
-              </Box>
-            )}
           </Box>
         )}
       </Stack>
