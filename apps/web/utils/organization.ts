@@ -17,6 +17,7 @@ export const getOrganizationSidebarNavigationItems = (
   organizationPage: OrganizationPage,
   basePath: string,
 ) => {
+  if (!organizationPage) return []
   return organizationPage.menuLinks.map(({ primaryLink, childrenLinks }) => ({
     title: primaryLink?.text ?? '',
     href: primaryLink?.url,

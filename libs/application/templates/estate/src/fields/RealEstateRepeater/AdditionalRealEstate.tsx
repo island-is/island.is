@@ -115,6 +115,7 @@ export const AdditionalRealEstate = ({
             backgroundColor="blue"
             defaultValue={field.assetNumber}
             error={error?.assetNumber}
+            placeholder="F1234567"
             required
           />
         </GridColumn>
