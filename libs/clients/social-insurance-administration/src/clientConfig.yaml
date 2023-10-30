@@ -139,6 +139,38 @@ paths:
             application/json:
               schema:
                 type: string
+  /Applicant/{applicationType}/eligible:
+    get:
+      tags:
+        - Get is applicant eligible
+      operationId: Applicant_GetIsEligible
+      parameters:
+        - name: applicationType
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: false
+          x-position: 1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Eligible'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        '500':
+          description: internal Error
+          content:
+            application/json:
+              schema:
+                type: string
 components:
   securitySchemes:
     bearerAuth:
@@ -370,6 +402,12 @@ components:
       description: Returns true if applicant has a spouse that is a resident at a nursing home
       properties:
         isSpouseInNursingHome:
+          type: boolean
+    Eligible:
+      type: object
+      description: Returns true if applicant is eligible
+      properties:
+        isEligible:
           type: boolean
 security:
   - bearerAuth: []

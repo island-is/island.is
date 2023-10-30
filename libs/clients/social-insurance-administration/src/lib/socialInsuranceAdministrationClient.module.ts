@@ -11,6 +11,7 @@ import {
   SendApplicationApi,
   GetBankInfoApi,
   GetSpouseInNursingHomeApi,
+  GetIsApplicantEligibleApi,
 } from '../../gen/fetch'
 import { createWrappedFetchWithLogging } from './utils'
 import { SocialInsuranceAdministrationClientService } from './socialInsuranceAdministrationClient.service'
@@ -60,6 +61,7 @@ export class SocialInsuranceAdministrationClientModule {
       GetBankInfoApi,
       SendApplicationApi,
       GetSpouseInNursingHomeApi,
+      GetIsApplicantEligibleApi,
     ]
 
     return {

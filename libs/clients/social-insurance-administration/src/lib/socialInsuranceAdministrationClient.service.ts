@@ -11,6 +11,8 @@ import {
   GetBankInfoApi,
   SpouseInNursingHome,
   GetSpouseInNursingHomeApi,
+  GetIsApplicantEligibleApi,
+  Eligible,
 } from '../../gen/fetch'
 
 @Injectable()
@@ -21,6 +23,7 @@ export class SocialInsuranceAdministrationClientService {
     private readonly sendApplicationApi: SendApplicationApi,
     private readonly getBankInfoApi: GetBankInfoApi,
     private readonly getSpouseInNursingHomeApi: GetSpouseInNursingHomeApi,
+    private readonly getIsApplicantEligibleApi: GetIsApplicantEligibleApi,
   ) {}
 
   private testWithAuth = (user: User) =>
@@ -36,6 +39,10 @@ export class SocialInsuranceAdministrationClientService {
 
   private spouseInNursingHomeAPIWithAuth = (user: User) =>
     this.getSpouseInNursingHomeApi.withMiddleware(
+      new AuthMiddleware(user as Auth),
+    )
+  private isEligibleAPIWithAuth = (user: User) =>
+    this.getIsApplicantEligibleApi.withMiddleware(
       new AuthMiddleware(user as Auth),
     )
 
@@ -79,5 +86,11 @@ export class SocialInsuranceAdministrationClientService {
     return await this.spouseInNursingHomeAPIWithAuth(
       user,
     ).applicationGetSpouseInNursingHome()
+  }
+
+  async getIsEligible(user: User, applicationType: string): Promise<Eligible> {
+    return await this.isEligibleAPIWithAuth(user).applicantGetIsEligible({
+      applicationType,
+    })
   }
 }

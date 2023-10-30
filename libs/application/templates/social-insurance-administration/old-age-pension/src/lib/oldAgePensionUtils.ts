@@ -332,6 +332,11 @@ export function getApplicationExternalData(
     'userProfile.data.bankInfo',
   ) as string
 
+  const isEligible = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
+  ) as boolean
+
   return {
     residenceHistory,
     cohabitants,
@@ -345,6 +350,7 @@ export function getApplicationExternalData(
     spouseNationalId,
     maritalStatus,
     bank,
+    isEligible,
   }
 }
 

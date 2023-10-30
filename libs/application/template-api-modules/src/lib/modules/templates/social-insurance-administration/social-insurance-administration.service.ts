@@ -357,4 +357,13 @@ export class OldAgePensionService extends BaseTemplateApiService {
       throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
     }
   }
+
+  async getIsEligible({ application, auth }: TemplateApiModuleActionProps) {
+    try {
+      const applicationType = getApplicationType(application).toLowerCase()
+      return await this.siaClientService.getIsEligible(auth, applicationType)
+    } catch (e) {
+      throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
+    }
+  }
 }
