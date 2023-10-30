@@ -236,6 +236,8 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/vmst/                                                                                      @island-is/deloitte
 /libs/api/domains/directorate-of-labour/                                                                 @island-is/deloitte
 /libs/application/templates/car-recycling/                                                               @island-is/deloitte
+/libs/application/templates-api-modules/src/lib/module/templates/car-recycling/                          @island-is/deloitte
+/libs/clients/recycling-fund/                                                                            @island-is/deloitte
 
 /apps/services/auth/ids-api/                                                                             @island-is/fuglar @island-is/aranja
 /apps/services/auth/admin-api/                                                                           @island-is/fuglar @island-is/aranja

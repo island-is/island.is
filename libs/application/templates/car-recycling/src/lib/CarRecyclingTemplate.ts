@@ -13,20 +13,18 @@ import {
   DefaultEvents,
   NationalRegistryUserApi,
   UserProfileApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 
 import { DataSchema } from './dataSchema'
 import { carRecyclingMessages, statesMessages } from './messages'
+import { ApiActions } from '../shared'
 
-const States = {
-  PREREQUISITES: 'prerequisites',
-  DRAFT: 'draft',
-  IN_REVIEW: 'inReview',
-  APPROVED: 'approved',
-  REJECTED: 'rejected',
-  WAITING_TO_ASSING: 'waitingToAssign',
+const enum States {
+  PREREQUISITES = 'prerequisites',
+  DRAFT = 'draft',
+  IN_REVIEW = 'inReview',
 }
-
 type ReferenceTemplateEvent =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.REJECT }
@@ -103,6 +101,11 @@ const CarRecyclingTemplate: ApplicationTemplate<
           name: States.DRAFT,
           status: 'draft',
           lifecycle: pruneAfterDays(30),
+          onEntry: defineTemplateApi({
+            action: ApiActions.getVehicles,
+            externalDataId: 'vehicles',
+            throwOnError: false,
+          }),
           progress: 0.25,
           /* onExit: defineTemplateApi({
             action: Actions.SEND_APPLICATION,

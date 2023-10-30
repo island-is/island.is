@@ -4,6 +4,7 @@ export enum ApiActions {
   completeApplication = 'completeApplication',
   getReferenceData = 'getReferenceData',
   getAnotherReferenceData = 'getAnotherReferenceData',
+  getVehicles = 'getVehicles',
 }
 
 export enum Actions {

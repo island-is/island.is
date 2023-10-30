@@ -252,6 +252,9 @@
       "@island.is/application/templates/announcement-of-death/types": [
         "libs/application/templates/announcement-of-death/src/types.ts"
       ],
+      "@island.is/application/templates/car-recycling": [
+        "libs/application/templates/car-recycling/src/index.ts"
+      ],
       "@island.is/application/templates/children-residence-change": [
         "libs/application/templates/family-matters/children-residence-change/src/index.ts"
       ],
@@ -417,9 +420,6 @@
       "@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership": [
         "libs/application/templates/transport-authority/transfer-of-vehicle-ownership/src/index.ts"
       ],
-      "@island.is/application/templates/car-recycling": [
-        "libs/application/templates/car-recycling/src/index.ts"
-      ],
       "@island.is/application/testing": [
         "libs/application/testing/src/index.ts"
       ],
@@ -554,6 +554,7 @@
       "@island.is/clients/payment-schedule": [
         "libs/clients/payment-schedule/src/index.ts"
       ],
+      "@island.is/clients/recycling-fund": ["libs/clients/recycling-fund/src/index.ts"],
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
       ],

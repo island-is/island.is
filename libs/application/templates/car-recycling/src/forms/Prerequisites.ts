@@ -44,13 +44,7 @@ export const Prerequisites: Form = buildForm({
               },
             ],
           }),
-          dataProviders: [
-            buildDataProviderItem({
-              provider: NationalRegistryUserApi,
-              title: 'oldAgePensionFormMessage.pre.skraInformationTitle',
-              subTitle: 'oldAgePensionFormMessage.pre.skraInformationSubTitle',
-            }),
-          ],
+          dataProviders: [],
         }),
       ],
     }),

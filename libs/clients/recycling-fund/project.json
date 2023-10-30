@@ -1,0 +1,30 @@
+{
+  "name": "clients-recycling-fund",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/recycling-fund/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/clients/recycling-fund/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/recycling-fund"],
+      "options": {
+        "jestConfig": "libs/clients/recycling-fund/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/recycling-fund/gen/fetch -i libs/clients/recycling-fund/src/clientConfig.yaml"
+      }
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}
