@@ -1,7 +1,8 @@
 import { UseGuards } from '@nestjs/common'
 import { TokenGuard } from '@island.is/judicial-system/auth'
 import { Controller, Post } from '@nestjs/common'
-import { ApiNoContentResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
+import { Documentation } from '@island.is/nest/swagger'
 import { InternalProgramService } from './internalProgram.service'
 
 @UseGuards(TokenGuard)
@@ -16,9 +17,8 @@ export class InternalProgramController {
   ) {}
 
   @Post('update')
-  @ApiNoContentResponse()
-  @ApiOperation({
-    summary:
+  @Documentation({
+    description:
       'Updates program in our DB by fetching data from the university APIs',
   })
   updatePrograms() {

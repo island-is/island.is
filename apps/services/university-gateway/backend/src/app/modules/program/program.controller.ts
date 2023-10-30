@@ -6,13 +6,8 @@ import {
 } from '@island.is/auth-nest-tools'
 import { Controller, Get, Param, Query } from '@nestjs/common'
 import { ProgramService } from './program.service'
-import {
-  ApiOkResponse,
-  ApiOperation,
-  ApiParam,
-  ApiQuery,
-  ApiTags,
-} from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
+import { Documentation } from '@island.is/nest/swagger'
 import { ProgramResponse } from './dto/programResponse'
 import { ProgramDetailsResponse } from './dto/programDetailsResponse'
 import { TagResponse } from './dto/tagResponse'
@@ -29,58 +24,62 @@ export class ProgramController {
 
   @BypassAuth()
   @Get()
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-    description:
-      'Limits the number of results in a request. The server should have a default value for this field.',
-  })
-  @ApiQuery({
-    name: 'before',
-    required: false,
-    description:
-      'The client provides the value of startCursor from the previous response pageInfo to query the previous page of limit number of data items.',
-  })
-  @ApiQuery({
-    name: 'after',
-    required: false,
-    description:
-      'The client provides the value of endCursor from the previous response to query the next page of limit number of data items.',
-  })
-  @ApiQuery({
-    name: 'active',
-    required: false,
-    description:
-      'If true, will return only active programs. If false, will return only inactive programs. If undefined, will return both active and inactive.',
-  })
-  @ApiQuery({
-    name: 'year',
-    required: false,
-    description: 'Starting semester year',
-  })
-  @ApiQuery({
-    name: 'season',
-    required: false,
-    description: 'Starting semester season',
-    enum: Season,
-  })
-  @ApiQuery({
-    name: 'universityId',
-    required: false,
-    description: 'University ID',
-  })
-  @ApiQuery({
-    name: 'degreeType',
-    required: false,
-    description: 'Degree type',
-    enum: DegreeType,
-  })
-  @ApiOkResponse({
-    type: ProgramResponse,
-    description: 'Returns all programs for the selected filtering',
-  })
-  @ApiOperation({
-    summary: 'Get all programs',
+  @Documentation({
+    description: 'Get all programs',
+    response: {
+      status: 200,
+      type: ProgramResponse,
+    },
+    request: {
+      query: {
+        limit: {
+          type: 'number',
+          description:
+            'Limits the number of results in a request. The server should have a default value for this field.',
+          required: false,
+        },
+        before: {
+          type: 'string',
+          description:
+            'The client provides the value of startCursor from the previous response pageInfo to query the previous page of limit number of data items.',
+          required: false,
+        },
+        after: {
+          type: 'string',
+          description:
+            'The client provides the value of endCursor from the previous response to query the next page of limit number of data items.',
+          required: false,
+        },
+        active: {
+          type: 'boolean',
+          description:
+            'If true, will return only active programs. If false, will return only inactive programs. If undefined, will return both active and inactive.',
+          required: false,
+        },
+        year: {
+          type: 'number',
+          description: 'Starting semester year',
+          required: false,
+        },
+        season: {
+          enum: Season,
+          enumName: 'Season',
+          description: 'Starting semester season',
+          required: false,
+        },
+        universityId: {
+          type: 'string',
+          description: 'University ID',
+          required: false,
+        },
+        degreeType: {
+          enum: DegreeType,
+          enumName: 'DegreeType',
+          description: 'Degree type',
+          required: false,
+        },
+      },
+    },
   })
   getPrograms(
     @Query('limit') limit: number,
@@ -106,18 +105,21 @@ export class ProgramController {
 
   @BypassAuth()
   @Get(':id')
-  @ApiParam({
-    name: 'id',
-    required: true,
-    allowEmptyValue: false,
-    description: 'Program ID',
-  })
-  @ApiOkResponse({
-    type: ProgramDetailsResponse,
-    description: 'Returns the program by ID',
-  })
-  @ApiOperation({
-    summary: 'Get program (and courses) by ID',
+  @Documentation({
+    description: 'Get program (and courses) by ID',
+    response: {
+      status: 200,
+      type: ProgramDetailsResponse,
+    },
+    request: {
+      params: {
+        id: {
+          type: 'string',
+          description: 'Program ID',
+          required: true,
+        },
+      },
+    },
   })
   getProgramDetails(@Param('id') id: string): Promise<ProgramDetailsResponse> {
     return this.programService.getProgramDetails(id)
@@ -125,12 +127,12 @@ export class ProgramController {
 
   @BypassAuth()
   @Get('tags')
-  @ApiOkResponse({
-    type: TagResponse,
-    description: 'Returns all tags',
-  })
-  @ApiOperation({
-    summary: 'Get all tags',
+  @Documentation({
+    description: 'Get all tags',
+    response: {
+      status: 200,
+      type: TagResponse,
+    },
   })
   getTags(): Promise<TagResponse> {
     return this.programService.getTags()
@@ -138,12 +140,12 @@ export class ProgramController {
 
   @BypassAuth()
   @Get('duration-in-years')
-  @ApiOkResponse({
-    type: [String],
-    description: 'Returns all possible values for duration in years',
-  })
-  @ApiOperation({
-    summary: 'Get all possible values for duration in years',
+  @Documentation({
+    description: 'Get all possible values for duration in years',
+    response: {
+      status: 200,
+      type: [String],
+    },
   })
   getDurationInYears(): Promise<string[]> {
     return this.programService.getDurationInYears()
