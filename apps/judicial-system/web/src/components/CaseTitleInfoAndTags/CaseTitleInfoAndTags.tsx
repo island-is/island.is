@@ -50,8 +50,9 @@ const CaseTitleInfoAndTags: React.FC = () => {
                     })}
               </Text>
             </Box>
-            {user?.institution?.type === InstitutionType.DISTRICT_COURT &&
-              workingCase.appealState === CaseAppealState.COMPLETED &&
+            {((user?.institution?.type === InstitutionType.DISTRICT_COURT &&
+              workingCase.appealState === CaseAppealState.COMPLETED) ||
+              user?.institution?.type === InstitutionType.COURT_OF_APPEALS) &&
               workingCase.appealReceivedByCourtDate && (
                 <Box marginTop={1}>
                   <Text as="h5" variant="h5">
