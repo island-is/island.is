@@ -690,7 +690,7 @@ export const notifications = {
         'Fyrirsögn í pósti til dómara og aðstoðarmanna dómara þegar máli er úthlutað í landsrétti',
     },
     forepersonBody: {
-      id: 'judicial.system.backend:notifications.coa_judged_assigned.foreperson.body',
+      id: 'judicial.system.backend:notifications.coa_judged_assigned.foreperson_body',
       defaultMessage:
         'Landsréttur hefur skráð þig sem dómsformann í máli nr. {caseNumber}. Þú getur nálgast yfirlit málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt.{linkEnd}',
     },

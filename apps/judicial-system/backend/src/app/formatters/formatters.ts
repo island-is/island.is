@@ -660,7 +660,7 @@ export function formatCourtOfAppealJudgeAssignedEmailNotification(
   formatMessage: FormatMessage,
   caseNumber: string,
   isForeperson: boolean,
-  foreperson: string,
+  forepersonName: string,
   role: UserRole,
   overviewUrl: string,
 ) {
@@ -676,7 +676,7 @@ export function formatCourtOfAppealJudgeAssignedEmailNotification(
     : formatMessage(notifications.COAJudgedAssigned.body, {
         role,
         caseNumber,
-        foreperson,
+        foreperson: forepersonName,
         linkStart: `<a href="${overviewUrl}">`,
         linkEnd: '</a>',
       })
