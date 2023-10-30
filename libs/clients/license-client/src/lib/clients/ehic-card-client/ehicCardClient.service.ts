@@ -28,7 +28,6 @@ export class EhicClient implements LicenseClient<BasicCardInfoDTO> {
       if (data.hasTempCard) {
         const pdfData = await api.getEhicPdfCard().catch(handle404)
 
-        this.logger.debug(pdfData)
         if (pdfData?.data) {
           return {
             ok: true,
