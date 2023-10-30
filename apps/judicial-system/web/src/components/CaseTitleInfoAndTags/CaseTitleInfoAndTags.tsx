@@ -6,6 +6,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 
 import {
   CaseAppealDecision,
+  CaseAppealState,
   InstitutionType,
   UserRole,
 } from '../../graphql/schema'
@@ -49,7 +50,8 @@ const CaseTitleInfoAndTags: React.FC = () => {
                     })}
               </Text>
             </Box>
-            {user?.institution?.type === InstitutionType.COURT_OF_APPEALS &&
+            {user?.institution?.type === InstitutionType.DISTRICT_COURT &&
+              workingCase.appealState === CaseAppealState.COMPLETED &&
               workingCase.appealReceivedByCourtDate && (
                 <Box marginTop={1}>
                   <Text as="h5" variant="h5">
