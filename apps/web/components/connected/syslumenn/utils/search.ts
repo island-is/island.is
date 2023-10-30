@@ -19,18 +19,16 @@ export const textSearch = (
   )
 }
 
-export const getSortedAndFilteredList = <T extends Record<string, string>>(
+export const getSortedAndFilteredList = <
+  T extends Record<string, string | null>,
+>(
   list: T[],
   searchTerms: string[],
   keys: (keyof T)[],
 ): T[] => {
   const fullSearchString: string = searchTerms.join(' ')
-  const itemsStartingWithFullSearchString: T[] = []
-  const itemsContainingAllTerm: T[] = []
 
   const startsWithFullSearchString = (item: T): boolean => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
     return keys.some((key) =>
       item[key]?.trim().toLowerCase().startsWith(fullSearchString),
     )
@@ -42,7 +40,9 @@ export const getSortedAndFilteredList = <T extends Record<string, string>>(
     )
   }
 
-  // Categorize the brokers into two arrays based on the matching criteria
+  const itemsStartingWithFullSearchString: T[] = []
+  const itemsContainingAllTerm: T[] = []
+
   for (const item of list) {
     if (startsWithFullSearchString(item)) {
       itemsStartingWithFullSearchString.push(item)
@@ -51,7 +51,7 @@ export const getSortedAndFilteredList = <T extends Record<string, string>>(
     }
   }
 
-  // Concatenate the arrays with, starting with the brokers that start with the full search string.
+  // Items that start with the full search string are fist in the list and then comes the rest
   return itemsStartingWithFullSearchString.concat(itemsContainingAllTerm)
 }
 

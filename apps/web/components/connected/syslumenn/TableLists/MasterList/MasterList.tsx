@@ -17,6 +17,7 @@ import {
 } from '@island.is/island-ui/core'
 import { sortAlpha } from '@island.is/shared/utils'
 import { SyslumennListCsvExport } from '@island.is/web/components'
+import { MasterLicence } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
@@ -29,6 +30,7 @@ import { GET_MASTER_LICENCES_QUERY } from './queries'
 
 const DEFAULT_PAGE_SIZE = 20
 const DEFAULT_TABLE_MIN_HEIGHT = '800px'
+const SEARCH_KEYS: (keyof MasterLicence)[] = ['name', 'dateOfPublication']
 
 interface MasterListProps {
   slice: ConnectedComponent
@@ -115,7 +117,7 @@ const MasterList = ({ slice }: MasterListProps) => {
         : licence.profession === filterLicenceProfession,
     ),
     searchTerms,
-    ['name', 'dateOfPublication'],
+    SEARCH_KEYS,
   )
 
   const pageSize = slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE

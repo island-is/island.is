@@ -10,7 +10,6 @@ import {
   VedbandayfirlitReguverkiSvarSkeyti,
   SkraningaradiliDanarbusSkeyti,
   TegundAndlags,
-  AdiliDanarbus,
   DanarbuUppl,
   EignirDanarbus,
   Fasteignasalar,
@@ -19,7 +18,7 @@ import {
   Taekifaerisleyfi,
   Verdbrefamidlari,
   Erfingar,
-  /** Malsvari,**/
+  Malsvari,
   Meistaraleyfi,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
@@ -52,13 +51,6 @@ import {
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
-type Malsvari = {
-  heimilisfang: string
-  netfang: string
-  nafn: string
-  kennitala: string
-  simi: string
-}
 export const cleanPropertyNumber = (propertyNumber: string): string => {
   const firstChar = propertyNumber.charAt(0).toUpperCase()
   return firstChar === 'F' || firstChar === 'L'
@@ -322,9 +314,7 @@ export const estateMemberMapper = (estateRaw: Erfingar): EstateMember => {
     name: estateRaw.nafn ?? '',
     nationalId: estateRaw.kennitala ?? '',
     relation: estateRaw.tengsl ?? 'Annað',
-    advocate: (estateRaw as { malsvari: Malsvari }).malsvari
-      ? mapAdvocate((estateRaw as { malsvari: Malsvari }).malsvari)
-      : undefined,
+    advocate: estateRaw.malsvari ? mapAdvocate(estateRaw.malsvari) : undefined,
   }
 }
 
