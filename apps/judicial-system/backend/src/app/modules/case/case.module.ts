@@ -25,6 +25,7 @@ import { InternalCaseController } from './internalCase.controller'
 import { InternalCaseService } from './internalCase.service'
 import { LimitedAccessCaseController } from './limitedAccessCase.controller'
 import { LimitedAccessCaseService } from './limitedAccessCase.service'
+import { PDFService } from './pdf.service'
 
 @Module({
   imports: [
@@ -42,7 +43,12 @@ import { LimitedAccessCaseService } from './limitedAccessCase.service'
     forwardRef(() => EventLogModule),
     SequelizeModule.forFeature([Case, CaseArchive]),
   ],
-  providers: [CaseService, InternalCaseService, LimitedAccessCaseService],
+  providers: [
+    CaseService,
+    InternalCaseService,
+    LimitedAccessCaseService,
+    PDFService,
+  ],
   controllers: [
     CaseController,
     InternalCaseController,

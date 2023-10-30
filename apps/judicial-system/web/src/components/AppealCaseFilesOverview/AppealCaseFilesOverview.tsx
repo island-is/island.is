@@ -88,19 +88,13 @@ const AppealCaseFilesOverview: React.FC<
             handleClick={() => onOpen(file.id)}
           >
             {file.category && file.category !== CaseFileCategory.APPEAL_RULING && (
-              <Box display="flex" alignItems="flexEnd" flexDirection="column">
+              <Box display="flex" flexDirection="column">
                 <Text>
-                  {`
-                       ${formatDate(
-                         file.created,
-                         'dd.MM.y',
-                       )}   kl. ${formatDate(
+                  {`${formatDate(file.created, 'dd.MM.y')} kl. ${formatDate(
                     file.created,
                     constants.TIME_FORMAT,
-                  )}
-                    `}
+                  )}`}
                 </Text>
-
                 <Text variant="small">
                   {formatMessage(strings.submittedBy, {
                     filesCategory: file.category?.includes('PROSECUTOR'),

@@ -1,0 +1,18 @@
+query getCertificateById($input: RightsPortalDrugCertificateInput!) {
+  rightsPortalGetCertificateById(input: $input) {
+    id
+    atcCode
+    atcName
+    drugName
+    date
+    validFrom
+    validTo
+    doctor
+    approved
+    comment
+    documentId
+    methylDoctors {
+      name
+    }
+  }
+}

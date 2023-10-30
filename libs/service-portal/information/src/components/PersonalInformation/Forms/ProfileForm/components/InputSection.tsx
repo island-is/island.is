@@ -1,5 +1,5 @@
 import React, { FC, ReactNode } from 'react'
-import { Text, Divider, Box, LoadingDots } from '@island.is/island-ui/core'
+import { Text, Divider, Box, SkeletonLoader } from '@island.is/island-ui/core'
 
 interface Props {
   title: string
@@ -25,7 +25,7 @@ export const InputSection: FC<React.PropsWithChildren<Props>> = ({
       {!loading && <Box marginBottom={4}>{children}</Box>}
       {loading && (
         <Box paddingBottom={3}>
-          <LoadingDots />
+          <SkeletonLoader />
         </Box>
       )}
       <Divider />

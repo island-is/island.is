@@ -81,11 +81,7 @@ import { UploadSignedFileResponseDto } from './dto/uploadSignedFile.response.dto
 import { AssignApplicationDto } from './dto/assignApplication.dto'
 import { verifyToken } from './utils/tokenUtils'
 import { getApplicationLifecycle } from './utils/application'
-import {
-  DecodedAssignmentToken,
-  StateChangeResult,
-  TemplateAPIModuleActionResult,
-} from './types'
+import { DecodedAssignmentToken } from './types'
 import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
 import { Application } from '@island.is/application/api/core'
@@ -101,6 +97,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
+import { ApplicationActionService } from './application-action.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -132,6 +129,7 @@ export class ApplicationController<
     private readonly historyService: HistoryService,
     private readonly templateApiActionRunner: TemplateApiActionRunner,
     private readonly templateService: TemplateService,
+    private readonly applicationActionService: ApplicationActionService,
   ) {}
 
   @Scopes(ApplicationScope.read)
@@ -440,12 +438,13 @@ export class ApplicationController<
 
     if (onEnterStateAction) {
       const { updatedApplication: withUpdatedExternalData } =
-        await this.performActionOnApplication(
+        await this.applicationActionService.performActionOnApplication(
           actionDto,
           template,
           user,
           onEnterStateAction,
           locale,
+          'SUBMIT',
         )
 
       //Programmers responsible for handling failure status
@@ -537,7 +536,7 @@ export class ApplicationController<
       hasError,
       error,
       application: updatedApplication,
-    } = await this.changeState(
+    } = await this.applicationActionService.changeState(
       mergedApplication,
       template,
       DefaultEvents.ASSIGN,
@@ -792,7 +791,7 @@ export class ApplicationController<
       hasError,
       error,
       application: updatedApplication,
-    } = await this.changeState(
+    } = await this.applicationActionService.changeState(
       mergedApplication,
       template,
       updateApplicationStateDto.event,
@@ -822,195 +821,6 @@ export class ApplicationController<
     }
 
     return existingApplication
-  }
-
-  async performActionOnApplication(
-    application: BaseApplication,
-    template: ApplicationTemplate<
-      ApplicationContext,
-      ApplicationStateSchema<EventObject>,
-      EventObject
-    >,
-    auth: User,
-    apis: TemplateApi | TemplateApi[],
-    locale: Locale,
-  ): Promise<TemplateAPIModuleActionResult> {
-    if (!Array.isArray(apis)) {
-      apis = [apis]
-    }
-
-    this.logger.debug(
-      `Performing actions ${apis
-        .map((api) => api.action)
-        .join(', ')} on ${JSON.stringify(template.name)}`,
-    )
-    const namespaces =
-      await this.templateService.getApplicationTranslationNamespaces(
-        application,
-      )
-    const intl = await this.intlService.useIntl(namespaces, locale)
-
-    const updatedApplication = await this.templateApiActionRunner.run(
-      application,
-      apis,
-      auth,
-      locale,
-      intl.formatMessage,
-    )
-
-    for (const api of apis) {
-      const result =
-        updatedApplication.externalData[api.externalDataId || api.action]
-
-      this.logger.debug(
-        `Performing action ${api.action} on ${JSON.stringify(
-          template.name,
-        )} ended with ${result.status}`,
-      )
-
-      if (result.status === 'failure' && api.throwOnError) {
-        return {
-          updatedApplication,
-          hasError: true,
-          error: result.reason,
-        }
-      }
-    }
-
-    this.logger.debug(
-      `Updated external data for application with ID ${updatedApplication.id}`,
-    )
-
-    return {
-      updatedApplication,
-      hasError: false,
-    }
-  }
-
-  private async changeState(
-    application: BaseApplication,
-    template: ApplicationTemplate<
-      ApplicationContext,
-      ApplicationStateSchema<EventObject>,
-      EventObject
-    >,
-    event: string,
-    auth: User,
-    locale: Locale,
-  ): Promise<StateChangeResult> {
-    const helper = new ApplicationTemplateHelper(application, template)
-    const onExitStateAction = helper.getOnExitStateAPIAction(application.state)
-    let updatedApplication: BaseApplication = application
-
-    await this.applicationService.clearNonces(updatedApplication.id)
-    if (onExitStateAction) {
-      const {
-        hasError,
-        error,
-        updatedApplication: withUpdatedExternalData,
-      } = await this.performActionOnApplication(
-        updatedApplication,
-        template,
-        auth,
-        onExitStateAction,
-        locale,
-      )
-      updatedApplication = withUpdatedExternalData
-
-      if (hasError) {
-        return {
-          hasChanged: false,
-          application: updatedApplication,
-          error,
-          hasError: true,
-        }
-      }
-    }
-
-    const [hasChanged, newState, withUpdatedState] =
-      new ApplicationTemplateHelper(updatedApplication, template).changeState(
-        event,
-      )
-    updatedApplication = {
-      ...updatedApplication,
-      answers: withUpdatedState.answers,
-      assignees: withUpdatedState.assignees,
-      state: withUpdatedState.state,
-    }
-
-    if (!hasChanged) {
-      return {
-        hasChanged: false,
-        hasError: false,
-        application: updatedApplication,
-      }
-    }
-
-    const onEnterStateAction = new ApplicationTemplateHelper(
-      updatedApplication,
-      template,
-    ).getOnEntryStateAPIAction(newState)
-
-    if (onEnterStateAction) {
-      const {
-        hasError,
-        error,
-        updatedApplication: withUpdatedExternalData,
-      } = await this.performActionOnApplication(
-        updatedApplication,
-        template,
-        auth,
-        onEnterStateAction,
-        locale,
-      )
-      updatedApplication = withUpdatedExternalData
-
-      if (hasError) {
-        return {
-          hasError: true,
-          hasChanged: false,
-          error: error,
-          application,
-        }
-      }
-    }
-
-    const status = new ApplicationTemplateHelper(
-      updatedApplication,
-      template,
-    ).getApplicationStatus()
-
-    try {
-      const update = await this.applicationService.updateApplicationState(
-        application.id,
-        newState,
-        updatedApplication.answers,
-        updatedApplication.assignees,
-        status,
-        getApplicationLifecycle(updatedApplication, template),
-      )
-
-      updatedApplication = update.updatedApplication as BaseApplication
-      await this.historyService.saveStateTransition(
-        application.id,
-        newState,
-        event,
-      )
-    } catch (e) {
-      this.logger.error(e)
-      return {
-        hasChanged: false,
-        hasError: true,
-        application,
-        error: 'Could not update application',
-      }
-    }
-
-    return {
-      hasChanged: true,
-      application: updatedApplication,
-      hasError: false,
-    }
   }
 
   @Scopes(ApplicationScope.write)
