@@ -465,7 +465,7 @@ export const m = defineMessages({
     description: '',
   },
   moneyAndDepositDescription: {
-    id: 'es.application:moneyAndDepositDescription',
+    id: 'es.application:moneyAndDepositDescription#markdown',
     defaultMessage: 'Nafn og kennitala ef um einstakling er að ræða',
     description: '',
   },

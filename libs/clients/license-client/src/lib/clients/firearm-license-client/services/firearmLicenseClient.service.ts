@@ -28,6 +28,8 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
     private smartApi: SmartSolutionsApi,
   ) {}
 
+  clientSupportsPkPass = true
+
   private checkLicenseValidityForPkPass(
     data: FirearmLicenseDto,
   ): LicensePkPassAvailability {

@@ -1121,7 +1121,7 @@ const useSections = (
                 ),
                 isActive: routeIndex === 0,
                 href:
-                  (section.children.length > 0 && section.children[5].href) ||
+                  (section.children.length > 0 && section.children[0].href) ||
                   undefined,
               },
               {
