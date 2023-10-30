@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "api-template.fullname" . }}
+  name: {{ include "api-template.name" . }}
   {{- if .Values.namespace }}
   namespace: {{ .Values.namespace }}
   {{- end }}
@@ -11,7 +11,7 @@ metadata:
     {{- include "api-template.labels" . | nindent 4 }}
     tags.datadoghq.com/env: {{ .Values.global.env.name }}
     tags.datadoghq.com/service: {{ include "api-template.name" . }}
-    tags.datadoghq.com/version: {{ default .Values.image.tag }}
+    tags.datadoghq.com/version: {{ .Values.image.tag | default .Values.global.image.tag }}
 spec:
   replicas: {{ .Values.replicaCount.default }}
   strategy:
@@ -25,7 +25,7 @@ spec:
         {{- include "api-template.selectorLabels" . | nindent 8 }}
         tags.datadoghq.com/env: {{ .Values.global.env.name }}
         tags.datadoghq.com/service: {{ include "api-template.name" . }}
-        tags.datadoghq.com/version: {{ default .Values.image.tag }}
+        tags.datadoghq.com/version: {{ .Values.image.tag | default .Values.global.image.tag }}
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: /metrics
@@ -69,7 +69,7 @@ spec:
         - name: {{ .name | default "migration" }}
           securityContext:
             {{- toYaml $.Values.securityContext | nindent 12 }}
-          image: "{{ .image }}"
+          image: "{{ if .image }}{{ .image }}{{ else }}{{ $.Values.image.repository }}:{{ $.Values.image.tag | default $.Values.global.image.tag }}{{ end }}"
           command: {{ .command | toJson }}
           args: {{ .args | toJson }}
           env:
@@ -89,7 +89,7 @@ spec:
                   key: {{ $key }}
             {{- end }}
             - name: APP_VERSION
-              value: {{ default $.Values.image.tag }}
+              value: {{ $.Values.image.tag | default $.Values.global.image.tag }}
             - name: DD_ENV
               valueFrom:
                 fieldRef:
@@ -123,7 +123,7 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository}}/{{ .Values.image.name }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Values.global.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if .Values.command }}
           command: {{ .Values.command | toJson }}
@@ -160,7 +160,7 @@ spec:
                   key: {{ $key }}
             {{- end }}
             - name: APP_VERSION
-              value: {{ .Values.image.tag }}
+              value: {{ .Values.image.tag | default .Values.global.image.tag }}
             - name: DD_ENV
               valueFrom:
                 fieldRef:
