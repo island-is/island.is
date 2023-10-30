@@ -1,14 +1,9 @@
-import {
-  Box,
-  BoxProps,
-  SkeletonLoader,
-  Tooltip,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, BoxProps, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import * as styles from './InstitutionPanel.css'
 import React from 'react'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
+import { Tooltip } from '../ToolTip/ToolTip'
 
 interface InstitutionPanelProps {
   title?: string
@@ -69,7 +64,7 @@ export const InstitutionPanel = ({
             )}
             {tooltipText && (
               <div className={styles.tooltip}>
-                <Tooltip placement="top" text={tooltipText} />
+                <Tooltip placement="top" text={tooltipText} variant="light" />
               </div>
             )}
           </Box>

@@ -2,6 +2,7 @@ import React, { ElementType, FC, ReactElement } from 'react'
 import cn from 'classnames'
 import {
   Tooltip as ReakitTooltip,
+  TooltipArrow,
   TooltipReference,
   useTooltipState,
 } from 'reakit'
@@ -59,6 +60,7 @@ interface TooltipProps {
   fullWidth?: boolean
   renderInPortal?: boolean
   as?: ElementType
+  variant?: 'light' | 'dark'
 }
 
 export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
@@ -70,6 +72,7 @@ export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
   as = 'span',
   fullWidth,
   renderInPortal = true,
+  variant = 'dark',
 }) => {
   const tooltip = useTooltipState({
     animated: 250,
@@ -91,12 +94,22 @@ export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
           <Icon icon="informationCircle" color={color} size={iconSize} />
         </TooltipReference>
       )}
-      <ReakitTooltip {...tooltip} unstable_portal={renderInPortal}>
+      <ReakitTooltip
+        {...tooltip}
+        unstable_portal={renderInPortal}
+        className={styles.z}
+      >
         <div
           className={cn(styles.tooltip, {
             [styles.fullWidth]: fullWidth,
+            [styles.light]: variant === 'light',
           })}
         >
+          {variant === 'light' && (
+            <TooltipArrow {...tooltip}>
+              <ArrowIcon placement={tooltip.placement} />
+            </TooltipArrow>
+          )}
           {text}
         </div>
       </ReakitTooltip>
