@@ -162,12 +162,12 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
 
     isNotEligibleLabel: {
-      id: 'oap.application:no.label',
+      id: 'oap.application:is.not.eligible.label',
       defaultMessage: 'Því miður hefur þú ekki rétt á ellilífeyri',
       description: 'Unfortunately, you are not entitled to old-age pension',
     },
     isNotEligibleDescription: {
-      id: 'oap.application:no.description#markdown',
+      id: 'oap.application:is.not.eligible.description#markdown',
       defaultMessage:
         'Ástæður fyrir því gætu verið eftirfarandi.\n* Þú ert ellilífeyrisþegi eða með umsókn um ellilífeyri í vinnslu.\n\nEf þú telur þessi atriði ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
       description:
