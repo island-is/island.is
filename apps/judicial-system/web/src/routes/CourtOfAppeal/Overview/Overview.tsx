@@ -2,11 +2,12 @@ import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
+  AlertBanner,
   CaseFilesAccordionItem,
   Conclusion,
   FormContentContainer,
@@ -17,12 +18,12 @@ import {
   PageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import CaseTitleInfoAndTags from '@island.is/judicial-system-web/src/components/CaseTitleInfoAndTags/CaseTitleInfoAndTags'
 import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
-import CaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 
 const CourtOfAppealOverview: React.FC<
   React.PropsWithChildren<unknown>
@@ -30,7 +31,7 @@ const CourtOfAppealOverview: React.FC<
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
-  const { title, description } = useAppealAlertBanner(workingCase)
+  const { title, description, child } = useAppealAlertBanner(workingCase)
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { user } = useContext(UserContext)
@@ -38,9 +39,12 @@ const CourtOfAppealOverview: React.FC<
   const handleNavigationTo = (destination: string) =>
     router.push(`${destination}/${workingCase.id}`)
 
+  console.log(child)
   return (
     <>
-      <AlertBanner variant="warning" title={title} description={description} />
+      <AlertBanner variant="warning" title={title} description={description}>
+        {child}
+      </AlertBanner>
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
@@ -49,7 +53,7 @@ const CourtOfAppealOverview: React.FC<
       >
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>
-          <CaseOverviewHeader />
+          <CaseTitleInfoAndTags />
           <Box marginBottom={5}>
             <InfoCard
               defendants={
