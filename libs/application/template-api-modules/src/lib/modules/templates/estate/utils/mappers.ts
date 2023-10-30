@@ -123,7 +123,8 @@ export const expandEstateMembers = (
       nationalId: member.nationalId ?? '',
       ssn: member.ssn ?? '',
       phone: member.phone ?? '',
-      relation: member.relation ?? 'Óþekkt',
+      relation: member.relation ?? '',
+      relationWithApplicant: member.relationWithApplicant ?? '',
       advocate: {
         address: member.advocate?.address ?? '',
         email: member.advocate?.email ?? '',
