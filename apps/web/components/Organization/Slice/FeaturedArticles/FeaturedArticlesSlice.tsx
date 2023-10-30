@@ -67,6 +67,7 @@ export const FeaturedArticlesSlice: React.FC<
               : slice.articles
             ).map((article) => {
               const url = linkResolver('Article' as LinkType, [article.slug])
+
               return (
                 <FocusableBox
                   key={article.slug}
@@ -74,15 +75,15 @@ export const FeaturedArticlesSlice: React.FC<
                   href={url.href}
                 >
                   <TopicCard
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore make web strict
-                    tag={
-                      hasProcessEntries(article as Article) &&
-                      n(
-                        article.processEntryButtonText || 'application',
-                        'Umsókn',
-                      )
-                    }
+                    {...(hasProcessEntries(article as Article) ||
+                    article.processEntryButtonText
+                      ? {
+                          tag: n(
+                            article.processEntryButtonText || 'application',
+                            'Umsókn',
+                          ),
+                        }
+                      : {})}
                   >
                     {article.title}
                   </TopicCard>
