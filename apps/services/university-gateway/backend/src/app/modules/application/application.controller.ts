@@ -9,14 +9,8 @@ import {
 import { UniversityGatewayScope } from '@island.is/auth/scopes'
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
 import { ApplicationService } from './application.service'
-import {
-  ApiBody,
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiParam,
-  ApiTags,
-} from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
+import { Documentation } from '@island.is/nest/swagger'
 import { Application } from './model/application'
 import { ApplicationResponse } from './dto/applicationResponse'
 import { CreateApplicationDto } from './dto/createApplicationDto'
@@ -33,18 +27,22 @@ export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
   @Get(':id')
-  @ApiParam({
-    name: 'id',
-    required: true,
-    allowEmptyValue: false,
-    description: 'Application ID',
-  })
-  @ApiOkResponse({
-    type: ApplicationResponse,
-    description: 'Returns the application by ID',
-  })
-  @ApiOperation({
-    summary: 'Get application by ID (only status for now) for logged in user',
+  @Documentation({
+    description:
+      'Get application by ID (only status for now) for logged in user',
+    response: {
+      status: 200,
+      type: ApplicationResponse,
+    },
+    request: {
+      params: {
+        id: {
+          type: 'string',
+          description: 'Application ID',
+          required: true,
+        },
+      },
+    },
   })
   getApplication(
     @Param('id') id: string,
@@ -54,15 +52,12 @@ export class ApplicationController {
   }
 
   @Post()
-  @ApiBody({
-    type: CreateApplicationDto,
-  })
-  @ApiCreatedResponse({
-    type: Application,
-    description: 'Returns the application that was created',
-  })
-  @ApiOperation({
-    summary: 'Create application for logged in user',
+  @Documentation({
+    description: 'Create application for logged in user',
+    response: {
+      status: 201,
+      type: Application,
+    },
   })
   createApplication(
     @Body() applicationDto: CreateApplicationDto,
@@ -72,21 +67,21 @@ export class ApplicationController {
   }
 
   @Patch(':id')
-  @ApiParam({
-    name: 'id',
-    required: true,
-    allowEmptyValue: false,
-    description: 'Application ID',
-  })
-  @ApiBody({
-    type: UpdateApplicationDto,
-  })
-  @ApiOkResponse({
-    type: Application,
-    description: 'Returns the updated application',
-  })
-  @ApiOperation({
-    summary: 'Update application (only status for now) for logged in user',
+  @Documentation({
+    description: 'Update application (only status for now) for logged in user',
+    response: {
+      status: 200,
+      type: Application,
+    },
+    request: {
+      params: {
+        id: {
+          type: 'string',
+          description: 'Application ID',
+          required: true,
+        },
+      },
+    },
   })
   updateApplication(
     @Param('id') id: string,

@@ -56,5 +56,5 @@
       }
     }
   },
-  "tags": ["scope:services/university-gateway", "scope:nest-TODOx"]
+  "tags": ["scope:nest-TODOx"]
 }

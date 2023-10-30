@@ -6,7 +6,8 @@ import {
 } from '@island.is/auth-nest-tools'
 import { Controller, Get } from '@nestjs/common'
 import { UniversityService } from './university.service'
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
+import { Documentation } from '@island.is/nest/swagger'
 import { UniversityResponse } from './dto/universityResponse'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -20,12 +21,12 @@ export class UniversityController {
 
   @BypassAuth()
   @Get()
-  @ApiOkResponse({
-    type: UniversityResponse,
-    description: 'Returns all universities',
-  })
-  @ApiOperation({
-    summary: 'Get all universities',
+  @Documentation({
+    description: 'Get all universities',
+    response: {
+      status: 200,
+      type: UniversityResponse,
+    },
   })
   getUniversities(): Promise<UniversityResponse> {
     return this.universityService.getUniversities()
