@@ -4,25 +4,31 @@ import {
   UniversityApi,
 } from '@island.is/clients/university-gateway-api'
 import { CmsContentfulService } from '@island.is/cms'
-import { GetProgramByIdInput, ProgramsPaginated } from './graphql/dto'
-import { ProgramDetails, ProgramFilter, University } from './graphql/models'
+import {
+  UniversityGatewayGetPogramInput,
+  UniversityGatewayProgramsPaginated,
+} from './graphql/dto'
+import {
+  UniversityGatewayProgramDetails,
+  UniversityGatewayProgramFilter,
+  UniversityGatewayUniversity,
+} from './graphql/models'
 import {
   DegreeType,
   ModeOfDelivery,
   Season,
-} from '@island.is/university-gateway-lib'
+} from '@island.is/university-gateway'
 
 const defaultLang = 'is'
-export
 @Injectable()
-class UniversityGatewayApi {
+export class UniversityGatewayApi {
   constructor(
     private readonly programApi: ProgramApi,
     private readonly universityApi: UniversityApi,
     private readonly cmsContentfulService: CmsContentfulService,
   ) {}
 
-  async getActivePrograms(): Promise<ProgramsPaginated> {
+  async getActivePrograms(): Promise<UniversityGatewayProgramsPaginated> {
     const res = await this.programApi.programControllerGetPrograms({
       active: true,
     })
@@ -69,7 +75,9 @@ class UniversityGatewayApi {
     }
   }
 
-  async getProgramById(input: GetProgramByIdInput): Promise<ProgramDetails> {
+  async getProgramById(
+    input: UniversityGatewayGetPogramInput,
+  ): Promise<UniversityGatewayProgramDetails> {
     const res = await this.programApi.programControllerGetProgramDetails({
       id: input.id,
     })
@@ -139,7 +147,7 @@ class UniversityGatewayApi {
     }
   }
 
-  async getUniversities(): Promise<University[]> {
+  async getUniversities(): Promise<UniversityGatewayUniversity[]> {
     const res = await this.universityApi.universityControllerGetUniversities()
 
     const referenceIdentifierSet = res.data?.map((i: any) => i.contentfulKey)
@@ -178,7 +186,7 @@ class UniversityGatewayApi {
     })
   }
 
-  async getProgramFilters(): Promise<ProgramFilter[]> {
+  async getProgramFilters(): Promise<UniversityGatewayProgramFilter[]> {
     return [
       {
         field: 'degreeType',

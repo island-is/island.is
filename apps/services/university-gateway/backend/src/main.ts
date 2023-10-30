@@ -9,4 +9,5 @@ bootstrap({
   port: 3380,
   swaggerPath: '/api/swagger',
   openApi,
+  enableVersioning: true,
 })

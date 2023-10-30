@@ -1,8 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-export
-@ObjectType('Program')
-class Program {
+@ObjectType('UniversityGatewayProgram')
+export class UniversityGatewayProgram {
   @Field()
   id!: string
 
@@ -78,16 +77,15 @@ class Program {
   @Field(() => [String])
   searchKeywords!: string[]
 
-  @Field(() => [ProgramTag])
-  tag!: ProgramTag[]
+  @Field(() => [UniversityGatewayProgramTag])
+  tag!: UniversityGatewayProgramTag[]
 
   @Field(() => [String])
   modeOfDelivery!: string[]
 }
 
-export
-@ObjectType('ProgramDetails')
-class ProgramDetails extends Program {
+@ObjectType('UniversityGatewayProgramDetails')
+export class UniversityGatewayProgramDetails extends UniversityGatewayProgram {
   @Field({ nullable: true })
   externalUrlIs?: string
 
@@ -112,15 +110,15 @@ class ProgramDetails extends Program {
   @Field({ nullable: true })
   costInformationEn?: string
 
-  @Field(() => [ProgramCourse])
-  courses!: ProgramCourse[]
+  @Field(() => [UniversityGatewayProgramCourse])
+  courses!: UniversityGatewayProgramCourse[]
 
-  // @Field(() => [ProgramExtraApplicationField])
-  // extraApplicationFields!: ProgramExtraApplicationField[]
+  // @Field(() => [UniversityGatewayProgramExtraApplicationField])
+  // extraApplicationFields!: UniversityGatewayProgramExtraApplicationField[]
 }
 
-@ObjectType('ProgramCourse')
-class ProgramCourse {
+@ObjectType('UniversityGatewayProgramCourse')
+class UniversityGatewayProgramCourse {
   @Field()
   id!: string
 
@@ -161,8 +159,8 @@ class ProgramCourse {
   requirement!: string
 }
 
-@ObjectType('ProgramTag')
-class ProgramTag {
+@ObjectType('UniversityGatewayProgramTag')
+class UniversityGatewayProgramTag {
   @Field()
   id!: string
 
@@ -176,8 +174,8 @@ class ProgramTag {
   nameEn!: string
 }
 
-// @ObjectType('ProgramExtraApplicationField')
-// class ProgramExtraApplicationField {
+// @ObjectType('UniversityGatewayProgramExtraApplicationField')
+// class UniversityGatewayProgramExtraApplicationField {
 //   @Field()
 //   externalId!: string
 

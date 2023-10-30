@@ -1,6 +1,0 @@
-export * from './applicationStatus'
-export * from './degreeType'
-export * from './fieldType'
-export * from './modeOfDelivery'
-export * from './requirement'
-export * from './season'

@@ -58,7 +58,8 @@
     "postinstall": "node -e 'process.exit(process.env.CI || process.env.SKIP_POSTINSTALL ? 0 : 1);' || node ./scripts/postinstall.js",
     "check-tags": "yarn ts scripts/check-tags.ts",
     "charts": "cd ./infra && yarn charts",
-    "infra": "cd ./infra && yarn cli"
+    "infra": "cd ./infra && yarn cli",
+    "hmr-benchmark": "node -r esbuild-register scripts/hmr-benchmark.ts"
   },
   "dependencies": {
     "@apollo/client": "3.7.15",
@@ -104,7 +105,7 @@
     "@nestjs/platform-express": "10.0.5",
     "@nestjs/sequelize": "9.0.2",
     "@nestjs/swagger": "7.1.1",
-    "@nestjs/terminus": "9.2.2",
+    "@nestjs/terminus": "10.1.1",
     "@react-pdf/renderer": "^3.1.9",
     "@rehooks/component-size": "1.0.3",
     "@sindresorhus/slugify": "1.0.0",
@@ -130,6 +131,7 @@
     "apollo-datasource-rest": "0.9.2",
     "apollo-server-express": "3.10.2",
     "apollo-server-plugin-response-cache": "3.8.2",
+    "archiver": "6.0.1",
     "aws-elasticsearch-connector": "9.0.0",
     "aws-sdk": "2.814.0",
     "aws4": "1.11.0",
@@ -149,7 +151,7 @@
     "cookie-parser": "1.4.5",
     "copy-to-clipboard": "3.3.1",
     "core-js": "3.6.5",
-    "crypto-js": "4.1.1",
+    "crypto-js": "4.2.0",
     "csv-stringify": "5.6.5",
     "cypress-promise": "1.1.0",
     "dataloader": "2.1.0",
@@ -172,7 +174,6 @@
     "formik": "2.2.9",
     "framer-motion": "6.5.1",
     "fridagar": "^3.2.0",
-    "fuse.js": "6.6.2",
     "geoip-lite": "1.4.7",
     "glob": "7.1.6",
     "graphql": "16.6.0",
@@ -245,7 +246,7 @@
     "react-keyed-flatten-children": "1.2.0",
     "react-modal": "3.15.1",
     "react-number-format": "4.9.1",
-    "react-pdf": "5.2.0",
+    "react-pdf": "7.5.0",
     "react-popper": "2.3.0",
     "react-remove-scroll": "2.5.6",
     "react-router-dom": "6.11.2",
@@ -293,8 +294,8 @@
     "xml2js": "0.4.23",
     "xstate": "4.20.0",
     "yargs": "17.7.2",
-    "zod": "^3.21.2",
-    "zod-form-data": "^2.0.0"
+    "zod": "3.22.4",
+    "zod-form-data": "2.0.2"
   },
   "devDependencies": {
     "@anatine/esbuild-decorators": "0.2.4",
@@ -471,6 +472,7 @@
     "trim-newlines": "3.0.1",
     "normalize-url": "4.5.1",
     "dicer": "0.3.0",
+    "xmldom": "github:xmldom/xmldom#0.7.0",
     "tar": "6.1.9",
     "url-parse": "1.5.2",
     "path-parse": "1.0.7",

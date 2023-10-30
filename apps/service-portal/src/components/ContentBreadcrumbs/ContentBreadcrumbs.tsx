@@ -6,10 +6,10 @@ import { useWindowSize } from 'react-use'
 import {
   Box,
   BreadcrumbsDeprecated as Breadcrumbs,
-  Icon,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
+  GoBack,
   ServicePortalNavigationItem,
   m,
   useDynamicRoutesWithNavigation,
@@ -95,7 +95,7 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
 
   findBreadcrumbsPath(navigation, [])
 
-  const isMobile = width < theme.breakpoints.sm
+  const isMobile = width < theme.breakpoints.md
   if (items.length < 2) return null
 
   return (
@@ -106,7 +106,6 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
       alignItems="center"
       paddingBottom={[2, 3]}
       paddingTop={[4, 4, 0]}
-      paddingLeft="p2"
     >
       <Box className={styles.breadcrumbs} paddingTop={0} position="relative">
         <Breadcrumbs color="blue400" separatorColor="blue400">
@@ -119,7 +118,9 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
                   ? formatMessage(m.overview)
                   : formatMessage(item.name)}
               </Link>
-            ) : null,
+            ) : (
+              <GoBack noUnderline={true} display="inline" />
+            ),
           )}
         </Breadcrumbs>
       </Box>

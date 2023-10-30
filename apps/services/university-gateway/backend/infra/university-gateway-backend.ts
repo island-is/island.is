@@ -43,7 +43,7 @@ export const serviceSetup =
             prod: 'university-gateway',
           },
           paths: ['/api'],
-          public: true,
+          public: false,
         },
       })
       .replicaCount({

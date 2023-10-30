@@ -10,7 +10,7 @@ import * as styles from './DocumentActionBar.css'
 import { GetDocumentListInput } from '@island.is/api/schema'
 import { Tooltip, m } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
-import { ActiveDocumentType } from '../../screens/Overview/Overview'
+import { ActiveDocumentType } from '../../lib/types'
 
 export type DocumentActionBarProps = {
   onPrintClick?: () => void
@@ -121,10 +121,10 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
         )}
         {activeDocument &&
           (activeDocument.document.content || activeDocument.document.html) && (
-            <Tooltip placement="top" as="span" text={formatMessage(m.download)}>
+            <Tooltip as="span" text={formatMessage(m.download)}>
               <a
                 download={`${activeDocument.subject}${
-                  activeDocument.document.html ? '.html' : ''
+                  activeDocument.document.html ? '.html' : '.pdf'
                 }`}
                 href={getDocumentLink(
                   activeDocument,

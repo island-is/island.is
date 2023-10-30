@@ -8,7 +8,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Application } from './application'
-import { ApplicationStatus } from '@island.is/university-gateway-lib'
+import { ApplicationStatus } from '@island.is/university-gateway'
 
 @Table({
   tableName: 'application_status_history',
@@ -34,14 +34,7 @@ export class ApplicationStatusHistory extends Model {
     values: Object.values(ApplicationStatus),
     allowNull: false,
   })
-  oldStatus!: ApplicationStatus
-
-  @Column({
-    type: DataType.ENUM,
-    values: Object.values(ApplicationStatus),
-    allowNull: false,
-  })
-  newStatus!: ApplicationStatus
+  status!: ApplicationStatus
 
   @CreatedAt
   readonly created!: Date

@@ -7,6 +7,8 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ConfigModule } from '@nestjs/config'
 import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
+import { ReykjavikUniversityApplicationClientConfig } from '@island.is/clients/university-application/reykjavik-university'
+import { UniversityOfIcelandApplicationClientConfig } from '@island.is/clients/university-application/university-of-iceland'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 import { environment } from '../environments'
 
@@ -25,7 +27,12 @@ import { environment } from '../environments'
     }),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [IdsClientConfig, XRoadConfig],
+      load: [
+        IdsClientConfig,
+        XRoadConfig,
+        ReykjavikUniversityApplicationClientConfig,
+        UniversityOfIcelandApplicationClientConfig,
+      ],
     }),
   ],
   controllers: [],

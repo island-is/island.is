@@ -4,21 +4,17 @@ import { CourseController } from './course.controller'
 import { CourseService } from './course.service'
 import { InternalCourseController } from './internalCourse.controller'
 import { InternalCourseService } from './internalCourse.service'
-import { Course } from './model'
-import { University } from '../university/model'
-import { ProgramCourse, ProgramMinor, ProgramTable } from '../program/model'
-import {
-  ReykjavikUniversityApplicationClientConfig,
-  ReykjavikUniversityApplicationClientModule,
-} from '@island.is/clients/university-application/reykjavik-university'
-import {
-  UniversityOfIcelandApplicationClientConfig,
-  UniversityOfIcelandApplicationClientModule,
-} from '@island.is/clients/university-application/university-of-iceland'
-import { ConfigModule } from '@nestjs/config'
+import { Course } from './model/course'
+import { University } from '../university'
+import { ProgramCourse, ProgramMinor, ProgramTable } from '../program'
+import { ReykjavikUniversityApplicationClientModule } from '@island.is/clients/university-application/reykjavik-university'
+import { UniversityOfIcelandApplicationClientModule } from '@island.is/clients/university-application/university-of-iceland'
+import { AuditModule } from '@island.is/nest/audit'
+import { environment } from '../../../environments'
 
 @Module({
   imports: [
+    AuditModule.forRoot(environment.audit),
     SequelizeModule.forFeature([
       University,
       Course,
@@ -28,13 +24,6 @@ import { ConfigModule } from '@nestjs/config'
     ]),
     ReykjavikUniversityApplicationClientModule,
     UniversityOfIcelandApplicationClientModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [
-        ReykjavikUniversityApplicationClientConfig,
-        UniversityOfIcelandApplicationClientConfig,
-      ],
-    }),
   ],
   controllers: [InternalCourseController, CourseController],
   providers: [InternalCourseService, CourseService],

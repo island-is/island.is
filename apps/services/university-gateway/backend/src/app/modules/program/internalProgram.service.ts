@@ -1,25 +1,19 @@
 import { Injectable } from '@nestjs/common'
-import {
-  ProgramExtraApplicationField,
-  ProgramMinor,
-  ProgramModeOfDelivery,
-  ProgramTable,
-  ProgramTag,
-  Tag,
-} from './model'
 import { InjectModel } from '@nestjs/sequelize'
-import { University } from '../university/model'
+import { Tag } from './model/tag'
+import { ProgramTable } from './model/program'
+import { ProgramTag } from './model/programTag'
+import { ProgramModeOfDelivery } from './model/programModeOfDelivery'
+import { ProgramExtraApplicationField } from './model/programExtraApplicationField'
+import { University } from '../university'
 import { ReykjavikUniversityApplicationClient } from '@island.is/clients/university-application/reykjavik-university'
 import { UniversityOfIcelandApplicationClient } from '@island.is/clients/university-application/university-of-iceland'
-import {
-  IProgram,
-  UniversityNationalIds,
-} from '@island.is/university-gateway-lib'
+import { IProgram, UniversityNationalIds } from '@island.is/university-gateway'
 import { logger } from '@island.is/logging'
+import { ProgramMinor } from './model'
 
-export
 @Injectable()
-class InternalProgramService {
+export class InternalProgramService {
   constructor(
     private readonly reykjavikUniversityClient: ReykjavikUniversityApplicationClient,
 
@@ -48,32 +42,18 @@ class InternalProgramService {
   ) {}
 
   async updatePrograms(): Promise<void> {
-    try {
-      logger.info('Updating programs for Reykjavik University')
+    Promise.allSettled([
       await this.doUpdateProgramsForUniversity(
         UniversityNationalIds.REYKJAVIK_UNIVERSITY,
         await this.reykjavikUniversityClient.getPrograms(),
-      )
-    } catch (e) {
-      logger.error(
-        'Failed to update programs for Reykjavik University, reason:',
-        e,
-      )
-    }
-
-    // TODO need to perform for all Uglu universities
-    try {
-      logger.info('Updating programs for University of Iceland')
+      ),
       await this.doUpdateProgramsForUniversity(
         UniversityNationalIds.UNIVERSITY_OF_ICELAND,
         await this.universityOfIcelandClient.getPrograms(),
-      )
-    } catch (e) {
-      logger.error(
-        'Failed to update programs for University of Iceland, reason:',
-        e,
-      )
-    }
+      ),
+    ]).catch((e) => {
+      logger.error('Failed to update programs, reason:', e)
+    })
   }
 
   private async doUpdateProgramsForUniversity(

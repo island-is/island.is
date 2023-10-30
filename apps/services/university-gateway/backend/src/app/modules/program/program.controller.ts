@@ -13,17 +13,22 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
-import { ProgramDetailsResponse, ProgramResponse, TagResponse } from './model'
-import { DegreeType, Season } from '@island.is/university-gateway-lib'
+import { ProgramResponse } from './dto/programResponse'
+import { ProgramDetailsResponse } from './dto/programDetailsResponse'
+import { TagResponse } from './dto/tagResponse'
+import { DegreeType, Season } from '@island.is/university-gateway'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('Program')
-@Controller('api')
+@Controller({
+  path: 'programs',
+  version: ['1'],
+})
 export class ProgramController {
   constructor(private readonly programService: ProgramService) {}
 
   @BypassAuth()
-  @Get('programs')
+  @Get()
   @ApiQuery({
     name: 'limit',
     required: false,
@@ -77,7 +82,7 @@ export class ProgramController {
   @ApiOperation({
     summary: 'Get all programs',
   })
-  async getPrograms(
+  getPrograms(
     @Query('limit') limit: number,
     @Query('before') before: string,
     @Query('after') after: string,
@@ -88,7 +93,9 @@ export class ProgramController {
     @Query('degreeType') degreeType?: DegreeType,
   ): Promise<ProgramResponse> {
     return this.programService.getPrograms(
-      { after, before, limit },
+      limit,
+      after,
+      before,
       active,
       year,
       season,
@@ -98,7 +105,7 @@ export class ProgramController {
   }
 
   @BypassAuth()
-  @Get('programs/:id')
+  @Get(':id')
   @ApiParam({
     name: 'id',
     required: true,
@@ -112,9 +119,7 @@ export class ProgramController {
   @ApiOperation({
     summary: 'Get program (and courses) by ID',
   })
-  async getProgramDetails(
-    @Param('id') id: string,
-  ): Promise<ProgramDetailsResponse> {
+  getProgramDetails(@Param('id') id: string): Promise<ProgramDetailsResponse> {
     return this.programService.getProgramDetails(id)
   }
 
@@ -127,7 +132,7 @@ export class ProgramController {
   @ApiOperation({
     summary: 'Get all tags',
   })
-  async getTags(): Promise<TagResponse> {
+  getTags(): Promise<TagResponse> {
     return this.programService.getTags()
   }
 
@@ -140,7 +145,7 @@ export class ProgramController {
   @ApiOperation({
     summary: 'Get all possible values for duration in years',
   })
-  async getDurationInYears(): Promise<string[]> {
+  getDurationInYears(): Promise<string[]> {
     return this.programService.getDurationInYears()
   }
 }

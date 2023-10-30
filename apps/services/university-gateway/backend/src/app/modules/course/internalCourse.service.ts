@@ -1,20 +1,16 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Course } from './model'
-import { University } from '../university/model'
-import { ProgramCourse, ProgramMinor, ProgramTable } from '../program/model'
+import { Course } from './model/course'
+import { University } from '../university'
+import { ProgramCourse, ProgramMinor, ProgramTable } from '../program'
 import { ReykjavikUniversityApplicationClient } from '@island.is/clients/university-application/reykjavik-university'
 import { UniversityOfIcelandApplicationClient } from '@island.is/clients/university-application/university-of-iceland'
-import {
-  ICourse,
-  UniversityNationalIds,
-} from '@island.is/university-gateway-lib'
+import { ICourse, UniversityNationalIds } from '@island.is/university-gateway'
 import { logger } from '@island.is/logging'
 import { Op } from 'sequelize'
 
-export
 @Injectable()
-class InternalCourseService {
+export class InternalCourseService {
   constructor(
     private readonly reykjavikUniversityClient: ReykjavikUniversityApplicationClient,
 
@@ -37,34 +33,20 @@ class InternalCourseService {
   ) {}
 
   async updateCourses(): Promise<void> {
-    try {
-      logger.info('Updating courses for Reykjavik University')
+    Promise.allSettled([
       await this.doUpdateCoursesForUniversity(
         UniversityNationalIds.REYKJAVIK_UNIVERSITY,
         (externalId: string) =>
           this.reykjavikUniversityClient.getCourses(externalId),
-      )
-    } catch (e) {
-      logger.error(
-        'Failed to update courses for Reykjavik University, reason:',
-        e,
-      )
-    }
-
-    // TODO need to perform for all Uglu universities
-    try {
-      logger.info('Updating courses for University of Iceland')
+      ),
       await this.doUpdateCoursesForUniversity(
         UniversityNationalIds.UNIVERSITY_OF_ICELAND,
         (externalId: string) =>
           this.universityOfIcelandClient.getCourses(externalId),
-      )
-    } catch (e) {
-      logger.error(
-        'Failed to update courses for University of Iceland, reason:',
-        e,
-      )
-    }
+      ),
+    ]).catch((e) => {
+      logger.error('Failed to update courses, reason:', e)
+    })
   }
 
   private async doUpdateCoursesForUniversity(

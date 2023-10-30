@@ -1,27 +1,23 @@
 import { Injectable } from '@nestjs/common'
-import {
-  ProgramCourse,
-  ProgramDetailsResponse,
-  ProgramExtraApplicationField,
-  ProgramMinor,
-  ProgramModeOfDelivery,
-  ProgramResponse,
-  ProgramTable,
-  ProgramTag,
-  Tag,
-  TagResponse,
-} from './model'
-import { Course } from '../course/model'
-import { University } from '../university/model'
-import { PaginateInput } from './types'
+import { ProgramTable } from './model/program'
+import { ProgramTag } from './model/programTag'
+import { Tag } from './model/tag'
+import { ProgramModeOfDelivery } from './model/programModeOfDelivery'
+import { ProgramCourse } from './model/programCourse'
+import { ProgramExtraApplicationField } from './model/programExtraApplicationField'
+import { ProgramResponse } from './dto/programResponse'
+import { ProgramDetailsResponse } from './dto/programDetailsResponse'
+import { TagResponse } from './dto/tagResponse'
+import { Course } from '../course'
+import { University } from '../university'
 import { InjectModel } from '@nestjs/sequelize'
 import { paginate } from '@island.is/nest/pagination'
-import { DegreeType, Season } from '@island.is/university-gateway-lib'
-import { logger } from '@island.is/logging'
+import { DegreeType, Season } from '@island.is/university-gateway'
+import { NoContentException } from '@island.is/nest/problem'
+import { ProgramMinor } from './model/programMinor'
 
-export
 @Injectable()
-class ProgramService {
+export class ProgramService {
   constructor(
     @InjectModel(ProgramTable)
     private programModel: typeof ProgramTable,
@@ -31,7 +27,9 @@ class ProgramService {
   ) {}
 
   async getPrograms(
-    { after, before, limit }: PaginateInput,
+    limit: number,
+    after: string,
+    before?: string,
     active?: boolean,
     year?: number,
     season?: Season,
@@ -51,7 +49,7 @@ class ProgramService {
     if (universityId !== undefined) where.universityId = universityId
     if (degreeType !== undefined) where.degreeType = degreeType
 
-    return await paginate({
+    return paginate({
       Model: this.programModel,
       limit: limit,
       after: after,
@@ -94,8 +92,7 @@ class ProgramService {
   }
 
   async getProgramDetails(id: string): Promise<ProgramDetailsResponse> {
-    const program = await this.programModel.findOne({
-      where: { id: id },
+    const program = await this.programModel.findByPk(id, {
       include: [
         {
           model: University,
@@ -129,9 +126,7 @@ class ProgramService {
     })
 
     if (!program) {
-      const errorMsg = `Program with id ${id} found`
-      logger.error(`Failed to get application, reason:`, errorMsg)
-      throw new Error(errorMsg)
+      throw new NoContentException()
     }
 
     return { data: program }

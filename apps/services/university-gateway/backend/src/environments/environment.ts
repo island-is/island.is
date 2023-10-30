@@ -11,6 +11,9 @@ const devConfig = {
     url: process.env.EVENT_URL,
     errorUrl: process.env.ERROR_EVENT_URL,
   },
+  audit: {
+    defaultNamespace: '@island.is/university-gateway-backend',
+  },
 }
 
 if (process.env.NODE_ENV === 'production') {
@@ -37,6 +40,11 @@ const prodConfig = {
   events: {
     url: process.env.EVENT_URL,
     errorUrl: process.env.ERROR_EVENT_URL,
+  },
+  audit: {
+    groupName: process.env.AUDIT_GROUP_NAME,
+    serviceName: 'services-university-gateway-backend',
+    defaultNamespace: '@island.is/university-gateway-backend',
   },
 }
 

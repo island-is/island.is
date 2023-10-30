@@ -12,11 +12,10 @@ import {
 import { ProgramTable } from './program'
 import { Tag } from './tag'
 
-export
 @Table({
   tableName: 'program_tag',
 })
-class ProgramTag extends Model {
+export class ProgramTag extends Model {
   @ApiHideProperty()
   @Column({
     type: DataType.UUID,

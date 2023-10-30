@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Course, CourseDetailsResponse, CourseResponse } from './model'
-import { PaginateInput } from '../program/types'
+import { Course } from './model/course'
+import { ProgramCourse } from '../program'
 import { paginate } from '@island.is/nest/pagination'
-import { ProgramCourse } from '../program/model'
 import { Op } from 'sequelize'
-import { logger } from '@island.is/logging'
+import { NoContentException } from '@island.is/nest/problem'
+import { CourseResponse } from './dto/courseResponse'
+import { CourseDetailsResponse } from './dto/courseDetailsResponse'
 
-export
 @Injectable()
-class CourseService {
+export class CourseService {
   constructor(
     @InjectModel(Course)
     private courseModel: typeof Course,
@@ -19,10 +19,12 @@ class CourseService {
   ) {}
 
   async getCourses(
-    { after, before, limit }: PaginateInput,
-    programId: string,
-    programMinorId: string,
-    universityId: string,
+    limit: number,
+    after: string,
+    before?: string,
+    programId?: string,
+    programMinorId?: string,
+    universityId?: string,
   ): Promise<CourseResponse> {
     const where: {
       id?: { [Op.in]: string[] }
@@ -44,7 +46,7 @@ class CourseService {
     }
     if (universityId) where.universityId = universityId
 
-    return await paginate({
+    return paginate({
       Model: this.courseModel,
       limit: limit,
       after: after,
@@ -56,12 +58,10 @@ class CourseService {
   }
 
   async getCourseDetails(id: string): Promise<CourseDetailsResponse> {
-    const course = await this.courseModel.findOne({ where: { id: id } })
+    const course = await this.courseModel.findByPk(id)
 
     if (!course) {
-      const errorMsg = `Course with id ${id} found`
-      logger.error(`Failed to get application, reason:`, errorMsg)
-      throw new Error(errorMsg)
+      throw new NoContentException()
     }
 
     return { data: course }

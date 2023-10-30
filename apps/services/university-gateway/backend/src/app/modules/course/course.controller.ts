@@ -13,16 +13,20 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
-import { CourseDetailsResponse, CourseResponse } from './model'
+import { CourseResponse } from './dto/courseResponse'
+import { CourseDetailsResponse } from './dto/courseDetailsResponse'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('Course')
-@Controller('api')
+@Controller({
+  path: 'courses',
+  version: ['1'],
+})
 export class CourseController {
   constructor(private readonly courseService: CourseService) {}
 
   @BypassAuth()
-  @Get('courses')
+  @Get()
   @ApiQuery({
     name: 'limit',
     required: false,
@@ -63,7 +67,7 @@ export class CourseController {
   @ApiOperation({
     summary: 'Get all courses',
   })
-  async getCourses(
+  getCourses(
     @Query('limit') limit: number,
     @Query('before') before: string,
     @Query('after') after: string,
@@ -72,7 +76,9 @@ export class CourseController {
     @Query('universityId') universityId: string,
   ): Promise<CourseResponse> {
     return this.courseService.getCourses(
-      { after, before, limit },
+      limit,
+      after,
+      before,
       programId,
       programMinorId,
       universityId,
@@ -80,7 +86,7 @@ export class CourseController {
   }
 
   @BypassAuth()
-  @Get('courses/:id')
+  @Get(':id')
   @ApiParam({
     name: 'id',
     required: true,
@@ -94,9 +100,7 @@ export class CourseController {
   @ApiOperation({
     summary: 'Get course by ID',
   })
-  async getCourseDetails(
-    @Param('id') id: string,
-  ): Promise<CourseDetailsResponse> {
+  getCourseDetails(@Param('id') id: string): Promise<CourseDetailsResponse> {
     return this.courseService.getCourseDetails(id)
   }
 }

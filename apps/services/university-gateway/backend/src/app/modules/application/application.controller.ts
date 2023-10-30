@@ -17,17 +17,22 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger'
-import { Application, ApplicationResponse } from './model'
-import { CreateApplicationDto, UpdateApplicationDto } from './dto'
+import { Application } from './model/application'
+import { ApplicationResponse } from './dto/applicationResponse'
+import { CreateApplicationDto } from './dto/createApplicationDto'
+import { UpdateApplicationDto } from './dto/updateApplicationDto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(UniversityGatewayScope.main)
 @ApiTags('Application')
-@Controller('api')
+@Controller({
+  path: 'applications',
+  version: ['1'],
+})
 export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
-  @Scopes(UniversityGatewayScope.main)
-  @Get('applications/:id')
+  @Get(':id')
   @ApiParam({
     name: 'id',
     required: true,
@@ -41,15 +46,14 @@ export class ApplicationController {
   @ApiOperation({
     summary: 'Get application by ID (only status for now) for logged in user',
   })
-  async getApplication(
+  getApplication(
     @Param('id') id: string,
     @CurrentUser() user: User,
   ): Promise<ApplicationResponse> {
     return this.applicationService.getApplication(id, user)
   }
 
-  @Scopes(UniversityGatewayScope.main)
-  @Post('applications')
+  @Post()
   @ApiBody({
     type: CreateApplicationDto,
   })
@@ -60,15 +64,14 @@ export class ApplicationController {
   @ApiOperation({
     summary: 'Create application for logged in user',
   })
-  async createApplication(
+  createApplication(
     @Body() applicationDto: CreateApplicationDto,
     @CurrentUser() user: User,
   ): Promise<Application> {
     return this.applicationService.createApplication(applicationDto, user)
   }
 
-  @Scopes(UniversityGatewayScope.main)
-  @Patch('applications/:id')
+  @Patch(':id')
   @ApiParam({
     name: 'id',
     required: true,
@@ -85,7 +88,7 @@ export class ApplicationController {
   @ApiOperation({
     summary: 'Update application (only status for now) for logged in user',
   })
-  async updateApplication(
+  updateApplication(
     @Param('id') id: string,
     @Body() applicationDto: UpdateApplicationDto,
     @CurrentUser() user: User,

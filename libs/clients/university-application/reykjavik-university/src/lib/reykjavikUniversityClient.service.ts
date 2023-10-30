@@ -17,13 +17,12 @@ import {
   Requirement,
   Season,
   mapStringToEnum,
-} from '@island.is/university-gateway-lib'
+} from '@island.is/university-gateway'
 import { logger } from '@island.is/logging'
 import * as kennitala from 'kennitala'
 
-export
 @Injectable()
-class ReykjavikUniversityApplicationClient {
+export class ReykjavikUniversityApplicationClient {
   constructor(private hvinApi: HvinApi) {}
 
   async getPrograms(): Promise<IProgram[]> {
@@ -76,7 +75,7 @@ class ReykjavikUniversityApplicationClient {
             program.modeOfDelivery?.map((m) => {
               // TODO why is this value empty
               if (!m) {
-                return ModeOfDelivery.OTHER
+                return ModeOfDelivery.UNDEFINED
               } else {
                 return mapStringToEnum(m, ModeOfDelivery)
               }

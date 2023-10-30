@@ -7,16 +7,19 @@ import {
 import { Controller, Get } from '@nestjs/common'
 import { UniversityService } from './university.service'
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
-import { UniversityResponse } from './model'
+import { UniversityResponse } from './dto/universityResponse'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('University')
-@Controller('api')
+@Controller({
+  path: 'universities',
+  version: ['1'],
+})
 export class UniversityController {
   constructor(private readonly universityService: UniversityService) {}
 
   @BypassAuth()
-  @Get('universities')
+  @Get()
   @ApiOkResponse({
     type: UniversityResponse,
     description: 'Returns all universities',
@@ -24,7 +27,7 @@ export class UniversityController {
   @ApiOperation({
     summary: 'Get all universities',
   })
-  async getUniversities(): Promise<UniversityResponse> {
+  getUniversities(): Promise<UniversityResponse> {
     return this.universityService.getUniversities()
   }
 }

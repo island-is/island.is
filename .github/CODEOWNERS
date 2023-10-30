@@ -115,7 +115,7 @@ libs/clients/rsk/relationships/                                                 
 /apps/download-service/                                                                                  @island-is/hugsmidjan
 /apps/service-portal*/                                                                                   @island-is/hugsmidjan
 /apps/services/regulations-admin-backend/                                                                @island-is/hugsmidjan
-/apps/services/user-profile/                                                                             @island-is/hugsmidjan @island-is/juni
+/apps/services/user-profile/                                                                             @island-is/hugsmidjan @island-is/juni @island-is/aranja
 /apps/web/screens/Regulations/                                                                           @island-is/hugsmidjan
 /apps/web/components/Regulations/                                                                        @island-is/hugsmidjan
 /libs/api/domains/air-discount-scheme                                                                    @island-is/hugsmidjan
@@ -125,7 +125,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/license-service/                                                                       @island-is/hugsmidjan
 /libs/api/domains/work-machines/                                                                         @island-is/hugsmidjan
 /libs/api/domains/national-registry/                                                                     @island-is/hugsmidjan
-/libs/api/domains/user-profile/                                                                          @island-is/hugsmidjan @island-is/juni
+/libs/api/domains/user-profile/                                                                          @island-is/hugsmidjan @island-is/juni @island-is/aranja
 /libs/api/domains/passport/                                                                              @island-is/hugsmidjan
 /libs/api/domains/vehicles/                                                                              @island-is/hugsmidjan
 /libs/api/domains/university-of-iceland/                                                                 @island-is/hugsmidjan
@@ -279,12 +279,10 @@ libs/clients/rsk/relationships/                                                 
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-book-update-instructor/ @island-is/origo
 
 /apps/services/university-gateway/                                                                       @island-is/origo
-/apps/web/screens/UniversitySearch/                                                                      @island-is/origo
-/apps/web/components/ListViewCard/                                                                       @island-is/origo
 /libs/clients/university-application/                                                                    @island-is/origo
 /libs/clients/university-gateway-api/                                                                    @island-is/origo
 /libs/api/domains/university-gateway/                                                                    @island-is/origo
-/libs/university-gateway-lib/                                                                            @island-is/origo
+/libs/university-gateway/                                                                                @island-is/origo
 
 # Temporary assignment while the QA bootstrap project is in progress
 /apps/system-e2e/                                                                                        @island-is/qa

@@ -14,6 +14,7 @@ import {
   IntroHeader,
   VINNUEFTIRLITID_ID,
   Filter,
+  FootNote,
 } from '@island.is/service-portal/core'
 import {
   Box,
@@ -181,22 +182,26 @@ const WorkMachinesOverview = () => {
                       />
                     }
                     additionalFilters={
-                      <DropdownMenu
-                        title={formatMessage(m.get)}
-                        icon="download"
-                        items={[
-                          {
-                            onClick: () =>
-                              getFileExport(WorkMachinesFileType.CSV),
-                            title: formatMessage(m.getAsCsv),
-                          },
-                          {
-                            onClick: () =>
-                              getFileExport(WorkMachinesFileType.EXCEL),
-                            title: formatMessage(m.getAsExcel),
-                          },
-                        ]}
-                      />
+                      !loading &&
+                      !error &&
+                      !!data?.workMachinesPaginatedCollection?.data.length && (
+                        <DropdownMenu
+                          title={formatMessage(m.get)}
+                          icon="download"
+                          items={[
+                            {
+                              onClick: () =>
+                                getFileExport(WorkMachinesFileType.CSV),
+                              title: formatMessage(m.getAsCsv),
+                            },
+                            {
+                              onClick: () =>
+                                getFileExport(WorkMachinesFileType.EXCEL),
+                              title: formatMessage(m.getAsExcel),
+                            },
+                          ]}
+                        />
+                      )
                     }
                   >
                     {
@@ -298,6 +303,9 @@ const WorkMachinesOverview = () => {
             />
           </Box>
         )}
+      <Box marginTop={2}>
+        <FootNote serviceProviderID={VINNUEFTIRLITID_ID} />
+      </Box>
     </Box>
   )
 }

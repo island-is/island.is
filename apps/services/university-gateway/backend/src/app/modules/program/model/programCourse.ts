@@ -13,16 +13,15 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
+import { Course } from '../../course'
 import { ProgramTable } from './program'
 import { ProgramMinor } from './programMinor'
-import { Course } from '../../course/model'
-import { Requirement, Season } from '@island.is/university-gateway-lib'
+import { Requirement, Season } from '@island.is/university-gateway'
 
-export
 @Table({
   tableName: 'program_course',
 })
-class ProgramCourse extends Model {
+export class ProgramCourse extends Model {
   @ApiHideProperty()
   @Column({
     type: DataType.UUID,
@@ -74,11 +73,10 @@ class ProgramCourse extends Model {
   })
   requirement!: Requirement
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Which year this course is taught on',
     example: 2023,
   })
-  @ApiPropertyOptional()
   @Column({
     type: DataType.INTEGER,
     allowNull: true,

@@ -1,6 +1,8 @@
 import { useContext } from 'react'
+
 import { defaultLanguage } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
+
 import { I18nContext, isLocale } from '../../i18n/I18n'
 
 export interface LinkResolverResponse {
@@ -60,6 +62,26 @@ export const routesTemplate = {
   newsoverview: {
     is: '/frett',
     en: '/en/news',
+  },
+  manual: {
+    is: '/handbaekur/[slug]',
+    en: '/en/manuals/[slug]',
+  },
+  manualchangelog: {
+    is: '/handbaekur/[slug]/breytingasaga',
+    en: '/en/manuals/[slug]/changelog',
+  },
+  manualchapter: {
+    is: '/handbaekur/[slug]/[chapterSlug]',
+    en: '/en/manuals/[slug]/[chapterSlug]',
+  },
+  vacancies: {
+    is: '/starfatorg',
+    en: '',
+  },
+  vacancydetails: {
+    is: '/starfatorg/[id]',
+    en: '',
   },
   digitalicelandservices: {
     is: '/s/stafraent-island/thjonustur',
@@ -202,18 +224,6 @@ export const routesTemplate = {
     is: '/[slug]',
     en: '/en/[slug]',
   },
-  universitysearchdetails: {
-    is: '/haskolanam/[id]',
-    en: '/en/haskolanam/[id]',
-  },
-  universitysearchcomparison: {
-    is: '/haskolanam/samanburdur',
-    en: '/en/haskolanam/samanburdur',
-  },
-  universitysearch: {
-    is: '/haskolanam',
-    en: '/en/haskolanam',
-  },
   homepage: {
     is: '/',
     en: '/en',
@@ -221,14 +231,6 @@ export const routesTemplate = {
   undirskriftalistar: {
     is: '/undirskriftalistar',
     en: '/en/petitions',
-  },
-  vacancies: {
-    is: '/starfatorg',
-    en: '',
-  },
-  vacancydetails: {
-    is: '/starfatorg/[id]',
-    en: '',
   },
 }
 

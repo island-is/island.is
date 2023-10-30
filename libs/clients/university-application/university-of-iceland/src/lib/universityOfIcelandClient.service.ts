@@ -11,12 +11,11 @@ import {
   Requirement,
   Season,
   mapStringToEnum,
-} from '@island.is/university-gateway-lib'
+} from '@island.is/university-gateway'
 import { logger } from '@island.is/logging'
 
-export
 @Injectable()
-class UniversityOfIcelandApplicationClient {
+export class UniversityOfIcelandApplicationClient {
   constructor(
     private readonly programsApi: ProgramsApi,
     private readonly coursesApi: CoursesApi,
@@ -68,7 +67,7 @@ class UniversityOfIcelandApplicationClient {
             program.modeOfDelivery?.map((m) => {
               // TODO handle when ráðuneyti has made decisions
               if (m.toString() === 'MIXED') {
-                return ModeOfDelivery.OTHER
+                return ModeOfDelivery.UNDEFINED
               } else {
                 return mapStringToEnum(m, ModeOfDelivery)
               }

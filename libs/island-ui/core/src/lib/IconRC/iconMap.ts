@@ -10,6 +10,7 @@ export type Icon =
   | 'arrowDown'
   | 'attach'
   | 'business'
+  | 'calculator'
   | 'calendar'
   | 'call'
   | 'car'
@@ -78,8 +79,6 @@ export type Icon =
   | 'QRCode'
   | 'globe'
   | 'signLanguage'
-  | 'listView'
-  | 'gridView'
 
 export default {
   filled: {
@@ -93,6 +92,7 @@ export default {
     arrowUp: 'ArrowUp',
     attach: 'Attach',
     business: 'Business',
+    calculator: 'Calculator',
     calendar: 'Calendar',
     call: 'Call',
     car: 'Car',
@@ -161,8 +161,6 @@ export default {
     QRCode: 'QRCodeOutline',
     globe: 'Globe',
     signLanguage: 'SignLanguage',
-    listView: 'ListView',
-    gridView: 'GridView',
   },
   outline: {
     archive: 'ArchiveOutline',
@@ -175,6 +173,7 @@ export default {
     arrowUp: 'ArrowUp',
     attach: 'AttachOutline',
     business: 'BusinessOutline',
+    calculator: 'CalculatorOutline',
     calendar: 'CalendarOutline',
     call: 'CallOutline',
     car: 'CarOutline',
@@ -243,7 +242,5 @@ export default {
     QRCode: 'QRCodeOutline',
     globe: 'Globe',
     signLanguage: 'SignLanguage',
-    listView: 'ListView',
-    gridView: 'GridView',
   },
 }

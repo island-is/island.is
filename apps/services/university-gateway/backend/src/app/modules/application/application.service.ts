@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Application, ApplicationResponse } from './model'
-import { CreateApplicationDto, UpdateApplicationDto } from './dto'
+import { Application } from './model/application'
+import { ApplicationResponse } from './dto/applicationResponse'
+import { CreateApplicationDto } from './dto/createApplicationDto'
+import { UpdateApplicationDto } from './dto/updateApplicationDto'
 import { User } from '@island.is/auth-nest-tools'
 import { ReykjavikUniversityApplicationClient } from '@island.is/clients/university-application/reykjavik-university'
 import { UniversityOfIcelandApplicationClient } from '@island.is/clients/university-application/university-of-iceland'
@@ -9,10 +11,10 @@ import {
   ApplicationStatus,
   IApplication,
   UniversityNationalIds,
-} from '@island.is/university-gateway-lib'
+} from '@island.is/university-gateway'
 import { logger } from '@island.is/logging'
-import { University } from '../university/model'
-import { ProgramTable } from '../program/model'
+import { University } from '../university'
+import { ProgramTable } from '../program'
 
 @Injectable()
 export class ApplicationService {

@@ -6,19 +6,22 @@ import { InternalProgramService } from './internalProgram.service'
 
 @UseGuards(TokenGuard)
 @ApiTags('Internal program')
-@Controller('api/internal')
+@Controller({
+  path: 'internal/programs',
+  version: ['1'],
+})
 export class InternalProgramController {
   constructor(
     private readonly internalProgramService: InternalProgramService,
   ) {}
 
-  @Post('programs/update')
+  @Post('update')
   @ApiNoContentResponse()
   @ApiOperation({
     summary:
       'Updates program in our DB by fetching data from the university APIs',
   })
-  async updatePrograms(): Promise<void> {
-    await this.internalProgramService.updatePrograms()
+  updatePrograms() {
+    this.internalProgramService.updatePrograms()
   }
 }
