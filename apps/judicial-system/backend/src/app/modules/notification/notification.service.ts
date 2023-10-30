@@ -1429,11 +1429,13 @@ export class NotificationService {
     ]
 
     recipientRoles.map((recipient) => {
-      if (theCase.appealCaseNumber && recipient) {
+      if (theCase.appealCaseNumber && recipient && theCase.appealJudge1?.name) {
         const { subject, body } =
           formatCourtOfAppealJudgeAssignedEmailNotification(
             this.formatMessage,
             theCase.appealCaseNumber,
+            recipient.id === theCase.appealJudge1Id,
+            theCase.appealJudge1.name,
             recipient.role,
             `${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}`,
           )
