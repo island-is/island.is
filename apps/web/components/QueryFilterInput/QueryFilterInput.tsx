@@ -1,4 +1,10 @@
-import { type FC, type MouseEventHandler, useContext, useEffect, useState } from 'react'
+import {
+  type FC,
+  type MouseEventHandler,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { useQueryState } from 'next-usequerystate'
 
 import { FilterInput, type FilterInputProps } from '@island.is/island-ui/core'

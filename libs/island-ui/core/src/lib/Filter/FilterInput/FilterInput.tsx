@@ -16,7 +16,7 @@ export interface FilterInputProps {
   backgroundColor?: ResponsiveProp<InputBackgroundColor>
 }
 
-const icon: InputIcon = { name: 'search', type: 'outline' };
+const icon: InputIcon = { name: 'search', type: 'outline' }
 
 export const FilterInput: React.FC<
   React.PropsWithChildren<FilterInputProps>

@@ -14,7 +14,10 @@ export default {
   component: Filter,
 }
 
-const RenderVariant = (variant: FilterProps['variant'], inputButton?: boolean) => {
+const RenderVariant = (
+  variant: FilterProps['variant'],
+  inputButton?: boolean,
+) => {
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
   useEffect(() => {
@@ -89,10 +92,14 @@ const RenderVariant = (variant: FilterProps['variant'], inputButton?: boolean) =
           placeholder="Sía eftir leitarorði"
           value={filter.input}
           onChange={(value) => setFilter({ ...filter, input: value })}
-          button={inputButton ? {
-            label: 'Search',
-            onClick: () => undefined
-          } : undefined}
+          button={
+            inputButton
+              ? {
+                  label: 'Search',
+                  onClick: () => undefined,
+                }
+              : undefined
+          }
         />
       }
     >
