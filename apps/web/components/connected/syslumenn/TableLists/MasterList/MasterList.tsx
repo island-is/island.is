@@ -190,6 +190,7 @@ const MasterList = ({ slice }: MasterListProps) => {
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore make web strict
                   onChange={({ value }: Option) => {
+                    setCurrentPageNumber(1)
                     setFilterLicenceProfession(String(value))
                   }}
                 />
