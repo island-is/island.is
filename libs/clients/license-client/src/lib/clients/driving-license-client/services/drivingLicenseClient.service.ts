@@ -32,6 +32,8 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
     private smartApi: SmartSolutionsApi,
   ) {}
 
+  clientSupportsPkPass = true
+
   private checkLicenseValidity(
     license: DriversLicense,
   ): LicensePkPassAvailability {

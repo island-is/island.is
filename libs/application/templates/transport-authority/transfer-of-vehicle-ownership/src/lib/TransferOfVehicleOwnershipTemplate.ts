@@ -325,7 +325,7 @@ const template: ApplicationTemplate<
               variant: 'blueberry',
             },
             pendingAction: {
-              title: corePendingActionMessages.applicationReceivedTitle,
+              title: applicationMessage.historyLogSentApplication,
               displayStatus: 'success',
             },
           },
