@@ -43,7 +43,7 @@ const DraftRequireAction: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           description={formatMessage(descKey[application.state])}
         />
       </Box>
-      <Box marginTop={10}>
+      <Box marginTop={1}>
         <Text>
           {formatMessage(parentalLeaveFormMessages.draftFlow.modifyDraftDesc)}
         </Text>

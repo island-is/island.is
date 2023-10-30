@@ -10,7 +10,6 @@ import {
   VedbandayfirlitReguverkiSvarSkeyti,
   SkraningaradiliDanarbusSkeyti,
   TegundAndlags,
-  AdiliDanarbus,
   DanarbuUppl,
   EignirDanarbus,
   Fasteignasalar,
@@ -20,6 +19,7 @@ import {
   Verdbrefamidlari,
   Erfingar,
   Malsvari,
+  Meistaraleyfi,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -47,6 +47,7 @@ import {
   TemporaryEventLicence,
   Broker,
   Advocate,
+  MasterLicence,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -433,5 +434,13 @@ export const mapEstateInfo = (syslaData: DanarbuUppl): EstateInfo => {
     marriageSettlement: syslaData.kaupmali,
     nameOfDeceased: syslaData?.nafn ?? '',
     nationalIdOfDeceased: syslaData?.kennitala ?? '',
+  }
+}
+export const mapMasterLicence = (licence: Meistaraleyfi): MasterLicence => {
+  return {
+    name: licence.nafn,
+    dateOfPublication: licence.gildirFra,
+    profession: licence.idngrein,
+    office: licence.embaetti,
   }
 }

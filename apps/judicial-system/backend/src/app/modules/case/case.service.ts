@@ -751,14 +751,19 @@ export class CaseService {
           caseId: theCase.id,
           caseFileId: caseFile.id,
         })) ?? []
-    messages.push(
-      {
-        type: MessageType.SEND_APPEAL_COMPLETED_NOTIFICATION,
+    messages.push({
+      type: MessageType.SEND_APPEAL_COMPLETED_NOTIFICATION,
+      user,
+      caseId: theCase.id,
+    })
+
+    if (theCase.origin === CaseOrigin.LOKE) {
+      messages.push({
+        type: MessageType.DELIVER_CASE_TO_POLICE,
         user,
         caseId: theCase.id,
-      },
-      { type: MessageType.DELIVER_CASE_TO_POLICE, user, caseId: theCase.id },
-    )
+      })
+    }
 
     return this.messageService.sendMessagesToQueue(messages)
   }
