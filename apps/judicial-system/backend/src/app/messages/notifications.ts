@@ -631,7 +631,7 @@ export const notifications = {
       description: 'Texti í pósti til aðila máls þegar að kæra er móttekin',
     },
     courtOfAppealsBody: {
-      id: 'judicial.system.backend:notifications.case_appeal_received_by_court.court_of_appeals_body_v2',
+      id: 'judicial.system.backend:notifications.case_appeal_received_by_court.court_of_appeals_body_v3',
       defaultMessage:
         'Kæra í máli {courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til {statementDeadline}. Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description: 'Texti í pósti til Landsréttar þegar að kæra er móttekin',
