@@ -51,7 +51,8 @@ import {
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
 export const cleanPropertyNumber = (propertyNumber: string): string => {
-  return propertyNumber[0] == 'F'
+  const firstChar = propertyNumber.charAt(0).toUpperCase()
+  return firstChar === 'F' || firstChar === 'L'
     ? propertyNumber.substring(1, propertyNumber.length)
     : propertyNumber
 }
