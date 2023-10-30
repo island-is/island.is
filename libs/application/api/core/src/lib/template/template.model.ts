@@ -292,9 +292,6 @@ export function buildCertificateTemplate<
   templateId: ApplicationTypes,
   title: string,
 ): ApplicationTemplate<TContext, TStateSchema, TEvents> {
-  const dataString: string = JSON.stringify(data)
-  const completedDataString: string = JSON.stringify(completedData)
-
   const providers = [
     buildDataProviderItem({
       provider: NationalRegistryUserApi,
